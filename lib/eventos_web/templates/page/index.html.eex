@@ -1,0 +1,4 @@
+<div class="jumbotron">
+  <h2><%= gettext "Welcome to %{name}!", name: "Eventos" %></h2>
+  <p class="lead">A decentralized event management platform, currently rewritten with Elixir</p>
+</div>

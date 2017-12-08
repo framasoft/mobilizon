@@ -1,0 +1,26 @@
+<h2>Listing Group accounts</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Role</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for group_account <- @group_accounts do %>
+    <tr>
+      <td><%= group_account.role %></td>
+
+      <td class="text-right">
+        <span><%= link "Show", to: group_account_path(@conn, :show, group_account), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Edit", to: group_account_path(@conn, :edit, group_account), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Delete", to: group_account_path(@conn, :delete, group_account), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Group account", to: group_account_path(@conn, :new) %></span>

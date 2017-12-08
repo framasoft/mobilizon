@@ -1,0 +1,5 @@
+<h2>New Group</h2>
+
+<%= render "form.html", Map.put(assigns, :action, group_path(@conn, :create)) %>
+
+<span><%= link "Back", to: group_path(@conn, :index) %></span>

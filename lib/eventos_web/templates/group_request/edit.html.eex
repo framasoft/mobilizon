@@ -1,0 +1,5 @@
+<h2>Edit Group request</h2>
+
+<%= render "form.html", Map.put(assigns, :action, group_request_path(@conn, :update, @group_request)) %>
+
+<span><%= link "Back", to: group_request_path(@conn, :index) %></span>

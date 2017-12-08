@@ -1,0 +1,28 @@
+<h2>Show Event</h2>
+
+<ul>
+
+  <li>
+    <strong>Title:</strong>
+    <%= @event.title %>
+  </li>
+
+  <li>
+    <strong>Description:</strong>
+    <%= @event.description %>
+  </li>
+
+  <li>
+    <strong>Begin on:</strong>
+    <%= @event.begin_on %>
+  </li>
+
+  <li>
+    <strong>Ends on:</strong>
+    <%= @event.ends_on %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: event_path(@conn, :edit, @event) %></span>
+<span><%= link "Back", to: event_path(@conn, :index) %></span>

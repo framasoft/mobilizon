@@ -1,0 +1,26 @@
+<h2>Listing Group requests</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>State</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for group_request <- @group_request do %>
+    <tr>
+      <td><%= group_request.state %></td>
+
+      <td class="text-right">
+        <span><%= link "Show", to: group_request_path(@conn, :show, group_request), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Edit", to: group_request_path(@conn, :edit, group_request), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Delete", to: group_request_path(@conn, :delete, group_request), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Group request", to: group_request_path(@conn, :new) %></span>

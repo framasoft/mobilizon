@@ -1,0 +1,42 @@
+<h2>Listing Accounts</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Domain</th>
+      <th>Display name</th>
+      <th>Description</th>
+      <th>Private key</th>
+      <th>Public key</th>
+      <th>Suspended</th>
+      <th>Uri</th>
+      <th>Url</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for account <- @accounts do %>
+    <tr>
+      <td><%= account.username %></td>
+      <td><%= account.domain %></td>
+      <td><%= account.display_name %></td>
+      <td><%= account.description %></td>
+      <td><%= account.private_key %></td>
+      <td><%= account.public_key %></td>
+      <td><%= account.suspended %></td>
+      <td><%= account.uri %></td>
+      <td><%= account.url %></td>
+
+      <td class="text-right">
+        <span><%= link "Show", to: account_path(@conn, :show, account), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Edit", to: account_path(@conn, :edit, account), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Delete", to: account_path(@conn, :delete, account), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Account", to: account_path(@conn, :new) %></span>
