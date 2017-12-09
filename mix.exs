@@ -20,7 +20,7 @@ defmodule Eventos.Mixfile do
   def application do
     [
       mod: {Eventos.Application, []},
-      extra_applications: [:logger, :runtime_tools, :coherence]
+      extra_applications: [:logger, :runtime_tools, :guardian]
     ]
   end
 
@@ -41,7 +41,9 @@ defmodule Eventos.Mixfile do
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
-      {:coherence, "~> 0.5"}
+      {:guardian, "~> 1.0"},
+      {:comeonin, "~> 4.0"},
+      {:argon2_elixir, "~> 1.2"}
     ]
   end
 

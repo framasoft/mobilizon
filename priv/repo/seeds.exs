@@ -12,6 +12,6 @@
 
 Eventos.Repo.delete_all Eventos.Accounts.User
 
-Eventos.Accounts.User.changeset(%Eventos.Accounts.User{}, %{username: "Test User", email: "testuser@example.com", password: "secret", password_confirmation: "secret"})
+Eventos.Accounts.User.registration_changeset(%Eventos.Accounts.User{}, %{email: "testuser@example.com", password: "secret", password_confirmation: "secret"})
 |> Eventos.Repo.insert!
 

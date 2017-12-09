@@ -12,8 +12,8 @@ config :logger, level: :warn
 # Configure your database
 config :eventos, Eventos.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
+  username: "elixir",
+  password: "elixir",
   database: "eventos_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox

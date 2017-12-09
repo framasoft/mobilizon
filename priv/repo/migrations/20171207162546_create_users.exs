@@ -3,14 +3,14 @@ defmodule Eventos.Repo.Migrations.CreateUsers do
 
   def change do
     create table(:users) do
-      add :username, :string
-      add :email, :string
-      add :role, :integer, default: 0
+      add :email, :string, null: false
+      add :role, :integer, default: 0, null: false
+      add :password_hash, :string
       add :account_id, references(:accounts, on_delete: :delete_all, null: false)
 
       timestamps()
     end
 
-    create unique_index(:users, [:username])
+    create unique_index(:users, [:email])
   end
 end

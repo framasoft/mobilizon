@@ -4,6 +4,7 @@ defmodule Eventos.Accounts do
   """
 
   import Ecto.Query, warn: false
+  import Logger
   alias Eventos.Repo
 
   alias Eventos.Accounts.User
@@ -36,6 +37,32 @@ defmodule Eventos.Accounts do
 
   """
   def get_user!(id), do: Repo.get!(User, id)
+
+
+  @doc """
+  Get an user by email
+  """
+  def find(email) do
+    Repo.get_by!(User, email: email)
+  end
+
+  @doc """
+  Authenticate user
+  """
+  def authenticate(%{user: user, password: password}) do
+    # Does password match the one stored in the database?
+    Logger.debug(user.password_hash)
+    Logger.debug(password)
+    case Comeonin.Argon2.checkpw(password, user.password_hash) do
+      true ->
+        # Yes, create and return the token
+        EventosWeb.Guardian.encode_and_sign(user)
+      _ ->
+        # No, return an error
+        {:error, :unauthorized}
+    end
+  end
+
 
   @doc """
   Creates a user.
