@@ -9,17 +9,25 @@ defmodule EventosWeb.Router do
     plug EventosWeb.AuthPipeline
   end
 
-  scope "/api" do
+  pipeline :browser do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_flash
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+  end
+
+  scope "/api", EventosWeb do
     pipe_through :api
 
-    resources "/users", UserController, only: [:create]
-    post "/sign-in", EventosWeb.SessionController, :sign_in
+    post "/users", UserController, :register
+    post "/login", SessionController, :sign_in
+    resources "/groups", GroupController, only: [:index]
   end
 
   # Other scopes may use custom stacks.
   scope "/api", EventosWeb do
      pipe_through :api_auth
-
 
      post "/sign-out", SessionController, :sign_out
      resources "/users", UserController
@@ -29,8 +37,14 @@ defmodule EventosWeb.Router do
      resources "/tags", TagController
      resources "/event_accounts", EventAccountsController
      resources "/event_requests", EventRequestController
-     resources "/groups", GroupController
+     resources "/groups", GroupController, except: [:index]
      resources "/group_accounts", GroupAccountController
      resources "/group_requests", GroupRequestController
+  end
+
+  scope "/", EventosWeb do
+    pipe_through :browser
+
+    get "/*path", AppController, :app
   end
 end

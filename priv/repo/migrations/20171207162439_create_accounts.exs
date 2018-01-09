@@ -10,7 +10,7 @@ defmodule Eventos.Repo.Migrations.CreateAccounts do
       add :private_key, :text
       add :public_key, :text, null: false
       add :suspended, :boolean, default: false, null: false
-      add :uri, :string, null: false
+      add :uri, :string
       add :url, :string
 
       timestamps()

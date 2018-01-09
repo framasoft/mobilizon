@@ -1,16 +1,17 @@
 defmodule Eventos.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Eventos.Accounts.{User}
+  alias Eventos.Accounts.{Account, User}
+  alias Eventos.Repo
 
+  import Logger
 
   schema "users" do
     field :email, :string
     field :role, :integer, default: 0
     field :password, :string, virtual: true
     field :password_hash, :string
-    field :account_id, :integer
-
+    belongs_to :account, Account
     timestamps()
   end
 
@@ -18,7 +19,7 @@ defmodule Eventos.Accounts.User do
   @doc false
   def changeset(%User{} = user, attrs) do
     user
-    |> cast(attrs, [:email, :password_hash, :role])
+    |> cast(attrs, [:email, :password_hash])
     |> validate_required([:email])
     |> unique_constraint(:email)
     |> validate_format(:email, ~r/@/)
