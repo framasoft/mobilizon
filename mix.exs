@@ -53,6 +53,7 @@ defmodule Eventos.Mixfile do
       {:timex, "~> 3.0"},
       {:timex_ecto, "~> 3.0"},
       {:ex_machina, "~> 2.1", only: :test},
+      {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
     ]
   end
 

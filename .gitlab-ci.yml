@@ -1,10 +1,17 @@
 image: elixir:latest
 
 services:
-  - postgres:latest
+  - mdillon/postgis:9.6-alpine
 
 variables:
   MIX_ENV: "test"
+
+cache:
+  key: "$CI_JOB_NAME"
+  paths:
+    - deps
+    - _build
+    - .rebar3
 
 before_script:
   - mix local.rebar --force
@@ -13,4 +20,5 @@ before_script:
 
 mix:
   script:
+  - mix credo
   - mix test
