@@ -8,7 +8,7 @@ variables:
   POSTGRES_DB: eventos_test
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: ""
-  POSTGRES_HOST: postgis
+  POSTGRES_HOST: mdillon-postgis
 
 cache:
   key: "$CI_JOB_NAME"
