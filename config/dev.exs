@@ -50,6 +50,7 @@ config :phoenix, :stacktrace_depth, 20
 # Configure your database
 config :eventos, Eventos.Repo,
   adapter: Ecto.Adapters.Postgres,
+  types: Eventos.PostgresTypes,
   username: "elixir",
   password: "elixir",
   database: "eventos_dev",

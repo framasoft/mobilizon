@@ -4,11 +4,10 @@
     <v-form>
       <v-text-field
         label="Name of the category"
-        v-model="category.name"
+        v-model="category.title"
         :counter="100"
         required
       ></v-text-field>
-      <input type="file" @change="processFile($event.target)">
     </v-form>
     <v-btn color="primary" @click="create">Create category</v-btn>
   </div>
@@ -22,32 +21,20 @@
     data() {
       return {
         category: {
-          name: '',
-          imageDataUri: null,
+          title: '',
         },
       };
     },
     methods: {
       create() {
         const router = this.$router;
-        eventFetch('/categories', this.$store, { method: 'POST', body: JSON.stringify(this.category) })
+        eventFetch('/categories', this.$store, { method: 'POST', body: JSON.stringify({ category: this.category }) })
           .then(response => response.json())
           .then(() => {
             this.loading = false;
             router.push('/category')
           });
       },
-      processFile(target) {
-        const reader = new FileReader();
-        const file = target.files[0];
-        reader.addEventListener('load', () => {
-          this.category.imageDataUri = reader.result;
-        });
-
-        if (file) {
-          reader.readAsDataURL(file);
-        }
-      }
     },
   };
 </script>

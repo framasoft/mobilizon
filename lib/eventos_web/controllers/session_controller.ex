@@ -1,30 +1,42 @@
 defmodule EventosWeb.SessionController do
   use EventosWeb, :controller
-  alias Eventos.Accounts.User
-  alias Eventos.Accounts
 
-  def sign_in(conn, %{"email" => email, "password" => password}) do
-    with %User{} = user <- Accounts.find(email) do
-      # Attempt to authenticate the user
-      with {:ok, token, _claims} <- Accounts.authenticate(%{user: user, password: password}) do
-        # Render the token
-        user = Eventos.Repo.preload user, :account
-        render conn, "token.json", %{token: token, user: user}
-      end
-      send_resp(conn, 400, "Bad login")
+  alias Eventos.Events
+  alias Eventos.Events.Session
+
+  action_fallback EventosWeb.FallbackController
+
+  def index(conn, _params) do
+    sessions = Events.list_sessions()
+    render(conn, "index.json", sessions: sessions)
+  end
+
+  def create(conn, %{"session" => session_params}) do
+    with {:ok, %Session{} = session} <- Events.create_session(session_params) do
+      conn
+      |> put_status(:created)
+      |> put_resp_header("location", session_path(conn, :show, session))
+      |> render("show.json", session: session)
     end
-    send_resp(conn, 400, "No such user")
   end
 
-  def sign_out(conn, _params) do
-    conn
-    |> Eventos.Guardian.Plug.sign_out()
-    |> send_resp(204, "")
+  def show(conn, %{"id" => id}) do
+    session = Events.get_session!(id)
+    render(conn, "show.json", session: session)
   end
 
-  def show(conn, _params) do
-    user = Eventos.Guardian.Plug.current_resource(conn)
+  def update(conn, %{"id" => id, "session" => session_params}) do
+    session = Events.get_session!(id)
 
-    send_resp(conn, 200, Poison.encode!(%{user: user}))
+    with {:ok, %Session{} = session} <- Events.update_session(session, session_params) do
+      render(conn, "show.json", session: session)
+    end
+  end
+
+  def delete(conn, %{"id" => id}) do
+    session = Events.get_session!(id)
+    with {:ok, %Session{}} <- Events.delete_session(session) do
+      send_resp(conn, :no_content, "")
+    end
   end
 end

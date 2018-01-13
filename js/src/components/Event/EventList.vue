@@ -26,7 +26,7 @@
             <div class="headline">{{ event.title }}</div>
           </v-card-title>
           <v-container>
-              <span class="grey--text">{{ event.startDate | formatDate }} à <router-link :to="{name: 'EventList', params: {location: geocode(event.address.geo.latitude, event.address.geo.longitude, 10) }}">{{ event.address.addressLocality }}</router-link></span><br>
+              <!--<span class="grey&#45;&#45;text">{{ event.startDate | formatDate }} à <router-link :to="{name: 'EventList', params: {location: geocode(event.address.geo.latitude, event.address.geo.longitude, 10) }}">{{ event.address.addressLocality }}</router-link></span><br>-->
               <p><vue-markdown>{{ event.description }}</vue-markdown></p>
               <p v-if="event.organizer">Organisé par <router-link :to="{name: 'Account', params: {'id': event.organizer.id}}">{{ event.organizer.username }}</router-link></p>
           </v-container>
@@ -93,9 +93,9 @@
         this.locationChip = true;
         eventFetch(queryString, this.$store)
           .then(response => response.json())
-          .then((data) => {
+          .then((response) => {
             this.loading = false;
-            this.events = data['hydra:member'];
+            this.events = response.data;
           });
       },
       deleteEvent(id) {

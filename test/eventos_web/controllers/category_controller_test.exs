@@ -1,80 +1,84 @@
 defmodule EventosWeb.CategoryControllerTest do
   use EventosWeb.ConnCase
 
-  alias Eventos.Events
+  import Eventos.Factory
 
-  @create_attrs %{picture: "some picture", title: "some title"}
-  @update_attrs %{picture: "some updated picture", title: "some updated title"}
-  @invalid_attrs %{picture: nil, title: nil}
+  alias Eventos.Events
+  alias Eventos.Events.Category
+
+  @create_attrs %{description: "some description", picture: "some picture", title: "some title"}
+  @update_attrs %{description: "some updated description", picture: "some updated picture", title: "some updated title"}
+  @invalid_attrs %{description: nil, picture: nil, title: nil}
 
   def fixture(:category) do
     {:ok, category} = Events.create_category(@create_attrs)
     category
   end
 
+  setup %{conn: conn} do
+    account = insert(:account)
+    user = insert(:user, account: account)
+    {:ok, conn: conn, user: user}
+  end
+
   describe "index" do
     test "lists all categories", %{conn: conn} do
       conn = get conn, category_path(conn, :index)
-      assert html_response(conn, 200) =~ "Listing Categories"
-    end
-  end
-
-  describe "new category" do
-    test "renders form", %{conn: conn} do
-      conn = get conn, category_path(conn, :new)
-      assert html_response(conn, 200) =~ "New Category"
+      assert json_response(conn, 200)["data"] == []
     end
   end
 
   describe "create category" do
-    test "redirects to show when data is valid", %{conn: conn} do
+    test "renders category when data is valid", %{conn: conn, user: user} do
+      conn = auth_conn(conn, user)
       conn = post conn, category_path(conn, :create), category: @create_attrs
-
-      assert %{id: id} = redirected_params(conn)
-      assert redirected_to(conn) == category_path(conn, :show, id)
+      assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get conn, category_path(conn, :show, id)
-      assert html_response(conn, 200) =~ "Show Category"
+      assert json_response(conn, 200)["data"] == %{
+        "id" => id,
+        "description" => "some description",
+        "picture" => "some picture",
+        "title" => "some title"}
     end
 
-    test "renders errors when data is invalid", %{conn: conn} do
+    test "renders errors when data is invalid", %{conn: conn, user: user} do
+      conn = auth_conn(conn, user)
       conn = post conn, category_path(conn, :create), category: @invalid_attrs
-      assert html_response(conn, 200) =~ "New Category"
-    end
-  end
-
-  describe "edit category" do
-    setup [:create_category]
-
-    test "renders form for editing chosen category", %{conn: conn, category: category} do
-      conn = get conn, category_path(conn, :edit, category)
-      assert html_response(conn, 200) =~ "Edit Category"
+      assert json_response(conn, 422)["errors"] != %{}
     end
   end
 
   describe "update category" do
     setup [:create_category]
 
-    test "redirects when data is valid", %{conn: conn, category: category} do
+    test "renders category when data is valid", %{conn: conn, category: %Category{id: id} = category, user: user} do
+      conn = auth_conn(conn, user)
       conn = put conn, category_path(conn, :update, category), category: @update_attrs
-      assert redirected_to(conn) == category_path(conn, :show, category)
+      assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
-      conn = get conn, category_path(conn, :show, category)
-      assert html_response(conn, 200) =~ "some updated picture"
+      conn = get conn, category_path(conn, :show, id)
+      assert json_response(conn, 200)["data"] == %{
+        "id" => id,
+        "description" => "some updated description",
+        "picture" => "some updated picture",
+        "title" => "some updated title"}
     end
 
-    test "renders errors when data is invalid", %{conn: conn, category: category} do
+    test "renders errors when data is invalid", %{conn: conn, category: category, user: user} do
+      conn = auth_conn(conn, user)
       conn = put conn, category_path(conn, :update, category), category: @invalid_attrs
-      assert html_response(conn, 200) =~ "Edit Category"
+      assert json_response(conn, 422)["errors"] != %{}
     end
   end
 
   describe "delete category" do
     setup [:create_category]
 
-    test "deletes chosen category", %{conn: conn, category: category} do
+    test "deletes chosen category", %{conn: conn, category: category, user: user} do
+      conn = auth_conn(conn, user)
       conn = delete conn, category_path(conn, :delete, category)
-      assert redirected_to(conn) == category_path(conn, :index)
+      assert response(conn, 204)
       assert_error_sent 404, fn ->
         get conn, category_path(conn, :show, category)
       end
@@ -84,5 +88,12 @@ defmodule EventosWeb.CategoryControllerTest do
   defp create_category(_) do
     category = fixture(:category)
     {:ok, category: category}
+  end
+
+  defp auth_conn(conn, %Eventos.Accounts.User{} = user) do
+    {:ok, token, _claims} = EventosWeb.Guardian.encode_and_sign(user)
+    conn
+    |> put_req_header("authorization", "Bearer #{token}")
+    |> put_req_header("accept", "application/json")
   end
 end

@@ -11,7 +11,7 @@
             </v-card-media>
             <v-card-title primary-title>
               <div>
-                <h3 class="headline mb-0">{{ category.name }}</h3>
+                <h3 class="headline mb-0">{{ category.title }}</h3>
                 <div>{{ category.description }}</div>
               </div>
             </v-card-title>
@@ -49,9 +49,9 @@
       fetchData() {
         eventFetch('/categories', this.$store)
           .then(response => response.json())
-          .then((data) => {
+          .then((response) => {
             this.loading = false;
-            this.categories = data['hydra:member'];
+            this.categories = response.data;
           });
       },
       deleteCategory(categoryId) {

@@ -4,130 +4,8 @@ defmodule Eventos.Accounts do
   """
 
   import Ecto.Query, warn: false
-  import Logger
   alias Eventos.Repo
-
-  alias Eventos.Accounts.User
-
-  @doc """
-  Returns the list of users.
-
-  ## Examples
-
-      iex> list_users()
-      [%User{}, ...]
-
-  """
-  def list_users do
-    Repo.all(User)
-  end
-
-  @doc """
-  Gets a single user.
-
-  Raises `Ecto.NoResultsError` if the User does not exist.
-
-  ## Examples
-
-      iex> get_user!(123)
-      %User{}
-
-      iex> get_user!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_user!(id), do: Repo.get!(User, id)
-
-
-  @doc """
-  Get an user by email
-  """
-  def find(email) do
-    Repo.get_by!(User, email: email)
-  end
-
-  @doc """
-  Authenticate user
-  """
-  def authenticate(%{user: user, password: password}) do
-    # Does password match the one stored in the database?
-    Logger.debug(user.password_hash)
-    Logger.debug(password)
-    case Comeonin.Argon2.checkpw(password, user.password_hash) do
-      true ->
-        # Yes, create and return the token
-        EventosWeb.Guardian.encode_and_sign(user)
-      _ ->
-        # No, return an error
-        {:error, :unauthorized}
-    end
-  end
-
-
-  @doc """
-  Creates a user.
-
-  ## Examples
-
-      iex> create_user(%{field: value})
-      {:ok, %User{}}
-
-      iex> create_user(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_user(attrs \\ %{}) do
-    %User{}
-    |> User.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
-  Updates a user.
-
-  ## Examples
-
-      iex> update_user(user, %{field: new_value})
-      {:ok, %User{}}
-
-      iex> update_user(user, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_user(%User{} = user, attrs) do
-    user
-    |> User.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a User.
-
-  ## Examples
-
-      iex> delete_user(user)
-      {:ok, %User{}}
-
-      iex> delete_user(user)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_user(%User{} = user) do
-    Repo.delete(user)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking user changes.
-
-  ## Examples
-
-      iex> change_user(user)
-      %Ecto.Changeset{source: %User{}}
-
-  """
-  def change_user(%User{} = user) do
-    User.changeset(user, %{})
-  end
+  import Logger
 
   alias Eventos.Accounts.Account
 
@@ -158,7 +36,14 @@ defmodule Eventos.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_account!(id), do: Repo.get!(Account, id)
+  def get_account!(id) do
+    account = Repo.get!(Account, id)
+  end
+
+  def get_account_with_everything!(id) do
+    account = Repo.get!(Account, id)
+    |> Repo.preload :organized_events
+  end
 
   @doc """
   Creates a account.
@@ -225,291 +110,177 @@ defmodule Eventos.Accounts do
     Account.changeset(account, %{})
   end
 
-  alias Eventos.Accounts.Group
+  alias Eventos.Accounts.User
 
   @doc """
-  Returns the list of groups.
+  Returns the list of users.
 
   ## Examples
 
-      iex> list_groups()
-      [%Group{}, ...]
+      iex> list_users()
+      [%User{}, ...]
 
   """
-  def list_groups do
-    Repo.all(Group)
+  def list_users do
+    Repo.all(User)
+  end
+
+  def list_users_with_accounts do
+    Repo.all(User)
+    |> Repo.preload :account
   end
 
   @doc """
-  Gets a single group.
+  Gets a single user.
 
-  Raises `Ecto.NoResultsError` if the Group does not exist.
+  Raises `Ecto.NoResultsError` if the User does not exist.
 
   ## Examples
 
-      iex> get_group!(123)
-      %Group{}
+      iex> get_user!(123)
+      %User{}
 
-      iex> get_group!(456)
+      iex> get_user!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_group!(id), do: Repo.get!(Group, id)
+  def get_user!(id), do: Repo.get!(User, id)
+
+  def get_user_with_account!(id) do
+    Repo.get!(User, id)
+    |> Repo.preload :account
+  end
 
   @doc """
-  Creates a group.
+  Get an user by email
+  """
+  def find_by_email(email) do
+    user = Repo.get_by(User, email: email)
+    |> Repo.preload :account
+  end
+
+  @doc """
+  Authenticate user
+  """
+  def authenticate(%{user: user, password: password}) do
+    # Does password match the one stored in the database?
+    case Comeonin.Argon2.checkpw(password, user.password_hash) do
+      true ->
+        # Yes, create and return the token
+        EventosWeb.Guardian.encode_and_sign(user)
+      _ ->
+        # No, return an error
+        {:error, :unauthorized}
+    end
+  end
+
+  @doc """
+  Register user
+  """
+  def register(%{email: email, password: password, username: username}) do
+    {:ok, {privkey, pubkey}} = RsaEx.generate_keypair("4096")
+
+
+    account = Eventos.Accounts.Account.registration_changeset(%Eventos.Accounts.Account{}, %{
+      username: username,
+      domain: nil,
+      private_key: privkey,
+      public_key: pubkey,
+      uri: "h",
+      url: "h"
+    })
+
+    user = Eventos.Accounts.User.registration_changeset(%Eventos.Accounts.User{}, %{
+      email: email,
+      password: password
+    })
+
+
+    account_with_user = Ecto.Changeset.put_assoc(account, :user, user)
+
+    try do
+      coucou = Eventos.Repo.insert!(account_with_user)
+      user = find_by_email(email)
+      {:ok, user}
+    rescue
+     e in Ecto.InvalidChangesetError ->
+      Logger.debug(inspect e)
+      {:error, e.changeset.changes.user.errors}
+    end
+
+#    with {:ok, %Account{} = account} <- create_account(%{username: username, suspended: false, domain: nil, private_key: privkey, public_key: pubkey, uri: "h", url: "h"}) do
+#      case create_user(%{email: email, password: password, account: account}) do
+#        {:ok, %User{} = user } ->
+#          {:ok, user}
+#        {:error, %Ecto.Changeset{} = changeset} ->
+#          {:error, changeset}
+#      end
+#    end
+  end
+
+
+  @doc """
+  Creates a user.
 
   ## Examples
 
-      iex> create_group(%{field: value})
-      {:ok, %Group{}}
+      iex> create_user(%{field: value})
+      {:ok, %User{}}
 
-      iex> create_group(%{field: bad_value})
+      iex> create_user(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_group(attrs \\ %{}) do
-    %Group{}
-    |> Group.changeset(attrs)
+  def create_user(attrs \\ %{}) do
+    %User{}
+    |> User.registration_changeset(attrs)
     |> Repo.insert()
   end
 
   @doc """
-  Updates a group.
+  Updates a user.
 
   ## Examples
 
-      iex> update_group(group, %{field: new_value})
-      {:ok, %Group{}}
+      iex> update_user(user, %{field: new_value})
+      {:ok, %User{}}
 
-      iex> update_group(group, %{field: bad_value})
+      iex> update_user(user, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_group(%Group{} = group, attrs) do
-    group
-    |> Group.changeset(attrs)
+  def update_user(%User{} = user, attrs) do
+    user
+    |> User.changeset(attrs)
     |> Repo.update()
   end
 
   @doc """
-  Deletes a Group.
+  Deletes a User.
 
   ## Examples
 
-      iex> delete_group(group)
-      {:ok, %Group{}}
+      iex> delete_user(user)
+      {:ok, %User{}}
 
-      iex> delete_group(group)
+      iex> delete_user(user)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_group(%Group{} = group) do
-    Repo.delete(group)
+  def delete_user(%User{} = user) do
+    Repo.delete(user)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking group changes.
+  Returns an `%Ecto.Changeset{}` for tracking user changes.
 
   ## Examples
 
-      iex> change_group(group)
-      %Ecto.Changeset{source: %Group{}}
+      iex> change_user(user)
+      %Ecto.Changeset{source: %User{}}
 
   """
-  def change_group(%Group{} = group) do
-    Group.changeset(group, %{})
-  end
-
-  alias Eventos.Accounts.GroupAccount
-
-  @doc """
-  Returns the list of group_accounts.
-
-  ## Examples
-
-      iex> list_group_accounts()
-      [%GroupAccount{}, ...]
-
-  """
-  def list_group_accounts do
-    Repo.all(GroupAccount)
-  end
-
-  @doc """
-  Gets a single group_account.
-
-  Raises `Ecto.NoResultsError` if the Group account does not exist.
-
-  ## Examples
-
-      iex> get_group_account!(123)
-      %GroupAccount{}
-
-      iex> get_group_account!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_group_account!(id), do: Repo.get!(GroupAccount, id)
-
-  @doc """
-  Creates a group_account.
-
-  ## Examples
-
-      iex> create_group_account(%{field: value})
-      {:ok, %GroupAccount{}}
-
-      iex> create_group_account(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_group_account(attrs \\ %{}) do
-    %GroupAccount{}
-    |> GroupAccount.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
-  Updates a group_account.
-
-  ## Examples
-
-      iex> update_group_account(group_account, %{field: new_value})
-      {:ok, %GroupAccount{}}
-
-      iex> update_group_account(group_account, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_group_account(%GroupAccount{} = group_account, attrs) do
-    group_account
-    |> GroupAccount.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a GroupAccount.
-
-  ## Examples
-
-      iex> delete_group_account(group_account)
-      {:ok, %GroupAccount{}}
-
-      iex> delete_group_account(group_account)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_group_account(%GroupAccount{} = group_account) do
-    Repo.delete(group_account)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking group_account changes.
-
-  ## Examples
-
-      iex> change_group_account(group_account)
-      %Ecto.Changeset{source: %GroupAccount{}}
-
-  """
-  def change_group_account(%GroupAccount{} = group_account) do
-    GroupAccount.changeset(group_account, %{})
-  end
-
-  alias Eventos.Accounts.GroupRequest
-
-  @doc """
-  Returns the list of group_request.
-
-  ## Examples
-
-      iex> list_group_requests()
-      [%GroupRequest{}, ...]
-
-  """
-  def list_group_requests do
-    Repo.all(GroupRequest)
-  end
-
-  @doc """
-  Gets a single group_request.
-
-  Raises `Ecto.NoResultsError` if the Group request does not exist.
-
-  ## Examples
-
-      iex> get_group_request!(123)
-      %GroupRequest{}
-
-      iex> get_group_request!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_group_request!(id), do: Repo.get!(GroupRequest, id)
-
-  @doc """
-  Creates a group_request.
-
-  ## Examples
-
-      iex> create_group_request(%{field: value})
-      {:ok, %GroupRequest{}}
-
-      iex> create_group_request(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_group_request(attrs \\ %{}) do
-    %GroupRequest{}
-    |> GroupRequest.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
-  Updates a group_request.
-
-  ## Examples
-
-      iex> update_group_request(group_request, %{field: new_value})
-      {:ok, %GroupRequest{}}
-
-      iex> update_group_request(group_request, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_group_request(%GroupRequest{} = group_request, attrs) do
-    group_request
-    |> GroupRequest.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a GroupRequest.
-
-  ## Examples
-
-      iex> delete_group_request(group_request)
-      {:ok, %GroupRequest{}}
-
-      iex> delete_group_request(group_request)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_group_request(%GroupRequest{} = group_request) do
-    Repo.delete(group_request)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking group_request changes.
-
-  ## Examples
-
-      iex> change_group_request(group_request)
-      %Ecto.Changeset{source: %GroupRequest{}}
-
-  """
-  def change_group_request(%GroupRequest{} = group_request) do
-    GroupRequest.changeset(group_request, %{})
+  def change_user(%User{} = user) do
+    User.changeset(user, %{})
   end
 end

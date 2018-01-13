@@ -1,5 +1,0 @@
-<h2>Edit Group account</h2>
-
-<%= render "form.html", Map.put(assigns, :action, group_account_path(@conn, :update, @group_account)) %>
-
-<span><%= link "Back", to: group_account_path(@conn, :index) %></span>

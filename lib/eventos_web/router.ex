@@ -6,6 +6,7 @@ defmodule EventosWeb.Router do
   end
 
   pipeline :api_auth do
+    plug :accepts, ["json"]
     plug EventosWeb.AuthPipeline
   end
 
@@ -21,17 +22,24 @@ defmodule EventosWeb.Router do
     pipe_through :api
 
     post "/users", UserController, :register
-    post "/login", SessionController, :sign_in
-    resources "/groups", GroupController, only: [:index]
+    post "/login", UserSessionController, :sign_in
+    resources "/groups", GroupController, only: [:index, :show]
+    resources "/events", EventController, only: [:index, :show]
+    resources "/accounts", AccountController, only: [:index, :show]
+    resources "/tags", TagController, only: [:index, :show]
+    resources "/categories", CategoryController, only: [:index, :show]
+    resources "/sessions", SessionController, only: [:index, :show]
+    resources "/tracks", TrackController, only: [:index, :show]
   end
 
   # Other scopes may use custom stacks.
   scope "/api", EventosWeb do
      pipe_through :api_auth
 
-     post "/sign-out", SessionController, :sign_out
-     resources "/users", UserController
-     resources "/accounts", AccountController
+     get "/user", UserController, :show_current_account
+     post "/sign-out", UserSessionController, :sign_out
+     resources "/users", UserController, except: [:new, :edit, :show]
+     resources "/accounts", AccountController, except: [:new, :edit]
      resources "/events", EventController
      resources "/categories", CategoryController
      resources "/tags", TagController
@@ -40,11 +48,13 @@ defmodule EventosWeb.Router do
      resources "/groups", GroupController, except: [:index]
      resources "/group_accounts", GroupAccountController
      resources "/group_requests", GroupRequestController
+     resources "/sessions", SessionController, except: [:new, :edit]
+     resources "/tracks", TrackController, except: [:new, :edit]
   end
 
   scope "/", EventosWeb do
     pipe_through :browser
 
-    get "/*path", AppController, :app
+    get "/*path", PageController, :index
   end
 end

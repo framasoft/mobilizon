@@ -72,7 +72,11 @@
     methods: {
       registerAction(e) {
         e.preventDefault();
-        auth.signup(JSON.stringify(this.credentials), this.$store, {name: 'Home'}, (error) => {
+        auth.signup(JSON.stringify(this.credentials), (response) => {
+          console.log(response);
+          this.$store.commit('LOGIN_USER', response.user);
+          this.$router.push({ name: 'Home' });
+        }, (error) => {
           this.error.show = true;
           this.error.text = error.message;
           this.error.field[error.field] = true;

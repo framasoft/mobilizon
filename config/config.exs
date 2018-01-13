@@ -27,5 +27,11 @@ config :logger, :console,
 import_config "#{Mix.env}.exs"
 
 config :eventos, EventosWeb.Guardian,
-       issuer: "Eventos",
+       issuer: "eventos",
        secret_key: "ty0WM7YBE3ojvxoUQxo8AERrNpfbXnIJ82ovkPdqbUFw31T5LcK8wGjaOiReVQjo"
+
+config :guardian, Guardian.DB,
+       repo: Eventos.Repo,
+       schema_name: "guardian_tokens", # default
+       token_types: ["refresh_token"], # store all token types if not set
+       sweep_interval: 60 # default: 60 minutes

@@ -1,5 +1,0 @@
-<h2>Edit Event accounts</h2>
-
-<%= render "form.html", Map.put(assigns, :action, event_accounts_path(@conn, :update, @event_accounts)) %>
-
-<span><%= link "Back", to: event_accounts_path(@conn, :index) %></span>

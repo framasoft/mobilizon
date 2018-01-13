@@ -4,7 +4,7 @@ var path = require('path')
 module.exports = {
   build: {
     env: require('./prod.env'),
-    index: path.resolve(__dirname, '../../lib/eventos_web/templates/app/index.html.eex'),
+    index: path.resolve(__dirname, '../../lib/eventos_web/templates/page/index.html.eex'),
     assetsRoot: path.resolve(__dirname, '../../priv/static'),
     assetsSubDirectory: '',
     assetsPublicPath: '/',

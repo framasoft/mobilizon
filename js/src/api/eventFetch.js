@@ -1,6 +1,6 @@
 import { API_HOST, API_PATH } from './_entrypoint';
 
-const jsonLdMimeType = 'application/ld+json';
+const jsonLdMimeType = 'application/json';
 
 export default function eventFetch(url, store, optionsarg = {}) {
   const options = optionsarg;

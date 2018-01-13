@@ -4,88 +4,66 @@ defmodule EventosWeb.UserController do
 
   alias Eventos.Accounts
   alias Eventos.Accounts.User
+  alias Eventos.Repo
+
+  action_fallback EventosWeb.FallbackController
 
   def index(conn, _params) do
-    users = Accounts.list_users()
-    render(conn, "index.html", users: users)
+    users = Accounts.list_users_with_accounts()
+    render(conn, "index.json", users: users)
   end
 
-  def new(conn, _params) do
-    changeset = Accounts.change_user(%User{})
-    render(conn, "new.html", changeset: changeset)
-  end
-
-  def create(conn, %{"user" => user_params}) do
-    case Accounts.create_user(user_params) do
-      {:ok, user} ->
+  def register(conn, %{"username" => username, "email" => email, "password" => password}) do
+    case Accounts.register(%{email: email, password: password, username: username}) do
+      {:ok, %User{} = user} ->
+        Logger.debug(inspect user)
+        {:ok, token, _claims} = EventosWeb.Guardian.encode_and_sign(user)
         conn
-        |> put_flash(:info, "User created successfully.")
-        |> redirect(to: user_path(conn, :show, user))
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
+        |> put_status(:created)
+        |> render "show_with_token.json", %{token: token, user: user}
+      {:error, error} ->
+        conn
+        |> put_resp_content_type("application/json")
+        |> send_resp(400, Poison.encode!(%{"msg" => handle_changeset_errors(error)}))
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
-    render(conn, "show.html", user: user)
+  def show_current_account(conn, _params) do
+    user = Guardian.Plug.current_resource(conn)
+    |> Repo.preload :account
+    render(conn, "show_simple.json", user: user)
   end
 
-  def edit(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
-    changeset = Accounts.change_user(user)
-    render(conn, "edit.html", user: user, changeset: changeset)
+  defp handle_changeset_errors(errors) do
+    Enum.map(errors, fn {field, detail} ->
+      "#{field} " <> render_detail(detail)
+    end)
+    |> Enum.join
+  end
+
+
+  defp render_detail({message, values}) do
+    Enum.reduce values, message, fn {k, v}, acc ->
+      String.replace(acc, "%{#{k}}", to_string(v))
+    end
+  end
+
+  defp render_detail(message) do
+    message
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
     user = Accounts.get_user!(id)
 
-    case Accounts.update_user(user, user_params) do
-      {:ok, user} ->
-        conn
-        |> put_flash(:info, "User updated successfully.")
-        |> redirect(to: user_path(conn, :show, user))
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", user: user, changeset: changeset)
+    with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
+      render(conn, "show.json", user: user)
     end
   end
 
   def delete(conn, %{"id" => id}) do
     user = Accounts.get_user!(id)
-    {:ok, _user} = Accounts.delete_user(user)
-
-    conn
-    |> put_flash(:info, "User deleted successfully.")
-    |> redirect(to: user_path(conn, :index))
-  end
-
-  def register(conn, %{"email" => email, "password" => password, "username" => username}) do
-
-    {:ok, {privkey, pubkey}} = RsaEx.generate_keypair("4096")
-    account_change = Ecto.Changeset.change(%Eventos.Accounts.Account{}, %{
-      username: username,
-      description: "tata",
-      display_name: "toto",
-      domain: nil,
-      private_key: privkey,
-      public_key: pubkey,
-      uri: "",
-      url: ""
-    })
-
-    user_change = Eventos.Accounts.User.registration_changeset(%Eventos.Accounts.User{}, %{
-      email: email,
-      password: password,
-      password_confirmation: password
-    })
-
-    account_with_user = Ecto.Changeset.put_assoc(account_change, :user, user_change)
-
-    Eventos.Repo.insert!(account_with_user)
-
-    user = Eventos.Accounts.find(email)
-    user = Eventos.Repo.preload user, :account
-
-    render conn, "user.json", %{user: user}
+    with {:ok, %User{}} <- Accounts.delete_user(user) do
+      send_resp(conn, :no_content, "")
+    end
   end
 end

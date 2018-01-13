@@ -12,4 +12,9 @@ export default {
       title: "Votre liste d'événements",
     },
   },
+  session: {
+    error: {
+      bad_login: 'Erreur lors de la connexion : Votre nom d\'utilisateur ou votre mot de passe est incorrect',
+    },
+  },
 };

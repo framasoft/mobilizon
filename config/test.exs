@@ -7,7 +7,10 @@ config :eventos, EventosWeb.Endpoint,
   server: false
 
 # Print only warnings and errors during test
-config :logger, level: :warn
+config :logger,
+   backends: [:console],
+   compile_time_purge_level: :debug,
+   level: :info
 
 # Configure your database
 config :eventos, Eventos.Repo,
@@ -16,4 +19,5 @@ config :eventos, Eventos.Repo,
   password: "elixir",
   database: "eventos_test",
   hostname: "localhost",
-  pool: Ecto.Adapters.SQL.Sandbox
+  pool: Ecto.Adapters.SQL.Sandbox,
+  types: Eventos.PostgresTypes

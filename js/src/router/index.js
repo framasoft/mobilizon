@@ -14,7 +14,6 @@ import Account from '@/components/Account/Account';
 import CreateGroup from '@/components/Group/Create';
 import Group from '@/components/Group/Group';
 import GroupList from '@/components/Group/GroupList';
-import Auth from '@/auth/index';
 
 Vue.use(Router);
 
@@ -116,18 +115,6 @@ const router = new Router({
       meta: { requiredAuth: false },
     },
   ],
-});
-
-router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiredAuth) && !Auth.checkAuth()) {
-    console.log('needs login');
-    next({
-      path: '/',
-      query: { redirect: to.fullPath }
-    });
-  } else {
-    next();
-  }
 });
 
 export default router;

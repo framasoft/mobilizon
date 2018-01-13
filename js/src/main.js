@@ -10,8 +10,9 @@ import VuexI18n from 'vuex-i18n';
 import 'vuetify/dist/vuetify.min.css';
 import App from '@/App';
 import router from '@/router';
-import storeData from './store/index';
-import translations from './i18n/index';
+import storeData from '@/store/index';
+import translations from '@/i18n/index';
+import auth from '@/auth';
 
 Vue.config.productionTip = false;
 
@@ -45,6 +46,19 @@ Object.entries(translations).forEach((key) => {
 
 Vue.i18n.set(language);
 Vue.i18n.fallback('en');
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiredAuth) && store.state.user === undefined || store.state.user == null) {
+    next({
+      name: 'Login',
+      query: { redirect: to.fullPath }
+    });
+  } else {
+    next();
+  }
+});
+
+auth.getUser(store, () => {}, () => {});
 
 /* eslint-disable no-new */
 new Vue({

@@ -5,8 +5,9 @@ defmodule Eventos.Events.Category do
 
 
   schema "categories" do
+    field :description, :string
     field :picture, :string
-    field :title, :string
+    field :title, :string, null: false
 
     timestamps()
   end
@@ -14,8 +15,8 @@ defmodule Eventos.Events.Category do
   @doc false
   def changeset(%Category{} = category, attrs) do
     category
-    |> cast(attrs, [:title, :picture])
-    |> validate_required([:title, :picture])
+    |> cast(attrs, [:title, :description, :picture])
+    |> validate_required([:title])
     |> unique_constraint(:title)
   end
 end

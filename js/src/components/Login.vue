@@ -65,10 +65,19 @@
     methods: {
       loginAction(e) {
         e.preventDefault();
-        auth.login(JSON.stringify(this.credentials), this.$store, '/', (error) => {
-          this.error.show = true;
-          this.error.text = error.message;
-          this.error.field[error.field] = true;
+        auth.login(JSON.stringify(this.credentials), (data) => {
+          this.$store.commit('LOGIN_USER', data.user);
+          this.$router.push({ name: 'Home' });
+        }, (error) => {
+          Promise.resolve(error).then((errorMsg) => {
+            console.log(errorMsg);
+            this.error.show = true;
+            this.error.text = this.$t(errorMsg.display_error);
+          }).catch((e) => {
+            console.log(e);
+            this.error.show = true;
+            this.error.text = e.message;
+          });
         });
       },
     },

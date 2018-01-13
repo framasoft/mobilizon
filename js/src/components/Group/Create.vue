@@ -98,7 +98,7 @@
           .then(response => response.json())
           .then((data) => {
             this.loading = false;
-            this.categories = data['hydra:member'];
+            this.categories = data;
           });
       },
       getAddressData: function (addressData) {

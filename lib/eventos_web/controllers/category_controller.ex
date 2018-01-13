@@ -4,57 +4,39 @@ defmodule EventosWeb.CategoryController do
   alias Eventos.Events
   alias Eventos.Events.Category
 
+  action_fallback EventosWeb.FallbackController
+
   def index(conn, _params) do
     categories = Events.list_categories()
-    render(conn, "index.html", categories: categories)
-  end
-
-  def new(conn, _params) do
-    changeset = Events.change_category(%Category{})
-    render(conn, "new.html", changeset: changeset)
+    render(conn, "index.json", categories: categories)
   end
 
   def create(conn, %{"category" => category_params}) do
-    case Events.create_category(category_params) do
-      {:ok, category} ->
-        conn
-        |> put_flash(:info, "Category created successfully.")
-        |> redirect(to: category_path(conn, :show, category))
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
+    with {:ok, %Category{} = category} <- Events.create_category(category_params) do
+      conn
+      |> put_status(:created)
+      |> put_resp_header("location", category_path(conn, :show, category))
+      |> render("show.json", category: category)
     end
   end
 
   def show(conn, %{"id" => id}) do
     category = Events.get_category!(id)
-    render(conn, "show.html", category: category)
-  end
-
-  def edit(conn, %{"id" => id}) do
-    category = Events.get_category!(id)
-    changeset = Events.change_category(category)
-    render(conn, "edit.html", category: category, changeset: changeset)
+    render(conn, "show.json", category: category)
   end
 
   def update(conn, %{"id" => id, "category" => category_params}) do
     category = Events.get_category!(id)
 
-    case Events.update_category(category, category_params) do
-      {:ok, category} ->
-        conn
-        |> put_flash(:info, "Category updated successfully.")
-        |> redirect(to: category_path(conn, :show, category))
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", category: category, changeset: changeset)
+    with {:ok, %Category{} = category} <- Events.update_category(category, category_params) do
+      render(conn, "show.json", category: category)
     end
   end
 
   def delete(conn, %{"id" => id}) do
     category = Events.get_category!(id)
-    {:ok, _category} = Events.delete_category(category)
-
-    conn
-    |> put_flash(:info, "Category deleted successfully.")
-    |> redirect(to: category_path(conn, :index))
+    with {:ok, %Category{}} <- Events.delete_category(category) do
+      send_resp(conn, :no_content, "")
+    end
   end
 end

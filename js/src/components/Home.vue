@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1 class="welcome" v-if="$store.state.user">{{ $t("home.welcome", { 'username': $store.state.user.username}) }}</h1>
+    <h1 class="welcome" v-if="$store.state.user">{{ $t("home.welcome", { 'username': this.displayed_name }) }}</h1>
     <h1 class="welcome" v-else>{{ $t("home.welcome_off", { 'username': $store.state.user.username}) }}</h1>
     <router-link :to="{ name: 'EventList' }">{{ $t('home.events') }}</router-link>
     <router-link v-if="$store.state.user === false" :to="{ name: 'Login' }">{{ $t('home.login') }}</router-link>
@@ -48,12 +48,17 @@ export default {
   mounted() {
     // this.fetchLocations();
   },
+  computed: {
+    displayed_name: function() {
+      return this.$store.state.user.account.display_name === null ? this.$store.state.user.account.username : this.$store.state.user.account.display_name
+    },
+  },
   methods: {
     fetchLocations() {
       eventFetch('/locations', this.$store)
         .then((response) => (response.json()))
         .then((response) => {
-          this.locations = response['hydra:member'];
+          this.locations = response;
         });
     },
     geoLocalize() {

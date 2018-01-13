@@ -36,7 +36,7 @@
               <v-select
                 v-bind:items="categories"
                 v-model="event.category"
-                item-text="name"
+                item-text="title"
                 item-value="@id"
                 label="Categories"
                 single-line
@@ -62,7 +62,7 @@
         <v-stepper-step step="2" :complete="e1 > 2">Date and place</v-stepper-step>
         <v-stepper-content step="2">
           Event starts at:
-          <v-text-field type="datetime-local" v-model="event.startDate"></v-text-field>
+          <v-text-field type="datetime-local" v-model="event.begins_on"></v-text-field>
           <!--<v-layout row wrap>
             <v-flex md6>
               <v-dialog
@@ -113,7 +113,7 @@
             </v-flex>
           </v-layout>-->
           Event ends at:
-          <v-text-field type="datetime-local" v-model="event.endDate"></v-text-field>
+          <v-text-field type="datetime-local" v-model="event.ends_on"></v-text-field>
           <!--<v-layout row wrap>
             <v-flex md6>
               <v-dialog
@@ -216,8 +216,8 @@
         event: {
           title: '',
           description: '',
-          startDate: new Date(),
-          endDate: new Date(),
+          begins_on: new Date(),
+          ends_on: new Date(),
           seats: 0,
           address: {
             description: null,
@@ -261,12 +261,12 @@
             // '@type': 'Tag',
           });
         });
-        this.event.organizer = "/accounts/" + this.$store.state.user.account.id;
-        this.event.participants = ["/accounts/" + this.$store.state.user.account.id];
+        this.event.organizer_id = this.$store.state.user.account.id;
+        this.event.participants = [this.$store.state.user.account.id];
         this.event.price = parseFloat(this.event.price);
 
         if (this.id === undefined) {
-          eventFetch('/events', this.$store, {method: 'POST', body: JSON.stringify(this.event)})
+          eventFetch('/events', this.$store, {method: 'POST', body: JSON.stringify({ event: this.event })})
             .then(response => response.json())
             .then((data) => {
               this.loading = false;
@@ -284,17 +284,17 @@
       fetchCategories() {
         eventFetch('/categories', this.$store)
           .then(response => response.json())
-          .then((data) => {
+          .then((response) => {
             this.loading = false;
-            this.categories = data['hydra:member'];
+            this.categories = response.data;
           });
       },
       fetchTags() {
         eventFetch('/tags', this.$store)
           .then(response => response.json())
-          .then((data) => {
+          .then((response) => {
             this.loading = false;
-            data['hydra:member'].forEach((tag) => {
+            response.data.forEach((tag) => {
               this.tagsFetched.push(tag.name);
             });
           });

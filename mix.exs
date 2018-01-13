@@ -42,10 +42,17 @@ defmodule Eventos.Mixfile do
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
       {:guardian, "~> 1.0"},
+      {:guardian_db, "~> 1.0"},
       {:comeonin, "~> 4.0"},
       {:argon2_elixir, "~> 1.2"},
       {:cors_plug, "~> 1.2"},
-      {:rsa_ex, "~> 0.1"}
+      {:ecto_autoslug_field, "~> 0.3"},
+      {:rsa_ex, "~> 0.1"},
+      {:geo, "~> 2.0"},
+      {:geo_postgis, "~> 1.0"},
+      {:timex, "~> 3.0"},
+      {:timex_ecto, "~> 3.0"},
+      {:ex_machina, "~> 2.1", only: :test},
     ]
   end
 

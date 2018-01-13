@@ -21,7 +21,7 @@
     "vue-markdown": "^2.2.4",
     "vue-router": "^3.0.1",
     "vue2-google-maps": "^0.8.4",
-    "vuetify": "^0.17.6",
+    "vuetify": "^1.0.0-beta.2",
     "vuetify-google-autocomplete": "^1.1.0",
     "vuex": "^2.5.0",
     "vuex-i18n": "1.8.0"

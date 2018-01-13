@@ -76,7 +76,6 @@
 
 <script>
 
-import auth from '@/auth/index';
 import NavBar from '@/components/NavBar';
 
 export default {
@@ -105,15 +104,7 @@ export default {
       show_new_event_button: false,
     };
   },
-  created() {
-    this.checkAuthMethod();
-  },
   methods: {
-    checkAuthMethod() {
-      if (auth.checkAuth(this.$store)) {
-        this.show_new_event_button = true;
-      }
-    },
     showMenuItem(elem) {
       return elem !== null && this.$store.state.user && this.$store.state.user.roles !== undefined ? this.$store.state.user.roles.includes(elem) : true;
     },

@@ -3,58 +3,37 @@ defmodule EventosWeb.AccountController do
 
   alias Eventos.Accounts
   alias Eventos.Accounts.Account
+  import Logger
+
+  action_fallback EventosWeb.FallbackController
 
   def index(conn, _params) do
     accounts = Accounts.list_accounts()
-    render(conn, "index.html", accounts: accounts)
-  end
-
-  def new(conn, _params) do
-    changeset = Accounts.change_account(%Account{})
-    render(conn, "new.html", changeset: changeset)
-  end
-
-  def create(conn, %{"account" => account_params}) do
-    case Accounts.create_account(account_params) do
-      {:ok, account} ->
-        conn
-        |> put_flash(:info, "Account created successfully.")
-        |> redirect(to: account_path(conn, :show, account))
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
-    end
+    render(conn, "index.json", accounts: accounts)
   end
 
   def show(conn, %{"id" => id}) do
-    account = Accounts.get_account!(id)
-    render(conn, "show.html", account: account)
-  end
-
-  def edit(conn, %{"id" => id}) do
-    account = Accounts.get_account!(id)
-    changeset = Accounts.change_account(account)
-    render(conn, "edit.html", account: account, changeset: changeset)
+    account = Accounts.get_account_with_everything!(id)
+    render(conn, "show.json", account: account)
   end
 
   def update(conn, %{"id" => id, "account" => account_params}) do
     account = Accounts.get_account!(id)
 
-    case Accounts.update_account(account, account_params) do
-      {:ok, account} ->
-        conn
-        |> put_flash(:info, "Account updated successfully.")
-        |> redirect(to: account_path(conn, :show, account))
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", account: account, changeset: changeset)
+    with {:ok, %Account{} = account} <- Accounts.update_account(account, account_params) do
+      render(conn, "show.json", account: account)
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    account = Accounts.get_account!(id)
-    {:ok, _account} = Accounts.delete_account(account)
-
-    conn
-    |> put_flash(:info, "Account deleted successfully.")
-    |> redirect(to: account_path(conn, :index))
+  def delete(conn, %{"id" => id_str}) do
+    {id, _} = Integer.parse(id_str)
+    if Guardian.Plug.current_resource(conn).account.id == id do
+      account = Accounts.get_account!(id)
+      with {:ok, %Account{}} <- Accounts.delete_account(account) do
+        send_resp(conn, :no_content, "")
+      end
+    else
+      send_resp(conn, 401, "")
+    end
   end
 end

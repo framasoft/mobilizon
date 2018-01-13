@@ -7,6 +7,7 @@ defmodule Eventos.Events do
   alias Eventos.Repo
 
   alias Eventos.Events.Event
+  alias Eventos.Accounts.Account
 
   @doc """
   Returns the list of events.
@@ -294,195 +295,389 @@ defmodule Eventos.Events do
     Tag.changeset(tag, %{})
   end
 
-  alias Eventos.Events.EventAccounts
+  alias Eventos.Events.Participant
 
   @doc """
-  Returns the list of event_accounts.
+  Returns the list of participants.
 
   ## Examples
 
-      iex> list_event_accounts()
-      [%EventAccounts{}, ...]
+      iex> list_participants()
+      [%Participant{}, ...]
 
   """
-  def list_event_accounts do
-    Repo.all(EventAccounts)
+  def list_participants do
+    Repo.all(Participant)
   end
 
   @doc """
-  Gets a single event_accounts.
+  Gets a single participant.
 
-  Raises `Ecto.NoResultsError` if the Event accounts does not exist.
+  Raises `Ecto.NoResultsError` if the Participant does not exist.
 
   ## Examples
 
-      iex> get_event_accounts!(123)
-      %EventAccounts{}
+      iex> get_participant!(123)
+      %Participant{}
 
-      iex> get_event_accounts!(456)
+      iex> get_participant!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_event_accounts!(id), do: Repo.get!(EventAccounts, id)
+  def get_participant!(event_id, account_id) do
+    Repo.get_by!(Participant, [event_id: event_id, account_id: account_id])
+  end
 
   @doc """
-  Creates a event_accounts.
+  Creates a participant.
 
   ## Examples
 
-      iex> create_event_accounts(%{field: value})
-      {:ok, %EventAccounts{}}
+      iex> create_participant(%{field: value})
+      {:ok, %Participant{}}
 
-      iex> create_event_accounts(%{field: bad_value})
+      iex> create_participant(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_event_accounts(attrs \\ %{}) do
-    %EventAccounts{}
-    |> EventAccounts.changeset(attrs)
+  def create_participant(attrs \\ %{}) do
+    %Participant{}
+    |> Participant.changeset(attrs)
     |> Repo.insert()
   end
 
   @doc """
-  Updates a event_accounts.
+  Updates a participant.
 
   ## Examples
 
-      iex> update_event_accounts(event_accounts, %{field: new_value})
-      {:ok, %EventAccounts{}}
+      iex> update_participant(participant, %{field: new_value})
+      {:ok, %Participant{}}
 
-      iex> update_event_accounts(event_accounts, %{field: bad_value})
+      iex> update_participant(participant, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_event_accounts(%EventAccounts{} = event_accounts, attrs) do
-    event_accounts
-    |> EventAccounts.changeset(attrs)
+  def update_participant(%Participant{} = participant, attrs) do
+    participant
+    |> Participant.changeset(attrs)
     |> Repo.update()
   end
 
   @doc """
-  Deletes a EventAccounts.
+  Deletes a Participant.
 
   ## Examples
 
-      iex> delete_event_accounts(event_accounts)
-      {:ok, %EventAccounts{}}
+      iex> delete_participant(participant)
+      {:ok, %Participant{}}
 
-      iex> delete_event_accounts(event_accounts)
+      iex> delete_participant(participant)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_event_accounts(%EventAccounts{} = event_accounts) do
-    Repo.delete(event_accounts)
+  def delete_participant(%Participant{} = participant) do
+    Repo.delete(participant)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking event_accounts changes.
+  Returns an `%Ecto.Changeset{}` for tracking participant changes.
 
   ## Examples
 
-      iex> change_event_accounts(event_accounts)
-      %Ecto.Changeset{source: %EventAccounts{}}
+      iex> change_participant(participant)
+      %Ecto.Changeset{source: %Participant{}}
 
   """
-  def change_event_accounts(%EventAccounts{} = event_accounts) do
-    EventAccounts.changeset(event_accounts, %{})
+  def change_participant(%Participant{} = participant) do
+    Participant.changeset(participant, %{})
   end
 
-  alias Eventos.Events.EventRequest
+  alias Eventos.Events.Request
 
   @doc """
-  Returns the list of event_requests.
+  Returns the list of requests.
 
   ## Examples
 
-      iex> list_event_requests()
-      [%EventRequest{}, ...]
+      iex> list_requests()
+      [%Request{}, ...]
 
   """
-  def list_event_requests do
-    Repo.all(EventRequest)
+  def list_requests do
+    Repo.all(Request)
   end
 
   @doc """
-  Gets a single event_request.
+  Gets a single request.
 
-  Raises `Ecto.NoResultsError` if the Event request does not exist.
+  Raises `Ecto.NoResultsError` if the Request does not exist.
 
   ## Examples
 
-      iex> get_event_request!(123)
-      %EventRequest{}
+      iex> get_request!(123)
+      %Request{}
 
-      iex> get_event_request!(456)
+      iex> get_request!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_event_request!(id), do: Repo.get!(EventRequest, id)
+  def get_request!(id), do: Repo.get!(Request, id)
 
   @doc """
-  Creates a event_request.
+  Creates a request.
 
   ## Examples
 
-      iex> create_event_request(%{field: value})
-      {:ok, %EventRequest{}}
+      iex> create_request(%{field: value})
+      {:ok, %Request{}}
 
-      iex> create_event_request(%{field: bad_value})
+      iex> create_request(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_event_request(attrs \\ %{}) do
-    %EventRequest{}
-    |> EventRequest.changeset(attrs)
+  def create_request(attrs \\ %{}) do
+    %Request{}
+    |> Request.changeset(attrs)
     |> Repo.insert()
   end
 
   @doc """
-  Updates a event_request.
+  Updates a request.
 
   ## Examples
 
-      iex> update_event_request(event_request, %{field: new_value})
-      {:ok, %EventRequest{}}
+      iex> update_request(request, %{field: new_value})
+      {:ok, %Request{}}
 
-      iex> update_event_request(event_request, %{field: bad_value})
+      iex> update_request(request, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_event_request(%EventRequest{} = event_request, attrs) do
-    event_request
-    |> EventRequest.changeset(attrs)
+  def update_request(%Request{} = request, attrs) do
+    request
+    |> Request.changeset(attrs)
     |> Repo.update()
   end
 
   @doc """
-  Deletes a EventRequest.
+  Deletes a Request.
 
   ## Examples
 
-      iex> delete_event_request(event_request)
-      {:ok, %EventRequest{}}
+      iex> delete_request(request)
+      {:ok, %Request{}}
 
-      iex> delete_event_request(event_request)
+      iex> delete_request(request)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_event_request(%EventRequest{} = event_request) do
-    Repo.delete(event_request)
+  def delete_request(%Request{} = request) do
+    Repo.delete(request)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking event_request changes.
+  Returns an `%Ecto.Changeset{}` for tracking request changes.
 
   ## Examples
 
-      iex> change_event_request(event_request)
-      %Ecto.Changeset{source: %EventRequest{}}
+      iex> change_request(request)
+      %Ecto.Changeset{source: %Request{}}
 
   """
-  def change_event_request(%EventRequest{} = event_request) do
-    EventRequest.changeset(event_request, %{})
+  def change_request(%Request{} = request) do
+    Request.changeset(request, %{})
+  end
+
+  alias Eventos.Events.Session
+
+  @doc """
+  Returns the list of sessions.
+
+  ## Examples
+
+      iex> list_sessions()
+      [%Session{}, ...]
+
+  """
+  def list_sessions do
+    Repo.all(Session)
+  end
+
+  @doc """
+  Gets a single session.
+
+  Raises `Ecto.NoResultsError` if the Session does not exist.
+
+  ## Examples
+
+      iex> get_session!(123)
+      %Session{}
+
+      iex> get_session!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_session!(id), do: Repo.get!(Session, id)
+
+  @doc """
+  Creates a session.
+
+  ## Examples
+
+      iex> create_session(%{field: value})
+      {:ok, %Session{}}
+
+      iex> create_session(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_session(attrs \\ %{}) do
+    %Session{}
+    |> Session.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a session.
+
+  ## Examples
+
+      iex> update_session(session, %{field: new_value})
+      {:ok, %Session{}}
+
+      iex> update_session(session, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_session(%Session{} = session, attrs) do
+    session
+    |> Session.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a Session.
+
+  ## Examples
+
+      iex> delete_session(session)
+      {:ok, %Session{}}
+
+      iex> delete_session(session)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_session(%Session{} = session) do
+    Repo.delete(session)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking session changes.
+
+  ## Examples
+
+      iex> change_session(session)
+      %Ecto.Changeset{source: %Session{}}
+
+  """
+  def change_session(%Session{} = session) do
+    Session.changeset(session, %{})
+  end
+
+  alias Eventos.Events.Track
+
+  @doc """
+  Returns the list of tracks.
+
+  ## Examples
+
+      iex> list_tracks()
+      [%Track{}, ...]
+
+  """
+  def list_tracks do
+    Repo.all(Track)
+  end
+
+  @doc """
+  Gets a single track.
+
+  Raises `Ecto.NoResultsError` if the Track does not exist.
+
+  ## Examples
+
+      iex> get_track!(123)
+      %Track{}
+
+      iex> get_track!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_track!(id), do: Repo.get!(Track, id)
+
+  @doc """
+  Creates a track.
+
+  ## Examples
+
+      iex> create_track(%{field: value})
+      {:ok, %Track{}}
+
+      iex> create_track(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_track(attrs \\ %{}) do
+    %Track{}
+    |> Track.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a track.
+
+  ## Examples
+
+      iex> update_track(track, %{field: new_value})
+      {:ok, %Track{}}
+
+      iex> update_track(track, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_track(%Track{} = track, attrs) do
+    track
+    |> Track.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a Track.
+
+  ## Examples
+
+      iex> delete_track(track)
+      {:ok, %Track{}}
+
+      iex> delete_track(track)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_track(%Track{} = track) do
+    Repo.delete(track)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking track changes.
+
+  ## Examples
+
+      iex> change_track(track)
+      %Ecto.Changeset{source: %Track{}}
+
+  """
+  def change_track(%Track{} = track) do
+    Track.changeset(track, %{})
   end
 end

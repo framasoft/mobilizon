@@ -4,57 +4,39 @@ defmodule EventosWeb.EventController do
   alias Eventos.Events
   alias Eventos.Events.Event
 
+  action_fallback EventosWeb.FallbackController
+
   def index(conn, _params) do
     events = Events.list_events()
-    render(conn, "index.html", events: events)
-  end
-
-  def new(conn, _params) do
-    changeset = Events.change_event(%Event{})
-    render(conn, "new.html", changeset: changeset)
+    render(conn, "index.json", events: events)
   end
 
   def create(conn, %{"event" => event_params}) do
-    case Events.create_event(event_params) do
-      {:ok, event} ->
-        conn
-        |> put_flash(:info, "Event created successfully.")
-        |> redirect(to: event_path(conn, :show, event))
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
+    with {:ok, %Event{} = event} <- Events.create_event(event_params) do
+      conn
+      |> put_status(:created)
+      |> put_resp_header("location", event_path(conn, :show, event))
+      |> render("show.json", event: event)
     end
   end
 
   def show(conn, %{"id" => id}) do
     event = Events.get_event!(id)
-    render(conn, "show.html", event: event)
-  end
-
-  def edit(conn, %{"id" => id}) do
-    event = Events.get_event!(id)
-    changeset = Events.change_event(event)
-    render(conn, "edit.html", event: event, changeset: changeset)
+    render(conn, "show.json", event: event)
   end
 
   def update(conn, %{"id" => id, "event" => event_params}) do
     event = Events.get_event!(id)
 
-    case Events.update_event(event, event_params) do
-      {:ok, event} ->
-        conn
-        |> put_flash(:info, "Event updated successfully.")
-        |> redirect(to: event_path(conn, :show, event))
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", event: event, changeset: changeset)
+    with {:ok, %Event{} = event} <- Events.update_event(event, event_params) do
+      render(conn, "show.json", event: event)
     end
   end
 
   def delete(conn, %{"id" => id}) do
     event = Events.get_event!(id)
-    {:ok, _event} = Events.delete_event(event)
-
-    conn
-    |> put_flash(:info, "Event deleted successfully.")
-    |> redirect(to: event_path(conn, :index))
+    with {:ok, %Event{}} <- Events.delete_event(event) do
+      send_resp(conn, :no_content, "")
+    end
   end
 end

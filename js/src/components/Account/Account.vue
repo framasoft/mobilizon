@@ -29,11 +29,16 @@
                      :src="account.avatarRemoteUrl"
                 >
               </v-avatar>
-              <v-card-title class="pl-5 pt-5">
-                <div class="display-1 pl-5 pt-5">@{{ account.username }}<span v-if="account.server">@{{ account.server.address }}</span></div>
-              </v-card-title>
-              <v-card-text v-if="account.description" v-html="account.description"></v-card-text>
             </div>
+            <v-container fluid grid-list-lg>
+              <v-layout row>
+                <v-flex xs7>
+                  <div class="headline">{{ account.display_name }}</div>
+                  <div><span class="subheading">@{{ account.username }}</span><span v-if="account.server">@{{ account.server.address }}</span></div>
+                  <v-card-text v-if="account.description" v-html="account.description"></v-card-text>
+                </v-flex>
+              </v-layout>
+            </v-container>
           </v-layout>
         <v-list three-line>
           <v-list-tile>
@@ -69,7 +74,7 @@
             </v-list-tile-content>
           </v-list-tile>
         </v-list>
-        <v-container fluid grid-list-md v-if="account.participatingEvents.length > 0">
+        <v-container fluid grid-list-md v-if="account.participatingEvents && account.participatingEvents.length > 0">
           <v-subheader>Participated at</v-subheader>
           <v-layout row wrap>
             <v-flex v-for="event in account.participatingEvents" :key="event.id">
@@ -110,7 +115,7 @@
             </v-flex>
           </v-layout>
         </v-container>
-        <v-container fluid grid-list-md v-if="account.organizingEvents.length > 0">
+        <v-container fluid grid-list-md v-if="account.organizingEvents && account.organizingEvents.length > 0">
           <v-subheader>Organized events</v-subheader>
           <v-layout row wrap>
             <v-flex v-for="event in account.organizingEvents" :key="event.id">
@@ -178,11 +183,12 @@ export default {
   },
   methods: {
     fetchData() {
-      eventFetch('/accounts/' + this.id, this.$store)
+      eventFetch(`/accounts/${this.id}`, this.$store)
         .then(response => response.json())
         .then((response) => {
-          this.account = response;
+          this.account = response.data;
           this.loading = false;
+          console.log(this.account);
         })
     }
   }

@@ -4,57 +4,39 @@ defmodule EventosWeb.TagController do
   alias Eventos.Events
   alias Eventos.Events.Tag
 
+  action_fallback EventosWeb.FallbackController
+
   def index(conn, _params) do
     tags = Events.list_tags()
-    render(conn, "index.html", tags: tags)
-  end
-
-  def new(conn, _params) do
-    changeset = Events.change_tag(%Tag{})
-    render(conn, "new.html", changeset: changeset)
+    render(conn, "index.json", tags: tags)
   end
 
   def create(conn, %{"tag" => tag_params}) do
-    case Events.create_tag(tag_params) do
-      {:ok, tag} ->
-        conn
-        |> put_flash(:info, "Tag created successfully.")
-        |> redirect(to: tag_path(conn, :show, tag))
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
+    with {:ok, %Tag{} = tag} <- Events.create_tag(tag_params) do
+      conn
+      |> put_status(:created)
+      |> put_resp_header("location", tag_path(conn, :show, tag))
+      |> render("show.json", tag: tag)
     end
   end
 
   def show(conn, %{"id" => id}) do
     tag = Events.get_tag!(id)
-    render(conn, "show.html", tag: tag)
-  end
-
-  def edit(conn, %{"id" => id}) do
-    tag = Events.get_tag!(id)
-    changeset = Events.change_tag(tag)
-    render(conn, "edit.html", tag: tag, changeset: changeset)
+    render(conn, "show.json", tag: tag)
   end
 
   def update(conn, %{"id" => id, "tag" => tag_params}) do
     tag = Events.get_tag!(id)
 
-    case Events.update_tag(tag, tag_params) do
-      {:ok, tag} ->
-        conn
-        |> put_flash(:info, "Tag updated successfully.")
-        |> redirect(to: tag_path(conn, :show, tag))
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", tag: tag, changeset: changeset)
+    with {:ok, %Tag{} = tag} <- Events.update_tag(tag, tag_params) do
+      render(conn, "show.json", tag: tag)
     end
   end
 
   def delete(conn, %{"id" => id}) do
     tag = Events.get_tag!(id)
-    {:ok, _tag} = Events.delete_tag(tag)
-
-    conn
-    |> put_flash(:info, "Tag deleted successfully.")
-    |> redirect(to: tag_path(conn, :index))
+    with {:ok, %Tag{}} <- Events.delete_tag(tag) do
+      send_resp(conn, :no_content, "")
+    end
   end
 end

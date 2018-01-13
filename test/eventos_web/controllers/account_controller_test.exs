@@ -1,6 +1,8 @@
 defmodule EventosWeb.AccountControllerTest do
   use EventosWeb.ConnCase
 
+  import Eventos.Factory
+
   alias Eventos.Accounts
 
   @create_attrs %{description: "some description", display_name: "some display_name", domain: "some domain", private_key: "some private_key", public_key: "some public_key", suspended: true, uri: "some uri", url: "some url", username: "some username"}
@@ -12,77 +14,49 @@ defmodule EventosWeb.AccountControllerTest do
     account
   end
 
+  setup %{conn: conn} do
+    account = insert(:account)
+    user = insert(:user, account: account)
+    {:ok, conn: conn, user: user}
+  end
+
   describe "index" do
-    test "lists all accounts", %{conn: conn} do
+    test "lists all accounts", %{conn: conn, user: user} do
       conn = get conn, account_path(conn, :index)
-      assert html_response(conn, 200) =~ "Listing Accounts"
-    end
-  end
-
-  describe "new account" do
-    test "renders form", %{conn: conn} do
-      conn = get conn, account_path(conn, :new)
-      assert html_response(conn, 200) =~ "New Account"
-    end
-  end
-
-  describe "create account" do
-    test "redirects to show when data is valid", %{conn: conn} do
-      conn = post conn, account_path(conn, :create), account: @create_attrs
-
-      assert %{id: id} = redirected_params(conn)
-      assert redirected_to(conn) == account_path(conn, :show, id)
-
-      conn = get conn, account_path(conn, :show, id)
-      assert html_response(conn, 200) =~ "Show Account"
-    end
-
-    test "renders errors when data is invalid", %{conn: conn} do
-      conn = post conn, account_path(conn, :create), account: @invalid_attrs
-      assert html_response(conn, 200) =~ "New Account"
-    end
-  end
-
-  describe "edit account" do
-    setup [:create_account]
-
-    test "renders form for editing chosen account", %{conn: conn, account: account} do
-      conn = get conn, account_path(conn, :edit, account)
-      assert html_response(conn, 200) =~ "Edit Account"
-    end
-  end
-
-  describe "update account" do
-    setup [:create_account]
-
-    test "redirects when data is valid", %{conn: conn, account: account} do
-      conn = put conn, account_path(conn, :update, account), account: @update_attrs
-      assert redirected_to(conn) == account_path(conn, :show, account)
-
-      conn = get conn, account_path(conn, :show, account)
-      assert html_response(conn, 200) =~ "some updated description"
-    end
-
-    test "renders errors when data is invalid", %{conn: conn, account: account} do
-      conn = put conn, account_path(conn, :update, account), account: @invalid_attrs
-      assert html_response(conn, 200) =~ "Edit Account"
+      assert hd(json_response(conn, 200)["data"])["username"] == user.account.username
     end
   end
 
   describe "delete account" do
     setup [:create_account]
 
-    test "deletes chosen account", %{conn: conn, account: account} do
-      conn = delete conn, account_path(conn, :delete, account)
-      assert redirected_to(conn) == account_path(conn, :index)
+    test "deletes own account", %{conn: conn, user: user} do
+      conn = auth_conn(conn, user)
+      conn = delete conn, account_path(conn, :delete, user.account)
+      assert response(conn, 204)
       assert_error_sent 404, fn ->
-        get conn, account_path(conn, :show, account)
+        get conn, account_path(conn, :show, user.account)
       end
+    end
+
+    test "deletes other account", %{conn: conn, account: account, user: user} do
+      conn = auth_conn(conn, user)
+      conn = delete conn, account_path(conn, :delete, account)
+      assert response(conn, 401)
+      conn = get conn, account_path(conn, :show, account)
+      assert response(conn, 200)
     end
   end
 
   defp create_account(_) do
     account = fixture(:account)
     {:ok, account: account}
+  end
+
+  defp auth_conn(conn, %Eventos.Accounts.User{} = user) do
+    {:ok, token, _claims} = EventosWeb.Guardian.encode_and_sign(user)
+    conn
+    |> put_req_header("authorization", "Bearer #{token}")
+    |> put_req_header("accept", "application/json")
   end
 end
