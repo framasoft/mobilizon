@@ -1,14 +1,15 @@
 image: elixir:1.4
 
 services:
-  - mdillon/postgis:9.6
+  - name: mdillon/postgis:9.6
+    alias: postgres
 
 variables:
   MIX_ENV: "test"
   POSTGRES_DB: eventos_test
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: ""
-  POSTGRES_HOST: mdillon-postgis
+  POSTGRES_HOST: postgres
 
 cache:
   key: "$CI_JOB_NAME"
