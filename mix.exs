@@ -10,7 +10,9 @@ defmodule Eventos.Mixfile do
       compilers: [:phoenix, :gettext] ++ Mix.compilers,
       start_permanent: Mix.env == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test]
     ]
   end
 
@@ -54,6 +56,8 @@ defmodule Eventos.Mixfile do
       {:timex_ecto, "~> 3.0"},
       {:ex_machina, "~> 2.1", only: :test},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.8", only: :test},
+      {:dogma, "~> 0.1", only: :dev},
     ]
   end
 

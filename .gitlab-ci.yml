@@ -30,4 +30,4 @@ before_script:
 mix:
   script:
   - mix credo || true
-  - mix test
+  - mix coveralls
