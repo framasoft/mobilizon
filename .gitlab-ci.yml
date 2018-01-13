@@ -6,9 +6,9 @@ services:
 variables:
   MIX_ENV: "test"
   POSTGRES_DB: eventos_test
-  POSTGRES_USER: ci
-  POSTGRES_PASSWORD: test
-
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: ""
+  POSTGRES_HOST: postgres
 
 cache:
   key: "$CI_JOB_NAME"
@@ -19,7 +19,7 @@ cache:
 
 before_script:
   - apt-get update
-  - apt-get install -y postgresql-client
+  - apt-get install -y build-essential postgresql-client git
   - mix local.rebar --force
   - mix local.hex --force
   - mix deps.get
