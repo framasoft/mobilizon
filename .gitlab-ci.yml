@@ -1,4 +1,4 @@
-image: elixir:latest
+image: elixir:1.4
 
 services:
   - mdillon/postgis:9.6-alpine
@@ -18,6 +18,8 @@ cache:
     - .rebar3
 
 before_script:
+  - apt-get update
+  - apt-get install -y postgresql-client
   - mix local.rebar --force
   - mix local.hex --force
   - mix deps.get
