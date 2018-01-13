@@ -3,6 +3,9 @@ image: elixir:latest
 services:
   - postgres:latest
 
+variables:
+  MIX_ENV: "test"
+
 before_script:
   - mix local.rebar --force
   - mix local.hex --force

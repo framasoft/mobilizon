@@ -15,9 +15,9 @@ config :logger,
 # Configure your database
 config :eventos, Eventos.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "elixir",
-  password: "elixir",
+  username: if(System.get_env("CI"), do: "postgres", else: "elixir"),
+  password: if(System.get_env("CI"), do: "", else: "elixir"),
   database: "eventos_test",
-  hostname: "localhost",
+  hostname: if(System.get_env("CI"), do: "postgres", else: "localhost"),
   pool: Ecto.Adapters.SQL.Sandbox,
   types: Eventos.PostgresTypes
