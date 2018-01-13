@@ -8,7 +8,7 @@ variables:
   POSTGRES_DB: eventos_test
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: ""
-  POSTGRES_HOST: postgres
+  POSTGRES_HOST: postgis
 
 cache:
   key: "$CI_JOB_NAME"
