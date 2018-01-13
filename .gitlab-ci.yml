@@ -1,7 +1,7 @@
 image: elixir:1.4
 
 services:
-  - postgres:latest
+  - mdillon/postgis:9.6
 
 variables:
   MIX_ENV: "test"
