@@ -1,3 +1,6 @@
+[![pipeline status](https://framagit.org/tcit/eventos/badges/master/pipeline.svg)](https://framagit.org/tcit/eventos/commits/master)
+[![coverage report](https://framagit.org/tcit/eventos/badges/master/coverage.svg)](https://framagit.org/tcit/eventos/commits/master)
+
 # Eventos
 
 To start your Phoenix server:
