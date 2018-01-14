@@ -32,7 +32,7 @@ defmodule Eventos.GroupsTest do
     test "create_group/1 with valid data creates a group" do
       assert {:ok, %Group{} = group} = Groups.create_group(@valid_attrs)
       assert group.description == "some description"
-      assert group.suspended == true
+      assert group.suspended
       assert group.title == "some title"
       assert group.uri == "some uri"
       assert group.url == "some url"
@@ -47,7 +47,7 @@ defmodule Eventos.GroupsTest do
       assert {:ok, group} = Groups.update_group(group, @update_attrs)
       assert %Group{} = group
       assert group.description == "some updated description"
-      assert group.suspended == false
+      refute group.suspended
       assert group.title == "some updated title"
       assert group.uri == "some updated uri"
       assert group.url == "some updated url"

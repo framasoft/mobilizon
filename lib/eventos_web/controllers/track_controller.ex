@@ -1,4 +1,7 @@
 defmodule EventosWeb.TrackController do
+  @moduledoc """
+  Controller for Tracks
+  """
   use EventosWeb, :controller
 
   alias Eventos.Events

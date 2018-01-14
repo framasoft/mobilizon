@@ -7,7 +7,6 @@ defmodule Eventos.Events do
   alias Eventos.Repo
 
   alias Eventos.Events.Event
-  alias Eventos.Accounts.Account
 
   @doc """
   Returns the list of events.

@@ -12,7 +12,11 @@ defmodule Eventos.Mixfile do
       aliases: aliases(),
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test]
+      preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test],
+      name: "Eventos",
+      source_url: "https://framagit.org/tcit/eventos",
+      homepage_url: "https://framagit.org/tcit/eventos",
+      docs: [main: "Eventos"]
     ]
   end
 
@@ -58,6 +62,8 @@ defmodule Eventos.Mixfile do
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.8", only: :test},
       {:dogma, "~> 0.1", only: :dev},
+      {:icalendar, "~> 0.6"},
+      {:ex_doc, "~> 0.16", only: :dev, runtime: false}
     ]
   end
 

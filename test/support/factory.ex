@@ -1,4 +1,7 @@
 defmodule Eventos.Factory do
+  @moduledoc """
+  Factory for fixtures with ExMachina
+  """
   # with Ecto
   use ExMachina.Ecto, repo: Eventos.Repo
 
@@ -12,7 +15,7 @@ defmodule Eventos.Factory do
   end
 
   def account_factory do
-    {:ok, {privkey, pubkey}} = RsaEx.generate_keypair("4096")
+    {:ok, {_, pubkey}} = RsaEx.generate_keypair("4096")
     %Eventos.Accounts.Account{
       username: sequence("Thomas"),
       domain: nil,

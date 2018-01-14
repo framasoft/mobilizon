@@ -1,4 +1,7 @@
 defmodule EventosWeb.AuthErrorHandler do
+  @moduledoc """
+  In case we have an auth error
+  """
   import Plug.Conn
 
   def auth_error(conn, {type, _reason}, _opts) do

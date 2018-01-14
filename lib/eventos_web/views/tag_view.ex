@@ -1,4 +1,7 @@
 defmodule EventosWeb.TagView do
+  @moduledoc """
+  View for Tags
+  """
   use EventosWeb, :view
   alias EventosWeb.TagView
 

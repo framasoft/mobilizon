@@ -1,4 +1,7 @@
 defmodule Eventos.Accounts.User do
+  @moduledoc """
+  Represents a local user
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias Eventos.Accounts.{Account, User}

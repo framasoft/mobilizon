@@ -1,4 +1,7 @@
 defmodule EventosWeb.AuthPipeline do
+  @moduledoc """
+  Handles the app sessions
+  """
 
   use Guardian.Plug.Pipeline, otp_app: :eventos,
                               module: EventosWeb.Guardian,

@@ -1,4 +1,7 @@
 defmodule EventosWeb.Endpoint do
+  @moduledoc """
+  Endpoint for Eventos app
+  """
   use Phoenix.Endpoint, otp_app: :eventos
 
   socket "/socket", EventosWeb.UserSocket

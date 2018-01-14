@@ -1,4 +1,7 @@
 defmodule EventosWeb.GroupView do
+  @moduledoc """
+  View for Groups
+  """
   use EventosWeb, :view
   alias EventosWeb.GroupView
 

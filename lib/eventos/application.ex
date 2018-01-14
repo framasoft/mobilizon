@@ -1,4 +1,7 @@
 defmodule Eventos.Application do
+  @moduledoc """
+  The Eventos application
+  """
   use Application
 
   # See https://hexdocs.pm/elixir/Application.html

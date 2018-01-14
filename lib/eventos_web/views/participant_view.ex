@@ -1,4 +1,7 @@
 defmodule EventosWeb.ParticipantView do
+  @moduledoc """
+  View for Participants
+  """
   use EventosWeb, :view
   alias EventosWeb.ParticipantView
 

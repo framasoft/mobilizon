@@ -1,9 +1,11 @@
 defmodule EventosWeb.AccountController do
+  @moduledoc """
+  Controller for Accounts
+  """
   use EventosWeb, :controller
 
   alias Eventos.Accounts
   alias Eventos.Accounts.Account
-  import Logger
 
   action_fallback EventosWeb.FallbackController
 

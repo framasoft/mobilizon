@@ -1,6 +1,8 @@
 defmodule EventosWeb.UserController do
+  @moduledoc """
+  Controller for Users
+  """
   use EventosWeb, :controller
-  import Logger
 
   alias Eventos.Accounts
   alias Eventos.Accounts.User
@@ -16,11 +18,10 @@ defmodule EventosWeb.UserController do
   def register(conn, %{"username" => username, "email" => email, "password" => password}) do
     case Accounts.register(%{email: email, password: password, username: username}) do
       {:ok, %User{} = user} ->
-        Logger.debug(inspect user)
         {:ok, token, _claims} = EventosWeb.Guardian.encode_and_sign(user)
         conn
         |> put_status(:created)
-        |> render "show_with_token.json", %{token: token, user: user}
+        |> render("show_with_token.json", %{token: token, user: user})
       {:error, error} ->
         conn
         |> put_resp_content_type("application/json")
@@ -30,12 +31,14 @@ defmodule EventosWeb.UserController do
 
   def show_current_account(conn, _params) do
     user = Guardian.Plug.current_resource(conn)
-    |> Repo.preload :account
+    user
+    |> Repo.preload(:account)
     render(conn, "show_simple.json", user: user)
   end
 
   defp handle_changeset_errors(errors) do
-    Enum.map(errors, fn {field, detail} ->
+    errors
+    |> Enum.map(fn {field, detail} ->
       "#{field} " <> render_detail(detail)
     end)
     |> Enum.join

@@ -36,7 +36,7 @@ defmodule Eventos.AccountsTest do
       assert account.domain == "some domain"
       assert account.private_key == "some private_key"
       assert account.public_key == "some public_key"
-      assert account.suspended == true
+      assert account.suspended
       assert account.uri == "some uri"
       assert account.url == "some url"
       assert account.username == "some username"
@@ -55,7 +55,7 @@ defmodule Eventos.AccountsTest do
       assert account.domain == "some updated domain"
       assert account.private_key == "some updated private_key"
       assert account.public_key == "some updated public_key"
-      assert account.suspended == false
+      refute account.suspended
       assert account.uri == "some updated uri"
       assert account.url == "some updated url"
       assert account.username == "some updated username"

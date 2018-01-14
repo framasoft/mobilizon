@@ -1,4 +1,7 @@
 defmodule EventosWeb.TagController do
+  @moduledoc """
+  Controller for Tags
+  """
   use EventosWeb, :controller
 
   alias Eventos.Events

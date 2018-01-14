@@ -1,4 +1,7 @@
 defmodule EventosWeb.ChangesetView do
+  @moduledoc """
+  View for changesets in case of errors
+  """
   use EventosWeb, :view
 
   @doc """

@@ -1,4 +1,7 @@
 defmodule Eventos.Events.Event.TitleSlug do
+  @moduledoc """
+  Generates a slug for an event title
+  """
   alias Eventos.Events.Event
   import Ecto.Query
   alias Eventos.Repo
@@ -17,25 +20,16 @@ defmodule Eventos.Events.Event.TitleSlug do
       nil -> slug
       _event ->
         slug
-        |> increment_slug
+        |> Eventos.Slug.increment_slug()
         |> build_unique_slug(changeset)
-    end
-  end
-
-  defp increment_slug(slug) do
-    case List.pop_at(String.split(slug, "-"), -1) do
-      {nil, _} ->
-        slug
-      {suffix, slug_parts} ->
-        case Integer.parse(suffix) do
-          {id, _} -> Enum.join(slug_parts, "-") <> "-" <> Integer.to_string(id + 1)
-          :error -> slug <> "-1"
-        end
     end
   end
 end
 
 defmodule Eventos.Events.Event do
+  @moduledoc """
+  Represents an event
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias Eventos.Events.{Event, Participant, Request, Tag, Session, Track}

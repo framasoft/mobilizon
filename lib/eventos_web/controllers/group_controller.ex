@@ -1,4 +1,7 @@
 defmodule EventosWeb.GroupController do
+  @moduledoc """
+  Controller for Groups
+  """
   use EventosWeb, :controller
 
   alias Eventos.Groups

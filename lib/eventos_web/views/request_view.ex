@@ -1,4 +1,7 @@
 defmodule EventosWeb.RequestView do
+  @moduledoc """
+  View for event request
+  """
   use EventosWeb, :view
   alias EventosWeb.RequestView
 

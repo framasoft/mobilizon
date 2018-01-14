@@ -7,7 +7,7 @@ defmodule EventosWeb.UserControllerTest do
   alias Eventos.Accounts.User
 
   @create_attrs %{email: "foo@bar.tld", password: "some password_hash", username: "some username"}
-  @update_attrs %{email: "foo@fighters.tld", password: "some updated password_hash", username: "some updated username"}
+  # @update_attrs %{email: "foo@fighters.tld", password: "some updated password_hash", username: "some updated username"}
   @invalid_attrs %{email: "not an email", password: nil, username: nil}
 
   def fixture(:user) do
@@ -33,6 +33,7 @@ defmodule EventosWeb.UserControllerTest do
     test "renders user when data is valid", %{conn: conn} do
       conn = post conn, user_path(conn, :create), @create_attrs
       assert %{"user" => %{"id" => id}} = json_response(conn, 201)
+      assert id > 0
     end
 
     test "renders errors when data is invalid", %{conn: conn} do

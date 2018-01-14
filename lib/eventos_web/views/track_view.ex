@@ -1,4 +1,7 @@
 defmodule EventosWeb.TrackView do
+  @moduledoc """
+  View for Tracks
+  """
   use EventosWeb, :view
   alias EventosWeb.TrackView
 

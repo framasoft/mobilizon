@@ -1,10 +1,13 @@
 defmodule EventosWeb.UserSocket do
+  @moduledoc """
+  Channel for User
+  """
   use Phoenix.Socket
 
-  ## Channels
+  # Channels
   # channel "room:*", EventosWeb.RoomChannel
 
-  ## Transports
+  # Transports
   transport :websocket, Phoenix.Transports.WebSocket
   # transport :longpoll, Phoenix.Transports.LongPoll
 

@@ -1,4 +1,7 @@
 defmodule EventosWeb.ErrorView do
+  @moduledoc """
+  View for errors
+  """
   use EventosWeb, :view
 
   def render("404.html", _assigns) do

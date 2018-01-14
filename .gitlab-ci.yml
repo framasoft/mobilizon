@@ -29,5 +29,6 @@ before_script:
 
 mix:
   script:
-  - mix credo || true
+  - mix credo
+  - mix dogma
   - mix coveralls

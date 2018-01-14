@@ -1,4 +1,7 @@
 defmodule Eventos.Repo do
+  @moduledoc """
+  Eventos Repo
+  """
   use Ecto.Repo, otp_app: :eventos
 
   @doc """

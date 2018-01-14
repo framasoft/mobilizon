@@ -1,4 +1,7 @@
 defmodule EventosWeb.AccountView do
+  @moduledoc """
+  View for Accounts
+  """
   use EventosWeb, :view
   alias EventosWeb.AccountView
 

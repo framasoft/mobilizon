@@ -1,4 +1,7 @@
 defmodule Eventos.Groups.Member do
+  @moduledoc """
+  Represents the membership of an account to a group
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias Eventos.Groups.{Member, Group}

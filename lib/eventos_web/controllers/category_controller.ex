@@ -1,4 +1,7 @@
 defmodule EventosWeb.CategoryController do
+  @moduledoc """
+  Controller for Categories
+  """
   use EventosWeb, :controller
 
   alias Eventos.Events

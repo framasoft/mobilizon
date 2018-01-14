@@ -1,4 +1,7 @@
 defmodule EventosWeb.EventController do
+  @moduledoc """
+  Controller for Events
+  """
   use EventosWeb, :controller
 
   alias Eventos.Events

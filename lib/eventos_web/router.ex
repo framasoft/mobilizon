@@ -1,4 +1,7 @@
 defmodule EventosWeb.Router do
+  @moduledoc """
+  Router for eventos app
+  """
   use EventosWeb, :router
 
   pipeline :api do

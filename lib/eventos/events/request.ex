@@ -1,4 +1,7 @@
 defmodule Eventos.Events.Request do
+  @moduledoc """
+  Represents an account request to join an event
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias Eventos.Events.{Request, Event}

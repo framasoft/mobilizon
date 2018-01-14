@@ -9,11 +9,11 @@ defmodule Eventos.EventsTest do
   @account_valid_attrs %{description: "some description", display_name: "some display_name", domain: "some domain", private_key: "some private_key", public_key: "some public_key", suspended: true, uri: "some uri", url: "some url", username: "some username"}
   @event_valid_attrs %{begins_on: "2010-04-17 14:00:00.000000Z", description: "some description", ends_on: "2010-04-17 14:00:00.000000Z", title: "some title"}
 
-  def account_fixture(attrs \\ %{}) do
+  def account_fixture do
     insert(:account)
   end
 
-  def event_fixture(attrs \\ %{}) do
+  def event_fixture do
     insert(:event, organizer: account_fixture())
   end
 
@@ -274,7 +274,7 @@ defmodule Eventos.EventsTest do
       event = event_fixture()
       account = account_fixture()
       valid_attrs = Map.put(@valid_attrs, :event_id, event.id)
-      |> Map.put(:account_id, account.id)
+      valid_attrs = Map.put(valid_attrs, :account_id, account.id)
       {:ok, participant} =
         attrs
         |> Enum.into(valid_attrs)
@@ -297,7 +297,7 @@ defmodule Eventos.EventsTest do
       account = account_fixture()
       event = event_fixture()
       valid_attrs = Map.put(@valid_attrs, :event_id, event.id)
-      |> Map.put(:account_id, account.id)
+      valid_attrs = Map.put(valid_attrs, :account_id, account.id)
       assert {:ok, %Participant{} = participant} = Events.create_participant(valid_attrs)
       assert participant.role == 42
     end

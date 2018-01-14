@@ -1,9 +1,9 @@
 defmodule Eventos do
   @moduledoc """
-  Eventos keeps the contexts that define your domain
-  and business logic.
+  Eventos is a decentralized and federated Meetup-like using [ActivityPub](http://activitypub.rocks/).
 
-  Contexts are also responsible for managing your data, regardless
-  if it comes from the database, an external API or others.
+  It consists of an API server build with [Elixir](http://elixir-lang.github.io/) and the [Phoenix Framework](https://hexdocs.pm/phoenix).
+
+  Eventos relies on `Guardian` for auth and `Geo`/Postgis for geographical informations.
   """
 end

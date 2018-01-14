@@ -1,4 +1,7 @@
 defmodule EventosWeb.SessionController do
+  @moduledoc """
+  Controller for (event) Sessions
+  """
   use EventosWeb, :controller
 
   alias Eventos.Events

@@ -1,4 +1,7 @@
 defmodule Eventos.Events.Track do
+  @moduledoc """
+  Represents a track for an event (such as a theme) having multiple sessions
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias Eventos.Events.{Track, Event, Session}

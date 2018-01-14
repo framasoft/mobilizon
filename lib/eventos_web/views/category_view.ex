@@ -1,4 +1,7 @@
 defmodule EventosWeb.CategoryView do
+  @moduledoc """
+  View for Categories
+  """
   use EventosWeb, :view
   alias EventosWeb.CategoryView
 

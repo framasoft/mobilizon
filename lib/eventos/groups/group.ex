@@ -1,4 +1,7 @@
 defmodule Eventos.Groups.Group.TitleSlug do
+  @moduledoc """
+  Slug generation for groups
+  """
   alias Eventos.Groups.Group
   import Ecto.Query
   alias Eventos.Repo
@@ -17,25 +20,16 @@ defmodule Eventos.Groups.Group.TitleSlug do
       nil -> slug
       _story ->
         slug
-        |> increment_slug
+        |> Eventos.Slug.increment_slug()
         |> build_unique_slug(changeset)
-    end
-  end
-
-  defp increment_slug(slug) do
-    case List.pop_at(String.split(slug, "-"), -1) do
-      {nil, _} ->
-        slug
-      {suffix, slug_parts} ->
-        case Integer.parse(suffix) do
-          {id, _} -> Enum.join(slug_parts, "-") <> "-" <> Integer.to_string(id + 1)
-          :error -> slug <> "-1"
-        end
     end
   end
 end
 
 defmodule Eventos.Groups.Group do
+  @moduledoc """
+  Represents a group
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias Eventos.Groups.{Group, Member, Request}

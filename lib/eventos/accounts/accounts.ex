@@ -5,7 +5,6 @@ defmodule Eventos.Accounts do
 
   import Ecto.Query, warn: false
   alias Eventos.Repo
-  import Logger
 
   alias Eventos.Accounts.Account
 
@@ -37,12 +36,12 @@ defmodule Eventos.Accounts do
 
   """
   def get_account!(id) do
-    account = Repo.get!(Account, id)
+    Repo.get!(Account, id)
   end
 
   def get_account_with_everything!(id) do
     account = Repo.get!(Account, id)
-    |> Repo.preload :organized_events
+    Repo.preload(account, :organized_events)
   end
 
   @doc """
@@ -126,8 +125,8 @@ defmodule Eventos.Accounts do
   end
 
   def list_users_with_accounts do
-    Repo.all(User)
-    |> Repo.preload :account
+    users = Repo.all(User)
+    Repo.preload(users, :account)
   end
 
   @doc """
@@ -147,8 +146,8 @@ defmodule Eventos.Accounts do
   def get_user!(id), do: Repo.get!(User, id)
 
   def get_user_with_account!(id) do
-    Repo.get!(User, id)
-    |> Repo.preload :account
+    user = Repo.get!(User, id)
+    Repo.preload(user, :account)
   end
 
   @doc """
@@ -156,7 +155,7 @@ defmodule Eventos.Accounts do
   """
   def find_by_email(email) do
     user = Repo.get_by(User, email: email)
-    |> Repo.preload :account
+    Repo.preload(user, :account)
   end
 
   @doc """
@@ -199,23 +198,13 @@ defmodule Eventos.Accounts do
     account_with_user = Ecto.Changeset.put_assoc(account, :user, user)
 
     try do
-      coucou = Eventos.Repo.insert!(account_with_user)
+      Eventos.Repo.insert!(account_with_user)
       user = find_by_email(email)
       {:ok, user}
     rescue
      e in Ecto.InvalidChangesetError ->
-      Logger.debug(inspect e)
       {:error, e.changeset.changes.user.errors}
     end
-
-#    with {:ok, %Account{} = account} <- create_account(%{username: username, suspended: false, domain: nil, private_key: privkey, public_key: pubkey, uri: "h", url: "h"}) do
-#      case create_user(%{email: email, password: password, account: account}) do
-#        {:ok, %User{} = user } ->
-#          {:ok, user}
-#        {:error, %Ecto.Changeset{} = changeset} ->
-#          {:error, changeset}
-#      end
-#    end
   end
 
 

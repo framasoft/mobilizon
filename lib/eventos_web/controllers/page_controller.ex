@@ -1,4 +1,7 @@
 defmodule EventosWeb.PageController do
+  @moduledoc """
+  Controller to load our webapp
+  """
   use EventosWeb, :controller
 
   plug :put_layout, false

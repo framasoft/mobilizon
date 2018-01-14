@@ -1,4 +1,7 @@
 defmodule EventosWeb.SessionView do
+  @moduledoc """
+  View for event Sessions
+  """
   use EventosWeb, :view
   alias EventosWeb.SessionView
 

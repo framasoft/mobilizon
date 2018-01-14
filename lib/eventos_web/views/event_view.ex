@@ -1,4 +1,7 @@
 defmodule EventosWeb.EventView do
+  @moduledoc """
+  View for Events
+  """
   use EventosWeb, :view
   alias EventosWeb.EventView
 

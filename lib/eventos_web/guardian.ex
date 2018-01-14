@@ -1,15 +1,16 @@
 defmodule EventosWeb.Guardian do
+  @moduledoc """
+  Handles the JWT tokens encoding and decoding
+  """
   use Guardian, otp_app: :eventos, permissions: %{
     superuser: [:moderate, :super],
     user: [:base]
   }
 
-  import Logger
-
   alias Eventos.Accounts
-  alias Eventos.Accounts.{Account, User}
+  alias Eventos.Accounts.User
 
-  def subject_for_token(user = %User{}, _claims) do
+  def subject_for_token(%User{} = user, _claims) do
     {:ok, "User:" <> to_string(user.id)}
   end
 
@@ -19,8 +20,6 @@ defmodule EventosWeb.Guardian do
 
   def resource_from_claims(%{"sub" => "User:" <> uid_str}) do
     try do
-      Logger.debug("Inspecting resource token")
-      Logger.debug(inspect uid_str)
       case Integer.parse(uid_str) do
         {uid, ""} ->
           {:ok, Accounts.get_user_with_account!(uid)}
@@ -32,9 +31,7 @@ defmodule EventosWeb.Guardian do
     end
   end
 
-  def resource_from_claims(claims) do
-    Logger.debug("Check bad resource")
-    Logger.debug(inspect claims)
+  def resource_from_claims(_) do
     {:error, :reason_for_error}
   end
 
@@ -45,7 +42,6 @@ defmodule EventosWeb.Guardian do
   end
 
   def on_verify(claims, token, _options) do
-    Logger.debug(inspect claims)
     with {:ok, _} <- Guardian.DB.on_verify(claims, token) do
       {:ok, claims}
     end

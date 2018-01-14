@@ -1,4 +1,7 @@
 defmodule Eventos.Events.Session do
+  @moduledoc """
+  Represents a session for an event (such as a talk at a conference)
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias Eventos.Events.{Session, Event, Track}

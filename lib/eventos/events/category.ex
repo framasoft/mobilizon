@@ -1,4 +1,7 @@
 defmodule Eventos.Events.Category do
+  @moduledoc """
+  Represents a category for events
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias Eventos.Events.Category

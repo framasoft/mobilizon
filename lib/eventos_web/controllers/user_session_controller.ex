@@ -1,8 +1,10 @@
 defmodule EventosWeb.UserSessionController do
+  @moduledoc """
+  Controller for user sessions
+  """
   use EventosWeb, :controller
   alias Eventos.Accounts.User
   alias Eventos.Accounts
-  import Logger
 
   def sign_in(conn, %{"email" => email, "password" => password}) do
     case Accounts.find_by_email(email) do
@@ -22,7 +24,7 @@ defmodule EventosWeb.UserSessionController do
 
   def sign_out(conn, _params) do
     conn
-    |> Guardian.Plug.sign_out()
+    |> EventosWeb.Guardian.Plug.sign_out()
     |> send_resp(204, "")
   end
 end

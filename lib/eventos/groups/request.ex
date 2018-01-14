@@ -1,4 +1,7 @@
 defmodule Eventos.Groups.Request do
+  @moduledoc """
+  Represents a group request, when an user wants to be member of a group
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias Eventos.Groups.Request
