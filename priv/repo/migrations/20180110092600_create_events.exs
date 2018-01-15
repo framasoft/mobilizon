@@ -11,6 +11,7 @@ defmodule Eventos.Repo.Migrations.CreateEvents do
       add :geom, :geometry
       add :state, :integer, null: false
       add :public, :boolean, null: false
+      add :status, :integer, null: false
       add :large_image, :string
       add :thumbnail, :string
       add :publish_at, :datetimetz

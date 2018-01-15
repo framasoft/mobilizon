@@ -44,6 +44,7 @@ defmodule Eventos.Events.Event do
     field :geom, Geo.Geometry
     field :slug, TitleSlug.Type
     field :state, :integer, default: 0
+    field :status, :integer, default: 0
     field :public, :boolean, default: true
     field :thumbnail, :string
     field :large_image, :string
@@ -61,7 +62,7 @@ defmodule Eventos.Events.Event do
   @doc false
   def changeset(%Event{} = event, attrs) do
     event
-    |> cast(attrs, [:title, :description, :begins_on, :ends_on, :organizer_id])
+    |> cast(attrs, [:title, :description, :begins_on, :ends_on, :organizer_id, :state, :geom, :status, :public, :thumbnail, :large_image, :publish_at])
     |> validate_required([:title, :description, :begins_on, :ends_on, :organizer_id])
     |> TitleSlug.maybe_generate_slug()
     |> TitleSlug.unique_constraint()
