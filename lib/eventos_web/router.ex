@@ -44,6 +44,7 @@ defmodule EventosWeb.Router do
      resources "/users", UserController, except: [:new, :edit, :show]
      resources "/accounts", AccountController, except: [:new, :edit]
      resources "/events", EventController
+     get "/events/:id/ics", EventController, :export_to_ics
      resources "/categories", CategoryController
      resources "/tags", TagController
      resources "/event_accounts", EventAccountsController
