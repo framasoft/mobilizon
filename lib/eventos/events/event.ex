@@ -50,7 +50,7 @@ defmodule Eventos.Events.Event do
     field :large_image, :string
     field :publish_at, Timex.Ecto.DateTimeWithTimezone
     belongs_to :organizer, Account, [foreign_key: :organizer_id]
-    has_many :tags, Tag
+    many_to_many :tags, Tag, join_through: "events_tags"
     belongs_to :category, Category
     many_to_many :participants, Account, join_through: Participant
     has_many :event_request, Request
@@ -64,6 +64,7 @@ defmodule Eventos.Events.Event do
   def changeset(%Event{} = event, attrs) do
     event
     |> cast(attrs, [:title, :description, :begins_on, :ends_on, :organizer_id, :category_id, :state, :geom, :status, :public, :thumbnail, :large_image, :publish_at])
+    |> cast_assoc(:tags)
     |> validate_required([:title, :description, :begins_on, :ends_on, :organizer_id, :category_id])
     |> TitleSlug.maybe_generate_slug()
     |> TitleSlug.unique_constraint()
