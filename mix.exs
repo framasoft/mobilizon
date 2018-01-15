@@ -63,7 +63,9 @@ defmodule Eventos.Mixfile do
       {:excoveralls, "~> 0.8", only: :test},
       {:dogma, "~> 0.1", only: [:dev, :test]},
       {:icalendar, "~> 0.6"},
-      {:ex_doc, "~> 0.16", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.16", only: :dev, runtime: false},
+      {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
+      {:ex_unit_notifier, "~> 0.1", only: :test}
     ]
   end
 
