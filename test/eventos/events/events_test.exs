@@ -17,6 +17,10 @@ defmodule Eventos.EventsTest do
     insert(:event, organizer: account_fixture())
   end
 
+  def category_fixture do
+    insert(:category)
+  end
+
   describe "events" do
     alias Eventos.Events.Event
 
@@ -37,7 +41,9 @@ defmodule Eventos.EventsTest do
 
     test "create_event/1 with valid data creates a event" do
       {:ok, account} = Accounts.create_account(@account_valid_attrs)
+      category = category_fixture()
       valid_attrs_with_account_id = Map.put(@event_valid_attrs, :organizer_id, account.id)
+      valid_attrs_with_account_id = Map.put(valid_attrs_with_account_id, :category_id, category.id)
       assert {:ok, %Event{} = event} = Events.create_event(valid_attrs_with_account_id)
       assert event.begins_on == DateTime.from_naive!(~N[2010-04-17 14:00:00.000000Z], "Etc/UTC")
       assert event.description == "some description"
@@ -145,15 +151,6 @@ defmodule Eventos.EventsTest do
     @valid_attrs %{description: "some description", picture: "some picture", title: "some title"}
     @update_attrs %{description: "some updated description", picture: "some updated picture", title: "some updated title"}
     @invalid_attrs %{description: nil, picture: nil, title: nil}
-
-    def category_fixture(attrs \\ %{}) do
-      {:ok, category} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Events.create_category()
-
-      category
-    end
 
     test "list_categories/0 returns all categories" do
       category = category_fixture()

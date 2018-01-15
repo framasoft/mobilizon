@@ -16,6 +16,7 @@ defmodule Eventos.Repo.Migrations.CreateEvents do
       add :thumbnail, :string
       add :publish_at, :datetimetz
       add :organizer_id, references(:accounts, on_delete: :nothing), null: false
+      add :category_id, references(:categories, on_delete: :nothing), null: false
 
       timestamps()
     end

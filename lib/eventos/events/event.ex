@@ -32,7 +32,7 @@ defmodule Eventos.Events.Event do
   """
   use Ecto.Schema
   import Ecto.Changeset
-  alias Eventos.Events.{Event, Participant, Request, Tag, Session, Track}
+  alias Eventos.Events.{Event, Participant, Request, Tag, Category, Session, Track}
   alias Eventos.Events.Event.TitleSlug
   alias Eventos.Accounts.Account
 
@@ -51,6 +51,7 @@ defmodule Eventos.Events.Event do
     field :publish_at, Timex.Ecto.DateTimeWithTimezone
     belongs_to :organizer, Account, [foreign_key: :organizer_id]
     has_many :tags, Tag
+    belongs_to :category, Category
     many_to_many :participants, Account, join_through: Participant
     has_many :event_request, Request
     has_many :tracks, Track
@@ -62,8 +63,8 @@ defmodule Eventos.Events.Event do
   @doc false
   def changeset(%Event{} = event, attrs) do
     event
-    |> cast(attrs, [:title, :description, :begins_on, :ends_on, :organizer_id, :state, :geom, :status, :public, :thumbnail, :large_image, :publish_at])
-    |> validate_required([:title, :description, :begins_on, :ends_on, :organizer_id])
+    |> cast(attrs, [:title, :description, :begins_on, :ends_on, :organizer_id, :category_id, :state, :geom, :status, :public, :thumbnail, :large_image, :publish_at])
+    |> validate_required([:title, :description, :begins_on, :ends_on, :organizer_id, :category_id])
     |> TitleSlug.maybe_generate_slug()
     |> TitleSlug.unique_constraint()
   end

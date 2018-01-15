@@ -25,6 +25,13 @@ defmodule Eventos.Factory do
     }
   end
 
+  def category_factory do
+    %Eventos.Events.Category{
+      title: sequence("MyCategory"),
+      description: "My category desc"
+    }
+  end
+
   def event_factory do
     %Eventos.Events.Event{
       title: sequence("MyEvent"),
@@ -32,7 +39,8 @@ defmodule Eventos.Factory do
       description: "My desc",
       begins_on: nil,
       ends_on: nil,
-      organizer: build(:account)
+      organizer: build(:account),
+      category: build(:category)
     }
   end
 

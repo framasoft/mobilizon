@@ -30,6 +30,9 @@ defmodule EventosWeb.EventControllerTest do
   describe "create event" do
     test "renders event when data is valid", %{conn: conn, user: user} do
       attrs = Map.put(@create_attrs, :organizer_id, user.account.id)
+
+      category = insert(:category)
+      attrs = Map.put(attrs, :category_id, category.id)
       conn = auth_conn(conn, user)
       conn = post conn, event_path(conn, :create), event: attrs
       assert %{"id" => id} = json_response(conn, 201)["data"]
