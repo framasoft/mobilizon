@@ -4,6 +4,7 @@ defmodule EventosWeb.EventControllerTest do
 
   alias Eventos.Events
   alias Eventos.Events.Event
+  alias Eventos.Export.ICalendar
 
   @create_attrs %{begins_on: "2010-04-17 14:00:00.000000Z", description: "some description", ends_on: "2010-04-17 14:00:00.000000Z", title: "some title"}
   @update_attrs %{begins_on: "2011-05-18 15:01:01.000000Z", description: "some updated description", ends_on: "2011-05-18 15:01:01.000000Z", title: "some updated title"}
@@ -48,6 +49,17 @@ defmodule EventosWeb.EventControllerTest do
       attrs = Map.put(@invalid_attrs, :organizer_id, user.account.id)
       conn = post conn, event_path(conn, :create), event: attrs
       assert json_response(conn, 422)["errors"] != %{}
+    end
+  end
+
+  describe "export event" do
+    setup [:create_event]
+
+    test "renders ics export of event", %{conn: conn, event: %Event{id: id} = event, user: user} do
+      conn = auth_conn(conn, user)
+      conn = get conn, event_path(conn, :export_to_ics, id)
+      exported_event = ICalendar.export_event(event)
+      assert exported_event == response(conn, 200)
     end
   end
 

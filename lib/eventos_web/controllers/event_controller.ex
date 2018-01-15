@@ -6,6 +6,7 @@ defmodule EventosWeb.EventController do
 
   alias Eventos.Events
   alias Eventos.Events.Event
+  alias Eventos.Export.ICalendar
 
   action_fallback EventosWeb.FallbackController
 
@@ -26,6 +27,13 @@ defmodule EventosWeb.EventController do
   def show(conn, %{"id" => id}) do
     event = Events.get_event!(id)
     render(conn, "show.json", event: event)
+  end
+
+  def export_to_ics(conn, %{"id" => id}) do
+    event = id
+      |> Events.get_event!()
+      |> ICalendar.export_event()
+    send_resp(conn, 200, event)
   end
 
   def update(conn, %{"id" => id, "event" => event_params}) do
