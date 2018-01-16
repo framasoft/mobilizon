@@ -30,7 +30,7 @@ defmodule EventosWeb.EventControllerTest do
 
   describe "create event" do
     test "renders event when data is valid", %{conn: conn, user: user} do
-      attrs = Map.put(@create_attrs, :organizer_id, user.account.id)
+      attrs = Map.put(@create_attrs, :organizer_account_id, user.account.id)
 
       category = insert(:category)
       attrs = Map.put(attrs, :category_id, category.id)
@@ -44,12 +44,25 @@ defmodule EventosWeb.EventControllerTest do
         "begins_on" => "2010-04-17T14:00:00Z",
         "description" => "some description",
         "ends_on" => "2010-04-17T14:00:00Z",
-        "title" => "some title"}
+        "title" => "some title",
+        "group" => nil,
+        "organizer" => %{
+          "description" => nil,
+          "display_name" => nil,
+          "domain" => nil,
+          "id" => user.account.id,
+          "suspended" => false,
+          "uri" => "https://",
+          "url" => "https://",
+          "username" => user.account.username
+        },
+        "participants" => []
+       }
     end
 
     test "renders errors when data is invalid", %{conn: conn, user: user} do
       conn = auth_conn(conn, user)
-      attrs = Map.put(@invalid_attrs, :organizer_id, user.account.id)
+      attrs = Map.put(@invalid_attrs, :organizer_account_id, user.account.id)
       conn = post conn, event_path(conn, :create), event: attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
@@ -71,7 +84,7 @@ defmodule EventosWeb.EventControllerTest do
 
     test "renders event when data is valid", %{conn: conn, event: %Event{id: id} = event, user: user} do
       conn = auth_conn(conn, user)
-      attrs = Map.put(@update_attrs, :organizer_id, user.account.id)
+      attrs = Map.put(@update_attrs, :organizer_account_id, user.account.id)
       conn = put conn, event_path(conn, :update, event), event: attrs
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
@@ -81,12 +94,25 @@ defmodule EventosWeb.EventControllerTest do
         "begins_on" => "2011-05-18T15:01:01Z",
         "description" => "some updated description",
         "ends_on" => "2011-05-18T15:01:01Z",
-        "title" => "some updated title"}
+        "title" => "some updated title",
+        "group" => nil,
+        "organizer" => %{
+          "description" => nil,
+          "display_name" => nil,
+          "domain" => nil,
+          "id" => user.account.id,
+          "suspended" => false,
+          "uri" => "https://",
+          "url" => "https://",
+          "username" => user.account.username
+        },
+        "participants" => []
+      }
     end
 
     test "renders errors when data is invalid", %{conn: conn, event: event, user: user} do
       conn = auth_conn(conn, user)
-      attrs = Map.put(@invalid_attrs, :organizer_id, user.account.id)
+      attrs = Map.put(@invalid_attrs, :organizer_account_id, user.account.id)
       conn = put conn, event_path(conn, :update, event), event: attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
@@ -107,7 +133,7 @@ defmodule EventosWeb.EventControllerTest do
 
   defp create_event(_) do
     account = insert(:account)
-    event = insert(:event, organizer: account)
+    event = insert(:event, organizer_account: account)
     {:ok, event: event, account: account}
   end
 

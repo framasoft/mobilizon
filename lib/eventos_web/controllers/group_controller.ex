@@ -15,16 +15,18 @@ defmodule EventosWeb.GroupController do
   end
 
   def create(conn, %{"group" => group_params}) do
+    group_params = Map.put(group_params, "uri", "h")
+    group_params = Map.put(group_params, "url", "h")
     with {:ok, %Group{} = group} <- Groups.create_group(group_params) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", group_path(conn, :show, group))
-      |> render("show.json", group: group)
+      |> render("show_simple.json", group: group)
     end
   end
 
   def show(conn, %{"id" => id}) do
-    group = Groups.get_group!(id)
+    group = Groups.get_group_full!(id)
     render(conn, "show.json", group: group)
   end
 
@@ -32,7 +34,7 @@ defmodule EventosWeb.GroupController do
     group = Groups.get_group!(id)
 
     with {:ok, %Group{} = group} <- Groups.update_group(group, group_params) do
-      render(conn, "show.json", group: group)
+      render(conn, "show_simple.json", group: group)
     end
   end
 

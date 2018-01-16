@@ -18,7 +18,7 @@ defmodule EventosWeb.SessionControllerTest do
   setup %{conn: conn} do
     account = insert(:account)
     user = insert(:user, account: account)
-    event = insert(:event, organizer: account)
+    event = insert(:event, organizer_account: account)
     {:ok, conn: conn, user: user, event: event}
   end
 
@@ -32,9 +32,13 @@ defmodule EventosWeb.SessionControllerTest do
   describe "create session" do
     test "renders session when data is valid", %{conn: conn, user: user, event: event} do
       conn = auth_conn(conn, user)
-      attrs = Map.put(@create_attrs, :event_id, event.id)
+      event_id = event.id
+      attrs = Map.put(@create_attrs, :event_id, event_id)
       conn = post conn, session_path(conn, :create), session: attrs
       assert %{"id" => id} = json_response(conn, 201)["data"]
+
+      conn = get conn, "/api/events/" <> Integer.to_string(event_id) <> "/sessions"
+      assert hd(json_response(conn, 200)["data"])["id"] == id
 
       conn = get conn, session_path(conn, :show, id)
       assert json_response(conn, 200)["data"] == %{

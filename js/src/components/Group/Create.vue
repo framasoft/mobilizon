@@ -42,7 +42,7 @@
           <v-select
             v-bind:items="categories"
             v-model="group.category"
-            item-text="name"
+            item-text="title"
             item-value="@id"
             label="Categories"
             single-line
@@ -86,7 +86,7 @@
       create() {
         // this.group.organizer = "/accounts/" + this.$store.state.user.id;
 
-        eventFetch('/groups', this.$store, { method: 'POST', body: JSON.stringify(this.group) })
+        eventFetch('/groups', this.$store, { method: 'POST', body: JSON.stringify({group: this.group}) })
           .then(response => response.json())
           .then((data) => {
             this.loading = false;
@@ -98,7 +98,7 @@
           .then(response => response.json())
           .then((data) => {
             this.loading = false;
-            this.categories = data;
+            this.categories = data.data;
           });
       },
       getAddressData: function (addressData) {

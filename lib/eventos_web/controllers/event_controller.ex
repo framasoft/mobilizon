@@ -20,12 +20,12 @@ defmodule EventosWeb.EventController do
       conn
       |> put_status(:created)
       |> put_resp_header("location", event_path(conn, :show, event))
-      |> render("show.json", event: event)
+      |> render("show_simple.json", event: event)
     end
   end
 
   def show(conn, %{"id" => id}) do
-    event = Events.get_event!(id)
+    event = Events.get_event_full!(id)
     render(conn, "show.json", event: event)
   end
 
@@ -40,7 +40,7 @@ defmodule EventosWeb.EventController do
     event = Events.get_event!(id)
 
     with {:ok, %Event{} = event} <- Events.update_event(event, event_params) do
-      render(conn, "show.json", event: event)
+      render(conn, "show_simple.json", event: event)
     end
   end
 

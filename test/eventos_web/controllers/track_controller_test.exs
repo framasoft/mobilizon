@@ -18,7 +18,7 @@ defmodule EventosWeb.TrackControllerTest do
   setup %{conn: conn} do
     account = insert(:account)
     user = insert(:user, account: account)
-    event = insert(:event, organizer: account)
+    event = insert(:event, organizer_account: account)
     {:ok, conn: conn, user: user, event: event}
   end
 

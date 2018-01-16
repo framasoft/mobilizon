@@ -9,7 +9,6 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
-import Logger
 
 Eventos.Repo.delete_all Eventos.Accounts.User
 

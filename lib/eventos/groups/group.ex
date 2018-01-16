@@ -32,6 +32,7 @@ defmodule Eventos.Groups.Group do
   """
   use Ecto.Schema
   import Ecto.Changeset
+  alias Eventos.Events.Event
   alias Eventos.Groups.{Group, Member, Request}
   alias Eventos.Accounts.Account
   alias Eventos.Groups.Group.TitleSlug
@@ -43,7 +44,8 @@ defmodule Eventos.Groups.Group do
     field :slug, TitleSlug.Type
     field :uri, :string
     field :url, :string
-    many_to_many :accounts, Account, join_through: Member
+    many_to_many :members, Account, join_through: Member
+    has_many :organized_events, Event, [foreign_key: :organizer_group_id]
     has_many :requests, Request
 
     timestamps()

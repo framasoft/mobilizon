@@ -40,8 +40,11 @@ defmodule EventosWeb.GroupControllerTest do
         "description" => "some description",
         "suspended" => true,
         "title" => "some title",
-        "uri" => "some uri",
-        "url" => "some url"}
+        "uri" => "h",
+        "url" => "h",
+        "events" => [],
+        "members" => []
+      }
     end
 
     test "renders errors when data is invalid", %{conn: conn, user: user} do
@@ -66,7 +69,10 @@ defmodule EventosWeb.GroupControllerTest do
         "suspended" => false,
         "title" => "some updated title",
         "uri" => "some updated uri",
-        "url" => "some updated url"}
+        "url" => "some updated url",
+        "events" => [],
+        "members" => []
+      }
     end
 
     test "renders errors when data is invalid", %{conn: conn, group: group, user: user} do

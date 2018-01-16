@@ -58,7 +58,7 @@
           .then(response => response.json())
           .then((data) => {
             this.loading = false;
-            this.groups = data;
+            this.groups = data.data;
           });
       },
       deleteEvent(id) {

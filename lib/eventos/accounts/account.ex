@@ -18,7 +18,7 @@ defmodule Eventos.Accounts.Account do
     field :uri, :string
     field :url, :string
     field :username, :string
-    has_many :organized_events, Event, [foreign_key: :organizer_id]
+    has_many :organized_events, Event, [foreign_key: :organizer_account_id]
     many_to_many :groups, Group, join_through: Member
     has_many :group_request, Request
     has_one :user, User

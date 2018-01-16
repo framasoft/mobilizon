@@ -7,6 +7,7 @@ defmodule Eventos.Events do
   alias Eventos.Repo
 
   alias Eventos.Events.Event
+  alias Eventos.Accounts.Account
 
   @doc """
   Returns the list of events.
@@ -36,6 +37,14 @@ defmodule Eventos.Events do
 
   """
   def get_event!(id), do: Repo.get!(Event, id)
+
+  @doc """
+  Gets a single event, with all associations loaded.
+  """
+  def get_event_full!(id) do
+    event = Repo.get!(Event, id)
+    Repo.preload(event, [:organizer_account, :organizer_group, :category, :sessions, :tracks, :tags, :participants])
+  end
 
   @doc """
   Creates a event.
@@ -407,6 +416,10 @@ defmodule Eventos.Events do
     Repo.all(Request)
   end
 
+  def list_requests_for_account(%Account{} = account) do
+    Repo.all(from r in Request, where: r.account_id == ^account.id)
+  end
+
   @doc """
   Gets a single request.
 
@@ -501,6 +514,20 @@ defmodule Eventos.Events do
   """
   def list_sessions do
     Repo.all(Session)
+  end
+
+  @doc """
+  Returns the list of sessions for an event
+  """
+  def list_sessions_for_event(event_id) do
+    Repo.all(from s in Session, where: s.event_id == ^event_id)
+  end
+
+  @doc """
+  Returns the list of sessions for a track
+  """
+  def list_sessions_for_track(track_id) do
+    Repo.all(from s in Session, where: s.track_id == ^track_id)
   end
 
   @doc """

@@ -14,7 +14,7 @@ defmodule Eventos.EventsTest do
   end
 
   def event_fixture do
-    insert(:event, organizer: account_fixture())
+    insert(:event, organizer_account: account_fixture())
   end
 
   def category_fixture do
@@ -42,7 +42,7 @@ defmodule Eventos.EventsTest do
     test "create_event/1 with valid data creates a event" do
       {:ok, account} = Accounts.create_account(@account_valid_attrs)
       category = category_fixture()
-      valid_attrs_with_account_id = Map.put(@event_valid_attrs, :organizer_id, account.id)
+      valid_attrs_with_account_id = Map.put(@event_valid_attrs, :organizer_account_id, account.id)
       valid_attrs_with_account_id = Map.put(valid_attrs_with_account_id, :category_id, category.id)
       assert {:ok, %Event{} = event} = Events.create_event(valid_attrs_with_account_id)
       assert event.begins_on == DateTime.from_naive!(~N[2010-04-17 14:00:00.000000Z], "Etc/UTC")
