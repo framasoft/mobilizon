@@ -69,21 +69,21 @@
               </v-list-tile-content>
             </v-list-tile>
           </v-list>
-          <v-container fluid grid-list-md v-if="group.groupAccounts.length > 0">
+          <v-container fluid grid-list-md v-if="group.members.length > 0">
             <v-subheader>Membres</v-subheader>
             <v-layout row>
-              <v-flex xs2 v-for="groupAccount in group.groupAccounts" :key="groupAccount.id">
-                <router-link :to="{name: 'Account', params: {'id': groupAccount.account.id}}">
+              <v-flex xs2 v-for="member in group.members" :key="member.id">
+                <router-link :to="{name: 'Account', params: {'id': member.account.id}}">
                   <v-badge overlap>
-                    <span slot="badge" v-if="groupAccount.role == 3"><v-icon>stars</v-icon></span>
+                    <span slot="badge" v-if="member.role == 3"><v-icon>stars</v-icon></span>
                     <v-avatar size="75px">
-                      <img v-if="!groupAccount.account.avatarRemoteUrl"
+                      <img v-if="!member.account.avatarRemoteUrl"
                            class="img-circle elevation-7 mb-1"
                            src="http://lorempixel.com/125/125/"
                       >
                       <img v-else
                            class="img-circle elevation-7 mb-1"
-                           :src="groupAccount.account.avatarRemoteUrl"
+                           :src="member.account.avatarRemoteUrl"
                       >
                     </v-avatar>
                   </v-badge>
@@ -162,7 +162,7 @@
           .then(response => response.json())
           .then((data) => {
             this.loading = false;
-            this.group = data;
+            this.group = data.data;
           });
       },
       deleteGroup() {

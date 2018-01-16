@@ -35,6 +35,7 @@ defmodule Eventos.Events.Event do
   alias Eventos.Events.{Event, Participant, Request, Tag, Category, Session, Track}
   alias Eventos.Events.Event.TitleSlug
   alias Eventos.Accounts.Account
+  alias Eventos.Groups.Group
 
   schema "events" do
     field :begins_on, Timex.Ecto.DateTimeWithTimezone
@@ -49,7 +50,8 @@ defmodule Eventos.Events.Event do
     field :thumbnail, :string
     field :large_image, :string
     field :publish_at, Timex.Ecto.DateTimeWithTimezone
-    belongs_to :organizer, Account, [foreign_key: :organizer_id]
+    belongs_to :organizer_account, Account, [foreign_key: :organizer_account_id]
+    belongs_to :organizer_group, Group, [foreign_key: :organizer_group_id]
     many_to_many :tags, Tag, join_through: "events_tags"
     belongs_to :category, Category
     many_to_many :participants, Account, join_through: Participant
@@ -63,9 +65,9 @@ defmodule Eventos.Events.Event do
   @doc false
   def changeset(%Event{} = event, attrs) do
     event
-    |> cast(attrs, [:title, :description, :begins_on, :ends_on, :organizer_id, :category_id, :state, :geom, :status, :public, :thumbnail, :large_image, :publish_at])
+    |> cast(attrs, [:title, :description, :begins_on, :ends_on, :organizer_account_id, :organizer_group_id, :category_id, :state, :geom, :status, :public, :thumbnail, :large_image, :publish_at])
     |> cast_assoc(:tags)
-    |> validate_required([:title, :description, :begins_on, :ends_on, :organizer_id, :category_id])
+    |> validate_required([:title, :description, :begins_on, :ends_on, :organizer_account_id, :category_id])
     |> TitleSlug.maybe_generate_slug()
     |> TitleSlug.unique_constraint()
   end

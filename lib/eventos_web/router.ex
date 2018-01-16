@@ -28,6 +28,9 @@ defmodule EventosWeb.Router do
     post "/login", UserSessionController, :sign_in
     resources "/groups", GroupController, only: [:index, :show]
     resources "/events", EventController, only: [:index, :show]
+    get "/events/:id/ics", EventController, :export_to_ics
+    get "/events/:id/tracks", TrackController, :show_tracks_for_event
+    get "/events/:id/sessions", SessionController, :show_sessions_for_event
     resources "/accounts", AccountController, only: [:index, :show]
     resources "/tags", TagController, only: [:index, :show]
     resources "/categories", CategoryController, only: [:index, :show]
@@ -44,16 +47,18 @@ defmodule EventosWeb.Router do
      resources "/users", UserController, except: [:new, :edit, :show]
      resources "/accounts", AccountController, except: [:new, :edit]
      resources "/events", EventController
-     get "/events/:id/ics", EventController, :export_to_ics
+     post "/events/:id/request", EventRequestController, :create_for_event
+     resources "/participant", ParticipantController
+     resources "/requests", EventRequestController
+     resources "/groups", GroupController, except: [:index, :show]
+     post "/groups/:id/request", GroupRequestController, :create_for_group
+     resources "/members", MemberController
+     resources "/requests", GroupRequestController
+     resources "/sessions", SessionController, except: [:index, :show]
+     resources "/tracks", TrackController, except: [:index, :show]
+     get "/tracks/:id/sessions", SessionController, :show_sessions_for_track
      resources "/categories", CategoryController
      resources "/tags", TagController
-     resources "/event_accounts", EventAccountsController
-     resources "/event_requests", EventRequestController
-     resources "/groups", GroupController, except: [:index]
-     resources "/group_accounts", GroupAccountController
-     resources "/group_requests", GroupRequestController
-     resources "/sessions", SessionController, except: [:new, :edit]
-     resources "/tracks", TrackController, except: [:new, :edit]
   end
 
   scope "/", EventosWeb do

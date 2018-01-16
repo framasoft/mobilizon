@@ -3,23 +3,27 @@ defmodule EventosWeb.AccountView do
   View for Accounts
   """
   use EventosWeb, :view
-  alias EventosWeb.AccountView
+  alias EventosWeb.{AccountView, EventView}
 
   def render("index.json", %{accounts: accounts}) do
-    %{data: render_many(accounts, AccountView, "account_for_user.json")}
+    %{data: render_many(accounts, AccountView, "acccount_basic.json")}
   end
 
   def render("show.json", %{account: account}) do
     %{data: render_one(account, AccountView, "account.json")}
   end
 
-  def render("account_for_user.json", %{account: account}) do
+  def render("show_basic.json", %{account: account}) do
+    %{data: render_one(account, AccountView, "account_basic.json")}
+  end
+
+  def render("acccount_basic.json", %{account: account}) do
     %{id: account.id,
       username: account.username,
       domain: account.domain,
       display_name: account.display_name,
       description: account.description,
-      public_key: account.public_key,
+      # public_key: account.public_key,
       suspended: account.suspended,
       uri: account.uri,
       url: account.url,
@@ -32,11 +36,11 @@ defmodule EventosWeb.AccountView do
       domain: account.domain,
       display_name: account.display_name,
       description: account.description,
-      public_key: account.public_key,
+      # public_key: account.public_key,
       suspended: account.suspended,
       uri: account.uri,
       url: account.url,
-      organized_events: account.organized_events
+      organized_events: render_many(account.organized_events, EventView, "event_simple.json")
     }
   end
 end

@@ -39,7 +39,7 @@ defmodule Eventos.Factory do
       description: "My desc",
       begins_on: nil,
       ends_on: nil,
-      organizer: build(:account),
+      organizer_account: build(:account),
       category: build(:category)
     }
   end

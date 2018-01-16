@@ -28,7 +28,7 @@ defmodule EventosWeb.UserView do
   def render("user_simple.json", %{user: user}) do
     %{id: user.id,
       role: user.role,
-      account: render_one(user.account, AccountView, "account_for_user.json")
+      account: render_one(user.account, AccountView, "acccount_basic.json")
     }
   end
 

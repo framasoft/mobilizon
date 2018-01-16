@@ -38,6 +38,14 @@ defmodule Eventos.Groups do
   def get_group!(id), do: Repo.get!(Group, id)
 
   @doc """
+  Gets a single group, with all associations loaded.
+  """
+  def get_group_full!(id) do
+    group = Repo.get!(Group, id)
+    Repo.preload(group, [:members, :organized_events])
+  end
+
+  @doc """
   Creates a group.
 
   ## Examples

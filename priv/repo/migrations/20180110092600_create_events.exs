@@ -15,13 +15,15 @@ defmodule Eventos.Repo.Migrations.CreateEvents do
       add :large_image, :string
       add :thumbnail, :string
       add :publish_at, :datetimetz
-      add :organizer_id, references(:accounts, on_delete: :nothing), null: false
+      add :organizer_account_id, references(:accounts, on_delete: :nothing)
+      add :organizer_group_id, references(:groups, on_delete: :nothing)
       add :category_id, references(:categories, on_delete: :nothing), null: false
 
       timestamps()
     end
 
-    create index(:events, [:organizer_id])
+    create index(:events, [:organizer_account_id])
+    create index(:events, [:organizer_group_id])
     create unique_index(:events, [:slug])
 
   end

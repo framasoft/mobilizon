@@ -24,16 +24,6 @@ export default function eventFetch(url, store, optionsarg = {}) {
   return fetch(link, options).then((response) => {
     if (response.ok) return response;
 
-    return response
-      .json()
-      .then((json) => {
-        const error = json['hydra:description'] ? json['hydra:description'] : response.statusText;
-        if (!json.violations) throw Error(error);
-
-        // const errors = { _error: error };
-        // json.violations.map(violation => errors[violation.propertyPath] = violation.message);
-
-        // throw errors;
-      });
+    throw response.text();
   });
 }

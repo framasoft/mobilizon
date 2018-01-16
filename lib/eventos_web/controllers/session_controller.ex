@@ -28,6 +28,16 @@ defmodule EventosWeb.SessionController do
     render(conn, "show.json", session: session)
   end
 
+  def show_sessions_for_event(conn, %{"id" => event_id}) do
+    sessions = Events.list_sessions_for_event(event_id)
+    render(conn, "index.json", sessions: sessions)
+  end
+
+  def show_sessions_for_track(conn, %{"id" => track}) do
+    sessions = Events.list_sessions_for_track(track)
+    render(conn, "index.json", sessions: sessions)
+  end
+
   def update(conn, %{"id" => id, "session" => session_params}) do
     session = Events.get_session!(id)
 

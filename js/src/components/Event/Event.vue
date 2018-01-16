@@ -2,8 +2,9 @@
   <v-container>
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
+        <span v-if="error">Error : event not found</span>
         <v-progress-circular v-if="loading" indeterminate color="primary"></v-progress-circular>
-        <v-card v-if="!loading">
+        <v-card v-if="!loading && !error">
           <v-layout column class="media">
             <v-card-title>
               <v-btn icon @click="$router.go(-1)">
@@ -32,12 +33,27 @@
               <v-card-title class="pl-5 pt-5">
                 <div class="display-1 pl-5 pt-5">{{ event.title }}</div>
               </v-card-title>
-              <p><router-link :to="{ name: 'Account', params: {id: event.organizer.id} }"><span class="grey--text">{{ event.organizer.username }}</span></router-link> organises {{ event.title }} <span v-if="event.address.addressLocality">in {{ event.address.addressLocality }}</span> on the {{ event.startDate | formatDate }}.</p>
-              <v-card-text v-if="event.description"><vue-markdown :source="event.description"></vue-markdown></v-card-text>
+              <!--<p><router-link :to="{ name: 'Account', params: {id: event.organizer.id} }"><span class="grey&#45;&#45;text">{{ event.organizer.username }}</span></router-link> organises {{ event.title }} <span v-if="event.address.addressLocality">in {{ event.address.addressLocality }}</span> on the {{ event.startDate | formatDate }}.</p>
+              <v-card-text v-if="event.description"><vue-markdown :source="event.description"></vue-markdown></v-card-text>-->
             </div>
-          <v-container fluid grid-list-md v-if="event.participants.length > 0">
+          <v-container fluid grid-list-md>
             <v-subheader>Membres</v-subheader>
             <v-layout row>
+              <v-flex xs2>
+                <router-link :to="{name: 'Account', params: {'id': event.organizer.id}}">
+                  <v-avatar size="75px">
+                    <img v-if="!event.organizer.avatarRemoteUrl"
+                         class="img-circle elevation-7 mb-1"
+                         src="http://lorempixel.com/125/125/"
+                    >
+                    <img v-else
+                         class="img-circle elevation-7 mb-1"
+                         :src="event.organizer.avatarRemoteUrl"
+                    >
+                  </v-avatar>
+                </router-link>
+                Organisateur <span>{{ event.organizer.username }}</span>
+              </v-flex>
               <v-flex xs2 v-for="account in event.participants" :key="account.id">
                 <router-link :to="{name: 'Account', params: {'id': account.id}}">
                   <v-avatar size="75px">
@@ -79,6 +95,7 @@
     data() {
       return {
         loading: true,
+        error: false,
         event: {
           id: this.id,
           title: '',
@@ -95,7 +112,6 @@
       deleteEvent() {
         const router = this.$router;
         eventFetch(`/events/${this.id}`, this.$store, { method: 'DELETE' })
-          .then(response => response.json())
           .then(() => router.push({'name': 'EventList'}));
       },
       fetchData() {
@@ -103,8 +119,14 @@
           .then(response => response.json())
           .then((data) => {
             this.loading = false;
-            this.event = data;
-          });
+            this.event = data.data;
+          }).catch((res) => {
+            Promise.resolve(res).then((data) => {
+              console.log(data);
+              this.error = true;
+              this.loading = false;
+          })
+        });
       },
       joinEvent() {
         eventFetch(`/events/${this.id}/join`, this.$store)
@@ -121,7 +143,7 @@
           });
       },
       downloadIcsEvent() {
-        eventFetch('/events/' + this.event.id + '/export', this.$store, {responseType: 'arraybuffer'})
+        eventFetch('/events/' + this.event.id + '/ics', this.$store, {responseType: 'arraybuffer'})
           .then((response) => response.text())
           .then(response => {
             const blob = new Blob([response],{type: 'text/calendar'});

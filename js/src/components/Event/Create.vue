@@ -261,7 +261,8 @@
             // '@type': 'Tag',
           });
         });
-        this.event.organizer_id = this.$store.state.user.account.id;
+        this.event.category_id = this.event.category.id;
+        this.event.organizer_account_id = this.$store.state.user.account.id;
         this.event.participants = [this.$store.state.user.account.id];
         this.event.price = parseFloat(this.event.price);
 
