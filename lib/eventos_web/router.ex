@@ -36,6 +36,7 @@ defmodule EventosWeb.Router do
     resources "/categories", CategoryController, only: [:index, :show]
     resources "/sessions", SessionController, only: [:index, :show]
     resources "/tracks", TrackController, only: [:index, :show]
+    resources "/addresses", AddressController, only: [:index, :show]
   end
 
   # Other scopes may use custom stacks.
@@ -59,6 +60,7 @@ defmodule EventosWeb.Router do
      get "/tracks/:id/sessions", SessionController, :show_sessions_for_track
      resources "/categories", CategoryController
      resources "/tags", TagController
+     resources "/addresses", AddressController, except: [:index, :show]
   end
 
   scope "/", EventosWeb do

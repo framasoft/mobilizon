@@ -43,7 +43,7 @@ defmodule Eventos.Events do
   """
   def get_event_full!(id) do
     event = Repo.get!(Event, id)
-    Repo.preload(event, [:organizer_account, :organizer_group, :category, :sessions, :tracks, :tags, :participants])
+    Repo.preload(event, [:organizer_account, :organizer_group, :category, :sessions, :tracks, :tags, :participants, :address])
   end
 
   @doc """

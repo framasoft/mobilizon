@@ -16,11 +16,22 @@ defmodule EventosWeb.EventController do
   end
 
   def create(conn, %{"event" => event_params}) do
+    event_params = %{event_params | "address" => process_address(event_params["address"])}
     with {:ok, %Event{} = event} <- Events.create_event(event_params) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", event_path(conn, :show, event))
       |> render("show_simple.json", event: event)
+    end
+  end
+
+  defp process_address(address) do
+    geom = EventosWeb.AddressController.process_geom(address["geom"])
+    case geom do
+      nil ->
+        address
+      _ ->
+        %{address | "geom" => geom}
     end
   end
 
