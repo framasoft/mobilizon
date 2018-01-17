@@ -9,6 +9,7 @@ defmodule Eventos.Repo.Migrations.CreateGroups do
       add :suspended, :boolean, default: false, null: false
       add :url, :string
       add :uri, :string
+      add :address_id, references(:addresses, on_delete: :delete_all)
 
       timestamps()
     end

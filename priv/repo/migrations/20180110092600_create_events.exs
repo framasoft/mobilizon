@@ -8,7 +8,6 @@ defmodule Eventos.Repo.Migrations.CreateEvents do
       add :description, :string, null: true
       add :begins_on, :datetimetz
       add :ends_on, :datetimetz
-      add :geom, :geometry
       add :state, :integer, null: false
       add :public, :boolean, null: false
       add :status, :integer, null: false
@@ -18,6 +17,7 @@ defmodule Eventos.Repo.Migrations.CreateEvents do
       add :organizer_account_id, references(:accounts, on_delete: :nothing)
       add :organizer_group_id, references(:groups, on_delete: :nothing)
       add :category_id, references(:categories, on_delete: :nothing), null: false
+      add :address_id, references(:addresses, on_delete: :delete_all)
 
       timestamps()
     end

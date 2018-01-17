@@ -36,13 +36,13 @@ defmodule Eventos.Events.Event do
   alias Eventos.Events.Event.TitleSlug
   alias Eventos.Accounts.Account
   alias Eventos.Groups.Group
+  alias Eventos.Addresses.Address
 
   schema "events" do
     field :begins_on, Timex.Ecto.DateTimeWithTimezone
     field :description, :string
     field :ends_on, Timex.Ecto.DateTimeWithTimezone
     field :title, :string
-    field :geom, Geo.Geometry
     field :slug, TitleSlug.Type
     field :state, :integer, default: 0
     field :status, :integer, default: 0
@@ -58,6 +58,7 @@ defmodule Eventos.Events.Event do
     has_many :event_request, Request
     has_many :tracks, Track
     has_many :sessions, Session
+    belongs_to :address, Address
 
     timestamps()
   end
@@ -65,8 +66,9 @@ defmodule Eventos.Events.Event do
   @doc false
   def changeset(%Event{} = event, attrs) do
     event
-    |> cast(attrs, [:title, :description, :begins_on, :ends_on, :organizer_account_id, :organizer_group_id, :category_id, :state, :geom, :status, :public, :thumbnail, :large_image, :publish_at])
+    |> cast(attrs, [:title, :description, :begins_on, :ends_on, :organizer_account_id, :organizer_group_id, :category_id, :state, :status, :public, :thumbnail, :large_image, :publish_at])
     |> cast_assoc(:tags)
+    |> cast_assoc(:address)
     |> validate_required([:title, :description, :begins_on, :ends_on, :organizer_account_id, :category_id])
     |> TitleSlug.maybe_generate_slug()
     |> TitleSlug.unique_constraint()

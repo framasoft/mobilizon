@@ -32,6 +32,19 @@ defmodule Eventos.Factory do
     }
   end
 
+  def address_factory do
+    %Eventos.Addresses.Address{
+      description: sequence("MyAddress"),
+      geom: %Geo.Point{coordinates: {30, -90}, srid: 4326},
+      floor: "Myfloor",
+      addressCountry: "My Country",
+      addressLocality: "My Locality",
+      addressRegion: "My Region",
+      postalCode: "My Postal Code",
+      streetAddress: "My Street Address"
+    }
+  end
+
   def event_factory do
     %Eventos.Events.Event{
       title: sequence("MyEvent"),
@@ -40,7 +53,8 @@ defmodule Eventos.Factory do
       begins_on: nil,
       ends_on: nil,
       organizer_account: build(:account),
-      category: build(:category)
+      category: build(:category),
+      address: build(:address)
     }
   end
 
@@ -56,6 +70,17 @@ defmodule Eventos.Factory do
     %Eventos.Events.Track{
       name: sequence("MyTrack"),
       event: build(:event)
+    }
+  end
+
+  def group_factory do
+    %Eventos.Groups.Group{
+      title: sequence("My Group"),
+      description: "My group",
+      suspended: false,
+      url: "https://",
+      uri: "https://",
+      address: build(:address)
     }
   end
 end

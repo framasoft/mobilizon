@@ -3,7 +3,7 @@ defmodule EventosWeb.EventView do
   View for Events
   """
   use EventosWeb, :view
-  alias EventosWeb.{EventView, AccountView, GroupView}
+  alias EventosWeb.{EventView, AccountView, GroupView, AddressView}
 
   def render("index.json", %{events: events}) do
     %{data: render_many(events, EventView, "event_simple.json")}
@@ -35,6 +35,7 @@ defmodule EventosWeb.EventView do
       organizer: render_one(event.organizer_account, AccountView, "acccount_basic.json"),
       group: render_one(event.organizer_group, GroupView, "group_basic.json"),
       participants: render_many(event.participants, AccountView, "show_basic.json"),
+      address: render_one(event.address, AddressView, "address.json"),
     }
   end
 end

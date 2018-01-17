@@ -223,8 +223,11 @@
             description: null,
             floor: null,
             geo: {
-              latitude: null,
-              longitude: null,
+              type: null,
+              data: {
+                latitude: null,
+                longitude: null,
+              },
             },
             addressCountry: null,
             addressLocality: null,
@@ -312,9 +315,12 @@
       getAddressData: function (addressData) {
         console.log(addressData);
         this.event.address = {
-          geo: {
-            latitude: addressData.latitude,
-            longitude: addressData.longitude,
+          geom: {
+            data: {
+              latitude: addressData.latitude,
+              longitude: addressData.longitude,
+            },
+            type: "point",
           },
           addressCountry: addressData.country,
           addressLocality: addressData.locality,

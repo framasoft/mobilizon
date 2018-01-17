@@ -36,6 +36,7 @@ defmodule Eventos.Groups.Group do
   alias Eventos.Groups.{Group, Member, Request}
   alias Eventos.Accounts.Account
   alias Eventos.Groups.Group.TitleSlug
+  alias Eventos.Addresses.Address
 
   schema "groups" do
     field :description, :string
@@ -47,6 +48,7 @@ defmodule Eventos.Groups.Group do
     many_to_many :members, Account, join_through: Member
     has_many :organized_events, Event, [foreign_key: :organizer_group_id]
     has_many :requests, Request
+    belongs_to :address, Address
 
     timestamps()
   end
@@ -54,7 +56,7 @@ defmodule Eventos.Groups.Group do
   @doc false
   def changeset(%Group{} = group, attrs) do
     group
-    |> cast(attrs, [:title, :description, :suspended, :url, :uri])
+    |> cast(attrs, [:title, :description, :suspended, :url, :uri, :address_id])
     |> validate_required([:title, :description, :suspended, :url, :uri])
     |> TitleSlug.maybe_generate_slug()
     |> TitleSlug.unique_constraint()
