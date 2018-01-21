@@ -7,6 +7,7 @@ defmodule EventosWeb.EventController do
   alias Eventos.Events
   alias Eventos.Events.Event
   alias Eventos.Export.ICalendar
+  alias Eventos.Addresses
 
   action_fallback EventosWeb.FallbackController
 
@@ -26,12 +27,11 @@ defmodule EventosWeb.EventController do
   end
 
   defp process_address(address) do
-    geom = EventosWeb.AddressController.process_geom(address["geom"])
-    case geom do
-      nil ->
-        address
-      _ ->
+    case Addresses.process_geom(address["geom"]) do
+      {:ok, geom} ->
         %{address | "geom" => geom}
+      _ ->
+        address
     end
   end
 

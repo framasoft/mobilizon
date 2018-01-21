@@ -8,6 +8,10 @@ defmodule EventosWeb.ErrorView do
     "Page not found"
   end
 
+  def render("invalid_request.json", _assigns) do
+    %{errors: "Invalid request"}
+  end
+
   def render("500.html", _assigns) do
     "Internal server error"
   end
