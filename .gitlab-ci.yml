@@ -30,5 +30,4 @@ before_script:
 mix:
   script:
   - mix credo
-  - mix dogma
   - mix coveralls
