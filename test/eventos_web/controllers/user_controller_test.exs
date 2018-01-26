@@ -32,13 +32,22 @@ defmodule EventosWeb.UserControllerTest do
   describe "create user" do
     test "renders user when data is valid", %{conn: conn} do
       conn = post conn, user_path(conn, :create), @create_attrs
-      assert %{"user" => %{"id" => id}} = json_response(conn, 201)
+      assert %{"user" => %{"id" => id, "account" => %{"avatar_url" => avatar_url}}} = json_response(conn, 201)
       assert id > 0
+      assert avatar_url == nil
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
       conn = post conn, user_path(conn, :create), @invalid_attrs
       assert json_response(conn, 400)["msg"] != %{}
+    end
+
+    test "renders user with avatar when email is valid", %{conn: conn} do
+      attrs = %{email: "contact@framasoft.org", password: "some password_hash", username: "framasoft"}
+      conn = post conn, user_path(conn, :create), attrs
+      assert %{"user" => %{"id" => id, "account" => %{"avatar_url" => avatar_url}}} = json_response(conn, 201)
+      assert id > 0
+      assert avatar_url == "https://secure.gravatar.com/avatar/68b2910a6bb84a482d920e1057533100?default=404"
     end
   end
 

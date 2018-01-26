@@ -20,13 +20,13 @@
             <v-spacer></v-spacer>
             <div class="text-xs-center">
               <v-avatar size="125px">
-                <img v-if="!group.avatarRemoteUrl"
+                <img v-if="!group.avatar_url"
                      class="img-circle elevation-7 mb-1"
                      src="http://lorempixel.com/125/125/"
                 >
                 <img v-else
                      class="img-circle elevation-7 mb-1"
-                     :src="group.avatarRemoteUrl"
+                     :src="group.avatar_url"
                 >
               </v-avatar>
               <v-card-title class="pl-5 pt-5">
@@ -77,13 +77,13 @@
                   <v-badge overlap>
                     <span slot="badge" v-if="member.role == 3"><v-icon>stars</v-icon></span>
                     <v-avatar size="75px">
-                      <img v-if="!member.account.avatarRemoteUrl"
+                      <img v-if="!member.account.avatar_url"
                            class="img-circle elevation-7 mb-1"
                            src="http://lorempixel.com/125/125/"
                       >
                       <img v-else
                            class="img-circle elevation-7 mb-1"
-                           :src="member.account.avatarRemoteUrl"
+                           :src="member.account.avatar_url"
                       >
                     </v-avatar>
                   </v-badge>
