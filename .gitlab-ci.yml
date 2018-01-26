@@ -1,4 +1,4 @@
-image: elixir:1.4
+image: elixir:1.6
 
 services:
   - name: mdillon/postgis:9.6
