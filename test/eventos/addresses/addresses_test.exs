@@ -73,5 +73,15 @@ defmodule Eventos.AddressesTest do
       address = address_fixture()
       assert %Ecto.Changeset{} = Addresses.change_address(address)
     end
+
+    test "process_geom/2 with valid data returns a Point element" do
+      attrs = %{"type" => "point", "data" => %{"latitude" => 10, "longitude" => -10}}
+      assert {:ok, %Geo.Point{}} = Addresses.process_geom(attrs)
+    end
+
+    test "process_geom/2 with invalid data returns nil" do
+      attrs = %{"type" => "linfdfsfe", "data" => %{"latitude" => 10, "longitude" => -10}}
+      assert {:error, nil} = Addresses.process_geom(attrs)
+    end
   end
 end

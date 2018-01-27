@@ -8,6 +8,10 @@ defmodule Eventos.Addresses do
 
   alias Eventos.Addresses.Address
 
+  import Logger
+
+  @geom_types [:point]
+
   @doc """
   Returns the list of addresses.
 
@@ -100,5 +104,37 @@ defmodule Eventos.Addresses do
   """
   def change_address(%Address{} = address) do
     Address.changeset(address, %{})
+  end
+
+  @doc """
+  Processes raw geo data informations and return a `Geo` geometry which can be one of `Geo.Point`.
+  """
+  def process_geom(%{"type" => type_input, "data" => data}) do
+    type =
+      if !is_atom(type_input) && type_input != nil do
+        try do
+          String.to_existing_atom(type_input)
+        rescue
+          e in ArgumentError ->
+            Logger.error("#{type_input} is not an existing atom : #{inspect e}")
+            nil
+        end
+      else
+        type_input
+      end
+
+    if Enum.member?(@geom_types, type) do
+      case type do
+        :point ->
+          {:ok, %Geo.Point{coordinates: {data["latitude"], data["longitude"]}, srid: 4326}}
+      end
+    else
+      {:error, nil}
+    end
+  end
+
+  @doc false
+  def process_geom(nil) do
+    {:error, nil}
   end
 end

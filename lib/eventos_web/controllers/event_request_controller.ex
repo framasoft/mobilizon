@@ -5,7 +5,7 @@ defmodule EventosWeb.EventRequestController do
   use EventosWeb, :controller
 
   alias Eventos.Events
-  alias Eventos.Events.{Event, Request}
+  alias Eventos.Events.Request
 
   action_fallback EventosWeb.FallbackController
 
