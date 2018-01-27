@@ -44,7 +44,6 @@ defmodule Eventos.Mixfile do
       {:phoenix_ecto, "~> 3.2"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 2.10"},
-      {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
       {:guardian, "~> 1.0"},
@@ -58,10 +57,14 @@ defmodule Eventos.Mixfile do
       {:geo_postgis, "~> 1.0"},
       {:timex, "~> 3.0"},
       {:timex_ecto, "~> 3.0"},
+      {:icalendar, "~> 0.6"},
+      {:exgravatar, "~> 2.0.1"},
+      {:httpoison, "~> 1.0"},
+      # Dev and test dependencies
+      {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:ex_machina, "~> 2.1", only: :test},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.8", only: :test},
-      {:icalendar, "~> 0.6"},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
       {:ex_unit_notifier, "~> 0.1", only: :test}

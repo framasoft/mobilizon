@@ -6,7 +6,6 @@ defmodule Eventos.Accounts.User do
   import Ecto.Changeset
   alias Eventos.Accounts.{Account, User}
 
-
   schema "users" do
     field :email, :string
     field :password_hash, :string
@@ -31,9 +30,12 @@ defmodule Eventos.Accounts.User do
     |> changeset(params)
     |> cast(params, ~w(password)a, [])
     |> validate_length(:password, min: 6, max: 100)
-    |> hash_password
+    |> hash_password()
   end
 
+  @doc """
+  Hash password when it's changed
+  """
   defp hash_password(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true,
@@ -45,5 +47,4 @@ defmodule Eventos.Accounts.User do
         changeset
     end
   end
-
 end

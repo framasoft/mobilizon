@@ -20,13 +20,13 @@
             <v-spacer></v-spacer>
             <div class="text-xs-center">
               <v-avatar size="125px">
-                <img v-if="!account.avatarRemoteUrl"
+                <img v-if="!account.avatar_url"
                   class="img-circle elevation-7 mb-1"
                   src="http://lorempixel.com/125/125/"
                 >
                 <img v-else
                      class="img-circle elevation-7 mb-1"
-                     :src="account.avatarRemoteUrl"
+                     :src="account.avatar_url"
                 >
               </v-avatar>
             </div>

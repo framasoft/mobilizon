@@ -27,6 +27,8 @@ defmodule EventosWeb.AccountView do
       suspended: account.suspended,
       uri: account.uri,
       url: account.url,
+      avatar_url: account.avatar_url,
+      banner_url: account.banner_url,
     }
   end
 
@@ -40,6 +42,8 @@ defmodule EventosWeb.AccountView do
       suspended: account.suspended,
       uri: account.uri,
       url: account.url,
+      avatar_url: account.avatar_url,
+      banner_url: account.banner_url,
       organized_events: render_many(account.organized_events, EventView, "event_simple.json")
     }
   end

@@ -42,13 +42,13 @@
               <v-flex xs2>
                 <router-link :to="{name: 'Account', params: {'id': event.organizer.id}}">
                   <v-avatar size="75px">
-                    <img v-if="!event.organizer.avatarRemoteUrl"
+                    <img v-if="!event.organizer.avatar_url"
                          class="img-circle elevation-7 mb-1"
                          src="http://lorempixel.com/125/125/"
                     >
                     <img v-else
                          class="img-circle elevation-7 mb-1"
-                         :src="event.organizer.avatarRemoteUrl"
+                         :src="event.organizer.avatar_url"
                     >
                   </v-avatar>
                 </router-link>
@@ -57,13 +57,13 @@
               <v-flex xs2 v-for="account in event.participants" :key="account.id">
                 <router-link :to="{name: 'Account', params: {'id': account.id}}">
                   <v-avatar size="75px">
-                    <img v-if="!account.avatarRemoteUrl"
+                    <img v-if="!account.avatar_url"
                          class="img-circle elevation-7 mb-1"
                          src="http://lorempixel.com/125/125/"
                     >
                     <img v-else
                          class="img-circle elevation-7 mb-1"
-                         :src="account.avatarRemoteUrl"
+                         :src="account.avatar_url"
                     >
                   </v-avatar>
                 </router-link>

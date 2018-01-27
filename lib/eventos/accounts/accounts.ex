@@ -4,8 +4,9 @@ defmodule Eventos.Accounts do
   """
 
   import Ecto.Query, warn: false
-  alias Eventos.Repo
+  import Exgravatar
 
+  alias Eventos.Repo
   alias Eventos.Accounts.Account
 
   @doc """
@@ -174,19 +175,34 @@ defmodule Eventos.Accounts do
   end
 
   @doc """
+  Fetch gravatar url for email and set it as avatar if it exists
+  """
+  defp gravatar(email) do
+    url = gravatar_url(email, default: "404")
+    case HTTPoison.get(url, [], [ssl: [{:versions, [:'tlsv1.2']}]]) do # See https://github.com/edgurgel/httpoison#note-about-broken-ssl-in-erlang-19
+      {:ok, %HTTPoison.Response{status_code: 200}} ->
+        url
+      _ -> # User doesn't have a gravatar email, or other issues
+        nil
+    end
+  end
+
+  @doc """
   Register user
   """
   def register(%{email: email, password: password, username: username}) do
     {:ok, {privkey, pubkey}} = RsaEx.generate_keypair("4096")
 
 
+    avatar = gravatar(email)
     account = Eventos.Accounts.Account.registration_changeset(%Eventos.Accounts.Account{}, %{
       username: username,
       domain: nil,
       private_key: privkey,
       public_key: pubkey,
       uri: "h",
-      url: "h"
+      url: "h",
+      avatar_url: avatar,
     })
 
     user = Eventos.Accounts.User.registration_changeset(%Eventos.Accounts.User{}, %{
@@ -206,7 +222,6 @@ defmodule Eventos.Accounts do
       {:error, e.changeset.changes.user.errors}
     end
   end
-
 
   @doc """
   Creates a user.
