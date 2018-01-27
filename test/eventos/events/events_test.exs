@@ -272,7 +272,7 @@ defmodule Eventos.EventsTest do
 
     @valid_attrs %{role: 42}
     @update_attrs %{role: 43}
-    @invalid_attrs %{role: nil}
+    @invalid_attrs %{role: nil, event_id: nil, account_id: nil}
 
     def participant_fixture(attrs \\ %{}) do
       event = event_fixture()

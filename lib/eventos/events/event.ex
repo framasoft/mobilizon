@@ -44,9 +44,10 @@ defmodule Eventos.Events.Event do
     field :ends_on, Timex.Ecto.DateTimeWithTimezone
     field :title, :string
     field :slug, TitleSlug.Type
-    field :state, :integer, default: 0
-    field :status, :integer, default: 0
-    field :public, :boolean, default: true
+    field :state, :integer, default: 0 # If the event is tentative, confirmed or cancelled
+    field :status, :integer, default: 0 # If the event is a draft or published
+    field :public, :boolean, default: true # If the event is publically listed or accessible only through a link
+    field :accept, :integer, default: 0 # If the event accepts automatically participants, or through participant requests, or through invites only
     field :thumbnail, :string
     field :large_image, :string
     field :publish_at, Timex.Ecto.DateTimeWithTimezone

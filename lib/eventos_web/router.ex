@@ -49,6 +49,7 @@ defmodule EventosWeb.Router do
      resources "/accounts", AccountController, except: [:new, :edit]
      resources "/events", EventController
      post "/events/:id/request", EventRequestController, :create_for_event
+     get "/accounts/:id/requests", EventRequestController, :index_for_account
      resources "/participant", ParticipantController
      resources "/requests", EventRequestController
      resources "/groups", GroupController, except: [:index, :show]

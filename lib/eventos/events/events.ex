@@ -416,8 +416,18 @@ defmodule Eventos.Events do
     Repo.all(Request)
   end
 
+  @doc """
+  Returns the list of requests for an account
+  """
   def list_requests_for_account(%Account{} = account) do
     Repo.all(from r in Request, where: r.account_id == ^account.id)
+  end
+
+  @doc """
+  Returns the list of requests for an account id
+  """
+  def list_requests_for_account_id(account_id) do
+    Repo.all(from r in Request, where: r.account_id == ^account_id)
   end
 
   @doc """
