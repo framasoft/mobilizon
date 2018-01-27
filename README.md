@@ -7,6 +7,8 @@
 
 ### Server
 
+  * Install Elixir (and Erlang) by following the instructions at [https://elixir-lang.github.io/install.html](https://elixir-lang.github.io/install.html)
+  * Install PostgreSQL
   * Start postgres and make sure the postgis extension is installed.
   * Create a postgres user with database creation capabilities, using the
     following: `createuser -d -P elixir` and set `elixir` as the password.
@@ -28,6 +30,7 @@ and see the website (server *and* client) in action.
 If you plan to specifically change the client side (frontend), do the following
 once the server is running:
 
+  * Install the latest version of NodeJS
   * Change directory to `js/`.
   * Install JavaScript package dependencies: `npm install`.
   * Run the developement server in watch mode: `npm run dev`. This will open a
