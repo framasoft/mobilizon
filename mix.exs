@@ -59,7 +59,12 @@ defmodule Eventos.Mixfile do
       {:timex_ecto, "~> 3.0"},
       {:icalendar, "~> 0.6"},
       {:exgravatar, "~> 2.0.1"},
+      {:littlefinger, "~> 0.1"},
       {:httpoison, "~> 1.0"},
+      {:json_ld, "~> 0.2"},
+      {:jason, "~> 1.0"},
+      {:ex_crypto, "~> 0.9.0"},
+      {:http_sign, "~> 0.1.1"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:ex_machina, "~> 2.1", only: :test},

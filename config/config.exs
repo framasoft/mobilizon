@@ -9,6 +9,15 @@ use Mix.Config
 config :eventos,
   ecto_repos: [Eventos.Repo]
 
+config :eventos, :instance,
+  name: "Localhost",
+  version: "1.0.0-dev",
+  registrations_open: true
+
+config :mime, :types, %{
+  "application/activity+json" => ["activity-json"]
+}
+
 # Configures the endpoint
 config :eventos, EventosWeb.Endpoint,
   url: [host: "localhost"],

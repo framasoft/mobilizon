@@ -16,12 +16,12 @@ defmodule Eventos.Factory do
 
   def account_factory do
     {:ok, {_, pubkey}} = RsaEx.generate_keypair("4096")
+    username = sequence("thomas")
     %Eventos.Accounts.Account{
-      username: sequence("Thomas"),
+      username: username,
       domain: nil,
       public_key: pubkey,
-      uri: "https://",
-      url: "https://"
+      url: EventosWeb.Endpoint.url() <> "/@#{username}"
     }
   end
 
@@ -46,15 +46,19 @@ defmodule Eventos.Factory do
   end
 
   def event_factory do
+    account = build(:account)
+    slug = sequence("my-event")
+
     %Eventos.Events.Event{
       title: sequence("MyEvent"),
-      slug: sequence("my-event"),
+      slug: slug,
       description: "My desc",
       begins_on: nil,
       ends_on: nil,
-      organizer_account: build(:account),
+      organizer_account: account,
       category: build(:category),
-      address: build(:address)
+      address: build(:address),
+      url: EventosWeb.Endpoint.url() <> "/@" <> account.username <> "/" <> slug
     }
   end
 
@@ -79,7 +83,6 @@ defmodule Eventos.Factory do
       description: "My group",
       suspended: false,
       url: "https://",
-      uri: "https://",
       address: build(:address)
     }
   end

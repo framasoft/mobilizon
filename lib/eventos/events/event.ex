@@ -39,6 +39,8 @@ defmodule Eventos.Events.Event do
   alias Eventos.Addresses.Address
 
   schema "events" do
+    field :url, :string
+    field :local, :boolean, default: true
     field :begins_on, Timex.Ecto.DateTimeWithTimezone
     field :description, :string
     field :ends_on, Timex.Ecto.DateTimeWithTimezone
@@ -60,13 +62,13 @@ defmodule Eventos.Events.Event do
     has_many :sessions, Session
     belongs_to :address, Address
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false
   def changeset(%Event{} = event, attrs) do
     event
-    |> cast(attrs, [:title, :description, :begins_on, :ends_on, :organizer_account_id, :organizer_group_id, :category_id, :state, :status, :public, :thumbnail, :large_image, :publish_at])
+    |> cast(attrs, [:title, :description, :url, :begins_on, :ends_on, :organizer_account_id, :organizer_group_id, :category_id, :state, :status, :public, :thumbnail, :large_image, :publish_at])
     |> cast_assoc(:tags)
     |> cast_assoc(:address)
     |> validate_required([:title, :description, :begins_on, :ends_on, :organizer_account_id, :category_id])

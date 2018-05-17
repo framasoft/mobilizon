@@ -8,6 +8,9 @@ defmodule Eventos.Accounts do
 
   alias Eventos.Repo
   alias Eventos.Accounts.Account
+  alias Eventos.Accounts
+
+  alias Eventos.Service.ActivityPub
 
   @doc """
   Returns the list of accounts.
@@ -110,6 +113,20 @@ defmodule Eventos.Accounts do
     Account.changeset(account, %{})
   end
 
+  @doc """
+  Returns a text representation of a local account like user@domain.tld
+  """
+  def account_to_local_username_and_domain(account) do
+    "#{account.username}@#{Application.get_env(:my, EventosWeb.Endpoint)[:url][:host]}"
+  end
+
+  @doc """
+  Returns a webfinger representation of an account
+  """
+  def account_to_webfinger_s(account) do
+    "acct:#{account_to_local_username_and_domain(account)}"
+  end
+
   alias Eventos.Accounts.User
 
   @doc """
@@ -128,6 +145,34 @@ defmodule Eventos.Accounts do
   def list_users_with_accounts do
     users = Repo.all(User)
     Repo.preload(users, :account)
+  end
+
+  defp blank?(""), do: nil
+  defp blank?(n), do: n
+
+  def insert_or_update_account(data) do
+    data =
+      data
+      |> Map.put(:name, blank?(data[:display_name]) || data[:username])
+
+    cs = Account.remote_account_creation(data)
+    Repo.insert(cs, on_conflict: [set: [public_key: data.public_key]], conflict_target: [:username, :domain])
+  end
+
+#  def increase_event_count(%Account{} = account) do
+#    event_count = (account.info["event_count"] || 0) + 1
+#    new_info = Map.put(account.info, "note_count", note_count)
+#
+#    cs = info_changeset(account, %{info: new_info})
+#
+#    update_and_set_cache(cs)
+#  end
+
+  def count_users() do
+    Repo.one(
+      from u in User,
+      select: count(u.id)
+    )
   end
 
   @doc """
@@ -149,6 +194,29 @@ defmodule Eventos.Accounts do
   def get_user_with_account!(id) do
     user = Repo.get!(User, id)
     Repo.preload(user, :account)
+  end
+
+  def get_account_by_url(url) do
+    Repo.get_by(Account, url: url)
+  end
+
+  def get_account_by_username(username) do
+    Repo.get_by!(Account, username: username)
+  end
+
+  def get_or_fetch_by_url(url) do
+    if account = get_account_by_url(url) do
+      account
+    else
+      ap_try = ActivityPub.make_account_from_url(url)
+
+      case ap_try do
+        {:ok, account} ->
+          account
+
+        _ -> {:error, "Could not fetch by AP id"}
+      end
+    end
   end
 
   @doc """
@@ -191,18 +259,17 @@ defmodule Eventos.Accounts do
   Register user
   """
   def register(%{email: email, password: password, username: username}) do
-    {:ok, {privkey, pubkey}} = RsaEx.generate_keypair("4096")
-
+    #{:ok, {privkey, pubkey}} = RsaEx.generate_keypair("4096")
+    {:ok, rsa_priv_key} = ExPublicKey.generate_key()
+    {:ok, rsa_pub_key} = ExPublicKey.public_key_from_private_key(rsa_priv_key)
 
     avatar = gravatar(email)
     account = Eventos.Accounts.Account.registration_changeset(%Eventos.Accounts.Account{}, %{
       username: username,
       domain: nil,
-      private_key: privkey,
-      public_key: pubkey,
-      uri: "h",
-      url: "h",
-      avatar_url: avatar,
+      private_key: rsa_priv_key |> ExPublicKey.pem_encode(),
+      public_key: rsa_pub_key |> ExPublicKey.pem_encode(),
+      url: EventosWeb.Endpoint.url() <> "/@" <> username,
     })
 
     user = Eventos.Accounts.User.registration_changeset(%Eventos.Accounts.User{}, %{

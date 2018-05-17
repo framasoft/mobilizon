@@ -43,7 +43,6 @@ defmodule Eventos.Groups.Group do
     field :suspended, :boolean, default: false
     field :title, :string
     field :slug, TitleSlug.Type
-    field :uri, :string
     field :url, :string
     many_to_many :members, Account, join_through: Member
     has_many :organized_events, Event, [foreign_key: :organizer_group_id]
@@ -56,8 +55,8 @@ defmodule Eventos.Groups.Group do
   @doc false
   def changeset(%Group{} = group, attrs) do
     group
-    |> cast(attrs, [:title, :description, :suspended, :url, :uri, :address_id])
-    |> validate_required([:title, :description, :suspended, :url, :uri])
+    |> cast(attrs, [:title, :description, :suspended, :url, :address_id])
+    |> validate_required([:title, :description, :suspended, :url])
     |> TitleSlug.maybe_generate_slug()
     |> TitleSlug.unique_constraint()
   end

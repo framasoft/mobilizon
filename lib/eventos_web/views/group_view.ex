@@ -23,7 +23,6 @@ defmodule EventosWeb.GroupView do
       description: group.description,
       suspended: group.suspended,
       url: group.url,
-      uri: group.uri
     }
   end
 
@@ -33,7 +32,6 @@ defmodule EventosWeb.GroupView do
       description: group.description,
       suspended: group.suspended,
       url: group.url,
-      uri: group.uri,
       members: render_many(group.members, AccountView, "acccount_basic.json"),
       events: render_many(group.organized_events, EventView, "event_simple.json")
     }

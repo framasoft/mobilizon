@@ -15,7 +15,6 @@ defmodule EventosWeb.GroupController do
   end
 
   def create(conn, %{"group" => group_params}) do
-    group_params = Map.put(group_params, "uri", "h")
     group_params = Map.put(group_params, "url", "h")
     with {:ok, %Group{} = group} <- Groups.create_group(group_params) do
       conn
