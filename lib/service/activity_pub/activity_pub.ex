@@ -5,8 +5,8 @@ defmodule Eventos.Service.ActivityPub do
   alias Eventos.Service.WebFinger
   alias Eventos.Activity
 
-  alias Eventos.Accounts
-  alias Eventos.Accounts.Account
+  alias Eventos.Actors
+  alias Eventos.Actors.Actor
 
   alias Eventos.Service.Federator
 
@@ -83,8 +83,12 @@ defmodule Eventos.Service.ActivityPub do
            ),
          {:ok, activity} <- insert(create_data, local),
          :ok <- maybe_federate(activity) do
-         # {:ok, actor} <- Accounts.increase_event_count(actor) do
+         # {:ok, actor} <- Actors.increase_event_count(actor) do
       {:ok, activity}
+    else
+      err ->
+        Logger.debug("Something went wrong")
+        Logger.debug(inspect err)
     end
   end
 
@@ -124,13 +128,13 @@ defmodule Eventos.Service.ActivityPub do
     end
   end
 
-  def delete(%Event{url: url, organizer_account: account} = event, local \\ true) do
+  def delete(%Event{url: url, organizer_actor: actor} = event, local \\ true) do
 
     data = %{
       "type" => "Delete",
-      "actor" => account.url,
+      "actor" => actor.url,
       "object" => url,
-      "to" => [account.url <> "/followers", "https://www.w3.org/ns/activitystreams#Public"]
+      "to" => [actor.url <> "/followers", "https://www.w3.org/ns/activitystreams#Public"]
     }
 
     with Events.delete_event(event),
@@ -141,40 +145,43 @@ defmodule Eventos.Service.ActivityPub do
     end
   end
 
-  def create_public_activities(%Account{} = account) do
+  def create_public_activities(%Actor{} = actor) do
 
   end
 
-  def make_account_from_url(url) do
+  def make_actor_from_url(url) do
     with {:ok, data} <- fetch_and_prepare_user_from_url(url) do
-      Accounts.insert_or_update_account(data)
+      Actors.insert_or_update_actor(data)
     else
       e ->
-        Logger.error("Failed to make account from url")
+        Logger.error("Failed to make actor from url")
         Logger.error(inspect e)
         {:error, e}
     end
   end
 
-  def make_account_from_nickname(nickname) do
+  def make_actor_from_nickname(nickname) do
     with {:ok, %{"url" => url}} when not is_nil(url) <- WebFinger.finger(nickname) do
-      make_account_from_url(url)
+      make_actor_from_url(url)
     else
       _e -> {:error, "No ActivityPub URL found in WebFinger"}
     end
   end
 
   def publish(actor, activity) do
-#    followers =
-#      if actor.follower_address in activity.recipients do
-#        {:ok, followers} = User.get_followers(actor)
-#        followers |> Enum.filter(&(!&1.local))
-#      else
-#        []
-#      end
-    followers = ["http://localhost:3000/users/tcit/inbox"]
+    Logger.debug("Publishing an activity")
+    followers =
+      if actor.followers_url in activity.recipients do
+        {:ok, followers} = Actor.get_followers(actor)
+        followers |> Enum.filter(fn follower -> is_nil(follower.domain) end)
+      else
+        []
+      end
 
-    remote_inboxes = followers
+    remote_inboxes =
+      followers
+      |> Enum.map(fn follower -> follower.shared_inbox_url end)
+      |> Enum.uniq()
 
     {:ok, data} = Transmogrifier.prepare_outgoing(activity.data)
     json = Jason.encode!(data)
@@ -219,6 +226,8 @@ defmodule Eventos.Service.ActivityPub do
   end
 
   def user_data_from_user_object(data) do
+    Logger.debug("user_data_from_user_object")
+    Logger.debug(inspect data)
     avatar =
       data["icon"]["url"] &&
         %{
@@ -241,19 +250,27 @@ defmodule Eventos.Service.ActivityPub do
         "banner" => banner
       },
       avatar: avatar,
-      username: "#{data["preferredUsername"]}@#{URI.parse(data["id"]).host}",
-      display_name: data["name"],
+      name: data["name"],
+      preferred_username: data["preferredUsername"],
       follower_address: data["followers"],
-      description: data["summary"],
+      summary: data["summary"],
       public_key: data["publicKey"]["publicKeyPem"],
+      inbox_url: data["inbox"],
+      outbox_url: data["outbox"],
+      following_url: data["following"],
+      followers_url: data["followers"],
+      shared_inbox_url: data["sharedInbox"],
+      domain: URI.parse(data["id"]).host,
+      manually_approves_followers: data["manuallyApprovesFollowers"],
+      type: data["type"],
     }
 
     {:ok, user_data}
   end
 
-  @spec fetch_public_activities_for_account(Account.t, integer(), integer()) :: list()
-  def fetch_public_activities_for_account(%Account{} = account, page \\ 10, limit \\ 1) do
-    {:ok, events, total} = Events.get_events_for_account(account, page, limit)
+  @spec fetch_public_activities_for_actor(Actor.t, integer(), integer()) :: list()
+  def fetch_public_activities_for_actor(%Actor{} = actor, page \\ 10, limit \\ 1) do
+    {:ok, events, total} = Events.get_events_for_actor(actor, page, limit)
     activities = Enum.map(events, fn event ->
       {:ok, activity} = event_to_activity(event)
       activity
@@ -265,7 +282,7 @@ defmodule Eventos.Service.ActivityPub do
     activity = %Activity{
       data: event,
       local: true,
-      actor: event.organizer_account.url,
+      actor: event.organizer_actor.url,
       recipients: ["https://www.w3.org/ns/activitystreams#Public"]
     }
 

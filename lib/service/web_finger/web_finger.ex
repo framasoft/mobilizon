@@ -1,6 +1,6 @@
 defmodule Eventos.Service.WebFinger do
 
-  alias Eventos.Accounts
+  alias Eventos.Actors
   alias Eventos.Service.XmlBuilder
   alias Eventos.Repo
   require Jason
@@ -26,14 +26,14 @@ defmodule Eventos.Service.WebFinger do
 
   def webfinger(resource, "JSON") do
     host = EventosWeb.Endpoint.host()
-    regex = ~r/(acct:)?(?<username>\w+)@#{host}/
+    regex = ~r/(acct:)?(?<name>\w+)@#{host}/
 
-    with %{"username" => username} <- Regex.named_captures(regex, resource) do
-      user = Accounts.get_account_by_username(username)
+    with %{"name" => name} <- Regex.named_captures(regex, resource) do
+      user = Actors.get_local_actor_by_name(name)
       {:ok, represent_user(user, "JSON")}
     else
       _e ->
-        with user when not is_nil(user) <- Accounts.get_account_by_url(resource) do
+        with user when not is_nil(user) <- Actors.get_actor_by_url(resource) do
           {:ok, represent_user(user, "JSON")}
         else
           _e ->
@@ -44,7 +44,7 @@ defmodule Eventos.Service.WebFinger do
 
   def represent_user(user, "JSON") do
     %{
-      "subject" => "acct:#{user.username}@#{EventosWeb.Endpoint.host() <> ":4001"}",
+      "subject" => "acct:#{user.preferred_username}@#{EventosWeb.Endpoint.host() <> ":4001"}",
       "aliases" => [user.url],
       "links" => [
         %{"rel" => "self", "type" => "application/activity+json", "href" => user.url},
@@ -67,18 +67,18 @@ defmodule Eventos.Service.WebFinger do
     {:ok, data}
   end
 
-  def finger(account) do
-    account = String.trim_leading(account, "@")
+  def finger(actor) do
+    actor = String.trim_leading(actor, "@")
 
     domain =
-      with [_name, domain] <- String.split(account, "@") do
+      with [_name, domain] <- String.split(actor, "@") do
         domain
       else
         _e ->
-          URI.parse(account).host
+          URI.parse(actor).host
       end
 
-      address = "http://#{domain}/.well-known/webfinger?resource=acct:#{account}"
+      address = "http://#{domain}/.well-known/webfinger?resource=acct:#{actor}"
 
     with response <- HTTPoison.get(address, [Accept: "application/json"],follow_redirect: true),
          {:ok, %{status_code: status_code, body: body}} when status_code in 200..299 <- response do
@@ -86,7 +86,7 @@ defmodule Eventos.Service.WebFinger do
           webfinger_from_json(doc)
     else
       e ->
-        Logger.debug(fn -> "Couldn't finger #{account}" end)
+        Logger.debug(fn -> "Couldn't finger #{actor}" end)
         Logger.debug(fn -> inspect(e) end)
         {:error, e}
     end

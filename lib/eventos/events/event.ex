@@ -34,8 +34,7 @@ defmodule Eventos.Events.Event do
   import Ecto.Changeset
   alias Eventos.Events.{Event, Participant, Request, Tag, Category, Session, Track}
   alias Eventos.Events.Event.TitleSlug
-  alias Eventos.Accounts.Account
-  alias Eventos.Groups.Group
+  alias Eventos.Actors.Actor
   alias Eventos.Addresses.Address
 
   schema "events" do
@@ -52,11 +51,10 @@ defmodule Eventos.Events.Event do
     field :thumbnail, :string
     field :large_image, :string
     field :publish_at, Timex.Ecto.DateTimeWithTimezone
-    belongs_to :organizer_account, Account, [foreign_key: :organizer_account_id]
-    belongs_to :organizer_group, Group, [foreign_key: :organizer_group_id]
+    belongs_to :organizer_actor, Actor, [foreign_key: :organizer_actor_id]
     many_to_many :tags, Tag, join_through: "events_tags"
     belongs_to :category, Category
-    many_to_many :participants, Account, join_through: Participant
+    many_to_many :participants, Actor, join_through: Participant
     has_many :event_request, Request
     has_many :tracks, Track
     has_many :sessions, Session
@@ -68,10 +66,10 @@ defmodule Eventos.Events.Event do
   @doc false
   def changeset(%Event{} = event, attrs) do
     event
-    |> cast(attrs, [:title, :description, :url, :begins_on, :ends_on, :organizer_account_id, :organizer_group_id, :category_id, :state, :status, :public, :thumbnail, :large_image, :publish_at])
+    |> cast(attrs, [:title, :description, :url, :begins_on, :ends_on, :organizer_actor_id, :category_id, :state, :status, :public, :thumbnail, :large_image, :publish_at])
     |> cast_assoc(:tags)
     |> cast_assoc(:address)
-    |> validate_required([:title, :description, :begins_on, :ends_on, :organizer_account_id, :category_id])
+    |> validate_required([:title, :description, :begins_on, :ends_on, :organizer_actor_id, :category_id])
     |> TitleSlug.maybe_generate_slug()
     |> TitleSlug.unique_constraint()
   end

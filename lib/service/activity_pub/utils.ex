@@ -1,7 +1,7 @@
 defmodule Eventos.Service.ActivityPub.Utils do
   alias Eventos.Repo
-  alias Eventos.Accounts
-  alias Eventos.Accounts.Account
+  alias Eventos.Actors
+  alias Eventos.Actors.Actor
   alias Eventos.Events.Event
   alias Eventos.Events
   alias Eventos.Activity
@@ -126,8 +126,11 @@ defmodule Eventos.Service.ActivityPub.Utils do
   """
   def insert_full_object(%{"object" => %{"type" => type} = object_data})
       when is_map(object_data) and type == "Note" do
-    account = Accounts.get_account_by_url(object_data["actor"])
-    data = %{"text" => object_data["content"], "url" => object_data["url"], "account_id" => account.id, "in_reply_to_comment_id" => object_data["inReplyTo"]}
+    import Logger
+    Logger.debug("insert full object")
+    Logger.debug(inspect object_data)
+    actor = Actors.get_actor_by_url(object_data["actor"])
+    data = %{"text" => object_data["content"], "url" => object_data["id"], "actor_id" => actor.id, "in_reply_to_comment_id" => object_data["inReplyTo"]}
     with {:ok, _} <- Events.create_comment(data) do
       :ok
     end
@@ -173,7 +176,7 @@ defmodule Eventos.Service.ActivityPub.Utils do
 #    Repo.one(query)
 #  end
 
-  def make_like_data(%Account{url: url} = actor, %{data: %{"id" => id}} = object, activity_id) do
+  def make_like_data(%Actor{url: url} = actor, %{data: %{"id" => id}} = object, activity_id) do
     data = %{
       "type" => "Like",
       "actor" => url,
@@ -218,7 +221,7 @@ defmodule Eventos.Service.ActivityPub.Utils do
   @doc """
   Makes a follow activity data for the given follower and followed
   """
-  def make_follow_data(%Account{url: follower_id}, %Account{url: followed_id}, activity_id) do
+  def make_follow_data(%Actor{url: follower_id}, %Actor{url: followed_id}, activity_id) do
     data = %{
       "type" => "Follow",
       "actor" => follower_id,
@@ -230,7 +233,7 @@ defmodule Eventos.Service.ActivityPub.Utils do
     if activity_id, do: Map.put(data, "id", activity_id), else: data
   end
 
-#  def fetch_latest_follow(%Account{url: follower_id}, %Account{url: followed_id}) do
+#  def fetch_latest_follow(%Actor{url: follower_id}, %Actor{url: followed_id}) do
 #    query =
 #      from(
 #        activity in Activity,
@@ -253,7 +256,7 @@ defmodule Eventos.Service.ActivityPub.Utils do
   Make announce activity data for the given actor and object
   """
   def make_announce_data(
-        %Account{url: url} = user,
+        %Actor{url: url} = user,
         %Event{id: id} = object,
         activity_id
       ) do

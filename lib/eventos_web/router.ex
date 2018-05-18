@@ -9,7 +9,7 @@ defmodule EventosWeb.Router do
   end
 
   pipeline :well_known do
-    plug :accepts, ["json/application"]
+    plug :accepts, ["json/application", "jrd-json"]
   end
 
   pipeline :activity_pub do
@@ -37,13 +37,13 @@ defmodule EventosWeb.Router do
 
       post "/users", UserController, :register
       post "/login", UserSessionController, :sign_in
-      resources "/groups", GroupController, only: [:index, :show]
+      #resources "/groups", GroupController, only: [:index, :show]
       resources "/events", EventController, only: [:index, :show]
       resources "/comments", CommentController, only: [:show]
       get "/events/:id/ics", EventController, :export_to_ics
       get "/events/:id/tracks", TrackController, :show_tracks_for_event
       get "/events/:id/sessions", SessionController, :show_sessions_for_event
-      resources "/accounts", AccountController, only: [:index, :show]
+      resources "/actors", ActorController, only: [:index, :show]
       resources "/tags", TagController, only: [:index, :show]
       resources "/categories", CategoryController, only: [:index, :show]
       resources "/sessions", SessionController, only: [:index, :show]
@@ -58,19 +58,19 @@ defmodule EventosWeb.Router do
 
      scope "/v1" do
 
-       get "/user", UserController, :show_current_account
+       get "/user", UserController, :show_current_actor
        post "/sign-out", UserSessionController, :sign_out
        resources "/users", UserController, except: [:new, :edit, :show]
-       resources "/accounts", AccountController, except: [:new, :edit]
+       resources "/actors", ActorController, except: [:new, :edit]
        resources "/events", EventController
        resources "/comments", CommentController, except: [:new, :edit]
-       post "/events/:id/request", EventRequestController, :create_for_event
+       #post "/events/:id/request", EventRequestController, :create_for_event
        resources "/participant", ParticipantController
-       resources "/requests", EventRequestController
-       resources "/groups", GroupController, except: [:index, :show]
-       post "/groups/:id/request", GroupRequestController, :create_for_group
+       #resources "/requests", EventRequestController
+       #resources "/groups", GroupController, except: [:index, :show]
+       #post "/groups/:id/request", GroupRequestController, :create_for_group
        resources "/members", MemberController
-       resources "/requests", GroupRequestController
+       #resources "/requests", GroupRequestController
        resources "/sessions", SessionController, except: [:index, :show]
        resources "/tracks", TrackController, except: [:index, :show]
        get "/tracks/:id/sessions", SessionController, :show_sessions_for_track
@@ -95,10 +95,12 @@ defmodule EventosWeb.Router do
   scope "/", EventosWeb do
     pipe_through :activity_pub
 
-    get "/@:username", ActivityPubController, :account
-    get "/@:username/outbox", ActivityPubController, :outbox
-    get "/@:username/:slug", ActivityPubController, :event
-    post "/@:username/inbox", ActivityPubController, :inbox
+    get "/@:name", ActivityPubController, :actor
+    get "/@:name/outbox", ActivityPubController, :outbox
+    get "/@:name/following", ActivityPubController, :following
+    get "/@:name/followers", ActivityPubController, :followers
+    get "/@:name/:slug", ActivityPubController, :event
+    post "/@:name/inbox", ActivityPubController, :inbox
     post "/inbox", ActivityPubController, :inbox
   end
 

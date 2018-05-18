@@ -1,0 +1,167 @@
+defmodule Eventos.Actors.Actor.TitleSlug do
+  @moduledoc """
+  Slug generation for groups
+  """
+  alias Eventos.Actors.Actor
+  import Ecto.Query
+  alias Eventos.Repo
+  use EctoAutoslugField.Slug, from: :title, to: :slug
+
+  def build_slug(sources, changeset) do
+    slug = super(sources, changeset)
+    build_unique_slug(slug, changeset)
+  end
+
+  defp build_unique_slug(slug, changeset) do
+    query = from a in Actor,
+                 where: a.slug == ^slug
+
+    case Repo.one(query) do
+      nil -> slug
+      _story ->
+        slug
+        |> Eventos.Slug.increment_slug()
+        |> build_unique_slug(changeset)
+    end
+  end
+end
+
+import EctoEnum
+defenum Eventos.Actors.ActorTypeEnum, :actor_type, [:Person, :Application, :Group, :Organization, :Service]
+
+
+defmodule Eventos.Actors.Actor do
+  @moduledoc """
+  Represents an actor (local and remote actors)
+  """
+  use Ecto.Schema
+  import Ecto.Changeset
+  alias Eventos.Actors
+  alias Eventos.Actors.{Actor, User, Follower, Member}
+  alias Eventos.Events.Event
+  alias Eventos.Service.ActivityPub
+
+  import Ecto.Query
+  alias Eventos.Repo
+
+  import Logger
+
+#  @type t :: %Actor{description: String.t, id: integer(), inserted_at: DateTime.t, updated_at: DateTime.t, display_name: String.t, domain: String.t, private_key: String.t, public_key: String.t, suspended: boolean(), url: String.t, username: String.t, organized_events: list(), groups: list(), group_request: list(), user: User.t, field: ActorTypeEnum.t}
+
+  schema "actors" do
+    field :url, :string
+    field :outbox_url, :string
+    field :inbox_url, :string
+    field :following_url, :string
+    field :followers_url, :string
+    field :shared_inbox_url, :string
+    field :type, Eventos.Actors.ActorTypeEnum
+    field :name, :string
+    field :domain, :string
+    field :summary, :string
+    field :preferred_username, :string
+    field :public_key, :string
+    field :private_key, :string
+    field :manually_approves_followers, :boolean
+    field :suspended, :boolean, default: false
+    many_to_many :followers, Actor, join_through: Follower
+    has_many :organized_events, Event, [foreign_key: :organizer_actor_id]
+    many_to_many :memberships, Actor, join_through: Member
+    has_one :user, User
+
+    timestamps()
+  end
+
+  @doc false
+  def changeset(%Actor{} = actor, attrs) do
+    actor
+    |> Ecto.Changeset.cast(attrs, [:url, :outbox_url, :inbox_url, :following_url, :followers_url, :type, :name, :domain, :summary, :preferred_username, :public_key, :private_key, :manually_approves_followers, :suspended])
+    |> validate_required([:preferred_username, :public_key, :suspended, :url])
+    |> unique_constraint(:name, name: :actors_username_domain_index)
+  end
+
+  def registration_changeset(%Actor{} = actor, attrs) do
+    actor
+    |> Ecto.Changeset.cast(attrs, [:name, :domain, :display_name, :description, :private_key, :public_key, :suspended, :url])
+    |> validate_required([:preferred_username, :public_key, :suspended, :url])
+    |> unique_constraint(:name)
+  end
+
+  @email_regex ~r/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+  def remote_actor_creation(params) do
+    changes =
+      %Actor{}
+      |> Ecto.Changeset.cast(params, [:url, :outbox_url, :inbox_url, :following_url, :followers_url, :type, :name, :domain, :summary, :preferred_username, :public_key, :manually_approves_followers])
+      |> validate_required([:url, :outbox_url, :inbox_url, :following_url, :followers_url, :type, :name, :domain, :summary, :preferred_username, :public_key, :manually_approves_followers])
+      |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_index)
+      |> validate_length(:summary, max: 5000)
+      |> validate_length(:preferred_username, max: 100)
+      |> put_change(:local, false)
+
+    Logger.debug("Remote actor creation")
+    Logger.debug(inspect changes)
+    changes
+    #    if changes.valid? do
+    #      case changes.changes[:info]["source_data"] do
+    #        %{"followers" => followers} ->
+    #          changes
+    #          |> put_change(:follower_address, followers)
+    #
+    #        _ ->
+    #          followers = User.ap_followers(%User{nickname: changes.changes[:nickname]})
+    #
+    #          changes
+    #          |> put_change(:follower_address, followers)
+    #      end
+    #    else
+    #      changes
+    #    end
+  end
+
+  def get_or_fetch_by_url(url) do
+    if user = Actors.get_actor_by_url(url) do
+      user
+    else
+      case ActivityPub.make_actor_from_url(url) do
+        {:ok, user} ->
+          user
+        _ -> {:error, "Could not fetch by AP id"}
+      end
+    end
+  end
+
+  #@spec get_public_key_for_url(Actor.t) :: {:ok, String.t}
+  def get_public_key_for_url(url) do
+    with %Actor{} = actor <- get_or_fetch_by_url(url) do
+      get_public_key_for_actor(actor)
+    else
+      _ -> :error
+    end
+  end
+
+  #@spec get_public_key_for_actor(Actor.t) :: {:ok, String.t}
+  def get_public_key_for_actor(%Actor{} = actor) do
+    {:ok, actor.public_key}
+  end
+
+  #@spec get_private_key_for_actor(Actor.t) :: {:ok, String.t}
+  def get_private_key_for_actor(%Actor{} = actor) do
+    actor.private_key
+  end
+
+  def get_followers(%Actor{id: actor_id} = actor) do
+    Repo.all(
+      from a in Actor,
+      join: f in Follower, on: a.id == f.actor_id,
+      where: f.target_actor_id == ^actor_id
+    )
+  end
+
+  def get_followings(%Actor{id: actor_id} = actor) do
+    Repo.all(
+      from a in Actor,
+      join: f in Follower, on: a.id == f.target_actor_id,
+      where: f.actor_id == ^actor_id
+    )
+  end
+end

@@ -1,17 +1,17 @@
-defmodule Eventos.Accounts.User do
+defmodule Eventos.Actors.User do
   @moduledoc """
   Represents a local user
   """
   use Ecto.Schema
   import Ecto.Changeset
-  alias Eventos.Accounts.{Account, User}
+  alias Eventos.Actors.{Actor, User}
 
   schema "users" do
     field :email, :string
     field :password_hash, :string
     field :password, :string, virtual: true
     field :role, :integer, default: 0
-    belongs_to :account, Account
+    belongs_to :actor, Actor
 
     timestamps()
   end
@@ -19,7 +19,7 @@ defmodule Eventos.Accounts.User do
   @doc false
   def changeset(%User{} = user, attrs) do
     user
-    |> cast(attrs, [:email, :role, :password_hash, :account_id])
+    |> cast(attrs, [:email, :role, :password_hash, :actor_id])
     |> validate_required([:email])
     |> unique_constraint(:email)
     |> validate_format(:email, ~r/@/)

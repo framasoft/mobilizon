@@ -1,7 +1,7 @@
 defmodule EventosWeb.ActivityPubController do
   use EventosWeb, :controller
-  alias Eventos.{Accounts, Accounts.Account, Events, Events.Event}
-  alias EventosWeb.ActivityPub.{ObjectView, AccountView}
+  alias Eventos.{Actors, Actors.Actor, Events, Events.Event}
+  alias EventosWeb.ActivityPub.{ObjectView, ActorView}
   alias Eventos.Service.ActivityPub
   alias Eventos.Service.Federator
 
@@ -9,72 +9,69 @@ defmodule EventosWeb.ActivityPubController do
 
   action_fallback(:errors)
 
-  def account(conn, %{"username" => username}) do
-    with %Account{} = account <- Accounts.get_account_by_username(username) do
+  def actor(conn, %{"name" => name}) do
+    with %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
-      |> json(AccountView.render("account.json", %{account: account}))
+      |> json(ActorView.render("actor.json", %{actor: actor}))
     end
   end
 
-  def event(conn, %{"username" => username, "slug" => slug}) do
-    with %Event{} = event <- Events.get_event_full_by_username_and_slug!(username, slug) do
+  def event(conn, %{"name" => name, "slug" => slug}) do
+    with %Event{} = event <- Events.get_event_full_by_name_and_slug!(name, slug) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ObjectView.render("event.json", %{event: event}))
     end
   end
 
-#  def following(conn, %{"username" => username, "page" => page}) do
-#    with %Account{} = account <- Accounts.get_account_by_username(username) do
-#      {page, _} = Integer.parse(page)
-#
-#      conn
-#      |> put_resp_header("content-type", "application/activity+json")
-#      |> json(UserView.render("following.json", %{account: account, page: page}))
-#    end
-#  end
-#
-#  def following(conn, %{"nickname" => nickname}) do
-#    with %User{} = user <- User.get_cached_by_nickname(nickname),
-#         {:ok, user} <- Pleroma.Web.WebFinger.ensure_keys_present(user) do
-#      conn
-#      |> put_resp_header("content-type", "application/activity+json")
-#      |> json(UserView.render("following.json", %{user: user}))
-#    end
-#  end
-#
-#  def followers(conn, %{"nickname" => nickname, "page" => page}) do
-#    with %User{} = user <- User.get_cached_by_nickname(nickname),
-#         {:ok, user} <- Pleroma.Web.WebFinger.ensure_keys_present(user) do
-#      {page, _} = Integer.parse(page)
-#
-#      conn
-#      |> put_resp_header("content-type", "application/activity+json")
-#      |> json(UserView.render("followers.json", %{user: user, page: page}))
-#    end
-#  end
-#
-#  def followers(conn, %{"nickname" => nickname}) do
-#    with %User{} = user <- User.get_cached_by_nickname(nickname),
-#         {:ok, user} <- Pleroma.Web.WebFinger.ensure_keys_present(user) do
-#      conn
-#      |> put_resp_header("content-type", "application/activity+json")
-#      |> json(UserView.render("followers.json", %{user: user}))
-#    end
-#  end
+  def following(conn, %{"name" => name, "page" => page}) do
+    with %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
+      {page, _} = Integer.parse(page)
 
-  def outbox(conn, %{"username" => username, "page" => page}) do
-    with {page, ""} = Integer.parse(page),
-         %Account{} = account <- Accounts.get_account_by_username(username) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
-      |> json(AccountView.render("outbox.json", %{account: account, page: page}))
+      |> json(ActorView.render("following.json", %{actor: actor, page: page}))
     end
   end
 
-  def outbox(conn, %{"username" => username}) do
-    outbox(conn, %{"username" => username, "page" => "0"})
+  def following(conn, %{"name" => name}) do
+    with %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
+      conn
+      |> put_resp_header("content-type", "application/activity+json")
+      |> json(ActorView.render("following.json", %{actor: actor}))
+    end
+  end
+
+  def followers(conn, %{"name" => name, "page" => page}) do
+    with %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
+      {page, _} = Integer.parse(page)
+
+      conn
+      |> put_resp_header("content-type", "application/activity+json")
+      |> json(ActorView.render("followers.json", %{actor: actor, page: page}))
+    end
+  end
+
+  def followers(conn, %{"name" => name}) do
+    with %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
+      conn
+      |> put_resp_header("content-type", "application/activity+json")
+      |> json(ActorView.render("followers.json", %{actor: actor}))
+    end
+  end
+
+  def outbox(conn, %{"name" => name, "page" => page}) do
+    with {page, ""} = Integer.parse(page),
+         %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
+      conn
+      |> put_resp_header("content-type", "application/activity+json")
+      |> json(ActorView.render("outbox.json", %{actor: actor, page: page}))
+    end
+  end
+
+  def outbox(conn, %{"name" => username}) do
+    outbox(conn, %{"name" => username, "page" => "0"})
   end
 
   # TODO: Ensure that this inbox is a recipient of the message

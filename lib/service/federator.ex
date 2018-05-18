@@ -1,6 +1,6 @@
 defmodule Eventos.Service.Federator do
   use GenServer
-  alias Eventos.Accounts
+  alias Eventos.Actors
   alias Eventos.Activity
   alias Eventos.Service.ActivityPub
   alias Eventos.Service.ActivityPub.Transmogrifier
@@ -33,7 +33,7 @@ defmodule Eventos.Service.Federator do
     Logger.debug(inspect activity)
     Logger.debug(fn -> "Running publish for #{activity.data["id"]}" end)
 
-    with actor when not is_nil(actor) <- Accounts.get_account_by_url(activity.data["actor"]) do
+    with actor when not is_nil(actor) <- Actors.get_actor_by_url(activity.data["actor"]) do
 
       Logger.info(fn -> "Sending #{activity.data["id"]} out via AP" end)
       ActivityPub.publish(actor, activity)

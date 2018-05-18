@@ -3,14 +3,14 @@ defmodule EventosWeb.UserSessionController do
   Controller for user sessions
   """
   use EventosWeb, :controller
-  alias Eventos.Accounts.User
-  alias Eventos.Accounts
+  alias Eventos.Actors.User
+  alias Eventos.Actors
 
   def sign_in(conn, %{"email" => email, "password" => password}) do
-    case Accounts.find_by_email(email) do
+    case Actors.find_by_email(email) do
       %User{} = user ->
         # Attempt to authenticate the user
-        case Accounts.authenticate(%{user: user, password: password}) do
+        case Actors.authenticate(%{user: user, password: password}) do
           {:ok, token, _claims} ->
             # Render the token
             render conn, "token.json", %{token: token, user: user}

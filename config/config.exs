@@ -15,7 +15,8 @@ config :eventos, :instance,
   registrations_open: true
 
 config :mime, :types, %{
-  "application/activity+json" => ["activity-json"]
+  "application/activity+json" => ["activity-json"],
+  "application/jrd+json" => ["jrd-json"]
 }
 
 # Configures the endpoint

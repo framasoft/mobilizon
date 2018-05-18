@@ -4,7 +4,7 @@ defmodule EventosWeb.UserView do
   """
   use EventosWeb, :view
   alias EventosWeb.UserView
-  alias EventosWeb.AccountView
+  alias EventosWeb.ActorView
 
   def render("index.json", %{users: users}) do
     %{data: render_many(users, UserView, "user_simple.json")}
@@ -28,14 +28,14 @@ defmodule EventosWeb.UserView do
   def render("user_simple.json", %{user: user}) do
     %{id: user.id,
       role: user.role,
-      account: render_one(user.account, AccountView, "acccount_basic.json")
+      actor: render_one(user.actor, ActorView, "acccount_basic.json")
     }
   end
 
   def render("user.json", %{user: user}) do
     %{id: user.id,
       role: user.role,
-      account: render_one(user.account, AccountView, "account.json")
+      actor: render_one(user.actor, ActorView, "actor.json")
     }
   end
 

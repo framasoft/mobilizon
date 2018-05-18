@@ -8,7 +8,7 @@ defmodule Eventos.Events do
 
   alias Eventos.Events.Event
   alias Eventos.Events.Comment
-  alias Eventos.Accounts.Account
+  alias Eventos.Actors.Actor
 
   @doc """
   Returns the list of events.
@@ -23,15 +23,15 @@ defmodule Eventos.Events do
     Repo.all(Event)
   end
 
-  def get_events_for_account(%Account{id: account_id} = _account, page \\ 1, limit \\ 10) do
+  def get_events_for_actor(%Actor{id: actor_id} = _actor, page \\ 1, limit \\ 10) do
     start = (page - 1) * limit
 
     query = from e in Event,
-                 where: e.organizer_account_id == ^account_id,
+                 where: e.organizer_actor_id == ^actor_id,
                  limit: ^limit,
                  order_by: [desc: :id],
                  offset: ^start,
-                 preload: [:organizer_account, :organizer_group, :category, :sessions, :tracks, :tags, :participants, :address]
+                 preload: [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address]
     events = Repo.all(query)
     count_events = Repo.one(from e in Event, select: count(e.id))
     {:ok, events, count_events}
@@ -81,7 +81,7 @@ defmodule Eventos.Events do
   """
   def get_event_full!(id) do
     event = Repo.get!(Event, id)
-    Repo.preload(event, [:organizer_account, :organizer_group, :category, :sessions, :tracks, :tags, :participants, :address])
+    Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address])
   end
 
   @doc """
@@ -89,18 +89,18 @@ defmodule Eventos.Events do
   """
   def get_event_full_by_url!(url) do
     event = Repo.get_by(Event, url: url)
-    Repo.preload(event, [:organizer_account, :organizer_group, :category, :sessions, :tracks, :tags, :participants, :address])
+    Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address])
   end
 
-  @spec get_event_full_by_username_and_slug!(String.t, String.t) :: Event.t
-  def get_event_full_by_username_and_slug!(username, slug) do
+  @spec get_event_full_by_name_and_slug!(String.t, String.t) :: Event.t
+  def get_event_full_by_name_and_slug!(name, slug) do
     event = Repo.one(
       from e in Event,
-      join: a in Account,
-      on: a.id == e.organizer_account_id and a.username == ^username,
+      join: a in Actor,
+      on: a.id == e.organizer_actor_id and a.name == ^name,
       where: e.slug == ^slug
     )
-    Repo.preload(event, [:organizer_account, :organizer_group, :category, :sessions, :tracks, :tags, :participants, :address])
+    Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address])
   end
 
   @doc """
@@ -389,8 +389,8 @@ defmodule Eventos.Events do
       ** (Ecto.NoResultsError)
 
   """
-  def get_participant!(event_id, account_id) do
-    Repo.get_by!(Participant, [event_id: event_id, account_id: account_id])
+  def get_participant!(event_id, actor_id) do
+    Repo.get_by!(Participant, [event_id: event_id, actor_id: actor_id])
   end
 
   @doc """
@@ -458,104 +458,8 @@ defmodule Eventos.Events do
     Participant.changeset(participant, %{})
   end
 
-  alias Eventos.Events.Request
-
-  @doc """
-  Returns the list of requests.
-
-  ## Examples
-
-      iex> list_requests()
-      [%Request{}, ...]
-
-  """
-  def list_requests do
-    Repo.all(Request)
-  end
-
-  def list_requests_for_account(%Account{} = account) do
-    Repo.all(from r in Request, where: r.account_id == ^account.id)
-  end
-
-  @doc """
-  Gets a single request.
-
-  Raises `Ecto.NoResultsError` if the Request does not exist.
-
-  ## Examples
-
-      iex> get_request!(123)
-      %Request{}
-
-      iex> get_request!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_request!(id), do: Repo.get!(Request, id)
-
-  @doc """
-  Creates a request.
-
-  ## Examples
-
-      iex> create_request(%{field: value})
-      {:ok, %Request{}}
-
-      iex> create_request(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_request(attrs \\ %{}) do
-    %Request{}
-    |> Request.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
-  Updates a request.
-
-  ## Examples
-
-      iex> update_request(request, %{field: new_value})
-      {:ok, %Request{}}
-
-      iex> update_request(request, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_request(%Request{} = request, attrs) do
-    request
-    |> Request.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a Request.
-
-  ## Examples
-
-      iex> delete_request(request)
-      {:ok, %Request{}}
-
-      iex> delete_request(request)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_request(%Request{} = request) do
-    Repo.delete(request)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking request changes.
-
-  ## Examples
-
-      iex> change_request(request)
-      %Ecto.Changeset{source: %Request{}}
-
-  """
-  def change_request(%Request{} = request) do
-    Request.changeset(request, %{})
+  def list_requests_for_actor(%Actor{} = actor) do
+    Repo.all(from p in Participant, where: p.actor_id == ^actor.id and p.approved == false)
   end
 
   alias Eventos.Events.Session

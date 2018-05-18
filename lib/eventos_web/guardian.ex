@@ -7,8 +7,8 @@ defmodule EventosWeb.Guardian do
     user: [:base]
   }
 
-  alias Eventos.Accounts
-  alias Eventos.Accounts.User
+  alias Eventos.Actors
+  alias Eventos.Actors.User
 
   def subject_for_token(%User{} = user, _claims) do
     {:ok, "User:" <> to_string(user.id)}
@@ -22,7 +22,7 @@ defmodule EventosWeb.Guardian do
     try do
       case Integer.parse(uid_str) do
         {uid, ""} ->
-          {:ok, Accounts.get_user_with_account!(uid)}
+          {:ok, Actors.get_user_with_actor!(uid)}
         _ ->
           {:error, :invalid_id}
       end

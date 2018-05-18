@@ -1,17 +1,18 @@
-defmodule Eventos.Groups.Member do
+defmodule Eventos.Actors.Member do
   @moduledoc """
-  Represents the membership of an account to a group
+  Represents the membership of an actor to a group
   """
   use Ecto.Schema
   import Ecto.Changeset
-  alias Eventos.Groups.{Member, Group}
-  alias Eventos.Accounts.Account
+  alias Eventos.Actors.Member
+  alias Eventos.Actors.Actor
 
 
   schema "members" do
+    field :approved, :boolean
     field :role, :integer
-    belongs_to :group, Group
-    belongs_to :account, Account
+    belongs_to :parent, Actor
+    belongs_to :actor, Actor
 
     timestamps()
   end

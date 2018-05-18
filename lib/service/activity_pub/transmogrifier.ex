@@ -2,8 +2,8 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
   @moduledoc """
   A module to handle coding from internal to wire ActivityPub and back.
   """
-  alias Eventos.Accounts.Account
-  alias Eventos.Accounts
+  alias Eventos.Actors.Actor
+  alias Eventos.Actors
   alias Eventos.Events.Event
   alias Eventos.Service.ActivityPub
 
@@ -101,13 +101,15 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
   # - tags
   # - emoji
   def handle_incoming(%{"type" => "Create", "object" => %{"type" => "Note"} = object} = data) do
-    with %Account{} = account <- Account.get_or_fetch_by_url(data["actor"]) do
+    Logger.debug("Handle incoming to create notes")
+    with %Actor{} = actor <- Actor.get_or_fetch_by_url(data["actor"]) do
+      Logger.debug("found actor")
       object = fix_object(data["object"])
 
       params = %{
         to: data["to"],
         object: object,
-        actor: account,
+        actor: actor,
         context: object["conversation"],
         local: false,
         published: data["published"],
@@ -122,15 +124,13 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
     end
   end
 
-  def handle_incoming(
-        %{"type" => "Follow", "object" => followed, "actor" => follower, "id" => id} = data
-      ) do
-    with %Account{} = followed <- Accounts.get_account_by_url(followed),
-         %Account{} = follower <- Accounts.get_or_fetch_by_url(follower),
+  def handle_incoming(%{"type" => "Follow", "object" => followed, "actor" => follower, "id" => id} = data) do
+    with %Actor{} = followed <- Actors.get_actor_by_url(followed),
+         %Actor{} = follower <- Actors.get_or_fetch_by_url(follower),
          {:ok, activity} <- ActivityPub.follow(follower, followed, id, false) do
       ActivityPub.accept(%{to: [follower.url], actor: followed.url, object: data, local: true})
 
-      #Accounts.follow(follower, followed)
+      #Actors.follow(follower, followed)
       {:ok, activity}
     else
       _e -> :error

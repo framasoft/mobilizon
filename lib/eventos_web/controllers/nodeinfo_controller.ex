@@ -2,7 +2,7 @@ defmodule EventosWeb.NodeinfoController do
   use EventosWeb, :controller
 
   alias EventosWeb
-  alias Eventos.{Accounts, Events}
+  alias Eventos.{Actors, Events}
 
   @instance Application.get_env(:eventos, :instance)
 
@@ -40,7 +40,7 @@ defmodule EventosWeb.NodeinfoController do
       usage: %{
         users: %{
           #total: stats.user_count || 0
-          total: Accounts.count_users()
+          total: Actors.count_users()
         },
         localPosts: Events.count_local_events(),
         localComments: Events.count_local_comments(),

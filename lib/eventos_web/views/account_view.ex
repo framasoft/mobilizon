@@ -1,48 +1,44 @@
-defmodule EventosWeb.AccountView do
+defmodule EventosWeb.ActorView do
   @moduledoc """
-  View for Accounts
+  View for Actors
   """
   use EventosWeb, :view
-  alias EventosWeb.{AccountView, EventView}
+  alias EventosWeb.{ActorView, EventView}
 
-  def render("index.json", %{accounts: accounts}) do
-    %{data: render_many(accounts, AccountView, "acccount_basic.json")}
+  def render("index.json", %{actors: actors}) do
+    %{data: render_many(actors, ActorView, "acccount_basic.json")}
   end
 
-  def render("show.json", %{account: account}) do
-    %{data: render_one(account, AccountView, "account.json")}
+  def render("show.json", %{actor: actor}) do
+    %{data: render_one(actor, ActorView, "actor.json")}
   end
 
-  def render("show_basic.json", %{account: account}) do
-    %{data: render_one(account, AccountView, "account_basic.json")}
+  def render("show_basic.json", %{actor: actor}) do
+    %{data: render_one(actor, ActorView, "actor_basic.json")}
   end
 
-  def render("acccount_basic.json", %{account: account}) do
-    %{id: account.id,
-      username: account.username,
-      domain: account.domain,
-      display_name: account.display_name,
-      description: account.description,
-      # public_key: account.public_key,
-      suspended: account.suspended,
-      url: account.url,
-      avatar_url: account.avatar_url,
-      banner_url: account.banner_url,
+  def render("acccount_basic.json", %{actor: actor}) do
+    %{id: actor.id,
+      username: actor.username,
+      domain: actor.domain,
+      display_name: actor.display_name,
+      description: actor.description,
+      # public_key: actor.public_key,
+      suspended: actor.suspended,
+      url: actor.url,
     }
   end
 
-  def render("account.json", %{account: account}) do
-    %{id: account.id,
-      username: account.username,
-      domain: account.domain,
-      display_name: account.display_name,
-      description: account.description,
-      # public_key: account.public_key,
-      suspended: account.suspended,
-      url: account.url,
-      avatar_url: account.avatar_url,
-      banner_url: account.banner_url,
-      organized_events: render_many(account.organized_events, EventView, "event_simple.json")
+  def render("actor.json", %{actor: actor}) do
+    %{id: actor.id,
+      username: actor.username,
+      domain: actor.domain,
+      display_name: actor.display_name,
+      description: actor.description,
+      # public_key: actor.public_key,
+      suspended: actor.suspended,
+      url: actor.url,
+      organized_events: render_many(actor.organized_events, EventView, "event_simple.json")
     }
   end
 end

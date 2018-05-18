@@ -3,7 +3,7 @@ defmodule EventosWeb.GroupView do
   View for Groups
   """
   use EventosWeb, :view
-  alias EventosWeb.{GroupView, AccountView}
+  alias EventosWeb.{GroupView, ActorView}
 
   def render("index.json", %{groups: groups}) do
     %{data: render_many(groups, GroupView, "group_simple.json")}
@@ -32,7 +32,7 @@ defmodule EventosWeb.GroupView do
       description: group.description,
       suspended: group.suspended,
       url: group.url,
-      members: render_many(group.members, AccountView, "acccount_basic.json"),
+      members: render_many(group.members, ActorView, "acccount_basic.json"),
       events: render_many(group.organized_events, EventView, "event_simple.json")
     }
   end

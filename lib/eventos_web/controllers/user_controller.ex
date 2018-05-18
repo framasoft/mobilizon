@@ -4,19 +4,19 @@ defmodule EventosWeb.UserController do
   """
   use EventosWeb, :controller
 
-  alias Eventos.Accounts
-  alias Eventos.Accounts.User
+  alias Eventos.Actors
+  alias Eventos.Actors.User
   alias Eventos.Repo
 
   action_fallback EventosWeb.FallbackController
 
   def index(conn, _params) do
-    users = Accounts.list_users_with_accounts()
+    users = Actors.list_users_with_actors()
     render(conn, "index.json", users: users)
   end
 
   def register(conn, %{"username" => username, "email" => email, "password" => password}) do
-    case Accounts.register(%{email: email, password: password, username: username}) do
+    case Actors.register(%{email: email, password: password, username: username}) do
       {:ok, %User{} = user} ->
         {:ok, token, _claims} = EventosWeb.Guardian.encode_and_sign(user)
         conn
@@ -29,10 +29,10 @@ defmodule EventosWeb.UserController do
     end
   end
 
-  def show_current_account(conn, _params) do
+  def show_current_actor(conn, _params) do
     user = Guardian.Plug.current_resource(conn)
     user
-    |> Repo.preload(:account)
+    |> Repo.preload(:actor)
     render(conn, "show_simple.json", user: user)
   end
 
@@ -56,16 +56,16 @@ defmodule EventosWeb.UserController do
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
-    user = Accounts.get_user!(id)
+    user = Actors.get_user!(id)
 
-    with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
+    with {:ok, %User{} = user} <- Actors.update_user(user, user_params) do
       render(conn, "show.json", user: user)
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
-    with {:ok, %User{}} <- Accounts.delete_user(user) do
+    user = Actors.get_user!(id)
+    with {:ok, %User{}} <- Actors.delete_user(user) do
       send_resp(conn, :no_content, "")
     end
   end
