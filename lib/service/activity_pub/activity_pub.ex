@@ -29,13 +29,27 @@ defmodule Eventos.Service.ActivityPub do
         }
 
       # Notification.create_notifications(activity)
-      #stream_out(activity)
+      # stream_out(activity)
       {:ok, activity}
     else
       %Activity{} = activity -> {:ok, activity}
       error -> {:error, error}
     end
   end
+
+#  def stream_out(%Activity{} = activity) do
+#    if activity.data["type"] in ["Create", "Announce"] do
+#      Pleroma.Web.Streamer.stream("user", activity)
+#
+#      if Enum.member?(activity.data["to"], "https://www.w3.org/ns/activitystreams#Public") do
+#        Pleroma.Web.Streamer.stream("public", activity)
+#
+#        if activity.local do
+#          Pleroma.Web.Streamer.stream("public:local", activity)
+#        end
+#      end
+#    end
+#  end
 
   def fetch_event_from_url(url) do
     if object = Events.get_event_by_url!(url) do

@@ -150,18 +150,18 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
 #    end
 #  end
 #
-#  def handle_incoming(
-#        %{"type" => "Announce", "object" => object_id, "actor" => actor, "id" => id} = data
-#      ) do
-#    with %User{} = actor <- User.get_or_fetch_by_ap_id(actor),
-#         {:ok, object} <-
-#           get_obj_helper(object_id) || ActivityPub.fetch_object_from_id(object_id),
-#         {:ok, activity, object} <- ActivityPub.announce(actor, object, id, false) do
-#      {:ok, activity}
-#    else
-#      _e -> :error
-#    end
-#  end
+  def handle_incoming(
+        %{"type" => "Announce", "object" => object_id, "actor" => actor, "id" => id} = data
+      ) do
+    with %Actor{} = actor <- Actors.get_or_fetch_by_url(actor),
+         {:ok, object} <-
+           get_obj_helper(object_id) || ActivityPub.fetch_event_from_url(object_id),
+         {:ok, activity, object} <- ActivityPub.announce(actor, object, id, false) do
+      {:ok, activity}
+    else
+      _e -> :error
+    end
+  end
 #
 #  def handle_incoming(
 #        %{"type" => "Update", "object" => %{"type" => "Person"} = object, "actor" => actor_id} =
@@ -219,35 +219,35 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
 #  # Accept
 #  # Undo
 #
-#  def handle_incoming(_), do: :error
-#
-#  def get_obj_helper(id) do
-#    if object = Object.get_by_ap_id(id), do: {:ok, object}, else: nil
-#  end
-#
-#  def set_reply_to_uri(%{"inReplyTo" => inReplyTo} = object) do
-#    with false <- String.starts_with?(inReplyTo, "http"),
-#         {:ok, %{data: replied_to_object}} <- get_obj_helper(inReplyTo) do
-#      Map.put(object, "inReplyTo", replied_to_object["external_url"] || inReplyTo)
-#    else
-#      _e -> object
-#    end
-#  end
-#
-#  def set_reply_to_uri(obj), do: obj
+  def handle_incoming(_), do: :error
+
+  def get_obj_helper(id) do
+    if object = Object.get_by_ap_id(id), do: {:ok, object}, else: nil
+  end
+
+  def set_reply_to_uri(%{"inReplyTo" => inReplyTo} = object) do
+    with false <- String.starts_with?(inReplyTo, "http"),
+         {:ok, %{data: replied_to_object}} <- get_obj_helper(inReplyTo) do
+      Map.put(object, "inReplyTo", replied_to_object["external_url"] || inReplyTo)
+    else
+      _e -> object
+    end
+  end
+
+  def set_reply_to_uri(obj), do: obj
 #
 #  # Prepares the object of an outgoing create activity.
-#  def prepare_object(object) do
-#    object
+  def prepare_object(object) do
+    object
 #    |> set_sensitive
 #    |> add_hashtags
 #    |> add_mention_tags
 #    |> add_emoji_tags
-#    |> add_attributed_to
+    |> add_attributed_to
 #    |> prepare_attachments
-#    |> set_conversation
-#    |> set_reply_to_uri
-#  end
+    |> set_conversation
+    |> set_reply_to_uri
+  end
 
   @doc
   """
@@ -257,7 +257,7 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
   def prepare_outgoing(%{"type" => "Create", "object" => %{"type" => "Note"} = object} = data) do
     object =
       object
-      #|> prepare_object
+      |> prepare_object
 
     data =
       data
@@ -282,6 +282,7 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
       |> Map.from_struct
       |> Map.drop([:"__meta__"])
       |> Map.put(:"@context", "https://www.w3.org/ns/activitystreams")
+      |> prepare_object
 
     {:ok, event}
   end
@@ -360,21 +361,21 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
 #    |> Map.put("tag", tags ++ out)
 #  end
 #
-#  def set_conversation(object) do
-#    Map.put(object, "conversation", object["context"])
-#  end
+  def set_conversation(object) do
+    Map.put(object, "conversation", object["context"])
+  end
 #
 #  def set_sensitive(object) do
 #    tags = object["tag"] || []
 #    Map.put(object, "sensitive", "nsfw" in tags)
 #  end
 #
-#  def add_attributed_to(object) do
-#    attributedTo = object["attributedTo"] || object["actor"]
-#
-#    object
-#    |> Map.put("attributedTo", attributedTo)
-#  end
+  def add_attributed_to(object) do
+    attributedTo = object["attributedTo"] || object["actor"]
+
+    object
+    |> Map.put("attributedTo", attributedTo)
+  end
 #
 #  def prepare_attachments(object) do
 #    attachments =
