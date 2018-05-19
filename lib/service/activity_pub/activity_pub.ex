@@ -241,6 +241,11 @@ defmodule Eventos.Service.ActivityPub do
           "type" => "Image",
           "url" => [%{"href" => data["image"]["url"]}]
         }
+    name = if String.trim(data["name"]) === "" do
+      data["preferredUsername"]
+    else
+      data["name"]
+    end
 
     user_data = %{
       url: data["id"],
@@ -250,7 +255,7 @@ defmodule Eventos.Service.ActivityPub do
         "banner" => banner
       },
       avatar: avatar,
-      name: data["name"],
+      name: name,
       preferred_username: data["preferredUsername"],
       follower_address: data["followers"],
       summary: data["summary"],
@@ -269,7 +274,7 @@ defmodule Eventos.Service.ActivityPub do
   end
 
   @spec fetch_public_activities_for_actor(Actor.t, integer(), integer()) :: list()
-  def fetch_public_activities_for_actor(%Actor{} = actor, page \\ 10, limit \\ 1) do
+  def fetch_public_activities_for_actor(%Actor{} = actor, page \\ 10, limit \\ 10) do
     {:ok, events, total} = Events.get_events_for_actor(actor, page, limit)
     activities = Enum.map(events, fn event ->
       {:ok, activity} = event_to_activity(event)

@@ -35,28 +35,27 @@ defmodule EventosWeb.EventController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    event = Events.get_event_full!(id)
+  def show(conn, %{"username" => username, "slug" => slug}) do
+    event = Events.get_event_full_by_name_and_slug!(username, slug)
     render(conn, "show.json", event: event)
   end
 
-  def export_to_ics(conn, %{"id" => id}) do
-    event = id
-      |> Events.get_event!()
+  def export_to_ics(conn, %{"username" => username, "slug" => slug}) do
+    event = Events.get_event_full_by_name_and_slug!(username, slug)
       |> ICalendar.export_event()
     send_resp(conn, 200, event)
   end
 
-  def update(conn, %{"id" => id, "event" => event_params}) do
-    event = Events.get_event!(id)
+  def update(conn, %{"username" => username, "slug" => slug, "event" => event_params}) do
+    event = Events.get_event_full_by_name_and_slug!(username, slug)
 
     with {:ok, %Event{} = event} <- Events.update_event(event, event_params) do
       render(conn, "show_simple.json", event: event)
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    event = Events.get_event!(id)
+  def delete(conn, %{"username" => username, "slug" => slug}) do
+    event = Events.get_event_full_by_name_and_slug!(username, slug)
     with {:ok, %Event{}} <- Events.delete_event(event) do
       send_resp(conn, :no_content, "")
     end

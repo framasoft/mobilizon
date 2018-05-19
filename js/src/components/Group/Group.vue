@@ -73,7 +73,7 @@
             <v-subheader>Membres</v-subheader>
             <v-layout row>
               <v-flex xs2 v-for="member in group.members" :key="member.id">
-                <router-link :to="{name: 'Account', params: {'id': member.account.id}}">
+                <router-link :to="{name: 'Account', params: {'id': member.actor.id}}">
                   <v-badge overlap>
                     <span slot="badge" v-if="member.role == 3"><v-icon>stars</v-icon></span>
                     <v-avatar size="75px">
@@ -88,7 +88,7 @@
                     </v-avatar>
                   </v-badge>
                 </router-link>
-                <span>{{ groupAccount.account.username }}</span>
+                <span>{{ groupAccount.actor.username }}</span>
               </v-flex>
             </v-layout>
           </v-container>

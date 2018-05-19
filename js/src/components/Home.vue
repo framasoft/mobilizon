@@ -50,7 +50,7 @@ export default {
   },
   computed: {
     displayed_name: function() {
-      return this.$store.state.user.account.display_name === null ? this.$store.state.user.account.username : this.$store.state.user.account.display_name
+      return this.$store.state.user.actor.display_name === null ? this.$store.state.user.actor.username : this.$store.state.user.actor.display_name
     },
   },
   methods: {

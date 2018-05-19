@@ -38,12 +38,16 @@ defmodule EventosWeb.Router do
       post "/users", UserController, :register
       post "/login", UserSessionController, :sign_in
       #resources "/groups", GroupController, only: [:index, :show]
-      resources "/events", EventController, only: [:index, :show]
+      get "/events", EventController, :index
+      get "/events/:username/:slug", EventController, :show
+      get "/events/:username/:slug/ics", EventController, :export_to_ics
+      get "/events/:username/:slug/tracks", TrackController, :show_tracks_for_event
+      get "/events/:username/:slug/sessions", SessionController, :show_sessions_for_event
       resources "/comments", CommentController, only: [:show]
-      get "/events/:id/ics", EventController, :export_to_ics
-      get "/events/:id/tracks", TrackController, :show_tracks_for_event
-      get "/events/:id/sessions", SessionController, :show_sessions_for_event
-      resources "/actors", ActorController, only: [:index, :show]
+
+      get "/actors", ActorController, :index
+      get "/actors/search/:name", ActorController, :search
+      get "/actors/:name", ActorController, :show
       resources "/tags", TagController, only: [:index, :show]
       resources "/categories", CategoryController, only: [:index, :show]
       resources "/sessions", SessionController, only: [:index, :show]
@@ -61,8 +65,11 @@ defmodule EventosWeb.Router do
        get "/user", UserController, :show_current_actor
        post "/sign-out", UserSessionController, :sign_out
        resources "/users", UserController, except: [:new, :edit, :show]
-       resources "/actors", ActorController, except: [:new, :edit]
-       resources "/events", EventController
+       patch "/actors/:name", ActorController, :update
+       post "/events", EventController, :create
+       patch "/events/:username/:slug", EventController, :update
+       put "/events/:username/:slug", EventController, :update
+       delete "/events/:username/:slug", EventController, :delete
        resources "/comments", CommentController, except: [:new, :edit]
        #post "/events/:id/request", EventRequestController, :create_for_event
        resources "/participant", ParticipantController

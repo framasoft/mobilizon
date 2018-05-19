@@ -23,6 +23,7 @@
     "vuex-i18n": "^1.10.5"
   },
   "devDependencies": {
+    "dotenv-webpack": "^1.5.5",
     "@vue/cli-plugin-babel": "^3.0.0-beta.10",
     "@vue/cli-plugin-e2e-nightwatch": "^3.0.0-beta.10",
     "@vue/cli-plugin-eslint": "^3.0.0-beta.10",

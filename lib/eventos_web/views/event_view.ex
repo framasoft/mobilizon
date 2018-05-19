@@ -17,12 +17,23 @@ defmodule EventosWeb.EventView do
     %{data: render_one(event, EventView, "event.json")}
   end
 
+  def render("event_for_actor.json", %{event: event}) do
+    %{id: event.id,
+      title: event.title,
+      slug: event.slug
+    }
+  end
+
   def render("event_simple.json", %{event: event}) do
     %{id: event.id,
       title: event.title,
+      slug: event.slug,
       description: event.description,
       begins_on: event.begins_on,
       ends_on: event.ends_on,
+      organizer: %{
+        username: event.organizer_actor.preferred_username
+      },
     }
   end
 
@@ -33,7 +44,6 @@ defmodule EventosWeb.EventView do
       begins_on: event.begins_on,
       ends_on: event.ends_on,
       organizer: render_one(event.organizer_actor, ActorView, "acccount_basic.json"),
-      group: render_one(event.organizer_group, GroupView, "group_basic.json"),
       participants: render_many(event.participants, ActorView, "show_basic.json"),
       address: render_one(event.address, AddressView, "address.json"),
     }

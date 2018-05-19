@@ -58,7 +58,7 @@
         </v-card-actions>
       </v-card>
     </v-menu>
-    <v-btn flat @click="$router.push({name: 'Account', params: {'id': getUser().account.id}})" v-if="$store.state.user">{{ this.displayed_name }}</v-btn>
+    <v-btn flat @click="$router.push({name: 'Account', params: {'id': getUser().actor.id}})" v-if="$store.state.user">{{ this.displayed_name }}</v-btn>
   </v-toolbar>
 </template>
 
@@ -97,7 +97,7 @@
     },
     computed: {
       displayed_name: function() {
-        return this.$store.state.user.account.display_name === null ? this.$store.state.user.account.username : this.$store.state.user.account.display_name
+        return this.$store.state.user.actor.display_name === null ? this.$store.state.user.actor.username : this.$store.state.user.actor.display_name
       },
     },
     methods: {

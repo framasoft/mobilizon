@@ -11,7 +11,7 @@
                 <v-icon>chevron_left</v-icon>
               </v-btn>
               <v-spacer></v-spacer>
-              <v-btn icon class="mr-3" v-if="event.organizer.id === $store.state.user.account.id" :to="{ name: 'EditEvent', params: {id: event.id}}">
+              <v-btn icon class="mr-3" v-if="event.organizer.id === $store.state.user.actor.id" :to="{ name: 'EditEvent', params: {id: event.id}}">
                 <v-icon>edit</v-icon>
               </v-btn>
               <v-menu bottom left>
@@ -22,7 +22,7 @@
                   <v-list-tile @click="downloadIcsEvent()">
                     <v-list-tile-title>Download</v-list-tile-title>
                   </v-list-tile>
-                  <v-list-tile @click="deleteEvent()" v-if="$store.state.user.account.id === event.organizer.id">
+                  <v-list-tile @click="deleteEvent()" v-if="$store.state.user.actor.id === event.organizer.id">
                     <v-list-tile-title>Delete</v-list-tile-title>
                   </v-list-tile>
                 </v-list>
@@ -54,8 +54,8 @@
                 </router-link>
                 Organisateur <span>{{ event.organizer.username }}</span>
               </v-flex>
-              <v-flex xs2 v-for="account in event.participants" :key="account.id">
-                <router-link :to="{name: 'Account', params: {'id': account.id}}">
+              <v-flex xs2 v-for="actor in event.participants" :key="actor.id">
+                <router-link :to="{name: 'Account', params: {'id': actor.id}}">
                   <v-avatar size="75px">
                     <img v-if="!account.avatar_url"
                          class="img-circle elevation-7 mb-1"
@@ -67,13 +67,13 @@
                     >
                   </v-avatar>
                 </router-link>
-                <span>{{ account.username }}</span>
+                <span>{{ actor.username }}</span>
               </v-flex>
             </v-layout>
           </v-container>
           <v-card-actions>
-            <button v-if="!event.participants.map(participant => participant.id).includes($store.state.user.account.id)" @click="joinEvent" class="btn btn-primary">Join</button>
-            <button v-if="event.participants.map(participant => participant.id).includes($store.state.user.account.id)" @click="leaveEvent" class="btn btn-primary">Leave</button>
+            <button v-if="!event.participants.map(participant => participant.id).includes($store.state.user.actor.id)" @click="joinEvent" class="btn btn-primary">Join</button>
+            <button v-if="event.participants.map(participant => participant.id).includes($store.state.user.actor.id)" @click="leaveEvent" class="btn btn-primary">Leave</button>
             <button @click="deleteEvent" class="btn btn-danger">Delete</button>
           </v-card-actions>
           </v-layout>
@@ -97,7 +97,8 @@
         loading: true,
         error: false,
         event: {
-          id: this.id,
+          name: this.name,
+          slug: this.slug,
           title: '',
           description: '',
           organizer: {
@@ -111,11 +112,11 @@
     methods: {
       deleteEvent() {
         const router = this.$router;
-        eventFetch(`/events/${this.id}`, this.$store, { method: 'DELETE' })
+        eventFetch(`/events/${this.name}/${this.slug}`, this.$store, { method: 'DELETE' })
           .then(() => router.push({'name': 'EventList'}));
       },
       fetchData() {
-        eventFetch(`/events/${this.id}`, this.$store)
+        eventFetch(`/events/${this.name}/${this.slug}`, this.$store)
           .then(response => response.json())
           .then((data) => {
             this.loading = false;
@@ -129,21 +130,21 @@
         });
       },
       joinEvent() {
-        eventFetch(`/events/${this.id}/join`, this.$store)
+        eventFetch(`/events/${this.name}/${this.slug}/join`, this.$store)
           .then(response => response.json())
           .then((data) => {
             console.log(data);
           });
       },
       leaveEvent() {
-        eventFetch(`/events/${this.id}/leave`, this.$store)
+        eventFetch(`/events/${this.name}/${this.slug}/leave`, this.$store)
           .then(response => response.json())
           .then((data) => {
             console.log(data);
           });
       },
       downloadIcsEvent() {
-        eventFetch('/events/' + this.event.id + '/ics', this.$store, {responseType: 'arraybuffer'})
+        eventFetch(`/events/${this.name}/${this.slug}/ics`, this.$store, {responseType: 'arraybuffer'})
           .then((response) => response.text())
           .then(response => {
             const blob = new Blob([response],{type: 'text/calendar'});
@@ -156,7 +157,16 @@
           })
       },
     },
-    props: ['id'],
+    props: {
+        name: {
+            type: String,
+            required: true,
+        },
+        slug: {
+            type: String,
+            required: true
+        },
+    },
     created() {
       this.fetchData();
     },

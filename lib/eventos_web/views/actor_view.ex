@@ -19,10 +19,10 @@ defmodule EventosWeb.ActorView do
 
   def render("acccount_basic.json", %{actor: actor}) do
     %{id: actor.id,
-      username: actor.username,
+      username: actor.preferred_username,
       domain: actor.domain,
-      display_name: actor.display_name,
-      description: actor.description,
+      display_name: actor.name,
+      description: actor.summary,
       # public_key: actor.public_key,
       suspended: actor.suspended,
       url: actor.url,
@@ -31,14 +31,14 @@ defmodule EventosWeb.ActorView do
 
   def render("actor.json", %{actor: actor}) do
     %{id: actor.id,
-      username: actor.username,
+      username: actor.preferred_username,
       domain: actor.domain,
-      display_name: actor.display_name,
-      description: actor.description,
+      display_name: actor.name,
+      description: actor.summary,
       # public_key: actor.public_key,
       suspended: actor.suspended,
       url: actor.url,
-      organized_events: render_many(actor.organized_events, EventView, "event_simple.json")
+      organized_events: render_many(actor.organized_events, EventView, "event_for_actor.json")
     }
   end
 end

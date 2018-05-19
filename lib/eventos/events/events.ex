@@ -20,7 +20,8 @@ defmodule Eventos.Events do
 
   """
   def list_events do
-    Repo.all(Event)
+    events = Repo.all(Event)
+    Repo.preload(events, [:organizer_actor])
   end
 
   def get_events_for_actor(%Actor{id: actor_id} = _actor, page \\ 1, limit \\ 10) do
@@ -94,12 +95,17 @@ defmodule Eventos.Events do
 
   @spec get_event_full_by_name_and_slug!(String.t, String.t) :: Event.t
   def get_event_full_by_name_and_slug!(name, slug) do
-    event = Repo.one(
-      from e in Event,
-      join: a in Actor,
-      on: a.id == e.organizer_actor_id and a.name == ^name,
-      where: e.slug == ^slug
-    )
+    query = case String.split(name, "@") do
+      [name, domain] -> from e in Event,
+                             join: a in Actor,
+                             on: a.id == e.organizer_actor_id and a.preferred_username == ^name and a.domain == ^domain,
+                             where: e.slug == ^slug
+      [name] -> from e in Event,
+                     join: a in Actor,
+                     on: a.id == e.organizer_actor_id and a.preferred_username == ^name and is_nil(a.domain),
+                     where: e.slug == ^slug
+    end
+    event = Repo.one(query)
     Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address])
   end
 

@@ -62,7 +62,7 @@ defmodule Eventos.Actors.Actor do
     field :preferred_username, :string
     field :public_key, :string
     field :private_key, :string
-    field :manually_approves_followers, :boolean
+    field :manually_approves_followers, :boolean, default: false
     field :suspended, :boolean, default: false
     many_to_many :followers, Actor, join_through: Follower
     has_many :organized_events, Event, [foreign_key: :organizer_actor_id]
@@ -92,7 +92,7 @@ defmodule Eventos.Actors.Actor do
     changes =
       %Actor{}
       |> Ecto.Changeset.cast(params, [:url, :outbox_url, :inbox_url, :following_url, :followers_url, :type, :name, :domain, :summary, :preferred_username, :public_key, :manually_approves_followers])
-      |> validate_required([:url, :outbox_url, :inbox_url, :following_url, :followers_url, :type, :name, :domain, :summary, :preferred_username, :public_key, :manually_approves_followers])
+      |> validate_required([:url, :outbox_url, :inbox_url, :type, :name, :domain, :summary, :preferred_username, :public_key])
       |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_index)
       |> validate_length(:summary, max: 5000)
       |> validate_length(:preferred_username, max: 100)
@@ -101,21 +101,6 @@ defmodule Eventos.Actors.Actor do
     Logger.debug("Remote actor creation")
     Logger.debug(inspect changes)
     changes
-    #    if changes.valid? do
-    #      case changes.changes[:info]["source_data"] do
-    #        %{"followers" => followers} ->
-    #          changes
-    #          |> put_change(:follower_address, followers)
-    #
-    #        _ ->
-    #          followers = User.ap_followers(%User{nickname: changes.changes[:nickname]})
-    #
-    #          changes
-    #          |> put_change(:follower_address, followers)
-    #      end
-    #    else
-    #      changes
-    #    end
   end
 
   def get_or_fetch_by_url(url) do

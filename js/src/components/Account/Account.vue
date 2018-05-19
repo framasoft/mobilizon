@@ -10,7 +10,7 @@
                 <v-icon>chevron_left</v-icon>
               </v-btn>
               <v-spacer></v-spacer>
-              <v-btn icon class="mr-3" v-if="$store.state.user && $store.state.user.account.id === account.id">
+              <v-btn icon class="mr-3" v-if="$store.state.user && $store.state.user.actor.id === actor.id">
                 <v-icon>edit</v-icon>
               </v-btn>
               <v-btn icon>
@@ -33,9 +33,9 @@
             <v-container fluid grid-list-lg>
               <v-layout row>
                 <v-flex xs7>
-                  <div class="headline">{{ account.display_name }}</div>
-                  <div><span class="subheading">@{{ account.username }}</span><span v-if="account.server">@{{ account.server.address }}</span></div>
-                  <v-card-text v-if="account.description" v-html="account.description"></v-card-text>
+                  <div class="headline">{{ actor.display_name }}</div>
+                  <div><span class="subheading">@{{ actor.username }}</span><span v-if="actor.server">@{{ actor.server.address }}</span></div>
+                  <v-card-text v-if="actor.description" v-html="actor.description"></v-card-text>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -74,10 +74,10 @@
             </v-list-tile-content>
           </v-list-tile>
         </v-list>
-        <v-container fluid grid-list-md v-if="account.participatingEvents && account.participatingEvents.length > 0">
+        <v-container fluid grid-list-md v-if="actor.participatingEvents && actor.participatingEvents.length > 0">
           <v-subheader>Participated at</v-subheader>
           <v-layout row wrap>
-            <v-flex v-for="event in account.participatingEvents" :key="event.id">
+            <v-flex v-for="event in actor.participatingEvents" :key="event.id">
               <v-card>
                 <v-card-media
                   class="black--text"
@@ -115,10 +115,10 @@
             </v-flex>
           </v-layout>
         </v-container>
-        <v-container fluid grid-list-md v-if="account.organizingEvents && account.organizingEvents.length > 0">
+        <v-container fluid grid-list-md v-if="actor.organizingEvents && actor.organizingEvents.length > 0">
           <v-subheader>Organized events</v-subheader>
           <v-layout row wrap>
-            <v-flex v-for="event in account.organizingEvents" :key="event.id">
+            <v-flex v-for="event in actor.organizingEvents" :key="event.id">
               <v-card>
                 <v-card-media
                   class="black--text"
@@ -169,11 +169,16 @@ export default {
   name: 'Account',
   data() {
     return {
-      account: null,
-      loading: true,
+        actor: null,
+        loading: true,
     }
   },
-  props: ['id'],
+  props: {
+      name: {
+          type: String,
+          required: true,
+      }
+  },
   mounted() {
     this.fetchData();
   },
@@ -183,12 +188,12 @@ export default {
   },
   methods: {
     fetchData() {
-      eventFetch(`/accounts/${this.id}`, this.$store)
+      eventFetch(`/actors/${this.name}`, this.$store)
         .then(response => response.json())
         .then((response) => {
-          this.account = response.data;
+          this.actor = response.data;
           this.loading = false;
-          console.log(this.account);
+          console.log(this.actor);
         })
     }
   }

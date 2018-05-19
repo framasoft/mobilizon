@@ -32,7 +32,7 @@ defmodule Eventos.Events.Event do
   """
   use Ecto.Schema
   import Ecto.Changeset
-  alias Eventos.Events.{Event, Participant, Request, Tag, Category, Session, Track}
+  alias Eventos.Events.{Event, Participant, Tag, Category, Session, Track}
   alias Eventos.Events.Event.TitleSlug
   alias Eventos.Actors.Actor
   alias Eventos.Addresses.Address
@@ -55,7 +55,6 @@ defmodule Eventos.Events.Event do
     many_to_many :tags, Tag, join_through: "events_tags"
     belongs_to :category, Category
     many_to_many :participants, Actor, join_through: Participant
-    has_many :event_request, Request
     has_many :tracks, Track
     has_many :sessions, Session
     belongs_to :address, Address

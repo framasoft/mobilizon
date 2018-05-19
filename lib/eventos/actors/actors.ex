@@ -150,10 +150,6 @@ defmodule Eventos.Actors do
   defp blank?(n), do: n
 
   def insert_or_update_actor(data) do
-    data =
-      data
-      |> Map.put(:name, blank?(data[:preferred_username]) || data[:name])
-
     cs = Actor.remote_actor_creation(data)
     Repo.insert(cs, on_conflict: [set: [public_key: data.public_key]], conflict_target: [:preferred_username, :domain])
   end
@@ -205,6 +201,19 @@ defmodule Eventos.Actors do
 
   def get_local_actor_by_name(name) do
     Repo.one from a in Actor, where: a.preferred_username == ^name and is_nil(a.domain)
+  end
+
+  def get_local_actor_by_name_with_everything(name) do
+    actor = Repo.one from a in Actor, where: a.preferred_username == ^name and is_nil(a.domain)
+    Repo.preload(actor, :organized_events)
+  end
+
+  def get_actor_by_name_with_everything(name) do
+    actor = case String.split(name, "@") do
+      [name] -> Repo.one from a in Actor, where: a.preferred_username == ^name and is_nil(a.domain)
+      [name, domain] -> Repo.one from a in Actor, where: a.preferred_username == ^name and a.domain == ^domain
+    end
+    Repo.preload(actor, :organized_events)
   end
 
   def get_or_fetch_by_url(url) do

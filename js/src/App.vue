@@ -61,7 +61,7 @@
       <v-icon>add</v-icon>
     </v-btn>
     <v-footer class="indigo" app>
-      <span class="white--text">© Thomas Citharel {{ new Date().getFullYear() }} - Made with <a href="https://api-platform.com/">API Platform</a> & <a href="https://vuejs.org/">VueJS</a> & <a href="https://www.vuetifyjs.com/">Vuetify</a> with some love and some weeks</span>
+      <span class="white--text">© Thomas Citharel {{ new Date().getFullYear() }} - Made with Elixir, Phoenix & <a href="https://vuejs.org/">VueJS</a> & <a href="https://www.vuetifyjs.com/">Vuetify</a> with some love and some weeks</span>
     </v-footer>
     <v-snackbar
       :timeout="error.timeout"

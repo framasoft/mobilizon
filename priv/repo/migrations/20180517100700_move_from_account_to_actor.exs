@@ -26,11 +26,11 @@ defmodule Eventos.Repo.Migrations.MoveFromAccountToActor do
     alter table("actors") do
       add :inbox_url, :string
       add :outbox_url, :string
-      add :following_url, :string
-      add :followers_url, :string
-      add :shared_inbox_url, :string
+      add :following_url, :string, null: true
+      add :followers_url, :string, null: true
+      add :shared_inbox_url, :string, null: false, default: ""
       add :type, :actor_type
-      add :manually_approves_followers, :boolean
+      add :manually_approves_followers, :boolean, default: false
       modify :name, :string, null: true
       modify :preferred_username, :string, null: false
     end
@@ -49,6 +49,8 @@ defmodule Eventos.Repo.Migrations.MoveFromAccountToActor do
     end
 
     rename table("comments"), :account_id, to: :actor_id
+
+    rename table("users"), :account_id, to: :actor_id
   end
 
   def down do
@@ -90,6 +92,8 @@ defmodule Eventos.Repo.Migrations.MoveFromAccountToActor do
     rename table("participants"), :actor_id, to: :account_id
 
     rename table("comments"), :actor_id, to: :account_id
+
+    rename table("users"), :actor_id, to: :account_id
 
     drop index("accounts", [:preferred_username, :domain], name: :actors_preferred_username_domain_index)
 

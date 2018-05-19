@@ -28,12 +28,12 @@
           <v-container>
               <!--<span class="grey&#45;&#45;text">{{ event.startDate | formatDate }} à <router-link :to="{name: 'EventList', params: {location: geocode(event.address.geo.latitude, event.address.geo.longitude, 10) }}">{{ event.address.addressLocality }}</router-link></span><br>-->
               <p><vue-markdown>{{ event.description }}</vue-markdown></p>
-              <p v-if="event.organizer">Organisé par <router-link :to="{name: 'Account', params: {'id': event.organizer.id}}">{{ event.organizer.username }}</router-link></p>
+              <p v-if="event.organizer">Organisé par <router-link :to="{name: 'Account', params: {'name': event.organizer.username}}">{{ event.organizer.username }}</router-link></p>
           </v-container>
           <v-card-actions>
             <v-btn flat color="orange" @click="downloadIcsEvent(event)">Share</v-btn>
-            <v-btn flat color="orange" @click="viewEvent(event.id)">Explore</v-btn>
-            <v-btn flat color="red" @click="deleteEvent(event.id)">Delete</v-btn>
+            <v-btn flat color="orange" @click="viewEvent(event)">Explore</v-btn>
+            <v-btn flat color="red" @click="deleteEvent(event)">Delete</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -98,16 +98,16 @@
             this.events = response.data;
           });
       },
-      deleteEvent(id) {
+      deleteEvent(event) {
         const router = this.$router;
-        eventFetch('/events/' + id, this.$store, {'method': 'DELETE'})
+        eventFetch(`/events/${event.organizer.username}/${event.slug}`, this.$store, {'method': 'DELETE'})
           .then(() => router.push('/events'));
       },
-      viewEvent(id) {
-        this.$router.push({ name: 'Event', params: { id } })
+      viewEvent(event) {
+        this.$router.push({ name: 'Event', params: { name: event.organizer.username, slug: event.slug } })
       },
       downloadIcsEvent(event) {
-        eventFetch('/events/' + event.id + '/export', this.$store, {responseType: 'arraybuffer'})
+        eventFetch(`/events/${event.organizer.username}/${event.slug}/export`, this.$store, {responseType: 'arraybuffer'})
           .then((response) => response.text())
           .then(response => {
             const blob = new Blob([response],{type: 'text/calendar'});
