@@ -6,15 +6,23 @@
         <v-flex xs12>
           <v-text-field
             label="Title"
-            v-model="group.title"
+            v-model="group.preferred_username"
             :counter="100"
             required
+          ></v-text-field>
+        </v-flex>
+        <v-flex xs12>
+          <v-text-field
+                  label="Title"
+                  v-model="group.name"
+                  :counter="100"
+                  required
           ></v-text-field>
         </v-flex>
         <v-flex md6>
           <v-text-field
             label="Description"
-            v-model="group.description"
+            v-model="group.summary"
             multiLine
             required
           ></v-text-field>
@@ -22,34 +30,34 @@
         <v-flex md6>
           <vue-markdown class="markdown-render"
                         :watches="['show','html','breaks','linkify','emoji','typographer','toc']"
-                        :source="group.description"
+                        :source="group.summary"
                         :show="true" :html="false" :breaks="true" :linkify="true"
                         :emoji="true" :typographer="true" :toc="false"
           ></vue-markdown>
         </v-flex>
-        <v-flex md12>
-          <vuetify-google-autocomplete
-            id="map"
-            append-icon="search"
-            classname="form-control"
-            placeholder="Start typing"
-            enable-geolocation
-            v-on:placechanged="getAddressData"
-          >
-          </vuetify-google-autocomplete>
-        </v-flex>
-        <v-flex md12>
-          <v-select
-            v-bind:items="categories"
-            v-model="group.category"
-            item-text="title"
-            item-value="@id"
-            label="Categories"
-            single-line
-            bottom
-            types="(cities)"
-          ></v-select>
-        </v-flex>
+        <!--<v-flex md12>-->
+          <!--<vuetify-google-autocomplete-->
+            <!--id="map"-->
+            <!--append-icon="search"-->
+            <!--classname="form-control"-->
+            <!--placeholder="Start typing"-->
+            <!--enable-geolocation-->
+            <!--v-on:placechanged="getAddressData"-->
+          <!--&gt;-->
+          <!--</vuetify-google-autocomplete>-->
+        <!--</v-flex>-->
+        <!--<v-flex md12>-->
+          <!--<v-select-->
+            <!--v-bind:items="categories"-->
+            <!--v-model="group.category"-->
+            <!--item-text="title"-->
+            <!--item-value="@id"-->
+            <!--label="Categories"-->
+            <!--single-line-->
+            <!--bottom-->
+            <!--types="(cities)"-->
+          <!--&gt;</v-select>-->
+        <!--</v-flex>-->
       </v-layout>
     </v-form>
     <v-btn color="primary" @click="create">Create group</v-btn>
@@ -72,9 +80,10 @@
       return {
         e1: 0,
         group: {
-          title: '',
-          description: '',
-          category: null,
+          preferred_username: '',
+          name: '',
+          summary: '',
+          // category: null,
         },
         categories: [],
       };

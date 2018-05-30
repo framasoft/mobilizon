@@ -37,7 +37,7 @@ defmodule EventosWeb.Router do
 
       post "/users", UserController, :register
       post "/login", UserSessionController, :sign_in
-      #resources "/groups", GroupController, only: [:index, :show]
+      get "/groups", GroupController, :index
       get "/events", EventController, :index
       get "/events/search/:name", EventController, :search
       get "/events/:username/:slug", EventController, :show
@@ -79,7 +79,7 @@ defmodule EventosWeb.Router do
        resources "/participant", ParticipantController
        resources "/bots", BotController, except: [:new, :edit, :show]
        #resources "/requests", EventRequestController
-       #resources "/groups", GroupController, except: [:index, :show]
+       post "/groups", GroupController, :create
        #post "/groups/:id/request", GroupRequestController, :create_for_group
        resources "/members", MemberController
        #resources "/requests", GroupRequestController

@@ -27,6 +27,7 @@ defmodule EventosWeb.ActorView do
       # public_key: actor.public_key,
       suspended: actor.suspended,
       url: actor.url,
+      avatar: actor.avatar_url,
     }
   end
 
@@ -40,6 +41,8 @@ defmodule EventosWeb.ActorView do
       # public_key: actor.public_key,
       suspended: actor.suspended,
       url: actor.url,
+      avatar: actor.avatar_url,
+      banner: actor.banner_url,
       organized_events: render_many(actor.organized_events, EventView, "event_for_actor.json")
     }
   end

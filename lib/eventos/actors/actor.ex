@@ -64,6 +64,8 @@ defmodule Eventos.Actors.Actor do
     field :private_key, :string
     field :manually_approves_followers, :boolean, default: false
     field :suspended, :boolean, default: false
+    field :avatar_url, :string
+    field :banner_url, :string
     many_to_many :followers, Actor, join_through: Follower
     has_many :organized_events, Event, [foreign_key: :organizer_actor_id]
     many_to_many :memberships, Actor, join_through: Member
@@ -75,7 +77,7 @@ defmodule Eventos.Actors.Actor do
   @doc false
   def changeset(%Actor{} = actor, attrs) do
     actor
-    |> Ecto.Changeset.cast(attrs, [:url, :outbox_url, :inbox_url, :following_url, :followers_url, :type, :name, :domain, :summary, :preferred_username, :public_key, :private_key, :manually_approves_followers, :suspended])
+    |> Ecto.Changeset.cast(attrs, [:url, :outbox_url, :inbox_url, :shared_inbox_url, :following_url, :followers_url, :type, :name, :domain, :summary, :preferred_username, :public_key, :private_key, :manually_approves_followers, :suspended, :avatar_url, :banner_url])
     |> validate_required([:preferred_username, :public_key, :suspended, :url])
     |> unique_constraint(:prefered_username, name: :actors_preferred_username_domain_index)
   end
@@ -91,8 +93,8 @@ defmodule Eventos.Actors.Actor do
   def remote_actor_creation(params) do
     changes =
       %Actor{}
-      |> Ecto.Changeset.cast(params, [:url, :outbox_url, :inbox_url, :following_url, :followers_url, :type, :name, :domain, :summary, :preferred_username, :public_key, :manually_approves_followers])
-      |> validate_required([:url, :outbox_url, :inbox_url, :type, :name, :domain, :summary, :preferred_username, :public_key])
+      |> Ecto.Changeset.cast(params, [:url, :outbox_url, :inbox_url, :shared_inbox_url, :following_url, :followers_url, :type, :name, :domain, :summary, :preferred_username, :public_key, :manually_approves_followers, :avatar_url, :banner_url])
+      |> validate_required([:url, :outbox_url, :inbox_url, :type, :name, :domain, :preferred_username, :public_key])
       |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_index)
       |> validate_length(:summary, max: 5000)
       |> validate_length(:preferred_username, max: 100)
@@ -101,6 +103,21 @@ defmodule Eventos.Actors.Actor do
     Logger.debug("Remote actor creation")
     Logger.debug(inspect changes)
     changes
+  end
+
+  def group_creation(%Actor{} = actor, params) do
+    actor
+    |> Ecto.Changeset.cast(params, [:url, :outbox_url, :inbox_url, :shared_inbox_url, :type, :name, :domain, :summary, :preferred_username, :avatar_url, :banner_url])
+    |> put_change(:outbox_url, "#{EventosWeb.Endpoint.url()}/@#{params["prefered_username"]}/outbox")
+    |> put_change(:inbox_url, "#{EventosWeb.Endpoint.url()}/@#{params["prefered_username"]}/inbox")
+    |> put_change(:shared_inbox_url, "#{EventosWeb.Endpoint.url()}/inbox")
+    |> put_change(:url, "#{EventosWeb.Endpoint.url()}/@#{params["prefered_username"]}")
+    |> put_change(:domain, nil)
+    |> put_change(:type, "Group")
+    |> validate_required([:url, :outbox_url, :inbox_url, :type, :name, :preferred_username])
+    |> validate_length(:summary, max: 5000)
+    |> validate_length(:preferred_username, max: 100)
+    |> put_change(:local, true)
   end
 
   def get_or_fetch_by_url(url) do

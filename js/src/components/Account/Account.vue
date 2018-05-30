@@ -4,6 +4,7 @@
     <v-flex xs12 sm6 offset-sm3>
       <v-progress-circular v-if="loading" indeterminate color="primary"></v-progress-circular>
       <v-card v-if="!loading">
+        <v-card-media :src="actor.banner" height="400px">
           <v-layout column class="media">
             <v-card-title>
               <v-btn icon @click="$router.go(-1)">
@@ -40,6 +41,7 @@
               </v-layout>
             </v-container>
           </v-layout>
+        </v-card-media>
         <v-list three-line>
           <v-list-tile>
             <v-list-tile-action>

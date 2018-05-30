@@ -126,6 +126,31 @@ defmodule Eventos.Actors do
     "acct:#{actor_to_local_name_and_domain(actor)}"
   end
 
+  @doc """
+  List the groups
+  """
+  def list_groups do
+    Repo.all(from a in Actor, where: a.type == "Group")
+  end
+
+  @doc """
+  Creates a group.
+
+  ## Examples
+
+      iex> create_group(%{field: value})
+      {:ok, %Actor{}}
+
+      iex> create_group(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_group(attrs \\ %{}) do
+    %Actor{}
+    |> Actor.group_creation(attrs)
+    |> Repo.insert()
+  end
+
   alias Eventos.Actors.User
 
   @doc """
@@ -151,7 +176,7 @@ defmodule Eventos.Actors do
 
   def insert_or_update_actor(data) do
     cs = Actor.remote_actor_creation(data)
-    Repo.insert(cs, on_conflict: [set: [public_key: data.public_key]], conflict_target: [:preferred_username, :domain])
+    Repo.insert(cs, on_conflict: [set: [public_key: data.public_key, avatar_url: data.avatar_url, banner: data.banner_url, name: data.name]], conflict_target: [:preferred_username, :domain])
   end
 
 #  def increase_event_count(%Actor{} = actor) do

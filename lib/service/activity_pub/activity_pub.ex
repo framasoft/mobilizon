@@ -249,21 +249,6 @@ defmodule Eventos.Service.ActivityPub do
   end
 
   def user_data_from_user_object(data) do
-    Logger.debug("user_data_from_user_object")
-    Logger.debug(inspect data)
-    avatar =
-      data["icon"]["url"] &&
-        %{
-          "type" => "Image",
-          "url" => [%{"href" => data["icon"]["url"]}]
-        }
-
-    banner =
-      data["image"]["url"] &&
-        %{
-          "type" => "Image",
-          "url" => [%{"href" => data["image"]["url"]}]
-        }
     name = if String.trim(data["name"]) === "" do
       data["preferredUsername"]
     else
@@ -275,9 +260,9 @@ defmodule Eventos.Service.ActivityPub do
       info: %{
         "ap_enabled" => true,
         "source_data" => data,
-        "banner" => banner
       },
-      avatar: avatar,
+      avatar_url: data["icon"]["url"],
+      banner_url: data["image"]["url"],
       name: name,
       preferred_username: data["preferredUsername"],
       follower_address: data["followers"],
@@ -287,11 +272,14 @@ defmodule Eventos.Service.ActivityPub do
       outbox_url: data["outbox"],
       following_url: data["following"],
       followers_url: data["followers"],
-      shared_inbox_url: data["sharedInbox"],
+      shared_inbox_url: data["endpoints"]["sharedInbox"],
       domain: URI.parse(data["id"]).host,
       manually_approves_followers: data["manuallyApprovesFollowers"],
       type: data["type"],
     }
+
+    Logger.debug("user_data_from_user_object")
+    Logger.debug(inspect user_data)
 
     {:ok, user_data}
   end
