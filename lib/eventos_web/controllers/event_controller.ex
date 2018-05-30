@@ -35,6 +35,11 @@ defmodule EventosWeb.EventController do
     end
   end
 
+  def search(conn, %{"name" => name}) do
+    events = Events.find_events_by_name(name)
+    render(conn, "index.json", events: events)
+  end
+
   def show(conn, %{"username" => username, "slug" => slug}) do
     event = Events.get_event_full_by_name_and_slug!(username, slug)
     render(conn, "show.json", event: event)

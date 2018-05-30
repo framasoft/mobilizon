@@ -34,7 +34,7 @@
               <v-layout row>
                 <v-flex xs7>
                   <div class="headline">{{ actor.display_name }}</div>
-                  <div><span class="subheading">@{{ actor.username }}</span><span v-if="actor.server">@{{ actor.server.address }}</span></div>
+                  <div><span class="subheading">@{{ actor.username }}<span v-if="actor.domain">@{{ actor.domain }}</span></span></div>
                   <v-card-text v-if="actor.description" v-html="actor.description"></v-card-text>
                 </v-flex>
               </v-layout>
@@ -179,7 +179,7 @@ export default {
           required: true,
       }
   },
-  mounted() {
+  created() {
     this.fetchData();
   },
   watch: {

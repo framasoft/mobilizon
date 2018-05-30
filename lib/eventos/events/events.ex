@@ -34,7 +34,7 @@ defmodule Eventos.Events do
                  offset: ^start,
                  preload: [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address]
     events = Repo.all(query)
-    count_events = Repo.one(from e in Event, select: count(e.id))
+    count_events = Repo.one(from e in Event, select: count(e.id), where: e.organizer_actor_id == ^actor_id)
     {:ok, events, count_events}
   end
 
@@ -107,6 +107,21 @@ defmodule Eventos.Events do
     end
     event = Repo.one(query)
     Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address])
+  end
+
+  @doc """
+  Find events by name
+  """
+  def find_events_by_name(name) do
+    events = Repo.all from a in Event, where: ilike(a.title, ^like_sanitize(name))
+    Repo.preload(events, [:organizer_actor])
+  end
+
+  @doc """
+  Sanitize the LIKE queries
+  """
+  defp like_sanitize(value) do
+    "%" <> String.replace(value, ~r/([\\%_])/, "\\1") <> "%"
   end
 
   @doc """
@@ -204,6 +219,11 @@ defmodule Eventos.Events do
 
   """
   def get_category!(id), do: Repo.get!(Category, id)
+
+  @spec get_category_by_title(String.t) :: tuple()
+  def get_category_by_title(title) when is_binary(title) do
+    Repo.get_by(Category, title: title)
+  end
 
   @doc """
   Creates a category.

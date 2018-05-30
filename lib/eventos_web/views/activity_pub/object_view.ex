@@ -1,5 +1,6 @@
 defmodule EventosWeb.ActivityPub.ObjectView do
   use EventosWeb, :view
+  alias EventosWeb.ActivityPub.ObjectView
   alias Eventos.Service.ActivityPub.Transmogrifier
   @base %{
     "@context" => [
@@ -22,7 +23,7 @@ defmodule EventosWeb.ActivityPub.ObjectView do
       "type" => "Event",
       "id" => event.url,
       "name" => event.title,
-      "category" => %{"title" => event.category.title},
+      "category" => render_one(event.category, ObjectView, "category.json", as: :category),
       "content" => event.description,
       "mediaType" => "text/markdown",
       "published" => Timex.format!(event.inserted_at, "{ISO:Extended}"),
@@ -32,6 +33,10 @@ defmodule EventosWeb.ActivityPub.ObjectView do
   end
 
   def render("category.json", %{category: category}) do
-    category
+    %{"title" => category.title}
+  end
+
+  def render("category.json", %{category: nil}) do
+    nil
   end
 end

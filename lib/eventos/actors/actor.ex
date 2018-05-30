@@ -77,14 +77,14 @@ defmodule Eventos.Actors.Actor do
     actor
     |> Ecto.Changeset.cast(attrs, [:url, :outbox_url, :inbox_url, :following_url, :followers_url, :type, :name, :domain, :summary, :preferred_username, :public_key, :private_key, :manually_approves_followers, :suspended])
     |> validate_required([:preferred_username, :public_key, :suspended, :url])
-    |> unique_constraint(:name, name: :actors_username_domain_index)
+    |> unique_constraint(:prefered_username, name: :actors_preferred_username_domain_index)
   end
 
   def registration_changeset(%Actor{} = actor, attrs) do
     actor
-    |> Ecto.Changeset.cast(attrs, [:name, :domain, :display_name, :description, :private_key, :public_key, :suspended, :url])
-    |> validate_required([:preferred_username, :public_key, :suspended, :url])
-    |> unique_constraint(:name)
+    |> Ecto.Changeset.cast(attrs, [:preferred_username, :domain, :name, :summary, :private_key, :public_key, :suspended, :url, :type])
+    |> validate_required([:preferred_username, :public_key, :suspended, :url, :type])
+    |> unique_constraint(:prefered_username, name: :actors_preferred_username_domain_index)
   end
 
   @email_regex ~r/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/

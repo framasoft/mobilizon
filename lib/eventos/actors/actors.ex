@@ -196,7 +196,12 @@ defmodule Eventos.Actors do
   end
 
   def get_actor_by_name(name) do
-    Repo.get_by!(Actor, preferred_username: name)
+    actor = case String.split(name, "@") do
+      [name] ->
+        Repo.get_by(Actor, preferred_username: name)
+      [name, domain] ->
+        Repo.get_by(Actor, preferred_username: name, domain: domain)
+    end
   end
 
   def get_local_actor_by_name(name) do
@@ -228,6 +233,44 @@ defmodule Eventos.Actors do
 
         _ -> {:error, "Could not fetch by AP id"}
       end
+    end
+  end
+
+  @doc """
+  Find local users by it's username
+  """
+  def find_local_by_username(username) do
+    actors = Repo.all from a in Actor, where: (ilike(a.preferred_username, ^like_sanitize(username)) or ilike(a.name, ^like_sanitize(username))) and is_nil(a.domain)
+    Repo.preload(actors, :organized_events)
+  end
+
+  @doc """
+  Find actors by their name or displayed name
+  """
+  def find_actors_by_username(username) do
+    Repo.all from a in Actor, where: ilike(a.preferred_username, ^like_sanitize(username)) or ilike(a.name, ^like_sanitize(username))
+  end
+
+  @doc """
+  Sanitize the LIKE queries
+  """
+  defp like_sanitize(value) do
+    "%" <> String.replace(value, ~r/([\\%_])/, "\\1") <> "%"
+  end
+
+  @email_regex ~r/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+  def search(name) do
+    case find_actors_by_username(name) do # find already saved accounts
+      [] ->
+        with true <- Regex.match?(@email_regex, name), # no accounts found, let's test if it's an username@domain.tld
+             {:ok, actor} <- ActivityPub.find_or_make_actor_from_nickname(name) do # creating the actor in that case
+          {:ok, [actor]}
+        else
+          false -> {:ok, []}
+          {:error, err} -> {:error, err} # error fingering the actor
+        end
+      actors = [_|_] ->
+        {:ok, actors} # actors already saved found !
     end
   end
 
@@ -285,6 +328,32 @@ defmodule Eventos.Actors do
     rescue
      e in Ecto.InvalidChangesetError ->
       {:error, e.changeset.changes.user.errors}
+    end
+  end
+
+  def register_bot_account(%{name: name, summary: summary}) do
+    key = :public_key.generate_key({:rsa, 2048, 65537})
+    entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
+    pem = :public_key.pem_encode([entry]) |> String.trim_trailing()
+
+    {:ok, rsa_priv_key} = ExPublicKey.generate_key()
+    {:ok, rsa_pub_key} = ExPublicKey.public_key_from_private_key(rsa_priv_key)
+
+    actor = Eventos.Actors.Actor.registration_changeset(%Eventos.Actors.Actor{}, %{
+      preferred_username: name,
+      domain: nil,
+      private_key: pem,
+      public_key: "toto",
+      url: EventosWeb.Endpoint.url() <> "/@" <> name,
+      summary: summary,
+      type: :Service
+    })
+
+    try do
+      Eventos.Repo.insert!(actor)
+    rescue
+      e in Ecto.InvalidChangesetError ->
+        {:error, e}
     end
   end
 
@@ -450,4 +519,105 @@ defmodule Eventos.Actors do
     Member.changeset(member, %{})
   end
 
+
+  alias Eventos.Actors.Bot
+
+  @doc """
+  Returns the list of bots.
+
+  ## Examples
+
+      iex> list_bots()
+      [%Bot{}, ...]
+
+  """
+  def list_bots do
+    Repo.all(Bot)
+  end
+
+  @doc """
+  Gets a single bot.
+
+  Raises `Ecto.NoResultsError` if the Bot does not exist.
+
+  ## Examples
+
+      iex> get_bot!(123)
+      %Bot{}
+
+      iex> get_bot!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_bot!(id), do: Repo.get!(Bot, id)
+
+  @spec get_bot_by_actor(Actor.t) :: Bot.t
+  def get_bot_by_actor(%Actor{} = actor) do
+    Repo.get_by!(Bot, actor_id: actor.id)
+  end
+
+  @doc """
+  Creates a bot.
+
+  ## Examples
+
+      iex> create_bot(%{field: value})
+      {:ok, %Bot{}}
+
+      iex> create_bot(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_bot(attrs \\ %{}) do
+    %Bot{}
+    |> Bot.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a bot.
+
+  ## Examples
+
+      iex> update_bot(bot, %{field: new_value})
+      {:ok, %Bot{}}
+
+      iex> update_bot(bot, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_bot(%Bot{} = bot, attrs) do
+    bot
+    |> Bot.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a Bot.
+
+  ## Examples
+
+      iex> delete_bot(bot)
+      {:ok, %Bot{}}
+
+      iex> delete_bot(bot)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_bot(%Bot{} = bot) do
+    Repo.delete(bot)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking bot changes.
+
+  ## Examples
+
+      iex> change_bot(bot)
+      %Ecto.Changeset{source: %Bot{}}
+
+  """
+  def change_bot(%Bot{} = bot) do
+    Bot.changeset(bot, %{})
+  end
 end

@@ -66,6 +66,7 @@ defmodule Eventos.Mixfile do
       {:ex_crypto, "~> 0.9.0"},
       {:http_sign, "~> 0.1.1"},
       {:ecto_enum, "~> 1.0"},
+      {:ex_ical, github: "tcitworld/ex_ical", branch: "usable"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:ex_machina, "~> 2.1", only: :test},

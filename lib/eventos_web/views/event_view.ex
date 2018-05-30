@@ -34,6 +34,7 @@ defmodule EventosWeb.EventView do
       organizer: %{
         username: event.organizer_actor.preferred_username
       },
+      type: "Event",
     }
   end
 
@@ -46,6 +47,7 @@ defmodule EventosWeb.EventView do
       organizer: render_one(event.organizer_actor, ActorView, "acccount_basic.json"),
       participants: render_many(event.participants, ActorView, "show_basic.json"),
       address: render_one(event.address, AddressView, "address.json"),
+      type: "Event",
     }
   end
 end

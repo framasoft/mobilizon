@@ -9,6 +9,7 @@ defmodule EventosWeb.ActivityPub.ActorView do
   alias Eventos.Service.ActivityPub
   alias Eventos.Service.ActivityPub.Transmogrifier
   alias Eventos.Service.ActivityPub.Utils
+  alias Eventos.Activity
   import Ecto.Query
 
   def render("actor.json", %{actor: actor}) do
@@ -123,10 +124,10 @@ defmodule EventosWeb.ActivityPub.ActorView do
     end
   end
 
-  def render("activity.json", %{activity: activity}) do
+  def render("activity.json", %{activity: %Activity{local: local} = activity}) do
     %{
       "id" => activity.data.url <> "/activity",
-      "type" => "Create",
+      "type" => if local do "Create" else "Announce" end,
       "actor" => activity.data.organizer_actor.url,
       "published" => Timex.now(),
       "to" => ["https://www.w3.org/ns/activitystreams#Public"],

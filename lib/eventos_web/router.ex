@@ -39,11 +39,13 @@ defmodule EventosWeb.Router do
       post "/login", UserSessionController, :sign_in
       #resources "/groups", GroupController, only: [:index, :show]
       get "/events", EventController, :index
+      get "/events/search/:name", EventController, :search
       get "/events/:username/:slug", EventController, :show
       get "/events/:username/:slug/ics", EventController, :export_to_ics
       get "/events/:username/:slug/tracks", TrackController, :show_tracks_for_event
       get "/events/:username/:slug/sessions", SessionController, :show_sessions_for_event
       resources "/comments", CommentController, only: [:show]
+      get "/bots/:id", BotController, :view
 
       get "/actors", ActorController, :index
       get "/actors/search/:name", ActorController, :search
@@ -53,6 +55,8 @@ defmodule EventosWeb.Router do
       resources "/sessions", SessionController, only: [:index, :show]
       resources "/tracks", TrackController, only: [:index, :show]
       resources "/addresses", AddressController, only: [:index, :show]
+
+      get "/search/:name", SearchController, :search
     end
   end
 
@@ -70,9 +74,10 @@ defmodule EventosWeb.Router do
        patch "/events/:username/:slug", EventController, :update
        put "/events/:username/:slug", EventController, :update
        delete "/events/:username/:slug", EventController, :delete
-       resources "/comments", CommentController, except: [:new, :edit]
+       resources "/comments", CommentController, except: [:new, :edit, :show]
        #post "/events/:id/request", EventRequestController, :create_for_event
        resources "/participant", ParticipantController
+       resources "/bots", BotController, except: [:new, :edit, :show]
        #resources "/requests", EventRequestController
        #resources "/groups", GroupController, except: [:index, :show]
        #post "/groups/:id/request", GroupRequestController, :create_for_group

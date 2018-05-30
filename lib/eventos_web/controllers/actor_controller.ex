@@ -20,10 +20,11 @@ defmodule EventosWeb.ActorController do
     render(conn, "show.json", actor: actor)
   end
 
+  @email_regex ~r/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
   def search(conn, %{"name" => name}) do
-    with {:ok, actor} <- ActivityPub.make_actor_from_nickname(name) do
-      render(conn, "acccount_basic.json", actor: actor)
-    else
+    case Actors.search(name) do # find already saved accounts
+      {:ok, actors} ->
+        render(conn, "index.json", actors: actors)
       {:error, err} -> json(conn, err)
     end
   end

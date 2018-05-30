@@ -81,7 +81,7 @@ defmodule Eventos.Service.WebFinger do
       address = "http://#{domain}/.well-known/webfinger?resource=acct:#{actor}"
 
       Logger.debug(inspect address)
-    with response <- HTTPoison.get!(address, [Accept: "application/json, application/activity+json, application/jrd+json"],follow_redirect: true),
+    with {:ok, %HTTPoison.Response{} = response} <- HTTPoison.get(address, [Accept: "application/json, application/activity+json, application/jrd+json"],follow_redirect: true),
          %{status_code: status_code, body: body} when status_code in 200..299 <- response do
           {:ok, doc} = Jason.decode(body)
           webfinger_from_json(doc)

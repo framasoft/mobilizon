@@ -1,6 +1,6 @@
 defmodule Eventos.Service.ActivityPub do
   alias Eventos.Events
-  alias Eventos.Events.Event
+  alias Eventos.Events.{Event, Category}
   alias Eventos.Service.ActivityPub.Transmogrifier
   alias Eventos.Service.WebFinger
   alias Eventos.Activity
@@ -174,6 +174,15 @@ defmodule Eventos.Service.ActivityPub do
     end
   end
 
+  @spec find_or_make_actor_from_nickname(String.t) :: tuple()
+  def find_or_make_actor_from_nickname(nickname) do
+    with %Actor{} = actor <- Actors.get_actor_by_name(nickname) do
+      {:ok, actor}
+    else
+      nil -> make_actor_from_nickname(nickname)
+    end
+  end
+
   def make_actor_from_nickname(nickname) do
     with {:ok, %{"url" => url}} when not is_nil(url) <- WebFinger.finger(nickname) do
       make_actor_from_url(url)
@@ -288,19 +297,39 @@ defmodule Eventos.Service.ActivityPub do
   end
 
   @spec fetch_public_activities_for_actor(Actor.t, integer(), integer()) :: list()
-  def fetch_public_activities_for_actor(%Actor{} = actor, page \\ 10, limit \\ 10) do
-    {:ok, events, total} = Events.get_events_for_actor(actor, page, limit)
-    activities = Enum.map(events, fn event ->
-      {:ok, activity} = event_to_activity(event)
-      activity
-    end)
-    {activities, total}
+  def fetch_public_activities_for_actor(%Actor{} = actor, page \\ 1, limit \\ 10) do
+    case actor.type do
+      :Person ->
+        {:ok, events, total} = Events.get_events_for_actor(actor, page, limit)
+        activities = Enum.map(events, fn event ->
+          {:ok, activity} = event_to_activity(event)
+          activity
+        end)
+        {activities, total}
+      :Service ->
+        bot = Actors.get_bot_by_actor(actor)
+        case bot.type do
+          "ics" ->
+            {:ok, %HTTPoison.Response{body: body} = _resp} = HTTPoison.get(bot.source)
+            ical_events = body
+                          |> ExIcal.parse()
+                          |> ExIcal.by_range(DateTime.utc_now(), DateTime.utc_now() |> Timex.shift(years: 1))
+            activities = ical_events
+            |> Enum.chunk_every(limit)
+            |> Enum.at(page - 1)
+            |> Enum.map(fn event ->
+              {:ok, activity } = ical_event_to_activity(event, actor, bot.source)
+              activity
+            end)
+            {activities, length(ical_events)}
+        end
+    end
   end
 
-  defp event_to_activity(%Event{} = event) do
+  defp event_to_activity(%Event{} = event, local \\ true) do
     activity = %Activity{
       data: event,
-      local: true,
+      local: local,
       actor: event.organizer_actor.url,
       recipients: ["https://www.w3.org/ns/activitystreams#Public"]
     }
@@ -308,5 +337,45 @@ defmodule Eventos.Service.ActivityPub do
     # Notification.create_notifications(activity)
     #stream_out(activity)
     {:ok, activity}
+  end
+
+  defp ical_event_to_activity(%ExIcal.Event{} = ical_event, %Actor{} = actor, source) do
+    # Logger.debug(inspect ical_event)
+    # TODO : refactor me !
+    category = if is_nil ical_event.categories do
+      nil
+    else
+      ical_category = ical_event.categories |> hd() |> String.downcase()
+      case ical_category |> Events.get_category_by_title() do
+        nil -> case Events.create_category(%{"title" => ical_category}) do
+           {:ok, %Category{} = category} -> category
+           _ -> nil
+         end
+        category -> category
+      end
+    end
+
+    {:ok, event} = Events.create_event(%{
+      begins_on: ical_event.start,
+      ends_on: ical_event.end,
+      inserted_at: ical_event.stamp,
+      updated_at: ical_event.stamp,
+      description: ical_event.description |> sanitize_ical_event_strings,
+      title: ical_event.summary |> sanitize_ical_event_strings,
+      organizer_actor: actor,
+      category: category,
+    })
+
+    event_to_activity(event, false)
+  end
+
+  defp sanitize_ical_event_strings(string) when is_binary(string) do
+    string
+    |> String.replace(~s"\r\n", "")
+    |> String.replace(~s"\\,", ",")
+  end
+
+  defp sanitize_ical_event_strings(nil) do
+    nil
   end
 end
