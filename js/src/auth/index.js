@@ -1,10 +1,10 @@
-import { API_HOST, API_PATH } from '../api/_entrypoint';
+import { API_ORIGIN, API_PATH } from '../api/_entrypoint';
 
 // URL and endpoint constants
-const LOGIN_URL = `${API_HOST}${API_PATH}/login`;
-const SIGNUP_URL = `${API_HOST}${API_PATH}/users/`;
-const CHECK_AUTH = `${API_HOST}${API_PATH}/user/`;
-const REFRESH_TOKEN = `${API_HOST}${API_PATH}/token/refresh`;
+const LOGIN_URL = `${API_ORIGIN}${API_PATH}/login`;
+const SIGNUP_URL = `${API_ORIGIN}${API_PATH}/users/`;
+const CHECK_AUTH = `${API_ORIGIN}${API_PATH}/user/`;
+const REFRESH_TOKEN = `${API_ORIGIN}${API_PATH}/token/refresh`;
 
 export default {
 

@@ -9,27 +9,26 @@
           <v-card-media
             class="black--text"
             height="200px"
-            src="http://lorempixel.com/400/200/"
+            src="https://picsum.photos/400/200/"
           >
             <v-container fill-height fluid>
               <v-layout fill-height>
                 <v-flex xs12 align-end flexbox>
-                  <span class="headline">{{ group.title }}</span>
+                  <span class="headline">{{ group.username }}</span>
                 </v-flex>
               </v-layout>
             </v-container>
           </v-card-media>
           <v-card-title>
             <div>
-              <span class="grey--text">{{ group.startDate | formatDate }} à {{ group.location }}</span><br>
-              <p>{{ group.description }}</p>
+              <p>{{ group.summary }}</p>
               <p v-if="group.organizer">Organisé par <router-link :to="{name: 'Account', params: {'id': group.organizer.id}}">{{ group.organizer.username }}</router-link></p>
             </div>
           </v-card-title>
           <v-card-actions>
-            <v-btn flat color="green" @click="joinGroup(group.id)"><v-icon v-if="group.locked">lock</v-icon>Join</v-btn>
-            <v-btn flat color="orange" @click="viewEvent(group.id)">Explore</v-btn>
-            <v-btn flat color="red" @click="deleteEvent(group.id)">Delete</v-btn>
+            <v-btn flat color="green" @click="joinGroup(group)"><v-icon v-if="group.locked">lock</v-icon>Join</v-btn>
+            <v-btn flat color="orange" @click="viewActor(group)">Explore</v-btn>
+            <v-btn flat color="red" @click="deleteGroup(group)">Delete</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -53,28 +52,32 @@
       this.fetchData();
     },
     methods: {
+      username_with_domain(actor) {
+        return actor.username + (actor.domain === null ? '' : `@${actor.domain}`)
+      },
       fetchData() {
         eventFetch('/groups', this.$store)
           .then(response => response.json())
           .then((data) => {
+              console.log(data);
             this.loading = false;
             this.groups = data.data;
           });
       },
-      deleteEvent(id) {
+      deleteGroup(group) {
         const router = this.$router;
-        eventFetch('/groups/' + id, this.$store, {'method': 'DELETE'})
+        eventFetch(`/groups/${this.username_with_domain(group)}`, this.$store, {'method': 'DELETE'})
           .then(response => response.json())
           .then(() => router.push('/groups'));
       },
-      viewEvent(id) {
-        this.$router.push({ name: 'Group', params: { id } })
+      viewActor(actor) {
+        this.$router.push({ name: 'Group', params: { name: this.username_with_domain(actor) } })
       },
-      joinGroup(id) {
+      joinGroup(group) {
         const router = this.$router;
-        eventFetch('/groups/' + id + '/join', this.$store)
+        eventFetch(`/groups/${this.username_with_domain(group)}/join`, this.$store, { method: 'POST' })
           .then(response => response.json())
-          .then(() => router.push('/group/' + id))
+          .then(() => router.push({ name: 'Group', params: { name: this.username_with_domain(group) } }));
       }
     },
   };

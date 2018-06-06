@@ -70,7 +70,6 @@
           <vuetify-google-autocomplete
             id="map"
             append-icon="search"
-            classname="form-control"
             placeholder="Start typing"
             label="Location"
             enable-geolocation

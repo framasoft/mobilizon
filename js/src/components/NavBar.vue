@@ -9,7 +9,7 @@
     <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <router-link :to="{ name: 'Home' }">
-        Libre-Event
+        Eventos
       </router-link>
     </v-toolbar-title>
     <v-select
@@ -24,7 +24,22 @@
       :items="searchElement.items"
       :search-input.sync="search"
       v-model="searchSelect"
-    ></v-select>
+    >
+      <template slot="item" slot-scope="data">
+        <template v-if="typeof data.item !== 'object'">
+          <v-list-tile-content v-text="data.item"></v-list-tile-content>
+        </template>
+        <template v-else>
+          <v-list-tile-avatar>
+            <img :src="data.item.avatar">
+          </v-list-tile-avatar>
+          <v-list-tile-content>
+            <v-list-tile-title v-html="username_with_domain(data.item)"></v-list-tile-title>
+            <v-list-tile-sub-title v-html="data.item.type"></v-list-tile-sub-title>
+          </v-list-tile-content>
+        </template>
+      </template>
+    </v-select>
     <v-spacer></v-spacer>
     <v-menu
       offset-y
@@ -58,7 +73,7 @@
         </v-card-actions>
       </v-card>
     </v-menu>
-    <v-btn flat @click="$router.push({name: 'Account', params: {'id': getUser().account.id}})" v-if="$store.state.user">{{ this.displayed_name }}</v-btn>
+    <v-btn flat @click="$router.push({name: 'Account', params: { name: getUser().actor.username }})" v-if="$store.state.user">{{ this.displayed_name }}</v-btn>
   </v-toolbar>
 </template>
 
@@ -88,48 +103,62 @@
       },
       searchSelect(val) {
         console.log(val);
-        if (val.hasOwnProperty('addressLocality')) {
+        if (val.type === 'Event') {
+          this.$router.push({name: 'Event', params: { name: val.organizer.username, slug: val.slug }});
+        } else if (val.type === 'Locality') {
           this.$router.push({name: 'EventList', params: {location: val.geohash}});
         } else {
-          this.$router.push({name: 'Account', params: {id: val.id}});
+          this.$router.push({name: 'Account', params: { name : this.username_with_domain(val) }});
         }
       }
     },
     computed: {
       displayed_name: function() {
-        return this.$store.state.user.account.display_name === null ? this.$store.state.user.account.username : this.$store.state.user.account.display_name
+        return this.$store.state.user.actor.display_name === null ? this.$store.state.user.actor.username : this.$store.state.user.actor.display_name
       },
     },
     methods: {
+      username_with_domain(actor) {
+          if (actor.type !== 'Event') {
+              return actor.username + (actor.domain === null ? '' : `@${actor.domain}`)
+          }
+          return actor.title;
+      },
       getUser() {
         return this.$store.state.user === undefined ? false : this.$store.state.user;
       },
       querySelections(searchTerm) {
         this.searchElement.loading = true;
-        eventFetch('/find/', this.$store, {method: 'POST', body: JSON.stringify({search: searchTerm})})
+        eventFetch(`/search/${searchTerm}`, this.$store)
           .then(response => response.json())
           .then((results) => {
+            console.log('results');
             console.log(results);
-            const accountResults = results.accounts.map((result) => {
-              if (result.server) {
-                result.displayedText = `${result.username}@${result.server.address}`;
+            const accountResults = results.data.actors.map((result) => {
+              if (result.domain) {
+                result.displayedText = `${result.username}@${result.domain}`;
               } else {
                 result.displayedText = result.username;
               }
               return result;
             });
-            const cities = new Set();
-            const placeResults = results.places.map((result) => {
-              result.displayedText = result.addressLocality;
-              return result;
-            }).filter((result) => {
-              if (cities.has(result.addressLocality)) {
-                return false;
-              }
-              cities.add(result.addressLocality);
-              return true;
+
+            const eventsResults = results.data.events.map((result) => {
+                result.displayedText = result.title;
+                return result;
             });
-            this.searchElement.items = accountResults.concat(placeResults);
+            // const cities = new Set();
+            // const placeResults = results.places.map((result) => {
+            //   result.displayedText = result.addressLocality;
+            //   return result;
+            // }).filter((result) => {
+            //   if (cities.has(result.addressLocality)) {
+            //     return false;
+            //   }
+            //   cities.add(result.addressLocality);
+            //   return true;
+            // });
+            this.searchElement.items = accountResults.concat(eventsResults);
             this.searchElement.loading = false;
           });
       }

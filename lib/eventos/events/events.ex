@@ -7,7 +7,8 @@ defmodule Eventos.Events do
   alias Eventos.Repo
 
   alias Eventos.Events.Event
-  alias Eventos.Accounts.Account
+  alias Eventos.Events.Comment
+  alias Eventos.Actors.Actor
 
   @doc """
   Returns the list of events.
@@ -19,7 +20,38 @@ defmodule Eventos.Events do
 
   """
   def list_events do
-    Repo.all(Event)
+    events = Repo.all(Event)
+    Repo.preload(events, [:organizer_actor])
+  end
+
+  def get_events_for_actor(%Actor{id: actor_id} = _actor, page \\ 1, limit \\ 10) do
+    start = (page - 1) * limit
+
+    query = from e in Event,
+                 where: e.organizer_actor_id == ^actor_id,
+                 limit: ^limit,
+                 order_by: [desc: :id],
+                 offset: ^start,
+                 preload: [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address]
+    events = Repo.all(query)
+    count_events = Repo.one(from e in Event, select: count(e.id), where: e.organizer_actor_id == ^actor_id)
+    {:ok, events, count_events}
+  end
+
+  def count_local_events do
+    Repo.one(
+      from e in Event,
+      select: count(e.id),
+      where: e.local == ^true
+    )
+  end
+
+  def count_local_comments do
+    Repo.one(
+      from c in Comment,
+      select: count(c.id),
+      where: c.local == ^true
+    )
   end
 
   @doc """
@@ -39,11 +71,72 @@ defmodule Eventos.Events do
   def get_event!(id), do: Repo.get!(Event, id)
 
   @doc """
+  Gets an event by it's URL
+  """
+  def get_event_by_url!(url) do
+    Repo.get_by(Event, url: url)
+  end
+
+  @doc """
+  Gets an event by it's UUID
+  """
+  def get_event_by_uuid(uuid) do
+    Repo.get_by(Event, uuid: uuid)
+  end
+
+  @doc """
   Gets a single event, with all associations loaded.
   """
   def get_event_full!(id) do
     event = Repo.get!(Event, id)
-    Repo.preload(event, [:organizer_account, :organizer_group, :category, :sessions, :tracks, :tags, :participants, :address])
+    Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address])
+  end
+
+  @doc """
+  Gets an event by it's URL
+  """
+  def get_event_full_by_url!(url) do
+    event = Repo.get_by(Event, url: url)
+    Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address])
+  end
+
+  @doc """
+  Gets a full event by it's UUID
+  """
+  def get_event_full_by_uuid(uuid) do
+    event = Repo.get_by(Event, uuid: uuid)
+    Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address])
+  end
+
+  @spec get_event_full_by_name_and_slug!(String.t, String.t) :: Event.t
+  def get_event_full_by_name_and_slug!(name, slug) do
+    query = case String.split(name, "@") do
+      [name, domain] -> from e in Event,
+                             join: a in Actor,
+                             on: a.id == e.organizer_actor_id and a.preferred_username == ^name and a.domain == ^domain,
+                             where: e.slug == ^slug
+      [name] -> from e in Event,
+                     join: a in Actor,
+                     on: a.id == e.organizer_actor_id and a.preferred_username == ^name and is_nil(a.domain),
+                     where: e.slug == ^slug
+    end
+    event = Repo.one(query)
+    Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address])
+  end
+
+  @doc """
+  Find events by name
+  """
+  def find_events_by_name(name) do
+    events = Repo.all from a in Event, where: ilike(a.title, ^like_sanitize(name))
+    Repo.preload(events, [:organizer_actor])
+  end
+
+  @doc """
+  Sanitize the LIKE queries
+  """
+  defp like_sanitize(value) do
+    "%" <> String.replace(value, ~r/([\\%_])/, "\\1") <> "%"
   end
 
   @doc """
@@ -61,7 +154,8 @@ defmodule Eventos.Events do
   def create_event(attrs \\ %{}) do
     %Event{}
     |> Event.changeset(attrs)
-    |> Repo.insert()
+    |> Repo.insert!()
+    |> Repo.preload([:organizer_actor])
   end
 
   @doc """
@@ -141,6 +235,11 @@ defmodule Eventos.Events do
 
   """
   def get_category!(id), do: Repo.get!(Category, id)
+
+  @spec get_category_by_title(String.t) :: tuple()
+  def get_category_by_title(title) when is_binary(title) do
+    Repo.get_by(Category, title: title)
+  end
 
   @doc """
   Creates a category.
@@ -332,8 +431,8 @@ defmodule Eventos.Events do
       ** (Ecto.NoResultsError)
 
   """
-  def get_participant!(event_id, account_id) do
-    Repo.get_by!(Participant, [event_id: event_id, account_id: account_id])
+  def get_participant!(event_id, actor_id) do
+    Repo.get_by!(Participant, [event_id: event_id, actor_id: actor_id])
   end
 
   @doc """
@@ -401,104 +500,8 @@ defmodule Eventos.Events do
     Participant.changeset(participant, %{})
   end
 
-  alias Eventos.Events.Request
-
-  @doc """
-  Returns the list of requests.
-
-  ## Examples
-
-      iex> list_requests()
-      [%Request{}, ...]
-
-  """
-  def list_requests do
-    Repo.all(Request)
-  end
-
-  def list_requests_for_account(%Account{} = account) do
-    Repo.all(from r in Request, where: r.account_id == ^account.id)
-  end
-
-  @doc """
-  Gets a single request.
-
-  Raises `Ecto.NoResultsError` if the Request does not exist.
-
-  ## Examples
-
-      iex> get_request!(123)
-      %Request{}
-
-      iex> get_request!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_request!(id), do: Repo.get!(Request, id)
-
-  @doc """
-  Creates a request.
-
-  ## Examples
-
-      iex> create_request(%{field: value})
-      {:ok, %Request{}}
-
-      iex> create_request(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_request(attrs \\ %{}) do
-    %Request{}
-    |> Request.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
-  Updates a request.
-
-  ## Examples
-
-      iex> update_request(request, %{field: new_value})
-      {:ok, %Request{}}
-
-      iex> update_request(request, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_request(%Request{} = request, attrs) do
-    request
-    |> Request.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a Request.
-
-  ## Examples
-
-      iex> delete_request(request)
-      {:ok, %Request{}}
-
-      iex> delete_request(request)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_request(%Request{} = request) do
-    Repo.delete(request)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking request changes.
-
-  ## Examples
-
-      iex> change_request(request)
-      %Ecto.Changeset{source: %Request{}}
-
-  """
-  def change_request(%Request{} = request) do
-    Request.changeset(request, %{})
+  def list_requests_for_actor(%Actor{} = actor) do
+    Repo.all(from p in Participant, where: p.actor_id == ^actor.id and p.approved == false)
   end
 
   alias Eventos.Events.Session
@@ -705,5 +708,101 @@ defmodule Eventos.Events do
   """
   def change_track(%Track{} = track) do
     Track.changeset(track, %{})
+  end
+
+  alias Eventos.Events.Comment
+
+  @doc """
+  Returns the list of comments.
+
+  ## Examples
+
+      iex> list_comments()
+      [%Comment{}, ...]
+
+  """
+  def list_comments do
+    Repo.all(Comment)
+  end
+
+  @doc """
+  Gets a single comment.
+
+  Raises `Ecto.NoResultsError` if the Comment does not exist.
+
+  ## Examples
+
+      iex> get_comment!(123)
+      %Comment{}
+
+      iex> get_comment!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_comment!(id), do: Repo.get!(Comment, id)
+
+  @doc """
+  Creates a comment.
+
+  ## Examples
+
+      iex> create_comment(%{field: value})
+      {:ok, %Comment{}}
+
+      iex> create_comment(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_comment(attrs \\ %{}) do
+    %Comment{}
+    |> Comment.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a comment.
+
+  ## Examples
+
+      iex> update_comment(comment, %{field: new_value})
+      {:ok, %Comment{}}
+
+      iex> update_comment(comment, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_comment(%Comment{} = comment, attrs) do
+    comment
+    |> Comment.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a Comment.
+
+  ## Examples
+
+      iex> delete_comment(comment)
+      {:ok, %Comment{}}
+
+      iex> delete_comment(comment)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_comment(%Comment{} = comment) do
+    Repo.delete(comment)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking comment changes.
+
+  ## Examples
+
+      iex> change_comment(comment)
+      %Ecto.Changeset{source: %Comment{}}
+
+  """
+  def change_comment(%Comment{} = comment) do
+    Comment.changeset(comment, %{})
   end
 end

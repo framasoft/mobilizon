@@ -27,6 +27,27 @@ defmodule EventosWeb.AddressController do
     end
   end
 
+  def process_geom(%{"type" => type, "data" => data}) do
+    import Logger
+    Logger.debug("Process geom")
+    Logger.debug(inspect data)
+    Logger.debug(inspect type)
+    types = [:point]
+    unless is_atom(type) do
+      type = String.to_existing_atom(type)
+    end
+    case type do
+      :point ->
+        %Geo.Point{coordinates: {data["latitude"], data["longitude"]}, srid: 4326}
+      nil ->
+        nil
+    end
+  end
+
+  def process_geom(nil) do
+    nil
+  end
+
   def show(conn, %{"id" => id}) do
     address = Addresses.get_address!(id)
     render(conn, "show.json", address: address)

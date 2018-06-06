@@ -6,22 +6,22 @@ defmodule Eventos.Factory do
   use ExMachina.Ecto, repo: Eventos.Repo
 
   def user_factory do
-    %Eventos.Accounts.User{
+    %Eventos.Actors.User{
       password_hash: "Jane Smith",
       email: sequence(:email, &"email-#{&1}@example.com"),
       role: 0,
-      account: build(:account)
+      actor: build(:actor)
     }
   end
 
-  def account_factory do
+  def actor_factory do
     {:ok, {_, pubkey}} = RsaEx.generate_keypair("4096")
-    %Eventos.Accounts.Account{
-      username: sequence("Thomas"),
+    username = sequence("thomas")
+    %Eventos.Actors.Actor{
+      preferred_username: username,
       domain: nil,
       public_key: pubkey,
-      uri: "https://",
-      url: "https://"
+      url: EventosWeb.Endpoint.url() <> "/@#{username}"
     }
   end
 
@@ -46,15 +46,19 @@ defmodule Eventos.Factory do
   end
 
   def event_factory do
+    actor = build(:actor)
+    slug = sequence("my-event")
+
     %Eventos.Events.Event{
       title: sequence("MyEvent"),
-      slug: sequence("my-event"),
+      slug: slug,
       description: "My desc",
       begins_on: nil,
       ends_on: nil,
-      organizer_account: build(:account),
+      organizer_actor: actor,
       category: build(:category),
-      address: build(:address)
+      address: build(:address),
+      url: EventosWeb.Endpoint.url() <> "/@" <> actor.username <> "/" <> slug
     }
   end
 
@@ -74,13 +78,13 @@ defmodule Eventos.Factory do
   end
 
   def group_factory do
-    %Eventos.Groups.Group{
-      title: sequence("My Group"),
-      description: "My group",
+    username = sequence("My Group")
+    %Eventos.Actors.Actor{
+      preferred_username: username,
+      summary: "My group",
       suspended: false,
-      url: "https://",
-      uri: "https://",
-      address: build(:address)
+      url: EventosWeb.Endpoint.url() <> "/@#{username}",
+      type: "Group",
     }
   end
 end

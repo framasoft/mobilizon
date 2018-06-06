@@ -3,7 +3,7 @@ defmodule EventosWeb.EventView do
   View for Events
   """
   use EventosWeb, :view
-  alias EventosWeb.{EventView, AccountView, GroupView, AddressView}
+  alias EventosWeb.{EventView, ActorView, GroupView, AddressView}
 
   def render("index.json", %{events: events}) do
     %{data: render_many(events, EventView, "event_simple.json")}
@@ -17,12 +17,28 @@ defmodule EventosWeb.EventView do
     %{data: render_one(event, EventView, "event.json")}
   end
 
+  def render("event_for_actor.json", %{event: event}) do
+    %{id: event.id,
+      title: event.title,
+      slug: event.slug,
+      uuid: event.uuid,
+    }
+  end
+
   def render("event_simple.json", %{event: event}) do
     %{id: event.id,
       title: event.title,
+      slug: event.slug,
       description: event.description,
       begins_on: event.begins_on,
       ends_on: event.ends_on,
+      uuid: event.uuid,
+      organizer: %{
+        username: event.organizer_actor.preferred_username,
+        display_name: event.organizer_actor.name,
+        avatar: event.organizer_actor.avatar_url,
+      },
+      type: "Event",
     }
   end
 
@@ -32,10 +48,11 @@ defmodule EventosWeb.EventView do
       description: event.description,
       begins_on: event.begins_on,
       ends_on: event.ends_on,
-      organizer: render_one(event.organizer_account, AccountView, "acccount_basic.json"),
-      group: render_one(event.organizer_group, GroupView, "group_basic.json"),
-      participants: render_many(event.participants, AccountView, "show_basic.json"),
+      uuid: event.uuid,
+      organizer: render_one(event.organizer_actor, ActorView, "acccount_basic.json"),
+      participants: render_many(event.participants, ActorView, "show_basic.json"),
       address: render_one(event.address, AddressView, "address.json"),
+      type: "Event",
     }
   end
 end

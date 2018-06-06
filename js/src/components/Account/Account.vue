@@ -4,13 +4,14 @@
     <v-flex xs12 sm6 offset-sm3>
       <v-progress-circular v-if="loading" indeterminate color="primary"></v-progress-circular>
       <v-card v-if="!loading">
+        <v-card-media :src="actor.banner" height="400px">
           <v-layout column class="media">
             <v-card-title>
               <v-btn icon @click="$router.go(-1)">
                 <v-icon>chevron_left</v-icon>
               </v-btn>
               <v-spacer></v-spacer>
-              <v-btn icon class="mr-3" v-if="$store.state.user && $store.state.user.account.id === account.id">
+              <v-btn icon class="mr-3" v-if="$store.state.user && $store.state.user.actor.id === actor.id">
                 <v-icon>edit</v-icon>
               </v-btn>
               <v-btn icon>
@@ -22,7 +23,7 @@
               <v-avatar size="125px">
                 <img v-if="!account.avatar_url"
                   class="img-circle elevation-7 mb-1"
-                  src="http://lorempixel.com/125/125/"
+                  src="https://picsum.photos/125/125/"
                 >
                 <img v-else
                      class="img-circle elevation-7 mb-1"
@@ -33,13 +34,14 @@
             <v-container fluid grid-list-lg>
               <v-layout row>
                 <v-flex xs7>
-                  <div class="headline">{{ account.display_name }}</div>
-                  <div><span class="subheading">@{{ account.username }}</span><span v-if="account.server">@{{ account.server.address }}</span></div>
-                  <v-card-text v-if="account.description" v-html="account.description"></v-card-text>
+                  <div class="headline">{{ actor.display_name }}</div>
+                  <div><span class="subheading">@{{ actor.username }}<span v-if="actor.domain">@{{ actor.domain }}</span></span></div>
+                  <v-card-text v-if="actor.description" v-html="actor.description"></v-card-text>
                 </v-flex>
               </v-layout>
             </v-container>
           </v-layout>
+        </v-card-media>
         <v-list three-line>
           <v-list-tile>
             <v-list-tile-action>
@@ -74,15 +76,15 @@
             </v-list-tile-content>
           </v-list-tile>
         </v-list>
-        <v-container fluid grid-list-md v-if="account.participatingEvents && account.participatingEvents.length > 0">
+        <v-container fluid grid-list-md v-if="actor.participatingEvents && actor.participatingEvents.length > 0">
           <v-subheader>Participated at</v-subheader>
           <v-layout row wrap>
-            <v-flex v-for="event in account.participatingEvents" :key="event.id">
+            <v-flex v-for="event in actor.participatingEvents" :key="event.id">
               <v-card>
                 <v-card-media
                   class="black--text"
                   height="200px"
-                  src="http://lorempixel.com/400/200/"
+                  src="https://picsum.photos/400/200/"
                 >
                   <v-container fill-height fluid>
                     <v-layout fill-height>
@@ -115,15 +117,15 @@
             </v-flex>
           </v-layout>
         </v-container>
-        <v-container fluid grid-list-md v-if="account.organizingEvents && account.organizingEvents.length > 0">
+        <v-container fluid grid-list-md v-if="actor.organizingEvents && actor.organizingEvents.length > 0">
           <v-subheader>Organized events</v-subheader>
           <v-layout row wrap>
-            <v-flex v-for="event in account.organizingEvents" :key="event.id">
+            <v-flex v-for="event in actor.organizingEvents" :key="event.id">
               <v-card>
                 <v-card-media
                   class="black--text"
                   height="200px"
-                  src="http://lorempixel.com/400/200/"
+                  src="https://picsum.photos/400/200/"
                 >
                   <v-container fill-height fluid>
                     <v-layout fill-height>
@@ -169,12 +171,17 @@ export default {
   name: 'Account',
   data() {
     return {
-      account: null,
-      loading: true,
+        actor: null,
+        loading: true,
     }
   },
-  props: ['id'],
-  mounted() {
+  props: {
+      name: {
+          type: String,
+          required: true,
+      }
+  },
+  created() {
     this.fetchData();
   },
   watch: {
@@ -183,12 +190,12 @@ export default {
   },
   methods: {
     fetchData() {
-      eventFetch(`/accounts/${this.id}`, this.$store)
+      eventFetch(`/actors/${this.name}`, this.$store)
         .then(response => response.json())
         .then((response) => {
-          this.account = response.data;
+          this.actor = response.data;
           this.loading = false;
-          console.log(this.account);
+          console.log(this.actor);
         })
     }
   }

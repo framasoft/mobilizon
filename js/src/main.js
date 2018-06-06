@@ -3,10 +3,12 @@
 import Vue from 'vue';
 // import * as VueGoogleMaps from 'vue2-google-maps';
 import VueMarkdown from 'vue-markdown';
+import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete';
 import Vuetify from 'vuetify';
 import Vuex from 'vuex';
 import moment from 'moment';
 import VuexI18n from 'vuex-i18n';
+import 'material-design-icons/iconfont/material-icons.css';
 import 'vuetify/dist/vuetify.min.css';
 import App from '@/App';
 import router from '@/router';
@@ -15,6 +17,10 @@ import translations from '@/i18n/index';
 import auth from '@/auth';
 
 Vue.config.productionTip = false;
+
+Vue.use(VuetifyGoogleAutocomplete, {
+    apiKey: 'AIzaSyBF37pw38j0giICt73TCAPNogc07Upe_Q4', // Can also be an object. E.g, for Google Maps Premium API, pass `{ client: <YOUR-CLIENT-ID> }`
+});
 
 /*Vue.use(VueGoogleMaps, {
   load: {
@@ -31,6 +37,7 @@ let language = window.navigator.userLanguage || window.navigator.language;
 moment.locale(language);
 
 Vue.filter('formatDate', value => (value ? moment(String(value)).format('LLLL') : null));
+Vue.filter('formatDay', value => (value ? moment(String(value)).format('LL') : null));
 
 if (!(language in translations)) {
   [language] = language.split('-', 1);

@@ -1,4 +1,4 @@
-import { API_HOST, API_PATH } from './_entrypoint';
+import { API_ORIGIN, API_PATH } from './_entrypoint';
 
 const jsonLdMimeType = 'application/json';
 
@@ -19,7 +19,7 @@ export default function eventFetch(url, store, optionsarg = {}) {
     options.headers.set('Authorization', `Bearer ${localStorage.getItem('token')}`);
   }
 
-  const link = url.includes(API_PATH) ? API_HOST + url : API_HOST + API_PATH + url;
+  const link = url.includes(API_PATH) ? API_ORIGIN + url : API_ORIGIN + API_PATH + url;
 
   return fetch(link, options).then((response) => {
     if (response.ok) return response;
