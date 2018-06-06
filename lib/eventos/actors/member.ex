@@ -7,10 +7,10 @@ defmodule Eventos.Actors.Member do
   alias Eventos.Actors.Member
   alias Eventos.Actors.Actor
 
-
+  @primary_key false
   schema "members" do
-    field :approved, :boolean
-    field :role, :integer
+    field :approved, :boolean, default: true
+    field :role, :integer, default: 0 # 0 : Member, 1 : Moderator, 2 : Admin
     belongs_to :parent, Actor
     belongs_to :actor, Actor
 
@@ -20,7 +20,7 @@ defmodule Eventos.Actors.Member do
   @doc false
   def changeset(%Member{} = member, attrs) do
     member
-    |> cast(attrs, [:role])
-    |> validate_required([:role])
+    |> cast(attrs, [:role, :approved, :parent_id, :actor_id])
+    |> validate_required([:parent_id, :actor_id])
   end
 end

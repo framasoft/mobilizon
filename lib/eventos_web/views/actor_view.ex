@@ -3,7 +3,8 @@ defmodule EventosWeb.ActorView do
   View for Actors
   """
   use EventosWeb, :view
-  alias EventosWeb.{ActorView, EventView}
+  alias EventosWeb.{ActorView, EventView, MemberView}
+  alias Eventos.Actors
 
   def render("index.json", %{actors: actors}) do
     %{data: render_many(actors, ActorView, "acccount_basic.json")}
@@ -32,7 +33,7 @@ defmodule EventosWeb.ActorView do
   end
 
   def render("actor.json", %{actor: actor}) do
-    %{id: actor.id,
+    output = %{id: actor.id,
       username: actor.preferred_username,
       domain: actor.domain,
       display_name: actor.name,
@@ -45,5 +46,14 @@ defmodule EventosWeb.ActorView do
       banner: actor.banner_url,
       organized_events: render_many(actor.organized_events, EventView, "event_for_actor.json")
     }
+    import Logger
+    Logger.debug(inspect actor.type)
+    if actor.type == :Group do
+      Logger.debug("I'm a group !")
+      Map.put(output, :members, render_many(Actors.members_for_group(actor), MemberView, "member.json"))
+    else
+      Logger.debug("not a group")
+      output
+    end
   end
 end

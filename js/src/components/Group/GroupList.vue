@@ -9,7 +9,7 @@
           <v-card-media
             class="black--text"
             height="200px"
-            src="http://lorempixel.com/400/200/"
+            src="https://picsum.photos/400/200/"
           >
             <v-container fill-height fluid>
               <v-layout fill-height>
@@ -26,9 +26,9 @@
             </div>
           </v-card-title>
           <v-card-actions>
-            <v-btn flat color="green" @click="joinGroup(group.id)"><v-icon v-if="group.locked">lock</v-icon>Join</v-btn>
+            <v-btn flat color="green" @click="joinGroup(group)"><v-icon v-if="group.locked">lock</v-icon>Join</v-btn>
             <v-btn flat color="orange" @click="viewActor(group)">Explore</v-btn>
-            <v-btn flat color="red" @click="deleteEvent(group.id)">Delete</v-btn>
+            <v-btn flat color="red" @click="deleteGroup(group)">Delete</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -64,20 +64,20 @@
             this.groups = data.data;
           });
       },
-      deleteEvent(id) {
+      deleteGroup(group) {
         const router = this.$router;
-        eventFetch('/groups/' + id, this.$store, {'method': 'DELETE'})
+        eventFetch(`/groups/${this.username_with_domain(group)}`, this.$store, {'method': 'DELETE'})
           .then(response => response.json())
           .then(() => router.push('/groups'));
       },
       viewActor(actor) {
-        this.$router.push({ name: 'Account', params: { name: this.username_with_domain(actor) } })
+        this.$router.push({ name: 'Group', params: { name: this.username_with_domain(actor) } })
       },
-      joinGroup(id) {
+      joinGroup(group) {
         const router = this.$router;
-        eventFetch('/groups/' + id + '/join', this.$store)
+        eventFetch(`/groups/${this.username_with_domain(group)}/join`, this.$store, { method: 'POST' })
           .then(response => response.json())
-          .then(() => router.push('/group/' + id))
+          .then(() => router.push({ name: 'Group', params: { name: this.username_with_domain(group) } }));
       }
     },
   };

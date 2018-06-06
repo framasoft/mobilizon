@@ -78,6 +78,13 @@ defmodule Eventos.Events do
   end
 
   @doc """
+  Gets an event by it's UUID
+  """
+  def get_event_by_uuid(uuid) do
+    Repo.get_by(Event, uuid: uuid)
+  end
+
+  @doc """
   Gets a single event, with all associations loaded.
   """
   def get_event_full!(id) do
@@ -90,6 +97,14 @@ defmodule Eventos.Events do
   """
   def get_event_full_by_url!(url) do
     event = Repo.get_by(Event, url: url)
+    Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address])
+  end
+
+  @doc """
+  Gets a full event by it's UUID
+  """
+  def get_event_full_by_uuid(uuid) do
+    event = Repo.get_by(Event, uuid: uuid)
     Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address])
   end
 
@@ -139,7 +154,8 @@ defmodule Eventos.Events do
   def create_event(attrs \\ %{}) do
     %Event{}
     |> Event.changeset(attrs)
-    |> Repo.insert()
+    |> Repo.insert!()
+    |> Repo.preload([:organizer_actor])
   end
 
   @doc """

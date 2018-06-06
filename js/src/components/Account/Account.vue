@@ -23,7 +23,7 @@
               <v-avatar size="125px">
                 <img v-if="!account.avatar_url"
                   class="img-circle elevation-7 mb-1"
-                  src="http://lorempixel.com/125/125/"
+                  src="https://picsum.photos/125/125/"
                 >
                 <img v-else
                      class="img-circle elevation-7 mb-1"
@@ -84,7 +84,7 @@
                 <v-card-media
                   class="black--text"
                   height="200px"
-                  src="http://lorempixel.com/400/200/"
+                  src="https://picsum.photos/400/200/"
                 >
                   <v-container fill-height fluid>
                     <v-layout fill-height>
@@ -125,7 +125,7 @@
                 <v-card-media
                   class="black--text"
                   height="200px"
-                  src="http://lorempixel.com/400/200/"
+                  src="https://picsum.photos/400/200/"
                 >
                   <v-container fill-height fluid>
                     <v-layout fill-height>

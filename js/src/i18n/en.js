@@ -1,7 +1,7 @@
 export default {
   home: {
-    welcome: 'Welcome on Libre-Event, {username}',
-    welcome_off: 'Welcome on Libre-Event',
+    welcome: 'Welcome on Eventos, {username}',
+    welcome_off: 'Welcome on Eventos',
     events: 'Events',
     groups: 'Groups',
     login: 'Login',

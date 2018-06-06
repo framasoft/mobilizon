@@ -51,6 +51,7 @@ defmodule Eventos.Events.Event do
     field :thumbnail, :string
     field :large_image, :string
     field :publish_at, Timex.Ecto.DateTimeWithTimezone
+    field :uuid, Ecto.UUID, default: Ecto.UUID.generate()
     belongs_to :organizer_actor, Actor, [foreign_key: :organizer_actor_id]
     many_to_many :tags, Tag, join_through: "events_tags"
     belongs_to :category, Category
@@ -64,12 +65,17 @@ defmodule Eventos.Events.Event do
 
   @doc false
   def changeset(%Event{} = event, attrs) do
-    event
+    changeset = event
     |> cast(attrs, [:title, :description, :url, :begins_on, :ends_on, :organizer_actor_id, :category_id, :state, :status, :public, :thumbnail, :large_image, :publish_at])
     |> cast_assoc(:tags)
     |> cast_assoc(:address)
     |> validate_required([:title, :description, :begins_on, :ends_on, :organizer_actor_id, :category_id])
     |> TitleSlug.maybe_generate_slug()
     |> TitleSlug.unique_constraint()
+    |> put_change(:uuid, Ecto.UUID.generate())
+
+    import Logger
+    Logger.debug(inspect changeset)
+    changeset
   end
 end

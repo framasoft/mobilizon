@@ -1,10 +1,59 @@
 <template>
   <v-container>
-    <h1 class="welcome" v-if="$store.state.user">{{ $t("home.welcome", { 'username': this.displayed_name }) }}</h1>
-    <h1 class="welcome" v-else>{{ $t("home.welcome_off", { 'username': $store.state.user.username}) }}</h1>
-    <router-link :to="{ name: 'EventList' }">{{ $t('home.events') }}</router-link>
-    <router-link v-if="$store.state.user === false" :to="{ name: 'Login' }">{{ $t('home.login') }}</router-link>
-    <router-link v-if="$store.state.user === false" :to="{ name: 'Register' }">{{ $t('home.register') }}</router-link>
+      <v-jumbotron
+              :gradient="gradient"
+              src="https://picsum.photos/1200/900"
+              dark
+              v-if="$store.state.user === false"
+      >
+          <v-container fill-height>
+              <v-layout align-center>
+                  <v-flex text-xs-center>
+                      <h1 class="display-3">Find events you like</h1>
+                      <h2>Share it with Eventos</h2>
+                      <v-btn>{{ $t("home.register") }}</v-btn>
+                  </v-flex>
+              </v-layout>
+          </v-container>
+      </v-jumbotron>
+      <v-layout>
+          <v-flex xs12 sm8 offset-sm2>
+              <v-card>
+      <v-layout row wrap>
+          <v-flex xs4 v-for="event in events" :key="event.uuid">
+              <v-card :to="{ name: 'Event', params:{ uuid: event.uuid } }">
+                  <v-card-media v-if="!event.image"
+                                class="white--text"
+                                height="200px"
+                                src="https://picsum.photos/g/400/200/"
+                  >
+                      <v-container fill-height fluid>
+                          <v-layout fill-height>
+                              <v-flex xs12 align-end flexbox>
+                                  <span class="headline black--text">{{ event.title }}</span>
+                              </v-flex>
+                          </v-layout>
+                      </v-container>
+                  </v-card-media>
+                  <v-card-title primary-title>
+                      <div>
+                          <span class="grey--text">{{ event.begins_on | formatDate }}</span><br>
+                          <router-link :to="{name: 'Account', params: { name: event.organizer.username } }">
+                              <v-avatar size="25px">
+                                  <img class="img-circle elevation-7 mb-1"
+                                       :src="event.organizer.avatar"
+                                  >
+                              </v-avatar>
+                          </router-link>
+                          <span v-if="event.organizer">Organisé par {{ event.organizer.display_name }}</span>
+                      </div>
+                  </v-card-title>
+              </v-card>
+          </v-flex>
+      </v-layout>
+              </v-card>
+          </v-flex>
+      </v-layout>
     <v-layout row>
       <v-flex xs6>
         <v-btn large @click="geoLocalize"><v-icon>my_location</v-icon>Me géolocaliser</v-btn>
@@ -36,6 +85,7 @@ export default {
   name: 'Home',
   data() {
     return {
+      gradient: 'to top right, rgba(63,81,181, .7), rgba(25,32,72, .7)',
       user: null,
       searchTerm: null,
       location_field: {
@@ -43,10 +93,11 @@ export default {
         search: null,
       },
       locations: [],
+      events: [],
     };
   },
-  mounted() {
-    // this.fetchLocations();
+  created() {
+    this.fetchData();
   },
   computed: {
     displayed_name: function() {
@@ -59,6 +110,14 @@ export default {
         .then((response) => (response.json()))
         .then((response) => {
           this.locations = response;
+        });
+    },
+    fetchData() {
+      eventFetch('/events', this.$store)
+        .then(response => response.json())
+        .then((response) => {
+          this.loading = false;
+          this.events = response.data;
         });
     },
     geoLocalize() {
@@ -84,6 +143,9 @@ export default {
       const geohash = ngeohash.encode(addressData.latitude, addressData.longitude, 11);
       sessionStorage.setItem('City', geohash);
       this.$router.push({name: 'EventList', params: {location: geohash}});
+    },
+    viewEvent(event) {
+      this.$router.push({ name: 'Event', params: { uuid: event.uuid } })
     },
   },
 };

@@ -11,7 +11,8 @@ defmodule Eventos.Export.ICalendar do
       summary: event.title,
       dtstart: event.begins_on,
       dtend: event.ends_on,
-      description: event.description
+      description: event.description,
+      uid: event.uuid
     }]
     %ICalendar{events: events}
     |> ICalendar.to_ics()

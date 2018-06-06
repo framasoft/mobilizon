@@ -5,7 +5,7 @@ defmodule EventosWeb.GroupController do
   use EventosWeb, :controller
 
   alias Eventos.Actors
-  alias Eventos.Actors.Actor
+  alias Eventos.Actors.{Actor, Member}
 
   action_fallback EventosWeb.FallbackController
 
@@ -21,6 +21,20 @@ defmodule EventosWeb.GroupController do
       |> put_status(:created)
       |> put_resp_header("location", actor_path(conn, :show, group))
       |> render(EventosWeb.ActorView, "acccount_basic.json", actor: group)
+    end
+  end
+
+  def join(conn, %{"name" => group_name}) do
+    with actor = Guardian.Plug.current_resource(conn).actor,
+      group <- Actors.get_group_by_name(group_name),
+      %Member{} = member <- Actors.create_member(%{"parent_id" => group.id, "actor_id" => actor.id}) do
+      conn
+      |> put_status(:created)
+      |> render(EventosWeb.MemberView, "member.json", member: member)
+    else
+      err ->
+        import Logger
+        Logger.debug(inspect err)
     end
   end
 end

@@ -103,7 +103,7 @@ const router = new Router({
       meta: { requiredAuth: false },
     },
     {
-      path: '/@:name/:slug',
+      path: '/events/:uuid',
       name: 'Event',
       component: Event,
       props: true,

@@ -40,10 +40,10 @@ defmodule EventosWeb.Router do
       get "/groups", GroupController, :index
       get "/events", EventController, :index
       get "/events/search/:name", EventController, :search
-      get "/events/:username/:slug", EventController, :show
-      get "/events/:username/:slug/ics", EventController, :export_to_ics
-      get "/events/:username/:slug/tracks", TrackController, :show_tracks_for_event
-      get "/events/:username/:slug/sessions", SessionController, :show_sessions_for_event
+      get "/events/:uuid/ics", EventController, :export_to_ics
+      get "/events/:uuid/tracks", TrackController, :show_tracks_for_event
+      get "/events/:uuid/sessions", SessionController, :show_sessions_for_event
+      get "/events/:uuid", EventController, :show
       resources "/comments", CommentController, only: [:show]
       get "/bots/:id", BotController, :view
 
@@ -71,18 +71,17 @@ defmodule EventosWeb.Router do
        resources "/users", UserController, except: [:new, :edit, :show]
        patch "/actors/:name", ActorController, :update
        post "/events", EventController, :create
-       patch "/events/:username/:slug", EventController, :update
-       put "/events/:username/:slug", EventController, :update
-       delete "/events/:username/:slug", EventController, :delete
+       patch "/events/:uuid", EventController, :update
+       put "/events/:uuid", EventController, :update
+       delete "/events/:uuid", EventController, :delete
        resources "/comments", CommentController, except: [:new, :edit, :show]
        #post "/events/:id/request", EventRequestController, :create_for_event
        resources "/participant", ParticipantController
        resources "/bots", BotController, except: [:new, :edit, :show]
        #resources "/requests", EventRequestController
        post "/groups", GroupController, :create
-       #post "/groups/:id/request", GroupRequestController, :create_for_group
+       post "/groups/:name/join", GroupController, :join
        resources "/members", MemberController
-       #resources "/requests", GroupRequestController
        resources "/sessions", SessionController, except: [:index, :show]
        resources "/tracks", TrackController, except: [:index, :show]
        get "/tracks/:id/sessions", SessionController, :show_sessions_for_track

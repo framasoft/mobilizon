@@ -133,6 +133,15 @@ defmodule Eventos.Actors do
     Repo.all(from a in Actor, where: a.type == "Group")
   end
 
+  def get_group_by_name(name) do
+    actor = case String.split(name, "@") do
+      [name] ->
+        Repo.get_by(Actor, preferred_username: name, type: :Group)
+      [name, domain] ->
+        Repo.get_by(Actor, preferred_username: name, domain: domain, type: :Group)
+    end
+  end
+
   @doc """
   Creates a group.
 
@@ -176,7 +185,7 @@ defmodule Eventos.Actors do
 
   def insert_or_update_actor(data) do
     cs = Actor.remote_actor_creation(data)
-    Repo.insert(cs, on_conflict: [set: [public_key: data.public_key, avatar_url: data.avatar_url, banner: data.banner_url, name: data.name]], conflict_target: [:preferred_username, :domain])
+    Repo.insert(cs, on_conflict: [set: [public_key: data.public_key, avatar_url: data.avatar_url, banner_url: data.banner_url, name: data.name]], conflict_target: [:preferred_username, :domain])
   end
 
 #  def increase_event_count(%Actor{} = actor) do
@@ -494,7 +503,8 @@ defmodule Eventos.Actors do
   def create_member(attrs \\ %{}) do
     %Member{}
     |> Member.changeset(attrs)
-    |> Repo.insert()
+    |> Repo.insert!()
+    |> Repo.preload([:actor, :parent])
   end
 
   @doc """
@@ -542,6 +552,22 @@ defmodule Eventos.Actors do
   """
   def change_member(%Member{} = member) do
     Member.changeset(member, %{})
+  end
+
+  def groups_for_actor(%Actor{id: id} = _actor) do
+    Repo.all(
+      from m in Member,
+      where: m.actor_id == ^id,
+      preload: [:parent]
+    )
+  end
+
+  def members_for_group(%Actor{type: :Group, id: id} = _group) do
+    Repo.all(
+      from m in Member,
+      where: m.parent_id == ^id,
+      preload: [:parent, :actor]
+    )
   end
 
 

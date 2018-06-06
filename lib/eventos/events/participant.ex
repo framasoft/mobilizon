@@ -9,7 +9,7 @@ defmodule Eventos.Events.Participant do
 
   @primary_key false
   schema "participants" do
-    field :role, :integer
+    field :role, :integer, default: 0 # 0 : participant, 1 : moderator, 2 : administrator, 3 : creator
     field :approved, :boolean
     belongs_to :event, Event, primary_key: true
     belongs_to :actor, Actor, primary_key: true

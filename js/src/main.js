@@ -8,8 +8,8 @@ import Vuetify from 'vuetify';
 import Vuex from 'vuex';
 import moment from 'moment';
 import VuexI18n from 'vuex-i18n';
+import 'material-design-icons/iconfont/material-icons.css';
 import 'vuetify/dist/vuetify.min.css';
-import 'material-design-icons-iconfont/dist/material-design-icons.css';
 import App from '@/App';
 import router from '@/router';
 import storeData from '@/store/index';
@@ -37,6 +37,7 @@ let language = window.navigator.userLanguage || window.navigator.language;
 moment.locale(language);
 
 Vue.filter('formatDate', value => (value ? moment(String(value)).format('LLLL') : null));
+Vue.filter('formatDay', value => (value ? moment(String(value)).format('LL') : null));
 
 if (!(language in translations)) {
   [language] = language.split('-', 1);

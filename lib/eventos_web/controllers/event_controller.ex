@@ -17,18 +17,30 @@ defmodule EventosWeb.EventController do
   end
 
   def create(conn, %{"event" => event_params}) do
-    event_params = %{event_params | "address" => process_address(event_params["address"])}
+    address = process_address(event_params["address"])
+    event_params = if is_nil address do
+      event_params
+    else
+      %{event_params | "address" => address}
+    end
     with {:ok, %Event{} = event} <- Events.create_event(event_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", event_path(conn, :show, event))
+      |> put_resp_header("location", event_path(conn, :show, event.uuid))
       |> render("show_simple.json", event: event)
     end
   end
 
   defp process_address(address) do
-    case Addresses.process_geom(address["geom"]) do
-      {:ok, geom} ->
+    import Logger
+    Logger.debug("process address")
+    Logger.debug(inspect address)
+    geom = EventosWeb.AddressController.process_geom(address["geom"])
+    Logger.debug(inspect geom)
+    case geom do
+      nil ->
+        address
+      _ ->
         %{address | "geom" => geom}
       _ ->
         address
@@ -40,27 +52,26 @@ defmodule EventosWeb.EventController do
     render(conn, "index.json", events: events)
   end
 
-  def show(conn, %{"username" => username, "slug" => slug}) do
-    event = Events.get_event_full_by_name_and_slug!(username, slug)
+  def show(conn, %{"uuid" => uuid}) do
+    event = Events.get_event_full_by_uuid(uuid)
     render(conn, "show.json", event: event)
   end
 
-  def export_to_ics(conn, %{"username" => username, "slug" => slug}) do
-    event = Events.get_event_full_by_name_and_slug!(username, slug)
-      |> ICalendar.export_event()
+  def export_to_ics(conn, %{"uuid" => uuid}) do
+    event = Events.get_event_full_by_uuid(uuid) |> ICalendar.export_event()
     send_resp(conn, 200, event)
   end
 
-  def update(conn, %{"username" => username, "slug" => slug, "event" => event_params}) do
-    event = Events.get_event_full_by_name_and_slug!(username, slug)
+  def update(conn, %{"uuid" => uuid, "event" => event_params}) do
+    event = Events.get_event_full_by_uuid(uuid)
 
     with {:ok, %Event{} = event} <- Events.update_event(event, event_params) do
       render(conn, "show_simple.json", event: event)
     end
   end
 
-  def delete(conn, %{"username" => username, "slug" => slug}) do
-    event = Events.get_event_full_by_name_and_slug!(username, slug)
+  def delete(conn, %{"uuid" => uuid}) do
+    event = Events.get_event_by_uuid(uuid)
     with {:ok, %Event{}} <- Events.delete_event(event) do
       send_resp(conn, :no_content, "")
     end

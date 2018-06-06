@@ -3,7 +3,7 @@ defmodule EventosWeb.MemberView do
   View for Members
   """
   use EventosWeb, :view
-  alias EventosWeb.MemberView
+  alias EventosWeb.{MemberView, ActorView}
 
   def render("index.json", %{members: members}) do
     %{data: render_many(members, MemberView, "member.json")}
@@ -14,7 +14,10 @@ defmodule EventosWeb.MemberView do
   end
 
   def render("member.json", %{member: member}) do
-    %{id: member.id,
-      role: member.role}
+    %{
+      role: member.role,
+      actor: render_one(member.actor, ActorView, "acccount_basic.json"),
+      group: render_one(member.parent, ActorView, "acccount_basic.json")
+    }
   end
 end
