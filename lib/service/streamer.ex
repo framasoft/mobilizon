@@ -46,49 +46,6 @@ defmodule Eventos.Service.Streamer do
     {:noreply, topics}
   end
 
-#  def handle_cast(%{action: :stream, topic: "user", item: %Notification{} = item}, topics) do
-#    topic = "user:#{item.user_id}"
-#
-#    Enum.each(topics[topic] || [], fn socket ->
-#      json =
-#        %{
-#          event: "notification",
-#          payload:
-#            Pleroma.Web.MastodonAPI.MastodonAPIController.render_notification(
-#              socket.assigns["user"],
-#              item
-#            )
-#            |> Jason.encode!()
-#        }
-#        |> Jason.encode!()
-#
-#      send(socket.transport_pid, {:text, json})
-#    end)
-#
-#    {:noreply, topics}
-#  end
-
-  def handle_cast(%{action: :stream, topic: "user", item: item}, topics) do
-    Logger.debug("Trying to push to users")
-
-    recipient_topics =
-      User.get_recipients_from_activity(item)
-      |> Enum.map(fn %{id: id} -> "user:#{id}" end)
-
-    Enum.each(recipient_topics, fn topic ->
-      push_to_socket(topics, topic, item)
-    end)
-
-    {:noreply, topics}
-  end
-
-  def handle_cast(%{action: :stream, topic: topic, item: item}, topics) do
-    Logger.debug("Trying to push to #{topic}")
-    Logger.debug("Pushing item to #{topic}")
-    push_to_socket(topics, topic, item)
-    {:noreply, topics}
-  end
-
   def handle_cast(%{action: :add, topic: topic, socket: socket}, sockets) do
     topic = internal_topic(topic, socket)
     sockets_for_topic = sockets[topic] || []
@@ -110,31 +67,6 @@ defmodule Eventos.Service.Streamer do
   def handle_cast(m, state) do
     Logger.info("Unknown: #{inspect(m)}, #{inspect(state)}")
     {:noreply, state}
-  end
-
-  def push_to_socket(topics, topic, item) do
-    Enum.each(topics[topic] || [], fn socket ->
-      # Get the current user so we have up-to-date blocks etc.
-      user = User.get_cached_by_ap_id(socket.assigns[:user].ap_id)
-      blocks = user.info["blocks"] || []
-
-      unless item.actor in blocks do
-        json =
-          %{
-            event: "update",
-            payload:
-              Pleroma.Web.MastodonAPI.StatusView.render(
-                "status.json",
-                activity: item,
-                for: user
-              )
-              |> Jason.encode!()
-          }
-          |> Jason.encode!()
-
-        send(socket.transport_pid, {:text, json})
-      end
-    end)
   end
 
   defp internal_topic("user", socket) do

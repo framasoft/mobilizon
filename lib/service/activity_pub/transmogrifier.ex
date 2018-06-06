@@ -20,7 +20,6 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
     |> fix_attachments
     |> fix_context
     #|> fix_in_reply_to
-    |> fix_emoji
     |> fix_tag
   end
 
@@ -60,29 +59,6 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
 
     object
     |> Map.put("attachment", attachments)
-  end
-
-  def fix_emoji(object) do
-    tags = object["tag"] || []
-    emoji = tags |> Enum.filter(fn data -> data["type"] == "Emoji" and data["icon"] end)
-
-    emoji =
-      emoji
-      |> Enum.reduce(%{}, fn data, mapping ->
-        name = data["name"]
-
-        if String.starts_with?(name, ":") do
-          name = name |> String.slice(1..-2)
-        end
-
-        mapping |> Map.put(name, data["icon"]["url"])
-      end)
-
-    # we merge mastodon and pleroma emoji into a single mapping, to allow for both wire formats
-    emoji = Map.merge(object["emoji"] || %{}, emoji)
-
-    object
-    |> Map.put("emoji", emoji)
   end
 
   def fix_tag(object) do
@@ -308,21 +284,6 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
 #    end
 #  end
 #
-#  def add_hashtags(object) do
-#    tags =
-#      (object["tag"] || [])
-#      |> Enum.map(fn tag ->
-#        %{
-#          "href" => Pleroma.Web.Endpoint.url() <> "/tags/#{tag}",
-#          "name" => "##{tag}",
-#          "type" => "Hashtag"
-#        }
-#      end)
-#
-#    object
-#    |> Map.put("tag", tags)
-#  end
-#
 #  def add_mention_tags(object) do
 #    recipients = object["to"] ++ (object["cc"] || [])
 #
@@ -468,16 +429,4 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
 #    end
 #  end
 #
-#  def maybe_retire_websub(ap_id) do
-#    # some sanity checks
-#    if is_binary(ap_id) && String.length(ap_id) > 8 do
-#      q =
-#        from(
-#          ws in Pleroma.Web.Websub.WebsubClientSubscription,
-#          where: fragment("? like ?", ws.topic, ^"#{ap_id}%")
-#        )
-#
-#      Repo.delete_all(q)
-#    end
-#  end
 end
