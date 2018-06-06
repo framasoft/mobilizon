@@ -306,7 +306,7 @@ defmodule Eventos.Service.ActivityPub do
             |> Enum.chunk_every(limit)
             |> Enum.at(page - 1)
             |> Enum.map(fn event ->
-              {:ok, activity } = ical_event_to_activity(event, actor, bot.source)
+              {:ok, activity} = ical_event_to_activity(event, actor, bot.source)
               activity
             end)
             {activities, length(ical_events)}

@@ -14,7 +14,7 @@ defmodule EventosWeb.BotController do
   def create(conn, %{"bot" => bot_params}) do
     with user <- Guardian.Plug.current_resource,
          bot_params <- Map.put(bot_params, "user_id", user.id),
-         {:ok, actor } <- Actors.register_bot_account(%{name: bot_params["name"], summary: bot_params["summary"]}),
+         {:ok, actor} <- Actors.register_bot_account(%{name: bot_params["name"], summary: bot_params["summary"]}),
          bot_params <- Map.put(bot_params, "actor_id", actor.id),
          {:ok, %Bot{} = bot} <- Actors.create_bot(bot_params) do
       conn
