@@ -304,4 +304,31 @@ defmodule Eventos.Service.ActivityPub.Utils do
     }
     |> Map.merge(additional)
   end
+
+  @doc """
+  Converts PEM encoded keys to a public key representation
+  """
+  def pem_to_public_key(pem) do
+    [private_key_code] = :public_key.pem_decode(pem)
+    private_key = :public_key.pem_entry_decode(private_key_code)
+    {:RSAPrivateKey, _, modulus, exponent, _, _, _, _, _, _, _} = private_key
+    {:RSAPublicKey, modulus, exponent}
+  end
+
+  @doc """
+  Converts PEM encoded keys to a private key representation
+  """
+  def pem_to_private_key(pem) do
+    [private_key_code] = :public_key.pem_decode(pem)
+    :public_key.pem_entry_decode(private_key_code)
+  end
+
+  @doc """
+  Converts PEM encoded keys to a PEM public key representation
+  """
+  def pem_to_public_key_pem(pem) do
+    public_key = pem_to_public_key(pem)
+    public_key = :public_key.pem_entry_encode(:RSAPublicKey, public_key)
+    :public_key.pem_encode([public_key])
+  end
 end

@@ -16,8 +16,8 @@ defmodule EventosWeb.AddressControllerTest do
   end
 
   setup %{conn: conn} do
-    account = insert(:account)
-    user = insert(:user, account: account)
+    actor = insert(:actor)
+    user = insert(:user, actor: actor)
     {:ok, conn: conn, user: user}
   end
 
@@ -100,12 +100,5 @@ defmodule EventosWeb.AddressControllerTest do
 
   defp create_address(_) do
     {:ok, address: insert(:address)}
-  end
-
-  defp auth_conn(conn, %Eventos.Accounts.User{} = user) do
-    {:ok, token, _claims} = EventosWeb.Guardian.encode_and_sign(user)
-    conn
-    |> put_req_header("authorization", "Bearer #{token}")
-    |> put_req_header("accept", "application/json")
   end
 end

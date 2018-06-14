@@ -185,7 +185,7 @@ defmodule Eventos.Actors do
 
   def insert_or_update_actor(data) do
     cs = Actor.remote_actor_creation(data)
-    Repo.insert(cs, on_conflict: [set: [public_key: data.public_key, avatar_url: data.avatar_url, banner_url: data.banner_url, name: data.name]], conflict_target: [:preferred_username, :domain])
+    Repo.insert(cs, on_conflict: [set: [keys: data.keys, avatar_url: data.avatar_url, banner_url: data.banner_url, name: data.name]], conflict_target: [:preferred_username, :domain])
   end
 
 #  def increase_event_count(%Actor{} = actor) do
@@ -335,16 +335,25 @@ defmodule Eventos.Actors do
   Register user
   """
   def register(%{email: email, password: password, username: username}) do
-    #{:ok, {privkey, pubkey}} = RsaEx.generate_keypair("4096")
-    {:ok, rsa_priv_key} = ExPublicKey.generate_key()
-    {:ok, rsa_pub_key} = ExPublicKey.public_key_from_private_key(rsa_priv_key)
+    key = :public_key.generate_key({:rsa, 2048, 65537})
+    entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
+    pem = :public_key.pem_encode([entry]) |> String.trim_trailing()
+
+    import Exgravatar
+
+    avatar_url = gravatar_url(email, default: "404")
+    avatar = case HTTPoison.get(avatar_url) do
+      {:ok, %HTTPoison.Response{status_code: 200}} ->
+        avatar_url
+      _ ->
+        nil
+    end
 
     actor = Eventos.Actors.Actor.registration_changeset(%Eventos.Actors.Actor{}, %{
       preferred_username: username,
       domain: nil,
-      private_key: rsa_priv_key |> ExPublicKey.pem_encode(),
-      public_key: rsa_pub_key |> ExPublicKey.pem_encode(),
-      url: EventosWeb.Endpoint.url() <> "/@" <> username,
+      keys: pem,
+      avatar_url: avatar,
     })
 
     user = Eventos.Actors.User.registration_changeset(%Eventos.Actors.User{}, %{
@@ -361,7 +370,7 @@ defmodule Eventos.Actors do
       {:ok, user}
     rescue
      e in Ecto.InvalidChangesetError ->
-      {:error, e.changeset.changes.user.errors}
+      {:error, e.changeset}
     end
   end
 
@@ -370,15 +379,10 @@ defmodule Eventos.Actors do
     entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
     pem = :public_key.pem_encode([entry]) |> String.trim_trailing()
 
-    {:ok, rsa_priv_key} = ExPublicKey.generate_key()
-    {:ok, rsa_pub_key} = ExPublicKey.public_key_from_private_key(rsa_priv_key)
-
     actor = Eventos.Actors.Actor.registration_changeset(%Eventos.Actors.Actor{}, %{
       preferred_username: name,
       domain: nil,
-      private_key: pem,
-      public_key: "toto",
-      url: EventosWeb.Endpoint.url() <> "/@" <> name,
+      keys: pem,
       summary: summary,
       type: :Service
     })
@@ -387,7 +391,7 @@ defmodule Eventos.Actors do
       Eventos.Repo.insert!(actor)
     rescue
       e in Ecto.InvalidChangesetError ->
-        {:error, e}
+        {:error, e.changeset}
     end
   end
 

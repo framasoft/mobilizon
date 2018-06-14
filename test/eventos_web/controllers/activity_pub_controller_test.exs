@@ -1,44 +1,42 @@
 defmodule EventosWeb.ActivityPubControllerTest do
   use EventosWeb.ConnCase
   import Eventos.Factory
-  alias EventosWeb.ActivityPub.{AccountView, ObjectView}
-  alias Eventos.{Repo, Accounts, Accounts.Account}
+  alias EventosWeb.ActivityPub.{ActorView, ObjectView}
+  alias Eventos.{Repo, Actors, Actors.Actor}
   alias Eventos.Activity
   import Logger
 
   describe "/@:username" do
-    test "it returns a json representation of the account", %{conn: conn} do
-      account = insert(:account)
+    test "it returns a json representation of the actor", %{conn: conn} do
+      actor = insert(:actor)
 
       conn =
         conn
         |> put_req_header("accept", "application/activity+json")
-        |> get("/@#{account.username}")
+        |> get("/@#{actor.preferred_username}")
 
-      account = Accounts.get_account!(account.id)
+      actor = Actors.get_actor!(actor.id)
 
-      assert json_response(conn, 200) == AccountView.render("account.json", %{account: account})
-      Logger.error(inspect AccountView.render("account.json", %{account: account}))
+      assert json_response(conn, 200) == ActorView.render("actor.json", %{actor: actor})
+      Logger.error(inspect ActorView.render("actor.json", %{actor: actor}))
     end
   end
 
-  describe "/@username/slug" do
+  describe "/events/uuid" do
     test "it returns a json representation of the object", %{conn: conn} do
       event = insert(:event)
-      {slug, parts} = List.pop_at(String.split(event.url, "/"), -1)
-      "@" <> username = List.last(parts)
 
       conn =
         conn
         |> put_req_header("accept", "application/activity+json")
-        |> get("/@#{username}/#{slug}")
+        |> get("/events/#{event.uuid}")
 
       assert json_response(conn, 200) == ObjectView.render("event.json", %{event: event})
       Logger.error(inspect ObjectView.render("event.json", %{event: event}))
     end
   end
 
-#  describe "/accounts/:username/inbox" do
+#  describe "/actors/:username/inbox" do
 #    test "it inserts an incoming activity into the database", %{conn: conn} do
 #      data = File.read!("test/fixtures/mastodon-post-activity.json") |> Poison.decode!()
 #
@@ -54,7 +52,7 @@ defmodule EventosWeb.ActivityPubControllerTest do
 #    end
 #  end
 
-#  describe "/accounts/:nickname/followers" do
+#  describe "/actors/:nickname/followers" do
 #    test "it returns the followers in a collection", %{conn: conn} do
 #      user = insert(:user)
 #      user_two = insert(:user)

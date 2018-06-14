@@ -17,8 +17,8 @@ defmodule EventosWeb.ActivityPubController do
     end
   end
 
-  def event(conn, %{"name" => name, "slug" => slug}) do
-    with %Event{} = event <- Events.get_event_full_by_name_and_slug!(name, slug) do
+  def event(conn, %{"uuid" => uuid}) do
+    with %Event{} = event <- Events.get_event_full_by_uuid(uuid) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ObjectView.render("event.json", %{event: event}))

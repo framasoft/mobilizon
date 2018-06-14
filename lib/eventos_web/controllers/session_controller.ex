@@ -28,8 +28,8 @@ defmodule EventosWeb.SessionController do
     render(conn, "show.json", session: session)
   end
 
-  def show_sessions_for_event(conn, %{"id" => event_id}) do
-    sessions = Events.list_sessions_for_event(event_id)
+  def show_sessions_for_event(conn, %{"uuid" => event_uuid}) do
+    sessions = Events.list_sessions_for_event(event_uuid)
     render(conn, "index.json", sessions: sessions)
   end
 

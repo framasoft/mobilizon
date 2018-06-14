@@ -9,6 +9,8 @@ defmodule EventosWeb.EventController do
   alias Eventos.Export.ICalendar
   alias Eventos.Addresses
 
+  import Logger
+
   action_fallback EventosWeb.FallbackController
 
   def index(conn, _params) do
@@ -32,11 +34,7 @@ defmodule EventosWeb.EventController do
   end
 
   defp process_address(address) do
-    import Logger
-    Logger.debug("process address")
-    Logger.debug(inspect address)
     geom = EventosWeb.AddressController.process_geom(address["geom"])
-    Logger.debug(inspect geom)
     case geom do
       nil ->
         address
@@ -53,8 +51,12 @@ defmodule EventosWeb.EventController do
   end
 
   def show(conn, %{"uuid" => uuid}) do
-    event = Events.get_event_full_by_uuid(uuid)
-    render(conn, "show.json", event: event)
+    case Events.get_event_full_by_uuid(uuid) do
+      nil ->
+        send_resp(conn, 404, "")
+      event ->
+        render(conn, "show.json", event: event)
+    end
   end
 
   def export_to_ics(conn, %{"uuid" => uuid}) do
@@ -71,8 +73,8 @@ defmodule EventosWeb.EventController do
   end
 
   def delete(conn, %{"uuid" => uuid}) do
-    event = Events.get_event_by_uuid(uuid)
-    with {:ok, %Event{}} <- Events.delete_event(event) do
+    with event <- Events.get_event_by_uuid(uuid),
+      {:ok, %Event{}} <- Events.delete_event(event) do
       send_resp(conn, :no_content, "")
     end
   end

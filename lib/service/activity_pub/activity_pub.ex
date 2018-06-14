@@ -253,7 +253,7 @@ defmodule Eventos.Service.ActivityPub do
       preferred_username: data["preferredUsername"],
       follower_address: data["followers"],
       summary: data["summary"],
-      public_key: data["publicKey"]["publicKeyPem"],
+      keys: data["publicKey"]["publicKeyPem"],
       inbox_url: data["inbox"],
       outbox_url: data["outbox"],
       following_url: data["following"],

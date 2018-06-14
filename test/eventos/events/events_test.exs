@@ -4,13 +4,12 @@ defmodule Eventos.EventsTest do
   import Eventos.Factory
 
   alias Eventos.Events
-  alias Eventos.Accounts
+  alias Eventos.Actors
 
-  @account_valid_attrs %{description: "some description", display_name: "some display_name", domain: "some domain", private_key: "some private_key", public_key: "some public_key", suspended: true, uri: "some uri", url: "some url", username: "some username"}
   @event_valid_attrs %{begins_on: "2010-04-17 14:00:00.000000Z", description: "some description", ends_on: "2010-04-17 14:00:00.000000Z", title: "some title"}
 
-  def account_fixture do
-    insert(:account)
+  def actor_fixture do
+    insert(:actor)
   end
 
   def address_fixture do
@@ -28,7 +27,6 @@ defmodule Eventos.EventsTest do
   describe "events" do
     alias Eventos.Events.Event
 
-    @account_valid_attrs %{description: "some description", display_name: "some display_name", domain: "some domain", private_key: "some private_key", public_key: "some public_key", suspended: true, uri: "some uri", url: "some url", username: "some username"}
     @valid_attrs %{begins_on: "2010-04-17 14:00:00.000000Z", description: "some description", ends_on: "2010-04-17 14:00:00.000000Z", title: "some title"}
     @update_attrs %{begins_on: "2011-05-18 15:01:01.000000Z", description: "some updated description", ends_on: "2011-05-18 15:01:01.000000Z", title: "some updated title"}
     @invalid_attrs %{begins_on: nil, description: nil, ends_on: nil, title: nil}
@@ -44,11 +42,12 @@ defmodule Eventos.EventsTest do
     end
 
     test "create_event/1 with valid data creates a event" do
-      {:ok, account} = Accounts.create_account(@account_valid_attrs)
+      actor = actor_fixture()
       category = category_fixture()
       address = address_fixture()
-      valid_attrs = Map.put(@event_valid_attrs, :organizer_account_id, account.id)
-      valid_attrs = valid_attrs
+      valid_attrs = @event_valid_attrs
+        |> Map.put(:organizer_actor, actor)
+        |> Map.put(:organizer_actor_id, actor.id)
         |> Map.put(:category_id, category.id)
         |> Map.put(:address_id, address.id)
       assert {:ok, %Event{} = event} = Events.create_event(valid_attrs)
@@ -87,68 +86,6 @@ defmodule Eventos.EventsTest do
     test "change_event/1 returns a event changeset" do
       event = event_fixture()
       assert %Ecto.Changeset{} = Events.change_event(event)
-    end
-  end
-
-  describe "event_requests" do
-    alias Eventos.Events.Request
-
-    @valid_attrs %{state: 42}
-    @update_attrs %{state: 43}
-    @invalid_attrs %{state: nil}
-
-    def event_request_fixture(attrs \\ %{}) do
-      event = event_fixture()
-      valid_attrs = Map.put(@valid_attrs, :event_id, event.id)
-      {:ok, event_request} =
-        attrs
-        |> Enum.into(valid_attrs)
-        |> Events.create_request()
-
-      event_request
-    end
-
-    test "list_event_requests/0 returns all event_requests" do
-      event_request = event_request_fixture()
-      assert Events.list_requests() == [event_request]
-    end
-
-    test "get_request!/1 returns the event_request with given id" do
-      event_request = event_request_fixture()
-      assert Events.get_request!(event_request.id) == event_request
-    end
-
-    test "create_request/1 with valid data creates a event_request" do
-      assert {:ok, %Request{} = event_request} = Events.create_request(@valid_attrs)
-      assert event_request.state == 42
-    end
-
-    test "create_request/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Events.create_request(@invalid_attrs)
-    end
-
-    test "update_event_request/2 with valid data updates the event_request" do
-      event_request = event_request_fixture()
-      assert {:ok, event_request} = Events.update_request(event_request, @update_attrs)
-      assert %Request{} = event_request
-      assert event_request.state == 43
-    end
-
-    test "update_event_request/2 with invalid data returns error changeset" do
-      event_request = event_request_fixture()
-      assert {:error, %Ecto.Changeset{}} = Events.update_request(event_request, @invalid_attrs)
-      assert event_request == Events.get_request!(event_request.id)
-    end
-
-    test "delete_event_request/1 deletes the event_request" do
-      event_request = event_request_fixture()
-      assert {:ok, %Request{}} = Events.delete_request(event_request)
-      assert_raise Ecto.NoResultsError, fn -> Events.get_request!(event_request.id) end
-    end
-
-    test "change_event_request/1 returns a event_request changeset" do
-      event_request = event_request_fixture()
-      assert %Ecto.Changeset{} = Events.change_request(event_request)
     end
   end
 
@@ -276,9 +213,9 @@ defmodule Eventos.EventsTest do
 
     def participant_fixture(attrs \\ %{}) do
       event = event_fixture()
-      account = account_fixture()
+      actor = actor_fixture()
       valid_attrs = Map.put(@valid_attrs, :event_id, event.id)
-      valid_attrs = Map.put(valid_attrs, :account_id, account.id)
+      valid_attrs = Map.put(valid_attrs, :actor_id, actor.id)
       {:ok, participant} =
         attrs
         |> Enum.into(valid_attrs)
@@ -298,10 +235,10 @@ defmodule Eventos.EventsTest do
 #    end
 
     test "create_participant/1 with valid data creates a participant" do
-      account = account_fixture()
+      actor = actor_fixture()
       event = event_fixture()
       valid_attrs = Map.put(@valid_attrs, :event_id, event.id)
-      valid_attrs = Map.put(valid_attrs, :account_id, account.id)
+      valid_attrs = Map.put(valid_attrs, :actor_id, actor.id)
       assert {:ok, %Participant{} = participant} = Events.create_participant(valid_attrs)
       assert participant.role == 42
     end
@@ -330,68 +267,6 @@ defmodule Eventos.EventsTest do
     test "change_participant/1 returns a participant changeset" do
       participant = participant_fixture()
       assert %Ecto.Changeset{} = Events.change_participant(participant)
-    end
-  end
-
-  describe "requests" do
-    alias Eventos.Events.Request
-
-    @valid_attrs %{state: 42}
-    @update_attrs %{state: 43}
-    @invalid_attrs %{state: nil}
-
-    def request_fixture(attrs \\ %{}) do
-      event = event_fixture()
-      valid_attrs = Map.put(@valid_attrs, :event_id, event.id)
-      {:ok, request} =
-        attrs
-        |> Enum.into(valid_attrs)
-        |> Events.create_request()
-
-      request
-    end
-
-    test "list_requests/0 returns all requests" do
-      request = request_fixture()
-      assert Events.list_requests() == [request]
-    end
-
-    test "get_request!/1 returns the request with given id" do
-      request = request_fixture()
-      assert Events.get_request!(request.id) == request
-    end
-
-    test "create_request/1 with valid data creates a request" do
-      assert {:ok, %Request{} = request} = Events.create_request(@valid_attrs)
-      assert request.state == 42
-    end
-
-    test "create_request/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Events.create_request(@invalid_attrs)
-    end
-
-    test "update_request/2 with valid data updates the request" do
-      request = request_fixture()
-      assert {:ok, request} = Events.update_request(request, @update_attrs)
-      assert %Request{} = request
-      assert request.state == 43
-    end
-
-    test "update_request/2 with invalid data returns error changeset" do
-      request = request_fixture()
-      assert {:error, %Ecto.Changeset{}} = Events.update_request(request, @invalid_attrs)
-      assert request == Events.get_request!(request.id)
-    end
-
-    test "delete_request/1 deletes the request" do
-      request = request_fixture()
-      assert {:ok, %Request{}} = Events.delete_request(request)
-      assert_raise Ecto.NoResultsError, fn -> Events.get_request!(request.id) end
-    end
-
-    test "change_request/1 returns a request changeset" do
-      request = request_fixture()
-      assert %Ecto.Changeset{} = Events.change_request(request)
     end
   end
 
@@ -544,33 +419,32 @@ defmodule Eventos.EventsTest do
   describe "comments" do
     alias Eventos.Events.Comment
 
-    @valid_attrs %{text: "some text", url: "some url"}
-    @update_attrs %{text: "some updated text", url: "some updated url"}
+    @valid_attrs %{text: "some text"}
+    @update_attrs %{text: "some updated text"}
     @invalid_attrs %{text: nil, url: nil}
 
-    def comment_fixture(attrs \\ %{}) do
-      {:ok, comment} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Events.create_comment()
-
-      comment
+    def comment_fixture() do
+      insert(:comment)
     end
 
     test "list_comments/0 returns all comments" do
       comment = comment_fixture()
-      assert Events.list_comments() == [comment]
+      comments = Events.list_comments()
+      assert comments = [comment]
     end
 
     test "get_comment!/1 returns the comment with given id" do
       comment = comment_fixture()
-      assert Events.get_comment!(comment.id) == comment
+      comment_fetched = Events.get_comment!(comment.id)
+      assert comment_fetched = comment
     end
 
     test "create_comment/1 with valid data creates a comment" do
-      assert {:ok, %Comment{} = comment} = Events.create_comment(@valid_attrs)
+      actor = actor_fixture()
+      comment_data = Map.merge(@valid_attrs, %{actor_id: actor.id})
+      assert {:ok, %Comment{} = comment} = Events.create_comment(comment_data)
       assert comment.text == "some text"
-      assert comment.url == "some url"
+      assert comment.actor_id == actor.id
     end
 
     test "create_comment/1 with invalid data returns error changeset" do
@@ -582,13 +456,13 @@ defmodule Eventos.EventsTest do
       assert {:ok, comment} = Events.update_comment(comment, @update_attrs)
       assert %Comment{} = comment
       assert comment.text == "some updated text"
-      assert comment.url == "some updated url"
     end
 
     test "update_comment/2 with invalid data returns error changeset" do
       comment = comment_fixture()
       assert {:error, %Ecto.Changeset{}} = Events.update_comment(comment, @invalid_attrs)
-      assert comment == Events.get_comment!(comment.id)
+      comment_fetched = Events.get_comment!(comment.id)
+      assert comment = comment_fetched
     end
 
     test "delete_comment/1 deletes the comment" do
