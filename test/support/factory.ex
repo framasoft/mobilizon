@@ -15,9 +15,9 @@ defmodule Eventos.Factory do
   end
 
   def actor_factory do
-    key = :public_key.generate_key({:rsa, 2048, 65537})
+    key = :public_key.generate_key({:rsa, 2048, 65_537})
     entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
-    pem = :public_key.pem_encode([entry]) |> String.trim_trailing()
+    pem = [entry] |> :public_key.pem_encode() |> String.trim_trailing()
 
 
     preferred_username = sequence("thomas")

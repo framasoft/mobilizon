@@ -335,9 +335,9 @@ defmodule Eventos.Actors do
   Register user
   """
   def register(%{email: email, password: password, username: username}) do
-    key = :public_key.generate_key({:rsa, 2048, 65537})
+    key = :public_key.generate_key({:rsa, 2048, 65_537})
     entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
-    pem = :public_key.pem_encode([entry]) |> String.trim_trailing()
+    pem = [entry] |> :public_key.pem_encode() |> String.trim_trailing()
 
     import Exgravatar
 
@@ -375,9 +375,9 @@ defmodule Eventos.Actors do
   end
 
   def register_bot_account(%{name: name, summary: summary}) do
-    key = :public_key.generate_key({:rsa, 2048, 65537})
+    key = :public_key.generate_key({:rsa, 2048, 65_537})
     entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
-    pem = :public_key.pem_encode([entry]) |> String.trim_trailing()
+    pem = [entry] |> :public_key.pem_encode() |> String.trim_trailing()
 
     actor = Eventos.Actors.Actor.registration_changeset(%Eventos.Actors.Actor{}, %{
       preferred_username: name,

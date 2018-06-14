@@ -1,4 +1,10 @@
 defmodule Eventos.Service.ActivityPub do
+  @moduledoc """
+  # ActivityPub
+
+  Every ActivityPub method
+  """
+
   alias Eventos.Events
   alias Eventos.Events.{Event, Category}
   alias Eventos.Service.ActivityPub.Transmogrifier
@@ -49,8 +55,8 @@ defmodule Eventos.Service.ActivityPub do
                url,
                [Accept: "application/activity+json"],
                follow_redirect: true,
-               timeout: 10000,
-               recv_timeout: 20000
+               timeout: 10_000,
+               recv_timeout: 20_000
              ),
            {:ok, data} <- Jason.decode(body),
            nil <- Events.get_event_by_url!(data["id"]),
@@ -285,9 +291,7 @@ defmodule Eventos.Service.ActivityPub do
         case bot.type do
           "ics" ->
             {:ok, %HTTPoison.Response{body: body} = _resp} = HTTPoison.get(bot.source)
-            ical_events = body
-                          |> ExIcal.parse()
-                          |> ExIcal.by_range(DateTime.utc_now(), DateTime.utc_now() |> Timex.shift(years: 1))
+            ical_events = body |> ExIcal.parse() |> ExIcal.by_range(DateTime.utc_now(), DateTime.utc_now() |> Timex.shift(years: 1))
             activities = ical_events
             |> Enum.chunk_every(limit)
             |> Enum.at(page - 1)

@@ -60,7 +60,7 @@ defmodule EventosWeb.EventController do
   end
 
   def export_to_ics(conn, %{"uuid" => uuid}) do
-    event = Events.get_event_full_by_uuid(uuid) |> ICalendar.export_event()
+    event = uuid |> Events.get_event_full_by_uuid() |> ICalendar.export_event()
     send_resp(conn, 200, event)
   end
 

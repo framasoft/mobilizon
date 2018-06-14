@@ -83,13 +83,13 @@ defmodule EventosWeb.ActivityPubController do
   def inbox(conn, params) do
     headers = Enum.into(conn.req_headers, %{})
 
-    if !String.contains?(headers["signature"] || "", params["actor"]) do
-      Logger.info("Signature not from author, relayed message, fetching from source")
-      ActivityPub.fetch_event_from_url(params["object"]["id"])
-    else
+    if String.contains?(headers["signature"] || "", params["actor"]) do
       Logger.info("Signature error")
       Logger.info("Could not validate #{params["actor"]}")
       Logger.info(inspect(conn.req_headers))
+    else
+      Logger.info("Signature not from author, relayed message, fetching from source")
+      ActivityPub.fetch_event_from_url(params["object"]["id"])
     end
 
     json(conn, "ok")

@@ -1,4 +1,10 @@
 defmodule Eventos.Service.ActivityPub.Utils do
+  @moduledoc """
+  # Utils
+
+  Various utils
+  """
+
   alias Eventos.Repo
   alias Eventos.Actors
   alias Eventos.Actors.Actor

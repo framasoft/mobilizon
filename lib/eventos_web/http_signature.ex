@@ -1,4 +1,10 @@
 defmodule EventosWeb.HTTPSignaturePlug do
+  @moduledoc """
+  # HTTPSignaturePlug
+
+  Plug to check HTTP Signatures on every incoming request
+  """
+
   alias Eventos.Service.HTTPSignatures
   import Plug.Conn
   require Logger
@@ -13,7 +19,9 @@ defmodule EventosWeb.HTTPSignaturePlug do
 
   def call(conn, _opts) do
     user = conn.params["actor"]
-    Logger.debug("Checking sig for #{user}")
+    Logger.debug fn ->
+      "Checking sig for #{user}"
+    end
     with [signature | _] <- get_req_header(conn, "signature") do
       cond do
         signature && String.contains?(signature, user) ->

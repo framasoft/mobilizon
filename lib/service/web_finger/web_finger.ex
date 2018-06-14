@@ -1,4 +1,9 @@
 defmodule Eventos.Service.WebFinger do
+  @moduledoc """
+  # WebFinger
+
+  Performs the WebFinger requests and responses (json only)
+  """
 
   alias Eventos.Actors
   alias Eventos.Service.XmlBuilder
@@ -59,7 +64,9 @@ defmodule Eventos.Service.WebFinger do
           {"application/activity+json", "self"} ->
             Map.put(data, "url", link["href"])
           _ ->
-            Logger.debug("Unhandled type: #{inspect(link["type"])}")
+            Logger.debug fn ->
+              "Unhandled type: #{inspect(link["type"])}"
+            end
             data
         end
       end)
@@ -81,7 +88,7 @@ defmodule Eventos.Service.WebFinger do
       address = "http://#{domain}/.well-known/webfinger?resource=acct:#{actor}"
 
       Logger.debug(inspect address)
-    with {:ok, %HTTPoison.Response{} = response} <- HTTPoison.get(address, [Accept: "application/json, application/activity+json, application/jrd+json"],follow_redirect: true),
+    with {:ok, %HTTPoison.Response{} = response} <- HTTPoison.get(address, [Accept: "application/json, application/activity+json, application/jrd+json"], follow_redirect: true),
          %{status_code: status_code, body: body} when status_code in 200..299 <- response do
           {:ok, doc} = Jason.decode(body)
           webfinger_from_json(doc)

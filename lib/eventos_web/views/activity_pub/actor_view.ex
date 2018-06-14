@@ -49,9 +49,9 @@ defmodule EventosWeb.ActivityPub.ActorView do
   end
 
   def render("following.json", %{actor: actor, page: page}) do
-    following = Actor.get_followings(actor)
-
-    collection(following, actor.following_url, page)
+    actor
+    |> Actor.get_followings()
+    |> collection(actor.following_url, page)
     |> Map.merge(Utils.make_json_ld_header())
   end
 
@@ -68,9 +68,9 @@ defmodule EventosWeb.ActivityPub.ActorView do
   end
 
   def render("followers.json", %{actor: actor, page: page}) do
-    followers = Actor.get_followers(actor)
-
-    collection(followers, actor.followers_url, page)
+    actor
+    |> Actor.get_followers()
+    |> collection(actor.followers_url, page)
     |> Map.merge(Utils.make_json_ld_header())
   end
 

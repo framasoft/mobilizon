@@ -1,4 +1,8 @@
 defmodule Eventos.Service.Federator do
+  @moduledoc """
+  Handle federated activities
+  """
+
   use GenServer
   alias Eventos.Actors
   alias Eventos.Activity
@@ -16,7 +20,7 @@ defmodule Eventos.Service.Federator do
 
     spawn(fn ->
       # 1 minute
-      Process.sleep(1000 * 60 * 1)
+      Process.sleep(1000 * 60)
     end)
 
     GenServer.start_link(
@@ -101,7 +105,9 @@ defmodule Eventos.Service.Federator do
   end
 
   def handle_cast(m, state) do
-    IO.inspect("Unknown: #{inspect(m)}, #{inspect(state)}")
+    Logger.error fn ->
+      "Unknown: #{inspect(m)}, #{inspect(state)}"
+    end
     {:noreply, state}
   end
 

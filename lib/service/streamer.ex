@@ -1,4 +1,10 @@
 defmodule Eventos.Service.Streamer do
+  @moduledoc """
+  # Streamer
+
+  Handles streaming activities
+  """
+
   use GenServer
   require Logger
   alias Eventos.Accounts.Actor
@@ -30,7 +36,8 @@ defmodule Eventos.Service.Streamer do
   end
 
   def handle_cast(%{action: :ping}, topics) do
-    Map.values(topics)
+    topics
+    |> Map.values()
     |> List.flatten()
     |> Enum.each(fn socket ->
       Logger.debug("Sending keepalive ping")
@@ -51,7 +58,9 @@ defmodule Eventos.Service.Streamer do
     sockets_for_topic = sockets[topic] || []
     sockets_for_topic = Enum.uniq([socket | sockets_for_topic])
     sockets = Map.put(sockets, topic, sockets_for_topic)
-    Logger.debug("Got new conn for #{topic}")
+    Logger.debug fn ->
+      "Got new conn for #{topic}"
+    end
     {:noreply, sockets}
   end
 
@@ -60,7 +69,9 @@ defmodule Eventos.Service.Streamer do
     sockets_for_topic = sockets[topic] || []
     sockets_for_topic = List.delete(sockets_for_topic, socket)
     sockets = Map.put(sockets, topic, sockets_for_topic)
-    Logger.debug("Removed conn for #{topic}")
+    Logger.debug fn ->
+      "Removed conn for #{topic}"
+    end
     {:noreply, sockets}
   end
 

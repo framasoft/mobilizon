@@ -201,10 +201,10 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
     if object = Object.get_by_ap_id(id), do: {:ok, object}, else: nil
   end
 
-  def set_reply_to_uri(%{"inReplyTo" => inReplyTo} = object) do
-    with false <- String.starts_with?(inReplyTo, "http"),
-         {:ok, %{data: replied_to_object}} <- get_obj_helper(inReplyTo) do
-      Map.put(object, "inReplyTo", replied_to_object["external_url"] || inReplyTo)
+  def set_reply_to_uri(%{"inReplyTo" => in_reply_to} = object) do
+    with false <- String.starts_with?(in_reply_to, "http"),
+         {:ok, %{data: replied_to_object}} <- get_obj_helper(in_reply_to) do
+      Map.put(object, "inReplyTo", replied_to_object["external_url"] || in_reply_to)
     else
       _e -> object
     end
@@ -332,10 +332,9 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
 #  end
 #
   def add_attributed_to(object) do
-    attributedTo = object["attributedTo"] || object["actor"]
+    attributed_to = object["attributedTo"] || object["actor"]
 
-    object
-    |> Map.put("attributedTo", attributedTo)
+    object |> Map.put("attributedTo", attributed_to)
   end
 #
 #  def prepare_attachments(object) do

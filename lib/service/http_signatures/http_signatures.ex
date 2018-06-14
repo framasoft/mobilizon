@@ -1,8 +1,14 @@
 # https://tools.ietf.org/html/draft-cavage-http-signatures-08
 defmodule Eventos.Service.HTTPSignatures do
+  @moduledoc """
+  # HTTP Signatures
+
+  Generates and checks HTTP Signatures
+  """
+
   alias Eventos.Actors.Actor
   alias Eventos.Service.ActivityPub
-  require Logger
+  import Logger
 
   def split_signature(sig) do
     default = %{"headers" => "date"}
@@ -22,8 +28,12 @@ defmodule Eventos.Service.HTTPSignatures do
 
   def validate(headers, signature, public_key) do
     sigstring = build_signing_string(headers, signature["headers"])
-    Logger.debug("Signature: #{signature["signature"]}")
-    Logger.debug("Sigstring: #{sigstring}")
+    Logger.debug fn ->
+      "Signature: #{signature["signature"]}"
+    end
+    Logger.debug fn ->
+      "Sigstring: #{sigstring}"
+    end
     {:ok, sig} = Base.decode64(signature["signature"])
     :public_key.verify(sigstring, :sha256, sig, public_key)
   end
@@ -74,14 +84,12 @@ defmodule Eventos.Service.HTTPSignatures do
     with private_key = Actor.get_keys_for_actor(actor) do
       sigstring = build_signing_string(headers, Map.keys(headers))
 
-      signature =
-        :public_key.sign(sigstring, :sha256, private_key)
-        |> Base.encode64()
+      signature = sigstring |> :public_key.sign(:sha256, private_key) |> Base.encode64()
 
       [
         keyId: actor.url <> "#main-key",
         algorithm: "rsa-sha256",
-        headers: Map.keys(headers) |> Enum.join(" "),
+        headers: headers |> Map.keys() |> Enum.join(" "),
         signature: signature
       ]
       |> Enum.map(fn {k, v} -> "#{k}=\"#{v}\"" end)

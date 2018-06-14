@@ -1,4 +1,8 @@
 defmodule Eventos.Events.Comment do
+  @moduledoc """
+  An actor comment (for instance on an event or on a group)
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 
