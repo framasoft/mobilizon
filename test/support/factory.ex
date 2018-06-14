@@ -15,13 +15,17 @@ defmodule Eventos.Factory do
   end
 
   def actor_factory do
-    {:ok, {_, pubkey}} = RsaEx.generate_keypair("4096")
-    username = sequence("thomas")
+    key = :public_key.generate_key({:rsa, 2048, 65_537})
+    entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
+    pem = [entry] |> :public_key.pem_encode() |> String.trim_trailing()
+
+
+    preferred_username = sequence("thomas")
     %Eventos.Actors.Actor{
-      preferred_username: username,
+      preferred_username: preferred_username,
       domain: nil,
-      public_key: pubkey,
-      url: EventosWeb.Endpoint.url() <> "/@#{username}"
+      keys: pem,
+      url: EventosWeb.Endpoint.url() <> "/@#{preferred_username}"
     }
   end
 
@@ -45,6 +49,15 @@ defmodule Eventos.Factory do
     }
   end
 
+  def comment_factory do
+    %Eventos.Events.Comment{
+      text: "My Comment",
+      actor: build(:actor),
+      event: build(:event),
+      uuid: Ecto.UUID.generate(),
+    }
+  end
+
   def event_factory do
     actor = build(:actor)
     slug = sequence("my-event")
@@ -58,7 +71,7 @@ defmodule Eventos.Factory do
       organizer_actor: actor,
       category: build(:category),
       address: build(:address),
-      url: EventosWeb.Endpoint.url() <> "/@" <> actor.username <> "/" <> slug
+      url: "#{EventosWeb.Endpoint.url()}/@#{actor.url}/#{Ecto.UUID.generate()}"
     }
   end
 
@@ -77,14 +90,12 @@ defmodule Eventos.Factory do
     }
   end
 
-  def group_factory do
-    username = sequence("My Group")
-    %Eventos.Actors.Actor{
-      preferred_username: username,
-      summary: "My group",
-      suspended: false,
-      url: EventosWeb.Endpoint.url() <> "/@#{username}",
-      type: "Group",
+  def bot_factory do
+    %Eventos.Actors.Bot{
+      source: "https://mysource.tld/feed.ics",
+      type: "ics",
+      user: build(:user),
+      actor: build(:actor),
     }
   end
 end

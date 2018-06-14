@@ -23,6 +23,13 @@ defmodule EventosWeb.ConnCase do
 
       # The default endpoint for testing
       @endpoint EventosWeb.Endpoint
+
+      def auth_conn(%Plug.Conn{} = conn, %Eventos.Actors.User{} = user) do
+        {:ok, token, _claims} = EventosWeb.Guardian.encode_and_sign(user)
+        conn
+        |> Plug.Conn.put_req_header("authorization", "Bearer #{token}")
+        |> Plug.Conn.put_req_header("accept", "application/json")
+      end
     end
   end
 

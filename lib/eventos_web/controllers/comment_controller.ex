@@ -20,21 +20,21 @@ defmodule EventosWeb.CommentController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    comment = Events.get_comment!(id)
+  def show(conn, %{"uuid" => uuid}) do
+    comment = Events.get_comment_with_uuid!(uuid)
     render(conn, "show.json", comment: comment)
   end
 
-  def update(conn, %{"id" => id, "comment" => comment_params}) do
-    comment = Events.get_comment!(id)
+  def update(conn, %{"uuid" => uuid, "comment" => comment_params}) do
+    comment = Events.get_comment_with_uuid!(uuid)
 
     with {:ok, %Comment{} = comment} <- Events.update_comment(comment, comment_params) do
       render(conn, "show.json", comment: comment)
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    comment = Events.get_comment!(id)
+  def delete(conn, %{"uuid" => uuid}) do
+    comment = Events.get_comment_with_uuid!(uuid)
     with {:ok, %Comment{}} <- Events.delete_comment(comment) do
       send_resp(conn, :no_content, "")
     end

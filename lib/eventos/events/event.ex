@@ -53,6 +53,7 @@ defmodule Eventos.Events.Event do
     field :publish_at, Timex.Ecto.DateTimeWithTimezone
     field :uuid, Ecto.UUID, default: Ecto.UUID.generate()
     belongs_to :organizer_actor, Actor, [foreign_key: :organizer_actor_id]
+    belongs_to :attributed_to, Actor, [foreign_key: :attributed_to_id]
     many_to_many :tags, Tag, join_through: "events_tags"
     belongs_to :category, Category
     many_to_many :participants, Actor, join_through: Participant
@@ -65,17 +66,22 @@ defmodule Eventos.Events.Event do
 
   @doc false
   def changeset(%Event{} = event, attrs) do
-    changeset = event
+    uuid = Ecto.UUID.generate()
+
+    # TODO : check what's the use here. Tests ?
+    actor_url = if Map.has_key?(attrs, :organizer_actor) do
+      attrs.organizer_actor.preferred_username
+    else
+      ""
+    end
+    event
     |> cast(attrs, [:title, :description, :url, :begins_on, :ends_on, :organizer_actor_id, :category_id, :state, :status, :public, :thumbnail, :large_image, :publish_at])
     |> cast_assoc(:tags)
     |> cast_assoc(:address)
-    |> validate_required([:title, :description, :begins_on, :ends_on, :organizer_actor_id, :category_id])
     |> TitleSlug.maybe_generate_slug()
     |> TitleSlug.unique_constraint()
-    |> put_change(:uuid, Ecto.UUID.generate())
-
-    import Logger
-    Logger.debug(inspect changeset)
-    changeset
+    |> put_change(:uuid, uuid)
+    |> put_change(:url, "#{EventosWeb.Endpoint.url()}/@#{actor_url}/#{uuid}")
+    |> validate_required([:title, :description, :begins_on, :ends_on, :organizer_actor_id, :category_id, :url, :uuid])
   end
 end

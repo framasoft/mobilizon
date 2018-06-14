@@ -3,21 +3,21 @@ defmodule EventosWeb.UserControllerTest do
 
   import Eventos.Factory
 
-  alias Eventos.Accounts
-  alias Eventos.Accounts.User
+  alias Eventos.Actors
+  alias Eventos.Actors.User
 
   @create_attrs %{email: "foo@bar.tld", password: "some password_hash", username: "some username"}
   # @update_attrs %{email: "foo@fighters.tld", password: "some updated password_hash", username: "some updated username"}
   @invalid_attrs %{email: "not an email", password: nil, username: nil}
 
   def fixture(:user) do
-    {:ok, user} = Accounts.create_user(@create_attrs)
+    {:ok, user} = Actors.create_user(@create_attrs)
     user
   end
 
   setup %{conn: conn} do
-    account = insert(:account)
-    user = insert(:user, account: account)
+    actor = insert(:actor)
+    user = insert(:user, actor: actor)
     {:ok, conn: conn, user: user}
   end
 
@@ -32,20 +32,20 @@ defmodule EventosWeb.UserControllerTest do
   describe "create user" do
     test "renders user when data is valid", %{conn: conn} do
       conn = post conn, user_path(conn, :create), @create_attrs
-      assert %{"user" => %{"id" => id, "account" => %{"avatar_url" => avatar_url}}} = json_response(conn, 201)
+      assert %{"user" => %{"id" => id, "actor" => %{"avatar" => avatar_url}}} = json_response(conn, 201)
       assert id > 0
       assert avatar_url == nil
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
       conn = post conn, user_path(conn, :create), @invalid_attrs
-      assert json_response(conn, 400)["msg"] != %{}
+      assert json_response(conn, 422)["errors"] != %{}
     end
 
     test "renders user with avatar when email is valid", %{conn: conn} do
       attrs = %{email: "contact@framasoft.org", password: "some password_hash", username: "framasoft"}
       conn = post conn, user_path(conn, :create), attrs
-      assert %{"user" => %{"id" => id, "account" => %{"avatar_url" => avatar_url}}} = json_response(conn, 201)
+      assert %{"user" => %{"id" => id, "actor" => %{"avatar" => avatar_url}}} = json_response(conn, 201)
       assert id > 0
       assert avatar_url == "https://secure.gravatar.com/avatar/68b2910a6bb84a482d920e1057533100?default=404"
     end
@@ -87,12 +87,5 @@ defmodule EventosWeb.UserControllerTest do
   defp create_user(_) do
     user = insert(:user)
     {:ok, user: user}
-  end
-
-  defp auth_conn(conn, %User{} = user) do
-    {:ok, token, _claims} = EventosWeb.Guardian.encode_and_sign(user)
-    conn
-    |> put_req_header("authorization", "Bearer #{token}")
-    |> put_req_header("accept", "application/json")
   end
 end

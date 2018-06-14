@@ -1,4 +1,10 @@
 defmodule Eventos.Service.XmlBuilder do
+  @moduledoc """
+  XML Builder.
+
+  Do we still need this ? Only for xrd ?
+  """
+
   def to_xml({tag, attributes, content}) do
     open_tag = make_open_tag(tag, attributes)
 

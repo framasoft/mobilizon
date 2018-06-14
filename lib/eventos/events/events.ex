@@ -152,10 +152,11 @@ defmodule Eventos.Events do
 
   """
   def create_event(attrs \\ %{}) do
-    %Event{}
-    |> Event.changeset(attrs)
-    |> Repo.insert!()
-    |> Repo.preload([:organizer_actor])
+    case %Event{} |> Event.changeset(attrs) |> Repo.insert() do
+      {:ok, %Event{} = event} -> {:ok, Repo.preload(event, [:organizer_actor])}
+      err -> err
+    end
+
   end
 
   @doc """
@@ -522,8 +523,13 @@ defmodule Eventos.Events do
   @doc """
   Returns the list of sessions for an event
   """
-  def list_sessions_for_event(event_id) do
-    Repo.all(from s in Session, where: s.event_id == ^event_id)
+  def list_sessions_for_event(event_uuid) do
+    Repo.all(
+      from s in Session,
+      join: e in Event,
+      on: s.event_id == e.id,
+      where: e.uuid == ^event_uuid
+    )
   end
 
   @doc """
@@ -740,6 +746,8 @@ defmodule Eventos.Events do
 
   """
   def get_comment!(id), do: Repo.get!(Comment, id)
+
+  def get_comment_with_uuid!(uuid), do: Repo.get_by!(Comment, uuid: uuid)
 
   @doc """
   Creates a comment.

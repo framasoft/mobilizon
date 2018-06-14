@@ -12,7 +12,9 @@ defmodule EventosWeb.CommentView do
 
   def render("comment.json", %{comment: comment}) do
     %{id: comment.id,
+      uuid: comment.uuid,
       url: comment.url,
-      text: comment.text}
+      text: comment.text
+    }
   end
 end

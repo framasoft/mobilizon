@@ -16,16 +16,11 @@ defmodule EventosWeb.UserController do
   end
 
   def register(conn, %{"username" => username, "email" => email, "password" => password}) do
-    case Actors.register(%{email: email, password: password, username: username}) do
-      {:ok, %User{} = user} ->
-        {:ok, token, _claims} = EventosWeb.Guardian.encode_and_sign(user)
+    with {:ok, %User{} = user} <- Actors.register(%{email: email, password: password, username: username}),
+        {:ok, token, _claims} <- EventosWeb.Guardian.encode_and_sign(user) do
         conn
         |> put_status(:created)
         |> render("show_with_token.json", %{token: token, user: user})
-      {:error, error} ->
-        conn
-        |> put_resp_content_type("application/json")
-        |> send_resp(400, Poison.encode!(%{"msg" => handle_changeset_errors(error)}))
     end
   end
 

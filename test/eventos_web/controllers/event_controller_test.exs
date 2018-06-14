@@ -21,8 +21,8 @@ defmodule EventosWeb.EventControllerTest do
   end
 
   setup %{conn: conn} do
-    account = insert(:account)
-    user = insert(:user, account: account)
+    actor = insert(:actor)
+    user = insert(:user, actor: actor)
     {:ok, conn: conn, user: user}
   end
 
@@ -35,30 +35,21 @@ defmodule EventosWeb.EventControllerTest do
 
   describe "create event" do
     test "renders event when data is valid", %{conn: conn, user: user} do
-      attrs = Map.put(@create_attrs, :organizer_account_id, user.account.id)
+      attrs = Map.put(@create_attrs, :organizer_actor_id, user.actor.id)
       attrs = Map.put(attrs, :address, @create_address_attrs)
 
       category = insert(:category)
       attrs = Map.put(attrs, :category_id, category.id)
       conn = auth_conn(conn, user)
       conn = post conn, event_path(conn, :create), event: attrs
-      assert %{"id" => id} = json_response(conn, 201)["data"]
+      assert %{"uuid" => uuid} = json_response(conn, 201)["data"]
 
-      conn = get conn, event_path(conn, :show, id)
+      conn = get conn, event_path(conn, :show, uuid)
       assert %{
         "begins_on" => "2010-04-17T14:00:00Z",
         "description" => "some description",
         "ends_on" => "2010-04-17T14:00:00Z",
         "title" => "some title",
-        "group" => nil,
-        "organizer" => %{
-          "description" => nil,
-          "display_name" => nil,
-          "domain" => nil,
-          "suspended" => false,
-          "uri" => "https://",
-          "url" => "https://",
-        },
         "participants" => [],
         "address" => %{"addressCountry" => "some addressCountry", "addressLocality" => "some addressLocality", "addressRegion" => "some addressRegion", "floor" => "some floor", "geom" => %{"data" => %{"latitude" => -20.0, "longitude" => 30.0}, "type" => "point"}, "postalCode" => "some postalCode", "streetAddress" => "some streetAddress"}
        } = json_response(conn, 200)["data"]
@@ -66,7 +57,7 @@ defmodule EventosWeb.EventControllerTest do
 
     test "renders errors when data is invalid", %{conn: conn, user: user} do
       conn = auth_conn(conn, user)
-      attrs = Map.put(@invalid_attrs, :organizer_account_id, user.account.id)
+      attrs = Map.put(@invalid_attrs, :organizer_actor_id, user.actor.id)
       attrs = Map.put(attrs, :address, @create_address_attrs)
       conn = post conn, event_path(conn, :create), event: attrs
       assert json_response(conn, 422)["errors"] != %{}
@@ -76,9 +67,9 @@ defmodule EventosWeb.EventControllerTest do
   describe "export event" do
     setup [:create_event]
 
-    test "renders ics export of event", %{conn: conn, event: %Event{id: id} = event, user: user} do
+    test "renders ics export of event", %{conn: conn, event: %Event{uuid: uuid} = event, user: user} do
       conn = auth_conn(conn, user)
-      conn = get conn, event_path(conn, :export_to_ics, id)
+      conn = get conn, event_path(conn, :export_to_ics, uuid)
       exported_event = ICalendar.export_event(event)
       assert exported_event == response(conn, 200)
     end
@@ -87,38 +78,29 @@ defmodule EventosWeb.EventControllerTest do
   describe "update event" do
     setup [:create_event]
 
-    test "renders event when data is valid", %{conn: conn, event: %Event{id: id} = event, user: user} do
+    test "renders event when data is valid", %{conn: conn, event: %Event{uuid: uuid} = event, user: user} do
       conn = auth_conn(conn, user)
       address = address_fixture()
-      attrs = Map.put(@update_attrs, :organizer_account_id, user.account.id)
+      attrs = Map.put(@update_attrs, :organizer_actor_id, user.actor.id)
       attrs = Map.put(attrs, :address_id, address.id)
-      conn = put conn, event_path(conn, :update, event), event: attrs
-      assert %{"id" => ^id} = json_response(conn, 200)["data"]
+      conn = put conn, event_path(conn, :update, uuid), event: attrs
+      assert %{"uuid" => uuid} = json_response(conn, 200)["data"]
 
-      conn = get conn, event_path(conn, :show, id)
+      conn = get conn, event_path(conn, :show, uuid)
       assert %{
                "begins_on" => "2011-05-18T15:01:01Z",
                "description" => "some updated description",
                "ends_on" => "2011-05-18T15:01:01Z",
                "title" => "some updated title",
-               "group" => nil,
-               "organizer" => %{
-                 "description" => nil,
-                 "display_name" => nil,
-                 "domain" => nil,
-                 "suspended" => false,
-                 "uri" => "https://",
-                 "url" => "https://",
-               },
                "participants" => [],
                "address" => %{"addressCountry" => "My Country", "addressLocality" => "My Locality", "addressRegion" => "My Region", "floor" => "Myfloor", "geom" => %{"data" => %{"latitude" => 30.0, "longitude" => -90.0}, "type" => "point"}, "postalCode" => "My Postal Code", "streetAddress" => "My Street Address"}
              } = json_response(conn, 200)["data"]
     end
 
-    test "renders errors when data is invalid", %{conn: conn, event: event, user: user} do
+    test "renders errors when data is invalid", %{conn: conn, event: %Event{uuid: uuid} = event, user: user} do
       conn = auth_conn(conn, user)
-      attrs = Map.put(@invalid_attrs, :organizer_account_id, user.account.id)
-      conn = put conn, event_path(conn, :update, event), event: attrs
+      attrs = Map.put(@invalid_attrs, :organizer_actor_id, user.actor.id)
+      conn = put conn, event_path(conn, :update, uuid), event: attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -126,26 +108,18 @@ defmodule EventosWeb.EventControllerTest do
   describe "delete event" do
     setup [:create_event]
 
-    test "deletes chosen event", %{conn: conn, event: event, user: user} do
+    test "deletes chosen event", %{conn: conn, event: %Event{uuid: uuid} = event, user: user} do
       conn = auth_conn(conn, user)
-      conn = delete conn, event_path(conn, :delete, event)
+      conn = delete conn, event_path(conn, :delete, uuid)
       assert response(conn, 204)
-      assert_error_sent 404, fn ->
-        get conn, event_path(conn, :show, event)
-      end
+      conn = get conn, event_path(conn, :show, uuid)
+      assert response(conn, 404)
     end
   end
 
   defp create_event(_) do
-    account = insert(:account)
-    event = insert(:event, organizer_account: account)
-    {:ok, event: event, account: account}
-  end
-
-  defp auth_conn(conn, %Eventos.Accounts.User{} = user) do
-    {:ok, token, _claims} = EventosWeb.Guardian.encode_and_sign(user)
-    conn
-    |> put_req_header("authorization", "Bearer #{token}")
-    |> put_req_header("accept", "application/json")
+    actor = insert(:actor)
+    event = insert(:event, organizer_actor: actor)
+    {:ok, event: event, actor: actor}
   end
 end

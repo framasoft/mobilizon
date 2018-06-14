@@ -16,9 +16,9 @@ defmodule EventosWeb.SessionControllerTest do
   end
 
   setup %{conn: conn} do
-    account = insert(:account)
-    user = insert(:user, account: account)
-    event = insert(:event, organizer_account: account)
+    actor = insert(:actor)
+    user = insert(:user, actor: actor)
+    event = insert(:event, organizer_actor: actor)
     {:ok, conn: conn, user: user, event: event}
   end
 
@@ -37,7 +37,7 @@ defmodule EventosWeb.SessionControllerTest do
       conn = post conn, session_path(conn, :create), session: attrs
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
-      conn = get conn, "/api/events/" <> Integer.to_string(event_id) <> "/sessions"
+      conn = get conn, session_path(conn, :show_sessions_for_event, event.uuid)
       assert hd(json_response(conn, 200)["data"])["id"] == id
 
       conn = get conn, session_path(conn, :show, id)
@@ -106,12 +106,5 @@ defmodule EventosWeb.SessionControllerTest do
   defp create_session(_) do
     session = insert(:session)
     {:ok, session: session}
-  end
-
-  defp auth_conn(conn, %Eventos.Accounts.User{} = user) do
-    {:ok, token, _claims} = EventosWeb.Guardian.encode_and_sign(user)
-    conn
-    |> put_req_header("authorization", "Bearer #{token}")
-    |> put_req_header("accept", "application/json")
   end
 end

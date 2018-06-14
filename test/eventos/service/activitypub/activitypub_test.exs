@@ -5,30 +5,30 @@ defmodule Eventos.Service.Activitypub.ActivitypubTest do
   import Eventos.Factory
 
   alias Eventos.Events
-  alias Eventos.Accounts.Account
+  alias Eventos.Actors.Actor
   alias Eventos.Service.ActivityPub
   alias Eventos.Activity
 
-  describe "fetching account from it's url" do
-    test "returns an account" do
-      assert {:ok, %Account{username: "tcit@framapiaf.org"} = account} = ActivityPub.make_account_from_nickname("tcit@framapiaf.org")
+  describe "fetching actor from it's url" do
+    test "returns an actor" do
+      assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"} = actor} = ActivityPub.make_actor_from_nickname("tcit@framapiaf.org")
     end
   end
 
   describe "create activities" do
     test "removes doubled 'to' recipients" do
-      account = insert(:account)
+      actor = insert(:actor)
 
       {:ok, activity} =
         ActivityPub.create(%{
           to: ["user1", "user1", "user2"],
-          actor: account,
+          actor: actor,
           context: "",
           object: %{}
         })
 
       assert activity.data["to"] == ["user1", "user2"]
-      assert activity.actor == account.url
+      assert activity.actor == actor.url
       assert activity.recipients == ["user1", "user2"]
     end
   end
@@ -52,7 +52,7 @@ defmodule Eventos.Service.Activitypub.ActivitypubTest do
       {:ok, delete} = ActivityPub.delete(event)
 
       assert delete.data["type"] == "Delete"
-      assert delete.data["actor"] == event.organizer_account.url
+      assert delete.data["actor"] == event.organizer_actor.url
       assert delete.data["object"] == event.url
 
       assert Events.get_event_by_url!(event.url) == nil
@@ -60,22 +60,22 @@ defmodule Eventos.Service.Activitypub.ActivitypubTest do
   end
 
   describe "update" do
-    test "it creates an update activity with the new user data" do
-      account = insert(:account)
-      account_data = EventosWeb.ActivityPub.UserView.render("account.json", %{account: account})
+    test "it creates an update activity with the new actor data" do
+      actor = insert(:actor)
+      actor_data = EventosWeb.ActivityPub.ActorView.render("actor.json", %{actor: actor})
 
       {:ok, update} =
         ActivityPub.update(%{
-          actor: account_data["url"],
-          to: [account.url <> "/followers"],
+          actor: actor_data["url"],
+          to: [actor.url <> "/followers"],
           cc: [],
-          object: account_data
+          object: actor_data
         })
 
-      assert update.data["actor"] == account.url
-      assert update.data["to"] == [account.url <> "/followers"]
-      assert update.data["object"]["id"] == account_data["id"]
-      assert update.data["object"]["type"] == account_data["type"]
+      assert update.data["actor"] == actor.url
+      assert update.data["to"] == [actor.url <> "/followers"]
+      assert update.data["object"]["id"] == actor_data["id"]
+      assert update.data["object"]["type"] == actor_data["type"]
     end
   end
 end

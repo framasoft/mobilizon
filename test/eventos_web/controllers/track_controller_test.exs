@@ -16,9 +16,9 @@ defmodule EventosWeb.TrackControllerTest do
   end
 
   setup %{conn: conn} do
-    account = insert(:account)
-    user = insert(:user, account: account)
-    event = insert(:event, organizer_account: account)
+    actor = insert(:actor)
+    user = insert(:user, actor: actor)
+    event = insert(:event, organizer_actor: actor)
     {:ok, conn: conn, user: user, event: event}
   end
 
@@ -93,12 +93,5 @@ defmodule EventosWeb.TrackControllerTest do
   defp create_track(_) do
     track = insert(:track)
     {:ok, track: track}
-  end
-
-  defp auth_conn(conn, %Eventos.Accounts.User{} = user) do
-    {:ok, token, _claims} = EventosWeb.Guardian.encode_and_sign(user)
-    conn
-    |> put_req_header("authorization", "Bearer #{token}")
-    |> put_req_header("accept", "application/json")
   end
 end

@@ -13,46 +13,46 @@ defmodule Eventos.Service.WebFingerTest do
 
   describe "incoming webfinger request" do
     test "works for fqns" do
-      account = insert(:account)
+      actor = insert(:actor)
 
       {:ok, result} =
-        WebFinger.webfinger("#{account.username}@#{EventosWeb.Endpoint.host()}", "JSON")
+        WebFinger.webfinger("#{actor.preferred_username}@#{EventosWeb.Endpoint.host()}", "JSON")
       assert is_map(result)
     end
 
     test "works for urls" do
-      account = insert(:account)
+      actor = insert(:actor)
 
-      {:ok, result} = WebFinger.webfinger(account.url, "JSON")
+      {:ok, result} = WebFinger.webfinger(actor.url, "JSON")
       assert is_map(result)
     end
   end
 
   describe "fingering" do
 
-    test "a mastodon account" do
-      account = "tcit@social.tcit.fr"
+    test "a mastodon actor" do
+      actor = "tcit@social.tcit.fr"
 
-      assert {:ok, %{"subject" => "acct:" <> account, "url" => "https://social.tcit.fr/users/tcit"}} = WebFinger.finger(account)
+      assert {:ok, %{"subject" => "acct:" <> actor, "url" => "https://social.tcit.fr/users/tcit"}} = WebFinger.finger(actor)
     end
 
-    test "a pleroma account" do
-      account = "@lain@pleroma.soykaf.com"
+    test "a pleroma actor" do
+      actor = "@lain@pleroma.soykaf.com"
 
-      assert {:ok, %{"subject" => "acct:" <> account, "url" => "https://pleroma.soykaf.com/users/lain"}} = WebFinger.finger(account)
+      assert {:ok, %{"subject" => "acct:" <> actor, "url" => "https://pleroma.soykaf.com/users/lain"}} = WebFinger.finger(actor)
     end
 
-    test "a peertube account" do
-      account = "framasoft@framatube.org"
+    test "a peertube actor" do
+      actor = "framasoft@framatube.org"
 
-      assert {:ok, %{"subject" => "acct:" <> account, "url" => "https://framatube.org/accounts/framasoft"}} = WebFinger.finger(account)
+      assert {:ok, %{"subject" => "acct:" <> actor, "url" => "https://framatube.org/accounts/framasoft"}} = WebFinger.finger(actor)
     end
 
-    test "a friendica account" do
+    test "a friendica actor" do
       # Hasn't any ActivityPub
-      account = "lain@squeet.me"
+      actor = "lain@squeet.me"
 
-      assert {:ok, %{"subject" => "acct:" <> account} = data} = WebFinger.finger(account)
+      assert {:ok, %{"subject" => "acct:" <> actor} = data} = WebFinger.finger(actor)
       refute Map.has_key?(data, "url")
     end
   end

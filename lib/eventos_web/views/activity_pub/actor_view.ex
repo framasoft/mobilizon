@@ -13,7 +13,8 @@ defmodule EventosWeb.ActivityPub.ActorView do
   import Ecto.Query
 
   def render("actor.json", %{actor: actor}) do
-    {:ok, public_key} = Actor.get_public_key_for_actor(actor)
+    pem = Actor.get_keys_for_actor(actor)
+    public_key = Eventos.Service.ActivityPub.Utils.pem_to_public_key_pem(pem)
 
     %{
       "id" => actor.url,
@@ -48,9 +49,9 @@ defmodule EventosWeb.ActivityPub.ActorView do
   end
 
   def render("following.json", %{actor: actor, page: page}) do
-    following = Actor.get_followings(actor)
-
-    collection(following, actor.following_url, page)
+    actor
+    |> Actor.get_followings()
+    |> collection(actor.following_url, page)
     |> Map.merge(Utils.make_json_ld_header())
   end
 
@@ -67,9 +68,9 @@ defmodule EventosWeb.ActivityPub.ActorView do
   end
 
   def render("followers.json", %{actor: actor, page: page}) do
-    followers = Actor.get_followers(actor)
-
-    collection(followers, actor.followers_url, page)
+    actor
+    |> Actor.get_followers()
+    |> collection(actor.followers_url, page)
     |> Map.merge(Utils.make_json_ld_header())
   end
 

@@ -46,7 +46,7 @@ defmodule Eventos.Actors.Actor do
 
   import Logger
 
-#  @type t :: %Actor{description: String.t, id: integer(), inserted_at: DateTime.t, updated_at: DateTime.t, display_name: String.t, domain: String.t, private_key: String.t, public_key: String.t, suspended: boolean(), url: String.t, username: String.t, organized_events: list(), groups: list(), group_request: list(), user: User.t, field: ActorTypeEnum.t}
+#  @type t :: %Actor{description: String.t, id: integer(), inserted_at: DateTime.t, updated_at: DateTime.t, display_name: String.t, domain: String.t, keys: String.t, suspended: boolean(), url: String.t, username: String.t, organized_events: list(), groups: list(), group_request: list(), user: User.t, field: ActorTypeEnum.t}
 
   schema "actors" do
     field :url, :string
@@ -55,13 +55,12 @@ defmodule Eventos.Actors.Actor do
     field :following_url, :string
     field :followers_url, :string
     field :shared_inbox_url, :string
-    field :type, Eventos.Actors.ActorTypeEnum
+    field :type, Eventos.Actors.ActorTypeEnum, default: :Person
     field :name, :string
     field :domain, :string
     field :summary, :string
     field :preferred_username, :string
-    field :public_key, :string
-    field :private_key, :string
+    field :keys, :string
     field :manually_approves_followers, :boolean, default: false
     field :suspended, :boolean, default: false
     field :avatar_url, :string
@@ -77,24 +76,25 @@ defmodule Eventos.Actors.Actor do
   @doc false
   def changeset(%Actor{} = actor, attrs) do
     actor
-    |> Ecto.Changeset.cast(attrs, [:url, :outbox_url, :inbox_url, :shared_inbox_url, :following_url, :followers_url, :type, :name, :domain, :summary, :preferred_username, :public_key, :private_key, :manually_approves_followers, :suspended, :avatar_url, :banner_url])
-    |> validate_required([:preferred_username, :public_key, :suspended, :url])
+    |> Ecto.Changeset.cast(attrs, [:url, :outbox_url, :inbox_url, :shared_inbox_url, :following_url, :followers_url, :type, :name, :domain, :summary, :preferred_username, :keys, :manually_approves_followers, :suspended, :avatar_url, :banner_url])
+    |> validate_required([:preferred_username, :keys, :suspended, :url])
     |> unique_constraint(:prefered_username, name: :actors_preferred_username_domain_index)
   end
 
   def registration_changeset(%Actor{} = actor, attrs) do
     actor
-    |> Ecto.Changeset.cast(attrs, [:preferred_username, :domain, :name, :summary, :private_key, :public_key, :suspended, :url, :type])
-    |> validate_required([:preferred_username, :public_key, :suspended, :url, :type])
-    |> unique_constraint(:prefered_username, name: :actors_preferred_username_domain_index)
+    |> Ecto.Changeset.cast(attrs, [:preferred_username, :domain, :name, :summary, :keys, :keys, :suspended, :url, :type, :avatar_url])
+    |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_index)
+    |> put_change(:url, "#{EventosWeb.Endpoint.url()}/@#{attrs["prefered_username"]}")
+    |> validate_required([:preferred_username, :keys, :suspended, :url, :type])
   end
 
   @email_regex ~r/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
   def remote_actor_creation(params) do
     changes =
       %Actor{}
-      |> Ecto.Changeset.cast(params, [:url, :outbox_url, :inbox_url, :shared_inbox_url, :following_url, :followers_url, :type, :name, :domain, :summary, :preferred_username, :public_key, :manually_approves_followers, :avatar_url, :banner_url])
-      |> validate_required([:url, :outbox_url, :inbox_url, :type, :name, :domain, :preferred_username, :public_key])
+      |> Ecto.Changeset.cast(params, [:url, :outbox_url, :inbox_url, :shared_inbox_url, :following_url, :followers_url, :type, :name, :domain, :summary, :preferred_username, :keys, :manually_approves_followers, :avatar_url, :banner_url])
+      |> validate_required([:url, :outbox_url, :inbox_url, :type, :name, :domain, :preferred_username, :keys])
       |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_index)
       |> validate_length(:summary, max: 5000)
       |> validate_length(:preferred_username, max: 100)
@@ -135,20 +135,31 @@ defmodule Eventos.Actors.Actor do
   #@spec get_public_key_for_url(Actor.t) :: {:ok, String.t}
   def get_public_key_for_url(url) do
     with %Actor{} = actor <- get_or_fetch_by_url(url) do
-      get_public_key_for_actor(actor)
+      actor
+      |> get_keys_for_actor
+      |> Eventos.Service.ActivityPub.Utils.pem_to_public_key
     else
       _ -> :error
     end
   end
 
+  @deprecated "Use get_keys_for_actor/1 instead"
   #@spec get_public_key_for_actor(Actor.t) :: {:ok, String.t}
   def get_public_key_for_actor(%Actor{} = actor) do
-    {:ok, actor.public_key}
+    {:ok, actor.keys}
   end
 
+  @doc """
+  Returns a pem encoded keypair (if local) or public key
+  """
+  def get_keys_for_actor(%Actor{} = actor) do
+    actor.keys
+  end
+
+  @deprecated "Use get_keys_for_actor/1 instead"
   #@spec get_private_key_for_actor(Actor.t) :: {:ok, String.t}
   def get_private_key_for_actor(%Actor{} = actor) do
-    actor.private_key
+    actor.keys
   end
 
   def get_followers(%Actor{id: actor_id} = actor) do

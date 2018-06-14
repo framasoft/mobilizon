@@ -44,8 +44,9 @@ defmodule EventosWeb.Router do
       get "/events/:uuid/tracks", TrackController, :show_tracks_for_event
       get "/events/:uuid/sessions", SessionController, :show_sessions_for_event
       get "/events/:uuid", EventController, :show
-      resources "/comments", CommentController, only: [:show]
-      get "/bots/:id", BotController, :view
+      get "/comments/:uuid", CommentController, :show
+      get "/bots/:id", BotController, :show
+      get "/bots", BotController, :index
 
       get "/actors", ActorController, :index
       get "/actors/search/:name", ActorController, :search
@@ -74,10 +75,13 @@ defmodule EventosWeb.Router do
        patch "/events/:uuid", EventController, :update
        put "/events/:uuid", EventController, :update
        delete "/events/:uuid", EventController, :delete
-       resources "/comments", CommentController, except: [:new, :edit, :show]
+       post "/comments", CommentController, :create
+       patch "/comments/:uuid", CommentController, :update
+       put "/comments/:uuid", CommentController, :update
+       delete "/comments/:uuid", CommentController, :delete
        #post "/events/:id/request", EventRequestController, :create_for_event
        resources "/participant", ParticipantController
-       resources "/bots", BotController, except: [:new, :edit, :show]
+       resources "/bots", BotController, except: [:new, :edit, :show, :index]
        #resources "/requests", EventRequestController
        post "/groups", GroupController, :create
        post "/groups/:name/join", GroupController, :join
@@ -110,7 +114,7 @@ defmodule EventosWeb.Router do
     get "/@:name/outbox", ActivityPubController, :outbox
     get "/@:name/following", ActivityPubController, :following
     get "/@:name/followers", ActivityPubController, :followers
-    get "/@:name/:slug", ActivityPubController, :event
+    get "/events/:uuid", ActivityPubController, :event
     post "/@:name/inbox", ActivityPubController, :inbox
     post "/inbox", ActivityPubController, :inbox
   end

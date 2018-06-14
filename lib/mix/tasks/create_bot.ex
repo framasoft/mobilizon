@@ -1,4 +1,8 @@
 defmodule Mix.Tasks.CreateBot do
+  @moduledoc """
+  Creates a bot from a source
+  """
+
   use Mix.Task
   alias Eventos.Actors
   alias Eventos.Actors.Bot

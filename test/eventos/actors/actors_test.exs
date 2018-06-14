@@ -1,14 +1,15 @@
 defmodule Eventos.ActorsTest do
   use Eventos.DataCase
+  import Eventos.Factory
 
   alias Eventos.Actors
 
   describe "actors" do
     alias Eventos.Actors.Actor
 
-    @valid_attrs %{description: "some description", display_name: "some display_name", domain: "some domain", private_key: "some private_key", public_key: "some public_key", suspended: true, uri: "some uri", url: "some url", username: "some username"}
-    @update_attrs %{description: "some updated description", display_name: "some updated display_name", domain: "some updated domain", private_key: "some updated private_key", public_key: "some updated public_key", suspended: false, uri: "some updated uri", url: "some updated url", username: "some updated username"}
-    @invalid_attrs %{description: nil, display_name: nil, domain: nil, private_key: nil, public_key: nil, suspended: nil, uri: nil, url: nil, username: nil}
+    @valid_attrs %{summary: "some description", name: "some name", domain: "some domain", keys: "some keypair", suspended: true, uri: "some uri", url: "some url", preferred_username: "some username"}
+    @update_attrs %{summary: "some updated description", name: "some updated name", domain: "some updated domain", keys: "some updated keys", suspended: false, uri: "some updated uri", url: "some updated url", preferred_username: "some updated username"}
+    @invalid_attrs %{summary: nil, name: nil, domain: nil, keys: nil, suspended: nil, uri: nil, url: nil, preferred_username: nil}
 
     def actor_fixture(attrs \\ %{}) do
       {:ok, actor} =
@@ -31,15 +32,13 @@ defmodule Eventos.ActorsTest do
 
     test "create_actor/1 with valid data creates a actor" do
       assert {:ok, %Actor{} = actor} = Actors.create_actor(@valid_attrs)
-      assert actor.description == "some description"
-      assert actor.display_name == "some display_name"
+      assert actor.summary == "some description"
+      assert actor.name == "some name"
       assert actor.domain == "some domain"
-      assert actor.private_key == "some private_key"
-      assert actor.public_key == "some public_key"
+      assert actor.keys == "some keypair"
       assert actor.suspended
-      assert actor.uri == "some uri"
       assert actor.url == "some url"
-      assert actor.username == "some username"
+      assert actor.preferred_username == "some username"
     end
 
     test "create_actor/1 with invalid data returns error changeset" do
@@ -50,15 +49,13 @@ defmodule Eventos.ActorsTest do
       actor = actor_fixture()
       assert {:ok, actor} = Actors.update_actor(actor, @update_attrs)
       assert %Actor{} = actor
-      assert actor.description == "some updated description"
-      assert actor.display_name == "some updated display_name"
+      assert actor.summary == "some updated description"
+      assert actor.name == "some updated name"
       assert actor.domain == "some updated domain"
-      assert actor.private_key == "some updated private_key"
-      assert actor.public_key == "some updated public_key"
+      assert actor.keys == "some updated keys"
       refute actor.suspended
-      assert actor.uri == "some updated uri"
       assert actor.url == "some updated url"
-      assert actor.username == "some updated username"
+      assert actor.preferred_username == "some updated username"
     end
 
     test "update_actor/2 with invalid data returns error changeset" do
@@ -82,7 +79,7 @@ defmodule Eventos.ActorsTest do
   describe "users" do
     alias Eventos.Actors.{User, Actor}
 
-    @actor_valid_attrs %{description: "some description", display_name: "some display_name", domain: "some domain", private_key: "some private_key", public_key: "some public_key", suspended: true, uri: "some uri", url: "some url", username: "some username"}
+    @actor_valid_attrs %{description: "some description", display_name: "some display_name", domain: "some domain", keys: "some keys", suspended: true, uri: "some uri", url: "some url", preferred_username: "some username"}
     @valid_attrs %{email: "foo@bar.tld", password_hash: "some password_hash", role: 42}
     @update_attrs %{email: "foo@fighters.tld", password_hash: "some updated password_hash", role: 43}
     @invalid_attrs %{email: nil, password_hash: nil, role: nil}
@@ -182,26 +179,26 @@ defmodule Eventos.ActorsTest do
     @invalid_attrs %{source: nil, type: nil}
 
     def bot_fixture(attrs \\ %{}) do
-      {:ok, bot} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Actors.create_bot()
-
-      bot
+      insert(:bot)
     end
 
     test "list_bots/0 returns all bots" do
       bot = bot_fixture()
-      assert Actors.list_bots() == [bot]
+      bots = Actors.list_bots()
+      assert bots = [bot]
     end
 
     test "get_bot!/1 returns the bot with given id" do
       bot = bot_fixture()
-      assert Actors.get_bot!(bot.id) == bot
+      bot_fetched = Actors.get_bot!(bot.id)
+      assert bot_fetched = bot
     end
 
     test "create_bot/1 with valid data creates a bot" do
-      assert {:ok, %Bot{} = bot} = Actors.create_bot(@valid_attrs)
+      attrs = @valid_attrs
+      |> Map.merge(%{actor_id: insert(:actor).id})
+      |> Map.merge(%{user_id: insert(:user).id})
+      assert {:ok, %Bot{} = bot} = Actors.create_bot(attrs)
       assert bot.source == "some source"
       assert bot.type == "some type"
     end
@@ -221,7 +218,8 @@ defmodule Eventos.ActorsTest do
     test "update_bot/2 with invalid data returns error changeset" do
       bot = bot_fixture()
       assert {:error, %Ecto.Changeset{}} = Actors.update_bot(bot, @invalid_attrs)
-      assert bot == Actors.get_bot!(bot.id)
+      bot_fetched = Actors.get_bot!(bot.id)
+      assert bot = bot_fetched
     end
 
     test "delete_bot/1 deletes the bot" do
