@@ -11,7 +11,7 @@
                   <v-flex text-xs-center>
                       <h1 class="display-3">Find events you like</h1>
                       <h2>Share it with Eventos</h2>
-                      <v-btn>{{ $t("home.register") }}</v-btn>
+                      <v-btn :to="{ name: 'Register' }">{{ $t("home.register") }}</v-btn>
                   </v-flex>
               </v-layout>
           </v-container>
