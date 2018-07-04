@@ -1,5 +1,7 @@
 defmodule Eventos.Email.User do
-
+  @moduledoc """
+  Handles emails sent to users
+  """
   alias Eventos.Actors.User
 
   import Bamboo.Email

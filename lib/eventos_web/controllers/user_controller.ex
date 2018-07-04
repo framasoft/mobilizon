@@ -90,7 +90,9 @@ defmodule EventosWeb.UserController do
   end
 
   def show_current_actor(conn, _params) do
-    user = Guardian.Plug.current_resource(conn) |> Repo.preload(:actor)
+    user = conn
+    |> Guardian.Plug.current_resource()
+    |> Repo.preload(:actor)
     render(conn, "show_simple.json", user: user)
   end
 

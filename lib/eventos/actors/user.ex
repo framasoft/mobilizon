@@ -66,7 +66,9 @@ defmodule Eventos.Actors.User do
   end
 
   defp random_string(length) do
-    :crypto.strong_rand_bytes(length) |> Base.url_encode64
+    length
+    |> :crypto.strong_rand_bytes()
+    |> Base.url_encode64
   end
 
   @doc """

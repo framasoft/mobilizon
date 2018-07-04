@@ -312,7 +312,7 @@ defmodule Eventos.Actors do
   Get an user by email
   """
   def find_by_email(email) do
-    case Repo.get_by(User, email: email) |> Repo.preload(:actor) do
+    case Repo.preload(Repo.get_by(User, email: email), :actor) do
       nil ->
         {:error, nil}
       user ->

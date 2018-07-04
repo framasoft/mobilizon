@@ -12,7 +12,7 @@ defmodule Eventos.Actors.Service.ResetPassword do
   @spec check_reset_password_token(String.t, String.t) :: tuple
   def check_reset_password_token(password, token) do
     with %User{} = user <- Repo.get_by(User, reset_password_token: token) do
-      User.password_reset_changeset(user, %{"password" => password, "reset_password_sent_at" => nil, "reset_password_token" => nil}) |> Repo.update()
+      Repo.update(User.password_reset_changeset(user, %{"password" => password, "reset_password_sent_at" => nil, "reset_password_token" => nil}))
     else
       _err ->
         {:error, :invalid_token}
@@ -25,7 +25,7 @@ defmodule Eventos.Actors.Service.ResetPassword do
   @spec send_password_reset_email(User.t, String.t) :: tuple
   def send_password_reset_email(%User{} = user, locale \\ "en") do
     with :ok <- we_can_send_email(user),
-         {:ok, %User{} = user_updated} <- User.send_password_reset_changeset(user, %{"reset_password_token" => random_string(30), "reset_password_sent_at" => DateTime.utc_now()}) |> Repo.update() do
+         {:ok, %User{} = user_updated} <- Repo.update(User.send_password_reset_changeset(user, %{"reset_password_token" => random_string(30), "reset_password_sent_at" => DateTime.utc_now()})) do
       mail = user_updated
       |> UserEmail.reset_password_email(locale)
       |> Mailer.deliver_later()
@@ -37,7 +37,9 @@ defmodule Eventos.Actors.Service.ResetPassword do
 
   @spec random_string(integer) :: String.t
   defp random_string(length) do
-    :crypto.strong_rand_bytes(length) |> Base.url_encode64
+    length
+    |> :crypto.strong_rand_bytes()
+    |> Base.url_encode64
   end
 
   @spec we_can_send_email(User.t) :: boolean
