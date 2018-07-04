@@ -60,17 +60,15 @@ defmodule Eventos.Factory do
 
   def event_factory do
     actor = build(:actor)
-    slug = sequence("my-event")
 
     %Eventos.Events.Event{
       title: sequence("MyEvent"),
-      slug: slug,
       description: "My desc",
       begins_on: nil,
       ends_on: nil,
       organizer_actor: actor,
       category: build(:category),
-      address: build(:address),
+      physical_address: build(:address),
       url: "#{EventosWeb.Endpoint.url()}/@#{actor.url}/#{Ecto.UUID.generate()}"
     }
   end

@@ -40,10 +40,6 @@ defmodule Eventos.AddressesTest do
       assert address.streetAddress == "some streetAddress"
     end
 
-    test "create_address/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Addresses.create_address(@invalid_attrs)
-    end
-
     test "update_address/2 with valid data updates the address" do
       address = address_fixture()
       assert {:ok, address} = Addresses.update_address(address, @update_attrs)
@@ -55,12 +51,6 @@ defmodule Eventos.AddressesTest do
       assert address.floor == "some updated floor"
       assert address.postalCode == "some updated postalCode"
       assert address.streetAddress == "some updated streetAddress"
-    end
-
-    test "update_address/2 with invalid data returns error changeset" do
-      address = address_fixture()
-      assert {:error, %Ecto.Changeset{}} = Addresses.update_address(address, @invalid_attrs)
-      assert address == Addresses.get_address!(address.id)
     end
 
     test "delete_address/1 deletes the address" do
@@ -80,8 +70,8 @@ defmodule Eventos.AddressesTest do
     end
 
     test "process_geom/2 with invalid data returns nil" do
-      attrs = %{"type" => "linfdfsfe", "data" => %{"latitude" => 10, "longitude" => -10}}
-      assert {:error, nil} = Addresses.process_geom(attrs)
+      attrs = %{"type" => :point, "data" => %{"latitude" => nil, "longitude" => nil}}
+      assert {:error, "Latitude and longitude must be numbers"} = Addresses.process_geom(attrs)
     end
   end
 end

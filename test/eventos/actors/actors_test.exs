@@ -80,32 +80,24 @@ defmodule Eventos.ActorsTest do
     alias Eventos.Actors.{User, Actor}
 
     @actor_valid_attrs %{description: "some description", display_name: "some display_name", domain: "some domain", keys: "some keys", suspended: true, uri: "some uri", url: "some url", preferred_username: "some username"}
-    @valid_attrs %{email: "foo@bar.tld", password_hash: "some password_hash", role: 42}
-    @update_attrs %{email: "foo@fighters.tld", password_hash: "some updated password_hash", role: 43}
+    @valid_attrs %{email: "foo@bar.tld", password: "some password", role: 42}
+    @update_attrs %{email: "foo@fighters.tld", password: "some updated password", role: 43}
     @invalid_attrs %{email: nil, password_hash: nil, role: nil}
 
     def user_fixture(attrs \\ %{}) do
-      {:ok, actor} =
-        attrs
-        |> Enum.into(@actor_valid_attrs)
-        |> Actors.create_actor()
-      valid_attrs_with_actor_id = Map.put(@valid_attrs, :actor_id, actor.id)
-      {:ok, user} =
-        attrs
-        |> Enum.into(valid_attrs_with_actor_id)
-        |> Actors.create_user()
-
-      user
+      insert(:user)
     end
 
     test "list_users/0 returns all users" do
       user = user_fixture()
-      assert Actors.list_users() == [user]
+      users = Actors.list_users()
+      assert users = [user]
     end
 
     test "get_user!/1 returns the user with given id" do
       user = user_fixture()
-      assert Actors.get_user!(user.id) == user
+      user_fetched = Actors.get_user!(user.id)
+      assert user_fetched = user
     end
 
     test "create_user/1 with valid data creates a user" do
@@ -113,7 +105,6 @@ defmodule Eventos.ActorsTest do
       attrs = Map.put(@valid_attrs, :actor_id, actor.id)
       assert {:ok, %User{} = user} = Actors.create_user(attrs)
       assert user.email == "foo@bar.tld"
-      assert user.password_hash == "some password_hash"
       assert user.role == 42
     end
 
@@ -126,14 +117,14 @@ defmodule Eventos.ActorsTest do
       assert {:ok, user} = Actors.update_user(user, @update_attrs)
       assert %User{} = user
       assert user.email == "foo@fighters.tld"
-      assert user.password_hash == "some updated password_hash"
       assert user.role == 43
     end
 
     test "update_user/2 with invalid data returns error changeset" do
       user = user_fixture()
       assert {:error, %Ecto.Changeset{}} = Actors.update_user(user, @invalid_attrs)
-      assert user == Actors.get_user!(user.id)
+      user_fetched = Actors.get_user!(user.id)
+      assert user = user_fetched
     end
 
     test "delete_user/1 deletes the user" do

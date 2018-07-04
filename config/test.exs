@@ -21,3 +21,6 @@ config :eventos, Eventos.Repo,
   hostname: System.get_env("POSTGRES_HOST") || "localhost",
   pool: Ecto.Adapters.SQL.Sandbox,
   types: Eventos.PostgresTypes
+
+  config :eventos, Eventos.Mailer,
+  adapter: Bamboo.TestAdapter

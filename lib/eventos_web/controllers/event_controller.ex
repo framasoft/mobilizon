@@ -31,18 +31,21 @@ defmodule EventosWeb.EventController do
   end
 
   defp process_event_address(event) do
-    if Map.has_key?(event, "address_type") && event["address_type"] === :physical do
-      address = event["physical_address"]
-      geom = EventosWeb.AddressController.process_geom(address["geom"])
-      address = case geom do
-        nil ->
-          address
-        _ ->
-          %{address | "geom" => geom}
-      end
-      %{event | "physical_address" => address}
-    else
-      event
+    cond do
+      Map.has_key?(event, "address_type") && event["address_type"] !== :physical ->
+        event
+      Map.has_key?(event, "physical_address") ->
+        address = event["physical_address"]
+        geom = EventosWeb.AddressController.process_geom(address["geom"])
+        address = case geom do
+          nil ->
+            address
+          _ ->
+            %{address | "geom" => geom}
+        end
+        %{event | "physical_address" => address}
+      true ->
+        event
     end
   end
 

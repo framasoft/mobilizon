@@ -126,7 +126,7 @@ defmodule Eventos.Addresses do
     if Enum.member?(@geom_types, type) do
       case type do
         :point ->
-          {:ok, %Geo.Point{coordinates: {data["latitude"], data["longitude"]}, srid: 4326}}
+          process_point(data["latitude"], data["longitude"])
       end
     else
       {:error, nil}
@@ -136,5 +136,14 @@ defmodule Eventos.Addresses do
   @doc false
   def process_geom(nil) do
     {:error, nil}
+  end
+
+  @spec process_point(number(), number()) :: tuple()
+  defp process_point(latitude, longitude) when is_number(latitude) and is_number(longitude) do
+    {:ok, %Geo.Point{coordinates: {latitude, longitude}, srid: 4326}}
+  end
+
+  defp process_point(_, _) do
+    {:error, "Latitude and longitude must be numbers"}
   end
 end
