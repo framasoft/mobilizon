@@ -45,4 +45,16 @@ defmodule EventosWeb.UserView do
       role: user.role,
     }
   end
+
+  def render("confirmation.json", %{user: user}) do
+    %{
+      email: user.email,
+    }
+  end
+
+  def render("password_reset.json", %{user: user}) do
+    %{
+      email: user.email,
+    }
+  end
 end

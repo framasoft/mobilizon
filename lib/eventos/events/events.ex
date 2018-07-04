@@ -32,7 +32,7 @@ defmodule Eventos.Events do
                  limit: ^limit,
                  order_by: [desc: :id],
                  offset: ^start,
-                 preload: [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address]
+                 preload: [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :physical_address]
     events = Repo.all(query)
     count_events = Repo.one(from e in Event, select: count(e.id), where: e.organizer_actor_id == ^actor_id)
     {:ok, events, count_events}
@@ -89,7 +89,7 @@ defmodule Eventos.Events do
   """
   def get_event_full!(id) do
     event = Repo.get!(Event, id)
-    Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address])
+    Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :physical_address])
   end
 
   @doc """
@@ -97,7 +97,7 @@ defmodule Eventos.Events do
   """
   def get_event_full_by_url!(url) do
     event = Repo.get_by(Event, url: url)
-    Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address])
+    Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :physical_address])
   end
 
   @doc """
@@ -105,23 +105,7 @@ defmodule Eventos.Events do
   """
   def get_event_full_by_uuid(uuid) do
     event = Repo.get_by(Event, uuid: uuid)
-    Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address])
-  end
-
-  @spec get_event_full_by_name_and_slug!(String.t, String.t) :: Event.t
-  def get_event_full_by_name_and_slug!(name, slug) do
-    query = case String.split(name, "@") do
-      [name, domain] -> from e in Event,
-                             join: a in Actor,
-                             on: a.id == e.organizer_actor_id and a.preferred_username == ^name and a.domain == ^domain,
-                             where: e.slug == ^slug
-      [name] -> from e in Event,
-                     join: a in Actor,
-                     on: a.id == e.organizer_actor_id and a.preferred_username == ^name and is_nil(a.domain),
-                     where: e.slug == ^slug
-    end
-    event = Repo.one(query)
-    Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :address])
+    Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :physical_address])
   end
 
   @doc """

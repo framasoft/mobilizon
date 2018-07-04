@@ -61,10 +61,11 @@ export default {
   },
 
   // To log out, we just need to remove the token
-  logout() {
+  logout(store) {
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('token');
     this.authenticated = false;
+    store.commit('LOGOUT_USER');
   },
 
   jwt_decode(token) {

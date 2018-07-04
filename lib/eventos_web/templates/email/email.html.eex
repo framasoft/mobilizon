@@ -1,0 +1,10 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="<%= static_url(EventosWeb.Endpoint, "/css/email.css") %>">
+  </head>
+  <body>
+    <%= render @view_module, @view_template, assigns %>
+
+    <p><%= gettext "An email sent by Eventos on %{instance}.", instance: @instance %></p>
+  </body>
+</html>

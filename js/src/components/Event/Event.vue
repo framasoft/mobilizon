@@ -48,10 +48,10 @@
                           >
                       </v-avatar>
                   </router-link>
-                  <span v-if="event.organizer">Organisé par {{ event.organizer.display_name }}</span>
+                  <span v-if="event.organizer">Organisé par {{ event.organizer.display_name ? event.organizer.display_name : event.organizer.username }}</span>
               </div>
                           <p>
-                              <vue-markdown :source="event.description" />
+                              <vue-markdown :source="event.description" v-if="event.description" />
                           </p>
               <!--<p><router-link :to="{ name: 'Account', params: {id: event.organizer.id} }"><span class="grey&#45;&#45;text">{{ event.organizer.username }}</span></router-link> organises {{ event.title }} <span v-if="event.address.addressLocality">in {{ event.address.addressLocality }}</span> on the {{ event.startDate | formatDate }}.</p>
               <v-card-text v-if="event.description"><vue-markdown :source="event.description"></vue-markdown></v-card-text>-->

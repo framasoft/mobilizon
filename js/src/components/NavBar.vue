@@ -3,24 +3,23 @@
     class="blue darken-3"
     dark
     app
-    clipped-left
+    :clipped-left="$vuetify.breakpoint.lgAndUp"
     fixed
   >
-    <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <router-link :to="{ name: 'Home' }">
-        Eventos
+    <v-toolbar-title style="width: 300px" class="ml-0 pl-3 white--text">
+      <v-toolbar-side-icon @click.stop="toggleDrawer()"></v-toolbar-side-icon>
+      <router-link :to="{ name: 'Home' }" class="hidden-sm-and-down white--text">Eventos
       </router-link>
     </v-toolbar-title>
-    <v-select
-      autocomplete
+    <v-autocomplete
       :loading="searchElement.loading"
-      light
-      solo
+      flat
+      solo-inverted
       prepend-icon="search"
-      placeholder="Search"
+      label="Search"
       required
       item-text="displayedText"
+      class="hidden-sm-and-down"
       :items="searchElement.items"
       :search-input.sync="search"
       v-model="searchSelect"
@@ -39,7 +38,7 @@
           </v-list-tile-content>
         </template>
       </template>
-    </v-select>
+    </v-autocomplete>
     <v-spacer></v-spacer>
     <v-menu
       offset-y
@@ -82,6 +81,12 @@
 
   export default {
     name: 'NavBar',
+    props: {
+      toggleDrawer: {
+        type: Function,
+        required: true,
+      },
+    },
     data() {
       return {
         notificationMenu: false,
@@ -165,3 +170,9 @@
     }
   }
 </script>
+
+<style>
+nav.v-toolbar .v-input__slot {
+  margin-bottom: 0;
+}
+</style>

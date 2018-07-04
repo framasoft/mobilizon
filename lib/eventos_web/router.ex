@@ -36,6 +36,12 @@ defmodule EventosWeb.Router do
     scope "/v1" do
 
       post "/users", UserController, :register
+      get "/users/validate/:token", UserController, :validate
+      post "/users/resend", UserController, :resend_confirmation
+
+      post "/users/password-reset/send", UserController, :send_reset_password
+      post "/users/password-reset/post", UserController, :reset_password
+
       post "/login", UserSessionController, :sign_in
       get "/groups", GroupController, :index
       get "/events", EventController, :index
@@ -117,6 +123,11 @@ defmodule EventosWeb.Router do
     get "/events/:uuid", ActivityPubController, :event
     post "/@:name/inbox", ActivityPubController, :inbox
     post "/inbox", ActivityPubController, :inbox
+  end
+
+  if Mix.env == :dev do
+    # If using Phoenix
+    forward "/sent_emails", Bamboo.SentEmailViewerPlug
   end
 
   scope "/", EventosWeb do

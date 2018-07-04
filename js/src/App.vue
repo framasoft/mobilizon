@@ -38,28 +38,54 @@
         </template>
       </v-list>
     </v-navigation-drawer>
-    <NavBar></NavBar>
+    <NavBar v-bind="{toggleDrawer}"></NavBar>
     <v-content>
       <v-container fluid fill-height>
         <v-layout xs-12>
-          <transition>
+          <transition name="router">
             <router-view></router-view>
           </transition>
         </v-layout>
       </v-container>
     </v-content>
-    <v-btn
-      fixed
-      dark
-      fab
+    <v-speed-dial
+      v-model="fab"
       bottom
+      fixed
       right
-      color="pink"
-      @click="$router.push({name: 'CreateEvent'})"
+      direction="top"
+      transition="scale-transition"
       v-if="getUser()"
     >
-      <v-icon>add</v-icon>
-    </v-btn>
+    <v-btn
+        slot="activator"
+        v-model="fab"
+        color="blue darken-2"
+        dark
+        fab
+      >
+        <v-icon>add</v-icon>
+        <v-icon>close</v-icon>
+      </v-btn>
+      <v-btn
+        fab
+        dark
+        small
+        color="pink"
+        @click="$router.push({name: 'CreateEvent'})"
+      >
+        <v-icon>event</v-icon>
+      </v-btn>
+      <v-btn
+        fab
+        dark
+        small
+        color="purple"
+        @click="$router.push({name: 'CreateGroup'})"
+      >
+        <v-icon>group</v-icon>
+      </v-btn>
+    </v-speed-dial>
     <v-footer class="indigo" app>
       <span class="white--text">© Thomas Citharel {{ new Date().getFullYear() }} - Made with Elixir, Phoenix & <a href="https://vuejs.org/">VueJS</a> & <a href="https://www.vuetifyjs.com/">Vuetify</a> with some love and some weeks</span>
     </v-footer>
@@ -85,7 +111,8 @@ export default {
   },
   data() {
     return {
-      drawer: true,
+      drawer: false,
+      fab: false,
       user: false,
       items: [
         { icon: 'poll', text: 'Events', route: 'EventList', role: null },
@@ -110,10 +137,25 @@ export default {
     },
     getUser() {
       return this.$store.state.user === undefined ? false : this.$store.state.user;
+    },
+    toggleDrawer() {
+      this.drawer = !this.drawer;
     }
   },
 };
 </script>
 
 <style>
+.router-enter-active, .router-leave-active {
+  transition-property: opacity;
+  transition-duration: .25s;
+}
+
+.router-enter-active {
+  transition-delay: .25s;
+}
+
+.router-enter, .router-leave-active {
+  opacity: 0
+}
 </style>

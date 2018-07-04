@@ -47,6 +47,9 @@ config :logger, :console, format: "[$level] $message\n", level: :debug
 # in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
 
+config :eventos, Eventos.Mailer,
+  adapter: Bamboo.LocalAdapter
+
 # Configure your database
 config :eventos, Eventos.Repo,
   adapter: Ecto.Adapters.Postgres,

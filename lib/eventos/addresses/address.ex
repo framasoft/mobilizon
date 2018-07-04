@@ -26,6 +26,5 @@ defmodule Eventos.Addresses.Address do
   def changeset(%Address{} = address, attrs) do
     address
     |> cast(attrs, [:description, :floor, :geom, :addressCountry, :addressLocality, :addressRegion, :postalCode, :streetAddress])
-    |> validate_required([:streetAddress])
   end
 end

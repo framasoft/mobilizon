@@ -19,38 +19,38 @@
       <v-layout>
           <v-flex xs12 sm8 offset-sm2>
               <v-card>
-      <v-layout row wrap>
-          <v-flex xs4 v-for="event in events" :key="event.uuid">
-              <v-card :to="{ name: 'Event', params:{ uuid: event.uuid } }">
-                  <v-card-media v-if="!event.image"
-                                class="white--text"
-                                height="200px"
-                                src="https://picsum.photos/g/400/200/"
-                  >
-                      <v-container fill-height fluid>
-                          <v-layout fill-height>
-                              <v-flex xs12 align-end flexbox>
-                                  <span class="headline black--text">{{ event.title }}</span>
-                              </v-flex>
-                          </v-layout>
-                      </v-container>
-                  </v-card-media>
-                  <v-card-title primary-title>
-                      <div>
-                          <span class="grey--text">{{ event.begins_on | formatDate }}</span><br>
-                          <router-link :to="{name: 'Account', params: { name: event.organizer.username } }">
-                              <v-avatar size="25px">
-                                  <img class="img-circle elevation-7 mb-1"
-                                       :src="event.organizer.avatar"
-                                  >
-                              </v-avatar>
-                          </router-link>
-                          <span v-if="event.organizer">Organisé par {{ event.organizer.display_name }}</span>
-                      </div>
-                  </v-card-title>
-              </v-card>
-          </v-flex>
-      </v-layout>
+                <v-layout row wrap>
+                    <v-flex xs4 v-for="event in events" :key="event.uuid">
+                        <v-card :to="{ name: 'Event', params:{ uuid: event.uuid } }">
+                            <v-card-media v-if="!event.image"
+                                          class="white--text"
+                                          height="200px"
+                                          src="https://picsum.photos/g/400/200/"
+                            >
+                                <v-container fill-height fluid>
+                                    <v-layout fill-height>
+                                        <v-flex xs12 align-end flexbox>
+                                            <span class="headline black--text">{{ event.title }}</span>
+                                        </v-flex>
+                                    </v-layout>
+                                </v-container>
+                            </v-card-media>
+                            <v-card-title primary-title>
+                                <div>
+                                    <span class="grey--text">{{ event.begins_on | formatDate }}</span><br>
+                                    <router-link :to="{name: 'Account', params: { name: event.organizer.username } }">
+                                        <v-avatar size="25px">
+                                            <img class="img-circle elevation-7 mb-1"
+                                                :src="event.organizer.avatar"
+                                            >
+                                        </v-avatar>
+                                    </router-link>
+                                    <span v-if="event.organizer">Organisé par {{ event.organizer.display_name }}</span>
+                                </div>
+                            </v-card-title>
+                        </v-card>
+                    </v-flex>
+                </v-layout>
               </v-card>
           </v-flex>
       </v-layout>

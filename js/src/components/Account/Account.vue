@@ -14,20 +14,30 @@
               <v-btn icon class="mr-3" v-if="$store.state.user && $store.state.user.actor.id === actor.id">
                 <v-icon>edit</v-icon>
               </v-btn>
-              <v-btn icon>
-                <v-icon>more_vert</v-icon>
-              </v-btn>
+              <v-menu bottom left>
+                <v-btn icon slot="activator">
+                  <v-icon>more_vert</v-icon>
+                </v-btn>
+                <v-list>
+                  <v-list-tile @click="logoutUser()" v-if="$store.state.user && $store.state.user.actor.id === actor.id">
+                    <v-list-tile-title>User logout</v-list-tile-title>
+                  </v-list-tile>
+                  <v-list-tile @click="deleteAccount()" v-if="$store.state.user && $store.state.user.actor.id === actor.id">
+                    <v-list-tile-title>Delete</v-list-tile-title>
+                  </v-list-tile>
+                </v-list>
+              </v-menu>
             </v-card-title>
             <v-spacer></v-spacer>
             <div class="text-xs-center">
               <v-avatar size="125px">
-                <img v-if="!account.avatar_url"
+                <img v-if="!actor.avatar_url"
                   class="img-circle elevation-7 mb-1"
                   src="https://picsum.photos/125/125/"
                 >
                 <img v-else
                      class="img-circle elevation-7 mb-1"
-                     :src="account.avatar_url"
+                     :src="actor.avatar_url"
                 >
               </v-avatar>
             </div>
@@ -166,6 +176,7 @@
 
 <script>
   import eventFetch from '@/api/eventFetch';
+  import auth from '@/auth';
 
 export default {
   name: 'Account',
@@ -197,6 +208,10 @@ export default {
           this.loading = false;
           console.log(this.actor);
         })
+    },
+    logoutUser() {
+      auth.logout(this.$store);
+      this.$router.push({ name: 'Home' });
     }
   }
 }

@@ -19,12 +19,9 @@ defmodule EventosWeb.EventController do
   end
 
   def create(conn, %{"event" => event_params}) do
-    address = process_address(event_params["address"])
-    event_params = if is_nil address do
-      event_params
-    else
-      %{event_params | "address" => address}
-    end
+    event_params = process_event_address(event_params)
+    Logger.debug("creating event with")
+    Logger.debug(inspect event_params)
     with {:ok, %Event{} = event} <- Events.create_event(event_params) do
       conn
       |> put_status(:created)
@@ -33,15 +30,19 @@ defmodule EventosWeb.EventController do
     end
   end
 
-  defp process_address(address) do
-    geom = EventosWeb.AddressController.process_geom(address["geom"])
-    case geom do
-      nil ->
-        address
-      _ ->
-        %{address | "geom" => geom}
-      _ ->
-        address
+  defp process_event_address(event) do
+    if Map.has_key?(event, "address_type") && event["address_type"] === :physical do
+      address = event["physical_address"]
+      geom = EventosWeb.AddressController.process_geom(address["geom"])
+      address = case geom do
+        nil ->
+          address
+        _ ->
+          %{address | "geom" => geom}
+      end
+      %{event | "physical_address" => address}
+    else
+      event
     end
   end
 

@@ -312,8 +312,12 @@ defmodule Eventos.Actors do
   Get an user by email
   """
   def find_by_email(email) do
-    user = Repo.get_by(User, email: email)
-    Repo.preload(user, :actor)
+    case Repo.get_by(User, email: email) |> Repo.preload(:actor) do
+      nil ->
+        {:error, nil}
+      user ->
+        {:ok, user}
+    end
   end
 
   @doc """
@@ -366,8 +370,7 @@ defmodule Eventos.Actors do
 
     try do
       Eventos.Repo.insert!(actor_with_user)
-      user = find_by_email(email)
-      {:ok, user}
+      find_by_email(email)
     rescue
      e in Ecto.InvalidChangesetError ->
       {:error, e.changeset}

@@ -15,4 +15,5 @@ erl_crash.dump
 # variables.
 /config/*.secret.exs
 
+.elixir_ls
 /doc

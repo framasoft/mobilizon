@@ -8,8 +8,12 @@ import Location from '@/components/Location';
 import CreateEvent from '@/components/Event/Create';
 import CategoryList from '@/components/Category/List';
 import CreateCategory from '@/components/Category/Create';
-import Register from '@/components/Register';
-import Login from '@/components/Login';
+import Register from '@/components/Account/Register';
+import Login from '@/components/Account/Login';
+import Validate from '@/components/Account/Validate';
+import ResendConfirmation from '@/components/Account/ResendConfirmation';
+import SendPasswordReset from '@/components/Account/SendPasswordReset';
+import PasswordReset from '@/components/Account/PasswordReset';
 import Account from '@/components/Account/Account';
 import CreateGroup from '@/components/Group/Create';
 import Group from '@/components/Group/Group';
@@ -68,12 +72,42 @@ const router = new Router({
       path: '/register',
       name: 'Register',
       component: Register,
+      props: true,
       meta: { requiredAuth: false },
+    },
+    {
+      path: '/resend-instructions',
+      name: 'ResendConfirmation',
+      component: ResendConfirmation,
+      props: true,
+      meta: { requiresAuth: false },
+    },
+    {
+      path: '/password-reset/send',
+      name: 'SendPasswordReset',
+      component: SendPasswordReset,
+      props: true,
+      meta: { requiresAuth: false },
+    },
+    {
+      path: '/password-reset/:token',
+      name: 'PasswordReset',
+      component: PasswordReset,
+      meta: { requiresAuth: false },
+      props: true,
+    },
+    {
+      path: '/validate/:token',
+      name: 'Validate',
+      component: Validate,
+      props: true,
+      meta: { requiresAuth: false },
     },
     {
       path: '/login',
       name: 'Login',
       component: Login,
+      props: true,
       meta: { requiredAuth: false },
     },
     {
@@ -109,7 +143,8 @@ const router = new Router({
       props: true,
       meta: { requiredAuth: false },
     },
-    { path: "*",
+    {
+      path: '*',
       name: 'PageNotFound',
       component: PageNotFound,
       meta: { requiredAuth: false },

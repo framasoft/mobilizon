@@ -25,7 +25,10 @@ config :eventos, EventosWeb.Endpoint,
   secret_key_base: "1yOazsoE0Wqu4kXk3uC5gu3jDbShOimTCzyFL3OjCdBmOXMyHX87Qmf3+Tu9s0iM",
   render_errors: [view: EventosWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: Eventos.PubSub,
-           adapter: Phoenix.PubSub.PG2]
+           adapter: Phoenix.PubSub.PG2],
+  instance: "localhost",
+  email_from: "noreply@localhost",
+  email_to: "noreply@localhost"
 
 # Configures Elixir's Logger
 config :logger, :console,

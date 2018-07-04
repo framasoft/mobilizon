@@ -7,18 +7,24 @@ defmodule EventosWeb.UserSessionController do
   alias Eventos.Actors
 
   def sign_in(conn, %{"email" => email, "password" => password}) do
-    case Actors.find_by_email(email) do
-      %User{} = user ->
-        # Attempt to authenticate the user
-        case Actors.authenticate(%{user: user, password: password}) do
-          {:ok, token, _claims} ->
+    with {:ok, %User{} = user} <- Actors.find_by_email(email),
+         {:ok, %User{} = _user} <- User.is_confirmed(user),
+         {:ok, token, _claims} <- Actors.authenticate(%{user: user, password: password}) do
             # Render the token
             render conn, "token.json", %{token: token, user: user}
-          _ ->
-            send_resp(conn, 400, Poison.encode!(%{"error_msg" => "Bad login", "display_error" => "session.error.bad_login", "error_code" => 400}))
-        end
-      _ ->
-        send_resp(conn, 400, Poison.encode!(%{"error_msg" => "No such user", "display_error" => "session.error.bad_login", "error_code" => 400}))
+    else
+      {:error, :not_found} ->
+        conn
+        |> put_status(401)
+        |> json(%{"error_msg" => "No such user", "display_error" => "session.error.bad_login"})
+      {:error, :unconfirmed} ->
+        conn
+        |> put_status(401)
+        |> json(%{"error_msg" => "User is not activated", "display_error" => "session.error.not_activated"})
+      {:error, :unauthorized} ->
+        conn
+        |> put_status(401)
+        |> json(%{"error_msg" => "Bad login", "display_error" => "session.error.bad_login"})
     end
   end
 
