@@ -57,13 +57,18 @@
             <v-card-text v-if="event.description"><vue-markdown :source="event.description"></vue-markdown></v-card-text>-->
             </v-flex>
             <v-flex md2>
-              <p v-if="!actorIsParticipant()">Vous y allez ?
-                <span class="text--darken-2 grey--text">{{ event.participants.length }} personnes y vont.</span>
+              <p v-if="actorIsOrganizer()">
+                Vous êtes organisateur de cet événement.
               </p>
-              <p v-else>
-                Vous avez annoncé aller à cet événement.
-              </p>
-              <v-card-actions>
+              <div v-else>
+                <p v-if="actorIsParticipant()">
+                  Vous avez annoncé aller à cet événement.
+                </p>
+                <p v-else>Vous y allez ?
+                  <span class="text--darken-2 grey--text">{{ event.participants.length }} personnes y vont.</span>
+                </p>
+              </div>
+              <v-card-actions v-if="!actorIsOrganizer()">
                 <v-btn v-if="!actorIsParticipant()" @click="joinEvent" color="success"><v-icon>check</v-icon> Join</v-btn>
                 <v-btn v-if="actorIsParticipant()" @click="leaveEvent" color="error">Leave</v-btn>
               </v-card-actions>
@@ -212,8 +217,10 @@
           })
       },
       actorIsParticipant() {
-        const actorId = this.$store.state.user.actor.id;
-        return this.event.participants.map(participant => participant.id).includes(actorId) || actorId === this.event.organizer.id;
+        return this.event.participants.map(participant => participant.id).includes(this.$store.state.user.actor.id) || this.actorIsOrganizer();
+      },
+      actorIsOrganizer() {
+        return this.$store.state.user.actor.id === this.event.organizer.id;
       }
     },
     props: {
