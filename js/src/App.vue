@@ -9,7 +9,10 @@
       enable-resize-watcher
     >
       <v-list dense>
-        <v-list-tile avatar v-if="$store.state.user">
+        <v-list-group
+        value="false"
+      >
+        <v-list-tile avatar v-if="$store.state.user" slot="activator">
           <v-list-tile-avatar>
               <img v-if="!getUser().actor.avatar_url"
                 class="img-circle elevation-7 mb-1"
@@ -25,6 +28,20 @@
             <v-list-tile-title>{{ this.displayed_name }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+
+        <v-list-tile avatar v-if="$store.state.user">
+          <v-list-tile-avatar>
+              <img
+                class="img-circle elevation-7 mb-1"
+                src="https://picsum.photos/125/125/"
+              >
+            </v-list-tile-avatar>
+
+          <v-list-tile-content>
+            <v-list-tile-title>Autre identité</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        </v-list-group>
         <template v-for="(item, i) in items" v-if="showMenuItem(item.role)">
           <v-layout
             row
