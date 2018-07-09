@@ -26,6 +26,7 @@ before_script:
   - mix deps.get
   - MIX_ENV=test mix ecto.create
   - MIX_ENV=test mix ecto.migrate
+  - curl http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz --output priv/static/GeoLite2-City.mmdb -s
 
 mix:
   script:
