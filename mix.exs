@@ -26,7 +26,7 @@ defmodule Eventos.Mixfile do
   def application do
     [
       mod: {Eventos.Application, []},
-      extra_applications: [:logger, :runtime_tools, :guardian, :bamboo]
+      extra_applications: [:logger, :runtime_tools, :guardian, :bamboo, :geolix]
     ]
   end
 
@@ -69,6 +69,7 @@ defmodule Eventos.Mixfile do
       {:ex_ical, github: "fazibear/ex_ical"},
       {:bamboo, "~> 1.0"},
       {:bamboo_smtp, "~> 1.5.0"},
+      {:geolix, "~> 0.16"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:ex_machina, "~> 2.1", only: :test},

@@ -23,6 +23,7 @@
       :items="searchElement.items"
       :search-input.sync="search"
       v-model="searchSelect"
+      return-object
     >
       <template slot="item" slot-scope="data">
         <template v-if="typeof data.item !== 'object'">
@@ -30,7 +31,8 @@
         </template>
         <template v-else>
           <v-list-tile-avatar>
-            <img :src="data.item.avatar">
+            <img :src="data.item.avatar" v-if="data.item.avatar">
+            <v-icon v-else>event</v-icon>
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-title v-html="username_with_domain(data.item)"></v-list-tile-title>
@@ -45,6 +47,7 @@
       :close-on-content-click="false"
       :nudge-width="200"
       v-model="notificationMenu"
+      v-if="getUser()"
     >
       <v-btn icon slot="activator">
         <v-badge left color="red">
@@ -73,6 +76,7 @@
       </v-card>
     </v-menu>
     <v-btn flat @click="$router.push({name: 'Account', params: { name: getUser().actor.username }})" v-if="$store.state.user">{{ this.displayed_name }}</v-btn>
+    <v-btn v-else :to="{ name: 'Login' }">Se connecter</v-btn>
   </v-toolbar>
 </template>
 
@@ -107,9 +111,9 @@
         val && this.querySelections(val)
       },
       searchSelect(val) {
-        console.log(val);
+        console.log('searchSelect', val);
         if (val.type === 'Event') {
-          this.$router.push({name: 'Event', params: { name: val.organizer.username, slug: val.slug }});
+          this.$router.push({name: 'Event', params: { uuid: val.uuid }});
         } else if (val.type === 'Locality') {
           this.$router.push({name: 'EventList', params: {location: val.geohash}});
         } else {

@@ -5,8 +5,13 @@ defmodule EventosWeb.EventView do
   use EventosWeb, :view
   alias EventosWeb.{EventView, ActorView, GroupView, AddressView}
 
-  def render("index.json", %{events: events}) do
-    %{data: render_many(events, EventView, "event_simple.json")}
+  def render("index.json", %{events: events, coord: coord, city: city, country: country}) do
+    %{
+      data: render_many(events, EventView, "event_simple.json"),
+      coord: coord,
+      city: city,
+      country: country,
+    }
   end
 
   def render("show_simple.json", %{event: event}) do
@@ -49,7 +54,7 @@ defmodule EventosWeb.EventView do
       ends_on: event.ends_on,
       uuid: event.uuid,
       organizer: render_one(event.organizer_actor, ActorView, "acccount_basic.json"),
-      participants: render_many(event.participants, ActorView, "show_basic.json"),
+      participants: render_many(event.participants, ActorView, "acccount_basic.json"),
       physical_address: render_one(event.physical_address, AddressView, "address.json"),
       type: "Event",
       address_type: event.address_type,

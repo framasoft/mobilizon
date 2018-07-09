@@ -9,6 +9,7 @@ defmodule Eventos.Events do
   alias Eventos.Events.Event
   alias Eventos.Events.Comment
   alias Eventos.Actors.Actor
+  alias Eventos.Addresses.Address
 
   @doc """
   Returns the list of events.
@@ -51,6 +52,19 @@ defmodule Eventos.Events do
       from c in Comment,
       select: count(c.id),
       where: c.local == ^true
+    )
+  end
+
+  import Geo.PostGIS
+
+  def find_close_events(lon, lat, radius \\ 50000) do # 50 000 meters -> 50 kms
+    ip_point = Geo.WKT.decode("SRID=4326;POINT(#{lon} #{lat})")
+    Repo.all(
+      from e in Event,
+      join: a in Address,
+      on: a.id == e.physical_address_id,
+      where: st_dwithin_in_meters(^ip_point, a.geom, ^radius),
+      preload: :organizer_actor
     )
   end
 

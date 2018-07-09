@@ -1,10 +1,10 @@
 <template>
   <v-container>
       <v-jumbotron
-              :gradient="gradient"
-              src="https://picsum.photos/1200/900"
-              dark
-              v-if="$store.state.user === false"
+        :gradient="gradient"
+        src="https://picsum.photos/1200/900"
+        dark
+        v-if="$store.state.user === false"
       >
           <v-container fill-height>
               <v-layout align-center>
@@ -18,9 +18,23 @@
       </v-jumbotron>
       <v-layout>
           <v-flex xs12 sm8 offset-sm2>
-              <v-card>
+            <v-layout row wrap>
+                <v-flex xs12 sm6>
+                  <h1>Welcome back {{ $store.state.user.actor.username }}</h1>
+                </v-flex>
+                <v-flex xs12 sm6>
+                <v-layout align-center>
+                  <span class="events-nearby title">Events nearby </span><v-text-field
+                    solo
+                    append-icon="place"
+                    :value="ipLocation()"
+                  ></v-text-field>
+                </v-layout>
+              </v-flex>
+            </v-layout>
+              <v-card v-if="events.length > 0">
                 <v-layout row wrap>
-                    <v-flex xs4 v-for="event in events" :key="event.uuid">
+                    <v-flex md4 v-for="event in events" :key="event.uuid">
                         <v-card :to="{ name: 'Event', params:{ uuid: event.uuid } }">
                             <v-card-media v-if="!event.image"
                                           class="white--text"
@@ -45,43 +59,27 @@
                                             >
                                         </v-avatar>
                                     </router-link>
-                                    <span v-if="event.organizer">Organisé par {{ event.organizer.display_name }}</span>
+                                    <span v-if="event.organizer">Organisé par {{ event.organizer.display_name ? event.organizer.display_name : event.organizer.username }}</span>
                                 </div>
                             </v-card-title>
                         </v-card>
                     </v-flex>
                 </v-layout>
               </v-card>
+              <v-alert v-else :value="true" type="info">
+                No events found nearby {{ ipLocation() }}
+              </v-alert>
           </v-flex>
       </v-layout>
-    <v-layout row>
-      <v-flex xs6>
-        <v-btn large @click="geoLocalize"><v-icon>my_location</v-icon>Me géolocaliser</v-btn>
-      </v-flex>
-      <v-flex xs6>
-        <vuetify-google-autocomplete
-          id="map"
-          append-icon="search"
-          classname="form-control"
-          placeholder="Start typing"
-          enable-geolocation
-          types="(cities)"
-          v-on:placechanged="getAddressData"
-        >
-        </vuetify-google-autocomplete>
-      </v-flex>
-    </v-layout>
   </v-container>
 </template>
 
 <script>
 
-import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete';
 import ngeohash from 'ngeohash';
 import eventFetch from "../api/eventFetch";
 
 export default {
-  components: { VuetifyGoogleAutocomplete },
   name: 'Home',
   data() {
     return {
@@ -94,6 +92,8 @@ export default {
       },
       locations: [],
       events: [],
+      city: {name: null},
+      country: {name: null},
     };
   },
   created() {
@@ -118,6 +118,8 @@ export default {
         .then((response) => {
           this.loading = false;
           this.events = response.data;
+          this.city = response.city;
+          this.country = response.country;
         });
     },
     geoLocalize() {
@@ -147,6 +149,9 @@ export default {
     viewEvent(event) {
       this.$router.push({ name: 'Event', params: { uuid: event.uuid } })
     },
+    ipLocation() {
+      return this.city.name ? this.city.name : this.country.name;
+    }
   },
 };
 </script>
@@ -156,5 +161,9 @@ export default {
   .search-autocomplete {
     border: 1px solid #dbdbdb;
     color: rgba(0,0,0,.87);
+  }
+
+  .events-nearby {
+    margin-bottom: 25px;
   }
 </style>

@@ -129,7 +129,7 @@
             .then(response => response.json())
             .then((data) => {
               this.loading = false;
-              this.$router.push({name: 'Event', params: {uuid: data.uuid}});
+              this.$router.push({name: 'Event', params: {uuid: data.data.uuid}});
             }).catch((err) => {
               Promise.resolve(err).then((err) => {
                 console.log('err creation', err);

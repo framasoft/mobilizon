@@ -9,6 +9,22 @@
       enable-resize-watcher
     >
       <v-list dense>
+        <v-list-tile avatar v-if="$store.state.user">
+          <v-list-tile-avatar>
+              <img v-if="!getUser().actor.avatar_url"
+                class="img-circle elevation-7 mb-1"
+                src="https://picsum.photos/125/125/"
+              >
+              <img v-else
+                    class="img-circle elevation-7 mb-1"
+                    :src="getUser().actor.avatar_url"
+              >
+            </v-list-tile-avatar>
+
+          <v-list-tile-content @click="$router.push({name: 'Account', params: { name: getUser().actor.username }})">
+            <v-list-tile-title>{{ this.displayed_name }}</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
         <template v-for="(item, i) in items" v-if="showMenuItem(item.role)">
           <v-layout
             row
@@ -40,8 +56,8 @@
     </v-navigation-drawer>
     <NavBar v-bind="{toggleDrawer}"></NavBar>
     <v-content>
-      <v-container fluid fill-height>
-        <v-layout xs-12>
+      <v-container fluid fill-height :class="{'px-0': $vuetify.breakpoint.xsOnly }">
+        <v-layout xs12>
           <transition name="router">
             <router-view></router-view>
           </transition>
@@ -140,8 +156,13 @@ export default {
     },
     toggleDrawer() {
       this.drawer = !this.drawer;
-    }
+    },
   },
+  computed: {
+    displayed_name() {
+      return this.$store.state.user.actor.display_name === null ? this.$store.state.user.actor.username : this.$store.state.user.actor.display_name
+    },
+  }
 };
 </script>
 

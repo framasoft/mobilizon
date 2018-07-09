@@ -7,15 +7,24 @@ defmodule EventosWeb.EventController do
   alias Eventos.Events
   alias Eventos.Events.Event
   alias Eventos.Export.ICalendar
-  alias Eventos.Addresses
 
-  import Logger
+  require Logger
 
   action_fallback EventosWeb.FallbackController
 
   def index(conn, _params) do
-    events = Events.list_events()
-    render(conn, "index.json", events: events)
+    ip = "88.161.154.97"
+    Logger.debug(inspect Geolix.lookup(ip), pretty: true)
+    with %{city: %Geolix.Result.City{city: city, country: country, location: %Geolix.Record.Location{latitude: latitude, longitude: longitude}}} <- Geolix.lookup(ip) do
+      Logger.debug(inspect city)
+      Logger.debug(inspect [latitude, longitude])
+      distance = case city do
+        nil -> 500000
+        _ -> 50000
+      end
+      events = Events.find_close_events(longitude, latitude, distance)
+      render(conn, "index.json", events: events, coord: %{longitude: longitude, latitude: latitude, distance: distance}, city: city, country: country)
+    end
   end
 
   def create(conn, %{"event" => event_params}) do

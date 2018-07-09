@@ -81,14 +81,12 @@ defmodule EventosWeb.Router do
        patch "/events/:uuid", EventController, :update
        put "/events/:uuid", EventController, :update
        delete "/events/:uuid", EventController, :delete
+       post "/events/:uuid/join", ParticipantController, :join
        post "/comments", CommentController, :create
        patch "/comments/:uuid", CommentController, :update
        put "/comments/:uuid", CommentController, :update
        delete "/comments/:uuid", CommentController, :delete
-       #post "/events/:id/request", EventRequestController, :create_for_event
-       resources "/participant", ParticipantController
        resources "/bots", BotController, except: [:new, :edit, :show, :index]
-       #resources "/requests", EventRequestController
        post "/groups", GroupController, :create
        post "/groups/:name/join", GroupController, :join
        resources "/members", MemberController
