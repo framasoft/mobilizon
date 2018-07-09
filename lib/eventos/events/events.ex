@@ -57,7 +57,7 @@ defmodule Eventos.Events do
 
   import Geo.PostGIS
 
-  def find_close_events(lon, lat, radius \\ 50000) do # 50 000 meters -> 50 kms
+  def find_close_events(lon, lat, radius \\ 50_000) do # 50 000 meters -> 50 kms
     ip_point = Geo.WKT.decode("SRID=4326;POINT(#{lon} #{lat})")
     Repo.all(
       from e in Event,

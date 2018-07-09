@@ -19,8 +19,8 @@ defmodule EventosWeb.EventController do
       Logger.debug(inspect city)
       Logger.debug(inspect [latitude, longitude])
       distance = case city do
-        nil -> 500000
-        _ -> 50000
+        nil -> 500_000
+        _ -> 50_000
       end
       events = Events.find_close_events(longitude, latitude, distance)
       render(conn, "index.json", events: events, coord: %{longitude: longitude, latitude: latitude, distance: distance}, city: city, country: country)
