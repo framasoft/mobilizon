@@ -10,7 +10,7 @@
               <v-icon>chevron_left</v-icon>
             </v-btn>
             <v-spacer></v-spacer>
-            <v-btn icon class="mr-3" v-if="$store.state.user && $store.state.user.actor.id === actor.id">
+            <v-btn icon class="mr-3" v-if="$store.state.user && $store.state.actor.id === actor.id">
               <v-icon>edit</v-icon>
             </v-btn>
             <v-menu bottom left>
@@ -18,10 +18,10 @@
                 <v-icon>more_vert</v-icon>
               </v-btn>
               <v-list>
-                <v-list-tile @click="logoutUser()" v-if="$store.state.user && $store.state.user.actor.id === actor.id">
+                <v-list-tile @click="logoutUser()" v-if="$store.state.user && $store.state.actor.id === actor.id">
                   <v-list-tile-title>User logout</v-list-tile-title>
                 </v-list-tile>
-                <v-list-tile @click="deleteAccount()" v-if="$store.state.user && $store.state.user.actor.id === actor.id">
+                <v-list-tile @click="deleteAccount()" v-if="$store.state.user && $store.state.actor.id === actor.id">
                   <v-list-tile-title>Delete</v-list-tile-title>
                 </v-list-tile>
               </v-list>
@@ -30,13 +30,13 @@
           <v-spacer></v-spacer>
           <div class="text-xs-center">
             <v-avatar size="125px">
-              <img v-if="!actor.avatar_url"
+              <img v-if="!actor.avatar"
                 class="img-circle elevation-7 mb-1"
                 src="https://picsum.photos/125/125/"
               >
               <img v-else
                     class="img-circle elevation-7 mb-1"
-                    :src="actor.avatar_url"
+                    :src="actor.avatar"
               >
             </v-avatar>
           </div>

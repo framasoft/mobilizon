@@ -11,7 +11,7 @@ defmodule Eventos.Actors.User do
     field :password_hash, :string
     field :password, :string, virtual: true
     field :role, :integer, default: 0
-    belongs_to :actor, Actor
+    has_many :actors, Actor
     field :confirmed_at, :utc_datetime
     field :confirmation_sent_at, :utc_datetime
     field :confirmation_token, :string
@@ -24,7 +24,7 @@ defmodule Eventos.Actors.User do
   @doc false
   def changeset(%User{} = user, attrs) do
     user
-    |> cast(attrs, [:email, :role, :password_hash, :actor_id, :confirmed_at, :confirmation_sent_at, :confirmation_token, :reset_password_sent_at, :reset_password_token])
+    |> cast(attrs, [:email, :role, :password_hash, :confirmed_at, :confirmation_sent_at, :confirmation_token, :reset_password_sent_at, :reset_password_token])
     |> validate_required([:email])
     |> unique_constraint(:email, [message: "registration.error.email_already_used"])
     |> validate_format(:email, ~r/@/)

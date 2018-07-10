@@ -177,7 +177,7 @@ defmodule Eventos.Actors do
 
   def list_users_with_actors do
     users = Repo.all(User)
-    Repo.preload(users, :actor)
+    Repo.preload(users, :actors)
   end
 
   defp blank?(""), do: nil
@@ -222,7 +222,7 @@ defmodule Eventos.Actors do
 
   def get_user_with_actor!(id) do
     user = Repo.get!(User, id)
-    Repo.preload(user, :actor)
+    Repo.preload(user, :actors)
   end
 
   def get_actor_by_url(url) do
@@ -312,7 +312,7 @@ defmodule Eventos.Actors do
   Get an user by email
   """
   def find_by_email(email) do
-    case Repo.preload(Repo.get_by(User, email: email), :actor) do
+    case Repo.preload(Repo.get_by(User, email: email), :actors) do
       nil ->
         {:error, nil}
       user ->

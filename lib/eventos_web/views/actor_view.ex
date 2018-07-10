@@ -7,7 +7,7 @@ defmodule EventosWeb.ActorView do
   alias Eventos.Actors
 
   def render("index.json", %{actors: actors}) do
-    %{data: render_many(actors, ActorView, "acccount_basic.json")}
+    %{data: render_many(actors, ActorView, "actor_basic.json")}
   end
 
   def render("show.json", %{actor: actor}) do
@@ -18,7 +18,7 @@ defmodule EventosWeb.ActorView do
     %{data: render_one(actor, ActorView, "actor_basic.json")}
   end
 
-  def render("acccount_basic.json", %{actor: actor}) do
+  def render("actor_basic.json", %{actor: actor}) do
     %{id: actor.id,
       username: actor.preferred_username,
       domain: actor.domain,

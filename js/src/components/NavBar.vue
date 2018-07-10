@@ -75,8 +75,7 @@
         </v-card-actions>
       </v-card>
     </v-menu>
-    <v-btn flat @click="$router.push({name: 'Account', params: { name: getUser().actor.username }})" v-if="$store.state.user">{{ this.displayed_name }}</v-btn>
-    <v-btn v-else :to="{ name: 'Login' }">Se connecter</v-btn>
+    <v-btn v-if="!$store.state.user" :to="{ name: 'Login' }">Se connecter</v-btn>
   </v-toolbar>
 </template>
 
@@ -123,7 +122,10 @@
     },
     computed: {
       displayed_name: function() {
-        return this.$store.state.user.actor.display_name === null ? this.$store.state.user.actor.username : this.$store.state.user.actor.display_name
+        console.log('displayed name', this.$store.state.actor);
+        if (this.$store.state.actor) {
+          return this.$store.state.actor.display_name === null ? this.$store.state.actor.username : this.$store.state.actor.display_name;
+        }
       },
     },
     methods: {

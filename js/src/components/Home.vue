@@ -16,11 +16,11 @@
               </v-layout>
           </v-container>
       </v-jumbotron>
-      <v-layout>
+      <v-layout v-else>
           <v-flex xs12 sm8 offset-sm2>
             <v-layout row wrap>
                 <v-flex xs12 sm6>
-                  <h1>Welcome back {{ $store.state.user.actor.username }}</h1>
+                  <h1>Welcome back {{ $store.state.actor.username }}</h1>
                 </v-flex>
                 <v-flex xs12 sm6>
                 <v-layout align-center>
@@ -51,7 +51,7 @@
                             </v-card-media>
                             <v-card-title primary-title>
                                 <div>
-                                    <span class="grey--text">{{ event.begins_on | formatDate }}</span><br>
+                                    <span class="grey--text">{{ event.begins_on | formatDay }}</span><br>
                                     <router-link :to="{name: 'Account', params: { name: event.organizer.username } }">
                                         <v-avatar size="25px">
                                             <img class="img-circle elevation-7 mb-1"
@@ -100,8 +100,8 @@ export default {
     this.fetchData();
   },
   computed: {
-    displayed_name: function() {
-      return this.$store.state.user.actor.display_name === null ? this.$store.state.user.actor.username : this.$store.state.user.actor.display_name
+    displayed_name() {
+      return this.$store.state.actor.display_name === null ? this.$store.state.actor.username : this.$store.state.actor.display_name
     },
   },
   methods: {

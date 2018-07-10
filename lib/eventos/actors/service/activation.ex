@@ -8,8 +8,9 @@ defmodule Eventos.Actors.Service.Activation do
 
   @doc false
   def check_confirmation_token(token) when is_binary(token) do
-    with %User{} = user <- Repo.get_by(User, confirmation_token: token) do
-      Actors.update_user(user, %{"confirmed_at" => DateTime.utc_now(), "confirmation_sent_at" => nil, "confirmation_token" => nil})
+    with %User{} = user <- Repo.get_by(User, confirmation_token: token),
+    {:ok, %User{} = user} <- Actors.update_user(user, %{"confirmed_at" => DateTime.utc_now(), "confirmation_sent_at" => nil, "confirmation_token" => nil}) do
+      {:ok, Repo.preload(user, :actors)}
     else
       _err ->
         {:error, "Invalid token"}

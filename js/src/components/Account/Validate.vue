@@ -1,17 +1,18 @@
 <template>
-  <b-container>
+  <v-container>
     <h1 v-if="loading">{{ $t('registration.validation.process') }}</h1>
     <div v-else>
       <div v-if="failed">
-        <b-alert show variant="danger">{{ $t('registration.success.validation_failure') }}</b-alert>
+        <v-alert :value="true" variant="danger">Error while validating account</v-alert>
       </div>
       <h1 v-else>{{ $t('registration.validation.finished') }}</h1>
     </div>
-  </b-container>
+  </v-container>
 </template>
 
 <script>
 import fetchStory from '@/api/eventFetch';
+import { LOGIN_USER } from '@/store/mutation-types';
 
 export default {
   name: 'Validate',
@@ -36,7 +37,7 @@ export default {
         this.loading = false;
         localStorage.setItem('token', data.token);
         localStorage.setItem('refresh_token', data.refresh_token);
-        this.$store.commit('LOGIN_USER', data.account);
+        this.$store.commit(LOGIN_USER, data.account);
         this.$snotify.success(this.$t('registration.success.login', { username: data.account.username }));
         this.$router.push({ name: 'Home' });
       }).catch((err) => {

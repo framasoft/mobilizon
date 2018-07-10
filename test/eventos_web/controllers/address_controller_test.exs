@@ -16,8 +16,8 @@ defmodule EventosWeb.AddressControllerTest do
   end
 
   setup %{conn: conn} do
-    actor = insert(:actor)
-    user = insert(:user, actor: actor)
+    user = insert(:user)
+    actor = insert(:actor, user: user)
     {:ok, conn: conn, user: user}
   end
 

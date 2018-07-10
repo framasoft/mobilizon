@@ -6,15 +6,15 @@ defmodule EventosWeb.ActorControllerTest do
   alias Eventos.Actors
 
   setup %{conn: conn} do
-    actor = insert(:actor)
-    user = insert(:user, actor: actor)
-    {:ok, conn: conn, user: user}
+    user = insert(:user)
+    actor = insert(:actor, user: user)
+    {:ok, conn: conn, user: user, actor: actor}
   end
 
   describe "index" do
-    test "lists all actors", %{conn: conn, user: user} do
+    test "lists all actors", %{conn: conn, user: user, actor: actor} do
       conn = get conn, actor_path(conn, :index)
-      assert hd(json_response(conn, 200)["data"])["username"] == user.actor.preferred_username
+      assert hd(json_response(conn, 200)["data"])["username"] == actor.preferred_username
     end
   end
 
@@ -41,9 +41,4 @@ defmodule EventosWeb.ActorControllerTest do
 #      assert response(conn, 200)
 #    end
 #  end
-
-  defp create_actor(_) do
-    actor = insert(:actor)
-    {:ok, actor: actor}
-  end
 end
