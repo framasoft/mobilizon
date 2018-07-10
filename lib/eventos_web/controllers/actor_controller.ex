@@ -5,7 +5,7 @@ defmodule EventosWeb.ActorController do
   use EventosWeb, :controller
 
   alias Eventos.Actors
-  alias Eventos.Actors.Actor
+  alias Eventos.Actors.{Actor, User}
   alias Eventos.Service.ActivityPub
 
   action_fallback EventosWeb.FallbackController
@@ -13,6 +13,17 @@ defmodule EventosWeb.ActorController do
   def index(conn, _params) do
     actors = Actors.list_actors()
     render(conn, "index.json", actors: actors)
+  end
+
+  def create(conn, %{"actor" => actor_params}) do
+    with %User{} = user <- Guardian.Plug.current_resource(conn),
+      actor_params <- Map.put(actor_params, "user_id", user.id),
+      {:ok, %Actor{} = actor} <- Actors.create_actor(actor_params) do
+      conn
+      |> put_status(:created)
+      |> put_resp_header("location", actor_path(conn, :show, actor.preferred_username))
+      |> render("show_basic.json", actor: actor)
+    end
   end
 
   def show(conn, %{"name" => name}) do

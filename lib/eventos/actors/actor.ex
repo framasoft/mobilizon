@@ -76,7 +76,8 @@ defmodule Eventos.Actors.Actor do
   @doc false
   def changeset(%Actor{} = actor, attrs) do
     actor
-    |> Ecto.Changeset.cast(attrs, [:url, :outbox_url, :inbox_url, :shared_inbox_url, :following_url, :followers_url, :type, :name, :domain, :summary, :preferred_username, :keys, :manually_approves_followers, :suspended, :avatar_url, :banner_url])
+    |> Ecto.Changeset.cast(attrs, [:url, :outbox_url, :inbox_url, :shared_inbox_url, :following_url, :followers_url, :type, :name, :domain, :summary, :preferred_username, :keys, :manually_approves_followers, :suspended, :avatar_url, :banner_url, :user_id])
+    |> put_change(:url, "#{EventosWeb.Endpoint.url()}/@#{attrs["prefered_username"]}")
     |> validate_required([:preferred_username, :keys, :suspended, :url])
     |> unique_constraint(:prefered_username, name: :actors_preferred_username_domain_index)
   end
