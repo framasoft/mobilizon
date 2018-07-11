@@ -18,6 +18,7 @@ import Account from '@/components/Account/Account';
 import CreateGroup from '@/components/Group/Create';
 import Group from '@/components/Group/Group';
 import GroupList from '@/components/Group/GroupList';
+import Identities from '../components/Account/Identities.vue';
 
 Vue.use(Router);
 
@@ -109,6 +110,12 @@ const router = new Router({
       component: Login,
       props: true,
       meta: { requiredAuth: false },
+    },
+    {
+      path: '/identities',
+      name: 'Identities',
+      component: Identities,
+      meta: { requiredAuth: true },
     },
     {
       path: '/groups',

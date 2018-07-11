@@ -10,37 +10,46 @@
     >
       <v-list dense>
         <v-list-group
-        value="false"
-      >
-        <v-list-tile avatar v-if="$store.state.actor" slot="activator">
-          <v-list-tile-avatar>
-              <img v-if="!$store.state.actor.avatar"
-                class="img-circle elevation-7 mb-1"
-                src="https://picsum.photos/125/125/"
-              >
-              <img v-else
-                    class="img-circle elevation-7 mb-1"
-                    :src="$store.state.actor.avatar"
-              >
-            </v-list-tile-avatar>
+          value="false"
+        >
+          <v-list-tile avatar v-if="$store.state.actor" slot="activator">
+            <v-list-tile-avatar>
+                <img v-if="!$store.state.actor.avatar"
+                  class="img-circle elevation-7 mb-1"
+                  src="https://picsum.photos/125/125/"
+                >
+                <img v-else
+                      class="img-circle elevation-7 mb-1"
+                      :src="$store.state.actor.avatar"
+                >
+              </v-list-tile-avatar>
 
-          <v-list-tile-content @click="$router.push({name: 'Account', params: { name: $store.state.actor.username }})">
-            <v-list-tile-title>{{ this.displayed_name }}</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
+            <v-list-tile-content @click="$router.push({name: 'Account', params: { name: $store.state.actor.username }})">
+              <v-list-tile-title>{{ this.displayed_name }}</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
 
-        <v-list-tile avatar v-if="$store.state.actor">
-          <v-list-tile-avatar>
-              <img
-                class="img-circle elevation-7 mb-1"
-                src="https://picsum.photos/125/125/"
-              >
-            </v-list-tile-avatar>
+          <v-list-tile avatar v-if="$store.state.actor">
+            <v-list-tile-avatar>
+                <img
+                  class="img-circle elevation-7 mb-1"
+                  src="https://picsum.photos/125/125/"
+                >
+              </v-list-tile-avatar>
 
-          <v-list-tile-content>
-            <v-list-tile-title>Autre identité</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
+            <v-list-tile-content>
+              <v-list-tile-title>Autre identité</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
+          <v-list-tile @click="$router.push({ name: 'Identities' })">
+            <v-list-tile-action>
+            <v-icon>group</v-icon>
+          </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>Identities</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
         </v-list-group>
         <template v-for="(item, i) in items" v-if="showMenuItem(item.role)">
           <v-layout

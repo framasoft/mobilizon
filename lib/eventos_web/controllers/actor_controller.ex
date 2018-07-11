@@ -18,12 +18,21 @@ defmodule EventosWeb.ActorController do
   def create(conn, %{"actor" => actor_params}) do
     with %User{} = user <- Guardian.Plug.current_resource(conn),
       actor_params <- Map.put(actor_params, "user_id", user.id),
+      actor_params <- Map.put(actor_params, "keys", keys_for_account()),
       {:ok, %Actor{} = actor} <- Actors.create_actor(actor_params) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", actor_path(conn, :show, actor.preferred_username))
       |> render("show_basic.json", actor: actor)
     end
+  end
+
+  defp keys_for_account() do
+    key = :public_key.generate_key({:rsa, 2048, 65_537})
+    entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
+    [entry]
+    |> :public_key.pem_encode()
+    |> String.trim_trailing()
   end
 
   def show(conn, %{"name" => name}) do

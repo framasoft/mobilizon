@@ -38,7 +38,7 @@ Vue.i18n.set(language);
 Vue.i18n.fallback('en');
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiredAuth)) {
+  if (to.matched.some(record => record.meta.requiredAuth) && !store.state.user) {
     next({
       name: 'Login',
       query: { redirect: to.fullPath },
