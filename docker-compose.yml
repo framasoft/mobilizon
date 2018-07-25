@@ -35,4 +35,5 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DATABASE: eventos_dev
       POSTGRES_HOST: postgres
+      PORT: 4000
     entrypoint: entrypoint
