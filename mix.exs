@@ -6,13 +6,18 @@ defmodule Eventos.Mixfile do
       app: :eventos,
       version: "0.0.1",
       elixir: "~> 1.4",
-      elixirc_paths: elixirc_paths(Mix.env),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers,
-      start_permanent: Mix.env == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
+      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
       name: "Eventos",
       source_url: "https://framagit.org/tcit/eventos",
       homepage_url: "https://framagit.org/tcit/eventos",
@@ -32,7 +37,7 @@ defmodule Eventos.Mixfile do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_),     do: ["lib"]
+  defp elixirc_paths(_), do: ["lib"]
 
   # Specifies your project dependencies.
   #
@@ -72,7 +77,7 @@ defmodule Eventos.Mixfile do
       {:geolix, "~> 0.16"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.0", only: :dev},
-      {:ex_machina, "~> 2.1", only: :test},
+      {:ex_machina, "~> 2.2", only: [:dev, :test]},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.8", only: :test},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
@@ -91,7 +96,7 @@ defmodule Eventos.Mixfile do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "test": ["ecto.create --quiet", "ecto.migrate", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
 end

@@ -1,4 +1,5 @@
 import { API_ORIGIN, API_PATH } from '../api/_entrypoint';
+import { LOGIN_USER, LOAD_USER, CHANGE_ACTOR } from '../store/mutation-types';
 
 // URL and endpoint constants
 const LOGIN_URL = `${API_ORIGIN}${API_PATH}/login`;
@@ -53,7 +54,7 @@ export default {
       .then((response) => {
         console.log('We have a new token');
         this.authenticated = true;
-        store.commit('LOGIN_USER', response);
+        store.commit(LOGIN_USER, response);
         localStorage.setItem('token', response.token);
         console.log("Let's try to auth again");
         successHandler();
@@ -104,9 +105,10 @@ export default {
       }).then((response) => {
         this.authenticated = true;
         console.log(response);
-        store.commit('LOAD_USER', response.data);
+        store.commit(LOAD_USER, response.data);
+        store.commit(CHANGE_ACTOR, response.data.actors[0]);
         return successHandler();
-    });
+      });
   },
 
   // The object to be passed as a header for authenticated requests

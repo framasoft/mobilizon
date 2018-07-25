@@ -11,15 +11,14 @@ defmodule EventosWeb.CommentControllerTest do
   @invalid_attrs %{text: nil, url: nil}
 
   setup %{conn: conn} do
-    actor = insert(:actor)
-    user = insert(:user, actor: actor)
-    {:ok, conn: put_req_header(conn, "accept", "application/json"), user: user}
+    user = insert(:user)
+    actor = insert(:actor, user: user)
+    {:ok, conn: put_req_header(conn, "accept", "application/json"), user: user, actor: actor}
   end
 
   describe "create comment" do
-    test "renders comment when data is valid", %{conn: conn, user: user} do
+    test "renders comment when data is valid", %{conn: conn, user: user, actor: actor} do
       conn = auth_conn(conn, user)
-      actor = insert(:actor)
       attrs = Map.merge(@create_attrs, %{actor_id: actor.id})
       conn = post conn, comment_path(conn, :create), comment: attrs
       assert %{"uuid" => uuid, "id" => id} = json_response(conn, 201)["data"]
@@ -43,9 +42,8 @@ defmodule EventosWeb.CommentControllerTest do
   describe "update comment" do
     setup [:create_comment]
 
-    test "renders comment when data is valid", %{conn: conn, comment: %Comment{id: id, uuid: uuid} = comment, user: user} do
+    test "renders comment when data is valid", %{conn: conn, comment: %Comment{id: id, uuid: uuid} = comment, user: user, actor: actor} do
       conn = auth_conn(conn, user)
-      actor = insert(:actor)
       attrs = Map.merge(@update_attrs, %{actor_id: actor.id})
       conn = put conn, comment_path(conn, :update, uuid), comment: attrs
       assert %{"uuid" => uuid, "id" => id} = json_response(conn, 200)["data"]

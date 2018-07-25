@@ -10,7 +10,6 @@ defmodule Eventos.Factory do
       password_hash: "Jane Smith",
       email: sequence(:email, &"email-#{&1}@example.com"),
       role: 0,
-      actor: build(:actor)
     }
   end
 
@@ -25,7 +24,8 @@ defmodule Eventos.Factory do
       preferred_username: preferred_username,
       domain: nil,
       keys: pem,
-      url: EventosWeb.Endpoint.url() <> "/@#{preferred_username}"
+      url: EventosWeb.Endpoint.url() <> "/@#{preferred_username}",
+      user: nil,
     }
   end
 

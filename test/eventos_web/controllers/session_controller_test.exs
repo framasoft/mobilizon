@@ -16,8 +16,8 @@ defmodule EventosWeb.SessionControllerTest do
   end
 
   setup %{conn: conn} do
-    actor = insert(:actor)
-    user = insert(:user, actor: actor)
+    user = insert(:user)
+    actor = insert(:actor, user: user)
     event = insert(:event, organizer_actor: actor)
     {:ok, conn: conn, user: user, event: event}
   end

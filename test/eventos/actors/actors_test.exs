@@ -37,7 +37,6 @@ defmodule Eventos.ActorsTest do
       assert actor.domain == "some domain"
       assert actor.keys == "some keypair"
       assert actor.suspended
-      assert actor.url == "some url"
       assert actor.preferred_username == "some username"
     end
 
@@ -54,7 +53,6 @@ defmodule Eventos.ActorsTest do
       assert actor.domain == "some updated domain"
       assert actor.keys == "some updated keys"
       refute actor.suspended
-      assert actor.url == "some updated url"
       assert actor.preferred_username == "some updated username"
     end
 

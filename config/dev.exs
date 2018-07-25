@@ -47,15 +47,14 @@ config :logger, :console, format: "[$level] $message\n", level: :debug
 # in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
 
-config :eventos, Eventos.Mailer,
-  adapter: Bamboo.LocalAdapter
+config :eventos, Eventos.Mailer, adapter: Bamboo.LocalAdapter
 
 # Configure your database
 config :eventos, Eventos.Repo,
   adapter: Ecto.Adapters.Postgres,
   types: Eventos.PostgresTypes,
-  username: "elixir",
-  password: "elixir",
-  database: "eventos_dev",
-  hostname: "localhost",
+  username: System.get_env("POSTGRES_USER") || "elixir",
+  password: System.get_env("POSTGRES_PASSWORD") || "elixir",
+  database: System.get_env("POSTGRES_DATABASE") || "eventos_dev",
+  hostname: System.get_env("POSTGRES_HOST") || "localhost",
   pool_size: 10

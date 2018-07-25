@@ -16,8 +16,8 @@ defmodule EventosWeb.MemberView do
   def render("member.json", %{member: member}) do
     %{
       role: member.role,
-      actor: render_one(member.actor, ActorView, "acccount_basic.json"),
-      group: render_one(member.parent, ActorView, "acccount_basic.json")
+      actor: render_one(member.actor, ActorView, "actor_basic.json"),
+      group: render_one(member.parent, ActorView, "actor_basic.json")
     }
   end
 end

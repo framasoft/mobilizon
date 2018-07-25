@@ -6,15 +6,29 @@ defmodule EventosWeb.ActorControllerTest do
   alias Eventos.Actors
 
   setup %{conn: conn} do
-    actor = insert(:actor)
-    user = insert(:user, actor: actor)
-    {:ok, conn: conn, user: user}
+    user = insert(:user)
+    actor = insert(:actor, user: user)
+    {:ok, conn: conn, user: user, actor: actor}
   end
 
+  key = :public_key.generate_key({:rsa, 2048, 65_537})
+  entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
+  pem = [entry] |> :public_key.pem_encode() |> String.trim_trailing()
+
+  @create_attrs %{preferred_username: "otheridentity", summary: "This is my other identity", domain: nil, keys: pem, user: nil}
+
   describe "index" do
-    test "lists all actors", %{conn: conn, user: user} do
+    test "lists all actors", %{conn: conn, user: user, actor: actor} do
       conn = get conn, actor_path(conn, :index)
-      assert hd(json_response(conn, 200)["data"])["username"] == user.actor.preferred_username
+      assert hd(json_response(conn, 200)["data"])["username"] == actor.preferred_username
+    end
+  end
+
+  describe "create actor" do
+    test "from an existing user", %{conn: conn, user: user} do
+      conn = auth_conn(conn, user)
+      conn = post conn, actor_path(conn, :create), actor: @create_attrs
+      assert json_response(conn, 201)["data"]["username"] == @create_attrs.preferred_username
     end
   end
 
@@ -41,9 +55,4 @@ defmodule EventosWeb.ActorControllerTest do
 #      assert response(conn, 200)
 #    end
 #  end
-
-  defp create_actor(_) do
-    actor = insert(:actor)
-    {:ok, actor: actor}
-  end
 end

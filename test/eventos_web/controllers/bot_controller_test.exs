@@ -11,8 +11,8 @@ defmodule EventosWeb.BotControllerTest do
   @invalid_attrs %{source: nil, type: nil, name: nil}
 
   setup %{conn: conn} do
-    actor = insert(:actor)
-    user = insert(:user, actor: actor)
+    user = insert(:user)
+    actor = insert(:actor, user: user)
     {:ok, conn: put_req_header(conn, "accept", "application/json"), user: user}
   end
 

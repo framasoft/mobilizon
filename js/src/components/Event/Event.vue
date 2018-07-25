@@ -16,7 +16,7 @@
                     <v-icon>chevron_left</v-icon>
                   </v-btn>
                   <v-spacer></v-spacer>
-                  <v-btn icon class="mr-3 white--text" v-if="event.organizer.id === $store.state.user.actor.id" :to="{ name: 'EditEvent', params: {id: event.id}}">
+                  <v-btn icon class="mr-3 white--text" v-if="actorIsOrganizer()" :to="{ name: 'EditEvent', params: {id: event.id}}">
                     <v-icon>edit</v-icon>
                   </v-btn>
                   <v-menu bottom left>
@@ -27,7 +27,7 @@
                       <v-list-tile @click="downloadIcsEvent()">
                         <v-list-tile-title>Download</v-list-tile-title>
                       </v-list-tile>
-                      <v-list-tile @click="deleteEvent()" v-if="$store.state.user.actor.id === event.organizer.id">
+                      <v-list-tile @click="deleteEvent()" v-if="actorIsOrganizer()">
                         <v-list-tile-title>Delete</v-list-tile-title>
                       </v-list-tile>
                     </v-list>
@@ -217,10 +217,10 @@
           })
       },
       actorIsParticipant() {
-        return this.event.participants.map(participant => participant.id).includes(this.$store.state.user.actor.id) || this.actorIsOrganizer();
+        return this.$store.state.actor && this.event.participants.map(participant => participant.id).includes(this.$store.state.actor.id) || this.actorIsOrganizer();
       },
       actorIsOrganizer() {
-        return this.$store.state.user.actor.id === this.event.organizer.id;
+        return this.$store.state.actor && this.$store.state.actor.id === this.event.organizer.id;
       }
     },
     props: {

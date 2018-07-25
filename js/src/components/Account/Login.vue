@@ -60,6 +60,7 @@
 
 <script>
 
+import { LOGIN_USER } from '@/store/mutation-types';
   import auth from '@/auth/index';
   import Gravatar from 'vue-gravatar';
   import RegisterAvatar from './RegisterAvatar';
@@ -119,7 +120,7 @@
       loginAction(e) {
         e.preventDefault();
         auth.login(JSON.stringify(this.credentials), (data) => {
-          this.$store.commit('LOGIN_USER', data.user);
+          this.$store.commit(LOGIN_USER, data.user);
           this.$router.push({ name: 'Home' });
         }, (error) => {
           Promise.resolve(error).then((errorMsg) => {

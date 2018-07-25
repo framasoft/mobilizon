@@ -11,7 +11,7 @@
                   <v-icon>chevron_left</v-icon>
                 </v-btn>
                 <v-spacer></v-spacer>
-                <!--<v-btn icon class="mr-3" v-if="$store.state.user && $store.state.user.actor.id === actor.id">-->
+                <!--<v-btn icon class="mr-3" v-if="$store.state.user && $store.state.actor.id === actor.id">-->
                   <!--<v-icon>edit</v-icon>-->
                 <!--</v-btn>-->
                 <v-btn icon>

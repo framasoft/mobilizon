@@ -21,9 +21,9 @@ defmodule EventosWeb.EventControllerTest do
   end
 
   setup %{conn: conn} do
-    actor = insert(:actor)
-    user = insert(:user, actor: actor)
-    {:ok, conn: conn, user: user}
+    user = insert(:user)
+    actor = insert(:actor, user: user)
+    {:ok, conn: conn, user: user, actor: actor}
   end
 
   describe "index" do
@@ -34,8 +34,8 @@ defmodule EventosWeb.EventControllerTest do
   end
 
   describe "create event" do
-    test "renders event when data is valid", %{conn: conn, user: user} do
-      attrs = Map.put(@create_attrs, :organizer_actor_id, user.actor.id)
+    test "renders event when data is valid", %{conn: conn, user: user, actor: actor} do
+      attrs = Map.put(@create_attrs, :organizer_actor_id, actor.id)
       attrs = Map.put(attrs, "physical_address", @create_address_attrs)
 
       category = insert(:category)
@@ -55,9 +55,9 @@ defmodule EventosWeb.EventControllerTest do
        } = json_response(conn, 200)["data"]
     end
 
-    test "renders errors when data is invalid", %{conn: conn, user: user} do
+    test "renders errors when data is invalid", %{conn: conn, user: user, actor: actor} do
       conn = auth_conn(conn, user)
-      attrs = Map.put(@invalid_attrs, :organizer_actor_id, user.actor.id)
+      attrs = Map.put(@invalid_attrs, :organizer_actor_id, actor.id)
       attrs = Map.put(attrs, :address, @create_address_attrs)
       conn = post conn, event_path(conn, :create), event: attrs
       assert json_response(conn, 422)["errors"] != %{}
@@ -78,10 +78,10 @@ defmodule EventosWeb.EventControllerTest do
   describe "update event" do
     setup [:create_event]
 
-    test "renders event when data is valid", %{conn: conn, event: %Event{uuid: uuid} = event, user: user} do
+    test "renders event when data is valid", %{conn: conn, event: %Event{uuid: uuid} = event, user: user, actor: actor} do
       conn = auth_conn(conn, user)
       address = address_fixture()
-      attrs = Map.put(@update_attrs, :organizer_actor_id, user.actor.id)
+      attrs = Map.put(@update_attrs, :organizer_actor_id, actor.id)
       attrs = Map.put(attrs, :address_id, address.id)
       conn = put conn, event_path(conn, :update, uuid), event: attrs
       assert %{"uuid" => uuid} = json_response(conn, 200)["data"]
@@ -97,9 +97,9 @@ defmodule EventosWeb.EventControllerTest do
              } = json_response(conn, 200)["data"]
     end
 
-    test "renders errors when data is invalid", %{conn: conn, event: %Event{uuid: uuid} = event, user: user} do
+    test "renders errors when data is invalid", %{conn: conn, event: %Event{uuid: uuid} = event, user: user, actor: actor} do
       conn = auth_conn(conn, user)
-      attrs = Map.put(@invalid_attrs, :organizer_actor_id, user.actor.id)
+      attrs = Map.put(@invalid_attrs, :organizer_actor_id, actor.id)
       conn = put conn, event_path(conn, :update, uuid), event: attrs
       assert json_response(conn, 422)["errors"] != %{}
     end

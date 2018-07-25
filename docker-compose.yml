@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+
+  postgres:
+    container_name: eventos_db
+    restart: unless-stopped
+    image: mdillon/postgis:10
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: eventos_dev
+
+  front:
+    container_name: eventos_front
+    restart: unless-stopped
+    build: ./js
+    volumes:
+      - './js:/app/js'
+    ports:
+      - "80:8080"
+    entrypoint: entrypoint
+
+  api:
+    container_name: eventos_api
+    restart: unless-stopped
+    build: .
+    volumes:
+      - '.:/app'
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DATABASE: eventos_dev
+      POSTGRES_HOST: postgres
+    entrypoint: entrypoint

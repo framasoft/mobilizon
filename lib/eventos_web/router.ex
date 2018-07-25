@@ -76,6 +76,7 @@ defmodule EventosWeb.Router do
        get "/user", UserController, :show_current_actor
        post "/sign-out", UserSessionController, :sign_out
        resources "/users", UserController, except: [:new, :edit, :show]
+       post "/actors", ActorController, :create
        patch "/actors/:name", ActorController, :update
        post "/events", EventController, :create
        patch "/events/:uuid", EventController, :update

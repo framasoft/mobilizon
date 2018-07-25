@@ -120,8 +120,8 @@
         //   });
         // });
         this.event.category_id = this.event.category;
-        this.event.organizer_actor_id = this.$store.state.user.actor.id;
-        this.event.participants = [this.$store.state.user.actor.id];
+        this.event.organizer_actor_id = this.$store.state.actor.id;
+        this.event.participants = [this.$store.state.actor.id];
         // this.event.price = parseFloat(this.event.price);
 
         if (this.id === undefined) {
