@@ -1,11 +1,18 @@
-[![pipeline status](https://framagit.org/tcit/eventos/badges/master/pipeline.svg)](https://framagit.org/tcit/eventos/commits/master)
-[![coverage report](https://framagit.org/tcit/eventos/badges/master/coverage.svg)](https://framagit.org/tcit/eventos/commits/master)
-
 # Eventos
 
 ## Development
 
-### Server
+### Docker
+
+Just run
+```
+docker-compose up -d
+```
+to start a database container, an API container and the front-end dev container running on localhost:80
+
+### Manual
+
+#### Server
 
   * Install Elixir (and Erlang) by following the instructions at [https://elixir-lang.github.io/install.html](https://elixir-lang.github.io/install.html)
   * Install PostgreSQL
@@ -25,7 +32,7 @@
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser
 and see the website (server *and* client) in action.
 
-### Client
+#### Client
 
 If you plan to specifically change the client side (frontend), do the following
 once the server is running:
