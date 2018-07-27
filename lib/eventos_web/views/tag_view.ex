@@ -14,7 +14,6 @@ defmodule EventosWeb.TagView do
   end
 
   def render("tag.json", %{tag: tag}) do
-    %{id: tag.id,
-      title: tag.title}
+    %{id: tag.id, title: tag.title}
   end
 end

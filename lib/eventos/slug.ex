@@ -6,6 +6,7 @@ defmodule Eventos.Slug do
     case List.pop_at(String.split(slug, "-"), -1) do
       {nil, _} ->
         slug
+
       {suffix, slug_parts} ->
         case Integer.parse(suffix) do
           {id, _} -> Enum.join(slug_parts, "-") <> "-" <> Integer.to_string(id + 1)

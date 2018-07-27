@@ -8,9 +8,9 @@ config :eventos, EventosWeb.Endpoint,
 
 # Print only warnings and errors during test
 config :logger,
-   backends: [:console],
-   compile_time_purge_level: :debug,
-   level: :info
+  backends: [:console],
+  compile_time_purge_level: :debug,
+  level: :info
 
 # Configure your database
 config :eventos, Eventos.Repo,
@@ -22,5 +22,4 @@ config :eventos, Eventos.Repo,
   pool: Ecto.Adapters.SQL.Sandbox,
   types: Eventos.PostgresTypes
 
-  config :eventos, Eventos.Mailer,
-  adapter: Bamboo.TestAdapter
+config :eventos, Eventos.Mailer, adapter: Bamboo.TestAdapter

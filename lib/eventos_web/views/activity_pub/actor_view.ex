@@ -34,16 +34,16 @@ defmodule EventosWeb.ActivityPub.ActorView do
         "publicKeyPem" => public_key
       },
       "endpoints" => %{
-        "sharedInbox" => actor.shared_inbox_url,
-      },
-#      "icon" => %{
-#        "type" => "Image",
-#        "url" => User.avatar_url(actor)
-#      },
-#      "image" => %{
-#        "type" => "Image",
-#        "url" => User.banner_url(actor)
-#      }
+        "sharedInbox" => actor.shared_inbox_url
+      }
+      #      "icon" => %{
+      #        "type" => "Image",
+      #        "url" => User.avatar_url(actor)
+      #      },
+      #      "image" => %{
+      #        "type" => "Image",
+      #        "url" => User.banner_url(actor)
+      #      }
     }
     |> Map.merge(Utils.make_json_ld_header())
   end
@@ -87,13 +87,14 @@ defmodule EventosWeb.ActivityPub.ActorView do
   end
 
   def render("outbox.json", %{actor: actor, page: page}) do
-    {page, no_page} = if page == 0 do
-      {1, true}
-    else
-      {page, false}
-    end
+    {page, no_page} =
+      if page == 0 do
+        {1, true}
+      else
+        {page, false}
+      end
 
-     {activities, total} = ActivityPub.fetch_public_activities_for_actor(actor, page)
+    {activities, total} = ActivityPub.fetch_public_activities_for_actor(actor, page)
 
     collection =
       Enum.map(activities, fn act ->
@@ -128,7 +129,12 @@ defmodule EventosWeb.ActivityPub.ActorView do
   def render("activity.json", %{activity: %Activity{local: local} = activity}) do
     %{
       "id" => activity.data.url <> "/activity",
-      "type" => if local do "Create" else "Announce" end,
+      "type" =>
+        if local do
+          "Create"
+        else
+          "Announce"
+        end,
       "actor" => activity.data.organizer_actor.url,
       "published" => Timex.now(),
       "to" => ["https://www.w3.org/ns/activitystreams#Public"],

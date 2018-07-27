@@ -2,6 +2,7 @@ defmodule EventosWeb.ActivityPub.ObjectView do
   use EventosWeb, :view
   alias EventosWeb.ActivityPub.ObjectView
   alias Eventos.Service.ActivityPub.Transmogrifier
+
   @base %{
     "@context" => [
       "https://www.w3.org/ns/activitystreams",
@@ -17,8 +18,6 @@ defmodule EventosWeb.ActivityPub.ObjectView do
   }
 
   def render("event.json", %{event: event}) do
-
-
     event = %{
       "type" => "Event",
       "id" => event.url,
@@ -27,8 +26,9 @@ defmodule EventosWeb.ActivityPub.ObjectView do
       "content" => event.description,
       "mediaType" => "text/markdown",
       "published" => Timex.format!(event.inserted_at, "{ISO:Extended}"),
-      "updated" => Timex.format!(event.updated_at, "{ISO:Extended}"),
+      "updated" => Timex.format!(event.updated_at, "{ISO:Extended}")
     }
+
     Map.merge(event, @base)
   end
 

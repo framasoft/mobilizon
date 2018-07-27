@@ -6,7 +6,12 @@ defmodule Eventos.EventsTest do
   alias Eventos.Events
   alias Eventos.Actors
 
-  @event_valid_attrs %{begins_on: "2010-04-17 14:00:00.000000Z", description: "some description", ends_on: "2010-04-17 14:00:00.000000Z", title: "some title"}
+  @event_valid_attrs %{
+    begins_on: "2010-04-17 14:00:00.000000Z",
+    description: "some description",
+    ends_on: "2010-04-17 14:00:00.000000Z",
+    title: "some title"
+  }
 
   def actor_fixture do
     insert(:actor)
@@ -27,8 +32,18 @@ defmodule Eventos.EventsTest do
   describe "events" do
     alias Eventos.Events.Event
 
-    @valid_attrs %{begins_on: "2010-04-17 14:00:00.000000Z", description: "some description", ends_on: "2010-04-17 14:00:00.000000Z", title: "some title"}
-    @update_attrs %{begins_on: "2011-05-18 15:01:01.000000Z", description: "some updated description", ends_on: "2011-05-18 15:01:01.000000Z", title: "some updated title"}
+    @valid_attrs %{
+      begins_on: "2010-04-17 14:00:00.000000Z",
+      description: "some description",
+      ends_on: "2010-04-17 14:00:00.000000Z",
+      title: "some title"
+    }
+    @update_attrs %{
+      begins_on: "2011-05-18 15:01:01.000000Z",
+      description: "some updated description",
+      ends_on: "2011-05-18 15:01:01.000000Z",
+      title: "some updated title"
+    }
     @invalid_attrs %{begins_on: nil, description: nil, ends_on: nil, title: nil}
 
     test "list_events/0 returns all events" do
@@ -45,11 +60,14 @@ defmodule Eventos.EventsTest do
       actor = actor_fixture()
       category = category_fixture()
       address = address_fixture()
-      valid_attrs = @event_valid_attrs
+
+      valid_attrs =
+        @event_valid_attrs
         |> Map.put(:organizer_actor, actor)
         |> Map.put(:organizer_actor_id, actor.id)
         |> Map.put(:category_id, category.id)
         |> Map.put(:address_id, address.id)
+
       assert {:ok, %Event{} = event} = Events.create_event(valid_attrs)
       assert event.begins_on == DateTime.from_naive!(~N[2010-04-17 14:00:00.000000Z], "Etc/UTC")
       assert event.description == "some description"
@@ -93,7 +111,11 @@ defmodule Eventos.EventsTest do
     alias Eventos.Events.Category
 
     @valid_attrs %{description: "some description", picture: "some picture", title: "some title"}
-    @update_attrs %{description: "some updated description", picture: "some updated picture", title: "some updated title"}
+    @update_attrs %{
+      description: "some updated description",
+      picture: "some updated picture",
+      title: "some updated title"
+    }
     @invalid_attrs %{description: nil, picture: nil, title: nil}
 
     test "list_categories/0 returns all categories" do
@@ -216,6 +238,7 @@ defmodule Eventos.EventsTest do
       actor = actor_fixture()
       valid_attrs = Map.put(@valid_attrs, :event_id, event.id)
       valid_attrs = Map.put(valid_attrs, :actor_id, actor.id)
+
       {:ok, participant} =
         attrs
         |> Enum.into(valid_attrs)
@@ -229,10 +252,10 @@ defmodule Eventos.EventsTest do
       assert Events.list_participants() == [participant]
     end
 
-#    test "get_participant!/1 returns the participant with given id" do
-#      participant = participant_fixture()
-#      assert Events.get_participant!(participant.id) == participant
-#    end
+    #    test "get_participant!/1 returns the participant with given id" do
+    #      participant = participant_fixture()
+    #      assert Events.get_participant!(participant.id) == participant
+    #    end
 
     test "create_participant/1 with valid data creates a participant" do
       actor = actor_fixture()
@@ -273,13 +296,41 @@ defmodule Eventos.EventsTest do
   describe "sessions" do
     alias Eventos.Events.Session
 
-    @valid_attrs %{audios_urls: "some audios_urls", language: "some language", long_abstract: "some long_abstract", short_abstract: "some short_abstract", slides_url: "some slides_url", subtitle: "some subtitle", title: "some title", videos_urls: "some videos_urls"}
-    @update_attrs %{audios_urls: "some updated audios_urls", language: "some updated language", long_abstract: "some updated long_abstract", short_abstract: "some updated short_abstract", slides_url: "some updated slides_url", subtitle: "some updated subtitle", title: "some updated title", videos_urls: "some updated videos_urls"}
-    @invalid_attrs %{audios_urls: nil, language: nil, long_abstract: nil, short_abstract: nil, slides_url: nil, subtitle: nil, title: nil, videos_urls: nil}
+    @valid_attrs %{
+      audios_urls: "some audios_urls",
+      language: "some language",
+      long_abstract: "some long_abstract",
+      short_abstract: "some short_abstract",
+      slides_url: "some slides_url",
+      subtitle: "some subtitle",
+      title: "some title",
+      videos_urls: "some videos_urls"
+    }
+    @update_attrs %{
+      audios_urls: "some updated audios_urls",
+      language: "some updated language",
+      long_abstract: "some updated long_abstract",
+      short_abstract: "some updated short_abstract",
+      slides_url: "some updated slides_url",
+      subtitle: "some updated subtitle",
+      title: "some updated title",
+      videos_urls: "some updated videos_urls"
+    }
+    @invalid_attrs %{
+      audios_urls: nil,
+      language: nil,
+      long_abstract: nil,
+      short_abstract: nil,
+      slides_url: nil,
+      subtitle: nil,
+      title: nil,
+      videos_urls: nil
+    }
 
     def session_fixture(attrs \\ %{}) do
       event = event_fixture()
       valid_attrs = Map.put(@valid_attrs, :event_id, event.id)
+
       {:ok, session} =
         attrs
         |> Enum.into(valid_attrs)
@@ -352,12 +403,17 @@ defmodule Eventos.EventsTest do
     alias Eventos.Events.Track
 
     @valid_attrs %{color: "some color", description: "some description", name: "some name"}
-    @update_attrs %{color: "some updated color", description: "some updated description", name: "some updated name"}
+    @update_attrs %{
+      color: "some updated color",
+      description: "some updated description",
+      name: "some updated name"
+    }
     @invalid_attrs %{color: nil, description: nil, name: nil}
 
     def track_fixture(attrs \\ %{}) do
       event = event_fixture()
       valid_attrs = Map.put(@valid_attrs, :event_id, event.id)
+
       {:ok, track} =
         attrs
         |> Enum.into(valid_attrs)

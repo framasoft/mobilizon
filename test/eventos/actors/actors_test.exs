@@ -7,9 +7,36 @@ defmodule Eventos.ActorsTest do
   describe "actors" do
     alias Eventos.Actors.Actor
 
-    @valid_attrs %{summary: "some description", name: "some name", domain: "some domain", keys: "some keypair", suspended: true, uri: "some uri", url: "some url", preferred_username: "some username"}
-    @update_attrs %{summary: "some updated description", name: "some updated name", domain: "some updated domain", keys: "some updated keys", suspended: false, uri: "some updated uri", url: "some updated url", preferred_username: "some updated username"}
-    @invalid_attrs %{summary: nil, name: nil, domain: nil, keys: nil, suspended: nil, uri: nil, url: nil, preferred_username: nil}
+    @valid_attrs %{
+      summary: "some description",
+      name: "some name",
+      domain: "some domain",
+      keys: "some keypair",
+      suspended: true,
+      uri: "some uri",
+      url: "some url",
+      preferred_username: "some username"
+    }
+    @update_attrs %{
+      summary: "some updated description",
+      name: "some updated name",
+      domain: "some updated domain",
+      keys: "some updated keys",
+      suspended: false,
+      uri: "some updated uri",
+      url: "some updated url",
+      preferred_username: "some updated username"
+    }
+    @invalid_attrs %{
+      summary: nil,
+      name: nil,
+      domain: nil,
+      keys: nil,
+      suspended: nil,
+      uri: nil,
+      url: nil,
+      preferred_username: nil
+    }
 
     def actor_fixture(attrs \\ %{}) do
       {:ok, actor} =
@@ -77,7 +104,16 @@ defmodule Eventos.ActorsTest do
   describe "users" do
     alias Eventos.Actors.{User, Actor}
 
-    @actor_valid_attrs %{description: "some description", display_name: "some display_name", domain: "some domain", keys: "some keys", suspended: true, uri: "some uri", url: "some url", preferred_username: "some username"}
+    @actor_valid_attrs %{
+      description: "some description",
+      display_name: "some display_name",
+      domain: "some domain",
+      keys: "some keys",
+      suspended: true,
+      uri: "some uri",
+      url: "some url",
+      preferred_username: "some username"
+    }
     @valid_attrs %{email: "foo@bar.tld", password: "some password", role: 42}
     @update_attrs %{email: "foo@fighters.tld", password: "some updated password", role: 43}
     @invalid_attrs %{email: nil, password_hash: nil, role: nil}
@@ -138,12 +174,21 @@ defmodule Eventos.ActorsTest do
   end
 
   describe "groups" do
-
     alias Eventos.Actors
     alias Eventos.Actors.Actor
 
-    @valid_attrs %{summary: "some description", suspended: true, preferred_username: "some-title", name: "Some Title"}
-    @update_attrs %{summary: "some updated description", suspended: false, preferred_username: "some-updated-title", name: "Some Updated Title"}
+    @valid_attrs %{
+      summary: "some description",
+      suspended: true,
+      preferred_username: "some-title",
+      name: "Some Title"
+    }
+    @update_attrs %{
+      summary: "some updated description",
+      suspended: false,
+      preferred_username: "some-updated-title",
+      name: "Some Updated Title"
+    }
     @invalid_attrs %{summary: nil, suspended: nil, preferred_username: nil, name: nil}
 
     test "create_group/1 with valid data creates a group" do
@@ -184,9 +229,11 @@ defmodule Eventos.ActorsTest do
     end
 
     test "create_bot/1 with valid data creates a bot" do
-      attrs = @valid_attrs
-      |> Map.merge(%{actor_id: insert(:actor).id})
-      |> Map.merge(%{user_id: insert(:user).id})
+      attrs =
+        @valid_attrs
+        |> Map.merge(%{actor_id: insert(:actor).id})
+        |> Map.merge(%{user_id: insert(:user).id})
+
       assert {:ok, %Bot{} = bot} = Actors.create_bot(attrs)
       assert bot.source == "some source"
       assert bot.type == "some type"

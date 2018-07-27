@@ -8,7 +8,7 @@ defmodule EventosWeb.ActorController do
   alias Eventos.Actors.{Actor, User}
   alias Eventos.Service.ActivityPub
 
-  action_fallback EventosWeb.FallbackController
+  action_fallback(EventosWeb.FallbackController)
 
   def index(conn, _params) do
     actors = Actors.list_actors()
@@ -17,9 +17,9 @@ defmodule EventosWeb.ActorController do
 
   def create(conn, %{"actor" => actor_params}) do
     with %User{} = user <- Guardian.Plug.current_resource(conn),
-      actor_params <- Map.put(actor_params, "user_id", user.id),
-      actor_params <- Map.put(actor_params, "keys", keys_for_account()),
-      {:ok, %Actor{} = actor} <- Actors.create_actor(actor_params) do
+         actor_params <- Map.put(actor_params, "user_id", user.id),
+         actor_params <- Map.put(actor_params, "keys", keys_for_account()),
+         {:ok, %Actor{} = actor} <- Actors.create_actor(actor_params) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", actor_path(conn, :show, actor.preferred_username))
@@ -30,6 +30,7 @@ defmodule EventosWeb.ActorController do
   defp keys_for_account() do
     key = :public_key.generate_key({:rsa, 2048, 65_537})
     entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
+
     [entry]
     |> :public_key.pem_encode()
     |> String.trim_trailing()
@@ -42,10 +43,13 @@ defmodule EventosWeb.ActorController do
 
   @email_regex ~r/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
   def search(conn, %{"name" => name}) do
-    case Actors.search(name) do # find already saved accounts
+    # find already saved accounts
+    case Actors.search(name) do
       {:ok, actors} ->
         render(conn, "index.json", actors: actors)
-      {:error, err} -> json(conn, err)
+
+      {:error, err} ->
+        json(conn, err)
     end
   end
 
@@ -57,15 +61,15 @@ defmodule EventosWeb.ActorController do
     end
   end
 
-#  def delete(conn, %{"id" => id_str}) do
-#    {id, _} = Integer.parse(id_str)
-#    if Guardian.Plug.current_resource(conn).actor.id == id do
-#      actor = Actors.get_actor!(id)
-#      with {:ok, %Actor{}} <- Actors.delete_actor(actor) do
-#        send_resp(conn, :no_content, "")
-#      end
-#    else
-#      send_resp(conn, 401, "")
-#    end
-#  end
+  #  def delete(conn, %{"id" => id_str}) do
+  #    {id, _} = Integer.parse(id_str)
+  #    if Guardian.Plug.current_resource(conn).actor.id == id do
+  #      actor = Actors.get_actor!(id)
+  #      with {:ok, %Actor{}} <- Actors.delete_actor(actor) do
+  #        send_resp(conn, :no_content, "")
+  #      end
+  #    else
+  #      send_resp(conn, 401, "")
+  #    end
+  #  end
 end

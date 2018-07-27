@@ -14,9 +14,11 @@ defmodule EventosWeb.CategoryView do
   end
 
   def render("category.json", %{category: category}) do
-    %{id: category.id,
+    %{
+      id: category.id,
       title: category.title,
       description: category.description,
-      picture: category.picture}
+      picture: category.picture
+    }
   end
 end

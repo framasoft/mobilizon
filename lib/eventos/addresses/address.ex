@@ -8,16 +8,16 @@ defmodule Eventos.Addresses.Address do
   alias Eventos.Groups.Group
 
   schema "addresses" do
-    field :addressCountry, :string
-    field :addressLocality, :string
-    field :addressRegion, :string
-    field :description, :string
-    field :floor, :string
-    field :geom, Geo.Geometry
-    field :postalCode, :string
-    field :streetAddress, :string
-    has_one :event, Event
-    has_one :group, Group
+    field(:addressCountry, :string)
+    field(:addressLocality, :string)
+    field(:addressRegion, :string)
+    field(:description, :string)
+    field(:floor, :string)
+    field(:geom, Geo.Geometry)
+    field(:postalCode, :string)
+    field(:streetAddress, :string)
+    has_one(:event, Event)
+    has_one(:group, Group)
 
     timestamps()
   end
@@ -25,6 +25,15 @@ defmodule Eventos.Addresses.Address do
   @doc false
   def changeset(%Address{} = address, attrs) do
     address
-    |> cast(attrs, [:description, :floor, :geom, :addressCountry, :addressLocality, :addressRegion, :postalCode, :streetAddress])
+    |> cast(attrs, [
+      :description,
+      :floor,
+      :geom,
+      :addressCountry,
+      :addressLocality,
+      :addressRegion,
+      :postalCode,
+      :streetAddress
+    ])
   end
 end

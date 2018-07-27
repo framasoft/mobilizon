@@ -10,27 +10,20 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-Eventos.Repo.delete_all Eventos.Accounts.User
+import Eventos.Factory
 
+# Insert an user
+user = insert(:user)
 
-{:ok, {privkey, pubkey}} = RsaEx.generate_keypair("4096")
-account = Ecto.Changeset.change(%Eventos.Accounts.Account{}, %{
-  username: "tcit",
-  description: "myaccount",
-  display_name: "Thomas Citharel",
-  domain: nil,
-  private_key: privkey,
-  public_key: pubkey,
-  uri: "",
-  url: ""
-})
+# Insert an actor account
+actor = insert(:actor, user: user)
 
-user = Eventos.Accounts.User.registration_changeset(%Eventos.Accounts.User{}, %{
-  email: "tcit@tcit.fr",
-  password: "tcittcit",
-  password_confirmation: "tcittcit"
-})
+# Insert a second actor account for the same user
+actor2 = insert(:actor, user: user)
 
-account_with_user = Ecto.Changeset.put_assoc(account, :user, user)
+# Make actor organize an event
+event = insert(:event, organizer_actor: actor)
 
-Eventos.Repo.insert!(account_with_user)
+# Insert a group
+group = insert(:actor, type: :Group)
+

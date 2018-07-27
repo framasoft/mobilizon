@@ -14,7 +14,6 @@ defmodule EventosWeb.ParticipantView do
   end
 
   def render("participant.json", %{participant: participant}) do
-    %{id: participant.id,
-      role: participant.role}
+    %{id: participant.id, role: participant.role}
   end
 end

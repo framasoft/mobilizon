@@ -26,6 +26,7 @@ defmodule EventosWeb.ConnCase do
 
       def auth_conn(%Plug.Conn{} = conn, %Eventos.Actors.User{} = user) do
         {:ok, token, _claims} = EventosWeb.Guardian.encode_and_sign(user)
+
         conn
         |> Plug.Conn.put_req_header("authorization", "Bearer #{token}")
         |> Plug.Conn.put_req_header("accept", "application/json")
@@ -33,13 +34,13 @@ defmodule EventosWeb.ConnCase do
     end
   end
 
-
   setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Eventos.Repo)
+
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(Eventos.Repo, {:shared, self()})
     end
+
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
-
 end

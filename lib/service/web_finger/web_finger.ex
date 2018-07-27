@@ -52,7 +52,7 @@ defmodule Eventos.Service.WebFinger do
       "subject" => "acct:#{user.preferred_username}@#{EventosWeb.Endpoint.host() <> ":4001"}",
       "aliases" => [user.url],
       "links" => [
-        %{"rel" => "self", "type" => "application/activity+json", "href" => user.url},
+        %{"rel" => "self", "type" => "application/activity+json", "href" => user.url}
       ]
     }
   end
@@ -63,10 +63,12 @@ defmodule Eventos.Service.WebFinger do
         case {link["type"], link["rel"]} do
           {"application/activity+json", "self"} ->
             Map.put(data, "url", link["href"])
+
           _ ->
-            Logger.debug fn ->
+            Logger.debug(fn ->
               "Unhandled type: #{inspect(link["type"])}"
-            end
+            end)
+
             data
         end
       end)
@@ -85,13 +87,19 @@ defmodule Eventos.Service.WebFinger do
           URI.parse(actor).host
       end
 
-      address = "http://#{domain}/.well-known/webfinger?resource=acct:#{actor}"
+    address = "http://#{domain}/.well-known/webfinger?resource=acct:#{actor}"
 
-      Logger.debug(inspect address)
-    with {:ok, %HTTPoison.Response{} = response} <- HTTPoison.get(address, [Accept: "application/json, application/activity+json, application/jrd+json"], follow_redirect: true),
+    Logger.debug(inspect(address))
+
+    with {:ok, %HTTPoison.Response{} = response} <-
+           HTTPoison.get(
+             address,
+             [Accept: "application/json, application/activity+json, application/jrd+json"],
+             follow_redirect: true
+           ),
          %{status_code: status_code, body: body} when status_code in 200..299 <- response do
-          {:ok, doc} = Jason.decode(body)
-          webfinger_from_json(doc)
+      {:ok, doc} = Jason.decode(body)
+      webfinger_from_json(doc)
     else
       e ->
         Logger.debug(fn -> "Couldn't finger #{actor}" end)

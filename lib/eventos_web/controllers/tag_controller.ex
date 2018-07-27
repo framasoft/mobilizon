@@ -7,7 +7,7 @@ defmodule EventosWeb.TagController do
   alias Eventos.Events
   alias Eventos.Events.Tag
 
-  action_fallback EventosWeb.FallbackController
+  action_fallback(EventosWeb.FallbackController)
 
   def index(conn, _params) do
     tags = Events.list_tags()
@@ -38,6 +38,7 @@ defmodule EventosWeb.TagController do
 
   def delete(conn, %{"id" => id}) do
     tag = Events.get_tag!(id)
+
     with {:ok, %Tag{}} <- Events.delete_tag(tag) do
       send_resp(conn, :no_content, "")
     end

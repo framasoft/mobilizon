@@ -7,7 +7,7 @@ defmodule EventosWeb.TrackController do
   alias Eventos.Events
   alias Eventos.Events.Track
 
-  action_fallback EventosWeb.FallbackController
+  action_fallback(EventosWeb.FallbackController)
 
   def index(conn, _params) do
     tracks = Events.list_tracks()
@@ -38,6 +38,7 @@ defmodule EventosWeb.TrackController do
 
   def delete(conn, %{"id" => id}) do
     track = Events.get_track!(id)
+
     with {:ok, %Track{}} <- Events.delete_track(track) do
       send_resp(conn, :no_content, "")
     end

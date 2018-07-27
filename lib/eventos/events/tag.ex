@@ -13,11 +13,16 @@ defmodule Eventos.Events.Tag.TitleSlug do
   end
 
   defp build_unique_slug(slug, changeset) do
-    query = from t in Tag,
-                 where: t.slug == ^slug
+    query =
+      from(
+        t in Tag,
+        where: t.slug == ^slug
+      )
 
     case Repo.one(query) do
-      nil -> slug
+      nil ->
+        slug
+
       _story ->
         slug
         |> Eventos.Slug.increment_slug()
@@ -36,8 +41,8 @@ defmodule Eventos.Events.Tag do
   alias Eventos.Events.Tag.TitleSlug
 
   schema "tags" do
-    field :title, :string
-    field :slug, TitleSlug.Type
+    field(:title, :string)
+    field(:slug, TitleSlug.Type)
 
     timestamps()
   end

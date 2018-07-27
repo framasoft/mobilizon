@@ -14,7 +14,8 @@ defmodule EventosWeb.SessionView do
   end
 
   def render("session.json", %{session: session}) do
-    %{id: session.id,
+    %{
+      id: session.id,
       title: session.title,
       subtitle: session.subtitle,
       short_abstract: session.short_abstract,
@@ -22,6 +23,7 @@ defmodule EventosWeb.SessionView do
       language: session.language,
       slides_url: session.slides_url,
       videos_urls: session.videos_urls,
-      audios_urls: session.audios_urls}
+      audios_urls: session.audios_urls
+    }
   end
 end

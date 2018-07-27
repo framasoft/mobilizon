@@ -6,13 +6,12 @@ defmodule Eventos.Events.Track do
   import Ecto.Changeset
   alias Eventos.Events.{Track, Event, Session}
 
-
   schema "tracks" do
-    field :color, :string
-    field :description, :string
-    field :name, :string
-    belongs_to :event, Event
-    has_many :sessions, Session
+    field(:color, :string)
+    field(:description, :string)
+    field(:name, :string)
+    belongs_to(:event, Event)
+    has_many(:sessions, Session)
 
     timestamps()
   end

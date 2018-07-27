@@ -58,9 +58,11 @@ defmodule Eventos.Service.Streamer do
     sockets_for_topic = sockets[topic] || []
     sockets_for_topic = Enum.uniq([socket | sockets_for_topic])
     sockets = Map.put(sockets, topic, sockets_for_topic)
-    Logger.debug fn ->
+
+    Logger.debug(fn ->
       "Got new conn for #{topic}"
-    end
+    end)
+
     {:noreply, sockets}
   end
 
@@ -69,9 +71,11 @@ defmodule Eventos.Service.Streamer do
     sockets_for_topic = sockets[topic] || []
     sockets_for_topic = List.delete(sockets_for_topic, socket)
     sockets = Map.put(sockets, topic, sockets_for_topic)
-    Logger.debug fn ->
+
+    Logger.debug(fn ->
       "Removed conn for #{topic}"
-    end
+    end)
+
     {:noreply, sockets}
   end
 

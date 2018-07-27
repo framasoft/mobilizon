@@ -18,7 +18,7 @@ defmodule Eventos.Application do
       # Start your own worker by calling: Eventos.Worker.start_link(arg1, arg2, arg3)
       # worker(Eventos.Worker, [arg1, arg2, arg3]),
       worker(Guardian.DB.Token.SweeperServer, []),
-      worker(Eventos.Service.Federator, []),
+      worker(Eventos.Service.Federator, [])
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

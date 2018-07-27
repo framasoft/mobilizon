@@ -6,9 +6,36 @@ defmodule Eventos.AddressesTest do
   describe "addresses" do
     alias Eventos.Addresses.Address
 
-    @valid_attrs %{addressCountry: "some addressCountry", addressLocality: "some addressLocality", addressRegion: "some addressRegion", description: "some description", floor: "some floor", postalCode: "some postalCode", streetAddress: "some streetAddress", geom: %Geo.Point{coordinates: {10, -10}, srid: 4326}}
-    @update_attrs %{addressCountry: "some updated addressCountry", addressLocality: "some updated addressLocality", addressRegion: "some updated addressRegion", description: "some updated description", floor: "some updated floor", postalCode: "some updated postalCode", streetAddress: "some updated streetAddress", geom: %Geo.Point{coordinates: {20, -20}, srid: 4326}}
-    @invalid_attrs %{addressCountry: nil, addressLocality: nil, addressRegion: nil, description: nil, floor: nil, postalCode: nil, streetAddress: nil, geom: nil}
+    @valid_attrs %{
+      addressCountry: "some addressCountry",
+      addressLocality: "some addressLocality",
+      addressRegion: "some addressRegion",
+      description: "some description",
+      floor: "some floor",
+      postalCode: "some postalCode",
+      streetAddress: "some streetAddress",
+      geom: %Geo.Point{coordinates: {10, -10}, srid: 4326}
+    }
+    @update_attrs %{
+      addressCountry: "some updated addressCountry",
+      addressLocality: "some updated addressLocality",
+      addressRegion: "some updated addressRegion",
+      description: "some updated description",
+      floor: "some updated floor",
+      postalCode: "some updated postalCode",
+      streetAddress: "some updated streetAddress",
+      geom: %Geo.Point{coordinates: {20, -20}, srid: 4326}
+    }
+    @invalid_attrs %{
+      addressCountry: nil,
+      addressLocality: nil,
+      addressRegion: nil,
+      description: nil,
+      floor: nil,
+      postalCode: nil,
+      streetAddress: nil,
+      geom: nil
+    }
 
     def address_fixture(attrs \\ %{}) do
       {:ok, address} =

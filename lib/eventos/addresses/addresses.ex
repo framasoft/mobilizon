@@ -116,7 +116,7 @@ defmodule Eventos.Addresses do
           String.to_existing_atom(type_input)
         rescue
           e in ArgumentError ->
-            Logger.error("#{type_input} is not an existing atom : #{inspect e}")
+            Logger.error("#{type_input} is not an existing atom : #{inspect(e)}")
             nil
         end
       else

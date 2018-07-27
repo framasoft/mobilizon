@@ -9,7 +9,7 @@ defmodule Eventos.Factory do
     %Eventos.Actors.User{
       password_hash: "Jane Smith",
       email: sequence(:email, &"email-#{&1}@example.com"),
-      role: 0,
+      role: 0
     }
   end
 
@@ -18,14 +18,14 @@ defmodule Eventos.Factory do
     entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
     pem = [entry] |> :public_key.pem_encode() |> String.trim_trailing()
 
-
     preferred_username = sequence("thomas")
+
     %Eventos.Actors.Actor{
       preferred_username: preferred_username,
       domain: nil,
       keys: pem,
       url: EventosWeb.Endpoint.url() <> "/@#{preferred_username}",
-      user: nil,
+      user: nil
     }
   end
 
@@ -54,7 +54,7 @@ defmodule Eventos.Factory do
       text: "My Comment",
       actor: build(:actor),
       event: build(:event),
-      uuid: Ecto.UUID.generate(),
+      uuid: Ecto.UUID.generate()
     }
   end
 
@@ -75,9 +75,9 @@ defmodule Eventos.Factory do
 
   def session_factory do
     %Eventos.Events.Session{
-    title: sequence("MySession"),
-    event: build(:event),
-    track: build(:track)
+      title: sequence("MySession"),
+      event: build(:event),
+      track: build(:track)
     }
   end
 
@@ -93,7 +93,14 @@ defmodule Eventos.Factory do
       source: "https://mysource.tld/feed.ics",
       type: "ics",
       user: build(:user),
-      actor: build(:actor),
+      actor: build(:actor)
+    }
+  end
+
+  def member_factory do
+    %Eventos.Actors.Member{
+      parent: build(:actor),
+      actor: build(:actor)
     }
   end
 end

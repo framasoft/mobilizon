@@ -9,10 +9,11 @@ defmodule Eventos.Actors.Member do
 
   @primary_key false
   schema "members" do
-    field :approved, :boolean, default: true
-    field :role, :integer, default: 0 # 0 : Member, 1 : Moderator, 2 : Admin
-    belongs_to :parent, Actor
-    belongs_to :actor, Actor
+    field(:approved, :boolean, default: true)
+    # 0 : Member, 1 : Moderator, 2 : Admin
+    field(:role, :integer, default: 0)
+    belongs_to(:parent, Actor)
+    belongs_to(:actor, Actor)
 
     timestamps()
   end

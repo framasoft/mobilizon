@@ -7,7 +7,7 @@ defmodule EventosWeb.SessionController do
   alias Eventos.Events
   alias Eventos.Events.Session
 
-  action_fallback EventosWeb.FallbackController
+  action_fallback(EventosWeb.FallbackController)
 
   def index(conn, _params) do
     sessions = Events.list_sessions()
@@ -48,6 +48,7 @@ defmodule EventosWeb.SessionController do
 
   def delete(conn, %{"id" => id}) do
     session = Events.get_session!(id)
+
     with {:ok, %Session{}} <- Events.delete_session(session) do
       send_resp(conn, :no_content, "")
     end

@@ -130,16 +130,18 @@ defmodule Eventos.Actors do
   List the groups
   """
   def list_groups do
-    Repo.all(from a in Actor, where: a.type == "Group")
+    Repo.all(from(a in Actor, where: a.type == "Group"))
   end
 
   def get_group_by_name(name) do
-    actor = case String.split(name, "@") do
-      [name] ->
-        Repo.get_by(Actor, preferred_username: name, type: :Group)
-      [name, domain] ->
-        Repo.get_by(Actor, preferred_username: name, domain: domain, type: :Group)
-    end
+    actor =
+      case String.split(name, "@") do
+        [name] ->
+          Repo.get_by(Actor, preferred_username: name, type: :Group)
+
+        [name, domain] ->
+          Repo.get_by(Actor, preferred_username: name, domain: domain, type: :Group)
+      end
   end
 
   @doc """
@@ -185,22 +187,36 @@ defmodule Eventos.Actors do
 
   def insert_or_update_actor(data) do
     cs = Actor.remote_actor_creation(data)
-    Repo.insert(cs, on_conflict: [set: [keys: data.keys, avatar_url: data.avatar_url, banner_url: data.banner_url, name: data.name]], conflict_target: [:preferred_username, :domain])
+
+    Repo.insert(
+      cs,
+      on_conflict: [
+        set: [
+          keys: data.keys,
+          avatar_url: data.avatar_url,
+          banner_url: data.banner_url,
+          name: data.name
+        ]
+      ],
+      conflict_target: [:preferred_username, :domain]
+    )
   end
 
-#  def increase_event_count(%Actor{} = actor) do
-#    event_count = (actor.info["event_count"] || 0) + 1
-#    new_info = Map.put(actor.info, "note_count", note_count)
-#
-#    cs = info_changeset(actor, %{info: new_info})
-#
-#    update_and_set_cache(cs)
-#  end
+  #  def increase_event_count(%Actor{} = actor) do
+  #    event_count = (actor.info["event_count"] || 0) + 1
+  #    new_info = Map.put(actor.info, "note_count", note_count)
+  #
+  #    cs = info_changeset(actor, %{info: new_info})
+  #
+  #    update_and_set_cache(cs)
+  #  end
 
   def count_users() do
     Repo.one(
-      from u in User,
-      select: count(u.id)
+      from(
+        u in User,
+        select: count(u.id)
+      )
     )
   end
 
@@ -230,28 +246,35 @@ defmodule Eventos.Actors do
   end
 
   def get_actor_by_name(name) do
-    actor = case String.split(name, "@") do
-      [name] ->
-        Repo.get_by(Actor, preferred_username: name)
-      [name, domain] ->
-        Repo.get_by(Actor, preferred_username: name, domain: domain)
-    end
+    actor =
+      case String.split(name, "@") do
+        [name] ->
+          Repo.get_by(Actor, preferred_username: name)
+
+        [name, domain] ->
+          Repo.get_by(Actor, preferred_username: name, domain: domain)
+      end
   end
 
   def get_local_actor_by_name(name) do
-    Repo.one from a in Actor, where: a.preferred_username == ^name and is_nil(a.domain)
+    Repo.one(from(a in Actor, where: a.preferred_username == ^name and is_nil(a.domain)))
   end
 
   def get_local_actor_by_name_with_everything(name) do
-    actor = Repo.one from a in Actor, where: a.preferred_username == ^name and is_nil(a.domain)
+    actor = Repo.one(from(a in Actor, where: a.preferred_username == ^name and is_nil(a.domain)))
     Repo.preload(actor, :organized_events)
   end
 
   def get_actor_by_name_with_everything(name) do
-    actor = case String.split(name, "@") do
-      [name] -> Repo.one from a in Actor, where: a.preferred_username == ^name and is_nil(a.domain)
-      [name, domain] -> Repo.one from a in Actor, where: a.preferred_username == ^name and a.domain == ^domain
-    end
+    actor =
+      case String.split(name, "@") do
+        [name] ->
+          Repo.one(from(a in Actor, where: a.preferred_username == ^name and is_nil(a.domain)))
+
+        [name, domain] ->
+          Repo.one(from(a in Actor, where: a.preferred_username == ^name and a.domain == ^domain))
+      end
+
     Repo.preload(actor, :organized_events)
   end
 
@@ -265,7 +288,8 @@ defmodule Eventos.Actors do
         {:ok, actor} ->
           actor
 
-        _ -> {:error, "Could not fetch by AP id"}
+        _ ->
+          {:error, "Could not fetch by AP id"}
       end
     end
   end
@@ -274,7 +298,16 @@ defmodule Eventos.Actors do
   Find local users by it's username
   """
   def find_local_by_username(username) do
-    actors = Repo.all from a in Actor, where: (ilike(a.preferred_username, ^like_sanitize(username)) or ilike(a.name, ^like_sanitize(username))) and is_nil(a.domain)
+    actors =
+      Repo.all(
+        from(
+          a in Actor,
+          where:
+            (ilike(a.preferred_username, ^like_sanitize(username)) or
+               ilike(a.name, ^like_sanitize(username))) and is_nil(a.domain)
+        )
+      )
+
     Repo.preload(actors, :organized_events)
   end
 
@@ -282,7 +315,14 @@ defmodule Eventos.Actors do
   Find actors by their name or displayed name
   """
   def find_actors_by_username(username) do
-    Repo.all from a in Actor, where: ilike(a.preferred_username, ^like_sanitize(username)) or ilike(a.name, ^like_sanitize(username))
+    Repo.all(
+      from(
+        a in Actor,
+        where:
+          ilike(a.preferred_username, ^like_sanitize(username)) or
+            ilike(a.name, ^like_sanitize(username))
+      )
+    )
   end
 
   @doc """
@@ -294,17 +334,26 @@ defmodule Eventos.Actors do
 
   @email_regex ~r/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
   def search(name) do
-    case find_actors_by_username(name) do # find already saved accounts
+    # find already saved accounts
+    case find_actors_by_username(name) do
       [] ->
-        with true <- Regex.match?(@email_regex, name), # no accounts found, let's test if it's an username@domain.tld
-             {:ok, actor} <- ActivityPub.find_or_make_actor_from_nickname(name) do # creating the actor in that case
+        # no accounts found, let's test if it's an username@domain.tld
+        with true <- Regex.match?(@email_regex, name),
+             # creating the actor in that case
+             {:ok, actor} <- ActivityPub.find_or_make_actor_from_nickname(name) do
           {:ok, [actor]}
         else
-          false -> {:ok, []}
-          {:error, err} -> {:error, err} # error fingering the actor
+          false ->
+            {:ok, []}
+
+          # error fingering the actor
+          {:error, err} ->
+            {:error, err}
         end
-      actors = [_|_] ->
-        {:ok, actors} # actors already saved found !
+
+      actors = [_ | _] ->
+        # actors already saved found !
+        {:ok, actors}
     end
   end
 
@@ -315,6 +364,7 @@ defmodule Eventos.Actors do
     case Repo.preload(Repo.get_by(User, email: email), :actors) do
       nil ->
         {:error, nil}
+
       user ->
         {:ok, user}
     end
@@ -329,6 +379,7 @@ defmodule Eventos.Actors do
       true ->
         # Yes, create and return the token
         EventosWeb.Guardian.encode_and_sign(user)
+
       _ ->
         # No, return an error
         {:error, :unauthorized}
@@ -346,25 +397,29 @@ defmodule Eventos.Actors do
     import Exgravatar
 
     avatar_url = gravatar_url(email, default: "404")
-    avatar = case HTTPoison.get(avatar_url) do
-      {:ok, %HTTPoison.Response{status_code: 200}} ->
-        avatar_url
-      _ ->
-        nil
-    end
 
-    actor = Eventos.Actors.Actor.registration_changeset(%Eventos.Actors.Actor{}, %{
-      preferred_username: username,
-      domain: nil,
-      keys: pem,
-      avatar_url: avatar,
-    })
+    avatar =
+      case HTTPoison.get(avatar_url) do
+        {:ok, %HTTPoison.Response{status_code: 200}} ->
+          avatar_url
 
-    user = Eventos.Actors.User.registration_changeset(%Eventos.Actors.User{}, %{
-      email: email,
-      password: password
-    })
+        _ ->
+          nil
+      end
 
+    actor =
+      Eventos.Actors.Actor.registration_changeset(%Eventos.Actors.Actor{}, %{
+        preferred_username: username,
+        domain: nil,
+        keys: pem,
+        avatar_url: avatar
+      })
+
+    user =
+      Eventos.Actors.User.registration_changeset(%Eventos.Actors.User{}, %{
+        email: email,
+        password: password
+      })
 
     actor_with_user = Ecto.Changeset.put_assoc(actor, :user, user)
 
@@ -372,8 +427,8 @@ defmodule Eventos.Actors do
       Eventos.Repo.insert!(actor_with_user)
       find_by_email(email)
     rescue
-     e in Ecto.InvalidChangesetError ->
-      {:error, e.changeset}
+      e in Ecto.InvalidChangesetError ->
+        {:error, e.changeset}
     end
   end
 
@@ -382,13 +437,14 @@ defmodule Eventos.Actors do
     entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
     pem = [entry] |> :public_key.pem_encode() |> String.trim_trailing()
 
-    actor = Eventos.Actors.Actor.registration_changeset(%Eventos.Actors.Actor{}, %{
-      preferred_username: name,
-      domain: nil,
-      keys: pem,
-      summary: summary,
-      type: :Service
-    })
+    actor =
+      Eventos.Actors.Actor.registration_changeset(%Eventos.Actors.Actor{}, %{
+        preferred_username: name,
+        domain: nil,
+        keys: pem,
+        summary: summary,
+        type: :Service
+      })
 
     try do
       Eventos.Repo.insert!(actor)
@@ -397,7 +453,6 @@ defmodule Eventos.Actors do
         {:error, e.changeset}
     end
   end
-
 
   @doc """
   Creates a user.
@@ -563,20 +618,23 @@ defmodule Eventos.Actors do
 
   def groups_for_actor(%Actor{id: id} = _actor) do
     Repo.all(
-      from m in Member,
-      where: m.actor_id == ^id,
-      preload: [:parent]
+      from(
+        m in Member,
+        where: m.actor_id == ^id,
+        preload: [:parent]
+      )
     )
   end
 
   def members_for_group(%Actor{type: :Group, id: id} = _group) do
     Repo.all(
-      from m in Member,
-      where: m.parent_id == ^id,
-      preload: [:parent, :actor]
+      from(
+        m in Member,
+        where: m.parent_id == ^id,
+        preload: [:parent, :actor]
+      )
     )
   end
-
 
   alias Eventos.Actors.Bot
 
@@ -609,7 +667,7 @@ defmodule Eventos.Actors do
   """
   def get_bot!(id), do: Repo.get!(Bot, id)
 
-  @spec get_bot_by_actor(Actor.t) :: Bot.t
+  @spec get_bot_by_actor(Actor.t()) :: Bot.t()
   def get_bot_by_actor(%Actor{} = actor) do
     Repo.get_by!(Bot, actor_id: actor.id)
   end

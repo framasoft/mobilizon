@@ -28,12 +28,15 @@ defmodule Eventos.Service.HTTPSignatures do
 
   def validate(headers, signature, public_key) do
     sigstring = build_signing_string(headers, signature["headers"])
-    Logger.debug fn ->
+
+    Logger.debug(fn ->
       "Signature: #{signature["signature"]}"
-    end
-    Logger.debug fn ->
+    end)
+
+    Logger.debug(fn ->
       "Sigstring: #{sigstring}"
-    end
+    end)
+
     {:ok, sig} = Base.decode64(signature["signature"])
     :public_key.verify(sigstring, :sha256, sig, public_key)
   end
@@ -55,13 +58,13 @@ defmodule Eventos.Service.HTTPSignatures do
              public_key_code <- Actor.get_public_key_for_url(actor_id),
              [public_key] = :public_key.pem_decode(public_key_code),
              public_key = :public_key.pem_entry_decode(public_key) do
-            validate_conn(conn, public_key)
+          validate_conn(conn, public_key)
         end
       end
     else
       e ->
         Logger.debug("Could not found url for actor!")
-        Logger.debug(inspect e)
+        Logger.debug(inspect(e))
         false
     end
   end

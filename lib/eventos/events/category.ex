@@ -6,11 +6,10 @@ defmodule Eventos.Events.Category do
   import Ecto.Changeset
   alias Eventos.Events.Category
 
-
   schema "categories" do
-    field :description, :string
-    field :picture, :string
-    field :title, :string, null: false
+    field(:description, :string)
+    field(:picture, :string)
+    field(:title, :string, null: false)
 
     timestamps()
   end

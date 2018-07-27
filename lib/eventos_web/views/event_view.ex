@@ -10,7 +10,13 @@ defmodule EventosWeb.EventView do
       data: render_many(events, EventView, "event_simple.json"),
       coord: coord,
       city: city,
-      country: country,
+      country: country
+    }
+  end
+
+  def render("index_all.json", %{events: events}) do
+    %{
+      data: render_many(events, EventView, "event_simple.json")
     }
   end
 
@@ -23,14 +29,12 @@ defmodule EventosWeb.EventView do
   end
 
   def render("event_for_actor.json", %{event: event}) do
-    %{id: event.id,
-      title: event.title,
-      uuid: event.uuid,
-    }
+    %{id: event.id, title: event.title, uuid: event.uuid}
   end
 
   def render("event_simple.json", %{event: event}) do
-    %{id: event.id,
+    %{
+      id: event.id,
       title: event.title,
       description: event.description,
       begins_on: event.begins_on,
@@ -39,15 +43,16 @@ defmodule EventosWeb.EventView do
       organizer: %{
         username: event.organizer_actor.preferred_username,
         display_name: event.organizer_actor.name,
-        avatar: event.organizer_actor.avatar_url,
+        avatar: event.organizer_actor.avatar_url
       },
       type: "Event",
-      address_type: event.address_type,
+      address_type: event.address_type
     }
   end
 
   def render("event.json", %{event: event}) do
-    %{id: event.id,
+    %{
+      id: event.id,
       title: event.title,
       description: event.description,
       begins_on: event.begins_on,
@@ -57,7 +62,7 @@ defmodule EventosWeb.EventView do
       participants: render_many(event.participants, ActorView, "actor_basic.json"),
       physical_address: render_one(event.physical_address, AddressView, "address.json"),
       type: "Event",
-      address_type: event.address_type,
+      address_type: event.address_type
     }
   end
 end

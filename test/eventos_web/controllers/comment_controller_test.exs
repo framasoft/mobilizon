@@ -20,21 +20,22 @@ defmodule EventosWeb.CommentControllerTest do
     test "renders comment when data is valid", %{conn: conn, user: user, actor: actor} do
       conn = auth_conn(conn, user)
       attrs = Map.merge(@create_attrs, %{actor_id: actor.id})
-      conn = post conn, comment_path(conn, :create), comment: attrs
+      conn = post(conn, comment_path(conn, :create), comment: attrs)
       assert %{"uuid" => uuid, "id" => id} = json_response(conn, 201)["data"]
 
-      conn = get conn, comment_path(conn, :show, uuid)
+      conn = get(conn, comment_path(conn, :show, uuid))
+
       assert json_response(conn, 200)["data"] == %{
-        "id" => id,
-        "text" => "some text",
-        "uuid" => uuid,
-        "url" => "#{EventosWeb.Endpoint.url()}/comments/#{uuid}"
-      }
+               "id" => id,
+               "text" => "some text",
+               "uuid" => uuid,
+               "url" => "#{EventosWeb.Endpoint.url()}/comments/#{uuid}"
+             }
     end
 
     test "renders errors when data is invalid", %{conn: conn, user: user} do
       conn = auth_conn(conn, user)
-      conn = post conn, comment_path(conn, :create), comment: @invalid_attrs
+      conn = post(conn, comment_path(conn, :create), comment: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -42,24 +43,30 @@ defmodule EventosWeb.CommentControllerTest do
   describe "update comment" do
     setup [:create_comment]
 
-    test "renders comment when data is valid", %{conn: conn, comment: %Comment{id: id, uuid: uuid} = comment, user: user, actor: actor} do
+    test "renders comment when data is valid", %{
+      conn: conn,
+      comment: %Comment{id: id, uuid: uuid} = comment,
+      user: user,
+      actor: actor
+    } do
       conn = auth_conn(conn, user)
       attrs = Map.merge(@update_attrs, %{actor_id: actor.id})
-      conn = put conn, comment_path(conn, :update, uuid), comment: attrs
+      conn = put(conn, comment_path(conn, :update, uuid), comment: attrs)
       assert %{"uuid" => uuid, "id" => id} = json_response(conn, 200)["data"]
 
-      conn = get conn, comment_path(conn, :show, uuid)
+      conn = get(conn, comment_path(conn, :show, uuid))
+
       assert json_response(conn, 200)["data"] == %{
-        "id" => id,
-        "text" => "some updated text",
-        "uuid" => uuid,
-        "url" => "#{EventosWeb.Endpoint.url()}/comments/#{uuid}"
-      }
+               "id" => id,
+               "text" => "some updated text",
+               "uuid" => uuid,
+               "url" => "#{EventosWeb.Endpoint.url()}/comments/#{uuid}"
+             }
     end
 
     test "renders errors when data is invalid", %{conn: conn, comment: comment, user: user} do
       conn = auth_conn(conn, user)
-      conn = put conn, comment_path(conn, :update, comment.uuid), comment: @invalid_attrs
+      conn = put(conn, comment_path(conn, :update, comment.uuid), comment: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -67,13 +74,18 @@ defmodule EventosWeb.CommentControllerTest do
   describe "delete comment" do
     setup [:create_comment]
 
-    test "deletes chosen comment", %{conn: conn, comment: %Comment{uuid: uuid} = comment, user: user} do
+    test "deletes chosen comment", %{
+      conn: conn,
+      comment: %Comment{uuid: uuid} = comment,
+      user: user
+    } do
       conn = auth_conn(conn, user)
-      conn = delete conn, comment_path(conn, :delete, uuid)
+      conn = delete(conn, comment_path(conn, :delete, uuid))
       assert response(conn, 204)
-      assert_error_sent 404, fn ->
-        get conn, comment_path(conn, :show, uuid)
-      end
+
+      assert_error_sent(404, fn ->
+        get(conn, comment_path(conn, :show, uuid))
+      end)
     end
   end
 

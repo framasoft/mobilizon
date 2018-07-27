@@ -7,12 +7,11 @@ defmodule Eventos.Actors.Follower do
   alias Eventos.Actors.Follower
   alias Eventos.Actors.Actor
 
-
   schema "followers" do
-    field :approved, :boolean, default: false
-    field :score, :integer, default: 1000
-    belongs_to :target_actor, Actor
-    belongs_to :actor, Actor
+    field(:approved, :boolean, default: false)
+    field(:score, :integer, default: 1000)
+    belongs_to(:target_actor, Actor)
+    belongs_to(:actor, Actor)
 
     timestamps()
   end

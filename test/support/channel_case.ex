@@ -25,13 +25,13 @@ defmodule EventosWeb.ChannelCase do
     end
   end
 
-
   setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Eventos.Repo)
+
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(Eventos.Repo, {:shared, self()})
     end
+
     :ok
   end
-
 end

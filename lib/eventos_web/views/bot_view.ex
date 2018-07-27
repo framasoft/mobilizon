@@ -11,8 +11,6 @@ defmodule EventosWeb.BotView do
   end
 
   def render("bot.json", %{bot: bot}) do
-    %{id: bot.id,
-      source: bot.source,
-      type: bot.type}
+    %{id: bot.id, source: bot.source, type: bot.type}
   end
 end

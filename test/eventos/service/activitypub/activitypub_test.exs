@@ -1,5 +1,4 @@
 defmodule Eventos.Service.Activitypub.ActivitypubTest do
-
   use Eventos.DataCase
 
   import Eventos.Factory
@@ -11,7 +10,8 @@ defmodule Eventos.Service.Activitypub.ActivitypubTest do
 
   describe "fetching actor from it's url" do
     test "returns an actor" do
-      assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"} = actor} = ActivityPub.make_actor_from_nickname("tcit@framapiaf.org")
+      assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"} = actor} =
+               ActivityPub.make_actor_from_nickname("tcit@framapiaf.org")
     end
   end
 

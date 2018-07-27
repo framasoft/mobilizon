@@ -1,5 +1,4 @@
 defmodule EventosWeb.OutboxesController do
-
   use EventosWeb, :controller
 
   def show(conn) do

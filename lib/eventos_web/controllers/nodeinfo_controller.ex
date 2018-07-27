@@ -22,8 +22,8 @@ defmodule EventosWeb.NodeinfoController do
   # Schema definition: https://github.com/jhass/nodeinfo/blob/master/schemas/2.0/schema.json
   def nodeinfo(conn, %{"version" => "2.0.json"}) do
     import Logger
-    Logger.debug(inspect @instance)
-    #stats = Stats.get_stats()
+    Logger.debug(inspect(@instance))
+    # stats = Stats.get_stats()
 
     response = %{
       version: "2.0",
@@ -39,12 +39,12 @@ defmodule EventosWeb.NodeinfoController do
       openRegistrations: Keyword.get(@instance, :registrations_open),
       usage: %{
         users: %{
-          #total: stats.user_count || 0
+          # total: stats.user_count || 0
           total: Actors.count_users()
         },
         localPosts: Events.count_local_events(),
-        localComments: Events.count_local_comments(),
-        #localPosts: stats.status_count || 0
+        localComments: Events.count_local_comments()
+        # localPosts: stats.status_count || 0
       },
       metadata: %{
         nodeName: Keyword.get(@instance, :name)

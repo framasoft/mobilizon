@@ -37,6 +37,7 @@ defmodule Eventos.Mixfile do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:dev), do: ["lib", "test/support/factory.ex"]
   defp elixirc_paths(_), do: ["lib"]
 
   # Specifies your project dependencies.
@@ -78,7 +79,6 @@ defmodule Eventos.Mixfile do
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:ex_machina, "~> 2.2", only: [:dev, :test]},
-      {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.8", only: :test},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},

@@ -19,7 +19,8 @@ defmodule EventosWeb.ActorView do
   end
 
   def render("actor_basic.json", %{actor: actor}) do
-    %{id: actor.id,
+    %{
+      id: actor.id,
       username: actor.preferred_username,
       domain: actor.domain,
       display_name: actor.name,
@@ -28,12 +29,13 @@ defmodule EventosWeb.ActorView do
       # public_key: actor.public_key,
       suspended: actor.suspended,
       url: actor.url,
-      avatar: actor.avatar_url,
+      avatar: actor.avatar_url
     }
   end
 
   def render("actor.json", %{actor: actor}) do
-    output = %{id: actor.id,
+    output = %{
+      id: actor.id,
       username: actor.preferred_username,
       domain: actor.domain,
       display_name: actor.name,
@@ -46,11 +48,18 @@ defmodule EventosWeb.ActorView do
       banner: actor.banner_url,
       organized_events: render_many(actor.organized_events, EventView, "event_for_actor.json")
     }
+
     import Logger
-    Logger.debug(inspect actor.type)
+    Logger.debug(inspect(actor.type))
+
     if actor.type == :Group do
       Logger.debug("I'm a group !")
-      Map.put(output, :members, render_many(Actors.members_for_group(actor), MemberView, "member.json"))
+
+      Map.put(
+        output,
+        :members,
+        render_many(Actors.members_for_group(actor), MemberView, "member.json")
+      )
     else
       Logger.debug("not a group")
       output

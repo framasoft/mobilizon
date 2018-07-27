@@ -7,7 +7,7 @@ defmodule EventosWeb.CategoryController do
   alias Eventos.Events
   alias Eventos.Events.Category
 
-  action_fallback EventosWeb.FallbackController
+  action_fallback(EventosWeb.FallbackController)
 
   def index(conn, _params) do
     categories = Events.list_categories()
@@ -38,6 +38,7 @@ defmodule EventosWeb.CategoryController do
 
   def delete(conn, %{"id" => id}) do
     category = Events.get_category!(id)
+
     with {:ok, %Category{}} <- Events.delete_category(category) do
       send_resp(conn, :no_content, "")
     end

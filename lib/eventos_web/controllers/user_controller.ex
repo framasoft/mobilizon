@@ -9,7 +9,7 @@ defmodule EventosWeb.UserController do
   alias Eventos.Repo
   alias Eventos.Actors.Service.{Activation, ResetPassword}
 
-  action_fallback EventosWeb.FallbackController
+  action_fallback(EventosWeb.FallbackController)
 
   def index(conn, _params) do
     users = Actors.list_users_with_actors()
@@ -17,17 +17,20 @@ defmodule EventosWeb.UserController do
   end
 
   def register(conn, %{"username" => username, "email" => email, "password" => password}) do
-    with {:ok, %User{} = user} <- Actors.register(%{email: email, password: password, username: username}) do
+    with {:ok, %User{} = user} <-
+           Actors.register(%{email: email, password: password, username: username}) do
       Activation.send_confirmation_email(user, "locale")
+
       conn
-        |> put_status(:created)
-        |> render("confirmation.json", %{user: user})
+      |> put_status(:created)
+      |> render("confirmation.json", %{user: user})
     end
   end
 
   def validate(conn, %{"token" => token}) do
     with {:ok, %User{} = user} <- Activation.check_confirmation_token(token) do
       {:ok, token, _claims} = EventosWeb.Guardian.encode_and_sign(user)
+
       conn
       |> put_resp_header("location", user_path(conn, :show_current_actor))
       |> render("show_with_token.json", %{user: user, token: token})
@@ -42,7 +45,8 @@ defmodule EventosWeb.UserController do
   def resend_confirmation(conn, %{"email" => email}) do
     with {:ok, %User{} = user} <- Actors.find_by_email(email),
          false <- is_nil(user.confirmation_token),
-           true <- Timex.before?(Timex.shift(user.confirmation_sent_at, hours: 1), DateTime.utc_now()) do
+         true <-
+           Timex.before?(Timex.shift(user.confirmation_sent_at, hours: 1), DateTime.utc_now()) do
       Activation.resend_confirmation_email(user)
       render(conn, "confirmation.json", %{user: user})
     else
@@ -50,6 +54,7 @@ defmodule EventosWeb.UserController do
         conn
         |> put_status(:not_found)
         |> json(%{"error" => "Unable to find an user with this email"})
+
       _ ->
         conn
         |> put_status(:not_found)
@@ -66,6 +71,7 @@ defmodule EventosWeb.UserController do
         conn
         |> put_status(:not_found)
         |> json(%{"errors" => "Unable to find an user with this email"})
+
       {:error, :email_too_soon} ->
         conn
         |> put_status(:not_found)
@@ -82,6 +88,7 @@ defmodule EventosWeb.UserController do
         conn
         |> put_status(:not_found)
         |> json(%{"errors" => %{"token" => ["Wrong token for password reset"]}})
+
       {:error, %Ecto.Changeset{} = changeset} ->
         conn
         |> put_status(:unprocessable_entity)
@@ -90,9 +97,11 @@ defmodule EventosWeb.UserController do
   end
 
   def show_current_actor(conn, _params) do
-    user = conn
-    |> Guardian.Plug.current_resource()
-    |> Repo.preload(:actors)
+    user =
+      conn
+      |> Guardian.Plug.current_resource()
+      |> Repo.preload(:actors)
+
     render(conn, "show_simple.json", user: user)
   end
 
@@ -101,14 +110,13 @@ defmodule EventosWeb.UserController do
     |> Enum.map(fn {field, detail} ->
       "#{field} " <> render_detail(detail)
     end)
-    |> Enum.join
+    |> Enum.join()
   end
 
-
   defp render_detail({message, values}) do
-    Enum.reduce values, message, fn {k, v}, acc ->
+    Enum.reduce(values, message, fn {k, v}, acc ->
       String.replace(acc, "%{#{k}}", to_string(v))
-    end
+    end)
   end
 
   defp render_detail(message) do
@@ -125,6 +133,7 @@ defmodule EventosWeb.UserController do
 
   def delete(conn, %{"id" => id}) do
     user = Actors.get_user!(id)
+
     with {:ok, %User{}} <- Actors.delete_user(user) do
       send_resp(conn, :no_content, "")
     end

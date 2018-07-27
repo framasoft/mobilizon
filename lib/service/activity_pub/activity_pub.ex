@@ -27,12 +27,13 @@ defmodule Eventos.Service.ActivityPub do
     with map <- lazy_put_activity_defaults(map),
          :ok <- insert_full_object(map) do
       map = Map.put(map, "id", Ecto.UUID.generate())
+
       activity = %Activity{
-          data: map,
-          local: local,
-          actor: map["actor"],
-          recipients: get_recipients(map)
-        }
+        data: map,
+        local: local,
+        actor: map["actor"],
+        recipients: get_recipients(map)
+      }
 
       # Notification.create_notifications(activity)
       # stream_out(activity)
@@ -71,7 +72,7 @@ defmodule Eventos.Service.ActivityPub do
         {:ok, Events.get_event_by_url!(activity.data["object"]["id"])}
       else
         object = %Event{} -> {:ok, object}
-                          e -> e
+        e -> e
       end
     end
   end
@@ -89,12 +90,12 @@ defmodule Eventos.Service.ActivityPub do
            ),
          {:ok, activity} <- insert(create_data, local),
          :ok <- maybe_federate(activity) do
-         # {:ok, actor} <- Actors.increase_event_count(actor) do
+      # {:ok, actor} <- Actors.increase_event_count(actor) do
       {:ok, activity}
     else
       err ->
         Logger.debug("Something went wrong")
-        Logger.debug(inspect err)
+        Logger.debug(inspect(err))
     end
   end
 
@@ -114,12 +115,12 @@ defmodule Eventos.Service.ActivityPub do
     local = !(params[:local] == false)
 
     with data <- %{
-      "to" => to,
-      "cc" => cc,
-      "type" => "Update",
-      "actor" => actor,
-      "object" => object
-    },
+           "to" => to,
+           "cc" => cc,
+           "type" => "Update",
+           "actor" => actor,
+           "object" => object
+         },
          {:ok, activity} <- insert(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity}
@@ -135,7 +136,6 @@ defmodule Eventos.Service.ActivityPub do
   end
 
   def delete(%Event{url: url, organizer_actor: actor} = event, local \\ true) do
-
     data = %{
       "type" => "Delete",
       "actor" => actor.url,
@@ -145,14 +145,12 @@ defmodule Eventos.Service.ActivityPub do
 
     with Events.delete_event(event),
          {:ok, activity} <- insert(data, local),
-         :ok <- maybe_federate(activity)
-      do
+         :ok <- maybe_federate(activity) do
       {:ok, activity}
     end
   end
 
   def create_public_activities(%Actor{} = actor) do
-
   end
 
   def make_actor_from_url(url) do
@@ -161,12 +159,12 @@ defmodule Eventos.Service.ActivityPub do
     else
       e ->
         Logger.error("Failed to make actor from url")
-        Logger.error(inspect e)
+        Logger.error(inspect(e))
         {:error, e}
     end
   end
 
-  @spec find_or_make_actor_from_nickname(String.t) :: tuple()
+  @spec find_or_make_actor_from_nickname(String.t()) :: tuple()
   def find_or_make_actor_from_nickname(nickname) do
     with %Actor{} = actor <- Actors.get_actor_by_name(nickname) do
       {:ok, actor}
@@ -185,6 +183,7 @@ defmodule Eventos.Service.ActivityPub do
 
   def publish(actor, activity) do
     Logger.debug("Publishing an activity")
+
     followers =
       if actor.followers_url in activity.recipients do
         {:ok, followers} = Actor.get_followers(actor)
@@ -217,22 +216,26 @@ defmodule Eventos.Service.ActivityPub do
 
     signature =
       Eventos.Service.HTTPSignatures.sign(actor, %{host: host, "content-length": byte_size(json)})
-    Logger.debug("signature")
-    Logger.debug(inspect signature)
 
-    {:ok, response} = HTTPoison.post(
-      inbox,
-      json,
-      [{"Content-Type", "application/activity+json"}, {"signature", signature}],
-      hackney: [pool: :default]
-    )
-    Logger.debug(inspect response)
+    Logger.debug("signature")
+    Logger.debug(inspect(signature))
+
+    {:ok, response} =
+      HTTPoison.post(
+        inbox,
+        json,
+        [{"Content-Type", "application/activity+json"}, {"signature", signature}],
+        hackney: [pool: :default]
+      )
+
+    Logger.debug(inspect(response))
   end
 
   def fetch_and_prepare_user_from_url(url) do
     Logger.debug("Fetching and preparing user from url")
+
     with {:ok, %{status_code: 200, body: body}} <-
-           HTTPoison.get(url, [Accept: "application/activity+json"], [follow_redirect: true]),
+           HTTPoison.get(url, [Accept: "application/activity+json"], follow_redirect: true),
          {:ok, data} <- Jason.decode(body) do
       user_data_from_user_object(data)
     else
@@ -241,17 +244,18 @@ defmodule Eventos.Service.ActivityPub do
   end
 
   def user_data_from_user_object(data) do
-    name = if String.trim(data["name"]) === "" do
-      data["preferredUsername"]
-    else
-      data["name"]
-    end
+    name =
+      if String.trim(data["name"]) === "" do
+        data["preferredUsername"]
+      else
+        data["name"]
+      end
 
     user_data = %{
       url: data["id"],
       info: %{
         "ap_enabled" => true,
-        "source_data" => data,
+        "source_data" => data
       },
       avatar_url: data["icon"]["url"],
       banner_url: data["image"]["url"],
@@ -267,38 +271,50 @@ defmodule Eventos.Service.ActivityPub do
       shared_inbox_url: data["endpoints"]["sharedInbox"],
       domain: URI.parse(data["id"]).host,
       manually_approves_followers: data["manuallyApprovesFollowers"],
-      type: data["type"],
+      type: data["type"]
     }
 
     Logger.debug("user_data_from_user_object")
-    Logger.debug(inspect user_data)
+    Logger.debug(inspect(user_data))
 
     {:ok, user_data}
   end
 
-  @spec fetch_public_activities_for_actor(Actor.t, integer(), integer()) :: list()
+  @spec fetch_public_activities_for_actor(Actor.t(), integer(), integer()) :: list()
   def fetch_public_activities_for_actor(%Actor{} = actor, page \\ 1, limit \\ 10) do
     case actor.type do
       :Person ->
         {:ok, events, total} = Events.get_events_for_actor(actor, page, limit)
-        activities = Enum.map(events, fn event ->
-          {:ok, activity} = event_to_activity(event)
-          activity
-        end)
+
+        activities =
+          Enum.map(events, fn event ->
+            {:ok, activity} = event_to_activity(event)
+            activity
+          end)
+
         {activities, total}
+
       :Service ->
         bot = Actors.get_bot_by_actor(actor)
+
         case bot.type do
           "ics" ->
             {:ok, %HTTPoison.Response{body: body} = _resp} = HTTPoison.get(bot.source)
-            ical_events = body |> ExIcal.parse() |> ExIcal.by_range(DateTime.utc_now(), DateTime.utc_now() |> Timex.shift(years: 1))
-            activities = ical_events
-            |> Enum.chunk_every(limit)
-            |> Enum.at(page - 1)
-            |> Enum.map(fn event ->
-              {:ok, activity} = ical_event_to_activity(event, actor, bot.source)
-              activity
-            end)
+
+            ical_events =
+              body
+              |> ExIcal.parse()
+              |> ExIcal.by_range(DateTime.utc_now(), DateTime.utc_now() |> Timex.shift(years: 1))
+
+            activities =
+              ical_events
+              |> Enum.chunk_every(limit)
+              |> Enum.at(page - 1)
+              |> Enum.map(fn event ->
+                {:ok, activity} = ical_event_to_activity(event, actor, bot.source)
+                activity
+              end)
+
             {activities, length(ical_events)}
         end
     end
@@ -313,36 +329,42 @@ defmodule Eventos.Service.ActivityPub do
     }
 
     # Notification.create_notifications(activity)
-    #stream_out(activity)
+    # stream_out(activity)
     {:ok, activity}
   end
 
   defp ical_event_to_activity(%ExIcal.Event{} = ical_event, %Actor{} = actor, source) do
     # Logger.debug(inspect ical_event)
     # TODO : refactor me !
-    category = if is_nil ical_event.categories do
-      nil
-    else
-      ical_category = ical_event.categories |> hd() |> String.downcase()
-      case ical_category |> Events.get_category_by_title() do
-        nil -> case Events.create_category(%{"title" => ical_category}) do
-           {:ok, %Category{} = category} -> category
-           _ -> nil
-         end
-        category -> category
-      end
-    end
+    category =
+      if is_nil(ical_event.categories) do
+        nil
+      else
+        ical_category = ical_event.categories |> hd() |> String.downcase()
 
-    {:ok, event} = Events.create_event(%{
-      begins_on: ical_event.start,
-      ends_on: ical_event.end,
-      inserted_at: ical_event.stamp,
-      updated_at: ical_event.stamp,
-      description: ical_event.description |> sanitize_ical_event_strings,
-      title: ical_event.summary |> sanitize_ical_event_strings,
-      organizer_actor: actor,
-      category: category,
-    })
+        case ical_category |> Events.get_category_by_title() do
+          nil ->
+            case Events.create_category(%{"title" => ical_category}) do
+              {:ok, %Category{} = category} -> category
+              _ -> nil
+            end
+
+          category ->
+            category
+        end
+      end
+
+    {:ok, event} =
+      Events.create_event(%{
+        begins_on: ical_event.start,
+        ends_on: ical_event.end,
+        inserted_at: ical_event.stamp,
+        updated_at: ical_event.stamp,
+        description: ical_event.description |> sanitize_ical_event_strings,
+        title: ical_event.summary |> sanitize_ical_event_strings,
+        organizer_actor: actor,
+        category: category
+      })
 
     event_to_activity(event, false)
   end

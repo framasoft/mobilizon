@@ -4,7 +4,7 @@ defmodule EventosWeb.CommentController do
   alias Eventos.Events
   alias Eventos.Events.Comment
 
-  action_fallback EventosWeb.FallbackController
+  action_fallback(EventosWeb.FallbackController)
 
   def index(conn, _params) do
     comments = Events.list_comments()
@@ -35,6 +35,7 @@ defmodule EventosWeb.CommentController do
 
   def delete(conn, %{"uuid" => uuid}) do
     comment = Events.get_comment_with_uuid!(uuid)
+
     with {:ok, %Comment{}} <- Events.delete_comment(comment) do
       send_resp(conn, :no_content, "")
     end

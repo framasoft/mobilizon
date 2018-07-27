@@ -8,7 +8,7 @@ defmodule EventosWeb.AddressController do
   alias Eventos.Addresses
   alias Eventos.Addresses.Address
 
-  action_fallback EventosWeb.FallbackController
+  action_fallback(EventosWeb.FallbackController)
 
   def index(conn, _params) do
     addresses = Addresses.list_addresses()
@@ -18,6 +18,7 @@ defmodule EventosWeb.AddressController do
   def create(conn, %{"address" => address_params}) do
     with {:ok, geom} <- Addresses.process_geom(address_params["geom"]) do
       address_params = %{address_params | "geom" => geom}
+
       with {:ok, %Address{} = address} <- Addresses.create_address(address_params) do
         conn
         |> put_status(:created)
@@ -30,15 +31,18 @@ defmodule EventosWeb.AddressController do
   def process_geom(%{"type" => type, "data" => data}) do
     import Logger
     Logger.debug("Process geom")
-    Logger.debug(inspect data)
-    Logger.debug(inspect type)
+    Logger.debug(inspect(data))
+    Logger.debug(inspect(type))
     types = [:point]
+
     unless is_atom(type) do
       type = String.to_existing_atom(type)
     end
+
     case type do
       :point ->
         %Geo.Point{coordinates: {data["latitude"], data["longitude"]}, srid: 4326}
+
       nil ->
         nil
     end
@@ -66,6 +70,7 @@ defmodule EventosWeb.AddressController do
 
   def delete(conn, %{"id" => id}) do
     address = Addresses.get_address!(id)
+
     with {:ok, %Address{}} <- Addresses.delete_address(address) do
       send_resp(conn, :no_content, "")
     end

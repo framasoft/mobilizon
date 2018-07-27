@@ -28,43 +28,66 @@ defmodule Eventos.Events do
   def get_events_for_actor(%Actor{id: actor_id} = _actor, page \\ 1, limit \\ 10) do
     start = (page - 1) * limit
 
-    query = from e in Event,
-                 where: e.organizer_actor_id == ^actor_id,
-                 limit: ^limit,
-                 order_by: [desc: :id],
-                 offset: ^start,
-                 preload: [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :physical_address]
+    query =
+      from(
+        e in Event,
+        where: e.organizer_actor_id == ^actor_id,
+        limit: ^limit,
+        order_by: [desc: :id],
+        offset: ^start,
+        preload: [
+          :organizer_actor,
+          :category,
+          :sessions,
+          :tracks,
+          :tags,
+          :participants,
+          :physical_address
+        ]
+      )
+
     events = Repo.all(query)
-    count_events = Repo.one(from e in Event, select: count(e.id), where: e.organizer_actor_id == ^actor_id)
+
+    count_events =
+      Repo.one(from(e in Event, select: count(e.id), where: e.organizer_actor_id == ^actor_id))
+
     {:ok, events, count_events}
   end
 
   def count_local_events do
     Repo.one(
-      from e in Event,
-      select: count(e.id),
-      where: e.local == ^true
+      from(
+        e in Event,
+        select: count(e.id),
+        where: e.local == ^true
+      )
     )
   end
 
   def count_local_comments do
     Repo.one(
-      from c in Comment,
-      select: count(c.id),
-      where: c.local == ^true
+      from(
+        c in Comment,
+        select: count(c.id),
+        where: c.local == ^true
+      )
     )
   end
 
   import Geo.PostGIS
 
-  def find_close_events(lon, lat, radius \\ 50_000) do # 50 000 meters -> 50 kms
+  # 50 000 meters -> 50 kms
+  def find_close_events(lon, lat, radius \\ 50_000) do
     ip_point = Geo.WKT.decode("SRID=4326;POINT(#{lon} #{lat})")
+
     Repo.all(
-      from e in Event,
-      join: a in Address,
-      on: a.id == e.physical_address_id,
-      where: st_dwithin_in_meters(^ip_point, a.geom, ^radius),
-      preload: :organizer_actor
+      from(
+        e in Event,
+        join: a in Address,
+        on: a.id == e.physical_address_id,
+        where: st_dwithin_in_meters(^ip_point, a.geom, ^radius),
+        preload: :organizer_actor
+      )
     )
   end
 
@@ -103,7 +126,16 @@ defmodule Eventos.Events do
   """
   def get_event_full!(id) do
     event = Repo.get!(Event, id)
-    Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :physical_address])
+
+    Repo.preload(event, [
+      :organizer_actor,
+      :category,
+      :sessions,
+      :tracks,
+      :tags,
+      :participants,
+      :physical_address
+    ])
   end
 
   @doc """
@@ -111,7 +143,16 @@ defmodule Eventos.Events do
   """
   def get_event_full_by_url!(url) do
     event = Repo.get_by(Event, url: url)
-    Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :physical_address])
+
+    Repo.preload(event, [
+      :organizer_actor,
+      :category,
+      :sessions,
+      :tracks,
+      :tags,
+      :participants,
+      :physical_address
+    ])
   end
 
   @doc """
@@ -119,14 +160,23 @@ defmodule Eventos.Events do
   """
   def get_event_full_by_uuid(uuid) do
     event = Repo.get_by(Event, uuid: uuid)
-    Repo.preload(event, [:organizer_actor, :category, :sessions, :tracks, :tags, :participants, :physical_address])
+
+    Repo.preload(event, [
+      :organizer_actor,
+      :category,
+      :sessions,
+      :tracks,
+      :tags,
+      :participants,
+      :physical_address
+    ])
   end
 
   @doc """
   Find events by name
   """
   def find_events_by_name(name) do
-    events = Repo.all from a in Event, where: ilike(a.title, ^like_sanitize(name))
+    events = Repo.all(from(a in Event, where: ilike(a.title, ^like_sanitize(name))))
     Repo.preload(events, [:organizer_actor])
   end
 
@@ -154,7 +204,6 @@ defmodule Eventos.Events do
       {:ok, %Event{} = event} -> {:ok, Repo.preload(event, [:organizer_actor])}
       err -> err
     end
-
   end
 
   @doc """
@@ -235,7 +284,7 @@ defmodule Eventos.Events do
   """
   def get_category!(id), do: Repo.get!(Category, id)
 
-  @spec get_category_by_title(String.t) :: tuple()
+  @spec get_category_by_title(String.t()) :: tuple()
   def get_category_by_title(title) when is_binary(title) do
     Repo.get_by(Category, title: title)
   end
@@ -431,7 +480,7 @@ defmodule Eventos.Events do
 
   """
   def get_participant!(event_id, actor_id) do
-    Repo.get_by!(Participant, [event_id: event_id, actor_id: actor_id])
+    Repo.get_by!(Participant, event_id: event_id, actor_id: actor_id)
   end
 
   @doc """
@@ -500,7 +549,7 @@ defmodule Eventos.Events do
   end
 
   def list_requests_for_actor(%Actor{} = actor) do
-    Repo.all(from p in Participant, where: p.actor_id == ^actor.id and p.approved == false)
+    Repo.all(from(p in Participant, where: p.actor_id == ^actor.id and p.approved == false))
   end
 
   alias Eventos.Events.Session
@@ -523,10 +572,12 @@ defmodule Eventos.Events do
   """
   def list_sessions_for_event(event_uuid) do
     Repo.all(
-      from s in Session,
-      join: e in Event,
-      on: s.event_id == e.id,
-      where: e.uuid == ^event_uuid
+      from(
+        s in Session,
+        join: e in Event,
+        on: s.event_id == e.id,
+        where: e.uuid == ^event_uuid
+      )
     )
   end
 
@@ -534,7 +585,7 @@ defmodule Eventos.Events do
   Returns the list of sessions for a track
   """
   def list_sessions_for_track(track_id) do
-    Repo.all(from s in Session, where: s.track_id == ^track_id)
+    Repo.all(from(s in Session, where: s.track_id == ^track_id))
   end
 
   @doc """

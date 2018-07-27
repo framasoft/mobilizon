@@ -18,16 +18,18 @@ defmodule EventosWeb.GroupView do
   end
 
   def render("group_simple.json", %{group: group}) do
-    %{id: group.id,
+    %{
+      id: group.id,
       title: group.title,
       description: group.description,
       suspended: group.suspended,
-      url: group.url,
+      url: group.url
     }
   end
 
   def render("group.json", %{group: group}) do
-    %{id: group.id,
+    %{
+      id: group.id,
       title: group.title,
       description: group.description,
       suspended: group.suspended,

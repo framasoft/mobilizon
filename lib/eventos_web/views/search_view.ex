@@ -9,7 +9,7 @@ defmodule EventosWeb.SearchView do
     %{
       data: %{
         events: render_many(events, EventView, "event_simple.json"),
-        actors: render_many(actors, ActorView, "actor_basic.json"),
+        actors: render_many(actors, ActorView, "actor_basic.json")
       }
     }
   end

@@ -19,9 +19,11 @@ defmodule EventosWeb.HTTPSignaturePlug do
 
   def call(conn, _opts) do
     user = conn.params["actor"]
-    Logger.debug fn ->
+
+    Logger.debug(fn ->
       "Checking sig for #{user}"
-    end
+    end)
+
     with [signature | _] <- get_req_header(conn, "signature") do
       cond do
         signature && String.contains?(signature, user) ->
@@ -42,10 +44,10 @@ defmodule EventosWeb.HTTPSignaturePlug do
           Logger.debug("No signature header!")
           conn
       end
-      else
-        _ ->
-          Logger.debug("No signature header!")
-          conn
+    else
+      _ ->
+        Logger.debug("No signature header!")
+        conn
     end
   end
 end

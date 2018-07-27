@@ -17,7 +17,6 @@ defmodule Eventos.Service.Federator do
   end
 
   def start_link do
-
     spawn(fn ->
       # 1 minute
       Process.sleep(1000 * 60)
@@ -34,11 +33,10 @@ defmodule Eventos.Service.Federator do
   end
 
   def handle(:publish, activity) do
-    Logger.debug(inspect activity)
+    Logger.debug(inspect(activity))
     Logger.debug(fn -> "Running publish for #{activity.data["id"]}" end)
 
     with actor when not is_nil(actor) <- Actors.get_actor_by_url(activity.data["actor"]) do
-
       Logger.info(fn -> "Sending #{activity.data["id"]} out via AP" end)
       ActivityPub.publish(actor, activity)
     end
@@ -46,7 +44,7 @@ defmodule Eventos.Service.Federator do
 
   def handle(:incoming_ap_doc, params) do
     Logger.info("Handling incoming AP activity")
-    Logger.debug(inspect params)
+    Logger.debug(inspect(params))
 
     with {:ok, _activity} <- Transmogrifier.handle_incoming(params) do
     else
@@ -71,6 +69,7 @@ defmodule Eventos.Service.Federator do
 
   def enqueue(type, payload, priority \\ 1) do
     Logger.debug("enqueue")
+
     if Mix.env() == :test do
       handle(type, payload)
     else
@@ -105,9 +104,10 @@ defmodule Eventos.Service.Federator do
   end
 
   def handle_cast(m, state) do
-    Logger.error fn ->
+    Logger.error(fn ->
       "Unknown: #{inspect(m)}, #{inspect(state)}"
-    end
+    end)
+
     {:noreply, state}
   end
 

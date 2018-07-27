@@ -31,5 +31,5 @@ before_script:
 
 mix:
   script:
-  - mix credo
+  - mix format --check-formatted --dry-run
   - mix coveralls

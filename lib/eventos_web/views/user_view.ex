@@ -26,35 +26,30 @@ defmodule EventosWeb.UserView do
   end
 
   def render("user_simple.json", %{user: user}) do
-    %{id: user.id,
+    %{
+      id: user.id,
       role: user.role,
       actors: render_many(user.actors, ActorView, "actor_basic.json")
     }
   end
 
   def render("user.json", %{user: user}) do
-    %{id: user.id,
-      role: user.role,
-      actors: render_many(user.actors, ActorView, "actor.json")
-    }
+    %{id: user.id, role: user.role, actors: render_many(user.actors, ActorView, "actor.json")}
   end
 
   def render("user_private.json", %{user: user}) do
-    %{id: user.id,
-      email: user.email,
-      role: user.role,
-    }
+    %{id: user.id, email: user.email, role: user.role}
   end
 
   def render("confirmation.json", %{user: user}) do
     %{
-      email: user.email,
+      email: user.email
     }
   end
 
   def render("password_reset.json", %{user: user}) do
     %{
-      email: user.email,
+      email: user.email
     }
   end
 end

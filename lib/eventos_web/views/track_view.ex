@@ -14,9 +14,6 @@ defmodule EventosWeb.TrackView do
   end
 
   def render("track.json", %{track: track}) do
-    %{id: track.id,
-      name: track.name,
-      description: track.description,
-      color: track.color}
+    %{id: track.id, name: track.name, description: track.description, color: track.color}
   end
 end

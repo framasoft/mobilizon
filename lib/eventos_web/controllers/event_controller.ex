@@ -10,27 +10,48 @@ defmodule EventosWeb.EventController do
 
   require Logger
 
-  action_fallback EventosWeb.FallbackController
+  action_fallback(EventosWeb.FallbackController)
 
   def index(conn, _params) do
     ip = "88.161.154.97"
-    Logger.debug(inspect Geolix.lookup(ip), pretty: true)
-    with %{city: %Geolix.Result.City{city: city, country: country, location: %Geolix.Record.Location{latitude: latitude, longitude: longitude}}} <- Geolix.lookup(ip) do
-      Logger.debug(inspect city)
-      Logger.debug(inspect [latitude, longitude])
-      distance = case city do
-        nil -> 500_000
-        _ -> 50_000
-      end
+    Logger.debug(inspect(Geolix.lookup(ip), pretty: true))
+
+    with %{
+           city: %Geolix.Result.City{
+             city: city,
+             country: country,
+             location: %Geolix.Record.Location{latitude: latitude, longitude: longitude}
+           }
+         } <- Geolix.lookup(ip) do
+      distance =
+        case city do
+          nil -> 500_000
+          _ -> 50_000
+        end
+
       events = Events.find_close_events(longitude, latitude, distance)
-      render(conn, "index.json", events: events, coord: %{longitude: longitude, latitude: latitude, distance: distance}, city: city, country: country)
+
+      render(
+        conn,
+        "index.json",
+        events: events,
+        coord: %{longitude: longitude, latitude: latitude, distance: distance},
+        city: city,
+        country: country
+      )
     end
+  end
+
+  def index_all(conn, _params) do
+    events = Events.list_events()
+    render(conn, "index_all.json", events: events)
   end
 
   def create(conn, %{"event" => event_params}) do
     event_params = process_event_address(event_params)
     Logger.debug("creating event with")
-    Logger.debug(inspect event_params)
+    Logger.debug(inspect(event_params))
+
     with {:ok, %Event{} = event} <- Events.create_event(event_params) do
       conn
       |> put_status(:created)
@@ -43,16 +64,22 @@ defmodule EventosWeb.EventController do
     cond do
       Map.has_key?(event, "address_type") && event["address_type"] !== :physical ->
         event
+
       Map.has_key?(event, "physical_address") ->
         address = event["physical_address"]
         geom = EventosWeb.AddressController.process_geom(address["geom"])
-        address = case geom do
-          nil ->
-            address
-          _ ->
-            %{address | "geom" => geom}
-        end
+
+        address =
+          case geom do
+            nil ->
+              address
+
+            _ ->
+              %{address | "geom" => geom}
+          end
+
         %{event | "physical_address" => address}
+
       true ->
         event
     end
@@ -67,6 +94,7 @@ defmodule EventosWeb.EventController do
     case Events.get_event_full_by_uuid(uuid) do
       nil ->
         send_resp(conn, 404, "")
+
       event ->
         render(conn, "show.json", event: event)
     end
@@ -87,7 +115,7 @@ defmodule EventosWeb.EventController do
 
   def delete(conn, %{"uuid" => uuid}) do
     with event <- Events.get_event_by_uuid(uuid),
-      {:ok, %Event{}} <- Events.delete_event(event) do
+         {:ok, %Event{}} <- Events.delete_event(event) do
       send_resp(conn, :no_content, "")
     end
   end

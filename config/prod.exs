@@ -23,13 +23,19 @@ config :eventos, Eventos.Mailer,
   server: "localhost",
   hostname: "localhost",
   port: 25,
-  username: nil, # or {:system, "SMTP_USERNAME"}
-  password: nil, # or {:system, "SMTP_PASSWORD"}
-  tls: :if_available, # can be `:always` or `:never`
-  allowed_tls_versions: [:"tlsv1", :"tlsv1.1", :"tlsv1.2"], # or {":system", ALLOWED_TLS_VERSIONS"} w/ comma seprated values (e.g. "tlsv1.1,tlsv1.2")
-  ssl: false, # can be `true`
+  # or {:system, "SMTP_USERNAME"}
+  username: nil,
+  # or {:system, "SMTP_PASSWORD"}
+  password: nil,
+  # can be `:always` or `:never`
+  tls: :if_available,
+  # or {":system", ALLOWED_TLS_VERSIONS"} w/ comma seprated values (e.g. "tlsv1.1,tlsv1.2")
+  allowed_tls_versions: [:tlsv1, :"tlsv1.1", :"tlsv1.2"],
+  # can be `true`
+  ssl: false,
   retries: 1,
-  no_mx_lookups: false # can be `true`
+  # can be `true`
+  no_mx_lookups: false
 
 # Do not print debug messages in production
 config :logger, level: :info

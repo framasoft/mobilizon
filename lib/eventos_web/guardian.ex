@@ -2,10 +2,12 @@ defmodule EventosWeb.Guardian do
   @moduledoc """
   Handles the JWT tokens encoding and decoding
   """
-  use Guardian, otp_app: :eventos, permissions: %{
-    superuser: [:moderate, :super],
-    user: [:base]
-  }
+  use Guardian,
+    otp_app: :eventos,
+    permissions: %{
+      superuser: [:moderate, :super],
+      user: [:base]
+    }
 
   alias Eventos.Actors
   alias Eventos.Actors.User
@@ -23,6 +25,7 @@ defmodule EventosWeb.Guardian do
       case Integer.parse(uid_str) do
         {uid, ""} ->
           {:ok, Actors.get_user_with_actor!(uid)}
+
         _ ->
           {:error, :invalid_id}
       end

@@ -12,9 +12,12 @@ defmodule Eventos.Email.User do
   def confirmation_email(%User{} = user, locale \\ "en") do
     Gettext.put_locale(locale)
     instance_url = get_config(:instance)
+
     base_email()
     |> to(user.email)
-    |> subject(gettext "Peakweaver: Confirmation instructions for %{instance}", instance: instance_url)
+    |> subject(
+      gettext("Peakweaver: Confirmation instructions for %{instance}", instance: instance_url)
+    )
     |> put_header("Reply-To", get_config(:reply_to))
     |> assign(:token, user.confirmation_token)
     |> assign(:instance, instance_url)
@@ -24,9 +27,15 @@ defmodule Eventos.Email.User do
   def reset_password_email(%User{} = user, locale \\ "en") do
     Gettext.put_locale(locale)
     instance_url = get_config(:instance)
+
     base_email()
     |> to(user.email)
-    |> subject(gettext "Peakweaver: Reset your password on %{instance} instructions", instance: instance_url)
+    |> subject(
+      gettext(
+        "Peakweaver: Reset your password on %{instance} instructions",
+        instance: instance_url
+      )
+    )
     |> put_header("Reply-To", get_config(:reply_to))
     |> assign(:token, user.reset_password_token)
     |> assign(:instance, instance_url)

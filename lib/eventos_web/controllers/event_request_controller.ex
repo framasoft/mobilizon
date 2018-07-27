@@ -1,4 +1,4 @@
-#defmodule EventosWeb.EventRequestController do
+# defmodule EventosWeb.EventRequestController do
 #  @moduledoc """
 #  Controller for Event requests
 #  """
@@ -49,4 +49,4 @@
 #      send_resp(conn, :no_content, "")
 #    end
 #  end
-#end
+# end

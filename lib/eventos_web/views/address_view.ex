@@ -15,7 +15,8 @@ defmodule EventosWeb.AddressView do
   end
 
   def render("address.json", %{address: address}) do
-    %{id: address.id,
+    %{
+      id: address.id,
       description: address.description,
       floor: address.floor,
       addressCountry: address.addressCountry,
@@ -29,11 +30,12 @@ defmodule EventosWeb.AddressView do
 
   def render("geom.json", %{address: %Geo.Point{} = point}) do
     [lat, lon] = Tuple.to_list(point.coordinates)
+
     %{
       type: "point",
       data: %{
-        "latitude": lat,
-        "longitude": lon,
+        latitude: lat,
+        longitude: lon
       }
     }
   end
