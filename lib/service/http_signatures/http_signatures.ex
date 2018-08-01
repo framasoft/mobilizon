@@ -46,8 +46,8 @@ defmodule Eventos.Service.HTTPSignatures do
     # For now, fetch the key for the actor.
     with actor_id <- conn.params["actor"],
          public_key_code <- Actor.get_public_key_for_url(actor_id),
-         [public_key] = :public_key.pem_decode(public_key_code),
-         public_key = :public_key.pem_entry_decode(public_key) do
+         [public_key] <- :public_key.pem_decode(public_key_code),
+         public_key <- :public_key.pem_entry_decode(public_key) do
       if validate_conn(conn, public_key) do
         true
       else
@@ -56,8 +56,8 @@ defmodule Eventos.Service.HTTPSignatures do
         with actor_id <- conn.params["actor"],
              {:ok, _actor} <- ActivityPub.make_actor_from_url(actor_id),
              public_key_code <- Actor.get_public_key_for_url(actor_id),
-             [public_key] = :public_key.pem_decode(public_key_code),
-             public_key = :public_key.pem_entry_decode(public_key) do
+             [public_key] <- :public_key.pem_decode(public_key_code),
+             public_key <- :public_key.pem_entry_decode(public_key) do
           validate_conn(conn, public_key)
         end
       end
@@ -84,19 +84,17 @@ defmodule Eventos.Service.HTTPSignatures do
   end
 
   def sign(%Actor{} = actor, headers) do
-    with private_key = Actor.get_keys_for_actor(actor) do
-      sigstring = build_signing_string(headers, Map.keys(headers))
+    sigstring = build_signing_string(headers, Map.keys(headers))
 
-      signature = sigstring |> :public_key.sign(:sha256, private_key) |> Base.encode64()
+    signature = sigstring |> :public_key.sign(:sha256, actor.keys) |> Base.encode64()
 
-      [
-        keyId: actor.url <> "#main-key",
-        algorithm: "rsa-sha256",
-        headers: headers |> Map.keys() |> Enum.join(" "),
-        signature: signature
-      ]
-      |> Enum.map(fn {k, v} -> "#{k}=\"#{v}\"" end)
-      |> Enum.join(",")
-    end
+    [
+      keyId: actor.url <> "#main-key",
+      algorithm: "rsa-sha256",
+      headers: headers |> Map.keys() |> Enum.join(" "),
+      signature: signature
+    ]
+    |> Enum.map(fn {k, v} -> "#{k}=\"#{v}\"" end)
+    |> Enum.join(",")
   end
 end

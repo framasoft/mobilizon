@@ -1,36 +1,3 @@
-defmodule Eventos.Actors.Actor.TitleSlug do
-  @moduledoc """
-  Slug generation for groups
-  """
-  alias Eventos.Actors.Actor
-  import Ecto.Query
-  alias Eventos.Repo
-  use EctoAutoslugField.Slug, from: :title, to: :slug
-
-  def build_slug(sources, changeset) do
-    slug = super(sources, changeset)
-    build_unique_slug(slug, changeset)
-  end
-
-  defp build_unique_slug(slug, changeset) do
-    query =
-      from(
-        a in Actor,
-        where: a.slug == ^slug
-      )
-
-    case Repo.one(query) do
-      nil ->
-        slug
-
-      _story ->
-        slug
-        |> Eventos.Slug.increment_slug()
-        |> build_unique_slug(changeset)
-    end
-  end
-end
-
 import EctoEnum
 
 defenum(Eventos.Actors.ActorTypeEnum, :actor_type, [
@@ -131,6 +98,7 @@ defmodule Eventos.Actors.Actor do
     |> validate_required([:preferred_username, :keys, :suspended, :url, :type])
   end
 
+  # TODO : Use me !
   @email_regex ~r/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
   def remote_actor_creation(params) do
     changes =
@@ -219,37 +187,17 @@ defmodule Eventos.Actors.Actor do
     end
   end
 
-  # @spec get_public_key_for_url(Actor.t) :: {:ok, String.t}
+  @spec get_public_key_for_url(String.t()) :: {:ok, String.t()}
   def get_public_key_for_url(url) do
     with %Actor{} = actor <- get_or_fetch_by_url(url) do
-      actor
-      |> get_keys_for_actor
+      actor.keys
       |> Eventos.Service.ActivityPub.Utils.pem_to_public_key()
     else
       _ -> :error
     end
   end
 
-  @deprecated "Use get_keys_for_actor/1 instead"
-  # @spec get_public_key_for_actor(Actor.t) :: {:ok, String.t}
-  def get_public_key_for_actor(%Actor{} = actor) do
-    {:ok, actor.keys}
-  end
-
-  @doc """
-  Returns a pem encoded keypair (if local) or public key
-  """
-  def get_keys_for_actor(%Actor{} = actor) do
-    actor.keys
-  end
-
-  @deprecated "Use get_keys_for_actor/1 instead"
-  # @spec get_private_key_for_actor(Actor.t) :: {:ok, String.t}
-  def get_private_key_for_actor(%Actor{} = actor) do
-    actor.keys
-  end
-
-  def get_followers(%Actor{id: actor_id} = actor) do
+  def get_followers(%Actor{id: actor_id} = _actor) do
     Repo.all(
       from(
         a in Actor,
@@ -260,7 +208,7 @@ defmodule Eventos.Actors.Actor do
     )
   end
 
-  def get_followings(%Actor{id: actor_id} = actor) do
+  def get_followings(%Actor{id: actor_id} = _actor) do
     Repo.all(
       from(
         a in Actor,

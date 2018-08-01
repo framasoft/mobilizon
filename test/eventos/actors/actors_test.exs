@@ -38,23 +38,30 @@ defmodule Eventos.ActorsTest do
       preferred_username: nil
     }
 
-    def actor_fixture(attrs \\ %{}) do
-      {:ok, actor} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Actors.create_actor()
+    setup do
+      user = insert(:user)
+      actor = insert(:actor, user: user)
 
-      actor
+      {:ok, actor: actor}
     end
 
-    test "list_actors/0 returns all actors" do
-      actor = actor_fixture()
-      assert Actors.list_actors() == [actor]
+    test "list_actors/0 returns all actors", %{actor: actor} do
+      actors = Actors.list_actors()
+      assert actors = [actor]
     end
 
-    test "get_actor!/1 returns the actor with given id" do
-      actor = actor_fixture()
-      assert Actors.get_actor!(actor.id) == actor
+    test "get_actor!/1 returns the actor with given id", %{actor: actor} do
+      actor_fetched = Actors.get_actor!(actor.id)
+      assert actor_fetched = actor
+    end
+
+    test "get_actor_with_everything!/1 returns the actor with it's organized events", %{
+      actor: actor
+    } do
+      assert Actors.get_actor_with_everything!(actor.id).organized_events == []
+      event = insert(:event, organizer_actor: actor)
+      events = Actors.get_actor_with_everything!(actor.id).organized_events
+      assert events = [event]
     end
 
     test "create_actor/1 with valid data creates a actor" do
@@ -71,8 +78,7 @@ defmodule Eventos.ActorsTest do
       assert {:error, %Ecto.Changeset{}} = Actors.create_actor(@invalid_attrs)
     end
 
-    test "update_actor/2 with valid data updates the actor" do
-      actor = actor_fixture()
+    test "update_actor/2 with valid data updates the actor", %{actor: actor} do
       assert {:ok, actor} = Actors.update_actor(actor, @update_attrs)
       assert %Actor{} = actor
       assert actor.summary == "some updated description"
@@ -83,20 +89,18 @@ defmodule Eventos.ActorsTest do
       assert actor.preferred_username == "some updated username"
     end
 
-    test "update_actor/2 with invalid data returns error changeset" do
-      actor = actor_fixture()
+    test "update_actor/2 with invalid data returns error changeset", %{actor: actor} do
       assert {:error, %Ecto.Changeset{}} = Actors.update_actor(actor, @invalid_attrs)
-      assert actor == Actors.get_actor!(actor.id)
+      actor_fetched = Actors.get_actor!(actor.id)
+      assert actor = actor_fetched
     end
 
-    test "delete_actor/1 deletes the actor" do
-      actor = actor_fixture()
+    test "delete_actor/1 deletes the actor", %{actor: actor} do
       assert {:ok, %Actor{}} = Actors.delete_actor(actor)
       assert_raise Ecto.NoResultsError, fn -> Actors.get_actor!(actor.id) end
     end
 
-    test "change_actor/1 returns a actor changeset" do
-      actor = actor_fixture()
+    test "change_actor/1 returns a actor changeset", %{actor: actor} do
       assert %Ecto.Changeset{} = Actors.change_actor(actor)
     end
   end
@@ -267,6 +271,74 @@ defmodule Eventos.ActorsTest do
     test "change_bot/1 returns a bot changeset" do
       bot = bot_fixture()
       assert %Ecto.Changeset{} = Actors.change_bot(bot)
+    end
+  end
+
+  describe "followers" do
+    alias Eventos.Actors.Follower
+
+    @valid_attrs %{approved: true, score: 42}
+    @update_attrs %{approved: false, score: 43}
+    @invalid_attrs %{approved: nil, score: nil}
+
+    setup do
+      actor = insert(:actor)
+      target_actor = insert(:actor)
+      follower = insert(:follower, actor: actor, target_actor: target_actor)
+      {:ok, follower: follower, actor: actor, target_actor: target_actor}
+    end
+
+    test "get_follower!/1 returns the follower with given id", %{follower: follower} do
+      follower_fetched = Actors.get_follower!(follower.id)
+      assert follower_fetched = follower
+    end
+
+    test "create_follower/1 with valid data creates a follower", %{
+      actor: actor,
+      target_actor: target_actor
+    } do
+      valid_attrs =
+        @valid_attrs
+        |> Map.put(:actor_id, actor.id)
+        |> Map.put(:target_actor_id, target_actor.id)
+
+      assert {:ok, %Follower{} = follower} = Actors.create_follower(valid_attrs)
+      assert follower.approved == true
+      assert follower.score == 42
+    end
+
+    test "create_follower/1 with invalid data returns error changeset", %{
+      actor: actor,
+      target_actor: target_actor
+    } do
+      invalid_attrs =
+        @invalid_attrs
+        |> Map.put(:actor_id, actor.id)
+        |> Map.put(:target_actor_id, target_actor.id)
+
+      assert {:error, %Ecto.Changeset{}} = Actors.create_follower(invalid_attrs)
+    end
+
+    test "update_follower/2 with valid data updates the follower", %{follower: follower} do
+      assert {:ok, follower} = Actors.update_follower(follower, @update_attrs)
+      assert %Follower{} = follower
+      assert follower.approved == false
+      assert follower.score == 43
+    end
+
+    test "update_follower/2 with invalid data returns error changeset", %{follower: follower} do
+      assert {:error, %Ecto.Changeset{}} = Actors.update_follower(follower, @invalid_attrs)
+      follower_fetched = Actors.get_follower!(follower.id)
+      assert follower = follower_fetched
+    end
+
+    test "delete_follower/1 deletes the follower", %{follower: follower} do
+      assert {:ok, %Follower{}} = Actors.delete_follower(follower)
+      assert_raise Ecto.NoResultsError, fn -> Actors.get_follower!(follower.id) end
+    end
+
+    test "change_follower/1 returns a follower changeset", %{follower: follower} do
+      assert %Ecto.Changeset{} = Actors.change_follower(follower)
     end
   end
 end

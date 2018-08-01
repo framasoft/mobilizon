@@ -113,35 +113,20 @@ defmodule Eventos.Actors do
   end
 
   @doc """
-  Returns a text representation of a local actor like user@domain.tld
-  """
-  def actor_to_local_name_and_domain(actor) do
-    "#{actor.preferred_username}@#{Application.get_env(:my, EventosWeb.Endpoint)[:url][:host]}"
-  end
-
-  @doc """
-  Returns a webfinger representation of an actor
-  """
-  def actor_to_webfinger_s(actor) do
-    "acct:#{actor_to_local_name_and_domain(actor)}"
-  end
-
-  @doc """
   List the groups
   """
   def list_groups do
-    Repo.all(from(a in Actor, where: a.type == "Group"))
+    Repo.all(from(a in Actor, where: a.type == ^:Group))
   end
 
   def get_group_by_name(name) do
-    actor =
-      case String.split(name, "@") do
-        [name] ->
-          Repo.get_by(Actor, preferred_username: name, type: :Group)
+    case String.split(name, "@") do
+      [name] ->
+        Repo.get_by(Actor, preferred_username: name, type: :Group)
 
-        [name, domain] ->
-          Repo.get_by(Actor, preferred_username: name, domain: domain, type: :Group)
-      end
+      [name, domain] ->
+        Repo.get_by(Actor, preferred_username: name, domain: domain, type: :Group)
+    end
   end
 
   @doc """
@@ -735,5 +720,91 @@ defmodule Eventos.Actors do
   """
   def change_bot(%Bot{} = bot) do
     Bot.changeset(bot, %{})
+  end
+
+  alias Eventos.Actors.Follower
+
+  @doc """
+  Gets a single follower.
+
+  Raises `Ecto.NoResultsError` if the Follower does not exist.
+
+  ## Examples
+
+      iex> get_follower!(123)
+      %Follower{}
+
+      iex> get_follower!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_follower!(id) do
+    Repo.get!(Follower, id)
+    |> Repo.preload([:actor, :target_actor])
+  end
+
+  @doc """
+  Creates a follower.
+
+  ## Examples
+
+      iex> create_follower(%{field: value})
+      {:ok, %Follower{}}
+
+      iex> create_follower(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_follower(attrs \\ %{}) do
+    %Follower{}
+    |> Follower.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a follower.
+
+  ## Examples
+
+      iex> update_follower(follower, %{field: new_value})
+      {:ok, %Follower{}}
+
+      iex> update_follower(follower, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_follower(%Follower{} = follower, attrs) do
+    follower
+    |> Follower.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a Follower.
+
+  ## Examples
+
+      iex> delete_follower(follower)
+      {:ok, %Follower{}}
+
+      iex> delete_follower(follower)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_follower(%Follower{} = follower) do
+    Repo.delete(follower)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking follower changes.
+
+  ## Examples
+
+      iex> change_follower(follower)
+      %Ecto.Changeset{source: %Follower{}}
+
+  """
+  def change_follower(%Follower{} = follower) do
+    Follower.changeset(follower, %{})
   end
 end

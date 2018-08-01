@@ -11,16 +11,9 @@ defmodule EventosWeb.ActorControllerTest do
     {:ok, conn: conn, user: user, actor: actor}
   end
 
-  key = :public_key.generate_key({:rsa, 2048, 65_537})
-  entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
-  pem = [entry] |> :public_key.pem_encode() |> String.trim_trailing()
-
   @create_attrs %{
     preferred_username: "otheridentity",
-    summary: "This is my other identity",
-    domain: nil,
-    keys: pem,
-    user: nil
+    summary: "This is my other identity"
   }
 
   describe "index" do
@@ -61,4 +54,66 @@ defmodule EventosWeb.ActorControllerTest do
   #      assert response(conn, 200)
   #    end
   #  end
+
+  @create_group_attrs %{
+    preferred_username: "mygroup",
+    summary: "This is my awesome group",
+    name: "My Group"
+  }
+
+  describe "index groups" do
+    test "lists all actor groups", %{conn: conn} do
+      conn = get(conn, group_path(conn, :index))
+      assert json_response(conn, 200)["data"] == []
+    end
+
+    test "after creating a group", %{conn: conn, user: user, actor: actor} do
+      # create group
+      conn = auth_conn(conn, user)
+      create_group_attrs = Map.put(@create_group_attrs, :actor_admin, actor.preferred_username)
+      conn = post(conn, group_path(conn, :create), group: create_group_attrs)
+
+      group_res = json_response(conn, 201)
+      assert group_res["username"] == @create_group_attrs.preferred_username
+
+      conn = get(conn, group_path(conn, :index))
+      assert json_response(conn, 200)["data"] == [group_res]
+    end
+  end
+
+  describe "create group" do
+    test "with valid attributes", %{conn: conn, user: user, actor: actor} do
+      conn = auth_conn(conn, user)
+      create_group_attrs = Map.put(@create_group_attrs, :actor_admin, actor.preferred_username)
+      conn = post(conn, group_path(conn, :create), group: create_group_attrs)
+
+      assert json_response(conn, 201)["username"] == @create_group_attrs.preferred_username
+    end
+  end
+
+  describe "join group" do
+    setup %{conn: conn} do
+      user = insert(:user)
+      actor = insert(:actor, user: user)
+      group = insert(:group, preferred_username: "mygroup")
+      {:ok, conn: conn, user: user, actor: actor, group: group}
+    end
+
+    test "from valid account", %{conn: conn, user: user, actor: actor, group: group} do
+      conn = auth_conn(conn, user)
+
+      conn =
+        post(conn, group_path(conn, :join, group.preferred_username), %{
+          "actor_name" => actor.preferred_username
+        })
+
+      resp = json_response(conn, 201)
+
+      assert resp = %{
+               "actor" => %{"username" => actor.preferred_username},
+               "group" => %{"username" => group.preferred_username},
+               "role" => 0
+             }
+    end
+  end
 end

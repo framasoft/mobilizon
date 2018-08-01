@@ -24,8 +24,25 @@ defmodule Eventos.Factory do
       preferred_username: preferred_username,
       domain: nil,
       keys: pem,
+      type: :Person,
       url: EventosWeb.Endpoint.url() <> "/@#{preferred_username}",
       user: nil
+    }
+  end
+
+  def group_factory do
+    struct!(
+      actor_factory(),
+      %{
+        type: :Group
+      }
+    )
+  end
+
+  def follower_factory do
+    %Eventos.Actors.Follower{
+      target_actor: build(:actor),
+      actor: build(:actor)
     }
   end
 

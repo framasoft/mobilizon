@@ -13,8 +13,7 @@ defmodule EventosWeb.ActivityPub.ActorView do
   import Ecto.Query
 
   def render("actor.json", %{actor: actor}) do
-    pem = Actor.get_keys_for_actor(actor)
-    public_key = Eventos.Service.ActivityPub.Utils.pem_to_public_key_pem(pem)
+    public_key = Eventos.Service.ActivityPub.Utils.pem_to_public_key_pem(actor.keys)
 
     %{
       "id" => actor.url,

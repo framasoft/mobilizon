@@ -19,3 +19,4 @@ erl_crash.dump
 /doc
 priv/static/GeoLite2-City.mmdb
 .vscode/
+cover/

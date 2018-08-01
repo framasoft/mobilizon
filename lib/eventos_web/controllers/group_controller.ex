@@ -15,8 +15,15 @@ defmodule EventosWeb.GroupController do
   end
 
   def create(conn, %{"group" => group_params}) do
-    with actor_admin = Guardian.Plug.current_resource(conn).actor,
-         {:ok, %Actor{} = group} <- Actors.create_group(group_params) do
+    with {:ok, %Actor{} = group} <- Actors.create_group(group_params) do
+      %Member{} =
+        _member =
+        Actors.create_member(%{
+          "parent_id" => group.id,
+          "actor_id" => Actors.get_local_actor_by_name(group_params["actor_admin"]).id,
+          "role" => 2
+        })
+
       conn
       |> put_status(:created)
       |> put_resp_header("location", actor_path(conn, :show, group))
@@ -24,9 +31,9 @@ defmodule EventosWeb.GroupController do
     end
   end
 
-  def join(conn, %{"name" => group_name}) do
-    with actor = Guardian.Plug.current_resource(conn).actor,
-         group <- Actors.get_group_by_name(group_name),
+  def join(conn, %{"name" => group_name, "actor_name" => actor_name}) do
+    with group <- Actors.get_group_by_name(group_name),
+         actor <- Actors.get_local_actor_by_name(actor_name),
          %Member{} = member <-
            Actors.create_member(%{"parent_id" => group.id, "actor_id" => actor.id}) do
       conn
@@ -34,7 +41,7 @@ defmodule EventosWeb.GroupController do
       |> render(EventosWeb.MemberView, "member.json", member: member)
     else
       err ->
-        import Logger
+        require Logger
         Logger.debug(inspect(err))
     end
   end

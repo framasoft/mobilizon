@@ -12,14 +12,12 @@ defmodule Eventos.Actors.Follower do
     field(:score, :integer, default: 1000)
     belongs_to(:target_actor, Actor)
     belongs_to(:actor, Actor)
-
-    timestamps()
   end
 
   @doc false
   def changeset(%Follower{} = member, attrs) do
     member
-    |> cast(attrs, [:role, :approved, :target_actor_id, :actor_id])
-    |> validate_required([:role, :approved, :target_actor_id, :actor_id])
+    |> cast(attrs, [:score, :approved, :target_actor_id, :actor_id])
+    |> validate_required([:score, :approved, :target_actor_id, :actor_id])
   end
 end

@@ -57,6 +57,9 @@ defmodule EventosWeb.Router do
       get("/actors", ActorController, :index)
       get("/actors/search/:name", ActorController, :search)
       get("/actors/:name", ActorController, :show)
+
+      resources("/followers", FollowerController, except: [:new, :edit])
+
       resources("/tags", TagController, only: [:index, :show])
       resources("/categories", CategoryController, only: [:index, :show])
       resources("/sessions", SessionController, only: [:index, :show])
@@ -67,7 +70,7 @@ defmodule EventosWeb.Router do
     end
   end
 
-  # Other scopes may use custom stacks.
+  # Authentificated API
   scope "/api", EventosWeb do
     pipe_through(:api_auth)
 
