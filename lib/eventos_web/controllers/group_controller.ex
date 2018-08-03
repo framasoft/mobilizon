@@ -44,6 +44,7 @@ defmodule EventosWeb.GroupController do
         conn
         |> put_status(:not_found)
         |> render(EventosWeb.ErrorView, "not_found.json", details: "group or actor doesn't exist")
+
       err ->
         require Logger
         Logger.debug(inspect(err))

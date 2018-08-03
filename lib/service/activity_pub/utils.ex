@@ -324,10 +324,13 @@ defmodule Eventos.Service.ActivityPub.Utils do
   def pem_to_public_key(pem) do
     [key_code] = :public_key.pem_decode(pem)
     key = :public_key.pem_entry_decode(key_code)
+
     case key do
       {:RSAPrivateKey, _, modulus, exponent, _, _, _, _, _, _, _} ->
         {:RSAPublicKey, modulus, exponent}
-      {:RSAPublicKey, modulus, exponent} -> {:RSAPublicKey, modulus, exponent}
+
+      {:RSAPublicKey, modulus, exponent} ->
+        {:RSAPublicKey, modulus, exponent}
     end
   end
 

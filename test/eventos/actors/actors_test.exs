@@ -69,19 +69,28 @@ defmodule Eventos.ActorsTest do
       assert actor_found = actor
     end
 
-    test "get_local_actor_by_name_with_everything!/1 returns the local actor with it's organized events", %{
-      actor: actor
-    } do
-      assert Actors.get_local_actor_by_name_with_everything(actor.preferred_username).organized_events == []
+    test "get_local_actor_by_name_with_everything!/1 returns the local actor with it's organized events",
+         %{
+           actor: actor
+         } do
+      assert Actors.get_local_actor_by_name_with_everything(actor.preferred_username).organized_events ==
+               []
+
       event = insert(:event, organizer_actor: actor)
-      events = Actors.get_local_actor_by_name_with_everything(actor.preferred_username).organized_events
+
+      events =
+        Actors.get_local_actor_by_name_with_everything(actor.preferred_username).organized_events
+
       assert events = [event]
     end
 
-    test "get_actor_by_name_with_everything!/1 returns the local actor with it's organized events", %{
-      actor: actor
-    } do
-      assert Actors.get_actor_by_name_with_everything(actor.preferred_username).organized_events == []
+    test "get_actor_by_name_with_everything!/1 returns the local actor with it's organized events",
+         %{
+           actor: actor
+         } do
+      assert Actors.get_actor_by_name_with_everything(actor.preferred_username).organized_events ==
+               []
+
       event = insert(:event, organizer_actor: actor)
       events = Actors.get_actor_by_name_with_everything(actor.preferred_username).organized_events
       assert events = [event]
@@ -98,10 +107,13 @@ defmodule Eventos.ActorsTest do
     @remote_account_username "tcit"
     @remote_account_domain "social.tcit.fr"
     test "get_or_fetch_by_url/1 returns the remote actor for the url" do
-      assert %Actor{preferred_username: @remote_account_username, domain: @remote_account_domain} = Actors.get_or_fetch_by_url(@remote_account_url)
+      assert %Actor{preferred_username: @remote_account_username, domain: @remote_account_domain} =
+               Actors.get_or_fetch_by_url(@remote_account_url)
     end
 
-    test "test find_local_by_username/1 returns local actors with similar usernames", %{actor: actor} do
+    test "test find_local_by_username/1 returns local actors with similar usernames", %{
+      actor: actor
+    } do
       actor2 = insert(:actor)
       actors = Actors.find_local_by_username("thomas")
       assert actors = [actor, actor2]
@@ -114,10 +126,13 @@ defmodule Eventos.ActorsTest do
     end
 
     test "test get_public_key_for_url/1 with local actor", %{actor: actor} do
-      assert Actor.get_public_key_for_url(actor.url) == actor.keys |> Eventos.Service.ActivityPub.Utils.pem_to_public_key()
+      assert Actor.get_public_key_for_url(actor.url) ==
+               actor.keys |> Eventos.Service.ActivityPub.Utils.pem_to_public_key()
     end
 
-    @remote_actor_key {:RSAPublicKey, 20890513599005517665557846902571022168782075040010449365706450877170130373892202874869873999284399697282332064948148602583340776692090472558740998357203838580321412679020304645826371196718081108049114160630664514340729769453281682773898619827376232969899348462205389310883299183817817999273916446620095414233374619948098516821650069821783810210582035456563335930330252551528035801173640288329718719895926309416142129926226047930429802084560488897717417403272782469039131379953278833320195233761955815307522871787339192744439894317730207141881699363391788150650217284777541358381165360697136307663640904621178632289787, 65537}
+    @remote_actor_key {:RSAPublicKey,
+                       20_890_513_599_005_517_665_557_846_902_571_022_168_782_075_040_010_449_365_706_450_877_170_130_373_892_202_874_869_873_999_284_399_697_282_332_064_948_148_602_583_340_776_692_090_472_558_740_998_357_203_838_580_321_412_679_020_304_645_826_371_196_718_081_108_049_114_160_630_664_514_340_729_769_453_281_682_773_898_619_827_376_232_969_899_348_462_205_389_310_883_299_183_817_817_999_273_916_446_620_095_414_233_374_619_948_098_516_821_650_069_821_783_810_210_582_035_456_563_335_930_330_252_551_528_035_801_173_640_288_329_718_719_895_926_309_416_142_129_926_226_047_930_429_802_084_560_488_897_717_417_403_272_782_469_039_131_379_953_278_833_320_195_233_761_955_815_307_522_871_787_339_192_744_439_894_317_730_207_141_881_699_363_391_788_150_650_217_284_777_541_358_381_165_360_697_136_307_663_640_904_621_178_632_289_787,
+                       65537}
     test "test get_public_key_for_url/1 with remote actor" do
       require Logger
       assert Actor.get_public_key_for_url(@remote_account_url) == @remote_actor_key
@@ -381,6 +396,7 @@ defmodule Eventos.ActorsTest do
       target_actor: target_actor
     } do
       create_follower(%{actor: actor, target_actor: target_actor})
+
       valid_attrs =
         @valid_attrs
         |> Map.put(:actor_id, actor.id)

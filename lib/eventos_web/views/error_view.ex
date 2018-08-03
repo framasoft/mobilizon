@@ -15,7 +15,7 @@ defmodule EventosWeb.ErrorView do
   def render("not_found.json", %{details: details}) do
     %{
       msg: "Resource not found",
-      details: details,
+      details: details
     }
   end
 

@@ -11,8 +11,6 @@ defmodule EventosWeb.FollowerView do
   end
 
   def render("follower.json", %{follower: follower}) do
-    %{id: follower.id,
-      approved: follower.approved,
-      score: follower.score}
+    %{id: follower.id, approved: follower.approved, score: follower.score}
   end
 end
