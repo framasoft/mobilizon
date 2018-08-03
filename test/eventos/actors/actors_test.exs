@@ -38,6 +38,10 @@ defmodule Eventos.ActorsTest do
       preferred_username: nil
     }
 
+    @remote_account_url "https://social.tcit.fr/users/tcit"
+    @remote_account_username "tcit"
+    @remote_account_domain "social.tcit.fr"
+
     setup do
       user = insert(:user)
       actor = insert(:actor, user: user)
@@ -69,6 +73,12 @@ defmodule Eventos.ActorsTest do
       assert actor_found = actor
     end
 
+    test "get_actor_by_name/1 returns a remote actor" do
+      assert %Actor{} = actor = Actors.get_or_fetch_by_url(@remote_account_url)
+      actor_found = Actors.get_actor_by_name("#{actor.preferred_username}@#{actor.domain}")
+      assert actor_found = actor
+    end
+
     test "get_local_actor_by_name_with_everything!/1 returns the local actor with it's organized events",
          %{
            actor: actor
@@ -96,6 +106,21 @@ defmodule Eventos.ActorsTest do
       assert events = [event]
     end
 
+    test "get_actor_by_name_with_everything!/1 returns the remote actor with it's organized events" do
+      assert %Actor{} = actor = Actors.get_or_fetch_by_url(@remote_account_url)
+
+      assert Actors.get_actor_by_name_with_everything(
+               "#{actor.preferred_username}@#{actor.domain}"
+             ).organized_events == []
+
+      event = insert(:event, organizer_actor: actor)
+
+      events =
+        Actors.get_actor_by_name_with_everything("#{actor.preferred_username}@#{actor.domain}").organized_events
+
+      assert events = [event]
+    end
+
     test "get_or_fetch_by_url/1 returns the local actor for the url", %{
       actor: actor
     } do
@@ -103,9 +128,6 @@ defmodule Eventos.ActorsTest do
       assert Actors.get_or_fetch_by_url(actor.url).domain == nil
     end
 
-    @remote_account_url "https://social.tcit.fr/users/tcit"
-    @remote_account_username "tcit"
-    @remote_account_domain "social.tcit.fr"
     test "get_or_fetch_by_url/1 returns the remote actor for the url" do
       assert %Actor{preferred_username: @remote_account_username, domain: @remote_account_domain} =
                Actors.get_or_fetch_by_url(@remote_account_url)
@@ -123,6 +145,23 @@ defmodule Eventos.ActorsTest do
       %Actor{} = actor2 = Actors.get_or_fetch_by_url(@remote_account_url)
       actors = Actors.find_actors_by_username("t")
       assert actors = [actor, actor2]
+    end
+
+    test "test search/1 returns accounts for search with existing accounts", %{actor: actor} do
+      assert {:ok, [actor]} = Actors.search("t")
+    end
+
+    test "test search/1 returns accounts for search with non existent accounts" do
+      assert {:ok, []} = Actors.search("nonexistent")
+    end
+
+    test "test search/1 returns accounts for search with existing remote accounts" do
+      assert {:ok, [%Actor{preferred_username: "tcit", domain: "framapiaf.org"}]} =
+               Actors.search("tcit@framapiaf.org")
+    end
+
+    test "test search/1 returns accounts for search with non existent remote accounts" do
+      assert {:error, _} = Actors.search("tcit@yolo.tld")
     end
 
     test "test get_public_key_for_url/1 with local actor", %{actor: actor} do
@@ -208,8 +247,7 @@ defmodule Eventos.ActorsTest do
 
     test "get_user!/1 returns the user with given id" do
       user = user_fixture()
-      user_fetched = Actors.get_user!(user.id)
-      assert user_fetched = user
+      assert user = Actors.get_user!(user.id)
     end
 
     test "create_user/1 with valid data creates a user" do
@@ -235,8 +273,7 @@ defmodule Eventos.ActorsTest do
     test "update_user/2 with invalid data returns error changeset" do
       user = user_fixture()
       assert {:error, %Ecto.Changeset{}} = Actors.update_user(user, @invalid_attrs)
-      user_fetched = Actors.get_user!(user.id)
-      assert user = user_fetched
+      assert user = Actors.get_user!(user.id)
     end
 
     test "delete_user/1 deletes the user" do
@@ -248,6 +285,16 @@ defmodule Eventos.ActorsTest do
     test "change_user/1 returns a user changeset" do
       user = user_fixture()
       assert %Ecto.Changeset{} = Actors.change_user(user)
+    end
+
+    @email "email@domain.tld"
+    @password "password"
+    test "authenticate/1 checks the user's password" do
+      {:ok, %User{} = user} = Actors.create_user(%{email: @email, password: @password})
+      assert {:ok, _, _} = Actors.authenticate(%{user: user, password: @password})
+
+      assert {:error, :unauthorized} ==
+               Actors.authenticate(%{user: user, password: "bad password"})
     end
   end
 
@@ -302,8 +349,7 @@ defmodule Eventos.ActorsTest do
 
     test "get_bot!/1 returns the bot with given id" do
       bot = bot_fixture()
-      bot_fetched = Actors.get_bot!(bot.id)
-      assert bot_fetched = bot
+      assert bot = Actors.get_bot!(bot.id)
     end
 
     test "create_bot/1 with valid data creates a bot" do
@@ -332,8 +378,7 @@ defmodule Eventos.ActorsTest do
     test "update_bot/2 with invalid data returns error changeset" do
       bot = bot_fixture()
       assert {:error, %Ecto.Changeset{}} = Actors.update_bot(bot, @invalid_attrs)
-      bot_fetched = Actors.get_bot!(bot.id)
-      assert bot = bot_fetched
+      assert bot = Actors.get_bot!(bot.id)
     end
 
     test "delete_bot/1 deletes the bot" do
@@ -368,8 +413,7 @@ defmodule Eventos.ActorsTest do
 
     test "get_follower!/1 returns the follower with given id", context do
       follower = create_follower(context)
-      follower_fetched = Actors.get_follower!(follower.id)
-      assert follower_fetched = follower
+      assert follower = Actors.get_follower!(follower.id)
     end
 
     test "create_follower/1 with valid data creates a follower", %{
@@ -385,10 +429,8 @@ defmodule Eventos.ActorsTest do
       assert follower.approved == true
       assert follower.score == 42
 
-      actor_followings = Actor.get_followings(actor)
-      assert actor_followings = [target_actor]
-      actor_followers = Actor.get_followers(target_actor)
-      assert actor_followers = [actor]
+      assert [target_actor] = Actor.get_followings(actor)
+      assert [actor] = Actor.get_followers(target_actor)
     end
 
     test "create_follower/1 with valid data but same actors fails to create a follower", %{
@@ -428,8 +470,7 @@ defmodule Eventos.ActorsTest do
     test "update_follower/2 with invalid data returns error changeset", context do
       follower = create_follower(context)
       assert {:error, %Ecto.Changeset{}} = Actors.update_follower(follower, @invalid_attrs)
-      follower_fetched = Actors.get_follower!(follower.id)
-      assert follower = follower_fetched
+      assert follower = Actors.get_follower!(follower.id)
     end
 
     test "delete_follower/1 deletes the follower", context do
