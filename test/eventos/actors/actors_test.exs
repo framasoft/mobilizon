@@ -64,6 +64,65 @@ defmodule Eventos.ActorsTest do
       assert events = [event]
     end
 
+    test "get_actor_by_name/1 returns a local actor", %{actor: actor} do
+      actor_found = Actors.get_actor_by_name(actor.preferred_username)
+      assert actor_found = actor
+    end
+
+    test "get_local_actor_by_name_with_everything!/1 returns the local actor with it's organized events", %{
+      actor: actor
+    } do
+      assert Actors.get_local_actor_by_name_with_everything(actor.preferred_username).organized_events == []
+      event = insert(:event, organizer_actor: actor)
+      events = Actors.get_local_actor_by_name_with_everything(actor.preferred_username).organized_events
+      assert events = [event]
+    end
+
+    test "get_actor_by_name_with_everything!/1 returns the local actor with it's organized events", %{
+      actor: actor
+    } do
+      assert Actors.get_actor_by_name_with_everything(actor.preferred_username).organized_events == []
+      event = insert(:event, organizer_actor: actor)
+      events = Actors.get_actor_by_name_with_everything(actor.preferred_username).organized_events
+      assert events = [event]
+    end
+
+    test "get_or_fetch_by_url/1 returns the local actor for the url", %{
+      actor: actor
+    } do
+      assert Actors.get_or_fetch_by_url(actor.url).preferred_username == actor.preferred_username
+      assert Actors.get_or_fetch_by_url(actor.url).domain == nil
+    end
+
+    @remote_account_url "https://social.tcit.fr/users/tcit"
+    @remote_account_username "tcit"
+    @remote_account_domain "social.tcit.fr"
+    test "get_or_fetch_by_url/1 returns the remote actor for the url" do
+      assert %Actor{preferred_username: @remote_account_username, domain: @remote_account_domain} = Actors.get_or_fetch_by_url(@remote_account_url)
+    end
+
+    test "test find_local_by_username/1 returns local actors with similar usernames", %{actor: actor} do
+      actor2 = insert(:actor)
+      actors = Actors.find_local_by_username("thomas")
+      assert actors = [actor, actor2]
+    end
+
+    test "test find_actors_by_username/1 returns actors with similar usernames", %{actor: actor} do
+      %Actor{} = actor2 = Actors.get_or_fetch_by_url(@remote_account_url)
+      actors = Actors.find_actors_by_username("t")
+      assert actors = [actor, actor2]
+    end
+
+    test "test get_public_key_for_url/1 with local actor", %{actor: actor} do
+      assert Actor.get_public_key_for_url(actor.url) == actor.keys |> Eventos.Service.ActivityPub.Utils.pem_to_public_key()
+    end
+
+    @remote_actor_key {:RSAPublicKey, 20890513599005517665557846902571022168782075040010449365706450877170130373892202874869873999284399697282332064948148602583340776692090472558740998357203838580321412679020304645826371196718081108049114160630664514340729769453281682773898619827376232969899348462205389310883299183817817999273916446620095414233374619948098516821650069821783810210582035456563335930330252551528035801173640288329718719895926309416142129926226047930429802084560488897717417403272782469039131379953278833320195233761955815307522871787339192744439894317730207141881699363391788150650217284777541358381165360697136307663640904621178632289787, 65537}
+    test "test get_public_key_for_url/1 with remote actor" do
+      require Logger
+      assert Actor.get_public_key_for_url(@remote_account_url) == @remote_actor_key
+    end
+
     test "create_actor/1 with valid data creates a actor" do
       assert {:ok, %Actor{} = actor} = Actors.create_actor(@valid_attrs)
       assert actor.summary == "some description"
@@ -276,6 +335,7 @@ defmodule Eventos.ActorsTest do
 
   describe "followers" do
     alias Eventos.Actors.Follower
+    alias Eventos.Actors.Actor
 
     @valid_attrs %{approved: true, score: 42}
     @update_attrs %{approved: false, score: 43}
@@ -284,11 +344,15 @@ defmodule Eventos.ActorsTest do
     setup do
       actor = insert(:actor)
       target_actor = insert(:actor)
-      follower = insert(:follower, actor: actor, target_actor: target_actor)
-      {:ok, follower: follower, actor: actor, target_actor: target_actor}
+      {:ok, actor: actor, target_actor: target_actor}
     end
 
-    test "get_follower!/1 returns the follower with given id", %{follower: follower} do
+    defp create_follower(%{actor: actor, target_actor: target_actor}) do
+      insert(:follower, actor: actor, target_actor: target_actor)
+    end
+
+    test "get_follower!/1 returns the follower with given id", context do
+      follower = create_follower(context)
       follower_fetched = Actors.get_follower!(follower.id)
       assert follower_fetched = follower
     end
@@ -305,6 +369,24 @@ defmodule Eventos.ActorsTest do
       assert {:ok, %Follower{} = follower} = Actors.create_follower(valid_attrs)
       assert follower.approved == true
       assert follower.score == 42
+
+      actor_followings = Actor.get_followings(actor)
+      assert actor_followings = [target_actor]
+      actor_followers = Actor.get_followers(target_actor)
+      assert actor_followers = [actor]
+    end
+
+    test "create_follower/1 with valid data but same actors fails to create a follower", %{
+      actor: actor,
+      target_actor: target_actor
+    } do
+      create_follower(%{actor: actor, target_actor: target_actor})
+      valid_attrs =
+        @valid_attrs
+        |> Map.put(:actor_id, actor.id)
+        |> Map.put(:target_actor_id, target_actor.id)
+
+      assert {:error, _follower} = Actors.create_follower(valid_attrs)
     end
 
     test "create_follower/1 with invalid data returns error changeset", %{
@@ -319,25 +401,29 @@ defmodule Eventos.ActorsTest do
       assert {:error, %Ecto.Changeset{}} = Actors.create_follower(invalid_attrs)
     end
 
-    test "update_follower/2 with valid data updates the follower", %{follower: follower} do
+    test "update_follower/2 with valid data updates the follower", context do
+      follower = create_follower(context)
       assert {:ok, follower} = Actors.update_follower(follower, @update_attrs)
       assert %Follower{} = follower
       assert follower.approved == false
       assert follower.score == 43
     end
 
-    test "update_follower/2 with invalid data returns error changeset", %{follower: follower} do
+    test "update_follower/2 with invalid data returns error changeset", context do
+      follower = create_follower(context)
       assert {:error, %Ecto.Changeset{}} = Actors.update_follower(follower, @invalid_attrs)
       follower_fetched = Actors.get_follower!(follower.id)
       assert follower = follower_fetched
     end
 
-    test "delete_follower/1 deletes the follower", %{follower: follower} do
+    test "delete_follower/1 deletes the follower", context do
+      follower = create_follower(context)
       assert {:ok, %Follower{}} = Actors.delete_follower(follower)
       assert_raise Ecto.NoResultsError, fn -> Actors.get_follower!(follower.id) end
     end
 
-    test "change_follower/1 returns a follower changeset", %{follower: follower} do
+    test "change_follower/1 returns a follower changeset", context do
+      follower = create_follower(context)
       assert %Ecto.Changeset{} = Actors.change_follower(follower)
     end
   end

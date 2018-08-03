@@ -115,5 +115,18 @@ defmodule EventosWeb.ActorControllerTest do
                "role" => 0
              }
     end
+
+    test "join non existent group", %{conn: conn, user: user, actor: actor} do
+      conn = auth_conn(conn, user)
+
+      conn =
+        post(conn, group_path(conn, :join, "mygroup@nonexistent.tld"), %{
+          "actor_name" => actor.preferred_username
+        })
+
+      resp = json_response(conn, 404)
+
+      assert resp = %{msg: "Resource not found", details: "group or actor doesn't exist"}
+    end
   end
 end

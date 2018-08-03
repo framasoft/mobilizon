@@ -19,5 +19,6 @@ defmodule Eventos.Actors.Follower do
     member
     |> cast(attrs, [:score, :approved, :target_actor_id, :actor_id])
     |> validate_required([:score, :approved, :target_actor_id, :actor_id])
+    |> unique_constraint(:target_actor_id, name: :followers_actor_target_actor_unique_index)
   end
 end

@@ -197,6 +197,11 @@ defmodule Eventos.Actors.Actor do
     end
   end
 
+  @doc """
+  Get followers from an actor
+
+  If actor A and C both follow actor B, actor B's followers are A and C
+  """
   def get_followers(%Actor{id: actor_id} = _actor) do
     Repo.all(
       from(
@@ -208,6 +213,11 @@ defmodule Eventos.Actors.Actor do
     )
   end
 
+  @doc """
+  Get followings from an actor
+
+  If actor A follows actor B and C, actor A's followings are B and B
+  """
   def get_followings(%Actor{id: actor_id} = _actor) do
     Repo.all(
       from(

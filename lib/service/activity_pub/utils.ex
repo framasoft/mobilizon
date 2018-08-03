@@ -322,10 +322,13 @@ defmodule Eventos.Service.ActivityPub.Utils do
   Converts PEM encoded keys to a public key representation
   """
   def pem_to_public_key(pem) do
-    [private_key_code] = :public_key.pem_decode(pem)
-    private_key = :public_key.pem_entry_decode(private_key_code)
-    {:RSAPrivateKey, _, modulus, exponent, _, _, _, _, _, _, _} = private_key
-    {:RSAPublicKey, modulus, exponent}
+    [key_code] = :public_key.pem_decode(pem)
+    key = :public_key.pem_entry_decode(key_code)
+    case key do
+      {:RSAPrivateKey, _, modulus, exponent, _, _, _, _, _, _, _} ->
+        {:RSAPublicKey, modulus, exponent}
+      {:RSAPublicKey, modulus, exponent} -> {:RSAPublicKey, modulus, exponent}
+    end
   end
 
   @doc """

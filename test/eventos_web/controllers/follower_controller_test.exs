@@ -12,13 +12,12 @@ defmodule EventosWeb.FollowerControllerTest do
   setup %{conn: conn} do
     actor = insert(:actor)
     target_actor = insert(:actor)
-    follower = insert(:follower, actor: actor, target_actor: target_actor)
 
     {:ok,
      conn: put_req_header(conn, "accept", "application/json"),
      actor: actor,
-     target_actor: target_actor,
-     follower: follower}
+     target_actor: target_actor
+    }
   end
 
   describe "create follower" do
@@ -46,6 +45,7 @@ defmodule EventosWeb.FollowerControllerTest do
   end
 
   describe "update follower" do
+    setup [:create_follower]
     test "renders follower when data is valid", %{
       conn: conn,
       follower: %Follower{id: id} = follower
@@ -64,6 +64,7 @@ defmodule EventosWeb.FollowerControllerTest do
   end
 
   describe "delete follower" do
+    setup [:create_follower]
     test "deletes chosen follower", %{conn: conn, follower: follower} do
       conn = delete(conn, follower_path(conn, :delete, follower))
       assert response(conn, 204)
@@ -72,5 +73,10 @@ defmodule EventosWeb.FollowerControllerTest do
         get(conn, follower_path(conn, :show, follower))
       end)
     end
+  end
+
+  defp create_follower(%{actor: actor, target_actor: target_actor}) do
+    follower = insert(:follower, actor: actor, target_actor: target_actor)
+    [follower: follower]
   end
 end

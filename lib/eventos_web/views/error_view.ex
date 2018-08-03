@@ -12,6 +12,13 @@ defmodule EventosWeb.ErrorView do
     %{errors: "Invalid request"}
   end
 
+  def render("not_found.json", %{details: details}) do
+    %{
+      msg: "Resource not found",
+      details: details,
+    }
+  end
+
   def render("500.html", _assigns) do
     "Internal server error"
   end
