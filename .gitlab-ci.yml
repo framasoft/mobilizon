@@ -1,7 +1,7 @@
-image: elixir:1.6
+image: elixir:1.7
 
 services:
-  - name: mdillon/postgis:9.6
+  - name: mdillon/postgis:10
     alias: postgres
 
 variables:

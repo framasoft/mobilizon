@@ -13,7 +13,7 @@ defmodule Eventos.Addresses.Address do
     field(:addressRegion, :string)
     field(:description, :string)
     field(:floor, :string)
-    field(:geom, Geo.Geometry)
+    field(:geom, Geo.PostGIS.Geometry)
     field(:postalCode, :string)
     field(:streetAddress, :string)
     has_one(:event, Event)
