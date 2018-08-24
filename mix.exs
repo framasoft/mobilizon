@@ -51,7 +51,7 @@ defmodule Eventos.Mixfile do
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 2.10"},
       {:gettext, "~> 0.11"},
-      {:cowboy, "~> 2.4", override: true},
+      {:cowboy, "~> 1.0"},
       {:guardian, "~> 1.0"},
       {:guardian_db, "~> 1.0"},
       {:comeonin, "~> 4.0"},
