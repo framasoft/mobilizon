@@ -5,13 +5,19 @@ defmodule Eventos.Service.Activitypub.ActivitypubTest do
 
   alias Eventos.Events
   alias Eventos.Actors.Actor
+  alias Eventos.Actors
   alias Eventos.Service.ActivityPub
   alias Eventos.Activity
 
   describe "fetching actor from it's url" do
-    test "returns an actor" do
+    test "returns an actor from nickname" do
       assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"} = actor} =
                ActivityPub.make_actor_from_nickname("tcit@framapiaf.org")
+    end
+
+    test "returns an actor from url" do
+      assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"}} =
+               Actors.get_or_fetch_by_url("https://framapiaf.org/users/tcit")
     end
   end
 
@@ -33,8 +39,8 @@ defmodule Eventos.Service.Activitypub.ActivitypubTest do
     end
   end
 
-  describe "fetching an object" do
-    test "it fetches an object" do
+  describe "fetching an" do
+    test "event by url" do
       {:ok, object} =
         ActivityPub.fetch_event_from_url("https://social.tcit.fr/@tcit/99908779444618462")
 
@@ -55,7 +61,19 @@ defmodule Eventos.Service.Activitypub.ActivitypubTest do
       assert delete.data["actor"] == event.organizer_actor.url
       assert delete.data["object"] == event.url
 
-      assert Events.get_event_by_url!(event.url) == nil
+      assert Events.get_event_by_url(event.url) == nil
+    end
+
+    test "it creates a delete activity and deletes the original comment" do
+      comment = insert(:comment)
+      comment = Events.get_comment_full_from_url!(comment.url)
+      {:ok, delete} = ActivityPub.delete(comment)
+
+      assert delete.data["type"] == "Delete"
+      assert delete.data["actor"] == comment.actor.url
+      assert delete.data["object"] == comment.url
+
+      assert Events.get_comment_from_url(comment.url) == nil
     end
   end
 

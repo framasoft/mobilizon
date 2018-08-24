@@ -265,13 +265,11 @@ defmodule Eventos.Actors do
 
   def get_or_fetch_by_url(url) do
     if actor = get_actor_by_url(url) do
-      actor
+      {:ok, actor}
     else
-      ap_try = ActivityPub.make_actor_from_url(url)
-
-      case ap_try do
+      case ActivityPub.make_actor_from_url(url) do
         {:ok, actor} ->
-          actor
+          {:ok, actor}
 
         _ ->
           {:error, "Could not fetch by AP id"}
@@ -299,7 +297,7 @@ defmodule Eventos.Actors do
   @doc """
   Find actors by their name or displayed name
   """
-  def find_actors_by_username(username) do
+  def find_actors_by_username_or_name(username) do
     Repo.all(
       from(
         a in Actor,
@@ -320,7 +318,7 @@ defmodule Eventos.Actors do
   @email_regex ~r/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
   def search(name) do
     # find already saved accounts
-    case find_actors_by_username(name) do
+    case find_actors_by_username_or_name(name) do
       [] ->
         # no accounts found, let's test if it's an username@domain.tld
         with true <- Regex.match?(@email_regex, name),
@@ -458,6 +456,24 @@ defmodule Eventos.Actors do
   end
 
   @doc """
+  Gets an user by it's email
+
+  ## Examples
+
+      iex> get_user_by_email(user, email)
+      {:ok, %User{}}
+
+      iex> get_user_by_email(user, wrong_email)
+      {:error, nil}
+  """
+  def get_user_by_email(email) do
+    case Repo.get_by(User, email: email) do
+      nil -> {:error, nil}
+      user -> {:ok, user}
+    end
+  end
+
+  @doc """
   Updates a user.
 
   ## Examples
@@ -548,10 +564,12 @@ defmodule Eventos.Actors do
 
   """
   def create_member(attrs \\ %{}) do
-    %Member{}
-    |> Member.changeset(attrs)
-    |> Repo.insert!()
-    |> Repo.preload([:actor, :parent])
+    with {:ok, %Member{} = member} <-
+           %Member{}
+           |> Member.changeset(attrs)
+           |> Repo.insert() do
+      {:ok, Repo.preload(member, [:actor, :parent])}
+    end
   end
 
   @doc """

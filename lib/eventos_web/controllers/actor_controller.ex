@@ -37,8 +37,12 @@ defmodule EventosWeb.ActorController do
   end
 
   def show(conn, %{"name" => name}) do
-    actor = Actors.get_actor_by_name_with_everything(name)
-    render(conn, "show.json", actor: actor)
+    with %Actor{} = actor <- Actors.get_actor_by_name_with_everything(name) do
+      render(conn, "show.json", actor: actor)
+    else
+      nil ->
+        send_resp(conn, :not_found, "")
+    end
   end
 
   @email_regex ~r/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
@@ -57,7 +61,7 @@ defmodule EventosWeb.ActorController do
     actor = Actors.get_local_actor_by_name(name)
 
     with {:ok, %Actor{} = actor} <- Actors.update_actor(actor, actor_params) do
-      render(conn, "show.json", actor: actor)
+      render(conn, "show_basic.json", actor: actor)
     end
   end
 

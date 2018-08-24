@@ -18,8 +18,11 @@ defmodule Eventos.Events.Event do
     field(:description, :string)
     field(:ends_on, Timex.Ecto.DateTimeWithTimezone)
     field(:title, :string)
+    # ???
     field(:state, :integer, default: 0)
+    # Event status: TENTATIVE 1, CONFIRMED 2, CANCELLED 3
     field(:status, :integer, default: 0)
+    # If the event is public or private
     field(:public, :boolean, default: true)
     field(:thumbnail, :string)
     field(:large_image, :string)
@@ -42,15 +45,20 @@ defmodule Eventos.Events.Event do
 
   @doc false
   def changeset(%Event{} = event, attrs) do
-    uuid = Ecto.UUID.generate()
-
-    # TODO : check what's the use here. Tests ?
+    # TODO : Change all of this
     actor_url =
       if Map.has_key?(attrs, :organizer_actor) do
         attrs.organizer_actor.preferred_username
       else
         ""
       end
+
+    uuid = Ecto.UUID.generate()
+
+    url =
+      if Map.has_key?(attrs, "url"),
+        do: attrs["url"],
+        else: "#{EventosWeb.Endpoint.url()}/@#{actor_url}/#{uuid}"
 
     event
     |> Ecto.Changeset.cast(attrs, [
@@ -74,7 +82,7 @@ defmodule Eventos.Events.Event do
     |> cast_assoc(:tags)
     |> cast_assoc(:physical_address)
     |> put_change(:uuid, uuid)
-    |> put_change(:url, "#{EventosWeb.Endpoint.url()}/@#{actor_url}/#{uuid}")
+    |> put_change(:url, url)
     |> validate_required([
       :title,
       :begins_on,

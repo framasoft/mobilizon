@@ -132,20 +132,23 @@ defmodule Eventos.Service.ActivityPub.Utils do
   """
   def insert_full_object(%{"object" => %{"type" => type} = object_data})
       when is_map(object_data) and type == "Note" do
-    import Logger
-    Logger.debug("insert full object")
-    Logger.debug(inspect(object_data))
-    actor = Actors.get_actor_by_url(object_data["actor"])
+    with {:ok, %Actor{id: actor_id}} <- Actors.get_or_fetch_by_url(object_data["actor"]) do
+      data = %{
+        "text" => object_data["content"],
+        "url" => object_data["id"],
+        "actor_id" => actor_id,
+        "in_reply_to_comment_id" => object_data["inReplyTo"]
+      }
 
-    data = %{
-      "text" => object_data["content"],
-      "url" => object_data["id"],
-      "actor_id" => actor.id,
-      "in_reply_to_comment_id" => object_data["inReplyTo"]
-    }
+      require Logger
+      Logger.info("comment data ready to be inserted")
+      Logger.info(inspect(data))
 
-    with {:ok, _} <- Events.create_comment(data) do
-      :ok
+      with {:ok, comm} <- Events.create_comment(data) do
+        Logger.info("comment inserted")
+        Logger.info(inspect(comm))
+        :ok
+      end
     end
   end
 

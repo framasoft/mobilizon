@@ -42,11 +42,15 @@ defmodule EventosWeb.UserController do
     end
   end
 
+  @time_before_resend 3600
   def resend_confirmation(conn, %{"email" => email}) do
     with {:ok, %User{} = user} <- Actors.find_by_email(email),
          false <- is_nil(user.confirmation_token),
          true <-
-           Timex.before?(Timex.shift(user.confirmation_sent_at, hours: 1), DateTime.utc_now()) do
+           Timex.before?(
+             Timex.shift(user.confirmation_sent_at, seconds: @time_before_resend),
+             DateTime.utc_now()
+           ) do
       Activation.resend_confirmation_email(user)
       render(conn, "confirmation.json", %{user: user})
     else
@@ -58,7 +62,10 @@ defmodule EventosWeb.UserController do
       _ ->
         conn
         |> put_status(:not_found)
-        |> json(%{"error" => "Unable to resend the validation token"})
+        |> json(%{
+          "error" =>
+            "Unable to resend the validation token. Please wait a while before you can ask for resending token"
+        })
     end
   end
 
@@ -67,7 +74,7 @@ defmodule EventosWeb.UserController do
          {:ok, _} <- ResetPassword.send_password_reset_email(user) do
       render(conn, "password_reset.json", %{user: user})
     else
-      {:error, :not_found} ->
+      {:error, nil} ->
         conn
         |> put_status(:not_found)
         |> json(%{"errors" => "Unable to find an user with this email"})
@@ -105,23 +112,23 @@ defmodule EventosWeb.UserController do
     render(conn, "show_simple.json", user: user)
   end
 
-  defp handle_changeset_errors(errors) do
-    errors
-    |> Enum.map(fn {field, detail} ->
-      "#{field} " <> render_detail(detail)
-    end)
-    |> Enum.join()
-  end
+  # defp handle_changeset_errors(errors) do
+  #   errors
+  #   |> Enum.map(fn {field, detail} ->
+  #     "#{field} " <> render_detail(detail)
+  #   end)
+  #   |> Enum.join()
+  # end
 
-  defp render_detail({message, values}) do
-    Enum.reduce(values, message, fn {k, v}, acc ->
-      String.replace(acc, "%{#{k}}", to_string(v))
-    end)
-  end
+  # defp render_detail({message, values}) do
+  #   Enum.reduce(values, message, fn {k, v}, acc ->
+  #     String.replace(acc, "%{#{k}}", to_string(v))
+  #   end)
+  # end
 
-  defp render_detail(message) do
-    message
-  end
+  # defp render_detail(message) do
+  #   message
+  # end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
     user = Actors.get_user!(id)

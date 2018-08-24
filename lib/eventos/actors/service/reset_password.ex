@@ -11,16 +11,18 @@ defmodule Eventos.Actors.Service.ResetPassword do
   """
   @spec check_reset_password_token(String.t(), String.t()) :: tuple
   def check_reset_password_token(password, token) do
-    with %User{} = user <- Repo.get_by(User, reset_password_token: token) do
-      Repo.update(
-        User.password_reset_changeset(user, %{
-          "password" => password,
-          "reset_password_sent_at" => nil,
-          "reset_password_token" => nil
-        })
-      )
+    with %User{} = user <- Repo.get_by(User, reset_password_token: token),
+         {:ok, %User{} = user} <-
+           Repo.update(
+             User.password_reset_changeset(user, %{
+               "password" => password,
+               "reset_password_sent_at" => nil,
+               "reset_password_token" => nil
+             })
+           ) do
+      {:ok, Repo.preload(user, :actors)}
     else
-      _err ->
+      err ->
         {:error, :invalid_token}
     end
   end

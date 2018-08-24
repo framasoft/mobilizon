@@ -6,7 +6,7 @@ defmodule Eventos.Service.ActivityPub do
   """
 
   alias Eventos.Events
-  alias Eventos.Events.{Event, Category}
+  alias Eventos.Events.{Event, Category, Comment}
   alias Eventos.Service.ActivityPub.Transmogrifier
   alias Eventos.Service.WebFinger
   alias Eventos.Activity
@@ -44,36 +44,65 @@ defmodule Eventos.Service.ActivityPub do
     end
   end
 
-  def fetch_event_from_url(url) do
-    if object = Events.get_event_by_url!(url) do
-      {:ok, object}
+  def fetch_object_from_url(url, :event), do: fetch_event_from_url(url)
+  def fetch_object_from_url(url, :note), do: fetch_note_from_url(url)
+
+  @spec fetch_object_from_url(String.t()) :: tuple()
+  def fetch_object_from_url(url) do
+    with true <- String.starts_with?(url, "http"),
+         {:ok, %{body: body, status_code: code}} when code in 200..299 <-
+           HTTPoison.get(
+             url,
+             [Accept: "application/activity+json"],
+             follow_redirect: true,
+             timeout: 10_000,
+             recv_timeout: 20_000
+           ),
+         {:ok, data} <- Jason.decode(body),
+         nil <- Events.get_event_by_url(data["id"]),
+         nil <- Events.get_comment_from_url(data["id"]),
+         params <- %{
+           "type" => "Create",
+           "to" => data["to"],
+           "cc" => data["cc"],
+           "actor" => data["attributedTo"],
+           "object" => data
+         },
+         {:ok, activity} <- Transmogrifier.handle_incoming(params) do
+      case data["type"] do
+        "Event" ->
+          {:ok, Events.get_event_by_url!(activity.data["object"]["id"])}
+
+        "Note" ->
+          {:ok, Events.get_comment_from_url!(activity.data["object"]["id"])}
+      end
     else
+      object = %Event{} -> {:ok, object}
+      object = %Comment{} -> {:ok, object}
+      e -> {:error, e}
+    end
+  end
+
+  @spec fetch_object_from_url(String.t()) :: tuple()
+  def fetch_event_from_url(url) do
+    with nil <- Events.get_event_by_url(url) do
+      Logger.info("Fetching #{url} via AP")
+      fetch_object_from_url(url)
+    else
+      %Event{} = comment ->
+        {:ok, comment}
+    end
+  end
+
+  @spec fetch_object_from_url(String.t()) :: tuple()
+  def fetch_note_from_url(url) do
+    with nil <- Events.get_comment_from_url(url) do
       Logger.info("Fetching #{url} via AP")
 
-      with true <- String.starts_with?(url, "http"),
-           {:ok, %{body: body, status_code: code}} when code in 200..299 <-
-             HTTPoison.get(
-               url,
-               [Accept: "application/activity+json"],
-               follow_redirect: true,
-               timeout: 10_000,
-               recv_timeout: 20_000
-             ),
-           {:ok, data} <- Jason.decode(body),
-           nil <- Events.get_event_by_url!(data["id"]),
-           params <- %{
-             "type" => "Create",
-             "to" => data["to"],
-             "cc" => data["cc"],
-             "actor" => data["attributedTo"],
-             "object" => data
-           },
-           {:ok, activity} <- Transmogrifier.handle_incoming(params) do
-        {:ok, Events.get_event_by_url!(activity.data["object"]["id"])}
-      else
-        object = %Event{} -> {:ok, object}
-        e -> e
-      end
+      fetch_object_from_url(url)
+    else
+      %Comment{} = comment ->
+        {:ok, comment}
     end
   end
 
@@ -127,7 +156,7 @@ defmodule Eventos.Service.ActivityPub do
     end
   end
 
-  def follow(follower, followed, activity_id \\ nil, local \\ true) do
+  def follow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
     with data <- make_follow_data(follower, followed, activity_id),
          {:ok, activity} <- insert(data, local),
          :ok <- maybe_federate(activity) do
@@ -135,7 +164,9 @@ defmodule Eventos.Service.ActivityPub do
     end
   end
 
-  def delete(%Event{url: url, organizer_actor: actor} = event, local \\ true) do
+  def delete(object, local \\ true)
+
+  def delete(%Event{url: url, organizer_actor: actor} = event, local) do
     data = %{
       "type" => "Delete",
       "actor" => actor.url,
@@ -144,6 +175,21 @@ defmodule Eventos.Service.ActivityPub do
     }
 
     with Events.delete_event(event),
+         {:ok, activity} <- insert(data, local),
+         :ok <- maybe_federate(activity) do
+      {:ok, activity}
+    end
+  end
+
+  def delete(%Comment{url: url, actor: actor} = comment, local) do
+    data = %{
+      "type" => "Delete",
+      "actor" => actor.url,
+      "object" => url,
+      "to" => [actor.url <> "/followers", "https://www.w3.org/ns/activitystreams#Public"]
+    }
+
+    with Events.delete_comment(comment),
          {:ok, activity} <- insert(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity}
@@ -285,12 +331,21 @@ defmodule Eventos.Service.ActivityPub do
     case actor.type do
       :Person ->
         {:ok, events, total} = Events.get_events_for_actor(actor, page, limit)
+        {:ok, comments, total} = Events.get_comments_for_actor(actor, page, limit)
 
-        activities =
+        event_activities =
           Enum.map(events, fn event ->
             {:ok, activity} = event_to_activity(event)
             activity
           end)
+
+        comment_activities =
+          Enum.map(comments, fn comment ->
+            {:ok, activity} = comment_to_activity(comment)
+            activity
+          end)
+
+        activities = event_activities ++ comment_activities
 
         {activities, total}
 
@@ -322,9 +377,24 @@ defmodule Eventos.Service.ActivityPub do
 
   defp event_to_activity(%Event{} = event, local \\ true) do
     activity = %Activity{
+      type: :Event,
       data: event,
       local: local,
       actor: event.organizer_actor.url,
+      recipients: ["https://www.w3.org/ns/activitystreams#Public"]
+    }
+
+    # Notification.create_notifications(activity)
+    # stream_out(activity)
+    {:ok, activity}
+  end
+
+  defp comment_to_activity(%Comment{} = comment, local \\ true) do
+    activity = %Activity{
+      type: :Comment,
+      data: comment,
+      local: local,
+      actor: comment.actor.url,
       recipients: ["https://www.w3.org/ns/activitystreams#Public"]
     }
 

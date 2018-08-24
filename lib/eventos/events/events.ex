@@ -110,8 +110,15 @@ defmodule Eventos.Events do
   @doc """
   Gets an event by it's URL
   """
-  def get_event_by_url!(url) do
+  def get_event_by_url(url) do
     Repo.get_by(Event, url: url)
+  end
+
+  @doc """
+  Gets an event by it's URL
+  """
+  def get_event_by_url!(url) do
+    Repo.get_by!(Event, url: url)
   end
 
   @doc """
@@ -175,7 +182,10 @@ defmodule Eventos.Events do
   @doc """
   Find events by name
   """
+  def find_events_by_name(name) when name == "", do: []
+
   def find_events_by_name(name) do
+    name = String.trim(name)
     events = Repo.all(from(a in Event, where: ilike(a.title, ^like_sanitize(name))))
     Repo.preload(events, [:organizer_actor])
   end
@@ -780,6 +790,32 @@ defmodule Eventos.Events do
     Repo.all(Comment)
   end
 
+  def get_comments_for_actor(%Actor{id: actor_id}, page \\ 1, limit \\ 10) do
+    start = (page - 1) * limit
+
+    query =
+      from(
+        c in Comment,
+        where: c.actor_id == ^actor_id,
+        limit: ^limit,
+        order_by: [desc: :id],
+        offset: ^start,
+        preload: [
+          :actor,
+          :in_reply_to_comment,
+          :origin_comment,
+          :event
+        ]
+      )
+
+    comments = Repo.all(query)
+
+    count_comments =
+      Repo.one(from(c in Comment, select: count(c.id), where: c.actor_id == ^actor_id))
+
+    {:ok, comments, count_comments}
+  end
+
   @doc """
   Gets a single comment.
 
@@ -797,6 +833,16 @@ defmodule Eventos.Events do
   def get_comment!(id), do: Repo.get!(Comment, id)
 
   def get_comment_with_uuid!(uuid), do: Repo.get_by!(Comment, uuid: uuid)
+
+  def get_comment_from_url(url), do: Repo.get_by(Comment, url: url)
+
+  def get_comment_from_url!(url), do: Repo.get_by!(Comment, url: url)
+
+  def get_comment_full_from_url!(url) do
+    with %Comment{} = comment <- Repo.get_by!(Comment, url: url) do
+      Repo.preload(comment, :actor)
+    end
+  end
 
   @doc """
   Creates a comment.

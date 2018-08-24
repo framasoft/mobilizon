@@ -7,7 +7,6 @@ defmodule Eventos.Actors.Member do
   alias Eventos.Actors.Member
   alias Eventos.Actors.Actor
 
-  @primary_key false
   schema "members" do
     field(:approved, :boolean, default: true)
     # 0 : Member, 1 : Moderator, 2 : Admin
@@ -23,5 +22,6 @@ defmodule Eventos.Actors.Member do
     member
     |> cast(attrs, [:role, :approved, :parent_id, :actor_id])
     |> validate_required([:parent_id, :actor_id])
+    |> unique_constraint(:parent_id, name: :members_actor_parent_unique_index)
   end
 end

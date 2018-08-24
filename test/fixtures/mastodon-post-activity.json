@@ -1,0 +1,65 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://w3id.org/security/v1",
+        {
+            "Emoji": "toot:Emoji",
+            "Hashtag": "as:Hashtag",
+            "atomUri": "ostatus:atomUri",
+            "conversation": "ostatus:conversation",
+            "inReplyToAtomUri": "ostatus:inReplyToAtomUri",
+            "manuallyApprovesFollowers": "as:manuallyApprovesFollowers",
+            "movedTo": "as:movedTo",
+            "ostatus": "http://ostatus.org#",
+            "sensitive": "as:sensitive",
+            "toot": "http://joinmastodon.org/ns#"
+        }
+    ],
+    "actor": "http://framapiaf.org/users/admin",
+    "cc": [
+        "http://framapiaf.org/users/admin/followers",
+        "http://eventos.com/@tcit"
+    ],
+    "id": "http://framapiaf.org/users/admin/statuses/99512778738411822/activity",
+    "nickname": "lain",
+    "object": {
+        "atomUri": "http://framapiaf.org/users/admin/statuses/99512778738411822",
+        "attachment": [],
+        "attributedTo": "http://framapiaf.org/users/admin",
+        "cc": [
+            "http://framapiaf.org/users/admin/followers",
+            "http://localtesting.pleroma.lol/users/lain"
+        ],
+        "content": "<p><span class=\"h-card\"><a href=\"http://localtesting.pleroma.lol/users/lain\" class=\"u-url mention\">@<span>lain</span></a></span></p>",
+        "conversation": "tag:mastodon.example.org,2018-02-12:objectId=20:objectType=Conversation",
+        "id": "http://framapiaf.org/users/admin/statuses/99512778738411822",
+        "inReplyTo": null,
+        "inReplyToAtomUri": null,
+        "published": "2018-02-12T14:08:20Z",
+        "sensitive": true,
+        "summary": "cw",
+        "tag": [
+            {
+                "href": "http://localtesting.pleroma.lol/users/lain",
+                "name": "@lain@localtesting.pleroma.lol",
+                "type": "Mention"
+            }
+        ],
+        "to": [
+            "https://www.w3.org/ns/activitystreams#Public"
+        ],
+        "type": "Note",
+        "url": "http://framapiaf.org/@admin/99512778738411822"
+    },
+    "published": "2018-02-12T14:08:20Z",
+    "signature": {
+        "created": "2018-02-12T14:08:20Z",
+        "creator": "http://framapiaf.org/users/admin#main-key",
+        "signatureValue": "rnNfcopkc6+Ju73P806popcfwrK9wGYHaJVG1/ZvrlEbWVDzaHjkXqj9Q3/xju5l8CSn9tvSgCCtPFqZsFQwn/pFIFUcw7ZWB2xi4bDm3NZ3S4XQ8JRaaX7og5hFxAhWkGhJhAkfxVnOg2hG+w2d/7d7vRVSC1vo5ip4erUaA/PkWusZvPIpxnRWoXaxJsFmVx0gJgjpJkYDyjaXUlp+jmaoseeZ4EPQUWqHLKJ59PRG0mg8j2xAjYH9nQaN14qMRmTGPxY8gfv/CUFcatA+8VJU9KEsJkDAwLVvglydNTLGrxpAJU78a2eaht0foV43XUIZGe3DKiJPgE+UOKGCJw==",
+        "type": "RsaSignature2017"
+    },
+    "to": [
+        "https://www.w3.org/ns/activitystreams#Public"
+    ],
+    "type": "Create"
+}
