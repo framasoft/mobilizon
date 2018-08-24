@@ -3,5 +3,5 @@ defmodule Eventos.Activity do
   Represents an activity
   """
 
-  defstruct [:id, :data, :local, :actor, :recipients, :notifications]
+  defstruct [:id, :data, :local, :actor, :recipients, :notifications, :type]
 end

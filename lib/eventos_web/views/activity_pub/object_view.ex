@@ -32,6 +32,19 @@ defmodule EventosWeb.ActivityPub.ObjectView do
     Map.merge(event, @base)
   end
 
+  def render("note.json", %{note: note}) do
+    event = %{
+      "type" => "Note",
+      "id" => note.url,
+      "content" => note.text,
+      "mediaType" => "text/markdown",
+      "published" => Timex.format!(note.inserted_at, "{ISO:Extended}"),
+      "updated" => Timex.format!(note.updated_at, "{ISO:Extended}")
+    }
+
+    Map.merge(event, @base)
+  end
+
   def render("category.json", %{category: category}) do
     %{"title" => category.title}
   end

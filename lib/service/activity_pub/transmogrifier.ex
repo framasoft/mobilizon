@@ -4,7 +4,7 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
   """
   alias Eventos.Actors.Actor
   alias Eventos.Actors
-  alias Eventos.Events.Event
+  alias Eventos.Events.{Event, Comment}
   alias Eventos.Service.ActivityPub
 
   import Ecto.Query
@@ -77,9 +77,9 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
   # - tags
   # - emoji
   def handle_incoming(%{"type" => "Create", "object" => %{"type" => "Note"} = object} = data) do
-    Logger.debug("Handle incoming to create notes")
+    Logger.info("Handle incoming to create notes")
 
-    with %Actor{} = actor <- Actor.get_or_fetch_by_url(data["actor"]) do
+    with {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(data["actor"]) do
       Logger.debug("found actor")
       object = fix_object(data["object"])
 
@@ -104,8 +104,8 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
   def handle_incoming(
         %{"type" => "Follow", "object" => followed, "actor" => follower, "id" => id} = data
       ) do
-    with %Actor{} = followed <- Actors.get_actor_by_url(followed),
-         %Actor{} = follower <- Actors.get_or_fetch_by_url(follower),
+    with {:ok, %Actor{} = followed} <- Actors.get_or_fetch_by_url(followed),
+         {:ok, %Actor{} = follower} <- Actors.get_or_fetch_by_url(follower),
          {:ok, activity} <- ActivityPub.follow(follower, followed, id, false) do
       ActivityPub.accept(%{to: [follower.url], actor: followed.url, object: data, local: true})
 
@@ -133,7 +133,7 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
   def handle_incoming(
         %{"type" => "Announce", "object" => object_id, "actor" => actor, "id" => id} = data
       ) do
-    with %Actor{} = actor <- Actors.get_or_fetch_by_url(actor),
+    with {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(actor),
          {:ok, object} <-
            get_obj_helper(object_id) || ActivityPub.fetch_event_from_url(object_id),
          {:ok, activity, object} <- ActivityPub.announce(actor, object, id, false) do
@@ -266,6 +266,17 @@ defmodule Eventos.Service.ActivityPub.Transmogrifier do
       |> prepare_object
 
     {:ok, event}
+  end
+
+  def prepare_outgoing(%Comment{} = comment) do
+    comment =
+      comment
+      |> Map.from_struct()
+      |> Map.drop([:__meta__])
+      |> Map.put(:"@context", "https://www.w3.org/ns/activitystreams")
+      |> prepare_object
+
+    {:ok, comment}
   end
 
   #

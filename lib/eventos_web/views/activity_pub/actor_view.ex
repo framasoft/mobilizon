@@ -134,10 +134,17 @@ defmodule EventosWeb.ActivityPub.ActorView do
         else
           "Announce"
         end,
-      "actor" => activity.data.organizer_actor.url,
+      "actor" => activity.actor,
       "published" => Timex.now(),
       "to" => ["https://www.w3.org/ns/activitystreams#Public"],
-      "object" => render_one(activity.data, ObjectView, "event.json", as: :event)
+      "object" =>
+        case activity.type do
+          :Event ->
+            render_one(activity.data, ObjectView, "event.json", as: :event)
+
+          :Comment ->
+            render_one(activity.data, ObjectView, "note.json", as: :note)
+        end
     }
   end
 

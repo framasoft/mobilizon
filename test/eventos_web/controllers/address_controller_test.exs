@@ -34,7 +34,7 @@ defmodule EventosWeb.AddressControllerTest do
     floor: nil,
     postalCode: nil,
     streetAddress: nil,
-    geom: %{type: nil, data: %{latitude: nil, longitude: nil}}
+    geom: %{type: "oh no", data: %{latitude: nil, longitude: nil}}
   }
 
   def fixture(:address) do

@@ -32,6 +32,12 @@ defmodule Eventos.EventsTest do
   describe "events" do
     alias Eventos.Events.Event
 
+    setup do
+      actor = insert(:actor)
+      event = insert(:event, organizer_actor: actor)
+      {:ok, actor: actor, event: event}
+    end
+
     @valid_attrs %{
       begins_on: "2010-04-17 14:00:00.000000Z",
       description: "some description",
@@ -46,14 +52,32 @@ defmodule Eventos.EventsTest do
     }
     @invalid_attrs %{begins_on: nil, description: nil, ends_on: nil, title: nil}
 
-    test "list_events/0 returns all events" do
-      event = event_fixture()
-      assert hd(Events.list_events()).title == event.title
+    test "list_events/0 returns all events", %{event: event} do
+      assert event.title == hd(Events.list_events()).title
     end
 
-    test "get_event!/1 returns the event with given id" do
-      event = event_fixture()
+    test "get_event!/1 returns the event with given id", %{event: event} do
       assert Events.get_event!(event.id).title == event.title
+      refute Ecto.assoc_loaded?(Events.get_event!(event.id).organizer_actor)
+    end
+
+    test "get_event_full!/1 returns the event with given id", %{event: event} do
+      assert Events.get_event_full!(event.id).organizer_actor.preferred_username ==
+               event.organizer_actor.preferred_username
+
+      assert Events.get_event_full!(event.id).participants == []
+    end
+
+    test "find_events_by_name/1 returns events for a given name", %{event: event} do
+      assert event.title == hd(Events.find_events_by_name(event.title)).title
+
+      event2 = insert(:event, title: "Special event")
+      assert event2.title == hd(Events.find_events_by_name("Special")).title
+
+      event2 = insert(:event, title: "Special event")
+      assert event2.title == hd(Events.find_events_by_name("  Special  ")).title
+
+      assert [] == Events.find_events_by_name("")
     end
 
     test "create_event/1 with valid data creates a event" do
@@ -79,8 +103,7 @@ defmodule Eventos.EventsTest do
       assert {:error, %Ecto.Changeset{}} = Events.create_event(@invalid_attrs)
     end
 
-    test "update_event/2 with valid data updates the event" do
-      event = event_fixture()
+    test "update_event/2 with valid data updates the event", %{event: event} do
       assert {:ok, event} = Events.update_event(event, @update_attrs)
       assert %Event{} = event
       assert event.begins_on == DateTime.from_naive!(~N[2011-05-18 15:01:01.000000Z], "Etc/UTC")
@@ -89,26 +112,43 @@ defmodule Eventos.EventsTest do
       assert event.title == "some updated title"
     end
 
-    test "update_event/2 with invalid data returns error changeset" do
-      event = event_fixture()
+    test "update_event/2 with invalid data returns error changeset", %{event: event} do
       assert {:error, %Ecto.Changeset{}} = Events.update_event(event, @invalid_attrs)
       assert event.title == Events.get_event!(event.id).title
     end
 
-    test "delete_event/1 deletes the event" do
-      event = event_fixture()
+    test "delete_event/1 deletes the event", %{event: event} do
       assert {:ok, %Event{}} = Events.delete_event(event)
       assert_raise Ecto.NoResultsError, fn -> Events.get_event!(event.id) end
     end
 
-    test "change_event/1 returns a event changeset" do
-      event = event_fixture()
+    test "change_event/1 returns a event changeset", %{event: event} do
       assert %Ecto.Changeset{} = Events.change_event(event)
+    end
+
+    test "get_events_for_actor/1", %{actor: actor, event: event} do
+      assert {:ok, [event_found], 1} = Events.get_events_for_actor(actor)
+      assert event_found.title == event.title
+    end
+
+    test "get_events_for_actor/3", %{actor: actor, event: event} do
+      event1 = insert(:event, organizer_actor: actor)
+      assert {:ok, [event_found, event1_found], 2} = Events.get_events_for_actor(actor, 1, 10)
+    end
+
+    test "get_events_for_actor/3 with limited results", %{actor: actor, event: event} do
+      event1 = insert(:event, organizer_actor: actor)
+      assert {:ok, [event_found], 2} = Events.get_events_for_actor(actor, 1, 1)
     end
   end
 
   describe "categories" do
     alias Eventos.Events.Category
+
+    setup do
+      category = insert(:category)
+      {:ok, category: category}
+    end
 
     @valid_attrs %{description: "some description", picture: "some picture", title: "some title"}
     @update_attrs %{
@@ -118,14 +158,16 @@ defmodule Eventos.EventsTest do
     }
     @invalid_attrs %{description: nil, picture: nil, title: nil}
 
-    test "list_categories/0 returns all categories" do
-      category = category_fixture()
+    test "list_categories/0 returns all categories", %{category: category} do
       assert Events.list_categories() == [category]
     end
 
-    test "get_category!/1 returns the category with given id" do
-      category = category_fixture()
+    test "get_category!/1 returns the category with given id", %{category: category} do
       assert Events.get_category!(category.id) == category
+    end
+
+    test "get_category_by_title/1 return the category with given title", %{category: category} do
+      assert Events.get_category_by_title(category.title) == category
     end
 
     test "create_category/1 with valid data creates a category" do
@@ -139,8 +181,7 @@ defmodule Eventos.EventsTest do
       assert {:error, %Ecto.Changeset{}} = Events.create_category(@invalid_attrs)
     end
 
-    test "update_category/2 with valid data updates the category" do
-      category = category_fixture()
+    test "update_category/2 with valid data updates the category", %{category: category} do
       assert {:ok, category} = Events.update_category(category, @update_attrs)
       assert %Category{} = category
       assert category.description == "some updated description"
@@ -148,20 +189,17 @@ defmodule Eventos.EventsTest do
       assert category.title == "some updated title"
     end
 
-    test "update_category/2 with invalid data returns error changeset" do
-      category = category_fixture()
+    test "update_category/2 with invalid data returns error changeset", %{category: category} do
       assert {:error, %Ecto.Changeset{}} = Events.update_category(category, @invalid_attrs)
       assert category == Events.get_category!(category.id)
     end
 
-    test "delete_category/1 deletes the category" do
-      category = category_fixture()
+    test "delete_category/1 deletes the category", %{category: category} do
       assert {:ok, %Category{}} = Events.delete_category(category)
       assert_raise Ecto.NoResultsError, fn -> Events.get_category!(category.id) end
     end
 
-    test "change_category/1 returns a category changeset" do
-      category = category_fixture()
+    test "change_category/1 returns a category changeset", %{category: category} do
       assert %Ecto.Changeset{} = Events.change_category(category)
     end
   end
@@ -227,35 +265,31 @@ defmodule Eventos.EventsTest do
   end
 
   describe "participants" do
-    alias Eventos.Events.Participant
+    alias Eventos.Events.{Participant, Event}
+    alias Eventos.Actors.Actor
 
     @valid_attrs %{role: 42}
     @update_attrs %{role: 43}
     @invalid_attrs %{role: nil}
 
-    def participant_fixture(attrs \\ %{}) do
-      event = event_fixture()
-      actor = actor_fixture()
-      valid_attrs = Map.put(@valid_attrs, :event_id, event.id)
-      valid_attrs = Map.put(valid_attrs, :actor_id, actor.id)
-
-      {:ok, participant} =
-        attrs
-        |> Enum.into(valid_attrs)
-        |> Events.create_participant()
-
-      participant
+    setup do
+      actor = insert(:actor)
+      event = insert(:event, organizer_actor: actor)
+      participant = insert(:participant, actor: actor, event: event)
+      {:ok, participant: participant, event: event, actor: actor}
     end
 
-    test "list_participants/0 returns all participants" do
-      participant = participant_fixture()
-      assert Events.list_participants() == [participant]
+    test "list_participants/0 returns all participants", %{participant: participant} do
+      assert [%Participant{} = participant] = Events.list_participants()
     end
 
-    #    test "get_participant!/1 returns the participant with given id" do
-    #      participant = participant_fixture()
-    #      assert Events.get_participant!(participant.id) == participant
-    #    end
+    test "get_participant!/1 returns the participant for a given event and given actor", %{
+      event: %Event{id: event_id} = _event,
+      actor: %Actor{id: actor_id} = _actor
+    } do
+      assert %Participant{event_id: event_id, actor_id: actor_id} =
+               _participant = Events.get_participant!(event_id, actor_id)
+    end
 
     test "create_participant/1 with valid data creates a participant" do
       actor = actor_fixture()
@@ -270,25 +304,25 @@ defmodule Eventos.EventsTest do
       assert {:error, %Ecto.Changeset{}} = Events.create_participant(@invalid_attrs)
     end
 
-    test "update_participant/2 with valid data updates the participant" do
-      participant = participant_fixture()
+    test "update_participant/2 with valid data updates the participant", %{
+      participant: participant
+    } do
       assert {:ok, participant} = Events.update_participant(participant, @update_attrs)
       assert %Participant{} = participant
       assert participant.role == 43
     end
 
-    test "update_participant/2 with invalid data returns error changeset" do
-      participant = participant_fixture()
+    test "update_participant/2 with invalid data returns error changeset", %{
+      participant: participant
+    } do
       assert {:error, %Ecto.Changeset{}} = Events.update_participant(participant, @invalid_attrs)
     end
 
-    test "delete_participant/1 deletes the participant" do
-      participant = participant_fixture()
+    test "delete_participant/1 deletes the participant", %{participant: participant} do
       assert {:ok, %Participant{}} = Events.delete_participant(participant)
     end
 
-    test "change_participant/1 returns a participant changeset" do
-      participant = participant_fixture()
+    test "change_participant/1 returns a participant changeset", %{participant: participant} do
       assert %Ecto.Changeset{} = Events.change_participant(participant)
     end
   end

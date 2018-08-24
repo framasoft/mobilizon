@@ -31,6 +31,64 @@ defmodule EventosWeb.ActorControllerTest do
     end
   end
 
+  describe "show actor" do
+    test "show existing actor", %{conn: conn, actor: actor} do
+      actor_id = actor.id
+      conn = get(conn, actor_path(conn, :show, actor.preferred_username))
+      assert %{"data" => %{"id" => actor_id}} = json_response(conn, 200)
+    end
+
+    test "show non-existing actor", %{conn: conn, actor: actor} do
+      actor_id = actor.id
+      conn = get(conn, actor_path(conn, :show, "nonexisting"))
+      assert "" == response(conn, 404)
+    end
+  end
+
+  describe "search for actors" do
+    test "search for existing actors", %{conn: conn, actor: actor} do
+      actor_username = actor.preferred_username
+      conn = get(conn, actor_path(conn, :search, actor_username))
+      assert %{"data" => [%{"username" => actor_username}]} = json_response(conn, 200)
+    end
+
+    test "search for existing actors with similar username", %{conn: conn, actor: actor} do
+      actor_username = actor.preferred_username
+      conn = get(conn, actor_path(conn, :search, "thom"))
+      assert %{"data" => [%{"username" => actor_username}]} = json_response(conn, 200)
+    end
+
+    test "search for nothing", %{conn: conn, actor: actor} do
+      actor_username = actor.preferred_username
+      conn = get(conn, actor_path(conn, :search, "nothing"))
+      assert %{"data" => []} = json_response(conn, 200)
+    end
+  end
+
+  describe "update actor" do
+    test "update actor with valid attrs", %{conn: conn, user: user, actor: actor} do
+      conn = auth_conn(conn, user)
+
+      conn =
+        patch(conn, actor_path(conn, :update, actor.preferred_username), %{
+          "actor" => %{"name" => "glouglou"}
+        })
+
+      assert %{"data" => %{"display_name" => "glouglou"}} = json_response(conn, 200)
+    end
+
+    test "update actor with invalid attrs", %{conn: conn, user: user, actor: actor} do
+      conn = auth_conn(conn, user)
+
+      conn =
+        patch(conn, actor_path(conn, :update, actor.preferred_username), %{
+          "actor" => %{"preferred_username" => nil}
+        })
+
+      assert json_response(conn, 422)["errors"] != %{}
+    end
+  end
+
   ###
   # Not possible atm
   ###

@@ -9,7 +9,7 @@ defmodule Eventos.ActorsTest do
 
     @valid_attrs %{
       summary: "some description",
-      name: "some name",
+      name: "Bobby Blank",
       domain: "some domain",
       keys: "some keypair",
       suspended: true,
@@ -74,7 +74,7 @@ defmodule Eventos.ActorsTest do
     end
 
     test "get_actor_by_name/1 returns a remote actor" do
-      assert %Actor{} = actor = Actors.get_or_fetch_by_url(@remote_account_url)
+      assert {:ok, %Actor{} = actor} = Actors.get_or_fetch_by_url(@remote_account_url)
       actor_found = Actors.get_actor_by_name("#{actor.preferred_username}@#{actor.domain}")
       assert actor_found = actor
     end
@@ -107,7 +107,7 @@ defmodule Eventos.ActorsTest do
     end
 
     test "get_actor_by_name_with_everything!/1 returns the remote actor with it's organized events" do
-      assert %Actor{} = actor = Actors.get_or_fetch_by_url(@remote_account_url)
+      assert {:ok, %Actor{} = actor} = Actors.get_or_fetch_by_url(@remote_account_url)
 
       assert Actors.get_actor_by_name_with_everything(
                "#{actor.preferred_username}@#{actor.domain}"
@@ -124,12 +124,15 @@ defmodule Eventos.ActorsTest do
     test "get_or_fetch_by_url/1 returns the local actor for the url", %{
       actor: actor
     } do
-      assert Actors.get_or_fetch_by_url(actor.url).preferred_username == actor.preferred_username
-      assert Actors.get_or_fetch_by_url(actor.url).domain == nil
+      preferred_username = actor.preferred_username
+
+      assert {:ok, %Actor{preferred_username: preferred_username, domain: nil} = actor_found} =
+               Actors.get_or_fetch_by_url(actor.url)
     end
 
     test "get_or_fetch_by_url/1 returns the remote actor for the url" do
-      assert %Actor{preferred_username: @remote_account_username, domain: @remote_account_domain} =
+      assert {:ok,
+              %Actor{preferred_username: @remote_account_username, domain: @remote_account_domain}} =
                Actors.get_or_fetch_by_url(@remote_account_url)
     end
 
@@ -141,10 +144,19 @@ defmodule Eventos.ActorsTest do
       assert actors = [actor, actor2]
     end
 
-    test "test find_actors_by_username/1 returns actors with similar usernames", %{actor: actor} do
-      %Actor{} = actor2 = Actors.get_or_fetch_by_url(@remote_account_url)
-      actors = Actors.find_actors_by_username("t")
+    test "test find_actors_by_username_or_name/1 returns actors with similar usernames", %{
+      actor: actor
+    } do
+      {:ok, %Actor{} = actor2} = Actors.get_or_fetch_by_url(@remote_account_url)
+      actors = Actors.find_actors_by_username_or_name("t")
       assert actors = [actor, actor2]
+    end
+
+    test "test find_actors_by_username_or_name/1 returns actors with similar names", %{
+      actor: actor
+    } do
+      actors = Actors.find_actors_by_username_or_name("ohno")
+      assert actors == []
     end
 
     test "test search/1 returns accounts for search with existing accounts", %{actor: actor} do
@@ -180,7 +192,7 @@ defmodule Eventos.ActorsTest do
     test "create_actor/1 with valid data creates a actor" do
       assert {:ok, %Actor{} = actor} = Actors.create_actor(@valid_attrs)
       assert actor.summary == "some description"
-      assert actor.name == "some name"
+      assert actor.name == "Bobby Blank"
       assert actor.domain == "some domain"
       assert actor.keys == "some keypair"
       assert actor.suspended
@@ -482,6 +494,99 @@ defmodule Eventos.ActorsTest do
     test "change_follower/1 returns a follower changeset", context do
       follower = create_follower(context)
       assert %Ecto.Changeset{} = Actors.change_follower(follower)
+    end
+  end
+
+  describe "members" do
+    alias Eventos.Actors.Member
+    alias Eventos.Actors.Actor
+
+    @valid_attrs %{approved: true, role: 0}
+    @update_attrs %{approved: false, role: 1}
+    @invalid_attrs %{approved: nil, role: nil}
+
+    setup do
+      actor = insert(:actor)
+      group = insert(:group)
+      {:ok, actor: actor, group: group}
+    end
+
+    defp create_member(%{actor: actor, group: group}) do
+      insert(:member, actor: actor, parent: group)
+    end
+
+    test "get_member!/1 returns the member with given id", context do
+      member = create_member(context)
+      assert member = Actors.get_member!(member.id)
+    end
+
+    test "create_member/1 with valid data creates a member", %{
+      actor: actor,
+      group: group
+    } do
+      valid_attrs =
+        @valid_attrs
+        |> Map.put(:actor_id, actor.id)
+        |> Map.put(:parent_id, group.id)
+
+      assert {:ok, %Member{} = member} = Actors.create_member(valid_attrs)
+      assert member.approved == true
+      assert member.role == 0
+
+      assert [group] = Actor.get_groups_member_of(actor)
+      assert [actor] = Actor.get_members_for_group(group)
+    end
+
+    test "create_member/1 with valid data but same actors fails to create a member", %{
+      actor: actor,
+      group: group
+    } do
+      create_member(%{actor: actor, group: group})
+
+      valid_attrs =
+        @valid_attrs
+        |> Map.put(:actor_id, actor.id)
+        |> Map.put(:parent_id, group.id)
+
+      assert {:error, _member} = Actors.create_member(valid_attrs)
+    end
+
+    test "create_member/1 with invalid data returns error changeset", %{
+      actor: actor,
+      group: group
+    } do
+      invalid_attrs =
+        @invalid_attrs
+        |> Map.put(:actor_id, nil)
+        |> Map.put(:parent_id, nil)
+
+      assert {:error, %Ecto.Changeset{}} = Actors.create_member(invalid_attrs)
+    end
+
+    test "update_member/2 with valid data updates the member", context do
+      member = create_member(context)
+      assert {:ok, member} = Actors.update_member(member, @update_attrs)
+      assert %Member{} = member
+      assert member.approved == false
+      assert member.role == 1
+    end
+
+    # This can't happen, since attrs are optional
+    # test "update_member/2 with invalid data returns error changeset", context do
+    #   member = create_member(context)
+    #   assert {:error, %Ecto.Changeset{}} = Actors.update_member(member, @invalid_attrs)
+    #   assert member = Actors.get_member!(member.id)
+    # end
+
+    test "delete_member/1 deletes the member", context do
+      member = create_member(context)
+      assert {:ok, %Member{}} = Actors.delete_member(member)
+      assert_raise Ecto.NoResultsError, fn -> Actors.get_member!(member.id) end
+    end
+
+    test "change_member/1 returns a member changeset", context do
+      member = create_member(context)
+      assert %Ecto.Changeset{} = Actors.change_member(member)
     end
   end
 end

@@ -122,6 +122,7 @@ defmodule EventosWeb.Router do
     get("/@:name/following", ActivityPubController, :following)
     get("/@:name/followers", ActivityPubController, :followers)
     get("/events/:uuid", ActivityPubController, :event)
+    get("/comments/:uuid", ActivityPubController, :event)
     post("/@:name/inbox", ActivityPubController, :inbox)
     post("/inbox", ActivityPubController, :inbox)
   end

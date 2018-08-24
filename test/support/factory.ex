@@ -67,11 +67,14 @@ defmodule Eventos.Factory do
   end
 
   def comment_factory do
+    uuid = Ecto.UUID.generate()
+
     %Eventos.Events.Comment{
       text: "My Comment",
       actor: build(:actor),
       event: build(:event),
-      uuid: Ecto.UUID.generate()
+      uuid: uuid,
+      url: "#{EventosWeb.Endpoint.url()}/comments/#{uuid}"
     }
   end
 
@@ -86,7 +89,15 @@ defmodule Eventos.Factory do
       organizer_actor: actor,
       category: build(:category),
       physical_address: build(:address),
+      public: true,
       url: "#{EventosWeb.Endpoint.url()}/@#{actor.url}/#{Ecto.UUID.generate()}"
+    }
+  end
+
+  def participant_factory do
+    %Eventos.Events.Participant{
+      event: build(:event),
+      actor: build(:actor)
     }
   end
 

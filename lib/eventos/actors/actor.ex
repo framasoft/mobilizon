@@ -173,23 +173,9 @@ defmodule Eventos.Actors.Actor do
     |> put_change(:local, true)
   end
 
-  def get_or_fetch_by_url(url) do
-    if user = Actors.get_actor_by_url(url) do
-      user
-    else
-      case ActivityPub.make_actor_from_url(url) do
-        {:ok, user} ->
-          user
-
-        _ ->
-          {:error, "Could not fetch by AP id"}
-      end
-    end
-  end
-
   @spec get_public_key_for_url(String.t()) :: {:ok, String.t()}
   def get_public_key_for_url(url) do
-    with %Actor{} = actor <- get_or_fetch_by_url(url) do
+    with {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(url) do
       actor.keys
       |> Eventos.Service.ActivityPub.Utils.pem_to_public_key()
     else
@@ -227,5 +213,45 @@ defmodule Eventos.Actors.Actor do
         where: f.actor_id == ^actor_id
       )
     )
+  end
+
+  def get_groups_member_of(%Actor{id: actor_id}) do
+    Repo.all(
+      from(
+        a in Actor,
+        join: m in Member,
+        on: a.id == m.parent_id,
+        where: m.actor_id == ^actor_id
+      )
+    )
+  end
+
+  def get_members_for_group(%Actor{id: actor_id}) do
+    Repo.all(
+      from(
+        a in Actor,
+        join: m in Member,
+        on: a.id == m.actor_id,
+        where: m.parent_id == ^actor_id
+      )
+    )
+  end
+
+  def follow(%Actor{} = follower, %Actor{} = followed) do
+    # Check if actor is locked
+    # Check if followed has blocked follower
+    # Check if follower already follows followed
+    cond do
+      following?(follower, followed) ->
+        {:error,
+         "Could not follow actor: you are already following #{followed.preferred_username}"}
+
+        # true -> nil
+        # Follow the person
+    end
+  end
+
+  def following?(%Actor{} = follower, %Actor{followers: followers}) do
+    Enum.member?(followers, follower)
   end
 end

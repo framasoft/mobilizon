@@ -65,7 +65,6 @@ defmodule Eventos.Mixfile do
       {:timex_ecto, "~> 3.0"},
       {:icalendar, "~> 0.6"},
       {:exgravatar, "~> 2.0.1"},
-      {:littlefinger, "~> 0.1"},
       {:httpoison, "~> 1.0"},
       {:json_ld, "~> 0.2"},
       {:jason, "~> 1.0"},
