@@ -78,17 +78,17 @@ defmodule Eventos.Events do
 
   # 50 000 meters -> 50 kms
   def find_close_events(lon, lat, radius \\ 50_000) do
-    ip_point = Geo.WKT.decode("SRID=4326;POINT(#{lon} #{lat})")
-
-    Repo.all(
-      from(
-        e in Event,
-        join: a in Address,
-        on: a.id == e.physical_address_id,
-        where: st_dwithin_in_meters(^ip_point, a.geom, ^radius),
-        preload: :organizer_actor
+    with {:ok, ip_point} <- Geo.WKT.decode("SRID=4326;POINT(#{lon} #{lat})") do
+      Repo.all(
+        from(
+          e in Event,
+          join: a in Address,
+          on: a.id == e.physical_address_id,
+          where: st_dwithin_in_meters(^ip_point, a.geom, ^radius),
+          preload: :organizer_actor
+        )
       )
-    )
+    end
   end
 
   @doc """
