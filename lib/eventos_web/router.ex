@@ -30,6 +30,10 @@ defmodule EventosWeb.Router do
     plug(:put_secure_browser_headers)
   end
 
+  pipeline :nodeinfo do
+    plug(:accepts, ["html", "application/json"])
+  end
+
   scope "/api", EventosWeb do
     pipe_through(:api)
 
@@ -67,6 +71,12 @@ defmodule EventosWeb.Router do
       resources("/addresses", AddressController, only: [:index, :show])
 
       get("/search/:name", SearchController, :search)
+
+      scope "/nodeinfo" do
+        pipe_through(:nodeinfo)
+
+        get("/:version", NodeinfoController, :nodeinfo)
+      end
     end
   end
 
@@ -108,10 +118,6 @@ defmodule EventosWeb.Router do
     get("/host-meta", WebFingerController, :host_meta)
     get("/webfinger", WebFingerController, :webfinger)
     get("/nodeinfo", NodeinfoController, :schemas)
-  end
-
-  scope "/nodeinfo", EventosWeb do
-    get("/:version", NodeinfoController, :nodeinfo)
   end
 
   scope "/", EventosWeb do

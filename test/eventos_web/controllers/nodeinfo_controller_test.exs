@@ -9,7 +9,8 @@ defmodule EventosWeb.NodeinfoControllerTest do
     assert json_response(conn, 200) == %{
              "links" => [
                %{
-                 "href" => EventosWeb.Endpoint.url() <> "/nodeinfo/2.0.json",
+                 "href" =>
+                   EventosWeb.Router.Helpers.nodeinfo_url(EventosWeb.Endpoint, :nodeinfo, "2.0"),
                  "rel" => "http://nodeinfo.diaspora.software/ns/schema/2.0"
                }
              ]
@@ -17,7 +18,7 @@ defmodule EventosWeb.NodeinfoControllerTest do
   end
 
   test "Get node info", %{conn: conn} do
-    conn = get(conn, nodeinfo_path(conn, :nodeinfo, "2.0.json"))
+    conn = get(conn, nodeinfo_path(conn, :nodeinfo, "2.0"))
 
     resp = json_response(conn, 200)
 

@@ -11,7 +11,7 @@ defmodule EventosWeb.NodeinfoController do
       links: [
         %{
           rel: "http://nodeinfo.diaspora.software/ns/schema/2.0",
-          href: EventosWeb.Endpoint.url() <> "/nodeinfo/2.0.json"
+          href: EventosWeb.Router.Helpers.nodeinfo_url(EventosWeb.Endpoint, :nodeinfo, "2.0")
         }
       ]
     }
@@ -20,7 +20,7 @@ defmodule EventosWeb.NodeinfoController do
   end
 
   # Schema definition: https://github.com/jhass/nodeinfo/blob/master/schemas/2.0/schema.json
-  def nodeinfo(conn, %{"version" => "2.0.json"}) do
+  def nodeinfo(conn, %{"version" => "2.0"}) do
     import Logger
     Logger.debug(inspect(@instance))
     # stats = Stats.get_stats()
