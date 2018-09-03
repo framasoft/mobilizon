@@ -122,9 +122,9 @@
     },
     computed: {
       displayed_name: function() {
-        console.log('displayed name', this.$store.state.actor);
-        if (this.$store.state.actor) {
-          return this.$store.state.actor.display_name === null ? this.$store.state.actor.username : this.$store.state.actor.display_name;
+        console.log('displayed name', this.$store.state.defaultActor);
+        if (this.$store.state.defaultActor) {
+          return this.$store.state.defaultActor.display_name === null ? this.$store.state.defaultActor.username : this.$store.state.defaultActor.display_name;
         }
       },
     },

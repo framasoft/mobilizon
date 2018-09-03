@@ -12,20 +12,24 @@
               v-for="actor in actors"
               :key="actor.id"
               avatar
-              @click="$router.push({ name: 'Account', params: { name: actor.username } })"
+              @click="changeDefaultActor(actor)"
             >
               <v-list-tile-action>
-                <v-icon v-if="$store.state.defaultActor === actor.username" color="pink">star</v-icon>
+                <v-icon v-if="$store.state.defaultActor.username === actor.username" color="pink">star</v-icon>
               </v-list-tile-action>
 
+              <v-list-tile-avatar v-if="actor.avatar">
+                <img :src="actor.avatar">
+              </v-list-tile-avatar>
               <v-list-tile-content>
                 <v-list-tile-title v-text="actor.username"></v-list-tile-title>
                 <v-list-tile-sub-title v-if="actor.display_name" v-text="actor.display_name"></v-list-tile-sub-title>
               </v-list-tile-content>
-
-              <v-list-tile-avatar>
-                <img :src="actor.avatar">
-              </v-list-tile-avatar>
+              <v-list-tile-action v-if="$store.state.defaultActor.username !== actor.username" @click="deleteActor(actor)">
+                <v-btn icon ripple>
+                  <v-icon>delete</v-icon>
+                </v-btn>
+              </v-list-tile-action>
             </v-list-tile>
           </v-list>
           <v-divider v-if="showForm"></v-divider>
@@ -69,6 +73,7 @@
 <script>
 import eventFetch from "@/api/eventFetch";
 import auth from "@/auth";
+import { CHANGE_ACTOR, REMOVE_ACTOR } from '@/store/mutation-types';
 
 export default {
   name: "Identities",
@@ -124,9 +129,19 @@ export default {
         this.showForm = true;
       }
     },
+    changeDefaultActor(actor) {
+      this.$store.commit(CHANGE_ACTOR, actor);
+    },
     host() {
       return `@${window.location.host}`;
-    }
-  }
+    },
+    deleteActor(actor) {
+      eventFetch(`/actors/${actor.username}`, this.$store, {
+        method: 'DELETE',
+      }).then(res => {
+        this.$store.commit(REMOVE_ACTOR, actor);
+      });
+    },
+  },
 };
 </script>

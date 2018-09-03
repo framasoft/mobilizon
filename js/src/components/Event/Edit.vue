@@ -67,7 +67,7 @@
           Event ends at:
           <v-text-field type="datetime-local" v-model="event.endDate"></v-text-field>
 
-          <vuetify-google-autocomplete
+          <!-- <vuetify-google-autocomplete
             id="map"
             append-icon="search"
             placeholder="Start typing"
@@ -75,7 +75,7 @@
             enable-geolocation
             v-on:placechanged="getAddressData"
           >
-          </vuetify-google-autocomplete>
+          </vuetify-google-autocomplete> -->
           <v-btn color="primary" @click.native="e1 = 3">Next</v-btn>
         </v-stepper-content>
         <v-stepper-step step="3" :complete="e1 > 3">Extra informations</v-stepper-step>

@@ -6,7 +6,7 @@ defmodule Eventos.Events do
   import Ecto.Query, warn: false
   alias Eventos.Repo
 
-  alias Eventos.Events.Event
+  alias Eventos.Events.{Event, Participant}
   alias Eventos.Events.Comment
   alias Eventos.Actors.Actor
   alias Eventos.Addresses.Address
@@ -166,17 +166,31 @@ defmodule Eventos.Events do
   Gets a full event by it's UUID
   """
   def get_event_full_by_uuid(uuid) do
-    event = Repo.get_by(Event, uuid: uuid)
-
-    Repo.preload(event, [
-      :organizer_actor,
-      :category,
-      :sessions,
-      :tracks,
-      :tags,
-      :participants,
-      :physical_address
-    ])
+    participant_query = from(
+      p in Participant,
+      preload: [:actor],
+      order_by: [desc: p.inserted_at],
+      limit: 5,
+    )
+    query = from(
+      e in Event,
+      where: e.uuid == ^uuid,
+      preload: [
+        :organizer_actor,
+        :category,
+        :sessions,
+        :tracks,
+        :tags,
+        :physical_address,
+      ]
+    )
+    final_query = from(
+      query,
+      preload: [
+        participants: ^participant_query,
+      ]
+    )
+    Repo.one(final_query)
   end
 
   @doc """

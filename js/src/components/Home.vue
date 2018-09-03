@@ -20,7 +20,7 @@
           <v-flex xs12 sm8 offset-sm2>
             <v-layout row wrap>
                 <v-flex xs12 sm6>
-                  <h1>Welcome back {{ $store.state.actor.username }}</h1>
+                  <h1>Welcome back {{ $store.state.defaultActor.username }}</h1>
                 </v-flex>
                 <v-flex xs12 sm6>
                 <v-layout align-center>
@@ -101,7 +101,7 @@ export default {
   },
   computed: {
     displayed_name() {
-      return this.$store.state.actor.display_name === null ? this.$store.state.actor.username : this.$store.state.actor.display_name
+      return this.$store.state.defaultActor.display_name === null ? this.$store.state.defaultActor.username : this.$store.state.defaultActor.display_name
     },
   },
   methods: {

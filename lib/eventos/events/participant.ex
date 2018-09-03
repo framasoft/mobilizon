@@ -21,6 +21,6 @@ defmodule Eventos.Events.Participant do
   def changeset(%Participant{} = participant, attrs) do
     participant
     |> cast(attrs, [:role, :event_id, :actor_id])
-    |> validate_required([:role, :event_id, :actor_id])
+    |> validate_required([:event_id, :actor_id])
   end
 end

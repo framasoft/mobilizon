@@ -3,7 +3,7 @@ defmodule EventosWeb.EventView do
   View for Events
   """
   use EventosWeb, :view
-  alias EventosWeb.{EventView, ActorView, GroupView, AddressView}
+  alias EventosWeb.{EventView, ActorView, GroupView, AddressView, ParticipantView}
 
   def render("index.json", %{events: events, coord: coord, city: city, country: country}) do
     %{
@@ -59,7 +59,7 @@ defmodule EventosWeb.EventView do
       ends_on: event.ends_on,
       uuid: event.uuid,
       organizer: render_one(event.organizer_actor, ActorView, "actor_basic.json"),
-      participants: render_many(event.participants, ActorView, "actor_basic.json"),
+      participants: render_many(event.participants, ParticipantView, "participant.json"),
       physical_address: render_one(event.physical_address, AddressView, "address.json"),
       type: "Event",
       address_type: event.address_type

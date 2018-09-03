@@ -35,7 +35,7 @@ defmodule Eventos.Events.Event do
     belongs_to(:attributed_to, Actor, foreign_key: :attributed_to_id)
     many_to_many(:tags, Tag, join_through: "events_tags")
     belongs_to(:category, Category)
-    many_to_many(:participants, Actor, join_through: Participant)
+    has_many(:participants, Participant, foreign_key: :event_id)
     has_many(:tracks, Track)
     has_many(:sessions, Session)
     belongs_to(:physical_address, Address)

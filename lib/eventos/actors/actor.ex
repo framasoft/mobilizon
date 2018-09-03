@@ -16,7 +16,7 @@ defmodule Eventos.Actors.Actor do
   import Ecto.Changeset
   alias Eventos.Actors
   alias Eventos.Actors.{Actor, User, Follower, Member}
-  alias Eventos.Events.Event
+  alias Eventos.Events.{Event, Participant}
   alias Eventos.Service.ActivityPub
 
   import Ecto.Query
@@ -45,6 +45,7 @@ defmodule Eventos.Actors.Actor do
     field(:banner_url, :string)
     many_to_many(:followers, Actor, join_through: Follower)
     has_many(:organized_events, Event, foreign_key: :organizer_actor_id)
+    has_many(:participations, Participant, foreign_key: :actor_id)
     many_to_many(:memberships, Actor, join_through: Member)
     belongs_to(:user, User)
 
@@ -73,7 +74,7 @@ defmodule Eventos.Actors.Actor do
       :banner_url,
       :user_id
     ])
-    |> put_change(:url, "#{EventosWeb.Endpoint.url()}/@#{attrs["prefered_username"]}")
+    |> put_change(:url, "#{EventosWeb.Endpoint.url()}/@#{attrs["preferred_username"]}")
     |> validate_required([:preferred_username, :keys, :suspended, :url])
     |> unique_constraint(:prefered_username, name: :actors_preferred_username_domain_index)
   end

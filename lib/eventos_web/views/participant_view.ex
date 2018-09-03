@@ -3,7 +3,7 @@ defmodule EventosWeb.ParticipantView do
   View for Participants
   """
   use EventosWeb, :view
-  alias EventosWeb.ParticipantView
+  alias EventosWeb.{ParticipantView, ActorView}
 
   def render("index.json", %{participants: participants}) do
     %{data: render_many(participants, ParticipantView, "participant.json")}
@@ -14,6 +14,9 @@ defmodule EventosWeb.ParticipantView do
   end
 
   def render("participant.json", %{participant: participant}) do
-    %{id: participant.id, role: participant.role}
+    %{
+      role: participant.role,
+      actor: render_one(participant.actor, ActorView, "actor_basic.json"),
+    }
   end
 end

@@ -7,7 +7,7 @@
               <v-toolbar-title>Create a new event</v-toolbar-title>
           </v-toolbar>
           <v-card-text>
-            <v-form>
+            <v-form ref="eventForm" v-model="valid" lazy-validation>
               <v-text-field
                 label="Title"
                 v-model="event.title"
@@ -20,7 +20,7 @@
                 <v-radio label="Phone" value="phone" off-icon="phone"></v-radio>
                 <v-radio label="Other" value="other"></v-radio>
               </v-radio-group>
-              <vuetify-google-autocomplete
+              <!-- <vuetify-google-autocomplete
                 v-if="event.location_type === 'physical'" 
                 id="map"
                 append-icon="search"
@@ -31,7 +31,7 @@
                 types="geocode"
                 v-on:placechanged="getAddressData"
               >
-              </vuetify-google-autocomplete>
+              </vuetify-google-autocomplete> -->
               <v-text-field
                 v-if="event.location_type === 'online'"
                 label="Meeting adress"
@@ -52,9 +52,10 @@
               item-text="title"
               item-value="id"
               label="Categories"
+              required
               >
               </v-autocomplete>
-              <v-btn color="primary" @click="create">Create event</v-btn>
+              <v-btn color="primary" :disabled="!valid" @click="create">Create event</v-btn>
             </v-form>
           </v-card-text>
         </v-card>
@@ -78,6 +79,7 @@
     },
     data() {
       return {
+        valid: true,
         e1: 0,
         event: {
           title: null,
@@ -112,6 +114,10 @@
     },
     methods: {
       create() {
+        if (!this.$refs.eventForm.validate()) {
+          return;
+        }
+
         // this.event.seats = parseInt(this.event.seats, 10);
         // this.tagsToSend.forEach((tag) => {
         //   this.event.tags.push({
@@ -119,9 +125,10 @@
         //     // '@type': 'Tag',
         //   });
         // });
+
         this.event.category_id = this.event.category;
-        this.event.organizer_actor_id = this.$store.state.actor.id;
-        this.event.participants = [this.$store.state.actor.id];
+        this.event.organizer_actor_id = this.$store.state.defaultActor.id;
+        this.event.participants = [this.$store.state.defaultActor.id];
         // this.event.price = parseFloat(this.event.price);
 
         if (this.id === undefined) {

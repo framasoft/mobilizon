@@ -12,33 +12,33 @@
         <v-list-group
           value="false"
         >
-          <v-list-tile avatar v-if="$store.state.actor" slot="activator">
+          <v-list-tile avatar v-if="$store.state.defaultActor" slot="activator">
             <v-list-tile-avatar>
-                <img v-if="!$store.state.actor.avatar"
+                <img v-if="!$store.state.defaultActor.avatar"
                   class="img-circle elevation-7 mb-1"
                   src="https://picsum.photos/125/125/"
                 >
                 <img v-else
                       class="img-circle elevation-7 mb-1"
-                      :src="$store.state.actor.avatar"
+                      :src="$store.state.defaultActor.avatar"
                 >
               </v-list-tile-avatar>
 
-            <v-list-tile-content @click="$router.push({name: 'Account', params: { name: $store.state.actor.username }})">
+            <v-list-tile-content @click="$router.push({name: 'Account', params: { name: $store.state.defaultActor.username }})">
               <v-list-tile-title>{{ this.displayed_name }}</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile avatar v-if="$store.state.actor">
+          <v-list-tile avatar v-if="$store.state.actors.length > 1 && actor.username !== $store.state.defaultActor.username" v-for="actor in $store.state.actors" :key="actor.id">
             <v-list-tile-avatar>
                 <img
                   class="img-circle elevation-7 mb-1"
-                  src="https://picsum.photos/125/125/"
+                  :src="actor.avatar"
                 >
               </v-list-tile-avatar>
 
             <v-list-tile-content>
-              <v-list-tile-title>Autre identité</v-list-tile-title>
+              <v-list-tile-title>{{ actor.username }}</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
 
@@ -186,7 +186,7 @@ export default {
   },
   computed: {
     displayed_name() {
-      return this.$store.state.actor.display_name === null ? this.$store.state.actor.username : this.$store.state.actor.display_name
+      return this.$store.state.defaultActor.display_name === null ? this.$store.state.defaultActor.username : this.$store.state.defaultActor.display_name
     },
   }
 };

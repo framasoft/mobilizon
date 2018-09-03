@@ -1,5 +1,5 @@
 import { API_ORIGIN, API_PATH } from '../api/_entrypoint';
-import { LOGIN_USER, LOAD_USER, CHANGE_ACTOR } from '../store/mutation-types';
+import { LOGIN_USER, LOAD_USER, CHANGE_ACTOR, LOAD_ACTORS } from '../store/mutation-types';
 
 // URL and endpoint constants
 const LOGIN_URL = `${API_ORIGIN}${API_PATH}/login`;
@@ -104,9 +104,10 @@ export default {
         return errorHandler('Error while authenticating');
       }).then((response) => {
         this.authenticated = true;
-        console.log(response);
-        store.commit(LOAD_USER, response.data);
+        console.log('authentification', response);
+        store.commit(LOAD_ACTORS, response.data.actors);
         store.commit(CHANGE_ACTOR, response.data.actors[0]);
+        store.commit(LOGIN_USER, response.data);
         return successHandler();
       });
   },

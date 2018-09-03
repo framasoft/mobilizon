@@ -103,7 +103,7 @@
                     </v-list-tile-action>
 
                     <v-list-tile-content>
-                      <v-list-tile-title><span v-if="event.address_type === 'physical'">
+                      <v-list-tile-title><span v-if="event.address_type === 'physical' && event.physical_address">
                   {{ event.physical_address.streetAddress }}
                 </span></v-list-tile-title>
                       <v-list-tile-sub-title>Mobile</v-list-tile-sub-title>
@@ -217,10 +217,10 @@
           })
       },
       actorIsParticipant() {
-        return this.$store.state.actor && this.event.participants.map(participant => participant.id).includes(this.$store.state.actor.id) || this.actorIsOrganizer();
+        return this.$store.state.defaultActor && this.event.participants.map(participant => participant.id).includes(this.$store.state.defaultActor.id) || this.actorIsOrganizer();
       },
       actorIsOrganizer() {
-        return this.$store.state.actor && this.$store.state.actor.id === this.event.organizer.id;
+        return this.$store.state.defaultActor && this.$store.state.defaultActor.id === this.event.organizer.id;
       }
     },
     props: {

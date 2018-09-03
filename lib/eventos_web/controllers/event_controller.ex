@@ -5,7 +5,7 @@ defmodule EventosWeb.EventController do
   use EventosWeb, :controller
 
   alias Eventos.Events
-  alias Eventos.Events.Event
+  alias Eventos.Events.{Event, Participant}
   alias Eventos.Export.ICalendar
 
   require Logger
@@ -52,7 +52,8 @@ defmodule EventosWeb.EventController do
     Logger.debug("creating event with")
     Logger.debug(inspect(event_params))
 
-    with {:ok, %Event{} = event} <- Events.create_event(event_params) do
+    with {:ok, %Event{id: event_id} = event} <- Events.create_event(event_params),
+    {:ok, %Participant{} = _particpant} <- Events.create_participant(%{"event_id" => event_id, "actor_id" => event_params["organizer_actor_id"], "role" => 4}) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", event_path(conn, :show, event.uuid))

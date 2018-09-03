@@ -80,6 +80,7 @@ defmodule EventosWeb.Router do
       resources("/users", UserController, except: [:new, :edit, :show])
       post("/actors", ActorController, :create)
       patch("/actors/:name", ActorController, :update)
+      delete("/actors/:preferred_username", ActorController, :delete)
       post("/events", EventController, :create)
       patch("/events/:uuid", EventController, :update)
       put("/events/:uuid", EventController, :update)

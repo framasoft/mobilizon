@@ -65,15 +65,17 @@ defmodule EventosWeb.ActorController do
     end
   end
 
-  #  def delete(conn, %{"id" => id_str}) do
-  #    {id, _} = Integer.parse(id_str)
-  #    if Guardian.Plug.current_resource(conn).actor.id == id do
-  #      actor = Actors.get_actor!(id)
-  #      with {:ok, %Actor{}} <- Actors.delete_actor(actor) do
-  #        send_resp(conn, :no_content, "")
-  #      end
-  #    else
-  #      send_resp(conn, 401, "")
-  #    end
-  #  end
+   def delete(conn, %{"preferred_username" => username}) do
+    with %User{} = user <- Guardian.Plug.current_resource(conn),
+      %Actor{} = actor <- Actors.get_actor_by_name(username),
+      true <- Enum.member?(user.actors, actor),
+      {:ok, %Actor{}} <- Actors.delete_actor(actor) do
+         send_resp(conn, :no_content, "")
+     else
+       e -> 
+        require Logger
+        Logger.error(inspect e)
+        send_resp(conn, 401, "")
+     end
+   end
 end
