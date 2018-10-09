@@ -9,7 +9,7 @@ defmodule EventosWeb.Router do
   end
 
   pipeline :well_known do
-    plug(:accepts, ["json/application", "jrd-json"])
+    plug(:accepts, ["json/application", "jrd-json", "application/json"])
   end
 
   pipeline :activity_pub do
