@@ -56,11 +56,14 @@ defmodule Eventos.Service.WebFingerTest do
     end
 
     test "a friendica actor" do
-      # Hasn't any ActivityPub
+      # Now with ActivityPub !
       actor = "lain@squeet.me"
 
-      assert {:ok, %{"subject" => "acct:" <> actor} = data} = WebFinger.finger(actor)
-      refute Map.has_key?(data, "url")
+      assert {:ok,
+              %{
+                "subject" => "acct:" <> actor,
+                "url" => "https://squeet.me/profile/lain"
+              }} = WebFinger.finger(actor)
     end
   end
 end
