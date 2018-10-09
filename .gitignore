@@ -17,6 +17,6 @@ erl_crash.dump
 
 .elixir_ls
 /doc
-priv/static/GeoLite2-City.mmdb
+priv/static/*
 .vscode/
 cover/
