@@ -140,6 +140,24 @@ defmodule Eventos.EventsTest do
       event1 = insert(:event, organizer_actor: actor)
       assert {:ok, [event_found], 2} = Events.get_events_for_actor(actor, 1, 1)
     end
+
+    test "get_event_by_url/1 with valid url", %{actor: actor, event: event} do
+      assert event = Events.get_event_by_url(event.url)
+    end
+
+    test "get_event_by_url/1 with bad url", %{actor: actor, event: event} do
+      refute event == Events.get_event_by_url("not valid")
+    end
+
+    test "get_event_by_url!/1 with valid url", %{actor: actor, event: event} do
+      assert event = Events.get_event_by_url!(event.url)
+    end
+
+    test "get_event_by_url!/1 with bad url", %{actor: actor, event: event} do
+      assert_raise Ecto.NoResultsError, fn ->
+        Events.get_event_by_url!("not valid")
+      end
+    end
   end
 
   describe "categories" do

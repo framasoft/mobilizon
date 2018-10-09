@@ -523,19 +523,6 @@ defmodule Eventos.Actors do
   alias Eventos.Actors.Member
 
   @doc """
-  Returns the list of members.
-
-  ## Examples
-
-      iex> list_members()
-      [%Member{}, ...]
-
-  """
-  def list_members do
-    Repo.all(Member)
-  end
-
-  @doc """
   Gets a single member.
 
   Raises `Ecto.NoResultsError` if the Member does not exist.

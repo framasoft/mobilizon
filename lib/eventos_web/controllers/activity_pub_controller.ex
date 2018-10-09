@@ -14,6 +14,8 @@ defmodule EventosWeb.ActivityPubController do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ActorView.render("actor.json", %{actor: actor}))
+    else
+      nil -> {:error, :not_found}
     end
   end
 
@@ -25,9 +27,7 @@ defmodule EventosWeb.ActivityPubController do
       |> json(ObjectView.render("event.json", %{event: event}))
     else
       false ->
-        conn
-        |> put_status(404)
-        |> json("Not found")
+        {:error, :not_found}
     end
   end
 
@@ -86,19 +86,35 @@ defmodule EventosWeb.ActivityPubController do
     json(conn, "ok")
   end
 
+  # only accept relayed Creates
+  def inbox(conn, %{"type" => "Create"} = params) do
+    Logger.info(
+      "Signature missing or not from author, relayed Create message, fetching object from source"
+    )
+
+    ActivityPub.fetch_object_from_url(params["object"]["id"])
+
+    json(conn, "ok")
+  end
+
   def inbox(conn, params) do
     headers = Enum.into(conn.req_headers, %{})
 
-    if String.contains?(headers["signature"] || "", params["actor"]) do
-      Logger.info("Signature error")
-      Logger.info("Could not validate #{params["actor"]}")
+    if String.contains?(headers["signature"], params["actor"]) do
+      Logger.info(
+        "Signature validation error for: #{params["actor"]}, make sure you are forwarding the HTTP Host header!"
+      )
+
       Logger.info(inspect(conn.req_headers))
-    else
-      Logger.info("Signature not from author, relayed message, fetching from source")
-      ActivityPub.fetch_event_from_url(params["object"]["id"])
     end
 
-    json(conn, "ok")
+    json(conn, "error")
+  end
+
+  def errors(conn, {:error, :not_found}) do
+    conn
+    |> put_status(404)
+    |> json("Not found")
   end
 
   def errors(conn, _e) do
