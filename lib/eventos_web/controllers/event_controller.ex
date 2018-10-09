@@ -17,10 +17,13 @@ defmodule EventosWeb.EventController do
     Logger.debug(inspect(Geolix.lookup(ip), pretty: true))
 
     with %{
-           city: %Geolix.Result.City{
+           city: %Geolix.Adapter.MMDB2.Result.City{
              city: city,
              country: country,
-             location: %Geolix.Record.Location{latitude: latitude, longitude: longitude}
+             location: %Geolix.Adapter.MMDB2.Record.Location{
+               latitude: latitude,
+               longitude: longitude
+             }
            }
          } <- Geolix.lookup(ip) do
       distance =
