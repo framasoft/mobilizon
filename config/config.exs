@@ -56,6 +56,6 @@ config :geolix,
     %{
       id: :city,
       adapter: Geolix.Adapter.MMDB2,
-      source: System.get_env("GEOLITE_CITIES_PATH") || "priv/static/GeoLite2-City.mmdb"
+      source: System.get_env("GEOLITE_CITIES_PATH") || "priv/data/GeoLite2-City.mmdb"
     }
   ]

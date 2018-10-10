@@ -73,9 +73,9 @@ defmodule Eventos.Actors.Actor do
       :banner_url,
       :user_id
     ])
-    |> put_change(:url, "#{EventosWeb.Endpoint.url()}/@#{attrs["prefered_username"]}")
+    |> put_change(:url, "#{EventosWeb.Endpoint.url()}/@#{attrs["preferred_username"]}")
     |> validate_required([:preferred_username, :keys, :suspended, :url])
-    |> unique_constraint(:prefered_username, name: :actors_preferred_username_domain_index)
+    |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_index)
   end
 
   def registration_changeset(%Actor{} = actor, attrs) do
@@ -94,7 +94,10 @@ defmodule Eventos.Actors.Actor do
       :user_id
     ])
     |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_index)
-    |> put_change(:url, "#{EventosWeb.Endpoint.url()}/@#{attrs["prefered_username"]}")
+    |> put_change(:url, "#{EventosWeb.Endpoint.url()}/@#{attrs.preferred_username}")
+    |> put_change(:inbox_url, "#{EventosWeb.Endpoint.url()}/@#{attrs.preferred_username}/inbox")
+    |> put_change(:outbox_url, "#{EventosWeb.Endpoint.url()}/@#{attrs.preferred_username}/outbox")
+    |> put_change(:shared_inbox_url, "#{EventosWeb.Endpoint.url()}/inbox")
     |> validate_required([:preferred_username, :keys, :suspended, :url, :type])
   end
 
@@ -157,14 +160,14 @@ defmodule Eventos.Actors.Actor do
     ])
     |> put_change(
       :outbox_url,
-      "#{EventosWeb.Endpoint.url()}/@#{params["prefered_username"]}/outbox"
+      "#{EventosWeb.Endpoint.url()}/@#{params["preferred_username"]}/outbox"
     )
     |> put_change(
       :inbox_url,
-      "#{EventosWeb.Endpoint.url()}/@#{params["prefered_username"]}/inbox"
+      "#{EventosWeb.Endpoint.url()}/@#{params["preferred_username"]}/inbox"
     )
     |> put_change(:shared_inbox_url, "#{EventosWeb.Endpoint.url()}/inbox")
-    |> put_change(:url, "#{EventosWeb.Endpoint.url()}/@#{params["prefered_username"]}")
+    |> put_change(:url, "#{EventosWeb.Endpoint.url()}/@#{params["preferred_username"]}")
     |> put_change(:domain, nil)
     |> put_change(:type, :Group)
     |> validate_required([:url, :outbox_url, :inbox_url, :type, :name, :preferred_username])

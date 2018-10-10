@@ -3,7 +3,7 @@
   <v-flex xs12 sm6 offset-sm3>
     <v-progress-circular v-if="loading" indeterminate color="primary"></v-progress-circular>
     <v-card v-if="!loading">
-      <v-card-media :src="actor.banner" height="400px">
+      <v-img :src="actor.banner || 'https://picsum.photos/400/'" height="300px">
         <v-layout column class="media">
           <v-card-title>
             <v-btn icon @click="$router.go(-1)">
@@ -50,7 +50,7 @@
             </v-layout>
           </v-container>
         </v-layout>
-      </v-card-media>
+      </v-img>
       <v-list three-line>
         <v-list-tile>
           <v-list-tile-action>
@@ -126,10 +126,10 @@
           </v-flex>
         </v-layout>
       </v-container>
-      <v-container fluid grid-list-md v-if="actor.organizingEvents && actor.organizingEvents.length > 0">
+      <v-container fluid grid-list-md v-if="actor.organized_events && actor.organized_events.length > 0">
         <v-subheader>Organized events</v-subheader>
         <v-layout row wrap>
-          <v-flex v-for="event in actor.organizingEvents" :key="event.id">
+          <v-flex v-for="event in actor.organized_events" :key="event.id">
             <v-card>
               <v-card-media
                 class="black--text"
@@ -204,13 +204,13 @@ export default {
         .then((response) => {
           this.actor = response.data;
           this.loading = false;
-          console.log(this.actor);
+          console.log('actor', this.actor);
         })
     },
     logoutUser() {
       auth.logout(this.$store);
       this.$router.push({ name: 'Home' });
-    }
+    },
   }
 }
 </script>

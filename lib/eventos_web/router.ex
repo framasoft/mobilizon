@@ -13,7 +13,7 @@ defmodule EventosWeb.Router do
   end
 
   pipeline :activity_pub do
-    plug(:accepts, ["activity-json"])
+    plug(:accepts, ["activity-json", "text/html"])
     plug(EventosWeb.HTTPSignaturePlug)
   end
 

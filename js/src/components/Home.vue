@@ -1,9 +1,10 @@
 <template>
   <v-container>
-      <v-jumbotron
+      <v-img
         :gradient="gradient"
         src="https://picsum.photos/1200/900"
         dark
+        height="300"
         v-if="$store.state.user === false"
       >
           <v-container fill-height>
@@ -15,7 +16,7 @@
                   </v-flex>
               </v-layout>
           </v-container>
-      </v-jumbotron>
+      </v-img>
       <v-layout v-else>
           <v-flex xs12 sm8 offset-sm2>
             <v-layout row wrap>

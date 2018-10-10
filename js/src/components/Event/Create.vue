@@ -20,7 +20,7 @@
                 <v-radio label="Phone" value="phone" off-icon="phone"></v-radio>
                 <v-radio label="Other" value="other"></v-radio>
               </v-radio-group>
-              <vuetify-google-autocomplete
+              <!-- <vuetify-google-autocomplete
                 v-if="event.location_type === 'physical'" 
                 id="map"
                 append-icon="search"
@@ -31,7 +31,7 @@
                 types="geocode"
                 v-on:placechanged="getAddressData"
               >
-              </vuetify-google-autocomplete>
+              </vuetify-google-autocomplete> -->
               <v-text-field
                 v-if="event.location_type === 'online'"
                 label="Meeting adress"

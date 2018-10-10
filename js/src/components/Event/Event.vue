@@ -4,7 +4,7 @@
       <span v-if="error">Error : event not found</span>
       <v-progress-circular v-if="loading" indeterminate color="primary"></v-progress-circular>
       <v-card v-if="!loading && !error">
-        <v-card-media
+        <v-img
                         src="https://picsum.photos/600/400/"
                         height="200px"
                 >
@@ -36,7 +36,7 @@
               </v-flex>
             </v-layout>
           </v-container>
-        </v-card-media>
+        </v-img>
         <v-container grid-list-md>
           <v-layout row wrap>
             <v-flex md10>
@@ -181,6 +181,7 @@
           .then((data) => {
             this.loading = false;
             this.event = data.data;
+            console.log('event', this.event);
           }).catch((res) => {
             Promise.resolve(res).then((data) => {
               console.log(data);

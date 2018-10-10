@@ -10,7 +10,7 @@ variables:
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: ""
   POSTGRES_HOST: postgres
-  GEOLITE_CITIES_PATH: "/builds/tcit/eventos/priv/static/GeoLite2-City.mmdb"
+  GEOLITE_CITIES_PATH: "/builds/tcit/eventos/priv/data/GeoLite2-City.mmdb"
 
 cache:
   key: "$CI_JOB_NAME"
@@ -27,7 +27,7 @@ before_script:
   - mix deps.get
   - MIX_ENV=test mix ecto.create
   - MIX_ENV=test mix ecto.migrate
-  - curl http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz --output GeoLite2-City.tar.gz -s && tar zxf GeoLite2-City.tar.gz && mv GeoLite2-City_*/GeoLite2-City.mmdb priv/static/GeoLite2-City.mmdb
+  - curl http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz --output GeoLite2-City.tar.gz -s && tar zxf GeoLite2-City.tar.gz && mv GeoLite2-City_*/GeoLite2-City.mmdb priv/data/GeoLite2-City.mmdb
 
 mix:
   script:
