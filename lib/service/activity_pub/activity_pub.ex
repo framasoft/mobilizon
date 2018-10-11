@@ -261,7 +261,10 @@ defmodule Mobilizon.Service.ActivityPub do
     host = URI.parse(inbox).host
 
     signature =
-      Mobilizon.Service.HTTPSignatures.sign(actor, %{host: host, "content-length": byte_size(json)})
+      Mobilizon.Service.HTTPSignatures.sign(actor, %{
+        host: host,
+        "content-length": byte_size(json)
+      })
 
     Logger.debug("signature")
     Logger.debug(inspect(signature))

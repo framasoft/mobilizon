@@ -41,7 +41,9 @@ defmodule MobilizonWeb.GroupController do
       nil ->
         conn
         |> put_status(:not_found)
-        |> render(MobilizonWeb.ErrorView, "not_found.json", details: "group or actor doesn't exist")
+        |> render(MobilizonWeb.ErrorView, "not_found.json",
+          details: "group or actor doesn't exist"
+        )
 
       err ->
         require Logger

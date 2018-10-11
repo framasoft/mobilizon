@@ -96,7 +96,10 @@ defmodule Mobilizon.Actors.Actor do
     |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_index)
     |> put_change(:url, "#{MobilizonWeb.Endpoint.url()}/@#{attrs.preferred_username}")
     |> put_change(:inbox_url, "#{MobilizonWeb.Endpoint.url()}/@#{attrs.preferred_username}/inbox")
-    |> put_change(:outbox_url, "#{MobilizonWeb.Endpoint.url()}/@#{attrs.preferred_username}/outbox")
+    |> put_change(
+      :outbox_url,
+      "#{MobilizonWeb.Endpoint.url()}/@#{attrs.preferred_username}/outbox"
+    )
     |> put_change(:shared_inbox_url, "#{MobilizonWeb.Endpoint.url()}/inbox")
     |> validate_required([:preferred_username, :keys, :suspended, :url, :type])
   end

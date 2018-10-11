@@ -10,7 +10,11 @@ defmodule MobilizonWeb.NodeinfoControllerTest do
              "links" => [
                %{
                  "href" =>
-                   MobilizonWeb.Router.Helpers.nodeinfo_url(MobilizonWeb.Endpoint, :nodeinfo, "2.0"),
+                   MobilizonWeb.Router.Helpers.nodeinfo_url(
+                     MobilizonWeb.Endpoint,
+                     :nodeinfo,
+                     "2.0"
+                   ),
                  "rel" => "http://nodeinfo.diaspora.software/ns/schema/2.0"
                }
              ]

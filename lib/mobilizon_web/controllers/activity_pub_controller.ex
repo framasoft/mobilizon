@@ -12,10 +12,11 @@ defmodule MobilizonWeb.ActivityPubController do
   def actor(conn, %{"name" => name}) do
     with %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
       case get_req_header(conn, "accept") do
-        ["application/activity+json"] -> 
+        ["application/activity+json"] ->
           conn
           |> put_resp_header("content-type", "application/activity+json")
           |> json(ActorView.render("actor.json", %{actor: actor}))
+
         _ ->
           conn
           |> put_resp_content_type("text/html")
