@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.CreateAccounts do
+defmodule Mobilizon.Repo.Migrations.CreateAccounts do
   use Ecto.Migration
 
   def change do

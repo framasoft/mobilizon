@@ -1,13 +1,13 @@
-defmodule Eventos.Service.Federator do
+defmodule Mobilizon.Service.Federator do
   @moduledoc """
   Handle federated activities
   """
 
   use GenServer
-  alias Eventos.Actors
-  alias Eventos.Activity
-  alias Eventos.Service.ActivityPub
-  alias Eventos.Service.ActivityPub.Transmogrifier
+  alias Mobilizon.Actors
+  alias Mobilizon.Activity
+  alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Service.ActivityPub.Transmogrifier
   require Logger
 
   @max_jobs 20

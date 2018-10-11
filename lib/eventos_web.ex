@@ -1,12 +1,12 @@
-defmodule EventosWeb do
+defmodule MobilizonWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
   as controllers, views, channels and so on.
 
   This can be used in your application as:
 
-      use EventosWeb, :controller
-      use EventosWeb, :view
+      use MobilizonWeb, :controller
+      use MobilizonWeb, :view
 
   The definitions below will be executed for every view,
   controller, etc, so keep them short and clean, focused
@@ -19,18 +19,18 @@ defmodule EventosWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller, namespace: EventosWeb
+      use Phoenix.Controller, namespace: MobilizonWeb
       import Plug.Conn
-      import EventosWeb.Router.Helpers
-      import EventosWeb.Gettext
+      import MobilizonWeb.Router.Helpers
+      import MobilizonWeb.Gettext
     end
   end
 
   def view do
     quote do
       use Phoenix.View,
-        root: "lib/eventos_web/templates",
-        namespace: EventosWeb
+        root: "lib/mobilizon_web/templates",
+        namespace: MobilizonWeb
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_flash: 2, view_module: 1]
@@ -38,9 +38,9 @@ defmodule EventosWeb do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import EventosWeb.Router.Helpers
-      import EventosWeb.ErrorHelpers
-      import EventosWeb.Gettext
+      import MobilizonWeb.Router.Helpers
+      import MobilizonWeb.ErrorHelpers
+      import MobilizonWeb.Gettext
     end
   end
 
@@ -55,7 +55,7 @@ defmodule EventosWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import EventosWeb.Gettext
+      import MobilizonWeb.Gettext
     end
   end
 

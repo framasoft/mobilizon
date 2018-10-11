@@ -1,10 +1,10 @@
-defmodule EventosWeb.BotControllerTest do
-  use EventosWeb.ConnCase
+defmodule MobilizonWeb.BotControllerTest do
+  use MobilizonWeb.ConnCase
 
-  import Eventos.Factory
+  import Mobilizon.Factory
 
-  alias Eventos.Actors
-  alias Eventos.Actors.Bot
+  alias Mobilizon.Actors
+  alias Mobilizon.Actors.Bot
 
   @create_attrs %{source: "some source", type: "some type", name: "some name"}
   @update_attrs %{

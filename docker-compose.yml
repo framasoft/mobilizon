@@ -3,15 +3,15 @@ version: '3'
 services:
 
   postgres:
-    container_name: eventos_db
+    container_name: mobilizon_db
     restart: unless-stopped
     image: mdillon/postgis:10
     environment:
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: eventos_dev
+      POSTGRES_DB: mobilizon_dev
 
   front:
-    container_name: eventos_front
+    container_name: mobilizon_front
     restart: unless-stopped
     build: ./js
     volumes:
@@ -21,7 +21,7 @@ services:
     entrypoint: entrypoint
 
   api:
-    container_name: eventos_api
+    container_name: mobilizon_api
     restart: unless-stopped
     build: .
     volumes:
@@ -33,7 +33,7 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
-      POSTGRES_DATABASE: eventos_dev
+      POSTGRES_DATABASE: mobilizon_dev
       POSTGRES_HOST: postgres
       PORT: 4000
     entrypoint: entrypoint

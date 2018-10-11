@@ -1,10 +1,10 @@
-defmodule EventosWeb.ActivityPubControllerTest do
-  use EventosWeb.ConnCase
-  import Eventos.Factory
-  alias EventosWeb.ActivityPub.{ActorView, ObjectView}
-  alias Eventos.{Repo, Actors, Actors.Actor}
-  alias Eventos.Service.ActivityPub
-  alias Eventos.Activity
+defmodule MobilizonWeb.ActivityPubControllerTest do
+  use MobilizonWeb.ConnCase
+  import Mobilizon.Factory
+  alias MobilizonWeb.ActivityPub.{ActorView, ObjectView}
+  alias Mobilizon.{Repo, Actors, Actors.Actor}
+  alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Activity
   import Logger
 
   describe "/@:preferred_username" do
@@ -135,7 +135,7 @@ defmodule EventosWeb.ActivityPubControllerTest do
   #    test "it returns the following in a collection", %{conn: conn} do
   #      actor = insert(:actor)
   #      actor2 = insert(:actor)
-  #      Eventos.Service.ActivityPub.follow(actor, actor2)
+  #      Mobilizon.Service.ActivityPub.follow(actor, actor2)
 
   #      result =
   #        conn

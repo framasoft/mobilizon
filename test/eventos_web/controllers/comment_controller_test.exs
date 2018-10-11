@@ -1,10 +1,10 @@
-defmodule EventosWeb.CommentControllerTest do
-  use EventosWeb.ConnCase
+defmodule MobilizonWeb.CommentControllerTest do
+  use MobilizonWeb.ConnCase
 
-  alias Eventos.Events
-  alias Eventos.Events.Comment
+  alias Mobilizon.Events
+  alias Mobilizon.Events.Comment
 
-  import Eventos.Factory
+  import Mobilizon.Factory
 
   @create_attrs %{text: "some text"}
   @update_attrs %{text: "some updated text"}
@@ -29,7 +29,7 @@ defmodule EventosWeb.CommentControllerTest do
                "id" => id,
                "text" => "some text",
                "uuid" => uuid,
-               "url" => "#{EventosWeb.Endpoint.url()}/comments/#{uuid}"
+               "url" => "#{MobilizonWeb.Endpoint.url()}/comments/#{uuid}"
              }
     end
 
@@ -60,7 +60,7 @@ defmodule EventosWeb.CommentControllerTest do
                "id" => id,
                "text" => "some updated text",
                "uuid" => uuid,
-               "url" => "#{EventosWeb.Endpoint.url()}/comments/#{uuid}"
+               "url" => "#{MobilizonWeb.Endpoint.url()}/comments/#{uuid}"
              }
     end
 

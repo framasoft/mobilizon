@@ -1,7 +1,7 @@
-defmodule EventosWeb.NodeinfoControllerTest do
-  use EventosWeb.ConnCase
+defmodule MobilizonWeb.NodeinfoControllerTest do
+  use MobilizonWeb.ConnCase
 
-  @instance Application.get_env(:eventos, :instance)
+  @instance Application.get_env(:mobilizon, :instance)
 
   test "Get node info schemas", %{conn: conn} do
     conn = get(conn, nodeinfo_path(conn, :schemas))
@@ -10,7 +10,7 @@ defmodule EventosWeb.NodeinfoControllerTest do
              "links" => [
                %{
                  "href" =>
-                   EventosWeb.Router.Helpers.nodeinfo_url(EventosWeb.Endpoint, :nodeinfo, "2.0"),
+                   MobilizonWeb.Router.Helpers.nodeinfo_url(MobilizonWeb.Endpoint, :nodeinfo, "2.0"),
                  "rel" => "http://nodeinfo.diaspora.software/ns/schema/2.0"
                }
              ]
@@ -27,7 +27,7 @@ defmodule EventosWeb.NodeinfoControllerTest do
              "openRegistrations" => Keyword.get(@instance, :registrations_open),
              "protocols" => ["activitypub"],
              "services" => %{"inbound" => [], "outbound" => []},
-             "software" => %{"name" => "eventos", "version" => Keyword.get(@instance, :version)},
+             "software" => %{"name" => "mobilizon", "version" => Keyword.get(@instance, :version)},
              "version" => "2.0"
            }
   end

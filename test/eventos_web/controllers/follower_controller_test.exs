@@ -1,9 +1,9 @@
-defmodule EventosWeb.FollowerControllerTest do
-  use EventosWeb.ConnCase
+defmodule MobilizonWeb.FollowerControllerTest do
+  use MobilizonWeb.ConnCase
 
-  alias Eventos.Actors
-  alias Eventos.Actors.Follower
-  import Eventos.Factory
+  alias Mobilizon.Actors
+  alias Mobilizon.Actors.Follower
+  import Mobilizon.Factory
 
   @create_attrs %{approved: true, score: 42}
   @update_attrs %{approved: false, score: 43}

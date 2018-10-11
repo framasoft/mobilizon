@@ -1,10 +1,10 @@
-defmodule EventosWeb.TrackControllerTest do
-  use EventosWeb.ConnCase
+defmodule MobilizonWeb.TrackControllerTest do
+  use MobilizonWeb.ConnCase
 
-  import Eventos.Factory
+  import Mobilizon.Factory
 
-  alias Eventos.Events
-  alias Eventos.Events.Track
+  alias Mobilizon.Events
+  alias Mobilizon.Events.Track
 
   @create_attrs %{color: "some color", description: "some description", name: "some name"}
   @update_attrs %{

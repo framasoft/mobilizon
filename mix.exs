@@ -1,9 +1,9 @@
-defmodule Eventos.Mixfile do
+defmodule Mobilizon.Mixfile do
   use Mix.Project
 
   def project do
     [
-      app: :eventos,
+      app: :mobilizon,
       version: "0.0.1",
       elixir: "~> 1.4",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -18,10 +18,10 @@ defmodule Eventos.Mixfile do
         "coveralls.post": :test,
         "coveralls.html": :test
       ],
-      name: "Eventos",
-      source_url: "https://framagit.org/tcit/eventos",
-      homepage_url: "https://framagit.org/tcit/eventos",
-      docs: [main: "Eventos"]
+      name: "Mobilizon",
+      source_url: "https://framagit.org/tcit/mobilizon",
+      homepage_url: "https://framagit.org/tcit/mobilizon",
+      docs: [main: "Mobilizon"]
     ]
   end
 
@@ -30,7 +30,7 @@ defmodule Eventos.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Eventos.Application, []},
+      mod: {Mobilizon.Application, []},
       extra_applications: [:logger, :runtime_tools, :guardian, :bamboo, :geolix]
     ]
   end

@@ -8,7 +8,7 @@
   >
     <v-toolbar-title style="width: 300px" class="ml-0 pl-3 white--text">
       <v-toolbar-side-icon @click.stop="toggleDrawer()"></v-toolbar-side-icon>
-      <router-link :to="{ name: 'Home' }" class="hidden-sm-and-down white--text">Eventos
+      <router-link :to="{ name: 'Home' }" class="hidden-sm-and-down white--text">Mobilizon
       </router-link>
     </v-toolbar-title>
     <v-autocomplete

@@ -1,0 +1,3 @@
+<%= render @view_module, @view_template, assigns %>
+
+<%= gettext "An email sent by Mobilizon on %{instance}.", instance: @instance %>

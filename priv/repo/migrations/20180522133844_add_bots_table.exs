@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.AddBotsTable do
+defmodule Mobilizon.Repo.Migrations.AddBotsTable do
   use Ecto.Migration
 
   def up do

@@ -1,10 +1,10 @@
-defmodule EventosWeb.TagControllerTest do
-  use EventosWeb.ConnCase
+defmodule MobilizonWeb.TagControllerTest do
+  use MobilizonWeb.ConnCase
 
-  import Eventos.Factory
+  import Mobilizon.Factory
 
-  alias Eventos.Events
-  alias Eventos.Events.Tag
+  alias Mobilizon.Events
+  alias Mobilizon.Events.Tag
 
   @create_attrs %{title: "some title"}
   @update_attrs %{title: "some updated title"}

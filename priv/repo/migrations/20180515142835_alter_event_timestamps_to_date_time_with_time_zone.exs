@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.AlterEventTimestampsToDateTimeWithTimeZone do
+defmodule Mobilizon.Repo.Migrations.AlterEventTimestampsToDateTimeWithTimeZone do
   use Ecto.Migration
 
   def up do

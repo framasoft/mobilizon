@@ -1,19 +1,19 @@
-defmodule Eventos.Service.ActivityPub.Utils do
+defmodule Mobilizon.Service.ActivityPub.Utils do
   @moduledoc """
   # Utils
 
   Various utils
   """
 
-  alias Eventos.Repo
-  alias Eventos.Actors
-  alias Eventos.Actors.Actor
-  alias Eventos.Events.Event
-  alias Eventos.Events
-  alias Eventos.Activity
-  alias EventosWeb
-  alias EventosWeb.Router.Helpers
-  alias EventosWeb.Endpoint
+  alias Mobilizon.Repo
+  alias Mobilizon.Actors
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Events.Event
+  alias Mobilizon.Events
+  alias Mobilizon.Activity
+  alias MobilizonWeb
+  alias MobilizonWeb.Router.Helpers
+  alias MobilizonWeb.Endpoint
   alias Ecto.{Changeset, UUID}
   import Ecto.Query
 
@@ -49,7 +49,7 @@ defmodule Eventos.Service.ActivityPub.Utils do
   #  end
 
   def generate_id(type) do
-    "#{EventosWeb.Endpoint.url()}/#{type}/#{UUID.generate()}"
+    "#{MobilizonWeb.Endpoint.url()}/#{type}/#{UUID.generate()}"
   end
 
   #  def create_context(context) do
@@ -78,7 +78,7 @@ defmodule Eventos.Service.ActivityPub.Utils do
         _ -> 5
       end
 
-    Eventos.Service.Federator.enqueue(:publish, activity, priority)
+    Mobilizon.Service.Federator.enqueue(:publish, activity, priority)
     :ok
   end
 

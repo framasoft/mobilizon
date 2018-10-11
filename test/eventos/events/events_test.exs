@@ -1,10 +1,10 @@
-defmodule Eventos.EventsTest do
-  use Eventos.DataCase
+defmodule Mobilizon.EventsTest do
+  use Mobilizon.DataCase
 
-  import Eventos.Factory
+  import Mobilizon.Factory
 
-  alias Eventos.Events
-  alias Eventos.Actors
+  alias Mobilizon.Events
+  alias Mobilizon.Actors
 
   @event_valid_attrs %{
     begins_on: "2010-04-17 14:00:00.000000Z",
@@ -30,7 +30,7 @@ defmodule Eventos.EventsTest do
   end
 
   describe "events" do
-    alias Eventos.Events.Event
+    alias Mobilizon.Events.Event
 
     setup do
       actor = insert(:actor)
@@ -161,7 +161,7 @@ defmodule Eventos.EventsTest do
   end
 
   describe "categories" do
-    alias Eventos.Events.Category
+    alias Mobilizon.Events.Category
 
     setup do
       category = insert(:category)
@@ -223,7 +223,7 @@ defmodule Eventos.EventsTest do
   end
 
   describe "tags" do
-    alias Eventos.Events.Tag
+    alias Mobilizon.Events.Tag
 
     @valid_attrs %{title: "some title"}
     @update_attrs %{title: "some updated title"}
@@ -283,8 +283,8 @@ defmodule Eventos.EventsTest do
   end
 
   describe "participants" do
-    alias Eventos.Events.{Participant, Event}
-    alias Eventos.Actors.Actor
+    alias Mobilizon.Events.{Participant, Event}
+    alias Mobilizon.Actors.Actor
 
     @valid_attrs %{role: 42}
     @update_attrs %{role: 43}
@@ -346,7 +346,7 @@ defmodule Eventos.EventsTest do
   end
 
   describe "sessions" do
-    alias Eventos.Events.Session
+    alias Mobilizon.Events.Session
 
     @valid_attrs %{
       audios_urls: "some audios_urls",
@@ -452,7 +452,7 @@ defmodule Eventos.EventsTest do
   end
 
   describe "tracks" do
-    alias Eventos.Events.Track
+    alias Mobilizon.Events.Track
 
     @valid_attrs %{color: "some color", description: "some description", name: "some name"}
     @update_attrs %{
@@ -525,7 +525,7 @@ defmodule Eventos.EventsTest do
   end
 
   describe "comments" do
-    alias Eventos.Events.Comment
+    alias Mobilizon.Events.Comment
 
     @valid_attrs %{text: "some text"}
     @update_attrs %{text: "some updated text"}

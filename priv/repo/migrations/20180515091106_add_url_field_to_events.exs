@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.AddUrlFieldToEvents do
+defmodule Mobilizon.Repo.Migrations.AddUrlFieldToEvents do
   use Ecto.Migration
 
   def up do

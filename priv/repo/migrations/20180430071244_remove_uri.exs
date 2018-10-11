@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.RemoveUri do
+defmodule Mobilizon.Repo.Migrations.RemoveUri do
   use Ecto.Migration
 
   def up do

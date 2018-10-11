@@ -1,4 +1,4 @@
-defmodule Eventos.Service.XmlBuilder do
+defmodule Mobilizon.Service.XmlBuilder do
   @moduledoc """
   XML Builder.
 

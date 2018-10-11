@@ -6,7 +6,7 @@ use Mix.Config
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with brunch.io to recompile .js and .css sources.
-config :eventos, EventosWeb.Endpoint,
+config :mobilizon, MobilizonWeb.Endpoint,
   http: [port: System.get_env("PORT") || 4001],
   debug_errors: true,
   code_reloader: true,
@@ -30,13 +30,13 @@ config :eventos, EventosWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :eventos, EventosWeb.Endpoint,
+config :mobilizon, MobilizonWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
       ~r{priv/gettext/.*(po)$},
-      ~r{lib/eventos_web/views/.*(ex)$},
-      ~r{lib/eventos_web/templates/.*(eex)$}
+      ~r{lib/mobilizon_web/views/.*(ex)$},
+      ~r{lib/mobilizon_web/templates/.*(eex)$}
     ]
   ]
 
@@ -47,14 +47,14 @@ config :logger, :console, format: "[$level] $message\n", level: :debug
 # in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
 
-config :eventos, Eventos.Mailer, adapter: Bamboo.LocalAdapter
+config :mobilizon, Mobilizon.Mailer, adapter: Bamboo.LocalAdapter
 
 # Configure your database
-config :eventos, Eventos.Repo,
+config :mobilizon, Mobilizon.Repo,
   adapter: Ecto.Adapters.Postgres,
-  types: Eventos.PostgresTypes,
+  types: Mobilizon.PostgresTypes,
   username: System.get_env("POSTGRES_USER") || "elixir",
   password: System.get_env("POSTGRES_PASSWORD") || "elixir",
-  database: System.get_env("POSTGRES_DATABASE") || "eventos_dev",
+  database: System.get_env("POSTGRES_DATABASE") || "mobilizon_dev",
   hostname: System.get_env("POSTGRES_HOST") || "localhost",
   pool_size: 10

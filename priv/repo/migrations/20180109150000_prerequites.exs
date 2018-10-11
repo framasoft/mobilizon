@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.Prerequites do
+defmodule Mobilizon.Repo.Migrations.Prerequites do
   use Ecto.Migration
 
   def up do

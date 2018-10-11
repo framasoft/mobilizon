@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.CreateTracks do
+defmodule Mobilizon.Repo.Migrations.CreateTracks do
   use Ecto.Migration
 
   def change do

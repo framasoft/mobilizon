@@ -1,3 +1,0 @@
-<%= render @view_module, @view_template, assigns %>
-
-<%= gettext "An email sent by Eventos on %{instance}.", instance: @instance %>

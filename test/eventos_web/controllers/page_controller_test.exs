@@ -1,5 +1,5 @@
-defmodule EventosWeb.PageControllerTest do
-  use EventosWeb.ConnCase
+defmodule MobilizonWeb.PageControllerTest do
+  use MobilizonWeb.ConnCase
 
   test "GET /", %{conn: conn} do
     conn = get(conn, "/")

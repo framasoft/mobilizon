@@ -1,23 +1,23 @@
-defmodule Eventos.Service.ActivityPub do
+defmodule Mobilizon.Service.ActivityPub do
   @moduledoc """
   # ActivityPub
 
   Every ActivityPub method
   """
 
-  alias Eventos.Events
-  alias Eventos.Events.{Event, Category, Comment}
-  alias Eventos.Service.ActivityPub.Transmogrifier
-  alias Eventos.Service.WebFinger
-  alias Eventos.Activity
+  alias Mobilizon.Events
+  alias Mobilizon.Events.{Event, Category, Comment}
+  alias Mobilizon.Service.ActivityPub.Transmogrifier
+  alias Mobilizon.Service.WebFinger
+  alias Mobilizon.Activity
 
-  alias Eventos.Actors
-  alias Eventos.Actors.Actor
+  alias Mobilizon.Actors
+  alias Mobilizon.Actors.Actor
 
-  alias Eventos.Service.Federator
+  alias Mobilizon.Service.Federator
 
   import Logger
-  import Eventos.Service.ActivityPub.Utils
+  import Mobilizon.Service.ActivityPub.Utils
 
   def get_recipients(data) do
     (data["to"] || []) ++ (data["cc"] || [])
@@ -261,7 +261,7 @@ defmodule Eventos.Service.ActivityPub do
     host = URI.parse(inbox).host
 
     signature =
-      Eventos.Service.HTTPSignatures.sign(actor, %{host: host, "content-length": byte_size(json)})
+      Mobilizon.Service.HTTPSignatures.sign(actor, %{host: host, "content-length": byte_size(json)})
 
     Logger.debug("signature")
     Logger.debug(inspect(signature))

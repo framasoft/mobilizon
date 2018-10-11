@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.AddApprovedStatusToMember do
+defmodule Mobilizon.Repo.Migrations.AddApprovedStatusToMember do
   use Ecto.Migration
 
   def up do

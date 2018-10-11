@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.AllowMultipleAccountsForUser do
+defmodule Mobilizon.Repo.Migrations.AllowMultipleAccountsForUser do
   use Ecto.Migration
 
   def up do

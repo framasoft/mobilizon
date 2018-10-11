@@ -1,18 +1,18 @@
-defmodule Eventos.Service.WebFinger do
+defmodule Mobilizon.Service.WebFinger do
   @moduledoc """
   # WebFinger
 
   Performs the WebFinger requests and responses (json only)
   """
 
-  alias Eventos.Actors
-  alias Eventos.Service.XmlBuilder
-  alias Eventos.Repo
+  alias Mobilizon.Actors
+  alias Mobilizon.Service.XmlBuilder
+  alias Mobilizon.Repo
   require Jason
   require Logger
 
   def host_meta do
-    base_url = EventosWeb.Endpoint.url()
+    base_url = MobilizonWeb.Endpoint.url()
 
     {
       :XRD,
@@ -30,7 +30,7 @@ defmodule Eventos.Service.WebFinger do
   end
 
   def webfinger(resource, "JSON") do
-    host = EventosWeb.Endpoint.host()
+    host = MobilizonWeb.Endpoint.host()
     regex = ~r/(acct:)?(?<name>\w+)@#{host}/
 
     with %{"name" => name} <- Regex.named_captures(regex, resource) do
@@ -49,7 +49,7 @@ defmodule Eventos.Service.WebFinger do
 
   def represent_user(user, "JSON") do
     %{
-      "subject" => "acct:#{user.preferred_username}@#{EventosWeb.Endpoint.host() <> ":4001"}",
+      "subject" => "acct:#{user.preferred_username}@#{MobilizonWeb.Endpoint.host() <> ":4001"}",
       "aliases" => [user.url],
       "links" => [
         %{"rel" => "self", "type" => "application/activity+json", "href" => user.url}

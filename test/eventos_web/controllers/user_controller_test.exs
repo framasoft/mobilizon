@@ -1,10 +1,10 @@
-defmodule EventosWeb.UserControllerTest do
-  use EventosWeb.ConnCase
+defmodule MobilizonWeb.UserControllerTest do
+  use MobilizonWeb.ConnCase
 
-  import Eventos.Factory
+  import Mobilizon.Factory
 
-  alias Eventos.Actors
-  alias Eventos.Actors.User
+  alias Mobilizon.Actors
+  alias Mobilizon.Actors.User
   use Bamboo.Test
 
   @create_attrs %{email: "foo@bar.tld", password: "some password_hash", username: "some username"}
@@ -34,8 +34,8 @@ defmodule EventosWeb.UserControllerTest do
     test "renders user when data is valid", %{conn: conn} do
       conn = post(conn, user_path(conn, :register), @create_attrs)
       assert %{"email" => "foo@bar.tld"} = json_response(conn, 201)
-      assert {:ok, %User{} = user} = Eventos.Actors.get_user_by_email(@create_attrs.email)
-      assert_delivered_email(Eventos.Email.User.confirmation_email(user))
+      assert {:ok, %User{} = user} = Mobilizon.Actors.get_user_by_email(@create_attrs.email)
+      assert_delivered_email(Mobilizon.Email.User.confirmation_email(user))
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -59,8 +59,8 @@ defmodule EventosWeb.UserControllerTest do
     test "validate user when token is valid", %{conn: conn} do
       conn = post(conn, user_path(conn, :create), @create_attrs)
       assert %{"email" => "foo@bar.tld"} = json_response(conn, 201)
-      assert {:ok, %User{} = user} = Eventos.Actors.get_user_by_email(@create_attrs.email)
-      assert_delivered_email(Eventos.Email.User.confirmation_email(user))
+      assert {:ok, %User{} = user} = Mobilizon.Actors.get_user_by_email(@create_attrs.email)
+      assert_delivered_email(Mobilizon.Email.User.confirmation_email(user))
 
       conn = get(conn, user_path(conn, :validate, user.confirmation_token))
       assert %{"user" => _, "token" => _} = json_response(conn, 200)
@@ -69,8 +69,8 @@ defmodule EventosWeb.UserControllerTest do
     test "validate user when token is invalid", %{conn: conn} do
       conn = post(conn, user_path(conn, :create), @create_attrs)
       assert %{"email" => "foo@bar.tld"} = json_response(conn, 201)
-      assert {:ok, %User{} = user} = Eventos.Actors.get_user_by_email(@create_attrs.email)
-      assert_delivered_email(Eventos.Email.User.confirmation_email(user))
+      assert {:ok, %User{} = user} = Mobilizon.Actors.get_user_by_email(@create_attrs.email)
+      assert_delivered_email(Mobilizon.Email.User.confirmation_email(user))
 
       conn = get(conn, user_path(conn, :validate, "toto"))
       assert %{"error" => _} = json_response(conn, 404)
@@ -81,8 +81,8 @@ defmodule EventosWeb.UserControllerTest do
     test "ask to resend token to user when too soon", %{conn: conn} do
       conn = post(conn, user_path(conn, :create), @create_attrs)
       assert %{"email" => "foo@bar.tld"} = json_response(conn, 201)
-      assert {:ok, %User{} = user} = Eventos.Actors.get_user_by_email(@create_attrs.email)
-      assert_delivered_email(Eventos.Email.User.confirmation_email(user))
+      assert {:ok, %User{} = user} = Mobilizon.Actors.get_user_by_email(@create_attrs.email)
+      assert_delivered_email(Mobilizon.Email.User.confirmation_email(user))
 
       conn = post(conn, user_path(conn, :resend_confirmation), %{"email" => @create_attrs.email})
       assert %{"error" => _} = json_response(conn, 404)
@@ -92,17 +92,17 @@ defmodule EventosWeb.UserControllerTest do
       conn = post(conn, user_path(conn, :create), @create_attrs)
 
       assert %{"email" => "foo@bar.tld"} = json_response(conn, 201)
-      assert {:ok, %User{} = user} = Eventos.Actors.get_user_by_email(@create_attrs.email)
-      assert_delivered_email(Eventos.Email.User.confirmation_email(user))
+      assert {:ok, %User{} = user} = Mobilizon.Actors.get_user_by_email(@create_attrs.email)
+      assert_delivered_email(Mobilizon.Email.User.confirmation_email(user))
 
       # Hammer time !
       {:ok, %User{} = user} =
-        Eventos.Actors.update_user(user, %{
+        Mobilizon.Actors.update_user(user, %{
           confirmation_sent_at: Timex.shift(user.confirmation_sent_at, hours: -3)
         })
 
       conn = post(conn, user_path(conn, :resend_confirmation), %{"email" => @create_attrs.email})
-      assert_delivered_email(Eventos.Email.User.confirmation_email(user))
+      assert_delivered_email(Mobilizon.Email.User.confirmation_email(user))
       assert %{"email" => "foo@bar.tld"} = json_response(conn, 200)
     end
   end
@@ -113,8 +113,8 @@ defmodule EventosWeb.UserControllerTest do
 
       # Send reset email
       conn = post(conn, user_path(conn, :send_reset_password), %{"email" => user_email})
-      assert {:ok, %User{} = user} = Eventos.Actors.get_user_by_email(user.email)
-      assert_delivered_email(Eventos.Email.User.reset_password_email(user))
+      assert {:ok, %User{} = user} = Mobilizon.Actors.get_user_by_email(user.email)
+      assert_delivered_email(Mobilizon.Email.User.reset_password_email(user))
       assert %{"email" => user_email} = json_response(conn, 200)
 
       # Call reset route
@@ -133,8 +133,8 @@ defmodule EventosWeb.UserControllerTest do
 
       # Send reset email
       conn = post(conn, user_path(conn, :send_reset_password), %{"email" => user.email})
-      assert {:ok, %User{} = user} = Eventos.Actors.get_user_by_email(user.email)
-      assert_delivered_email(Eventos.Email.User.reset_password_email(user))
+      assert {:ok, %User{} = user} = Mobilizon.Actors.get_user_by_email(user.email)
+      assert_delivered_email(Mobilizon.Email.User.reset_password_email(user))
       assert %{"email" => user_email} = json_response(conn, 200)
 
       # Send reset email again
@@ -149,20 +149,20 @@ defmodule EventosWeb.UserControllerTest do
 
       # Send reset email
       conn = post(conn, user_path(conn, :send_reset_password), %{"email" => user.email})
-      assert {:ok, %User{} = user} = Eventos.Actors.get_user_by_email(user.email)
-      assert_delivered_email(Eventos.Email.User.reset_password_email(user))
+      assert {:ok, %User{} = user} = Mobilizon.Actors.get_user_by_email(user.email)
+      assert_delivered_email(Mobilizon.Email.User.reset_password_email(user))
       assert %{"email" => user_email} = json_response(conn, 200)
 
       # Hammer time !
       {:ok, %User{} = user} =
-        Eventos.Actors.update_user(user, %{
+        Mobilizon.Actors.update_user(user, %{
           reset_password_sent_at: Timex.shift(user.reset_password_sent_at, hours: -3)
         })
 
       # Send reset email again
       conn = post(conn, user_path(conn, :send_reset_password), %{"email" => user.email})
-      assert {:ok, %User{} = user} = Eventos.Actors.get_user_by_email(user.email)
-      assert_delivered_email(Eventos.Email.User.reset_password_email(user))
+      assert {:ok, %User{} = user} = Mobilizon.Actors.get_user_by_email(user.email)
+      assert_delivered_email(Mobilizon.Email.User.reset_password_email(user))
       assert %{"email" => user_email} = json_response(conn, 200)
     end
 

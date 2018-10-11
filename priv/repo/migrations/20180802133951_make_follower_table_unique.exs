@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.MakeFollowerTableUnique do
+defmodule Mobilizon.Repo.Migrations.MakeFollowerTableUnique do
   use Ecto.Migration
 
   def up do

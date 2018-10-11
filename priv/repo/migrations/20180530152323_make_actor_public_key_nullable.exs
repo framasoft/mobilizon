@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.MakeActorPublicKeyNullable do
+defmodule Mobilizon.Repo.Migrations.MakeActorPublicKeyNullable do
   use Ecto.Migration
 
   def up do

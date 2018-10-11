@@ -1,13 +1,13 @@
-defmodule Eventos.Service.Activitypub.ActivitypubTest do
-  use Eventos.DataCase
+defmodule Mobilizon.Service.Activitypub.ActivitypubTest do
+  use Mobilizon.DataCase
 
-  import Eventos.Factory
+  import Mobilizon.Factory
 
-  alias Eventos.Events
-  alias Eventos.Actors.Actor
-  alias Eventos.Actors
-  alias Eventos.Service.ActivityPub
-  alias Eventos.Activity
+  alias Mobilizon.Events
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Actors
+  alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Activity
 
   describe "fetching actor from it's url" do
     test "returns an actor from nickname" do
@@ -80,7 +80,7 @@ defmodule Eventos.Service.Activitypub.ActivitypubTest do
   describe "update" do
     test "it creates an update activity with the new actor data" do
       actor = insert(:actor)
-      actor_data = EventosWeb.ActivityPub.ActorView.render("actor.json", %{actor: actor})
+      actor_data = MobilizonWeb.ActivityPub.ActorView.render("actor.json", %{actor: actor})
 
       {:ok, update} =
         ActivityPub.update(%{

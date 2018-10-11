@@ -1,10 +1,10 @@
-defmodule EventosWeb.AddressControllerTest do
-  use EventosWeb.ConnCase
+defmodule MobilizonWeb.AddressControllerTest do
+  use MobilizonWeb.ConnCase
 
-  import Eventos.Factory
+  import Mobilizon.Factory
 
-  alias Eventos.Addresses
-  alias Eventos.Addresses.Address
+  alias Mobilizon.Addresses
+  alias Mobilizon.Addresses.Address
 
   @create_attrs %{
     addressCountry: "some addressCountry",

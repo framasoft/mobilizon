@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.AddPrimaryKeyToMember do
+defmodule Mobilizon.Repo.Migrations.AddPrimaryKeyToMember do
   use Ecto.Migration
 
   def up do

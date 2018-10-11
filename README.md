@@ -1,4 +1,4 @@
-# Eventos
+# Mobilizon
 
 ## Development
 
@@ -22,7 +22,7 @@ to start a database container, an API container and the front-end dev container 
   * Fetch dependencies with `mix deps.get`.
   * Create your database with `mix ecto.create`.
   * Create the postgis extension on the database with a postgres user that has
-    superuser capabilities: `psql eventos_dev`
+    superuser capabilities: `psql mobilizon_dev`
 
     ``` create extension if not exists postgis; ```
 

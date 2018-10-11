@@ -1,3 +1,3 @@
-defmodule EventosWeb.LayoutViewTest do
-  use EventosWeb.ConnCase, async: true
+defmodule MobilizonWeb.LayoutViewTest do
+  use MobilizonWeb.ConnCase, async: true
 end

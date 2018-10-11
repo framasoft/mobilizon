@@ -1,10 +1,10 @@
-defmodule EventosWeb.CategoryControllerTest do
-  use EventosWeb.ConnCase
+defmodule MobilizonWeb.CategoryControllerTest do
+  use MobilizonWeb.ConnCase
 
-  import Eventos.Factory
+  import Mobilizon.Factory
 
-  alias Eventos.Events
-  alias Eventos.Events.Category
+  alias Mobilizon.Events
+  alias Mobilizon.Events.Category
 
   @create_attrs %{description: "some description", picture: "some picture", title: "some title"}
   @update_attrs %{

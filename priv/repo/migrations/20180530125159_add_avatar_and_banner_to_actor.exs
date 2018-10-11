@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.AddAvatarAndBannerToActor do
+defmodule Mobilizon.Repo.Migrations.AddAvatarAndBannerToActor do
   use Ecto.Migration
 
   def up do

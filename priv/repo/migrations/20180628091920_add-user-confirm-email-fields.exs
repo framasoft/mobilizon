@@ -1,4 +1,4 @@
-defmodule :"Elixir.Eventos.Repo.Migrations.Add-user-confirm-email-fields" do
+defmodule :"Elixir.Mobilizon.Repo.Migrations.Add-user-confirm-email-fields" do
   use Ecto.Migration
 
   def up do

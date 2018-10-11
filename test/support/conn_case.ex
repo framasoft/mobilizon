@@ -1,4 +1,4 @@
-defmodule EventosWeb.ConnCase do
+defmodule MobilizonWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -19,13 +19,13 @@ defmodule EventosWeb.ConnCase do
     quote do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
-      import EventosWeb.Router.Helpers
+      import MobilizonWeb.Router.Helpers
 
       # The default endpoint for testing
-      @endpoint EventosWeb.Endpoint
+      @endpoint MobilizonWeb.Endpoint
 
-      def auth_conn(%Plug.Conn{} = conn, %Eventos.Actors.User{} = user) do
-        {:ok, token, _claims} = EventosWeb.Guardian.encode_and_sign(user)
+      def auth_conn(%Plug.Conn{} = conn, %Mobilizon.Actors.User{} = user) do
+        {:ok, token, _claims} = MobilizonWeb.Guardian.encode_and_sign(user)
 
         conn
         |> Plug.Conn.put_req_header("authorization", "Bearer #{token}")
@@ -35,10 +35,10 @@ defmodule EventosWeb.ConnCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Eventos.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Mobilizon.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Eventos.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(Mobilizon.Repo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}

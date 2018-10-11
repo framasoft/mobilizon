@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.AddUUIDIdToEvents do
+defmodule Mobilizon.Repo.Migrations.AddUUIDIdToEvents do
   use Ecto.Migration
 
   def up do

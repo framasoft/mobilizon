@@ -1,11 +1,11 @@
-defmodule Eventos.ActorsTest do
-  use Eventos.DataCase
-  import Eventos.Factory
+defmodule Mobilizon.ActorsTest do
+  use Mobilizon.DataCase
+  import Mobilizon.Factory
 
-  alias Eventos.Actors
+  alias Mobilizon.Actors
 
   describe "actors" do
-    alias Eventos.Actors.Actor
+    alias Mobilizon.Actors.Actor
 
     @valid_attrs %{
       summary: "some description",
@@ -178,7 +178,7 @@ defmodule Eventos.ActorsTest do
 
     test "test get_public_key_for_url/1 with local actor", %{actor: actor} do
       assert Actor.get_public_key_for_url(actor.url) ==
-               actor.keys |> Eventos.Service.ActivityPub.Utils.pem_to_public_key()
+               actor.keys |> Mobilizon.Service.ActivityPub.Utils.pem_to_public_key()
     end
 
     @remote_actor_key {:RSAPublicKey,
@@ -231,7 +231,7 @@ defmodule Eventos.ActorsTest do
   end
 
   describe "users" do
-    alias Eventos.Actors.{User, Actor}
+    alias Mobilizon.Actors.{User, Actor}
 
     @actor_valid_attrs %{
       description: "some description",
@@ -311,8 +311,8 @@ defmodule Eventos.ActorsTest do
   end
 
   describe "groups" do
-    alias Eventos.Actors
-    alias Eventos.Actors.Actor
+    alias Mobilizon.Actors
+    alias Mobilizon.Actors.Actor
 
     @valid_attrs %{
       summary: "some description",
@@ -340,10 +340,10 @@ defmodule Eventos.ActorsTest do
     end
   end
 
-  alias Eventos.Actors
+  alias Mobilizon.Actors
 
   describe "bots" do
-    alias Eventos.Actors.Bot
+    alias Mobilizon.Actors.Bot
 
     @valid_attrs %{source: "some source", type: "some type"}
     @update_attrs %{source: "some updated source", type: "some updated type"}
@@ -406,8 +406,8 @@ defmodule Eventos.ActorsTest do
   end
 
   describe "followers" do
-    alias Eventos.Actors.Follower
-    alias Eventos.Actors.Actor
+    alias Mobilizon.Actors.Follower
+    alias Mobilizon.Actors.Actor
 
     @valid_attrs %{approved: true, score: 42}
     @update_attrs %{approved: false, score: 43}
@@ -498,8 +498,8 @@ defmodule Eventos.ActorsTest do
   end
 
   describe "members" do
-    alias Eventos.Actors.Member
-    alias Eventos.Actors.Actor
+    alias Mobilizon.Actors.Member
+    alias Mobilizon.Actors.Actor
 
     @valid_attrs %{approved: true, role: 0}
     @update_attrs %{approved: false, role: 1}

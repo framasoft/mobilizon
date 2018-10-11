@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.CreateComments do
+defmodule Mobilizon.Repo.Migrations.CreateComments do
   use Ecto.Migration
 
   def change do

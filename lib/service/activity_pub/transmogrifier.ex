@@ -1,11 +1,11 @@
-defmodule Eventos.Service.ActivityPub.Transmogrifier do
+defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   @moduledoc """
   A module to handle coding from internal to wire ActivityPub and back.
   """
-  alias Eventos.Actors.Actor
-  alias Eventos.Actors
-  alias Eventos.Events.{Event, Comment}
-  alias Eventos.Service.ActivityPub
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Actors
+  alias Mobilizon.Events.{Event, Comment}
+  alias Mobilizon.Service.ActivityPub
 
   import Ecto.Query
 

@@ -1,3 +1,3 @@
-defmodule EventosWeb.PageViewTest do
-  use EventosWeb.ConnCase, async: true
+defmodule MobilizonWeb.PageViewTest do
+  use MobilizonWeb.ConnCase, async: true
 end

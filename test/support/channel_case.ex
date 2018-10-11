@@ -1,4 +1,4 @@
-defmodule EventosWeb.ChannelCase do
+defmodule MobilizonWeb.ChannelCase do
   @moduledoc """
   This module defines the test case to be used by
   channel tests.
@@ -21,15 +21,15 @@ defmodule EventosWeb.ChannelCase do
       use Phoenix.ChannelTest
 
       # The default endpoint for testing
-      @endpoint EventosWeb.Endpoint
+      @endpoint MobilizonWeb.Endpoint
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Eventos.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Mobilizon.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Eventos.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(Mobilizon.Repo, {:shared, self()})
     end
 
     :ok

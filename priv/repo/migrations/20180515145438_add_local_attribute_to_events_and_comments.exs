@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.AddLocalAttributeToEventsAndComments do
+defmodule Mobilizon.Repo.Migrations.AddLocalAttributeToEventsAndComments do
   use Ecto.Migration
 
   def up do

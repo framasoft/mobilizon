@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.RemoveSlugForEvent do
+defmodule Mobilizon.Repo.Migrations.RemoveSlugForEvent do
   use Ecto.Migration
 
   def up do

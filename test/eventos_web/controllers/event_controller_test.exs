@@ -1,10 +1,10 @@
-defmodule EventosWeb.EventControllerTest do
-  use EventosWeb.ConnCase
-  import Eventos.Factory
+defmodule MobilizonWeb.EventControllerTest do
+  use MobilizonWeb.ConnCase
+  import Mobilizon.Factory
 
-  alias Eventos.Events
-  alias Eventos.Events.Event
-  alias Eventos.Export.ICalendar
+  alias Mobilizon.Events
+  alias Mobilizon.Events.Event
+  alias Mobilizon.Export.ICalendar
 
   @create_attrs %{
     begins_on: "2010-04-17 14:00:00.000000Z",

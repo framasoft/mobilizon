@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.MoveFromAccountToActor do
+defmodule Mobilizon.Repo.Migrations.MoveFromAccountToActor do
   use Ecto.Migration
 
   def up do
@@ -19,7 +19,7 @@ defmodule Eventos.Repo.Migrations.MoveFromAccountToActor do
 
     drop table("groups")
     rename table("accounts"), to: table("actors")
-    Eventos.Actors.ActorTypeEnum.create_type
+    Mobilizon.Actors.ActorTypeEnum.create_type
     rename table("actors"), :username, to: :name
     rename table("actors"), :description, to: :summary
     rename table("actors"), :display_name, to: :preferred_username
@@ -85,7 +85,7 @@ defmodule Eventos.Repo.Migrations.MoveFromAccountToActor do
       modify :username, :string, null: false
       modify :display_name, :string, null: true
     end
-    Eventos.Actors.ActorTypeEnum.drop_type()
+    Mobilizon.Actors.ActorTypeEnum.drop_type()
 
     rename table("events"), :organizer_actor_id, to: :organizer_account_id
 

@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.CreateGroupRequests do
+defmodule Mobilizon.Repo.Migrations.CreateGroupRequests do
   use Ecto.Migration
 
   def change do

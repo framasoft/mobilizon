@@ -1,4 +1,4 @@
-defmodule Eventos.Service.Streamer do
+defmodule Mobilizon.Service.Streamer do
   @moduledoc """
   # Streamer
 
@@ -7,7 +7,7 @@ defmodule Eventos.Service.Streamer do
 
   use GenServer
   require Logger
-  alias Eventos.Accounts.Actor
+  alias Mobilizon.Accounts.Actor
 
   def init(args) do
     {:ok, args}

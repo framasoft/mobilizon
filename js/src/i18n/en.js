@@ -1,7 +1,7 @@
 export default {
   home: {
-    welcome: 'Welcome on Eventos, {username}',
-    welcome_off: 'Welcome on Eventos',
+    welcome: 'Welcome on Mobilizon, {username}',
+    welcome_off: 'Welcome on Mobilizon',
     events: 'Events',
     groups: 'Groups',
     login: 'Login',

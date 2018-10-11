@@ -1,13 +1,13 @@
-defmodule Eventos.Service.WebFingerTest do
-  use Eventos.DataCase
-  alias Eventos.Service.WebFinger
-  import Eventos.Factory
+defmodule Mobilizon.Service.WebFingerTest do
+  use Mobilizon.DataCase
+  alias Mobilizon.Service.WebFinger
+  import Mobilizon.Factory
 
   describe "host meta" do
     test "returns a link to the xml lrdd" do
       host_info = WebFinger.host_meta()
 
-      assert String.contains?(host_info, EventosWeb.Endpoint.url())
+      assert String.contains?(host_info, MobilizonWeb.Endpoint.url())
     end
   end
 
@@ -16,7 +16,7 @@ defmodule Eventos.Service.WebFingerTest do
       actor = insert(:actor)
 
       {:ok, result} =
-        WebFinger.webfinger("#{actor.preferred_username}@#{EventosWeb.Endpoint.host()}", "JSON")
+        WebFinger.webfinger("#{actor.preferred_username}@#{MobilizonWeb.Endpoint.host()}", "JSON")
 
       assert is_map(result)
     end

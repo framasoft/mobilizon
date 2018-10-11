@@ -1,4 +1,4 @@
-defmodule :"Elixir.Eventos.Repo.Migrations.Add-user-password-reset-fields" do
+defmodule :"Elixir.Mobilizon.Repo.Migrations.Add-user-password-reset-fields" do
   use Ecto.Migration
 
   def up do

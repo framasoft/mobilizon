@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.AlterEventsSetDescriptionAsText do
+defmodule Mobilizon.Repo.Migrations.AlterEventsSetDescriptionAsText do
   use Ecto.Migration
 
   def up do

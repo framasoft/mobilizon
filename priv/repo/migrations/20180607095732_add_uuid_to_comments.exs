@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.AddUUIDToComments do
+defmodule Mobilizon.Repo.Migrations.AddUUIDToComments do
   use Ecto.Migration
 
   def up do

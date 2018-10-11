@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.FusionPublicPrivateKeyIntoKeysColumn do
+defmodule Mobilizon.Repo.Migrations.FusionPublicPrivateKeyIntoKeysColumn do
   use Ecto.Migration
 
   def up do

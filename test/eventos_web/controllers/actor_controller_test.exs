@@ -1,9 +1,9 @@
-defmodule EventosWeb.ActorControllerTest do
-  use EventosWeb.ConnCase
+defmodule MobilizonWeb.ActorControllerTest do
+  use MobilizonWeb.ConnCase
 
-  import Eventos.Factory
+  import Mobilizon.Factory
 
-  alias Eventos.Actors
+  alias Mobilizon.Actors
 
   setup %{conn: conn} do
     user = insert(:user)

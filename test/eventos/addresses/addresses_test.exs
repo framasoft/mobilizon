@@ -1,10 +1,10 @@
-defmodule Eventos.AddressesTest do
-  use Eventos.DataCase
+defmodule Mobilizon.AddressesTest do
+  use Mobilizon.DataCase
 
-  alias Eventos.Addresses
+  alias Mobilizon.Addresses
 
   describe "addresses" do
-    alias Eventos.Addresses.Address
+    alias Mobilizon.Addresses.Address
 
     @valid_attrs %{
       addressCountry: "some addressCountry",

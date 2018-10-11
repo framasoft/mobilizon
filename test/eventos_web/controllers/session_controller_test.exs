@@ -1,10 +1,10 @@
-defmodule EventosWeb.SessionControllerTest do
-  use EventosWeb.ConnCase
+defmodule MobilizonWeb.SessionControllerTest do
+  use MobilizonWeb.ConnCase
 
-  import Eventos.Factory
+  import Mobilizon.Factory
 
-  alias Eventos.Events
-  alias Eventos.Events.Session
+  alias Mobilizon.Events
+  alias Mobilizon.Events.Session
 
   @create_attrs %{
     audios_urls: "some audios_urls",

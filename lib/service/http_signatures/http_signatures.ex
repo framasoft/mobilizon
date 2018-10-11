@@ -1,13 +1,13 @@
 # https://tools.ietf.org/html/draft-cavage-http-signatures-08
-defmodule Eventos.Service.HTTPSignatures do
+defmodule Mobilizon.Service.HTTPSignatures do
   @moduledoc """
   # HTTP Signatures
 
   Generates and checks HTTP Signatures
   """
 
-  alias Eventos.Actors.Actor
-  alias Eventos.Service.ActivityPub
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Service.ActivityPub
   import Logger
 
   def split_signature(sig) do

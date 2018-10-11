@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.MakeSharedInboxUrlNullable do
+defmodule Mobilizon.Repo.Migrations.MakeSharedInboxUrlNullable do
   use Ecto.Migration
 
   def up do

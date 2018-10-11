@@ -1,4 +1,4 @@
-defmodule Eventos.DataCase do
+defmodule Mobilizon.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.
@@ -16,20 +16,20 @@ defmodule Eventos.DataCase do
 
   using do
     quote do
-      alias Eventos.Repo
+      alias Mobilizon.Repo
 
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      import Eventos.DataCase
+      import Mobilizon.DataCase
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Eventos.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Mobilizon.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Eventos.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(Mobilizon.Repo, {:shared, self()})
     end
 
     :ok

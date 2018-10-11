@@ -1,4 +1,0 @@
-<h1><%= gettext "Confirm the email address" %></h1>
-<p><%= gettext "You created an account on %{host} with this email address. You are one click away from activating it. If this wasn't you, please ignore this email.", host: @instance %></p>
-
-<p><%= link "Confirm your email address", to: EventosWeb.Endpoint.url() <> "/validate/#{@token}", target: "_blank" %></p>

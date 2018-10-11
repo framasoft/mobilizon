@@ -4,10 +4,10 @@ defmodule Mix.Tasks.CreateBot do
   """
 
   use Mix.Task
-  alias Eventos.Actors
-  alias Eventos.Actors.Bot
-  alias Eventos.Repo
-  alias Eventos.Actors.User
+  alias Mobilizon.Actors
+  alias Mobilizon.Actors.Bot
+  alias Mobilizon.Repo
+  alias Mobilizon.Actors.User
   import Logger
 
   @shortdoc "Register user"

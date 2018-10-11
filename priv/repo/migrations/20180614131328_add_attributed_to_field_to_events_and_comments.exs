@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.AddAttributedToFieldToEventsAndComments do
+defmodule Mobilizon.Repo.Migrations.AddAttributedToFieldToEventsAndComments do
   use Ecto.Migration
 
   def up do

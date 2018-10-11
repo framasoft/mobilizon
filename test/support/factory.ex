@@ -1,12 +1,12 @@
-defmodule Eventos.Factory do
+defmodule Mobilizon.Factory do
   @moduledoc """
   Factory for fixtures with ExMachina
   """
   # with Ecto
-  use ExMachina.Ecto, repo: Eventos.Repo
+  use ExMachina.Ecto, repo: Mobilizon.Repo
 
   def user_factory do
-    %Eventos.Actors.User{
+    %Mobilizon.Actors.User{
       password_hash: "Jane Smith",
       email: sequence(:email, &"email-#{&1}@example.com"),
       role: 0
@@ -20,12 +20,12 @@ defmodule Eventos.Factory do
 
     preferred_username = sequence("thomas")
 
-    %Eventos.Actors.Actor{
+    %Mobilizon.Actors.Actor{
       preferred_username: preferred_username,
       domain: nil,
       keys: pem,
       type: :Person,
-      url: EventosWeb.Endpoint.url() <> "/@#{preferred_username}",
+      url: MobilizonWeb.Endpoint.url() <> "/@#{preferred_username}",
       user: nil
     }
   end
@@ -40,21 +40,21 @@ defmodule Eventos.Factory do
   end
 
   def follower_factory do
-    %Eventos.Actors.Follower{
+    %Mobilizon.Actors.Follower{
       target_actor: build(:actor),
       actor: build(:actor)
     }
   end
 
   def category_factory do
-    %Eventos.Events.Category{
+    %Mobilizon.Events.Category{
       title: sequence("MyCategory"),
       description: "My category desc"
     }
   end
 
   def address_factory do
-    %Eventos.Addresses.Address{
+    %Mobilizon.Addresses.Address{
       description: sequence("MyAddress"),
       geom: %Geo.Point{coordinates: {30, -90}, srid: 4326},
       floor: "Myfloor",
@@ -69,19 +69,19 @@ defmodule Eventos.Factory do
   def comment_factory do
     uuid = Ecto.UUID.generate()
 
-    %Eventos.Events.Comment{
+    %Mobilizon.Events.Comment{
       text: "My Comment",
       actor: build(:actor),
       event: build(:event),
       uuid: uuid,
-      url: "#{EventosWeb.Endpoint.url()}/comments/#{uuid}"
+      url: "#{MobilizonWeb.Endpoint.url()}/comments/#{uuid}"
     }
   end
 
   def event_factory do
     actor = build(:actor)
 
-    %Eventos.Events.Event{
+    %Mobilizon.Events.Event{
       title: sequence("MyEvent"),
       description: "My desc",
       begins_on: nil,
@@ -90,19 +90,19 @@ defmodule Eventos.Factory do
       category: build(:category),
       physical_address: build(:address),
       public: true,
-      url: "#{EventosWeb.Endpoint.url()}/@#{actor.url}/#{Ecto.UUID.generate()}"
+      url: "#{MobilizonWeb.Endpoint.url()}/@#{actor.url}/#{Ecto.UUID.generate()}"
     }
   end
 
   def participant_factory do
-    %Eventos.Events.Participant{
+    %Mobilizon.Events.Participant{
       event: build(:event),
       actor: build(:actor)
     }
   end
 
   def session_factory do
-    %Eventos.Events.Session{
+    %Mobilizon.Events.Session{
       title: sequence("MySession"),
       event: build(:event),
       track: build(:track)
@@ -110,14 +110,14 @@ defmodule Eventos.Factory do
   end
 
   def track_factory do
-    %Eventos.Events.Track{
+    %Mobilizon.Events.Track{
       name: sequence("MyTrack"),
       event: build(:event)
     }
   end
 
   def bot_factory do
-    %Eventos.Actors.Bot{
+    %Mobilizon.Actors.Bot{
       source: "https://mysource.tld/feed.ics",
       type: "ics",
       user: build(:user),
@@ -126,7 +126,7 @@ defmodule Eventos.Factory do
   end
 
   def member_factory do
-    %Eventos.Actors.Member{
+    %Mobilizon.Actors.Member{
       parent: build(:actor),
       actor: build(:actor)
     }

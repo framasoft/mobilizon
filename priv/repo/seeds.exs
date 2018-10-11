@@ -5,12 +5,12 @@
 # Inside the script, you can read and write to any of your
 # repositories directly:
 #
-#     Eventos.Repo.insert!(%Eventos.SomeSchema{})
+#     Mobilizon.Repo.insert!(%Mobilizon.SomeSchema{})
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-import Eventos.Factory
+import Mobilizon.Factory
 
 # Insert an user
 user = insert(:user)

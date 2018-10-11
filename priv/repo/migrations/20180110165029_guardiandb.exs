@@ -1,4 +1,4 @@
-defmodule Eventos.Repo.Migrations.Guardian.DB do
+defmodule Mobilizon.Repo.Migrations.Guardian.DB do
   use Ecto.Migration
 
   def change do
