@@ -337,14 +337,15 @@ defmodule Mobilizon.ActorsTest do
     test "get_user_by_email/1 finds an activated user by it's email" do
       {:ok, %Actor{user: %User{email: email} = user} = _actor} =
         Actors.register(%{email: @email, password: @password, username: "yolo"})
+
       {:ok, %User{id: id}} = Actors.get_user_by_email(@email, false)
       assert id == user.id
       assert {:error, :user_not_found} = Actors.get_user_by_email(@email, true)
 
       Actors.update_user(user, %{
-          "confirmed_at" => DateTime.utc_now(),
-          "confirmation_sent_at" => nil,
-          "confirmation_token" => nil
+        "confirmed_at" => DateTime.utc_now(),
+        "confirmation_sent_at" => nil,
+        "confirmation_token" => nil
       })
 
       assert {:error, :user_not_found} = Actors.get_user_by_email(@email, false)

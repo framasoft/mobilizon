@@ -130,8 +130,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
   end
 
   @valid_actor_params %{email: "test@test.tld", password: "testest", username: "test"}
-  test "test validate_user/3 validates an user", context do    
-
+  test "test validate_user/3 validates an user", context do
     {:ok, actor} = Actors.register(@valid_actor_params)
 
     mutation = """
@@ -154,15 +153,14 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
       context.conn
       |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-    assert json_response(res, 200)["data"]["validateUser"]["actor"]["preferredUsername"] == @valid_actor_params.username
-             
+    assert json_response(res, 200)["data"]["validateUser"]["actor"]["preferredUsername"] ==
+             @valid_actor_params.username
 
     assert json_response(res, 200)["data"]["validateUser"]["user"]["id"] ==
              to_string(actor.user.id)
   end
 
-  test "test validate_user/3 with invalid token doesn't validate an user", context do    
-
+  test "test validate_user/3 with invalid token doesn't validate an user", context do
     {:ok, actor} = Actors.register(@valid_actor_params)
 
     mutation = """
@@ -185,7 +183,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
       context.conn
       |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "Invalid token"
+    assert hd(json_response(res, 200)["errors"])["message"] == "Invalid token"
   end
 
   test "test resend_confirmation_email/3 with valid email resends an validation email", context do
@@ -203,23 +201,24 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
       context.conn
       |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "You requested again a confirmation email too soon"
+    assert hd(json_response(res, 200)["errors"])["message"] ==
+             "You requested again a confirmation email too soon"
 
-      # Hammer time !
-        Mobilizon.Actors.update_user(actor.user, %{
-          confirmation_sent_at: Timex.shift(actor.user.confirmation_sent_at, hours: -3)
-        })
-
+    # Hammer time !
+    Mobilizon.Actors.update_user(actor.user, %{
+      confirmation_sent_at: Timex.shift(actor.user.confirmation_sent_at, hours: -3)
+    })
 
     res =
       context.conn
       |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert json_response(res, 200)["data"]["resendConfirmationEmail"] == actor.user.email
-      assert_delivered_email Mobilizon.Email.User.confirmation_email(actor.user)
+    assert json_response(res, 200)["data"]["resendConfirmationEmail"] == actor.user.email
+    assert_delivered_email(Mobilizon.Email.User.confirmation_email(actor.user))
   end
 
-  test "test resend_confirmation_email/3 with invalid email resends an validation email", context do
+  test "test resend_confirmation_email/3 with invalid email resends an validation email",
+       context do
     {:ok, actor} = Actors.register(@valid_actor_params)
 
     mutation = """
@@ -234,6 +233,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
       context.conn
       |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "No user to validate with this email was found"
+    assert hd(json_response(res, 200)["errors"])["message"] ==
+             "No user to validate with this email was found"
   end
 end

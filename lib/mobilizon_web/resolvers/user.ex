@@ -70,11 +70,13 @@ defmodule MobilizonWeb.Resolvers.User do
   """
   def resend_confirmation_email(_parent, %{email: email, locale: locale}, _resolution) do
     with {:ok, user} <- Actors.get_user_by_email(email, false),
-         {:ok, email} <- Mobilizon.Actors.Service.Activation.resend_confirmation_email(user, locale) do
+         {:ok, email} <-
+           Mobilizon.Actors.Service.Activation.resend_confirmation_email(user, locale) do
       {:ok, email}
     else
       {:error, :user_not_found} ->
         {:error, "No user to validate with this email was found"}
+
       {:error, :email_too_soon} ->
         {:error, "You requested again a confirmation email too soon"}
     end
@@ -85,11 +87,13 @@ defmodule MobilizonWeb.Resolvers.User do
   """
   def send_reset_password(_parent, %{email: email, locale: locale}, _resolution) do
     with {:ok, user} <- Actors.get_user_by_email(email, false),
-         {:ok, email} <- Mobilizon.Actors.Service.ResetPassword.send_password_reset_email(user, locale) do
+         {:ok, email} <-
+           Mobilizon.Actors.Service.ResetPassword.send_password_reset_email(user, locale) do
       {:ok, email}
     else
       {:error, :user_not_found} ->
         {:error, "No user to validate with this email was found"}
+
       {:error, :email_too_soon} ->
         {:error, "You requested again a confirmation email too soon"}
     end

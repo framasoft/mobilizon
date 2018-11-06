@@ -453,7 +453,8 @@ defmodule Mobilizon.Actors do
         {msg, opts} -> msg
         msg -> msg
       end)
-      {:error, hd(Map.get(changeset, :email))}
+
+    {:error, hd(Map.get(changeset, :email))}
   end
 
   def register_bot_account(%{name: name, summary: summary}) do
