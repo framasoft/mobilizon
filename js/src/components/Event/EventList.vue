@@ -54,85 +54,84 @@
 </template>
 
 <script>
-  import ngeohash from 'ngeohash';
-  import VueMarkdown from 'vue-markdown';
-  import eventFetch from '@/api/eventFetch';
-  import VCardTitle from "vuetify/es5/components/VCard/VCardTitle";
+import ngeohash from 'ngeohash';
+import VueMarkdown from 'vue-markdown';
+import VCardTitle from 'vuetify/es5/components/VCard/VCardTitle';
 
-  export default {
-    name: 'EventList',
-    components: {
-      VCardTitle,
-      VueMarkdown
-    },
-    data() {
-      return {
-        events: [],
-        loading: true,
-        locationChip: false,
-        locationText: '',
-      };
-    },
-    props: ['location'],
-    created() {
-      this.fetchData(this.$router.currentRoute.params.location);
-    },
-    watch: {
-      locationChip(val) {
-        if (val === false) {
-          this.$router.push({name: 'EventList'});
-        }
+export default {
+  name: 'EventList',
+  components: {
+    VCardTitle,
+    VueMarkdown,
+  },
+  data() {
+    return {
+      events: [],
+      loading: true,
+      locationChip: false,
+      locationText: '',
+    };
+  },
+  props: ['location'],
+  created() {
+    this.fetchData(this.$router.currentRoute.params.location);
+  },
+  watch: {
+    locationChip(val) {
+      if (val === false) {
+        this.$router.push({ name: 'EventList' });
       }
     },
-    beforeRouteUpdate(to, from, next) {
-      this.fetchData(to.params.location);
-      next();
+  },
+  beforeRouteUpdate(to, from, next) {
+    this.fetchData(to.params.location);
+    next();
+  },
+  methods: {
+    geocode(lat, lon) {
+      console.log({ lat, lon });
+      console.log(ngeohash.encode(lat, lon, 10));
+      return ngeohash.encode(lat, lon, 10);
     },
-    methods: {
-      geocode(lat, lon) {
-        console.log({lat, lon});
-        console.log(ngeohash.encode(lat, lon, 10));
-        return ngeohash.encode(lat, lon, 10);
-      },
-      fetchData(location) {
-        let queryString = '/events';
-        if (location) {
-          queryString += ('?geohash=' + location);
-          const { latitude, longitude } = ngeohash.decode(location);
-          this.locationText = latitude.toString() + ' : ' + longitude.toString();
-        }
-        this.locationChip = true;
-        eventFetch(queryString, this.$store)
-          .then(response => response.json())
-          .then((response) => {
-            this.loading = false;
-            this.events = response.data;
-            console.log(this.events);
-          });
-      },
-      deleteEvent(event) {
-        const router = this.$router;
-        eventFetch(`/events/${event.uuid}`, this.$store, {'method': 'DELETE'})
-          .then(() => router.push('/events'));
-      },
-      viewEvent(event) {
-        this.$router.push({ name: 'Event', params: { uuid: event.uuid } })
-      },
-      downloadIcsEvent(event) {
-        eventFetch(`/events/${event.uuid}/ics`, this.$store, {responseType: 'arraybuffer'})
-          .then((response) => response.text())
-          .then(response => {
-            const blob = new Blob([response],{type: 'text/calendar'});
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = `${event.title}.ics`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          })
-      },
+    fetchData(location) {
+      let queryString = '/events';
+      if (location) {
+        queryString += (`?geohash=${location}`);
+        const { latitude, longitude } = ngeohash.decode(location);
+        this.locationText = `${latitude.toString()} : ${longitude.toString()}`;
+      }
+      this.locationChip = true;
+      eventFetch(queryString, this.$store)
+        .then(response => response.json())
+        .then((response) => {
+          this.loading = false;
+          this.events = response.data;
+          console.log(this.events);
+        });
     },
-  };
+    deleteEvent(event) {
+      const router = this.$router;
+      eventFetch(`/events/${event.uuid}`, this.$store, { method: 'DELETE' })
+        .then(() => router.push('/events'));
+    },
+    viewEvent(event) {
+      this.$router.push({ name: 'Event', params: { uuid: event.uuid } });
+    },
+    downloadIcsEvent(event) {
+      eventFetch(`/events/${event.uuid}/ics`, this.$store, { responseType: 'arraybuffer' })
+        .then(response => response.text())
+        .then((response) => {
+          const blob = new Blob([response], { type: 'text/calendar' });
+          const link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = `${event.title}.ics`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        });
+    },
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

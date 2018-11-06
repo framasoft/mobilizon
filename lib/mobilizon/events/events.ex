@@ -6,23 +6,16 @@ defmodule Mobilizon.Events do
   import Ecto.Query, warn: false
   alias Mobilizon.Repo
 
-  alias Mobilizon.Events.Event
-  alias Mobilizon.Events.Comment
+  alias Mobilizon.Events.{Event, Comment, Participant}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
 
-  @doc """
-  Returns the list of events.
+  def data() do
+    Dataloader.Ecto.new(Mobilizon.Repo, query: &query/2)
+  end
 
-  ## Examples
-
-      iex> list_events()
-      [%Event{}, ...]
-
-  """
-  def list_events do
-    events = Repo.all(Event)
-    Repo.preload(events, [:organizer_actor])
+  def query(queryable, _params) do
+    queryable
   end
 
   def get_events_for_actor(%Actor{id: actor_id} = _actor, page \\ 1, limit \\ 10) do
@@ -180,14 +173,46 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
+  Returns the list of events.
+
+  ## Examples
+
+      iex> list_events()
+      [%Event{}, ...]
+
+  """
+  def list_events(page \\ 1, limit \\ 10) do
+    start = (page - 1) * limit
+
+    query =
+      from(e in Event,
+        limit: ^limit,
+        offset: ^start,
+        preload: [:organizer_actor]
+      )
+
+    Repo.all(query)
+  end
+
+  @doc """
   Find events by name
   """
-  def find_events_by_name(name) when name == "", do: []
+  def find_events_by_name(name, page \\ 1, limit \\ 10)
+  def find_events_by_name("", page, limit), do: list_events(page, limit)
 
-  def find_events_by_name(name) do
+  def find_events_by_name(name, page, limit) do
     name = String.trim(name)
-    events = Repo.all(from(a in Event, where: ilike(a.title, ^like_sanitize(name))))
-    Repo.preload(events, [:organizer_actor])
+    start = (page - 1) * limit
+
+    query =
+      from(e in Event,
+        limit: ^limit,
+        offset: ^start,
+        where: ilike(e.title, ^like_sanitize(name)),
+        preload: [:organizer_actor]
+      )
+
+    Repo.all(query)
   end
 
   @doc """
@@ -210,9 +235,16 @@ defmodule Mobilizon.Events do
 
   """
   def create_event(attrs \\ %{}) do
-    case %Event{} |> Event.changeset(attrs) |> Repo.insert() do
-      {:ok, %Event{} = event} -> {:ok, Repo.preload(event, [:organizer_actor])}
-      err -> err
+    with {:ok, %Event{} = event} <- %Event{} |> Event.changeset(attrs) |> Repo.insert(),
+         {:ok, %Participant{} = _participant} <-
+           %Participant{}
+           |> Participant.changeset(%{
+             actor_id: attrs.organizer_actor_id,
+             role: 4,
+             event_id: event.id
+           })
+           |> Repo.insert() do
+      {:ok, Repo.preload(event, [:organizer_actor])}
     end
   end
 
@@ -473,6 +505,27 @@ defmodule Mobilizon.Events do
   """
   def list_participants do
     Repo.all(Participant)
+  end
+
+  @doc """
+  Returns the list of participants for an event.
+
+  ## Examples
+
+      iex> list_participants_for_event(someuuid)
+      [%Participant{}, ...]
+
+  """
+  def list_participants_for_event(uuid) do
+    Repo.all(
+      from(
+        p in Participant,
+        join: e in Event,
+        on: p.event_id == e.id,
+        where: e.uuid == ^uuid,
+        preload: [:actor]
+      )
+    )
   end
 
   @doc """

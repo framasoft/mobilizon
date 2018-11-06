@@ -3,7 +3,7 @@
 </template>
 <script>
 export default {
-    name: 'RegisterAvatar'
-}
+  name: 'RegisterAvatar',
+};
 </script>
 

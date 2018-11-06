@@ -23,3 +23,5 @@ priv/data/*
 !priv/data/.gitkeep
 .vscode/
 cover/
+uploads/*
+!uploads/.gitkeep

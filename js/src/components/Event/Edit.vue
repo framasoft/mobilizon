@@ -98,29 +98,27 @@
 </template>
 
 <script>
-  import eventFetch from '@/api/eventFetch';
-
-  export default {
-    props: ['id'],
-    data() {
-      return {
-        loading: true,
-        event: null,
-      };
+export default {
+  props: ['id'],
+  data() {
+    return {
+      loading: true,
+      event: null,
+    };
+  },
+  created() {
+    this.fetchData();
+  },
+  methods: {
+    fetchData() {
+      eventFetch(`/events/${this.id}`, this.$store)
+        .then(response => response.json())
+        .then((data) => {
+          this.loading = false;
+          this.event = data;
+          console.log(this.event);
+        });
     },
-    created() {
-      this.fetchData();
-    },
-    methods: {
-      fetchData() {
-        eventFetch(`/events/${this.id}`, this.$store)
-          .then(response => response.json())
-          .then((data) => {
-            this.loading = false;
-            this.event = data;
-            console.log(this.event);
-          });
-      },
-    }
-  }
+  },
+};
 </script>

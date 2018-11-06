@@ -10,6 +10,14 @@ defmodule MobilizonWeb.Endpoint do
   #
   # You should set gzip to true if you are running phoenix.digest
   # when deploying your static files in production.
+
+  plug(
+    Plug.Static,
+    at: "/uploads",
+    from: "./uploads",
+    gzip: false
+  )
+
   plug(
     Plug.Static,
     at: "/",

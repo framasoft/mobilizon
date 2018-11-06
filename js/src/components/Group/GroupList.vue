@@ -38,49 +38,47 @@
 </template>
 
 <script>
-  import eventFetch from '@/api/eventFetch';
-
-  export default {
-    name: 'GroupList',
-    data() {
-      return {
-        groups: [],
-        loading: true,
-      };
+export default {
+  name: 'GroupList',
+  data() {
+    return {
+      groups: [],
+      loading: true,
+    };
+  },
+  created() {
+    this.fetchData();
+  },
+  methods: {
+    username_with_domain(actor) {
+      return actor.username + (actor.domain === null ? '' : `@${actor.domain}`);
     },
-    created() {
-      this.fetchData();
+    fetchData() {
+      eventFetch('/groups', this.$store)
+        .then(response => response.json())
+        .then((data) => {
+          console.log(data);
+          this.loading = false;
+          this.groups = data.data;
+        });
     },
-    methods: {
-      username_with_domain(actor) {
-        return actor.username + (actor.domain === null ? '' : `@${actor.domain}`)
-      },
-      fetchData() {
-        eventFetch('/groups', this.$store)
-          .then(response => response.json())
-          .then((data) => {
-              console.log(data);
-            this.loading = false;
-            this.groups = data.data;
-          });
-      },
-      deleteGroup(group) {
-        const router = this.$router;
-        eventFetch(`/groups/${this.username_with_domain(group)}`, this.$store, {'method': 'DELETE'})
-          .then(response => response.json())
-          .then(() => router.push('/groups'));
-      },
-      viewActor(actor) {
-        this.$router.push({ name: 'Group', params: { name: this.username_with_domain(actor) } })
-      },
-      joinGroup(group) {
-        const router = this.$router;
-        eventFetch(`/groups/${this.username_with_domain(group)}/join`, this.$store, { method: 'POST' })
-          .then(response => response.json())
-          .then(() => router.push({ name: 'Group', params: { name: this.username_with_domain(group) } }));
-      }
+    deleteGroup(group) {
+      const router = this.$router;
+      eventFetch(`/groups/${this.username_with_domain(group)}`, this.$store, { method: 'DELETE' })
+        .then(response => response.json())
+        .then(() => router.push('/groups'));
     },
-  };
+    viewActor(actor) {
+      this.$router.push({ name: 'Group', params: { name: this.username_with_domain(actor) } });
+    },
+    joinGroup(group) {
+      const router = this.$router;
+      eventFetch(`/groups/${this.username_with_domain(group)}/join`, this.$store, { method: 'POST' })
+        .then(response => response.json())
+        .then(() => router.push({ name: 'Group', params: { name: this.username_with_domain(group) } }));
+    },
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

@@ -24,6 +24,8 @@ actor2 = insert(:actor, user: user)
 # Make actor organize an event
 event = insert(:event, organizer_actor: actor)
 
+participant = insert(:participant, actor: actor, event: event)
+
 # Insert a group
 group = insert(:actor, type: :Group)
 

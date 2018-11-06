@@ -11,6 +11,14 @@ defmodule Mobilizon.Actors do
 
   alias Mobilizon.Service.ActivityPub
 
+  def data() do
+    Dataloader.Ecto.new(Repo, query: &query/2)
+  end
+
+  def query(queryable, _params) do
+    queryable
+  end
+
   @doc """
   Returns the list of actors.
 
@@ -40,6 +48,28 @@ defmodule Mobilizon.Actors do
   """
   def get_actor!(id) do
     Repo.get!(Actor, id)
+  end
+
+  @doc """
+  Returns the associated actor for an user, either the default set one or the first found
+  """
+  @spec get_actor_for_user(%Mobilizon.Actors.User{}) :: %Mobilizon.Actors.Actor{}
+  def get_actor_for_user(%Mobilizon.Actors.User{} = user) do
+    case user.default_actor_id do
+      nil -> get_first_actor_for_user(user)
+      actor_id -> get_actor!(actor_id)
+    end
+  end
+
+  @doc """
+  Returns the first actor found for an user
+
+  Useful when the user has not defined default actor
+
+  Raises `Ecto.NoResultsError` if no Actor is found for this ID
+  """
+  defp get_first_actor_for_user(%Mobilizon.Actors.User{id: id} = _user) do
+    Repo.one!(from(a in Actor, where: a.user_id == ^id))
   end
 
   def get_actor_with_everything!(id) do
@@ -162,10 +192,13 @@ defmodule Mobilizon.Actors do
     Repo.all(User)
   end
 
-  def list_users_with_actors do
-    users = Repo.all(User)
-    Repo.preload(users, :actors)
-  end
+  @doc """
+  List users with their associated actors. No reason for that, so removed
+  """
+  # def list_users_with_actors do
+  #   users = Repo.all(User)
+  #   Repo.preload(users, :actors)
+  # end
 
   defp blank?(""), do: nil
   defp blank?(n), do: n
@@ -224,6 +257,14 @@ defmodule Mobilizon.Actors do
   def get_user_with_actor!(id) do
     user = Repo.get!(User, id)
     Repo.preload(user, :actors)
+  end
+
+  @spec get_user_with_actor(integer()) :: %User{}
+  def get_user_with_actor(id) do
+    case Repo.get(User, id) do
+      nil -> {:error, "User with ID #{id} not found"}
+      user -> {:ok, Repo.preload(user, :actors)}
+    end
   end
 
   def get_actor_by_url(url) do
@@ -297,10 +338,17 @@ defmodule Mobilizon.Actors do
   @doc """
   Find actors by their name or displayed name
   """
-  def find_actors_by_username_or_name(username) do
+  def find_actors_by_username_or_name(username, page \\ 1, limit \\ 10)
+  def find_actors_by_username_or_name("", page, limit), do: []
+
+  def find_actors_by_username_or_name(username, page, limit) do
+    start = (page - 1) * limit
+
     Repo.all(
       from(
         a in Actor,
+        limit: ^limit,
+        offset: ^start,
         where:
           ilike(a.preferred_username, ^like_sanitize(username)) or
             ilike(a.name, ^like_sanitize(username))
@@ -341,19 +389,6 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
-  Get an user by email
-  """
-  def find_by_email(email) do
-    case Repo.preload(Repo.get_by(User, email: email), :actors) do
-      nil ->
-        {:error, nil}
-
-      user ->
-        {:ok, user}
-    end
-  end
-
-  @doc """
   Authenticate user
   """
   def authenticate(%{user: user, password: password}) do
@@ -390,29 +425,35 @@ defmodule Mobilizon.Actors do
           nil
       end
 
-    actor =
-      Mobilizon.Actors.Actor.registration_changeset(%Mobilizon.Actors.Actor{}, %{
-        preferred_username: username,
-        domain: nil,
-        keys: pem,
-        avatar_url: avatar
-      })
-
-    user =
-      Mobilizon.Actors.User.registration_changeset(%Mobilizon.Actors.User{}, %{
-        email: email,
-        password: password
-      })
-
-    actor_with_user = Ecto.Changeset.put_assoc(actor, :user, user)
-
-    try do
-      Mobilizon.Repo.insert!(actor_with_user)
-      find_by_email(email)
-    rescue
-      e in Ecto.InvalidChangesetError ->
-        {:error, e.changeset}
+    with actor_changeset <-
+           Mobilizon.Actors.Actor.registration_changeset(%Mobilizon.Actors.Actor{}, %{
+             preferred_username: username,
+             domain: nil,
+             keys: pem,
+             avatar_url: avatar
+           }),
+         {:ok, %Mobilizon.Actors.Actor{id: id} = actor} <- Mobilizon.Repo.insert(actor_changeset),
+         user_changeset <-
+           Mobilizon.Actors.User.registration_changeset(%Mobilizon.Actors.User{}, %{
+             email: email,
+             password: password,
+             default_actor_id: id
+           }),
+         {:ok, %Mobilizon.Actors.User{} = user} <- Mobilizon.Repo.insert(user_changeset) do
+      {:ok, Map.put(actor, :user, user)}
+    else
+      {:error, %Ecto.Changeset{} = changeset} ->
+        handle_actor_user_changeset(changeset)
     end
+  end
+
+  defp handle_actor_user_changeset(changeset) do
+    changeset =
+      Ecto.Changeset.traverse_errors(changeset, fn
+        {msg, opts} -> msg
+        msg -> msg
+      end)
+      {:error, hd(Map.get(changeset, :email))}
   end
 
   def register_bot_account(%{name: name, summary: summary}) do
@@ -466,9 +507,16 @@ defmodule Mobilizon.Actors do
       iex> get_user_by_email(user, wrong_email)
       {:error, nil}
   """
-  def get_user_by_email(email) do
-    case Repo.get_by(User, email: email) do
-      nil -> {:error, nil}
+  def get_user_by_email(email, activated \\ nil) do
+    query =
+      case activated do
+        nil -> from(u in User, where: u.email == ^email)
+        true -> from(u in User, where: u.email == ^email and not is_nil(u.confirmed_at))
+        false -> from(u in User, where: u.email == ^email and is_nil(u.confirmed_at))
+      end
+
+    case Repo.one(query) do
+      nil -> {:error, :user_not_found}
       user -> {:ok, user}
     end
   end

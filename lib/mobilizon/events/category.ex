@@ -5,10 +5,11 @@ defmodule Mobilizon.Events.Category do
   use Ecto.Schema
   import Ecto.Changeset
   alias Mobilizon.Events.Category
+  use Arc.Ecto.Schema
 
   schema "categories" do
     field(:description, :string)
-    field(:picture, :string)
+    field(:picture, MobilizonWeb.Uploaders.Category.Type)
     field(:title, :string, null: false)
 
     timestamps()
@@ -17,7 +18,8 @@ defmodule Mobilizon.Events.Category do
   @doc false
   def changeset(%Category{} = category, attrs) do
     category
-    |> cast(attrs, [:title, :description, :picture])
+    |> cast(attrs, [:title, :description])
+    |> cast_attachments(attrs, [:picture])
     |> validate_required([:title])
     |> unique_constraint(:title)
   end

@@ -82,15 +82,16 @@ defmodule Mobilizon.Factory do
     actor = build(:actor)
 
     %Mobilizon.Events.Event{
-      title: sequence("MyEvent"),
-      description: "My desc",
+      title: sequence("Ceci est un événement"),
+      description: "Ceci est une description avec une première phrase assez longue,
+      puis sur une seconde ligne",
       begins_on: nil,
       ends_on: nil,
       organizer_actor: actor,
       category: build(:category),
       physical_address: build(:address),
       public: true,
-      url: "#{MobilizonWeb.Endpoint.url()}/@#{actor.url}/#{Ecto.UUID.generate()}"
+      url: "@#{actor.url}/#{Ecto.UUID.generate()}"
     }
   end
 

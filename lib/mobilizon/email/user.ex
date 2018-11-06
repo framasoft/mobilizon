@@ -16,7 +16,7 @@ defmodule Mobilizon.Email.User do
     base_email()
     |> to(user.email)
     |> subject(
-      gettext("Peakweaver: Confirmation instructions for %{instance}", instance: instance_url)
+      gettext("Mobilizon: Confirmation instructions for %{instance}", instance: instance_url)
     )
     |> put_header("Reply-To", get_config(:reply_to))
     |> assign(:token, user.confirmation_token)
@@ -32,7 +32,7 @@ defmodule Mobilizon.Email.User do
     |> to(user.email)
     |> subject(
       gettext(
-        "Peakweaver: Reset your password on %{instance} instructions",
+        "Mobilizon: Reset your password on %{instance} instructions",
         instance: instance_url
       )
     )

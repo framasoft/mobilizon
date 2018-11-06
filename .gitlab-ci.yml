@@ -1,4 +1,4 @@
-image: elixir:1.7
+image: tcitworld/mobilizon-ci
 
 services:
   - name: mdillon/postgis:10
@@ -20,8 +20,7 @@ cache:
     - .rebar3
 
 before_script:
-  - apt-get update
-  - apt-get install -y build-essential postgresql-client git
+  - cd js && npm install && npm run build && cd ../
   - mix local.rebar --force
   - mix local.hex --force
   - mix deps.get

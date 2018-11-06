@@ -202,39 +202,37 @@
 </template>
 
 <script>
-    import eventFetch from '@/api/eventFetch';
-
-    export default {
-        name: 'Group',
-        data() {
-            return {
-                group: null,
-                loading: true,
-            }
-        },
-        props: {
-            name: {
-                type: String,
-                required: true,
-            }
-        },
-        created() {
-            this.fetchData();
-        },
-        watch: {
-            // call again the method if the route changes
-            '$route': 'fetchData'
-        },
-        methods: {
-            fetchData() {
-                eventFetch(`/actors/${this.name}`, this.$store)
-                    .then(response => response.json())
-                    .then((response) => {
-                        this.group = response.data;
-                        this.loading = false;
-                        console.log(this.group);
-                    })
-            }
-        }
-    }
+export default {
+  name: 'Group',
+  data() {
+    return {
+      group: null,
+      loading: true,
+    };
+  },
+  props: {
+    name: {
+      type: String,
+      required: true,
+    },
+  },
+  created() {
+    this.fetchData();
+  },
+  watch: {
+    // call again the method if the route changes
+    $route: 'fetchData',
+  },
+  methods: {
+    fetchData() {
+      eventFetch(`/actors/${this.name}`, this.$store)
+        .then(response => response.json())
+        .then((response) => {
+          this.group = response.data;
+          this.loading = false;
+          console.log(this.group);
+        });
+    },
+  },
+};
 </script>

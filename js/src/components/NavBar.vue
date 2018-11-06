@@ -12,33 +12,36 @@
       </router-link>
     </v-toolbar-title>
     <v-autocomplete
-      :loading="searchElement.loading"
+      :loading="$apollo.loading"
       flat
       solo-inverted
       prepend-icon="search"
-      label="Search"
+      :label="$gettext('Search')"
       required
-      item-text="displayedText"
+      item-text="label"
       class="hidden-sm-and-down"
-      :items="searchElement.items"
-      :search-input.sync="search"
-      v-model="searchSelect"
+      :items="items"
+      :search-input.sync="searchText"
+      v-model="model"
       return-object
     >
       <template slot="item" slot-scope="data">
-        <template v-if="typeof data.item !== 'object'">
-          <v-list-tile-content v-text="data.item"></v-list-tile-content>
-        </template>
-        <template v-else>
+        <!-- <div>{{ data }}</div> -->
+        <v-list-tile v-if="data.item.__typename === 'Event'">
           <v-list-tile-avatar>
-            <img :src="data.item.avatar" v-if="data.item.avatar">
-            <v-icon v-else>event</v-icon>
+            <v-icon>event</v-icon>
+          </v-list-tile-avatar>
+          <v-list-tile-content v-text="data.item.label"></v-list-tile-content>
+        </v-list-tile>
+        <v-list-tile v-else-if="data.item.__typename === 'Actor'">
+          <v-list-tile-avatar>
+            <img :src="data.item.avatarUrl" v-if="data.item.avatarUrl">
+            <v-icon v-else>account_circle</v-icon>
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-title v-html="username_with_domain(data.item)"></v-list-tile-title>
-            <v-list-tile-sub-title v-html="data.item.type"></v-list-tile-sub-title>
           </v-list-tile-content>
-        </template>
+        </v-list-tile>
       </template>
     </v-autocomplete>
     <v-spacer></v-spacer>
@@ -47,7 +50,7 @@
       :close-on-content-click="false"
       :nudge-width="200"
       v-model="notificationMenu"
-      v-if="getUser()"
+      v-if="user"
     >
       <v-btn icon slot="activator">
         <v-badge left color="red">
@@ -70,111 +73,94 @@
         </v-list>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn flat @click="notificationMenu = false">Close</v-btn>
-          <v-btn color="primary" flat @click="notificationMenu = false">Save</v-btn>
+          <v-btn flat @click="notificationMenu = false"><translate>Close</translate></v-btn>
+          <v-btn color="primary" flat @click="notificationMenu = false"><translate>Save</translate></v-btn>
         </v-card-actions>
       </v-card>
     </v-menu>
-    <v-btn v-if="!$store.state.user" :to="{ name: 'Login' }">Se connecter</v-btn>
+    <v-btn v-if="!user" :to="{ name: 'Login' }"><translate>Login</translate></v-btn>
   </v-toolbar>
 </template>
 
 <script>
-  import eventFetch from '@/api/eventFetch';
+import {AUTH_USER_ACTOR, AUTH_USER_ID} from '@/constants';
+import {SEARCH} from '@/graphql/search';
 
-  export default {
-    name: 'NavBar',
-    props: {
-      toggleDrawer: {
-        type: Function,
-        required: true,
+export default {
+  name: 'NavBar',
+  props: {
+    toggleDrawer: {
+      type: Function,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      notificationMenu: false,
+      notifications: [
+        { header: 'Coucou' },
+        { title: "T'as une notification", subtitle: 'Et elle est cool' },
+      ],
+      model: null,
+      search: [],
+      searchText: null,
+      searchSelect: null,
+      actor: localStorage.getItem(AUTH_USER_ACTOR),
+      user: localStorage.getItem(AUTH_USER_ID),
+    };
+  },
+  apollo: {
+    search: {
+      query: SEARCH,
+      variables() {
+        return {
+          searchText: this.searchText,
+        };
+      },
+      skip() {
+        return !this.searchText;
       },
     },
-    data() {
-      return {
-        notificationMenu: false,
-        notifications: [
-          {header: 'Coucou'},
-          {title: "T'as une notification", subtitle: 'Et elle est cool'},
-        ],
-        searchElement: {
-          loading: false,
-          items: [],
-        },
-        search: null,
-        searchSelect: null,
-      };
-    },
-    watch: {
-      search (val) {
-        val && this.querySelections(val)
-      },
-      searchSelect(val) {
-        console.log('searchSelect', val);
-        if (val.type === 'Event') {
-          this.$router.push({name: 'Event', params: { uuid: val.uuid }});
-        } else if (val.type === 'Locality') {
-          this.$router.push({name: 'EventList', params: {location: val.geohash}});
-        } else {
-          this.$router.push({name: 'Account', params: { name : this.username_with_domain(val) }});
-        }
+  },
+  watch: {
+    model(val) {
+      switch(val.__typename) {
+        case 'Event':
+          this.$router.push({ name: 'Event', params: { uuid: val.uuid } });
+          break;
+        case 'Actor':
+          this.$router.push({ name: 'Account', params: { name: this.username_with_domain(val) } });
+          break;
       }
     },
-    computed: {
-      displayed_name: function() {
-        console.log('displayed name', this.$store.state.actor);
-        if (this.$store.state.actor) {
-          return this.$store.state.actor.display_name === null ? this.$store.state.actor.username : this.$store.state.actor.display_name;
+  },
+  computed: {
+    items() {
+      return this.search.map(searchEntry => {
+        switch (searchEntry.__typename) {
+          case 'Actor':
+            searchEntry.label = searchEntry.preferredUsername;
+            break;
+          case 'Event':
+            searchEntry.label = searchEntry.title;
+            break;
         }
-      },
+        return searchEntry;
+      });
     },
-    methods: {
-      username_with_domain(actor) {
-          if (actor.type !== 'Event') {
-              return actor.username + (actor.domain === null ? '' : `@${actor.domain}`)
-          }
-          return actor.title;
-      },
-      getUser() {
-        return this.$store.state.user === undefined ? false : this.$store.state.user;
-      },
-      querySelections(searchTerm) {
-        this.searchElement.loading = true;
-        eventFetch(`/search/${searchTerm}`, this.$store)
-          .then(response => response.json())
-          .then((results) => {
-            console.log('results');
-            console.log(results);
-            const accountResults = results.data.actors.map((result) => {
-              if (result.domain) {
-                result.displayedText = `${result.username}@${result.domain}`;
-              } else {
-                result.displayedText = result.username;
-              }
-              return result;
-            });
-
-            const eventsResults = results.data.events.map((result) => {
-                result.displayedText = result.title;
-                return result;
-            });
-            // const cities = new Set();
-            // const placeResults = results.places.map((result) => {
-            //   result.displayedText = result.addressLocality;
-            //   return result;
-            // }).filter((result) => {
-            //   if (cities.has(result.addressLocality)) {
-            //     return false;
-            //   }
-            //   cities.add(result.addressLocality);
-            //   return true;
-            // });
-            this.searchElement.items = accountResults.concat(eventsResults);
-            this.searchElement.loading = false;
-          });
+    displayed_name() {
+      console.log('displayed name', this.actor);
+      if (this.actor) {
+        return this.actor.display_name === null ? this.actor.username : this.actor.display_name;
       }
-    }
-  }
+    },
+  },
+  methods: {
+    username_with_domain(actor) {
+      return actor.preferredUsername + (actor.domain === undefined ? '' : `@${actor.domain}`);
+    },
+  },
+};
 </script>
 
 <style>

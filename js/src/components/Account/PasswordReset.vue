@@ -37,8 +37,6 @@
 </template>
 
 <script>
-import fetchStory from '@/api/eventFetch';
-
 export default {
   name: 'PasswordReset',
   props: {
@@ -80,7 +78,7 @@ export default {
         password_length: value => value.length > 6 || 'Password must be at least 6 caracters long',
         required: value => !!value || 'Required.',
         password_equal: value => value === this.credentials.password || 'Passwords must be the same',
-      }
+      },
     };
   },
   methods: {

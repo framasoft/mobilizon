@@ -12,6 +12,7 @@ defmodule Mobilizon.Actors.User do
     field(:password, :string, virtual: true)
     field(:role, :integer, default: 0)
     has_many(:actors, Actor)
+    field(:default_actor_id, :integer)
     field(:confirmed_at, :utc_datetime)
     field(:confirmation_sent_at, :utc_datetime)
     field(:confirmation_token, :string)
@@ -27,6 +28,7 @@ defmodule Mobilizon.Actors.User do
     |> cast(attrs, [
       :email,
       :role,
+      :default_actor_id,
       :password_hash,
       :confirmed_at,
       :confirmation_sent_at,
@@ -49,7 +51,8 @@ defmodule Mobilizon.Actors.User do
     struct
     |> changeset(params)
     |> cast(params, ~w(password)a, [])
-    |> validate_required([:email, :password])
+    |> validate_required([:email, :password, :default_actor_id])
+    |> validate_email()
     |> validate_length(
       :password,
       min: 6,
@@ -86,6 +89,19 @@ defmodule Mobilizon.Actors.User do
       %Ecto.Changeset{valid?: true, changes: %{email: _email}} ->
         changeset = put_change(changeset, :confirmation_token, random_string(30))
         put_change(changeset, :confirmation_sent_at, DateTime.utc_now())
+
+      _ ->
+        changeset
+    end
+  end
+
+  defp validate_email(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{email: email}} ->
+        case EmailChecker.valid?(email) do
+          false -> add_error(changeset, :email, "Email doesn't fit required format")
+          _ -> changeset
+        end
 
       _ ->
         changeset

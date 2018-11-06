@@ -8,7 +8,7 @@ defmodule MobilizonWeb.AuthPipeline do
     module: MobilizonWeb.Guardian,
     error_handler: MobilizonWeb.AuthErrorHandler
 
-  plug(Guardian.Plug.VerifyHeader, claims: %{"typ" => "access"})
-  plug(Guardian.Plug.EnsureAuthenticated)
-  plug(Guardian.Plug.LoadResource, ensure: true)
+  plug(Guardian.Plug.VerifyHeader, realm: "Bearer")
+  plug(Guardian.Plug.LoadResource, allow_blank: true)
+  plug(MobilizonWeb.Context)
 end

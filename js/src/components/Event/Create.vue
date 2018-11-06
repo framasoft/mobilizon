@@ -14,6 +14,8 @@
                 :counter="100"
                 required
               ></v-text-field>
+              <v-date-picker v-model="event.begins_on">
+              </v-date-picker>
               <v-radio-group v-model="event.location_type" row>
                 <v-radio label="Address" value="physical" off-icon="place"></v-radio>
                 <v-radio label="Online" value="online" off-icon="link"></v-radio>
@@ -21,7 +23,7 @@
                 <v-radio label="Other" value="other"></v-radio>
               </v-radio-group>
               <!-- <vuetify-google-autocomplete
-                v-if="event.location_type === 'physical'" 
+                v-if="event.location_type === 'physical'"
                 id="map"
                 append-icon="search"
                 classname="form-control"
@@ -64,134 +66,132 @@
 </template>
 
 <script>
-  // import Location from '@/components/Location';
-  import eventFetch from '@/api/eventFetch';
-  import VueMarkdown from 'vue-markdown';
+// import Location from '@/components/Location';
+import VueMarkdown from 'vue-markdown';
+import { CREATE_EVENT, EDIT_EVENT } from '@/graphql/event';
+import { FETCH_CATEGORIES } from '@/graphql/category';
+import { AUTH_USER_ACTOR } from '@/constants';
 
-  export default {
-    name: 'create-event',
-    props: ['id'],
-
-    components: {
-/*      Location,*/
-      VueMarkdown,
+export default {
+  name: 'create-event',
+  props: {
+    uuid: {
+      required: false,
+      type: String,
     },
-    data() {
-      return {
-        e1: 0,
-        event: {
-          title: null,
-          description: null,
-          begins_on: new Date(),
-          ends_on: new Date(),
-          seats: null,
-          physical_address: null,
-          location_type: 'physical',
-          online_address: null,
-          tel_num: null,
-          price: null,
-          category: null,
-          category_id: null,
-          tags: [],
-          participants: [],
-        },
-        categories: [],
+  },
+  components: {
+    /*      Location, */
+    VueMarkdown,
+  },
+  data() {
+    return {
+      e1: 0,
+      event: {
+        title: null,
+        description: '',
+        begins_on: (new Date()).toISOString().substr(0, 10),
+        ends_on: new Date(),
+        seats: null,
+        physical_address: null,
+        location_type: 'physical',
+        online_address: null,
+        tel_num: null,
+        price: null,
+        category: null,
+        category_id: null,
         tags: [],
-        tagsToSend: [],
-        tagsFetched: [],
-      };
+        participants: [],
+      },
+      categories: [],
+      tags: [],
+      tagsToSend: [],
+      tagsFetched: [],
+    };
+  },
+  // created() {
+  //   if (this.uuid) {
+  //     this.fetchEvent();
+  //   }
+  // },
+  apollo: {
+    categories: {
+      query: FETCH_CATEGORIES,
     },
-    created() {
-      if (this.id) {
-        this.fetchEvent();
+  },
+  methods: {
+    create() {
+      // this.event.seats = parseInt(this.event.seats, 10);
+      // this.tagsToSend.forEach((tag) => {
+      //   this.event.tags.push({
+      //     title: tag,
+      //     // '@type': 'Tag',
+      //   });
+      // });
+      const actor = JSON.parse(localStorage.getItem(AUTH_USER_ACTOR));
+      this.event.category_id = this.event.category;
+      this.event.organizer_actor_id = actor.id;
+      this.event.participants = [actor.id];
+      // this.event.price = parseFloat(this.event.price);
+
+      if (this.uuid === undefined) {
+        this.$apollo.mutate({
+          mutation: CREATE_EVENT,
+          variables: {
+            title: this.event.title,
+            description: this.event.description,
+            organizerActorId: this.event.organizer_actor_id,
+            categoryId: this.event.category_id,
+            beginsOn: this.event.begins_on,
+            addressType: this.event.location_type,
+          }
+        }).then((data) => {
+          this.loading = false;
+          this.$router.push({ name: 'Event', params: { uuid: data.data.uuid } });
+        }).catch((error) => {
+          console.log(error);
+        });
+      } else {
+        this.$apollo.mutate({
+          mutation: EDIT_EVENT,
+        }).then((data) => {
+          this.loading = false;
+          this.$router.push({ name: 'Event', params: { uuid: data.data.uuid } });
+        }).catch((error) => {
+          console.log(error);
+        });
+      }
+      this.event.tags = [];
+    },
+    // fetchEvent() {
+    //   eventFetch(`/events/${this.id}`, this.$store)
+    //     .then(response => response.json())
+    //     .then((data) => {
+    //       this.loading = false;
+    //       this.event = data;
+    //       console.log(this.event);
+    //     });
+    // },
+    getAddressData(addressData) {
+      if (addressData !== null) {
+        this.event.address = {
+          geom: {
+            data: {
+              latitude: addressData.latitude,
+              longitude: addressData.longitude,
+            },
+            type: 'point',
+          },
+          addressCountry: addressData.country,
+          addressLocality: addressData.locality,
+          addressRegion: addressData.administrative_area_level_1,
+          postalCode: addressData.postal_code,
+          streetAddress: `${addressData.street_number} ${addressData.route}`,
+        };
       }
     },
-    mounted() {
-      this.fetchCategories();
-      this.fetchTags();
-    },
-    methods: {
-      create() {
-        // this.event.seats = parseInt(this.event.seats, 10);
-        // this.tagsToSend.forEach((tag) => {
-        //   this.event.tags.push({
-        //     title: tag,
-        //     // '@type': 'Tag',
-        //   });
-        // });
-        this.event.category_id = this.event.category;
-        this.event.organizer_actor_id = this.$store.state.actor.id;
-        this.event.participants = [this.$store.state.actor.id];
-        // this.event.price = parseFloat(this.event.price);
-
-        if (this.id === undefined) {
-          eventFetch('/events', this.$store, {method: 'POST', body: JSON.stringify({ event: this.event })})
-            .then(response => response.json())
-            .then((data) => {
-              this.loading = false;
-              this.$router.push({name: 'Event', params: {uuid: data.data.uuid}});
-            }).catch((err) => {
-              Promise.resolve(err).then((err) => {
-                console.log('err creation', err);
-              });
-            });
-        } else {
-          eventFetch(`/events/${this.uuid}`, this.$store, {method: 'PUT', body: JSON.stringify(this.event)})
-            .then(response => response.json())
-            .then((data) => {
-              this.loading = false;
-              this.$router.push({name: 'Event', params: {uuid: data.uuid}});
-            });
-        }
-        this.event.tags = [];
-      },
-      fetchCategories() {
-        eventFetch('/categories', this.$store)
-          .then(response => response.json())
-          .then((response) => {
-            this.loading = false;
-            this.categories = response.data;
-          });
-      },
-      fetchTags() {
-        eventFetch('/tags', this.$store)
-          .then(response => response.json())
-          .then((response) => {
-            this.loading = false;
-            response.data.forEach((tag) => {
-              this.tagsFetched.push(tag.name);
-            });
-          });
-      },
-      fetchEvent() {
-        eventFetch(`/events/${this.id}`, this.$store)
-          .then(response => response.json())
-          .then((data) => {
-            this.loading = false;
-            this.event = data;
-            console.log(this.event);
-          });
-      },
-      getAddressData: function (addressData) {
-        if (addressData !== null) {
-            this.event.address = {
-                geom: {
-                    data: {
-                        latitude: addressData.latitude,
-                        longitude: addressData.longitude,
-                    },
-                    type: "point",
-                },
-                addressCountry: addressData.country,
-                addressLocality: addressData.locality,
-                addressRegion: addressData.administrative_area_level_1,
-                postalCode: addressData.postal_code,
-                streetAddress: `${addressData.street_number} ${addressData.route}`,
-            };
-        }
-      },
-    },
-  };
+  },
+};
 </script>
 
 <style>

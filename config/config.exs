@@ -47,7 +47,7 @@ config :guardian, Guardian.DB,
   # default
   schema_name: "guardian_tokens",
   # store all token types if not set
-  token_types: ["refresh_token"],
+  # token_types: ["refresh_token"],
   # default: 60 minutes
   sweep_interval: 60
 
@@ -59,3 +59,9 @@ config :geolix,
       source: System.get_env("GEOLITE_CITIES_PATH") || "priv/data/GeoLite2-City.mmdb"
     }
   ]
+
+config :arc,
+  storage: Arc.Storage.Local
+
+config :email_checker,
+  validations: [EmailChecker.Check.Format]

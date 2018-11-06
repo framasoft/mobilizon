@@ -26,27 +26,27 @@
 
 <script>
 
-  export default {
-    data() {
-      return {
-        description: 'Paris, France',
-        center: { lat: 48.85, lng: 2.35 },
-        markers: [],
+export default {
+  data() {
+    return {
+      description: 'Paris, France',
+      center: { lat: 48.85, lng: 2.35 },
+      markers: [],
+    };
+  },
+  props: ['address'],
+  methods: {
+    setPlace(place) {
+      this.center = {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
       };
+      this.markers = [{
+        position: { lat: this.center.lat, lng: this.center.lng },
+      }];
+      this.$emit('input', place.formatted_address);
     },
-    props: ['address'],
-    methods: {
-      setPlace(place) {
-        this.center = {
-          lat: place.geometry.location.lat(),
-          lng: place.geometry.location.lng(),
-        };
-        this.markers = [{
-          position: { lat: this.center.lat, lng: this.center.lng },
-        }];
-        this.$emit('input', place.formatted_address);
-      },
-    },
-  };
+  },
+};
 
 </script>
