@@ -18,4 +18,8 @@ defmodule MobilizonWeb.WebFingerController do
       _e -> send_resp(conn, 404, "Couldn't find user")
     end
   end
+
+  def webfinger(conn, _) do
+    send_resp(conn, 400, "No query provided")
+  end
 end

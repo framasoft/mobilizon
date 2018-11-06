@@ -60,83 +60,88 @@
 
 <script>
 
-import { LOGIN_USER } from '@/store/mutation-types';
-  import auth from '@/auth/index';
-  import Gravatar from 'vue-gravatar';
-  import RegisterAvatar from './RegisterAvatar';
+import Gravatar from 'vue-gravatar';
+import RegisterAvatar from './RegisterAvatar';
+import { AUTH_TOKEN, AUTH_USER_ID, AUTH_USER_ACTOR } from '@/constants';
+import { LOGIN } from '@/graphql/auth';
 
-  export default {
-    props: {
-      email: {
-        type: String,
-        required: false,
-        default: '',
+export default {
+  props: {
+    email: {
+      type: String,
+      required: false,
+      default: '',
+    },
+    password: {
+      type: String,
+      required: false,
+      default: '',
+    },
+  },
+  beforeCreate() {
+    if (this.user) {
+      this.$router.push('/');
+    }
+  },
+  components: {
+    'v-gravatar': Gravatar,
+    avatar: RegisterAvatar,
+  },
+  mounted() {
+    this.credentials.email = this.email;
+    this.credentials.password = this.password;
+  },
+  data() {
+    return {
+      credentials: {
+        email: '',
+        password: '',
       },
-      password: {
-        type: String,
-        required: false,
-        default: '',
-      },
-    },
-    beforeCreate() {
-      if (this.$store.state.user) {
-        this.$router.push('/');
-      }
-    },
-    components: {
-      'v-gravatar': Gravatar,
-      'avatar': RegisterAvatar
-    },
-    mounted() {
-      this.credentials.email = this.email;
-      this.credentials.password = this.password;
-    },
-    data() {
-      return {
-        credentials: {
-          email: '',
-          password: '',
+      validationSent: false,
+      error: {
+        show: false,
+        text: '',
+        timeout: 3000,
+        field: {
+          email: false,
+          password: false,
         },
-        validationSent: false,
-        error: {
-          show: false,
-          text: '',
-          timeout: 3000,
-          field: {
-            email: false,
-            password: false,
-          },
-        },
-        rules: {
-          required: value => !!value || 'Required.',
-          email: (value) => {
-            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return pattern.test(value) || 'Invalid e-mail.';
-          },
-        },
-      };
-    },
-    methods: {
-      loginAction(e) {
-        e.preventDefault();
-        auth.login(JSON.stringify(this.credentials), (data) => {
-          this.$store.commit(LOGIN_USER, data.user);
-          this.$router.push({ name: 'Home' });
-        }, (error) => {
-          Promise.resolve(error).then((errorMsg) => {
-            console.log(errorMsg);
-            this.error.show = true;
-            this.error.text = this.$t(errorMsg.display_error);
-          }).catch((e) => {
-            console.log(e);
-            this.error.show = true;
-            this.error.text = e.message;
-          });
-        });
       },
-      validEmail() {
-        return this.rules.email(this.credentials.email) === true ? 'v-gravatar' : 'avatar';
+      rules: {
+        required: value => !!value || 'Required.',
+        email: (value) => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+          return pattern.test(value) || 'Invalid e-mail.';
+        },
       },
+    };
+  },
+  methods: {
+    loginAction(e) {
+      e.preventDefault();
+      this.$apollo.mutate({
+        mutation: LOGIN,
+        variables: {
+          email: this.credentials.email,
+          password: this.credentials.password
+        }
+      }).then((result) => {
+        this.saveUserData(result.data);
+        this.$router.push({name: 'Home'});
+      }).catch((e) => {
+        console.log(e);
+        this.error.show = true;
+        this.error.text = e.message;
+      });
     },
-  };
+    validEmail() {
+      return this.rules.email(this.credentials.email) === true ? 'v-gravatar' : 'avatar';
+    },
+    saveUserData({login: login}) {
+      localStorage.setItem(AUTH_USER_ID, login.user.id);
+      localStorage.setItem(AUTH_USER_ACTOR, JSON.stringify(login.actor));
+      localStorage.setItem(AUTH_TOKEN, login.token);
+    }
+  },
+};
 </script>

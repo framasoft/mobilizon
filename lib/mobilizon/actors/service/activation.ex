@@ -3,6 +3,7 @@ defmodule Mobilizon.Actors.Service.Activation do
 
   alias Mobilizon.{Mailer, Repo, Actors.User, Actors}
   alias Mobilizon.Email.User, as: UserEmail
+  alias Mobilizon.Actors.Service.Tools
 
   require Logger
 
@@ -15,7 +16,8 @@ defmodule Mobilizon.Actors.Service.Activation do
              "confirmation_sent_at" => nil,
              "confirmation_token" => nil
            }) do
-      {:ok, Repo.preload(user, :actors)}
+      Logger.info("User #{user.email} has been confirmed")
+      {:ok, user}
     else
       _err ->
         {:error, "Invalid token"}
@@ -23,8 +25,12 @@ defmodule Mobilizon.Actors.Service.Activation do
   end
 
   def resend_confirmation_email(%User{} = user, locale \\ "en") do
-    {:ok, user} = Actors.update_user(user, %{"confirmation_sent_at" => DateTime.utc_now()})
-    send_confirmation_email(user, locale)
+    with :ok <- Tools.we_can_send_email(user, :confirmation_sent_at),
+         {:ok, user} <- Actors.update_user(user, %{"confirmation_sent_at" => DateTime.utc_now()}) do
+      send_confirmation_email(user, locale)
+      Logger.info("Sent confirmation email again to #{user.email}")
+      {:ok, user.email}
+    end
   end
 
   def send_confirmation_email(%User{} = user, locale \\ "en") do

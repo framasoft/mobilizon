@@ -9,7 +9,7 @@
             <v-tooltip bottom>
               <v-btn
                 slot="activator"
-                :to="{ name: 'Login', params: { email: this.credentials.email, password: this.credentials.password } }"
+                :to="{ name: 'Login', params: { email, password } }"
               >
                 <!-- <v-icon large>login</v-icon> -->
                 <span>Login</span>
@@ -21,22 +21,22 @@
             <div class="text-xs-center">
               <v-avatar size="80px">
                 <transition name="avatar">
-                  <component :is="validEmail()" v-bind="{email: credentials.email}"></component>
+                  <component :is="validEmail()" v-bind="{email}"></component>
                   <!-- <v-gravatar :email="credentials.email" default-img="mp" v-if="validEmail()"/>
                   <avatar v-else></avatar> -->
                 </transition>
               </v-avatar>
             </div>
-            <v-form @submit="registerAction" v-if="!validationSent">
+            <v-form @submit="submit()" v-if="!validationSent">
               <v-text-field
                 label="Username"
                 required
                 type="text"
-                v-model="credentials.username"
+                v-model="username"
                 :rules="[rules.required]"
-                :error="this.state.username.status"
-                :error-messages="this.state.username.msg"
-                :suffix="this.host()"
+                :error="state.username.status"
+                :error-messages="state.username.msg"
+                :suffix="host()"
                 hint="You will be able to create more identities once registered"
                 persistent-hint
               >
@@ -46,30 +46,30 @@
                 required
                 type="email"
                 ref="email"
-                v-model="credentials.email"
+                v-model="email"
                 :rules="[rules.required, rules.email]"
-                :error="this.state.email.status"
-                :error-messages="this.state.email.msg"
+                :error="state.email.status"
+                :error-messages="state.email.msg"
               >
               </v-text-field>
               <v-text-field
                 label="Password"
                 required
                 :type="showPassword ? 'text' : 'password'"
-                v-model="credentials.password"
+                v-model="password"
                 :rules="[rules.required, rules.password_length]"
-                :error="this.state.password.status"
-                :error-messages="this.state.password.msg"
+                :error="state.password.status"
+                :error-messages="state.password.msg"
                 :append-icon="showPassword ? 'visibility_off' : 'visibility'"
                 @click:append="showPassword = !showPassword"
               >
               </v-text-field>
-              <v-btn @click="registerAction" color="primary">Register</v-btn>
-              <router-link :to="{ name: 'ResendConfirmation', params: { email: credentials.email }}">Didn't receive the instructions ?</router-link>
+              <v-btn @click="submit()" color="primary">Register</v-btn>
+              <router-link :to="{ name: 'ResendConfirmation', params: { email }}">Didn't receive the instructions ?</router-link>
             </v-form>
-            <div v-else>
-              <h2>{{ $t('registration.form.validation_sent', { email: credentials.email }) }}</h2>
-              <b-alert show variant="info">{{ $t('registration.form.validation_sent_info') }}</b-alert>
+            <div v-if="validationSent">
+              <h2><translate>A validation email was sent to %{email}</translate></h2>
+              <v-alert :value="true" type="info"><translate>Before you can login, you need to click on the link inside it to validate your account</translate></v-alert>
             </div>
           </v-card-text>
         </v-card>
@@ -79,110 +79,101 @@
 </template>
 
 <script>
-  import auth from '@/auth/index';
-  import Gravatar from 'vue-gravatar';
-  import RegisterAvatar from './RegisterAvatar';
+import Gravatar from 'vue-gravatar';
+import RegisterAvatar from './RegisterAvatar';
+import { CREATE_USER } from '@/graphql/user';
 
-  export default {
-    props: {
-      email: {
-        type: String,
-        required: false,
-        default: '',
+export default {
+  props: {
+    default_email: {
+      type: String,
+      required: false,
+      default: '',
+    },
+    default_password: {
+      type: String,
+      required: false,
+      default: '',
+    },
+  },
+  components: {
+    'v-gravatar': Gravatar,
+    avatar: RegisterAvatar,
+  },
+  data() {
+    return {
+      username: '',
+      email: this.default_email,
+      password: this.default_password,
+      error: {
+        show: false,
       },
-      password: {
-        type: String,
-        required: false,
-        default: '',
+      showPassword: false,
+      validationSent: false,
+      state: {
+        email: {
+          status: false,
+          msg: [],
+        },
+        username: {
+          status: false,
+          msg: [],
+        },
+        password: {
+          status: false,
+          msg: [],
+        },
       },
-    },
-    components: {
-      'v-gravatar': Gravatar,
-      'avatar': RegisterAvatar
-    },
-    mounted() {
-      this.credentials.email = this.email;
-      this.credentials.password = this.password;
-    },
-    data() {
-      return {
-        credentials: {
-          username: '',
-          email: '',
-          password: '',
+      rules: {
+        password_length: value => value.length > 6 || 'Password must be at least 6 caracters long',
+        required: value => !!value || 'Required.',
+        email: (value) => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+          return pattern.test(value) || 'Invalid e-mail.';
         },
-        error: {
-          show: false,
+      },
+    };
+  },
+  methods: {
+    resetState() {
+      this.state = {
+        email: {
+          status: false,
+          msg: '',
         },
-        showPassword: false,
-        validationSent: false,
-        state: {
-          email: {
-            status: false,
-            msg: [],
-          },
-          username: {
-            status: false,
-            msg: [],
-          },
-          password: {
-            status: false,
-            msg: [],
-          },
+        username: {
+          status: false,
+          msg: '',
         },
-        rules: {
-          password_length: value => value.length > 6 || 'Password must be at least 6 caracters long',
-          required: value => !!value || 'Required.',
-          email: (value) => {
-            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return pattern.test(value) || 'Invalid e-mail.';
-          },
+        password: {
+          status: false,
+          msg: '',
         },
       };
     },
-    methods: {
-      registerAction(e) {
-        this.resetState();
-        e.preventDefault();
-        auth.signup(JSON.stringify(this.credentials), (data) => {
-          console.log(data);
-          this.validationSent = true;
-        }, (error) => {
-          Promise.resolve(error).then((errormsg) => {
-            console.log(errormsg);
-            this.error.show = true;
-            Object.entries(errormsg.errors.user).forEach(([key, val]) => {
-              console.log(key);
-              console.log(val);
-              this.state[key] = { status: true, msg: val };
-            });
-          });
-        });
-      },
-      resetState() {
-        this.state = {
-          email: {
-            status: false,
-            msg: '',
-          },
-          username: {
-            status: false,
-            msg: '',
-          },
-          password: {
-            status: false,
-            msg: '',
-          },
-        };
-      },
-      host() {
-        return `@${window.location.host}`;
-      },
-      validEmail() {
-        return this.rules.email(this.credentials.email) === true ? 'v-gravatar' : 'avatar';
-      }
+    host() {
+      return `@${window.location.host}`;
     },
-  };
+    validEmail() {
+      return this.rules.email(this.email) === true ? 'v-gravatar' : 'avatar';
+    },
+    submit() {
+      this.$apollo.mutate({
+        mutation: CREATE_USER,
+        variables: {
+          email: this.email,
+          password: this.password,
+          username: this.username,
+        },
+      }).then((data) => {
+        console.log(data);
+        this.validationSent = true;
+      }).catch((error) => {
+        console.error(error);
+      });
+    },
+  },
+};
 </script>
 <style lang="scss">
 .avatar-enter-active {

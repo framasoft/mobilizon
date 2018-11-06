@@ -31,8 +31,6 @@
 </template>
 
 <script>
-import fetchStory from '@/api/eventFetch';
-
 export default {
   name: 'ResendConfirmation',
   props: {

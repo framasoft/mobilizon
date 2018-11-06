@@ -12,24 +12,24 @@
         <v-list-group
           value="false"
         >
-          <v-list-tile avatar v-if="$store.state.actor" slot="activator">
+          <v-list-tile avatar v-if="actor" slot="activator">
             <v-list-tile-avatar>
-                <img v-if="!$store.state.actor.avatar"
+                <img v-if="!actor.avatar"
                   class="img-circle elevation-7 mb-1"
                   src="https://picsum.photos/125/125/"
                 >
                 <img v-else
                       class="img-circle elevation-7 mb-1"
-                      :src="$store.state.actor.avatar"
+                      :src="actor.avatar"
                 >
               </v-list-tile-avatar>
 
-            <v-list-tile-content @click="$router.push({name: 'Account', params: { name: $store.state.actor.username }})">
+            <v-list-tile-content @click="$router.push({name: 'Account', params: { name: actor.username }})">
               <v-list-tile-title>{{ this.displayed_name }}</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile avatar v-if="$store.state.actor">
+          <v-list-tile avatar v-if="actor">
             <v-list-tile-avatar>
                 <img
                   class="img-circle elevation-7 mb-1"
@@ -93,11 +93,12 @@
     <v-speed-dial
       v-model="fab"
       bottom
-      fixed
       right
+      fixed
       direction="top"
+      open-on-hover
       transition="scale-transition"
-      v-if="getUser()"
+      v-if="user"
     >
     <v-btn
         slot="activator"
@@ -129,7 +130,12 @@
       </v-btn>
     </v-speed-dial>
     <v-footer class="indigo" app>
-      <span class="white--text">© Thomas Citharel {{ new Date().getFullYear() }} - Made with Elixir, Phoenix & <a href="https://vuejs.org/">VueJS</a> & <a href="https://www.vuetifyjs.com/">Vuetify</a> with some love and some weeks</span>
+      <span
+        class="white--text"
+        v-translate="{
+          date: new Date().getFullYear(),
+          }">© The Mobilizon Contributors %{date} - Made with Elixir, Phoenix & <a href="https://vuejs.org/">VueJS</a> & <a href="https://www.vuetifyjs.com/">Vuetify</a> with some love and some weeks
+      </span>
     </v-footer>
     <v-snackbar
       :timeout="error.timeout"
@@ -143,8 +149,9 @@
 </template>
 
 <script>
-
+import gql from 'graphql-tag';
 import NavBar from '@/components/NavBar';
+import { AUTH_USER_ACTOR, AUTH_USER_ID } from '@/constants';
 
 export default {
   name: 'app',
@@ -155,11 +162,17 @@ export default {
     return {
       drawer: false,
       fab: false,
-      user: false,
+      user: localStorage.getItem(AUTH_USER_ID),
       items: [
-        { icon: 'poll', text: 'Events', route: 'EventList', role: null },
-        { icon: 'group', text: 'Groups', route: 'GroupList', role: null },
-        { icon: 'content_copy', text: 'Categories', route: 'CategoryList', role: 'ROLE_ADMIN' },
+        {
+          icon: 'poll', text: 'Events', route: 'EventList', role: null,
+        },
+        {
+          icon: 'group', text: 'Groups', route: 'GroupList', role: null,
+        },
+        {
+          icon: 'content_copy', text: 'Categories', route: 'CategoryList', role: 'ROLE_ADMIN',
+        },
         { icon: 'settings', text: 'Settings', role: 'ROLE_USER' },
         { icon: 'chat_bubble', text: 'Send feedback', role: 'ROLE_USER' },
         { icon: 'help', text: 'Help', role: null },
@@ -171,14 +184,15 @@ export default {
         text: '',
       },
       show_new_event_button: false,
+      actor: localStorage.getItem(AUTH_USER_ACTOR),
     };
   },
   methods: {
     showMenuItem(elem) {
-      return elem !== null && this.$store.state.user && this.$store.state.user.roles !== undefined ? this.$store.state.user.roles.includes(elem) : true;
+      return elem !== null && this.user && this.user.roles !== undefined ? this.user.roles.includes(elem) : true;
     },
     getUser() {
-      return this.$store.state.user === undefined ? false : this.$store.state.user;
+      return this.user === undefined ? false : this.user;
     },
     toggleDrawer() {
       this.drawer = !this.drawer;
@@ -186,9 +200,9 @@ export default {
   },
   computed: {
     displayed_name() {
-      return this.$store.state.actor.display_name === null ? this.$store.state.actor.username : this.$store.state.actor.display_name
+      return this.actor.display_name === null ? this.actor.username : this.actor.display_name;
     },
-  }
+  },
 };
 </script>
 

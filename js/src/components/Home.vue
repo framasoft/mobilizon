@@ -5,14 +5,14 @@
         src="https://picsum.photos/1200/900"
         dark
         height="300"
-        v-if="$store.state.user === false"
+        v-if="!user"
       >
           <v-container fill-height>
               <v-layout align-center>
                   <v-flex text-xs-center>
                       <h1 class="display-3">Find events you like</h1>
                       <h2>Share it with Mobilizon</h2>
-                      <v-btn :to="{ name: 'Register' }">{{ $t("home.register") }}</v-btn>
+                      <v-btn :to="{ name: 'Register' }"><translate>Register</translate></v-btn>
                   </v-flex>
               </v-layout>
           </v-container>
@@ -21,7 +21,7 @@
           <v-flex xs12 sm8 offset-sm2>
             <v-layout row wrap>
                 <v-flex xs12 sm6>
-                  <h1>Welcome back {{ $store.state.actor.username }}</h1>
+                  <h1><translate :translate-params="{username: actor.preferredUsername}">Welcome back %{username}</translate></h1>
                 </v-flex>
                 <v-flex xs12 sm6>
                 <v-layout align-center>
@@ -33,11 +33,14 @@
                 </v-layout>
               </v-flex>
             </v-layout>
+              <div v-if="$apollo.loading">
+                Still loading
+              </div>
               <v-card v-if="events.length > 0">
                 <v-layout row wrap>
                     <v-flex md4 v-for="event in events" :key="event.uuid">
                         <v-card :to="{ name: 'Event', params:{ uuid: event.uuid } }">
-                            <v-card-media v-if="!event.image"
+                            <v-img v-if="!event.image"
                                           class="white--text"
                                           height="200px"
                                           src="https://picsum.photos/g/400/200/"
@@ -49,26 +52,26 @@
                                         </v-flex>
                                     </v-layout>
                                 </v-container>
-                            </v-card-media>
+                            </v-img>
                             <v-card-title primary-title>
                                 <div>
                                     <span class="grey--text">{{ event.begins_on | formatDay }}</span><br>
-                                    <router-link :to="{name: 'Account', params: { name: event.organizer.username } }">
+                                    <router-link :to="{name: 'Account', params: { name: event.organizerActor.preferredUsername } }">
                                         <v-avatar size="25px">
                                             <img class="img-circle elevation-7 mb-1"
-                                                :src="event.organizer.avatar"
+                                                :src="event.organizerActor.avatarUrl"
                                             >
                                         </v-avatar>
                                     </router-link>
-                                    <span v-if="event.organizer">Organisé par {{ event.organizer.display_name ? event.organizer.display_name : event.organizer.username }}</span>
+                                    <span v-if="event.organizerActor">Organisé par {{ event.organizerActor.name ? event.organizerActor.name : event.organizerActor.preferredUsername }}</span>
                                 </div>
                             </v-card-title>
                         </v-card>
                     </v-flex>
                 </v-layout>
               </v-card>
-              <v-alert v-else :value="true" type="info">
-                No events found nearby {{ ipLocation() }}
+              <v-alert v-else :value="true" type="error">
+                No events found
               </v-alert>
           </v-flex>
       </v-layout>
@@ -76,83 +79,75 @@
 </template>
 
 <script>
-
 import ngeohash from 'ngeohash';
-import eventFetch from "../api/eventFetch";
+import {AUTH_USER_ACTOR, AUTH_USER_ID} from '@/constants';
+import { FETCH_EVENTS } from '@/graphql/event';
 
 export default {
   name: 'Home',
   data() {
     return {
       gradient: 'to top right, rgba(63,81,181, .7), rgba(25,32,72, .7)',
-      user: null,
       searchTerm: null,
       location_field: {
         loading: false,
         search: null,
       },
-      locations: [],
       events: [],
-      city: {name: null},
-      country: {name: null},
+      locations: [],
+      city: { name: null },
+      country: { name: null },
+      actor: JSON.parse(localStorage.getItem(AUTH_USER_ACTOR)),
+      user: localStorage.getItem(AUTH_USER_ID),
     };
   },
-  created() {
-    this.fetchData();
+  apollo: {
+    events: {
+      query: FETCH_EVENTS,
+    },
   },
   computed: {
     displayed_name() {
-      return this.$store.state.actor.display_name === null ? this.$store.state.actor.username : this.$store.state.actor.display_name
+      return this.actor.name === null ? this.actor.preferredUsername : this.actor.name;
     },
   },
   methods: {
     fetchLocations() {
       eventFetch('/locations', this.$store)
-        .then((response) => (response.json()))
+        .then(response => (response.json()))
         .then((response) => {
           this.locations = response;
-        });
-    },
-    fetchData() {
-      eventFetch('/events', this.$store)
-        .then(response => response.json())
-        .then((response) => {
-          this.loading = false;
-          this.events = response.data;
-          this.city = response.city;
-          this.country = response.country;
         });
     },
     geoLocalize() {
       const router = this.$router;
       if (sessionStorage.getItem('City')) {
-        router.push({name: 'EventList', params: {location: localStorage.getItem('City')}})
+        router.push({ name: 'EventList', params: { location: localStorage.getItem('City') } });
       } else {
         navigator.geolocation.getCurrentPosition((pos) => {
           const crd = pos.coords;
 
           const geohash = ngeohash.encode(crd.latitude, crd.longitude, 11);
           sessionStorage.setItem('City', geohash);
-          router.push({name: 'EventList', params: {location: geohash}});
-
-        }, (err) => console.warn(`ERROR(${err.code}): ${err.message}`), {
+          router.push({ name: 'EventList', params: { location: geohash } });
+        }, err => console.warn(`ERROR(${err.code}): ${err.message}`), {
           enableHighAccuracy: true,
           timeout: 5000,
-          maximumAge: 0
+          maximumAge: 0,
         });
       }
     },
-    getAddressData: function (addressData) {
+    getAddressData(addressData) {
       const geohash = ngeohash.encode(addressData.latitude, addressData.longitude, 11);
       sessionStorage.setItem('City', geohash);
-      this.$router.push({name: 'EventList', params: {location: geohash}});
+      this.$router.push({ name: 'EventList', params: { location: geohash } });
     },
     viewEvent(event) {
-      this.$router.push({ name: 'Event', params: { uuid: event.uuid } })
+      this.$router.push({ name: 'Event', params: { uuid: event.uuid } });
     },
     ipLocation() {
       return this.city.name ? this.city.name : this.country.name;
-    }
+    },
   },
 };
 </script>

@@ -31,8 +31,6 @@
 </template>
 
 <script>
-import fetchStory from '@/api/eventFetch';
-
 export default {
   name: 'SendPasswordReset',
   props: {
@@ -43,8 +41,8 @@ export default {
     },
   },
   mounted() {
-      this.credentials.email = this.email;
-    },
+    this.credentials.email = this.email;
+  },
   data() {
     return {
       credentials: {

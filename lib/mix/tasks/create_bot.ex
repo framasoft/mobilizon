@@ -14,7 +14,7 @@ defmodule Mix.Tasks.CreateBot do
   def run([email, name, summary, type, url]) do
     Mix.Task.run("app.start")
 
-    with {:ok, %User{} = user} <- Actors.find_by_email(email),
+    with {:ok, %User{} = user} <- Actors.get_user_by_email(email, true),
          actor <- Actors.register_bot_account(%{name: name, summary: summary}),
          {:ok, %Bot{} = bot} <-
            Actors.create_bot(%{

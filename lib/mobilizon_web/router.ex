@@ -4,8 +4,9 @@ defmodule MobilizonWeb.Router do
   """
   use MobilizonWeb, :router
 
-  pipeline :api do
+  pipeline :graphql do
     plug(:accepts, ["json"])
+    plug(MobilizonWeb.AuthPipeline)
   end
 
   pipeline :well_known do
@@ -15,11 +16,6 @@ defmodule MobilizonWeb.Router do
   pipeline :activity_pub do
     plug(:accepts, ["activity-json", "text/html"])
     plug(MobilizonWeb.HTTPSignaturePlug)
-  end
-
-  pipeline :api_auth do
-    plug(:accepts, ["json"])
-    plug(MobilizonWeb.AuthPipeline)
   end
 
   pipeline :browser do
@@ -34,90 +30,21 @@ defmodule MobilizonWeb.Router do
     plug(:accepts, ["html", "application/json"])
   end
 
-  scope "/api", MobilizonWeb do
-    pipe_through(:api)
+  scope "/api" do
+    pipe_through(:graphql)
 
-    scope "/v1" do
-      post("/users", UserController, :register)
-      get("/users/validate/:token", UserController, :validate)
-      post("/users/resend", UserController, :resend_confirmation)
-
-      post("/users/password-reset/send", UserController, :send_reset_password)
-      post("/users/password-reset/post", UserController, :reset_password)
-
-      post("/login", UserSessionController, :sign_in)
-      get("/groups", GroupController, :index)
-      get("/events", EventController, :index)
-      get("/events/all", EventController, :index_all)
-      get("/events/search/:name", EventController, :search)
-      get("/events/:uuid/ics", EventController, :export_to_ics)
-      get("/events/:uuid/tracks", TrackController, :show_tracks_for_event)
-      get("/events/:uuid/sessions", SessionController, :show_sessions_for_event)
-      get("/events/:uuid", EventController, :show)
-      get("/comments/:uuid", CommentController, :show)
-      get("/bots/:id", BotController, :show)
-      get("/bots", BotController, :index)
-
-      get("/actors", ActorController, :index)
-      get("/actors/search/:name", ActorController, :search)
-      get("/actors/:name", ActorController, :show)
-
-      resources("/followers", FollowerController, except: [:new, :edit])
-
-      resources("/tags", TagController, only: [:index, :show])
-      resources("/categories", CategoryController, only: [:index, :show])
-      resources("/sessions", SessionController, only: [:index, :show])
-      resources("/tracks", TrackController, only: [:index, :show])
-      resources("/addresses", AddressController, only: [:index, :show])
-
-      get("/search/:name", SearchController, :search)
-
-      scope "/nodeinfo" do
-        pipe_through(:nodeinfo)
-
-        get("/:version", NodeinfoController, :nodeinfo)
-      end
-    end
+    forward("/", Absinthe.Plug, schema: MobilizonWeb.Schema)
   end
 
-  # Authentificated API
-  scope "/api", MobilizonWeb do
-    pipe_through(:api_auth)
-
-    scope "/v1" do
-      get("/user", UserController, :show_current_actor)
-      post("/sign-out", UserSessionController, :sign_out)
-      resources("/users", UserController, except: [:new, :edit, :show])
-      post("/actors", ActorController, :create)
-      patch("/actors/:name", ActorController, :update)
-      post("/events", EventController, :create)
-      patch("/events/:uuid", EventController, :update)
-      put("/events/:uuid", EventController, :update)
-      delete("/events/:uuid", EventController, :delete)
-      post("/events/:uuid/join", ParticipantController, :join)
-      post("/comments", CommentController, :create)
-      patch("/comments/:uuid", CommentController, :update)
-      put("/comments/:uuid", CommentController, :update)
-      delete("/comments/:uuid", CommentController, :delete)
-      resources("/bots", BotController, except: [:new, :edit, :show, :index])
-      post("/groups", GroupController, :create)
-      post("/groups/:name/join", GroupController, :join)
-      resources("/members", MemberController)
-      resources("/sessions", SessionController, except: [:index, :show])
-      resources("/tracks", TrackController, except: [:index, :show])
-      get("/tracks/:id/sessions", SessionController, :show_sessions_for_track)
-      resources("/categories", CategoryController)
-      resources("/tags", TagController)
-      resources("/addresses", AddressController, except: [:index, :show])
-    end
-  end
+  forward("/graphiql", Absinthe.Plug.GraphiQL, schema: MobilizonWeb.Schema)
 
   scope "/.well-known", MobilizonWeb do
     pipe_through(:well_known)
 
     get("/host-meta", WebFingerController, :host_meta)
     get("/webfinger", WebFingerController, :webfinger)
-    get("/nodeinfo", NodeinfoController, :schemas)
+    get("/nodeinfo", NodeInfoController, :schemas)
+    get("/nodeinfo/:version", NodeInfoController, :nodeinfo)
   end
 
   scope "/", MobilizonWeb do
@@ -141,6 +68,7 @@ defmodule MobilizonWeb.Router do
   scope "/", MobilizonWeb do
     pipe_through(:browser)
 
+    forward("/uploads", UploadPlug)
     get("/*path", PageController, :index)
   end
 end

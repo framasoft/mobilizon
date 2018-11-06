@@ -15,7 +15,7 @@
               @click="$router.push({ name: 'Account', params: { name: actor.username } })"
             >
               <v-list-tile-action>
-                <v-icon v-if="$store.state.defaultActor === actor.username" color="pink">star</v-icon>
+                <v-icon v-if="defaultActor === actor.username" color="pink">star</v-icon>
               </v-list-tile-action>
 
               <v-list-tile-content>
@@ -67,29 +67,26 @@
 </template>
 
 <script>
-import eventFetch from "@/api/eventFetch";
-import auth from "@/auth";
-
 export default {
-  name: "Identities",
+  name: 'Identities',
   data() {
     return {
       actors: [],
       newActor: {
-        preferred_username: "",
-        summary: ""
+        preferred_username: '',
+        summary: '',
       },
       loading: true,
       showForm: false,
       rules: {
-        required: value => !!value || "Required."
+        required: value => !!value || 'Required.',
       },
       state: {
         username: {
           status: false,
-          msg: []
-        }
-      }
+          msg: [],
+        },
+      },
     };
   },
   created() {
@@ -97,9 +94,9 @@ export default {
   },
   methods: {
     fetchData() {
-      eventFetch(`/user`, this.$store)
+      eventFetch('/user', this.$store)
         .then(response => response.json())
-        .then(response => {
+        .then((response) => {
           this.actors = response.data.actors;
           this.loading = false;
         });
@@ -107,12 +104,12 @@ export default {
     sendData() {
       this.loading = true;
       this.showForm = false;
-      eventFetch(`/actors`, this.$store, {
-        method: "POST",
-        body: JSON.stringify({ actor: this.newActor })
+      eventFetch('/actors', this.$store, {
+        method: 'POST',
+        body: JSON.stringify({ actor: this.newActor }),
       })
         .then(response => response.json())
-        .then(response => {
+        .then((response) => {
           this.actors.push(response.data);
           this.loading = false;
         });
@@ -126,7 +123,7 @@ export default {
     },
     host() {
       return `@${window.location.host}`;
-    }
-  }
+    },
+  },
 };
 </script>

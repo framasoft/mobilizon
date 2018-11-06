@@ -65,66 +65,65 @@
 </template>
 
 <script>
-  import eventFetch from '@/api/eventFetch';
-  import VueMarkdown from 'vue-markdown';
-  import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete';
+import VueMarkdown from 'vue-markdown';
+import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete';
 
-  export default {
-    name: 'create-group',
+export default {
+  name: 'create-group',
 
-    components: {
-      VueMarkdown,
-      VuetifyGoogleAutocomplete,
+  components: {
+    VueMarkdown,
+    VuetifyGoogleAutocomplete,
+  },
+  data() {
+    return {
+      e1: 0,
+      group: {
+        preferred_username: '',
+        name: '',
+        summary: '',
+        // category: null,
+      },
+      categories: [],
+    };
+  },
+  mounted() {
+    this.fetchCategories();
+  },
+  methods: {
+    create() {
+      // this.group.organizer = "/accounts/" + this.$store.state.user.id;
+
+      eventFetch('/groups', this.$store, { method: 'POST', body: JSON.stringify({ group: this.group }) })
+        .then(response => response.json())
+        .then((data) => {
+          this.loading = false;
+          this.$router.push({ path: 'Group', params: { id: data.id } });
+        });
     },
-    data() {
-      return {
-        e1: 0,
-        group: {
-          preferred_username: '',
-          name: '',
-          summary: '',
-          // category: null,
+    fetchCategories() {
+      eventFetch('/categories', this.$store)
+        .then(response => response.json())
+        .then((data) => {
+          this.loading = false;
+          this.categories = data.data;
+        });
+    },
+    getAddressData(addressData) {
+      this.group.address = {
+        geo: {
+          latitude: addressData.latitude,
+          longitude: addressData.longitude,
         },
-        categories: [],
+        addressCountry: addressData.country,
+        addressLocality: addressData.city,
+        addressRegion: addressData.administrative_area_level_1,
+        postalCode: addressData.postal_code,
+        streetAddress: `${addressData.street_number} ${addressData.route}`,
       };
     },
-    mounted() {
-      this.fetchCategories();
-    },
-    methods: {
-      create() {
-        // this.group.organizer = "/accounts/" + this.$store.state.user.id;
-
-        eventFetch('/groups', this.$store, { method: 'POST', body: JSON.stringify({group: this.group}) })
-          .then(response => response.json())
-          .then((data) => {
-            this.loading = false;
-            this.$router.push({ path: 'Group', params: { id: data.id } });
-          });
-      },
-      fetchCategories() {
-        eventFetch('/categories', this.$store)
-          .then(response => response.json())
-          .then((data) => {
-            this.loading = false;
-            this.categories = data.data;
-          });
-      },
-      getAddressData: function (addressData) {
-        this.group.address = {
-          geo: {
-            latitude: addressData.latitude,
-            longitude: addressData.longitude,
-          },
-          addressCountry: addressData.country,
-          addressLocality: addressData.city,
-          addressRegion: addressData.administrative_area_level_1,
-          postalCode: addressData.postal_code,
-          streetAddress: `${addressData.street_number} ${addressData.route}`,
-        };
-      },
-    },
-  };
+  },
+};
 </script>
 
 <style>

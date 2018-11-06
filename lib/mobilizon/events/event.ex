@@ -86,7 +86,6 @@ defmodule Mobilizon.Events.Event do
     |> validate_required([
       :title,
       :begins_on,
-      :ends_on,
       :organizer_actor_id,
       :category_id,
       :url,
