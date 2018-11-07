@@ -231,20 +231,6 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     end
   end
 
-  def make_create_data(params, additional) do
-    published = params.published || make_date()
-
-    %{
-      "type" => "Create",
-      "to" => params.to |> Enum.uniq(),
-      "actor" => params.actor.ap_id,
-      "object" => params.object,
-      "published" => published,
-      "context" => params.context
-    }
-    |> Map.merge(additional)
-  end
-
   def make_like_data(%Actor{url: url} = actor, %{data: %{"id" => id}} = object, activity_id) do
     data = %{
       "type" => "Like",
