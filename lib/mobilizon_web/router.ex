@@ -10,7 +10,7 @@ defmodule MobilizonWeb.Router do
   end
 
   pipeline :well_known do
-    plug(:accepts, ["json/application", "jrd-json", "application/json"])
+    plug(:accepts, ["json", "jrd-json"])
   end
 
   pipeline :activity_pub do

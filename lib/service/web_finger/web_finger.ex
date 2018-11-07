@@ -52,7 +52,12 @@ defmodule Mobilizon.Service.WebFinger do
       "subject" => "acct:#{user.preferred_username}@#{MobilizonWeb.Endpoint.host()}",
       "aliases" => [user.url],
       "links" => [
-        %{"rel" => "self", "type" => "application/activity+json", "href" => user.url}
+        %{"rel" => "self", "type" => "application/activity+json", "href" => user.url},
+        %{
+          "rel" => "https://webfinger.net/rel/profile-page/",
+          "type" => "text/html",
+          "href" => user.url
+        }
       ]
     }
   end
