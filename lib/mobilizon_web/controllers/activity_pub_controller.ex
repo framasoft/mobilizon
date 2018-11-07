@@ -13,9 +13,10 @@ defmodule MobilizonWeb.ActivityPubController do
     with %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
       case get_req_header(conn, "accept") do
         ["application/activity+json"] ->
-          conn
-          |> put_resp_header("content-type", "application/activity+json")
-          |> json(ActorView.render("actor.json", %{actor: actor}))
+          conn |> render_ap_actor(actor)
+
+        ["application/activity+json, application/ld+json"] ->
+          conn |> render_ap_actor(actor)
 
         _ ->
           conn
@@ -25,6 +26,12 @@ defmodule MobilizonWeb.ActivityPubController do
     else
       nil -> {:error, :not_found}
     end
+  end
+
+  defp render_ap_actor(conn, %Actor{} = actor) do
+    conn
+    |> put_resp_header("content-type", "application/activity+json")
+    |> json(ActorView.render("actor.json", %{actor: actor}))
   end
 
   def event(conn, %{"uuid" => uuid}) do
