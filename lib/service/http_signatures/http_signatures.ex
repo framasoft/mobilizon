@@ -73,7 +73,7 @@ defmodule Mobilizon.Service.HTTPSignatures do
 
   def validate_conn(conn, public_key) do
     headers = Enum.into(conn.req_headers, %{})
-    [host_without_port, _] = String.split(headers["host"], ":")
+    host_without_port = String.split(headers["host"], ":") |> hd
     headers = Map.put(headers, "host", host_without_port)
     signature = split_signature(headers["signature"])
     validate(headers, signature, public_key)
