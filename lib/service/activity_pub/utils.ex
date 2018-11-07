@@ -153,7 +153,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       else
         err ->
           Logger.error("Error while inserting a remote comment inside database")
-          Logger.error(inspect err)
+          Logger.error(inspect(err))
           {:error, err}
       end
     end
