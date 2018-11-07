@@ -44,7 +44,7 @@ defmodule Mobilizon.Service.Federator do
 
   def handle(:incoming_ap_doc, params) do
     Logger.info("Handling incoming AP activity")
-    Logger.debug(inspect(params))
+    Logger.info(inspect(params))
 
     with {:ok, _activity} <- Transmogrifier.handle_incoming(params) do
     else

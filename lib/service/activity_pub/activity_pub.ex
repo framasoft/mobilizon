@@ -293,13 +293,6 @@ defmodule Mobilizon.Service.ActivityPub do
   end
 
   def user_data_from_user_object(data) do
-    name =
-      if String.trim(data["name"]) === "" do
-        data["preferredUsername"]
-      else
-        data["name"]
-      end
-
     user_data = %{
       url: data["id"],
       info: %{
