@@ -199,6 +199,52 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   #    Repo.one(query)
   #  end
 
+  def make_comment_data(
+        actor,
+        to,
+        context,
+        content_html,
+        attachments,
+        inReplyTo,
+        tags,
+        cw \\ nil,
+        cc \\ []
+      ) do
+    object = %{
+      "type" => "Note",
+      "to" => to,
+      "cc" => cc,
+      "content" => content_html,
+      "summary" => cw,
+      "context" => context,
+      "attachment" => attachments,
+      "actor" => actor,
+      "tag" => tags |> Enum.map(fn {_, tag} -> tag end) |> Enum.uniq()
+    }
+
+    if inReplyTo do
+      object
+      |> Map.put("inReplyTo", inReplyTo.data["object"]["id"])
+      |> Map.put("inReplyToStatusId", inReplyTo.id)
+    else
+      object
+    end
+  end
+
+  def make_create_data(params, additional) do
+    published = params.published || make_date()
+
+    %{
+      "type" => "Create",
+      "to" => params.to |> Enum.uniq(),
+      "actor" => params.actor.ap_id,
+      "object" => params.object,
+      "published" => published,
+      "context" => params.context
+    }
+    |> Map.merge(additional)
+  end
+
   def make_like_data(%Actor{url: url} = actor, %{data: %{"id" => id}} = object, activity_id) do
     data = %{
       "type" => "Like",
