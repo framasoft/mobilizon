@@ -137,7 +137,9 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
         "text" => object_data["content"],
         "url" => object_data["id"],
         "actor_id" => actor_id,
-        "in_reply_to_comment_id" => object_data["inReplyTo"]
+        "in_reply_to_comment_id" => object_data["inReplyTo"],
+        # probably
+        "local" => false
       }
 
       require Logger
