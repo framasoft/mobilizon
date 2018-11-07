@@ -150,6 +150,11 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
         Logger.info("comment inserted")
         Logger.info(inspect(comm))
         :ok
+      else
+        err ->
+          Logger.error("Error while inserting a remote comment inside database")
+          Logger.error(inspect err)
+          {:error, err}
       end
     end
   end
