@@ -91,7 +91,8 @@ defmodule Mobilizon.Service.WebFinger do
 
     Logger.debug(inspect(address))
 
-    with {:ok, %HTTPoison.Response{} = response} <-
+    with false <- is_nil(domain),
+         {:ok, %HTTPoison.Response{} = response} <-
            HTTPoison.get(
              address,
              [Accept: "application/json, application/activity+json, application/jrd+json"],
