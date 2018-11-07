@@ -275,7 +275,7 @@ defmodule Mobilizon.Actors do
     actor =
       case String.split(name, "@") do
         [name] ->
-          Repo.get_by(Actor, preferred_username: name)
+          Repo.one(from(a in Actor, where: a.preferred_username == ^name and is_nil(a.domain)))
 
         [name, domain] ->
           Repo.get_by(Actor, preferred_username: name, domain: domain)

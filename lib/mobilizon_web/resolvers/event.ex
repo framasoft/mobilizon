@@ -1,4 +1,6 @@
 defmodule MobilizonWeb.Resolvers.Event do
+  alias Mobilizon.Service.ActivityPub
+
   def list_events(_parent, _args, _resolution) do
     {:ok, Mobilizon.Events.list_events()}
   end
@@ -28,9 +30,21 @@ defmodule MobilizonWeb.Resolvers.Event do
   Search events and actors by title
   """
   def search_events_and_actors(_parent, %{search: search, page: page, limit: limit}, _resolution) do
+    search = String.strip(search)
     found =
-      Mobilizon.Events.find_events_by_name(search, page, limit) ++
-        Mobilizon.Actors.find_actors_by_username_or_name(search, page, limit)
+      case String.contains?(search, "@") do
+        true ->
+          with {:ok, actor} <- ActivityPub.find_or_make_actor_from_nickname(search) do
+            actor
+          else
+            {:error, _err} ->
+              nil
+          end
+
+        _ ->
+          Mobilizon.Events.find_events_by_name(search, page, limit) ++
+            Mobilizon.Actors.find_actors_by_username_or_name(search, page, limit)
+      end
 
     require Logger
     Logger.debug(inspect(found))

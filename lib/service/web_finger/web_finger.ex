@@ -49,7 +49,7 @@ defmodule Mobilizon.Service.WebFinger do
 
   def represent_user(user, "JSON") do
     %{
-      "subject" => "acct:#{user.preferred_username}@#{MobilizonWeb.Endpoint.host() <> ":4001"}",
+      "subject" => "acct:#{user.preferred_username}@#{MobilizonWeb.Endpoint.host()}",
       "aliases" => [user.url],
       "links" => [
         %{"rel" => "self", "type" => "application/activity+json", "href" => user.url}

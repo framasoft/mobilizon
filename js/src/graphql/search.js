@@ -9,6 +9,8 @@ query SearchEvents($searchText: String!) {
       __typename
     },
     ...on Actor {
+      avatarUrl,
+      domain,
       preferredUsername,
       __typename
     }

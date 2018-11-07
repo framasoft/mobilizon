@@ -22,6 +22,7 @@
       class="hidden-sm-and-down"
       :items="items"
       :search-input.sync="searchText"
+      @keyup.enter="enter"
       v-model="model"
       return-object
     >
@@ -139,7 +140,7 @@ export default {
       return this.search.map(searchEntry => {
         switch (searchEntry.__typename) {
           case 'Actor':
-            searchEntry.label = searchEntry.preferredUsername;
+            searchEntry.label = searchEntry.preferredUsername + (searchEntry.domain === null ? '' : `@${searchEntry.domain}`);
             break;
           case 'Event':
             searchEntry.label = searchEntry.title;
@@ -148,17 +149,15 @@ export default {
         return searchEntry;
       });
     },
-    displayed_name() {
-      console.log('displayed name', this.actor);
-      if (this.actor) {
-        return this.actor.display_name === null ? this.actor.username : this.actor.display_name;
-      }
-    },
   },
   methods: {
     username_with_domain(actor) {
-      return actor.preferredUsername + (actor.domain === undefined ? '' : `@${actor.domain}`);
+      return actor.preferredUsername + (actor.domain === null ? '' : `@${actor.domain}`);
     },
+    enter() {
+      console.log('enter');
+      this.$apollo.queries.search.refetch();
+    }
   },
 };
 </script>

@@ -2,14 +2,14 @@ defmodule MobilizonWeb.Resolvers.Actor do
   alias Mobilizon.Actors.Actor, as: ActorSchema
   alias Mobilizon.Actors.User
   alias Mobilizon.Actors
+  alias Mobilizon.Service.ActivityPub
 
   def find_actor(_parent, %{preferred_username: name}, _resolution) do
-    case Actors.get_actor_by_name_with_everything(name) do
-      nil ->
-        {:error, "Actor with name #{name} not found"}
-
-      actor ->
+    case ActivityPub.find_or_make_actor_from_nickname(name) do
+      {:ok, actor} ->
         {:ok, actor}
+      _ ->
+        {:error, "Actor with name #{name} not found"}
     end
   end
 

@@ -88,9 +88,17 @@ export const CREATE_EVENT = gql`
         $categoryId: Int!,
         $beginsOn: DateTime!,
         $addressType: AddressType!,
-        ) {
-    createEvent(title: $title, description: $description, beginsOn: $beginsOn, organizerActorId: $organizerActorId, categoryId: $categoryId, addressType: $addressType) {
-    uuid
+    ) {
+        createEvent(
+            title: $title, 
+            description: $description, 
+            beginsOn: $beginsOn, 
+            organizerActorId: $organizerActorId, 
+            categoryId: $categoryId, 
+            addressType: $addressType) {
+                uuid,
+                title,
+                description,
     }
 }
 `;
