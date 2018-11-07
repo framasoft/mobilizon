@@ -31,6 +31,7 @@ defmodule MobilizonWeb.Resolvers.Event do
   """
   def search_events_and_actors(_parent, %{search: search, page: page, limit: limit}, _resolution) do
     search = String.strip(search)
+
     found =
       case String.contains?(search, "@") do
         true ->

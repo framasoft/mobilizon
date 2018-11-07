@@ -8,6 +8,7 @@ defmodule MobilizonWeb.Resolvers.Actor do
     case ActivityPub.find_or_make_actor_from_nickname(name) do
       {:ok, actor} ->
         {:ok, actor}
+
       _ ->
         {:error, "Actor with name #{name} not found"}
     end
