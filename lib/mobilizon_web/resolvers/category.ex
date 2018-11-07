@@ -34,4 +34,8 @@ defmodule MobilizonWeb.Resolvers.Category do
         {:error, errors}
     end
   end
+
+  def create_category(_parent, %{title: title, picture: picture, description: description}, %{}) do
+    {:error, "You are not allowed to create a category if not connected"}
+  end
 end

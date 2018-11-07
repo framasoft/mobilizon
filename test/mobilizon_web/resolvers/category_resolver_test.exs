@@ -56,5 +56,24 @@ defmodule MobilizonWeb.Resolvers.CategoryResolverTest do
 
     #   assert json_response(res, 200)["data"]["createCategory"]["title"] == "my category"
     # end
+
+    # test "create_category/3 doesn't create a category if the user isn't logged in", %{conn: conn, actor: actor} do
+    #   mutation = """
+    #       mutation {
+    #         createCategory(title: "my category", description: "my desc") {
+    #             id,
+    #             title,
+    #             description,
+    #         },
+    #       }
+    #   """
+
+    #   res =
+    #     conn
+    #     |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+    #     assert hd(json_response(res, 200)["errors"])["message"] ==
+    #     "You are not allowed to create a category if not connected"
+    # end
   end
 end
