@@ -183,7 +183,6 @@ defmodule Mobilizon.Actors.Actor do
   def get_public_key_for_url(url) do
     with {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(url) do
       actor.keys
-      |> Mobilizon.Service.ActivityPub.Utils.pem_to_public_key()
     else
       _ -> :error
     end
