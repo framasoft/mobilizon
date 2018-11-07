@@ -301,7 +301,7 @@ defmodule Mobilizon.Service.ActivityPub do
       },
       avatar_url: data["icon"]["url"],
       banner_url: data["image"]["url"],
-      name: name,
+      name: data["name"],
       preferred_username: data["preferredUsername"],
       follower_address: data["followers"],
       summary: data["summary"],
