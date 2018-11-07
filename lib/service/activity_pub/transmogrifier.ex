@@ -112,7 +112,10 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
       # Actors.follow(follower, followed)
       {:ok, activity}
     else
-      _e -> :error
+      e ->
+        Logger.error("Unable to handle Follow activity")
+        Logger.error(inspect(e))
+        :error
     end
   end
 
