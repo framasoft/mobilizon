@@ -10,7 +10,7 @@ config :mobilizon,
   ecto_repos: [Mobilizon.Repo]
 
 config :mobilizon, :instance,
-  name: "Localhost",
+  name: System.get_env("MOBILIZON_INSTANCE_NAME") || "Localhost",
   version: "1.0.0-dev",
   registrations_open: true
 
