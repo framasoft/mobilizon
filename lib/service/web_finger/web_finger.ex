@@ -98,8 +98,8 @@ defmodule Mobilizon.Service.WebFinger do
              [Accept: "application/json, application/activity+json, application/jrd+json"],
              follow_redirect: true
            ),
-         %{status_code: status_code, body: body} when status_code in 200..299 <- response do
-      {:ok, doc} = Jason.decode(body)
+         %{status_code: status_code, body: body} when status_code in 200..299 <- response,
+         {:ok, doc} <- Jason.decode(body) do
       webfinger_from_json(doc)
     else
       e ->
