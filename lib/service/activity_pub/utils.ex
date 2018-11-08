@@ -9,6 +9,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Event
+  alias Mobilizon.Events.Comment
   alias Mobilizon.Events
   alias Mobilizon.Activity
   alias MobilizonWeb

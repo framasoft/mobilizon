@@ -8,7 +8,7 @@ defmodule Mobilizon.Events.Comment do
 
   alias Mobilizon.Events.Event
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Actors.Comment
+  alias Mobilizon.Events.Comment
 
   schema "comments" do
     field(:text, :string)
