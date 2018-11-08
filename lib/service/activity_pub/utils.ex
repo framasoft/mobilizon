@@ -14,6 +14,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   alias MobilizonWeb
   alias MobilizonWeb.Router.Helpers
   alias MobilizonWeb.Endpoint
+  alias Mobilizon.Service.ActivityPub
   alias Ecto.{Changeset, UUID}
   import Ecto.Query
 
@@ -137,10 +138,29 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
         "text" => object_data["content"],
         "url" => object_data["id"],
         "actor_id" => actor_id,
-        "in_reply_to_comment_id" => object_data["inReplyTo"],
+        "in_reply_to_comment_id" => nil,
+        "event_id" => nil,
         # probably
         "local" => false
       }
+
+      # We fetch the parent object
+      data =
+        case ActivityPub.fetch_object_from_url(object_data["inReplyTo"]) do
+          # Reply to an event (Comment)
+          {:ok, %Event{id: id}} ->
+            data |> Map.put("event_id", id)
+
+          # Reply to a comment (Comment)
+          {:ok, %Comment{id: id} = comment} ->
+            data
+            |> Map.put("in_reply_to_comment_id", id)
+            |> Map.put("origin_comment_id", comment |> Comment.get_thread_id())
+
+          # Anthing else is kind of a MP
+          _ ->
+            data
+        end
 
       require Logger
       Logger.info("comment data ready to be inserted")

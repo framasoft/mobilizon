@@ -50,6 +50,8 @@ defmodule Mobilizon.Service.ActivityPub do
   @spec fetch_object_from_url(String.t()) :: tuple()
   def fetch_object_from_url(url) do
     with true <- String.starts_with?(url, "http"),
+         nil <- Events.get_event_by_url(url),
+         nil <- Events.get_comment_from_url(url),
          {:ok, %{body: body, status_code: code}} when code in 200..299 <-
            HTTPoison.get(
              url,
@@ -59,8 +61,6 @@ defmodule Mobilizon.Service.ActivityPub do
              recv_timeout: 20_000
            ),
          {:ok, data} <- Jason.decode(body),
-         nil <- Events.get_event_by_url(data["id"]),
-         nil <- Events.get_comment_from_url(data["id"]),
          params <- %{
            "type" => "Create",
            "to" => data["to"],

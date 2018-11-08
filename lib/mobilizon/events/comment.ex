@@ -40,4 +40,11 @@ defmodule Mobilizon.Events.Comment do
     |> put_change(:url, url)
     |> validate_required([:text, :actor_id, :url])
   end
+
+  @doc """
+  Returns the id of the first comment in the conversation
+  """
+  def get_thread_id(%Comment{id: id, origin_comment_id: origin_comment_id}) do
+    origin_comment_id || id
+  end
 end
