@@ -43,7 +43,7 @@ defmodule Mobilizon.Service.HTTPSignatures do
 
   defp prepare_public_key(public_key_code) do
     with [public_key_entry] <- :public_key.pem_decode(public_key_code) do
-      :public_key.pem_entry_decode(public_key_entry)
+      {:ok, :public_key.pem_entry_decode(public_key_entry)}
     else
       _err ->
         {:error, :pem_decode_error}
