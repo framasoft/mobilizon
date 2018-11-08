@@ -41,7 +41,7 @@ config :mobilizon, Mobilizon.Mailer,
   no_mx_lookups: false
 
 # Do not print debug messages in production
-config :logger, level: :info
+config :logger, level: System.get_env("MOBILIZON_LOGLEVEL") || :info
 
 # ## SSL Support
 #
