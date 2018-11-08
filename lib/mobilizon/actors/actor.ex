@@ -22,7 +22,7 @@ defmodule Mobilizon.Actors.Actor do
   import Ecto.Query
   alias Mobilizon.Repo
 
-  import Logger
+  require Logger
 
   #  @type t :: %Actor{description: String.t, id: integer(), inserted_at: DateTime.t, updated_at: DateTime.t, display_name: String.t, domain: String.t, keys: String.t, suspended: boolean(), url: String.t, username: String.t, organized_events: list(), groups: list(), group_request: list(), user: User.t, field: ActorTypeEnum.t}
 
@@ -182,9 +182,11 @@ defmodule Mobilizon.Actors.Actor do
   @spec get_public_key_for_url(String.t()) :: {:ok, String.t()}
   def get_public_key_for_url(url) do
     with {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(url) do
-      actor.keys
+      {:ok, actor.keys}
     else
-      _ -> :error
+      _ ->
+        Logger.error("Unable to fetch actor, so no keys for you")
+        {:error, :actor_fetch_error}
     end
   end
 

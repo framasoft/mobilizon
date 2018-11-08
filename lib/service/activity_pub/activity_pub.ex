@@ -203,6 +203,10 @@ defmodule Mobilizon.Service.ActivityPub do
     with {:ok, data} <- fetch_and_prepare_user_from_url(url) do
       Actors.insert_or_update_actor(data)
     else
+      # Request returned 410
+      {:error, :actor_deleted} ->
+        {:error, :actor_deleted}
+
       e ->
         Logger.error("Failed to make actor from url")
         Logger.error(inspect(e))
@@ -283,12 +287,18 @@ defmodule Mobilizon.Service.ActivityPub do
   def fetch_and_prepare_user_from_url(url) do
     Logger.debug("Fetching and preparing user from url")
 
-    with {:ok, %{status_code: 200, body: body}} <-
+    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
            HTTPoison.get(url, [Accept: "application/activity+json"], follow_redirect: true),
          {:ok, data} <- Jason.decode(body) do
       user_data_from_user_object(data)
     else
-      e -> Logger.error("Could not decode user at fetch #{url}, #{inspect(e)}")
+      # User is gone, probably deleted
+      {:ok, %HTTPoison.Response{status_code: 410}} ->
+        {:error, :actor_deleted}
+
+      e ->
+        Logger.error("Could not decode user at fetch #{url}, #{inspect(e)}")
+        e
     end
   end
 
