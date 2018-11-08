@@ -35,7 +35,7 @@ defmodule Mobilizon.Events.Comment do
         else: "#{MobilizonWeb.Endpoint.url()}/comments/#{uuid}"
 
     comment
-    |> cast(attrs, [:url, :text, :actor_id, :event_id, :in_reply_to_comment_id, :attributed_to_id])
+    |> cast(attrs, [:url, :text, :actor_id, :event_id, :in_reply_to_comment_id, :origin_comment_id, :attributed_to_id])
     |> put_change(:uuid, uuid)
     |> put_change(:url, url)
     |> validate_required([:text, :actor_id, :url])
