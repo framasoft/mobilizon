@@ -146,7 +146,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       }
 
       # We fetch the parent object
-      unless !Map.has_key?("inReplyTo") || object_data["inReplyTo"] == nil ||
+      unless !Map.has_key?(object_data, "inReplyTo") || object_data["inReplyTo"] == nil ||
                object_data["inReplyTo"] == "" do
         data =
           case ActivityPub.fetch_object_from_url(object_data["inReplyTo"]) do
