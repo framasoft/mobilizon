@@ -18,6 +18,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   alias Mobilizon.Service.ActivityPub
   alias Ecto.{Changeset, UUID}
   import Ecto.Query
+  require Logger
 
   def make_json_ld_header do
     %{
