@@ -146,25 +146,34 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       }
 
       # We fetch the parent object
-      unless !Map.has_key?(object_data, "inReplyTo") || object_data["inReplyTo"] == nil ||
-               object_data["inReplyTo"] == "" do
-        data =
+      data =
+        if Map.has_key?(object_data, "inReplyTo") && object_data["inReplyTo"] != nil &&
+             object_data["inReplyTo"] != "" do
+          Logger.debug("Object has inReplyTo #{object_data["inReplyTo"]}")
+
           case ActivityPub.fetch_object_from_url(object_data["inReplyTo"]) do
             # Reply to an event (Comment)
             {:ok, %Event{id: id}} ->
+              Logger.debug("Parent object is an event")
               data |> Map.put("event_id", id)
 
             # Reply to a comment (Comment)
             {:ok, %Comment{id: id} = comment} ->
+              Logger.debug("Parent object is another comment")
+
               data
               |> Map.put("in_reply_to_comment_id", id)
               |> Map.put("origin_comment_id", comment |> Comment.get_thread_id())
 
             # Anthing else is kind of a MP
             _ ->
+              Logger.debug("Parent object is something we don't handle")
               data
           end
-      end
+        else
+          Logger.debug("No parent object for this comment")
+          data
+        end
 
       require Logger
       Logger.info("comment data ready to be inserted")
