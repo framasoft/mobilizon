@@ -167,8 +167,9 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
               |> Map.put("origin_comment_id", comment |> Comment.get_thread_id())
 
             # Anthing else is kind of a MP
-            _ ->
+            object ->
               Logger.debug("Parent object is something we don't handle")
+              Logger.debug(inspect(object))
               data
           end
         else
@@ -176,7 +177,6 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
           data
         end
 
-      require Logger
       Logger.info("comment data ready to be inserted")
       Logger.info(inspect(data))
 
