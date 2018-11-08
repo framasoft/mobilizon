@@ -146,22 +146,25 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       }
 
       # We fetch the parent object
-      data =
-        case ActivityPub.fetch_object_from_url(object_data["inReplyTo"]) do
-          # Reply to an event (Comment)
-          {:ok, %Event{id: id}} ->
-            data |> Map.put("event_id", id)
+      unless !Map.has_key?("inReplyTo") || object_data["inReplyTo"] == nil ||
+               object_data["inReplyTo"] == "" do
+        data =
+          case ActivityPub.fetch_object_from_url(object_data["inReplyTo"]) do
+            # Reply to an event (Comment)
+            {:ok, %Event{id: id}} ->
+              data |> Map.put("event_id", id)
 
-          # Reply to a comment (Comment)
-          {:ok, %Comment{id: id} = comment} ->
-            data
-            |> Map.put("in_reply_to_comment_id", id)
-            |> Map.put("origin_comment_id", comment |> Comment.get_thread_id())
+            # Reply to a comment (Comment)
+            {:ok, %Comment{id: id} = comment} ->
+              data
+              |> Map.put("in_reply_to_comment_id", id)
+              |> Map.put("origin_comment_id", comment |> Comment.get_thread_id())
 
-          # Anthing else is kind of a MP
-          _ ->
-            data
-        end
+            # Anthing else is kind of a MP
+            _ ->
+              data
+          end
+      end
 
       require Logger
       Logger.info("comment data ready to be inserted")
