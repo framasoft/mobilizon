@@ -16,7 +16,7 @@ defmodule Mobilizon.Service.ActivityPub do
 
   alias Mobilizon.Service.Federator
 
-  import Logger
+  require Logger
   import Mobilizon.Service.ActivityPub.Utils
 
   def get_recipients(data) do
@@ -24,6 +24,9 @@ defmodule Mobilizon.Service.ActivityPub do
   end
 
   def insert(map, local \\ true) when is_map(map) do
+    Logger.debug("preparing an activity")
+    Logger.debug(inspect(map))
+
     with map <- lazy_put_activity_defaults(map),
          :ok <- insert_full_object(map) do
       map = Map.put(map, "id", Ecto.UUID.generate())
@@ -106,7 +109,8 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
-  def create(%{to: to, actor: actor, context: context, object: object} = params) do
+  def create(%{to: to, actor: actor, object: object, context: context} = params) do
+    Logger.debug("creating an activity")
     additional = params[:additional] || %{}
     # only accept false as false value
     local = !(params[:local] == false)
@@ -114,7 +118,7 @@ defmodule Mobilizon.Service.ActivityPub do
 
     with create_data <-
            make_create_data(
-             %{to: to, actor: actor, published: published, context: context, object: object},
+             %{to: to, actor: actor, published: published, object: object, context: context},
              additional
            ),
          {:ok, activity} <- insert(create_data, local),
@@ -243,12 +247,13 @@ defmodule Mobilizon.Service.ActivityPub do
       end
 
     remote_inboxes =
-      followers
+      (remote_actors(activity) ++ followers)
       |> Enum.map(fn follower -> follower.shared_inbox_url end)
       |> Enum.uniq()
 
     {:ok, data} = Transmogrifier.prepare_outgoing(activity.data)
     json = Jason.encode!(data)
+    Logger.debug("Remote inboxes are : #{inspect(remote_inboxes)}")
 
     Enum.each(remote_inboxes, fn inbox ->
       Federator.enqueue(:publish_single_ap, %{

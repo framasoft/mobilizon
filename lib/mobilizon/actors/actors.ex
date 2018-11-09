@@ -206,18 +206,21 @@ defmodule Mobilizon.Actors do
   def insert_or_update_actor(data) do
     cs = Actor.remote_actor_creation(data)
 
-    Repo.insert(
-      cs,
-      on_conflict: [
-        set: [
-          keys: data.keys,
-          avatar_url: data.avatar_url,
-          banner_url: data.banner_url,
-          name: data.name
-        ]
-      ],
-      conflict_target: [:preferred_username, :domain]
-    )
+    actor =
+      Repo.insert(
+        cs,
+        on_conflict: [
+          set: [
+            keys: data.keys,
+            avatar_url: data.avatar_url,
+            banner_url: data.banner_url,
+            name: data.name
+          ]
+        ],
+        conflict_target: [:preferred_username, :domain]
+      )
+
+    {:ok, actor}
   end
 
   #  def increase_event_count(%Actor{} = actor) do

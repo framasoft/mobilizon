@@ -239,6 +239,8 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   """
 
   def prepare_outgoing(%{"type" => "Create", "object" => %{"type" => "Note"} = object} = data) do
+    Logger.debug("Prepare outgoing for a note creation")
+
     object =
       object
       |> prepare_object
@@ -247,6 +249,8 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
       data
       |> Map.put("object", object)
       |> Map.put("@context", "https://www.w3.org/ns/activitystreams")
+
+    Logger.debug("Finished prepare outgoing for a note creation")
 
     {:ok, data}
   end

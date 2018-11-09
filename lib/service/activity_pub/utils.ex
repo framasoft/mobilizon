@@ -20,6 +20,9 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   import Ecto.Query
   require Logger
 
+  def make_context(%Activity{data: %{"context" => context}}), do: context
+  def make_context(_), do: generate_context_id()
+
   def make_json_ld_header do
     %{
       "@context" => [
@@ -74,6 +77,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   Enqueues an activity for federation if it's local
   """
   def maybe_federate(%Activity{local: true} = activity) do
+    Logger.debug("Maybe federate an activity")
+
     priority =
       case activity.data["type"] do
         "Delete" -> 10
@@ -86,6 +91,14 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   end
 
   def maybe_federate(_), do: :ok
+
+  def remote_actors(%{data: %{"to" => to} = data}) do
+    to = to ++ (data["cc"] || [])
+
+    to
+    |> Enum.map(fn url -> Actors.get_actor_by_url(url) end)
+    |> Enum.filter(fn actor -> actor && !is_nil(actor.domain) end)
+  end
 
   @doc """
   Adds an id and a published data if they aren't there,
@@ -238,28 +251,31 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
         to,
         context,
         content_html,
-        attachments,
-        inReplyTo,
-        tags,
+        # attachments,
+        inReplyTo \\ nil,
+        # tags,
         cw \\ nil,
         cc \\ []
       ) do
+    Logger.debug("Making comment data")
+    uuid = Ecto.UUID.generate()
+
     object = %{
       "type" => "Note",
       "to" => to,
-      "cc" => cc,
+      # "cc" => cc,
       "content" => content_html,
-      "summary" => cw,
+      # "summary" => cw,
       "context" => context,
-      "attachment" => attachments,
+      # "attachment" => attachments,
       "actor" => actor,
-      "tag" => tags |> Enum.map(fn {_, tag} -> tag end) |> Enum.uniq()
+      "id" => "#{MobilizonWeb.Endpoint.url()}/comment/#{uuid}"
+      # "tag" => tags |> Enum.map(fn {_, tag} -> tag end) |> Enum.uniq()
     }
 
     if inReplyTo do
       object
-      |> Map.put("inReplyTo", inReplyTo.data["object"]["id"])
-      |> Map.put("inReplyToStatusId", inReplyTo.id)
+      |> Map.put("inReplyTo", inReplyTo)
     else
       object
     end
