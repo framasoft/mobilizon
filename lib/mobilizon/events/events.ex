@@ -885,7 +885,9 @@ defmodule Mobilizon.Events do
   """
   def get_comment!(id), do: Repo.get!(Comment, id)
 
-  def get_comment_with_uuid!(uuid), do: Repo.get_by!(Comment, uuid: uuid)
+  def get_comment_from_uuid(uuid), do: Repo.get_by(Comment, uuid: uuid)
+
+  def get_comment_from_uuid!(uuid), do: Repo.get_by!(Comment, uuid: uuid)
 
   def get_comment_from_url(url), do: Repo.get_by(Comment, url: url)
 

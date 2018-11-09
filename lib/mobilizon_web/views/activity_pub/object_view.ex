@@ -32,14 +32,14 @@ defmodule MobilizonWeb.ActivityPub.ObjectView do
     Map.merge(event, @base)
   end
 
-  def render("note.json", %{note: note}) do
+  def render("comment.json", %{comment: comment}) do
     event = %{
       "type" => "Note",
-      "id" => note.url,
-      "content" => note.text,
+      "id" => comment.url,
+      "content" => comment.text,
       "mediaType" => "text/markdown",
-      "published" => Timex.format!(note.inserted_at, "{ISO:Extended}"),
-      "updated" => Timex.format!(note.updated_at, "{ISO:Extended}")
+      "published" => Timex.format!(comment.inserted_at, "{ISO:Extended}"),
+      "updated" => Timex.format!(comment.updated_at, "{ISO:Extended}")
     }
 
     Map.merge(event, @base)

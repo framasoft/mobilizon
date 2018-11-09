@@ -269,7 +269,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "context" => context,
       # "attachment" => attachments,
       "actor" => actor,
-      "id" => "#{MobilizonWeb.Endpoint.url()}/comment/#{uuid}"
+      "id" => "#{MobilizonWeb.Endpoint.url()}/comments/#{uuid}"
       # "tag" => tags |> Enum.map(fn {_, tag} -> tag end) |> Enum.uniq()
     }
 
