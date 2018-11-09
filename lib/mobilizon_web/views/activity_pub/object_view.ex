@@ -24,7 +24,7 @@ defmodule MobilizonWeb.ActivityPub.ObjectView do
       "name" => event.title,
       "category" => render_one(event.category, ObjectView, "category.json", as: :category),
       "content" => event.description,
-      "mediaType" => "text/markdown",
+      "mediaType" => "text/html",
       "published" => Timex.format!(event.inserted_at, "{ISO:Extended}"),
       "updated" => Timex.format!(event.updated_at, "{ISO:Extended}")
     }
@@ -37,7 +37,7 @@ defmodule MobilizonWeb.ActivityPub.ObjectView do
       "type" => "Note",
       "id" => comment.url,
       "content" => comment.text,
-      "mediaType" => "text/markdown",
+      "mediaType" => "text/html",
       "published" => Timex.format!(comment.inserted_at, "{ISO:Extended}"),
       "updated" => Timex.format!(comment.updated_at, "{ISO:Extended}")
     }

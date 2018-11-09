@@ -143,7 +143,7 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
             render_one(activity.data, ObjectView, "event.json", as: :event)
 
           :Comment ->
-            render_one(activity.data, ObjectView, "note.json", as: :note)
+            render_one(activity.data, ObjectView, "comment.json", as: :comment)
         end
     }
   end
