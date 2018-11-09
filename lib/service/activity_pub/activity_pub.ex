@@ -278,6 +278,9 @@ defmodule Mobilizon.Service.ActivityPub do
     Logger.debug("signature")
     Logger.debug(inspect(signature))
 
+    Logger.debug("body json")
+    Logger.debug(inspect(json))
+
     {:ok, response} =
       HTTPoison.post(
         inbox,
