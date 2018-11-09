@@ -130,7 +130,12 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   @doc """
   Inserts a full object if it is contained in an activity.
   """
-  def insert_full_object(%{"object" => %{"type" => type} = object_data})
+  def insert_full_object(object_data, local \\ false)
+
+  @doc """
+  Inserts a full object if it is contained in an activity.
+  """
+  def insert_full_object(%{"object" => %{"type" => type} = object_data}, _local)
       when is_map(object_data) and type == "Event" do
     with {:ok, _} <- Events.create_event(object_data) do
       :ok
@@ -140,7 +145,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   @doc """
   Inserts a full object if it is contained in an activity.
   """
-  def insert_full_object(%{"object" => %{"type" => type} = object_data})
+  def insert_full_object(%{"object" => %{"type" => type} = object_data}, local)
       when is_map(object_data) and type == "Note" do
     with {:ok, %Actor{id: actor_id}} <- Actors.get_or_fetch_by_url(object_data["actor"]) do
       data = %{
@@ -150,8 +155,20 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
         "in_reply_to_comment_id" => nil,
         "event_id" => nil,
         # probably
-        "local" => false
+        "local" => local
       }
+
+      data =
+        if local do
+          with [uuid | _] <- object_data["id"] |> String.split("/") |> Enum.reverse() do
+            Map.put(data, "uuid", uuid)
+          else
+            err ->
+              data
+          end
+        else
+          data
+        end
 
       # We fetch the parent object
       data =
@@ -200,7 +217,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     end
   end
 
-  def insert_full_object(_), do: :ok
+  def insert_full_object(_, _), do: :ok
 
   #  def update_object_in_activities(%{data: %{"id" => id}} = object) do
   #    # TODO

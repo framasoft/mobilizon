@@ -26,7 +26,8 @@ defmodule Mix.Tasks.Toot do
         to: [to.url],
         actor: from,
         object: comment,
-        context: context
+        context: context,
+        local: true
       })
     else
       e -> Logger.error(inspect(e))

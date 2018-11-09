@@ -28,7 +28,7 @@ defmodule Mobilizon.Service.ActivityPub do
     Logger.debug(inspect(map))
 
     with map <- lazy_put_activity_defaults(map),
-         :ok <- insert_full_object(map) do
+         :ok <- insert_full_object(map, local) do
       map = Map.put(map, "id", Ecto.UUID.generate())
 
       activity = %Activity{

@@ -145,7 +145,8 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
           :Comment ->
             render_one(activity.data, ObjectView, "comment.json", as: :comment)
         end
-    } |> Map.merge(Utils.make_json_ld_header())
+    }
+    |> Map.merge(Utils.make_json_ld_header())
   end
 
   def collection(collection, iri, page, total \\ nil) do

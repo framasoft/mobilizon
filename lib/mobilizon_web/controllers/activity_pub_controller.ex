@@ -9,6 +9,7 @@ defmodule MobilizonWeb.ActivityPubController do
   require Logger
 
   action_fallback(:errors)
+
   @activity_pub_headers [
     "application/activity+json",
     "application/activity+json, application/ld+json"
