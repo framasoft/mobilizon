@@ -9,18 +9,18 @@ defmodule MobilizonWeb.ActivityPubController do
   require Logger
 
   action_fallback(:errors)
+  @activity_pub_headers [
+    "application/activity+json",
+    "application/activity+json, application/ld+json"
+  ]
 
   def actor(conn, %{"name" => name}) do
     with %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
-      case get_req_header(conn, "accept") do
-        ap_header
-        when ap_header in [
-               "application/activity+json",
-               "application/activity+json, application/ld+json"
-             ] ->
+      cond do
+        conn |> get_req_header("accept") |> is_ap_header() ->
           conn |> render_ap_actor(actor)
 
-        _ ->
+        true ->
           conn
           |> put_resp_content_type("text/html")
           |> send_file(200, "priv/static/index.html")
@@ -28,6 +28,10 @@ defmodule MobilizonWeb.ActivityPubController do
     else
       nil -> {:error, :not_found}
     end
+  end
+
+  defp is_ap_header(ap_headers) do
+    length(@activity_pub_headers -- ap_headers) < 2
   end
 
   defp render_ap_actor(conn, %Actor{} = actor) do

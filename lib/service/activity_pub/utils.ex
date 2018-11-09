@@ -27,13 +27,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     %{
       "@context" => [
         "https://www.w3.org/ns/activitystreams",
-        %{
-          "manuallyApprovesFollowers" => "as:manuallyApprovesFollowers",
-          "sensitive" => "as:sensitive",
-          "Hashtag" => "as:Hashtag",
-          "toot" => "http://joinmastodon.org/ns#",
-          "Emoji" => "toot:Emoji"
-        }
+        "https://litepub.github.io/litepub/context.jsonld"
       ]
     }
   end

@@ -14,7 +14,7 @@ defmodule MobilizonWeb.Router do
   end
 
   pipeline :activity_pub do
-    plug(:accepts, ["activity-json", "text/html"])
+    plug(:accepts, ["activity-json", "html"])
     plug(MobilizonWeb.HTTPSignaturePlug)
   end
 
