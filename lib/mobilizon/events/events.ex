@@ -889,7 +889,7 @@ defmodule Mobilizon.Events do
 
   def get_comment_from_uuid!(uuid), do: Repo.get_by!(Comment, uuid: uuid)
 
-  def get_comment_full_from_uuid(uuid), do: Repo.get_by(Comment, uuid: uuid) do
+  def get_comment_full_from_uuid(uuid) do
     with %Comment{} = comment <- Repo.get_by!(Comment, uuid: uuid) do
       Repo.preload(comment, [:actor, :attributed_to])
     end
