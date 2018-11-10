@@ -341,9 +341,11 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "object" => followed_id
     }
 
-    Logger.debug(inspect data)
+    Logger.debug(inspect(data))
 
-    if activity_id, do: Map.put(data, "id", activity_id), else: data
+    if activity_id,
+      do: Map.put(data, "id", "#{MobilizonWeb.Endpoint.url()}/follow/#{activity_id}/activity"),
+      else: data
   end
 
   #  def fetch_latest_follow(%Actor{url: follower_id}, %Actor{url: followed_id}) do
