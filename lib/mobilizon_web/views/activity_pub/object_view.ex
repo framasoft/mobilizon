@@ -20,7 +20,11 @@ defmodule MobilizonWeb.ActivityPub.ObjectView do
   end
 
   def render("comment.json", %{comment: comment}) do
-    event = %{
+    comment = %{
+      "actor" => comment.actor.url,
+      "uuid" => comment.uuid,
+      # The activity should have attributedTo, not the comment itself
+      #      "attributedTo" => comment.attributed_to,
       "type" => "Note",
       "id" => comment.url,
       "content" => comment.text,
@@ -29,11 +33,14 @@ defmodule MobilizonWeb.ActivityPub.ObjectView do
       "updated" => Timex.format!(comment.updated_at, "{ISO:Extended}")
     }
 
-    Map.merge(event, Utils.make_json_ld_header())
+    Map.merge(comment, Utils.make_json_ld_header())
   end
 
   def render("category.json", %{category: category}) do
-    %{"title" => category.title}
+    %{
+      "identifier" => category.id,
+      "name" => category.title
+    }
   end
 
   def render("category.json", %{category: nil}) do

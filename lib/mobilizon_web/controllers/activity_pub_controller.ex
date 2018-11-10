@@ -54,8 +54,9 @@ defmodule MobilizonWeb.ActivityPubController do
   end
 
   def comment(conn, %{"uuid" => uuid}) do
-    with %Comment{} = comment <- Events.get_comment_from_uuid(uuid) do
+    with %Comment{} = comment <- Events.get_comment_full_from_uuid(uuid) do
       # Comments are always public for now
+      # TODO : Make comments maybe restricted
       # true <- comment.public do
       conn
       |> put_resp_header("content-type", "application/activity+json")

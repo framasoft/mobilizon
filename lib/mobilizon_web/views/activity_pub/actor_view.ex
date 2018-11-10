@@ -32,6 +32,8 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
         "owner" => actor.url,
         "publicKeyPem" => public_key
       },
+      # TODO : Make have actors have an uuid
+      # "uuid" => actor.uuid
       "endpoints" => %{
         "sharedInbox" => actor.shared_inbox_url
       }
@@ -135,6 +137,7 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
           "Announce"
         end,
       "actor" => activity.actor,
+      # Not sure if needed since this is used into outbox
       "published" => Timex.now(),
       "to" => ["https://www.w3.org/ns/activitystreams#Public"],
       "object" =>

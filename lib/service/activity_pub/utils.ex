@@ -27,7 +27,13 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     %{
       "@context" => [
         "https://www.w3.org/ns/activitystreams",
-        "https://litepub.github.io/litepub/context.jsonld"
+        "https://litepub.github.io/litepub/context.jsonld",
+        %{
+          "sc" => "http://schema.org#",
+          "Hashtag" => "as:Hashtag",
+          "category" => "sc:category",
+          "uuid" => "sc:identifier"
+        }
       ]
     }
   end
@@ -154,6 +160,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
         "actor_id" => actor_id,
         "in_reply_to_comment_id" => nil,
         "event_id" => nil,
+        "uuid" => object_data["uuid"],
         # probably
         "local" => local
       }
