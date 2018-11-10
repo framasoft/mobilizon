@@ -247,7 +247,7 @@ defmodule Mobilizon.Actors.Actor do
   def follow(%Actor{} = follower, %Actor{} = followed, approved \\ true) do
     with {:suspended, false} <- {:suspended, followed.suspended},
          # Check if followed has blocked follower
-         {:already_following, false} <- {:alread_following, following?(follower, followed)} do
+         {:already_following, false} <- {:already_following, following?(follower, followed)} do
       do_follow(follower, followed, approved)
     else
       {:already_following, _} ->
