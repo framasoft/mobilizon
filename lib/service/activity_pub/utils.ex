@@ -165,18 +165,6 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
         "local" => local
       }
 
-      data =
-        if local do
-          with [uuid | _] <- object_data["id"] |> String.split("/") |> Enum.reverse() do
-            Map.put(data, "uuid", uuid)
-          else
-            err ->
-              data
-          end
-        else
-          data
-        end
-
       # We fetch the parent object
       data =
         if Map.has_key?(object_data, "inReplyTo") && object_data["inReplyTo"] != nil &&
