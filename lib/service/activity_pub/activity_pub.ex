@@ -29,7 +29,7 @@ defmodule Mobilizon.Service.ActivityPub do
 
     with map <- lazy_put_activity_defaults(map),
          :ok <- insert_full_object(map, local) do
-      map = Map.put(map, "id", "#{map["object"].id}/activity")
+      map = Map.put(map, "id", "#{map["object"]["id"]}/activity")
 
       activity = %Activity{
         data: map,
