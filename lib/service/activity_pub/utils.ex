@@ -341,7 +341,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "object" => followed_id
     }
 
-    Logger.debug(data)
+    Logger.debug(inspect data)
 
     if activity_id, do: Map.put(data, "id", activity_id), else: data
   end
