@@ -25,7 +25,6 @@ defmodule Mix.Tasks.Toot do
         to: [to.url],
         actor: from,
         object: comment,
-        context: context,
         local: true
       })
     else

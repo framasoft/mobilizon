@@ -161,10 +161,14 @@ defmodule Mobilizon.Service.ActivityPub do
   end
 
   def follow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
-    with data <- make_follow_data(follower, followed, activity_id),
+    with {:ok, follow} <- Actor.follow(follower, followed, true),
+         data <- make_follow_data(follower, followed, follow.id),
          {:ok, activity} <- insert(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity}
+    else
+      {err, _} when err in [:already_following, :suspended] ->
+        {:error, err}
     end
   end
 

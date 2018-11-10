@@ -98,7 +98,6 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
          {:ok, activity} <- ActivityPub.follow(follower, followed, id, false) do
       ActivityPub.accept(%{to: [follower.url], actor: followed.url, object: data, local: true})
 
-      # Actors.follow(follower, followed)
       {:ok, activity}
     else
       e ->

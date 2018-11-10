@@ -244,18 +244,27 @@ defmodule Mobilizon.Actors.Actor do
     )
   end
 
-  def follow(%Actor{} = follower, %Actor{} = followed) do
-    # Check if actor is locked
-    # Check if followed has blocked follower
-    # Check if follower already follows followed
-    cond do
-      following?(follower, followed) ->
+  def follow(%Actor{} = follower, %Actor{} = followed, approved \\ true) do
+    with {:suspended, false} <- {:suspended, followed.suspended},
+         # Check if followed has blocked follower
+         {:already_following, false} <- {:alread_following, following?(follower, followed)} do
+      do_follow(follower, followed, approved)
+    else
+      {:already_following, _} ->
         {:error,
          "Could not follow actor: you are already following #{followed.preferred_username}"}
 
-        # true -> nil
-        # Follow the person
+      {:suspended, _} ->
+        {:error, "Could not follow actor: #{followed.preferred_username} has been suspended"}
     end
+  end
+
+  defp do_follow(%Actor{} = follower, %Actor{} = followed, approved \\ true) do
+    Actors.create_follower(%{
+      "actor_id" => follower.id,
+      "target_actor_id" => followed.id,
+      "approved" => approved
+    })
   end
 
   def following?(%Actor{} = follower, %Actor{followers: followers}) do

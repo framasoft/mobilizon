@@ -331,6 +331,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   Makes a follow activity data for the given follower and followed
   """
   def make_follow_data(%Actor{url: follower_id}, %Actor{url: followed_id}, activity_id) do
+    Logger.debug("Make follow data")
+
     data = %{
       "type" => "Follow",
       "actor" => follower_id,
@@ -338,6 +340,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "cc" => ["https://www.w3.org/ns/activitystreams#Public"],
       "object" => followed_id
     }
+
+    Logger.debug(data)
 
     if activity_id, do: Map.put(data, "id", activity_id), else: data
   end
