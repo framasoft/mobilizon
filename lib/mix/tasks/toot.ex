@@ -18,9 +18,8 @@ defmodule Mix.Tasks.Toot do
     Mix.Task.run("app.start")
 
     with %Actor{} = from <- Actors.get_actor_by_name(from),
-         {:ok, %Actor{} = to} <- ActivityPub.find_or_make_actor_from_nickname(to),
-         context <- Utils.make_context(nil) do
-      comment = Utils.make_comment_data(from.url, [to.url], context, content)
+         {:ok, %Actor{} = to} <- ActivityPub.find_or_make_actor_from_nickname(to) do
+      comment = Utils.make_comment_data(from.url, [to.url], content)
 
       ActivityPub.create(%{
         to: [to.url],

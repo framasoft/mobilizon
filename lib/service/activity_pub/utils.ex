@@ -267,7 +267,6 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   def make_comment_data(
         actor,
         to,
-        context,
         content_html,
         # attachments,
         inReplyTo \\ nil,
@@ -284,7 +283,6 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       # "cc" => cc,
       "content" => content_html,
       # "summary" => cw,
-      "context" => context,
       # "attachment" => attachments,
       "actor" => actor,
       "id" => "#{MobilizonWeb.Endpoint.url()}/comments/#{uuid}"
@@ -422,8 +420,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "to" => params.to |> Enum.uniq(),
       "actor" => params.actor.url,
       "object" => params.object,
-      "published" => published,
-      "context" => params.context
+      "published" => published
     }
     |> Map.merge(additional)
   end

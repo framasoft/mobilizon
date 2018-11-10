@@ -109,7 +109,7 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
-  def create(%{to: to, actor: actor, object: object, context: context} = params) do
+  def create(%{to: to, actor: actor, object: object} = params) do
     Logger.debug("creating an activity")
     additional = params[:additional] || %{}
     # only accept false as false value
@@ -118,7 +118,7 @@ defmodule Mobilizon.Service.ActivityPub do
 
     with create_data <-
            make_create_data(
-             %{to: to, actor: actor, published: published, object: object, context: context},
+             %{to: to, actor: actor, published: published, object: object},
              additional
            ),
          {:ok, activity} <- insert(create_data, local),
