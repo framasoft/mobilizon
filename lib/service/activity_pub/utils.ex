@@ -96,7 +96,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     to = to ++ (data["cc"] || [])
 
     to
-    |> Enum.map(fn url -> Actors.get_actor_by_url(url) end)
+    |> Enum.map(fn url -> Actors.get_actor_by_url!(url) end)
     |> Enum.filter(fn actor -> actor && !is_nil(actor.domain) end)
   end
 

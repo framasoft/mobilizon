@@ -38,7 +38,7 @@ defmodule Mobilizon.Service.WebFinger do
       {:ok, represent_user(user, "JSON")}
     else
       _e ->
-        with user when not is_nil(user) <- Actors.get_actor_by_url(resource) do
+        with user when not is_nil(user) <- Actors.get_actor_by_url!(resource) do
           {:ok, represent_user(user, "JSON")}
         else
           _e ->
