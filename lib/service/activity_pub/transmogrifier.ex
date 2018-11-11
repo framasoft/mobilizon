@@ -303,7 +303,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
       |> Enum.map(fn url -> Actors.get_actor_by_url!(url) end)
       |> Enum.filter(& &1)
       |> Enum.map(fn actor ->
-        %{"type" => "Mention", "href" => actor.url, "name" => "@#{actor.preferredUsername}"}
+        %{"type" => "Mention", "href" => actor.url, "name" => "@#{actor.preferred_username}"}
       end)
 
     tags = object["tag"] || []
