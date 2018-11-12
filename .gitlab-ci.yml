@@ -17,6 +17,8 @@ cache:
     - deps
     - _build
     - .rebar3
+    - ~/.mix
+    - ~/.hex
     - js/node_modules
 
 before_script:
