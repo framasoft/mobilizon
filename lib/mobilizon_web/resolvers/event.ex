@@ -64,8 +64,8 @@ defmodule MobilizonWeb.Resolvers.Event do
   end
 
   def create_event(_parent, args, %{context: %{current_user: user}}) do
-    organizer_actor_id = Map.get(args, "organizer_actor_id") || Actors.get_actor_for_user(user).id
-    args = args |> Map.put("organizer_actor_id", organizer_actor_id)
+    organizer_actor_id = Map.get(args, :organizer_actor_id) || Actors.get_actor_for_user(user).id
+    args = args |> Map.put(:organizer_actor_id, organizer_actor_id)
     Mobilizon.Events.create_event(args)
   end
 
