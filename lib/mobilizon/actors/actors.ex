@@ -203,21 +203,24 @@ defmodule Mobilizon.Actors do
   defp blank?(""), do: nil
   defp blank?(n), do: n
 
-  def insert_or_update_actor(data) do
+  def insert_or_update_actor(data, preload \\ false) do
     cs = Actor.remote_actor_creation(data)
 
-    Repo.insert(
-      cs,
-      on_conflict: [
-        set: [
-          keys: data.keys,
-          avatar_url: data.avatar_url,
-          banner_url: data.banner_url,
-          name: data.name
-        ]
-      ],
-      conflict_target: [:preferred_username, :domain]
-    )
+    actor =
+      Repo.insert(
+        cs,
+        on_conflict: [
+          set: [
+            keys: data.keys,
+            avatar_url: data.avatar_url,
+            banner_url: data.banner_url,
+            name: data.name
+          ]
+        ],
+        conflict_target: [:preferred_username, :domain]
+      )
+
+    if preload, do: {:ok, Repo.preload(actor, [:followers])}, else: {:ok, actor}
   end
 
   #  def increase_event_count(%Actor{} = actor) do
@@ -267,8 +270,24 @@ defmodule Mobilizon.Actors do
     end
   end
 
-  def get_actor_by_url(url) do
-    Repo.get_by(Actor, url: url)
+  @doc """
+  Get an actor by it's URL (ActivityPub ID)
+  """
+  @spec get_actor_by_url(String.t(), boolean()) :: {:ok, struct()} | {:error, :actor_not_found}
+  def get_actor_by_url(url, preload \\ false) do
+    case Repo.get_by(Actor, url: url) do
+      nil ->
+        {:error, :actor_not_found}
+
+      actor ->
+        if preload, do: {:ok, Repo.preload(actor, [:followers])}, else: {:ok, actor}
+    end
+  end
+
+  @spec get_actor_by_url!(String.t(), boolean()) :: struct()
+  def get_actor_by_url!(url, preload \\ false) do
+    actor = Repo.get_by!(Actor, url: url)
+    if preload, do: Repo.preload(actor, [:followers]), else: actor
   end
 
   def get_actor_by_name(name) do
@@ -304,11 +323,11 @@ defmodule Mobilizon.Actors do
     Repo.preload(actor, :organized_events)
   end
 
-  def get_or_fetch_by_url(url) do
-    if actor = get_actor_by_url(url) do
+  def get_or_fetch_by_url(url, preload \\ false) do
+    if {:ok, actor} = get_actor_by_url(url, preload) do
       {:ok, actor}
     else
-      case ActivityPub.make_actor_from_url(url) do
+      case ActivityPub.make_actor_from_url(url, preload) do
         {:ok, actor} ->
           {:ok, actor}
 

@@ -32,6 +32,8 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
         "owner" => actor.url,
         "publicKeyPem" => public_key
       },
+      # TODO : Make have actors have an uuid
+      # "uuid" => actor.uuid
       "endpoints" => %{
         "sharedInbox" => actor.shared_inbox_url
       }
@@ -135,6 +137,7 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
           "Announce"
         end,
       "actor" => activity.actor,
+      # Not sure if needed since this is used into outbox
       "published" => Timex.now(),
       "to" => ["https://www.w3.org/ns/activitystreams#Public"],
       "object" =>
@@ -143,9 +146,10 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
             render_one(activity.data, ObjectView, "event.json", as: :event)
 
           :Comment ->
-            render_one(activity.data, ObjectView, "note.json", as: :note)
+            render_one(activity.data, ObjectView, "comment.json", as: :comment)
         end
     }
+    |> Map.merge(Utils.make_json_ld_header())
   end
 
   def collection(collection, iri, page, total \\ nil) do

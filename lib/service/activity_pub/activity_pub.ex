@@ -16,7 +16,7 @@ defmodule Mobilizon.Service.ActivityPub do
 
   alias Mobilizon.Service.Federator
 
-  import Logger
+  require Logger
   import Mobilizon.Service.ActivityPub.Utils
 
   def get_recipients(data) do
@@ -24,9 +24,21 @@ defmodule Mobilizon.Service.ActivityPub do
   end
 
   def insert(map, local \\ true) when is_map(map) do
+    Logger.debug("preparing an activity")
+    Logger.debug(inspect(map))
+
     with map <- lazy_put_activity_defaults(map),
-         :ok <- insert_full_object(map) do
-      map = Map.put(map, "id", Ecto.UUID.generate())
+         :ok <- insert_full_object(map, local) do
+      object_id =
+        cond do
+          is_map(map["object"]) ->
+            map["object"]["id"]
+
+          is_binary(map["object"]) ->
+            map["id"]
+        end
+
+      map = Map.put(map, "id", "#{object_id}/activity")
 
       activity = %Activity{
         data: map,
@@ -106,7 +118,8 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
-  def create(%{to: to, actor: actor, context: context, object: object} = params) do
+  def create(%{to: to, actor: actor, object: object} = params) do
+    Logger.debug("creating an activity")
     additional = params[:additional] || %{}
     # only accept false as false value
     local = !(params[:local] == false)
@@ -114,7 +127,7 @@ defmodule Mobilizon.Service.ActivityPub do
 
     with create_data <-
            make_create_data(
-             %{to: to, actor: actor, published: published, context: context, object: object},
+             %{to: to, actor: actor, published: published, object: object},
              additional
            ),
          {:ok, activity} <- insert(create_data, local),
@@ -157,10 +170,14 @@ defmodule Mobilizon.Service.ActivityPub do
   end
 
   def follow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
-    with data <- make_follow_data(follower, followed, activity_id),
+    with {:ok, follow} <- Actor.follow(follower, followed, true),
+         data <- make_follow_data(follower, followed, follow.id),
          {:ok, activity} <- insert(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity}
+    else
+      {err, _} when err in [:already_following, :suspended] ->
+        {:error, err}
     end
   end
 
@@ -199,9 +216,9 @@ defmodule Mobilizon.Service.ActivityPub do
   def create_public_activities(%Actor{} = actor) do
   end
 
-  def make_actor_from_url(url) do
-    with {:ok, data} <- fetch_and_prepare_user_from_url(url) do
-      Actors.insert_or_update_actor(data)
+  def make_actor_from_url(url, preload \\ false) do
+    with {:ok, data} <- fetch_and_prepare_actor_from_url(url) do
+      Actors.insert_or_update_actor(data, preload)
     else
       # Request returned 410
       {:error, :actor_deleted} ->
@@ -243,12 +260,13 @@ defmodule Mobilizon.Service.ActivityPub do
       end
 
     remote_inboxes =
-      followers
+      (remote_actors(activity) ++ followers)
       |> Enum.map(fn follower -> follower.shared_inbox_url end)
       |> Enum.uniq()
 
     {:ok, data} = Transmogrifier.prepare_outgoing(activity.data)
     json = Jason.encode!(data)
+    Logger.debug("Remote inboxes are : #{inspect(remote_inboxes)}")
 
     Enum.each(remote_inboxes, fn inbox ->
       Federator.enqueue(:publish_single_ap, %{
@@ -273,6 +291,9 @@ defmodule Mobilizon.Service.ActivityPub do
     Logger.debug("signature")
     Logger.debug(inspect(signature))
 
+    Logger.debug("body json")
+    Logger.debug(inspect(json))
+
     {:ok, response} =
       HTTPoison.post(
         inbox,
@@ -284,8 +305,8 @@ defmodule Mobilizon.Service.ActivityPub do
     Logger.debug(inspect(response))
   end
 
-  def fetch_and_prepare_user_from_url(url) do
-    Logger.debug("Fetching and preparing user from url")
+  def fetch_and_prepare_actor_from_url(url) do
+    Logger.debug("Fetching and preparing actor from url")
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
            HTTPoison.get(url, [Accept: "application/activity+json"], follow_redirect: true),
@@ -297,7 +318,7 @@ defmodule Mobilizon.Service.ActivityPub do
         {:error, :actor_deleted}
 
       e ->
-        Logger.error("Could not decode user at fetch #{url}, #{inspect(e)}")
+        Logger.error("Could not decode actor at fetch #{url}, #{inspect(e)}")
         e
     end
   end
