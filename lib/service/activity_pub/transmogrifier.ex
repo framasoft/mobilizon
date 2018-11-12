@@ -18,24 +18,39 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     object
     |> Map.put("actor", object["attributedTo"])
     |> fix_attachments
-    # |> fix_in_reply_to
+    |> fix_in_reply_to
     |> fix_tag
   end
 
-  #  def fix_in_reply_to(%{"inReplyTo" => in_reply_to_id} = object)
-  #      when not is_nil(in_reply_to_id) do
-  #    case ActivityPub.fetch_object_from_id(in_reply_to_id) do
-  #      {:ok, replied_object} ->
-  #        activity = Activity.get_create_activity_by_object_ap_id(replied_object.data["id"])
-  #
-  #        object
-  #        |> Map.put("inReplyTo", replied_object.data["id"])
-  #
-  #      e ->
-  #        Logger.error("Couldn't fetch #{object["inReplyTo"]} #{inspect(e)}")
-  #        object
-  #    end
-  #  end
+  def fix_in_reply_to(%{"inReplyTo" => in_reply_to} = object)
+      when not is_nil(in_reply_to) do
+    in_reply_to_id =
+      cond do
+        is_bitstring(in_reply_to) -> # If the inReplyTo is just an AP ID
+          in_reply_to
+
+        is_map(in_reply_to) && is_bitstring(in_reply_to["id"]) -> # If the inReplyTo is a object itself
+          in_reply_to["id"]
+
+        is_list(in_reply_to) && is_bitstring(Enum.at(in_reply_to, 0)) -> # If the inReplyTo is an array
+          Enum.at(in_reply_to, 0)
+
+        true ->
+          Logger.error("inReplyTo ID seem incorrect")
+          Logger.error(inspect(in_reply_to))
+          ""
+      end
+
+    case fetch_obj_helper(in_reply_to_id) do
+      {:ok, replied_object} ->
+        object
+        |> Map.put("inReplyTo", replied_object.data["id"])
+
+      e ->
+        Logger.error("Couldn't fetch #{in_reply_to_id} #{inspect(e)}")
+        object
+    end
+  end
 
   def fix_in_reply_to(object), do: object
 
@@ -295,6 +310,22 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   #    end
   #  end
   #
+
+  def add_hashtags(object) do
+    tags =
+      (object["tag"] || [])
+      |> Enum.map(fn tag ->
+        %{
+          "href" => MobilizonWeb.Endpoint.url() <> "/tags/#{tag}",
+          "name" => "##{tag}",
+          "type" => "Hashtag"
+        }
+      end)
+
+    object
+    |> Map.put("tag", tags)
+  end
+
   def add_mention_tags(object) do
     recipients = object["to"] ++ (object["cc"] || [])
 
@@ -359,4 +390,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   #    object
   #    |> Map.put("attachment", attachments)
   #  end
+
+  def fetch_obj_helper(url) when is_bitstring(url), do: ActivityPub.fetch_object_from_url(url)
+  def fetch_obj_helper(obj) when is_map(obj), do: ActivityPub.fetch_object_from_url(obj["id"])
 end

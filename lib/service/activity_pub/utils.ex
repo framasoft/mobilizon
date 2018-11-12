@@ -50,28 +50,9 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     generate_id("contexts")
   end
 
-  #  def generate_object_id do
-  #    Helpers.o_status_url(Endpoint, :object, UUID.generate())
-  #  end
-
   def generate_id(type) do
     "#{MobilizonWeb.Endpoint.url()}/#{type}/#{UUID.generate()}"
   end
-
-  #  def create_context(context) do
-  #    context = context || generate_id("contexts")
-  #    changeset = Object.context_mapping(context)
-  #
-  #    case Repo.insert(changeset) do
-  #      {:ok, object} ->
-  #        object
-  #
-  #      # This should be solved by an upsert, but it seems ecto
-  #      # has problems accessing the constraint inside the jsonb.
-  #      {:error, _} ->
-  #        Events.get_cached_by_url(context)
-  #    end
-  #  end
 
   @doc """
   Enqueues an activity for federation if it's local
@@ -105,15 +86,6 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   also adds it to an included object
   """
   def lazy_put_activity_defaults(map) do
-    #    %{data: %{"id" => context}, id: context_id} = create_context(map["context"])
-    #
-    #    map =
-    #      map
-    #      |> Map.put_new_lazy("id", &generate_activity_id/0)
-    #      |> Map.put_new_lazy("published", &make_date/0)
-    #      |> Map.put_new("context", context)
-    #      |> Map.put_new("context_id", context_id)
-
     if is_map(map["object"]) do
       object = lazy_put_object_defaults(map["object"], map)
       %{map | "object" => object}
@@ -127,10 +99,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   """
   def lazy_put_object_defaults(map, activity \\ %{}) do
     map
-    # |> Map.put_new_lazy("id", &generate_object_id/0)
     |> Map.put_new_lazy("published", &make_date/0)
-    |> Map.put_new("context", activity["context"])
-    |> Map.put_new("context_id", activity["context_id"])
   end
 
   @doc """
@@ -161,7 +130,6 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
         "in_reply_to_comment_id" => nil,
         "event_id" => nil,
         "uuid" => object_data["uuid"],
-        # probably
         "local" => local
       }
 
@@ -214,20 +182,6 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
 
   def insert_full_object(_, _), do: :ok
 
-  #  def update_object_in_activities(%{data: %{"id" => id}} = object) do
-  #    # TODO
-  #    # Update activities that already had this. Could be done in a seperate process.
-  #    # Alternatively, just don't do this and fetch the current object each time. Most
-  #    # could probably be taken from cache.
-  #    relevant_activities = Activity.all_by_object_url(id)
-  #
-  #    Enum.map(relevant_activities, fn activity ->
-  #      new_activity_data = activity.data |> Map.put("object", object.data)
-  #      changeset = Changeset.change(activity, data: new_activity_data)
-  #      Repo.update(changeset)
-  #    end)
-  #  end
-
   #### Like-related helpers
 
   #  @doc """
@@ -273,7 +227,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       # "summary" => cw,
       # "attachment" => attachments,
       "actor" => actor,
-      "id" => "#{MobilizonWeb.Endpoint.url()}/comments/#{uuid}"
+      "id" => "#{MobilizonWeb.Endpoint.url()}/comments/#{uuid}",
+      "uuid" => uuid
       # "tag" => tags |> Enum.map(fn {_, tag} -> tag end) |> Enum.uniq()
     }
 
@@ -347,23 +302,6 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       do: Map.put(data, "id", "#{MobilizonWeb.Endpoint.url()}/follow/#{activity_id}/activity"),
       else: data
   end
-
-  #  def fetch_latest_follow(%Actor{url: follower_id}, %Actor{url: followed_id}) do
-  #    query =
-  #      from(
-  #        activity in Activity,
-  #        where:
-  #          fragment(
-  #            "? @> ?",
-  #            activity.data,
-  #            ^%{type: "Follow", actor: follower_id, object: followed_id}
-  #          ),
-  #        order_by: [desc: :id],
-  #        limit: 1
-  #      )
-  #
-  #    Repo.one(query)
-  #  end
 
   #### Announce-related helpers
 
