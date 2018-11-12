@@ -1,6 +1,4 @@
 defmodule MobilizonWeb.Resolvers.Actor do
-  alias Mobilizon.Actors.Actor, as: ActorSchema
-  alias Mobilizon.Actors.User
   alias Mobilizon.Actors
   alias Mobilizon.Service.ActivityPub
 

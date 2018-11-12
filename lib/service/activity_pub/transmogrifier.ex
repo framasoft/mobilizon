@@ -6,8 +6,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   alias Mobilizon.Actors
   alias Mobilizon.Events.{Event, Comment}
   alias Mobilizon.Service.ActivityPub
-
-  import Ecto.Query
+  alias Mobilizon.Service.ActivityPub.Utils
 
   require Logger
 
@@ -89,11 +88,10 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
 
     with {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(data["actor"]) do
       Logger.debug("found actor")
-      object = fix_object(data["object"])
 
       params = %{
         to: data["to"],
-        object: object,
+        object: object |> fix_object,
         actor: actor,
         local: false,
         published: data["published"],
@@ -234,11 +232,9 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     |> set_reply_to_uri
   end
 
-  @doc
-  """
+  @doc """
   internal -> Mastodon
   """
-
   def prepare_outgoing(%{"type" => "Create", "object" => %{"type" => "Note"} = object} = data) do
     Logger.debug("Prepare outgoing for a note creation")
 
@@ -249,43 +245,42 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     data =
       data
       |> Map.put("object", object)
-      |> Map.put("@context", "https://www.w3.org/ns/activitystreams")
+      |> Map.merge(Utils.make_json_ld_header())
 
     Logger.debug("Finished prepare outgoing for a note creation")
 
     {:ok, data}
   end
 
-  def prepare_outgoing(%{"type" => type} = data) do
+  def prepare_outgoing(%{"type" => _type} = data) do
     data =
       data
-      # |> maybe_fix_object_url
-      |> Map.put("@context", "https://www.w3.org/ns/activitystreams")
+      |> Map.merge(Utils.make_json_ld_header())
 
     {:ok, data}
   end
 
-  def prepare_outgoing(%Event{} = event) do
-    event =
-      event
-      |> Map.from_struct()
-      |> Map.drop([:__meta__])
-      |> Map.put(:"@context", "https://www.w3.org/ns/activitystreams")
-      |> prepare_object
+  # def prepare_outgoing(%Event{} = event) do
+  #   event =
+  #     event
+  #     |> Map.from_struct()
+  #     |> Map.drop([:__meta__])
+  #     |> Map.put(:"@context", "https://www.w3.org/ns/activitystreams")
+  #     |> prepare_object
 
-    {:ok, event}
-  end
+  #   {:ok, event}
+  # end
 
-  def prepare_outgoing(%Comment{} = comment) do
-    comment =
-      comment
-      |> Map.from_struct()
-      |> Map.drop([:__meta__])
-      |> Map.put(:"@context", "https://www.w3.org/ns/activitystreams")
-      |> prepare_object
+  # def prepare_outgoing(%Comment{} = comment) do
+  #   comment =
+  #     comment
+  #     |> Map.from_struct()
+  #     |> Map.drop([:__meta__])
+  #     |> Map.put(:"@context", "https://www.w3.org/ns/activitystreams")
+  #     |> prepare_object
 
-    {:ok, comment}
-  end
+  #   {:ok, comment}
+  # end
 
   #
   #  def maybe_fix_object_url(data) do

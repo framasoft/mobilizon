@@ -3,14 +3,10 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
 
   alias MobilizonWeb.ActivityPub.ActorView
   alias MobilizonWeb.ActivityPub.ObjectView
-  alias MobilizonWeb.WebFinger
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Repo
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Transmogrifier
   alias Mobilizon.Service.ActivityPub.Utils
   alias Mobilizon.Activity
-  import Ecto.Query
 
   def render("actor.json", %{actor: actor}) do
     public_key = Mobilizon.Service.ActivityPub.Utils.pem_to_public_key_pem(actor.keys)

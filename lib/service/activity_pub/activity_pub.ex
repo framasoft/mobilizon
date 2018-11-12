@@ -153,7 +153,7 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
-  def follow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
+  def follow(%Actor{} = follower, %Actor{} = followed, _activity_id \\ nil, local \\ true) do
     with {:ok, follow} <- Actor.follow(follower, followed, true),
          data <- make_follow_data(follower, followed, follow.id),
          {:ok, activity} <- insert(data, local),
@@ -195,9 +195,6 @@ defmodule Mobilizon.Service.ActivityPub do
          :ok <- maybe_federate(activity) do
       {:ok, activity}
     end
-  end
-
-  def create_public_activities(%Actor{} = actor) do
   end
 
   @doc """
@@ -283,18 +280,15 @@ defmodule Mobilizon.Service.ActivityPub do
         "content-length": byte_size(json)
       })
 
-    {:ok, response} =
-      HTTPoison.post(
-        inbox,
-        json,
-        [{"Content-Type", "application/activity+json"}, {"signature", signature}],
-        hackney: [pool: :default]
-      )
+    HTTPoison.post(
+      inbox,
+      json,
+      [{"Content-Type", "application/activity+json"}, {"signature", signature}],
+      hackney: [pool: :default]
+    )
   end
 
-  @doc """
-  Fetching a remote actor's informations through it's AP ID 
-  """
+  # Fetching a remote actor's informations through it's AP ID 
   @spec fetch_and_prepare_actor_from_url(String.t()) :: {:ok, struct()} | {:error, atom()} | any()
   defp fetch_and_prepare_actor_from_url(url) do
     Logger.debug("Fetching and preparing actor from url")
@@ -352,8 +346,8 @@ defmodule Mobilizon.Service.ActivityPub do
   def fetch_public_activities_for_actor(%Actor{} = actor, page \\ 1, limit \\ 10) do
     case actor.type do
       :Person ->
-        {:ok, events, total} = Events.get_events_for_actor(actor, page, limit)
-        {:ok, comments, total} = Events.get_comments_for_actor(actor, page, limit)
+        {:ok, events, total_events} = Events.get_events_for_actor(actor, page, limit)
+        {:ok, comments, total_comments} = Events.get_comments_for_actor(actor, page, limit)
 
         event_activities = Enum.map(events, &event_to_activity/1)
 
@@ -361,7 +355,7 @@ defmodule Mobilizon.Service.ActivityPub do
 
         activities = event_activities ++ comment_activities
 
-        {activities, total}
+        {activities, total_events + total_comments}
 
       :Service ->
         bot = Actors.get_bot_by_actor(actor)
@@ -389,9 +383,7 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
-  @doc """
-  Create an activity from an event
-  """
+  # Create an activity from an event
   @spec event_to_activity(%Event{}, boolean()) :: Activity.t()
   defp event_to_activity(%Event{} = event, local \\ true) do
     %Activity{
@@ -402,9 +394,7 @@ defmodule Mobilizon.Service.ActivityPub do
     }
   end
 
-  @doc """
-  Create an activity from a comment
-  """
+  # Create an activity from a comment
   @spec comment_to_activity(%Comment{}, boolean()) :: Activity.t()
   defp comment_to_activity(%Comment{} = comment, local \\ true) do
     %Activity{
@@ -415,7 +405,7 @@ defmodule Mobilizon.Service.ActivityPub do
     }
   end
 
-  defp ical_event_to_activity(%ExIcal.Event{} = ical_event, %Actor{} = actor, source) do
+  defp ical_event_to_activity(%ExIcal.Event{} = ical_event, %Actor{} = actor, _source) do
     # Logger.debug(inspect ical_event)
     # TODO : refactor me !
     # TODO : also, there should be a form of cache that allows this to be more efficient

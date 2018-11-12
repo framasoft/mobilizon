@@ -1,5 +1,6 @@
 defmodule MobilizonWeb.Resolvers.Category do
   require Logger
+  alias Mobilizon.Actors.User
 
   def list_categories(_parent, _args, _resolution) do
     categories =
@@ -13,7 +14,7 @@ defmodule MobilizonWeb.Resolvers.Category do
   end
 
   def create_category(_parent, %{title: title, picture: picture, description: description}, %{
-        context: %{current_user: user}
+        context: %{current_user: %User{} = _user}
       }) do
     with {:ok, category} <-
            Mobilizon.Events.create_category(%{
@@ -35,7 +36,7 @@ defmodule MobilizonWeb.Resolvers.Category do
     end
   end
 
-  def create_category(_parent, %{title: title, picture: picture, description: description}, %{}) do
+  def create_category(_parent, _args, %{}) do
     {:error, "You are not allowed to create a category if not connected"}
   end
 end

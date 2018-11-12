@@ -5,7 +5,7 @@ defmodule Mobilizon.Addresses.Address do
   import Ecto.Changeset
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.Event
-  alias Mobilizon.Groups.Group
+  # alias Mobilizon.Actors.Actor
 
   schema "addresses" do
     field(:addressCountry, :string)
@@ -16,8 +16,8 @@ defmodule Mobilizon.Addresses.Address do
     field(:geom, Geo.PostGIS.Geometry)
     field(:postalCode, :string)
     field(:streetAddress, :string)
-    has_one(:event, Event)
-    has_one(:group, Group)
+    has_one(:event, Event, foreign_key: :physical_address_id)
+    # has_one(:group, Actor)
 
     timestamps()
   end

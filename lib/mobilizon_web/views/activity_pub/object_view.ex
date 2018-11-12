@@ -1,7 +1,6 @@
 defmodule MobilizonWeb.ActivityPub.ObjectView do
   use MobilizonWeb, :view
   alias MobilizonWeb.ActivityPub.ObjectView
-  alias Mobilizon.Service.ActivityPub.Transmogrifier
   alias Mobilizon.Service.ActivityPub.Utils
 
   def render("event.json", %{event: event}) do
@@ -37,14 +36,14 @@ defmodule MobilizonWeb.ActivityPub.ObjectView do
     Map.merge(comment, Utils.make_json_ld_header())
   end
 
-  def render("category.json", %{category: category}) do
+  def render("category.json", %{category: category}) when not is_nil(category) do
     %{
       "identifier" => category.id,
       "name" => category.title
     }
   end
 
-  def render("category.json", %{category: nil}) do
+  def render("category.json", %{category: _category}) do
     nil
   end
 end

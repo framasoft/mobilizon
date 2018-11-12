@@ -1,5 +1,6 @@
 defmodule MobilizonWeb.Resolvers.Event do
   alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Actors
 
   def list_events(_parent, _args, _resolution) do
     {:ok, Mobilizon.Events.list_events()}
@@ -15,7 +16,17 @@ defmodule MobilizonWeb.Resolvers.Event do
     end
   end
 
+  @doc """
+  List participant for event (separate request)
+  """
   def list_participants_for_event(_parent, %{uuid: uuid}, _resolution) do
+    {:ok, Mobilizon.Events.list_participants_for_event(uuid)}
+  end
+
+  @doc """
+  List participants for event (through an event request)
+  """
+  def list_participants_for_event(%{uuid: uuid}, _args, _resolution) do
     {:ok, Mobilizon.Events.list_participants_for_event(uuid)}
   end
 
@@ -30,7 +41,7 @@ defmodule MobilizonWeb.Resolvers.Event do
   Search events and actors by title
   """
   def search_events_and_actors(_parent, %{search: search, page: page, limit: limit}, _resolution) do
-    search = String.strip(search)
+    search = String.trim(search)
 
     found =
       case String.contains?(search, "@") do
@@ -52,14 +63,9 @@ defmodule MobilizonWeb.Resolvers.Event do
     {:ok, found}
   end
 
-  @doc """
-  List participants for event (through an event request)
-  """
-  def list_participants_for_event(%{uuid: uuid}, _args, _resolution) do
-    {:ok, Mobilizon.Events.list_participants_for_event(uuid)}
-  end
-
   def create_event(_parent, args, %{context: %{current_user: user}}) do
+    organizer_actor_id = Map.get(args, "organizer_actor_id") || Actors.get_actor_for_user(user).id
+    args = args |> Map.put("organizer_actor_id", organizer_actor_id)
     Mobilizon.Events.create_event(args)
   end
 

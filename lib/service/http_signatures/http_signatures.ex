@@ -8,7 +8,7 @@ defmodule Mobilizon.Service.HTTPSignatures do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.ActivityPub
-  import Logger
+  require Logger
 
   def split_signature(sig) do
     default = %{"headers" => "date"}

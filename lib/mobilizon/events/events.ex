@@ -215,9 +215,7 @@ defmodule Mobilizon.Events do
     Repo.all(query)
   end
 
-  @doc """
-  Sanitize the LIKE queries
-  """
+  # Sanitize the LIKE queries
   defp like_sanitize(value) do
     "%" <> String.replace(value, ~r/([\\%_])/, "\\1") <> "%"
   end

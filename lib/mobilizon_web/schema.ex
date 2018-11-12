@@ -10,9 +10,6 @@ defmodule MobilizonWeb.Schema do
   import_types(Absinthe.Type.Custom)
   import_types(Absinthe.Plug.Types)
 
-  #  import_types(MobilizonWeb.Schema.EventTypes)
-  # import_types(MobilizonWeb.Schema.ActorTypes)
-
   alias MobilizonWeb.Resolvers
 
   @desc "An ActivityPub actor"

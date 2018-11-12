@@ -7,7 +7,6 @@ defmodule Mobilizon.Actors do
   alias Mobilizon.Repo
 
   alias Mobilizon.Actors.{Actor, Bot, Member, Follower, User}
-  alias Mobilizon.Actors
 
   alias Mobilizon.Service.ActivityPub
 
@@ -63,13 +62,9 @@ defmodule Mobilizon.Actors do
     end
   end
 
-  @doc """
-  Returns the first actor found for an user
-
-  Useful when the user has not defined default actor
-
-  Raises `Ecto.NoResultsError` if no Actor is found for this ID
-  """
+  # Returns the first actor found for an user
+  # Useful when the user has not defined default actor
+  # Raises `Ecto.NoResultsError` if no Actor is found for this ID
   defp get_first_actor_for_user(%Mobilizon.Actors.User{id: id} = _user) do
     Repo.one!(from(a in Actor, where: a.user_id == ^id))
   end
@@ -195,9 +190,6 @@ defmodule Mobilizon.Actors do
     Repo.all(User)
   end
 
-  defp blank?(""), do: nil
-  defp blank?(n), do: n
-
   def insert_or_update_actor(data, preload \\ false) do
     cs = Actor.remote_actor_creation(data)
 
@@ -321,14 +313,13 @@ defmodule Mobilizon.Actors do
   end
 
   def get_actor_by_name(name) do
-    actor =
-      case String.split(name, "@") do
-        [name] ->
-          Repo.one(from(a in Actor, where: a.preferred_username == ^name and is_nil(a.domain)))
+    case String.split(name, "@") do
+      [name] ->
+        Repo.one(from(a in Actor, where: a.preferred_username == ^name and is_nil(a.domain)))
 
-        [name, domain] ->
-          Repo.get_by(Actor, preferred_username: name, domain: domain)
-      end
+      [name, domain] ->
+        Repo.get_by(Actor, preferred_username: name, domain: domain)
+    end
   end
 
   def get_local_actor_by_name(name) do
@@ -404,7 +395,7 @@ defmodule Mobilizon.Actors do
   Find actors by their name or displayed name
   """
   def find_actors_by_username_or_name(username, page \\ 1, limit \\ 10)
-  def find_actors_by_username_or_name("", page, limit), do: []
+  def find_actors_by_username_or_name("", _page, _limit), do: []
 
   def find_actors_by_username_or_name(username, page, limit) do
     start = (page - 1) * limit
@@ -421,9 +412,7 @@ defmodule Mobilizon.Actors do
     )
   end
 
-  @doc """
-  Sanitize the LIKE queries
-  """
+  # Sanitize the LIKE queries
   defp like_sanitize(value) do
     "%" <> String.replace(value, ~r/([\\%_])/, "\\1") <> "%"
   end
@@ -515,7 +504,7 @@ defmodule Mobilizon.Actors do
   defp handle_actor_user_changeset(changeset) do
     changeset =
       Ecto.Changeset.traverse_errors(changeset, fn
-        {msg, opts} -> msg
+        {msg, _opts} -> msg
         msg -> msg
       end)
 

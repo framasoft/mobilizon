@@ -5,10 +5,9 @@ defmodule Mobilizon.Addresses do
 
   import Ecto.Query, warn: false
   alias Mobilizon.Repo
+  require Logger
 
   alias Mobilizon.Addresses.Address
-
-  import Logger
 
   @geom_types [:point]
 

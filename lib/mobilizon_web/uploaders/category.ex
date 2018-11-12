@@ -23,7 +23,7 @@ defmodule MobilizonWeb.Uploaders.Category do
   end
 
   # Override the persisted filenames:
-  def filename(version, {file, %{title: title}}) do
+  def filename(version, {_file, %{title: title}}) do
     "#{title}_#{version}"
   end
 

@@ -6,9 +6,6 @@ defmodule Mix.Tasks.Toot do
   use Mix.Task
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Repo
-  alias Mobilizon.Events
-  alias Mobilizon.Events.Comment
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Utils
   require Logger

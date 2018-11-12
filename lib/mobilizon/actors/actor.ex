@@ -17,7 +17,6 @@ defmodule Mobilizon.Actors.Actor do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, User, Follower, Member}
   alias Mobilizon.Events.Event
-  alias Mobilizon.Service.ActivityPub
 
   import Ecto.Query
   alias Mobilizon.Repo
@@ -105,7 +104,7 @@ defmodule Mobilizon.Actors.Actor do
   end
 
   # TODO : Use me !
-  @email_regex ~r/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+  # @email_regex ~r/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
   def remote_actor_creation(params) do
     changes =
       %Actor{}
@@ -279,7 +278,7 @@ defmodule Mobilizon.Actors.Actor do
     end
   end
 
-  defp do_follow(%Actor{} = follower, %Actor{} = followed, approved \\ true) do
+  defp do_follow(%Actor{} = follower, %Actor{} = followed, approved) do
     Actors.create_follower(%{
       "actor_id" => follower.id,
       "target_actor_id" => followed.id,

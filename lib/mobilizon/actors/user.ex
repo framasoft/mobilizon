@@ -114,9 +114,7 @@ defmodule Mobilizon.Actors.User do
     |> Base.url_encode64()
   end
 
-  @doc """
-  Hash password when it's changed
-  """
+  # Hash password when it's changed
   defp hash_password(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{password: password}} ->

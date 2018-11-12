@@ -7,7 +7,6 @@ defmodule Mobilizon.Service.WebFinger do
 
   alias Mobilizon.Actors
   alias Mobilizon.Service.XmlBuilder
-  alias Mobilizon.Repo
   require Jason
   require Logger
 

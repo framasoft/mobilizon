@@ -7,7 +7,6 @@ defmodule Mobilizon.Service.Streamer do
 
   use GenServer
   require Logger
-  alias Mobilizon.Accounts.Actor
 
   def init(args) do
     {:ok, args}

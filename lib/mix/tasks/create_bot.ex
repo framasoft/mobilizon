@@ -6,9 +6,8 @@ defmodule Mix.Tasks.CreateBot do
   use Mix.Task
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Bot
-  alias Mobilizon.Repo
   alias Mobilizon.Actors.User
-  import Logger
+  require Logger
 
   @shortdoc "Register user"
   def run([email, name, summary, type, url]) do

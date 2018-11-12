@@ -23,7 +23,7 @@ defmodule Mobilizon.Actors.Service.ResetPassword do
            ) do
       {:ok, user}
     else
-      err ->
+      _err ->
         {:error, :invalid_token}
     end
   end

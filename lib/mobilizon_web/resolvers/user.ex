@@ -20,7 +20,7 @@ defmodule MobilizonWeb.Resolvers.User do
     {:error, "You need to be logged-in to view current user"}
   end
 
-  @desc """
+  @doc """
   Login an user. Returns a token and the user
   """
   def login_user(_parent, %{email: email, password: password}, _resolution) do
@@ -37,7 +37,7 @@ defmodule MobilizonWeb.Resolvers.User do
     end
   end
 
-  @desc """
+  @doc """
   Register an user :
     - create the user
     - create the actor
@@ -111,7 +111,7 @@ defmodule MobilizonWeb.Resolvers.User do
     end
   end
 
-  @desc "Change an user default actor"
+  @doc "Change an user default actor"
   def change_default_actor(_parent, %{preferred_username: username}, %{
         context: %{current_user: user}
       }) do

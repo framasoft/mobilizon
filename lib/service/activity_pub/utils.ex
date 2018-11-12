@@ -13,11 +13,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   alias Mobilizon.Events
   alias Mobilizon.Activity
   alias MobilizonWeb
-  alias MobilizonWeb.Router.Helpers
-  alias MobilizonWeb.Endpoint
   alias Mobilizon.Service.ActivityPub
   alias Ecto.{Changeset, UUID}
-  import Ecto.Query
   require Logger
 
   def make_context(%Activity{data: %{"context" => context}}), do: context
@@ -97,7 +94,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   """
   def lazy_put_activity_defaults(map) do
     if is_map(map["object"]) do
-      object = lazy_put_object_defaults(map["object"], map)
+      object = lazy_put_object_defaults(map["object"])
       %{map | "object" => object}
     else
       map
@@ -107,9 +104,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   @doc """
   Adds an id and published date if they aren't there.
   """
-  def lazy_put_object_defaults(map, activity \\ %{}) do
-    map
-    |> Map.put_new_lazy("published", &make_date/0)
+  def lazy_put_object_defaults(map) do
+    Map.put_new_lazy(map, "published", &make_date/0)
   end
 
   @doc """
@@ -174,7 +170,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
           data
         end
 
-      with {:ok, comm} <- Events.create_comment(data) do
+      with {:ok, _comment} <- Events.create_comment(data) do
         :ok
       else
         err ->
@@ -261,7 +257,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
         # attachments,
         inReplyTo \\ nil,
         # tags,
-        cw \\ nil,
+        _cw \\ nil,
         cc \\ []
       ) do
     Logger.debug("Making comment data")
@@ -270,7 +266,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     object = %{
       "type" => "Note",
       "to" => to,
-      # "cc" => cc,
+      "cc" => cc,
       "content" => content_html,
       # "summary" => cw,
       # "attachment" => attachments,
