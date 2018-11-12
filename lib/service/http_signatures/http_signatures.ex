@@ -90,17 +90,21 @@ defmodule Mobilizon.Service.HTTPSignatures do
   end
 
   def sign(%Actor{} = actor, headers) do
-    sigstring = build_signing_string(headers, Map.keys(headers))
-
-    signature = sigstring |> :public_key.sign(:sha256, actor.keys) |> Base.encode64()
-
-    [
-      keyId: actor.url <> "#main-key",
-      algorithm: "rsa-sha256",
-      headers: headers |> Map.keys() |> Enum.join(" "),
-      signature: signature
-    ]
-    |> Enum.map(fn {k, v} -> "#{k}=\"#{v}\"" end)
-    |> Enum.join(",")
+    with sigstring <- build_signing_string(headers, Map.keys(headers)),
+         {:ok, key} <- actor.keys |> prepare_public_key(),
+         signature <- sigstring |> :public_key.sign(:sha256, key) |> Base.encode64() do
+      [
+        keyId: actor.url <> "#main-key",
+        algorithm: "rsa-sha256",
+        headers: headers |> Map.keys() |> Enum.join(" "),
+        signature: signature
+      ]
+      |> Enum.map(fn {k, v} -> "#{k}=\"#{v}\"" end)
+      |> Enum.join(",")
+    else
+      err ->
+        Logger.error("Unable to sign headers")
+        Logger.error(inspect(err))
+    end
   end
 end

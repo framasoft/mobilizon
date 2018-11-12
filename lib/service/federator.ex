@@ -36,7 +36,7 @@ defmodule Mobilizon.Service.Federator do
     Logger.debug(inspect(activity))
     Logger.debug(fn -> "Running publish for #{activity.data["id"]}" end)
 
-    with actor when not is_nil(actor) <- Actors.get_actor_by_url(activity.data["actor"]) do
+    with actor when not is_nil(actor) <- Actors.get_actor_by_url!(activity.data["actor"]) do
       Logger.info(fn -> "Sending #{activity.data["id"]} out via AP" end)
       ActivityPub.publish(actor, activity)
     end

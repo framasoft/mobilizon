@@ -885,7 +885,15 @@ defmodule Mobilizon.Events do
   """
   def get_comment!(id), do: Repo.get!(Comment, id)
 
-  def get_comment_with_uuid!(uuid), do: Repo.get_by!(Comment, uuid: uuid)
+  def get_comment_from_uuid(uuid), do: Repo.get_by(Comment, uuid: uuid)
+
+  def get_comment_from_uuid!(uuid), do: Repo.get_by!(Comment, uuid: uuid)
+
+  def get_comment_full_from_uuid(uuid) do
+    with %Comment{} = comment <- Repo.get_by!(Comment, uuid: uuid) do
+      Repo.preload(comment, [:actor, :attributed_to])
+    end
+  end
 
   def get_comment_from_url(url), do: Repo.get_by(Comment, url: url)
 

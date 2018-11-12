@@ -1,6 +1,7 @@
 defmodule MobilizonWeb.ActivityPubController do
   use MobilizonWeb, :controller
-  alias Mobilizon.{Actors, Actors.Actor, Events, Events.Event}
+  alias Mobilizon.{Actors, Actors.Actor, Events}
+  alias Mobilizon.Events.{Event, Comment}
   alias MobilizonWeb.ActivityPub.{ObjectView, ActorView}
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.Federator
@@ -9,16 +10,18 @@ defmodule MobilizonWeb.ActivityPubController do
 
   action_fallback(:errors)
 
+  @activity_pub_headers [
+    "application/activity+json",
+    "application/activity+json, application/ld+json"
+  ]
+
   def actor(conn, %{"name" => name}) do
     with %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
-      case get_req_header(conn, "accept") do
-        ["application/activity+json"] ->
+      cond do
+        conn |> get_req_header("accept") |> is_ap_header() ->
           conn |> render_ap_actor(actor)
 
-        ["application/activity+json, application/ld+json"] ->
-          conn |> render_ap_actor(actor)
-
-        _ ->
+        true ->
           conn
           |> put_resp_content_type("text/html")
           |> send_file(200, "priv/static/index.html")
@@ -26,6 +29,10 @@ defmodule MobilizonWeb.ActivityPubController do
     else
       nil -> {:error, :not_found}
     end
+  end
+
+  defp is_ap_header(ap_headers) do
+    length(@activity_pub_headers -- ap_headers) < 2
   end
 
   defp render_ap_actor(conn, %Actor{} = actor) do
@@ -41,7 +48,21 @@ defmodule MobilizonWeb.ActivityPubController do
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ObjectView.render("event.json", %{event: event}))
     else
-      false ->
+      _ ->
+        {:error, :not_found}
+    end
+  end
+
+  def comment(conn, %{"uuid" => uuid}) do
+    with %Comment{} = comment <- Events.get_comment_full_from_uuid(uuid) do
+      # Comments are always public for now
+      # TODO : Make comments maybe restricted
+      # true <- comment.public do
+      conn
+      |> put_resp_header("content-type", "application/activity+json")
+      |> json(ObjectView.render("comment.json", %{comment: comment}))
+    else
+      _ ->
         {:error, :not_found}
     end
   end

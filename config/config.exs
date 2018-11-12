@@ -65,3 +65,5 @@ config :arc,
 
 config :email_checker,
   validations: [EmailChecker.Check.Format]
+
+config :phoenix, :format_encoders, json: Jason

@@ -18,7 +18,6 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     object
     |> Map.put("actor", object["attributedTo"])
     |> fix_attachments
-    |> fix_context
     # |> fix_in_reply_to
     |> fix_tag
   end
@@ -31,10 +30,6 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   #
   #        object
   #        |> Map.put("inReplyTo", replied_object.data["id"])
-  #        |> Map.put("inReplyToAtomUri", object["inReplyToAtomUri"] || in_reply_to_id)
-  #        |> Map.put("inReplyToStatusId", activity.id)
-  #        |> Map.put("conversation", replied_object.data["context"] || object["conversation"])
-  #        |> Map.put("context", replied_object.data["context"] || object["conversation"])
   #
   #      e ->
   #        Logger.error("Couldn't fetch #{object["inReplyTo"]} #{inspect(e)}")
@@ -43,11 +38,6 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   #  end
 
   def fix_in_reply_to(object), do: object
-
-  def fix_context(object) do
-    object
-    |> Map.put("context", object["conversation"])
-  end
 
   def fix_attachments(object) do
     attachments =
@@ -87,7 +77,6 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
         to: data["to"],
         object: object,
         actor: actor,
-        context: object["conversation"],
         local: false,
         published: data["published"],
         additional:
@@ -104,12 +93,11 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   def handle_incoming(
         %{"type" => "Follow", "object" => followed, "actor" => follower, "id" => id} = data
       ) do
-    with {:ok, %Actor{} = followed} <- Actors.get_or_fetch_by_url(followed),
+    with {:ok, %Actor{} = followed} <- Actors.get_or_fetch_by_url(followed, true),
          {:ok, %Actor{} = follower} <- Actors.get_or_fetch_by_url(follower),
          {:ok, activity} <- ActivityPub.follow(follower, followed, id, false) do
       ActivityPub.accept(%{to: [follower.url], actor: followed.url, object: data, local: true})
 
-      # Actors.follow(follower, followed)
       {:ok, activity}
     else
       e ->
@@ -225,11 +213,10 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     object
     #    |> set_sensitive
     #    |> add_hashtags
-    #    |> add_mention_tags
+    |> add_mention_tags
     #    |> add_emoji_tags
     |> add_attributed_to
     #    |> prepare_attachments
-    |> set_conversation
     |> set_reply_to_uri
   end
 
@@ -239,6 +226,8 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   """
 
   def prepare_outgoing(%{"type" => "Create", "object" => %{"type" => "Note"} = object} = data) do
+    Logger.debug("Prepare outgoing for a note creation")
+
     object =
       object
       |> prepare_object
@@ -247,6 +236,8 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
       data
       |> Map.put("object", object)
       |> Map.put("@context", "https://www.w3.org/ns/activitystreams")
+
+    Logger.debug("Finished prepare outgoing for a note creation")
 
     {:ok, data}
   end
@@ -304,22 +295,23 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   #    end
   #  end
   #
-  #  def add_mention_tags(object) do
-  #    recipients = object["to"] ++ (object["cc"] || [])
-  #
-  #    mentions =
-  #      recipients
-  #      |> Enum.map(fn ap_id -> User.get_cached_by_ap_id(ap_id) end)
-  #      |> Enum.filter(& &1)
-  #      |> Enum.map(fn user ->
-  #        %{"type" => "Mention", "href" => user.ap_id, "name" => "@#{user.nickname}"}
-  #      end)
-  #
-  #    tags = object["tag"] || []
-  #
-  #    object
-  #    |> Map.put("tag", tags ++ mentions)
-  #  end
+  def add_mention_tags(object) do
+    recipients = object["to"] ++ (object["cc"] || [])
+
+    mentions =
+      recipients
+      |> Enum.map(fn url -> Actors.get_actor_by_url!(url) end)
+      |> Enum.filter(& &1)
+      |> Enum.map(fn actor ->
+        %{"type" => "Mention", "href" => actor.url, "name" => "@#{actor.preferred_username}"}
+      end)
+
+    tags = object["tag"] || []
+
+    object
+    |> Map.put("tag", tags ++ mentions)
+  end
+
   #
   #  # TODO: we should probably send mtime instead of unix epoch time for updated
   #  def add_emoji_tags(object) do
@@ -342,9 +334,6 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   #    |> Map.put("tag", tags ++ out)
   #  end
   #
-  def set_conversation(object) do
-    Map.put(object, "conversation", object["context"])
-  end
 
   #
   #  def set_sensitive(object) do
@@ -370,84 +359,4 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   #    object
   #    |> Map.put("attachment", attachments)
   #  end
-  #
-  #  defp user_upgrade_task(user) do
-  #    old_follower_address = User.ap_followers(user)
-  #
-  #    q =
-  #      from(
-  #        u in User,
-  #        where: ^old_follower_address in u.following,
-  #        update: [
-  #          set: [
-  #            following:
-  #              fragment(
-  #                "array_replace(?,?,?)",
-  #                u.following,
-  #                ^old_follower_address,
-  #                ^user.follower_address
-  #              )
-  #          ]
-  #        ]
-  #      )
-  #
-  #    Repo.update_all(q, [])
-  #
-  #    maybe_retire_websub(user.ap_id)
-  #
-  #    # Only do this for recent activties, don't go through the whole db.
-  #    # Only look at the last 1000 activities.
-  #    since = (Repo.aggregate(Activity, :max, :id) || 0) - 1_000
-  #
-  #    q =
-  #      from(
-  #        a in Activity,
-  #        where: ^old_follower_address in a.recipients,
-  #        where: a.id > ^since,
-  #        update: [
-  #          set: [
-  #            recipients:
-  #              fragment(
-  #                "array_replace(?,?,?)",
-  #                a.recipients,
-  #                ^old_follower_address,
-  #                ^user.follower_address
-  #              )
-  #          ]
-  #        ]
-  #      )
-  #
-  #    Repo.update_all(q, [])
-  #  end
-  #
-  #  def upgrade_user_from_ap_id(ap_id, async \\ true) do
-  #    with %User{local: false} = user <- User.get_by_ap_id(ap_id),
-  #         {:ok, data} <- ActivityPub.fetch_and_prepare_user_from_ap_id(ap_id) do
-  #      data =
-  #        data
-  #        |> Map.put(:info, Map.merge(user.info, data[:info]))
-  #
-  #      already_ap = User.ap_enabled?(user)
-  #
-  #      {:ok, user} =
-  #        User.upgrade_changeset(user, data)
-  #        |> Repo.update()
-  #
-  #      if !already_ap do
-  #        # This could potentially take a long time, do it in the background
-  #        if async do
-  #          Task.start(fn ->
-  #            user_upgrade_task(user)
-  #          end)
-  #        else
-  #          user_upgrade_task(user)
-  #        end
-  #      end
-  #
-  #      {:ok, user}
-  #    else
-  #      e -> e
-  #    end
-  #  end
-  #
 end
