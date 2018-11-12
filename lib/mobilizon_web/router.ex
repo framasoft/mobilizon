@@ -13,9 +13,13 @@ defmodule MobilizonWeb.Router do
     plug(:accepts, ["json", "jrd-json"])
   end
 
-  pipeline :activity_pub do
+  pipeline :activity_pub_signature do
     plug(:accepts, ["activity-json", "html"])
     plug(MobilizonWeb.HTTPSignaturePlug)
+  end
+
+  pipeline :activity_pub do
+    plug(:accepts, ["activity-json", "html"])
   end
 
   pipeline :browser do
@@ -56,6 +60,10 @@ defmodule MobilizonWeb.Router do
     get("/@:name/followers", ActivityPubController, :followers)
     get("/events/:uuid", ActivityPubController, :event)
     get("/comments/:uuid", ActivityPubController, :comment)
+  end
+
+  scope "/", MobilizonWeb do
+    pipe_through(:activity_pub_signature)
     post("/@:name/inbox", ActivityPubController, :inbox)
     post("/inbox", ActivityPubController, :inbox)
   end

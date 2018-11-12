@@ -4,6 +4,7 @@ defmodule MobilizonWeb.ActivityPubController do
   alias Mobilizon.Events.{Event, Comment}
   alias MobilizonWeb.ActivityPub.{ObjectView, ActorView}
   alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Service.ActivityPub.Utils
   alias Mobilizon.Service.Federator
 
   require Logger
@@ -46,7 +47,7 @@ defmodule MobilizonWeb.ActivityPubController do
          true <- event.public do
       conn
       |> put_resp_header("content-type", "application/activity+json")
-      |> json(ObjectView.render("event.json", %{event: event}))
+      |> json(ObjectView.render("event.json", %{event: event |> Utils.make_event_data()}))
     else
       _ ->
         {:error, :not_found}
@@ -60,7 +61,7 @@ defmodule MobilizonWeb.ActivityPubController do
       # true <- comment.public do
       conn
       |> put_resp_header("content-type", "application/activity+json")
-      |> json(ObjectView.render("comment.json", %{comment: comment}))
+      |> json(ObjectView.render("comment.json", %{comment: comment |> Utils.make_comment_data()}))
     else
       _ ->
         {:error, :not_found}
@@ -137,11 +138,11 @@ defmodule MobilizonWeb.ActivityPubController do
     headers = Enum.into(conn.req_headers, %{})
 
     if String.contains?(headers["signature"], params["actor"]) do
-      Logger.info(
+      Logger.error(
         "Signature validation error for: #{params["actor"]}, make sure you are forwarding the HTTP Host header!"
       )
 
-      Logger.info(inspect(conn.req_headers))
+      Logger.error(inspect(conn.req_headers))
     end
 
     json(conn, "error")

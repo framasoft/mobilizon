@@ -44,7 +44,7 @@ defmodule Mobilizon.Service.Federator do
 
   def handle(:incoming_ap_doc, params) do
     Logger.info("Handling incoming AP activity")
-    Logger.info(inspect(params))
+    Logger.debug(inspect(params))
 
     with {:ok, _activity} <- Transmogrifier.handle_incoming(params) do
     else
@@ -53,8 +53,8 @@ defmodule Mobilizon.Service.Federator do
 
       _e ->
         # Just drop those for now
-        Logger.info("Unhandled activity")
-        Logger.info(Poison.encode!(params, pretty: 2))
+        Logger.error("Unhandled activity")
+        Logger.error(Poison.encode!(params, pretty: 2))
     end
   end
 

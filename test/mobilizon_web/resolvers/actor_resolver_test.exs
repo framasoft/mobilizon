@@ -1,9 +1,7 @@
 defmodule MobilizonWeb.Resolvers.ActorResolverTest do
   use MobilizonWeb.ConnCase
-  alias Mobilizon.{Events, Actors}
-  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Actors
   alias MobilizonWeb.AbsintheHelpers
-  import Mobilizon.Factory
 
   @valid_actor_params %{email: "test@test.tld", password: "testest", username: "test"}
   @non_existent_username "nonexistent"

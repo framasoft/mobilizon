@@ -52,7 +52,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
         |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
 
       assert [%{"message" => "Argument \"uuid\" has invalid value \"bad uuid\"."}] =
-               json_response(res, 400)["errors"]
+               json_response(res, 200)["errors"]
     end
 
     test "list_participants_for_event/3 returns participants for an event", context do

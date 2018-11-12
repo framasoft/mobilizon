@@ -6,7 +6,7 @@ defmodule Mobilizon.Actors do
   import Ecto.Query, warn: false
   alias Mobilizon.Repo
 
-  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Actors.{Actor, Bot, Member, Follower, User}
   alias Mobilizon.Actors
 
   alias Mobilizon.Service.ActivityPub
@@ -24,10 +24,11 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> list_actors()
-      [%Actor{}, ...]
+      iex> Mobilizon.Actors.list_actors()
+      [%Mobilizon.Actors.Actor{}]
 
   """
+  @spec list_actors() :: list()
   def list_actors do
     Repo.all(Actor)
   end
@@ -40,12 +41,13 @@ defmodule Mobilizon.Actors do
   ## Examples
 
       iex> get_actor!(123)
-      %Actor{}
+      %Mobilizon.Actors.Actor{}
 
       iex> get_actor!(456)
       ** (Ecto.NoResultsError)
 
   """
+  @spec get_actor!(integer()) :: Actor.t()
   def get_actor!(id) do
     Repo.get!(Actor, id)
   end
@@ -53,7 +55,7 @@ defmodule Mobilizon.Actors do
   @doc """
   Returns the associated actor for an user, either the default set one or the first found
   """
-  @spec get_actor_for_user(%Mobilizon.Actors.User{}) :: %Mobilizon.Actors.Actor{}
+  @spec get_actor_for_user(Mobilizon.Actors.User.t()) :: Mobilizon.Actors.Actor.t()
   def get_actor_for_user(%Mobilizon.Actors.User{} = user) do
     case user.default_actor_id do
       nil -> get_first_actor_for_user(user)
@@ -82,10 +84,10 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> create_actor(%{field: value})
-      {:ok, %Actor{}}
+      iex> create_actor(%{preferred_username: "test"})
+      {:ok, %Mobilizon.Actors.Actor{preferred_username: "test"}}
 
-      iex> create_actor(%{field: bad_value})
+      iex> create_actor(%{preferred_username: nil})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -100,10 +102,10 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> update_actor(actor, %{field: new_value})
-      {:ok, %Actor{}}
+      iex> update_actor(%Actor{preferred_username: "toto"}, %{preferred_username: "tata"})
+      {:ok, %Mobilizon.Actors.Actor{preferred_username: "tata"}}
 
-      iex> update_actor(actor, %{field: bad_value})
+      iex> update_actor(%Actor{preferred_username: "toto"}, %{preferred_username: nil})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -118,13 +120,14 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> delete_actor(actor)
-      {:ok, %Actor{}}
+      iex> delete_actor(%Actor{})
+      {:ok, %Mobilizon.Actors.Actor{}}
 
-      iex> delete_actor(actor)
+      iex> delete_actor(nil)
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec delete_actor(Actor.t()) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def delete_actor(%Actor{} = actor) do
     Repo.delete(actor)
   end
@@ -134,8 +137,8 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> change_actor(actor)
-      %Ecto.Changeset{source: %Actor{}}
+      iex> change_actor(%Actor{})
+      %Ecto.Changeset{data: %Mobilizon.Actors.Actor{}}
 
   """
   def change_actor(%Actor{} = actor) do
@@ -164,10 +167,10 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> create_group(%{field: value})
-      {:ok, %Actor{}}
+      iex> create_group(%{name: "group name"})
+      {:ok, %Mobilizon.Actors.Actor{}}
 
-      iex> create_group(%{field: bad_value})
+      iex> create_group(%{name: nil})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -185,20 +188,12 @@ defmodule Mobilizon.Actors do
   ## Examples
 
       iex> list_users()
-      [%User{}, ...]
+      [%Mobilizon.Actors.User{}]
 
   """
   def list_users do
     Repo.all(User)
   end
-
-  @doc """
-  List users with their associated actors. No reason for that, so removed
-  """
-  # def list_users_with_actors do
-  #   users = Repo.all(User)
-  #   Repo.preload(users, :actors)
-  # end
 
   defp blank?(""), do: nil
   defp blank?(n), do: n
@@ -206,7 +201,7 @@ defmodule Mobilizon.Actors do
   def insert_or_update_actor(data, preload \\ false) do
     cs = Actor.remote_actor_creation(data)
 
-    actor =
+    {:ok, actor} =
       Repo.insert(
         cs,
         on_conflict: [
@@ -249,7 +244,7 @@ defmodule Mobilizon.Actors do
   ## Examples
 
       iex> get_user!(123)
-      %User{}
+      %Mobilizon.Actors.User{}
 
       iex> get_user!(456)
       ** (Ecto.NoResultsError)
@@ -257,13 +252,19 @@ defmodule Mobilizon.Actors do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
-  def get_user_with_actor!(id) do
+  @doc """
+  Get an user with it's actors
+
+  Raises `Ecto.NoResultsError` if the User does not exist.
+  """
+  @spec get_user_with_actors!(integer()) :: User.t()
+  def get_user_with_actors!(id) do
     user = Repo.get!(User, id)
     Repo.preload(user, :actors)
   end
 
-  @spec get_user_with_actor(integer()) :: %User{}
-  def get_user_with_actor(id) do
+  @spec get_user_with_actors(integer()) :: User.t()
+  def get_user_with_actors(id) do
     case Repo.get(User, id) do
       nil -> {:error, "User with ID #{id} not found"}
       user -> {:ok, Repo.preload(user, :actors)}
@@ -271,9 +272,22 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
-  Get an actor by it's URL (ActivityPub ID)
+  Get an actor by it's URL (ActivityPub ID). The `:preload` option allows preloading the Followers relation.
+
+  Raises `Ecto.NoResultsError` if the Actor does not exist.
+
+  ## Examples
+      iex> get_actor_by_url("https://mastodon.server.tld/users/user")
+      {:ok, %Mobilizon.Actors.Actor{preferred_username: "user"}}
+
+      iex> get_actor_by_url("https://mastodon.server.tld/users/user", true)
+      {:ok, %Mobilizon.Actors.Actor{preferred_username: "user", followers: []}}
+
+      iex> get_actor_by_url("non existent")
+      {:error, :actor_not_found}
+
   """
-  @spec get_actor_by_url(String.t(), boolean()) :: {:ok, struct()} | {:error, :actor_not_found}
+  @spec get_actor_by_url(String.t(), boolean()) :: {:ok, Actor.t()} | {:error, :actor_not_found}
   def get_actor_by_url(url, preload \\ false) do
     case Repo.get_by(Actor, url: url) do
       nil ->
@@ -284,6 +298,22 @@ defmodule Mobilizon.Actors do
     end
   end
 
+  @doc """
+  Get an actor by it's URL (ActivityPub ID). The `:preload` option allows preloading the Followers relation.
+
+  Raises `Ecto.NoResultsError` if the Actor does not exist.
+
+  ## Examples
+      iex> get_actor_by_url!("https://mastodon.server.tld/users/user")
+      %Mobilizon.Actors.Actor{}
+
+      iex> get_actor_by_url!("https://mastodon.server.tld/users/user", true)
+      {:ok, %Mobilizon.Actors.Actor{preferred_username: "user", followers: []}}
+
+      iex> get_actor_by_url!("non existent")
+      ** (Ecto.NoResultsError)
+
+  """
   @spec get_actor_by_url!(String.t(), boolean()) :: struct()
   def get_actor_by_url!(url, preload \\ false) do
     actor = Repo.get_by!(Actor, url: url)
@@ -324,16 +354,32 @@ defmodule Mobilizon.Actors do
   end
 
   def get_or_fetch_by_url(url, preload \\ false) do
-    if {:ok, actor} = get_actor_by_url(url, preload) do
+    with {:ok, actor} <- get_actor_by_url(url, preload) do
       {:ok, actor}
     else
-      case ActivityPub.make_actor_from_url(url, preload) do
-        {:ok, actor} ->
-          {:ok, actor}
+      _ ->
+        case ActivityPub.make_actor_from_url(url, preload) do
+          {:ok, actor} ->
+            {:ok, actor}
 
-        _ ->
-          {:error, "Could not fetch by AP id"}
-      end
+          _ ->
+            {:error, "Could not fetch by AP id"}
+        end
+    end
+  end
+
+  def get_or_fetch_by_url!(url, preload \\ false) do
+    with {:ok, actor} <- get_actor_by_url(url, preload) do
+      actor
+    else
+      _ ->
+        case ActivityPub.make_actor_from_url(url, preload) do
+          {:ok, actor} ->
+            actor
+
+          _ ->
+            raise "Could not fetch by AP id"
+        end
     end
   end
 
@@ -503,10 +549,10 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> create_user(%{field: value})
-      {:ok, %User{}}
+      iex> create_user(%{email: "test@test.tld"})
+      {:ok, %Mobilizon.Actors.User{}}
 
-      iex> create_user(%{field: bad_value})
+      iex> create_user(%{email: "not an email"})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -521,11 +567,11 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> get_user_by_email(user, email)
-      {:ok, %User{}}
+      iex> get_user_by_email("test@test.tld", true)
+      {:ok, %Mobilizon.Actors.User{}}
 
-      iex> get_user_by_email(user, wrong_email)
-      {:error, nil}
+      iex> get_user_by_email("test@notfound.tld", false)
+      {:error, :user_not_found}
   """
   def get_user_by_email(email, activated \\ nil) do
     query =
@@ -546,10 +592,10 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> update_user(user, %{field: new_value})
-      {:ok, %User{}}
+      iex> update_user(User{}, %{password: "coucou"})
+      {:ok, %Mobilizon.Actors.User{}}
 
-      iex> update_user(user, %{field: bad_value})
+      iex> update_user(User{}, %{password: nil})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -564,10 +610,10 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> delete_user(user)
-      {:ok, %User{}}
+      iex> delete_user(%User{email: "test@test.tld"})
+      {:ok, %Mobilizon.Actors.User{}}
 
-      iex> delete_user(user)
+      iex> delete_user(%User{})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -580,8 +626,8 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> change_user(user)
-      %Ecto.Changeset{source: %User{}}
+      iex> change_user(%Mobilizon.Actors.User{})
+      %Ecto.Changeset{data: %Mobilizon.Actors.User{}}
 
   """
   def change_user(%User{} = user) do
@@ -598,7 +644,7 @@ defmodule Mobilizon.Actors do
   ## Examples
 
       iex> get_member!(123)
-      %Member{}
+      %Mobilizon.Actors.Member{}
 
       iex> get_member!(456)
       ** (Ecto.NoResultsError)
@@ -611,10 +657,10 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> create_member(%{field: value})
-      {:ok, %Member{}}
+      iex> create_member(%{actor: %Actor{}})
+      {:ok, %Mobilizon.Actors.Member{}}
 
-      iex> create_member(%{field: bad_value})
+      iex> create_member(%{actor: nil})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -632,10 +678,10 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> update_member(member, %{field: new_value})
-      {:ok, %Member{}}
+      iex> update_member(%Member{}, %{role: 3})
+      {:ok, %Mobilizon.Actors.Member{}}
 
-      iex> update_member(member, %{field: bad_value})
+      iex> update_member(%Member{}, %{role: nil})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -650,10 +696,10 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> delete_member(member)
-      {:ok, %Member{}}
+      iex> delete_member(%Member{})
+      {:ok, %Mobilizon.Actors.Member{}}
 
-      iex> delete_member(member)
+      iex> delete_member(%Member{})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -666,8 +712,8 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> change_member(member)
-      %Ecto.Changeset{source: %Member{}}
+      iex> change_member(%Member{})
+      %Ecto.Changeset{data: %Mobilizon.Actors.Member{}}
 
   """
   def change_member(%Member{} = member) do
@@ -702,7 +748,7 @@ defmodule Mobilizon.Actors do
   ## Examples
 
       iex> list_bots()
-      [%Bot{}, ...]
+      [%Mobilizon.Actors.Bot{}]
 
   """
   def list_bots do
@@ -717,7 +763,7 @@ defmodule Mobilizon.Actors do
   ## Examples
 
       iex> get_bot!(123)
-      %Bot{}
+      %Mobilizon.Actors.Bot{}
 
       iex> get_bot!(456)
       ** (Ecto.NoResultsError)
@@ -735,10 +781,10 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> create_bot(%{field: value})
-      {:ok, %Bot{}}
+      iex> create_bot(%{source: "toto"})
+      {:ok, %Mobilizon.Actors.Bot{}}
 
-      iex> create_bot(%{field: bad_value})
+      iex> create_bot(%{source: nil})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -753,10 +799,10 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> update_bot(bot, %{field: new_value})
-      {:ok, %Bot{}}
+      iex> update_bot(%Bot{}, %{source: "new"})
+      {:ok, %Mobilizon.Actors.Bot{}}
 
-      iex> update_bot(bot, %{field: bad_value})
+      iex> update_bot(%Bot{}, %{source: nil})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -771,10 +817,10 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> delete_bot(bot)
-      {:ok, %Bot{}}
+      iex> delete_bot(%Bot{})
+      {:ok, %Mobilizon.Actors.Bot{}}
 
-      iex> delete_bot(bot)
+      iex> delete_bot(%Bot{})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -787,8 +833,8 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> change_bot(bot)
-      %Ecto.Changeset{source: %Bot{}}
+      iex> change_bot(%Bot{})
+      %Ecto.Changeset{data: %Mobilizon.Actors.Bot{}}
 
   """
   def change_bot(%Bot{} = bot) do
@@ -805,7 +851,7 @@ defmodule Mobilizon.Actors do
   ## Examples
 
       iex> get_follower!(123)
-      %Follower{}
+      %Mobilizon.Actors.Follower{}
 
       iex> get_follower!(456)
       ** (Ecto.NoResultsError)
@@ -821,10 +867,10 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> create_follower(%{field: value})
-      {:ok, %Follower{}}
+      iex> create_follower(%{actor: %Actor{}})
+      {:ok, %Mobilizon.Actors.Follower{}}
 
-      iex> create_follower(%{field: bad_value})
+      iex> create_follower(%{actor: nil})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -839,10 +885,10 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> update_follower(follower, %{field: new_value})
-      {:ok, %Follower{}}
+      iex> update_follower(Follower{}, %{approved: true})
+      {:ok, %Mobilizon.Actors.Follower{}}
 
-      iex> update_follower(follower, %{field: bad_value})
+      iex> update_follower(Follower{}, %{approved: nil})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -857,10 +903,10 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> delete_follower(follower)
-      {:ok, %Follower{}}
+      iex> delete_follower(Follower{})
+      {:ok, %Mobilizon.Actors.Follower{}}
 
-      iex> delete_follower(follower)
+      iex> delete_follower(Follower{})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -873,8 +919,8 @@ defmodule Mobilizon.Actors do
 
   ## Examples
 
-      iex> change_follower(follower)
-      %Ecto.Changeset{source: %Follower{}}
+      iex> change_follower(Follower{})
+      %Ecto.Changeset{data: %Mobilizon.Actors.Follower{}}
 
   """
   def change_follower(%Follower{} = follower) do

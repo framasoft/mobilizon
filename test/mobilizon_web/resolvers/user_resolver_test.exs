@@ -1,13 +1,11 @@
 defmodule MobilizonWeb.Resolvers.UserResolverTest do
   use MobilizonWeb.ConnCase
-  alias Mobilizon.{Events, Actors}
-  alias Mobilizon.Actors.{Actor, User}
+  alias Mobilizon.Actors
   alias MobilizonWeb.AbsintheHelpers
   import Mobilizon.Factory
   use Bamboo.Test
 
   @valid_actor_params %{email: "test@test.tld", password: "testest", username: "test"}
-  @non_existent_username "nonexistent"
 
   describe "User Resolver" do
     test "find_user/3 returns an user by it's id", context do
@@ -161,7 +159,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
   end
 
   test "test validate_user/3 with invalid token doesn't validate an user", context do
-    {:ok, actor} = Actors.register(@valid_actor_params)
+    {:ok, _actor} = Actors.register(@valid_actor_params)
 
     mutation = """
         mutation {
@@ -219,7 +217,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
   test "test resend_confirmation_email/3 with invalid email resends an validation email",
        context do
-    {:ok, actor} = Actors.register(@valid_actor_params)
+    {:ok, _actor} = Actors.register(@valid_actor_params)
 
     mutation = """
         mutation {

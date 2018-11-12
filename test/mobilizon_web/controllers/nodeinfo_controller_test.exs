@@ -26,12 +26,13 @@ defmodule MobilizonWeb.NodeInfoControllerTest do
 
     resp = json_response(conn, 200)
 
-    assert resp = %{
+    assert resp == %{
              "metadata" => %{"nodeName" => Keyword.get(@instance, :name)},
              "openRegistrations" => Keyword.get(@instance, :registrations_open),
              "protocols" => ["activitypub"],
              "services" => %{"inbound" => [], "outbound" => []},
              "software" => %{"name" => "mobilizon", "version" => Keyword.get(@instance, :version)},
+             "usage" => %{"localComments" => 0, "localPosts" => 0, "users" => %{"total" => 0}},
              "version" => "2.0"
            }
   end

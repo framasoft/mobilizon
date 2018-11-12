@@ -26,16 +26,16 @@ defmodule Mobilizon.AddressesTest do
       streetAddress: "some updated streetAddress",
       geom: %Geo.Point{coordinates: {20, -20}, srid: 4326}
     }
-    @invalid_attrs %{
-      addressCountry: nil,
-      addressLocality: nil,
-      addressRegion: nil,
-      description: nil,
-      floor: nil,
-      postalCode: nil,
-      streetAddress: nil,
-      geom: nil
-    }
+    # @invalid_attrs %{
+    #   addressCountry: nil,
+    #   addressLocality: nil,
+    #   addressRegion: nil,
+    #   description: nil,
+    #   floor: nil,
+    #   postalCode: nil,
+    #   streetAddress: nil,
+    #   geom: nil
+    # }
 
     def address_fixture(attrs \\ %{}) do
       {:ok, address} =

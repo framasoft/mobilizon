@@ -41,20 +41,10 @@ defmodule Mobilizon.Service.HTTPSignatures do
     :public_key.verify(sigstring, :sha256, sig, public_key)
   end
 
-  defp prepare_public_key(public_key_code) do
-    with [public_key_entry] <- :public_key.pem_decode(public_key_code) do
-      {:ok, :public_key.pem_entry_decode(public_key_entry)}
-    else
-      _err ->
-        {:error, :pem_decode_error}
-    end
-  end
-
   def validate_conn(conn) do
     # TODO: How to get the right key and see if it is actually valid for that request.
     # For now, fetch the key for the actor.
-    with {:ok, public_key} <- conn.params["actor"] |> Actor.get_public_key_for_url(),
-         {:ok, public_key} <- prepare_public_key(public_key) do
+    with {:ok, public_key} <- conn.params["actor"] |> Actor.get_public_key_for_url() do
       if validate_conn(conn, public_key) do
         true
       else
@@ -62,8 +52,7 @@ defmodule Mobilizon.Service.HTTPSignatures do
         # Fetch user anew and try one more time
         with actor_id <- conn.params["actor"],
              {:ok, _actor} <- ActivityPub.make_actor_from_url(actor_id),
-             {:ok, public_key} <- actor_id |> Actor.get_public_key_for_url(),
-             {:ok, public_key} <- prepare_public_key(public_key) do
+             {:ok, public_key} <- actor_id |> Actor.get_public_key_for_url() do
           validate_conn(conn, public_key)
         end
       end
@@ -91,7 +80,7 @@ defmodule Mobilizon.Service.HTTPSignatures do
 
   def sign(%Actor{} = actor, headers) do
     with sigstring <- build_signing_string(headers, Map.keys(headers)),
-         {:ok, key} <- actor.keys |> prepare_public_key(),
+         {:ok, key} <- actor.keys |> Actor.prepare_public_key(),
          signature <- sigstring |> :public_key.sign(:sha256, key) |> Base.encode64() do
       [
         keyId: actor.url <> "#main-key",

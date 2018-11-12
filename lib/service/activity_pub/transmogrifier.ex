@@ -26,13 +26,16 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
       when not is_nil(in_reply_to) do
     in_reply_to_id =
       cond do
-        is_bitstring(in_reply_to) -> # If the inReplyTo is just an AP ID
+        # If the inReplyTo is just an AP ID
+        is_bitstring(in_reply_to) ->
           in_reply_to
 
-        is_map(in_reply_to) && is_bitstring(in_reply_to["id"]) -> # If the inReplyTo is a object itself
+        # If the inReplyTo is a object itself
+        is_map(in_reply_to) && is_bitstring(in_reply_to["id"]) ->
           in_reply_to["id"]
 
-        is_list(in_reply_to) && is_bitstring(Enum.at(in_reply_to, 0)) -> # If the inReplyTo is an array
+        # If the inReplyTo is an array
+        is_list(in_reply_to) && is_bitstring(Enum.at(in_reply_to, 0)) ->
           Enum.at(in_reply_to, 0)
 
         true ->
@@ -44,7 +47,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     case fetch_obj_helper(in_reply_to_id) do
       {:ok, replied_object} ->
         object
-        |> Map.put("inReplyTo", replied_object.data["id"])
+        |> Map.put("inReplyTo", replied_object.url)
 
       e ->
         Logger.error("Couldn't fetch #{in_reply_to_id} #{inspect(e)}")
@@ -128,7 +131,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   #      ) do
   #    with %User{} = actor <- User.get_or_fetch_by_ap_id(actor),
   #         {:ok, object} <-
-  #           get_obj_helper(object_id) || ActivityPub.fetch_object_from_id(object_id),
+  #           fetch_obj_helper(object_id) || ActivityPub.fetch_object_from_id(object_id),
   #         {:ok, activity, object} <- ActivityPub.like(actor, object, id, false) do
   #      {:ok, activity}
   #    else
@@ -136,18 +139,18 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   #    end
   #  end
   #
-  def handle_incoming(
-        %{"type" => "Announce", "object" => object_id, "actor" => actor, "id" => id} = data
-      ) do
-    with {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(actor),
-         {:ok, object} <-
-           get_obj_helper(object_id) || ActivityPub.fetch_event_from_url(object_id),
-         {:ok, activity, object} <- ActivityPub.announce(actor, object, id, false) do
-      {:ok, activity}
-    else
-      _e -> :error
-    end
-  end
+  # def handle_incoming(
+  #       %{"type" => "Announce", "object" => object_id, "actor" => actor, "id" => id} = data
+  #     ) do
+  #   with {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(actor),
+  #        {:ok, object} <-
+  #          fetch_obj_helper(object_id) || ActivityPub.fetch_object_from_url(object_id),
+  #        {:ok, activity, object} <- ActivityPub.announce(actor, object, id, false) do
+  #     {:ok, activity}
+  #   else
+  #     _e -> :error
+  #   end
+  # end
 
   #
   #  def handle_incoming(
@@ -155,7 +158,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   #          data
   #      ) do
   #    with %User{ap_id: ^actor_id} = actor <- User.get_by_ap_id(object["id"]) do
-  #      {:ok, new_user_data} = ActivityPub.user_data_from_user_object(object)
+  #      {:ok, new_user_data} = ActivityPub.actor_data_from_actor_object(object)
   #
   #      banner = new_user_data[:info]["banner"]
   #
@@ -194,7 +197,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   #
   #    with %User{} = actor <- User.get_or_fetch_by_ap_id(actor),
   #         {:ok, object} <-
-  #           get_obj_helper(object_id) || ActivityPub.fetch_object_from_id(object_id),
+  #           fetch_obj_helper(object_id) || ActivityPub.fetch_object_from_id(object_id),
   #         {:ok, activity} <- ActivityPub.delete(object, false) do
   #      {:ok, activity}
   #    else
@@ -208,13 +211,9 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   #
   def handle_incoming(_), do: :error
 
-  def get_obj_helper(id) do
-    if object = Object.get_by_ap_id(id), do: {:ok, object}, else: nil
-  end
-
   def set_reply_to_uri(%{"inReplyTo" => in_reply_to} = object) do
     with false <- String.starts_with?(in_reply_to, "http"),
-         {:ok, %{data: replied_to_object}} <- get_obj_helper(in_reply_to) do
+         {:ok, replied_to_object} <- fetch_obj_helper(in_reply_to) do
       Map.put(object, "inReplyTo", replied_to_object["external_url"] || in_reply_to)
     else
       _e -> object
@@ -327,7 +326,8 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   end
 
   def add_mention_tags(object) do
-    recipients = object["to"] ++ (object["cc"] || [])
+    recipients =
+      (object["to"] ++ (object["cc"] || [])) -- ["https://www.w3.org/ns/activitystreams#Public"]
 
     mentions =
       recipients
@@ -391,6 +391,9 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   #    |> Map.put("attachment", attachments)
   #  end
 
+  @spec fetch_obj_helper(String.t()) :: {:ok, %Event{}} | {:ok, %Comment{}} | {:error, any()}
   def fetch_obj_helper(url) when is_bitstring(url), do: ActivityPub.fetch_object_from_url(url)
+
+  @spec fetch_obj_helper(map()) :: {:ok, %Event{}} | {:ok, %Comment{}} | {:error, any()}
   def fetch_obj_helper(obj) when is_map(obj), do: ActivityPub.fetch_object_from_url(obj["id"])
 end

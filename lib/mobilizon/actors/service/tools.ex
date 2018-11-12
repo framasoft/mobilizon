@@ -1,7 +1,7 @@
 defmodule Mobilizon.Actors.Service.Tools do
   alias Mobilizon.Actors.User
 
-  @spec we_can_send_email(User.t()) :: boolean
+  @spec we_can_send_email(User.t(), atom()) :: :ok | {:error, :email_too_soon}
   def we_can_send_email(%User{} = user, key \\ :reset_password_sent_at) do
     case Map.get(user, key) do
       nil ->

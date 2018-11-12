@@ -6,7 +6,7 @@ defmodule MobilizonWeb.Resolvers.User do
   Find an user by it's ID
   """
   def find_user(_parent, %{id: id}, _resolution) do
-    Actors.get_user_with_actor(id)
+    Actors.get_user_with_actors(id)
   end
 
   @doc """

@@ -77,7 +77,17 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     to = to ++ (data["cc"] || [])
 
     to
-    |> Enum.map(fn url -> Actors.get_actor_by_url!(url) end)
+    |> Enum.map(fn url -> Actors.get_actor_by_url(url) end)
+    |> Enum.map(fn {status, actor} ->
+      case status do
+        :ok ->
+          actor
+
+        _ ->
+          nil
+      end
+    end)
+    |> Enum.map(& &1)
     |> Enum.filter(fn actor -> actor && !is_nil(actor.domain) end)
   end
 
@@ -110,8 +120,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   @doc """
   Inserts a full object if it is contained in an activity.
   """
-  def insert_full_object(%{"object" => %{"type" => type} = object_data}, _local)
-      when is_map(object_data) and type == "Event" do
+  def insert_full_object(%{"object" => %{"type" => type} = object_data}, local)
+      when is_map(object_data) and type == "Event" and not local do
     with {:ok, _} <- Events.create_event(object_data) do
       :ok
     end
@@ -121,7 +131,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   Inserts a full object if it is contained in an activity.
   """
   def insert_full_object(%{"object" => %{"type" => type} = object_data}, local)
-      when is_map(object_data) and type == "Note" do
+      when is_map(object_data) and type == "Note" and not local do
     with {:ok, %Actor{id: actor_id}} <- Actors.get_or_fetch_by_url(object_data["actor"]) do
       data = %{
         "text" => object_data["content"],
@@ -164,12 +174,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
           data
         end
 
-      Logger.info("comment data ready to be inserted")
-      Logger.info(inspect(data))
-
       with {:ok, comm} <- Events.create_comment(data) do
-        Logger.info("comment inserted")
-        Logger.info(inspect(comm))
         :ok
       else
         err ->
@@ -205,6 +210,49 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   #
   #    Repo.one(query)
   #  end
+
+  def make_event_data(
+        %Event{title: title, organizer_actor: actor, uuid: uuid},
+        to \\ ["https://www.w3.org/ns/activitystreams#Public"]
+      ) do
+    %{
+      "type" => "Event",
+      "to" => to,
+      "title" => title,
+      "actor" => actor.url,
+      "uuid" => uuid,
+      "id" => "#{MobilizonWeb.Endpoint.url()}/events/#{uuid}"
+    }
+  end
+
+  @doc """
+  Make an AP comment object from an existing `Comment` structure.
+  """
+  def make_comment_data(
+        %Comment{
+          text: text,
+          actor: actor,
+          uuid: uuid,
+          in_reply_to_comment: reply_to,
+          event: event
+        },
+        to \\ ["https://www.w3.org/ns/activitystreams#Public"]
+      ) do
+    object = %{
+      "type" => "Note",
+      "to" => to,
+      "content" => text,
+      "actor" => actor.url,
+      "uuid" => uuid,
+      "id" => "#{MobilizonWeb.Endpoint.url()}/comments/#{uuid}"
+    }
+
+    if reply_to do
+      object |> Map.put("inReplyTo", reply_to.url || event.url)
+    else
+      object
+    end
+  end
 
   def make_comment_data(
         actor,
@@ -344,7 +392,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
 
   #### Create-related helpers
 
-  def make_create_data(params, additional) do
+  def make_create_data(params, additional \\ %{}) do
     published = params.published || make_date()
 
     %{

@@ -3,5 +3,5 @@ defmodule Mobilizon.Activity do
   Represents an activity
   """
 
-  defstruct [:id, :data, :local, :actor, :recipients, :notifications, :type]
+  defstruct [:data, :local, :actor, :recipients, :notifications]
 end

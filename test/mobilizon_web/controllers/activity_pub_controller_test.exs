@@ -2,10 +2,9 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
   use MobilizonWeb.ConnCase
   import Mobilizon.Factory
   alias MobilizonWeb.ActivityPub.{ActorView, ObjectView}
-  alias Mobilizon.{Repo, Actors, Actors.Actor}
+  alias Mobilizon.Actors
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Activity
-  import Logger
+  alias Mobilizon.Service.ActivityPub.Utils
 
   describe "/@:preferred_username" do
     test "it returns a json representation of the actor", %{conn: conn} do
@@ -19,7 +18,6 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
       actor = Actors.get_actor!(actor.id)
 
       assert json_response(conn, 200) == ActorView.render("actor.json", %{actor: actor})
-      Logger.error(inspect(ActorView.render("actor.json", %{actor: actor})))
     end
   end
 
@@ -32,8 +30,8 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
         |> put_req_header("accept", "application/activity+json")
         |> get("/events/#{event.uuid}")
 
-      assert json_response(conn, 200) == ObjectView.render("event.json", %{event: event})
-      Logger.error(inspect(ObjectView.render("event.json", %{event: event})))
+      assert json_response(conn, 200) ==
+               ObjectView.render("event.json", %{event: event |> Utils.make_event_data()})
     end
 
     test "it returns 404 for non-public events", %{conn: conn} do
@@ -60,7 +58,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
       assert "ok" == json_response(conn, 200)
       :timer.sleep(500)
-      assert ActivityPub.fetch_object_from_url(data["object"]["id"], :note)
+      assert ActivityPub.fetch_object_from_url(data["object"]["id"])
     end
   end
 

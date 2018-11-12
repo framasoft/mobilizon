@@ -309,10 +309,10 @@ defmodule MobilizonWeb.Schema do
       resolve(&Resolvers.User.change_default_actor/3)
     end
 
-    @desc "Upload a picture"
-    field :upload_picture, :picture do
-      arg(:file, non_null(:upload))
-      resolve(&Resolvers.Upload.upload_picture/3)
-    end
+    # @desc "Upload a picture"
+    # field :upload_picture, :picture do
+    #   arg(:file, non_null(:upload))
+    #   resolve(&Resolvers.Upload.upload_picture/3)
+    # end
   end
 end

@@ -97,11 +97,11 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
 
     {activities, total} = ActivityPub.fetch_public_activities_for_actor(actor, page)
 
-    collection =
-      Enum.map(activities, fn act ->
-        {:ok, data} = Transmogrifier.prepare_outgoing(act.data)
-        data
-      end)
+    # collection =
+    #   Enum.map(activities, fn act ->
+    #     {:ok, data} = Transmogrifier.prepare_outgoing(act.data)
+    #     data
+    #   end)
 
     iri = "#{actor.url}/outbox"
 
@@ -127,9 +127,9 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
     end
   end
 
-  def render("activity.json", %{activity: %Activity{local: local} = activity}) do
+  def render("activity.json", %{activity: %Activity{local: local, data: data} = activity}) do
     %{
-      "id" => activity.data.url <> "/activity",
+      "id" => data["id"],
       "type" =>
         if local do
           "Create"
@@ -139,14 +139,14 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
       "actor" => activity.actor,
       # Not sure if needed since this is used into outbox
       "published" => Timex.now(),
-      "to" => ["https://www.w3.org/ns/activitystreams#Public"],
+      "to" => activity.recipients,
       "object" =>
-        case activity.type do
-          :Event ->
-            render_one(activity.data, ObjectView, "event.json", as: :event)
+        case data["type"] do
+          "Event" ->
+            render_one(data, ObjectView, "event.json", as: :event)
 
-          :Comment ->
-            render_one(activity.data, ObjectView, "comment.json", as: :comment)
+          "Note" ->
+            render_one(data, ObjectView, "comment.json", as: :comment)
         end
     }
     |> Map.merge(Utils.make_json_ld_header())

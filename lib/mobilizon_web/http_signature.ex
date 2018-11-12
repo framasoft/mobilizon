@@ -18,34 +18,31 @@ defmodule MobilizonWeb.HTTPSignaturePlug do
   end
 
   def call(conn, _opts) do
-    user = conn.params["actor"]
+    actor = conn.params["actor"]
 
     Logger.debug(fn ->
-      "Checking sig for #{user}"
+      "Checking sig for #{actor}"
     end)
 
-    with [signature | _] <- get_req_header(conn, "signature") do
-      cond do
-        signature && String.contains?(signature, user) ->
-          conn =
-            conn
-            |> put_req_header(
-              "(request-target)",
-              String.downcase("#{conn.method}") <> " #{conn.request_path}"
-            )
+    [signature | _] = get_req_header(conn, "signature")
 
-          assign(conn, :valid_signature, HTTPSignatures.validate_conn(conn))
-
-        signature ->
-          Logger.debug("Signature not from actor")
-          assign(conn, :valid_signature, false)
-
-        true ->
-          Logger.debug("No signature header!")
+    cond do
+      # Dialyzer doesn't like this line
+      signature && String.contains?(signature, actor) ->
+        conn =
           conn
-      end
-    else
-      _ ->
+          |> put_req_header(
+            "(request-target)",
+            String.downcase("#{conn.method}") <> " #{conn.request_path}"
+          )
+
+        assign(conn, :valid_signature, HTTPSignatures.validate_conn(conn))
+
+      signature ->
+        Logger.debug("Signature not from actor")
+        assign(conn, :valid_signature, false)
+
+      true ->
         Logger.debug("No signature header!")
         conn
     end

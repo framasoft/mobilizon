@@ -131,7 +131,6 @@ defmodule Mobilizon.Actors.Actor do
         :outbox_url,
         :inbox_url,
         :type,
-        :name,
         :domain,
         :preferred_username,
         :keys
@@ -179,14 +178,35 @@ defmodule Mobilizon.Actors.Actor do
     |> put_change(:local, true)
   end
 
+  @doc """
+  Get a public key for a given ActivityPub actor ID (url)
+  """
   @spec get_public_key_for_url(String.t()) :: {:ok, String.t()}
   def get_public_key_for_url(url) do
-    with {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(url) do
-      {:ok, actor.keys}
+    with {:ok, %Actor{keys: keys}} <- Actors.get_or_fetch_by_url(url),
+         {:ok, public_key} <- prepare_public_key(keys) do
+      {:ok, public_key}
     else
+      {:error, :pem_decode_error} ->
+        Logger.error("Error while decoding PEM")
+        {:error, :pem_decode_error}
+
       _ ->
         Logger.error("Unable to fetch actor, so no keys for you")
         {:error, :actor_fetch_error}
+    end
+  end
+
+  @doc """
+  Convert internal PEM encoded keys to public key format
+  """
+  @spec prepare_public_key(String.t()) :: {:ok, tuple()} | {:error, :pem_decode_error}
+  def prepare_public_key(public_key_code) do
+    with [public_key_entry] <- :public_key.pem_decode(public_key_code) do
+      {:ok, :public_key.pem_entry_decode(public_key_entry)}
+    else
+      _err ->
+        {:error, :pem_decode_error}
     end
   end
 

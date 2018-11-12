@@ -90,7 +90,8 @@ defmodule Mobilizon.Mixfile do
       {:excoveralls, "~> 0.8", only: :test},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
-      {:ex_unit_notifier, "~> 0.1", only: :test}
+      {:ex_unit_notifier, "~> 0.1", only: :test},
+      {:dialyxir, "~> 1.0.0-rc.4", only: [:dev], runtime: false}
     ]
   end
 

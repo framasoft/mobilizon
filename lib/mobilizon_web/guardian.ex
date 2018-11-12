@@ -24,7 +24,7 @@ defmodule MobilizonWeb.Guardian do
     try do
       case Integer.parse(uid_str) do
         {uid, ""} ->
-          {:ok, Actors.get_user_with_actor!(uid)}
+          {:ok, Actors.get_user_with_actors!(uid)}
 
         _ ->
           {:error, :invalid_id}

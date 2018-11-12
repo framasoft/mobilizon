@@ -19,14 +19,21 @@ defmodule Mobilizon.Service.ActivityPub do
   require Logger
   import Mobilizon.Service.ActivityPub.Utils
 
+  @doc """
+  Get recipients for an activity or object
+  """
+  @spec get_recipients(map()) :: list()
   def get_recipients(data) do
     (data["to"] || []) ++ (data["cc"] || [])
   end
 
-  def insert(map, local \\ true) when is_map(map) do
-    Logger.debug("preparing an activity")
-    Logger.debug(inspect(map))
+  @doc """
+  Wraps an object into an activity
 
+  TODO: Rename me
+  """
+  @spec insert(map(), boolean()) :: {:ok, %Activity{}} | {:error, any()}
+  def insert(map, local \\ true) when is_map(map) do
     with map <- lazy_put_activity_defaults(map),
          :ok <- insert_full_object(map, local) do
       object_id =
@@ -56,10 +63,10 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
-  def fetch_object_from_url(url, :event), do: fetch_event_from_url(url)
-  def fetch_object_from_url(url, :note), do: fetch_note_from_url(url)
-
-  @spec fetch_object_from_url(String.t()) :: tuple()
+  @doc """
+  Fetch an object from an URL, from our local database of events and comments, then eventually remote
+  """
+  @spec fetch_object_from_url(String.t()) :: {:ok, %Event{}} | {:ok, %Comment{}} | {:error, any()}
   def fetch_object_from_url(url) do
     with true <- String.starts_with?(url, "http"),
          nil <- Events.get_event_by_url(url),
@@ -95,29 +102,6 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
-  @spec fetch_object_from_url(String.t()) :: tuple()
-  def fetch_event_from_url(url) do
-    with nil <- Events.get_event_by_url(url) do
-      Logger.info("Fetching #{url} via AP")
-      fetch_object_from_url(url)
-    else
-      %Event{} = comment ->
-        {:ok, comment}
-    end
-  end
-
-  @spec fetch_object_from_url(String.t()) :: tuple()
-  def fetch_note_from_url(url) do
-    with nil <- Events.get_comment_from_url(url) do
-      Logger.info("Fetching #{url} via AP")
-
-      fetch_object_from_url(url)
-    else
-      %Comment{} = comment ->
-        {:ok, comment}
-    end
-  end
-
   def create(%{to: to, actor: actor, object: object} = params) do
     Logger.debug("creating an activity")
     additional = params[:additional] || %{}
@@ -136,8 +120,8 @@ defmodule Mobilizon.Service.ActivityPub do
       {:ok, activity}
     else
       err ->
-        Logger.debug("Something went wrong")
-        Logger.debug(inspect(err))
+        Logger.error("Something went wrong")
+        Logger.error(inspect(err))
     end
   end
 
@@ -216,6 +200,10 @@ defmodule Mobilizon.Service.ActivityPub do
   def create_public_activities(%Actor{} = actor) do
   end
 
+  @doc """
+  Create an actor locally by it's URL (AP ID)
+  """
+  @spec make_actor_from_url(String.t(), boolean()) :: {:ok, %Actor{}} | {:error, any()}
   def make_actor_from_url(url, preload \\ false) do
     with {:ok, data} <- fetch_and_prepare_actor_from_url(url) do
       Actors.insert_or_update_actor(data, preload)
@@ -231,6 +219,9 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
+  @doc """
+  Find an actor in our local database or call Webfinger to find what's its AP ID is and then fetch it
+  """
   @spec find_or_make_actor_from_nickname(String.t()) :: tuple()
   def find_or_make_actor_from_nickname(nickname) do
     with %Actor{} = actor <- Actors.get_actor_by_name(nickname) do
@@ -240,6 +231,10 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
+  @doc """
+  Create an actor inside our database from username, using Webfinger to find out it's AP ID and then fetch it
+  """
+  @spec make_actor_from_nickname(String.t()) :: {:ok, %Actor{}} | {:error, any()}
   def make_actor_from_nickname(nickname) do
     with {:ok, %{"url" => url}} when not is_nil(url) <- WebFinger.finger(nickname) do
       make_actor_from_url(url)
@@ -288,12 +283,6 @@ defmodule Mobilizon.Service.ActivityPub do
         "content-length": byte_size(json)
       })
 
-    Logger.debug("signature")
-    Logger.debug(inspect(signature))
-
-    Logger.debug("body json")
-    Logger.debug(inspect(json))
-
     {:ok, response} =
       HTTPoison.post(
         inbox,
@@ -301,19 +290,21 @@ defmodule Mobilizon.Service.ActivityPub do
         [{"Content-Type", "application/activity+json"}, {"signature", signature}],
         hackney: [pool: :default]
       )
-
-    Logger.debug(inspect(response))
   end
 
-  def fetch_and_prepare_actor_from_url(url) do
+  @doc """
+  Fetching a remote actor's informations through it's AP ID 
+  """
+  @spec fetch_and_prepare_actor_from_url(String.t()) :: {:ok, struct()} | {:error, atom()} | any()
+  defp fetch_and_prepare_actor_from_url(url) do
     Logger.debug("Fetching and preparing actor from url")
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
            HTTPoison.get(url, [Accept: "application/activity+json"], follow_redirect: true),
          {:ok, data} <- Jason.decode(body) do
-      user_data_from_user_object(data)
+      actor_data_from_actor_object(data)
     else
-      # User is gone, probably deleted
+      # Actor is gone, probably deleted
       {:ok, %HTTPoison.Response{status_code: 410}} ->
         {:error, :actor_deleted}
 
@@ -323,8 +314,12 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
-  def user_data_from_user_object(data) do
-    user_data = %{
+  @doc """
+  Creating proper actor data struct from AP data
+  """
+  @spec actor_data_from_actor_object(map()) :: {:ok, map()}
+  def actor_data_from_actor_object(data) when is_map(data) do
+    actor_data = %{
       url: data["id"],
       info: %{
         "ap_enabled" => true,
@@ -347,30 +342,22 @@ defmodule Mobilizon.Service.ActivityPub do
       type: data["type"]
     }
 
-    Logger.debug("user_data_from_user_object")
-    Logger.debug(inspect(user_data))
-
-    {:ok, user_data}
+    {:ok, actor_data}
   end
 
-  @spec fetch_public_activities_for_actor(Actor.t(), integer(), integer()) :: list()
+  @doc """
+  Return all public activities (events & comments) for an actor
+  """
+  @spec fetch_public_activities_for_actor(Actor.t(), integer(), integer()) :: {list(), integer()}
   def fetch_public_activities_for_actor(%Actor{} = actor, page \\ 1, limit \\ 10) do
     case actor.type do
       :Person ->
         {:ok, events, total} = Events.get_events_for_actor(actor, page, limit)
         {:ok, comments, total} = Events.get_comments_for_actor(actor, page, limit)
 
-        event_activities =
-          Enum.map(events, fn event ->
-            {:ok, activity} = event_to_activity(event)
-            activity
-          end)
+        event_activities = Enum.map(events, &event_to_activity/1)
 
-        comment_activities =
-          Enum.map(comments, fn comment ->
-            {:ok, activity} = comment_to_activity(comment)
-            activity
-          end)
+        comment_activities = Enum.map(comments, &comment_to_activity/1)
 
         activities = event_activities ++ comment_activities
 
@@ -402,37 +389,36 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
+  @doc """
+  Create an activity from an event
+  """
+  @spec event_to_activity(%Event{}, boolean()) :: Activity.t()
   defp event_to_activity(%Event{} = event, local \\ true) do
-    activity = %Activity{
-      type: :Event,
-      data: event,
-      local: local,
+    %Activity{
+      recipients: ["https://www.w3.org/ns/activitystreams#Public"],
       actor: event.organizer_actor.url,
-      recipients: ["https://www.w3.org/ns/activitystreams#Public"]
+      data: event |> make_event_data,
+      local: local
     }
-
-    # Notification.create_notifications(activity)
-    # stream_out(activity)
-    {:ok, activity}
   end
 
+  @doc """
+  Create an activity from a comment
+  """
+  @spec comment_to_activity(%Comment{}, boolean()) :: Activity.t()
   defp comment_to_activity(%Comment{} = comment, local \\ true) do
-    activity = %Activity{
-      type: :Comment,
-      data: comment,
-      local: local,
+    %Activity{
+      recipients: ["https://www.w3.org/ns/activitystreams#Public"],
       actor: comment.actor.url,
-      recipients: ["https://www.w3.org/ns/activitystreams#Public"]
+      data: comment |> make_comment_data,
+      local: local
     }
-
-    # Notification.create_notifications(activity)
-    # stream_out(activity)
-    {:ok, activity}
   end
 
   defp ical_event_to_activity(%ExIcal.Event{} = ical_event, %Actor{} = actor, source) do
     # Logger.debug(inspect ical_event)
     # TODO : refactor me !
+    # TODO : also, there should be a form of cache that allows this to be more efficient
     category =
       if is_nil(ical_event.categories) do
         nil

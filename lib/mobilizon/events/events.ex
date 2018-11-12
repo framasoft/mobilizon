@@ -142,7 +142,7 @@ defmodule Mobilizon.Events do
   Gets an event by it's URL
   """
   def get_event_full_by_url!(url) do
-    event = Repo.get_by(Event, url: url)
+    event = Repo.get_by!(Event, url: url)
 
     Repo.preload(event, [
       :organizer_actor,
@@ -326,7 +326,7 @@ defmodule Mobilizon.Events do
   """
   def get_category!(id), do: Repo.get!(Category, id)
 
-  @spec get_category_by_title(String.t()) :: tuple()
+  @spec get_category_by_title(String.t()) :: Category.t() | nil
   def get_category_by_title(title) when is_binary(title) do
     Repo.get_by(Category, title: title)
   end

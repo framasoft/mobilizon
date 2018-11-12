@@ -4,7 +4,6 @@ defmodule Mobilizon.EventsTest do
   import Mobilizon.Factory
 
   alias Mobilizon.Events
-  alias Mobilizon.Actors
 
   @event_valid_attrs %{
     begins_on: "2010-04-17 14:00:00.000000Z",
@@ -12,22 +11,6 @@ defmodule Mobilizon.EventsTest do
     ends_on: "2010-04-17 14:00:00.000000Z",
     title: "some title"
   }
-
-  def actor_fixture do
-    insert(:actor)
-  end
-
-  def address_fixture do
-    insert(:address)
-  end
-
-  def event_fixture do
-    insert(:event)
-  end
-
-  def category_fixture do
-    insert(:category)
-  end
 
   describe "events" do
     alias Mobilizon.Events.Event
@@ -78,14 +61,14 @@ defmodule Mobilizon.EventsTest do
 
       assert event2.title == hd(Events.find_events_by_name("  Special  ")).title
 
-      assert title = hd(Events.find_events_by_name("")).title
-      assert title2 = hd(tl(Events.find_events_by_name(""))).title
+      assert title == hd(Events.find_events_by_name("")).title
+      assert title2 == hd(tl(Events.find_events_by_name(""))).title
     end
 
     test "create_event/1 with valid data creates a event" do
-      actor = actor_fixture()
-      category = category_fixture()
-      address = address_fixture()
+      actor = insert(:actor)
+      category = insert(:category)
+      address = insert(:address)
 
       valid_attrs =
         @event_valid_attrs
@@ -94,11 +77,15 @@ defmodule Mobilizon.EventsTest do
         |> Map.put(:category_id, category.id)
         |> Map.put(:address_id, address.id)
 
-      assert {:ok, %Event{} = event} = Events.create_event(valid_attrs)
-      assert event.begins_on == DateTime.from_naive!(~N[2010-04-17 14:00:00.000000Z], "Etc/UTC")
-      assert event.description == "some description"
-      assert event.ends_on == DateTime.from_naive!(~N[2010-04-17 14:00:00.000000Z], "Etc/UTC")
-      assert event.title == "some title"
+      with {:ok, %Event{} = event} <- Events.create_event(valid_attrs) do
+        assert event.begins_on == DateTime.from_naive!(~N[2010-04-17 14:00:00.000000Z], "Etc/UTC")
+        assert event.description == "some description"
+        assert event.ends_on == DateTime.from_naive!(~N[2010-04-17 14:00:00.000000Z], "Etc/UTC")
+        assert event.title == "some title"
+      else
+        err ->
+          flunk("Failed to create an event #{inspect(err)}")
+      end
     end
 
     test "create_event/1 with invalid data returns error changeset" do
@@ -135,27 +122,40 @@ defmodule Mobilizon.EventsTest do
 
     test "get_events_for_actor/3", %{actor: actor, event: event} do
       event1 = insert(:event, organizer_actor: actor)
-      assert {:ok, [event_found, event1_found], 2} = Events.get_events_for_actor(actor, 1, 10)
+
+      with {:ok, events_found, 2} <- Events.get_events_for_actor(actor, 1, 10) do
+        event_ids = MapSet.new(events_found |> Enum.map(& &1.id))
+        assert event_ids == MapSet.new([event.id, event1.id])
+      else
+        err ->
+          flunk("Failed to get events for an actor #{inspect(err)}")
+      end
     end
 
     test "get_events_for_actor/3 with limited results", %{actor: actor, event: event} do
       event1 = insert(:event, organizer_actor: actor)
-      assert {:ok, [event_found], 2} = Events.get_events_for_actor(actor, 1, 1)
+
+      with {:ok, [%Event{id: event_found_id}], 2} <- Events.get_events_for_actor(actor, 1, 1) do
+        assert event_found_id in [event.id, event1.id]
+      else
+        err ->
+          flunk("Failed to get limited events for an actor #{inspect(err)}")
+      end
     end
 
-    test "get_event_by_url/1 with valid url", %{actor: actor, event: event} do
-      assert event = Events.get_event_by_url(event.url)
+    test "get_event_by_url/1 with valid url", %{event: %Event{id: event_id, url: event_url}} do
+      assert event_id == Events.get_event_by_url(event_url).id
     end
 
-    test "get_event_by_url/1 with bad url", %{actor: actor, event: event} do
-      refute event == Events.get_event_by_url("not valid")
+    test "get_event_by_url/1 with bad url" do
+      assert is_nil(Events.get_event_by_url("not valid"))
     end
 
-    test "get_event_by_url!/1 with valid url", %{actor: actor, event: event} do
-      assert event = Events.get_event_by_url!(event.url)
+    test "get_event_by_url!/1 with valid url", %{event: %Event{id: event_id, url: event_url}} do
+      assert event_id == Events.get_event_by_url!(event_url).id
     end
 
-    test "get_event_by_url!/1 with bad url", %{actor: actor, event: event} do
+    test "get_event_by_url!/1 with bad url" do
       assert_raise Ecto.NoResultsError, fn ->
         Events.get_event_by_url!("not valid")
       end
@@ -309,25 +309,35 @@ defmodule Mobilizon.EventsTest do
       {:ok, participant: participant, event: event, actor: actor}
     end
 
-    test "list_participants/0 returns all participants", %{participant: participant} do
-      assert [%Participant{} = participant] = Events.list_participants()
+    test "list_participants/0 returns all participants", %{
+      participant: %Participant{event_id: participant_event_id, actor_id: participant_actor_id}
+    } do
+      assert [participant_event_id] == Events.list_participants() |> Enum.map(& &1.event_id)
+      assert [participant_actor_id] == Events.list_participants() |> Enum.map(& &1.actor_id)
     end
 
     test "get_participant!/1 returns the participant for a given event and given actor", %{
-      event: %Event{id: event_id} = _event,
-      actor: %Actor{id: actor_id} = _actor
+      event: %Event{id: event_id},
+      actor: %Actor{id: actor_id}
     } do
-      assert %Participant{event_id: event_id, actor_id: actor_id} =
-               _participant = Events.get_participant!(event_id, actor_id)
+      assert event_id == Events.get_participant!(event_id, actor_id).event_id
+      assert actor_id == Events.get_participant!(event_id, actor_id).actor_id
     end
 
     test "create_participant/1 with valid data creates a participant" do
-      actor = actor_fixture()
-      event = event_fixture()
+      actor = insert(:actor)
+      event = insert(:event)
       valid_attrs = Map.put(@valid_attrs, :event_id, event.id)
       valid_attrs = Map.put(valid_attrs, :actor_id, actor.id)
-      assert {:ok, %Participant{} = participant} = Events.create_participant(valid_attrs)
-      assert participant.role == 42
+
+      with {:ok, %Participant{} = participant} <- Events.create_participant(valid_attrs) do
+        assert participant.event_id == event.id
+        assert participant.actor_id == actor.id
+        assert participant.role == 42
+      else
+        err ->
+          flunk("Failed to create a participant #{inspect(err)}")
+      end
     end
 
     test "create_participant/1 with invalid data returns error changeset" do
@@ -337,9 +347,13 @@ defmodule Mobilizon.EventsTest do
     test "update_participant/2 with valid data updates the participant", %{
       participant: participant
     } do
-      assert {:ok, participant} = Events.update_participant(participant, @update_attrs)
-      assert %Participant{} = participant
-      assert participant.role == 43
+      with {:ok, %Participant{} = participant} <-
+             Events.update_participant(participant, @update_attrs) do
+        assert participant.role == 43
+      else
+        err ->
+          flunk("Failed to update a participant #{inspect(err)}")
+      end
     end
 
     test "update_participant/2 with invalid data returns error changeset", %{
@@ -392,7 +406,7 @@ defmodule Mobilizon.EventsTest do
     }
 
     def session_fixture(attrs \\ %{}) do
-      event = event_fixture()
+      event = insert(:event)
       valid_attrs = Map.put(@valid_attrs, :event_id, event.id)
 
       {:ok, session} =
@@ -414,7 +428,7 @@ defmodule Mobilizon.EventsTest do
     end
 
     test "create_session/1 with valid data creates a session" do
-      event = event_fixture()
+      event = insert(:event)
       valid_attrs = Map.put(@valid_attrs, :event_id, event.id)
       assert {:ok, %Session{} = session} = Events.create_session(valid_attrs)
       assert session.audios_urls == "some audios_urls"
@@ -475,7 +489,7 @@ defmodule Mobilizon.EventsTest do
     @invalid_attrs %{color: nil, description: nil, name: nil}
 
     def track_fixture(attrs \\ %{}) do
-      event = event_fixture()
+      event = insert(:event)
       valid_attrs = Map.put(@valid_attrs, :event_id, event.id)
 
       {:ok, track} =
@@ -497,7 +511,7 @@ defmodule Mobilizon.EventsTest do
     end
 
     test "create_track/1 with valid data creates a track" do
-      event = event_fixture()
+      event = insert(:event)
       valid_attrs = Map.put(@valid_attrs, :event_id, event.id)
       assert {:ok, %Track{} = track} = Events.create_track(valid_attrs)
       assert track.color == "some color"
@@ -543,28 +557,29 @@ defmodule Mobilizon.EventsTest do
     @update_attrs %{text: "some updated text"}
     @invalid_attrs %{text: nil, url: nil}
 
-    def comment_fixture() do
-      insert(:comment)
-    end
-
     test "list_comments/0 returns all comments" do
-      comment = comment_fixture()
-      comments = Events.list_comments()
-      assert comments = [comment]
+      %Comment{id: comment_id} = insert(:comment)
+      comment_ids = Events.list_comments() |> Enum.map(& &1.id)
+      assert comment_ids == [comment_id]
     end
 
     test "get_comment!/1 returns the comment with given id" do
-      comment = comment_fixture()
-      comment_fetched = Events.get_comment!(comment.id)
-      assert comment_fetched = comment
+      %Comment{id: comment_id} = insert(:comment)
+      comment_fetched = Events.get_comment!(comment_id)
+      assert comment_fetched.id == comment_id
     end
 
     test "create_comment/1 with valid data creates a comment" do
-      actor = actor_fixture()
+      actor = insert(:actor)
       comment_data = Map.merge(@valid_attrs, %{actor_id: actor.id})
-      assert {:ok, %Comment{} = comment} = Events.create_comment(comment_data)
-      assert comment.text == "some text"
-      assert comment.actor_id == actor.id
+
+      with {:ok, %Comment{} = comment} <- Events.create_comment(comment_data) do
+        assert comment.text == "some text"
+        assert comment.actor_id == actor.id
+      else
+        err ->
+          flunk("Failed to create a comment #{inspect(err)}")
+      end
     end
 
     test "create_comment/1 with invalid data returns error changeset" do
@@ -572,27 +587,31 @@ defmodule Mobilizon.EventsTest do
     end
 
     test "update_comment/2 with valid data updates the comment" do
-      comment = comment_fixture()
-      assert {:ok, comment} = Events.update_comment(comment, @update_attrs)
-      assert %Comment{} = comment
-      assert comment.text == "some updated text"
+      comment = insert(:comment)
+
+      with {:ok, %Comment{} = comment} <- Events.update_comment(comment, @update_attrs) do
+        assert comment.text == "some updated text"
+      else
+        err ->
+          flunk("Failed to update a comment #{inspect(err)}")
+      end
     end
 
     test "update_comment/2 with invalid data returns error changeset" do
-      comment = comment_fixture()
+      comment = insert(:comment)
       assert {:error, %Ecto.Changeset{}} = Events.update_comment(comment, @invalid_attrs)
       comment_fetched = Events.get_comment!(comment.id)
       assert comment = comment_fetched
     end
 
     test "delete_comment/1 deletes the comment" do
-      comment = comment_fixture()
+      comment = insert(:comment)
       assert {:ok, %Comment{}} = Events.delete_comment(comment)
       assert_raise Ecto.NoResultsError, fn -> Events.get_comment!(comment.id) end
     end
 
     test "change_comment/1 returns a comment changeset" do
-      comment = comment_fixture()
+      comment = insert(:comment)
       assert %Ecto.Changeset{} = Events.change_comment(comment)
     end
   end

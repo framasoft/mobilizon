@@ -7,7 +7,6 @@ defmodule Mobilizon.Service.Activitypub.ActivitypubTest do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Actors
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Activity
 
   describe "fetching actor from it's url" do
     test "returns an actor from nickname" do
@@ -40,12 +39,16 @@ defmodule Mobilizon.Service.Activitypub.ActivitypubTest do
   end
 
   describe "fetching an" do
-    test "event by url" do
+    test "object by url" do
       {:ok, object} =
-        ActivityPub.fetch_event_from_url("https://social.tcit.fr/@tcit/99908779444618462")
+        ActivityPub.fetch_object_from_url(
+          "https://social.tcit.fr/users/tcit/statuses/99908779444618462"
+        )
 
       {:ok, object_again} =
-        ActivityPub.fetch_event_from_url("https://social.tcit.fr/@tcit/99908779444618462")
+        ActivityPub.fetch_object_from_url(
+          "https://social.tcit.fr/users/tcit/statuses/99908779444618462"
+        )
 
       assert object == object_again
     end
