@@ -13,11 +13,11 @@ variables:
   GEOLITE_CITIES_PATH: "/builds/tcit/mobilizon/priv/data/GeoLite2-City.mmdb"
 
 cache:
-  key: "$CI_JOB_NAME"
   paths:
     - deps
     - _build
     - .rebar3
+    - js/node_modules
 
 before_script:
   - cd js && npm install && npm run build && cd ../
