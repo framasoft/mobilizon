@@ -1,0 +1,39 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true"
+      },
+      "request_body": "",
+      "url": "https://social.tcit.fr/users/tcit"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://w3id.org/security/v1\",{\"manuallyApprovesFollowers\":\"as:manuallyApprovesFollowers\",\"sensitive\":\"as:sensitive\",\"movedTo\":{\"@id\":\"as:movedTo\",\"@type\":\"@id\"},\"Hashtag\":\"as:Hashtag\",\"ostatus\":\"http://ostatus.org#\",\"atomUri\":\"ostatus:atomUri\",\"inReplyToAtomUri\":\"ostatus:inReplyToAtomUri\",\"conversation\":\"ostatus:conversation\",\"toot\":\"http://joinmastodon.org/ns#\",\"Emoji\":\"toot:Emoji\",\"focalPoint\":{\"@container\":\"@list\",\"@id\":\"toot:focalPoint\"},\"featured\":{\"@id\":\"toot:featured\",\"@type\":\"@id\"},\"schema\":\"http://schema.org#\",\"PropertyValue\":\"schema:PropertyValue\",\"value\":\"schema:value\"}],\"id\":\"https://social.tcit.fr/users/tcit\",\"type\":\"Person\",\"following\":\"https://social.tcit.fr/users/tcit/following\",\"followers\":\"https://social.tcit.fr/users/tcit/followers\",\"inbox\":\"https://social.tcit.fr/users/tcit/inbox\",\"outbox\":\"https://social.tcit.fr/users/tcit/outbox\",\"featured\":\"https://social.tcit.fr/users/tcit/collections/featured\",\"preferredUsername\":\"tcit\",\"name\":\"🦄 Thomas Citharel\",\"summary\":\"\\u003cp\\u003eHoping to make people\\u0026apos;s life better with free software at \\u003cspan class=\\\"h-card\\\"\\u003e\\u003ca href=\\\"https://framapiaf.org/@Framasoft\\\" class=\\\"u-url mention\\\"\\u003e@\\u003cspan\\u003eFramasoft\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/span\\u003e.\\u003c/p\\u003e\",\"url\":\"https://social.tcit.fr/@tcit\",\"manuallyApprovesFollowers\":false,\"publicKey\":{\"id\":\"https://social.tcit.fr/users/tcit#main-key\",\"owner\":\"https://social.tcit.fr/users/tcit\",\"publicKeyPem\":\"-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApXwYMUdFg3XUd+bGsh8C\\nyiMRGpRGAWuCdM5pDWx5uM4pW2pM3xbHbcI21j9h8BmlAiPg6hbZD73KGly2N8Rt\\n5iIS0I+l6i8kA1JCCdlAaDTRd41RKMggZDoQvjVZQtsyE1VzMeU2kbqqTFN6ew7H\\nvbd6O0NhixoKoZ5f3jwuBDZoT0p1TAcaMdmG8oqHD97isizkDnRn8cOBA6wtI+xb\\n5xP2zxZMsLpTDZLiKU8XcPKZCw4OfQfmDmKkHtrFb77jCAQj/s/FxjVnvxRwmfhN\\nnWy0D+LUV/g63nHh/b5zXIeV92QZLvDYbgbezmzUzv9UeA1s70GGbaDqCIy85gw9\\n+wIDAQAB\\n-----END PUBLIC KEY-----\\n\"},\"tag\":[],\"attachment\":[{\"type\":\"PropertyValue\",\"name\":\"Works at\",\"value\":\"\\u003cspan class=\\\"h-card\\\"\\u003e\\u003ca href=\\\"https://framapiaf.org/@Framasoft\\\" class=\\\"u-url mention\\\"\\u003e@\\u003cspan\\u003eFramasoft\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/span\\u003e\"},{\"type\":\"PropertyValue\",\"name\":\"Pronouns\",\"value\":\"He/Him\"},{\"type\":\"PropertyValue\",\"name\":\"Work Account\",\"value\":\"\\u003cspan class=\\\"h-card\\\"\\u003e\\u003ca href=\\\"https://framapiaf.org/@tcit\\\" class=\\\"u-url mention\\\"\\u003e@\\u003cspan\\u003etcit\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/span\\u003e\"},{\"type\":\"PropertyValue\",\"name\":\"Pixelfed Account\",\"value\":\"@tcit@pix.tcit.fr\"}],\"endpoints\":{\"sharedInbox\":\"https://social.tcit.fr/inbox\"},\"icon\":{\"type\":\"Image\",\"mediaType\":\"image/jpeg\",\"url\":\"https://media.social.tcit.fr/mastodontcit/accounts/avatars/000/000/001/original/a28c50ce5f2b13fd.jpg\"},\"image\":{\"type\":\"Image\",\"mediaType\":\"image/jpeg\",\"url\":\"https://media.social.tcit.fr/mastodontcit/accounts/headers/000/000/001/original/4d1ab77c20265ee9.jpg\"}}",
+      "headers": {
+        "Date": "Tue, 13 Nov 2018 11:29:32 GMT",
+        "Content-Type": "application/activity+json; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Server": "Mastodon",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Link": "<https://social.tcit.fr/.well-known/webfinger?resource=acct%3Atcit%40social.tcit.fr>; rel=\"lrdd\"; type=\"application/xrd+xml\", <https://social.tcit.fr/users/tcit.atom>; rel=\"alternate\"; type=\"application/atom+xml\", <https://social.tcit.fr/users/tcit>; rel=\"alternate\"; type=\"application/activity+json\"",
+        "Vary": "Accept,Accept-Encoding",
+        "Cache-Control": "max-age=180, public",
+        "ETag": "W/\"928f8a090d8c180ccc82fc1699f6c2a5\"",
+        "X-Request-Id": "ab17a9c9-7dd4-4f21-b70a-e35a3ca02b90",
+        "X-Runtime": "0.052812",
+        "X-Cached": "MISS"
+      },
+      "status_code": 410,
+      "type": "ok"
+    }
+  }
+]

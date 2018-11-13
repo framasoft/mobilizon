@@ -91,12 +91,12 @@ defmodule Mobilizon.ActorsTest do
     test "get_actor_by_name/1 returns a remote actor" do
       use_cassette "actors/remote_actor_mastodon_tcit" do
         with {:ok,
-              %Actor{id: actor_id, preferred_username: preferred_username, domain: domain} = _actor} <-
-              Actors.get_or_fetch_by_url(@remote_account_url),
-            %Actor{id: actor_found_id} <-
-              Actors.get_actor_by_name("#{preferred_username}@#{domain}").id do
+              %Actor{id: actor_id, preferred_username: preferred_username, domain: domain} =
+                _actor} <- Actors.get_or_fetch_by_url(@remote_account_url),
+             %Actor{id: actor_found_id} <-
+               Actors.get_actor_by_name("#{preferred_username}@#{domain}").id do
           assert actor_found_id == actor_id
-          end
+        end
       end
     end
 
@@ -138,13 +138,15 @@ defmodule Mobilizon.ActorsTest do
       use_cassette "actors/remote_actor_mastodon_tcit" do
         with {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(@remote_account_url) do
           assert Actors.get_actor_by_name_with_everything(
-                  "#{actor.preferred_username}@#{actor.domain}"
-                ).organized_events == []
+                   "#{actor.preferred_username}@#{actor.domain}"
+                 ).organized_events == []
 
           event = insert(:event, organizer_actor: actor)
 
           event_found_id =
-            Actors.get_actor_by_name_with_everything("#{actor.preferred_username}@#{actor.domain}").organized_events
+            Actors.get_actor_by_name_with_everything(
+              "#{actor.preferred_username}@#{actor.domain}"
+            ).organized_events
             |> hd
             |> Map.get(:id)
 
@@ -165,7 +167,7 @@ defmodule Mobilizon.ActorsTest do
     test "get_or_fetch_by_url/1 returns the remote actor for the url" do
       use_cassette "actors/remote_actor_mastodon_tcit" do
         with {:ok, %Actor{preferred_username: preferred_username, domain: domain}} <-
-              Actors.get_or_fetch_by_url!(@remote_account_url) do
+               Actors.get_or_fetch_by_url!(@remote_account_url) do
           assert preferred_username == @remote_account_username
           assert domain == @remote_account_domain
         end
@@ -230,6 +232,12 @@ defmodule Mobilizon.ActorsTest do
     test "test get_public_key_for_url/1 with remote actor" do
       use_cassette "actors/remote_actor_mastodon_tcit" do
         assert Actor.get_public_key_for_url(@remote_account_url) == @remote_actor_key
+      end
+    end
+
+    test "test get_public_key_for_url/1 with remote actor and bad key" do
+      use_cassette "actors/remote_actor_mastodon_tcit_actor_deleted" do
+        assert Actor.get_public_key_for_url(@remote_account_url) == {:error, :actor_fetch_error}
       end
     end
 
