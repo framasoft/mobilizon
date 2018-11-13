@@ -5,6 +5,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
   alias Mobilizon.Actors
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Utils
+  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
   describe "/@:preferred_username" do
     test "it returns a json representation of the actor", %{conn: conn} do
@@ -48,17 +49,19 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
   describe "/@:preferred_username/inbox" do
     test "it inserts an incoming event into the database", %{conn: conn} do
-      data = File.read!("test/fixtures/mastodon-post-activity.json") |> Poison.decode!()
+      use_cassette "activity_pub_controller/mastodon-post-activity_actor_call" do
+        data = File.read!("test/fixtures/mastodon-post-activity.json") |> Poison.decode!()
 
-      conn =
-        conn
-        |> assign(:valid_signature, true)
-        |> put_req_header("content-type", "application/activity+json")
-        |> post("/inbox", data)
+        conn =
+          conn
+          |> assign(:valid_signature, true)
+          |> put_req_header("content-type", "application/activity+json")
+          |> post("/inbox", data)
 
-      assert "ok" == json_response(conn, 200)
-      :timer.sleep(500)
-      assert ActivityPub.fetch_object_from_url(data["object"]["id"])
+        assert "ok" == json_response(conn, 200)
+        :timer.sleep(500)
+        assert ActivityPub.fetch_object_from_url(data["object"]["id"])
+      end
     end
   end
 

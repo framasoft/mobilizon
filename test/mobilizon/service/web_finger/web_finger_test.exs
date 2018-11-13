@@ -3,6 +3,17 @@ defmodule Mobilizon.Service.WebFingerTest do
   alias Mobilizon.Service.WebFinger
   import Mobilizon.Factory
 
+  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+
+  @mastodon_account "tcit@social.tcit.fr"
+  @mastodon_account_username "tcit"
+  @pleroma_account "lain@pleroma.soykaf.com"
+  @pleroma_account_username "lain"
+  @peertube_account "framasoft@framatube.org"
+  @peertube_account_username "framasoft"
+  @friendica_account "lain@squeet.me"
+  @friendica_account_username "lain"
+
   describe "host meta" do
     test "returns a link to the xml lrdd" do
       host_info = WebFinger.host_meta()
@@ -31,39 +42,47 @@ defmodule Mobilizon.Service.WebFingerTest do
 
   describe "fingering" do
     test "a mastodon actor" do
-      actor = "tcit@social.tcit.fr"
+      use_cassette "webfinger/mastodon" do
+        res = %{
+          "subject" => "acct:" <> @mastodon_account,
+          "url" => "https://social.tcit.fr/users/#{@mastodon_account_username}"
+        }
 
-      assert {:ok, %{"subject" => "acct:" <> actor, "url" => "https://social.tcit.fr/users/tcit"}} =
-               WebFinger.finger(actor)
+        assert {:ok, res} == WebFinger.finger(@mastodon_account)
+      end
     end
 
     test "a pleroma actor" do
-      actor = "@lain@pleroma.soykaf.com"
+      use_cassette "webfinger/pleroma" do
+        res = %{
+          "subject" => "acct:" <> @pleroma_account,
+          "url" => "https://pleroma.soykaf.com/users/#{@pleroma_account_username}"
+        }
 
-      assert {:ok,
-              %{"subject" => "acct:" <> actor, "url" => "https://pleroma.soykaf.com/users/lain"}} =
-               WebFinger.finger(actor)
+        assert {:ok, res} == WebFinger.finger(@pleroma_account)
+      end
     end
 
     test "a peertube actor" do
-      actor = "framasoft@framatube.org"
+      use_cassette "webfinger/peertube" do
+        res = %{
+          "subject" => "acct:" <> @peertube_account,
+          "url" => "https://framatube.org/accounts/#{@peertube_account_username}"
+        }
 
-      assert {:ok,
-              %{
-                "subject" => "acct:" <> actor,
-                "url" => "https://framatube.org/accounts/framasoft"
-              }} = WebFinger.finger(actor)
+        assert {:ok, res} == WebFinger.finger(@peertube_account)
+      end
     end
 
     test "a friendica actor" do
-      # Now with ActivityPub !
-      actor = "lain@squeet.me"
+      use_cassette "webfinger/friendica" do
+        res = %{
+          "subject" => "acct:" <> @friendica_account,
+          "url" => "https://squeet.me/profile/#{@friendica_account_username}"
+        }
 
-      assert {:ok,
-              %{
-                "subject" => "acct:" <> actor,
-                "url" => "https://squeet.me/profile/lain"
-              }} = WebFinger.finger(actor)
+        assert {:ok, res} == WebFinger.finger(@friendica_account)
+      end
     end
   end
 end

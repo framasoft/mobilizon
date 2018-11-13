@@ -1,0 +1,38 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/json, application/activity+json, application/jrd+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true"
+      },
+      "request_body": "",
+      "url": "http://framatube.org/.well-known/webfinger?resource=acct:framasoft@framatube.org"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"subject\":\"acct:framasoft@framatube.org\",\"aliases\":[\"https://framatube.org/accounts/framasoft\"],\"links\":[{\"rel\":\"self\",\"type\":\"application/activity+json\",\"href\":\"https://framatube.org/accounts/framasoft\"}]}",
+      "headers": {
+        "Server": "nginx/1.10.3",
+        "Date": "Tue, 13 Nov 2018 11:11:11 GMT",
+        "Content-Type": "application/json; charset=utf-8",
+        "Content-Length": "207",
+        "Connection": "keep-alive",
+        "X-DNS-Prefetch-Control": "off",
+        "X-Frame-Options": "DENY",
+        "X-Download-Options": "noopen",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Tk": "N",
+        "ETag": "W/\"cf-VoWlsif7OQ4xxqki7jRAnOPKRes\"",
+        "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+        "X-Robots-Tag": "none"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

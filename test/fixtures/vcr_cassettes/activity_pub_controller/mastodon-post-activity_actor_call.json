@@ -1,0 +1,40 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true"
+      },
+      "request_body": "",
+      "url": "http://framapiaf.org/users/admin"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://w3id.org/security/v1\",{\"manuallyApprovesFollowers\":\"as:manuallyApprovesFollowers\",\"sensitive\":\"as:sensitive\",\"movedTo\":{\"@id\":\"as:movedTo\",\"@type\":\"@id\"},\"Hashtag\":\"as:Hashtag\",\"ostatus\":\"http://ostatus.org#\",\"atomUri\":\"ostatus:atomUri\",\"inReplyToAtomUri\":\"ostatus:inReplyToAtomUri\",\"conversation\":\"ostatus:conversation\",\"toot\":\"http://joinmastodon.org/ns#\",\"Emoji\":\"toot:Emoji\",\"focalPoint\":{\"@container\":\"@list\",\"@id\":\"toot:focalPoint\"},\"featured\":{\"@id\":\"toot:featured\",\"@type\":\"@id\"},\"schema\":\"http://schema.org#\",\"PropertyValue\":\"schema:PropertyValue\",\"value\":\"schema:value\"}],\"id\":\"https://framapiaf.org/users/admin\",\"type\":\"Person\",\"following\":\"https://framapiaf.org/users/admin/following\",\"followers\":\"https://framapiaf.org/users/admin/followers\",\"inbox\":\"https://framapiaf.org/users/admin/inbox\",\"outbox\":\"https://framapiaf.org/users/admin/outbox\",\"featured\":\"https://framapiaf.org/users/admin/collections/featured\",\"preferredUsername\":\"admin\",\"name\":\"\",\"summary\":\"\\u003cp\\u003e\\u003c/p\\u003e\",\"url\":\"https://framapiaf.org/@admin\",\"manuallyApprovesFollowers\":false,\"publicKey\":{\"id\":\"https://framapiaf.org/users/admin#main-key\",\"owner\":\"https://framapiaf.org/users/admin\",\"publicKeyPem\":\"-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyHaU/AZ5dWtSxZXkPa89\\nDUQ4z+JQHGGUG/xkGuq0v8P6qJfQqtHPBO5vH0IQJqluXWQS96gqTwjZnYevcpNA\\nveYv0K25DWszx5Ehz6JX2/sSvu2rNUcQ3YZvSjdo/Yy1u5Fuc5lLmvw8uFzXYekD\\nWovTMOnp4mIKpVEm/G/v4w8jvFEKw88h743vwaEIim88GEQItMxzGAV6zSqV1DWO\\nLxtoRsinslJYfAG46ex4YUATFveWvOUeWk5W1sEa5f3c0moaTmBM/PAAo8vLxhlw\\nJhsHihsCH+BcXKVMjW8OCqYYqISMxEifUBX63HcJt78ELHpOuc1c2eG59PomtTjQ\\nywIDAQAB\\n-----END PUBLIC KEY-----\\n\"},\"tag\":[],\"attachment\":[],\"endpoints\":{\"sharedInbox\":\"https://framapiaf.org/inbox\"}}",
+      "headers": {
+        "Date": "Tue, 13 Nov 2018 11:22:02 GMT",
+        "Content-Type": "application/activity+json; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Server": "Mastodon",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Link": "<https://framapiaf.org/.well-known/webfinger?resource=acct%3Aadmin%40framapiaf.org>; rel=\"lrdd\"; type=\"application/xrd+xml\", <https://framapiaf.org/users/admin.atom>; rel=\"alternate\"; type=\"application/atom+xml\", <https://framapiaf.org/users/admin>; rel=\"alternate\"; type=\"application/activity+json\"",
+        "Vary": "Accept,Accept-Encoding",
+        "Cache-Control": "max-age=180, public",
+        "ETag": "W/\"82f88eaea909e6c3f20f908ad16e4b54\"",
+        "X-Request-Id": "cef423e2-d143-422f-94b0-03450f70a32d",
+        "X-Runtime": "0.005097",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Referrer-Policy": "same-origin"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

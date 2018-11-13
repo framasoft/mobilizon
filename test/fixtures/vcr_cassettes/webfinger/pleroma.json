@@ -1,0 +1,43 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/json, application/activity+json, application/jrd+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true"
+      },
+      "request_body": "",
+      "url": "http://pleroma.soykaf.com/.well-known/webfinger?resource=acct:lain@pleroma.soykaf.com"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"aliases\":[\"https://pleroma.soykaf.com/users/lain\"],\"links\":[{\"href\":\"https://pleroma.soykaf.com/users/lain/feed.atom\",\"rel\":\"http://schemas.google.com/g/2010#updates-from\",\"type\":\"application/atom+xml\"},{\"href\":\"https://pleroma.soykaf.com/users/lain\",\"rel\":\"http://webfinger.net/rel/profile-page\",\"type\":\"text/html\"},{\"href\":\"https://pleroma.soykaf.com/users/lain/salmon\",\"rel\":\"salmon\"},{\"href\":\"data:application/magic-public-key,RSA.u39dKLin8N4PywPvasEGXstOMsgg9m1OEKnpfHnSHqc6UOtIPs5-aI_LcLbhIEH2EVl6jstvtqMIloPch1FizZ3OBiKz81dXTiEZ3NfKgj_GJfIlipChAadxrmUyWT_Pr0qPaF1vhPrkSTwR8iDNUiQ-OEggRPpJVkJ619MXNdsJE59yklZiD1WY0vC9aG9m-dh0BANKNwSjwfZ3uFjDh0UosMATKjPTSO_I59nK_lArex_jAwTnVm6Dryk2qR2XXZyzTzZAHuYqSM77RlsNTJUCOaSadl816eZAvU3TF-ibIou0D-0sN-M-QehRh93sVJ95U40GQz8jOGc_5wK8xw==.AQAB\",\"rel\":\"magic-public-key\"},{\"href\":\"https://pleroma.soykaf.com/users/lain\",\"rel\":\"self\",\"type\":\"application/activity+json\"},{\"href\":\"https://pleroma.soykaf.com/users/lain\",\"rel\":\"self\",\"type\":\"application/ld+json; profile=\\\"https://www.w3.org/ns/activitystreams\\\"\"},{\"rel\":\"http://ostatus.org/schema/1.0/subscribe\",\"template\":\"https://pleroma.soykaf.com/ostatus_subscribe?acct={uri}\"}],\"subject\":\"acct:lain@pleroma.soykaf.com\"}",
+      "headers": {
+        "Server": "nginx/1.10.3",
+        "Date": "Tue, 13 Nov 2018 11:11:11 GMT",
+        "Content-Type": "application/json; charset=utf-8",
+        "Content-Length": "1214",
+        "Connection": "keep-alive",
+        "Vary": "Accept-Encoding",
+        "cache-control": "max-age=0, private, must-revalidate",
+        "x-request-id": "2ljal4oljell0gfni41am571",
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "",
+        "access-control-allow-credentials": "true",
+        "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Authorization, Content-Type",
+        "X-XSS-Protection": "1; mode=block",
+        "X-Permitted-Cross-Domain-Policies": "none",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "same-origin",
+        "X-Download-Options": "noopen"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

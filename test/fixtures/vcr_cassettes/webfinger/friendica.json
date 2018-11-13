@@ -1,0 +1,35 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/json, application/activity+json, application/jrd+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true"
+      },
+      "request_body": "",
+      "url": "http://squeet.me/.well-known/webfinger?resource=acct:lain@squeet.me"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"subject\":\"acct:lain@squeet.me\",\"aliases\":[\"https:\\/\\/squeet.me\\/~lain\",\"https:\\/\\/squeet.me\\/profile\\/lain\"],\"links\":[{\"rel\":\"http:\\/\\/purl.org\\/macgirvin\\/dfrn\\/1.0\",\"href\":\"https:\\/\\/squeet.me\\/profile\\/lain\"},{\"rel\":\"http:\\/\\/schemas.google.com\\/g\\/2010#updates-from\",\"type\":\"application\\/atom+xml\",\"href\":\"https:\\/\\/squeet.me\\/dfrn_poll\\/lain\"},{\"rel\":\"http:\\/\\/webfinger.net\\/rel\\/profile-page\",\"type\":\"text\\/html\",\"href\":\"https:\\/\\/squeet.me\\/profile\\/lain\"},{\"rel\":\"self\",\"type\":\"application\\/activity+json\",\"href\":\"https:\\/\\/squeet.me\\/profile\\/lain\"},{\"rel\":\"http:\\/\\/microformats.org\\/profile\\/hcard\",\"type\":\"text\\/html\",\"href\":\"https:\\/\\/squeet.me\\/hcard\\/lain\"},{\"rel\":\"http:\\/\\/portablecontacts.net\\/spec\\/1.0\",\"href\":\"https:\\/\\/squeet.me\\/poco\\/lain\"},{\"rel\":\"http:\\/\\/webfinger.net\\/rel\\/avatar\",\"type\":\"image\\/jpeg\",\"href\":\"https:\\/\\/squeet.me\\/photo\\/profile\\/301.jpg\"},{\"rel\":\"http:\\/\\/joindiaspora.com\\/seed_location\",\"type\":\"text\\/html\",\"href\":\"https:\\/\\/squeet.me\"},{\"rel\":\"salmon\",\"href\":\"https:\\/\\/squeet.me\\/salmon\\/lain\"},{\"rel\":\"http:\\/\\/salmon-protocol.org\\/ns\\/salmon-replies\",\"href\":\"https:\\/\\/squeet.me\\/salmon\\/lain\"},{\"rel\":\"http:\\/\\/salmon-protocol.org\\/ns\\/salmon-mention\",\"href\":\"https:\\/\\/squeet.me\\/salmon\\/lain\\/mention\"},{\"rel\":\"http:\\/\\/ostatus.org\\/schema\\/1.0\\/subscribe\",\"template\":\"https:\\/\\/squeet.me\\/follow?url={uri}\"},{\"rel\":\"magic-public-key\",\"href\":\"data:application\\/magic-public-key,RSA.AMwa8FUs2fWEjX0xN7yRQgegQffhBpuKNC6fa5VNSVorFjGZhRrlPMn7TQOeihlc9lBz2OsHlIedbYn2uJ7yCs0.AQAB\"},{\"rel\":\"http:\\/\\/purl.org\\/openwebauth\\/v1\",\"type\":\"application\\/x-dfrn+json\",\"href\":\"https:\\/\\/squeet.me\\/owa\"}]}",
+      "headers": {
+        "Date": "Tue, 13 Nov 2018 11:11:09 GMT",
+        "Server": "Apache",
+        "Expires": "Thu, 19 Nov 1981 08:52:00 GMT",
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+        "Pragma": "no-cache",
+        "X-Account-Management-Status": "none",
+        "Access-Control-Allow-Origin": "*",
+        "Set-Cookie": "PHPSESSID=330arcps63iok272c5hqdsfhp3; path=/; secure; HttpOnly",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Content-Type": "application/json; charset=utf-8"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

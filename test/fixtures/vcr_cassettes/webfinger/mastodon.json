@@ -1,0 +1,38 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/json, application/activity+json, application/jrd+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true"
+      },
+      "request_body": "",
+      "url": "http://social.tcit.fr/.well-known/webfinger?resource=acct:tcit@social.tcit.fr"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"subject\":\"acct:tcit@social.tcit.fr\",\"aliases\":[\"https://social.tcit.fr/@tcit\",\"https://social.tcit.fr/users/tcit\"],\"links\":[{\"rel\":\"http://webfinger.net/rel/profile-page\",\"type\":\"text/html\",\"href\":\"https://social.tcit.fr/@tcit\"},{\"rel\":\"http://schemas.google.com/g/2010#updates-from\",\"type\":\"application/atom+xml\",\"href\":\"https://social.tcit.fr/users/tcit.atom\"},{\"rel\":\"self\",\"type\":\"application/activity+json\",\"href\":\"https://social.tcit.fr/users/tcit\"},{\"rel\":\"salmon\",\"href\":\"https://social.tcit.fr/api/salmon/1\"},{\"rel\":\"magic-public-key\",\"href\":\"data:application/magic-public-key,RSA.pXwYMUdFg3XUd-bGsh8CyiMRGpRGAWuCdM5pDWx5uM4pW2pM3xbHbcI21j9h8BmlAiPg6hbZD73KGly2N8Rt5iIS0I-l6i8kA1JCCdlAaDTRd41RKMggZDoQvjVZQtsyE1VzMeU2kbqqTFN6ew7Hvbd6O0NhixoKoZ5f3jwuBDZoT0p1TAcaMdmG8oqHD97isizkDnRn8cOBA6wtI-xb5xP2zxZMsLpTDZLiKU8XcPKZCw4OfQfmDmKkHtrFb77jCAQj_s_FxjVnvxRwmfhNnWy0D-LUV_g63nHh_b5zXIeV92QZLvDYbgbezmzUzv9UeA1s70GGbaDqCIy85gw9-w==.AQAB\"},{\"rel\":\"http://ostatus.org/schema/1.0/subscribe\",\"template\":\"https://social.tcit.fr/authorize_interaction?uri={uri}\"}]}",
+      "headers": {
+        "Date": "Tue, 13 Nov 2018 11:11:10 GMT",
+        "Content-Type": "application/jrd+json; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Server": "Mastodon",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Vary": "Accept, Accept-Encoding, Origin",
+        "Cache-Control": "max-age=259200, public",
+        "ETag": "W/\"33f6cc86f8f97d0ca930761c04e0db58\"",
+        "X-Request-Id": "b7f5ad84-5120-4275-aacf-dbb9654be181",
+        "X-Runtime": "0.015609",
+        "X-Cached": "MISS"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

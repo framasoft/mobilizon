@@ -23,3 +23,6 @@ config :mobilizon, Mobilizon.Repo,
   types: Mobilizon.PostgresTypes
 
 config :mobilizon, Mobilizon.Mailer, adapter: Bamboo.TestAdapter
+
+config :exvcr,
+  vcr_cassette_library_dir: "test/fixtures/vcr_cassettes"

@@ -7,16 +7,25 @@ defmodule Mobilizon.Service.Activitypub.ActivitypubTest do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Actors
   alias Mobilizon.Service.ActivityPub
+  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+
+  setup_all do
+    HTTPoison.start()
+  end
 
   describe "fetching actor from it's url" do
     test "returns an actor from nickname" do
-      assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"} = actor} =
-               ActivityPub.make_actor_from_nickname("tcit@framapiaf.org")
+      use_cassette "activity_pub/fetch_tcit@framapiaf.org" do
+        assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"} = actor} =
+                 ActivityPub.make_actor_from_nickname("tcit@framapiaf.org")
+      end
     end
 
     test "returns an actor from url" do
-      assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"}} =
-               Actors.get_or_fetch_by_url("https://framapiaf.org/users/tcit")
+      use_cassette "activity_pub/fetch_framapiaf.org_users_tcit" do
+        assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"}} =
+                 Actors.get_or_fetch_by_url("https://framapiaf.org/users/tcit")
+      end
     end
   end
 
@@ -40,17 +49,19 @@ defmodule Mobilizon.Service.Activitypub.ActivitypubTest do
 
   describe "fetching an" do
     test "object by url" do
-      {:ok, object} =
-        ActivityPub.fetch_object_from_url(
-          "https://social.tcit.fr/users/tcit/statuses/99908779444618462"
-        )
+      use_cassette "activity_pub/fetch_social_tcit_fr_status" do
+        {:ok, object} =
+          ActivityPub.fetch_object_from_url(
+            "https://social.tcit.fr/users/tcit/statuses/99908779444618462"
+          )
 
-      {:ok, object_again} =
-        ActivityPub.fetch_object_from_url(
-          "https://social.tcit.fr/users/tcit/statuses/99908779444618462"
-        )
+        {:ok, object_again} =
+          ActivityPub.fetch_object_from_url(
+            "https://social.tcit.fr/users/tcit/statuses/99908779444618462"
+          )
 
-      assert object == object_again
+        assert object == object_again
+      end
     end
   end
 

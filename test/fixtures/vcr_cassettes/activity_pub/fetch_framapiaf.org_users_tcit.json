@@ -1,0 +1,40 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true"
+      },
+      "request_body": "",
+      "url": "https://framapiaf.org/users/tcit"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://w3id.org/security/v1\",{\"manuallyApprovesFollowers\":\"as:manuallyApprovesFollowers\",\"sensitive\":\"as:sensitive\",\"movedTo\":{\"@id\":\"as:movedTo\",\"@type\":\"@id\"},\"Hashtag\":\"as:Hashtag\",\"ostatus\":\"http://ostatus.org#\",\"atomUri\":\"ostatus:atomUri\",\"inReplyToAtomUri\":\"ostatus:inReplyToAtomUri\",\"conversation\":\"ostatus:conversation\",\"toot\":\"http://joinmastodon.org/ns#\",\"Emoji\":\"toot:Emoji\",\"focalPoint\":{\"@container\":\"@list\",\"@id\":\"toot:focalPoint\"},\"featured\":{\"@id\":\"toot:featured\",\"@type\":\"@id\"},\"schema\":\"http://schema.org#\",\"PropertyValue\":\"schema:PropertyValue\",\"value\":\"schema:value\"}],\"id\":\"https://framapiaf.org/users/tcit\",\"type\":\"Person\",\"following\":\"https://framapiaf.org/users/tcit/following\",\"followers\":\"https://framapiaf.org/users/tcit/followers\",\"inbox\":\"https://framapiaf.org/users/tcit/inbox\",\"outbox\":\"https://framapiaf.org/users/tcit/outbox\",\"featured\":\"https://framapiaf.org/users/tcit/collections/featured\",\"preferredUsername\":\"tcit\",\"name\":\"💼 Thomas Citharel\",\"summary\":\"\\u003cp\\u003e[Professionnal account] See \\u003cspan class=\\\"h-card\\\"\\u003e\\u003ca href=\\\"https://social.tcit.fr/@tcit\\\" class=\\\"u-url mention\\\"\\u003e@\\u003cspan\\u003etcit\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/span\\u003e for personnal stuff. At frama doing framathings.\\u003c/p\\u003e\",\"url\":\"https://framapiaf.org/@tcit\",\"manuallyApprovesFollowers\":false,\"publicKey\":{\"id\":\"https://framapiaf.org/users/tcit#main-key\",\"owner\":\"https://framapiaf.org/users/tcit\",\"publicKeyPem\":\"-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApscVCt06lrIiB5jT6Kqk\\nZZwPVoPkhR7HzoTGb8rnklZuOyP4goHIuBDnurklztkmDCaM7DbsUWAPgRVtwWFE\\nWuQrOenb7BPRe/m99pJfUTkBQU3IeuRMD/5Fc3OTIhHQOltTSiB900srCUxjysfw\\nnV5JFciCz8YAXTNJZD34qyv8DbtC/pCJM7wMd9Hl3ohxSPETa6CJUaTdlNwlYJa2\\nMOMCj6/7Iv5oAg14FT9lwqS5lF7jPHk9Z7PNc2wPmNVgIYA2n9d5k7JY8TdM8iu4\\nHLnIbJuqDd1uitlYgy1qsdsxjv4U2Y7Nytc+3ZKHtGsCzUltYL5kC7uWrFpGoWo1\\n0QIDAQAB\\n-----END PUBLIC KEY-----\\n\"},\"tag\":[],\"attachment\":[{\"type\":\"PropertyValue\",\"name\":\"Personnal account\",\"value\":\"\\u003cspan class=\\\"h-card\\\"\\u003e\\u003ca href=\\\"https://social.tcit.fr/@tcit\\\" class=\\\"u-url mention\\\"\\u003e@\\u003cspan\\u003etcit\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/span\\u003e\"},{\"type\":\"PropertyValue\",\"name\":\"Work\",\"value\":\"\\u003cspan class=\\\"h-card\\\"\\u003e\\u003ca href=\\\"https://framapiaf.org/@Framasoft\\\" class=\\\"u-url mention\\\"\\u003e@\\u003cspan\\u003eFramasoft\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/span\\u003e\"},{\"type\":\"PropertyValue\",\"name\":\"Location\",\"value\":\"Nantes, France\"}],\"endpoints\":{\"sharedInbox\":\"https://framapiaf.org/inbox\"},\"icon\":{\"type\":\"Image\",\"mediaType\":\"image/jpeg\",\"url\":\"https://framapiaf.org/system/accounts/avatars/000/000/001/original/da0cad7ffd20eb61.jpg?1491844231\"},\"image\":{\"type\":\"Image\",\"mediaType\":\"image/jpeg\",\"url\":\"https://framapiaf.org/system/accounts/headers/000/000/001/original/198d058b3086d82d.jpg?1491844231\"}}",
+      "headers": {
+        "Date": "Tue, 13 Nov 2018 11:00:23 GMT",
+        "Content-Type": "application/activity+json; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Server": "Mastodon",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Link": "<https://framapiaf.org/.well-known/webfinger?resource=acct%3Atcit%40framapiaf.org>; rel=\"lrdd\"; type=\"application/xrd+xml\", <https://framapiaf.org/users/tcit.atom>; rel=\"alternate\"; type=\"application/atom+xml\", <https://framapiaf.org/users/tcit>; rel=\"alternate\"; type=\"application/activity+json\"",
+        "Vary": "Accept,Accept-Encoding",
+        "Cache-Control": "max-age=180, public",
+        "ETag": "W/\"473bf1a80cea53496b5f1e968123a01b\"",
+        "X-Request-Id": "e5d89c8d-2052-4f72-8e2b-0192456a0c67",
+        "X-Runtime": "0.004232",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Referrer-Policy": "same-origin"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
