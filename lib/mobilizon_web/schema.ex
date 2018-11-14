@@ -14,51 +14,51 @@ defmodule MobilizonWeb.Schema do
 
   @desc "An ActivityPub actor"
   object :actor do
-    field(:url, :string)
-    field(:outbox_url, :string)
-    field(:inbox_url, :string)
-    field(:following_url, :string)
-    field(:followers_url, :string)
-    field(:shared_inbox_url, :string)
-    field(:type, :actor_type)
-    field(:name, :string)
-    field(:domain, :string)
-    field(:summary, :string)
-    field(:preferred_username, :string)
-    field(:keys, :string)
-    field(:manually_approves_followers, :boolean)
-    field(:suspended, :boolean)
-    field(:avatar_url, :string)
-    field(:banner_url, :string)
+    field(:url, :string, description: "The ActivityPub actor's URL")
+    # We probably don't need all of that
+    # field(:outbox_url, :string, description: "The ActivityPub actor outbox_url")
+    # field(:inbox_url, :string)
+    # field(:following_url, :string)
+    # field(:followers_url, :string)
+    # field(:shared_inbox_url, :string)
+    field(:type, :actor_type, description: "The type of Actor (Person, Group,…)")
+    field(:name, :string, description: "The actor's displayed name")
+    field(:domain, :string, description: "The actor's domain if (null if it's this instance)")
+    field(:summary, :string, description: "The actor's summary")
+    field(:preferred_username, :string, description: "The actor's preferred username")
+    field(:keys, :string, description: "The actors RSA Keys")
+    field(:manually_approves_followers, :boolean, description: "Whether the actors manually approves followers")
+    field(:suspended, :boolean, description: "If the actor is suspended")
+    field(:avatar_url, :string, description: "The actor's avatar url")
+    field(:banner_url, :string, description: "The actor's banner url")
     # field(:followers, list_of(:follower))
-    field :organized_events, list_of(:event) do
-      resolve(dataloader(Events))
-    end
+    field(:organized_events, list_of(:event), resolve: dataloader(Events), description: "A list of the events this actor has organized")
 
     # field(:memberships, list_of(:member))
-    field(:user, :user)
+    field(:user, :user, description: "The user this actor is associated to")
   end
 
+  @desc "The list of types an actor can be"
   enum :actor_type do
-    value(:Person)
-    value(:Application)
-    value(:Group)
-    value(:Organization)
-    value(:Service)
+    value(:Person, description: "An ActivityPub Person")
+    value(:Application, description: "An ActivityPub Application")
+    value(:Group, description: "An ActivityPub Group")
+    value(:Organization, description: "An ActivityPub Organization")
+    value(:Service, description: "An ActivityPub Service")
   end
 
   @desc "A local user of Mobilizon"
   object :user do
-    field(:id, non_null(:id))
-    field(:email, non_null(:string))
+    field(:id, non_null(:id), description: "The user's ID")
+    field(:email, non_null(:string), description: "The user's email")
     # , resolve: dataloader(:actors))
-    field(:actors, non_null(list_of(:actor)))
-    field(:default_actor_id, non_null(:integer))
-    field(:confirmed_at, :datetime)
-    field(:confirmation_sent_at, :datetime)
-    field(:confirmation_token, :string)
-    field(:reset_password_sent_at, :datetime)
-    field(:reset_password_token, :string)
+    field(:actors, non_null(list_of(:actor)), description: "The user's list of actors (identities)")
+    field(:default_actor_id, non_null(:integer), description: "The user's default actor")
+    field(:confirmed_at, :datetime, description: "The datetime when the user was confirmed/activated")
+    field(:confirmation_sent_at, :datetime, description: "The datetime the last activation/confirmation token was sent")
+    field(:confirmation_token, :string, description: "The account activation/confirmation token")
+    field(:reset_password_sent_at, :datetime, description: "The datetime last reset password email was sent")
+    field(:reset_password_token, :string, description: "The token sent when requesting password token")
   end
 
   @desc "A JWT and the associated user ID"
@@ -115,6 +115,7 @@ defmodule MobilizonWeb.Schema do
     field(:role, :integer)
   end
 
+  @desc "The list of types an address can be"
   enum :address_type do
     value(:physical)
     value(:url)
@@ -212,9 +213,7 @@ defmodule MobilizonWeb.Schema do
       resolve(&Resolvers.Actor.find_actor/3)
     end
 
-    @doc """
-    Get the list of categories
-    """
+    @desc "Get the list of categories"
     field :categories, list_of(:category) do
       resolve(&Resolvers.Category.list_categories/3)
     end
@@ -242,9 +241,7 @@ defmodule MobilizonWeb.Schema do
       resolve(&Resolvers.Event.create_event/3)
     end
 
-    @doc """
-    Create a category with a title, description and picture
-    """
+    @desc "Create a category with a title, description and picture"
     field :create_category, type: :category do
       arg(:title, non_null(:string))
       arg(:description, non_null(:string))
@@ -274,18 +271,14 @@ defmodule MobilizonWeb.Schema do
       resolve(&Resolvers.User.resend_confirmation_email/3)
     end
 
-    @doc """
-    Send a link through email to reset user password
-    """
+    @desc "Send a link through email to reset user password"
     field :send_reset_password, type: :string do
       arg(:email, non_null(:string))
       arg(:locale, :string, default_value: "en")
       resolve(&Resolvers.User.send_reset_password/3)
     end
 
-    @doc """
-    Reset user password
-    """
+    @desc "Reset user password"
     field :reset_password, type: :login do
       arg(:token, non_null(:string))
       arg(:password, non_null(:string))
