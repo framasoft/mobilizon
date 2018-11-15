@@ -27,12 +27,19 @@ defmodule MobilizonWeb.Schema do
     field(:summary, :string, description: "The actor's summary")
     field(:preferred_username, :string, description: "The actor's preferred username")
     field(:keys, :string, description: "The actors RSA Keys")
-    field(:manually_approves_followers, :boolean, description: "Whether the actors manually approves followers")
+
+    field(:manually_approves_followers, :boolean,
+      description: "Whether the actors manually approves followers"
+    )
+
     field(:suspended, :boolean, description: "If the actor is suspended")
     field(:avatar_url, :string, description: "The actor's avatar url")
     field(:banner_url, :string, description: "The actor's banner url")
     # field(:followers, list_of(:follower))
-    field(:organized_events, list_of(:event), resolve: dataloader(Events), description: "A list of the events this actor has organized")
+    field(:organized_events, list_of(:event),
+      resolve: dataloader(Events),
+      description: "A list of the events this actor has organized"
+    )
 
     # field(:memberships, list_of(:member))
     field(:user, :user, description: "The user this actor is associated to")
@@ -52,13 +59,29 @@ defmodule MobilizonWeb.Schema do
     field(:id, non_null(:id), description: "The user's ID")
     field(:email, non_null(:string), description: "The user's email")
     # , resolve: dataloader(:actors))
-    field(:actors, non_null(list_of(:actor)), description: "The user's list of actors (identities)")
+    field(:actors, non_null(list_of(:actor)),
+      description: "The user's list of actors (identities)"
+    )
+
     field(:default_actor_id, non_null(:integer), description: "The user's default actor")
-    field(:confirmed_at, :datetime, description: "The datetime when the user was confirmed/activated")
-    field(:confirmation_sent_at, :datetime, description: "The datetime the last activation/confirmation token was sent")
+
+    field(:confirmed_at, :datetime,
+      description: "The datetime when the user was confirmed/activated"
+    )
+
+    field(:confirmation_sent_at, :datetime,
+      description: "The datetime the last activation/confirmation token was sent"
+    )
+
     field(:confirmation_token, :string, description: "The account activation/confirmation token")
-    field(:reset_password_sent_at, :datetime, description: "The datetime last reset password email was sent")
-    field(:reset_password_token, :string, description: "The token sent when requesting password token")
+
+    field(:reset_password_sent_at, :datetime,
+      description: "The datetime last reset password email was sent"
+    )
+
+    field(:reset_password_token, :string,
+      description: "The token sent when requesting password token"
+    )
   end
 
   @desc "A JWT and the associated user ID"

@@ -63,7 +63,4 @@ config :geolix,
 config :arc,
   storage: Arc.Storage.Local
 
-config :email_checker,
-  validations: [EmailChecker.Check.Format]
-
 config :phoenix, :format_encoders, json: Jason

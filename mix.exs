@@ -87,7 +87,6 @@ defmodule Mobilizon.Mixfile do
       {:dataloader, "~> 1.0"},
       {:arc, "~> 0.11.0"},
       {:arc_ecto, "~> 0.11.0"},
-      {:email_checker, "~> 0.1.2"},
       {:plug_cowboy, "~> 1.0"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.0", only: :dev},

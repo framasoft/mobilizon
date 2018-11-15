@@ -5,12 +5,14 @@ import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemo
 import { createLink } from 'apollo-absinthe-upload-link';
 import { createApolloClient, restartWebsockets } from 'vue-cli-plugin-apollo/graphql-client';
 import { AUTH_TOKEN } from './constants';
+import { GRAPHQL_API_ENDPOINT, GRAPHQL_API_FULL_PATH } from './api/_entrypoint';
 
 // Install the vue plugin
 Vue.use(VueApollo);
 
 // Http endpoint
-const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP || 'http://localhost:4000/api';
+const httpServer = GRAPHQL_API_ENDPOINT || 'http://localhost:4000';
+const httpEndpoint = GRAPHQL_API_FULL_PATH || `${httpServer}/api`;
 
 const fragmentMatcher = new IntrospectionFragmentMatcher({
   introspectionQueryResultData: {

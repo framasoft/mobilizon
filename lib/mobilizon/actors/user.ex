@@ -5,6 +5,7 @@ defmodule Mobilizon.Actors.User do
   use Ecto.Schema
   import Ecto.Changeset
   alias Mobilizon.Actors.{Actor, User}
+  alias Mobilizon.Service.EmailChecker
 
   schema "users" do
     field(:email, :string)

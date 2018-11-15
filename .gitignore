@@ -15,6 +15,10 @@ erl_crash.dump
 # variables.
 /config/*.secret.exs
 
+.env.production
+
+setup_db.psql
+
 .elixir_ls
 /doc
 priv/static/*

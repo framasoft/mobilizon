@@ -19,7 +19,19 @@ config :mobilizon, MobilizonWeb.Endpoint,
     host: System.get_env("MOBILIZON_HOST") || "example.com",
     port: 80
   ],
+  secret_key_base:
+    System.get_env("MOBILIZON_SECRET") || "ThisShouldBeAVeryStrongStringPleaseReplaceMe",
   cache_static_manifest: "priv/static/cache_manifest.json"
+
+# Configure your database
+config :mobilison, Mobilizon.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  username: System.get_env("MOBILIZON_DATABASE_USERNAME") || "mobilizon",
+  password: System.get_env("MOBILIZON_DATABASE_PASSWORD") || "mobilizon",
+  database: System.get_env("MOBILIZON_DATABASE_DBNAME") || "mobilizon_prod",
+  hostname: System.get_env("MOBILIZON_DATABASE_HOST") || "localhost",
+  port: System.get_env("MOBILIZON_DATABASE_PORT") || "5432",
+  pool_size: 15
 
 config :mobilizon, Mobilizon.Mailer,
   adapter: Bamboo.SMTPAdapter,
@@ -80,7 +92,3 @@ config :logger, level: System.get_env("MOBILIZON_LOGLEVEL") |> String.to_atom() 
 #
 #     config :mobilizon, MobilizonWeb.Endpoint, server: true
 #
-
-# Finally import the config/prod.secret.exs
-# which should be versioned separately.
-import_config "prod.secret.exs"
