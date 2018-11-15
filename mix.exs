@@ -49,15 +49,16 @@ defmodule Mobilizon.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.3.0"},
+      {:phoenix, "~> 1.4.0"},
       {:phoenix_pubsub, "~> 1.0"},
-      {:phoenix_ecto, "~> 3.2"},
+      {:phoenix_ecto, "~> 4.0"},
+      {:ecto_sql, "~> 3.0"},
+      {:ecto, github: "elixir-ecto/ecto", branch: "jv-utc-datetime", override: true},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 2.10"},
       {:gettext, "~> 0.11"},
-      {:cowboy, "~> 1.0"},
       {:guardian, "~> 1.0"},
-      {:guardian_db, "~> 1.0"},
+      {:guardian_db, github: "ueberauth/guardian_db"}, # Until 2.0 is released
       {:comeonin, "~> 4.0"},
       {:argon2_elixir, "~> 1.2"},
       {:cors_plug, "~> 1.2"},
@@ -66,7 +67,6 @@ defmodule Mobilizon.Mixfile do
       {:geo, "~> 3.0"},
       {:geo_postgis, "~> 2.0"},
       {:timex, "~> 3.0"},
-      {:timex_ecto, "~> 3.0"},
       {:icalendar, "~> 0.6"},
       {:exgravatar, "~> 2.0.1"},
       {:httpoison, "~> 1.0"},
@@ -86,11 +86,11 @@ defmodule Mobilizon.Mixfile do
       {:absinthe_ecto, "~> 0.1.3"},
       {:dataloader, "~> 1.0"},
       {:arc, "~> 0.11.0"},
-      {:arc_ecto, "~> 0.11.0"},
-      {:plug_cowboy, "~> 1.0"},
+      {:arc_ecto, github: "dbernheisel/arc_ecto", branch: "db-ecto-3"}, # Until new version is released
+      {:plug_cowboy, "~> 2.0"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.0", only: :dev},
-      {:ex_machina, "~> 2.2", only: [:dev, :test]},
+      {:ex_machina, "~> 2.2.2", only: [:dev, :test]},
       {:excoveralls, "~> 0.8", only: :test},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},

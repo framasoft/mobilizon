@@ -2,7 +2,7 @@ defmodule Mobilizon.Events.Participant do
   @moduledoc """
   Represents a participant, an actor participating to an event
   """
-  use Ecto.Schema
+  use Mobilizon.Ecto.Schema
   import Ecto.Changeset
   alias Mobilizon.Events.{Participant, Event}
   alias Mobilizon.Actors.Actor

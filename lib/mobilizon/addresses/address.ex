@@ -1,7 +1,7 @@
 defmodule Mobilizon.Addresses.Address do
   @moduledoc "An address for an event or a group"
 
-  use Ecto.Schema
+  use Mobilizon.Ecto.Schema
   import Ecto.Changeset
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.Event

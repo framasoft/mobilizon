@@ -2,7 +2,7 @@ defmodule Mobilizon.Actors.User do
   @moduledoc """
   Represents a local user
   """
-  use Ecto.Schema
+  use Mobilizon.Ecto.Schema
   import Ecto.Changeset
   alias Mobilizon.Actors.{Actor, User}
   alias Mobilizon.Service.EmailChecker
@@ -89,7 +89,7 @@ defmodule Mobilizon.Actors.User do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{email: _email}} ->
         changeset = put_change(changeset, :confirmation_token, random_string(30))
-        put_change(changeset, :confirmation_sent_at, DateTime.utc_now())
+        put_change(changeset, :confirmation_sent_at, DateTime.utc_now() |> DateTime.truncate(:second))
 
       _ ->
         changeset

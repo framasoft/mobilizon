@@ -2,7 +2,7 @@ defmodule Mobilizon.Events.Track do
   @moduledoc """
   Represents a track for an event (such as a theme) having multiple sessions
   """
-  use Ecto.Schema
+  use Mobilizon.Ecto.Schema
   import Ecto.Changeset
   alias Mobilizon.Events.{Track, Event, Session}
 

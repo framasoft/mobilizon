@@ -2,7 +2,7 @@ defmodule Mobilizon.Actors.Bot do
   @moduledoc """
   Represents a local bot
   """
-  use Ecto.Schema
+  use Mobilizon.Ecto.Schema
   import Ecto.Changeset
   alias Mobilizon.Actors.{Actor, User}
 

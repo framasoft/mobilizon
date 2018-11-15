@@ -12,7 +12,7 @@ defmodule Mobilizon.Actors.Actor do
   @moduledoc """
   Represents an actor (local and remote actors)
   """
-  use Ecto.Schema
+  use Mobilizon.Ecto.Schema
   import Ecto.Changeset
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, User, Follower, Member}

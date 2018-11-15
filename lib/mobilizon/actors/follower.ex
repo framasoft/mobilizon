@@ -2,7 +2,7 @@ defmodule Mobilizon.Actors.Follower do
   @moduledoc """
   Represents the following of an actor to another actor
   """
-  use Ecto.Schema
+  use Mobilizon.Ecto.Schema
   import Ecto.Changeset
   alias Mobilizon.Actors.Follower
   alias Mobilizon.Actors.Actor

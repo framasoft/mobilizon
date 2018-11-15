@@ -2,7 +2,7 @@ defmodule Mobilizon.Actors.Member do
   @moduledoc """
   Represents the membership of an actor to a group
   """
-  use Ecto.Schema
+  use Mobilizon.Ecto.Schema
   import Ecto.Changeset
   alias Mobilizon.Actors.Member
   alias Mobilizon.Actors.Actor

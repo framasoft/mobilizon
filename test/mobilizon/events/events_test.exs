@@ -6,9 +6,9 @@ defmodule Mobilizon.EventsTest do
   alias Mobilizon.Events
 
   @event_valid_attrs %{
-    begins_on: "2010-04-17 14:00:00.000000Z",
+    begins_on: "2010-04-17 14:00:00Z",
     description: "some description",
-    ends_on: "2010-04-17 14:00:00.000000Z",
+    ends_on: "2010-04-17 14:00:00Z",
     title: "some title"
   }
 
@@ -22,15 +22,15 @@ defmodule Mobilizon.EventsTest do
     end
 
     @valid_attrs %{
-      begins_on: "2010-04-17 14:00:00.000000Z",
+      begins_on: "2010-04-17 14:00:00Z",
       description: "some description",
-      ends_on: "2010-04-17 14:00:00.000000Z",
+      ends_on: "2010-04-17 14:00:00Z",
       title: "some title"
     }
     @update_attrs %{
-      begins_on: "2011-05-18 15:01:01.000000Z",
+      begins_on: "2011-05-18 15:01:01Z",
       description: "some updated description",
-      ends_on: "2011-05-18 15:01:01.000000Z",
+      ends_on: "2011-05-18 15:01:01Z",
       title: "some updated title"
     }
     @invalid_attrs %{begins_on: nil, description: nil, ends_on: nil, title: nil}
@@ -78,9 +78,9 @@ defmodule Mobilizon.EventsTest do
         |> Map.put(:address_id, address.id)
 
       with {:ok, %Event{} = event} <- Events.create_event(valid_attrs) do
-        assert event.begins_on == DateTime.from_naive!(~N[2010-04-17 14:00:00.000000Z], "Etc/UTC")
+        assert event.begins_on == DateTime.from_naive!(~N[2010-04-17 14:00:00Z], "Etc/UTC")
         assert event.description == "some description"
-        assert event.ends_on == DateTime.from_naive!(~N[2010-04-17 14:00:00.000000Z], "Etc/UTC")
+        assert event.ends_on == DateTime.from_naive!(~N[2010-04-17 14:00:00Z], "Etc/UTC")
         assert event.title == "some title"
       else
         err ->
@@ -93,12 +93,15 @@ defmodule Mobilizon.EventsTest do
     end
 
     test "update_event/2 with valid data updates the event", %{event: event} do
-      assert {:ok, event} = Events.update_event(event, @update_attrs)
-      assert %Event{} = event
-      assert event.begins_on == DateTime.from_naive!(~N[2011-05-18 15:01:01.000000Z], "Etc/UTC")
-      assert event.description == "some updated description"
-      assert event.ends_on == DateTime.from_naive!(~N[2011-05-18 15:01:01.000000Z], "Etc/UTC")
-      assert event.title == "some updated title"
+      with {:ok, %Event{} = event} <- Events.update_event(event, @update_attrs) do
+        assert event.begins_on == DateTime.from_naive!(~N[2011-05-18 15:01:01Z], "Etc/UTC")
+        assert event.description == "some updated description"
+        assert event.ends_on == DateTime.from_naive!(~N[2011-05-18 15:01:01Z], "Etc/UTC")
+        assert event.title == "some updated title"
+      else
+        err ->
+          flunk("Failed to update an event #{inspect(err)}")
+      end
     end
 
     test "update_event/2 with invalid data returns error changeset", %{event: event} do

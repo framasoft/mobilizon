@@ -5,7 +5,7 @@ defmodule Mobilizon.Events.Event do
   @moduledoc """
   Represents an event
   """
-  use Ecto.Schema
+  use Mobilizon.Ecto.Schema
   import Ecto.Changeset
   alias Mobilizon.Events.{Event, Participant, Tag, Category, Session, Track}
   alias Mobilizon.Actors.Actor
@@ -14,9 +14,9 @@ defmodule Mobilizon.Events.Event do
   schema "events" do
     field(:url, :string)
     field(:local, :boolean, default: true)
-    field(:begins_on, Timex.Ecto.DateTimeWithTimezone)
+    field(:begins_on, Mobilizon.Ecto.DatetimeWithTimezone)
     field(:description, :string)
-    field(:ends_on, Timex.Ecto.DateTimeWithTimezone)
+    field(:ends_on, Mobilizon.Ecto.DatetimeWithTimezone)
     field(:title, :string)
     # ???
     field(:state, :integer, default: 0)
@@ -26,7 +26,7 @@ defmodule Mobilizon.Events.Event do
     field(:public, :boolean, default: true)
     field(:thumbnail, :string)
     field(:large_image, :string)
-    field(:publish_at, Timex.Ecto.DateTimeWithTimezone)
+    field(:publish_at, Mobilizon.Ecto.DatetimeWithTimezone)
     field(:uuid, Ecto.UUID, default: Ecto.UUID.generate())
     field(:address_type, AddressTypeEnum, default: :physical)
     field(:online_address, :string)
@@ -40,7 +40,7 @@ defmodule Mobilizon.Events.Event do
     has_many(:sessions, Session)
     belongs_to(:physical_address, Address)
 
-    timestamps(type: :utc_datetime)
+    timestamps()
   end
 
   @doc false

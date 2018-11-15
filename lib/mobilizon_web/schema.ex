@@ -127,7 +127,7 @@ defmodule MobilizonWeb.Schema do
     # field(:physical_address, :address)
 
     field(:updated_at, :datetime)
-    field(:created_at, :datetime)
+    field(:inserted_at, :datetime)
   end
 
   @desc "Represents a participant to an event"
@@ -153,7 +153,7 @@ defmodule MobilizonWeb.Schema do
     field(:picture, :picture)
     field(:title, :string)
     field(:updated_at, :datetime)
-    field(:created_at, :datetime)
+    field(:inserted_at, :datetime)
   end
 
   @desc "A picture"

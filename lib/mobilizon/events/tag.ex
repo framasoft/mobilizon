@@ -35,7 +35,7 @@ defmodule Mobilizon.Events.Tag do
   @moduledoc """
   Represents a tag for events
   """
-  use Ecto.Schema
+  use Mobilizon.Ecto.Schema
   import Ecto.Changeset
   alias Mobilizon.Events.Tag
   alias Mobilizon.Events.Tag.TitleSlug

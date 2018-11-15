@@ -2,7 +2,7 @@ defmodule Mobilizon.Events.Category do
   @moduledoc """
   Represents a category for events
   """
-  use Ecto.Schema
+  use Mobilizon.Ecto.Schema
   import Ecto.Changeset
   alias Mobilizon.Events.Category
   use Arc.Ecto.Schema

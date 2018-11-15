@@ -3,7 +3,7 @@ defmodule Mobilizon.Events.Comment do
   An actor comment (for instance on an event or on a group)
   """
 
-  use Ecto.Schema
+  use Mobilizon.Ecto.Schema
   import Ecto.Changeset
 
   alias Mobilizon.Events.Event
@@ -21,7 +21,7 @@ defmodule Mobilizon.Events.Comment do
     belongs_to(:in_reply_to_comment, Comment, foreign_key: :in_reply_to_comment_id)
     belongs_to(:origin_comment, Comment, foreign_key: :origin_comment_id)
 
-    timestamps(type: :utc_datetime)
+    timestamps()
   end
 
   @doc false

@@ -2,7 +2,7 @@ defmodule Mobilizon.Events.Session do
   @moduledoc """
   Represents a session for an event (such as a talk at a conference)
   """
-  use Ecto.Schema
+  use Mobilizon.Ecto.Schema
   import Ecto.Changeset
   alias Mobilizon.Events.{Session, Event, Track}
 
@@ -15,8 +15,8 @@ defmodule Mobilizon.Events.Session do
     field(:subtitle, :string)
     field(:title, :string)
     field(:videos_urls, :string)
-    field(:begins_on, Timex.Ecto.DateTimeWithTimezone)
-    field(:ends_on, Timex.Ecto.DateTimeWithTimezone)
+    field(:begins_on, Mobilizon.Ecto.DatetimeWithTimezone)
+    field(:ends_on, Mobilizon.Ecto.DatetimeWithTimezone)
     belongs_to(:event, Event)
     belongs_to(:track, Track)
 
