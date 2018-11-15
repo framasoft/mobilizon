@@ -5,7 +5,11 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
   alias MobilizonWeb.AbsintheHelpers
   import Mobilizon.Factory
 
-  @event %{description: "some body", title: "some title", begins_on: "2018-11-15 18:36:53.048035Z"}
+  @event %{
+    description: "some body",
+    title: "some title",
+    begins_on: "2018-11-15 18:36:53.048035Z"
+  }
 
   setup %{conn: conn} do
     {:ok, %Actor{} = actor} =

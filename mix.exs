@@ -58,7 +58,8 @@ defmodule Mobilizon.Mixfile do
       {:phoenix_html, "~> 2.10"},
       {:gettext, "~> 0.11"},
       {:guardian, "~> 1.0"},
-      {:guardian_db, github: "ueberauth/guardian_db"}, # Until 2.0 is released
+      # Until 2.0 is released
+      {:guardian_db, github: "ueberauth/guardian_db"},
       {:comeonin, "~> 4.0"},
       {:argon2_elixir, "~> 1.2"},
       {:cors_plug, "~> 1.2"},
@@ -86,7 +87,8 @@ defmodule Mobilizon.Mixfile do
       {:absinthe_ecto, "~> 0.1.3"},
       {:dataloader, "~> 1.0"},
       {:arc, "~> 0.11.0"},
-      {:arc_ecto, github: "dbernheisel/arc_ecto", branch: "db-ecto-3"}, # Until new version is released
+      # Until new version is released
+      {:arc_ecto, github: "dbernheisel/arc_ecto", branch: "db-ecto-3"},
       {:plug_cowboy, "~> 2.0"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.0", only: :dev},
