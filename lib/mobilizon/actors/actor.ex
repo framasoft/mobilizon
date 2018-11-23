@@ -8,6 +8,12 @@ defenum(Mobilizon.Actors.ActorTypeEnum, :actor_type, [
   :Service
 ])
 
+defenum(Mobilizon.Actors.ActorOpennesssEnum, :openness, [
+  :invite_only,
+  :moderated,
+  :open
+])
+
 defmodule Mobilizon.Actors.Actor do
   @moduledoc """
   Represents an actor (local and remote actors)
@@ -42,6 +48,7 @@ defmodule Mobilizon.Actors.Actor do
     field(:suspended, :boolean, default: false)
     field(:avatar_url, :string)
     field(:banner_url, :string)
+    # field(:openness, Mobilizon.Actors.ActorOpennesssEnum, default: :moderated)
     many_to_many(:followers, Actor, join_through: Follower)
     has_many(:organized_events, Event, foreign_key: :organizer_actor_id)
     many_to_many(:memberships, Actor, join_through: Member)

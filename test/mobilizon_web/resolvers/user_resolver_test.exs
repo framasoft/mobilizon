@@ -140,7 +140,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
               user {
                 id
               },
-              actor {
+              person {
                 preferredUsername
               }
             }
@@ -151,7 +151,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
       context.conn
       |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-    assert json_response(res, 200)["data"]["validateUser"]["actor"]["preferredUsername"] ==
+    assert json_response(res, 200)["data"]["validateUser"]["person"]["preferredUsername"] ==
              @valid_actor_params.username
 
     assert json_response(res, 200)["data"]["validateUser"]["user"]["id"] ==
@@ -170,7 +170,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
               user {
                 id
               },
-              actor {
+              person {
                 preferredUsername
               }
             }

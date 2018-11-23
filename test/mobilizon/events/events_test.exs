@@ -189,15 +189,15 @@ defmodule Mobilizon.EventsTest do
     @invalid_attrs %{description: nil, picture: nil, title: nil}
 
     test "list_categories/0 returns all categories", %{category: category} do
-      assert Events.list_categories() == [category]
+      assert [category.id] == Events.list_categories() |> Enum.map(& &1.id)
     end
 
     test "get_category!/1 returns the category with given id", %{category: category} do
-      assert Events.get_category!(category.id) == category
+      assert Events.get_category!(category.id).id == category.id
     end
 
     test "get_category_by_title/1 return the category with given title", %{category: category} do
-      assert Events.get_category_by_title(category.title) == category
+      assert Events.get_category_by_title(category.title).id == category.id
     end
 
     test "create_category/1 with valid data creates a category" do
@@ -212,8 +212,7 @@ defmodule Mobilizon.EventsTest do
     end
 
     test "update_category/2 with valid data updates the category", %{category: category} do
-      assert {:ok, category} = Events.update_category(category, @update_attrs)
-      assert %Category{} = category
+      assert {:ok, %Category{} = category} = Events.update_category(category, @update_attrs)
       assert category.description == "some updated description"
       assert category.picture.file_name == @update_attrs.picture.filename
       assert category.title == "some updated title"
@@ -221,7 +220,7 @@ defmodule Mobilizon.EventsTest do
 
     test "update_category/2 with invalid data returns error changeset", %{category: category} do
       assert {:error, %Ecto.Changeset{}} = Events.update_category(category, @invalid_attrs)
-      assert category == Events.get_category!(category.id)
+      assert category.description == Events.get_category!(category.id).description
     end
 
     test "delete_category/1 deletes the category", %{category: category} do
@@ -241,28 +240,24 @@ defmodule Mobilizon.EventsTest do
     @update_attrs %{title: "some updated title"}
     @invalid_attrs %{title: nil}
 
-    def tag_fixture(attrs \\ %{}) do
-      {:ok, tag} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Events.create_tag()
-
-      tag
-    end
-
     test "list_tags/0 returns all tags" do
-      tag = tag_fixture()
-      assert Events.list_tags() == [tag]
+      tag = insert(:tag)
+      assert [tag.id] == Events.list_tags() |> Enum.map(& &1.id)
     end
 
     test "get_tag!/1 returns the tag with given id" do
-      tag = tag_fixture()
-      assert Events.get_tag!(tag.id) == tag
+      tag = insert(:tag)
+      assert Events.get_tag!(tag.id).id == tag.id
     end
 
     test "create_tag/1 with valid data creates a tag" do
       assert {:ok, %Tag{} = tag} = Events.create_tag(@valid_attrs)
       assert tag.title == "some title"
+      assert tag.slug == "some-title"
+
+      assert {:ok, %Tag{} = tag2} = Events.create_tag(@valid_attrs)
+      assert tag2.title == "some title"
+      assert tag2.slug == "some-title-1"
     end
 
     test "create_tag/1 with invalid data returns error changeset" do
@@ -270,26 +265,26 @@ defmodule Mobilizon.EventsTest do
     end
 
     test "update_tag/2 with valid data updates the tag" do
-      tag = tag_fixture()
+      tag = insert(:tag)
       assert {:ok, tag} = Events.update_tag(tag, @update_attrs)
       assert %Tag{} = tag
       assert tag.title == "some updated title"
     end
 
     test "update_tag/2 with invalid data returns error changeset" do
-      tag = tag_fixture()
+      tag = insert(:tag)
       assert {:error, %Ecto.Changeset{}} = Events.update_tag(tag, @invalid_attrs)
-      assert tag == Events.get_tag!(tag.id)
+      assert tag.id == Events.get_tag!(tag.id).id
     end
 
     test "delete_tag/1 deletes the tag" do
-      tag = tag_fixture()
+      tag = insert(:tag)
       assert {:ok, %Tag{}} = Events.delete_tag(tag)
       assert_raise Ecto.NoResultsError, fn -> Events.get_tag!(tag.id) end
     end
 
     test "change_tag/1 returns a tag changeset" do
-      tag = tag_fixture()
+      tag = insert(:tag)
       assert %Ecto.Changeset{} = Events.change_tag(tag)
     end
   end
@@ -405,26 +400,14 @@ defmodule Mobilizon.EventsTest do
       videos_urls: nil
     }
 
-    def session_fixture(attrs \\ %{}) do
-      event = insert(:event)
-      valid_attrs = Map.put(@valid_attrs, :event_id, event.id)
-
-      {:ok, session} =
-        attrs
-        |> Enum.into(valid_attrs)
-        |> Events.create_session()
-
-      session
-    end
-
     test "list_sessions/0 returns all sessions" do
-      session = session_fixture()
-      assert Events.list_sessions() == [session]
+      session = insert(:session)
+      assert [session.id] == Events.list_sessions() |> Enum.map(& &1.id)
     end
 
     test "get_session!/1 returns the session with given id" do
-      session = session_fixture()
-      assert Events.get_session!(session.id) == session
+      session = insert(:session)
+      assert Events.get_session!(session.id).id == session.id
     end
 
     test "create_session/1 with valid data creates a session" do
@@ -446,9 +429,8 @@ defmodule Mobilizon.EventsTest do
     end
 
     test "update_session/2 with valid data updates the session" do
-      session = session_fixture()
-      assert {:ok, session} = Events.update_session(session, @update_attrs)
-      assert %Session{} = session
+      session = insert(:session)
+      assert {:ok, %Session{} = session} = Events.update_session(session, @update_attrs)
       assert session.audios_urls == "some updated audios_urls"
       assert session.language == "some updated language"
       assert session.long_abstract == "some updated long_abstract"
@@ -460,19 +442,19 @@ defmodule Mobilizon.EventsTest do
     end
 
     test "update_session/2 with invalid data returns error changeset" do
-      session = session_fixture()
+      session = insert(:session)
       assert {:error, %Ecto.Changeset{}} = Events.update_session(session, @invalid_attrs)
-      assert session == Events.get_session!(session.id)
+      assert session.title == Events.get_session!(session.id).title
     end
 
     test "delete_session/1 deletes the session" do
-      session = session_fixture()
+      session = insert(:session)
       assert {:ok, %Session{}} = Events.delete_session(session)
       assert_raise Ecto.NoResultsError, fn -> Events.get_session!(session.id) end
     end
 
     test "change_session/1 returns a session changeset" do
-      session = session_fixture()
+      session = insert(:session)
       assert %Ecto.Changeset{} = Events.change_session(session)
     end
   end
@@ -488,26 +470,14 @@ defmodule Mobilizon.EventsTest do
     }
     @invalid_attrs %{color: nil, description: nil, name: nil}
 
-    def track_fixture(attrs \\ %{}) do
-      event = insert(:event)
-      valid_attrs = Map.put(@valid_attrs, :event_id, event.id)
-
-      {:ok, track} =
-        attrs
-        |> Enum.into(valid_attrs)
-        |> Events.create_track()
-
-      track
-    end
-
     test "list_tracks/0 returns all tracks" do
-      track = track_fixture()
-      assert Events.list_tracks() == [track]
+      track = insert(:track)
+      assert [track.id] == Events.list_tracks() |> Enum.map(& &1.id)
     end
 
     test "get_track!/1 returns the track with given id" do
-      track = track_fixture()
-      assert Events.get_track!(track.id) == track
+      track = insert(:track)
+      assert Events.get_track!(track.id).id == track.id
     end
 
     test "create_track/1 with valid data creates a track" do
@@ -524,28 +494,27 @@ defmodule Mobilizon.EventsTest do
     end
 
     test "update_track/2 with valid data updates the track" do
-      track = track_fixture()
-      assert {:ok, track} = Events.update_track(track, @update_attrs)
-      assert %Track{} = track
+      track = insert(:track)
+      {:ok, %Track{} = track} = Events.update_track(track, @update_attrs)
       assert track.color == "some updated color"
       assert track.description == "some updated description"
       assert track.name == "some updated name"
     end
 
     test "update_track/2 with invalid data returns error changeset" do
-      track = track_fixture()
+      track = insert(:track)
       assert {:error, %Ecto.Changeset{}} = Events.update_track(track, @invalid_attrs)
-      assert track == Events.get_track!(track.id)
+      assert track.color == Events.get_track!(track.id).color
     end
 
     test "delete_track/1 deletes the track" do
-      track = track_fixture()
+      track = insert(:track)
       assert {:ok, %Track{}} = Events.delete_track(track)
       assert_raise Ecto.NoResultsError, fn -> Events.get_track!(track.id) end
     end
 
     test "change_track/1 returns a track changeset" do
-      track = track_fixture()
+      track = insert(:track)
       assert %Ecto.Changeset{} = Events.change_track(track)
     end
   end

@@ -60,7 +60,7 @@ defmodule MobilizonWeb.Resolvers.User do
            Mobilizon.Actors.Service.Activation.check_confirmation_token(token),
          %Actor{} = actor <- Actors.get_actor_for_user(user),
          {:ok, token, _} <- MobilizonWeb.Guardian.encode_and_sign(user) do
-      {:ok, %{token: token, user: user, actor: actor}}
+      {:ok, %{token: token, user: user, person: actor}}
     end
   end
 

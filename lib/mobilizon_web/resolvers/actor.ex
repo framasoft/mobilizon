@@ -13,13 +13,39 @@ defmodule MobilizonWeb.Resolvers.Actor do
   end
 
   @doc """
+  Find a person
+  """
+  def find_person(_parent, %{preferred_username: name}, _resolution) do
+    case ActivityPub.find_or_make_person_from_nickname(name) do
+      {:ok, actor} ->
+        {:ok, actor}
+
+      _ ->
+        {:error, "Person with name #{name} not found"}
+    end
+  end
+
+  @doc """
+  Find a person
+  """
+  def find_group(_parent, %{preferred_username: name}, _resolution) do
+    case ActivityPub.find_or_make_group_from_nickname(name) do
+      {:ok, actor} ->
+        {:ok, actor}
+
+      _ ->
+        {:error, "Group with name #{name} not found"}
+    end
+  end
+
+  @doc """
   Returns the current actor for the currently logged-in user
   """
-  def get_current_actor(_parent, _args, %{context: %{current_user: user}}) do
+  def get_current_person(_parent, _args, %{context: %{current_user: user}}) do
     {:ok, Actors.get_actor_for_user(user)}
   end
 
-  def get_current_actor(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to view current actor"}
+  def get_current_person(_parent, _args, _resolution) do
+    {:error, "You need to be logged-in to view current person"}
   end
 end

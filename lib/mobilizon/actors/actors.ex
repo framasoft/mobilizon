@@ -10,10 +10,12 @@ defmodule Mobilizon.Actors do
 
   alias Mobilizon.Service.ActivityPub
 
+  @doc false
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
   end
 
+  @doc false
   def query(queryable, _params) do
     queryable
   end
@@ -312,14 +314,51 @@ defmodule Mobilizon.Actors do
     if preload, do: Repo.preload(actor, [:followers]), else: actor
   end
 
-  def get_actor_by_name(name) do
-    case String.split(name, "@") do
-      [name] ->
-        Repo.one(from(a in Actor, where: a.preferred_username == ^name and is_nil(a.domain)))
+  @doc """
+  Get an actor by name
 
-      [name, domain] ->
-        Repo.get_by(Actor, preferred_username: name, domain: domain)
-    end
+  ## Examples
+      iex> get_actor_by_name("tcit")
+      %Mobilizon.Actors.Actor{preferred_username: "tcit", domain: nil}
+
+      iex> get_actor_by_name("tcit@social.tcit.fr")
+      %Mobilizon.Actors.Actor{preferred_username: "tcit", domain: "social.tcit.fr"}
+
+      iex> get_actor_by_name("tcit", :Group)
+      nil
+
+  """
+  @spec get_actor_by_name(String.t(), atom() | nil) :: Actor.t()
+  def get_actor_by_name(name, type \\ nil) do
+    # Base query
+    query = from(a in Actor)
+
+    # If we have Person / Group information
+    query =
+      if type in [:Person, :Group] do
+        from(a in query, where: a.type == ^type)
+      else
+        query
+      end
+
+    # If the name is a remote actor
+    query =
+      case String.split(name, "@") do
+        [name] -> do_get_actor_by_name(query, name)
+        [name, domain] -> do_get_actor_by_name(query, name, domain)
+      end
+
+    Repo.one(query)
+  end
+
+  # Get actor by username and domain is nil
+  defp do_get_actor_by_name(query, name) do
+    from(a in query, where: a.preferred_username == ^name and is_nil(a.domain))
+  end
+
+  # Get actor by username and domain
+  defp do_get_actor_by_name(query, name, domain) do
+    from(a in query, where: a.preferred_username == ^name and a.domain == ^domain)
   end
 
   def get_local_actor_by_name(name) do
@@ -331,17 +370,11 @@ defmodule Mobilizon.Actors do
     Repo.preload(actor, :organized_events)
   end
 
-  def get_actor_by_name_with_everything(name) do
-    actor =
-      case String.split(name, "@") do
-        [name] ->
-          Repo.one(from(a in Actor, where: a.preferred_username == ^name and is_nil(a.domain)))
-
-        [name, domain] ->
-          Repo.one(from(a in Actor, where: a.preferred_username == ^name and a.domain == ^domain))
-      end
-
-    Repo.preload(actor, :organized_events)
+  @spec get_actor_by_name_with_everything(String.t(), atom() | nil) :: Actor.t()
+  def get_actor_by_name_with_everything(name, type \\ nil) do
+    name
+    |> get_actor_by_name(type)
+    |> Repo.preload(:organized_events)
   end
 
   def get_or_fetch_by_url(url, preload \\ false) do
@@ -394,6 +427,7 @@ defmodule Mobilizon.Actors do
   @doc """
   Find actors by their name or displayed name
   """
+  @spec find_actors_by_username_or_name(String.t(), integer(), integer()) :: list(Actor.t())
   def find_actors_by_username_or_name(username, page \\ 1, limit \\ 10)
   def find_actors_by_username_or_name("", _page, _limit), do: []
 
@@ -418,6 +452,7 @@ defmodule Mobilizon.Actors do
   end
 
   @email_regex ~r/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+  @spec search(String.t()) :: {:ok, list(Actor.t())} | {:ok, []} | {:error, any()}
   def search(name) do
     # find already saved accounts
     case find_actors_by_username_or_name(name) do

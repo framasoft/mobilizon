@@ -48,12 +48,12 @@ defmodule Mobilizon.AddressesTest do
 
     test "list_addresses/0 returns all addresses" do
       address = address_fixture()
-      assert Addresses.list_addresses() == [address]
+      assert [address.id] == Addresses.list_addresses() |> Enum.map(& &1.id)
     end
 
     test "get_address!/1 returns the address with given id" do
       address = address_fixture()
-      assert Addresses.get_address!(address.id) == address
+      assert Addresses.get_address!(address.id).id == address.id
     end
 
     test "create_address/1 with valid data creates a address" do
@@ -69,8 +69,7 @@ defmodule Mobilizon.AddressesTest do
 
     test "update_address/2 with valid data updates the address" do
       address = address_fixture()
-      assert {:ok, address} = Addresses.update_address(address, @update_attrs)
-      assert %Address{} = address
+      assert {:ok, %Address{} = address} = Addresses.update_address(address, @update_attrs)
       assert address.addressCountry == "some updated addressCountry"
       assert address.addressLocality == "some updated addressLocality"
       assert address.addressRegion == "some updated addressRegion"

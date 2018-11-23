@@ -219,14 +219,20 @@ defmodule Mobilizon.Service.ActivityPub do
   @doc """
   Find an actor in our local database or call Webfinger to find what's its AP ID is and then fetch it
   """
-  @spec find_or_make_actor_from_nickname(String.t()) :: tuple()
-  def find_or_make_actor_from_nickname(nickname) do
-    with %Actor{} = actor <- Actors.get_actor_by_name(nickname) do
+  @spec find_or_make_actor_from_nickname(String.t(), atom() | nil) :: tuple()
+  def find_or_make_actor_from_nickname(nickname, type \\ nil) do
+    with %Actor{} = actor <- Actors.get_actor_by_name(nickname, type) do
       {:ok, actor}
     else
       nil -> make_actor_from_nickname(nickname)
     end
   end
+
+  @spec find_or_make_person_from_nickname(String.t()) :: tuple()
+  def find_or_make_person_from_nickname(nick), do: find_or_make_actor_from_nickname(nick, :Person)
+
+  @spec find_or_make_group_from_nickname(String.t()) :: tuple()
+  def find_or_make_group_from_nickname(nick), do: find_or_make_actor_from_nickname(nick, :Group)
 
   @doc """
   Create an actor inside our database from username, using Webfinger to find out it's AP ID and then fetch it

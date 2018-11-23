@@ -23,7 +23,7 @@ defmodule Mobilizon.Events.Tag.TitleSlug do
       nil ->
         slug
 
-      _story ->
+      _tag ->
         slug
         |> Mobilizon.Slug.increment_slug()
         |> build_unique_slug(changeset)
@@ -51,8 +51,8 @@ defmodule Mobilizon.Events.Tag do
   def changeset(%Tag{} = tag, attrs) do
     tag
     |> cast(attrs, [:title])
-    |> validate_required([:title])
     |> TitleSlug.maybe_generate_slug()
+    |> validate_required([:title, :slug])
     |> TitleSlug.unique_constraint()
   end
 end

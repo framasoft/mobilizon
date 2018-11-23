@@ -306,7 +306,7 @@ defmodule Mobilizon.ActorsTest do
     test "list_users/0 returns all users" do
       user = insert(:user)
       users = Actors.list_users()
-      assert users == [user]
+      assert [user.id] == users |> Enum.map(& &1.id)
     end
 
     test "get_user!/1 returns the user with given id" do

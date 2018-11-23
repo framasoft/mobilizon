@@ -53,6 +53,13 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  def tag_factory do
+    %Mobilizon.Events.Tag{
+      title: "MyTag",
+      slug: sequence("MyTag")
+    }
+  end
+
   def address_factory do
     %Mobilizon.Addresses.Address{
       description: sequence("MyAddress"),
