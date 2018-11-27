@@ -33,29 +33,32 @@ defmodule Mobilizon.Service.WebFinger do
     regex = ~r/(acct:)?(?<name>\w+)@#{host}/
 
     with %{"name" => name} <- Regex.named_captures(regex, resource) do
-      user = Actors.get_local_actor_by_name(name)
-      {:ok, represent_user(user, "JSON")}
+      actor = Actors.get_local_actor_by_name(name)
+      {:ok, represent_actor(actor, "JSON")}
     else
       _e ->
-        with user when not is_nil(user) <- Actors.get_actor_by_url!(resource) do
-          {:ok, represent_user(user, "JSON")}
+        with actor when not is_nil(actor) <- Actors.get_actor_by_url!(resource) do
+          {:ok, represent_actor(actor, "JSON")}
         else
           _e ->
-            {:error, "Couldn't find user"}
+            {:error, "Couldn't find actor"}
         end
     end
   end
 
-  def represent_user(user, "JSON") do
+  @spec represent_actor(Actor.t()) :: struct()
+  def represent_actor(actor), do: represent_actor(actor, "JSON")
+
+  def represent_actor(actor, "JSON") do
     %{
-      "subject" => "acct:#{user.preferred_username}@#{MobilizonWeb.Endpoint.host()}",
-      "aliases" => [user.url],
+      "subject" => "acct:#{actor.preferred_username}@#{MobilizonWeb.Endpoint.host()}",
+      "aliases" => [actor.url],
       "links" => [
-        %{"rel" => "self", "type" => "application/activity+json", "href" => user.url},
+        %{"rel" => "self", "type" => "application/activity+json", "href" => actor.url},
         %{
           "rel" => "https://webfinger.net/rel/profile-page/",
           "type" => "text/html",
-          "href" => user.url
+          "href" => actor.url
         }
       ]
     }
