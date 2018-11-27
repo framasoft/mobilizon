@@ -49,7 +49,7 @@ defmodule Mobilizon.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.3.0"},
+      {:phoenix, "~> 1.4.0"},
       {:phoenix_pubsub, "~> 1.0"},
       {:phoenix_ecto, "~> 3.2"},
       {:postgrex, ">= 0.0.0"},
@@ -77,7 +77,7 @@ defmodule Mobilizon.Mixfile do
       {:ecto_enum, "~> 1.0"},
       {:ex_ical, "~> 0.2"},
       {:bamboo, "~> 1.0"},
-      {:bamboo_smtp, "~> 1.5.0"},
+      {:bamboo_smtp, "~> 1.6.0"},
       {:geolix, "~> 0.16"},
       {:absinthe, "~> 1.4.0"},
       {:absinthe_phoenix, "~> 1.4.0"},
@@ -89,9 +89,9 @@ defmodule Mobilizon.Mixfile do
       {:arc_ecto, "~> 0.11.0"},
       {:plug_cowboy, "~> 1.0"},
       # Dev and test dependencies
-      {:phoenix_live_reload, "~> 1.0", only: :dev},
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:ex_machina, "~> 2.2", only: [:dev, :test]},
-      {:excoveralls, "~> 0.8", only: :test},
+      {:excoveralls, "~> 0.10", only: :test},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
       {:ex_unit_notifier, "~> 0.1", only: :test},
