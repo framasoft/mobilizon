@@ -47,7 +47,7 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
 
   def render("following.json", %{actor: actor, page: page}) do
     actor
-    |> Actor.get_followings()
+    |> Actor.get_followings(page)
     |> collection(actor.following_url, page)
     |> Map.merge(Utils.make_json_ld_header())
   end
@@ -66,7 +66,7 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
 
   def render("followers.json", %{actor: actor, page: page}) do
     actor
-    |> Actor.get_followers()
+    |> Actor.get_followers(page)
     |> collection(actor.followers_url, page)
     |> Map.merge(Utils.make_json_ld_header())
   end
@@ -77,7 +77,8 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
     %{
       "id" => actor.followers_url,
       "type" => "OrderedCollection",
-      "totalItems" => length(followers),
+      # TODO put me back
+      # "totalItems" => length(followers),
       "first" => collection(followers, actor.followers_url, 1)
     }
     |> Map.merge(Utils.make_json_ld_header())
@@ -148,22 +149,22 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
     |> Map.merge(Utils.make_json_ld_header())
   end
 
-  def collection(collection, iri, page, total \\ nil) do
-    offset = (page - 1) * 10
-    items = Enum.slice(collection, offset, 10)
-    items = Enum.map(items, fn account -> account.url end)
-    total = total || length(collection)
+  def collection(collection, iri, page, _total \\ nil) do
+    items = Enum.map(collection, fn account -> account.url end)
 
-    map = %{
+    # TODO : Add me back
+    # total = total || length(collection)
+
+    %{
       "id" => "#{iri}?page=#{page}",
       "type" => "OrderedCollectionPage",
       "partOf" => iri,
-      "totalItems" => total,
+      # "totalItems" => total,
       "orderedItems" => items
     }
 
-    if offset < total do
-      Map.put(map, "next", "#{iri}?page=#{page + 1}")
-    end
+    # if offset < total do
+    #   Map.put(map, "next", "#{iri}?page=#{page + 1}")
+    # end
   end
 end

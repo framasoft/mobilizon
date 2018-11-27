@@ -367,7 +367,7 @@ defmodule Mobilizon.Actors do
 
   def get_local_actor_by_name_with_everything(name) do
     actor = Repo.one(from(a in Actor, where: a.preferred_username == ^name and is_nil(a.domain)))
-    Repo.preload(actor, :organized_events)
+    Repo.preload(actor, [:organized_events, :followers, :followings])
   end
 
   @spec get_actor_by_name_with_everything(String.t(), atom() | nil) :: Actor.t()

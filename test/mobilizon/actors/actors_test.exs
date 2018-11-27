@@ -585,23 +585,23 @@ defmodule Mobilizon.ActorsTest do
       actor = Actors.get_actor_with_everything!(actor.id)
       target_actor = Actors.get_actor_with_everything!(target_actor.id)
 
-      {:ok, follower} = Actor.follow(actor, target_actor)
+      {:ok, follower} = Actor.follow(target_actor, actor)
       assert follower.actor.id == actor.id
 
       # Referesh followers/followings
       actor = Actors.get_actor_with_everything!(actor.id)
       target_actor = Actors.get_actor_with_everything!(target_actor.id)
 
-      assert target_actor.followers |> Enum.map(&(&1.actor_id)) == [actor.id]
-      assert actor.followings |> Enum.map(&(&1.target_actor_id)) == [target_actor.id]
+      assert target_actor.followers |> Enum.map(& &1.actor_id) == [actor.id]
+      assert actor.followings |> Enum.map(& &1.target_actor_id) == [target_actor.id]
 
       # Test if actor is already following target actor
-      {:error, msg} = Actor.follow(actor, target_actor)
+      {:error, msg} = Actor.follow(target_actor, actor)
       assert msg =~ "already following"
 
       # Test if target actor is suspended
       target_actor = %{target_actor | suspended: true}
-      {:error, msg} = Actor.follow(actor, target_actor)
+      {:error, msg} = Actor.follow(target_actor, actor)
       assert msg =~ "suspended"
     end
   end

@@ -23,9 +23,13 @@ defmodule Mobilizon.Factory do
     %Mobilizon.Actors.Actor{
       preferred_username: preferred_username,
       domain: nil,
+      followers: [],
+      followings: [],
       keys: pem,
       type: :Person,
       url: MobilizonWeb.Endpoint.url() <> "/@#{preferred_username}",
+      followers_url: MobilizonWeb.Endpoint.url() <> "/@#{preferred_username}/followers",
+      following_url: MobilizonWeb.Endpoint.url() <> "/@#{preferred_username}/following",
       user: nil
     }
   end
@@ -81,6 +85,7 @@ defmodule Mobilizon.Factory do
       actor: build(:actor),
       event: build(:event),
       uuid: uuid,
+      in_reply_to_comment: nil,
       url: "#{MobilizonWeb.Endpoint.url()}/comments/#{uuid}"
     }
   end

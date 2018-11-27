@@ -69,9 +69,8 @@ defmodule MobilizonWeb.ActivityPubController do
   end
 
   def following(conn, %{"name" => name, "page" => page}) do
-    with %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
-      {page, _} = Integer.parse(page)
-
+    with {page, ""} = Integer.parse(page),
+         %Actor{} = actor <- Actors.get_local_actor_by_name_with_everything(name) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ActorView.render("following.json", %{actor: actor, page: page}))
@@ -79,7 +78,7 @@ defmodule MobilizonWeb.ActivityPubController do
   end
 
   def following(conn, %{"name" => name}) do
-    with %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
+    with %Actor{} = actor <- Actors.get_local_actor_by_name_with_everything(name) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ActorView.render("following.json", %{actor: actor}))
@@ -87,9 +86,8 @@ defmodule MobilizonWeb.ActivityPubController do
   end
 
   def followers(conn, %{"name" => name, "page" => page}) do
-    with %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
-      {page, _} = Integer.parse(page)
-
+    with {page, ""} = Integer.parse(page),
+         %Actor{} = actor <- Actors.get_local_actor_by_name_with_everything(name) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ActorView.render("followers.json", %{actor: actor, page: page}))
@@ -97,7 +95,7 @@ defmodule MobilizonWeb.ActivityPubController do
   end
 
   def followers(conn, %{"name" => name}) do
-    with %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
+    with %Actor{} = actor <- Actors.get_local_actor_by_name_with_everything(name) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ActorView.render("followers.json", %{actor: actor}))
@@ -157,6 +155,6 @@ defmodule MobilizonWeb.ActivityPubController do
   def errors(conn, _e) do
     conn
     |> put_status(500)
-    |> json("error")
+    |> json("Unknown Error")
   end
 end

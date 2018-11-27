@@ -1,6 +1,7 @@
 defmodule MobilizonWeb.Resolvers.UserResolverTest do
   use MobilizonWeb.ConnCase
   alias Mobilizon.Actors
+  alias Mobilizon.Actors.{User, Actor}
   alias MobilizonWeb.AbsintheHelpers
   import Mobilizon.Factory
   use Bamboo.Test
@@ -233,5 +234,115 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
     assert hd(json_response(res, 200)["errors"])["message"] ==
              "No user to validate with this email was found"
+  end
+
+  test "test send_reset_password/3 with valid email", context do
+    user = insert(:user)
+
+    mutation = """
+        mutation {
+          sendResetPassword(
+                email: "#{user.email}"
+            )
+          }
+    """
+
+    res =
+      context.conn
+      |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+    assert json_response(res, 200)["data"]["sendResetPassword"] == user.email
+  end
+
+  test "test send_reset_password/3 with invalid email", context do
+    mutation = """
+        mutation {
+          sendResetPassword(
+                email: "oh no"
+            )
+          }
+    """
+
+    res =
+      context.conn
+      |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+    assert hd(json_response(res, 200)["errors"])["message"] == "No user with this email was found"
+  end
+
+  test "test reset_password/3 with valid email", context do
+    %User{} = user = insert(:user)
+    %Actor{} = insert(:actor, user: user)
+    {:ok, _email_sent} = Mobilizon.Actors.Service.ResetPassword.send_password_reset_email(user)
+    %User{reset_password_token: reset_password_token} = Mobilizon.Actors.get_user!(user.id)
+
+    mutation = """
+        mutation {
+          resetPassword(
+                token: "#{reset_password_token}",
+                password: "new password"
+            ) {
+              user {
+                id
+              }
+            }
+          }
+    """
+
+    res =
+      context.conn
+      |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+    assert json_response(res, 200)["data"]["resetPassword"]["user"]["id"] == to_string(user.id)
+  end
+
+  test "test reset_password/3 with a password too short", context do
+    %User{} = user = insert(:user)
+    {:ok, _email_sent} = Mobilizon.Actors.Service.ResetPassword.send_password_reset_email(user)
+    %User{reset_password_token: reset_password_token} = Mobilizon.Actors.get_user!(user.id)
+
+    mutation = """
+        mutation {
+          resetPassword(
+                token: "#{reset_password_token}",
+                password: "new"
+            ) {
+              user {
+                id
+              }
+            }
+          }
+    """
+
+    res =
+      context.conn
+      |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+    assert hd(json_response(res, 200)["errors"])["message"] == "password_too_short"
+  end
+
+  test "test reset_password/3 with an invalid token", context do
+    %User{} = user = insert(:user)
+    {:ok, _email_sent} = Mobilizon.Actors.Service.ResetPassword.send_password_reset_email(user)
+    %User{} = Mobilizon.Actors.get_user!(user.id)
+
+    mutation = """
+        mutation {
+          resetPassword(
+                token: "not good",
+                password: "new"
+            ) {
+              user {
+                id
+              }
+            }
+          }
+    """
+
+    res =
+      context.conn
+      |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+    assert hd(json_response(res, 200)["errors"])["message"] == "invalid_token"
   end
 end

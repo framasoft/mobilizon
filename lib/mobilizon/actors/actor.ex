@@ -222,13 +222,17 @@ defmodule Mobilizon.Actors.Actor do
 
   If actor A and C both follow actor B, actor B's followers are A and C
   """
-  def get_followers(%Actor{id: actor_id} = _actor) do
+  def get_followers(%Actor{id: actor_id} = _actor, page \\ 1, limit \\ 10) do
+    start = (page - 1) * limit
+
     Repo.all(
       from(
         a in Actor,
         join: f in Follower,
         on: a.id == f.actor_id,
-        where: f.target_actor_id == ^actor_id
+        where: f.target_actor_id == ^actor_id,
+        limit: ^limit,
+        offset: ^start
       )
     )
   end
@@ -238,13 +242,17 @@ defmodule Mobilizon.Actors.Actor do
 
   If actor A follows actor B and C, actor A's followings are B and B
   """
-  def get_followings(%Actor{id: actor_id} = _actor) do
+  def get_followings(%Actor{id: actor_id} = _actor, page \\ 1, limit \\ 10) do
+    start = (page - 1) * limit
+
     Repo.all(
       from(
         a in Actor,
         join: f in Follower,
         on: a.id == f.target_actor_id,
-        where: f.actor_id == ^actor_id
+        where: f.actor_id == ^actor_id,
+        limit: ^limit,
+        offset: ^start
       )
     )
   end
@@ -271,10 +279,8 @@ defmodule Mobilizon.Actors.Actor do
     )
   end
 
-
   @spec follow(struct(), struct(), boolean()) :: Follower.t() | {:error, String.t()}
-  def follow(%Actor{} = follower, %Actor{} = followed, approved \\ true) do
-
+  def follow(%Actor{} = followed, %Actor{} = follower, approved \\ true) do
     with {:suspended, false} <- {:suspended, followed.suspended},
          # Check if followed has blocked follower
          {:already_following, false} <- {:already_following, following?(follower, followed)} do
@@ -298,9 +304,12 @@ defmodule Mobilizon.Actors.Actor do
   end
 
   @spec following?(struct(), struct()) :: boolean()
-  def following?(%Actor{id: follower_actor_id} = _follower_actor, %Actor{followers: followers} = _followed) do
+  def following?(
+        %Actor{id: follower_actor_id} = _follower_actor,
+        %Actor{followers: followers} = _followed
+      ) do
     followers
-    |> Enum.map(&(&1.actor_id))
+    |> Enum.map(& &1.actor_id)
     |> Enum.member?(follower_actor_id)
   end
 end

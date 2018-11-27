@@ -154,7 +154,7 @@ defmodule Mobilizon.Service.ActivityPub do
   end
 
   def follow(%Actor{} = follower, %Actor{} = followed, _activity_id \\ nil, local \\ true) do
-    with {:ok, follow} <- Actor.follow(follower, followed, true),
+    with {:ok, follow} <- Actor.follow(followed, follower, true),
          data <- make_follow_data(follower, followed, follow.id),
          {:ok, activity} <- insert(data, local),
          :ok <- maybe_federate(activity) do
@@ -251,8 +251,7 @@ defmodule Mobilizon.Service.ActivityPub do
 
     followers =
       if actor.followers_url in activity.recipients do
-        {:ok, followers} = Actor.get_followers(actor)
-        followers |> Enum.filter(fn follower -> is_nil(follower.domain) end)
+        Actor.get_followers(actor) |> Enum.filter(fn follower -> is_nil(follower.domain) end)
       else
         []
       end
