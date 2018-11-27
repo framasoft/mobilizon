@@ -49,7 +49,8 @@ defmodule Mobilizon.Actors.Actor do
     field(:avatar_url, :string)
     field(:banner_url, :string)
     # field(:openness, Mobilizon.Actors.ActorOpennesssEnum, default: :moderated)
-    many_to_many(:followers, Actor, join_through: Follower)
+    has_many(:followers, Follower, foreign_key: :target_actor_id)
+    has_many(:followings, Follower, foreign_key: :actor_id)
     has_many(:organized_events, Event, foreign_key: :organizer_actor_id)
     many_to_many(:memberships, Actor, join_through: Member)
     belongs_to(:user, User)
@@ -270,7 +271,10 @@ defmodule Mobilizon.Actors.Actor do
     )
   end
 
+
+  @spec follow(struct(), struct(), boolean()) :: Follower.t() | {:error, String.t()}
   def follow(%Actor{} = follower, %Actor{} = followed, approved \\ true) do
+
     with {:suspended, false} <- {:suspended, followed.suspended},
          # Check if followed has blocked follower
          {:already_following, false} <- {:already_following, following?(follower, followed)} do
@@ -293,7 +297,10 @@ defmodule Mobilizon.Actors.Actor do
     })
   end
 
-  def following?(%Actor{} = follower, %Actor{followers: followers}) do
-    Enum.member?(followers, follower)
+  @spec following?(struct(), struct()) :: boolean()
+  def following?(%Actor{id: follower_actor_id} = _follower_actor, %Actor{followers: followers} = _followed) do
+    followers
+    |> Enum.map(&(&1.actor_id))
+    |> Enum.member?(follower_actor_id)
   end
 end

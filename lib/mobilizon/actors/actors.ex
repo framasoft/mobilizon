@@ -73,7 +73,7 @@ defmodule Mobilizon.Actors do
 
   def get_actor_with_everything!(id) do
     actor = Repo.get!(Actor, id)
-    Repo.preload(actor, :organized_events)
+    Repo.preload(actor, [:organized_events, :followers, :followings])
   end
 
   @doc """
@@ -899,9 +899,12 @@ defmodule Mobilizon.Actors do
 
   """
   def create_follower(attrs \\ %{}) do
-    %Follower{}
-    |> Follower.changeset(attrs)
-    |> Repo.insert()
+    with {:ok, %Follower{} = follower} <-
+           %Follower{}
+           |> Follower.changeset(attrs)
+           |> Repo.insert() do
+      {:ok, Repo.preload(follower, [:actor, :target_actor])}
+    end
   end
 
   @doc """
