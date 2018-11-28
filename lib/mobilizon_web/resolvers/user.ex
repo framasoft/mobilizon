@@ -27,7 +27,7 @@ defmodule MobilizonWeb.Resolvers.User do
     with {:ok, %User{} = user} <- Actors.get_user_by_email(email, true),
          {:ok, token, _} <- Actors.authenticate(%{user: user, password: password}),
          %Actor{} = actor <- Actors.get_actor_for_user(user) do
-      {:ok, %{token: token, user: user, actor: actor}}
+      {:ok, %{token: token, user: user, person: actor}}
     else
       {:error, :user_not_found} ->
         {:error, "User with email not found"}
