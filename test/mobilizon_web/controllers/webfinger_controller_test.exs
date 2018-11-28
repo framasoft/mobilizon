@@ -21,6 +21,11 @@ defmodule MobilizonWeb.WebFingerTest do
     assert json_response(conn, 200) == WebFinger.represent_actor(actor)
   end
 
+  test "GET /.well-known/webfinger with non existent actor", %{conn: conn} do
+    conn = get(conn, "/.well-known/webfinger?resource=acct:notme@localhost:4001")
+    assert response(conn, 404) == "Couldn't find user"
+  end
+
   test "GET /.well-known/webfinger with no query", %{conn: conn} do
     conn = get(conn, "/.well-known/webfinger")
     assert response(conn, 400) == "No query provided"

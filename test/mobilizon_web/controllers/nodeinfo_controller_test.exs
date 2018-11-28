@@ -36,4 +36,10 @@ defmodule MobilizonWeb.NodeInfoControllerTest do
              "version" => "2.0"
            }
   end
+
+  test "Get node info with non supported version (1.0)", %{conn: conn} do
+    conn = get(conn, node_info_path(conn, :nodeinfo, "1.0"))
+
+    assert json_response(conn, 404) == %{"error" => "Nodeinfo schema version not handled"}
+  end
 end

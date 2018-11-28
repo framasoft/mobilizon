@@ -6,6 +6,7 @@ defmodule Mobilizon.Service.WebFinger do
   """
 
   alias Mobilizon.Actors
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.XmlBuilder
   require Jason
   require Logger
@@ -32,12 +33,12 @@ defmodule Mobilizon.Service.WebFinger do
     host = MobilizonWeb.Endpoint.host()
     regex = ~r/(acct:)?(?<name>\w+)@#{host}/
 
-    with %{"name" => name} <- Regex.named_captures(regex, resource) do
-      actor = Actors.get_local_actor_by_name(name)
+    with %{"name" => name} <- Regex.named_captures(regex, resource),
+         %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
       {:ok, represent_actor(actor, "JSON")}
     else
       _e ->
-        with actor when not is_nil(actor) <- Actors.get_actor_by_url!(resource) do
+        with %Actor{} = actor when not is_nil(actor) <- Actors.get_actor_by_url(resource) do
           {:ok, represent_actor(actor, "JSON")}
         else
           _e ->
