@@ -190,7 +190,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
         context.conn
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "Invalid token"
+      assert hd(json_response(res, 200)["errors"])["message"] == "validation_failed"
     end
   end
 

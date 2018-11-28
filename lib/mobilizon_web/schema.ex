@@ -177,8 +177,7 @@ defmodule MobilizonWeb.Schema do
       description: "The user's list of profiles (identities)"
     )
 
-    # TODO: This shouldn't be an ID, but the actor itself
-    field(:default_actor_id, non_null(:integer), description: "The user's default actor")
+    field(:default_actor, non_null(:person), description: "The user's default actor")
 
     field(:confirmed_at, :datetime,
       description: "The datetime when the user was confirmed/activated"

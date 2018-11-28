@@ -13,7 +13,7 @@ defmodule Mobilizon.Actors.User do
     field(:password, :string, virtual: true)
     field(:role, :integer, default: 0)
     has_many(:actors, Actor)
-    field(:default_actor_id, :integer)
+    has_one(:default_actor, Actor)
     field(:confirmed_at, :utc_datetime)
     field(:confirmation_sent_at, :utc_datetime)
     field(:confirmation_token, :string)
@@ -29,7 +29,7 @@ defmodule Mobilizon.Actors.User do
     |> cast(attrs, [
       :email,
       :role,
-      :default_actor_id,
+      # :default_actor,
       :password_hash,
       :confirmed_at,
       :confirmation_sent_at,
@@ -52,7 +52,8 @@ defmodule Mobilizon.Actors.User do
     struct
     |> changeset(params)
     |> cast(params, ~w(password)a, [])
-    |> validate_required([:email, :password, :default_actor_id])
+    |> put_assoc(:default_actor, params.default_actor)
+    |> validate_required([:email, :password])
     |> validate_email()
     |> validate_length(
       :password,

@@ -9,6 +9,7 @@ defmodule Mobilizon.Actors do
   alias Mobilizon.Actors.{Actor, Bot, Member, Follower, User}
 
   alias Mobilizon.Service.ActivityPub
+  import Exgravatar
 
   @doc false
   def data() do
@@ -58,17 +59,10 @@ defmodule Mobilizon.Actors do
   """
   @spec get_actor_for_user(Mobilizon.Actors.User.t()) :: Mobilizon.Actors.Actor.t()
   def get_actor_for_user(%Mobilizon.Actors.User{} = user) do
-    case user.default_actor_id do
-      nil -> get_first_actor_for_user(user)
-      actor_id -> get_actor!(actor_id)
+    with %User{default_actor: actor} = user when not is_nil(user) and not is_nil(actor) <-
+           Repo.preload(user, [:default_actor]) do
+      actor
     end
-  end
-
-  # Returns the first actor found for an user
-  # Useful when the user has not defined default actor
-  # Raises `Ecto.NoResultsError` if no Actor is found for this ID
-  defp get_first_actor_for_user(%Mobilizon.Actors.User{id: id} = _user) do
-    Repo.one!(from(a in Actor, where: a.user_id == ^id))
   end
 
   def get_actor_with_everything!(id) do
@@ -496,37 +490,26 @@ defmodule Mobilizon.Actors do
   @doc """
   Register user
   """
+  @spec register(map()) :: {:ok, Actor.t()} | {:error, String.t()}
   def register(%{email: email, password: password, username: username}) do
     key = :public_key.generate_key({:rsa, 2048, 65_537})
     entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
     pem = [entry] |> :public_key.pem_encode() |> String.trim_trailing()
 
-    import Exgravatar
-
-    avatar_url = gravatar_url(email, default: "404")
-
-    avatar =
-      case HTTPoison.get(avatar_url) do
-        {:ok, %HTTPoison.Response{status_code: 200}} ->
-          avatar_url
-
-        _ ->
-          nil
-      end
-
-    with actor_changeset <-
+    with avatar <- gravatar(email),
+         actor_changeset <-
            Mobilizon.Actors.Actor.registration_changeset(%Mobilizon.Actors.Actor{}, %{
              preferred_username: username,
              domain: nil,
              keys: pem,
              avatar_url: avatar
            }),
-         {:ok, %Mobilizon.Actors.Actor{id: id} = actor} <- Mobilizon.Repo.insert(actor_changeset),
+         {:ok, %Mobilizon.Actors.Actor{} = actor} <- Mobilizon.Repo.insert(actor_changeset),
          user_changeset <-
            Mobilizon.Actors.User.registration_changeset(%Mobilizon.Actors.User{}, %{
              email: email,
              password: password,
-             default_actor_id: id
+             default_actor: actor
            }),
          {:ok, %Mobilizon.Actors.User{} = user} <- Mobilizon.Repo.insert(user_changeset) do
       {:ok, Map.put(actor, :user, user)}
@@ -536,6 +519,22 @@ defmodule Mobilizon.Actors do
     end
   end
 
+  @spec gravatar(String.t()) :: String.t() | nil
+  defp gravatar(nil), do: nil
+
+  defp gravatar(email) do
+    avatar_url = gravatar_url(email, default: "404")
+
+    case HTTPoison.get(avatar_url) do
+      {:ok, %HTTPoison.Response{status_code: 200}} ->
+        avatar_url
+
+      _ ->
+        nil
+    end
+  end
+
+  @spec handle_actor_user_changeset(Ecto.Changeset.t()) :: {:error, String.t()}
   defp handle_actor_user_changeset(changeset) do
     changeset =
       Ecto.Changeset.traverse_errors(changeset, fn
@@ -543,7 +542,8 @@ defmodule Mobilizon.Actors do
         msg -> msg
       end)
 
-    {:error, hd(Map.get(changeset, :email))}
+    email_msg = Map.get(changeset, :email) || [:empty_email]
+    {:error, hd(email_msg)}
   end
 
   def register_bot_account(%{name: name, summary: summary}) do
@@ -611,6 +611,16 @@ defmodule Mobilizon.Actors do
     end
   end
 
+  @spec get_user_by_activation_token(String.t()) :: Actor.t()
+  def get_user_by_activation_token(token) do
+    Repo.one(
+      from(u in User,
+        where: u.confirmation_token == ^token,
+        preload: [:default_actor]
+      )
+    )
+  end
+
   @doc """
   Updates a user.
 
@@ -645,18 +655,18 @@ defmodule Mobilizon.Actors do
     Repo.delete(user)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking user changes.
+  # @doc """
+  # Returns an `%Ecto.Changeset{}` for tracking user changes.
 
-  ## Examples
+  # ## Examples
 
-      iex> change_user(%Mobilizon.Actors.User{})
-      %Ecto.Changeset{data: %Mobilizon.Actors.User{}}
+  #     iex> change_user(%Mobilizon.Actors.User{})
+  #     %Ecto.Changeset{data: %Mobilizon.Actors.User{}}
 
-  """
-  def change_user(%User{} = user) do
-    User.changeset(user, %{})
-  end
+  # """
+  # def change_user(%User{} = user) do
+  #   User.changeset(user, %{})
+  # end
 
   alias Mobilizon.Actors.Member
 

@@ -9,7 +9,7 @@ defmodule Mobilizon.Actors.Service.Activation do
 
   @doc false
   def check_confirmation_token(token) when is_binary(token) do
-    with %User{} = user <- Repo.get_by(User, confirmation_token: token),
+    with %User{} = user <- Actors.get_user_by_activation_token(token),
          {:ok, %User{} = user} <-
            Actors.update_user(user, %{
              "confirmed_at" => DateTime.utc_now(),
@@ -20,7 +20,7 @@ defmodule Mobilizon.Actors.Service.Activation do
       {:ok, user}
     else
       _err ->
-        {:error, "Invalid token"}
+        {:error, :invalid_token}
     end
   end
 

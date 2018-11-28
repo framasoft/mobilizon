@@ -1,6 +1,7 @@
 defmodule MobilizonWeb.Resolvers.User do
   alias Mobilizon.Actors.{User, Actor}
   alias Mobilizon.Actors
+  require Logger
 
   @doc """
   Find an user by it's ID
@@ -56,11 +57,18 @@ defmodule MobilizonWeb.Resolvers.User do
   Validate an user, get it's actor and a token
   """
   def validate_user(_parent, %{token: token}, _resolution) do
-    with {:ok, %User{} = user} <-
-           Mobilizon.Actors.Service.Activation.check_confirmation_token(token),
-         %Actor{} = actor <- Actors.get_actor_for_user(user),
-         {:ok, token, _} <- MobilizonWeb.Guardian.encode_and_sign(user) do
+    with {:check_confirmation_token, {:ok, %User{} = user}} <-
+           {:check_confirmation_token,
+            Mobilizon.Actors.Service.Activation.check_confirmation_token(token)},
+         {:get_actor, %Actor{} = actor} <- {:get_actor, Actors.get_actor_for_user(user)},
+         {:guardian_encode_and_sign, {:ok, token, _}} <-
+           {:guardian_encode_and_sign, MobilizonWeb.Guardian.encode_and_sign(user)} do
       {:ok, %{token: token, user: user, person: actor}}
+    else
+      err ->
+        Logger.info("Unable to validate user with token #{token}")
+        Logger.debug(inspect(err))
+        {:error, :validation_failed}
     end
   end
 
@@ -116,8 +124,8 @@ defmodule MobilizonWeb.Resolvers.User do
   def change_default_actor(_parent, %{preferred_username: username}, %{
         context: %{current_user: user}
       }) do
-    with %Actor{id: id} <- Actors.get_local_actor_by_name(username) do
-      Actors.update_user(user, %{default_actor_id: id})
+    with %Actor{} = actor <- Actors.get_local_actor_by_name(username) do
+      Actors.update_user(user, %{default_actor: actor})
     end
   end
 end

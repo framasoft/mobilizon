@@ -26,7 +26,7 @@ defmodule Mobilizon.Actors.Service.ResetPassword do
       {:error, %Ecto.Changeset{errors: [password: {"registration.error.password_too_short", _}]}} ->
         {:error, :password_too_short}
 
-      err ->
+      _err ->
         {:error, :invalid_token}
     end
   end

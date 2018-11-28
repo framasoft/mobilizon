@@ -289,19 +289,9 @@ defmodule Mobilizon.ActorsTest do
   describe "users" do
     alias Mobilizon.Actors.{User, Actor}
 
-    @actor_valid_attrs %{
-      description: "some description",
-      display_name: "some display_name",
-      domain: "some domain",
-      keys: "some keys",
-      suspended: true,
-      uri: "some uri",
-      url: "some url",
-      preferred_username: "some username"
-    }
-    @valid_attrs %{email: "foo@bar.tld", password: "some password", role: 42}
-    @update_attrs %{email: "foo@fighters.tld", password: "some updated password", role: 43}
-    @invalid_attrs %{email: nil, password_hash: nil, role: nil}
+    @valid_attrs %{email: "foo@bar.tld", password: "some password", username: "foo"}
+    @update_attrs %{email: "foo@fighters.tld", password: "some updated password"}
+    @invalid_attrs %{email: nil, password: nil, username: nil}
 
     test "list_users/0 returns all users" do
       user = insert(:user)
@@ -314,24 +304,23 @@ defmodule Mobilizon.ActorsTest do
       assert user = Actors.get_user!(user.id)
     end
 
-    test "create_user/1 with valid data creates a user" do
-      {:ok, %Actor{} = actor} = Actors.create_actor(@actor_valid_attrs)
-      attrs = @valid_attrs |> Map.put(:actor_id, actor.id) |> Map.put(:default_actor_id, actor.id)
-      assert {:ok, %User{} = user} = Actors.create_user(attrs)
-      assert user.email == "foo@bar.tld"
-      assert user.role == 42
+    # There's no create_user/1, just register/1
+    test "register/1 with valid data creates a user" do
+      assert {:ok, %Actor{preferred_username: username, user: %User{email: email}}} =
+               Actors.register(@valid_attrs)
+
+      assert email == @valid_attrs.email
+      assert username == @valid_attrs.username
     end
 
     test "create_user/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Actors.create_user(@invalid_attrs)
+      assert {:error, :empty_email} = Actors.register(@invalid_attrs)
     end
 
     test "update_user/2 with valid data updates the user" do
       user = insert(:user)
-      assert {:ok, user} = Actors.update_user(user, @update_attrs)
-      assert %User{} = user
-      assert user.email == "foo@fighters.tld"
-      assert user.role == 43
+      assert {:ok, %User{email: email}} = Actors.update_user(user, @update_attrs)
+      assert email == "foo@fighters.tld"
     end
 
     test "update_user/2 with invalid data returns error changeset" do
@@ -346,10 +335,10 @@ defmodule Mobilizon.ActorsTest do
       assert_raise Ecto.NoResultsError, fn -> Actors.get_user!(user.id) end
     end
 
-    test "change_user/1 returns a user changeset" do
-      user = insert(:user)
-      assert %Ecto.Changeset{} = Actors.change_user(user)
-    end
+    # test "change_user/1 returns a user changeset" do
+    #   user = insert(:user)
+    #   assert %Ecto.Changeset{} = Actors.change_user(user)
+    # end
 
     @email "email@domain.tld"
     @password "password"
