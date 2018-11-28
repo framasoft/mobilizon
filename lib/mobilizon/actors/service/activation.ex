@@ -1,7 +1,7 @@
 defmodule Mobilizon.Actors.Service.Activation do
   @moduledoc false
 
-  alias Mobilizon.{Mailer, Repo, Actors.User, Actors}
+  alias Mobilizon.{Mailer, Actors.User, Actors}
   alias Mobilizon.Email.User, as: UserEmail
   alias Mobilizon.Actors.Service.Tools
 
