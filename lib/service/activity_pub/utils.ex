@@ -12,7 +12,6 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   alias Mobilizon.Events.Comment
   alias Mobilizon.Events
   alias Mobilizon.Activity
-  alias MobilizonWeb
   alias Mobilizon.Service.ActivityPub
   alias Ecto.{Changeset, UUID}
   require Logger

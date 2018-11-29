@@ -1,7 +1,6 @@
 defmodule MobilizonWeb.NodeInfoController do
   use MobilizonWeb, :controller
 
-  alias MobilizonWeb
   alias Mobilizon.{Actors, Events}
 
   @instance Application.get_env(:mobilizon, :instance)
