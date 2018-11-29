@@ -13,7 +13,7 @@ defmodule Mobilizon.Actors.User do
     field(:password, :string, virtual: true)
     field(:role, :integer, default: 0)
     has_many(:actors, Actor)
-    has_one(:default_actor, Actor)
+    belongs_to(:default_actor, Actor)
     field(:confirmed_at, :utc_datetime)
     field(:confirmation_sent_at, :utc_datetime)
     field(:confirmation_token, :string)
@@ -25,34 +25,40 @@ defmodule Mobilizon.Actors.User do
 
   @doc false
   def changeset(%User{} = user, attrs) do
-    user
-    |> cast(attrs, [
-      :email,
-      :role,
-      # :default_actor,
-      :password_hash,
-      :confirmed_at,
-      :confirmation_sent_at,
-      :confirmation_token,
-      :reset_password_sent_at,
-      :reset_password_token
-    ])
-    |> validate_required([:email])
-    |> unique_constraint(:email, message: "registration.error.email_already_used")
-    |> validate_format(:email, ~r/@/)
-    |> validate_length(
-      :password,
-      min: 6,
-      max: 100,
-      message: "registration.error.password_too_short"
-    )
+    changeset =
+      user
+      |> cast(attrs, [
+        :email,
+        :role,
+        :password_hash,
+        :confirmed_at,
+        :confirmation_sent_at,
+        :confirmation_token,
+        :reset_password_sent_at,
+        :reset_password_token
+      ])
+      |> validate_required([:email])
+      |> unique_constraint(:email, message: "registration.error.email_already_used")
+      |> validate_format(:email, ~r/@/)
+      |> validate_length(
+        :password,
+        min: 6,
+        max: 100,
+        message: "registration.error.password_too_short"
+      )
+
+    if Map.has_key?(attrs, :default_actor) do
+      put_assoc(changeset, :default_actor, attrs.default_actor)
+    else
+      changeset
+    end
   end
 
   def registration_changeset(struct, params) do
     struct
     |> changeset(params)
     |> cast(params, ~w(password)a, [])
-    |> put_assoc(:default_actor, params.default_actor)
+    |> cast_assoc(:default_actor)
     |> validate_required([:email, :password])
     |> validate_email()
     |> validate_length(

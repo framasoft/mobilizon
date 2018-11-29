@@ -306,15 +306,17 @@ defmodule Mobilizon.ActorsTest do
 
     # There's no create_user/1, just register/1
     test "register/1 with valid data creates a user" do
-      assert {:ok, %Actor{preferred_username: username, user: %User{email: email}}} =
-               Actors.register(@valid_attrs)
+      assert {:ok,
+              %User{email: email, default_actor: %Actor{preferred_username: username} = actor} =
+                user} = Actors.register(@valid_attrs)
 
       assert email == @valid_attrs.email
       assert username == @valid_attrs.username
+      assert [actor.id] == Actors.get_actors_for_user(user) |> Enum.map(& &1.id)
     end
 
     test "create_user/1 with invalid data returns error changeset" do
-      assert {:error, :empty_email} = Actors.register(@invalid_attrs)
+      assert {:error, "can't be blank"} = Actors.register(@invalid_attrs)
     end
 
     test "update_user/2 with valid data updates the user" do
@@ -343,7 +345,7 @@ defmodule Mobilizon.ActorsTest do
     @email "email@domain.tld"
     @password "password"
     test "authenticate/1 checks the user's password" do
-      {:ok, %Actor{user: user} = _actor} =
+      {:ok, %User{} = user} =
         Actors.register(%{email: @email, password: @password, username: "yolo"})
 
       assert {:ok, _, _} = Actors.authenticate(%{user: user, password: @password})
@@ -353,7 +355,7 @@ defmodule Mobilizon.ActorsTest do
     end
 
     test "get_user_by_email/1 finds an user by it's email" do
-      {:ok, %Actor{user: %User{email: email} = user} = _actor} =
+      {:ok, %User{email: email} = user} =
         Actors.register(%{email: @email, password: @password, username: "yolo"})
 
       assert email == @email
@@ -363,7 +365,7 @@ defmodule Mobilizon.ActorsTest do
     end
 
     test "get_user_by_email/1 finds an activated user by it's email" do
-      {:ok, %Actor{user: user}} =
+      {:ok, %User{} = user} =
         Actors.register(%{email: @email, password: @password, username: "yolo"})
 
       {:ok, %User{id: id}} = Actors.get_user_by_email(@email, false)

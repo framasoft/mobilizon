@@ -202,7 +202,6 @@ defmodule MobilizonWeb.Schema do
   object :login do
     field(:token, non_null(:string), description: "A JWT Token for this session")
     field(:user, non_null(:user), description: "The user associated to this session")
-    field(:person, non_null(:person), description: "The person associated to this session")
   end
 
   @desc "An event"
@@ -480,8 +479,8 @@ defmodule MobilizonWeb.Schema do
       resolve(&Resolvers.Category.create_category/3)
     end
 
-    @desc "Create an user (returns an actor)"
-    field :create_user, type: :person do
+    @desc "Create an user"
+    field :create_user, type: :user do
       arg(:email, non_null(:string))
       arg(:password, non_null(:string))
       arg(:username, non_null(:string))

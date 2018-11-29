@@ -1,15 +1,15 @@
 defmodule MobilizonWeb.Resolvers.CategoryResolverTest do
   use MobilizonWeb.ConnCase
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Actors.{Actor, User}
   alias MobilizonWeb.AbsintheHelpers
   import Mobilizon.Factory
 
   setup %{conn: conn} do
-    {:ok, %Actor{} = actor} =
+    {:ok, %User{default_actor: %Actor{} = actor} = user} =
       Actors.register(%{email: "test@test.tld", password: "testest", username: "test"})
 
-    {:ok, conn: conn, actor: actor}
+    {:ok, conn: conn, actor: actor, user: user}
   end
 
   describe "Category Resolver" do
@@ -38,7 +38,7 @@ defmodule MobilizonWeb.Resolvers.CategoryResolverTest do
     end
 
     # We can't test an upload…yet?
-    # test "create_category/3 creates a category", %{conn: conn, actor: actor} do
+    # test "create_category/3 creates a category", %{conn: conn, actor: actor, user: user} do
     #   mutation = """
     #       mutation {
     #         createCategory(title: "my category", description: "my desc") {
@@ -51,7 +51,7 @@ defmodule MobilizonWeb.Resolvers.CategoryResolverTest do
 
     #   res =
     #     conn
-    #     |> auth_conn(actor.user)
+    #     |> auth_conn(user)
     #     |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
     #   assert json_response(res, 200)["data"]["createCategory"]["title"] == "my category"

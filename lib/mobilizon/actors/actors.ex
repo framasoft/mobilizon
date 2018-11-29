@@ -59,10 +59,14 @@ defmodule Mobilizon.Actors do
   """
   @spec get_actor_for_user(Mobilizon.Actors.User.t()) :: Mobilizon.Actors.Actor.t()
   def get_actor_for_user(%Mobilizon.Actors.User{} = user) do
-    with %User{default_actor: actor} = user when not is_nil(user) and not is_nil(actor) <-
-           Repo.preload(user, [:default_actor]) do
-      actor
+    case Repo.one(from(a in Actor, join: u in User, on: u.default_actor_id == a.id)) do
+      nil -> get_actors_for_user(user) |> hd
+      actor -> actor
     end
+  end
+
+  def get_actors_for_user(%User{id: user_id}) do
+    Repo.all(from(a in Actor, where: a.user_id == ^user_id))
   end
 
   def get_actor_with_everything!(id) do
@@ -104,6 +108,13 @@ defmodule Mobilizon.Actors do
     actor
     |> Actor.changeset(attrs)
     |> Repo.update()
+  end
+
+  def update_user_default_actor(user_id, actor_id) do
+    with from(u in User, where: u.id == ^user_id, update: [set: [default_actor_id: ^actor_id]])
+         |> Repo.update_all([]) do
+      Repo.get!(User, user_id) |> Repo.preload([:default_actor])
+    end
   end
 
   @doc """
@@ -248,14 +259,25 @@ defmodule Mobilizon.Actors do
   @spec get_user_with_actors!(integer()) :: User.t()
   def get_user_with_actors!(id) do
     user = Repo.get!(User, id)
-    Repo.preload(user, :actors)
+    Repo.preload(user, [:actors, :default_actor])
   end
 
+  @doc """
+  Get user with it's actors by ID
+  """
   @spec get_user_with_actors(integer()) :: User.t()
   def get_user_with_actors(id) do
     case Repo.get(User, id) do
-      nil -> {:error, "User with ID #{id} not found"}
-      user -> {:ok, Repo.preload(user, :actors)}
+      nil ->
+        {:error, "User with ID #{id} not found"}
+
+      user ->
+        user =
+          user
+          |> Repo.preload([:actors, :default_actor])
+          |> Map.put(:actors, get_actors_for_user(user))
+
+        {:ok, user}
     end
   end
 
@@ -497,22 +519,21 @@ defmodule Mobilizon.Actors do
     pem = [entry] |> :public_key.pem_encode() |> String.trim_trailing()
 
     with avatar <- gravatar(email),
-         actor_changeset <-
-           Mobilizon.Actors.Actor.registration_changeset(%Mobilizon.Actors.Actor{}, %{
-             preferred_username: username,
-             domain: nil,
-             keys: pem,
-             avatar_url: avatar
-           }),
-         {:ok, %Mobilizon.Actors.Actor{} = actor} <- Mobilizon.Repo.insert(actor_changeset),
          user_changeset <-
-           Mobilizon.Actors.User.registration_changeset(%Mobilizon.Actors.User{}, %{
+           User.registration_changeset(%User{}, %{
              email: email,
              password: password,
-             default_actor: actor
+             default_actor: %{
+               preferred_username: username,
+               domain: nil,
+               keys: pem,
+               avatar_url: avatar
+             }
            }),
-         {:ok, %Mobilizon.Actors.User{} = user} <- Mobilizon.Repo.insert(user_changeset) do
-      {:ok, Map.put(actor, :user, user)}
+         {:ok, %User{default_actor: %Actor{} = actor, id: user_id} = user} <-
+           Mobilizon.Repo.insert(user_changeset),
+         {:ok, %Actor{} = _actor} <- update_actor(actor, %{user_id: user_id}) do
+      {:ok, Repo.preload(user, [:actors])}
     else
       {:error, %Ecto.Changeset{} = changeset} ->
         handle_actor_user_changeset(changeset)
@@ -600,9 +621,20 @@ defmodule Mobilizon.Actors do
   def get_user_by_email(email, activated \\ nil) do
     query =
       case activated do
-        nil -> from(u in User, where: u.email == ^email)
-        true -> from(u in User, where: u.email == ^email and not is_nil(u.confirmed_at))
-        false -> from(u in User, where: u.email == ^email and is_nil(u.confirmed_at))
+        nil ->
+          from(u in User, where: u.email == ^email, preload: :default_actor)
+
+        true ->
+          from(u in User,
+            where: u.email == ^email and not is_nil(u.confirmed_at),
+            preload: :default_actor
+          )
+
+        false ->
+          from(u in User,
+            where: u.email == ^email and is_nil(u.confirmed_at),
+            preload: :default_actor
+          )
       end
 
     case Repo.one(query) do
@@ -611,11 +643,27 @@ defmodule Mobilizon.Actors do
     end
   end
 
+  @doc """
+  Get an user by it's activation token
+  """
   @spec get_user_by_activation_token(String.t()) :: Actor.t()
   def get_user_by_activation_token(token) do
     Repo.one(
       from(u in User,
         where: u.confirmation_token == ^token,
+        preload: [:default_actor]
+      )
+    )
+  end
+
+  @doc """
+  Get an user by it's reset password token
+  """
+  @spec get_user_by_reset_password_token(String.t()) :: Actor.t()
+  def get_user_by_reset_password_token(token) do
+    Repo.one(
+      from(u in User,
+        where: u.reset_password_token == ^token,
         preload: [:default_actor]
       )
     )
@@ -634,9 +682,12 @@ defmodule Mobilizon.Actors do
 
   """
   def update_user(%User{} = user, attrs) do
-    user
-    |> User.changeset(attrs)
-    |> Repo.update()
+    with {:ok, %User{} = user} <-
+           user
+           |> User.changeset(attrs)
+           |> Repo.update() do
+      {:ok, Repo.preload(user, [:default_actor])}
+    end
   end
 
   @doc """

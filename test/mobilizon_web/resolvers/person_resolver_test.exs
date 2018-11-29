@@ -1,6 +1,7 @@
 defmodule MobilizonWeb.Resolvers.PersonResolverTest do
   use MobilizonWeb.ConnCase
   alias Mobilizon.Actors
+  alias Mobilizon.Actors.{User, Actor}
   alias MobilizonWeb.AbsintheHelpers
 
   @valid_actor_params %{email: "test@test.tld", password: "testest", username: "test"}
@@ -8,7 +9,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
 
   describe "Person Resolver" do
     test "find_actor/3 returns a person by it's username", context do
-      {:ok, actor} = Actors.register(@valid_actor_params)
+      {:ok, %User{default_actor: %Actor{} = actor} = _user} = Actors.register(@valid_actor_params)
 
       query = """
       {
@@ -44,7 +45,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
     end
 
     test "get_current_person/3 returns the current logged-in actor", context do
-      {:ok, actor} = Actors.register(@valid_actor_params)
+      {:ok, %User{default_actor: %Actor{} = actor} = user} = Actors.register(@valid_actor_params)
 
       query = """
       {
@@ -66,7 +67,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
 
       res =
         context.conn
-        |> auth_conn(actor.user)
+        |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "logged_person"))
 
       assert json_response(res, 200)["data"]["loggedPerson"]["preferredUsername"] ==

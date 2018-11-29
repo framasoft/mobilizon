@@ -26,9 +26,8 @@ defmodule MobilizonWeb.Resolvers.User do
   """
   def login_user(_parent, %{email: email, password: password}, _resolution) do
     with {:ok, %User{} = user} <- Actors.get_user_by_email(email, true),
-         {:ok, token, _} <- Actors.authenticate(%{user: user, password: password}),
-         %Actor{} = actor <- Actors.get_actor_for_user(user) do
-      {:ok, %{token: token, user: user, person: actor}}
+         {:ok, token, _} <- Actors.authenticate(%{user: user, password: password}) do
+      {:ok, %{token: token, user: user}}
     else
       {:error, :user_not_found} ->
         {:error, "User with email not found"}
@@ -47,9 +46,9 @@ defmodule MobilizonWeb.Resolvers.User do
   """
   @spec create_user_actor(any(), map(), any()) :: tuple()
   def create_user_actor(_parent, args, _resolution) do
-    with {:ok, %Actor{user: user} = actor} <- Actors.register(args) do
+    with {:ok, %User{} = user} <- Actors.register(args) do
       Mobilizon.Actors.Service.Activation.send_confirmation_email(user)
-      {:ok, actor}
+      {:ok, user}
     end
   end
 
@@ -114,9 +113,8 @@ defmodule MobilizonWeb.Resolvers.User do
   def reset_password(_parent, %{password: password, token: token}, _resolution) do
     with {:ok, %User{} = user} <-
            Mobilizon.Actors.Service.ResetPassword.check_reset_password_token(password, token),
-         %Actor{} = actor <- Actors.get_actor_for_user(user),
          {:ok, token, _} <- MobilizonWeb.Guardian.encode_and_sign(user) do
-      {:ok, %{token: token, user: user, actor: actor}}
+      {:ok, %{token: token, user: user}}
     end
   end
 
@@ -124,8 +122,17 @@ defmodule MobilizonWeb.Resolvers.User do
   def change_default_actor(_parent, %{preferred_username: username}, %{
         context: %{current_user: user}
       }) do
-    with %Actor{} = actor <- Actors.get_local_actor_by_name(username) do
-      Actors.update_user(user, %{default_actor: actor})
+    with %Actor{id: actor_id} <- Actors.get_local_actor_by_name(username),
+         {:user_actor, true} <-
+           {:user_actor, actor_id in Enum.map(Actors.get_actors_for_user(user), & &1.id)},
+         %User{} = user <- Actors.update_user_default_actor(user.id, actor_id) do
+      {:ok, user}
+    else
+      {:user_actor, _} ->
+        {:error, :actor_not_from_user}
+
+      _err ->
+        {:error, :unable_to_change_default_actor}
     end
   end
 end
