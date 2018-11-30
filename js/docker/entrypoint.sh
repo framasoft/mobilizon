@@ -2,4 +2,4 @@
 
 npm install
 npm rebuild node-sass
-npm run serve
+npm run dev
