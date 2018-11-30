@@ -7,7 +7,8 @@
     "build": "vue-cli-service build --modern",
     "lint": "vue-cli-service lint",
     "test:e2e": "vue-cli-service test:e2e",
-    "test:unit": "vue-cli-service test:unit"
+    "test:unit": "vue-cli-service test:unit",
+    "analyze-bundle": "npm run build -- --report-json && webpack-bundle-analyzer ../priv/static/report.json"
   },
   "dependencies": {
     "apollo-absinthe-upload-link": "^1.4.0",
@@ -44,7 +45,8 @@
     "node-sass": "^4.10.0",
     "sass-loader": "^7.1.0",
     "vue-cli-plugin-apollo": "^0.17.4",
-    "vue-template-compiler": "^2.5.17"
+    "vue-template-compiler": "^2.5.17",
+    "webpack-bundle-analyzer": "^3.0.3"
   },
   "browserslist": [
     "> 1%",
