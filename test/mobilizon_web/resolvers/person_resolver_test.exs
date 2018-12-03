@@ -8,7 +8,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
   @non_existent_username "nonexistent"
 
   describe "Person Resolver" do
-    test "find_actor/3 returns a person by it's username", context do
+    test "find_person/3 returns a person by it's username", context do
       {:ok, %User{default_actor: %Actor{} = actor} = _user} = Actors.register(@valid_actor_params)
 
       query = """

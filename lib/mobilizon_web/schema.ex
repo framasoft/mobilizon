@@ -398,6 +398,11 @@ defmodule MobilizonWeb.Schema do
       resolve(&Resolvers.Event.list_events/3)
     end
 
+    @desc "Get all groups"
+    field :groups, list_of(:group) do
+      resolve(&Resolvers.Group.list_groups/3)
+    end
+
     @desc "Search through events, persons and groups"
     field :search, list_of(:search_result) do
       arg(:search, non_null(:string))
@@ -418,6 +423,12 @@ defmodule MobilizonWeb.Schema do
       resolve(&Resolvers.Event.list_participants_for_event/3)
     end
 
+    @desc "Get a group by it's preferred username"
+    field :group, :group do
+      arg(:preferred_username, non_null(:string))
+      resolve(&Resolvers.Group.find_group/3)
+    end
+
     @desc "Get an user"
     field :user, :user do
       arg(:id, non_null(:id))
@@ -431,13 +442,13 @@ defmodule MobilizonWeb.Schema do
 
     @desc "Get the current actor for the logged-in user"
     field :logged_person, :person do
-      resolve(&Resolvers.Actor.get_current_person/3)
+      resolve(&Resolvers.Person.get_current_person/3)
     end
 
-    @desc "Get a person"
+    @desc "Get a person by it's preferred username"
     field :person, :person do
       arg(:preferred_username, non_null(:string))
-      resolve(&Resolvers.Actor.find_person/3)
+      resolve(&Resolvers.Person.find_person/3)
     end
 
     @desc "Get the list of categories"
@@ -527,6 +538,17 @@ defmodule MobilizonWeb.Schema do
     field :change_default_actor, :user do
       arg(:preferred_username, non_null(:string))
       resolve(&Resolvers.User.change_default_actor/3)
+    end
+
+    @desc "Create a group"
+    field :create_group, :group do
+      arg(:preferred_username, non_null(:string), description: "The name for the group")
+      arg(:name, :string, description: "The displayed name for the group")
+
+      arg(:creator_username, :string,
+        description: "The actor's username which will be the admin (otherwise user's default one)"
+      )
+      resolve(&Resolvers.Group.create_group/3)
     end
 
     # @desc "Upload a picture"

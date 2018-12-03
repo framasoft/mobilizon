@@ -1,7 +1,8 @@
-defmodule MobilizonWeb.Resolvers.Actor do
+defmodule MobilizonWeb.Resolvers.Person do
   alias Mobilizon.Actors
   alias Mobilizon.Service.ActivityPub
 
+  @deprecated "Use find_person/3 or find_group/3 instead"
   def find_actor(_parent, %{preferred_username: name}, _resolution) do
     case ActivityPub.find_or_make_actor_from_nickname(name) do
       {:ok, actor} ->
@@ -22,19 +23,6 @@ defmodule MobilizonWeb.Resolvers.Actor do
 
       _ ->
         {:error, "Person with name #{name} not found"}
-    end
-  end
-
-  @doc """
-  Find a person
-  """
-  def find_group(_parent, %{preferred_username: name}, _resolution) do
-    case ActivityPub.find_or_make_group_from_nickname(name) do
-      {:ok, actor} ->
-        {:ok, actor}
-
-      _ ->
-        {:error, "Group with name #{name} not found"}
     end
   end
 

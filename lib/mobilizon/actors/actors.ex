@@ -177,6 +177,8 @@ defmodule Mobilizon.Actors do
 
   """
   def create_group(attrs \\ %{}) do
+    attrs = Map.put(attrs, :keys, create_keys())
+
     %Actor{}
     |> Actor.group_creation(attrs)
     |> Repo.insert()
@@ -211,7 +213,7 @@ defmodule Mobilizon.Actors do
             name: data.name
           ]
         ],
-        conflict_target: [:preferred_username, :domain]
+        conflict_target: [:preferred_username, :domain, :type]
       )
 
     if preload, do: {:ok, Repo.preload(actor, [:followers])}, else: {:ok, actor}
@@ -509,15 +511,19 @@ defmodule Mobilizon.Actors do
     end
   end
 
+  # Create a new RSA key
+  @spec create_keys() :: String.t()
+  defp create_keys() do
+    key = :public_key.generate_key({:rsa, 2048, 65_537})
+    entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
+    [entry] |> :public_key.pem_encode() |> String.trim_trailing()
+  end
+
   @doc """
   Register user
   """
   @spec register(map()) :: {:ok, Actor.t()} | {:error, String.t()}
   def register(%{email: email, password: password, username: username}) do
-    key = :public_key.generate_key({:rsa, 2048, 65_537})
-    entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
-    pem = [entry] |> :public_key.pem_encode() |> String.trim_trailing()
-
     with avatar <- gravatar(email),
          user_changeset <-
            User.registration_changeset(%User{}, %{
@@ -526,7 +532,7 @@ defmodule Mobilizon.Actors do
              default_actor: %{
                preferred_username: username,
                domain: nil,
-               keys: pem,
+               keys: create_keys(),
                avatar_url: avatar
              }
            }),

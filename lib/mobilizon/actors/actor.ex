@@ -80,9 +80,10 @@ defmodule Mobilizon.Actors.Actor do
       :banner_url,
       :user_id
     ])
-    |> put_change(:url, "#{MobilizonWeb.Endpoint.url()}/@#{attrs["preferred_username"]}")
+    |> build_urls()
     |> validate_required([:preferred_username, :keys, :suspended, :url])
-    |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_index)
+    |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_type_index)
+    |> unique_constraint(:url, name: :actors_url_index)
   end
 
   def registration_changeset(%Actor{} = actor, attrs) do
@@ -93,21 +94,15 @@ defmodule Mobilizon.Actors.Actor do
       :name,
       :summary,
       :keys,
-      :keys,
       :suspended,
       :url,
       :type,
       :avatar_url,
       :user_id
     ])
-    |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_index)
-    |> put_change(:url, "#{MobilizonWeb.Endpoint.url()}/@#{attrs.preferred_username}")
-    |> put_change(:inbox_url, "#{MobilizonWeb.Endpoint.url()}/@#{attrs.preferred_username}/inbox")
-    |> put_change(
-      :outbox_url,
-      "#{MobilizonWeb.Endpoint.url()}/@#{attrs.preferred_username}/outbox"
-    )
-    |> put_change(:shared_inbox_url, "#{MobilizonWeb.Endpoint.url()}/inbox")
+    |> build_urls()
+    |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_type_index)
+    |> unique_constraint(:url, name: :actors_url_index)
     |> validate_required([:preferred_username, :keys, :suspended, :url, :type])
   end
 
@@ -142,7 +137,8 @@ defmodule Mobilizon.Actors.Actor do
         :preferred_username,
         :keys
       ])
-      |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_index)
+      |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_type_index)
+      |> unique_constraint(:url, name: :actors_url_index)
       |> validate_length(:summary, max: 5000)
       |> validate_length(:preferred_username, max: 100)
       |> put_change(:local, false)
@@ -167,23 +163,35 @@ defmodule Mobilizon.Actors.Actor do
       :avatar_url,
       :banner_url
     ])
-    |> put_change(
-      :outbox_url,
-      "#{MobilizonWeb.Endpoint.url()}/@#{params["preferred_username"]}/outbox"
-    )
-    |> put_change(
-      :inbox_url,
-      "#{MobilizonWeb.Endpoint.url()}/@#{params["preferred_username"]}/inbox"
-    )
-    |> put_change(:shared_inbox_url, "#{MobilizonWeb.Endpoint.url()}/inbox")
-    |> put_change(:url, "#{MobilizonWeb.Endpoint.url()}/@#{params["preferred_username"]}")
+    |> build_urls(:Group)
     |> put_change(:domain, nil)
     |> put_change(:type, :Group)
-    |> validate_required([:url, :outbox_url, :inbox_url, :type, :name, :preferred_username])
+    |> validate_required([:url, :outbox_url, :inbox_url, :type, :preferred_username])
+    |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_type_index)
+    |> unique_constraint(:url, name: :actors_url_index)
     |> validate_length(:summary, max: 5000)
     |> validate_length(:preferred_username, max: 100)
     |> put_change(:local, true)
   end
+
+  @spec build_urls(Ecto.Changeset.t, atom()) :: Ecto.Changeset.t
+  defp build_urls(changeset, type \\ :Person)
+  defp build_urls(%Ecto.Changeset{changes: %{preferred_username: username}} = changeset, type) do
+    symbol = if type == :Group, do: "~", else: "@"
+    changeset
+    |> put_change(
+      :outbox_url,
+      "#{MobilizonWeb.Endpoint.url()}/#{symbol}#{username}/outbox"
+    )
+    |> put_change(
+      :inbox_url,
+      "#{MobilizonWeb.Endpoint.url()}/#{symbol}#{username}/inbox"
+    )
+    |> put_change(:shared_inbox_url, "#{MobilizonWeb.Endpoint.url()}/inbox")
+    |> put_change(:url, "#{MobilizonWeb.Endpoint.url()}/#{symbol}#{username}")
+  end
+
+  defp build_urls(%Ecto.Changeset{} = changeset, _type), do: changeset
 
   @doc """
   Get a public key for a given ActivityPub actor ID (url)
