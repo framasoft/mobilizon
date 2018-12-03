@@ -322,4 +322,13 @@ defmodule Mobilizon.Actors.Actor do
     |> Enum.map(& &1.actor_id)
     |> Enum.member?(follower_actor_id)
   end
+
+  @spec actor_acct_from_actor(struct()) :: String.t()
+  def actor_acct_from_actor(%Actor{preferred_username: preferred_username, domain: domain}) do
+    if is_nil(domain) do
+      preferred_username
+    else
+      "#{preferred_username}@#{domain}"
+    end
+  end
 end

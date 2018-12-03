@@ -45,21 +45,6 @@ defmodule Mobilizon.Events.Event do
 
   @doc false
   def changeset(%Event{} = event, attrs) do
-    # TODO : Change all of this
-    actor_url =
-      if Map.has_key?(attrs, :organizer_actor) do
-        attrs.organizer_actor.preferred_username
-      else
-        ""
-      end
-
-    uuid = Ecto.UUID.generate()
-
-    url =
-      if Map.has_key?(attrs, "url"),
-        do: attrs["url"],
-        else: "#{MobilizonWeb.Endpoint.url()}/@#{actor_url}/#{uuid}"
-
     event
     |> Ecto.Changeset.cast(attrs, [
       :title,
@@ -81,8 +66,7 @@ defmodule Mobilizon.Events.Event do
     ])
     |> cast_assoc(:tags)
     |> cast_assoc(:physical_address)
-    |> put_change(:uuid, uuid)
-    |> put_change(:url, url)
+    |> build_url()
     |> validate_required([
       :title,
       :begins_on,
@@ -92,5 +76,32 @@ defmodule Mobilizon.Events.Event do
       :uuid,
       :address_type
     ])
+  end
+
+  @spec build_url(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp build_url(%Ecto.Changeset{changes: %{url: _url}} = changeset), do: changeset
+
+  defp build_url(%Ecto.Changeset{changes: %{organizer_actor: organizer_actor}} = changeset) do
+    organizer_actor
+    |> Actor.actor_acct_from_actor()
+    |> do_build_url(changeset)
+  end
+
+  defp build_url(%Ecto.Changeset{changes: %{organizer_actor_id: organizer_actor_id}} = changeset) do
+    organizer_actor_id
+    |> Mobilizon.Actors.get_actor!()
+    |> Actor.actor_acct_from_actor()
+    |> do_build_url(changeset)
+  end
+
+  defp build_url(%Ecto.Changeset{} = changeset), do: changeset
+
+  @spec do_build_url(String.t(), Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp do_build_url(actor_acct, changeset) do
+    uuid = Ecto.UUID.generate()
+
+    changeset
+    |> put_change(:uuid, uuid)
+    |> put_change(:url, "#{MobilizonWeb.Endpoint.url()}/@#{actor_acct}/#{uuid}")
   end
 end
