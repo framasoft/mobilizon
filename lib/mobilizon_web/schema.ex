@@ -548,6 +548,7 @@ defmodule MobilizonWeb.Schema do
       arg(:creator_username, :string,
         description: "The actor's username which will be the admin (otherwise user's default one)"
       )
+
       resolve(&Resolvers.Group.create_group/3)
     end
 

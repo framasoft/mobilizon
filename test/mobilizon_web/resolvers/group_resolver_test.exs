@@ -35,11 +35,12 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
         |> auth_conn(user)
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-        assert json_response(res, 200)["data"]["createGroup"]["preferred_username"] ==
-        @new_group_params.groupname
-        assert json_response(res, 200)["data"]["createGroup"]["type"] == "GROUP"
+      assert json_response(res, 200)["data"]["createGroup"]["preferred_username"] ==
+               @new_group_params.groupname
 
-        mutation = """
+      assert json_response(res, 200)["data"]["createGroup"]["type"] == "GROUP"
+
+      mutation = """
           mutation {
             createGroup(
               preferred_username: "#{@new_group_params.groupname}",
@@ -56,11 +57,12 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
         |> auth_conn(user)
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-        assert hd(json_response(res, 200)["errors"])["message"] == "group_name_not_available"
+      assert hd(json_response(res, 200)["errors"])["message"] == "group_name_not_available"
     end
 
     test "list_groups/3 returns all groups", context do
       group = insert(:group)
+
       query = """
       {
         groups {

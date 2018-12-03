@@ -174,10 +174,12 @@ defmodule Mobilizon.Actors.Actor do
     |> put_change(:local, true)
   end
 
-  @spec build_urls(Ecto.Changeset.t, atom()) :: Ecto.Changeset.t
+  @spec build_urls(Ecto.Changeset.t(), atom()) :: Ecto.Changeset.t()
   defp build_urls(changeset, type \\ :Person)
+
   defp build_urls(%Ecto.Changeset{changes: %{preferred_username: username}} = changeset, type) do
     symbol = if type == :Group, do: "~", else: "@"
+
     changeset
     |> put_change(
       :outbox_url,
