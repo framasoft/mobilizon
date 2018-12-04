@@ -65,6 +65,16 @@ defmodule Mobilizon.EventsTest do
       assert title2 == hd(tl(Events.find_events_by_name(""))).title
     end
 
+    test "find_close_events/3 returns events in the area" do
+      assert [] == Events.find_close_events(0, 0)
+
+      geom = %Geo.Point{coordinates: {47.2330724, -1.55068}, srid: 4326}
+      address = insert(:address, geom: geom)
+      event = insert(:event, physical_address: address)
+
+      assert [event.id] == Events.find_close_events(47.2330724, -1.55068) |> Enum.map(& &1.id)
+    end
+
     test "create_event/1 with valid data creates a event" do
       actor = insert(:actor)
       category = insert(:category)

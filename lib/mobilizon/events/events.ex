@@ -69,15 +69,20 @@ defmodule Mobilizon.Events do
 
   import Geo.PostGIS
 
-  # 50 000 meters -> 50 kms
-  def find_close_events(lon, lat, radius \\ 50_000) do
-    with {:ok, ip_point} <- Geo.WKT.decode("SRID=4326;POINT(#{lon} #{lat})") do
+  @doc """
+  Find close events to coordinates
+
+  Radius is in meters and defaults to 50km.
+  """
+  @spec find_close_events(number(), number(), number(), number()) :: list(Event.t())
+  def find_close_events(lon, lat, radius \\ 50_000, srid \\ 4326) do
+    with {:ok, point} <- Geo.WKT.decode("SRID=#{srid};POINT(#{lon} #{lat})") do
       Repo.all(
         from(
           e in Event,
           join: a in Address,
           on: a.id == e.physical_address_id,
-          where: st_dwithin_in_meters(^ip_point, a.geom, ^radius),
+          where: st_dwithin_in_meters(^point, a.geom, ^radius),
           preload: :organizer_actor
         )
       )
