@@ -6,11 +6,29 @@ defmodule Mobilizon.Service.Activitypub.ActivitypubTest do
   alias Mobilizon.Events
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Actors
+  alias Mobilizon.Service.HTTPSignatures
   alias Mobilizon.Service.ActivityPub
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
   setup_all do
     HTTPoison.start()
+  end
+
+  describe "setting HTTP signature" do
+    test "set http signature header" do
+      actor = insert(:actor)
+
+      signature =
+        HTTPSignatures.sign(actor, %{
+          host: "example.com",
+          "content-length": 15,
+          digest: Jason.encode!(%{id: "my_id"}) |> HTTPSignatures.build_digest(),
+          "(request-target)": HTTPSignatures.generate_request_target("POST", "/inbox"),
+          date: HTTPSignatures.generate_date_header()
+        })
+
+      assert signature =~ "headers=\"(request-target) content-length date digest host\""
+    end
   end
 
   describe "fetching actor from it's url" do

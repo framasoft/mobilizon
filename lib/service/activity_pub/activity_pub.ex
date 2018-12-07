@@ -15,6 +15,7 @@ defmodule Mobilizon.Service.ActivityPub do
   alias Mobilizon.Actors.Actor
 
   alias Mobilizon.Service.Federator
+  alias Mobilizon.Service.HTTPSignatures
 
   require Logger
   import Mobilizon.Service.ActivityPub.Utils
@@ -277,23 +278,35 @@ defmodule Mobilizon.Service.ActivityPub do
 
   def publish_one(%{inbox: inbox, json: json, actor: actor, id: id}) do
     Logger.info("Federating #{id} to #{inbox}")
-    host = URI.parse(inbox).host
+    {host, path} = URI.parse(inbox)
+
+    digest = HTTPSignatures.build_digest(json)
+    date = HTTPSignatures.generate_date_header()
+    request_target = HTTPSignatures.generate_request_target("POST", path)
 
     signature =
-      Mobilizon.Service.HTTPSignatures.sign(actor, %{
+      HTTPSignatures.sign(actor, %{
         host: host,
-        "content-length": byte_size(json)
+        "content-length": byte_size(json),
+        "(request-target)": request_target,
+        digest: digest,
+        date: date
       })
 
     HTTPoison.post(
       inbox,
       json,
-      [{"Content-Type", "application/activity+json"}, {"signature", signature}],
+      [
+        {"Content-Type", "application/activity+json"},
+        {"signature", signature},
+        {"digest", digest},
+        {"date", date}
+      ],
       hackney: [pool: :default]
     )
   end
 
-  # Fetching a remote actor's informations through it's AP ID 
+  # Fetching a remote actor's informations through it's AP ID
   @spec fetch_and_prepare_actor_from_url(String.t()) :: {:ok, struct()} | {:error, atom()} | any()
   defp fetch_and_prepare_actor_from_url(url) do
     Logger.debug("Fetching and preparing actor from url")
