@@ -94,6 +94,24 @@ defmodule Mobilizon.Service.HTTPSignatures do
       err ->
         Logger.error("Unable to sign headers")
         Logger.error(inspect(err))
+        nil
     end
+  end
+
+  def generate_date_header(date \\ Timex.now("GMT")) do
+    with {:ok, date} <- Timex.format(date, "%a, %d %b %Y %H:%M:%S %Z", :strftime) do
+      date
+    else
+      {:error, err} ->
+        Logger.error("Unable to generate date header")
+        Logger.error(inspect(err))
+        nil
+    end
+  end
+
+  def generate_request_target(method, path), do: "#{method} #{path}"
+
+  def build_digest(body) do
+    "SHA-256=" <> (:crypto.hash(:sha256, body) |> Base.encode64())
   end
 end
