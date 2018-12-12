@@ -35,7 +35,7 @@ and see the website (server *and* client) in action.
 If you plan to specifically change the client side (frontend), do the following
 once the server is running:
 
-  * Install the latest version of NodeJS ![](https://img.shields.io/badge/node-%3E%3D%2011.4.0-brightgreen.svg)
+  * Install the NodeJS (we guarantee support for the latest LTS and later) ![](https://img.shields.io/badge/node-%3E%3D%2010.0+-brightgreen.svg)
   * Change directory to `js/` and do:
     * Install JavaScript package dependencies: `npm install`.
     * Run the developement server in watch mode: `npm run dev`. This will open a
