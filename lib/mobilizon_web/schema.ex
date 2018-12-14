@@ -322,7 +322,7 @@ defmodule MobilizonWeb.Schema do
   end
 
   @desc """
-  Represents an actor's follower 
+  Represents an actor's follower
   """
   object :follower do
     field(:target_actor, :actor, description: "What or who the profile follows")
@@ -395,11 +395,15 @@ defmodule MobilizonWeb.Schema do
   query do
     @desc "Get all events"
     field :events, list_of(:event) do
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
       resolve(&Resolvers.Event.list_events/3)
     end
 
     @desc "Get all groups"
     field :groups, list_of(:group) do
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
       resolve(&Resolvers.Group.list_groups/3)
     end
 
@@ -420,6 +424,8 @@ defmodule MobilizonWeb.Schema do
     @desc "Get all participants for an event uuid"
     field :participants, list_of(:participant) do
       arg(:uuid, non_null(:uuid))
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
       resolve(&Resolvers.Event.list_participants_for_event/3)
     end
 
@@ -453,6 +459,8 @@ defmodule MobilizonWeb.Schema do
 
     @desc "Get the list of categories"
     field :categories, non_null(list_of(:category)) do
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
       resolve(&Resolvers.Category.list_categories/3)
     end
   end

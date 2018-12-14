@@ -2,9 +2,9 @@ defmodule MobilizonWeb.Resolvers.Category do
   require Logger
   alias Mobilizon.Actors.User
 
-  def list_categories(_parent, _args, _resolution) do
+  def list_categories(_parent, %{page: page, limit: limit}, _resolution) do
     categories =
-      Mobilizon.Events.list_categories()
+      Mobilizon.Events.list_categories(page, limit)
       |> Enum.map(fn category ->
         urls = MobilizonWeb.Uploaders.Category.urls({category.picture, category})
         Map.put(category, :picture, %{url: urls.original, url_thumbnail: urls.thumb})

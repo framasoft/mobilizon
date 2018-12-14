@@ -20,8 +20,8 @@ defmodule MobilizonWeb.Resolvers.Group do
   @doc """
   Lists all groups
   """
-  def list_groups(_parent, _args, _resolution) do
-    {:ok, Actors.list_groups()}
+  def list_groups(_parent, %{page: page, limit: limit}, _resolution) do
+    {:ok, Actors.list_groups(page, limit)}
   end
 
   @doc """
