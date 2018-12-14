@@ -22,7 +22,7 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
           mutation {
             createGroup(
               preferred_username: "#{@new_group_params.groupname}",
-              creator_username: "#{actor.preferred_username}"
+              admin_actor_username: "#{actor.preferred_username}"
             ) {
                 preferred_username,
                 type
@@ -44,7 +44,7 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
           mutation {
             createGroup(
               preferred_username: "#{@new_group_params.groupname}",
-              creator_username: "#{actor.preferred_username}",
+              admin_actor_username: "#{actor.preferred_username}",
             ) {
                 preferred_username,
                 type
@@ -57,7 +57,7 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
         |> auth_conn(user)
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "group_name_not_available"
+      assert hd(json_response(res, 200)["errors"])["message"] == "existing_group_name"
     end
 
     test "list_groups/3 returns all groups", context do

@@ -116,10 +116,10 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
               createEvent(
                   title: "come to my event",
                   description: "it will be fine",
-                  beginsOn: "#{DateTime.utc_now() |> DateTime.to_iso8601()}",
-                  organizer_actor_id: #{actor.id},
-                  category_id: #{category.id},
-                  addressType: #{"OTHER"}
+                  begins_on: "#{DateTime.utc_now() |> DateTime.to_iso8601()}",
+                  organizer_actor_username: "#{actor.preferred_username}",
+                  category: "#{category.title}",
+                  address_type: #{"OTHER"}
               ) {
                 title,
                 uuid

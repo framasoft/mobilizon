@@ -98,6 +98,9 @@ defmodule Mobilizon.AddressesTest do
     test "process_geom/2 with invalid data returns nil" do
       attrs = %{"type" => :point, "data" => %{"latitude" => nil, "longitude" => nil}}
       assert {:error, "Latitude and longitude must be numbers"} = Addresses.process_geom(attrs)
+
+      attrs = %{"type" => :not_valid, "data" => %{"latitude" => nil, "longitude" => nil}}
+      assert {:error, :invalid_type} == Addresses.process_geom(attrs)
     end
   end
 end

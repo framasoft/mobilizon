@@ -116,7 +116,7 @@ defmodule Mobilizon.Addresses do
         rescue
           e in ArgumentError ->
             Logger.error("#{type_input} is not an existing atom : #{inspect(e)}")
-            nil
+            :invalid_type
         end
       else
         type_input
@@ -128,7 +128,7 @@ defmodule Mobilizon.Addresses do
           process_point(data["latitude"], data["longitude"])
       end
     else
-      {:error, nil}
+      {:error, :invalid_type}
     end
   end
 

@@ -13,11 +13,17 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   alias Mobilizon.Events
   alias Mobilizon.Activity
   alias Mobilizon.Service.ActivityPub
-  alias Ecto.{Changeset, UUID}
+  alias Ecto.Changeset
   require Logger
 
-  def make_context(%Activity{data: %{"context" => context}}), do: context
-  def make_context(_), do: generate_context_id()
+  # Some implementations send the actor URI as the actor field, others send the entire actor object,
+  # so figure out what the actor's URI is based on what we have.
+  def get_url(object) do
+    case object do
+      %{"id" => id} -> id
+      id -> id
+    end
+  end
 
   def make_json_ld_header do
     %{
@@ -36,18 +42,6 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
 
   def make_date do
     DateTime.utc_now() |> DateTime.to_iso8601()
-  end
-
-  def generate_activity_id do
-    generate_id("activities")
-  end
-
-  def generate_context_id do
-    generate_id("contexts")
-  end
-
-  def generate_id(type) do
-    "#{MobilizonWeb.Endpoint.url()}/#{type}/#{UUID.generate()}"
   end
 
   @doc """
@@ -108,16 +102,42 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   end
 
   @doc """
-  Inserts a full object if it is contained in an activity.
+  Converts an AP object data to our internal data structure
   """
-  def insert_full_object(object_data, local \\ false)
+  def object_to_event_data(object) do
+    {:ok, %Actor{id: actor_id}} = Actors.get_actor_by_url(object["actor"])
+
+    %{
+      "title" => object["name"],
+      "description" => object["content"],
+      "organizer_actor_id" => actor_id,
+      "begins_on" => object["begins_on"],
+      "category_id" => Events.get_category_by_title(object["category"]).id,
+      "url" => object["id"]
+    }
+  end
 
   @doc """
   Inserts a full object if it is contained in an activity.
   """
-  def insert_full_object(%{"object" => %{"type" => type} = object_data}, local)
-      when is_map(object_data) and type == "Event" and not local do
-    with {:ok, _} <- Events.create_event(object_data) do
+  def insert_full_object(object_data)
+
+  @doc """
+  Inserts a full object if it is contained in an activity.
+  """
+  def insert_full_object(%{"object" => %{"type" => "Event"} = object_data})
+      when is_map(object_data) do
+    with object_data <- object_to_event_data(object_data),
+         {:ok, _} <- Events.create_event(object_data) do
+      :ok
+    end
+  end
+
+  def insert_full_object(%{"object" => %{"type" => "Group"} = object_data})
+      when is_map(object_data) do
+    with object_data <-
+           Map.put(object_data, "preferred_username", object_data["preferredUsername"]),
+         {:ok, _} <- Actors.create_group(object_data) do
       :ok
     end
   end
@@ -125,8 +145,11 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   @doc """
   Inserts a full object if it is contained in an activity.
   """
-  def insert_full_object(%{"object" => %{"type" => type} = object_data}, local)
-      when is_map(object_data) and type == "Note" and not local do
+  def insert_full_object(%{"object" => %{"type" => "Note"} = object_data})
+      when is_map(object_data) do
+    Logger.debug("Inserting full comment")
+    Logger.debug(inspect(object_data))
+
     with {:ok, %Actor{id: actor_id}} <- Actors.get_or_fetch_by_url(object_data["actor"]) do
       data = %{
         "text" => object_data["content"],
@@ -134,11 +157,12 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
         "actor_id" => actor_id,
         "in_reply_to_comment_id" => nil,
         "event_id" => nil,
-        "uuid" => object_data["uuid"],
-        "local" => local
+        "uuid" => object_data["uuid"]
       }
 
       # We fetch the parent object
+      Logger.debug("We're fetching the parent object")
+
       data =
         if Map.has_key?(object_data, "inReplyTo") && object_data["inReplyTo"] != nil &&
              object_data["inReplyTo"] != "" do
@@ -159,7 +183,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
               |> Map.put("origin_comment_id", comment |> Comment.get_thread_id())
 
             # Anthing else is kind of a MP
-            object ->
+            {:error, object} ->
               Logger.debug("Parent object is something we don't handle")
               Logger.debug(inspect(object))
               data
@@ -180,7 +204,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     end
   end
 
-  def insert_full_object(_, _), do: :ok
+  def insert_full_object(_), do: :ok
 
   #### Like-related helpers
 
@@ -205,6 +229,41 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   #
   #    Repo.one(query)
   #  end
+
+  @doc """
+  Make an AP event object from an set of values
+  """
+  def make_event_data(
+        actor,
+        to,
+        title,
+        content_html,
+        # attachments,
+        tags \\ [],
+        # _cw \\ nil,
+        cc \\ [],
+        metadata \\ %{},
+        category \\ ""
+      ) do
+    Logger.debug("Making event data")
+    uuid = Ecto.UUID.generate()
+
+    %{
+      "type" => "Event",
+      "to" => to,
+      "cc" => cc,
+      "content" => content_html,
+      "name" => title,
+      # "summary" => cw,
+      # "attachment" => attachments,
+      "begins_on" => metadata.begins_on,
+      "category" => category,
+      "actor" => actor,
+      "id" => "#{MobilizonWeb.Endpoint.url()}/events/#{uuid}",
+      "uuid" => uuid,
+      "tag" => tags |> Enum.map(fn {_, tag} -> tag end) |> Enum.uniq()
+    }
+  end
 
   def make_event_data(
         %Event{title: title, organizer_actor: actor, uuid: uuid},
@@ -238,6 +297,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "to" => to,
       "content" => text,
       "actor" => actor.url,
+      "attributedTo" => actor.url,
       "uuid" => uuid,
       "id" => "#{MobilizonWeb.Endpoint.url()}/comments/#{uuid}"
     }
@@ -249,14 +309,17 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     end
   end
 
+  @doc """
+  Make an AP comment object from an set of values
+  """
   def make_comment_data(
         actor,
         to,
         content_html,
         # attachments,
         inReplyTo \\ nil,
-        # tags,
-        _cw \\ nil,
+        tags \\ [],
+        # _cw \\ nil,
         cc \\ []
       ) do
     Logger.debug("Making comment data")
@@ -271,8 +334,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       # "attachment" => attachments,
       "actor" => actor,
       "id" => "#{MobilizonWeb.Endpoint.url()}/comments/#{uuid}",
-      "uuid" => uuid
-      # "tag" => tags |> Enum.map(fn {_, tag} -> tag end) |> Enum.uniq()
+      "uuid" => uuid,
+      "tag" => tags |> Enum.map(fn {_, tag} -> tag end) |> Enum.uniq()
     }
 
     if inReplyTo do
@@ -283,18 +346,53 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     end
   end
 
-  def make_like_data(%Actor{url: url} = actor, %{data: %{"id" => id}} = object, activity_id) do
-    data = %{
-      "type" => "Like",
-      "actor" => url,
-      "object" => id,
-      "to" => [actor.follower_address, object.data["actor"]],
-      "cc" => ["https://www.w3.org/ns/activitystreams#Public"],
-      "context" => object.data["context"]
-    }
+  def make_group_data(
+        actor,
+        to,
+        preferred_username,
+        content_html,
+        # attachments,
+        tags \\ [],
+        # _cw \\ nil,
+        cc \\ []
+      ) do
+    uuid = Ecto.UUID.generate()
 
-    if activity_id, do: Map.put(data, "id", activity_id), else: data
+    %{
+      "type" => "Group",
+      "to" => to,
+      "cc" => cc,
+      "summary" => content_html,
+      "attributedTo" => actor,
+      "preferredUsername" => preferred_username,
+      "id" => "#{MobilizonWeb.Endpoint.url()}/~#{preferred_username}",
+      "uuid" => uuid,
+      "tag" => tags |> Enum.map(fn {_, tag} -> tag end) |> Enum.uniq()
+    }
   end
+
+  #### Like-related helpers
+
+  @doc """
+  Returns an existing like if a user already liked an object
+  """
+  # @spec get_existing_like(Actor.t, map()) :: nil
+  # def get_existing_like(%Actor{url: url} = actor, %{data: %{"id" => id}}) do
+  #   nil
+  # end
+
+  # def make_like_data(%Actor{url: url} = actor, %{data: %{"id" => id}} = object, activity_id) do
+  #   data = %{
+  #     "type" => "Like",
+  #     "actor" => url,
+  #     "object" => id,
+  #     "to" => [actor.followers_url, object.data["actor"]],
+  #     "cc" => ["https://www.w3.org/ns/activitystreams#Public"],
+  #     "context" => object.data["context"]
+  #   }
+
+  #   if activity_id, do: Map.put(data, "id", activity_id), else: data
+  # end
 
   def update_element_in_object(property, element, object) do
     with new_data <-
@@ -326,9 +424,9 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   #### Follow-related helpers
 
   @doc """
-  Makes a follow activity data for the given follower and followed
+  Makes a follow activity data for the given followed and follower
   """
-  def make_follow_data(%Actor{url: follower_id}, %Actor{url: followed_id}, activity_id) do
+  def make_follow_data(%Actor{url: followed_id}, %Actor{url: follower_id}, activity_id) do
     Logger.debug("Make follow data")
 
     data = %{
@@ -342,7 +440,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     Logger.debug(inspect(data))
 
     if activity_id,
-      do: Map.put(data, "id", "#{MobilizonWeb.Endpoint.url()}/follow/#{activity_id}/activity"),
+      do: Map.put(data, "id", activity_id),
       else: data
   end
 
@@ -352,17 +450,37 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   Make announce activity data for the given actor and object
   """
   def make_announce_data(
-        %Actor{url: url} = user,
-        %Event{id: id} = object,
+        %Actor{url: actor_url} = actor,
+        %Event{url: event_url} = object,
         activity_id
       ) do
     data = %{
       "type" => "Announce",
-      "actor" => url,
-      "object" => id,
-      "to" => [user.follower_address, object.data["actor"]],
-      "cc" => ["https://www.w3.org/ns/activitystreams#Public"],
-      "context" => object.data["context"]
+      "actor" => actor_url,
+      "object" => event_url,
+      "to" => [actor.followers_url, object.actor.url],
+      "cc" => ["https://www.w3.org/ns/activitystreams#Public"]
+      # "context" => object.data["context"]
+    }
+
+    if activity_id, do: Map.put(data, "id", activity_id), else: data
+  end
+
+  @doc """
+  Make announce activity data for the given actor and object
+  """
+  def make_announce_data(
+        %Actor{url: actor_url} = actor,
+        %Comment{url: comment_url} = object,
+        activity_id
+      ) do
+    data = %{
+      "type" => "Announce",
+      "actor" => actor_url,
+      "object" => comment_url,
+      "to" => [actor.followers_url, object.actor.url],
+      "cc" => ["https://www.w3.org/ns/activitystreams#Public"]
+      # "context" => object.data["context"]
     }
 
     if activity_id, do: Map.put(data, "id", activity_id), else: data
@@ -376,18 +494,32 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
 
   #### Unfollow-related helpers
 
-  def make_unfollow_data(follower, followed, follow_activity) do
-    %{
+  @spec make_unfollow_data(Actor.t(), Actor.t(), map(), String.t()) :: map()
+  def make_unfollow_data(
+        %Actor{url: follower_url},
+        %Actor{url: followed_url},
+        follow_activity,
+        activity_id
+      ) do
+    data = %{
       "type" => "Undo",
-      "actor" => follower.url,
-      "to" => [followed.url],
-      "object" => follow_activity.data["id"]
+      "actor" => follower_url,
+      "to" => [followed_url],
+      "object" => follow_activity.data
     }
+
+    if activity_id, do: Map.put(data, "id", activity_id), else: data
   end
 
   #### Create-related helpers
 
+  @doc """
+  Make create activity data
+  """
+  @spec make_create_data(map(), map()) :: map()
   def make_create_data(params, additional \\ %{}) do
+    Logger.debug("Making create data")
+    Logger.debug(inspect(params))
     published = params.published || make_date()
 
     %{

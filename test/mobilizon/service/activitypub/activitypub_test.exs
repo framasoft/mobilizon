@@ -78,7 +78,30 @@ defmodule Mobilizon.Service.Activitypub.ActivitypubTest do
             "https://social.tcit.fr/users/tcit/statuses/99908779444618462"
           )
 
-        assert object == object_again
+        assert object.id == object_again.id
+      end
+    end
+
+    test "object reply by url" do
+      use_cassette "activity_pub/fetch_social_tcit_fr_reply" do
+        {:ok, object} =
+          ActivityPub.fetch_object_from_url(
+            "https://social.tcit.fr/users/tcit/statuses/101160654038714030"
+          )
+
+        assert object.in_reply_to_comment.url ==
+                 "https://social.tcit.fr/users/tcit/statuses/101160195754333819"
+      end
+    end
+
+    test "object reply to a video by url" do
+      use_cassette "activity_pub/fetch_reply_to_framatube" do
+        {:ok, object} =
+          ActivityPub.fetch_object_from_url(
+            "https://framapiaf.org/@troisiemelobe/101156292125317651"
+          )
+
+        assert object.in_reply_to_comment == nil
       end
     end
   end

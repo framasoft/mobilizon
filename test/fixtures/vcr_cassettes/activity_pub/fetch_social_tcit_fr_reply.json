@@ -1,0 +1,156 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true",
+        "recv_timeout": 20000,
+        "connect_timeout": 10000
+      },
+      "request_body": "",
+      "url": "https://social.tcit.fr/users/tcit/statuses/101160654038714030"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://w3id.org/security/v1\",{\"manuallyApprovesFollowers\":\"as:manuallyApprovesFollowers\",\"sensitive\":\"as:sensitive\",\"movedTo\":{\"@id\":\"as:movedTo\",\"@type\":\"@id\"},\"Hashtag\":\"as:Hashtag\",\"ostatus\":\"http://ostatus.org#\",\"atomUri\":\"ostatus:atomUri\",\"inReplyToAtomUri\":\"ostatus:inReplyToAtomUri\",\"conversation\":\"ostatus:conversation\",\"toot\":\"http://joinmastodon.org/ns#\",\"Emoji\":\"toot:Emoji\",\"focalPoint\":{\"@container\":\"@list\",\"@id\":\"toot:focalPoint\"},\"featured\":{\"@id\":\"toot:featured\",\"@type\":\"@id\"},\"schema\":\"http://schema.org#\",\"PropertyValue\":\"schema:PropertyValue\",\"value\":\"schema:value\"}],\"id\":\"https://social.tcit.fr/users/tcit/statuses/101160654038714030\",\"type\":\"Note\",\"summary\":null,\"inReplyTo\":\"https://social.tcit.fr/users/tcit/statuses/101160195754333819\",\"published\":\"2018-11-30T14:44:41Z\",\"url\":\"https://social.tcit.fr/@tcit/101160654038714030\",\"attributedTo\":\"https://social.tcit.fr/users/tcit\",\"to\":[\"https://www.w3.org/ns/activitystreams#Public\"],\"cc\":[\"https://social.tcit.fr/users/tcit/followers\"],\"sensitive\":false,\"atomUri\":\"https://social.tcit.fr/users/tcit/statuses/101160654038714030\",\"inReplyToAtomUri\":\"https://social.tcit.fr/users/tcit/statuses/101160195754333819\",\"conversation\":\"tag:social.tcit.fr,2018-11-30:objectId=3642669:objectType=Conversation\",\"content\":\"\\u003cp\\u003eOkay so that\\u0026apos;s it.\\u003cbr /\\u003e\\u003ca href=\\\"https://tcit.frama.io/group-uri-scheme/draft-tcit-group-uri-01.txt\\\" rel=\\\"nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"ellipsis\\\"\\u003etcit.frama.io/group-uri-scheme\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e/draft-tcit-group-uri-01.txt\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/p\\u003e\",\"contentMap\":{\"fr\":\"\\u003cp\\u003eOkay so that\\u0026apos;s it.\\u003cbr /\\u003e\\u003ca href=\\\"https://tcit.frama.io/group-uri-scheme/draft-tcit-group-uri-01.txt\\\" rel=\\\"nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"ellipsis\\\"\\u003etcit.frama.io/group-uri-scheme\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e/draft-tcit-group-uri-01.txt\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/p\\u003e\"},\"attachment\":[],\"tag\":[]}",
+      "headers": {
+        "Date": "Tue, 04 Dec 2018 13:59:58 GMT",
+        "Content-Type": "application/activity+json; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Server": "Mastodon",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Link": "<https://social.tcit.fr/users/tcit/updates/15979.atom>; rel=\"alternate\"; type=\"application/atom+xml\", <https://social.tcit.fr/users/tcit/statuses/101160654038714030>; rel=\"alternate\"; type=\"application/activity+json\"",
+        "Vary": "Accept,Accept-Encoding",
+        "Cache-Control": "max-age=180, public",
+        "ETag": "W/\"619af54f65bbb41538e430b8247c36d7\"",
+        "X-Request-Id": "84a750de-2dfa-4a36-976e-bae0b0ac4821",
+        "X-Runtime": "0.056423",
+        "X-Cached": "MISS"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true"
+      },
+      "request_body": "",
+      "url": "https://social.tcit.fr/users/tcit"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://w3id.org/security/v1\",{\"manuallyApprovesFollowers\":\"as:manuallyApprovesFollowers\",\"sensitive\":\"as:sensitive\",\"movedTo\":{\"@id\":\"as:movedTo\",\"@type\":\"@id\"},\"Hashtag\":\"as:Hashtag\",\"ostatus\":\"http://ostatus.org#\",\"atomUri\":\"ostatus:atomUri\",\"inReplyToAtomUri\":\"ostatus:inReplyToAtomUri\",\"conversation\":\"ostatus:conversation\",\"toot\":\"http://joinmastodon.org/ns#\",\"Emoji\":\"toot:Emoji\",\"focalPoint\":{\"@container\":\"@list\",\"@id\":\"toot:focalPoint\"},\"featured\":{\"@id\":\"toot:featured\",\"@type\":\"@id\"},\"schema\":\"http://schema.org#\",\"PropertyValue\":\"schema:PropertyValue\",\"value\":\"schema:value\"}],\"id\":\"https://social.tcit.fr/users/tcit\",\"type\":\"Person\",\"following\":\"https://social.tcit.fr/users/tcit/following\",\"followers\":\"https://social.tcit.fr/users/tcit/followers\",\"inbox\":\"https://social.tcit.fr/users/tcit/inbox\",\"outbox\":\"https://social.tcit.fr/users/tcit/outbox\",\"featured\":\"https://social.tcit.fr/users/tcit/collections/featured\",\"preferredUsername\":\"tcit\",\"name\":\"🦄 Thomas Citharel\",\"summary\":\"\\u003cp\\u003eHoping to make people\\u0026apos;s life better with free software at \\u003cspan class=\\\"h-card\\\"\\u003e\\u003ca href=\\\"https://framapiaf.org/@Framasoft\\\" class=\\\"u-url mention\\\"\\u003e@\\u003cspan\\u003eFramasoft\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/span\\u003e.\\u003c/p\\u003e\",\"url\":\"https://social.tcit.fr/@tcit\",\"manuallyApprovesFollowers\":false,\"publicKey\":{\"id\":\"https://social.tcit.fr/users/tcit#main-key\",\"owner\":\"https://social.tcit.fr/users/tcit\",\"publicKeyPem\":\"-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApXwYMUdFg3XUd+bGsh8C\\nyiMRGpRGAWuCdM5pDWx5uM4pW2pM3xbHbcI21j9h8BmlAiPg6hbZD73KGly2N8Rt\\n5iIS0I+l6i8kA1JCCdlAaDTRd41RKMggZDoQvjVZQtsyE1VzMeU2kbqqTFN6ew7H\\nvbd6O0NhixoKoZ5f3jwuBDZoT0p1TAcaMdmG8oqHD97isizkDnRn8cOBA6wtI+xb\\n5xP2zxZMsLpTDZLiKU8XcPKZCw4OfQfmDmKkHtrFb77jCAQj/s/FxjVnvxRwmfhN\\nnWy0D+LUV/g63nHh/b5zXIeV92QZLvDYbgbezmzUzv9UeA1s70GGbaDqCIy85gw9\\n+wIDAQAB\\n-----END PUBLIC KEY-----\\n\"},\"tag\":[],\"attachment\":[{\"type\":\"PropertyValue\",\"name\":\"Works at\",\"value\":\"\\u003cspan class=\\\"h-card\\\"\\u003e\\u003ca href=\\\"https://framapiaf.org/@Framasoft\\\" class=\\\"u-url mention\\\"\\u003e@\\u003cspan\\u003eFramasoft\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/span\\u003e\"},{\"type\":\"PropertyValue\",\"name\":\"Pronouns\",\"value\":\"He/Him\"},{\"type\":\"PropertyValue\",\"name\":\"Work Account\",\"value\":\"\\u003ca href=\\\"https://framapiaf.org/@tcit\\\" rel=\\\"me nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"\\\"\\u003eframapiaf.org/@tcit\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e\\u003c/span\\u003e\\u003c/a\\u003e\"},{\"type\":\"PropertyValue\",\"name\":\"Site\",\"value\":\"\\u003ca href=\\\"https://tcit.fr\\\" rel=\\\"me nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"\\\"\\u003etcit.fr\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e\\u003c/span\\u003e\\u003c/a\\u003e\"}],\"endpoints\":{\"sharedInbox\":\"https://social.tcit.fr/inbox\"},\"icon\":{\"type\":\"Image\",\"mediaType\":\"image/jpeg\",\"url\":\"https://media.social.tcit.fr/mastodontcit/accounts/avatars/000/000/001/original/a28c50ce5f2b13fd.jpg\"},\"image\":{\"type\":\"Image\",\"mediaType\":\"image/jpeg\",\"url\":\"https://media.social.tcit.fr/mastodontcit/accounts/headers/000/000/001/original/4d1ab77c20265ee9.jpg\"}}",
+      "headers": {
+        "Date": "Tue, 04 Dec 2018 13:59:58 GMT",
+        "Content-Type": "application/activity+json; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Server": "Mastodon",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Link": "<https://social.tcit.fr/.well-known/webfinger?resource=acct%3Atcit%40social.tcit.fr>; rel=\"lrdd\"; type=\"application/xrd+xml\", <https://social.tcit.fr/users/tcit.atom>; rel=\"alternate\"; type=\"application/atom+xml\", <https://social.tcit.fr/users/tcit>; rel=\"alternate\"; type=\"application/activity+json\"",
+        "Vary": "Accept,Accept-Encoding",
+        "Cache-Control": "max-age=180, public",
+        "ETag": "W/\"039b9e136f81a55656fb1f38a23640d2\"",
+        "X-Request-Id": "91a50164-aa87-45c9-8100-786b9c74fbe0",
+        "X-Runtime": "0.039489",
+        "X-Cached": "MISS"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true",
+        "recv_timeout": 20000,
+        "connect_timeout": 10000
+      },
+      "request_body": "",
+      "url": "https://social.tcit.fr/users/tcit/statuses/101160195754333819"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://w3id.org/security/v1\",{\"manuallyApprovesFollowers\":\"as:manuallyApprovesFollowers\",\"sensitive\":\"as:sensitive\",\"movedTo\":{\"@id\":\"as:movedTo\",\"@type\":\"@id\"},\"Hashtag\":\"as:Hashtag\",\"ostatus\":\"http://ostatus.org#\",\"atomUri\":\"ostatus:atomUri\",\"inReplyToAtomUri\":\"ostatus:inReplyToAtomUri\",\"conversation\":\"ostatus:conversation\",\"toot\":\"http://joinmastodon.org/ns#\",\"Emoji\":\"toot:Emoji\",\"focalPoint\":{\"@container\":\"@list\",\"@id\":\"toot:focalPoint\"},\"featured\":{\"@id\":\"toot:featured\",\"@type\":\"@id\"},\"schema\":\"http://schema.org#\",\"PropertyValue\":\"schema:PropertyValue\",\"value\":\"schema:value\"}],\"id\":\"https://social.tcit.fr/users/tcit/statuses/101160195754333819\",\"type\":\"Note\",\"summary\":null,\"inReplyTo\":\"https://social.tcit.fr/users/tcit/statuses/101159468934977010\",\"published\":\"2018-11-30T12:48:08Z\",\"url\":\"https://social.tcit.fr/@tcit/101160195754333819\",\"attributedTo\":\"https://social.tcit.fr/users/tcit\",\"to\":[\"https://www.w3.org/ns/activitystreams#Public\"],\"cc\":[\"https://social.tcit.fr/users/tcit/followers\"],\"sensitive\":false,\"atomUri\":\"https://social.tcit.fr/users/tcit/statuses/101160195754333819\",\"inReplyToAtomUri\":\"https://social.tcit.fr/users/tcit/statuses/101159468934977010\",\"conversation\":\"tag:social.tcit.fr,2018-11-30:objectId=3642669:objectType=Conversation\",\"content\":\"\\u003cp\\u003eOkay so YOLO.\\u003c/p\\u003e\",\"contentMap\":{\"fr\":\"\\u003cp\\u003eOkay so YOLO.\\u003c/p\\u003e\"},\"attachment\":[{\"type\":\"Document\",\"mediaType\":\"image/png\",\"url\":\"https://media.social.tcit.fr/mastodontcit/media_attachments/files/000/718/393/original/b56706a78fd355b8.png\",\"name\":\"Start of a 'group' URI RFC\"}],\"tag\":[]}",
+      "headers": {
+        "Date": "Tue, 04 Dec 2018 13:59:58 GMT",
+        "Content-Type": "application/activity+json; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Server": "Mastodon",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Link": "<https://social.tcit.fr/users/tcit/updates/15967.atom>; rel=\"alternate\"; type=\"application/atom+xml\", <https://social.tcit.fr/users/tcit/statuses/101160195754333819>; rel=\"alternate\"; type=\"application/activity+json\"",
+        "Vary": "Accept,Accept-Encoding",
+        "Cache-Control": "max-age=180, public",
+        "ETag": "W/\"e878d9ab8dfa31073b27b4661046b911\"",
+        "X-Request-Id": "b598d538-88b5-4d7a-867c-d78b85ee5677",
+        "X-Runtime": "0.078823",
+        "X-Cached": "MISS"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true",
+        "recv_timeout": 20000,
+        "connect_timeout": 10000
+      },
+      "request_body": "",
+      "url": "https://social.tcit.fr/users/tcit/statuses/101159468934977010"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://w3id.org/security/v1\",{\"manuallyApprovesFollowers\":\"as:manuallyApprovesFollowers\",\"sensitive\":\"as:sensitive\",\"movedTo\":{\"@id\":\"as:movedTo\",\"@type\":\"@id\"},\"Hashtag\":\"as:Hashtag\",\"ostatus\":\"http://ostatus.org#\",\"atomUri\":\"ostatus:atomUri\",\"inReplyToAtomUri\":\"ostatus:inReplyToAtomUri\",\"conversation\":\"ostatus:conversation\",\"toot\":\"http://joinmastodon.org/ns#\",\"Emoji\":\"toot:Emoji\",\"focalPoint\":{\"@container\":\"@list\",\"@id\":\"toot:focalPoint\"},\"featured\":{\"@id\":\"toot:featured\",\"@type\":\"@id\"},\"schema\":\"http://schema.org#\",\"PropertyValue\":\"schema:PropertyValue\",\"value\":\"schema:value\"}],\"id\":\"https://social.tcit.fr/users/tcit/statuses/101159468934977010\",\"type\":\"Note\",\"summary\":null,\"inReplyTo\":null,\"published\":\"2018-11-30T09:43:18Z\",\"url\":\"https://social.tcit.fr/@tcit/101159468934977010\",\"attributedTo\":\"https://social.tcit.fr/users/tcit\",\"to\":[\"https://www.w3.org/ns/activitystreams#Public\"],\"cc\":[\"https://social.tcit.fr/users/tcit/followers\"],\"sensitive\":false,\"atomUri\":\"https://social.tcit.fr/users/tcit/statuses/101159468934977010\",\"inReplyToAtomUri\":null,\"conversation\":\"tag:social.tcit.fr,2018-11-30:objectId=3642669:objectType=Conversation\",\"content\":\"\\u003cp\\u003eApart from PeerTube, which software that implements ActivityPub does have a group functionnality?\\u003cbr /\\u003eIt\\u0026apos;s to discuss about a Webfinger group: query prefix, similar to the acct: query prefix.\\u003c/p\\u003e\",\"contentMap\":{\"en\":\"\\u003cp\\u003eApart from PeerTube, which software that implements ActivityPub does have a group functionnality?\\u003cbr /\\u003eIt\\u0026apos;s to discuss about a Webfinger group: query prefix, similar to the acct: query prefix.\\u003c/p\\u003e\"},\"attachment\":[],\"tag\":[]}",
+      "headers": {
+        "Date": "Tue, 04 Dec 2018 13:59:58 GMT",
+        "Content-Type": "application/activity+json; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Server": "Mastodon",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Link": "<https://social.tcit.fr/users/tcit/updates/15941.atom>; rel=\"alternate\"; type=\"application/atom+xml\", <https://social.tcit.fr/users/tcit/statuses/101159468934977010>; rel=\"alternate\"; type=\"application/activity+json\"",
+        "Vary": "Accept,Accept-Encoding",
+        "Cache-Control": "max-age=180, public",
+        "ETag": "W/\"a29cc605a433ed904736da57572038d3\"",
+        "X-Request-Id": "18488387-c5a3-40db-8c9e-5a3a067401a9",
+        "X-Runtime": "0.054993",
+        "X-Cached": "MISS"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

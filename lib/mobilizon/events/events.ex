@@ -117,11 +117,30 @@ defmodule Mobilizon.Events do
     Repo.get_by!(Event, url: url)
   end
 
+  # @doc """
+  # Gets an event by it's UUID
+  # """
+  # @depreciated "Use get_event_full_by_uuid/3 instead"
+  # def get_event_by_uuid(uuid) do
+  #   Repo.get_by(Event, uuid: uuid)
+  # end
+
   @doc """
-  Gets an event by it's UUID
+  Gets a full event by it's UUID
   """
-  def get_event_by_uuid(uuid) do
-    Repo.get_by(Event, uuid: uuid)
+  @spec get_event_full_by_uuid(String.t()) :: Event.t()
+  def get_event_full_by_uuid(uuid) do
+    event = Repo.get_by(Event, uuid: uuid)
+
+    Repo.preload(event, [
+      :organizer_actor,
+      :category,
+      :sessions,
+      :tracks,
+      :tags,
+      :participants,
+      :physical_address
+    ])
   end
 
   @doc """
@@ -144,25 +163,31 @@ defmodule Mobilizon.Events do
   @doc """
   Gets an event by it's URL
   """
-  def get_event_full_by_url!(url) do
-    event = Repo.get_by!(Event, url: url)
-
-    Repo.preload(event, [
-      :organizer_actor,
-      :category,
-      :sessions,
-      :tracks,
-      :tags,
-      :participants,
-      :physical_address
-    ])
+  def get_event_full_by_url(url) do
+    case Repo.one(
+           from(e in Event,
+             where: e.url == ^url,
+             preload: [
+               :organizer_actor,
+               :category,
+               :sessions,
+               :tracks,
+               :tags,
+               :participants,
+               :physical_address
+             ]
+           )
+         ) do
+      nil -> {:error, :event_not_found}
+      event -> {:ok, event}
+    end
   end
 
   @doc """
-  Gets a full event by it's UUID
+  Gets an event by it's URL
   """
-  def get_event_full_by_uuid(uuid) do
-    event = Repo.get_by(Event, uuid: uuid)
+  def get_event_full_by_url!(url) do
+    event = Repo.get_by!(Event, url: url)
 
     Repo.preload(event, [
       :organizer_actor,
@@ -233,7 +258,7 @@ defmodule Mobilizon.Events do
          {:ok, %Participant{} = _participant} <-
            %Participant{}
            |> Participant.changeset(%{
-             actor_id: attrs.organizer_actor_id,
+             actor_id: event.organizer_actor_id,
              role: 4,
              event_id: event.id
            })
@@ -609,8 +634,12 @@ defmodule Mobilizon.Events do
     Participant.changeset(participant, %{})
   end
 
-  def list_requests_for_actor(%Actor{} = actor) do
-    Repo.all(from(p in Participant, where: p.actor_id == ^actor.id and p.approved == false))
+  @doc """
+  List event participation requests for an actor
+  """
+  @spec list_requests_for_actor(Actor.t()) :: list(Participant.t())
+  def list_requests_for_actor(%Actor{id: actor_id}) do
+    Repo.all(from(p in Participant, where: p.actor_id == ^actor_id and p.approved == false))
   end
 
   alias Mobilizon.Events.Session
@@ -631,22 +660,16 @@ defmodule Mobilizon.Events do
   @doc """
   Returns the list of sessions for an event
   """
-  def list_sessions_for_event(event_uuid) do
+  @spec list_sessions_for_event(Event.t()) :: list(Session.t())
+  def list_sessions_for_event(%Event{id: event_id}) do
     Repo.all(
       from(
         s in Session,
         join: e in Event,
         on: s.event_id == e.id,
-        where: e.uuid == ^event_uuid
+        where: e.id == ^event_id
       )
     )
-  end
-
-  @doc """
-  Returns the list of sessions for a track
-  """
-  def list_sessions_for_track(track_id) do
-    Repo.all(from(s in Session, where: s.track_id == ^track_id))
   end
 
   @doc """
@@ -743,6 +766,14 @@ defmodule Mobilizon.Events do
   """
   def list_tracks do
     Repo.all(Track)
+  end
+
+  @doc """
+  Returns the list of sessions for a track
+  """
+  @spec list_sessions_for_track(Track.t()) :: list(Session.t())
+  def list_sessions_for_track(%Track{id: track_id}) do
+    Repo.all(from(s in Session, where: s.track_id == ^track_id))
   end
 
   @doc """
@@ -880,9 +911,29 @@ defmodule Mobilizon.Events do
   """
   def get_comment!(id), do: Repo.get!(Comment, id)
 
-  def get_comment_from_uuid(uuid), do: Repo.get_by(Comment, uuid: uuid)
+  # @doc """
+  # Gets a single comment from it's UUID
 
-  def get_comment_from_uuid!(uuid), do: Repo.get_by!(Comment, uuid: uuid)
+  # """
+  # @spec get_comment_from_uuid(String.t) :: {:ok, Comment.t} | {:error, nil}
+  # def get_comment_from_uuid(uuid), do: Repo.get_by(Comment, uuid: uuid)
+
+  # @doc """
+  # Gets a single comment by it's UUID.
+
+  # Raises `Ecto.NoResultsError` if the Comment does not exist.
+
+  # ## Examples
+
+  #     iex> get_comment_from_uuid!("123AFV13")
+  #     %Comment{}
+
+  #     iex> get_comment_from_uuid!("20R9HKDJHF")
+  #     ** (Ecto.NoResultsError)
+
+  # """
+  # @spec get_comment_from_uuid(String.t) :: Comment.t
+  # def get_comment_from_uuid!(uuid), do: Repo.get_by!(Comment, uuid: uuid)
 
   def get_comment_full_from_uuid(uuid) do
     with %Comment{} = comment <- Repo.get_by!(Comment, uuid: uuid) do
@@ -894,9 +945,18 @@ defmodule Mobilizon.Events do
 
   def get_comment_from_url!(url), do: Repo.get_by!(Comment, url: url)
 
+  def get_comment_full_from_url(url) do
+    case Repo.one(
+           from(c in Comment, where: c.url == ^url, preload: [:actor, :in_reply_to_comment])
+         ) do
+      nil -> {:error, :comment_not_found}
+      comment -> {:ok, comment}
+    end
+  end
+
   def get_comment_full_from_url!(url) do
     with %Comment{} = comment <- Repo.get_by!(Comment, url: url) do
-      Repo.preload(comment, :actor)
+      Repo.preload(comment, [:actor, :in_reply_to_comment])
     end
   end
 

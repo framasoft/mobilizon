@@ -253,7 +253,7 @@ defmodule MobilizonWeb.Schema do
     field(:uuid, :uuid)
     field(:url, :string)
     field(:local, :boolean)
-    field(:content, :string)
+    field(:text, :string)
     field(:primaryLanguage, :string)
     field(:replies, list_of(:comment))
     field(:threadLanguages, non_null(list_of(:string)))
@@ -484,10 +484,18 @@ defmodule MobilizonWeb.Schema do
       arg(:address_type, non_null(:address_type))
       arg(:online_address, :string)
       arg(:phone, :string)
-      arg(:organizer_actor_id, non_null(:integer))
-      arg(:category_id, non_null(:integer))
+      arg(:organizer_actor_username, non_null(:string))
+      arg(:category, non_null(:string))
 
       resolve(&Resolvers.Event.create_event/3)
+    end
+
+    @desc "Create a comment"
+    field :create_comment, type: :comment do
+      arg(:text, non_null(:string))
+      arg(:actor_username, non_null(:string))
+
+      resolve(&Resolvers.Comment.create_comment/3)
     end
 
     @desc "Create a category with a title, description and picture"
@@ -552,8 +560,9 @@ defmodule MobilizonWeb.Schema do
     field :create_group, :group do
       arg(:preferred_username, non_null(:string), description: "The name for the group")
       arg(:name, :string, description: "The displayed name for the group")
+      arg(:description, :string, description: "The summary for the group", default_value: "")
 
-      arg(:creator_username, :string,
+      arg(:admin_actor_username, :string,
         description: "The actor's username which will be the admin (otherwise user's default one)"
       )
 
