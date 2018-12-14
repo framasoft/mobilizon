@@ -4,6 +4,7 @@ defmodule Mobilizon.Events do
   """
 
   import Ecto.Query, warn: false
+  import Mobilizon.Ecto
   alias Mobilizon.Repo
 
   alias Mobilizon.Events.{Event, Comment, Participant}
@@ -18,16 +19,12 @@ defmodule Mobilizon.Events do
     queryable
   end
 
-  def get_events_for_actor(%Actor{id: actor_id} = _actor, page \\ 1, limit \\ 10) do
-    start = (page - 1) * limit
-
+  def get_events_for_actor(%Actor{id: actor_id} = _actor, page \\ nil, limit \\ nil) do
     query =
       from(
         e in Event,
         where: e.organizer_actor_id == ^actor_id,
-        limit: ^limit,
         order_by: [desc: :id],
-        offset: ^start,
         preload: [
           :organizer_actor,
           :category,
@@ -38,6 +35,7 @@ defmodule Mobilizon.Events do
           :physical_address
         ]
       )
+      |> paginate(page, limit)
 
     events = Repo.all(query)
 
@@ -186,15 +184,10 @@ defmodule Mobilizon.Events do
       [%Event{}, ...]
 
   """
-  def list_events(page \\ 1, limit \\ 10) do
-    start = (page - 1) * limit
-
+  def list_events(page \\ nil, limit \\ nil) do
     query =
-      from(e in Event,
-        limit: ^limit,
-        offset: ^start,
-        preload: [:organizer_actor]
-      )
+      from(e in Event, preload: [:organizer_actor])
+      |> paginate(page, limit)
 
     Repo.all(query)
   end
@@ -202,20 +195,18 @@ defmodule Mobilizon.Events do
   @doc """
   Find events by name
   """
-  def find_events_by_name(name, page \\ 1, limit \\ 10)
+  def find_events_by_name(name, page \\ nil, limit \\ nil)
   def find_events_by_name("", page, limit), do: list_events(page, limit)
 
   def find_events_by_name(name, page, limit) do
     name = String.trim(name)
-    start = (page - 1) * limit
 
     query =
       from(e in Event,
-        limit: ^limit,
-        offset: ^start,
         where: ilike(e.title, ^like_sanitize(name)),
         preload: [:organizer_actor]
       )
+      |> paginate(page, limit)
 
     Repo.all(query)
   end
@@ -309,8 +300,11 @@ defmodule Mobilizon.Events do
       [%Category{}, ...]
 
   """
-  def list_categories do
-    Repo.all(Category)
+  def list_categories(page \\ nil, limit \\ nil) do
+    Repo.all(
+      Category
+      |> paginate(page, limit)
+    )
   end
 
   @doc """
@@ -519,7 +513,7 @@ defmodule Mobilizon.Events do
       [%Participant{}, ...]
 
   """
-  def list_participants_for_event(uuid) do
+  def list_participants_for_event(uuid, page \\ nil, limit \\ nil) do
     Repo.all(
       from(
         p in Participant,
@@ -528,6 +522,7 @@ defmodule Mobilizon.Events do
         where: e.uuid == ^uuid,
         preload: [:actor]
       )
+      |> paginate(page, limit)
     )
   end
 
@@ -846,16 +841,12 @@ defmodule Mobilizon.Events do
     Repo.all(Comment)
   end
 
-  def get_comments_for_actor(%Actor{id: actor_id}, page \\ 1, limit \\ 10) do
-    start = (page - 1) * limit
-
+  def get_comments_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     query =
       from(
         c in Comment,
         where: c.actor_id == ^actor_id,
-        limit: ^limit,
         order_by: [desc: :id],
-        offset: ^start,
         preload: [
           :actor,
           :in_reply_to_comment,
@@ -863,6 +854,7 @@ defmodule Mobilizon.Events do
           :event
         ]
       )
+      |> paginate(page, limit)
 
     comments = Repo.all(query)
 

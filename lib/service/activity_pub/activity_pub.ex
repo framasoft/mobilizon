@@ -361,7 +361,9 @@ defmodule Mobilizon.Service.ActivityPub do
   Return all public activities (events & comments) for an actor
   """
   @spec fetch_public_activities_for_actor(Actor.t(), integer(), integer()) :: {list(), integer()}
-  def fetch_public_activities_for_actor(%Actor{} = actor, page \\ 1, limit \\ 10) do
+  def fetch_public_activities_for_actor(actor, page \\ nil, limit \\ nil)
+
+  def fetch_public_activities_for_actor(%Actor{} = actor, page, limit) do
     case actor.type do
       :Person ->
         {:ok, events, total_events} = Events.get_events_for_actor(actor, page, limit)

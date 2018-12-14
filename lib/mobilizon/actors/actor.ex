@@ -20,11 +20,13 @@ defmodule Mobilizon.Actors.Actor do
   """
   use Ecto.Schema
   import Ecto.Changeset
+
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, User, Follower, Member}
   alias Mobilizon.Events.Event
 
   import Ecto.Query
+  import Mobilizon.Ecto
   alias Mobilizon.Repo
 
   require Logger
@@ -232,18 +234,15 @@ defmodule Mobilizon.Actors.Actor do
 
   If actor A and C both follow actor B, actor B's followers are A and C
   """
-  def get_followers(%Actor{id: actor_id} = _actor, page \\ 1, limit \\ 10) do
-    start = (page - 1) * limit
-
+  def get_followers(%Actor{id: actor_id} = _actor, page \\ nil, limit \\ nil) do
     Repo.all(
       from(
         a in Actor,
         join: f in Follower,
         on: a.id == f.actor_id,
-        where: f.target_actor_id == ^actor_id,
-        limit: ^limit,
-        offset: ^start
+        where: f.target_actor_id == ^actor_id
       )
+      |> paginate(page, limit)
     )
   end
 
@@ -252,18 +251,15 @@ defmodule Mobilizon.Actors.Actor do
 
   If actor A follows actor B and C, actor A's followings are B and B
   """
-  def get_followings(%Actor{id: actor_id} = _actor, page \\ 1, limit \\ 10) do
-    start = (page - 1) * limit
-
+  def get_followings(%Actor{id: actor_id} = _actor, page \\ nil, limit \\ nil) do
     Repo.all(
       from(
         a in Actor,
         join: f in Follower,
         on: a.id == f.target_actor_id,
-        where: f.actor_id == ^actor_id,
-        limit: ^limit,
-        offset: ^start
+        where: f.actor_id == ^actor_id
       )
+      |> paginate(page, limit)
     )
   end
 

@@ -4,6 +4,8 @@ defmodule Mobilizon.Actors do
   """
 
   import Ecto.Query, warn: false
+  import Mobilizon.Ecto
+
   alias Mobilizon.Repo
 
   alias Mobilizon.Actors.{Actor, Bot, Member, Follower, User}
@@ -150,8 +152,14 @@ defmodule Mobilizon.Actors do
   @doc """
   List the groups
   """
-  def list_groups do
-    Repo.all(from(a in Actor, where: a.type == ^:Group))
+  def list_groups(page \\ nil, limit \\ nil) do
+    Repo.all(
+      from(
+        a in Actor,
+        where: a.type == ^:Group
+      )
+      |> paginate(page, limit)
+    )
   end
 
   def get_group_by_name(name) do
@@ -446,21 +454,18 @@ defmodule Mobilizon.Actors do
   Find actors by their name or displayed name
   """
   @spec find_actors_by_username_or_name(String.t(), integer(), integer()) :: list(Actor.t())
-  def find_actors_by_username_or_name(username, page \\ 1, limit \\ 10)
+  def find_actors_by_username_or_name(username, page \\ nil, limit \\ nil)
   def find_actors_by_username_or_name("", _page, _limit), do: []
 
   def find_actors_by_username_or_name(username, page, limit) do
-    start = (page - 1) * limit
-
     Repo.all(
       from(
         a in Actor,
-        limit: ^limit,
-        offset: ^start,
         where:
           ilike(a.preferred_username, ^like_sanitize(username)) or
             ilike(a.name, ^like_sanitize(username))
       )
+      |> paginate(page, limit)
     )
   end
 

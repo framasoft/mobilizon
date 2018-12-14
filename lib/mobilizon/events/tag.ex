@@ -25,7 +25,7 @@ defmodule Mobilizon.Events.Tag.TitleSlug do
 
       _tag ->
         slug
-        |> Mobilizon.Slug.increment_slug()
+        |> Mobilizon.Ecto.increment_slug()
         |> build_unique_slug(changeset)
     end
   end

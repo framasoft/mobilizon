@@ -2,8 +2,8 @@ defmodule MobilizonWeb.Resolvers.Event do
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Actors
 
-  def list_events(_parent, _args, _resolution) do
-    {:ok, Mobilizon.Events.list_events()}
+  def list_events(_parent, %{page: page, limit: limit}, _resolution) do
+    {:ok, Mobilizon.Events.list_events(page, limit)}
   end
 
   def find_event(_parent, %{uuid: uuid}, _resolution) do
@@ -26,8 +26,8 @@ defmodule MobilizonWeb.Resolvers.Event do
   @doc """
   List participants for event (through an event request)
   """
-  def list_participants_for_event(%{uuid: uuid}, _args, _resolution) do
-    {:ok, Mobilizon.Events.list_participants_for_event(uuid)}
+  def list_participants_for_event(%{uuid: uuid}, %{page: page, limit: limit}, _resolution) do
+    {:ok, Mobilizon.Events.list_participants_for_event(uuid, page, limit)}
   end
 
   @doc """
