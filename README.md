@@ -3,12 +3,17 @@
 Your federated organization and mobilization platform. Gather people with a convivial, ethical, and emancipating tool.
 
 ## Development
-
+Clone the repo, and start the project via Docker
+```bash
+git clone https://framagit.org/framasoft/mobilizon
+make
+```
 ### Manual
 
 #### Server
 
   * Install dependencies:
+    
     * Elixir (and Erlang) by following the instructions at [https://elixir-lang.github.io/install.html](https://elixir-lang.github.io/install.html)
     * Fetch backend Elixir dependencies with `mix deps.get`.
     * PostgreSQL
@@ -43,10 +48,19 @@ once the server is running:
       automatically reloaded on change.
 
 ### Docker
+You need to install the latest supported [Docker](https://docs.docker.com/install/#supported-platforms) and [Docker-Compose](https://docs.docker.com/compose/install/) before using the Docker way of installing Mobilizon.
 
-Just run `docker-compose up -d` to start a database container, an API container and the front-end dev container running on localhost.
+Just run :
+```bash
+make start
+```
+to start a database container, an API container and the front-end dev container running on localhost.
 
 ## Learn more
 
   * Official website: https://joinmobilizon.org/
   * Source: https://framagit.org/framasoft/mobilizon
+  * Riot/Matrix: https://riot.im/app/#/room/#Mobilizon:matrix.org
+  * Mastodon: https://framapiaf.org/@mobilizon
+  * Forum: https://framacolibri.org/c/mobilizon/fr-francais
+  
