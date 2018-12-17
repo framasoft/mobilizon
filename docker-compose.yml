@@ -17,7 +17,7 @@ services:
     volumes:
       - './js:/app/js'
     ports:
-      - "80:8080"
+      - "8888:8080"
     entrypoint: entrypoint
 
   api:
@@ -31,6 +31,7 @@ services:
     depends_on:
       - postgres
     environment:
+      MIX_ENV: dev
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DATABASE: mobilizon_dev
