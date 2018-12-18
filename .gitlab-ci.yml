@@ -1,8 +1,8 @@
 image: tcitworld/mobilizon-ci
 
-services:
-  - name: mdillon/postgis:10
-    alias: postgres
+stages:
+  - front
+  - back
 
 variables:
   MIX_ENV: "test"
@@ -12,24 +12,48 @@ variables:
   POSTGRES_HOST: postgres
   GEOLITE_CITIES_PATH: "/usr/share/GeoIP/GeoLite2-City.mmdb"
 
-cache:
-  paths:
-    - deps
-    - _build
-    - .rebar3
-    - ~/.mix
-    - ~/.hex
-    - js/node_modules
+js:
+  stage: front
+  before_script:
+    - cd js
+    - npm install
+  script:
+    - npm run build
+  after_script:
+    - cd ../
+  cache:
+    paths:
+      - js/node_modules
+  artifacts:
+    paths:
+      - priv/static
+    untracked: false
+    expire_in: 30 days
 
-before_script:
-  - cd js && npm install && npm run build && cd ../
-  - mix local.rebar --force
-  - mix local.hex --force
-  - mix deps.get
-  - MIX_ENV=test mix ecto.create
-  - MIX_ENV=test mix ecto.migrate
+elixir_format:
+  stage: back
+  before_script:
+    - mix deps.get
+  script:
+    - mix format --check-formatted --dry-run
+  cache:
+    paths:
+      - deps
 
 mix:
+  stage: back
+  services:
+  - name: mdillon/postgis:10
+    alias: postgres
+  dependencies:
+    - js
+  before_script:
+    - mix deps.get
+    - MIX_ENV=test mix ecto.create
+    - MIX_ENV=test mix ecto.migrate
   script:
-  - mix format --check-formatted --dry-run
-  - mix coveralls
+    - mix coveralls
+  cache:
+    paths:
+      - deps
+      - _build
