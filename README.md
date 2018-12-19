@@ -5,7 +5,7 @@ Your federated organization and mobilization platform. Gather people with a conv
 ## Development
 Clone the repo, and start the project via Docker
 ```bash
-git clone https://framagit.org/framasoft/mobilizon
+git clone https://framagit.org/framasoft/mobilizon && cd mobilizon
 make
 ```
 ### Manual
@@ -60,6 +60,7 @@ to start a database container, an API container and the front-end dev container 
 
   * Official website: https://joinmobilizon.org/
   * Source: https://framagit.org/framasoft/mobilizon
+  * Docu wiki: https://framagit.org/framasoft/mobilizon/wikis/home
   * Riot/Matrix: https://riot.im/app/#/room/#Mobilizon:matrix.org
   * Mastodon: https://framapiaf.org/@mobilizon
   * Forum: https://framacolibri.org/c/mobilizon/fr-francais

@@ -29,3 +29,4 @@ priv/data/*
 cover/
 uploads/*
 !uploads/.gitkeep
+.idea
