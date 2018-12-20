@@ -24,7 +24,7 @@ config :mobilizon, MobilizonWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Configure your database
-config :mobilison, Mobilizon.Repo,
+config :mobilizon, Mobilizon.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: System.get_env("MOBILIZON_DATABASE_USERNAME") || "mobilizon",
   password: System.get_env("MOBILIZON_DATABASE_PASSWORD") || "mobilizon",
