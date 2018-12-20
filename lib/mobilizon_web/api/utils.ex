@@ -110,14 +110,14 @@ defmodule MobilizonWeb.API.Utils do
     |> Formatter.finalize()
   end
 
-  def format_input(text, mentions, tags, "text/markdown") do
-    text
-    |> Earmark.as_html!()
-    |> Formatter.html_escape("text/html")
-    |> String.replace(~r/\r?\n/, "")
-    |> (&{[], &1}).()
-    |> Formatter.add_actor_links(mentions)
-    |> Formatter.add_hashtag_links(tags)
-    |> Formatter.finalize()
-  end
+  # def format_input(text, mentions, tags, "text/markdown") do
+  #   text
+  #   |> Earmark.as_html!()
+  #   |> Formatter.html_escape("text/html")
+  #   |> String.replace(~r/\r?\n/, "")
+  #   |> (&{[], &1}).()
+  #   |> Formatter.add_actor_links(mentions)
+  #   |> Formatter.add_hashtag_links(tags)
+  #   |> Formatter.finalize()
+  # end
 end
