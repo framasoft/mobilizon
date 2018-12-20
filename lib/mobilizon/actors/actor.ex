@@ -167,6 +167,7 @@ defmodule Mobilizon.Actors.Actor do
     ])
     |> build_urls(:Group)
     |> put_change(:domain, nil)
+    |> put_change(:keys, Actors.create_keys())
     |> put_change(:type, :Group)
     |> validate_required([:url, :outbox_url, :inbox_url, :type, :preferred_username])
     |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_type_index)
@@ -292,12 +293,23 @@ defmodule Mobilizon.Actors.Actor do
          {:already_following, false} <- {:already_following, following?(follower, followed)} do
       do_follow(follower, followed, approved)
     else
-      {:already_following, _} ->
+      {:already_following, %Follower{}} ->
         {:error,
          "Could not follow actor: you are already following #{followed.preferred_username}"}
 
       {:suspended, _} ->
         {:error, "Could not follow actor: #{followed.preferred_username} has been suspended"}
+    end
+  end
+
+  @spec unfollow(struct(), struct()) :: {:ok, Follower.t()} | {:error, Ecto.Changeset.t()}
+  def unfollow(%Actor{} = followed, %Actor{} = follower) do
+    with {:already_following, %Follower{} = follow} <-
+           {:already_following, following?(follower, followed)} do
+      Actors.delete_follower(follow)
+    else
+      {:already_following, false} ->
+        {:error, "Could not unfollow actor: you are not following #{followed.preferred_username}"}
     end
   end
 
@@ -311,12 +323,13 @@ defmodule Mobilizon.Actors.Actor do
 
   @spec following?(struct(), struct()) :: boolean()
   def following?(
-        %Actor{id: follower_actor_id} = _follower_actor,
-        %Actor{followers: followers} = _followed
+        %Actor{} = follower_actor,
+        %Actor{} = followed_actor
       ) do
-    followers
-    |> Enum.map(& &1.actor_id)
-    |> Enum.member?(follower_actor_id)
+    case Actors.get_follower(followed_actor, follower_actor) do
+      nil -> false
+      %Follower{} = follow -> follow
+    end
   end
 
   @spec actor_acct_from_actor(struct()) :: String.t()

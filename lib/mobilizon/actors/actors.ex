@@ -162,14 +162,39 @@ defmodule Mobilizon.Actors do
     )
   end
 
-  def get_group_by_name(name) do
-    case String.split(name, "@") do
-      [name] ->
-        Repo.get_by(Actor, preferred_username: name, type: :Group)
+  @doc """
+  Get a group by it's title
+  """
+  @spec get_group_by_title(String.t()) :: Actor.t() | nil
+  def get_group_by_title(title) do
+    case String.split(title, "@") do
+      [title] ->
+        get_local_group_by_title(title)
 
-      [name, domain] ->
-        Repo.get_by(Actor, preferred_username: name, domain: domain, type: :Group)
+      [title, domain] ->
+        Repo.one(
+          from(a in Actor,
+            where: a.preferred_username == ^title and a.type == "Group" and a.domain == ^domain
+          )
+        )
     end
+  end
+
+  @doc """
+  Get a local group by it's title
+  """
+  @spec get_local_group_by_title(String.t()) :: Actor.t() | nil
+  def get_local_group_by_title(title) do
+    title
+    |> do_get_local_group_by_title
+    |> Repo.one()
+  end
+
+  @spec do_get_local_group_by_title(String.t()) :: Ecto.Query.t()
+  defp do_get_local_group_by_title(title) do
+    from(a in Actor,
+      where: a.preferred_username == ^title and a.type == "Group" and is_nil(a.domain)
+    )
   end
 
   @doc """
@@ -185,8 +210,6 @@ defmodule Mobilizon.Actors do
 
   """
   def create_group(attrs \\ %{}) do
-    attrs = Map.put(attrs, :keys, create_keys())
-
     %Actor{}
     |> Actor.group_creation(attrs)
     |> Repo.insert()
@@ -218,10 +241,11 @@ defmodule Mobilizon.Actors do
             keys: data.keys,
             avatar_url: data.avatar_url,
             banner_url: data.banner_url,
-            name: data.name
+            name: data.name,
+            summary: data.summary
           ]
         ],
-        conflict_target: [:preferred_username, :domain, :type]
+        conflict_target: [:url]
       )
 
     if preload, do: {:ok, Repo.preload(actor, [:followers])}, else: {:ok, actor}
@@ -516,9 +540,11 @@ defmodule Mobilizon.Actors do
     end
   end
 
-  # Create a new RSA key
+  @doc """
+  Create a new RSA key
+  """
   @spec create_keys() :: String.t()
-  defp create_keys() do
+  def create_keys() do
     key = :public_key.generate_key({:rsa, 2048, 65_537})
     entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
     [entry] |> :public_key.pem_encode() |> String.trim_trailing()
@@ -958,6 +984,13 @@ defmodule Mobilizon.Actors do
     |> Repo.preload([:actor, :target_actor])
   end
 
+  @spec get_follower(Actor.t(), Actor.t()) :: Follower.t()
+  def get_follower(%Actor{id: followed_id}, %Actor{id: follower_id}) do
+    Repo.one(
+      from(f in Follower, where: f.target_actor_id == ^followed_id and f.actor_id == ^follower_id)
+    )
+  end
+
   @doc """
   Creates a follower.
 
@@ -1011,6 +1044,24 @@ defmodule Mobilizon.Actors do
   """
   def delete_follower(%Follower{} = follower) do
     Repo.delete(follower)
+  end
+
+  @doc """
+  Delete a follower by followed and follower actors
+
+  ## Examples
+
+      iex> delete_follower(%Actor{}, %Actor{})
+      {:ok, %Mobilizon.Actors.Follower{}}
+
+      iex> delete_follower(%Actor{}, %Actor{})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  @spec delete_follower(Actor.t(), Actor.t()) ::
+          {:ok, Follower.t()} | {:error, Ecto.Changeset.t()}
+  def delete_follower(%Actor{} = followed, %Actor{} = follower) do
+    get_follower(followed, follower) |> Repo.delete()
   end
 
   @doc """

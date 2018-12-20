@@ -1,6 +1,8 @@
 defmodule MobilizonWeb.Resolvers.Event do
   alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Activity
   alias Mobilizon.Actors
+  alias Mobilizon.Events.Event
 
   def list_events(_parent, %{page: page, limit: limit}, _resolution) do
     {:ok, Mobilizon.Events.list_events(page, limit)}
@@ -63,10 +65,27 @@ defmodule MobilizonWeb.Resolvers.Event do
     {:ok, found}
   end
 
+  @doc """
+  Create an event
+  """
   def create_event(_parent, args, %{context: %{current_user: user}}) do
-    organizer_actor_id = Map.get(args, :organizer_actor_id) || Actors.get_actor_for_user(user).id
-    args = args |> Map.put(:organizer_actor_id, organizer_actor_id)
-    Mobilizon.Events.create_event(args)
+    with {:ok, %Activity{data: %{"object" => %{"type" => "Event"} = object}}} <-
+           args
+           # Set default organizer_actor_id if none set
+           |> Map.update(
+             :organizer_actor_username,
+             Actors.get_actor_for_user(user).preferred_username,
+             & &1
+           )
+           |> MobilizonWeb.API.Events.create_event() do
+      {:ok,
+       %Event{
+         title: object["name"],
+         description: object["content"],
+         uuid: object["uuid"],
+         url: object["id"]
+       }}
+    end
   end
 
   def create_event(_parent, _args, _resolution) do

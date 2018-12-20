@@ -1,0 +1,118 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true",
+        "recv_timeout": 20000,
+        "connect_timeout": 10000
+      },
+      "request_body": "",
+      "url": "https://framatube.org/videos/watch/7e261f9e-242c-4100-a0bd-268dab321114"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"type\":\"Video\",\"id\":\"https://framatube.org/videos/watch/7e261f9e-242c-4100-a0bd-268dab321114\",\"name\":\"Contributopia : Peut-on faire du libre sans vision politique ? — Pierre-Yves Gosset\",\"duration\":\"PT4332S\",\"uuid\":\"7e261f9e-242c-4100-a0bd-268dab321114\",\"tag\":[{\"type\":\"Hashtag\",\"name\":\"contributopia\"},{\"type\":\"Hashtag\",\"name\":\"framaconf\"},{\"type\":\"Hashtag\",\"name\":\"framasoft\"},{\"type\":\"Hashtag\",\"name\":\"libre\"},{\"type\":\"Hashtag\",\"name\":\"politique\"}],\"category\":{\"identifier\":\"15\",\"name\":\"Science & Technology\"},\"licence\":{\"identifier\":\"2\",\"name\":\"Attribution - Share Alike\"},\"language\":{\"identifier\":\"fr\",\"name\":\"French\"},\"views\":83,\"sensitive\":false,\"waitTranscoding\":false,\"state\":1,\"commentsEnabled\":true,\"published\":\"2018-11-26T17:11:02.993Z\",\"updated\":\"2018-12-03T22:01:01.919Z\",\"mediaType\":\"text/markdown\",\"content\":\"Suite à sa campagne \\\"Dégooglisons Internet\\\" (oct 2014 - oct 2017), l'association a fait le bilan, calmement. Et il n'est pas brillant.\\r\\n\\r\\nEn quelques années, les GAFAM/BATX/NATU (Google, Apple, Facebook, Amazon, Microsoft, Baidu, Alibaba, Tencent,...\",\"support\":null,\"subtitleLanguage\":[],\"icon\":{\"type\":\"Image\",\"url\":\"https://framatube.org/static/thumbnails/7e261f9e-242c-4100-a0bd-268dab321114.jpg\",\"mediaType\":\"image/jpeg\",\"width\":200,\"height\":110},\"url\":[{\"type\":\"Link\",\"mimeType\":\"video/mp4\",\"mediaType\":\"video/mp4\",\"href\":\"https://framatube.org/static/webseed/7e261f9e-242c-4100-a0bd-268dab321114-720.mp4\",\"height\":720,\"size\":367273671,\"fps\":25},{\"type\":\"Link\",\"mimeType\":\"application/x-bittorrent\",\"mediaType\":\"application/x-bittorrent\",\"href\":\"https://framatube.org/static/torrents/7e261f9e-242c-4100-a0bd-268dab321114-720.torrent\",\"height\":720},{\"type\":\"Link\",\"mimeType\":\"application/x-bittorrent;x-scheme-handler/magnet\",\"mediaType\":\"application/x-bittorrent;x-scheme-handler/magnet\",\"href\":\"magnet:?xs=https%3A%2F%2Fframatube.org%2Fstatic%2Ftorrents%2F7e261f9e-242c-4100-a0bd-268dab321114-720.torrent&xt=urn:btih:21fbb72548ceac12af5562f43313274f67c89b6a&dn=Contributopia%E2%80%AF%3A+Peut-on+faire+du+libre+sans+vision+politique+%3F+%E2%80%94+Pierre-Yves+Gosset&tr=wss%3A%2F%2Fframatube.org%3A443%2Ftracker%2Fsocket&tr=https%3A%2F%2Fframatube.org%2Ftracker%2Fannounce&ws=https%3A%2F%2Fframatube.org%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-720.mp4&ws=https%3A%2F%2Ftube.tape.cx%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-720.mp4&ws=https%3A%2F%2Fpeertube.social%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-720.mp4&ws=https%3A%2F%2Fwatching.cypherpunk.observer%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-720.mp4&ws=https%3A%2F%2Ftube.bootlicker.party%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-720.mp4&ws=https%3A%2F%2Ftube.tr4sk.me%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-720.mp4&ws=https%3A%2F%2Fvideos.tcit.fr%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-720.mp4\",\"height\":720},{\"type\":\"Link\",\"mimeType\":\"video/mp4\",\"mediaType\":\"video/mp4\",\"href\":\"https://framatube.org/static/webseed/7e261f9e-242c-4100-a0bd-268dab321114-480.mp4\",\"height\":480,\"size\":224475150,\"fps\":25},{\"type\":\"Link\",\"mimeType\":\"application/x-bittorrent\",\"mediaType\":\"application/x-bittorrent\",\"href\":\"https://framatube.org/static/torrents/7e261f9e-242c-4100-a0bd-268dab321114-480.torrent\",\"height\":480},{\"type\":\"Link\",\"mimeType\":\"application/x-bittorrent;x-scheme-handler/magnet\",\"mediaType\":\"application/x-bittorrent;x-scheme-handler/magnet\",\"href\":\"magnet:?xs=https%3A%2F%2Fframatube.org%2Fstatic%2Ftorrents%2F7e261f9e-242c-4100-a0bd-268dab321114-480.torrent&xt=urn:btih:c442b32af103dc516c12fe87c7552dcfaa45f814&dn=Contributopia%E2%80%AF%3A+Peut-on+faire+du+libre+sans+vision+politique+%3F+%E2%80%94+Pierre-Yves+Gosset&tr=wss%3A%2F%2Fframatube.org%3A443%2Ftracker%2Fsocket&tr=https%3A%2F%2Fframatube.org%2Ftracker%2Fannounce&ws=https%3A%2F%2Fframatube.org%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-480.mp4&ws=https%3A%2F%2Ftube.tape.cx%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-480.mp4&ws=https%3A%2F%2Fwatching.cypherpunk.observer%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-480.mp4&ws=https%3A%2F%2Ftube.bootlicker.party%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-480.mp4&ws=https%3A%2F%2Fvideos.tcit.fr%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-480.mp4&ws=https%3A%2F%2Ftube.tr4sk.me%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-480.mp4&ws=https%3A%2F%2Fpeertube.social%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-480.mp4\",\"height\":480},{\"type\":\"Link\",\"mimeType\":\"video/mp4\",\"mediaType\":\"video/mp4\",\"href\":\"https://framatube.org/static/webseed/7e261f9e-242c-4100-a0bd-268dab321114-360.mp4\",\"height\":360,\"size\":173650856,\"fps\":25},{\"type\":\"Link\",\"mimeType\":\"application/x-bittorrent\",\"mediaType\":\"application/x-bittorrent\",\"href\":\"https://framatube.org/static/torrents/7e261f9e-242c-4100-a0bd-268dab321114-360.torrent\",\"height\":360},{\"type\":\"Link\",\"mimeType\":\"application/x-bittorrent;x-scheme-handler/magnet\",\"mediaType\":\"application/x-bittorrent;x-scheme-handler/magnet\",\"href\":\"magnet:?xs=https%3A%2F%2Fframatube.org%2Fstatic%2Ftorrents%2F7e261f9e-242c-4100-a0bd-268dab321114-360.torrent&xt=urn:btih:a271bf6516b22f837e86b578796aaa5ffc685fa9&dn=Contributopia%E2%80%AF%3A+Peut-on+faire+du+libre+sans+vision+politique+%3F+%E2%80%94+Pierre-Yves+Gosset&tr=wss%3A%2F%2Fframatube.org%3A443%2Ftracker%2Fsocket&tr=https%3A%2F%2Fframatube.org%2Ftracker%2Fannounce&ws=https%3A%2F%2Fframatube.org%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-360.mp4&ws=https%3A%2F%2Ftube.tape.cx%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-360.mp4&ws=https%3A%2F%2Fwatching.cypherpunk.observer%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-360.mp4&ws=https%3A%2F%2Ftube.bootlicker.party%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-360.mp4&ws=https%3A%2F%2Fvideos.tcit.fr%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-360.mp4&ws=https%3A%2F%2Ftube.tr4sk.me%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-360.mp4&ws=https%3A%2F%2Fpeertube.social%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-360.mp4\",\"height\":360},{\"type\":\"Link\",\"mimeType\":\"video/mp4\",\"mediaType\":\"video/mp4\",\"href\":\"https://framatube.org/static/webseed/7e261f9e-242c-4100-a0bd-268dab321114-240.mp4\",\"height\":240,\"size\":119774049,\"fps\":25},{\"type\":\"Link\",\"mimeType\":\"application/x-bittorrent\",\"mediaType\":\"application/x-bittorrent\",\"href\":\"https://framatube.org/static/torrents/7e261f9e-242c-4100-a0bd-268dab321114-240.torrent\",\"height\":240},{\"type\":\"Link\",\"mimeType\":\"application/x-bittorrent;x-scheme-handler/magnet\",\"mediaType\":\"application/x-bittorrent;x-scheme-handler/magnet\",\"href\":\"magnet:?xs=https%3A%2F%2Fframatube.org%2Fstatic%2Ftorrents%2F7e261f9e-242c-4100-a0bd-268dab321114-240.torrent&xt=urn:btih:dacdc6c5d6cda936213789ecfcdfb0311e54f10c&dn=Contributopia%E2%80%AF%3A+Peut-on+faire+du+libre+sans+vision+politique+%3F+%E2%80%94+Pierre-Yves+Gosset&tr=wss%3A%2F%2Fframatube.org%3A443%2Ftracker%2Fsocket&tr=https%3A%2F%2Fframatube.org%2Ftracker%2Fannounce&ws=https%3A%2F%2Fframatube.org%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-240.mp4&ws=https%3A%2F%2Fwatching.cypherpunk.observer%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-240.mp4&ws=https%3A%2F%2Ftube.bootlicker.party%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-240.mp4&ws=https%3A%2F%2Fvideos.tcit.fr%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-240.mp4&ws=https%3A%2F%2Ftube.tr4sk.me%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-240.mp4&ws=https%3A%2F%2Fpeertube.social%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-240.mp4&ws=https%3A%2F%2Ftube.tape.cx%2Fstatic%2Fwebseed%2F7e261f9e-242c-4100-a0bd-268dab321114-240.mp4\",\"height\":240},{\"type\":\"Link\",\"mimeType\":\"text/html\",\"mediaType\":\"text/html\",\"href\":\"https://framatube.org/videos/watch/7e261f9e-242c-4100-a0bd-268dab321114\"}],\"likes\":\"https://framatube.org/videos/watch/7e261f9e-242c-4100-a0bd-268dab321114/likes\",\"dislikes\":\"https://framatube.org/videos/watch/7e261f9e-242c-4100-a0bd-268dab321114/dislikes\",\"shares\":\"https://framatube.org/videos/watch/7e261f9e-242c-4100-a0bd-268dab321114/announces\",\"comments\":\"https://framatube.org/videos/watch/7e261f9e-242c-4100-a0bd-268dab321114/comments\",\"attributedTo\":[{\"type\":\"Person\",\"id\":\"https://framatube.org/accounts/framasoft\"},{\"type\":\"Group\",\"id\":\"https://framatube.org/video-channels/bf54d359-cfad-4935-9d45-9d6be93f63e8\"}],\"to\":[\"https://www.w3.org/ns/activitystreams#Public\"],\"cc\":[\"https://framatube.org/accounts/framasoft/followers\"],\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://w3id.org/security/v1\",{\"RsaSignature2017\":\"https://w3id.org/security#RsaSignature2017\",\"pt\":\"https://joinpeertube.org/ns\",\"sc\":\"http://schema.org#\",\"Hashtag\":\"as:Hashtag\",\"uuid\":\"sc:identifier\",\"category\":\"sc:category\",\"licence\":\"sc:license\",\"subtitleLanguage\":\"sc:subtitleLanguage\",\"sensitive\":\"as:sensitive\",\"language\":\"sc:inLanguage\",\"views\":\"sc:Number\",\"state\":\"sc:Number\",\"size\":\"sc:Number\",\"fps\":\"sc:Number\",\"commentsEnabled\":\"sc:Boolean\",\"waitTranscoding\":\"sc:Boolean\",\"expires\":\"sc:expires\",\"support\":\"sc:Text\",\"CacheFile\":\"pt:CacheFile\"},{\"likes\":{\"@id\":\"as:likes\",\"@type\":\"@id\"},\"dislikes\":{\"@id\":\"as:dislikes\",\"@type\":\"@id\"},\"shares\":{\"@id\":\"as:shares\",\"@type\":\"@id\"},\"comments\":{\"@id\":\"as:comments\",\"@type\":\"@id\"}}]}",
+      "headers": {
+        "Server": "nginx/1.10.3",
+        "Date": "Tue, 04 Dec 2018 14:14:49 GMT",
+        "Content-Type": "application/activity+json; charset=utf-8",
+        "Content-Length": "9448",
+        "Connection": "keep-alive",
+        "X-DNS-Prefetch-Control": "off",
+        "X-Frame-Options": "DENY",
+        "X-Download-Options": "noopen",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Tk": "N",
+        "ETag": "W/\"24e8-KpgKOiOmc9vLXqcT33ncvpnwdzg\"",
+        "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+        "X-Robots-Tag": "none"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true",
+        "recv_timeout": 20000,
+        "connect_timeout": 10000
+      },
+      "request_body": "",
+      "url": "https://framapiaf.org/@troisiemelobe/101156292125317651"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://w3id.org/security/v1\",{\"manuallyApprovesFollowers\":\"as:manuallyApprovesFollowers\",\"sensitive\":\"as:sensitive\",\"movedTo\":{\"@id\":\"as:movedTo\",\"@type\":\"@id\"},\"Hashtag\":\"as:Hashtag\",\"ostatus\":\"http://ostatus.org#\",\"atomUri\":\"ostatus:atomUri\",\"inReplyToAtomUri\":\"ostatus:inReplyToAtomUri\",\"conversation\":\"ostatus:conversation\",\"toot\":\"http://joinmastodon.org/ns#\",\"Emoji\":\"toot:Emoji\",\"focalPoint\":{\"@container\":\"@list\",\"@id\":\"toot:focalPoint\"},\"featured\":{\"@id\":\"toot:featured\",\"@type\":\"@id\"},\"schema\":\"http://schema.org#\",\"PropertyValue\":\"schema:PropertyValue\",\"value\":\"schema:value\"}],\"id\":\"https://framapiaf.org/users/troisiemelobe/statuses/101156292125317651\",\"type\":\"Note\",\"summary\":null,\"inReplyTo\":\"https://framatube.org/videos/watch/7e261f9e-242c-4100-a0bd-268dab321114\",\"published\":\"2018-11-29T20:15:23Z\",\"url\":\"https://framapiaf.org/@troisiemelobe/101156292125317651\",\"attributedTo\":\"https://framapiaf.org/users/troisiemelobe\",\"to\":[\"https://www.w3.org/ns/activitystreams#Public\"],\"cc\":[\"https://framapiaf.org/users/troisiemelobe/followers\",\"https://framatube.org/accounts/framasoft\"],\"sensitive\":false,\"atomUri\":\"https://framapiaf.org/users/troisiemelobe/statuses/101156292125317651\",\"inReplyToAtomUri\":\"https://framatube.org/videos/watch/7e261f9e-242c-4100-a0bd-268dab321114\",\"conversation\":\"tag:framapiaf.org,2018-11-26:objectId=9224839:objectType=Conversation\",\"content\":\"\\u003cp\\u003e\\u003cspan class=\\\"h-card\\\"\\u003e\\u003ca href=\\\"https://framatube.org/accounts/framasoft\\\" class=\\\"u-url mention\\\"\\u003e@\\u003cspan\\u003eframasoft\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/span\\u003e \\u003cbr /\\u003eJ\\u0026apos;en suis au 20 premières minutes et cela résonne vraiment avec ce que je ressent.\\u003c/p\\u003e\",\"contentMap\":{\"en\":\"\\u003cp\\u003e\\u003cspan class=\\\"h-card\\\"\\u003e\\u003ca href=\\\"https://framatube.org/accounts/framasoft\\\" class=\\\"u-url mention\\\"\\u003e@\\u003cspan\\u003eframasoft\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/span\\u003e \\u003cbr /\\u003eJ\\u0026apos;en suis au 20 premières minutes et cela résonne vraiment avec ce que je ressent.\\u003c/p\\u003e\"},\"attachment\":[],\"tag\":[{\"type\":\"Mention\",\"href\":\"https://framatube.org/accounts/framasoft\",\"name\":\"@framasoft@framatube.org\"}]}",
+      "headers": {
+        "Date": "Tue, 04 Dec 2018 14:14:48 GMT",
+        "Content-Type": "application/activity+json; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Server": "Mastodon",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Link": "<https://framapiaf.org/users/troisiemelobe/updates/1014845.atom>; rel=\"alternate\"; type=\"application/atom+xml\", <https://framapiaf.org/users/troisiemelobe/statuses/101156292125317651>; rel=\"alternate\"; type=\"application/activity+json\"",
+        "Vary": "Accept,Accept-Encoding",
+        "Cache-Control": "max-age=180, public",
+        "ETag": "W/\"fb0071d6eb506ce441bb2947e651dcc9\"",
+        "X-Request-Id": "30e6a4cc-d3c0-42ab-8fdc-2d60916f5b98",
+        "X-Runtime": "0.012958",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Referrer-Policy": "same-origin"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true"
+      },
+      "request_body": "",
+      "url": "https://framapiaf.org/users/troisiemelobe"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://w3id.org/security/v1\",{\"manuallyApprovesFollowers\":\"as:manuallyApprovesFollowers\",\"sensitive\":\"as:sensitive\",\"movedTo\":{\"@id\":\"as:movedTo\",\"@type\":\"@id\"},\"Hashtag\":\"as:Hashtag\",\"ostatus\":\"http://ostatus.org#\",\"atomUri\":\"ostatus:atomUri\",\"inReplyToAtomUri\":\"ostatus:inReplyToAtomUri\",\"conversation\":\"ostatus:conversation\",\"toot\":\"http://joinmastodon.org/ns#\",\"Emoji\":\"toot:Emoji\",\"focalPoint\":{\"@container\":\"@list\",\"@id\":\"toot:focalPoint\"},\"featured\":{\"@id\":\"toot:featured\",\"@type\":\"@id\"},\"schema\":\"http://schema.org#\",\"PropertyValue\":\"schema:PropertyValue\",\"value\":\"schema:value\"}],\"id\":\"https://framapiaf.org/users/troisiemelobe\",\"type\":\"Person\",\"following\":\"https://framapiaf.org/users/troisiemelobe/following\",\"followers\":\"https://framapiaf.org/users/troisiemelobe/followers\",\"inbox\":\"https://framapiaf.org/users/troisiemelobe/inbox\",\"outbox\":\"https://framapiaf.org/users/troisiemelobe/outbox\",\"featured\":\"https://framapiaf.org/users/troisiemelobe/collections/featured\",\"preferredUsername\":\"troisiemelobe\",\"name\":\"Troisième Lobe\",\"summary\":\"\\u003cp\\u003eDistributeur de lp, mon troisième lobe alimente ma conversation.\\u003cbr /\\u003eCeux qui me connaissent... \\u003cbr /\\u003eMa marque de fabrquie : jamais un pouet sans fautes.\\u003c/p\\u003e\",\"url\":\"https://framapiaf.org/@troisiemelobe\",\"manuallyApprovesFollowers\":false,\"publicKey\":{\"id\":\"https://framapiaf.org/users/troisiemelobe#main-key\",\"owner\":\"https://framapiaf.org/users/troisiemelobe\",\"publicKeyPem\":\"-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1bWzvgYA5d7bxABsr0Xf\\nosB7d8S7HuYJZk9B19n9TUyJY/sQLW2anLvaMJZ7o2OrbvkclzATs9g0D0kyW7FR\\nWOHlIIAWSQhLXxjZRr/kdWXfk/lE5Ki0sRoKK9I4RVl3xkdReIHjUPhDE3V9oLOw\\nZJ5DntwINh/c1C/UWcyDMD/SJtcptbqpYdooUUGvIWS0slmy2qYCAK3/E24A/UKw\\nwsUg0tUH1DhRZ8HB4DR7IDuT1k+8g5ZPAMIIrABJf1leDE5g+JLncK5bNCg6C58F\\nxdHFP9diUS/ZrYp9CJbyApMsE7OPdgwjgb18lZ4iG4hUIX4aGlh/LAkYFeGVW9+R\\nmQIDAQAB\\n-----END PUBLIC KEY-----\\n\"},\"tag\":[],\"attachment\":[],\"endpoints\":{\"sharedInbox\":\"https://framapiaf.org/inbox\"},\"icon\":{\"type\":\"Image\",\"mediaType\":\"image/png\",\"url\":\"https://framapiaf.org/system/accounts/avatars/000/043/079/original/2a187fb5e3b55e71.png?1523727664\"}}",
+      "headers": {
+        "Date": "Tue, 04 Dec 2018 14:14:48 GMT",
+        "Content-Type": "application/activity+json; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Server": "Mastodon",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Link": "<https://framapiaf.org/.well-known/webfinger?resource=acct%3Atroisiemelobe%40framapiaf.org>; rel=\"lrdd\"; type=\"application/xrd+xml\", <https://framapiaf.org/users/troisiemelobe.atom>; rel=\"alternate\"; type=\"application/atom+xml\", <https://framapiaf.org/users/troisiemelobe>; rel=\"alternate\"; type=\"application/activity+json\"",
+        "Vary": "Accept,Accept-Encoding",
+        "Cache-Control": "max-age=180, public",
+        "ETag": "W/\"237171ff8479633d866b0ddf50813d06\"",
+        "X-Request-Id": "93e46cef-5577-4859-a3cb-c7bab0507928",
+        "X-Runtime": "0.006258",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Referrer-Policy": "same-origin"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

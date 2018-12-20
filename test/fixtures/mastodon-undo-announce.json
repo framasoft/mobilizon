@@ -1,0 +1,47 @@
+{
+   "type": "Undo",
+   "signature": {
+     "type": "RsaSignature2017",
+     "signatureValue": "VU9AmHf3Pus9cWtMG/TOdxr+MRQfPHdTVKBBgFJBXhAlMhxEtcbxsu7zmqBgfIz6u0HpTCi5jRXEMftc228OJf/aBUkr4hyWADgcdmhPQgpibouDLgQf9BmnrPqb2rMbzZyt49GJkQZma8taLh077TTq6OKcnsAAJ1evEKOcRYS4OxBSwh4nI726bOXzZWoNzpTcrnm+llcUEN980sDSAS0uyZdb8AxZdfdG6DJQX4AkUD5qTpfqP/vC1ISirrNphvVhlxjUV9Amr4SYTsLx80vdZe5NjeL5Ir4jTIIQLedpxaDu1M9Q+Jpc0fYByQ2hOwUq8JxEmvHvarKjrq0Oww==",
+     "creator": "http://mastodon.example.org/users/admin#main-key",
+     "created": "2018-05-11T16:23:45Z"
+   },
+   "object": {
+     "type": "Announce",
+     "to": [
+       "http://www.w3.org/ns/activitystreams#Public"
+     ],
+     "published": "2018-05-11T16:23:37Z",
+     "object": "http://mastodon.example.org/@admin/99541947525187367",
+     "id": "http://mastodon.example.org/users/admin/statuses/99542391527669785/activity",
+     "cc": [
+       "http://mastodon.example.org/users/admin",
+       "http://mastodon.example.org/users/admin/followers"
+     ],
+     "atomUri": "http://mastodon.example.org/users/admin/statuses/99542391527669785/activity",
+     "actor": "http://mastodon.example.org/users/admin"
+   },
+   "id": "http://mastodon.example.org/users/admin#announces/100011594053806179/undo",
+   "actor": "http://mastodon.example.org/users/admin",
+   "@context": [
+     "http://www.w3.org/ns/activitystreams",
+     "http://w3id.org/security/v1",
+     {
+       "toot": "http://joinmastodon.org/ns#",
+       "sensitive": "as:sensitive",
+       "ostatus": "http://ostatus.org#",
+       "movedTo": "as:movedTo",
+       "manuallyApprovesFollowers": "as:manuallyApprovesFollowers",
+       "inReplyToAtomUri": "ostatus:inReplyToAtomUri",
+       "focalPoint": {
+         "@id": "toot:focalPoint",
+         "@container": "@list"
+       },
+       "featured": "toot:featured",
+       "conversation": "ostatus:conversation",
+       "atomUri": "ostatus:atomUri",
+       "Hashtag": "as:Hashtag",
+       "Emoji": "toot:Emoji"
+     }
+   ]
+}

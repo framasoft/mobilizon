@@ -1,0 +1,33 @@
+{
+  "type": "Delete",
+  "signature": {
+    "type": "RsaSignature2017",
+    "signatureValue": "cw0RlfNREf+5VdsOYcCBDrv521eiLsDTAYNHKffjF0bozhCnOh+wHkFik7WamUk$
+uEiN4L2H6vPlGRprAZGRhEwgy+A7rIFQNmLrpW5qV5UNVI/2F7kngEHqZQgbQYj9hW+5GMYmPkHdv3D72ZefGw$
+4Xa2NBLGFpAjQllfzt7kzZLKKY2DM99FdUa64I2Wj3iD04Hs23SbrUdAeuGk/c1Cg6bwGNG4vxoiwn1jikgJLA$
+NAlSGjsRGdR7LfbC7GqWWsW3cSNsLFPoU6FyALjgTrrYoHiXe0QHggw+L3yMLfzB2S/L46/VRbyb+WDKMBIXUL$
+5owmzHSi6e/ZtCI3w==",
+    "creator": "http://mastodon.example.org/users/gargron#main-key",                       "created": "2018-03-03T16:24:11Z"
+  },
+  "object": {
+    "type": "Tombstone",
+    "id": "http://mastodon.example.org/users/gargron/statuses/99620895606148759",
+    "atomUri": "http://mastodon.example.org/users/gargron/statuses/99620895606148759"
+  },
+  "id": "http://mastodon.example.org/users/gargron/statuses/99620895606148759#delete",
+  "actor": "http://mastodon.example.org/users/gargron",
+  "@context": [
+    {
+      "toot": "http://joinmastodon.org/ns#",
+      "sensitive": "as:sensitive",
+      "ostatus": "http://ostatus.org#",
+      "movedTo": "as:movedTo",
+      "manuallyApprovesFollowers": "as:manuallyApprovesFollowers",
+      "inReplyToAtomUri": "ostatus:inReplyToAtomUri",
+      "conversation": "ostatus:conversation",
+      "atomUri": "ostatus:atomUri",
+      "Hashtag": "as:Hashtag",
+      "Emoji": "toot:Emoji"
+    }
+  ]
+}

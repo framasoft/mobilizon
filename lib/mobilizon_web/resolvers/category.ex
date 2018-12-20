@@ -2,6 +2,9 @@ defmodule MobilizonWeb.Resolvers.Category do
   require Logger
   alias Mobilizon.Actors.User
 
+  ###
+  # TODO : Refactor this into MobilizonWeb.API.Categories when a standard AS category is defined
+  ###
   def list_categories(_parent, %{page: page, limit: limit}, _resolution) do
     categories =
       Mobilizon.Events.list_categories(page, limit)

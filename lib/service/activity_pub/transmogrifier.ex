@@ -2,13 +2,35 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   @moduledoc """
   A module to handle coding from internal to wire ActivityPub and back.
   """
-  alias Mobilizon.Actors.Actor
   alias Mobilizon.Actors
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Comment}
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Utils
 
   require Logger
+
+  def get_actor(%{"actor" => actor}) when is_binary(actor) do
+    actor
+  end
+
+  def get_actor(%{"actor" => actor}) when is_list(actor) do
+    if is_binary(Enum.at(actor, 0)) do
+      Enum.at(actor, 0)
+    else
+      Enum.find(actor, fn %{"type" => type} -> type in ["Person", "Service", "Application"] end)
+      |> Map.get("id")
+    end
+  end
+
+  def get_actor(%{"actor" => %{"id" => id}}) when is_bitstring(id) do
+    id
+  end
+
+  def get_actor(%{"actor" => nil, "attributedTo" => actor}) when not is_nil(actor) do
+    get_actor(%{"actor" => actor})
+  end
 
   @doc """
   Modifies an incoming AP object (mastodon format) to our internal format.
@@ -47,6 +69,10 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
       {:ok, replied_object} ->
         object
         |> Map.put("inReplyTo", replied_object.url)
+
+      {:error, {:error, :not_supported}} ->
+        Logger.info("Object reply origin has not a supported type")
+        object
 
       e ->
         Logger.error("Couldn't fetch #{in_reply_to_id} #{inspect(e)}")
@@ -88,6 +114,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
 
     with {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(data["actor"]) do
       Logger.debug("found actor")
+      Logger.debug(inspect(actor))
 
       params = %{
         to: data["to"],
@@ -136,78 +163,134 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   #      _e -> :error
   #    end
   #  end
-  #
+  # #
   # def handle_incoming(
   #       %{"type" => "Announce", "object" => object_id, "actor" => actor, "id" => id} = data
   #     ) do
-  #   with {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(actor),
-  #        {:ok, object} <-
-  #          fetch_obj_helper(object_id) || ActivityPub.fetch_object_from_url(object_id),
-  #        {:ok, activity, object} <- ActivityPub.announce(actor, object, id, false) do
+  #   with actor <- get_actor(data),
+  #        {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(actor),
+  #        {:ok, object} <- get_obj_helper(object_id) || fetch_obj_helper(object_id),
+  #        {:ok, activity, _object} <- ActivityPub.announce(actor, object, id, false) do
+  #     {:ok, activity}
+  #   else
+  #     e -> Logger.error(inspect e)
+  #       :error
+  #   end
+  # end
+
+  def handle_incoming(
+        %{"type" => "Update", "object" => %{"type" => object_type} = object, "actor" => _actor_id} =
+          data
+      )
+      when object_type in ["Person", "Application", "Service", "Organization"] do
+    with {:ok, %Actor{url: url}} <- Actors.get_actor_by_url(object["id"]) do
+      {:ok, new_actor_data} = ActivityPub.actor_data_from_actor_object(object)
+
+      Actors.insert_or_update_actor(new_actor_data)
+
+      ActivityPub.update(%{
+        local: false,
+        to: data["to"] || [],
+        cc: data["cc"] || [],
+        object: object,
+        actor: url
+      })
+    else
+      e ->
+        Logger.error(inspect(e))
+        :error
+    end
+  end
+
+  # def handle_incoming(
+  #       %{
+  #         "type" => "Undo",
+  #         "object" => %{"type" => "Announce", "object" => object_id},
+  #         "actor" => actor,
+  #         "id" => id
+  #       } = data
+  #     ) do
+  #   with actor <- get_actor(data),
+  #        {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(actor),
+  #        {:ok, object} <- get_obj_helper(object_id) || fetch_obj_helper(object_id),
+  #        {:ok, activity, _} <- ActivityPub.unannounce(actor, object, id, false) do
   #     {:ok, activity}
   #   else
   #     _e -> :error
   #   end
   # end
 
-  #
-  #  def handle_incoming(
-  #        %{"type" => "Update", "object" => %{"type" => "Person"} = object, "actor" => actor_id} =
-  #          data
-  #      ) do
-  #    with %User{ap_id: ^actor_id} = actor <- User.get_by_ap_id(object["id"]) do
-  #      {:ok, new_user_data} = ActivityPub.actor_data_from_actor_object(object)
-  #
-  #      banner = new_user_data[:info]["banner"]
-  #
-  #      update_data =
-  #        new_user_data
-  #        |> Map.take([:name, :bio, :avatar])
-  #        |> Map.put(:info, Map.merge(actor.info, %{"banner" => banner}))
-  #
-  #      actor
-  #      |> User.upgrade_changeset(update_data)
-  #      |> User.update_and_set_cache()
-  #
-  #      ActivityPub.update(%{
-  #        local: false,
-  #        to: data["to"] || [],
-  #        cc: data["cc"] || [],
-  #        object: object,
-  #        actor: actor_id
-  #      })
-  #    else
-  #      e ->
-  #        Logger.error(e)
-  #        :error
-  #    end
-  #  end
-  #
-  #  # TODO: Make secure.
-  #  def handle_incoming(
-  #        %{"type" => "Delete", "object" => object_id, "actor" => actor, "id" => id} = data
-  #      ) do
-  #    object_id =
-  #      case object_id do
-  #        %{"id" => id} -> id
-  #        id -> id
-  #      end
-  #
-  #    with %User{} = actor <- User.get_or_fetch_by_ap_id(actor),
-  #         {:ok, object} <-
-  #           fetch_obj_helper(object_id) || ActivityPub.fetch_object_from_id(object_id),
-  #         {:ok, activity} <- ActivityPub.delete(object, false) do
-  #      {:ok, activity}
-  #    else
-  #      e -> :error
-  #    end
-  #  end
+  def handle_incoming(
+        %{
+          "type" => "Undo",
+          "object" => %{"type" => "Follow", "object" => followed},
+          "actor" => follower,
+          "id" => id
+        } = _data
+      ) do
+    with {:ok, %Actor{domain: nil} = followed} <- Actors.get_actor_by_url(followed),
+         {:ok, %Actor{} = follower} <- Actors.get_actor_by_url(follower),
+         {:ok, activity} <- ActivityPub.unfollow(followed, follower, id, false) do
+      Actor.unfollow(follower, followed)
+      {:ok, activity}
+    else
+      e ->
+        Logger.error(inspect(e))
+        :error
+    end
+  end
+
+  # TODO: We presently assume that any actor on the same origin domain as the object being
+  # deleted has the rights to delete that object.  A better way to validate whether or not
+  # the object should be deleted is to refetch the object URI, which should return either
+  # an error or a tombstone.  This would allow us to verify that a deletion actually took
+  # place.
+  def handle_incoming(
+        %{"type" => "Delete", "object" => object, "actor" => _actor, "id" => _id} = data
+      ) do
+    object_id = Utils.get_url(object)
+
+    with actor <- get_actor(data),
+         {:ok, %Actor{url: _actor_url}} <- Actors.get_actor_by_url(actor),
+         {:ok, object} <- get_obj_helper(object_id) || fetch_obj_helper(object_id),
+         #  TODO : Validate that DELETE comes indeed form right domain (see above)
+         #  :ok <- contain_origin(actor_url, object.data),
+         {:ok, activity} <- ActivityPub.delete(object, false) do
+      {:ok, activity}
+    else
+      e ->
+        Logger.debug(inspect(e))
+        :error
+    end
+  end
+
   #
   #  # TODO
   #  # Accept
   #  # Undo
   #
-  def handle_incoming(_), do: :error
+  # def handle_incoming(
+  #       %{
+  #         "type" => "Undo",
+  #         "object" => %{"type" => "Like", "object" => object_id},
+  #         "actor" => _actor,
+  #         "id" => id
+  #       } = data
+  #     ) do
+  #   with actor <- get_actor(data),
+  #        %Actor{} = actor <- Actors.get_or_fetch_by_url(actor),
+  #        {:ok, object} <- get_obj_helper(object_id) || fetch_obj_helper(object_id),
+  #        {:ok, activity, _, _} <- ActivityPub.unlike(actor, object, id, false) do
+  #     {:ok, activity}
+  #   else
+  #     _e -> :error
+  #   end
+  # end
+
+  def handle_incoming(_) do
+    Logger.info("Handing something not supported")
+    {:error, :not_supported}
+  end
 
   def set_reply_to_uri(%{"inReplyTo" => in_reply_to} = object) do
     with false <- String.starts_with?(in_reply_to, "http"),
@@ -224,7 +307,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   def prepare_object(object) do
     object
     #    |> set_sensitive
-    #    |> add_hashtags
+    |> add_hashtags
     |> add_mention_tags
     #    |> add_emoji_tags
     |> add_attributed_to
@@ -326,7 +409,13 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
 
     mentions =
       recipients
-      |> Enum.map(fn url -> Actors.get_actor_by_url!(url) end)
+      |> Enum.filter(& &1)
+      |> Enum.map(fn url ->
+        case Actors.get_actor_by_url(url) do
+          {:ok, actor} -> actor
+          _ -> nil
+        end
+      end)
       |> Enum.filter(& &1)
       |> Enum.map(fn actor ->
         %{"type" => "Mention", "href" => actor.url, "name" => "@#{actor.preferred_username}"}
@@ -391,4 +480,43 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
 
   @spec fetch_obj_helper(map()) :: {:ok, %Event{}} | {:ok, %Comment{}} | {:error, any()}
   def fetch_obj_helper(obj) when is_map(obj), do: ActivityPub.fetch_object_from_url(obj["id"])
+
+  @spec get_obj_helper(String.t()) :: {:ok, struct()} | nil
+  def get_obj_helper(id) do
+    if object = normalize(id), do: {:ok, object}, else: nil
+  end
+
+  @spec normalize(map()) :: struct() | nil
+  def normalize(obj) when is_map(obj), do: get_anything_by_url(obj["id"])
+  @spec normalize(String.t()) :: struct() | nil
+  def normalize(url) when is_binary(url), do: get_anything_by_url(url)
+  @spec normalize(any()) :: nil
+  def normalize(_), do: nil
+
+  @spec normalize(String.t()) :: struct() | nil
+  def get_anything_by_url(url) do
+    Logger.debug("Getting anything from url #{url}")
+    get_actor_url(url) || get_event_url(url) || get_comment_url(url)
+  end
+
+  defp get_actor_url(url) do
+    case Actors.get_actor_by_url(url) do
+      {:ok, %Actor{} = actor} -> actor
+      _ -> nil
+    end
+  end
+
+  defp get_event_url(url) do
+    case Events.get_event_by_url(url) do
+      {:ok, %Event{} = event} -> event
+      _ -> nil
+    end
+  end
+
+  defp get_comment_url(url) do
+    case Events.get_comment_full_from_url(url) do
+      {:ok, %Comment{} = comment} -> comment
+      _ -> nil
+    end
+  end
 end

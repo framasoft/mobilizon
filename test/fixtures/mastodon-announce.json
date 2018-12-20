@@ -1,0 +1,37 @@
+{
+  "type": "Announce",
+  "to": [
+    "https://www.w3.org/ns/activitystreams#Public"
+  ],
+  "signature": {
+    "type": "RsaSignature2017",
+    "signatureValue": "T95DRE0eAligvMuRMkQA01lsoz2PKi4XXF+cyZ0BqbrO12p751TEWTyyRn5a+HH0e4kc77EUhQVXwMq80WAYDzHKVUTf2XBJPBa68vl0j6RXw3+HK4ef5hR4KWFNBU34yePS7S1fEmc1mTG4Yx926wtmZwDpEMTp1CXOeVEjCYzmdyHpepPPH2ZZettiacmPRSqBLPGWZoot7kH/SioIdnrMGY0I7b+rqkIdnnEcdhu9N1BKPEO9Sr+KmxgAUiidmNZlbBXX6gCxp8BiIdH4ABsIcwoDcGNkM5EmWunGW31LVjsEQXhH5c1Wly0ugYYPCg/0eHLNBOhKkY/teSM8Lg==",
+    "creator": "https://social.tcit.fr/users/tcit#main-key",
+    "created": "2018-02-17T19:39:15Z"
+  },
+  "published": "2018-02-17T19:39:15Z",
+  "object": "https://social.tcit.fr/@tcit/101188891162897047",
+  "id": "https://social.tcit.fr/users/tcit/statuses/101188891162897047/activity",
+  "cc": [
+    "https://social.tcit.fr/users/tcit",
+    "https://social.tcit.fr/users/tcit/followers"
+  ],
+  "atomUri": "https://social.tcit.fr/users/tcit/statuses/101188891162897047/activity",
+  "actor": "https://social.tcit.fr/users/tcit",
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    "https://w3id.org/security/v1",
+    {
+      "toot": "http://joinmastodon.org/ns#",
+      "sensitive": "as:sensitive",
+      "ostatus": "http://ostatus.org#",
+      "movedTo": "as:movedTo",
+      "manuallyApprovesFollowers": "as:manuallyApprovesFollowers",
+      "inReplyToAtomUri": "ostatus:inReplyToAtomUri",
+      "conversation": "ostatus:conversation",
+      "atomUri": "ostatus:atomUri",
+      "Hashtag": "as:Hashtag",
+      "Emoji": "toot:Emoji"
+    }
+  ]
+}
