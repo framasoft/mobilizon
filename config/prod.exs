@@ -16,7 +16,7 @@ use Mix.Config
 config :mobilizon, MobilizonWeb.Endpoint,
   load_from_system_env: true,
   url: [
-    host: System.get_env("MOBILIZON_HOST") || "example.com",
+    host: System.get_env("MOBILIZON_INSTANCE_HOST") || "example.com",
     port: 80
   ],
   secret_key_base:
