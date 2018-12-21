@@ -4,7 +4,9 @@
       <v-flex xs12 sm8 md4>
         <v-card class="elevation-12">
           <v-toolbar dark color="primary">
-              <v-toolbar-title><translate>Create a new category</translate></v-toolbar-title>
+            <v-toolbar-title>
+              <translate>Create a new category</translate>
+            </v-toolbar-title>
           </v-toolbar>
           <v-card-text>
             <v-form>
@@ -29,7 +31,9 @@
                   @change="onFilePicked"
                 >
               </v-flex>
-              <v-btn color="primary" @click="create"><translate>Create category</translate></v-btn>
+              <v-btn color="primary" @click="create">
+                <translate>Create category</translate>
+              </v-btn>
             </v-form>
           </v-card-text>
         </v-card>
@@ -38,50 +42,48 @@
   </v-container>
 </template>
 
-<script>
-import { UPLOAD_PICTURE } from '@/graphql/upload';
-import { CREATE_CATEGORY } from '@/graphql/category';
+<script lang="ts">
+  import { CREATE_CATEGORY } from '@/graphql/category';
+  import { Component, Vue } from 'vue-property-decorator';
 
-export default {
-  name: 'create-category',
-  data() {
-    return {
-      title: '',
-      description: '',
-      image: {
-        url: '',
-        name: '',
-        file: '',
-      },
+  @Component
+  export default class CreateCategory extends Vue {
+    title = '';
+    description = '';
+    image = {
+      url: '',
+      name: '',
+      file: '',
     };
-  },
-  methods: {
+
     create() {
       this.$apollo.mutate({
         mutation: CREATE_CATEGORY,
         variables: {
           title: this.title,
           description: this.description,
-          picture: this.$refs.image.files[0],
-        }
+          picture: (this.$refs['image'] as any).files[ 0 ],
+        },
       }).then((data) => {
         console.log(data);
       }).catch((error) => {
         console.error(error);
       });
-    },
-    pickFile () {
-      this.$refs.image.click ()
-    },
+    }
+
+    pickFile() {
+      (this.$refs['image'] as any).click();
+    }
+
     onFilePicked(e) {
       const files = e.target.files;
-      if(files[0] === undefined || files[0].name.lastIndexOf('.') <= 0) {
-					console.error("File is incorrect")
+      if (files[ 0 ] === undefined || files[ 0 ].name.lastIndexOf('.') <= 0) {
+        console.error('File is incorrect');
       }
-      this.image.name = files[0].name;
-    },
-  },
-};
+      this.image.name = files[ 0 ].name;
+    }
+
+  };
 </script>
 
 <style>

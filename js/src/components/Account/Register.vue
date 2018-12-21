@@ -68,8 +68,12 @@
               <router-link :to="{ name: 'ResendConfirmation', params: { email }}">Didn't receive the instructions ?</router-link>
             </v-form>
             <div v-if="validationSent">
-              <h2><translate>A validation email was sent to %{email}</translate></h2>
-              <v-alert :value="true" type="info"><translate>Before you can login, you need to click on the link inside it to validate your account</translate></v-alert>
+              <h2>
+                <translate>A validation email was sent to %{email}</translate>
+              </h2>
+              <v-alert :value="true" type="info">
+                <translate>Before you can login, you need to click on the link inside it to validate your account</translate>
+              </v-alert>
             </div>
           </v-card-text>
         </v-card>
@@ -78,85 +82,78 @@
   </v-container>
 </template>
 
-<script>
-import Gravatar from 'vue-gravatar';
-import RegisterAvatar from './RegisterAvatar';
-import { CREATE_USER } from '@/graphql/user';
+<script lang="ts">
+  import Gravatar from 'vue-gravatar';
+  import RegisterAvatar from './RegisterAvatar.vue';
+  import { CREATE_USER } from '@/graphql/user';
+  import { Component, Prop, Vue } from 'vue-property-decorator';
 
-export default {
-  props: {
-    default_email: {
-      type: String,
-      required: false,
-      default: '',
+  @Component({
+    components: {
+      'v-gravatar': Gravatar,
+      avatar: RegisterAvatar,
     },
-    default_password: {
-      type: String,
-      required: false,
-      default: '',
-    },
-  },
-  components: {
-    'v-gravatar': Gravatar,
-    avatar: RegisterAvatar,
-  },
-  data() {
-    return {
-      username: '',
-      email: this.default_email,
-      password: this.default_password,
-      error: {
-        show: false,
+  })
+  export default class Register extends Vue {
+    @Prop({ type: String, required: false, default: '' }) default_email!: string;
+    @Prop({ type: String, required: false, default: '' }) default_password!: string;
+
+    username = '';
+    email = this.default_email;
+    password = this.default_password;
+    error = {
+      show: false,
+    };
+    showPassword = false;
+    validationSent = false;
+    state = {
+      email: {
+        status: false,
+        msg: [],
       },
-      showPassword: false,
-      validationSent: false,
-      state: {
-        email: {
-          status: false,
-          msg: [],
-        },
-        username: {
-          status: false,
-          msg: [],
-        },
-        password: {
-          status: false,
-          msg: [],
-        },
+      username: {
+        status: false,
+        msg: [],
       },
-      rules: {
-        password_length: value => value.length > 6 || 'Password must be at least 6 caracters long',
-        required: value => !!value || 'Required.',
-        email: (value) => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-          return pattern.test(value) || 'Invalid e-mail.';
-        },
+      password: {
+        status: false,
+        msg: [],
       },
     };
-  },
-  methods: {
+    rules = {
+      password_length: value => value.length > 6 || 'Password must be at least 6 caracters long',
+      required: value => !!value || 'Required.',
+      email: (value) => {
+        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return pattern.test(value) || 'Invalid e-mail.';
+      },
+    };
+
     resetState() {
       this.state = {
         email: {
           status: false,
-          msg: '',
+          msg: [],
         },
         username: {
           status: false,
-          msg: '',
+          msg: [],
         },
         password: {
           status: false,
-          msg: '',
+          msg: [],
         },
       };
-    },
+    }
+
     host() {
       return `@${window.location.host}`;
-    },
+    }
+
     validEmail() {
       return this.rules.email(this.email) === true ? 'v-gravatar' : 'avatar';
-    },
+    }
+
     submit() {
       this.$apollo.mutate({
         mutation: CREATE_USER,
@@ -171,19 +168,20 @@ export default {
       }).catch((error) => {
         console.error(error);
       });
-    },
-  },
-};
+    }
+  };
 </script>
-<style lang="scss">
-.avatar-enter-active {
-  transition: opacity 1s ease;
-}
-.avatar-enter, .avatar-leave-to {
-  opacity: 0;
-}
 
-.avatar-leave {
-  display: none;
-}
+<style lang="scss">
+  .avatar-enter-active {
+    transition: opacity 1s ease;
+  }
+
+  .avatar-enter, .avatar-leave-to {
+    opacity: 0;
+  }
+
+  .avatar-leave {
+    display: none;
+  }
 </style>

@@ -30,53 +30,48 @@
   </v-container>
 </template>
 
-<script>
-export default {
-  name: 'ResendConfirmation',
-  props: {
-    email: {
-      type: String,
-      required: false,
-      default: '',
-    },
-  },
-  data() {
-    return {
-      credentials: {
-        email: '',
-      },
-      validationSent: false,
-      error: false,
-      state: {
-        email: {
-          status: null,
-          msg: '',
-        },
-      },
-      rules: {
-        required: value => !!value || 'Required.',
-        email: (value) => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-          return pattern.test(value) || 'Invalid e-mail.';
-        },
+<script lang="ts">
+  import { Component, Prop, Vue } from 'vue-property-decorator';
+
+  @Component
+  export default class ResendConfirmation extends Vue {
+    @Prop({ type: String, required: false, default: '' }) email!: string;
+
+    credentials = {
+      email: '',
+    };
+    validationSent = false;
+    error = false;
+    state = {
+      email: {
+        status: null,
+        msg: '',
       },
     };
-  },
-  mounted() {
-    this.credentials.email = this.email;
-  },
-  methods: {
+    rules = {
+      required: value => !!value || 'Required.',
+      email: (value) => {
+        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return pattern.test(value) || 'Invalid e-mail.';
+      },
+    };
+
+    mounted() {
+      this.credentials.email = this.email;
+    }
+
     resendConfirmationAction(e) {
       e.preventDefault();
-      fetchStory('/users/resend', this.$store, { method: 'POST', body: JSON.stringify(this.credentials) }).then(() => {
-        this.validationSent = true;
-      }).catch((err) => {
-        Promise.resolve(err).then(() => {
-          this.error = true;
-          this.validationSent = true;
-        });
-      });
-    },
-  },
-};
+
+      // FIXME: implement fetchStory
+      // fetchStory('/users/resend', this.$store, { method: 'POST', body: JSON.stringify(this.credentials) }).then(() => {
+      //   this.validationSent = true;
+      // }).catch((err) => {
+      //   Promise.resolve(err).then(() => {
+      //     this.error = true;
+      //     this.validationSent = true;
+      //   });
+      // });
+    }
+  };
 </script>

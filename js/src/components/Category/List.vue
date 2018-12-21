@@ -15,8 +15,12 @@
               </div>
             </v-card-title>
             <v-card-actions>
-              <v-btn flat class="orange--text"><translate>Explore</translate></v-btn>
-              <v-btn flat class="red--text" v-on:click="deleteCategory(category.id)"><translate>Delete</translate></v-btn>
+              <v-btn flat class="orange--text">
+                <translate>Explore</translate>
+              </v-btn>
+              <v-btn flat class="red--text" v-on:click="deleteCategory(category.id)">
+                <translate>Delete</translate>
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-flex>
@@ -30,37 +34,34 @@
   </v-container>
 </template>
 
-<script>
-import { FETCH_CATEGORIES } from '@/graphql/category';
+<script lang="ts">
+  import { FETCH_CATEGORIES } from '@/graphql/category';
+  import { Component, Vue } from 'vue-property-decorator';
 
-// TODO : remove this hardcode
+  // TODO : remove this hardcode
 
-
-export default {
-  name: 'Home',
-  data() {
-    return {
-      categories: [],
-      loading: true,
-      HTTP_ENDPOINT: 'http://localhost:4000',
-    };
-  },
-  apollo: {
-    categories: {
-      query: FETCH_CATEGORIES,
+  @Component({
+    apollo: {
+      categories: {
+        query: FETCH_CATEGORIES,
+      },
     },
-  },
-  methods: {
+  })
+  export default class List extends Vue {
+    categories = [];
+    loading = true;
+    HTTP_ENDPOINT = 'http://localhost:4000';
+
     deleteCategory(categoryId) {
       const router = this.$router;
-      eventFetch(`/categories/${categoryId}`, this.$store, { method: 'DELETE' })
-        .then(() => {
-          this.categories = this.categories.filter(category => category.id !== categoryId);
-          router.push('/category');
-        });
-    },
-  },
-};
+      // FIXME: remove eventFetch
+      // eventFetch(`/categories/${categoryId}`, this.$store, { method: 'DELETE' })
+      //   .then(() => {
+      //     this.categories = this.categories.filter(category => category.id !== categoryId);
+      //     router.push('/category');
+      //   });
+    }
+  };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

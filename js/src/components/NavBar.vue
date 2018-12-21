@@ -96,75 +96,74 @@
 </style>
 
 <script lang="ts">
-  import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-  import { AUTH_USER_ACTOR, AUTH_USER_ID } from '@/constants';
-  import { SEARCH } from '@/graphql/search';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { AUTH_USER_ACTOR, AUTH_USER_ID } from '@/constants';
+import { SEARCH } from '@/graphql/search';
 
-  @Component({
-    apollo: {
-      search: {
-        query: SEARCH,
-        variables() {
-          return {
-            searchText: this.searchText,
-          };
-        },
-        skip() {
-          return !this.searchText;
-        },
+@Component({
+  apollo: {
+    search: {
+      query: SEARCH,
+      variables() {
+        return {
+          searchText: this.searchText,
+        };
       },
-    }
-  })
-  export default class NavBar extends Vue {
-    @Prop({ required: true, type: Function }) toggleDrawer!: Function;
+      skip() {
+        return !this.searchText;
+      },
+    },
+  },
+})
+export default class NavBar extends Vue {
+  @Prop({ required: true, type: Function }) toggleDrawer!: Function;
 
-    notificationMenu = false;
-    notifications = [
-      { header: 'Coucou' },
-      { title: 'T\'as une notification', subtitle: 'Et elle est cool' },
-    ];
-    model = null;
-    search: any[] = [];
-    searchText: string | null = null;
-    searchSelect = null;
-    actor: string | null = localStorage.getItem(AUTH_USER_ACTOR);
-    user: string | null = localStorage.getItem(AUTH_USER_ID);
+  notificationMenu = false;
+  notifications = [
+    { header: 'Coucou' },
+    { title: 'T\'as une notification', subtitle: 'Et elle est cool' },
+  ];
+  model = null;
+  search: any[] = [];
+  searchText: string | null = null;
+  searchSelect = null;
+  actor = localStorage.getItem(AUTH_USER_ACTOR);
+  user = localStorage.getItem(AUTH_USER_ID);
 
-    get items() {
-      return this.search.map(searchEntry => {
-        switch (searchEntry.__typename) {
-          case 'Actor':
-            searchEntry.label = searchEntry.preferredUsername + (searchEntry.domain === null ? '' : `@${searchEntry.domain}`);
-            break;
-          case 'Event':
-            searchEntry.label = searchEntry.title;
-            break;
-        }
-        return searchEntry;
-      });
-    }
-
-    @Watch('model')
-    onModelChanged(val) {
-      switch (val.__typename) {
-        case 'Event':
-          this.$router.push({ name: 'Event', params: { uuid: val.uuid } });
-          break;
+  get items() {
+    return this.search.map(searchEntry => {
+      switch (searchEntry.__typename) {
         case 'Actor':
-          this.$router.push({ name: 'Account', params: { name: this.username_with_domain(val) } });
+          searchEntry.label = searchEntry.preferredUsername + (searchEntry.domain === null ? '' : `@${searchEntry.domain}`);
+          break;
+        case 'Event':
+          searchEntry.label = searchEntry.title;
           break;
       }
-    }
-
-    username_with_domain(actor) {
-      return actor.preferredUsername + (actor.domain === null ? '' : `@${actor.domain}`);
-    }
-
-    enter() {
-      console.log('enter');
-      this.$apollo.queries[ 'search' ].refetch();
-    }
-
+      return searchEntry;
+    });
   }
 
+  @Watch('model')
+  onModelChanged(val) {
+    switch (val.__typename) {
+      case 'Event':
+        this.$router.push({ name: 'Event', params: { uuid: val.uuid } });
+        break;
+      case 'Actor':
+        this.$router.push({ name: 'Account', params: { name: this.username_with_domain(val) } });
+        break;
+    }
+  }
+
+  username_with_domain(actor) {
+    return actor.preferredUsername + (actor.domain === null ? '' : `@${actor.domain}`);
+  }
+
+  enter() {
+    console.log('enter');
+    this.$apollo.queries['search'].refetch();
+  }
+
+}
 </script>

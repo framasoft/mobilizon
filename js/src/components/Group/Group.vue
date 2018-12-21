@@ -12,7 +12,7 @@
                 </v-btn>
                 <v-spacer></v-spacer>
                 <!--<v-btn icon class="mr-3" v-if="$store.state.user && $store.state.actor.id === actor.id">-->
-                  <!--<v-icon>edit</v-icon>-->
+                <!--<v-icon>edit</v-icon>-->
                 <!--</v-btn>-->
                 <v-btn icon>
                   <v-icon>more_vert</v-icon>
@@ -42,12 +42,12 @@
                                 @{{ group.domain }}
                             </span>
                         </span>
-                        <v-chip color="indigo" text-color="white">
-                            <v-avatar>
-                                <v-icon>group</v-icon>
-                            </v-avatar>
-                            Group
-                        </v-chip>
+                      <v-chip color="indigo" text-color="white">
+                        <v-avatar>
+                          <v-icon>group</v-icon>
+                        </v-avatar>
+                        Group
+                      </v-chip>
                     </div>
                     <v-card-text v-if="group.description" v-html="group.description"></v-card-text>
                   </v-flex>
@@ -119,9 +119,9 @@
               <v-flex v-for="event in group.participatingEvents" :key="event.id">
                 <v-card>
                   <v-card-media
-                          class="black--text"
-                          height="200px"
-                          src="https://picsum.photos/400/200/"
+                    class="black--text"
+                    height="200px"
+                    src="https://picsum.photos/400/200/"
                   >
                     <v-container fill-height fluid>
                       <v-layout fill-height>
@@ -135,7 +135,10 @@
                     <div>
                       <span class="grey--text">{{ event.startDate | formatDate }} à {{ event.location }}</span><br>
                       <p>{{ event.description }}</p>
-                      <p v-if="event.organizer">Organisé par <router-link :to="{name: 'Account', params: {'id': event.organizer.id}}">{{ event.organizer.username }}</router-link></p>
+                      <p v-if="event.organizer">Organisé par
+                        <router-link :to="{name: 'Account', params: {'id': event.organizer.id}}">{{ event.organizer.username }}
+                        </router-link>
+                      </p>
                     </div>
                   </v-card-title>
                   <v-card-actions>
@@ -160,9 +163,9 @@
               <v-flex v-for="event in group.organizingEvents" :key="event.id">
                 <v-card>
                   <v-card-media
-                          class="black--text"
-                          height="200px"
-                          src="https://picsum.photos/400/200/"
+                    class="black--text"
+                    height="200px"
+                    src="https://picsum.photos/400/200/"
                   >
                     <v-container fill-height fluid>
                       <v-layout fill-height>
@@ -176,7 +179,10 @@
                     <div>
                       <span class="grey--text">{{ event.startDate | formatDate }} à {{ event.location }}</span><br>
                       <p>{{ event.description }}</p>
-                      <p v-if="event.organizer">Organisé par <router-link :to="{name: 'Account', params: {'id': event.organizer.id}}">{{ event.organizer.username }}</router-link></p>
+                      <p v-if="event.organizer">Organisé par
+                        <router-link :to="{name: 'Account', params: {'id': event.organizer.id}}">{{ event.organizer.username }}
+                        </router-link>
+                      </p>
                     </div>
                   </v-card-title>
                   <v-card-actions>
@@ -201,38 +207,35 @@
   </v-container>
 </template>
 
-<script>
-export default {
-  name: 'Group',
-  data() {
-    return {
-      group: null,
-      loading: true,
-    };
-  },
-  props: {
-    name: {
-      type: String,
-      required: true,
-    },
-  },
-  created() {
-    this.fetchData();
-  },
-  watch: {
-    // call again the method if the route changes
-    $route: 'fetchData',
-  },
-  methods: {
+<script lang="ts">
+  import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+
+  @Component
+  export default class Group extends Vue {
+    @Prop({ type: String, required: true }) name!: string;
+
+    group = null;
+    loading = true;
+
+    created() {
+      this.fetchData();
+    }
+
+    @Watch('$route')
+    onRouteChanged() {
+      // call again the method if the route changes
+      this.fetchData();
+    }
+
     fetchData() {
-      eventFetch(`/actors/${this.name}`, this.$store)
-        .then(response => response.json())
-        .then((response) => {
-          this.group = response.data;
-          this.loading = false;
-          console.log(this.group);
-        });
-    },
-  },
-};
+      // FIXME: remove eventFetch
+      // eventFetch(`/actors/${this.name}`, this.$store)
+      //   .then(response => response.json())
+      //   .then((response) => {
+      //     this.group = response.data;
+      //     this.loading = false;
+      //     console.log(this.group);
+      //   });
+    }
+  };
 </script>

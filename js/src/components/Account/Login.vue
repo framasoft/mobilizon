@@ -58,90 +58,84 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 
-import Gravatar from 'vue-gravatar';
-import RegisterAvatar from './RegisterAvatar';
-import { AUTH_TOKEN, AUTH_USER_ID, AUTH_USER_ACTOR } from '@/constants';
-import { LOGIN } from '@/graphql/auth';
+  import Gravatar from 'vue-gravatar';
+  import RegisterAvatar from './RegisterAvatar.vue';
+  import { AUTH_TOKEN, AUTH_USER_ACTOR, AUTH_USER_ID } from '@/constants';
+  import { Component, Prop, Vue } from 'vue-property-decorator';
+  import { LOGIN } from '@/graphql/auth';
 
-export default {
-  props: {
-    email: {
-      type: String,
-      required: false,
-      default: '',
+  @Component({
+    components: {
+      'v-gravatar': Gravatar,
+      avatar: RegisterAvatar,
     },
-    password: {
-      type: String,
-      required: false,
-      default: '',
-    },
-  },
-  beforeCreate() {
-    if (this.user) {
-      this.$router.push('/');
-    }
-  },
-  components: {
-    'v-gravatar': Gravatar,
-    avatar: RegisterAvatar,
-  },
-  mounted() {
-    this.credentials.email = this.email;
-    this.credentials.password = this.password;
-  },
-  data() {
-    return {
-      credentials: {
-        email: '',
-        password: '',
-      },
-      validationSent: false,
-      error: {
-        show: false,
-        text: '',
-        timeout: 3000,
-        field: {
-          email: false,
-          password: false,
-        },
-      },
-      rules: {
-        required: value => !!value || 'Required.',
-        email: (value) => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-          return pattern.test(value) || 'Invalid e-mail.';
-        },
+  })
+  export default class Login extends Vue {
+    @Prop({ type: String, required: false, default: '' }) email!: string;
+    @Prop({ type: String, required: false, default: '' }) password!: string;
+
+    credentials = {
+      email: '',
+      password: '',
+    };
+    validationSent = false;
+    error = {
+      show: false,
+      text: '',
+      timeout: 3000,
+      field: {
+        email: false,
+        password: false,
       },
     };
-  },
-  methods: {
+    rules = {
+      required: value => !!value || 'Required.',
+      email: (value) => {
+        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return pattern.test(value) || 'Invalid e-mail.';
+      },
+    };
+    user: any;
+
+    beforeCreate() {
+      if (this.user) {
+        this.$router.push('/');
+      }
+    }
+
+    mounted() {
+      this.credentials.email = this.email;
+      this.credentials.password = this.password;
+    }
+
     loginAction(e) {
       e.preventDefault();
       this.$apollo.mutate({
         mutation: LOGIN,
         variables: {
           email: this.credentials.email,
-          password: this.credentials.password
-        }
+          password: this.credentials.password,
+        },
       }).then((result) => {
         this.saveUserData(result.data);
-        this.$router.push({name: 'Home'});
+        this.$router.push({ name: 'Home' });
       }).catch((e) => {
         console.log(e);
         this.error.show = true;
         this.error.text = e.message;
       });
-    },
+    }
+
     validEmail() {
       return this.rules.email(this.credentials.email) === true ? 'v-gravatar' : 'avatar';
-    },
-    saveUserData({login: login}) {
+    }
+
+    saveUserData({ login: login }) {
       localStorage.setItem(AUTH_USER_ID, login.user.id);
       localStorage.setItem(AUTH_USER_ACTOR, JSON.stringify(login.actor));
       localStorage.setItem(AUTH_TOKEN, login.token);
     }
-  },
-};
+  }
 </script>

@@ -150,64 +150,62 @@
 </template>
 
 <script lang="ts">
-  import NavBar from '@/components/NavBar.vue';
-  import { Component, Vue } from 'vue-property-decorator';
-  import { AUTH_USER_ACTOR, AUTH_USER_ID } from '@/constants';
+import NavBar from '@/components/NavBar.vue';
+import { Component, Vue } from 'vue-property-decorator';
+import { AUTH_USER_ACTOR, AUTH_USER_ID } from '@/constants';
 
-  @Component({
-    components: {
-      NavBar
-    }
-  })
-  export default class App extends Vue {
-    drawer = false
-    fab = false
-    user = localStorage.getItem(AUTH_USER_ID)
-    items = [
-      {
-        icon: 'poll', text: 'Events', route: 'EventList', role: null
-      },
-      {
-        icon: 'group', text: 'Groups', route: 'GroupList', role: null
-      },
-      {
-        icon: 'content_copy', text: 'Categories', route: 'CategoryList', role: 'ROLE_ADMIN'
-      },
-      { icon: 'settings', text: 'Settings', role: 'ROLE_USER' },
-      { icon: 'chat_bubble', text: 'Send feedback', role: 'ROLE_USER' },
-      { icon: 'help', text: 'Help', role: null },
-      { icon: 'phonelink', text: 'App downloads', role: null }
-    ]
-    error = {
-      timeout: 3000,
-      show: false,
-      text: ''
-    }
+@Component({
+  components: {
+    NavBar,
+  },
+})
+export default class App extends Vue {
+  drawer = false;
+  fab = false;
+  user = localStorage.getItem(AUTH_USER_ID);
+  items = [
+    {
+      icon: 'poll', text: 'Events', route: 'EventList', role: null,
+    },
+    {
+      icon: 'group', text: 'Groups', route: 'GroupList', role: null,
+    },
+    {
+      icon: 'content_copy', text: 'Categories', route: 'CategoryList', role: 'ROLE_ADMIN',
+    },
+    { icon: 'settings', text: 'Settings', role: 'ROLE_USER' },
+    { icon: 'chat_bubble', text: 'Send feedback', role: 'ROLE_USER' },
+    { icon: 'help', text: 'Help', role: null },
+    { icon: 'phonelink', text: 'App downloads', role: null },
+  ];
+  error = {
+    timeout: 3000,
+    show: false,
+    text: '',
+  };
 
-    show_new_event_button = false
-    actor = localStorage.getItem(AUTH_USER_ACTOR)
+  actor = localStorage.getItem(AUTH_USER_ACTOR);
 
-    get displayed_name () {
-      // FIXME: load actor
-      return 'no implemented'
-      // return this.actor.display_name === null ? this.actor.username : this.actor.display_name
-    }
-
-    showMenuItem (elem) {
-      // FIXME: load actor
-      return false
-      // return elem !== null && this.user && this.user.roles !== undefined ? this.user.roles.includes(elem) : true
-    }
-
-    getUser () {
-      return this.user === undefined ? false : this.user
-    }
-
-    toggleDrawer () {
-      this.drawer = !this.drawer
-    }
+  get displayed_name () {
+    // FIXME: load actor
+    return 'no implemented';
+    // return this.actor.display_name === null ? this.actor.username : this.actor.display_name
   }
 
+  showMenuItem (elem) {
+    // FIXME: load actor
+    return false;
+    // return elem !== null && this.user && this.user.roles !== undefined ? this.user.roles.includes(elem) : true
+  }
+
+  getUser () {
+    return this.user === undefined ? false : this.user;
+  }
+
+  toggleDrawer () {
+    this.drawer = !this.drawer;
+  }
+}
 </script>
 
 <style>

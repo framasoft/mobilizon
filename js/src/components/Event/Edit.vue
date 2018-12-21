@@ -97,28 +97,29 @@
   </v-container>
 </template>
 
-<script>
-export default {
-  props: ['id'],
-  data() {
-    return {
-      loading: true,
-      event: null,
-    };
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
+<script lang="ts">
+  import { Component, Prop, Vue } from 'vue-property-decorator';
+
+  @Component
+  export default class EventEdit extends Vue {
+    @Prop(String) id!: string;
+
+    loading = true;
+    event = null;
+
+    created() {
+      this.fetchData();
+    }
+
     fetchData() {
-      eventFetch(`/events/${this.id}`, this.$store)
-        .then(response => response.json())
-        .then((data) => {
-          this.loading = false;
-          this.event = data;
-          console.log(this.event);
-        });
-    },
-  },
-};
+      // FIXME: remove eventFetch
+      // eventFetch(`/events/${this.id}`, this.$store)
+      //   .then(response => response.json())
+      //   .then((data) => {
+      //     this.loading = false;
+      //     this.event = data;
+      //     console.log(this.event);
+      //   });
+    }
+  };
 </script>
