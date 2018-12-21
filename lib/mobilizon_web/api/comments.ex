@@ -41,7 +41,7 @@ defmodule MobilizonWeb.API.Comments do
              cc
            ) do
       ActivityPub.create(%{
-        to: ["https://www.w3.org/ns/activitystreams#Public"],
+        to: to,
         actor: actor,
         object: comment,
         local: true
