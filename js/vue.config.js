@@ -1,4 +1,5 @@
 const Dotenv = require('dotenv-webpack');
+const path = require('path');
 
 module.exports = {
   lintOnSave: false,
@@ -6,7 +7,7 @@ module.exports = {
   outputDir: '../priv/static',
   configureWebpack: {
     plugins: [
-      new Dotenv(),
+      new Dotenv({ path: path.resolve(process.cwd(), '../.env') }),
     ],
   },
 };
