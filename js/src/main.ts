@@ -11,14 +11,16 @@ import 'vuetify/dist/vuetify.min.css';
 import App from '@/App.vue';
 import router from '@/router';
 // import store from './store';
-import translations from '@/i18n/translations.json';
 import { createProvider } from './vue-apollo';
+
+const translations = require('@/i18n/translations.json');
 
 Vue.config.productionTip = false;
 
 Vue.use(VueMarkdown);
 Vue.use(Vuetify);
-const language = window.navigator.userLanguage || window.navigator.language;
+
+const language = (window.navigator as any).userLanguage || window.navigator.language;
 moment.locale(language);
 
 Vue.filter('formatDate', value => (value ? moment(String(value)).format('LLLL') : null));
@@ -33,8 +35,8 @@ Vue.config.language = language.replace('-', '_');
 
 /* eslint-disable no-new */
 new Vue({
-  el: '#app',
   router,
+  el: '#app',
   template: '<App/>',
   apolloProvider: createProvider(),
   components: { App },
