@@ -4,8 +4,16 @@ defmodule MobilizonWeb.Resolvers.Event do
   alias Mobilizon.Actors
   alias Mobilizon.Events.Event
 
-  def list_events(_parent, %{page: page, limit: limit}, _resolution) do
+  # We limit the max number of events that can be retrieved
+  @event_max_limit 100
+
+  def list_events(_parent, %{page: page, limit: limit}, _resolution)
+      when limit < @event_max_limit do
     {:ok, Mobilizon.Events.list_events(page, limit)}
+  end
+
+  def list_events(_parent, %{page: page, limit: limit}, _resolution) do
+    {:error, :events_max_limit_reached}
   end
 
   def find_event(_parent, %{uuid: uuid}, _resolution) do
