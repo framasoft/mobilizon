@@ -12,7 +12,7 @@ defmodule MobilizonWeb.Resolvers.Event do
     {:ok, Mobilizon.Events.list_events(page, limit)}
   end
 
-  def list_events(_parent, %{page: page, limit: limit}, _resolution) do
+  def list_events(_parent, %{page: _page, limit: _limit}, _resolution) do
     {:error, :events_max_limit_reached}
   end
 
