@@ -163,5 +163,83 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       assert hd(tl(json_response(res, 200)["data"]["search"]))["preferredUsername"] ==
                actor.preferred_username
     end
+
+    test "list_events/3 returns events", context do
+      event = insert(:event)
+
+      query = """
+      {
+        events {
+          uuid,
+        }
+      }
+      """
+
+      res =
+        context.conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+
+      assert json_response(res, 200)["data"]["events"] |> Enum.map(& &1["uuid"]) == [event.uuid]
+
+      Enum.each(0..15, fn _ ->
+        insert(:event)
+      end)
+
+      query = """
+      {
+        events {
+          uuid,
+        }
+      }
+      """
+
+      res =
+        context.conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+
+      assert json_response(res, 200)["data"]["events"] |> length == 10
+
+      query = """
+      {
+        events(page: 2) {
+          uuid,
+        }
+      }
+      """
+
+      res =
+        context.conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+
+      assert json_response(res, 200)["data"]["events"] |> length == 7
+
+      query = """
+      {
+        events(page: 2, limit: 15) {
+          uuid,
+        }
+      }
+      """
+
+      res =
+        context.conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+
+      assert json_response(res, 200)["data"]["events"] |> length == 2
+
+      query = """
+      {
+        events(page: 3, limit: 15) {
+          uuid,
+        }
+      }
+      """
+
+      res =
+        context.conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+
+      assert json_response(res, 200)["data"]["events"] |> length == 0
+    end
   end
 end
