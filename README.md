@@ -3,7 +3,7 @@
 Your federated organization and mobilization platform. Gather people with a convivial, ethical, and emancipating tool.
 
 ## Development
-Clone the repo, and start the project via Docker
+Clone the repo, and start the project trough Docker. You'll need both Docker and Docker-Compose.
 ```bash
 git clone https://framagit.org/framasoft/mobilizon && cd mobilizon
 make
@@ -65,3 +65,4 @@ to start a database container, an API container and the front-end dev container 
   * Mastodon: https://framapiaf.org/@mobilizon
   * Forum: https://framacolibri.org/c/mobilizon/fr-francais
   
+Note: Most federation code comes from [Pleroma](https://pleroma.social), which is `Copyright © 2017-2018 Pleroma Authors - AGPL-3.0`
