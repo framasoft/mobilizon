@@ -4,7 +4,6 @@
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/test/web/activity_pub/transmogrifier_test.exs
 
 defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
-
   use Mobilizon.DataCase
 
   import Mobilizon.Factory

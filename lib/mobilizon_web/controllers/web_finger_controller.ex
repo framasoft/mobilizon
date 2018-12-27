@@ -4,10 +4,16 @@
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/lib/pleroma/web/web_finger/web_finger_controller.ex
 
 defmodule MobilizonWeb.WebFingerController do
+  @moduledoc """
+  Handles Webfinger requests
+  """
   use MobilizonWeb, :controller
 
   alias Mobilizon.Service.WebFinger
 
+  @doc """
+  Provides /.well-known/host-meta
+  """
   def host_meta(conn, _params) do
     xml = WebFinger.host_meta()
 
@@ -16,6 +22,9 @@ defmodule MobilizonWeb.WebFingerController do
     |> send_resp(200, xml)
   end
 
+  @doc """
+  Provides /.well-known/webfinger
+  """
   def webfinger(conn, %{"resource" => resource}) do
     with {:ok, response} <- WebFinger.webfinger(resource, "JSON") do
       json(conn, response)
@@ -24,7 +33,5 @@ defmodule MobilizonWeb.WebFingerController do
     end
   end
 
-  def webfinger(conn, _) do
-    send_resp(conn, 400, "No query provided")
-  end
+  def webfinger(conn, _), do: send_resp(conn, 400, "No query provided")
 end
