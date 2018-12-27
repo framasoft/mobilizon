@@ -74,42 +74,33 @@
         </v-list>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn flat @click="notificationMenu = false"><translate>Close</translate></v-btn>
-          <v-btn color="primary" flat @click="notificationMenu = false"><translate>Save</translate></v-btn>
+          <v-btn flat @click="notificationMenu = false">
+            <translate>Close</translate>
+          </v-btn>
+          <v-btn color="primary" flat @click="notificationMenu = false">
+            <translate>Save</translate>
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-menu>
-    <v-btn v-if="!user" :to="{ name: 'Login' }"><translate>Login</translate></v-btn>
+    <v-btn v-if="!user" :to="{ name: 'Login' }">
+      <translate>Login</translate>
+    </v-btn>
   </v-toolbar>
 </template>
 
-<script>
-import {AUTH_USER_ACTOR, AUTH_USER_ID} from '@/constants';
-import {SEARCH} from '@/graphql/search';
+<style>
+  nav.v-toolbar .v-input__slot {
+    margin-bottom: 0;
+  }
+</style>
 
-export default {
-  name: 'NavBar',
-  props: {
-    toggleDrawer: {
-      type: Function,
-      required: true,
-    },
-  },
-  data() {
-    return {
-      notificationMenu: false,
-      notifications: [
-        { header: 'Coucou' },
-        { title: "T'as une notification", subtitle: 'Et elle est cool' },
-      ],
-      model: null,
-      search: [],
-      searchText: null,
-      searchSelect: null,
-      actor: localStorage.getItem(AUTH_USER_ACTOR),
-      user: localStorage.getItem(AUTH_USER_ID),
-    };
-  },
+<script lang="ts">
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { AUTH_USER_ACTOR, AUTH_USER_ID } from '@/constants';
+import { SEARCH } from '@/graphql/search';
+
+@Component({
   apollo: {
     search: {
       query: SEARCH,
@@ -123,47 +114,56 @@ export default {
       },
     },
   },
-  watch: {
-    model(val) {
-      switch(val.__typename) {
-        case 'Event':
-          this.$router.push({ name: 'Event', params: { uuid: val.uuid } });
-          break;
+})
+export default class NavBar extends Vue {
+  @Prop({ required: true, type: Function }) toggleDrawer!: Function;
+
+  notificationMenu = false;
+  notifications = [
+    { header: 'Coucou' },
+    { title: 'T\'as une notification', subtitle: 'Et elle est cool' },
+  ];
+  model = null;
+  search: any[] = [];
+  searchText: string | null = null;
+  searchSelect = null;
+  actor = localStorage.getItem(AUTH_USER_ACTOR);
+  user = localStorage.getItem(AUTH_USER_ID);
+
+  get items() {
+    return this.search.map(searchEntry => {
+      switch (searchEntry.__typename) {
         case 'Actor':
-          this.$router.push({ name: 'Account', params: { name: this.username_with_domain(val) } });
+          searchEntry.label = searchEntry.preferredUsername + (searchEntry.domain === null ? '' : `@${searchEntry.domain}`);
+          break;
+        case 'Event':
+          searchEntry.label = searchEntry.title;
           break;
       }
-    },
-  },
-  computed: {
-    items() {
-      return this.search.map(searchEntry => {
-        switch (searchEntry.__typename) {
-          case 'Actor':
-            searchEntry.label = searchEntry.preferredUsername + (searchEntry.domain === null ? '' : `@${searchEntry.domain}`);
-            break;
-          case 'Event':
-            searchEntry.label = searchEntry.title;
-            break;
-        }
-        return searchEntry;
-      });
-    },
-  },
-  methods: {
-    username_with_domain(actor) {
-      return actor.preferredUsername + (actor.domain === null ? '' : `@${actor.domain}`);
-    },
-    enter() {
-      console.log('enter');
-      this.$apollo.queries.search.refetch();
-    }
-  },
-};
-</script>
+      return searchEntry;
+    });
+  }
 
-<style>
-nav.v-toolbar .v-input__slot {
-  margin-bottom: 0;
+  @Watch('model')
+  onModelChanged(val) {
+    switch (val.__typename) {
+      case 'Event':
+        this.$router.push({ name: 'Event', params: { uuid: val.uuid } });
+        break;
+      case 'Actor':
+        this.$router.push({ name: 'Account', params: { name: this.username_with_domain(val) } });
+        break;
+    }
+  }
+
+  username_with_domain(actor) {
+    return actor.preferredUsername + (actor.domain === null ? '' : `@${actor.domain}`);
+  }
+
+  enter() {
+    console.log('enter');
+    this.$apollo.queries['search'].refetch();
+  }
+
 }
-</style>
+</script>

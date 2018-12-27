@@ -31,12 +31,12 @@
             <div class="text-xs-center">
               <v-avatar size="125px">
                 <img v-if="!actor.avatarUrl"
-                  class="img-circle elevation-7 mb-1"
-                  src="https://picsum.photos/125/125/"
+                     class="img-circle elevation-7 mb-1"
+                     src="https://picsum.photos/125/125/"
                 >
                 <img v-else
-                      class="img-circle elevation-7 mb-1"
-                      :src="actor.avatarUrl"
+                     class="img-circle elevation-7 mb-1"
+                     :src="actor.avatarUrl"
                 >
               </v-avatar>
             </div>
@@ -44,7 +44,8 @@
               <v-layout row>
                 <v-flex xs7>
                   <div class="headline">{{ actor.name }}</div>
-                  <div><span class="subheading">@{{ actor.preferredUsername }}<span v-if="actor.domain">@{{ actor.domain }}</span></span></div>
+                  <div><span class="subheading">@{{ actor.preferredUsername }}<span v-if="actor.domain">@{{ actor.domain }}</span></span>
+                  </div>
                   <v-card-text v-if="actor.description" v-html="actor.description"></v-card-text>
                 </v-flex>
               </v-layout>
@@ -107,7 +108,9 @@
                   <div>
                     <span class="grey--text">{{ event.startDate | formatDate }} à {{ event.location }}</span><br>
                     <p>{{ event.description }}</p>
-                    <p v-if="event.organizer">Organisé par <router-link :to="{name: 'Account', params: {'id': event.organizer.id}}">{{ event.organizer.username }}</router-link></p>
+                    <p v-if="event.organizer">Organisé par
+                      <router-link :to="{name: 'Account', params: {'id': event.organizer.id}}">{{ event.organizer.username }}</router-link>
+                    </p>
                   </div>
                 </v-card-title>
                 <v-card-actions>
@@ -143,7 +146,7 @@
                     <span class="grey--text" v-html="nl2br(event.description)"></span>
                   </div>
                 </v-card-title>
-                
+
                 <!-- <v-card-title>
                   <div>
                     <span class="grey--text" v-if="event.addressType === 'physical'">{{ event.startDate }} à {{ event.location }}</span><br>
@@ -171,46 +174,40 @@
   </v-layout>
 </template>
 
-<script>
-import { FETCH_ACTOR } from '@/graphql/actor';
+<script lang="ts">
+  import { FETCH_ACTOR } from '@/graphql/actor';
+  import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 
-export default {
-  name: 'Account',
-  data() {
-    return {
-      actor: null,
-    };
-  },
-  props: {
-    name: {
-      type: String,
-      required: true,
-    },
-  },
-  apollo: {
-    actor: {
-      query: FETCH_ACTOR,
-      variables() {
-        return {
-          name: this.$route.params.name,
-        };
+  @Component({
+    apollo: {
+      actor: {
+        query: FETCH_ACTOR,
+        variables() {
+          return {
+            name: this.$route.params.name,
+          };
+        },
       },
     },
-  },
-  created() {
-  },
-  watch: {
+  })
+  export default class Account extends Vue {
+    @Prop({ type: String, required: true }) name!: string;
+
+    actor = null;
+
     // call again the method if the route changes
-    $route: 'fetchData',
-  },
-  methods: {
+    @Watch('$route')
+    onRouteChange() {
+      // this.fetchData()
+    }
+
     logoutUser() {
       // TODO : implement logout
       this.$router.push({ name: 'Home' });
-    },
-    nl2br: function(text) {
+    }
+
+    nl2br(text) {
       return text.replace(/(?:\r\n|\r|\n)/g, '<br>');
     }
-  },
-};
+  };
 </script>

@@ -90,11 +90,11 @@ export const CREATE_EVENT = gql`
         $addressType: AddressType!,
     ) {
         createEvent(
-            title: $title, 
-            description: $description, 
-            beginsOn: $beginsOn, 
-            organizerActorId: $organizerActorId, 
-            categoryId: $categoryId, 
+            title: $title,
+            description: $description,
+            beginsOn: $beginsOn,
+            organizerActorId: $organizerActorId,
+            categoryId: $categoryId,
             addressType: $addressType) {
                 uuid,
                 title,

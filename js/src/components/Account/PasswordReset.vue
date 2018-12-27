@@ -36,75 +36,74 @@
   </v-container>
 </template>
 
-<script>
-export default {
-  name: 'PasswordReset',
-  props: {
-    token: {
-      type: String,
-      required: true,
-    },
-  },
-  computed: {
-    samePasswords() {
-      return this.rules.password_length(this.credentials.password) === true &&
-          this.credentials.password === this.credentials.password_confirmation;
-    },
-  },
-  data() {
-    return {
-      credentials: {
-        password: '',
-        password_confirmation: '',
+<script lang="ts">
+
+  import { Component, Prop, Vue } from 'vue-property-decorator';
+
+  @Component
+  export default class PasswordReset extends Vue {
+    @Prop({ type: String, required: true }) token!: string;
+
+    credentials = {
+      password: '',
+      password_confirmation: '',
+    };
+    error = {
+      show: false,
+    };
+    state = {
+      token: {
+        status: null,
+        msg: '',
       },
-      error: {
-        show: false,
+      password: {
+        status: null,
+        msg: '',
       },
-      state: {
-        token: {
-          status: null,
-          msg: '',
-        },
-        password: {
-          status: null,
-          msg: '',
-        },
-        password_confirmation: {
-          status: null,
-          msg: '',
-        },
-      },
-      rules: {
-        password_length: value => value.length > 6 || 'Password must be at least 6 caracters long',
-        required: value => !!value || 'Required.',
-        password_equal: value => value === this.credentials.password || 'Passwords must be the same',
+      password_confirmation: {
+        status: null,
+        msg: '',
       },
     };
-  },
-  methods: {
+    rules = {
+      password_length: value => value.length > 6 || 'Password must be at least 6 caracters long',
+      required: value => !!value || 'Required.',
+      password_equal: value => value === this.credentials.password || 'Passwords must be the same',
+    };
+
+    get samePasswords() {
+      return this.rules.password_length(this.credentials.password) === true &&
+        this.credentials.password === this.credentials.password_confirmation;
+    }
+
     resetAction(e) {
       this.resetState();
       e.preventDefault();
       console.log(this.token);
-      fetchStory('/users/password-reset/post', this.$store, { method: 'POST', body: JSON.stringify({ password: this.credentials.password, token: this.token }) }).then((data) => {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('refresh_token', data.refresh_token);
-        this.$store.commit('LOGIN_USER', data.account);
-        this.$snotify.success(this.$t('registration.success.login', { username: data.account.username }));
-        this.$router.push({ name: 'Home' });
-      }, (error) => {
-        Promise.resolve(error).then((errormsg) => {
-          console.log('errormsg', errormsg);
-          this.error.show = true;
-          Object.entries(JSON.parse(errormsg).errors).forEach(([key, val]) => {
-            console.log('key', key);
-            console.log('val', val[0]);
-            this.state[key] = { status: false, msg: val[0] };
-            console.log('state', this.state);
-          });
-        });
-      });
-    },
+      // FIXME: implements fetchStory
+      // fetchStory('/users/password-reset/post', this.$store, {
+      //   method: 'POST',
+      //   body: JSON.stringify({ password: this.credentials.password, token: this.token }),
+      // }).then((data) => {
+      //   localStorage.setItem('token', data.token);
+      //   localStorage.setItem('refresh_token', data.refresh_token);
+      //   this.$store.commit('LOGIN_USER', data.account);
+      //   this.$snotify.success(this.$t('registration.success.login', { username: data.account.username }));
+      //   this.$router.push({ name: 'Home' });
+      // }, (error) => {
+      //   Promise.resolve(error).then((errormsg) => {
+      //     console.log('errormsg', errormsg);
+      //     this.error.show = true;
+      //     Object.entries(JSON.parse(errormsg).errors).forEach(([ key, val ]) => {
+      //       console.log('key', key);
+      //       console.log('val', val[ 0 ]);
+      //       this.state[ key ] = { status: false, msg: val[ 0 ] };
+      //       console.log('state', this.state);
+      //     });
+      //   });
+      // });
+    }
+
     resetState() {
       this.state = {
         token: {
@@ -120,7 +119,6 @@ export default {
           msg: '',
         },
       };
-    },
-  },
-};
+    }
+  };
 </script>

@@ -33,7 +33,6 @@ const fragmentMatcher = new IntrospectionFragmentMatcher({
 
 const cache = new InMemoryCache({ fragmentMatcher });
 
-
 const authMiddleware = new ApolloLink((operation, forward) => {
   // add the authorization to the headers
   const token = localStorage.getItem(AUTH_TOKEN);
@@ -43,7 +42,9 @@ const authMiddleware = new ApolloLink((operation, forward) => {
     },
   });
 
-  return forward(operation);
+  if (forward) forward(operation);
+
+  return null;
 });
 
 const uploadLink = createLink({
@@ -60,6 +61,8 @@ const link = authMiddleware.concat(uploadLink);
 
 // Config
 const defaultOptions = {
+  cache,
+  link,
   // You can use `https` for secure connection (recommended in production)
   httpEndpoint,
   // You can use `wss` for secure connection (recommended in production)
@@ -74,9 +77,8 @@ const defaultOptions = {
   websocketsOnly: false,
   // Is being rendered on the server?
   ssr: false,
-  cache,
-  link,
   defaultHttpLink: false,
+  connectToDevTools: true,
 };
 
 // Call this in the Vue app file
@@ -89,23 +91,18 @@ export function createProvider(options = {}) {
   apolloClient.wsClient = wsClient;
 
   // Create vue apollo provider
-  const apolloProvider = new VueApollo({
+  return new VueApollo({
     defaultClient: apolloClient,
-    link,
-    cache,
-    connectToDevTools: true,
-    defaultOptions: {
-      $query: {
-        // fetchPolicy: 'cache-and-network',
-      },
-    },
+    // defaultOptions: {
+    //   $query: {
+    //     fetchPolicy: 'cache-and-network',
+    //   },
+    // },
     errorHandler(error) {
       // eslint-disable-next-line no-console
       console.log('%cError', 'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;', error.message);
     },
   });
-
-  return apolloProvider;
 }
 
 // Manually call this when user log in
