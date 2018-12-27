@@ -1,4 +1,10 @@
-defmodule Mobilizon.Service.Activitypub.TransmogrifierTest do
+# Portions of this file are derived from Pleroma:
+# Copyright © 2017-2018 Pleroma Authors <https://pleroma.social>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/test/web/activity_pub/transmogrifier_test.exs
+
+defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
+
   use Mobilizon.DataCase
 
   import Mobilizon.Factory

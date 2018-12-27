@@ -1,4 +1,4 @@
-defmodule Mobilizon.Service.Activitypub.UtilsTest do
+defmodule Mobilizon.Service.ActivityPub.UtilsTest do
   use Mobilizon.DataCase
   import Mobilizon.Factory
   alias Mobilizon.Service.ActivityPub.Utils

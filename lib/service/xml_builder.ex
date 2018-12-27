@@ -1,12 +1,13 @@
 # Portions of this file are derived from Pleroma:
 # Copyright © 2017-2018 Pleroma Authors <https://pleroma.social>
 # SPDX-License-Identifier: AGPL-3.0-only
+# Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/lib/xml_builder.ex
 
 defmodule Mobilizon.Service.XmlBuilder do
   @moduledoc """
   XML Builder.
 
-  Do we still need this ? Only for xrd ?
+  Needed to build XRD for webfinger host_meta
   """
 
   def to_xml({tag, attributes, content}) do
