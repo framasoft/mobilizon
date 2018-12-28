@@ -110,24 +110,25 @@
       this.credentials.password = this.password;
     }
 
-    loginAction(e: Event) {
+    async loginAction(e: Event) {
       e.preventDefault();
 
-      this.$apollo.mutate({
-        mutation: LOGIN,
-        variables: {
-          email: this.credentials.email,
-          password: this.credentials.password,
-        },
-      }).then((result) => {
-        console.log(result)
+      try {
+        const result = await this.$apollo.mutate({
+          mutation: LOGIN,
+          variables: {
+            email: this.credentials.email,
+            password: this.credentials.password,
+          },
+        });
+
         this.saveUserData(result.data);
         this.$router.push({ name: 'Home' });
-      }).catch((e) => {
-        console.log(e);
+      } catch (err) {
+        console.error(err);
         this.error.show = true;
-        this.error.text = e.message;
-      });
+        this.error.text = err.message;
+      }
     }
 
     validEmail() {
@@ -136,7 +137,6 @@
 
     saveUserData({ login: login }) {
       localStorage.setItem(AUTH_USER_ID, login.user.id);
-      localStorage.setItem(AUTH_USER_ACTOR, JSON.stringify(login.actor));
       localStorage.setItem(AUTH_TOKEN, login.token);
     }
   }
