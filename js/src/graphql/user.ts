@@ -3,11 +3,8 @@ import gql from 'graphql-tag';
 export const CREATE_USER = gql`
 mutation CreateUser($email: String!, $username: String!, $password: String!) {
   createUser(email: $email, username: $username, password: $password) {
-    preferredUsername,
-    user {
-      email,
-      confirmationSentAt
-    }
+    email,
+    confirmationSentAt
   }
 }
 `;
@@ -18,10 +15,6 @@ mutation ValidateUser($token: String!) {
     token,
     user {
       id,
-    },
-    actor {
-      avatarUrl,
-      preferredUsername,
     }
   }
 }

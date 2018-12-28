@@ -61,7 +61,13 @@ defmodule Mobilizon.Actors do
   """
   @spec get_actor_for_user(Mobilizon.Actors.User.t()) :: Mobilizon.Actors.Actor.t()
   def get_actor_for_user(%Mobilizon.Actors.User{} = user) do
-    case Repo.one(from(a in Actor, join: u in User, on: u.default_actor_id == a.id)) do
+    case Repo.one(
+           from(a in Actor,
+             join: u in User,
+             on: u.default_actor_id == a.id,
+             where: u.id == ^user.id
+           )
+         ) do
       nil -> get_actors_for_user(user) |> hd
       actor -> actor
     end

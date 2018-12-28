@@ -19,7 +19,7 @@
 <script lang="ts">
   import { VALIDATE_USER } from '@/graphql/user';
   import { Component, Prop, Vue } from 'vue-property-decorator';
-  import { AUTH_TOKEN, AUTH_USER_ACTOR, AUTH_USER_ID } from '@/constants';
+  import { AUTH_TOKEN, AUTH_USER_ID } from '@/constants';
 
   @Component
   export default class Validate extends Vue {
@@ -32,27 +32,27 @@
       this.validateAction();
     }
 
-    validateAction() {
-      this.$apollo.mutate({
-        mutation: VALIDATE_USER,
-        variables: {
-          token: this.token,
-        },
-      }).then((data) => {
-        this.loading = false;
-        console.log(data);
+    async validateAction() {
+      try {
+        const data = await this.$apollo.mutate({
+          mutation: VALIDATE_USER,
+          variables: {
+            token: this.token,
+          },
+        });
+
         this.saveUserData(data.data);
         this.$router.push({ name: 'Home' });
-      }).catch((error) => {
-        this.loading = false;
-        console.log(error);
+      } catch (err) {
+        console.error(err);
         this.failed = true;
-      });
+      } finally {
+        this.loading = false;
+      }
     }
 
     saveUserData({ validateUser: login }) {
       localStorage.setItem(AUTH_USER_ID, login.user.id);
-      localStorage.setItem(AUTH_USER_ACTOR, JSON.stringify(login.actor));
       localStorage.setItem(AUTH_TOKEN, login.token);
     }
 
