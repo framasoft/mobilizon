@@ -110,8 +110,9 @@
       this.credentials.password = this.password;
     }
 
-    loginAction(e) {
+    loginAction(e: Event) {
       e.preventDefault();
+
       this.$apollo.mutate({
         mutation: LOGIN,
         variables: {
@@ -119,6 +120,7 @@
           password: this.credentials.password,
         },
       }).then((result) => {
+        console.log(result)
         this.saveUserData(result.data);
         this.$router.push({ name: 'Home' });
       }).catch((e) => {
