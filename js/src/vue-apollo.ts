@@ -42,7 +42,7 @@ const authMiddleware = new ApolloLink((operation, forward) => {
     },
   });
 
-  if (forward) forward(operation);
+  if (forward) return forward(operation);
 
   return null;
 });
