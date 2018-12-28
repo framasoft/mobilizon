@@ -123,7 +123,7 @@
     rules = {
       password_length: value => value.length > 6 || 'Password must be at least 6 characters long',
       required: value => !!value || 'Required.',
-      email: (value: string) => value.indexOf('@') !== -1 || 'Invalid e-mail.',
+      email: (value: string) => value.includes('@') || 'Invalid e-mail.',
     };
 
     resetState() {
