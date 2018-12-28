@@ -121,12 +121,9 @@
       },
     };
     rules = {
-      password_length: value => value.length > 6 || 'Password must be at least 6 caracters long',
+      password_length: value => value.length > 6 || 'Password must be at least 6 characters long',
       required: value => !!value || 'Required.',
-      email: (value) => {
-        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return pattern.test(value) || 'Invalid e-mail.';
-      },
+      email: (value: string) => value.includes('@') || 'Invalid e-mail.',
     };
 
     resetState() {
@@ -154,20 +151,21 @@
       return this.rules.email(this.email) === true ? 'v-gravatar' : 'avatar';
     }
 
-    submit() {
-      this.$apollo.mutate({
-        mutation: CREATE_USER,
-        variables: {
-          email: this.email,
-          password: this.password,
-          username: this.username,
-        },
-      }).then((data) => {
-        console.log(data);
+    async submit() {
+      try {
+        await this.$apollo.mutate({
+          mutation: CREATE_USER,
+          variables: {
+            email: this.email,
+            password: this.password,
+            username: this.username,
+          },
+        });
+
         this.validationSent = true;
-      }).catch((error) => {
+      } catch (error) {
         console.error(error);
-      });
+      }
     }
   };
 </script>
