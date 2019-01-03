@@ -171,7 +171,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       data =
         if Map.has_key?(object_data, "inReplyTo") && object_data["inReplyTo"] != nil &&
              object_data["inReplyTo"] != "" do
-          Logger.debug("Object has inReplyTo #{object_data["inReplyTo"]}")
+          Logger.debug(fn -> "Object has inReplyTo #{object_data["inReplyTo"]}" end)
 
           case ActivityPub.fetch_object_from_url(object_data["inReplyTo"]) do
             # Reply to an event (Comment)

@@ -36,12 +36,13 @@ js:
     untracked: false
     expire_in: 30 days
 
-elixir_format:
+elixir_check:
   stage: back
   before_script:
     - mix deps.get
   script:
     - mix format --check-formatted --dry-run
+    - mix credo list
   cache:
     paths:
       - deps

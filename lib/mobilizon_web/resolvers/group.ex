@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.Resolvers.Group do
+  @moduledoc """
+  Handles the group-related GraphQL calls
+  """
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor}
   alias Mobilizon.Service.ActivityPub

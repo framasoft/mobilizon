@@ -49,27 +49,34 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   end
 
   def fix_in_reply_to(%{"inReplyTo" => in_reply_to} = object)
+      when not is_nil(in_reply_to) and is_bitstring(in_reply_to) do
+    in_reply_to |> do_fix_in_reply_to(object)
+  end
+
+  def fix_in_reply_to(%{"inReplyTo" => in_reply_to} = object)
+      when not is_nil(in_reply_to) and is_map(in_reply_to) do
+    if is_bitstring(in_reply_to["id"]) do
+      in_reply_to["id"] |> do_fix_in_reply_to(object)
+    end
+  end
+
+  def fix_in_reply_to(%{"inReplyTo" => in_reply_to} = object)
+      when not is_nil(in_reply_to) and is_list(in_reply_to) do
+    if is_bitstring(Enum.at(in_reply_to, 0)) do
+      in_reply_to |> Enum.at(0) |> do_fix_in_reply_to(object)
+    end
+  end
+
+  def fix_in_reply_to(%{"inReplyTo" => in_reply_to} = object)
       when not is_nil(in_reply_to) do
-    in_reply_to_id =
-      cond do
-        # If the inReplyTo is just an AP ID
-        is_bitstring(in_reply_to) ->
-          in_reply_to
+    Logger.error("inReplyTo ID seem incorrect")
+    Logger.error(inspect(in_reply_to))
+    do_fix_in_reply_to("", object)
+  end
 
-        # If the inReplyTo is a object itself
-        is_map(in_reply_to) && is_bitstring(in_reply_to["id"]) ->
-          in_reply_to["id"]
+  def fix_in_reply_to(object), do: object
 
-        # If the inReplyTo is an array
-        is_list(in_reply_to) && is_bitstring(Enum.at(in_reply_to, 0)) ->
-          Enum.at(in_reply_to, 0)
-
-        true ->
-          Logger.error("inReplyTo ID seem incorrect")
-          Logger.error(inspect(in_reply_to))
-          ""
-      end
-
+  def do_fix_in_reply_to(in_reply_to_id, object) do
     case fetch_obj_helper(in_reply_to_id) do
       {:ok, replied_object} ->
         object
@@ -84,8 +91,6 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
         object
     end
   end
-
-  def fix_in_reply_to(object), do: object
 
   def fix_attachments(object) do
     attachments =
@@ -500,7 +505,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
 
   @spec normalize(String.t()) :: struct() | nil
   def get_anything_by_url(url) do
-    Logger.debug("Getting anything from url #{url}")
+    Logger.debug(fn -> "Getting anything from url #{url}" end)
     get_actor_url(url) || get_event_url(url) || get_comment_url(url)
   end
 

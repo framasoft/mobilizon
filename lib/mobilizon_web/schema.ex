@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.Schema do
+  @moduledoc """
+  GraphQL schema representation
+  """
   use Absinthe.Schema
 
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]

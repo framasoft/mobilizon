@@ -63,7 +63,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
     will_overwrite = Enum.filter(paths, &File.exists?/1)
     proceed? = Enum.empty?(will_overwrite) or Keyword.get(options, :force, false)
 
-    unless not proceed? do
+    if proceed? do
       [domain, port | _] =
         String.split(
           Common.get_option(
@@ -163,7 +163,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
     else
       Mix.shell().error(
         "The task would have overwritten the following files:\n" <>
-          (Enum.map(will_overwrite, &"- #{&1}\n") |> Enum.join("")) <>
+          (will_overwrite |> Enum.map(&"- #{&1}\n") |> Enum.join("")) <>
           "Rerun with `-f/--force` to overwrite them."
       )
     end

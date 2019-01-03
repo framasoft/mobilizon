@@ -1,4 +1,7 @@
 defmodule Mobilizon.Actors.Service.Tools do
+  @moduledoc """
+  Common functions for actors services
+  """
   alias Mobilizon.Actors.User
 
   @spec we_can_send_email(User.t(), atom()) :: :ok | {:error, :email_too_soon}

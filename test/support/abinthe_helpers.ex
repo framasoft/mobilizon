@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.AbsintheHelpers do
+  @moduledoc """
+  Absinthe helpers for tests
+  """
   def query_skeleton(query, query_name) do
     %{
       "operationName" => "#{query_name}",

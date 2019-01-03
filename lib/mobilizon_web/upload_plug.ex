@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.UploadPlug do
+  @moduledoc """
+  Plug to intercept uploads
+  """
   use Plug.Builder
 
   plug(Plug.Static,

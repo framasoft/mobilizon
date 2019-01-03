@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.Resolvers.Person do
+  @moduledoc """
+  Handles the person-related GraphQL calls
+  """
   alias Mobilizon.Actors
   alias Mobilizon.Service.ActivityPub
 

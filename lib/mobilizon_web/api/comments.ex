@@ -17,13 +17,18 @@ defmodule MobilizonWeb.API.Comments do
   Creates a comment from an actor and a status
   """
   @spec create_comment(String.t(), String.t(), String.t()) :: {:ok, Activity.t()} | any()
-  def create_comment(from_username, status, visibility \\ "public", inReplyToCommentURL \\ nil) do
+  def create_comment(
+        from_username,
+        status,
+        visibility \\ "public",
+        in_reply_to_comment_URL \\ nil
+      ) do
     with {:local_actor, %Actor{url: url} = actor} <-
            {:local_actor, Actors.get_local_actor_by_name(from_username)},
          status <- String.trim(status),
          mentions <- Formatter.parse_mentions(status),
-         inReplyToComment <- get_in_reply_to_comment(inReplyToCommentURL),
-         {to, cc} <- to_for_actor_and_mentions(actor, mentions, inReplyToComment, visibility),
+         in_reply_to_comment <- get_in_reply_to_comment(in_reply_to_comment_URL),
+         {to, cc} <- to_for_actor_and_mentions(actor, mentions, in_reply_to_comment, visibility),
          tags <- Formatter.parse_tags(status),
          content_html <-
            make_content_html(
@@ -37,7 +42,7 @@ defmodule MobilizonWeb.API.Comments do
              url,
              to,
              content_html,
-             inReplyToComment,
+             in_reply_to_comment,
              tags,
              cc
            ) do
