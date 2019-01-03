@@ -729,8 +729,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
       {:ok, activity} = MobilizonWeb.API.Comments.create_comment(actor.preferred_username, "hey")
       {:ok, modified} = Transmogrifier.prepare_outgoing(activity.data)
 
-      assert modified["@context"] ==
-               Mobilizon.Service.ActivityPub.Utils.make_json_ld_header()["@context"]
+      assert modified["@context"] == Utils.make_json_ld_header()["@context"]
     end
 
     test "it sets the 'attributedTo' property to the actor of the object if it doesn't have one" do

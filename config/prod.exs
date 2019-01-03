@@ -16,8 +16,11 @@ use Mix.Config
 config :mobilizon, MobilizonWeb.Endpoint,
   load_from_system_env: true,
   url: [
-    host: System.get_env("MOBILIZON_INSTANCE_HOST") || "example.com",
-    port: 80
+    host: System.get_env("MOBILIZON_INSTANCE_HOST") || "mobilizon.me",
+    port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4000
+  ],
+  http: [
+    port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4000
   ],
   secret_key_base:
     System.get_env("MOBILIZON_SECRET") || "ThisShouldBeAVeryStrongStringPleaseReplaceMe",
@@ -26,6 +29,7 @@ config :mobilizon, MobilizonWeb.Endpoint,
 # Configure your database
 config :mobilizon, Mobilizon.Repo,
   adapter: Ecto.Adapters.Postgres,
+  types: Mobilizon.PostgresTypes,
   username: System.get_env("MOBILIZON_DATABASE_USERNAME") || "mobilizon",
   password: System.get_env("MOBILIZON_DATABASE_PASSWORD") || "mobilizon",
   database: System.get_env("MOBILIZON_DATABASE_DBNAME") || "mobilizon_prod",

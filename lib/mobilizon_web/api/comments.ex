@@ -18,7 +18,8 @@ defmodule MobilizonWeb.API.Comments do
   """
   @spec create_comment(String.t(), String.t(), String.t()) :: {:ok, Activity.t()} | any()
   def create_comment(from_username, status, visibility \\ "public", inReplyToCommentURL \\ nil) do
-    with %Actor{url: url} = actor <- Actors.get_local_actor_by_name(from_username),
+    with {:local_actor, %Actor{url: url} = actor} <-
+           {:local_actor, Actors.get_local_actor_by_name(from_username)},
          status <- String.trim(status),
          mentions <- Formatter.parse_mentions(status),
          inReplyToComment <- get_in_reply_to_comment(inReplyToCommentURL),

@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.CreateBot do
+defmodule Mix.Tasks.Mobilizon.CreateBot do
   @moduledoc """
   Creates a bot from a source
   """

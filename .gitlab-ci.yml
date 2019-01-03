@@ -6,10 +6,16 @@ stages:
 
 variables:
   MIX_ENV: "test"
+  # DB Variables for Postgres / Postgis
   POSTGRES_DB: mobilizon_test
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: ""
   POSTGRES_HOST: postgres
+  # DB Variables for Mobilizon
+  MOBILIZON_DATABASE_USERNAME: $POSTGRES_USER
+  MOBILIZON_DATABASE_PASSWORD: $POSTGRES_PASSWORD
+  MOBILIZON_DATABASE_DBNAME: $POSTGRES_DB
+  MOBILIZON_DATABASE_HOST: $POSTGRES_HOST
   GEOLITE_CITIES_PATH: "/usr/share/GeoIP/GeoLite2-City.mmdb"
 
 js:

@@ -22,12 +22,12 @@ defmodule MobilizonWeb.WebFingerTest do
 
   test "GET /.well-known/webfinger with local actor", %{conn: conn} do
     %Actor{preferred_username: username} = actor = insert(:actor)
-    conn = get(conn, "/.well-known/webfinger?resource=acct:#{username}@localhost:4001")
+    conn = get(conn, "/.well-known/webfinger?resource=acct:#{username}@mobilizon.test")
     assert json_response(conn, 200) == WebFinger.represent_actor(actor)
   end
 
   test "GET /.well-known/webfinger with non existent actor", %{conn: conn} do
-    conn = get(conn, "/.well-known/webfinger?resource=acct:notme@localhost:4001")
+    conn = get(conn, "/.well-known/webfinger?resource=acct:notme@mobilizon.test")
     assert response(conn, 404) == "Couldn't find user"
   end
 

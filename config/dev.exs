@@ -7,7 +7,13 @@ use Mix.Config
 # watchers to your application. For example, we use it
 # with brunch.io to recompile .js and .css sources.
 config :mobilizon, MobilizonWeb.Endpoint,
-  http: [port: System.get_env("PORT") || 4001],
+  http: [
+    port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4001
+  ],
+  url: [
+    host: System.get_env("MOBILIZON_INSTANCE_HOST") || "mobilizon.dev",
+    port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4001
+  ],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
@@ -53,8 +59,9 @@ config :mobilizon, Mobilizon.Mailer, adapter: Bamboo.LocalAdapter
 config :mobilizon, Mobilizon.Repo,
   adapter: Ecto.Adapters.Postgres,
   types: Mobilizon.PostgresTypes,
-  username: System.get_env("POSTGRES_USER") || "elixir",
-  password: System.get_env("POSTGRES_PASSWORD") || "elixir",
-  database: System.get_env("POSTGRES_DATABASE") || "mobilizon_dev",
-  hostname: System.get_env("POSTGRES_HOST") || "localhost",
+  username: System.get_env("MOBILIZON_DATABASE_USERNAME") || "mobilizon",
+  password: System.get_env("MOBILIZON_DATABASE_PASSWORD") || "mobilizon",
+  database: System.get_env("MOBILIZON_DATABASE_DBNAME") || "mobilizon_dev",
+  hostname: System.get_env("MOBILIZON_DATABASE_HOST") || "localhost",
+  port: System.get_env("MOBILIZON_DATABASE_PORT") || "5432",
   pool_size: 10
