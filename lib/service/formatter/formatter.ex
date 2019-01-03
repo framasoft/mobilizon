@@ -4,6 +4,9 @@
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/lib/pleroma/formatter.ex
 
 defmodule Mobilizon.Service.Formatter do
+  @moduledoc """
+  Formats input text to structured data, extracts mentions and hashtags
+  """
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Actors
 

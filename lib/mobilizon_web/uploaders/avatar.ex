@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.Uploaders.Avatar do
+  @moduledoc """
+  Handles avatar uploads
+  """
   use Arc.Definition
 
   # Include ecto support (requires package arc_ecto installed):

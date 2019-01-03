@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.Resolvers.Event do
+  @moduledoc """
+  Handles the event-related GraphQL calls
+  """
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Activity
   alias Mobilizon.Actors

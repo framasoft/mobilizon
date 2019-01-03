@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.Uploaders.Category do
+  @moduledoc """
+  Handles file uploads for categories
+  """
   use Arc.Definition
   use Arc.Ecto.Definition
 

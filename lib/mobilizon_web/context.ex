@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.Context do
+  @moduledoc """
+  Guardian context for MobilizonWeb
+  """
   @behaviour Plug
 
   import Plug.Conn

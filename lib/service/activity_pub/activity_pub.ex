@@ -43,14 +43,7 @@ defmodule Mobilizon.Service.ActivityPub do
   def insert(map, local \\ true) when is_map(map) do
     with map <- lazy_put_activity_defaults(map),
          :ok <- insert_full_object(map) do
-      object_id =
-        cond do
-          is_map(map["object"]) ->
-            map["object"]["id"]
-
-          is_binary(map["object"]) ->
-            map["id"]
-        end
+      object_id = if is_map(map["object"]), do: map["object"]["id"], else: map["id"]
 
       map = if local, do: Map.put(map, "id", "#{object_id}/activity"), else: map
 
@@ -384,7 +377,7 @@ defmodule Mobilizon.Service.ActivityPub do
 
     {:ok, data} = Transmogrifier.prepare_outgoing(activity.data)
     json = Jason.encode!(data)
-    Logger.debug("Remote inboxes are : #{inspect(remote_inboxes)}")
+    Logger.debug(fn -> "Remote inboxes are : #{inspect(remote_inboxes)}" end)
 
     Enum.each(remote_inboxes, fn inbox ->
       Federator.enqueue(:publish_single_ap, %{

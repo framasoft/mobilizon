@@ -68,7 +68,7 @@ defmodule Mobilizon.Actors do
              where: u.id == ^user.id
            )
          ) do
-      nil -> get_actors_for_user(user) |> hd
+      nil -> user |> get_actors_for_user() |> hd
       actor -> actor
     end
   end

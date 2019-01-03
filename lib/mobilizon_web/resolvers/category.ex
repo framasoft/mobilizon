@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.Resolvers.Category do
+  @moduledoc """
+  Handles the category-related GraphQL calls
+  """
   require Logger
   alias Mobilizon.Actors.User
 

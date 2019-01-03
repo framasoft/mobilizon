@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.Resolvers.User do
+  @moduledoc """
+  Handles the user-related GraphQL calls
+  """
   alias Mobilizon.Actors.{User, Actor}
   alias Mobilizon.Actors
   require Logger

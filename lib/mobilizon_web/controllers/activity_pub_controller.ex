@@ -23,14 +23,12 @@ defmodule MobilizonWeb.ActivityPubController do
 
   def actor(conn, %{"name" => name}) do
     with %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
-      cond do
-        conn |> get_req_header("accept") |> is_ap_header() ->
-          conn |> render_ap_actor(actor)
-
-        true ->
-          conn
-          |> put_resp_content_type("text/html")
-          |> send_file(200, "priv/static/index.html")
+      if conn |> get_req_header("accept") |> is_ap_header() do
+        conn |> render_ap_actor(actor)
+      else
+        conn
+        |> put_resp_content_type("text/html")
+        |> send_file(200, "priv/static/index.html")
       end
     else
       nil -> {:error, :not_found}
