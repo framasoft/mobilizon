@@ -3,7 +3,7 @@
 mix deps.get
 
 # Wait for Postgres to become available.
-until PGPASSWORD=$POSTGRES_PASSWORD psql -h postgres -U "postgres" -c '\q' 2>/dev/null; do
+until PGPASSWORD=$MOBILIZON_DATABASE_PASSWORD psql -h $MOBILIZON_DATABASE_HOST -U $MOBILIZON_DATABASE_USERNAME -c '\q' 2>/dev/null; do
   >&2 echo "Postgres is unavailable - sleeping"
   sleep 1
 done
