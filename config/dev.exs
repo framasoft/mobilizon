@@ -11,7 +11,7 @@ config :mobilizon, MobilizonWeb.Endpoint,
     port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4001
   ],
   url: [
-    host: System.get_env("MOBILIZON_INSTANCE_HOST") || "mobilizon.dev",
+    host: System.get_env("MOBILIZON_INSTANCE_HOST") || "mobilizon.local",
     port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4001
   ],
   debug_errors: true,
