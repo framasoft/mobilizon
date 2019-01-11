@@ -96,7 +96,7 @@ defmodule MobilizonWeb.Resolvers.User do
   Send an email to reset the password from an user
   """
   def send_reset_password(_parent, %{email: email, locale: locale}, _resolution) do
-    with {:ok, user} <- Actors.get_user_by_email(email, false),
+    with {:ok, user} <- Actors.get_user_by_email(email, true),
          {:ok, %Bamboo.Email{} = _email_html} <-
            Mobilizon.Actors.Service.ResetPassword.send_password_reset_email(user, locale) do
       {:ok, email}
