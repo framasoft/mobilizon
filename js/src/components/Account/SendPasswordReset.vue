@@ -32,7 +32,7 @@
 
 <script lang="ts">
   import { Component, Prop, Vue } from 'vue-property-decorator';
-  import { validateEmail, validateRequiredField } from '@/utils/validators';
+  import { validateEmailField, validateRequiredField } from '@/utils/validators';
   import { SEND_RESET_PASSWORD } from '@/graphql/auth';
 
   @Component
@@ -53,7 +53,7 @@
 
     rules = {
       required: validateRequiredField,
-      email: validateEmail,
+      email: validateEmailField,
     };
 
     mounted() {

@@ -27,3 +27,9 @@ mutation ResetPassword($token: String!, $password: String!) {
   },
 }
 `;
+
+export const RESEND_CONFIRMATION_EMAIL = gql`
+mutation ResendConfirmationEmail($email: String!) {
+  resendConfirmationEmail(email: $email)
+}
+`;

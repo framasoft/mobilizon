@@ -64,7 +64,7 @@
   import RegisterAvatar from './RegisterAvatar.vue';
   import { Component, Prop, Vue } from 'vue-property-decorator';
   import { LOGIN } from '@/graphql/auth';
-  import { validateEmail, validateRequiredField } from '@/utils/validators';
+  import { validateEmailField, validateRequiredField } from '@/utils/validators';
   import { saveUserData } from '@/utils/auth';
   import { ILogin } from '@/types/login.model'
 
@@ -94,7 +94,7 @@
     };
     rules = {
       required: validateRequiredField,
-      email: validateEmail
+      email: validateEmailField
     };
     user: any;
 

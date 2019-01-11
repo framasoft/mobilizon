@@ -32,6 +32,8 @@
 
 <script lang="ts">
   import { Component, Prop, Vue } from 'vue-property-decorator';
+  import { validateEmailField, validateRequiredField } from '@/utils/validators';
+  import { RESEND_CONFIRMATION_EMAIL } from '@/graphql/auth';
 
   @Component
   export default class ResendConfirmation extends Vue {
@@ -49,29 +51,32 @@
       },
     };
     rules = {
-      required: value => !!value || 'Required.',
-      email: (value) => {
-        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return pattern.test(value) || 'Invalid e-mail.';
-      },
+      required: validateRequiredField,
+      email: validateEmailField,
     };
 
     mounted() {
       this.credentials.email = this.email;
     }
 
-    resendConfirmationAction(e) {
+    async resendConfirmationAction(e) {
       e.preventDefault();
+      this.error = false;
 
-      // FIXME: implement fetchStory
-      // fetchStory('/users/resend', this.$store, { method: 'POST', body: JSON.stringify(this.credentials) }).then(() => {
-      //   this.validationSent = true;
-      // }).catch((err) => {
-      //   Promise.resolve(err).then(() => {
-      //     this.error = true;
-      //     this.validationSent = true;
-      //   });
-      // });
+      try {
+        await this.$apollo.mutate({
+          mutation: RESEND_CONFIRMATION_EMAIL,
+          variables: {
+            email: this.credentials.email,
+          },
+        });
+
+      } catch (err) {
+        console.error(err);
+        this.error = true;
+      } finally {
+        this.validationSent = true;
+      }
     }
   };
 </script>

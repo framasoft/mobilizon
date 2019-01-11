@@ -1,4 +1,4 @@
-export function validateEmail(value: string) {
+export function validateEmailField(value: string) {
   return value.includes('@') || 'Invalid e-mail.';
 }
 
