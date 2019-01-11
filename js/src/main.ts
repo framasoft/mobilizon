@@ -4,7 +4,6 @@ import Vue from 'vue';
 // import * as VueGoogleMaps from 'vue2-google-maps';
 import VueMarkdown from 'vue-markdown';
 import Vuetify from 'vuetify';
-import moment from 'moment';
 import GetTextPlugin from 'vue-gettext';
 import 'material-design-icons/iconfont/material-icons.css';
 import 'vuetify/dist/vuetify.min.css';
@@ -21,10 +20,9 @@ Vue.use(VueMarkdown);
 Vue.use(Vuetify);
 
 const language = (window.navigator as any).userLanguage || window.navigator.language;
-moment.locale(language);
 
-Vue.filter('formatDate', value => (value ? moment(String(value)).format('LLLL') : null));
-Vue.filter('formatDay', value => (value ? moment(String(value)).format('LL') : null));
+Vue.filter('formatDate', value => value ? new Date(value).toLocaleString() : null);
+Vue.filter('formatDay', value => value ? new Date(value).toLocaleDateString() : null);
 
 Vue.use(GetTextPlugin, {
   translations,
