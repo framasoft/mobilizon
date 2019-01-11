@@ -17,8 +17,8 @@ export const FETCH_EVENT = gql`
             large_image,
             publish_at,
             # address_type,
-            online_address,
-            phone,
+            # online_address,
+            # phone,
             organizerActor {
                 avatarUrl,
                 preferredUsername,
@@ -61,8 +61,8 @@ export const FETCH_EVENTS = gql`
         large_image,
         publish_at,
         # address_type,
-        online_address,
-        phone,
+        # online_address,
+        # phone,
         organizerActor {
             avatarUrl,
             preferredUsername,
