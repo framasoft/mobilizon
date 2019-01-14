@@ -12,13 +12,12 @@ export const FETCH_EVENT = gql`
             ends_on,
             state,
             status,
-            public,
+            visibility,
             thumbnail,
             large_image,
             publish_at,
-            # address_type,
             # online_address,
-            # phone,
+            # phone_address,
             organizerActor {
                 avatarUrl,
                 preferredUsername,
@@ -56,13 +55,12 @@ export const FETCH_EVENTS = gql`
         ends_on,
         state,
         status,
-        public,
+        visibility,
         thumbnail,
         large_image,
         publish_at,
-        # address_type,
         # online_address,
-        # phone,
+        # phone_address,
         organizerActor {
             avatarUrl,
             preferredUsername,
@@ -87,19 +85,13 @@ export const CREATE_EVENT = gql`
         $organizerActorId: Int!,
         $categoryId: Int!,
         $beginsOn: DateTime!,
-        $addressType: AddressType!,
     ) {
         createEvent(
             title: $title,
             description: $description,
             beginsOn: $beginsOn,
             organizerActorId: $organizerActorId,
-            categoryId: $categoryId,
-            addressType: $addressType) {
-                uuid,
-                title,
-                description,
-    }
+            categoryId: $categoryId
 }
 `;
 
