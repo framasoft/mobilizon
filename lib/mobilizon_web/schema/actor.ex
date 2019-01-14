@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.Schema.ActorInterface do
+  @moduledoc """
+  Schema representation for Actor
+  """
   use Absinthe.Schema.Notation
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   alias Mobilizon.Actors.Actor

@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.Schema.Actors.GroupType do
+  @moduledoc """
+  Schema representation for Group
+  """
   use Absinthe.Schema.Notation
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   import_types(MobilizonWeb.Schema.Actors.MemberType)

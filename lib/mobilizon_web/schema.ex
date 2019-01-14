@@ -4,7 +4,6 @@ defmodule MobilizonWeb.Schema do
   """
   use Absinthe.Schema
 
-  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   alias Mobilizon.{Actors, Events}
   alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Events.{Event, Comment, Participant}
@@ -200,9 +199,8 @@ defmodule MobilizonWeb.Schema do
       arg(:thumbnail, :string)
       arg(:large_image, :string)
       arg(:publish_at, :datetime)
-      arg(:address_type, non_null(:address_type))
       arg(:online_address, :string)
-      arg(:phone, :string)
+      arg(:phone_address, :string)
       arg(:organizer_actor_username, non_null(:string))
       arg(:category, non_null(:string))
 

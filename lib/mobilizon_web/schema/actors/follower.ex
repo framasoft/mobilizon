@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.Schema.Actors.FollowerType do
+  @moduledoc """
+  Schema representation for Follower
+  """
   use Absinthe.Schema.Notation
 
   @desc """

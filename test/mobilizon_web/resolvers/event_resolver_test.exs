@@ -118,8 +118,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                   description: "it will be fine",
                   begins_on: "#{DateTime.utc_now() |> DateTime.to_iso8601()}",
                   organizer_actor_username: "#{actor.preferred_username}",
-                  category: "#{category.title}",
-                  address_type: #{"OTHER"}
+                  category: "#{category.title}"
               ) {
                 title,
                 uuid

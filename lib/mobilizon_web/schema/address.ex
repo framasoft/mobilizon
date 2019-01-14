@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.Schema.AddressType do
+  @moduledoc """
+  Schema representation for Address
+  """
   use Absinthe.Schema.Notation
 
   object :physical_address do

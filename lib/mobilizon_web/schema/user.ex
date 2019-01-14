@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.Schema.UserType do
+  @moduledoc """
+  Schema representation for User
+  """
   use Absinthe.Schema.Notation
 
   @desc "A local user of Mobilizon"

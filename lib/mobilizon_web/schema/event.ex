@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.Schema.EventType do
+  @moduledoc """
+  Schema representation for Event
+  """
   use Absinthe.Schema.Notation
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   import_types(MobilizonWeb.Schema.AddressType)
@@ -14,9 +17,8 @@ defmodule MobilizonWeb.Schema.EventType do
     field(:description, :string, description: "The event's description")
     field(:begins_on, :datetime, description: "Datetime for when the event begins")
     field(:ends_on, :datetime, description: "Datetime for when the event ends")
-    field(:state, :integer, description: "State of the event")
-    field(:status, :integer, description: "Status of the event")
-    field(:public, :boolean, description: "Whether the event is public or not")
+    field(:status, :event_status, description: "Status of the event")
+    field(:visibility, :event_visibility, description: "The event's visibility")
     # TODO replace me with picture object
     field(:thumbnail, :string, description: "A thumbnail picture for the event")
     # TODO replace me with banner
@@ -36,7 +38,7 @@ defmodule MobilizonWeb.Schema.EventType do
     field(:category, :category, description: "The event's category")
 
     field(:participants, list_of(:participant),
-      resolve: &Resolvers.Event.list_participants_for_event/3,
+      resolve: &MobilizonWeb.Resolvers.Event.list_participants_for_event/3,
       description: "The event's participants"
     )
 
@@ -45,5 +47,25 @@ defmodule MobilizonWeb.Schema.EventType do
 
     field(:updated_at, :datetime, description: "When the event was last updated")
     field(:created_at, :datetime, description: "When the event was created")
+  end
+
+  @desc "The list of visibility options for an event"
+  enum :event_visibility do
+    value(:public, description: "Publically listed and federated. Can be shared.")
+    value(:unlisted, description: "Visible only to people with the link - or invited")
+
+    value(:private,
+      description: "Visible only to people members of the group or followers of the person"
+    )
+
+    value(:moderated, description: "Visible only after a moderator accepted")
+    value(:invite, description: "visible only to people invited")
+  end
+
+  @desc "The list of possible options for the event's status"
+  enum :event_status do
+    value(:tentative, description: "The event is tentative")
+    value(:confirmed, description: "The event is confirmed")
+    value(:cancelled, description: "The event is cancelled")
   end
 end

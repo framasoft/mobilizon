@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.Schema.Actors.PersonType do
+  @moduledoc """
+  Schema representation for Person
+  """
   use Absinthe.Schema.Notation
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   import_types(MobilizonWeb.Schema.UserType)

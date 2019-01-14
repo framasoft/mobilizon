@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.Schema.Events.CategoryType do
+  @moduledoc """
+  Schema representation for Category
+  """
   use Absinthe.Schema.Notation
 
   @desc "A category"

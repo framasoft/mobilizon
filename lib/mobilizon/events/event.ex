@@ -1,5 +1,4 @@
 import EctoEnum
-defenum(Mobilizon.Events.AddressTypeEnum, :address_type, [:physical, :url, :phone, :other])
 
 defenum(Mobilizon.Events.EventVisibilityEnum, :event_visibility_type, [
   :public,
@@ -38,9 +37,8 @@ defmodule Mobilizon.Events.Event do
     field(:large_image, :string)
     field(:publish_at, Timex.Ecto.DateTimeWithTimezone)
     field(:uuid, Ecto.UUID, default: Ecto.UUID.generate())
-    field(:address_type, Mobilizon.Events.AddressTypeEnum, default: :physical)
     field(:online_address, :string)
-    field(:phone, :string)
+    field(:phone_address, :string)
     belongs_to(:organizer_actor, Actor, foreign_key: :organizer_actor_id)
     belongs_to(:attributed_to, Actor, foreign_key: :attributed_to_id)
     many_to_many(:tags, Tag, join_through: "events_tags")
@@ -69,9 +67,8 @@ defmodule Mobilizon.Events.Event do
       :thumbnail,
       :large_image,
       :publish_at,
-      :address_type,
       :online_address,
-      :phone
+      :phone_address
     ])
     |> cast_assoc(:tags)
     |> cast_assoc(:physical_address)
@@ -82,8 +79,7 @@ defmodule Mobilizon.Events.Event do
       :organizer_actor_id,
       :category_id,
       :url,
-      :uuid,
-      :address_type
+      :uuid
     ])
   end
 
