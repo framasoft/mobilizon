@@ -32,6 +32,8 @@
 
 <script lang="ts">
   import { Component, Prop, Vue } from 'vue-property-decorator';
+  import { validateEmailField, validateRequiredField } from '@/utils/validators';
+  import { SEND_RESET_PASSWORD } from '@/graphql/auth';
 
   @Component
   export default class SendPasswordReset extends Vue {
@@ -46,33 +48,36 @@
       email: {
         status: null,
         msg: '',
-      },
+      } as { status: boolean | null, msg: string },
     };
 
     rules = {
-      required: value => !!value || 'Required.',
-      email: (value) => {
-        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return pattern.test(value) || 'Invalid e-mail.';
-      },
+      required: validateRequiredField,
+      email: validateEmailField,
     };
 
     mounted() {
       this.credentials.email = this.email;
     }
 
-    resendConfirmationAction(e) {
+    async resendConfirmationAction(e) {
       e.preventDefault();
-      // FIXME: implement fetchStory
-      // fetchStory('/users/password-reset/send', this.$store, { method: 'POST', body: JSON.stringify(this.credentials) }).then(() => {
-      //   this.error = false;
-      //   this.validationSent = true;
-      // }).catch((err) => {
-      //   Promise.resolve(err).then((data) => {
-      //     this.error = true;
-      //     this.state.email = { status: false, msg: data.errors };
-      //   });
-      // });
+      this.error = false;
+
+      try {
+        await this.$apollo.mutate({
+          mutation: SEND_RESET_PASSWORD,
+          variables: {
+            email: this.credentials.email,
+          },
+        });
+
+        this.validationSent = true;
+      } catch (err) {
+        console.error(err);
+        this.error = true;
+        this.state.email = { status: false, msg: err.errors };
+      }
     }
 
     resetState() {

@@ -39,6 +39,10 @@
 <script lang="ts">
 
   import { Component, Prop, Vue } from 'vue-property-decorator';
+  import { validateRequiredField } from '@/utils/validators';
+  import { RESET_PASSWORD } from '@/graphql/auth';
+  import { saveUserData } from '@/utils/auth';
+  import { ILogin } from '@/types/login.model'
 
   @Component
   export default class PasswordReset extends Vue {
@@ -66,8 +70,8 @@
       },
     };
     rules = {
-      password_length: value => value.length > 6 || 'Password must be at least 6 caracters long',
-      required: value => !!value || 'Required.',
+      password_length: value => value.length > 6 || 'Password must be at least 6 characters long',
+      required: validateRequiredField,
       password_equal: value => value === this.credentials.password || 'Passwords must be the same',
     };
 
@@ -76,32 +80,27 @@
         this.credentials.password === this.credentials.password_confirmation;
     }
 
-    resetAction(e) {
+    async resetAction(e) {
       this.resetState();
+      this.error.show = false;
+
       e.preventDefault();
-      console.log(this.token);
-      // FIXME: implements fetchStory
-      // fetchStory('/users/password-reset/post', this.$store, {
-      //   method: 'POST',
-      //   body: JSON.stringify({ password: this.credentials.password, token: this.token }),
-      // }).then((data) => {
-      //   localStorage.setItem('token', data.token);
-      //   localStorage.setItem('refresh_token', data.refresh_token);
-      //   this.$store.commit('LOGIN_USER', data.account);
-      //   this.$snotify.success(this.$t('registration.success.login', { username: data.account.username }));
-      //   this.$router.push({ name: 'Home' });
-      // }, (error) => {
-      //   Promise.resolve(error).then((errormsg) => {
-      //     console.log('errormsg', errormsg);
-      //     this.error.show = true;
-      //     Object.entries(JSON.parse(errormsg).errors).forEach(([ key, val ]) => {
-      //       console.log('key', key);
-      //       console.log('val', val[ 0 ]);
-      //       this.state[ key ] = { status: false, msg: val[ 0 ] };
-      //       console.log('state', this.state);
-      //     });
-      //   });
-      // });
+
+      try {
+        const result = await this.$apollo.mutate<{ resetPassword: ILogin}>({
+          mutation: RESET_PASSWORD,
+          variables: {
+            password: this.credentials.password,
+            token: this.token,
+          },
+        });
+
+        saveUserData(result.data.resetPassword);
+        this.$router.push({ name: 'Home' });
+      } catch (err) {
+        console.error(err);
+        this.error.show = true;
+      }
     }
 
     resetState() {

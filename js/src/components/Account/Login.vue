@@ -62,9 +62,11 @@
 
   import Gravatar from 'vue-gravatar';
   import RegisterAvatar from './RegisterAvatar.vue';
-  import { AUTH_TOKEN, AUTH_USER_ACTOR, AUTH_USER_ID } from '@/constants';
   import { Component, Prop, Vue } from 'vue-property-decorator';
   import { LOGIN } from '@/graphql/auth';
+  import { validateEmailField, validateRequiredField } from '@/utils/validators';
+  import { saveUserData } from '@/utils/auth';
+  import { ILogin } from '@/types/login.model'
 
   @Component({
     components: {
@@ -91,8 +93,8 @@
       },
     };
     rules = {
-      required: value => !!value || 'Required.',
-      email: (value) => value.includes('@') || 'Invalid e-mail.',
+      required: validateRequiredField,
+      email: validateEmailField
     };
     user: any;
 
@@ -109,9 +111,10 @@
 
     async loginAction(e: Event) {
       e.preventDefault();
+      this.error.show = false;
 
       try {
-        const result = await this.$apollo.mutate({
+        const result = await this.$apollo.mutate<{ login: ILogin }>({
           mutation: LOGIN,
           variables: {
             email: this.credentials.email,
@@ -119,7 +122,7 @@
           },
         });
 
-        this.saveUserData(result.data);
+        saveUserData(result.data.login);
         this.$router.push({ name: 'Home' });
       } catch (err) {
         console.error(err);
@@ -130,11 +133,6 @@
 
     validEmail() {
       return this.rules.email(this.credentials.email) === true ? 'v-gravatar' : 'avatar';
-    }
-
-    saveUserData({ login: login }) {
-      localStorage.setItem(AUTH_USER_ID, login.user.id);
-      localStorage.setItem(AUTH_TOKEN, login.token);
     }
   }
 </script>
