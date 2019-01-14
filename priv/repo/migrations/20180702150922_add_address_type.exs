@@ -2,7 +2,7 @@ defmodule Mobilizon.Repo.Migrations.AddAddressType do
   use Ecto.Migration
 
   def up do
-    AddressTypeEnum.create_type
+    Mobilizon.Events.AddressTypeEnum.create_type
     alter table(:events) do
       add :address_type, :address_type
       add :online_address, :string
@@ -21,7 +21,7 @@ defmodule Mobilizon.Repo.Migrations.AddAddressType do
       remove :online_address
       remove :phone
     end
-    AddressTypeEnum.drop_type
+    Mobilizon.Events.AddressTypeEnum.drop_type
     drop constraint(:events, "events_physical_address_id_fkey")
     rename table(:events), :physical_address_id, to: :address_id
     alter table(:events) do

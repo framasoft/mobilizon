@@ -125,15 +125,15 @@ defmodule Mobilizon.EventsTest do
       assert %Ecto.Changeset{} = Events.change_event(event)
     end
 
-    test "get_events_for_actor/1", %{actor: actor, event: event} do
-      assert {:ok, [event_found], 1} = Events.get_events_for_actor(actor)
+    test "get_public_events_for_actor/1", %{actor: actor, event: event} do
+      assert {:ok, [event_found], 1} = Events.get_public_events_for_actor(actor)
       assert event_found.title == event.title
     end
 
-    test "get_events_for_actor/3", %{actor: actor, event: event} do
+    test "get_public_events_for_actor/3", %{actor: actor, event: event} do
       event1 = insert(:event, organizer_actor: actor)
 
-      with {:ok, events_found, 2} <- Events.get_events_for_actor(actor, 1, 10) do
+      with {:ok, events_found, 2} <- Events.get_public_events_for_actor(actor, 1, 10) do
         event_ids = MapSet.new(events_found |> Enum.map(& &1.id))
         assert event_ids == MapSet.new([event.id, event1.id])
       else
@@ -142,10 +142,11 @@ defmodule Mobilizon.EventsTest do
       end
     end
 
-    test "get_events_for_actor/3 with limited results", %{actor: actor, event: event} do
+    test "get_public_events_for_actor/3 with limited results", %{actor: actor, event: event} do
       event1 = insert(:event, organizer_actor: actor)
 
-      with {:ok, [%Event{id: event_found_id}], 2} <- Events.get_events_for_actor(actor, 1, 1) do
+      with {:ok, [%Event{id: event_found_id}], 2} <-
+             Events.get_public_events_for_actor(actor, 1, 1) do
         assert event_found_id in [event.id, event1.id]
       else
         err ->

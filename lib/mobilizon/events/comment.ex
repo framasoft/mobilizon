@@ -1,3 +1,13 @@
+import EctoEnum
+
+defenum(Mobilizon.Events.CommentVisibilityEnum, :comment_visibility_type, [
+  :public,
+  :unlisted,
+  :private,
+  :moderated,
+  :invite
+])
+
 defmodule Mobilizon.Events.Comment do
   @moduledoc """
   An actor comment (for instance on an event or on a group)
@@ -14,6 +24,7 @@ defmodule Mobilizon.Events.Comment do
     field(:text, :string)
     field(:url, :string)
     field(:local, :boolean, default: true)
+    field(:visibility, Mobilizon.Events.CommentVisibilityEnum, default: :public)
     field(:uuid, Ecto.UUID)
     belongs_to(:actor, Actor, foreign_key: :actor_id)
     belongs_to(:attributed_to, Actor, foreign_key: :attributed_to_id)
@@ -38,7 +49,7 @@ defmodule Mobilizon.Events.Comment do
         else: "#{MobilizonWeb.Endpoint.url()}/comments/#{uuid}"
 
     comment
-    |> cast(attrs, [
+    |> Ecto.Changeset.cast(attrs, [
       :url,
       :text,
       :actor_id,

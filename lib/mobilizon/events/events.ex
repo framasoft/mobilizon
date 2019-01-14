@@ -19,11 +19,11 @@ defmodule Mobilizon.Events do
     queryable
   end
 
-  def get_events_for_actor(%Actor{id: actor_id} = _actor, page \\ nil, limit \\ nil) do
+  def get_public_events_for_actor(%Actor{id: actor_id} = _actor, page \\ nil, limit \\ nil) do
     query =
       from(
         e in Event,
-        where: e.organizer_actor_id == ^actor_id,
+        where: e.organizer_actor_id == ^actor_id and e.visibility in [^:public, ^:unlisted],
         order_by: [desc: :id],
         preload: [
           :organizer_actor,
@@ -50,7 +50,7 @@ defmodule Mobilizon.Events do
       from(
         e in Event,
         select: count(e.id),
-        where: e.local == ^true
+        where: e.local == ^true and e.visibility in [^:public, ^:unlisted]
       )
     )
   end
@@ -60,7 +60,7 @@ defmodule Mobilizon.Events do
       from(
         c in Comment,
         select: count(c.id),
-        where: c.local == ^true
+        where: c.local == ^true and c.visibility in [^:public, ^:unlisted]
       )
     )
   end
@@ -80,7 +80,7 @@ defmodule Mobilizon.Events do
           e in Event,
           join: a in Address,
           on: a.id == e.physical_address_id,
-          where: st_dwithin_in_meters(^point, a.geom, ^radius),
+          where: e.visibility == ^:public and st_dwithin_in_meters(^point, a.geom, ^radius),
           preload: :organizer_actor
         )
       )
@@ -130,17 +130,20 @@ defmodule Mobilizon.Events do
   """
   @spec get_event_full_by_uuid(String.t()) :: Event.t()
   def get_event_full_by_uuid(uuid) do
-    event = Repo.get_by(Event, uuid: uuid)
-
-    Repo.preload(event, [
-      :organizer_actor,
-      :category,
-      :sessions,
-      :tracks,
-      :tags,
-      :participants,
-      :physical_address
-    ])
+    from(
+      e in Event,
+      where: e.uuid == ^uuid and e.visibility in [^:public, ^:unlisted],
+      preload: [
+        :organizer_actor,
+        :category,
+        :sessions,
+        :tracks,
+        :tags,
+        :participants,
+        :physical_address
+      ]
+    )
+    |> Repo.one()
   end
 
   @doc """
@@ -166,7 +169,7 @@ defmodule Mobilizon.Events do
   def get_event_full_by_url(url) do
     case Repo.one(
            from(e in Event,
-             where: e.url == ^url,
+             where: e.url == ^url and e.visibility in [^:public, ^:unlisted],
              preload: [
                :organizer_actor,
                :category,
@@ -187,17 +190,20 @@ defmodule Mobilizon.Events do
   Gets an event by it's URL
   """
   def get_event_full_by_url!(url) do
-    event = Repo.get_by!(Event, url: url)
-
-    Repo.preload(event, [
-      :organizer_actor,
-      :category,
-      :sessions,
-      :tracks,
-      :tags,
-      :participants,
-      :physical_address
-    ])
+    Repo.one(
+      from(e in Event,
+        where: e.url == ^url and e.visibility in [^:public, ^:unlisted],
+        preload: [
+          :organizer_actor,
+          :category,
+          :sessions,
+          :tracks,
+          :tags,
+          :participants,
+          :physical_address
+        ]
+      )
+    )
   end
 
   @doc """
@@ -211,7 +217,11 @@ defmodule Mobilizon.Events do
   """
   def list_events(page \\ nil, limit \\ nil) do
     query =
-      from(e in Event, preload: [:organizer_actor])
+      from(
+        e in Event,
+        where: e.visibility == ^:public,
+        preload: [:organizer_actor]
+      )
       |> paginate(page, limit)
 
     Repo.all(query)
@@ -228,7 +238,7 @@ defmodule Mobilizon.Events do
 
     query =
       from(e in Event,
-        where: ilike(e.title, ^like_sanitize(name)),
+        where: e.visibility == ^:public and ilike(e.title, ^like_sanitize(name)),
         preload: [:organizer_actor]
       )
       |> paginate(page, limit)
@@ -860,7 +870,7 @@ defmodule Mobilizon.Events do
   alias Mobilizon.Events.Comment
 
   @doc """
-  Returns the list of comments.
+  Returns the list of public comments.
 
   ## Examples
 
@@ -869,14 +879,14 @@ defmodule Mobilizon.Events do
 
   """
   def list_comments do
-    Repo.all(Comment)
+    Repo.all(from(c in Comment, where: c.visibility == ^:public))
   end
 
-  def get_comments_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
+  def get_public_comments_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     query =
       from(
         c in Comment,
-        where: c.actor_id == ^actor_id,
+        where: c.actor_id == ^actor_id and c.visibility in [^:public, ^:unlisted],
         order_by: [desc: :id],
         preload: [
           :actor,

@@ -105,7 +105,7 @@ defmodule Mobilizon.Factory do
       organizer_actor: actor,
       category: build(:category),
       physical_address: build(:address),
-      public: true,
+      visibility: :public,
       url: "@#{actor.url}/#{Ecto.UUID.generate()}"
     }
   end
