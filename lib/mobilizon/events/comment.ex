@@ -2,11 +2,10 @@ import EctoEnum
 
 defenum(Mobilizon.Events.CommentVisibilityEnum, :comment_visibility_type, [
   :public,
-  :local,
-  :group,
   :unlisted,
+  :private,
   :moderated,
-  :private
+  :invite
 ])
 
 defmodule Mobilizon.Events.Comment do
@@ -25,7 +24,7 @@ defmodule Mobilizon.Events.Comment do
     field(:text, :string)
     field(:url, :string)
     field(:local, :boolean, default: true)
-    field(:visibility, :integer)
+    field(:visibility, Mobilizon.Events.CommentVisibilityEnum, default: :public)
     field(:uuid, Ecto.UUID)
     belongs_to(:actor, Actor, foreign_key: :actor_id)
     belongs_to(:attributed_to, Actor, foreign_key: :attributed_to_id)

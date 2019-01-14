@@ -47,7 +47,7 @@ defmodule MobilizonWeb.ActivityPubController do
 
   def event(conn, %{"uuid" => uuid}) do
     with %Event{} = event <- Events.get_event_full_by_uuid(uuid),
-         true <- event.public do
+         true <- event.visibility in [:public, :unlisted] do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ObjectView.render("event.json", %{event: event |> Utils.make_event_data()}))

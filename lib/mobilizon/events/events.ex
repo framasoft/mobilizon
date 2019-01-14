@@ -19,11 +19,11 @@ defmodule Mobilizon.Events do
     queryable
   end
 
-  def get_events_for_actor(%Actor{id: actor_id} = _actor, page \\ nil, limit \\ nil) do
+  def get_public_events_for_actor(%Actor{id: actor_id} = _actor, page \\ nil, limit \\ nil) do
     query =
       from(
         e in Event,
-        where: e.organizer_actor_id == ^actor_id,
+        where: e.organizer_actor_id == ^actor_id and e.visibility in [^:public, ^:unlisted],
         order_by: [desc: :id],
         preload: [
           :organizer_actor,
@@ -50,7 +50,7 @@ defmodule Mobilizon.Events do
       from(
         e in Event,
         select: count(e.id),
-        where: e.local == ^true and e.visibility == ^:public
+        where: e.local == ^true and e.visibility in [^:public, ^:unlisted]
       )
     )
   end
@@ -60,7 +60,7 @@ defmodule Mobilizon.Events do
       from(
         c in Comment,
         select: count(c.id),
-        where: c.local == ^true
+        where: c.local == ^true and c.visibility in [^:public, ^:unlisted]
       )
     )
   end
@@ -870,7 +870,7 @@ defmodule Mobilizon.Events do
   alias Mobilizon.Events.Comment
 
   @doc """
-  Returns the list of comments.
+  Returns the list of public comments.
 
   ## Examples
 
@@ -879,14 +879,14 @@ defmodule Mobilizon.Events do
 
   """
   def list_comments do
-    Repo.all(Comment)
+    Repo.all(from(c in Comment, where: c.visibility == ^:public))
   end
 
-  def get_comments_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
+  def get_public_comments_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     query =
       from(
         c in Comment,
-        where: c.actor_id == ^actor_id,
+        where: c.actor_id == ^actor_id and c.visibility in [^:public, ^:unlisted],
         order_by: [desc: :id],
         preload: [
           :actor,

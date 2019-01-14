@@ -42,7 +42,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
     end
 
     test "it returns 404 for non-public events", %{conn: conn} do
-      event = insert(:event, public: false)
+      event = insert(:event, visibility: :private)
 
       conn =
         conn

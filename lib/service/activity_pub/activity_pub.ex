@@ -474,8 +474,8 @@ defmodule Mobilizon.Service.ActivityPub do
   def fetch_public_activities_for_actor(%Actor{} = actor, page, limit) do
     case actor.type do
       :Person ->
-        {:ok, events, total_events} = Events.get_events_for_actor(actor, page, limit)
-        {:ok, comments, total_comments} = Events.get_comments_for_actor(actor, page, limit)
+        {:ok, events, total_events} = Events.get_public_events_for_actor(actor, page, limit)
+        {:ok, comments, total_comments} = Events.get_public_comments_for_actor(actor, page, limit)
 
         event_activities = Enum.map(events, &event_to_activity/1)
 
