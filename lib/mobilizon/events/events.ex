@@ -50,7 +50,7 @@ defmodule Mobilizon.Events do
       from(
         e in Event,
         select: count(e.id),
-        where: e.local == ^true
+        where: e.local == ^true and e.visibility == ^:public
       )
     )
   end
@@ -80,7 +80,7 @@ defmodule Mobilizon.Events do
           e in Event,
           join: a in Address,
           on: a.id == e.physical_address_id,
-          where: st_dwithin_in_meters(^point, a.geom, ^radius),
+          where: e.visibility == ^:public and st_dwithin_in_meters(^point, a.geom, ^radius),
           preload: :organizer_actor
         )
       )
@@ -130,17 +130,20 @@ defmodule Mobilizon.Events do
   """
   @spec get_event_full_by_uuid(String.t()) :: Event.t()
   def get_event_full_by_uuid(uuid) do
-    event = Repo.get_by(Event, uuid: uuid)
-
-    Repo.preload(event, [
-      :organizer_actor,
-      :category,
-      :sessions,
-      :tracks,
-      :tags,
-      :participants,
-      :physical_address
-    ])
+    from(
+      e in Event,
+      where: e.uuid == ^uuid and e.visibility in [^:public, ^:unlisted],
+      preload: [
+        :organizer_actor,
+        :category,
+        :sessions,
+        :tracks,
+        :tags,
+        :participants,
+        :physical_address
+      ]
+    )
+    |> Repo.one()
   end
 
   @doc """
@@ -166,7 +169,7 @@ defmodule Mobilizon.Events do
   def get_event_full_by_url(url) do
     case Repo.one(
            from(e in Event,
-             where: e.url == ^url,
+             where: e.url == ^url and e.visibility in [^:public, ^:unlisted],
              preload: [
                :organizer_actor,
                :category,
@@ -187,17 +190,20 @@ defmodule Mobilizon.Events do
   Gets an event by it's URL
   """
   def get_event_full_by_url!(url) do
-    event = Repo.get_by!(Event, url: url)
-
-    Repo.preload(event, [
-      :organizer_actor,
-      :category,
-      :sessions,
-      :tracks,
-      :tags,
-      :participants,
-      :physical_address
-    ])
+    Repo.one(
+      from(e in Event,
+        where: e.url == ^url and e.visibility in [^:public, ^:unlisted],
+        preload: [
+          :organizer_actor,
+          :category,
+          :sessions,
+          :tracks,
+          :tags,
+          :participants,
+          :physical_address
+        ]
+      )
+    )
   end
 
   @doc """
@@ -211,7 +217,11 @@ defmodule Mobilizon.Events do
   """
   def list_events(page \\ nil, limit \\ nil) do
     query =
-      from(e in Event, preload: [:organizer_actor])
+      from(
+        e in Event,
+        where: e.visibility == ^:public,
+        preload: [:organizer_actor]
+      )
       |> paginate(page, limit)
 
     Repo.all(query)
@@ -228,7 +238,7 @@ defmodule Mobilizon.Events do
 
     query =
       from(e in Event,
-        where: ilike(e.title, ^like_sanitize(name)),
+        where: e.visibility == ^:public and ilike(e.title, ^like_sanitize(name)),
         preload: [:organizer_actor]
       )
       |> paginate(page, limit)

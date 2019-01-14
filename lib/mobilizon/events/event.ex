@@ -1,5 +1,19 @@
 import EctoEnum
-defenum(AddressTypeEnum, :address_type, [:physical, :url, :phone, :other])
+defenum(Mobilizon.Events.AddressTypeEnum, :address_type, [:physical, :url, :phone, :other])
+
+defenum(Mobilizon.Events.EventVisibilityEnum, :event_visibility_type, [
+  :public,
+  :unlisted,
+  :private,
+  :moderated,
+  :invite
+])
+
+defenum(Mobilizon.Events.EventStatusEnum, :event_status_type, [
+  :tentative,
+  :confirmed,
+  :cancelled
+])
 
 defmodule Mobilizon.Events.Event do
   @moduledoc """
@@ -18,17 +32,13 @@ defmodule Mobilizon.Events.Event do
     field(:description, :string)
     field(:ends_on, Timex.Ecto.DateTimeWithTimezone)
     field(:title, :string)
-    # ???
-    field(:state, :integer, default: 0)
-    # Event status: TENTATIVE 1, CONFIRMED 2, CANCELLED 3
-    field(:status, :integer, default: 0)
-    # If the event is public or private
-    field(:public, :boolean, default: true)
+    field(:status, Mobilizon.Events.EventStatusEnum, default: :confirmed)
+    field(:visibility, Mobilizon.Events.EventVisibilityEnum, default: :public)
     field(:thumbnail, :string)
     field(:large_image, :string)
     field(:publish_at, Timex.Ecto.DateTimeWithTimezone)
     field(:uuid, Ecto.UUID, default: Ecto.UUID.generate())
-    field(:address_type, AddressTypeEnum, default: :physical)
+    field(:address_type, Mobilizon.Events.AddressTypeEnum, default: :physical)
     field(:online_address, :string)
     field(:phone, :string)
     belongs_to(:organizer_actor, Actor, foreign_key: :organizer_actor_id)
@@ -54,9 +64,8 @@ defmodule Mobilizon.Events.Event do
       :ends_on,
       :organizer_actor_id,
       :category_id,
-      :state,
       :status,
-      :public,
+      :visibility,
       :thumbnail,
       :large_image,
       :publish_at,

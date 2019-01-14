@@ -241,5 +241,63 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
 
       assert json_response(res, 200)["data"]["events"] |> length == 0
     end
+
+    test "list_events/3 doesn't list private events", context do
+      insert(:event, visibility: :private)
+      insert(:event, visibility: :unlisted)
+      insert(:event, visibility: :moderated)
+      insert(:event, visibility: :invite)
+
+      query = """
+      {
+        events {
+          uuid,
+        }
+      }
+      """
+
+      res =
+        context.conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+
+      assert json_response(res, 200)["data"]["events"] |> Enum.map(& &1["uuid"]) == []
+    end
+
+    test "find_event/3 returns an unlisted event", context do
+      event = insert(:event, visibility: :unlisted)
+
+      query = """
+      {
+        event(uuid: "#{event.uuid}") {
+          uuid,
+        }
+      }
+      """
+
+      res =
+        context.conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+
+      assert json_response(res, 200)["data"]["event"]["uuid"] == to_string(event.uuid)
+    end
+
+    test "find_event/3 doesn't return a private event", context do
+      event = insert(:event, visibility: :private)
+
+      query = """
+      {
+        event(uuid: "#{event.uuid}") {
+          uuid,
+        }
+      }
+      """
+
+      res =
+        context.conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+
+      assert json_response(res, 200)["errors"] |> hd |> Map.get("message") ==
+               "Event with UUID #{event.uuid} not found"
+    end
   end
 end
