@@ -84,7 +84,7 @@ export const CREATE_EVENT = gql`
         $description: String!,
         $organizerActorId: Int!,
         $categoryId: Int!,
-        $beginsOn: DateTime!,
+        $beginsOn: DateTime!
     ) {
         createEvent(
             title: $title,
@@ -92,6 +92,7 @@ export const CREATE_EVENT = gql`
             beginsOn: $beginsOn,
             organizerActorId: $organizerActorId,
             categoryId: $categoryId
+        )
 }
 `;
 
@@ -100,7 +101,7 @@ export const EDIT_EVENT = gql`
         $title: String!,
         $description: String!,
         $organizerActorId: Int!,
-        $categoryId: Int!,
+        $categoryId: Int!
         ) {
     EditEvent(title: $title, description: $description, organizerActorId: $organizerActorId, categoryId: $categoryId) {
     uuid
