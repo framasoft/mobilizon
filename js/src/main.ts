@@ -9,8 +9,7 @@ import 'material-design-icons/iconfont/material-icons.css';
 import 'vuetify/dist/vuetify.min.css';
 import App from '@/App.vue';
 import router from '@/router';
-// import store from './store';
-import { createProvider } from './vue-apollo';
+import { apolloProvider } from './vue-apollo';
 
 const translations = require('@/i18n/translations.json');
 
@@ -36,6 +35,6 @@ new Vue({
   router,
   el: '#app',
   template: '<App/>',
-  apolloProvider: createProvider(),
+  apolloProvider,
   components: { App },
 });

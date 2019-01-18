@@ -67,6 +67,8 @@
   import { validateEmailField, validateRequiredField } from '@/utils/validators';
   import { saveUserData } from '@/utils/auth';
   import { ILogin } from '@/types/login.model'
+  import { UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user'
+  import { onLogin } from '@/vue-apollo'
 
   @Component({
     components: {
@@ -123,6 +125,17 @@
         });
 
         saveUserData(result.data.login);
+
+        await this.$apollo.mutate({
+          mutation: UPDATE_CURRENT_USER_CLIENT,
+          variables: {
+            id: result.data.login.user.id,
+            email: this.credentials.email,
+          }
+        });
+
+        onLogin(this.$apollo);
+
         this.$router.push({ name: 'Home' });
       } catch (err) {
         console.error(err);
