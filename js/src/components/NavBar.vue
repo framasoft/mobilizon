@@ -46,12 +46,15 @@
       </template>
     </v-autocomplete>
     <v-spacer></v-spacer>
+
+    <span v-if="currentUser.id" @click="logout()">Logout</span>
+
     <v-menu
       offset-y
       :close-on-content-click="false"
       :nudge-width="200"
       v-model="notificationMenu"
-      v-if="user"
+      v-if="currentUser.id"
     >
       <v-btn icon slot="activator">
         <v-badge left color="red">
@@ -83,7 +86,7 @@
         </v-card-actions>
       </v-card>
     </v-menu>
-    <v-btn v-if="!user" :to="{ name: 'Login' }">
+    <v-btn v-if="!currentUser.id" :to="{ name: 'Login' }">
       <translate>Login</translate>
     </v-btn>
   </v-toolbar>
@@ -96,11 +99,14 @@
 </style>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import { AUTH_USER_ACTOR, AUTH_USER_ID } from '@/constants';
-import { SEARCH } from '@/graphql/search';
+  import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+  import { AUTH_USER_ACTOR } from '@/constants';
+  import { SEARCH } from '@/graphql/search';
+  import { CURRENT_USER_CLIENT } from '@/graphql/user';
+  import { onLogout } from '@/vue-apollo';
+  import { deleteUserData } from '@/utils/auth';
 
-@Component({
+  @Component({
   apollo: {
     search: {
       query: SEARCH,
@@ -113,6 +119,9 @@ import { SEARCH } from '@/graphql/search';
         return !this.searchText;
       },
     },
+    currentUser: {
+      query: CURRENT_USER_CLIENT
+    }
   },
 })
 export default class NavBar extends Vue {
@@ -128,7 +137,6 @@ export default class NavBar extends Vue {
   searchText: string | null = null;
   searchSelect = null;
   actor = localStorage.getItem(AUTH_USER_ACTOR);
-  user = localStorage.getItem(AUTH_USER_ID);
 
   get items() {
     return this.search.map(searchEntry => {
@@ -163,6 +171,14 @@ export default class NavBar extends Vue {
   enter() {
     console.log('enter');
     this.$apollo.queries['search'].refetch();
+  }
+
+  logout() {
+    alert('logout !');
+
+    deleteUserData();
+
+    return onLogout(this.$apollo);
   }
 
 }

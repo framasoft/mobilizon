@@ -3,9 +3,13 @@ import VueApollo from 'vue-apollo';
 import { ApolloLink } from 'apollo-link';
 import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
 import { createLink } from 'apollo-absinthe-upload-link';
-import { createApolloClient, restartWebsockets } from 'vue-cli-plugin-apollo/graphql-client';
 import { AUTH_TOKEN } from './constants';
 import { GRAPHQL_API_ENDPOINT, GRAPHQL_API_FULL_PATH } from './api/_entrypoint';
+import { withClientState } from 'apollo-link-state';
+import { currentUser } from '@/apollo/user';
+import merge from 'lodash/merge';
+import { ApolloClient } from 'apollo-client';
+import { DollarApollo } from 'vue-apollo/types/vue-apollo';
 
 // Install the vue plugin
 Vue.use(VueApollo);
@@ -51,82 +55,40 @@ const uploadLink = createLink({
   uri: httpEndpoint,
 });
 
-// const link = ApolloLink.from([
-//   uploadLink,
-//   authMiddleware,
-//   HttpLink,
-// ]);
+const stateLink = withClientState({
+  ...merge(currentUser),
+  cache,
+});
 
-const link = authMiddleware.concat(uploadLink);
+const link = stateLink.concat(authMiddleware).concat(uploadLink);
 
-// Config
-const defaultOptions = {
+const apolloClient = new ApolloClient({
   cache,
   link,
-  // You can use `https` for secure connection (recommended in production)
-  httpEndpoint,
-  // You can use `wss` for secure connection (recommended in production)
-  // Use `null` to disable subscriptions
-  // wsEndpoint: process.env.VUE_APP_GRAPHQL_WS || 'ws://localhost:4000/graphql',
-  // LocalStorage token
-  tokenName: AUTH_TOKEN,
-  // Enable Automatic Query persisting with Apollo Engine
-  persisting: false,
-  // Use websockets for everything (no HTTP)
-  // You need to pass a `wsEndpoint` for this to work
-  websocketsOnly: false,
-  // Is being rendered on the server?
-  ssr: false,
-  defaultHttpLink: false,
   connectToDevTools: true,
-};
+});
 
-// Call this in the Vue app file
-export function createProvider(options = {}) {
-  // Create apollo client
-  const { apolloClient, wsClient } = createApolloClient({
-    ...defaultOptions,
-    ...options,
-  });
-  apolloClient.wsClient = wsClient;
+apolloClient.onResetStore(stateLink.writeDefaults as any);
 
-  // Create vue apollo provider
-  return new VueApollo({
-    defaultClient: apolloClient,
-    // defaultOptions: {
-    //   $query: {
-    //     fetchPolicy: 'cache-and-network',
-    //   },
-    // },
-    errorHandler(error) {
-      // eslint-disable-next-line no-console
-      console.log('%cError', 'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;', error.message);
-    },
-  });
-}
+export const apolloProvider = new VueApollo({
+  defaultClient: apolloClient,
+  errorHandler(error) {
+    // eslint-disable-next-line no-console
+    console.log('%cError', 'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;', error.message);
+  },
+});
 
 // Manually call this when user log in
-export async function onLogin(apolloClient, token) {
-  if (typeof localStorage !== 'undefined' && token) {
-    localStorage.setItem(AUTH_TOKEN, token);
-  }
-  if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient);
-  try {
-    await apolloClient.resetStore();
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.log('%cError on cache reset (login)', 'color: orange;', e.message);
-  }
+export function onLogin(apolloClient) {
+  // if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient);
 }
 
 // Manually call this when user log out
-export async function onLogout(apolloClient) {
-  if (typeof localStorage !== 'undefined') {
-    localStorage.removeItem(AUTH_TOKEN);
-  }
-  if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient);
+export async function onLogout(apolloClient: DollarApollo<any>) {
+  // if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient);
+
   try {
-    await apolloClient.resetStore();
+    await apolloClient.provider.defaultClient.resetStore();
   } catch (e) {
     // eslint-disable-next-line no-console
     console.log('%cError on cache reset (logout)', 'color: orange;', e.message);

@@ -98,7 +98,7 @@
       direction="top"
       open-on-hover
       transition="scale-transition"
-      v-if="user"
+      v-if="currentUser"
     >
       <v-btn
         slot="activator"
@@ -152,9 +152,16 @@
 <script lang="ts">
 import NavBar from '@/components/NavBar.vue';
 import { Component, Vue } from 'vue-property-decorator';
-import { AUTH_USER_ACTOR, AUTH_USER_ID } from '@/constants';
+import { AUTH_TOKEN, AUTH_USER_ACTOR, AUTH_USER_EMAIL, AUTH_USER_ID } from '@/constants';
+import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
+import { ICurrentUser } from '@/types/current-user.model'
 
 @Component({
+  apollo: {
+    currentUser: {
+      query: CURRENT_USER_CLIENT
+    }
+  },
   components: {
     NavBar,
   },
@@ -162,7 +169,6 @@ import { AUTH_USER_ACTOR, AUTH_USER_ID } from '@/constants';
 export default class App extends Vue {
   drawer = false;
   fab = false;
-  user = localStorage.getItem(AUTH_USER_ID);
   items = [
     {
       icon: 'poll', text: 'Events', route: 'EventList', role: null,
@@ -183,8 +189,13 @@ export default class App extends Vue {
     show: false,
     text: '',
   };
+  currentUser!: ICurrentUser;
 
   actor = localStorage.getItem(AUTH_USER_ACTOR);
+
+  mounted () {
+    this.initializeCurrentUser()
+  }
 
   get displayed_name () {
     // FIXME: load actor
@@ -199,11 +210,27 @@ export default class App extends Vue {
   }
 
   getUser () {
-    return this.user === undefined ? false : this.user;
+    return this.currentUser.id ? this.currentUser : false;
   }
 
   toggleDrawer () {
     this.drawer = !this.drawer;
+  }
+
+  private initializeCurrentUser() {
+    const userId = localStorage.getItem(AUTH_USER_ID);
+    const userEmail = localStorage.getItem(AUTH_USER_EMAIL);
+    const token = localStorage.getItem(AUTH_TOKEN);
+
+    if (userId && userEmail && token) {
+      return this.$apollo.mutate({
+        mutation: UPDATE_CURRENT_USER_CLIENT,
+        variables: {
+          id: userId,
+          email: userEmail,
+        },
+      });
+    }
   }
 }
 </script>

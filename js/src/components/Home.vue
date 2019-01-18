@@ -5,7 +5,7 @@
       src="https://picsum.photos/1200/900"
       dark
       height="300"
-      v-if="!user"
+      v-if="!currentUser.id"
     >
       <v-container fill-height>
         <v-layout align-center>
@@ -88,11 +88,16 @@
   import { AUTH_USER_ACTOR, AUTH_USER_ID } from '@/constants';
   import { FETCH_EVENTS } from '@/graphql/event';
   import { Component, Vue } from 'vue-property-decorator';
+  import { ICurrentUser } from '@/types/current-user.model';
+  import { CURRENT_USER_CLIENT } from '@/graphql/user';
 
   @Component({
     apollo: {
       events: {
         query: FETCH_EVENTS,
+      },
+      currentUser: {
+        query: CURRENT_USER_CLIENT,
       },
     },
   })
@@ -109,7 +114,7 @@
     country = { name: null };
     // FIXME: correctly parse local storage
     actor = JSON.parse(localStorage.getItem(AUTH_USER_ACTOR) || '{}');
-    user = localStorage.getItem(AUTH_USER_ID);
+    currentUser!: ICurrentUser;
 
     get displayed_name() {
       return this.actor.name === null ? this.actor.preferredUsername : this.actor.name;
@@ -126,7 +131,7 @@
 
     geoLocalize() {
       const router = this.$router;
-      const sessionCity = sessionStorage.getItem('City')
+      const sessionCity = sessionStorage.getItem('City');
       if (sessionCity) {
         router.push({ name: 'EventList', params: { location: sessionCity } });
       } else {

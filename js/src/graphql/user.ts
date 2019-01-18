@@ -19,3 +19,18 @@ mutation ValidateUser($token: String!) {
   }
 }
 `;
+
+export const CURRENT_USER_CLIENT = gql`
+query {
+  currentUser @client {
+    id,
+    email
+  }
+}
+`;
+
+export const UPDATE_CURRENT_USER_CLIENT = gql`
+mutation UpdateCurrentUser($id: Int!, $email: String!) {
+  updateCurrentUser(id: $id, email: $email) @client
+}
+`
