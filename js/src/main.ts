@@ -3,10 +3,9 @@
 import Vue from 'vue';
 // import * as VueGoogleMaps from 'vue2-google-maps';
 import VueMarkdown from 'vue-markdown';
-import Vuetify from 'vuetify';
+import Buefy from 'buefy'
+import 'buefy/dist/buefy.css';
 import GetTextPlugin from 'vue-gettext';
-import 'material-design-icons/iconfont/material-icons.css';
-import 'vuetify/dist/vuetify.min.css';
 import App from '@/App.vue';
 import router from '@/router';
 import { apolloProvider } from './vue-apollo';
@@ -16,7 +15,9 @@ const translations = require('@/i18n/translations.json');
 Vue.config.productionTip = false;
 
 Vue.use(VueMarkdown);
-Vue.use(Vuetify);
+Vue.use(Buefy, {
+  defaultContainerElement: '#mobilizon'
+});
 
 const language = (window.navigator as any).userLanguage || window.navigator.language;
 

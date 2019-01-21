@@ -220,7 +220,7 @@ defmodule Mobilizon.Events do
       from(
         e in Event,
         where: e.visibility == ^:public,
-        preload: [:organizer_actor]
+        preload: [:organizer_actor, :participants]
       )
       |> paginate(page, limit)
 

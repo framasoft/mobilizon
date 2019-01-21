@@ -3,13 +3,14 @@ import gql from 'graphql-tag';
 export const FETCH_EVENT = gql`
     query($uuid:UUID!) {
         event(uuid: $uuid) {
+            id,
             uuid,
             url,
             local,
             title,
             description,
-            begins_on,
-            ends_on,
+            beginsOn,
+            endsOn,
             status,
             visibility,
             thumbnail,
@@ -22,11 +23,11 @@ export const FETCH_EVENT = gql`
                 preferredUsername,
                 name,
             },
-            attributedTo {
-                avatarUrl,
-                preferredUsername,
-                name,
-            },
+            # attributedTo {
+            #     # avatarUrl,
+            #     preferredUsername,
+            #     name,
+            # },
             participants {
                 actor {
                     avatarUrl,
@@ -45,13 +46,14 @@ export const FETCH_EVENT = gql`
 export const FETCH_EVENTS = gql`
     query {
         events {
+        id,
         uuid,
         url,
         local,
         title,
         description,
-        begins_on,
-        ends_on,
+        beginsOn,
+        endsOn,
         status,
         visibility,
         thumbnail,
@@ -72,16 +74,24 @@ export const FETCH_EVENTS = gql`
         category {
             title,
         },
+        participants {
+            role,
+            actor {
+                preferredUsername,
+                avatarUrl,
+                name
+            }
         }
     }
+}
 `;
 
 export const CREATE_EVENT = gql`
     mutation CreateEvent(
         $title: String!,
         $description: String!,
-        $organizerActorId: Int!,
-        $categoryId: Int!,
+        $organizerActorId: String!,
+        $category: String!,
         $beginsOn: DateTime!
     ) {
         createEvent(
@@ -89,8 +99,12 @@ export const CREATE_EVENT = gql`
             description: $description,
             beginsOn: $beginsOn,
             organizerActorId: $organizerActorId,
-            categoryId: $categoryId
-        )
+            category: $category
+        ) {
+            id,
+            uuid,
+            title
+        }
 }
 `;
 
@@ -104,5 +118,17 @@ export const EDIT_EVENT = gql`
     EditEvent(title: $title, description: $description, organizerActorId: $organizerActorId, categoryId: $categoryId) {
     uuid
     }
+}
+`;
+
+export const JOIN_EVENT = gql`
+    mutation JoinEvent(
+        $uuid: String!,
+        $username: String!    
+    ) {
+        joinEvent(
+            uuid: $uuid,
+            username: $username
+        )
 }
 `;

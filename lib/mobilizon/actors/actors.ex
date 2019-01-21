@@ -77,9 +77,30 @@ defmodule Mobilizon.Actors do
     Repo.all(from(a in Actor, where: a.user_id == ^user_id))
   end
 
-  def get_actor_with_everything!(id) do
-    actor = Repo.get!(Actor, id)
-    Repo.preload(actor, [:organized_events, :followers, :followings])
+  @spec get_actor_with_everything(integer()) :: Ecto.Query
+  defp do_get_actor_with_everything(id) do
+    from(a in Actor, where: a.id == ^id, preload: [:organized_events, :followers, :followings])
+  end
+
+  @doc """
+  Returns an actor with every relation
+  """
+  @spec get_actor_with_everything(integer()) :: Mobilizon.Actors.Actor.t()
+  def get_actor_with_everything(id) do
+    id
+    |> do_get_actor_with_everything
+    |> Repo.one()
+  end
+
+  @doc """
+  Returns an actor with every relation
+  """
+  @spec get_local_actor_with_everything(integer()) :: Mobilizon.Actors.Actor.t()
+  def get_local_actor_with_everything(id) do
+    id
+    |> do_get_actor_with_everything
+    |> where([a], is_nil(a.domain))
+    |> Repo.one()
   end
 
   @doc """
@@ -608,6 +629,19 @@ defmodule Mobilizon.Actors do
 
     email_msg = Map.get(changeset, :email) || [:empty_email]
     {:error, hd(email_msg)}
+  end
+
+  @doc """
+  Create a new person actor
+  """
+  def new_person(args) do
+    key = :public_key.generate_key({:rsa, 2048, 65_537})
+    entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
+    pem = [entry] |> :public_key.pem_encode() |> String.trim_trailing()
+    args = Map.put(args, :keys, pem)
+
+    actor = Mobilizon.Actors.Actor.registration_changeset(%Mobilizon.Actors.Actor{}, args)
+    Mobilizon.Repo.insert(actor)
   end
 
   def register_bot_account(%{name: name, summary: summary}) do

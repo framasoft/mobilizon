@@ -24,10 +24,12 @@ defmodule Mobilizon.Actors.Service.ResetPassword do
       {:ok, user}
     else
       {:error, %Ecto.Changeset{errors: [password: {"registration.error.password_too_short", _}]}} ->
-        {:error, :password_too_short}
+        {:error,
+         "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."}
 
       _err ->
-        {:error, :invalid_token}
+        {:error,
+         "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."}
     end
   end
 

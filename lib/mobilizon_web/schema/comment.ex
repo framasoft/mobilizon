@@ -6,6 +6,7 @@ defmodule MobilizonWeb.Schema.CommentType do
 
   @desc "A comment"
   object :comment do
+    field(:id, :id, description: "Internal ID for this comment")
     field(:uuid, :uuid)
     field(:url, :string)
     field(:local, :boolean)

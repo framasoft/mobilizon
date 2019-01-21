@@ -104,7 +104,7 @@ defmodule MobilizonWeb.Schema do
   end
 
   def plugins do
-    [Absinthe.Middleware.Dataloader | Absinthe.Plugin.defaults()]
+    [Absinthe.Middleware.Dataloader] ++ Absinthe.Plugin.defaults()
   end
 
   @desc """
@@ -175,6 +175,11 @@ defmodule MobilizonWeb.Schema do
       resolve(&Resolvers.Person.find_person/3)
     end
 
+    @desc "Get the persons for an user"
+    field :identities, list_of(:person) do
+      resolve(&Resolvers.Person.identities/3)
+    end
+
     @desc "Get the list of categories"
     field :categories, non_null(list_of(:category)) do
       arg(:page, :integer, default_value: 1)
@@ -201,7 +206,7 @@ defmodule MobilizonWeb.Schema do
       arg(:publish_at, :datetime)
       arg(:online_address, :string)
       arg(:phone_address, :string)
-      arg(:organizer_actor_username, non_null(:string))
+      arg(:organizer_actor_id, non_null(:id))
       arg(:category, non_null(:string))
 
       resolve(&Resolvers.Event.create_event/3)
@@ -271,6 +276,16 @@ defmodule MobilizonWeb.Schema do
     field :change_default_actor, :user do
       arg(:preferred_username, non_null(:string))
       resolve(&Resolvers.User.change_default_actor/3)
+    end
+
+    @desc "Create a new person for user"
+    field :create_person, :person do
+      arg(:preferred_username, non_null(:string))
+      arg(:name, :string, description: "The displayed name for the new profile")
+
+      arg(:description, :string, description: "The summary for the new profile", default_value: "")
+
+      resolve(&Resolvers.Person.create_person/3)
     end
 
     @desc "Create a group"

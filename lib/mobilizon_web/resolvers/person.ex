@@ -3,6 +3,7 @@ defmodule MobilizonWeb.Resolvers.Person do
   Handles the person-related GraphQL calls
   """
   alias Mobilizon.Actors
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.ActivityPub
 
   @deprecated "Use find_person/3 or find_group/3 instead"
@@ -38,5 +39,29 @@ defmodule MobilizonWeb.Resolvers.Person do
 
   def get_current_person(_parent, _args, _resolution) do
     {:error, "You need to be logged-in to view current person"}
+  end
+
+  @doc """
+  Returns the list of identities for the logged-in user
+  """
+  def identities(_parent, _args, %{context: %{current_user: user}}) do
+    {:ok, Actors.get_actors_for_user(user)}
+  end
+
+  def identities(_parent, _args, _resolution) do
+    {:error, "You need to be logged-in to view your list of identities"}
+  end
+
+  def create_person(_parent, %{preferred_username: preferred_username} = args, %{
+        context: %{current_user: user}
+      }) do
+    args = Map.put(args, :user_id, user.id)
+
+    with {:ok, %Actor{} = new_person} <- Actors.new_person(args) do
+      {:ok, new_person}
+    else
+      {:error, %Ecto.Changeset{} = e} ->
+        {:error, "Unable to create a profile with this username"}
+    end
   end
 end

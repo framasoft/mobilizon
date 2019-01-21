@@ -95,25 +95,29 @@ defmodule Mobilizon.Factory do
 
   def event_factory do
     actor = build(:actor)
+    start = Timex.now()
+    uuid = Ecto.UUID.generate()
 
     %Mobilizon.Events.Event{
       title: sequence("Ceci est un événement"),
       description: "Ceci est une description avec une première phrase assez longue,
       puis sur une seconde ligne",
-      begins_on: nil,
-      ends_on: nil,
+      begins_on: start,
+      ends_on: Timex.shift(start, hours: 2),
       organizer_actor: actor,
       category: build(:category),
       physical_address: build(:address),
       visibility: :public,
-      url: "@#{actor.url}/#{Ecto.UUID.generate()}"
+      url: "#{actor.url}/#{uuid}",
+      uuid: uuid
     }
   end
 
   def participant_factory do
     %Mobilizon.Events.Participant{
       event: build(:event),
-      actor: build(:actor)
+      actor: build(:actor),
+      role: 0
     }
   end
 

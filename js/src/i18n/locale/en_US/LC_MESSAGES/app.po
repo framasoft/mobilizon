@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mobilizon 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-24 16:25+0200\n"
+"POT-Creation-Date: 2019-01-17 16:08+0100\n"
 "PO-Revision-Date: 2018-10-24 16:25+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,14 +17,178 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/components/Account/Register.vue:70
+#: src/App.vue:8
+msgid "© The Mobilizon Contributors %{date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks"
+msgstr ""
+
+#: src/components/Account/Register.vue:89
 msgid "A validation email was sent to %{email}"
 msgstr "A validation email was sent to %{email}"
 
-#: src/components/Account/Register.vue:71
+#: src/components/Account/Register.vue:26
+msgid "About this instance"
+msgstr ""
+
+#: src/components/Account/Register.vue:92
 msgid "Before you can login, you need to click on the link inside it to validate your account"
 msgstr "Before you can login, you need to click on the link inside it to validate your account"
 
-#: src/components/Home.vue:14
+#: src/components/Category/Create.vue:7
+msgid "Create a new category"
+msgstr ""
+
+#: src/components/Category/Create.vue:34
+msgid "Create category"
+msgstr ""
+
+#: src/components/Account/Register.vue:16
+msgid "Create your communities and your events"
+msgstr ""
+
+#: src/components/Account/Profile.vue:48 src/components/Category/List.vue:21
+#: src/components/Event/Event.vue:41
+msgid "Delete"
+msgstr ""
+
+#: src/components/Account/Register.vue:80
+msgid "Didn't receive the instructions ?"
+msgstr ""
+
+#: src/components/Event/Event.vue:36
+msgid "Download"
+msgstr ""
+
+#: src/components/Event/Event.vue:31
+msgid "Edit"
+msgstr ""
+
+#: src/components/Account/Validate.vue:8
+msgid "Error while validating account"
+msgstr ""
+
+#: src/components/Category/List.vue:18
+msgid "Explore"
+msgstr ""
+
+#: src/components/Account/Register.vue:14
+msgid "Features"
+msgstr ""
+
+#: src/components/Account/Login.vue:46
+msgid "Forgot your password ?"
+msgstr ""
+
+#: src/components/Account/Register.vue:20
+msgid ""
+"Learn more on\n"
+"            <a target=\"_blank\" href=\"https://joinmobilizon.org\">joinmobilizon.org</a>"
+msgstr ""
+
+#: src/components/NavBar.vue:26
+msgid "Log in"
+msgstr ""
+
+#: src/components/Account/Login.vue:38
+msgid "Login"
+msgstr ""
+
+#: src/components/Account/Register.vue:32
+msgid "meditate a bit"
+msgstr ""
+
+#: src/components/Home.vue:33
+msgid "No events found"
+msgstr ""
+
+#: src/components/Account/Profile.vue:29
+msgid "Organized"
+msgstr ""
+
+#: src/components/Account/Register.vue:17
+msgid "Other stuff…"
+msgstr ""
+
+#: src/components/Account/SendPasswordReset.vue:4
+msgid "Password reset"
+msgstr ""
+
+#: src/components/Account/Register.vue:31
+msgid "Please be nice to each other"
+msgstr ""
+
+#: src/components/Account/ResendConfirmation.vue:21
+#: src/components/Account/SendPasswordReset.vue:22
+msgid "Please check you spam folder if you didn't receive the email."
+msgstr ""
+
+#: src/components/Account/Register.vue:35
+msgid "Please read the full rules"
+msgstr ""
+
+#: src/components/Account/Register.vue:72 src/components/Home.vue:9
 msgid "Register"
 msgstr "Register"
+
+#: src/components/Account/Register.vue:5
+msgid "Register an account on Mobilizon!"
+msgstr ""
+
+#: src/components/Account/ResendConfirmation.vue:4
+msgid "Resend confirmation email"
+msgstr ""
+
+#: src/components/Account/PasswordReset.vue:26
+msgid "Reset my password"
+msgstr ""
+
+#: src/components/Account/ResendConfirmation.vue:11
+msgid "Send confirmation email again"
+msgstr ""
+
+#: src/components/Account/SendPasswordReset.vue:12
+msgid "Send email to reset my password"
+msgstr ""
+
+#: src/components/NavBar.vue:22
+msgid "Sign up"
+msgstr ""
+
+#: src/components/Account/Profile.vue:43
+msgid "User logout"
+msgstr ""
+
+#: src/components/Event/Event.vue:50
+msgid "Vous avez annoncé aller à cet événement."
+msgstr ""
+
+#: src/components/Event/Event.vue:46
+msgid "Vous êtes organisateur de cet événement."
+msgstr ""
+
+#: src/components/Account/SendPasswordReset.vue:17
+msgid "We just sent an email to %{email}"
+msgstr ""
+
+#: src/components/Account/ResendConfirmation.vue:16
+msgid "We just sent another confirmation email to %{email}"
+msgstr ""
+
+#: src/components/Home.vue:16
+msgid "Welcome back %{username}"
+msgstr ""
+
+#: src/components/Account/Login.vue:4
+msgid "Welcome back!"
+msgstr ""
+
+#: src/components/Account/Validate.vue:12
+msgid "Your account has been validated"
+msgstr ""
+
+#: src/components/Account/Validate.vue:3
+msgid "Your account is being validated"
+msgstr ""
+
+#: src/components/Account/Register.vue:28
+msgid "Your local administrator resumed it's policy:"
+msgstr ""

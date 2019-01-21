@@ -1,24 +1,24 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import PageNotFound from '@/components/PageNotFound.vue';
-import Home from '@/components/Home.vue';
-import Event from '@/components/Event/Event.vue';
-import EventList from '@/components/Event/EventList.vue';
-import Location from '@/components/Location.vue';
-import CreateEvent from '@/components/Event/Create.vue';
-import CategoryList from '@/components/Category/List.vue';
-import CreateCategory from '@/components/Category/Create.vue';
-import Register from '@/components/Account/Register.vue';
-import Login from '@/components/Account/Login.vue';
-import Validate from '@/components/Account/Validate.vue';
-import ResendConfirmation from '@/components/Account/ResendConfirmation.vue';
-import SendPasswordReset from '@/components/Account/SendPasswordReset.vue';
-import PasswordReset from '@/components/Account/PasswordReset.vue';
-import Account from '@/components/Account/Account.vue';
-import CreateGroup from '@/components/Group/Create.vue';
-import Group from '@/components/Group/Group.vue';
-import GroupList from '@/components/Group/GroupList.vue';
-import Identities from '../components/Account/Identities.vue';
+import PageNotFound from '@/views/PageNotFound.vue';
+import Home from '@/views/Home.vue';
+import Event from '@/views/Event/Event.vue';
+import EventList from '@/views/Event/EventList.vue';
+import Location from '@/views/Location.vue';
+import CreateEvent from '@/views/Event/Create.vue';
+import CategoryList from '@/views/Category/List.vue';
+import CreateCategory from '@/views/Category/Create.vue';
+import Register from '@/views/Account/Register.vue';
+import Login from '@/views/User/Login.vue';
+import Validate from '@/views/User/Validate.vue';
+import ResendConfirmation from '@/views/User/ResendConfirmation.vue';
+import SendPasswordReset from '@/views/User/SendPasswordReset.vue';
+import PasswordReset from '@/views/User/PasswordReset.vue';
+import Profile from '@/views/Account/Profile.vue';
+import CreateGroup from '@/views/Group/Create.vue';
+import Group from '@/views/Group/Group.vue';
+import GroupList from '@/views/Group/GroupList.vue';
+import Identities from '@/views/Account/Identities.vue';
 
 Vue.use(Router);
 
@@ -45,7 +45,7 @@ const router = new Router({
       meta: { requiredAuth: true },
     },
     {
-      path: '/events/:id(\\d+)/edit',
+      path: '/events/:id/edit',
       name: 'EditEvent',
       component: CreateEvent,
       props: true,
@@ -124,7 +124,7 @@ const router = new Router({
       meta: { requiredAuth: false },
     },
     {
-      path: '/group-create',
+      path: '/groups/create',
       name: 'CreateGroup',
       component: CreateGroup,
       meta: { requiredAuth: true },
@@ -138,8 +138,8 @@ const router = new Router({
     },
     {
       path: '/@:name',
-      name: 'Account',
-      component: Account,
+      name: 'Profile',
+      component: Profile,
       props: true,
       meta: { requiredAuth: false },
     },

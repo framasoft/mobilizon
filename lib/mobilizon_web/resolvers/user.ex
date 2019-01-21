@@ -36,7 +36,7 @@ defmodule MobilizonWeb.Resolvers.User do
         {:error, "User with email not found"}
 
       {:error, :unauthorized} ->
-        {:error, "Impossible to authenticate"}
+        {:error, "Impossible to authenticate, either your email or password are invalid."}
     end
   end
 

@@ -14,12 +14,12 @@ defmodule MobilizonWeb.API.Events do
         %{
           title: title,
           description: description,
-          organizer_actor_username: organizer_actor_username,
+          organizer_actor_id: organizer_actor_id,
           begins_on: begins_on,
           category: category
         } = args
       ) do
-    with %Actor{url: url} = actor <- Actors.get_local_actor_by_name(organizer_actor_username),
+    with %Actor{url: url} = actor <- Actors.get_local_actor_with_everything(organizer_actor_id),
          title <- String.trim(title),
          mentions <- Formatter.parse_mentions(description),
          visibility <- Map.get(args, :visibility, "public"),

@@ -42,7 +42,7 @@ defmodule Mobilizon.Actors.Actor do
     field(:shared_inbox_url, :string)
     field(:type, Mobilizon.Actors.ActorTypeEnum, default: :Person)
     field(:name, :string)
-    field(:domain, :string)
+    field(:domain, :string, default: nil)
     field(:summary, :string)
     field(:preferred_username, :string)
     field(:keys, :string)
