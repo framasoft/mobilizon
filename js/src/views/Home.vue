@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="hero is-link" v-if="!currentUser.id">
+    <section class="hero is-link" v-if="!currentUser.id || !loggedPerson">
       <div class="hero-body">
         <div class="container">
           <h1 class="title">Find events you like</h1>
@@ -43,7 +43,7 @@ import { FETCH_EVENTS } from "@/graphql/event";
 import { Component, Vue } from "vue-property-decorator";
 import EventCard from "@/components/Event/EventCard.vue";
 import { LOGGED_PERSON } from "@/graphql/actor";
-import { IPerson } from "../types/actor.model";
+import { IPerson } from "@/types/actor.model";
 import { ICurrentUser } from "@/types/current-user.model";
 import { CURRENT_USER_CLIENT } from "@/graphql/user";
 

@@ -28,7 +28,7 @@
           </router-link>
           <router-link
             class="button is-light"
-            v-if="currentUser.id"
+            v-if="currentUser.id && loggedPerson"
             :to="{ name: 'Profile', params: { name: loggedPerson.preferredUsername} }"
           >
             <figure class="image is-24x24">
@@ -43,27 +43,27 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import { AUTH_USER_ACTOR } from '@/constants';
-import { SEARCH } from '@/graphql/search';
-import { CURRENT_USER_CLIENT } from '@/graphql/user';
-import { onLogout } from '@/vue-apollo';
-import { deleteUserData } from '@/utils/auth';
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { AUTH_USER_ACTOR } from "@/constants";
+import { SEARCH } from "@/graphql/search";
+import { CURRENT_USER_CLIENT } from "@/graphql/user";
+import { onLogout } from "@/vue-apollo";
+import { deleteUserData } from "@/utils/auth";
 import { LOGGED_PERSON } from "@/graphql/actor";
 import { IPerson } from "../types/actor.model";
 
-  @Component({
+@Component({
   apollo: {
     search: {
       query: SEARCH,
       variables() {
         return {
-          searchText: this.searchText,
+          searchText: this.searchText
         };
       },
       skip() {
         return !this.searchText;
-      },
+      }
     },
     currentUser: {
       query: CURRENT_USER_CLIENT
@@ -71,7 +71,7 @@ import { IPerson } from "../types/actor.model";
     loggedPerson: {
       query: LOGGED_PERSON
     }
-  },
+  }
 })
 export default class NavBar extends Vue {
   notifications = [
@@ -128,12 +128,11 @@ export default class NavBar extends Vue {
   }
 
   logout() {
-    alert('logout !');
+    alert("logout !");
 
     deleteUserData();
 
     return onLogout(this.$apollo);
   }
-
 }
 </script>
