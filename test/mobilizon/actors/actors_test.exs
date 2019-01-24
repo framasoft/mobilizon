@@ -69,14 +69,14 @@ defmodule Mobilizon.ActorsTest do
       assert actor_id == Actors.get_actor_for_user(user).id
     end
 
-    test "get_actor_with_everything!/1 returns the actor with it's organized events", %{
+    test "get_actor_with_everything/1 returns the actor with it's organized events", %{
       actor: actor
     } do
-      assert Actors.get_actor_with_everything!(actor.id).organized_events == []
+      assert Actors.get_actor_with_everything(actor.id).organized_events == []
       event = insert(:event, organizer_actor: actor)
 
       event_found_id =
-        Actors.get_actor_with_everything!(actor.id).organized_events |> hd |> Map.get(:id)
+        Actors.get_actor_with_everything(actor.id).organized_events |> hd |> Map.get(:id)
 
       assert event_found_id == event.id
     end
@@ -573,15 +573,15 @@ defmodule Mobilizon.ActorsTest do
 
     test "follow/3 makes an actor follow another", %{actor: actor, target_actor: target_actor} do
       # Preloading followers/followings
-      actor = Actors.get_actor_with_everything!(actor.id)
-      target_actor = Actors.get_actor_with_everything!(target_actor.id)
+      actor = Actors.get_actor_with_everything(actor.id)
+      target_actor = Actors.get_actor_with_everything(target_actor.id)
 
       {:ok, follower} = Actor.follow(target_actor, actor)
       assert follower.actor.id == actor.id
 
       # Referesh followers/followings
-      actor = Actors.get_actor_with_everything!(actor.id)
-      target_actor = Actors.get_actor_with_everything!(target_actor.id)
+      actor = Actors.get_actor_with_everything(actor.id)
+      target_actor = Actors.get_actor_with_everything(target_actor.id)
 
       assert target_actor.followers |> Enum.map(& &1.actor_id) == [actor.id]
       assert actor.followings |> Enum.map(& &1.target_actor_id) == [target_actor.id]

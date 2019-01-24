@@ -1,14 +1,9 @@
 import gql from 'graphql-tag';
 
-export const FETCH_ACTOR = gql`
+export const FETCH_PERSON = gql`
 query($name:String!) {
-  actor(preferredUsername: $name) {
+  person(preferredUsername: $name) {
     url,
-    outboxUrl,
-    inboxUrl,
-    followingUrl,
-    followersUrl,
-    sharedInboxUrl,
     name,
     domain,
     summary,
@@ -18,22 +13,36 @@ query($name:String!) {
     bannerUrl,
     organizedEvents {
         uuid,
-        title,
-        description,
-        organizer_actor {
-            avatarUrl,
-            preferred_username,
-            name,
-        }
+        title
     },
   }
 }
 `;
 
-export const LOGGED_ACTOR = gql`
+export const LOGGED_PERSON = gql`
 query {
-  loggedActor {
+  loggedPerson {
+    id,
     avatarUrl,
     preferredUsername,
   }
 }`;
+
+export const IDENTITIES = gql`
+query {
+  identities {
+    avatarUrl,
+    preferredUsername,
+    name
+  }
+}`;
+
+export const CREATE_PERSON = gql`
+mutation CreatePerson($preferredUsername: String!) {
+  createPerson(preferredUsername: $preferredUsername) {
+    preferredUsername,
+    name,
+    avatarUrl
+  }
+}
+`

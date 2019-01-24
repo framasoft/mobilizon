@@ -5,12 +5,14 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
   use Absinthe.Schema.Notation
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   import_types(MobilizonWeb.Schema.UserType)
+  alias Mobilizon.Events
 
   @desc """
   Represents a person identity
   """
   object :person do
     interfaces([:actor])
+    field(:id, :id, description: "Internal ID for this person")
     field(:user, :user, description: "The user this actor is associated to")
 
     field(:member_of, list_of(:member), description: "The list of groups this person is member of")

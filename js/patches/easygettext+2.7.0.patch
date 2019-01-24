@@ -1,0 +1,41 @@
+patch-package
+--- a/node_modules/easygettext/src/extract-cli.js
++++ b/node_modules/easygettext/src/extract-cli.js
+@@ -22,9 +22,12 @@ const endDelimiter = argv.endDelimiter === undefined ? constants.DEFAULT_DELIMIT
+ const extraAttribute = argv.attribute || false;
+ const extraFilter = argv.filter || false;
+ const filterPrefix = argv.filterPrefix || constants.DEFAULT_FILTER_PREFIX;
++const parseScript = argv.parseScript === undefined ? true : argv.parseScript === 'true';
+ 
+ if (!quietMode && (!files || files.length === 0)) {
+-  console.log('Usage:\n\tgettext-extract [--attribute EXTRA-ATTRIBUTE] [--filterPrefix FILTER-PREFIX] [--output OUTFILE] <FILES>');
++  console.log(
++    'Usage:\n\tgettext-extract [--attribute EXTRA-ATTRIBUTE] [--filterPrefix FILTER-PREFIX] [--parseScript BOOLEAN] [--output OUTFILE] <FILES>',
++  );
+   process.exit(1);
+ }
+ 
+@@ -54,7 +57,7 @@ const extractor = new extract.Extractor({
+ });
+ 
+ 
+-files.forEach(function(filename) {
++files.forEach(function (filename) {
+   let file = filename;
+   const ext = file.split('.').pop();
+   if (ALLOWED_EXTENSIONS.indexOf(ext) === -1) {
+@@ -63,9 +66,13 @@ files.forEach(function(filename) {
+   }
+   console.log(`[${PROGRAM_NAME}] extracting: '${filename}`);
+   try {
+-    let data = fs.readFileSync(file, {encoding: 'utf-8'}).toString();
++    let data = fs.readFileSync(file, { encoding: 'utf-8' }).toString();
+     extractor.parse(file, extract.preprocessTemplate(data, ext));
+ 
++    if (!parseScript) {
++      return;
++    }
++
+     if (ext !== 'js') {
+       data = extract.preprocessScriptTags(data, ext);
+     }

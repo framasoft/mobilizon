@@ -68,11 +68,11 @@ defmodule Mobilizon.Events.Event do
       :large_image,
       :publish_at,
       :online_address,
-      :phone_address
+      :phone_address,
+      :uuid
     ])
     |> cast_assoc(:tags)
     |> cast_assoc(:physical_address)
-    |> build_url()
     |> validate_required([
       :title,
       :begins_on,
@@ -81,32 +81,5 @@ defmodule Mobilizon.Events.Event do
       :url,
       :uuid
     ])
-  end
-
-  @spec build_url(Ecto.Changeset.t()) :: Ecto.Changeset.t()
-  defp build_url(%Ecto.Changeset{changes: %{url: _url}} = changeset), do: changeset
-
-  defp build_url(%Ecto.Changeset{changes: %{organizer_actor: organizer_actor}} = changeset) do
-    organizer_actor
-    |> Actor.actor_acct_from_actor()
-    |> do_build_url(changeset)
-  end
-
-  defp build_url(%Ecto.Changeset{changes: %{organizer_actor_id: organizer_actor_id}} = changeset) do
-    organizer_actor_id
-    |> Mobilizon.Actors.get_actor!()
-    |> Actor.actor_acct_from_actor()
-    |> do_build_url(changeset)
-  end
-
-  defp build_url(%Ecto.Changeset{} = changeset), do: changeset
-
-  @spec do_build_url(String.t(), Ecto.Changeset.t()) :: Ecto.Changeset.t()
-  defp do_build_url(actor_acct, changeset) do
-    uuid = Ecto.UUID.generate()
-
-    changeset
-    |> put_change(:uuid, uuid)
-    |> put_change(:url, "#{MobilizonWeb.Endpoint.url()}/@#{actor_acct}/#{uuid}")
   end
 end

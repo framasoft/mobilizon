@@ -5,12 +5,14 @@ defmodule MobilizonWeb.Schema.ActorInterface do
   use Absinthe.Schema.Notation
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Events
 
   import_types(MobilizonWeb.Schema.Actors.FollowerType)
   import_types(MobilizonWeb.Schema.EventType)
 
   @desc "An ActivityPub actor"
   interface :actor do
+    field(:id, :id, description: "Internal ID for this actor")
     field(:url, :string, description: "The ActivityPub actor's URL")
     field(:type, :actor_type, description: "The type of Actor (Person, Group,…)")
     field(:name, :string, description: "The actor's displayed name")
@@ -51,6 +53,9 @@ defmodule MobilizonWeb.Schema.ActorInterface do
 
       %Actor{type: :Group}, _ ->
         :group
+
+      _, _ ->
+        nil
     end)
   end
 

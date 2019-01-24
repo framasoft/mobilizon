@@ -3,6 +3,7 @@ defmodule MobilizonWeb.Schema.EventType do
   Schema representation for Event
   """
   use Absinthe.Schema.Notation
+  alias Mobilizon.Actors
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   import_types(MobilizonWeb.Schema.AddressType)
   import_types(MobilizonWeb.Schema.Events.ParticipantType)
@@ -10,6 +11,7 @@ defmodule MobilizonWeb.Schema.EventType do
 
   @desc "An event"
   object :event do
+    field(:id, :id, description: "Internal ID for this event")
     field(:uuid, :uuid, description: "The Event UUID")
     field(:url, :string, description: "The ActivityPub Event URL")
     field(:local, :boolean, description: "Whether the event is local or not")
@@ -28,7 +30,7 @@ defmodule MobilizonWeb.Schema.EventType do
     field(:online_address, :online_address, description: "Online address of the event")
     field(:phone_address, :phone_address, description: "Phone address for the event")
 
-    field(:organizer_actor, :person,
+    field(:organizer_actor, :actor,
       resolve: dataloader(Actors),
       description: "The event's organizer (as a person)"
     )

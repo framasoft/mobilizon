@@ -37,7 +37,7 @@ translations: ./$(OUTPUT_DIR)/translations.json
 	mkdir -p $(dir $@)
 	which gettext-extract
 # Extract gettext strings from templates files and create a POT dictionary template.
-	gettext-extract --attribute v-translate --quiet --output $@ $(GETTEXT_HTML_SOURCES)
+	gettext-extract --attribute v-translate --quiet --parseScript false --output $@ $(GETTEXT_HTML_SOURCES)
 # Extract gettext strings from JavaScript files.
 	xgettext --language=JavaScript --keyword=npgettext:1c,2,3 \
 		--from-code=utf-8 --join-existing --no-wrap \

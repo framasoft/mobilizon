@@ -535,7 +535,8 @@ defmodule Mobilizon.Service.ActivityPub do
 
   defp ical_event_to_activity(%ExIcal.Event{} = ical_event, %Actor{} = actor, _source) do
     # Logger.debug(inspect ical_event)
-    # TODO : refactor me !
+    # TODO : Use MobilizonWeb.API instead
+    # TODO : refactor me and move me somewhere else!
     # TODO : also, there should be a form of cache that allows this to be more efficient
     category =
       if is_nil(ical_event.categories) do

@@ -4,7 +4,6 @@ defmodule MobilizonWeb.Resolvers.Event do
   """
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Activity
-  alias Mobilizon.Actors
   alias Mobilizon.Events.Event
 
   # We limit the max number of events that can be retrieved
@@ -39,8 +38,8 @@ defmodule MobilizonWeb.Resolvers.Event do
   @doc """
   List participants for event (through an event request)
   """
-  def list_participants_for_event(%{uuid: uuid}, %{page: page, limit: limit}, _resolution) do
-    {:ok, Mobilizon.Events.list_participants_for_event(uuid, page, limit)}
+  def list_participants_for_event(%Event{uuid: uuid}, _args, _resolution) do
+    {:ok, Mobilizon.Events.list_participants_for_event(uuid, 1, 10)}
   end
 
   @doc """
@@ -79,16 +78,9 @@ defmodule MobilizonWeb.Resolvers.Event do
   @doc """
   Create an event
   """
-  def create_event(_parent, args, %{context: %{current_user: user}}) do
+  def create_event(_parent, args, %{context: %{current_user: _user}}) do
     with {:ok, %Activity{data: %{"object" => %{"type" => "Event"} = object}}} <-
-           args
-           # Set default organizer_actor_id if none set
-           |> Map.update(
-             :organizer_actor_username,
-             Actors.get_actor_for_user(user).preferred_username,
-             & &1
-           )
-           |> MobilizonWeb.API.Events.create_event() do
+           MobilizonWeb.API.Events.create_event(args) do
       {:ok,
        %Event{
          title: object["name"],
