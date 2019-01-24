@@ -9,7 +9,9 @@ defmodule Mobilizon.EventsTest do
     begins_on: "2010-04-17 14:00:00.000000Z",
     description: "some description",
     ends_on: "2010-04-17 14:00:00.000000Z",
-    title: "some title"
+    title: "some title",
+    url: "some url",
+    uuid: "b5126423-f1af-43e4-a923-002a03003ba4"
   }
 
   describe "events" do

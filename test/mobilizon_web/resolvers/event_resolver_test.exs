@@ -5,7 +5,13 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
   alias MobilizonWeb.AbsintheHelpers
   import Mobilizon.Factory
 
-  @event %{description: "some body", title: "some title", begins_on: Ecto.DateTime.utc()}
+  @event %{
+    description: "some body",
+    title: "some title",
+    begins_on: Ecto.DateTime.utc(),
+    uuid: "b5126423-f1af-43e4-a923-002a03003ba4",
+    url: "some url"
+  }
 
   setup %{conn: conn} do
     {:ok, %User{default_actor: %Actor{} = actor} = user} =
@@ -117,7 +123,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                   title: "come to my event",
                   description: "it will be fine",
                   begins_on: "#{DateTime.utc_now() |> DateTime.to_iso8601()}",
-                  organizer_actor_username: "#{actor.preferred_username}",
+                  organizer_actor_id: "#{actor.id}",
                   category: "#{category.title}"
               ) {
                 title,
@@ -131,6 +137,8 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
         |> auth_conn(user)
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
+      require Logger
+      Logger.error(inspect(json_response(res, 200)))
       assert json_response(res, 200)["data"]["createEvent"]["title"] == "come to my event"
     end
 

@@ -52,7 +52,7 @@ defmodule MobilizonWeb.Resolvers.Person do
     {:error, "You need to be logged-in to view your list of identities"}
   end
 
-  def create_person(_parent, %{preferred_username: preferred_username} = args, %{
+  def create_person(_parent, %{preferred_username: _preferred_username} = args, %{
         context: %{current_user: user}
       }) do
     args = Map.put(args, :user_id, user.id)
@@ -60,7 +60,7 @@ defmodule MobilizonWeb.Resolvers.Person do
     with {:ok, %Actor{} = new_person} <- Actors.new_person(args) do
       {:ok, new_person}
     else
-      {:error, %Ecto.Changeset{} = e} ->
+      {:error, %Ecto.Changeset{} = _e} ->
         {:error, "Unable to create a profile with this username"}
     end
   end

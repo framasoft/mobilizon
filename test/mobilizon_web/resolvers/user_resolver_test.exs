@@ -336,7 +336,8 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
         context.conn
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "password_too_short"
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
     end
 
     test "test reset_password/3 with an invalid token", context do
@@ -361,7 +362,8 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
         context.conn
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "invalid_token"
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
     end
   end
 
@@ -431,7 +433,8 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
         context.conn
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "Impossible to authenticate"
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "Impossible to authenticate, either your email or password are invalid."
     end
 
     test "test login_user/3 with invalid email", context do

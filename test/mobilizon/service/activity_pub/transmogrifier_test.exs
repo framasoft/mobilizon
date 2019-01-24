@@ -176,7 +176,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
       assert data["type"] == "Follow"
       assert data["id"] == "https://social.tcit.fr/users/tcit#follows/2"
 
-      actor = Actors.get_actor_with_everything!(actor.id)
+      actor = Actors.get_actor_with_everything(actor.id)
       assert Actor.following?(Actors.get_actor_by_url!(data["actor"], true), actor)
     end
 

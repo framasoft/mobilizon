@@ -4,7 +4,6 @@ defmodule MobilizonWeb.Resolvers.Event do
   """
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Activity
-  alias Mobilizon.Actors
   alias Mobilizon.Events.Event
 
   # We limit the max number of events that can be retrieved
@@ -79,7 +78,7 @@ defmodule MobilizonWeb.Resolvers.Event do
   @doc """
   Create an event
   """
-  def create_event(_parent, args, %{context: %{current_user: user}}) do
+  def create_event(_parent, args, %{context: %{current_user: _user}}) do
     with {:ok, %Activity{data: %{"object" => %{"type" => "Event"} = object}}} <-
            MobilizonWeb.API.Events.create_event(args) do
       {:ok,
