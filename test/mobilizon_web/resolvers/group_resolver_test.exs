@@ -114,5 +114,36 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
       assert hd(json_response(res, 200)["errors"])["message"] ==
                "Group with name #{@non_existent_username} not found"
     end
+
+    test "delete_group/3 deletes a group", %{conn: conn, user: user, actor: actor} do
+      group = insert(:group)
+      insert(:member, parent: group, actor: actor, role: 2)
+
+      mutation = """
+          mutation {
+            deleteGroup(
+              actor_id: #{actor.id},
+              group_id: #{group.id}
+            ) {
+                id
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["deleteGroup"]["id"] == group.id
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] =~ "not found"
+    end
   end
 end

@@ -242,6 +242,13 @@ defmodule Mobilizon.Actors do
     |> Repo.insert()
   end
 
+  @doc """
+  Delete a group
+  """
+  def delete_group!(%Actor{type: :Group} = group) do
+    Repo.delete!(group)
+  end
+
   alias Mobilizon.Actors.User
 
   @doc """
@@ -548,6 +555,16 @@ defmodule Mobilizon.Actors do
       actors = [_ | _] ->
         # actors already saved found !
         {:ok, actors}
+    end
+  end
+
+  @doc """
+  Find a group by its actor id
+  """
+  def find_group_by_actor_id(actor_id) do
+    case Repo.get_by(Actor, id: actor_id, type: :Group) do
+      nil -> {:error, :group_not_found}
+      actor -> {:ok, actor}
     end
   end
 
