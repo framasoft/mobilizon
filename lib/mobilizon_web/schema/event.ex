@@ -8,6 +8,7 @@ defmodule MobilizonWeb.Schema.EventType do
   import_types(MobilizonWeb.Schema.AddressType)
   import_types(MobilizonWeb.Schema.Events.ParticipantType)
   import_types(MobilizonWeb.Schema.Events.CategoryType)
+  alias MobilizonWeb.Resolvers
 
   @desc "An event"
   object :event do
@@ -69,5 +70,50 @@ defmodule MobilizonWeb.Schema.EventType do
     value(:tentative, description: "The event is tentative")
     value(:confirmed, description: "The event is confirmed")
     value(:cancelled, description: "The event is cancelled")
+  end
+
+  object :event_queries do
+    @desc "Get all events"
+    field :events, list_of(:event) do
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
+      resolve(&Resolvers.Event.list_events/3)
+    end
+
+    @desc "Get an event by uuid"
+    field :event, :event do
+      arg(:uuid, non_null(:uuid))
+      resolve(&Resolvers.Event.find_event/3)
+    end
+  end
+
+  object :event_mutations do
+    @desc "Create an event"
+    field :create_event, type: :event do
+      arg(:title, non_null(:string))
+      arg(:description, non_null(:string))
+      arg(:begins_on, non_null(:datetime))
+      arg(:ends_on, :datetime)
+      arg(:state, :integer)
+      arg(:status, :integer)
+      arg(:public, :boolean)
+      arg(:thumbnail, :string)
+      arg(:large_image, :string)
+      arg(:publish_at, :datetime)
+      arg(:online_address, :string)
+      arg(:phone_address, :string)
+      arg(:organizer_actor_id, non_null(:id))
+      arg(:category, non_null(:string))
+
+      resolve(&Resolvers.Event.create_event/3)
+    end
+
+    @desc "Delete an event"
+    field :delete_event, :deleted_object do
+      arg(:event_id, non_null(:integer))
+      arg(:actor_id, non_null(:integer))
+
+      resolve(&Resolvers.Event.delete_event/3)
+    end
   end
 end

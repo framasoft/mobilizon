@@ -5,6 +5,7 @@ defmodule MobilizonWeb.Schema.Actors.GroupType do
   use Absinthe.Schema.Notation
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   import_types(MobilizonWeb.Schema.Actors.MemberType)
+  alias MobilizonWeb.Resolvers
 
   @desc """
   Represents a group of actors
