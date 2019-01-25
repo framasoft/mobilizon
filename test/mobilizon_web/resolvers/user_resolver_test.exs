@@ -75,26 +75,21 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
   describe "Resolver: Create an user & actor" do
     @account_creation %{
       email: "test@demo.tld",
-      password: "long password",
-      username: "test_account"
+      password: "long password"
     }
     @account_creation_bad_email %{
       email: "y@l@",
-      password: "long password",
-      username: "test_account"
+      password: "long password"
     }
 
-    test "test create_user_actor/3 creates an user", context do
+    test "test create_user/3 creates an user", context do
       mutation = """
           mutation {
             createUser(
                   email: "#{@account_creation.email}",
                   password: "#{@account_creation.password}",
-                  username: "#{@account_creation.username}"
               ) {
-                default_actor {
-                  preferred_username,
-                },
+                id,
                 email
               }
             }
@@ -104,24 +99,18 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
         context.conn
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert json_response(res, 200)["data"]["createUser"]["default_actor"]["preferred_username"] ==
-               @account_creation.username
-
       assert json_response(res, 200)["data"]["createUser"]["email"] == @account_creation.email
     end
 
-    test "test create_user_actor/3 doesn't create an user with bad email", context do
+    test "test create_user/3 doesn't create an user with bad email", context do
       mutation = """
           mutation {
             createUser(
                   email: "#{@account_creation_bad_email.email}",
                   password: "#{@account_creation.password}",
-                  username: "#{@account_creation.username}"
               ) {
-                default_actor {
-                  preferred_username,
-                },
-                email,
+                id,
+                email
               }
             }
       """
@@ -136,9 +125,9 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
   end
 
   describe "Resolver: Validate an user" do
-    @valid_actor_params %{email: "test@test.tld", password: "testest", username: "test"}
+    @valid_actor_params %{email: "test@test.tld", password: "testest"}
     test "test validate_user/3 validates an user", context do
-      {:ok, %User{default_actor: %Actor{} = _actor} = user} = Actors.register(@valid_actor_params)
+      {:ok, %User{} = user} = Actors.register(@valid_actor_params)
 
       mutation = """
           mutation {
@@ -148,9 +137,6 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
                 token,
                 user {
                   id,
-                  default_actor {
-                    preferredUsername
-                  }
                 },
               }
             }
@@ -160,16 +146,11 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
         context.conn
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert json_response(res, 200)["data"]["validateUser"]["user"]["default_actor"][
-               "preferredUsername"
-             ] == @valid_actor_params.username
-
       assert json_response(res, 200)["data"]["validateUser"]["user"]["id"] == to_string(user.id)
     end
 
     test "test validate_user/3 with invalid token doesn't validate an user", context do
-      {:ok, %User{default_actor: %Actor{} = _actor} = _user} =
-        Actors.register(@valid_actor_params)
+      insert(:user, confirmation_token: "t0t0")
 
       mutation = """
           mutation {
@@ -178,10 +159,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
               ) {
                 token,
                 user {
-                  id,
-                  default_actor {
-                    preferredUsername
-                  }
+                  id
                 },
               }
             }
@@ -191,14 +169,14 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
         context.conn
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "validation_failed"
+      assert hd(json_response(res, 200)["errors"])["message"] == "Unable to validate user"
     end
   end
 
   describe "Resolver: Resend confirmation emails" do
     test "test resend_confirmation_email/3 with valid email resends an validation email",
          context do
-      {:ok, %User{default_actor: %Actor{} = _actor} = user} = Actors.register(@valid_actor_params)
+      {:ok, %User{} = user} = Actors.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
 
       mutation = """
           mutation {
@@ -230,9 +208,6 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
     test "test resend_confirmation_email/3 with invalid email resends an validation email",
          context do
-      {:ok, %User{default_actor: %Actor{} = _actor} = _user} =
-        Actors.register(@valid_actor_params)
-
       mutation = """
           mutation {
             resendConfirmationEmail(
@@ -289,7 +264,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
   describe "Resolver: Reset user's password" do
     test "test reset_password/3 with valid email", context do
-      %User{} = user = insert(:user)
+      {:ok, %User{} = user} = Actors.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
       %Actor{} = insert(:actor, user: user)
       {:ok, _email_sent} = Mobilizon.Actors.Service.ResetPassword.send_password_reset_email(user)
       %User{reset_password_token: reset_password_token} = Mobilizon.Actors.get_user!(user.id)
@@ -369,7 +344,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
   describe "Resolver: Login an user" do
     test "test login_user/3 with valid credentials", context do
-      {:ok, %User{} = user} = Actors.register(@valid_actor_params)
+      {:ok, %User{} = user} = Actors.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
 
       {:ok, %User{} = _user} =
         Actors.update_user(user, %{
@@ -381,14 +356,12 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
       mutation = """
           mutation {
             login(
-                  email: "#{@valid_actor_params.email}",
-                  password: "#{@valid_actor_params.password}",
+                  email: "#{user.email}",
+                  password: "#{user.password}",
               ) {
                 token,
                 user {
-                  default_actor {
-                    preferred_username,
-                  }
+                  id  
                 }
               }
             }
@@ -400,11 +373,10 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
       assert login = json_response(res, 200)["data"]["login"]
       assert Map.has_key?(login, "token") && not is_nil(login["token"])
-      assert login["user"]["default_actor"]["preferred_username"] == @valid_actor_params.username
     end
 
     test "test login_user/3 with invalid password", context do
-      {:ok, %User{} = user} = Actors.register(@valid_actor_params)
+      {:ok, %User{} = user} = Actors.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
 
       {:ok, %User{} = _user} =
         Actors.update_user(user, %{
@@ -416,7 +388,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
       mutation = """
           mutation {
             login(
-                  email: "#{@valid_actor_params.email}",
+                  email: "#{user.email}",
                   password: "bad password",
               ) {
                 token,
@@ -438,15 +410,6 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
     end
 
     test "test login_user/3 with invalid email", context do
-      {:ok, %User{} = user} = Actors.register(@valid_actor_params)
-
-      {:ok, %User{} = _user} =
-        Actors.update_user(user, %{
-          "confirmed_at" => DateTime.utc_now(),
-          "confirmation_sent_at" => nil,
-          "confirmation_token" => nil
-        })
-
       mutation = """
           mutation {
             login(
@@ -474,15 +437,15 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
   describe "Resolver: change default actor for user" do
     test "test change_default_actor/3 with valid actor", context do
       # Prepare user with two actors
-      assert {:ok, %User{id: user_id, default_actor: %Actor{} = actor} = user} =
-               Actors.register(@valid_actor_params)
+      user = insert(:user)
+      insert(:actor, user: user)
 
-      assert {:ok, %User{actors: actors}} = Actors.get_user_with_actors(user_id)
+      assert {:ok, %User{actors: actors}} = Actors.get_user_with_actors(user.id)
 
-      actor_params = @valid_single_actor_params |> Map.put(:user_id, user_id)
+      actor_params = @valid_single_actor_params |> Map.put(:user_id, user.id)
       assert {:ok, %Actor{} = actor2} = Actors.create_actor(actor_params)
 
-      assert {:ok, %User{actors: actors}} = Actors.get_user_with_actors(user_id)
+      assert {:ok, %User{actors: actors}} = Actors.get_user_with_actors(user.id)
       assert length(actors) == 2
 
       mutation = """

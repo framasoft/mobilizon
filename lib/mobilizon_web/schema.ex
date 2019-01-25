@@ -245,9 +245,8 @@ defmodule MobilizonWeb.Schema do
     field :create_user, type: :user do
       arg(:email, non_null(:string))
       arg(:password, non_null(:string))
-      arg(:username, non_null(:string))
 
-      resolve(&Resolvers.User.create_user_actor/3)
+      resolve(handle_errors(&Resolvers.User.create_user/3))
     end
 
     @desc "Validate an user after registration"
@@ -314,18 +313,30 @@ defmodule MobilizonWeb.Schema do
       resolve(&Resolvers.Group.create_group/3)
     end
 
-    @desc "Delete a group"
-    field :delete_group, :deleted_object do
-      arg(:group_id, non_null(:integer))
-      arg(:actor_id, non_null(:integer))
-
-      resolve(&Resolvers.Group.delete_group/3)
-    end
-
     # @desc "Upload a picture"
     # field :upload_picture, :picture do
     #   arg(:file, non_null(:upload))
     #   resolve(&Resolvers.Upload.upload_picture/3)
     # end
+  end
+
+  def handle_errors(fun) do
+    fn source, args, info ->
+      case Absinthe.Resolution.call(fun, source, args, info) do
+        {:error, %Ecto.Changeset{} = changeset} -> format_changeset(changeset)
+        val -> val
+      end
+    end
+  end
+
+  def format_changeset(changeset) do
+    # {:error, [email: {"has already been taken", []}]}
+    errors =
+      changeset.errors
+      |> Enum.map(fn {_key, {value, context}} ->
+        [message: "#{value}", details: context]
+      end)
+
+    {:error, errors}
   end
 end

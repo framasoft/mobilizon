@@ -69,4 +69,42 @@ defmodule MobilizonWeb.Schema.Actors.GroupType do
 
     value(:open, description: "The actor is open to followings")
   end
+
+  object :group_queries do
+    @desc "Get all groups"
+    field :groups, list_of(:group) do
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
+      resolve(&Resolvers.Group.list_groups/3)
+    end
+
+    @desc "Get a group by it's preferred username"
+    field :group, :group do
+      arg(:preferred_username, non_null(:string))
+      resolve(&Resolvers.Group.find_group/3)
+    end
+  end
+
+  object :group_mutations do
+    @desc "Create a group"
+    field :create_group, :group do
+      arg(:preferred_username, non_null(:string), description: "The name for the group")
+      arg(:name, :string, description: "The displayed name for the group")
+      arg(:description, :string, description: "The summary for the group", default_value: "")
+
+      arg(:admin_actor_username, :string,
+        description: "The actor's username which will be the admin (otherwise user's default one)"
+      )
+
+      resolve(&Resolvers.Group.create_group/3)
+    end
+
+    @desc "Delete a group"
+    field :delete_group, :deleted_object do
+      arg(:group_id, non_null(:integer))
+      arg(:actor_id, non_null(:integer))
+
+      resolve(&Resolvers.Group.delete_group/3)
+    end
+  end
 end

@@ -1,7 +1,6 @@
 defmodule MobilizonWeb.Resolvers.EventResolverTest do
   use MobilizonWeb.ConnCase
-  alias Mobilizon.{Events, Actors}
-  alias Mobilizon.Actors.{Actor, User}
+  alias Mobilizon.Events
   alias MobilizonWeb.AbsintheHelpers
   import Mobilizon.Factory
 
@@ -14,8 +13,8 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
   }
 
   setup %{conn: conn} do
-    {:ok, %User{default_actor: %Actor{} = actor} = user} =
-      Actors.register(%{email: "test@test.tld", password: "testest", username: "test"})
+    user = insert(:user)
+    actor = insert(:actor, user: user, preferred_username: "test")
 
     {:ok, conn: conn, actor: actor, user: user}
   end
@@ -137,8 +136,6 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
         |> auth_conn(user)
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      require Logger
-      Logger.error(inspect(json_response(res, 200)))
       assert json_response(res, 200)["data"]["createEvent"]["title"] == "come to my event"
     end
 

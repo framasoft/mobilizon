@@ -13,7 +13,7 @@ defmodule MobilizonWeb.Schema.UserType do
       description: "The user's list of profiles (identities)"
     )
 
-    field(:default_actor, non_null(:person), description: "The user's default actor")
+    field(:default_actor, :person, description: "The user's default actor")
 
     field(:confirmed_at, :datetime,
       description: "The datetime when the user was confirmed/activated"

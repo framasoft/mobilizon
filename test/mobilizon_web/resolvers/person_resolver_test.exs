@@ -1,15 +1,14 @@
 defmodule MobilizonWeb.Resolvers.PersonResolverTest do
   use MobilizonWeb.ConnCase
-  alias Mobilizon.Actors
-  alias Mobilizon.Actors.{User, Actor}
   alias MobilizonWeb.AbsintheHelpers
+  import Mobilizon.Factory
 
-  @valid_actor_params %{email: "test@test.tld", password: "testest", username: "test"}
   @non_existent_username "nonexistent"
 
   describe "Person Resolver" do
     test "find_person/3 returns a person by it's username", context do
-      {:ok, %User{default_actor: %Actor{} = actor} = _user} = Actors.register(@valid_actor_params)
+      user = insert(:user)
+      actor = insert(:actor, user: user)
 
       query = """
       {
@@ -45,7 +44,8 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
     end
 
     test "get_current_person/3 returns the current logged-in actor", context do
-      {:ok, %User{default_actor: %Actor{} = actor} = user} = Actors.register(@valid_actor_params)
+      user = insert(:user)
+      actor = insert(:actor, user: user)
 
       query = """
       {

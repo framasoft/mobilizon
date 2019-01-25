@@ -1,7 +1,5 @@
 defmodule MobilizonWeb.Resolvers.GroupResolverTest do
   use MobilizonWeb.ConnCase
-  alias Mobilizon.Actors
-  alias Mobilizon.Actors.{User, Actor}
   alias MobilizonWeb.AbsintheHelpers
   import Mobilizon.Factory
   require Logger
@@ -10,8 +8,8 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
   @new_group_params %{groupname: "new group"}
 
   setup %{conn: conn} do
-    {:ok, %User{default_actor: %Actor{} = actor} = user} =
-      Actors.register(%{email: "test2@test.tld", password: "testest", username: "test"})
+    user = insert(:user)
+    actor = insert(:actor, user: user)
 
     {:ok, conn: conn, actor: actor, user: user}
   end
