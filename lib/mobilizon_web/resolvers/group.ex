@@ -3,7 +3,7 @@ defmodule MobilizonWeb.Resolvers.Group do
   Handles the group-related GraphQL calls
   """
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.{Actor}
+  alias Mobilizon.Actors.{Actor, User, Member}
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Activity
   require Logger
@@ -67,5 +67,42 @@ defmodule MobilizonWeb.Resolvers.Group do
 
   def create_group(_parent, _args, _resolution) do
     {:error, "You need to be logged-in to create a group"}
+  end
+
+  @doc """
+  Delete an existing group
+  """
+  def delete_group(
+        _parent,
+        %{group_id: group_id, actor_id: actor_id},
+        %{
+          context: %{
+            current_user: user
+          }
+        }
+      ) do
+    with {:ok, %Actor{} = group} <- Actors.find_group_by_actor_id(group_id),
+         {:is_owned, true} <- User.owns_actor(user, actor_id),
+         {:ok, %Member{} = member} <- Member.get_member(actor_id, group.id),
+         {:is_admin, true} <- Member.is_administrator(member),
+         group <- Actors.delete_group!(group) do
+      {:ok, %{id: group.id}}
+    else
+      {:error, :group_not_found} ->
+        {:error, "Group with preferred username not found"}
+
+      {:is_owned, false} ->
+        {:error, "Actor id is not owned by authenticated user"}
+
+      {:error, :member_not_found} ->
+        {:error, "Actor id is not a member of this group"}
+
+      {:is_admin, false} ->
+        {:error, "User is not an administrator of the selected group"}
+    end
+  end
+
+  def delete_group(_parent, _args, _resolution) do
+    {:error, "You need to be logged-in to delete a group"}
   end
 end

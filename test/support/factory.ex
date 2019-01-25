@@ -148,7 +148,8 @@ defmodule Mobilizon.Factory do
   def member_factory do
     %Mobilizon.Actors.Member{
       parent: build(:actor),
-      actor: build(:actor)
+      actor: build(:actor),
+      role: 0
     }
   end
 end

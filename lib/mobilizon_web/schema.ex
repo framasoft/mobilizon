@@ -20,6 +20,11 @@ defmodule MobilizonWeb.Schema do
 
   alias MobilizonWeb.Resolvers
 
+  @desc "A struct containing the id of the deleted object"
+  object :deleted_object do
+    field(:id, :integer)
+  end
+
   @desc "A JWT and the associated user ID"
   object :login do
     field(:token, non_null(:string), description: "A JWT Token for this session")
@@ -299,6 +304,14 @@ defmodule MobilizonWeb.Schema do
       )
 
       resolve(&Resolvers.Group.create_group/3)
+    end
+
+    @desc "Delete a group"
+    field :delete_group, :deleted_object do
+      arg(:group_id, non_null(:integer))
+      arg(:actor_id, non_null(:integer))
+
+      resolve(&Resolvers.Group.delete_group/3)
     end
 
     # @desc "Upload a picture"
