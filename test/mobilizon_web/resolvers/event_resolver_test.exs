@@ -306,5 +306,35 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       assert json_response(res, 200)["errors"] |> hd |> Map.get("message") ==
                "Event with UUID #{event.uuid} not found"
     end
+
+    test "delete_event/3 deletes an event", %{conn: conn, user: user, actor: actor} do
+      event = insert(:event, organizer_actor: actor)
+
+      mutation = """
+          mutation {
+            deleteEvent(
+              actor_id: #{actor.id},
+              event_id: #{event.id}
+            ) {
+                id
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["deleteEvent"]["id"] == event.id
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] =~ "not found"
+    end
   end
 end

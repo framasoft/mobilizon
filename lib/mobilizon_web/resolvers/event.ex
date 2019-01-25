@@ -5,6 +5,7 @@ defmodule MobilizonWeb.Resolvers.Event do
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Activity
   alias Mobilizon.Events.Event
+  alias Mobilizon.Actors.User
 
   # We limit the max number of events that can be retrieved
   @event_max_limit 100
@@ -93,5 +94,32 @@ defmodule MobilizonWeb.Resolvers.Event do
 
   def create_event(_parent, _args, _resolution) do
     {:error, "You need to be logged-in to create events"}
+  end
+
+  @doc """
+  Delete an event
+  """
+  def delete_event(_parent, %{event_id: event_id, actor_id: actor_id}, %{
+        context: %{current_user: user}
+      }) do
+    with {:ok, %Event{} = event} <- Mobilizon.Events.get_event(event_id),
+         {:is_owned, true} <- User.owns_actor(user, actor_id),
+         {:event_can_be_managed, true} <- Event.can_event_be_managed_by(event, actor_id),
+         event <- Mobilizon.Events.delete_event!(event) do
+      {:ok, %{id: event.id}}
+    else
+      {:error, :event_not_found} ->
+        {:error, "Event not found"}
+
+      {:is_owned, false} ->
+        {:error, "Actor id is not owned by authenticated user"}
+
+      {:event_can_be_managed, false} ->
+        {:error, "You cannot delete this event"}
+    end
+  end
+
+  def delete_event(_parent, _args, _resolution) do
+    {:error, "You need to be logged-in to delete an event"}
   end
 end

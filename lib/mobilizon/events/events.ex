@@ -104,6 +104,16 @@ defmodule Mobilizon.Events do
   def get_event!(id), do: Repo.get!(Event, id)
 
   @doc """
+  Gets a single event.
+  """
+  def get_event(id) do
+    case Repo.get(Event, id) do
+      nil -> {:error, :event_not_found}
+      event -> {:ok, event}
+    end
+  end
+
+  @doc """
   Gets an event by it's URL
   """
   def get_event_by_url(url) do
@@ -309,6 +319,15 @@ defmodule Mobilizon.Events do
   """
   def delete_event(%Event{} = event) do
     Repo.delete(event)
+  end
+
+  @doc """
+  Deletes a Event.
+
+  Raises an exception if it fails.
+  """
+  def delete_event!(%Event{} = event) do
+    Repo.delete!(event)
   end
 
   @doc """
