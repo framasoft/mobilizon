@@ -89,7 +89,7 @@ defmodule MobilizonWeb.Resolvers.Group do
       {:ok, %{id: group.id}}
     else
       {:error, :group_not_found} ->
-        {:error, "Group with preferred username not found"}
+        {:error, "Group not found"}
 
       {:is_owned, false} ->
         {:error, "Actor id is not owned by authenticated user"}

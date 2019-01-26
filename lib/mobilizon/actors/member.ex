@@ -36,7 +36,7 @@ defmodule Mobilizon.Actors.Member do
     end
   end
 
-  def is_administrator(%Member{role: 2} = member) do
+  def is_administrator(%Member{role: 2}) do
     {:is_admin, true}
   end
 

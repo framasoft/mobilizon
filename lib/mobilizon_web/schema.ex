@@ -217,6 +217,14 @@ defmodule MobilizonWeb.Schema do
       resolve(&Resolvers.Event.create_event/3)
     end
 
+    @desc "Delete an event"
+    field :delete_event, :deleted_object do
+      arg(:event_id, non_null(:integer))
+      arg(:actor_id, non_null(:integer))
+
+      resolve(&Resolvers.Event.delete_event/3)
+    end
+
     @desc "Create a comment"
     field :create_comment, type: :comment do
       arg(:text, non_null(:string))

@@ -82,4 +82,13 @@ defmodule Mobilizon.Events.Event do
       :uuid
     ])
   end
+
+  def can_event_be_managed_by(%Event{organizer_actor_id: organizer_actor_id}, actor_id)
+      when organizer_actor_id == actor_id do
+    {:event_can_be_managed, true}
+  end
+
+  def can_event_be_managed_by(_event, _actor) do
+    {:event_can_be_managed, false}
+  end
 end
