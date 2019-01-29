@@ -73,21 +73,25 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
   end
 
   describe "Resolver: Create an user & actor" do
-    @account_creation %{
+    @user_creation %{
       email: "test@demo.tld",
-      password: "long password"
+      password: "long password",
+      username: "toto",
+      name: "Sir Toto",
+      summary: "Sir Toto, prince of the functional tests"
     }
-    @account_creation_bad_email %{
+    @user_creation_bad_email %{
       email: "y@l@",
       password: "long password"
     }
 
-    test "test create_user/3 creates an user", context do
+    test "test create_user/3 creates an user and register_person/3 registers a profile",
+         context do
       mutation = """
           mutation {
             createUser(
-                  email: "#{@account_creation.email}",
-                  password: "#{@account_creation.password}",
+                  email: "#{@user_creation.email}",
+                  password: "#{@user_creation.password}",
               ) {
                 id,
                 email
@@ -99,15 +103,141 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
         context.conn
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert json_response(res, 200)["data"]["createUser"]["email"] == @account_creation.email
+      assert json_response(res, 200)["data"]["createUser"]["email"] == @user_creation.email
+
+      mutation = """
+          mutation {
+            registerPerson(
+              preferredUsername: "#{@user_creation.username}",
+              name: "#{@user_creation.name}",
+              summary: "#{@user_creation.summary}",
+              email: "#{@user_creation.email}",
+              ) {
+                preferredUsername,
+                name,
+                summary,
+                avatarUrl,
+              }
+            }
+      """
+
+      res =
+        context.conn
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["data"]["registerPerson"]["preferredUsername"] ==
+               @user_creation.username
+    end
+
+    test "register_person/3 doesn't register a profile from an unknown email", context do
+      mutation = """
+          mutation {
+            createUser(
+                  email: "#{@user_creation.email}",
+                  password: "#{@user_creation.password}",
+              ) {
+                id,
+                email
+              }
+            }
+      """
+
+      context.conn
+      |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      mutation = """
+          mutation {
+            registerPerson(
+              preferredUsername: "#{@user_creation.username}",
+              name: "#{@user_creation.name}",
+              summary: "#{@user_creation.summary}",
+              email: "random",
+              ) {
+                preferredUsername,
+                name,
+                summary,
+                avatarUrl,
+              }
+            }
+      """
+
+      res =
+        context.conn
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "User with email not found"
+    end
+
+    test "register_person/3 can't be called with an existing profile", context do
+      mutation = """
+          mutation {
+            createUser(
+                  email: "#{@user_creation.email}",
+                  password: "#{@user_creation.password}",
+              ) {
+                id,
+                email
+              }
+            }
+      """
+
+      context.conn
+      |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      mutation = """
+          mutation {
+            registerPerson(
+              preferredUsername: "#{@user_creation.username}",
+              name: "#{@user_creation.name}",
+              summary: "#{@user_creation.summary}",
+              email: "#{@user_creation.email}",
+              ) {
+                preferredUsername,
+                name,
+                summary,
+                avatarUrl,
+              }
+            }
+      """
+
+      res =
+        context.conn
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["data"]["registerPerson"]["preferredUsername"] ==
+               @user_creation.username
+
+      mutation = """
+          mutation {
+            registerPerson(
+              preferredUsername: "#{@user_creation.username}",
+              name: "#{@user_creation.name}",
+              summary: "#{@user_creation.summary}",
+              email: "#{@user_creation.email}",
+              ) {
+                preferredUsername,
+                name,
+                summary,
+                avatarUrl,
+              }
+            }
+      """
+
+      res =
+        context.conn
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "You already have a profile for this user"
     end
 
     test "test create_user/3 doesn't create an user with bad email", context do
       mutation = """
           mutation {
             createUser(
-                  email: "#{@account_creation_bad_email.email}",
-                  password: "#{@account_creation.password}",
+                  email: "#{@user_creation_bad_email.email}",
+                  password: "#{@user_creation_bad_email.password}",
               ) {
                 id,
                 email

@@ -39,10 +39,34 @@ query {
 
 export const CREATE_PERSON = gql`
 mutation CreatePerson($preferredUsername: String!) {
-  createPerson(preferredUsername: $preferredUsername) {
+  createPerson(
+      preferredUsername: $preferredUsername,
+      name: $name,
+      summary: $summary
+    ) {
     preferredUsername,
     name,
+    summary,
     avatarUrl
   }
 }
-`
+`;
+
+/**
+ * This one is used only to register the first account. Prefer CREATE_PERSON when creating another identity
+ */
+export const REGISTER_PERSON = gql`
+mutation ($preferredUsername: String!, $name: String!, $summary: String!, $email: String!) {
+  registerPerson(
+      preferredUsername: $preferredUsername,
+      name: $name,
+      summary: $summary,
+      email: $email
+    ) {
+    preferredUsername,
+    name,
+    summary,
+    avatarUrl,
+  }
+}
+`;

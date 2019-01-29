@@ -12,8 +12,8 @@ defmodule MobilizonWeb.Schema.Utils do
     # {:error, [email: {"has already been taken", []}]}
     errors =
       changeset.errors
-      |> Enum.map(fn {_key, {value, context}} ->
-        [message: "#{value}", details: context]
+      |> Enum.map(fn {key, {value, _context}} ->
+        [message: "#{value}", details: key]
       end)
 
     {:error, errors}

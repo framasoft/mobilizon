@@ -30,6 +30,7 @@ defmodule Mobilizon.Actors.User do
       |> cast(attrs, [
         :email,
         :role,
+        :password,
         :password_hash,
         :confirmed_at,
         :confirmation_sent_at,
@@ -38,13 +39,13 @@ defmodule Mobilizon.Actors.User do
         :reset_password_token
       ])
       |> validate_required([:email])
-      |> unique_constraint(:email, message: "registration.error.email_already_used")
-      |> validate_format(:email, ~r/@/)
+      |> unique_constraint(:email, message: "This email is already used.")
+      |> validate_email()
       |> validate_length(
         :password,
         min: 6,
         max: 100,
-        message: "registration.error.password_too_short"
+        message: "The choosen password is too short."
       )
 
     if Map.has_key?(attrs, :default_actor) do
@@ -57,21 +58,13 @@ defmodule Mobilizon.Actors.User do
   def registration_changeset(struct, params) do
     struct
     |> changeset(params)
-    |> cast(params, ~w(password)a, [])
     |> cast_assoc(:default_actor)
     |> validate_required([:email, :password])
-    |> validate_email()
-    |> validate_length(
-      :password,
-      min: 6,
-      max: 100,
-      message: "registration.error.password_too_short"
-    )
     |> hash_password()
     |> save_confirmation_token()
     |> unique_constraint(
       :confirmation_token,
-      message: "regisration.error.confirmation_token_already_in_use"
+      message: "The registration is already in use, this looks like an issue on our side."
     )
   end
 

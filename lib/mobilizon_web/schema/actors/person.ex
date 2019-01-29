@@ -6,6 +6,7 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   alias Mobilizon.Events
   alias MobilizonWeb.Resolvers
+  import MobilizonWeb.Schema.Utils
 
   @desc """
   Represents a person identity
@@ -69,11 +70,24 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
     @desc "Create a new person for user"
     field :create_person, :person do
       arg(:preferred_username, non_null(:string))
-      arg(:name, :string, description: "The displayed name for the new profile")
 
-      arg(:description, :string, description: "The summary for the new profile", default_value: "")
+      arg(:name, :string, description: "The displayed name for the new profile", default_value: "")
 
-      resolve(&Resolvers.Person.create_person/3)
+      arg(:summary, :string, description: "The summary for the new profile", default_value: "")
+
+      resolve(handle_errors(&Resolvers.Person.create_person/3))
+    end
+
+    @desc "Register a first profile on registration"
+    field :register_person, :person do
+      arg(:preferred_username, non_null(:string))
+
+      arg(:name, :string, description: "The displayed name for the new profile", default_value: "")
+
+      arg(:summary, :string, description: "The summary for the new profile", default_value: "")
+      arg(:email, non_null(:string), description: "The email from the user previously created")
+
+      resolve(handle_errors(&Resolvers.Person.register_person/3))
     end
   end
 end

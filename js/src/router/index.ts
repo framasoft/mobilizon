@@ -8,17 +8,12 @@ import Location from '@/views/Location.vue';
 import CreateEvent from '@/views/Event/Create.vue';
 import CategoryList from '@/views/Category/List.vue';
 import CreateCategory from '@/views/Category/Create.vue';
-import Register from '@/views/Account/Register.vue';
-import Login from '@/views/User/Login.vue';
-import Validate from '@/views/User/Validate.vue';
-import ResendConfirmation from '@/views/User/ResendConfirmation.vue';
-import SendPasswordReset from '@/views/User/SendPasswordReset.vue';
-import PasswordReset from '@/views/User/PasswordReset.vue';
 import Profile from '@/views/Account/Profile.vue';
 import CreateGroup from '@/views/Group/Create.vue';
 import Group from '@/views/Group/Group.vue';
 import GroupList from '@/views/Group/GroupList.vue';
 import Identities from '@/views/Account/Identities.vue';
+import userRoutes from './user';
 
 Vue.use(Router);
 
@@ -26,6 +21,7 @@ const router = new Router({
   mode: 'history',
   base: '/',
   routes: [
+    ...userRoutes,
     {
       path: '/',
       name: 'Home',
@@ -68,48 +64,6 @@ const router = new Router({
       name: 'CreateCategory',
       component: CreateCategory,
       meta: { requiredAuth: true },
-    },
-    {
-      path: '/register',
-      name: 'Register',
-      component: Register,
-      props: true,
-      meta: { requiredAuth: false },
-    },
-    {
-      path: '/resend-instructions',
-      name: 'ResendConfirmation',
-      component: ResendConfirmation,
-      props: true,
-      meta: { requiresAuth: false },
-    },
-    {
-      path: '/password-reset/send',
-      name: 'SendPasswordReset',
-      component: SendPasswordReset,
-      props: true,
-      meta: { requiresAuth: false },
-    },
-    {
-      path: '/password-reset/:token',
-      name: 'PasswordReset',
-      component: PasswordReset,
-      meta: { requiresAuth: false },
-      props: true,
-    },
-    {
-      path: '/validate/:token',
-      name: 'Validate',
-      component: Validate,
-      props: true,
-      meta: { requiresAuth: false },
-    },
-    {
-      path: '/login',
-      name: 'Login',
-      component: Login,
-      props: true,
-      meta: { requiredAuth: false },
     },
     {
       path: '/identities',
