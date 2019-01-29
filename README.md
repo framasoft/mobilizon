@@ -22,7 +22,7 @@ make
   * Setup services:
     * Make sure the postgis extension is installed on your system.
     * Create a postgres user with database creation capabilities, using the
-      following: `createuser -d -P elixir` and set `elixir` as the password.
+      following: `createuser -d -P mobilizon` and set `mobilizon` as the password.
     * Create your database with `mix ecto.create`.
     * Create the postgis extension on the database with a postgres user that has
       superuser capabilities: `psql mobilizon_dev`
