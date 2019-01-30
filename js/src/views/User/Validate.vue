@@ -5,8 +5,8 @@
     </h1>
     <div v-else>
       <div v-if="failed">
-        <b-message title="Error" type="is-danger">
-          <translate>Error while validating account</translate>
+        <b-message :title="$gettext('Error while validating account')" type="is-danger">
+          <translate>Either the account is already validated, either the validation token is incorrect.</translate>
         </b-message>
       </div>
       <h1 class="title" v-else>
@@ -28,21 +28,28 @@ export default class Validate extends Vue {
   loading = true;
   failed = false;
 
-  created() {
-    this.validateAction();
+  async created() {
+    await this.validateAction();
   }
 
   async validateAction() {
     try {
-      const data = await this.$apollo.mutate({
+      const { data } = await this.$apollo.mutate({
         mutation: VALIDATE_USER,
         variables: {
           token: this.token
         }
       });
 
-      this.saveUserData(data.data);
-      this.$router.push({ name: "Home" });
+      this.saveUserData(data);
+
+      const user = data.validateUser.user;
+      console.log(user);
+      if (user.defaultActor) {
+        this.$router.push({name: "Home"});
+      } else { // If the user didn't register any profile yet, let's create one for them
+        this.$router.push({ name: 'RegisterProfile', params: {email: user.email, userAlreadyActivated: 'true'} });
+      }
     } catch (err) {
       console.error(err);
       this.failed = true;

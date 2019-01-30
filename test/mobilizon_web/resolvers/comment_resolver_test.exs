@@ -1,14 +1,13 @@
 defmodule MobilizonWeb.Resolvers.CommentResolverTest do
   use MobilizonWeb.ConnCase
-  alias Mobilizon.Actors
-  alias Mobilizon.Actors.{Actor, User}
   alias MobilizonWeb.AbsintheHelpers
+  import Mobilizon.Factory
 
   @comment %{text: "I love this event"}
 
   setup %{conn: conn} do
-    {:ok, %User{default_actor: %Actor{} = actor} = user} =
-      Actors.register(%{email: "test@test.tld", password: "testest", username: "test"})
+    user = insert(:user)
+    actor = insert(:actor, user: user)
 
     {:ok, conn: conn, actor: actor, user: user}
   end

@@ -3,7 +3,7 @@ defmodule MobilizonWeb.Resolvers.Person do
   Handles the person-related GraphQL calls
   """
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Actors.{Actor, User}
   alias Mobilizon.Service.ActivityPub
 
   @deprecated "Use find_person/3 or find_group/3 instead"
@@ -52,6 +52,9 @@ defmodule MobilizonWeb.Resolvers.Person do
     {:error, "You need to be logged-in to view your list of identities"}
   end
 
+  @doc """
+  This function is used to create more identities from an existing user
+  """
   def create_person(_parent, %{preferred_username: _preferred_username} = args, %{
         context: %{current_user: user}
       }) do
@@ -59,9 +62,27 @@ defmodule MobilizonWeb.Resolvers.Person do
 
     with {:ok, %Actor{} = new_person} <- Actors.new_person(args) do
       {:ok, new_person}
+    end
+  end
+
+  @doc """
+  This function is used to register a person afterwards the user has been created (but not activated)
+  """
+  def register_person(_parent, args, _resolution) do
+    with {:ok, %User{} = user} <- Actors.get_user_by_email(args.email),
+         {:no_actor, nil} <- {:no_actor, Actors.get_actor_for_user(user)},
+         args <- Map.put(args, :user_id, user.id),
+         {:ok, %Actor{} = new_person} <- Actors.new_person(args) do
+      {:ok, new_person}
     else
-      {:error, %Ecto.Changeset{} = _e} ->
-        {:error, "Unable to create a profile with this username"}
+      {:error, :user_not_found} ->
+        {:error, "User with email not found"}
+
+      {:no_actor, _} ->
+        {:error, "You already have a profile for this user"}
+
+      {:error, %Ecto.Changeset{} = e} ->
+        {:error, e}
     end
   end
 end

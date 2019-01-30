@@ -11,7 +11,7 @@ defmodule Mobilizon.Actors do
   alias Mobilizon.Actors.{Actor, Bot, Member, Follower, User}
 
   alias Mobilizon.Service.ActivityPub
-  import Exgravatar
+  # import Exgravatar
 
   @doc false
   def data() do
@@ -68,8 +68,14 @@ defmodule Mobilizon.Actors do
              where: u.id == ^user.id
            )
          ) do
-      nil -> user |> get_actors_for_user() |> hd
-      actor -> actor
+      nil ->
+        case user |> get_actors_for_user() do
+          [] -> nil
+          actors -> hd(actors)
+        end
+
+      actor ->
+        actor
     end
   end
 
@@ -597,56 +603,71 @@ defmodule Mobilizon.Actors do
   @doc """
   Register user
   """
-  @spec register(map()) :: {:ok, Actor.t()} | {:error, String.t()}
-  def register(%{email: email, password: password, username: username}) do
-    with avatar <- gravatar(email),
-         user_changeset <-
-           User.registration_changeset(%User{}, %{
-             email: email,
-             password: password,
-             default_actor: %{
-               preferred_username: username,
-               domain: nil,
-               keys: create_keys(),
-               avatar_url: avatar
-             }
-           }),
-         {:ok, %User{default_actor: %Actor{} = actor, id: user_id} = user} <-
-           Mobilizon.Repo.insert(user_changeset),
-         {:ok, %Actor{} = _actor} <- update_actor(actor, %{user_id: user_id}) do
-      {:ok, Repo.preload(user, [:actors])}
-    else
-      {:error, %Ecto.Changeset{} = changeset} ->
-        handle_actor_user_changeset(changeset)
+  @spec register(map()) :: {:ok, User.t()} | {:error, String.t()}
+  def register(%{email: _email, password: _password} = args) do
+    with {:ok, %User{} = user} <-
+           %User{} |> User.registration_changeset(args) |> Mobilizon.Repo.insert() do
+      {:ok, user}
+      # else
+      #   {:error, %Ecto.Changeset{} = changeset} ->
+      #     {:error, Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
+      #       Enum.reduce(opts, msg, fn {key, value}, acc ->
+      #         String.replace(acc, "%{#{key}}", to_string(value))
+      #       end)
+      #     end)}
     end
   end
 
-  @spec gravatar(String.t()) :: String.t() | nil
-  defp gravatar(nil), do: nil
+  # @spec register(map()) :: {:ok, Actor.t()} | {:error, String.t()}
+  # def register(%{email: email, password: password, username: username}) do
+  #   with avatar <- gravatar(email),
+  #        user_changeset <-
+  #          User.registration_changeset(%User{}, %{
+  #            email: email,
+  #            password: password,
+  #            default_actor: %{
+  #              preferred_username: username,
+  #              domain: nil,
+  #              keys: create_keys(),
+  #              avatar_url: avatar
+  #            }
+  #          }),
+  #        {:ok, %User{default_actor: %Actor{} = actor, id: user_id} = user} <-
+  #          Mobilizon.Repo.insert(user_changeset),
+  #        {:ok, %Actor{} = _actor} <- update_actor(actor, %{user_id: user_id}) do
+  #     {:ok, Repo.preload(user, [:actors])}
+  #   else
+  #     {:error, %Ecto.Changeset{} = changeset} ->
+  #       handle_actor_user_changeset(changeset)
+  #   end
+  # end
 
-  defp gravatar(email) do
-    avatar_url = gravatar_url(email, default: "404")
+  # @spec handle_actor_user_changeset(Ecto.Changeset.t()) :: {:error, String.t()}
+  # defp handle_actor_user_changeset(changeset) do
+  #   changeset =
+  #     Ecto.Changeset.traverse_errors(changeset, fn
+  #       {msg, _opts} -> msg
+  #       msg -> msg
+  #     end)
 
-    case HTTPoison.get(avatar_url) do
-      {:ok, %HTTPoison.Response{status_code: 200}} ->
-        avatar_url
+  #   email_msg = Map.get(changeset, :email) || [:empty_email]
+  #   {:error, hd(email_msg)}
+  # end
 
-      _ ->
-        nil
-    end
-  end
+  # @spec gravatar(String.t()) :: String.t() | nil
+  # defp gravatar(nil), do: nil
 
-  @spec handle_actor_user_changeset(Ecto.Changeset.t()) :: {:error, String.t()}
-  defp handle_actor_user_changeset(changeset) do
-    changeset =
-      Ecto.Changeset.traverse_errors(changeset, fn
-        {msg, _opts} -> msg
-        msg -> msg
-      end)
+  # defp gravatar(email) do
+  #   avatar_url = gravatar_url(email, default: "404")
 
-    email_msg = Map.get(changeset, :email) || [:empty_email]
-    {:error, hd(email_msg)}
-  end
+  #   case HTTPoison.get(avatar_url) do
+  #     {:ok, %HTTPoison.Response{status_code: 200}} ->
+  #       avatar_url
+
+  #     _ ->
+  #       nil
+  #   end
+  # end
 
   @doc """
   Create a new person actor

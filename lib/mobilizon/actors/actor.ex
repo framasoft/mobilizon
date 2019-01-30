@@ -103,6 +103,8 @@ defmodule Mobilizon.Actors.Actor do
       :user_id
     ])
     |> build_urls()
+    # Needed because following constraint can't work for domain null values (local)
+    |> unique_username_validator()
     |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_type_index)
     |> unique_constraint(:url, name: :actors_url_index)
     |> validate_required([:preferred_username, :keys, :suspended, :url, :type])
@@ -175,6 +177,16 @@ defmodule Mobilizon.Actors.Actor do
     |> validate_length(:summary, max: 5000)
     |> validate_length(:preferred_username, max: 100)
     |> put_change(:local, true)
+  end
+
+  def unique_username_validator(
+        %Ecto.Changeset{changes: %{preferred_username: username}} = changeset
+      ) do
+    if Actors.get_local_actor_by_name(username) do
+      changeset |> add_error(:preferred_username, "Username is already taken")
+    else
+      changeset
+    end
   end
 
   @spec build_urls(Ecto.Changeset.t(), atom()) :: Ecto.Changeset.t()

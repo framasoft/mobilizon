@@ -43,12 +43,10 @@ defmodule MobilizonWeb.Resolvers.User do
   @doc """
   Register an user :
     - create the user
-    - create the actor
-    - set the user's default_actor to the newly created actor
     - send a validation email to the user
   """
-  @spec create_user_actor(any(), map(), any()) :: tuple()
-  def create_user_actor(_parent, args, _resolution) do
+  @spec create_user(any(), map(), any()) :: tuple()
+  def create_user(_parent, args, _resolution) do
     with {:ok, %User{} = user} <- Actors.register(args) do
       Mobilizon.Actors.Service.Activation.send_confirmation_email(user)
       {:ok, user}
@@ -62,15 +60,15 @@ defmodule MobilizonWeb.Resolvers.User do
     with {:check_confirmation_token, {:ok, %User{} = user}} <-
            {:check_confirmation_token,
             Mobilizon.Actors.Service.Activation.check_confirmation_token(token)},
-         {:get_actor, %Actor{} = actor} <- {:get_actor, Actors.get_actor_for_user(user)},
+         {:get_actor, actor} <- {:get_actor, Actors.get_actor_for_user(user)},
          {:guardian_encode_and_sign, {:ok, token, _}} <-
            {:guardian_encode_and_sign, MobilizonWeb.Guardian.encode_and_sign(user)} do
-      {:ok, %{token: token, user: user, person: actor}}
+      {:ok, %{token: token, user: Map.put(user, :default_actor, actor)}}
     else
       err ->
         Logger.info("Unable to validate user with token #{token}")
         Logger.debug(inspect(err))
-        {:error, :validation_failed}
+        {:error, "Unable to validate user"}
     end
   end
 

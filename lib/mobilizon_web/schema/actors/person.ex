@@ -4,8 +4,9 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
   """
   use Absinthe.Schema.Notation
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
-  import_types(MobilizonWeb.Schema.UserType)
   alias Mobilizon.Events
+  alias MobilizonWeb.Resolvers
+  import MobilizonWeb.Schema.Utils
 
   @desc """
   Represents a person identity
@@ -45,5 +46,48 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
       resolve: dataloader(Events),
       description: "A list of the events this actor has organized"
     )
+  end
+
+  object :person_queries do
+    @desc "Get the current actor for the logged-in user"
+    field :logged_person, :person do
+      resolve(&Resolvers.Person.get_current_person/3)
+    end
+
+    @desc "Get a person by it's preferred username"
+    field :person, :person do
+      arg(:preferred_username, non_null(:string))
+      resolve(&Resolvers.Person.find_person/3)
+    end
+
+    @desc "Get the persons for an user"
+    field :identities, list_of(:person) do
+      resolve(&Resolvers.Person.identities/3)
+    end
+  end
+
+  object :person_mutations do
+    @desc "Create a new person for user"
+    field :create_person, :person do
+      arg(:preferred_username, non_null(:string))
+
+      arg(:name, :string, description: "The displayed name for the new profile", default_value: "")
+
+      arg(:summary, :string, description: "The summary for the new profile", default_value: "")
+
+      resolve(handle_errors(&Resolvers.Person.create_person/3))
+    end
+
+    @desc "Register a first profile on registration"
+    field :register_person, :person do
+      arg(:preferred_username, non_null(:string))
+
+      arg(:name, :string, description: "The displayed name for the new profile", default_value: "")
+
+      arg(:summary, :string, description: "The summary for the new profile", default_value: "")
+      arg(:email, non_null(:string), description: "The email from the user previously created")
+
+      resolve(handle_errors(&Resolvers.Person.register_person/3))
+    end
   end
 end

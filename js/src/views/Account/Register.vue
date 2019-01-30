@@ -11,101 +11,62 @@
       <div class="container">
         <div class="columns is-mobile">
           <div class="column">
-            <div class="content">
-              <h2 class="subtitle" v-translate>Features</h2>
-              <ul>
-                <li v-translate>Create your communities and your events</li>
-                <li v-translate>Other stuff…</li>
-              </ul>
-            </div>
-            <p v-translate>
-              Learn more on
-              <a target="_blank" href="https://joinmobilizon.org">joinmobilizon.org</a>
-            </p>
-            <hr>
-            <div class="content">
-              <h2 class="subtitle" v-translate>About this instance</h2>
-              <p>
-                <translate>Your local administrator resumed it's policy:</translate>
-              </p>
-              <ul>
-                <li v-translate>Please be nice to each other</li>
-                <li v-translate>meditate a bit</li>
-              </ul>
-              <p>
-                <translate>Please read the full rules</translate>
-              </p>
-            </div>
-          </div>
-          <div class="column">
             <form v-if="!validationSent">
               <div class="columns is-mobile is-centered">
                 <div class="column is-narrow">
                   <figure class="image is-64x64">
                     <transition name="avatar">
-                      <v-gravatar v-bind="{email: credentials.email}" default-img="mp"></v-gravatar>
+                      <v-gravatar v-bind="{email: email}" default-img="mp"></v-gravatar>
                     </transition>
                   </figure>
                 </div>
               </div>
 
-              <b-field label="Email">
-                <b-input
-                  aria-required="true"
-                  required
-                  type="email"
-                  v-model="credentials.email"
-                  @blur="showGravatar = true"
-                  @focus="showGravatar = false"
-                />
+              <b-field
+                :label="$gettext('Username')"
+                :type="errors.preferred_username ? 'is-danger' : null"
+                :message="errors.preferred_username"
+              >
+                <b-field>
+                  <b-input
+                    aria-required="true"
+                    required
+                    expanded
+                    v-model="person.preferredUsername"
+                  />
+                  <p class="control">
+                    <span class="button is-static">@{{ host }}</span>
+                  </p>
+                </b-field>
               </b-field>
 
-              <b-field label="Username">
-                <b-input aria-required="true" required v-model="credentials.username"/>
+              <b-field :label="$gettext('Displayed name')">
+                <b-input v-model="person.name"/>
               </b-field>
 
-              <b-field label="Password">
-                <b-input
-                  aria-required="true"
-                  required
-                  type="password"
-                  password-reveal
-                  minlength="6"
-                  v-model="credentials.password"
-                />
+              <b-field :label="$gettext('Description')">
+                <b-input type="textarea" v-model="person.summary"/>
               </b-field>
 
               <b-field grouped>
                 <div class="control">
                   <button type="button" class="button is-primary" @click="submit()">
-                    <translate>Register</translate>
+                    <translate>Create my profile</translate>
                   </button>
-                </div>
-                <div class="control">
-                  <router-link
-                    class="button is-text"
-                    :to="{ name: 'ResendConfirmation', params: { email: credentials.email }}"
-                  >
-                    <translate>Didn't receive the instructions ?</translate>
-                  </router-link>
-                </div>
-                <div class="control">
-                  <router-link
-                    class="button is-text"
-                    :to="{ name: 'Login', params: { email: credentials.email, password: credentials.password }}"
-                    :disabled="validationSent"
-                  >
-                    <translate>Login</translate>
-                  </router-link>
                 </div>
               </b-field>
             </form>
 
-            <div v-if="validationSent">
+            <div v-if="validationSent && !userAlreadyActivated">
               <b-message title="Success" type="is-success">
-                <h2>
-                  <translate>A validation email was sent to %{email}</translate>
+                <h2 class="title">
+                  <translate
+                    :translate-params="{ username: person.preferredUsername }"
+                  >Your account is nearly ready, %{username}</translate>
                 </h2>
+                <p>
+                  <translate>A validation email was sent to %{email}</translate>
+                </p>
                 <p>
                   <translate>Before you can login, you need to click on the link inside it to validate your account</translate>
                 </p>
@@ -120,8 +81,9 @@
 
 <script lang="ts">
 import Gravatar from "vue-gravatar";
-import { CREATE_USER } from "@/graphql/user";
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { IPerson } from "@/types/actor.model";
+import { REGISTER_PERSON } from "@/graphql/actor";
 import { MOBILIZON_INSTANCE_HOST } from "@/api/_entrypoint";
 
 @Component({
@@ -130,37 +92,47 @@ import { MOBILIZON_INSTANCE_HOST } from "@/api/_entrypoint";
   }
 })
 export default class Register extends Vue {
-  @Prop({ type: String, required: false, default: "" }) email!: string;
-  @Prop({ type: String, required: false, default: "" }) password!: string;
+  @Prop({ type: String, required: true }) email!: string;
+  @Prop({ type: Boolean, required: false, default: false }) userAlreadyActivated!: boolean;
 
-  credentials = {
-    username: "",
-    email: this.email,
-    password: this.password
-  } as { username: string; email: string; password: string };
-  errors: string[] = [];
+  host: string = MOBILIZON_INSTANCE_HOST;
+
+  person: IPerson = {
+    preferredUsername: "",
+    name: "",
+    summary: "",
+    id: "",
+    url: "",
+    suspended: false,
+    avatarUrl: "", // TODO : Use Gravatar here
+    bannerUrl: "",
+    domain: null,
+  };
+  errors: object = {};
   validationSent: boolean = false;
+  sendingValidation: boolean = false;
   showGravatar: boolean = false;
-
-  host() {
-    return MOBILIZON_INSTANCE_HOST;
-  }
-
-  validEmail() {
-    return this.credentials.email.includes("@") === true
-      ? "v-gravatar"
-      : "avatar";
-  }
 
   async submit() {
     try {
-      this.validationSent = true;
+      this.sendingValidation = true;
+      this.errors = {};
       await this.$apollo.mutate({
-        mutation: CREATE_USER,
-        variables: this.credentials
+        mutation: REGISTER_PERSON,
+        variables: Object.assign({ email: this.email }, this.person)
       });
+      this.validationSent = true;
+
+      if (this.userAlreadyActivated) {
+        this.$router.push({name: "Home"});
+      }
     } catch (error) {
+      this.errors = error.graphQLErrors.reduce((acc, error) => {
+        acc[error.details] = error.message;
+        return acc;
+      }, {});
       console.error(error);
+      console.error(this.errors);
     }
   }
 }

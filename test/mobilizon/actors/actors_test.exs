@@ -289,9 +289,9 @@ defmodule Mobilizon.ActorsTest do
   describe "users" do
     alias Mobilizon.Actors.{User, Actor}
 
-    @valid_attrs %{email: "foo@bar.tld", password: "some password", username: "foo"}
+    @valid_attrs %{email: "foo@bar.tld", password: "some password"}
     @update_attrs %{email: "foo@fighters.tld", password: "some updated password"}
-    @invalid_attrs %{email: nil, password: nil, username: nil}
+    @invalid_attrs %{email: nil, password: nil}
 
     test "list_users/0 returns all users" do
       user = insert(:user)
@@ -306,17 +306,20 @@ defmodule Mobilizon.ActorsTest do
 
     # There's no create_user/1, just register/1
     test "register/1 with valid data creates a user" do
-      assert {:ok,
-              %User{email: email, default_actor: %Actor{preferred_username: username} = actor} =
-                user} = Actors.register(@valid_attrs)
+      assert {:ok, %User{email: email} = user} = Actors.register(@valid_attrs)
 
       assert email == @valid_attrs.email
-      assert username == @valid_attrs.username
-      assert [actor.id] == Actors.get_actors_for_user(user) |> Enum.map(& &1.id)
     end
 
     test "create_user/1 with invalid data returns error changeset" do
-      assert {:error, "can't be blank"} = Actors.register(@invalid_attrs)
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  password: {"can't be blank", [validation: :required]},
+                  email: {"can't be blank", [validation: :required]}
+                ],
+                valid?: false
+              }} = Actors.register(@invalid_attrs)
     end
 
     test "update_user/2 with valid data updates the user" do
@@ -345,8 +348,7 @@ defmodule Mobilizon.ActorsTest do
     @email "email@domain.tld"
     @password "password"
     test "authenticate/1 checks the user's password" do
-      {:ok, %User{} = user} =
-        Actors.register(%{email: @email, password: @password, username: "yolo"})
+      {:ok, %User{} = user} = Actors.register(%{email: @email, password: @password})
 
       assert {:ok, _, _} = Actors.authenticate(%{user: user, password: @password})
 
@@ -355,8 +357,7 @@ defmodule Mobilizon.ActorsTest do
     end
 
     test "get_user_by_email/1 finds an user by it's email" do
-      {:ok, %User{email: email} = user} =
-        Actors.register(%{email: @email, password: @password, username: "yolo"})
+      {:ok, %User{email: email} = user} = Actors.register(%{email: @email, password: @password})
 
       assert email == @email
       {:ok, %User{id: id}} = Actors.get_user_by_email(@email)
@@ -365,8 +366,7 @@ defmodule Mobilizon.ActorsTest do
     end
 
     test "get_user_by_email/1 finds an activated user by it's email" do
-      {:ok, %User{} = user} =
-        Actors.register(%{email: @email, password: @password, username: "yolo"})
+      {:ok, %User{} = user} = Actors.register(%{email: @email, password: @password})
 
       {:ok, %User{id: id}} = Actors.get_user_by_email(@email, false)
       assert id == user.id

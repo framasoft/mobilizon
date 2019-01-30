@@ -3,6 +3,7 @@ defmodule MobilizonWeb.Schema.CommentType do
   Schema representation for Comment
   """
   use Absinthe.Schema.Notation
+  alias MobilizonWeb.Resolvers.Comment
 
   @desc "A comment"
   object :comment do
@@ -28,5 +29,15 @@ defmodule MobilizonWeb.Schema.CommentType do
 
     value(:moderated, description: "Visible only after a moderator accepted")
     value(:invite, description: "visible only to people invited")
+  end
+
+  object :comment_mutations do
+    @desc "Create a comment"
+    field :create_comment, type: :comment do
+      arg(:text, non_null(:string))
+      arg(:actor_username, non_null(:string))
+
+      resolve(&Comment.create_comment/3)
+    end
   end
 end
