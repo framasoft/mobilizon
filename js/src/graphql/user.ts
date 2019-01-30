@@ -15,6 +15,10 @@ mutation ValidateUser($token: String!) {
     token,
     user {
       id,
+      email,
+      defaultActor {
+        id
+      }
     }
   }
 }
@@ -33,4 +37,4 @@ export const UPDATE_CURRENT_USER_CLIENT = gql`
 mutation UpdateCurrentUser($id: Int!, $email: String!) {
   updateCurrentUser(id: $id, email: $email) @client
 }
-`
+`;

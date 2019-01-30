@@ -46,7 +46,8 @@ export default [
         path: '/validate/:token',
         name: 'Validate',
         component: Validate,
-        props: true,
+        // We can only pass string values through params, therefore
+        props: (route) => ({ email: route.params.email, userAlreadyActivated: route.params.userAlreadyActivated === 'true'}),
         meta: { requiresAuth: false },
     },
     {

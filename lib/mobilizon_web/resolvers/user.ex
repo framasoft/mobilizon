@@ -63,7 +63,7 @@ defmodule MobilizonWeb.Resolvers.User do
          {:get_actor, actor} <- {:get_actor, Actors.get_actor_for_user(user)},
          {:guardian_encode_and_sign, {:ok, token, _}} <-
            {:guardian_encode_and_sign, MobilizonWeb.Guardian.encode_and_sign(user)} do
-      {:ok, %{token: token, user: user, person: actor}}
+      {:ok, %{token: token, user: Map.put(user, :default_actor, actor)}}
     else
       err ->
         Logger.info("Unable to validate user with token #{token}")

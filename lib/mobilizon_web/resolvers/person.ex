@@ -77,8 +77,12 @@ defmodule MobilizonWeb.Resolvers.Person do
     else
       {:error, :user_not_found} ->
         {:error, "User with email not found"}
+
       {:no_actor, _} ->
         {:error, "You already have a profile for this user"}
+
+      {:error, %Ecto.Changeset{} = e} ->
+        {:error, e}
     end
   end
 end

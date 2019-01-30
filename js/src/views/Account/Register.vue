@@ -57,7 +57,7 @@
               </b-field>
             </form>
 
-            <div v-if="validationSent">
+            <div v-if="validationSent && !userAlreadyActivated">
               <b-message title="Success" type="is-success">
                 <h2 class="title">
                   <translate
@@ -92,8 +92,9 @@ import { MOBILIZON_INSTANCE_HOST } from "@/api/_entrypoint";
   }
 })
 export default class Register extends Vue {
-  @Prop({ type: String, required: true })
-  email!: string;
+  @Prop({ type: String, required: true }) email!: string;
+  @Prop({ type: Boolean, required: false, default: false }) userAlreadyActivated!: boolean;
+
   host: string = MOBILIZON_INSTANCE_HOST;
 
   person: IPerson = {
@@ -121,6 +122,10 @@ export default class Register extends Vue {
         variables: Object.assign({ email: this.email }, this.person)
       });
       this.validationSent = true;
+
+      if (this.userAlreadyActivated) {
+        this.$router.push({name: "Home"});
+      }
     } catch (error) {
       this.errors = error.graphQLErrors.reduce((acc, error) => {
         acc[error.details] = error.message;
