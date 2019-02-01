@@ -12,7 +12,7 @@ defmodule MobilizonWeb.Schema.EventType do
 
   @desc "An event"
   object :event do
-    field(:id, :id, description: "Internal ID for this event")
+    field(:id, :integer, description: "Internal ID for this event")
     field(:uuid, :uuid, description: "The Event UUID")
     field(:url, :string, description: "The ActivityPub Event URL")
     field(:local, :boolean, description: "Whether the event is local or not")

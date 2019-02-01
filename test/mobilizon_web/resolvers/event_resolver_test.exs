@@ -60,63 +60,6 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                json_response(res, 200)["errors"]
     end
 
-    test "list_participants_for_event/3 returns participants for an event", context do
-      # Plain event
-      category = insert(:category)
-
-      event =
-        @event
-        |> Map.put(:organizer_actor_id, context.actor.id)
-        |> Map.put(:category_id, category.id)
-
-      {:ok, event} = Events.create_event(event)
-
-      query = """
-      {
-        participants(uuid: "#{event.uuid}") {
-          role,
-          actor {
-              preferredUsername
-          }
-        }
-      }
-      """
-
-      res =
-        context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "participants"))
-
-      assert json_response(res, 200)["data"]["participants"] == [
-               %{
-                 "actor" => %{"preferredUsername" => context.actor.preferred_username},
-                 "role" => "creator"
-               }
-             ]
-
-      # Adding two participants
-      actor2 = insert(:actor)
-      actor3 = insert(:actor)
-      # This one won't get listed (as not approved)
-      participant = insert(:participant, event: event, actor: actor2, role: :not_approved)
-      # This one will (as a participant)
-      participant2 = insert(:participant, event: event, actor: actor3, role: :participant)
-
-      res =
-        context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "participants"))
-
-      assert json_response(res, 200)["data"]["participants"] == [
-               %{
-                 "actor" => %{"preferredUsername" => context.actor.preferred_username},
-                 "role" => "creator"
-               },
-               %{
-                 "actor" => %{"preferredUsername" => participant2.actor.preferred_username},
-                 "role" => "participant"
-               }
-             ]
-    end
-
     test "create_event/3 creates an event", %{conn: conn, actor: actor, user: user} do
       category = insert(:category)
 

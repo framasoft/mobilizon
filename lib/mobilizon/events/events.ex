@@ -601,6 +601,16 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
+  Get a single participant
+  """
+  def get_participant(event_id, actor_id) do
+    case Repo.get_by(Participant, event_id: event_id, actor_id: actor_id) do
+      nil -> {:error, :participant_not_found}
+      participant -> {:ok, participant}
+    end
+  end
+
+  @doc """
   Creates a participant.
 
   ## Examples
@@ -663,6 +673,18 @@ defmodule Mobilizon.Events do
   """
   def change_participant(%Participant{} = participant) do
     Participant.changeset(participant, %{})
+  end
+
+  @doc """
+  Get the default participant role depending on the event visbility
+  """
+  def get_default_participant_role(%Event{} = event) do
+    case event.visibility do
+      # Participant
+      :public -> 1
+      # Not approved
+      _ -> 0
+    end
   end
 
   @doc """

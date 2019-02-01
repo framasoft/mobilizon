@@ -138,15 +138,10 @@ defmodule Mobilizon.Actors.User do
     {:ok, user}
   end
 
-  def owns_actor(%User{default_actor_id: default_actor_id}, %Actor{id: actor_id})
-      when default_actor_id == actor_id do
-    {:is_owned, true}
-  end
-
   def owns_actor(%User{actors: actors}, actor_id) do
-    case Enum.any?(actors, fn a -> a.id == actor_id end) do
-      true -> {:is_owned, true}
-      _ -> {:is_owned, false}
+    case Enum.find(actors, fn a -> a.id == actor_id end) do
+      nil -> {:is_owned, false}
+      actor -> {:is_owned, true, actor}
     end
   end
 end

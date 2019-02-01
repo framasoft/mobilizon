@@ -143,6 +143,7 @@ defmodule MobilizonWeb.Schema do
     import_fields(:event_mutations)
     import_fields(:category_mutations)
     import_fields(:comment_mutations)
+    import_fields(:participant_mutations)
 
     # @desc "Upload a picture"
     # field :upload_picture, :picture do
