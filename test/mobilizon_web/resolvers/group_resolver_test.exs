@@ -166,7 +166,11 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
       assert hd(json_response(res, 200)["errors"])["message"] =~ "logged-in"
     end
 
-    test "delete_group/3 should checks the actor is owned by the user", %{conn: conn, user: user, actor: actor} do
+    test "delete_group/3 should check the actor is owned by the user", %{
+      conn: conn,
+      user: user,
+      actor: actor
+    } do
       group = insert(:group)
       insert(:member, parent: group, actor: actor, role: 2)
 
@@ -189,7 +193,11 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
       assert hd(json_response(res, 200)["errors"])["message"] =~ "not owned"
     end
 
-    test "delete_group/3 should checks the actor is a member of this group", %{conn: conn, user: user, actor: actor} do
+    test "delete_group/3 should check the actor is a member of this group", %{
+      conn: conn,
+      user: user,
+      actor: actor
+    } do
       group = insert(:group)
 
       mutation = """
@@ -211,7 +219,11 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
       assert hd(json_response(res, 200)["errors"])["message"] =~ "not a member"
     end
 
-    test "delete_group/3 should checks the actor is an administrator of this group", %{conn: conn, user: user, actor: actor} do
+    test "delete_group/3 should check the actor is an administrator of this group", %{
+      conn: conn,
+      user: user,
+      actor: actor
+    } do
       group = insert(:group)
       insert(:member, parent: group, actor: actor, role: 1)
 
@@ -233,6 +245,5 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
 
       assert hd(json_response(res, 200)["errors"])["message"] =~ "not an administrator"
     end
-
   end
 end

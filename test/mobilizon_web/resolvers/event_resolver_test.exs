@@ -333,5 +333,79 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
 
       assert hd(json_response(res, 200)["errors"])["message"] =~ "not found"
     end
+
+    test "delete_event/3 should check the user is authenticated", %{conn: conn, actor: actor} do
+      event = insert(:event, organizer_actor: actor)
+
+      mutation = """
+          mutation {
+            deleteEvent(
+              actor_id: #{actor.id},
+              event_id: #{event.id}
+            ) {
+                id
+              }
+            }
+      """
+
+      res =
+        conn
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] =~ "logged-in"
+    end
+
+    test "delete_event/3 should check the actor id is owned by the user", %{
+      conn: conn,
+      user: user,
+      actor: actor
+    } do
+      event = insert(:event, organizer_actor: actor)
+
+      mutation = """
+          mutation {
+            deleteEvent(
+              actor_id: 1042,
+              event_id: #{event.id}
+            ) {
+                id
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] =~ "not owned"
+    end
+
+    test "delete_event/3 should check the event can be deleted by the user", %{
+      conn: conn,
+      user: user,
+      actor: actor
+    } do
+      actor2 = insert(:actor)
+      event = insert(:event, organizer_actor: actor2)
+
+      mutation = """
+          mutation {
+            deleteEvent(
+              actor_id: #{actor.id},
+              event_id: #{event.id}
+            ) {
+                id
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] =~ "cannot delete"
+    end
   end
 end

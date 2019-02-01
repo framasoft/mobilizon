@@ -165,8 +165,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
         context.conn
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
-               "User with email not found"
+      assert hd(json_response(res, 200)["errors"])["message"] == "User with email not found"
     end
 
     test "register_person/3 can't be called with an existing profile", context do
