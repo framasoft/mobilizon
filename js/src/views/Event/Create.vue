@@ -1,3 +1,4 @@
+import {EventJoinOptions} from "../../types/event.model";
 <template>
   <section>
     <h1 class="title">
@@ -31,22 +32,16 @@
 </template>
 
 <script lang="ts">
-// import Location from '@/components/Location';
-import VueMarkdown from "vue-markdown";
-import { CREATE_EVENT, EDIT_EVENT } from "@/graphql/event";
-import { FETCH_CATEGORIES } from "@/graphql/category";
-import { AUTH_USER_ACTOR } from "@/constants";
-import { Component, Prop, Vue } from "vue-property-decorator";
-import {
-  IEvent,
-  ICategory,
-  EventVisibility,
-  EventStatus
-} from "../../types/event.model";
-import { LOGGED_PERSON } from "../../graphql/actor";
-import { IPerson } from "../../types/actor.model";
+  // import Location from '@/components/Location';
+  import VueMarkdown from "vue-markdown";
+  import {CREATE_EVENT, EDIT_EVENT} from "@/graphql/event";
+  import {FETCH_CATEGORIES} from "@/graphql/category";
+  import {Component, Prop, Vue} from "vue-property-decorator";
+  import {EventJoinOptions, EventStatus, EventVisibility, ICategory, IEvent} from "@/types/event.model";
+  import {LOGGED_PERSON} from "@/graphql/actor";
+  import {IPerson} from "@/types/actor.model";
 
-@Component({
+  @Component({
   components: {
     VueMarkdown
   },
@@ -70,7 +65,7 @@ export default class CreateEvent extends Vue {
   // }
 
   async created() {
-    // We put initialization here because we need loggedPerson to be ready before initalizing event
+    // We put initialization here because we need loggedPerson to be ready before initializing event
     const { data } = await this.$apollo.query({ query: LOGGED_PERSON });
 
     this.loggedPerson = data.loggedPerson;
@@ -89,6 +84,7 @@ export default class CreateEvent extends Vue {
       local: true,
       status: EventStatus.CONFIRMED,
       visibility: EventVisibility.PUBLIC,
+      join_options: EventJoinOptions.FREE,
       thumbnail: "",
       large_image: "",
       publish_at: new Date()

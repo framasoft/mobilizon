@@ -3,8 +3,13 @@ import EctoEnum
 defenum(Mobilizon.Events.EventVisibilityEnum, :event_visibility_type, [
   :public,
   :unlisted,
-  :private,
-  :moderated,
+  :restricted,
+  :private
+])
+
+defenum(Mobilizon.Events.JoinOptionsEnum, :event_join_options_type, [
+  :free,
+  :restricted,
   :invite
 ])
 
@@ -33,6 +38,7 @@ defmodule Mobilizon.Events.Event do
     field(:title, :string)
     field(:status, Mobilizon.Events.EventStatusEnum, default: :confirmed)
     field(:visibility, Mobilizon.Events.EventVisibilityEnum, default: :public)
+    field(:join_options, Mobilizon.Events.JoinOptionsEnum, default: :free)
     field(:thumbnail, :string)
     field(:large_image, :string)
     field(:publish_at, Timex.Ecto.DateTimeWithTimezone)

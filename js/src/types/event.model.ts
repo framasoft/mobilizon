@@ -1,11 +1,22 @@
 import { IActor } from "./actor.model";
 
 export enum EventStatus {
-    TENTATIVE, CONFIRMED, CANCELLED
+    TENTATIVE,
+    CONFIRMED,
+    CANCELLED
 }
 
 export enum EventVisibility {
-    PUBLIC, PRIVATE
+    PUBLIC,
+    UNLISTED,
+    RESTRICTED,
+    PRIVATE
+}
+
+export enum EventJoinOptions {
+    FREE,
+    RESTRICTED,
+    INVITE
 }
 
 export enum ParticipantRole {
@@ -34,6 +45,7 @@ export interface IEvent {
     ends_on: Date;
     status: EventStatus;
     visibility: EventVisibility;
+    join_options: EventJoinOptions;
     thumbnail: string;
     large_image: string;
     publish_at: Date;
