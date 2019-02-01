@@ -98,7 +98,7 @@ defmodule MobilizonWeb.Resolvers.Group do
         {:error, "Actor id is not a member of this group"}
 
       {:is_admin, false} ->
-        {:error, "User is not an administrator of the selected group"}
+        {:error, "Actor id is not an administrator of the selected group"}
     end
   end
 
