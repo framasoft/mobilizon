@@ -20,7 +20,11 @@ export enum EventJoinOptions {
 }
 
 export enum ParticipantRole {
-
+    NOT_APPROVED = 'not_approved',
+    PARTICIPANT = 'participant',
+    MODERATOR = 'moderator',
+    ADMINSTRATOR = 'administrator',
+    CREATOR = 'creator'
 }
 
 export interface ICategory {

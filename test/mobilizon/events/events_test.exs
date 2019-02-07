@@ -306,9 +306,9 @@ defmodule Mobilizon.EventsTest do
     alias Mobilizon.Events.{Participant, Event}
     alias Mobilizon.Actors.Actor
 
-    @valid_attrs %{role: 42}
-    @update_attrs %{role: 43}
-    @invalid_attrs %{role: nil}
+    @valid_attrs %{role: :creator}
+    @update_attrs %{role: :moderator}
+    @invalid_attrs %{role: :no_such_role}
 
     setup do
       actor = insert(:actor)
@@ -341,7 +341,7 @@ defmodule Mobilizon.EventsTest do
       with {:ok, %Participant{} = participant} <- Events.create_participant(valid_attrs) do
         assert participant.event_id == event.id
         assert participant.actor_id == actor.id
-        assert participant.role == 42
+        assert participant.role == :creator
       else
         err ->
           flunk("Failed to create a participant #{inspect(err)}")
@@ -357,7 +357,7 @@ defmodule Mobilizon.EventsTest do
     } do
       with {:ok, %Participant{} = participant} <-
              Events.update_participant(participant, @update_attrs) do
-        assert participant.role == 43
+        assert participant.role == :moderator
       else
         err ->
           flunk("Failed to update a participant #{inspect(err)}")

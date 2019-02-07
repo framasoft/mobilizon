@@ -21,7 +21,7 @@
         <div v-else>
           <span v-for="participant in event.participants" :key="participant.actor.uuid">
             {{ participant.actor.preferredUsername }}
-            <span v-if="participant.role === 4">(organizer)</span>,
+            <span v-if="participant.role === ParticipantRole.CREATOR">(organizer)</span>,
             <!-- <translate
               :translate-params="{name: participant.actor.preferredUsername}"
             >&nbsp;%{name} is in,</translate>-->
@@ -33,12 +33,18 @@
 </template>
 
 <script lang="ts">
-import { IEvent } from "@/types/event.model";
+  import {IEvent, ParticipantRole} from "@/types/event.model";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
 export default class EventCard extends Vue {
   @Prop({ required: true }) event!: IEvent;
   @Prop({ default: false }) hideDetails!: boolean;
+
+  data() {
+    return {
+      ParticipantRole: ParticipantRole
+    }
+  }
 }
 </script>
