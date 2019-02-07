@@ -13,7 +13,7 @@ defmodule MobilizonWeb.Schema.Actors.GroupType do
   object :group do
     interfaces([:actor])
 
-    field(:id, :id, description: "Internal ID for this group")
+    field(:id, :integer, description: "Internal ID for this group")
     field(:url, :string, description: "The ActivityPub actor's URL")
     field(:type, :actor_type, description: "The type of Actor (Person, Group,…)")
     field(:name, :string, description: "The actor's displayed name")

@@ -82,7 +82,7 @@ defmodule MobilizonWeb.Resolvers.Group do
         }
       ) do
     with {:ok, %Actor{} = group} <- Actors.find_group_by_actor_id(group_id),
-         {:is_owned, true} <- User.owns_actor(user, actor_id),
+         {:is_owned, true, _} <- User.owns_actor(user, actor_id),
          {:ok, %Member{} = member} <- Member.get_member(actor_id, group.id),
          {:is_admin, true} <- Member.is_administrator(member),
          group <- Actors.delete_group!(group) do
