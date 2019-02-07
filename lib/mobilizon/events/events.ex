@@ -676,14 +676,14 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
-  Get the default participant role depending on the event visbility
+  Get the default participant role depending on the event join options
   """
   def get_default_participant_role(%Event{} = event) do
-    case event.visibility do
+    case event.join_options do
       # Participant
-      :public -> 1
+      :free -> :participant
       # Not approved
-      _ -> 0
+      _ -> :not_approved
     end
   end
 
