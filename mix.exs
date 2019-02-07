@@ -60,7 +60,7 @@ defmodule Mobilizon.Mixfile do
       {:guardian_db, "~> 1.1"},
       {:comeonin, "~> 4.0"},
       {:argon2_elixir, "~> 1.2"},
-      {:cors_plug, "~> 1.2"},
+      {:cors_plug, "~> 2.0"},
       {:ecto_autoslug_field, "~> 0.3"},
       {:rsa_ex, "~> 0.1"},
       {:geo, "~> 3.0"},
