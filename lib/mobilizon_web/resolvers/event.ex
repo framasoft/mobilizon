@@ -100,11 +100,18 @@ defmodule MobilizonWeb.Resolvers.Event do
     with {:is_owned, true, _} <- User.owns_actor(user, actor_id),
          {:ok, %Participant{} = participant} <-
            Mobilizon.Events.get_participant(event_id, actor_id),
-         {:ok, _} <- Mobilizon.Events.delete_participant(participant) do
+         {:only_organizer, false} <-
+           {:only_organizer,
+            Mobilizon.Events.list_organizers_participants_for_event(event_id) |> length == 1},
+         {:ok, _} <-
+           Mobilizon.Events.delete_participant(participant) do
       {:ok, %{event: %{id: event_id}, actor: %{id: actor_id}}}
     else
       {:is_owned, false} ->
         {:error, "Actor id is not owned by authenticated user"}
+
+      {:only_organizer, true} ->
+        {:error, "You can't leave event because you're the only event creator participant"}
 
       {:error, :participant_not_found} ->
         {:error, "Participant not found"}

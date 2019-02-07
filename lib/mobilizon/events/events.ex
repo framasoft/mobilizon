@@ -583,6 +583,28 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
+  Returns the list of organizers participants for an event.
+
+  ## Examples
+
+      iex> list_organizers_participants_for_event(id)
+      [%Participant{role: :creator}, ...]
+
+  """
+  def list_organizers_participants_for_event(id, page \\ nil, limit \\ nil) do
+    Repo.all(
+      from(
+        p in Participant,
+        join: e in Event,
+        on: p.event_id == e.id,
+        where: e.id == ^id and p.role == ^:creator,
+        preload: [:actor]
+      )
+      |> paginate(page, limit)
+    )
+  end
+
+  @doc """
   Gets a single participant.
 
   Raises `Ecto.NoResultsError` if the Participant does not exist.
