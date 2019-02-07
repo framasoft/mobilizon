@@ -249,8 +249,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
     test "list_events/3 doesn't list private events", context do
       insert(:event, visibility: :private)
       insert(:event, visibility: :unlisted)
-      insert(:event, visibility: :moderated)
-      insert(:event, visibility: :invite)
+      insert(:event, visibility: :restricted)
 
       query = """
       {
