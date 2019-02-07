@@ -62,7 +62,7 @@
             <a v-if="!actorIsParticipant()" @click="joinEvent" class="button">
               <translate>Join</translate>
             </a>
-            <a v-if="actorIsParticipant()" @click="leaveEvent" color="button">Leave</a>
+            <a v-if="actorIsParticipant()" @click="leaveEvent" class="button">Leave</a>
           </div>
           <h2 class="subtitle">Details</h2>
           <p v-if="event.description">

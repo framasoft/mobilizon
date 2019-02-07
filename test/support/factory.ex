@@ -117,7 +117,7 @@ defmodule Mobilizon.Factory do
     %Mobilizon.Events.Participant{
       event: build(:event),
       actor: build(:actor),
-      role: 0
+      role: :creator
     }
   end
 

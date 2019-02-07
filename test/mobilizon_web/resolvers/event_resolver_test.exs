@@ -89,13 +89,17 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       assert json_response(res, 200)["data"]["participants"] == [
                %{
                  "actor" => %{"preferredUsername" => context.actor.preferred_username},
-                 "role" => 4
+                 "role" => "creator"
                }
              ]
 
-      # Adding a participant
+      # Adding two participants
       actor2 = insert(:actor)
-      participant = insert(:participant, event: event, actor: actor2)
+      actor3 = insert(:actor)
+      # This one won't get listed (as not approved)
+      participant = insert(:participant, event: event, actor: actor2, role: :not_approved)
+      # This one will (as a participant)
+      participant2 = insert(:participant, event: event, actor: actor3, role: :participant)
 
       res =
         context.conn
@@ -104,11 +108,11 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       assert json_response(res, 200)["data"]["participants"] == [
                %{
                  "actor" => %{"preferredUsername" => context.actor.preferred_username},
-                 "role" => 4
+                 "role" => "creator"
                },
                %{
-                 "actor" => %{"preferredUsername" => participant.actor.preferred_username},
-                 "role" => 0
+                 "actor" => %{"preferredUsername" => participant2.actor.preferred_username},
+                 "role" => "participant"
                }
              ]
     end

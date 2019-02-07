@@ -1,3 +1,13 @@
+import EctoEnum
+
+defenum(Mobilizon.Events.ParticipantRoleEnum, :participant_role_type, [
+  :not_approved,
+  :participant,
+  :moderator,
+  :administrator,
+  :creator
+])
+
 defmodule Mobilizon.Events.Participant do
   @moduledoc """
   Represents a participant, an actor participating to an event
@@ -9,8 +19,7 @@ defmodule Mobilizon.Events.Participant do
 
   @primary_key false
   schema "participants" do
-    # 0 : not_approved, 1 : participant, 2 : moderator, 3 : administrator, 4 : creator
-    field(:role, :integer, default: 0)
+    field(:role, Mobilizon.Events.ParticipantRoleEnum, default: :participant)
     belongs_to(:event, Event, primary_key: true)
     belongs_to(:actor, Actor, primary_key: true)
 
@@ -20,7 +29,7 @@ defmodule Mobilizon.Events.Participant do
   @doc false
   def changeset(%Participant{} = participant, attrs) do
     participant
-    |> cast(attrs, [:role, :event_id, :actor_id])
+    |> Ecto.Changeset.cast(attrs, [:role, :event_id, :actor_id])
     |> validate_required([:role, :event_id, :actor_id])
   end
 end

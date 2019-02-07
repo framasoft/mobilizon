@@ -279,7 +279,7 @@ defmodule Mobilizon.Events do
            %Participant{}
            |> Participant.changeset(%{
              actor_id: event.organizer_actor_id,
-             role: 4,
+             role: :creator,
              event_id: event.id
            })
            |> Repo.insert() do
@@ -561,6 +561,8 @@ defmodule Mobilizon.Events do
   @doc """
   Returns the list of participants for an event.
 
+  Default behaviour is to not return :not_approved participants
+
   ## Examples
 
       iex> list_participants_for_event(someuuid)
@@ -573,7 +575,7 @@ defmodule Mobilizon.Events do
         p in Participant,
         join: e in Event,
         on: p.event_id == e.id,
-        where: e.uuid == ^uuid,
+        where: e.uuid == ^uuid and p.role != ^:not_approved,
         preload: [:actor]
       )
       |> paginate(page, limit)
@@ -668,7 +670,7 @@ defmodule Mobilizon.Events do
   """
   @spec list_requests_for_actor(Actor.t()) :: list(Participant.t())
   def list_requests_for_actor(%Actor{id: actor_id}) do
-    Repo.all(from(p in Participant, where: p.actor_id == ^actor_id and p.approved == false))
+    Repo.all(from(p in Participant, where: p.actor_id == ^actor_id and p.role == ^:not_approved))
   end
 
   alias Mobilizon.Events.Session
