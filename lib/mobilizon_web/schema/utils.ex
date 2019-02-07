@@ -1,4 +1,8 @@
 defmodule MobilizonWeb.Schema.Utils do
+  @moduledoc """
+  Helper functions for MobilizonWeb.Schema
+  """
+
   def handle_errors(fun) do
     fn source, args, info ->
       case Absinthe.Resolution.call(fun, source, args, info) do
