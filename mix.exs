@@ -61,7 +61,7 @@ defmodule Mobilizon.Mixfile do
       {:comeonin, "~> 4.0"},
       {:argon2_elixir, "~> 1.2"},
       {:cors_plug, "~> 2.0"},
-      {:ecto_autoslug_field, "~> 0.3"},
+      {:ecto_autoslug_field, "~> 1.0"},
       {:rsa_ex, "~> 0.1"},
       {:geo, "~> 3.0"},
       {:geo_postgis, "~> 2.0"},
