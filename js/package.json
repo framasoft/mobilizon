@@ -25,7 +25,7 @@
     "lodash": "^4.17.11",
     "material-design-icons": "^3.0.1",
     "ngeohash": "^0.6.3",
-    "register-service-worker": "^1.5.2",
+    "register-service-worker": "^1.6.1",
     "vue": "^2.6.3",
     "vue-apollo": "^3.0.0-beta.28",
     "vue-class-component": "^6.3.2",
