@@ -15,8 +15,8 @@ defmodule Mobilizon.Events.Session do
     field(:subtitle, :string)
     field(:title, :string)
     field(:videos_urls, :string)
-    field(:begins_on, Timex.Ecto.DateTimeWithTimezone)
-    field(:ends_on, Timex.Ecto.DateTimeWithTimezone)
+    field(:begins_on, :utc_datetime)
+    field(:ends_on, :utc_datetime)
     belongs_to(:event, Event)
     belongs_to(:track, Track)
 

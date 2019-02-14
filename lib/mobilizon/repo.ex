@@ -2,7 +2,9 @@ defmodule Mobilizon.Repo do
   @moduledoc """
   Mobilizon Repo
   """
-  use Ecto.Repo, otp_app: :mobilizon
+  use Ecto.Repo,
+    otp_app: :mobilizon,
+    adapter: Ecto.Adapters.Postgres
 
   @doc """
   Dynamically loads the repository url from the

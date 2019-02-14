@@ -21,17 +21,21 @@ actor = insert(:actor, user: user)
 # Insert a second actor account for the same user
 actor2 = insert(:actor, user: user)
 
-# Make actor organize a few events
-event = insert(:event, organizer_actor: actor)
-event2 = insert(:event, organizer_actor: actor)
-event3 = insert(:event, organizer_actor: actor)
-event4 = insert(:event, organizer_actor: actor2)
+tag1 = insert(:tag)
+tag2 = insert(:tag)
+tag3 = insert(:tag)
 
-participant = insert(:participant, actor: actor, event: event, role: 4)
-participant = insert(:participant, actor: actor, event: event2, role: 4)
-participant = insert(:participant, actor: actor, event: event3, role: 4)
-participant = insert(:participant, actor: actor2, event: event4, role: 4)
-participant = insert(:participant, actor: actor, event: event4, role: 1)
+# Make actor organize a few events
+event = insert(:event, organizer_actor: actor, tags: [tag1, tag2])
+event2 = insert(:event, organizer_actor: actor, tags: [tag1, tag2])
+event3 = insert(:event, organizer_actor: actor, tags: [tag1])
+event4 = insert(:event, organizer_actor: actor2, tags: [tag3, tag2])
+
+insert(:participant, actor: actor, event: event, role: :creator)
+insert(:participant, actor: actor, event: event2, role: :creator)
+insert(:participant, actor: actor, event: event3, role: :creator)
+insert(:participant, actor: actor2, event: event4, role: :creator)
+insert(:participant, actor: actor, event: event4, role: :participant)
 
 # Insert a group
 group = insert(:actor, type: :Group)

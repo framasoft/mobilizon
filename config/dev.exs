@@ -57,7 +57,6 @@ config :mobilizon, Mobilizon.Mailer, adapter: Bamboo.LocalAdapter
 
 # Configure your database
 config :mobilizon, Mobilizon.Repo,
-  adapter: Ecto.Adapters.Postgres,
   types: Mobilizon.PostgresTypes,
   username: System.get_env("MOBILIZON_DATABASE_USERNAME") || "mobilizon",
   password: System.get_env("MOBILIZON_DATABASE_PASSWORD") || "mobilizon",

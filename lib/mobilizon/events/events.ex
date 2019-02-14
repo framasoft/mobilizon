@@ -458,8 +458,32 @@ defmodule Mobilizon.Events do
       [%Tag{}, ...]
 
   """
-  def list_tags do
-    Repo.all(Tag)
+  def list_tags(page \\ nil, limit \\ nil) do
+    Repo.all(
+      Tag
+      |> paginate(page, limit)
+    )
+  end
+
+  @doc """
+  Returns the list of tags for an event.
+
+  ## Examples
+
+      iex> list_tags_for_event(id)
+      [%Participant{}, ...]
+
+  """
+  def list_tags_for_event(id, page \\ nil, limit \\ nil) do
+    Repo.all(
+      from(
+        t in Tag,
+        join: e in "events_tags",
+        on: t.id == e.tag_id,
+        where: e.event_id == ^id
+      )
+      |> paginate(page, limit)
+    )
   end
 
   @doc """
@@ -541,6 +565,85 @@ defmodule Mobilizon.Events do
   """
   def change_tag(%Tag{} = tag) do
     Tag.changeset(tag, %{})
+  end
+
+  alias Mobilizon.Events.TagRelation
+
+  @doc """
+  Create a relation between two tags
+  """
+  def create_tag_relation(attrs \\ {}) do
+    %TagRelation{}
+    |> TagRelation.changeset(attrs)
+    |> Repo.insert(conflict_target: [:tag_id, :link_id], on_conflict: [inc: [weight: 1]])
+  end
+
+  @doc """
+  Remove a tag relation
+  """
+  def delete_tag_relation(%TagRelation{} = tag_relation) do
+    Repo.delete(tag_relation)
+  end
+
+  @doc """
+  Returns whether two tags are linked or not
+  """
+  def are_tags_linked(%Tag{id: tag1_id}, %Tag{id: tag2_id}) do
+    case from(tr in TagRelation,
+           where: tr.tag_id == ^min(tag1_id, tag2_id) and tr.link_id == ^max(tag1_id, tag2_id)
+         )
+         |> Repo.one() do
+      %TagRelation{} -> true
+      _ -> false
+    end
+  end
+
+  @doc """
+  Returns the tags neighbors for a given tag
+
+  We can't rely on the single many_to_many relation since we also want tags that link to our tag, not just tags linked by this one
+
+  The SQL query looks like this:
+  ```sql
+  SELECT * FROM tags t
+  RIGHT JOIN (
+    SELECT weight, link_id AS id
+    FROM tag_relations t2
+    WHERE tag_id = 1
+    UNION ALL
+    SELECT tag_id AS id, weight
+    FROM tag_relations t2
+    WHERE link_id = 1
+  ) tr
+  ON t.id = tr.id
+  ORDER BY tr.weight
+  DESC;
+  ```
+  """
+  def tag_neighbors(%Tag{id: id}, relation_minimum \\ 1, limit \\ 10) do
+    query2 =
+      from(tr in TagRelation,
+        select: %{id: tr.tag_id, weight: tr.weight},
+        where: tr.link_id == ^id
+      )
+
+    query =
+      from(tr in TagRelation,
+        select: %{id: tr.link_id, weight: tr.weight},
+        union_all: ^query2,
+        where: tr.tag_id == ^id
+      )
+
+    final_query =
+      from(t in Tag,
+        right_join: q in subquery(query),
+        on: [id: t.id],
+        where: q.weight >= ^relation_minimum,
+        limit: ^limit,
+        order_by: [desc: q.weight]
+      )
+
+    Repo.all(final_query)
   end
 
   alias Mobilizon.Events.Participant

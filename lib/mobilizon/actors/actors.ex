@@ -579,7 +579,7 @@ defmodule Mobilizon.Actors do
   """
   def authenticate(%{user: user, password: password}) do
     # Does password match the one stored in the database?
-    case Comeonin.Argon2.checkpw(password, user.password_hash) do
+    case Argon2.verify_pass(password, user.password_hash) do
       true ->
         # Yes, create and return the token
         MobilizonWeb.Guardian.encode_and_sign(user)

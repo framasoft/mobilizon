@@ -39,10 +39,12 @@ defmodule Mobilizon.Events.Tag do
   import Ecto.Changeset
   alias Mobilizon.Events.Tag
   alias Mobilizon.Events.Tag.TitleSlug
+  alias Mobilizon.Events.TagRelation
 
   schema "tags" do
     field(:title, :string)
     field(:slug, TitleSlug.Type)
+    many_to_many(:related_tags, Tag, join_through: TagRelation)
 
     timestamps()
   end

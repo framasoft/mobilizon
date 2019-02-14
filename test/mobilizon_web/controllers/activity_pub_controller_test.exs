@@ -82,7 +82,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
   describe "/@:preferred_username/inbox" do
     test "it inserts an incoming event into the database", %{conn: conn} do
       use_cassette "activity_pub_controller/mastodon-post-activity_actor_call" do
-        data = File.read!("test/fixtures/mastodon-post-activity.json") |> Poison.decode!()
+        data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
 
         conn =
           conn

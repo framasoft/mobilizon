@@ -477,7 +477,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
       {:ok, %User{} = _user} =
         Actors.update_user(user, %{
-          "confirmed_at" => DateTime.utc_now(),
+          "confirmed_at" => DateTime.utc_now() |> DateTime.truncate(:second),
           "confirmation_sent_at" => nil,
           "confirmation_token" => nil
         })
@@ -509,7 +509,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
       {:ok, %User{} = _user} =
         Actors.update_user(user, %{
-          "confirmed_at" => DateTime.utc_now(),
+          "confirmed_at" => DateTime.utc_now() |> DateTime.truncate(:second),
           "confirmation_sent_at" => nil,
           "confirmation_token" => nil
         })

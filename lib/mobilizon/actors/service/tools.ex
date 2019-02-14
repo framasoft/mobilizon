@@ -11,7 +11,10 @@ defmodule Mobilizon.Actors.Service.Tools do
         :ok
 
       _ ->
-        case Timex.before?(Timex.shift(Map.get(user, key), hours: 1), DateTime.utc_now()) do
+        case Timex.before?(
+               Timex.shift(Map.get(user, key), hours: 1),
+               DateTime.utc_now() |> DateTime.truncate(:second)
+             ) do
           true ->
             :ok
 

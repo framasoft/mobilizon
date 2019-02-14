@@ -373,7 +373,7 @@ defmodule Mobilizon.ActorsTest do
       assert {:error, :user_not_found} = Actors.get_user_by_email(@email, true)
 
       Actors.update_user(user, %{
-        "confirmed_at" => DateTime.utc_now(),
+        "confirmed_at" => DateTime.utc_now() |> DateTime.truncate(:second),
         "confirmation_sent_at" => nil,
         "confirmation_token" => nil
       })

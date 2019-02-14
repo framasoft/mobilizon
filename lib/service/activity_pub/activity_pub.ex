@@ -495,7 +495,10 @@ defmodule Mobilizon.Service.ActivityPub do
             ical_events =
               body
               |> ExIcal.parse()
-              |> ExIcal.by_range(DateTime.utc_now(), DateTime.utc_now() |> Timex.shift(years: 1))
+              |> ExIcal.by_range(
+                DateTime.utc_now(),
+                DateTime.utc_now() |> DateTime.truncate(:second) |> Timex.shift(years: 1)
+              )
 
             activities =
               ical_events

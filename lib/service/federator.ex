@@ -59,7 +59,7 @@ defmodule Mobilizon.Service.Federator do
       _e ->
         # Just drop those for now
         Logger.error("Unhandled activity")
-        Logger.error(Poison.encode!(params, pretty: 2))
+        Logger.error(Jason.encode!(params))
     end
   end
 

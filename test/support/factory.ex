@@ -10,7 +10,7 @@ defmodule Mobilizon.Factory do
       password_hash: "Jane Smith",
       email: sequence(:email, &"email-#{&1}@example.com"),
       role: 0,
-      confirmed_at: DateTime.utc_now(),
+      confirmed_at: DateTime.utc_now() |> DateTime.truncate(:second),
       confirmation_sent_at: nil,
       confirmation_token: nil
     }
@@ -64,6 +64,13 @@ defmodule Mobilizon.Factory do
     %Mobilizon.Events.Tag{
       title: "MyTag",
       slug: sequence("MyTag")
+    }
+  end
+
+  def tag_relation_factory do
+    %Mobilizon.Events.TagRelation{
+      tag: build(:tag),
+      link: build(:tag)
     }
   end
 
