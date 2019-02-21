@@ -70,7 +70,7 @@ defmodule Mobilizon.Mixfile do
       {:httpoison, "~> 1.0"},
       {:json_ld, "~> 0.3"},
       {:jason, "~> 1.1"},
-      {:ex_crypto, "~> 0.9.0"},
+      {:ex_crypto, "~> 0.10.0"},
       {:http_sign, "~> 0.1.1"},
       {:ecto_enum, "~> 1.0"},
       {:ex_ical, "~> 0.2"},
