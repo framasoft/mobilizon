@@ -248,17 +248,24 @@ defmodule Mobilizon.Events do
 
     query =
       from(e in Event,
-        where: e.visibility == ^:public and ilike(e.title, ^like_sanitize(name)),
+        where:
+          e.visibility == ^:public and
+            fragment(
+              "f_unaccent(?) %> f_unaccent(?)",
+              e.title,
+              ^name
+            ),
+        order_by:
+          fragment(
+            "word_similarity(?, ?) desc",
+            e.title,
+            ^name
+          ),
         preload: [:organizer_actor]
       )
       |> paginate(page, limit)
 
     Repo.all(query)
-  end
-
-  # Sanitize the LIKE queries
-  defp like_sanitize(value) do
-    "%" <> String.replace(value, ~r/([\\%_])/, "\\1") <> "%"
   end
 
   @doc """

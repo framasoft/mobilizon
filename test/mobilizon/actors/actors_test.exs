@@ -44,7 +44,7 @@ defmodule Mobilizon.ActorsTest do
 
     setup do
       user = insert(:user)
-      actor = insert(:actor, user: user)
+      actor = insert(:actor, user: user, preferred_username: "tcit")
 
       {:ok, actor: actor}
     end
@@ -177,11 +177,10 @@ defmodule Mobilizon.ActorsTest do
     test "test find_local_by_username/1 returns local actors with similar usernames", %{
       actor: actor
     } do
-      actor2 = insert(:actor)
-      [%Actor{id: actor_found_id} | tail] = Actors.find_local_by_username("thomas")
+      actor2 = insert(:actor, preferred_username: "tcit")
+      [%Actor{id: actor_found_id} | tail] = Actors.find_local_by_username("tcit")
       %Actor{id: actor2_found_id} = hd(tail)
-      assert actor_found_id == actor.id
-      assert actor2_found_id == actor2.id
+      assert MapSet.new([actor_found_id, actor2_found_id]) == MapSet.new([actor.id, actor2.id])
     end
 
     test "test find_actors_by_username_or_name/1 returns actors with similar usernames", %{
@@ -189,7 +188,7 @@ defmodule Mobilizon.ActorsTest do
     } do
       use_cassette "actors/remote_actor_mastodon_tcit" do
         with {:ok, %Actor{id: actor2_id}} <- Actors.get_or_fetch_by_url(@remote_account_url) do
-          actors_ids = Actors.find_actors_by_username_or_name("t") |> Enum.map(& &1.id)
+          actors_ids = Actors.find_actors_by_username_or_name("tcit") |> Enum.map(& &1.id)
           assert MapSet.new(actors_ids) == MapSet.new([actor2_id, actor_id])
         end
       end
@@ -198,26 +197,6 @@ defmodule Mobilizon.ActorsTest do
     test "test find_actors_by_username_or_name/1 returns actors with similar names" do
       actors = Actors.find_actors_by_username_or_name("ohno")
       assert actors == []
-    end
-
-    test "test search/1 returns accounts for search with existing accounts", %{actor: actor} do
-      with {:ok, [%Actor{id: actor_found_id}]} <- Actors.search("t") do
-        assert actor_found_id == actor.id
-      end
-    end
-
-    test "test search/1 returns accounts for search with non existent accounts" do
-      assert {:ok, []} == Actors.search("nonexistent")
-    end
-
-    test "test search/1 returns accounts for search with existing remote accounts" do
-      with {:ok, [%Actor{preferred_username: username}]} <- Actors.search("tcit@framapiaf.org") do
-        assert username == "tcit"
-      end
-    end
-
-    test "test search/1 returns accounts for search with non existent remote accounts" do
-      assert {:error, "No ActivityPub URL found in WebFinger"} == Actors.search("tcit@yolo.tld")
     end
 
     test "test get_public_key_for_url/1 with local actor", %{actor: actor} do

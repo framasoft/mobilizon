@@ -45,7 +45,7 @@ defmodule Mobilizon.Actors.User do
         :password,
         min: 6,
         max: 100,
-        message: "The choosen password is too short."
+        message: "The chosen password is too short."
       )
 
     if Map.has_key?(attrs, :default_actor) do
