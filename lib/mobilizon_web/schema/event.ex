@@ -8,6 +8,7 @@ defmodule MobilizonWeb.Schema.EventType do
   import_types(MobilizonWeb.Schema.AddressType)
   import_types(MobilizonWeb.Schema.Events.ParticipantType)
   import_types(MobilizonWeb.Schema.Events.CategoryType)
+  import_types(MobilizonWeb.Schema.TagType)
   alias MobilizonWeb.Resolvers
 
   @desc "An event"
@@ -37,7 +38,12 @@ defmodule MobilizonWeb.Schema.EventType do
     )
 
     field(:attributed_to, :actor, description: "Who the event is attributed to (often a group)")
-    # field(:tags, list_of(:tag))
+
+    field(:tags, list_of(:tag),
+      resolve: &MobilizonWeb.Resolvers.Tag.list_tags_for_event/3,
+      description: "The event's tags"
+    )
+
     field(:category, :category, description: "The event's category")
 
     field(:participants, list_of(:participant),

@@ -34,7 +34,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #   data =
     #     File.read!("test/fixtures/mastodon-post-activity.json")
-    #     |> Poison.decode!()
+    #     |> Jason.decode!()
     #     |> Map.put("object", activity["object"])
 
     #   {:ok, returned_activity} = Transmogrifier.handle_incoming(data)
@@ -45,7 +45,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     # test "it fetches replied-to activities if we don't have them" do
     #   data =
     #     File.read!("test/fixtures/mastodon-post-activity.json")
-    #     |> Poison.decode!()
+    #     |> Jason.decode!()
 
     #   object =
     #     data["object"]
@@ -69,7 +69,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     # end
 
     test "it works for incoming notices" do
-      data = File.read!("test/fixtures/mastodon-post-activity.json") |> Poison.decode!()
+      data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
 
       {:ok, %Mobilizon.Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
 
@@ -103,7 +103,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     end
 
     test "it works for incoming notices with hashtags" do
-      data = File.read!("test/fixtures/mastodon-post-activity-hashtag.json") |> Poison.decode!()
+      data = File.read!("test/fixtures/mastodon-post-activity-hashtag.json") |> Jason.decode!()
 
       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
       assert Enum.at(data["object"]["tag"], 2) == "moo"
@@ -111,7 +111,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #     test "it works for incoming notices with contentMap" do
     #       data =
-    #         File.read!("test/fixtures/mastodon-post-activity-contentmap.json") |> Poison.decode!()
+    #         File.read!("test/fixtures/mastodon-post-activity-contentmap.json") |> Jason.decode!()
 
     #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
 
@@ -120,7 +120,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     #     end
 
     #     test "it works for incoming notices with to/cc not being an array (kroeg)" do
-    #       data = File.read!("test/fixtures/kroeg-post-activity.json") |> Poison.decode!()
+    #       data = File.read!("test/fixtures/kroeg-post-activity.json") |> Jason.decode!()
 
     #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
 
@@ -129,7 +129,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     #     end
 
     #     test "it works for incoming announces with actor being inlined (kroeg)" do
-    #       data = File.read!("test/fixtures/kroeg-announce-with-inline-actor.json") |> Poison.decode!()
+    #       data = File.read!("test/fixtures/kroeg-announce-with-inline-actor.json") |> Jason.decode!()
 
     #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
 
@@ -137,7 +137,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     #     end
 
     #     test "it works for incoming notices with tag not being an array (kroeg)" do
-    #       data = File.read!("test/fixtures/kroeg-array-less-emoji.json") |> Poison.decode!()
+    #       data = File.read!("test/fixtures/kroeg-array-less-emoji.json") |> Jason.decode!()
 
     #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
 
@@ -145,7 +145,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     #                "icon_e_smile" => "https://puckipedia.com/forum/images/smilies/icon_e_smile.png"
     #              }
 
-    #       data = File.read!("test/fixtures/kroeg-array-less-hashtag.json") |> Poison.decode!()
+    #       data = File.read!("test/fixtures/kroeg-array-less-hashtag.json") |> Jason.decode!()
 
     #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
 
@@ -153,7 +153,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     #     end
 
     test "it works for incoming notices with url not being a string (prismo)" do
-      data = File.read!("test/fixtures/prismo-url-map.json") |> Poison.decode!()
+      data = File.read!("test/fixtures/prismo-url-map.json") |> Jason.decode!()
 
       assert {:error, :not_supported} == Transmogrifier.handle_incoming(data)
       # Pages are not supported
@@ -167,7 +167,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
       data =
         File.read!("test/fixtures/mastodon-follow-activity.json")
-        |> Poison.decode!()
+        |> Jason.decode!()
         |> Map.put("object", actor.url)
 
       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
@@ -185,7 +185,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #       data =
     #         File.read!("test/fixtures/hubzilla-follow-activity.json")
-    #         |> Poison.decode!()
+    #         |> Jason.decode!()
     #         |> Map.put("object", user.ap_id)
     #         |> Utils.normalize_params()
 
@@ -202,7 +202,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #   data =
     #     File.read!("test/fixtures/mastodon-like.json")
-    #     |> Poison.decode!()
+    #     |> Jason.decode!()
     #     |> Map.put("object", url)
 
     #   {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
@@ -218,7 +218,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #   data =
     #     File.read!("test/fixtures/mastodon-undo-like.json")
-    #     |> Poison.decode!()
+    #     |> Jason.decode!()
     #     |> Map.put("object", url)
 
     #   assert Transmogrifier.handle_incoming(data) == {:error, :not_supported}
@@ -229,14 +229,14 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #   like_data =
     #     File.read!("test/fixtures/mastodon-like.json")
-    #     |> Poison.decode!()
+    #     |> Jason.decode!()
     #     |> Map.put("object", comment.url)
 
     #   {:ok, %Activity{data: like_data, local: false}} = Transmogrifier.handle_incoming(like_data)
 
     #   data =
     #     File.read!("test/fixtures/mastodon-undo-like.json")
-    #     |> Poison.decode!()
+    #     |> Jason.decode!()
     #     |> Map.put("object", like_data)
     #     |> Map.put("actor", like_data["actor"])
 
@@ -249,7 +249,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     # end
 
     # test "it works for incoming announces" do
-    #   data = File.read!("test/fixtures/mastodon-announce.json") |> Poison.decode!()
+    #   data = File.read!("test/fixtures/mastodon-announce.json") |> Jason.decode!()
 
     #   {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
 
@@ -270,7 +270,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #   data =
     #     File.read!("test/fixtures/mastodon-announce.json")
-    #     |> Poison.decode!()
+    #     |> Jason.decode!()
     #     |> Map.put("object", comment.url)
 
     #   {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
@@ -287,10 +287,10 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     # end
 
     test "it works for incoming update activities" do
-      data = File.read!("test/fixtures/mastodon-post-activity.json") |> Poison.decode!()
+      data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
 
       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
-      update_data = File.read!("test/fixtures/mastodon-update.json") |> Poison.decode!()
+      update_data = File.read!("test/fixtures/mastodon-update.json") |> Jason.decode!()
 
       object =
         update_data["object"]
@@ -317,10 +317,10 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     end
 
     #     test "it works for incoming update activities which lock the account" do
-    #       data = File.read!("test/fixtures/mastodon-post-activity.json") |> Poison.decode!()
+    #       data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
 
     #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
-    #       update_data = File.read!("test/fixtures/mastodon-update.json") |> Poison.decode!()
+    #       update_data = File.read!("test/fixtures/mastodon-update.json") |> Jason.decode!()
 
     #       object =
     #         update_data["object"]
@@ -345,7 +345,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
       data =
         File.read!("test/fixtures/mastodon-delete.json")
-        |> Poison.decode!()
+        |> Jason.decode!()
 
       object =
         data["object"]
@@ -369,7 +369,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #       data =
     #         File.read!("test/fixtures/mastodon-delete.json")
-    #         |> Poison.decode!()
+    #         |> Jason.decode!()
 
     #       object =
     #         data["object"]
@@ -389,7 +389,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #   announce_data =
     #     File.read!("test/fixtures/mastodon-announce.json")
-    #     |> Poison.decode!()
+    #     |> Jason.decode!()
     #     |> Map.put("object", comment.url)
 
     #   {:ok, %Activity{data: announce_data, local: false}} =
@@ -397,7 +397,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #   data =
     #     File.read!("test/fixtures/mastodon-undo-announce.json")
-    #     |> Poison.decode!()
+    #     |> Jason.decode!()
     #     |> Map.put("object", announce_data)
     #     |> Map.put("actor", announce_data["actor"])
 
@@ -416,14 +416,14 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
       follow_data =
         File.read!("test/fixtures/mastodon-follow-activity.json")
-        |> Poison.decode!()
+        |> Jason.decode!()
         |> Map.put("object", actor.url)
 
       {:ok, %Activity{data: _, local: false}} = Transmogrifier.handle_incoming(follow_data)
 
       data =
         File.read!("test/fixtures/mastodon-unfollow-activity.json")
-        |> Poison.decode!()
+        |> Jason.decode!()
         |> Map.put("object", follow_data)
 
       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
@@ -442,7 +442,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #       data =
     #         File.read!("test/fixtures/mastodon-block-activity.json")
-    #         |> Poison.decode!()
+    #         |> Jason.decode!()
     #         |> Map.put("object", user.ap_id)
 
     #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
@@ -462,7 +462,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #       data =
     #         File.read!("test/fixtures/mastodon-block-activity.json")
-    #         |> Poison.decode!()
+    #         |> Jason.decode!()
     #         |> Map.put("object", blocked.ap_id)
     #         |> Map.put("actor", blocker.ap_id)
 
@@ -492,14 +492,14 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #       block_data =
     #         File.read!("test/fixtures/mastodon-block-activity.json")
-    #         |> Poison.decode!()
+    #         |> Jason.decode!()
     #         |> Map.put("object", user.ap_id)
 
     #       {:ok, %Activity{data: _, local: false}} = Transmogrifier.handle_incoming(block_data)
 
     #       data =
     #         File.read!("test/fixtures/mastodon-unblock-activity.json")
-    #         |> Poison.decode!()
+    #         |> Jason.decode!()
     #         |> Map.put("object", block_data)
 
     #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
@@ -524,7 +524,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #       accept_data =
     #         File.read!("test/fixtures/mastodon-accept-activity.json")
-    #         |> Poison.decode!()
+    #         |> Jason.decode!()
     #         |> Map.put("actor", followed.ap_id)
 
     #       object =
@@ -552,7 +552,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #       accept_data =
     #         File.read!("test/fixtures/mastodon-accept-activity.json")
-    #         |> Poison.decode!()
+    #         |> Jason.decode!()
     #         |> Map.put("actor", followed.ap_id)
 
     #       accept_data =
@@ -574,7 +574,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #       accept_data =
     #         File.read!("test/fixtures/mastodon-accept-activity.json")
-    #         |> Poison.decode!()
+    #         |> Jason.decode!()
     #         |> Map.put("actor", followed.ap_id)
     #         |> Map.put("object", follow_activity.data["id"])
 
@@ -592,7 +592,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #       accept_data =
     #         File.read!("test/fixtures/mastodon-accept-activity.json")
-    #         |> Poison.decode!()
+    #         |> Jason.decode!()
     #         |> Map.put("actor", followed.ap_id)
 
     #       accept_data =
@@ -611,7 +611,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #       accept_data =
     #         File.read!("test/fixtures/mastodon-reject-activity.json")
-    #         |> Poison.decode!()
+    #         |> Jason.decode!()
     #         |> Map.put("actor", followed.ap_id)
 
     #       accept_data =
@@ -635,7 +635,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #       reject_data =
     #         File.read!("test/fixtures/mastodon-reject-activity.json")
-    #         |> Poison.decode!()
+    #         |> Jason.decode!()
     #         |> Map.put("actor", followed.ap_id)
 
     #       reject_data =
@@ -660,7 +660,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #       reject_data =
     #         File.read!("test/fixtures/mastodon-reject-activity.json")
-    #         |> Poison.decode!()
+    #         |> Jason.decode!()
     #         |> Map.put("actor", followed.ap_id)
     #         |> Map.put("object", follow_activity.data["id"])
 
@@ -676,7 +676,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #       data =
     #         File.read!("test/fixtures/mastodon-follow-activity.json")
-    #         |> Poison.decode!()
+    #         |> Jason.decode!()
     #         |> Map.put("object", user.ap_id)
     #         |> Map.put("id", "")
 

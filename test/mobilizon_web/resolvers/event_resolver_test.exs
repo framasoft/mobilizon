@@ -7,7 +7,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
   @event %{
     description: "some body",
     title: "some title",
-    begins_on: Ecto.DateTime.utc(),
+    begins_on: DateTime.utc_now() |> DateTime.truncate(:second),
     uuid: "b5126423-f1af-43e4-a923-002a03003ba4",
     url: "some url"
   }
@@ -68,7 +68,9 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
               createEvent(
                   title: "come to my event",
                   description: "it will be fine",
-                  begins_on: "#{DateTime.utc_now() |> DateTime.to_iso8601()}",
+                  begins_on: "#{
+        DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
+      }",
                   organizer_actor_id: "#{actor.id}",
                   category: "#{category.title}"
               ) {

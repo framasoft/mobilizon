@@ -46,7 +46,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   end
 
   def make_date do
-    DateTime.utc_now() |> DateTime.to_iso8601()
+    DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
   end
 
   @doc """

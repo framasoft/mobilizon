@@ -43,7 +43,7 @@ defmodule Mobilizon.Actors.Service.ResetPassword do
            Repo.update(
              User.send_password_reset_changeset(user, %{
                "reset_password_token" => Tools.random_string(30),
-               "reset_password_sent_at" => DateTime.utc_now()
+               "reset_password_sent_at" => DateTime.utc_now() |> DateTime.truncate(:second)
              })
            ) do
       mail =

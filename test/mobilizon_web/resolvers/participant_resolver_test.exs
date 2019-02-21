@@ -7,7 +7,7 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
   @event %{
     description: "some body",
     title: "some title",
-    begins_on: Ecto.DateTime.utc(),
+    begins_on: DateTime.utc_now() |> DateTime.truncate(:second),
     uuid: "b5126423-f1af-43e4-a923-002a03003ba4",
     url: "some url"
   }

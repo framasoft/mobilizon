@@ -89,7 +89,12 @@ defmodule Mobilizon.Actors.User do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{email: _email}} ->
         changeset = put_change(changeset, :confirmation_token, random_string(30))
-        put_change(changeset, :confirmation_sent_at, DateTime.utc_now())
+
+        put_change(
+          changeset,
+          :confirmation_sent_at,
+          DateTime.utc_now() |> DateTime.truncate(:second)
+        )
 
       _ ->
         changeset
@@ -122,7 +127,7 @@ defmodule Mobilizon.Actors.User do
         put_change(
           changeset,
           :password_hash,
-          Comeonin.Argon2.hashpwsalt(password)
+          Argon2.hash_pwd_salt(password)
         )
 
       _ ->

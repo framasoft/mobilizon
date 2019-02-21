@@ -6,9 +6,9 @@ defmodule Mobilizon.EventsTest do
   alias Mobilizon.Events
 
   @event_valid_attrs %{
-    begins_on: "2010-04-17 14:00:00.000000Z",
+    begins_on: "2010-04-17 14:00:00Z",
     description: "some description",
-    ends_on: "2010-04-17 14:00:00.000000Z",
+    ends_on: "2010-04-17 14:00:00Z",
     title: "some title",
     url: "some url",
     uuid: "b5126423-f1af-43e4-a923-002a03003ba4"
@@ -24,15 +24,15 @@ defmodule Mobilizon.EventsTest do
     end
 
     @valid_attrs %{
-      begins_on: "2010-04-17 14:00:00.000000Z",
+      begins_on: "2010-04-17 14:00:00Z",
       description: "some description",
-      ends_on: "2010-04-17 14:00:00.000000Z",
+      ends_on: "2010-04-17 14:00:00Z",
       title: "some title"
     }
     @update_attrs %{
-      begins_on: "2011-05-18 15:01:01.000000Z",
+      begins_on: "2011-05-18 15:01:01Z",
       description: "some updated description",
-      ends_on: "2011-05-18 15:01:01.000000Z",
+      ends_on: "2011-05-18 15:01:01Z",
       title: "some updated title"
     }
     @invalid_attrs %{begins_on: nil, description: nil, ends_on: nil, title: nil}
@@ -90,9 +90,9 @@ defmodule Mobilizon.EventsTest do
         |> Map.put(:address_id, address.id)
 
       with {:ok, %Event{} = event} <- Events.create_event(valid_attrs) do
-        assert event.begins_on == DateTime.from_naive!(~N[2010-04-17 14:00:00.000000Z], "Etc/UTC")
+        assert event.begins_on == DateTime.from_naive!(~N[2010-04-17 14:00:00Z], "Etc/UTC")
         assert event.description == "some description"
-        assert event.ends_on == DateTime.from_naive!(~N[2010-04-17 14:00:00.000000Z], "Etc/UTC")
+        assert event.ends_on == DateTime.from_naive!(~N[2010-04-17 14:00:00Z], "Etc/UTC")
         assert event.title == "some title"
       else
         err ->
@@ -107,9 +107,9 @@ defmodule Mobilizon.EventsTest do
     test "update_event/2 with valid data updates the event", %{event: event} do
       assert {:ok, event} = Events.update_event(event, @update_attrs)
       assert %Event{} = event
-      assert event.begins_on == DateTime.from_naive!(~N[2011-05-18 15:01:01.000000Z], "Etc/UTC")
+      assert event.begins_on == DateTime.from_naive!(~N[2011-05-18 15:01:01Z], "Etc/UTC")
       assert event.description == "some updated description"
-      assert event.ends_on == DateTime.from_naive!(~N[2011-05-18 15:01:01.000000Z], "Etc/UTC")
+      assert event.ends_on == DateTime.from_naive!(~N[2011-05-18 15:01:01Z], "Etc/UTC")
       assert event.title == "some updated title"
     end
 
@@ -299,6 +299,81 @@ defmodule Mobilizon.EventsTest do
     test "change_tag/1 returns a tag changeset" do
       tag = insert(:tag)
       assert %Ecto.Changeset{} = Events.change_tag(tag)
+    end
+  end
+
+  describe "tags_relations" do
+    alias Mobilizon.Events.TagRelation
+    alias Mobilizon.Events.Tag
+
+    setup do
+      tag1 = insert(:tag)
+      tag2 = insert(:tag)
+      {:ok, tag1: tag1, tag2: tag2}
+    end
+
+    test "create_tag_relation/1 with valid data creates a tag relation", %{
+      tag1: %Tag{id: tag1_id} = tag1,
+      tag2: %Tag{id: tag2_id} = tag2
+    } do
+      assert {:ok, %TagRelation{} = tag_relation} =
+               Events.create_tag_relation(%{tag_id: tag1_id, link_id: tag2_id})
+
+      assert Events.are_tags_linked(tag1, tag2)
+      assert Events.are_tags_linked(tag2, tag1)
+    end
+
+    test "create_tag_relation/1 with invalid data returns error changeset", %{
+      tag1: %Tag{} = tag1,
+      tag2: %Tag{} = tag2
+    } do
+      assert {:error, %Ecto.Changeset{}} =
+               Events.create_tag_relation(%{tag_id: nil, link_id: nil})
+
+      refute Events.are_tags_linked(tag1, tag2)
+    end
+
+    test "delete_tag_relation/1 deletes the tag relation" do
+      tag_relation = insert(:tag_relation)
+      assert {:ok, %TagRelation{}} = Events.delete_tag_relation(tag_relation)
+    end
+
+    test "tag_neighbors/2 return the connected tags for a given tag", %{
+      tag1: %Tag{} = tag1,
+      tag2: %Tag{} = tag2
+    } do
+      tag3 = insert(:tag)
+      tag4 = insert(:tag)
+
+      assert {:ok, %TagRelation{}} =
+               Events.create_tag_relation(%{tag_id: tag1.id, link_id: tag2.id})
+
+      assert {:ok, %TagRelation{}} =
+               Events.create_tag_relation(%{tag_id: tag2.id, link_id: tag1.id})
+
+      assert {:ok, %TagRelation{}} =
+               Events.create_tag_relation(%{tag_id: tag3.id, link_id: tag2.id})
+
+      assert {:ok, %TagRelation{}} =
+               Events.create_tag_relation(%{tag_id: tag4.id, link_id: tag1.id})
+
+      assert {:ok, %TagRelation{}} =
+               Events.create_tag_relation(%{tag_id: tag4.id, link_id: tag1.id})
+
+      assert {:ok, %TagRelation{}} =
+               Events.create_tag_relation(%{tag_id: tag4.id, link_id: tag1.id})
+
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  tag_id:
+                    {"Can't add a relation on self",
+                     [constraint: :check, constraint_name: "no_self_loops_check"]}
+                ]
+              }} = Events.create_tag_relation(%{tag_id: tag1.id, link_id: tag1.id})
+
+      # The order is preserved, since tag4 has one more relation than tag2
+      assert [tag4, tag2] == Events.tag_neighbors(tag1)
     end
   end
 

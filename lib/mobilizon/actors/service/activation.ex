@@ -12,7 +12,7 @@ defmodule Mobilizon.Actors.Service.Activation do
     with %User{} = user <- Actors.get_user_by_activation_token(token),
          {:ok, %User{} = user} <-
            Actors.update_user(user, %{
-             "confirmed_at" => DateTime.utc_now(),
+             "confirmed_at" => DateTime.utc_now() |> DateTime.truncate(:second),
              "confirmation_sent_at" => nil,
              "confirmation_token" => nil
            }) do
@@ -26,7 +26,10 @@ defmodule Mobilizon.Actors.Service.Activation do
 
   def resend_confirmation_email(%User{} = user, locale \\ "en") do
     with :ok <- Tools.we_can_send_email(user, :confirmation_sent_at),
-         {:ok, user} <- Actors.update_user(user, %{"confirmation_sent_at" => DateTime.utc_now()}) do
+         {:ok, user} <-
+           Actors.update_user(user, %{
+             "confirmation_sent_at" => DateTime.utc_now() |> DateTime.truncate(:second)
+           }) do
       send_confirmation_email(user, locale)
       Logger.info("Sent confirmation email again to #{user.email}")
       {:ok, user.email}
