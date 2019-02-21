@@ -1,7 +1,7 @@
 FROM elixir:latest
 LABEL maintainer="Thomas Citharel <tcit@tcit.fr>"
 
-ENV REFRESHED_AT=2018-12-18
+ENV REFRESHED_AT=2019-02-21
 RUN apt-get update -yq && apt-get install -yq build-essential inotify-tools postgresql-client git curl gnupg
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash && apt-get install nodejs -yq
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
