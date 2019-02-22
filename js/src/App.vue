@@ -49,12 +49,6 @@ export default class App extends Vue {
       route: "GroupList",
       role: null
     },
-    {
-      icon: "content_copy",
-      text: "Categories",
-      route: "CategoryList",
-      role: "ROLE_ADMIN"
-    },
     { icon: "settings", text: "Settings", role: "ROLE_USER" },
     { icon: "chat_bubble", text: "Send feedback", role: "ROLE_USER" },
     { icon: "help", text: "Help", role: null },

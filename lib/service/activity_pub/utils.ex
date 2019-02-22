@@ -117,7 +117,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "description" => object["content"],
       "organizer_actor_id" => actor_id,
       "begins_on" => object["begins_on"],
-      "category_id" => Events.get_category_by_title(object["category"]).id,
+      "category" => object["category"],
       "url" => object["id"],
       "uuid" => object["uuid"]
     }

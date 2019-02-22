@@ -130,7 +130,6 @@ defmodule MobilizonWeb.Schema do
     import_fields(:group_queries)
     import_fields(:event_queries)
     import_fields(:participant_queries)
-    import_fields(:category_queries)
     import_fields(:tag_queries)
   end
 
@@ -142,7 +141,6 @@ defmodule MobilizonWeb.Schema do
     import_fields(:person_mutations)
     import_fields(:group_mutations)
     import_fields(:event_mutations)
-    import_fields(:category_mutations)
     import_fields(:comment_mutations)
     import_fields(:participant_mutations)
 

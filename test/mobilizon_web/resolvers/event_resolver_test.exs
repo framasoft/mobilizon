@@ -9,7 +9,8 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
     title: "some title",
     begins_on: DateTime.utc_now() |> DateTime.truncate(:second),
     uuid: "b5126423-f1af-43e4-a923-002a03003ba4",
-    url: "some url"
+    url: "some url",
+    category: "meeting"
   }
 
   setup %{conn: conn} do
@@ -21,12 +22,9 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
 
   describe "Event Resolver" do
     test "find_event/3 returns an event", context do
-      category = insert(:category)
-
       event =
         @event
         |> Map.put(:organizer_actor_id, context.actor.id)
-        |> Map.put(:category_id, category.id)
 
       {:ok, event} = Events.create_event(event)
 
@@ -61,8 +59,6 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
     end
 
     test "create_event/3 creates an event", %{conn: conn, actor: actor, user: user} do
-      category = insert(:category)
-
       mutation = """
           mutation {
               createEvent(
@@ -72,7 +68,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
         DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
       }",
                   organizer_actor_id: "#{actor.id}",
-                  category: "#{category.title}"
+                  category: "birthday"
               ) {
                 title,
                 uuid

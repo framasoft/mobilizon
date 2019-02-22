@@ -27,10 +27,12 @@ export enum ParticipantRole {
   CREATOR = 'creator',
 }
 
-export interface ICategory {
-  title: string;
-  description: string;
-  picture: string;
+export enum Category {
+  BUSINESS = 'business',
+  CONFERENCE = 'conference',
+  BIRTHDAY = 'birthday',
+  DEMONSTRATION = 'demonstration',
+  MEETING = 'meeting',
 }
 
 export interface IParticipant {
@@ -47,7 +49,7 @@ export interface IEvent {
 
   title: string;
   description: string;
-  category: ICategory;
+  category: Category;
 
   begins_on: Date;
   ends_on: Date;

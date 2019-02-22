@@ -19,13 +19,21 @@ defenum(Mobilizon.Events.EventStatusEnum, :event_status_type, [
   :cancelled
 ])
 
+defenum(Mobilizon.Event.EventCategoryEnum, :event_category_type, [
+  :business,
+  :conference,
+  :birthday,
+  :demonstration,
+  :meeting
+])
+
 defmodule Mobilizon.Events.Event do
   @moduledoc """
   Represents an event
   """
   use Ecto.Schema
   import Ecto.Changeset
-  alias Mobilizon.Events.{Event, Participant, Tag, Category, Session, Track}
+  alias Mobilizon.Events.{Event, Participant, Tag, Session, Track}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
 
@@ -45,10 +53,10 @@ defmodule Mobilizon.Events.Event do
     field(:uuid, Ecto.UUID, default: Ecto.UUID.generate())
     field(:online_address, :string)
     field(:phone_address, :string)
+    field(:category, :string)
     belongs_to(:organizer_actor, Actor, foreign_key: :organizer_actor_id)
     belongs_to(:attributed_to, Actor, foreign_key: :attributed_to_id)
     many_to_many(:tags, Tag, join_through: "events_tags")
-    belongs_to(:category, Category)
     many_to_many(:participants, Actor, join_through: Participant)
     has_many(:tracks, Track)
     has_many(:sessions, Session)
@@ -67,7 +75,7 @@ defmodule Mobilizon.Events.Event do
       :begins_on,
       :ends_on,
       :organizer_actor_id,
-      :category_id,
+      :category,
       :status,
       :visibility,
       :thumbnail,
@@ -83,7 +91,7 @@ defmodule Mobilizon.Events.Event do
       :title,
       :begins_on,
       :organizer_actor_id,
-      :category_id,
+      :category,
       :url,
       :uuid
     ])

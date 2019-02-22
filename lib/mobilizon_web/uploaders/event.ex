@@ -30,10 +30,9 @@ defmodule MobilizonWeb.Uploaders.Category do
     "#{title}_#{version}"
   end
 
-  # TODO : When we're sure creating a category is secured and made possible only for admins, use category name
   # Override the storage directory:
   def storage_dir(_, _) do
-    "uploads/categories/"
+    "uploads/event/"
   end
 
   # Provide a default URL if there hasn't been a file uploaded

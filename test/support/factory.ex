@@ -53,13 +53,6 @@ defmodule Mobilizon.Factory do
     }
   end
 
-  def category_factory do
-    %Mobilizon.Events.Category{
-      title: sequence("MyCategory"),
-      description: "My category desc"
-    }
-  end
-
   def tag_factory do
     %Mobilizon.Events.Tag{
       title: "MyTag",
@@ -112,7 +105,7 @@ defmodule Mobilizon.Factory do
       begins_on: start,
       ends_on: Timex.shift(start, hours: 2),
       organizer_actor: actor,
-      category: build(:category),
+      category: sequence("something"),
       physical_address: build(:address),
       visibility: :public,
       url: "#{actor.url}/#{uuid}",

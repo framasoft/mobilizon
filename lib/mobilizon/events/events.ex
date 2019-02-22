@@ -27,7 +27,6 @@ defmodule Mobilizon.Events do
         order_by: [desc: :id],
         preload: [
           :organizer_actor,
-          :category,
           :sessions,
           :tracks,
           :tags,
@@ -145,7 +144,6 @@ defmodule Mobilizon.Events do
       where: e.uuid == ^uuid and e.visibility in [^:public, ^:unlisted],
       preload: [
         :organizer_actor,
-        :category,
         :sessions,
         :tracks,
         :tags,
@@ -164,7 +162,6 @@ defmodule Mobilizon.Events do
 
     Repo.preload(event, [
       :organizer_actor,
-      :category,
       :sessions,
       :tracks,
       :tags,
@@ -182,7 +179,6 @@ defmodule Mobilizon.Events do
              where: e.url == ^url and e.visibility in [^:public, ^:unlisted],
              preload: [
                :organizer_actor,
-               :category,
                :sessions,
                :tracks,
                :tags,
@@ -205,7 +201,6 @@ defmodule Mobilizon.Events do
         where: e.url == ^url and e.visibility in [^:public, ^:unlisted],
         preload: [
           :organizer_actor,
-          :category,
           :sessions,
           :tracks,
           :tags,
@@ -348,110 +343,6 @@ defmodule Mobilizon.Events do
   """
   def change_event(%Event{} = event) do
     Event.changeset(event, %{})
-  end
-
-  alias Mobilizon.Events.Category
-
-  @doc """
-  Returns the list of categories.
-
-  ## Examples
-
-      iex> list_categories()
-      [%Category{}, ...]
-
-  """
-  def list_categories(page \\ nil, limit \\ nil) do
-    Repo.all(
-      Category
-      |> paginate(page, limit)
-    )
-  end
-
-  @doc """
-  Gets a single category.
-
-  Raises `Ecto.NoResultsError` if the Category does not exist.
-
-  ## Examples
-
-      iex> get_category!(123)
-      %Category{}
-
-      iex> get_category!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_category!(id), do: Repo.get!(Category, id)
-
-  @spec get_category_by_title(String.t()) :: Category.t() | nil
-  def get_category_by_title(title) when is_binary(title) do
-    Repo.get_by(Category, title: title)
-  end
-
-  @doc """
-  Creates a category.
-
-  ## Examples
-
-      iex> create_category(%{field: value})
-      {:ok, %Category{}}
-
-      iex> create_category(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_category(attrs \\ %{}) do
-    %Category{}
-    |> Category.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
-  Updates a category.
-
-  ## Examples
-
-      iex> update_category(category, %{field: new_value})
-      {:ok, %Category{}}
-
-      iex> update_category(category, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_category(%Category{} = category, attrs) do
-    category
-    |> Category.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a Category.
-
-  ## Examples
-
-      iex> delete_category(category)
-      {:ok, %Category{}}
-
-      iex> delete_category(category)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_category(%Category{} = category) do
-    Repo.delete(category)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking category changes.
-
-  ## Examples
-
-      iex> change_category(category)
-      %Ecto.Changeset{source: %Category{}}
-
-  """
-  def change_category(%Category{} = category) do
-    Category.changeset(category, %{})
   end
 
   alias Mobilizon.Events.Tag
