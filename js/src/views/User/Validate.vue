@@ -20,6 +20,8 @@
 import { VALIDATE_USER } from "@/graphql/user";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { AUTH_TOKEN, AUTH_USER_ID } from "@/constants";
+import { RouteName } from '@/router'
+import { UserRouteName } from '@/router/user'
 
 @Component
 export default class Validate extends Vue {
@@ -46,9 +48,9 @@ export default class Validate extends Vue {
       const user = data.validateUser.user;
       console.log(user);
       if (user.defaultActor) {
-        this.$router.push({name: "Home"});
+        this.$router.push({ name: RouteName.HOME });
       } else { // If the user didn't register any profile yet, let's create one for them
-        this.$router.push({ name: 'RegisterProfile', params: {email: user.email, userAlreadyActivated: 'true'} });
+        this.$router.push({ name: UserRouteName.REGISTER_PROFILE, params: { email: user.email, userAlreadyActivated: 'true' } });
       }
     } catch (err) {
       console.error(err);

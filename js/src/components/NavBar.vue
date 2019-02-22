@@ -50,7 +50,8 @@ import { CURRENT_USER_CLIENT } from "@/graphql/user";
 import { onLogout } from "@/vue-apollo";
 import { deleteUserData } from "@/utils/auth";
 import { LOGGED_PERSON } from "@/graphql/actor";
-import { IPerson } from "../types/actor.model";
+import { IActor, IPerson } from '../types/actor.model';
+import { RouteName } from '@/router'
 
 @Component({
   apollo: {
@@ -100,25 +101,26 @@ export default class NavBar extends Vue {
     });
   }
 
-  @Watch("model")
+  @Watch('model')
   onModelChanged(val) {
     switch (val.__typename) {
-      case "Event":
-        this.$router.push({ name: "Event", params: { uuid: val.uuid } });
+      case 'Event':
+        this.$router.push({ name: RouteName.EVENT, params: { uuid: val.uuid } });
         break;
-      case "Actor":
+
+      case 'Actor':
         this.$router.push({
-          name: "Profile",
-          params: { name: this.username_with_domain(val) }
+          name: RouteName.PROFILE,
+          params: { name: this.usernameWithDomain(val) },
         });
         break;
     }
   }
 
-  username_with_domain(actor) {
+  usernameWithDomain(actor: IActor) {
     return (
       actor.preferredUsername +
-      (actor.domain === null ? "" : `@${actor.domain}`)
+      (actor.domain === null ? '' : `@${actor.domain}`)
     );
   }
 
@@ -128,7 +130,7 @@ export default class NavBar extends Vue {
   }
 
   logout() {
-    alert("logout !");
+    alert('logout !');
 
     deleteUserData();
 

@@ -26,8 +26,10 @@
 </template>
 
 <script lang="ts">
-import VueMarkdown from "vue-markdown";
 import { Component, Vue } from "vue-property-decorator";
+
+// VueMarkdown is untyped
+const VueMarkdown = require('vue-markdown')
 
 @Component({
   components: {
@@ -43,9 +45,9 @@ export default class CreateGroup extends Vue {
     summary: string;
     address?: any;
   } = {
-    preferred_username: "",
-    name: "",
-    summary: ""
+    preferred_username: '',
+    name: '',
+    summary: '',
     // category: null,
   };
   categories = [];

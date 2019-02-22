@@ -99,6 +99,7 @@ import { LOGGED_PERSON } from '@/graphql/actor';
 import { IEvent, IParticipant } from '@/types/event.model';
 import { JOIN_EVENT } from '@/graphql/event';
 import { IPerson } from '@/types/actor.model';
+import { RouteName } from '@/router'
 
 // No typings for this component, so we use require
 const VueMarkdown = require('vue-markdown');
@@ -140,7 +141,7 @@ export default class Event extends Vue {
         }
       });
 
-      router.push({ name: 'EventList' })
+      router.push({ name: RouteName.EVENT })
     } catch (error) {
       console.error(error);
     }

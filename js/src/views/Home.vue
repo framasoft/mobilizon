@@ -37,15 +37,15 @@
 </template>
 
 <script lang="ts">
-import ngeohash from "ngeohash";
-import { AUTH_USER_ACTOR, AUTH_USER_ID } from "@/constants";
-import { FETCH_EVENTS } from "@/graphql/event";
-import { Component, Vue } from "vue-property-decorator";
-import EventCard from "@/components/Event/EventCard.vue";
-import { LOGGED_PERSON } from "@/graphql/actor";
-import { IPerson } from "@/types/actor.model";
-import { ICurrentUser } from "@/types/current-user.model";
-import { CURRENT_USER_CLIENT } from "@/graphql/user";
+import ngeohash from 'ngeohash';
+import { FETCH_EVENTS } from '@/graphql/event';
+import { Component, Vue } from 'vue-property-decorator';
+import EventCard from '@/components/Event/EventCard.vue';
+import { LOGGED_PERSON } from '@/graphql/actor';
+import { IPerson } from '@/types/actor.model';
+import { ICurrentUser } from '@/types/current-user.model';
+import { CURRENT_USER_CLIENT } from '@/graphql/user';
+import { RouteName } from '@/router';
 
 @Component({
   apollo: {
@@ -95,40 +95,44 @@ export default class Home extends Vue {
 
   geoLocalize() {
     const router = this.$router;
-    const sessionCity = sessionStorage.getItem("City");
-    if (sessionCity) {
-      router.push({ name: "EventList", params: { location: sessionCity } });
-    } else {
-      navigator.geolocation.getCurrentPosition(
-        pos => {
-          const crd = pos.coords;
+    const sessionCity = sessionStorage.getItem('City');
 
-          const geohash = ngeohash.encode(crd.latitude, crd.longitude, 11);
-          sessionStorage.setItem("City", geohash);
-          router.push({ name: "EventList", params: { location: geohash } });
-        },
-        err => console.warn(`ERROR(${err.code}): ${err.message}`),
-        {
-          enableHighAccuracy: true,
-          timeout: 5000,
-          maximumAge: 0
-        }
-      );
+    if (sessionCity) {
+      return router.push({ name: 'EventList', params: { location: sessionCity } });
     }
+
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const crd = pos.coords;
+
+        const geoHash = ngeohash.encode(crd.latitude, crd.longitude, 11);
+        sessionStorage.setItem('City', geoHash);
+        router.push({ name: RouteName.EVENT_LIST, params: { location: geoHash } });
+      },
+
+      err => console.warn(`ERROR(${err.code}): ${err.message}`),
+
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0,
+      },
+    );
   }
 
   getAddressData(addressData) {
-    const geohash = ngeohash.encode(
+    const geoHash = ngeohash.encode(
       addressData.latitude,
       addressData.longitude,
       11
     );
-    sessionStorage.setItem("City", geohash);
-    this.$router.push({ name: "EventList", params: { location: geohash } });
+    sessionStorage.setItem("City", geoHash);
+
+    this.$router.push({ name: RouteName.EVENT_LIST, params: { location: geoHash } });
   }
 
   viewEvent(event) {
-    this.$router.push({ name: "Event", params: { uuid: event.uuid } });
+    this.$router.push({ name: RouteName.EVENT, params: { uuid: event.uuid } });
   }
 
   ipLocation() {

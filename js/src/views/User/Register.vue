@@ -108,15 +108,11 @@
 </template>
 
 <script lang="ts">
-import Gravatar from "vue-gravatar";
 import { CREATE_USER } from "@/graphql/user";
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { UserRouteName } from '@/router/user'
 
-@Component({
-  components: {
-    "v-gravatar": Gravatar
-  }
-})
+@Component
 export default class Register extends Vue {
   @Prop({ type: String, required: false, default: "" }) email!: string;
   @Prop({ type: String, required: false, default: "" }) password!: string;
@@ -124,29 +120,25 @@ export default class Register extends Vue {
   credentials = {
     email: this.email,
     password: this.password
-  } as { email: string; password: string };
+  }
   errors: object = {};
   sendingValidation: boolean = false;
   validationSent: boolean = false;
-  showGravatar: boolean = false;
-
-  validEmail() {
-    return this.credentials.email.includes("@") === true
-      ? "v-gravatar"
-      : "avatar";
-  }
 
   async submit() {
     try {
       this.sendingValidation = true;
       this.errors = {};
+
       await this.$apollo.mutate({
         mutation: CREATE_USER,
         variables: this.credentials
       });
+
       this.validationSent = true;
+
       this.$router.push({
-        name: "RegisterProfile",
+        name: UserRouteName.REGISTER_PROFILE,
         params: { email: this.credentials.email }
       });
     } catch (error) {

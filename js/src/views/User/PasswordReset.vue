@@ -40,6 +40,7 @@ import { validateRequiredField } from "@/utils/validators";
 import { RESET_PASSWORD } from "@/graphql/auth";
 import { saveUserData } from "@/utils/auth";
 import { ILogin } from "@/types/login.model";
+import { RouteName } from '@/router'
 
 @Component
 export default class PasswordReset extends Vue {
@@ -79,7 +80,7 @@ export default class PasswordReset extends Vue {
       });
 
       saveUserData(result.data.resetPassword);
-      this.$router.push({ name: "Home" });
+      this.$router.push({ name: RouteName.HOME });
     } catch (err) {
       console.error(err);
       err.graphQLErrors.forEach(({ message }) => {
