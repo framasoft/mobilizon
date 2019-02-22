@@ -9,7 +9,7 @@ defmodule Mobilizon.Repo.Migrations.RemoveSlugForEvent do
 
   def down do
     alter table(:events) do
-      add :slug, :string, null: false
+      add(:slug, :string, null: false)
     end
   end
 end

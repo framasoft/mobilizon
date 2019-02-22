@@ -3,13 +3,13 @@ defmodule Mobilizon.Repo.Migrations.AddUUIDIdToEvents do
 
   def up do
     alter table(:events) do
-      add :uuid, :uuid
+      add(:uuid, :uuid)
     end
   end
 
   def down do
     alter table(:events) do
-      remove :uuid
+      remove(:uuid)
     end
   end
 end

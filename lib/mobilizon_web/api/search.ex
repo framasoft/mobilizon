@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.API.Search do
+  @moduledoc """
+  API for Search
+  """
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
@@ -80,7 +83,7 @@ defmodule MobilizonWeb.API.Search do
       actor
     else
       {:error, _err} ->
-        Logger.debug("Unable to find or make actor '#{search}'")
+        Logger.debug(fn -> "Unable to find or make actor '#{search}'" end)
         nil
     end
   end
@@ -92,7 +95,7 @@ defmodule MobilizonWeb.API.Search do
       object
     else
       {:error, _err} ->
-        Logger.debug("Unable to find or make object from URL '#{search}'")
+        Logger.debug(fn -> "Unable to find or make object from URL '#{search}'" end)
         nil
     end
   end

@@ -3,13 +3,13 @@ defmodule Mobilizon.Repo.Migrations.AddUUIDToComments do
 
   def up do
     alter table(:comments) do
-      add :uuid, :uuid
+      add(:uuid, :uuid)
     end
   end
 
   def down do
     alter table(:comments) do
-      remove :uuid
+      remove(:uuid)
     end
   end
 end

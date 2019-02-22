@@ -3,13 +3,13 @@ defmodule Mobilizon.Repo.Migrations.AddDefaultActorUserField do
 
   def up do
     alter table(:users) do
-      add :default_actor_id, :integer
+      add(:default_actor_id, :integer)
     end
   end
 
   def down do
     alter table(:users) do
-      remove :default_actor_id
+      remove(:default_actor_id)
     end
   end
 end

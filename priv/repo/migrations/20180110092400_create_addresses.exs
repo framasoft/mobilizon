@@ -3,17 +3,16 @@ defmodule Mobilizon.Repo.Migrations.CreateAddresses do
 
   def change do
     create table(:addresses) do
-      add :description, :string
-      add :floor, :string
-      add :addressCountry, :string
-      add :addressLocality, :string
-      add :addressRegion, :string
-      add :postalCode, :string
-      add :streetAddress, :string
-      add :geom, :geometry
+      add(:description, :string)
+      add(:floor, :string)
+      add(:addressCountry, :string)
+      add(:addressLocality, :string)
+      add(:addressRegion, :string)
+      add(:postalCode, :string)
+      add(:streetAddress, :string)
+      add(:geom, :geometry)
 
       timestamps()
     end
-
   end
 end

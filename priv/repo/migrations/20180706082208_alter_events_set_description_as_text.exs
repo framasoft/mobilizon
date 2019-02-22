@@ -3,13 +3,13 @@ defmodule Mobilizon.Repo.Migrations.AlterEventsSetDescriptionAsText do
 
   def up do
     alter table(:events) do
-      modify :description, :text
+      modify(:description, :text)
     end
   end
 
   def down do
     alter table(:events) do
-      modify :description, :string
+      modify(:description, :string)
     end
   end
 end

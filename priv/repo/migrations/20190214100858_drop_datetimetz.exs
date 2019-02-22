@@ -18,7 +18,7 @@ defmodule Mobilizon.Repo.Migrations.DropDatetimetz do
       add(:ends_on, :utc_datetime)
     end
 
-    execute "DROP TYPE datetimetz"
+    execute("DROP TYPE datetimetz")
   end
 
   def down do
