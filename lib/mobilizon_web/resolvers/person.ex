@@ -6,17 +6,6 @@ defmodule MobilizonWeb.Resolvers.Person do
   alias Mobilizon.Actors.{Actor, User}
   alias Mobilizon.Service.ActivityPub
 
-  @deprecated "Use find_person/3 or find_group/3 instead"
-  def find_actor(_parent, %{preferred_username: name}, _resolution) do
-    case ActivityPub.find_or_make_actor_from_nickname(name) do
-      {:ok, actor} ->
-        {:ok, actor}
-
-      _ ->
-        {:error, "Actor with name #{name} not found"}
-    end
-  end
-
   @doc """
   Find a person
   """
@@ -63,6 +52,13 @@ defmodule MobilizonWeb.Resolvers.Person do
     with {:ok, %Actor{} = new_person} <- Actors.new_person(args) do
       {:ok, new_person}
     end
+  end
+
+  @doc """
+  This function is used to create more identities from an existing user
+  """
+  def create_person(_parent, _args, _resolution) do
+    {:error, "You need to be logged-in to create a new identity"}
   end
 
   @doc """
