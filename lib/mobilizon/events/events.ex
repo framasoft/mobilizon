@@ -579,6 +579,7 @@ defmodule Mobilizon.Events do
   @doc """
   Create a relation between two tags
   """
+  @spec create_tag_relation(map()) :: {:ok, TagRelation.t()} | {:error, Ecto.Changeset.t()}
   def create_tag_relation(attrs \\ {}) do
     %TagRelation{}
     |> TagRelation.changeset(attrs)
