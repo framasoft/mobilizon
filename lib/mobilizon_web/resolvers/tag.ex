@@ -19,15 +19,15 @@ defmodule MobilizonWeb.Resolvers.Tag do
     {:ok, Mobilizon.Events.list_tags_for_event(id)}
   end
 
-  @doc """
-  Retrieve the list of related tags for a given tag ID
-  """
-  def get_related_tags(_parent, %{tag_id: tag_id}, _resolution) do
-    with %Tag{} = tag <- Mobilizon.Events.get_tag!(tag_id),
-         tags <- Mobilizon.Events.tag_neighbors(tag) do
-      {:ok, tags}
-    end
-  end
+  #  @doc """
+  #  Retrieve the list of related tags for a given tag ID
+  #  """
+  #  def get_related_tags(_parent, %{tag_id: tag_id}, _resolution) do
+  #    with %Tag{} = tag <- Mobilizon.Events.get_tag!(tag_id),
+  #         tags <- Mobilizon.Events.tag_neighbors(tag) do
+  #      {:ok, tags}
+  #    end
+  #  end
 
   @doc """
   Retrieve the list of related tags for a parent tag

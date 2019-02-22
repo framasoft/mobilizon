@@ -21,8 +21,4 @@ defmodule Mobilizon.Actors.Follower do
     |> validate_required([:score, :approved, :target_actor_id, :actor_id])
     |> unique_constraint(:target_actor_id, name: :followers_actor_target_actor_unique_index)
   end
-
-  def url(%Follower{id: id}) do
-    "#{MobilizonWeb.Endpoint.url()}/follow/#{id}/activity"
-  end
 end

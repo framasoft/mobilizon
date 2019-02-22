@@ -246,8 +246,9 @@ defmodule Mobilizon.Service.ActivityPub do
   Make an actor follow another
   """
   def follow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
-    with {:ok, %Follower{} = follow} <- Actor.follow(followed, follower, true),
-         activity_follow_id <- activity_id || Follower.url(follow),
+    with {:ok, %Follower{id: follow_id}} <- Actor.follow(followed, follower, true),
+         activity_follow_id <-
+           activity_id || "#{MobilizonWeb.Endpoint.url()}/follow/#{follow_id}/activity",
          data <- make_follow_data(followed, follower, activity_follow_id),
          {:ok, activity} <- insert(data, local),
          :ok <- maybe_federate(activity) do
