@@ -188,7 +188,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
               |> Map.put("in_reply_to_comment_id", id)
               |> Map.put("origin_comment_id", comment |> Comment.get_thread_id())
 
-            # Anthing else is kind of a MP
+            # Anything else is kind of a MP
             {:error, object} ->
               Logger.debug("Parent object is something we don't handle")
               Logger.debug(inspect(object))
@@ -239,6 +239,16 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   @doc """
   Make an AP event object from an set of values
   """
+  @spec make_event_data(
+          String.t(),
+          String.t(),
+          String.t(),
+          String.t(),
+          list(),
+          list(),
+          map(),
+          String.t()
+        ) :: map()
   def make_event_data(
         actor,
         to,
@@ -271,6 +281,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     }
   end
 
+  @spec make_event_data(Event.t(), list(String.t())) :: map()
   def make_event_data(
         %Event{title: title, organizer_actor: actor, uuid: uuid},
         to \\ ["https://www.w3.org/ns/activitystreams#Public"]

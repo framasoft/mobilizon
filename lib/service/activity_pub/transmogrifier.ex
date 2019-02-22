@@ -498,8 +498,10 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
 
   @spec normalize(map()) :: struct() | nil
   def normalize(obj) when is_map(obj), do: get_anything_by_url(obj["id"])
+
   @spec normalize(String.t()) :: struct() | nil
   def normalize(url) when is_binary(url), do: get_anything_by_url(url)
+
   @spec normalize(any()) :: nil
   def normalize(_), do: nil
 

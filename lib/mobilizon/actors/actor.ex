@@ -213,7 +213,7 @@ defmodule Mobilizon.Actors.Actor do
   @doc """
   Get a public key for a given ActivityPub actor ID (url)
   """
-  @spec get_public_key_for_url(String.t()) :: {:ok, String.t()}
+  @spec get_public_key_for_url(String.t()) :: {:ok, String.t()} | {:error, atom()}
   def get_public_key_for_url(url) do
     with {:ok, %Actor{keys: keys}} <- Actors.get_or_fetch_by_url(url),
          {:ok, public_key} <- prepare_public_key(keys) do

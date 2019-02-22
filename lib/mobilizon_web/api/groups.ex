@@ -51,7 +51,7 @@ defmodule MobilizonWeb.API.Groups do
       {:existing_group, _} ->
         {:error, :existing_group_name}
 
-      {:bad_actor} ->
+      {:bad_actor, _} ->
         {:error, :bad_admin_actor}
     end
   end

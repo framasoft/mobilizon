@@ -32,8 +32,7 @@ defmodule MobilizonWeb.HTTPSignaturePlug do
     [signature | _] = get_req_header(conn, "signature")
 
     cond do
-      # Dialyzer doesn't like this line
-      signature && String.contains?(signature, actor) ->
+      String.contains?(signature, actor) ->
         conn =
           conn
           |> put_req_header(

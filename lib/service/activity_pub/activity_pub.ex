@@ -36,9 +36,8 @@ defmodule Mobilizon.Service.ActivityPub do
 
   @doc """
   Wraps an object into an activity
-
-  TODO: Rename me
   """
+  # TODO: Rename me
   @spec insert(map(), boolean()) :: {:ok, %Activity{}} | {:error, any()}
   def insert(map, local \\ true) when is_map(map) do
     with map <- lazy_put_activity_defaults(map),
@@ -113,6 +112,9 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
+  @doc """
+  Create an activity of type "Create"
+  """
   def create(%{to: to, actor: actor, object: object} = params) do
     Logger.debug("creating an activity")
     Logger.debug(inspect(params))
@@ -240,6 +242,9 @@ defmodule Mobilizon.Service.ActivityPub do
   #   end
   # end
 
+  @doc """
+  Make an actor follow another
+  """
   def follow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
     with {:ok, %Follower{} = follow} <- Actor.follow(followed, follower, true),
          activity_follow_id <- activity_id || Follower.url(follow),
@@ -253,6 +258,9 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
+  @doc """
+  Make an actor unfollow another
+  """
   @spec unfollow(Actor.t(), Actor.t(), String.t(), boolean()) :: {:ok, map()} | any()
   def unfollow(%Actor{} = followed, %Actor{} = follower, activity_id \\ nil, local \\ true) do
     with {:ok, %Follower{id: follow_id}} <- Actor.unfollow(followed, follower),
@@ -337,7 +345,7 @@ defmodule Mobilizon.Service.ActivityPub do
   end
 
   @doc """
-  Find an actor in our local database or call Webfinger to find what's its AP ID is and then fetch it
+  Find an actor in our local database or call WebFinger to find what's its AP ID is and then fetch it
   """
   @spec find_or_make_actor_from_nickname(String.t(), atom() | nil) :: tuple()
   def find_or_make_actor_from_nickname(nickname, type \\ nil) do
@@ -355,7 +363,7 @@ defmodule Mobilizon.Service.ActivityPub do
   def find_or_make_group_from_nickname(nick), do: find_or_make_actor_from_nickname(nick, :Group)
 
   @doc """
-  Create an actor inside our database from username, using Webfinger to find out it's AP ID and then fetch it
+  Create an actor inside our database from username, using WebFinger to find out it's AP ID and then fetch it
   """
   @spec make_actor_from_nickname(String.t()) :: {:ok, %Actor{}} | {:error, any()}
   def make_actor_from_nickname(nickname) do
@@ -366,6 +374,9 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
+  @doc """
+  Publish an activity to all appropriated audiences inboxes
+  """
   def publish(actor, activity) do
     Logger.debug("Publishing an activity")
 
@@ -395,6 +406,9 @@ defmodule Mobilizon.Service.ActivityPub do
     end)
   end
 
+  @doc """
+  Publish an activity to a specific inbox
+  """
   def publish_one(%{inbox: inbox, json: json, actor: actor, id: id}) do
     Logger.info("Federating #{id} to #{inbox}")
     %URI{host: host, path: path} = URI.parse(inbox)
@@ -425,7 +439,7 @@ defmodule Mobilizon.Service.ActivityPub do
     )
   end
 
-  # Fetching a remote actor's informations through it's AP ID
+  # Fetching a remote actor's information through it's AP ID
   @spec fetch_and_prepare_actor_from_url(String.t()) :: {:ok, struct()} | {:error, atom()} | any()
   defp fetch_and_prepare_actor_from_url(url) do
     Logger.debug("Fetching and preparing actor from url")
@@ -447,6 +461,9 @@ defmodule Mobilizon.Service.ActivityPub do
 
   @doc """
   Creating proper actor data struct from AP data
+
+
+  Convert ActivityPub data to our internal format
   """
   @spec actor_data_from_actor_object(map()) :: {:ok, map()}
   def actor_data_from_actor_object(data) when is_map(data) do
@@ -533,7 +550,7 @@ defmodule Mobilizon.Service.ActivityPub do
 
   # Create an activity from a comment
   @spec comment_to_activity(%Comment{}, boolean()) :: Activity.t()
-  def comment_to_activity(%Comment{} = comment, local \\ true) do
+  defp comment_to_activity(%Comment{} = comment, local \\ true) do
     %Activity{
       recipients: ["https://www.w3.org/ns/activitystreams#Public"],
       actor: comment.actor.url,
@@ -590,8 +607,9 @@ defmodule Mobilizon.Service.ActivityPub do
     nil
   end
 
-  def is_public?(activity) do
-    "https://www.w3.org/ns/activitystreams#Public" in (activity.data["to"] ++
-                                                         (activity.data["cc"] || []))
-  end
+  #  # Whether the Public audience is in the activity's audience
+  #  defp is_public?(activity) do
+  #    "https://www.w3.org/ns/activitystreams#Public" in (activity.data["to"] ++
+  #                                                         (activity.data["cc"] || []))
+  #  end
 end

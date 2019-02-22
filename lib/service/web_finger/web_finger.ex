@@ -55,6 +55,7 @@ defmodule Mobilizon.Service.WebFinger do
   @spec represent_actor(Actor.t()) :: struct()
   def represent_actor(actor), do: represent_actor(actor, "JSON")
 
+  @spec represent_actor(Actor.t(), String.t()) :: struct()
   def represent_actor(actor, "JSON") do
     %{
       "subject" => "acct:#{actor.preferred_username}@#{MobilizonWeb.Endpoint.host()}",
