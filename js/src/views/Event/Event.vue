@@ -93,13 +93,15 @@
 </template>
 
 <script lang="ts">
-import { FETCH_EVENT } from "@/graphql/event";
-import { Component, Prop, Vue } from "vue-property-decorator";
-import VueMarkdown from "vue-markdown";
-import { LOGGED_PERSON } from "../../graphql/actor";
-import { IEvent } from "@/types/event.model";
-import { JOIN_EVENT } from "../../graphql/event";
-import { IPerson } from "@/types/actor.model";
+import { DELETE_EVENT, FETCH_EVENT, LEAVE_EVENT } from '@/graphql/event';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { LOGGED_PERSON } from '@/graphql/actor';
+import { IEvent, IParticipant } from '@/types/event.model';
+import { JOIN_EVENT } from '@/graphql/event';
+import { IPerson } from '@/types/actor.model';
+
+// No typings for this component, so we use require
+const VueMarkdown = require('vue-markdown');
 
 @Component({
   components: {
@@ -126,31 +128,73 @@ export default class Event extends Vue {
   loggedPerson!: IPerson;
   validationSent: boolean = false;
 
-  deleteEvent() {
+  async deleteEvent() {
     const router = this.$router;
-    // FIXME: remove eventFetch
-    // eventFetch(`/events/${this.uuid}`, this.$store, { method: 'DELETE' })
-    //   .then(() => router.push({ name: 'EventList' }));
+
+    try {
+      await this.$apollo.mutate<IParticipant>({
+        mutation: DELETE_EVENT,
+        variables: {
+          id: this.event.id,
+          actorId: this.loggedPerson.id,
+        }
+      });
+
+      router.push({ name: 'EventList' })
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async joinEvent() {
     try {
-      this.validationSent = true;
-      await this.$apollo.mutate({
-        mutation: JOIN_EVENT
+      await this.$apollo.mutate<IParticipant>({
+        mutation: JOIN_EVENT,
+        variables: {
+          id: this.event.id,
+          actorId: this.loggedPerson.id,
+        },
+        update: (store, { data: { joinEvent } }) => {
+          const event = store.readQuery<IEvent>({ query: FETCH_EVENT });
+          if (event === null) {
+            console.error('Cannot update event participant cache, because of null value.')
+            return
+          }
+
+          event.participants = event.participants.concat([ joinEvent ]);
+
+          store.writeQuery({ query: FETCH_EVENT, data: event });
+        }
       });
     } catch (error) {
       console.error(error);
     }
   }
 
-  leaveEvent() {
-    // FIXME: remove eventFetch
-    // eventFetch(`/events/${this.uuid}/leave`, this.$store)
-    //   .then(response => response.json())
-    //   .then((data) => {
-    //     console.log(data);
-    //   });
+  async leaveEvent() {
+    try {
+      await this.$apollo.mutate<IParticipant>({
+        mutation: LEAVE_EVENT,
+        variables: {
+          id: this.event.id,
+          actorId: this.loggedPerson.id,
+        },
+        update: (store, { data: { leaveEvent } }) => {
+          const event = store.readQuery<IEvent>({ query: FETCH_EVENT });
+          if (event === null) {
+            console.error('Cannot update event participant cache, because of null value.');
+            return
+          }
+
+          event.participants = event.participants
+            .filter(p => p.actor.id !== leaveEvent.actor.id);
+
+          store.writeQuery({ query: FETCH_EVENT, data: event });
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   downloadIcsEvent() {
@@ -169,28 +213,16 @@ export default class Event extends Vue {
   }
 
   actorIsParticipant() {
-    return (
-      (this.loggedPerson &&
-        this.event.participants
-          .map(participant => participant.actor.preferredUsername)
-          .includes(this.loggedPerson.preferredUsername)) ||
-      this.actorIsOrganizer()
-    );
+    if (this.actorIsOrganizer()) return true;
+
+    return this.loggedPerson &&
+      this.event.participants
+          .some(participant => participant.actor.id === this.loggedPerson.id);
   }
-  //
+
   actorIsOrganizer() {
-    return (
-      this.loggedPerson &&
-      this.loggedPerson.preferredUsername ===
-        this.event.organizerActor.preferredUsername
-    );
+    return this.loggedPerson &&
+      this.loggedPerson.id === this.event.organizerActor.id;
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-.v-card__media__background {
-  filter: contrast(0.4);
-}
-</style>
