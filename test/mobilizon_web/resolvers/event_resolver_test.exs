@@ -88,35 +88,6 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       assert json_response(res, 200)["data"]["createEvent"]["title"] == "come to my event"
     end
 
-    test "search_events_and_actors/3 finds events and actors", %{conn: conn, actor: actor} do
-      event = insert(:event, title: "test")
-
-      query = """
-      {
-          search(search: "test") {
-              ...on Event {
-                title,
-                uuid,
-                __typename
-              },
-              ...on Actor {
-                preferredUsername,
-                __typename
-              }
-            }
-      }
-      """
-
-      res =
-        conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "search"))
-
-      assert hd(json_response(res, 200)["data"]["search"])["uuid"] == to_string(event.uuid)
-
-      assert hd(tl(json_response(res, 200)["data"]["search"]))["preferredUsername"] ==
-               actor.preferred_username
-    end
-
     test "list_events/3 returns events", context do
       event = insert(:event)
 

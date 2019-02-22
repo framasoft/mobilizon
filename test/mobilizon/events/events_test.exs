@@ -59,12 +59,12 @@ defmodule Mobilizon.EventsTest do
       assert title == hd(Events.find_events_by_name(event.title)).title
 
       %Event{title: title2} = event2 = insert(:event, title: "Special event")
-      assert event2.title == hd(Events.find_events_by_name("Special")).title
+      assert event2.title == Events.find_events_by_name("Special") |> hd() |> Map.get(:title)
 
-      assert event2.title == hd(Events.find_events_by_name("  Special  ")).title
+      assert event2.title == Events.find_events_by_name("  Special  ") |> hd() |> Map.get(:title)
 
-      assert title == hd(Events.find_events_by_name("")).title
-      assert title2 == hd(tl(Events.find_events_by_name(""))).title
+      assert title == Events.find_events_by_name("") |> hd() |> Map.get(:title)
+      assert title2 == Events.find_events_by_name("") |> tl |> hd() |> Map.get(:title)
     end
 
     test "find_close_events/3 returns events in the area" do

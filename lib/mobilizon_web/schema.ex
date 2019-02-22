@@ -122,7 +122,7 @@ defmodule MobilizonWeb.Schema do
       arg(:search, non_null(:string))
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
-      resolve(&Resolvers.Event.search_events_and_actors/3)
+      resolve(&Resolvers.Search.search_events_and_actors/3)
     end
 
     import_fields(:user_queries)

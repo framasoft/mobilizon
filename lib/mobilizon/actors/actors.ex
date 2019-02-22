@@ -467,6 +467,11 @@ defmodule Mobilizon.Actors do
     |> Repo.preload(:organized_events)
   end
 
+  @doc """
+  Getting an actor from url, eventually creating it
+  """
+  # TODO: Move this to Mobilizon.Service.ActivityPub
+  @spec get_or_fetch_by_url(String.t(), bool()) :: {:ok, Actor.t()} | {:error, String.t()}
   def get_or_fetch_by_url(url, preload \\ false) do
     with {:ok, actor} <- get_actor_by_url(url, preload) do
       {:ok, actor}
@@ -498,16 +503,32 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
-  Find local users by it's username
+  Find local users by their username
   """
+  # TODO: This doesn't seem to be used anyway
   def find_local_by_username(username) do
     actors =
       Repo.all(
         from(
           a in Actor,
           where:
-            (ilike(a.preferred_username, ^like_sanitize(username)) or
-               ilike(a.name, ^like_sanitize(username))) and is_nil(a.domain)
+            fragment(
+              "f_unaccent(?) <% f_unaccent(?) or
+             f_unaccent(coalesce(?, '')) <% f_unaccent(?)",
+              a.preferred_username,
+              ^username,
+              a.name,
+              ^username
+            ),
+          where: is_nil(a.domain),
+          order_by:
+            fragment(
+              "word_similarity(?, ?) + word_similarity(coalesce(?, ''), ?) desc",
+              a.preferred_username,
+              ^username,
+              a.name,
+              ^username
+            )
         )
       )
 
@@ -526,48 +547,31 @@ defmodule Mobilizon.Actors do
       from(
         a in Actor,
         where:
-          ilike(a.preferred_username, ^like_sanitize(username)) or
-            ilike(a.name, ^like_sanitize(username))
+          fragment(
+            "f_unaccent(?) %> f_unaccent(?) or
+             f_unaccent(coalesce(?, '')) %> f_unaccent(?)",
+            a.preferred_username,
+            ^username,
+            a.name,
+            ^username
+          ),
+        order_by:
+          fragment(
+            "word_similarity(?, ?) + word_similarity(coalesce(?, ''), ?) desc",
+            a.preferred_username,
+            ^username,
+            a.name,
+            ^username
+          )
       )
       |> paginate(page, limit)
     )
   end
 
-  # Sanitize the LIKE queries
-  defp like_sanitize(value) do
-    "%" <> String.replace(value, ~r/([\\%_])/, "\\1") <> "%"
-  end
-
-  @email_regex ~r/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
-  @spec search(String.t()) :: {:ok, list(Actor.t())} | {:ok, []} | {:error, any()}
-  def search(name) do
-    # find already saved accounts
-    case find_actors_by_username_or_name(name) do
-      [] ->
-        # no accounts found, let's test if it's an username@domain.tld
-        with true <- Regex.match?(@email_regex, name),
-             # creating the actor in that case
-             {:ok, actor} <- ActivityPub.find_or_make_actor_from_nickname(name) do
-          {:ok, [actor]}
-        else
-          false ->
-            {:ok, []}
-
-          # error fingering the actor
-          {:error, err} ->
-            {:error, err}
-        end
-
-      actors = [_ | _] ->
-        # actors already saved found !
-        {:ok, actors}
-    end
-  end
-
   @doc """
-  Find a group by its actor id
+  Get a group by its actor id
   """
-  def find_group_by_actor_id(actor_id) do
+  def get_group_by_actor_id(actor_id) do
     case Repo.get_by(Actor, id: actor_id, type: :Group) do
       nil -> {:error, :group_not_found}
       actor -> {:ok, actor}

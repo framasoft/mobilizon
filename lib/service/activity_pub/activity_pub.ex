@@ -66,6 +66,7 @@ defmodule Mobilizon.Service.ActivityPub do
   @doc """
   Fetch an object from an URL, from our local database of events and comments, then eventually remote
   """
+  # TODO: Make database calls parallel
   @spec fetch_object_from_url(String.t()) :: {:ok, %Event{}} | {:ok, %Comment{}} | {:error, any()}
   def fetch_object_from_url(url) do
     Logger.info("Fetching object from url #{url}")
@@ -73,6 +74,7 @@ defmodule Mobilizon.Service.ActivityPub do
     with true <- String.starts_with?(url, "http"),
          nil <- Events.get_event_by_url(url),
          nil <- Events.get_comment_from_url(url),
+         {:error, :actor_not_found} <- Actors.get_actor_by_url(url),
          {:ok, %{body: body, status_code: code}} when code in 200..299 <-
            HTTPoison.get(
              url,
@@ -97,12 +99,16 @@ defmodule Mobilizon.Service.ActivityPub do
         "Note" ->
           {:ok, Events.get_comment_full_from_url!(activity.data["object"]["id"])}
 
+        "Actor" ->
+          {:ok, Actors.get_actor_by_url!(activity.data["object"]["id"], true)}
+
         other ->
           {:error, other}
       end
     else
       %Event{url: event_url} -> {:ok, Events.get_event_by_url!(event_url)}
       %Comment{url: comment_url} -> {:ok, Events.get_comment_full_from_url!(comment_url)}
+      %Actor{url: actor_url} -> {:ok, Actors.get_actor_by_url!(actor_url, true)}
       e -> {:error, e}
     end
   end
