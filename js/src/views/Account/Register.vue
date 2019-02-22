@@ -80,17 +80,13 @@
 </template>
 
 <script lang="ts">
-import Gravatar from "vue-gravatar";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { IPerson } from "@/types/actor.model";
 import { REGISTER_PERSON } from "@/graphql/actor";
 import { MOBILIZON_INSTANCE_HOST } from "@/api/_entrypoint";
+import { RouteName } from '@/router'
 
-@Component({
-  components: {
-    "v-gravatar": Gravatar
-  }
-})
+@Component
 export default class Register extends Vue {
   @Prop({ type: String, required: true }) email!: string;
   @Prop({ type: Boolean, required: false, default: false }) userAlreadyActivated!: boolean;
@@ -98,20 +94,19 @@ export default class Register extends Vue {
   host: string = MOBILIZON_INSTANCE_HOST;
 
   person: IPerson = {
-    preferredUsername: "",
-    name: "",
-    summary: "",
-    id: "",
-    url: "",
+    preferredUsername: '',
+    name: '',
+    summary: '',
+    id: '',
+    url: '',
     suspended: false,
-    avatarUrl: "", // TODO : Use Gravatar here
-    bannerUrl: "",
+    avatarUrl: '',
+    bannerUrl: '',
     domain: null,
   };
   errors: object = {};
   validationSent: boolean = false;
   sendingValidation: boolean = false;
-  showGravatar: boolean = false;
 
   async submit() {
     try {
@@ -124,7 +119,7 @@ export default class Register extends Vue {
       this.validationSent = true;
 
       if (this.userAlreadyActivated) {
-        this.$router.push({name: "Home"});
+        this.$router.push({ name: RouteName.HOME });
       }
     } catch (error) {
       this.errors = error.graphQLErrors.reduce((acc, error) => {

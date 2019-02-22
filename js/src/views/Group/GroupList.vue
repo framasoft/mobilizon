@@ -19,7 +19,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue } from 'vue-property-decorator';
+import { RouteName } from '@/router';
 
 @Component
 export default class GroupList extends Vue {
@@ -55,7 +56,7 @@ export default class GroupList extends Vue {
 
   viewActor(actor) {
     this.$router.push({
-      name: "Group",
+      name: RouteName.GROUP,
       params: { name: this.usernameWithDomain(actor) }
     });
   }

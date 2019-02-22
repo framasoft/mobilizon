@@ -69,6 +69,7 @@
 import { FETCH_PERSON, LOGGED_PERSON } from "@/graphql/actor";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import EventCard from "@/components/Event/EventCard.vue";
+import { RouteName } from '@/router'
 
 @Component({
   apollo: {
@@ -101,7 +102,7 @@ export default class Profile extends Vue {
 
   logoutUser() {
     // TODO : implement logout
-    this.$router.push({ name: "Home" });
+    this.$router.push({ name: RouteName.HOME });
   }
 
   nl2br(text) {

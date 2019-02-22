@@ -53,7 +53,6 @@
 </template>
 
 <script lang="ts">
-import Gravatar from "vue-gravatar";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { LOGIN } from "@/graphql/auth";
 import { validateEmailField, validateRequiredField } from "@/utils/validators";
@@ -61,12 +60,9 @@ import { saveUserData } from "@/utils/auth";
 import { ILogin } from "@/types/login.model";
 import { UPDATE_CURRENT_USER_CLIENT } from "@/graphql/user";
 import { onLogin } from "@/vue-apollo";
+import { RouteName } from '@/router'
 
-@Component({
-  components: {
-    "v-gravatar": Gravatar
-  }
-})
+@Component
 export default class Login extends Vue {
   @Prop({ type: String, required: false, default: "" }) email!: string;
   @Prop({ type: String, required: false, default: "" }) password!: string;
@@ -85,7 +81,7 @@ export default class Login extends Vue {
 
   beforeCreate() {
     if (this.user) {
-      this.$router.push("/");
+      this.$router.push('/');
     }
   }
 
@@ -119,19 +115,13 @@ export default class Login extends Vue {
 
       onLogin(this.$apollo);
 
-      this.$router.push({ name: "Home" });
+      this.$router.push({ name: RouteName.HOME });
     } catch (err) {
       console.error(err);
       err.graphQLErrors.forEach(({ message }) => {
         this.errors.push(message);
       });
     }
-  }
-
-  validEmail() {
-    return this.rules.email(this.credentials.email) === true
-      ? "v-gravatar"
-      : "avatar";
   }
 }
 </script>

@@ -19,10 +19,13 @@
 </template>
 
 <script lang="ts">
-import ngeohash from "ngeohash";
-import VueMarkdown from "vue-markdown";
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import EventCard from "@/components/Event/EventCard.vue";
+import ngeohash from 'ngeohash';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import EventCard from '@/components/Event/EventCard.vue';
+import { RouteName } from '@/router';
+
+// VueMarkdown is untyped
+const VueMarkdown = require('vue-markdown');
 
 @Component({
   components: {
@@ -36,7 +39,7 @@ export default class EventList extends Vue {
   events = [];
   loading = true;
   locationChip = false;
-  locationText = "";
+  locationText = '';
 
   created() {
     this.fetchData(this.$router.currentRoute.params["location"]);
@@ -50,7 +53,7 @@ export default class EventList extends Vue {
   @Watch("locationChip")
   onLocationChipChange(val) {
     if (val === false) {
-      this.$router.push({ name: "EventList" });
+      this.$router.push({ name: RouteName.EVENT_LIST });
     }
   }
 
@@ -86,7 +89,7 @@ export default class EventList extends Vue {
   }
 
   viewEvent(event) {
-    this.$router.push({ name: "Event", params: { uuid: event.uuid } });
+    this.$router.push({ name: RouteName.EVENT, params: { uuid: event.uuid } });
   }
 
   downloadIcsEvent(event) {

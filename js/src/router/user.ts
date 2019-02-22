@@ -6,53 +6,63 @@ import ResendConfirmation from '@/views/User/ResendConfirmation.vue';
 import SendPasswordReset from '@/views/User/SendPasswordReset.vue';
 import PasswordReset from '@/views/User/PasswordReset.vue';
 
-export default [
+export enum UserRouteName {
+  REGISTER = 'Register',
+  REGISTER_PROFILE = 'RegisterProfile',
+  RESEND_CONFIRMATION = 'ResendConfirmation',
+  SEND_PASSWORD_RESET = 'SendPasswordReset',
+  PASSWORD_RESET = 'PasswordReset',
+  VALIDATE = 'Validate',
+  LOGIN = 'Login',
+}
+
+export const userRoutes = [
   {
     path: '/register/user',
-    name: 'Register',
+    name: UserRouteName.REGISTER,
     component: RegisterUser,
     props: true,
     meta: { requiredAuth: false },
   },
   {
     path: '/register/profile',
-    name: 'RegisterProfile',
+    name: UserRouteName.REGISTER_PROFILE,
     component: RegisterProfile,
     props: true,
     meta: { requiredAuth: false },
   },
   {
     path: '/resend-instructions',
-    name: 'ResendConfirmation',
+    name: UserRouteName.RESEND_CONFIRMATION,
     component: ResendConfirmation,
     props: true,
     meta: { requiresAuth: false },
   },
   {
     path: '/password-reset/send',
-    name: 'SendPasswordReset',
+    name: UserRouteName.SEND_PASSWORD_RESET,
     component: SendPasswordReset,
     props: true,
     meta: { requiresAuth: false },
   },
   {
     path: '/password-reset/:token',
-    name: 'PasswordReset',
+    name: UserRouteName.PASSWORD_RESET,
     component: PasswordReset,
     meta: { requiresAuth: false },
     props: true,
   },
   {
     path: '/validate/:token',
-    name: 'Validate',
+    name: UserRouteName.VALIDATE,
     component: Validate,
     // We can only pass string values through params, therefore
-    props: (route) => ({ email: route.params.email, userAlreadyActivated: route.params.userAlreadyActivated === 'true'}),
+    props: (route) => ({ email: route.params.email, userAlreadyActivated: route.params.userAlreadyActivated === 'true' }),
     meta: { requiresAuth: false },
   },
   {
     path: '/login',
-    name: 'Login',
+    name: UserRouteName.LOGIN,
     component: Login,
     props: true,
     meta: { requiredAuth: false },
