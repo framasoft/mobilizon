@@ -41,8 +41,9 @@ elixir_check:
   before_script:
     - mix deps.get
   script:
-    - mix format --check-formatted --dry-run
     - mix credo list
+    - mix format --check-formatted --dry-run
+    - mix hex.outdated
   cache:
     paths:
       - deps

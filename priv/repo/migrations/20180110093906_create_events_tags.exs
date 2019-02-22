@@ -3,8 +3,8 @@ defmodule Mobilizon.Repo.Migrations.CreateEventsTags do
 
   def change do
     create table(:events_tags, primary_key: false) do
-      add :event_id, references(:events)
-      add :tag_id, references(:tags)
+      add(:event_id, references(:events))
+      add(:tag_id, references(:tags))
     end
   end
 end

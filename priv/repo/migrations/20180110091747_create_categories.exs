@@ -3,14 +3,13 @@ defmodule Mobilizon.Repo.Migrations.CreateCategories do
 
   def change do
     create table(:categories) do
-      add :title, :string
-      add :description, :string
-      add :picture, :string
+      add(:title, :string)
+      add(:description, :string)
+      add(:picture, :string)
 
       timestamps()
     end
 
-    create unique_index(:categories, [:title])
-
+    create(unique_index(:categories, [:title]))
   end
 end

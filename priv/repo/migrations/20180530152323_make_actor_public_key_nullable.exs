@@ -3,13 +3,13 @@ defmodule Mobilizon.Repo.Migrations.MakeActorPublicKeyNullable do
 
   def up do
     alter table(:actors) do
-      modify :public_key, :text, null: true
+      modify(:public_key, :text, null: true)
     end
   end
 
   def down do
     alter table(:actors) do
-      modify :public_key, :text, null: false
+      modify(:public_key, :text, null: false)
     end
   end
 end

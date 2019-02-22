@@ -39,4 +39,3 @@ insert(:participant, actor: actor, event: event4, role: :participant)
 
 # Insert a group
 group = insert(:actor, type: :Group)
-
