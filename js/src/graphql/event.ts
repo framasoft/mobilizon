@@ -5,7 +5,8 @@ const participantQuery = `
   actor {
     preferredUsername,
     avatarUrl,
-    name
+    name,
+    id
   }
 `;
 
@@ -117,23 +118,20 @@ export const EDIT_EVENT = gql`
 `;
 
 export const JOIN_EVENT = gql`
-  mutation JoinEvent($id: Int!, $actorId: Int!) {
+  mutation JoinEvent($eventId: Int!, $actorId: Int!) {
     joinEvent(
-      id: $id,
+      eventId: $eventId,
       actorId: $actorId
     ) {
-      actor {
         ${participantQuery}
-      },
-      role
     }
   }
 `;
 
 export const LEAVE_EVENT = gql`
-  mutation LeaveEvent($id: Int!, $actorId: Int!) {
+  mutation LeaveEvent($eventId: Int!, $actorId: Int!) {
     leaveEvent(
-      id: $id,
+      eventId: $eventId,
       actorId: $actorId
     ) {
       actor {

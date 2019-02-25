@@ -28,14 +28,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 
-// VueMarkdown is untyped
-const VueMarkdown = require('vue-markdown')
-
-@Component({
-  components: {
-    VueMarkdown
-  }
-})
+@Component({})
 export default class CreateGroup extends Vue {
   e1 = 0;
   // FIXME: correctly type group

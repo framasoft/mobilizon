@@ -19,17 +19,14 @@
 </template>
 
 <script lang="ts">
-import ngeohash from 'ngeohash';
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import EventCard from '@/components/Event/EventCard.vue';
 import { RouteName } from '@/router';
 
-// VueMarkdown is untyped
-const VueMarkdown = require('vue-markdown');
+const ngeohash = require('ngeohash');
 
 @Component({
   components: {
-    VueMarkdown,
     EventCard
   }
 })

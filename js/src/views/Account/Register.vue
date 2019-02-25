@@ -12,16 +12,6 @@
         <div class="columns is-mobile">
           <div class="column">
             <form v-if="!validationSent">
-              <div class="columns is-mobile is-centered">
-                <div class="column is-narrow">
-                  <figure class="image is-64x64">
-                    <transition name="avatar">
-                      <v-gravatar v-bind="{email: email}" default-img="mp"></v-gravatar>
-                    </transition>
-                  </figure>
-                </div>
-              </div>
-
               <b-field
                 :label="$gettext('Username')"
                 :type="errors.preferred_username ? 'is-danger' : null"

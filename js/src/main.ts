@@ -2,7 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue';
 // import * as VueGoogleMaps from 'vue2-google-maps';
-import VueMarkdown from 'vue-markdown';
+import VueSimpleMarkdown from 'vue-simple-markdown';
 import Buefy from 'buefy'
 import 'buefy/dist/buefy.css';
 import GetTextPlugin from 'vue-gettext';
@@ -14,7 +14,7 @@ const translations = require('@/i18n/translations.json');
 
 Vue.config.productionTip = false;
 
-Vue.use(VueMarkdown);
+Vue.use(VueSimpleMarkdown);
 Vue.use(Buefy, {
   defaultContainerElement: '#mobilizon'
 });
