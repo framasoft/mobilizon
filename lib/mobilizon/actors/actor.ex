@@ -50,7 +50,7 @@ defmodule Mobilizon.Actors.Actor do
     field(:suspended, :boolean, default: false)
     field(:avatar_url, :string)
     field(:banner_url, :string)
-    # field(:openness, Mobilizon.Actors.ActorOpennesssEnum, default: :moderated)
+    # field(:openness, Mobilizon.Actors.ActorOpennessEnum, default: :moderated)
     has_many(:followers, Follower, foreign_key: :target_actor_id)
     has_many(:followings, Follower, foreign_key: :actor_id)
     has_many(:organized_events, Event, foreign_key: :organizer_actor_id)
@@ -83,6 +83,7 @@ defmodule Mobilizon.Actors.Actor do
       :user_id
     ])
     |> build_urls()
+    |> unique_username_validator()
     |> validate_required([:preferred_username, :keys, :suspended, :url])
     |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_type_index)
     |> unique_constraint(:url, name: :actors_url_index)
@@ -141,6 +142,8 @@ defmodule Mobilizon.Actors.Actor do
         :preferred_username,
         :keys
       ])
+      # Needed because following constraint can't work for domain null values (local)
+      |> unique_username_validator()
       |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_type_index)
       |> unique_constraint(:url, name: :actors_url_index)
       |> validate_length(:summary, max: 5000)
@@ -171,6 +174,7 @@ defmodule Mobilizon.Actors.Actor do
     |> put_change(:domain, nil)
     |> put_change(:keys, Actors.create_keys())
     |> put_change(:type, :Group)
+    |> unique_username_validator()
     |> validate_required([:url, :outbox_url, :inbox_url, :type, :preferred_username])
     |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_type_index)
     |> unique_constraint(:url, name: :actors_url_index)
@@ -179,14 +183,20 @@ defmodule Mobilizon.Actors.Actor do
     |> put_change(:local, true)
   end
 
-  def unique_username_validator(
-        %Ecto.Changeset{changes: %{preferred_username: username}} = changeset
-      ) do
-    if Actors.get_local_actor_by_name(username) do
+  defp unique_username_validator(
+         %Ecto.Changeset{changes: %{preferred_username: username} = changes} = changeset
+       ) do
+    with nil <- Map.get(changes, :domain, nil),
+         %Actor{preferred_username: _username} <- Actors.get_local_actor_by_name(username) do
       changeset |> add_error(:preferred_username, "Username is already taken")
     else
-      changeset
+      _ -> changeset
     end
+  end
+
+  # When we don't even have any preferred_username, don't even try validating preferred_username
+  defp unique_username_validator(changeset) do
+    changeset
   end
 
   @spec build_urls(Ecto.Changeset.t(), atom()) :: Ecto.Changeset.t()
