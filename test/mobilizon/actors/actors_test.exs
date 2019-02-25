@@ -35,7 +35,7 @@ defmodule Mobilizon.ActorsTest do
       suspended: nil,
       uri: nil,
       url: nil,
-      preferred_username: nil
+      preferred_username: "never"
     }
 
     @remote_account_url "https://social.tcit.fr/users/tcit"
@@ -386,6 +386,22 @@ defmodule Mobilizon.ActorsTest do
       assert group.summary == "some description"
       refute group.suspended
       assert group.preferred_username == "some-title"
+    end
+
+    test "create_group/1 with an existing profile username fails" do
+      _actor = insert(:actor, preferred_username: @valid_attrs.preferred_username)
+
+      assert {:error,
+              %Ecto.Changeset{errors: [preferred_username: {"Username is already taken", []}]}} =
+               Actors.create_group(@valid_attrs)
+    end
+
+    test "create_group/1 with an existing group username fails" do
+      assert {:ok, %Actor{} = group} = Actors.create_group(@valid_attrs)
+
+      assert {:error,
+              %Ecto.Changeset{errors: [preferred_username: {"Username is already taken", []}]}} =
+               Actors.create_group(@valid_attrs)
     end
 
     test "create_group/1 with invalid data returns error changeset" do
