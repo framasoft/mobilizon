@@ -47,15 +47,22 @@
             <span>{{ event.begins_on | formatDate }} - {{ event.ends_on | formatDate }}</span>
           </div>
           <p v-if="actorIsOrganizer()">
-            <translate>Vous êtes organisateur de cet événement.</translate>
+            <translate>You are an organizer.</translate>
           </p>
           <div v-else>
             <p v-if="actorIsParticipant()">
-              <translate>Vous avez annoncé aller à cet événement.</translate>
+              <translate>You announced that you're going to this event.</translate>
             </p>
             <p v-else>
-              Vous y allez ?
-              <span>{{ event.participants.length }} personnes y vont.</span>
+              <translate>Are you going to this event?</translate><br />
+              <span>
+                <translate
+                        :translate-n="event.participants.length"
+                        translate-plural="%{event.participants.length} persons are going"
+                >
+                  One person is going.
+                </translate>
+              </span>
             </p>
           </div>
           <div v-if="!actorIsOrganizer()">
@@ -66,7 +73,7 @@
           </div>
           <h2 class="subtitle">Details</h2>
           <p v-if="event.description">
-            <vue-markdown :source="event.description"></vue-markdown>
+            <vue-simple-markdown :source="event.description"></vue-simple-markdown>
           </p>
           <h2 class="subtitle">Participants</h2>
           <span v-if="event.participants.length === 0">No participants yet.</span>
@@ -99,15 +106,10 @@ import { LOGGED_PERSON } from '@/graphql/actor';
 import { IEvent, IParticipant } from '@/types/event.model';
 import { JOIN_EVENT } from '@/graphql/event';
 import { IPerson } from '@/types/actor.model';
-import { RouteName } from '@/router'
-
-// No typings for this component, so we use require
-const VueMarkdown = require('vue-markdown');
+import { RouteName } from '@/router';
+import 'vue-simple-markdown/dist/vue-simple-markdown.css';
 
 @Component({
-  components: {
-    VueMarkdown
-  },
   apollo: {
     event: {
       query: FETCH_EVENT,
@@ -152,13 +154,13 @@ export default class Event extends Vue {
       await this.$apollo.mutate<IParticipant>({
         mutation: JOIN_EVENT,
         variables: {
-          id: this.event.id,
+          eventId: this.event.id,
           actorId: this.loggedPerson.id,
         },
         update: (store, { data: { joinEvent } }) => {
           const event = store.readQuery<IEvent>({ query: FETCH_EVENT });
           if (event === null) {
-            console.error('Cannot update event participant cache, because of null value.')
+            console.error('Cannot update event participant cache, because of null value.');
             return
           }
 
@@ -177,7 +179,7 @@ export default class Event extends Vue {
       await this.$apollo.mutate<IParticipant>({
         mutation: LEAVE_EVENT,
         variables: {
-          id: this.event.id,
+          eventId: this.event.id,
           actorId: this.loggedPerson.id,
         },
         update: (store, { data: { leaveEvent } }) => {

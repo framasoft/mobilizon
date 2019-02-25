@@ -28,7 +28,8 @@ export const userRoutes = [
     path: '/register/profile',
     name: UserRouteName.REGISTER_PROFILE,
     component: RegisterProfile,
-    props: true,
+    // We can only pass string values through params, therefore
+    props: (route) => ({ email: route.params.email, userAlreadyActivated: route.params.userAlreadyActivated === 'true' }),
     meta: { requiredAuth: false },
   },
   {
@@ -56,8 +57,7 @@ export const userRoutes = [
     path: '/validate/:token',
     name: UserRouteName.VALIDATE,
     component: Validate,
-    // We can only pass string values through params, therefore
-    props: (route) => ({ email: route.params.email, userAlreadyActivated: route.params.userAlreadyActivated === 'true' }),
+    props: true,
     meta: { requiresAuth: false },
   },
   {

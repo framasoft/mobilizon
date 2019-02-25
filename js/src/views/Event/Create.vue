@@ -34,18 +34,13 @@ import {EventJoinOptions} from "../../types/event.model";
 
 <script lang="ts">
     // import Location from '@/components/Location';
-    import VueMarkdown from "vue-markdown";
     import {CREATE_EVENT, EDIT_EVENT} from "@/graphql/event";
     import {Component, Prop, Vue} from "vue-property-decorator";
     import {Category, EventJoinOptions, EventStatus, EventVisibility, IEvent} from "@/types/event.model";
     import {LOGGED_PERSON} from "@/graphql/actor";
     import {IPerson} from "@/types/actor.model";
 
-    @Component({
-  components: {
-    VueMarkdown
-  }
-})
+@Component({})
 export default class CreateEvent extends Vue {
   @Prop({ required: false, type: String }) uuid!: string;
 

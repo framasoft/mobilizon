@@ -4,7 +4,7 @@ defmodule MobilizonWeb.Resolvers.Event do
   """
   alias Mobilizon.Activity
   alias Mobilizon.Events.{Event, Participant}
-  alias Mobilizon.Actors.User
+  alias Mobilizon.Actors.{User, Actor}
 
   # We limit the max number of events that can be retrieved
   @event_max_limit 100
@@ -100,8 +100,7 @@ defmodule MobilizonWeb.Resolvers.Event do
          {:ok, %Participant{} = participant} <-
            Mobilizon.Events.get_participant(event_id, actor_id),
          {:only_organizer, false} <-
-           {:only_organizer,
-            Mobilizon.Events.list_organizers_participants_for_event(event_id) |> length == 1},
+           {:only_organizer, check_that_participant_is_not_only_organizer(event_id, actor_id)},
          {:ok, _} <-
            Mobilizon.Events.delete_participant(participant) do
       {:ok, %{event: %{id: event_id}, actor: %{id: actor_id}}}
@@ -119,6 +118,19 @@ defmodule MobilizonWeb.Resolvers.Event do
 
   def actor_leave_event(_parent, _args, _resolution) do
     {:error, "You need to be logged-in to leave an event"}
+  end
+
+  # We check that the actor asking to leave the event is not it's only organizer
+  # We start by fetching the list of organizers and if there's only one of them
+  # and that it's the actor requesting leaving the event we return true
+  @spec check_that_participant_is_not_only_organizer(integer(), integer()) :: boolean()
+  defp check_that_participant_is_not_only_organizer(event_id, actor_id) do
+    with [%Participant{actor: %Actor{id: participant_actor_id}}] <-
+           Mobilizon.Events.list_organizers_participants_for_event(event_id) do
+      participant_actor_id == actor_id
+    else
+      _ -> false
+    end
   end
 
   @doc """
