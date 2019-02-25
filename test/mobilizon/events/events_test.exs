@@ -11,7 +11,8 @@ defmodule Mobilizon.EventsTest do
     ends_on: "2010-04-17 14:00:00Z",
     title: "some title",
     url: "some url",
-    uuid: "b5126423-f1af-43e4-a923-002a03003ba4"
+    uuid: "b5126423-f1af-43e4-a923-002a03003ba4",
+    category: "meeting"
   }
 
   describe "events" do
@@ -79,14 +80,12 @@ defmodule Mobilizon.EventsTest do
 
     test "create_event/1 with valid data creates a event" do
       actor = insert(:actor)
-      category = insert(:category)
       address = insert(:address)
 
       valid_attrs =
         @event_valid_attrs
         |> Map.put(:organizer_actor, actor)
         |> Map.put(:organizer_actor_id, actor.id)
-        |> Map.put(:category_id, category.id)
         |> Map.put(:address_id, address.id)
 
       with {:ok, %Event{} = event} <- Events.create_event(valid_attrs) do
@@ -172,77 +171,6 @@ defmodule Mobilizon.EventsTest do
       assert_raise Ecto.NoResultsError, fn ->
         Events.get_event_by_url!("not valid")
       end
-    end
-  end
-
-  describe "categories" do
-    alias Mobilizon.Events.Category
-
-    setup do
-      category = insert(:category)
-      {:ok, category: category}
-    end
-
-    @valid_attrs %{
-      description: "some description",
-      picture: %Plug.Upload{
-        path: "test/fixtures/category_picture.png",
-        filename: "category_picture.png"
-      },
-      title: "some title"
-    }
-    @update_attrs %{
-      description: "some updated description",
-      picture: %Plug.Upload{
-        path: "test/fixtures/category_picture_updated.png",
-        filename: "category_picture_updated.png"
-      },
-      title: "some updated title"
-    }
-    @invalid_attrs %{description: nil, picture: nil, title: nil}
-
-    test "list_categories/0 returns all categories", %{category: category} do
-      assert [category.id] == Events.list_categories() |> Enum.map(& &1.id)
-    end
-
-    test "get_category!/1 returns the category with given id", %{category: category} do
-      assert Events.get_category!(category.id).id == category.id
-    end
-
-    test "get_category_by_title/1 return the category with given title", %{category: category} do
-      assert Events.get_category_by_title(category.title).id == category.id
-    end
-
-    test "create_category/1 with valid data creates a category" do
-      assert {:ok, %Category{} = category} = Events.create_category(@valid_attrs)
-      assert category.description == "some description"
-      assert category.picture.file_name == @valid_attrs.picture.filename
-      assert category.title == "some title"
-    end
-
-    test "create_category/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Events.create_category(@invalid_attrs)
-    end
-
-    test "update_category/2 with valid data updates the category", %{category: category} do
-      assert {:ok, %Category{} = category} = Events.update_category(category, @update_attrs)
-      assert category.description == "some updated description"
-      assert category.picture.file_name == @update_attrs.picture.filename
-      assert category.title == "some updated title"
-    end
-
-    test "update_category/2 with invalid data returns error changeset", %{category: category} do
-      assert {:error, %Ecto.Changeset{}} = Events.update_category(category, @invalid_attrs)
-      assert category.description == Events.get_category!(category.id).description
-    end
-
-    test "delete_category/1 deletes the category", %{category: category} do
-      assert {:ok, %Category{}} = Events.delete_category(category)
-      assert_raise Ecto.NoResultsError, fn -> Events.get_category!(category.id) end
-    end
-
-    test "change_category/1 returns a category changeset", %{category: category} do
-      assert %Ecto.Changeset{} = Events.change_category(category)
     end
   end
 

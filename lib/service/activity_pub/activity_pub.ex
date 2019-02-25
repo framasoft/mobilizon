@@ -11,7 +11,7 @@ defmodule Mobilizon.Service.ActivityPub do
   """
 
   alias Mobilizon.Events
-  alias Mobilizon.Events.{Event, Category, Comment}
+  alias Mobilizon.Events.{Event, Comment}
   alias Mobilizon.Service.ActivityPub.Transmogrifier
   alias Mobilizon.Service.WebFinger
   alias Mobilizon.Activity
@@ -565,23 +565,8 @@ defmodule Mobilizon.Service.ActivityPub do
     # TODO : Use MobilizonWeb.API instead
     # TODO : refactor me and move me somewhere else!
     # TODO : also, there should be a form of cache that allows this to be more efficient
-    category =
-      if is_nil(ical_event.categories) do
-        nil
-      else
-        ical_category = ical_event.categories |> hd() |> String.downcase()
 
-        case ical_category |> Events.get_category_by_title() do
-          nil ->
-            case Events.create_category(%{"title" => ical_category}) do
-              {:ok, %Category{} = category} -> category
-              _ -> nil
-            end
-
-          category ->
-            category
-        end
-      end
+    # ical_event.categories should be tags
 
     {:ok, event} =
       Events.create_event(%{
@@ -591,8 +576,7 @@ defmodule Mobilizon.Service.ActivityPub do
         updated_at: ical_event.stamp,
         description: ical_event.description |> sanitize_ical_event_strings,
         title: ical_event.summary |> sanitize_ical_event_strings,
-        organizer_actor: actor,
-        category: category
+        organizer_actor: actor
       })
 
     event_to_activity(event, false)

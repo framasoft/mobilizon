@@ -1,3 +1,4 @@
+import {Category} from "../../types/event.model";
 import {EventJoinOptions} from "../../types/event.model";
 <template>
   <section>
@@ -18,8 +19,8 @@ import {EventJoinOptions} from "../../types/event.model";
             <option
               v-for="category in categories"
               :value="category"
-              :key="category.title"
-            >{{ category.title }}</option>
+              :key="category"
+            >{{ $gettext(category) }}</option>
           </b-select>
         </b-field>
 
@@ -32,30 +33,24 @@ import {EventJoinOptions} from "../../types/event.model";
 </template>
 
 <script lang="ts">
-  // import Location from '@/components/Location';
-  import VueMarkdown from "vue-markdown";
-  import {CREATE_EVENT, EDIT_EVENT} from "@/graphql/event";
-  import {FETCH_CATEGORIES} from "@/graphql/category";
-  import {Component, Prop, Vue} from "vue-property-decorator";
-  import {EventJoinOptions, EventStatus, EventVisibility, ICategory, IEvent} from "@/types/event.model";
-  import {LOGGED_PERSON} from "@/graphql/actor";
-  import {IPerson} from "@/types/actor.model";
+    // import Location from '@/components/Location';
+    import VueMarkdown from "vue-markdown";
+    import {CREATE_EVENT, EDIT_EVENT} from "@/graphql/event";
+    import {Component, Prop, Vue} from "vue-property-decorator";
+    import {Category, EventJoinOptions, EventStatus, EventVisibility, IEvent} from "@/types/event.model";
+    import {LOGGED_PERSON} from "@/graphql/actor";
+    import {IPerson} from "@/types/actor.model";
 
-  @Component({
+    @Component({
   components: {
     VueMarkdown
-  },
-  apollo: {
-    categories: {
-      query: FETCH_CATEGORIES
-    }
   }
 })
 export default class CreateEvent extends Vue {
   @Prop({ required: false, type: String }) uuid!: string;
 
   loggedPerson!: IPerson;
-  categories: ICategory[] = [];
+  categories: string[] = Object.keys(Category);
   event!: IEvent; // FIXME: correctly type an event
 
   // created() {
@@ -77,7 +72,7 @@ export default class CreateEvent extends Vue {
       description: "",
       begins_on: new Date(),
       ends_on: new Date(),
-      category: this.categories[0],
+      category: Category.MEETING,
       participants: [],
       uuid: "",
       url: "",
@@ -102,7 +97,7 @@ export default class CreateEvent extends Vue {
             title: this.event.title,
             description: this.event.description,
             beginsOn: this.event.begins_on,
-            category: this.event.category.title,
+            category: this.event.category,
             organizerActorId: this.event.organizerActor.id
           }
         })

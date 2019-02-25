@@ -9,7 +9,8 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
     title: "some title",
     begins_on: DateTime.utc_now() |> DateTime.truncate(:second),
     uuid: "b5126423-f1af-43e4-a923-002a03003ba4",
-    url: "some url"
+    url: "some url",
+    category: "meeting"
   }
 
   setup %{conn: conn} do
@@ -313,13 +314,9 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
     end
 
     test "list_participants_for_event/3 returns participants for an event", context do
-      # Plain event
-      category = insert(:category)
-
       event =
         @event
         |> Map.put(:organizer_actor_id, context.actor.id)
-        |> Map.put(:category_id, category.id)
 
       {:ok, event} = Events.create_event(event)
 

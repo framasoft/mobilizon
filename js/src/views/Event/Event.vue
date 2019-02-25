@@ -10,7 +10,7 @@
         </div>
         <div class="card-content">
           <span>{{ event.begins_on | formatDay }}</span>
-          <span class="tag is-primary">{{ event.category.title }}</span>
+          <span class="tag is-primary">{{ event.category }}</span>
           <h1 class="title">{{ event.title }}</h1>
           <router-link
             :to="{name: 'Profile', params: { name: event.organizerActor.preferredUsername } }"

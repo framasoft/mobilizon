@@ -5,7 +5,6 @@ import Home from '@/views/Home.vue';
 import { UserRouteName, userRoutes } from './user';
 import { EventRouteName, eventRoutes } from '@/router/event';
 import { ActorRouteName, actorRoutes } from '@/router/actor';
-import { CategoryRouteName, categoryRoutes } from '@/router/category';
 
 Vue.use(Router);
 
@@ -20,7 +19,6 @@ export const RouteName = {
   ...GlobalRouteName,
   ...UserRouteName,
   ...EventRouteName,
-  ...CategoryRouteName,
   ...ActorRouteName,
 };
 
@@ -30,7 +28,6 @@ const router = new Router({
   routes: [
     ...userRoutes,
     ...eventRoutes,
-    ...categoryRoutes,
     ...actorRoutes,
 
     {

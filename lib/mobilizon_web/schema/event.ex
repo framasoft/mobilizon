@@ -7,7 +7,6 @@ defmodule MobilizonWeb.Schema.EventType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   import_types(MobilizonWeb.Schema.AddressType)
   import_types(MobilizonWeb.Schema.Events.ParticipantType)
-  import_types(MobilizonWeb.Schema.Events.CategoryType)
   import_types(MobilizonWeb.Schema.TagType)
   alias MobilizonWeb.Resolvers
 
@@ -44,7 +43,7 @@ defmodule MobilizonWeb.Schema.EventType do
       description: "The event's tags"
     )
 
-    field(:category, :category, description: "The event's category")
+    field(:category, :string, description: "The event's category")
 
     field(:participants, list_of(:participant),
       resolve: &MobilizonWeb.Resolvers.Event.list_participants_for_event/3,

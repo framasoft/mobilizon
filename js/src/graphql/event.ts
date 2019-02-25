@@ -25,6 +25,7 @@ export const FETCH_EVENT = gql`
       thumbnail,
       large_image,
       publish_at,
+      category,
       # online_address,
       # phone_address,
       organizerActor {
@@ -39,10 +40,7 @@ export const FETCH_EVENT = gql`
       # },
       participants {
         ${participantQuery}
-      },
-      category {
-        title,
-      },
+      }
     }
   }
 `;
@@ -75,9 +73,7 @@ export const FETCH_EVENTS = gql`
         preferredUsername,
         name,
       },
-      category {
-        title,
-      },
+      category,
       participants {
         ${participantQuery}
       }
@@ -112,9 +108,9 @@ export const EDIT_EVENT = gql`
   $title: String!,
   $description: String!,
   $organizerActorId: Int!,
-  $categoryId: Int!
+  $category: String!
   ) {
-    EditEvent(title: $title, description: $description, organizerActorId: $organizerActorId, categoryId: $categoryId) {
+    EditEvent(title: $title, description: $description, organizerActorId: $organizerActorId, category: $category) {
       uuid
     }
   }
