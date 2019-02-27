@@ -1,0 +1,63 @@
+## `msgid`s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove `msgid`s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use `mix gettext.extract --merge` or `mix gettext.merge`
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: fr_FR\n"
+"Plural-Forms: nplurals=2\n"
+
+#, elixir-format
+#: lib/mobilizon_web/controllers/feed_controller.ex:59
+msgid "%{actor}'s public events feed"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:8
+#: lib/mobilizon_web/templates/email/email.text.eex:3
+msgid "An email sent by Mobilizon on %{instance}."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:1
+#: lib/mobilizon_web/templates/email/registration_confirmation.text.eex:1
+msgid "Confirm the email address"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:3
+#: lib/mobilizon_web/templates/email/password_reset.text.eex:7
+msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon/email/user.ex:19
+msgid "Mobilizon: Confirmation instructions for %{instance}"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon/email/user.ex:34
+msgid "Mobilizon: Reset your password on %{instance} instructions"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:1
+#: lib/mobilizon_web/templates/email/password_reset.text.eex:1
+msgid "Password reset"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:2
+#: lib/mobilizon_web/templates/email/registration_confirmation.text.eex:5
+msgid "You created an account on %{host} with this email address. You are one click away from activating it. If this wasn't you, please ignore this email."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:2
+#: lib/mobilizon_web/templates/email/password_reset.text.eex:5
+msgid "You requested a new password for your account on %{host}."
+msgstr ""

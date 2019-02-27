@@ -35,7 +35,7 @@ defmodule Mobilizon.Mixfile do
   def application do
     [
       mod: {Mobilizon.Application, []},
-      extra_applications: [:logger, :runtime_tools, :guardian, :bamboo, :geolix, :crypto]
+      extra_applications: [:logger, :runtime_tools, :guardian, :bamboo, :geolix, :crypto, :cachex]
     ]
   end
 
@@ -85,6 +85,10 @@ defmodule Mobilizon.Mixfile do
       {:arc, "~> 0.11.0"},
       {:arc_ecto, "~> 0.11.0"},
       {:plug_cowboy, "~> 2.0"},
+      {:atomex, "0.3.0"},
+      {:cachex, "~> 3.1"},
+      {:trailing_format_plug, "~> 0.0.5"},
+      {:earmark, "~> 1.3.1"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:ex_machina, "~> 2.2", only: [:dev, :test]},
@@ -95,7 +99,8 @@ defmodule Mobilizon.Mixfile do
       {:dialyxir, "~> 1.0.0-rc.4", only: [:dev], runtime: false},
       {:exvcr, "~> 0.10", only: :test},
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
-      {:mock, "~> 0.3.0", only: :test}
+      {:mock, "~> 0.3.0", only: :test},
+      {:feeder_ex, "~> 1.1", only: :test}
     ]
   end
 
