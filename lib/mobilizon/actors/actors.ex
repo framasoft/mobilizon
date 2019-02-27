@@ -612,66 +612,8 @@ defmodule Mobilizon.Actors do
     with {:ok, %User{} = user} <-
            %User{} |> User.registration_changeset(args) |> Mobilizon.Repo.insert() do
       {:ok, user}
-      # else
-      #   {:error, %Ecto.Changeset{} = changeset} ->
-      #     {:error, Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
-      #       Enum.reduce(opts, msg, fn {key, value}, acc ->
-      #         String.replace(acc, "%{#{key}}", to_string(value))
-      #       end)
-      #     end)}
     end
   end
-
-  # @spec register(map()) :: {:ok, Actor.t()} | {:error, String.t()}
-  # def register(%{email: email, password: password, username: username}) do
-  #   with avatar <- gravatar(email),
-  #        user_changeset <-
-  #          User.registration_changeset(%User{}, %{
-  #            email: email,
-  #            password: password,
-  #            default_actor: %{
-  #              preferred_username: username,
-  #              domain: nil,
-  #              keys: create_keys(),
-  #              avatar_url: avatar
-  #            }
-  #          }),
-  #        {:ok, %User{default_actor: %Actor{} = actor, id: user_id} = user} <-
-  #          Mobilizon.Repo.insert(user_changeset),
-  #        {:ok, %Actor{} = _actor} <- update_actor(actor, %{user_id: user_id}) do
-  #     {:ok, Repo.preload(user, [:actors])}
-  #   else
-  #     {:error, %Ecto.Changeset{} = changeset} ->
-  #       handle_actor_user_changeset(changeset)
-  #   end
-  # end
-
-  # @spec handle_actor_user_changeset(Ecto.Changeset.t()) :: {:error, String.t()}
-  # defp handle_actor_user_changeset(changeset) do
-  #   changeset =
-  #     Ecto.Changeset.traverse_errors(changeset, fn
-  #       {msg, _opts} -> msg
-  #       msg -> msg
-  #     end)
-
-  #   email_msg = Map.get(changeset, :email) || [:empty_email]
-  #   {:error, hd(email_msg)}
-  # end
-
-  # @spec gravatar(String.t()) :: String.t() | nil
-  # defp gravatar(nil), do: nil
-
-  # defp gravatar(email) do
-  #   avatar_url = gravatar_url(email, default: "404")
-
-  #   case HTTPoison.get(avatar_url) do
-  #     {:ok, %HTTPoison.Response{status_code: 200}} ->
-  #       avatar_url
-
-  #     _ ->
-  #       nil
-  #   end
-  # end
 
   @doc """
   Create a new person actor

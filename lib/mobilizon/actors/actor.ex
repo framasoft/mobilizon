@@ -354,12 +354,27 @@ defmodule Mobilizon.Actors.Actor do
     end
   end
 
+  @doc """
+  Return the preferred_username with the eventual @domain suffix if it's a distant actor
+  """
   @spec actor_acct_from_actor(struct()) :: String.t()
   def actor_acct_from_actor(%Actor{preferred_username: preferred_username, domain: domain}) do
     if is_nil(domain) do
       preferred_username
     else
       "#{preferred_username}@#{domain}"
+    end
+  end
+
+  @doc """
+  Returns the display name if available, or the preferred_username (with the eventual @domain suffix if it's a distant actor).
+  """
+  @spec display_name(struct()) :: String.t()
+  def display_name(%Actor{name: name} = actor) do
+    case name do
+      nil -> actor_acct_from_actor(actor)
+      "" -> actor_acct_from_actor(actor)
+      name -> name
     end
   end
 end

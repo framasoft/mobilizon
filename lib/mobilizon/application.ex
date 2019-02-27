@@ -17,6 +17,7 @@ defmodule Mobilizon.Application do
       supervisor(MobilizonWeb.Endpoint, []),
       # Start your own worker by calling: Mobilizon.Worker.start_link(arg1, arg2, arg3)
       # worker(Mobilizon.Worker, [arg1, arg2, arg3]),
+      worker(Cachex, [:mobilizon, []]),
       worker(Guardian.DB.Token.SweeperServer, []),
       worker(Mobilizon.Service.Federator, [])
     ]
