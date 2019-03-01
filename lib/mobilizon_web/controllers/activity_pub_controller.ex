@@ -21,10 +21,6 @@ defmodule MobilizonWeb.ActivityPubController do
     "application/activity+json, application/ld+json"
   ]
 
-  def actor(conn, %{"name" => _name, "_format" => "atom"} = params) do
-    MobilizonWeb.FeedController.actor(conn, params)
-  end
-
   def actor(conn, %{"name" => name}) do
     with %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
       if conn |> get_req_header("accept") |> is_ap_header() do

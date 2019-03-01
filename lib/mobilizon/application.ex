@@ -3,6 +3,7 @@ defmodule Mobilizon.Application do
   The Mobilizon application
   """
   use Application
+  import Cachex.Spec
 
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
@@ -17,7 +18,32 @@ defmodule Mobilizon.Application do
       supervisor(MobilizonWeb.Endpoint, []),
       # Start your own worker by calling: Mobilizon.Worker.start_link(arg1, arg2, arg3)
       # worker(Mobilizon.Worker, [arg1, arg2, arg3]),
-      worker(Cachex, [:mobilizon, []]),
+      worker(
+        Cachex,
+        [
+          :feed,
+          [
+            limit: 2500,
+            expiration:
+              expiration(
+                default: :timer.minutes(60),
+                interval: :timer.seconds(60)
+              ),
+            fallback: fallback(default: &Mobilizon.Service.Feed.create_cache/1)
+          ]
+        ],
+        id: :cache_feed
+      ),
+      worker(
+        Cachex,
+        [
+          :json,
+          [
+            limit: 2500
+          ]
+        ],
+        id: :cache_actor
+      ),
       worker(Guardian.DB.Token.SweeperServer, []),
       worker(Mobilizon.Service.Federator, [])
     ]
