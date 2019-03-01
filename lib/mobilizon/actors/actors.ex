@@ -163,6 +163,12 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
+  Get the default member role depending on the actor openness
+  """
+  def get_default_member_role(%Actor{openness: :open}), do: :member
+  def get_default_member_role(%Actor{}), do: :not_approved
+
+  @doc """
   Get a group by it's title
   """
   @spec get_group_by_title(String.t()) :: Actor.t() | nil

@@ -5,8 +5,8 @@ defmodule Mobilizon.Events do
 
   import Ecto.Query, warn: false
   import Mobilizon.Ecto
-  alias Mobilizon.Repo
 
+  alias Mobilizon.Repo
   alias Mobilizon.Events.{Event, Comment, Participant}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
@@ -607,9 +607,7 @@ defmodule Mobilizon.Events do
     Repo.all(
       from(
         p in Participant,
-        join: e in Event,
-        on: p.event_id == e.id,
-        where: e.id == ^id and p.role == ^:creator,
+        where: p.event_id == ^id and p.role == ^:creator,
         preload: [:actor]
       )
       |> paginate(page, limit)

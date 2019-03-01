@@ -115,7 +115,7 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
 
     test "delete_group/3 deletes a group", %{conn: conn, user: user, actor: actor} do
       group = insert(:group)
-      insert(:member, parent: group, actor: actor, role: 2)
+      insert(:member, parent: group, actor: actor, role: :administrator)
 
       mutation = """
           mutation {
@@ -146,7 +146,7 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
 
     test "delete_group/3 should check user authentication", %{conn: conn, actor: actor} do
       group = insert(:group)
-      insert(:member, parent: group, actor: actor, role: 2)
+      insert(:member, parent: group, actor: actor, role: :member)
 
       mutation = """
           mutation {
@@ -172,7 +172,7 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
       actor: actor
     } do
       group = insert(:group)
-      insert(:member, parent: group, actor: actor, role: 2)
+      insert(:member, parent: group, actor: actor, role: :member)
 
       mutation = """
           mutation {
@@ -225,7 +225,7 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
       actor: actor
     } do
       group = insert(:group)
-      insert(:member, parent: group, actor: actor, role: 1)
+      insert(:member, parent: group, actor: actor, role: :member)
 
       mutation = """
           mutation {

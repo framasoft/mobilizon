@@ -36,19 +36,30 @@ defmodule MobilizonWeb.Resolvers.Group do
         _parent,
         args,
         %{
-          context: %{current_user: _user}
+          context: %{
+            current_user: _user
+          }
         }
       ) do
-    with {:ok, %Activity{data: %{"object" => %{"type" => "Group"} = object}}} <-
+    with {
+           :ok,
+           %Activity{
+             data: %{
+               "object" => %{"type" => "Group"} = object
+             }
+           }
+         } <-
            MobilizonWeb.API.Groups.create_group(args) do
-      {:ok,
-       %Actor{
-         preferred_username: object["preferredUsername"],
-         summary: object["summary"],
-         type: :Group,
-         #  uuid: object["uuid"],
-         url: object["id"]
-       }}
+      {
+        :ok,
+        %Actor{
+          preferred_username: object["preferredUsername"],
+          summary: object["summary"],
+          type: :Group,
+          #  uuid: object["uuid"],
+          url: object["id"]
+        }
+      }
     end
 
     # with %Actor{id: actor_id} <- Actors.get_local_actor_by_name(actor_username),
@@ -105,5 +116,112 @@ defmodule MobilizonWeb.Resolvers.Group do
 
   def delete_group(_parent, _args, _resolution) do
     {:error, "You need to be logged-in to delete a group"}
+  end
+
+  @doc """
+  Join an existing group
+  """
+  def join_group(
+        _parent,
+        %{group_id: group_id, actor_id: actor_id},
+        %{
+          context: %{
+            current_user: user
+          }
+        }
+      ) do
+    with {:is_owned, true, actor} <- User.owns_actor(user, actor_id),
+         {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
+         {:error, :member_not_found} <- Member.get_member(actor.id, group.id),
+         {:is_able_to_join, true} <- {:is_able_to_join, Member.can_be_joined(group)},
+         role <- Mobilizon.Actors.get_default_member_role(group),
+         {:ok, _} <-
+           Actors.create_member(%{
+             parent_id: group.id,
+             actor_id: actor.id,
+             role: role
+           }) do
+      {:ok, %{parent: group, person: actor, role: role}}
+    else
+      {:is_owned, false} ->
+        {:error, "Actor id is not owned by authenticated user"}
+
+      {:error, :group_not_found} ->
+        {:error, "Group id not found"}
+
+      {:is_able_to_join, false} ->
+        {:error, "You cannot join this group"}
+
+      {:ok, %Member{}} ->
+        {:error, "You are already a member of this group"}
+    end
+  end
+
+  def join_group(_parent, _args, _resolution) do
+    {:error, "You need to be logged-in to join a group"}
+  end
+
+  @doc """
+  Leave a existing group
+  """
+  def leave_group(
+        _parent,
+        %{group_id: group_id, actor_id: actor_id},
+        %{
+          context: %{
+            current_user: user
+          }
+        }
+      ) do
+    with {:is_owned, true, actor} <- User.owns_actor(user, actor_id),
+         {:ok, %Member{} = member} <- Member.get_member(actor.id, group_id),
+         {:only_administrator, false} <-
+           {:only_administrator, check_that_member_is_not_only_administrator(group_id, actor_id)},
+         {:ok, _} <-
+           Mobilizon.Actors.delete_member(member) do
+      {
+        :ok,
+        %{
+          parent: %{
+            id: group_id
+          },
+          person: %{
+            id: actor_id
+          }
+        }
+      }
+    else
+      {:is_owned, false} ->
+        {:error, "Actor id is not owned by authenticated user"}
+
+      {:error, :member_not_found} ->
+        {:error, "Member not found"}
+
+      {:only_administrator, true} ->
+        {:error, "You can't leave this group because you are the only administrator"}
+    end
+  end
+
+  def leave_group(_parent, _args, _resolution) do
+    {:error, "You need to be logged-in to leave a group"}
+  end
+
+  # We check that the actor asking to leave the group is not it's only administrator
+  # We start by fetching the list of administrator or creators and if there's only one of them
+  # and that it's the actor requesting leaving the group we return true
+  @spec check_that_member_is_not_only_administrator(integer(), integer()) :: boolean()
+  defp check_that_member_is_not_only_administrator(group_id, actor_id) do
+    with [
+           %Member{
+             actor: %Actor{
+               id: member_actor_id
+             }
+           }
+         ] <-
+           Member.list_administrator_members_for_group(group_id) do
+      actor_id == member_actor_id
+    else
+      _ -> false
+    end
   end
 end

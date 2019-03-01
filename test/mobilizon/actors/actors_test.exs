@@ -499,9 +499,9 @@ defmodule Mobilizon.ActorsTest do
     alias Mobilizon.Actors.Member
     alias Mobilizon.Actors.Actor
 
-    @valid_attrs %{approved: true, role: 0}
-    @update_attrs %{approved: false, role: 1}
-    @invalid_attrs %{approved: nil, role: nil}
+    @valid_attrs %{role: :member}
+    @update_attrs %{role: :not_approved}
+    @invalid_attrs %{role: nil}
 
     setup do
       actor = insert(:actor)
@@ -528,8 +528,7 @@ defmodule Mobilizon.ActorsTest do
         |> Map.put(:parent_id, group.id)
 
       assert {:ok, %Member{} = member} = Actors.create_member(valid_attrs)
-      assert member.approved == true
-      assert member.role == 0
+      assert member.role == :member
 
       assert [group] = Actor.get_groups_member_of(actor)
       assert [actor] = Actor.get_members_for_group(group)
@@ -562,8 +561,7 @@ defmodule Mobilizon.ActorsTest do
       member = create_test_member(context)
       assert {:ok, member} = Actors.update_member(member, @update_attrs)
       assert %Member{} = member
-      assert member.approved == false
-      assert member.role == 1
+      assert member.role == :not_approved
     end
 
     # This can't happen, since attrs are optional
