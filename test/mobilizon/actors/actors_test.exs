@@ -274,7 +274,7 @@ defmodule Mobilizon.ActorsTest do
 
     test "list_users/0 returns all users" do
       user = insert(:user)
-      users = Actors.list_users()
+      users = Actors.list_users(nil, nil, :id, :desc)
       assert [user.id] == users |> Enum.map(& &1.id)
     end
 

@@ -6,6 +6,8 @@ defmodule MobilizonWeb.Schema.UserType do
   alias MobilizonWeb.Resolvers.User
   import MobilizonWeb.Schema.Utils
 
+  import_types(MobilizonWeb.Schema.SortType)
+
   @desc "A local user of Mobilizon"
   object :user do
     field(:id, non_null(:id), description: "The user's ID")
@@ -36,6 +38,17 @@ defmodule MobilizonWeb.Schema.UserType do
     )
   end
 
+  @desc "Users list"
+  object :users do
+    field(:total, non_null(:integer), description: "Total elements")
+    field(:elements, non_null(list_of(:user)), description: "User elements")
+  end
+
+  @desc "The list of possible options for the event's status"
+  enum :sortable_user_field do
+    value(:id)
+  end
+
   object :user_queries do
     @desc "Get an user"
     field :user, :user do
@@ -46,6 +59,17 @@ defmodule MobilizonWeb.Schema.UserType do
     @desc "Get the current user"
     field :logged_user, :user do
       resolve(&User.get_current_user/3)
+    end
+
+    @desc "List instance users"
+    field :users, :users do
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
+
+      arg(:sort, :sortable_user_field, default_value: :id)
+      arg(:direction, :sort_direction, default_value: :asc)
+
+      resolve(&User.list_and_count_users/3)
     end
   end
 
