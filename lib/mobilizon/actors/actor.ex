@@ -377,4 +377,8 @@ defmodule Mobilizon.Actors.Actor do
       name -> name
     end
   end
+
+  def clear_cache(%Actor{preferred_username: preferred_username, domain: nil}) do
+    Cachex.del(:activity_pub, "actor_" <> preferred_username)
+  end
 end

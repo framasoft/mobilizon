@@ -283,16 +283,20 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
 
   @spec make_event_data(Event.t(), list(String.t())) :: map()
   def make_event_data(
-        %Event{title: title, organizer_actor: actor, uuid: uuid},
+        %Event{} = event,
         to \\ ["https://www.w3.org/ns/activitystreams#Public"]
       ) do
     %{
       "type" => "Event",
       "to" => to,
-      "title" => title,
-      "actor" => actor.url,
-      "uuid" => uuid,
-      "id" => "#{MobilizonWeb.Endpoint.url()}/events/#{uuid}"
+      "title" => event.title,
+      "actor" => event.organizer_actor.url,
+      "uuid" => event.uuid,
+      "category" => event.category,
+      "summary" => event.description,
+      "publish_at" => (event.publish_at || event.inserted_at) |> DateTime.to_iso8601(),
+      "updated_at" => event.updated_at |> DateTime.to_iso8601(),
+      "id" => "#{MobilizonWeb.Endpoint.url()}/events/#{event.uuid}"
     }
   end
 

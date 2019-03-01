@@ -37,12 +37,17 @@ defmodule Mobilizon.Application do
       worker(
         Cachex,
         [
-          :json,
+          :activity_pub,
           [
-            limit: 2500
+            limit: 2500,
+            expiration:
+              expiration(
+                default: :timer.minutes(3),
+                interval: :timer.seconds(15)
+              )
           ]
         ],
-        id: :cache_actor
+        id: :cache_activity_pub
       ),
       worker(Guardian.DB.Token.SweeperServer, []),
       worker(Mobilizon.Service.Federator, [])
