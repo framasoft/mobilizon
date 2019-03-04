@@ -468,6 +468,20 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
+  Returns a cached local actor by username
+  """
+  @spec get_cached_local_actor_by_name(String.t()) ::
+          {:ok, Actor.t()} | {:commit, Actor.t()} | {:ignore, any()}
+  def get_cached_local_actor_by_name(name) do
+    Cachex.fetch(:activity_pub, "actor_" <> name, fn "actor_" <> name ->
+      case get_local_actor_by_name(name) do
+        nil -> {:ignore, nil}
+        %Actor{} = actor -> {:commit, actor}
+      end
+    end)
+  end
+
+  @doc """
   Getting an actor from url, eventually creating it
   """
   # TODO: Move this to Mobilizon.Service.ActivityPub

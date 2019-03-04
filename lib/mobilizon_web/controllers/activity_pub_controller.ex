@@ -16,48 +16,20 @@ defmodule MobilizonWeb.ActivityPubController do
 
   action_fallback(:errors)
 
-  @activity_pub_headers [
-    "application/activity+json",
-    "application/activity+json, application/ld+json"
-  ]
-
   @doc """
-  Show an Actor's ActivityPub representation
+  Renders an Actor ActivityPub's representation
   """
-  @spec actor(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  @spec actor(Plug.Conn.t(), String.t()) :: Plug.Conn.t()
   def actor(conn, %{"name" => name}) do
-    if conn |> get_req_header("accept") |> is_ap_header() do
-      render_cached_actor(conn, name)
-    else
+    with {status, %Actor{} = actor} when status in [:ok, :commit] <-
+           Actors.get_cached_local_actor_by_name(name) do
       conn
-      |> put_resp_content_type("text/html")
-      |> send_file(200, "priv/static/index.html")
-    end
-  end
-
-  @spec render_cached_actor(Plug.Conn.t(), String.t()) :: Plug.Conn.t()
-  defp render_cached_actor(conn, name) do
-    case Cachex.fetch(:activity_pub, "actor_" <> name, &get_local_actor_by_name/1) do
-      {status, %Actor{} = actor} when status in [:ok, :commit] ->
-        conn
-        |> put_resp_header("content-type", "application/activity+json")
-        |> json(ActorView.render("actor.json", %{actor: actor}))
-
+      |> put_resp_header("content-type", "application/activity+json")
+      |> json(ActorView.render("actor.json", %{actor: actor}))
+    else
       {:ignore, _} ->
         {:error, :not_found}
     end
-  end
-
-  defp get_local_actor_by_name("actor_" <> name) do
-    case Actors.get_local_actor_by_name(name) do
-      nil -> {:ignore, nil}
-      %Actor{} = actor -> {:commit, actor}
-    end
-  end
-
-  # Test if the request has an AP header
-  defp is_ap_header(ap_headers) do
-    length(@activity_pub_headers -- ap_headers) < 2
   end
 
   @doc """
@@ -65,23 +37,15 @@ defmodule MobilizonWeb.ActivityPubController do
   """
   @spec event(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def event(conn, %{"uuid" => uuid}) do
-    case Cachex.fetch(:activity_pub, "event_" <> uuid, &get_event_full_by_uuid/1) do
-      {status, %Event{} = event} when status in [:ok, :commit] ->
-        conn
-        |> put_resp_header("content-type", "application/activity+json")
-        |> json(ObjectView.render("event.json", %{event: event |> Utils.make_event_data()}))
-
+    with {status, %Event{}} = event when status in [:ok, :commit] <-
+           Events.get_cached_event_full_by_uuid(uuid),
+         true <- event.visibility in [:public, :unlisted] do
+      conn
+      |> put_resp_header("content-type", "application/activity+json")
+      |> json(ObjectView.render("event.json", %{event: event |> Utils.make_event_data()}))
+    else
       {:ignore, _} ->
         {:error, :not_found}
-    end
-  end
-
-  defp get_event_full_by_uuid("event_" <> uuid) do
-    with %Event{} = event <- Events.get_event_full_by_uuid(uuid),
-         true <- event.visibility in [:public, :unlisted] do
-      {:commit, event}
-    else
-      _ -> {:ignore, nil}
     end
   end
 
@@ -90,27 +54,17 @@ defmodule MobilizonWeb.ActivityPubController do
   """
   @spec comment(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def comment(conn, %{"uuid" => uuid}) do
-    case Cachex.fetch(:activity_pub, "comment_" <> uuid, &get_comment_full_by_uuid/1) do
-      {status, %Comment{} = comment} when status in [:ok, :commit] ->
-        conn
-        |> put_resp_header("content-type", "application/activity+json")
-        |> json(
-          ObjectView.render("comment.json", %{comment: comment |> Utils.make_comment_data()})
-        )
-
-      {:ignore, _} ->
-        {:error, :not_found}
-    end
-  end
-
-  defp get_comment_full_by_uuid("comment_" <> uuid) do
-    with %Comment{} = comment <- Events.get_comment_full_from_uuid(uuid) do
+    with {status, %Comment{} = comment} when status in [:ok, :commit] <-
+           Events.get_cached_comment_full_by_uuid(uuid) do
       # Comments are always public for now
       # TODO : Make comments maybe restricted
       # true <- comment.public do
-      {:commit, comment}
+      conn
+      |> put_resp_header("content-type", "application/activity+json")
+      |> json(ObjectView.render("comment.json", %{comment: comment |> Utils.make_comment_data()}))
     else
-      _ -> {:ignore, nil}
+      {:ignore, _} ->
+        {:error, :not_found}
     end
   end
 

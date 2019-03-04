@@ -154,6 +154,16 @@ defmodule Mobilizon.Events do
     |> Repo.one()
   end
 
+  def get_cached_event_full_by_uuid(uuid) do
+    Cachex.fetch(:activity_pub, "event_" <> uuid, fn "event_" <> uuid ->
+      with %Event{} = event <- get_event_full_by_uuid(uuid) do
+        {:commit, event}
+      else
+        _ -> {:ignore, nil}
+      end
+    end)
+  end
+
   @doc """
   Gets a single event, with all associations loaded.
   """
@@ -1016,6 +1026,16 @@ defmodule Mobilizon.Events do
     with %Comment{} = comment <- Repo.get_by!(Comment, uuid: uuid) do
       Repo.preload(comment, [:actor, :attributed_to, :in_reply_to_comment])
     end
+  end
+
+  def get_cached_comment_full_by_uuid("comment_" <> uuid) do
+    Cachex.fetch(:activity_pub, "comment_" <> uuid, fn "comment_" <> uuid ->
+      with %Comment{} = comment <- Events.get_comment_full_from_uuid(uuid) do
+        {:commit, comment}
+      else
+        _ -> {:ignore, nil}
+      end
+    end)
   end
 
   def get_comment_from_url(url), do: Repo.get_by(Comment, url: url)
