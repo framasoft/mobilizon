@@ -3,16 +3,22 @@ defmodule MobilizonWeb.ActivityPub.ObjectView do
   alias Mobilizon.Service.ActivityPub.Utils
 
   def render("event.json", %{event: event}) do
+    {:ok, html, []} = Earmark.as_html(event["summary"])
+
     event = %{
       "type" => "Event",
-      "actor" => event["actor"],
+      "attributedTo" => event["actor"],
       "id" => event["id"],
       "name" => event["title"],
       "category" => event["category"],
-      "content" => event["summary"],
-      "mediaType" => "text/html"
-      # "published" => Timex.format!(event.inserted_at, "{ISO:Extended}"),
-      # "updated" => Timex.format!(event.updated_at, "{ISO:Extended}")
+      "content" => html,
+      "source" => %{
+        "content" => event["summary"],
+        "mediaType" => "text/markdown"
+      },
+      "mediaType" => "text/html",
+      "published" => event["publish_at"],
+      "updated" => event["updated_at"]
     }
 
     Map.merge(event, Utils.make_json_ld_header())

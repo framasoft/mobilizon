@@ -19,12 +19,15 @@ defmodule MobilizonWeb.Router do
   end
 
   pipeline :activity_pub do
+    plug(:accepts, ["activity-json"])
+  end
+
+  pipeline :activity_pub_and_html do
     plug(:accepts, ["activity-json", "html"])
   end
 
-  pipeline :activity_pub_rss do
-    plug(TrailingFormatPlug)
-    plug(:accepts, ["activity-json", "html", "atom"])
+  pipeline :rss do
+    plug(:accepts, ["atom", "html"])
   end
 
   pipeline :browser do
@@ -57,9 +60,16 @@ defmodule MobilizonWeb.Router do
   end
 
   scope "/", MobilizonWeb do
-    pipe_through(:activity_pub_rss)
+    pipe_through(:rss)
 
-    get("/@:name", ActivityPubController, :actor)
+    get("/@:name/feed/:format", FeedController, :actor)
+  end
+
+  scope "/", MobilizonWeb do
+    pipe_through(:activity_pub_and_html)
+    get("/@:name", PageController, :actor)
+    get("/events/:uuid", PageController, :event)
+    get("/comments/:uuid", PageController, :comment)
   end
 
   scope "/", MobilizonWeb do
@@ -68,8 +78,6 @@ defmodule MobilizonWeb.Router do
     get("/@:name/outbox", ActivityPubController, :outbox)
     get("/@:name/following", ActivityPubController, :following)
     get("/@:name/followers", ActivityPubController, :followers)
-    get("/events/:uuid", ActivityPubController, :event)
-    get("/comments/:uuid", ActivityPubController, :comment)
   end
 
   scope "/", MobilizonWeb do

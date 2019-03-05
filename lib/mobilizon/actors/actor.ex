@@ -377,4 +377,14 @@ defmodule Mobilizon.Actors.Actor do
       name -> name
     end
   end
+
+  def display_name_and_username(%Actor{name: nil} = actor), do: actor_acct_from_actor(actor)
+  def display_name_and_username(%Actor{name: ""} = actor), do: actor_acct_from_actor(actor)
+
+  def display_name_and_username(%Actor{name: name} = actor),
+    do: name <> " (" <> actor_acct_from_actor(actor) <> ")"
+
+  def clear_cache(%Actor{preferred_username: preferred_username, domain: nil}) do
+    Cachex.del(:activity_pub, "actor_" <> preferred_username)
+  end
 end

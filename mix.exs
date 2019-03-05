@@ -87,7 +87,6 @@ defmodule Mobilizon.Mixfile do
       {:plug_cowboy, "~> 2.0"},
       {:atomex, "0.3.0"},
       {:cachex, "~> 3.1"},
-      {:trailing_format_plug, "~> 0.0.5"},
       {:earmark, "~> 1.3.1"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: :dev},
@@ -100,7 +99,7 @@ defmodule Mobilizon.Mixfile do
       {:exvcr, "~> 0.10", only: :test},
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
       {:mock, "~> 0.3.0", only: :test},
-      {:feeder_ex, "~> 1.1", only: :test}
+      {:elixir_feed_parser, "~> 2.1.0", only: :test}
     ]
   end
 

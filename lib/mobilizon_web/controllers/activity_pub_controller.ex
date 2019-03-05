@@ -16,53 +16,46 @@ defmodule MobilizonWeb.ActivityPubController do
 
   action_fallback(:errors)
 
-  @activity_pub_headers [
-    "application/activity+json",
-    "application/activity+json, application/ld+json"
-  ]
-
-  def actor(conn, %{"name" => _name, "_format" => "atom"} = params) do
-    MobilizonWeb.FeedController.actor(conn, params)
-  end
-
+  @doc """
+  Renders an Actor ActivityPub's representation
+  """
+  @spec actor(Plug.Conn.t(), String.t()) :: Plug.Conn.t()
   def actor(conn, %{"name" => name}) do
-    with %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
-      if conn |> get_req_header("accept") |> is_ap_header() do
-        conn |> render_ap_actor(actor)
-      else
-        conn
-        |> put_resp_content_type("text/html")
-        |> send_file(200, "priv/static/index.html")
-      end
+    with {status, %Actor{} = actor} when status in [:ok, :commit] <-
+           Actors.get_cached_local_actor_by_name(name) do
+      conn
+      |> put_resp_header("content-type", "application/activity+json")
+      |> json(ActorView.render("actor.json", %{actor: actor}))
     else
-      nil -> {:error, :not_found}
+      {:ignore, _} ->
+        {:error, :not_found}
     end
   end
 
-  defp is_ap_header(ap_headers) do
-    length(@activity_pub_headers -- ap_headers) < 2
-  end
-
-  defp render_ap_actor(conn, %Actor{} = actor) do
-    conn
-    |> put_resp_header("content-type", "application/activity+json")
-    |> json(ActorView.render("actor.json", %{actor: actor}))
-  end
-
+  @doc """
+  Renders an Event ActivityPub's representation
+  """
+  @spec event(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def event(conn, %{"uuid" => uuid}) do
-    with %Event{} = event <- Events.get_event_full_by_uuid(uuid),
+    with {status, %Event{} = event} when status in [:ok, :commit] <-
+           Events.get_cached_event_full_by_uuid(uuid),
          true <- event.visibility in [:public, :unlisted] do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ObjectView.render("event.json", %{event: event |> Utils.make_event_data()}))
     else
-      _ ->
+      {:ignore, _} ->
         {:error, :not_found}
     end
   end
 
+  @doc """
+  Renders a Comment ActivityPub's representation
+  """
+  @spec comment(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def comment(conn, %{"uuid" => uuid}) do
-    with %Comment{} = comment <- Events.get_comment_full_from_uuid(uuid) do
+    with {status, %Comment{} = comment} when status in [:ok, :commit] <-
+           Events.get_cached_comment_full_by_uuid(uuid) do
       # Comments are always public for now
       # TODO : Make comments maybe restricted
       # true <- comment.public do
@@ -70,7 +63,7 @@ defmodule MobilizonWeb.ActivityPubController do
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ObjectView.render("comment.json", %{comment: comment |> Utils.make_comment_data()}))
     else
-      _ ->
+      {:ignore, _} ->
         {:error, :not_found}
     end
   end
