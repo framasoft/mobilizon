@@ -10,6 +10,7 @@ defmodule MobilizonWeb.PageController do
   alias Mobilizon.Events.{Event, Comment}
 
   plug(:put_layout, false)
+  action_fallback(MobilizonWeb.FallbackController)
 
   def index(conn, _params) do
     conn
@@ -23,9 +24,12 @@ defmodule MobilizonWeb.PageController do
         with {status, %Actor{} = actor} when status in [:ok, :commit] <-
                Actors.get_cached_local_actor_by_name(name) do
           render_with_meta(conn, actor)
+        else
+          _ -> {:error, :not_found}
         end
 
-      "activity+json" ->
+      # "activity-json" matches "application/activity+json" inside our config
+      "activity-json" ->
         MobilizonWeb.ActivityPubController.call(conn, :actor)
 
       _ ->
@@ -40,9 +44,11 @@ defmodule MobilizonWeb.PageController do
                Events.get_cached_event_full_by_uuid(uuid),
              true <- event.visibility in [:public, :unlisted] do
           render_with_meta(conn, event)
+        else
+          _ -> {:error, :not_found}
         end
 
-      "activity+json" ->
+      "activity-json" ->
         MobilizonWeb.ActivityPubController.call(conn, :event)
 
       _ ->
@@ -59,9 +65,11 @@ defmodule MobilizonWeb.PageController do
           # TODO : Make comments maybe restricted
           # true <- comment.public do
           render_with_meta(conn, comment)
+        else
+          _ -> {:error, :not_found}
         end
 
-      "activity+json" ->
+      "activity-json" ->
         MobilizonWeb.ActivityPubController.call(conn, :comment)
 
       _ ->

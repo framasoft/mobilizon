@@ -37,7 +37,7 @@ defmodule MobilizonWeb.ActivityPubController do
   """
   @spec event(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def event(conn, %{"uuid" => uuid}) do
-    with {status, %Event{}} = event when status in [:ok, :commit] <-
+    with {status, %Event{} = event} when status in [:ok, :commit] <-
            Events.get_cached_event_full_by_uuid(uuid),
          true <- event.visibility in [:public, :unlisted] do
       conn

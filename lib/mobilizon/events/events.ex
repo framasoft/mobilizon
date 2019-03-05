@@ -1028,9 +1028,9 @@ defmodule Mobilizon.Events do
     end
   end
 
-  def get_cached_comment_full_by_uuid("comment_" <> uuid) do
+  def get_cached_comment_full_by_uuid(uuid) do
     Cachex.fetch(:activity_pub, "comment_" <> uuid, fn "comment_" <> uuid ->
-      with %Comment{} = comment <- Events.get_comment_full_from_uuid(uuid) do
+      with %Comment{} = comment <- get_comment_full_from_uuid(uuid) do
         {:commit, comment}
       else
         _ -> {:ignore, nil}

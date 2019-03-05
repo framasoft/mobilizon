@@ -13,13 +13,17 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
   alias Mobilizon.Service.ActivityPub.Utils
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
+  setup do
+    conn = build_conn() |> put_req_header("accept", "application/activity+json")
+    {:ok, conn: conn}
+  end
+
   describe "/@:preferred_username" do
     test "it returns a json representation of the actor", %{conn: conn} do
       actor = insert(:actor)
 
       conn =
         conn
-        |> put_req_header("accept", "application/activity+json")
         |> get("/@#{actor.preferred_username}")
 
       actor = Actors.get_actor!(actor.id)
@@ -34,7 +38,6 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
       conn =
         conn
-        |> put_req_header("accept", "application/activity+json")
         |> get("/events/#{event.uuid}")
 
       assert json_response(conn, 200) ==
@@ -46,7 +49,6 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
       conn =
         conn
-        |> put_req_header("accept", "application/activity+json")
         |> get("/events/#{event.uuid}")
 
       assert json_response(conn, 404)
@@ -59,7 +61,6 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
       conn =
         conn
-        |> put_req_header("accept", "application/activity+json")
         |> get("/comments/#{comment.uuid}")
 
       assert json_response(conn, 200) ==
@@ -87,7 +88,6 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
         conn =
           conn
           |> assign(:valid_signature, true)
-          |> put_req_header("content-type", "application/activity+json")
           |> post("/inbox", data)
 
         assert "ok" == json_response(conn, 200)
@@ -104,7 +104,6 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
       conn =
         conn
-        |> put_req_header("accept", "application/activity+json")
         |> get("/@#{actor.preferred_username}/outbox")
 
       assert response(conn, 200) =~ comment.text
@@ -116,7 +115,6 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
       conn =
         conn
-        |> put_req_header("accept", "application/activity+json")
         |> get("/@#{actor.preferred_username}/outbox")
 
       assert response(conn, 200) =~ event.title
