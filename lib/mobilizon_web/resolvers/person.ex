@@ -3,7 +3,9 @@ defmodule MobilizonWeb.Resolvers.Person do
   Handles the person-related GraphQL calls
   """
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.{Actor, User}
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Users.User
+  alias Mobilizon.Users
   alias Mobilizon.Service.ActivityPub
 
   @doc """
@@ -23,7 +25,7 @@ defmodule MobilizonWeb.Resolvers.Person do
   Returns the current actor for the currently logged-in user
   """
   def get_current_person(_parent, _args, %{context: %{current_user: user}}) do
-    {:ok, Actors.get_actor_for_user(user)}
+    {:ok, Users.get_actor_for_user(user)}
   end
 
   def get_current_person(_parent, _args, _resolution) do
@@ -34,7 +36,7 @@ defmodule MobilizonWeb.Resolvers.Person do
   Returns the list of identities for the logged-in user
   """
   def identities(_parent, _args, %{context: %{current_user: user}}) do
-    {:ok, Actors.get_actors_for_user(user)}
+    {:ok, Users.get_actors_for_user(user)}
   end
 
   def identities(_parent, _args, _resolution) do
@@ -65,8 +67,8 @@ defmodule MobilizonWeb.Resolvers.Person do
   This function is used to register a person afterwards the user has been created (but not activated)
   """
   def register_person(_parent, args, _resolution) do
-    with {:ok, %User{} = user} <- Actors.get_user_by_email(args.email),
-         {:no_actor, nil} <- {:no_actor, Actors.get_actor_for_user(user)},
+    with {:ok, %User{} = user} <- Users.get_user_by_email(args.email),
+         {:no_actor, nil} <- {:no_actor, Users.get_actor_for_user(user)},
          args <- Map.put(args, :user_id, user.id),
          {:ok, %Actor{} = new_person} <- Actors.new_person(args) do
       {:ok, new_person}

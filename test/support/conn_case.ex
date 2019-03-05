@@ -24,7 +24,7 @@ defmodule MobilizonWeb.ConnCase do
       # The default endpoint for testing
       @endpoint MobilizonWeb.Endpoint
 
-      def auth_conn(%Plug.Conn{} = conn, %Mobilizon.Actors.User{} = user) do
+      def auth_conn(%Plug.Conn{} = conn, %Mobilizon.Users.User{} = user) do
         {:ok, token, _claims} = MobilizonWeb.Guardian.encode_and_sign(user)
 
         conn

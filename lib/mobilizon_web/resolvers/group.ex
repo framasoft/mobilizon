@@ -3,7 +3,8 @@ defmodule MobilizonWeb.Resolvers.Group do
   Handles the group-related GraphQL calls
   """
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.{Actor, User, Member}
+  alias Mobilizon.Actors.{Actor, Member}
+  alias Mobilizon.Users.User
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Activity
   require Logger

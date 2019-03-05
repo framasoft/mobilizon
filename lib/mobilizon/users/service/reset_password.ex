@@ -1,18 +1,19 @@
-defmodule Mobilizon.Actors.Service.ResetPassword do
+defmodule Mobilizon.Users.Service.ResetPassword do
   @moduledoc false
 
   require Logger
 
-  alias Mobilizon.{Mailer, Repo, Actors.User, Actors}
+  alias Mobilizon.Users.User
+  alias Mobilizon.{Mailer, Repo, Users}
   alias Mobilizon.Email.User, as: UserEmail
-  alias Mobilizon.Actors.Service.Tools
+  alias Mobilizon.Users.Service.Tools
 
   @doc """
   Check that the provided token is correct and update provided password
   """
   @spec check_reset_password_token(String.t(), String.t()) :: tuple
   def check_reset_password_token(password, token) do
-    with %User{} = user <- Actors.get_user_by_reset_password_token(token),
+    with %User{} = user <- Users.get_user_by_reset_password_token(token),
          {:ok, %User{} = user} <-
            Repo.update(
              User.password_reset_changeset(user, %{

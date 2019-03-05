@@ -9,8 +9,8 @@ defmodule MobilizonWeb.Guardian do
       user: [:base]
     }
 
-  alias Mobilizon.Actors
-  alias Mobilizon.Actors.User
+  alias Mobilizon.Users
+  alias Mobilizon.Users.User
 
   def subject_for_token(%User{} = user, _claims) do
     {:ok, "User:" <> to_string(user.id)}
@@ -24,7 +24,7 @@ defmodule MobilizonWeb.Guardian do
     try do
       case Integer.parse(uid_str) do
         {uid, ""} ->
-          {:ok, Actors.get_user_with_actors!(uid)}
+          {:ok, Users.get_user_with_actors!(uid)}
 
         _ ->
           {:error, :invalid_id}

@@ -1,17 +1,18 @@
-defmodule Mobilizon.Actors.Service.Activation do
+defmodule Mobilizon.Users.Service.Activation do
   @moduledoc false
 
-  alias Mobilizon.{Mailer, Actors.User, Actors}
+  alias Mobilizon.{Mailer, Users}
+  alias Mobilizon.Users.User
   alias Mobilizon.Email.User, as: UserEmail
-  alias Mobilizon.Actors.Service.Tools
+  alias Mobilizon.Users.Service.Tools
 
   require Logger
 
   @doc false
   def check_confirmation_token(token) when is_binary(token) do
-    with %User{} = user <- Actors.get_user_by_activation_token(token),
+    with %User{} = user <- Users.get_user_by_activation_token(token),
          {:ok, %User{} = user} <-
-           Actors.update_user(user, %{
+           Users.update_user(user, %{
              "confirmed_at" => DateTime.utc_now() |> DateTime.truncate(:second),
              "confirmation_sent_at" => nil,
              "confirmation_token" => nil
@@ -27,7 +28,7 @@ defmodule Mobilizon.Actors.Service.Activation do
   def resend_confirmation_email(%User{} = user, locale \\ "en") do
     with :ok <- Tools.we_can_send_email(user, :confirmation_sent_at),
          {:ok, user} <-
-           Actors.update_user(user, %{
+           Users.update_user(user, %{
              "confirmation_sent_at" => DateTime.utc_now() |> DateTime.truncate(:second)
            }) do
       send_confirmation_email(user, locale)

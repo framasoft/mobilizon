@@ -1,8 +1,10 @@
 defmodule MobilizonWeb.Resolvers.UserResolverTest do
   use MobilizonWeb.ConnCase
-  alias Mobilizon.Actors
-  alias Mobilizon.Actors.{User, Actor}
+  alias Mobilizon.{Actors, Users}
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Users.User
   alias MobilizonWeb.AbsintheHelpers
+  alias Mobilizon.Users.Service.ResetPassword
   import Mobilizon.Factory
   use Bamboo.Test
 
@@ -431,7 +433,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
                "You requested again a confirmation email too soon"
 
       # Hammer time !
-      Mobilizon.Actors.update_user(user, %{
+      Mobilizon.Users.update_user(user, %{
         confirmation_sent_at: Timex.shift(user.confirmation_sent_at, hours: -3)
       })
 
@@ -503,8 +505,8 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
     test "test reset_password/3 with valid email", context do
       {:ok, %User{} = user} = Actors.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
       %Actor{} = insert(:actor, user: user)
-      {:ok, _email_sent} = Mobilizon.Actors.Service.ResetPassword.send_password_reset_email(user)
-      %User{reset_password_token: reset_password_token} = Mobilizon.Actors.get_user!(user.id)
+      {:ok, _email_sent} = ResetPassword.send_password_reset_email(user)
+      %User{reset_password_token: reset_password_token} = Mobilizon.Users.get_user!(user.id)
 
       mutation = """
           mutation {
@@ -528,8 +530,8 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
     test "test reset_password/3 with a password too short", context do
       %User{} = user = insert(:user)
-      {:ok, _email_sent} = Mobilizon.Actors.Service.ResetPassword.send_password_reset_email(user)
-      %User{reset_password_token: reset_password_token} = Mobilizon.Actors.get_user!(user.id)
+      {:ok, _email_sent} = ResetPassword.send_password_reset_email(user)
+      %User{reset_password_token: reset_password_token} = Mobilizon.Users.get_user!(user.id)
 
       mutation = """
           mutation {
@@ -554,8 +556,8 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
     test "test reset_password/3 with an invalid token", context do
       %User{} = user = insert(:user)
-      {:ok, _email_sent} = Mobilizon.Actors.Service.ResetPassword.send_password_reset_email(user)
-      %User{} = Mobilizon.Actors.get_user!(user.id)
+      {:ok, _email_sent} = ResetPassword.send_password_reset_email(user)
+      %User{} = Mobilizon.Users.get_user!(user.id)
 
       mutation = """
           mutation {
@@ -584,7 +586,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
       {:ok, %User{} = user} = Actors.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
 
       {:ok, %User{} = _user} =
-        Actors.update_user(user, %{
+        Users.update_user(user, %{
           "confirmed_at" => DateTime.utc_now() |> DateTime.truncate(:second),
           "confirmation_sent_at" => nil,
           "confirmation_token" => nil
@@ -616,7 +618,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
       {:ok, %User{} = user} = Actors.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
 
       {:ok, %User{} = _user} =
-        Actors.update_user(user, %{
+        Users.update_user(user, %{
           "confirmed_at" => DateTime.utc_now() |> DateTime.truncate(:second),
           "confirmation_sent_at" => nil,
           "confirmation_token" => nil
@@ -677,12 +679,12 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
       user = insert(:user)
       insert(:actor, user: user)
 
-      assert {:ok, %User{actors: actors}} = Actors.get_user_with_actors(user.id)
+      assert {:ok, %User{actors: actors}} = Users.get_user_with_actors(user.id)
 
       actor_params = @valid_single_actor_params |> Map.put(:user_id, user.id)
       assert {:ok, %Actor{} = actor2} = Actors.create_actor(actor_params)
 
-      assert {:ok, %User{actors: actors}} = Actors.get_user_with_actors(user.id)
+      assert {:ok, %User{actors: actors}} = Users.get_user_with_actors(user.id)
       assert length(actors) == 2
 
       mutation = """
