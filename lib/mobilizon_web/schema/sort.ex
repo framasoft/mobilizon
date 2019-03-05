@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.Schema.SortType do
+  @moduledoc """
+  Allows sorting a collection of elements
+  """
   use Absinthe.Schema.Notation
 
   @desc "Available sort directions"
