@@ -5,7 +5,7 @@ defmodule MobilizonWeb.Resolvers.Comment do
   require Logger
   alias Mobilizon.Events.Comment
   alias Mobilizon.Activity
-  alias Mobilizon.Actors.User
+  alias Mobilizon.Users.User
   alias MobilizonWeb.API.Comments
 
   def create_comment(_parent, %{text: comment, actor_username: username}, %{

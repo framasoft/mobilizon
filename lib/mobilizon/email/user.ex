@@ -2,7 +2,7 @@ defmodule Mobilizon.Email.User do
   @moduledoc """
   Handles emails sent to users
   """
-  alias Mobilizon.Actors.User
+  alias Mobilizon.Users.User
 
   import Bamboo.Email
   import Bamboo.Phoenix

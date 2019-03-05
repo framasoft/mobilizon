@@ -5,15 +5,16 @@ defmodule Mix.Tasks.Mobilizon.CreateBot do
 
   use Mix.Task
   alias Mobilizon.Actors
+  alias Mobilizon.Users
   alias Mobilizon.Actors.Bot
-  alias Mobilizon.Actors.User
+  alias Mobilizon.Users.User
   require Logger
 
   @shortdoc "Register user"
   def run([email, name, summary, type, url]) do
     Mix.Task.run("app.start")
 
-    with {:ok, %User{} = user} <- Actors.get_user_by_email(email, true),
+    with {:ok, %User{} = user} <- Users.get_user_by_email(email, true),
          actor <- Actors.register_bot_account(%{name: name, summary: summary}),
          {:ok, %Bot{} = bot} <-
            Actors.create_bot(%{

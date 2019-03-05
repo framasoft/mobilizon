@@ -4,7 +4,8 @@ defmodule MobilizonWeb.Resolvers.Event do
   """
   alias Mobilizon.Activity
   alias Mobilizon.Events.{Event, Participant}
-  alias Mobilizon.Actors.{User, Actor}
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Users.User
 
   # We limit the max number of events that can be retrieved
   @event_max_limit 100

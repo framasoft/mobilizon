@@ -6,7 +6,7 @@
 defmodule MobilizonWeb.NodeInfoController do
   use MobilizonWeb, :controller
 
-  alias Mobilizon.{Actors, Events}
+  alias Mobilizon.{Events, Users}
 
   @instance Application.get_env(:mobilizon, :instance)
 
@@ -39,7 +39,7 @@ defmodule MobilizonWeb.NodeInfoController do
       openRegistrations: Keyword.get(@instance, :registrations_open),
       usage: %{
         users: %{
-          total: Actors.count_users()
+          total: Users.count_users()
         },
         localPosts: Events.count_local_events(),
         localComments: Events.count_local_comments()

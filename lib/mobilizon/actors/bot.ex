@@ -4,7 +4,8 @@ defmodule Mobilizon.Actors.Bot do
   """
   use Ecto.Schema
   import Ecto.Changeset
-  alias Mobilizon.Actors.{Actor, User}
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Users.User
 
   schema "bots" do
     field(:source, :string)

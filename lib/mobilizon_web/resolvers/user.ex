@@ -2,15 +2,17 @@ defmodule MobilizonWeb.Resolvers.User do
   @moduledoc """
   Handles the user-related GraphQL calls
   """
-  alias Mobilizon.Actors.{User, Actor}
-  alias Mobilizon.Actors
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Users.User
+  alias Mobilizon.{Actors, Users}
+  alias Mobilizon.Users.Service.{ResetPassword, Activation}
   require Logger
 
   @doc """
   Find an user by it's ID
   """
   def find_user(_parent, %{id: id}, _resolution) do
-    Actors.get_user_with_actors(id)
+    Users.get_user_with_actors(id)
   end
 
   @doc """
@@ -32,8 +34,8 @@ defmodule MobilizonWeb.Resolvers.User do
         %{page: page, limit: limit, sort: sort, direction: direction},
         _resolution
       ) do
-    total = Task.async(&Actors.count_users/0)
-    elements = Task.async(fn -> Actors.list_users(page, limit, sort, direction) end)
+    total = Task.async(&Users.count_users/0)
+    elements = Task.async(fn -> Users.list_users(page, limit, sort, direction) end)
 
     {:ok, %{total: Task.await(total), elements: Task.await(elements)}}
   end
@@ -42,8 +44,8 @@ defmodule MobilizonWeb.Resolvers.User do
   Login an user. Returns a token and the user
   """
   def login_user(_parent, %{email: email, password: password}, _resolution) do
-    with {:ok, %User{} = user} <- Actors.get_user_by_email(email, true),
-         {:ok, token, _} <- Actors.authenticate(%{user: user, password: password}) do
+    with {:ok, %User{} = user} <- Users.get_user_by_email(email, true),
+         {:ok, token, _} <- Users.authenticate(%{user: user, password: password}) do
       {:ok, %{token: token, user: user}}
     else
       {:error, :user_not_found} ->
@@ -62,7 +64,7 @@ defmodule MobilizonWeb.Resolvers.User do
   @spec create_user(any(), map(), any()) :: tuple()
   def create_user(_parent, args, _resolution) do
     with {:ok, %User{} = user} <- Actors.register(args) do
-      Mobilizon.Actors.Service.Activation.send_confirmation_email(user)
+      Activation.send_confirmation_email(user)
       {:ok, user}
     end
   end
@@ -72,9 +74,8 @@ defmodule MobilizonWeb.Resolvers.User do
   """
   def validate_user(_parent, %{token: token}, _resolution) do
     with {:check_confirmation_token, {:ok, %User{} = user}} <-
-           {:check_confirmation_token,
-            Mobilizon.Actors.Service.Activation.check_confirmation_token(token)},
-         {:get_actor, actor} <- {:get_actor, Actors.get_actor_for_user(user)},
+           {:check_confirmation_token, Activation.check_confirmation_token(token)},
+         {:get_actor, actor} <- {:get_actor, Users.get_actor_for_user(user)},
          {:guardian_encode_and_sign, {:ok, token, _}} <-
            {:guardian_encode_and_sign, MobilizonWeb.Guardian.encode_and_sign(user)} do
       {:ok, %{token: token, user: Map.put(user, :default_actor, actor)}}
@@ -91,9 +92,9 @@ defmodule MobilizonWeb.Resolvers.User do
   We only do this to accounts unconfirmed
   """
   def resend_confirmation_email(_parent, %{email: email, locale: locale}, _resolution) do
-    with {:ok, user} <- Actors.get_user_by_email(email, false),
+    with {:ok, user} <- Users.get_user_by_email(email, false),
          {:ok, email} <-
-           Mobilizon.Actors.Service.Activation.resend_confirmation_email(user, locale) do
+           Activation.resend_confirmation_email(user, locale) do
       {:ok, email}
     else
       {:error, :user_not_found} ->
@@ -108,9 +109,9 @@ defmodule MobilizonWeb.Resolvers.User do
   Send an email to reset the password from an user
   """
   def send_reset_password(_parent, %{email: email, locale: locale}, _resolution) do
-    with {:ok, user} <- Actors.get_user_by_email(email, true),
+    with {:ok, user} <- Users.get_user_by_email(email, true),
          {:ok, %Bamboo.Email{} = _email_html} <-
-           Mobilizon.Actors.Service.ResetPassword.send_password_reset_email(user, locale) do
+           ResetPassword.send_password_reset_email(user, locale) do
       {:ok, email}
     else
       {:error, :user_not_found} ->
@@ -127,7 +128,7 @@ defmodule MobilizonWeb.Resolvers.User do
   """
   def reset_password(_parent, %{password: password, token: token}, _resolution) do
     with {:ok, %User{} = user} <-
-           Mobilizon.Actors.Service.ResetPassword.check_reset_password_token(password, token),
+           ResetPassword.check_reset_password_token(password, token),
          {:ok, token, _} <- MobilizonWeb.Guardian.encode_and_sign(user) do
       {:ok, %{token: token, user: user}}
     end
@@ -139,8 +140,8 @@ defmodule MobilizonWeb.Resolvers.User do
       }) do
     with %Actor{id: actor_id} <- Actors.get_local_actor_by_name(username),
          {:user_actor, true} <-
-           {:user_actor, actor_id in Enum.map(Actors.get_actors_for_user(user), & &1.id)},
-         %User{} = user <- Actors.update_user_default_actor(user.id, actor_id) do
+           {:user_actor, actor_id in Enum.map(Users.get_actors_for_user(user), & &1.id)},
+         %User{} = user <- Users.update_user_default_actor(user.id, actor_id) do
       {:ok, user}
     else
       {:user_actor, _} ->

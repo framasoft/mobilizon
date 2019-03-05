@@ -2,7 +2,8 @@ defmodule Mobilizon.ActorsTest do
   use Mobilizon.DataCase
 
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.{Actor, Member, Follower, User, Bot}
+  alias Mobilizon.Actors.{Actor, Member, Follower, Bot}
+  alias Mobilizon.Users
   import Mobilizon.Factory
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
@@ -60,13 +61,13 @@ defmodule Mobilizon.ActorsTest do
     test "get_actor_for_user/1 returns the actor for an user", %{
       actor: %{user: user, id: actor_id} = _actor
     } do
-      assert actor_id == Actors.get_actor_for_user(user).id
+      assert actor_id == Users.get_actor_for_user(user).id
     end
 
     test "get_actor_for_user/1 returns the actor for an user with no default actor defined" do
       user = insert(:user)
       actor_id = insert(:actor, user: user).id
-      assert actor_id == Actors.get_actor_for_user(user).id
+      assert actor_id == Users.get_actor_for_user(user).id
     end
 
     test "get_actor_with_everything/1 returns the actor with it's organized events", %{
@@ -262,104 +263,6 @@ defmodule Mobilizon.ActorsTest do
 
     test "change_actor/1 returns a actor changeset", %{actor: actor} do
       assert %Ecto.Changeset{} = Actors.change_actor(actor)
-    end
-  end
-
-  describe "users" do
-    alias Mobilizon.Actors.{User, Actor}
-
-    @valid_attrs %{email: "foo@bar.tld", password: "some password"}
-    @update_attrs %{email: "foo@fighters.tld", password: "some updated password"}
-    @invalid_attrs %{email: nil, password: nil}
-
-    test "list_users/0 returns all users" do
-      user = insert(:user)
-      users = Actors.list_users(nil, nil, :id, :desc)
-      assert [user.id] == users |> Enum.map(& &1.id)
-    end
-
-    test "get_user!/1 returns the user with given id" do
-      user = insert(:user)
-      assert user = Actors.get_user!(user.id)
-    end
-
-    # There's no create_user/1, just register/1
-    test "register/1 with valid data creates a user" do
-      assert {:ok, %User{email: email} = user} = Actors.register(@valid_attrs)
-
-      assert email == @valid_attrs.email
-    end
-
-    test "create_user/1 with invalid data returns error changeset" do
-      assert {:error,
-              %Ecto.Changeset{
-                errors: [
-                  password: {"can't be blank", [validation: :required]},
-                  email: {"can't be blank", [validation: :required]}
-                ],
-                valid?: false
-              }} = Actors.register(@invalid_attrs)
-    end
-
-    test "update_user/2 with valid data updates the user" do
-      user = insert(:user)
-      assert {:ok, %User{email: email}} = Actors.update_user(user, @update_attrs)
-      assert email == "foo@fighters.tld"
-    end
-
-    test "update_user/2 with invalid data returns error changeset" do
-      user = insert(:user)
-      assert {:error, %Ecto.Changeset{}} = Actors.update_user(user, @invalid_attrs)
-      assert user = Actors.get_user!(user.id)
-    end
-
-    test "delete_user/1 deletes the user" do
-      user = insert(:user)
-      assert {:ok, %User{}} = Actors.delete_user(user)
-      assert_raise Ecto.NoResultsError, fn -> Actors.get_user!(user.id) end
-    end
-
-    # test "change_user/1 returns a user changeset" do
-    #   user = insert(:user)
-    #   assert %Ecto.Changeset{} = Actors.change_user(user)
-    # end
-
-    @email "email@domain.tld"
-    @password "password"
-    test "authenticate/1 checks the user's password" do
-      {:ok, %User{} = user} = Actors.register(%{email: @email, password: @password})
-
-      assert {:ok, _, _} = Actors.authenticate(%{user: user, password: @password})
-
-      assert {:error, :unauthorized} ==
-               Actors.authenticate(%{user: user, password: "bad password"})
-    end
-
-    test "get_user_by_email/1 finds an user by it's email" do
-      {:ok, %User{email: email} = user} = Actors.register(%{email: @email, password: @password})
-
-      assert email == @email
-      {:ok, %User{id: id}} = Actors.get_user_by_email(@email)
-      assert id == user.id
-      assert {:error, :user_not_found} = Actors.get_user_by_email("no email")
-    end
-
-    test "get_user_by_email/1 finds an activated user by it's email" do
-      {:ok, %User{} = user} = Actors.register(%{email: @email, password: @password})
-
-      {:ok, %User{id: id}} = Actors.get_user_by_email(@email, false)
-      assert id == user.id
-      assert {:error, :user_not_found} = Actors.get_user_by_email(@email, true)
-
-      Actors.update_user(user, %{
-        "confirmed_at" => DateTime.utc_now() |> DateTime.truncate(:second),
-        "confirmation_sent_at" => nil,
-        "confirmation_token" => nil
-      })
-
-      assert {:error, :user_not_found} = Actors.get_user_by_email(@email, false)
-      {:ok, %User{id: id}} = Actors.get_user_by_email(@email, true)
-      assert id == user.id
     end
   end
 

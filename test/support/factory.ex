@@ -6,7 +6,7 @@ defmodule Mobilizon.Factory do
   use ExMachina.Ecto, repo: Mobilizon.Repo
 
   def user_factory do
-    %Mobilizon.Actors.User{
+    %Mobilizon.Users.User{
       password_hash: "Jane Smith",
       email: sequence(:email, &"email-#{&1}@example.com"),
       role: 0,

@@ -1,10 +1,11 @@
-defmodule Mobilizon.Actors.User do
+defmodule Mobilizon.Users.User do
   @moduledoc """
   Represents a local user
   """
   use Ecto.Schema
   import Ecto.Changeset
-  alias Mobilizon.Actors.{Actor, User}
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Users.User
   alias Mobilizon.Service.EmailChecker
 
   schema "users" do

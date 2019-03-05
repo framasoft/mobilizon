@@ -22,7 +22,8 @@ defmodule Mobilizon.Actors.Actor do
   import Ecto.Changeset
 
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.{Actor, User, Follower, Member}
+  alias Mobilizon.Users.User
+  alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Events.Event
 
   import Ecto.Query
