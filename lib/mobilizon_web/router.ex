@@ -23,7 +23,7 @@ defmodule MobilizonWeb.Router do
   end
 
   pipeline :activity_pub_and_html do
-    plug(:accepts, ["activity-json", "html"])
+    plug(:accepts, ["html", "activity-json"])
   end
 
   pipeline :rss do
