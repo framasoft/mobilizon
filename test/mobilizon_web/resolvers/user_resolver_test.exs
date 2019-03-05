@@ -99,9 +99,9 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
       assert json_response(res, 200)["data"]["users"]["elements"]
              |> Enum.map(& &1["email"]) == [
-               "riri@example.com",
+               "loulou@example.com",
                "fifi@example.com",
-               "loulou@example.com"
+               "riri@example.com"
              ]
 
       query = """

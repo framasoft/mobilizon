@@ -67,7 +67,7 @@ defmodule MobilizonWeb.Schema.UserType do
       arg(:limit, :integer, default_value: 10)
 
       arg(:sort, :sortable_user_field, default_value: :id)
-      arg(:direction, :sort_direction, default_value: :asc)
+      arg(:direction, :sort_direction, default_value: :desc)
 
       resolve(&User.list_and_count_users/3)
     end
