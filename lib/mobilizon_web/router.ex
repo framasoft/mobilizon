@@ -66,6 +66,15 @@ defmodule MobilizonWeb.Router do
   end
 
   scope "/", MobilizonWeb do
+    pipe_through(:browser)
+
+    # Because the "/events/:uuid" route caches all these, we need to force them
+    get("/events/create", PageController, :index)
+    get("/events/list", PageController, :index)
+    get("/events/:uuid/edit", PageController, :index)
+  end
+
+  scope "/", MobilizonWeb do
     pipe_through(:activity_pub_and_html)
     get("/@:name", PageController, :actor)
     get("/events/:uuid", PageController, :event)

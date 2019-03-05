@@ -1,4 +1,4 @@
-import { IActor } from './actor.model';
+import {Actor, IActor} from './actor.model';
 
 export enum EventStatus {
   TENTATIVE,
@@ -69,4 +69,25 @@ export interface IEvent {
 
   // online_address: Address;
   // phone_address: string;
+}
+
+
+export class EventModel implements IEvent {
+  begins_on: Date = new Date();
+  category: Category = Category.MEETING;
+  description: string = '';
+  ends_on: Date = new Date();
+  join_options: EventJoinOptions = EventJoinOptions.FREE;
+  large_image: string = '';
+  local: boolean = true;
+  participants: IParticipant[] = [];
+  publish_at: Date = new Date();
+  status: EventStatus = EventStatus.CONFIRMED;
+  thumbnail: string = '';
+  title: string = '';
+  url: string = '';
+  uuid: string = '';
+  visibility: EventVisibility = EventVisibility.PUBLIC;
+  attributedTo: IActor = new Actor();
+  organizerActor: IActor = new Actor();
 }

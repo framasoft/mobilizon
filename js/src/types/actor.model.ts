@@ -1,5 +1,5 @@
 export interface IActor {
-  id: string;
+  id?: string;
   url: string;
   name: string;
   domain: string|null;
@@ -10,6 +10,17 @@ export interface IActor {
   bannerUrl: string;
 }
 
+export class Actor implements IActor {
+  avatarUrl: string = '';
+  bannerUrl: string = '';
+  domain: string | null = null;
+  name: string = '';
+  preferredUsername: string = '';
+  summary: string = '';
+  suspended: boolean = false;
+  url: string = '';
+}
+
 export interface IPerson extends IActor {
 
 }
@@ -17,6 +28,8 @@ export interface IPerson extends IActor {
 export interface IGroup extends IActor {
   members: IMember[];
 }
+
+export class Person extends Actor implements IPerson {}
 
 export enum MemberRole {
   PENDING,
