@@ -1,5 +1,3 @@
-import {Category} from "../../types/event.model";
-import {EventJoinOptions} from "../../types/event.model";
 <template>
   <section>
     <h1 class="title">
@@ -36,55 +34,34 @@ import {EventJoinOptions} from "../../types/event.model";
     // import Location from '@/components/Location';
     import {CREATE_EVENT, EDIT_EVENT} from "@/graphql/event";
     import {Component, Prop, Vue} from "vue-property-decorator";
-    import {Category, EventJoinOptions, EventStatus, EventVisibility, IEvent} from "@/types/event.model";
+    import {
+      Category,
+      IEvent,
+      EventModel,
+    } from "@/types/event.model";
     import {LOGGED_PERSON} from "@/graphql/actor";
-    import {IPerson} from "@/types/actor.model";
+    import {IPerson, Person} from "@/types/actor.model";
 
-@Component({})
+@Component({
+  apollo: {
+    loggedPerson: {
+      query: LOGGED_PERSON,
+    }
+  }
+})
 export default class CreateEvent extends Vue {
   @Prop({ required: false, type: String }) uuid!: string;
 
-  loggedPerson!: IPerson;
+  loggedPerson: IPerson = new Person();
   categories: string[] = Object.keys(Category);
-  event!: IEvent; // FIXME: correctly type an event
-
-  // created() {
-  //   if (this.uuid) {
-  //     this.fetchEvent();
-  //   }
-  // }
-
-  async created() {
-    // We put initialization here because we need loggedPerson to be ready before initializing event
-    const { data } = await this.$apollo.query({ query: LOGGED_PERSON });
-
-    this.loggedPerson = data.loggedPerson;
-
-    this.event = {
-      title: "",
-      organizerActor: this.loggedPerson,
-      attributedTo: this.loggedPerson,
-      description: "",
-      begins_on: new Date(),
-      ends_on: new Date(),
-      category: Category.MEETING,
-      participants: [],
-      uuid: "",
-      url: "",
-      local: true,
-      status: EventStatus.CONFIRMED,
-      visibility: EventVisibility.PUBLIC,
-      join_options: EventJoinOptions.FREE,
-      thumbnail: "",
-      large_image: "",
-      publish_at: new Date()
-    };
-  }
+  event: IEvent = new EventModel();
 
   createEvent(e: Event) {
     e.preventDefault();
+    this.event.organizerActor = this.loggedPerson;
+    this.event.attributedTo = this.loggedPerson;
 
-    if (this.uuid === undefined) {
+    if (this.event.uuid === "") {
       this.$apollo
         .mutate({
           mutation: CREATE_EVENT,
@@ -104,7 +81,7 @@ export default class CreateEvent extends Vue {
           });
         })
         .catch(error => {
-          console.log(error);
+          console.error(error);
         });
     } else {
       this.$apollo

@@ -43,14 +43,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { AUTH_USER_ACTOR } from "@/constants";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import { SEARCH } from "@/graphql/search";
 import { CURRENT_USER_CLIENT } from "@/graphql/user";
 import { onLogout } from "@/vue-apollo";
 import { deleteUserData } from "@/utils/auth";
 import { LOGGED_PERSON } from "@/graphql/actor";
-import { IActor, IPerson } from '../types/actor.model';
+import { IActor, IPerson } from '@/types/actor.model';
 import { RouteName } from '@/router'
 
 @Component({
