@@ -25,6 +25,20 @@ defmodule MobilizonWeb.Resolvers.User do
   end
 
   @doc """
+  List instance users
+  """
+  def list_and_count_users(
+        _parent,
+        %{page: page, limit: limit, sort: sort, direction: direction},
+        _resolution
+      ) do
+    total = Task.async(&Actors.count_users/0)
+    elements = Task.async(fn -> Actors.list_users(page, limit, sort, direction) end)
+
+    {:ok, %{total: Task.await(total), elements: Task.await(elements)}}
+  end
+
+  @doc """
   Login an user. Returns a token and the user
   """
   def login_user(_parent, %{email: email, password: password}, _resolution) do

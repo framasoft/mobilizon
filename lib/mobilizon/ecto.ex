@@ -19,6 +19,16 @@ defmodule Mobilizon.Ecto do
     )
   end
 
+  @doc """
+  Add sort to the query
+  """
+  def sort(query, sort, direction) do
+    from(
+      query,
+      order_by: [{^direction, ^sort}]
+    )
+  end
+
   def increment_slug(slug) do
     case List.pop_at(String.split(slug, "-"), -1) do
       {nil, _} ->

@@ -266,8 +266,21 @@ defmodule Mobilizon.Actors do
       [%Mobilizon.Actors.User{}]
 
   """
-  def list_users do
-    Repo.all(User)
+  def list_users(page \\ nil, limit \\ nil, sort \\ nil, direction \\ nil) do
+    Repo.all(
+      User
+      |> paginate(page, limit)
+      |> sort(sort, direction)
+    )
+  end
+
+  def count_users() do
+    Repo.one(
+      from(
+        u in User,
+        select: count(u.id)
+      )
+    )
   end
 
   def insert_or_update_actor(data, preload \\ false) do
@@ -299,15 +312,6 @@ defmodule Mobilizon.Actors do
   #
   #    update_and_set_cache(cs)
   #  end
-
-  def count_users() do
-    Repo.one(
-      from(
-        u in User,
-        select: count(u.id)
-      )
-    )
-  end
 
   @doc """
   Gets a single user.

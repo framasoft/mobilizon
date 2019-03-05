@@ -72,6 +72,114 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
     end
   end
 
+  describe "Resolver: List users" do
+    test "list_users/3 returns a list of users", context do
+      insert(:user, email: "riri@example.com")
+      insert(:user, email: "fifi@example.com")
+      insert(:user, email: "loulou@example.com")
+
+      query = """
+      {
+        users {
+          total,
+          elements {
+            email
+          }
+        }
+      }
+      """
+
+      res =
+        context.conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "user"))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["users"]["total"] == 3
+      assert json_response(res, 200)["data"]["users"]["elements"] |> length == 3
+
+      assert json_response(res, 200)["data"]["users"]["elements"]
+             |> Enum.map(& &1["email"]) == [
+               "loulou@example.com",
+               "fifi@example.com",
+               "riri@example.com"
+             ]
+
+      query = """
+      {
+        users(page: 2, limit: 1) {
+          total,
+          elements {
+            email
+          }
+        }
+      }
+      """
+
+      res =
+        context.conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "user"))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["users"]["total"] == 3
+      assert json_response(res, 200)["data"]["users"]["elements"] |> length == 1
+
+      assert json_response(res, 200)["data"]["users"]["elements"] |> Enum.map(& &1["email"]) == [
+               "fifi@example.com"
+             ]
+
+      query = """
+      {
+        users(page: 3, limit: 1, sort: ID, direction: DESC) {
+          total,
+          elements {
+            email
+          }
+        }
+      }
+      """
+
+      res =
+        context.conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "user"))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["users"]["total"] == 3
+      assert json_response(res, 200)["data"]["users"]["elements"] |> length == 1
+
+      assert json_response(res, 200)["data"]["users"]["elements"] |> Enum.map(& &1["email"]) == [
+               "riri@example.com"
+             ]
+    end
+
+    test "get_current_user/3 returns the current logged-in user", context do
+      user = insert(:user)
+
+      query = """
+      {
+          loggedUser {
+            id
+          }
+        }
+      """
+
+      res =
+        context.conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "logged_user"))
+
+      assert json_response(res, 200)["data"]["loggedUser"] == nil
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "You need to be logged-in to view current user"
+
+      res =
+        context.conn
+        |> auth_conn(user)
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "logged_user"))
+
+      assert json_response(res, 200)["data"]["loggedUser"]["id"] == to_string(user.id)
+    end
+  end
+
   describe "Resolver: Create an user & actor" do
     @user_creation %{
       email: "test@demo.tld",
@@ -490,7 +598,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
               ) {
                 token,
                 user {
-                  id  
+                  id
                 }
               }
             }
