@@ -11,6 +11,7 @@ defmodule MobilizonWeb.Guardian do
 
   alias Mobilizon.Users
   alias Mobilizon.Users.User
+  require Logger
 
   def subject_for_token(%User{} = user, _claims) do
     {:ok, "User:" <> to_string(user.id)}
@@ -21,6 +22,8 @@ defmodule MobilizonWeb.Guardian do
   end
 
   def resource_from_claims(%{"sub" => "User:" <> uid_str}) do
+    Logger.debug(fn -> "Receiving claim for user #{uid_str}" end)
+
     try do
       case Integer.parse(uid_str) do
         {uid, ""} ->
@@ -39,6 +42,8 @@ defmodule MobilizonWeb.Guardian do
   end
 
   def after_encode_and_sign(resource, claims, token, _options) do
+    Logger.debug(fn -> "after_encode_and_sign #{inspect(claims)}" end)
+
     with {:ok, _} <- Guardian.DB.after_encode_and_sign(resource, claims["typ"], claims, token) do
       {:ok, token}
     end

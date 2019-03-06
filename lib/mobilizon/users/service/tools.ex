@@ -31,3 +31,13 @@ defmodule Mobilizon.Users.Service.Tools do
     |> Base.url_encode64()
   end
 end
+
+defmodule Mobilizon.Users.Guards do
+  @moduledoc """
+  Guards for users
+  """
+
+  defguard is_admin(role) when is_atom(role) and role == :administrator
+
+  defguard is_moderator(role) when is_atom(role) and role in [:administrator, :moderator]
+end

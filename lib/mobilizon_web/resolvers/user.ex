@@ -6,6 +6,7 @@ defmodule MobilizonWeb.Resolvers.User do
   alias Mobilizon.Users.User
   alias Mobilizon.{Actors, Users}
   alias Mobilizon.Users.Service.{ResetPassword, Activation}
+  import Mobilizon.Users.Guards
   require Logger
 
   @doc """
@@ -32,13 +33,19 @@ defmodule MobilizonWeb.Resolvers.User do
   def list_and_count_users(
         _parent,
         %{page: page, limit: limit, sort: sort, direction: direction},
-        _resolution
-      ) do
+        %{
+          context: %{current_user: %User{role: role}}
+        }
+      )
+      when is_moderator(role) do
     total = Task.async(&Users.count_users/0)
     elements = Task.async(fn -> Users.list_users(page, limit, sort, direction) end)
 
     {:ok, %{total: Task.await(total), elements: Task.await(elements)}}
   end
+
+  def list_and_count_users(_parent, _args, _resolution),
+    do: {:error, "You need to have admin access to list users"}
 
   @doc """
   Login an user. Returns a token and the user
