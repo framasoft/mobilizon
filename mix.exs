@@ -65,7 +65,8 @@ defmodule Mobilizon.Mixfile do
       {:geo, "~> 3.0"},
       {:geo_postgis, "~> 3.1"},
       {:timex, "~> 3.0"},
-      {:icalendar, "~> 0.6"},
+      # Waiting for https://github.com/lpil/icalendar/pull/29
+      {:icalendar, git: "git@framagit.org:tcit/icalendar.git"},
       {:exgravatar, "~> 2.0.1"},
       {:httpoison, "~> 1.0"},
       {:json_ld, "~> 0.3"},

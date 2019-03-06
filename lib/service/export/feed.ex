@@ -1,4 +1,4 @@
-defmodule Mobilizon.Service.Feed do
+defmodule Mobilizon.Service.Export.Feed do
   @moduledoc """
   Serve Atom Syndication Feeds
   """

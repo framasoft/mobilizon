@@ -26,8 +26,8 @@ defmodule MobilizonWeb.Router do
     plug(:accepts, ["html", "activity-json"])
   end
 
-  pipeline :rss do
-    plug(:accepts, ["atom", "html"])
+  pipeline :atom_and_ical do
+    plug(:accepts, ["atom", "ics", "html"])
   end
 
   pipeline :browser do
@@ -60,9 +60,10 @@ defmodule MobilizonWeb.Router do
   end
 
   scope "/", MobilizonWeb do
-    pipe_through(:rss)
+    pipe_through(:atom_and_ical)
 
     get("/@:name/feed/:format", FeedController, :actor)
+    get("/events/:uuid/export/:format", FeedController, :event)
   end
 
   scope "/", MobilizonWeb do
