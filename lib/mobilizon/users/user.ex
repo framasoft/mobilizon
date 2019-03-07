@@ -1,3 +1,11 @@
+import EctoEnum
+
+defenum(Mobilizon.Users.UserRoleEnum, :user_role_type, [
+  :administrator,
+  :moderator,
+  :user
+])
+
 defmodule Mobilizon.Users.User do
   @moduledoc """
   Represents a local user
@@ -12,7 +20,7 @@ defmodule Mobilizon.Users.User do
     field(:email, :string)
     field(:password_hash, :string)
     field(:password, :string, virtual: true)
-    field(:role, :integer, default: 0)
+    field(:role, Mobilizon.Users.UserRoleEnum, default: :user)
     has_many(:actors, Actor)
     belongs_to(:default_actor, Actor)
     field(:confirmed_at, :utc_datetime)

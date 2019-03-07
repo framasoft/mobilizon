@@ -75,8 +75,33 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
   end
 
   describe "Resolver: List users" do
+    test "list_users/3 doesn't return anything with a non moderator user", context do
+      insert(:user, email: "riri@example.com", role: :moderator)
+      user = insert(:user, email: "fifi@example.com")
+      insert(:user, email: "loulou@example.com", role: :administrator)
+
+      query = """
+      {
+        users {
+          total,
+          elements {
+            email
+          }
+        }
+      }
+      """
+
+      res =
+        context.conn
+        |> auth_conn(user)
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "user"))
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "You need to have admin access to list users"
+    end
+
     test "list_users/3 returns a list of users", context do
-      insert(:user, email: "riri@example.com")
+      user = insert(:user, email: "riri@example.com", role: :moderator)
       insert(:user, email: "fifi@example.com")
       insert(:user, email: "loulou@example.com")
 
@@ -93,6 +118,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
       res =
         context.conn
+        |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "user"))
 
       assert json_response(res, 200)["errors"] == nil
@@ -119,6 +145,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
       res =
         context.conn
+        |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "user"))
 
       assert json_response(res, 200)["errors"] == nil
@@ -142,6 +169,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
       res =
         context.conn
+        |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "user"))
 
       assert json_response(res, 200)["errors"] == nil

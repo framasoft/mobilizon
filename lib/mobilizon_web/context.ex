@@ -5,19 +5,18 @@ defmodule MobilizonWeb.Context do
   @behaviour Plug
 
   import Plug.Conn
-  require Logger
+  alias Mobilizon.Users.User
 
   def init(opts) do
     opts
   end
 
   def call(conn, _) do
-    case Guardian.Plug.current_resource(conn) do
+    with %User{} = user <- Guardian.Plug.current_resource(conn) do
+      put_private(conn, :absinthe, %{context: %{current_user: user}})
+    else
       nil ->
         conn
-
-      user ->
-        put_private(conn, :absinthe, %{context: %{current_user: user}})
     end
   end
 end

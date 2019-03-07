@@ -9,7 +9,7 @@ defmodule Mobilizon.Factory do
     %Mobilizon.Users.User{
       password_hash: "Jane Smith",
       email: sequence(:email, &"email-#{&1}@example.com"),
-      role: 0,
+      role: :user,
       confirmed_at: DateTime.utc_now() |> DateTime.truncate(:second),
       confirmation_sent_at: nil,
       confirmation_token: nil
