@@ -24,7 +24,7 @@ defmodule Mobilizon.Actors.Actor do
   alias Mobilizon.Actors
   alias Mobilizon.Users.User
   alias Mobilizon.Actors.{Actor, Follower, Member}
-  alias Mobilizon.Events.Event
+  alias Mobilizon.Events.{Event, FeedToken}
 
   import Ecto.Query
   import Mobilizon.Ecto
@@ -58,6 +58,7 @@ defmodule Mobilizon.Actors.Actor do
     has_many(:organized_events, Event, foreign_key: :organizer_actor_id)
     many_to_many(:memberships, Actor, join_through: Member)
     belongs_to(:user, User)
+    has_many(:feed_tokens, FeedToken, foreign_key: :actor_id)
 
     timestamps()
   end

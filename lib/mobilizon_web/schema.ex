@@ -4,7 +4,7 @@ defmodule MobilizonWeb.Schema do
   """
   use Absinthe.Schema
 
-  alias Mobilizon.{Actors, Events}
+  alias Mobilizon.{Actors, Events, Users}
   alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Events.{Event, Comment, Participant}
 
@@ -104,6 +104,7 @@ defmodule MobilizonWeb.Schema do
     loader =
       Dataloader.new()
       |> Dataloader.add_source(Actors, Actors.data())
+      |> Dataloader.add_source(Users, Users.data())
       |> Dataloader.add_source(Events, Events.data())
 
     Map.put(ctx, :loader, loader)
@@ -144,6 +145,7 @@ defmodule MobilizonWeb.Schema do
     import_fields(:comment_mutations)
     import_fields(:participant_mutations)
     import_fields(:member_mutations)
+    import_fields(:feed_token_mutations)
 
     # @desc "Upload a picture"
     # field :upload_picture, :picture do

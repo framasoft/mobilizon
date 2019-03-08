@@ -70,7 +70,7 @@ defmodule MobilizonWeb.Resolvers.User do
   """
   @spec create_user(any(), map(), any()) :: tuple()
   def create_user(_parent, args, _resolution) do
-    with {:ok, %User{} = user} <- Actors.register(args) do
+    with {:ok, %User{} = user} <- Users.register(args) do
       Activation.send_confirmation_email(user)
       {:ok, user}
     end

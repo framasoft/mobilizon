@@ -9,6 +9,7 @@ defmodule Mobilizon.Events do
   alias Mobilizon.Repo
   alias Mobilizon.Events.{Event, Comment, Participant}
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Users.User
   alias Mobilizon.Addresses.Address
 
   def data() do
@@ -577,7 +578,7 @@ defmodule Mobilizon.Events do
 
   ## Examples
 
-      iex> list_participants_for_event(someuuid)
+      iex> list_participants_for_event(some_uuid)
       [%Participant{}, ...]
 
   """
@@ -589,6 +590,32 @@ defmodule Mobilizon.Events do
         on: p.event_id == e.id,
         where: e.uuid == ^uuid and p.role != ^:not_approved,
         preload: [:actor]
+      )
+      |> paginate(page, limit)
+    )
+  end
+
+  @doc """
+  Returns the list of participations for an actor.
+
+  Default behaviour is to not return :not_approved participants
+
+  ## Examples
+
+      iex> list_participants_for_actor(%Actor{})
+      [%Participant{}, ...]
+
+  """
+  def list_event_participations_for_actor(%Actor{id: id}, page \\ nil, limit \\ nil) do
+    Repo.all(
+      from(
+        e in Event,
+        join: p in Participant,
+        join: a in Actor,
+        on: p.actor_id == a.id,
+        on: p.event_id == e.id,
+        where: a.id == ^id and p.role != ^:not_approved,
+        preload: [:tags]
       )
       |> paginate(page, limit)
     )
@@ -1118,5 +1145,144 @@ defmodule Mobilizon.Events do
   """
   def change_comment(%Comment{} = comment) do
     Comment.changeset(comment, %{})
+  end
+
+  alias Mobilizon.Events.FeedToken
+
+  @doc """
+  Gets a single feed token.
+
+  ## Examples
+
+      iex> get_feed_token("123")
+      {:ok, %FeedToken{}}
+
+      iex> get_feed_token("456")
+      {:error, nil}
+
+  """
+  def get_feed_token(token) do
+    from(
+      tk in FeedToken,
+      where: tk.token == ^token,
+      preload: [:actor, :user]
+    )
+    |> Repo.one()
+  end
+
+  @doc """
+  Gets a single feed token.
+
+  Raises `Ecto.NoResultsError` if the FeedToken does not exist.
+
+  ## Examples
+
+      iex> get_feed_token!(123)
+      %FeedToken{}
+
+      iex> get_feed_token!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_feed_token!(token) do
+    from(
+      tk in FeedToken,
+      where: tk.token == ^token,
+      preload: [:actor, :user]
+    )
+    |> Repo.one!()
+  end
+
+  @doc """
+  Get feed tokens for an user
+  """
+  @spec get_feed_tokens(User.t()) :: list(FeedTokens.t())
+  def get_feed_tokens(%User{id: id}) do
+    from(
+      tk in FeedToken,
+      where: tk.user_id == ^id,
+      preload: [:actor, :user]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Get feed tokens for an actor
+  """
+  @spec get_feed_tokens(Actor.t()) :: list(FeedTokens.t())
+  def get_feed_tokens(%Actor{id: id, domain: nil}) do
+    from(
+      tk in FeedToken,
+      where: tk.actor_id == ^id,
+      preload: [:actor, :user]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Creates a feed token.
+
+  ## Examples
+
+      iex> create_feed_token(%{field: value})
+      {:ok, %FeedToken{}}
+
+      iex> create_feed_token(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_feed_token(attrs \\ %{}) do
+    attrs = Map.put(attrs, "token", Ecto.UUID.generate())
+
+    %FeedToken{}
+    |> FeedToken.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a feed token.
+
+  ## Examples
+
+      iex> update_feed_token(feed_token, %{field: new_value})
+      {:ok, %FeedToken{}}
+
+      iex> update_feed_token(feed_token, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_feed_token(%FeedToken{} = feed_token, attrs) do
+    feed_token
+    |> FeedToken.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a FeedToken.
+
+  ## Examples
+
+      iex> delete_feed_token(feed_token)
+      {:ok, %FeedToken{}}
+
+      iex> delete_feed_token(feed_token)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_feed_token(%FeedToken{} = feed_token) do
+    Repo.delete(feed_token)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking feed_token changes.
+
+  ## Examples
+
+      iex> change_feed_token(feed_token)
+      %Ecto.Changeset{source: %FeedToken{}}
+
+  """
+  def change_feed_token(%FeedToken{} = feed_token) do
+    FeedToken.changeset(feed_token, %{})
   end
 end

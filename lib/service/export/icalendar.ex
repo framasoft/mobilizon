@@ -3,10 +3,12 @@ defmodule Mobilizon.Service.Export.ICalendar do
   Export an event to iCalendar format
   """
 
-  alias Mobilizon.Events.Event
+  alias Mobilizon.Events.{Event, FeedToken}
   alias Mobilizon.Events
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Actors
+  alias Mobilizon.Users.User
+  alias Mobilizon.Users
 
   @doc """
   Export a public event to iCalendar format.
@@ -47,6 +49,13 @@ defmodule Mobilizon.Service.Export.ICalendar do
     end
   end
 
+  @spec export_private_actor(Actor.t()) :: String.t()
+  def export_private_actor(%Actor{} = actor) do
+    with events <- Events.list_event_participations_for_actor(actor) do
+      {:ok, %ICalendar{events: events |> Enum.map(&do_export_event/1)} |> ICalendar.to_ics()}
+    end
+  end
+
   @doc """
   Create cache for an actor
   """
@@ -70,6 +79,38 @@ defmodule Mobilizon.Service.Export.ICalendar do
     else
       err ->
         {:ignore, err}
+    end
+  end
+
+  @doc """
+  Create cache for an actor
+  """
+  def create_cache("token_" <> token) do
+    with {:ok, res} <- fetch_events_from_token(token) do
+      {:commit, res}
+    else
+      err ->
+        {:ignore, err}
+    end
+  end
+
+  @spec fetch_events_from_token(String.t()) :: String.t()
+  defp fetch_events_from_token(token) do
+    with %FeedToken{actor: actor, user: %User{} = user} <- Events.get_feed_token(token) do
+      case actor do
+        %Actor{} = actor ->
+          export_private_actor(actor)
+
+        nil ->
+          with actors <- Users.get_actors_for_user(user),
+               events <-
+                 actors
+                 |> Enum.map(&Events.list_event_participations_for_actor/1)
+                 |> Enum.concat() do
+            {:ok,
+             %ICalendar{events: events |> Enum.map(&do_export_event/1)} |> ICalendar.to_ics()}
+          end
+      end
     end
   end
 end

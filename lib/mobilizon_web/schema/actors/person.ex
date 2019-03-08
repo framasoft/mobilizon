@@ -8,6 +8,8 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
   alias MobilizonWeb.Resolvers
   import MobilizonWeb.Schema.Utils
 
+  import_types(MobilizonWeb.Schema.Events.FeedTokenType)
+
   @desc """
   Represents a person identity
   """
@@ -40,6 +42,11 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
     field(:followers, list_of(:follower), description: "List of followers")
     field(:followersCount, :integer, description: "Number of followers for this actor")
     field(:followingCount, :integer, description: "Number of actors following this actor")
+
+    field(:feed_tokens, list_of(:feed_token),
+      resolve: dataloader(Events),
+      description: "A list of the feed tokens for this person"
+    )
 
     # This one should have a privacy setting
     field(:organized_events, list_of(:event),

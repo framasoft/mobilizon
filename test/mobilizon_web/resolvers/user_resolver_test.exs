@@ -394,7 +394,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
   describe "Resolver: Validate an user" do
     @valid_actor_params %{email: "test@test.tld", password: "testest"}
     test "test validate_user/3 validates an user", context do
-      {:ok, %User{} = user} = Actors.register(@valid_actor_params)
+      {:ok, %User{} = user} = Users.register(@valid_actor_params)
 
       mutation = """
           mutation {
@@ -443,7 +443,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
   describe "Resolver: Resend confirmation emails" do
     test "test resend_confirmation_email/3 with valid email resends an validation email",
          context do
-      {:ok, %User{} = user} = Actors.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
+      {:ok, %User{} = user} = Users.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
 
       mutation = """
           mutation {
@@ -531,7 +531,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
   describe "Resolver: Reset user's password" do
     test "test reset_password/3 with valid email", context do
-      {:ok, %User{} = user} = Actors.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
+      {:ok, %User{} = user} = Users.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
       %Actor{} = insert(:actor, user: user)
       {:ok, _email_sent} = ResetPassword.send_password_reset_email(user)
       %User{reset_password_token: reset_password_token} = Mobilizon.Users.get_user!(user.id)
@@ -611,7 +611,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
   describe "Resolver: Login an user" do
     test "test login_user/3 with valid credentials", context do
-      {:ok, %User{} = user} = Actors.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
+      {:ok, %User{} = user} = Users.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
 
       {:ok, %User{} = _user} =
         Users.update_user(user, %{
@@ -643,7 +643,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
     end
 
     test "test login_user/3 with invalid password", context do
-      {:ok, %User{} = user} = Actors.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
+      {:ok, %User{} = user} = Users.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
 
       {:ok, %User{} = _user} =
         Users.update_user(user, %{

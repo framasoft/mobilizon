@@ -9,7 +9,6 @@ defmodule Mobilizon.Actors do
   alias Mobilizon.Repo
 
   alias Mobilizon.Actors.{Actor, Bot, Member, Follower}
-  alias Mobilizon.Users.User
 
   alias Mobilizon.Service.ActivityPub
   # import Exgravatar
@@ -506,17 +505,6 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
-  Register user
-  """
-  @spec register(map()) :: {:ok, User.t()} | {:error, String.t()}
-  def register(%{email: _email, password: _password} = args) do
-    with {:ok, %User{} = user} <-
-           %User{} |> User.registration_changeset(args) |> Mobilizon.Repo.insert() do
-      {:ok, user}
-    end
-  end
-
-  @doc """
   Create a new person actor
   """
   def new_person(args) do
@@ -525,8 +513,13 @@ defmodule Mobilizon.Actors do
     pem = [entry] |> :public_key.pem_encode() |> String.trim_trailing()
     args = Map.put(args, :keys, pem)
 
-    actor = Mobilizon.Actors.Actor.registration_changeset(%Mobilizon.Actors.Actor{}, args)
-    Mobilizon.Repo.insert(actor)
+    with {:ok, %Actor{} = person} <-
+           %Actor{}
+           |> Actor.registration_changeset(args)
+           |> Repo.insert() do
+      Mobilizon.Events.create_feed_token(%{"user_id" => args["user_id"], "actor_id" => person.id})
+      {:ok, person}
+    end
   end
 
   def register_bot_account(%{name: name, summary: summary}) do

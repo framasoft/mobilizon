@@ -152,4 +152,14 @@ defmodule Mobilizon.Factory do
       role: :not_approved
     }
   end
+
+  def feed_token_factory do
+    user = build(:user)
+
+    %Mobilizon.Events.FeedToken{
+      user: user,
+      actor: build(:actor, user: user),
+      token: Ecto.UUID.generate()
+    }
+  end
 end
