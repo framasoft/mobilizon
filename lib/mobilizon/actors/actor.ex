@@ -8,7 +8,7 @@ defenum(Mobilizon.Actors.ActorTypeEnum, :actor_type, [
   :Service
 ])
 
-defenum(Mobilizon.Actors.ActorOpennesssEnum, :openness, [
+defenum(Mobilizon.Actors.ActorOpennessEnum, :actor_openness, [
   :invite_only,
   :moderated,
   :open
@@ -48,6 +48,7 @@ defmodule Mobilizon.Actors.Actor do
     field(:preferred_username, :string)
     field(:keys, :string)
     field(:manually_approves_followers, :boolean, default: false)
+    field(:openness, Mobilizon.Actors.ActorOpennessEnum, default: :moderated)
     field(:suspended, :boolean, default: false)
     field(:avatar_url, :string)
     field(:banner_url, :string)

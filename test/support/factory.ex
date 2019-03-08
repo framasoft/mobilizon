@@ -149,7 +149,7 @@ defmodule Mobilizon.Factory do
     %Mobilizon.Actors.Member{
       parent: build(:actor),
       actor: build(:actor),
-      role: 0
+      role: :not_approved
     }
   end
 end

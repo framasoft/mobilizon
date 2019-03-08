@@ -32,8 +32,8 @@ defmodule MobilizonWeb.Resolvers.Event do
   @doc """
   List participant for event (separate request)
   """
-  def list_participants_for_event(_parent, %{uuid: uuid}, _resolution) do
-    {:ok, Mobilizon.Events.list_participants_for_event(uuid)}
+  def list_participants_for_event(_parent, %{uuid: uuid, page: page, limit: limit}, _resolution) do
+    {:ok, Mobilizon.Events.list_participants_for_event(uuid, page, limit)}
   end
 
   @doc """
