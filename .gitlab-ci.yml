@@ -36,6 +36,22 @@ js:
     untracked: false
     expire_in: 30 days
 
+
+js_deps:
+  stage: front
+  before_script:
+    - cd js
+    - npm install
+    - npm install -g npm-check-updates
+  script:
+    - ncu --error-level 2
+  after_script:
+    - cd ../
+  cache:
+    paths:
+      - js/node_modules
+  allow_failure: true
+
 elixir_check:
   stage: back
   before_script:
@@ -43,7 +59,17 @@ elixir_check:
   script:
     - mix credo list
     - mix format --check-formatted --dry-run
+  cache:
+    paths:
+      - deps
+
+elixir_deps:
+  stage: back
+  before_script:
+    - mix deps.get
+  script:
     - mix hex.outdated
+  allow_failure: true
   cache:
     paths:
       - deps
