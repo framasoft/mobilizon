@@ -66,7 +66,7 @@ defmodule Mobilizon.Mixfile do
       {:geo_postgis, "~> 3.1"},
       {:timex, "~> 3.0"},
       # Waiting for new release
-      {:icalendar, github: "lpil/icalendar"},
+      {:icalendar, "~> 0.7"},
       {:exgravatar, "~> 2.0.1"},
       {:httpoison, "~> 1.0"},
       {:json_ld, "~> 0.3"},
