@@ -123,7 +123,6 @@
         {Credo.Check.Warning.ExpensiveEmptyEnumCheck, []},
         {Credo.Check.Warning.IExPry, []},
         {Credo.Check.Warning.IoInspect, []},
-        {Credo.Check.Warning.LazyLogging, []},
         {Credo.Check.Warning.OperationOnSameValues, []},
         {Credo.Check.Warning.OperationWithConstantResult, []},
         {Credo.Check.Warning.RaiseInsideRescue, []},
@@ -147,11 +146,17 @@
         {Credo.Check.Refactor.DoubleBooleanNegation, false},
         {Credo.Check.Refactor.VariableRebinding, false},
         {Credo.Check.Warning.MapGetUnsafePass, false},
-        {Credo.Check.Warning.UnsafeToAtom, false}
+        {Credo.Check.Warning.UnsafeToAtom, false},
 
         #
         # Custom checks can be created using `mix credo.gen.check`.
         #
+
+        #
+        # Removed checks
+        #
+        {Credo.Check.Warning.LazyLogging, false},
+        {Credo.Check.Refactor.MapInto, false},
       ]
     }
   ]
