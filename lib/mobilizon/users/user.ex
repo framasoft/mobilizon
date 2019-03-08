@@ -15,6 +15,7 @@ defmodule Mobilizon.Users.User do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Users.User
   alias Mobilizon.Service.EmailChecker
+  alias Mobilizon.Events.FeedToken
 
   schema "users" do
     field(:email, :string)
@@ -28,6 +29,7 @@ defmodule Mobilizon.Users.User do
     field(:confirmation_token, :string)
     field(:reset_password_sent_at, :utc_datetime)
     field(:reset_password_token, :string)
+    has_many(:feed_tokens, FeedToken, foreign_key: :user_id)
 
     timestamps()
   end

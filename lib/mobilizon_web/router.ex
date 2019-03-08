@@ -64,6 +64,7 @@ defmodule MobilizonWeb.Router do
 
     get("/@:name/feed/:format", FeedController, :actor)
     get("/events/:uuid/export/:format", FeedController, :event)
+    get("/events/going/:token/:format", FeedController, :going)
   end
 
   scope "/", MobilizonWeb do
