@@ -9,6 +9,7 @@ defmodule Mobilizon.Events do
   alias Mobilizon.Repo
   alias Mobilizon.Events.{Event, Comment, Participant}
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Users.User
   alias Mobilizon.Addresses.Address
 
   def data() do
@@ -1193,6 +1194,32 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
+  Get feed tokens for an user
+  """
+  @spec get_feed_tokens(User.t()) :: list(FeedTokens.t())
+  def get_feed_tokens(%User{id: id}) do
+    from(
+      tk in FeedToken,
+      where: tk.user_id == ^id,
+      preload: [:actor, :user]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Get feed tokens for an actor
+  """
+  @spec get_feed_tokens(Actor.t()) :: list(FeedTokens.t())
+  def get_feed_tokens(%Actor{id: id, domain: nil}) do
+    from(
+      tk in FeedToken,
+      where: tk.actor_id == ^id,
+      preload: [:actor, :user]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
   Creates a feed token.
 
   ## Examples
@@ -1205,6 +1232,8 @@ defmodule Mobilizon.Events do
 
   """
   def create_feed_token(attrs \\ %{}) do
+    attrs = Map.put(attrs, "token", Ecto.UUID.generate())
+
     %FeedToken{}
     |> FeedToken.changeset(attrs)
     |> Repo.insert()

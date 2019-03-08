@@ -22,6 +22,18 @@ defmodule Mobilizon.Users do
   end
 
   @doc """
+  Register user
+  """
+  @spec register(map()) :: {:ok, User.t()} | {:error, String.t()}
+  def register(%{email: _email, password: _password} = args) do
+    with {:ok, %User{} = user} <-
+           %User{} |> User.registration_changeset(args) |> Mobilizon.Repo.insert() do
+      Mobilizon.Events.create_feed_token(%{"user_id" => user.id})
+      {:ok, user}
+    end
+  end
+
+  @doc """
   Gets an user by it's email
 
   ## Examples

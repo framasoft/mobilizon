@@ -9,8 +9,8 @@ defmodule Mobilizon.Events.FeedToken do
   alias Mobilizon.Users.User
 
   @primary_key false
-  schema "feed_token" do
-    field(:token, :string, primary_key: true)
+  schema "feed_tokens" do
+    field(:token, Ecto.UUID, primary_key: true)
     belongs_to(:actor, Actor)
     belongs_to(:user, User)
 

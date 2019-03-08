@@ -3,6 +3,8 @@ defmodule MobilizonWeb.Schema.UserType do
   Schema representation for User
   """
   use Absinthe.Schema.Notation
+  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+  alias Mobilizon.Events
   alias MobilizonWeb.Resolvers.User
   import MobilizonWeb.Schema.Utils
 
@@ -35,6 +37,11 @@ defmodule MobilizonWeb.Schema.UserType do
 
     field(:reset_password_token, :string,
       description: "The token sent when requesting password token"
+    )
+
+    field(:feed_tokens, list_of(:feed_token),
+      resolve: dataloader(Events),
+      description: "A list of the feed tokens for this user"
     )
   end
 

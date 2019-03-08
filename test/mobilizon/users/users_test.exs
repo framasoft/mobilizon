@@ -1,7 +1,6 @@
 defmodule Mobilizon.UsersTest do
   use Mobilizon.DataCase
 
-  alias Mobilizon.Actors
   alias Mobilizon.Users
   alias Mobilizon.Users.User
   import Mobilizon.Factory
@@ -25,7 +24,7 @@ defmodule Mobilizon.UsersTest do
 
     # There's no create_user/1, just register/1
     test "register/1 with valid data creates a user" do
-      assert {:ok, %User{email: email} = user} = Actors.register(@valid_attrs)
+      assert {:ok, %User{email: email} = user} = Users.register(@valid_attrs)
 
       assert email == @valid_attrs.email
     end
@@ -38,7 +37,7 @@ defmodule Mobilizon.UsersTest do
                   email: {"can't be blank", [validation: :required]}
                 ],
                 valid?: false
-              }} = Actors.register(@invalid_attrs)
+              }} = Users.register(@invalid_attrs)
     end
 
     test "update_user/2 with valid data updates the user" do
@@ -67,7 +66,7 @@ defmodule Mobilizon.UsersTest do
     @email "email@domain.tld"
     @password "password"
     test "authenticate/1 checks the user's password" do
-      {:ok, %User{} = user} = Actors.register(%{email: @email, password: @password})
+      {:ok, %User{} = user} = Users.register(%{email: @email, password: @password})
 
       assert {:ok, _, _} = Users.authenticate(%{user: user, password: @password})
 
@@ -76,7 +75,7 @@ defmodule Mobilizon.UsersTest do
     end
 
     test "get_user_by_email/1 finds an user by it's email" do
-      {:ok, %User{email: email} = user} = Actors.register(%{email: @email, password: @password})
+      {:ok, %User{email: email} = user} = Users.register(%{email: @email, password: @password})
 
       assert email == @email
       {:ok, %User{id: id}} = Users.get_user_by_email(@email)
@@ -85,7 +84,7 @@ defmodule Mobilizon.UsersTest do
     end
 
     test "get_user_by_email/1 finds an activated user by it's email" do
-      {:ok, %User{} = user} = Actors.register(%{email: @email, password: @password})
+      {:ok, %User{} = user} = Users.register(%{email: @email, password: @password})
 
       {:ok, %User{id: id}} = Users.get_user_by_email(@email, false)
       assert id == user.id
