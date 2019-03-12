@@ -58,6 +58,8 @@ config :mobilizon, Mobilizon.Mailer,
 # Do not print debug messages in production
 config :logger, level: System.get_env("MOBILIZON_LOGLEVEL") |> String.to_atom() || :info
 
+config :mobilizon, Mobilizon.Service.Geospatial, service: Mobilizon.Service.Geospatial.Nominatim
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key

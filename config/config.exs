@@ -64,3 +64,20 @@ config :arc,
   storage: Arc.Storage.Local
 
 config :phoenix, :format_encoders, json: Jason
+
+config :mobilizon, Mobilizon.Service.Geospatial.Nominatim,
+  endpoint:
+    System.get_env("GEOSPATIAL_NOMINATIM_ENDPOINT") || "https://nominatim.openstreetmap.org",
+  api_key: System.get_env("GEOSPATIAL_NOMINATIM_API_KEY") || nil
+
+config :mobilizon, Mobilizon.Service.Geospatial.Addok,
+  endpoint: System.get_env("GEOSPATIAL_ADDOK_ENDPOINT") || "https://api-adresse.data.gouv.fr"
+
+config :mobilizon, Mobilizon.Service.Geospatial.Photon,
+  endpoint: System.get_env("GEOSPATIAL_PHOTON_ENDPOINT") || "https://photon.komoot.de"
+
+config :mobilizon, Mobilizon.Service.Geospatial.GoogleMaps,
+  api_key: System.get_env("GEOSPATIAL_GOOGLE_MAPS_API_KEY") || nil
+
+config :mobilizon, Mobilizon.Service.Geospatial.MapQuest,
+  api_key: System.get_env("GEOSPATIAL_MAP_QUEST_API_KEY") || nil

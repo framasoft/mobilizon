@@ -32,3 +32,5 @@ config :mobilizon, Mobilizon.Mailer, adapter: Bamboo.TestAdapter
 
 config :exvcr,
   vcr_cassette_library_dir: "test/fixtures/vcr_cassettes"
+
+config :mobilizon, Mobilizon.Service.Geospatial, service: Mobilizon.Service.Geospatial.Mock

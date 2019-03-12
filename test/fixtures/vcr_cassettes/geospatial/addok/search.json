@@ -1,0 +1,29 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": [],
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://api-adresse.data.gouv.fr/search/?q=10%20rue%20Jangot&limit=10"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"limit\": 10, \"features\": [{\"geometry\": {\"coordinates\": [4.842569, 45.751718], \"type\": \"Point\"}, \"properties\": {\"y\": 6518573.3, \"city\": \"Lyon\", \"label\": \"10 Rue Jangot 69007 Lyon\", \"score\": 0.8469454545454544, \"type\": \"housenumber\", \"street\": \"Rue Jangot\", \"name\": \"10 Rue Jangot\", \"x\": 843232.2, \"id\": \"ADRNIVX_0000000260022046\", \"housenumber\": \"10\", \"citycode\": \"69387\", \"context\": \"69, Rh\\u00f4ne, Auvergne-Rh\\u00f4ne-Alpes (Rh\\u00f4ne-Alpes)\", \"postcode\": \"69007\", \"importance\": 0.3164}, \"type\": \"Feature\"}, {\"geometry\": {\"coordinates\": [2.440118, 50.371066], \"type\": \"Point\"}, \"properties\": {\"y\": 7030518.3, \"city\": \"Bailleul-aux-Cornailles\", \"label\": \"Rue Jangon 62127 Bailleul-aux-Cornailles\", \"score\": 0.5039055944055943, \"name\": \"Rue Jangon\", \"x\": 660114.7, \"id\": \"62070_0100_9b8d3c\", \"type\": \"street\", \"citycode\": \"62070\", \"context\": \"62, Pas-de-Calais, Hauts-de-France (Nord-Pas-de-Calais)\", \"postcode\": \"62127\", \"importance\": 0.0045}, \"type\": \"Feature\"}], \"attribution\": \"BAN\", \"version\": \"draft\", \"type\": \"FeatureCollection\", \"licence\": \"ODbL 1.0\", \"query\": \"10 rue Jangot\"}",
+      "headers": {
+        "Server": "nginx/1.13.4",
+        "Date": "Wed, 13 Mar 2019 17:01:21 GMT",
+        "Content-Type": "application/json; charset=utf-8",
+        "Content-Length": "1087",
+        "Connection": "keep-alive",
+        "Vary": "Accept-Encoding",
+        "X-Cache-Status": "MISS",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "X-Requested-With"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

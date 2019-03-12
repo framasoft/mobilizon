@@ -65,7 +65,6 @@ defmodule Mobilizon.Mixfile do
       {:geo, "~> 3.0"},
       {:geo_postgis, "~> 3.1"},
       {:timex, "~> 3.0"},
-      # Waiting for new release
       {:icalendar, "~> 0.7"},
       {:exgravatar, "~> 2.0.1"},
       {:httpoison, "~> 1.0"},
@@ -89,6 +88,7 @@ defmodule Mobilizon.Mixfile do
       {:atomex, "0.3.0"},
       {:cachex, "~> 3.1"},
       {:earmark, "~> 1.3.1"},
+      {:geohax, "~> 0.3.0"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:ex_machina, "~> 2.2", only: [:dev, :test]},

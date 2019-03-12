@@ -1,0 +1,28 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": [],
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://api-adresse.data.gouv.fr/reverse/?lon=4.842569&lat=45.751718"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"limit\": 1, \"features\": [{\"geometry\": {\"coordinates\": [4.842569, 45.751718], \"type\": \"Point\"}, \"properties\": {\"y\": 6518613.6, \"city\": \"Lyon\", \"label\": \"10 Rue Jangot 69007 Lyon\", \"score\": 1.0, \"distance\": 0, \"type\": \"housenumber\", \"street\": \"Rue Jangot\", \"name\": \"10 Rue Jangot\", \"x\": 843191.7, \"id\": \"69387_3650_f5ec2a\", \"housenumber\": \"10\", \"citycode\": \"69387\", \"context\": \"69, Rh\\u00f4ne, Auvergne-Rh\\u00f4ne-Alpes (Rh\\u00f4ne-Alpes)\", \"postcode\": \"69007\", \"importance\": 0.3164}, \"type\": \"Feature\"}], \"attribution\": \"BAN\", \"version\": \"draft\", \"type\": \"FeatureCollection\", \"licence\": \"ODbL 1.0\"}",
+      "headers": {
+        "Server": "nginx/1.13.4",
+        "Date": "Wed, 13 Mar 2019 17:22:17 GMT",
+        "Content-Type": "application/json; charset=utf-8",
+        "Content-Length": "598",
+        "Connection": "keep-alive",
+        "X-Cache-Status": "MISS",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "X-Requested-With"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
