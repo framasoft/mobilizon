@@ -6,7 +6,9 @@
 
 First off, thank you for considering contributing to Mobilizon!
 
-Our aim is for this project to make you feel welcome as a contributor. We hugely value the comments and contributions of community members in the various publicly-accessible areas in use, which currently are:
+Our aim is for this project to make you feel welcome as a contributor. 
+We hugely value the comments and contributions of community members in the various
+publicly-accessible areas in use, which currently are:
 
 * Home: [Home](https://joinmobilizon.org)
 * Wiki: [Project Wiki](https://framagit.org/framasoft/mobilizon/wikis) (Gitlab)
@@ -93,13 +95,13 @@ Project maintainers who do not follow or enforce the Code of Conduct in good fai
 
 ### Submitting Feature Requests, Enhancement Suggestions or Bug Reports
 
-This section guides you through submitting a :sparkles: feature request, :lipstick: enhancement suggestions, and :bug: bug reports for Mobilizon - anything from errors and crashes, to minor improvements, to completely new features.
+This section guides you through submitting a ✨ feature request, 💄 enhancement suggestions, and 🐛 bug reports for Mobilizon - anything from errors and crashes, to minor improvements, to completely new features.
 
 When you post an issue, please include as many details as possible. **Fill in the issue template** (available below) to help us resolve issues faster.
 
 ### Before making a submission
 
-Please go through the checklist below before posting any :sparkles: :lipstick: :bug:
+Please go through the checklist below before posting any ✨ 💄 🐛
 
 * **Check if you're using the latest version** of Mobilizon and all its relevant components and if you can get the desired behaviour by changing some config settings.
 * **Perform a cursory search** in the issue tracker to see if the enhancement has already been suggested. If it has, add a comment to the existing issue instead of opening a new one.
@@ -121,7 +123,7 @@ Open an issue providing the following information:
 * **Explain why this enhancement would be useful** to most participants of Mobilizon and isn't something that can or should be implemented as a community extension.
 * **List some other communities, platforms or apps where this enhancement exists.**
 
-### Reporting Bugs :bug:
+### Reporting Bugs 🐛
 
 Open an issue providing the following information by filling in issue template below, explaining the problem and including additional details to help maintainers reproduce the problem:
 
@@ -149,76 +151,42 @@ Include details about your configuration and environment:
 
 ---
 
-### Template for submitting issues
-
-#### Description
-
-[Description of the issue]
-
-#### Steps to Reproduce
-
-1. [First Step]
-2. [Second Step]
-3. [and so on...]
-
-#### Expected behaviour:
-
-[What you expect to happen]
-
-#### Actual behaviour:
-
-[What actually happens]
-
-#### Reproduces how often:
-
-[What percentage of the time does it reproduce?]
-
-#### Versions
-
-[What Mobilizon instance you're using, and the versions of each relevant app or component, including your OS and browser.]
-
-#### Additional Information
-
-[Any additional information, configuration or data that might be necessary to reproduce the issue.]
-
----
-
 ### Contributing 
 
 A common misconception about contributing to free and open source projects is that you need to contribute code. In fact, it’s often the other parts of a project that are most overlooked. You’ll do the project a huge favour by offering to pitch in with these types of contributions!
 
 Even if you like to write code, other types of contributions are a great way to get involved with a project and meet other community members. Building those relationships may open up unexpected opportunities.
 
-#### Do you like to design? :art:
+#### Do you like to design? 🎨
 
 * Restructure layouts to improve the project's usability
 * Conduct user research to reorganise and refine the project's navigation or menus
 * Create art for icons and app screens
 
-#### Do you like to write? :pencil2:
+#### Do you like to write? ✏
 
 * Write and improve the project's documentation
 * Write tutorials for the project
 * Curate a wiki page of examples showing how the project can be used
 
-#### Do you like organising? :inbox_tray:
+#### Do you like organising? 📥
 
 * Link to duplicate issues, and suggest new issue labels, to keep things organised
 * Go through open issues and suggest revisiting or closing old ones
 * Ask clarifying questions on recently opened issues to move the discussion forward
 
-#### Do you like helping people? :raising_hand:
+#### Do you like helping people? 🙋
 
 * Answer questions about the project on forums and other sites
 * Answer questions for people on open issues
 
-#### Do you like helping others code? :open_hands:
+#### Do you like helping others code? 👐
 
 * Review code on other people’s submissions
 * Write tutorials for how a project can be used
 * Offer to mentor another contributor
 
-#### Do you like to code? :nut_and_bolt:
+#### Do you like to code? 🔩
 
 * Find an open issue to tackle
 * Offer to help write a new feature
@@ -231,24 +199,23 @@ Even if you like to write code, other types of contributions are a great way to 
 
 Unsure where to begin contributing? You can start by looking through issues tagged with:
 
-* [`first-timers-only`](https://www.firsttimersonly.com)- issues which should only require a few lines of code, and a test or two.
-* `help-wanted` - issues which should be a bit more involved than `first-timers-only` issues.
+* [`first-timers-only`](https://framagit.org/framasoft/mobilizon/issues?scope=all&utf8=✓&state=opened&label_name[]=🌱 first-timers-only) [https://www.firsttimersonly.com](https://www.firsttimersonly.com)- issues which should only require a few lines of code, and a test or two.
+* [`help-wanted`](https://framagit.org/framasoft/mobilizon/issues?label_name[]=🙏 help-wanted) - issues which should be a bit more involved than `first-timers-only` issues.
 
 #### Local development
 
-Mobilizon can be developed locally. For instructions on how to do this, please see [the documentation](https://framagit.org/framasoft/mobilizon/wikis/install).
+Mobilizon can be developed locally. For instructions on how to do this, please see [the documentation](development.html).
 
 #### Coding & git practices
 
 * We use GitLab's merge requests as our code review tool
 * We encourage any dev to comment on merge requests and we think of the merge request not as a "please approve my code" but as a space for co-developing.
 * We develop features on separate branches identified by issue numbers.
-* We use merge to `develop` (not rebase) so that commits related to an issue can be retroactively explored.
 * We don't currently use release branches or tags because we don't have release management at this phase of development.
 
 #### How to make changes
 
-* Make your changes on a seperate branch which includes an issue number e.g. `1234-some-new-feature` where 1234 is the issue number where the feature is documented. Make sure the branch is based on `develop`.
+* Make your changes on a separate branch which includes an issue number e.g. `1234-some-new-feature` where 1234 is the issue number where the feature is documented. Make sure the branch is based on `develop`.
 * Do not commit changes to files that are irrelevant to your feature or bugfix.
 * Use commit messages descriptive of your changes.
 * Push to the upstream of your new branch.
@@ -262,8 +229,8 @@ Mobilizon can be developed locally. For instructions on how to do this, please s
 
 #### Merge requests
 
-* Follow the code styleguides (TBD).
-* Document new code based on the documentation styleguide (TBD)
+* Follow [the code styleguides](styleguide.html).
+* Document new code based on [the documentation styleguide](https://hexdocs.pm/elixir/writing-documentation.html)
 * Each merge request should implement ONE feature or bugfix. If you want to add or fix more than one thing, submit more than one merge request.
 * Fill in the merge request template below
 * Include relevant issue number(s) in the merge request title
@@ -284,48 +251,48 @@ Mobilizon can be developed locally. For instructions on how to do this, please s
 
 #### Issue & Commit Categories
 
-* :ambulance: `critical` : Critical hotfix!
-* :lipstick: `enhancement` : General improvements.
-* :sparkles: `feature` : New features.
-* :bug: `bug` : Confirmed bugs, or reports that are likely to be bugs.
-* :raising_hand: `question` : Questions (e.g. how can I do X?)
-* :postbox: `feedback` : General feedback.
-* :art: `ui` : Visual design.
-* :scroll: `copy` : Text in the apps, or translations.
-* :information_source: `documentation` : Documentation.
-* :racehorse: `performance` : Performance.
-* :lock: `security` : Security.
-* :electric_plug: `api` : Mobilizon's APIs.
-* :alien: `external` : External libraries or API integrations.
-* :warning: `exception` : Uncaught exceptions.
-* :fire: `crash` : Crash.
-* :symbols: `encoding` : Character encoding or data serialization issue.
-* :truck: `cleanup` : Removing, moving or refactoring code or files.
-* :white_check_mark: `tests` : Testing
+* 🚑 `critical` : Critical hotfix!
+* 💄 `enhancement` : General improvements.
+* ✨ `feature` : New features.
+* 🐛 `bug` : Confirmed bugs, or reports that are likely to be bugs.
+* 🙋 `question` : Questions (e.g. how can I do X?)
+* 📮 `feedback` : General feedback.
+* 🎨 `ui` : Visual design.
+* 📜 `copy` : Text in the apps, or translations.
+* ℹ  `documentation` : Documentation.
+* 🐎 `performance` : Performance.
+* 🔒 `security` : Security.
+* 🔌 `api` : Mobilizon's APIs.
+* 👽 `external` : External libraries or API integrations.
+* ⚠ `exception` : Uncaught exceptions.
+* 🔥 `crash` : Crash.
+* 🔣 `encoding` : Character encoding or data serialization issue.
+* 🚚 `cleanup` : Removing, moving or refactoring code or files.
+* ✅ `tests` : Testing
 
 #### Issue Status
 
-* :speech_balloon: `discussion` : Discussion to clarify this issue is ongoing.
-* :soon: `todo` : This has been discussed and now needs work.
-* :repeat: `needs-more-info` : More information needs to be collected about these problems or feature requests (e.g. steps to reproduce).
-* :bulb: `idea` : Needs to be discussed further. Could be a feature request which might be good to first implement as a community extension.
-* :construction: `in-progress` : Someone is working on this...
-* :pray: `help-wanted` : The Mobilizon core team would appreciate help from the community in resolving these issues.
-* :seedling: `first-timers-only` : Less complex issues which would be good first issues to work on for users who want to contribute.
-* :1234: `needs-reproduction` : Likely bugs, but haven't been reliably reproduced.
-* :red_circle: `blocked` : Blocked on other issues.
-* :two: `duplicate` : Duplicate of another issue, i.e. has been reported before.
-* :no_good: `wontfix` : The Mobilizon core team has decided not to fix these issues (or add these features) for now, because they're working as intended, or some other reason.
-* :put_litter_in_its_place: `invalid` : Issues which are not valid (e.g. spam or submitted by error).
+* 💬 `discussion` : Discussion to clarify this issue is ongoing.
+* 🔜 `todo` : This has been discussed and now needs work.
+* 🔁 `needs-more-info` : More information needs to be collected about these problems or feature requests (e.g. steps to reproduce).
+* 💡 `idea` : Needs to be discussed further. Could be a feature request which might be good to first implement as a community extension.
+* 🚧 `in-progress` : Someone is working on this...
+* 🙏 `help-wanted` : The Mobilizon core team would appreciate help from the community in resolving these issues.
+* 🌱 `first-timers-only` : Less complex issues which would be good first issues to work on for users who want to contribute.
+* 🔢 `needs-reproduction` : Likely bugs, but haven't been reliably reproduced.
+* 🔴 `blocked` : Blocked on other issues.
+* 2️⃣ `duplicate` : Duplicate of another issue, i.e. has been reported before.
+* 🙅 `wontfix` : The Mobilizon core team has decided not to fix these issues (or add these features) for now, because they're working as intended, or some other reason.
+* 🚮 `invalid` : Issues which are not valid (e.g. spam or submitted by error).
 
 
 #### Merge Request Status
 
-* :construction: `in-progress` : Still being worked on, more changes will follow.
-* :busstop: `needs-review` : Needs code review and approval from maintainers.
-* :mag: `under-review` : Being reviewed by maintainers.
-* :wrench: `changes-required` : Needs to be updated based on review comments and then reviewed again.
-* :eyes: `needs-testing` : Needs manual testing.
+* 🚧 `in-progress` : Still being worked on, more changes will follow.
+* 🚏 `needs-review` : Needs code review and approval from maintainers.
+* 🔍 `under-review` : Being reviewed by maintainers.
+* 🔧 `changes-required` : Needs to be updated based on review comments and then reviewed again.
+* 👀 `needs-testing` : Needs manual testing.
 
 ---
 

@@ -1,4 +1,4 @@
-defmodule Mobilizon.Users.Service.Tools do
+defmodule Mobilizon.Service.Users.Tools do
   @moduledoc """
   Common functions for actors services
   """

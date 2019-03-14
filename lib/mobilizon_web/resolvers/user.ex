@@ -5,7 +5,7 @@ defmodule MobilizonWeb.Resolvers.User do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Users.User
   alias Mobilizon.{Actors, Users}
-  alias Mobilizon.Users.Service.{ResetPassword, Activation}
+  alias Mobilizon.Service.Users.{ResetPassword, Activation}
   import Mobilizon.Users.Guards
   require Logger
 

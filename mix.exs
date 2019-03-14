@@ -1,10 +1,12 @@
 defmodule Mobilizon.Mixfile do
   use Mix.Project
 
+  @version "0.0.1-dev"
+
   def project do
     [
       app: :mobilizon,
-      version: "0.0.1",
+      version: @version,
       elixir: "~> 1.4",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
@@ -25,7 +27,7 @@ defmodule Mobilizon.Mixfile do
       name: "Mobilizon",
       source_url: "https://framagit.org/tcit/mobilizon",
       homepage_url: "https://framagit.org/tcit/mobilizon",
-      docs: [main: "Mobilizon"]
+      docs: docs()
     ]
   end
 
@@ -93,7 +95,7 @@ defmodule Mobilizon.Mixfile do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:ex_machina, "~> 2.2", only: [:dev, :test]},
       {:excoveralls, "~> 0.10", only: :test},
-      {:ex_doc, "~> 0.16", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.16", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
       {:ex_unit_notifier, "~> 0.1", only: :test},
       {:dialyxir, "~> 1.0.0-rc.4", only: [:dev], runtime: false},
@@ -115,6 +117,198 @@ defmodule Mobilizon.Mixfile do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate", "test"]
+    ]
+  end
+
+  defp docs() do
+    [
+      source_ref: "v#{@version}",
+      extra_section: "GUIDES",
+      main: "introduction",
+      api_reference: false,
+      groups_for_modules: groups_for_modules(),
+      extras: extras(),
+      groups_for_extras: groups_for_extras(),
+      nest_modules_by_prefix: [
+        Mobilizon,
+        MobilizonWeb,
+        Mobilizon.Service.Geospatial,
+        MobilizonWeb.Resolvers,
+        MobilizonWeb.Schema,
+        Mobilizon.Service
+      ]
+    ]
+  end
+
+  defp extras() do
+    [
+      "support/guides/development/development.md",
+      "support/guides/development/tests.md",
+      "support/guides/development/styleguide.md",
+      "support/guides/install/install.md",
+      "support/guides/install/dependencies.md",
+      "support/guides/install/docker.md",
+      "support/guides/introduction.md",
+      "CONTRIBUTING.md"
+    ]
+  end
+
+  defp groups_for_modules() do
+    [
+      Models: [
+        Mobilizon.Actors,
+        Mobilizon.Actors.Actor,
+        Mobilizon.Actors.ActorOpennessEnum,
+        Mobilizon.Actors.ActorTypeEnum,
+        Mobilizon.Actors.MemberRoleEnum,
+        Mobilizon.Actors.Bot,
+        Mobilizon.Actors.Follower,
+        Mobilizon.Actors.Member,
+        Mobilizon.Addresses,
+        Mobilizon.Addresses.Address,
+        Mobilizon.Events,
+        Mobilizon.Events.Event,
+        Mobilizon.Events.Comment,
+        Mobilizon.Events.FeedToken,
+        Mobilizon.Events.Participant,
+        Mobilizon.Events.Session,
+        Mobilizon.Events.Tag,
+        Mobilizon.Events.TagRelations,
+        Mobilizon.Events.Track,
+        Mobilizon.Event.EventCategoryEnum,
+        Mobilizon.Events.CommentVisibilityEnum,
+        Mobilizon.Events.EventStatusEnum,
+        Mobilizon.Events.EventVisibilityEnum,
+        Mobilizon.Events.JoinOptionsEnum,
+        Mobilizon.Events.ParticipantRoleEnum,
+        Mobilizon.Events.Tag.TitleSlug,
+        Mobilizon.Events.Tag.TitleSlug.Type,
+        Mobilizon.Events.TagRelation,
+        Mobilizon.Users,
+        Mobilizon.Users.User,
+        Mobilizon.Users.UserRoleEnum,
+        Mobilizon.Users.Guards,
+        Mobilizon.Activity,
+        Mobilizon.Ecto,
+        Mobilizon.Repo
+      ],
+      APIs: [
+        MobilizonWeb.API.Comments,
+        MobilizonWeb.API.Events,
+        MobilizonWeb.API.Groups,
+        MobilizonWeb.API.Search,
+        MobilizonWeb.API.Utils
+      ],
+      Web: [
+        MobilizonWeb,
+        MobilizonWeb.PageView,
+        MobilizonWeb.Router,
+        MobilizonWeb.Router.Helpers,
+        MobilizonWeb.AuthErrorHandler,
+        MobilizonWeb.AuthPipeline,
+        MobilizonWeb.ChangesetView,
+        MobilizonWeb.Context,
+        MobilizonWeb.Endpoint,
+        MobilizonWeb.ErrorHelpers,
+        MobilizonWeb.ErrorView,
+        MobilizonWeb.FallbackController,
+        MobilizonWeb.FeedController,
+        MobilizonWeb.Gettext,
+        MobilizonWeb.Guardian,
+        MobilizonWeb.Guardian.Plug,
+        MobilizonWeb.JsonLD.ObjectView,
+        MobilizonWeb.PageController,
+        MobilizonWeb.UploadPlug,
+        MobilizonWeb.Uploaders.Avatar,
+        MobilizonWeb.Uploaders.Category,
+        MobilizonWeb.Uploaders.Category.Type
+      ],
+      Geospatial: [
+        Mobilizon.Service.Geospatial,
+        Mobilizon.Service.Geospatial.Addok,
+        Mobilizon.Service.Geospatial.GoogleMaps,
+        Mobilizon.Service.Geospatial.MapQuest,
+        Mobilizon.Service.Geospatial.Nominatim,
+        Mobilizon.Service.Geospatial.Photon,
+        Mobilizon.Service.Geospatial.Provider
+      ],
+      GraphQL: [
+        MobilizonWeb.Resolvers.Address,
+        MobilizonWeb.Resolvers.Comment,
+        MobilizonWeb.Resolvers.Event,
+        MobilizonWeb.Resolvers.FeedToken,
+        MobilizonWeb.Resolvers.Group,
+        MobilizonWeb.Resolvers.Person,
+        MobilizonWeb.Resolvers.Search,
+        MobilizonWeb.Resolvers.Tag,
+        MobilizonWeb.Resolvers.User,
+        MobilizonWeb.Schema,
+        MobilizonWeb.Schema.ActorInterface,
+        MobilizonWeb.Schema.Actors.FollowerType,
+        MobilizonWeb.Schema.Actors.GroupType,
+        MobilizonWeb.Schema.Actors.MemberType,
+        MobilizonWeb.Schema.Actors.PersonType,
+        MobilizonWeb.Schema.AddressType,
+        MobilizonWeb.Schema.CommentType,
+        MobilizonWeb.Schema.Custom.Point,
+        MobilizonWeb.Schema.Custom.UUID,
+        MobilizonWeb.Schema.EventType,
+        MobilizonWeb.Schema.Events.FeedTokenType,
+        MobilizonWeb.Schema.Events.ParticipantType,
+        MobilizonWeb.Schema.SortType,
+        MobilizonWeb.Schema.TagType,
+        MobilizonWeb.Schema.UserType,
+        MobilizonWeb.Schema.Utils
+      ],
+      ActivityPub: [
+        MobilizonWeb.ActivityPub.ActorView,
+        MobilizonWeb.ActivityPub.ObjectView,
+        MobilizonWeb.ActivityPubController,
+        Mobilizon.Service.ActivityPub,
+        Mobilizon.Service.ActivityPub.Transmogrifier,
+        Mobilizon.Service.ActivityPub.Utils,
+        MobilizonWeb.HTTPSignaturePlug,
+        MobilizonWeb.WebFingerController,
+        MobilizonWeb.NodeInfoController,
+        Mobilizon.Service.HTTPSignatures,
+        Mobilizon.Service.WebFinger,
+        Mobilizon.Service.XmlBuilder,
+        Mobilizon.Service.Federator
+      ],
+      Services: [
+        Mobilizon.Service.EmailChecker,
+        Mobilizon.Service.Export.Feed,
+        Mobilizon.Service.Export.ICalendar,
+        Mobilizon.Service.Metadata,
+        Mobilizon.Service.Formatter,
+        Mobilizon.Service.Users.Tools
+      ],
+      Tools: [
+        Mobilizon.Application,
+        Mobilizon.Factory,
+        Mobilizon.Mailer,
+        Mobilizon.EmailView,
+        Mobilizon.Email.User
+      ]
+    ]
+  end
+
+  defp groups_for_extras() do
+    [
+      Introduction: [
+        "support/guides/introduction.md",
+        "CONTRIBUTING.md"
+      ],
+      Development: [
+        "support/guides/development/development.md",
+        "support/guides/development/tests.md",
+        "support/guides/development/styleguide.md"
+      ],
+      Production: [
+        "support/guides/install/install.md",
+        "support/guides/install/docker.md",
+        "support/guides/install/dependencies.md"
+      ]
     ]
   end
 end

@@ -1,10 +1,10 @@
-defmodule Mobilizon.Users.Service.Activation do
+defmodule Mobilizon.Service.Users.Activation do
   @moduledoc false
 
   alias Mobilizon.{Mailer, Users}
   alias Mobilizon.Users.User
   alias Mobilizon.Email.User, as: UserEmail
-  alias Mobilizon.Users.Service.Tools
+  alias Mobilizon.Service.Users.Tools
 
   require Logger
 

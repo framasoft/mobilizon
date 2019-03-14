@@ -74,6 +74,21 @@ elixir_deps:
     paths:
       - deps
 
+doc:
+  stage: back
+  before_script:
+    - mix deps.get
+  script:
+    - mix docs
+    - mv doc public
+  cache:
+    paths:
+      - deps
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - public
+
 mix:
   stage: back
   services:
