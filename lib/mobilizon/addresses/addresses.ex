@@ -108,6 +108,7 @@ defmodule Mobilizon.Addresses do
   @doc """
   Processes raw geo data informations and return a `Geo` geometry which can be one of `Geo.Point`.
   """
+  # TODO: Unused, remove me
   def process_geom(%{"type" => type_input, "data" => data}) do
     type =
       if !is_atom(type_input) && type_input != nil do
@@ -144,5 +145,63 @@ defmodule Mobilizon.Addresses do
 
   defp process_point(_, _) do
     {:error, "Latitude and longitude must be numbers"}
+  end
+
+  @doc """
+  Search addresses in our database
+
+  We only look at the description for now, and eventually order by object distance
+  """
+  @spec search_addresses(String.t(), list()) :: list(Address.t())
+  def search_addresses(search, options) do
+    limit = Keyword.get(options, :limit, 5)
+
+    query = from(a in Address, where: ilike(a.description, ^"%#{search}%"), limit: ^limit)
+
+    query =
+      if coords = Keyword.get(options, :coords, false),
+        do:
+          from(a in query,
+            order_by: [fragment("? <-> ?", a.geom, ^"POINT(#{coords.lon} #{coords.lat})'")]
+          ),
+        else: query
+
+    query =
+      if country = Keyword.get(options, :country, nil),
+        do: from(a in query, where: ilike(a.addressCountry, ^"%#{country}%")),
+        else: query
+
+    Repo.all(query)
+  end
+
+  @doc """
+  Reverse geocode from coordinates in our database
+
+  We only take addresses 50km around and sort them by distance
+  """
+  @spec reverse_geocode(number(), number(), list()) :: list(Address.t())
+  def reverse_geocode(lon, lat, options) do
+    limit = Keyword.get(options, :limit, 5)
+    radius = Keyword.get(options, :radius, 50_000)
+    country = Keyword.get(options, :country, nil)
+    srid = Keyword.get(options, :srid, 4326)
+
+    import Geo.PostGIS
+
+    with {:ok, point} <- Geo.WKT.decode("SRID=#{srid};POINT(#{lon} #{lat})") do
+      query =
+        from(a in Address,
+          order_by: [fragment("? <-> ?", a.geom, ^point)],
+          limit: ^limit,
+          where: st_dwithin_in_meters(^point, a.geom, ^radius)
+        )
+
+      query =
+        if country,
+          do: from(a in query, where: ilike(a.addressCountry, ^"%#{country}%")),
+          else: query
+
+      Repo.all(query)
+    end
   end
 end

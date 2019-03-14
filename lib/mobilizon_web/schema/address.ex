@@ -3,6 +3,7 @@ defmodule MobilizonWeb.Schema.AddressType do
   Schema representation for Address
   """
   use Absinthe.Schema.Notation
+  alias MobilizonWeb.Resolvers
 
   object :physical_address do
     field(:type, :address_type)
@@ -35,5 +36,22 @@ defmodule MobilizonWeb.Schema.AddressType do
     value(:url, description: "The address is on the Web, like an URL")
     value(:phone, description: "The address is a phone number for a conference")
     value(:other, description: "The address is something else")
+  end
+
+  object :address_queries do
+    @desc "Search for an address"
+    field :search_address, type: list_of(:physical_address) do
+      arg(:query, non_null(:string))
+
+      resolve(&Resolvers.Address.search/3)
+    end
+
+    @desc "Reverse geocode coordinates"
+    field :reverse_geocode, type: list_of(:physical_address) do
+      arg(:longitude, non_null(:float))
+      arg(:latitude, non_null(:float))
+
+      resolve(&Resolvers.Address.reverse_geocode/3)
+    end
   end
 end

@@ -70,7 +70,7 @@ defmodule Mobilizon.Factory do
   def address_factory do
     %Mobilizon.Addresses.Address{
       description: sequence("MyAddress"),
-      geom: %Geo.Point{coordinates: {30, -90}, srid: 4326},
+      geom: %Geo.Point{coordinates: {45.75, 4.85}, srid: 4326},
       floor: "Myfloor",
       addressCountry: "My Country",
       addressLocality: "My Locality",
