@@ -1,0 +1,80 @@
+defmodule Mobilizon.Service.Geospatial.GoogleMapsTest do
+  use Mobilizon.DataCase, async: false
+  alias Mobilizon.Service.Geospatial.GoogleMaps
+  alias Mobilizon.Addresses.Address
+
+  import Mock
+  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+
+  describe "search address" do
+    test "without API Key triggers an error" do
+      assert_raise ArgumentError, "API Key required to use Google Maps", fn ->
+        GoogleMaps.search("10 Rue Jangot")
+      end
+    end
+
+    test "produces a valid search address with options" do
+      with_mock HTTPoison,
+        get: fn _url ->
+          {:ok,
+           %HTTPoison.Response{status_code: 200, body: "{\"status\": \"OK\", \"results\": []}"}}
+        end do
+        GoogleMaps.search("10 Rue Jangot",
+          limit: 5,
+          lang: "fr",
+          api_key: "toto"
+        )
+
+        assert_called(
+          HTTPoison.get(
+            "https://maps.googleapis.com/maps/api/geocode/json?limit=5&key=toto&language=fr&address=10%20Rue%20Jangot"
+          )
+        )
+      end
+    end
+
+    test "triggers an error with an invalid API Key" do
+      assert_raise ArgumentError, "The provided API key is invalid.", fn ->
+        GoogleMaps.search("10 rue Jangot", api_key: "secret_key")
+      end
+    end
+
+    test "returns a valid address from search" do
+      use_cassette "geospatial/google_maps/search" do
+        assert %Address{
+                 addressLocality: "Lyon",
+                 description: "10 Rue Jangot, 69007 Lyon, France",
+                 addressRegion: "Auvergne-Rhône-Alpes",
+                 addressCountry: "France",
+                 postalCode: "69007",
+                 streetAddress: "10 Rue Jangot",
+                 geom: %Geo.Point{
+                   coordinates: {4.8424032, 45.75164940000001},
+                   properties: %{},
+                   srid: 4326
+                 }
+               } == GoogleMaps.search("10 rue Jangot", api_key: "toto") |> hd
+      end
+    end
+
+    test "returns a valid address from reverse geocode" do
+      use_cassette "geospatial/google_maps/geocode" do
+        assert %Address{
+                 addressLocality: "Lyon",
+                 description: "10 Rue Jangot, 69007 Lyon, France",
+                 addressRegion: "Auvergne-Rhône-Alpes",
+                 addressCountry: "France",
+                 postalCode: "69007",
+                 streetAddress: "10 Rue Jangot",
+                 geom: %Geo.Point{
+                   coordinates: {4.8424967, 45.751725},
+                   properties: %{},
+                   srid: 4326
+                 }
+               } ==
+                 GoogleMaps.geocode(4.842569, 45.751718, api_key: "toto")
+                 |> hd
+      end
+    end
+  end
+end

@@ -1,0 +1,34 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": [],
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://maps.googleapis.com/maps/api/geocode/json?address=10%20rue%20Jangot&limit=10&key=toto&language=en"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\n   \"results\" : [\n      {\n         \"address_components\" : [\n            {\n               \"long_name\" : \"10\",\n               \"short_name\" : \"10\",\n               \"types\" : [ \"street_number\" ]\n            },\n            {\n               \"long_name\" : \"Rue Jangot\",\n               \"short_name\" : \"Rue Jangot\",\n               \"types\" : [ \"route\" ]\n            },\n            {\n               \"long_name\" : \"Lyon\",\n               \"short_name\" : \"Lyon\",\n               \"types\" : [ \"locality\", \"political\" ]\n            },\n            {\n               \"long_name\" : \"Rhône\",\n               \"short_name\" : \"Rhône\",\n               \"types\" : [ \"administrative_area_level_2\", \"political\" ]\n            },\n            {\n               \"long_name\" : \"Auvergne-Rhône-Alpes\",\n               \"short_name\" : \"Auvergne-Rhône-Alpes\",\n               \"types\" : [ \"administrative_area_level_1\", \"political\" ]\n            },\n            {\n               \"long_name\" : \"France\",\n               \"short_name\" : \"FR\",\n               \"types\" : [ \"country\", \"political\" ]\n            },\n            {\n               \"long_name\" : \"69007\",\n               \"short_name\" : \"69007\",\n               \"types\" : [ \"postal_code\" ]\n            }\n         ],\n         \"formatted_address\" : \"10 Rue Jangot, 69007 Lyon, France\",\n         \"geometry\" : {\n            \"location\" : {\n               \"lat\" : 45.75164940000001,\n               \"lng\" : 4.8424032\n            },\n            \"location_type\" : \"ROOFTOP\",\n            \"viewport\" : {\n               \"northeast\" : {\n                  \"lat\" : 45.75299838029151,\n                  \"lng\" : 4.843752180291502\n               },\n               \"southwest\" : {\n                  \"lat\" : 45.75030041970851,\n                  \"lng\" : 4.841054219708497\n               }\n            }\n         },\n         \"place_id\" : \"ChIJtW0QikTq9EcRLI4Vy6bRx0U\",\n         \"plus_code\" : {\n            \"compound_code\" : \"QR2R+MX Lyon, France\",\n            \"global_code\" : \"8FQ6QR2R+MX\"\n         },\n         \"types\" : [ \"street_address\" ]\n      }\n   ],\n   \"status\" : \"OK\"\n}\n",
+      "headers": {
+        "Content-Type": "application/json; charset=UTF-8",
+        "Date": "Wed, 13 Mar 2019 17:50:19 GMT",
+        "Expires": "Thu, 14 Mar 2019 17:50:19 GMT",
+        "Access-Control-Allow-Origin": "*",
+        "Server": "mafe",
+        "X-XSS-Protection": "1; mode=block",
+        "X-Frame-Options": "SAMEORIGIN",
+        "Server-Timing": "gfet4t7; dur=52",
+        "Cache-Control": "public, max-age=86400",
+        "Age": "17",
+        "Alt-Svc": "quic=\":443\"; ma=2592000; v=\"46,44,43,39\"",
+        "Accept-Ranges": "none",
+        "Vary": "Accept-Encoding",
+        "Transfer-Encoding": "chunked"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

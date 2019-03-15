@@ -12,11 +12,17 @@ defmodule MobilizonWeb.Context do
   end
 
   def call(conn, _) do
-    with %User{} = user <- Guardian.Plug.current_resource(conn) do
-      put_private(conn, :absinthe, %{context: %{current_user: user}})
-    else
-      nil ->
-        conn
-    end
+    context = %{ip: to_string(:inet_parse.ntoa(conn.remote_ip))}
+
+    context =
+      case Guardian.Plug.current_resource(conn) do
+        %User{} = user ->
+          Map.put(context, :current_user, user)
+
+        nil ->
+          context
+      end
+
+    put_private(conn, :absinthe, %{context: context})
   end
 end

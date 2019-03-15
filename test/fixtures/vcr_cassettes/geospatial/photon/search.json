@@ -1,0 +1,26 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": [],
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://photon.komoot.de/api/?q=10%20rue%20Jangot&lang=en&limit=10"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"features\":[{\"geometry\":{\"coordinates\":[4.8425657,45.7517141],\"type\":\"Point\"},\"type\":\"Feature\",\"properties\":{\"osm_id\":3078260611,\"osm_type\":\"N\",\"country\":\"France\",\"osm_key\":\"place\",\"housenumber\":\"10\",\"city\":\"Lyon\",\"street\":\"Rue Jangot\",\"osm_value\":\"house\",\"postcode\":\"69007\",\"state\":\"Auvergne-Rhône-Alpes\"}},{\"geometry\":{\"coordinates\":[4.8424254,45.7517056],\"type\":\"Point\"},\"type\":\"Feature\",\"properties\":{\"osm_id\":3078260612,\"osm_type\":\"N\",\"country\":\"France\",\"osm_key\":\"place\",\"housenumber\":\"10bis\",\"city\":\"Lyon\",\"street\":\"Rue Jangot\",\"osm_value\":\"house\",\"postcode\":\"69007\",\"state\":\"Auvergne-Rhône-Alpes\"}}],\"type\":\"FeatureCollection\"}",
+      "headers": {
+        "Server": "nginx/1.9.3 (Ubuntu)",
+        "Date": "Thu, 14 Mar 2019 10:46:43 GMT",
+        "Content-Type": "application/json;charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Access-Control-Allow-Origin": "*"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

@@ -1,0 +1,36 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": [],
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://open.mapquestapi.com/geocoding/v1/address?key=secret_key&location=10%20rue%20Jangot&maxResults=10"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"info\":{\"statuscode\":0,\"copyright\":{\"text\":\"\\u00A9 2019 MapQuest, Inc.\",\"imageUrl\":\"http://api.mqcdn.com/res/mqlogo.gif\",\"imageAltText\":\"\\u00A9 2019 MapQuest, Inc.\"},\"messages\":[]},\"options\":{\"maxResults\":10,\"thumbMaps\":true,\"ignoreLatLngInput\":false},\"results\":[{\"providedLocation\":{\"location\":\"10 rue Jangot\"},\"locations\":[{\"street\":\"10 Rue Jangot\",\"adminArea6\":\"7e\",\"adminArea6Type\":\"Neighborhood\",\"adminArea5\":\"Lyon\",\"adminArea5Type\":\"City\",\"adminArea4\":\"Lyon\",\"adminArea4Type\":\"County\",\"adminArea3\":\"Auvergne-Rh\\u00F4ne-Alpes\",\"adminArea3Type\":\"State\",\"adminArea1\":\"FR\",\"adminArea1Type\":\"Country\",\"postalCode\":\"69007\",\"geocodeQualityCode\":\"P1AXX\",\"geocodeQuality\":\"POINT\",\"dragPoint\":false,\"sideOfStreet\":\"N\",\"linkId\":\"0\",\"unknownInput\":\"\",\"type\":\"s\",\"latLng\":{\"lat\":45.751714,\"lng\":4.842566},\"displayLatLng\":{\"lat\":45.751714,\"lng\":4.842566},\"mapUrl\":\"http://open.mapquestapi.com/staticmap/v5/map?key=secret_key&type=map&size=225,160&locations=45.7517141,4.8425657|marker-sm-50318A-1&scalebar=true&zoom=15&rand=1358091752\"}]}]}",
+      "headers": {
+        "Access-Control-Allow-Methods": "OPTIONS,GET,POST",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "no-cache, must-revalidate",
+        "Content-Type": "application/json;charset=UTF-8",
+        "Date": "Thu, 14 Mar 2019 09:27:01 GMT",
+        "Expires": "Mon, 20 Dec 1998 01:00:00 GMT",
+        "GeocodeTransactionCount": "1",
+        "Last-Modified": "Thu, 14 Mar 2019 09:27:01 GMT",
+        "Pragma": "no-cache",
+        "ReverseGeocodeTransactionCount": "0",
+        "Server": "Apache-Coyote/1.1",
+        "Set-Cookie": "JSESSIONID=something; Path=/; HttpOnly",
+        "status": "success",
+        "transactionWeight": "1.0",
+        "Content-Length": "1055",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

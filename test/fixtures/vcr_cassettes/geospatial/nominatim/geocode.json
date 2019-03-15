@@ -1,0 +1,30 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": [],
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=45.751718&lon=4.842569&addressdetails=1"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"place_id\":41453794,\"licence\":\"Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright\",\"osm_type\":\"node\",\"osm_id\":3078260611,\"lat\":\"45.7517141\",\"lon\":\"4.8425657\",\"place_rank\":30,\"category\":\"place\",\"type\":\"house\",\"importance\":\"0\",\"addresstype\":\"place\",\"name\":null,\"display_name\":\"10, Rue Jangot, La Guillotière, Lyon 7e Arrondissement, Lyon, Métropole de Lyon, Circonscription départementale du Rhône, Auvergne-Rhône-Alpes, France métropolitaine, 69007, France\",\"address\":{\"house_number\":\"10\",\"road\":\"Rue Jangot\",\"suburb\":\"La Guillotière\",\"city_district\":\"Lyon 7e Arrondissement\",\"city\":\"Lyon\",\"county\":\"Lyon\",\"state_district\":\"Circonscription départementale du Rhône\",\"state\":\"Auvergne-Rhône-Alpes\",\"country\":\"France\",\"postcode\":\"69007\",\"country_code\":\"fr\"},\"boundingbox\":[\"45.7516141\",\"45.7518141\",\"4.8424657\",\"4.8426657\"]}",
+      "headers": {
+        "Date": "Thu, 14 Mar 2019 10:26:11 GMT",
+        "Server": "Apache/2.4.29 (Ubuntu)",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "OPTIONS,GET",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Expect-CT": "max-age=0, report-uri=\"https://openstreetmap.report-uri.com/r/d/ct/reportOnly\"",
+        "Upgrade": "h2",
+        "Connection": "Upgrade, close",
+        "Transfer-Encoding": "chunked",
+        "Content-Type": "application/json; charset=UTF-8"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

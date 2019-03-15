@@ -132,6 +132,7 @@ defmodule MobilizonWeb.Schema do
     import_fields(:event_queries)
     import_fields(:participant_queries)
     import_fields(:tag_queries)
+    import_fields(:address_queries)
   end
 
   @desc """

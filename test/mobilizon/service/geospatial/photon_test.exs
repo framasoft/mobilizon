@@ -1,0 +1,65 @@
+defmodule Mobilizon.Service.Geospatial.PhotonTest do
+  use Mobilizon.DataCase, async: false
+  alias Mobilizon.Service.Geospatial.Photon
+  alias Mobilizon.Addresses.Address
+
+  import Mock
+  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+
+  describe "search address" do
+    test "produces a valid search address with options" do
+      with_mock HTTPoison,
+        get: fn _url ->
+          {:ok, %HTTPoison.Response{status_code: 200, body: "{\"features\": []"}}
+        end do
+        Photon.search("10 Rue Jangot",
+          limit: 5,
+          lang: "fr"
+        )
+
+        assert_called(
+          HTTPoison.get("https://photon.komoot.de/api/?q=10%20Rue%20Jangot&lang=fr&limit=5")
+        )
+      end
+    end
+
+    test "returns a valid address from search" do
+      use_cassette "geospatial/photon/search" do
+        assert %Address{
+                 addressLocality: "Lyon",
+                 description: "10 Rue Jangot",
+                 addressRegion: "Auvergne-Rhône-Alpes",
+                 addressCountry: "France",
+                 postalCode: "69007",
+                 streetAddress: "10 Rue Jangot",
+                 geom: %Geo.Point{
+                   coordinates: {4.8425657, 45.7517141},
+                   properties: %{},
+                   srid: 4326
+                 }
+               } == Photon.search("10 rue Jangot") |> hd
+      end
+    end
+
+    # Photon returns something quite wrong, so no need to test this right now.
+    #    test "returns a valid address from reverse geocode" do
+    #      use_cassette "geospatial/photon/geocode" do
+    #        assert %Address{
+    #                 addressLocality: "Lyon",
+    #                 description: "",
+    #                 addressRegion: "Auvergne-Rhône-Alpes",
+    #                 addressCountry: "France",
+    #                 postalCode: "69007",
+    #                 streetAddress: "10 Rue Jangot",
+    #                 geom: %Geo.Point{
+    #                   coordinates: {4.8425657, 45.7517141},
+    #                   properties: %{},
+    #                   srid: 4326
+    #                 }
+    #               } ==
+    #                 Photon.geocode(4.8425657, 45.7517141)
+    #                 |> hd
+    #      end
+    #    end
+  end
+end
