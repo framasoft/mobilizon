@@ -3,6 +3,7 @@ image: tcitworld/mobilizon-ci
 stages:
   - front
   - back
+  - deploy
 
 variables:
   MIX_ENV: "test"
@@ -75,7 +76,7 @@ elixir_deps:
       - deps
 
 doc:
-  stage: back
+  stage: deploy
   before_script:
     - mix deps.get
   script:
@@ -84,6 +85,8 @@ doc:
   cache:
     paths:
       - deps
+  only:
+    - master
   artifacts:
     expire_in: 1 hour
     paths:
