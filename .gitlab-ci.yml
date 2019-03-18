@@ -75,7 +75,7 @@ elixir_deps:
     paths:
       - deps
 
-doc:
+pages:
   stage: deploy
   before_script:
     - mix deps.get
