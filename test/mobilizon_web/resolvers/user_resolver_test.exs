@@ -4,7 +4,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Users.User
   alias MobilizonWeb.AbsintheHelpers
-  alias Mobilizon.Users.Service.ResetPassword
+  alias Mobilizon.Service.Users.ResetPassword
   import Mobilizon.Factory
   use Bamboo.Test
 

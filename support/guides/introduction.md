@@ -1,8 +1,10 @@
-<h1 align="center">
-  <a href="https://joinmobilizon.org">
-    <img src="http://lutim.cpy.re/m9Y8rXRU.png" alt="Mobilizon">
-  </a>
-</h1>
+# Mobilizon
+
+<p align="center">
+    <a href="https://joinmobilizon.org">
+        <img src="http://lutim.cpy.re/m9Y8rXRU.png" alt="Mobilizon">
+    </a>
+</p>
 
 MobiliZon is your federated organization and mobilization platform. Gather people with a convivial, ethical, and emancipating tool.
 
@@ -41,7 +43,7 @@ There's no lock-in, you can interact with the event without registration.
 
 ## Contributing
 
-We appreciate any contribution to MobiliZon. Check our [CONTRIBUTING](CONTRIBUTING.md) file for more information.
+We appreciate any contribution to MobiliZon. Check our [CONTRIBUTING](contributing.html) file for more information.
 
 ## Links
 
@@ -51,7 +53,8 @@ We appreciate any contribution to MobiliZon. Check our [CONTRIBUTING](CONTRIBUTI
   * 📝 Wiki: [https://framagit.org/framasoft/mobilizon/wikis/home](https://framagit.org/framasoft/mobilizon/wikis/home)
   
 ### Discuss
-  * 💬 Riot/Matrix: [https://riot.im/app/#/room/#Mobilizon:matrix.org](https://riot.im/app/#/room/#Mobilizon:matrix.org)
+  * 💬 Matrix: `#Mobilizon:matrix.org` [Riot](https://riot.im/app/#/room/#Mobilizon:matrix.org)
+  * #️⃣   IRC `#mobilizon` on Freenode
   * 🗣️ Forum: [https://framacolibri.org/c/mobilizon](https://framacolibri.org/c/mobilizon)
 
 ### Follow

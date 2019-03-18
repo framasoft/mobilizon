@@ -1,4 +1,4 @@
-defmodule Mobilizon.Users.Service.ResetPassword do
+defmodule Mobilizon.Service.Users.ResetPassword do
   @moduledoc false
 
   require Logger
@@ -6,7 +6,7 @@ defmodule Mobilizon.Users.Service.ResetPassword do
   alias Mobilizon.Users.User
   alias Mobilizon.{Mailer, Repo, Users}
   alias Mobilizon.Email.User, as: UserEmail
-  alias Mobilizon.Users.Service.Tools
+  alias Mobilizon.Service.Users.Tools
 
   @doc """
   Check that the provided token is correct and update provided password
