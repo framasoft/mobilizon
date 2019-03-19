@@ -14,3 +14,5 @@ These two commands must not return an error code, since they are required to pas
 
 We use `tslint` with the `tslint-config-airbnb` preset.
 Errors should be reported when running in dev mode `npm run dev` or when building a production bundle `npm run build`.
+
+We also try to follow the [official Vue.js style guide](https://vuejs.org/v2/style-guide/).

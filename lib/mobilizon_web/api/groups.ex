@@ -9,6 +9,9 @@ defmodule MobilizonWeb.API.Groups do
   alias Mobilizon.Service.ActivityPub.Utils, as: ActivityPubUtils
   import MobilizonWeb.API.Utils
 
+  @doc """
+  Create a group
+  """
   @spec create_group(map()) :: {:ok, Activity.t()} | any()
   def create_group(
         %{

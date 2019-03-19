@@ -9,6 +9,9 @@ defmodule MobilizonWeb.API.Events do
   alias Mobilizon.Service.ActivityPub.Utils, as: ActivityPubUtils
   import MobilizonWeb.API.Utils
 
+  @doc """
+  Create an event
+  """
   @spec create_event(map()) :: {:ok, Activity.t()} | any()
   def create_event(
         %{

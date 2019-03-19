@@ -4,8 +4,13 @@ defmodule MobilizonWeb.Resolvers.Address do
   """
   require Logger
   alias Mobilizon.Addresses
+  alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial
 
+  @doc """
+  Search an address
+  """
+  @spec search(map(), map(), map()) :: {:ok, list(Address.t())}
   def search(_parent, %{query: query}, %{context: %{ip: ip}}) do
     country = Geolix.lookup(ip) |> Map.get(:country, nil)
 
@@ -18,6 +23,10 @@ defmodule MobilizonWeb.Resolvers.Address do
     {:ok, addresses}
   end
 
+  @doc """
+  Reverse geocode some coordinates
+  """
+  @spec reverse_geocode(map(), map(), map()) :: {:ok, list(Address.t())}
   def reverse_geocode(_parent, %{longitude: longitude, latitude: latitude}, %{context: %{ip: ip}}) do
     country = Geolix.lookup(ip) |> Map.get(:country, nil)
 

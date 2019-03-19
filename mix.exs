@@ -149,7 +149,8 @@ defmodule Mobilizon.Mixfile do
       "support/guides/install/dependencies.md",
       "support/guides/install/docker.md",
       "support/guides/introduction.md",
-      "CONTRIBUTING.md"
+      "support/guides/contributing.md",
+      "support/guides/code_of_conduct.md"
     ]
   end
 
@@ -297,7 +298,8 @@ defmodule Mobilizon.Mixfile do
     [
       Introduction: [
         "support/guides/introduction.md",
-        "CONTRIBUTING.md"
+        "support/guides/contributing.md",
+        "support/guides/code_of_conduct.md"
       ],
       Development: [
         "support/guides/development/development.md",
