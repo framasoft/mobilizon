@@ -58,7 +58,7 @@ defmodule MobilizonWeb.API.Comments do
   @spec get_in_reply_to_comment(nil) :: nil
   defp get_in_reply_to_comment(nil), do: nil
   @spec get_in_reply_to_comment(String.t()) :: Comment.t()
-  defp get_in_reply_to_comment(inReplyToCommentURL) do
-    ActivityPub.fetch_object_from_url(inReplyToCommentURL)
+  defp get_in_reply_to_comment(in_reply_to_comment_url) do
+    ActivityPub.fetch_object_from_url(in_reply_to_comment_url)
   end
 end

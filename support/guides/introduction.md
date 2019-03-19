@@ -43,7 +43,7 @@ There's no lock-in, you can interact with the event without registration.
 
 ## Contributing
 
-We appreciate any contribution to MobiliZon. Check our [CONTRIBUTING](contributing.html) file for more information.
+We appreciate any contribution to MobiliZon. Check our [Contributing](contributing.html) page for more information.
 
 ## Links
 

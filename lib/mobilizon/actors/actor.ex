@@ -92,6 +92,10 @@ defmodule Mobilizon.Actors.Actor do
     |> unique_constraint(:url, name: :actors_url_index)
   end
 
+  @doc """
+  Changeset for person registration
+  """
+  @spec registration_changeset(struct(), map()) :: Ecto.Changeset.t()
   def registration_changeset(%Actor{} = actor, attrs) do
     actor
     |> Ecto.Changeset.cast(attrs, [
@@ -116,6 +120,10 @@ defmodule Mobilizon.Actors.Actor do
 
   # TODO : Use me !
   # @email_regex ~r/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+  @doc """
+  Changeset for remote actor creation
+  """
+  @spec remote_actor_creation(map()) :: Ecto.Changeset.t()
   def remote_actor_creation(params) do
     changes =
       %Actor{}
@@ -158,6 +166,10 @@ defmodule Mobilizon.Actors.Actor do
     changes
   end
 
+  @doc """
+  Changeset for group creation
+  """
+  @spec group_creation(struct(), map()) :: Ecto.Changeset.t()
   def group_creation(%Actor{} = actor, params) do
     actor
     |> Ecto.Changeset.cast(params, [
@@ -260,6 +272,7 @@ defmodule Mobilizon.Actors.Actor do
 
   If actor A and C both follow actor B, actor B's followers are A and C
   """
+  @spec get_followers(struct(), number(), number()) :: list()
   def get_followers(%Actor{id: actor_id} = _actor, page \\ nil, limit \\ nil) do
     Repo.all(
       from(
@@ -277,6 +290,7 @@ defmodule Mobilizon.Actors.Actor do
 
   If actor A follows actor B and C, actor A's followings are B and B
   """
+  @spec get_followings(struct(), number(), number()) :: list()
   def get_followings(%Actor{id: actor_id} = _actor, page \\ nil, limit \\ nil) do
     Repo.all(
       from(
@@ -289,6 +303,10 @@ defmodule Mobilizon.Actors.Actor do
     )
   end
 
+  @doc """
+  Returns the groups an actor is member of
+  """
+  @spec get_groups_member_of(struct()) :: list()
   def get_groups_member_of(%Actor{id: actor_id}) do
     Repo.all(
       from(
@@ -300,6 +318,10 @@ defmodule Mobilizon.Actors.Actor do
     )
   end
 
+  @doc """
+  Returns the members for a group actor
+  """
+  @spec get_members_for_group(struct()) :: list()
   def get_members_for_group(%Actor{id: actor_id}) do
     Repo.all(
       from(
@@ -311,6 +333,9 @@ defmodule Mobilizon.Actors.Actor do
     )
   end
 
+  @doc """
+  Make an actor follow another
+  """
   @spec follow(struct(), struct(), boolean()) :: Follower.t() | {:error, String.t()}
   def follow(%Actor{} = followed, %Actor{} = follower, approved \\ true) do
     with {:suspended, false} <- {:suspended, followed.suspended},
@@ -327,6 +352,9 @@ defmodule Mobilizon.Actors.Actor do
     end
   end
 
+  @doc """
+  Unfollow an actor (remove a `Mobilizon.Actors.Follower`)
+  """
   @spec unfollow(struct(), struct()) :: {:ok, Follower.t()} | {:error, Ecto.Changeset.t()}
   def unfollow(%Actor{} = followed, %Actor{} = follower) do
     with {:already_following, %Follower{} = follow} <-
@@ -338,6 +366,8 @@ defmodule Mobilizon.Actors.Actor do
     end
   end
 
+  @spec do_follow(struct(), struct(), boolean) ::
+          {:ok, Follower.t()} | {:error, Ecto.Changeset.t()}
   defp do_follow(%Actor{} = follower, %Actor{} = followed, approved) do
     Actors.create_follower(%{
       "actor_id" => follower.id,
@@ -346,7 +376,10 @@ defmodule Mobilizon.Actors.Actor do
     })
   end
 
-  @spec following?(struct(), struct()) :: boolean()
+  @doc """
+  Returns whether an actor is following another
+  """
+  @spec following?(struct(), struct()) :: Follower.t() | false
   def following?(
         %Actor{} = follower_actor,
         %Actor{} = followed_actor
@@ -381,13 +414,34 @@ defmodule Mobilizon.Actors.Actor do
     end
   end
 
+  @doc """
+  Return display name and username
+
+  ## Examples
+      iex> display_name_and_username(%Actor{name: "Thomas C", preferred_username: "tcit", domain: nil})
+      "Thomas (tcit)"
+
+      iex> display_name_and_username(%Actor{name: "Thomas C", preferred_username: "tcit", domain: "framapiaf.org"})
+      "Thomas (tcit@framapiaf.org)"
+
+      iex> display_name_and_username(%Actor{name: nil, preferred_username: "tcit", domain: "framapiaf.org"})
+      "tcit@framapiaf.org"
+
+  """
+  @spec display_name_and_username(struct()) :: String.t()
   def display_name_and_username(%Actor{name: nil} = actor), do: actor_acct_from_actor(actor)
   def display_name_and_username(%Actor{name: ""} = actor), do: actor_acct_from_actor(actor)
 
   def display_name_and_username(%Actor{name: name} = actor),
     do: name <> " (" <> actor_acct_from_actor(actor) <> ")"
 
+  @doc """
+  Clear multiple caches for an actor
+  """
+  @spec clear_cache(struct()) :: {:ok, true}
   def clear_cache(%Actor{preferred_username: preferred_username, domain: nil}) do
     Cachex.del(:activity_pub, "actor_" <> preferred_username)
+    Cachex.del(:feed, "actor_" <> preferred_username)
+    Cachex.del(:ics, "actor_" <> preferred_username)
   end
 end
