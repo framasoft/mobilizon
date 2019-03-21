@@ -25,13 +25,13 @@
     "lodash": "^4.17.11",
     "material-design-icons": "^3.0.1",
     "ngeohash": "^0.6.3",
-    "npm-check-updates": "^3.1.0",
+    "npm-check-updates": "^3.1.1",
     "register-service-worker": "^1.6.2",
-    "vue": "^2.6.9",
+    "vue": "^2.6.10",
     "vue-apollo": "^3.0.0-beta.28",
     "vue-class-component": "^7.0.1",
     "vue-gettext": "^2.1.2",
-    "vue-property-decorator": "^8.0.0",
+    "vue-property-decorator": "^8.1.0",
     "vue-router": "^3.0.2",
     "vue-simple-markdown": "^1.0.9",
     "vuex": "^3.1.0"
@@ -54,8 +54,8 @@
     "patch-package": "^6.0.5",
     "sass-loader": "^7.1.0",
     "tslint-config-airbnb": "^5.11.1",
-    "typescript": "^3.3.3333",
-    "vue-template-compiler": "^2.6.9",
+    "typescript": "^3.3.4000",
+    "vue-template-compiler": "^2.6.10",
     "webpack-bundle-analyzer": "^3.1.0"
   },
   "browserslist": [
