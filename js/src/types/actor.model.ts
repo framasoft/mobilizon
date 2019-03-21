@@ -1,3 +1,6 @@
+import { ICurrentUser } from '@/types/current-user.model';
+import { IEvent } from '@/types/event.model';
+
 export interface IActor {
   id?: string;
   url: string;
@@ -22,14 +25,24 @@ export class Actor implements IActor {
 }
 
 export interface IPerson extends IActor {
-
+  feedTokens: IFeedToken[];
+  goingToEvents: IEvent[];
 }
 
 export interface IGroup extends IActor {
   members: IMember[];
 }
 
-export class Person extends Actor implements IPerson {}
+export class Person extends Actor implements IPerson {
+  feedTokens: IFeedToken[] = [];
+  goingToEvents: IEvent[] = [];
+}
+
+export interface IFeedToken {
+  token: string;
+  actor?: IPerson;
+  user: ICurrentUser;
+}
 
 export enum MemberRole {
   PENDING,

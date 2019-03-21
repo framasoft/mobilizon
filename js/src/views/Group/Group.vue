@@ -33,7 +33,7 @@
               <EventCard
                 v-for="event in group.organizedEvents"
                 :event="event"
-                :hideDetails="true"
+                :options="{ hideDetails: true }"
                 :key="event.uuid"
                 class="column is-one-third"
               />

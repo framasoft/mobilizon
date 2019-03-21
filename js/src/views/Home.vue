@@ -18,6 +18,50 @@
         >Welcome back %{username}</translate>
       </h1>
     </section>
+    <section v-if="loggedPerson">
+      <span class="events-nearby title">Events you're going at</span>
+      <b-loading :active.sync="$apollo.loading"></b-loading>
+      <div v-if="goingToEvents.size > 0" v-for="row in Array.from(goingToEvents.entries())">
+        <!--   Iterators will be supported in v-for with VueJS 3     -->
+        <date-component :date="row[0]"></date-component>
+          <h3 class="subtitle"
+            v-if="isToday(row[0])"
+            v-translate="{count: row[1].length}"
+            :translate-n="row[1].length"
+            translate-plural="You have %{ count } events today"
+          >
+                  You have one event today.
+          </h3>
+          <h3 class="subtitle"
+              v-else-if="isTomorrow(row[0])"
+              v-translate="{count: row[1].length}"
+              :translate-n="row[1].length"
+              translate-plural="You have %{ count } events tomorrow"
+          >
+              You have one event tomorrow.
+          </h3>
+          <h3 class="subtitle"
+              v-else
+              v-translate="{count: row[1].length, days: calculateDiffDays(row[0])}"
+              :translate-n="row[1].length"
+              translate-plural="You have %{ count } events in %{ days } days"
+          >
+              You have one event in %{ days } days.
+          </h3>
+        <div class="columns">
+          <EventCard
+                  v-for="event in row[1]"
+                  :key="event.uuid"
+                  :event="event"
+                  :options="{loggedPerson: loggedPerson}"
+                  class="column is-one-quarter-desktop is-half-mobile"
+          />
+        </div>
+      </div>
+      <b-message v-else type="is-danger">
+        <translate>You're not going to any event yet</translate>
+      </b-message>
+    </section>
     <section>
       <span class="events-nearby title">Events nearby you</span>
       <b-loading :active.sync="$apollo.loading"></b-loading>
@@ -41,11 +85,13 @@ import ngeohash from 'ngeohash';
 import { FETCH_EVENTS } from '@/graphql/event';
 import { Component, Vue } from 'vue-property-decorator';
 import EventCard from '@/components/Event/EventCard.vue';
-import { LOGGED_PERSON } from '@/graphql/actor';
-import { IPerson } from '@/types/actor.model';
+import { LOGGED_PERSON_WITH_GOING_TO_EVENTS } from '@/graphql/actor';
+import { IPerson, Person } from '@/types/actor.model';
 import { ICurrentUser } from '@/types/current-user.model';
 import { CURRENT_USER_CLIENT } from '@/graphql/user';
 import { RouteName } from '@/router';
+import { IEvent } from '@/types/event.model';
+import DateComponent from '@/components/Event/Date.vue';
 
 @Component({
   apollo: {
@@ -54,13 +100,14 @@ import { RouteName } from '@/router';
       fetchPolicy: 'no-cache', // Debug me: https://github.com/apollographql/apollo-client/issues/3030
     },
     loggedPerson: {
-      query: LOGGED_PERSON,
+      query: LOGGED_PERSON_WITH_GOING_TO_EVENTS,
     },
     currentUser: {
       query: CURRENT_USER_CLIENT,
     },
   },
   components: {
+    DateComponent,
     EventCard,
   },
 })
@@ -69,8 +116,7 @@ export default class Home extends Vue {
   locations = [];
   city = { name: null };
   country = { name: null };
-  // FIXME: correctly parse local storage
-  loggedPerson!: IPerson;
+  loggedPerson: IPerson = new Person();
   currentUser!: ICurrentUser;
 
   get displayed_name() {
@@ -79,13 +125,47 @@ export default class Home extends Vue {
       : this.loggedPerson.name;
   }
 
-  fetchLocations() {
-    // FIXME: remove eventFetch
-    // eventFetch('/locations', this.$store)
-    //   .then(response => (response.json()))
-    //   .then((response) => {
-    //     this.locations = response;
-    //   });
+  isToday(date: string) {
+    return (new Date(date)).toDateString() === (new Date()).toDateString();
+  }
+
+  isTomorrow(date: string) :boolean {
+    return this.isInDays(date, 1);
+  }
+
+  isInDays(date: string, nbDays: number) :boolean {
+    return this.calculateDiffDays(date) === nbDays;
+  }
+
+  isBefore(date: string, nbDays: number) :boolean {
+    return this.calculateDiffDays(date) > nbDays;
+  }
+
+  // FIXME: Use me
+  isInLessThanSevenDays(date: string): boolean {
+    return this.isInDays(date, 7);
+  }
+
+  calculateDiffDays(date: string): number {
+    const dateObj = new Date(date);
+    return Math.ceil((dateObj.getTime() - (new Date()).getTime()) / 1000 / 60 / 60 / 24);
+  }
+
+  get goingToEvents(): Map<string, IEvent[]> {
+    const res = this.$data.loggedPerson.goingToEvents.filter((event) => {
+      return event.beginsOn != null && this.isBefore(event.beginsOn, 0)
+    });
+    res.sort(
+            (a: IEvent, b: IEvent) => new Date(a.beginsOn) > new Date(b.beginsOn),
+    );
+    const groups = res.reduce((acc: Map<string, IEvent[]>, event: IEvent) => {
+      const day = (new Date(event.beginsOn)).toDateString();
+      const events: IEvent[] = acc.get(day) || [];
+      events.push(event);
+      acc.set(day, events);
+      return acc;
+    }, new Map());
+    return groups;
   }
 
   geoLocalize() {
@@ -144,6 +224,6 @@ export default class Home extends Vue {
 }
 
 .events-nearby {
-  margin-bottom: 25px;
+  margin: 25px auto;
 }
 </style>

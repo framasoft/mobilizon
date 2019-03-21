@@ -3,6 +3,7 @@ import gql from 'graphql-tag';
 export const FETCH_PERSON = gql`
 query($name:String!) {
   person(preferredUsername: $name) {
+    id,
     url,
     name,
     domain,
@@ -11,9 +12,13 @@ query($name:String!) {
     suspended,
     avatarUrl,
     bannerUrl,
+    feedTokens {
+        token
+    },
     organizedEvents {
         uuid,
-        title
+        title,
+        beginsOn
     },
   }
 }
@@ -25,6 +30,26 @@ query {
     id,
     avatarUrl,
     preferredUsername,
+  }
+}`;
+
+export const LOGGED_PERSON_WITH_GOING_TO_EVENTS = gql`
+query {
+  loggedPerson {
+    id,
+    avatarUrl,
+    preferredUsername,
+    goingToEvents {
+        uuid,
+        title,
+        beginsOn,
+        participants {
+            actor {
+                id,
+                preferredUsername
+            }
+        }
+    },
   }
 }`;
 

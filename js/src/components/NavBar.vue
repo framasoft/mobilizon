@@ -75,8 +75,8 @@ import { ICurrentUser } from '@/types/current-user.model'
     },
     config: {
       query: CONFIG,
-    }
-  }
+    },
+  },
 })
 export default class NavBar extends Vue {
   notifications = [

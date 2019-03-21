@@ -137,4 +137,86 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
                MapSet.new([actor.preferred_username, "new_identity"])
     end
   end
+
+  test "get_current_person/3 can return the events the person is going to", context do
+    user = insert(:user)
+    actor = insert(:actor, user: user)
+
+    query = """
+    {
+        loggedPerson {
+          goingToEvents {
+            uuid,
+            title
+          }
+        }
+      }
+    """
+
+    res =
+      context.conn
+      |> auth_conn(user)
+      |> get("/api", AbsintheHelpers.query_skeleton(query, "logged_person"))
+
+    assert json_response(res, 200)["data"]["loggedPerson"]["goingToEvents"] == []
+
+    event = insert(:event, %{organizer_actor: actor})
+    insert(:participant, %{actor: actor, event: event})
+
+    res =
+      context.conn
+      |> auth_conn(user)
+      |> get("/api", AbsintheHelpers.query_skeleton(query, "logged_person"))
+
+    assert json_response(res, 200)["data"]["loggedPerson"]["goingToEvents"] == [
+             %{"title" => event.title, "uuid" => event.uuid}
+           ]
+  end
+
+  test "find_person/3 can return the events an identity is going to if it's the same actor",
+       context do
+    user = insert(:user)
+    actor = insert(:actor, user: user)
+    insert(:actor, user: user)
+    actor_from_other_user = insert(:actor)
+
+    query = """
+    {
+      person(preferredUsername: "#{actor.preferred_username}") {
+          goingToEvents {
+            uuid,
+            title
+          }
+      }
+    }
+    """
+
+    res =
+      context.conn
+      |> auth_conn(user)
+      |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+
+    assert json_response(res, 200)["data"]["person"]["goingToEvents"] == []
+
+    query = """
+    {
+      person(preferredUsername: "#{actor_from_other_user.preferred_username}") {
+          goingToEvents {
+            uuid,
+            title
+          }
+      }
+    }
+    """
+
+    res =
+      context.conn
+      |> auth_conn(user)
+      |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+
+    assert json_response(res, 200)["data"]["person"]["goingToEvents"] == nil
+
+    assert hd(json_response(res, 200)["errors"])["message"] ==
+             "Actor id is not owned by authenticated user"
+  end
 end
