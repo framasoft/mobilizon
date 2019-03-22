@@ -18,7 +18,7 @@ defmodule MobilizonWeb.Resolvers.ConfigResolverTest do
         context.conn
         |> get("/api", AbsintheHelpers.query_skeleton(query, "config"))
 
-      assert json_response(res, 200)["data"]["config"]["name"] == "Localhost"
+      assert json_response(res, 200)["data"]["config"]["name"] == "Test instance"
       assert json_response(res, 200)["data"]["config"]["registrationsOpen"] == true
     end
   end

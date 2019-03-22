@@ -2,7 +2,7 @@ defmodule MobilizonWeb.Resolvers.Config do
   @moduledoc """
   Handles the config-related GraphQL calls
   """
-  require Logger
+
   import Mobilizon.CommonConfig
 
   @doc """

@@ -18,7 +18,7 @@
     <div class="navbar-end">
       <div class="navbar-item">
         <div class="buttons">
-          <router-link class="button is-primary" v-if="!currentUser.id" :to="{ name: 'Register' }">
+          <router-link class="button is-primary" v-if="!currentUser.id && config && config.registrationsOpen" :to="{ name: 'Register' }">
             <strong>
               <translate>Sign up</translate>
             </strong>
@@ -51,6 +51,8 @@ import { deleteUserData } from '@/utils/auth';
 import { LOGGED_PERSON } from '@/graphql/actor';
 import { IActor, IPerson } from '@/types/actor.model';
 import { RouteName } from '@/router';
+import { CONFIG } from '@/graphql/config';
+import { IConfig } from '@/types/config.model';
 
 @Component({
   apollo: {
@@ -71,7 +73,10 @@ import { RouteName } from '@/router';
     loggedPerson: {
       query: LOGGED_PERSON,
     },
-  },
+    config: {
+      query: CONFIG,
+    }
+  }
 })
 export default class NavBar extends Vue {
   notifications = [
@@ -83,6 +88,7 @@ export default class NavBar extends Vue {
   searchText: string | null = null;
   searchSelect = null;
   loggedPerson!: IPerson;
+  config!: IConfig;
 
   get items() {
     return this.search.map(searchEntry => {

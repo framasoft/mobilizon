@@ -12,7 +12,7 @@ config :mobilizon,
 config :mobilizon, :instance,
   name: System.get_env("MOBILIZON_INSTANCE_NAME") || "Localhost",
   version: "1.0.0-dev",
-  registrations_open: System.get_env("MOBILIZON_INSTANCE_REGISTRATIONS_OPEN") || true
+  registrations_open: System.get_env("MOBILIZON_INSTANCE_REGISTRATIONS_OPEN") || false
 
 config :mime, :types, %{
   "application/activity+json" => ["activity-json"],

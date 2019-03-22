@@ -1,7 +1,5 @@
-import { ICurrentUser } from '@/types/current-user.model';
+export interface IConfig {
+  name: string,
 
-export interface ILogin {
-  user: ICurrentUser,
-
-  token: string,
+  registrationsOpen: boolean,
 }
