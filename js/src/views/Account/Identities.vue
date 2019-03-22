@@ -46,19 +46,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { IDENTITIES, LOGGED_PERSON, CREATE_PERSON } from "../../graphql/actor";
-import { IPerson } from "@/types/actor.model";
+import { Component, Vue } from 'vue-property-decorator';
+import { IDENTITIES, LOGGED_PERSON, CREATE_PERSON } from '../../graphql/actor';
+import { IPerson } from '@/types/actor.model';
 
 @Component({
   apollo: {
     identities: {
-      query: IDENTITIES
+      query: IDENTITIES,
     },
     loggedPerson: {
-      query: LOGGED_PERSON
-    }
-  }
+      query: LOGGED_PERSON,
+    },
+  },
 })
 export default class Identities extends Vue {
   identities: IPerson[] = [];
@@ -73,7 +73,7 @@ export default class Identities extends Vue {
     try {
       await this.$apollo.mutate({
         mutation: CREATE_PERSON,
-        variables: this.newPerson
+        variables: this.newPerson,
       });
       this.showCreateProfileForm = false;
       this.$apollo.queries.identities.refresh();

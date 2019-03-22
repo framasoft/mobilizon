@@ -3,7 +3,7 @@
 import Vue from 'vue';
 // import * as VueGoogleMaps from 'vue2-google-maps';
 import VueSimpleMarkdown from 'vue-simple-markdown';
-import Buefy from 'buefy'
+import Buefy from 'buefy';
 import 'buefy/dist/buefy.css';
 import GetTextPlugin from 'vue-gettext';
 import App from '@/App.vue';
@@ -16,7 +16,7 @@ Vue.config.productionTip = false;
 
 Vue.use(VueSimpleMarkdown);
 Vue.use(Buefy, {
-  defaultContainerElement: '#mobilizon'
+  defaultContainerElement: '#mobilizon',
 });
 
 const language = (window.navigator as any).userLanguage || window.navigator.language;
@@ -34,8 +34,8 @@ Vue.config.language = language.replace('-', '_');
 /* eslint-disable no-new */
 new Vue({
   router,
+  apolloProvider,
   el: '#app',
   template: '<App/>',
-  apolloProvider,
   components: { App },
 });

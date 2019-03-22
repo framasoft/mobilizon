@@ -17,11 +17,11 @@
 </template>
 
 <script lang="ts">
-import { VALIDATE_USER } from "@/graphql/user";
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { AUTH_TOKEN, AUTH_USER_ID } from "@/constants";
-import { RouteName } from '@/router'
-import { UserRouteName } from '@/router/user'
+import { VALIDATE_USER } from '@/graphql/user';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { AUTH_TOKEN, AUTH_USER_ID } from '@/constants';
+import { RouteName } from '@/router';
+import { UserRouteName } from '@/router/user';
 
 @Component
 export default class Validate extends Vue {
@@ -39,8 +39,8 @@ export default class Validate extends Vue {
       const { data } = await this.$apollo.mutate({
         mutation: VALIDATE_USER,
         variables: {
-          token: this.token
-        }
+          token: this.token,
+        },
       });
 
       this.saveUserData(data);

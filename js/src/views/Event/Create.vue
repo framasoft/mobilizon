@@ -10,7 +10,7 @@
           <b-input aria-required="true" required v-model="event.title"/>
         </b-field>
 
-        <b-datepicker v-model="event.begins_on" inline></b-datepicker>
+        <b-datepicker v-model="event.beginsOn" inline></b-datepicker>
 
         <b-field :label="$gettext('Category')">
           <b-select placeholder="Select a category" v-model="event.category">
@@ -31,23 +31,23 @@
 </template>
 
 <script lang="ts">
-    // import Location from '@/components/Location';
-    import {CREATE_EVENT, EDIT_EVENT} from "@/graphql/event";
-    import {Component, Prop, Vue} from "vue-property-decorator";
-    import {
+// import Location from '@/components/Location';
+import { CREATE_EVENT, EDIT_EVENT } from '@/graphql/event';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import {
       Category,
       IEvent,
       EventModel,
-    } from "@/types/event.model";
-    import {LOGGED_PERSON} from "@/graphql/actor";
-    import {IPerson, Person} from "@/types/actor.model";
+    } from '@/types/event.model';
+import { LOGGED_PERSON } from '@/graphql/actor';
+import { IPerson, Person } from '@/types/actor.model';
 
 @Component({
   apollo: {
     loggedPerson: {
       query: LOGGED_PERSON,
-    }
-  }
+    },
+  },
 })
 export default class CreateEvent extends Vue {
   @Prop({ required: false, type: String }) uuid!: string;
@@ -61,23 +61,23 @@ export default class CreateEvent extends Vue {
     this.event.organizerActor = this.loggedPerson;
     this.event.attributedTo = this.loggedPerson;
 
-    if (this.event.uuid === "") {
+    if (this.event.uuid === '') {
       this.$apollo
         .mutate({
           mutation: CREATE_EVENT,
           variables: {
             title: this.event.title,
             description: this.event.description,
-            beginsOn: this.event.begins_on,
+            beginsOn: this.event.beginsOn,
             category: this.event.category,
-            organizerActorId: this.event.organizerActor.id
-          }
+            organizerActorId: this.event.organizerActor.id,
+          },
         })
         .then(data => {
-          console.log("event created", data);
+          console.log('event created', data);
           this.$router.push({
-            name: "Event",
-            params: { uuid: data.data.createEvent.uuid }
+            name: 'Event',
+            params: { uuid: data.data.createEvent.uuid },
           });
         })
         .catch(error => {
@@ -86,12 +86,12 @@ export default class CreateEvent extends Vue {
     } else {
       this.$apollo
         .mutate({
-          mutation: EDIT_EVENT
+          mutation: EDIT_EVENT,
         })
         .then(data => {
           this.$router.push({
-            name: "Event",
-            params: { uuid: data.data.uuid }
+            name: 'Event',
+            params: { uuid: data.data.uuid },
           });
         })
         .catch(error => {

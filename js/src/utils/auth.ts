@@ -8,7 +8,7 @@ export function saveUserData(obj: ILogin) {
 }
 
 export function deleteUserData() {
-  for (const key of [ AUTH_USER_ID, AUTH_USER_EMAIL, AUTH_TOKEN ]) {
+  for (const key of [AUTH_USER_ID, AUTH_USER_EMAIL, AUTH_TOKEN]) {
     localStorage.removeItem(key);
   }
 }

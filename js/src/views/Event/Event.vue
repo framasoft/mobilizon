@@ -9,7 +9,7 @@
           </figure>
         </div>
         <div class="card-content">
-          <span>{{ event.begins_on | formatDay }}</span>
+          <span>{{ event.beginsOn | formatDay }}</span>
           <span class="tag is-primary">{{ event.category }}</span>
           <h1 class="title">{{ event.title }}</h1>
           <router-link
@@ -44,7 +44,7 @@
             </p>
           </div>
           <div>
-            <span>{{ event.begins_on | formatDate }} - {{ event.ends_on | formatDate }}</span>
+            <span>{{ event.beginsOn | formatDate }} - {{ event.endsOn | formatDate }}</span>
           </div>
           <p v-if="actorIsOrganizer()">
             <translate>You are an organizer.</translate>
@@ -100,11 +100,10 @@
 </template>
 
 <script lang="ts">
-import { DELETE_EVENT, FETCH_EVENT, LEAVE_EVENT } from '@/graphql/event';
+import { DELETE_EVENT, FETCH_EVENT, JOIN_EVENT, LEAVE_EVENT } from '@/graphql/event';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { LOGGED_PERSON } from '@/graphql/actor';
 import { IEvent, IParticipant } from '@/types/event.model';
-import { JOIN_EVENT } from '@/graphql/event';
 import { IPerson } from '@/types/actor.model';
 import { RouteName } from '@/router';
 import 'vue-simple-markdown/dist/vue-simple-markdown.css';
@@ -115,14 +114,14 @@ import 'vue-simple-markdown/dist/vue-simple-markdown.css';
       query: FETCH_EVENT,
       variables() {
         return {
-          uuid: this.uuid
+          uuid: this.uuid,
         };
-      }
+      },
     },
     loggedPerson: {
-      query: LOGGED_PERSON
-    }
-  }
+      query: LOGGED_PERSON,
+    },
+  },
 })
 export default class Event extends Vue {
   @Prop({ type: String, required: true }) uuid!: string;
@@ -140,10 +139,10 @@ export default class Event extends Vue {
         variables: {
           id: this.event.id,
           actorId: this.loggedPerson.id,
-        }
+        },
       });
 
-      router.push({ name: RouteName.EVENT })
+      router.push({ name: RouteName.EVENT });
     } catch (error) {
       console.error(error);
     }
@@ -161,13 +160,13 @@ export default class Event extends Vue {
           const event = store.readQuery<IEvent>({ query: FETCH_EVENT });
           if (event === null) {
             console.error('Cannot update event participant cache, because of null value.');
-            return
+            return;
           }
 
-          event.participants = event.participants.concat([ joinEvent ]);
+          event.participants = event.participants.concat([joinEvent]);
 
           store.writeQuery({ query: FETCH_EVENT, data: event });
-        }
+        },
       });
     } catch (error) {
       console.error(error);
@@ -186,14 +185,14 @@ export default class Event extends Vue {
           const event = store.readQuery<IEvent>({ query: FETCH_EVENT });
           if (event === null) {
             console.error('Cannot update event participant cache, because of null value.');
-            return
+            return;
           }
 
           event.participants = event.participants
             .filter(p => p.actor.id !== leaveEvent.actor.id);
 
           store.writeQuery({ query: FETCH_EVENT, data: event });
-        }
+        },
       });
     } catch (error) {
       console.error(error);

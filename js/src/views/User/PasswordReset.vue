@@ -35,28 +35,28 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { validateRequiredField } from "@/utils/validators";
-import { RESET_PASSWORD } from "@/graphql/auth";
-import { saveUserData } from "@/utils/auth";
-import { ILogin } from "@/types/login.model";
-import { RouteName } from '@/router'
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { validateRequiredField } from '@/utils/validators';
+import { RESET_PASSWORD } from '@/graphql/auth';
+import { saveUserData } from '@/utils/auth';
+import { ILogin } from '@/types/login.model';
+import { RouteName } from '@/router';
 
 @Component
 export default class PasswordReset extends Vue {
   @Prop({ type: String, required: true }) token!: string;
 
   credentials = {
-    password: "",
-    password_confirmation: ""
+    password: '',
+    password_confirmation: '',
   } as { password: string; password_confirmation: string };
   errors: string[] = [];
   rules = {
-    password_length: value =>
-      value.length > 6 || "Password must be at least 6 characters long",
+    password_length: (value: string) =>
+      value.length > 6 || 'Password must be at least 6 characters long',
     required: validateRequiredField,
-    password_equal: value =>
-      value === this.credentials.password || "Passwords must be the same"
+    password_equal: (value: string) =>
+      value === this.credentials.password || 'Passwords must be the same',
   };
 
   get samePasswords() {
@@ -75,8 +75,8 @@ export default class PasswordReset extends Vue {
         mutation: RESET_PASSWORD,
         variables: {
           password: this.credentials.password,
-          token: this.token
-        }
+          token: this.token,
+        },
       });
 
       saveUserData(result.data.resetPassword);

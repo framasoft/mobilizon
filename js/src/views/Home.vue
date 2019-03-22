@@ -51,25 +51,20 @@ import { RouteName } from '@/router';
   apollo: {
     events: {
       query: FETCH_EVENTS,
-      fetchPolicy: "no-cache" // Debug me: https://github.com/apollographql/apollo-client/issues/3030
+      fetchPolicy: 'no-cache', // Debug me: https://github.com/apollographql/apollo-client/issues/3030
     },
     loggedPerson: {
-      query: LOGGED_PERSON
+      query: LOGGED_PERSON,
     },
     currentUser: {
-      query: CURRENT_USER_CLIENT
-    }
+      query: CURRENT_USER_CLIENT,
+    },
   },
   components: {
-    EventCard
-  }
+    EventCard,
+  },
 })
 export default class Home extends Vue {
-  searchTerm = null;
-  location_field = {
-    loading: false,
-    search: null
-  };
   events = [];
   locations = [];
   city = { name: null };
@@ -124,9 +119,9 @@ export default class Home extends Vue {
     const geoHash = ngeohash.encode(
       addressData.latitude,
       addressData.longitude,
-      11
+      11,
     );
-    sessionStorage.setItem("City", geoHash);
+    sessionStorage.setItem('City', geoHash);
 
     this.$router.push({ name: RouteName.EVENT_LIST, params: { location: geoHash } });
   }

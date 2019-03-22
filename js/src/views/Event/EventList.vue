@@ -27,8 +27,8 @@ const ngeohash = require('ngeohash');
 
 @Component({
   components: {
-    EventCard
-  }
+    EventCard,
+  },
 })
 export default class EventList extends Vue {
   @Prop(String) location!: string;
@@ -39,7 +39,7 @@ export default class EventList extends Vue {
   locationText = '';
 
   created() {
-    this.fetchData(this.$router.currentRoute.params["location"]);
+    this.fetchData(this.$router.currentRoute.params['location']);
   }
 
   beforeRouteUpdate(to, from, next) {
@@ -47,7 +47,7 @@ export default class EventList extends Vue {
     next();
   }
 
-  @Watch("locationChip")
+  @Watch('locationChip')
   onLocationChipChange(val) {
     if (val === false) {
       this.$router.push({ name: RouteName.EVENT_LIST });
@@ -61,7 +61,7 @@ export default class EventList extends Vue {
   }
 
   fetchData(location) {
-    let queryString = "/events";
+    let queryString = '/events';
     if (location) {
       queryString += `?geohash=${location}`;
       const { latitude, longitude } = ngeohash.decode(location);

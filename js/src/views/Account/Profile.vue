@@ -66,10 +66,10 @@
 </template>
 
 <script lang="ts">
-import { FETCH_PERSON, LOGGED_PERSON } from "@/graphql/actor";
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import EventCard from "@/components/Event/EventCard.vue";
-import { RouteName } from '@/router'
+import { FETCH_PERSON, LOGGED_PERSON } from '@/graphql/actor';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import EventCard from '@/components/Event/EventCard.vue';
+import { RouteName } from '@/router';
 
 @Component({
   apollo: {
@@ -77,17 +77,17 @@ import { RouteName } from '@/router'
       query: FETCH_PERSON,
       variables() {
         return {
-          name: this.$route.params.name
+          name: this.$route.params.name,
         };
-      }
+      },
     },
     loggedPerson: {
-      query: LOGGED_PERSON
-    }
+      query: LOGGED_PERSON,
+    },
   },
   components: {
-    EventCard
-  }
+    EventCard,
+  },
 })
 export default class Profile extends Vue {
   @Prop({ type: String, required: true }) name!: string;
@@ -95,7 +95,7 @@ export default class Profile extends Vue {
   person = null;
 
   // call again the method if the route changes
-  @Watch("$route")
+  @Watch('$route')
   onRouteChange() {
     // this.fetchData()
   }
@@ -106,7 +106,7 @@ export default class Profile extends Vue {
   }
 
   nl2br(text) {
-    return text.replace(/(?:\r\n|\r|\n)/g, "<br>");
+    return text.replace(/(?:\r\n|\r|\n)/g, '<br>');
   }
 }
 </script>

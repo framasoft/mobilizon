@@ -19,8 +19,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { IGroup } from "../../types/actor.model";
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { IGroup } from '../../types/actor.model';
 
 @Component
 export default class GroupCard extends Vue {

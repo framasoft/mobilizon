@@ -60,9 +60,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import EventCard from "@/components/Event/EventCard.vue";
-import { FETCH_PERSON, LOGGED_PERSON } from "@/graphql/actor";
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import EventCard from '@/components/Event/EventCard.vue';
+import { FETCH_PERSON, LOGGED_PERSON } from '@/graphql/actor';
 
 @Component({
   apollo: {
@@ -70,17 +70,17 @@ import { FETCH_PERSON, LOGGED_PERSON } from "@/graphql/actor";
       query: FETCH_PERSON,
       variables() {
         return {
-          name: this.$route.params.name
+          name: this.$route.params.name,
         };
-      }
+      },
     },
     loggedPerson: {
-      query: LOGGED_PERSON
-    }
+      query: LOGGED_PERSON,
+    },
   },
   components: {
-    EventCard
-  }
+    EventCard,
+  },
 })
 export default class Group extends Vue {
   @Prop({ type: String, required: true }) name!: string;
@@ -92,7 +92,7 @@ export default class Group extends Vue {
     this.fetchData();
   }
 
-  @Watch("$route")
+  @Watch('$route')
   onRouteChanged() {
     // call again the method if the route changes
     this.fetchData();

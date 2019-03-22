@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue } from 'vue-property-decorator';
 
 @Component({})
 export default class CreateGroup extends Vue {
@@ -74,13 +74,13 @@ export default class CreateGroup extends Vue {
     this.group.address = {
       geo: {
         latitude: addressData.latitude,
-        longitude: addressData.longitude
+        longitude: addressData.longitude,
       },
       addressCountry: addressData.country,
       addressLocality: addressData.city,
       addressRegion: addressData.administrative_area_level_1,
       postalCode: addressData.postal_code,
-      streetAddress: `${addressData.street_number} ${addressData.route}`
+      streetAddress: `${addressData.street_number} ${addressData.route}`,
     };
   }
 }

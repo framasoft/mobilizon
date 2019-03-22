@@ -1,4 +1,4 @@
-import {Actor, IActor} from './actor.model';
+import { Actor, IActor } from './actor.model';
 
 export enum EventStatus {
   TENTATIVE,
@@ -51,17 +51,17 @@ export interface IEvent {
   description: string;
   category: Category;
 
-  begins_on: Date;
-  ends_on: Date;
-  publish_at: Date;
+  beginsOn: Date;
+  endsOn: Date;
+  publishAt: Date;
 
   status: EventStatus;
   visibility: EventVisibility;
 
-  join_options: EventJoinOptions;
+  joinOptions: EventJoinOptions;
 
   thumbnail: string;
-  large_image: string;
+  largeImage: string;
 
   organizerActor: IActor;
   attributedTo: IActor;
@@ -73,15 +73,15 @@ export interface IEvent {
 
 
 export class EventModel implements IEvent {
-  begins_on: Date = new Date();
+  beginsOn: Date = new Date();
   category: Category = Category.MEETING;
   description: string = '';
-  ends_on: Date = new Date();
-  join_options: EventJoinOptions = EventJoinOptions.FREE;
-  large_image: string = '';
+  endsOn: Date = new Date();
+  joinOptions: EventJoinOptions = EventJoinOptions.FREE;
+  largeImage: string = '';
   local: boolean = true;
   participants: IParticipant[] = [];
-  publish_at: Date = new Date();
+  publishAt: Date = new Date();
   status: EventStatus = EventStatus.CONFIRMED;
   thumbnail: string = '';
   title: string = '';

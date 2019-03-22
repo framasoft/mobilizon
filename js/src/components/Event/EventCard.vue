@@ -10,7 +10,7 @@
         <router-link :to="{ name: 'Event', params:{ uuid: event.uuid } }">
           <h2 class="title">{{ event.title }}</h2>
         </router-link>
-        <span>{{ event.begins_on | formatDay }}</span>
+        <span>{{ event.beginsOn | formatDay }}</span>
       </div>
       <div v-if="!hideDetails">
         <div v-if="event.participants.length === 1">
@@ -33,8 +33,8 @@
 </template>
 
 <script lang="ts">
-  import {IEvent, ParticipantRole} from "@/types/event.model";
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { IEvent, ParticipantRole } from '@/types/event.model';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component
 export default class EventCard extends Vue {
@@ -43,8 +43,8 @@ export default class EventCard extends Vue {
 
   data() {
     return {
-      ParticipantRole: ParticipantRole
-    }
+      ParticipantRole,
+    };
   }
 }
 </script>

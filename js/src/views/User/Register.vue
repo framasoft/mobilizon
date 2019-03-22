@@ -108,19 +108,19 @@
 </template>
 
 <script lang="ts">
-import { CREATE_USER } from "@/graphql/user";
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { UserRouteName } from '@/router/user'
+import { CREATE_USER } from '@/graphql/user';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { UserRouteName } from '@/router/user';
 
 @Component
 export default class Register extends Vue {
-  @Prop({ type: String, required: false, default: "" }) email!: string;
-  @Prop({ type: String, required: false, default: "" }) password!: string;
+  @Prop({ type: String, required: false, default: '' }) email!: string;
+  @Prop({ type: String, required: false, default: '' }) password!: string;
 
   credentials = {
     email: this.email,
-    password: this.password
-  }
+    password: this.password,
+  };
   errors: object = {};
   sendingValidation: boolean = false;
   validationSent: boolean = false;
@@ -132,21 +132,21 @@ export default class Register extends Vue {
 
       await this.$apollo.mutate({
         mutation: CREATE_USER,
-        variables: this.credentials
+        variables: this.credentials,
       });
 
       this.validationSent = true;
 
       this.$router.push({
         name: UserRouteName.REGISTER_PROFILE,
-        params: { email: this.credentials.email }
+        params: { email: this.credentials.email },
       });
     } catch (error) {
       console.error(error);
       this.errors = error.graphQLErrors.reduce((acc, error) => {
         acc[error.details] = error.message;
         return acc;
-      }, {});
+      },                                       {});
       console.log(this.errors);
     }
   }
