@@ -53,6 +53,19 @@ js_deps:
       - js/node_modules
   allow_failure: true
 
+js_check:
+  stage: front
+  before_script:
+    - cd js
+    - npm install
+  script:
+    - npm run lint
+  after_script:
+    - cd ../
+  cache:
+    paths:
+      - js/node_modules
+
 elixir_check:
   stage: back
   before_script:
