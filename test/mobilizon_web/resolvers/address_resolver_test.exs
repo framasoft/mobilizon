@@ -10,6 +10,7 @@ defmodule MobilizonWeb.Resolvers.AddressResolverTest do
       query = """
         {
           searchAddress(query: "10 Rue Jangot") {
+            street,
             description,
             geom
           }

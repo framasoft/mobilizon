@@ -8,14 +8,14 @@ defmodule Mobilizon.Addresses.Address do
   # alias Mobilizon.Actors.Actor
 
   schema "addresses" do
-    field(:addressCountry, :string)
-    field(:addressLocality, :string)
-    field(:addressRegion, :string)
+    field(:country, :string)
+    field(:locality, :string)
+    field(:region, :string)
     field(:description, :string)
     field(:floor, :string)
     field(:geom, Geo.PostGIS.Geometry)
-    field(:postalCode, :string)
-    field(:streetAddress, :string)
+    field(:postal_code, :string)
+    field(:street, :string)
     has_one(:event, Event, foreign_key: :physical_address_id)
     # has_one(:group, Actor)
 
@@ -29,11 +29,11 @@ defmodule Mobilizon.Addresses.Address do
       :description,
       :floor,
       :geom,
-      :addressCountry,
-      :addressLocality,
-      :addressRegion,
-      :postalCode,
-      :streetAddress
+      :country,
+      :locality,
+      :region,
+      :postal_code,
+      :street
     ])
   end
 end

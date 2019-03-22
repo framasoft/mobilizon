@@ -3,7 +3,7 @@ defmodule MobilizonWeb.Schema.EventType do
   Schema representation for Event
   """
   use Absinthe.Schema.Notation
-  alias Mobilizon.Actors
+  alias Mobilizon.{Actors, Addresses}
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   import_types(MobilizonWeb.Schema.AddressType)
   import_types(MobilizonWeb.Schema.Events.ParticipantType)
@@ -27,7 +27,12 @@ defmodule MobilizonWeb.Schema.EventType do
     # TODO replace me with banner
     field(:large_image, :string, description: "A large picture for the event")
     field(:publish_at, :datetime, description: "When the event was published")
-    field(:physical_address, :physical_address, description: "The type of the event's address")
+
+    field(:physical_address, :address,
+      resolve: dataloader(Addresses),
+      description: "The type of the event's address"
+    )
+
     field(:online_address, :online_address, description: "Online address of the event")
     field(:phone_address, :phone_address, description: "Phone address for the event")
 

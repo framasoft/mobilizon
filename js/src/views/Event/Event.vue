@@ -46,6 +46,15 @@
           <div>
             <span>{{ event.beginsOn | formatDate }} - {{ event.endsOn | formatDate }}</span>
           </div>
+          <div class="address" v-if="event.physicalAddress">
+            <h3 class="subtitle">Adresse</h3>
+            <address>
+              <span>{{ event.physicalAddress.description }}</span><br>
+              <span>{{ event.physicalAddress.floor }} {{ event.physicalAddress.street }}</span><br>
+              <span>{{ event.physicalAddress.postal_code }} {{ event.physicalAddress.locality }}</span><br>
+              <span>{{ event.physicalAddress.region }} {{ event.physicalAddress.country }}</span>
+            </address>
+          </div>
           <p v-if="actorIsOrganizer()">
             <translate>You are an organizer.</translate>
           </p>

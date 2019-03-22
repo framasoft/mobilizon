@@ -29,6 +29,16 @@ export const FETCH_EVENT = gql`
       category,
       # online_address,
       # phone_address,
+      physicalAddress {
+        description,
+        floor,
+        street,
+        locality,
+        postal_code,
+        region,
+        country,
+        geom
+      }
       organizerActor {
         avatarUrl,
         preferredUsername,
@@ -64,6 +74,9 @@ export const FETCH_EVENTS = gql`
       publishAt,
       # online_address,
       # phone_address,
+      physicalAddress {
+        description
+      }
       organizerActor {
         avatarUrl,
         preferredUsername,

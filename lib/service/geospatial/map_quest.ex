@@ -103,14 +103,14 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
 
   defp produceAddress(address, lat, lng) do
     %Address{
-      addressCountry: Map.get(address, "adminArea1"),
-      addressLocality: Map.get(address, "adminArea5"),
-      addressRegion: Map.get(address, "adminArea3"),
+      country: Map.get(address, "adminArea1"),
+      locality: Map.get(address, "adminArea5"),
+      region: Map.get(address, "adminArea3"),
       description: Map.get(address, "street"),
       floor: Map.get(address, "floor"),
       geom: [lng, lat] |> Provider.coordinates(),
-      postalCode: Map.get(address, "postalCode"),
-      streetAddress: Map.get(address, "street")
+      postal_code: Map.get(address, "postalCode"),
+      street: Map.get(address, "street")
     }
   end
 end

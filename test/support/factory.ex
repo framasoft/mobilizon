@@ -72,11 +72,11 @@ defmodule Mobilizon.Factory do
       description: sequence("MyAddress"),
       geom: %Geo.Point{coordinates: {45.75, 4.85}, srid: 4326},
       floor: "Myfloor",
-      addressCountry: "My Country",
-      addressLocality: "My Locality",
-      addressRegion: "My Region",
-      postalCode: "My Postal Code",
-      streetAddress: "My Street Address"
+      country: "My Country",
+      locality: "My Locality",
+      region: "My Region",
+      postal_code: "My Postal Code",
+      street: "My Street Address"
     }
   end
 

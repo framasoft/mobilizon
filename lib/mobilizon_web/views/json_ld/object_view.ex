@@ -44,11 +44,11 @@ defmodule MobilizonWeb.JsonLD.ObjectView do
       "name" => address.description,
       "address" => %{
         "@type" => "PostalAddress",
-        "streetAddress" => address.streetAddress,
-        "addressLocality" => address.addressLocality,
-        "postalCode" => address.postalCode,
-        "addressRegion" => address.addressRegion,
-        "addressCountry" => address.addressCountry
+        "streetAddress" => address.street,
+        "addressLocality" => address.locality,
+        "postalCode" => address.postal_code,
+        "addressRegion" => address.region,
+        "addressCountry" => address.country
       }
     }
   end

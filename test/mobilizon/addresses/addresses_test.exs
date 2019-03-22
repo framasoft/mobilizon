@@ -7,23 +7,23 @@ defmodule Mobilizon.AddressesTest do
     alias Mobilizon.Addresses.Address
 
     @valid_attrs %{
-      addressCountry: "some addressCountry",
-      addressLocality: "some addressLocality",
-      addressRegion: "some addressRegion",
+      country: "some addressCountry",
+      locality: "some addressLocality",
+      region: "some addressRegion",
       description: "some description",
       floor: "some floor",
-      postalCode: "some postalCode",
-      streetAddress: "some streetAddress",
+      postal_code: "some postalCode",
+      street: "some streetAddress",
       geom: %Geo.Point{coordinates: {10, -10}, srid: 4326}
     }
     @update_attrs %{
-      addressCountry: "some updated addressCountry",
-      addressLocality: "some updated addressLocality",
-      addressRegion: "some updated addressRegion",
+      country: "some updated addressCountry",
+      locality: "some updated addressLocality",
+      region: "some updated addressRegion",
       description: "some updated description",
       floor: "some updated floor",
-      postalCode: "some updated postalCode",
-      streetAddress: "some updated streetAddress",
+      postal_code: "some updated postalCode",
+      street: "some updated streetAddress",
       geom: %Geo.Point{coordinates: {20, -20}, srid: 4326}
     }
     # @invalid_attrs %{
@@ -58,25 +58,25 @@ defmodule Mobilizon.AddressesTest do
 
     test "create_address/1 with valid data creates a address" do
       assert {:ok, %Address{} = address} = Addresses.create_address(@valid_attrs)
-      assert address.addressCountry == "some addressCountry"
-      assert address.addressLocality == "some addressLocality"
-      assert address.addressRegion == "some addressRegion"
+      assert address.country == "some addressCountry"
+      assert address.locality == "some addressLocality"
+      assert address.region == "some addressRegion"
       assert address.description == "some description"
       assert address.floor == "some floor"
-      assert address.postalCode == "some postalCode"
-      assert address.streetAddress == "some streetAddress"
+      assert address.postal_code == "some postalCode"
+      assert address.street == "some streetAddress"
     end
 
     test "update_address/2 with valid data updates the address" do
       address = address_fixture()
       assert {:ok, %Address{} = address} = Addresses.update_address(address, @update_attrs)
-      assert address.addressCountry == "some updated addressCountry"
-      assert address.addressLocality == "some updated addressLocality"
-      assert address.addressRegion == "some updated addressRegion"
+      assert address.country == "some updated addressCountry"
+      assert address.locality == "some updated addressLocality"
+      assert address.region == "some updated addressRegion"
       assert address.description == "some updated description"
       assert address.floor == "some updated floor"
-      assert address.postalCode == "some updated postalCode"
-      assert address.streetAddress == "some updated streetAddress"
+      assert address.postal_code == "some updated postalCode"
+      assert address.street == "some updated streetAddress"
     end
 
     test "delete_address/1 deletes the address" do

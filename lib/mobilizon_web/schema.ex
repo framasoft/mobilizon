@@ -4,7 +4,7 @@ defmodule MobilizonWeb.Schema do
   """
   use Absinthe.Schema
 
-  alias Mobilizon.{Actors, Events, Users}
+  alias Mobilizon.{Actors, Events, Users, Addresses}
   alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Events.{Event, Comment, Participant}
 
@@ -107,6 +107,7 @@ defmodule MobilizonWeb.Schema do
       |> Dataloader.add_source(Actors, Actors.data())
       |> Dataloader.add_source(Users, Users.data())
       |> Dataloader.add_source(Events, Events.data())
+      |> Dataloader.add_source(Addresses, Addresses.data())
 
     Map.put(ctx, :loader, loader)
   end

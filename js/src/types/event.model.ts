@@ -1,4 +1,5 @@
 import { Actor, IActor } from './actor.model';
+import {IAddress} from "@/types/address.model";
 
 export enum EventStatus {
   TENTATIVE,
@@ -67,8 +68,9 @@ export interface IEvent {
   attributedTo: IActor;
   participants: IParticipant[];
 
-  // online_address: Address;
-  // phone_address: string;
+  onlineAddress?: string;
+  phoneAddress?: string;
+  physicalAddress?: IAddress;
 }
 
 
@@ -90,4 +92,6 @@ export class EventModel implements IEvent {
   visibility: EventVisibility = EventVisibility.PUBLIC;
   attributedTo: IActor = new Actor();
   organizerActor: IActor = new Actor();
+  onlineAddress: string = '';
+  phoneAddress: string = '';
 }

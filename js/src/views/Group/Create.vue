@@ -76,11 +76,11 @@ export default class CreateGroup extends Vue {
         latitude: addressData.latitude,
         longitude: addressData.longitude,
       },
-      addressCountry: addressData.country,
-      addressLocality: addressData.city,
-      addressRegion: addressData.administrative_area_level_1,
-      postalCode: addressData.postal_code,
-      streetAddress: `${addressData.street_number} ${addressData.route}`,
+      country: addressData.country,
+      locality: addressData.city,
+      region: addressData.administrative_area_level_1,
+      postal_code: addressData.postal_code,
+      street: `${addressData.street_number} ${addressData.route}`,
     };
   }
 }

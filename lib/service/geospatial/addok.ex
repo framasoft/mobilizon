@@ -63,14 +63,14 @@ defmodule Mobilizon.Service.Geospatial.Addok do
     features
     |> Enum.map(fn %{"geometry" => geometry, "properties" => properties} ->
       %Address{
-        addressCountry: Map.get(properties, "country"),
-        addressLocality: Map.get(properties, "city"),
-        addressRegion: Map.get(properties, "state"),
+        country: Map.get(properties, "country"),
+        locality: Map.get(properties, "city"),
+        region: Map.get(properties, "state"),
         description: Map.get(properties, "name") || streetAddress(properties),
         floor: Map.get(properties, "floor"),
         geom: Map.get(geometry, "coordinates") |> Provider.coordinates(),
-        postalCode: Map.get(properties, "postcode"),
-        streetAddress: properties |> streetAddress()
+        postal_code: Map.get(properties, "postcode"),
+        street: properties |> streetAddress()
       }
     end)
   end

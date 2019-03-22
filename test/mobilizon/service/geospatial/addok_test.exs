@@ -35,10 +35,10 @@ defmodule Mobilizon.Service.Geospatial.AddokTest do
     test "returns a valid address from search" do
       use_cassette "geospatial/addok/search" do
         assert %Address{
-                 addressLocality: "Lyon",
+                 locality: "Lyon",
                  description: "10 Rue Jangot",
-                 postalCode: "69007",
-                 streetAddress: "10 Rue Jangot",
+                 postal_code: "69007",
+                 street: "10 Rue Jangot",
                  geom: %Geo.Point{coordinates: {4.842569, 45.751718}, properties: %{}, srid: 4326}
                } == Addok.search("10 rue Jangot") |> hd
       end
@@ -47,10 +47,10 @@ defmodule Mobilizon.Service.Geospatial.AddokTest do
     test "returns a valid address from reverse geocode" do
       use_cassette "geospatial/addok/geocode" do
         assert %Address{
-                 addressLocality: "Lyon",
+                 locality: "Lyon",
                  description: "10 Rue Jangot",
-                 postalCode: "69007",
-                 streetAddress: "10 Rue Jangot",
+                 postal_code: "69007",
+                 street: "10 Rue Jangot",
                  geom: %Geo.Point{coordinates: {4.842569, 45.751718}, properties: %{}, srid: 4326}
                } == Addok.geocode(4.842569, 45.751718) |> hd
       end
