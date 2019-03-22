@@ -27,28 +27,28 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { validateEmailField, validateRequiredField } from "@/utils/validators";
-import { RESEND_CONFIRMATION_EMAIL } from "@/graphql/auth";
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { validateEmailField, validateRequiredField } from '@/utils/validators';
+import { RESEND_CONFIRMATION_EMAIL } from '@/graphql/auth';
 
 @Component
 export default class ResendConfirmation extends Vue {
-  @Prop({ type: String, required: false, default: "" }) email!: string;
+  @Prop({ type: String, required: false, default: '' }) email!: string;
 
   credentials = {
-    email: ""
+    email: '',
   };
   validationSent = false;
   error = false;
   state = {
     email: {
       status: null,
-      msg: ""
-    }
+      msg: '',
+    },
   };
   rules = {
     required: validateRequiredField,
-    email: validateEmailField
+    email: validateEmailField,
   };
 
   mounted() {
@@ -63,8 +63,8 @@ export default class ResendConfirmation extends Vue {
       await this.$apollo.mutate({
         mutation: RESEND_CONFIRMATION_EMAIL,
         variables: {
-          email: this.credentials.email
-        }
+          email: this.credentials.email,
+        },
       });
     } catch (err) {
       console.error(err);

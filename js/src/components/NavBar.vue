@@ -43,14 +43,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
-import { SEARCH } from "@/graphql/search";
-import { CURRENT_USER_CLIENT } from "@/graphql/user";
-import { onLogout } from "@/vue-apollo";
-import { deleteUserData } from "@/utils/auth";
-import { LOGGED_PERSON } from "@/graphql/actor";
+import { Component, Vue, Watch } from 'vue-property-decorator';
+import { SEARCH } from '@/graphql/search';
+import { CURRENT_USER_CLIENT } from '@/graphql/user';
+import { onLogout } from '@/vue-apollo';
+import { deleteUserData } from '@/utils/auth';
+import { LOGGED_PERSON } from '@/graphql/actor';
 import { IActor, IPerson } from '@/types/actor.model';
-import { RouteName } from '@/router'
+import { RouteName } from '@/router';
 
 @Component({
   apollo: {
@@ -58,25 +58,25 @@ import { RouteName } from '@/router'
       query: SEARCH,
       variables() {
         return {
-          searchText: this.searchText
+          searchText: this.searchText,
         };
       },
       skip() {
         return !this.searchText;
-      }
+      },
     },
     currentUser: {
-      query: CURRENT_USER_CLIENT
+      query: CURRENT_USER_CLIENT,
     },
     loggedPerson: {
-      query: LOGGED_PERSON
-    }
-  }
+      query: LOGGED_PERSON,
+    },
+  },
 })
 export default class NavBar extends Vue {
   notifications = [
-    { header: "Coucou" },
-    { title: "T'as une notification", subtitle: "Et elle est cool" }
+    { header: 'Coucou' },
+    { title: "T'as une notification", subtitle: 'Et elle est cool' },
   ];
   model = null;
   search: any[] = [];
@@ -87,12 +87,12 @@ export default class NavBar extends Vue {
   get items() {
     return this.search.map(searchEntry => {
       switch (searchEntry.__typename) {
-        case "Actor":
+        case 'Actor':
           searchEntry.label =
             searchEntry.preferredUsername +
-            (searchEntry.domain === null ? "" : `@${searchEntry.domain}`);
+            (searchEntry.domain === null ? '' : `@${searchEntry.domain}`);
           break;
-        case "Event":
+        case 'Event':
           searchEntry.label = searchEntry.title;
           break;
       }
@@ -124,8 +124,8 @@ export default class NavBar extends Vue {
   }
 
   enter() {
-    console.log("enter");
-    this.$apollo.queries["search"].refetch();
+    console.log('enter');
+    this.$apollo.queries['search'].refetch();
   }
 
   logout() {

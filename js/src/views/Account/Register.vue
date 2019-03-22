@@ -70,11 +70,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { IPerson } from "@/types/actor.model";
-import { REGISTER_PERSON } from "@/graphql/actor";
-import { MOBILIZON_INSTANCE_HOST } from "@/api/_entrypoint";
-import { RouteName } from '@/router'
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { IPerson } from '@/types/actor.model';
+import { REGISTER_PERSON } from '@/graphql/actor';
+import { MOBILIZON_INSTANCE_HOST } from '@/api/_entrypoint';
+import { RouteName } from '@/router';
 
 @Component
 export default class Register extends Vue {
@@ -104,7 +104,7 @@ export default class Register extends Vue {
       this.errors = {};
       await this.$apollo.mutate({
         mutation: REGISTER_PERSON,
-        variables: Object.assign({ email: this.email }, this.person)
+        variables: Object.assign({ email: this.email }, this.person),
       });
       this.validationSent = true;
 
@@ -115,7 +115,7 @@ export default class Register extends Vue {
       this.errors = error.graphQLErrors.reduce((acc, error) => {
         acc[error.details] = error.message;
         return acc;
-      }, {});
+      },                                       {});
       console.error(error);
       console.error(this.errors);
     }

@@ -28,29 +28,29 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { validateEmailField, validateRequiredField } from "@/utils/validators";
-import { SEND_RESET_PASSWORD } from "@/graphql/auth";
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { validateEmailField, validateRequiredField } from '@/utils/validators';
+import { SEND_RESET_PASSWORD } from '@/graphql/auth';
 
 @Component
 export default class SendPasswordReset extends Vue {
-  @Prop({ type: String, required: false, default: "" }) email!: string;
+  @Prop({ type: String, required: false, default: '' }) email!: string;
 
   credentials = {
-    email: ""
+    email: '',
   } as { email: string };
   validationSent: boolean = false;
   errors: string[] = [];
   state = {
     email: {
       status: null,
-      msg: ""
-    } as { status: boolean | null; msg: string }
+      msg: '',
+    } as { status: boolean | null; msg: string },
   };
 
   rules = {
     required: validateRequiredField,
-    email: validateEmailField
+    email: validateEmailField,
   };
 
   mounted() {
@@ -64,8 +64,8 @@ export default class SendPasswordReset extends Vue {
       await this.$apollo.mutate({
         mutation: SEND_RESET_PASSWORD,
         variables: {
-          email: this.credentials.email
-        }
+          email: this.credentials.email,
+        },
       });
 
       this.validationSent = true;
@@ -81,8 +81,8 @@ export default class SendPasswordReset extends Vue {
     this.state = {
       email: {
         status: null,
-        msg: ""
-      }
+        msg: '',
+      },
     };
   }
 }

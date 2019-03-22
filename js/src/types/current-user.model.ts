@@ -1,4 +1,4 @@
 export interface ICurrentUser {
-  id: number,
-  email: string,
+  id: number;
+  email: string;
 }

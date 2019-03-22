@@ -53,29 +53,29 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { LOGIN } from "@/graphql/auth";
-import { validateEmailField, validateRequiredField } from "@/utils/validators";
-import { saveUserData } from "@/utils/auth";
-import { ILogin } from "@/types/login.model";
-import { UPDATE_CURRENT_USER_CLIENT } from "@/graphql/user";
-import { onLogin } from "@/vue-apollo";
-import { RouteName } from '@/router'
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { LOGIN } from '@/graphql/auth';
+import { validateEmailField, validateRequiredField } from '@/utils/validators';
+import { saveUserData } from '@/utils/auth';
+import { ILogin } from '@/types/login.model';
+import { UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
+import { onLogin } from '@/vue-apollo';
+import { RouteName } from '@/router';
 
 @Component
 export default class Login extends Vue {
-  @Prop({ type: String, required: false, default: "" }) email!: string;
-  @Prop({ type: String, required: false, default: "" }) password!: string;
+  @Prop({ type: String, required: false, default: '' }) email!: string;
+  @Prop({ type: String, required: false, default: '' }) password!: string;
 
   credentials = {
-    email: "",
-    password: ""
+    email: '',
+    password: '',
   };
   validationSent = false;
   errors: string[] = [];
   rules = {
     required: validateRequiredField,
-    email: validateEmailField
+    email: validateEmailField,
   };
   user: any;
 
@@ -99,8 +99,8 @@ export default class Login extends Vue {
         mutation: LOGIN,
         variables: {
           email: this.credentials.email,
-          password: this.credentials.password
-        }
+          password: this.credentials.password,
+        },
       });
 
       saveUserData(result.data.login);
@@ -109,8 +109,8 @@ export default class Login extends Vue {
         mutation: UPDATE_CURRENT_USER_CLIENT,
         variables: {
           id: result.data.login.user.id,
-          email: this.credentials.email
-        }
+          email: this.credentials.email,
+        },
       });
 
       onLogin(this.$apollo);

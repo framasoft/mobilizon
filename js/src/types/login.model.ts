@@ -1,7 +1,7 @@
 import { ICurrentUser } from '@/types/current-user.model';
 
 export interface ILogin {
-  user: ICurrentUser,
+  user: ICurrentUser;
 
-  token: string,
+  token: string;
 }

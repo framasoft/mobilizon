@@ -32,7 +32,7 @@ export default class GroupList extends Vue {
   }
 
   usernameWithDomain(actor) {
-    return actor.username + (actor.domain === null ? "" : `@${actor.domain}`);
+    return actor.username + (actor.domain === null ? '' : `@${actor.domain}`);
   }
 
   fetchData() {
@@ -57,7 +57,7 @@ export default class GroupList extends Vue {
   viewActor(actor) {
     this.$router.push({
       name: RouteName.GROUP,
-      params: { name: this.usernameWithDomain(actor) }
+      params: { name: this.usernameWithDomain(actor) },
     });
   }
 
