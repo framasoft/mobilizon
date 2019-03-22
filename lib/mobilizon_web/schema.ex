@@ -18,6 +18,7 @@ defmodule MobilizonWeb.Schema do
   import_types(MobilizonWeb.Schema.Actors.PersonType)
   import_types(MobilizonWeb.Schema.Actors.GroupType)
   import_types(MobilizonWeb.Schema.CommentType)
+  import_types(MobilizonWeb.Schema.ConfigType)
 
   alias MobilizonWeb.Resolvers
 
@@ -133,6 +134,7 @@ defmodule MobilizonWeb.Schema do
     import_fields(:participant_queries)
     import_fields(:tag_queries)
     import_fields(:address_queries)
+    import_fields(:config_queries)
   end
 
   @desc """

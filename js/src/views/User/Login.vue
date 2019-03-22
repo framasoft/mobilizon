@@ -37,7 +37,7 @@
                 <translate>Forgot your password ?</translate>
               </router-link>
             </div>
-            <div class="control">
+            <div class="control" v-if="config && config.registrationsOpen">
               <router-link
                 class="button is-text"
                 :to="{ name: 'Register', params: { default_email: credentials.email, default_password: credentials.password }}"
@@ -61,12 +61,21 @@ import { ILogin } from '@/types/login.model';
 import { UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
 import { onLogin } from '@/vue-apollo';
 import { RouteName } from '@/router';
+import { IConfig } from '@/types/config.model';
+import { CONFIG } from '@/graphql/config';
 
-@Component
+@Component({
+  apollo: {
+    config: {
+      query: CONFIG
+    }
+  }
+})
 export default class Login extends Vue {
   @Prop({ type: String, required: false, default: '' }) email!: string;
   @Prop({ type: String, required: false, default: '' }) password!: string;
 
+  config!: IConfig;
   credentials = {
     email: '',
     password: '',

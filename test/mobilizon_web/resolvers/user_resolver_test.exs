@@ -1,11 +1,12 @@
 defmodule MobilizonWeb.Resolvers.UserResolverTest do
   use MobilizonWeb.ConnCase
-  alias Mobilizon.{Actors, Users}
+  alias Mobilizon.{Actors, Users, CommonConfig}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Users.User
   alias MobilizonWeb.AbsintheHelpers
   alias Mobilizon.Service.Users.ResetPassword
   import Mobilizon.Factory
+  import Mock
   use Bamboo.Test
 
   @valid_actor_params %{email: "test@test.tld", password: "testest", username: "test"}
@@ -388,6 +389,29 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
                "Email doesn't fit required format"
+    end
+
+    test "test create_user/3 doesn't create a user when registration is disabled", context do
+      with_mock CommonConfig, registrations_open?: fn -> false end do
+        mutation = """
+            mutation {
+              createUser(
+                    email: "#{@user_creation.email}",
+                    password: "#{@user_creation.password}",
+                ) {
+                  id,
+                  email
+                }
+              }
+        """
+
+        res =
+          context.conn
+          |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+        assert hd(json_response(res, 200)["errors"])["message"] ==
+                 "Registrations are not enabled"
+      end
     end
   end
 
