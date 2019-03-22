@@ -22,6 +22,7 @@
     "easygettext": "^2.7.0",
     "graphql": "^14.1.1",
     "graphql-tag": "^2.10.1",
+    "leaflet": "^1.4.0",
     "lodash": "^4.17.11",
     "material-design-icons": "^3.0.1",
     "ngeohash": "^0.6.3",
@@ -34,10 +35,12 @@
     "vue-property-decorator": "^8.1.0",
     "vue-router": "^3.0.2",
     "vue-simple-markdown": "^1.0.9",
+    "vue2-leaflet": "^2.0.2",
     "vuex": "^3.1.0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
+    "@types/leaflet": "^1.4.3",
     "@types/lodash": "^4.14.123",
     "@types/mocha": "^5.2.6",
     "@vue/cli-plugin-babel": "^3.5.1",

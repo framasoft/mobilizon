@@ -54,6 +54,12 @@
               <span>{{ event.physicalAddress.postal_code }} {{ event.physicalAddress.locality }}</span><br>
               <span>{{ event.physicalAddress.region }} {{ event.physicalAddress.country }}</span>
             </address>
+            <div class="map">
+              <map-leaflet
+                :coords="event.physicalAddress.geom"
+                :popup="event.physicalAddress.description"
+              />
+            </div>
           </div>
           <p v-if="actorIsOrganizer()">
             <translate>You are an organizer.</translate>
@@ -118,6 +124,9 @@ import { RouteName } from '@/router';
 import 'vue-simple-markdown/dist/vue-simple-markdown.css';
 
 @Component({
+  components: {
+    'map-leaflet': () => import('@/components/Map.vue'),
+  },
   apollo: {
     event: {
       query: FETCH_EVENT,
@@ -237,3 +246,10 @@ export default class Event extends Vue {
   }
 }
 </script>
+<style lang="scss">
+  .address div.map {
+    height: 400px;
+    width: 400px;
+    padding: 25px 35px;
+  }
+</style>
