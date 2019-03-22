@@ -1,6 +1,7 @@
 image: tcitworld/mobilizon-ci
 
 stages:
+  - deps
   - front
   - back
   - deploy
@@ -18,6 +19,28 @@ variables:
   MOBILIZON_DATABASE_DBNAME: $POSTGRES_DB
   MOBILIZON_DATABASE_HOST: $POSTGRES_HOST
   GEOLITE_CITIES_PATH: "/usr/share/GeoIP/GeoLite2-City.mmdb"
+
+setup_elixir_deps:
+  stage: deps
+  script:
+    - mix deps.get
+    - mix compile
+  cache:
+    paths:
+      - deps
+      - _build
+
+setup_js_deps:
+  stage: deps
+  before_script:
+    - cd js
+  script:
+    - npm install
+  after_script:
+    - cd ../
+  cache:
+    paths:
+      - js/node_modules
 
 js:
   stage: front
