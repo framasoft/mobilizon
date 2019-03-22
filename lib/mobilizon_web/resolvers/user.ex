@@ -3,6 +3,7 @@ defmodule MobilizonWeb.Resolvers.User do
   Handles the user-related GraphQL calls
   """
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.CommonConfig
   alias Mobilizon.Users.User
   alias Mobilizon.{Actors, Users}
   alias Mobilizon.Service.Users.{ResetPassword, Activation}
@@ -64,15 +65,23 @@ defmodule MobilizonWeb.Resolvers.User do
   end
 
   @doc """
-  Register an user :
+  Register an user:
+    - check registrations are enabled
     - create the user
     - send a validation email to the user
   """
   @spec create_user(any(), map(), any()) :: tuple()
   def create_user(_parent, args, _resolution) do
-    with {:ok, %User{} = user} <- Users.register(args) do
+    with {:registrations_open, true} <- {:registrations_open, CommonConfig.registrations_open?()},
+         {:ok, %User{} = user} <- Users.register(args) do
       Activation.send_confirmation_email(user)
       {:ok, user}
+    else
+      {:registrations_open, false} ->
+        {:error, "Registrations are not enabled"}
+
+      err ->
+        err
     end
   end
 

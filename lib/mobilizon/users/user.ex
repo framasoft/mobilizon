@@ -146,13 +146,8 @@ defmodule Mobilizon.Users.User do
     end
   end
 
-  def is_confirmed(%User{confirmed_at: nil} = _user) do
-    {:error, :unconfirmed}
-  end
-
-  def is_confirmed(%User{} = user) do
-    {:ok, user}
-  end
+  def is_confirmed(%User{confirmed_at: nil} = _user), do: {:error, :unconfirmed}
+  def is_confirmed(%User{} = user), do: {:ok, user}
 
   def owns_actor(%User{actors: actors}, actor_id) do
     case Enum.find(actors, fn a -> a.id == actor_id end) do
