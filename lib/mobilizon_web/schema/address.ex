@@ -5,49 +5,37 @@ defmodule MobilizonWeb.Schema.AddressType do
   use Absinthe.Schema.Notation
   alias MobilizonWeb.Resolvers
 
-  object :physical_address do
-    field(:type, :address_type)
-    field(:geom, :point)
-    field(:floor, :string)
-    field(:streetAddress, :string)
-    field(:addressLocality, :string)
-    field(:postalCode, :string)
-    field(:addressRegion, :string)
-    field(:addressCountry, :string)
+  object :address do
+    field(:geom, :point, description: "The geocoordinates for the point where this address is")
+    field(:floor, :string, description: "The floor this event is at")
+    field(:street, :string, description: "The address's street name (with number)")
+    field(:locality, :string, description: "The address's locality")
+    field(:postal_code, :string)
+    field(:region, :string)
+    field(:country, :string)
     field(:description, :string)
-    field(:name, :string)
   end
 
   object :phone_address do
-    field(:type, :address_type)
     field(:phone, :string)
     field(:info, :string)
   end
 
   object :online_address do
-    field(:type, :address_type)
     field(:url, :string)
     field(:info, :string)
   end
 
-  @desc "The list of types an address can be"
-  enum :address_type do
-    value(:physical, description: "The address is physical, like a postal address")
-    value(:url, description: "The address is on the Web, like an URL")
-    value(:phone, description: "The address is a phone number for a conference")
-    value(:other, description: "The address is something else")
-  end
-
   object :address_queries do
     @desc "Search for an address"
-    field :search_address, type: list_of(:physical_address) do
+    field :search_address, type: list_of(:address) do
       arg(:query, non_null(:string))
 
       resolve(&Resolvers.Address.search/3)
     end
 
     @desc "Reverse geocode coordinates"
-    field :reverse_geocode, type: list_of(:physical_address) do
+    field :reverse_geocode, type: list_of(:address) do
       arg(:longitude, non_null(:float))
       arg(:latitude, non_null(:float))
 

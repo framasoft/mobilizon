@@ -45,12 +45,12 @@ defmodule Mobilizon.Service.Geospatial.MapQuestTest do
     test "returns a valid address from search" do
       use_cassette "geospatial/map_quest/search" do
         assert %Address{
-                 addressLocality: "Lyon",
+                 locality: "Lyon",
                  description: "10 Rue Jangot",
-                 addressRegion: "Auvergne-Rhône-Alpes",
-                 addressCountry: "FR",
-                 postalCode: "69007",
-                 streetAddress: "10 Rue Jangot",
+                 region: "Auvergne-Rhône-Alpes",
+                 country: "FR",
+                 postal_code: "69007",
+                 street: "10 Rue Jangot",
                  geom: %Geo.Point{
                    coordinates: {4.842566, 45.751714},
                    properties: %{},
@@ -65,12 +65,12 @@ defmodule Mobilizon.Service.Geospatial.MapQuestTest do
     test "returns a valid address from reverse geocode" do
       use_cassette "geospatial/map_quest/geocode" do
         assert %Address{
-                 addressLocality: "Lyon",
+                 locality: "Lyon",
                  description: "10 Rue Jangot",
-                 addressRegion: "Auvergne-Rhône-Alpes",
-                 addressCountry: "FR",
-                 postalCode: "69007",
-                 streetAddress: "10 Rue Jangot",
+                 region: "Auvergne-Rhône-Alpes",
+                 country: "FR",
+                 postal_code: "69007",
+                 street: "10 Rue Jangot",
                  geom: %Geo.Point{
                    coordinates: {4.842569, 45.751718},
                    properties: %{},

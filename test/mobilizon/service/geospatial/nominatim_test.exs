@@ -28,13 +28,13 @@ defmodule Mobilizon.Service.Geospatial.NominatimTest do
     test "returns a valid address from search" do
       use_cassette "geospatial/nominatim/search" do
         assert %Address{
-                 addressLocality: "Lyon",
+                 locality: "Lyon",
                  description:
                    "10, Rue Jangot, La Guillotière, Lyon 7e Arrondissement, Lyon, Métropole de Lyon, Departemental constituency of Rhône, Auvergne-Rhône-Alpes, Metropolitan France, 69007, France",
-                 addressRegion: "Auvergne-Rhône-Alpes",
-                 addressCountry: "France",
-                 postalCode: "69007",
-                 streetAddress: "10 Rue Jangot",
+                 region: "Auvergne-Rhône-Alpes",
+                 country: "France",
+                 postal_code: "69007",
+                 street: "10 Rue Jangot",
                  geom: %Geo.Point{
                    coordinates: {4.8425657, 45.7517141},
                    properties: %{},
@@ -47,13 +47,13 @@ defmodule Mobilizon.Service.Geospatial.NominatimTest do
     test "returns a valid address from reverse geocode" do
       use_cassette "geospatial/nominatim/geocode" do
         assert %Address{
-                 addressLocality: "Lyon",
+                 locality: "Lyon",
                  description:
                    "10, Rue Jangot, La Guillotière, Lyon 7e Arrondissement, Lyon, Métropole de Lyon, Circonscription départementale du Rhône, Auvergne-Rhône-Alpes, France métropolitaine, 69007, France",
-                 addressRegion: "Auvergne-Rhône-Alpes",
-                 addressCountry: "France",
-                 postalCode: "69007",
-                 streetAddress: "10 Rue Jangot",
+                 region: "Auvergne-Rhône-Alpes",
+                 country: "France",
+                 postal_code: "69007",
+                 street: "10 Rue Jangot",
                  geom: %Geo.Point{
                    coordinates: {4.8425657, 45.7517141},
                    properties: %{},

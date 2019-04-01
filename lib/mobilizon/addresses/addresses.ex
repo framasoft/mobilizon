@@ -11,6 +11,16 @@ defmodule Mobilizon.Addresses do
 
   @geom_types [:point]
 
+  @doc false
+  def data() do
+    Dataloader.Ecto.new(Repo, query: &query/2)
+  end
+
+  @doc false
+  def query(queryable, _params) do
+    queryable
+  end
+
   @doc """
   Returns the list of addresses.
 
@@ -168,7 +178,7 @@ defmodule Mobilizon.Addresses do
 
     query =
       if country = Keyword.get(options, :country, nil),
-        do: from(a in query, where: ilike(a.addressCountry, ^"%#{country}%")),
+        do: from(a in query, where: ilike(a.country, ^"%#{country}%")),
         else: query
 
     Repo.all(query)
@@ -198,7 +208,7 @@ defmodule Mobilizon.Addresses do
 
       query =
         if country,
-          do: from(a in query, where: ilike(a.addressCountry, ^"%#{country}%")),
+          do: from(a in query, where: ilike(a.country, ^"%#{country}%")),
           else: query
 
       Repo.all(query)

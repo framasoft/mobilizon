@@ -67,14 +67,14 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
   @spec process_data(map()) :: Address.t()
   defp process_data(%{"address" => address} = body) do
     %Address{
-      addressCountry: Map.get(address, "country"),
-      addressLocality: Map.get(address, "city"),
-      addressRegion: Map.get(address, "state"),
+      country: Map.get(address, "country"),
+      locality: Map.get(address, "city"),
+      region: Map.get(address, "state"),
       description: Map.get(body, "display_name"),
       floor: Map.get(address, "floor"),
       geom: [Map.get(body, "lon"), Map.get(body, "lat")] |> Provider.coordinates(),
-      postalCode: Map.get(address, "postcode"),
-      streetAddress: street_address(address)
+      postal_code: Map.get(address, "postcode"),
+      street: street_address(address)
     }
   end
 
