@@ -107,6 +107,7 @@ import { IEvent, IParticipant } from '@/types/event.model';
 import { IPerson } from '@/types/actor.model';
 import { RouteName } from '@/router';
 import 'vue-simple-markdown/dist/vue-simple-markdown.css';
+import { GRAPHQL_API_ENDPOINT } from '@/api/_entrypoint';
 
 @Component({
   apollo: {
@@ -199,19 +200,15 @@ export default class Event extends Vue {
     }
   }
 
-  downloadIcsEvent() {
-    // FIXME: remove eventFetch
-    // eventFetch(`/events/${this.uuid}/ics`, this.$store, { responseType: 'arraybuffer' })
-    //   .then(response => response.text())
-    //   .then((response) => {
-    //     const blob = new Blob([ response ], { type: 'text/calendar' });
-    //     const link = document.createElement('a');
-    //     link.href = window.URL.createObjectURL(blob);
-    //     link.download = `${this.event.title}.ics`;
-    //     document.body.appendChild(link);
-    //     link.click();
-    //     document.body.removeChild(link);
-    //   });
+  async downloadIcsEvent() {
+    const data = await (await fetch(`${GRAPHQL_API_ENDPOINT}/events/${this.uuid}/export/ics`)).text();
+    const blob = new Blob([data], { type: 'text/calendar' });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = `${this.event.title}.ics`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   actorIsParticipant() {

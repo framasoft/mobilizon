@@ -93,6 +93,8 @@ export default class Register extends Vue {
     avatarUrl: '',
     bannerUrl: '',
     domain: null,
+    feedTokens: [],
+    goingToEvents: [],
   };
   errors: object = {};
   validationSent: boolean = false;

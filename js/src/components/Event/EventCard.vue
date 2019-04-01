@@ -1,8 +1,8 @@
 <template>
   <div class="card">
     <div class="card-image" v-if="!event.image">
-      <figure class="image is-4by3">
-        <img src="https://picsum.photos/g/400/200/">
+      <figure class="image is-16by9">
+        <img src="https://picsum.photos/g/400/225/?random">
       </figure>
     </div>
     <div class="card-content">
@@ -10,12 +10,17 @@
         <router-link :to="{ name: 'Event', params:{ uuid: event.uuid } }">
           <h2 class="title">{{ event.title }}</h2>
         </router-link>
-        <span>{{ event.beginsOn | formatDay }}</span>
+        <DateComponent v-if="!options.hideDate" :date="event.beginsOn" />
       </div>
-      <div v-if="!hideDetails">
-        <div v-if="event.participants.length === 1">
+      <div v-if="!options.hideDetails">
+        <div v-if="event.participants.length > 0 &&
+        options.loggedPerson &&
+        event.participants[0].actor.id === options.loggedPerson.id">
+          <b-tag type="is-info"><translate>Organizer</translate></b-tag>
+        </div>
+        <div v-else-if="event.participants.length === 1">
           <translate
-            :translate-params="{name: event.participants[0].actor.preferredUsername}"
+                  :translate-params="{name: event.participants[0].actor.preferredUsername}"
           >%{name} organizes this event</translate>
         </div>
         <div v-else>
@@ -35,11 +40,17 @@
 <script lang="ts">
 import { IEvent, ParticipantRole } from '@/types/event.model';
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import DateComponent from '@/components/Event/Date.vue';
 
-@Component
+@Component({
+  components: {
+    DateComponent,
+    EventCard,
+  },
+})
 export default class EventCard extends Vue {
   @Prop({ required: true }) event!: IEvent;
-  @Prop({ default: false }) hideDetails!: boolean;
+  @Prop({ default() { return { hideDate: false, loggedPerson: false, hideDetails: false }; } }) options!: object;
 
   data() {
     return {

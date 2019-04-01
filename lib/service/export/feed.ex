@@ -88,7 +88,9 @@ defmodule Mobilizon.Service.Export.Feed do
   # Create an entry for the Atom feed
   @spec get_entry(Event.t()) :: any()
   defp get_entry(%Event{} = event) do
-    with {:ok, html, []} <- Earmark.as_html(event.description) do
+    description = event.description || ""
+
+    with {:ok, html, []} <- Earmark.as_html(description) do
       entry =
         Entry.new(event.url, event.publish_at || event.inserted_at, event.title)
         |> Entry.link(event.url, rel: "alternate", type: "text/html")

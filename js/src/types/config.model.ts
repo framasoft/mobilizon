@@ -1,5 +1,5 @@
 export interface IConfig {
-  name: string,
+  name: string;
 
-  registrationsOpen: boolean,
+  registrationsOpen: boolean;
 }

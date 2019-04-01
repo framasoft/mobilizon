@@ -53,6 +53,11 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
       resolve: dataloader(Events),
       description: "A list of the events this actor has organized"
     )
+
+    @desc "The list of events this person goes to"
+    field :going_to_events, list_of(:event) do
+      resolve(&Resolvers.Person.person_going_to_events/3)
+    end
   end
 
   object :person_queries do

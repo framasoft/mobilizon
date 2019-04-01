@@ -6,6 +6,7 @@ defmodule MobilizonWeb.Resolvers.Person do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Users.User
   alias Mobilizon.Users
+  alias Mobilizon.Events
   alias Mobilizon.Service.ActivityPub
 
   @doc """
@@ -81,6 +82,36 @@ defmodule MobilizonWeb.Resolvers.Person do
 
       {:error, %Ecto.Changeset{} = e} ->
         {:error, e}
+    end
+  end
+
+  @doc """
+  Returns the list of events this person is going to
+  """
+  def person_going_to_events(%Actor{id: actor_id}, _args, %{
+        context: %{current_user: user}
+      }) do
+    with {:is_owned, true, actor} <- User.owns_actor(user, actor_id),
+         events <- Events.list_event_participations_for_actor(actor) do
+      {:ok, events}
+    else
+      {:is_owned, false} ->
+        {:error, "Actor id is not owned by authenticated user"}
+    end
+  end
+
+  @doc """
+  Returns the list of events this person is going to
+  """
+  def person_going_to_events(_parent, %{}, %{
+        context: %{current_user: user}
+      }) do
+    with %Actor{} = actor <- Users.get_actor_for_user(user),
+         events <- Events.list_event_participations_for_actor(actor) do
+      {:ok, events}
+    else
+      {:is_owned, false} ->
+        {:error, "Actor id is not owned by authenticated user"}
     end
   end
 end
