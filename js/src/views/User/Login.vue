@@ -5,7 +5,12 @@
         <translate>Welcome back!</translate>
       </h1>
     </section>
-    <section>
+
+    <b-message v-if="errorCode === LoginErrorCode.NEED_TO_LOGIN" title="Info" type="is-info">
+      <translate>You need to login.</translate>
+    </b-message>
+
+    <section v-if="!currentUser.isLoggedIn">
       <div class="columns is-mobile is-centered">
         <div class="column is-half card">
           <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">{{ error }}</b-message>
@@ -49,6 +54,10 @@
         </div>
       </div>
     </section>
+
+    <b-message v-else title="Error" type="is-error">
+      <translate>You are already logged-in.</translate>
+    </b-message>
   </div>
 </template>
 
@@ -58,16 +67,21 @@ import { LOGIN } from '@/graphql/auth';
 import { validateEmailField, validateRequiredField } from '@/utils/validators';
 import { saveUserData } from '@/utils/auth';
 import { ILogin } from '@/types/login.model';
-import { UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
+import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
 import { onLogin } from '@/vue-apollo';
 import { RouteName } from '@/router';
-import { IConfig } from '@/types/config.model';
-import { CONFIG } from '@/graphql/config';
+import { LoginErrorCode } from '@/types/login-error-code.model'
+import { ICurrentUser } from '@/types/current-user.model'
+import { CONFIG } from '@/graphql/config'
+import { IConfig } from '@/types/config.model'
 
 @Component({
   apollo: {
     config: {
       query: CONFIG
+    },
+    currentUser: {
+      query: CURRENT_USER_CLIENT
     }
   }
 })
@@ -75,33 +89,39 @@ export default class Login extends Vue {
   @Prop({ type: String, required: false, default: '' }) email!: string;
   @Prop({ type: String, required: false, default: '' }) password!: string;
 
+  LoginErrorCode = LoginErrorCode;
+
+  errorCode: LoginErrorCode | null = null;
   config!: IConfig;
+  currentUser!: ICurrentUser;
+
   credentials = {
     email: '',
     password: '',
   };
   validationSent = false;
+
   errors: string[] = [];
   rules = {
     required: validateRequiredField,
     email: validateEmailField,
   };
-  user: any;
 
-  beforeCreate() {
-    if (this.user) {
-      this.$router.push('/');
-    }
-  }
+  private redirect: string | null = null;
 
   mounted() {
     this.credentials.email = this.email;
     this.credentials.password = this.password;
+
+    let query = this.$route.query;
+    this.errorCode = query[ 'code' ] as LoginErrorCode;
+    this.redirect = query[ 'redirect' ] as string;
   }
 
   async loginAction(e: Event) {
     e.preventDefault();
-    this.errors.splice(0);
+
+    this.errors = [];
 
     try {
       const result = await this.$apollo.mutate<{ login: ILogin }>({
@@ -119,12 +139,17 @@ export default class Login extends Vue {
         variables: {
           id: result.data.login.user.id,
           email: this.credentials.email,
+          isLoggedIn: true,
         },
       });
 
       onLogin(this.$apollo);
 
-      this.$router.push({ name: RouteName.HOME });
+      if (this.redirect) {
+        this.$router.push(this.redirect)
+      } else {
+        this.$router.push({ name: RouteName.HOME });
+      }
     } catch (err) {
       console.error(err);
       err.graphQLErrors.forEach(({ message }) => {

@@ -3,6 +3,7 @@ import CreateGroup from '@/views/Group/Create.vue';
 import Group from '@/views/Group/Group.vue';
 import GroupList from '@/views/Group/GroupList.vue';
 import Identities from '@/views/Account/Identities.vue';
+import { RouteConfig } from 'vue-router';
 
 export enum ActorRouteName {
   IDENTITIES = 'Identities',
@@ -12,7 +13,7 @@ export enum ActorRouteName {
   PROFILE = 'Profile',
 }
 
-export const actorRoutes = [
+export const actorRoutes: RouteConfig[] = [
   {
     path: '/identities',
     name: ActorRouteName.IDENTITIES,

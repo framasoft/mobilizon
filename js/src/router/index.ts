@@ -5,6 +5,8 @@ import Home from '@/views/Home.vue';
 import { UserRouteName, userRoutes } from './user';
 import { EventRouteName, eventRoutes } from '@/router/event';
 import { ActorRouteName, actorRoutes } from '@/router/actor';
+import { ErrorRouteName, errorRoutes } from '@/router/error';
+import { authGuardIfNeeded } from '@/router/guards/auth-guard';
 
 Vue.use(Router);
 
@@ -20,6 +22,7 @@ export const RouteName = {
   ...UserRouteName,
   ...EventRouteName,
   ...ActorRouteName,
+  ...ErrorRouteName,
 };
 
 const router = new Router({
@@ -29,6 +32,7 @@ const router = new Router({
     ...userRoutes,
     ...eventRoutes,
     ...actorRoutes,
+    ...errorRoutes,
 
     {
       path: '/',
@@ -45,5 +49,7 @@ const router = new Router({
     },
   ],
 });
+
+router.beforeEach(authGuardIfNeeded);
 
 export default router;
