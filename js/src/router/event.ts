@@ -2,6 +2,7 @@ import EventList from '@/views/Event/EventList.vue';
 import Location from '@/views/Location.vue';
 import CreateEvent from '@/views/Event/Create.vue';
 import Event from '@/views/Event/Event.vue';
+import { RouteConfig } from 'vue-router';
 
 export enum EventRouteName {
   EVENT_LIST = 'EventList',
@@ -11,7 +12,7 @@ export enum EventRouteName {
   LOCATION = 'Location',
 }
 
-export const eventRoutes = [
+export const eventRoutes: RouteConfig[] = [
   {
     path: '/events/list/:location?',
     name: EventRouteName.EVENT_LIST,

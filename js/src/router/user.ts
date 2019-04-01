@@ -5,6 +5,8 @@ import Validate from '@/views/User/Validate.vue';
 import ResendConfirmation from '@/views/User/ResendConfirmation.vue';
 import SendPasswordReset from '@/views/User/SendPasswordReset.vue';
 import PasswordReset from '@/views/User/PasswordReset.vue';
+import { beforeRegisterGuard } from '@/router/guards/register-guard';
+import { RouteConfig } from 'vue-router';
 
 export enum UserRouteName {
   REGISTER = 'Register',
@@ -16,13 +18,14 @@ export enum UserRouteName {
   LOGIN = 'Login',
 }
 
-export const userRoutes = [
+export const userRoutes: RouteConfig[] = [
   {
     path: '/register/user',
     name: UserRouteName.REGISTER,
     component: RegisterUser,
     props: true,
     meta: { requiredAuth: false },
+    beforeEnter: beforeRegisterGuard,
   },
   {
     path: '/register/profile',

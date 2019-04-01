@@ -98,6 +98,7 @@ export default class App extends Vue {
         variables: {
           id: userId,
           email: userEmail,
+          isLoggedIn: true,
         },
       });
     }

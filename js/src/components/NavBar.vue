@@ -18,17 +18,17 @@
     <div class="navbar-end">
       <div class="navbar-item">
         <div class="buttons">
-          <router-link class="button is-primary" v-if="!currentUser.id && config && config.registrationsOpen" :to="{ name: 'Register' }">
+          <router-link class="button is-primary" v-if="!currentUser.isLoggedIn && config && config.registrationsOpen" :to="{ name: 'Register' }">
             <strong>
               <translate>Sign up</translate>
             </strong>
           </router-link>
-          <router-link class="button is-light" v-if="!currentUser.id" :to="{ name: 'Login' }">
+          <router-link class="button is-light" v-if="!currentUser.isLoggedIn" :to="{ name: 'Login' }">
             <translate>Log in</translate>
           </router-link>
           <router-link
             class="button is-light"
-            v-if="currentUser.id && loggedPerson"
+            v-if="currentUser.isLoggedIn && loggedPerson"
             :to="{ name: 'Profile', params: { name: loggedPerson.preferredUsername} }"
           >
             <figure class="image is-24x24">
@@ -36,6 +36,8 @@
             </figure>
             <span>{{ loggedPerson.preferredUsername }}</span>
           </router-link>
+
+          <span v-if="currentUser.isLoggedIn" class="button" v-on:click="logout()">Log out</span>
         </div>
       </div>
     </div>
@@ -45,7 +47,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { SEARCH } from '@/graphql/search';
-import { CURRENT_USER_CLIENT } from '@/graphql/user';
+import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
 import { onLogout } from '@/vue-apollo';
 import { deleteUserData } from '@/utils/auth';
 import { LOGGED_PERSON } from '@/graphql/actor';
@@ -53,6 +55,7 @@ import { IActor, IPerson } from '@/types/actor.model';
 import { RouteName } from '@/router';
 import { CONFIG } from '@/graphql/config';
 import { IConfig } from '@/types/config.model';
+import { ICurrentUser } from '@/types/current-user.model'
 
 @Component({
   apollo: {
@@ -70,9 +73,6 @@ import { IConfig } from '@/types/config.model';
     currentUser: {
       query: CURRENT_USER_CLIENT,
     },
-    loggedPerson: {
-      query: LOGGED_PERSON,
-    },
     config: {
       query: CONFIG,
     }
@@ -87,8 +87,9 @@ export default class NavBar extends Vue {
   search: any[] = [];
   searchText: string | null = null;
   searchSelect = null;
-  loggedPerson!: IPerson;
+  loggedPerson: IPerson | null = null;
   config!: IConfig;
+  currentUser!: ICurrentUser;
 
   get items() {
     return this.search.map(searchEntry => {
@@ -104,6 +105,20 @@ export default class NavBar extends Vue {
       }
       return searchEntry;
     });
+  }
+
+  @Watch('currentUser')
+  async onCurrentUserChanged() {
+    // Refresh logged person object
+    if (this.currentUser.isLoggedIn) {
+      const result = await this.$apollo.query({
+        query: LOGGED_PERSON,
+      });
+
+      this.loggedPerson = result.data.loggedPerson;
+    } else {
+      this.loggedPerson = null;
+    }
   }
 
   @Watch('model')
@@ -134,12 +149,21 @@ export default class NavBar extends Vue {
     this.$apollo.queries['search'].refetch();
   }
 
-  logout() {
-    alert('logout !');
+  async logout() {
+    await this.$apollo.mutate({
+      mutation: UPDATE_CURRENT_USER_CLIENT,
+      variables: {
+        id: null,
+        email: null,
+        isLoggedIn: false,
+      },
+    });
 
     deleteUserData();
 
-    return onLogout(this.$apollo);
+    onLogout(this.$apollo)
+
+    return this.$router.push({ path: '/' })
   }
 }
 </script>
