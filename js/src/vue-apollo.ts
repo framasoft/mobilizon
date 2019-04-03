@@ -27,9 +27,18 @@ const fragmentMatcher = new IntrospectionFragmentMatcher({
           name: 'SearchResult',
           possibleTypes: [
             { name: 'Event' },
-            { name: 'Actor' },
+            { name: 'Person' },
+            { name: 'Group' },
           ],
-        }, // this is an example, put your INTERFACE and UNION kinds here!
+        },
+        {
+          kind: 'INTERFACE',
+          name: 'Actor',
+          possibleTypes: [
+            { name: 'Person' },
+            { name: 'Group' },
+          ],
+        },
       ],
     },
   },

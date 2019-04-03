@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <section class="hero">
       <h1 class="title">
         <translate>Welcome back!</translate>
@@ -12,14 +12,14 @@
 
     <section v-if="!currentUser.isLoggedIn">
       <div class="columns is-mobile is-centered">
-        <div class="column is-half card">
+        <div class="column is-half">
           <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">{{ error }}</b-message>
           <form @submit="loginAction">
-            <b-field label="Email">
+            <b-field :label="$gettext('Email')">
               <b-input aria-required="true" required type="email" v-model="credentials.email"/>
             </b-field>
 
-            <b-field label="Password">
+            <b-field :label="$gettext('Password')">
               <b-input
                 aria-required="true"
                 required
@@ -70,20 +70,20 @@ import { ILogin } from '@/types/login.model';
 import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
 import { onLogin } from '@/vue-apollo';
 import { RouteName } from '@/router';
-import { LoginErrorCode } from '@/types/login-error-code.model'
-import { ICurrentUser } from '@/types/current-user.model'
-import { CONFIG } from '@/graphql/config'
-import { IConfig } from '@/types/config.model'
+import { LoginErrorCode } from '@/types/login-error-code.model';
+import { ICurrentUser } from '@/types/current-user.model';
+import { CONFIG } from '@/graphql/config';
+import { IConfig } from '@/types/config.model';
 
 @Component({
   apollo: {
     config: {
-      query: CONFIG
+      query: CONFIG,
     },
     currentUser: {
-      query: CURRENT_USER_CLIENT
-    }
-  }
+      query: CURRENT_USER_CLIENT,
+    },
+  },
 })
 export default class Login extends Vue {
   @Prop({ type: String, required: false, default: '' }) email!: string;
@@ -113,9 +113,9 @@ export default class Login extends Vue {
     this.credentials.email = this.email;
     this.credentials.password = this.password;
 
-    let query = this.$route.query;
-    this.errorCode = query[ 'code' ] as LoginErrorCode;
-    this.redirect = query[ 'redirect' ] as string;
+    const query = this.$route.query;
+    this.errorCode = query['code'] as LoginErrorCode;
+    this.redirect = query['redirect'] as string;
   }
 
   async loginAction(e: Event) {
@@ -146,7 +146,7 @@ export default class Login extends Vue {
       onLogin(this.$apollo);
 
       if (this.redirect) {
-        this.$router.push(this.redirect)
+        this.$router.push(this.redirect);
       } else {
         this.$router.push({ name: RouteName.HOME });
       }

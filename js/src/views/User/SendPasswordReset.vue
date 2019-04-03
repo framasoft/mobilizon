@@ -1,6 +1,6 @@
 <template>
-  <section class="columns">
-    <div class="card column">
+  <section class="container">
+    <div class="column">
       <h1 class="title">
         <translate>Password reset</translate>
       </h1>

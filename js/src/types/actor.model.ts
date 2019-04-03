@@ -22,6 +22,19 @@ export class Actor implements IActor {
   summary: string = '';
   suspended: boolean = false;
   url: string = '';
+
+  get displayNameAndUsername(): string {
+    return `${this.name} (${this.usernameWithDomain})`;
+  }
+
+  public usernameWithDomain(): string {
+    const domain = this.domain ? `@${this.domain}` : '';
+    return `@${this.preferredUsername}${domain}`;
+  }
+
+  public displayName(): string {
+    return this.name != null && this.name !== '' ? this.name : this.usernameWithDomain();
+  }
 }
 
 export interface IPerson extends IActor {
@@ -36,6 +49,10 @@ export interface IGroup extends IActor {
 export class Person extends Actor implements IPerson {
   feedTokens: IFeedToken[] = [];
   goingToEvents: IEvent[] = [];
+}
+
+export class Group extends Actor implements IGroup {
+  members: IMember[] = [];
 }
 
 export interface IFeedToken {

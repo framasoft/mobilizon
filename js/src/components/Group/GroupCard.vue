@@ -7,11 +7,11 @@
     </div>
     <div class="card-content">
       <div class="content">
-        <router-link :to="{ name: 'Group', params:{ uuid: group.uuid } }">
-          <h2 class="title">{{ group.name ? group.name : group.preferredUsername }}</h2>
+        <router-link :to="{ name: RouteName.GROUP, params:{ preferredUsername: group.preferredUsername } }">
+          <h2 class="title">{{ group.displayName() }}</h2>
         </router-link>
       </div>
-      <div v-if="!hideDetails">
+      <div>
         <p>{{ group.summary }}</p>
       </div>
     </div>
@@ -20,11 +20,13 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { IGroup } from '../../types/actor.model';
+import { Group } from '@/types/actor.model';
+import { RouteName } from '@/router';
 
 @Component
 export default class GroupCard extends Vue {
-  @Prop({ required: true }) group!: IGroup;
-  @Prop({ default: false }) hideDetails!: boolean;
+  @Prop({ required: true }) group!: Group;
+
+  RouteName = RouteName;
 }
 </script>

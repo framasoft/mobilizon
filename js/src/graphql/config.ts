@@ -4,6 +4,7 @@ export const CONFIG = gql`
 query {
   config {
     name,
+    description,
     registrationsOpen
   }
 }

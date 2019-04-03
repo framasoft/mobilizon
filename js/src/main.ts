@@ -3,7 +3,6 @@
 import Vue from 'vue';
 import VueSimpleMarkdown from 'vue-simple-markdown';
 import Buefy from 'buefy';
-import 'buefy/dist/buefy.css';
 import GetTextPlugin from 'vue-gettext';
 import App from '@/App.vue';
 import router from '@/router';
@@ -19,9 +18,6 @@ Vue.use(Buefy, {
 });
 
 const language = (window.navigator as any).userLanguage || window.navigator.language;
-
-Vue.filter('formatDate', value => value ? new Date(value).toLocaleString() : null);
-Vue.filter('formatDay', value => value ? new Date(value).toLocaleDateString() : null);
 
 Vue.use(GetTextPlugin, {
   translations,

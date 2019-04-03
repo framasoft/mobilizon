@@ -33,7 +33,7 @@ export const actorRoutes: RouteConfig[] = [
     meta: { requiredAuth: true },
   },
   {
-    path: '/~:name',
+    path: '/~:preferredUsername',
     name: ActorRouteName.GROUP,
     component: Group,
     props: true,

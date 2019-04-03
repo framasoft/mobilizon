@@ -3,11 +3,14 @@
     <section class="hero is-link" v-if="!currentUser.id || !loggedPerson">
       <div class="hero-body">
         <div class="container">
-          <h1 class="title">Find events you like</h1>
-          <h2 class="subtitle">Share them with Mobilizon</h2>
-          <router-link class="button" :to="{ name: 'Register' }">
+          <h1 class="title">{{ config.name }}</h1>
+          <h2 class="subtitle">{{ config.description }}</h2>
+          <router-link class="button" :to="{ name: 'Register' }" v-if="config.registrationsOpen">
             <translate>Register</translate>
           </router-link>
+          <p v-else>
+            <translate>This instance isn't opened to registrations, but you can register on other instances.</translate>
+          </p>
         </div>
       </div>
     </section>
@@ -18,8 +21,8 @@
         >Welcome back %{username}</translate>
       </h1>
     </section>
-    <section v-if="loggedPerson">
-      <span class="events-nearby title">Events you're going at</span>
+    <section v-if="loggedPerson" class="container">
+      <span class="events-nearby title"><translate>Events you're going at</translate></span>
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <div v-if="goingToEvents.size > 0" v-for="row in Array.from(goingToEvents.entries())">
         <!--   Iterators will be supported in v-for with VueJS 3     -->
@@ -62,16 +65,15 @@
         <translate>You're not going to any event yet</translate>
       </b-message>
     </section>
-    <section>
-      <span class="events-nearby title">Events nearby you</span>
+    <section class="container">
+      <h3 class="events-nearby title"><translate>Events nearby you</translate></h3>
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <div v-if="events.length > 0" class="columns is-multiline">
-        <EventCard
-          v-for="event in events"
-          :key="event.uuid"
-          :event="event"
-          class="column is-one-quarter-desktop is-half-mobile"
-        />
+        <div class="column is-one-third-desktop" v-for="event in events.slice(0, 6)" :key="event.uuid">
+          <EventCard
+            :event="event"
+          />
+        </div>
       </div>
       <b-message v-else type="is-danger">
         <translate>No events found</translate>
@@ -91,7 +93,9 @@ import { ICurrentUser } from '@/types/current-user.model';
 import { CURRENT_USER_CLIENT } from '@/graphql/user';
 import { RouteName } from '@/router';
 import { IEvent } from '@/types/event.model';
-import DateComponent from '@/components/Event/Date.vue';
+import DateComponent from '@/components/Event/DateCalendarIcon.vue';
+import { CONFIG } from '@/graphql/config';
+import { IConfig } from '@/types/config.model';
 
 @Component({
   apollo: {
@@ -105,6 +109,9 @@ import DateComponent from '@/components/Event/Date.vue';
     currentUser: {
       query: CURRENT_USER_CLIENT,
     },
+    config: {
+      query: CONFIG,
+    },
   },
   components: {
     DateComponent,
@@ -112,18 +119,19 @@ import DateComponent from '@/components/Event/Date.vue';
   },
 })
 export default class Home extends Vue {
-  events = [];
+  events: Event[] = [];
   locations = [];
   city = { name: null };
   country = { name: null };
   loggedPerson: IPerson = new Person();
   currentUser!: ICurrentUser;
+  config: IConfig = { description: '', name: '', registrationsOpen: false };
 
-  get displayed_name() {
-    return this.loggedPerson.name === null
-      ? this.loggedPerson.preferredUsername
-      : this.loggedPerson.name;
-  }
+  // get displayed_name() {
+  //   return this.loggedPerson && this.loggedPerson.name === null
+  //     ? this.loggedPerson.preferredUsername
+  //     : this.loggedPerson.name;
+  // }
 
   isToday(date: string) {
     return (new Date(date)).toDateString() === (new Date()).toDateString();
@@ -153,19 +161,18 @@ export default class Home extends Vue {
 
   get goingToEvents(): Map<string, IEvent[]> {
     const res = this.$data.loggedPerson.goingToEvents.filter((event) => {
-      return event.beginsOn != null && this.isBefore(event.beginsOn, 0)
+      return event.beginsOn != null && this.isBefore(event.beginsOn, 0);
     });
     res.sort(
             (a: IEvent, b: IEvent) => new Date(a.beginsOn) > new Date(b.beginsOn),
     );
-    const groups = res.reduce((acc: Map<string, IEvent[]>, event: IEvent) => {
+    return res.reduce((acc: Map<string, IEvent[]>, event: IEvent) => {
       const day = (new Date(event.beginsOn)).toDateString();
       const events: IEvent[] = acc.get(day) || [];
       events.push(event);
       acc.set(day, events);
       return acc;
-    }, new Map());
-    return groups;
+    },                new Map());
   }
 
   geoLocalize() {
@@ -210,9 +217,9 @@ export default class Home extends Vue {
     this.$router.push({ name: RouteName.EVENT, params: { uuid: event.uuid } });
   }
 
-  ipLocation() {
-    return this.city.name ? this.city.name : this.country.name;
-  }
+  // ipLocation() {
+  //   return this.city.name ? this.city.name : this.country.name;
+  // }
 }
 </script>
 

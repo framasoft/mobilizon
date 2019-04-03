@@ -1,105 +1,101 @@
 <template>
-    <section>
-        <div class="columns">
-            <div class="column">
-                <div class="card" v-if="person">
-                    <div class="card-image" v-if="person.bannerUrl">
-                        <figure class="image">
-                            <img :src="person.bannerUrl">
+    <section class="container">
+        <div v-if="person">
+            <div class="card-image" v-if="person.bannerUrl">
+                <figure class="image">
+                    <img :src="person.bannerUrl">
+                </figure>
+            </div>
+            <div class="card-content">
+                <div class="media">
+                    <div class="media-left">
+                        <figure class="image is-48x48">
+                            <img :src="person.avatarUrl">
                         </figure>
                     </div>
-                    <div class="card-content">
-                        <div class="media">
-                            <div class="media-left">
-                                <figure class="image is-48x48">
-                                    <img :src="person.avatarUrl">
-                                </figure>
-                            </div>
-                            <div class="media-content">
-                                <p class="title">{{ person.name }}</p>
-                                <p class="subtitle">@{{ person.preferredUsername }}</p>
-                            </div>
-                        </div>
-
-                        <div class="content">
-                            <p v-html="person.summary"></p>
-                        </div>
-
-                        <b-dropdown hoverable has-link aria-role="list">
-                            <button class="button is-info" slot="trigger">
-                                <translate>Public feeds</translate>
-                                <b-icon icon="menu-down"></b-icon>
-                            </button>
-
-                            <b-dropdown-item aria-role="listitem">
-                                <a :href="feedUrls('atom', true)">
-                                    <translate>Public RSS/Atom Feed</translate>
-                                </a>
-                            </b-dropdown-item>
-                            <b-dropdown-item aria-role="listitem">
-                                <a :href="feedUrls('ics', true)">
-                                    <translate>Public iCal Feed</translate>
-                                </a>
-                            </b-dropdown-item>
-                        </b-dropdown>
-
-                        <b-dropdown hoverable has-link aria-role="list" v-if="person.feedTokens.length > 0">
-                            <button class="button is-info" slot="trigger">
-                                <translate>Private feeds</translate>
-                                <b-icon icon="menu-down"></b-icon>
-                            </button>
-
-                            <b-dropdown-item aria-role="listitem">
-                                <a :href="feedUrls('atom', false)">
-                                    <translate>RSS/Atom Feed</translate>
-                                </a>
-                            </b-dropdown-item>
-                            <b-dropdown-item aria-role="listitem">
-                                <a :href="feedUrls('ics', false)">
-                                    <translate>iCal Feed</translate>
-                                </a>
-                            </b-dropdown-item>
-                        </b-dropdown>
-                        <a class="button" v-else @click="createToken">
-                            <translate>Create token</translate>
-                        </a>
+                    <div class="media-content">
+                        <p class="title">{{ person.name }}</p>
+                        <p class="subtitle">@{{ person.preferredUsername }}</p>
                     </div>
-                    <section v-if="person.organizedEvents.length > 0">
-                        <h2 class="subtitle">
-                            <translate>Organized</translate>
-                        </h2>
-                        <div class="columns">
-                            <EventCard
-                                    v-for="event in person.organizedEvents"
-                                    :event="event"
-                                    :options="{ hideDetails: true }"
-                                    :key="event.uuid"
-                                    class="column is-one-third"
-                            />
-                        </div>
-                        <div class="field is-grouped">
-                            <p class="control">
-                                <a
-                                        class="button"
-                                        @click="logoutUser()"
-                                        v-if="loggedPerson && loggedPerson.id === person.id"
-                                >
-                                    <translate>User logout</translate>
-                                </a>
-                            </p>
-                            <p class="control">
-                                <a
-                                        class="button"
-                                        @click="deleteProfile()"
-                                        v-if="loggedPerson && loggedPerson.id === person.id"
-                                >
-                                    <translate>Delete</translate>
-                                </a>
-                            </p>
-                        </div>
-                    </section>
                 </div>
+
+                <div class="content">
+                    <vue-simple-markdown :source="person.summary"></vue-simple-markdown>
+                </div>
+
+                <b-dropdown hoverable has-link aria-role="list">
+                    <button class="button is-primary" slot="trigger">
+                        <translate>Public feeds</translate>
+                        <b-icon icon="menu-down"></b-icon>
+                    </button>
+
+                    <b-dropdown-item aria-role="listitem">
+                        <a :href="feedUrls('atom', true)">
+                            <translate>Public RSS/Atom Feed</translate>
+                        </a>
+                    </b-dropdown-item>
+                    <b-dropdown-item aria-role="listitem">
+                        <a :href="feedUrls('ics', true)">
+                            <translate>Public iCal Feed</translate>
+                        </a>
+                    </b-dropdown-item>
+                </b-dropdown>
+
+                <b-dropdown hoverable has-link aria-role="list" v-if="person.feedTokens.length > 0">
+                    <button class="button is-info" slot="trigger">
+                        <translate>Private feeds</translate>
+                        <b-icon icon="menu-down"></b-icon>
+                    </button>
+
+                    <b-dropdown-item aria-role="listitem">
+                        <a :href="feedUrls('atom', false)">
+                            <translate>RSS/Atom Feed</translate>
+                        </a>
+                    </b-dropdown-item>
+                    <b-dropdown-item aria-role="listitem">
+                        <a :href="feedUrls('ics', false)">
+                            <translate>iCal Feed</translate>
+                        </a>
+                    </b-dropdown-item>
+                </b-dropdown>
+                <a class="button" v-else-if="loggedPerson" @click="createToken">
+                    <translate>Create token</translate>
+                </a>
             </div>
+            <section v-if="person.organizedEvents.length > 0">
+                <h2 class="subtitle">
+                    <translate>Organized</translate>
+                </h2>
+                <div class="columns">
+                    <EventCard
+                            v-for="event in person.organizedEvents"
+                            :event="event"
+                            :options="{ hideDetails: true, organizerActor: person }"
+                            :key="event.uuid"
+                            class="column is-one-third"
+                    />
+                </div>
+                <div class="field is-grouped">
+                    <p class="control">
+                        <a
+                                class="button"
+                                @click="logoutUser()"
+                                v-if="loggedPerson && loggedPerson.id === person.id"
+                        >
+                            <translate>User logout</translate>
+                        </a>
+                    </p>
+                    <p class="control">
+                        <a
+                                class="button"
+                                @click="deleteProfile()"
+                                v-if="loggedPerson && loggedPerson.id === person.id"
+                        >
+                            <translate>Delete</translate>
+                        </a>
+                    </p>
+                </div>
+            </section>
         </div>
     </section>
 </template>
@@ -172,3 +168,8 @@ export default class Profile extends Vue {
   }
 }
 </script>
+<style lang="scss">
+@import "../../variables";
+@import "~bulma/sass/utilities/_all";
+@import "~bulma/sass/components/dropdown.sass";
+</style>

@@ -1,43 +1,56 @@
 <template>
   <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-      <router-link class="navbar-item" :to="{ name: 'Home' }">Mobilizon</router-link>
+    <div class="container">
+      <div class="navbar-brand">
+        <router-link class="navbar-item" :to="{ name: 'Home' }"><logo /></router-link>
 
-      <a
-        role="button"
-        class="navbar-burger burger"
-        aria-label="menu"
-        aria-expanded="false"
-        data-target="navbarBasicExample"
-      >
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-      </a>
-    </div>
-    <div class="navbar-end">
-      <div class="navbar-item">
-        <div class="buttons">
-          <router-link class="button is-primary" v-if="!currentUser.isLoggedIn && config && config.registrationsOpen" :to="{ name: 'Register' }">
-            <strong>
-              <translate>Sign up</translate>
-            </strong>
-          </router-link>
-          <router-link class="button is-light" v-if="!currentUser.isLoggedIn" :to="{ name: 'Login' }">
-            <translate>Log in</translate>
-          </router-link>
-          <router-link
-            class="button is-light"
-            v-if="currentUser.isLoggedIn && loggedPerson"
-            :to="{ name: 'Profile', params: { name: loggedPerson.preferredUsername} }"
-          >
-            <figure class="image is-24x24">
-              <img :src="loggedPerson.avatarUrl">
-            </figure>
-            <span>{{ loggedPerson.preferredUsername }}</span>
-          </router-link>
+        <a
+          role="button"
+          class="navbar-burger burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="navbarBasicExample"
+          @click="showNavbar = !showNavbar" :class="{ 'is-active': showNavbar }"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+      <div class="navbar-menu" :class="{ 'is-active': showNavbar }">
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <search-field />
+          </div>
+          <div class="navbar-item" v-if="!currentUser.isLoggedIn">
+            <div class="buttons">
+              <router-link class="button is-primary" v-if="config && config.registrationsOpen" :to="{ name: 'Register' }">
+                <strong>
+                  <translate>Sign up</translate>
+                </strong>
+              </router-link>
+              <router-link class="button is-primary" :to="{ name: 'Login' }">
+                <translate>Log in</translate>
+              </router-link>
+            </div>
+          </div>
+          <div class="navbar-item has-dropdown is-hoverable" v-else>
+              <router-link
+                      class="navbar-link"
+                      v-if="currentUser.isLoggedIn && loggedPerson"
+                      :to="{ name: 'Profile', params: { name: loggedPerson.preferredUsername} }"
+              >
+                <figure class="image is-24x24">
+                  <img :src="loggedPerson.avatarUrl">
+                </figure>
+                <span>{{ loggedPerson.preferredUsername }}</span>
+              </router-link>
 
-          <span v-if="currentUser.isLoggedIn" class="button" v-on:click="logout()">Log out</span>
+            <div class="navbar-dropdown">
+              <a class="navbar-item"><translate>My account</translate></a>
+              <a class="navbar-item" v-on:click="logout()"><translate>Log out</translate></a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -46,30 +59,19 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
-import { SEARCH } from '@/graphql/search';
 import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
 import { onLogout } from '@/vue-apollo';
 import { deleteUserData } from '@/utils/auth';
 import { LOGGED_PERSON } from '@/graphql/actor';
-import { IActor, IPerson } from '@/types/actor.model';
-import { RouteName } from '@/router';
+import { IPerson } from '@/types/actor.model';
 import { CONFIG } from '@/graphql/config';
 import { IConfig } from '@/types/config.model';
-import { ICurrentUser } from '@/types/current-user.model'
+import { ICurrentUser } from '@/types/current-user.model';
+import Logo from '@/components/Logo.vue';
+import SearchField from '@/components/SearchField.vue';
 
 @Component({
   apollo: {
-    search: {
-      query: SEARCH,
-      variables() {
-        return {
-          searchText: this.searchText,
-        };
-      },
-      skip() {
-        return !this.searchText;
-      },
-    },
     currentUser: {
       query: CURRENT_USER_CLIENT,
     },
@@ -77,35 +79,20 @@ import { ICurrentUser } from '@/types/current-user.model'
       query: CONFIG,
     },
   },
+  components: {
+    Logo,
+    SearchField,
+  },
 })
 export default class NavBar extends Vue {
   notifications = [
     { header: 'Coucou' },
     { title: "T'as une notification", subtitle: 'Et elle est cool' },
   ];
-  model = null;
-  search: any[] = [];
-  searchText: string | null = null;
-  searchSelect = null;
   loggedPerson: IPerson | null = null;
   config!: IConfig;
   currentUser!: ICurrentUser;
-
-  get items() {
-    return this.search.map(searchEntry => {
-      switch (searchEntry.__typename) {
-        case 'Actor':
-          searchEntry.label =
-            searchEntry.preferredUsername +
-            (searchEntry.domain === null ? '' : `@${searchEntry.domain}`);
-          break;
-        case 'Event':
-          searchEntry.label = searchEntry.title;
-          break;
-      }
-      return searchEntry;
-    });
-  }
+  showNavbar: boolean = false;
 
   @Watch('currentUser')
   async onCurrentUserChanged() {
@@ -121,34 +108,6 @@ export default class NavBar extends Vue {
     }
   }
 
-  @Watch('model')
-  onModelChanged(val) {
-    switch (val.__typename) {
-      case 'Event':
-        this.$router.push({ name: RouteName.EVENT, params: { uuid: val.uuid } });
-        break;
-
-      case 'Actor':
-        this.$router.push({
-          name: RouteName.PROFILE,
-          params: { name: this.usernameWithDomain(val) },
-        });
-        break;
-    }
-  }
-
-  usernameWithDomain(actor: IActor) {
-    return (
-      actor.preferredUsername +
-      (actor.domain === null ? '' : `@${actor.domain}`)
-    );
-  }
-
-  enter() {
-    console.log('enter');
-    this.$apollo.queries['search'].refetch();
-  }
-
   async logout() {
     await this.$apollo.mutate({
       mutation: UPDATE_CURRENT_USER_CLIENT,
@@ -161,9 +120,16 @@ export default class NavBar extends Vue {
 
     deleteUserData();
 
-    onLogout(this.$apollo)
+    onLogout(this.$apollo);
 
-    return this.$router.push({ path: '/' })
+    return this.$router.push({ path: '/' });
   }
 }
 </script>
+<style lang="scss" scoped>
+  @import "../variables.scss";
+
+  nav {
+    border-bottom: solid 1px #0a0a0a;
+  }
+</style>

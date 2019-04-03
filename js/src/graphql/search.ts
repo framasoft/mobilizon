@@ -6,12 +6,14 @@ query SearchEvents($searchText: String!) {
     ...on Event {
       title,
       uuid,
+      beginsOn,
       __typename
     },
     ...on Actor {
       avatarUrl,
       domain,
       preferredUsername,
+      name,
       __typename
     }
   }

@@ -12,7 +12,7 @@
         class="column is-one-quarter-desktop is-half-mobile"
       />
     </div>
-    <router-link class="button" :to="{ name: 'CreateGroup' }">
+    <router-link class="button" :to="{ name: RouteName.CREATE_GROUP }">
       <translate>Create group</translate>
     </router-link>
   </section>
@@ -26,6 +26,8 @@ import { RouteName } from '@/router';
 export default class GroupList extends Vue {
   groups = [];
   loading = true;
+
+  RouteName = RouteName;
 
   created() {
     this.fetchData();

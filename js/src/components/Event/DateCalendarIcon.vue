@@ -1,18 +1,18 @@
 <template>
-    <span class="container">
+    <time class="container" :datetime="dateObj.getUTCSeconds()">
         <span class="month">{{ month }}</span>
         <span class="day">{{ day }}</span>
-    </span>
+    </time>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component
-export default class DateComponent extends Vue {
+export default class DateCalendarIcon extends Vue {
   @Prop({ required: true }) date!: string;
 
   get dateObj() {
-      return new Date(this.$props.date);
+    return new Date(this.$props.date);
   }
 
   get month() {
@@ -26,22 +26,27 @@ export default class DateComponent extends Vue {
 </script>
 
 <style lang="scss" scoped>
-  .container {
-    display: inline-flex;
-    padding: 2px 0;
-    width: 40px;
-    background: #fff;
+  time.container {
+    background: #f6f7f8;
+    border: 1px solid rgba(46,62,72,.12);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /*height: 50px;*/
+    width: 48px;
+    padding: 8px;
+    text-align: center;
 
     span {
-      flex: 0;
-      flex-direction: column;
-      text-align: center;
+      display: block;
 
       &.month {
         color: #fa3e3e;
         padding: 2px 0;
         font-size: 12px;
         line-height: 12px;
+        text-transform: uppercase;
       }
 
       &.day {

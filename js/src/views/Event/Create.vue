@@ -95,7 +95,7 @@ export default class CreateEvent extends Vue {
           });
         })
         .catch(error => {
-          console.log(error);
+          console.error(error);
         });
     }
   }

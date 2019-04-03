@@ -51,6 +51,10 @@ export const FETCH_EVENT = gql`
       # },
       participants {
         ${participantQuery}
+      },
+      tags {
+        slug,
+        title
       }
     }
   }
@@ -75,7 +79,8 @@ export const FETCH_EVENTS = gql`
       # online_address,
       # phone_address,
       physicalAddress {
-        description
+        description,
+        locality
       }
       organizerActor {
         avatarUrl,

@@ -11,6 +11,7 @@ config :mobilizon,
 
 config :mobilizon, :instance,
   name: System.get_env("MOBILIZON_INSTANCE_NAME") || "Localhost",
+  description: System.get_env("MOBILIZON_INSTANCE_DESCRIPTION") || "This is a Mobilizon instance",
   version: "1.0.0-dev",
   registrations_open: System.get_env("MOBILIZON_INSTANCE_REGISTRATIONS_OPEN") || false
 

@@ -141,7 +141,7 @@ defmodule MobilizonWeb.Resolvers.Group do
              actor_id: actor.id,
              role: role
            }) do
-      {:ok, %{parent: group, person: actor, role: role}}
+      {:ok, %{parent: group, actor: actor, role: role}}
     else
       {:is_owned, false} ->
         {:error, "Actor id is not owned by authenticated user"}
@@ -185,7 +185,7 @@ defmodule MobilizonWeb.Resolvers.Group do
           parent: %{
             id: group_id
           },
-          person: %{
+          actor: %{
             id: actor_id
           }
         }

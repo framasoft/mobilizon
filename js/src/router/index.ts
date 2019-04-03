@@ -7,12 +7,24 @@ import { EventRouteName, eventRoutes } from '@/router/event';
 import { ActorRouteName, actorRoutes } from '@/router/actor';
 import { ErrorRouteName, errorRoutes } from '@/router/error';
 import { authGuardIfNeeded } from '@/router/guards/auth-guard';
+import Search from '@/views/Search.vue';
 
 Vue.use(Router);
 
 enum GlobalRouteName {
   HOME = 'Home',
   PAGE_NOT_FOUND = 'PageNotFound',
+  SEARCH = 'Search',
+}
+
+function scrollBehavior(to) {
+  if (to.hash) {
+    return {
+      selector: to.hash,
+      // , offset: { x: 0, y: 10 }
+    };
+  }
+  return { x: 0, y: 0 };
 }
 
 // Hack to merge enums
@@ -26,6 +38,7 @@ export const RouteName = {
 };
 
 const router = new Router({
+  scrollBehavior,
   mode: 'history',
   base: '/',
   routes: [
@@ -33,7 +46,13 @@ const router = new Router({
     ...eventRoutes,
     ...actorRoutes,
     ...errorRoutes,
-
+    {
+      path: '/search/:searchTerm/:searchType?',
+      name: RouteName.SEARCH,
+      component: Search,
+      props: true,
+      meta: { requiredAuth: false },
+    },
     {
       path: '/',
       name: RouteName.HOME,
