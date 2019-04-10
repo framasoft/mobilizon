@@ -38,8 +38,8 @@ once the server is running:
 
   * Install the NodeJS (we guarantee support for the latest LTS and later) ![](https://img.shields.io/badge/node-%3E%3D%2010.0+-brightgreen.svg)
   * Change directory to `js/` and do:
-    * Install JavaScript package dependencies: `npm install`.
-    * Run the developement server in watch mode: `npm run dev`. This will open a
+    * Install JavaScript package dependencies: `yarn install`.
+    * Run the developement server in watch mode: `yarn run dev`. This will open a
       browser on [`localhost:8080`](http://localhost:8080) that gets
       automatically reloaded on change.
 

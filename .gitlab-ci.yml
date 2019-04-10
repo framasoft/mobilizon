@@ -35,7 +35,7 @@ setup_js_deps:
   before_script:
     - cd js
   script:
-    - npm install
+    - yarn install
   after_script:
     - cd ../
   cache:
@@ -46,9 +46,9 @@ js:
   stage: front
   before_script:
     - cd js
-    - npm install
+    - yarn install
   script:
-    - npm run build
+    - yarn run build
   after_script:
     - cd ../
   cache:
@@ -65,10 +65,9 @@ js_deps:
   stage: front
   before_script:
     - cd js
-    - npm install
-    - npm install -g npm-check-updates
+    - yarn install
   script:
-    - ncu --error-level 2
+    - yarn outdated
   after_script:
     - cd ../
   cache:
@@ -80,9 +79,9 @@ js_check:
   stage: front
   before_script:
     - cd js
-    - npm install
+    - yarn install
   script:
-    - npm run lint
+    - yarn run lint
   after_script:
     - cd ../
   cache:

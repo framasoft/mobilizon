@@ -5,7 +5,7 @@
   "scripts": {
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "analyze-bundle": "npm run build -- --report-json && webpack-bundle-analyzer ../priv/static/report.json",
+    "analyze-bundle": "yarn run build -- --report-json && webpack-bundle-analyzer ../priv/static/report.json",
     "dev": "vue-cli-service serve",
     "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "vue-cli-service test:unit",
@@ -27,7 +27,6 @@
     "lodash": "^4.17.11",
     "material-design-icons": "^3.0.1",
     "ngeohash": "^0.6.3",
-    "npm-check-updates": "^3.1.7",
     "register-service-worker": "^1.6.2",
     "typeface-signika": "0.0.72",
     "vue": "^2.6.10",
@@ -67,9 +66,9 @@
     "webpack-bundle-analyzer": "^3.3.0"
   },
   "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
+    ">0.25%",
+    "not ie 11",
+    "not op_mini all"
   ],
   "engines": {
     "node": ">=10.0.0"

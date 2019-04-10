@@ -77,12 +77,12 @@ cd js/
 and install the Javascript dependencies
  
 ```bash
-npm install
+yarn install
 ```
 
 Finally, build the front-end with 
 ```bash
-npm run build
+yarn run build
 ```
   
 ### Testing
