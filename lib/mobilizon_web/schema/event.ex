@@ -17,6 +17,7 @@ defmodule MobilizonWeb.Schema.EventType do
     field(:url, :string, description: "The ActivityPub Event URL")
     field(:local, :boolean, description: "Whether the event is local or not")
     field(:title, :string, description: "The event's title")
+    field(:slug, :string, description: "The event's description's slug")
     field(:description, :string, description: "The event's description")
     field(:begins_on, :datetime, description: "Datetime for when the event begins")
     field(:ends_on, :datetime, description: "Datetime for when the event ends")

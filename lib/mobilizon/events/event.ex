@@ -41,6 +41,7 @@ defmodule Mobilizon.Events.Event do
     field(:url, :string)
     field(:local, :boolean, default: true)
     field(:begins_on, :utc_datetime)
+    field(:slug, :string)
     field(:description, :string)
     field(:ends_on, :utc_datetime)
     field(:title, :string)
@@ -70,6 +71,7 @@ defmodule Mobilizon.Events.Event do
     event
     |> Ecto.Changeset.cast(attrs, [
       :title,
+      :slug,
       :description,
       :url,
       :begins_on,
