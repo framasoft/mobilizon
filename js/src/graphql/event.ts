@@ -18,6 +18,7 @@ export const FETCH_EVENT = gql`
       url,
       local,
       title,
+      slug,
       description,
       beginsOn,
       endsOn,

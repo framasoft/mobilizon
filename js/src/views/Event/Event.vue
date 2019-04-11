@@ -46,8 +46,7 @@
                 </a>
               </div>
               <p class="slug">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                In aliquam libero quam, ut ultricies velit porttitor a. Maecenas mollis vestibulum dolor.
+                {{ event.slug }}
               </p>
             </div>
             <div class="column sidebar">

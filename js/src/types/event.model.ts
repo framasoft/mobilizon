@@ -49,6 +49,7 @@ export interface IEvent {
   local: boolean;
 
   title: string;
+  slug: string;
   description: string;
   category: Category;
 
@@ -77,6 +78,7 @@ export interface IEvent {
 export class EventModel implements IEvent {
   beginsOn: Date = new Date();
   category: Category = Category.MEETING;
+  slug: string = '';
   description: string = '';
   endsOn: Date = new Date();
   joinOptions: EventJoinOptions = EventJoinOptions.FREE;
