@@ -10,6 +10,7 @@ defmodule MobilizonWeb.Schema.ConfigType do
   object :config do
     # Instance name
     field(:name, :string)
+    field(:description, :string)
 
     field(:registrations_open, :boolean)
   end

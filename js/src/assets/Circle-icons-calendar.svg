@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 19.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 64 64"
+   style="enable-background:new 0 0 64 64;"
+   xml:space="preserve"
+   id="svg4965"
+   sodipodi:docname="Circle-icons-calendar.svg"
+   inkscape:version="0.92.4 5da689c313, 2019-01-14"><metadata
+   id="metadata4971"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+   id="defs4969" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1920"
+   inkscape:window-height="1018"
+   id="namedview4967"
+   showgrid="false"
+   inkscape:zoom="10.429825"
+   inkscape:cx="30.416304"
+   inkscape:cy="28.788016"
+   inkscape:window-x="0"
+   inkscape:window-y="34"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="g4961" />
+<style
+   type="text/css"
+   id="style4919">
+	.st0{fill:#77B3D4;}
+	.st1{opacity:0.2;}
+	.st2{fill:#231F20;}
+	.st3{fill:#FFFFFF;}
+	.st4{fill:#C75C5C;}
+	.st5{fill:#4F5D73;}
+	.st6{fill:#E0E0D1;}
+</style>
+<g
+   id="Layer_1">
+	<g
+   id="g4923">
+		<circle
+   class="st0"
+   cx="32"
+   cy="32"
+   r="32"
+   id="circle4921" />
+	</g>
+	<g
+   id="g4961">
+		<g
+   class="st1"
+   id="g4927">
+			<path
+   class="st2"
+   d="M12,25v25c0,2.2,1.8,4,4,4h32c2.2,0,4-1.8,4-4V25H12z"
+   id="path4925" />
+		</g>
+		<g
+   id="g4931">
+			<path
+   class="st3"
+   d="M12,23v25c0,2.2,1.8,4,4,4h32c2.2,0,4-1.8,4-4V23H12z"
+   id="path4929" />
+		</g>
+		<g
+   class="st1"
+   id="g4935">
+			<path
+   class="st2"
+   d="M48,14H16c-2.2,0-4,1.8-4,4v7h40v-7C52,15.8,50.2,14,48,14z"
+   id="path4933" />
+		</g>
+		<g
+   id="g4939">
+			<path
+   class="st4"
+   d="M48,12H16c-2.2,0-4,1.8-4,4v7h40v-7C52,13.8,50.2,12,48,12z"
+   id="path4937" />
+		</g>
+		
+		<g
+   class="st1"
+   id="g4947">
+			<path
+   class="st2"
+   d="M20,21c-1.1,0-2-0.9-2-2v-7c0-1.1,0.9-2,2-2l0,0c1.1,0,2,0.9,2,2v7C22,20.1,21.1,21,20,21L20,21z"
+   id="path4945" />
+		</g>
+		<g
+   class="st1"
+   id="g4951">
+			<path
+   class="st2"
+   d="M45,21c-1.1,0-2-0.9-2-2v-7c0-1.1,0.9-2,2-2l0,0c1.1,0,2,0.9,2,2v7C47,20.1,46.1,21,45,21L45,21z"
+   id="path4949" />
+		</g>
+		<g
+   id="g4955">
+			<path
+   class="st6"
+   d="M20,19c-1.1,0-2-0.9-2-2v-7c0-1.1,0.9-2,2-2l0,0c1.1,0,2,0.9,2,2v7C22,18.1,21.1,19,20,19L20,19z"
+   id="path4953" />
+		</g>
+		<g
+   id="g4959">
+			<path
+   class="st6"
+   d="M45,19c-1.1,0-2-0.9-2-2v-7c0-1.1,0.9-2,2-2l0,0c1.1,0,2,0.9,2,2v7C47,18.1,46.1,19,45,19L45,19z"
+   id="path4957" />
+		</g>
+	</g>
+</g>
+<g
+   id="Layer_2">
+</g>
+</svg>

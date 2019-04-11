@@ -1,6 +1,6 @@
 <template>
-  <section class="columns">
-    <div class="column card">
+  <section class="container">
+    <div class="column">
       <h1 class="title">
         <translate>Resend confirmation email</translate>
       </h1>

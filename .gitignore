@@ -31,3 +31,5 @@ cover/
 uploads/*
 !uploads/.gitkeep
 .idea
+*.mo
+*.po~

@@ -12,7 +12,7 @@
         <div class="columns is-mobile">
           <div class="column">
             <div class="content">
-              <h2 class="subtitle" v-translate>Features</h2>
+              <h3 class="title" v-translate>Features</h3>
               <ul>
                 <li v-translate>Create your communities and your events</li>
                 <li v-translate>Other stuff…</li>
@@ -24,7 +24,7 @@
             </p>
             <hr>
             <div class="content">
-              <h2 class="subtitle" v-translate>About this instance</h2>
+              <h3 class="title" v-translate>About this instance</h3>
               <p>
                 <translate>Your local administrator resumed it's policy:</translate>
               </p>
@@ -96,9 +96,7 @@
             </form>
 
             <div v-if="errors.length > 0">
-              <b-message type="is-danger" v-for="error in errors" :key="error">
-                <translate>{{ error }}</translate>
-              </b-message>
+              <b-message type="is-danger" v-for="error in errors" :key="error">{{ error }}</b-message>
             </div>
           </div>
         </div>
@@ -154,6 +152,8 @@ export default class Register extends Vue {
 </script>
 
 <style lang="scss">
+  @import "../../variables";
+
 .avatar-enter-active {
   transition: opacity 1s ease;
 }
@@ -166,4 +166,9 @@ export default class Register extends Vue {
 .avatar-leave {
   display: none;
 }
+
+  h3.title {
+    background: $secondary;
+    display: inline;
+  }
 </style>

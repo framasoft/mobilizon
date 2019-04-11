@@ -95,3 +95,33 @@ mutation ($preferredUsername: String!, $name: String!, $summary: String!, $email
   }
 }
 `;
+
+export const FETCH_GROUP = gql`
+query($name:String!) {
+  group(preferredUsername: $name) {
+    id,
+    url,
+    name,
+    domain,
+    summary,
+    preferredUsername,
+    suspended,
+    avatarUrl,
+    bannerUrl,
+    organizedEvents {
+        uuid,
+        title,
+        beginsOn
+    },
+    members {
+        role,
+        actor {
+            id,
+            name,
+            domain,
+            preferredUsername
+        }
+    }
+  }
+}
+`;

@@ -11,14 +11,14 @@ defmodule MobilizonWeb.Schema.Actors.MemberType do
   """
   object :member do
     field(:parent, :group, description: "Of which the profile is member")
-    field(:person, :person, description: "Which profile is member of")
+    field(:actor, :person, description: "Which profile is member of")
     field(:role, :integer, description: "The role of this membership")
   end
 
   @desc "Represents a deleted member"
   object :deleted_member do
     field(:parent, :deleted_object)
-    field(:person, :deleted_object)
+    field(:actor, :deleted_object)
   end
 
   object :member_mutations do

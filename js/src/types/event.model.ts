@@ -8,10 +8,10 @@ export enum EventStatus {
 }
 
 export enum EventVisibility {
-  PUBLIC,
-  UNLISTED,
-  RESTRICTED,
-  PRIVATE,
+  PUBLIC = 'PUBLIC',
+  UNLISTED = 'UNLISTED',
+  RESTRICTED = 'RESTRICTED',
+  PRIVATE = 'PRIVATE',
 }
 
 export enum EventJoinOptions {

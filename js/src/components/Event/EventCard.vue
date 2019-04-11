@@ -1,61 +1,124 @@
 <template>
-  <div class="card">
+  <router-link class="card" :to="{ name: 'Event', params: { uuid: event.uuid } }">
     <div class="card-image" v-if="!event.image">
       <figure class="image is-16by9">
         <img src="https://picsum.photos/g/400/225/?random">
       </figure>
     </div>
-    <div class="card-content">
-      <div class="content">
-        <router-link :to="{ name: 'Event', params:{ uuid: event.uuid } }">
-          <h2 class="title">{{ event.title }}</h2>
-        </router-link>
-        <DateComponent v-if="!options.hideDate" :date="event.beginsOn" />
+    <div class="content">
+      <div class="title-wrapper">
+        <div class="date-component">
+          <date-calendar-icon v-if="!mergedOptions.hideDate" :date="event.beginsOn" />
+        </div>
+        <h2 class="title" ref="title">{{ event.title }}</h2>
       </div>
-      <div v-if="!options.hideDetails">
-        <div v-if="event.participants.length > 0 &&
-        options.loggedPerson &&
-        event.participants[0].actor.id === options.loggedPerson.id">
-          <b-tag type="is-info"><translate>Organizer</translate></b-tag>
-        </div>
-        <div v-else-if="event.participants.length === 1">
-          <translate
-                  :translate-params="{name: event.participants[0].actor.preferredUsername}"
-          >%{name} organizes this event</translate>
-        </div>
-        <div v-else>
-          <span v-for="participant in event.participants" :key="participant.actor.uuid">
-            {{ participant.actor.preferredUsername }}
-            <span v-if="participant.role === ParticipantRole.CREATOR">(organizer)</span>,
-            <!-- <translate
-              :translate-params="{name: participant.actor.preferredUsername}"
-            >&nbsp;%{name} is in,</translate>-->
-          </span>
-        </div>
-      </div>
+      <span>
+        <span v-if="event.physicalAddress && event.physicalAddress.locality">{{ event.physicalAddress.locality }} - </span>
+        <span v-if="actorDisplayName && actorDisplayName !== '@'">{{ actorDisplayName }}</span>
+      </span>
     </div>
-  </div>
+<!--    <div v-if="!mergedOptions.hideDetails" class="details">-->
+<!--      <div v-if="event.participants.length > 0 &&-->
+<!--      mergedOptions.loggedPerson &&-->
+<!--      event.participants[0].actor.id === mergedOptions.loggedPerson.id">-->
+<!--        <b-tag type="is-info"><translate>Organizer</translate></b-tag>-->
+<!--      </div>-->
+<!--      <div v-else-if="event.participants.length === 1">-->
+<!--        <translate-->
+<!--                :translate-params="{name: event.participants[0].actor.preferredUsername}"-->
+<!--        >%{name} organizes this event</translate>-->
+<!--      </div>-->
+<!--      <div v-else>-->
+<!--        <span v-for="participant in event.participants" :key="participant.actor.uuid">-->
+<!--          {{ participant.actor.preferredUsername }}-->
+<!--          <span v-if="participant.role === ParticipantRole.CREATOR">(organizer)</span>,-->
+<!--          &lt;!&ndash; <translate-->
+<!--            :translate-params="{name: participant.actor.preferredUsername}"-->
+<!--          >&nbsp;%{name} is in,</translate>&ndash;&gt;-->
+<!--        </span>-->
+<!--      </div>-->
+    </router-link>
 </template>
 
 <script lang="ts">
 import { IEvent, ParticipantRole } from '@/types/event.model';
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import DateComponent from '@/components/Event/Date.vue';
+import DateCalendarIcon from '@/components/Event/DateCalendarIcon.vue';
+import { IActor, IPerson, Person } from '@/types/actor.model';
+const lineClamp = require('line-clamp');
+
+export interface IEventCardOptions {
+  hideDate: boolean;
+  loggedPerson: IPerson | boolean;
+  hideDetails: boolean;
+  organizerActor: IActor | null;
+}
 
 @Component({
   components: {
-    DateComponent,
+    DateCalendarIcon,
     EventCard,
+  },
+  mounted() {
+    lineClamp(this.$refs.title, 3);
   },
 })
 export default class EventCard extends Vue {
   @Prop({ required: true }) event!: IEvent;
-  @Prop({ default() { return { hideDate: false, loggedPerson: false, hideDetails: false }; } }) options!: object;
+  @Prop({ required: false }) options!: IEventCardOptions;
 
-  data() {
-    return {
-      ParticipantRole,
-    };
+  ParticipantRole = ParticipantRole;
+
+  defaultOptions: IEventCardOptions = {
+    hideDate: false,
+    loggedPerson: false,
+    hideDetails: false,
+    organizerActor: null,
+  };
+
+  get mergedOptions(): IEventCardOptions {
+    return { ...this.defaultOptions, ...this.options };
   }
+
+  get actorDisplayName() {
+    const actor = Object.assign(new Person(), this.event.organizerActor || this.mergedOptions.organizerActor);
+    return actor.displayName();
+  }
+
 }
 </script>
+
+<style lang="scss">
+  @import "../../variables";
+
+  a.card {
+    border: none;
+    background: $secondary;
+
+    div.card-image {
+      background: $secondary;
+    }
+
+    div.content {
+      padding: 5px;
+      background: $secondary;
+
+      div.title-wrapper {
+        display: flex;
+
+        div.date-component {
+          flex: 0;
+          margin-right: 16px;
+        }
+
+        .title {
+          font-weight: 400;
+          line-height: 1em;
+          font-size: 1.6em;
+          padding-bottom: 5px;
+        }
+      }
+    }
+  }
+
+</style>

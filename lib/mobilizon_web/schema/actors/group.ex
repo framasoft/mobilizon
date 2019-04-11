@@ -6,6 +6,7 @@ defmodule MobilizonWeb.Schema.Actors.GroupType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   import_types(MobilizonWeb.Schema.Actors.MemberType)
   alias MobilizonWeb.Resolvers
+  alias Mobilizon.Events
 
   @desc """
   Represents a group of actors
@@ -49,7 +50,10 @@ defmodule MobilizonWeb.Schema.Actors.GroupType do
       description: "Whether the group is opened to all or has restricted access"
     )
 
-    field(:members, non_null(list_of(:member)), description: "List of group members")
+    field(:members, non_null(list_of(:member)),
+      resolve: &Resolvers.Member.find_members_for_group/3,
+      description: "List of group members"
+    )
   end
 
   @desc """

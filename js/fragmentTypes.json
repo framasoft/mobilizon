@@ -1,0 +1,21 @@
+{"__schema":
+  {"types":[
+    {
+      "possibleTypes":[
+        {"name":"Person"},
+        {"name":"Group"}
+        ],
+        "name":"Actor",
+        "kind":"INTERFACE"
+    },
+    {
+      "possibleTypes":[
+        {"name":"Event"},
+        {"name":"Person"},
+        {"name":"Group"}
+      ],
+      "name":"SearchResult",
+      "kind":"UNION"}
+  ]
+  }
+}

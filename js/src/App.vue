@@ -1,18 +1,10 @@
 <template>
   <div id="mobilizon">
-    <NavBar></NavBar>
-    <main class="container">
-      <router-view></router-view>
+    <NavBar />
+    <main>
+      <router-view />
     </main>
-    <footer class="footer">
-      <div class="content has-text-centered">
-        <span
-          v-translate="{
-            date: new Date().getFullYear(),
-            }"
-        >© The Mobilizon Contributors %{date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks</span>
-      </div>
-    </footer>
+    <mobilizon-footer />
   </div>
 </template>
 
@@ -22,6 +14,8 @@ import { Component, Vue } from 'vue-property-decorator';
 import { AUTH_TOKEN, AUTH_USER_ACTOR, AUTH_USER_EMAIL, AUTH_USER_ID } from '@/constants';
 import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
 import { ICurrentUser } from '@/types/current-user.model';
+import Footer from '@/components/Footer.vue';
+import Logo from '@/components/Logo.vue';
 
 @Component({
   apollo: {
@@ -30,61 +24,22 @@ import { ICurrentUser } from '@/types/current-user.model';
     },
   },
   components: {
+    Logo,
     NavBar,
+    'mobilizon-footer': Footer,
   },
 })
 export default class App extends Vue {
-  drawer = false;
-  fab = false;
-  items = [
-    {
-      icon: 'poll',
-      text: 'Events',
-      route: 'EventList',
-      role: null,
-    },
-    {
-      icon: 'group',
-      text: 'Groups',
-      route: 'GroupList',
-      role: null,
-    },
-    { icon: 'settings', text: 'Settings', role: 'ROLE_USER' },
-    { icon: 'chat_bubble', text: 'Send feedback', role: 'ROLE_USER' },
-    { icon: 'help', text: 'Help', role: null },
-    { icon: 'phonelink', text: 'App downloads', role: null },
-  ];
-  error = {
-    timeout: 3000,
-    show: false,
-    text: '',
-  };
   currentUser!: ICurrentUser;
 
   actor = localStorage.getItem(AUTH_USER_ACTOR);
 
-  mounted () {
-    this.initializeCurrentUser();
-  }
-
-  get displayed_name () {
-    // FIXME: load actor
-    return 'no implemented';
-    // return this.actor.display_name === null ? this.actor.username : this.actor.display_name
-  }
-
-  showMenuItem(elem) {
-    // FIXME: load actor
-    return false;
-    // return elem !== null && this.user && this.user.roles !== undefined ? this.user.roles.includes(elem) : true
+  async mounted () {
+    await this.initializeCurrentUser();
   }
 
   getUser (): ICurrentUser|false {
     return this.currentUser.id ? this.currentUser : false;
-  }
-
-  toggleDrawer() {
-    this.drawer = !this.drawer;
   }
 
   private initializeCurrentUser() {
@@ -106,7 +61,32 @@ export default class App extends Vue {
 }
 </script>
 
-<style>
+<style lang="scss">
+  @import "variables";
+
+  // Import Bulma and Buefy styles
+  @import "~bulma/sass/utilities/_all";
+  @import "~bulma/sass/base/_all.sass";
+  @import "~bulma/sass/elements/button.sass";
+  @import "~bulma/sass/elements/container.sass";
+  @import "~bulma/sass/components/card.sass";
+  @import "~bulma/sass/components/pagination.sass";
+  @import "~bulma/sass/elements/form.sass";
+  @import "~bulma/sass/layout/hero.sass";
+  @import "~bulma/sass/elements/title.sass";
+  @import "~bulma/sass/elements/image.sass";
+  @import "~bulma/sass/elements/box.sass";
+  @import "~bulma/sass/components/navbar.sass";
+  @import "~bulma/sass/components/modal.sass";
+  @import "~bulma/sass/grid/_all.sass";
+  @import "~bulma/sass/layout/section.sass";
+  @import "~bulma/sass/layout/footer.sass";
+  @import "~buefy/src/scss/utils/_all";
+  @import "~buefy/src/scss/components/datepicker";
+  @import "~buefy/src/scss/components/modal";
+  @import "~buefy/src/scss/components/form";
+  @import "~buefy/src/scss/components/dropdown";
+
 .router-enter-active,
 .router-leave-active {
   transition-property: opacity;
@@ -121,4 +101,8 @@ export default class App extends Vue {
 .router-leave-active {
   opacity: 0;
 }
+
+  body {
+    background: #f6f7f8;
+  }
 </style>

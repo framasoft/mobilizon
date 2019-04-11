@@ -9,17 +9,17 @@
 </template>
 
 <script lang="ts">
-  import { Component, Vue } from 'vue-property-decorator';
-  import { ErrorCode } from '@/types/error-code.model';
+import { Component, Vue } from 'vue-property-decorator';
+import { ErrorCode } from '@/types/error-code.model';
 
-  @Component
-  export default class ErrorPage extends Vue {
-    code: ErrorCode | null = null;
+@Component
+export default class ErrorPage extends Vue {
+  code: ErrorCode | null = null;
 
-    ErrorCode = ErrorCode;
+  ErrorCode = ErrorCode;
 
-    mounted() {
-      this.code = this.$route.query[ 'code' ] as ErrorCode;
-    }
+  mounted() {
+    this.code = this.$route.query['code'] as ErrorCode;
   }
+}
 </script>

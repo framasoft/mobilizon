@@ -1,14 +1,14 @@
 # English translations for mobilizon package.
-# Copyright (C) 2018 THE mobilizon'S COPYRIGHT HOLDER
+# Copyright (C) 2019 THE mobilizon'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the mobilizon package.
-# Automatically generated, 2018.
+# Automatically generated, 2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: mobilizon 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-17 16:08+0100\n"
-"PO-Revision-Date: 2018-10-24 16:25+0200\n"
+"POT-Creation-Date: 2019-04-10 16:31+0200\n"
+"PO-Revision-Date: 2019-04-08 20:58+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
 "Language: en_US\n"
@@ -17,178 +17,423 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/App.vue:8
+#: src/components/Footer.vue:10
 msgid "© The Mobilizon Contributors %{date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks"
-msgstr ""
+msgstr "© The Mobilizon Contributors %{date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks"
 
-#: src/components/Account/Register.vue:89
+#: src/views/Account/Register.vue:57
 msgid "A validation email was sent to %{email}"
 msgstr "A validation email was sent to %{email}"
 
-#: src/components/Account/Register.vue:26
-msgid "About this instance"
-msgstr ""
+#: src/components/Footer.vue:5
+msgid "About"
+msgstr "About"
 
-#: src/components/Account/Register.vue:92
+#: src/views/Event/Event.vue:138
+msgid "About this event"
+msgstr "About this event"
+
+#: src/views/User/Register.vue:26
+msgid "About this instance"
+msgstr "About this instance"
+
+#: src/views/Account/Identities.vue:7
+msgid "Add a new profile"
+msgstr "Add a new profile"
+
+#: src/views/Event/Event.vue:44 src/views/Event/Event.vue:217
+msgid "Add to my calendar"
+msgstr "Add to my calendar"
+
+#: src/views/Event/Event.vue:2
+msgid "Are you going to this event?"
+msgstr "Are you going to this event?"
+
+#: src/views/Account/Register.vue:60
 msgid "Before you can login, you need to click on the link inside it to validate your account"
 msgstr "Before you can login, you need to click on the link inside it to validate your account"
 
-#: src/components/Category/Create.vue:7
-msgid "Create a new category"
-msgstr ""
+#: src/views/Event/Event.vue:101
+msgid "By %{ name }"
+msgstr "By %{ name }"
 
-#: src/components/Category/Create.vue:34
-msgid "Create category"
-msgstr ""
+#: src/views/Event/Create.vue:3
+msgid "Create a new event"
+msgstr "Create a new event"
 
-#: src/components/Account/Register.vue:16
+#: src/views/Group/Create.vue:3
+msgid "Create a new group"
+msgstr "Create a new group"
+
+#: src/views/Group/GroupList.vue:15
+msgid "Create group"
+msgstr "Create group"
+
+#: src/views/Event/Create.vue:25
+msgid "Create my event"
+msgstr "Create my event"
+
+#: src/views/Group/Create.vue:20
+msgid "Create my group"
+msgstr "Create my group"
+
+#: src/views/Account/Register.vue:43
+msgid "Create my profile"
+msgstr "Create my profile"
+
+#: src/views/Account/Profile.vue:61
+msgid "Create token"
+msgstr "Create token"
+
+#: src/views/User/Register.vue:16
 msgid "Create your communities and your events"
-msgstr ""
+msgstr "Create your communities and your events"
 
-#: src/components/Account/Profile.vue:48 src/components/Category/List.vue:21
-#: src/components/Event/Event.vue:41
+#: src/views/Account/Identities.vue:36
+msgid "Current"
+msgstr "Current"
+
+#: src/views/Account/Profile.vue:93 src/views/Event/Event.vue:64
 msgid "Delete"
-msgstr ""
+msgstr "Delete"
 
-#: src/components/Account/Register.vue:80
+#: src/views/User/Register.vue:82
 msgid "Didn't receive the instructions ?"
-msgstr ""
+msgstr "Didn't receive the instructions ?"
 
-#: src/components/Event/Event.vue:36
-msgid "Download"
-msgstr ""
-
-#: src/components/Event/Event.vue:31
+#: src/views/Event/Event.vue:59
 msgid "Edit"
-msgstr ""
+msgstr "Edit"
 
-#: src/components/Account/Validate.vue:8
-msgid "Error while validating account"
-msgstr ""
+#: src/views/User/Validate.vue:8
+msgid "Either the account is already validated, either the validation token is incorrect."
+msgstr "Either the account is already validated, either the validation token is incorrect."
 
-#: src/components/Category/List.vue:18
-msgid "Explore"
-msgstr ""
+#: src/views/Event/EventList.vue:3
+msgid "Event list"
+msgstr "Event list"
 
-#: src/components/Account/Register.vue:14
+#: src/views/Search.vue:10
+msgid "Events"
+msgstr "Events"
+
+#: src/views/Home.vue:68
+msgid "Events nearby you"
+msgstr "Events nearby you"
+
+#: src/views/Home.vue:24
+msgid "Events you're going at"
+msgstr "Events you're going at"
+
+#: src/views/User/Register.vue:14
 msgid "Features"
-msgstr ""
+msgstr "Features"
 
-#: src/components/Account/Login.vue:46
+#: src/views/User/Login.vue:41
 msgid "Forgot your password ?"
-msgstr ""
+msgstr "Forgot your password ?"
 
-#: src/components/Account/Register.vue:20
+#: src/components/Event/EventFullDate.vue:9
+msgid "From the %{ startDate } at %{ startTime } to the %{ endDate } at %{ endTime }"
+msgstr "From the %{ startDate } at %{ startTime } to the %{ endDate } at %{ endTime }"
+
+#: src/views/Group/GroupList.vue:3
+msgid "Group List"
+msgstr "Group List"
+
+#: src/views/Search.vue:28
+msgid "Groups"
+msgstr "Groups"
+
+#: src/views/Account/Profile.vue:56
+msgid "iCal Feed"
+msgstr "iCal Feed"
+
+#: src/views/Account/Identities.vue:4
+msgid "Identities"
+msgstr "Identities"
+
+#: src/views/User/ResendConfirmation.vue:16
+msgid "If an account with this email exists, we just sent another confirmation email to %{email}"
+msgstr "If an account with this email exists, we just sent another confirmation email to %{email}"
+
+#: src/views/Event/Event.vue:20
+msgid "Join"
+msgstr "Join"
+
+#: src/views/User/Register.vue:20
 msgid ""
 "Learn more on\n"
 "            <a target=\"_blank\" href=\"https://joinmobilizon.org\">joinmobilizon.org</a>"
 msgstr ""
+"Learn more on\n"
+"            <a target=\"_blank\" href=\"https://joinmobilizon.org\">joinmobilizon.org</a>"
 
-#: src/components/NavBar.vue:26
+#: src/views/Event/Event.vue:24
+msgid "Leave"
+msgstr "Leave"
+
+#: src/components/Footer.vue:7
+msgid "Legal"
+msgstr "Legal"
+
+#: src/components/Footer.vue:6
+msgid "License"
+msgstr "License"
+
+#: src/components/NavBar.vue:32
 msgid "Log in"
-msgstr ""
+msgstr "Log in"
 
-#: src/components/Account/Login.vue:38
+#: src/components/NavBar.vue:50
+msgid "Log out"
+msgstr "Log out"
+
+#: src/views/User/Login.vue:33 src/views/User/Register.vue:91
 msgid "Login"
-msgstr ""
+msgstr "Login"
 
-#: src/components/Account/Register.vue:32
+#: src/views/User/Register.vue:32
 msgid "meditate a bit"
-msgstr ""
+msgstr "meditate a bit"
 
-#: src/components/Home.vue:33
+#: src/views/Group/Group.vue:41
+msgid "Members"
+msgstr "Members"
+
+#: src/components/NavBar.vue:49
+msgid "My account"
+msgstr "My account"
+
+#: src/views/Event/Event.vue:70
+msgid "No address defined"
+msgstr "No address defined"
+
+#: src/views/Event/EventList.vue:15 src/views/Home.vue:78
+#: src/views/Search.vue:22
 msgid "No events found"
-msgstr ""
+msgstr "No events found"
 
-#: src/components/Account/Profile.vue:29
+#: src/views/Group/Group.vue:52
+msgid "No group found"
+msgstr "No group found"
+
+#: src/views/Search.vue:38
+msgid "No groups found"
+msgstr "No groups found"
+
+#: src/views/Account/Profile.vue:66 src/views/Group/Group.vue:27
 msgid "Organized"
-msgstr ""
+msgstr "Organized"
 
-#: src/components/Account/Register.vue:17
+#: src/components/Event/EventCard.vue:1
+msgid "Organizer"
+msgstr "Organizer"
+
+#: src/views/User/Register.vue:17
 msgid "Other stuff…"
-msgstr ""
+msgstr "Other stuff…"
 
-#: src/components/Account/SendPasswordReset.vue:4
+#: src/views/User/PasswordReset.vue:4 src/views/User/SendPasswordReset.vue:4
 msgid "Password reset"
-msgstr ""
+msgstr "Password reset"
 
-#: src/components/Account/Register.vue:31
+#: src/views/User/Register.vue:31
 msgid "Please be nice to each other"
-msgstr ""
+msgstr "Please be nice to each other"
 
-#: src/components/Account/ResendConfirmation.vue:21
-#: src/components/Account/SendPasswordReset.vue:22
+#: src/views/User/ResendConfirmation.vue:21
+#: src/views/User/SendPasswordReset.vue:22
 msgid "Please check you spam folder if you didn't receive the email."
+msgstr "Please check you spam folder if you didn't receive the email."
+
+#: src/views/PageNotFound.vue:12
+msgid "Please contact this instance's Mobilizon admin if you think this is a mistake."
 msgstr ""
 
-#: src/components/Account/Register.vue:35
+#: src/views/PageNotFound.vue:9
+msgid "Please make sure the address is correct and that the page hasn't been moved."
+msgstr ""
+
+#: src/views/User/Register.vue:35
 msgid "Please read the full rules"
-msgstr ""
+msgstr "Please read the full rules"
 
-#: src/components/Account/Register.vue:72 src/components/Home.vue:9
+#: src/views/Account/Profile.vue:45
+msgid "Private feeds"
+msgstr "Private feeds"
+
+#: src/views/Event/Event.vue:34
+msgid "public event"
+msgstr "public event"
+
+#: src/views/Account/Profile.vue:27
+msgid "Public feeds"
+msgstr "Public feeds"
+
+#: src/views/Account/Profile.vue:38
+msgid "Public iCal Feed"
+msgstr "Public iCal Feed"
+
+#: src/views/Account/Profile.vue:33
+msgid "Public RSS/Atom Feed"
+msgstr "Public RSS/Atom Feed"
+
+#: src/views/Account/Identities.vue:16 src/views/Home.vue:8
+#: src/views/User/Login.vue:49 src/views/User/Register.vue:74
 msgid "Register"
 msgstr "Register"
 
-#: src/components/Account/Register.vue:5
+#: src/views/Account/Register.vue:5 src/views/User/Register.vue:5
 msgid "Register an account on Mobilizon!"
-msgstr ""
+msgstr "Register an account on Mobilizon!"
 
-#: src/components/Account/ResendConfirmation.vue:4
+#: src/views/Error.vue:2
+msgid "Registration is currently closed."
+msgstr "Registration is currently closed."
+
+#: src/views/User/ResendConfirmation.vue:4
 msgid "Resend confirmation email"
-msgstr ""
+msgstr "Resend confirmation email"
 
-#: src/components/Account/PasswordReset.vue:26
+#: src/views/User/PasswordReset.vue:29
 msgid "Reset my password"
-msgstr ""
+msgstr "Reset my password"
 
-#: src/components/Account/ResendConfirmation.vue:11
+#: src/views/Account/Profile.vue:51
+msgid "RSS/Atom Feed"
+msgstr "RSS/Atom Feed"
+
+#: src/views/PageNotFound.vue:18 src/components/SearchField.vue:19
+msgid "Search"
+msgstr "Search"
+
+#: src/views/Search.vue:3
+msgid "Search results: « %{ search } »"
+msgstr "Search results: « %{ search } »"
+
+#: src/views/User/ResendConfirmation.vue:11
 msgid "Send confirmation email again"
-msgstr ""
+msgstr "Send confirmation email again"
 
-#: src/components/Account/SendPasswordReset.vue:12
+#: src/views/User/SendPasswordReset.vue:12
 msgid "Send email to reset my password"
-msgstr ""
+msgstr "Send email to reset my password"
 
-#: src/components/NavBar.vue:22
+#: src/views/Event/Event.vue:206
+msgid "Share this event"
+msgstr "Share this event"
+
+#: src/views/Event/Event.vue:79
+msgid "Show map"
+msgstr "Show map"
+
+#: src/components/NavBar.vue:28
 msgid "Sign up"
+msgstr "Sign up"
+
+#: src/components/Event/EventFullDate.vue:1
+msgid "The %{ date } at %{ time }"
+msgstr "The %{ date } at %{ time }"
+
+#: src/components/Event/EventFullDate.vue:5
+msgid "The %{ date } from %{ startTime } to %{ endTime }"
+msgstr "The %{ date } from %{ startTime } to %{ endTime }"
+
+#: src/views/Event/Event.vue:141
+msgid "The event organizer didn't add any description."
+msgstr "The event organizer didn't add any description."
+
+#: src/views/PageNotFound.vue:6
+msgid "The page you're looking for doesn't exist."
 msgstr ""
 
-#: src/components/Account/Profile.vue:43
+#: src/views/Event/Event.vue:224
+msgid "These events may interest you"
+msgstr "These events may interest you"
+
+#: src/views/Home.vue:11
+msgid "This instance isn't opened to registrations, but you can register on other instances."
+msgstr "This instance isn't opened to registrations, but you can register on other instances."
+
+#: src/views/Error.vue:6
+msgid "Unknown error."
+msgstr "Unknown error."
+
+#: src/views/Account/Profile.vue:84
 msgid "User logout"
-msgstr ""
+msgstr "User logout"
 
-#: src/components/Event/Event.vue:50
-msgid "Vous avez annoncé aller à cet événement."
-msgstr ""
-
-#: src/components/Event/Event.vue:46
-msgid "Vous êtes organisateur de cet événement."
-msgstr ""
-
-#: src/components/Account/SendPasswordReset.vue:17
+#: src/views/User/SendPasswordReset.vue:17
 msgid "We just sent an email to %{email}"
-msgstr ""
+msgstr "We just sent an email to %{email}"
 
-#: src/components/Account/ResendConfirmation.vue:16
-msgid "We just sent another confirmation email to %{email}"
-msgstr ""
-
-#: src/components/Home.vue:16
+#: src/views/Home.vue:18
 msgid "Welcome back %{username}"
-msgstr ""
+msgstr "Welcome back %{username}"
 
-#: src/components/Account/Login.vue:4
+#: src/views/User/Login.vue:4
 msgid "Welcome back!"
-msgstr ""
+msgstr "Welcome back!"
 
-#: src/components/Account/Validate.vue:12
+#: src/views/Event/Event.vue:2
+msgid "You announced that you're going to this event."
+msgstr "You announced that you're going to this event."
+
+#: src/views/User/Login.vue:58
+msgid "You are already logged-in."
+msgstr "You are already logged-in."
+
+#: src/views/Event/Event.vue:2
+msgid "You are an organizer."
+msgstr "You are an organizer."
+
+#: src/views/Home.vue:45
+msgid "You have one event in %{ days } days."
+msgid_plural "You have %{ count } events in %{ days } days"
+msgstr[0] "You have one event in %{ days } days."
+msgstr[1] "You have %{ count } events in %{ days } days"
+
+#: src/views/Home.vue:29
+msgid "You have one event today."
+msgid_plural "You have %{ count } events today"
+msgstr[0] "You have one event today."
+msgstr[1] "You have %{ count } events today"
+
+#: src/views/Home.vue:37
+msgid "You have one event tomorrow."
+msgid_plural "You have %{ count } events tomorrow"
+msgstr[0] "You have one event tomorrow."
+msgstr[1] "You have %{ count } events tomorrow"
+
+#: src/views/User/Login.vue:9
+msgid "You need to login."
+msgstr "You need to login."
+
+#: src/views/Home.vue:64
+msgid "You're not going to any event yet"
+msgstr "You're not going to any event yet"
+
+#: src/views/User/Validate.vue:12
 msgid "Your account has been validated"
-msgstr ""
+msgstr "Your account has been validated"
 
-#: src/components/Account/Validate.vue:3
+#: src/views/User/Validate.vue:3
 msgid "Your account is being validated"
-msgstr ""
+msgstr "Your account is being validated"
 
-#: src/components/Account/Register.vue:28
+#: src/views/Account/Register.vue:52
+msgid "Your account is nearly ready, %{username}"
+msgstr "Your account is nearly ready, %{username}"
+
+#: src/views/User/Register.vue:28
 msgid "Your local administrator resumed it's policy:"
+msgstr "Your local administrator resumed it's policy:"
+
+#: src/components/Footer.vue:4
+msgid "World map"
+msgstr "World map"
+
+#: src/views/PageNotFound.vue:40
+msgid "Search events, groups, etc."
 msgstr ""

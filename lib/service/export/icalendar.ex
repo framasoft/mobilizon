@@ -18,7 +18,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
   @spec export_public_event(Event.t()) :: {:ok, String.t()}
   def export_public_event(%Event{visibility: visibility} = event)
       when visibility in [:public, :unlisted] do
-    {:ok, %ICalendar{events: [do_export_event(event)]} |> ICalendar.to_ics()}
+    {:ok, %ICalendar{events: [do_export_event(event)]} |> ICalendar.to_ics(vendor: "Mobilizon")}
   end
 
   @spec export_public_event(Event.t()) :: {:error, :event_not_public}
@@ -29,6 +29,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
     %ICalendar.Event{
       summary: event.title,
       dtstart: event.begins_on,
+      dtstamp: event.publish_at || DateTime.utc_now(),
       dtend: event.ends_on,
       description: event.description,
       uid: event.uuid,

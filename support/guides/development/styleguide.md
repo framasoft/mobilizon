@@ -13,9 +13,9 @@ These two commands must not return an error code, since they are required to pas
 # Front
 
 We use `tslint` with the `tslint-config-airbnb` preset.
-Errors should be reported when running in dev mode `npm run dev` or when building a production bundle `npm run build`.
+Errors should be reported when running in dev mode `yarn run dev` or when building a production bundle `yarn run build`.
 
-Please run the following command before pushing code `npm run lint`.
+Please run the following command before pushing code `yanr run lint`.
 
 This command must not return an error code, since it's required to pass inside CI.
 
