@@ -3,12 +3,14 @@ defmodule MobilizonWeb.Resolvers.Event do
   Handles the event-related GraphQL calls
   """
   alias Mobilizon.Activity
+  alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Users.User
 
   # We limit the max number of events that can be retrieved
   @event_max_limit 100
+  @number_of_related_events 3
 
   def list_events(_parent, %{page: page, limit: limit}, _resolution)
       when limit < @event_max_limit do
@@ -41,6 +43,50 @@ defmodule MobilizonWeb.Resolvers.Event do
   """
   def list_participants_for_event(%Event{uuid: uuid}, _args, _resolution) do
     {:ok, Mobilizon.Events.list_participants_for_event(uuid, 1, 10)}
+  end
+
+  @doc """
+  List related events
+  """
+  def list_related_events(
+        %Event{tags: tags, organizer_actor: organizer_actor},
+        _args,
+        _resolution
+      ) do
+    # We get the organizer's next public event
+    events =
+      [Events.get_actor_upcoming_public_event(organizer_actor, uuid)] |> Enum.filter(&is_map/1)
+
+    # uniq_by : It's possible event_from_same_actor is inside events_from_tags
+    events =
+      (events ++
+         Events.find_similar_events_by_common_tags(
+           tags,
+           @number_of_related_events - length(events)
+         ))
+      |> uniq_events()
+
+    # TODO: We should use tag_relations to find more appropriate events
+
+    # We've considered all recommended events, so we fetch the latest events
+    events =
+      if @number_of_related_events - length(events) > 0 do
+        (events ++
+           Events.list_events(1, @number_of_related_events, :begins_on, :asc, true, true))
+        |> uniq_events()
+      else
+        events
+      end
+
+    events =
+      events
+      # We remove the same event from the results
+      |> Enum.filter(fn event -> event.uuid != uuid end)
+      # We return only @number_of_related_events right now
+      |> Enum.take(@number_of_related_events)
+
+    # TODO: We should use tag_relations to find more events
+    {:ok, events}
   end
 
   @doc """

@@ -45,6 +45,34 @@ defmodule Mobilizon.Events do
     {:ok, events, count_events}
   end
 
+  @doc """
+  Get an actor's eventual upcoming public event
+  """
+  @spec get_actor_upcoming_public_event(Actor.t(), String.t()) :: Event.t() | nil
+  def get_actor_upcoming_public_event(%Actor{id: actor_id} = _actor, not_event_uuid \\ nil) do
+    query =
+      from(
+        e in Event,
+        where:
+          e.organizer_actor_id == ^actor_id and e.visibility in [^:public, ^:unlisted] and
+            e.begins_on > ^DateTime.utc_now(),
+        order_by: [asc: :begins_on],
+        preload: [
+          :organizer_actor,
+          :tags,
+          :participants,
+          :physical_address
+        ]
+      )
+
+    query =
+      if is_nil(not_event_uuid),
+        do: query,
+        else: from(q in query, where: q.uuid != ^not_event_uuid)
+
+    Repo.one(query)
+  end
+
   def count_local_events do
     Repo.one(
       from(
@@ -270,6 +298,28 @@ defmodule Mobilizon.Events do
         preload: [:organizer_actor]
       )
       |> paginate(page, limit)
+
+    Repo.all(query)
+  end
+
+  @doc """
+  Find events with the same tags
+  """
+  @spec find_similar_events_by_common_tags(list(), integer()) :: {:ok, list(Event.t())}
+  def find_similar_events_by_common_tags(tags, limit \\ 2) do
+    tags_ids = Enum.map(tags, & &1.id)
+
+    query =
+      from(e in Event,
+        distinct: e.uuid,
+        join: te in "events_tags",
+        on: e.id == te.event_id,
+        where: e.begins_on > ^DateTime.utc_now(),
+        where: e.visibility in [^:public, ^:unlisted],
+        where: te.tag_id in ^tags_ids,
+        order_by: [asc: e.begins_on],
+        limit: ^limit
+      )
 
     Repo.all(query)
   end

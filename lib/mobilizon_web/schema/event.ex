@@ -56,6 +56,11 @@ defmodule MobilizonWeb.Schema.EventType do
       description: "The event's participants"
     )
 
+    field(:related_events, list_of(:event),
+      resolve: &MobilizonWeb.Resolvers.Event.list_related_events/3,
+      description: "Events related to this one"
+    )
+
     # field(:tracks, list_of(:track))
     # field(:sessions, list_of(:session))
 
