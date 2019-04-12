@@ -43,6 +43,7 @@ export const FETCH_EVENT = gql`
       organizerActor {
         avatarUrl,
         preferredUsername,
+        domain,
         name,
       },
       # attributedTo {
@@ -56,6 +57,20 @@ export const FETCH_EVENT = gql`
       tags {
         slug,
         title
+      },
+      relatedEvents {
+        uuid,
+        title,
+        beginsOn,
+        physicalAddress {
+          description
+        },
+        organizerActor {
+          avatarUrl,
+          preferredUsername,
+          domain,
+          name,
+        }
       }
     }
   }

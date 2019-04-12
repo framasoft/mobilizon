@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mobilizon 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-10 16:31+0200\n"
-"PO-Revision-Date: 2019-04-10 16:33+0200\n"
+"POT-Creation-Date: 2019-04-12 16:47+0200\n"
+"PO-Revision-Date: 2019-04-12 16:45+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
 "Language: fr_FR\n"
@@ -30,7 +30,7 @@ msgstr "Un email de validation a été envoyé à %{email}"
 msgid "About"
 msgstr "À propos"
 
-#: src/views/Event/Event.vue:138
+#: src/views/Event/Event.vue:137
 msgid "About this event"
 msgstr "À propos de cet événement"
 
@@ -42,7 +42,7 @@ msgstr "À propos de cette instance"
 msgid "Add a new profile"
 msgstr "Ajouter un nouveau profil"
 
-#: src/views/Event/Event.vue:44 src/views/Event/Event.vue:217
+#: src/views/Event/Event.vue:44 src/views/Event/Event.vue:216
 msgid "Add to my calendar"
 msgstr "Ajouter à mon agenda"
 
@@ -54,7 +54,7 @@ msgstr "Allez-vous à cet événement ?"
 msgid "Before you can login, you need to click on the link inside it to validate your account"
 msgstr "Avant que vous puissiez vous enregistrer, vous devez cliquer sur le lien à l'intérieur pour valider votre compte"
 
-#: src/views/Event/Event.vue:101
+#: src/views/Event/Event.vue:100
 msgid "By %{ name }"
 msgstr "Par %{name}"
 
@@ -94,7 +94,7 @@ msgstr "Créer vos communautés et vos événements"
 msgid "Current"
 msgstr "Actuel"
 
-#: src/views/Account/Profile.vue:93 src/views/Event/Event.vue:64
+#: src/views/Account/Profile.vue:93 src/views/Event/Event.vue:63
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -102,7 +102,7 @@ msgstr "Supprimer"
 msgid "Didn't receive the instructions ?"
 msgstr "Vous n'avez pas reçu les instructions ?"
 
-#: src/views/Event/Event.vue:59
+#: src/views/Event/Event.vue:58
 msgid "Edit"
 msgstr "Éditer"
 
@@ -206,7 +206,7 @@ msgstr "Membres"
 msgid "My account"
 msgstr "Mon compte"
 
-#: src/views/Event/Event.vue:70
+#: src/views/Event/Event.vue:69
 msgid "No address defined"
 msgstr "Aucune adresse définie"
 
@@ -305,7 +305,7 @@ msgstr "Réinitialiser mon mot de passe"
 msgid "RSS/Atom Feed"
 msgstr "Flux RSS/Atom"
 
-#: src/views/PageNotFound.vue:18 src/components/SearchField.vue:19
+#: src/views/PageNotFound.vue:19 src/components/SearchField.vue:19
 msgid "Search"
 msgstr "Rechercher"
 
@@ -321,11 +321,11 @@ msgstr "Envoyer l'email de confirmation à nouveau"
 msgid "Send email to reset my password"
 msgstr "Envoyer un email pour réinitialiser mon mot de passe"
 
-#: src/views/Event/Event.vue:206
+#: src/views/Event/Event.vue:205
 msgid "Share this event"
-msgstr "Partager cet événement"
+msgstr "Partager l'événement"
 
-#: src/views/Event/Event.vue:79
+#: src/views/Event/Event.vue:78
 msgid "Show map"
 msgstr "Afficher la carte"
 
@@ -341,7 +341,7 @@ msgstr "Le %{ date } à %{ time }"
 msgid "The %{ date } from %{ startTime } to %{ endTime }"
 msgstr "Le %{ date } de %{ startTime } à %{ endTime }"
 
-#: src/views/Event/Event.vue:141
+#: src/views/Event/Event.vue:140
 msgid "The event organizer didn't add any description."
 msgstr "L'organisateur de l'événement n'a pas ajouté de description."
 
@@ -349,7 +349,7 @@ msgstr "L'organisateur de l'événement n'a pas ajouté de description."
 msgid "The page you're looking for doesn't exist."
 msgstr "La page que vous recherchez n'existe pas."
 
-#: src/views/Event/Event.vue:224
+#: src/views/Event/Event.vue:223
 msgid "These events may interest you"
 msgstr "Ces événements peuvent vous intéresser"
 
@@ -435,6 +435,6 @@ msgstr "Votre administrateur local a résumé sa politique ainsi :"
 msgid "World map"
 msgstr "Carte mondiale"
 
-#: src/views/PageNotFound.vue:40
+#: src/views/PageNotFound.vue:42
 msgid "Search events, groups, etc."
 msgstr "Rechercher des événements, des groupes, etc."

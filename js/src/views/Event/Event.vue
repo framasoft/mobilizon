@@ -204,12 +204,14 @@
           <div class="columns">
             <div class="column is-half has-text-centered">
               <h3 class="title"><translate>Share this event</translate></h3>
-              <b-icon icon="mastodon" size="is-large" type="is-primary" />
-              <a :href="facebookShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="facebook" size="is-large" type="is-primary" /></a>
-              <a :href="twitterShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="twitter" size="is-large" type="is-primary" /></a>
-              <a :href="emailShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="email" size="is-large" type="is-primary" /></a>
-              <!--     TODO: mailto: links are not used anymore, we should provide a popup to redact a message instead    -->
-              <a :href="linkedInShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="linkedin" size="is-large" type="is-primary" /></a>
+              <div>
+                <b-icon icon="mastodon" size="is-large" type="is-primary" />
+                <a :href="facebookShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="facebook" size="is-large" type="is-primary" /></a>
+                <a :href="twitterShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="twitter" size="is-large" type="is-primary" /></a>
+                <a :href="emailShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="email" size="is-large" type="is-primary" /></a>
+                <!--     TODO: mailto: links are not used anymore, we should provide a popup to redact a message instead    -->
+                <a :href="linkedInShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="linkedin" size="is-large" type="is-primary" /></a>
+              </div>
             </div>
             <hr />
             <div class="column is-half has-text-right add-to-calendar">
@@ -223,8 +225,8 @@
       <section class="more-events container">
         <h3 class="title has-text-centered"><translate>These events may interest you</translate></h3>
         <div class="columns">
-          <div class="column" v-for="index in 3" :key="index">
-            <EventCard :event="event" />
+          <div class="column" v-for="relatedEvent in event.relatedEvents" :key="relatedEvent.uuid">
+            <EventCard :event="relatedEvent" />
           </div>
         </div>
       </section>

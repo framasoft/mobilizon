@@ -69,6 +69,8 @@ export interface IEvent {
   attributedTo: IActor;
   participants: IParticipant[];
 
+  relatedEvents: IEvent[];
+
   onlineAddress?: string;
   phoneAddress?: string;
   physicalAddress?: IAddress;
@@ -94,6 +96,7 @@ export class EventModel implements IEvent {
   visibility: EventVisibility = EventVisibility.PUBLIC;
   attributedTo: IActor = new Actor();
   organizerActor: IActor = new Actor();
+  relatedEvents: IEvent[] = [];
   onlineAddress: string = '';
   phoneAddress: string = '';
 }

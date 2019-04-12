@@ -49,7 +49,7 @@ defmodule MobilizonWeb.Resolvers.Event do
   List related events
   """
   def list_related_events(
-        %Event{tags: tags, organizer_actor: organizer_actor},
+        %Event{tags: tags, organizer_actor: organizer_actor, uuid: uuid},
         _args,
         _resolution
       ) do
@@ -57,12 +57,13 @@ defmodule MobilizonWeb.Resolvers.Event do
     events =
       [Events.get_actor_upcoming_public_event(organizer_actor, uuid)] |> Enum.filter(&is_map/1)
 
+    # We find similar events with the same tags
     # uniq_by : It's possible event_from_same_actor is inside events_from_tags
     events =
       (events ++
          Events.find_similar_events_by_common_tags(
            tags,
-           @number_of_related_events - length(events)
+           @number_of_related_events
          ))
       |> uniq_events()
 
@@ -85,9 +86,10 @@ defmodule MobilizonWeb.Resolvers.Event do
       # We return only @number_of_related_events right now
       |> Enum.take(@number_of_related_events)
 
-    # TODO: We should use tag_relations to find more events
     {:ok, events}
   end
+
+  defp uniq_events(events), do: Enum.uniq_by(events, fn event -> event.uuid end)
 
   @doc """
   Join an event for an actor
