@@ -498,12 +498,17 @@ defmodule Mobilizon.Actors do
   @doc """
   Find actors by their name or displayed name
   """
-  @spec find_actors_by_username_or_name(String.t(), integer(), integer()) :: list(Actor.t())
-  def find_actors_by_username_or_name(username, page \\ nil, limit \\ nil)
-  def find_actors_by_username_or_name("", _page, _limit), do: []
+  @spec find_and_count_actors_by_username_or_name(
+          String.t(),
+          [ActorTypeEnum.t()],
+          integer() | nil,
+          integer() | nil
+        ) ::
+          %{total: integer(), elements: list(Actor.t())}
+  def find_and_count_actors_by_username_or_name(username, _types, page \\ nil, limit \\ nil)
 
-  def find_actors_by_username_or_name(username, page, limit) do
-    Repo.all(
+  def find_and_count_actors_by_username_or_name(username, types, page, limit) do
+    query =
       from(
         a in Actor,
         where:
@@ -515,6 +520,7 @@ defmodule Mobilizon.Actors do
             a.name,
             ^username
           ),
+        where: a.type in ^types,
         order_by:
           fragment(
             "word_similarity(?, ?) + word_similarity(coalesce(?, ''), ?) desc",
@@ -525,7 +531,11 @@ defmodule Mobilizon.Actors do
           )
       )
       |> paginate(page, limit)
-    )
+
+    total = Task.async(fn -> Repo.aggregate(query, :count, :id) end)
+    elements = Task.async(fn -> Repo.all(query) end)
+
+    %{total: Task.await(total), elements: Task.await(elements)}
   end
 
   @doc """

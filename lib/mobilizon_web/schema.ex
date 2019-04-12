@@ -18,9 +18,8 @@ defmodule MobilizonWeb.Schema do
   import_types(MobilizonWeb.Schema.Actors.PersonType)
   import_types(MobilizonWeb.Schema.Actors.GroupType)
   import_types(MobilizonWeb.Schema.CommentType)
+  import_types(MobilizonWeb.Schema.SearchType)
   import_types(MobilizonWeb.Schema.ConfigType)
-
-  alias MobilizonWeb.Resolvers
 
   @desc "A struct containing the id of the deleted object"
   object :deleted_object do
@@ -85,22 +84,6 @@ defmodule MobilizonWeb.Schema do
     end)
   end
 
-  @desc "A search result"
-  union :search_result do
-    types([:event, :person, :group])
-
-    resolve_type(fn
-      %Actor{type: :Person}, _ ->
-        :person
-
-      %Actor{type: :Group}, _ ->
-        :group
-
-      %Event{}, _ ->
-        :event
-    end)
-  end
-
   def context(ctx) do
     loader =
       Dataloader.new()
@@ -120,14 +103,7 @@ defmodule MobilizonWeb.Schema do
   Root Query
   """
   query do
-    @desc "Search through events, persons and groups"
-    field :search, list_of(:search_result) do
-      arg(:search, non_null(:string))
-      arg(:page, :integer, default_value: 1)
-      arg(:limit, :integer, default_value: 10)
-      resolve(&Resolvers.Search.search_events_and_actors/3)
-    end
-
+    import_fields(:search_queries)
     import_fields(:user_queries)
     import_fields(:person_queries)
     import_fields(:group_queries)
