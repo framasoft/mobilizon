@@ -17,9 +17,11 @@ config :mobilizon, MobilizonWeb.Endpoint,
   load_from_system_env: true,
   url: [
     host: System.get_env("MOBILIZON_INSTANCE_HOST") || "mobilizon.me",
-    port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4000
+    scheme: "https",
+    port: 443
   ],
   http: [
+    ip: {127, 0, 0, 1},
     port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4000
   ],
   secret_key_base:
