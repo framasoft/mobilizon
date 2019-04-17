@@ -3,19 +3,15 @@ defmodule MobilizonWeb.PageController do
   Controller to load our webapp
   """
   use MobilizonWeb, :controller
-  alias Mobilizon.Service.Metadata
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Comment}
 
-  plug(:put_layout, false)
   action_fallback(MobilizonWeb.FallbackController)
 
   def index(conn, _params) do
-    conn
-    |> put_resp_content_type("text/html")
-    |> send_file(200, "priv/static/index.html")
+    render conn, "app.html"
   end
 
   def actor(conn, %{"name" => name}) do
@@ -77,16 +73,6 @@ defmodule MobilizonWeb.PageController do
 
   # Inject OpenGraph information
   defp render_with_meta(conn, object) do
-    {:ok, index_content} = File.read(index_file_path())
-    tags = Metadata.build_tags(object)
-    response = String.replace(index_content, "<!--server-generated-meta-->", tags)
-
-    conn
-    |> put_resp_content_type("text/html")
-    |> send_resp(200, response)
-  end
-
-  defp index_file_path() do
-    Path.join(Application.app_dir(:mobilizon, "priv/static/"), "index.html")
+    render conn, "app.html", object: object
   end
 end

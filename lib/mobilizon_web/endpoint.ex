@@ -21,7 +21,7 @@ defmodule MobilizonWeb.Endpoint do
     at: "/",
     from: :mobilizon,
     gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt index.html)
+    only: ~w(css fonts images js favicon.ico robots.txt)
   )
 
   # Code reloading can be explicitly enabled under the
