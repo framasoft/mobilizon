@@ -1,7 +1,6 @@
 version: '3'
 
 services:
-
   postgres:
     container_name: mobilizon_db
     restart: unless-stopped
@@ -9,6 +8,9 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: mobilizon_dev
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
 
   front:
     container_name: mobilizon_front
@@ -43,3 +45,6 @@ services:
       MOBILIZON_DATABASE_DBNAME: mobilizon_dev
       MOBILIZON_DATABASE_HOST: postgres
     entrypoint: entrypoint
+volumes:
+  pgdata:
+  .:
