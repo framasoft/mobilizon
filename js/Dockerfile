@@ -2,7 +2,8 @@ FROM node:10
 
 LABEL maintainer="tcit"
 
-COPY docker/entrypoint.sh /bin/entrypoint
+RUN yarn install
+RUN yarn upgrade node-sass
 
 WORKDIR /app/js
 
