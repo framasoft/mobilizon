@@ -7,7 +7,7 @@ defmodule Mobilizon.Mixfile do
     [
       app: :mobilizon,
       version: @version,
-      elixir: "~> 1.4",
+      elixir: "~> 1.8",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
@@ -116,7 +116,8 @@ defmodule Mobilizon.Mixfile do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate", "test"],
+      "phx.migrate_serve": ["ecto.create --quiet", "ecto.migrate", "phx.server"]
     ]
   end
 
