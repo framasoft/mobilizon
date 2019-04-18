@@ -26,9 +26,8 @@ defmodule MobilizonWeb.WebFingerController do
   Provides /.well-known/webfinger
   """
   def webfinger(conn, %{"resource" => resource}) do
-    with {:ok, response} <- WebFinger.webfinger(resource, "JSON") do
-      json(conn, response)
-    else
+    case WebFinger.webfinger(resource, "JSON") do
+      {:ok, response} -> json(conn, response)
       _e -> send_resp(conn, 404, "Couldn't find user")
     end
   end

@@ -39,10 +39,6 @@ defmodule MobilizonWeb.Router do
     plug(:put_secure_browser_headers)
   end
 
-  pipeline :nodeinfo do
-    plug(:accepts, ["html", "application/json"])
-  end
-
   scope "/api" do
     pipe_through(:graphql)
 
