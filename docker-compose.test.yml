@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  postgres:
+    restart: "no"
+    environment:
+      POSTGRES_DB: mobilizon_test
+  front:
+    restart: "no"
+  api:
+    restart: "no"
+    environment:
+      MIX_ENV: "test"
+      MOBILIZON_DATABASE_DBNAME: mobilizon_test
+    command: "mix test"
+volumes:
+  pgdata:
+  .:

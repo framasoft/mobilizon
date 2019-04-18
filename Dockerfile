@@ -1,6 +1,6 @@
-FROM elixir:1.7
+FROM bitwalker/alpine-elixir:latest
 
-RUN apt-get update && apt-get install -y build-essential inotify-tools postgresql-client
+RUN apk add inotify-tools postgresql-client yarn
 
 RUN mix local.hex --force && mix local.rebar --force
 
