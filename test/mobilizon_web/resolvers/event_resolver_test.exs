@@ -322,5 +322,59 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
 
       assert hd(json_response(res, 200)["errors"])["message"] =~ "cannot delete"
     end
+
+    test "list_related_events/3 should give related events", %{
+      conn: conn,
+      actor: actor
+    } do
+      tag1 = insert(:tag, title: "Elixir", slug: "elixir")
+      tag2 = insert(:tag, title: "PostgreSQL", slug: "postgresql")
+
+      event = insert(:event, title: "Initial event", organizer_actor: actor, tags: [tag1, tag2])
+
+      event2 =
+        insert(:event,
+          title: "Event from same actor",
+          organizer_actor: actor,
+          visibility: :public,
+          begins_on: Timex.shift(DateTime.utc_now(), days: 3)
+        )
+
+      event3 =
+        insert(:event,
+          title: "Event with same tags",
+          tags: [tag1, tag2],
+          visibility: :public,
+          begins_on: Timex.shift(DateTime.utc_now(), days: 3)
+        )
+
+      query = """
+      {
+        event(uuid: "#{event.uuid}") {
+          uuid,
+          title,
+          tags {
+            id
+          },
+          related_events {
+            uuid,
+            title,
+            tags {
+              id
+            }
+          }
+        }
+      }
+      """
+
+      res =
+        conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+
+      assert hd(json_response(res, 200)["data"]["event"]["related_events"])["uuid"] == event2.uuid
+
+      assert hd(tl(json_response(res, 200)["data"]["event"]["related_events"]))["uuid"] ==
+               event3.uuid
+    end
   end
 end

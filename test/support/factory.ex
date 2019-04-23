@@ -95,7 +95,7 @@ defmodule Mobilizon.Factory do
 
   def event_factory do
     actor = build(:actor)
-    start = Timex.now()
+    start = Timex.shift(DateTime.utc_now(), hours: 2)
     uuid = Ecto.UUID.generate()
 
     %Mobilizon.Events.Event{
@@ -108,6 +108,7 @@ defmodule Mobilizon.Factory do
       category: sequence("something"),
       physical_address: build(:address),
       visibility: :public,
+      tags: build_list(3, :tag),
       url: "#{actor.url}/#{uuid}",
       uuid: uuid
     }

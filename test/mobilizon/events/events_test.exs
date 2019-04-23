@@ -20,7 +20,7 @@ defmodule Mobilizon.EventsTest do
 
     setup do
       actor = insert(:actor)
-      event = insert(:event, organizer_actor: actor)
+      event = insert(:event, organizer_actor: actor, visibility: :public)
       {:ok, actor: actor, event: event}
     end
 

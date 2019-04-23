@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mobilizon 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-10 16:31+0200\n"
+"POT-Creation-Date: 2019-04-12 16:47+0200\n"
 "PO-Revision-Date: 2019-04-08 20:58+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -29,7 +29,7 @@ msgstr "A validation email was sent to %{email}"
 msgid "About"
 msgstr "About"
 
-#: src/views/Event/Event.vue:138
+#: src/views/Event/Event.vue:137
 msgid "About this event"
 msgstr "About this event"
 
@@ -41,7 +41,7 @@ msgstr "About this instance"
 msgid "Add a new profile"
 msgstr "Add a new profile"
 
-#: src/views/Event/Event.vue:44 src/views/Event/Event.vue:217
+#: src/views/Event/Event.vue:44 src/views/Event/Event.vue:216
 msgid "Add to my calendar"
 msgstr "Add to my calendar"
 
@@ -53,7 +53,7 @@ msgstr "Are you going to this event?"
 msgid "Before you can login, you need to click on the link inside it to validate your account"
 msgstr "Before you can login, you need to click on the link inside it to validate your account"
 
-#: src/views/Event/Event.vue:101
+#: src/views/Event/Event.vue:100
 msgid "By %{ name }"
 msgstr "By %{ name }"
 
@@ -93,7 +93,7 @@ msgstr "Create your communities and your events"
 msgid "Current"
 msgstr "Current"
 
-#: src/views/Account/Profile.vue:93 src/views/Event/Event.vue:64
+#: src/views/Account/Profile.vue:93 src/views/Event/Event.vue:63
 msgid "Delete"
 msgstr "Delete"
 
@@ -101,7 +101,7 @@ msgstr "Delete"
 msgid "Didn't receive the instructions ?"
 msgstr "Didn't receive the instructions ?"
 
-#: src/views/Event/Event.vue:59
+#: src/views/Event/Event.vue:58
 msgid "Edit"
 msgstr "Edit"
 
@@ -205,7 +205,7 @@ msgstr "Members"
 msgid "My account"
 msgstr "My account"
 
-#: src/views/Event/Event.vue:70
+#: src/views/Event/Event.vue:69
 msgid "No address defined"
 msgstr "No address defined"
 
@@ -304,7 +304,7 @@ msgstr "Reset my password"
 msgid "RSS/Atom Feed"
 msgstr "RSS/Atom Feed"
 
-#: src/views/PageNotFound.vue:18 src/components/SearchField.vue:19
+#: src/views/PageNotFound.vue:19 src/components/SearchField.vue:19
 msgid "Search"
 msgstr "Search"
 
@@ -320,11 +320,11 @@ msgstr "Send confirmation email again"
 msgid "Send email to reset my password"
 msgstr "Send email to reset my password"
 
-#: src/views/Event/Event.vue:206
+#: src/views/Event/Event.vue:205
 msgid "Share this event"
 msgstr "Share this event"
 
-#: src/views/Event/Event.vue:79
+#: src/views/Event/Event.vue:78
 msgid "Show map"
 msgstr "Show map"
 
@@ -340,7 +340,7 @@ msgstr "The %{ date } at %{ time }"
 msgid "The %{ date } from %{ startTime } to %{ endTime }"
 msgstr "The %{ date } from %{ startTime } to %{ endTime }"
 
-#: src/views/Event/Event.vue:141
+#: src/views/Event/Event.vue:140
 msgid "The event organizer didn't add any description."
 msgstr "The event organizer didn't add any description."
 
@@ -348,7 +348,7 @@ msgstr "The event organizer didn't add any description."
 msgid "The page you're looking for doesn't exist."
 msgstr ""
 
-#: src/views/Event/Event.vue:224
+#: src/views/Event/Event.vue:223
 msgid "These events may interest you"
 msgstr "These events may interest you"
 
@@ -434,6 +434,6 @@ msgstr "Your local administrator resumed it's policy:"
 msgid "World map"
 msgstr "World map"
 
-#: src/views/PageNotFound.vue:40
+#: src/views/PageNotFound.vue:42
 msgid "Search events, groups, etc."
 msgstr ""
