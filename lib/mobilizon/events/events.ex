@@ -246,10 +246,9 @@ defmodule Mobilizon.Events do
   @doc """
   Find events by name
   """
-  def find_events_by_name(name, page \\ nil, limit \\ nil)
-  def find_events_by_name("", page, limit), do: list_events(page, limit)
+  def find_and_count_events_by_name(name, page \\ nil, limit \\ nil)
 
-  def find_events_by_name(name, page, limit) do
+  def find_and_count_events_by_name(name, page, limit) do
     name = String.trim(name)
 
     query =
@@ -271,7 +270,10 @@ defmodule Mobilizon.Events do
       )
       |> paginate(page, limit)
 
-    Repo.all(query)
+    total = Task.async(fn -> Repo.aggregate(query, :count, :id) end)
+    elements = Task.async(fn -> Repo.all(query) end)
+
+    %{total: Task.await(total), elements: Task.await(elements)}
   end
 
   @doc """

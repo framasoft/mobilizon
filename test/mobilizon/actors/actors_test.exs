@@ -184,19 +184,26 @@ defmodule Mobilizon.ActorsTest do
       assert MapSet.new([actor_found_id, actor2_found_id]) == MapSet.new([actor.id, actor2.id])
     end
 
-    test "test find_actors_by_username_or_name/1 returns actors with similar usernames", %{
-      actor: %Actor{id: actor_id}
-    } do
+    test "test find_and_count_actors_by_username_or_name/4 returns actors with similar usernames",
+         %{
+           actor: %Actor{id: actor_id}
+         } do
       use_cassette "actors/remote_actor_mastodon_tcit" do
         with {:ok, %Actor{id: actor2_id}} <- Actors.get_or_fetch_by_url(@remote_account_url) do
-          actors_ids = Actors.find_actors_by_username_or_name("tcit") |> Enum.map(& &1.id)
+          %{total: 2, elements: actors} =
+            Actors.find_and_count_actors_by_username_or_name("tcit", [:Person])
+
+          actors_ids = actors |> Enum.map(& &1.id)
+
           assert MapSet.new(actors_ids) == MapSet.new([actor2_id, actor_id])
         end
       end
     end
 
-    test "test find_actors_by_username_or_name/1 returns actors with similar names" do
-      actors = Actors.find_actors_by_username_or_name("ohno")
+    test "test find_and_count_actors_by_username_or_name/4 returns actors with similar names" do
+      %{total: 0, elements: actors} =
+        Actors.find_and_count_actors_by_username_or_name("ohno", [:Person])
+
       assert actors == []
     end
 
