@@ -25,7 +25,6 @@
     "leaflet": "^1.4.0",
     "line-clamp": "0.0.9",
     "lodash": "^4.17.11",
-    "material-design-icons": "^3.0.1",
     "ngeohash": "^0.6.3",
     "register-service-worker": "^1.6.2",
     "typeface-signika": "0.0.72",
