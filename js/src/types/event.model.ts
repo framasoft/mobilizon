@@ -1,5 +1,6 @@
 import { Actor, IActor } from './actor.model';
 import { IAddress } from '@/types/address.model';
+import { ITag } from '@/types/tag.model';
 
 export enum EventStatus {
   TENTATIVE,
