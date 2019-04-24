@@ -79,15 +79,6 @@
                     <p class="control">
                         <a
                                 class="button"
-                                @click="logoutUser()"
-                                v-if="loggedPerson && loggedPerson.id === person.id"
-                        >
-                            <translate>User logout</translate>
-                        </a>
-                    </p>
-                    <p class="control">
-                        <a
-                                class="button"
                                 @click="deleteProfile()"
                                 v-if="loggedPerson && loggedPerson.id === person.id"
                         >
@@ -136,11 +127,6 @@ export default class Profile extends Vue {
   @Watch('$route')
     onRouteChange() {
         // this.fetchData()
-  }
-
-  logoutUser() {
-        // TODO : implement logout
-    this.$router.push({ name: RouteName.HOME });
   }
 
   nl2br(text) {
