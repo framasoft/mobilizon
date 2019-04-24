@@ -111,7 +111,11 @@ export const FETCH_EVENTS = gql`
       category,
       participants {
         ${participantQuery}
-      }
+      },
+      tags {
+        slug,
+        title
+      },
     }
   }
 `;

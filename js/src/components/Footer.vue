@@ -38,6 +38,7 @@ export default class Footer extends Vue {
         align-items: center;
 
         .logo {
+            fill: $secondary;
             flex: 1;
         }
 

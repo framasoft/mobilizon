@@ -1,5 +1,5 @@
 <template>
-    <img src="../assets/mobilizon_logo.svg" alt="Mobilizon">
+    <img svg-inline src="../assets/mobilizon_logo.svg" alt="Mobilizon" :class="{invert: invert}">
 </template>
 
 <script lang="ts">
@@ -13,8 +13,12 @@ export default class Logo extends Vue {
 <style lang="scss" scoped>
     @import "../variables.scss";
 
-    img {
-        color: #403e56;
-        height: 80px;
+    svg {
+        fill: $primary;
+        height: 60px;
+
+        &.invert {
+            fill: $secondary;
+        }
     }
 </style>

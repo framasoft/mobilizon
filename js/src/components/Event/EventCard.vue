@@ -2,6 +2,9 @@
   <router-link class="card" :to="{ name: 'Event', params: { uuid: event.uuid } }">
     <div class="card-image" v-if="!event.image">
       <figure class="image is-16by9">
+        <div class="tag-container">
+          <b-tag v-for="tag in event.tags.slice(0, 3)" :key="tag.slug" type="is-secondary">{{ tag.title }}</b-tag>
+        </div>
         <img src="https://picsum.photos/g/400/225/?random">
       </figure>
     </div>
@@ -80,7 +83,7 @@ export default class EventCard extends Vue {
     return { ...this.defaultOptions, ...this.options };
   }
 
-  get actorDisplayName() {
+  get actorDisplayName(): string {
     const actor = Object.assign(new Person(), this.event.organizerActor || this.mergedOptions.organizerActor);
     return actor.displayName();
   }
@@ -94,6 +97,28 @@ export default class EventCard extends Vue {
   a.card {
     border: none;
     background: $secondary;
+
+    div.tag-container {
+      position: absolute;
+      top: 10px;
+      right: 0;
+      margin-right: -5px;
+      z-index: 10;
+      max-width: 40%;
+
+      span.tag {
+        margin: 5px auto;
+        box-shadow: 0 0 5px 0 rgba(0, 0, 0, 1);
+        /*word-break: break-all;*/
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: block;
+        /*text-align: right;*/
+        font-size: 1em;
+        /*padding: 0 1px;*/
+        line-height: 1.75em;
+      }
+    }
 
     div.card-image {
       background: $secondary;

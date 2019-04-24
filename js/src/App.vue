@@ -76,6 +76,7 @@ export default class App extends Vue {
   @import "~bulma/sass/elements/title.sass";
   @import "~bulma/sass/elements/image.sass";
   @import "~bulma/sass/elements/box.sass";
+  @import "~bulma/sass/elements/tag.sass";
   @import "~bulma/sass/components/navbar.sass";
   @import "~bulma/sass/components/modal.sass";
   @import "~bulma/sass/grid/_all.sass";
@@ -86,6 +87,7 @@ export default class App extends Vue {
   @import "~buefy/src/scss/components/modal";
   @import "~buefy/src/scss/components/form";
   @import "~buefy/src/scss/components/dropdown";
+  @import "~buefy/src/scss/components/tag";
 
 .router-enter-active,
 .router-leave-active {

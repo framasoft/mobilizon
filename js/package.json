@@ -60,6 +60,7 @@
     "tslint": "^5.16.0",
     "tslint-config-airbnb": "^5.11.1",
     "typescript": "^3.4.3",
+    "vue-svg-inline-loader": "^1.2.15",
     "vue-template-compiler": "^2.6.10",
     "webpack": "^4.30.0",
     "webpack-bundle-analyzer": "^3.3.2"

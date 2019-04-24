@@ -1,5 +1,14 @@
+@import "~bulma/sass/utilities/_all";
+
 $primary: #424056;
+$primary-invert: findColorInvert($primary);
 $secondary: #FAB12D;
+$secondary-invert: findColorInvert($secondary);
+
+$colors: (
+        "primary": ($primary, $primary-invert),
+        "secondary": ($secondary, $secondary-invert),
+);
 
 // Navbar
 $navbar-background-color: $secondary;
