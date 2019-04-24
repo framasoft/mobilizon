@@ -1,5 +1,5 @@
 <template>
-    <span class="logo" v-bind:class="{ invert }">M<span class="accent">o</span>b<span class="accent">ı</span>l<span class="accent">ı</span>z<span class="accent">o</span>n</span>
+    <img src="../assets/mobilizon_logo.svg" alt="Mobilizon">
 </template>
 
 <script lang="ts">
@@ -12,21 +12,9 @@ export default class Logo extends Vue {
 </script>
 <style lang="scss" scoped>
     @import "../variables.scss";
-    @import "~typeface-signika/index.css";
 
-    .logo {
-        font-size: 3.5em;
-        color: $primary;
-        font-weight: 400;
-        font-family: Signika,serif;
-
-        &.invert {
-            color: $secondary;
-        }
-
-        span.accent::after {
-            content: "̇"; // U+0307
-            color: #fff;
-        }
+    img {
+        color: #403e56;
+        height: 80px;
     }
 </style>

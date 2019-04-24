@@ -131,5 +131,9 @@ export default class NavBar extends Vue {
 
   nav {
     border-bottom: solid 1px #0a0a0a;
+
+    .navbar-item img {
+      max-height: 2.5em;
+    }
   }
 </style>
