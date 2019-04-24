@@ -75,17 +75,11 @@
                     <span>{{ event.physicalAddress.postal_code }} {{ event.physicalAddress.locality }}</span>
   <!--                  <span>{{ event.physicalAddress.region }} {{ event.physicalAddress.country }}</span>-->
                   </address>
-                  <span class="map-show-button" @click="showMap = !showMap">
+                  <span class="map-show-button" @click="showMap = !showMap" v-if="event.physicalAddress && event.physicalAddress.geom">
                     <translate>Show map</translate>
                   </span>
                 </div>
-<!--                <div class="map" v-if="showMap">-->
-<!--                  <map-leaflet-->
-<!--                          :coords="event.physicalAddress.geom"-->
-<!--                          :popup="event.physicalAddress.description"-->
-<!--                  />-->
-<!--                </div>-->
-                <b-modal v-if="event.physicalAddress" :active.sync="showMap" :width="800" scroll="keep">
+                <b-modal v-if="event.physicalAddress && event.physicalAddress.geom" :active.sync="showMap" :width="800" scroll="keep">
                   <div class="map">
                     <map-leaflet
                             :coords="event.physicalAddress.geom"
