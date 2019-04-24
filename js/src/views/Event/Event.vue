@@ -216,10 +216,10 @@
           </div>
         </div>
       </section>
-      <section class="more-events container">
+      <section class="more-events container" v-if="event.relatedEvents.length > 0">
         <h3 class="title has-text-centered"><translate>These events may interest you</translate></h3>
         <div class="columns">
-          <div class="column" v-for="relatedEvent in event.relatedEvents" :key="relatedEvent.uuid">
+          <div class="column is-one-third-desktop" v-for="relatedEvent in event.relatedEvents" :key="relatedEvent.uuid">
             <EventCard :event="relatedEvent" />
           </div>
         </div>
