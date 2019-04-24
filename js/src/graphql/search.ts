@@ -1,15 +1,28 @@
 import gql from 'graphql-tag';
 
-export const SEARCH = gql`
+export const SEARCH_EVENTS = gql`
 query SearchEvents($searchText: String!) {
-  search(search: $searchText) {
-    ...on Event {
+  searchEvents(search: $searchText) {
+    total,
+    elements {
       title,
       uuid,
       beginsOn,
+      tags {
+        slug,
+        title
+      },
       __typename
-    },
-    ...on Actor {
+    }
+  }
+}
+`;
+
+export const SEARCH_GROUPS = gql`
+query SearchGroups($searchText: String!) {
+  searchGroups(search: $searchText) {
+    total,
+    elements {
       avatarUrl,
       domain,
       preferredUsername,
