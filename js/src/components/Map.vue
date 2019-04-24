@@ -6,7 +6,12 @@
                 class="leaflet-map"
                 :center="[lat, lon]"
         >
-            <l-tile-layer url="https://{s}.tile.osm.org/{z}/{x}/{y}.png"></l-tile-layer>
+            <l-tile-layer
+                    url="https://{s}.tile.osm.org/{z}/{x}/{y}.png"
+                    attribution="© OpenStreetMap contributors"
+            >
+
+            </l-tile-layer>
             <l-marker :lat-lng="[lat, lon]" >
                 <l-popup v-if="popup">{{ popup }}</l-popup>
             </l-marker>
