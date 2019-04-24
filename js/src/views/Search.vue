@@ -8,11 +8,11 @@
             <b-tab-item>
                 <template slot="header">
                     <b-icon icon="calendar"></b-icon>
-                    <span><translate>Events</translate> <b-tag rounded>{{ events.length }}</b-tag> </span>
+                    <span><translate>Events</translate> <b-tag rounded>{{ searchEvents.total }}</b-tag> </span>
                 </template>
-                <div v-if="search.length > 0" class="columns is-multiline">
+                <div v-if="searchEvents.total > 0" class="columns is-multiline">
                     <div class="column is-one-quarter-desktop is-half-mobile"
-                         v-for="event in events"
+                         v-for="event in searchEvents.elements"
                          :key="event.uuid">
                         <EventCard
                                 :event="event"
@@ -26,9 +26,9 @@
             <b-tab-item>
                 <template slot="header">
                     <b-icon icon="account-multiple"></b-icon>
-                    <span><translate>Groups</translate> <b-tag rounded>{{ groups.length }}</b-tag> </span>
+                    <span><translate>Groups</translate> <b-tag rounded>{{ searchGroups.total }}</b-tag> </span>
                 </template>
-                <div v-if="groups.length > 0" class="columns is-multiline">
+                <div v-if="searchGroups.total > 0" class="columns is-multiline">
                     <div class="column is-one-quarter-desktop is-half-mobile"
                          v-for="group in groups"
                          :key="group.uuid">
@@ -44,13 +44,12 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import { SEARCH } from '@/graphql/search';
+import { SEARCH_EVENTS, SEARCH_GROUPS } from '@/graphql/search';
 import { RouteName } from '@/router';
-import { IEvent } from '@/types/event.model';
-import { ISearch } from '@/types/search.model';
 import EventCard from '@/components/Event/EventCard.vue';
-import { IGroup, Group } from '@/types/actor.model';
 import GroupCard from '@/components/Group/GroupCard.vue';
+import { Group, IGroup } from '@/types/actor.model';
+import { SearchEvent, SearchGroup } from '@/types/search.model';
 
 enum SearchTabs {
     EVENTS = 0,
@@ -65,8 +64,19 @@ const tabsName = {
 
 @Component({
   apollo: {
-    search: {
-      query: SEARCH,
+    searchEvents: {
+      query: SEARCH_EVENTS,
+      variables() {
+        return {
+          searchText: this.searchTerm,
+        };
+      },
+      skip() {
+        return !this.searchTerm;
+      },
+    },
+    searchGroups: {
+      query: SEARCH_GROUPS,
       variables() {
         return {
           searchText: this.searchTerm,
@@ -86,7 +96,8 @@ export default class Search extends Vue {
   @Prop({ type: String, required: true }) searchTerm!: string;
   @Prop({ type: String, required: false, default: 'events' }) searchType!: string;
 
-  search = [];
+  searchEvents: SearchEvent = { total: 0, elements: [] };
+  searchGroups: SearchGroup = { total: 0, elements: [] };
   activeTab: SearchTabs = tabsName[this.searchType];
 
   changeTab(index: number) {
@@ -102,10 +113,10 @@ export default class Search extends Vue {
 
   @Watch('search')
   changeTabForResult() {
-    if (this.events.length === 0 && this.groups.length > 0) {
+    if (this.searchEvents.total === 0 && this.searchGroups.total > 0) {
       this.activeTab = SearchTabs.GROUPS;
     }
-    if (this.groups.length === 0 && this.events.length > 0) {
+    if (this.searchGroups.total === 0 && this.searchEvents.total > 0) {
       this.activeTab = SearchTabs.EVENTS;
     }
   }
@@ -113,16 +124,12 @@ export default class Search extends Vue {
   @Watch('search')
   @Watch('$route')
   async loadSearch() {
-    await this.$apollo.queries['search'].refetch();
+    await this.$apollo.queries['searchEvents'].refetch() && this.$apollo.queries['searchGroups'].refetch();
   }
 
-  get events(): IEvent[] {
-    return this.search.filter((value: ISearch) => { return value.__typename === 'Event'; }) as IEvent[];
-  }
 
   get groups(): IGroup[] {
-    const groups = this.search.filter((value: ISearch) => { return value.__typename === 'Group'; }) as IGroup[];
-    return groups.map(group => Object.assign(new Group(), group));
+    return this.searchGroups.elements.map(group => Object.assign(new Group(), group));
   }
 
 }
