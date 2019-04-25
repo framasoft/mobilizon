@@ -14,6 +14,14 @@ defenum(Mobilizon.Actors.ActorOpennessEnum, :actor_openness, [
   :open
 ])
 
+defenum(Mobilizon.Actors.ActorVisibilityEnum, :actor_visibility_type, [
+  :public,
+  :unlisted,
+  # Probably unused
+  :restricted,
+  :private
+])
+
 defmodule Mobilizon.Actors.Actor do
   @moduledoc """
   Represents an actor (local and remote actors)
@@ -25,6 +33,9 @@ defmodule Mobilizon.Actors.Actor do
   alias Mobilizon.Users.User
   alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Events.{Event, FeedToken}
+
+  alias MobilizonWeb.Router.Helpers, as: Routes
+  alias MobilizonWeb.Endpoint
 
   import Ecto.Query
   import Mobilizon.Ecto
@@ -49,6 +60,7 @@ defmodule Mobilizon.Actors.Actor do
     field(:keys, :string)
     field(:manually_approves_followers, :boolean, default: false)
     field(:openness, Mobilizon.Actors.ActorOpennessEnum, default: :moderated)
+    field(:visibility, Mobilizon.Actors.ActorVisibilityEnum, default: :private)
     field(:suspended, :boolean, default: false)
     field(:avatar_url, :string)
     field(:banner_url, :string)
@@ -217,23 +229,42 @@ defmodule Mobilizon.Actors.Actor do
   @spec build_urls(Ecto.Changeset.t(), atom()) :: Ecto.Changeset.t()
   defp build_urls(changeset, type \\ :Person)
 
-  defp build_urls(%Ecto.Changeset{changes: %{preferred_username: username}} = changeset, type) do
-    symbol = if type == :Group, do: "~", else: "@"
-
+  defp build_urls(%Ecto.Changeset{changes: %{preferred_username: username}} = changeset, _type) do
     changeset
     |> put_change(
       :outbox_url,
-      "#{MobilizonWeb.Endpoint.url()}/#{symbol}#{username}/outbox"
+      build_url(username, :outbox)
     )
     |> put_change(
       :inbox_url,
-      "#{MobilizonWeb.Endpoint.url()}/#{symbol}#{username}/inbox"
+      build_url(username, :inbox)
     )
     |> put_change(:shared_inbox_url, "#{MobilizonWeb.Endpoint.url()}/inbox")
-    |> put_change(:url, "#{MobilizonWeb.Endpoint.url()}/#{symbol}#{username}")
+    |> put_change(:url, build_url(username, :page))
   end
 
   defp build_urls(%Ecto.Changeset{} = changeset, _type), do: changeset
+
+  @doc """
+  Build an AP URL for an actor
+  """
+  @spec build_url(String.t(), atom()) :: String.t()
+  def build_url(preferred_username, endpoint, args \\ [])
+
+  def build_url(preferred_username, :page, args) do
+    Endpoint
+    |> Routes.page_url(:actor, preferred_username, args)
+    |> URI.decode()
+  end
+
+  def build_url(username, :inbox, _args), do: "#{build_url(username, :page)}/inbox"
+
+  def build_url(preferred_username, endpoint, args)
+      when endpoint in [:outbox, :following, :followers] do
+    Endpoint
+    |> Routes.activity_pub_url(endpoint, preferred_username, args)
+    |> URI.decode()
+  end
 
   @doc """
   Get a public key for a given ActivityPub actor ID (url)
@@ -272,8 +303,24 @@ defmodule Mobilizon.Actors.Actor do
 
   If actor A and C both follow actor B, actor B's followers are A and C
   """
-  @spec get_followers(struct(), number(), number()) :: list()
+  @spec get_followers(struct(), number(), number()) :: map()
   def get_followers(%Actor{id: actor_id} = _actor, page \\ nil, limit \\ nil) do
+    query =
+      from(
+        a in Actor,
+        join: f in Follower,
+        on: a.id == f.actor_id,
+        where: f.target_actor_id == ^actor_id
+      )
+
+    total = Task.async(fn -> Repo.aggregate(query, :count, :id) end)
+    elements = Task.async(fn -> Repo.all(paginate(query, page, limit)) end)
+
+    %{total: Task.await(total), elements: Task.await(elements)}
+  end
+
+  @spec get_full_followers(struct()) :: list()
+  def get_full_followers(%Actor{id: actor_id} = _actor) do
     Repo.all(
       from(
         a in Actor,
@@ -281,7 +328,6 @@ defmodule Mobilizon.Actors.Actor do
         on: a.id == f.actor_id,
         where: f.target_actor_id == ^actor_id
       )
-      |> paginate(page, limit)
     )
   end
 
@@ -292,6 +338,22 @@ defmodule Mobilizon.Actors.Actor do
   """
   @spec get_followings(struct(), number(), number()) :: list()
   def get_followings(%Actor{id: actor_id} = _actor, page \\ nil, limit \\ nil) do
+    query =
+      from(
+        a in Actor,
+        join: f in Follower,
+        on: a.id == f.target_actor_id,
+        where: f.actor_id == ^actor_id
+      )
+
+    total = Task.async(fn -> Repo.aggregate(query, :count, :id) end)
+    elements = Task.async(fn -> Repo.all(paginate(query, page, limit)) end)
+
+    %{total: Task.await(total), elements: Task.await(elements)}
+  end
+
+  @spec get_full_followings(struct()) :: list()
+  def get_full_followings(%Actor{id: actor_id} = _actor) do
     Repo.all(
       from(
         a in Actor,
@@ -299,7 +361,6 @@ defmodule Mobilizon.Actors.Actor do
         on: a.id == f.target_actor_id,
         where: f.actor_id == ^actor_id
       )
-      |> paginate(page, limit)
     )
   end
 
@@ -389,6 +450,9 @@ defmodule Mobilizon.Actors.Actor do
       %Follower{} = follow -> follow
     end
   end
+
+  @spec public_visibility?(struct()) :: boolean()
+  def public_visibility?(%Actor{visibility: visibility}), do: visibility in [:public, :unlisted]
 
   @doc """
   Return the preferred_username with the eventual @domain suffix if it's a distant actor

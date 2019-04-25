@@ -421,8 +421,8 @@ defmodule Mobilizon.ActorsTest do
       assert follower.approved == true
       assert follower.score == 42
 
-      assert [target_actor] = Actor.get_followings(actor)
-      assert [actor] = Actor.get_followers(target_actor)
+      assert %{total: 1, elements: [target_actor]} = Actor.get_followings(actor)
+      assert %{total: 1, elements: [actor]} = Actor.get_followers(target_actor)
     end
 
     test "create_follower/1 with valid data but same actors fails to create a follower", %{

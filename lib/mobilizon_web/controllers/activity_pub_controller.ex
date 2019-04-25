@@ -111,8 +111,12 @@ defmodule MobilizonWeb.ActivityPubController do
     end
   end
 
-  def outbox(conn, %{"name" => username}) do
-    outbox(conn, %{"name" => username, "page" => "0"})
+  def outbox(conn, %{"name" => name}) do
+    with %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
+      conn
+      |> put_resp_header("content-type", "application/activity+json")
+      |> json(ActorView.render("outbox.json", %{actor: actor}))
+    end
   end
 
   # TODO: Ensure that this inbox is a recipient of the message

@@ -5,8 +5,9 @@ defmodule MobilizonWeb.FeedControllerTest do
   alias MobilizonWeb.Endpoint
 
   describe "/@:preferred_username/feed/atom" do
-    test "it returns an RSS representation of the actor's public events", %{conn: conn} do
-      actor = insert(:actor)
+    test "it returns an RSS representation of the actor's public events if the actor is publicly visible",
+         %{conn: conn} do
+      actor = insert(:actor, visibility: :public)
       tag1 = insert(:tag, title: "RSS", slug: "rss")
       tag2 = insert(:tag, title: "ATOM", slug: "atom")
       event1 = insert(:event, organizer_actor: actor, tags: [tag1])
@@ -36,9 +37,27 @@ defmodule MobilizonWeb.FeedControllerTest do
       assert entry2.categories == [tag1.slug]
     end
 
-    test "it returns an RSS representation of the actor's public events with the proper accept header",
+    test "it returns a 404 for the actor's public events Atom feed if the actor is not publicly visible",
          %{conn: conn} do
       actor = insert(:actor)
+      tag1 = insert(:tag, title: "RSS", slug: "rss")
+      tag2 = insert(:tag, title: "ATOM", slug: "atom")
+      insert(:event, organizer_actor: actor, tags: [tag1])
+      insert(:event, organizer_actor: actor, tags: [tag1, tag2])
+
+      conn =
+        conn
+        |> get(
+          Routes.feed_url(Endpoint, :actor, actor.preferred_username, "atom")
+          |> URI.decode()
+        )
+
+      assert response(conn, 404)
+    end
+
+    test "it returns an RSS representation of the actor's public events with the proper accept header",
+         %{conn: conn} do
+      actor = insert(:actor, visibility: :unlisted)
 
       conn =
         conn
@@ -63,8 +82,9 @@ defmodule MobilizonWeb.FeedControllerTest do
   end
 
   describe "/@:preferred_username/feed/ics" do
-    test "it returns an iCalendar representation of the actor's public events", %{conn: conn} do
-      actor = insert(:actor)
+    test "it returns an iCalendar representation of the actor's public events with an actor publicly visible",
+         %{conn: conn} do
+      actor = insert(:actor, visibility: :public)
       tag1 = insert(:tag, title: "iCalendar", slug: "icalendar")
       tag2 = insert(:tag, title: "Apple", slug: "apple")
       event1 = insert(:event, organizer_actor: actor, tags: [tag1])
@@ -90,9 +110,27 @@ defmodule MobilizonWeb.FeedControllerTest do
       assert entry2.categories == [event2.category, tag1.slug, tag2.slug]
     end
 
+    test "it returns a 404 page for the actor's public events iCal feed with an actor not publicly visible",
+         %{conn: conn} do
+      actor = insert(:actor, visibility: :private)
+      tag1 = insert(:tag, title: "iCalendar", slug: "icalendar")
+      tag2 = insert(:tag, title: "Apple", slug: "apple")
+      insert(:event, organizer_actor: actor, tags: [tag1])
+      insert(:event, organizer_actor: actor, tags: [tag1, tag2])
+
+      conn =
+        conn
+        |> get(
+          Routes.feed_url(Endpoint, :actor, actor.preferred_username, "ics")
+          |> URI.decode()
+        )
+
+      assert response(conn, 404)
+    end
+
     test "it returns an iCalendar representation of the actor's public events with the proper accept header",
          %{conn: conn} do
-      actor = insert(:actor)
+      actor = insert(:actor, visibility: :unlisted)
 
       conn =
         conn

@@ -20,6 +20,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   alias Mobilizon.Service.ActivityPub
   alias Ecto.Changeset
   require Logger
+  alias MobilizonWeb.Router.Helpers, as: Routes
+  alias MobilizonWeb.Endpoint
 
   # Some implementations send the actor URI as the actor field, others send the entire actor object,
   # so figure out what the actor's URI is based on what we have.
@@ -275,7 +277,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "begins_on" => metadata.begins_on,
       "category" => category,
       "actor" => actor,
-      "id" => "#{MobilizonWeb.Endpoint.url()}/events/#{uuid}",
+      "id" => Routes.page_url(Endpoint, :event, uuid),
       "uuid" => uuid,
       "tag" => tags |> Enum.map(fn {_, tag} -> tag end) |> Enum.uniq()
     }
@@ -296,7 +298,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "summary" => event.description,
       "publish_at" => (event.publish_at || event.inserted_at) |> DateTime.to_iso8601(),
       "updated_at" => event.updated_at |> DateTime.to_iso8601(),
-      "id" => "#{MobilizonWeb.Endpoint.url()}/events/#{event.uuid}"
+      "id" => Routes.page_url(Endpoint, :event, event.uuid)
     }
   end
 
@@ -320,7 +322,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "actor" => actor.url,
       "attributedTo" => actor.url,
       "uuid" => uuid,
-      "id" => "#{MobilizonWeb.Endpoint.url()}/comments/#{uuid}"
+      "id" => Routes.page_url(Endpoint, :comment, uuid)
     }
 
     if reply_to do
@@ -354,7 +356,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       # "summary" => cw,
       # "attachment" => attachments,
       "actor" => actor,
-      "id" => "#{MobilizonWeb.Endpoint.url()}/comments/#{uuid}",
+      "id" => Routes.page_url(Endpoint, :comment, uuid),
       "uuid" => uuid,
       "tag" => tags |> Enum.map(fn {_, tag} -> tag end) |> Enum.uniq()
     }
@@ -386,7 +388,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "summary" => content_html,
       "attributedTo" => actor,
       "preferredUsername" => preferred_username,
-      "id" => "#{MobilizonWeb.Endpoint.url()}/~#{preferred_username}",
+      "id" => Actor.build_url(preferred_username, :page),
       "uuid" => uuid,
       "tag" => tags |> Enum.map(fn {_, tag} -> tag end) |> Enum.uniq()
     }

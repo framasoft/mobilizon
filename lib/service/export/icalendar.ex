@@ -40,12 +40,12 @@ defmodule Mobilizon.Service.Export.ICalendar do
   @doc """
   Export a public actor's events to iCalendar format.
 
-  The events must have a visibility of `:public` or `:unlisted`
+  The actor must have a visibility of `:public` or `:unlisted`, as well as the events
   """
-  # TODO: The actor should also have visibility options
   @spec export_public_actor(Actor.t()) :: String.t()
   def export_public_actor(%Actor{} = actor) do
-    with {:ok, events, _} <- Events.get_public_events_for_actor(actor) do
+    with true <- Actor.public_visibility?(actor),
+         {:ok, events, _} <- Events.get_public_events_for_actor(actor) do
       {:ok, %ICalendar{events: events |> Enum.map(&do_export_event/1)} |> ICalendar.to_ics()}
     end
   end

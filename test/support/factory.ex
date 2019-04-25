@@ -4,6 +4,9 @@ defmodule Mobilizon.Factory do
   """
   # with Ecto
   use ExMachina.Ecto, repo: Mobilizon.Repo
+  alias Mobilizon.Actors.Actor
+  alias MobilizonWeb.Router.Helpers, as: Routes
+  alias MobilizonWeb.Endpoint
 
   def user_factory do
     %Mobilizon.Users.User{
@@ -30,9 +33,10 @@ defmodule Mobilizon.Factory do
       followings: [],
       keys: pem,
       type: :Person,
-      url: MobilizonWeb.Endpoint.url() <> "/@#{preferred_username}",
-      followers_url: MobilizonWeb.Endpoint.url() <> "/@#{preferred_username}/followers",
-      following_url: MobilizonWeb.Endpoint.url() <> "/@#{preferred_username}/following",
+      url: Actor.build_url(preferred_username, :page),
+      followers_url: Actor.build_url(preferred_username, :followers),
+      following_url: Actor.build_url(preferred_username, :following),
+      outbox_url: Actor.build_url(preferred_username, :outbox),
       user: nil
     }
   end
@@ -89,7 +93,7 @@ defmodule Mobilizon.Factory do
       event: build(:event),
       uuid: uuid,
       in_reply_to_comment: nil,
-      url: "#{MobilizonWeb.Endpoint.url()}/comments/#{uuid}"
+      url: Routes.page_url(Endpoint, :comment, uuid)
     }
   end
 
@@ -109,7 +113,7 @@ defmodule Mobilizon.Factory do
       physical_address: build(:address),
       visibility: :public,
       tags: build_list(3, :tag),
-      url: "#{actor.url}/#{uuid}",
+      url: Routes.page_url(Endpoint, :event, uuid),
       uuid: uuid
     }
   end

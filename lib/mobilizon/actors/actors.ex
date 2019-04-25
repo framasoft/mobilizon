@@ -158,7 +158,8 @@ defmodule Mobilizon.Actors do
     Repo.all(
       from(
         a in Actor,
-        where: a.type == ^:Group
+        where: a.type == ^:Group,
+        where: a.visibility in [^:public, ^:unlisted]
       )
       |> paginate(page, limit)
     )

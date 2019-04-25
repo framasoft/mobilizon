@@ -3,6 +3,8 @@ defmodule Mobilizon.Service.ActivityPub.UtilsTest do
   import Mobilizon.Factory
   alias Mobilizon.Service.ActivityPub.Utils
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+  alias MobilizonWeb.Router.Helpers, as: Routes
+  alias MobilizonWeb.Endpoint
 
   setup_all do
     HTTPoison.start()
@@ -19,7 +21,7 @@ defmodule Mobilizon.Service.ActivityPub.UtilsTest do
                "content" => reply.text,
                "actor" => reply.actor.url,
                "uuid" => reply.uuid,
-               "id" => "#{MobilizonWeb.Endpoint.url()}/comments/#{reply.uuid}",
+               "id" => Routes.page_url(Endpoint, :comment, reply.uuid),
                "inReplyTo" => comment.url,
                "attributedTo" => reply.actor.url
              } == Utils.make_comment_data(reply)
