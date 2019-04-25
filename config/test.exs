@@ -8,11 +8,10 @@ config :mobilizon, :instance,
 # you can enable the server option below.
 config :mobilizon, MobilizonWeb.Endpoint,
   http: [
-    port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4002
+    port: System.get_env("MOBILIZON_INSTANCE_PORT") || 80
   ],
   url: [
-    host: System.get_env("MOBILIZON_INSTANCE_HOST") || "mobilizon.test",
-    port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4002
+    host: System.get_env("MOBILIZON_INSTANCE_HOST") || "mobilizon.test"
   ],
   server: false
 

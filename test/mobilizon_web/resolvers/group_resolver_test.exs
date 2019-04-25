@@ -58,8 +58,9 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
       assert hd(json_response(res, 200)["errors"])["message"] == "existing_group_name"
     end
 
-    test "list_groups/3 returns all groups", context do
-      group = insert(:group)
+    test "list_groups/3 returns all public or unlisted groups", context do
+      group = insert(:group, visibility: :unlisted)
+      insert(:group, visibility: :private)
 
       query = """
       {
@@ -71,7 +72,9 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
 
       res =
         context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "groups"))
+
+      assert length(json_response(res, 200)["data"]["groups"]) == 1
 
       assert hd(json_response(res, 200)["data"]["groups"])["preferredUsername"] ==
                group.preferred_username

@@ -383,7 +383,7 @@ defmodule Mobilizon.Service.ActivityPub do
 
     followers =
       if actor.followers_url in activity.recipients do
-        Actor.get_followers(actor) |> Enum.filter(fn follower -> is_nil(follower.domain) end)
+        Actor.get_full_followers(actor) |> Enum.filter(fn follower -> is_nil(follower.domain) end)
       else
         []
       end
@@ -492,50 +492,18 @@ defmodule Mobilizon.Service.ActivityPub do
   @doc """
   Return all public activities (events & comments) for an actor
   """
-  @spec fetch_public_activities_for_actor(Actor.t(), integer(), integer()) :: {list(), integer()}
-  def fetch_public_activities_for_actor(actor, page \\ nil, limit \\ nil)
+  @spec fetch_public_activities_for_actor(Actor.t(), integer(), integer()) :: map()
+  def fetch_public_activities_for_actor(%Actor{} = actor, page \\ 1, limit \\ 10) do
+    {:ok, events, total_events} = Events.get_public_events_for_actor(actor, page, limit)
+    {:ok, comments, total_comments} = Events.get_public_comments_for_actor(actor, page, limit)
 
-  def fetch_public_activities_for_actor(%Actor{} = actor, page, limit) do
-    case actor.type do
-      :Person ->
-        {:ok, events, total_events} = Events.get_public_events_for_actor(actor, page, limit)
-        {:ok, comments, total_comments} = Events.get_public_comments_for_actor(actor, page, limit)
+    event_activities = Enum.map(events, &event_to_activity/1)
 
-        event_activities = Enum.map(events, &event_to_activity/1)
+    comment_activities = Enum.map(comments, &comment_to_activity/1)
 
-        comment_activities = Enum.map(comments, &comment_to_activity/1)
+    activities = event_activities ++ comment_activities
 
-        activities = event_activities ++ comment_activities
-
-        {activities, total_events + total_comments}
-
-      :Service ->
-        bot = Actors.get_bot_by_actor(actor)
-
-        case bot.type do
-          "ics" ->
-            {:ok, %HTTPoison.Response{body: body} = _resp} = HTTPoison.get(bot.source)
-
-            ical_events =
-              body
-              |> ExIcal.parse()
-              |> ExIcal.by_range(
-                DateTime.utc_now(),
-                DateTime.utc_now() |> DateTime.truncate(:second) |> Timex.shift(years: 1)
-              )
-
-            activities =
-              ical_events
-              |> Enum.chunk_every(limit)
-              |> Enum.at(page - 1)
-              |> Enum.map(fn event ->
-                {:ok, activity} = ical_event_to_activity(event, actor, bot.source)
-                activity
-              end)
-
-            {activities, length(ical_events)}
-        end
-    end
+    %{elements: activities, total: total_events + total_comments}
   end
 
   # Create an activity from an event
@@ -558,38 +526,6 @@ defmodule Mobilizon.Service.ActivityPub do
       data: comment |> make_comment_data,
       local: local
     }
-  end
-
-  defp ical_event_to_activity(%ExIcal.Event{} = ical_event, %Actor{} = actor, _source) do
-    # Logger.debug(inspect ical_event)
-    # TODO : Use MobilizonWeb.API instead
-    # TODO : refactor me and move me somewhere else!
-    # TODO : also, there should be a form of cache that allows this to be more efficient
-
-    # ical_event.categories should be tags
-
-    {:ok, event} =
-      Events.create_event(%{
-        begins_on: ical_event.start,
-        ends_on: ical_event.end,
-        inserted_at: ical_event.stamp,
-        updated_at: ical_event.stamp,
-        description: ical_event.description |> sanitize_ical_event_strings,
-        title: ical_event.summary |> sanitize_ical_event_strings,
-        organizer_actor: actor
-      })
-
-    event_to_activity(event, false)
-  end
-
-  defp sanitize_ical_event_strings(string) when is_binary(string) do
-    string
-    |> String.replace(~s"\r\n", "")
-    |> String.replace(~s"\\,", ",")
-  end
-
-  defp sanitize_ical_event_strings(nil) do
-    nil
   end
 
   #  # Whether the Public audience is in the activity's audience

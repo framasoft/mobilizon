@@ -19,6 +19,8 @@ defmodule Mobilizon.Events.Comment do
   alias Mobilizon.Events.Event
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Comment
+  alias MobilizonWeb.Router.Helpers, as: Routes
+  alias MobilizonWeb.Endpoint
 
   schema "comments" do
     field(:text, :string)
@@ -46,7 +48,7 @@ defmodule Mobilizon.Events.Comment do
     url =
       if Map.has_key?(attrs, "url"),
         do: attrs["url"],
-        else: "#{MobilizonWeb.Endpoint.url()}/comments/#{uuid}"
+        else: Routes.page_url(Endpoint, :comment, uuid)
 
     comment
     |> Ecto.Changeset.cast(attrs, [

@@ -1,23 +1,23 @@
 defmodule MobilizonWeb.ActivityPub.ActorView do
   use MobilizonWeb, :view
 
-  alias MobilizonWeb.ActivityPub.ActorView
-  alias MobilizonWeb.ActivityPub.ObjectView
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Utils
   alias Mobilizon.Activity
 
+  @private_visibility_empty_collection %{elements: [], total: 0}
+
   def render("actor.json", %{actor: actor}) do
     public_key = Mobilizon.Service.ActivityPub.Utils.pem_to_public_key_pem(actor.keys)
 
     %{
-      "id" => actor.url,
+      "id" => Actor.build_url(actor.preferred_username, :page),
       "type" => "Person",
-      "following" => actor.following_url,
-      "followers" => actor.followers_url,
-      "inbox" => actor.inbox_url,
-      "outbox" => actor.outbox_url,
+      "following" => Actor.build_url(actor.preferred_username, :following),
+      "followers" => Actor.build_url(actor.preferred_username, :followers),
+      "inbox" => Actor.build_url(actor.preferred_username, :inbox),
+      "outbox" => Actor.build_url(actor.preferred_username, :outbox),
       "preferredUsername" => actor.preferred_username,
       "name" => actor.name,
       "summary" => actor.summary,
@@ -46,125 +46,102 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
   end
 
   def render("following.json", %{actor: actor, page: page}) do
-    actor
-    |> Actor.get_followings(page)
-    |> collection(actor.following_url, page)
+    %{total: total, elements: following} =
+      if Actor.public_visibility?(actor),
+        do: Actor.get_followings(actor, page),
+        else: @private_visibility_empty_collection
+
+    following
+    |> collection(actor.preferred_username, :following, page, total)
     |> Map.merge(Utils.make_json_ld_header())
   end
 
   def render("following.json", %{actor: actor}) do
-    following = Actor.get_followings(actor)
+    %{total: total, elements: following} =
+      if Actor.public_visibility?(actor),
+        do: Actor.get_followings(actor),
+        else: @private_visibility_empty_collection
 
     %{
-      "id" => actor.following_url,
+      "id" => Actor.build_url(actor.preferred_username, :following),
       "type" => "OrderedCollection",
-      "totalItems" => length(following),
-      "first" => collection(following, actor.following_url, 1)
+      "totalItems" => total,
+      "first" => collection(following, actor.preferred_username, :following, 1, total)
     }
     |> Map.merge(Utils.make_json_ld_header())
   end
 
   def render("followers.json", %{actor: actor, page: page}) do
-    actor
-    |> Actor.get_followers(page)
-    |> collection(actor.followers_url, page)
+    %{total: total, elements: followers} =
+      if Actor.public_visibility?(actor),
+        do: Actor.get_followers(actor, page),
+        else: @private_visibility_empty_collection
+
+    followers
+    |> collection(actor.preferred_username, :followers, page, total)
     |> Map.merge(Utils.make_json_ld_header())
   end
 
   def render("followers.json", %{actor: actor}) do
-    followers = Actor.get_followers(actor)
+    %{total: total, elements: followers} =
+      if Actor.public_visibility?(actor),
+        do: Actor.get_followers(actor),
+        else: @private_visibility_empty_collection
 
     %{
-      "id" => actor.followers_url,
+      "id" => Actor.build_url(actor.preferred_username, :followers),
       "type" => "OrderedCollection",
-      # TODO put me back
-      # "totalItems" => length(followers),
-      "first" => collection(followers, actor.followers_url, 1)
+      "totalItems" => total,
+      "first" => collection(followers, actor.preferred_username, :followers, 1, total)
     }
     |> Map.merge(Utils.make_json_ld_header())
   end
 
   def render("outbox.json", %{actor: actor, page: page}) do
-    {page, no_page} =
-      if page == 0 do
-        {1, true}
-      else
-        {page, false}
-      end
+    %{total: total, elements: followers} =
+      if Actor.public_visibility?(actor),
+        do: ActivityPub.fetch_public_activities_for_actor(actor, page),
+        else: @private_visibility_empty_collection
 
-    {activities, total} = ActivityPub.fetch_public_activities_for_actor(actor, page)
-
-    # collection =
-    #   Enum.map(activities, fn act ->
-    #     {:ok, data} = Transmogrifier.prepare_outgoing(act.data)
-    #     data
-    #   end)
-
-    iri = "#{actor.url}/outbox"
-
-    page = %{
-      "id" => "#{iri}?page=#{page}",
-      "type" => "OrderedCollectionPage",
-      "partOf" => iri,
-      "totalItems" => total,
-      "orderedItems" => render_many(activities, ActorView, "activity.json", as: :activity),
-      "next" => "#{iri}?page=#{page + 1}"
-    }
-
-    if no_page do
-      %{
-        "id" => iri,
-        "type" => "OrderedCollection",
-        "totalItems" => total,
-        "first" => page
-      }
-      |> Map.merge(Utils.make_json_ld_header())
-    else
-      page |> Map.merge(Utils.make_json_ld_header())
-    end
+    followers
+    |> collection(actor.preferred_username, :outbox, page, total)
+    |> Map.merge(Utils.make_json_ld_header())
   end
 
-  def render("activity.json", %{activity: %Activity{local: local, data: data} = activity}) do
-    %{
-      "id" => data["id"],
-      "type" =>
-        if local do
-          "Create"
-        else
-          "Announce"
-        end,
-      "actor" => activity.actor,
-      # Not sure if needed since this is used into outbox
-      "published" => Timex.now(),
-      "to" => activity.recipients,
-      "object" =>
-        case data["type"] do
-          "Event" ->
-            render_one(data, ObjectView, "event.json", as: :event)
+  def render("outbox.json", %{actor: actor}) do
+    %{total: total, elements: followers} =
+      if Actor.public_visibility?(actor),
+        do: ActivityPub.fetch_public_activities_for_actor(actor),
+        else: @private_visibility_empty_collection
 
-          "Note" ->
-            render_one(data, ObjectView, "comment.json", as: :comment)
-        end
+    %{
+      "id" => Actor.build_url(actor.preferred_username, :outbox),
+      "type" => "OrderedCollection",
+      "totalItems" => total,
+      "first" => collection(followers, actor.preferred_username, :outbox, 1, total)
     }
     |> Map.merge(Utils.make_json_ld_header())
   end
 
-  def collection(collection, iri, page, _total \\ nil) do
-    items = Enum.map(collection, fn account -> account.url end)
+  @spec collection(list(), String.t(), atom(), integer(), integer()) :: map()
+  defp collection(collection, preferred_username, endpoint, page, total)
+       when endpoint in [:followers, :following, :outbox] do
+    offset = (page - 1) * 10
 
-    # TODO : Add me back
-    # total = total || length(collection)
-
-    %{
-      "id" => "#{iri}?page=#{page}",
+    map = %{
+      "id" => Actor.build_url(preferred_username, endpoint, page: page),
       "type" => "OrderedCollectionPage",
-      "partOf" => iri,
-      # "totalItems" => total,
-      "orderedItems" => items
+      "partOf" => Actor.build_url(preferred_username, endpoint),
+      "orderedItems" => Enum.map(collection, &item/1)
     }
 
-    # if offset < total do
-    #   Map.put(map, "next", "#{iri}?page=#{page + 1}")
-    # end
+    if offset < total do
+      Map.put(map, "next", Actor.build_url(preferred_username, endpoint, page: page + 1))
+    end
+
+    map
   end
+
+  def item(%Activity{data: %{"id" => id}}), do: id
+  def item(%Actor{url: url}), do: url
 end

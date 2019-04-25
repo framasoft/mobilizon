@@ -12,6 +12,8 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Utils
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+  alias MobilizonWeb.Router.Helpers, as: Routes
+  alias MobilizonWeb.Endpoint
 
   setup do
     conn = build_conn() |> put_req_header("accept", "application/activity+json")
@@ -24,7 +26,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
       conn =
         conn
-        |> get("/@#{actor.preferred_username}")
+        |> get(Actor.build_url(actor.preferred_username, :page))
 
       actor = Actors.get_actor!(actor.id)
 
@@ -38,7 +40,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
       conn =
         conn
-        |> get("/events/#{event.uuid}")
+        |> get(Routes.page_url(Endpoint, :event, event.uuid))
 
       assert json_response(conn, 200) ==
                ObjectView.render("event.json", %{event: event |> Utils.make_event_data()})
@@ -49,7 +51,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
       conn =
         conn
-        |> get("/events/#{event.uuid}")
+        |> get(Routes.page_url(Endpoint, :event, event.uuid))
 
       assert json_response(conn, 404)
     end
@@ -61,7 +63,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
       conn =
         conn
-        |> get("/comments/#{comment.uuid}")
+        |> get(Routes.page_url(Endpoint, :comment, comment.uuid))
 
       assert json_response(conn, 200) ==
                ObjectView.render("comment.json", %{comment: comment |> Utils.make_comment_data()})
@@ -88,7 +90,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
         conn =
           conn
           |> assign(:valid_signature, true)
-          |> post("/inbox", data)
+          |> post("#{MobilizonWeb.Endpoint.url()}/inbox", data)
 
         assert "ok" == json_response(conn, 200)
         :timer.sleep(500)
@@ -99,44 +101,106 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
   describe "/@:preferred_username/outbox" do
     test "it returns a note activity in a collection", %{conn: conn} do
-      actor = insert(:actor)
+      actor = insert(:actor, visibility: :public)
       comment = insert(:comment, actor: actor)
 
       conn =
         conn
-        |> get("/@#{actor.preferred_username}/outbox")
+        |> get(Actor.build_url(actor.preferred_username, :outbox))
 
-      assert response(conn, 200) =~ comment.text
+      assert json_response(conn, 200)["totalItems"] == 1
+      assert json_response(conn, 200)["first"]["orderedItems"] == [comment.url]
     end
 
     test "it returns an event activity in a collection", %{conn: conn} do
-      actor = insert(:actor)
+      actor = insert(:actor, visibility: :public)
       event = insert(:event, organizer_actor: actor)
 
       conn =
         conn
-        |> get("/@#{actor.preferred_username}/outbox")
+        |> get(Actor.build_url(actor.preferred_username, :outbox))
 
-      assert response(conn, 200) =~ event.title
+      assert json_response(conn, 200)["totalItems"] == 1
+      assert json_response(conn, 200)["first"]["orderedItems"] == [event.url]
+    end
+
+    test "it works for more than 10 events", %{conn: conn} do
+      actor = insert(:actor, visibility: :public)
+
+      Enum.each(1..15, fn _ ->
+        insert(:event, organizer_actor: actor)
+      end)
+
+      result =
+        conn
+        |> get(Actor.build_url(actor.preferred_username, :outbox))
+        |> json_response(200)
+
+      assert length(result["first"]["orderedItems"]) == 10
+      assert result["totalItems"] == 15
+
+      result =
+        conn
+        |> get(Actor.build_url(actor.preferred_username, :outbox, page: 2))
+        |> json_response(200)
+
+      assert length(result["orderedItems"]) == 5
+    end
+
+    test "it returns an empty collection if the actor has private visibility", %{conn: conn} do
+      actor = insert(:actor, visibility: :private)
+      insert(:event, organizer_actor: actor)
+
+      conn =
+        conn
+        |> get(Actor.build_url(actor.preferred_username, :outbox))
+
+      assert json_response(conn, 200)["totalItems"] == 0
+      assert json_response(conn, 200)["first"]["orderedItems"] == []
+    end
+
+    test "it doesn't returns an event activity in a collection if actor has private visibility",
+         %{conn: conn} do
+      actor = insert(:actor, visibility: :private)
+      insert(:event, organizer_actor: actor)
+
+      conn =
+        conn
+        |> get(Actor.build_url(actor.preferred_username, :outbox))
+
+      assert json_response(conn, 200)["totalItems"] == 0
     end
   end
 
   describe "/@actor/followers" do
     test "it returns the followers in a collection", %{conn: conn} do
-      actor = insert(:actor)
+      actor = insert(:actor, visibility: :public)
       actor2 = insert(:actor)
       Actor.follow(actor, actor2)
 
       result =
         conn
-        |> get("/@#{actor.preferred_username}/followers")
+        |> get(Actor.build_url(actor.preferred_username, :followers))
         |> json_response(200)
 
       assert result["first"]["orderedItems"] == [actor2.url]
     end
 
+    test "it returns no followers for a private actor", %{conn: conn} do
+      actor = insert(:actor, visibility: :private)
+      actor2 = insert(:actor)
+      Actor.follow(actor, actor2)
+
+      result =
+        conn
+        |> get(Actor.build_url(actor.preferred_username, :followers))
+        |> json_response(200)
+
+      assert result["first"]["orderedItems"] == []
+    end
+
     test "it works for more than 10 actors", %{conn: conn} do
-      actor = insert(:actor)
+      actor = insert(:actor, visibility: :public)
 
       Enum.each(1..15, fn _ ->
         other_actor = insert(:actor)
@@ -145,39 +209,50 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
       result =
         conn
-        |> get("/@#{actor.preferred_username}/followers")
+        |> get(Actor.build_url(actor.preferred_username, :followers))
         |> json_response(200)
 
       assert length(result["first"]["orderedItems"]) == 10
-      #  assert result["first"]["totalItems"] == 15
-      #  assert result["totalItems"] == 15
+      assert result["totalItems"] == 15
 
       result =
         conn
-        |> get("/@#{actor.preferred_username}/followers?page=2")
+        |> get(Actor.build_url(actor.preferred_username, :followers, page: 2))
         |> json_response(200)
 
       assert length(result["orderedItems"]) == 5
-      #  assert result["totalItems"] == 15
     end
   end
 
   describe "/@actor/following" do
     test "it returns the followings in a collection", %{conn: conn} do
       actor = insert(:actor)
-      actor2 = insert(:actor)
+      actor2 = insert(:actor, visibility: :public)
       Actor.follow(actor, actor2)
 
       result =
         conn
-        |> get("/@#{actor2.preferred_username}/following")
+        |> get(Actor.build_url(actor2.preferred_username, :following))
         |> json_response(200)
 
       assert result["first"]["orderedItems"] == [actor.url]
     end
 
-    test "it works for more than 10 actors", %{conn: conn} do
+    test "it returns no followings for a private actor", %{conn: conn} do
       actor = insert(:actor)
+      actor2 = insert(:actor, visibility: :private)
+      Actor.follow(actor, actor2)
+
+      result =
+        conn
+        |> get(Actor.build_url(actor2.preferred_username, :following))
+        |> json_response(200)
+
+      assert result["first"]["orderedItems"] == []
+    end
+
+    test "it works for more than 10 actors", %{conn: conn} do
+      actor = insert(:actor, visibility: :public)
 
       Enum.each(1..15, fn _ ->
         other_actor = insert(:actor)
@@ -186,7 +261,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
       result =
         conn
-        |> get("/@#{actor.preferred_username}/following")
+        |> get(Actor.build_url(actor.preferred_username, :following))
         |> json_response(200)
 
       assert length(result["first"]["orderedItems"]) == 10
@@ -195,7 +270,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
       result =
         conn
-        |> get("/@#{actor.preferred_username}/following?page=2")
+        |> get(Actor.build_url(actor.preferred_username, :following, page: 2))
         |> json_response(200)
 
       assert length(result["orderedItems"]) == 5
