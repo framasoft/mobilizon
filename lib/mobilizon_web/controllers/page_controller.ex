@@ -60,10 +60,8 @@ defmodule MobilizonWeb.PageController do
     case get_format(conn) do
       "html" ->
         with {status, %Comment{} = comment} when status in [:ok, :commit] <-
-               Events.get_cached_comment_full_by_uuid(uuid) do
-          # Comments are always public for now
-          # TODO : Make comments maybe restricted
-          # true <- comment.public do
+               Events.get_cached_comment_full_by_uuid(uuid),
+             true <- comment.visibility in [:public, :unlisted] do
           render_with_meta(conn, comment)
         else
           _ -> {:error, :not_found}
