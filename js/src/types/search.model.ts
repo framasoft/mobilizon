@@ -1,4 +1,4 @@
-import { IGroup } from '@/types/actor.model';
+import { IGroup } from '@/types/actor';
 import { IEvent } from '@/types/event.model';
 
 export interface SearchEvent {

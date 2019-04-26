@@ -88,7 +88,7 @@ import { FETCH_EVENTS } from '@/graphql/event';
 import { Component, Vue } from 'vue-property-decorator';
 import EventCard from '@/components/Event/EventCard.vue';
 import { LOGGED_PERSON_WITH_GOING_TO_EVENTS } from '@/graphql/actor';
-import { IPerson, Person } from '@/types/actor.model';
+import { IPerson, Person } from '@/types/actor';
 import { ICurrentUser } from '@/types/current-user.model';
 import { CURRENT_USER_CLIENT } from '@/graphql/user';
 import { RouteName } from '@/router';

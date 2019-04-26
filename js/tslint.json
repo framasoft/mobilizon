@@ -3,6 +3,7 @@
   "rules": {
     "max-line-length": [ true, 140 ],
     "import-name": false,
-    "ter-arrow-parens": false
+    "ter-arrow-parens": false,
+    "no-boolean-literal-compare": false
   }
 }

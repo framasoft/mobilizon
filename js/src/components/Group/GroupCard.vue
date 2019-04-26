@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { Group } from '@/types/actor.model';
+import { Group } from '@/types/actor';
 import { RouteName } from '@/router';
 
 @Component

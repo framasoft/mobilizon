@@ -233,7 +233,7 @@ import { DELETE_EVENT, FETCH_EVENT, JOIN_EVENT, LEAVE_EVENT } from '@/graphql/ev
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { LOGGED_PERSON } from '@/graphql/actor';
 import { EventVisibility, IEvent, IParticipant } from '@/types/event.model';
-import { IPerson } from '@/types/actor.model';
+import { IPerson } from '@/types/actor';
 import { RouteName } from '@/router';
 import 'vue-simple-markdown/dist/vue-simple-markdown.css';
 import { GRAPHQL_API_ENDPOINT } from '@/api/_entrypoint';

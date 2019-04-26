@@ -47,7 +47,7 @@
 import { IEvent, ParticipantRole } from '@/types/event.model';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import DateCalendarIcon from '@/components/Event/DateCalendarIcon.vue';
-import { IActor, IPerson, Person } from '@/types/actor.model';
+import { IActor, IPerson, Person } from '@/types/actor';
 const lineClamp = require('line-clamp');
 
 export interface IEventCardOptions {

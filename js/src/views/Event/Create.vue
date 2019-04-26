@@ -40,7 +40,7 @@ import {
       EventModel,
     } from '@/types/event.model';
 import { LOGGED_PERSON } from '@/graphql/actor';
-import { IPerson, Person } from '@/types/actor.model';
+import { IPerson, Person } from '@/types/actor';
 
 @Component({
   apollo: {

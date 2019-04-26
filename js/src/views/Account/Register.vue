@@ -71,7 +71,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { IPerson } from '@/types/actor.model';
+import { IPerson } from '@/types/actor';
 import { REGISTER_PERSON } from '@/graphql/actor';
 import { MOBILIZON_INSTANCE_HOST } from '@/api/_entrypoint';
 import { RouteName } from '@/router';
