@@ -42,7 +42,16 @@ defmodule MobilizonWeb.ActivityPubController do
          true <- event.visibility in [:public, :unlisted] do
       conn
       |> put_resp_header("content-type", "application/activity+json")
-      |> json(ObjectView.render("event.json", %{event: event |> Utils.make_event_data()}))
+      |> json(
+        ObjectView.render(
+          "event.json",
+          %{
+            event:
+              event
+              |> Utils.make_event_data()
+          }
+        )
+      )
     else
       {:ignore, _} ->
         {:error, :not_found}
@@ -55,15 +64,22 @@ defmodule MobilizonWeb.ActivityPubController do
   @spec comment(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def comment(conn, %{"uuid" => uuid}) do
     with {status, %Comment{} = comment} when status in [:ok, :commit] <-
-           Events.get_cached_comment_full_by_uuid(uuid) do
-      # Comments are always public for now
-      # TODO : Make comments maybe restricted
-      # true <- comment.public do
+           Events.get_cached_comment_full_by_uuid(uuid),
+         true <- comment.visibility in [:public, :unlisted] do
       conn
       |> put_resp_header("content-type", "application/activity+json")
-      |> json(ObjectView.render("comment.json", %{comment: comment |> Utils.make_comment_data()}))
+      |> json(
+        ObjectView.render(
+          "comment.json",
+          %{
+            comment:
+              comment
+              |> Utils.make_comment_data()
+          }
+        )
+      )
     else
-      {:ignore, _} ->
+      _ ->
         {:error, :not_found}
     end
   end

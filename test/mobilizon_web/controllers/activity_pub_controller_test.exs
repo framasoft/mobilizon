@@ -69,17 +69,16 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
                ObjectView.render("comment.json", %{comment: comment |> Utils.make_comment_data()})
     end
 
-    # TODO !
-    # test "it returns 404 for non-public comments", %{conn: conn} do
-    #   event = insert(:event, public: false)
+    test "it returns 404 for non-public comments", %{conn: conn} do
+      comment = insert(:comment, visibility: :private)
 
-    #   conn =
-    #     conn
-    #     |> put_req_header("accept", "application/activity+json")
-    #     |> get("/events/#{event.uuid}")
+      conn =
+        conn
+        |> put_req_header("accept", "application/activity+json")
+        |> get(Routes.page_url(Endpoint, :comment, comment.uuid))
 
-    #   assert json_response(conn, 404)
-    # end
+      assert json_response(conn, 404)
+    end
   end
 
   describe "/@:preferred_username/inbox" do

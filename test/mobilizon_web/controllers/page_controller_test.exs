@@ -43,5 +43,20 @@ defmodule MobilizonWeb.PageControllerTest do
     assert html_response(conn, 404)
   end
 
-  # TODO: Comments
+  test "GET /comments/:uuid", %{conn: conn} do
+    comment = insert(:comment)
+    conn = get(conn, Routes.page_url(Endpoint, :comment, comment.uuid))
+    assert html_response(conn, 200)
+  end
+
+  test "GET /comments/:uuid with not existing comment", %{conn: conn} do
+    conn = get(conn, Routes.page_url(Endpoint, :comment, "not_existing_comment"))
+    assert html_response(conn, 404)
+  end
+
+  test "GET /comments/:uuid with comment not public", %{conn: conn} do
+    comment = insert(:comment, visibility: :private)
+    conn = get(conn, Routes.page_url(Endpoint, :comment, comment.uuid))
+    assert html_response(conn, 404)
+  end
 end
