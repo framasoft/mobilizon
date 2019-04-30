@@ -3,6 +3,7 @@ defmodule MobilizonWeb.FeedController do
   Controller to serve RSS, ATOM and iCal Feeds
   """
   use MobilizonWeb, :controller
+  action_fallback(MobilizonWeb.FallbackController)
 
   def actor(conn, %{"name" => name, "format" => "atom"}) do
     with {status, data} when status in [:ok, :commit] <-
@@ -12,9 +13,7 @@ defmodule MobilizonWeb.FeedController do
       |> send_resp(200, data)
     else
       _err ->
-        conn
-        |> put_resp_content_type("text/html")
-        |> send_file(404, "priv/static/index.html")
+        {:error, :not_found}
     end
   end
 
@@ -26,9 +25,7 @@ defmodule MobilizonWeb.FeedController do
       |> send_resp(200, data)
     else
       _err ->
-        conn
-        |> put_resp_content_type("text/html")
-        |> send_file(404, "priv/static/index.html")
+        {:error, :not_found}
     end
   end
 
@@ -40,9 +37,7 @@ defmodule MobilizonWeb.FeedController do
       |> send_resp(200, data)
     else
       _err ->
-        conn
-        |> put_resp_content_type("text/html")
-        |> send_file(404, "priv/static/index.html")
+        {:error, :not_found}
     end
   end
 
@@ -54,9 +49,7 @@ defmodule MobilizonWeb.FeedController do
       |> send_resp(200, data)
     else
       _err ->
-        conn
-        |> put_resp_content_type("text/html")
-        |> send_file(404, "priv/static/index.html")
+        {:error, :not_found}
     end
   end
 
@@ -68,9 +61,7 @@ defmodule MobilizonWeb.FeedController do
       |> send_resp(200, data)
     else
       _err ->
-        conn
-        |> put_resp_content_type("text/html")
-        |> send_file(404, "priv/static/index.html")
+        {:error, :not_found}
     end
   end
 end
