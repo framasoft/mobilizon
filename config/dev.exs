@@ -17,7 +17,9 @@ config :mobilizon, MobilizonWeb.Endpoint,
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
-  watchers: []
+  watchers: [
+    yarn: ["run", "dev", cd: Path.expand("../js", __DIR__)]
+  ]
 
 # ## SSL Support
 #

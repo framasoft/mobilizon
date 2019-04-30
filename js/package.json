@@ -6,7 +6,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "analyze-bundle": "yarn run build -- --report-json && webpack-bundle-analyzer ../priv/static/report.json",
-    "dev": "vue-cli-service serve",
+    "dev": "vue-cli-service build --watch",
     "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "vue-cli-service test:unit",
     "prepare": "patch-package"

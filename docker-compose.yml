@@ -10,18 +10,6 @@ services:
       POSTGRES_DB: mobilizon_dev
     volumes:
       - pgdata:/var/lib/postgresql/data
-
-
-  front:
-    container_name: mobilizon_front
-    restart: unless-stopped
-    build: ./js
-    volumes:
-      - '.:/app'
-    ports:
-      - "8888:8080"
-    command: yarn run dev
-
   api:
     container_name: mobilizon_api
     restart: unless-stopped
@@ -32,18 +20,17 @@ services:
       - "4000:4001"
     depends_on:
       - postgres
-      - front
     environment:
       MIX_ENV: "dev"
       MOBILIZON_INSTANCE_NAME: My Mobilizon Instance
       MOBILIZON_INSTANCE_HOST: mobilizon.me
       MOBILIZON_INSTANCE_EMAIL: noreply@mobilizon.me
-      MOBILIZON_INSTANCE_REGISTRATIONS_OPEN: "false"
+      MOBILIZON_INSTANCE_REGISTRATIONS_OPEN: "true"
       MOBILIZON_DATABASE_PASSWORD: postgres
       MOBILIZON_DATABASE_USERNAME: postgres
       MOBILIZON_DATABASE_DBNAME: mobilizon_dev
       MOBILIZON_DATABASE_HOST: postgres
-    command: "mix phx.migrate_serve"
+    command: "mix phx.deps_migrate_serve"
 volumes:
   pgdata:
   .:

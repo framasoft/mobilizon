@@ -4,7 +4,7 @@ const path = require('path');
 module.exports = {
   lintOnSave: false,
   runtimeCompiler: true,
-  outputDir: '../priv/static',
+  outputDir: '../priv/static/js',
   configureWebpack: {
     plugins: [
       new Dotenv({ path: path.resolve(process.cwd(), '../.env') }),
@@ -18,6 +18,9 @@ module.exports = {
         },
       ],
     },
+    output: {
+      filename: 'app.js'
+    }
   },
   chainWebpack: config => {
     config

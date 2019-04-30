@@ -5,13 +5,12 @@ services:
     restart: "no"
     environment:
       POSTGRES_DB: mobilizon_test
-  front:
-    restart: "no"
   api:
     restart: "no"
     environment:
       MIX_ENV: "test"
       MOBILIZON_DATABASE_DBNAME: mobilizon_test
+      MOBILIZON_INSTANCE_HOST: mobilizon.test
     command: "mix test"
 volumes:
   pgdata:
