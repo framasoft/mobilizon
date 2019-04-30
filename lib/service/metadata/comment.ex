@@ -1,5 +1,4 @@
 defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Comment do
-  alias Phoenix.HTML
   alias Phoenix.HTML.Tag
   alias Mobilizon.Events.Comment
 
