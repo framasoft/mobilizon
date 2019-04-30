@@ -79,6 +79,7 @@ export default class App extends Vue {
   @import "~bulma/sass/elements/tag.sass";
   @import "~bulma/sass/components/navbar.sass";
   @import "~bulma/sass/components/modal.sass";
+  @import "~bulma/sass/components/media.sass";
   @import "~bulma/sass/grid/_all.sass";
   @import "~bulma/sass/layout/section.sass";
   @import "~bulma/sass/layout/footer.sass";

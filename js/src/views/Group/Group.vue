@@ -59,7 +59,7 @@
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import EventCard from '@/components/Event/EventCard.vue';
 import { FETCH_GROUP, LOGGED_PERSON } from '@/graphql/actor';
-import { IGroup } from '@/types/actor.model';
+import { IGroup } from '@/types/actor';
 
 @Component({
   apollo: {

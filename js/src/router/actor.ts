@@ -1,25 +1,19 @@
 import Profile from '@/views/Account/Profile.vue';
+import MyAccount from '@/views/Account/MyAccount.vue';
 import CreateGroup from '@/views/Group/Create.vue';
 import Group from '@/views/Group/Group.vue';
 import GroupList from '@/views/Group/GroupList.vue';
-import Identities from '@/views/Account/Identities.vue';
 import { RouteConfig } from 'vue-router';
 
 export enum ActorRouteName {
-  IDENTITIES = 'Identities',
   GROUP_LIST = 'GroupList',
   GROUP = 'Group',
   CREATE_GROUP = 'CreateGroup',
   PROFILE = 'Profile',
+  MY_ACCOUNT = 'MyAccount',
 }
 
 export const actorRoutes: RouteConfig[] = [
-  {
-    path: '/identities',
-    name: ActorRouteName.IDENTITIES,
-    component: Identities,
-    meta: { requiredAuth: true },
-  },
   {
     path: '/groups',
     name: ActorRouteName.GROUP_LIST,
@@ -45,5 +39,12 @@ export const actorRoutes: RouteConfig[] = [
     component: Profile,
     props: true,
     meta: { requiredAuth: false },
+  },
+  {
+    path: '/my-account',
+    name: ActorRouteName.MY_ACCOUNT,
+    component: MyAccount,
+    props: true,
+    meta: { requiredAuth: true },
   },
 ];

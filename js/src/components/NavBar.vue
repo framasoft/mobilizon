@@ -36,9 +36,9 @@
           </div>
           <div class="navbar-item has-dropdown is-hoverable" v-else>
               <router-link
-                      class="navbar-link"
-                      v-if="currentUser.isLoggedIn && loggedPerson"
-                      :to="{ name: 'Profile', params: { name: loggedPerson.preferredUsername} }"
+                class="navbar-link"
+                v-if="currentUser.isLoggedIn && loggedPerson"
+                :to="{ name: 'MyAccount' }"
               >
                 <figure class="image is-24x24">
                   <img :src="loggedPerson.avatarUrl">
@@ -47,8 +47,13 @@
               </router-link>
 
             <div class="navbar-dropdown">
-              <a class="navbar-item"><translate>My account</translate></a>
-              <a class="navbar-item" v-on:click="logout()"><translate>Log out</translate></a>
+              <router-link :to="{ name: 'MyAccount' }" class="navbar-item">
+                <translate>My account</translate>
+              </router-link>
+
+              <a class="navbar-item" v-on:click="logout()">
+                <translate>Log out</translate>
+              </a>
             </div>
           </div>
         </div>
@@ -63,7 +68,7 @@ import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user'
 import { onLogout } from '@/vue-apollo';
 import { deleteUserData } from '@/utils/auth';
 import { LOGGED_PERSON } from '@/graphql/actor';
-import { IPerson } from '@/types/actor.model';
+import { IPerson } from '@/types/actor';
 import { CONFIG } from '@/graphql/config';
 import { IConfig } from '@/types/config.model';
 import { ICurrentUser } from '@/types/current-user.model';

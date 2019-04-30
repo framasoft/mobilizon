@@ -3,4 +3,6 @@ projects:
     schemaPath: schema.graphql
     extensions:
       endpoints:
-        dev: 'http://localhost:4000/api'
+        dev:
+          url: 'http://localhost:4001/api'
+          introspect: true

@@ -48,7 +48,7 @@ import { SEARCH_EVENTS, SEARCH_GROUPS } from '@/graphql/search';
 import { RouteName } from '@/router';
 import EventCard from '@/components/Event/EventCard.vue';
 import GroupCard from '@/components/Group/GroupCard.vue';
-import { Group, IGroup } from '@/types/actor.model';
+import { Group, IGroup } from '@/types/actor';
 import { SearchEvent, SearchGroup } from '@/types/search.model';
 
 enum SearchTabs {
