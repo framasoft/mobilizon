@@ -11,7 +11,7 @@ defmodule MobilizonWeb.PageController do
   action_fallback(MobilizonWeb.FallbackController)
 
   def index(conn, _params) do
-    render conn, "app.html"
+    render(conn, "app.html")
   end
 
   def actor(conn, %{"name" => name}) do
@@ -73,6 +73,6 @@ defmodule MobilizonWeb.PageController do
 
   # Inject OpenGraph information
   defp render_with_meta(conn, object) do
-    render conn, "app.html", object: object
+    render(conn, "app.html", object: object)
   end
 end

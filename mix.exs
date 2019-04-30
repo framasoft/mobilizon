@@ -117,7 +117,13 @@ defmodule Mobilizon.Mixfile do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate", "test"],
-      "phx.migrate_serve": ["ecto.create --quiet", "ecto.migrate", "phx.server"]
+      "phx.deps_migrate_serve": [
+        "deps.get",
+        "ecto.create --quiet",
+        "ecto.migrate",
+        "cmd cd js && yarn install && cd ../",
+        "phx.server"
+      ]
     ]
   end
 
