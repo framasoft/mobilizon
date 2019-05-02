@@ -18,7 +18,7 @@ defmodule MobilizonWeb.PageControllerTest do
   test "GET /@actor with existing actor", %{conn: conn} do
     actor = insert(:actor)
     conn = get(conn, Actor.build_url(actor.preferred_username, :page))
-    assert html_response(conn, 200)
+    assert html_response(conn, 200) =~ actor.preferred_username
   end
 
   test "GET /@actor with not existing actor", %{conn: conn} do
@@ -29,7 +29,7 @@ defmodule MobilizonWeb.PageControllerTest do
   test "GET /events/:uuid", %{conn: conn} do
     event = insert(:event)
     conn = get(conn, Routes.page_url(Endpoint, :event, event.uuid))
-    assert html_response(conn, 200)
+    assert html_response(conn, 200) =~ event.title
   end
 
   test "GET /events/:uuid with not existing event", %{conn: conn} do
@@ -46,7 +46,7 @@ defmodule MobilizonWeb.PageControllerTest do
   test "GET /comments/:uuid", %{conn: conn} do
     comment = insert(:comment)
     conn = get(conn, Routes.page_url(Endpoint, :comment, comment.uuid))
-    assert html_response(conn, 200)
+    assert html_response(conn, 200) =~ comment.text
   end
 
   test "GET /comments/:uuid with not existing comment", %{conn: conn} do

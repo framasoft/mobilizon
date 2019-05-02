@@ -64,7 +64,7 @@ config :geolix,
 config :arc,
   storage: Arc.Storage.Local
 
-config :phoenix, :format_encoders, json: Jason
+config :phoenix, :format_encoders, json: Jason, "activity-json": Jason
 
 config :mobilizon, Mobilizon.Service.Geospatial.Nominatim,
   endpoint:

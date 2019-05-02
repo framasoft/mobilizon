@@ -7,6 +7,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
   use MobilizonWeb.ConnCase
   import Mobilizon.Factory
   alias MobilizonWeb.ActivityPub.{ActorView, ObjectView}
+  alias MobilizonWeb.PageView
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.ActivityPub
@@ -43,7 +44,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
         |> get(Routes.page_url(Endpoint, :event, event.uuid))
 
       assert json_response(conn, 200) ==
-               ObjectView.render("event.json", %{event: event |> Utils.make_event_data()})
+               PageView.render("event.activity-json", %{conn: %{assigns: %{object: event}}})
     end
 
     test "it returns 404 for non-public events", %{conn: conn} do
@@ -51,6 +52,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
       conn =
         conn
+        |> put_req_header("accept", "application/activity+json")
         |> get(Routes.page_url(Endpoint, :event, event.uuid))
 
       assert json_response(conn, 404)
@@ -63,10 +65,11 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
       conn =
         conn
+        |> put_req_header("accept", "application/activity+json")
         |> get(Routes.page_url(Endpoint, :comment, comment.uuid))
 
       assert json_response(conn, 200) ==
-               ObjectView.render("comment.json", %{comment: comment |> Utils.make_comment_data()})
+               PageView.render("comment.activity-json", %{conn: %{assigns: %{object: comment}}})
     end
 
     test "it returns 404 for non-public comments", %{conn: conn} do
