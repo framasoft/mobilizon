@@ -10,69 +10,35 @@ defmodule MobilizonWeb.PageController do
 
   action_fallback(MobilizonWeb.FallbackController)
 
-  def index(conn, _params) do
-    render(conn, "app.html")
-  end
+  def index(conn, _params), do: render(conn, :index)
 
   def actor(conn, %{"name" => name}) do
-    case get_format(conn) do
-      "html" ->
-        with {status, %Actor{} = actor} when status in [:ok, :commit] <-
-               Actors.get_cached_local_actor_by_name(name) do
-          render_with_meta(conn, actor)
-        else
-          _ -> {:error, :not_found}
-        end
-
-      # "activity-json" matches "application/activity+json" inside our config
-      "activity-json" ->
-        MobilizonWeb.ActivityPubController.call(conn, :actor)
-
-      _ ->
-        {:error, :not_found}
-    end
+    {status, actor} = Actors.get_cached_local_actor_by_name(name)
+    render_or_error(conn, &ok_status?/2, status, :actor, actor)
   end
 
   def event(conn, %{"uuid" => uuid}) do
-    case get_format(conn) do
-      "html" ->
-        with {status, %Event{} = event} when status in [:ok, :commit] <-
-               Events.get_cached_event_full_by_uuid(uuid),
-             true <- event.visibility in [:public, :unlisted] do
-          render_with_meta(conn, event)
-        else
-          _ -> {:error, :not_found}
-        end
-
-      "activity-json" ->
-        MobilizonWeb.ActivityPubController.call(conn, :event)
-
-      _ ->
-        {:error, :not_found}
-    end
+    {status, event} = Events.get_cached_event_full_by_uuid(uuid)
+    render_or_error(conn, &ok_status_and_is_visible?/2, status, :event, event)
   end
 
   def comment(conn, %{"uuid" => uuid}) do
-    case get_format(conn) do
-      "html" ->
-        with {status, %Comment{} = comment} when status in [:ok, :commit] <-
-               Events.get_cached_comment_full_by_uuid(uuid),
-             true <- comment.visibility in [:public, :unlisted] do
-          render_with_meta(conn, comment)
-        else
-          _ -> {:error, :not_found}
-        end
+    {status, comment} = Events.get_cached_comment_full_by_uuid(uuid)
+    render_or_error(conn, &ok_status_and_is_visible?/2, status, :comment, comment)
+  end
 
-      "activity-json" ->
-        MobilizonWeb.ActivityPubController.call(conn, :comment)
-
-      _ ->
-        {:error, :not_found}
+  defp render_or_error(conn, check_fn, status, object_type, object) do
+    if check_fn.(status, object) do
+      render(conn, object_type, object: object)
+    else
+      {:error, :not_found}
     end
   end
 
-  # Inject OpenGraph information
-  defp render_with_meta(conn, object) do
-    render(conn, "app.html", object: object)
-  end
+  defp is_visible?(%{visibility: v}), do: v in [:public, :unlisted]
+
+  defp ok_status?(status), do: status in [:ok, :commit]
+  defp ok_status?(status, _), do: ok_status?(status)
+
+  defp ok_status_and_is_visible?(status, o), do: ok_status?(status) and is_visible?(o)
 end

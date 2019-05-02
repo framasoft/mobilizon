@@ -10,6 +10,6 @@ defmodule MobilizonWeb.FallbackController do
     conn
     |> put_status(:not_found)
     |> put_view(MobilizonWeb.ErrorView)
-    |> render("404.html")
+    |> render(:"404")
   end
 end

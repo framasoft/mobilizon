@@ -8,6 +8,10 @@ defmodule MobilizonWeb.ErrorView do
     "Page not found"
   end
 
+  def render("404.json", _assigns) do
+    %{msg: "Resource not found"}
+  end
+
   def render("invalid_request.json", _assigns) do
     %{errors: "Invalid request"}
   end
