@@ -2,7 +2,7 @@
 
 <p align="center">
     <a href="https://joinmobilizon.org">
-        <img src="http://lutim.cpy.re/m9Y8rXRU.png" alt="Mobilizon">
+        <img src="https://lutim.cpy.re/qVYC86G9.png" alt="Mobilizon">
     </a>
 </p>
 
@@ -14,7 +14,7 @@ MobiliZon is your federated organization and mobilization platform. Gather peopl
 
 <p align="center">
   <a href="https://framasoft.org">
-    <img width="150px" src="http://lutim.cpy.re/Prd3ci7G.png" alt="Framasoft logo"/>
+    <img width="150px" src="https://lutim.cpy.re/Prd3ci7G.png" alt="Framasoft logo"/>
   </a>
 </p>
 
