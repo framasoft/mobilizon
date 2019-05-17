@@ -5,9 +5,12 @@ $primary-invert: findColorInvert($primary);
 $secondary: #FAB12D;
 $secondary-invert: findColorInvert($secondary);
 
-$colors: (
+$colors: map-merge(
+    $colors,
+    (
         "primary": ($primary, $primary-invert),
-        "secondary": ($secondary, $secondary-invert),
+        "secondary": ($secondary, $secondary-invert)
+    )
 );
 
 // Navbar
