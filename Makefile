@@ -3,11 +3,11 @@ init:
 	make start
 
 start: stop
-	@bash docker/message.sh "starting MobiliZon with docker"
+	@bash docker/message.sh "starting Mobilizon with docker"
 	docker-compose up -d
 	@bash docker/message.sh "started"
 stop:
-	@bash docker/message.sh "stopping MobiliZon"
+	@bash docker/message.sh "stopping Mobilizon"
 	docker-compose down
 	@bash docker/message.sh "stopped"
 test: stop

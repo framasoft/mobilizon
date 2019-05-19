@@ -13,7 +13,7 @@ sudo -u postgres createuser -P mobilizon
 sudo -u postgres createdb -O mobilizon mobilizon_prod
 ```
 
-Then enable extensions PeerTube needs:
+Then enable extensions Mobilizon needs:
 
 ```bash
 sudo -u postgres psql -c "CREATE EXTENSION postgis;" mobilizon_prod
@@ -22,7 +22,7 @@ sudo -u postgres psql -c "CREATE EXTENSION unaccent;" mobilizon_prod
 ```
 
 
-## MobiliZon user
+## Mobilizon user
 
 Create a `mobilizon` user with `/home/mobilizon` home:
 ```bash
@@ -46,7 +46,7 @@ git clone https://framagit.org/framasoft/mobilizon live && cd live
 
 ### Backend
 
-Install Elixir dependencies 
+Install Elixir dependencies
 
 ```bash
 mix deps.get
@@ -58,42 +58,43 @@ Configure your instance with
 mix mobilizon.instance gen
 ```
 
-This will ask you questions about your instance and generate an `.env.prod` file.
+This will ask you questions about your instance and generate a `.env.prod` file.
 
 ### Migration
- 
+
 Run database migrations: `mix ecto.migrate`. You will have to do this again after most updates.
 
 > If some migrations fail, it probably means you're not using a recent enough version of PostgreSQL,
-or that you didn't installed [the required extensions](#database). 
-  
+or that you haven't installed [the required extensions](#database).
+
 ### Front-end
 
 Go into the `js/` directory
 
 ```bash
-cd js/
+cd js
 ```
+
 and install the Javascript dependencies
- 
+
 ```bash
 yarn install
 ```
 
-Finally, build the front-end with 
+Finally, build the front-end with
 ```bash
 yarn run build
 ```
-  
+
 ### Testing
 
 Go back to the previous directory
- 
+
 ```bash
-cd ../
+cd ..
 ```
 
-Now try to run the server 
+Now try to run the server
 
 ```bash
 mix phx.server
@@ -106,7 +107,7 @@ It runs on port 4000.
 
 ### Systemd
 
-Copy the `support/systemd/mobilizon.service` to `/etc/systemd/system`. 
+Copy the `support/systemd/mobilizon.service` to `/etc/systemd/system`.
 
 ```bash
 sudo cp support/systemd/mobilizon.service /etc/systemd/system/
@@ -117,15 +118,15 @@ Reload Systemd to detect your new file
 ```bash
 sudo systemctl daemon-reload
 ```
+
 And enable the service
 
 ```bash
 systemctl enable --now mobilizon.service
 ```
 
-It will run MobiliZon and enable startup on boot. You can follow the logs with 
+It will run Mobilizon and enable startup on boot. You can follow the logs with
 
 ```bash
 sudo journalctl -fu mobilizon.service
 ```
-

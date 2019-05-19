@@ -9,28 +9,28 @@
   1. On a fresh Debian/Ubuntu, as root user, install basic utility programs needed for the installation
 
 ```
-sudo apt-get install curl sudo unzip vim
+sudo apt install curl sudo unzip vim
 ```
 
   2. It would be wise to disable root access and to continue this tutorial with a user with sudoers group access
-
-  3. Install certbot (choose instructions for nginx and your distribution) :
+  3. Install certbot (choose instructions for nginx and your distribution):
      [https://certbot.eff.org/all-instructions](https://certbot.eff.org/all-instructions)
   4. Install NodeJS 10.x (current LTS):
      [https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)
-  5. Install yarn, and be sure to have [a recent version](https://github.com/yarnpkg/yarn/releases/latest): [yarnpkg.com/en/docs/install#linux-tab](https://yarnpkg.com/en/docs/install#linux-tab)
-  5. Install Erlang and Elixir:
+  5. Install yarn, and be sure to have [a recent version](https://github.com/yarnpkg/yarn/releases/latest):
+     [https://yarnpkg.com/en/docs/install#linux-tab](https://yarnpkg.com/en/docs/install#linux-tab)
+  6. Install Erlang and Elixir:
      [https://elixir-lang.org/install.html#unix-and-unix-like](https://elixir-lang.org/install.html#unix-and-unix-like)
-  6. Install PostGIS:
+  7. Install PostGIS:
      [https://postgis.net/install/](https://postgis.net/install/)
-  6. Run:
+  8. Run:
 
 ```
 sudo apt update
 sudo apt install nginx postgresql postgresql-contrib openssl make git esl-erlang elixir postgis 
 ```
 
-Now that dependencies are installed, before running MobiliZon you should start PostgreSQL:
+Now that dependencies are installed, before running Mobilizon you should start PostgreSQL:
 ```
 sudo systemctl start postgresql
 ```
@@ -43,7 +43,7 @@ sudo systemctl start postgresql
 sudo pacman -S nodejs postgresql openssl git wget unzip base-devel yarn nginx elixir postgis
 ```
 
-Now that dependencies are installed, before running MobiliZon you should start PostgreSQL and Redis:
+Now that dependencies are installed, before running Mobilizon you should start PostgreSQL and Redis:
 ```
 sudo systemctl start postgresql
 ```

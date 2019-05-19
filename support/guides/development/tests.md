@@ -9,7 +9,7 @@ To launch all the tests:
 mix test
 ```
 
-If you want the coverage:
+If you want test coverage:
 
 ```bash
 mix coveralls.html
