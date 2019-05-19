@@ -6,7 +6,7 @@
     </a>
 </p>
 
-MobiliZon is your federated organization and mobilization platform. Gather people with a convivial, ethical, and emancipating tool.
+Mobilizon is your federated organization and mobilization platform. Gather people with a convivial, ethical, and emancipating tool.
 
 <p align="center">
   <strong>Developed with ♥ by <a href="https://framasoft.org">Framasoft</a></strong>
@@ -22,7 +22,7 @@ MobiliZon is your federated organization and mobilization platform. Gather peopl
 
 Mobilizon is a tool designed to create platforms for managing communities and events. Its purpose is to help as many people as possible to free themselves from Facebook groups and events, from Meetup, etc.
 
-The MobiliZon software is under a Free licence, so anyone can host a MobiliZon server, called an instance. These instances may federate with each other, so any person with an account on *ExampleMeet* will be able to register to an event created on *SpecimenEvent*.
+The Mobilizon software is under a Free licence, so anyone can host a Mobilizon server, called an instance. These instances may federate with each other, so any person with an account on *ExampleMeet* will be able to register to an event created on *SpecimenEvent*.
 
 ## ✨ Features
 
@@ -43,7 +43,7 @@ There's no lock-in, you can interact with the event without registration.
 
 ## Contributing
 
-We appreciate any contribution to MobiliZon. Check our [Contributing](contributing.html) page for more information.
+We appreciate any contribution to Mobilizon. Check our [Contributing](contributing.html) page for more information.
 
 ## Links
 
@@ -54,7 +54,7 @@ We appreciate any contribution to MobiliZon. Check our [Contributing](contributi
   
 ### Discuss
   * 💬 Matrix: `#Mobilizon:matrix.org` [Riot](https://riot.im/app/#/room/#Mobilizon:matrix.org)
-  * #️⃣   IRC `#mobilizon` on Freenode
+  * #️⃣   IRC: `#mobilizon` on Freenode
   * 🗣️ Forum: [https://framacolibri.org/c/mobilizon](https://framacolibri.org/c/mobilizon)
 
 ### Follow

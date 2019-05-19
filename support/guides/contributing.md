@@ -6,24 +6,24 @@
 
 First off, thank you for considering contributing to Mobilizon!
 
-Our aim is for this project to make you feel welcome as a contributor.
+Our aim for this project is to make you feel welcome as a contributor.
 We hugely value the comments and contributions of community members in the various
 publicly-accessible areas in use, which currently are:
 
 * Home: [Home](https://joinmobilizon.org)
-* Wiki: [Project Wiki](https://framagit.org/framasoft/mobilizon/wikis) (Gitlab)
-* Code: [Framagit](https://framagit.org/framasoft/mobilizon) (Gitlab)
-* Issue tracking: [Framagit](https://framagit.org/framasoft/mobilizon) (Gitlab)
+* Wiki: [Project Wiki](https://framagit.org/framasoft/mobilizon/wikis) (GitLab)
+* Code: [Framagit](https://framagit.org/framasoft/mobilizon) (GitLab)
+* Issue tracking: [Framagit](https://framagit.org/framasoft/mobilizon) (GitLab)
 * Discussion: [Mobilizon forum](https://framacolibri.org/c/mobilizon) (Discourse)
 * Chat: [#Mobilizon:matrix.org](https://matrix.org/#/room/#Mobilizon:matrix.org) (Matrix) or `#mobilizon` on Freenode (IRC)
 
 ### How to communicate with others ?
 
-As you may know, English is not the only language in the community and communicating in various languages can be quite tricky. Some might not understand what you're saying, while other have a hard time writing in a language that is not their primary language.
+As you may know, English is not the only language in the community and communicating in various languages can be quite tricky. Some might not understand what you're saying, while others have a hard time writing in a language that is not their primary language.
 
-If you don't have noticed yet, French is the de-facto language for communication in various channels. This is because a huge part of our community speaks French, as Framasoft is a French organization.
+If you haven't noticed yet, French is the de-facto language for communication in various channels. This is because a huge part of our community speaks French, as Framasoft is a French organization.
 
-We don't want to impose French as the only language in the project, though, because we would lose a ton of potential users users and contributors that can help us make Mobilizon better.
+We don't want to impose French as the only language in the project, though, because we would lose a ton of potential users and contributors that can help us make Mobilizon better.
 
 You can write what you would like to tell us in the language you're most comfortable with and then use automagic translation to translate your message in English. It's far from perfect, but if we can understand the main idea you wanted to expose, it's sufficient.
 
@@ -68,7 +68,7 @@ Please go through the checklist below before posting any ✨ 💄 🐛
 
 * **Check if you're using the latest version** of Mobilizon and all its relevant components and if you can get the desired behaviour by changing some config settings.
 * **Perform a cursory search** in the issue tracker to see if the enhancement has already been suggested. If it has, add a comment to the existing issue instead of opening a new one.
-* Never report security related issues, vulnerabilities or bugs including sensitive information to the issue tracker, or elsewhere in public. Instead sensitive bugs must be sent by email to tcit plus mobilizon at framasoft dot org.
+* Never report security related issues, vulnerabilities or bugs including sensitive information to the issue tracker, or elsewhere in public. Instead, sensitive bugs must be sent by email to tcit plus mobilizon at framasoft dot org.
 
 > **Note:** If you find a **Closed** issue that seems like it is the same thing that you're experiencing, open a new issue and include a link to the original issue in the body of your new one.
 
@@ -81,21 +81,21 @@ Open an issue providing the following information:
 * **Use a clear and descriptive title** for the issue to identify the suggestion.
 * **Provide a description of the suggested enhancement** in as many details as possible, including the steps that you imagine you (as a user) would take if the feature you're requesting existed.
 * **Describe the current behaviour** and **explain which behaviour you would like to see instead** and why.
-* **Include screenshots and animated GIFs** which help you demonstrate the steps or point out the parts of Mobilizon which the suggestion is related to. You can use a tool called [LICEcap](https://www.cockos.com/licecap/) to record GIFs on macOS and Windows, and [Silentcast](https://github.com/colinkeenan/silentcast) or [Byzanz](https://github.com/GNOME/byzanz) on Linux.
-* **Provide specific examples to demonstrate the enhancements**. If possible, include drawings, screenshots, or gifs of similar features in another app.
+* **Include screenshots and animated GIFs** which help demonstrate the steps or point out the parts of Mobilizon which your suggestion is related to. You can use a tool called [LICEcap](https://www.cockos.com/licecap/) to record GIFs on macOS and Windows, and [Silentcast](https://github.com/colinkeenan/silentcast) or [Byzanz](https://github.com/GNOME/byzanz) on Linux.
+* **Provide specific examples to demonstrate the enhancements**. If possible, include drawings, screenshots, or GIFs of similar features in another app.
 * **Explain why this enhancement would be useful** to most participants of Mobilizon and isn't something that can or should be implemented as a community extension.
 * **List some other communities, platforms or apps where this enhancement exists.**
 
 ### Reporting Bugs 🐛
 
-Open an issue providing the following information by filling in issue template below, explaining the problem and including additional details to help maintainers reproduce the problem:
+Open an issue providing the following information by filling in the issue template below, explaining the problem and including additional details to help maintainers reproduce the problem:
 
 * **Use a clear and descriptive title** for the issue to identify the problem.
 * **Describe the exact steps which reproduce the problem** in as many details as possible. For example, start by explaining where you started in Mobilizon, and then which actions you took. When listing steps, **don't just say what you did, but explain how you did it**. For example, if you moved the cursor to the end of a line, explain if you used the mouse or a keyboard shortcut, and if so which one?
 * **Provide specific examples to demonstrate the steps**. Include links to pages, screenshots, or copy/pasteable snippets, which you use in those examples. If you're providing snippets in the issue, use Markdown code blocks.
 * **Describe the behaviour you observed after following the steps** and point out what exactly is the problem with that behaviour.
 * **Explain which behaviour you expected to see instead and why.**
-* **Include screenshots and animated GIFs** which show you following the described steps and clearly demonstrate the problem. You can use [this tool](https://www.cockos.com/licecap/) to record GIFs on macOS and Windows, and [this tool](https://github.com/colinkeenan/silentcast) or [this tool](https://github.com/GNOME/byzanz) on Linux.
+* **Include screenshots and animated GIFs** which show you following the described steps and clearly demonstrate the problem. You can use [LICEcap](https://www.cockos.com/licecap/) to record GIFs on macOS and Windows, and [Silentcast](https://github.com/colinkeenan/silentcast) or [Byzanz](https://github.com/GNOME/byzanz) on Linux.
 * **If you're reporting a crash**, include a crash report with error logs.
 * **If the problem wasn't triggered by a specific action**, describe what you were doing before the problem happened and share more information using the guidelines below.
 
@@ -122,39 +122,39 @@ Even if you like to write code, other types of contributions are a great way to 
 
 #### Do you like to design? 🎨
 
-* Restructure layouts to improve the project's usability
-* Conduct user research to reorganise and refine the project's navigation or menus
-* Create art for icons and app screens
+* Restructure layouts to improve the project's usability.
+* Conduct user research to reorganise and refine the project's navigation or menus.
+* Create art for icons and app screens.
 
 #### Do you like to write? ✏
 
-* Write and improve the project's documentation
-* Write tutorials for the project
-* Curate a wiki page of examples showing how the project can be used
+* Write and improve the project's documentation.
+* Write tutorials for the project.
+* Curate a wiki page of examples showing how the project can be used.
 
 #### Do you like organising? 📥
 
-* Link to duplicate issues, and suggest new issue labels, to keep things organised
-* Go through open issues and suggest revisiting or closing old ones
-* Ask clarifying questions on recently opened issues to move the discussion forward
+* Link to duplicate issues, and suggest new issue labels, to keep things organised.
+* Go through open issues and suggest revisiting or closing old ones.
+* Ask clarifying questions on recently opened issues to move the discussion forward.
 
 #### Do you like helping people? 🙋
 
-* Answer questions about the project on forums and other sites
-* Answer questions for people on open issues
+* Answer questions about the project on forums and other sites.
+* Answer questions for people on open issues.
 
 #### Do you like helping others code? 👐
 
-* Review code on other people’s submissions
-* Write tutorials for how a project can be used
-* Offer to mentor another contributor
+* Review code on other people's submissions.
+* Write tutorials for how a project can be used.
+* Offer to mentor another contributor.
 
 #### Do you like to code? 🔩
 
-* Find an open issue to tackle
-* Offer to help write a new feature
-* Improve tooling, testing & deployment options
-* Read the **next section for guidelines**
+* Find an open issue to tackle.
+* Offer to help write a new feature.
+* Improve tooling, testing & deployment options.
+* Read the **next section for guidelines**.
 
 ---
 
@@ -171,7 +171,7 @@ Mobilizon can be developed locally. For instructions on how to do this, please s
 
 #### Coding & git practices
 
-* We use GitLab's merge requests as our code review tool
+* We use GitLab's merge requests as our code review tool.
 * We encourage any dev to comment on merge requests and we think of the merge request not as a "please approve my code" but as a space for co-developing.
 * We develop features on separate branches identified by issue numbers.
 * We don't currently use release branches or tags because we don't have release management at this phase of development.
@@ -186,19 +186,19 @@ Mobilizon can be developed locally. For instructions on how to do this, please s
 
 #### Git commit messages
 
-* Limit the first line to 72 characters or less, referencing relevant issue numbers
-* Be as descriptive as you want after the first line
-* Consider starting the commit message with an applicable emoji (see Issue & Commit Categories below)
+* Limit the first line to 72 characters or less, referencing relevant issue numbers.
+* Be as descriptive as you want after the first line.
+* Consider starting the commit message with an applicable emoji (see Issue & Commit Categories below).
 
 #### Merge requests
 
 * Follow [the code styleguides](styleguide.html).
-* Document new code based on [the documentation styleguide](https://hexdocs.pm/elixir/writing-documentation.html)
+* Document new code based on [the documentation styleguide](https://hexdocs.pm/elixir/writing-documentation.html).
 * Each merge request should implement ONE feature or bugfix. If you want to add or fix more than one thing, submit more than one merge request.
-* Fill in the merge request template below
-* Include relevant issue number(s) in the merge request title
+* Fill in the merge request template below.
+* Include relevant issue number(s) in the merge request title.
 * Include screenshots or animated GIFs in your merge request whenever possible.
-* End all files with a newline
+* End all files with a newline.
 
 #### Template for merge requests
 
@@ -218,7 +218,7 @@ Mobilizon can be developed locally. For instructions on how to do this, please s
 * 💄 `enhancement` : General improvements.
 * ✨ `feature` : New features.
 * 🐛 `bug` : Confirmed bugs, or reports that are likely to be bugs.
-* 🙋 `question` : Questions (e.g. how can I do X?)
+* 🙋 `question` : Questions (e.g. how can I do X?).
 * 📮 `feedback` : General feedback.
 * 🎨 `ui` : Visual design.
 * 📜 `copy` : Text in the apps, or translations.
@@ -231,7 +231,7 @@ Mobilizon can be developed locally. For instructions on how to do this, please s
 * 🔥 `crash` : Crash.
 * 🔣 `encoding` : Character encoding or data serialization issue.
 * 🚚 `cleanup` : Removing, moving or refactoring code or files.
-* ✅ `tests` : Testing
+* ✅ `tests` : Testing.
 
 #### Issue Status
 
