@@ -1,5 +1,5 @@
 <template>
-    <img svg-inline src="../assets/mobilizon_logo.svg" alt="Mobilizon" :class="{invert: invert}">
+    <img svg-inline src="../assets/mobilizon_logo.svg" alt="Mobilizon" :class="{invert: invert}" height="60px">
 </template>
 
 <script lang="ts">
@@ -15,7 +15,6 @@ export default class Logo extends Vue {
 
     svg {
         fill: $primary;
-        height: 60px;
 
         &.invert {
             fill: $secondary;
