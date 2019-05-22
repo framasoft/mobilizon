@@ -33,6 +33,7 @@ defmodule Mobilizon.Actors.Actor do
   alias Mobilizon.Users.User
   alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Events.{Event, FeedToken}
+  alias Mobilizon.Media.File
 
   alias MobilizonWeb.Router.Helpers, as: Routes
   alias MobilizonWeb.Endpoint
@@ -62,8 +63,6 @@ defmodule Mobilizon.Actors.Actor do
     field(:openness, Mobilizon.Actors.ActorOpennessEnum, default: :moderated)
     field(:visibility, Mobilizon.Actors.ActorVisibilityEnum, default: :private)
     field(:suspended, :boolean, default: false)
-    field(:avatar_url, :string)
-    field(:banner_url, :string)
     # field(:openness, Mobilizon.Actors.ActorOpennessEnum, default: :moderated)
     has_many(:followers, Follower, foreign_key: :target_actor_id)
     has_many(:followings, Follower, foreign_key: :actor_id)
@@ -71,6 +70,8 @@ defmodule Mobilizon.Actors.Actor do
     many_to_many(:memberships, Actor, join_through: Member)
     belongs_to(:user, User)
     has_many(:feed_tokens, FeedToken, foreign_key: :actor_id)
+    embeds_one(:avatar, File)
+    embeds_one(:banner, File)
 
     timestamps()
   end
@@ -93,11 +94,11 @@ defmodule Mobilizon.Actors.Actor do
       :keys,
       :manually_approves_followers,
       :suspended,
-      :avatar_url,
-      :banner_url,
       :user_id
     ])
     |> build_urls()
+    |> cast_embed(:avatar)
+    |> cast_embed(:banner)
     |> unique_username_validator()
     |> validate_required([:preferred_username, :keys, :suspended, :url])
     |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_type_index)
@@ -119,10 +120,11 @@ defmodule Mobilizon.Actors.Actor do
       :suspended,
       :url,
       :type,
-      :avatar_url,
       :user_id
     ])
     |> build_urls()
+    |> cast_embed(:avatar)
+    |> cast_embed(:banner)
     # Needed because following constraint can't work for domain null values (local)
     |> unique_username_validator()
     |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_type_index)
@@ -152,9 +154,7 @@ defmodule Mobilizon.Actors.Actor do
         :summary,
         :preferred_username,
         :keys,
-        :manually_approves_followers,
-        :avatar_url,
-        :banner_url
+        :manually_approves_followers
       ])
       |> validate_required([
         :url,
@@ -165,6 +165,8 @@ defmodule Mobilizon.Actors.Actor do
         :preferred_username,
         :keys
       ])
+      |> cast_embed(:avatar)
+      |> cast_embed(:banner)
       # Needed because following constraint can't work for domain null values (local)
       |> unique_username_validator()
       |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_type_index)
@@ -193,10 +195,10 @@ defmodule Mobilizon.Actors.Actor do
       :name,
       :domain,
       :summary,
-      :preferred_username,
-      :avatar_url,
-      :banner_url
+      :preferred_username
     ])
+    |> cast_embed(:avatar)
+    |> cast_embed(:banner)
     |> build_urls(:Group)
     |> put_change(:domain, nil)
     |> put_change(:keys, Actors.create_keys())

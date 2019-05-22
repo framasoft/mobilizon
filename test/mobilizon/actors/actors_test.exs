@@ -4,6 +4,7 @@ defmodule Mobilizon.ActorsTest do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Member, Follower, Bot}
   alias Mobilizon.Users
+  alias Mobilizon.Media.File
   import Mobilizon.Factory
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
@@ -91,13 +92,23 @@ defmodule Mobilizon.ActorsTest do
 
     test "get_actor_by_name/1 returns a remote actor" do
       use_cassette "actors/remote_actor_mastodon_tcit" do
-        with {:ok,
-              %Actor{id: actor_id, preferred_username: preferred_username, domain: domain} =
-                _actor} <- Actors.get_or_fetch_by_url(@remote_account_url),
-             %Actor{id: actor_found_id} <-
-               Actors.get_actor_by_name("#{preferred_username}@#{domain}").id do
-          assert actor_found_id == actor_id
-        end
+        {:ok,
+         %Actor{
+           id: actor_id,
+           preferred_username: preferred_username,
+           domain: domain,
+           avatar: %File{name: picture_name} = _picture
+         } = _actor} = Actors.get_or_fetch_by_url(@remote_account_url)
+
+        assert picture_name == "avatar"
+
+        %Actor{
+          id: actor_found_id,
+          avatar: %File{name: picture_name} = _picture
+        } = Actors.get_actor_by_name("#{preferred_username}@#{domain}")
+
+        assert actor_found_id == actor_id
+        assert picture_name == "avatar"
       end
     end
 

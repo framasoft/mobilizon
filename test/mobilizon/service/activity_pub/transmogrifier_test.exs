@@ -307,12 +307,6 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
       {:ok, %Actor{} = actor} = Actors.get_actor_by_url(data["actor"])
       assert actor.name == "gargle"
 
-      assert actor.avatar_url ==
-               "https://cd.niu.moe/accounts/avatars/000/033/323/original/fd7f8ae0b3ffedc9.jpeg"
-
-      assert actor.banner_url ==
-               "https://cd.niu.moe/accounts/headers/000/033/323/original/850b3448fa5fd477.png"
-
       assert actor.summary == "<p>Some bio</p>"
     end
 

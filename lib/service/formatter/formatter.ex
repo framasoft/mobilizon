@@ -65,7 +65,7 @@ defmodule Mobilizon.Service.Formatter do
 
   @link_regex ~r/[0-9a-z+\-\.]+:[0-9a-z$-_.+!*'(),]+/ui
 
-  @uri_schemes Application.get_env(:pleroma, :uri_schemes, [])
+  @uri_schemes Application.get_env(:mobilizon, :uri_schemes, [])
   @valid_schemes Keyword.get(@uri_schemes, :valid_schemes, [])
 
   # # TODO: make it use something other than @link_regex

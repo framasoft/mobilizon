@@ -2,8 +2,8 @@
   <section class="container">
     <div v-if="person">
       <div class="header">
-        <figure v-if="person.bannerUrl" class="image is-3by1">
-          <img :src="person.bannerUrl" alt="banner">
+        <figure v-if="person.banner" class="image is-3by1">
+          <img :src="person.banner.url" alt="banner">
         </figure>
       </div>
 

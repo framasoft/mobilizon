@@ -1,16 +1,16 @@
 <template>
   <section class="container">
     <div v-if="group">
-      <div class="card-image" v-if="group.bannerUrl">
+      <div class="card-image" v-if="group.banner.url">
         <figure class="image">
-          <img :src="group.bannerUrl">
+          <img :src="group.banner.url">
         </figure>
       </div>
       <div class="box">
         <div class="media">
           <div class="media-left">
             <figure class="image is-48x48">
-              <img :src="group.avatarUrl">
+              <img :src="group.avatar.url">
             </figure>
           </div>
           <div class="media-content">

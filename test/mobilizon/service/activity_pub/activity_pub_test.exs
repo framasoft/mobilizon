@@ -72,15 +72,15 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
 
   describe "fetching an" do
     test "object by url" do
-      use_cassette "activity_pub/fetch_social_tcit_fr_status" do
+      use_cassette "activity_pub/fetch_framapiaf_framasoft_status" do
         {:ok, object} =
           ActivityPub.fetch_object_from_url(
-            "https://social.tcit.fr/users/tcit/statuses/99908779444618462"
+            "https://framapiaf.org/users/Framasoft/statuses/102093631881522097"
           )
 
         {:ok, object_again} =
           ActivityPub.fetch_object_from_url(
-            "https://social.tcit.fr/users/tcit/statuses/99908779444618462"
+            "https://framapiaf.org/users/Framasoft/statuses/102093631881522097"
           )
 
         assert object.id == object_again.id
@@ -88,14 +88,12 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
     end
 
     test "object reply by url" do
-      use_cassette "activity_pub/fetch_social_tcit_fr_reply" do
+      use_cassette "activity_pub/fetch_framasoft_framapiaf_reply" do
         {:ok, object} =
-          ActivityPub.fetch_object_from_url(
-            "https://social.tcit.fr/users/tcit/statuses/101160654038714030"
-          )
+          ActivityPub.fetch_object_from_url("https://mamot.fr/@imacrea/102094441327423790")
 
         assert object.in_reply_to_comment.url ==
-                 "https://social.tcit.fr/users/tcit/statuses/101160195754333819"
+                 "https://framapiaf.org/users/Framasoft/statuses/102093632302210150"
       end
     end
 
@@ -103,7 +101,7 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
       use_cassette "activity_pub/fetch_reply_to_framatube" do
         {:ok, object} =
           ActivityPub.fetch_object_from_url(
-            "https://framapiaf.org/@troisiemelobe/101156292125317651"
+            "https://diaspodon.fr/users/dada/statuses/100820008426311925"
           )
 
         assert object.in_reply_to_comment == nil

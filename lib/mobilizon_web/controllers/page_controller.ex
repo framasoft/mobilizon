@@ -4,9 +4,7 @@ defmodule MobilizonWeb.PageController do
   """
   use MobilizonWeb, :controller
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
-  alias Mobilizon.Events.{Event, Comment}
 
   action_fallback(MobilizonWeb.FallbackController)
 

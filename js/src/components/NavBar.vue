@@ -40,8 +40,8 @@
                 v-if="currentUser.isLoggedIn && loggedPerson"
                 :to="{ name: 'MyAccount' }"
               >
-                <figure class="image is-24x24">
-                  <img :src="loggedPerson.avatarUrl">
+                <figure class="image is-24x24" v-if="loggedPerson.avatar">
+                  <img :src="loggedPerson.avatar.url">
                 </figure>
                 <span>{{ loggedPerson.preferredUsername }}</span>
               </router-link>

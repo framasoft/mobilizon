@@ -50,7 +50,9 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
       query = """
       {
           loggedPerson {
-            avatarUrl,
+            avatar {
+              url
+            },
             preferredUsername,
           }
         }
@@ -72,6 +74,9 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
 
       assert json_response(res, 200)["data"]["loggedPerson"]["preferredUsername"] ==
                actor.preferred_username
+
+      assert json_response(res, 200)["data"]["loggedPerson"]["avatar"]["url"] =~
+               MobilizonWeb.Endpoint.url()
     end
 
     test "create_person/3 creates a new identity", context do
@@ -111,7 +116,9 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
       query = """
       {
           identities {
-            avatarUrl,
+            avatar {
+              url
+            },
             preferredUsername,
           }
         }
@@ -136,87 +143,156 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
              |> MapSet.new() ==
                MapSet.new([actor.preferred_username, "new_identity"])
     end
-  end
 
-  test "get_current_person/3 can return the events the person is going to", context do
-    user = insert(:user)
-    actor = insert(:actor, user: user)
+    test "create_person/3 with an avatar and an banner creates a new identity", context do
+      user = insert(:user)
+      insert(:actor, user: user)
 
-    query = """
-    {
-        loggedPerson {
-          goingToEvents {
-            uuid,
-            title
+      mutation = """
+          mutation {
+            createPerson(
+              preferredUsername: "new_identity",
+              name: "secret person",
+              summary: "no-one will know who I am",
+              banner: {
+                picture: {
+                  file: "landscape.jpg",
+                  name: "irish landscape",
+                  alt: "The beautiful atlantic way"
+                }
+              }
+            ) {
+              id,
+              preferredUsername
+              avatar {
+                id,
+                url
+              },
+              banner {
+                id,
+                name,
+                url
+              }
+            }
           }
+      """
+
+      map = %{
+        "query" => mutation,
+        "landscape.jpg" => %Plug.Upload{
+          path: "test/fixtures/picture.png",
+          filename: "landscape.jpg"
         }
       }
-    """
 
-    res =
-      context.conn
-      |> auth_conn(user)
-      |> get("/api", AbsintheHelpers.query_skeleton(query, "logged_person"))
+      res =
+        context.conn
+        |> put_req_header("content-type", "multipart/form-data")
+        |> post("/api", map)
 
-    assert json_response(res, 200)["data"]["loggedPerson"]["goingToEvents"] == []
+      assert json_response(res, 200)["data"]["createPerson"] == nil
 
-    event = insert(:event, %{organizer_actor: actor})
-    insert(:participant, %{actor: actor, event: event})
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "You need to be logged-in to create a new identity"
 
-    res =
-      context.conn
-      |> auth_conn(user)
-      |> get("/api", AbsintheHelpers.query_skeleton(query, "logged_person"))
+      res =
+        context.conn
+        |> auth_conn(user)
+        |> put_req_header("content-type", "multipart/form-data")
+        |> post("/api", map)
 
-    assert json_response(res, 200)["data"]["loggedPerson"]["goingToEvents"] == [
-             %{"title" => event.title, "uuid" => event.uuid}
-           ]
-  end
+      assert json_response(res, 200)["data"]["createPerson"]["preferredUsername"] ==
+               "new_identity"
 
-  test "find_person/3 can return the events an identity is going to if it's the same actor",
-       context do
-    user = insert(:user)
-    actor = insert(:actor, user: user)
-    insert(:actor, user: user)
-    actor_from_other_user = insert(:actor)
+      assert json_response(res, 200)["data"]["createPerson"]["banner"]["id"]
 
-    query = """
-    {
-      person(preferredUsername: "#{actor.preferred_username}") {
-          goingToEvents {
-            uuid,
-            title
+      assert json_response(res, 200)["data"]["createPerson"]["banner"]["name"] ==
+               "The beautiful atlantic way"
+
+      assert json_response(res, 200)["data"]["createPerson"]["banner"]["url"] =~
+               MobilizonWeb.Endpoint.url() <> "/media/"
+    end
+
+    test "get_current_person/3 can return the events the person is going to", context do
+      user = insert(:user)
+      actor = insert(:actor, user: user)
+
+      query = """
+      {
+          loggedPerson {
+            goingToEvents {
+              uuid,
+              title
+            }
           }
+        }
+      """
+
+      res =
+        context.conn
+        |> auth_conn(user)
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "logged_person"))
+
+      assert json_response(res, 200)["data"]["loggedPerson"]["goingToEvents"] == []
+
+      event = insert(:event, %{organizer_actor: actor})
+      insert(:participant, %{actor: actor, event: event})
+
+      res =
+        context.conn
+        |> auth_conn(user)
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "logged_person"))
+
+      assert json_response(res, 200)["data"]["loggedPerson"]["goingToEvents"] == [
+               %{"title" => event.title, "uuid" => event.uuid}
+             ]
+    end
+
+    test "find_person/3 can return the events an identity is going to if it's the same actor",
+         context do
+      user = insert(:user)
+      actor = insert(:actor, user: user)
+      insert(:actor, user: user)
+      actor_from_other_user = insert(:actor)
+
+      query = """
+      {
+        person(preferredUsername: "#{actor.preferred_username}") {
+            goingToEvents {
+              uuid,
+              title
+            }
+        }
       }
-    }
-    """
+      """
 
-    res =
-      context.conn
-      |> auth_conn(user)
-      |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+      res =
+        context.conn
+        |> auth_conn(user)
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
 
-    assert json_response(res, 200)["data"]["person"]["goingToEvents"] == []
+      assert json_response(res, 200)["data"]["person"]["goingToEvents"] == []
 
-    query = """
-    {
-      person(preferredUsername: "#{actor_from_other_user.preferred_username}") {
-          goingToEvents {
-            uuid,
-            title
-          }
+      query = """
+      {
+        person(preferredUsername: "#{actor_from_other_user.preferred_username}") {
+            goingToEvents {
+              uuid,
+              title
+            }
+        }
       }
-    }
-    """
+      """
 
-    res =
-      context.conn
-      |> auth_conn(user)
-      |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+      res =
+        context.conn
+        |> auth_conn(user)
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
 
-    assert json_response(res, 200)["data"]["person"]["goingToEvents"] == nil
+      assert json_response(res, 200)["data"]["person"]["goingToEvents"] == nil
 
-    assert hd(json_response(res, 200)["errors"])["message"] ==
-             "Actor id is not owned by authenticated user"
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "Actor id is not owned by authenticated user"
+    end
   end
 end

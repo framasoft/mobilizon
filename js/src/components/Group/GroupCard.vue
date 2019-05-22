@@ -1,6 +1,6 @@
 <template>
   <div class="card">
-    <div class="card-image" v-if="!group.bannerUrl">
+    <div class="card-image" v-if="!group.banner">
       <figure class="image is-4by3">
         <img src="https://picsum.photos/g/400/200/">
       </figure>

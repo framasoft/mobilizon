@@ -2,7 +2,7 @@
   <router-link class="card" :to="{ name: 'Event', params: { uuid: event.uuid } }">
     <div class="card-image" v-if="!event.image">
       <figure class="image is-16by9">
-        <div class="tag-container">
+        <div class="tag-container" v-if="event.tags">
           <b-tag v-for="tag in event.tags.slice(0, 3)" :key="tag.slug" type="is-secondary">{{ tag.title }}</b-tag>
         </div>
         <img src="https://picsum.photos/g/400/225/?random">

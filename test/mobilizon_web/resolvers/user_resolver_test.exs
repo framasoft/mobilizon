@@ -255,7 +255,9 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
                 preferredUsername,
                 name,
                 summary,
-                avatarUrl,
+                avatar {
+                  url
+                },
               }
             }
       """
@@ -295,7 +297,9 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
                 preferredUsername,
                 name,
                 summary,
-                avatarUrl,
+                avatar {
+                  url
+                },
               }
             }
       """
@@ -334,7 +338,9 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
                 preferredUsername,
                 name,
                 summary,
-                avatarUrl,
+                avatar {
+                  url
+                },
               }
             }
       """
@@ -357,7 +363,9 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
                 preferredUsername,
                 name,
                 summary,
-                avatarUrl,
+                avatar {
+                  url
+                },
               }
             }
       """

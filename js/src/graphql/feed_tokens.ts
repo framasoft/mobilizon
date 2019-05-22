@@ -4,14 +4,16 @@ export const LOGGED_PERSON = gql`
 query {
   loggedPerson {
     id,
-    avatarUrl,
+    avatar {
+      url
+    },
     preferredUsername,
   }
 }`;
 
 export const CREATE_FEED_TOKEN_ACTOR = gql`
 mutation createFeedToken($actor_id: Int!) {
-  createFeedToken(actor_id: $actor_id) {
+  createFeedToken(actorId: $actor_id) {
     token,
     actor {
       id

@@ -9,12 +9,7 @@ defmodule MobilizonWeb.Endpoint do
   # You should set gzip to true if you are running phoenix.digest
   # when deploying your static files in production.
 
-  plug(
-    Plug.Static,
-    at: "/uploads",
-    from: "./uploads",
-    gzip: false
-  )
+  plug(MobilizonWeb.Plugs.UploadedMedia)
 
   plug(
     Plug.Static,
@@ -38,7 +33,7 @@ defmodule MobilizonWeb.Endpoint do
 
   plug(
     Plug.Parsers,
-    parsers: [:urlencoded, :multipart, :json],
+    parsers: [:urlencoded, :multipart, :json, Absinthe.Plug.Parser],
     pass: ["*/*"],
     json_decoder: Jason
   )
@@ -57,22 +52,4 @@ defmodule MobilizonWeb.Endpoint do
   )
 
   plug(MobilizonWeb.Router)
-
-  @doc """
-  Callback invoked for dynamically configuring the endpoint.
-
-  It receives the endpoint configuration and checks if
-  configuration should be loaded from the system environment.
-  """
-  def init(_key, config) do
-    if config[:load_from_system_env] do
-      port =
-        System.get_env("MOBILIZON_INSTANCE_PORT") ||
-          raise "expected the MOBILIZON_INSTANCE_PORT environment variable to be set"
-
-      {:ok, Keyword.put(config, :http, [:inet6, port: port])}
-    else
-      {:ok, config}
-    end
-  end
 end

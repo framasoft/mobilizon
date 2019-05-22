@@ -84,6 +84,135 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       assert json_response(res, 200)["data"]["createEvent"]["title"] == "come to my event"
     end
 
+    test "create_event/3 creates an event with an attached picture", %{
+      conn: conn,
+      actor: actor,
+      user: user
+    } do
+      mutation = """
+          mutation {
+              createEvent(
+                  title: "come to my event",
+                  description: "it will be fine",
+                  begins_on: "#{
+        DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
+      }",
+                  organizer_actor_id: "#{actor.id}",
+                  category: "birthday",
+                  picture: {
+                    picture: {
+                      name: "picture for my event",
+                      alt: "A very sunny landscape",
+                      file: "event.jpg"
+                    }
+                  }
+              ) {
+                title,
+                uuid,
+                picture {
+                  name,
+                  url
+                }
+              }
+            }
+      """
+
+      map = %{
+        "query" => mutation,
+        "event.jpg" => %Plug.Upload{
+          path: "test/fixtures/picture.png",
+          filename: "event.jpg"
+        }
+      }
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> put_req_header("content-type", "multipart/form-data")
+        |> post("/api", map)
+
+      assert json_response(res, 200)["data"]["createEvent"]["title"] == "come to my event"
+
+      assert json_response(res, 200)["data"]["createEvent"]["picture"]["name"] ==
+               "picture for my event"
+    end
+
+    test "create_event/3 creates an event with an picture URL", %{
+      conn: conn,
+      actor: actor,
+      user: user
+    } do
+      picture = %{name: "my pic", alt: "represents something", file: "picture.png"}
+
+      mutation = """
+      mutation { uploadPicture(
+              name: "#{picture.name}",
+              alt: "#{picture.alt}",
+              file: "#{picture.file}"
+            ) {
+                id,
+                url,
+                name
+              }
+        }
+      """
+
+      map = %{
+        "query" => mutation,
+        picture.file => %Plug.Upload{
+          path: "test/fixtures/picture.png",
+          filename: picture.file
+        }
+      }
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> put_req_header("content-type", "multipart/form-data")
+        |> post(
+          "/api",
+          map
+        )
+
+      assert json_response(res, 200)["data"]["uploadPicture"]["name"] == picture.name
+      picture_id = json_response(res, 200)["data"]["uploadPicture"]["id"]
+
+      mutation = """
+          mutation {
+              createEvent(
+                  title: "come to my event",
+                  description: "it will be fine",
+                  begins_on: "#{
+        DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
+      }",
+                  organizer_actor_id: "#{actor.id}",
+                  category: "birthday",
+                  picture: {
+                    picture_id: "#{picture_id}"
+                  }
+              ) {
+                title,
+                uuid,
+                picture {
+                  name,
+                  url
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["data"]["createEvent"]["title"] == "come to my event"
+
+      assert json_response(res, 200)["data"]["createEvent"]["picture"]["name"] == picture.name
+
+      assert json_response(res, 200)["data"]["createEvent"]["picture"]["url"]
+    end
+
     test "list_events/3 returns events", context do
       event = insert(:event)
 

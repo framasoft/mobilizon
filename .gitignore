@@ -28,6 +28,8 @@ priv/data/*
 !priv/data/.gitkeep
 .vscode/
 cover/
+test/fixtures/image_tmp.jpg
+test/uploads/
 uploads/*
 !uploads/.gitkeep
 .idea

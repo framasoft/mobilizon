@@ -4,7 +4,7 @@ defmodule MobilizonWeb.Schema do
   """
   use Absinthe.Schema
 
-  alias Mobilizon.{Actors, Events, Users, Addresses}
+  alias Mobilizon.{Actors, Events, Users, Addresses, Media}
   alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Events.{Event, Comment, Participant}
 
@@ -14,6 +14,7 @@ defmodule MobilizonWeb.Schema do
   import_types(Absinthe.Plug.Types)
 
   import_types(MobilizonWeb.Schema.UserType)
+  import_types(MobilizonWeb.Schema.PictureType)
   import_types(MobilizonWeb.Schema.ActorInterface)
   import_types(MobilizonWeb.Schema.Actors.PersonType)
   import_types(MobilizonWeb.Schema.Actors.GroupType)
@@ -30,12 +31,6 @@ defmodule MobilizonWeb.Schema do
   object :login do
     field(:token, non_null(:string), description: "A JWT Token for this session")
     field(:user, non_null(:user), description: "The user associated to this session")
-  end
-
-  @desc "A picture"
-  object :picture do
-    field(:url, :string, description: "The URL for this picture")
-    field(:url_thumbnail, :string, description: "The URL for this picture's thumbnail")
   end
 
   @desc """
@@ -91,6 +86,7 @@ defmodule MobilizonWeb.Schema do
       |> Dataloader.add_source(Users, Users.data())
       |> Dataloader.add_source(Events, Events.data())
       |> Dataloader.add_source(Addresses, Addresses.data())
+      |> Dataloader.add_source(Media, Media.data())
 
     Map.put(ctx, :loader, loader)
   end
@@ -112,6 +108,7 @@ defmodule MobilizonWeb.Schema do
     import_fields(:tag_queries)
     import_fields(:address_queries)
     import_fields(:config_queries)
+    import_fields(:picture_queries)
   end
 
   @desc """
@@ -126,11 +123,6 @@ defmodule MobilizonWeb.Schema do
     import_fields(:participant_mutations)
     import_fields(:member_mutations)
     import_fields(:feed_token_mutations)
-
-    # @desc "Upload a picture"
-    # field :upload_picture, :picture do
-    #   arg(:file, non_null(:upload))
-    #   resolve(&Resolvers.Upload.upload_picture/3)
-    # end
+    import_fields(:picture_mutations)
   end
 end

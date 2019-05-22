@@ -74,12 +74,19 @@ defmodule Mobilizon.Service.Export.Feed do
       |> Feed.generator("Mobilizon", uri: "https://joinmobilizon.org", version: version())
       |> Feed.entries(Enum.map(events, &get_entry/1))
 
-    feed = if actor.avatar_url, do: Feed.icon(feed, actor.avatar_url), else: feed
+    feed =
+      if actor.avatar do
+        Feed.icon(feed, actor.avatar.url)
+      else
+        feed
+      end
 
     feed =
-      if actor.banner_url,
-        do: Feed.logo(feed, actor.banner_url),
-        else: feed
+      if actor.banner do
+        Feed.logo(feed, actor.banner.url)
+      else
+        feed
+      end
 
     feed
     |> Feed.build()
@@ -113,7 +120,8 @@ defmodule Mobilizon.Service.Export.Feed do
 
   @spec fetch_events_from_token(String.t()) :: String.t()
   defp fetch_events_from_token(token) do
-    with %FeedToken{actor: actor, user: %User{} = user} <- Events.get_feed_token(token) do
+    with {:ok, _uuid} <- Ecto.UUID.cast(token),
+         %FeedToken{actor: actor, user: %User{} = user} <- Events.get_feed_token(token) do
       case actor do
         %Actor{} = actor ->
           events = fetch_identity_going_to_events(actor)

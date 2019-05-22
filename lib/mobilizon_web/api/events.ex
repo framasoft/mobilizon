@@ -26,8 +26,9 @@ defmodule MobilizonWeb.API.Events do
          title <- String.trim(title),
          mentions <- Formatter.parse_mentions(description),
          visibility <- Map.get(args, :visibility, "public"),
-         {to, cc} <- to_for_actor_and_mentions(actor, mentions, nil, visibility),
+         {to, cc} <- to_for_actor_and_mentions(actor, mentions, nil, Atom.to_string(visibility)),
          tags <- Formatter.parse_tags(description),
+         picture <- Map.get(args, :picture, nil),
          content_html <-
            make_content_html(
              description,
@@ -41,6 +42,7 @@ defmodule MobilizonWeb.API.Events do
              to,
              title,
              content_html,
+             picture,
              tags,
              cc,
              %{begins_on: begins_on},

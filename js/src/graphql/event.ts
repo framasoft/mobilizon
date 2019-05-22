@@ -4,7 +4,9 @@ const participantQuery = `
   role,
   actor {
     preferredUsername,
-    avatarUrl,
+    avatar {
+      url
+    },
     name,
     id
   }
@@ -24,8 +26,10 @@ export const FETCH_EVENT = gql`
       endsOn,
       status,
       visibility,
-      thumbnail,
-      largeImage,
+      picture {
+        id
+        url
+      },
       publishAt,
       category,
       # online_address,
@@ -35,19 +39,23 @@ export const FETCH_EVENT = gql`
         floor,
         street,
         locality,
-        postal_code,
+        postalCode,
         region,
         country,
         geom
       }
       organizerActor {
-        avatarUrl,
+        avatar {
+          url
+        },
         preferredUsername,
         domain,
         name,
       },
       # attributedTo {
-      #     # avatarUrl,
+      #     avatar {
+      #      url,
+      #     }
       #     preferredUsername,
       #     name,
       # },
@@ -66,7 +74,9 @@ export const FETCH_EVENT = gql`
           description
         },
         organizerActor {
-          avatarUrl,
+          avatar {
+            url,
+          },
           preferredUsername,
           domain,
           name,
@@ -89,8 +99,10 @@ export const FETCH_EVENTS = gql`
       endsOn,
       status,
       visibility,
-      thumbnail,
-      largeImage,
+      picture {
+        id
+        url
+      },
       publishAt,
       # online_address,
       # phone_address,
@@ -99,12 +111,16 @@ export const FETCH_EVENTS = gql`
         locality
       }
       organizerActor {
-        avatarUrl,
+        avatar {
+          url
+        },
         preferredUsername,
         name,
       },
       attributedTo {
-        avatarUrl,
+        avatar {
+          url
+        },
         preferredUsername,
         name,
       },
@@ -124,20 +140,31 @@ export const CREATE_EVENT = gql`
   mutation CreateEvent(
   $title: String!,
   $description: String!,
-  $organizerActorId: String!,
+  $organizerActorId: ID!,
   $category: String!,
-  $beginsOn: DateTime!
+  $beginsOn: DateTime!,
+  $picture_file: Upload,
+  $picture_name: String,
   ) {
     createEvent(
       title: $title,
       description: $description,
       beginsOn: $beginsOn,
       organizerActorId: $organizerActorId,
-      category: $category
+      category: $category,
+      picture: {
+          picture: {
+              file: $picture_file,
+              name: $picture_name,
+          }
+      }
     ) {
       id,
       uuid,
-      title
+      title,
+      picture {
+        url
+      }
     }
   }
 `;

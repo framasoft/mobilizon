@@ -3,7 +3,10 @@
     <b-loading :active.sync="$apollo.loading"></b-loading>
     <div v-if="event">
       <div class="header-picture container">
-        <figure class="image is-3by1">
+        <figure class="image is-3by1" v-if="event.picture">
+          <img :src="event.picture.url">
+        </figure>
+        <figure class="image is-3by1" v-else>
           <img src="https://picsum.photos/600/200/">
         </figure>
       </div>
@@ -95,10 +98,10 @@
                 <translate
                         :translate-params="{name: event.organizerActor.name ? event.organizerActor.name : event.organizerActor.preferredUsername}"
                         v-if="event.organizerActor">By %{ name }</translate>
-                  <figure v-if="event.organizerActor.avatarUrl" class="image is-48x48">
+                  <figure v-if="event.organizerActor.avatar" class="image is-48x48">
                     <img
                             class="is-rounded"
-                            :src="event.organizerActor.avatarUrl"
+                            :src="event.organizerActor.avatar.url"
                             :alt="$gettextInterpolate('%{actor}\'s avatar', {actor: event.organizerActor.preferredUsername})" />
                   </figure>
                 </router-link>
@@ -185,8 +188,8 @@
 <!--          >-->
 <!--            <div>-->
 <!--              <figure>-->
-<!--                <img v-if="!participant.actor.avatarUrl" src="https://picsum.photos/125/125/">-->
-<!--                <img v-else :src="participant.actor.avatarUrl">-->
+<!--                <img v-if="!participant.actor.avatar.url" src="https://picsum.photos/125/125/">-->
+<!--                <img v-else :src="participant.actor.avatar.url">-->
 <!--              </figure>-->
 <!--              <span>{{ participant.actor.preferredUsername }}</span>-->
 <!--            </div>-->

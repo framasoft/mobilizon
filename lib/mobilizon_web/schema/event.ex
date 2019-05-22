@@ -8,7 +8,7 @@ defmodule MobilizonWeb.Schema.EventType do
   import_types(MobilizonWeb.Schema.AddressType)
   import_types(MobilizonWeb.Schema.Events.ParticipantType)
   import_types(MobilizonWeb.Schema.TagType)
-  alias MobilizonWeb.Resolvers
+  alias MobilizonWeb.Resolvers.{Picture, Event, Tag}
 
   @desc "An event"
   object :event do
@@ -23,10 +23,12 @@ defmodule MobilizonWeb.Schema.EventType do
     field(:ends_on, :datetime, description: "Datetime for when the event ends")
     field(:status, :event_status, description: "Status of the event")
     field(:visibility, :event_visibility, description: "The event's visibility")
-    # TODO replace me with picture object
-    field(:thumbnail, :string, description: "A thumbnail picture for the event")
-    # TODO replace me with banner
-    field(:large_image, :string, description: "A large picture for the event")
+
+    field(:picture, :picture,
+      description: "The event's picture",
+      resolve: &Picture.picture/3
+    )
+
     field(:publish_at, :datetime, description: "When the event was published")
 
     field(:physical_address, :address,
@@ -45,19 +47,19 @@ defmodule MobilizonWeb.Schema.EventType do
     field(:attributed_to, :actor, description: "Who the event is attributed to (often a group)")
 
     field(:tags, list_of(:tag),
-      resolve: &MobilizonWeb.Resolvers.Tag.list_tags_for_event/3,
+      resolve: &Tag.list_tags_for_event/3,
       description: "The event's tags"
     )
 
     field(:category, :string, description: "The event's category")
 
     field(:participants, list_of(:participant),
-      resolve: &MobilizonWeb.Resolvers.Event.list_participants_for_event/3,
+      resolve: &Event.list_participants_for_event/3,
       description: "The event's participants"
     )
 
     field(:related_events, list_of(:event),
-      resolve: &MobilizonWeb.Resolvers.Event.list_related_events/3,
+      resolve: &Event.list_related_events/3,
       description: "Events related to this one"
     )
 
@@ -93,13 +95,13 @@ defmodule MobilizonWeb.Schema.EventType do
     field :events, list_of(:event) do
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
-      resolve(&Resolvers.Event.list_events/3)
+      resolve(&Event.list_events/3)
     end
 
     @desc "Get an event by uuid"
     field :event, :event do
       arg(:uuid, non_null(:uuid))
-      resolve(&Resolvers.Event.find_event/3)
+      resolve(&Event.find_event/3)
     end
   end
 
@@ -113,15 +115,20 @@ defmodule MobilizonWeb.Schema.EventType do
       arg(:state, :integer)
       arg(:status, :integer)
       arg(:public, :boolean)
-      arg(:thumbnail, :string)
-      arg(:large_image, :string)
+      arg(:visibility, :event_visibility, default_value: :private)
+
+      arg(:picture, :picture_input,
+        description:
+          "The picture for the event, either as an object or directly the ID of an existing Picture"
+      )
+
       arg(:publish_at, :datetime)
       arg(:online_address, :string)
       arg(:phone_address, :string)
       arg(:organizer_actor_id, non_null(:id))
       arg(:category, non_null(:string))
 
-      resolve(&Resolvers.Event.create_event/3)
+      resolve(&Event.create_event/3)
     end
 
     @desc "Delete an event"
@@ -129,7 +136,7 @@ defmodule MobilizonWeb.Schema.EventType do
       arg(:event_id, non_null(:integer))
       arg(:actor_id, non_null(:integer))
 
-      resolve(&Resolvers.Event.delete_event/3)
+      resolve(&Event.delete_event/3)
     end
   end
 end

@@ -15,9 +15,9 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Event
   alias Mobilizon.Events.Comment
+  alias Mobilizon.Media.Picture
   alias Mobilizon.Events
   alias Mobilizon.Activity
-  alias Mobilizon.Service.ActivityPub
   alias Ecto.Changeset
   require Logger
   alias MobilizonWeb.Router.Helpers, as: Routes
@@ -109,23 +109,6 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   end
 
   @doc """
-  Converts an AP object data to our internal data structure
-  """
-  def object_to_event_data(object) do
-    {:ok, %Actor{id: actor_id}} = Actors.get_actor_by_url(object["actor"])
-
-    %{
-      "title" => object["name"],
-      "description" => object["content"],
-      "organizer_actor_id" => actor_id,
-      "begins_on" => object["begins_on"],
-      "category" => object["category"],
-      "url" => object["id"],
-      "uuid" => object["uuid"]
-    }
-  end
-
-  @doc """
   Inserts a full object if it is contained in an activity.
   """
   def insert_full_object(object_data)
@@ -135,7 +118,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   """
   def insert_full_object(%{"object" => %{"type" => "Event"} = object_data})
       when is_map(object_data) do
-    with object_data <- object_to_event_data(object_data),
+    with object_data <-
+           Mobilizon.Service.ActivityPub.Converters.Event.as_to_model_data(object_data),
          {:ok, _} <- Events.create_event(object_data) do
       :ok
     end
@@ -155,60 +139,14 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   """
   def insert_full_object(%{"object" => %{"type" => "Note"} = object_data})
       when is_map(object_data) do
-    Logger.debug("Inserting full comment")
-    Logger.debug(inspect(object_data))
-
-    with {:ok, %Actor{id: actor_id}} <- Actors.get_or_fetch_by_url(object_data["actor"]) do
-      data = %{
-        "text" => object_data["content"],
-        "url" => object_data["id"],
-        "actor_id" => actor_id,
-        "in_reply_to_comment_id" => nil,
-        "event_id" => nil,
-        "uuid" => object_data["uuid"]
-      }
-
-      # We fetch the parent object
-      Logger.debug("We're fetching the parent object")
-
-      data =
-        if Map.has_key?(object_data, "inReplyTo") && object_data["inReplyTo"] != nil &&
-             object_data["inReplyTo"] != "" do
-          Logger.debug(fn -> "Object has inReplyTo #{object_data["inReplyTo"]}" end)
-
-          case ActivityPub.fetch_object_from_url(object_data["inReplyTo"]) do
-            # Reply to an event (Comment)
-            {:ok, %Event{id: id}} ->
-              Logger.debug("Parent object is an event")
-              data |> Map.put("event_id", id)
-
-            # Reply to a comment (Comment)
-            {:ok, %Comment{id: id} = comment} ->
-              Logger.debug("Parent object is another comment")
-
-              data
-              |> Map.put("in_reply_to_comment_id", id)
-              |> Map.put("origin_comment_id", comment |> Comment.get_thread_id())
-
-            # Anything else is kind of a MP
-            {:error, object} ->
-              Logger.debug("Parent object is something we don't handle")
-              Logger.debug(inspect(object))
-              data
-          end
-        else
-          Logger.debug("No parent object for this comment")
-          data
-        end
-
-      with {:ok, _comment} <- Events.create_comment(data) do
-        :ok
-      else
-        err ->
-          Logger.error("Error while inserting a remote comment inside database")
-          Logger.error(inspect(err))
-          {:error, err}
-      end
+    with data <- Mobilizon.Service.ActivityPub.Converters.Comment.as_to_model_data(object_data),
+         {:ok, _comment} <- Events.create_comment(data) do
+      :ok
+    else
+      err ->
+        Logger.error("Error while inserting a remote comment inside database")
+        Logger.error(inspect(err))
+        {:error, err}
     end
   end
 
@@ -238,6 +176,43 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   #    Repo.one(query)
   #  end
 
+  def make_picture_data(%Plug.Upload{} = picture) do
+    with {:ok, picture} <- MobilizonWeb.Upload.store(picture) do
+      picture
+    else
+      _ -> nil
+    end
+  end
+
+  def make_picture_data(%Picture{file: file} = _picture) do
+    %{
+      "type" => "Document",
+      "url" => [
+        %{
+          "type" => "Link",
+          "mediaType" => file.content_type,
+          "href" => file.url
+        }
+      ],
+      "name" => file.name
+    }
+  end
+
+  def make_picture_data(%{picture: picture}) do
+    with {:ok, %{"url" => [%{"href" => url}]}} <- MobilizonWeb.Upload.store(picture.file),
+         {:ok, %Picture{file: _file} = pic} <-
+           Mobilizon.Media.create_picture(%{
+             "file" => %{
+               "url" => url,
+               "name" => picture.name
+             }
+           }) do
+      make_picture_data(pic)
+    end
+  end
+
+  def make_picture_data(nil), do: nil
+
   @doc """
   Make an AP event object from an set of values
   """
@@ -246,6 +221,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
           String.t(),
           String.t(),
           String.t(),
+          map(),
           list(),
           list(),
           map(),
@@ -256,7 +232,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
         to,
         title,
         content_html,
-        # attachments,
+        picture \\ nil,
         tags \\ [],
         # _cw \\ nil,
         cc \\ [],
@@ -266,14 +242,13 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     Logger.debug("Making event data")
     uuid = Ecto.UUID.generate()
 
-    %{
+    res = %{
       "type" => "Event",
       "to" => to,
       "cc" => cc,
       "content" => content_html,
       "name" => title,
       # "summary" => cw,
-      # "attachment" => attachments,
       "begins_on" => metadata.begins_on,
       "category" => category,
       "actor" => actor,
@@ -281,55 +256,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "uuid" => uuid,
       "tag" => tags |> Enum.map(fn {_, tag} -> tag end) |> Enum.uniq()
     }
-  end
 
-  @spec make_event_data(Event.t(), list(String.t())) :: map()
-  def make_event_data(
-        %Event{} = event,
-        to \\ ["https://www.w3.org/ns/activitystreams#Public"]
-      ) do
-    %{
-      "type" => "Event",
-      "to" => to,
-      "title" => event.title,
-      "actor" => event.organizer_actor.url,
-      "uuid" => event.uuid,
-      "category" => event.category,
-      "summary" => event.description,
-      "publish_at" => (event.publish_at || event.inserted_at) |> DateTime.to_iso8601(),
-      "updated_at" => event.updated_at |> DateTime.to_iso8601(),
-      "id" => Routes.page_url(Endpoint, :event, event.uuid)
-    }
-  end
-
-  @doc """
-  Make an AP comment object from an existing `Comment` structure.
-  """
-  def make_comment_data(
-        %Comment{
-          text: text,
-          actor: actor,
-          uuid: uuid,
-          in_reply_to_comment: reply_to,
-          event: event
-        },
-        to \\ ["https://www.w3.org/ns/activitystreams#Public"]
-      ) do
-    object = %{
-      "type" => "Note",
-      "to" => to,
-      "content" => text,
-      "actor" => actor.url,
-      "attributedTo" => actor.url,
-      "uuid" => uuid,
-      "id" => Routes.page_url(Endpoint, :comment, uuid)
-    }
-
-    if reply_to do
-      object |> Map.put("inReplyTo", reply_to.url || event.url)
-    else
-      object
-    end
+    if is_nil(picture), do: res, else: Map.put(res, "attachment", [make_picture_data(picture)])
   end
 
   @doc """

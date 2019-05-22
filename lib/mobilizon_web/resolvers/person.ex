@@ -47,12 +47,17 @@ defmodule MobilizonWeb.Resolvers.Person do
   @doc """
   This function is used to create more identities from an existing user
   """
-  def create_person(_parent, %{preferred_username: _preferred_username} = args, %{
-        context: %{current_user: user}
-      }) do
+  def create_person(
+        _parent,
+        %{preferred_username: _preferred_username} = args,
+        %{
+          context: %{current_user: user}
+        } = _resolution
+      ) do
     args = Map.put(args, :user_id, user.id)
 
-    with {:ok, %Actor{} = new_person} <- Actors.new_person(args) do
+    with args <- save_attached_pictures(args),
+         {:ok, %Actor{} = new_person} <- Actors.new_person(args) do
       {:ok, new_person}
     end
   end
@@ -64,6 +69,21 @@ defmodule MobilizonWeb.Resolvers.Person do
     {:error, "You need to be logged-in to create a new identity"}
   end
 
+  defp save_attached_pictures(args) do
+    Enum.reduce([:avatar, :banner], args, fn key, args ->
+      if Map.has_key?(args, key) do
+        pic = args[key][:picture]
+
+        with {:ok, %{"name" => name, "url" => [%{"href" => url, "mediaType" => content_type}]}} <-
+               MobilizonWeb.Upload.store(pic.file, type: key, description: pic.alt) do
+          Map.put(args, key, %{"name" => name, "url" => url, "mediaType" => content_type})
+        end
+      else
+        args
+      end
+    end)
+  end
+
   @doc """
   This function is used to register a person afterwards the user has been created (but not activated)
   """
@@ -71,6 +91,7 @@ defmodule MobilizonWeb.Resolvers.Person do
     with {:ok, %User{} = user} <- Users.get_user_by_email(args.email),
          {:no_actor, nil} <- {:no_actor, Users.get_actor_for_user(user)},
          args <- Map.put(args, :user_id, user.id),
+         args <- save_attached_pictures(args),
          {:ok, %Actor{} = new_person} <- Actors.new_person(args) do
       {:ok, new_person}
     else

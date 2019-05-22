@@ -5,7 +5,7 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
   use Absinthe.Schema.Notation
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   alias Mobilizon.Events
-  alias MobilizonWeb.Resolvers
+  alias MobilizonWeb.Resolvers.Person
   import MobilizonWeb.Schema.Utils
 
   import_types(MobilizonWeb.Schema.Events.FeedTokenType)
@@ -34,8 +34,9 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
     )
 
     field(:suspended, :boolean, description: "If the actor is suspended")
-    field(:avatar_url, :string, description: "The actor's avatar url")
-    field(:banner_url, :string, description: "The actor's banner url")
+
+    field(:avatar, :picture, description: "The actor's avatar picture")
+    field(:banner, :picture, description: "The actor's banner picture")
 
     # These one should have a privacy setting
     field(:following, list_of(:follower), description: "List of followings")
@@ -56,25 +57,25 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
 
     @desc "The list of events this person goes to"
     field :going_to_events, list_of(:event) do
-      resolve(&Resolvers.Person.person_going_to_events/3)
+      resolve(&Person.person_going_to_events/3)
     end
   end
 
   object :person_queries do
     @desc "Get the current actor for the logged-in user"
     field :logged_person, :person do
-      resolve(&Resolvers.Person.get_current_person/3)
+      resolve(&Person.get_current_person/3)
     end
 
     @desc "Get a person by it's preferred username"
     field :person, :person do
       arg(:preferred_username, non_null(:string))
-      resolve(&Resolvers.Person.find_person/3)
+      resolve(&Person.find_person/3)
     end
 
     @desc "Get the persons for an user"
     field :identities, list_of(:person) do
-      resolve(&Resolvers.Person.identities/3)
+      resolve(&Person.identities/3)
     end
   end
 
@@ -87,7 +88,17 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
 
       arg(:summary, :string, description: "The summary for the new profile", default_value: "")
 
-      resolve(handle_errors(&Resolvers.Person.create_person/3))
+      arg(:avatar, :picture_input,
+        description:
+          "The avatar for the profile, either as an object or directly the ID of an existing Picture"
+      )
+
+      arg(:banner, :picture_input,
+        description:
+          "The banner for the profile, either as an object or directly the ID of an existing Picture"
+      )
+
+      resolve(handle_errors(&Person.create_person/3))
     end
 
     @desc "Register a first profile on registration"
@@ -99,7 +110,17 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
       arg(:summary, :string, description: "The summary for the new profile", default_value: "")
       arg(:email, non_null(:string), description: "The email from the user previously created")
 
-      resolve(handle_errors(&Resolvers.Person.register_person/3))
+      arg(:avatar, :picture_input,
+        description:
+          "The avatar for the profile, either as an object or directly the ID of an existing Picture"
+      )
+
+      arg(:banner, :picture_input,
+        description:
+          "The banner for the profile, either as an object or directly the ID of an existing Picture"
+      )
+
+      resolve(handle_errors(&Person.register_person/3))
     end
   end
 end

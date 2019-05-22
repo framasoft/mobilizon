@@ -50,4 +50,21 @@ defmodule Mobilizon.DataCase do
       end)
     end)
   end
+
+  def ensure_local_uploader(_context) do
+    uploader = Mobilizon.CommonConfig.get([MobilizonWeb.Upload, :uploader])
+    filters = Mobilizon.CommonConfig.get([MobilizonWeb.Upload, :filters])
+
+    unless uploader == MobilizonWeb.Uploaders.Local || filters != [] do
+      Mobilizon.CommonConfig.put([MobilizonWeb.Upload, :uploader], MobilizonWeb.Uploaders.Local)
+      Mobilizon.CommonConfig.put([MobilizonWeb.Upload, :filters], [])
+
+      on_exit(fn ->
+        Mobilizon.CommonConfig.put([MobilizonWeb.Upload, :uploader], uploader)
+        Mobilizon.CommonConfig.put([MobilizonWeb.Upload, :filters], filters)
+      end)
+    end
+
+    :ok
+  end
 end

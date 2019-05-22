@@ -5,6 +5,7 @@ defmodule MobilizonWeb.Resolvers.Event do
   alias Mobilizon.Activity
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Participant}
+  alias Mobilizon.Media.Picture
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Users.User
 
@@ -185,22 +186,49 @@ defmodule MobilizonWeb.Resolvers.Event do
   @doc """
   Create an event
   """
-  def create_event(_parent, args, %{context: %{current_user: _user}}) do
-    with {:ok, %Activity{data: %{"object" => %{"type" => "Event"} = object}}} <-
+  def create_event(_parent, args, %{context: %{current_user: _user}} = _resolution) do
+    with {:ok, args} <- save_attached_picture(args),
+         {:ok, %Activity{data: %{"object" => %{"type" => "Event"} = object}}} <-
            MobilizonWeb.API.Events.create_event(args) do
-      {:ok,
-       %Event{
-         title: object["name"],
-         description: object["content"],
-         uuid: object["uuid"],
-         url: object["id"]
-       }}
+      res = %{
+        title: object["name"],
+        description: object["content"],
+        uuid: object["uuid"],
+        url: object["id"]
+      }
+
+      res =
+        if Map.has_key?(object, "attachment"),
+          do:
+            Map.put(res, :picture, %{
+              name: object["attachment"] |> hd() |> Map.get("name"),
+              url: object["attachment"] |> hd() |> Map.get("url") |> hd() |> Map.get("href")
+            }),
+          else: res
+
+      {:ok, res}
     end
   end
 
   def create_event(_parent, _args, _resolution) do
     {:error, "You need to be logged-in to create events"}
   end
+
+  # If we have an attached picture, just transmit it. It will be handled by
+  # Mobilizon.Service.ActivityPub.Utils.make_picture_data/1
+  @spec save_attached_picture(map()) :: {:ok, map()}
+  defp save_attached_picture(%{picture: %{picture: %Plug.Upload{} = _picture}} = args), do: args
+
+  # Otherwise if we use a previously uploaded picture we need to fetch it from database
+  @spec save_attached_picture(map()) :: {:ok, map()}
+  defp save_attached_picture(%{picture: %{picture_id: picture_id}} = args) do
+    with %Picture{} = picture <- Mobilizon.Media.get_picture(picture_id) do
+      {:ok, Map.put(args, :picture, picture)}
+    end
+  end
+
+  @spec save_attached_picture(map()) :: {:ok, map()}
+  defp save_attached_picture(args), do: {:ok, args}
 
   @doc """
   Delete an event

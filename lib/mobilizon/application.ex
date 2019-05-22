@@ -6,6 +6,9 @@ defmodule Mobilizon.Application do
   import Cachex.Spec
   alias Mobilizon.Service.Export.{Feed, ICalendar}
 
+  @name Mix.Project.config()[:name]
+  @version Mix.Project.config()[:version]
+
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   def start(_type, _args) do
@@ -81,5 +84,14 @@ defmodule Mobilizon.Application do
   def config_change(changed, _new, removed) do
     MobilizonWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  def named_version, do: @name <> " " <> @version
+
+  def user_agent do
+    info =
+      "#{MobilizonWeb.Endpoint.url()} <#{Mobilizon.CommonConfig.get([:instance, :email], "")}>"
+
+    named_version() <> "; " <> info
   end
 end

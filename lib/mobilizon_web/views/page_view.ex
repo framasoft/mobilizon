@@ -44,7 +44,7 @@ defmodule MobilizonWeb.PageView do
   end
 
   def render("event.activity-json", %{conn: %{assigns: %{object: event}}}) do
-    event = Utils.make_event_data(event)
+    event = Mobilizon.Service.ActivityPub.Converters.Event.model_to_as(event)
     {:ok, html, []} = Earmark.as_html(event["summary"])
 
     %{
@@ -66,7 +66,7 @@ defmodule MobilizonWeb.PageView do
   end
 
   def render("comment.activity-json", %{conn: %{assigns: %{object: comment}}}) do
-    comment = Utils.make_comment_data(comment)
+    comment = Mobilizon.Service.ActivityPub.Converters.Comment.model_to_as(comment)
 
     %{
       "actor" => comment["actor"],

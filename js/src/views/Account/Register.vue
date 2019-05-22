@@ -81,7 +81,7 @@ export default class Register extends Vue {
   @Prop({ type: String, required: true }) email!: string;
   @Prop({ type: Boolean, required: false, default: false }) userAlreadyActivated!: boolean;
 
-  host: string = MOBILIZON_INSTANCE_HOST;
+  host?: string = MOBILIZON_INSTANCE_HOST;
 
   person: IPerson = {
     preferredUsername: '',
@@ -90,8 +90,8 @@ export default class Register extends Vue {
     id: '',
     url: '',
     suspended: false,
-    avatarUrl: '',
-    bannerUrl: '',
+    avatar: null,
+    banner: null,
     domain: null,
     feedTokens: [],
     goingToEvents: [],
