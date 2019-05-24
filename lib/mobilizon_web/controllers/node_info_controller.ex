@@ -14,8 +14,8 @@ defmodule MobilizonWeb.NodeInfoController do
     response = %{
       links: [
         %{
-          rel: "http://nodeinfo.diaspora.software/ns/schema/2.0",
-          href: MobilizonWeb.Router.Helpers.node_info_url(MobilizonWeb.Endpoint, :nodeinfo, "2.0")
+          rel: "http://nodeinfo.diaspora.software/ns/schema/2.1",
+          href: MobilizonWeb.Router.Helpers.node_info_url(MobilizonWeb.Endpoint, :nodeinfo, "2.1")
         }
       ]
     }
@@ -23,13 +23,14 @@ defmodule MobilizonWeb.NodeInfoController do
     json(conn, response)
   end
 
-  # Schema definition: https://github.com/jhass/nodeinfo/blob/master/schemas/2.0/schema.json
-  def nodeinfo(conn, %{"version" => "2.0"}) do
+  # Schema definition: https://github.com/jhass/nodeinfo/blob/master/schemas/2.1/schema.json
+  def nodeinfo(conn, %{"version" => "2.1"}) do
     response = %{
-      version: "2.0",
+      version: "2.1",
       software: %{
         name: "mobilizon",
-        version: Keyword.get(@instance, :version)
+        version: Keyword.get(@instance, :version),
+        repository: Keyword.get(@instance, :repository)
       },
       protocols: ["activitypub"],
       services: %{
@@ -52,7 +53,7 @@ defmodule MobilizonWeb.NodeInfoController do
     conn
     |> put_resp_header(
       "content-type",
-      "application/json; profile=http://nodeinfo.diaspora.software/ns/schema/2.0#; charset=utf-8"
+      "application/json; profile=http://nodeinfo.diaspora.software/ns/schema/2.1#; charset=utf-8"
     )
     |> json(response)
   end
