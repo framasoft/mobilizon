@@ -23,7 +23,9 @@ query SearchGroups($searchText: String!) {
   searchGroups(search: $searchText) {
     total,
     elements {
-      avatarUrl,
+      avatar {
+        url
+      },
       domain,
       preferredUsername,
       name,

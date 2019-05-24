@@ -1,5 +1,7 @@
 import { Actor, IActor } from './actor';
 import { IAddress } from '@/types/address.model';
+import { ITag } from '@/types/tag.model';
+import { IAbstractPicture, IPicture } from '@/types/picture.model';
 
 export enum EventStatus {
   TENTATIVE,
@@ -62,8 +64,7 @@ export interface IEvent {
 
   joinOptions: EventJoinOptions;
 
-  thumbnail: string;
-  largeImage: string;
+  picture: IAbstractPicture|null;
 
   organizerActor: IActor;
   attributedTo: IActor;
@@ -84,12 +85,10 @@ export class EventModel implements IEvent {
   description: string = '';
   endsOn: Date = new Date();
   joinOptions: EventJoinOptions = EventJoinOptions.FREE;
-  largeImage: string = '';
   local: boolean = true;
   participants: IParticipant[] = [];
   publishAt: Date = new Date();
   status: EventStatus = EventStatus.CONFIRMED;
-  thumbnail: string = '';
   title: string = '';
   url: string = '';
   uuid: string = '';
@@ -99,4 +98,5 @@ export class EventModel implements IEvent {
   relatedEvents: IEvent[] = [];
   onlineAddress: string = '';
   phoneAddress: string = '';
+  picture: IAbstractPicture|null = null;
 }

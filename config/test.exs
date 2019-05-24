@@ -33,6 +33,10 @@ config :mobilizon, Mobilizon.Repo,
 
 config :mobilizon, Mobilizon.Mailer, adapter: Bamboo.TestAdapter
 
+config :mobilizon, MobilizonWeb.Upload, filters: [], link_name: false
+
+config :mobilizon, MobilizonWeb.Uploaders.Local, uploads: "test/uploads"
+
 config :exvcr,
   vcr_cassette_library_dir: "test/fixtures/vcr_cassettes"
 

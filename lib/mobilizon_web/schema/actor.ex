@@ -5,10 +5,11 @@ defmodule MobilizonWeb.Schema.ActorInterface do
   use Absinthe.Schema.Notation
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events
+  alias Mobilizon.{Events}
 
   import_types(MobilizonWeb.Schema.Actors.FollowerType)
   import_types(MobilizonWeb.Schema.EventType)
+  #  import_types(MobilizonWeb.Schema.PictureType)
 
   @desc "An ActivityPub actor"
   interface :actor do
@@ -27,8 +28,9 @@ defmodule MobilizonWeb.Schema.ActorInterface do
     )
 
     field(:suspended, :boolean, description: "If the actor is suspended")
-    field(:avatar_url, :string, description: "The actor's avatar url")
-    field(:banner_url, :string, description: "The actor's banner url")
+
+    field(:avatar, :picture, description: "The actor's avatar picture")
+    field(:banner, :picture, description: "The actor's banner picture")
 
     # These one should have a privacy setting
     field(:following, list_of(:follower), description: "List of followings")

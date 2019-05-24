@@ -33,6 +33,8 @@ defmodule Mobilizon.Factory do
       followings: [],
       keys: pem,
       type: :Person,
+      avatar: build(:file, name: "Avatar"),
+      banner: build(:file, name: "Banner"),
       url: Actor.build_url(preferred_username, :page),
       followers_url: Actor.build_url(preferred_username, :followers),
       following_url: Actor.build_url(preferred_username, :following),
@@ -165,6 +167,20 @@ defmodule Mobilizon.Factory do
       user: user,
       actor: build(:actor, user: user),
       token: Ecto.UUID.generate()
+    }
+  end
+
+  def file_factory do
+    %Mobilizon.Media.File{
+      name: "My Picture",
+      url: MobilizonWeb.Endpoint.url() <> "/uploads/something",
+      content_type: "image/png"
+    }
+  end
+
+  def picture_factory do
+    %Mobilizon.Media.Picture{
+      file: build(:file)
     }
   end
 end

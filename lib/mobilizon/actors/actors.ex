@@ -11,7 +11,7 @@ defmodule Mobilizon.Actors do
   alias Mobilizon.Actors.{Actor, Bot, Member, Follower}
 
   alias Mobilizon.Service.ActivityPub
-  # import Exgravatar
+  require Logger
 
   @doc false
   def data() do
@@ -57,9 +57,12 @@ defmodule Mobilizon.Actors do
   end
 
   # Get actor by ID and preload organized events, followers and followings
-  @spec get_actor_with_everything(integer()) :: Ecto.Query
+  @spec get_actor_with_everything(integer()) :: Ecto.Query.t()
   defp do_get_actor_with_everything(id) do
-    from(a in Actor, where: a.id == ^id, preload: [:organized_events, :followers, :followings])
+    from(a in Actor,
+      where: a.id == ^id,
+      preload: [:organized_events, :followers, :followings]
+    )
   end
 
   @doc """
@@ -239,24 +242,29 @@ defmodule Mobilizon.Actors do
   """
   @spec insert_or_update_actor(map(), boolean()) :: {:ok, Actor.t()}
   def insert_or_update_actor(data, preload \\ false) do
-    cs = Actor.remote_actor_creation(data)
+    cs =
+      data
+      |> Actor.remote_actor_creation()
 
-    {:ok, actor} =
-      Repo.insert(
-        cs,
-        on_conflict: [
-          set: [
-            keys: data.keys,
-            avatar_url: data.avatar_url,
-            banner_url: data.banner_url,
-            name: data.name,
-            summary: data.summary
-          ]
-        ],
-        conflict_target: [:url]
-      )
-
-    if preload, do: {:ok, Repo.preload(actor, [:followers])}, else: {:ok, actor}
+    with {:ok, actor} <-
+           Repo.insert(
+             cs,
+             on_conflict: [
+               set: [
+                 keys: data.keys,
+                 name: data.name,
+                 summary: data.summary
+               ]
+             ],
+             conflict_target: [:url]
+           ) do
+      actor = if preload, do: Repo.preload(actor, [:followers]), else: actor
+      {:ok, actor}
+    else
+      err ->
+        Logger.error(inspect(err))
+        {:error, err}
+    end
   end
 
   #  def increase_event_count(%Actor{} = actor) do
@@ -291,7 +299,8 @@ defmodule Mobilizon.Actors do
         {:error, :actor_not_found}
 
       actor ->
-        if preload, do: {:ok, Repo.preload(actor, [:followers])}, else: {:ok, actor}
+        actor = if preload, do: Repo.preload(actor, [:followers]), else: actor
+        {:ok, actor}
     end
   end
 
@@ -371,7 +380,11 @@ defmodule Mobilizon.Actors do
   """
   @spec get_local_actor_by_name(String.t()) :: Actor.t() | nil
   def get_local_actor_by_name(name) do
-    Repo.one(from(a in Actor, where: a.preferred_username == ^name and is_nil(a.domain)))
+    Repo.one(
+      from(a in Actor,
+        where: a.preferred_username == ^name and is_nil(a.domain)
+      )
+    )
   end
 
   @doc """
@@ -435,6 +448,7 @@ defmodule Mobilizon.Actors do
             {:ok, actor}
 
           _ ->
+            Logger.error("Could not fetch by AP id")
             {:error, "Could not fetch by AP id"}
         end
     end

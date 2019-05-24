@@ -6,12 +6,11 @@
 defmodule MobilizonWeb.ActivityPubControllerTest do
   use MobilizonWeb.ConnCase
   import Mobilizon.Factory
-  alias MobilizonWeb.ActivityPub.{ActorView, ObjectView}
+  alias MobilizonWeb.ActivityPub.ActorView
   alias MobilizonWeb.PageView
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Utils
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
   alias MobilizonWeb.Router.Helpers, as: Routes
   alias MobilizonWeb.Endpoint

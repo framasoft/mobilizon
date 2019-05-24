@@ -1,5 +1,5 @@
-# source: http://localhost:4001/api
-# timestamp: Fri Apr 26 2019 14:47:01 GMT+0200 (heure d’été d’Europe centrale)
+# source: http://localhost:4000/api
+# timestamp: Thu May 02 2019 16:24:47 GMT+0200 (GMT+02:00)
 
 schema {
   query: RootQueryType
@@ -8,11 +8,11 @@ schema {
 
 """An ActivityPub actor"""
 interface Actor {
-  """The actor's avatar url"""
-  avatarUrl: String
+  """The actor's avatar picture"""
+  avatar: Picture
 
-  """The actor's banner url"""
-  bannerUrl: String
+  """The actor's banner picture"""
+  banner: Picture
 
   """The actor's domain if (null if it's this instance)"""
   domain: String
@@ -193,9 +193,6 @@ type Event {
   """Internal ID for this event"""
   id: Int
 
-  """A large picture for the event"""
-  largeImage: String
-
   """Whether the event is local or not"""
   local: Boolean
 
@@ -214,6 +211,9 @@ type Event {
   """The type of the event's address"""
   physicalAddress: Address
 
+  """The event's picture"""
+  picture: Picture
+
   """When the event was published"""
   publishAt: DateTime
 
@@ -228,9 +228,6 @@ type Event {
 
   """The event's tags"""
   tags: [Tag]
-
-  """A thumbnail picture for the event"""
-  thumbnail: String
 
   """The event's title"""
   title: String
@@ -319,11 +316,11 @@ Represents a group of actors
 
 """
 type Group implements Actor {
-  """The actor's avatar url"""
-  avatarUrl: String
+  """The actor's avatar picture"""
+  avatar: Picture
 
-  """The actor's banner url"""
-  bannerUrl: String
+  """The actor's banner picture"""
+  banner: Picture
 
   """The actor's domain if (null if it's this instance)"""
   domain: String
@@ -465,11 +462,11 @@ Represents a person identity
 
 """
 type Person implements Actor {
-  """The actor's avatar url"""
-  avatarUrl: String
+  """The actor's avatar picture"""
+  avatar: Picture
 
-  """The actor's banner url"""
-  bannerUrl: String
+  """The actor's banner picture"""
+  banner: Picture
 
   """The actor's domain if (null if it's this instance)"""
   domain: String
@@ -546,6 +543,37 @@ type PhoneAddress {
   phone: String
 }
 
+"""A picture"""
+type Picture {
+  """The picture's alternative text"""
+  alt: String
+
+  """The picture's UUID"""
+  id: UUID
+
+  """The picture's name"""
+  name: String
+
+  """The picture's full thumbnail URL"""
+  thumbnailUrl: String
+
+  """The picture's full URL"""
+  url: String
+}
+
+"""An attached picture or a link to a picture"""
+input PictureInput {
+  picture: PictureInputObject
+  pictureId: String
+}
+
+"""An attached picture"""
+input PictureInputObject {
+  alt: String
+  file: Upload!
+  name: String!
+}
+
 """
 The `Point` scalar type represents Point geographic information compliant string data, 
 represented as floats separated by a semi-colon. The geodetic system is WGS 84
@@ -560,7 +588,25 @@ type RootMutationType {
   createComment(actorUsername: String!, text: String!): Comment
 
   """Create an event"""
-  createEvent(beginsOn: DateTime!, category: String!, description: String!, endsOn: DateTime, largeImage: String, onlineAddress: String, organizerActorId: ID!, phoneAddress: String, public: Boolean, publishAt: DateTime, state: Int, status: Int, thumbnail: String, title: String!): Event
+  createEvent(
+    beginsOn: DateTime!
+    category: String!
+    description: String!
+    endsOn: DateTime
+    onlineAddress: String
+    organizerActorId: ID!
+    phoneAddress: String
+
+    """
+    The picture for the event, either as an object or directly the ID of an existing Picture
+    """
+    picture: PictureInput
+    public: Boolean
+    publishAt: DateTime
+    state: Int
+    status: Int
+    title: String!
+  ): Event
 
   """Create a Feed Token"""
   createFeedToken(actorId: Int): FeedToken
@@ -571,6 +617,16 @@ type RootMutationType {
     The actor's username which will be the admin (otherwise user's default one)
     """
     adminActorUsername: String
+
+    """
+    The avatar for the group, either as an object or directly the ID of an existing Picture
+    """
+    avatar: PictureInput
+
+    """
+    The banner for the group, either as an object or directly the ID of an existing Picture
+    """
+    banner: PictureInput
 
     """The summary for the group"""
     description: String = ""
@@ -584,6 +640,16 @@ type RootMutationType {
 
   """Create a new person for user"""
   createPerson(
+    """
+    The avatar for the profile, either as an object or directly the ID of an existing Picture
+    """
+    avatar: PictureInput
+
+    """
+    The banner for the profile, either as an object or directly the ID of an existing Picture
+    """
+    banner: PictureInput
+
     """The displayed name for the new profile"""
     name: String = ""
     preferredUsername: String!
@@ -621,6 +687,16 @@ type RootMutationType {
 
   """Register a first profile on registration"""
   registerPerson(
+    """
+    The avatar for the profile, either as an object or directly the ID of an existing Picture
+    """
+    avatar: PictureInput
+
+    """
+    The banner for the profile, either as an object or directly the ID of an existing Picture
+    """
+    banner: PictureInput
+
     """The email from the user previously created"""
     email: String!
 
@@ -640,6 +716,9 @@ type RootMutationType {
 
   """Send a link through email to reset user password"""
   sendResetPassword(email: String!, locale: String = "en"): String
+
+  """Upload a picture"""
+  uploadPicture(alt: String, file: Upload!, name: String!): Picture
 
   """Validate an user after registration"""
   validateUser(token: String!): Login
@@ -679,6 +758,9 @@ type RootQueryType {
 
   """Get a person by it's preferred username"""
   person(preferredUsername: String!): Person
+
+  """Get a picture"""
+  picture(id: String!): Picture
 
   """Reverse geocode coordinates"""
   reverseGeocode(latitude: Float!, longitude: Float!): [Address]
@@ -730,6 +812,12 @@ type Tag {
   """The tag's title"""
   title: String
 }
+
+"""
+Represents an uploaded file.
+
+"""
+scalar Upload
 
 """A local user of Mobilizon"""
 type User {

@@ -468,10 +468,24 @@ defmodule Mobilizon.Service.ActivityPub do
   """
   @spec actor_data_from_actor_object(map()) :: {:ok, map()}
   def actor_data_from_actor_object(data) when is_map(data) do
+    avatar =
+      data["icon"]["url"] &&
+        %{
+          "name" => data["icon"]["name"] || "avatar",
+          "url" => data["icon"]["url"]
+        }
+
+    banner =
+      data["image"]["url"] &&
+        %{
+          "name" => data["image"]["name"] || "banner",
+          "url" => data["image"]["url"]
+        }
+
     actor_data = %{
       url: data["id"],
-      avatar_url: data["icon"]["url"],
-      banner_url: data["image"]["url"],
+      avatar: avatar,
+      banner: banner,
       name: data["name"],
       preferred_username: data["preferredUsername"],
       summary: data["summary"],
@@ -512,7 +526,7 @@ defmodule Mobilizon.Service.ActivityPub do
     %Activity{
       recipients: ["https://www.w3.org/ns/activitystreams#Public"],
       actor: event.organizer_actor.url,
-      data: event |> make_event_data,
+      data: event |> Mobilizon.Service.ActivityPub.Converters.Event.model_to_as(),
       local: local
     }
   end
@@ -523,7 +537,7 @@ defmodule Mobilizon.Service.ActivityPub do
     %Activity{
       recipients: ["https://www.w3.org/ns/activitystreams#Public"],
       actor: comment.actor.url,
-      data: comment |> make_comment_data,
+      data: comment |> Mobilizon.Service.ActivityPub.Converters.Comment.model_to_as(),
       local: local
     }
   end

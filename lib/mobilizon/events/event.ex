@@ -35,6 +35,7 @@ defmodule Mobilizon.Events.Event do
   import Ecto.Changeset
   alias Mobilizon.Events.{Event, Participant, Tag, Session, Track}
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Media.Picture
   alias Mobilizon.Addresses.Address
 
   schema "events" do
@@ -48,8 +49,6 @@ defmodule Mobilizon.Events.Event do
     field(:status, Mobilizon.Events.EventStatusEnum, default: :confirmed)
     field(:visibility, Mobilizon.Events.EventVisibilityEnum, default: :public)
     field(:join_options, Mobilizon.Events.JoinOptionsEnum, default: :free)
-    field(:thumbnail, :string)
-    field(:large_image, :string)
     field(:publish_at, :utc_datetime)
     field(:uuid, Ecto.UUID, default: Ecto.UUID.generate())
     field(:online_address, :string)
@@ -62,6 +61,7 @@ defmodule Mobilizon.Events.Event do
     has_many(:tracks, Track)
     has_many(:sessions, Session)
     belongs_to(:physical_address, Address)
+    belongs_to(:picture, Picture)
 
     timestamps(type: :utc_datetime)
   end
@@ -80,12 +80,11 @@ defmodule Mobilizon.Events.Event do
       :category,
       :status,
       :visibility,
-      :thumbnail,
-      :large_image,
       :publish_at,
       :online_address,
       :phone_address,
-      :uuid
+      :uuid,
+      :picture_id
     ])
     |> cast_assoc(:tags)
     |> cast_assoc(:physical_address)

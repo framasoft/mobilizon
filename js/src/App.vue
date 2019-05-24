@@ -91,6 +91,7 @@ export default class App extends Vue {
   @import "~buefy/src/scss/components/form";
   @import "~buefy/src/scss/components/modal";
   @import "~buefy/src/scss/components/tag";
+  @import "~buefy/src/scss/components/upload";
   @import "~buefy/src/scss/utils/_all";
 
 .router-enter-active,

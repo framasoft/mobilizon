@@ -24,7 +24,7 @@ defmodule Mobilizon.Service.ActivityPub.UtilsTest do
                "id" => Routes.page_url(Endpoint, :comment, reply.uuid),
                "inReplyTo" => comment.url,
                "attributedTo" => reply.actor.url
-             } == Utils.make_comment_data(reply)
+             } == Mobilizon.Service.ActivityPub.Converters.Comment.model_to_as(reply)
     end
 
     test "comment data from map" do

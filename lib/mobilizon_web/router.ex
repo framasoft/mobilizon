@@ -5,7 +5,7 @@ defmodule MobilizonWeb.Router do
   use MobilizonWeb, :router
 
   pipeline :graphql do
-    plug(:accepts, ["json"])
+    #    plug(:accepts, ["json"])
     plug(MobilizonWeb.AuthPipeline)
   end
 
@@ -102,7 +102,6 @@ defmodule MobilizonWeb.Router do
   scope "/", MobilizonWeb do
     pipe_through(:browser)
 
-    forward("/uploads", UploadPlug)
     get("/*path", PageController, :index)
   end
 end

@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="container">
     <h1 class="title">
       <translate>Create a new event</translate>
     </h1>
@@ -22,6 +22,8 @@
           </b-select>
         </b-field>
 
+        <picture-upload @change="handlePictureUploadChange" />
+
         <button class="button is-primary">
           <translate>Create my event</translate>
         </button>
@@ -41,8 +43,11 @@ import {
     } from '@/types/event.model';
 import { LOGGED_PERSON } from '@/graphql/actor';
 import { IPerson, Person } from '@/types/actor';
+import PictureUpload from '@/components/PictureUpload.vue';
+import { IPictureUpload } from '@/types/picture.model';
 
 @Component({
+  components: { PictureUpload },
   apollo: {
     loggedPerson: {
       query: LOGGED_PERSON,
@@ -55,6 +60,8 @@ export default class CreateEvent extends Vue {
   loggedPerson: IPerson = new Person();
   categories: string[] = Object.keys(Category);
   event: IEvent = new EventModel();
+  pictureFile?: File;
+  pictureName?: String;
 
   createEvent(e: Event) {
     e.preventDefault();
@@ -62,15 +69,18 @@ export default class CreateEvent extends Vue {
     this.event.attributedTo = this.loggedPerson;
 
     if (this.event.uuid === '') {
+      console.log('event', this.event);
       this.$apollo
         .mutate({
           mutation: CREATE_EVENT,
           variables: {
             title: this.event.title,
             description: this.event.description,
-            beginsOn: this.event.beginsOn,
+            beginsOn: this.event.beginsOn.toISOString(),
             category: this.event.category,
             organizerActorId: this.event.organizerActor.id,
+            picture_file: this.pictureFile,
+            picture_name: this.pictureName,
           },
         })
         .then(data => {
@@ -98,6 +108,12 @@ export default class CreateEvent extends Vue {
           console.error(error);
         });
     }
+  }
+
+  handlePictureUploadChange(picture: IPictureUpload) {
+    console.log('picture upload change', picture);
+    this.pictureFile = picture.file;
+    this.pictureName = picture.name;
   }
 
   // getAddressData(addressData) {

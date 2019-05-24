@@ -178,7 +178,8 @@ defmodule Mobilizon.Events do
         :tracks,
         :tags,
         :participants,
-        :physical_address
+        :physical_address,
+        :picture
       ]
     )
     |> Repo.one()
@@ -692,7 +693,7 @@ defmodule Mobilizon.Events do
         on: p.actor_id == a.id,
         on: p.event_id == e.id,
         where: a.id == ^id and p.role != ^:not_approved,
-        preload: [:tags]
+        preload: [:picture, :tags]
       )
       |> paginate(page, limit)
     )
@@ -1239,11 +1240,7 @@ defmodule Mobilizon.Events do
 
   """
   def get_feed_token(token) do
-    from(
-      tk in FeedToken,
-      where: tk.token == ^token,
-      preload: [:actor, :user]
-    )
+    from(ftk in FeedToken, where: ftk.token == ^token, preload: [:actor, :user])
     |> Repo.one()
   end
 

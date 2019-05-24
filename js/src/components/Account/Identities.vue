@@ -8,8 +8,8 @@
       <li v-for="identity in identities" :key="identity.id">
         <div class="media identity" v-bind:class="{ 'is-current-identity': isCurrentIdentity(identity) }">
           <div class="media-left">
-            <figure class="image is-48x48">
-              <img class="is-rounded" :src="identity.avatarUrl">
+            <figure class="image is-48x48" v-if="identity.avatar">
+              <img class="is-rounded" :src="identity.avatar.url">
             </figure>
           </div>
 

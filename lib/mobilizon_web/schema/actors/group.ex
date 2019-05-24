@@ -5,7 +5,7 @@ defmodule MobilizonWeb.Schema.Actors.GroupType do
   use Absinthe.Schema.Notation
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   import_types(MobilizonWeb.Schema.Actors.MemberType)
-  alias MobilizonWeb.Resolvers
+  alias MobilizonWeb.Resolvers.{Member, Group}
   alias Mobilizon.Events
 
   @desc """
@@ -29,8 +29,9 @@ defmodule MobilizonWeb.Schema.Actors.GroupType do
     )
 
     field(:suspended, :boolean, description: "If the actor is suspended")
-    field(:avatar_url, :string, description: "The actor's avatar url")
-    field(:banner_url, :string, description: "The actor's banner url")
+
+    field(:avatar, :picture, description: "The actor's avatar picture")
+    field(:banner, :picture, description: "The actor's banner picture")
 
     # These one should have a privacy setting
     field(:following, list_of(:follower), description: "List of followings")
@@ -51,7 +52,7 @@ defmodule MobilizonWeb.Schema.Actors.GroupType do
     )
 
     field(:members, non_null(list_of(:member)),
-      resolve: &Resolvers.Member.find_members_for_group/3,
+      resolve: &Member.find_members_for_group/3,
       description: "List of group members"
     )
   end
@@ -80,13 +81,13 @@ defmodule MobilizonWeb.Schema.Actors.GroupType do
     field :groups, list_of(:group) do
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
-      resolve(&Resolvers.Group.list_groups/3)
+      resolve(&Group.list_groups/3)
     end
 
     @desc "Get a group by it's preferred username"
     field :group, :group do
       arg(:preferred_username, non_null(:string))
-      resolve(&Resolvers.Group.find_group/3)
+      resolve(&Group.find_group/3)
     end
   end
 
@@ -101,7 +102,17 @@ defmodule MobilizonWeb.Schema.Actors.GroupType do
         description: "The actor's username which will be the admin (otherwise user's default one)"
       )
 
-      resolve(&Resolvers.Group.create_group/3)
+      arg(:avatar, :picture_input,
+        description:
+          "The avatar for the group, either as an object or directly the ID of an existing Picture"
+      )
+
+      arg(:banner, :picture_input,
+        description:
+          "The banner for the group, either as an object or directly the ID of an existing Picture"
+      )
+
+      resolve(&Group.create_group/3)
     end
 
     @desc "Delete a group"
@@ -109,7 +120,7 @@ defmodule MobilizonWeb.Schema.Actors.GroupType do
       arg(:group_id, non_null(:integer))
       arg(:actor_id, non_null(:integer))
 
-      resolve(&Resolvers.Group.delete_group/3)
+      resolve(&Group.delete_group/3)
     end
   end
 end

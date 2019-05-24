@@ -8,11 +8,10 @@ use Mix.Config
 # with brunch.io to recompile .js and .css sources.
 config :mobilizon, MobilizonWeb.Endpoint,
   http: [
-    port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4001
+    port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4000
   ],
   url: [
-    host: System.get_env("MOBILIZON_INSTANCE_HOST") || "mobilizon.local",
-    port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4001
+    host: System.get_env("MOBILIZON_INSTANCE_HOST") || "mobilizon.local"
   ],
   debug_errors: true,
   code_reloader: true,

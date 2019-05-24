@@ -1,16 +1,16 @@
 <template>
   <section class="container">
     <div v-if="person">
-      <div class="card-image" v-if="person.bannerUrl">
+      <div class="card-image" v-if="person.banner">
         <figure class="image">
-          <img :src="person.bannerUrl">
+          <img :src="person.banner.url">
         </figure>
       </div>
       <div class="card-content">
         <div class="media">
           <div class="media-left">
-            <figure class="image is-48x48">
-              <img :src="person.avatarUrl">
+            <figure class="image is-48x48" v-if="person.avatar">
+              <img :src="person.avatar.url">
             </figure>
           </div>
           <div class="media-content">
@@ -18,7 +18,6 @@
             <p class="subtitle">@{{ person.preferredUsername }}</p>
           </div>
         </div>
-
         <div class="content">
           <vue-simple-markdown :source="person.summary"></vue-simple-markdown>
         </div>
@@ -58,7 +57,7 @@
             </a>
           </b-dropdown-item>
         </b-dropdown>
-        <a class="button" v-else-if="loggedPerson" @click="createToken">
+        <a class="button" v-if="loggedPerson.id === person.id" @click="createToken">
           <translate>Create token</translate>
         </a>
       </div>

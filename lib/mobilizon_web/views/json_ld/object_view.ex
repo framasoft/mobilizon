@@ -8,15 +8,12 @@ defmodule MobilizonWeb.JsonLD.ObjectView do
 
   def render("event.json", %{event: %Event{} = event}) do
     # TODO: event.description is actually markdown!
+
     json_ld = %{
       "@context" => "https://schema.org",
       "@type" => "Event",
       "name" => event.title,
       "description" => event.description,
-      "image" => [
-        event.thumbnail,
-        event.large_image
-      ],
       "performer" => %{
         "@type" =>
           if(event.organizer_actor.type == :Group, do: "PerformingGroup", else: "Person"),
@@ -24,6 +21,15 @@ defmodule MobilizonWeb.JsonLD.ObjectView do
       },
       "location" => render_one(event.physical_address, ObjectView, "place.json", as: :address)
     }
+
+    json_ld =
+      if event.picture do
+        Map.put(json_ld, "image", [
+          event.picture.file.url
+        ])
+      else
+        json_ld
+      end
 
     json_ld =
       if event.begins_on,

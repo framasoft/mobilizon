@@ -10,8 +10,12 @@ query($name:String!) {
     summary,
     preferredUsername,
     suspended,
-    avatarUrl,
-    bannerUrl,
+    avatar {
+      url
+    },
+    banner {
+      url
+    },
     feedTokens {
         token
     },
@@ -28,7 +32,9 @@ export const LOGGED_PERSON = gql`
 query {
   loggedPerson {
     id,
-    avatarUrl,
+    avatar {
+      url
+    },
     preferredUsername,
   }
 }`;
@@ -37,7 +43,9 @@ export const LOGGED_PERSON_WITH_GOING_TO_EVENTS = gql`
 query {
   loggedPerson {
     id,
-    avatarUrl,
+    avatar {
+        url
+    },
     preferredUsername,
     goingToEvents {
         uuid,
@@ -56,7 +64,9 @@ query {
 export const IDENTITIES = gql`
 query {
   identities {
-    avatarUrl,
+    avatar {
+        url
+    },
     preferredUsername,
     name
   }
@@ -72,7 +82,9 @@ mutation CreatePerson($preferredUsername: String!) {
     preferredUsername,
     name,
     summary,
-    avatarUrl
+    avatar {
+      url
+    },
   }
 }
 `;
@@ -91,7 +103,9 @@ mutation ($preferredUsername: String!, $name: String!, $summary: String!, $email
     preferredUsername,
     name,
     summary,
-    avatarUrl,
+    avatar {
+      url
+    },
   }
 }
 `;
@@ -106,8 +120,12 @@ query($name:String!) {
     summary,
     preferredUsername,
     suspended,
-    avatarUrl,
-    bannerUrl,
+    avatar {
+      url
+    },
+    banner {
+      url
+    }
     organizedEvents {
         uuid,
         title,

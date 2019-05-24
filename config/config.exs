@@ -14,7 +14,11 @@ config :mobilizon, :instance,
   description: System.get_env("MOBILIZON_INSTANCE_DESCRIPTION") || "This is a Mobilizon instance",
   version: "1.0.0-dev",
   registrations_open: System.get_env("MOBILIZON_INSTANCE_REGISTRATIONS_OPEN") || false,
-  repository: Mix.Project.config()[:source_url]
+  repository: Mix.Project.config()[:source_url],
+  remote_limit: 100_000,
+  upload_limit: 16_000_000,
+  avatar_upload_limit: 2_000_000,
+  banner_upload_limit: 4_000_000
 
 config :mime, :types, %{
   "application/activity+json" => ["activity-json"],
@@ -30,6 +34,34 @@ config :mobilizon, MobilizonWeb.Endpoint,
   instance: "localhost",
   email_from: "noreply@localhost",
   email_to: "noreply@localhost"
+
+# Upload configuration
+config :mobilizon, MobilizonWeb.Upload,
+  uploader: MobilizonWeb.Uploaders.Local,
+  filters: [MobilizonWeb.Upload.Filter.Dedupe],
+  link_name: true,
+  proxy_remote: false,
+  proxy_opts: [
+    redirect_on_failure: false,
+    max_body_length: 25 * 1_048_576,
+    http: [
+      follow_redirect: true,
+      pool: :upload
+    ]
+  ]
+
+config :mobilizon, MobilizonWeb.Uploaders.Local, uploads: "uploads"
+
+config :mobilizon, :media_proxy,
+  enabled: false,
+  proxy_opts: [
+    redirect_on_failure: false,
+    max_body_length: 25 * 1_048_576,
+    http: [
+      follow_redirect: true,
+      pool: :media
+    ]
+  ]
 
 # Configures Elixir's Logger
 config :logger, :console,
@@ -61,9 +93,6 @@ config :geolix,
       source: System.get_env("GEOLITE_CITIES_PATH") || "priv/data/GeoLite2-City.mmdb"
     }
   ]
-
-config :arc,
-  storage: Arc.Storage.Local
 
 config :phoenix, :format_encoders, json: Jason, "activity-json": Jason
 

@@ -1,10 +1,10 @@
-{                                                                               
-  "type": "Update",                                                                    
-  "object": {                                                                          
-    "url": "http://mastodon.example.org/@gargron",                                     
-    "type": "Person",                                                                  
-    "summary": "<p>Some bio</p>",                                                              
-    "publicKey": {                                                                     
+{
+  "type": "Update",
+  "object": {
+    "url": "http://mastodon.example.org/@gargron",
+    "type": "Person",
+    "summary": "<p>Some bio</p>",
+    "publicKey": {
       "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0gs3VnQf6am3R+CeBV4H\nlfI1HZTNRIBHgvFszRZkCERbRgEWMu+P+I6/7GJC5H5jhVQ60z4MmXcyHOGmYMK/\n5XyuHQz7V2Ssu1AxLfRN5Biq1ayb0+DT/E7QxNXDJPqSTnstZ6C7zKH/uAETqg3l\nBonjCQWyds+IYbQYxf5Sp3yhvQ80lMwHML3DaNCMlXWLoOnrOX5/yK5+dedesg2\n/HIvGk+HEt36vm6hoH7bwPuEkgA++ACqwjXRe5Mta7i3eilHxFaF8XIrJFARV0t\nqOu4GID/jG6oA+swIWndGrtR2QRJIt9QIBFfK3HG5M0koZbY1eTqwNFRHFL3xaD\nUQIDAQAB\n-----END PUBLIC KEY-----\n",
       "owner": "http://mastodon.example.org/users/gargron",
       "id": "http://mastodon.example.org/users/gargron#main-key"
@@ -20,7 +20,16 @@
     "endpoints": {
       "sharedInbox": "http://mastodon.example.org/inbox"
     },
-    "icon":{"type":"Image","mediaType":"image/jpeg","url":"https://cd.niu.moe/accounts/avatars/000/033/323/original/fd7f8ae0b3ffedc9.jpeg"},"image":{"type":"Image","mediaType":"image/png","url":"https://cd.niu.moe/accounts/headers/000/033/323/original/850b3448fa5fd477.png"}
+    "icon":{
+      "type":"Image",
+      "mediaType":"image/png",
+      "url":"https://files.mastodon.social/accounts/avatars/000/000/001/original/a285c086605e4182.png"
+    },
+    "image":{
+      "type":"Image",
+      "mediaType":"image/png",
+      "url":"https://files.mastodon.social/accounts/headers/000/000/001/original/c91b871f294ea63e.png"
+    }
   },
   "id": "http://mastodon.example.org/users/gargron#updates/1519563538",
   "actor": "http://mastodon.example.org/users/gargron",

@@ -84,13 +84,12 @@ defmodule Mobilizon.Mixfile do
       {:absinthe_plug, "~> 1.4.6"},
       {:absinthe_ecto, "~> 0.1.3"},
       {:dataloader, "~> 1.0.6"},
-      {:arc, "~> 0.11.0"},
-      {:arc_ecto, "~> 0.11.0"},
       {:plug_cowboy, "~> 2.0"},
       {:atomex, "0.3.0"},
       {:cachex, "~> 3.1"},
       {:earmark, "~> 1.3.1"},
       {:geohax, "~> 0.3.0"},
+      {:mogrify, "~> 0.7.2"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},
@@ -226,7 +225,6 @@ defmodule Mobilizon.Mixfile do
         MobilizonWeb.Guardian.Plug,
         MobilizonWeb.JsonLD.ObjectView,
         MobilizonWeb.PageController,
-        MobilizonWeb.UploadPlug,
         MobilizonWeb.Uploaders.Avatar,
         MobilizonWeb.Uploaders.Category,
         MobilizonWeb.Uploaders.Category.Type

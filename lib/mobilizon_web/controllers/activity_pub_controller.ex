@@ -5,11 +5,9 @@
 
 defmodule MobilizonWeb.ActivityPubController do
   use MobilizonWeb, :controller
-  alias Mobilizon.{Actors, Actors.Actor, Events}
-  alias Mobilizon.Events.{Event, Comment}
-  alias MobilizonWeb.ActivityPub.{ObjectView, ActorView}
+  alias Mobilizon.{Actors, Actors.Actor}
+  alias MobilizonWeb.ActivityPub.ActorView
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Utils
   alias Mobilizon.Service.Federator
 
   require Logger
