@@ -5,6 +5,7 @@ defmodule MobilizonWeb.JsonLD.ObjectView do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
   alias MobilizonWeb.JsonLD.ObjectView
+  alias MobilizonWeb.MediaProxy
 
   def render("event.json", %{event: %Event{} = event}) do
     # TODO: event.description is actually markdown!
@@ -25,7 +26,7 @@ defmodule MobilizonWeb.JsonLD.ObjectView do
     json_ld =
       if event.picture do
         Map.put(json_ld, "image", [
-          event.picture.file.url
+          event.picture.file.url |> MediaProxy.url()
         ])
       else
         json_ld

@@ -13,10 +13,10 @@ defmodule MobilizonWeb.Resolvers.Person do
   Find a person
   """
   def find_person(_parent, %{preferred_username: name}, _resolution) do
-    case ActivityPub.find_or_make_person_from_nickname(name) do
-      {:ok, actor} ->
-        {:ok, actor}
-
+    with {:ok, actor} <- ActivityPub.find_or_make_person_from_nickname(name),
+         actor <- proxify_pictures(actor) do
+      {:ok, actor}
+    else
       _ ->
         {:error, "Person with name #{name} not found"}
     end
@@ -135,4 +135,26 @@ defmodule MobilizonWeb.Resolvers.Person do
         {:error, "Actor id is not owned by authenticated user"}
     end
   end
+
+  def proxify_pictures(%Actor{} = actor) do
+    actor
+    |> proxify_avatar
+    |> proxify_banner
+  end
+
+  @spec proxify_avatar(Actor.t()) :: Actor.t()
+  defp proxify_avatar(%Actor{avatar: %{url: avatar_url} = avatar} = actor) do
+    actor |> Map.put(:avatar, avatar |> Map.put(:url, MobilizonWeb.MediaProxy.url(avatar_url)))
+  end
+
+  @spec proxify_avatar(Actor.t()) :: Actor.t()
+  defp proxify_avatar(%Actor{} = actor), do: actor
+
+  @spec proxify_banner(Actor.t()) :: Actor.t()
+  defp proxify_banner(%Actor{banner: %{url: banner_url} = banner} = actor) do
+    actor |> Map.put(:banner, banner |> Map.put(:url, MobilizonWeb.MediaProxy.url(banner_url)))
+  end
+
+  @spec proxify_banner(Actor.t()) :: Actor.t()
+  defp proxify_banner(%Actor{} = actor), do: actor
 end

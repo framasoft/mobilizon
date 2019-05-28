@@ -1,6 +1,7 @@
 defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
   alias Phoenix.HTML.Tag
   alias Mobilizon.Actors.Actor
+  alias MobilizonWeb.MediaProxy
 
   def build_tags(%Actor{} = actor) do
     tags = [
@@ -15,7 +16,8 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
     if is_nil(actor.avatar) do
       tags
     else
-      tags ++ [Tag.tag(:meta, property: "og:image", content: actor.avatar.url)]
+      tags ++
+        [Tag.tag(:meta, property: "og:image", content: actor.avatar.url |> MediaProxy.url())]
     end
   end
 end
