@@ -4,13 +4,18 @@
       <translate>Create a new event</translate>
     </h1>
     <div v-if="$apollo.loading">Loading...</div>
-    <div class="columns" v-else>
-      <form class="column" @submit="createEvent">
+    <div class="columns is-centered" v-else>
+      <form class="column is-half" @submit="createEvent">
         <b-field :label="$gettext('Title')">
           <b-input aria-required="true" required v-model="event.title"/>
         </b-field>
 
         <b-datepicker v-model="event.beginsOn" inline></b-datepicker>
+
+        <div class="field">
+          <label class="label">{{ $gettext('Description') }}</label>
+          <editor v-model="event.description" />
+        </div>
 
         <b-field :label="$gettext('Category')">
           <b-select placeholder="Select a category" v-model="event.category">
@@ -45,9 +50,10 @@ import { LOGGED_PERSON } from '@/graphql/actor';
 import { IPerson, Person } from '@/types/actor';
 import PictureUpload from '@/components/PictureUpload.vue';
 import { IPictureUpload } from '@/types/picture.model';
+import Editor from '@/components/Editor.vue';
 
 @Component({
-  components: { PictureUpload },
+  components: { PictureUpload, Editor },
   apollo: {
     loggedPerson: {
       query: LOGGED_PERSON,

@@ -137,9 +137,8 @@
             <p v-if="!event.description">
               <translate>The event organizer didn't add any description.</translate>
             </p>
-            <div class="columns" v-else="event.description">
+            <div class="columns" v-else>
               <div class="column is-half">
-<!--                <vue-simple-markdown :source="event.description" />-->
                 <p>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                   Suspendisse vehicula ex dapibus augue volutpat, ultrices cursus mi rutrum.
@@ -238,7 +237,6 @@ import { LOGGED_PERSON } from '@/graphql/actor';
 import { EventVisibility, IEvent, IParticipant } from '@/types/event.model';
 import { IPerson } from '@/types/actor';
 import { RouteName } from '@/router';
-import 'vue-simple-markdown/dist/vue-simple-markdown.css';
 import { GRAPHQL_API_ENDPOINT } from '@/api/_entrypoint';
 import DateCalendarIcon from '@/components/Event/DateCalendarIcon.vue';
 import BIcon from 'buefy/src/components/icon/Icon.vue';
