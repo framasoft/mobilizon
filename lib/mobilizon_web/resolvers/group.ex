@@ -7,16 +7,17 @@ defmodule MobilizonWeb.Resolvers.Group do
   alias Mobilizon.Users.User
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Activity
+  alias MobilizonWeb.Resolvers.Person
   require Logger
 
   @doc """
   Find a group
   """
   def find_group(_parent, %{preferred_username: name}, _resolution) do
-    case ActivityPub.find_or_make_group_from_nickname(name) do
-      {:ok, actor} ->
-        {:ok, actor}
-
+    with {:ok, actor} <- ActivityPub.find_or_make_group_from_nickname(name),
+         actor <- Person.proxify_pictures(actor) do
+      {:ok, actor}
+    else
       _ ->
         {:error, "Group with name #{name} not found"}
     end
@@ -26,7 +27,8 @@ defmodule MobilizonWeb.Resolvers.Group do
   Lists all groups
   """
   def list_groups(_parent, %{page: page, limit: limit}, _resolution) do
-    {:ok, Actors.list_groups(page, limit)}
+    {:ok,
+     Actors.list_groups(page, limit) |> Enum.map(fn actor -> Person.proxify_pictures(actor) end)}
   end
 
   @doc """
@@ -141,7 +143,12 @@ defmodule MobilizonWeb.Resolvers.Group do
              actor_id: actor.id,
              role: role
            }) do
-      {:ok, %{parent: group, actor: actor, role: role}}
+      {:ok,
+       %{
+         parent: group |> Person.proxify_pictures(),
+         actor: actor |> Person.proxify_pictures(),
+         role: role
+       }}
     else
       {:is_owned, false} ->
         {:error, "Actor id is not owned by authenticated user"}

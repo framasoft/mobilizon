@@ -3,6 +3,7 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Event do
   alias Phoenix.HTML.Tag
   alias Mobilizon.Events.Event
   alias MobilizonWeb.JsonLD.ObjectView
+  alias MobilizonWeb.MediaProxy
 
   def build_tags(%Event{} = event) do
     tags = [
@@ -18,7 +19,10 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Event do
       else
         tags ++
           [
-            Tag.tag(:meta, property: "og:image", content: event.picture.file.url)
+            Tag.tag(:meta,
+              property: "og:image",
+              content: event.picture.file.url |> MediaProxy.url()
+            )
           ]
       end
 

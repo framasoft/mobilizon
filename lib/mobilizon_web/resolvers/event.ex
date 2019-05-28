@@ -8,6 +8,7 @@ defmodule MobilizonWeb.Resolvers.Event do
   alias Mobilizon.Media.Picture
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Users.User
+  alias MobilizonWeb.Resolvers.Person
 
   # We limit the max number of events that can be retrieved
   @event_max_limit 100
@@ -28,7 +29,7 @@ defmodule MobilizonWeb.Resolvers.Event do
         {:error, "Event with UUID #{uuid} not found"}
 
       event ->
-        {:ok, event}
+        {:ok, Map.put(event, :organizer_actor, Person.proxify_pictures(event.organizer_actor))}
     end
   end
 
@@ -116,7 +117,7 @@ defmodule MobilizonWeb.Resolvers.Event do
            }),
          participant <-
            Map.put(participant, :event, event)
-           |> Map.put(:actor, actor) do
+           |> Map.put(:actor, Person.proxify_pictures(actor)) do
       {:ok, participant}
     else
       {:is_owned, false} ->

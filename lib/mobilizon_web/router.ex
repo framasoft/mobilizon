@@ -39,6 +39,9 @@ defmodule MobilizonWeb.Router do
     plug(:put_secure_browser_headers)
   end
 
+  pipeline :remote_media do
+  end
+
   scope "/api" do
     pipe_through(:graphql)
 
@@ -92,6 +95,13 @@ defmodule MobilizonWeb.Router do
     pipe_through(:activity_pub_signature)
     post("/@:name/inbox", ActivityPubController, :inbox)
     post("/inbox", ActivityPubController, :inbox)
+  end
+
+  scope "/proxy/", MobilizonWeb do
+    pipe_through(:remote_media)
+
+    get("/:sig/:url", MediaProxyController, :remote)
+    get("/:sig/:url/:filename", MediaProxyController, :remote)
   end
 
   if Mix.env() == :dev do

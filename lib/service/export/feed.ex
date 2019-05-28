@@ -13,6 +13,7 @@ defmodule Mobilizon.Service.Export.Feed do
   import MobilizonWeb.Gettext
   alias MobilizonWeb.Router.Helpers, as: Routes
   alias MobilizonWeb.Endpoint
+  alias MobilizonWeb.MediaProxy
   require Logger
 
   @version Mix.Project.config()[:version]
@@ -76,14 +77,14 @@ defmodule Mobilizon.Service.Export.Feed do
 
     feed =
       if actor.avatar do
-        Feed.icon(feed, actor.avatar.url)
+        feed |> Feed.icon(actor.avatar.url |> MediaProxy.url())
       else
         feed
       end
 
     feed =
       if actor.banner do
-        Feed.logo(feed, actor.banner.url)
+        feed |> Feed.logo(actor.banner.url |> MediaProxy.url())
       else
         feed
       end
