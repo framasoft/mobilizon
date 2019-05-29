@@ -1,4 +1,5 @@
 <template>
+    <div>
     <div class="editor">
         <editor-menu-bar :editor="editor" v-slot="{ commands, isActive, focused }">
             <div class="menubar bar-is-hidden" :class="{ 'is-focused': focused }">
@@ -122,6 +123,23 @@
 
         <editor-content class="editor__content" :editor="editor" />
     </div>
+        <div class="suggestion-list" v-show="showSuggestions" ref="suggestions">
+            <template v-if="hasResults">
+                <div
+                        v-for="(actor, index) in filteredActors"
+                        :key="actor.id"
+                        class="suggestion-list__item"
+                        :class="{ 'is-selected': navigatedUserIndex === index }"
+                        @click="selectActor(actor)"
+                >
+                    {{ actor.name }}
+                </div>
+            </template>
+            <div v-else class="suggestion-list__item is-empty">
+                No actors found
+            </div>
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -142,8 +160,14 @@ import {
     Link,
     Underline,
     History,
-    Placeholder
+    Placeholder,
+    Mention,
+    Image,
 } from 'tiptap-extensions';
+import tippy, { Instance } from 'tippy.js';
+import { SEARCH_PERSONS } from '@/graphql/search';
+import { IActor } from '@/types/actor';
+
 
 @Component({
   components: { EditorContent, EditorMenuBar, EditorMenuBubble },
@@ -151,8 +175,32 @@ import {
 export default class CreateEvent extends Vue {
   @Prop({ required: true }) value!: String;
   editor: Editor = null;
-  linkUrl: string|null = null;
+
+    /**
+     * Editor Link
+     */
+  linkUrl!: string|null;
   linkMenuIsActive: boolean = false;
+
+    /**
+     * Editor Suggestions
+     */
+  query!: string|null;
+  filteredActors: IActor[] = [];
+  suggestionRange!: object|null;
+  navigatedUserIndex: number = 0;
+  popup!: Instance|null;
+
+  get hasResults() {
+    return this.filteredActors.length;
+  }
+  get showSuggestions() {
+    return this.query || this.hasResults;
+  }
+
+  insertMention: Function = () => {};
+  observer!: MutationObserver|null;
+
 
   mounted() {
     this.editor = new Editor({
@@ -161,6 +209,77 @@ export default class CreateEvent extends Vue {
         new BulletList(),
         new HardBreak(),
         new Heading({ levels: [1, 2, 3] }),
+        new Mention({
+          items: () => [],
+          onEnter: ({ items, query, range, command, virtualNode }) => {
+            this.query = query;
+            this.filteredActors = items;
+            this.suggestionRange = range;
+            this.renderPopup(virtualNode);
+            // we save the command for inserting a selected mention
+            // this allows us to call it inside of our custom popup
+            // via keyboard navigation and on click
+            this.insertMention = command;
+          },
+          /**
+           * is called when a suggestion has changed
+           */
+          onChange: ({ items, query, range, virtualNode }) => {
+            this.query = query;
+            this.filteredActors = items;
+            this.suggestionRange = range;
+            this.navigatedUserIndex = 0;
+            this.renderPopup(virtualNode);
+          },
+
+          /**
+           * is called when a suggestion is cancelled
+           */
+          onExit: () => {
+            // reset all saved values
+            this.query = null;
+            this.filteredActors = [];
+            this.suggestionRange = null;
+            this.navigatedUserIndex = 0;
+            this.destroyPopup();
+          },
+
+          /**
+           * is called on every keyDown event while a suggestion is active
+           */
+          onKeyDown: ({ event }) => {
+            // pressing up arrow
+            if (event.keyCode === 38) {
+              this.upHandler();
+              return true;
+            }
+            // pressing down arrow
+            if (event.keyCode === 40) {
+              this.downHandler();
+              return true;
+            }
+            // pressing enter
+            if (event.keyCode === 13) {
+              this.enterHandler();
+              return true;
+            }
+            return false;
+          },
+          onFilter: async (items, query) => {
+            if (!query) {
+              return items;
+            }
+            const result = await this.$apollo.query({
+              query: SEARCH_PERSONS,
+              variables: {
+                searchText: query,
+              },
+            });
+            // TODO: TipTap doesn't handle async for onFilter, hence the following line.
+            this.filteredActors = result.data.searchPersons.elements;
+            return this.filteredActors;
+          },
+        }),
         new ListItem(),
         new OrderedList(),
         new TodoItem(),
@@ -172,10 +291,11 @@ export default class CreateEvent extends Vue {
         new Underline(),
         new History(),
         new Placeholder({
-            emptyClass: 'is-empty',
-            emptyNodeText: 'Write something …',
-            showOnlyWhenEditable: false,
-        })
+          emptyClass: 'is-empty',
+          emptyNodeText: 'Write something …',
+          showOnlyWhenEditable: false,
+        }),
+        new Image(),
       ],
       onUpdate: ({ getHTML }) => {
         this.$emit('input', getHTML());
@@ -191,7 +311,7 @@ export default class CreateEvent extends Vue {
     }
   }
 
-  showLinkMenu(attrs) {
+  showLinkMenu(attrs: any) {
     this.linkUrl = attrs.href;
     this.linkMenuIsActive = true;
     this.$nextTick(() => {
@@ -207,6 +327,87 @@ export default class CreateEvent extends Vue {
     command({ href: url });
     this.hideLinkMenu();
     this.editor.focus();
+  }
+
+  upHandler() {
+    this.navigatedUserIndex = ((this.navigatedUserIndex + this.filteredActors.length) - 1) % this.filteredActors.length;
+  }
+
+  /**
+   * navigate to the next item
+   * if it's the last item, navigate to the first one
+   */
+  downHandler() {
+    this.navigatedUserIndex = (this.navigatedUserIndex + 1) % this.filteredActors.length;
+  }
+
+  enterHandler() {
+    const actor = this.filteredActors[this.navigatedUserIndex];
+    if (actor) {
+      this.selectActor(actor);
+    }
+  }
+
+  /**
+   * we have to replace our suggestion text with a mention
+   * so it's important to pass also the position of your suggestion text
+   * @param actor IActor
+   */
+  selectActor(actor: IActor) {
+    this.insertMention({
+      range: this.suggestionRange,
+      attrs: {
+        id: actor.id,
+        label: actor.name,
+      },
+    });
+    this.editor.focus();
+  }
+
+  /**
+   * renders a popup with suggestions
+   * tiptap provides a virtualNode object for using popper.js (or tippy.js) for popups
+   * @param node
+   */
+  renderPopup(node) {
+    if (this.popup) {
+      return;
+    }
+    this.popup = tippy(node, {
+      content: this.$refs.suggestions as HTMLElement,
+      trigger: 'mouseenter',
+      interactive: true,
+      theme: 'dark',
+      placement: 'top-start',
+      inertia: true,
+      duration: [400, 200],
+      showOnInit: true,
+      arrow: true,
+      arrowType: 'round',
+    }) as Instance;
+        // we have to update tippy whenever the DOM is updated
+    if (MutationObserver) {
+      this.observer = new MutationObserver(() => {
+        if (this.popup != null && this.popup.popperInstance) {
+          this.popup.popperInstance.scheduleUpdate();
+        }
+      });
+      this.observer.observe(this.$refs.suggestions as HTMLElement, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+      });
+    }
+  }
+
+  destroyPopup() {
+    if (this.popup) {
+      this.popup.destroy();
+      this.popup = null;
+    }
+    if (this.observer) {
+      this.observer.disconnect();
+    }
   }
 
   beforeDestroy() {
@@ -272,11 +473,11 @@ export default class CreateEvent extends Vue {
 
         &__content {
             div.ProseMirror {
-                background: #fff;
                 min-height: 10rem;
 
                 &:focus {
                     border-color: #3273dc;
+                    background: #fff;
                     box-shadow: 0 0 0 0.125em rgba(50, 115, 220, 0.25);
                 }
             }
@@ -384,6 +585,69 @@ export default class CreateEvent extends Vue {
             border: none;
             background: transparent;
             color: $color-white;
+        }
+    }
+    .mention {
+        background: rgba($color-black, 0.1);
+        color: rgba($color-black, 0.6);
+        font-size: 0.8rem;
+        font-weight: bold;
+        border-radius: 5px;
+        padding: 0.2rem 0.5rem;
+        white-space: nowrap;
+    }
+    .mention-suggestion {
+        color: rgba($color-black, 0.6);
+    }
+    .suggestion-list {
+        padding: 0.2rem;
+        border: 2px solid rgba($color-black, 0.1);
+        font-size: 0.8rem;
+        font-weight: bold;
+        &__no-results {
+            padding: 0.2rem 0.5rem;
+        }
+        &__item {
+            border-radius: 5px;
+            padding: 0.2rem 0.5rem;
+            margin-bottom: 0.2rem;
+            cursor: pointer;
+            &:last-child {
+                margin-bottom: 0;
+            }
+            &.is-selected,
+            &:hover {
+                background-color: rgba($color-white, 0.2);
+            }
+            &.is-empty {
+                opacity: 0.5;
+            }
+        }
+    }
+    .tippy-tooltip.dark-theme {
+        background-color: $color-black;
+        padding: 0;
+        font-size: 1rem;
+        text-align: inherit;
+        color: $color-white;
+        border-radius: 5px;
+        .tippy-backdrop {
+            display: none;
+        }
+        .tippy-roundarrow {
+            fill: $color-black;
+        }
+        .tippy-popper[x-placement^=top] & .tippy-arrow {
+            border-top-color: $color-black;
+        }
+        .tippy-popper[x-placement^=bottom] & .tippy-arrow {
+            border-bottom-color: $color-black;
+        }
+        .tippy-popper[x-placement^=left] & .tippy-arrow {
+            border-left-color: $color-black;
+        }
+        .tippy-popper[x-placement^=right] & .tippy-arrow {
+            border-right-color: $color-black;
         }
     }
 

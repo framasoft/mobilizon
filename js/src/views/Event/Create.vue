@@ -142,9 +142,3 @@ export default class CreateEvent extends Vue {
   // }
 }
 </script>
-
-<style>
-.markdown-render h1 {
-  font-size: 2em;
-}
-</style>

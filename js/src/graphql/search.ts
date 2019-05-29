@@ -34,3 +34,21 @@ query SearchGroups($searchText: String!) {
   }
 }
 `;
+
+export const SEARCH_PERSONS = gql`
+  query SearchPersons($searchText: String!) {
+    searchPersons(search: $searchText) {
+      total,
+      elements {
+        id,
+        avatar {
+          url
+        },
+        domain,
+        preferredUsername,
+        name,
+        __typename
+      }
+    }
+  }
+`;
