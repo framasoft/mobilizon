@@ -162,12 +162,11 @@ import {
     History,
     Placeholder,
     Mention,
-    Image,
 } from 'tiptap-extensions';
 import tippy, { Instance } from 'tippy.js';
 import { SEARCH_PERSONS } from '@/graphql/search';
 import { IActor } from '@/types/actor';
-
+import Image from '@/components/Editor/Image';
 
 @Component({
   components: { EditorContent, EditorMenuBar, EditorMenuBubble },
