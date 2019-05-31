@@ -75,7 +75,7 @@ export default class App extends Vue {
   @import "~bulma/sass/elements/box.sass";
   @import "~bulma/sass/elements/button.sass";
   @import "~bulma/sass/elements/container.sass";
-  @import "~bulma/sass/elements/form.sass";
+  @import "~bulma/sass/form/_all";
   @import "~bulma/sass/elements/icon.sass";
   @import "~bulma/sass/elements/image.sass";
   @import "~bulma/sass/elements/other.sass";
