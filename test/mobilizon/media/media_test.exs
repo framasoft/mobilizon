@@ -22,17 +22,22 @@ defmodule Mobilizon.MediaTest do
 
     test "get_picture!/1 returns the picture with given id" do
       picture = insert(:picture)
-      assert Media.get_picture!(picture.id) == picture
+      assert Media.get_picture!(picture.id).id == picture.id
     end
 
     test "create_picture/1 with valid data creates a picture" do
-      assert {:ok, %Picture{} = picture} = Media.create_picture(@valid_attrs)
+      assert {:ok, %Picture{} = picture} =
+               Media.create_picture(Map.put(@valid_attrs, :actor_id, insert(:actor).id))
+
       assert picture.file.name == "something old"
     end
 
     test "update_picture/2 with valid data updates the picture" do
       picture = insert(:picture)
-      assert {:ok, %Picture{} = picture} = Media.update_picture(picture, @update_attrs)
+
+      assert {:ok, %Picture{} = picture} =
+               Media.update_picture(picture, Map.put(@update_attrs, :actor_id, insert(:actor).id))
+
       assert picture.file.name == "something new"
     end
 

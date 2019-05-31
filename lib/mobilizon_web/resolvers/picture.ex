@@ -4,6 +4,7 @@ defmodule MobilizonWeb.Resolvers.Picture do
   """
   alias Mobilizon.Media
   alias Mobilizon.Media.Picture
+  alias Mobilizon.Users.User
 
   @doc """
   Get picture for an event's pic
@@ -43,16 +44,21 @@ defmodule MobilizonWeb.Resolvers.Picture do
   end
 
   @spec upload_picture(map(), map(), map()) :: {:ok, Picture.t()} | {:error, any()}
-  def upload_picture(_parent, %{file: %Plug.Upload{} = file} = args, %{
+  def upload_picture(_parent, %{file: %Plug.Upload{} = file, actor_id: actor_id} = args, %{
         context: %{
-          current_user: _user
+          current_user: user
         }
       }) do
-    with {:ok, %{"url" => [%{"href" => url}]}} <- MobilizonWeb.Upload.store(file),
+    with {:is_owned, true, _actor} <- User.owns_actor(user, actor_id),
+         {:ok, %{"url" => [%{"href" => url}]}} <- MobilizonWeb.Upload.store(file),
          args <- Map.put(args, :url, url),
-         {:ok, picture = %Picture{}} <- Media.create_picture(%{"file" => args}) do
+         {:ok, picture = %Picture{}} <-
+           Media.create_picture(%{"file" => args, "actor_id" => actor_id}) do
       {:ok, %{name: picture.file.name, url: picture.file.url, id: picture.id}}
     else
+      {:is_owned, false} ->
+        {:error, "Actor id is not owned by authenticated user"}
+
       err ->
         {:error, err}
     end

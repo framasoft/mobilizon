@@ -176,6 +176,9 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   #    Repo.one(query)
   #  end
 
+  @doc """
+  Save picture data from %Plug.Upload{} and return AS Link data.
+  """
   def make_picture_data(%Plug.Upload{} = picture) do
     with {:ok, picture} <- MobilizonWeb.Upload.store(picture) do
       picture
@@ -184,6 +187,10 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     end
   end
 
+  @doc """
+  Convert a picture model into an AS Link representation
+  """
+  # TODO: Move me to Mobilizon.Service.ActivityPub.Converters
   def make_picture_data(%Picture{file: file} = _picture) do
     %{
       "type" => "Document",
@@ -198,6 +205,9 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     }
   end
 
+  @doc """
+  Save picture data from raw data and return AS Link data.
+  """
   def make_picture_data(%{picture: picture}) do
     with {:ok, %{"url" => [%{"href" => url}]}} <- MobilizonWeb.Upload.store(picture.file),
          {:ok, %Picture{file: _file} = pic} <-
@@ -205,7 +215,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
              "file" => %{
                "url" => url,
                "name" => picture.name
-             }
+             },
+             "actor_id" => picture.actor_id
            }) do
       make_picture_data(pic)
     end

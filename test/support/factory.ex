@@ -180,7 +180,8 @@ defmodule Mobilizon.Factory do
 
   def picture_factory do
     %Mobilizon.Media.Picture{
-      file: build(:file)
+      file: build(:file),
+      actor: build(:actor)
     }
   end
 end

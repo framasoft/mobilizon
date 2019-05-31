@@ -26,6 +26,7 @@ defmodule MobilizonWeb.Schema.PictureType do
     field(:name, non_null(:string))
     field(:alt, :string)
     field(:file, non_null(:upload))
+    field(:actor_id, :id)
   end
 
   object :picture_queries do
@@ -42,6 +43,7 @@ defmodule MobilizonWeb.Schema.PictureType do
       arg(:name, non_null(:string))
       arg(:alt, :string)
       arg(:file, non_null(:upload))
+      arg(:actor_id, non_null(:id))
       resolve(&Picture.upload_picture/3)
     end
   end

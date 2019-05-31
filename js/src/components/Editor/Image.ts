@@ -71,11 +71,14 @@ export default class Image extends Node {
               const { schema } = view.state;
               const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
               const client = apolloProvider.defaultClient as ApolloClient<InMemoryCache>;
+              const editorElem = document.getElementById('tiptab-editor');
+              const actorId = editorElem && editorElem.dataset.actorId;
 
               for (const image of images) {
                 const { data } = await client.mutate({
                   mutation: UPLOAD_PICTURE,
                   variables: {
+                    actorId,
                     file: image,
                     name: image.name,
                   },
