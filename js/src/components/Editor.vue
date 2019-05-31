@@ -54,6 +54,13 @@
 
                 <button
                         class="menubar__button"
+                        @click="showImagePrompt(commands.image)"
+                >
+                    <b-icon icon="image" />
+                </button>
+
+                <button
+                        class="menubar__button"
                         :class="{ 'is-active': isActive.bullet_list() }"
                         @click="commands.bullet_list"
                 >
@@ -167,6 +174,8 @@ import tippy, { Instance } from 'tippy.js';
 import { SEARCH_PERSONS } from '@/graphql/search';
 import { IActor } from '@/types/actor';
 import Image from '@/components/Editor/Image';
+import { UPLOAD_PICTURE } from '@/graphql/upload';
+import { listenFileUpload } from '@/utils/upload';
 
 @Component({
   components: { EditorContent, EditorMenuBar, EditorMenuBubble },
@@ -384,7 +393,7 @@ export default class CreateEvent extends Vue {
       arrow: true,
       arrowType: 'round',
     }) as Instance;
-        // we have to update tippy whenever the DOM is updated
+    // we have to update tippy whenever the DOM is updated
     if (MutationObserver) {
       this.observer = new MutationObserver(() => {
         if (this.popup != null && this.popup.popperInstance) {
@@ -406,6 +415,24 @@ export default class CreateEvent extends Vue {
     }
     if (this.observer) {
       this.observer.disconnect();
+    }
+  }
+
+  /**
+   * Show a file prompt, upload picture and insert it into editor
+   * @param command
+   */
+  async showImagePrompt(command) {
+    const image = await listenFileUpload();
+    const { data } = await this.$apollo.mutate({
+      mutation: UPLOAD_PICTURE,
+      variables: {
+        file: image,
+        name: image.name,
+      },
+    });
+    if (data.uploadPicture && data.uploadPicture.url) {
+      command({ src: data.uploadPicture.url });
     }
   }
 
