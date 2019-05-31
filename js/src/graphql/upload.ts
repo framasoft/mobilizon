@@ -1,10 +1,10 @@
 import gql from 'graphql-tag';
 
 export const UPLOAD_PICTURE = gql`
-    mutation {
-        uploadPicture(file: "file") {
+    mutation UploadPicture($file: Upload!, $alt: String, $name: String!){
+        uploadPicture(file: $file, alt: $alt, name: $name) {
             url,
-            url_thumbnail
+            id
         }
     }
 `;

@@ -27,6 +27,9 @@
     "lodash": "^4.17.11",
     "ngeohash": "^0.6.3",
     "register-service-worker": "^1.6.2",
+    "tippy.js": "^4.3.1",
+    "tiptap": "^1.20.1",
+    "tiptap-extensions": "^1.20.1",
     "typeface-signika": "0.0.72",
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.0-beta.28",
@@ -34,7 +37,6 @@
     "vue-gettext": "^2.1.3",
     "vue-property-decorator": "^8.1.0",
     "vue-router": "^3.0.6",
-    "vue-simple-markdown": "^1.0.9",
     "vue2-leaflet": "^2.0.3",
     "vuex": "^3.1.0"
   },

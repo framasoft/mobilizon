@@ -1,7 +1,6 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue';
-import VueSimpleMarkdown from 'vue-simple-markdown';
 import Buefy from 'buefy';
 import GetTextPlugin from 'vue-gettext';
 import App from '@/App.vue';
@@ -12,7 +11,6 @@ const translations = require('@/i18n/translations.json');
 
 Vue.config.productionTip = false;
 
-Vue.use(VueSimpleMarkdown);
 Vue.use(Buefy, {
   defaultContainerElement: '#mobilizon',
 });
