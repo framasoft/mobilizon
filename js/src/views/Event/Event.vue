@@ -249,7 +249,9 @@ import EventFullDate from '@/components/Event/EventFullDate.vue';
     EventCard,
     BIcon,
     DateCalendarIcon,
-    'map-leaflet': () => import('@/components/Map.vue'),
+    // tslint:disable:space-in-parens
+    'map-leaflet': () => import(/* webpackChunkName: "map" */ '@/components/Map.vue'),
+    // tslint:enable
   },
   apollo: {
     event: {
