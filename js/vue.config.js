@@ -2,6 +2,11 @@ const Dotenv = require('dotenv-webpack');
 const path = require('path');
 
 module.exports = {
+  pluginOptions: {
+    webpackBundleAnalyzer: {
+      openAnalyzer: false
+    }
+  },
   lintOnSave: false,
   runtimeCompiler: true,
   outputDir: '../priv/static/js',
