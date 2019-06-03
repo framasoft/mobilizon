@@ -21,7 +21,11 @@ defmodule Mobilizon.UploadTest do
 
       {:ok, data} = Upload.store(file)
 
-      assert %{"url" => [%{"href" => url}]} = data
+      assert %{
+               "url" => [%{"href" => url, "mediaType" => "image/jpeg"}],
+               "size" => 13_227,
+               "type" => "Image"
+             } = data
 
       assert String.starts_with?(url, MobilizonWeb.Endpoint.url() <> "/media/")
     end

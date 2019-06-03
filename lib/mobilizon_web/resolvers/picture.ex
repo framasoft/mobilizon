@@ -36,7 +36,8 @@ defmodule MobilizonWeb.Resolvers.Picture do
   @spec do_fetch_picture(String.t()) :: {:ok, Picture.t()} | {:error, :not_found}
   defp do_fetch_picture(picture_id) do
     with %Picture{id: id, file: file} = _pic <- Media.get_picture(picture_id) do
-      {:ok, %{name: file.name, url: file.url, id: id}}
+      {:ok,
+       %{name: file.name, url: file.url, id: id, content_type: file.content_type, size: file.size}}
     else
       _err ->
         {:error, "Picture with ID #{picture_id} was not found"}
@@ -50,11 +51,23 @@ defmodule MobilizonWeb.Resolvers.Picture do
         }
       }) do
     with {:is_owned, true, _actor} <- User.owns_actor(user, actor_id),
-         {:ok, %{"url" => [%{"href" => url}]}} <- MobilizonWeb.Upload.store(file),
-         args <- Map.put(args, :url, url),
+         {:ok, %{"url" => [%{"href" => url, "mediaType" => content_type}], "size" => size}} <-
+           MobilizonWeb.Upload.store(file),
+         args <-
+           args
+           |> Map.put(:url, url)
+           |> Map.put(:size, size)
+           |> Map.put(:content_type, content_type),
          {:ok, picture = %Picture{}} <-
            Media.create_picture(%{"file" => args, "actor_id" => actor_id}) do
-      {:ok, %{name: picture.file.name, url: picture.file.url, id: picture.id}}
+      {:ok,
+       %{
+         name: picture.file.name,
+         url: picture.file.url,
+         id: picture.id,
+         content_type: picture.file.content_type,
+         size: picture.file.size
+       }}
     else
       {:is_owned, false} ->
         {:error, "Actor id is not owned by authenticated user"}

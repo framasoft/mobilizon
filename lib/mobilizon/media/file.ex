@@ -9,6 +9,7 @@ defmodule Mobilizon.Media.File do
     field(:name, :string)
     field(:url, :string)
     field(:content_type, :string)
+    field(:size, :integer)
 
     timestamps()
   end
@@ -16,7 +17,7 @@ defmodule Mobilizon.Media.File do
   @doc false
   def changeset(picture, attrs) do
     picture
-    |> cast(attrs, [:name, :url, :content_type])
+    |> cast(attrs, [:name, :url, :content_type, :size])
     |> validate_required([:name, :url])
   end
 end

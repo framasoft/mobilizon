@@ -21,7 +21,9 @@ defmodule MobilizonWeb.Resolvers.PictureResolverTest do
         picture(id: "#{id}") {
             name,
             alt,
-            url
+            url,
+            content_type,
+            size
         }
       }
       """
@@ -31,6 +33,11 @@ defmodule MobilizonWeb.Resolvers.PictureResolverTest do
         |> get("/api", AbsintheHelpers.query_skeleton(query, "picture"))
 
       assert json_response(res, 200)["data"]["picture"]["name"] == picture.file.name
+
+      assert json_response(res, 200)["data"]["picture"]["content_type"] ==
+               picture.file.content_type
+
+      assert json_response(res, 200)["data"]["picture"]["size"] == 13_120
 
       assert json_response(res, 200)["data"]["picture"]["url"] =~
                MobilizonWeb.Endpoint.url()
@@ -68,7 +75,9 @@ defmodule MobilizonWeb.Resolvers.PictureResolverTest do
               actor_id: #{actor.id}
             ) {
                 url,
-                name
+                name,
+                content_type,
+                size
               }
         }
       """
@@ -91,6 +100,8 @@ defmodule MobilizonWeb.Resolvers.PictureResolverTest do
         )
 
       assert json_response(res, 200)["data"]["uploadPicture"]["name"] == picture.name
+      assert json_response(res, 200)["data"]["uploadPicture"]["content_type"] == "image/png"
+      assert json_response(res, 200)["data"]["uploadPicture"]["size"] == 10_097
       assert json_response(res, 200)["data"]["uploadPicture"]["url"]
     end
 
