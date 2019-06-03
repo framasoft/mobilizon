@@ -1,6 +1,6 @@
 <template>
     <div>
-    <div class="editor">
+    <div class="editor" id="tiptab-editor" :data-actor-id="loggedPerson && loggedPerson.id">
         <editor-menu-bar :editor="editor" v-slot="{ commands, isActive, focused }">
             <div class="menubar bar-is-hidden" :class="{ 'is-focused': focused }">
 
@@ -172,16 +172,25 @@ import {
 } from 'tiptap-extensions';
 import tippy, { Instance } from 'tippy.js';
 import { SEARCH_PERSONS } from '@/graphql/search';
-import { IActor } from '@/types/actor';
+import { IActor, IPerson } from '@/types/actor';
 import Image from '@/components/Editor/Image';
 import { UPLOAD_PICTURE } from '@/graphql/upload';
 import { listenFileUpload } from '@/utils/upload';
+import { LOGGED_PERSON } from '@/graphql/actor';
 
 @Component({
   components: { EditorContent, EditorMenuBar, EditorMenuBubble },
+  apollo: {
+    loggedPerson: {
+      query: LOGGED_PERSON,
+    },
+  },
 })
 export default class CreateEvent extends Vue {
   @Prop({ required: true }) value!: String;
+
+  loggedPerson!: IPerson;
+
   editor: Editor = null;
 
     /**
@@ -429,6 +438,7 @@ export default class CreateEvent extends Vue {
       variables: {
         file: image,
         name: image.name,
+        actorId: this.loggedPerson.id,
       },
     });
     if (data.uploadPicture && data.uploadPicture.url) {

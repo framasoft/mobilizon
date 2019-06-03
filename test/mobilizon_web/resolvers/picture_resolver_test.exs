@@ -7,8 +7,9 @@ defmodule MobilizonWeb.Resolvers.PictureResolverTest do
 
   setup %{conn: conn} do
     user = insert(:user)
+    actor = insert(:actor, user: user)
 
-    {:ok, conn: conn, user: user}
+    {:ok, conn: conn, user: user, actor: actor}
   end
 
   describe "Resolver: Get picture" do
@@ -56,14 +57,15 @@ defmodule MobilizonWeb.Resolvers.PictureResolverTest do
   end
 
   describe "Resolver: Upload picture" do
-    test "upload_picture/3 uploads a new picture", %{conn: conn, user: user} do
+    test "upload_picture/3 uploads a new picture", %{conn: conn, user: user, actor: actor} do
       picture = %{name: "my pic", alt: "represents something", file: "picture.png"}
 
       mutation = """
       mutation { uploadPicture(
               name: "#{picture.name}",
               alt: "#{picture.alt}",
-              file: "#{picture.file}"
+              file: "#{picture.file}",
+              actor_id: #{actor.id}
             ) {
                 url,
                 name
@@ -92,14 +94,15 @@ defmodule MobilizonWeb.Resolvers.PictureResolverTest do
       assert json_response(res, 200)["data"]["uploadPicture"]["url"]
     end
 
-    test "upload_picture/3 forbids uploading if no auth", %{conn: conn} do
+    test "upload_picture/3 forbids uploading if no auth", %{conn: conn, actor: actor} do
       picture = %{name: "my pic", alt: "represents something", file: "picture.png"}
 
       mutation = """
       mutation { uploadPicture(
               name: "#{picture.name}",
               alt: "#{picture.alt}",
-              file: "#{picture.file}"
+              file: "#{picture.file}",
+              actor_id: #{actor.id}
             ) {
                 url,
                 name

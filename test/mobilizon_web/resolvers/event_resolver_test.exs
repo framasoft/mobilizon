@@ -103,7 +103,8 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                     picture: {
                       name: "picture for my event",
                       alt: "A very sunny landscape",
-                      file: "event.jpg"
+                      file: "event.jpg",
+                      actor_id: #{actor.id}
                     }
                   }
               ) {
@@ -148,7 +149,8 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       mutation { uploadPicture(
               name: "#{picture.name}",
               alt: "#{picture.alt}",
-              file: "#{picture.file}"
+              file: "#{picture.file}",
+              actor_id: #{actor.id}
             ) {
                 id,
                 url,

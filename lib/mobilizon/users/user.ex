@@ -149,6 +149,18 @@ defmodule Mobilizon.Users.User do
   def is_confirmed(%User{confirmed_at: nil} = _user), do: {:error, :unconfirmed}
   def is_confirmed(%User{} = user), do: {:ok, user}
 
+  @doc """
+  Returns whether an user owns an actor
+  """
+  @spec owns_actor(struct(), String.t()) :: {:is_owned, false} | {:is_owned, true, Actor.t()}
+  def owns_actor(%User{} = user, actor_id) when is_binary(actor_id) do
+    case Integer.parse(actor_id) do
+      {actor_id, ""} -> owns_actor(user, actor_id)
+      _ -> {:is_owned, false}
+    end
+  end
+
+  @spec owns_actor(struct(), integer()) :: {:is_owned, false} | {:is_owned, true, Actor.t()}
   def owns_actor(%User{actors: actors}, actor_id) do
     case Enum.find(actors, fn a -> a.id == actor_id end) do
       nil -> {:is_owned, false}
