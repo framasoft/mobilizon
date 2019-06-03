@@ -174,7 +174,8 @@ defmodule Mobilizon.Factory do
     %Mobilizon.Media.File{
       name: "My Picture",
       url: MobilizonWeb.Endpoint.url() <> "/uploads/something",
-      content_type: "image/png"
+      content_type: "image/png",
+      size: 13_120
     }
   end
 

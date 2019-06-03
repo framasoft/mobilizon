@@ -11,6 +11,8 @@ defmodule MobilizonWeb.Schema.PictureType do
     field(:alt, :string, description: "The picture's alternative text")
     field(:name, :string, description: "The picture's name")
     field(:url, :string, description: "The picture's full URL")
+    field(:content_type, :string, description: "The picture's detected content type")
+    field(:size, :integer, description: "The picture's size")
   end
 
   @desc "An attached picture or a link to a picture"

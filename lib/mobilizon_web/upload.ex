@@ -52,9 +52,10 @@ defmodule MobilizonWeb.Upload do
           name: String.t(),
           tempfile: String.t(),
           content_type: String.t(),
-          path: String.t()
+          path: String.t(),
+          size: integer()
         }
-  defstruct [:id, :name, :tempfile, :content_type, :path]
+  defstruct [:id, :name, :tempfile, :content_type, :path, :size]
 
   @spec store(source, options :: [option()]) :: {:ok, Map.t()} | {:error, any()}
   def store(upload, opts \\ []) do
@@ -66,7 +67,7 @@ defmodule MobilizonWeb.Upload do
          {:ok, url_spec} <- MobilizonWeb.Uploaders.Uploader.put_file(opts.uploader, upload) do
       {:ok,
        %{
-         "type" => opts.activity_type,
+         "type" => opts.activity_type || get_type(upload.content_type),
          "url" => [
            %{
              "type" => "Link",
@@ -74,6 +75,7 @@ defmodule MobilizonWeb.Upload do
              "href" => url_from_spec(upload, opts.base_url, url_spec)
            }
          ],
+         "size" => upload.size,
          "name" => Map.get(opts, :description) || upload.name
        }}
     else
@@ -100,7 +102,7 @@ defmodule MobilizonWeb.Upload do
           {Mobilizon.CommonConfig.get!([:instance, :avatar_upload_limit]), "Image"}
 
         _ ->
-          {Mobilizon.CommonConfig.get!([:instance, :upload_limit]), "Document"}
+          {Mobilizon.CommonConfig.get!([:instance, :upload_limit]), nil}
       end
 
     %{
@@ -119,14 +121,15 @@ defmodule MobilizonWeb.Upload do
   end
 
   defp prepare_upload(%Plug.Upload{} = file, opts) do
-    with :ok <- check_file_size(file.path, opts.size_limit),
+    with {:ok, size} <- check_file_size(file.path, opts.size_limit),
          {:ok, content_type, name} <- Mobilizon.MIME.file_mime_type(file.path, file.filename) do
       {:ok,
        %__MODULE__{
          id: UUID.generate(),
          name: name,
          tempfile: file.path,
-         content_type: content_type
+         content_type: content_type,
+         size: size
        }}
     end
   end
@@ -134,7 +137,7 @@ defmodule MobilizonWeb.Upload do
   defp check_file_size(path, size_limit) when is_integer(size_limit) and size_limit > 0 do
     with {:ok, %{size: size}} <- File.stat(path),
          true <- size <= size_limit do
-      :ok
+      {:ok, size}
     else
       false -> {:error, :file_too_large}
       error -> error
@@ -142,6 +145,16 @@ defmodule MobilizonWeb.Upload do
   end
 
   defp check_file_size(_, _), do: :ok
+
+  @picture_content_types ["image/png", "image/jpg", "image/jpeg", "image/webp"]
+  # Return whether the upload is a picture or not
+  defp get_type(content_type) do
+    if content_type in @picture_content_types do
+      "Image"
+    else
+      "Document"
+    end
+  end
 
   defp url_from_spec(%__MODULE__{name: name}, base_url, {:file, path}) do
     path =

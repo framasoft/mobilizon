@@ -209,12 +209,15 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   Save picture data from raw data and return AS Link data.
   """
   def make_picture_data(%{picture: picture}) do
-    with {:ok, %{"url" => [%{"href" => url}]}} <- MobilizonWeb.Upload.store(picture.file),
+    with {:ok, %{"url" => [%{"href" => url, "mediaType" => content_type}], "size" => size}} <-
+           MobilizonWeb.Upload.store(picture.file),
          {:ok, %Picture{file: _file} = pic} <-
            Mobilizon.Media.create_picture(%{
              "file" => %{
                "url" => url,
-               "name" => picture.name
+               "name" => picture.name,
+               "content_type" => content_type,
+               "size" => size
              },
              "actor_id" => picture.actor_id
            }) do
