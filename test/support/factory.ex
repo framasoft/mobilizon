@@ -7,6 +7,7 @@ defmodule Mobilizon.Factory do
   alias Mobilizon.Actors.Actor
   alias MobilizonWeb.Router.Helpers, as: Routes
   alias MobilizonWeb.Endpoint
+  alias MobilizonWeb.Upload
 
   def user_factory do
     %Mobilizon.Users.User{
@@ -171,9 +172,25 @@ defmodule Mobilizon.Factory do
   end
 
   def file_factory do
+    File.cp!("test/fixtures/image.jpg", "test/fixtures/image_tmp.jpg")
+
+    file = %Plug.Upload{
+      content_type: "image/jpg",
+      path: Path.absname("test/fixtures/image_tmp.jpg"),
+      filename: "image.jpg"
+    }
+
+    {:ok, data} = Upload.store(file)
+
+    %{
+      "url" => [%{"href" => url, "mediaType" => "image/jpeg"}],
+      "size" => 13_227,
+      "type" => "Image"
+    } = data
+
     %Mobilizon.Media.File{
       name: "My Picture",
-      url: MobilizonWeb.Endpoint.url() <> "/uploads/something",
+      url: url,
       content_type: "image/png",
       size: 13_120
     }

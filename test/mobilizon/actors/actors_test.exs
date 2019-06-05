@@ -4,7 +4,7 @@ defmodule Mobilizon.ActorsTest do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Member, Follower, Bot}
   alias Mobilizon.Users
-  alias Mobilizon.Media.File
+  alias Mobilizon.Media.File, as: FileModel
   import Mobilizon.Factory
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
@@ -97,14 +97,14 @@ defmodule Mobilizon.ActorsTest do
            id: actor_id,
            preferred_username: preferred_username,
            domain: domain,
-           avatar: %File{name: picture_name} = _picture
+           avatar: %FileModel{name: picture_name} = _picture
          } = _actor} = Actors.get_or_fetch_by_url(@remote_account_url)
 
         assert picture_name == "avatar"
 
         %Actor{
           id: actor_found_id,
-          avatar: %File{name: picture_name} = _picture
+          avatar: %FileModel{name: picture_name} = _picture
         } = Actors.get_actor_by_name("#{preferred_username}@#{domain}")
 
         assert actor_found_id == actor_id
@@ -235,7 +235,8 @@ defmodule Mobilizon.ActorsTest do
 
     test "test get_public_key_for_url/1 with remote actor and bad key" do
       use_cassette "actors/remote_actor_mastodon_tcit_actor_deleted" do
-        assert Actor.get_public_key_for_url(@remote_account_url) == {:error, :actor_fetch_error}
+        assert Actor.get_public_key_for_url(@remote_account_url) ==
+                 {:error, :actor_fetch_error}
       end
     end
 
@@ -257,8 +258,15 @@ defmodule Mobilizon.ActorsTest do
       assert {:error, %Ecto.Changeset{}} = Actors.create_actor(@invalid_attrs)
     end
 
-    test "update_actor/2 with valid data updates the actor", %{actor: actor} do
-      assert {:ok, actor} = Actors.update_actor(actor, @update_attrs)
+    test "update_actor/2 with valid data updates the actor", %{
+      actor: %Actor{} = actor
+    } do
+      assert {:ok, actor} =
+               Actors.update_actor(
+                 actor,
+                 @update_attrs
+               )
+
       assert %Actor{} = actor
       assert actor.summary == "some updated description"
       assert actor.name == "some updated name"
@@ -268,15 +276,85 @@ defmodule Mobilizon.ActorsTest do
       assert actor.preferred_username == "some updated username"
     end
 
+    test "update_actor/2 with valid data updates the actor and it's media files", %{
+      actor: %Actor{avatar: %{url: avatar_url}, banner: %{url: banner_url}} = actor
+    } do
+      %URI{path: "/media/" <> avatar_path} = URI.parse(avatar_url)
+      %URI{path: "/media/" <> banner_path} = URI.parse(banner_url)
+
+      assert File.exists?(
+               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+                 "/" <> avatar_path
+             )
+
+      assert File.exists?(
+               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+                 "/" <> banner_path
+             )
+
+      file = %Plug.Upload{
+        content_type: "image/jpg",
+        path: Path.absname("test/fixtures/image.jpg"),
+        filename: "image.jpg"
+      }
+
+      {:ok, data} = MobilizonWeb.Upload.store(file)
+      url = hd(data["url"])["href"]
+
+      assert {:ok, actor} =
+               Actors.update_actor(
+                 actor,
+                 Map.put(@update_attrs, :avatar, %{name: file.filename, url: url})
+               )
+
+      assert %Actor{} = actor
+      assert actor.summary == "some updated description"
+      assert actor.name == "some updated name"
+      assert actor.domain == "some updated domain"
+      assert actor.keys == "some updated keys"
+      refute actor.suspended
+      assert actor.preferred_username == "some updated username"
+
+      refute File.exists?(
+               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+                 "/" <> avatar_path
+             )
+
+      assert File.exists?(
+               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+                 "/" <> banner_path
+             )
+    end
+
     test "update_actor/2 with invalid data returns error changeset", %{actor: actor} do
       assert {:error, %Ecto.Changeset{}} = Actors.update_actor(actor, @invalid_attrs)
       actor_fetched = Actors.get_actor!(actor.id)
       assert actor = actor_fetched
     end
 
-    test "delete_actor/1 deletes the actor", %{actor: actor} do
+    test "delete_actor/1 deletes the actor", %{
+      actor: %Actor{avatar: %{url: avatar_url}, banner: %{url: banner_url}, id: actor_id} = actor
+    } do
+      %URI{path: "/media/" <> avatar_path} = URI.parse(avatar_url)
+      %URI{path: "/media/" <> banner_path} = URI.parse(banner_url)
+
+      assert File.exists?(
+               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+                 "/" <> avatar_path
+             )
+
+      assert File.exists?(
+               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+                 "/" <> banner_path
+             )
+
       assert {:ok, %Actor{}} = Actors.delete_actor(actor)
-      assert_raise Ecto.NoResultsError, fn -> Actors.get_actor!(actor.id) end
+      assert_raise Ecto.NoResultsError, fn -> Actors.get_actor!(actor_id) end
+
+      refute File.exists?(
+               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+                 "/" <> banner_path
+             )
     end
 
     test "change_actor/1 returns a actor changeset", %{actor: actor} do

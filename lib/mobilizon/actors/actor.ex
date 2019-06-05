@@ -70,8 +70,8 @@ defmodule Mobilizon.Actors.Actor do
     many_to_many(:memberships, Actor, join_through: Member)
     belongs_to(:user, User)
     has_many(:feed_tokens, FeedToken, foreign_key: :actor_id)
-    embeds_one(:avatar, File)
-    embeds_one(:banner, File)
+    embeds_one(:avatar, File, on_replace: :update)
+    embeds_one(:banner, File, on_replace: :update)
 
     timestamps()
   end

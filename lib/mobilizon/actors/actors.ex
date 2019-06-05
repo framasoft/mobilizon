@@ -9,6 +9,8 @@ defmodule Mobilizon.Actors do
   alias Mobilizon.Repo
 
   alias Mobilizon.Actors.{Actor, Bot, Member, Follower}
+  alias Mobilizon.Media.File
+  alias Ecto.Multi
 
   alias Mobilizon.Service.ActivityPub
   require Logger
@@ -119,7 +121,22 @@ defmodule Mobilizon.Actors do
   def update_actor(%Actor{} = actor, attrs) do
     actor
     |> Actor.changeset(attrs)
+    |> delete_files_if_media_changed()
     |> Repo.update()
+  end
+
+  defp delete_files_if_media_changed(%Ecto.Changeset{changes: changes} = changeset) do
+    Enum.each([:avatar, :banner], fn key ->
+      if Map.has_key?(changes, key) do
+        with %Ecto.Changeset{changes: %{url: new_url}} <- changes[key],
+             old_url <- Map.from_struct(changeset.data) |> Map.get(key) |> Map.get(:url),
+             false <- new_url == old_url do
+          MobilizonWeb.Upload.remove(old_url)
+        end
+      end
+    end)
+
+    changeset
   end
 
   @doc """
@@ -135,6 +152,26 @@ defmodule Mobilizon.Actors do
 
   """
   @spec delete_actor(Actor.t()) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
+  def delete_actor(%Actor{domain: nil} = actor) do
+    case Multi.new()
+         |> Multi.delete(:actor, actor)
+         |> Multi.run(:remove_banner, fn _repo,
+                                         %{actor: %Actor{banner: %File{url: url}}} = _picture ->
+           MobilizonWeb.Upload.remove(url)
+         end)
+         |> Multi.run(:remove_avatar, fn _repo,
+                                         %{actor: %Actor{avatar: %File{url: url}}} = _picture ->
+           MobilizonWeb.Upload.remove(url)
+         end)
+         |> Repo.transaction() do
+      {:ok, %{actor: %Actor{} = actor}} ->
+        {:ok, actor}
+
+      {:error, remove, error, _} when remove in [:remove_banner, :remove_avatar] ->
+        {:error, error}
+    end
+  end
+
   def delete_actor(%Actor{} = actor) do
     Repo.delete(actor)
   end
