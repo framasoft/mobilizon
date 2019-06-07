@@ -495,7 +495,6 @@ export default class CreateEvent extends Vue {
 
     .editor {
         position: relative;
-        max-width: 30rem;
         margin: 0 0 1rem;
 
         p.is-empty:first-child::before {
