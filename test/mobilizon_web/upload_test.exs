@@ -173,5 +173,48 @@ defmodule Mobilizon.UploadTest do
       assert Path.basename(attachment_url["href"]) ==
                "%3A%3F%23%5B%5D%40%21%24%26%5C%27%28%29%2A%2B%2C%3B%3D.jpg"
     end
+
+    test "upload and delete successfully a file" do
+      {path, url} = upload()
+      assert File.exists?(path)
+      assert {:ok, _} = Upload.remove(url)
+      refute File.exists?(path)
+      path = path |> Path.split() |> Enum.reverse() |> tl |> Enum.reverse() |> Path.join()
+      refute File.exists?(path)
+    end
+
+    test "delete a not existing file" do
+      file =
+        Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+          "/not_existing/definitely.jpg"
+
+      refute File.exists?(file)
+
+      assert {:error, "File not_existing/definitely.jpg doesn't exist"} =
+               Upload.remove("https://mobilizon.test/media/not_existing/definitely.jpg")
+    end
+  end
+
+  defp upload() do
+    File.cp!("test/fixtures/image.jpg", "test/fixtures/image_tmp.jpg")
+
+    file = %Plug.Upload{
+      content_type: "image/jpg",
+      path: Path.absname("test/fixtures/image_tmp.jpg"),
+      filename: "image.jpg"
+    }
+
+    {:ok, data} = Upload.store(file)
+
+    assert %{
+             "url" => [%{"href" => url, "mediaType" => "image/jpeg"}],
+             "size" => 13_227,
+             "type" => "Image"
+           } = data
+
+    assert String.starts_with?(url, MobilizonWeb.Endpoint.url() <> "/media/")
+
+    %URI{path: "/media/" <> path} = URI.parse(url)
+    {Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <> "/" <> path, url}
   end
 end

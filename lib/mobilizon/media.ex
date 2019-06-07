@@ -7,6 +7,8 @@ defmodule Mobilizon.Media do
   alias Mobilizon.Repo
 
   alias Mobilizon.Media.Picture
+  alias Mobilizon.Media.File
+  alias Ecto.Multi
 
   @doc false
   def data() do
@@ -97,7 +99,15 @@ defmodule Mobilizon.Media do
 
   """
   def delete_picture(%Picture{} = picture) do
-    Repo.delete(picture)
+    case Multi.new()
+         |> Multi.delete(:picture, picture)
+         |> Multi.run(:remove, fn _repo, %{picture: %Picture{file: %File{url: url}}} = _picture ->
+           MobilizonWeb.Upload.remove(url)
+         end)
+         |> Repo.transaction() do
+      {:ok, %{picture: %Picture{} = picture}} -> {:ok, picture}
+      {:error, :remove, error, _} -> {:error, error}
+    end
   end
 
   @doc """

@@ -5,6 +5,7 @@ defmodule Mobilizon.MediaTest do
   import Mobilizon.Factory
 
   describe "media" do
+    setup [:ensure_local_uploader]
     alias Mobilizon.Media.Picture
 
     @valid_attrs %{
@@ -43,8 +44,21 @@ defmodule Mobilizon.MediaTest do
 
     test "delete_picture/1 deletes the picture" do
       picture = insert(:picture)
+
+      %URI{path: "/media/" <> path} = URI.parse(picture.file.url)
+
+      assert File.exists?(
+               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+                 "/" <> path
+             )
+
       assert {:ok, %Picture{}} = Media.delete_picture(picture)
       assert_raise Ecto.NoResultsError, fn -> Media.get_picture!(picture.id) end
+
+      refute File.exists?(
+               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+                 "/" <> path
+             )
     end
 
     test "change_picture/1 returns a picture changeset" do

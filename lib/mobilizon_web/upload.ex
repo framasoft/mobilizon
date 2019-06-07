@@ -88,6 +88,16 @@ defmodule MobilizonWeb.Upload do
     end
   end
 
+  def remove(url, opts \\ []) do
+    with opts <- get_opts(opts),
+         %URI{path: "/media/" <> path, host: host} <- URI.parse(url),
+         true <- host == MobilizonWeb.Endpoint.host() do
+      MobilizonWeb.Uploaders.Uploader.remove_file(opts.uploader, path)
+    else
+      %URI{} = _uri -> {:error, "URL doesn't match pattern"}
+    end
+  end
+
   def char_unescaped?(char) do
     URI.char_unreserved?(char) or char == ?/
   end
