@@ -5,12 +5,13 @@
     </h1>
     <div v-if="$apollo.loading">Loading...</div>
     <div class="columns is-centered" v-else>
-      <form class="column is-half" @submit="createEvent">
+      <form class="column is-two-thirds-desktop" @submit="createEvent">
         <b-field :label="$gettext('Title')">
-          <b-input aria-required="true" required v-model="event.title"/>
+          <b-input aria-required="true" required v-model="event.title" maxlength="64" />
         </b-field>
 
-        <b-datepicker v-model="event.beginsOn" inline></b-datepicker>
+        <date-time-picker v-model="event.beginsOn" :label="$gettext('Starts on…')" :step="15"/>
+        <date-time-picker v-model="event.endsOn" :label="$gettext('Ends on…')" :step="15" />
 
         <div class="field">
           <label class="label">{{ $gettext('Description') }}</label>
@@ -51,9 +52,10 @@ import { IPerson, Person } from '@/types/actor';
 import PictureUpload from '@/components/PictureUpload.vue';
 import { IPictureUpload } from '@/types/picture.model';
 import Editor from '@/components/Editor.vue';
+import DateTimePicker from '@/components/Event/DateTimePicker.vue';
 
 @Component({
-  components: { PictureUpload, Editor },
+  components: { DateTimePicker, PictureUpload, Editor },
   apollo: {
     loggedPerson: {
       query: LOGGED_PERSON,
@@ -68,6 +70,14 @@ export default class CreateEvent extends Vue {
   event: IEvent = new EventModel();
   pictureFile?: File;
   pictureName?: String;
+
+  created() {
+    const now = new Date();
+    const end = new Date();
+    end.setUTCHours(now.getUTCHours() + 3);
+    this.event.beginsOn = now;
+    this.event.endsOn = end;
+  }
 
   createEvent(e: Event) {
     e.preventDefault();
