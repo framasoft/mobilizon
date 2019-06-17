@@ -6,14 +6,14 @@ import GetTextPlugin from 'vue-gettext';
 import App from '@/App.vue';
 import router from '@/router';
 import { apolloProvider } from './vue-apollo';
+import { NotifierPlugin } from '@/plugins/notifier';
 
 const translations = require('@/i18n/translations.json');
 
 Vue.config.productionTip = false;
 
-Vue.use(Buefy, {
-  defaultContainerElement: '#mobilizon',
-});
+Vue.use(Buefy);
+Vue.use(NotifierPlugin);
 
 const language = (window.navigator as any).userLanguage || window.navigator.language;
 

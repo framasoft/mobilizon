@@ -4,6 +4,7 @@
     "max-line-length": [ true, 140 ],
     "import-name": false,
     "ter-arrow-parens": false,
-    "no-boolean-literal-compare": false
+    "no-boolean-literal-compare": false,
+    "object-shorthand-properties-first": false
   }
 }

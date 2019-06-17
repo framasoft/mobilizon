@@ -11,6 +11,7 @@ query($name:String!) {
     preferredUsername,
     suspended,
     avatar {
+      name,
       url
     },
     banner {
@@ -64,6 +65,7 @@ query {
 export const IDENTITIES = gql`
 query {
   identities {
+    id,
     avatar {
         url
     },
@@ -73,20 +75,49 @@ query {
 }`;
 
 export const CREATE_PERSON = gql`
-mutation CreatePerson($preferredUsername: String!) {
+mutation CreatePerson($preferredUsername: String!, $name: String!, $summary: String, $avatar: PictureInput) {
   createPerson(
       preferredUsername: $preferredUsername,
       name: $name,
-      summary: $summary
+      summary: $summary,
+      avatar: $avatar
     ) {
+    id,
     preferredUsername,
     name,
     summary,
     avatar {
       url
-    },
+    }
   }
 }
+`;
+
+export const UPDATE_PERSON = gql`
+  mutation UpdatePerson($preferredUsername: String!, $name: String, $summary: String, $avatar: PictureInput) {
+    updatePerson(
+      preferredUsername: $preferredUsername,
+      name: $name,
+      summary: $summary,
+      avatar: $avatar
+    ) {
+      id,
+      preferredUsername,
+      name,
+      summary,
+      avatar {
+        url
+      },
+    }
+  }
+`;
+
+export const DELETE_PERSON = gql`
+  mutation DeletePerson($preferredUsername: String!) {
+    deletePerson(preferredUsername: $preferredUsername) {
+      preferredUsername,
+    }
+  }
 `;
 
 /**

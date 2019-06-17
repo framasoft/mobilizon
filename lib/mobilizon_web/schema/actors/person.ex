@@ -101,6 +101,34 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
       resolve(handle_errors(&Person.create_person/3))
     end
 
+    @desc "Update an identity"
+    field :update_person, :person do
+      arg(:preferred_username, non_null(:string))
+
+      arg(:name, :string, description: "The displayed name for this profile")
+
+      arg(:summary, :string, description: "The summary for this profile")
+
+      arg(:avatar, :picture_input,
+        description:
+          "The avatar for the profile, either as an object or directly the ID of an existing Picture"
+      )
+
+      arg(:banner, :picture_input,
+        description:
+          "The banner for the profile, either as an object or directly the ID of an existing Picture"
+      )
+
+      resolve(handle_errors(&Person.update_person/3))
+    end
+
+    @desc "Delete an identity"
+    field :delete_person, :person do
+      arg(:preferred_username, non_null(:string))
+
+      resolve(handle_errors(&Person.delete_person/3))
+    end
+
     @desc "Register a first profile on registration"
     field :register_person, :person do
       arg(:preferred_username, non_null(:string))

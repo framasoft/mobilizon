@@ -1,7 +1,7 @@
 import { IPicture } from '@/types/picture.model';
 
 export interface IActor {
-  id?: string;
+  id?: number;
   url: string;
   name: string;
   domain: string|null;
@@ -13,6 +13,7 @@ export interface IActor {
 }
 
 export class Actor implements IActor {
+  id?: number;
   avatar: IPicture | null = null;
   banner: IPicture | null = null;
   domain: string | null = null;

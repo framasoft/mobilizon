@@ -17,43 +17,40 @@
           <span aria-hidden="true"></span>
         </a>
       </div>
+
       <div class="navbar-menu" :class="{ 'is-active': showNavbar }">
         <div class="navbar-end">
           <div class="navbar-item">
             <search-field />
           </div>
-          <div class="navbar-item" v-if="!currentUser.isLoggedIn">
-            <div class="buttons">
-              <router-link class="button is-primary" v-if="config && config.registrationsOpen" :to="{ name: 'Register' }">
-                <strong>
-                  <translate>Sign up</translate>
-                </strong>
-              </router-link>
-              <router-link class="button is-primary" :to="{ name: 'Login' }">
-                <translate>Log in</translate>
-              </router-link>
-            </div>
-          </div>
-          <div class="navbar-item has-dropdown is-hoverable" v-else>
-              <router-link
-                class="navbar-link"
-                v-if="currentUser.isLoggedIn && loggedPerson"
-                :to="{ name: 'MyAccount' }"
-              >
-                <figure class="image is-24x24" v-if="loggedPerson.avatar">
-                  <img :src="loggedPerson.avatar.url">
-                </figure>
-                <span>{{ loggedPerson.preferredUsername }}</span>
-              </router-link>
+
+          <div class="navbar-item has-dropdown is-hoverable" v-if="currentUser.isLoggedIn">
+            <a
+              class="navbar-link"
+              v-if="loggedPerson"
+            >
+              <figure class="image is-24x24" v-if="loggedPerson.avatar">
+                <img alt="avatarUrl" :src="loggedPerson.avatar.url">
+              </figure>
+              <span>{{ loggedPerson.preferredUsername }}</span>
+            </a>
 
             <div class="navbar-dropdown">
-              <router-link :to="{ name: 'MyAccount' }" class="navbar-item">
-                <translate>My account</translate>
+              <span class="navbar-item">
+                <router-link :to="{ name: 'UpdateIdentity' }" v-translate>My account</router-link>
+              </span>
+
+              <a v-translate class="navbar-item" v-on:click="logout()">Log out</a>
+            </div>
+          </div>
+
+          <div class="navbar-item" v-else>
+            <div class="buttons">
+              <router-link class="button is-primary" v-if="config && config.registrationsOpen" :to="{ name: 'Register' }">
+                <strong v-translate>Sign up</strong>
               </router-link>
 
-              <a class="navbar-item" v-on:click="logout()">
-                <translate>Log out</translate>
-              </a>
+              <router-link class="button is-primary" :to="{ name: 'Login' }" v-translate>Log in</router-link>
             </div>
           </div>
         </div>

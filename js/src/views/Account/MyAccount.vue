@@ -1,15 +1,18 @@
 <template>
   <section class="container">
-    <div v-if="person">
+    <div v-if="loggedPerson">
       <div class="header">
-        <figure v-if="person.banner" class="image is-3by1">
-          <img :src="person.banner.url" alt="banner">
+        <figure v-if="loggedPerson.banner" class="image is-3by1">
+          <img :src="loggedPerson.banner.url" alt="banner">
         </figure>
       </div>
 
       <div class="columns">
         <div class="identities column is-4">
-          <identities></identities>
+          <identities v-bind:currentIdentityName="currentIdentityName"></identities>
+        </div>
+        <div class="column is-8">
+          <router-view></router-view>
         </div>
       </div>
     </div>
@@ -29,35 +32,46 @@
 
 <script lang="ts">
 import { LOGGED_PERSON } from '@/graphql/actor';
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import EventCard from '@/components/Event/EventCard.vue';
 import { IPerson } from '@/types/actor';
-import { CURRENT_USER_CLIENT } from '@/graphql/user';
 import Identities from '@/components/Account/Identities.vue';
 
 @Component({
-  apollo: {
-    currentUser: {
-      query: CURRENT_USER_CLIENT,
-    },
-    loggedPerson: {
-      query: LOGGED_PERSON,
-    },
-  },
   components: {
     EventCard,
     Identities,
   },
 })
 export default class MyAccount extends Vue {
-  person: IPerson | null = null;
+  loggedPerson: IPerson | null = null;
+  currentIdentityName: string | null = null;
 
-  async mounted () {
+  @Watch('$route.params.identityName', { immediate: true })
+  async onIdentityParamChanged (val: string) {
+    if (!this.loggedPerson) {
+      this.loggedPerson = await this.loadLoggedPerson();
+    }
+
+    await this.redirectIfNoIdentitySelected(val);
+
+    this.currentIdentityName = val;
+  }
+
+  private async redirectIfNoIdentitySelected (identityParam?: string) {
+    if (!!identityParam) return;
+
+    if (!!this.loggedPerson) {
+      this.$router.push({ params: { identityName: this.loggedPerson.preferredUsername } });
+    }
+  }
+
+  private async loadLoggedPerson () {
     const result = await this.$apollo.query({
       query: LOGGED_PERSON,
     });
 
-    this.person = result.data.loggedPerson;
+    return result.data.loggedPerson as IPerson;
   }
 }
 </script>
