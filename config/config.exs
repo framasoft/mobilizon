@@ -95,6 +95,7 @@ config :geolix,
   ]
 
 config :phoenix, :format_encoders, json: Jason, "activity-json": Jason
+config :phoenix, :json_library, Jason
 
 config :mobilizon, Mobilizon.Service.Geospatial.Nominatim,
   endpoint:

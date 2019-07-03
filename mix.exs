@@ -7,7 +7,7 @@ defmodule Mobilizon.Mixfile do
     [
       app: :mobilizon,
       version: @version,
-      elixir: "~> 1.8",
+      elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
