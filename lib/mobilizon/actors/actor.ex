@@ -173,7 +173,6 @@ defmodule Mobilizon.Actors.Actor do
       |> unique_constraint(:url, name: :actors_url_index)
       |> validate_length(:summary, max: 5000)
       |> validate_length(:preferred_username, max: 100)
-      |> put_change(:local, false)
 
     Logger.debug("Remote actor creation")
     Logger.debug(inspect(changes))
@@ -209,7 +208,6 @@ defmodule Mobilizon.Actors.Actor do
     |> unique_constraint(:url, name: :actors_url_index)
     |> validate_length(:summary, max: 5000)
     |> validate_length(:preferred_username, max: 100)
-    |> put_change(:local, true)
   end
 
   defp unique_username_validator(
