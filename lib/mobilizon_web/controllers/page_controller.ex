@@ -6,6 +6,7 @@ defmodule MobilizonWeb.PageController do
   alias Mobilizon.Actors
   alias Mobilizon.Events
 
+  plug(:put_layout, false)
   action_fallback(MobilizonWeb.FallbackController)
 
   def index(conn, _params), do: render(conn, :index)
