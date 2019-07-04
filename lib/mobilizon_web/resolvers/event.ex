@@ -217,8 +217,13 @@ defmodule MobilizonWeb.Resolvers.Event do
 
   # If we have an attached picture, just transmit it. It will be handled by
   # Mobilizon.Service.ActivityPub.Utils.make_picture_data/1
+  # However, we need to pass it's actor ID
   @spec save_attached_picture(map()) :: {:ok, map()}
-  defp save_attached_picture(%{picture: %{picture: %Plug.Upload{} = _picture}} = args), do: args
+  defp save_attached_picture(
+         %{picture: %{picture: %{file: %Plug.Upload{} = _picture} = all_pic}} = args
+       ) do
+    {:ok, Map.put(args, :picture, Map.put(all_pic, :actor_id, args.organizer_actor_id))}
+  end
 
   # Otherwise if we use a previously uploaded picture we need to fetch it from database
   @spec save_attached_picture(map()) :: {:ok, map()}
