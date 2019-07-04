@@ -5,6 +5,8 @@ defmodule MobilizonWeb.PageView do
   use MobilizonWeb, :view
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.ActivityPub.Utils
+  alias Mobilizon.Service.Metadata
+  alias Mobilizon.Service.MetadataUtils
 
   def render("actor.activity-json", %{conn: %{assigns: %{object: actor}}}) do
     public_key = Mobilizon.Service.ActivityPub.Utils.pem_to_public_key_pem(actor.keys)
@@ -81,5 +83,24 @@ defmodule MobilizonWeb.PageView do
       # "updated" => Timex.format!(comment.updated_at, "{ISO:Extended}")
     }
     |> Map.merge(Utils.make_json_ld_header())
+  end
+
+  def render(page, %{object: object} = _assigns)
+      when page in ["actor.html", "event.html", "comment.html"] do
+    with {:ok, index_content} <- File.read(index_file_path()) do
+      tags = object |> Metadata.build_tags() |> MetadataUtils.stringify_tags()
+      index_content = String.replace(index_content, "<!--server-generated-meta-->", tags)
+      {:safe, index_content}
+    end
+  end
+
+  def render("index.html", _assigns) do
+    with {:ok, index_content} <- File.read(index_file_path()) do
+      {:safe, index_content}
+    end
+  end
+
+  defp index_file_path() do
+    Path.join(Application.app_dir(:mobilizon, "priv/static/js"), "index.html")
   end
 end

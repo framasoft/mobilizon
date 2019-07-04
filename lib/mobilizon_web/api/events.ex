@@ -22,7 +22,8 @@ defmodule MobilizonWeb.API.Events do
           category: category
         } = args
       ) do
-    with %Actor{url: url} = actor <- Actors.get_local_actor_with_everything(organizer_actor_id),
+    with %Actor{url: url} = actor <-
+           Actors.get_local_actor_with_everything(organizer_actor_id),
          title <- String.trim(title),
          mentions <- Formatter.parse_mentions(description),
          visibility <- Map.get(args, :visibility, "public"),
