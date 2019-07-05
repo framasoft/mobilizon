@@ -9,7 +9,7 @@ module.exports = {
   },
   lintOnSave: false,
   runtimeCompiler: true,
-  outputDir: '../priv/static/js',
+  outputDir: '../priv/static',
   configureWebpack: {
     plugins: [
       new Dotenv({ path: path.resolve(process.cwd(), '../.env') }),
