@@ -31,7 +31,7 @@ defmodule MobilizonWeb.Router do
   end
 
   pipeline :browser do
-    plug(Plug.Static, at: "/", from: "priv/static/js")
+    plug(Plug.Static, at: "/", from: "priv/static")
     plug(:accepts, ["html"])
     plug(:fetch_session)
     plug(:fetch_flash)

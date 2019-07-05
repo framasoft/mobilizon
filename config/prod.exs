@@ -4,11 +4,12 @@ config :mobilizon, MobilizonWeb.Endpoint,
   http: [:inet6, port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4000],
   url: [
     host: System.get_env("MOBILIZON_INSTANCE_HOST") || "mobilizon.me",
-    port: 80
+    port: 443,
+    scheme: "https"
   ],
   secret_key_base:
     System.get_env("MOBILIZON_SECRET") || "ThisShouldBeAVeryStrongStringPleaseReplaceMe",
-  cache_static_manifest: "priv/static/js/manifest.json"
+  cache_static_manifest: "priv/static/manifest.json"
 
 # Configure your database
 config :mobilizon, Mobilizon.Repo,
