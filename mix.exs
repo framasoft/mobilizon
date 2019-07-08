@@ -25,8 +25,8 @@ defmodule Mobilizon.Mixfile do
         "vcr.show": :test
       ],
       name: "Mobilizon",
-      source_url: "https://framagit.org/tcit/mobilizon",
-      homepage_url: "https://framagit.org/tcit/mobilizon",
+      source_url: "https://framagit.org/framasoft/mobilizon",
+      homepage_url: "https://joinmobilizon.org",
       docs: docs()
     ]
   end
