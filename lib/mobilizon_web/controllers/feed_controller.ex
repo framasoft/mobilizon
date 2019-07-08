@@ -3,6 +3,7 @@ defmodule MobilizonWeb.FeedController do
   Controller to serve RSS, ATOM and iCal Feeds
   """
   use MobilizonWeb, :controller
+  plug(:put_layout, false)
   action_fallback(MobilizonWeb.FallbackController)
 
   def actor(conn, %{"name" => name, "format" => "atom"}) do
