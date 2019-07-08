@@ -7,37 +7,42 @@ defmodule MobilizonWeb.NodeInfoController do
   use MobilizonWeb, :controller
 
   alias Mobilizon.{Events, Users}
+  alias Mobilizon.CommonConfig
 
   @instance Application.get_env(:mobilizon, :instance)
+  @node_info_supported_versions ["2.0", "2.1"]
+  @node_info_schema_uri "http://nodeinfo.diaspora.software/ns/schema/"
 
   def schemas(conn, _params) do
-    response = %{
-      links: [
+    links =
+      @node_info_supported_versions
+      |> Enum.map(fn version ->
         %{
-          rel: "http://nodeinfo.diaspora.software/ns/schema/2.1",
-          href: MobilizonWeb.Router.Helpers.node_info_url(MobilizonWeb.Endpoint, :nodeinfo, "2.1")
+          rel: @node_info_schema_uri <> version,
+          href:
+            MobilizonWeb.Router.Helpers.node_info_url(MobilizonWeb.Endpoint, :nodeinfo, version)
         }
-      ]
-    }
+      end)
 
-    json(conn, response)
+    json(conn, %{
+      links: links
+    })
   end
 
   # Schema definition: https://github.com/jhass/nodeinfo/blob/master/schemas/2.1/schema.json
-  def nodeinfo(conn, %{"version" => "2.1"}) do
+  def nodeinfo(conn, %{"version" => version}) when version in @node_info_supported_versions do
     response = %{
-      version: "2.1",
+      version: version,
       software: %{
         name: "mobilizon",
-        version: Keyword.get(@instance, :version),
-        repository: Keyword.get(@instance, :repository)
+        version: Keyword.get(@instance, :version)
       },
       protocols: ["activitypub"],
       services: %{
         inbound: [],
-        outbound: []
+        outbound: ["atom1.0"]
       },
-      openRegistrations: Keyword.get(@instance, :registrations_open),
+      openRegistrations: CommonConfig.registrations_open?(),
       usage: %{
         users: %{
           total: Users.count_users()
@@ -46,9 +51,17 @@ defmodule MobilizonWeb.NodeInfoController do
         localComments: Events.count_local_comments()
       },
       metadata: %{
-        nodeName: Keyword.get(@instance, :name)
+        nodeName: CommonConfig.instance_name(),
+        nodeDescription: CommonConfig.instance_description()
       }
     }
+
+    response =
+      if version == "2.1" do
+        put_in(response, [:software, :repository], Keyword.get(@instance, :repository))
+      else
+        response
+      end
 
     conn
     |> put_resp_header(

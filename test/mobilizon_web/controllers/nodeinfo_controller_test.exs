@@ -13,6 +13,15 @@ defmodule MobilizonWeb.NodeInfoControllerTest do
                    MobilizonWeb.Router.Helpers.node_info_url(
                      MobilizonWeb.Endpoint,
                      :nodeinfo,
+                     "2.0"
+                   ),
+                 "rel" => "http://nodeinfo.diaspora.software/ns/schema/2.0"
+               },
+               %{
+                 "href" =>
+                   MobilizonWeb.Router.Helpers.node_info_url(
+                     MobilizonWeb.Endpoint,
+                     :nodeinfo,
                      "2.1"
                    ),
                  "rel" => "http://nodeinfo.diaspora.software/ns/schema/2.1"
@@ -27,10 +36,13 @@ defmodule MobilizonWeb.NodeInfoControllerTest do
     resp = json_response(conn, 200)
 
     assert resp == %{
-             "metadata" => %{"nodeName" => Keyword.get(@instance, :name)},
+             "metadata" => %{
+               "nodeName" => Mobilizon.CommonConfig.instance_name(),
+               "nodeDescription" => Mobilizon.CommonConfig.instance_description()
+             },
              "openRegistrations" => Keyword.get(@instance, :registrations_open),
              "protocols" => ["activitypub"],
-             "services" => %{"inbound" => [], "outbound" => []},
+             "services" => %{"inbound" => [], "outbound" => ["atom1.0"]},
              "software" => %{
                "name" => "mobilizon",
                "version" => Keyword.get(@instance, :version),
