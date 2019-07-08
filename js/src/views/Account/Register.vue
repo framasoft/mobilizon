@@ -87,7 +87,6 @@ export default class Register extends Vue {
     preferredUsername: '',
     name: '',
     summary: '',
-    id: '',
     url: '',
     suspended: false,
     avatar: null,

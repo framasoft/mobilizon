@@ -4,7 +4,7 @@ import PageNotFound from '@/views/PageNotFound.vue';
 import Home from '@/views/Home.vue';
 import { UserRouteName, userRoutes } from './user';
 import { EventRouteName, eventRoutes } from '@/router/event';
-import { ActorRouteName, actorRoutes } from '@/router/actor';
+import { ActorRouteName, actorRoutes, MyAccountRouteName } from '@/router/actor';
 import { ErrorRouteName, errorRoutes } from '@/router/error';
 import { authGuardIfNeeded } from '@/router/guards/auth-guard';
 import Search from '@/views/Search.vue';
@@ -34,6 +34,7 @@ export const RouteName = {
   ...UserRouteName,
   ...EventRouteName,
   ...ActorRouteName,
+  ...MyAccountRouteName,
   ...ErrorRouteName,
 };
 

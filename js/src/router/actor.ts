@@ -4,13 +4,18 @@ import CreateGroup from '@/views/Group/Create.vue';
 import Group from '@/views/Group/Group.vue';
 import GroupList from '@/views/Group/GroupList.vue';
 import { RouteConfig } from 'vue-router';
+import EditIdentity from '@/views/Account/children/EditIdentity.vue';
 
 export enum ActorRouteName {
   GROUP_LIST = 'GroupList',
   GROUP = 'Group',
   CREATE_GROUP = 'CreateGroup',
   PROFILE = 'Profile',
-  MY_ACCOUNT = 'MyAccount',
+}
+
+export enum MyAccountRouteName {
+  CREATE_IDENTITY = 'CreateIdentity',
+  UPDATE_IDENTITY = 'UpdateIdentity',
 }
 
 export const actorRoutes: RouteConfig[] = [
@@ -41,10 +46,23 @@ export const actorRoutes: RouteConfig[] = [
     meta: { requiredAuth: false },
   },
   {
-    path: '/my-account',
-    name: ActorRouteName.MY_ACCOUNT,
+    path: '/my-account/identity',
     component: MyAccount,
     props: true,
     meta: { requiredAuth: true },
+    children: [
+      {
+        path: 'create',
+        name: MyAccountRouteName.CREATE_IDENTITY,
+        component: EditIdentity,
+        props: { isUpdate: false },
+      },
+      {
+        path: 'update/:identityName?',
+        name: MyAccountRouteName.UPDATE_IDENTITY,
+        component: EditIdentity,
+        props: { isUpdate: true },
+      },
+    ],
   },
 ];

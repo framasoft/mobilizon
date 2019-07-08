@@ -129,7 +129,7 @@ defmodule Mobilizon.Actors do
     Enum.each([:avatar, :banner], fn key ->
       if Map.has_key?(changes, key) do
         with %Ecto.Changeset{changes: %{url: new_url}} <- changes[key],
-             old_url <- Map.from_struct(changeset.data) |> Map.get(key) |> Map.get(:url),
+             %{url: old_url} = _old_key <- Map.from_struct(changeset.data) |> Map.get(key),
              false <- new_url == old_url do
           MobilizonWeb.Upload.remove(old_url)
         end
@@ -155,13 +155,11 @@ defmodule Mobilizon.Actors do
   def delete_actor(%Actor{domain: nil} = actor) do
     case Multi.new()
          |> Multi.delete(:actor, actor)
-         |> Multi.run(:remove_banner, fn _repo,
-                                         %{actor: %Actor{banner: %File{url: url}}} = _picture ->
-           MobilizonWeb.Upload.remove(url)
+         |> Multi.run(:remove_banner, fn _repo, %{actor: %Actor{}} = _picture ->
+           remove_banner(actor)
          end)
-         |> Multi.run(:remove_avatar, fn _repo,
-                                         %{actor: %Actor{avatar: %File{url: url}}} = _picture ->
-           MobilizonWeb.Upload.remove(url)
+         |> Multi.run(:remove_avatar, fn _repo, %{actor: %Actor{}} = _picture ->
+           remove_avatar(actor)
          end)
          |> Repo.transaction() do
       {:ok, %{actor: %Actor{} = actor}} ->
@@ -988,5 +986,28 @@ defmodule Mobilizon.Actors do
   """
   def change_follower(%Follower{} = follower) do
     Follower.changeset(follower, %{})
+  end
+
+  defp remove_banner(%Actor{banner: nil} = actor), do: {:ok, actor}
+
+  defp remove_banner(%Actor{banner: %File{url: url}} = actor) do
+    safe_remove_file(url, actor)
+  end
+
+  defp remove_avatar(%Actor{avatar: nil} = actor), do: {:ok, actor}
+
+  defp remove_avatar(%Actor{avatar: %File{url: url}} = actor) do
+    safe_remove_file(url, actor)
+  end
+
+  defp safe_remove_file(url, %Actor{} = actor) do
+    with {:ok, _value} <- MobilizonWeb.Upload.remove(url) do
+      {:ok, actor}
+    else
+      {:error, error} ->
+        Logger.error("Error while removing an upload file")
+        Logger.error(inspect(error))
+        {:ok, actor}
+    end
   end
 end

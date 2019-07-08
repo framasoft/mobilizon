@@ -20,6 +20,10 @@ export class Person extends Actor implements IPerson {
   constructor(hash: IPerson | {} = {}) {
     super(hash);
 
+    this.patch(hash);
+  }
+
+  patch (hash: any) {
     Object.assign(this, hash);
   }
 }

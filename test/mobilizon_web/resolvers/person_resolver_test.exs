@@ -213,6 +213,235 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
                MobilizonWeb.Endpoint.url() <> "/media/"
     end
 
+    test "update_person/3 updates an existing identity", context do
+      user = insert(:user)
+      insert(:actor, user: user, preferred_username: "riri")
+
+      mutation = """
+          mutation {
+            updatePerson(
+              preferredUsername: "riri",
+              name: "riri updated",
+              summary: "summary updated",
+              banner: {
+                picture: {
+                  file: "landscape.jpg",
+                  name: "irish landscape",
+                  alt: "The beautiful atlantic way"
+                }
+              }
+            ) {
+              id,
+              preferredUsername,
+              name,
+              summary,
+              avatar {
+                id,
+                url
+              },
+              banner {
+                id,
+                name,
+                url
+              }
+            }
+          }
+      """
+
+      map = %{
+        "query" => mutation,
+        "landscape.jpg" => %Plug.Upload{
+          path: "test/fixtures/picture.png",
+          filename: "landscape.jpg"
+        }
+      }
+
+      res =
+        context.conn
+        |> put_req_header("content-type", "multipart/form-data")
+        |> post("/api", map)
+
+      assert json_response(res, 200)["data"]["updatePerson"] == nil
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "You need to be logged-in to update an identity"
+
+      res =
+        context.conn
+        |> auth_conn(user)
+        |> put_req_header("content-type", "multipart/form-data")
+        |> post("/api", map)
+
+      res_person = json_response(res, 200)["data"]["updatePerson"]
+
+      assert res_person["preferredUsername"] == "riri"
+      assert res_person["name"] == "riri updated"
+      assert res_person["summary"] == "summary updated"
+
+      assert res_person["banner"]["id"]
+      assert res_person["banner"]["name"] == "The beautiful atlantic way"
+      assert res_person["banner"]["url"] =~ MobilizonWeb.Endpoint.url() <> "/media/"
+    end
+
+    test "update_person/3 should fail to update a not owned identity", context do
+      user1 = insert(:user)
+      user2 = insert(:user)
+      insert(:actor, user: user2, preferred_username: "riri")
+
+      mutation = """
+          mutation {
+            updatePerson(
+              preferredUsername: "riri",
+              name: "riri updated",
+            ) {
+              id,
+            }
+          }
+      """
+
+      res =
+        context.conn
+        |> auth_conn(user1)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["data"]["updatePerson"] == nil
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "Actor is not owned by authenticated user"
+    end
+
+    test "update_person/3 should fail to update a not existing identity", context do
+      user = insert(:user)
+      insert(:actor, user: user, preferred_username: "riri")
+
+      mutation = """
+          mutation {
+            updatePerson(
+              preferredUsername: "not_existing",
+              name: "riri updated",
+            ) {
+              id,
+            }
+          }
+      """
+
+      res =
+        context.conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["data"]["updatePerson"] == nil
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "Actor not found"
+    end
+
+    test "delete_person/3 should fail to update a not owned identity", context do
+      user1 = insert(:user)
+      user2 = insert(:user)
+      insert(:actor, user: user2, preferred_username: "riri")
+
+      mutation = """
+          mutation {
+            deletePerson(preferredUsername: "riri") {
+              id,
+            }
+          }
+      """
+
+      res =
+        context.conn
+        |> auth_conn(user1)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["data"]["updatePerson"] == nil
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "Actor is not owned by authenticated user"
+    end
+
+    test "delete_person/3 should fail to delete a not existing identity", context do
+      user = insert(:user)
+      insert(:actor, user: user, preferred_username: "riri")
+
+      mutation = """
+          mutation {
+            deletePerson(preferredUsername: "fifi") {
+              id,
+            }
+          }
+      """
+
+      res =
+        context.conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["data"]["updatePerson"] == nil
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "Actor not found"
+    end
+
+    test "delete_person/3 should fail to delete the last user identity", context do
+      user = insert(:user)
+      insert(:actor, user: user, preferred_username: "riri")
+
+      mutation = """
+          mutation {
+            deletePerson(preferredUsername: "riri") {
+              id,
+            }
+          }
+      """
+
+      res =
+        context.conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["data"]["updatePerson"] == nil
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "Cannot remove the last identity of a user"
+    end
+
+    test "delete_person/3 should delete a user identity", context do
+      user = insert(:user)
+      insert(:actor, user: user, preferred_username: "riri")
+      insert(:actor, user: user, preferred_username: "fifi")
+
+      mutation = """
+          mutation {
+            deletePerson(preferredUsername: "riri") {
+              id,
+            }
+          }
+      """
+
+      res =
+        context.conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["errors"] == nil
+
+      query = """
+      {
+        person(preferredUsername: "riri") {
+          id,
+        }
+      }
+      """
+
+      res =
+        context.conn
+        |> auth_conn(user)
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+
+      assert hd(json_response(res, 200)["errors"])["message"] == "Person with name riri not found"
+    end
+
     test "get_current_person/3 can return the events the person is going to", context do
       user = insert(:user)
       actor = insert(:actor, user: user)

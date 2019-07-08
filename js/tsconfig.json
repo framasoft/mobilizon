@@ -13,6 +13,7 @@
     "sourceMap": true,
     "skipLibCheck": true,
     "baseUrl": ".",
+    "typeRoots": [ "node_modules/@types", "src/typings" ],
     "types": [
       "webpack-env",
       "mocha",

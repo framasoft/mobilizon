@@ -6,7 +6,10 @@
 
     <ul class="identities">
       <li v-for="identity in identities" :key="identity.id">
-        <div class="media identity" v-bind:class="{ 'is-current-identity': isCurrentIdentity(identity) }">
+        <router-link
+          :to="{ name: 'UpdateIdentity', params: { identityName: identity.preferredUsername } }"
+          class="media identity" v-bind:class="{ 'is-current-identity': isCurrentIdentity(identity) }"
+        >
           <div class="media-left">
             <figure class="image is-48x48" v-if="identity.avatar">
               <img class="is-rounded" :src="identity.avatar.url">
@@ -16,13 +19,13 @@
           <div class="media-content">
             {{ identity.displayName() }}
           </div>
-        </div>
+        </router-link>
       </li>
     </ul>
 
-    <a class="button create-identity is-primary">
+    <router-link :to="{ name: 'CreateIdentity' }" class="button create-identity is-primary" >
       <translate>Create a new identity</translate>
-    </a>
+    </router-link>
   </section>
 </template>
 
@@ -38,6 +41,7 @@
     font-size: 1.3rem;
     padding-bottom: 0;
     margin-bottom: 15px;
+    color: #000;
 
     &.is-current-identity {
       background-color: rgba(0, 0, 0, 0.1);
@@ -50,33 +54,29 @@
 </style>
 
 <script lang="ts">
-  import { Component, Vue } from 'vue-property-decorator';
-  import { IDENTITIES, LOGGED_PERSON } from '@/graphql/actor';
-  import { IPerson, Person } from '@/types/actor';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { IDENTITIES, LOGGED_PERSON } from '@/graphql/actor';
+import { IPerson, Person } from '@/types/actor';
 
-  @Component({
-    apollo: {
-      loggedPerson: {
-        query: LOGGED_PERSON,
+@Component({
+  apollo: {
+    identities: {
+      query: IDENTITIES,
+
+      update (result) {
+        return result.identities.map(i => new Person(i));
       },
     },
-  })
-  export default class Identities extends Vue {
-    identities: Person[] = [];
-    loggedPerson!: IPerson;
-    errors: string[] = [];
+  },
+})
+export default class Identities extends Vue {
+  @Prop({ type: String }) currentIdentityName!: string;
 
-    async mounted() {
-      const result = await this.$apollo.query({
-        query: IDENTITIES,
-      });
+  identities: Person[] = [];
+  errors: string[] = [];
 
-      this.identities = result.data.identities
-                              .map(i => new Person(i));
-    }
-
-    isCurrentIdentity(identity: IPerson) {
-      return identity.preferredUsername === this.loggedPerson.preferredUsername;
-    }
+  isCurrentIdentity(identity: IPerson) {
+    return identity.preferredUsername === this.currentIdentityName;
   }
+}
 </script>
