@@ -120,4 +120,16 @@ defmodule MobilizonWeb.API.Utils do
   #   |> Formatter.add_hashtag_links(tags)
   #   |> Formatter.finalize()
   # end
+
+  def make_report_content_html(nil), do: {:ok, {nil, [], []}}
+
+  def make_report_content_html(comment) do
+    max_size = Mobilizon.CommonConfig.get([:instance, :max_report_comment_size], 1000)
+
+    if String.length(comment) <= max_size do
+      {:ok, Formatter.html_escape(comment, "text/plain")}
+    else
+      {:error, "Comment must be up to #{max_size} characters"}
+    end
+  end
 end

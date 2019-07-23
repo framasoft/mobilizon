@@ -18,6 +18,10 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   alias Mobilizon.Media.Picture
   alias Mobilizon.Events
   alias Mobilizon.Activity
+  alias Mobilizon.Reports
+  alias Mobilizon.Reports.Report
+  alias Mobilizon.Users
+  alias Mobilizon.Service.ActivityPub.Converters
   alias Ecto.Changeset
   require Logger
   alias MobilizonWeb.Router.Helpers, as: Routes
@@ -119,9 +123,9 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   def insert_full_object(%{"object" => %{"type" => "Event"} = object_data})
       when is_map(object_data) do
     with object_data <-
-           Mobilizon.Service.ActivityPub.Converters.Event.as_to_model_data(object_data),
-         {:ok, _} <- Events.create_event(object_data) do
-      :ok
+           Converters.Event.as_to_model_data(object_data),
+         {:ok, %Event{} = event} <- Events.create_event(object_data) do
+      {:ok, event}
     end
   end
 
@@ -129,8 +133,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       when is_map(object_data) do
     with object_data <-
            Map.put(object_data, "preferred_username", object_data["preferredUsername"]),
-         {:ok, _} <- Actors.create_group(object_data) do
-      :ok
+         {:ok, %Actor{} = group} <- Actors.create_group(object_data) do
+      {:ok, group}
     end
   end
 
@@ -139,9 +143,9 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   """
   def insert_full_object(%{"object" => %{"type" => "Note"} = object_data})
       when is_map(object_data) do
-    with data <- Mobilizon.Service.ActivityPub.Converters.Comment.as_to_model_data(object_data),
-         {:ok, _comment} <- Events.create_comment(data) do
-      :ok
+    with data <- Converters.Comment.as_to_model_data(object_data),
+         {:ok, %Comment{} = comment} <- Events.create_comment(data) do
+      {:ok, comment}
     else
       err ->
         Logger.error("Error while inserting a remote comment inside database")
@@ -150,7 +154,29 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     end
   end
 
-  def insert_full_object(_), do: :ok
+  @doc """
+  Inserts a full object if it is contained in an activity.
+  """
+  def insert_full_object(%{"type" => "Flag"} = object_data)
+      when is_map(object_data) do
+    with data <- Converters.Flag.as_to_model_data(object_data),
+         {:ok, %Report{} = report} <- Reports.create_report(data) do
+      Enum.each(Users.list_moderators(), fn moderator ->
+        moderator
+        |> Mobilizon.Email.Admin.report(moderator, report)
+        |> Mobilizon.Mailer.deliver_later()
+      end)
+
+      {:ok, report}
+    else
+      err ->
+        Logger.error("Error while inserting a remote comment inside database")
+        Logger.error(inspect(err))
+        {:error, err}
+    end
+  end
+
+  def insert_full_object(_), do: {:ok, nil}
 
   #### Like-related helpers
 
@@ -493,6 +519,24 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "actor" => params.actor.url,
       "object" => params.object,
       "published" => published
+    }
+    |> Map.merge(additional)
+  end
+
+  #### Flag-related helpers
+  @spec make_flag_data(map(), map()) :: map()
+  def make_flag_data(params, additional) do
+    object = [params.reported_actor_url] ++ params.comments_url
+
+    object = if params[:event_url], do: object ++ [params.event_url], else: object
+
+    %{
+      "type" => "Flag",
+      "id" => "#{MobilizonWeb.Endpoint.url()}/report/#{Ecto.UUID.generate()}",
+      "actor" => params.reporter_url,
+      "content" => params.content,
+      "object" => object,
+      "state" => "open"
     }
     |> Map.merge(additional)
   end

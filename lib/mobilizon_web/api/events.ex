@@ -26,7 +26,7 @@ defmodule MobilizonWeb.API.Events do
            Actors.get_local_actor_with_everything(organizer_actor_id),
          title <- String.trim(title),
          mentions <- Formatter.parse_mentions(description),
-         visibility <- Map.get(args, :visibility, "public"),
+         visibility <- Map.get(args, :visibility, :public),
          {to, cc} <- to_for_actor_and_mentions(actor, mentions, nil, Atom.to_string(visibility)),
          tags <- Formatter.parse_tags(description),
          picture <- Map.get(args, :picture, nil),

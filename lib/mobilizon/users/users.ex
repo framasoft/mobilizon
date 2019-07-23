@@ -258,6 +258,36 @@ defmodule Mobilizon.Users do
     )
   end
 
+  @doc """
+  Returns the list of administrators.
+
+  ## Examples
+
+      iex> list_admins()
+      [%Mobilizon.Users.User{role: :administrator}]
+
+  """
+  def list_admins() do
+    User
+    |> where([u], u.role == ^:administrator)
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns the list of moderators.
+
+  ## Examples
+
+      iex> list_moderators()
+      [%Mobilizon.Users.User{role: :moderator}, %Mobilizon.Users.User{role: :administrator}]
+
+  """
+  def list_moderators() do
+    User
+    |> where([u], u.role in ^[:administrator, :moderator])
+    |> Repo.all()
+  end
+
   def count_users() do
     Repo.one(
       from(

@@ -21,6 +21,8 @@ defmodule MobilizonWeb.Schema do
   import_types(MobilizonWeb.Schema.CommentType)
   import_types(MobilizonWeb.Schema.SearchType)
   import_types(MobilizonWeb.Schema.ConfigType)
+  import_types(MobilizonWeb.Schema.ReportType)
+  import_types(MobilizonWeb.Schema.AdminType)
 
   @desc "A struct containing the id of the deleted object"
   object :deleted_object do
@@ -109,6 +111,8 @@ defmodule MobilizonWeb.Schema do
     import_fields(:address_queries)
     import_fields(:config_queries)
     import_fields(:picture_queries)
+    import_fields(:report_queries)
+    import_fields(:admin_queries)
   end
 
   @desc """
@@ -124,5 +128,6 @@ defmodule MobilizonWeb.Schema do
     import_fields(:member_mutations)
     import_fields(:feed_token_mutations)
     import_fields(:picture_mutations)
+    import_fields(:report_mutations)
   end
 end

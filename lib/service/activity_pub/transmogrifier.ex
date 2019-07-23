@@ -116,6 +116,22 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     |> Map.put("tag", combined)
   end
 
+  def handle_incoming(%{"type" => "Flag"} = data) do
+    with params <- Mobilizon.Service.ActivityPub.Converters.Flag.as_to_model(data) do
+      params = %{
+        reporter_url: params["reporter"].url,
+        reported_actor_url: params["reported"].url,
+        comments_url: params["comments"] |> Enum.map(& &1.url),
+        content: params["content"] || "",
+        additional: %{
+          "cc" => [params["reported"].url]
+        }
+      }
+
+      ActivityPub.flag(params)
+    end
+  end
+
   # TODO: validate those with a Ecto scheme
   # - tags
   # - emoji

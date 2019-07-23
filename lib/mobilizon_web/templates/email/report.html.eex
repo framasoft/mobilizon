@@ -1,0 +1,15 @@
+<h1><%= gettext "New report from %{reporter} on %{instance}", reporter: @report.reporter, instance: @instance %></h1>
+
+<% if @report.event do %>
+<p><%= gettext "Event: %{event}", event: @report.event %></p>
+<% end %>
+
+<%= for comment <- @report.comments do %>
+<p><%= gettext "Comment: %{comment}", comment: comment %></p>
+<% end %>
+
+<% if @content do %>
+<p><%= gettext "Reason: %{content}", event: @report.content %></p>
+<% end %>
+
+<p><%= link "View the report", to: MobilizonWeb.Endpoint.url() <> "/reports/#{@report.id}", target: "_blank" %></p>
