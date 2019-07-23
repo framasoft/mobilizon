@@ -62,7 +62,7 @@ defmodule Mobilizon.Mixfile do
       {:guardian_db, "~> 2.0"},
       {:argon2_elixir, "~> 2.0"},
       {:cors_plug, "~> 2.0"},
-      {:ecto_autoslug_field, "~> 1.0"},
+      {:ecto_autoslug_field, "~> 2.0"},
       {:rsa_ex, "~> 0.1"},
       {:geo, "~> 3.0"},
       {:geo_postgis, "~> 3.1"},
@@ -94,12 +94,12 @@ defmodule Mobilizon.Mixfile do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},
       {:excoveralls, "~> 0.10", only: :test},
-      {:ex_doc, "~> 0.20.2", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.21.1", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
       {:ex_unit_notifier, "~> 0.1", only: :test},
       {:dialyxir, "~> 1.0.0-rc.4", only: [:dev], runtime: false},
       {:exvcr, "~> 0.10", only: :test},
-      {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.1.2", only: [:dev, :test], runtime: false},
       {:mock, "~> 0.3.0", only: :test},
       {:elixir_feed_parser, "~> 2.1.0", only: :test}
     ]
