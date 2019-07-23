@@ -13,12 +13,15 @@ config :mobilizon, :instance,
   name: System.get_env("MOBILIZON_INSTANCE_NAME") || "Localhost",
   description: System.get_env("MOBILIZON_INSTANCE_DESCRIPTION") || "This is a Mobilizon instance",
   version: "1.0.0-dev",
+  hostname: System.get_env("MOBILIZON_INSTANCE_HOST") || "localhost",
   registrations_open: System.get_env("MOBILIZON_INSTANCE_REGISTRATIONS_OPEN") || false,
   repository: Mix.Project.config()[:source_url],
   remote_limit: 100_000,
   upload_limit: 16_000_000,
   avatar_upload_limit: 2_000_000,
-  banner_upload_limit: 4_000_000
+  banner_upload_limit: 4_000_000,
+  email_from: "noreply@localhost",
+  email_reply_to: "noreply@localhost"
 
 config :mime, :types, %{
   "application/activity+json" => ["activity-json"],
@@ -30,10 +33,7 @@ config :mobilizon, MobilizonWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "1yOazsoE0Wqu4kXk3uC5gu3jDbShOimTCzyFL3OjCdBmOXMyHX87Qmf3+Tu9s0iM",
   render_errors: [view: MobilizonWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: Mobilizon.PubSub, adapter: Phoenix.PubSub.PG2],
-  instance: "localhost",
-  email_from: "noreply@localhost",
-  email_to: "noreply@localhost"
+  pubsub: [name: Mobilizon.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Upload configuration
 config :mobilizon, MobilizonWeb.Upload,

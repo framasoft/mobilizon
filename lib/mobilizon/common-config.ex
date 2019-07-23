@@ -19,7 +19,12 @@ defmodule Mobilizon.CommonConfig do
     |> get_in([:description])
   end
 
-  defp instance_config(), do: Application.get_env(:mobilizon, :instance)
+  def instance_hostname() do
+    instance_config()
+    |> get_in([:hostname])
+  end
+
+  def instance_config(), do: Application.get_env(:mobilizon, :instance)
 
   defp to_bool(v), do: v == true or v == "true" or v == "True"
 

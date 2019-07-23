@@ -41,7 +41,7 @@ defmodule Mobilizon.Service.ActivityPub do
   @spec insert(map(), boolean()) :: {:ok, %Activity{}} | {:error, any()}
   def insert(map, local \\ true) when is_map(map) do
     with map <- lazy_put_activity_defaults(map),
-         :ok <- insert_full_object(map) do
+         {:ok, object} <- insert_full_object(map) do
       object_id = if is_map(map["object"]), do: map["object"]["id"], else: map["id"]
 
       map = if local, do: Map.put(map, "id", "#{object_id}/activity"), else: map
@@ -55,7 +55,7 @@ defmodule Mobilizon.Service.ActivityPub do
 
       # Notification.create_notifications(activity)
       # stream_out(activity)
-      {:ok, activity}
+      {:ok, activity, object}
     else
       %Activity{} = activity -> {:ok, activity}
       error -> {:error, error}
@@ -130,7 +130,7 @@ defmodule Mobilizon.Service.ActivityPub do
              additional
            ),
          :ok <- Logger.debug(inspect(create_data)),
-         {:ok, activity} <- insert(create_data, local),
+         {:ok, activity, _object} <- insert(create_data, local),
          :ok <- maybe_federate(activity) do
       # {:ok, actor} <- Actors.increase_event_count(actor) do
       {:ok, activity}
@@ -147,7 +147,7 @@ defmodule Mobilizon.Service.ActivityPub do
     local = !(params[:local] == false)
 
     with data <- %{"to" => to, "type" => "Accept", "actor" => actor, "object" => object},
-         {:ok, activity} <- insert(data, local),
+         {:ok, activity, _object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity}
     end
@@ -164,7 +164,7 @@ defmodule Mobilizon.Service.ActivityPub do
            "actor" => actor,
            "object" => object
          },
-         {:ok, activity} <- insert(data, local),
+         {:ok, activity, _object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity}
     end
@@ -179,7 +179,7 @@ defmodule Mobilizon.Service.ActivityPub do
   #     ) do
   #   with nil <- get_existing_like(url, object),
   #        like_data <- make_like_data(user, object, activity_id),
-  #        {:ok, activity} <- insert(like_data, local),
+  #        {:ok, activity, _object} <- insert(like_data, local),
   #        {:ok, object} <- add_like_to_object(activity, object),
   #        :ok <- maybe_federate(activity) do
   #     {:ok, activity, object}
@@ -197,7 +197,7 @@ defmodule Mobilizon.Service.ActivityPub do
   #     ) do
   #   with %Activity{} = like_activity <- get_existing_like(actor.ap_id, object),
   #        unlike_data <- make_unlike_data(actor, like_activity, activity_id),
-  #        {:ok, unlike_activity} <- insert(unlike_data, local),
+  #        {:ok, unlike_activity, _object} <- insert(unlike_data, local),
   #        {:ok, _activity} <- Repo.delete(like_activity),
   #        {:ok, object} <- remove_like_from_object(like_activity, object),
   #        :ok <- maybe_federate(unlike_activity) do
@@ -215,7 +215,7 @@ defmodule Mobilizon.Service.ActivityPub do
   #     ) do
   #   #with true <- is_public?(object),
   #        with announce_data <- make_announce_data(actor, object, activity_id),
-  #        {:ok, activity} <- insert(announce_data, local),
+  #        {:ok, activity, _object} <- insert(announce_data, local),
   #       #  {:ok, object} <- add_announce_to_object(activity, object),
   #        :ok <- maybe_federate(activity) do
   #     {:ok, activity, object}
@@ -232,7 +232,7 @@ defmodule Mobilizon.Service.ActivityPub do
   #     ) do
   #   with %Activity{} = announce_activity <- get_existing_announce(actor.ap_id, object),
   #        unannounce_data <- make_unannounce_data(actor, announce_activity, activity_id),
-  #        {:ok, unannounce_activity} <- insert(unannounce_data, local),
+  #        {:ok, unannounce_activity, _object} <- insert(unannounce_data, local),
   #        :ok <- maybe_federate(unannounce_activity),
   #        {:ok, _activity} <- Repo.delete(announce_activity),
   #        {:ok, object} <- remove_announce_from_object(announce_activity, object) do
@@ -250,7 +250,7 @@ defmodule Mobilizon.Service.ActivityPub do
          activity_follow_id <-
            activity_id || "#{MobilizonWeb.Endpoint.url()}/follow/#{follow_id}/activity",
          data <- make_follow_data(followed, follower, activity_follow_id),
-         {:ok, activity} <- insert(data, local),
+         {:ok, activity, _object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity}
     else
@@ -267,9 +267,9 @@ defmodule Mobilizon.Service.ActivityPub do
     with {:ok, %Follower{id: follow_id}} <- Actor.unfollow(followed, follower),
          # We recreate the follow activity
          data <- make_follow_data(followed, follower, follow_id),
-         {:ok, follow_activity} <- insert(data, local),
+         {:ok, follow_activity, _object} <- insert(data, local),
          unfollow_data <- make_unfollow_data(follower, followed, follow_activity, activity_id),
-         {:ok, activity} <- insert(unfollow_data, local),
+         {:ok, activity, _object} <- insert(unfollow_data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity}
     else
@@ -290,7 +290,7 @@ defmodule Mobilizon.Service.ActivityPub do
     }
 
     with Events.delete_event(event),
-         {:ok, activity} <- insert(data, local),
+         {:ok, activity, _object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity}
     end
@@ -305,7 +305,7 @@ defmodule Mobilizon.Service.ActivityPub do
     }
 
     with Events.delete_comment(comment),
-         {:ok, activity} <- insert(data, local),
+         {:ok, activity, _object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity}
     end
@@ -320,9 +320,30 @@ defmodule Mobilizon.Service.ActivityPub do
     }
 
     with Actors.delete_actor(actor),
-         {:ok, activity} <- insert(data, local),
+         {:ok, activity, _object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity}
+    end
+  end
+
+  def flag(params) do
+    # only accept false as false value
+    local = !(params[:local] == false)
+    forward = !(params[:forward] == false)
+
+    additional = params[:additional] || %{}
+
+    additional =
+      if forward do
+        Map.merge(additional, %{"to" => [], "cc" => [params.reported_actor_url]})
+      else
+        Map.merge(additional, %{"to" => [], "cc" => []})
+      end
+
+    with flag_data <- make_flag_data(params, additional),
+         {:ok, activity, report} <- insert(flag_data, local),
+         :ok <- maybe_federate(activity) do
+      {:ok, activity, report}
     end
   end
 

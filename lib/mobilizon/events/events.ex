@@ -1161,6 +1161,19 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
+  Get all comments by an actor and a list of ids
+  """
+  def get_all_comments_by_actor_and_ids(actor_id, comment_ids \\ [])
+  def get_all_comments_by_actor_and_ids(_actor_id, []), do: []
+
+  def get_all_comments_by_actor_and_ids(actor_id, comment_ids) do
+    Comment
+    |> where([c], c.id in ^comment_ids)
+    |> where([c], c.actor_id == ^actor_id)
+    |> Repo.all()
+  end
+
+  @doc """
   Creates a comment.
 
   ## Examples

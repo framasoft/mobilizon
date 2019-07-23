@@ -35,6 +35,8 @@ defmodule Mobilizon.Actors.Actor do
   alias Mobilizon.Events.{Event, FeedToken}
   alias Mobilizon.Media.File
 
+  alias Mobilizon.Reports.{Report, Note}
+
   alias MobilizonWeb.Router.Helpers, as: Routes
   alias MobilizonWeb.Endpoint
 
@@ -72,6 +74,9 @@ defmodule Mobilizon.Actors.Actor do
     has_many(:feed_tokens, FeedToken, foreign_key: :actor_id)
     embeds_one(:avatar, File, on_replace: :update)
     embeds_one(:banner, File, on_replace: :update)
+    has_many(:created_reports, Report, foreign_key: :reporter_id)
+    has_many(:subject_reports, Report, foreign_key: :reported_id)
+    has_many(:report_notes, Note, foreign_key: :moderator_id)
 
     timestamps()
   end

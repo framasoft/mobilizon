@@ -676,6 +676,29 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #       :error = Transmogrifier.handle_incoming(data)
     #     end
+
+    test "it accepts Flag activities" do
+      %Actor{url: reporter_url} = _reporter = insert(:actor)
+      %Actor{url: reported_url} = reported = insert(:actor)
+
+      %Comment{url: comment_url} = _comment = insert(:comment, actor: reported)
+
+      message = %{
+        "@context" => "https://www.w3.org/ns/activitystreams",
+        "cc" => [reported_url],
+        "object" => [reported_url, comment_url],
+        "type" => "Flag",
+        "content" => "blocked AND reported!!!",
+        "actor" => reporter_url
+      }
+
+      assert {:ok, activity, _} = Transmogrifier.handle_incoming(message)
+
+      assert activity.data["object"] == [reported_url, comment_url]
+      assert activity.data["content"] == "blocked AND reported!!!"
+      assert activity.data["actor"] == reporter_url
+      assert activity.data["cc"] == [reported_url]
+    end
   end
 
   describe "prepare outgoing" do
