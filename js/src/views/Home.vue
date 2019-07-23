@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <section class="hero is-link" v-if="!currentUser.id || !loggedPerson">
       <div class="hero-body">
         <div class="container">
@@ -21,6 +21,20 @@
         >Welcome back %{username}</translate>
       </h1>
     </section>
+    <b-dropdown aria-role="list">
+      <button class="button is-primary" slot="trigger">
+        <span>Create</span>
+        <b-icon icon="menu-down"></b-icon>
+      </button>
+
+      <b-dropdown-item aria-role="listitem">
+        <router-link :to="{ name: RouteName.CREATE_EVENT }">Event</router-link>
+      </b-dropdown-item>
+      <b-dropdown-item aria-role="listitem">
+        <router-link :to="{ name: RouteName.CREATE_GROUP }">Group</router-link>
+      </b-dropdown-item>
+      <b-dropdown-item aria-role="listitem">Something else</b-dropdown-item>
+    </b-dropdown>
     <section v-if="loggedPerson" class="container">
       <span class="events-nearby title"><translate>Events you're going at</translate></span>
       <b-loading :active.sync="$apollo.loading"></b-loading>
@@ -126,6 +140,7 @@ export default class Home extends Vue {
   loggedPerson: IPerson = new Person();
   currentUser!: ICurrentUser;
   config: IConfig = { description: '', name: '', registrationsOpen: false };
+  RouteName = RouteName;
 
   // get displayed_name() {
   //   return this.loggedPerson && this.loggedPerson.name === null
