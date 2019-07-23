@@ -37,18 +37,22 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Flag do
     with {:ok, %Actor{} = reporter} <- Actors.get_actor_by_url(object["actor"]),
          %Actor{} = reported <-
            Enum.reduce_while(objects, nil, fn url, _ ->
-             with {:ok, %Actor{} = actor} <- Actors.get_actor_by_url(url) do
-               {:halt, actor}
-             else
-               _ -> {:cont, nil}
+             case Actors.get_actor_by_url(url) do
+               {:ok, %Actor{} = actor} ->
+                 {:halt, actor}
+
+               _ ->
+                 {:cont, nil}
              end
            end),
          event <-
            Enum.reduce_while(objects, nil, fn url, _ ->
-             with %Event{} = event <- Events.get_event_by_url(url) do
-               {:halt, event}
-             else
-               _ -> {:cont, nil}
+             case Events.get_event_by_url(url) do
+               %Event{} = event ->
+                 {:halt, event}
+
+               _ ->
+                 {:cont, nil}
              end
            end),
 

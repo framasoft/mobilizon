@@ -235,8 +235,9 @@ defmodule Mobilizon.Users do
   end
 
   def update_user_default_actor(user_id, actor_id) do
-    with from(u in User, where: u.id == ^user_id, update: [set: [default_actor_id: ^actor_id]])
-         |> Repo.update_all([]) do
+    with _ <-
+           from(u in User, where: u.id == ^user_id, update: [set: [default_actor_id: ^actor_id]])
+           |> Repo.update_all([]) do
       Repo.get!(User, user_id) |> Repo.preload([:default_actor])
     end
   end

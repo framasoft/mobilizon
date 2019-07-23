@@ -206,10 +206,12 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   Save picture data from %Plug.Upload{} and return AS Link data.
   """
   def make_picture_data(%Plug.Upload{} = picture) do
-    with {:ok, picture} <- MobilizonWeb.Upload.store(picture) do
-      picture
-    else
-      _ -> nil
+    case MobilizonWeb.Upload.store(picture) do
+      {:ok, picture} ->
+        picture
+
+      _ ->
+        nil
     end
   end
 

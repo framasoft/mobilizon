@@ -176,11 +176,12 @@ defmodule MobilizonWeb.Resolvers.Event do
   # and that it's the actor requesting leaving the event we return true
   @spec check_that_participant_is_not_only_organizer(integer(), integer()) :: boolean()
   defp check_that_participant_is_not_only_organizer(event_id, actor_id) do
-    with [%Participant{actor: %Actor{id: participant_actor_id}}] <-
-           Mobilizon.Events.list_organizers_participants_for_event(event_id) do
-      participant_actor_id == actor_id
-    else
-      _ -> false
+    case Mobilizon.Events.list_organizers_participants_for_event(event_id) do
+      [%Participant{actor: %Actor{id: participant_actor_id}}] ->
+        participant_actor_id == actor_id
+
+      _ ->
+        false
     end
   end
 

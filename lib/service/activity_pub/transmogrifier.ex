@@ -209,19 +209,20 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
           data
       )
       when object_type in ["Person", "Application", "Service", "Organization"] do
-    with {:ok, %Actor{url: url}} <- Actors.get_actor_by_url(object["id"]) do
-      {:ok, new_actor_data} = ActivityPub.actor_data_from_actor_object(object)
+    case Actors.get_actor_by_url(object["id"]) do
+      {:ok, %Actor{url: url}} ->
+        {:ok, new_actor_data} = ActivityPub.actor_data_from_actor_object(object)
 
-      Actors.insert_or_update_actor(new_actor_data)
+        Actors.insert_or_update_actor(new_actor_data)
 
-      ActivityPub.update(%{
-        local: false,
-        to: data["to"] || [],
-        cc: data["cc"] || [],
-        object: object,
-        actor: url
-      })
-    else
+        ActivityPub.update(%{
+          local: false,
+          to: data["to"] || [],
+          cc: data["cc"] || [],
+          object: object,
+          actor: url
+        })
+
       e ->
         Logger.error(inspect(e))
         :error

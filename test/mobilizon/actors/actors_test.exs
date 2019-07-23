@@ -440,9 +440,10 @@ defmodule Mobilizon.ActorsTest do
     end
 
     test "create_bot/1 with invalid data returns error changeset" do
-      with {:error, %Ecto.Changeset{}} <- Actors.create_bot(@invalid_attrs) do
-        assert true
-      else
+      case Actors.create_bot(@invalid_attrs) do
+        {:error, %Ecto.Changeset{}} ->
+          assert true
+
         _ ->
           assert false
       end

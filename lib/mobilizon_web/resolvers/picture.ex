@@ -35,10 +35,17 @@ defmodule MobilizonWeb.Resolvers.Picture do
 
   @spec do_fetch_picture(String.t()) :: {:ok, Picture.t()} | {:error, :not_found}
   defp do_fetch_picture(picture_id) do
-    with %Picture{id: id, file: file} = _pic <- Media.get_picture(picture_id) do
-      {:ok,
-       %{name: file.name, url: file.url, id: id, content_type: file.content_type, size: file.size}}
-    else
+    case Media.get_picture(picture_id) do
+      %Picture{id: id, file: file} = _pic ->
+        {:ok,
+         %{
+           name: file.name,
+           url: file.url,
+           id: id,
+           content_type: file.content_type,
+           size: file.size
+         }}
+
       _err ->
         {:error, "Picture with ID #{picture_id} was not found"}
     end

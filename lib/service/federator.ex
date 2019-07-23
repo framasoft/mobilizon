@@ -51,8 +51,10 @@ defmodule Mobilizon.Service.Federator do
     Logger.info("Handling incoming AP activity")
     Logger.debug(inspect(params))
 
-    with {:ok, _activity} <- Transmogrifier.handle_incoming(params) do
-    else
+    case Transmogrifier.handle_incoming(params) do
+      {:ok, activity} ->
+        {:ok, activity}
+
       %Activity{} ->
         Logger.info("Already had #{params["id"]}")
 

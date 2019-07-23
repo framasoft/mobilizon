@@ -10,11 +10,15 @@ defmodule Mix.Tasks.Mobilizon.Toot do
   def run([from, content]) do
     Mix.Task.run("app.start")
 
-    with {:ok, _} <- MobilizonWeb.API.Comments.create_comment(from, content) do
-      Mix.shell().info("Tooted")
-    else
-      {:local_actor, _} -> Mix.shell().error("Failed to toot.\nActor #{from} doesn't exist")
-      _ -> Mix.shell().error("Failed to toot.")
+    case MobilizonWeb.API.Comments.create_comment(from, content) do
+      {:ok, _} ->
+        Mix.shell().info("Tooted")
+
+      {:local_actor, _} ->
+        Mix.shell().error("Failed to toot.\nActor #{from} doesn't exist")
+
+      _ ->
+        Mix.shell().error("Failed to toot.")
     end
   end
 end

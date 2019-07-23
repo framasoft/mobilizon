@@ -187,10 +187,12 @@ defmodule Mobilizon.Events do
 
   def get_cached_event_full_by_uuid(uuid) do
     Cachex.fetch(:activity_pub, "event_" <> uuid, fn "event_" <> uuid ->
-      with %Event{} = event <- get_event_full_by_uuid(uuid) do
-        {:commit, event}
-      else
-        _ -> {:ignore, nil}
+      case get_event_full_by_uuid(uuid) do
+        %Event{} = event ->
+          {:commit, event}
+
+        _ ->
+          {:ignore, nil}
       end
     end)
   end
@@ -1133,10 +1135,12 @@ defmodule Mobilizon.Events do
 
   def get_cached_comment_full_by_uuid(uuid) do
     Cachex.fetch(:activity_pub, "comment_" <> uuid, fn "comment_" <> uuid ->
-      with %Comment{} = comment <- get_comment_full_from_uuid(uuid) do
-        {:commit, comment}
-      else
-        _ -> {:ignore, nil}
+      case get_comment_full_from_uuid(uuid) do
+        %Comment{} = comment ->
+          {:commit, comment}
+
+        _ ->
+          {:ignore, nil}
       end
     end)
   end

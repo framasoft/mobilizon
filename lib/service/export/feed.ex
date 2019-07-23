@@ -21,9 +21,10 @@ defmodule Mobilizon.Service.Export.Feed do
 
   @spec create_cache(String.t()) :: {:commit, String.t()} | {:ignore, any()}
   def create_cache("actor_" <> name) do
-    with {:ok, res} <- fetch_actor_event_feed(name) do
-      {:commit, res}
-    else
+    case fetch_actor_event_feed(name) do
+      {:ok, res} ->
+        {:commit, res}
+
       err ->
         {:ignore, err}
     end
@@ -31,9 +32,10 @@ defmodule Mobilizon.Service.Export.Feed do
 
   @spec create_cache(String.t()) :: {:commit, String.t()} | {:ignore, any()}
   def create_cache("token_" <> token) do
-    with {:ok, res} <- fetch_events_from_token(token) do
-      {:commit, res}
-    else
+    case fetch_events_from_token(token) do
+      {:ok, res} ->
+        {:commit, res}
+
       err ->
         {:ignore, err}
     end
@@ -99,21 +101,22 @@ defmodule Mobilizon.Service.Export.Feed do
   defp get_entry(%Event{} = event) do
     description = event.description || ""
 
-    with {:ok, html, []} <- Earmark.as_html(description) do
-      entry =
-        Entry.new(event.url, event.publish_at || event.inserted_at, event.title)
-        |> Entry.link(event.url, rel: "alternate", type: "text/html")
-        |> Entry.content({:cdata, html}, type: "html")
-        |> Entry.published(event.publish_at || event.inserted_at)
+    case Earmark.as_html(description) do
+      {:ok, html, []} ->
+        entry =
+          Entry.new(event.url, event.publish_at || event.inserted_at, event.title)
+          |> Entry.link(event.url, rel: "alternate", type: "text/html")
+          |> Entry.content({:cdata, html}, type: "html")
+          |> Entry.published(event.publish_at || event.inserted_at)
 
-      # Add tags
-      entry =
-        event.tags
-        |> Enum.uniq()
-        |> Enum.reduce(entry, fn tag, acc -> Entry.category(acc, tag.slug, label: tag.title) end)
+        # Add tags
+        entry =
+          event.tags
+          |> Enum.uniq()
+          |> Enum.reduce(entry, fn tag, acc -> Entry.category(acc, tag.slug, label: tag.title) end)
 
-      Entry.build(entry)
-    else
+        Entry.build(entry)
+
       {:error, _html, error_messages} ->
         Logger.error("Unable to produce HTML for Markdown", details: inspect(error_messages))
     end

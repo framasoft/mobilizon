@@ -218,17 +218,18 @@ defmodule MobilizonWeb.Resolvers.Group do
   # and that it's the actor requesting leaving the group we return true
   @spec check_that_member_is_not_only_administrator(integer(), integer()) :: boolean()
   defp check_that_member_is_not_only_administrator(group_id, actor_id) do
-    with [
-           %Member{
-             actor: %Actor{
-               id: member_actor_id
-             }
-           }
-         ] <-
-           Member.list_administrator_members_for_group(group_id) do
-      actor_id == member_actor_id
-    else
-      _ -> false
+    case Member.list_administrator_members_for_group(group_id) do
+      [
+        %Member{
+          actor: %Actor{
+            id: member_actor_id
+          }
+        }
+      ] ->
+        actor_id == member_actor_id
+
+      _ ->
+        false
     end
   end
 end

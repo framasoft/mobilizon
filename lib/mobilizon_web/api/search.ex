@@ -25,9 +25,10 @@ defmodule MobilizonWeb.API.Search do
       # Some URLs could be domain.tld/@username, so keep this condition above handle_search? function
       url_search?(search) ->
         # If this is not an actor, skip
-        with %{:total => total, :elements => [%Actor{}] = elements} <- process_from_url(search) do
-          {:ok, %{total: total, elements: elements}}
-        else
+        case process_from_url(search) do
+          %{:total => total, :elements => [%Actor{}] = elements} ->
+            {:ok, %{total: total, elements: elements}}
+
           _ ->
             {:ok, %{total: 0, elements: []}}
         end
@@ -55,9 +56,10 @@ defmodule MobilizonWeb.API.Search do
 
       url_search?(search) ->
         # If this is not an event, skip
-        with {total = total, [%Event{} = elements]} <- process_from_url(search) do
-          {:ok, %{total: total, elements: elements}}
-        else
+        case process_from_url(search) do
+          {total = total, [%Event{} = elements]} ->
+            {:ok, %{total: total, elements: elements}}
+
           _ ->
             {:ok, %{total: 0, elements: []}}
         end
@@ -70,9 +72,10 @@ defmodule MobilizonWeb.API.Search do
   # If the search string is an username
   @spec process_from_username(String.t()) :: %{total: integer(), elements: [Actor.t()]}
   defp process_from_username(search) do
-    with {:ok, actor} <- ActivityPub.find_or_make_actor_from_nickname(search) do
-      %{total: 1, elements: [actor]}
-    else
+    case ActivityPub.find_or_make_actor_from_nickname(search) do
+      {:ok, actor} ->
+        %{total: 1, elements: [actor]}
+
       {:error, _err} ->
         Logger.debug(fn -> "Unable to find or make actor '#{search}'" end)
         %{total: 0, elements: []}
@@ -85,9 +88,10 @@ defmodule MobilizonWeb.API.Search do
           elements: [Actor.t() | Event.t() | Comment.t()]
         }
   defp process_from_url(search) do
-    with {:ok, object} <- ActivityPub.fetch_object_from_url(search) do
-      %{total: 1, elements: [object]}
-    else
+    case ActivityPub.fetch_object_from_url(search) do
+      {:ok, object} ->
+        %{total: 1, elements: [object]}
+
       {:error, _err} ->
         Logger.debug(fn -> "Unable to find or make object from URL '#{search}'" end)
         %{total: 0, elements: []}

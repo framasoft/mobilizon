@@ -39,7 +39,7 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
              },#{lon}&maxResults=#{limit}"
            ),
          {:ok, %{"results" => results, "info" => %{"statuscode" => 0}}} <- Poison.decode(body) do
-      results |> Enum.map(&processData/1)
+      results |> Enum.map(&process_data/1)
     else
       {:ok, %HTTPoison.Response{status_code: 403, body: err}} ->
         raise(ArgumentError, message: err)
@@ -71,14 +71,14 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
            HTTPoison.get(url),
          {:ok, %{"results" => results, "info" => %{"statuscode" => 0}}} <- Poison.decode(body) do
-      results |> Enum.map(&processData/1)
+      results |> Enum.map(&process_data/1)
     else
       {:ok, %HTTPoison.Response{status_code: 403, body: err}} ->
         raise(ArgumentError, message: err)
     end
   end
 
-  defp processData(
+  defp process_data(
          %{
            "locations" => addresses,
            "providedLocation" => %{"latLng" => %{"lat" => lat, "lng" => lng}}
@@ -86,22 +86,22 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
        ) do
     case addresses do
       [] -> nil
-      addresses -> addresses |> hd |> produceAddress(lat, lng)
+      addresses -> addresses |> hd |> produce_address(lat, lng)
     end
   end
 
-  defp processData(%{"locations" => addresses}) do
+  defp process_data(%{"locations" => addresses}) do
     case addresses do
       [] -> nil
-      addresses -> addresses |> hd |> produceAddress()
+      addresses -> addresses |> hd |> produce_address()
     end
   end
 
-  defp produceAddress(%{"latLng" => %{"lat" => lat, "lng" => lng}} = address) do
-    produceAddress(address, lat, lng)
+  defp produce_address(%{"latLng" => %{"lat" => lat, "lng" => lng}} = address) do
+    produce_address(address, lat, lng)
   end
 
-  defp produceAddress(address, lat, lng) do
+  defp produce_address(address, lat, lng) do
     %Address{
       country: Map.get(address, "adminArea1"),
       locality: Map.get(address, "adminArea5"),
