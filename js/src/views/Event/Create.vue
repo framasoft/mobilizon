@@ -28,7 +28,7 @@
           </b-select>
         </b-field>
 
-        <picture-upload @change="handlePictureUploadChange" />
+        <picture-upload v-model="pictureFile" />
 
         <button class="button is-primary">
           <translate>Create my event</translate>
@@ -50,7 +50,6 @@ import {
 import { LOGGED_PERSON } from '@/graphql/actor';
 import { IPerson, Person } from '@/types/actor';
 import PictureUpload from '@/components/PictureUpload.vue';
-import { IPictureUpload } from '@/types/picture.model';
 import Editor from '@/components/Editor.vue';
 import DateTimePicker from '@/components/Event/DateTimePicker.vue';
 
@@ -68,8 +67,7 @@ export default class CreateEvent extends Vue {
   loggedPerson: IPerson = new Person();
   categories: string[] = Object.keys(Category);
   event: IEvent = new EventModel();
-  pictureFile?: File;
-  pictureName?: String;
+  pictureFile: File | null = null;
 
   created() {
     const now = new Date();
@@ -81,23 +79,14 @@ export default class CreateEvent extends Vue {
 
   createEvent(e: Event) {
     e.preventDefault();
-    this.event.organizerActor = this.loggedPerson;
-    this.event.attributedTo = this.loggedPerson;
+
 
     if (this.event.uuid === '') {
       console.log('event', this.event);
       this.$apollo
         .mutate({
           mutation: CREATE_EVENT,
-          variables: {
-            title: this.event.title,
-            description: this.event.description,
-            beginsOn: this.event.beginsOn.toISOString(),
-            category: this.event.category,
-            organizerActorId: this.event.organizerActor.id,
-            picture_file: this.pictureFile,
-            picture_name: this.pictureName,
-          },
+          variables: this.buildVariables(),
         })
         .then(data => {
           console.log('event created', data);
@@ -126,10 +115,35 @@ export default class CreateEvent extends Vue {
     }
   }
 
-  handlePictureUploadChange(picture: IPictureUpload) {
-    console.log('picture upload change', picture);
-    this.pictureFile = picture.file;
-    this.pictureName = picture.name;
+  /**
+   * Build variables for Event GraphQL creation query
+   */
+  private buildVariables() {
+    /**
+     * Transform general variables
+     */
+    let pictureObj = {};
+    let obj = {
+      organizerActorId: this.loggedPerson.id,
+      beginsOn: this.event.beginsOn.toISOString(),
+    };
+    let res = Object.assign({}, this.event, obj);
+
+    /**
+     * Transform picture files
+     */
+    if (this.pictureFile) {
+      pictureObj = {
+        picture: {
+          picture: {
+            name: this.pictureFile.name,
+            file: this.pictureFile,
+          },
+        },
+      };
+    }
+
+    return Object.assign({}, res, pictureObj);
   }
 
   // getAddressData(addressData) {

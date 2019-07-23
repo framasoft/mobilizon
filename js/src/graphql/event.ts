@@ -143,8 +143,7 @@ export const CREATE_EVENT = gql`
   $organizerActorId: ID!,
   $category: String!,
   $beginsOn: DateTime!,
-  $picture_file: Upload,
-  $picture_name: String,
+  $picture: PictureInput!
   ) {
     createEvent(
       title: $title,
@@ -152,12 +151,7 @@ export const CREATE_EVENT = gql`
       beginsOn: $beginsOn,
       organizerActorId: $organizerActorId,
       category: $category,
-      picture: {
-          picture: {
-              file: $picture_file,
-              name: $picture_name,
-          }
-      }
+      picture: $picture
     ) {
       id,
       uuid,
