@@ -92,12 +92,13 @@ defmodule Mobilizon.EventsTest do
         |> Map.put(:organizer_actor_id, actor.id)
         |> Map.put(:address_id, address.id)
 
-      with {:ok, %Event{} = event} <- Events.create_event(valid_attrs) do
-        assert event.begins_on == DateTime.from_naive!(~N[2010-04-17 14:00:00Z], "Etc/UTC")
-        assert event.description == "some description"
-        assert event.ends_on == DateTime.from_naive!(~N[2010-04-17 14:00:00Z], "Etc/UTC")
-        assert event.title == "some title"
-      else
+      case Events.create_event(valid_attrs) do
+        {:ok, %Event{} = event} ->
+          assert event.begins_on == DateTime.from_naive!(~N[2010-04-17 14:00:00Z], "Etc/UTC")
+          assert event.description == "some description"
+          assert event.ends_on == DateTime.from_naive!(~N[2010-04-17 14:00:00Z], "Etc/UTC")
+          assert event.title == "some title"
+
         err ->
           flunk("Failed to create an event #{inspect(err)}")
       end
@@ -138,10 +139,11 @@ defmodule Mobilizon.EventsTest do
     test "get_public_events_for_actor/3", %{actor: actor, event: event} do
       event1 = insert(:event, organizer_actor: actor)
 
-      with {:ok, events_found, 2} <- Events.get_public_events_for_actor(actor, 1, 10) do
-        event_ids = MapSet.new(events_found |> Enum.map(& &1.id))
-        assert event_ids == MapSet.new([event.id, event1.id])
-      else
+      case Events.get_public_events_for_actor(actor, 1, 10) do
+        {:ok, events_found, 2} ->
+          event_ids = MapSet.new(events_found |> Enum.map(& &1.id))
+          assert event_ids == MapSet.new([event.id, event1.id])
+
         err ->
           flunk("Failed to get events for an actor #{inspect(err)}")
       end
@@ -150,10 +152,10 @@ defmodule Mobilizon.EventsTest do
     test "get_public_events_for_actor/3 with limited results", %{actor: actor, event: event} do
       event1 = insert(:event, organizer_actor: actor)
 
-      with {:ok, [%Event{id: event_found_id}], 2} <-
-             Events.get_public_events_for_actor(actor, 1, 1) do
-        assert event_found_id in [event.id, event1.id]
-      else
+      case Events.get_public_events_for_actor(actor, 1, 1) do
+        {:ok, [%Event{id: event_found_id}], 2} ->
+          assert event_found_id in [event.id, event1.id]
+
         err ->
           flunk("Failed to get limited events for an actor #{inspect(err)}")
       end
@@ -345,11 +347,12 @@ defmodule Mobilizon.EventsTest do
       valid_attrs = Map.put(@valid_attrs, :event_id, event.id)
       valid_attrs = Map.put(valid_attrs, :actor_id, actor.id)
 
-      with {:ok, %Participant{} = participant} <- Events.create_participant(valid_attrs) do
-        assert participant.event_id == event.id
-        assert participant.actor_id == actor.id
-        assert participant.role == :creator
-      else
+      case Events.create_participant(valid_attrs) do
+        {:ok, %Participant{} = participant} ->
+          assert participant.event_id == event.id
+          assert participant.actor_id == actor.id
+          assert participant.role == :creator
+
         err ->
           flunk("Failed to create a participant #{inspect(err)}")
       end
@@ -362,10 +365,10 @@ defmodule Mobilizon.EventsTest do
     test "update_participant/2 with valid data updates the participant", %{
       participant: participant
     } do
-      with {:ok, %Participant{} = participant} <-
-             Events.update_participant(participant, @update_attrs) do
-        assert participant.role == :moderator
-      else
+      case Events.update_participant(participant, @update_attrs) do
+        {:ok, %Participant{} = participant} ->
+          assert participant.role == :moderator
+
         err ->
           flunk("Failed to update a participant #{inspect(err)}")
       end
@@ -575,10 +578,11 @@ defmodule Mobilizon.EventsTest do
       actor = insert(:actor)
       comment_data = Map.merge(@valid_attrs, %{actor_id: actor.id})
 
-      with {:ok, %Comment{} = comment} <- Events.create_comment(comment_data) do
-        assert comment.text == "some text"
-        assert comment.actor_id == actor.id
-      else
+      case Events.create_comment(comment_data) do
+        {:ok, %Comment{} = comment} ->
+          assert comment.text == "some text"
+          assert comment.actor_id == actor.id
+
         err ->
           flunk("Failed to create a comment #{inspect(err)}")
       end
@@ -591,9 +595,10 @@ defmodule Mobilizon.EventsTest do
     test "update_comment/2 with valid data updates the comment" do
       comment = insert(:comment)
 
-      with {:ok, %Comment{} = comment} <- Events.update_comment(comment, @update_attrs) do
-        assert comment.text == "some updated text"
-      else
+      case Events.update_comment(comment, @update_attrs) do
+        {:ok, %Comment{} = comment} ->
+          assert comment.text == "some updated text"
+
         err ->
           flunk("Failed to update a comment #{inspect(err)}")
       end

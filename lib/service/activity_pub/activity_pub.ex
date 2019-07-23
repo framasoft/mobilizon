@@ -289,7 +289,7 @@ defmodule Mobilizon.Service.ActivityPub do
       "to" => [actor.url <> "/followers", "https://www.w3.org/ns/activitystreams#Public"]
     }
 
-    with Events.delete_event(event),
+    with {:ok, _} <- Events.delete_event(event),
          {:ok, activity, _object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity}
@@ -304,7 +304,7 @@ defmodule Mobilizon.Service.ActivityPub do
       "to" => [actor.url <> "/followers", "https://www.w3.org/ns/activitystreams#Public"]
     }
 
-    with Events.delete_comment(comment),
+    with {:ok, _} <- Events.delete_comment(comment),
          {:ok, activity, _object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity}
@@ -319,7 +319,7 @@ defmodule Mobilizon.Service.ActivityPub do
       "to" => [url <> "/followers", "https://www.w3.org/ns/activitystreams#Public"]
     }
 
-    with Actors.delete_actor(actor),
+    with {:ok, _} <- Actors.delete_actor(actor),
          {:ok, activity, _object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity}
@@ -352,9 +352,10 @@ defmodule Mobilizon.Service.ActivityPub do
   """
   @spec make_actor_from_url(String.t(), boolean()) :: {:ok, %Actor{}} | {:error, any()}
   def make_actor_from_url(url, preload \\ false) do
-    with {:ok, data} <- fetch_and_prepare_actor_from_url(url) do
-      Actors.insert_or_update_actor(data, preload)
-    else
+    case fetch_and_prepare_actor_from_url(url) do
+      {:ok, data} ->
+        Actors.insert_or_update_actor(data, preload)
+
       # Request returned 410
       {:error, :actor_deleted} ->
         {:error, :actor_deleted}
@@ -371,10 +372,12 @@ defmodule Mobilizon.Service.ActivityPub do
   """
   @spec find_or_make_actor_from_nickname(String.t(), atom() | nil) :: tuple()
   def find_or_make_actor_from_nickname(nickname, type \\ nil) do
-    with %Actor{} = actor <- Actors.get_actor_by_name(nickname, type) do
-      {:ok, actor}
-    else
-      nil -> make_actor_from_nickname(nickname)
+    case Actors.get_actor_by_name(nickname, type) do
+      %Actor{} = actor ->
+        {:ok, actor}
+
+      nil ->
+        make_actor_from_nickname(nickname)
     end
   end
 
@@ -389,10 +392,12 @@ defmodule Mobilizon.Service.ActivityPub do
   """
   @spec make_actor_from_nickname(String.t()) :: {:ok, %Actor{}} | {:error, any()}
   def make_actor_from_nickname(nickname) do
-    with {:ok, %{"url" => url}} when not is_nil(url) <- WebFinger.finger(nickname) do
-      make_actor_from_url(url)
-    else
-      _e -> {:error, "No ActivityPub URL found in WebFinger"}
+    case WebFinger.finger(nickname) do
+      {:ok, %{"url" => url}} when not is_nil(url) ->
+        make_actor_from_url(url)
+
+      _e ->
+        {:error, "No ActivityPub URL found in WebFinger"}
     end
   end
 

@@ -49,19 +49,19 @@ defmodule Mobilizon.Service.HTTPSignatures do
   def validate_conn(conn) do
     # TODO: How to get the right key and see if it is actually valid for that request.
     # For now, fetch the key for the actor.
-    with {:ok, public_key} <- conn.params["actor"] |> Actor.get_public_key_for_url() do
-      if validate_conn(conn, public_key) do
-        true
-      else
-        Logger.info("Could not validate request, re-fetching user and trying one more time")
-        # Fetch user anew and try one more time
-        with actor_id <- conn.params["actor"],
-             {:ok, _actor} <- ActivityPub.make_actor_from_url(actor_id),
-             {:ok, public_key} <- actor_id |> Actor.get_public_key_for_url() do
-          validate_conn(conn, public_key)
+    case conn.params["actor"] |> Actor.get_public_key_for_url() do
+      {:ok, public_key} ->
+        if validate_conn(conn, public_key) do
+          true
+          Logger.info("Could not validate request, re-fetching user and trying one more time")
+          # Fetch user anew and try one more time
+          with actor_id <- conn.params["actor"],
+               {:ok, _actor} <- ActivityPub.make_actor_from_url(actor_id),
+               {:ok, public_key} <- actor_id |> Actor.get_public_key_for_url() do
+            validate_conn(conn, public_key)
+          end
         end
-      end
-    else
+
       e ->
         Logger.debug("Could not found url for actor!")
         Logger.debug(inspect(e))
@@ -104,9 +104,10 @@ defmodule Mobilizon.Service.HTTPSignatures do
   end
 
   def generate_date_header(date \\ Timex.now("GMT")) do
-    with {:ok, date} <- Timex.format(date, "%a, %d %b %Y %H:%M:%S %Z", :strftime) do
-      date
-    else
+    case Timex.format(date, "%a, %d %b %Y %H:%M:%S %Z", :strftime) do
+      {:ok, date} ->
+        date
+
       {:error, err} ->
         Logger.error("Unable to generate date header")
         Logger.error(inspect(err))

@@ -87,9 +87,10 @@ defmodule Mobilizon.Service.Export.ICalendar do
   Create cache for an actor
   """
   def create_cache("token_" <> token) do
-    with {:ok, res} <- fetch_events_from_token(token) do
-      {:commit, res}
-    else
+    case fetch_events_from_token(token) do
+      {:ok, res} ->
+        {:commit, res}
+
       err ->
         {:ignore, err}
     end

@@ -281,21 +281,21 @@ defmodule Mobilizon.Actors do
       data
       |> Actor.remote_actor_creation()
 
-    with {:ok, actor} <-
-           Repo.insert(
-             cs,
-             on_conflict: [
-               set: [
-                 keys: data.keys,
-                 name: data.name,
-                 summary: data.summary
-               ]
-             ],
-             conflict_target: [:url]
-           ) do
-      actor = if preload, do: Repo.preload(actor, [:followers]), else: actor
-      {:ok, actor}
-    else
+    case Repo.insert(
+           cs,
+           on_conflict: [
+             set: [
+               keys: data.keys,
+               name: data.name,
+               summary: data.summary
+             ]
+           ],
+           conflict_target: [:url]
+         ) do
+      {:ok, actor} ->
+        actor = if preload, do: Repo.preload(actor, [:followers]), else: actor
+        {:ok, actor}
+
       err ->
         Logger.error(inspect(err))
         {:error, err}
@@ -474,9 +474,10 @@ defmodule Mobilizon.Actors do
   # TODO: Move this to Mobilizon.Service.ActivityPub
   @spec get_or_fetch_by_url(String.t(), bool()) :: {:ok, Actor.t()} | {:error, String.t()}
   def get_or_fetch_by_url(url, preload \\ false) do
-    with {:ok, actor} <- get_actor_by_url(url, preload) do
-      {:ok, actor}
-    else
+    case get_actor_by_url(url, preload) do
+      {:ok, actor} ->
+        {:ok, actor}
+
       _ ->
         case ActivityPub.make_actor_from_url(url, preload) do
           {:ok, actor} ->
@@ -497,9 +498,10 @@ defmodule Mobilizon.Actors do
   # TODO: Move this to Mobilizon.Service.ActivityPub
   @spec get_or_fetch_by_url!(String.t(), bool()) :: Actor.t()
   def get_or_fetch_by_url!(url, preload \\ false) do
-    with {:ok, actor} <- get_actor_by_url(url, preload) do
-      actor
-    else
+    case get_actor_by_url(url, preload) do
+      {:ok, actor} ->
+        actor
+
       _ ->
         case ActivityPub.make_actor_from_url(url, preload) do
           {:ok, actor} ->
@@ -1001,9 +1003,10 @@ defmodule Mobilizon.Actors do
   end
 
   defp safe_remove_file(url, %Actor{} = actor) do
-    with {:ok, _value} <- MobilizonWeb.Upload.remove(url) do
-      {:ok, actor}
-    else
+    case MobilizonWeb.Upload.remove(url) do
+      {:ok, _value} ->
+        {:ok, actor}
+
       {:error, error} ->
         Logger.error("Error while removing an upload file")
         Logger.error(inspect(error))

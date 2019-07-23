@@ -91,10 +91,14 @@ defmodule MobilizonWeb.Upload do
   def remove(url, opts \\ []) do
     with opts <- get_opts(opts),
          %URI{path: "/media/" <> path, host: host} <- URI.parse(url),
-         true <- host == MobilizonWeb.Endpoint.host() do
+         {:same_host, true} <- {:same_host, host == MobilizonWeb.Endpoint.host()} do
       MobilizonWeb.Uploaders.Uploader.remove_file(opts.uploader, path)
     else
-      %URI{} = _uri -> {:error, "URL doesn't match pattern"}
+      %URI{} = _uri ->
+        {:error, "URL doesn't match pattern"}
+
+      {:same_host, _} ->
+        Logger.error("Media can't be deleted because its URL doesn't match current host")
     end
   end
 

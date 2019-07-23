@@ -15,7 +15,7 @@ defmodule MobilizonWeb.ActivityPubController do
   action_fallback(:errors)
 
   def following(conn, %{"name" => name, "page" => page}) do
-    with {page, ""} = Integer.parse(page),
+    with {page, ""} <- Integer.parse(page),
          %Actor{} = actor <- Actors.get_local_actor_by_name_with_everything(name) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
@@ -32,7 +32,7 @@ defmodule MobilizonWeb.ActivityPubController do
   end
 
   def followers(conn, %{"name" => name, "page" => page}) do
-    with {page, ""} = Integer.parse(page),
+    with {page, ""} <- Integer.parse(page),
          %Actor{} = actor <- Actors.get_local_actor_by_name_with_everything(name) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
@@ -49,7 +49,7 @@ defmodule MobilizonWeb.ActivityPubController do
   end
 
   def outbox(conn, %{"name" => name, "page" => page}) do
-    with {page, ""} = Integer.parse(page),
+    with {page, ""} <- Integer.parse(page),
          %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
       conn
       |> put_resp_header("content-type", "application/activity+json")

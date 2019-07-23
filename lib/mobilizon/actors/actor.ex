@@ -295,9 +295,10 @@ defmodule Mobilizon.Actors.Actor do
   """
   @spec prepare_public_key(String.t()) :: {:ok, tuple()} | {:error, :pem_decode_error}
   def prepare_public_key(public_key_code) do
-    with [public_key_entry] <- :public_key.pem_decode(public_key_code) do
-      {:ok, :public_key.pem_entry_decode(public_key_entry)}
-    else
+    case :public_key.pem_decode(public_key_code) do
+      [public_key_entry] ->
+        {:ok, :public_key.pem_entry_decode(public_key_entry)}
+
       _err ->
         {:error, :pem_decode_error}
     end
@@ -423,10 +424,10 @@ defmodule Mobilizon.Actors.Actor do
   """
   @spec unfollow(struct(), struct()) :: {:ok, Follower.t()} | {:error, Ecto.Changeset.t()}
   def unfollow(%Actor{} = followed, %Actor{} = follower) do
-    with {:already_following, %Follower{} = follow} <-
-           {:already_following, following?(follower, followed)} do
-      Actors.delete_follower(follow)
-    else
+    case {:already_following, following?(follower, followed)} do
+      {:already_following, %Follower{} = follow} ->
+        Actors.delete_follower(follow)
+
       {:already_following, false} ->
         {:error, "Could not unfollow actor: you are not following #{followed.preferred_username}"}
     end

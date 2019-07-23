@@ -23,7 +23,7 @@ defmodule Mobilizon.Service.Geospatial.Addok do
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
            HTTPoison.get(url),
          {:ok, %{"features" => features}} <- Poison.decode(body) do
-      processData(features)
+      process_data(features)
     end
   end
 
@@ -39,7 +39,7 @@ defmodule Mobilizon.Service.Geospatial.Addok do
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
            HTTPoison.get(url),
          {:ok, %{"features" => features}} <- Poison.decode(body) do
-      processData(features)
+      process_data(features)
     end
   end
 
@@ -59,23 +59,23 @@ defmodule Mobilizon.Service.Geospatial.Addok do
     end
   end
 
-  defp processData(features) do
+  defp process_data(features) do
     features
     |> Enum.map(fn %{"geometry" => geometry, "properties" => properties} ->
       %Address{
         country: Map.get(properties, "country"),
         locality: Map.get(properties, "city"),
         region: Map.get(properties, "state"),
-        description: Map.get(properties, "name") || streetAddress(properties),
+        description: Map.get(properties, "name") || street_address(properties),
         floor: Map.get(properties, "floor"),
         geom: Map.get(geometry, "coordinates") |> Provider.coordinates(),
         postal_code: Map.get(properties, "postcode"),
-        street: properties |> streetAddress()
+        street: properties |> street_address()
       }
     end)
   end
 
-  defp streetAddress(properties) do
+  defp street_address(properties) do
     if Map.has_key?(properties, "housenumber") do
       Map.get(properties, "housenumber") <> " " <> Map.get(properties, "street")
     else

@@ -43,9 +43,10 @@ defmodule Mobilizon.Service.WebFinger do
       {:ok, represent_actor(actor, "JSON")}
     else
       _e ->
-        with {:ok, %Actor{} = actor} when not is_nil(actor) <- Actors.get_actor_by_url(resource) do
-          {:ok, represent_actor(actor, "JSON")}
-        else
+        case Actors.get_actor_by_url(resource) do
+          {:ok, %Actor{} = actor} when not is_nil(actor) ->
+            {:ok, represent_actor(actor, "JSON")}
+
           _e ->
             {:error, "Couldn't find actor"}
         end
@@ -94,9 +95,10 @@ defmodule Mobilizon.Service.WebFinger do
     actor = String.trim_leading(actor, "@")
 
     domain =
-      with [_name, domain] <- String.split(actor, "@") do
-        domain
-      else
+      case String.split(actor, "@") do
+        [_name, domain] ->
+          domain
+
         _e ->
           URI.parse(actor).host
       end
