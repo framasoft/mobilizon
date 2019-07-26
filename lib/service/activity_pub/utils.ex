@@ -296,7 +296,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "actor" => actor,
       "id" => Routes.page_url(Endpoint, :event, uuid),
       "uuid" => uuid,
-      "tag" => tags |> Enum.map(fn {_, tag} -> tag end) |> Enum.uniq()
+      "tag" => tags |> Enum.uniq()
     }
 
     if is_nil(picture), do: res, else: Map.put(res, "attachment", [make_picture_data(picture)])
@@ -328,7 +328,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "actor" => actor,
       "id" => Routes.page_url(Endpoint, :comment, uuid),
       "uuid" => uuid,
-      "tag" => tags |> Enum.map(fn {_, tag} -> tag end) |> Enum.uniq()
+      "tag" => tags |> Enum.uniq()
     }
 
     if inReplyTo do

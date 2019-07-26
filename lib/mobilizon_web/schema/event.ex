@@ -117,6 +117,11 @@ defmodule MobilizonWeb.Schema.EventType do
       arg(:public, :boolean)
       arg(:visibility, :event_visibility, default_value: :private)
 
+      arg(:tags, list_of(:string),
+        default_value: [],
+        description: "The list of tags associated to the event"
+      )
+
       arg(:picture, :picture_input,
         description:
           "The picture for the event, either as an object or directly the ID of an existing Picture"

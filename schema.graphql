@@ -1,654 +1,990 @@
-# This file was generated based on ".graphqlconfig.yaml". Do not edit manually.
+# source: http://localhost:4000/api
+# timestamp: Fri Jul 26 2019 11:28:32 GMT+0200 (GMT+02:00)
 
 schema {
-    query: RootQueryType
-    mutation: RootMutationType
+  query: RootQueryType
+  mutation: RootMutationType
 }
 
-"An ActivityPub actor"
+"""An action log"""
+type ActionLog {
+  """The action that was done"""
+  action: String
+
+  """The actor that acted"""
+  actor: Actor
+
+  """Internal ID for this comment"""
+  id: ID
+
+  """The object that was acted upon"""
+  object: ActionLogObject
+}
+
+"""The objects that can be in an action log"""
+interface ActionLogObject {
+  """Internal ID for this object"""
+  id: ID
+}
+
+"""An ActivityPub actor"""
 interface Actor {
-    "The actor's avatar picture"
-    avatar: Picture
-    "The actor's banner picture"
-    banner: Picture
-    "The actor's domain if (null if it's this instance)"
-    domain: String
-    "List of followers"
-    followers: [Follower]
-    "Number of followers for this actor"
-    followersCount: Int
-    "List of followings"
-    following: [Follower]
-    "Number of actors following this actor"
-    followingCount: Int
-    "Internal ID for this actor"
-    id: Int
-    "The actors RSA Keys"
-    keys: String
-    "If the actor is from this instance"
-    local: Boolean
-    "Whether the actors manually approves followers"
-    manuallyApprovesFollowers: Boolean
-    "The actor's displayed name"
-    name: String
-    "A list of the events this actor has organized"
-    organizedEvents: [Event]
-    "The actor's preferred username"
-    preferredUsername: String
-    "The actor's summary"
-    summary: String
-    "If the actor is suspended"
-    suspended: Boolean
-    "The type of Actor (Person, Group,…)"
-    type: ActorType
-    "The ActivityPub actor's URL"
-    url: String
+  """The actor's avatar picture"""
+  avatar: Picture
+
+  """The actor's banner picture"""
+  banner: Picture
+
+  """The actor's domain if (null if it's this instance)"""
+  domain: String
+
+  """List of followers"""
+  followers: [Follower]
+
+  """Number of followers for this actor"""
+  followersCount: Int
+
+  """List of followings"""
+  following: [Follower]
+
+  """Number of actors following this actor"""
+  followingCount: Int
+
+  """Internal ID for this actor"""
+  id: Int
+
+  """The actors RSA Keys"""
+  keys: String
+
+  """If the actor is from this instance"""
+  local: Boolean
+
+  """Whether the actors manually approves followers"""
+  manuallyApprovesFollowers: Boolean
+
+  """The actor's displayed name"""
+  name: String
+
+  """A list of the events this actor has organized"""
+  organizedEvents: [Event]
+
+  """The actor's preferred username"""
+  preferredUsername: String
+
+  """The actor's summary"""
+  summary: String
+
+  """If the actor is suspended"""
+  suspended: Boolean
+
+  """The type of Actor (Person, Group,…)"""
+  type: ActorType
+
+  """The ActivityPub actor's URL"""
+  url: String
+}
+
+"""The list of types an actor can be"""
+enum ActorType {
+  """An ActivityPub Application"""
+  APPLICATION
+
+  """An ActivityPub Group"""
+  GROUP
+
+  """An ActivityPub Organization"""
+  ORGANIZATION
+
+  """An ActivityPub Person"""
+  PERSON
+
+  """An ActivityPub Service"""
+  SERVICE
 }
 
 type Address {
-    country: String
-    description: String
-    "The floor this event is at"
-    floor: String
-    "The geocoordinates for the point where this address is"
-    geom: Point
-    "The address's locality"
-    locality: String
-    postalCode: String
-    region: String
-    "The address's street name (with number)"
-    street: String
+  country: String
+  description: String
+
+  """The floor this event is at"""
+  floor: String
+
+  """The geocoordinates for the point where this address is"""
+  geom: Point
+
+  """The address's locality"""
+  locality: String
+  postalCode: String
+  region: String
+
+  """The address's street name (with number)"""
+  street: String
 }
 
-"A comment"
+"""A comment"""
 type Comment {
-    "Internal ID for this comment"
-    id: ID
-    local: Boolean
-    primaryLanguage: String
-    replies: [Comment]
-    text: String
-    threadLanguages: [String]!
-    url: String
-    uuid: UUID
-    visibility: CommentVisibility
+  """Internal ID for this comment"""
+  id: ID
+  local: Boolean
+  primaryLanguage: String
+  replies: [Comment]
+  text: String
+  threadLanguages: [String]!
+  url: String
+  uuid: UUID
+  visibility: CommentVisibility
 }
 
-"A config object"
-type Config {
-    description: String
-    name: String
-    registrationsOpen: Boolean
-}
-
-"Represents a deleted feed_token"
-type DeletedFeedToken {
-    actor: DeletedObject
-    user: DeletedObject
-}
-
-"Represents a deleted member"
-type DeletedMember {
-    actor: DeletedObject
-    parent: DeletedObject
-}
-
-"A struct containing the id of the deleted object"
-type DeletedObject {
-    id: Int
-}
-
-"Represents a deleted participant"
-type DeletedParticipant {
-    actor: DeletedObject
-    event: DeletedObject
-}
-
-"An event"
-type Event {
-    "Who the event is attributed to (often a group)"
-    attributedTo: Actor
-    "Datetime for when the event begins"
-    beginsOn: DateTime
-    "The event's category"
-    category: String
-    "When the event was created"
-    createdAt: DateTime
-    "The event's description"
-    description: String
-    "Datetime for when the event ends"
-    endsOn: DateTime
-    "Internal ID for this event"
-    id: Int
-    "Whether the event is local or not"
-    local: Boolean
-    "Online address of the event"
-    onlineAddress: OnlineAddress
-    "The event's organizer (as a person)"
-    organizerActor: Actor
-    "The event's participants"
-    participants: [Participant]
-    "Phone address for the event"
-    phoneAddress: PhoneAddress
-    "The type of the event's address"
-    physicalAddress: Address
-    "The event's picture"
-    picture: Picture
-    "When the event was published"
-    publishAt: DateTime
-    "Events related to this one"
-    relatedEvents: [Event]
-    "The event's description's slug"
-    slug: String
-    "Status of the event"
-    status: EventStatus
-    "The event's tags"
-    tags: [Tag]
-    "The event's title"
-    title: String
-    "When the event was last updated"
-    updatedAt: DateTime
-    "The ActivityPub Event URL"
-    url: String
-    "The Event UUID"
-    uuid: UUID
-    "The event's visibility"
-    visibility: EventVisibility
-}
-
-"Search events result"
-type Events {
-    "Event elements"
-    elements: [Event]!
-    "Total elements"
-    total: Int!
-}
-
-"Represents a participant to an event"
-type FeedToken {
-    "The event which the actor participates in"
-    actor: Actor
-    "The role of this actor at this event"
-    token: String
-    "The actor that participates to the event"
-    user: User
-}
-
-"""
-Represents an actor's follower
-"""
-type Follower {
-    "Which profile follows"
-    actor: Actor
-    "Whether the follow has been approved by the target actor"
-    approved: Boolean
-    "What or who the profile follows"
-    targetActor: Actor
-}
-
-"""
-Represents a group of actors
-"""
-type Group implements Actor {
-    "The actor's avatar picture"
-    avatar: Picture
-    "The actor's banner picture"
-    banner: Picture
-    "The actor's domain if (null if it's this instance)"
-    domain: String
-    "List of followers"
-    followers: [Follower]
-    "Number of followers for this actor"
-    followersCount: Int
-    "List of followings"
-    following: [Follower]
-    "Number of actors following this actor"
-    followingCount: Int
-    "Internal ID for this group"
-    id: Int
-    "The actors RSA Keys"
-    keys: String
-    "If the actor is from this instance"
-    local: Boolean
-    "Whether the actors manually approves followers"
-    manuallyApprovesFollowers: Boolean
-    "List of group members"
-    members: [Member]!
-    "The actor's displayed name"
-    name: String
-    "Whether the group is opened to all or has restricted access"
-    openness: Openness
-    "A list of the events this actor has organized"
-    organizedEvents: [Event]
-    "The actor's preferred username"
-    preferredUsername: String
-    "The actor's summary"
-    summary: String
-    "If the actor is suspended"
-    suspended: Boolean
-    "The type of Actor (Person, Group,…)"
-    type: ActorType
-    "The type of group : Group, Community,…"
-    types: GroupType
-    "The ActivityPub actor's URL"
-    url: String
-}
-
-"Search groups result"
-type Groups {
-    "Group elements"
-    elements: [Group]!
-    "Total elements"
-    total: Int!
-}
-
-"A JWT and the associated user ID"
-type Login {
-    "A JWT Token for this session"
-    token: String!
-    "The user associated to this session"
-    user: User!
-}
-
-"""
-Represents a member of a group
-"""
-type Member {
-    "Which profile is member of"
-    actor: Person
-    "Of which the profile is member"
-    parent: Group
-    "The role of this membership"
-    role: Int
-}
-
-type OnlineAddress {
-    info: String
-    url: String
-}
-
-"Represents a participant to an event"
-type Participant {
-    "The actor that participates to the event"
-    actor: Actor
-    "The event which the actor participates in"
-    event: Event
-    "The role of this actor at this event"
-    role: Int
-}
-
-"""
-Represents a person identity
-"""
-type Person implements Actor {
-    "The actor's avatar picture"
-    avatar: Picture
-    "The actor's banner picture"
-    banner: Picture
-    "The actor's domain if (null if it's this instance)"
-    domain: String
-    "A list of the feed tokens for this person"
-    feedTokens: [FeedToken]
-    "List of followers"
-    followers: [Follower]
-    "Number of followers for this actor"
-    followersCount: Int
-    "List of followings"
-    following: [Follower]
-    "Number of actors following this actor"
-    followingCount: Int
-    "The list of events this person goes to"
-    goingToEvents: [Event]
-    "Internal ID for this person"
-    id: Int
-    "The actors RSA Keys"
-    keys: String
-    "If the actor is from this instance"
-    local: Boolean
-    "Whether the actors manually approves followers"
-    manuallyApprovesFollowers: Boolean
-    "The list of groups this person is member of"
-    memberOf: [Member]
-    "The actor's displayed name"
-    name: String
-    "A list of the events this actor has organized"
-    organizedEvents: [Event]
-    "The actor's preferred username"
-    preferredUsername: String
-    "The actor's summary"
-    summary: String
-    "If the actor is suspended"
-    suspended: Boolean
-    "The type of Actor (Person, Group,…)"
-    type: ActorType
-    "The ActivityPub actor's URL"
-    url: String
-    "The user this actor is associated to"
-    user: User
-}
-
-"Search persons result"
-type Persons {
-    "Person elements"
-    elements: [Person]!
-    "Total elements"
-    total: Int!
-}
-
-type PhoneAddress {
-    info: String
-    phone: String
-}
-
-"A picture"
-type Picture {
-    "The picture's alternative text"
-    alt: String
-    "The picture's ID"
-    id: ID
-    "The picture's name"
-    name: String
-    "The picture's full URL"
-    url: String
-}
-
-type RootMutationType {
-    "Change default actor for user"
-    changeDefaultActor(preferredUsername: String!): User
-    "Create a comment"
-    createComment(actorUsername: String!, text: String!): Comment
-    "Create an event"
-    createEvent(
-        beginsOn: DateTime!,
-        category: String!,
-        description: String!,
-        endsOn: DateTime,
-        onlineAddress: String,
-        organizerActorId: ID!,
-        phoneAddress: String,
-        #The picture for the event, either as an object or directly the ID of an existing Picture
-        picture: PictureInput,
-        public: Boolean,
-        publishAt: DateTime,
-        state: Int,
-        status: Int,
-        title: String!,
-        visibility: EventVisibility = PRIVATE
-    ): Event
-    "Create a Feed Token"
-    createFeedToken(actorId: Int): FeedToken
-    "Create a group"
-    createGroup(
-        #The actor's username which will be the admin (otherwise user's default one)
-        adminActorUsername: String,
-        #The avatar for the group, either as an object or directly the ID of an existing Picture
-        avatar: PictureInput,
-        #The banner for the group, either as an object or directly the ID of an existing Picture
-        banner: PictureInput,
-        #The summary for the group
-        description: String = "",
-        #The displayed name for the group
-        name: String,
-        #The name for the group
-        preferredUsername: String!
-    ): Group
-    "Create a new person for user"
-    createPerson(
-        #The avatar for the profile, either as an object or directly the ID of an existing Picture
-        avatar: PictureInput,
-        #The banner for the profile, either as an object or directly the ID of an existing Picture
-        banner: PictureInput,
-        #The displayed name for the new profile
-        name: String = "",
-        preferredUsername: String!,
-        #The summary for the new profile
-        summary: String = ""
-    ): Person
-    "Create an user"
-    createUser(email: String!, password: String!): User
-    "Delete an event"
-    deleteEvent(actorId: Int!, eventId: Int!): DeletedObject
-    "Delete a feed token"
-    deleteFeedToken(token: String!): DeletedFeedToken
-    "Delete a group"
-    deleteGroup(actorId: Int!, groupId: Int!): DeletedObject
-    "Join an event"
-    joinEvent(actorId: Int!, eventId: Int!): Participant
-    "Join a group"
-    joinGroup(actorId: Int!, groupId: Int!): Member
-    "Leave an event"
-    leaveEvent(actorId: Int!, eventId: Int!): DeletedParticipant
-    "Leave an event"
-    leaveGroup(actorId: Int!, groupId: Int!): DeletedMember
-    "Login an user"
-    login(email: String!, password: String!): Login
-    "Register a first profile on registration"
-    registerPerson(
-        #The avatar for the profile, either as an object or directly the ID of an existing Picture
-        avatar: PictureInput,
-        #The banner for the profile, either as an object or directly the ID of an existing Picture
-        banner: PictureInput,
-        #The email from the user previously created
-        email: String!,
-        #The displayed name for the new profile
-        name: String = "",
-        preferredUsername: String!,
-        #The summary for the new profile
-        summary: String = ""
-    ): Person
-    "Resend registration confirmation token"
-    resendConfirmationEmail(email: String!, locale: String = "en"): String
-    "Reset user password"
-    resetPassword(locale: String = "en", password: String!, token: String!): Login
-    "Send a link through email to reset user password"
-    sendResetPassword(email: String!, locale: String = "en"): String
-    "Upload a picture"
-    uploadPicture(actorId: ID!, alt: String, file: Upload!, name: String!): Picture
-    "Validate an user after registration"
-    validateUser(token: String!): Login
-}
-
-"""
-Root Query
-"""
-type RootQueryType {
-    "Get the instance config"
-    config: Config
-    "Get an event by uuid"
-    event(uuid: UUID!): Event
-    "Get all events"
-    events(limit: Int = 10, page: Int = 1): [Event]
-    "Get a group by it's preferred username"
-    group(preferredUsername: String!): Group
-    "Get all groups"
-    groups(limit: Int = 10, page: Int = 1): [Group]
-    "Get the persons for an user"
-    identities: [Person]
-    "Get the current actor for the logged-in user"
-    loggedPerson: Person
-    "Get the current user"
-    loggedUser: User
-    "Get all participants for an event uuid"
-    participants(limit: Int = 10, page: Int = 1, uuid: UUID!): [Participant]
-    "Get a person by it's preferred username"
-    person(preferredUsername: String!): Person
-    "Get a picture"
-    picture(id: String!): Picture
-    "Reverse geocode coordinates"
-    reverseGeocode(latitude: Float!, longitude: Float!): [Address]
-    "Search for an address"
-    searchAddress(query: String!): [Address]
-    "Search events"
-    searchEvents(limit: Int = 10, page: Int = 1, search: String!): Events
-    "Search groups"
-    searchGroups(limit: Int = 10, page: Int = 1, search: String!): Groups
-    "Search persons"
-    searchPersons(limit: Int = 10, page: Int = 1, search: String!): Persons
-    "Get the list of tags"
-    tags(limit: Int = 10, page: Int = 1): [Tag]!
-    "Get an user"
-    user(id: ID!): User
-    "List instance users"
-    users(direction: SortDirection = DESC, limit: Int = 10, page: Int = 1, sort: SortableUserField = ID): Users
-}
-
-"A tag"
-type Tag {
-    "The tag's ID"
-    id: ID
-    "Related tags to this tag"
-    related: [Tag]
-    "The tags's slug"
-    slug: String
-    "The tag's title"
-    title: String
-}
-
-"A local user of Mobilizon"
-type User {
-    "The datetime the last activation/confirmation token was sent"
-    confirmationSentAt: DateTime
-    "The account activation/confirmation token"
-    confirmationToken: String
-    "The datetime when the user was confirmed/activated"
-    confirmedAt: DateTime
-    "The user's default actor"
-    defaultActor: Person
-    "The user's email"
-    email: String!
-    "A list of the feed tokens for this user"
-    feedTokens: [FeedToken]
-    "The user's ID"
-    id: ID!
-    "The user's list of profiles (identities)"
-    profiles: [Person]!
-    "The datetime last reset password email was sent"
-    resetPasswordSentAt: DateTime
-    "The token sent when requesting password token"
-    resetPasswordToken: String
-}
-
-"Users list"
-type Users {
-    "User elements"
-    elements: [User]!
-    "Total elements"
-    total: Int!
-}
-
-"The list of types an actor can be"
-enum ActorType {
-    #An ActivityPub Application
-    APPLICATION
-    #An ActivityPub Group
-    GROUP
-    #An ActivityPub Organization
-    ORGANIZATION
-    #An ActivityPub Person
-    PERSON
-    #An ActivityPub Service
-    SERVICE
-}
-
-"The list of visibility options for a comment"
+"""The list of visibility options for a comment"""
 enum CommentVisibility {
-    #visible only to people invited
-    INVITE
-    #Visible only after a moderator accepted
-    MODERATED
-    #Visible only to people members of the group or followers of the person
-    PRIVATE
-    #Publically listed and federated. Can be shared.
-    PUBLIC
-    #Visible only to people with the link - or invited
-    UNLISTED
+  """visible only to people invited"""
+  INVITE
+
+  """Visible only after a moderator accepted"""
+  MODERATED
+
+  """Visible only to people members of the group or followers of the person"""
+  PRIVATE
+
+  """Publically listed and federated. Can be shared."""
+  PUBLIC
+
+  """Visible only to people with the link - or invited"""
+  UNLISTED
 }
 
-"The list of possible options for the event's status"
-enum EventStatus {
-    #The event is cancelled
-    CANCELLED
-    #The event is confirmed
-    CONFIRMED
-    #The event is tentative
-    TENTATIVE
+"""A config object"""
+type Config {
+  description: String
+  name: String
+  registrationsOpen: Boolean
 }
-
-"The list of visibility options for an event"
-enum EventVisibility {
-    #visible only to people invited
-    INVITE
-    #Visible only after a moderator accepted
-    MODERATED
-    #Visible only to people members of the group or followers of the person
-    PRIVATE
-    #Publically listed and federated. Can be shared.
-    PUBLIC
-    #Visible only to people with the link - or invited
-    UNLISTED
-}
-
-"""
-The types of Group that exist
-"""
-enum GroupType {
-    #A public group of many actors
-    COMMUNITY
-    #A private group of persons
-    GROUP
-}
-
-"""
-Describes how an actor is opened to follows
-"""
-enum Openness {
-    #The actor can only be followed by invitation
-    INVITE_ONLY
-    #The actor needs to accept the following before it's effective
-    MODERATED
-    #The actor is open to followings
-    OPEN
-}
-
-"Available sort directions"
-enum SortDirection {
-    ASC
-    DESC
-}
-
-"The list of possible options for the event's status"
-enum SortableUserField {
-    ID
-}
-
-"An attached picture or a link to a picture"
-input PictureInput {
-    picture: PictureInputObject
-    pictureId: String
-}
-
-"An attached picture"
-input PictureInputObject {
-    actorId: ID
-    alt: String
-    file: Upload!
-    name: String!
-}
-
-
-"""
-The `Point` scalar type represents Point geographic information compliant string data,
-represented as floats separated by a semi-colon. The geodetic system is WGS 84
-"""
-scalar Point
 
 """
 The `DateTime` scalar type represents a date and time in the UTC
 timezone. The DateTime appears in a JSON response as an ISO8601 formatted
-string, including UTC timezone (\"Z\"). The parsed date and time string will
+string, including UTC timezone ("Z"). The parsed date and time string will
 be converted to UTC and any UTC offset other than 0 will be rejected.
 """
 scalar DateTime
+
+"""Represents a deleted feed_token"""
+type DeletedFeedToken {
+  actor: DeletedObject
+  user: DeletedObject
+}
+
+"""Represents a deleted member"""
+type DeletedMember {
+  actor: DeletedObject
+  parent: DeletedObject
+}
+
+"""A struct containing the id of the deleted object"""
+type DeletedObject {
+  id: Int
+}
+
+"""Represents a deleted participant"""
+type DeletedParticipant {
+  actor: DeletedObject
+  event: DeletedObject
+}
+
+"""An event"""
+type Event {
+  """Who the event is attributed to (often a group)"""
+  attributedTo: Actor
+
+  """Datetime for when the event begins"""
+  beginsOn: DateTime
+
+  """The event's category"""
+  category: String
+
+  """When the event was created"""
+  createdAt: DateTime
+
+  """The event's description"""
+  description: String
+
+  """Datetime for when the event ends"""
+  endsOn: DateTime
+
+  """Internal ID for this event"""
+  id: Int
+
+  """Whether the event is local or not"""
+  local: Boolean
+
+  """Online address of the event"""
+  onlineAddress: OnlineAddress
+
+  """The event's organizer (as a person)"""
+  organizerActor: Actor
+
+  """The event's participants"""
+  participants: [Participant]
+
+  """Phone address for the event"""
+  phoneAddress: PhoneAddress
+
+  """The type of the event's address"""
+  physicalAddress: Address
+
+  """The event's picture"""
+  picture: Picture
+
+  """When the event was published"""
+  publishAt: DateTime
+
+  """Events related to this one"""
+  relatedEvents: [Event]
+
+  """The event's description's slug"""
+  slug: String
+
+  """Status of the event"""
+  status: EventStatus
+
+  """The event's tags"""
+  tags: [Tag]
+
+  """The event's title"""
+  title: String
+
+  """When the event was last updated"""
+  updatedAt: DateTime
+
+  """The ActivityPub Event URL"""
+  url: String
+
+  """The Event UUID"""
+  uuid: UUID
+
+  """The event's visibility"""
+  visibility: EventVisibility
+}
+
+"""Search events result"""
+type Events {
+  """Event elements"""
+  elements: [Event]!
+
+  """Total elements"""
+  total: Int!
+}
+
+"""The list of possible options for the event's status"""
+enum EventStatus {
+  """The event is cancelled"""
+  CANCELLED
+
+  """The event is confirmed"""
+  CONFIRMED
+
+  """The event is tentative"""
+  TENTATIVE
+}
+
+"""The list of visibility options for an event"""
+enum EventVisibility {
+  """visible only to people invited"""
+  INVITE
+
+  """Visible only after a moderator accepted"""
+  MODERATED
+
+  """Visible only to people members of the group or followers of the person"""
+  PRIVATE
+
+  """Publically listed and federated. Can be shared."""
+  PUBLIC
+
+  """Visible only to people with the link - or invited"""
+  UNLISTED
+}
+
+"""Represents a participant to an event"""
+type FeedToken {
+  """The event which the actor participates in"""
+  actor: Actor
+
+  """The role of this actor at this event"""
+  token: String
+
+  """The actor that participates to the event"""
+  user: User
+}
+
+"""
+Represents an actor's follower
+
+"""
+type Follower {
+  """Which profile follows"""
+  actor: Actor
+
+  """Whether the follow has been approved by the target actor"""
+  approved: Boolean
+
+  """What or who the profile follows"""
+  targetActor: Actor
+}
+
+"""
+Represents a group of actors
+
+"""
+type Group implements Actor {
+  """The actor's avatar picture"""
+  avatar: Picture
+
+  """The actor's banner picture"""
+  banner: Picture
+
+  """The actor's domain if (null if it's this instance)"""
+  domain: String
+
+  """List of followers"""
+  followers: [Follower]
+
+  """Number of followers for this actor"""
+  followersCount: Int
+
+  """List of followings"""
+  following: [Follower]
+
+  """Number of actors following this actor"""
+  followingCount: Int
+
+  """Internal ID for this group"""
+  id: Int
+
+  """The actors RSA Keys"""
+  keys: String
+
+  """If the actor is from this instance"""
+  local: Boolean
+
+  """Whether the actors manually approves followers"""
+  manuallyApprovesFollowers: Boolean
+
+  """List of group members"""
+  members: [Member]!
+
+  """The actor's displayed name"""
+  name: String
+
+  """Whether the group is opened to all or has restricted access"""
+  openness: Openness
+
+  """A list of the events this actor has organized"""
+  organizedEvents: [Event]
+
+  """The actor's preferred username"""
+  preferredUsername: String
+
+  """The actor's summary"""
+  summary: String
+
+  """If the actor is suspended"""
+  suspended: Boolean
+
+  """The type of Actor (Person, Group,…)"""
+  type: ActorType
+
+  """The type of group : Group, Community,…"""
+  types: GroupType
+
+  """The ActivityPub actor's URL"""
+  url: String
+}
+
+"""Search groups result"""
+type Groups {
+  """Group elements"""
+  elements: [Group]!
+
+  """Total elements"""
+  total: Int!
+}
+
+"""
+The types of Group that exist
+
+"""
+enum GroupType {
+  """A public group of many actors"""
+  COMMUNITY
+
+  """A private group of persons"""
+  GROUP
+}
+
+"""A JWT and the associated user ID"""
+type Login {
+  """A JWT Token for this session"""
+  token: String!
+
+  """The user associated to this session"""
+  user: User!
+}
+
+"""
+Represents a member of a group
+
+"""
+type Member {
+  """Which profile is member of"""
+  actor: Person
+
+  """Of which the profile is member"""
+  parent: Group
+
+  """The role of this membership"""
+  role: Int
+}
+
+type OnlineAddress {
+  info: String
+  url: String
+}
+
+"""
+Describes how an actor is opened to follows
+
+"""
+enum Openness {
+  """The actor can only be followed by invitation"""
+  INVITE_ONLY
+
+  """The actor needs to accept the following before it's effective"""
+  MODERATED
+
+  """The actor is open to followings"""
+  OPEN
+}
+
+"""Represents a participant to an event"""
+type Participant {
+  """The actor that participates to the event"""
+  actor: Actor
+
+  """The event which the actor participates in"""
+  event: Event
+
+  """The role of this actor at this event"""
+  role: Int
+}
+
+"""
+Represents a person identity
+
+"""
+type Person implements Actor {
+  """The actor's avatar picture"""
+  avatar: Picture
+
+  """The actor's banner picture"""
+  banner: Picture
+
+  """The actor's domain if (null if it's this instance)"""
+  domain: String
+
+  """A list of the feed tokens for this person"""
+  feedTokens: [FeedToken]
+
+  """List of followers"""
+  followers: [Follower]
+
+  """Number of followers for this actor"""
+  followersCount: Int
+
+  """List of followings"""
+  following: [Follower]
+
+  """Number of actors following this actor"""
+  followingCount: Int
+
+  """The list of events this person goes to"""
+  goingToEvents: [Event]
+
+  """Internal ID for this person"""
+  id: Int
+
+  """The actors RSA Keys"""
+  keys: String
+
+  """If the actor is from this instance"""
+  local: Boolean
+
+  """Whether the actors manually approves followers"""
+  manuallyApprovesFollowers: Boolean
+
+  """The list of groups this person is member of"""
+  memberOf: [Member]
+
+  """The actor's displayed name"""
+  name: String
+
+  """A list of the events this actor has organized"""
+  organizedEvents: [Event]
+
+  """The actor's preferred username"""
+  preferredUsername: String
+
+  """The actor's summary"""
+  summary: String
+
+  """If the actor is suspended"""
+  suspended: Boolean
+
+  """The type of Actor (Person, Group,…)"""
+  type: ActorType
+
+  """The ActivityPub actor's URL"""
+  url: String
+
+  """The user this actor is associated to"""
+  user: User
+}
+
+"""Search persons result"""
+type Persons {
+  """Person elements"""
+  elements: [Person]!
+
+  """Total elements"""
+  total: Int!
+}
+
+type PhoneAddress {
+  info: String
+  phone: String
+}
+
+"""A picture"""
+type Picture {
+  """The picture's alternative text"""
+  alt: String
+
+  """The picture's detected content type"""
+  contentType: String
+
+  """The picture's ID"""
+  id: ID
+
+  """The picture's name"""
+  name: String
+
+  """The picture's size"""
+  size: Int
+
+  """The picture's full URL"""
+  url: String
+}
+
+"""An attached picture or a link to a picture"""
+input PictureInput {
+  picture: PictureInputObject
+  pictureId: String
+}
+
+"""An attached picture"""
+input PictureInputObject {
+  actorId: ID
+  alt: String
+  file: Upload!
+  name: String!
+}
+
+"""
+The `Point` scalar type represents Point geographic information compliant string data, 
+represented as floats separated by a semi-colon. The geodetic system is WGS 84
+"""
+scalar Point
+
+"""A report object"""
+type Report implements ActionLogObject {
+  """The comments that are reported"""
+  comments: [Comment]
+
+  """The comment the reporter added about this report"""
+  content: String
+
+  """The event that is being reported"""
+  event: Event
+
+  """The internal ID of the report"""
+  id: ID
+
+  """The actor that is being reported"""
+  reported: Actor
+
+  """The actor that created the report"""
+  reporter: Actor
+
+  """Whether the report is still active"""
+  status: ReportStatus
+
+  """The URI of the report"""
+  uri: String
+}
+
+"""A report note object"""
+type ReportNote implements ActionLogObject {
+  """The content of the note"""
+  content: String
+
+  """The internal ID of the report note"""
+  id: ID
+
+  """The moderator who added the note"""
+  moderator: Actor
+
+  """The report on which this note is added"""
+  report: Report
+}
+
+"""The list of possible statuses for a report object"""
+enum ReportStatus {
+  """The report has been closed"""
+  CLOSED
+
+  """The report has been opened"""
+  OPEN
+
+  """The report has been marked as resolved"""
+  RESOLVED
+}
+
+type RootMutationType {
+  """Change default actor for user"""
+  changeDefaultActor(preferredUsername: String!): User
+
+  """Create a comment"""
+  createComment(actorUsername: String!, text: String!): Comment
+
+  """Create an event"""
+  createEvent(
+    beginsOn: DateTime!
+    category: String!
+    description: String!
+    endsOn: DateTime
+    onlineAddress: String
+    organizerActorId: ID!
+    phoneAddress: String
+
+    """
+    The picture for the event, either as an object or directly the ID of an existing Picture
+    """
+    picture: PictureInput
+    public: Boolean
+    publishAt: DateTime
+    state: Int
+    status: Int
+
+    """The list of tags associated to the event"""
+    tags: [String] = [""]
+    title: String!
+    visibility: EventVisibility = PRIVATE
+  ): Event
+
+  """Create a Feed Token"""
+  createFeedToken(actorId: Int): FeedToken
+
+  """Create a group"""
+  createGroup(
+    """
+    The actor's username which will be the admin (otherwise user's default one)
+    """
+    adminActorUsername: String
+
+    """
+    The avatar for the group, either as an object or directly the ID of an existing Picture
+    """
+    avatar: PictureInput
+
+    """
+    The banner for the group, either as an object or directly the ID of an existing Picture
+    """
+    banner: PictureInput
+
+    """The summary for the group"""
+    description: String = ""
+
+    """The displayed name for the group"""
+    name: String
+
+    """The name for the group"""
+    preferredUsername: String!
+  ): Group
+
+  """Create a new person for user"""
+  createPerson(
+    """
+    The avatar for the profile, either as an object or directly the ID of an existing Picture
+    """
+    avatar: PictureInput
+
+    """
+    The banner for the profile, either as an object or directly the ID of an existing Picture
+    """
+    banner: PictureInput
+
+    """The displayed name for the new profile"""
+    name: String = ""
+    preferredUsername: String!
+
+    """The summary for the new profile"""
+    summary: String = ""
+  ): Person
+
+  """Create a report"""
+  createReport(commentsIds: [ID] = [""], eventId: ID, reportContent: String, reportedActorId: ID!, reporterActorId: ID!): Report
+
+  """Create a note on a report"""
+  createReportNote(content: String, moderatorId: ID!, reportId: ID!): ReportNote
+
+  """Create an user"""
+  createUser(email: String!, password: String!): User
+
+  """Delete an event"""
+  deleteEvent(actorId: Int!, eventId: Int!): DeletedObject
+
+  """Delete a feed token"""
+  deleteFeedToken(token: String!): DeletedFeedToken
+
+  """Delete a group"""
+  deleteGroup(actorId: Int!, groupId: Int!): DeletedObject
+
+  """Delete an identity"""
+  deletePerson(preferredUsername: String!): Person
+  deleteReportNote(moderatorId: ID!, noteId: ID!): DeletedObject
+
+  """Join an event"""
+  joinEvent(actorId: Int!, eventId: Int!): Participant
+
+  """Join a group"""
+  joinGroup(actorId: Int!, groupId: Int!): Member
+
+  """Leave an event"""
+  leaveEvent(actorId: Int!, eventId: Int!): DeletedParticipant
+
+  """Leave an event"""
+  leaveGroup(actorId: Int!, groupId: Int!): DeletedMember
+
+  """Login an user"""
+  login(email: String!, password: String!): Login
+
+  """Register a first profile on registration"""
+  registerPerson(
+    """
+    The avatar for the profile, either as an object or directly the ID of an existing Picture
+    """
+    avatar: PictureInput
+
+    """
+    The banner for the profile, either as an object or directly the ID of an existing Picture
+    """
+    banner: PictureInput
+
+    """The email from the user previously created"""
+    email: String!
+
+    """The displayed name for the new profile"""
+    name: String = ""
+    preferredUsername: String!
+
+    """The summary for the new profile"""
+    summary: String = ""
+  ): Person
+
+  """Resend registration confirmation token"""
+  resendConfirmationEmail(email: String!, locale: String = "en"): String
+
+  """Reset user password"""
+  resetPassword(locale: String = "en", password: String!, token: String!): Login
+
+  """Send a link through email to reset user password"""
+  sendResetPassword(email: String!, locale: String = "en"): String
+
+  """Update an identity"""
+  updatePerson(
+    """
+    The avatar for the profile, either as an object or directly the ID of an existing Picture
+    """
+    avatar: PictureInput
+
+    """
+    The banner for the profile, either as an object or directly the ID of an existing Picture
+    """
+    banner: PictureInput
+
+    """The displayed name for this profile"""
+    name: String
+    preferredUsername: String!
+
+    """The summary for this profile"""
+    summary: String
+  ): Person
+
+  """Update a report"""
+  updateReportStatus(moderatorId: ID!, reportId: ID!, status: ReportStatus!): Report
+
+  """Upload a picture"""
+  uploadPicture(actorId: ID!, alt: String, file: Upload!, name: String!): Picture
+
+  """Validate an user after registration"""
+  validateUser(token: String!): Login
+}
+
+"""
+Root Query
+
+"""
+type RootQueryType {
+  """Get the list of action logs"""
+  actionLogs(limit: Int = 10, page: Int = 1): [ActionLog]
+
+  """Get the instance config"""
+  config: Config
+
+  """Get an event by uuid"""
+  event(uuid: UUID!): Event
+
+  """Get all events"""
+  events(limit: Int = 10, page: Int = 1): [Event]
+
+  """Get a group by it's preferred username"""
+  group(preferredUsername: String!): Group
+
+  """Get all groups"""
+  groups(limit: Int = 10, page: Int = 1): [Group]
+
+  """Get the persons for an user"""
+  identities: [Person]
+
+  """Get the current actor for the logged-in user"""
+  loggedPerson: Person
+
+  """Get the current user"""
+  loggedUser: User
+
+  """Get all participants for an event uuid"""
+  participants(limit: Int = 10, page: Int = 1, uuid: UUID!): [Participant]
+
+  """Get a person by it's preferred username"""
+  person(preferredUsername: String!): Person
+
+  """Get a picture"""
+  picture(id: String!): Picture
+
+  """Get a report by id"""
+  report(id: ID!): Report
+
+  """Get all reports"""
+  reports(limit: Int = 10, page: Int = 1): [Report]
+
+  """Reverse geocode coordinates"""
+  reverseGeocode(latitude: Float!, longitude: Float!): [Address]
+
+  """Search for an address"""
+  searchAddress(query: String!): [Address]
+
+  """Search events"""
+  searchEvents(limit: Int = 10, page: Int = 1, search: String!): Events
+
+  """Search groups"""
+  searchGroups(limit: Int = 10, page: Int = 1, search: String!): Groups
+
+  """Search persons"""
+  searchPersons(limit: Int = 10, page: Int = 1, search: String!): Persons
+
+  """Get the list of tags"""
+  tags(limit: Int = 10, page: Int = 1): [Tag]!
+
+  """Get an user"""
+  user(id: ID!): User
+
+  """List instance users"""
+  users(direction: SortDirection = DESC, limit: Int = 10, page: Int = 1, sort: SortableUserField = ID): Users
+}
+
+"""The list of possible options for the event's status"""
+enum SortableUserField {
+  ID
+}
+
+"""Available sort directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""A tag"""
+type Tag {
+  """The tag's ID"""
+  id: ID
+
+  """Related tags to this tag"""
+  related: [Tag]
+
+  """The tags's slug"""
+  slug: String
+
+  """The tag's title"""
+  title: String
+}
+
+"""
+Represents an uploaded file.
+
+"""
+scalar Upload
+
+"""A local user of Mobilizon"""
+type User {
+  """The datetime the last activation/confirmation token was sent"""
+  confirmationSentAt: DateTime
+
+  """The account activation/confirmation token"""
+  confirmationToken: String
+
+  """The datetime when the user was confirmed/activated"""
+  confirmedAt: DateTime
+
+  """The user's default actor"""
+  defaultActor: Person
+
+  """The user's email"""
+  email: String!
+
+  """A list of the feed tokens for this user"""
+  feedTokens: [FeedToken]
+
+  """The user's ID"""
+  id: ID!
+
+  """The user's list of profiles (identities)"""
+  profiles: [Person]!
+
+  """The datetime last reset password email was sent"""
+  resetPasswordSentAt: DateTime
+
+  """The token sent when requesting password token"""
+  resetPasswordToken: String
+}
+
+"""Users list"""
+type Users {
+  """User elements"""
+  elements: [User]!
+
+  """Total elements"""
+  total: Int!
+}
 
 """
 The `UUID` scalar type represents UUID4 compliant string data, represented as UTF-8
@@ -656,8 +992,3 @@ character sequences. The UUID4 type is most often used to represent unique
 human-readable ID strings.
 """
 scalar UUID
-
-"""
-Represents an uploaded file.
-"""
-scalar Upload

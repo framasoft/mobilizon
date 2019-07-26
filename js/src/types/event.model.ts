@@ -75,6 +75,8 @@ export interface IEvent {
   onlineAddress?: string;
   phoneAddress?: string;
   physicalAddress?: IAddress;
+
+  tags: ITag[];
 }
 
 
@@ -99,4 +101,5 @@ export class EventModel implements IEvent {
   onlineAddress: string = '';
   phoneAddress: string = '';
   picture: IAbstractPicture|null = null;
+  tags: ITag[] = [];
 }

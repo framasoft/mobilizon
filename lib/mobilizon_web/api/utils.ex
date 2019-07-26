@@ -12,11 +12,9 @@ defmodule MobilizonWeb.API.Utils do
     * `to` : the mentionned actors, the eventual actor we're replying to and the public
     * `cc` : the actor's followers
   """
-  @spec to_for_actor_and_mentions(Actor.t(), list(), map(), String.t()) :: {list(), list()}
-  def to_for_actor_and_mentions(%Actor{} = actor, mentions, inReplyTo, "public") do
-    mentioned_actors = Enum.map(mentions, fn {_, %{url: url}} -> url end)
-
-    to = ["https://www.w3.org/ns/activitystreams#Public" | mentioned_actors]
+  @spec get_to_and_cc(Actor.t(), list(), map(), String.t()) :: {list(), list()}
+  def get_to_and_cc(%Actor{} = actor, mentions, inReplyTo, :public) do
+    to = ["https://www.w3.org/ns/activitystreams#Public" | mentions]
     cc = [actor.followers_url]
 
     if inReplyTo do
@@ -33,11 +31,9 @@ defmodule MobilizonWeb.API.Utils do
     * `to` : the mentionned actors, actor's followers and the eventual actor we're replying to
     * `cc` : public
   """
-  @spec to_for_actor_and_mentions(Actor.t(), list(), map(), String.t()) :: {list(), list()}
-  def to_for_actor_and_mentions(%Actor{} = actor, mentions, inReplyTo, "unlisted") do
-    mentioned_actors = Enum.map(mentions, fn {_, %{url: url}} -> url end)
-
-    to = [actor.followers_url | mentioned_actors]
+  @spec get_to_and_cc(Actor.t(), list(), map(), String.t()) :: {list(), list()}
+  def get_to_and_cc(%Actor{} = actor, mentions, inReplyTo, :unlisted) do
+    to = [actor.followers_url | mentions]
     cc = ["https://www.w3.org/ns/activitystreams#Public"]
 
     if inReplyTo do
@@ -54,9 +50,9 @@ defmodule MobilizonWeb.API.Utils do
     * `to` : the mentionned actors, actor's followers and the eventual actor we're replying to
     * `cc` : none
   """
-  @spec to_for_actor_and_mentions(Actor.t(), list(), map(), String.t()) :: {list(), list()}
-  def to_for_actor_and_mentions(%Actor{} = actor, mentions, inReplyTo, "private") do
-    {to, cc} = to_for_actor_and_mentions(actor, mentions, inReplyTo, "direct")
+  @spec get_to_and_cc(Actor.t(), list(), map(), String.t()) :: {list(), list()}
+  def get_to_and_cc(%Actor{} = actor, mentions, inReplyTo, :private) do
+    {to, cc} = get_to_and_cc(actor, mentions, inReplyTo, :direct)
     {[actor.followers_url | to], cc}
   end
 
@@ -67,59 +63,62 @@ defmodule MobilizonWeb.API.Utils do
     * `to` : the mentionned actors and the eventual actor we're replying to
     * `cc` : none
   """
-  @spec to_for_actor_and_mentions(Actor.t(), list(), map(), String.t()) :: {list(), list()}
-  def to_for_actor_and_mentions(_actor, mentions, inReplyTo, "direct") do
-    mentioned_actors = Enum.map(mentions, fn {_, %{url: url}} -> url end)
-
+  @spec get_to_and_cc(Actor.t(), list(), map(), String.t()) :: {list(), list()}
+  def get_to_and_cc(_actor, mentions, inReplyTo, :direct) do
     if inReplyTo do
-      {Enum.uniq([inReplyTo.actor | mentioned_actors]), []}
+      {Enum.uniq([inReplyTo.actor | mentions]), []}
     else
-      {mentioned_actors, []}
+      {mentions, []}
     end
   end
+
+  def get_to_and_cc(_user, mentions, _inReplyTo, {:list, _}), do: {mentions, []}
+
+  #  def get_addressed_users(_, to) when is_list(to) do
+  #    Actors.get(to)
+  #  end
+
+  def get_addressed_users(mentioned_users, _), do: mentioned_users
 
   @doc """
   Creates HTML content from text and mentions
   """
-  @spec make_content_html(String.t(), list(), list(), String.t()) :: String.t()
+  @spec make_content_html(String.t(), list(), String.t()) :: String.t()
   def make_content_html(
-        status,
-        mentions,
-        tags,
+        text,
+        additional_tags,
         content_type
-      ),
-      do: format_input(status, mentions, tags, content_type)
+      ) do
+    with {text, mentions, tags} <- format_input(text, content_type, []) do
+      {text, mentions, additional_tags ++ Enum.map(tags, fn {_, tag} -> tag end)}
+    end
+  end
 
-  def format_input(text, mentions, tags, "text/plain") do
+  def format_input(text, "text/plain", options) do
     text
     |> Formatter.html_escape("text/plain")
-    |> String.replace(~r/\r?\n/, "<br>")
-    |> (&{[], &1}).()
-    |> Formatter.add_links()
-    |> Formatter.add_actor_links(mentions)
-    |> Formatter.add_hashtag_links(tags)
-    |> Formatter.finalize()
+    |> Formatter.linkify(options)
+    |> (fn {text, mentions, tags} ->
+          {String.replace(text, ~r/\r?\n/, "<br>"), mentions, tags}
+        end).()
   end
 
-  def format_input(text, mentions, _tags, "text/html") do
+  def format_input(text, "text/html", options) do
     text
     |> Formatter.html_escape("text/html")
-    |> String.replace(~r/\r?\n/, "<br>")
-    |> (&{[], &1}).()
-    |> Formatter.add_actor_links(mentions)
-    |> Formatter.finalize()
+    |> Formatter.linkify(options)
   end
 
-  # def format_input(text, mentions, tags, "text/markdown") do
-  #   text
-  #   |> Earmark.as_html!()
-  #   |> Formatter.html_escape("text/html")
-  #   |> String.replace(~r/\r?\n/, "")
-  #   |> (&{[], &1}).()
-  #   |> Formatter.add_actor_links(mentions)
-  #   |> Formatter.add_hashtag_links(tags)
-  #   |> Formatter.finalize()
-  # end
+  #  @doc """
+  #  Formatting text to markdown.
+  #  """
+  #  def format_input(text, "text/markdown", options) do
+  #    text
+  #    |> Formatter.mentions_escape(options)
+  #    |> Earmark.as_html!()
+  #    |> Formatter.linkify(options)
+  #    |> Formatter.html_escape("text/html")
+  #  end
 
   def make_report_content_html(nil), do: {:ok, {nil, [], []}}
 
@@ -130,6 +129,21 @@ defmodule MobilizonWeb.API.Utils do
       {:ok, Formatter.html_escape(comment, "text/plain")}
     else
       {:error, "Comment must be up to #{max_size} characters"}
+    end
+  end
+
+  def prepare_content(actor, content, visibility, tags, in_reply_to) do
+    with content <- String.trim(content),
+         {content_html, mentions, tags} <-
+           make_content_html(
+             content,
+             tags,
+             "text/plain"
+           ),
+         mentioned_users <- for({_, mentioned_user} <- mentions, do: mentioned_user.url),
+         addressed_users <- get_addressed_users(mentioned_users, nil),
+         {to, cc} <- get_to_and_cc(actor, addressed_users, in_reply_to, visibility) do
+      {content_html, tags, to, cc}
     end
   end
 end
