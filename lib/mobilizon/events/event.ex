@@ -86,7 +86,6 @@ defmodule Mobilizon.Events.Event do
       :uuid,
       :picture_id
     ])
-    |> cast_assoc(:tags)
     |> cast_assoc(:physical_address)
     |> validate_required([
       :title,

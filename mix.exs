@@ -90,6 +90,9 @@ defmodule Mobilizon.Mixfile do
       {:earmark, "~> 1.3.1"},
       {:geohax, "~> 0.3.0"},
       {:mogrify, "~> 0.7.2"},
+      {:auto_linker,
+       git: "https://git.pleroma.social/pleroma/auto_linker.git",
+       ref: "95e8188490e97505c56636c1379ffdf036c1fdde"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},

@@ -72,6 +72,7 @@ export default class App extends Vue {
   @import "~bulma/sass/components/modal.sass";
   @import "~bulma/sass/components/navbar.sass";
   @import "~bulma/sass/components/pagination.sass";
+  @import "~bulma/sass/components/dropdown.sass";
   @import "~bulma/sass/elements/box.sass";
   @import "~bulma/sass/elements/button.sass";
   @import "~bulma/sass/elements/container.sass";
@@ -91,9 +92,11 @@ export default class App extends Vue {
   @import "~buefy/src/scss/components/datepicker";
   @import "~buefy/src/scss/components/notices";
   @import "~buefy/src/scss/components/dropdown";
+  @import "~buefy/src/scss/components/autocomplete";
   @import "~buefy/src/scss/components/form";
   @import "~buefy/src/scss/components/modal";
   @import "~buefy/src/scss/components/tag";
+  @import "~buefy/src/scss/components/taginput";
   @import "~buefy/src/scss/components/upload";
 
 .router-enter-active,

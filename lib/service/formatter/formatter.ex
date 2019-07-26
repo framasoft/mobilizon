@@ -1,5 +1,5 @@
 # Portions of this file are derived from Pleroma:
-# Copyright © 2017-2018 Pleroma Authors <https://pleroma.social>
+# Copyright © 2017-2019 Pleroma Authors <https://pleroma.social>
 # SPDX-License-Identifier: AGPL-3.0-only
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/lib/pleroma/formatter.ex
 
@@ -10,68 +10,86 @@ defmodule Mobilizon.Service.Formatter do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Actors
 
-  @tag_regex ~r/\#\w+/u
-  def parse_tags(text, data \\ %{}) do
-    Regex.scan(@tag_regex, text)
-    |> Enum.map(fn ["#" <> tag = full_tag] -> {full_tag, String.downcase(tag)} end)
-    |> (fn map ->
-          if data["sensitive"] in [true, "True", "true", "1"],
-            do: [{"#nsfw", "nsfw"}] ++ map,
-            else: map
-        end).()
+  @link_regex ~r"((?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~%:/?#[\]@!\$&'\(\)\*\+,;=.]+)|[0-9a-z+\-\.]+:[0-9a-z$-_.+!*'(),]+"ui
+  @markdown_characters_regex ~r/(`|\*|_|{|}|[|]|\(|\)|#|\+|-|\.|!)/
+
+  @auto_linker_config hashtag: true,
+                      hashtag_handler: &Mobilizon.Service.Formatter.hashtag_handler/4,
+                      mention: true,
+                      mention_handler: &Mobilizon.Service.Formatter.mention_handler/4
+
+  def escape_mention_handler("@" <> nickname = mention, buffer, _, _) do
+    case Mobilizon.Actors.get_actor_by_name(nickname) do
+      %Actor{} ->
+        # escape markdown characters with `\\`
+        # (we don't want something like @user__name to be parsed by markdown)
+        String.replace(mention, @markdown_characters_regex, "\\\\\\1")
+
+      _ ->
+        buffer
+    end
   end
 
-  def parse_mentions(text) do
-    # Modified from https://www.w3.org/TR/html5/forms.html#valid-e-mail-address
-    regex =
-      ~r/@[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]*@?[a-zA-Z0-9_-](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*/u
+  def mention_handler("@" <> nickname, buffer, _opts, acc) do
+    case Actors.get_actor_by_name(nickname) do
+      %Actor{id: id, url: url, preferred_username: preferred_username} = actor ->
+        link =
+          "<span class='h-card'><a data-user='#{id}' class='u-url mention' href='#{url}'>@<span>#{
+            preferred_username
+          }</span></a></span>"
 
-    Regex.scan(regex, text)
-    |> List.flatten()
-    |> Enum.uniq()
-    |> Enum.map(fn "@" <> match = full_match ->
-      {full_match, Actors.get_actor_by_name(match)}
-    end)
-    |> Enum.filter(fn {_match, user} -> user end)
+        {link, %{acc | mentions: MapSet.put(acc.mentions, {"@" <> nickname, actor})}}
+
+      _ ->
+        {buffer, acc}
+    end
   end
 
-  # def emojify(text) do
-  #   emojify(text, Emoji.get_all())
-  # end
+  def hashtag_handler("#" <> tag = tag_text, _buffer, _opts, acc) do
+    tag = String.downcase(tag)
+    url = "#{MobilizonWeb.Endpoint.url()}/tag/#{tag}"
+    link = "<a class='hashtag' data-tag='#{tag}' href='#{url}' rel='tag'>#{tag_text}</a>"
 
-  # def emojify(text, nil), do: text
+    {link, %{acc | tags: MapSet.put(acc.tags, {tag_text, tag})}}
+  end
 
-  # def emojify(text, emoji) do
-  #   Enum.reduce(emoji, text, fn {emoji, file}, text ->
-  #     emoji = HTML.strip_tags(emoji)
-  #     file = HTML.strip_tags(file)
+  @doc """
+  Parses a text and replace plain text links with HTML. Returns a tuple with a result text, mentions, and hashtags.
 
-  #     String.replace(
-  #       text,
-  #       ":#{emoji}:",
-  #       "<img height='32px' width='32px' alt='#{emoji}' title='#{emoji}' src='#{
-  #         MediaProxy.url(file)
-  #       }' />"
-  #     )
-  #     |> HTML.filter_tags()
-  #   end)
-  # end
+  If the 'safe_mention' option is given, only consecutive mentions at the start the post are actually mentioned.
+  """
+  @spec linkify(String.t(), keyword()) ::
+          {String.t(), [{String.t(), Actor.t()}], [{String.t(), String.t()}]}
+  def linkify(text, options \\ []) do
+    options = options ++ @auto_linker_config
 
-  # def get_emoji(text) when is_binary(text) do
-  #   Enum.filter(Emoji.get_all(), fn {emoji, _} -> String.contains?(text, ":#{emoji}:") end)
-  # end
+    acc = %{mentions: MapSet.new(), tags: MapSet.new()}
+    {text, %{mentions: mentions, tags: tags}} = AutoLinker.link_map(text, acc, options)
 
-  # def get_emoji(_), do: []
+    {text, MapSet.to_list(mentions), MapSet.to_list(tags)}
+  end
 
-  @link_regex ~r/[0-9a-z+\-\.]+:[0-9a-z$-_.+!*'(),]+/ui
+  @doc """
+  Escapes a special characters in mention names.
+  """
+  def mentions_escape(text, options \\ []) do
+    options =
+      Keyword.merge(options,
+        mention: true,
+        url: false,
+        mention_handler: &escape_mention_handler/4
+      )
 
-  @uri_schemes Application.get_env(:mobilizon, :uri_schemes, [])
-  @valid_schemes Keyword.get(@uri_schemes, :valid_schemes, [])
+    AutoLinker.link(text, options)
+  end
 
-  # # TODO: make it use something other than @link_regex
-  # def html_escape(text, "text/html") do
-  #   HTML.filter_tags(text)
-  # end
+  def html_escape({text, mentions, hashtags}, type) do
+    {html_escape(text, type), mentions, hashtags}
+  end
+
+  def html_escape(_text, "text/html") do
+    #    HTML.filter_tags(text)
+  end
 
   def html_escape(text, "text/plain") do
     Regex.split(@link_regex, text, include_captures: true)
@@ -82,84 +100,15 @@ defmodule Mobilizon.Service.Formatter do
     |> Enum.join("")
   end
 
-  @doc "changes scheme:... urls to html links"
-  def add_links({subs, text}) do
-    links =
+  def truncate(text, max_length \\ 200, omission \\ "...") do
+    # Remove trailing whitespace
+    text = Regex.replace(~r/([^ \t\r\n])([ \t]+$)/u, text, "\\g{1}")
+
+    if String.length(text) < max_length do
       text
-      |> String.split([" ", "\t", "<br>"])
-      |> Enum.filter(fn word -> String.starts_with?(word, @valid_schemes) end)
-      |> Enum.filter(fn word -> Regex.match?(@link_regex, word) end)
-      |> Enum.map(fn url -> {Ecto.UUID.generate(), url} end)
-      |> Enum.sort_by(fn {_, url} -> -String.length(url) end)
-
-    uuid_text =
-      links
-      |> Enum.reduce(text, fn {uuid, url}, acc -> String.replace(acc, url, uuid) end)
-
-    subs =
-      subs ++
-        Enum.map(links, fn {uuid, url} ->
-          {uuid, "<a href=\"#{url}\">#{url}</a>"}
-        end)
-
-    {subs, uuid_text}
-  end
-
-  @doc "Adds the links to mentioned actors"
-  def add_actor_links({subs, text}, mentions) do
-    mentions =
-      mentions
-      |> Enum.sort_by(fn {name, _} -> -String.length(name) end)
-      |> Enum.map(fn {name, actor} -> {name, actor, Ecto.UUID.generate()} end)
-
-    uuid_text =
-      mentions
-      |> Enum.reduce(text, fn {match, _actor, uuid}, text ->
-        String.replace(text, match, uuid)
-      end)
-
-    subs =
-      subs ++
-        Enum.map(mentions, fn {match, %Actor{id: id, url: url}, uuid} ->
-          short_match = String.split(match, "@") |> tl() |> hd()
-
-          {uuid,
-           "<span><a data-user='#{id}' class='mention' href='#{url}'>@<span>#{short_match}</span></a></span>"}
-        end)
-
-    {subs, uuid_text}
-  end
-
-  @doc "Adds the hashtag links"
-  def add_hashtag_links({subs, text}, tags) do
-    tags =
-      tags
-      |> Enum.sort_by(fn {name, _} -> -String.length(name) end)
-      |> Enum.map(fn {name, short} -> {name, short, Ecto.UUID.generate()} end)
-
-    uuid_text =
-      tags
-      |> Enum.reduce(text, fn {match, _short, uuid}, text ->
-        String.replace(text, match, uuid)
-      end)
-
-    subs =
-      subs ++
-        Enum.map(tags, fn {tag_text, tag, uuid} ->
-          url =
-            "<a data-tag='#{tag}' href='#{MobilizonWeb.Endpoint.url()}/tag/#{tag}' rel='tag'>#{
-              tag_text
-            }</a>"
-
-          {uuid, url}
-        end)
-
-    {subs, uuid_text}
-  end
-
-  def finalize({subs, text}) do
-    Enum.reduce(subs, text, fn {uuid, replacement}, result_text ->
-      String.replace(result_text, uuid, replacement)
-    end)
+    else
+      length_with_omission = max_length - String.length(omission)
+      String.slice(text, 0, length_with_omission) <> omission
+    end
   end
 end

@@ -143,7 +143,8 @@ export const CREATE_EVENT = gql`
   $organizerActorId: ID!,
   $category: String!,
   $beginsOn: DateTime!,
-  $picture: PictureInput!
+  $picture: PictureInput,
+  $tags: [String]
   ) {
     createEvent(
       title: $title,
@@ -151,7 +152,8 @@ export const CREATE_EVENT = gql`
       beginsOn: $beginsOn,
       organizerActorId: $organizerActorId,
       category: $category,
-      picture: $picture
+      picture: $picture,
+      tags: $tags
     ) {
       id,
       uuid,
@@ -203,8 +205,10 @@ export const LEAVE_EVENT = gql`
 export const DELETE_EVENT = gql`
   mutation DeleteEvent($id: Int!, $actorId: Int!) {
     deleteEvent(
-      id: $id,
+      eventId: $id,
       actorId: $actorId
-    )
+    ) {
+        id
+    }
   }
 `;

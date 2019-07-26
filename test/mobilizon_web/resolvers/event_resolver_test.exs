@@ -84,6 +84,44 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       assert json_response(res, 200)["data"]["createEvent"]["title"] == "come to my event"
     end
 
+    test "create_event/3 creates an event with tags", %{conn: conn, actor: actor, user: user} do
+      mutation = """
+          mutation {
+              createEvent(
+                  title: "my event is referenced",
+                  description: "with tags!",
+                  begins_on: "#{
+        DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
+      }",
+                  organizer_actor_id: "#{actor.id}",
+                  category: "birthday",
+                  tags: ["nicolas", "birthday", "bad tag"]
+              ) {
+                title,
+                uuid,
+                tags {
+                  title,
+                  slug
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["createEvent"]["title"] == "my event is referenced"
+
+      assert json_response(res, 200)["data"]["createEvent"]["tags"] == [
+               %{"slug" => "nicolas", "title" => "nicolas"},
+               %{"slug" => "birthday", "title" => "birthday"},
+               %{"slug" => "bad-tag", "title" => "bad tag"}
+             ]
+    end
+
     test "create_event/3 creates an event with an attached picture", %{
       conn: conn,
       actor: actor,

@@ -367,7 +367,7 @@ defmodule Mobilizon.Events do
 
   """
   def create_event(attrs \\ %{}) do
-    with {:ok, %Event{} = event} <- %Event{} |> Event.changeset(attrs) |> Repo.insert(),
+    with %Event{} = event <- do_create_event(attrs),
          {:ok, %Participant{} = _participant} <-
            %Participant{}
            |> Participant.changeset(%{
@@ -376,7 +376,24 @@ defmodule Mobilizon.Events do
              event_id: event.id
            })
            |> Repo.insert() do
-      {:ok, Repo.preload(event, [:organizer_actor])}
+      {:ok, event}
+    end
+  end
+
+  defp do_create_event(attrs) do
+    with {:ok, %Event{} = event} <- %Event{} |> Event.changeset(attrs) |> Repo.insert(),
+         %Event{} = event <- event |> Repo.preload([:tags, :organizer_actor]),
+         {:has_tags, true, _} <- {:has_tags, Map.has_key?(attrs, "tags"), event} do
+      event
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_assoc(:tags, attrs["tags"])
+      |> Repo.update()
+    else
+      {:has_tags, false, event} ->
+        event
+
+      error ->
+        error
     end
   end
 
@@ -490,6 +507,22 @@ defmodule Mobilizon.Events do
 
   """
   def get_tag!(id), do: Repo.get!(Tag, id)
+
+  def get_tag(id), do: Repo.get(Tag, id)
+
+  @doc """
+  Get an existing tag or create one
+  """
+  @spec get_or_create_tag(String.t()) :: {:ok, Tag.t()} | {:error, any()}
+  def get_or_create_tag(title) do
+    case Repo.get_by(Tag, title: title) do
+      %Tag{} = tag ->
+        {:ok, tag}
+
+      nil ->
+        create_tag(%{"title" => title})
+    end
+  end
 
   @doc """
   Creates a tag.

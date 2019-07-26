@@ -7,6 +7,7 @@
   "arc_ecto": {:git, "https://github.com/tcitworld/arc_ecto.git", "e0d8db119c564744404cff68157417e2a83941af", []},
   "argon2_elixir": {:hex, :argon2_elixir, "2.0.5", "0073a87d755c7e63fc4f9d08b1d1646585b93f144cecde126e15061b24240b20", [:make, :mix], [{:comeonin, "~> 5.1", [hex: :comeonin, repo: "hexpm", optional: false]}, {:elixir_make, "~> 0.5", [hex: :elixir_make, repo: "hexpm", optional: false]}], "hexpm"},
   "atomex": {:hex, :atomex, "0.3.0", "19b5d1a2aef8706dbd307385f7d5d9f6f273869226d317492c396c7bacf26402", [:mix], [{:xml_builder, "~> 2.0.0", [hex: :xml_builder, repo: "hexpm", optional: false]}], "hexpm"},
+  "auto_linker": {:git, "https://git.pleroma.social/pleroma/auto_linker.git", "95e8188490e97505c56636c1379ffdf036c1fdde", [ref: "95e8188490e97505c56636c1379ffdf036c1fdde"]},
   "bamboo": {:hex, :bamboo, "1.2.0", "8aebd24f7c606c32d0163c398004a11608ca1028182a169b2e527793bfab7561", [:mix], [{:hackney, ">= 1.13.0", [hex: :hackney, repo: "hexpm", optional: false]}, {:plug, "~> 1.0", [hex: :plug, repo: "hexpm", optional: false]}, {:poison, ">= 1.5.0", [hex: :poison, repo: "hexpm", optional: true]}], "hexpm"},
   "bamboo_smtp": {:hex, :bamboo_smtp, "1.7.0", "f0d213e18ced1f08b551a72221e9b8cfbf23d592b684e9aa1ef5250f4943ef9b", [:mix], [{:bamboo, "~> 1.2", [hex: :bamboo, repo: "hexpm", optional: false]}, {:gen_smtp, "~> 0.14.0", [hex: :gen_smtp, repo: "hexpm", optional: false]}], "hexpm"},
   "base64url": {:hex, :base64url, "0.0.1", "36a90125f5948e3afd7be97662a1504b934dd5dac78451ca6e9abf85a10286be", [:rebar], [], "hexpm"},

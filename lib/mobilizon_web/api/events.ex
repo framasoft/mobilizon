@@ -4,10 +4,9 @@ defmodule MobilizonWeb.API.Events do
   """
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Service.Formatter
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Utils, as: ActivityPubUtils
-  import MobilizonWeb.API.Utils
+  alias MobilizonWeb.API.Utils
 
   @doc """
   Create an event
@@ -19,24 +18,19 @@ defmodule MobilizonWeb.API.Events do
           description: description,
           organizer_actor_id: organizer_actor_id,
           begins_on: begins_on,
-          category: category
+          category: category,
+          tags: tags
         } = args
       ) do
+    require Logger
+
     with %Actor{url: url} = actor <-
            Actors.get_local_actor_with_everything(organizer_actor_id),
          title <- String.trim(title),
-         mentions <- Formatter.parse_mentions(description),
          visibility <- Map.get(args, :visibility, :public),
-         {to, cc} <- to_for_actor_and_mentions(actor, mentions, nil, Atom.to_string(visibility)),
-         tags <- Formatter.parse_tags(description),
          picture <- Map.get(args, :picture, nil),
-         content_html <-
-           make_content_html(
-             description,
-             mentions,
-             tags,
-             "text/plain"
-           ),
+         {content_html, tags, to, cc} <-
+           Utils.prepare_content(actor, description, visibility, tags, nil),
          event <-
            ActivityPubUtils.make_event_data(
              url,

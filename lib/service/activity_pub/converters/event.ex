@@ -10,6 +10,8 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Event, as: EventModel
   alias Mobilizon.Service.ActivityPub.Converter
+  alias Mobilizon.Events
+  alias Mobilizon.Events.Tag
 
   @behaviour Converter
 
@@ -19,7 +21,8 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
   @impl Converter
   @spec as_to_model_data(map()) :: map()
   def as_to_model_data(object) do
-    with {:ok, %Actor{id: actor_id}} <- Actors.get_actor_by_url(object["actor"]) do
+    with {:ok, %Actor{id: actor_id}} <- Actors.get_actor_by_url(object["actor"]),
+         tags <- fetch_tags(object["tag"]) do
       picture_id =
         with true <- Map.has_key?(object, "attachment"),
              %Picture{id: picture_id} <-
@@ -43,9 +46,22 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
         "begins_on" => object["begins_on"],
         "category" => object["category"],
         "url" => object["id"],
-        "uuid" => object["uuid"]
+        "uuid" => object["uuid"],
+        "tags" => tags
       }
     end
+  end
+
+  defp fetch_tags(tags) do
+    Enum.reduce(tags, [], fn tag, acc ->
+      case Events.get_or_create_tag(tag) do
+        {:ok, %Tag{} = tag} ->
+          acc ++ [tag]
+
+        _ ->
+          acc
+      end
+    end)
   end
 
   @doc """
