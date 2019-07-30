@@ -70,10 +70,11 @@ defmodule Mobilizon.Service.ActivityPub do
   def fetch_object_from_url(url) do
     Logger.info("Fetching object from url #{url}")
 
-    with true <- String.starts_with?(url, "http"),
-         nil <- Events.get_event_by_url(url),
-         nil <- Events.get_comment_from_url(url),
-         {:error, :actor_not_found} <- Actors.get_actor_by_url(url),
+    with {:not_http, true} <- {:not_http, String.starts_with?(url, "http")},
+         {:existing_event, nil} <- {:existing_event, Events.get_event_by_url(url)},
+         {:existing_comment, nil} <- {:existing_comment, Events.get_comment_from_url(url)},
+         {:existing_actor, {:error, :actor_not_found}} <-
+           {:existing_actor, Actors.get_actor_by_url(url)},
          {:ok, %{body: body, status_code: code}} when code in 200..299 <-
            HTTPoison.get(
              url,
@@ -90,25 +91,32 @@ defmodule Mobilizon.Service.ActivityPub do
            "actor" => data["attributedTo"],
            "object" => data
          },
-         {:ok, activity} <- Transmogrifier.handle_incoming(params) do
+         {:ok, _activity, %{url: object_url} = _object} <- Transmogrifier.handle_incoming(params) do
       case data["type"] do
         "Event" ->
-          {:ok, Events.get_event_by_url!(activity.data["object"]["id"])}
+          {:ok, Events.get_event_by_url!(object_url)}
 
         "Note" ->
-          {:ok, Events.get_comment_full_from_url!(activity.data["object"]["id"])}
+          {:ok, Events.get_comment_full_from_url!(object_url)}
 
         "Actor" ->
-          {:ok, Actors.get_actor_by_url!(activity.data["object"]["id"], true)}
+          {:ok, Actors.get_actor_by_url!(object_url, true)}
 
         other ->
           {:error, other}
       end
     else
-      %Event{url: event_url} -> {:ok, Events.get_event_by_url!(event_url)}
-      %Comment{url: comment_url} -> {:ok, Events.get_comment_full_from_url!(comment_url)}
-      %Actor{url: actor_url} -> {:ok, Actors.get_actor_by_url!(actor_url, true)}
-      e -> {:error, e}
+      {:existing_event, %Event{url: event_url}} ->
+        {:ok, Events.get_event_by_url!(event_url)}
+
+      {:existing_comment, %Comment{url: comment_url}} ->
+        {:ok, Events.get_comment_full_from_url!(comment_url)}
+
+      {:existing_actor, %Actor{url: actor_url}} ->
+        {:ok, Actors.get_actor_by_url!(actor_url, true)}
+
+      e ->
+        {:error, e}
     end
   end
 
@@ -130,10 +138,10 @@ defmodule Mobilizon.Service.ActivityPub do
              additional
            ),
          :ok <- Logger.debug(inspect(create_data)),
-         {:ok, activity, _object} <- insert(create_data, local),
+         {:ok, activity, object} <- insert(create_data, local),
          :ok <- maybe_federate(activity) do
       # {:ok, actor} <- Actors.increase_event_count(actor) do
-      {:ok, activity}
+      {:ok, activity, object}
     else
       err ->
         Logger.error("Something went wrong")
@@ -147,9 +155,9 @@ defmodule Mobilizon.Service.ActivityPub do
     local = !(params[:local] == false)
 
     with data <- %{"to" => to, "type" => "Accept", "actor" => actor, "object" => object},
-         {:ok, activity, _object} <- insert(data, local),
+         {:ok, activity, object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
-      {:ok, activity}
+      {:ok, activity, object}
     end
   end
 
@@ -164,9 +172,9 @@ defmodule Mobilizon.Service.ActivityPub do
            "actor" => actor,
            "object" => object
          },
-         {:ok, activity, _object} <- insert(data, local),
+         {:ok, activity, object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
-      {:ok, activity}
+      {:ok, activity, object}
     end
   end
 
@@ -179,7 +187,7 @@ defmodule Mobilizon.Service.ActivityPub do
   #     ) do
   #   with nil <- get_existing_like(url, object),
   #        like_data <- make_like_data(user, object, activity_id),
-  #        {:ok, activity, _object} <- insert(like_data, local),
+  #        {:ok, activity, object} <- insert(like_data, local),
   #        {:ok, object} <- add_like_to_object(activity, object),
   #        :ok <- maybe_federate(activity) do
   #     {:ok, activity, object}
@@ -215,7 +223,7 @@ defmodule Mobilizon.Service.ActivityPub do
   #     ) do
   #   #with true <- is_public?(object),
   #        with announce_data <- make_announce_data(actor, object, activity_id),
-  #        {:ok, activity, _object} <- insert(announce_data, local),
+  #        {:ok, activity, object} <- insert(announce_data, local),
   #       #  {:ok, object} <- add_announce_to_object(activity, object),
   #        :ok <- maybe_federate(activity) do
   #     {:ok, activity, object}
@@ -250,9 +258,9 @@ defmodule Mobilizon.Service.ActivityPub do
          activity_follow_id <-
            activity_id || "#{MobilizonWeb.Endpoint.url()}/follow/#{follow_id}/activity",
          data <- make_follow_data(followed, follower, activity_follow_id),
-         {:ok, activity, _object} <- insert(data, local),
+         {:ok, activity, object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
-      {:ok, activity}
+      {:ok, activity, object}
     else
       {err, _} when err in [:already_following, :suspended] ->
         {:error, err}
@@ -269,9 +277,9 @@ defmodule Mobilizon.Service.ActivityPub do
          data <- make_follow_data(followed, follower, follow_id),
          {:ok, follow_activity, _object} <- insert(data, local),
          unfollow_data <- make_unfollow_data(follower, followed, follow_activity, activity_id),
-         {:ok, activity, _object} <- insert(unfollow_data, local),
+         {:ok, activity, object} <- insert(unfollow_data, local),
          :ok <- maybe_federate(activity) do
-      {:ok, activity}
+      {:ok, activity, object}
     else
       err ->
         Logger.error(inspect(err))
@@ -290,9 +298,9 @@ defmodule Mobilizon.Service.ActivityPub do
     }
 
     with {:ok, _} <- Events.delete_event(event),
-         {:ok, activity, _object} <- insert(data, local),
+         {:ok, activity, object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
-      {:ok, activity}
+      {:ok, activity, object}
     end
   end
 
@@ -305,9 +313,9 @@ defmodule Mobilizon.Service.ActivityPub do
     }
 
     with {:ok, _} <- Events.delete_comment(comment),
-         {:ok, activity, _object} <- insert(data, local),
+         {:ok, activity, object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
-      {:ok, activity}
+      {:ok, activity, object}
     end
   end
 
@@ -320,9 +328,9 @@ defmodule Mobilizon.Service.ActivityPub do
     }
 
     with {:ok, _} <- Actors.delete_actor(actor),
-         {:ok, activity, _object} <- insert(data, local),
+         {:ok, activity, object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
-      {:ok, activity}
+      {:ok, activity, object}
     end
   end
 

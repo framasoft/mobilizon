@@ -382,7 +382,8 @@ defmodule Mobilizon.Events do
 
   defp do_create_event(attrs) do
     with {:ok, %Event{} = event} <- %Event{} |> Event.changeset(attrs) |> Repo.insert(),
-         %Event{} = event <- event |> Repo.preload([:tags, :organizer_actor]),
+         %Event{} = event <-
+           event |> Repo.preload([:tags, :organizer_actor, :physical_address, :picture]),
          {:has_tags, true, _} <- {:has_tags, Map.has_key?(attrs, "tags"), event} do
       event
       |> Ecto.Changeset.change()
@@ -513,8 +514,10 @@ defmodule Mobilizon.Events do
   @doc """
   Get an existing tag or create one
   """
-  @spec get_or_create_tag(String.t()) :: {:ok, Tag.t()} | {:error, any()}
-  def get_or_create_tag(title) do
+  @spec get_or_create_tag(map()) :: {:ok, Tag.t()} | {:error, any()}
+  def get_or_create_tag(tag) do
+    "#" <> title = tag["name"]
+
     case Repo.get_by(Tag, title: title) do
       %Tag{} = tag ->
         {:ok, tag}
@@ -1223,9 +1226,13 @@ defmodule Mobilizon.Events do
 
   """
   def create_comment(attrs \\ %{}) do
-    %Comment{}
-    |> Comment.changeset(attrs)
-    |> Repo.insert()
+    with {:ok, %Comment{} = comment} <-
+           %Comment{}
+           |> Comment.changeset(attrs)
+           |> Repo.insert(),
+         %Comment{} = comment <- Repo.preload(comment, [:actor, :in_reply_to_comment]) do
+      {:ok, comment}
+    end
   end
 
   @doc """

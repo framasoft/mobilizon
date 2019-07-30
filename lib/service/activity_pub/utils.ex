@@ -11,6 +11,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   """
 
   alias Mobilizon.Repo
+  alias Mobilizon.Addresses.Address
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Event
@@ -122,7 +123,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   """
   def insert_full_object(%{"object" => %{"type" => "Event"} = object_data})
       when is_map(object_data) do
-    with object_data <-
+    with {:ok, object_data} <-
            Converters.Event.as_to_model_data(object_data),
          {:ok, %Event{} = event} <- Events.create_event(object_data) do
       {:ok, event}
@@ -260,26 +261,21 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   """
   @spec make_event_data(
           String.t(),
-          String.t(),
+          map(),
           String.t(),
           String.t(),
           map(),
           list(),
-          list(),
-          map(),
-          String.t()
+          map()
         ) :: map()
   def make_event_data(
         actor,
-        to,
+        %{to: to, cc: cc} = _audience,
         title,
         content_html,
         picture \\ nil,
         tags \\ [],
-        # _cw \\ nil,
-        cc \\ [],
-        metadata \\ %{},
-        category \\ ""
+        metadata \\ %{}
       ) do
     Logger.debug("Making event data")
     uuid = Ecto.UUID.generate()
@@ -287,19 +283,56 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     res = %{
       "type" => "Event",
       "to" => to,
-      "cc" => cc,
+      "cc" => cc || [],
       "content" => content_html,
       "name" => title,
-      # "summary" => cw,
-      "begins_on" => metadata.begins_on,
-      "category" => category,
+      "startTime" => metadata.begins_on,
+      "category" => metadata.category,
       "actor" => actor,
       "id" => Routes.page_url(Endpoint, :event, uuid),
       "uuid" => uuid,
-      "tag" => tags |> Enum.uniq()
+      "tag" =>
+        tags |> Enum.uniq() |> Enum.map(fn tag -> %{"type" => "Hashtag", "name" => "##{tag}"} end)
     }
 
+    res =
+      if is_nil(metadata.physical_address),
+        do: res,
+        else: Map.put(res, "location", make_address_data(metadata.physical_address))
+
     if is_nil(picture), do: res, else: Map.put(res, "attachment", [make_picture_data(picture)])
+  end
+
+  def make_address_data(%Address{} = address) do
+    res = %{
+      "type" => "Place",
+      "name" => address.description,
+      "id" => address.url,
+      "address" => %{
+        "type" => "PostalAddress",
+        "streetAddress" => address.street,
+        "postalCode" => address.postal_code,
+        "addressLocality" => address.locality,
+        "addressRegion" => address.region,
+        "addressCountry" => address.country
+      }
+    }
+
+    if is_nil(address.geom) do
+      res
+    else
+      Map.put(res, "geo", %{
+        "type" => "GeoCoordinates",
+        "latitude" => address.geom.coordinates |> elem(0),
+        "longitude" => address.geom.coordinates |> elem(1)
+      })
+    end
+  end
+
+  def make_address_data(address) do
+    Address
+    |> struct(address)
+    |> make_address_data()
   end
 
   @doc """

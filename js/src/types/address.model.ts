@@ -1,4 +1,5 @@
 export interface IAddress {
+  id: number;
   description: string;
   floor: string;
   street: string;

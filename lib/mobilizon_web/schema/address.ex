@@ -14,6 +14,7 @@ defmodule MobilizonWeb.Schema.AddressType do
     field(:region, :string)
     field(:country, :string)
     field(:description, :string)
+    field(:url, :string)
   end
 
   object :phone_address do
@@ -26,10 +27,25 @@ defmodule MobilizonWeb.Schema.AddressType do
     field(:info, :string)
   end
 
+  input_object :address_input do
+    # Either a full picture object
+    field(:geom, :point, description: "The geocoordinates for the point where this address is")
+    field(:floor, :string, description: "The floor this event is at")
+    field(:street, :string, description: "The address's street name (with number)")
+    field(:locality, :string, description: "The address's locality")
+    field(:postal_code, :string)
+    field(:region, :string)
+    field(:country, :string)
+    field(:description, :string)
+    field(:url, :string)
+  end
+
   object :address_queries do
     @desc "Search for an address"
     field :search_address, type: list_of(:address) do
       arg(:query, non_null(:string))
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
 
       resolve(&Resolvers.Address.search/3)
     end

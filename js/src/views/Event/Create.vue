@@ -14,6 +14,8 @@
 
         <tag-input v-model="event.tags" :data="tags" path="title" />
 
+        <address-auto-complete v-model="event.physicalAddress" />
+
         <date-time-picker v-model="event.beginsOn" :label="$gettext('Starts on…')" :step="15"/>
         <date-time-picker v-model="event.endsOn" :label="$gettext('Ends on…')" :step="15" />
 
@@ -57,9 +59,10 @@ import DateTimePicker from '@/components/Event/DateTimePicker.vue';
 import TagInput from '@/components/Event/TagInput.vue';
 import { TAGS } from '@/graphql/tags';
 import { ITag } from '@/types/tag.model';
+import AddressAutoComplete from '@/components/Event/AddressAutoComplete.vue';
 
 @Component({
-  components: { TagInput, DateTimePicker, PictureUpload, Editor },
+  components: { AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor },
   apollo: {
     loggedPerson: {
       query: LOGGED_PERSON,
@@ -134,9 +137,13 @@ export default class CreateEvent extends Vue {
     const obj = {
       organizerActorId: this.loggedPerson.id,
       beginsOn: this.event.beginsOn.toISOString(),
-      tags: this.event.tags.map((tag: ITag) => tag.title),
+      tags: this.event.tags.map((tag: ITag) => tag.title)
     };
-    const res = Object.assign({}, this.event, obj);
+    let res = Object.assign({}, this.event, obj);
+
+    if (this.event.physicalAddress) {
+      delete this.event.physicalAddress['__typename'];
+    }
 
     /**
      * Transform picture files

@@ -1,6 +1,7 @@
 defmodule Mobilizon.AddressesTest do
   use Mobilizon.DataCase
 
+  import Mobilizon.Factory
   alias Mobilizon.Addresses
 
   describe "addresses" do
@@ -37,22 +38,13 @@ defmodule Mobilizon.AddressesTest do
     #   geom: nil
     # }
 
-    def address_fixture(attrs \\ %{}) do
-      {:ok, address} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Addresses.create_address()
-
-      address
-    end
-
     test "list_addresses/0 returns all addresses" do
-      address = address_fixture()
+      address = insert(:address)
       assert [address.id] == Addresses.list_addresses() |> Enum.map(& &1.id)
     end
 
     test "get_address!/1 returns the address with given id" do
-      address = address_fixture()
+      address = insert(:address)
       assert Addresses.get_address!(address.id).id == address.id
     end
 
@@ -68,7 +60,7 @@ defmodule Mobilizon.AddressesTest do
     end
 
     test "update_address/2 with valid data updates the address" do
-      address = address_fixture()
+      address = insert(:address)
       assert {:ok, %Address{} = address} = Addresses.update_address(address, @update_attrs)
       assert address.country == "some updated addressCountry"
       assert address.locality == "some updated addressLocality"
@@ -80,13 +72,13 @@ defmodule Mobilizon.AddressesTest do
     end
 
     test "delete_address/1 deletes the address" do
-      address = address_fixture()
+      address = insert(:address)
       assert {:ok, %Address{}} = Addresses.delete_address(address)
       assert_raise Ecto.NoResultsError, fn -> Addresses.get_address!(address.id) end
     end
 
     test "change_address/1 returns a address changeset" do
-      address = address_fixture()
+      address = insert(:address)
       assert %Ecto.Changeset{} = Addresses.change_address(address)
     end
 

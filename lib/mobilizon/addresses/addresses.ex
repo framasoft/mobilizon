@@ -51,6 +51,21 @@ defmodule Mobilizon.Addresses do
   def get_address!(id), do: Repo.get!(Address, id)
 
   @doc """
+  Gets a single address by it's url
+
+  ## Examples
+
+      iex> get_address_by_url("https://mobilizon.social/addresses/4572")
+      %Address{}
+
+      iex> get_address_by_url("https://mobilizon.social/addresses/099")
+      nil
+  """
+  def get_address_by_url(url) do
+    Repo.get_by(Address, url: url)
+  end
+
+  @doc """
   Creates a address.
 
   ## Examples
@@ -163,7 +178,7 @@ defmodule Mobilizon.Addresses do
   We only look at the description for now, and eventually order by object distance
   """
   @spec search_addresses(String.t(), list()) :: list(Address.t())
-  def search_addresses(search, options) do
+  def search_addresses(search, options \\ []) do
     limit = Keyword.get(options, :limit, 5)
 
     query = from(a in Address, where: ilike(a.description, ^"%#{search}%"), limit: ^limit)
@@ -181,7 +196,7 @@ defmodule Mobilizon.Addresses do
         do: from(a in query, where: ilike(a.country, ^"%#{country}%")),
         else: query
 
-    Repo.all(query)
+    if Keyword.get(options, :single, false) == true, do: Repo.one(query), else: Repo.all(query)
   end
 
   @doc """

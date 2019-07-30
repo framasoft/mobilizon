@@ -52,7 +52,7 @@ defmodule Mobilizon.Service.Federator do
     Logger.debug(inspect(params))
 
     case Transmogrifier.handle_incoming(params) do
-      {:ok, activity} ->
+      {:ok, activity, _} ->
         {:ok, activity}
 
       %Activity{} ->

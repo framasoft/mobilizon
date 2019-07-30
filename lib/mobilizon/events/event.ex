@@ -84,9 +84,9 @@ defmodule Mobilizon.Events.Event do
       :online_address,
       :phone_address,
       :uuid,
-      :picture_id
+      :picture_id,
+      :physical_address_id
     ])
-    |> cast_assoc(:physical_address)
     |> validate_required([
       :title,
       :begins_on,
