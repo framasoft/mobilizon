@@ -279,6 +279,28 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
     end
   end
 
+  describe "/relay" do
+    test "with the relay active, it returns the relay user", %{conn: conn} do
+      res =
+        conn
+        |> get(activity_pub_path(conn, :relay))
+        |> json_response(200)
+
+      assert res["id"] =~ "/relay"
+    end
+
+    test "with the relay disabled, it returns 404", %{conn: conn} do
+      Mobilizon.CommonConfig.put([:instance, :allow_relay], false)
+
+      conn
+      |> get(activity_pub_path(conn, :relay))
+      |> json_response(404)
+      |> assert
+
+      Mobilizon.CommonConfig.put([:instance, :allow_relay], true)
+    end
+  end
+
   #
   #  describe "/@:preferred_username/following" do
   #    test "it returns the following in a collection", %{conn: conn} do

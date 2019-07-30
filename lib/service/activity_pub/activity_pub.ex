@@ -21,10 +21,11 @@ defmodule Mobilizon.Service.ActivityPub do
   alias Mobilizon.Actors.Follower
 
   alias Mobilizon.Service.Federator
-  alias Mobilizon.Service.HTTPSignatures
+  alias Mobilizon.Service.HTTPSignatures.Signature
 
   require Logger
   import Mobilizon.Service.ActivityPub.Utils
+  import Mobilizon.Service.ActivityPub.Visibility
 
   @doc """
   Get recipients for an activity or object
@@ -42,10 +43,6 @@ defmodule Mobilizon.Service.ActivityPub do
   def insert(map, local \\ true) when is_map(map) do
     with map <- lazy_put_activity_defaults(map),
          {:ok, object} <- insert_full_object(map) do
-      object_id = if is_map(map["object"]), do: map["object"]["id"], else: map["id"]
-
-      map = if local, do: Map.put(map, "id", "#{object_id}/activity"), else: map
-
       activity = %Activity{
         data: map,
         local: local,
@@ -94,7 +91,7 @@ defmodule Mobilizon.Service.ActivityPub do
          {:ok, _activity, %{url: object_url} = _object} <- Transmogrifier.handle_incoming(params) do
       case data["type"] do
         "Event" ->
-          {:ok, Events.get_event_by_url!(object_url)}
+          {:ok, Events.get_event_full_by_url!(object_url)}
 
         "Note" ->
           {:ok, Events.get_comment_full_from_url!(object_url)}
@@ -107,15 +104,17 @@ defmodule Mobilizon.Service.ActivityPub do
       end
     else
       {:existing_event, %Event{url: event_url}} ->
-        {:ok, Events.get_event_by_url!(event_url)}
+        {:ok, Events.get_event_full_by_url!(event_url)}
 
       {:existing_comment, %Comment{url: comment_url}} ->
         {:ok, Events.get_comment_full_from_url!(comment_url)}
 
-      {:existing_actor, %Actor{url: actor_url}} ->
+      {:existing_actor, {:ok, %Actor{url: actor_url}}} ->
         {:ok, Actors.get_actor_by_url!(actor_url, true)}
 
       e ->
+        require Logger
+        Logger.error(inspect(e))
         {:error, e}
     end
   end
@@ -137,24 +136,40 @@ defmodule Mobilizon.Service.ActivityPub do
              %{to: to, actor: actor, published: published, object: object},
              additional
            ),
-         :ok <- Logger.debug(inspect(create_data)),
          {:ok, activity, object} <- insert(create_data, local),
          :ok <- maybe_federate(activity) do
       # {:ok, actor} <- Actors.increase_event_count(actor) do
       {:ok, activity, object}
     else
       err ->
-        Logger.error("Something went wrong")
-        Logger.error(inspect(err))
+        Logger.error("Something went wrong while creating an activity")
+        Logger.debug(inspect(err))
         err
     end
   end
 
-  def accept(%{to: to, actor: actor, object: object} = params) do
+  def accept(%{to: to, actor: actor, object: object} = params, activity_follow_id \\ nil) do
     # only accept false as false value
     local = !(params[:local] == false)
 
-    with data <- %{"to" => to, "type" => "Accept", "actor" => actor, "object" => object},
+    with data <- %{
+           "to" => to,
+           "type" => "Accept",
+           "actor" => actor,
+           "object" => object,
+           "id" => activity_follow_id || get_url(object) <> "/activity"
+         },
+         {:ok, activity, object} <- insert(data, local),
+         :ok <- maybe_federate(activity) do
+      {:ok, activity, object}
+    end
+  end
+
+  def reject(%{to: to, actor: actor, object: object} = params) do
+    # only accept false as false value
+    local = !(params[:local] == false)
+
+    with data <- %{"to" => to, "type" => "Reject", "actor" => actor.url, "object" => object},
          {:ok, activity, object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity, object}
@@ -168,6 +183,7 @@ defmodule Mobilizon.Service.ActivityPub do
     with data <- %{
            "to" => to,
            "cc" => cc,
+           "id" => object["url"],
            "type" => "Update",
            "actor" => actor,
            "object" => object
@@ -215,55 +231,56 @@ defmodule Mobilizon.Service.ActivityPub do
   #   end
   # end
 
-  # def announce(
-  #       %Actor{} = actor,
-  #       object,
-  #       activity_id \\ nil,
-  #       local \\ true
-  #     ) do
-  #   #with true <- is_public?(object),
-  #        with announce_data <- make_announce_data(actor, object, activity_id),
-  #        {:ok, activity, object} <- insert(announce_data, local),
-  #       #  {:ok, object} <- add_announce_to_object(activity, object),
-  #        :ok <- maybe_federate(activity) do
-  #     {:ok, activity, object}
-  #   else
-  #     error -> {:error, error}
-  #   end
-  # end
+  def announce(
+        %Actor{} = actor,
+        object,
+        activity_id \\ nil,
+        local \\ true,
+        public \\ true
+      ) do
+    with true <- is_public?(object),
+         announce_data <- make_announce_data(actor, object, activity_id, public),
+         {:ok, activity, object} <- insert(announce_data, local),
+         :ok <- maybe_federate(activity) do
+      {:ok, activity, object}
+    else
+      error ->
+        {:error, error}
+    end
+  end
 
-  # def unannounce(
-  #       %Actor{} = actor,
-  #       object,
-  #       activity_id \\ nil,
-  #       local \\ true
-  #     ) do
-  #   with %Activity{} = announce_activity <- get_existing_announce(actor.ap_id, object),
-  #        unannounce_data <- make_unannounce_data(actor, announce_activity, activity_id),
-  #        {:ok, unannounce_activity, _object} <- insert(unannounce_data, local),
-  #        :ok <- maybe_federate(unannounce_activity),
-  #        {:ok, _activity} <- Repo.delete(announce_activity),
-  #        {:ok, object} <- remove_announce_from_object(announce_activity, object) do
-  #     {:ok, unannounce_activity, object}
-  #   else
-  #     _e -> {:ok, object}
-  #   end
-  # end
+  def unannounce(
+        %Actor{} = actor,
+        object,
+        activity_id \\ nil,
+        cancelled_activity_id \\ nil,
+        local \\ true
+      ) do
+    with announce_activity <- make_announce_data(actor, object, cancelled_activity_id),
+         unannounce_data <- make_unannounce_data(actor, announce_activity, activity_id),
+         {:ok, unannounce_activity, _object} <- insert(unannounce_data, local),
+         :ok <- maybe_federate(unannounce_activity) do
+      {:ok, unannounce_activity, object}
+    else
+      _e -> {:ok, object}
+    end
+  end
 
   @doc """
   Make an actor follow another
   """
   def follow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
-    with {:ok, %Follower{id: follow_id}} <- Actor.follow(followed, follower, true),
+    with {:ok, %Follower{url: follow_url}} <-
+           Actor.follow(followed, follower, activity_id, false),
          activity_follow_id <-
-           activity_id || "#{MobilizonWeb.Endpoint.url()}/follow/#{follow_id}/activity",
+           activity_id || follow_url,
          data <- make_follow_data(followed, follower, activity_follow_id),
          {:ok, activity, object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity, object}
     else
-      {err, _} when err in [:already_following, :suspended] ->
-        {:error, err}
+      {:error, err, msg} when err in [:already_following, :suspended] ->
+        {:error, msg}
     end
   end
 
@@ -271,18 +288,26 @@ defmodule Mobilizon.Service.ActivityPub do
   Make an actor unfollow another
   """
   @spec unfollow(Actor.t(), Actor.t(), String.t(), boolean()) :: {:ok, map()} | any()
-  def unfollow(%Actor{} = followed, %Actor{} = follower, activity_id \\ nil, local \\ true) do
+  def unfollow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
     with {:ok, %Follower{id: follow_id}} <- Actor.unfollow(followed, follower),
          # We recreate the follow activity
-         data <- make_follow_data(followed, follower, follow_id),
+         data <-
+           make_follow_data(
+             followed,
+             follower,
+             "#{MobilizonWeb.Endpoint.url()}/follow/#{follow_id}/activity"
+           ),
          {:ok, follow_activity, _object} <- insert(data, local),
-         unfollow_data <- make_unfollow_data(follower, followed, follow_activity, activity_id),
+         activity_unfollow_id <-
+           activity_id || "#{MobilizonWeb.Endpoint.url()}/unfollow/#{follow_id}/activity",
+         unfollow_data <-
+           make_unfollow_data(follower, followed, follow_activity, activity_unfollow_id),
          {:ok, activity, object} <- insert(unfollow_data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity, object}
     else
       err ->
-        Logger.error(inspect(err))
+        Logger.debug("Error while unfollowing an actor #{inspect(err)}")
         err
     end
   end
@@ -294,7 +319,8 @@ defmodule Mobilizon.Service.ActivityPub do
       "type" => "Delete",
       "actor" => actor.url,
       "object" => url,
-      "to" => [actor.url <> "/followers", "https://www.w3.org/ns/activitystreams#Public"]
+      "to" => [actor.url <> "/followers", "https://www.w3.org/ns/activitystreams#Public"],
+      "id" => url <> "/delete"
     }
 
     with {:ok, _} <- Events.delete_event(event),
@@ -309,6 +335,7 @@ defmodule Mobilizon.Service.ActivityPub do
       "type" => "Delete",
       "actor" => actor.url,
       "object" => url,
+      "id" => url <> "/delete",
       "to" => [actor.url <> "/followers", "https://www.w3.org/ns/activitystreams#Public"]
     }
 
@@ -324,6 +351,7 @@ defmodule Mobilizon.Service.ActivityPub do
       "type" => "Delete",
       "actor" => url,
       "object" => url,
+      "id" => url <> "/delete",
       "to" => [url <> "/followers", "https://www.w3.org/ns/activitystreams#Public"]
     }
 
@@ -366,11 +394,11 @@ defmodule Mobilizon.Service.ActivityPub do
 
       # Request returned 410
       {:error, :actor_deleted} ->
+        Logger.info("Actor was deleted")
         {:error, :actor_deleted}
 
       e ->
-        Logger.error("Failed to make actor from url")
-        Logger.error(inspect(e))
+        Logger.warn("Failed to make actor from url")
         {:error, e}
     end
   end
@@ -414,10 +442,18 @@ defmodule Mobilizon.Service.ActivityPub do
   """
   def publish(actor, activity) do
     Logger.debug("Publishing an activity")
+    Logger.debug(inspect(activity))
+
+    public = is_public?(activity)
+
+    if public && Mobilizon.CommonConfig.get([:instance, :allow_relay]) do
+      Logger.info(fn -> "Relaying #{activity.data["id"]} out" end)
+      Mobilizon.Service.ActivityPub.Relay.publish(activity)
+    end
 
     followers =
       if actor.followers_url in activity.recipients do
-        Actor.get_full_followers(actor) |> Enum.filter(fn follower -> is_nil(follower.domain) end)
+        Actor.get_full_external_followers(actor)
       else
         []
       end
@@ -448,15 +484,16 @@ defmodule Mobilizon.Service.ActivityPub do
     Logger.info("Federating #{id} to #{inbox}")
     %URI{host: host, path: path} = URI.parse(inbox)
 
-    digest = HTTPSignatures.build_digest(json)
-    date = HTTPSignatures.generate_date_header()
-    request_target = HTTPSignatures.generate_request_target("POST", path)
+    digest = Signature.build_digest(json)
+    date = Signature.generate_date_header()
+    # request_target = Signature.generate_request_target("POST", path)
 
     signature =
-      HTTPSignatures.sign(actor, %{
+      Signature.sign(actor, %{
         host: host,
         "content-length": byte_size(json),
-        "(request-target)": request_target,
+        # TODO : Look me up in depth why Pleroma handles this inside lib/mobilizon_web/http_signature.ex
+        # "(request-target)": request_target,
         digest: digest,
         date: date
       })
@@ -478,20 +515,27 @@ defmodule Mobilizon.Service.ActivityPub do
   @spec fetch_and_prepare_actor_from_url(String.t()) :: {:ok, struct()} | {:error, atom()} | any()
   defp fetch_and_prepare_actor_from_url(url) do
     Logger.debug("Fetching and preparing actor from url")
+    Logger.debug(inspect(url))
 
-    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           HTTPoison.get(url, [Accept: "application/activity+json"], follow_redirect: true),
-         {:ok, data} <- Jason.decode(body) do
-      actor_data_from_actor_object(data)
-    else
-      # Actor is gone, probably deleted
-      {:ok, %HTTPoison.Response{status_code: 410}} ->
-        {:error, :actor_deleted}
+    res =
+      with %HTTPoison.Response{status_code: 200, body: body} <-
+             HTTPoison.get!(url, [Accept: "application/activity+json"], follow_redirect: true),
+           :ok <- Logger.debug("response okay, now decoding json"),
+           {:ok, data} <- Jason.decode(body) do
+        Logger.debug("Got activity+json response at actor's endpoint, now converting data")
+        actor_data_from_actor_object(data)
+      else
+        # Actor is gone, probably deleted
+        {:ok, %HTTPoison.Response{status_code: 410}} ->
+          Logger.info("Response HTTP 410")
+          {:error, :actor_deleted}
 
-      e ->
-        Logger.error("Could not decode actor at fetch #{url}, #{inspect(e)}")
-        e
-    end
+        e ->
+          Logger.warn("Could not decode actor at fetch #{url}, #{inspect(e)}")
+          {:error, e}
+      end
+
+    res
   end
 
   @doc """

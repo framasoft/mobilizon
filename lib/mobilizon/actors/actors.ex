@@ -297,7 +297,7 @@ defmodule Mobilizon.Actors do
         {:ok, actor}
 
       err ->
-        Logger.error(inspect(err))
+        Logger.debug(inspect(err))
         {:error, err}
     end
   end
@@ -475,16 +475,16 @@ defmodule Mobilizon.Actors do
   @spec get_or_fetch_by_url(String.t(), bool()) :: {:ok, Actor.t()} | {:error, String.t()}
   def get_or_fetch_by_url(url, preload \\ false) do
     case get_actor_by_url(url, preload) do
-      {:ok, actor} ->
+      {:ok, %Actor{} = actor} ->
         {:ok, actor}
 
       _ ->
         case ActivityPub.make_actor_from_url(url, preload) do
-          {:ok, actor} ->
+          {:ok, %Actor{} = actor} ->
             {:ok, actor}
 
           _ ->
-            Logger.error("Could not fetch by AP id")
+            Logger.warn("Could not fetch by AP id")
             {:error, "Could not fetch by AP id"}
         end
     end
@@ -652,6 +652,18 @@ defmodule Mobilizon.Actors do
     rescue
       e in Ecto.InvalidChangesetError ->
         {:error, e.changeset}
+    end
+  end
+
+  def get_or_create_service_actor_by_url(url, preferred_username \\ "relay") do
+    case get_actor_by_url(url) do
+      {:ok, %Actor{} = actor} ->
+        {:ok, actor}
+
+      _ ->
+        %{url: url, preferred_username: preferred_username}
+        |> Actor.relay_creation()
+        |> Repo.insert()
     end
   end
 
@@ -895,12 +907,25 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
-  Get a follower by the followed actor and following actor
+  Get a follow by the followed actor and following actor
   """
   @spec get_follower(Actor.t(), Actor.t()) :: Follower.t()
   def get_follower(%Actor{id: followed_id}, %Actor{id: follower_id}) do
     Repo.one(
       from(f in Follower, where: f.target_actor_id == ^followed_id and f.actor_id == ^follower_id)
+    )
+  end
+
+  @doc """
+  Get a follow by the followed actor and following actor
+  """
+  @spec get_follow_by_url(String.t()) :: Follower.t()
+  def get_follow_by_url(url) do
+    Repo.one(
+      from(f in Follower,
+        where: f.url == ^url,
+        preload: [:actor, :target_actor]
+      )
     )
   end
 
@@ -1009,7 +1034,7 @@ defmodule Mobilizon.Actors do
 
       {:error, error} ->
         Logger.error("Error while removing an upload file")
-        Logger.error(inspect(error))
+        Logger.debug(inspect(error))
         {:ok, actor}
     end
   end

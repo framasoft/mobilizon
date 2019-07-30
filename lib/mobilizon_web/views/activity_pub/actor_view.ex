@@ -12,12 +12,12 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
     public_key = Mobilizon.Service.ActivityPub.Utils.pem_to_public_key_pem(actor.keys)
 
     %{
-      "id" => Actor.build_url(actor.preferred_username, :page),
-      "type" => "Person",
-      "following" => Actor.build_url(actor.preferred_username, :following),
-      "followers" => Actor.build_url(actor.preferred_username, :followers),
-      "inbox" => Actor.build_url(actor.preferred_username, :inbox),
-      "outbox" => Actor.build_url(actor.preferred_username, :outbox),
+      "id" => actor.url,
+      "type" => to_string(actor.type),
+      "following" => actor.following_url,
+      "followers" => actor.followers_url,
+      "inbox" => actor.inbox_url,
+      "outbox" => actor.outbox_url,
       "preferredUsername" => actor.preferred_username,
       "name" => actor.name,
       "summary" => actor.summary,

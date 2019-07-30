@@ -9,6 +9,7 @@ defmodule Mobilizon.Service.Formatter do
   """
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Actors
+  alias Mobilizon.Service.HTML
 
   @link_regex ~r"((?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~%:/?#[\]@!\$&'\(\)\*\+,;=.]+)|[0-9a-z+\-\.]+:[0-9a-z$-_.+!*'(),]+"ui
   @markdown_characters_regex ~r/(`|\*|_|{|}|[|]|\(|\)|#|\+|-|\.|!)/
@@ -87,8 +88,8 @@ defmodule Mobilizon.Service.Formatter do
     {html_escape(text, type), mentions, hashtags}
   end
 
-  def html_escape(_text, "text/html") do
-    #    HTML.filter_tags(text)
+  def html_escape(text, "text/html") do
+    HTML.filter_tags(text)
   end
 
   def html_escape(text, "text/plain") do

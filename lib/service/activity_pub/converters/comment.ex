@@ -84,7 +84,7 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Comment do
       "actor" => comment.actor.url,
       "attributedTo" => comment.actor.url,
       "uuid" => comment.uuid,
-      "id" => Routes.page_url(Endpoint, :comment, comment.uuid)
+      "id" => comment.url
     }
 
     if comment.in_reply_to_comment do
@@ -93,4 +93,10 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Comment do
       object
     end
   end
+end
+
+defimpl Mobilizon.Service.ActivityPub.Convertible, for: Mobilizon.Events.Comment do
+  alias Mobilizon.Service.ActivityPub.Converters.Comment, as: CommentConverter
+
+  defdelegate model_to_as(comment), to: CommentConverter
 end

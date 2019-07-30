@@ -32,7 +32,8 @@ defmodule Mobilizon.Events do
           :tracks,
           :tags,
           :participants,
-          :physical_address
+          :physical_address,
+          :picture
         ]
       )
       |> paginate(page, limit)
@@ -248,7 +249,8 @@ defmodule Mobilizon.Events do
           :tracks,
           :tags,
           :participants,
-          :physical_address
+          :physical_address,
+          :picture
         ]
       )
     )

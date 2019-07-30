@@ -9,6 +9,8 @@ defmodule MobilizonWeb.API.Events do
   alias Mobilizon.Service.ActivityPub.Utils, as: ActivityPubUtils
   alias MobilizonWeb.API.Utils
 
+  @visibility %{"PUBLIC" => :public, "PRIVATE" => :private}
+
   @doc """
   Create an event
   """

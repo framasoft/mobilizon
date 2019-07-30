@@ -18,6 +18,10 @@ defmodule MobilizonWeb.Router do
     plug(MobilizonWeb.HTTPSignaturePlug)
   end
 
+  pipeline :relay do
+    plug(:accepts, ["activity-json", "json"])
+  end
+
   pipeline :activity_pub do
     plug(:accepts, ["activity-json"])
   end
@@ -94,6 +98,13 @@ defmodule MobilizonWeb.Router do
   scope "/", MobilizonWeb do
     pipe_through(:activity_pub_signature)
     post("/@:name/inbox", ActivityPubController, :inbox)
+    post("/inbox", ActivityPubController, :inbox)
+  end
+
+  scope "/relay", MobilizonWeb do
+    pipe_through(:relay)
+
+    get("/", ActivityPubController, :relay)
     post("/inbox", ActivityPubController, :inbox)
   end
 

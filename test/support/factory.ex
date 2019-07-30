@@ -39,6 +39,7 @@ defmodule Mobilizon.Factory do
       url: Actor.build_url(preferred_username, :page),
       followers_url: Actor.build_url(preferred_username, :followers),
       following_url: Actor.build_url(preferred_username, :following),
+      inbox_url: Actor.build_url(preferred_username, :inbox),
       outbox_url: Actor.build_url(preferred_username, :outbox),
       user: nil
     }
@@ -54,9 +55,13 @@ defmodule Mobilizon.Factory do
   end
 
   def follower_factory do
+    uuid = Ecto.UUID.generate()
+
     %Mobilizon.Actors.Follower{
       target_actor: build(:actor),
-      actor: build(:actor)
+      actor: build(:actor),
+      id: uuid,
+      url: "#{MobilizonWeb.Endpoint.url()}/follows/#{uuid}"
     }
   end
 
@@ -118,6 +123,7 @@ defmodule Mobilizon.Factory do
       visibility: :public,
       tags: build_list(3, :tag),
       url: Routes.page_url(Endpoint, :event, uuid),
+      picture: insert(:picture),
       uuid: uuid
     }
   end

@@ -163,7 +163,6 @@ defmodule Mobilizon.Actors.Actor do
       ])
       |> validate_required([
         :url,
-        :outbox_url,
         :inbox_url,
         :type,
         :domain,
@@ -182,6 +181,44 @@ defmodule Mobilizon.Actors.Actor do
     Logger.debug("Remote actor creation")
     Logger.debug(inspect(changes))
     changes
+  end
+
+  def relay_creation(%{url: url, preferred_username: preferred_username} = _params) do
+    key = :public_key.generate_key({:rsa, 2048, 65_537})
+    entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
+    pem = [entry] |> :public_key.pem_encode() |> String.trim_trailing()
+
+    vars = %{
+      "name" => Mobilizon.CommonConfig.get([:instance, :name], "Mobilizon"),
+      "summary" =>
+        Mobilizon.CommonConfig.get(
+          [:instance, :description],
+          "An internal service actor for this Mobilizon instance"
+        ),
+      "url" => url,
+      "keys" => pem,
+      "preferred_username" => preferred_username,
+      "domain" => nil,
+      "inbox_url" => "#{MobilizonWeb.Endpoint.url()}/inbox",
+      "followers_url" => "#{url}/followers",
+      "following_url" => "#{url}/following",
+      "shared_inbox_url" => "#{MobilizonWeb.Endpoint.url()}/inbox",
+      "type" => :Application
+    }
+
+    cast(%Actor{}, vars, [
+      :type,
+      :name,
+      :summary,
+      :url,
+      :keys,
+      :preferred_username,
+      :domain,
+      :inbox_url,
+      :followers_url,
+      :following_url,
+      :shared_inbox_url
+    ])
   end
 
   @doc """
@@ -239,6 +276,14 @@ defmodule Mobilizon.Actors.Actor do
     |> put_change(
       :outbox_url,
       build_url(username, :outbox)
+    )
+    |> put_change(
+      :followers_url,
+      build_url(username, :followers)
+    )
+    |> put_change(
+      :following_url,
+      build_url(username, :following)
     )
     |> put_change(
       :inbox_url,
@@ -325,16 +370,28 @@ defmodule Mobilizon.Actors.Actor do
     %{total: Task.await(total), elements: Task.await(elements)}
   end
 
-  @spec get_full_followers(struct()) :: list()
-  def get_full_followers(%Actor{id: actor_id} = _actor) do
-    Repo.all(
-      from(
-        a in Actor,
-        join: f in Follower,
-        on: a.id == f.actor_id,
-        where: f.target_actor_id == ^actor_id
-      )
+  defp get_full_followers_query(%Actor{id: actor_id} = _actor) do
+    from(
+      a in Actor,
+      join: f in Follower,
+      on: a.id == f.actor_id,
+      where: f.target_actor_id == ^actor_id
     )
+  end
+
+  @spec get_full_followers(struct()) :: list()
+  def get_full_followers(%Actor{} = actor) do
+    actor
+    |> get_full_followers_query()
+    |> Repo.all()
+  end
+
+  @spec get_full_external_followers(struct()) :: list()
+  def get_full_external_followers(%Actor{} = actor) do
+    actor
+    |> get_full_followers_query()
+    |> where([a], not is_nil(a.domain))
+    |> Repo.all()
   end
 
   @doc """
@@ -404,18 +461,19 @@ defmodule Mobilizon.Actors.Actor do
   Make an actor follow another
   """
   @spec follow(struct(), struct(), boolean()) :: Follower.t() | {:error, String.t()}
-  def follow(%Actor{} = followed, %Actor{} = follower, approved \\ true) do
+  def follow(%Actor{} = followed, %Actor{} = follower, url \\ nil, approved \\ true) do
     with {:suspended, false} <- {:suspended, followed.suspended},
          # Check if followed has blocked follower
          {:already_following, false} <- {:already_following, following?(follower, followed)} do
-      do_follow(follower, followed, approved)
+      do_follow(follower, followed, approved, url)
     else
       {:already_following, %Follower{}} ->
-        {:error,
+        {:error, :already_following,
          "Could not follow actor: you are already following #{followed.preferred_username}"}
 
       {:suspended, _} ->
-        {:error, "Could not follow actor: #{followed.preferred_username} has been suspended"}
+        {:error, :suspended,
+         "Could not follow actor: #{followed.preferred_username} has been suspended"}
     end
   end
 
@@ -433,13 +491,20 @@ defmodule Mobilizon.Actors.Actor do
     end
   end
 
-  @spec do_follow(struct(), struct(), boolean) ::
+  @spec do_follow(struct(), struct(), boolean(), String.t()) ::
           {:ok, Follower.t()} | {:error, Ecto.Changeset.t()}
-  defp do_follow(%Actor{} = follower, %Actor{} = followed, approved) do
+  defp do_follow(%Actor{} = follower, %Actor{} = followed, approved, url) do
+    Logger.info(
+      "Making #{follower.preferred_username} follow #{followed.preferred_username} (approved: #{
+        approved
+      })"
+    )
+
     Actors.create_follower(%{
       "actor_id" => follower.id,
       "target_actor_id" => followed.id,
-      "approved" => approved
+      "approved" => approved,
+      "url" => url
     })
   end
 

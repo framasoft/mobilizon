@@ -6,6 +6,11 @@
     <div v-if="$apollo.loading">Loading...</div>
     <div class="columns is-centered" v-else>
       <form class="column is-two-thirds-desktop" @submit="createEvent">
+        <h2 class="subtitle">
+          <translate>
+            General informations
+          </translate>
+        </h2>
         <picture-upload v-model="pictureFile" />
 
         <b-field :label="$gettext('Title')">
@@ -34,7 +39,28 @@
           </b-select>
         </b-field>
 
-        <button class="button is-primary">
+        <h2 class="subtitle">
+          <translate>
+            Visibility
+          </translate>
+        </h2>
+          <label class="label">{{ $gettext('Event visibility') }}</label>
+          <div class="field">
+            <b-radio v-model="event.visibility"
+                     name="name"
+                     :native-value="EventVisibility.PUBLIC">
+              <translate>Visible everywhere on the web (public)</translate>
+            </b-radio>
+          </div>
+          <div class="field">
+            <b-radio v-model="event.visibility"
+                     name="name"
+                     :native-value="EventVisibility.PRIVATE">
+              <translate>Only accessible through link and search (private)</translate>
+            </b-radio>
+          </div>
+
+          <button class="button is-primary">
           <translate>Create my event</translate>
         </button>
       </form>
@@ -60,6 +86,7 @@ import TagInput from '@/components/Event/TagInput.vue';
 import { TAGS } from '@/graphql/tags';
 import { ITag } from '@/types/tag.model';
 import AddressAutoComplete from '@/components/Event/AddressAutoComplete.vue';
+import { EventVisibility } from '@/types/event.model';
 
 @Component({
   components: { AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor },
@@ -79,6 +106,7 @@ export default class CreateEvent extends Vue {
   categories: string[] = Object.keys(Category);
   event: IEvent = new EventModel();
   pictureFile: File | null = null;
+  EventVisibility = EventVisibility;
 
   created() {
     const now = new Date();

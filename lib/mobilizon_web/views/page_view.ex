@@ -46,24 +46,8 @@ defmodule MobilizonWeb.PageView do
   end
 
   def render("event.activity-json", %{conn: %{assigns: %{object: event}}}) do
-    event = Mobilizon.Service.ActivityPub.Converters.Event.model_to_as(event)
-    {:ok, html, []} = Earmark.as_html(event["summary"])
-
-    %{
-      "type" => "Event",
-      "attributedTo" => event["actor"],
-      "id" => event["id"],
-      "name" => event["title"],
-      "category" => event["category"],
-      "content" => html,
-      "source" => %{
-        "content" => event["summary"],
-        "mediaType" => "text/markdown"
-      },
-      "mediaType" => "text/html",
-      "published" => event["publish_at"],
-      "updated" => event["updated_at"]
-    }
+    event
+    |> Mobilizon.Service.ActivityPub.Converters.Event.model_to_as()
     |> Map.merge(Utils.make_json_ld_header())
   end
 

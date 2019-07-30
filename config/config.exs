@@ -16,6 +16,7 @@ config :mobilizon, :instance,
   hostname: System.get_env("MOBILIZON_INSTANCE_HOST") || "localhost",
   registrations_open: System.get_env("MOBILIZON_INSTANCE_REGISTRATIONS_OPEN") || false,
   repository: Mix.Project.config()[:source_url],
+  allow_relay: true,
   remote_limit: 100_000,
   upload_limit: 16_000_000,
   avatar_upload_limit: 2_000_000,
@@ -108,6 +109,9 @@ config :auto_linker,
 
 config :phoenix, :format_encoders, json: Jason, "activity-json": Jason
 config :phoenix, :json_library, Jason
+
+config :http_signatures,
+  adapter: Mobilizon.Service.HTTPSignatures.Signature
 
 config :mobilizon, Mobilizon.Service.Geospatial.Nominatim,
   endpoint:

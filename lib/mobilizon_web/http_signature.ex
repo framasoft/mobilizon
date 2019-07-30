@@ -10,7 +10,6 @@ defmodule MobilizonWeb.HTTPSignaturePlug do
   Plug to check HTTP Signatures on every incoming request
   """
 
-  alias Mobilizon.Service.HTTPSignatures
   import Plug.Conn
   require Logger
 
@@ -23,32 +22,30 @@ defmodule MobilizonWeb.HTTPSignaturePlug do
   end
 
   def call(conn, _opts) do
-    actor = conn.params["actor"]
-
-    Logger.debug(fn ->
-      "Checking sig for #{actor}"
-    end)
-
     [signature | _] = get_req_header(conn, "signature")
 
-    cond do
-      String.contains?(signature, actor) ->
-        conn =
-          conn
-          |> put_req_header(
-            "(request-target)",
-            String.downcase("#{conn.method}") <> " #{conn.request_path}"
-          )
-
-        assign(conn, :valid_signature, HTTPSignatures.validate_conn(conn))
-
-      signature ->
-        Logger.debug("Signature not from actor")
-        assign(conn, :valid_signature, false)
-
-      true ->
-        Logger.debug("No signature header!")
+    if signature do
+      # set (request-target) header to the appropriate value
+      # we also replace the digest header with the one we computed
+      conn =
         conn
+        |> put_req_header(
+          "(request-target)",
+          String.downcase("#{conn.method}") <> " #{conn.request_path}"
+        )
+
+      conn =
+        if conn.assigns[:digest] do
+          conn
+          |> put_req_header("digest", conn.assigns[:digest])
+        else
+          conn
+        end
+
+      assign(conn, :valid_signature, HTTPSignatures.validate_conn(conn))
+    else
+      Logger.debug("No signature header!")
+      conn
     end
   end
 end

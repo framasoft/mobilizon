@@ -52,7 +52,29 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Address do
   """
   @impl Converter
   @spec model_to_as(AddressModel.t()) :: map()
-  def model_to_as(%AddressModel{} = _address) do
-    nil
+  def model_to_as(%AddressModel{} = address) do
+    res = %{
+      "type" => "Place",
+      "name" => address.description,
+      "id" => address.url,
+      "address" => %{
+        "type" => "PostalAddress",
+        "streetAddress" => address.street,
+        "postalCode" => address.postal_code,
+        "addressLocality" => address.locality,
+        "addressRegion" => address.region,
+        "addressCountry" => address.country
+      }
+    }
+
+    if is_nil(address.geom) do
+      res
+    else
+      Map.put(res, "geo", %{
+        "type" => "GeoCoordinates",
+        "latitude" => address.geom.coordinates |> elem(0),
+        "longitude" => address.geom.coordinates |> elem(1)
+      })
+    end
   end
 end
