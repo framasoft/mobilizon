@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Fri Jul 26 2019 11:28:32 GMT+0200 (GMT+02:00)
+# timestamp: Mon Jul 29 2019 15:24:10 GMT+0200 (GMT+02:00)
 
 schema {
   query: RootQueryType
@@ -103,6 +103,25 @@ enum ActorType {
 }
 
 type Address {
+  country: String
+  description: String
+
+  """The floor this event is at"""
+  floor: String
+
+  """The geocoordinates for the point where this address is"""
+  geom: Point
+
+  """The address's locality"""
+  locality: String
+  postalCode: String
+  region: String
+
+  """The address's street name (with number)"""
+  street: String
+}
+
+input AddressInput {
   country: String
   description: String
 
@@ -262,7 +281,7 @@ type Event {
   """The Event UUID"""
   uuid: UUID
 
-  """The event's visibility"""
+  """The event's  visibility"""
   visibility: EventVisibility
 }
 
@@ -675,6 +694,7 @@ type RootMutationType {
     onlineAddress: String
     organizerActorId: ID!
     phoneAddress: String
+    physicalAddress: AddressInput
 
     """
     The picture for the event, either as an object or directly the ID of an existing Picture
@@ -891,7 +911,7 @@ type RootQueryType {
   reverseGeocode(latitude: Float!, longitude: Float!): [Address]
 
   """Search for an address"""
-  searchAddress(query: String!): [Address]
+  searchAddress(limit: Int = 10, page: Int = 1, query: String!): [Address]
 
   """Search events"""
   searchEvents(limit: Int = 10, page: Int = 1, search: String!): Events

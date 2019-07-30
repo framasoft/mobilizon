@@ -22,7 +22,7 @@ defmodule MobilizonWeb.Schema.EventType do
     field(:begins_on, :datetime, description: "Datetime for when the event begins")
     field(:ends_on, :datetime, description: "Datetime for when the event ends")
     field(:status, :event_status, description: "Status of the event")
-    field(:visibility, :event_visibility, description: "The event's visibility")
+    field(:visibility, :event_visibility, description: "The event's  visibility")
 
     field(:picture, :picture,
       description: "The event's picture",
@@ -132,6 +132,7 @@ defmodule MobilizonWeb.Schema.EventType do
       arg(:phone_address, :string)
       arg(:organizer_actor_id, non_null(:id))
       arg(:category, non_null(:string))
+      arg(:physical_address, :address_input)
 
       resolve(&Event.create_event/3)
     end

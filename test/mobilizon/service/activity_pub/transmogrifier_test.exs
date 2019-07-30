@@ -12,7 +12,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
-  alias Mobilizon.Events.Comment
+  alias Mobilizon.Events.{Comment, Event}
   alias Mobilizon.Service.ActivityPub.Utils
   alias Mobilizon.Service.ActivityPub.Transmogrifier
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
@@ -21,7 +21,51 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     HTTPoison.start()
   end
 
-  describe "handle_incoming" do
+  describe "handle incoming events" do
+    test "it works for incoming events" do
+      data = File.read!("test/fixtures/mobilizon-post-activity.json") |> Jason.decode!()
+
+      {:ok, %Mobilizon.Activity{data: data, local: false}, %Event{} = event} =
+        Transmogrifier.handle_incoming(data)
+
+      assert data["id"] ==
+               "https://event1.tcit.fr/@tcit/events/109ccdfd-ee3e-46e1-a877-6c228763df0c/activity"
+
+      assert data["to"] == ["https://www.w3.org/ns/activitystreams#Public"]
+      #
+      #      assert data["cc"] == [
+      #               "https://framapiaf.org/users/admin/followers",
+      #               "http://localtesting.pleroma.lol/users/lain"
+      #             ]
+
+      assert data["actor"] == "https://event1.tcit.fr/@tcit"
+
+      object = data["object"]
+
+      assert object["id"] ==
+               "https://event1.tcit.fr/@tcit/events/109ccdfd-ee3e-46e1-a877-6c228763df0c"
+
+      assert object["to"] == ["https://www.w3.org/ns/activitystreams#Public"]
+
+      #      assert object["cc"] == [
+      #               "https://framapiaf.org/users/admin/followers",
+      #               "http://localtesting.pleroma.lol/users/lain"
+      #             ]
+
+      assert object["actor"] == "https://event1.tcit.fr/@tcit"
+      assert object["location"]["name"] == "Locaux de Framasoft"
+      assert object["attributedTo"] == "https://event1.tcit.fr/@tcit"
+
+      assert event.physical_address.street == "10 Rue Jangot"
+
+      assert event.physical_address.url ==
+               "https://event1.tcit.fr/address/eeecc11d-0030-43e8-a897-6422876372jd"
+
+      {:ok, %Actor{}} = Actors.get_actor_by_url(object["actor"])
+    end
+  end
+
+  describe "handle incoming notices" do
     # test "it ignores an incoming comment if we already have it" do
     #   comment = insert(:comment)
 
@@ -37,7 +81,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     #     |> Jason.decode!()
     #     |> Map.put("object", activity["object"])
 
-    #   {:ok, returned_activity} = Transmogrifier.handle_incoming(data)
+    #   {:ok, returned_activity, _} = Transmogrifier.handle_incoming(data)
 
     #   assert activity == returned_activity.data
     # end
@@ -55,7 +99,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     #     data
     #     |> Map.put("object", object)
 
-    #   {:ok, returned_activity} = Transmogrifier.handle_incoming(data)
+    #   {:ok, returned_activity, _} = Transmogrifier.handle_incoming(data)
 
     #   assert activity =
     #            Activity.get_create_activity_by_object_ap_id(
@@ -71,7 +115,8 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     test "it works for incoming notices" do
       data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
 
-      {:ok, %Mobilizon.Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
+      {:ok, %Mobilizon.Activity{data: data, local: false}, _} =
+        Transmogrifier.handle_incoming(data)
 
       assert data["id"] == "https://framapiaf.org/users/admin/statuses/99512778738411822/activity"
 
@@ -105,7 +150,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     test "it works for incoming notices with hashtags" do
       data = File.read!("test/fixtures/mastodon-post-activity-hashtag.json") |> Jason.decode!()
 
-      {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
+      {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
       assert Enum.at(data["object"]["tag"], 2) == "moo"
     end
 
@@ -113,7 +158,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     #       data =
     #         File.read!("test/fixtures/mastodon-post-activity-contentmap.json") |> Jason.decode!()
 
-    #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
+    #       {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
 
     #       assert data["object"]["content"] ==
     #                "<p><span class=\"h-card\"><a href=\"http://localtesting.pleroma.lol/users/lain\" class=\"u-url mention\">@<span>lain</span></a></span></p>"
@@ -122,7 +167,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     #     test "it works for incoming notices with to/cc not being an array (kroeg)" do
     #       data = File.read!("test/fixtures/kroeg-post-activity.json") |> Jason.decode!()
 
-    #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
+    #       {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
 
     #       assert data["object"]["content"] ==
     #                "<p>henlo from my Psion netBook</p><p>message sent from my Psion netBook</p>"
@@ -131,7 +176,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     #     test "it works for incoming announces with actor being inlined (kroeg)" do
     #       data = File.read!("test/fixtures/kroeg-announce-with-inline-actor.json") |> Jason.decode!()
 
-    #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
+    #       {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
 
     #       assert data["actor"] == "https://puckipedia.com/"
     #     end
@@ -139,7 +184,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     #     test "it works for incoming notices with tag not being an array (kroeg)" do
     #       data = File.read!("test/fixtures/kroeg-array-less-emoji.json") |> Jason.decode!()
 
-    #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
+    #       {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
 
     #       assert data["object"]["emoji"] == %{
     #                "icon_e_smile" => "https://puckipedia.com/forum/images/smilies/icon_e_smile.png"
@@ -147,7 +192,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
     #       data = File.read!("test/fixtures/kroeg-array-less-hashtag.json") |> Jason.decode!()
 
-    #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
+    #       {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
 
     #       assert "test" in data["object"]["tag"]
     #     end
@@ -170,7 +215,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
         |> Jason.decode!()
         |> Map.put("object", actor.url)
 
-      {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
+      {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
 
       assert data["actor"] == "https://social.tcit.fr/users/tcit"
       assert data["type"] == "Follow"
@@ -289,7 +334,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     test "it works for incoming update activities" do
       data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
 
-      {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
+      {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
       update_data = File.read!("test/fixtures/mastodon-update.json") |> Jason.decode!()
 
       object =
@@ -302,7 +347,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
         |> Map.put("actor", data["actor"])
         |> Map.put("object", object)
 
-      {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(update_data)
+      {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(update_data)
 
       {:ok, %Actor{} = actor} = Actors.get_actor_by_url(data["actor"])
       assert actor.name == "gargle"
@@ -352,7 +397,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
       assert Events.get_comment_from_url(comment_url)
 
-      {:ok, %Activity{local: false}} = Transmogrifier.handle_incoming(data)
+      {:ok, %Activity{local: false}, _} = Transmogrifier.handle_incoming(data)
 
       refute Events.get_comment_from_url(comment_url)
     end
@@ -413,14 +458,14 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
         |> Jason.decode!()
         |> Map.put("object", actor.url)
 
-      {:ok, %Activity{data: _, local: false}} = Transmogrifier.handle_incoming(follow_data)
+      {:ok, %Activity{data: _, local: false}, _} = Transmogrifier.handle_incoming(follow_data)
 
       data =
         File.read!("test/fixtures/mastodon-unfollow-activity.json")
         |> Jason.decode!()
         |> Map.put("object", follow_data)
 
-      {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
+      {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
 
       assert data["type"] == "Undo"
       assert data["object"]["type"] == "Follow"
@@ -706,7 +751,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
       actor = insert(:actor)
       other_actor = insert(:actor)
 
-      {:ok, activity} =
+      {:ok, activity, _} =
         MobilizonWeb.API.Comments.create_comment(
           actor.preferred_username,
           "hey, @#{other_actor.preferred_username}, how are ya? #2hu"
@@ -743,7 +788,9 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     test "it adds the json-ld context and the conversation property" do
       actor = insert(:actor)
 
-      {:ok, activity} = MobilizonWeb.API.Comments.create_comment(actor.preferred_username, "hey")
+      {:ok, activity, _} =
+        MobilizonWeb.API.Comments.create_comment(actor.preferred_username, "hey")
+
       {:ok, modified} = Transmogrifier.prepare_outgoing(activity.data)
 
       assert modified["@context"] == Utils.make_json_ld_header()["@context"]
@@ -752,7 +799,9 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     test "it sets the 'attributedTo' property to the actor of the object if it doesn't have one" do
       actor = insert(:actor)
 
-      {:ok, activity} = MobilizonWeb.API.Comments.create_comment(actor.preferred_username, "hey")
+      {:ok, activity, _} =
+        MobilizonWeb.API.Comments.create_comment(actor.preferred_username, "hey")
+
       {:ok, modified} = Transmogrifier.prepare_outgoing(activity.data)
 
       assert modified["object"]["actor"] == modified["object"]["attributedTo"]
@@ -761,7 +810,8 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     test "it strips internal hashtag data" do
       actor = insert(:actor)
 
-      {:ok, activity} = MobilizonWeb.API.Comments.create_comment(actor.preferred_username, "#2hu")
+      {:ok, activity, _} =
+        MobilizonWeb.API.Comments.create_comment(actor.preferred_username, "#2hu")
 
       expected_tag = %{
         "href" => MobilizonWeb.Endpoint.url() <> "/tags/2hu",
@@ -777,7 +827,8 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     test "it strips internal fields" do
       actor = insert(:actor)
 
-      {:ok, activity} = MobilizonWeb.API.Comments.create_comment(actor.preferred_username, "#2hu")
+      {:ok, activity, _} =
+        MobilizonWeb.API.Comments.create_comment(actor.preferred_username, "#2hu")
 
       {:ok, modified} = Transmogrifier.prepare_outgoing(activity.data)
 

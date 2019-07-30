@@ -3,6 +3,8 @@ defmodule MobilizonWeb.Resolvers.Event do
   Handles the event-related GraphQL calls
   """
   alias Mobilizon.Activity
+  alias Mobilizon.Addresses
+  alias Mobilizon.Addresses.Address
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Media.Picture
@@ -190,25 +192,10 @@ defmodule MobilizonWeb.Resolvers.Event do
   """
   def create_event(_parent, args, %{context: %{current_user: _user}} = _resolution) do
     with {:ok, args} <- save_attached_picture(args),
-         {:ok, %Activity{data: %{"object" => %{"type" => "Event"} = object}}} <-
+         {:ok, args} <- save_physical_address(args),
+         {:ok, %Activity{data: %{"object" => %{"type" => "Event"} = _object}}, %Event{} = event} <-
            MobilizonWeb.API.Events.create_event(args) do
-      res = %{
-        title: object["name"],
-        description: object["content"],
-        uuid: object["uuid"],
-        url: object["id"]
-      }
-
-      res =
-        if Map.has_key?(object, "attachment"),
-          do:
-            Map.put(res, :picture, %{
-              name: object["attachment"] |> hd() |> Map.get("name"),
-              url: object["attachment"] |> hd() |> Map.get("url") |> hd() |> Map.get("href")
-            }),
-          else: res
-
-      {:ok, res}
+      {:ok, event}
     end
   end
 
@@ -236,6 +223,25 @@ defmodule MobilizonWeb.Resolvers.Event do
 
   @spec save_attached_picture(map()) :: {:ok, map()}
   defp save_attached_picture(args), do: {:ok, args}
+
+  @spec save_physical_address(map()) :: {:ok, map()}
+  defp save_physical_address(%{physical_address: %{url: physical_address_url}} = args) do
+    with %Address{} = address <- Addresses.get_address_by_url(physical_address_url),
+         args <- Map.put(args, :physical_address, address) do
+      {:ok, args}
+    end
+  end
+
+  #  @spec save_physical_address(map()) :: {:ok, map()}
+  #  defp save_physical_address(%{physical_address: address} = args) do
+  #    with {:ok, %Address{} = address} <- Addresses.create_address(address),
+  #         args <- Map.put(args, :physical_address, address) do
+  #      {:ok, args}
+  #    end
+  #  end
+
+  @spec save_physical_address(map()) :: {:ok, map()}
+  defp save_physical_address(args), do: {:ok, args}
 
   @doc """
   Delete an event

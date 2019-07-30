@@ -11,14 +11,10 @@ defmodule MobilizonWeb.Resolvers.Comment do
   def create_comment(_parent, %{text: comment, actor_username: username}, %{
         context: %{current_user: %User{} = _user}
       }) do
-    with {:ok, %Activity{data: %{"object" => %{"type" => "Note"} = object}}} <-
+    with {:ok, %Activity{data: %{"object" => %{"type" => "Note"} = _object}},
+          %Comment{} = comment} <-
            Comments.create_comment(username, comment) do
-      {:ok,
-       %Comment{
-         text: object["content"],
-         url: object["id"],
-         uuid: object["uuid"]
-       }}
+      {:ok, comment}
     end
   end
 

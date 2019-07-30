@@ -6,6 +6,20 @@ defmodule Mobilizon.Addresses.Address do
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.Event
   # alias Mobilizon.Actors.Actor
+  @attrs [
+    :description,
+    :floor,
+    :geom,
+    :country,
+    :locality,
+    :region,
+    :postal_code,
+    :street,
+    :url
+  ]
+  @required [
+    :url
+  ]
 
   schema "addresses" do
     field(:country, :string)
@@ -16,8 +30,8 @@ defmodule Mobilizon.Addresses.Address do
     field(:geom, Geo.PostGIS.Geometry)
     field(:postal_code, :string)
     field(:street, :string)
-    has_one(:event, Event, foreign_key: :physical_address_id)
-    # has_one(:group, Actor)
+    field(:url, :string)
+    has_many(:event, Event, foreign_key: :physical_address_id)
 
     timestamps()
   end
@@ -25,15 +39,15 @@ defmodule Mobilizon.Addresses.Address do
   @doc false
   def changeset(%Address{} = address, attrs) do
     address
-    |> cast(attrs, [
-      :description,
-      :floor,
-      :geom,
-      :country,
-      :locality,
-      :region,
-      :postal_code,
-      :street
-    ])
+    |> cast(attrs, @attrs)
+    |> set_url()
+    |> validate_required(@required)
+  end
+
+  defp set_url(%Ecto.Changeset{changes: changes} = changeset) do
+    url =
+      Map.get(changes, :url, MobilizonWeb.Endpoint.url() <> "/address/#{Ecto.UUID.generate()}")
+
+    put_change(changeset, :url, url)
   end
 end

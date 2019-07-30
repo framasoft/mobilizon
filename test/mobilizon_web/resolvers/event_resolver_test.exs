@@ -122,6 +122,95 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
              ]
     end
 
+    test "create_event/3 creates an event with an address", %{
+      conn: conn,
+      actor: actor,
+      user: user
+    } do
+      address = insert(:address)
+
+      mutation = """
+          mutation {
+              createEvent(
+                  title: "my event is referenced",
+                  description: "with tags!",
+                  begins_on: "#{
+        DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
+      }",
+                  organizer_actor_id: "#{actor.id}",
+                  category: "birthday",
+                  physical_address: {
+                    street: "#{address.street}",
+                    locality: "#{address.locality}"
+                  }
+              ) {
+                title,
+                uuid,
+                physicalAddress {
+                  url,
+                  geom,
+                  street
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["errors"] == nil
+
+      assert json_response(res, 200)["data"]["createEvent"]["title"] == "my event is referenced"
+
+      assert json_response(res, 200)["data"]["createEvent"]["physicalAddress"]["street"] ==
+               address.street
+
+      refute json_response(res, 200)["data"]["createEvent"]["physicalAddress"]["url"] ==
+               address.url
+
+      mutation = """
+          mutation {
+              createEvent(
+                  title: "my event is referenced",
+                  description: "with tags!",
+                  begins_on: "#{
+        DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
+      }",
+                  organizer_actor_id: "#{actor.id}",
+                  category: "birthday",
+                  physical_address: {
+                    url: "#{address.url}"
+                  }
+              ) {
+                title,
+                uuid,
+                physicalAddress {
+                  url,
+                  geom,
+                  street
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["errors"] == nil
+
+      assert json_response(res, 200)["data"]["createEvent"]["title"] == "my event is referenced"
+
+      assert json_response(res, 200)["data"]["createEvent"]["physicalAddress"]["street"] ==
+               address.street
+
+      assert json_response(res, 200)["data"]["createEvent"]["physicalAddress"]["url"] ==
+               address.url
+    end
+
     test "create_event/3 creates an event with an attached picture", %{
       conn: conn,
       actor: actor,

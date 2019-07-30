@@ -15,7 +15,8 @@ defmodule MobilizonWeb.API.Comments do
 
   Creates a comment from an actor and a status
   """
-  @spec create_comment(String.t(), String.t(), String.t()) :: {:ok, Activity.t()} | any()
+  @spec create_comment(String.t(), String.t(), String.t()) ::
+          {:ok, Activity.t(), Comment.t()} | any()
   def create_comment(
         from_username,
         status,

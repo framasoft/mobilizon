@@ -47,20 +47,15 @@ defmodule MobilizonWeb.Resolvers.Group do
            :ok,
            %Activity{
              data: %{
-               "object" => %{"type" => "Group"} = object
+               "object" => %{"type" => "Group"} = _object
              }
-           }
+           },
+           %Actor{} = group
          } <-
            MobilizonWeb.API.Groups.create_group(args) do
       {
         :ok,
-        %Actor{
-          preferred_username: object["preferredUsername"],
-          summary: object["summary"],
-          type: :Group,
-          #  uuid: object["uuid"],
-          url: object["id"]
-        }
+        group
       }
     end
 

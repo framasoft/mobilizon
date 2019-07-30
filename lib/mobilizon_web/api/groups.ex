@@ -11,7 +11,7 @@ defmodule MobilizonWeb.API.Groups do
   @doc """
   Create a group
   """
-  @spec create_group(map()) :: {:ok, Activity.t()} | any()
+  @spec create_group(map()) :: {:ok, Activity.t(), Group.t()} | any()
   def create_group(
         %{
           preferred_username: title,

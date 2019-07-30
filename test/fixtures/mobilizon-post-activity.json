@@ -1,0 +1,66 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://w3id.org/security/v1",
+        {
+            "mblzn": "https://joinmobilizon.org/ns#",
+            "Hashtag": "as:Hashtag",
+            "sc": "http://schema.org#",
+            "Place": "sc:Place",
+            "PostalAddress": "sc:PostalAddress",
+            "uuid": "sc:identifier"
+        }
+    ],
+    "actor": "https://event1.tcit.fr/@tcit",
+    "cc": [
+        "https://framapiaf.org/users/admin/followers",
+        "http://localtesting.pleroma.lol/users/lain"
+    ],
+    "id": "https://event1.tcit.fr/@tcit/events/109ccdfd-ee3e-46e1-a877-6c228763df0c/activity",
+    "object": {
+        "attachment": [],
+        "attributedTo": "https://event1.tcit.fr/@tcit",
+        "startTime": "2018-02-12T14:08:20Z",
+        "cc": [
+            "https://framapiaf.org/users/admin/followers",
+            "http://localtesting.pleroma.lol/users/lain"
+        ],
+        "content": "<p><span class=\"h-card\"><a href=\"http://localtesting.pleroma.lol/users/lain\" class=\"u-url mention\">@<span>lain</span></a></span></p>",
+        "category": "TODO remove me",
+        "id": "https://event1.tcit.fr/@tcit/events/109ccdfd-ee3e-46e1-a877-6c228763df0c",
+        "inReplyTo": null,
+        "location": {
+            "type": "Place",
+            "name": "Locaux de Framasoft",
+            "id": "https://event1.tcit.fr/address/eeecc11d-0030-43e8-a897-6422876372jd",
+            "address": {
+                "type": "PostalAddress",
+                "streetAddress": "10 Rue Jangot",
+                "postalCode": "69007",
+                "addressLocality": "Lyon",
+                "addressRegion": "Auvergne Rhône Alpes",
+                "addressCountry": "France"
+            }
+        },
+        "name": "My first event",
+        "published": "2018-02-12T14:08:20Z",
+        "tag": [
+            {
+                "href": "http://localtesting.pleroma.lol/users/lain",
+                "name": "@lain@localtesting.pleroma.lol",
+                "type": "Mention"
+            }
+        ],
+        "to": [
+            "https://www.w3.org/ns/activitystreams#Public"
+        ],
+        "type": "Event",
+        "url": "https://event1.tcit.fr/@tcit/events/109ccdfd-ee3e-46e1-a877-6c228763df0c",
+        "uuid": "109ccdfd-ee3e-46e1-a877-6c228763df0c"
+    },
+    "published": "2018-02-12T14:08:20Z",
+    "to": [
+        "https://www.w3.org/ns/activitystreams#Public"
+    ],
+    "type": "Create"
+}

@@ -132,11 +132,32 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     end
   end
 
-  # TODO: validate those with a Ecto scheme
-  # - tags
-  # - emoji
   def handle_incoming(%{"type" => "Create", "object" => %{"type" => "Note"} = object} = data) do
     Logger.info("Handle incoming to create notes")
+
+    with {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(data["actor"]) do
+      Logger.debug("found actor")
+      Logger.debug(inspect(actor))
+
+      params = %{
+        to: data["to"],
+        object: object |> fix_object,
+        actor: actor,
+        local: false,
+        published: data["published"],
+        additional:
+          Map.take(data, [
+            "cc",
+            "id"
+          ])
+      }
+
+      ActivityPub.create(params)
+    end
+  end
+
+  def handle_incoming(%{"type" => "Create", "object" => %{"type" => "Event"} = object} = data) do
+    Logger.info("Handle incoming to create event")
 
     with {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(data["actor"]) do
       Logger.debug("found actor")
@@ -164,10 +185,10 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
       ) do
     with {:ok, %Actor{} = followed} <- Actors.get_or_fetch_by_url(followed, true),
          {:ok, %Actor{} = follower} <- Actors.get_or_fetch_by_url(follower),
-         {:ok, activity} <- ActivityPub.follow(follower, followed, id, false) do
+         {:ok, activity, object} <- ActivityPub.follow(follower, followed, id, false) do
       ActivityPub.accept(%{to: [follower.url], actor: followed.url, object: data, local: true})
 
-      {:ok, activity}
+      {:ok, activity, object}
     else
       e ->
         Logger.error("Unable to handle Follow activity")
@@ -257,9 +278,9 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
       ) do
     with {:ok, %Actor{domain: nil} = followed} <- Actors.get_actor_by_url(followed),
          {:ok, %Actor{} = follower} <- Actors.get_actor_by_url(follower),
-         {:ok, activity} <- ActivityPub.unfollow(followed, follower, id, false) do
+         {:ok, activity, object} <- ActivityPub.unfollow(followed, follower, id, false) do
       Actor.unfollow(follower, followed)
-      {:ok, activity}
+      {:ok, activity, object}
     else
       e ->
         Logger.error(inspect(e))
@@ -282,11 +303,11 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
          {:ok, object} <- get_obj_helper(object_id) || fetch_obj_helper(object_id),
          #  TODO : Validate that DELETE comes indeed form right domain (see above)
          #  :ok <- contain_origin(actor_url, object.data),
-         {:ok, activity} <- ActivityPub.delete(object, false) do
-      {:ok, activity}
+         {:ok, activity, object} <- ActivityPub.delete(object, false) do
+      {:ok, activity, object}
     else
       e ->
-        Logger.debug(inspect(e))
+        Logger.error(inspect(e))
         :error
     end
   end

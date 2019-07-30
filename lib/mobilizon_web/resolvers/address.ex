@@ -11,7 +11,7 @@ defmodule MobilizonWeb.Resolvers.Address do
   Search an address
   """
   @spec search(map(), map(), map()) :: {:ok, list(Address.t())}
-  def search(_parent, %{query: query}, %{context: %{ip: ip}}) do
+  def search(_parent, %{query: query, page: _page, limit: _limit}, %{context: %{ip: ip}}) do
     country = Geolix.lookup(ip) |> Map.get(:country, nil)
 
     local_addresses = Task.async(fn -> Addresses.search_addresses(query, country: country) end)

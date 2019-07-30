@@ -56,7 +56,7 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
     test "removes doubled 'to' recipients" do
       actor = insert(:actor)
 
-      {:ok, activity} =
+      {:ok, activity, _} =
         ActivityPub.create(%{
           to: ["user1", "user1", "user2"],
           actor: actor,
@@ -113,7 +113,7 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
     test "it creates a delete activity and deletes the original event" do
       event = insert(:event)
       event = Events.get_event_full_by_url!(event.url)
-      {:ok, delete} = ActivityPub.delete(event)
+      {:ok, delete, _} = ActivityPub.delete(event)
 
       assert delete.data["type"] == "Delete"
       assert delete.data["actor"] == event.organizer_actor.url
@@ -125,7 +125,7 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
     test "it creates a delete activity and deletes the original comment" do
       comment = insert(:comment)
       comment = Events.get_comment_full_from_url!(comment.url)
-      {:ok, delete} = ActivityPub.delete(comment)
+      {:ok, delete, _} = ActivityPub.delete(comment)
 
       assert delete.data["type"] == "Delete"
       assert delete.data["actor"] == comment.actor.url
@@ -140,7 +140,7 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
       actor = insert(:actor)
       actor_data = MobilizonWeb.ActivityPub.ActorView.render("actor.json", %{actor: actor})
 
-      {:ok, update} =
+      {:ok, update, _} =
         ActivityPub.update(%{
           actor: actor_data["url"],
           to: [actor.url <> "/followers"],
