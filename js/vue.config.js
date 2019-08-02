@@ -4,7 +4,7 @@ const path = require('path');
 module.exports = {
   pluginOptions: {
     webpackBundleAnalyzer: {
-      openAnalyzer: false
+      analyzerMode: 'disabled'
     }
   },
   lintOnSave: false,
