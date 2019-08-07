@@ -29,7 +29,7 @@
           <editor v-model="event.description" />
         </div>
 
-        <b-field :label="$gettext('Category')">
+        <!--<b-field :label="$gettext('Category')">
           <b-select placeholder="Select a category" v-model="event.category">
             <option
               v-for="category in categories"
@@ -37,7 +37,7 @@
               :key="category"
             >{{ $gettext(category) }}</option>
           </b-select>
-        </b-field>
+        </b-field>-->
 
         <h2 class="subtitle">
           <translate>
@@ -103,7 +103,7 @@ export default class CreateEvent extends Vue {
   @Prop({ required: false, type: String }) uuid!: string;
 
   loggedPerson: IPerson = new Person();
-  categories: string[] = Object.keys(Category);
+  /*categories: string[] = Object.keys(Category);*/
   event: IEvent = new EventModel();
   pictureFile: File | null = null;
   EventVisibility = EventVisibility;

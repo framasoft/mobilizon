@@ -53,7 +53,7 @@ export interface IEvent {
   title: string;
   slug: string;
   description: string;
-  category: Category;
+  category: Category|null;
 
   beginsOn: Date;
   endsOn: Date;

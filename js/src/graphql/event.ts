@@ -141,7 +141,7 @@ export const CREATE_EVENT = gql`
   $title: String!,
   $description: String!,
   $organizerActorId: ID!,
-  $category: String!,
+  $category: String,
   $beginsOn: DateTime!,
   $picture: PictureInput,
   $tags: [String],
@@ -174,7 +174,7 @@ export const EDIT_EVENT = gql`
   $title: String!,
   $description: String!,
   $organizerActorId: Int!,
-  $category: String!
+  $category: String
   ) {
     EditEvent(title: $title, description: $description, organizerActorId: $organizerActorId, category: $category) {
       uuid
