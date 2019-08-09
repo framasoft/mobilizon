@@ -76,6 +76,7 @@ import {
       Category,
       IEvent,
       EventModel,
+      EventVisibility,
     } from '@/types/event.model';
 import { LOGGED_PERSON } from '@/graphql/actor';
 import { IPerson, Person } from '@/types/actor';
@@ -86,7 +87,6 @@ import TagInput from '@/components/Event/TagInput.vue';
 import { TAGS } from '@/graphql/tags';
 import { ITag } from '@/types/tag.model';
 import AddressAutoComplete from '@/components/Event/AddressAutoComplete.vue';
-import { EventVisibility } from '@/types/event.model';
 
 @Component({
   components: { AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor },

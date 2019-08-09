@@ -92,19 +92,17 @@
                 </b-modal>
               </div>
               <div class="organizer">
-                <router-link
-                        :to="{name: 'Profile', params: { name: event.organizerActor.preferredUsername } }"
-                >
-                <translate
-                        :translate-params="{name: event.organizerActor.name ? event.organizerActor.name : event.organizerActor.preferredUsername}"
-                        v-if="event.organizerActor">By %{ name }</translate>
+                <actor-link :actor="event.organizerActor">
+                  <translate
+                          :translate-params="{name: event.organizerActor.name ? event.organizerActor.name : event.organizerActor.preferredUsername}"
+                          v-if="event.organizerActor">By %{ name }</translate>
                   <figure v-if="event.organizerActor.avatar" class="image is-48x48">
                     <img
                             class="is-rounded"
                             :src="event.organizerActor.avatar.url"
                             :alt="$gettextInterpolate('%{actor}\'s avatar', {actor: event.organizerActor.preferredUsername})" />
                   </figure>
-                </router-link>
+                </actor-link>
               </div>
             </div>
           </div>
@@ -242,9 +240,11 @@ import DateCalendarIcon from '@/components/Event/DateCalendarIcon.vue';
 import BIcon from 'buefy/src/components/icon/Icon.vue';
 import EventCard from '@/components/Event/EventCard.vue';
 import EventFullDate from '@/components/Event/EventFullDate.vue';
+import ActorLink from '@/components/Account/ActorLink.vue';
 
 @Component({
   components: {
+    ActorLink,
     EventFullDate,
     EventCard,
     BIcon,

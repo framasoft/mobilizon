@@ -51,6 +51,7 @@ export const FETCH_EVENT = gql`
         preferredUsername,
         domain,
         name,
+        url,
       },
       # attributedTo {
       #     avatar {
