@@ -253,13 +253,21 @@ defmodule Mobilizon.Users do
   end
 
   def generate_access_token(user) do
-    with {:ok, access_token, _claims} <- MobilizonWeb.Guardian.encode_and_sign(user, %{}, token_type: "access", ttl: {5, :seconds}) do
+    with {:ok, access_token, _claims} <-
+           MobilizonWeb.Guardian.encode_and_sign(user, %{},
+             token_type: "access",
+             ttl: {5, :seconds}
+           ) do
       {:ok, access_token}
     end
   end
 
   def generate_refresh_token(user) do
-    with {:ok, refresh_token, _claims} <- MobilizonWeb.Guardian.encode_and_sign(user, %{}, token_type: "refresh", ttl: {30, :days}) do
+    with {:ok, refresh_token, _claims} <-
+           MobilizonWeb.Guardian.encode_and_sign(user, %{},
+             token_type: "refresh",
+             ttl: {30, :days}
+           ) do
       {:ok, refresh_token}
     end
   end

@@ -65,7 +65,8 @@ defmodule MobilizonWeb.Resolvers.User do
   """
   def login_user(_parent, %{email: email, password: password}, _resolution) do
     with {:ok, %User{} = user} <- Users.get_user_by_email(email, true),
-         {:ok, %{access_token: access_token, refresh_token: refresh_token}} <- Users.authenticate(%{user: user, password: password}) do
+         {:ok, %{access_token: access_token, refresh_token: refresh_token}} <-
+           Users.authenticate(%{user: user, password: password}) do
       {:ok, %{access_token: access_token, refresh_token: refresh_token, user: user}}
     else
       {:error, :user_not_found} ->
@@ -86,8 +87,11 @@ defmodule MobilizonWeb.Resolvers.User do
         },
         _context
       ) do
-    with {:ok, _old, {exchanged_token, _claims}} <- MobilizonWeb.Guardian.exchange(refresh_token, "refresh", "access", ttl: { 1, :days}),
-         {:ok, user, _claims} <- MobilizonWeb.Guardian.resource_from_token(refresh_token),
+    with {:ok, user, _claims} <- MobilizonWeb.Guardian.resource_from_token(refresh_token),
+         {:ok, _old, {exchanged_token, _claims}} <-
+           MobilizonWeb.Guardian.exchange(refresh_token, ["access", "refresh"], "access",
+             ttl: {1, :days}
+           ),
          {:ok, refresh_token} <- Users.generate_refresh_token(user) do
       {:ok, %{access_token: exchanged_token, refresh_token: refresh_token}}
     else
@@ -128,8 +132,14 @@ defmodule MobilizonWeb.Resolvers.User do
     with {:check_confirmation_token, {:ok, %User{} = user}} <-
            {:check_confirmation_token, Activation.check_confirmation_token(token)},
          {:get_actor, actor} <- {:get_actor, Users.get_actor_for_user(user)},
-         {:ok, %{access_token: access_token, refresh_token: refresh_token}} <- Users.generate_tokens(user) do
-      {:ok, %{access_token: access_token, refresh_token: refresh_token, user: Map.put(user, :default_actor, actor)}}
+         {:ok, %{access_token: access_token, refresh_token: refresh_token}} <-
+           Users.generate_tokens(user) do
+      {:ok,
+       %{
+         access_token: access_token,
+         refresh_token: refresh_token,
+         user: Map.put(user, :default_actor, actor)
+       }}
     else
       err ->
         Logger.info("Unable to validate user with token #{token}")
@@ -180,7 +190,8 @@ defmodule MobilizonWeb.Resolvers.User do
   def reset_password(_parent, %{password: password, token: token}, _resolution) do
     with {:ok, %User{} = user} <-
            ResetPassword.check_reset_password_token(password, token),
-         {:ok, %{access_token: access_token, refresh_token: refresh_token}} <- Users.authenticate(%{user: user, password: password}) do
+         {:ok, %{access_token: access_token, refresh_token: refresh_token}} <-
+           Users.authenticate(%{user: user, password: password}) do
       {:ok, %{access_token: access_token, refresh_token: refresh_token, user: user}}
     end
   end

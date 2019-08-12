@@ -19,7 +19,7 @@ config :mobilizon, MobilizonWeb.Endpoint,
 config :logger,
   backends: [:console],
   compile_time_purge_level: :debug,
-  level: :info
+  level: :debug
 
 # Configure your database
 config :mobilizon, Mobilizon.Repo,
