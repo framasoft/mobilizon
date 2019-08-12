@@ -3,6 +3,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
   alias Mobilizon.{Actors, Users, CommonConfig}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Users.User
+  alias Mobilizon.Users
   alias MobilizonWeb.AbsintheHelpers
   alias Mobilizon.Service.Users.ResetPassword
   import Mobilizon.Factory
@@ -433,7 +434,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
             validateUser(
                   token: "#{user.confirmation_token}"
               ) {
-                token,
+                accessToken,
                 user {
                   id,
                 },
@@ -456,7 +457,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
             validateUser(
                   token: "no pass"
               ) {
-                token,
+                accessToken,
                 user {
                   id
                 },
@@ -641,7 +642,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
     end
   end
 
-  describe "Resolver: Login an user" do
+  describe "Resolver: Login a user" do
     test "test login_user/3 with valid credentials", context do
       {:ok, %User{} = user} = Users.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
 
@@ -658,7 +659,8 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
                   email: "#{user.email}",
                   password: "#{user.password}",
               ) {
-                token,
+                accessToken,
+                refreshToken,
                 user {
                   id
                 }
@@ -671,7 +673,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert login = json_response(res, 200)["data"]["login"]
-      assert Map.has_key?(login, "token") && not is_nil(login["token"])
+      assert Map.has_key?(login, "accessToken") && not is_nil(login["accessToken"])
     end
 
     test "test login_user/3 with invalid password", context do
@@ -690,7 +692,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
                   email: "#{user.email}",
                   password: "bad password",
               ) {
-                token,
+                accessToken,
                 user {
                   default_actor {
                     preferred_username,
@@ -715,7 +717,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
                   email: "bad email",
                   password: "bad password",
               ) {
-                token,
+                accessToken,
                 user {
                   default_actor {
                     preferred_username,
@@ -730,6 +732,66 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert hd(json_response(res, 200)["errors"])["message"] == "User with email not found"
+    end
+  end
+
+  describe "Resolver: Refresh a token" do
+    test "test refresh_token/3 with a bad token", context do
+      mutation = """
+          mutation {
+            refreshToken(
+              refreshToken: "bad_token"
+            ) {
+              accessToken
+            }
+          }
+      """
+
+      res =
+        context.conn
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "Cannot refresh the token"
+    end
+
+    test "test refresh_token/3 with an appropriate token", context do
+      user = insert(:user)
+      {:ok, refresh_token} = Users.generate_refresh_token(user)
+
+      mutation = """
+          mutation {
+            refreshToken(
+              refreshToken: "#{refresh_token}"
+            ) {
+              accessToken
+            }
+          }
+      """
+
+      res =
+        context.conn
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["errors"] == nil
+
+      access_token = json_response(res, 200)["data"]["refreshToken"]["accessToken"]
+      assert String.length(access_token) > 10
+
+      query = """
+      {
+          loggedPerson {
+            preferredUsername,
+          }
+        }
+      """
+
+      res =
+        context.conn
+        |> Plug.Conn.put_req_header("authorization", "Bearer #{access_token}")
+        |> post("/api", AbsintheHelpers.query_skeleton(query, "logged_person"))
+
+      assert json_response(res, 200)["errors"] == nil
     end
   end
 

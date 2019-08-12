@@ -3,7 +3,8 @@ import gql from 'graphql-tag';
 export const LOGIN = gql`
 mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
-    token,
+    accessToken,
+    refreshToken,
     user {
       id,
     }
@@ -32,4 +33,13 @@ export const RESEND_CONFIRMATION_EMAIL = gql`
 mutation ResendConfirmationEmail($email: String!) {
   resendConfirmationEmail(email: $email)
 }
+`;
+
+export const REFRESH_TOKEN = gql`
+  mutation RefreshToken($refreshToken: String!) {
+    refreshToken(refreshToken: $refreshToken) {
+      accessToken,
+      refreshToken,
+    }
+  }
 `;

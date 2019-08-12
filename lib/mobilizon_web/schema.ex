@@ -31,7 +31,8 @@ defmodule MobilizonWeb.Schema do
 
   @desc "A JWT and the associated user ID"
   object :login do
-    field(:token, non_null(:string), description: "A JWT Token for this session")
+    field(:access_token, non_null(:string), description: "A JWT Token for this session")
+    field(:refresh_token, non_null(:string), description: "A JWT Token to refresh the access token")
     field(:user, non_null(:user), description: "The user associated to this session")
   end
 

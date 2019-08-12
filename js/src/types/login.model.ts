@@ -1,7 +1,10 @@
 import { ICurrentUser } from '@/types/current-user.model';
 
-export interface ILogin {
-  user: ICurrentUser;
+export interface IToken {
+  accessToken: string;
+  refreshToken: string;
+}
 
-  token: string;
+export interface ILogin extends IToken {
+  user: ICurrentUser;
 }

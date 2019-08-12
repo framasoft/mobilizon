@@ -9,15 +9,15 @@
 </template>
 
 <script lang="ts">
-import NavBar from '@/components/NavBar.vue';
-import { Component, Vue } from 'vue-property-decorator';
-import { AUTH_TOKEN, AUTH_USER_ACTOR, AUTH_USER_EMAIL, AUTH_USER_ID } from '@/constants';
-import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
-import { ICurrentUser } from '@/types/current-user.model';
-import Footer from '@/components/Footer.vue';
-import Logo from '@/components/Logo.vue';
+  import NavBar from '@/components/NavBar.vue';
+  import { Component, Vue } from 'vue-property-decorator';
+  import { AUTH_ACCESS_TOKEN, AUTH_USER_ACTOR, AUTH_USER_EMAIL, AUTH_USER_ID } from '@/constants';
+  import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
+  import { ICurrentUser } from '@/types/current-user.model';
+  import Footer from '@/components/Footer.vue';
+  import Logo from '@/components/Logo.vue';
 
-@Component({
+  @Component({
   apollo: {
     currentUser: {
       query: CURRENT_USER_CLIENT,
@@ -45,9 +45,9 @@ export default class App extends Vue {
   private initializeCurrentUser() {
     const userId = localStorage.getItem(AUTH_USER_ID);
     const userEmail = localStorage.getItem(AUTH_USER_EMAIL);
-    const token = localStorage.getItem(AUTH_TOKEN);
+    const accessToken = localStorage.getItem(AUTH_ACCESS_TOKEN);
 
-    if (userId && userEmail && token) {
+    if (userId && userEmail && accessToken) {
       return this.$apollo.mutate({
         mutation: UPDATE_CURRENT_USER_CLIENT,
         variables: {

@@ -17,13 +17,14 @@
 </template>
 
 <script lang="ts">
-import { VALIDATE_USER } from '@/graphql/user';
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { AUTH_TOKEN, AUTH_USER_ID } from '@/constants';
-import { RouteName } from '@/router';
-import { UserRouteName } from '@/router/user';
+  import { VALIDATE_USER } from '@/graphql/user';
+  import { Component, Prop, Vue } from 'vue-property-decorator';
+  import { AUTH_USER_ID } from '@/constants';
+  import { RouteName } from '@/router';
+  import { UserRouteName } from '@/router/user';
+  import { saveTokenData } from '@/utils/auth';
 
-@Component
+  @Component
 export default class Validate extends Vue {
   @Prop({ type: String, required: true }) token!: string;
 
@@ -62,7 +63,8 @@ export default class Validate extends Vue {
 
   saveUserData({ validateUser: login }) {
     localStorage.setItem(AUTH_USER_ID, login.user.id);
-    localStorage.setItem(AUTH_TOKEN, login.token);
+
+    saveTokenData(login)
   }
 }
 </script>

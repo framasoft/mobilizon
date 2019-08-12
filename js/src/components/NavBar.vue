@@ -60,19 +60,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
-import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
-import { onLogout } from '@/vue-apollo';
-import { deleteUserData } from '@/utils/auth';
-import { LOGGED_PERSON } from '@/graphql/actor';
-import { IPerson } from '@/types/actor';
-import { CONFIG } from '@/graphql/config';
-import { IConfig } from '@/types/config.model';
-import { ICurrentUser } from '@/types/current-user.model';
-import Logo from '@/components/Logo.vue';
-import SearchField from '@/components/SearchField.vue';
+  import { Component, Vue, Watch } from 'vue-property-decorator';
+  import { CURRENT_USER_CLIENT } from '@/graphql/user';
+  import { logout } from '@/utils/auth';
+  import { LOGGED_PERSON } from '@/graphql/actor';
+  import { IPerson } from '@/types/actor';
+  import { CONFIG } from '@/graphql/config';
+  import { IConfig } from '@/types/config.model';
+  import { ICurrentUser } from '@/types/current-user.model';
+  import Logo from '@/components/Logo.vue';
+  import SearchField from '@/components/SearchField.vue';
 
-@Component({
+  @Component({
   apollo: {
     currentUser: {
       query: CURRENT_USER_CLIENT,
@@ -111,18 +110,7 @@ export default class NavBar extends Vue {
   }
 
   async logout() {
-    await this.$apollo.mutate({
-      mutation: UPDATE_CURRENT_USER_CLIENT,
-      variables: {
-        id: null,
-        email: null,
-        isLoggedIn: false,
-      },
-    });
-
-    deleteUserData();
-
-    onLogout(this.$apollo);
+    await logout(this.$apollo.provider.defaultClient);
 
     return this.$router.push({ path: '/' });
   }
