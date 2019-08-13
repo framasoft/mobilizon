@@ -12,7 +12,8 @@ mutation CreateUser($email: String!, $password: String!) {
 export const VALIDATE_USER = gql`
 mutation ValidateUser($token: String!) {
   validateUser(token: $token) {
-    token,
+    accessToken,
+    refreshToken,
     user {
       id,
       email,

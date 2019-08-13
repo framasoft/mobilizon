@@ -20,7 +20,15 @@ defmodule MobilizonWeb.Resolvers.User do
   @doc """
   Return current logged-in user
   """
-  def get_current_user(_parent, _args, %{context: %{current_user: user}}) do
+  def get_current_user(
+        _parent,
+        _args,
+        %{
+          context: %{
+            current_user: user
+          }
+        }
+      ) do
     {:ok, user}
   end
 
@@ -35,7 +43,11 @@ defmodule MobilizonWeb.Resolvers.User do
         _parent,
         %{page: page, limit: limit, sort: sort, direction: direction},
         %{
-          context: %{current_user: %User{role: role}}
+          context: %{
+            current_user: %User{
+              role: role
+            }
+          }
         }
       )
       when is_moderator(role) do
@@ -53,8 +65,9 @@ defmodule MobilizonWeb.Resolvers.User do
   """
   def login_user(_parent, %{email: email, password: password}, _resolution) do
     with {:ok, %User{} = user} <- Users.get_user_by_email(email, true),
-         {:ok, token, _} <- Users.authenticate(%{user: user, password: password}) do
-      {:ok, %{token: token, user: user}}
+         {:ok, %{access_token: access_token, refresh_token: refresh_token}} <-
+           Users.authenticate(%{user: user, password: password}) do
+      {:ok, %{access_token: access_token, refresh_token: refresh_token, user: user}}
     else
       {:error, :user_not_found} ->
         {:error, "User with email not found"}
@@ -63,6 +76,31 @@ defmodule MobilizonWeb.Resolvers.User do
         {:error, "Impossible to authenticate, either your email or password are invalid."}
     end
   end
+
+  @doc """
+  Refresh a token
+  """
+  def refresh_token(
+        _parent,
+        %{
+          refresh_token: refresh_token
+        },
+        _context
+      ) do
+    with {:ok, user, _claims} <- MobilizonWeb.Guardian.resource_from_token(refresh_token),
+         {:ok, _old, {exchanged_token, _claims}} <-
+           MobilizonWeb.Guardian.exchange(refresh_token, ["access", "refresh"], "access"),
+         {:ok, refresh_token} <- Users.generate_refresh_token(user) do
+      {:ok, %{access_token: exchanged_token, refresh_token: refresh_token}}
+    else
+      {:error, message} ->
+        Logger.debug("Cannot refresh user token: #{inspect(message)}")
+        {:error, "Cannot refresh the token"}
+    end
+  end
+
+  def refresh_token(_parent, _params, _context),
+    do: {:error, "You need to have an existing token to get a refresh token"}
 
   @doc """
   Register an user:
@@ -92,9 +130,14 @@ defmodule MobilizonWeb.Resolvers.User do
     with {:check_confirmation_token, {:ok, %User{} = user}} <-
            {:check_confirmation_token, Activation.check_confirmation_token(token)},
          {:get_actor, actor} <- {:get_actor, Users.get_actor_for_user(user)},
-         {:guardian_encode_and_sign, {:ok, token, _}} <-
-           {:guardian_encode_and_sign, MobilizonWeb.Guardian.encode_and_sign(user)} do
-      {:ok, %{token: token, user: Map.put(user, :default_actor, actor)}}
+         {:ok, %{access_token: access_token, refresh_token: refresh_token}} <-
+           Users.generate_tokens(user) do
+      {:ok,
+       %{
+         access_token: access_token,
+         refresh_token: refresh_token,
+         user: Map.put(user, :default_actor, actor)
+       }}
     else
       err ->
         Logger.info("Unable to validate user with token #{token}")
@@ -145,15 +188,22 @@ defmodule MobilizonWeb.Resolvers.User do
   def reset_password(_parent, %{password: password, token: token}, _resolution) do
     with {:ok, %User{} = user} <-
            ResetPassword.check_reset_password_token(password, token),
-         {:ok, token, _} <- MobilizonWeb.Guardian.encode_and_sign(user) do
-      {:ok, %{token: token, user: user}}
+         {:ok, %{access_token: access_token, refresh_token: refresh_token}} <-
+           Users.authenticate(%{user: user, password: password}) do
+      {:ok, %{access_token: access_token, refresh_token: refresh_token, user: user}}
     end
   end
 
   @doc "Change an user default actor"
-  def change_default_actor(_parent, %{preferred_username: username}, %{
-        context: %{current_user: user}
-      }) do
+  def change_default_actor(
+        _parent,
+        %{preferred_username: username},
+        %{
+          context: %{
+            current_user: user
+          }
+        }
+      ) do
     with %Actor{id: actor_id} <- Actors.get_local_actor_by_name(username),
          {:user_actor, true} <-
            {:user_actor, actor_id in Enum.map(Users.get_actors_for_user(user), & &1.id)},

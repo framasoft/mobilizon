@@ -137,9 +137,9 @@ export default class CreateEvent extends Vue {
     const obj = {
       organizerActorId: this.loggedPerson.id,
       beginsOn: this.event.beginsOn.toISOString(),
-      tags: this.event.tags.map((tag: ITag) => tag.title)
+      tags: this.event.tags.map((tag: ITag) => tag.title),
     };
-    let res = Object.assign({}, this.event, obj);
+    const res = Object.assign({}, this.event, obj);
 
     if (this.event.physicalAddress) {
       delete this.event.physicalAddress['__typename'];

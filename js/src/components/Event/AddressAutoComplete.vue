@@ -45,7 +45,7 @@ export default class AddressAutoComplete extends Vue {
     this.data = result.data.searchAddress as IAddress[];
   }
 
-  @Watch("selected")
+  @Watch('selected')
   updateSelected() {
     this.$emit('input', this.selected);
   }

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="config">
     <section class="hero is-link" v-if="!currentUser.id || !loggedPerson">
       <div class="hero-body">
         <div class="container">

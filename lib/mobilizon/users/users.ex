@@ -27,7 +27,9 @@ defmodule Mobilizon.Users do
   @spec register(map()) :: {:ok, User.t()} | {:error, String.t()}
   def register(%{email: _email, password: _password} = args) do
     with {:ok, %User{} = user} <-
-           %User{} |> User.registration_changeset(args) |> Mobilizon.Repo.insert() do
+           %User{}
+           |> User.registration_changeset(args)
+           |> Mobilizon.Repo.insert() do
       Mobilizon.Events.create_feed_token(%{"user_id" => user.id})
       {:ok, user}
     end
@@ -51,13 +53,15 @@ defmodule Mobilizon.Users do
           from(u in User, where: u.email == ^email, preload: :default_actor)
 
         true ->
-          from(u in User,
+          from(
+            u in User,
             where: u.email == ^email and not is_nil(u.confirmed_at),
             preload: :default_actor
           )
 
         false ->
-          from(u in User,
+          from(
+            u in User,
             where: u.email == ^email and is_nil(u.confirmed_at),
             preload: :default_actor
           )
@@ -75,7 +79,8 @@ defmodule Mobilizon.Users do
   @spec get_user_by_activation_token(String.t()) :: Actor.t()
   def get_user_by_activation_token(token) do
     Repo.one(
-      from(u in User,
+      from(
+        u in User,
         where: u.confirmation_token == ^token,
         preload: [:default_actor]
       )
@@ -88,7 +93,8 @@ defmodule Mobilizon.Users do
   @spec get_user_by_reset_password_token(String.t()) :: Actor.t()
   def get_user_by_reset_password_token(token) do
     Repo.one(
-      from(u in User,
+      from(
+        u in User,
         where: u.reset_password_token == ^token,
         preload: [:default_actor]
       )
@@ -197,14 +203,16 @@ defmodule Mobilizon.Users do
   @spec get_actor_for_user(Mobilizon.Users.User.t()) :: Mobilizon.Actors.Actor.t()
   def get_actor_for_user(%Mobilizon.Users.User{} = user) do
     case Repo.one(
-           from(a in Actor,
+           from(
+             a in Actor,
              join: u in User,
              on: u.default_actor_id == a.id,
              where: u.id == ^user.id
            )
          ) do
       nil ->
-        case user |> get_actors_for_user() do
+        case user
+             |> get_actors_for_user() do
           [] -> nil
           actors -> hd(actors)
         end
@@ -223,22 +231,55 @@ defmodule Mobilizon.Users do
   """
   def authenticate(%{user: user, password: password}) do
     # Does password match the one stored in the database?
-    case Argon2.verify_pass(password, user.password_hash) do
-      true ->
-        # Yes, create and return the token
-        MobilizonWeb.Guardian.encode_and_sign(user)
-
+    with true <- Argon2.verify_pass(password, user.password_hash),
+         # Yes, create and return the token
+         {:ok, tokens} <- generate_tokens(user) do
+      {:ok, tokens}
+    else
       _ ->
         # No, return an error
         {:error, :unauthorized}
     end
   end
 
+  @doc """
+  Generate access token and refresh token
+  """
+  def generate_tokens(user) do
+    with {:ok, access_token} <- generate_access_token(user),
+         {:ok, refresh_token} <- generate_refresh_token(user) do
+      {:ok, %{access_token: access_token, refresh_token: refresh_token}}
+    end
+  end
+
+  defp generate_access_token(user) do
+    with {:ok, access_token, _claims} <-
+           MobilizonWeb.Guardian.encode_and_sign(user, %{}, token_type: "access") do
+      {:ok, access_token}
+    end
+  end
+
+  def generate_refresh_token(user) do
+    with {:ok, refresh_token, _claims} <-
+           MobilizonWeb.Guardian.encode_and_sign(user, %{}, token_type: "refresh") do
+      {:ok, refresh_token}
+    end
+  end
+
   def update_user_default_actor(user_id, actor_id) do
     with _ <-
-           from(u in User, where: u.id == ^user_id, update: [set: [default_actor_id: ^actor_id]])
+           from(
+             u in User,
+             where: u.id == ^user_id,
+             update: [
+               set: [
+                 default_actor_id: ^actor_id
+               ]
+             ]
+           )
            |> Repo.update_all([]) do
-      Repo.get!(User, user_id) |> Repo.preload([:default_actor])
+      Repo.get!(User, user_id)
+      |> Repo.preload([:default_actor])
     end
   end
 

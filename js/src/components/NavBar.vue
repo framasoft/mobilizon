@@ -61,9 +61,8 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
-import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
-import { onLogout } from '@/vue-apollo';
-import { deleteUserData } from '@/utils/auth';
+import { CURRENT_USER_CLIENT } from '@/graphql/user';
+import { logout } from '@/utils/auth';
 import { LOGGED_PERSON } from '@/graphql/actor';
 import { IPerson } from '@/types/actor';
 import { CONFIG } from '@/graphql/config';
@@ -89,7 +88,7 @@ import SearchField from '@/components/SearchField.vue';
 export default class NavBar extends Vue {
   notifications = [
     { header: 'Coucou' },
-    { title: "T'as une notification", subtitle: 'Et elle est cool' },
+    { title: 'T\'as une notification', subtitle: 'Et elle est cool' },
   ];
   loggedPerson: IPerson | null = null;
   config!: IConfig;
@@ -111,31 +110,20 @@ export default class NavBar extends Vue {
   }
 
   async logout() {
-    await this.$apollo.mutate({
-      mutation: UPDATE_CURRENT_USER_CLIENT,
-      variables: {
-        id: null,
-        email: null,
-        isLoggedIn: false,
-      },
-    });
-
-    deleteUserData();
-
-    onLogout(this.$apollo);
+    await logout(this.$apollo.provider.defaultClient);
 
     return this.$router.push({ path: '/' });
   }
 }
 </script>
 <style lang="scss" scoped>
-  @import "../variables.scss";
+@import "../variables.scss";
 
-  nav {
-    border-bottom: solid 1px #0a0a0a;
+nav {
+  border-bottom: solid 1px #0a0a0a;
 
-    .navbar-item img {
-      max-height: 2.5em;
-    }
+  .navbar-item img {
+    max-height: 2.5em;
   }
+}
 </style>

@@ -45,6 +45,12 @@ defmodule MobilizonWeb.Schema.UserType do
     )
   end
 
+  @desc "Token"
+  object :refreshed_token do
+    field(:access_token, non_null(:string), description: "Generated access token")
+    field(:refresh_token, non_null(:string), description: "Generated refreshed token")
+  end
+
   @desc "Users list"
   object :users do
     field(:total, non_null(:integer), description: "Total elements")
@@ -118,10 +124,16 @@ defmodule MobilizonWeb.Schema.UserType do
     end
 
     @desc "Login an user"
-    field :login, :login do
+    field :login, type: :login do
       arg(:email, non_null(:string))
       arg(:password, non_null(:string))
       resolve(&User.login_user/3)
+    end
+
+    @desc "Refresh a token"
+    field :refresh_token, type: :refreshed_token do
+      arg(:refresh_token, non_null(:string))
+      resolve(&User.refresh_token/3)
     end
 
     @desc "Change default actor for user"

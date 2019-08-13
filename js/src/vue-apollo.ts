@@ -1,15 +1,18 @@
 import Vue from 'vue';
 import VueApollo from 'vue-apollo';
-import { ApolloLink } from 'apollo-link';
+import { ApolloLink, Observable } from 'apollo-link';
 import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
+import { onError } from 'apollo-link-error';
 import { createLink } from 'apollo-absinthe-upload-link';
-import { AUTH_TOKEN } from './constants';
 import { GRAPHQL_API_ENDPOINT, GRAPHQL_API_FULL_PATH } from './api/_entrypoint';
-import { withClientState } from 'apollo-link-state';
-import { currentUser } from '@/apollo/user';
-import merge from 'lodash/merge';
 import { ApolloClient } from 'apollo-client';
 import { DollarApollo } from 'vue-apollo/types/vue-apollo';
+import { buildCurrentUserResolver } from '@/apollo/user';
+import { isServerError } from '@/types/apollo';
+import { inspect } from 'util';
+import { REFRESH_TOKEN } from '@/graphql/auth';
+import { AUTH_ACCESS_TOKEN, AUTH_REFRESH_TOKEN } from '@/constants';
+import { logout, saveTokenData } from '@/utils/auth';
 
 // Install the vue plugin
 Vue.use(VueApollo);
@@ -44,14 +47,11 @@ const fragmentMatcher = new IntrospectionFragmentMatcher({
   },
 });
 
-const cache = new InMemoryCache({ fragmentMatcher });
-
 const authMiddleware = new ApolloLink((operation, forward) => {
   // add the authorization to the headers
-  const token = localStorage.getItem(AUTH_TOKEN);
   operation.setContext({
     headers: {
-      authorization: token ? `Bearer ${token}` : null,
+      authorization: generateTokenHeader(),
     },
   });
 
@@ -64,20 +64,53 @@ const uploadLink = createLink({
   uri: httpEndpoint,
 });
 
-const stateLink = withClientState({
-  ...merge(currentUser),
-  cache,
+let refreshingTokenPromise: Promise<boolean> | undefined;
+let alreadyRefreshedToken = false;
+const errorLink = onError(({ graphQLErrors, networkError, forward, operation }) => {
+  if (isServerError(networkError) && networkError.statusCode === 401 && !alreadyRefreshedToken) {
+    if (!refreshingTokenPromise) refreshingTokenPromise = refreshAccessToken();
+
+    return promiseToObservable(refreshingTokenPromise).flatMap(() => {
+      refreshingTokenPromise = undefined;
+      alreadyRefreshedToken = true;
+
+      const context = operation.getContext();
+      const oldHeaders = context.headers;
+
+      operation.setContext({
+        headers: {
+          ...oldHeaders,
+          authorization: generateTokenHeader(),
+        },
+      });
+
+      return forward(operation);
+    });
+  }
+
+  if (graphQLErrors) {
+    graphQLErrors.forEach(({ message, locations, path }) =>
+      console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`),
+    );
+  }
+
+  if (networkError) console.log(`[Network error]: ${networkError}`);
 });
 
-const link = stateLink.concat(authMiddleware).concat(uploadLink);
+const link = authMiddleware
+  .concat(errorLink)
+  .concat(uploadLink);
+
+const cache = new InMemoryCache({ fragmentMatcher });
 
 const apolloClient = new ApolloClient({
   cache,
   link,
   connectToDevTools: true,
+  resolvers: {
+    currentUser: buildCurrentUserResolver(cache),
+  },
 });
-
-apolloClient.onResetStore(stateLink.writeDefaults as any);
 
 export const apolloProvider = new VueApollo({
   defaultClient: apolloClient,
@@ -93,13 +126,65 @@ export function onLogin(apolloClient) {
 }
 
 // Manually call this when user log out
-export async function onLogout(apolloClient: DollarApollo<any>) {
+export async function onLogout() {
   // if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient);
 
   try {
-    await apolloClient.provider.defaultClient.resetStore();
+    await apolloClient.resetStore();
   } catch (e) {
     // eslint-disable-next-line no-console
     console.log('%cError on cache reset (logout)', 'color: orange;', e.message);
   }
 }
+
+async function refreshAccessToken() {
+  // Remove invalid access token, so the next request is not authenticated
+  localStorage.removeItem(AUTH_ACCESS_TOKEN);
+
+  const refreshToken = localStorage.getItem(AUTH_REFRESH_TOKEN);
+
+  console.log('Refreshing access token.');
+
+  try {
+    const res = await apolloClient.mutate({
+      mutation: REFRESH_TOKEN,
+      variables: {
+        refreshToken,
+      },
+    });
+
+    saveTokenData(res.data.refreshToken);
+
+    return true;
+  } catch (err) {
+
+    return false;
+  }
+}
+
+function generateTokenHeader() {
+  const token = localStorage.getItem(AUTH_ACCESS_TOKEN);
+
+  return token ? `Bearer ${token}` : null;
+}
+
+// Thanks: https://github.com/apollographql/apollo-link/issues/747#issuecomment-502676676
+const promiseToObservable = <T> (promise: Promise<T>) => {
+  return new Observable<T>((subscriber) => {
+    promise.then(
+      (value) => {
+        if (subscriber.closed) {
+          return;
+        }
+        subscriber.next(value);
+        subscriber.complete();
+      },
+      (err) => {
+        console.error('Cannot refresh token.', err);
+
+        subscriber.error(err);
+        logout(apolloClient);
+      },
+    );
+  });
+};
