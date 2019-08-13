@@ -60,18 +60,18 @@
 </template>
 
 <script lang="ts">
-  import { Component, Vue, Watch } from 'vue-property-decorator';
-  import { CURRENT_USER_CLIENT } from '@/graphql/user';
-  import { logout } from '@/utils/auth';
-  import { LOGGED_PERSON } from '@/graphql/actor';
-  import { IPerson } from '@/types/actor';
-  import { CONFIG } from '@/graphql/config';
-  import { IConfig } from '@/types/config.model';
-  import { ICurrentUser } from '@/types/current-user.model';
-  import Logo from '@/components/Logo.vue';
-  import SearchField from '@/components/SearchField.vue';
+import { Component, Vue, Watch } from 'vue-property-decorator';
+import { CURRENT_USER_CLIENT } from '@/graphql/user';
+import { logout } from '@/utils/auth';
+import { LOGGED_PERSON } from '@/graphql/actor';
+import { IPerson } from '@/types/actor';
+import { CONFIG } from '@/graphql/config';
+import { IConfig } from '@/types/config.model';
+import { ICurrentUser } from '@/types/current-user.model';
+import Logo from '@/components/Logo.vue';
+import SearchField from '@/components/SearchField.vue';
 
-  @Component({
+@Component({
   apollo: {
     currentUser: {
       query: CURRENT_USER_CLIENT,
@@ -88,7 +88,7 @@
 export default class NavBar extends Vue {
   notifications = [
     { header: 'Coucou' },
-    { title: "T'as une notification", subtitle: 'Et elle est cool' },
+    { title: 'T\'as une notification', subtitle: 'Et elle est cool' },
   ];
   loggedPerson: IPerson | null = null;
   config!: IConfig;
@@ -117,13 +117,13 @@ export default class NavBar extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-  @import "../variables.scss";
+@import "../variables.scss";
 
-  nav {
-    border-bottom: solid 1px #0a0a0a;
+nav {
+  border-bottom: solid 1px #0a0a0a;
 
-    .navbar-item img {
-      max-height: 2.5em;
-    }
+  .navbar-item img {
+    max-height: 2.5em;
   }
+}
 </style>

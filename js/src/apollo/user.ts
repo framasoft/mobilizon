@@ -29,4 +29,4 @@ export function buildCurrentUserResolver(cache: ApolloCache<NormalizedCacheObjec
       cache.writeData({ data });
     },
   };
-};
+}

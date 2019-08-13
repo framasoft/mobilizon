@@ -231,11 +231,11 @@ defmodule Mobilizon.Users do
   """
   def authenticate(%{user: user, password: password}) do
     # Does password match the one stored in the database?
-    case Argon2.verify_pass(password, user.password_hash) do
-      true ->
-        # Yes, create and return the token
-        with {:ok, tokens} <- generate_tokens(user), do: {:ok, tokens}
-
+    with true <- Argon2.verify_pass(password, user.password_hash),
+         # Yes, create and return the token
+         {:ok, tokens} <- generate_tokens(user) do
+      {:ok, tokens}
+    else
       _ ->
         # No, return an error
         {:error, :unauthorized}
@@ -252,22 +252,16 @@ defmodule Mobilizon.Users do
     end
   end
 
-  def generate_access_token(user) do
+  defp generate_access_token(user) do
     with {:ok, access_token, _claims} <-
-           MobilizonWeb.Guardian.encode_and_sign(user, %{},
-             token_type: "access",
-             ttl: {5, :seconds}
-           ) do
+           MobilizonWeb.Guardian.encode_and_sign(user, %{}, token_type: "access") do
       {:ok, access_token}
     end
   end
 
   def generate_refresh_token(user) do
     with {:ok, refresh_token, _claims} <-
-           MobilizonWeb.Guardian.encode_and_sign(user, %{},
-             token_type: "refresh",
-             ttl: {30, :days}
-           ) do
+           MobilizonWeb.Guardian.encode_and_sign(user, %{}, token_type: "refresh") do
       {:ok, refresh_token}
     end
   end

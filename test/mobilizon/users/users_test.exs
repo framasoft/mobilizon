@@ -68,7 +68,7 @@ defmodule Mobilizon.UsersTest do
     test "authenticate/1 checks the user's password" do
       {:ok, %User{} = user} = Users.register(%{email: @email, password: @password})
 
-      assert {:ok, _, _} = Users.authenticate(%{user: user, password: @password})
+      assert {:ok, _} = Users.authenticate(%{user: user, password: @password})
 
       assert {:error, :unauthorized} ==
                Users.authenticate(%{user: user, password: "bad password"})

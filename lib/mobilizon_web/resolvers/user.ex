@@ -89,9 +89,7 @@ defmodule MobilizonWeb.Resolvers.User do
       ) do
     with {:ok, user, _claims} <- MobilizonWeb.Guardian.resource_from_token(refresh_token),
          {:ok, _old, {exchanged_token, _claims}} <-
-           MobilizonWeb.Guardian.exchange(refresh_token, ["access", "refresh"], "access",
-             ttl: {1, :days}
-           ),
+           MobilizonWeb.Guardian.exchange(refresh_token, ["access", "refresh"], "access"),
          {:ok, refresh_token} <- Users.generate_refresh_token(user) do
       {:ok, %{access_token: exchanged_token, refresh_token: refresh_token}}
     else
