@@ -131,7 +131,7 @@ defmodule MobilizonWeb.Schema.EventType do
       arg(:online_address, :string)
       arg(:phone_address, :string)
       arg(:organizer_actor_id, non_null(:id))
-      arg(:category, non_null(:string))
+      arg(:category, :string)
       arg(:physical_address, :address_input)
 
       resolve(&Event.create_event/3)

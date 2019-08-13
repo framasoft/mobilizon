@@ -1,0 +1,57 @@
+[
+  {
+    "request": {
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://litepub.github.io/litepub/context.jsonld\",{\"Hashtag\":\"as:Hashtag\",\"category\":\"sc:category\",\"sc\":\"http://schema.org#\",\"uuid\":\"sc:identifier\"}],\"actor\":\"http://mobilizon.test/relay\",\"cc\":[\"https://www.w3.org/ns/activitystreams#Public\"],\"id\":\"http://mobilizon.test/follow/68/activity\",\"object\":\"http://localhost:8080/actor\",\"to\":[\"http://localhost:8080/actor\"],\"type\":\"Follow\"}",
+      "headers": {
+        "Content-Type": "application/activity+json",
+        "signature": "keyId=\"http://mobilizon.test/relay#main-key\",algorithm=\"rsa-sha256\",headers=\"(request-target) content-length date digest host\",signature=\"WsxzipdObXsApVtY5l2yTonTOPV888XLKK2+AMQRyiNZm4RGMEux8kgBKgJIODaKmRx9EsX8dIzBtTmJdLyj5gqfjvGVyj8hVeR0ERNMZmjngh5EZ3W+ySbkdFYZeYDWhwpL1i+7dTFJ3zE/ASZVaTMeIgqEpFnzHNbamwPzBZVvcnzyraB1rrmwcbzzrk3UPlJ3tA+Xz67Njr2wOiNNsjZ53abArKZB3KGbife6OyrVrKldJ+UKZS+vokgUXFwvMBZxfdmH2GD+yXHPhCIu7bVu77ASdW7bl7tM3uIV/c/Wemy5qJtPOupwbDvpLZ9ETE5IRCoUPdQ7l75kvevNxQ==\"",
+        "digest": "SHA-256=qIEgTH6kBorFchTiX2kxd7onyZ7BHhvLgCODLs6RAVc=",
+        "date": "Thu, 01 Aug 2019 14:44:37 GMT"
+      },
+      "method": "post",
+      "options": {
+        "pool": "default"
+      },
+      "request_body": "",
+      "url": "http://localhost:8080/inbox"
+    },
+    "response": {
+      "binary": false,
+      "body": "signature check failed, signature did not match key",
+      "headers": {
+        "Content-Length": "51",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Thu, 01 Aug 2019 14:44:37 GMT",
+        "Server": "Python/3.7 aiohttp/3.3.2"
+      },
+      "status_code": 401,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true"
+      },
+      "request_body": "",
+      "url": "http://localhost:8080/actor"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"@context\": \"https://www.w3.org/ns/activitystreams\", \"endpoints\": {\"sharedInbox\": \"http://localhost:8080/inbox\"}, \"followers\": \"http://localhost:8080/followers\", \"following\": \"http://localhost:8080/following\", \"inbox\": \"http://localhost:8080/inbox\", \"name\": \"ActivityRelay\", \"type\": \"Application\", \"id\": \"http://localhost:8080/actor\", \"publicKey\": {\"id\": \"http://localhost:8080/actor#main-key\", \"owner\": \"http://localhost:8080/actor\", \"publicKeyPem\": \"-----BEGIN PUBLIC KEY-----\\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvs6UuAo26Sb3BiOK7xay\\nsBzqvXI3xd55JAP0pAk2faF+Vl3r67/g9MoND96JqCVMuzSJZ9oSsqa6ilJCxG3p\\nXUUfQUvqAMGW49cCvga86DG17Ennjbc4C6WIQtoW3Wm5OdDciPY2Dx+pSXdTOajB\\nFX6RHUZcgqHENrsm3jPZI138e/2OJeqdxv4/5t2xdPXEpWdPGitX9AJhrqPY4lzg\\nzQ9Y9wS2eS1CVL9vZZRf9Z4RiZvAfVb0s1iS/IUxrf4TYERRFJxEoDLD2SZVrkq6\\nvhGldCfw2ZnfTftA1ToXguC9S6nSaz+li0ajNjpK/xjZjlKvn0I078UPPe5LUlsb\\nUcYZvBx5PC5rV8yKMLlgxnTY8PqC8LEVc453wO7Ai4M5TeB0SUyEycZHSyLfvQXV\\nThEN/07u1UaJViY3U5S/SihyoCQUfJXQ3jx2SjGgM32/aJ3IwxgveLaTsaZ0VVKM\\nbawEFw6iAcWYM06hZSB6j6dkL1xh+FYGEQTPMYMqUOJi2r1cD8yMLe8dTFOmwMLt\\nBnf7xxvnjKJcv3e9zGRWIdLkQbBQn3BEuRTCUMgljipxdjbeE5/JSP1kQLB94ncb\\nb9gvYgtemJKvT8m37+HOi9MI4BMIlDwpRWjqPZmkNvkegR/1KPjJSsyAnGdd89ne\\np442vUqPyXIq0tSCDmjmU+cCAwEAAQ==\\n-----END PUBLIC KEY-----\"}, \"summary\": \"ActivityRelay bot\", \"preferredUsername\": \"relay\", \"url\": \"http://localhost:8080/actor\"}",
+      "headers": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Content-Length": "1368",
+        "Date": "Thu, 01 Aug 2019 14:44:36 GMT",
+        "Server": "Python/3.7 aiohttp/3.3.2"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

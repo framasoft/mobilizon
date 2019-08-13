@@ -9,7 +9,7 @@ defmodule MobilizonWeb.API.Utils do
   Determines the full audience based on mentions for a public audience
 
   Audience is:
-    * `to` : the mentionned actors, the eventual actor we're replying to and the public
+    * `to` : the mentioned actors, the eventual actor we're replying to and the public
     * `cc` : the actor's followers
   """
   @spec get_to_and_cc(Actor.t(), list(), map(), String.t()) :: {list(), list()}
@@ -72,7 +72,9 @@ defmodule MobilizonWeb.API.Utils do
     end
   end
 
-  def get_to_and_cc(_user, mentions, _inReplyTo, {:list, _}), do: {mentions, []}
+  def get_to_and_cc(_actor, mentions, _inReplyTo, {:list, _}) do
+    {mentions, []}
+  end
 
   #  def get_addressed_users(_, to) when is_list(to) do
   #    Actors.get(to)
@@ -138,7 +140,7 @@ defmodule MobilizonWeb.API.Utils do
            make_content_html(
              content,
              tags,
-             "text/plain"
+             "text/html"
            ),
          mentioned_users <- for({_, mentioned_user} <- mentions, do: mentioned_user.url),
          addressed_users <- get_addressed_users(mentioned_users, nil),

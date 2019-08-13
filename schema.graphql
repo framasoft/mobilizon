@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Mon Jul 29 2019 15:24:10 GMT+0200 (GMT+02:00)
+# timestamp: Wed Aug 07 2019 17:57:34 GMT+0200 (GMT+02:00)
 
 schema {
   query: RootQueryType
@@ -119,6 +119,7 @@ type Address {
 
   """The address's street name (with number)"""
   street: String
+  url: String
 }
 
 input AddressInput {
@@ -138,6 +139,7 @@ input AddressInput {
 
   """The address's street name (with number)"""
   street: String
+  url: String
 }
 
 """A comment"""
@@ -688,7 +690,7 @@ type RootMutationType {
   """Create an event"""
   createEvent(
     beginsOn: DateTime!
-    category: String!
+    category: String
     description: String!
     endsOn: DateTime
     onlineAddress: String

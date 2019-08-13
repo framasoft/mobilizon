@@ -6,6 +6,11 @@
     <div v-if="$apollo.loading">Loading...</div>
     <div class="columns is-centered" v-else>
       <form class="column is-two-thirds-desktop" @submit="createEvent">
+        <h2 class="subtitle">
+          <translate>
+            General informations
+          </translate>
+        </h2>
         <picture-upload v-model="pictureFile" />
 
         <b-field :label="$gettext('Title')">
@@ -24,7 +29,7 @@
           <editor v-model="event.description" />
         </div>
 
-        <b-field :label="$gettext('Category')">
+        <!--<b-field :label="$gettext('Category')">
           <b-select placeholder="Select a category" v-model="event.category">
             <option
               v-for="category in categories"
@@ -32,9 +37,30 @@
               :key="category"
             >{{ $gettext(category) }}</option>
           </b-select>
-        </b-field>
+        </b-field>-->
 
-        <button class="button is-primary">
+        <h2 class="subtitle">
+          <translate>
+            Visibility
+          </translate>
+        </h2>
+          <label class="label">{{ $gettext('Event visibility') }}</label>
+          <div class="field">
+            <b-radio v-model="event.visibility"
+                     name="name"
+                     :native-value="EventVisibility.PUBLIC">
+              <translate>Visible everywhere on the web (public)</translate>
+            </b-radio>
+          </div>
+          <div class="field">
+            <b-radio v-model="event.visibility"
+                     name="name"
+                     :native-value="EventVisibility.PRIVATE">
+              <translate>Only accessible through link and search (private)</translate>
+            </b-radio>
+          </div>
+
+          <button class="button is-primary">
           <translate>Create my event</translate>
         </button>
       </form>
@@ -50,6 +76,7 @@ import {
       Category,
       IEvent,
       EventModel,
+      EventVisibility,
     } from '@/types/event.model';
 import { LOGGED_PERSON } from '@/graphql/actor';
 import { IPerson, Person } from '@/types/actor';
@@ -76,9 +103,10 @@ export default class CreateEvent extends Vue {
   @Prop({ required: false, type: String }) uuid!: string;
 
   loggedPerson: IPerson = new Person();
-  categories: string[] = Object.keys(Category);
+  /*categories: string[] = Object.keys(Category);*/
   event: IEvent = new EventModel();
   pictureFile: File | null = null;
+  EventVisibility = EventVisibility;
 
   created() {
     const now = new Date();

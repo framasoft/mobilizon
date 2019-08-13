@@ -5,7 +5,7 @@
  *
  * Example: framameet.org
  */
-export const MOBILIZON_INSTANCE_HOST = process.env.MOBILIZON_INSTANCE_HOST;
+export const MOBILIZON_INSTANCE_HOST = window.location.hostname;
 
 /**
  * URL on which the API is. "/api" will be added at the end
@@ -14,7 +14,7 @@ export const MOBILIZON_INSTANCE_HOST = process.env.MOBILIZON_INSTANCE_HOST;
  *
  * Example: https://framameet.org
  */
-export const GRAPHQL_API_ENDPOINT = process.env.GRAPHQL_API_ENDPOINT;
+export const GRAPHQL_API_ENDPOINT = window.location.origin;
 
 /**
  * URL with path on which the API is. Replaces GRAPHQL_API_ENDPOINT if used
@@ -23,4 +23,4 @@ export const GRAPHQL_API_ENDPOINT = process.env.GRAPHQL_API_ENDPOINT;
  *
  * Example: https://framameet.org/api
  */
-export const GRAPHQL_API_FULL_PATH = process.env.GRAPHQL_API_FULL_PATH;
+export const GRAPHQL_API_FULL_PATH = `${window.location.origin}/api`;

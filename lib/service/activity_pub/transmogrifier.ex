@@ -8,11 +8,12 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   A module to handle coding from internal to wire ActivityPub and back.
   """
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Actors.{Actor, Follower}
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Comment}
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Utils
+  alias Mobilizon.Service.ActivityPub.Visibility
 
   require Logger
 
@@ -45,7 +46,8 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     |> Map.put("actor", object["attributedTo"])
     |> fix_attachments
     |> fix_in_reply_to
-    |> fix_tag
+
+    # |> fix_tag
   end
 
   def fix_in_reply_to(%{"inReplyTo" => in_reply_to} = object)
@@ -69,8 +71,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
 
   def fix_in_reply_to(%{"inReplyTo" => in_reply_to} = object)
       when not is_nil(in_reply_to) do
-    Logger.error("inReplyTo ID seem incorrect")
-    Logger.error(inspect(in_reply_to))
+    Logger.warn("inReplyTo ID seem incorrect: #{inspect(in_reply_to)}")
     do_fix_in_reply_to("", object)
   end
 
@@ -87,7 +88,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
         object
 
       e ->
-        Logger.error("Couldn't fetch #{in_reply_to_id} #{inspect(e)}")
+        Logger.warn("Couldn't fetch #{in_reply_to_id} #{inspect(e)}")
         object
     end
   end
@@ -115,6 +116,9 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     object
     |> Map.put("tag", combined)
   end
+
+  def handle_incoming(%{"id" => nil}), do: :error
+  def handle_incoming(%{"id" => ""}), do: :error
 
   def handle_incoming(%{"type" => "Flag"} = data) do
     with params <- Mobilizon.Service.ActivityPub.Converters.Flag.as_to_model(data) do
@@ -186,13 +190,69 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     with {:ok, %Actor{} = followed} <- Actors.get_or_fetch_by_url(followed, true),
          {:ok, %Actor{} = follower} <- Actors.get_or_fetch_by_url(follower),
          {:ok, activity, object} <- ActivityPub.follow(follower, followed, id, false) do
-      ActivityPub.accept(%{to: [follower.url], actor: followed.url, object: data, local: true})
-
       {:ok, activity, object}
     else
       e ->
-        Logger.error("Unable to handle Follow activity")
-        Logger.error(inspect(e))
+        Logger.warn("Unable to handle Follow activity #{inspect(e)}")
+        :error
+    end
+  end
+
+  # TODO : Handle object being a Link
+  def handle_incoming(
+        %{
+          "type" => "Accept",
+          "object" => follow_object,
+          "actor" => _actor,
+          "id" => _id
+        } = data
+      ) do
+    with followed_actor_url <- get_actor(data),
+         {:ok, %Actor{} = followed} <- Actors.get_or_fetch_by_url(followed_actor_url),
+         {:ok, %Follower{approved: false, actor: follower, id: follow_id} = follow} <-
+           get_follow(follow_object),
+         {:ok, activity, _} <-
+           ActivityPub.accept(
+             %{
+               to: [follower.url],
+               actor: followed.url,
+               object: follow_object,
+               local: false
+             },
+             "#{MobilizonWeb.Endpoint.url()}/accept/follow/#{follow_id}"
+           ),
+         {:ok, %Follower{approved: true}} <- Actors.update_follower(follow, %{"approved" => true}) do
+      {:ok, activity, follow}
+    else
+      {:ok, %Follower{approved: true} = _follow} ->
+        {:error, "Follow already accepted"}
+
+      e ->
+        Logger.warn("Unable to process Accept Follow activity #{inspect(e)}")
+        :error
+    end
+  end
+
+  def handle_incoming(
+        %{"type" => "Reject", "object" => follow_object, "actor" => _actor, "id" => _id} = data
+      ) do
+    with followed_actor_url <- get_actor(data),
+         {:ok, %Actor{} = followed} <- Actors.get_or_fetch_by_url(followed_actor_url),
+         {:ok, %Follower{approved: false, actor: follower, id: follow_id} = follow} <-
+           get_follow(follow_object),
+         {:ok, activity, object} <-
+           ActivityPub.reject(%{
+             to: [follower.url],
+             type: "Reject",
+             actor: followed,
+             object: follow_object,
+             local: false
+           }),
+         {:ok, _follower} <- Actor.unfollow(followed, follower) do
+      {:ok, activity, object}
+    else
+      e ->
+        Logger.debug(inspect(e))
         :error
     end
   end
@@ -211,19 +271,21 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   #    end
   #  end
   # #
-  # def handle_incoming(
-  #       %{"type" => "Announce", "object" => object_id, "actor" => actor, "id" => id} = data
-  #     ) do
-  #   with actor <- get_actor(data),
-  #        {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(actor),
-  #        {:ok, object} <- get_obj_helper(object_id) || fetch_obj_helper(object_id),
-  #        {:ok, activity, _object} <- ActivityPub.announce(actor, object, id, false) do
-  #     {:ok, activity}
-  #   else
-  #     e -> Logger.error(inspect e)
-  #       :error
-  #   end
-  # end
+  def handle_incoming(
+        %{"type" => "Announce", "object" => object_id, "actor" => actor, "id" => id} = data
+      ) do
+    with actor <- get_actor(data),
+         {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(actor),
+         {:ok, object} <- fetch_obj_helper_as_activity_streams(object_id),
+         public <- Visibility.is_public?(data),
+         {:ok, activity, object} <- ActivityPub.announce(actor, object, id, false, public) do
+      {:ok, activity, object}
+    else
+      e ->
+        Logger.debug(inspect(e))
+        :error
+    end
+  end
 
   def handle_incoming(
         %{"type" => "Update", "object" => %{"type" => object_type} = object, "actor" => _actor_id} =
@@ -245,28 +307,33 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
         })
 
       e ->
-        Logger.error(inspect(e))
+        Logger.debug(inspect(e))
         :error
     end
   end
 
-  # def handle_incoming(
-  #       %{
-  #         "type" => "Undo",
-  #         "object" => %{"type" => "Announce", "object" => object_id},
-  #         "actor" => actor,
-  #         "id" => id
-  #       } = data
-  #     ) do
-  #   with actor <- get_actor(data),
-  #        {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(actor),
-  #        {:ok, object} <- get_obj_helper(object_id) || fetch_obj_helper(object_id),
-  #        {:ok, activity, _} <- ActivityPub.unannounce(actor, object, id, false) do
-  #     {:ok, activity}
-  #   else
-  #     _e -> :error
-  #   end
-  # end
+  def handle_incoming(
+        %{
+          "type" => "Undo",
+          "object" => %{
+            "type" => "Announce",
+            "object" => object_id,
+            "id" => cancelled_activity_id
+          },
+          "actor" => actor,
+          "id" => id
+        } = data
+      ) do
+    with actor <- get_actor(data),
+         {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(actor),
+         {:ok, object} <- fetch_obj_helper_as_activity_streams(object_id),
+         {:ok, activity, object} <-
+           ActivityPub.unannounce(actor, object, id, cancelled_activity_id, false) do
+      {:ok, activity, object}
+    else
+      _e -> :error
+    end
+  end
 
   def handle_incoming(
         %{
@@ -278,12 +345,11 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
       ) do
     with {:ok, %Actor{domain: nil} = followed} <- Actors.get_actor_by_url(followed),
          {:ok, %Actor{} = follower} <- Actors.get_actor_by_url(follower),
-         {:ok, activity, object} <- ActivityPub.unfollow(followed, follower, id, false) do
-      Actor.unfollow(follower, followed)
+         {:ok, activity, object} <- ActivityPub.unfollow(follower, followed, id, false) do
       {:ok, activity, object}
     else
       e ->
-        Logger.error(inspect(e))
+        Logger.debug(inspect(e))
         :error
     end
   end
@@ -300,14 +366,14 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
 
     with actor <- get_actor(data),
          {:ok, %Actor{url: _actor_url}} <- Actors.get_actor_by_url(actor),
-         {:ok, object} <- get_obj_helper(object_id) || fetch_obj_helper(object_id),
+         {:ok, object} <- fetch_obj_helper(object_id),
          #  TODO : Validate that DELETE comes indeed form right domain (see above)
          #  :ok <- contain_origin(actor_url, object.data),
          {:ok, activity, object} <- ActivityPub.delete(object, false) do
       {:ok, activity, object}
     else
       e ->
-        Logger.error(inspect(e))
+        Logger.debug(inspect(e))
         :error
     end
   end
@@ -327,7 +393,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   #     ) do
   #   with actor <- get_actor(data),
   #        %Actor{} = actor <- Actors.get_or_fetch_by_url(actor),
-  #        {:ok, object} <- get_obj_helper(object_id) || fetch_obj_helper(object_id),
+  #        {:ok, object} <- fetch_obj_helper(object_id) || fetch_obj_helper(object_id),
   #        {:ok, activity, _, _} <- ActivityPub.unlike(actor, object, id, false) do
   #     {:ok, activity}
   #   else
@@ -338,6 +404,20 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   def handle_incoming(_) do
     Logger.info("Handing something not supported")
     {:error, :not_supported}
+  end
+
+  defp get_follow(follow_object) do
+    with follow_object_id when not is_nil(follow_object_id) <- Utils.get_url(follow_object),
+         {:not_found, %Follower{} = follow} <-
+           {:not_found, Actors.get_follow_by_url(follow_object_id)} do
+      {:ok, follow}
+    else
+      {:not_found, err} ->
+        {:error, "Follow URL not found"}
+
+      _ ->
+        {:error, "ActivityPub ID not found in Accept Follow object"}
+    end
   end
 
   def set_reply_to_uri(%{"inReplyTo" => in_reply_to} = object) do
@@ -523,50 +603,23 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   #    |> Map.put("attachment", attachments)
   #  end
 
-  @spec fetch_obj_helper(String.t()) :: {:ok, %Event{}} | {:ok, %Comment{}} | {:error, any()}
-  def fetch_obj_helper(url) when is_bitstring(url), do: ActivityPub.fetch_object_from_url(url)
+  @spec fetch_obj_helper(map() | String.t()) :: Event.t() | Comment.t() | Actor.t() | any()
+  def fetch_obj_helper(object) do
+    Logger.debug("Fetching object #{inspect(object)}")
 
-  @spec fetch_obj_helper(map()) :: {:ok, %Event{}} | {:ok, %Comment{}} | {:error, any()}
-  def fetch_obj_helper(obj) when is_map(obj), do: ActivityPub.fetch_object_from_url(obj["id"])
+    case object |> Utils.get_url() |> ActivityPub.fetch_object_from_url() do
+      {:ok, object} ->
+        {:ok, object}
 
-  @spec get_obj_helper(String.t()) :: {:ok, struct()} | nil
-  def get_obj_helper(id) do
-    if object = normalize(id), do: {:ok, object}, else: nil
-  end
-
-  @spec normalize(map()) :: struct() | nil
-  def normalize(obj) when is_map(obj), do: get_anything_by_url(obj["id"])
-
-  @spec normalize(String.t()) :: struct() | nil
-  def normalize(url) when is_binary(url), do: get_anything_by_url(url)
-
-  @spec normalize(any()) :: nil
-  def normalize(_), do: nil
-
-  @spec normalize(String.t()) :: struct() | nil
-  def get_anything_by_url(url) do
-    Logger.debug(fn -> "Getting anything from url #{url}" end)
-    get_actor_url(url) || get_event_url(url) || get_comment_url(url)
-  end
-
-  defp get_actor_url(url) do
-    case Actors.get_actor_by_url(url) do
-      {:ok, %Actor{} = actor} -> actor
-      _ -> nil
+      err ->
+        Logger.info("Error while fetching #{inspect(object)}")
+        {:error, err}
     end
   end
 
-  defp get_event_url(url) do
-    case Events.get_event_by_url(url) do
-      {:ok, %Event{} = event} -> event
-      _ -> nil
-    end
-  end
-
-  defp get_comment_url(url) do
-    case Events.get_comment_full_from_url(url) do
-      {:ok, %Comment{} = comment} -> comment
-      _ -> nil
+  def fetch_obj_helper_as_activity_streams(object) do
+    with {:ok, object} <- fetch_obj_helper(object) do
+      {:ok, Mobilizon.Service.ActivityPub.Convertible.model_to_as(object)}
     end
   end
 end

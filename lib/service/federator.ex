@@ -58,10 +58,11 @@ defmodule Mobilizon.Service.Federator do
       %Activity{} ->
         Logger.info("Already had #{params["id"]}")
 
-      _e ->
+      e ->
         # Just drop those for now
         Logger.error("Unhandled activity")
-        Logger.error(Jason.encode!(params))
+        Logger.debug(inspect(e))
+        Logger.debug(Jason.encode!(params))
     end
   end
 
@@ -75,7 +76,7 @@ defmodule Mobilizon.Service.Federator do
   end
 
   def enqueue(type, payload, priority \\ 1) do
-    Logger.debug("enqueue")
+    Logger.debug("enqueue something with type #{inspect(type)}")
 
     if Mix.env() == :test do
       handle(type, payload)
@@ -111,7 +112,7 @@ defmodule Mobilizon.Service.Federator do
   end
 
   def handle_cast(m, state) do
-    Logger.error(fn ->
+    Logger.debug(fn ->
       "Unknown: #{inspect(m)}, #{inspect(state)}"
     end)
 

@@ -93,6 +93,10 @@ defmodule Mobilizon.Mixfile do
       {:auto_linker,
        git: "https://git.pleroma.social/pleroma/auto_linker.git",
        ref: "95e8188490e97505c56636c1379ffdf036c1fdde"},
+      {:http_signatures,
+       git: "https://git.pleroma.social/pleroma/http_signatures.git",
+       ref: "293d77bb6f4a67ac8bde1428735c3b42f22cbb30"},
+      {:html_sanitize_ex, "~> 1.3.0"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},
@@ -279,7 +283,7 @@ defmodule Mobilizon.Mixfile do
         MobilizonWeb.HTTPSignaturePlug,
         MobilizonWeb.WebFingerController,
         MobilizonWeb.NodeInfoController,
-        Mobilizon.Service.HTTPSignatures,
+        Mobilizon.Service.HTTPSignatures.Signature,
         Mobilizon.Service.WebFinger,
         Mobilizon.Service.XmlBuilder,
         Mobilizon.Service.Federator

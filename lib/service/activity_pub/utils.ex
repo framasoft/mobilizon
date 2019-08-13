@@ -30,12 +30,9 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
 
   # Some implementations send the actor URI as the actor field, others send the entire actor object,
   # so figure out what the actor's URI is based on what we have.
-  def get_url(object) do
-    case object do
-      %{"id" => id} -> id
-      id -> id
-    end
-  end
+  def get_url(%{"id" => id}), do: id
+  def get_url(id) when is_bitstring(id), do: id
+  def get_url(_), do: nil
 
   def make_json_ld_header do
     %{
@@ -150,7 +147,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     else
       err ->
         Logger.error("Error while inserting a remote comment inside database")
-        Logger.error(inspect(err))
+        Logger.debug(inspect(err))
         {:error, err}
     end
   end
@@ -172,7 +169,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     else
       err ->
         Logger.error("Error while inserting a remote comment inside database")
-        Logger.error(inspect(err))
+        Logger.debug(inspect(err))
         {:error, err}
     end
   end
@@ -463,59 +460,96 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "object" => followed_id
     }
 
+    data =
+      if activity_id,
+        do: Map.put(data, "id", activity_id),
+        else: data
+
     Logger.debug(inspect(data))
 
-    if activity_id,
-      do: Map.put(data, "id", activity_id),
-      else: data
+    data
   end
 
   #### Announce-related helpers
 
+  require Logger
+
   @doc """
   Make announce activity data for the given actor and object
   """
+  def make_announce_data(actor, object, activity_id, public \\ true)
+
   def make_announce_data(
-        %Actor{url: actor_url} = actor,
-        %Event{url: event_url} = object,
-        activity_id
-      ) do
+        %Actor{url: actor_url, followers_url: actor_followers_url} = _actor,
+        %{"id" => url, "type" => type} = _object,
+        activity_id,
+        public
+      )
+      when type in ["Group", "Person", "Application"] do
+    do_make_announce_data(actor_url, actor_followers_url, url, url, activity_id, public)
+  end
+
+  def make_announce_data(
+        %Actor{url: actor_url, followers_url: actor_followers_url} = _actor,
+        %{"id" => url, "type" => type, "actor" => object_actor_url} = _object,
+        activity_id,
+        public
+      )
+      when type in ["Note", "Event"] do
+    do_make_announce_data(
+      actor_url,
+      actor_followers_url,
+      object_actor_url,
+      url,
+      activity_id,
+      public
+    )
+  end
+
+  defp do_make_announce_data(
+         actor_url,
+         actor_followers_url,
+         object_actor_url,
+         object_url,
+         activity_id,
+         public \\ true
+       ) do
+    {to, cc} =
+      if public do
+        {[actor_followers_url, object_actor_url],
+         ["https://www.w3.org/ns/activitystreams#Public"]}
+      else
+        {[actor_followers_url], []}
+      end
+
     data = %{
       "type" => "Announce",
       "actor" => actor_url,
-      "object" => event_url,
-      "to" => [actor.followers_url, object.actor.url],
-      "cc" => ["https://www.w3.org/ns/activitystreams#Public"]
-      # "context" => object.data["context"]
+      "object" => object_url,
+      "to" => to,
+      "cc" => cc
     }
 
     if activity_id, do: Map.put(data, "id", activity_id), else: data
   end
 
   @doc """
-  Make announce activity data for the given actor and object
+  Make unannounce activity data for the given actor and object
   """
-  def make_announce_data(
-        %Actor{url: actor_url} = actor,
-        %Comment{url: comment_url} = object,
+  def make_unannounce_data(
+        %Actor{url: url} = actor,
+        activity,
         activity_id
       ) do
     data = %{
-      "type" => "Announce",
-      "actor" => actor_url,
-      "object" => comment_url,
-      "to" => [actor.followers_url, object.actor.url],
+      "type" => "Undo",
+      "actor" => url,
+      "object" => activity,
+      "to" => [actor.followers_url, actor.url],
       "cc" => ["https://www.w3.org/ns/activitystreams#Public"]
-      # "context" => object.data["context"]
     }
 
     if activity_id, do: Map.put(data, "id", activity_id), else: data
-  end
-
-  def add_announce_to_object(%Activity{data: %{"actor" => actor}}, object) do
-    with announcements <- [actor | object.data["announcements"] || []] |> Enum.uniq() do
-      update_element_in_object("announcement", announcements, object)
-    end
   end
 
   #### Unfollow-related helpers
@@ -553,7 +587,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "to" => params.to |> Enum.uniq(),
       "actor" => params.actor.url,
       "object" => params.object,
-      "published" => published
+      "published" => published,
+      "id" => params.object["id"] <> "/activity"
     }
     |> Map.merge(additional)
   end

@@ -91,7 +91,6 @@ defmodule Mobilizon.Events.Event do
       :title,
       :begins_on,
       :organizer_actor_id,
-      :category,
       :url,
       :uuid
     ])

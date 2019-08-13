@@ -12,17 +12,17 @@
        "http://www.w3.org/ns/activitystreams#Public"
      ],
      "published": "2018-05-11T16:23:37Z",
-     "object": "http://mastodon.example.org/@admin/99541947525187367",
-     "id": "http://mastodon.example.org/users/admin/statuses/99542391527669785/activity",
+     "object": "https://framapiaf.org/@Framasoft/statuses/102501959686438400",
+     "id": "https://framapiaf.org/users/Framasoft/statuses/102501959686438400/activity",
      "cc": [
-       "http://mastodon.example.org/users/admin",
-       "http://mastodon.example.org/users/admin/followers"
+       "https://framapiaf.org/users/Framasoft/",
+       "https://framapiaf.org/users/Framasoft/followers"
      ],
-     "atomUri": "http://mastodon.example.org/users/admin/statuses/99542391527669785/activity",
-     "actor": "http://mastodon.example.org/users/admin"
+     "atomUri": "https://framapiaf.org/users/Framasoft/statuses/102501959686438400/activity",
+     "actor": "https://framapiaf.org/users/Framasoft"
    },
-   "id": "http://mastodon.example.org/users/admin#announces/100011594053806179/undo",
-   "actor": "http://mastodon.example.org/users/admin",
+   "id": "https://framapiaf.org/users/Framasoft#announces/100011594053806179/undo",
+   "actor": "https://framapiaf.org/users/Framasoft",
    "@context": [
      "http://www.w3.org/ns/activitystreams",
      "http://w3id.org/security/v1",

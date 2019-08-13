@@ -22,6 +22,11 @@ defmodule Mix.Tasks.Mobilizon.Common do
       end
   end
 
+  def start_mobilizon do
+    Application.put_env(:phoenix, :serve_endpoints, false, persistent: true)
+    {:ok, _} = Application.ensure_all_started(:mobilizon)
+  end
+
   def escape_sh_path(path) do
     ~S(') <> String.replace(path, ~S('), ~S(\')) <> ~S(')
   end

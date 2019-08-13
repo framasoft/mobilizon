@@ -14,6 +14,19 @@ defmodule MobilizonWeb.ActivityPubController do
 
   action_fallback(:errors)
 
+  plug(:relay_active? when action in [:relay])
+
+  def relay_active?(conn, _) do
+    if Mobilizon.CommonConfig.get([:instance, :allow_relay]) do
+      conn
+    else
+      conn
+      |> put_status(404)
+      |> json("Not found")
+      |> halt()
+    end
+  end
+
   def following(conn, %{"name" => name, "page" => page}) do
     with {page, ""} <- Integer.parse(page),
          %Actor{} = actor <- Actors.get_local_actor_by_name_with_everything(name) do
@@ -67,6 +80,7 @@ defmodule MobilizonWeb.ActivityPubController do
 
   # TODO: Ensure that this inbox is a recipient of the message
   def inbox(%{assigns: %{valid_signature: true}} = conn, params) do
+    Logger.debug("Got something with valid signature inside inbox")
     Federator.enqueue(:incoming_ap_doc, params)
     json(conn, "ok")
   end
@@ -90,10 +104,24 @@ defmodule MobilizonWeb.ActivityPubController do
         "Signature validation error for: #{params["actor"]}, make sure you are forwarding the HTTP Host header!"
       )
 
-      Logger.error(inspect(conn.req_headers))
+      Logger.debug(inspect(conn.req_headers))
     end
 
     json(conn, "error")
+  end
+
+  def relay(conn, _params) do
+    with {status, actor} <-
+           Cachex.fetch(
+             :activity_pub,
+             "relay_actor",
+             &Mobilizon.Service.ActivityPub.Relay.get_actor/0
+           ),
+         true <- status in [:ok, :commit] do
+      conn
+      |> put_resp_header("content-type", "application/activity+json")
+      |> json(ActorView.render("actor.json", %{actor: actor}))
+    end
   end
 
   def errors(conn, {:error, :not_found}) do
@@ -102,7 +130,9 @@ defmodule MobilizonWeb.ActivityPubController do
     |> json("Not found")
   end
 
-  def errors(conn, _e) do
+  def errors(conn, e) do
+    Logger.debug(inspect(e))
+
     conn
     |> put_status(500)
     |> json("Unknown Error")

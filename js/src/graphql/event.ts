@@ -51,6 +51,7 @@ export const FETCH_EVENT = gql`
         preferredUsername,
         domain,
         name,
+        url,
       },
       # attributedTo {
       #     avatar {
@@ -141,11 +142,12 @@ export const CREATE_EVENT = gql`
   $title: String!,
   $description: String!,
   $organizerActorId: ID!,
-  $category: String!,
+  $category: String,
   $beginsOn: DateTime!,
   $picture: PictureInput,
   $tags: [String],
-  $physicalAddress: AddressInput!
+  $physicalAddress: AddressInput,
+  $visibility: EventVisibility
   ) {
     createEvent(
       title: $title,
@@ -155,7 +157,8 @@ export const CREATE_EVENT = gql`
       category: $category,
       picture: $picture,
       tags: $tags,
-      physicalAddress: $physicalAddress
+      physicalAddress: $physicalAddress,
+      visibility: $visibility
     ) {
       id,
       uuid,
@@ -172,7 +175,7 @@ export const EDIT_EVENT = gql`
   $title: String!,
   $description: String!,
   $organizerActorId: Int!,
-  $category: String!
+  $category: String
   ) {
     EditEvent(title: $title, description: $description, organizerActorId: $organizerActorId, category: $category) {
       uuid

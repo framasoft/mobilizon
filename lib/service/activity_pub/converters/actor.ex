@@ -45,3 +45,9 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Actor do
     }
   end
 end
+
+defimpl Mobilizon.Service.ActivityPub.Convertible, for: Mobilizon.Actors.Actor do
+  alias Mobilizon.Service.ActivityPub.Converters.Actor, as: ActorConverter
+
+  defdelegate model_to_as(actor), to: ActorConverter
+end

@@ -479,9 +479,9 @@ defmodule Mobilizon.ActorsTest do
     alias Mobilizon.Actors.Follower
     alias Mobilizon.Actors.Actor
 
-    @valid_attrs %{approved: true, score: 42}
-    @update_attrs %{approved: false, score: 43}
-    @invalid_attrs %{approved: nil, score: nil}
+    @valid_attrs %{approved: true}
+    @update_attrs %{approved: false}
+    @invalid_attrs %{approved: nil}
 
     setup do
       actor = insert(:actor)
@@ -509,7 +509,6 @@ defmodule Mobilizon.ActorsTest do
 
       assert {:ok, %Follower{} = follower} = Actors.create_follower(valid_attrs)
       assert follower.approved == true
-      assert follower.score == 42
 
       assert %{total: 1, elements: [target_actor]} = Actor.get_followings(actor)
       assert %{total: 1, elements: [actor]} = Actor.get_followers(target_actor)
@@ -546,7 +545,6 @@ defmodule Mobilizon.ActorsTest do
       assert {:ok, follower} = Actors.update_follower(follower, @update_attrs)
       assert %Follower{} = follower
       assert follower.approved == false
-      assert follower.score == 43
     end
 
     test "update_follower/2 with invalid data returns error changeset", context do
@@ -582,12 +580,12 @@ defmodule Mobilizon.ActorsTest do
       assert actor.followings |> Enum.map(& &1.target_actor_id) == [target_actor.id]
 
       # Test if actor is already following target actor
-      {:error, msg} = Actor.follow(target_actor, actor)
+      assert {:error, :already_following, msg} = Actor.follow(target_actor, actor)
       assert msg =~ "already following"
 
       # Test if target actor is suspended
       target_actor = %{target_actor | suspended: true}
-      {:error, msg} = Actor.follow(target_actor, actor)
+      assert {:error, :suspended, msg} = Actor.follow(target_actor, actor)
       assert msg =~ "suspended"
     end
   end

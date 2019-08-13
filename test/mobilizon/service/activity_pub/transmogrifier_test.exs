@@ -13,6 +13,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Events.{Comment, Event}
+  alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Utils
   alias Mobilizon.Service.ActivityPub.Transmogrifier
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
@@ -151,7 +152,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
       data = File.read!("test/fixtures/mastodon-post-activity-hashtag.json") |> Jason.decode!()
 
       {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
-      assert Enum.at(data["object"]["tag"], 2) == "moo"
+      assert Enum.at(data["object"]["tag"], 1)["name"] == "#moo"
     end
 
     #     test "it works for incoming notices with contentMap" do
@@ -293,43 +294,41 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     #   assert data["object"]["id"] == "http://mastodon.example.org/users/admin#likes/2"
     # end
 
-    # test "it works for incoming announces" do
-    #   data = File.read!("test/fixtures/mastodon-announce.json") |> Jason.decode!()
+    test "it works for incoming announces" do
+      data = File.read!("test/fixtures/mastodon-announce.json") |> Jason.decode!()
 
-    #   {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
+      {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
 
-    #   assert data["actor"] == "https://social.tcit.fr/users/tcit"
-    #   assert data["type"] == "Announce"
+      assert data["actor"] == "https://framapiaf.org/users/Framasoft"
+      assert data["type"] == "Announce"
 
-    #   assert data["id"] ==
-    #            "https://social.tcit.fr/users/tcit/statuses/101188891162897047/activity"
+      assert data["id"] ==
+               "https://framapiaf.org/users/Framasoft/statuses/102501959686438400/activity"
 
-    #   assert data["object"] ==
-    #            "https://social.tcit.fr/users/tcit/statuses/101188891162897047"
+      assert data["object"] ==
+               "https://framapiaf.org/users/Framasoft/statuses/102501959686438400"
 
-    #   assert %Comment{} = Events.get_comment_from_url(data["object"])
-    # end
+      assert %Comment{} = Events.get_comment_from_url(data["object"])
+    end
 
-    # test "it works for incoming announces with an existing activity" do
-    #   comment = insert(:comment)
+    test "it works for incoming announces with an existing activity" do
+      comment = insert(:comment)
 
-    #   data =
-    #     File.read!("test/fixtures/mastodon-announce.json")
-    #     |> Jason.decode!()
-    #     |> Map.put("object", comment.url)
+      data =
+        File.read!("test/fixtures/mastodon-announce.json")
+        |> Jason.decode!()
+        |> Map.put("object", comment.url)
 
-    #   {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
+      {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
 
-    #   assert data["actor"] == "https://social.tcit.fr/users/tcit"
-    #   assert data["type"] == "Announce"
+      assert data["actor"] == "https://framapiaf.org/users/Framasoft"
+      assert data["type"] == "Announce"
 
-    #   assert data["id"] ==
-    #            "https://social.tcit.fr/users/tcit/statuses/101188891162897047/activity"
+      assert data["id"] ==
+               "https://framapiaf.org/users/Framasoft/statuses/102501959686438400/activity"
 
-    #   assert data["object"] == comment.url
-
-    #   # assert Activity.get_create_activity_by_object_ap_id(data["object"]).id == activity.id
-    # end
+      assert data["object"] == comment.url
+    end
 
     test "it works for incoming update activities" do
       data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
@@ -423,32 +422,32 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     #       assert Repo.get(Activity, activity.id)
     #     end
 
-    # test "it works for incoming unannounces with an existing notice" do
-    #   comment = insert(:comment)
+    test "it works for incoming unannounces with an existing notice" do
+      comment = insert(:comment)
 
-    #   announce_data =
-    #     File.read!("test/fixtures/mastodon-announce.json")
-    #     |> Jason.decode!()
-    #     |> Map.put("object", comment.url)
+      announce_data =
+        File.read!("test/fixtures/mastodon-announce.json")
+        |> Jason.decode!()
+        |> Map.put("object", comment.url)
 
-    #   {:ok, %Activity{data: announce_data, local: false}} =
-    #     Transmogrifier.handle_incoming(announce_data)
+      {:ok, %Activity{data: announce_data, local: false}, _} =
+        Transmogrifier.handle_incoming(announce_data)
 
-    #   data =
-    #     File.read!("test/fixtures/mastodon-undo-announce.json")
-    #     |> Jason.decode!()
-    #     |> Map.put("object", announce_data)
-    #     |> Map.put("actor", announce_data["actor"])
+      data =
+        File.read!("test/fixtures/mastodon-undo-announce.json")
+        |> Jason.decode!()
+        |> Map.put("object", announce_data)
+        |> Map.put("actor", announce_data["actor"])
 
-    #   {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
+      {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
 
-    #   assert data["type"] == "Undo"
-    #   assert data["object"]["type"] == "Announce"
-    #   assert data["object"]["object"] == comment.url
+      assert data["type"] == "Undo"
+      assert data["object"]["type"] == "Announce"
+      assert data["object"]["object"] == comment.url
 
-    #   assert data["object"]["id"] ==
-    #            "http://mastodon.example.org/users/admin/statuses/99542391527669785/activity"
-    # end
+      assert data["object"]["id"] ==
+               "https://framapiaf.org/users/Framasoft/statuses/102501959686438400/activity"
+    end
 
     test "it works for incomming unfollows with an existing follow" do
       actor = insert(:actor)
@@ -552,175 +551,127 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     #       refute User.blocks?(blocker, user)
     #     end
 
-    #     test "it works for incoming accepts which were pre-accepted" do
-    #       follower = insert(:user)
-    #       followed = insert(:user)
+    test "it works for incoming accepts which were pre-accepted" do
+      follower = insert(:actor)
+      followed = insert(:actor)
 
-    #       {:ok, follower} = User.follow(follower, followed)
-    #       assert User.following?(follower, followed) == true
+      refute Actor.following?(follower, followed)
 
-    #       {:ok, follow_activity} = ActivityPub.follow(follower, followed)
+      {:ok, follow_activity, _} = ActivityPub.follow(follower, followed)
+      assert Actor.following?(follower, followed)
 
-    #       accept_data =
-    #         File.read!("test/fixtures/mastodon-accept-activity.json")
-    #         |> Jason.decode!()
-    #         |> Map.put("actor", followed.ap_id)
+      accept_data =
+        File.read!("test/fixtures/mastodon-accept-activity.json")
+        |> Jason.decode!()
+        |> Map.put("actor", followed.url)
 
-    #       object =
-    #         accept_data["object"]
-    #         |> Map.put("actor", follower.ap_id)
-    #         |> Map.put("id", follow_activity.data["id"])
+      object =
+        accept_data["object"]
+        |> Map.put("actor", follower.url)
+        |> Map.put("id", follow_activity.data["id"])
 
-    #       accept_data = Map.put(accept_data, "object", object)
+      accept_data = Map.put(accept_data, "object", object)
 
-    #       {:ok, activity} = Transmogrifier.handle_incoming(accept_data)
-    #       refute activity.local
+      {:ok, activity, _} = Transmogrifier.handle_incoming(accept_data)
+      refute activity.local
 
-    #       assert activity.data["object"] == follow_activity.data["id"]
+      assert activity.data["object"]["id"] == follow_activity.data["id"]
 
-    #       follower = Repo.get(User, follower.id)
+      {:ok, follower} = Actors.get_actor_by_url(follower.url)
 
-    #       assert User.following?(follower, followed) == true
-    #     end
+      assert Actor.following?(follower, followed)
+    end
 
-    #     test "it works for incoming accepts which were orphaned" do
-    #       follower = insert(:user)
-    #       followed = insert(:user, %{info: %{"locked" => true}})
+    test "it works for incoming accepts which are referenced by IRI only" do
+      follower = insert(:actor)
+      followed = insert(:actor)
 
-    #       {:ok, follow_activity} = ActivityPub.follow(follower, followed)
+      {:ok, follow_activity, _} = ActivityPub.follow(follower, followed)
 
-    #       accept_data =
-    #         File.read!("test/fixtures/mastodon-accept-activity.json")
-    #         |> Jason.decode!()
-    #         |> Map.put("actor", followed.ap_id)
+      accept_data =
+        File.read!("test/fixtures/mastodon-accept-activity.json")
+        |> Jason.decode!()
+        |> Map.put("actor", followed.url)
+        |> Map.put("object", follow_activity.data["id"])
 
-    #       accept_data =
-    #         Map.put(accept_data, "object", Map.put(accept_data["object"], "actor", follower.ap_id))
+      {:ok, activity, _} = Transmogrifier.handle_incoming(accept_data)
+      assert activity.data["object"] == follow_activity.data["id"]
+      assert activity.data["object"] =~ "/follow/"
+      assert activity.data["id"] =~ "/accept/follow/"
 
-    #       {:ok, activity} = Transmogrifier.handle_incoming(accept_data)
-    #       assert activity.data["object"] == follow_activity.data["id"]
+      {:ok, follower} = Actors.get_actor_by_url(follower.url)
 
-    #       follower = Repo.get(User, follower.id)
+      assert Actor.following?(follower, followed)
+    end
 
-    #       assert User.following?(follower, followed) == true
-    #     end
+    test "it fails for incoming accepts which cannot be correlated" do
+      follower = insert(:actor)
+      followed = insert(:actor)
 
-    #     test "it works for incoming accepts which are referenced by IRI only" do
-    #       follower = insert(:user)
-    #       followed = insert(:user, %{info: %{"locked" => true}})
+      accept_data =
+        File.read!("test/fixtures/mastodon-accept-activity.json")
+        |> Jason.decode!()
+        |> Map.put("actor", followed.url)
 
-    #       {:ok, follow_activity} = ActivityPub.follow(follower, followed)
+      accept_data =
+        Map.put(accept_data, "object", Map.put(accept_data["object"], "actor", follower.url))
 
-    #       accept_data =
-    #         File.read!("test/fixtures/mastodon-accept-activity.json")
-    #         |> Jason.decode!()
-    #         |> Map.put("actor", followed.ap_id)
-    #         |> Map.put("object", follow_activity.data["id"])
+      :error = Transmogrifier.handle_incoming(accept_data)
 
-    #       {:ok, activity} = Transmogrifier.handle_incoming(accept_data)
-    #       assert activity.data["object"] == follow_activity.data["id"]
+      {:ok, follower} = Actors.get_actor_by_url(follower.url)
 
-    #       follower = Repo.get(User, follower.id)
+      refute Actor.following?(follower, followed)
+    end
 
-    #       assert User.following?(follower, followed) == true
-    #     end
+    test "it fails for incoming rejects which cannot be correlated" do
+      follower = insert(:actor)
+      followed = insert(:actor)
 
-    #     test "it fails for incoming accepts which cannot be correlated" do
-    #       follower = insert(:user)
-    #       followed = insert(:user, %{info: %{"locked" => true}})
+      accept_data =
+        File.read!("test/fixtures/mastodon-reject-activity.json")
+        |> Jason.decode!()
+        |> Map.put("actor", followed.url)
 
-    #       accept_data =
-    #         File.read!("test/fixtures/mastodon-accept-activity.json")
-    #         |> Jason.decode!()
-    #         |> Map.put("actor", followed.ap_id)
+      accept_data =
+        Map.put(accept_data, "object", Map.put(accept_data["object"], "actor", follower.url))
 
-    #       accept_data =
-    #         Map.put(accept_data, "object", Map.put(accept_data["object"], "actor", follower.ap_id))
+      :error = Transmogrifier.handle_incoming(accept_data)
 
-    #       :error = Transmogrifier.handle_incoming(accept_data)
+      {:ok, follower} = Actors.get_actor_by_url(follower.url)
 
-    #       follower = Repo.get(User, follower.id)
+      refute Actor.following?(follower, followed)
+    end
 
-    #       refute User.following?(follower, followed) == true
-    #     end
+    test "it works for incoming rejects which are referenced by IRI only" do
+      follower = insert(:actor)
+      followed = insert(:actor)
 
-    #     test "it fails for incoming rejects which cannot be correlated" do
-    #       follower = insert(:user)
-    #       followed = insert(:user, %{info: %{"locked" => true}})
+      {:ok, follow_activity, _} = ActivityPub.follow(follower, followed)
 
-    #       accept_data =
-    #         File.read!("test/fixtures/mastodon-reject-activity.json")
-    #         |> Jason.decode!()
-    #         |> Map.put("actor", followed.ap_id)
+      assert Actor.following?(follower, followed)
 
-    #       accept_data =
-    #         Map.put(accept_data, "object", Map.put(accept_data["object"], "actor", follower.ap_id))
+      reject_data =
+        File.read!("test/fixtures/mastodon-reject-activity.json")
+        |> Jason.decode!()
+        |> Map.put("actor", followed.url)
+        |> Map.put("object", follow_activity.data["id"])
 
-    #       :error = Transmogrifier.handle_incoming(accept_data)
+      {:ok, %Activity{data: _}, _} = Transmogrifier.handle_incoming(reject_data)
 
-    #       follower = Repo.get(User, follower.id)
+      refute Actor.following?(follower, followed)
+    end
 
-    #       refute User.following?(follower, followed) == true
-    #     end
+    test "it rejects activities without a valid ID" do
+      actor = insert(:actor)
 
-    #     test "it works for incoming rejects which are orphaned" do
-    #       follower = insert(:user)
-    #       followed = insert(:user, %{info: %{"locked" => true}})
+      data =
+        File.read!("test/fixtures/mastodon-follow-activity.json")
+        |> Jason.decode!()
+        |> Map.put("object", actor.url)
+        |> Map.put("id", "")
 
-    #       {:ok, follower} = User.follow(follower, followed)
-    #       {:ok, _follow_activity} = ActivityPub.follow(follower, followed)
-
-    #       assert User.following?(follower, followed) == true
-
-    #       reject_data =
-    #         File.read!("test/fixtures/mastodon-reject-activity.json")
-    #         |> Jason.decode!()
-    #         |> Map.put("actor", followed.ap_id)
-
-    #       reject_data =
-    #         Map.put(reject_data, "object", Map.put(reject_data["object"], "actor", follower.ap_id))
-
-    #       {:ok, activity} = Transmogrifier.handle_incoming(reject_data)
-    #       refute activity.local
-
-    #       follower = Repo.get(User, follower.id)
-
-    #       assert User.following?(follower, followed) == false
-    #     end
-
-    #     test "it works for incoming rejects which are referenced by IRI only" do
-    #       follower = insert(:user)
-    #       followed = insert(:user, %{info: %{"locked" => true}})
-
-    #       {:ok, follower} = User.follow(follower, followed)
-    #       {:ok, follow_activity} = ActivityPub.follow(follower, followed)
-
-    #       assert User.following?(follower, followed) == true
-
-    #       reject_data =
-    #         File.read!("test/fixtures/mastodon-reject-activity.json")
-    #         |> Jason.decode!()
-    #         |> Map.put("actor", followed.ap_id)
-    #         |> Map.put("object", follow_activity.data["id"])
-
-    #       {:ok, %Activity{data: _}} = Transmogrifier.handle_incoming(reject_data)
-
-    #       follower = Repo.get(User, follower.id)
-
-    #       assert User.following?(follower, followed) == false
-    #     end
-
-    #     test "it rejects activities without a valid ID" do
-    #       user = insert(:user)
-
-    #       data =
-    #         File.read!("test/fixtures/mastodon-follow-activity.json")
-    #         |> Jason.decode!()
-    #         |> Map.put("object", user.ap_id)
-    #         |> Map.put("id", "")
-
-    #       :error = Transmogrifier.handle_incoming(data)
-    #     end
+      :error = Transmogrifier.handle_incoming(data)
+    end
 
     test "it accepts Flag activities" do
       %Actor{url: reporter_url} = _reporter = insert(:actor)

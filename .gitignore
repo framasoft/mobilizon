@@ -16,7 +16,9 @@ erl_crash.dump
 /config/*.secret.exs
 
 .env.production
+.env.test
 .env
+.env.2
 
 setup_db.psql
 

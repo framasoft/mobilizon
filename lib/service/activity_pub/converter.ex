@@ -7,3 +7,10 @@ defmodule Mobilizon.Service.ActivityPub.Converter do
   @callback as_to_model_data(map()) :: map()
   @callback model_to_as(struct()) :: map()
 end
+
+defprotocol Mobilizon.Service.ActivityPub.Convertible do
+  @type activitystreams :: map()
+
+  @spec model_to_as(t) :: activitystreams
+  def model_to_as(convertible)
+end
