@@ -8,7 +8,6 @@ defmodule MobilizonWeb.Resolvers.Event do
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Media.Picture
-  alias Mobilizon.Actors.Actor
   alias Mobilizon.Users.User
   alias MobilizonWeb.Resolvers.Person
 
@@ -108,20 +107,18 @@ defmodule MobilizonWeb.Resolvers.Event do
         }
       ) do
     with {:is_owned, true, actor} <- User.owns_actor(user, actor_id),
-         {:ok, %Event{} = event} <- Mobilizon.Events.get_event(event_id),
+         {:has_event, {:ok, %Event{} = event}} <-
+           {:has_event, Mobilizon.Events.get_event_full(event_id)},
          {:error, :participant_not_found} <- Mobilizon.Events.get_participant(event_id, actor_id),
-         role <- Mobilizon.Events.get_default_participant_role(event),
-         {:ok, participant} <-
-           Mobilizon.Events.create_participant(%{
-             role: role,
-             event_id: event.id,
-             actor_id: actor.id
-           }),
+         {:ok, _activity, participant} <- MobilizonWeb.API.Participations.join(event, actor),
          participant <-
            Map.put(participant, :event, event)
            |> Map.put(:actor, Person.proxify_pictures(actor)) do
       {:ok, participant}
     else
+      {:has_event, _} ->
+        {:error, "Event with this ID #{inspect(event_id)} doesn't exist"}
+
       {:is_owned, false} ->
         {:error, "Actor id is not owned by authenticated user"}
 
@@ -149,15 +146,15 @@ defmodule MobilizonWeb.Resolvers.Event do
           }
         }
       ) do
-    with {:is_owned, true, _} <- User.owns_actor(user, actor_id),
-         {:ok, %Participant{} = participant} <-
-           Mobilizon.Events.get_participant(event_id, actor_id),
-         {:only_organizer, false} <-
-           {:only_organizer, check_that_participant_is_not_only_organizer(event_id, actor_id)},
-         {:ok, _} <-
-           Mobilizon.Events.delete_participant(participant) do
+    with {:is_owned, true, actor} <- User.owns_actor(user, actor_id),
+         {:has_event, {:ok, %Event{} = event}} <-
+           {:has_event, Mobilizon.Events.get_event_full(event_id)},
+         {:ok, _activity, _participant} <- MobilizonWeb.API.Participations.leave(event, actor) do
       {:ok, %{event: %{id: event_id}, actor: %{id: actor_id}}}
     else
+      {:has_event, _} ->
+        {:error, "Event with this ID #{inspect(event_id)} doesn't exist"}
+
       {:is_owned, false} ->
         {:error, "Actor id is not owned by authenticated user"}
 
@@ -171,20 +168,6 @@ defmodule MobilizonWeb.Resolvers.Event do
 
   def actor_leave_event(_parent, _args, _resolution) do
     {:error, "You need to be logged-in to leave an event"}
-  end
-
-  # We check that the actor asking to leave the event is not it's only organizer
-  # We start by fetching the list of organizers and if there's only one of them
-  # and that it's the actor requesting leaving the event we return true
-  @spec check_that_participant_is_not_only_organizer(integer(), integer()) :: boolean()
-  defp check_that_participant_is_not_only_organizer(event_id, actor_id) do
-    case Mobilizon.Events.list_organizers_participants_for_event(event_id) do
-      [%Participant{actor: %Actor{id: participant_actor_id}}] ->
-        participant_actor_id == actor_id
-
-      _ ->
-        false
-    end
   end
 
   @doc """

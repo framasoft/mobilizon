@@ -12,7 +12,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
-  alias Mobilizon.Events.{Comment, Event}
+  alias Mobilizon.Events.{Comment, Event, Participant}
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Utils
   alias Mobilizon.Service.ActivityPub.Transmogrifier
@@ -694,6 +694,120 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
       assert activity.data["content"] == "blocked AND reported!!!"
       assert activity.data["actor"] == reporter_url
       assert activity.data["cc"] == [reported_url]
+    end
+
+    test "it accepts Join activities" do
+      %Actor{url: _organizer_url} = organizer = insert(:actor)
+      %Actor{url: participant_url} = _participant = insert(:actor)
+
+      %Event{url: event_url} = _event = insert(:event, organizer_actor: organizer)
+
+      join_data =
+        File.read!("test/fixtures/mobilizon-join-activity.json")
+        |> Jason.decode!()
+        |> Map.put("actor", participant_url)
+        |> Map.put("object", event_url)
+
+      assert {:ok, activity, _} = Transmogrifier.handle_incoming(join_data)
+
+      assert activity.data["object"] == event_url
+      assert activity.data["actor"] == participant_url
+    end
+
+    test "it accepts Accept activities for Join activities" do
+      %Actor{url: organizer_url} = organizer = insert(:actor)
+      %Actor{} = participant_actor = insert(:actor)
+
+      %Event{} = event = insert(:event, organizer_actor: organizer, join_options: :restricted)
+
+      {:ok, join_activity, participation} = ActivityPub.join(event, participant_actor)
+
+      accept_data =
+        File.read!("test/fixtures/mastodon-accept-activity.json")
+        |> Jason.decode!()
+        |> Map.put("actor", organizer_url)
+        |> Map.put("object", participation.url)
+
+      {:ok, accept_activity, _} = Transmogrifier.handle_incoming(accept_data)
+      assert accept_activity.data["object"] == join_activity.data["id"]
+      assert accept_activity.data["object"] =~ "/join/"
+      assert accept_activity.data["id"] =~ "/accept/join/"
+
+      # We don't accept already accepted Accept activities
+      :error = Transmogrifier.handle_incoming(accept_data)
+    end
+
+    test "it accepts Reject activities for Join activities" do
+      %Actor{url: organizer_url} = organizer = insert(:actor)
+      %Actor{} = participant_actor = insert(:actor)
+
+      %Event{} = event = insert(:event, organizer_actor: organizer, join_options: :restricted)
+
+      {:ok, join_activity, participation} = ActivityPub.join(event, participant_actor)
+
+      reject_data =
+        File.read!("test/fixtures/mastodon-reject-activity.json")
+        |> Jason.decode!()
+        |> Map.put("actor", organizer_url)
+        |> Map.put("object", participation.url)
+
+      {:ok, reject_activity, _} = Transmogrifier.handle_incoming(reject_data)
+      assert reject_activity.data["object"] == join_activity.data["id"]
+      assert reject_activity.data["object"] =~ "/join/"
+      assert reject_activity.data["id"] =~ "/reject/join/"
+
+      # We don't accept already rejected Reject activities
+      assert :error == Transmogrifier.handle_incoming(reject_data)
+
+      # Organiser is not present since we use factories directly
+      assert Events.list_participants_for_event(event.uuid, 1, 10, true) |> Enum.map(& &1.id) ==
+               []
+    end
+
+    test "it accepts Leave activities" do
+      %Actor{url: _organizer_url} = organizer = insert(:actor)
+      %Actor{url: participant_url} = participant_actor = insert(:actor)
+
+      %Event{url: event_url} =
+        event = insert(:event, organizer_actor: organizer, join_options: :restricted)
+
+      organizer_participation =
+        %Participant{} = insert(:participant, event: event, actor: organizer, role: :creator)
+
+      {:ok, _join_activity, _participation} = ActivityPub.join(event, participant_actor)
+
+      join_data =
+        File.read!("test/fixtures/mobilizon-leave-activity.json")
+        |> Jason.decode!()
+        |> Map.put("actor", participant_url)
+        |> Map.put("object", event_url)
+
+      assert {:ok, activity, _} = Transmogrifier.handle_incoming(join_data)
+
+      assert activity.data["object"] == event_url
+      assert activity.data["actor"] == participant_url
+
+      # The only participant left is the organizer
+      assert Events.list_participants_for_event(event.uuid, 1, 10, true) |> Enum.map(& &1.id) == [
+               organizer_participation.id
+             ]
+    end
+
+    test "it refuses Leave activities when actor is the only organizer" do
+      %Actor{url: organizer_url} = organizer = insert(:actor)
+
+      %Event{url: event_url} =
+        event = insert(:event, organizer_actor: organizer, join_options: :restricted)
+
+      %Participant{} = insert(:participant, event: event, actor: organizer, role: :creator)
+
+      join_data =
+        File.read!("test/fixtures/mobilizon-leave-activity.json")
+        |> Jason.decode!()
+        |> Map.put("actor", organizer_url)
+        |> Map.put("object", event_url)
+
+      assert :error = Transmogrifier.handle_incoming(join_data)
     end
   end
 

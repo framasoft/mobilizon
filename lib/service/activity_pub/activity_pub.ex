@@ -11,17 +11,18 @@ defmodule Mobilizon.Service.ActivityPub do
   """
 
   alias Mobilizon.Events
-  alias Mobilizon.Events.{Event, Comment}
+  alias Mobilizon.Events.{Event, Comment, Participant}
   alias Mobilizon.Service.ActivityPub.Transmogrifier
   alias Mobilizon.Service.WebFinger
   alias Mobilizon.Activity
 
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.Actor
-  alias Mobilizon.Actors.Follower
+  alias Mobilizon.Actors.{Actor, Follower}
 
   alias Mobilizon.Service.Federator
   alias Mobilizon.Service.HTTPSignatures.Signature
+
+  alias Mobilizon.Service.ActivityPub.Convertible
 
   require Logger
   import Mobilizon.Service.ActivityPub.Utils
@@ -148,7 +149,7 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
-  def accept(%{to: to, actor: actor, object: object} = params, activity_follow_id \\ nil) do
+  def accept(%{to: to, actor: actor, object: object} = params, activity_wrapper_id \\ nil) do
     # only accept false as false value
     local = !(params[:local] == false)
 
@@ -157,7 +158,7 @@ defmodule Mobilizon.Service.ActivityPub do
            "type" => "Accept",
            "actor" => actor,
            "object" => object,
-           "id" => activity_follow_id || get_url(object) <> "/activity"
+           "id" => activity_wrapper_id || get_url(object) <> "/activity"
          },
          {:ok, activity, object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
@@ -165,11 +166,17 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
-  def reject(%{to: to, actor: actor, object: object} = params) do
+  def reject(%{to: to, actor: actor, object: object} = params, activity_wrapper_id \\ nil) do
     # only accept false as false value
     local = !(params[:local] == false)
 
-    with data <- %{"to" => to, "type" => "Reject", "actor" => actor.url, "object" => object},
+    with data <- %{
+           "to" => to,
+           "type" => "Reject",
+           "actor" => actor,
+           "object" => object,
+           "id" => activity_wrapper_id || get_url(object) <> "/activity"
+         },
          {:ok, activity, object} <- insert(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity, object}
@@ -383,6 +390,65 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
+  def join(object, actor, local \\ true)
+
+  def join(%Event{} = event, %Actor{} = actor, local) do
+    with role <- Mobilizon.Events.get_default_participant_role(event),
+         {:ok, %Participant{} = participant} <-
+           Mobilizon.Events.create_participant(%{
+             role: role,
+             event_id: event.id,
+             actor_id: actor.id
+           }),
+         join_data <- Convertible.model_to_as(participant),
+         join_data <- Map.put(join_data, "to", [event.organizer_actor.url]),
+         join_data <- Map.put(join_data, "cc", []),
+         {:ok, activity, _} <- insert(join_data, local),
+         :ok <- maybe_federate(activity) do
+      if role === :participant do
+        accept(
+          %{to: [actor.url], actor: event.organizer_actor.url, object: join_data["id"]},
+          "#{MobilizonWeb.Endpoint.url()}/accept/join/#{participant.id}"
+        )
+      end
+
+      {:ok, activity, participant}
+    end
+  end
+
+  # TODO: Implement me
+  def join(%Actor{type: :Group} = _group, %Actor{} = _actor, _local) do
+    :error
+  end
+
+  def leave(object, actor, local \\ true)
+
+  # TODO: If we want to use this for exclusion we need to have an extra field for the actor that excluded the participant
+  def leave(
+        %Event{id: event_id, url: event_url} = event,
+        %Actor{id: actor_id, url: actor_url} = _actor,
+        local
+      ) do
+    with {:only_organizer, false} <-
+           {:only_organizer,
+            Participant.check_that_participant_is_not_only_organizer(event_id, actor_id)},
+         {:ok, %Participant{} = participant} <-
+           Mobilizon.Events.get_participant(event_id, actor_id),
+         {:ok, %Participant{} = participant} <- Mobilizon.Events.delete_participant(participant),
+         leave_data <- %{
+           "type" => "Leave",
+           # If it's an exclusion it should be something else
+           "actor" => actor_url,
+           "object" => event_url,
+           "to" => [event.organizer_actor.url],
+           "cc" => []
+         },
+         {:ok, activity, _} <- insert(leave_data, local),
+         :ok <- maybe_federate(activity) do
+      {:ok, activity, participant}
+    end
+  end
+
   @doc """
   Create an actor locally by it's URL (AP ID)
   """
@@ -482,7 +548,7 @@ defmodule Mobilizon.Service.ActivityPub do
   """
   def publish_one(%{inbox: inbox, json: json, actor: actor, id: id}) do
     Logger.info("Federating #{id} to #{inbox}")
-    %URI{host: host, path: path} = URI.parse(inbox)
+    %URI{host: host, path: _path} = URI.parse(inbox)
 
     digest = Signature.build_digest(json)
     date = Signature.generate_date_header()

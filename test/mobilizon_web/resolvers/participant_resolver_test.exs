@@ -116,7 +116,8 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
         |> auth_conn(user)
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "Event id not found"
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "Event with this ID 1042 doesn't exist"
     end
 
     test "actor_leave_event/3 should delete a participant from an event", %{
@@ -290,13 +291,14 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
       user: user,
       actor: actor
     } do
+      event = insert(:event)
       participant = insert(:participant, %{actor: actor})
 
       mutation = """
           mutation {
             leaveEvent(
               actor_id: #{participant.actor.id},
-              event_id: 1042
+              event_id: #{event.id}
             ) {
                 actor {
                   id
@@ -356,12 +358,12 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
 
       assert json_response(res, 200)["data"]["participants"] == [
                %{
-                 "actor" => %{"preferredUsername" => context.actor.preferred_username},
-                 "role" => "creator"
-               },
-               %{
                  "actor" => %{"preferredUsername" => participant2.actor.preferred_username},
                  "role" => "participant"
+               },
+               %{
+                 "actor" => %{"preferredUsername" => context.actor.preferred_username},
+                 "role" => "creator"
                }
              ]
     end

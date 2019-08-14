@@ -124,15 +124,20 @@ defmodule Mobilizon.Factory do
       tags: build_list(3, :tag),
       url: Routes.page_url(Endpoint, :event, uuid),
       picture: insert(:picture),
-      uuid: uuid
+      uuid: uuid,
+      join_options: :free
     }
   end
 
   def participant_factory do
+    uuid = Ecto.UUID.generate()
+
     %Mobilizon.Events.Participant{
       event: build(:event),
       actor: build(:actor),
-      role: :creator
+      role: :creator,
+      url: "#{Endpoint.url()}/join/event/#{uuid}",
+      id: uuid
     }
   end
 

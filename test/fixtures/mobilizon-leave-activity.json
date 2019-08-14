@@ -1,0 +1,22 @@
+{
+  "type": "Leave",
+  "signature": {
+    "type": "RsaSignature2017",
+    "signatureValue": "Kn1/UkAQGJVaXBfWLAHcnwHg8YMAUqlEaBuYLazAG+pz5hqivsyrBmPV186Xzr+B4ZLExA9+SnOoNx/GOz4hBm0kAmukNSILAsUd84tcJ2yT9zc1RKtembK4WiwOw7li0+maeDN0HaB6t+6eTqsCWmtiZpprhXD8V1GGT8yG7X24fQ9oFGn+ng7lasbcCC0988Y1eGqNe7KryxcPuQz57YkDapvtONzk8gyLTkZMV4De93MyRHq6GVjQVIgtiYabQAxrX6Q8C+4P/jQoqdWJHEe+MY5JKyNaT/hMPt2Md1ok9fZQBGHlErk22/zy8bSN19GdG09HmIysBUHRYpBLig==",
+    "creator": "http://mobilizon.test/users/tcit#main-key",
+    "created": "2018-02-17T13:29:31Z"
+  },
+  "object": "http://mobilizon.test/events/some-uuid",
+  "id": "http://mobilizon2.test/@admin/join/event/1",
+  "actor": "http://mobilizon2.test/@admin",
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    "https://w3id.org/security/v1",
+    {
+      "sensitive": "as:sensitive",
+      "movedTo": "as:movedTo",
+      "manuallyApprovesFollowers": "as:manuallyApprovesFollowers",
+      "Hashtag": "as:Hashtag"
+    }
+  ]
+}

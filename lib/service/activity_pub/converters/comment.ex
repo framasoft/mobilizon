@@ -10,8 +10,6 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Comment do
   alias Mobilizon.Events.Event
   alias Mobilizon.Service.ActivityPub.Converter
   alias Mobilizon.Service.ActivityPub
-  alias MobilizonWeb.Router.Helpers, as: Routes
-  alias MobilizonWeb.Endpoint
   require Logger
 
   @behaviour Converter
