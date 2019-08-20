@@ -512,7 +512,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
          object_actor_url,
          object_url,
          activity_id,
-         public \\ true
+         public
        ) do
     {to, cc} =
       if public do
@@ -609,6 +609,24 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "state" => "open"
     }
     |> Map.merge(additional)
+  end
+
+  def make_join_data(%Event{} = event, %Actor{} = actor) do
+    %{
+      "type" => "Join",
+      "id" => "#{actor.url}/join/event/id",
+      "actor" => actor.url,
+      "object" => event.url
+    }
+  end
+
+  def make_join_data(%Actor{type: :Group} = event, %Actor{} = actor) do
+    %{
+      "type" => "Join",
+      "id" => "#{actor.url}/join/group/id",
+      "actor" => actor.url,
+      "object" => event.url
+    }
   end
 
   @doc """

@@ -215,6 +215,27 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
+  Gets a single event, with all associations loaded.
+  """
+  def get_event_full(id) do
+    case Repo.get(Event, id) do
+      %Event{} = event ->
+        {:ok,
+         Repo.preload(event, [
+           :organizer_actor,
+           :sessions,
+           :tracks,
+           :tags,
+           :participants,
+           :physical_address
+         ])}
+
+      err ->
+        {:error, err}
+    end
+  end
+
+  @doc """
   Gets an event by it's URL
   """
   def get_event_full_by_url(url) do
@@ -700,17 +721,28 @@ defmodule Mobilizon.Events do
       [%Participant{}, ...]
 
   """
-  def list_participants_for_event(uuid, page \\ nil, limit \\ nil) do
-    Repo.all(
-      from(
-        p in Participant,
-        join: e in Event,
-        on: p.event_id == e.id,
-        where: e.uuid == ^uuid and p.role != ^:not_approved,
-        preload: [:actor]
-      )
-      |> paginate(page, limit)
+  def list_participants_for_event(uuid, page \\ nil, limit \\ nil, include_not_improved \\ false)
+
+  def list_participants_for_event(uuid, page, limit, false) do
+    query = do_list_participants_for_event(uuid, page, limit)
+    query = from(p in query, where: p.role != ^:not_approved)
+    Repo.all(query)
+  end
+
+  def list_participants_for_event(uuid, page, limit, true) do
+    query = do_list_participants_for_event(uuid, page, limit)
+    Repo.all(query)
+  end
+
+  defp do_list_participants_for_event(uuid, page, limit) do
+    from(
+      p in Participant,
+      join: e in Event,
+      on: p.event_id == e.id,
+      where: e.uuid == ^uuid,
+      preload: [:actor]
     )
+    |> paginate(page, limit)
   end
 
   @doc """
@@ -787,6 +819,15 @@ defmodule Mobilizon.Events do
     end
   end
 
+  def get_participant_by_url(url) do
+    Repo.one(
+      from(p in Participant,
+        where: p.url == ^url,
+        preload: [:actor, :event]
+      )
+    )
+  end
+
   @doc """
   Creates a participant.
 
@@ -800,9 +841,10 @@ defmodule Mobilizon.Events do
 
   """
   def create_participant(attrs \\ %{}) do
-    %Participant{}
-    |> Participant.changeset(attrs)
-    |> Repo.insert()
+    with {:ok, %Participant{} = participant} <-
+           %Participant{} |> Participant.changeset(attrs) |> Repo.insert() do
+      {:ok, Repo.preload(participant, [:event, :actor])}
+    end
   end
 
   @doc """

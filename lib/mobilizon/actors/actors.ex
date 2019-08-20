@@ -58,6 +58,10 @@ defmodule Mobilizon.Actors do
     Repo.get!(Actor, id)
   end
 
+  def get_actor(id) do
+    Repo.get(Actor, id)
+  end
+
   # Get actor by ID and preload organized events, followers and followings
   @spec get_actor_with_everything(integer()) :: Ecto.Query.t()
   defp do_get_actor_with_everything(id) do

@@ -2,14 +2,11 @@ defmodule MobilizonWeb.API.Events do
   @moduledoc """
   API for Events
   """
-  alias Mobilizon.Addresses
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Utils, as: ActivityPubUtils
   alias MobilizonWeb.API.Utils
-
-  @visibility %{"PUBLIC" => :public, "PRIVATE" => :private}
 
   @doc """
   Create an event
@@ -51,15 +48,4 @@ defmodule MobilizonWeb.API.Events do
       })
     end
   end
-
-  defp get_physical_address(address_id) when is_number(address_id),
-    do: Addresses.get_address!(address_id)
-
-  defp get_physical_address(address_id) when is_binary(address_id) do
-    with {address_id, ""} <- Integer.parse(address_id) do
-      get_physical_address(address_id)
-    end
-  end
-
-  defp get_physical_address(nil), do: nil
 end
