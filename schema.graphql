@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Wed Aug 07 2019 17:57:34 GMT+0200 (GMT+02:00)
+# timestamp: Wed Aug 21 2019 09:02:13 GMT+0200 (GMT+02:00)
 
 schema {
   query: RootQueryType
@@ -446,7 +446,10 @@ enum GroupType {
 """A JWT and the associated user ID"""
 type Login {
   """A JWT Token for this session"""
-  token: String!
+  accessToken: String!
+
+  """A JWT Token to refresh the access token"""
+  refreshToken: String!
 
   """The user associated to this session"""
   user: User!
@@ -626,6 +629,15 @@ represented as floats separated by a semi-colon. The geodetic system is WGS 84
 """
 scalar Point
 
+"""Token"""
+type RefreshedToken {
+  """Generated access token"""
+  accessToken: String!
+
+  """Generated refreshed token"""
+  refreshToken: String!
+}
+
 """A report object"""
 type Report implements ActionLogObject {
   """The comments that are reported"""
@@ -799,6 +811,9 @@ type RootMutationType {
 
   """Login an user"""
   login(email: String!, password: String!): Login
+
+  """Refresh a token"""
+  refreshToken(refreshToken: String!): RefreshedToken
 
   """Register a first profile on registration"""
   registerPerson(
