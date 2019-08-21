@@ -7,6 +7,7 @@ mutation Login($email: String!, $password: String!) {
     refreshToken,
     user {
       id,
+      email
     }
   },
 }
@@ -21,7 +22,8 @@ mutation SendResetPassword($email: String!) {
 export const RESET_PASSWORD = gql`
 mutation ResetPassword($token: String!, $password: String!) {
   resetPassword(token: $token, password: $password) {
-    token,
+    accessToken,
+    refreshToken
     user {
       id,
     }

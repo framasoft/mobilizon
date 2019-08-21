@@ -14,19 +14,19 @@ export function buildCurrentUserResolver(cache: ApolloCache<NormalizedCacheObjec
   });
 
   return {
-    updateCurrentUser: (_, { id, email, isLoggedIn }, { cache }) => {
-      const data = {
-        Mutation: {
+    Mutation: {
+      updateCurrentUser: (_, { id, email, isLoggedIn }, { cache }) => {
+        const data = {
           currentUser: {
             id,
             email,
             isLoggedIn,
             __typename: 'CurrentUser',
           },
-        },
-      };
+        };
 
-      cache.writeData({ data });
+        cache.writeData({ data });
+      },
     },
   };
 }

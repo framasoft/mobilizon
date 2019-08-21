@@ -107,9 +107,7 @@ const apolloClient = new ApolloClient({
   cache,
   link,
   connectToDevTools: true,
-  resolvers: {
-    currentUser: buildCurrentUserResolver(cache),
-  },
+  resolvers: buildCurrentUserResolver(cache)
 });
 
 export const apolloProvider = new VueApollo({

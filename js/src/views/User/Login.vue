@@ -146,9 +146,9 @@ export default class Login extends Vue {
       onLogin(this.$apollo);
 
       if (this.redirect) {
-        this.$router.push(this.redirect);
+        await this.$router.push(this.redirect);
       } else {
-        this.$router.push({ name: RouteName.HOME });
+        await this.$router.push({ name: RouteName.HOME });
       }
     } catch (err) {
       console.error(err);
