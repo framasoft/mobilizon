@@ -50,6 +50,8 @@ defmodule Mobilizon.Addresses do
   """
   def get_address!(id), do: Repo.get!(Address, id)
 
+  def get_address(id), do: Repo.get(Address, id)
+
   @doc """
   Gets a single address by it's url
 
@@ -80,7 +82,10 @@ defmodule Mobilizon.Addresses do
   def create_address(attrs \\ %{}) do
     %Address{}
     |> Address.changeset(attrs)
-    |> Repo.insert()
+    |> Repo.insert(
+      on_conflict: :replace_all_except_primary_key,
+      conflict_target: [:origin_id]
+    )
   end
 
   @doc """

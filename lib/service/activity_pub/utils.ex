@@ -11,6 +11,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   """
 
   alias Mobilizon.Repo
+  alias Mobilizon.Addresses
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
@@ -301,35 +302,42 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   end
 
   def make_address_data(%Address{} = address) do
-    res = %{
-      "type" => "Place",
-      "name" => address.description,
-      "id" => address.url,
-      "address" => %{
-        "type" => "PostalAddress",
-        "streetAddress" => address.street,
-        "postalCode" => address.postal_code,
-        "addressLocality" => address.locality,
-        "addressRegion" => address.region,
-        "addressCountry" => address.country
-      }
-    }
-
-    if is_nil(address.geom) do
-      res
-    else
-      Map.put(res, "geo", %{
-        "type" => "GeoCoordinates",
-        "latitude" => address.geom.coordinates |> elem(0),
-        "longitude" => address.geom.coordinates |> elem(1)
-      })
-    end
+    #    res = %{
+    #      "type" => "Place",
+    #      "name" => address.description,
+    #      "id" => address.url,
+    #      "address" => %{
+    #        "type" => "PostalAddress",
+    #        "streetAddress" => address.street,
+    #        "postalCode" => address.postal_code,
+    #        "addressLocality" => address.locality,
+    #        "addressRegion" => address.region,
+    #        "addressCountry" => address.country
+    #      }
+    #    }
+    #
+    #    if is_nil(address.geom) do
+    #      res
+    #    else
+    #      Map.put(res, "geo", %{
+    #        "type" => "GeoCoordinates",
+    #        "latitude" => address.geom.coordinates |> elem(0),
+    #        "longitude" => address.geom.coordinates |> elem(1)
+    #      })
+    #    end
+    address.url
   end
 
-  def make_address_data(address) do
+  def make_address_data(address) when is_map(address) do
     Address
     |> struct(address)
     |> make_address_data()
+  end
+
+  def make_address_data(address_url) when is_bitstring(address_url) do
+    with %Address{} = address <- Addresses.get_address_by_url(address_url) do
+      address.url
+    end
   end
 
   @doc """

@@ -20,6 +20,18 @@ defmodule MobilizonWeb.Resolvers.Address do
 
     addresses = Task.await(local_addresses) ++ Task.await(remote_addresses)
 
+    # If we have results with same origin_id than those locally saved, don't return them
+    addresses =
+      Enum.reduce(addresses, %{}, fn address, addresses ->
+        if Map.has_key?(addresses, address.origin_id) && !is_nil(address.url) do
+          addresses
+        else
+          Map.put(addresses, address.origin_id, address)
+        end
+      end)
+
+    addresses = Map.values(addresses)
+
     {:ok, addresses}
   end
 

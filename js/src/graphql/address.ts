@@ -5,6 +5,7 @@ export const ADDRESS = gql`
         searchAddress(
             query: $query
         ) {
+            id,
             description,
             geom,
             floor,
@@ -12,7 +13,9 @@ export const ADDRESS = gql`
             locality,
             postalCode,
             region,
-            country
+            country,
+            url,
+            originId
         }
     }
 `;

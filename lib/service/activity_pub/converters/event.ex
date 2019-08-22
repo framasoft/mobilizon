@@ -69,6 +69,10 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
     end
   end
 
+  defp get_address(address_url) when is_bitstring(address_url) do
+    get_address(%{"id" => address_url})
+  end
+
   defp get_address(%{"id" => url} = map) when is_map(map) and is_binary(url) do
     Logger.debug("Address with an URL, let's check against our own database")
 

@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Wed Aug 21 2019 09:02:13 GMT+0200 (GMT+02:00)
+# timestamp: Thu Aug 22 2019 12:34:52 GMT+0200 (GMT+02:00)
 
 schema {
   query: RootQueryType
@@ -111,9 +111,11 @@ type Address {
 
   """The geocoordinates for the point where this address is"""
   geom: Point
+  id: Int
 
   """The address's locality"""
   locality: String
+  originId: String
   postalCode: String
   region: String
 
@@ -131,9 +133,11 @@ input AddressInput {
 
   """The geocoordinates for the point where this address is"""
   geom: Point
+  id: Int
 
   """The address's locality"""
   locality: String
+  originId: String
   postalCode: String
   region: String
 

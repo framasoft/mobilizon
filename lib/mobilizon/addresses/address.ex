@@ -15,7 +15,8 @@ defmodule Mobilizon.Addresses.Address do
     :region,
     :postal_code,
     :street,
-    :url
+    :url,
+    :origin_id
   ]
   @required [
     :url
@@ -31,6 +32,7 @@ defmodule Mobilizon.Addresses.Address do
     field(:postal_code, :string)
     field(:street, :string)
     field(:url, :string)
+    field(:origin_id, :string)
     has_many(:event, Event, foreign_key: :physical_address_id)
 
     timestamps()

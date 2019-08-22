@@ -12,6 +12,9 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
 
   @api_key Application.get_env(:mobilizon, __MODULE__) |> get_in([:api_key])
 
+  @fetch_place_details (Application.get_env(:mobilizon, __MODULE__)
+                        |> get_in([:fetch_place_details])) in [true, "true", "True"]
+
   @components [
     "street_number",
     "route",
@@ -36,7 +39,7 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
            HTTPoison.get(url),
          {:ok, %{"results" => results, "status" => "OK"}} <- Poison.decode(body) do
-      Enum.map(results, &process_data/1)
+      Enum.map(results, fn entry -> process_data(entry, options) end)
     else
       {:ok, %{"status" => "REQUEST_DENIED", "error_message" => error_message}} ->
         raise ArgumentError, message: to_string(error_message)
@@ -56,10 +59,13 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
            HTTPoison.get(url),
          {:ok, %{"results" => results, "status" => "OK"}} <- Poison.decode(body) do
-      Enum.map(results, fn entry -> process_data(entry) end)
+      results |> Enum.map(fn entry -> process_data(entry, options) end)
     else
       {:ok, %{"status" => "REQUEST_DENIED", "error_message" => error_message}} ->
         raise ArgumentError, message: to_string(error_message)
+
+      {:ok, %{"results" => [], "status" => "ZERO_RESULTS"}} ->
+        []
     end
   end
 
@@ -75,25 +81,44 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
         lang
       }"
 
-    case method do
-      :search ->
-        url <> "&address=#{URI.encode(args.q)}"
+    uri =
+      case method do
+        :search ->
+          url <> "&address=#{args.q}"
 
-      :geocode ->
-        url <> "&latlng=#{args.lat},#{args.lon}"
-    end
+        :geocode ->
+          url <> "&latlng=#{args.lat},#{args.lon}&result_type=street_address"
+
+        :place_details ->
+          "https://maps.googleapis.com/maps/api/place/details/json?key=#{api_key}&placeid=#{
+            args.place_id
+          }"
+      end
+
+    URI.encode(uri)
   end
 
-  defp process_data(%{
-         "formatted_address" => description,
-         "geometry" => %{"location" => %{"lat" => lat, "lng" => lon}},
-         "address_components" => components
-       }) do
+  defp process_data(
+         %{
+           "formatted_address" => description,
+           "geometry" => %{"location" => %{"lat" => lat, "lng" => lon}},
+           "address_components" => components,
+           "place_id" => place_id
+         },
+         options
+       ) do
     components =
       @components
       |> Enum.reduce(%{}, fn component, acc ->
         Map.put(acc, component, extract_component(components, component))
       end)
+
+    description =
+      if Keyword.get(options, :fetch_place_details, @fetch_place_details) == true do
+        do_fetch_place_details(place_id, options) || description
+      else
+        description
+      end
 
     %Address{
       country: Map.get(components, "country"),
@@ -103,7 +128,8 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
       floor: nil,
       geom: [lon, lat] |> Provider.coordinates(),
       postal_code: Map.get(components, "postal_code"),
-      street: street_address(components)
+      street: street_address(components),
+      origin_id: "gm:" <> to_string(place_id)
     }
   end
 
@@ -121,6 +147,27 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
       Map.get(body, "street_number") <> " " <> Map.get(body, "route")
     else
       Map.get(body, "route")
+    end
+  end
+
+  defp do_fetch_place_details(place_id, options) do
+    url = build_url(:place_details, %{place_id: place_id}, options)
+
+    Logger.debug("Asking Google Maps for details with #{url}")
+
+    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
+           HTTPoison.get(url),
+         {:ok, %{"result" => %{"name" => name}, "status" => "OK"}} <- Poison.decode(body) do
+      name
+    else
+      {:ok, %{"status" => "REQUEST_DENIED", "error_message" => error_message}} ->
+        raise ArgumentError, message: to_string(error_message)
+
+      {:ok, %{"status" => "INVALID_REQUEST"}} ->
+        raise ArgumentError, message: "Invalid Request"
+
+      {:ok, %{"results" => [], "status" => "ZERO_RESULTS"}} ->
+        nil
     end
   end
 end

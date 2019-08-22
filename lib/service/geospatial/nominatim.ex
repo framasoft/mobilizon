@@ -39,7 +39,7 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
            HTTPoison.get(url),
          {:ok, body} <- Poison.decode(body) do
-      Enum.map(body, fn entry -> process_data(entry) end)
+      body |> Enum.map(fn entry -> process_data(entry) end) |> Enum.filter(& &1)
     end
   end
 
@@ -66,24 +66,63 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
 
   @spec process_data(map()) :: Address.t()
   defp process_data(%{"address" => address} = body) do
-    %Address{
-      country: Map.get(address, "country"),
-      locality: Map.get(address, "city"),
-      region: Map.get(address, "state"),
-      description: Map.get(body, "display_name"),
-      floor: Map.get(address, "floor"),
-      geom: [Map.get(body, "lon"), Map.get(body, "lat")] |> Provider.coordinates(),
-      postal_code: Map.get(address, "postcode"),
-      street: street_address(address)
-    }
+    try do
+      %Address{
+        country: Map.get(address, "country"),
+        locality: Map.get(address, "city"),
+        region: Map.get(address, "state"),
+        description: description(body),
+        floor: Map.get(address, "floor"),
+        geom: [Map.get(body, "lon"), Map.get(body, "lat")] |> Provider.coordinates(),
+        postal_code: Map.get(address, "postcode"),
+        street: street_address(address),
+        origin_id: "osm:" <> to_string(Map.get(body, "osm_id"))
+      }
+    rescue
+      e in ArgumentError ->
+        Logger.warn(inspect(e))
+        nil
+    end
   end
 
   @spec street_address(map()) :: String.t()
   defp street_address(body) do
-    if Map.has_key?(body, "house_number") do
-      Map.get(body, "house_number") <> " " <> Map.get(body, "road")
+    road =
+      cond do
+        Map.has_key?(body, "road") ->
+          Map.get(body, "road")
+
+        Map.has_key?(body, "road") ->
+          Map.get(body, "road")
+
+        Map.has_key?(body, "pedestrian") ->
+          Map.get(body, "pedestrian")
+
+        true ->
+          ""
+      end
+
+    Map.get(body, "house_number", "") <> " " <> road
+  end
+
+  @address29_classes ["amenity", "shop", "tourism", "leisure"]
+  @address29_categories ["office"]
+
+  @spec description(map()) :: String.t()
+  defp description(body) do
+    if !Map.has_key?(body, "display_name") do
+      Logger.warn("Address has no display name")
+      raise ArgumentError, message: "Address has no display_name"
+    end
+
+    description = Map.get(body, "display_name")
+    address = Map.get(body, "address")
+
+    if (Map.get(body, "category") in @address29_categories or
+          Map.get(body, "class") in @address29_classes) and Map.has_key?(address, "address29") do
+      Map.get(address, "address29")
     else
-      Map.get(body, "road")
+      description
     end
   end
 end

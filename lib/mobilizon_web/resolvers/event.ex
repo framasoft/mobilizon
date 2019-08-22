@@ -208,20 +208,21 @@ defmodule MobilizonWeb.Resolvers.Event do
   defp save_attached_picture(args), do: {:ok, args}
 
   @spec save_physical_address(map()) :: {:ok, map()}
-  defp save_physical_address(%{physical_address: %{url: physical_address_url}} = args) do
+  defp save_physical_address(%{physical_address: %{url: physical_address_url}} = args)
+       when not is_nil(physical_address_url) do
     with %Address{} = address <- Addresses.get_address_by_url(physical_address_url),
-         args <- Map.put(args, :physical_address, address) do
+         args <- Map.put(args, :physical_address, address.url) do
       {:ok, args}
     end
   end
 
-  #  @spec save_physical_address(map()) :: {:ok, map()}
-  #  defp save_physical_address(%{physical_address: address} = args) do
-  #    with {:ok, %Address{} = address} <- Addresses.create_address(address),
-  #         args <- Map.put(args, :physical_address, address) do
-  #      {:ok, args}
-  #    end
-  #  end
+  @spec save_physical_address(map()) :: {:ok, map()}
+  defp save_physical_address(%{physical_address: address} = args) do
+    with {:ok, %Address{} = address} <- Addresses.create_address(address),
+         args <- Map.put(args, :physical_address, address.url) do
+      {:ok, args}
+    end
+  end
 
   @spec save_physical_address(map()) :: {:ok, map()}
   defp save_physical_address(args), do: {:ok, args}

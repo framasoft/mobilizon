@@ -75,7 +75,7 @@
                   <address>
                     <span class="addressDescription">{{ event.physicalAddress.description }}</span>
                     <span>{{ event.physicalAddress.floor }} {{ event.physicalAddress.street }}</span>
-                    <span>{{ event.physicalAddress.postal_code }} {{ event.physicalAddress.locality }}</span>
+                    <span>{{ event.physicalAddress.postalCode }} {{ event.physicalAddress.locality }}</span>
   <!--                  <span>{{ event.physicalAddress.region }} {{ event.physicalAddress.country }}</span>-->
                   </address>
                   <span class="map-show-button" @click="showMap = !showMap" v-if="event.physicalAddress && event.physicalAddress.geom">

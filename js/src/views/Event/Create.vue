@@ -119,7 +119,6 @@ export default class CreateEvent extends Vue {
   createEvent(e: Event) {
     e.preventDefault();
 
-
     if (this.event.uuid === '') {
       console.log('event', this.event);
       this.$apollo

@@ -43,7 +43,7 @@ defmodule Mobilizon.Service.Geospatial.GoogleMapsTest do
       use_cassette "geospatial/google_maps/search" do
         assert %Address{
                  locality: "Lyon",
-                 description: "10 Rue Jangot, 69007 Lyon, France",
+                 description: "10 Rue Jangot",
                  region: "Auvergne-Rhône-Alpes",
                  country: "France",
                  postal_code: "69007",
@@ -52,8 +52,13 @@ defmodule Mobilizon.Service.Geospatial.GoogleMapsTest do
                    coordinates: {4.8424032, 45.75164940000001},
                    properties: %{},
                    srid: 4326
-                 }
-               } == GoogleMaps.search("10 rue Jangot", api_key: "toto") |> hd
+                 },
+                 origin_id: "gm:ChIJtW0QikTq9EcRLI4Vy6bRx0U"
+               } ==
+                 GoogleMaps.search("10 rue Jangot",
+                   api_key: "toto"
+                 )
+                 |> hd
       end
     end
 
@@ -61,16 +66,17 @@ defmodule Mobilizon.Service.Geospatial.GoogleMapsTest do
       use_cassette "geospatial/google_maps/geocode" do
         assert %Address{
                  locality: "Lyon",
-                 description: "10 Rue Jangot, 69007 Lyon, France",
+                 description: "10bis Rue Jangot",
                  region: "Auvergne-Rhône-Alpes",
                  country: "France",
                  postal_code: "69007",
-                 street: "10 Rue Jangot",
+                 street: "10bis Rue Jangot",
                  geom: %Geo.Point{
-                   coordinates: {4.8424967, 45.751725},
+                   coordinates: {4.8424966, 45.751725},
                    properties: %{},
                    srid: 4326
-                 }
+                 },
+                 origin_id: "gm:ChIJrW0QikTq9EcR96jk2OnO75w"
                } ==
                  GoogleMaps.geocode(4.842569, 45.751718, api_key: "toto")
                  |> hd

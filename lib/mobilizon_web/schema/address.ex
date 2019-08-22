@@ -15,6 +15,8 @@ defmodule MobilizonWeb.Schema.AddressType do
     field(:country, :string)
     field(:description, :string)
     field(:url, :string)
+    field(:id, :integer)
+    field(:origin_id, :string)
   end
 
   object :phone_address do
@@ -38,6 +40,8 @@ defmodule MobilizonWeb.Schema.AddressType do
     field(:country, :string)
     field(:description, :string)
     field(:url, :string)
+    field(:id, :integer)
+    field(:origin_id, :string)
   end
 
   object :address_queries do

@@ -39,7 +39,8 @@ defmodule Mobilizon.Service.Geospatial.NominatimTest do
                    coordinates: {4.8425657, 45.7517141},
                    properties: %{},
                    srid: 4326
-                 }
+                 },
+                 origin_id: "osm:3078260611"
                } == Nominatim.search("10 rue Jangot") |> hd
       end
     end
@@ -58,7 +59,8 @@ defmodule Mobilizon.Service.Geospatial.NominatimTest do
                    coordinates: {4.8425657, 45.7517141},
                    properties: %{},
                    srid: 4326
-                 }
+                 },
+                 origin_id: "osm:3078260611"
                } ==
                  Nominatim.geocode(4.842569, 45.751718)
                  |> hd
