@@ -68,6 +68,33 @@ defmodule Mobilizon.Actors.Member do
     )
   end
 
+  @doc """
+  Get all group ids where the actor_id is the last administrator
+  """
+  def list_group_id_where_last_administrator(actor_id) do
+    in_query =
+      from(
+        m in Member,
+        where: m.actor_id == ^actor_id and (m.role == ^:creator or m.role == ^:administrator),
+        select: m.parent_id
+      )
+
+    Repo.all(
+      from(
+        m in Member,
+        where: m.role == ^:creator or m.role == ^:administrator,
+        join: m2 in subquery(in_query),
+        on: m.parent_id == m2.parent_id,
+        group_by: m.parent_id,
+        select: m.parent_id,
+        having: count(m.actor_id) == 1
+      )
+    )
+  end
+
+  @doc """
+  Returns true if the member is an administrator (admin or creator) of the group
+  """
   def is_administrator(%Member{role: :administrator}), do: {:is_admin, true}
   def is_administrator(%Member{role: :creator}), do: {:is_admin, true}
   def is_administrator(%Member{}), do: {:is_admin, false}

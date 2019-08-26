@@ -354,7 +354,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
         |> auth_conn(user1)
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert json_response(res, 200)["data"]["updatePerson"] == nil
+      assert json_response(res, 200)["data"]["deletePerson"] == nil
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
                "Actor is not owned by authenticated user"
@@ -377,7 +377,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
         |> auth_conn(user)
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert json_response(res, 200)["data"]["updatePerson"] == nil
+      assert json_response(res, 200)["data"]["deletePerson"] == nil
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
                "Actor not found"
@@ -400,10 +400,42 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
         |> auth_conn(user)
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert json_response(res, 200)["data"]["updatePerson"] == nil
+      assert json_response(res, 200)["data"]["deletePerson"] == nil
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
                "Cannot remove the last identity of a user"
+    end
+
+    test "delete_person/3 should fail to delete an identity that is the last admin of a group",
+         context do
+      group = insert(:group)
+      classic_user = insert(:user)
+      classic_actor = insert(:actor, user: classic_user, preferred_username: "classic_user")
+
+      admin_user = insert(:user)
+      admin_actor = insert(:actor, user: admin_user, preferred_username: "last_admin")
+      insert(:actor, user: admin_user)
+
+      insert(:member, %{actor: admin_actor, role: :creator, parent: group})
+      insert(:member, %{actor: classic_actor, role: :member, parent: group})
+
+      mutation = """
+          mutation {
+            deletePerson(preferredUsername: "last_admin") {
+              id,
+            }
+          }
+      """
+
+      res =
+        context.conn
+        |> auth_conn(admin_user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["data"]["deletePerson"] == nil
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "Cannot remove the last administrator of a group"
     end
 
     test "delete_person/3 should delete a user identity", context do

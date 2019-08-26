@@ -3,7 +3,7 @@ defmodule MobilizonWeb.Resolvers.Person do
   Handles the person-related GraphQL calls
   """
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Users.User
   alias Mobilizon.Users
   alias Mobilizon.Events
@@ -118,6 +118,7 @@ defmodule MobilizonWeb.Resolvers.Person do
            {:find_actor, Actors.get_actor_by_name(preferred_username)},
          {:is_owned, true, _} <- User.owns_actor(user, actor.id),
          {:last_identity, false} <- {:last_identity, last_identity?(user)},
+         {:last_admin, false} <- {:last_admin, last_admin_of_a_group?(actor.id)},
          {:ok, actor} <- Actors.delete_actor(actor) do
       {:ok, actor}
     else
@@ -126,6 +127,9 @@ defmodule MobilizonWeb.Resolvers.Person do
 
       {:last_identity, true} ->
         {:error, "Cannot remove the last identity of a user"}
+
+      {:last_admin, true} ->
+        {:error, "Cannot remove the last administrator of a group"}
 
       {:is_owned, false} ->
         {:error, "Actor is not owned by authenticated user"}
@@ -211,6 +215,12 @@ defmodule MobilizonWeb.Resolvers.Person do
     actor
     |> proxify_avatar
     |> proxify_banner
+  end
+
+  # We check that the actor is not the last administrator/creator of a group
+  @spec last_admin_of_a_group?(integer()) :: boolean()
+  defp last_admin_of_a_group?(actor_id) do
+    length(Member.list_group_id_where_last_administrator(actor_id)) > 0
   end
 
   @spec proxify_avatar(Actor.t()) :: Actor.t()
