@@ -65,6 +65,7 @@ export default class App extends Vue {
 @import "variables";
 
 /* Bulma imports */
+@import "~bulma/sass/utilities/_all";
 @import "~bulma/sass/base/_all.sass";
 @import "~bulma/sass/components/card.sass";
 @import "~bulma/sass/components/media.sass";
@@ -85,7 +86,6 @@ export default class App extends Vue {
 @import "~bulma/sass/elements/notification";
 @import "~bulma/sass/grid/_all.sass";
 @import "~bulma/sass/layout/_all.sass";
-@import "~bulma/sass/utilities/_all";
 
 /* Buefy imports */
 @import "~buefy/src/scss/utils/_all";
