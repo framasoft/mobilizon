@@ -178,7 +178,7 @@ defmodule MobilizonWeb.Resolvers.Group do
     with {:is_owned, true, actor} <- User.owns_actor(user, actor_id),
          {:ok, %Member{} = member} <- Member.get_member(actor.id, group_id),
          {:only_administrator, false} <-
-           {:only_administrator, check_that_member_is_not_only_administrator(group_id, actor_id)},
+           {:only_administrator, check_that_member_is_not_last_administrator(group_id, actor_id)},
          {:ok, _} <-
            Mobilizon.Actors.delete_member(member) do
       {
@@ -211,8 +211,8 @@ defmodule MobilizonWeb.Resolvers.Group do
   # We check that the actor asking to leave the group is not it's only administrator
   # We start by fetching the list of administrator or creators and if there's only one of them
   # and that it's the actor requesting leaving the group we return true
-  @spec check_that_member_is_not_only_administrator(integer(), integer()) :: boolean()
-  defp check_that_member_is_not_only_administrator(group_id, actor_id) do
+  @spec check_that_member_is_not_last_administrator(integer(), integer()) :: boolean()
+  defp check_that_member_is_not_last_administrator(group_id, actor_id) do
     case Member.list_administrator_members_for_group(group_id) do
       [
         %Member{
