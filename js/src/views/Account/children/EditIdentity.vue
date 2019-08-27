@@ -229,6 +229,9 @@ export default class EditIdentity extends Vue {
       type: 'is-danger',
       title: this.$gettext('Delete your identity'),
       message: this.$gettextInterpolate(
+        'This will delete / anonymize all content (events, comments, messages, participation...) created from this identity. <br /><br />' +
+        'If this identity is the only administrator of some groups, you need to delete them before being able to delete this identity. ' +
+        'Otherwise this identity will just be removed from the group administrators.<br /><br />' +
         'To confirm, type your identity username "%{preferredUsername}"',
         { preferredUsername: this.identity.preferredUsername },
       ),
