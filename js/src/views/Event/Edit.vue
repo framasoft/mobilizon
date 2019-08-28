@@ -32,6 +32,10 @@
           <editor v-model="event.description" />
         </div>
 
+        <b-field :label="$gettext('Website / URL')">
+          <b-input v-model="event.onlineAddress" placeholder="URL" />
+        </b-field>
+
         <!--<b-field :label="$gettext('Category')">
           <b-select placeholder="Select a category" v-model="event.category">
             <option
@@ -44,25 +48,126 @@
 
         <h2 class="subtitle">
           <translate>
-            Visibility
+            Who can view this event and participate
           </translate>
         </h2>
-          <label class="label">{{ $gettext('Event visibility') }}</label>
           <div class="field">
-            <b-radio v-model="event.visibility" name="name" :native-value="EventVisibility.PUBLIC">
+            <b-radio v-model="eventVisibilityJoinOptions"
+                     name="eventVisibilityJoinOptions"
+                     :native-value="EventVisibilityJoinOptions.PUBLIC">
               <translate>Visible everywhere on the web (public)</translate>
             </b-radio>
           </div>
           <div class="field">
-            <b-radio v-model="event.visibility" name="name" :native-value="EventVisibility.PRIVATE">
+            <b-radio v-model="eventVisibilityJoinOptions"
+                     name="eventVisibilityJoinOptions"
+                     :native-value="EventVisibilityJoinOptions.LINK">
               <translate>Only accessible through link and search (private)</translate>
             </b-radio>
           </div>
+        <div class="field">
+          <b-radio v-model="eventVisibilityJoinOptions"
+                   name="eventVisibilityJoinOptions"
+                   :native-value="EventVisibilityJoinOptions.LIMITED">
+            <translate>Page limited to my group (asks for auth)</translate>
+          </b-radio>
+        </div>
 
-          <button class="button is-primary">
+        <div class="field">
+          <label class="label">Approbation des participations</label>
+          <b-switch v-model="needsApproval">
+            Je veux approuver chaque demande de participation
+          </b-switch>
+        </div>
 
-          <translate v-if="isUpdate === false">Create my event</translate>
-          <translate v-else>Update my event</translate>
+        <div class="field">
+          <label class="label">Mise en avant</label>
+          <b-switch v-model="doNotPromote" :disabled="canPromote === false">
+            Ne pas autoriser la mise en avant sur sur Mobilizon
+          </b-switch>
+        </div>
+
+        <div class="field">
+          <b-switch v-model="limitedPlaces">
+            Places limitées
+          </b-switch>
+        </div>
+
+        <div class="box" v-if="limitedPlaces">
+          <b-field label="Number of places">
+            <b-numberinput v-model="event.options.maximumAttendeeCapacity"></b-numberinput>
+          </b-field>
+
+          <b-field>
+            <b-switch v-model="event.options.showRemainingAttendeeCapacity">
+              Show remaining number of places
+            </b-switch>
+          </b-field>
+
+          <b-field>
+            <b-switch v-model="event.options.showParticipationPrice">
+              Display participation price
+            </b-switch>
+          </b-field>
+        </div>
+
+        <h2 class="subtitle">
+          <translate>
+            Modération des commentaires publics
+          </translate>
+        </h2>
+
+        <label>Comments on the event page</label>
+
+        <div class="field">
+          <b-radio v-model="event.options.commentModeration"
+                   name="commentModeration"
+                   :native-value="CommentModeration.ALLOW_ALL">
+            <translate>Allow all comments</translate>
+          </b-radio>
+        </div>
+
+        <div class="field">
+          <b-radio v-model="event.options.commentModeration"
+                   name="commentModeration"
+                   :native-value="CommentModeration.MODERATED">
+            <translate>Moderated comments (shown after approval)</translate>
+          </b-radio>
+        </div>
+
+        <div class="field">
+          <b-radio v-model="event.options.commentModeration"
+                   name="commentModeration"
+                   :native-value="CommentModeration.CLOSED">
+            <translate>Close all comments (except for admins)</translate>
+          </b-radio>
+        </div>
+
+        <h2 class="subtitle">
+          <translate>
+            Status
+          </translate>
+        </h2>
+
+        <div class="field">
+          <b-radio v-model="event.status"
+                   name="status"
+                   :native-value="EventStatus.TENTATIVE">
+            <translate>Tentative: Will be confirmed later</translate>
+          </b-radio>
+        </div>
+
+        <div class="field">
+          <b-radio v-model="event.status"
+                   name="status"
+                   :native-value="EventStatus.CONFIRMED">
+            <translate>Confirmed: Will happen</translate>
+          </b-radio>
+        </div>
+
+        <button class="button is-primary">
+            <translate v-if="isUpdate === false">Create my event</translate>
+            <translate v-else>Update my event</translate>
         </button>
       </form>
     </div>
@@ -72,7 +177,7 @@
 <script lang="ts">
 import { CREATE_EVENT, EDIT_EVENT, FETCH_EVENT } from '@/graphql/event';
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import { EventModel, EventVisibility, IEvent } from '@/types/event.model';
+import { EventModel, EventStatus, EventVisibility, EventVisibilityJoinOptions, IEvent, CommentModeration } from '@/types/event.model';
 import { LOGGED_PERSON } from '@/graphql/actor';
 import { IPerson, Person } from '@/types/actor';
 import PictureUpload from '@/components/PictureUpload.vue';
@@ -105,7 +210,14 @@ export default class EditEvent extends Vue {
   event = new EventModel();
   pictureFile: File | null = null;
 
-  EventVisibility = EventVisibility;
+  EventStatus = EventStatus;
+  EventVisibilityJoinOptions = EventVisibilityJoinOptions;
+  eventVisibilityJoinOptions: EventVisibilityJoinOptions = EventVisibilityJoinOptions.PUBLIC;
+  needsApproval: boolean = false;
+  doNotPromote: boolean = false;
+  canPromote: boolean = true;
+  limitedPlaces: boolean = false;
+  CommentModeration = CommentModeration;
 
   // categories: string[] = Object.keys(Category);
 
@@ -129,6 +241,7 @@ export default class EditEvent extends Vue {
 
     this.event.beginsOn = now;
     this.event.endsOn = end;
+    console.log('eventvisibilityjoinoptions', this.eventVisibilityJoinOptions);
   }
 
   createOrUpdate(e: Event) {
@@ -141,7 +254,7 @@ export default class EditEvent extends Vue {
 
   async createEvent() {
     try {
-      const data = await this.$apollo.mutate({
+      const { data } = await this.$apollo.mutate({
         mutation: CREATE_EVENT,
         variables: this.buildVariables(),
       });
@@ -204,6 +317,26 @@ export default class EditEvent extends Vue {
     return new EventModel(result.data.event);
   }
 
+  @Watch('eventVisibilityJoinOptions')
+  calculateVisibilityAndJoinOptions(eventVisibilityJoinOptions) {
+    switch (eventVisibilityJoinOptions) {
+      case EventVisibilityJoinOptions.PUBLIC:
+        this.event.visibility = EventVisibility.UNLISTED;
+        this.canPromote = true;
+        break;
+      case EventVisibilityJoinOptions.LINK:
+        this.event.visibility = EventVisibility.PRIVATE;
+        this.canPromote = false;
+        this.doNotPromote = false;
+        break;
+      case EventVisibilityJoinOptions.LIMITED:
+        this.event.visibility = EventVisibility.RESTRICTED;
+        this.canPromote = false;
+        this.doNotPromote = false;
+        break;
+    }
+  }
+
   // getAddressData(addressData) {
   //   if (addressData !== null) {
   //     this.event.address = {
@@ -224,3 +357,16 @@ export default class EditEvent extends Vue {
   // }
 }
 </script>
+<style lang="scss">
+  @import "@/variables.scss";
+
+  h2.subtitle {
+    margin: 10px 0;
+
+    span {
+      padding: 5px 7px;
+      display: inline;
+      background: $secondary;
+    }
+  }
+</style>

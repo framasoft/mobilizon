@@ -99,6 +99,7 @@ export default class App extends Vue {
 @import "~buefy/src/scss/components/taginput";
 @import "~buefy/src/scss/components/upload";
 @import "~buefy/src/scss/components/radio";
+@import "~buefy/src/scss/components/switch";
 
 .router-enter-active,
 .router-leave-active {

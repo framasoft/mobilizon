@@ -34,7 +34,8 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
            {:actor, Actors.get_actor_by_url(object["actor"])},
          {:address, address_id} <-
            {:address, get_address(object["location"])},
-         {:tags, tags} <- {:tags, fetch_tags(object["tag"])} do
+         {:tags, tags} <- {:tags, fetch_tags(object["tag"])},
+         {:options, options} <- {:options, get_options(object)} do
       picture_id =
         with true <- Map.has_key?(object, "attachment") && length(object["attachment"]) > 0,
              %Picture{id: picture_id} <-
@@ -50,23 +51,39 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
           _ -> nil
         end
 
-      {:ok,
-       %{
-         "title" => object["name"],
-         "description" => object["content"],
-         "organizer_actor_id" => actor_id,
-         "picture_id" => picture_id,
-         "begins_on" => object["startTime"],
-         "category" => object["category"],
-         "url" => object["id"],
-         "uuid" => object["uuid"],
-         "tags" => tags,
-         "physical_address_id" => address_id
-       }}
+      entity = %{
+        "title" => object["name"],
+        "description" => object["content"],
+        "organizer_actor_id" => actor_id,
+        "picture_id" => picture_id,
+        "begins_on" => object["startTime"],
+        "category" => object["category"],
+        "url" => object["id"],
+        "uuid" => object["uuid"],
+        "tags" => tags,
+        "physical_address_id" => address_id
+      }
+
+      {:ok, Map.put(entity, "options", options)}
     else
       err ->
         {:error, err}
     end
+  end
+
+  # Get only elements that we have in EventOptions
+  defp get_options(object) do
+    keys =
+      Mobilizon.Events.EventOptions
+      |> struct
+      |> Map.keys()
+      |> List.delete(:__struct__)
+      |> Enum.map(&Utils.camelize/1)
+
+    Enum.reduce(object, %{}, fn {key, value}, acc ->
+      (value && key in keys && Map.put(acc, Utils.underscore(key), value)) ||
+        acc
+    end)
   end
 
   defp get_address(address_url) when is_bitstring(address_url) do

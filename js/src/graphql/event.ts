@@ -146,6 +146,7 @@ export const CREATE_EVENT = gql`
     $beginsOn: DateTime!,
     $picture: PictureInput,
     $tags: [String],
+    $options: EventOptionsInput,
     $physicalAddress: AddressInput,
     $visibility: EventVisibility
   ) {
@@ -155,6 +156,7 @@ export const CREATE_EVENT = gql`
       beginsOn: $beginsOn,
       organizerActorId: $organizerActorId,
       category: $category,
+      options: $options,
       picture: $picture,
       tags: $tags,
       physicalAddress: $physicalAddress,

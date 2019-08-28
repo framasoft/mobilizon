@@ -298,7 +298,19 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
         do: res,
         else: Map.put(res, "location", make_address_data(metadata.physical_address))
 
-    if is_nil(picture), do: res, else: Map.put(res, "attachment", [make_picture_data(picture)])
+    res =
+      if is_nil(picture), do: res, else: Map.put(res, "attachment", [make_picture_data(picture)])
+
+    if is_nil(metadata.options) do
+      res
+    else
+      options = struct(Mobilizon.Events.EventOptions, metadata.options) |> Map.from_struct()
+
+      Enum.reduce(options, res, fn {key, value}, acc ->
+        (value && Map.put(acc, camelize(key), value)) ||
+          acc
+      end)
+    end
   end
 
   def make_address_data(%Address{} = address) do
@@ -668,5 +680,22 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     public_key = pem_to_public_key(pem)
     public_key = :public_key.pem_entry_encode(:RSAPublicKey, public_key)
     :public_key.pem_encode([public_key])
+  end
+
+  def camelize(word) when is_atom(word) do
+    camelize(to_string(word))
+  end
+
+  def camelize(word) when is_bitstring(word) do
+    {first, rest} = String.split_at(Macro.camelize(word), 1)
+    String.downcase(first) <> rest
+  end
+
+  def underscore(word) when is_atom(word) do
+    underscore(to_string(word))
+  end
+
+  def underscore(word) when is_bitstring(word) do
+    Macro.underscore(word)
   end
 end
