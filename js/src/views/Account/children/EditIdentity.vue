@@ -226,7 +226,7 @@ export default class EditIdentity extends Vue {
   }
 
   openDeleteIdentityConfirmation() {
-    this.$dialog.prompt({
+    this.$buefy.dialog.prompt({
       type: 'is-danger',
       title: this.$gettext('Delete your identity'),
       message: this.$gettextInterpolate(

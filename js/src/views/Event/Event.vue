@@ -289,7 +289,7 @@ export default class Event extends Vue {
         },
       });
 
-      router.push({ name: RouteName.EVENT });
+      await router.push({ name: RouteName.EVENT });
     } catch (error) {
       console.error(error);
     }
@@ -297,22 +297,25 @@ export default class Event extends Vue {
 
   async joinEvent() {
     try {
-      await this.$apollo.mutate<IParticipant>({
+      await this.$apollo.mutate<{ joinEvent: IParticipant }>({
         mutation: JOIN_EVENT,
         variables: {
           eventId: this.event.id,
           actorId: this.loggedPerson.id,
         },
-        update: (store, { data: { joinEvent } }) => {
-          const event = store.readQuery<IEvent>({ query: FETCH_EVENT });
+        update: (store, { data }) => {
+          if (data == null) return;
+          const cachedData = store.readQuery<{ event: IEvent }>({ query: FETCH_EVENT, variables: { uuid: this.event.uuid } });
+          if (cachedData == null) return;
+          const { event } = cachedData;
           if (event === null) {
             console.error('Cannot update event participant cache, because of null value.');
             return;
           }
 
-          event.participants = event.participants.concat([joinEvent]);
+          event.participants = event.participants.concat([data.joinEvent]);
 
-          store.writeQuery({ query: FETCH_EVENT, data: event });
+          store.writeQuery({ query: FETCH_EVENT, data: { event } });
         },
       });
     } catch (error) {
@@ -322,23 +325,26 @@ export default class Event extends Vue {
 
   async leaveEvent() {
     try {
-      await this.$apollo.mutate<IParticipant>({
+      await this.$apollo.mutate<{ leaveEvent: IParticipant }>({
         mutation: LEAVE_EVENT,
         variables: {
           eventId: this.event.id,
           actorId: this.loggedPerson.id,
         },
-        update: (store, { data: { leaveEvent } }) => {
-          const event = store.readQuery<IEvent>({ query: FETCH_EVENT });
+        update: (store, { data }) => {
+          if (data == null) return;
+          const cachedData = store.readQuery<{ event: IEvent }>({ query: FETCH_EVENT, variables: { uuid: this.event.uuid } });
+          if (cachedData == null) return;
+          const { event } = cachedData;
           if (event === null) {
             console.error('Cannot update event participant cache, because of null value.');
             return;
           }
 
           event.participants = event.participants
-            .filter(p => p.actor.id !== leaveEvent.actor.id);
+            .filter(p => p.actor.id !== data.leaveEvent.actor.id);
 
-          store.writeQuery({ query: FETCH_EVENT, data: event });
+          store.writeQuery({ query: FETCH_EVENT, data: { event } });
         },
       });
     } catch (error) {
