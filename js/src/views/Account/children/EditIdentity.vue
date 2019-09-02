@@ -76,6 +76,7 @@ import PictureUpload from '@/components/PictureUpload.vue';
 import { MOBILIZON_INSTANCE_HOST } from '@/api/_entrypoint';
 import { Dialog } from 'buefy/dist/components/dialog';
 import { RouteName } from '@/router';
+import { buildFileFromIPicture, buildFileVariable } from '@/utils/image';
 
 @Component({
   components: {
@@ -113,7 +114,7 @@ export default class EditIdentity extends Vue {
     if (this.identityName) {
       this.identity = await this.getIdentity();
 
-      this.avatarFile = await this.getAvatarFileFromIdentity(this.identity);
+      this.avatarFile = await buildFileFromIPicture(this.identity.avatar);
     }
   }
 
@@ -259,15 +260,6 @@ export default class EditIdentity extends Vue {
     return new Person(result.data.person);
   }
 
-  private async getAvatarFileFromIdentity(identity: IPerson) {
-    if (!identity.avatar) return null;
-
-    const response = await fetch(identity.avatar.url);
-    const blob = await response.blob();
-
-    return new File([blob], identity.avatar.name);
-  }
-
   private handleError(err: any) {
     console.error(err);
 
@@ -285,18 +277,7 @@ export default class EditIdentity extends Vue {
   }
 
   private buildVariables() {
-    let avatarObj = {};
-    if (this.avatarFile) {
-      avatarObj = {
-        avatar: {
-          picture: {
-            name: this.avatarFile.name,
-            alt: `${this.identity.preferredUsername}'s avatar`,
-            file: this.avatarFile,
-          },
-        },
-      };
-    }
+    const avatarObj = buildFileVariable(this.avatarFile, 'avatar', `${this.identity.preferredUsername}'s avatar`);
 
     return Object.assign({}, this.identity, avatarObj);
   }

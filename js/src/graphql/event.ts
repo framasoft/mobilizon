@@ -139,15 +139,15 @@ export const FETCH_EVENTS = gql`
 
 export const CREATE_EVENT = gql`
   mutation CreateEvent(
-  $title: String!,
-  $description: String!,
-  $organizerActorId: ID!,
-  $category: String,
-  $beginsOn: DateTime!,
-  $picture: PictureInput,
-  $tags: [String],
-  $physicalAddress: AddressInput,
-  $visibility: EventVisibility
+    $title: String!,
+    $description: String!,
+    $organizerActorId: ID!,
+    $category: String,
+    $beginsOn: DateTime!,
+    $picture: PictureInput,
+    $tags: [String],
+    $physicalAddress: AddressInput,
+    $visibility: EventVisibility
   ) {
     createEvent(
       title: $title,
