@@ -1,16 +1,11 @@
-export interface IAbstractPicture {
-  name;
-  alt;
-}
-
 export interface IPicture {
-  url;
-  name;
-  alt;
+  url: string;
+  name: string;
+  alt: string;
 }
 
 export interface IPictureUpload {
   file: File;
-  name: String;
-  alt: String|null;
+  name: string;
+  alt: string | null;
 }

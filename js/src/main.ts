@@ -20,6 +20,7 @@ const language = (window.navigator as any).userLanguage || window.navigator.lang
 Vue.use(GetTextPlugin, {
   translations,
   defaultLanguage: 'en_US',
+  silent: true,
 });
 
 Vue.config.language = language.replace('-', '_');

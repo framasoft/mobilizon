@@ -1,14 +1,17 @@
 <template>
   <section class="container">
     <h1 class="title">
-      <translate>Create a new event</translate>
+      <translate v-if="isUpdate === false">Create a new event</translate>
+      <translate v-else>Update event {{ event.name }}</translate>
     </h1>
+
     <div v-if="$apollo.loading">Loading...</div>
+
     <div class="columns is-centered" v-else>
-      <form class="column is-two-thirds-desktop" @submit="createEvent">
+      <form class="column is-two-thirds-desktop" @submit="createOrUpdate">
         <h2 class="subtitle">
           <translate>
-            General informations
+            General information
           </translate>
         </h2>
         <picture-upload v-model="pictureFile" />
@@ -46,22 +49,20 @@
         </h2>
           <label class="label">{{ $gettext('Event visibility') }}</label>
           <div class="field">
-            <b-radio v-model="event.visibility"
-                     name="name"
-                     :native-value="EventVisibility.PUBLIC">
+            <b-radio v-model="event.visibility" name="name" :native-value="EventVisibility.PUBLIC">
               <translate>Visible everywhere on the web (public)</translate>
             </b-radio>
           </div>
           <div class="field">
-            <b-radio v-model="event.visibility"
-                     name="name"
-                     :native-value="EventVisibility.PRIVATE">
+            <b-radio v-model="event.visibility" name="name" :native-value="EventVisibility.PRIVATE">
               <translate>Only accessible through link and search (private)</translate>
             </b-radio>
           </div>
 
           <button class="button is-primary">
-          <translate>Create my event</translate>
+
+          <translate v-if="isUpdate === false">Create my event</translate>
+          <translate v-else>Update my event</translate>
         </button>
       </form>
     </div>
@@ -69,15 +70,9 @@
 </template>
 
 <script lang="ts">
-// import Location from '@/components/Location';
-import { CREATE_EVENT, EDIT_EVENT } from '@/graphql/event';
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import {
-      Category,
-      IEvent,
-      EventModel,
-      EventVisibility,
-    } from '@/types/event.model';
+import { CREATE_EVENT, EDIT_EVENT, FETCH_EVENT } from '@/graphql/event';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { EventModel, EventVisibility, IEvent } from '@/types/event.model';
 import { LOGGED_PERSON } from '@/graphql/actor';
 import { IPerson, Person } from '@/types/actor';
 import PictureUpload from '@/components/PictureUpload.vue';
@@ -87,6 +82,7 @@ import TagInput from '@/components/Event/TagInput.vue';
 import { TAGS } from '@/graphql/tags';
 import { ITag } from '@/types/tag.model';
 import AddressAutoComplete from '@/components/Event/AddressAutoComplete.vue';
+import { buildFileFromIPicture, buildFileVariable } from '@/utils/image';
 
 @Component({
   components: { AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor },
@@ -99,57 +95,81 @@ import AddressAutoComplete from '@/components/Event/AddressAutoComplete.vue';
     },
   },
 })
-export default class CreateEvent extends Vue {
+export default class EditEvent extends Vue {
+  @Prop({ type: Boolean, default: false }) isUpdate!: boolean;
   @Prop({ required: false, type: String }) uuid!: string;
 
-  loggedPerson: IPerson = new Person();
-  /*categories: string[] = Object.keys(Category);*/
-  event: IEvent = new EventModel();
+  eventId!: string | undefined;
+
+  loggedPerson = new Person();
+  event = new EventModel();
   pictureFile: File | null = null;
+
   EventVisibility = EventVisibility;
+
+  // categories: string[] = Object.keys(Category);
+
+  @Watch('$route.params.eventId', { immediate: true })
+  async onEventIdParamChanged (val: string) {
+    if (this.isUpdate !== true) return;
+
+    this.eventId = val;
+
+    if (this.eventId) {
+      this.event = await this.getEvent();
+
+      this.pictureFile = await buildFileFromIPicture(this.event.picture);
+    }
+  }
 
   created() {
     const now = new Date();
     const end = new Date();
     end.setUTCHours(now.getUTCHours() + 3);
+
     this.event.beginsOn = now;
     this.event.endsOn = end;
   }
 
-  createEvent(e: Event) {
+  createOrUpdate(e: Event) {
     e.preventDefault();
 
-    if (this.event.uuid === '') {
-      console.log('event', this.event);
-      this.$apollo
-        .mutate({
-          mutation: CREATE_EVENT,
-          variables: this.buildVariables(),
-        })
-        .then(data => {
-          console.log('event created', data);
-          this.$router.push({
-            name: 'Event',
-            params: { uuid: data.data.createEvent.uuid },
-          });
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    } else {
-      this.$apollo
-        .mutate({
-          mutation: EDIT_EVENT,
-        })
-        .then(data => {
-          this.$router.push({
-            name: 'Event',
-            params: { uuid: data.data.uuid },
-          });
-        })
-        .catch(error => {
-          console.error(error);
-        });
+    if (this.eventId) return this.updateEvent();
+
+    return this.createEvent();
+  }
+
+  async createEvent() {
+    try {
+      const data = await this.$apollo.mutate({
+        mutation: CREATE_EVENT,
+        variables: this.buildVariables(),
+      });
+
+      console.log('Event created', data);
+
+      this.$router.push({
+        name: 'Event',
+        params: { uuid: data.createEvent.uuid },
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async updateEvent() {
+    try {
+      await this.$apollo.mutate({
+        mutation: EDIT_EVENT,
+        variables: this.buildVariables(),
+      });
+
+      this.$router.push({
+        name: 'Event',
+        params: { uuid: this.eventId as string },
+      });
+    } catch (err) {
+      console.error(err);
     }
   }
 
@@ -157,10 +177,6 @@ export default class CreateEvent extends Vue {
    * Build variables for Event GraphQL creation query
    */
   private buildVariables() {
-    /**
-     * Transform general variables
-     */
-    let pictureObj = {};
     const obj = {
       organizerActorId: this.loggedPerson.id,
       beginsOn: this.event.beginsOn.toISOString(),
@@ -172,21 +188,20 @@ export default class CreateEvent extends Vue {
       delete this.event.physicalAddress['__typename'];
     }
 
-    /**
-     * Transform picture files
-     */
-    if (this.pictureFile) {
-      pictureObj = {
-        picture: {
-          picture: {
-            name: this.pictureFile.name,
-            file: this.pictureFile,
-          },
-        },
-      };
-    }
+    const pictureObj = buildFileVariable(this.pictureFile, 'picture');
 
     return Object.assign({}, res, pictureObj);
+  }
+
+  private async getEvent() {
+    const result = await this.$apollo.query({
+      query: FETCH_EVENT,
+      variables: {
+        uuid: this.eventId,
+      },
+    });
+
+    return new EventModel(result.data.event);
   }
 
   // getAddressData(addressData) {

@@ -6,10 +6,8 @@ import { onError } from 'apollo-link-error';
 import { createLink } from 'apollo-absinthe-upload-link';
 import { GRAPHQL_API_ENDPOINT, GRAPHQL_API_FULL_PATH } from './api/_entrypoint';
 import { ApolloClient } from 'apollo-client';
-import { DollarApollo } from 'vue-apollo/types/vue-apollo';
 import { buildCurrentUserResolver } from '@/apollo/user';
 import { isServerError } from '@/types/apollo';
-import { inspect } from 'util';
 import { REFRESH_TOKEN } from '@/graphql/auth';
 import { AUTH_ACCESS_TOKEN, AUTH_REFRESH_TOKEN } from '@/constants';
 import { logout, saveTokenData } from '@/utils/auth';
@@ -107,7 +105,7 @@ const apolloClient = new ApolloClient({
   cache,
   link,
   connectToDevTools: true,
-  resolvers: buildCurrentUserResolver(cache)
+  resolvers: buildCurrentUserResolver(cache),
 });
 
 export const apolloProvider = new VueApollo({

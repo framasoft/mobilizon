@@ -3,7 +3,7 @@ import Location from '@/views/Location.vue';
 import { RouteConfig } from 'vue-router';
 
 // tslint:disable:space-in-parens
-const createEvent = () => import(/* webpackChunkName: "create-event" */ '@/views/Event/Create.vue');
+const editEvent = () => import(/* webpackChunkName: "create-event" */ '@/views/Event/Edit.vue');
 const event = () => import(/* webpackChunkName: "event" */ '@/views/Event/Event.vue');
 // tslint:enable
 
@@ -25,15 +25,15 @@ export const eventRoutes: RouteConfig[] = [
   {
     path: '/events/create',
     name: EventRouteName.CREATE_EVENT,
-    component: createEvent,
+    component: editEvent,
     meta: { requiredAuth: true },
   },
   {
-    path: '/events/:id/edit',
+    path: '/events/edit/:eventId',
     name: EventRouteName.EDIT_EVENT,
-    component: createEvent,
-    props: true,
+    component: editEvent,
     meta: { requiredAuth: true },
+    props: { isUpdate: true },
   },
   {
     path: '/location/new',
