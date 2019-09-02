@@ -58,6 +58,40 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                json_response(res, 200)["errors"]
     end
 
+    test "create_event/3 should check the organizer_actor_id is owned by the user", %{
+      conn: conn,
+      user: user
+    } do
+      another_actor = insert(:actor)
+
+      begins_on = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
+
+      mutation = """
+          mutation {
+              createEvent(
+                  title: "come to my event",
+                  description: "it will be fine",
+                  begins_on: "#{begins_on}",
+                  organizer_actor_id: "#{another_actor.id}",
+                  category: "birthday"
+              ) {
+                title,
+                uuid
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["data"]["createEvent"] == nil
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "Organizer actor id is not owned by the user"
+    end
+
     test "create_event/3 creates an event", %{conn: conn, actor: actor, user: user} do
       mutation = """
           mutation {
@@ -382,6 +416,100 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       assert json_response(res, 200)["data"]["createEvent"]["picture"]["name"] == picture.name
 
       assert json_response(res, 200)["data"]["createEvent"]["picture"]["url"]
+    end
+
+    test "update_event/3 should check the event exists", %{conn: conn, actor: actor, user: user} do
+      mutation = """
+          mutation {
+              updateEvent(
+                  event_id: 45,
+                  title: "my event updated",
+              ) {
+                title,
+                uuid,
+                tags {
+                  title,
+                  slug
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] == "Event not found"
+    end
+
+    test "update_event/3 should check the user is an administrator", %{
+      conn: conn,
+      actor: actor,
+      user: user
+    } do
+      event = insert(:event)
+
+      mutation = """
+          mutation {
+              updateEvent(
+                  title: "my event updated",
+              ) {
+                title,
+                uuid,
+                tags {
+                  title,
+                  slug
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["errors"] == nil
+    end
+
+    test "update_event/3 updates an event", %{conn: conn, actor: actor, user: user} do
+      event = insert(:event)
+
+      begins_on = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
+
+      mutation = """
+          mutation {
+              updateEvent(
+                  title: "my event updated",
+                  description: "description updated",
+                  begins_on: "#{begins_on}",
+                  organizer_actor_id: "#{actor.id}",
+                  category: "birthday",
+                  tags: ["tag1_updated", "tag2_updated"]
+              ) {
+                title,
+                uuid,
+                tags {
+                  title,
+                  slug
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["updateEvent"]["title"] == "my event updated"
+
+      assert json_response(res, 200)["data"]["createEvent"]["tags"] == [
+               %{"slug" => "tag1_updated", "title" => "tag1_updated"},
+               %{"slug" => "tag2_updated", "title" => "tag2_updated"}
+             ]
     end
 
     test "list_events/3 returns events", context do
