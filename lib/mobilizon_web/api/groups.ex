@@ -3,7 +3,7 @@ defmodule MobilizonWeb.API.Groups do
   API for Events
   """
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Users.User
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Utils, as: ActivityPubUtils
   alias MobilizonWeb.API.Utils
@@ -11,24 +11,26 @@ defmodule MobilizonWeb.API.Groups do
   @doc """
   Create a group
   """
-  @spec create_group(map()) :: {:ok, Activity.t(), Group.t()} | any()
+  @spec create_group(User.t(), map()) :: {:ok, Activity.t(), Group.t()} | any()
   def create_group(
+        user,
         %{
           preferred_username: title,
-          description: description,
-          admin_actor_username: admin_actor_username
+          summary: summary,
+          creator_actor_id: creator_actor_id,
+          avatar: avatar,
+          banner: banner
         } = args
       ) do
-    with {:bad_actor, %Actor{url: url} = actor} <-
-           {:bad_actor, Actors.get_local_actor_by_name(admin_actor_username)},
+    with {:is_owned, true, actor} <- User.owns_actor(user, creator_actor_id),
          {:existing_group, nil} <- {:existing_group, Actors.get_group_by_title(title)},
          title <- String.trim(title),
          visibility <- Map.get(args, :visibility, :public),
          {content_html, tags, to, cc} <-
-           Utils.prepare_content(actor, description, visibility, [], nil),
+           Utils.prepare_content(actor, summary, visibility, [], nil),
          group <-
            ActivityPubUtils.make_group_data(
-             url,
+             actor.url,
              to,
              title,
              content_html,
@@ -43,10 +45,10 @@ defmodule MobilizonWeb.API.Groups do
       })
     else
       {:existing_group, _} ->
-        {:error, :existing_group_name}
+        {:error, "A group with this name already exists"}
 
-      {:bad_actor, _} ->
-        {:error, :bad_admin_actor}
+      {:is_owned, _} ->
+        {:error, "Actor id is not owned by authenticated user"}
     end
   end
 end

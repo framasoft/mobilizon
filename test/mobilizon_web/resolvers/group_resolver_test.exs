@@ -15,12 +15,37 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
   end
 
   describe "Group Resolver" do
-    test "create_group/3 creates a group", %{conn: conn, user: user, actor: actor} do
+    test "create_group/3 should check the user owns the identity", %{conn: conn, user: user} do
+      another_actor = insert(:actor)
+
       mutation = """
           mutation {
             createGroup(
               preferred_username: "#{@new_group_params.groupname}",
-              admin_actor_username: "#{actor.preferred_username}"
+              creator_actor_id: #{another_actor.id}
+            ) {
+                preferred_username,
+                type
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "Actor id is not owned by authenticated user"
+    end
+
+    test "create_group/3 creates a group and check a group with this name does not already exist",
+         %{conn: conn, user: user, actor: actor} do
+      mutation = """
+          mutation {
+            createGroup(
+              preferred_username: "#{@new_group_params.groupname}",
+              creator_actor_id: #{actor.id}
             ) {
                 preferred_username,
                 type
@@ -42,7 +67,7 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
           mutation {
             createGroup(
               preferred_username: "#{@new_group_params.groupname}",
-              admin_actor_username: "#{actor.preferred_username}",
+              creator_actor_id: #{actor.id},
             ) {
                 preferred_username,
                 type
@@ -55,7 +80,8 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
         |> auth_conn(user)
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "existing_group_name"
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "A group with this name already exists"
     end
 
     test "list_groups/3 returns all public or unlisted groups", context do

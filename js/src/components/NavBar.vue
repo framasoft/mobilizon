@@ -40,6 +40,10 @@
                 <router-link :to="{ name: 'UpdateIdentity' }" v-translate>My account</router-link>
               </span>
 
+              <span class="navbar-item">
+                <router-link :to="{ name: ActorRouteName.CREATE_GROUP }" v-translate>Create group</router-link>
+              </span>
+
               <a v-translate class="navbar-item" v-on:click="logout()">Log out</a>
             </div>
           </div>
@@ -70,6 +74,7 @@ import { IConfig } from '@/types/config.model';
 import { ICurrentUser } from '@/types/current-user.model';
 import Logo from '@/components/Logo.vue';
 import SearchField from '@/components/SearchField.vue';
+import { ActorRouteName } from '@/router/actor';
 
 @Component({
   apollo: {
@@ -94,6 +99,8 @@ export default class NavBar extends Vue {
   config!: IConfig;
   currentUser!: ICurrentUser;
   showNavbar: boolean = false;
+
+  ActorRouteName = ActorRouteName;
 
   @Watch('currentUser')
   async onCurrentUserChanged() {

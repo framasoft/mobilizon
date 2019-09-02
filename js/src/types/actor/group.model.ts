@@ -19,4 +19,14 @@ export interface IMember {
 
 export class Group extends Actor implements IGroup {
   members: IMember[] = [];
+
+  constructor(hash: IGroup | {} = {}) {
+    super(hash);
+
+    this.patch(hash);
+  }
+
+  patch (hash: any) {
+    Object.assign(this, hash);
+  }
 }

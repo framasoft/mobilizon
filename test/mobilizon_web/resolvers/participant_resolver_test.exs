@@ -7,7 +7,9 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
   @event %{
     description: "some body",
     title: "some title",
-    begins_on: DateTime.utc_now() |> DateTime.truncate(:second),
+    begins_on:
+      DateTime.utc_now()
+      |> DateTime.truncate(:second),
     uuid: "b5126423-f1af-43e4-a923-002a03003ba4",
     url: "some url",
     category: "meeting"
@@ -171,7 +173,9 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
 
       assert json_response(res, 200)["data"]["participants"] == [
                %{
-                 "actor" => %{"preferredUsername" => participant2.actor.preferred_username},
+                 "actor" => %{
+                   "preferredUsername" => participant2.actor.preferred_username
+                 },
                  "role" => "creator"
                }
              ]
@@ -339,7 +343,9 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
 
       assert json_response(res, 200)["data"]["participants"] == [
                %{
-                 "actor" => %{"preferredUsername" => context.actor.preferred_username},
+                 "actor" => %{
+                   "preferredUsername" => context.actor.preferred_username
+                 },
                  "role" => "creator"
                }
              ]
@@ -356,14 +362,26 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
         context.conn
         |> get("/api", AbsintheHelpers.query_skeleton(query, "participants"))
 
-      assert json_response(res, 200)["data"]["participants"] == [
+      sorted_participants =
+        json_response(res, 200)["data"]["participants"]
+        |> Enum.sort_by(
+          &(&1
+            |> Map.get("actor")
+            |> Map.get("preferredUsername"))
+        )
+
+      assert sorted_participants == [
                %{
-                 "actor" => %{"preferredUsername" => participant2.actor.preferred_username},
-                 "role" => "participant"
+                 "actor" => %{
+                   "preferredUsername" => context.actor.preferred_username
+                 },
+                 "role" => "creator"
                },
                %{
-                 "actor" => %{"preferredUsername" => context.actor.preferred_username},
-                 "role" => "creator"
+                 "actor" => %{
+                   "preferredUsername" => participant2.actor.preferred_username
+                 },
+                 "role" => "participant"
                }
              ]
     end
