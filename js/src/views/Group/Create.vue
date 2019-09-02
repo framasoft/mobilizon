@@ -1,87 +1,124 @@
 <template>
-  <section>
-    <h1>
-      <translate>Create a new group</translate>
-    </h1>
-    <div class="columns">
-      <form class="column" @submit="createGroup">
-        <b-field :label="$gettext('Group name')">
-          <b-input aria-required="true" required v-model="group.preferred_username"/>
-        </b-field>
+  <div class="root">
+    <h1 v-translate>Create a new group</h1>
 
-        <b-field :label="$gettext('Group full name')">
-          <b-input aria-required="true" required v-model="group.name"/>
-        </b-field>
+    <div>
+      <b-field :label="$gettext('Group name')">
+        <b-input aria-required="true" required v-model="group.preferred_username"/>
+      </b-field>
 
-        <b-field :label="$gettext('Description')">
-          <b-input aria-required="true" required v-model="group.summary" type="textarea"/>
-        </b-field>
+      <b-field :label="$gettext('Group full name')">
+        <b-input aria-required="true" required v-model="group.name"/>
+      </b-field>
 
-        <button class="button is-primary">
-          <translate>Create my group</translate>
-        </button>
-      </form>
+      <b-field :label="$gettext('Description')">
+        <b-input aria-required="true" required v-model="group.description" type="textarea"/>
+      </b-field>
+
+      <div>
+        Avatar
+        <picture-upload v-model="avatarFile"></picture-upload>
+      </div>
+
+      <div>
+        Banner
+        <picture-upload v-model="avatarFile"></picture-upload>
+      </div>
+
+      <button class="button is-primary" @click="createGroup()">
+        <translate>Create my group</translate>
+      </button>
     </div>
-  </section>
+  </div>
 </template>
+
+<style lang="scss" scoped>
+  .root {
+    width: 400px;
+    margin: auto;
+  }
+</style>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import { Group, IPerson } from '@/types/actor';
+import { CREATE_GROUP, LOGGED_PERSON } from '@/graphql/actor';
+import { RouteName } from '@/router';
+import PictureUpload from '@/components/PictureUpload.vue';
 
-@Component({})
+@Component({
+  components: {
+    PictureUpload,
+  },
+  apollo: {
+    loggedPerson: {
+      query: LOGGED_PERSON,
+    },
+  },
+})
 export default class CreateGroup extends Vue {
-  e1 = 0;
-  // FIXME: correctly type group
-  group: {
-    preferred_username: string;
-    name: string;
-    summary: string;
-    address?: any;
-  } = {
-    preferred_username: '',
-    name: '',
-    summary: '',
-    // category: null,
-  };
-  categories = [];
+  loggedPerson!: IPerson;
 
-  mounted() {
-    this.fetchCategories();
+  group = new Group();
+
+  avatarFile: File | null = null;
+  bannerFile: File | null = null;
+
+  async createGroup() {
+    try {
+      await this.$apollo.mutate({
+        mutation: CREATE_GROUP,
+        variables: this.buildVariables(),
+        update: (store, { data: { createGroup } }) => {
+          // TODO: update group list cache
+        },
+      });
+
+      this.$router.push({ name: RouteName.GROUP, params: { identityName: this.group.preferredUsername } });
+
+      this.$notifier.success(
+        this.$gettextInterpolate('Group %{displayName} created', { displayName: this.group.displayName() }),
+      );
+    } catch (err) {
+      this.handleError(err);
+    }
   }
 
-  createGroup() {
-    // this.group.organizer = "/accounts/" + this.$store.state.user.id;
-    // FIXME: remove eventFetch
-    // eventFetch('/groups', this.$store, { method: 'POST', body: JSON.stringify({ group: this.group }) })
-    //   .then(response => response.json())
-    //   .then((data) => {
-    //     this.loading = false;
-    //     this.$router.push({ path: 'Group', params: { id: data.id } });
-    //   });
-  }
+  private buildVariables() {
+    let avatarObj = {};
+    let bannerObj = {};
 
-  fetchCategories() {
-    // FIXME: remove eventFetch
-    // eventFetch('/categories', this.$store)
-    //   .then(response => response.json())
-    //   .then((data) => {
-    //     this.loading = false;
-    //     this.categories = data.data;
-    //   });
-  }
+    if (this.avatarFile) {
+      avatarObj = {
+        avatar: {
+          picture: {
+            name: this.avatarFile.name,
+            alt: `${this.group.preferredUsername}'s avatar`,
+            file: this.avatarFile,
+          },
+        },
+      };
+    }
 
-  getAddressData(addressData) {
-    this.group.address = {
-      geo: {
-        latitude: addressData.latitude,
-        longitude: addressData.longitude,
-      },
-      country: addressData.country,
-      locality: addressData.city,
-      region: addressData.administrative_area_level_1,
-      postalCode: addressData.postalCode,
-      street: `${addressData.street_number} ${addressData.route}`,
+    if (this.bannerFile) {
+      bannerObj = {
+        picture: {
+          name: this.bannerFile.name,
+          alt: `${this.group.preferredUsername}'s banner`,
+          file: this.bannerFile,
+        },
+      };
+    }
+
+    const currentActor = {
+      creatorActorId: this.loggedPerson.id,
     };
+
+    return Object.assign({}, this.group, avatarObj, bannerObj, currentActor);
+  }
+
+  private handleError(err: any) {
+    console.error(err);
   }
 }
 </script>

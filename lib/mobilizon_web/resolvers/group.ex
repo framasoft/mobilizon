@@ -27,8 +27,11 @@ defmodule MobilizonWeb.Resolvers.Group do
   Lists all groups
   """
   def list_groups(_parent, %{page: page, limit: limit}, _resolution) do
-    {:ok,
-     Actors.list_groups(page, limit) |> Enum.map(fn actor -> Person.proxify_pictures(actor) end)}
+    {
+      :ok,
+      Actors.list_groups(page, limit)
+      |> Enum.map(fn actor -> Person.proxify_pictures(actor) end)
+    }
   end
 
   @doc """
@@ -39,7 +42,7 @@ defmodule MobilizonWeb.Resolvers.Group do
         args,
         %{
           context: %{
-            current_user: _user
+            current_user: user
           }
         }
       ) do
@@ -52,26 +55,22 @@ defmodule MobilizonWeb.Resolvers.Group do
            },
            %Actor{} = group
          } <-
-           MobilizonWeb.API.Groups.create_group(args) do
+           MobilizonWeb.API.Groups.create_group(
+             user,
+             %{
+               preferred_username: args.preferred_username,
+               creator_actor_id: args.creator_actor_id,
+               name: Map.get(args, "name", args.preferred_username),
+               summary: args.summary,
+               avatar: Map.get(args, "avatar"),
+               banner: Map.get(args, "banner")
+             }
+           ) do
       {
         :ok,
         group
       }
     end
-
-    # with %Actor{id: actor_id} <- Actors.get_local_actor_by_name(actor_username),
-    #      {:user_actor, true} <-
-    #        {:user_actor, actor_id in Enum.map(Actors.get_actors_for_user(user), & &1.id)},
-    #      {:ok, %Actor{} = group} <- Actors.create_group(%{preferred_username: preferred_username}) do
-    #   {:ok, group}
-    # else
-    #   {:error, %Ecto.Changeset{errors: [url: {"has already been taken", []}]}} ->
-    #     {:error, :group_name_not_available}
-
-    #   err ->
-    #     Logger.error(inspect(err))
-    #     err
-    # end
   end
 
   def create_group(_parent, _args, _resolution) do
@@ -138,12 +137,18 @@ defmodule MobilizonWeb.Resolvers.Group do
              actor_id: actor.id,
              role: role
            }) do
-      {:ok,
-       %{
-         parent: group |> Person.proxify_pictures(),
-         actor: actor |> Person.proxify_pictures(),
-         role: role
-       }}
+      {
+        :ok,
+        %{
+          parent:
+            group
+            |> Person.proxify_pictures(),
+          actor:
+            actor
+            |> Person.proxify_pictures(),
+          role: role
+        }
+      }
     else
       {:is_owned, false} ->
         {:error, "Actor id is not owned by authenticated user"}

@@ -72,7 +72,7 @@ defmodule MobilizonWeb.Schema.EventType do
 
   @desc "The list of visibility options for an event"
   enum :event_visibility do
-    value(:public, description: "Publically listed and federated. Can be shared.")
+    value(:public, description: "Publicly listed and federated. Can be shared.")
     value(:unlisted, description: "Visible only to people with the link - or invited")
 
     value(:private,

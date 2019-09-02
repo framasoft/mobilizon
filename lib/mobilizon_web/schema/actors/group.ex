@@ -95,12 +95,13 @@ defmodule MobilizonWeb.Schema.Actors.GroupType do
     @desc "Create a group"
     field :create_group, :group do
       arg(:preferred_username, non_null(:string), description: "The name for the group")
-      arg(:name, :string, description: "The displayed name for the group")
-      arg(:description, :string, description: "The summary for the group", default_value: "")
 
-      arg(:admin_actor_username, :string,
-        description: "The actor's username which will be the admin (otherwise user's default one)"
+      arg(:creator_actor_id, non_null(:integer),
+        description: "The identity that creates the group"
       )
+
+      arg(:name, :string, description: "The displayed name for the group")
+      arg(:summary, :string, description: "The summary for the group", default_value: "")
 
       arg(:avatar, :picture_input,
         description:

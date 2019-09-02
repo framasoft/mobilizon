@@ -174,3 +174,34 @@ query($name:String!) {
   }
 }
 `;
+
+export const CREATE_GROUP = gql`
+  mutation CreateGroup(
+    $creatorActorId: Int!,
+    $preferredUsername: String!,
+    $name: String!,
+    $summary: String,
+    $avatar: PictureInput,
+    $banner: PictureInput
+  ) {
+    createGroup(
+      creatorActorId: $creatorActorId,
+      preferredUsername: $preferredUsername,
+      name: $name,
+      summary: $summary,
+      banner: $banner,
+      avatar: $avatar
+    ) {
+      id,
+      preferredUsername,
+      name,
+      summary,
+      avatar {
+        url
+      },
+      banner {
+        url
+      }
+    }
+  }
+`;
