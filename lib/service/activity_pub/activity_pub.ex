@@ -39,11 +39,9 @@ defmodule Mobilizon.Service.ActivityPub do
   @doc """
   Wraps an object into an activity
   """
-  # TODO: Rename me
-  @spec insert(map(), boolean()) :: {:ok, %Activity{}} | {:error, any()}
-  def insert(map, local \\ true) when is_map(map) do
-    with map <- lazy_put_activity_defaults(map),
-         {:ok, object} <- insert_full_object(map) do
+  @spec create_activity(map(), boolean()) :: {:ok, %Activity{}} | {:error, any()}
+  def create_activity(map, local \\ true) when is_map(map) do
+    with map <- lazy_put_activity_defaults(map) do
       activity = %Activity{
         data: map,
         local: local,
@@ -53,9 +51,8 @@ defmodule Mobilizon.Service.ActivityPub do
 
       # Notification.create_notifications(activity)
       # stream_out(activity)
-      {:ok, activity, object}
+      {:ok, activity}
     else
-      %Activity{} = activity -> {:ok, activity}
       error -> {:error, error}
     end
   end
@@ -137,7 +134,8 @@ defmodule Mobilizon.Service.ActivityPub do
              %{to: to, actor: actor, published: published, object: object},
              additional
            ),
-         {:ok, activity, object} <- insert(create_data, local),
+         {:ok, activity} <- create_activity(create_data, local),
+         {:ok, object} <- insert_full_object(create_data),
          :ok <- maybe_federate(activity) do
       # {:ok, actor} <- Actors.increase_event_count(actor) do
       {:ok, activity, object}
@@ -160,7 +158,8 @@ defmodule Mobilizon.Service.ActivityPub do
            "object" => object,
            "id" => activity_wrapper_id || get_url(object) <> "/activity"
          },
-         {:ok, activity, object} <- insert(data, local),
+         {:ok, activity} <- create_activity(data, local),
+         {:ok, object} <- insert_full_object(data),
          :ok <- maybe_federate(activity) do
       {:ok, activity, object}
     end
@@ -177,7 +176,8 @@ defmodule Mobilizon.Service.ActivityPub do
            "object" => object,
            "id" => activity_wrapper_id || get_url(object) <> "/activity"
          },
-         {:ok, activity, object} <- insert(data, local),
+         {:ok, activity} <- create_activity(data, local),
+         {:ok, object} <- insert_full_object(data),
          :ok <- maybe_federate(activity) do
       {:ok, activity, object}
     end
@@ -195,7 +195,8 @@ defmodule Mobilizon.Service.ActivityPub do
            "actor" => actor,
            "object" => object
          },
-         {:ok, activity, object} <- insert(data, local),
+         {:ok, activity} <- create_activity(data, local),
+         {:ok, object} <- insert_full_object(data),
          :ok <- maybe_federate(activity) do
       {:ok, activity, object}
     end
@@ -210,7 +211,8 @@ defmodule Mobilizon.Service.ActivityPub do
   #     ) do
   #   with nil <- get_existing_like(url, object),
   #        like_data <- make_like_data(user, object, activity_id),
-  #        {:ok, activity, object} <- insert(like_data, local),
+  #        {:ok, activity} <- create_activity(like_data, local),
+  #        {:ok, object} <- insert_full_object(data),
   #        {:ok, object} <- add_like_to_object(activity, object),
   #        :ok <- maybe_federate(activity) do
   #     {:ok, activity, object}
@@ -228,7 +230,8 @@ defmodule Mobilizon.Service.ActivityPub do
   #     ) do
   #   with %Activity{} = like_activity <- get_existing_like(actor.ap_id, object),
   #        unlike_data <- make_unlike_data(actor, like_activity, activity_id),
-  #        {:ok, unlike_activity, _object} <- insert(unlike_data, local),
+  #        {:ok, unlike_activity} <- create_activity(unlike_data, local),
+  #        {:ok, _object} <- insert_full_object(data),
   #        {:ok, _activity} <- Repo.delete(like_activity),
   #        {:ok, object} <- remove_like_from_object(like_activity, object),
   #        :ok <- maybe_federate(unlike_activity) do
@@ -247,7 +250,8 @@ defmodule Mobilizon.Service.ActivityPub do
       ) do
     with true <- is_public?(object),
          announce_data <- make_announce_data(actor, object, activity_id, public),
-         {:ok, activity, object} <- insert(announce_data, local),
+         {:ok, activity} <- create_activity(announce_data, local),
+         {:ok, object} <- insert_full_object(announce_data),
          :ok <- maybe_federate(activity) do
       {:ok, activity, object}
     else
@@ -265,7 +269,8 @@ defmodule Mobilizon.Service.ActivityPub do
       ) do
     with announce_activity <- make_announce_data(actor, object, cancelled_activity_id),
          unannounce_data <- make_unannounce_data(actor, announce_activity, activity_id),
-         {:ok, unannounce_activity, _object} <- insert(unannounce_data, local),
+         {:ok, unannounce_activity} <- create_activity(unannounce_data, local),
+         {:ok, object} <- insert_full_object(unannounce_data),
          :ok <- maybe_federate(unannounce_activity) do
       {:ok, unannounce_activity, object}
     else
@@ -282,7 +287,8 @@ defmodule Mobilizon.Service.ActivityPub do
          activity_follow_id <-
            activity_id || follow_url,
          data <- make_follow_data(followed, follower, activity_follow_id),
-         {:ok, activity, object} <- insert(data, local),
+         {:ok, activity} <- create_activity(data, local),
+         {:ok, object} <- insert_full_object(data),
          :ok <- maybe_federate(activity) do
       {:ok, activity, object}
     else
@@ -304,12 +310,14 @@ defmodule Mobilizon.Service.ActivityPub do
              follower,
              "#{MobilizonWeb.Endpoint.url()}/follow/#{follow_id}/activity"
            ),
-         {:ok, follow_activity, _object} <- insert(data, local),
+         {:ok, follow_activity} <- create_activity(data, local),
+         {:ok, _object} <- insert_full_object(data),
          activity_unfollow_id <-
            activity_id || "#{MobilizonWeb.Endpoint.url()}/unfollow/#{follow_id}/activity",
          unfollow_data <-
            make_unfollow_data(follower, followed, follow_activity, activity_unfollow_id),
-         {:ok, activity, object} <- insert(unfollow_data, local),
+         {:ok, activity} <- create_activity(unfollow_data, local),
+         {:ok, object} <- insert_full_object(unfollow_data),
          :ok <- maybe_federate(activity) do
       {:ok, activity, object}
     else
@@ -331,7 +339,8 @@ defmodule Mobilizon.Service.ActivityPub do
     }
 
     with {:ok, _} <- Events.delete_event(event),
-         {:ok, activity, object} <- insert(data, local),
+         {:ok, activity} <- create_activity(data, local),
+         {:ok, object} <- insert_full_object(data),
          :ok <- maybe_federate(activity) do
       {:ok, activity, object}
     end
@@ -347,7 +356,8 @@ defmodule Mobilizon.Service.ActivityPub do
     }
 
     with {:ok, _} <- Events.delete_comment(comment),
-         {:ok, activity, object} <- insert(data, local),
+         {:ok, activity} <- create_activity(data, local),
+         {:ok, object} <- insert_full_object(data),
          :ok <- maybe_federate(activity) do
       {:ok, activity, object}
     end
@@ -363,7 +373,8 @@ defmodule Mobilizon.Service.ActivityPub do
     }
 
     with {:ok, _} <- Actors.delete_actor(actor),
-         {:ok, activity, object} <- insert(data, local),
+         {:ok, activity} <- create_activity(data, local),
+         {:ok, object} <- insert_full_object(data),
          :ok <- maybe_federate(activity) do
       {:ok, activity, object}
     end
@@ -384,9 +395,10 @@ defmodule Mobilizon.Service.ActivityPub do
       end
 
     with flag_data <- make_flag_data(params, additional),
-         {:ok, activity, report} <- insert(flag_data, local),
+         {:ok, activity} <- create_activity(flag_data, local),
+         {:ok, object} <- insert_full_object(flag_data),
          :ok <- maybe_federate(activity) do
-      {:ok, activity, report}
+      {:ok, activity, object}
     end
   end
 
@@ -403,7 +415,8 @@ defmodule Mobilizon.Service.ActivityPub do
          join_data <- Convertible.model_to_as(participant),
          join_data <- Map.put(join_data, "to", [event.organizer_actor.url]),
          join_data <- Map.put(join_data, "cc", []),
-         {:ok, activity, _} <- insert(join_data, local),
+         {:ok, activity} <- create_activity(join_data, local),
+         {:ok, _object} <- insert_full_object(join_data),
          :ok <- maybe_federate(activity) do
       if role === :participant do
         accept(
@@ -443,7 +456,8 @@ defmodule Mobilizon.Service.ActivityPub do
            "to" => [event.organizer_actor.url],
            "cc" => []
          },
-         {:ok, activity, _} <- insert(leave_data, local),
+         {:ok, activity} <- create_activity(leave_data, local),
+         {:ok, _object} <- insert_full_object(leave_data),
          :ok <- maybe_federate(activity) do
       {:ok, activity, participant}
     end
