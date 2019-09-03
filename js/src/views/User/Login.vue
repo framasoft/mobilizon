@@ -124,20 +124,23 @@ export default class Login extends Vue {
     this.errors = [];
 
     try {
-      const result = await this.$apollo.mutate<{ login: ILogin }>({
+      const { data } = await this.$apollo.mutate<{ login: ILogin }>({
         mutation: LOGIN,
         variables: {
           email: this.credentials.email,
           password: this.credentials.password,
         },
       });
+      if (data == null) {
+        throw new Error('Data is undefined');
+      }
 
-      saveUserData(result.data.login);
+      saveUserData(data.login);
 
       await this.$apollo.mutate({
         mutation: UPDATE_CURRENT_USER_CLIENT,
         variables: {
-          id: result.data.login.user.id,
+          id: data.login.user.id,
           email: this.credentials.email,
           isLoggedIn: true,
         },

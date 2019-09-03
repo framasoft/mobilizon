@@ -68,6 +68,7 @@ defmodule MobilizonWeb.Schema.EventType do
 
     field(:updated_at, :datetime, description: "When the event was last updated")
     field(:created_at, :datetime, description: "When the event was created")
+    field(:options, :event_options, description: "The event options")
   end
 
   @desc "The list of visibility options for an event"
@@ -88,6 +89,101 @@ defmodule MobilizonWeb.Schema.EventType do
     value(:tentative, description: "The event is tentative")
     value(:confirmed, description: "The event is confirmed")
     value(:cancelled, description: "The event is cancelled")
+  end
+
+  object :event_offer do
+    field(:price, :float, description: "The price amount for this offer")
+    field(:price_currency, :string, description: "The currency for this price offer")
+    field(:url, :string, description: "The URL to access to this offer")
+  end
+
+  object :event_participation_condition do
+    field(:title, :string, description: "The title for this condition")
+    field(:content, :string, description: "The content for this condition")
+    field(:url, :string, description: "The URL to access this condition")
+  end
+
+  input_object :event_offer_input do
+    field(:price, :float, description: "The price amount for this offer")
+    field(:price_currency, :string, description: "The currency for this price offer")
+    field(:url, :string, description: "The URL to access to this offer")
+  end
+
+  input_object :event_participation_condition_input do
+    field(:title, :string, description: "The title for this condition")
+    field(:content, :string, description: "The content for this condition")
+    field(:url, :string, description: "The URL to access this condition")
+  end
+
+  @desc "The list of possible options for the event's status"
+  enum :event_comment_moderation do
+    value(:allow_all, description: "Anyone can comment under the event")
+    value(:moderated, description: "Every comment has to be moderated by the admin")
+    value(:closed, description: "No one can comment except for the admin")
+  end
+
+  object :event_options do
+    field(:maximum_attendee_capacity, :integer,
+      description: "The maximum attendee capacity for this event"
+    )
+
+    field(:remaining_attendee_capacity, :integer,
+      description: "The number of remaining seats for this event"
+    )
+
+    field(:show_remaining_attendee_capacity, :boolean,
+      description: "Whether or not to show the number of remaining seats for this event"
+    )
+
+    field(:offers, list_of(:event_offer), description: "The list of offers to show for this event")
+
+    field(:participation_conditions, list_of(:event_participation_condition),
+      description: "The list of participation conditions to accept to join this event"
+    )
+
+    field(:attendees, list_of(:string), description: "The list of special attendees")
+    field(:program, :string, description: "The list of the event")
+
+    field(:comment_moderation, :event_comment_moderation,
+      description: "The policy on public comment moderation under the event"
+    )
+
+    field(:show_participation_price, :boolean,
+      description: "Whether or not to show the participation price"
+    )
+  end
+
+  input_object :event_options_input do
+    field(:maximum_attendee_capacity, :integer,
+      description: "The maximum attendee capacity for this event"
+    )
+
+    field(:remaining_attendee_capacity, :integer,
+      description: "The number of remaining seats for this event"
+    )
+
+    field(:show_remaining_attendee_capacity, :boolean,
+      description: "Whether or not to show the number of remaining seats for this event"
+    )
+
+    field(:offers, list_of(:event_offer_input),
+      description: "The list of offers to show for this event"
+    )
+
+    field(:participation_conditions, list_of(:event_participation_condition_input),
+      description: "The list of participation conditions to accept to join this event"
+    )
+
+    field(:attendees, list_of(:string), description: "The list of special attendees")
+    field(:program, :string, description: "The list of the event")
+
+    field(:comment_moderation, :event_comment_moderation,
+      description: "The policy on public comment moderation under the event"
+    )
+
+    field(:show_participation_price, :boolean,
+      description: "Whether or not to show the participation price"
+    )
   end
 
   object :event_queries do
@@ -131,8 +227,9 @@ defmodule MobilizonWeb.Schema.EventType do
       arg(:online_address, :string)
       arg(:phone_address, :string)
       arg(:organizer_actor_id, non_null(:id))
-      arg(:category, :string)
+      arg(:category, :string, default_value: "meeting")
       arg(:physical_address, :address_input)
+      arg(:options, :event_options_input, default_value: %{})
 
       resolve(&Event.create_event/3)
     end

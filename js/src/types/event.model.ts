@@ -22,6 +22,12 @@ export enum EventJoinOptions {
   INVITE,
 }
 
+export enum EventVisibilityJoinOptions {
+  PUBLIC = 'PUBLIC',
+  LINK = 'LINK',
+  LIMITED = 'LIMITED',
+}
+
 export enum ParticipantRole {
   NOT_APPROVED = 'not_approved',
   PARTICIPANT = 'participant',
@@ -42,6 +48,24 @@ export interface IParticipant {
   role: ParticipantRole;
   actor: IActor;
   event: IEvent;
+}
+
+export interface IOffer {
+  price: number;
+  priceCurrency: string;
+  url: string;
+}
+
+export interface IParticipationCondition {
+  title: string;
+  content: string;
+  url: string;
+}
+
+export enum CommentModeration {
+    ALLOW_ALL = 'ALLOW_ALL',
+    MODERATED = 'MODERATED',
+    CLOSED = 'CLOSED',
 }
 
 export interface IEvent {
@@ -77,6 +101,31 @@ export interface IEvent {
   physicalAddress?: IAddress;
 
   tags: ITag[];
+  options: IEventOptions;
+}
+
+export interface IEventOptions {
+  maximumAttendeeCapacity: number;
+  remainingAttendeeCapacity: number;
+  showRemainingAttendeeCapacity: boolean;
+  offers: IOffer[];
+  participationConditions: IParticipationCondition[];
+  attendees: string[];
+  program: string;
+  commentModeration: CommentModeration;
+  showParticipationPrice: boolean;
+}
+
+export class EventOptions implements IEventOptions {
+  maximumAttendeeCapacity: number = 0;
+  remainingAttendeeCapacity: number = 0;
+  showRemainingAttendeeCapacity: boolean = false;
+  offers: IOffer[] = [];
+  participationConditions: IParticipationCondition[] = [];
+  attendees: string[] = [];
+  program: string = '';
+  commentModeration: CommentModeration = CommentModeration.ALLOW_ALL;
+  showParticipationPrice: boolean = false;
 }
 
 export class EventModel implements IEvent {
@@ -113,6 +162,7 @@ export class EventModel implements IEvent {
   organizerActor = new Actor();
 
   tags: ITag[] = [];
+  options: IEventOptions = new EventOptions();
 
   constructor(hash?: IEvent) {
     if (!hash) return;
@@ -150,5 +200,6 @@ export class EventModel implements IEvent {
     this.physicalAddress = hash.physicalAddress;
 
     this.tags = hash.tags;
+    this.options = hash.options;
   }
 }

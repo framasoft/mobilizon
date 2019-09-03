@@ -14,14 +14,15 @@ defmodule MobilizonWeb.API.Events do
   @spec create_event(map()) :: {:ok, Activity.t(), Event.t()} | any()
   def create_event(
         %{
-          title: title,
-          description: description,
-          organizer_actor_id: organizer_actor_id,
           begins_on: begins_on,
-          category: category,
-          tags: tags
+          description: description,
+          options: options,
+          organizer_actor_id: organizer_actor_id,
+          tags: tags,
+          title: title
         } = args
-      ) do
+      )
+      when is_map(options) do
     with %Actor{url: url} = actor <-
            Actors.get_local_actor_with_everything(organizer_actor_id),
          physical_address <- Map.get(args, :physical_address, nil),
@@ -38,7 +39,12 @@ defmodule MobilizonWeb.API.Events do
              content_html,
              picture,
              tags,
-             %{begins_on: begins_on, physical_address: physical_address, category: category}
+             %{
+               begins_on: begins_on,
+               physical_address: physical_address,
+               category: Map.get(args, :category),
+               options: options
+             }
            ) do
       ActivityPub.create(%{
         to: ["https://www.w3.org/ns/activitystreams#Public"],

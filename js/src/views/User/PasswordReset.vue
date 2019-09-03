@@ -71,16 +71,19 @@ export default class PasswordReset extends Vue {
     this.errors.splice(0);
 
     try {
-      const result = await this.$apollo.mutate<{ resetPassword: ILogin }>({
+      const { data } = await this.$apollo.mutate<{ resetPassword: ILogin }>({
         mutation: RESET_PASSWORD,
         variables: {
           password: this.credentials.password,
           token: this.token,
         },
       });
+      if (data == null) {
+        throw new Error('Data is undefined');
+      }
 
-      saveUserData(result.data.resetPassword);
-      this.$router.push({ name: RouteName.HOME });
+      saveUserData(data.resetPassword);
+      await this.$router.push({ name: RouteName.HOME });
     } catch (err) {
       console.error(err);
       err.graphQLErrors.forEach(({ message }) => {

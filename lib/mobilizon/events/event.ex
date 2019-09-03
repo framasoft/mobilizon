@@ -54,6 +54,7 @@ defmodule Mobilizon.Events.Event do
     field(:online_address, :string)
     field(:phone_address, :string)
     field(:category, :string)
+    embeds_one(:options, Mobilizon.Events.EventOptions)
     belongs_to(:organizer_actor, Actor, foreign_key: :organizer_actor_id)
     belongs_to(:attributed_to, Actor, foreign_key: :attributed_to_id)
     many_to_many(:tags, Tag, join_through: "events_tags")
@@ -87,6 +88,7 @@ defmodule Mobilizon.Events.Event do
       :picture_id,
       :physical_address_id
     ])
+    |> cast_embed(:options)
     |> validate_required([
       :title,
       :begins_on,

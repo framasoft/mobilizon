@@ -460,18 +460,6 @@ export default class CreateEvent extends Vue {
         margin-bottom: 1rem;
         transition: visibility 0.2s 0.4s, opacity 0.2s 0.4s;
 
-        &.bar-is-hidden {
-            visibility: hidden;
-            opacity: 0;
-        }
-
-        &.is-focused {
-            visibility: visible;
-            opacity: 1;
-            height: auto;
-            transition: visibility 0.2s, opacity 0.2s;
-        }
-
         &__button {
             font-weight: bold;
             display: inline-flex;
@@ -510,10 +498,14 @@ export default class CreateEvent extends Vue {
             div.ProseMirror {
                 min-height: 10rem;
 
+                box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.1);
+                background-color: white;
+                border-radius: 4px;
+                color: #363636;
+                border: 1px solid #dbdbdb;
+
                 &:focus {
-                    border-color: #3273dc;
-                    background: #fff;
-                    box-shadow: 0 0 0 0.125em rgba(50, 115, 220, 0.25);
+
                 }
             }
 

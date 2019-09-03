@@ -84,6 +84,48 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       assert json_response(res, 200)["data"]["createEvent"]["title"] == "come to my event"
     end
 
+    test "create_event/3 creates an event with options", %{conn: conn, actor: actor, user: user} do
+      mutation = """
+          mutation {
+              createEvent(
+                  title: "come to my event",
+                  description: "it will be fine",
+                  begins_on: "#{
+        DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
+      }",
+                  organizer_actor_id: "#{actor.id}",
+                  options: {
+                    maximumAttendeeCapacity: 30,
+                    showRemainingAttendeeCapacity: true
+                  }
+              ) {
+                title,
+                uuid,
+                options {
+                  maximumAttendeeCapacity,
+                  showRemainingAttendeeCapacity
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["errors"] == nil
+
+      assert json_response(res, 200)["data"]["createEvent"]["title"] == "come to my event"
+
+      assert json_response(res, 200)["data"]["createEvent"]["options"]["maximumAttendeeCapacity"] ==
+               30
+
+      assert json_response(res, 200)["data"]["createEvent"]["options"][
+               "showRemainingAttendeeCapacity"
+             ] == true
+    end
+
     test "create_event/3 creates an event with tags", %{conn: conn, actor: actor, user: user} do
       mutation = """
           mutation {

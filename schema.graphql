@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Thu Aug 22 2019 12:34:52 GMT+0200 (GMT+02:00)
+# timestamp: Mon Sep 02 2019 16:41:17 GMT+0200 (GMT+02:00)
 
 schema {
   query: RootQueryType
@@ -245,6 +245,9 @@ type Event {
   """Online address of the event"""
   onlineAddress: OnlineAddress
 
+  """The event options"""
+  options: EventOptions
+
   """The event's organizer (as a person)"""
   organizerActor: Actor
 
@@ -289,6 +292,120 @@ type Event {
 
   """The event's  visibility"""
   visibility: EventVisibility
+}
+
+"""The list of possible options for the event's status"""
+enum EventCommentModeration {
+  """Anyone can comment under the event"""
+  ALLOW_ALL
+
+  """No one can comment except for the admin"""
+  CLOSED
+
+  """Every comment has to be moderated by the admin"""
+  MODERATED
+}
+
+type EventOffer {
+  """The price amount for this offer"""
+  price: Float
+
+  """The currency for this price offer"""
+  priceCurrency: String
+
+  """The URL to access to this offer"""
+  url: String
+}
+
+input EventOfferInput {
+  """The price amount for this offer"""
+  price: Float
+
+  """The currency for this price offer"""
+  priceCurrency: String
+
+  """The URL to access to this offer"""
+  url: String
+}
+
+type EventOptions {
+  """The list of special attendees"""
+  attendees: [String]
+
+  """The policy on public comment moderation under the event"""
+  commentModeration: EventCommentModeration
+
+  """The maximum attendee capacity for this event"""
+  maximumAttendeeCapacity: Int
+
+  """The list of offers to show for this event"""
+  offers: [EventOffer]
+
+  """The list of participation conditions to accept to join this event"""
+  participationConditions: [EventParticipationCondition]
+
+  """The list of the event"""
+  program: String
+
+  """The number of remaining seats for this event"""
+  remainingAttendeeCapacity: Int
+
+  """Whether or not to show the participation price"""
+  showParticipationPrice: Boolean
+
+  """Whether or not to show the number of remaining seats for this event"""
+  showRemainingAttendeeCapacity: Boolean
+}
+
+input EventOptionsInput {
+  """The list of special attendees"""
+  attendees: [String]
+
+  """The policy on public comment moderation under the event"""
+  commentModeration: EventCommentModeration
+
+  """The maximum attendee capacity for this event"""
+  maximumAttendeeCapacity: Int
+
+  """The list of offers to show for this event"""
+  offers: [EventOfferInput]
+
+  """The list of participation conditions to accept to join this event"""
+  participationConditions: [EventParticipationConditionInput]
+
+  """The list of the event"""
+  program: String
+
+  """The number of remaining seats for this event"""
+  remainingAttendeeCapacity: Int
+
+  """Whether or not to show the participation price"""
+  showParticipationPrice: Boolean
+
+  """Whether or not to show the number of remaining seats for this event"""
+  showRemainingAttendeeCapacity: Boolean
+}
+
+type EventParticipationCondition {
+  """The content for this condition"""
+  content: String
+
+  """The title for this condition"""
+  title: String
+
+  """The URL to access this condition"""
+  url: String
+}
+
+input EventParticipationConditionInput {
+  """The content for this condition"""
+  content: String
+
+  """The title for this condition"""
+  title: String
+
+  """The URL to access this condition"""
+  url: String
 }
 
 """Search events result"""
@@ -710,6 +827,7 @@ type RootMutationType {
     description: String!
     endsOn: DateTime
     onlineAddress: String
+    options: EventOptionsInput
     organizerActorId: ID!
     phoneAddress: String
     physicalAddress: AddressInput
