@@ -1,24 +1,24 @@
 {
   "type": "Update",
   "object": {
-    "url": "http://mastodon.example.org/@gargron",
+    "url": "https://framapiaf.org/@framasoft",
     "type": "Person",
     "summary": "<p>Some bio</p>",
     "publicKey": {
       "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0gs3VnQf6am3R+CeBV4H\nlfI1HZTNRIBHgvFszRZkCERbRgEWMu+P+I6/7GJC5H5jhVQ60z4MmXcyHOGmYMK/\n5XyuHQz7V2Ssu1AxLfRN5Biq1ayb0+DT/E7QxNXDJPqSTnstZ6C7zKH/uAETqg3l\nBonjCQWyds+IYbQYxf5Sp3yhvQ80lMwHML3DaNCMlXWLoOnrOX5/yK5+dedesg2\n/HIvGk+HEt36vm6hoH7bwPuEkgA++ACqwjXRe5Mta7i3eilHxFaF8XIrJFARV0t\nqOu4GID/jG6oA+swIWndGrtR2QRJIt9QIBFfK3HG5M0koZbY1eTqwNFRHFL3xaD\nUQIDAQAB\n-----END PUBLIC KEY-----\n",
-      "owner": "http://mastodon.example.org/users/gargron",
-      "id": "http://mastodon.example.org/users/gargron#main-key"
+      "owner": "https://framapiaf.org/users/framasoft",
+      "id": "https://framapiaf.org/users/framasoft#main-key"
     },
-    "preferredUsername": "gargron",
-    "outbox": "http://mastodon.example.org/users/gargron/outbox",
-    "name": "gargle",
+    "preferredUsername": "framasoft",
+    "outbox": "https://framapiaf.org/users/framasoft/outbox",
+    "name": "nextsoft",
     "manuallyApprovesFollowers": false,
-    "inbox": "http://mastodon.example.org/users/gargron/inbox",
-    "id": "http://mastodon.example.org/users/gargron",
-    "following": "http://mastodon.example.org/users/gargron/following",
-    "followers": "http://mastodon.example.org/users/gargron/followers",
+    "inbox": "https://framapiaf.org/users/framasoft/inbox",
+    "id": "https://framapiaf.org/users/framasoft",
+    "following": "https://framapiaf.org/users/framasoft/following",
+    "followers": "https://framapiaf.org/users/framasoft/followers",
     "endpoints": {
-      "sharedInbox": "http://mastodon.example.org/inbox"
+      "sharedInbox": "https://framapiaf.org/inbox"
     },
     "icon":{
       "type":"Image",
@@ -31,8 +31,8 @@
       "url":"https://files.mastodon.social/accounts/headers/000/000/001/original/c91b871f294ea63e.png"
     }
   },
-  "id": "http://mastodon.example.org/users/gargron#updates/1519563538",
-  "actor": "http://mastodon.example.org/users/gargron",
+  "id": "https://framapiaf.org/users/gargron#updates/1519563538",
+  "actor": "https://framapiaf.org/users/framasoft",
   "@context": [
     "https://www.w3.org/ns/activitystreams",
     "https://w3id.org/security/v1",

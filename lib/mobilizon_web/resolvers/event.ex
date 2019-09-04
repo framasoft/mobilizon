@@ -193,7 +193,9 @@ defmodule MobilizonWeb.Resolvers.Event do
           }
         } = _resolution
       ) do
-    with {:is_owned, true, organizer_actor} <- User.owns_actor(user, organizer_actor_id),
+    # See https://github.com/absinthe-graphql/absinthe/issues/490
+    with args <- Map.put(args, :options, args[:options] || %{}),
+         {:is_owned, true, organizer_actor} <- User.owns_actor(user, organizer_actor_id),
          {:ok, args} <- save_attached_picture(args),
          {:ok, args} <- save_physical_address(args),
          args_with_organizer <- Map.put(args, :organizer_actor, organizer_actor),
@@ -230,10 +232,13 @@ defmodule MobilizonWeb.Resolvers.Event do
           }
         } = _resolution
       ) do
-    with {:ok, %Event{} = event} <- Mobilizon.Events.get_event(event_id),
+    # See https://github.com/absinthe-graphql/absinthe/issues/490
+    with args <- Map.put(args, :options, args[:options] || %{}),
+         {:ok, %Event{} = event} <- Mobilizon.Events.get_event_full(event_id),
          {:is_owned, true, organizer_actor} <- User.owns_actor(user, event.organizer_actor_id),
          {:ok, args} <- save_attached_picture(args),
          {:ok, args} <- save_physical_address(args),
+         args <- Map.put(args, :organizer_actor, organizer_actor),
          {
            :ok,
            %Activity{
@@ -243,11 +248,14 @@ defmodule MobilizonWeb.Resolvers.Event do
            },
            %Event{} = event
          } <-
-           MobilizonWeb.API.Events.update_event(args) do
+           MobilizonWeb.API.Events.update_event(args, event) do
       {:ok, event}
     else
       {:error, :event_not_found} ->
         {:error, "Event not found"}
+
+      {:is_owned, _} ->
+        {:error, "User doesn't own actor"}
     end
   end
 

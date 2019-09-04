@@ -124,7 +124,7 @@ defmodule Mobilizon.Actors do
   """
   def update_actor(%Actor{} = actor, attrs) do
     actor
-    |> Actor.changeset(attrs)
+    |> Actor.update_changeset(attrs)
     |> delete_files_if_media_changed()
     |> Repo.update()
   end

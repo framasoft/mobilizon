@@ -52,6 +52,7 @@ export const FETCH_EVENT = gql`
         domain,
         name,
         url,
+        id,
       },
       # attributedTo {
       #     avatar {
@@ -64,6 +65,7 @@ export const FETCH_EVENT = gql`
         ${participantQuery}
       },
       tags {
+        id,
         slug,
         title
       },
@@ -82,6 +84,25 @@ export const FETCH_EVENT = gql`
           domain,
           name,
         }
+      },
+      options {
+        maximumAttendeeCapacity,
+        remainingAttendeeCapacity,
+        showRemainingAttendeeCapacity,
+        offers {
+          price,
+          priceCurrency,
+          url
+        },
+        participationConditions {
+          title,
+          content,
+          url
+        },
+        attendees,
+        program,
+        commentModeration,
+        showParticipationPrice
       }
     }
   }
@@ -144,6 +165,7 @@ export const CREATE_EVENT = gql`
     $organizerActorId: ID!,
     $category: String,
     $beginsOn: DateTime!,
+    $endsOn: DateTime,
     $picture: PictureInput,
     $tags: [String],
     $options: EventOptionsInput,
@@ -154,6 +176,7 @@ export const CREATE_EVENT = gql`
       title: $title,
       description: $description,
       beginsOn: $beginsOn,
+      endsOn: $endsOn,
       organizerActorId: $organizerActorId,
       category: $category,
       options: $options,
@@ -173,13 +196,32 @@ export const CREATE_EVENT = gql`
 `;
 
 export const EDIT_EVENT = gql`
-  mutation EditEvent(
+  mutation updateEvent(
+  $id: ID!,
   $title: String!,
   $description: String!,
-  $organizerActorId: Int!,
-  $category: String
+  $organizerActorId: ID!,
+  $category: String,
+  $beginsOn: DateTime!,
+  $endsOn: DateTime,
+  $picture: PictureInput,
+  $tags: [String],
+  $options: EventOptionsInput,
+  $physicalAddress: AddressInput,
+  $visibility: EventVisibility
   ) {
-    EditEvent(title: $title, description: $description, organizerActorId: $organizerActorId, category: $category) {
+    updateEvent(eventId: $id,
+        title: $title,
+        description: $description,
+        beginsOn: $beginsOn,
+        endsOn: $endsOn,
+        organizerActorId: $organizerActorId,
+        category: $category,
+        options: $options,
+        picture: $picture,
+        tags: $tags,
+        physicalAddress: $physicalAddress,
+        visibility: $visibility) {
       uuid
     }
   }

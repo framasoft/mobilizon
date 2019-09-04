@@ -418,12 +418,12 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       assert json_response(res, 200)["data"]["createEvent"]["picture"]["url"]
     end
 
-    test "update_event/3 should check the event exists", %{conn: conn, actor: actor, user: user} do
+    test "update_event/3 should check the event exists", %{conn: conn, actor: _actor, user: user} do
       mutation = """
           mutation {
               updateEvent(
                   event_id: 45,
-                  title: "my event updated",
+                  title: "my event updated"
               ) {
                 title,
                 uuid,
@@ -445,7 +445,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
 
     test "update_event/3 should check the user is an administrator", %{
       conn: conn,
-      actor: actor,
+      actor: _actor,
       user: user
     } do
       event = insert(:event)
@@ -454,6 +454,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
           mutation {
               updateEvent(
                   title: "my event updated",
+                  event_id: #{event.id}
               ) {
                 title,
                 uuid,
@@ -470,11 +471,11 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
         |> auth_conn(user)
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert json_response(res, 200)["errors"] == nil
+      assert hd(json_response(res, 200)["errors"])["message"] == "User doesn't own actor"
     end
 
     test "update_event/3 updates an event", %{conn: conn, actor: actor, user: user} do
-      event = insert(:event)
+      event = insert(:event, organizer_actor: actor)
 
       begins_on = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
 
@@ -484,12 +485,14 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                   title: "my event updated",
                   description: "description updated",
                   begins_on: "#{begins_on}",
+                  event_id: #{event.id},
                   organizer_actor_id: "#{actor.id}",
                   category: "birthday",
                   tags: ["tag1_updated", "tag2_updated"]
               ) {
                 title,
                 uuid,
+                url,
                 tags {
                   title,
                   slug
@@ -505,11 +508,74 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
 
       assert json_response(res, 200)["errors"] == nil
       assert json_response(res, 200)["data"]["updateEvent"]["title"] == "my event updated"
+      assert json_response(res, 200)["data"]["updateEvent"]["uuid"] == event.uuid
+      assert json_response(res, 200)["data"]["updateEvent"]["url"] == event.url
 
-      assert json_response(res, 200)["data"]["createEvent"]["tags"] == [
-               %{"slug" => "tag1_updated", "title" => "tag1_updated"},
-               %{"slug" => "tag2_updated", "title" => "tag2_updated"}
+      assert json_response(res, 200)["data"]["updateEvent"]["tags"] == [
+               %{"slug" => "tag1-updated", "title" => "tag1_updated"},
+               %{"slug" => "tag2-updated", "title" => "tag2_updated"}
              ]
+    end
+
+    test "update_event/3 updates an event with a new picture", %{
+      conn: conn,
+      actor: actor,
+      user: user
+    } do
+      event = insert(:event, organizer_actor: actor)
+
+      begins_on = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
+
+      mutation = """
+          mutation {
+              updateEvent(
+                  title: "my event updated",
+                  description: "description updated",
+                  begins_on: "#{begins_on}",
+                  event_id: #{event.id},
+                  organizer_actor_id: "#{actor.id}",
+                  category: "birthday",
+                  picture: {
+                    picture: {
+                      name: "picture for my event",
+                      alt: "A very sunny landscape",
+                      file: "event.jpg",
+                      actor_id: "#{actor.id}"
+                    }
+                  }
+              ) {
+                title,
+                uuid,
+                url,
+                picture {
+                  name,
+                  url
+                }
+              }
+          }
+      """
+
+      map = %{
+        "query" => mutation,
+        "event.jpg" => %Plug.Upload{
+          path: "test/fixtures/picture.png",
+          filename: "event.jpg"
+        }
+      }
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> put_req_header("content-type", "multipart/form-data")
+        |> post("/api", map)
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["updateEvent"]["title"] == "my event updated"
+      assert json_response(res, 200)["data"]["updateEvent"]["uuid"] == event.uuid
+      assert json_response(res, 200)["data"]["updateEvent"]["url"] == event.url
+
+      assert json_response(res, 200)["data"]["updateEvent"]["picture"]["name"] ==
+               "picture for my event"
     end
 
     test "list_events/3 returns events", context do

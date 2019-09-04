@@ -57,7 +57,7 @@
                 <p class="control">
                   <router-link
                           class="button"
-                          :to="{ name: 'EditEvent', params: {uuid: event.uuid}}"
+                          :to="{ name: 'EditEvent', params: {eventId: event.uuid}}"
                   >
                     <translate>Edit</translate>
                   </router-link>

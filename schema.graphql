@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Mon Sep 02 2019 16:41:17 GMT+0200 (GMT+02:00)
+# timestamp: Thu Sep 05 2019 13:00:10 GMT+0200 (GMT+02:00)
 
 schema {
   query: RootQueryType
@@ -440,7 +440,7 @@ enum EventVisibility {
   """Visible only to people members of the group or followers of the person"""
   PRIVATE
 
-  """Publically listed and federated. Can be shared."""
+  """Publicly listed and federated. Can be shared."""
   PUBLIC
 
   """Visible only to people with the link - or invited"""
@@ -823,7 +823,7 @@ type RootMutationType {
   """Create an event"""
   createEvent(
     beginsOn: DateTime!
-    category: String
+    category: String = "meeting"
     description: String!
     endsOn: DateTime
     onlineAddress: String
@@ -853,11 +853,6 @@ type RootMutationType {
   """Create a group"""
   createGroup(
     """
-    The actor's username which will be the admin (otherwise user's default one)
-    """
-    adminActorUsername: String
-
-    """
     The avatar for the group, either as an object or directly the ID of an existing Picture
     """
     avatar: PictureInput
@@ -867,14 +862,17 @@ type RootMutationType {
     """
     banner: PictureInput
 
-    """The summary for the group"""
-    description: String = ""
+    """The identity that creates the group"""
+    creatorActorId: Int!
 
     """The displayed name for the group"""
     name: String
 
     """The name for the group"""
     preferredUsername: String!
+
+    """The summary for the group"""
+    summary: String = ""
   ): Group
 
   """Create a new person for user"""
@@ -968,6 +966,34 @@ type RootMutationType {
 
   """Send a link through email to reset user password"""
   sendResetPassword(email: String!, locale: String = "en"): String
+
+  """Update an event"""
+  updateEvent(
+    beginsOn: DateTime
+    category: String
+    description: String
+    endsOn: DateTime
+    eventId: ID!
+    onlineAddress: String
+    options: EventOptionsInput
+    organizerActorId: ID
+    phoneAddress: String
+    physicalAddress: AddressInput
+
+    """
+    The picture for the event, either as an object or directly the ID of an existing Picture
+    """
+    picture: PictureInput
+    public: Boolean
+    publishAt: DateTime
+    state: Int
+    status: Int
+
+    """The list of tags associated to the event"""
+    tags: [String]
+    title: String
+    visibility: EventVisibility
+  ): Event
 
   """Update an identity"""
   updatePerson(

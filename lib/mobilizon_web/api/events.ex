@@ -2,8 +2,7 @@ defmodule MobilizonWeb.API.Events do
   @moduledoc """
   API for Events
   """
-  alias Mobilizon.Actors
-  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Events.Event
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Utils, as: ActivityPubUtils
   alias MobilizonWeb.API.Utils
@@ -16,13 +15,13 @@ defmodule MobilizonWeb.API.Events do
     with %{
            title: title,
            physical_address: physical_address,
-           visibility: visibility,
            picture: picture,
            content_html: content_html,
            tags: tags,
            to: to,
            cc: cc,
            begins_on: begins_on,
+           ends_on: ends_on,
            category: category,
            options: options
          } <- prepare_args(args),
@@ -34,7 +33,13 @@ defmodule MobilizonWeb.API.Events do
              content_html,
              picture,
              tags,
-             %{begins_on: begins_on, physical_address: physical_address, category: category, options: options}
+             %{
+               begins_on: begins_on,
+               ends_on: ends_on,
+               physical_address: physical_address,
+               category: category,
+               options: options
+             }
            ) do
       ActivityPub.create(%{
         to: ["https://www.w3.org/ns/activitystreams#Public"],
@@ -48,30 +53,28 @@ defmodule MobilizonWeb.API.Events do
   @doc """
   Update an event
   """
-  @spec update_event(map()) :: {:ok, Activity.t(), Event.t()} | any()
+  @spec update_event(map(), Event.t()) :: {:ok, Activity.t(), Event.t()} | any()
   def update_event(
         %{
-          organizer_actor: organizer_actor,
-          event: event
-        } = args
+          organizer_actor: organizer_actor
+        } = args,
+        %Event{} = event
       ) do
-    with %{
+    with args <- Map.put(args, :tags, Map.get(args, :tags, [])),
+         %{
            title: title,
            physical_address: physical_address,
-           visibility: visibility,
            picture: picture,
            content_html: content_html,
            tags: tags,
            to: to,
            cc: cc,
            begins_on: begins_on,
+           ends_on: ends_on,
            category: category,
            options: options
          } <-
-           prepare_args(
-             args
-             |> update_args(event)
-           ),
+           prepare_args(Map.merge(event, args)),
          event <-
            ActivityPubUtils.make_event_data(
              organizer_actor.url,
@@ -82,32 +85,22 @@ defmodule MobilizonWeb.API.Events do
              tags,
              %{
                begins_on: begins_on,
+               ends_on: ends_on,
                physical_address: physical_address,
-               category: Map.get(args, :category),
+               category: category,
                options: options
-             }
+             },
+             event.uuid,
+             event.url
            ) do
       ActivityPub.update(%{
         to: ["https://www.w3.org/ns/activitystreams#Public"],
-        actor: organizer_actor,
+        actor: organizer_actor.url,
+        cc: [],
         object: event,
         local: true
       })
     end
-  end
-
-  defp update_args(args, event) do
-    %{
-      title: Map.get(args, :title, event.title),
-      description: Map.get(args, :description, event.description),
-      tags: Map.get(args, :tags, event.tags),
-      physical_address: Map.get(args, :physical_address, event.physical_address),
-      visibility: Map.get(args, :visibility, event.visibility),
-      physical_address: Map.get(args, :physical_address, event.physical_address),
-      begins_on: Map.get(args, :begins_on, event.begins_on),
-      category: Map.get(args, :category, event.category),
-      options: Map.get(args, :options, event.options)
-    }
   end
 
   defp prepare_args(
@@ -118,8 +111,7 @@ defmodule MobilizonWeb.API.Events do
            options: options,
            tags: tags,
            begins_on: begins_on,
-           category: category,
-           options: options
+           category: category
          } = args
        ) do
     with physical_address <- Map.get(args, :physical_address, nil),
@@ -131,13 +123,13 @@ defmodule MobilizonWeb.API.Events do
       %{
         title: title,
         physical_address: physical_address,
-        visibility: visibility,
         picture: picture,
         content_html: content_html,
         tags: tags,
         to: to,
         cc: cc,
         begins_on: begins_on,
+        ends_on: Map.get(args, :ends_on, nil),
         category: category,
         options: options
       }

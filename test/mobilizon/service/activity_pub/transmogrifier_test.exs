@@ -330,7 +330,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
       assert data["object"] == comment.url
     end
 
-    test "it works for incoming update activities" do
+    test "it works for incoming update activities on actors" do
       data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
 
       {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
@@ -349,9 +349,35 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
       {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(update_data)
 
       {:ok, %Actor{} = actor} = Actors.get_actor_by_url(data["actor"])
-      assert actor.name == "gargle"
+      assert actor.name == "nextsoft"
 
       assert actor.summary == "<p>Some bio</p>"
+    end
+
+    test "it works for incoming update activities on events" do
+      data = File.read!("test/fixtures/mobilizon-post-activity.json") |> Jason.decode!()
+
+      {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
+      update_data = File.read!("test/fixtures/mastodon-update.json") |> Jason.decode!()
+
+      object =
+        data["object"]
+        |> Map.put("actor", data["actor"])
+        |> Map.put("name", "My updated event")
+        |> Map.put("id", data["object"]["id"])
+        |> Map.put("type", "Event")
+
+      update_data =
+        update_data
+        |> Map.put("actor", data["actor"])
+        |> Map.put("object", object)
+
+      {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(update_data)
+
+      %Event{} = event = Events.get_event_by_url(data["object"]["id"])
+      assert event.title == "My updated event"
+
+      assert event.description == data["object"]["content"]
     end
 
     #     test "it works for incoming update activities which lock the account" do

@@ -18,13 +18,13 @@ defmodule MobilizonWeb.API.Groups do
           preferred_username: title,
           summary: summary,
           creator_actor_id: creator_actor_id,
-          avatar: avatar,
-          banner: banner
+          avatar: _avatar,
+          banner: _banner
         } = args
       ) do
     with {:is_owned, true, actor} <- User.owns_actor(user, creator_actor_id),
-         {:existing_group, nil} <- {:existing_group, Actors.get_group_by_title(title)},
          title <- String.trim(title),
+         {:existing_group, nil} <- {:existing_group, Actors.get_group_by_title(title)},
          visibility <- Map.get(args, :visibility, :public),
          {content_html, tags, to, cc} <-
            Utils.prepare_content(actor, summary, visibility, [], nil),

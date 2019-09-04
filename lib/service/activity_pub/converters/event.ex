@@ -57,6 +57,7 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
         "organizer_actor_id" => actor_id,
         "picture_id" => picture_id,
         "begins_on" => object["startTime"],
+        "ends_on" => object["endTime"],
         "category" => object["category"],
         "url" => object["id"],
         "uuid" => object["uuid"],
@@ -173,7 +174,8 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
       "startTime" => event.begins_on |> date_to_string(),
       "endTime" => event.ends_on |> date_to_string(),
       "tag" => event.tags |> build_tags(),
-      "id" => event.url
+      "id" => event.url,
+      "url" => event.url
     }
 
     res =

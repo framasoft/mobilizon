@@ -29,6 +29,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   alias MobilizonWeb.Router.Helpers, as: Routes
   alias MobilizonWeb.Endpoint
 
+  @actor_types ["Group", "Person", "Application"]
+
   # Some implementations send the actor URI as the actor field, others send the entire actor object,
   # so figure out what the actor's URI is based on what we have.
   def get_url(%{"id" => id}), do: id
@@ -119,7 +121,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   @doc """
   Inserts a full object if it is contained in an activity.
   """
-  def insert_full_object(%{"object" => %{"type" => "Event"} = object_data})
+  def insert_full_object(%{"object" => %{"type" => "Event"} = object_data, "type" => "Create"})
       when is_map(object_data) do
     with {:ok, object_data} <-
            Converters.Event.as_to_model_data(object_data),
@@ -128,7 +130,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     end
   end
 
-  def insert_full_object(%{"object" => %{"type" => "Group"} = object_data})
+  def insert_full_object(%{"object" => %{"type" => "Group"} = object_data, "type" => "Create"})
       when is_map(object_data) do
     with object_data <-
            Map.put(object_data, "preferred_username", object_data["preferredUsername"]),
@@ -140,7 +142,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   @doc """
   Inserts a full object if it is contained in an activity.
   """
-  def insert_full_object(%{"object" => %{"type" => "Note"} = object_data})
+  def insert_full_object(%{"object" => %{"type" => "Note"} = object_data, "type" => "Create"})
       when is_map(object_data) do
     with data <- Converters.Comment.as_to_model_data(object_data),
          {:ok, %Comment{} = comment} <- Events.create_comment(data) do
@@ -176,6 +178,39 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   end
 
   def insert_full_object(_), do: {:ok, nil}
+
+  @doc """
+  Update an object
+  """
+  @spec update_object(struct(), map()) :: {:ok, struct()} | any()
+  def update_object(object, object_data)
+
+  def update_object(event_url, %{
+        "object" => %{"type" => "Event"} = object_data,
+        "type" => "Update"
+      })
+      when is_map(object_data) do
+    with {:event_not_found, %Event{} = event} <-
+           {:event_not_found, Events.get_event_by_url(event_url)},
+         {:ok, object_data} <- Converters.Event.as_to_model_data(object_data),
+         {:ok, %Event{} = event} <- Events.update_event(event, object_data) do
+      {:ok, event}
+    end
+  end
+
+  def update_object(actor_url, %{
+        "object" => %{"type" => type_actor} = object_data,
+        "type" => "Update"
+      })
+      when is_map(object_data) and type_actor in @actor_types do
+    with {:ok, %Actor{} = actor} <- Actors.get_actor_by_url(actor_url),
+         object_data <- Converters.Actor.as_to_model_data(object_data),
+         {:ok, %Actor{} = actor} <- Actors.update_actor(actor, object_data) do
+      {:ok, actor}
+    end
+  end
+
+  def update_object(_, _), do: {:ok, nil}
 
   #### Like-related helpers
 
@@ -264,7 +299,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
           String.t(),
           map(),
           list(),
-          map()
+          map(),
+          String.t()
         ) :: map()
   def make_event_data(
         actor,
@@ -273,10 +309,12 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
         content_html,
         picture \\ nil,
         tags \\ [],
-        metadata \\ %{}
+        metadata \\ %{},
+        uuid \\ nil,
+        url \\ nil
       ) do
     Logger.debug("Making event data")
-    uuid = Ecto.UUID.generate()
+    uuid = uuid || Ecto.UUID.generate()
 
     res = %{
       "type" => "Event",
@@ -285,9 +323,10 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "content" => content_html,
       "name" => title,
       "startTime" => metadata.begins_on,
+      "endTime" => metadata.ends_on,
       "category" => metadata.category,
       "actor" => actor,
-      "id" => Routes.page_url(Endpoint, :event, uuid),
+      "id" => url || Routes.page_url(Endpoint, :event, uuid),
       "uuid" => uuid,
       "tag" =>
         tags |> Enum.uniq() |> Enum.map(fn tag -> %{"type" => "Hashtag", "name" => "##{tag}"} end)
@@ -505,7 +544,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
         activity_id,
         public
       )
-      when type in ["Group", "Person", "Application"] do
+      when type in @actor_types do
     do_make_announce_data(actor_url, actor_followers_url, url, url, activity_id, public)
   end
 

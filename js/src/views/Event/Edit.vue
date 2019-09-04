@@ -177,7 +177,7 @@
 <script lang="ts">
 import { CREATE_EVENT, EDIT_EVENT, FETCH_EVENT } from '@/graphql/event';
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import { EventModel, EventStatus, EventVisibility, EventVisibilityJoinOptions, IEvent, CommentModeration } from '@/types/event.model';
+import { EventModel, EventStatus, EventVisibility, EventVisibilityJoinOptions, CommentModeration } from '@/types/event.model';
 import { LOGGED_PERSON } from '@/graphql/actor';
 import { IPerson, Person } from '@/types/actor';
 import PictureUpload from '@/components/PictureUpload.vue';
@@ -207,6 +207,7 @@ export default class EditEvent extends Vue {
   eventId!: string | undefined;
 
   loggedPerson = new Person();
+  tags: ITag[] = [];
   event = new EventModel();
   pictureFile: File | null = null;
 
@@ -223,7 +224,7 @@ export default class EditEvent extends Vue {
 
   @Watch('$route.params.eventId', { immediate: true })
   async onEventIdParamChanged (val: string) {
-    if (this.isUpdate !== true) return;
+    if (!this.isUpdate) return;
 
     this.eventId = val;
 
@@ -231,6 +232,7 @@ export default class EditEvent extends Vue {
       this.event = await this.getEvent();
 
       this.pictureFile = await buildFileFromIPicture(this.event.picture);
+      this.limitedPlaces = this.event.options.maximumAttendeeCapacity != null;
     }
   }
 
@@ -241,7 +243,6 @@ export default class EditEvent extends Vue {
 
     this.event.beginsOn = now;
     this.event.endsOn = end;
-    console.log('eventvisibilityjoinoptions', this.eventVisibilityJoinOptions);
   }
 
   createOrUpdate(e: Event) {
@@ -261,7 +262,7 @@ export default class EditEvent extends Vue {
 
       console.log('Event created', data);
 
-      this.$router.push({
+      await this.$router.push({
         name: 'Event',
         params: { uuid: data.createEvent.uuid },
       });
@@ -277,7 +278,7 @@ export default class EditEvent extends Vue {
         variables: this.buildVariables(),
       });
 
-      this.$router.push({
+      await this.$router.push({
         name: 'Event',
         params: { uuid: this.eventId as string },
       });
@@ -296,6 +297,8 @@ export default class EditEvent extends Vue {
       tags: this.event.tags.map((tag: ITag) => tag.title),
     };
     const res = Object.assign({}, this.event, obj);
+
+    delete this.event.options['__typename'];
 
     if (this.event.physicalAddress) {
       delete this.event.physicalAddress['__typename'];

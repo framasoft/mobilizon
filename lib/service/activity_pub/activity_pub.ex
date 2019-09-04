@@ -39,21 +39,16 @@ defmodule Mobilizon.Service.ActivityPub do
   @doc """
   Wraps an object into an activity
   """
-  @spec create_activity(map(), boolean()) :: {:ok, %Activity{}} | {:error, any()}
+  @spec create_activity(map(), boolean()) :: {:ok, %Activity{}}
   def create_activity(map, local \\ true) when is_map(map) do
     with map <- lazy_put_activity_defaults(map) do
-      activity = %Activity{
-        data: map,
-        local: local,
-        actor: map["actor"],
-        recipients: get_recipients(map)
-      }
-
-      # Notification.create_notifications(activity)
-      # stream_out(activity)
-      {:ok, activity}
-    else
-      error -> {:error, error}
+      {:ok,
+       %Activity{
+         data: map,
+         local: local,
+         actor: map["actor"],
+         recipients: get_recipients(map)
+       }}
     end
   end
 
@@ -196,7 +191,7 @@ defmodule Mobilizon.Service.ActivityPub do
            "object" => object
          },
          {:ok, activity} <- create_activity(data, local),
-         {:ok, object} <- insert_full_object(data),
+         {:ok, object} <- update_object(object["id"], data),
          :ok <- maybe_federate(activity) do
       {:ok, activity, object}
     end
