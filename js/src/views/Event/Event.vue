@@ -279,6 +279,7 @@ export default class Event extends Vue {
 
   async deleteEvent() {
     const router = this.$router;
+    const eventTitle = this.event.title;
 
     try {
       await this.$apollo.mutate<IParticipant>({
@@ -289,7 +290,13 @@ export default class Event extends Vue {
         },
       });
 
-      await router.push({ name: RouteName.EVENT });
+      await router.push({ name: RouteName.HOME });
+      this.$buefy.notification.open({
+        message: this.$gettextInterpolate('Event %{eventTitle} deleted', { eventTitle }),
+        type: 'is-success',
+        position: 'is-bottom-right',
+        duration: 5000,
+      });
     } catch (error) {
       console.error(error);
     }

@@ -22,7 +22,7 @@ import { ITag } from '@/types/tag.model';
   computed: {
     tagsStrings: {
       get() {
-        return this.$props.data.map((tag: ITag) => tag.title);
+        return this.$props.value.map((tag: ITag) => tag.title);
       },
       set(tagStrings) {
         const tagEntities = tagStrings.map((tag) => {
