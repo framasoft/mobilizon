@@ -12,7 +12,7 @@ Mobilizon is your federated organization and mobilization platform. Gather peopl
 
 <p align="center">
   <a href="https://framasoft.org">
-    <img width="150px" src="https://lutim.cpy.re/Prd3ci7G.png" alt="Framasoft logo"/>
+    <img width="150px" src="https://lutim.cpy.re/FeRgHH8r.png" alt="Framasoft logo"/>
   </a>
 </p>
 
