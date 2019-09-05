@@ -17,7 +17,7 @@ defmodule Mobilizon.Service.ActivityPub.Converters.ActorTest do
       actor =
         ActorConverter.as_to_model_data(%{
           "type" => "Person",
-          "preferred_username" => "test_account"
+          "preferredUsername" => "test_account"
         })
 
       assert actor["type"] == :Person

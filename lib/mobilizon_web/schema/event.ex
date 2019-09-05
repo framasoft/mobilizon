@@ -229,9 +229,40 @@ defmodule MobilizonWeb.Schema.EventType do
       arg(:organizer_actor_id, non_null(:id))
       arg(:category, :string, default_value: "meeting")
       arg(:physical_address, :address_input)
-      arg(:options, :event_options_input, default_value: %{})
+      arg(:options, :event_options_input)
 
       resolve(&Event.create_event/3)
+    end
+
+    @desc "Update an event"
+    field :update_event, type: :event do
+      arg(:event_id, non_null(:id))
+
+      arg(:title, :string)
+      arg(:description, :string)
+      arg(:begins_on, :datetime)
+      arg(:ends_on, :datetime)
+      arg(:state, :integer)
+      arg(:status, :integer)
+      arg(:public, :boolean)
+      arg(:visibility, :event_visibility)
+      arg(:organizer_actor_id, :id)
+
+      arg(:tags, list_of(:string), description: "The list of tags associated to the event")
+
+      arg(:picture, :picture_input,
+        description:
+          "The picture for the event, either as an object or directly the ID of an existing Picture"
+      )
+
+      arg(:publish_at, :datetime)
+      arg(:online_address, :string)
+      arg(:phone_address, :string)
+      arg(:category, :string)
+      arg(:physical_address, :address_input)
+      arg(:options, :event_options_input)
+
+      resolve(&Event.update_event/3)
     end
 
     @desc "Delete an event"

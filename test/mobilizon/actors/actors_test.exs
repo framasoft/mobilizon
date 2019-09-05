@@ -270,10 +270,8 @@ defmodule Mobilizon.ActorsTest do
       assert %Actor{} = actor
       assert actor.summary == "some updated description"
       assert actor.name == "some updated name"
-      assert actor.domain == "some updated domain"
       assert actor.keys == "some updated keys"
       refute actor.suspended
-      assert actor.preferred_username == "some updated username"
     end
 
     test "update_actor/2 with valid data updates the actor and it's media files", %{
@@ -310,10 +308,8 @@ defmodule Mobilizon.ActorsTest do
       assert %Actor{} = actor
       assert actor.summary == "some updated description"
       assert actor.name == "some updated name"
-      assert actor.domain == "some updated domain"
       assert actor.keys == "some updated keys"
       refute actor.suspended
-      assert actor.preferred_username == "some updated username"
 
       refute File.exists?(
                Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>

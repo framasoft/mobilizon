@@ -110,6 +110,24 @@ defmodule Mobilizon.Actors.Actor do
     |> unique_constraint(:url, name: :actors_url_index)
   end
 
+  @doc false
+  def update_changeset(%Actor{} = actor, attrs) do
+    actor
+    |> Ecto.Changeset.cast(attrs, [
+      :name,
+      :summary,
+      :keys,
+      :manually_approves_followers,
+      :suspended,
+      :user_id
+    ])
+    |> cast_embed(:avatar)
+    |> cast_embed(:banner)
+    |> validate_required([:preferred_username, :keys, :suspended, :url])
+    |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_type_index)
+    |> unique_constraint(:url, name: :actors_url_index)
+  end
+
   @doc """
   Changeset for person registration
   """

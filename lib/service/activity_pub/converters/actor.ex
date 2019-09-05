@@ -15,12 +15,30 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Actor do
   @impl Converter
   @spec as_to_model_data(map()) :: map()
   def as_to_model_data(object) do
+    avatar =
+      object["icon"]["url"] &&
+        %{
+          "name" => object["icon"]["name"] || "avatar",
+          "url" => object["icon"]["url"]
+        }
+
+    banner =
+      object["image"]["url"] &&
+        %{
+          "name" => object["image"]["name"] || "banner",
+          "url" => object["image"]["url"]
+        }
+
     %{
       "type" => String.to_existing_atom(object["type"]),
-      "preferred_username" => object["preferred_username"],
+      "preferred_username" => object["preferredUsername"],
       "summary" => object["summary"],
       "url" => object["url"],
-      "name" => object["name"]
+      "name" => object["name"],
+      "avatar" => avatar,
+      "banner" => banner,
+      "keys" => object["publicKey"]["publicKeyPem"],
+      "manually_approves_followers" => object["manuallyApprovesFollowers"]
     }
   end
 

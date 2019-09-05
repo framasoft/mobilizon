@@ -295,21 +295,39 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
         %{"type" => "Update", "object" => %{"type" => object_type} = object, "actor" => _actor_id} =
           data
       )
-      when object_type in ["Person", "Application", "Service", "Organization"] do
+      when object_type in ["Person", "Group", "Application", "Service", "Organization"] do
     case Actors.get_actor_by_url(object["id"]) do
-      {:ok, %Actor{url: url}} ->
-        {:ok, new_actor_data} = ActivityPub.actor_data_from_actor_object(object)
-
-        Actors.insert_or_update_actor(new_actor_data)
-
+      {:ok, %Actor{url: actor_url}} ->
         ActivityPub.update(%{
           local: false,
           to: data["to"] || [],
           cc: data["cc"] || [],
           object: object,
-          actor: url
+          actor: actor_url
         })
 
+      e ->
+        Logger.debug(inspect(e))
+        :error
+    end
+  end
+
+  def handle_incoming(
+        %{"type" => "Update", "object" => %{"type" => "Event"} = object, "actor" => actor} =
+          _update
+      ) do
+    with {:ok, %{"actor" => existing_organizer_actor_url} = _existing_event_data} <-
+           fetch_obj_helper_as_activity_streams(object),
+         {:ok, %Actor{url: actor_url}} <- actor |> Utils.get_url() |> Actors.get_actor_by_url(),
+         true <- Utils.get_url(existing_organizer_actor_url) == actor_url do
+      ActivityPub.update(%{
+        local: false,
+        to: object["to"] || [],
+        cc: object["cc"] || [],
+        object: object,
+        actor: actor_url
+      })
+    else
       e ->
         Logger.debug(inspect(e))
         :error

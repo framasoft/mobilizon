@@ -4,9 +4,9 @@ import { ITag } from '@/types/tag.model';
 import { IPicture } from '@/types/picture.model';
 
 export enum EventStatus {
-  TENTATIVE,
-  CONFIRMED,
-  CANCELLED,
+  TENTATIVE = 'TENTATIVE',
+  CONFIRMED = 'CONFIRMED',
+  CANCELLED = 'CANCELLED',
 }
 
 export enum EventVisibility {
@@ -17,9 +17,9 @@ export enum EventVisibility {
 }
 
 export enum EventJoinOptions {
-  FREE,
-  RESTRICTED,
-  INVITE,
+  FREE = 'FREE',
+  RESTRICTED = 'RESTRICTED',
+  INVITE = 'INVITE',
 }
 
 export enum EventVisibilityJoinOptions {

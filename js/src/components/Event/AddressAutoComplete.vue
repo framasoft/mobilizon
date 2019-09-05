@@ -81,11 +81,12 @@ import { Modal } from 'buefy/dist/components/dialog';
 export default class AddressAutoComplete extends Vue {
 
   @Prop({ required: false, default: () => [] }) initialData!: IAddress[];
+  @Prop({ required: false }) value!: IAddress;
 
   data: IAddress[] = this.initialData;
   selected: IAddress|null = new Address();
   isFetching: boolean = false;
-  queryText: string = '';
+  queryText: string = this.value && this.value.description || '';
   addressModalActive: boolean = false;
 
   async getAsyncData(query) {

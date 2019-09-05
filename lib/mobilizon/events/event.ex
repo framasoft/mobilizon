@@ -54,10 +54,10 @@ defmodule Mobilizon.Events.Event do
     field(:online_address, :string)
     field(:phone_address, :string)
     field(:category, :string)
-    embeds_one(:options, Mobilizon.Events.EventOptions)
+    embeds_one(:options, Mobilizon.Events.EventOptions, on_replace: :update)
     belongs_to(:organizer_actor, Actor, foreign_key: :organizer_actor_id)
     belongs_to(:attributed_to, Actor, foreign_key: :attributed_to_id)
-    many_to_many(:tags, Tag, join_through: "events_tags")
+    many_to_many(:tags, Tag, join_through: "events_tags", on_replace: :delete)
     many_to_many(:participants, Actor, join_through: Participant)
     has_many(:tracks, Track)
     has_many(:sessions, Session)
@@ -97,6 +97,38 @@ defmodule Mobilizon.Events.Event do
       :uuid
     ])
   end
+
+  @doc false
+  def update_changeset(%Event{} = event, attrs) do
+    event
+    |> Ecto.Changeset.cast(attrs, [
+      :title,
+      :slug,
+      :description,
+      :begins_on,
+      :ends_on,
+      :category,
+      :status,
+      :visibility,
+      :publish_at,
+      :online_address,
+      :phone_address,
+      :picture_id,
+      :physical_address_id
+    ])
+    |> cast_embed(:options)
+    |> put_tags(attrs)
+    |> validate_required([
+      :title,
+      :begins_on,
+      :organizer_actor_id,
+      :url,
+      :uuid
+    ])
+  end
+
+  defp put_tags(changeset, %{"tags" => tags}), do: put_assoc(changeset, :tags, tags)
+  defp put_tags(changeset, _), do: changeset
 
   def can_event_be_managed_by(%Event{organizer_actor_id: organizer_actor_id}, actor_id)
       when organizer_actor_id == actor_id do

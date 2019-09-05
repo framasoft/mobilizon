@@ -67,8 +67,8 @@ defmodule Mobilizon.Factory do
 
   def tag_factory do
     %Mobilizon.Events.Tag{
-      title: "MyTag",
-      slug: sequence("MyTag")
+      title: sequence("MyTag"),
+      slug: sequence("my-tag")
     }
   end
 

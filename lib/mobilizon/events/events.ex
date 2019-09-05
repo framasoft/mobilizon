@@ -227,11 +227,12 @@ defmodule Mobilizon.Events do
            :tracks,
            :tags,
            :participants,
-           :physical_address
+           :physical_address,
+           :picture
          ])}
 
-      err ->
-        {:error, err}
+      _err ->
+        {:error, :event_not_found}
     end
   end
 
@@ -435,7 +436,8 @@ defmodule Mobilizon.Events do
   """
   def update_event(%Event{} = event, attrs) do
     event
-    |> Event.changeset(attrs)
+    |> Repo.preload(:tags)
+    |> Event.update_changeset(attrs)
     |> Repo.update()
   end
 
