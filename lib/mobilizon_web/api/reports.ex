@@ -61,7 +61,7 @@ defmodule MobilizonWeb.API.Reports do
   """
   def update_report_status(%Actor{} = actor, %Report{} = report, state) do
     with {:valid_state, true} <-
-           {:valid_state, Mobilizon.Reports.ReportStateEnum.valid_value?(state)},
+           {:valid_state, Mobilizon.Reports.ReportStatus.valid_value?(state)},
          {:ok, report} <- ReportsAction.update_report(report, %{"status" => state}),
          {:ok, _} <- log_action(actor, "update", report) do
       {:ok, report}
@@ -89,7 +89,7 @@ defmodule MobilizonWeb.API.Reports do
     with %User{role: role} <- Users.get_user!(user_id),
          {:role, true} <- {:role, role in [:administrator, :moderator]},
          {:ok, %Note{} = note} <-
-           Mobilizon.Reports.create_report_note(%{
+           Mobilizon.Reports.create_note(%{
              "report_id" => report_id,
              "moderator_id" => moderator_id,
              "content" => content
@@ -114,7 +114,7 @@ defmodule MobilizonWeb.API.Reports do
          %User{role: role} <- Users.get_user!(user_id),
          {:role, true} <- {:role, role in [:administrator, :moderator]},
          {:ok, %Note{} = note} <-
-           Mobilizon.Reports.delete_report_note(note),
+           Mobilizon.Reports.delete_note(note),
          {:ok, _} <- log_action(moderator, "delete", note) do
       {:ok, note}
     else

@@ -1,13 +1,13 @@
 defmodule Mobilizon.Repo.Migrations.CreateReports do
   use Ecto.Migration
-  alias Mobilizon.Reports.ReportStateEnum
+  alias Mobilizon.Reports.ReportStatus
 
   def up do
-    ReportStateEnum.create_type()
+    ReportStatus.create_type()
 
     create table(:reports) do
       add(:content, :string)
-      add(:status, ReportStateEnum.type(), default: "open", null: false)
+      add(:status, ReportStatus.type(), default: "open", null: false)
       add(:uri, :string, null: false)
 
       add(:reported_id, references(:actors, on_delete: :delete_all), null: false)
@@ -28,6 +28,6 @@ defmodule Mobilizon.Repo.Migrations.CreateReports do
     drop(table(:reports_comments))
     drop(table(:reports))
 
-    ReportStateEnum.drop_type()
+    ReportStatus.drop_type()
   end
 end
