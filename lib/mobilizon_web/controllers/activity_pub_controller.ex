@@ -5,10 +5,12 @@
 
 defmodule MobilizonWeb.ActivityPubController do
   use MobilizonWeb, :controller
-  alias Mobilizon.{Actors, Actors.Actor}
-  alias MobilizonWeb.ActivityPub.ActorView
+
+  alias Mobilizon.{Actors, Actors.Actor, Config}
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.Federator
+
+  alias MobilizonWeb.ActivityPub.ActorView
 
   require Logger
 
@@ -17,7 +19,7 @@ defmodule MobilizonWeb.ActivityPubController do
   plug(:relay_active? when action in [:relay])
 
   def relay_active?(conn, _) do
-    if Mobilizon.CommonConfig.get([:instance, :allow_relay]) do
+    if Config.get([:instance, :allow_relay]) do
       conn
     else
       conn

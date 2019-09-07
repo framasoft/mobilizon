@@ -9,11 +9,14 @@ defmodule MobilizonWeb.Upload.Filter.AnonymizeFilename do
 
   Should be used after `MobilizonWeb.Upload.Filter.Dedupe`.
   """
+
   @behaviour MobilizonWeb.Upload.Filter
+
+  alias Mobilizon.Config
 
   def filter(upload) do
     extension = List.last(String.split(upload.name, "."))
-    name = Mobilizon.CommonConfig.get([__MODULE__, :text], random(extension))
+    name = Config.get([__MODULE__, :text], random(extension))
     {:ok, %MobilizonWeb.Upload{upload | name: name}}
   end
 

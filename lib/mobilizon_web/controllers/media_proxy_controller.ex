@@ -5,13 +5,16 @@
 
 defmodule MobilizonWeb.MediaProxyController do
   use MobilizonWeb, :controller
+
+  alias Mobilizon.Config
+
   alias MobilizonWeb.ReverseProxy
   alias MobilizonWeb.MediaProxy
 
   @default_proxy_opts [max_body_length: 25 * 1_048_576, http: [follow_redirect: true]]
 
   def remote(conn, %{"sig" => sig64, "url" => url64} = params) do
-    with config <- Mobilizon.CommonConfig.get([:media_proxy], []),
+    with config <- Config.get([:media_proxy], []),
          true <- Keyword.get(config, :enabled, false),
          {:ok, url} <- MediaProxy.decode_url(sig64, url64),
          :ok <- filename_matches(Map.has_key?(params, "filename"), conn.request_path, url) do

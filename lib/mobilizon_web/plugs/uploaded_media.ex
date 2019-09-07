@@ -8,10 +8,14 @@ defmodule MobilizonWeb.Plugs.UploadedMedia do
   Serves uploaded media files
   """
 
+  @behaviour Plug
+
   import Plug.Conn
+
+  alias Mobilizon.Config
+
   require Logger
 
-  @behaviour Plug
   # no slashes
   @path "media"
 
@@ -38,7 +42,7 @@ defmodule MobilizonWeb.Plugs.UploadedMedia do
           conn
       end
 
-    config = Mobilizon.CommonConfig.get([MobilizonWeb.Upload])
+    config = Config.get([MobilizonWeb.Upload])
 
     with uploader <- Keyword.fetch!(config, :uploader),
          proxy_remote = Keyword.get(config, :proxy_remote, false),
@@ -75,7 +79,7 @@ defmodule MobilizonWeb.Plugs.UploadedMedia do
     conn
     |> MobilizonWeb.ReverseProxy.call(
       url,
-      Mobilizon.CommonConfig.get([Mobilizon.Upload, :proxy_opts], [])
+      Config.get([Mobilizon.Upload, :proxy_opts], [])
     )
   end
 

@@ -2,12 +2,14 @@ defmodule MobilizonWeb.Resolvers.User do
   @moduledoc """
   Handles the user-related GraphQL calls
   """
+
+  alias Mobilizon.{Actors, Config, Users}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.CommonConfig
-  alias Mobilizon.Users.User
-  alias Mobilizon.{Actors, Users}
   alias Mobilizon.Service.Users.{ResetPassword, Activation}
+  alias Mobilizon.Users.User
+
   import Mobilizon.Users.Guards
+
   require Logger
 
   @doc """
@@ -110,7 +112,7 @@ defmodule MobilizonWeb.Resolvers.User do
   """
   @spec create_user(any(), map(), any()) :: tuple()
   def create_user(_parent, args, _resolution) do
-    with {:registrations_open, true} <- {:registrations_open, CommonConfig.registrations_open?()},
+    with {:registrations_open, true} <- {:registrations_open, Config.instance_registrations_open?()},
          {:ok, %User{} = user} <- Users.register(args) do
       Activation.send_confirmation_email(user)
       {:ok, user}

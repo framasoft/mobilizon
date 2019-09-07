@@ -1,6 +1,6 @@
 defmodule MobilizonWeb.Resolvers.UserResolverTest do
   use MobilizonWeb.ConnCase
-  alias Mobilizon.{Actors, Users, CommonConfig}
+  alias Mobilizon.{Actors, Config, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Users.User
   alias Mobilizon.Users
@@ -401,7 +401,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
     end
 
     test "test create_user/3 doesn't create a user when registration is disabled", context do
-      with_mock CommonConfig, registrations_open?: fn -> false end do
+      with_mock Config, instance_registrations_open?: fn -> false end do
         mutation = """
             mutation {
               createUser(

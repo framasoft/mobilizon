@@ -5,18 +5,22 @@
 
 defmodule MobilizonWeb.MediaProxyTest do
   use ExUnit.Case
+
   import MobilizonWeb.MediaProxy
+
+  alias Mobilizon.Config
+
   alias MobilizonWeb.MediaProxyController
 
   setup do
-    enabled = Mobilizon.CommonConfig.get([:media_proxy, :enabled])
-    on_exit(fn -> Mobilizon.CommonConfig.put([:media_proxy, :enabled], enabled) end)
+    enabled = Config.get([:media_proxy, :enabled])
+    on_exit(fn -> Config.put([:media_proxy, :enabled], enabled) end)
     :ok
   end
 
   describe "when enabled" do
     setup do
-      Mobilizon.CommonConfig.put([:media_proxy, :enabled], true)
+      Config.put([:media_proxy, :enabled], true)
       :ok
     end
 
@@ -43,7 +47,7 @@ defmodule MobilizonWeb.MediaProxyTest do
 
       assert String.starts_with?(
                encoded,
-               Mobilizon.CommonConfig.get([:media_proxy, :base_url], MobilizonWeb.Endpoint.url())
+               Config.get([:media_proxy, :base_url], MobilizonWeb.Endpoint.url())
              )
 
       assert String.ends_with?(encoded, "/logo.png")
@@ -80,15 +84,15 @@ defmodule MobilizonWeb.MediaProxyTest do
     end
 
     test "validates signature" do
-      secret_key_base = Mobilizon.CommonConfig.get([MobilizonWeb.Endpoint, :secret_key_base])
+      secret_key_base = Config.get([MobilizonWeb.Endpoint, :secret_key_base])
 
       on_exit(fn ->
-        Mobilizon.CommonConfig.put([MobilizonWeb.Endpoint, :secret_key_base], secret_key_base)
+        Config.put([MobilizonWeb.Endpoint, :secret_key_base], secret_key_base)
       end)
 
       encoded = url("https://pleroma.social")
 
-      Mobilizon.CommonConfig.put(
+      Config.put(
         [MobilizonWeb.Endpoint, :secret_key_base],
         "00000000000000000000000000000000000000000000000"
       )
@@ -126,20 +130,20 @@ defmodule MobilizonWeb.MediaProxyTest do
     end
 
     test "uses the configured base_url" do
-      base_url = Mobilizon.CommonConfig.get([:media_proxy, :base_url])
+      base_url = Config.get([:media_proxy, :base_url])
 
       if base_url do
         on_exit(fn ->
-          Mobilizon.CommonConfig.put([:media_proxy, :base_url], base_url)
+          Config.put([:media_proxy, :base_url], base_url)
         end)
       end
 
-      Mobilizon.CommonConfig.put([:media_proxy, :base_url], "https://cache.pleroma.social")
+      Config.put([:media_proxy, :base_url], "https://cache.pleroma.social")
 
       url = "https://pleroma.soykaf.com/static/logo.png"
       encoded = url(url)
 
-      assert String.starts_with?(encoded, Mobilizon.CommonConfig.get([:media_proxy, :base_url]))
+      assert String.starts_with?(encoded, Config.get([:media_proxy, :base_url]))
     end
 
     # https://git.pleroma.social/pleroma/pleroma/issues/580
@@ -154,13 +158,13 @@ defmodule MobilizonWeb.MediaProxyTest do
 
   describe "when disabled" do
     setup do
-      enabled = Mobilizon.CommonConfig.get([:media_proxy, :enabled])
+      enabled = Config.get([:media_proxy, :enabled])
 
       if enabled do
-        Mobilizon.CommonConfig.put([:media_proxy, :enabled], false)
+        Config.put([:media_proxy, :enabled], false)
 
         on_exit(fn ->
-          Mobilizon.CommonConfig.put([:media_proxy, :enabled], enabled)
+          Config.put([:media_proxy, :enabled], enabled)
           :ok
         end)
       end

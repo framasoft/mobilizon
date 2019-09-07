@@ -30,10 +30,11 @@ defmodule Mobilizon.Actors.Actor do
   import Ecto.Changeset
 
   alias Mobilizon.Actors
-  alias Mobilizon.Users.User
   alias Mobilizon.Actors.{Actor, Follower, Member}
+  alias Mobilizon.Config
   alias Mobilizon.Events.{Event, FeedToken}
   alias Mobilizon.Media.File
+  alias Mobilizon.Users.User
 
   alias Mobilizon.Reports.{Report, Note}
 
@@ -207,9 +208,8 @@ defmodule Mobilizon.Actors.Actor do
     pem = [entry] |> :public_key.pem_encode() |> String.trim_trailing()
 
     vars = %{
-      "name" => Mobilizon.CommonConfig.get([:instance, :name], "Mobilizon"),
-      "summary" =>
-        Mobilizon.CommonConfig.get(
+      "name" => Config.get([:instance, :name], "Mobilizon"),
+      "summary" => Config.get(
           [:instance, :description],
           "An internal service actor for this Mobilizon instance"
         ),

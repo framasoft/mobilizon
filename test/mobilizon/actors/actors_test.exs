@@ -1,9 +1,8 @@
 defmodule Mobilizon.ActorsTest do
   use Mobilizon.DataCase
 
-  alias Mobilizon.Actors
+  alias Mobilizon.{Actors, Config, Users}
   alias Mobilizon.Actors.{Actor, Member, Follower, Bot}
-  alias Mobilizon.Users
   alias Mobilizon.Media.File, as: FileModel
   import Mobilizon.Factory
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
@@ -281,12 +280,12 @@ defmodule Mobilizon.ActorsTest do
       %URI{path: "/media/" <> banner_path} = URI.parse(banner_url)
 
       assert File.exists?(
-               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
                  "/" <> avatar_path
              )
 
       assert File.exists?(
-               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
                  "/" <> banner_path
              )
 
@@ -312,12 +311,12 @@ defmodule Mobilizon.ActorsTest do
       refute actor.suspended
 
       refute File.exists?(
-               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
                  "/" <> avatar_path
              )
 
       assert File.exists?(
-               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
                  "/" <> banner_path
              )
     end
@@ -335,12 +334,12 @@ defmodule Mobilizon.ActorsTest do
       %URI{path: "/media/" <> banner_path} = URI.parse(banner_url)
 
       assert File.exists?(
-               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
                  "/" <> avatar_path
              )
 
       assert File.exists?(
-               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
                  "/" <> banner_path
              )
 
@@ -348,7 +347,7 @@ defmodule Mobilizon.ActorsTest do
       assert_raise Ecto.NoResultsError, fn -> Actors.get_actor!(actor_id) end
 
       refute File.exists?(
-               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
                  "/" <> banner_path
              )
     end

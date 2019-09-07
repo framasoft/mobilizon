@@ -7,7 +7,10 @@ defmodule MobilizonWeb.Uploaders.Local do
   @moduledoc """
   Local uploader for files
   """
+
   @behaviour MobilizonWeb.Uploaders.Uploader
+
+  alias Mobilizon.Config
 
   def get_file(_) do
     {:ok, {:static_dir, upload_path()}}
@@ -59,6 +62,6 @@ defmodule MobilizonWeb.Uploaders.Local do
   end
 
   def upload_path do
-    Mobilizon.CommonConfig.get!([__MODULE__, :uploads])
+    Config.get!([__MODULE__, :uploads])
   end
 end

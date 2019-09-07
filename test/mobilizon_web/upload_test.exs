@@ -4,8 +4,11 @@
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/test/upload_test.ex
 
 defmodule Mobilizon.UploadTest do
-  alias MobilizonWeb.Upload
   use Mobilizon.DataCase
+
+  alias Mobilizon.Config
+
+  alias MobilizonWeb.Upload
 
   describe "Storing a file with the Local uploader" do
     setup [:ensure_local_uploader]
@@ -185,7 +188,7 @@ defmodule Mobilizon.UploadTest do
 
     test "delete a not existing file" do
       file =
-        Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+        Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
           "/not_existing/definitely.jpg"
 
       refute File.exists?(file)
@@ -215,6 +218,6 @@ defmodule Mobilizon.UploadTest do
     assert String.starts_with?(url, MobilizonWeb.Endpoint.url() <> "/media/")
 
     %URI{path: "/media/" <> path} = URI.parse(url)
-    {Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <> "/" <> path, url}
+    {Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <> "/" <> path, url}
   end
 end

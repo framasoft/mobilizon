@@ -2,8 +2,12 @@ defmodule Mobilizon.Application do
   @moduledoc """
   The Mobilizon application
   """
+
   use Application
+
   import Cachex.Spec
+
+  alias Mobilizon.Config
   alias Mobilizon.Service.Export.{Feed, ICalendar}
 
   @name Mix.Project.config()[:name]
@@ -90,7 +94,7 @@ defmodule Mobilizon.Application do
 
   def user_agent do
     info =
-      "#{MobilizonWeb.Endpoint.url()} <#{Mobilizon.CommonConfig.get([:instance, :email], "")}>"
+      "#{MobilizonWeb.Endpoint.url()} <#{Config.get([:instance, :email], "")}>"
 
     named_version() <> "; " <> info
   end

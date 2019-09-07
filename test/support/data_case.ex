@@ -14,6 +14,8 @@ defmodule Mobilizon.DataCase do
 
   use ExUnit.CaseTemplate
 
+  alias Mobilizon.Config
+
   using do
     quote do
       alias Mobilizon.Repo
@@ -52,16 +54,16 @@ defmodule Mobilizon.DataCase do
   end
 
   def ensure_local_uploader(_context) do
-    uploader = Mobilizon.CommonConfig.get([MobilizonWeb.Upload, :uploader])
-    filters = Mobilizon.CommonConfig.get([MobilizonWeb.Upload, :filters])
+    uploader = Config.get([MobilizonWeb.Upload, :uploader])
+    filters = Config.get([MobilizonWeb.Upload, :filters])
 
     unless uploader == MobilizonWeb.Uploaders.Local || filters != [] do
-      Mobilizon.CommonConfig.put([MobilizonWeb.Upload, :uploader], MobilizonWeb.Uploaders.Local)
-      Mobilizon.CommonConfig.put([MobilizonWeb.Upload, :filters], [])
+      Config.put([MobilizonWeb.Upload, :uploader], MobilizonWeb.Uploaders.Local)
+      Config.put([MobilizonWeb.Upload, :filters], [])
 
       on_exit(fn ->
-        Mobilizon.CommonConfig.put([MobilizonWeb.Upload, :uploader], uploader)
-        Mobilizon.CommonConfig.put([MobilizonWeb.Upload, :filters], filters)
+        Config.put([MobilizonWeb.Upload, :uploader], uploader)
+        Config.put([MobilizonWeb.Upload, :filters], filters)
       end)
     end
 

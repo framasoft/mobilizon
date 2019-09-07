@@ -10,6 +10,7 @@ defmodule Mobilizon.Service.ActivityPub do
   Every ActivityPub method
   """
 
+  alias Mobilizon.Config
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Comment, Participant}
   alias Mobilizon.Service.ActivityPub.Transmogrifier
@@ -521,7 +522,7 @@ defmodule Mobilizon.Service.ActivityPub do
 
     public = is_public?(activity)
 
-    if public && Mobilizon.CommonConfig.get([:instance, :allow_relay]) do
+    if public && Config.get([:instance, :allow_relay]) do
       Logger.info(fn -> "Relaying #{activity.data["id"]} out" end)
       Mobilizon.Service.ActivityPub.Relay.publish(activity)
     end

@@ -8,7 +8,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
   import Mobilizon.Factory
   alias MobilizonWeb.ActivityPub.ActorView
   alias MobilizonWeb.PageView
-  alias Mobilizon.Actors
+  alias Mobilizon.{Actors, Config}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.ActivityPub
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
@@ -290,14 +290,14 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
     end
 
     test "with the relay disabled, it returns 404", %{conn: conn} do
-      Mobilizon.CommonConfig.put([:instance, :allow_relay], false)
+      Config.put([:instance, :allow_relay], false)
 
       conn
       |> get(activity_pub_path(conn, :relay))
       |> json_response(404)
       |> assert
 
-      Mobilizon.CommonConfig.put([:instance, :allow_relay], true)
+      Config.put([:instance, :allow_relay], true)
     end
   end
 
