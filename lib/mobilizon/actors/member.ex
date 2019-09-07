@@ -12,15 +12,14 @@ defmodule Mobilizon.Actors.Member do
   @moduledoc """
   Represents the membership of an actor to a group
   """
+
   use Ecto.Schema
 
   import Ecto.Changeset
-  import Ecto.Query, warn: false
-  import Mobilizon.Ecto
+  import Ecto.Query
 
-  alias Mobilizon.Actors.Member
-  alias Mobilizon.Actors.Actor
-  alias Mobilizon.Repo
+  alias Mobilizon.Actors.{Actor, Member}
+  alias Mobilizon.Storage.{Page, Repo}
 
   schema "members" do
     field(:role, Mobilizon.Actors.MemberRoleEnum, default: :member)
@@ -64,7 +63,7 @@ defmodule Mobilizon.Actors.Member do
         where: m.parent_id == ^id and (m.role == ^:creator or m.role == ^:administrator),
         preload: [:actor]
       )
-      |> paginate(page, limit)
+      |> Page.paginate(page, limit)
     )
   end
 

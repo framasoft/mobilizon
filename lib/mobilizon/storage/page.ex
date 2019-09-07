@@ -1,11 +1,11 @@
-defmodule Mobilizon.Page do
+defmodule Mobilizon.Storage.Page do
   @moduledoc """
   Module for pagination of queries.
   """
 
-  import Ecto.Query, warn: false
+  import Ecto.Query
 
-  alias Mobilizon.Repo
+  alias Mobilizon.Storage.Repo
 
   defstruct [
     :total,
@@ -36,7 +36,7 @@ defmodule Mobilizon.Page do
   @doc """
   Add limit and offset to the query.
   """
-  @spec paginate(Ecto.Query.t(), integer | nil, integer | nil) :: Ecto.Query.t()
+  @spec paginate(Ecto.Query.t() | struct, integer | nil, integer | nil) :: Ecto.Query.t()
   def paginate(query, page \\ 1, size \\ 10)
 
   def paginate(query, page, _size) when is_nil(page), do: paginate(query)

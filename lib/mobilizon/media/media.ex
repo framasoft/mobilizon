@@ -8,11 +8,11 @@ defmodule Mobilizon.Media do
   alias Ecto.Multi
 
   alias Mobilizon.Media.{File, Picture}
-  alias Mobilizon.Repo
+  alias Mobilizon.Storage.Repo
 
   @doc false
   @spec data :: Dataloader.Ecto.t()
-  def data, do: Dataloader.Ecto.new(Mobilizon.Repo, query: &query/2)
+  def data, do: Dataloader.Ecto.new(Repo, query: &query/2)
 
   @doc false
   @spec query(Ecto.Query.t(), map) :: Ecto.Query.t()

@@ -18,7 +18,7 @@ defmodule Mobilizon.DataCase do
 
   using do
     quote do
-      alias Mobilizon.Repo
+      alias Mobilizon.Storage.Repo
 
       import Ecto
       import Ecto.Changeset
@@ -28,10 +28,10 @@ defmodule Mobilizon.DataCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Mobilizon.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Mobilizon.Storage.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Mobilizon.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(Mobilizon.Storage.Repo, {:shared, self()})
     end
 
     :ok

@@ -7,7 +7,7 @@ use Mix.Config
 
 # General application configuration
 config :mobilizon,
-  ecto_repos: [Mobilizon.Repo]
+  ecto_repos: [Mobilizon.Storage.Repo]
 
 config :mobilizon, :instance,
   name: System.get_env("MOBILIZON_INSTANCE_NAME") || "Localhost",
@@ -78,7 +78,7 @@ config :mobilizon, MobilizonWeb.Guardian,
   secret_key: "ty0WM7YBE3ojvxoUQxo8AERrNpfbXnIJ82ovkPdqbUFw31T5LcK8wGjaOiReVQjo"
 
 config :guardian, Guardian.DB,
-  repo: Mobilizon.Repo,
+  repo: Mobilizon.Storage.Repo,
   # default
   schema_name: "guardian_tokens",
   # store all token types if not set

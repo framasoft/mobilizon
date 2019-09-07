@@ -3,17 +3,18 @@ defmodule Mobilizon.Events do
   The Events context.
   """
 
-  import Ecto.Query, warn: false
-  import Mobilizon.Ecto
+  import Ecto.Query
 
-  alias Mobilizon.Repo
-  alias Mobilizon.Events.{Event, Comment, Participant}
+  import Mobilizon.Storage.Ecto
+
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Users.User
   alias Mobilizon.Addresses.Address
+  alias Mobilizon.Events.{Event, Comment, Participant}
+  alias Mobilizon.Storage.{Page, Repo}
+  alias Mobilizon.Users.User
 
   def data() do
-    Dataloader.Ecto.new(Mobilizon.Repo, query: &query/2)
+    Dataloader.Ecto.new(Repo, query: &query/2)
   end
 
   def query(queryable, _params) do
@@ -36,7 +37,7 @@ defmodule Mobilizon.Events do
           :picture
         ]
       )
-      |> paginate(page, limit)
+      |> Page.paginate(page, limit)
 
     events = Repo.all(query)
 
@@ -301,7 +302,7 @@ defmodule Mobilizon.Events do
         e in Event,
         preload: [:organizer_actor, :participants]
       )
-      |> paginate(page, limit)
+      |> Page.paginate(page, limit)
       |> sort(sort, direction)
       |> restrict_future_events(future)
       |> allow_unlisted(unlisted)
@@ -348,7 +349,7 @@ defmodule Mobilizon.Events do
           ),
         preload: [:organizer_actor]
       )
-      |> paginate(page, limit)
+      |> Page.paginate(page, limit)
 
     total = Task.async(fn -> Repo.aggregate(query, :count, :id) end)
     elements = Task.async(fn -> Repo.all(query) end)
@@ -493,7 +494,7 @@ defmodule Mobilizon.Events do
   def list_tags(page \\ nil, limit \\ nil) do
     Repo.all(
       Tag
-      |> paginate(page, limit)
+      |> Page.paginate(page, limit)
     )
   end
 
@@ -514,7 +515,7 @@ defmodule Mobilizon.Events do
         on: t.id == e.tag_id,
         where: e.event_id == ^id
       )
-      |> paginate(page, limit)
+      |> Page.paginate(page, limit)
     )
   end
 
@@ -744,7 +745,7 @@ defmodule Mobilizon.Events do
       where: e.uuid == ^uuid,
       preload: [:actor]
     )
-    |> paginate(page, limit)
+    |> Page.paginate(page, limit)
   end
 
   @doc """
@@ -769,7 +770,7 @@ defmodule Mobilizon.Events do
         where: a.id == ^id and p.role != ^:not_approved,
         preload: [:picture, :tags]
       )
-      |> paginate(page, limit)
+      |> Page.paginate(page, limit)
     )
   end
 
@@ -789,7 +790,7 @@ defmodule Mobilizon.Events do
         where: p.event_id == ^id and p.role == ^:creator,
         preload: [:actor]
       )
-      |> paginate(page, limit)
+      |> Page.paginate(page, limit)
     )
   end
 
@@ -1159,7 +1160,7 @@ defmodule Mobilizon.Events do
           :event
         ]
       )
-      |> paginate(page, limit)
+      |> Page.paginate(page, limit)
 
     comments = Repo.all(query)
 

@@ -6,16 +6,16 @@ defmodule Mobilizon.Reports do
   import Ecto.Query
   import EctoEnum
 
-  import Mobilizon.Ecto
+  import Mobilizon.Storage.Ecto
 
-  alias Mobilizon.{Page, Repo}
   alias Mobilizon.Reports.{Note, Report}
+  alias Mobilizon.Storage.{Page, Repo}
 
   defenum(ReportStatus, :report_status, [:open, :closed, :resolved])
 
   @doc false
   @spec data :: Dataloader.Ecto.t()
-  def data, do: Dataloader.Ecto.new(Mobilizon.Repo, query: &query/2)
+  def data, do: Dataloader.Ecto.new(Repo, query: &query/2)
 
   @doc false
   @spec query(Ecto.Query.t(), map) :: Ecto.Query.t()

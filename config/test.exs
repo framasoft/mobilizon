@@ -22,16 +22,15 @@ config :logger,
   level: :info
 
 # Configure your database
-config :mobilizon, Mobilizon.Repo,
-  types: Mobilizon.PostgresTypes,
+config :mobilizon, Mobilizon.Storage.Repo,
+  types: Mobilizon.Storage.PostgresTypes,
   username: System.get_env("MOBILIZON_DATABASE_USERNAME") || "mobilizon",
   password: System.get_env("MOBILIZON_DATABASE_PASSWORD") || "mobilizon",
   database: System.get_env("MOBILIZON_DATABASE_DBNAME") || "mobilizon_test",
   hostname: System.get_env("MOBILIZON_DATABASE_HOST") || "localhost",
-  pool: Ecto.Adapters.SQL.Sandbox,
-  types: Mobilizon.PostgresTypes
+  pool: Ecto.Adapters.SQL.Sandbox
 
-config :mobilizon, Mobilizon.Mailer, adapter: Bamboo.TestAdapter
+config :mobilizon, Mobilizon.Email.Mailer, adapter: Bamboo.TestAdapter
 
 config :mobilizon, MobilizonWeb.Upload, filters: [], link_name: false
 

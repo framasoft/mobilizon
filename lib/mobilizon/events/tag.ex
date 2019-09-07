@@ -1,36 +1,3 @@
-defmodule Mobilizon.Events.Tag.TitleSlug do
-  @moduledoc """
-  Generates slugs for tags
-  """
-  alias Mobilizon.Events.Tag
-  import Ecto.Query
-  alias Mobilizon.Repo
-  use EctoAutoslugField.Slug, from: :title, to: :slug
-
-  def build_slug(sources, changeset) do
-    slug = super(sources, changeset)
-    build_unique_slug(slug, changeset)
-  end
-
-  defp build_unique_slug(slug, changeset) do
-    query =
-      from(
-        t in Tag,
-        where: t.slug == ^slug
-      )
-
-    case Repo.one(query) do
-      nil ->
-        slug
-
-      _tag ->
-        slug
-        |> Mobilizon.Ecto.increment_slug()
-        |> build_unique_slug(changeset)
-    end
-  end
-end
-
 defmodule Mobilizon.Events.Tag do
   @moduledoc """
   Represents a tag for events
@@ -56,5 +23,18 @@ defmodule Mobilizon.Events.Tag do
     |> TitleSlug.maybe_generate_slug()
     |> validate_required([:title, :slug])
     |> TitleSlug.unique_constraint()
+  end
+
+  def increment_slug(slug) do
+    case List.pop_at(String.split(slug, "-"), -1) do
+      {nil, _} ->
+        slug
+
+      {suffix, slug_parts} ->
+        case Integer.parse(suffix) do
+          {id, _} -> Enum.join(slug_parts, "-") <> "-" <> Integer.to_string(id + 1)
+          :error -> slug <> "-1"
+        end
+    end
   end
 end

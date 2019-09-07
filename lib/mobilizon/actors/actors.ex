@@ -3,16 +3,15 @@ defmodule Mobilizon.Actors do
   The Actors context.
   """
 
-  import Ecto.Query, warn: false
-  import Mobilizon.Ecto
+  import Ecto.Query
 
-  alias Mobilizon.Repo
+  alias Ecto.Multi
 
   alias Mobilizon.Actors.{Actor, Bot, Member, Follower}
   alias Mobilizon.Media.File
-  alias Ecto.Multi
-
   alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Storage.{Page, Repo}
+
   require Logger
 
   @doc false
@@ -203,7 +202,7 @@ defmodule Mobilizon.Actors do
         where: a.type == ^:Group,
         where: a.visibility in [^:public, ^:unlisted]
       )
-      |> paginate(page, limit)
+      |> Page.paginate(page, limit)
     )
   end
 
@@ -586,7 +585,7 @@ defmodule Mobilizon.Actors do
             ^username
           )
       )
-      |> paginate(page, limit)
+      |> Page.paginate(page, limit)
 
     total = Task.async(fn -> Repo.aggregate(query, :count, :id) end)
     elements = Task.async(fn -> Repo.all(query) end)
@@ -652,7 +651,7 @@ defmodule Mobilizon.Actors do
       })
 
     try do
-      Mobilizon.Repo.insert!(actor)
+      Repo.insert!(actor)
     rescue
       e in Ecto.InvalidChangesetError ->
         {:error, e.changeset}

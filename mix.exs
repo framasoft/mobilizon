@@ -203,8 +203,8 @@ defmodule Mobilizon.Mixfile do
         Mobilizon.Users.UserRole,
         Mobilizon.Users.Guards,
         Mobilizon.Activity,
-        Mobilizon.Ecto,
-        Mobilizon.Repo
+        Mobilizon.Storage.Ecto,
+        Mobilizon.Storage.Repo
       ],
       APIs: [
         MobilizonWeb.API.Comments,
@@ -299,7 +299,7 @@ defmodule Mobilizon.Mixfile do
       Tools: [
         Mobilizon.Application,
         Mobilizon.Factory,
-        Mobilizon.Mailer,
+        Mobilizon.Email.Mailer,
         Mobilizon.EmailView,
         Mobilizon.Email.User
       ]

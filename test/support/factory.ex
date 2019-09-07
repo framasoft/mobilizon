@@ -3,7 +3,7 @@ defmodule Mobilizon.Factory do
   Factory for fixtures with ExMachina
   """
   # with Ecto
-  use ExMachina.Ecto, repo: Mobilizon.Repo
+  use ExMachina.Ecto, repo: Mobilizon.Storage.Repo
   alias Mobilizon.Actors.Actor
   alias MobilizonWeb.Router.Helpers, as: Routes
   alias MobilizonWeb.Endpoint

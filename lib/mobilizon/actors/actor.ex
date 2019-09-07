@@ -26,24 +26,23 @@ defmodule Mobilizon.Actors.Actor do
   @moduledoc """
   Represents an actor (local and remote actors)
   """
+
   use Ecto.Schema
+
   import Ecto.Changeset
+  import Ecto.Query
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Config
   alias Mobilizon.Events.{Event, FeedToken}
   alias Mobilizon.Media.File
-  alias Mobilizon.Users.User
-
   alias Mobilizon.Reports.{Report, Note}
+  alias Mobilizon.Storage.{Page, Repo}
+  alias Mobilizon.Users.User
 
   alias MobilizonWeb.Router.Helpers, as: Routes
   alias MobilizonWeb.Endpoint
-
-  import Ecto.Query
-  import Mobilizon.Ecto
-  alias Mobilizon.Repo
 
   require Logger
 
@@ -383,7 +382,7 @@ defmodule Mobilizon.Actors.Actor do
       )
 
     total = Task.async(fn -> Repo.aggregate(query, :count, :id) end)
-    elements = Task.async(fn -> Repo.all(paginate(query, page, limit)) end)
+    elements = Task.async(fn -> Repo.all(Page.paginate(query, page, limit)) end)
 
     %{total: Task.await(total), elements: Task.await(elements)}
   end
@@ -428,7 +427,7 @@ defmodule Mobilizon.Actors.Actor do
       )
 
     total = Task.async(fn -> Repo.aggregate(query, :count, :id) end)
-    elements = Task.async(fn -> Repo.all(paginate(query, page, limit)) end)
+    elements = Task.async(fn -> Repo.all(Page.paginate(query, page, limit)) end)
 
     %{total: Task.await(total), elements: Task.await(elements)}
   end

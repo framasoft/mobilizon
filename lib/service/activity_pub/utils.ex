@@ -10,7 +10,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   Various utils
   """
 
-  alias Mobilizon.Repo
+  alias Mobilizon.Storage.Repo
   alias Mobilizon.Addresses
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Actors
@@ -165,7 +165,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       Enum.each(Users.list_moderators(), fn moderator ->
         moderator
         |> Mobilizon.Email.Admin.report(moderator, report)
-        |> Mobilizon.Mailer.deliver_later()
+        |> Mobilizon.Email.Mailer.deliver_later()
       end)
 
       {:ok, report}

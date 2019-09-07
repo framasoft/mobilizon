@@ -6,11 +6,11 @@ defmodule Mobilizon.Users do
   import Ecto.Query
   import EctoEnum
 
-  import Mobilizon.Ecto
+  import Mobilizon.Storage.Ecto
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
-  alias Mobilizon.{Page, Repo}
+  alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.User
 
   @type tokens :: %{
@@ -22,7 +22,7 @@ defmodule Mobilizon.Users do
 
   @doc false
   @spec data :: Dataloader.Ecto.t()
-  def data, do: Dataloader.Ecto.new(Mobilizon.Repo, query: &query/2)
+  def data, do: Dataloader.Ecto.new(Repo, query: &query/2)
 
   @doc false
   @spec query(Ecto.Query.t(), map) :: Ecto.Query.t()

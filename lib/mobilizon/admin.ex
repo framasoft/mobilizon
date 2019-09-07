@@ -3,11 +3,10 @@ defmodule Mobilizon.Admin do
   The Admin context.
   """
 
-  import Ecto.Query, warn: false
-  alias Mobilizon.Repo
-  import Mobilizon.Ecto
+  import Ecto.Query
 
   alias Mobilizon.Admin.ActionLog
+  alias Mobilizon.Storage.{Page, Repo}
 
   @doc """
   Returns the list of action_logs.
@@ -24,7 +23,7 @@ defmodule Mobilizon.Admin do
       r in ActionLog,
       preload: [:actor]
     )
-    |> paginate(page, limit)
+    |> Page.paginate(page, limit)
     |> Repo.all()
   end
 

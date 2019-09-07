@@ -1,4 +1,4 @@
-defmodule Mobilizon.Mailer do
+defmodule Mobilizon.Email.Mailer do
   @moduledoc """
   Mobilizon Mailer.
   """
