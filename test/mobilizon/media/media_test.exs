@@ -60,10 +60,5 @@ defmodule Mobilizon.MediaTest do
                  "/" <> path
              )
     end
-
-    test "change_picture/1 returns a picture changeset" do
-      picture = insert(:picture)
-      assert %Ecto.Changeset{} = Media.change_picture(picture)
-    end
   end
 end
