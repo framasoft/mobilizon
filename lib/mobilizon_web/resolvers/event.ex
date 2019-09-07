@@ -3,6 +3,7 @@ defmodule MobilizonWeb.Resolvers.Event do
   Handles the event-related GraphQL calls
   """
   alias Mobilizon.Activity
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events
@@ -64,11 +65,8 @@ defmodule MobilizonWeb.Resolvers.Event do
     # We find similar events with the same tags
     # uniq_by : It's possible event_from_same_actor is inside events_from_tags
     events =
-      (events ++
-         Events.find_similar_events_by_common_tags(
-           tags,
-           @number_of_related_events
-         ))
+      events
+      |> Enum.concat(Events.find_similar_events_by_common_tags(tags, @number_of_related_events))
       |> uniq_events()
 
     # TODO: We should use tag_relations to find more appropriate events
@@ -76,8 +74,10 @@ defmodule MobilizonWeb.Resolvers.Event do
     # We've considered all recommended events, so we fetch the latest events
     events =
       if @number_of_related_events - length(events) > 0 do
-        (events ++
-           Events.list_events(1, @number_of_related_events, :begins_on, :asc, true, true))
+        events
+        |> Enum.concat(
+          Events.list_events(1, @number_of_related_events, :begins_on, :asc, true, true)
+        )
         |> uniq_events()
       else
         events
@@ -101,26 +101,23 @@ defmodule MobilizonWeb.Resolvers.Event do
   def actor_join_event(
         _parent,
         %{actor_id: actor_id, event_id: event_id},
-        %{
-          context: %{
-            current_user: user
-          }
-        }
+        %{context: %{current_user: user}}
       ) do
-    with {:is_owned, true, actor} <- User.owns_actor(user, actor_id),
+    with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
          {:has_event, {:ok, %Event{} = event}} <-
            {:has_event, Mobilizon.Events.get_event_full(event_id)},
          {:error, :participant_not_found} <- Mobilizon.Events.get_participant(event_id, actor_id),
          {:ok, _activity, participant} <- MobilizonWeb.API.Participations.join(event, actor),
          participant <-
-           Map.put(participant, :event, event)
+           participant
+           |> Map.put(:event, event)
            |> Map.put(:actor, Person.proxify_pictures(actor)) do
       {:ok, participant}
     else
       {:has_event, _} ->
         {:error, "Event with this ID #{inspect(event_id)} doesn't exist"}
 
-      {:is_owned, false} ->
+      {:is_owned, nil} ->
         {:error, "Actor id is not owned by authenticated user"}
 
       {:error, :event_not_found} ->
@@ -141,32 +138,18 @@ defmodule MobilizonWeb.Resolvers.Event do
   def actor_leave_event(
         _parent,
         %{actor_id: actor_id, event_id: event_id},
-        %{
-          context: %{
-            current_user: user
-          }
-        }
+        %{context: %{current_user: user}}
       ) do
-    with {:is_owned, true, actor} <- User.owns_actor(user, actor_id),
+    with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
          {:has_event, {:ok, %Event{} = event}} <-
            {:has_event, Mobilizon.Events.get_event_full(event_id)},
          {:ok, _activity, _participant} <- MobilizonWeb.API.Participations.leave(event, actor) do
-      {
-        :ok,
-        %{
-          event: %{
-            id: event_id
-          },
-          actor: %{
-            id: actor_id
-          }
-        }
-      }
+      {:ok, %{event: %{id: event_id}, actor: %{id: actor_id}}}
     else
       {:has_event, _} ->
         {:error, "Event with this ID #{inspect(event_id)} doesn't exist"}
 
-      {:is_owned, false} ->
+      {:is_owned, nil} ->
         {:error, "Actor id is not owned by authenticated user"}
 
       {:only_organizer, true} ->
@@ -187,31 +170,19 @@ defmodule MobilizonWeb.Resolvers.Event do
   def create_event(
         _parent,
         %{organizer_actor_id: organizer_actor_id} = args,
-        %{
-          context: %{
-            current_user: user
-          }
-        } = _resolution
+        %{context: %{current_user: user}} = _resolution
       ) do
     # See https://github.com/absinthe-graphql/absinthe/issues/490
     with args <- Map.put(args, :options, args[:options] || %{}),
-         {:is_owned, true, organizer_actor} <- User.owns_actor(user, organizer_actor_id),
+         {:is_owned, %Actor{} = organizer_actor} <- User.owns_actor(user, organizer_actor_id),
          {:ok, args} <- save_attached_picture(args),
          {:ok, args} <- save_physical_address(args),
          args_with_organizer <- Map.put(args, :organizer_actor, organizer_actor),
-         {
-           :ok,
-           %Activity{
-             data: %{
-               "object" => %{"type" => "Event"} = _object
-             }
-           },
-           %Event{} = event
-         } <-
+         {:ok, %Activity{data: %{"object" => %{"type" => "Event"} = _object}}, %Event{} = event} <-
            MobilizonWeb.API.Events.create_event(args_with_organizer) do
       {:ok, event}
     else
-      {:is_owned, false} ->
+      {:is_owned, nil} ->
         {:error, "Organizer actor id is not owned by the user"}
     end
   end
@@ -226,35 +197,24 @@ defmodule MobilizonWeb.Resolvers.Event do
   def update_event(
         _parent,
         %{event_id: event_id} = args,
-        %{
-          context: %{
-            current_user: user
-          }
-        } = _resolution
+        %{context: %{current_user: user}} = _resolution
       ) do
     # See https://github.com/absinthe-graphql/absinthe/issues/490
     with args <- Map.put(args, :options, args[:options] || %{}),
          {:ok, %Event{} = event} <- Mobilizon.Events.get_event_full(event_id),
-         {:is_owned, true, organizer_actor} <- User.owns_actor(user, event.organizer_actor_id),
+         {:is_owned, %Actor{} = organizer_actor} <-
+           User.owns_actor(user, event.organizer_actor_id),
          {:ok, args} <- save_attached_picture(args),
          {:ok, args} <- save_physical_address(args),
          args <- Map.put(args, :organizer_actor, organizer_actor),
-         {
-           :ok,
-           %Activity{
-             data: %{
-               "object" => %{"type" => "Event"} = _object
-             }
-           },
-           %Event{} = event
-         } <-
+         {:ok, %Activity{data: %{"object" => %{"type" => "Event"} = _object}}, %Event{} = event} <-
            MobilizonWeb.API.Events.update_event(args, event) do
       {:ok, event}
     else
       {:error, :event_not_found} ->
         {:error, "Event not found"}
 
-      {:is_owned, _} ->
+      {:is_owned, nil} ->
         {:error, "User doesn't own actor"}
     end
   end
@@ -268,24 +228,14 @@ defmodule MobilizonWeb.Resolvers.Event do
   # However, we need to pass it's actor ID
   @spec save_attached_picture(map()) :: {:ok, map()}
   defp save_attached_picture(
-         %{
-           picture: %{
-             picture: %{file: %Plug.Upload{} = _picture} = all_pic
-           }
-         } = args
+         %{picture: %{picture: %{file: %Plug.Upload{} = _picture} = all_pic}} = args
        ) do
     {:ok, Map.put(args, :picture, Map.put(all_pic, :actor_id, args.organizer_actor_id))}
   end
 
   # Otherwise if we use a previously uploaded picture we need to fetch it from database
   @spec save_attached_picture(map()) :: {:ok, map()}
-  defp save_attached_picture(
-         %{
-           picture: %{
-             picture_id: picture_id
-           }
-         } = args
-       ) do
+  defp save_attached_picture(%{picture: %{picture_id: picture_id}} = args) do
     with %Picture{} = picture <- Mobilizon.Media.get_picture(picture_id) do
       {:ok, Map.put(args, :picture, picture)}
     end
@@ -295,13 +245,7 @@ defmodule MobilizonWeb.Resolvers.Event do
   defp save_attached_picture(args), do: {:ok, args}
 
   @spec save_physical_address(map()) :: {:ok, map()}
-  defp save_physical_address(
-         %{
-           physical_address: %{
-             url: physical_address_url
-           }
-         } = args
-       )
+  defp save_physical_address(%{physical_address: %{url: physical_address_url}} = args)
        when not is_nil(physical_address_url) do
     with %Address{} = address <- Addresses.get_address_by_url(physical_address_url),
          args <- Map.put(args, :physical_address, address.url) do
@@ -326,14 +270,10 @@ defmodule MobilizonWeb.Resolvers.Event do
   def delete_event(
         _parent,
         %{event_id: event_id, actor_id: actor_id},
-        %{
-          context: %{
-            current_user: user
-          }
-        }
+        %{context: %{current_user: user}}
       ) do
     with {:ok, %Event{} = event} <- Mobilizon.Events.get_event(event_id),
-         {:is_owned, true, _} <- User.owns_actor(user, actor_id),
+         {:is_owned, %Actor{}} <- User.owns_actor(user, actor_id),
          {:event_can_be_managed, true} <- Event.can_event_be_managed_by(event, actor_id),
          event <- Mobilizon.Events.delete_event!(event) do
       {:ok, %{id: event.id}}
@@ -341,7 +281,7 @@ defmodule MobilizonWeb.Resolvers.Event do
       {:error, :event_not_found} ->
         {:error, "Event not found"}
 
-      {:is_owned, false} ->
+      {:is_owned, nil} ->
         {:error, "Actor id is not owned by authenticated user"}
 
       {:event_can_be_managed, false} ->

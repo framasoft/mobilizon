@@ -10,9 +10,11 @@ defmodule MobilizonWeb.Resolvers.Report do
   alias MobilizonWeb.API.Reports, as: ReportsAPI
   import Mobilizon.Users.Guards
 
-  def list_reports(_parent, %{page: page, limit: limit}, %{
-        context: %{current_user: %User{role: role}}
-      })
+  def list_reports(
+        _parent,
+        %{page: page, limit: limit},
+        %{context: %{current_user: %User{role: role}}}
+      )
       when is_moderator(role) do
     {:ok, Mobilizon.Reports.list_reports(page, limit)}
   end
@@ -21,9 +23,7 @@ defmodule MobilizonWeb.Resolvers.Report do
     {:error, "You need to be logged-in and a moderator to list reports"}
   end
 
-  def get_report(_parent, %{id: id}, %{
-        context: %{current_user: %User{role: role}}
-      })
+  def get_report(_parent, %{id: id}, %{context: %{current_user: %User{role: role}}})
       when is_moderator(role) do
     {:ok, Mobilizon.Reports.get_report(id)}
   end
@@ -40,14 +40,14 @@ defmodule MobilizonWeb.Resolvers.Report do
         %{reporter_actor_id: reporter_actor_id} = args,
         %{context: %{current_user: user}} = _resolution
       ) do
-    with {:is_owned, true, _} <- User.owns_actor(user, reporter_actor_id),
+    with {:is_owned, %Actor{}} <- User.owns_actor(user, reporter_actor_id),
          {:ok, _, %Report{} = report} <- ReportsAPI.report(args) do
       {:ok, report}
     else
-      {:is_owned, false} ->
+      {:is_owned, nil} ->
         {:error, "Reporter actor id is not owned by authenticated user"}
 
-      _err ->
+      _error ->
         {:error, "Error while saving report"}
     end
   end
@@ -62,22 +62,19 @@ defmodule MobilizonWeb.Resolvers.Report do
   def update_report(
         _parent,
         %{report_id: report_id, moderator_id: moderator_id, status: status},
-        %{
-          context: %{current_user: %User{role: role} = user}
-        }
+        %{context: %{current_user: %User{role: role} = user}}
       )
       when is_moderator(role) do
-    with {:is_owned, true, _} <- User.owns_actor(user, moderator_id),
-         %Actor{} = actor <- Actors.get_actor!(moderator_id),
+    with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, moderator_id),
          %Report{} = report <- Mobilizon.Reports.get_report(report_id),
          {:ok, %Report{} = report} <-
            MobilizonWeb.API.Reports.update_report_status(actor, report, status) do
       {:ok, report}
     else
-      {:is_owned, false} ->
+      {:is_owned, nil} ->
         {:error, "Actor id is not owned by authenticated user"}
 
-      _err ->
+      _error ->
         {:error, "Error while updating report"}
     end
   end
@@ -89,12 +86,10 @@ defmodule MobilizonWeb.Resolvers.Report do
   def create_report_note(
         _parent,
         %{report_id: report_id, moderator_id: moderator_id, content: content},
-        %{
-          context: %{current_user: %User{role: role} = user}
-        }
+        %{context: %{current_user: %User{role: role} = user}}
       )
       when is_moderator(role) do
-    with {:is_owned, true, _} <- User.owns_actor(user, moderator_id),
+    with {:is_owned, %Actor{}} <- User.owns_actor(user, moderator_id),
          %Report{} = report <- Reports.get_report(report_id),
          %Actor{} = moderator <- Actors.get_local_actor_with_everything(moderator_id),
          {:ok, %Note{} = note} <-
@@ -103,11 +98,13 @@ defmodule MobilizonWeb.Resolvers.Report do
     end
   end
 
-  def delete_report_note(_parent, %{note_id: note_id, moderator_id: moderator_id}, %{
-        context: %{current_user: %User{role: role} = user}
-      })
+  def delete_report_note(
+        _parent,
+        %{note_id: note_id, moderator_id: moderator_id},
+        %{context: %{current_user: %User{role: role} = user}}
+      )
       when is_moderator(role) do
-    with {:is_owned, true, _} <- User.owns_actor(user, moderator_id),
+    with {:is_owned, %Actor{}} <- User.owns_actor(user, moderator_id),
          %Note{} = note <- Reports.get_note(note_id),
          %Actor{} = moderator <- Actors.get_local_actor_with_everything(moderator_id),
          {:ok, %Note{} = note} <-

@@ -200,7 +200,7 @@ defmodule Mobilizon.Mixfile do
         Mobilizon.Events.TagRelation,
         Mobilizon.Users,
         Mobilizon.Users.User,
-        Mobilizon.Users.UserRoleEnum,
+        Mobilizon.Users.UserRole,
         Mobilizon.Users.Guards,
         Mobilizon.Activity,
         Mobilizon.Ecto,

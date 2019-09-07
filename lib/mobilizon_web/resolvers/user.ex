@@ -118,8 +118,8 @@ defmodule MobilizonWeb.Resolvers.User do
       {:registrations_open, false} ->
         {:error, "Registrations are not enabled"}
 
-      err ->
-        err
+      error ->
+        error
     end
   end
 
@@ -139,9 +139,9 @@ defmodule MobilizonWeb.Resolvers.User do
          user: Map.put(user, :default_actor, actor)
        }}
     else
-      err ->
+      error ->
         Logger.info("Unable to validate user with token #{token}")
-        Logger.debug(inspect(err))
+        Logger.debug(inspect(error))
         {:error, "Unable to validate user"}
     end
   end
@@ -213,7 +213,7 @@ defmodule MobilizonWeb.Resolvers.User do
       {:user_actor, _} ->
         {:error, :actor_not_from_user}
 
-      _err ->
+      _error ->
         {:error, :unable_to_change_default_actor}
     end
   end

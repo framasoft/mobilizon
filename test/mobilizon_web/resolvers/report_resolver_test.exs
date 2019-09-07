@@ -195,7 +195,8 @@ defmodule MobilizonWeb.Resolvers.ReportResolverTest do
       assert json_response(res, 200)["errors"] == nil
 
       assert json_response(res, 200)["data"]["reports"]
-             |> Enum.map(fn report -> Map.get(report, "id") end) ==
+             |> Enum.map(fn report -> Map.get(report, "id") end)
+             |> Enum.sort() ==
                Enum.map([report_1_id, report_2_id, report_3_id], &to_string/1)
 
       query = """

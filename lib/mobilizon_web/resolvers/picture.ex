@@ -2,6 +2,7 @@ defmodule MobilizonWeb.Resolvers.Picture do
   @moduledoc """
   Handles the picture-related GraphQL calls
   """
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Media
   alias Mobilizon.Media.Picture
   alias Mobilizon.Users.User
@@ -10,9 +11,7 @@ defmodule MobilizonWeb.Resolvers.Picture do
   Get picture for an event's pic
   """
   def picture(%{picture_id: picture_id} = _parent, _args, _resolution) do
-    with {:ok, picture} <- do_fetch_picture(picture_id) do
-      {:ok, picture}
-    end
+    with {:ok, picture} <- do_fetch_picture(picture_id), do: {:ok, picture}
   end
 
   @doc """
@@ -20,15 +19,9 @@ defmodule MobilizonWeb.Resolvers.Picture do
 
   See MobilizonWeb.Resolvers.Event.create_event/3
   """
-  def picture(%{picture: picture} = _parent, _args, _resolution) do
-    {:ok, picture}
-  end
-
+  def picture(%{picture: picture} = _parent, _args, _resolution), do: {:ok, picture}
   def picture(_parent, %{id: picture_id}, _resolution), do: do_fetch_picture(picture_id)
-
-  def picture(_parent, _args, _resolution) do
-    {:ok, nil}
-  end
+  def picture(_parent, _args, _resolution), do: {:ok, nil}
 
   @spec do_fetch_picture(nil) :: {:error, nil}
   defp do_fetch_picture(nil), do: {:error, nil}
@@ -36,7 +29,7 @@ defmodule MobilizonWeb.Resolvers.Picture do
   @spec do_fetch_picture(String.t()) :: {:ok, Picture.t()} | {:error, :not_found}
   defp do_fetch_picture(picture_id) do
     case Media.get_picture(picture_id) do
-      %Picture{id: id, file: file} = _pic ->
+      %Picture{id: id, file: file} ->
         {:ok,
          %{
            name: file.name,
@@ -46,18 +39,18 @@ defmodule MobilizonWeb.Resolvers.Picture do
            size: file.size
          }}
 
-      _err ->
+      _error ->
         {:error, "Picture with ID #{picture_id} was not found"}
     end
   end
 
   @spec upload_picture(map(), map(), map()) :: {:ok, Picture.t()} | {:error, any()}
-  def upload_picture(_parent, %{file: %Plug.Upload{} = file, actor_id: actor_id} = args, %{
-        context: %{
-          current_user: user
-        }
-      }) do
-    with {:is_owned, true, _actor} <- User.owns_actor(user, actor_id),
+  def upload_picture(
+        _parent,
+        %{file: %Plug.Upload{} = file, actor_id: actor_id} = args,
+        %{context: %{current_user: user}}
+      ) do
+    with {:is_owned, %Actor{}} <- User.owns_actor(user, actor_id),
          {:ok, %{"url" => [%{"href" => url, "mediaType" => content_type}], "size" => size}} <-
            MobilizonWeb.Upload.store(file),
          args <-
@@ -76,11 +69,11 @@ defmodule MobilizonWeb.Resolvers.Picture do
          size: picture.file.size
        }}
     else
-      {:is_owned, false} ->
+      {:is_owned, nil} ->
         {:error, "Actor id is not owned by authenticated user"}
 
-      err ->
-        {:error, err}
+      error ->
+        {:error, error}
     end
   end
 

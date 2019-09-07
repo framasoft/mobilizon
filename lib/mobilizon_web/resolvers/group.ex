@@ -40,19 +40,11 @@ defmodule MobilizonWeb.Resolvers.Group do
   def create_group(
         _parent,
         args,
-        %{
-          context: %{
-            current_user: user
-          }
-        }
+        %{context: %{current_user: user}}
       ) do
     with {
            :ok,
-           %Activity{
-             data: %{
-               "object" => %{"type" => "Group"} = _object
-             }
-           },
+           %Activity{data: %{"object" => %{"type" => "Group"} = _object}},
            %Actor{} = group
          } <-
            MobilizonWeb.API.Groups.create_group(
@@ -66,10 +58,7 @@ defmodule MobilizonWeb.Resolvers.Group do
                banner: Map.get(args, "banner")
              }
            ) do
-      {
-        :ok,
-        group
-      }
+      {:ok, group}
     end
   end
 
@@ -83,14 +72,10 @@ defmodule MobilizonWeb.Resolvers.Group do
   def delete_group(
         _parent,
         %{group_id: group_id, actor_id: actor_id},
-        %{
-          context: %{
-            current_user: user
-          }
-        }
+        %{context: %{current_user: user}}
       ) do
     with {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
-         {:is_owned, true, _} <- User.owns_actor(user, actor_id),
+         {:is_owned, %Actor{}} <- User.owns_actor(user, actor_id),
          {:ok, %Member{} = member} <- Member.get_member(actor_id, group.id),
          {:is_admin, true} <- Member.is_administrator(member),
          group <- Actors.delete_group!(group) do
@@ -99,7 +84,7 @@ defmodule MobilizonWeb.Resolvers.Group do
       {:error, :group_not_found} ->
         {:error, "Group not found"}
 
-      {:is_owned, false} ->
+      {:is_owned, nil} ->
         {:error, "Actor id is not owned by authenticated user"}
 
       {:error, :member_not_found} ->
@@ -120,37 +105,24 @@ defmodule MobilizonWeb.Resolvers.Group do
   def join_group(
         _parent,
         %{group_id: group_id, actor_id: actor_id},
-        %{
-          context: %{
-            current_user: user
-          }
-        }
+        %{context: %{current_user: user}}
       ) do
-    with {:is_owned, true, actor} <- User.owns_actor(user, actor_id),
+    with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
          {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
          {:error, :member_not_found} <- Member.get_member(actor.id, group.id),
          {:is_able_to_join, true} <- {:is_able_to_join, Member.can_be_joined(group)},
          role <- Mobilizon.Actors.get_default_member_role(group),
-         {:ok, _} <-
-           Actors.create_member(%{
-             parent_id: group.id,
-             actor_id: actor.id,
-             role: role
-           }) do
+         {:ok, _} <- Actors.create_member(%{parent_id: group.id, actor_id: actor.id, role: role}) do
       {
         :ok,
         %{
-          parent:
-            group
-            |> Person.proxify_pictures(),
-          actor:
-            actor
-            |> Person.proxify_pictures(),
+          parent: Person.proxify_pictures(group),
+          actor: Person.proxify_pictures(actor),
           role: role
         }
       }
     else
-      {:is_owned, false} ->
+      {:is_owned, nil} ->
         {:error, "Actor id is not owned by authenticated user"}
 
       {:error, :group_not_found} ->
@@ -174,31 +146,17 @@ defmodule MobilizonWeb.Resolvers.Group do
   def leave_group(
         _parent,
         %{group_id: group_id, actor_id: actor_id},
-        %{
-          context: %{
-            current_user: user
-          }
-        }
+        %{context: %{current_user: user}}
       ) do
-    with {:is_owned, true, actor} <- User.owns_actor(user, actor_id),
+    with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
          {:ok, %Member{} = member} <- Member.get_member(actor.id, group_id),
          {:only_administrator, false} <-
            {:only_administrator, check_that_member_is_not_last_administrator(group_id, actor_id)},
          {:ok, _} <-
            Mobilizon.Actors.delete_member(member) do
-      {
-        :ok,
-        %{
-          parent: %{
-            id: group_id
-          },
-          actor: %{
-            id: actor_id
-          }
-        }
-      }
+      {:ok, %{parent: %{id: group_id}, actor: %{id: actor_id}}}
     else
-      {:is_owned, false} ->
+      {:is_owned, nil} ->
         {:error, "Actor id is not owned by authenticated user"}
 
       {:error, :member_not_found} ->
@@ -219,13 +177,7 @@ defmodule MobilizonWeb.Resolvers.Group do
   @spec check_that_member_is_not_last_administrator(integer(), integer()) :: boolean()
   defp check_that_member_is_not_last_administrator(group_id, actor_id) do
     case Member.list_administrator_members_for_group(group_id) do
-      [
-        %Member{
-          actor: %Actor{
-            id: member_actor_id
-          }
-        }
-      ] ->
+      [%Member{actor: %Actor{id: member_actor_id}}] ->
         actor_id == member_actor_id
 
       _ ->
