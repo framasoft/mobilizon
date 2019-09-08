@@ -9,39 +9,27 @@ defmodule Mobilizon.Admin do
   alias Mobilizon.Storage.{Page, Repo}
 
   @doc """
-  Returns the list of action_logs.
-
-  ## Examples
-
-      iex> list_action_logs()
-      [%ActionLog{}, ...]
-
+  Returns the list of action logs.
   """
-  @spec list_action_logs(integer(), integer()) :: list(ActionLog.t())
+  @spec list_action_logs(integer | nil, integer | nil) :: [ActionLog.t()]
   def list_action_logs(page \\ nil, limit \\ nil) do
-    from(
-      r in ActionLog,
-      preload: [:actor]
-    )
+    list_action_logs_query()
     |> Page.paginate(page, limit)
     |> Repo.all()
   end
 
   @doc """
   Creates a action_log.
-
-  ## Examples
-
-      iex> create_action_log(%{field: value})
-      {:ok, %ActionLog{}}
-
-      iex> create_action_log(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
   """
+  @spec create_action_log(map) :: {:ok, ActionLog.t()} | {:error, Ecto.Changeset.t()}
   def create_action_log(attrs \\ %{}) do
     %ActionLog{}
     |> ActionLog.changeset(attrs)
     |> Repo.insert()
+  end
+
+  @spec list_action_logs_query :: Ecto.Query.t()
+  defp list_action_logs_query do
+    from(r in ActionLog, preload: [:actor])
   end
 end
