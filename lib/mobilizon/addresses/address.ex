@@ -1,12 +1,31 @@
 defmodule Mobilizon.Addresses.Address do
-  @moduledoc "An address for an event or a group"
+  @moduledoc """
+  Represents an address for an event or a group.
+  """
 
   use Ecto.Schema
+
   import Ecto.Changeset
+
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.Event
-  # alias Mobilizon.Actors.Actor
-  @attrs [
+
+  @type t :: %__MODULE__{
+          country: String.t(),
+          locality: String.t(),
+          region: String.t(),
+          description: String.t(),
+          floor: String.t(),
+          geom: Geo.PostGIS.Geometry.t(),
+          postal_code: String.t(),
+          street: String.t(),
+          url: String.t(),
+          origin_id: String.t(),
+          events: [Event.t()]
+        }
+
+  @required_attrs [:url]
+  @optional_attrs [
     :description,
     :floor,
     :geom,
@@ -15,12 +34,9 @@ defmodule Mobilizon.Addresses.Address do
     :region,
     :postal_code,
     :street,
-    :url,
     :origin_id
   ]
-  @required [
-    :url
-  ]
+  @attrs @required_attrs ++ @optional_attrs
 
   schema "addresses" do
     field(:country, :string)
@@ -33,22 +49,29 @@ defmodule Mobilizon.Addresses.Address do
     field(:street, :string)
     field(:url, :string)
     field(:origin_id, :string)
-    has_many(:event, Event, foreign_key: :physical_address_id)
+
+    has_many(:events, Event, foreign_key: :physical_address_id)
 
     timestamps()
   end
 
   @doc false
+  @spec changeset(t | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
   def changeset(%Address{} = address, attrs) do
     address
     |> cast(attrs, @attrs)
     |> set_url()
-    |> validate_required(@required)
+    |> validate_required(@required_attrs)
   end
 
+  @spec set_url(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   defp set_url(%Ecto.Changeset{changes: changes} = changeset) do
     url =
-      Map.get(changes, :url, MobilizonWeb.Endpoint.url() <> "/address/#{Ecto.UUID.generate()}")
+      Map.get(
+        changes,
+        :url,
+        "#{MobilizonWeb.Endpoint.url()}/address/#{Ecto.UUID.generate()}"
+      )
 
     put_change(changeset, :url, url)
   end
