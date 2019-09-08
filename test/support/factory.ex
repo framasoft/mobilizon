@@ -1,10 +1,13 @@
 defmodule Mobilizon.Factory do
   @moduledoc """
-  Factory for fixtures with ExMachina
+  Factory for fixtures with ExMachina.
   """
-  # with Ecto
+
   use ExMachina.Ecto, repo: Mobilizon.Storage.Repo
+
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Crypto
+
   alias MobilizonWeb.Router.Helpers, as: Routes
   alias MobilizonWeb.Endpoint
   alias MobilizonWeb.Upload
@@ -21,10 +24,6 @@ defmodule Mobilizon.Factory do
   end
 
   def actor_factory do
-    key = :public_key.generate_key({:rsa, 2048, 65_537})
-    entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
-    pem = [entry] |> :public_key.pem_encode() |> String.trim_trailing()
-
     preferred_username = sequence("thomas")
 
     %Mobilizon.Actors.Actor{
@@ -32,7 +31,7 @@ defmodule Mobilizon.Factory do
       domain: nil,
       followers: [],
       followings: [],
-      keys: pem,
+      keys: Crypto.generate_rsa_2048_private_key(),
       type: :Person,
       avatar: build(:file, name: "Avatar"),
       banner: build(:file, name: "Banner"),

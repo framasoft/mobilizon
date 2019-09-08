@@ -19,12 +19,6 @@ defmodule Mobilizon.Addresses do
   def query(queryable, _params), do: queryable
 
   @doc """
-  Returns the list of addresses.
-  """
-  @spec list_addresses :: [Address.t()]
-  def list_addresses, do: Repo.all(Address)
-
-  @doc """
   Gets a single address.
   """
   @spec get_address(integer | String.t()) :: Address.t() | nil
@@ -71,6 +65,12 @@ defmodule Mobilizon.Addresses do
   """
   @spec delete_address(Address.t()) :: {:ok, Address.t()} | {:error, Ecto.Changeset.t()}
   def delete_address(%Address{} = address), do: Repo.delete(address)
+
+  @doc """
+  Returns the list of addresses.
+  """
+  @spec list_addresses :: [Address.t()]
+  def list_addresses, do: Repo.all(Address)
 
   @doc """
   Searches addresses.

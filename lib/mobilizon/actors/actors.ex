@@ -4,105 +4,206 @@ defmodule Mobilizon.Actors do
   """
 
   import Ecto.Query
+  import EctoEnum
 
   alias Ecto.Multi
 
-  alias Mobilizon.Actors.{Actor, Bot, Member, Follower}
+  alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
+  alias Mobilizon.Crypto
   alias Mobilizon.Media.File
-  alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Storage.{Page, Repo}
 
   require Logger
 
-  @doc false
-  def data() do
-    Dataloader.Ecto.new(Repo, query: &query/2)
-  end
+  defenum(ActorType, :actor_type, [
+    :Person,
+    :Application,
+    :Group,
+    :Organization,
+    :Service
+  ])
+
+  defenum(ActorOpenness, :actor_openness, [
+    :invite_only,
+    :moderated,
+    :open
+  ])
+
+  defenum(ActorVisibility, :actor_visibility, [
+    :public,
+    :unlisted,
+    # Probably unused
+    :restricted,
+    :private
+  ])
+
+  defenum(MemberRole, :member_role, [
+    :not_approved,
+    :member,
+    :moderator,
+    :administrator,
+    :creator
+  ])
 
   @doc false
-  def query(queryable, _params) do
-    queryable
-  end
+  @spec data :: Dataloader.Ecto.t()
+  def data, do: Dataloader.Ecto.new(Repo, query: &query/2)
 
-  @doc """
-  Returns the list of actors.
-
-  ## Examples
-
-      iex> Mobilizon.Actors.list_actors()
-      [%Mobilizon.Actors.Actor{}]
-
-  """
-  @spec list_actors() :: list()
-  def list_actors do
-    Repo.all(Actor)
-  end
+  @doc false
+  @spec query(Ecto.Query.t(), map) :: Ecto.Query.t()
+  def query(queryable, _params), do: queryable
 
   @doc """
   Gets a single actor.
+  """
+  @spec get_actor(integer | String.t()) :: Actor.t() | nil
+  def get_actor(id), do: Repo.get(Actor, id)
 
+  @doc """
+  Gets a single actor.
   Raises `Ecto.NoResultsError` if the Actor does not exist.
-
-  ## Examples
-
-      iex> get_actor!(123)
-      %Mobilizon.Actors.Actor{}
-
-      iex> get_actor!(456)
-      ** (Ecto.NoResultsError)
-
   """
-  @spec get_actor!(integer()) :: Actor.t()
-  def get_actor!(id) do
-    Repo.get!(Actor, id)
-  end
-
-  def get_actor(id) do
-    Repo.get(Actor, id)
-  end
-
-  # Get actor by ID and preload organized events, followers and followings
-  @spec get_actor_with_everything(integer()) :: Ecto.Query.t()
-  defp do_get_actor_with_everything(id) do
-    from(a in Actor,
-      where: a.id == ^id,
-      preload: [:organized_events, :followers, :followings]
-    )
-  end
+  @spec get_actor!(integer | String.t()) :: Actor.t()
+  def get_actor!(id), do: Repo.get!(Actor, id)
 
   @doc """
-  Returns an actor with every relation
+  Gets an actor with preloaded relations.
   """
-  @spec get_actor_with_everything(integer()) :: Mobilizon.Actors.Actor.t()
-  def get_actor_with_everything(id) do
+  @spec get_actor_with_preload(integer | String.t()) :: Actor.t() | nil
+  def get_actor_with_preload(id) do
     id
-    |> do_get_actor_with_everything
+    |> actor_with_preload_query()
     |> Repo.one()
   end
 
   @doc """
-  Returns an actor with every relation
+  Gets a local actor with preloaded relations.
   """
-  @spec get_local_actor_with_everything(integer()) :: Mobilizon.Actors.Actor.t()
-  def get_local_actor_with_everything(id) do
+  @spec get_local_actor_with_preload(integer | String.t()) :: Actor.t() | nil
+  def get_local_actor_with_preload(id) do
     id
-    |> do_get_actor_with_everything
-    |> where([a], is_nil(a.domain))
+    |> actor_with_preload_query()
+    |> filter_local()
     |> Repo.one()
   end
 
   @doc """
-  Creates a actor.
-
-  ## Examples
-
-      iex> create_actor(%{preferred_username: "test"})
-      {:ok, %Mobilizon.Actors.Actor{preferred_username: "test"}}
-
-      iex> create_actor(%{preferred_username: nil})
-      {:error, %Ecto.Changeset{}}
-
+  Gets an actor by its URL (ActivityPub ID). The `:preload` option allows to
+  preload the followers relation.
   """
+  @spec get_actor_by_url(String.t(), boolean) ::
+          {:ok, Actor.t()} | {:error, :actor_not_found}
+  def get_actor_by_url(url, preload \\ false) do
+    case Repo.get_by(Actor, url: url) do
+      nil ->
+        {:error, :actor_not_found}
+
+      actor ->
+        {:ok, preload_followers(actor, preload)}
+    end
+  end
+
+  @doc """
+  Gets an actor by its URL (ActivityPub ID). The `:preload` option allows to
+  preload the followers relation.
+  Raises `Ecto.NoResultsError` if the actor does not exist.
+  """
+  @spec get_actor_by_url!(String.t(), boolean) :: Actor.t()
+  def get_actor_by_url!(url, preload \\ false) do
+    Actor
+    |> Repo.get_by!(url: url)
+    |> preload_followers(preload)
+  end
+
+  @doc """
+  Gets an actor by name.
+  """
+  @spec get_actor_by_name(String.t(), atom | nil) :: Actor.t() | nil
+  def get_actor_by_name(name, type \\ nil) do
+    from(a in Actor)
+    |> filter_by_type(type)
+    |> filter_by_name(String.split(name, "@"))
+    |> Repo.one()
+  end
+
+  @doc """
+  Gets a local actor by its preferred username.
+  """
+  @spec get_local_actor_by_name(String.t()) :: Actor.t() | nil
+  def get_local_actor_by_name(name) do
+    from(a in Actor)
+    |> filter_by_name([name])
+    |> Repo.one()
+  end
+
+  @doc """
+  Gets a local actor by its preferred username and preloaded relations
+  (organized events, followers and followings).
+  """
+  @spec get_local_actor_by_name_with_preload(String.t()) :: Actor.t() | nil
+  def get_local_actor_by_name_with_preload(name) do
+    name
+    |> get_local_actor_by_name()
+    |> Repo.preload([:organized_events, :followers, :followings])
+  end
+
+  @doc """
+  Gets an actor by name and preloads the organized events.
+  """
+  @spec get_actor_by_name_with_preload(String.t(), atom() | nil) :: Actor.t() | nil
+  def get_actor_by_name_with_preload(name, type \\ nil) do
+    name
+    |> get_actor_by_name(type)
+    |> Repo.preload(:organized_events)
+  end
+
+  @doc """
+  Gets a cached local actor by username.
+  #TODO: move to MobilizonWeb layer
+  """
+  @spec get_cached_local_actor_by_name(String.t()) ::
+          {:commit, Actor.t()} | {:ignore, any()}
+  def get_cached_local_actor_by_name(name) do
+    Cachex.fetch(:activity_pub, "actor_" <> name, fn "actor_" <> name ->
+      case get_local_actor_by_name(name) do
+        nil -> {:ignore, nil}
+        %Actor{} = actor -> {:commit, actor}
+      end
+    end)
+  end
+
+  @doc """
+  Gets local actors by their username.
+  """
+  @spec get_local_actor_by_username(String.t()) :: [Actor.t()]
+  def get_local_actor_by_username(username) do
+    username
+    |> actor_by_username_query()
+    |> filter_local()
+    |> Repo.all()
+    |> Repo.preload(:organized_events)
+  end
+
+  @doc """
+  Builds a page struct for actors by their name or displayed name.
+  """
+  @spec build_actors_by_username_or_name_page(
+          String.t(),
+          [ActorType.t()],
+          integer | nil,
+          integer | nil
+        ) :: Page.t()
+  def build_actors_by_username_or_name_page(username, types, page \\ nil, limit \\ nil) do
+    username
+    |> actor_by_username_or_name_query()
+    |> filter_by_types(types)
+    |> Page.build_page(page, limit)
+  end
+
+  @doc """
+  Creates an actor.
+  """
+  @spec create_actor(map) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def create_actor(attrs \\ %{}) do
     %Actor{}
     |> Actor.changeset(attrs)
@@ -110,17 +211,9 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
-  Updates a actor.
-
-  ## Examples
-
-      iex> update_actor(%Actor{preferred_username: "toto"}, %{preferred_username: "tata"})
-      {:ok, %Mobilizon.Actors.Actor{preferred_username: "tata"}}
-
-      iex> update_actor(%Actor{preferred_username: "toto"}, %{preferred_username: nil})
-      {:error, %Ecto.Changeset{}}
-
+  Updates an actor.
   """
+  @spec update_actor(Actor.t(), map) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def update_actor(%Actor{} = actor, attrs) do
     actor
     |> Actor.update_changeset(attrs)
@@ -128,43 +221,46 @@ defmodule Mobilizon.Actors do
     |> Repo.update()
   end
 
-  defp delete_files_if_media_changed(%Ecto.Changeset{changes: changes} = changeset) do
-    Enum.each([:avatar, :banner], fn key ->
-      if Map.has_key?(changes, key) do
-        with %Ecto.Changeset{changes: %{url: new_url}} <- changes[key],
-             %{url: old_url} = _old_key <- Map.from_struct(changeset.data) |> Map.get(key),
-             false <- new_url == old_url do
-          MobilizonWeb.Upload.remove(old_url)
-        end
-      end
-    end)
+  @doc """
+  Upserts an actor.
+  Conflicts on actor's URL/AP ID, replaces keys, avatar and banner, name and summary.
+  """
+  @spec upsert_actor(map, boolean) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
+  def upsert_actor(%{keys: keys, name: name, summary: summary} = data, preload \\ false) do
+    insert =
+      data
+      |> Actor.remote_actor_creation_changeset()
+      |> Repo.insert(
+        on_conflict: [set: [keys: keys, name: name, summary: summary]],
+        conflict_target: [:url]
+      )
 
-    changeset
+    case insert do
+      {:ok, actor} ->
+        actor = if preload, do: Repo.preload(actor, [:followers]), else: actor
+
+        {:ok, actor}
+
+      error ->
+        Logger.debug(inspect(error))
+
+        {:error, error}
+    end
   end
 
   @doc """
-  Deletes a Actor.
-
-  ## Examples
-
-      iex> delete_actor(%Actor{})
-      {:ok, %Mobilizon.Actors.Actor{}}
-
-      iex> delete_actor(nil)
-      {:error, %Ecto.Changeset{}}
-
+  Deletes an actor.
   """
   @spec delete_actor(Actor.t()) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def delete_actor(%Actor{domain: nil} = actor) do
-    case Multi.new()
-         |> Multi.delete(:actor, actor)
-         |> Multi.run(:remove_banner, fn _repo, %{actor: %Actor{}} = _picture ->
-           remove_banner(actor)
-         end)
-         |> Multi.run(:remove_avatar, fn _repo, %{actor: %Actor{}} = _picture ->
-           remove_avatar(actor)
-         end)
-         |> Repo.transaction() do
+    transaction =
+      Multi.new()
+      |> Multi.delete(:actor, actor)
+      |> Multi.run(:remove_banner, fn _, %{actor: %Actor{}} -> remove_banner(actor) end)
+      |> Multi.run(:remove_avatar, fn _, %{actor: %Actor{}} -> remove_avatar(actor) end)
+      |> Repo.transaction()
+
+    case transaction do
       {:ok, %{actor: %Actor{} = actor}} ->
         {:ok, actor}
 
@@ -173,78 +269,153 @@ defmodule Mobilizon.Actors do
     end
   end
 
-  def delete_actor(%Actor{} = actor) do
-    Repo.delete(actor)
+  def delete_actor(%Actor{} = actor), do: Repo.delete(actor)
+
+  @doc """
+  Returns the list of actors.
+  """
+  @spec list_actors :: [Actor.t()]
+  def list_actors, do: Repo.all(Actor)
+
+  @doc """
+  Gets a group by its title.
+  """
+  @spec get_group_by_title(String.t()) :: Actor.t() | nil
+  def get_group_by_title(title) do
+    group_query()
+    |> filter_by_name(String.split(title, "@"))
+    |> Repo.one()
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking actor changes.
-
-  ## Examples
-
-      iex> change_actor(%Actor{})
-      %Ecto.Changeset{data: %Mobilizon.Actors.Actor{}}
-
+  Gets a local group by its title.
   """
-  @spec change_actor(Actor.t()) :: Ecto.Changeset.t()
-  def change_actor(%Actor{} = actor) do
-    Actor.changeset(actor, %{})
+  @spec get_local_group_by_title(String.t()) :: Actor.t() | nil
+  def get_local_group_by_title(title) do
+    group_query()
+    |> filter_by_name([title])
+    |> Repo.one()
   end
 
+  @spec actor_with_preload_query(integer | String.t()) :: Ecto.Query.t()
+  defp actor_with_preload_query(id) do
+    from(
+      a in Actor,
+      where: a.id == ^id,
+      preload: [:organized_events, :followers, :followings]
+    )
+  end
+
+  @spec actor_by_username_query(String.t()) :: Ecto.Query.t()
+  defp actor_by_username_query(username) do
+    from(
+      a in Actor,
+      where:
+        fragment(
+          "f_unaccent(?) <% f_unaccent(?) or f_unaccent(coalesce(?, '')) <% f_unaccent(?)",
+          a.preferred_username,
+          ^username,
+          a.name,
+          ^username
+        ),
+      order_by:
+        fragment(
+          "word_similarity(?, ?) + word_similarity(coalesce(?, ''), ?) desc",
+          a.preferred_username,
+          ^username,
+          a.name,
+          ^username
+        )
+    )
+  end
+
+  @spec actor_by_username_or_name_query(String.t()) :: Ecto.Query.t()
+  defp actor_by_username_or_name_query(username) do
+    from(
+      a in Actor,
+      where:
+        fragment(
+          "f_unaccent(?) %> f_unaccent(?) or f_unaccent(coalesce(?, '')) %> f_unaccent(?)",
+          a.preferred_username,
+          ^username,
+          a.name,
+          ^username
+        ),
+      order_by:
+        fragment(
+          "word_similarity(?, ?) + word_similarity(coalesce(?, ''), ?) desc",
+          a.preferred_username,
+          ^username,
+          a.name,
+          ^username
+        )
+    )
+  end
+
+  @spec group_query :: Ecto.Query.t()
+  defp group_query do
+    from(a in Actor, where: a.type == "Group")
+  end
+
+  @spec filter_local(Ecto.Query.t()) :: Ecto.Query.t()
+  defp filter_local(query) do
+    from(a in query, where: is_nil(a.domain))
+  end
+
+  @spec filter_by_type(Ecto.Query.t(), ActorType.t()) :: Ecto.Query.t()
+  defp filter_by_type(query, type) when type in [:Person, :Group] do
+    from(a in query, where: a.type == ^type)
+  end
+
+  defp filter_by_type(query, _type), do: query
+
+  @spec filter_by_types(Ecto.Query.t(), [ActorType.t()]) :: Ecto.Query.t()
+  defp filter_by_types(query, types) do
+    from(a in query, where: a.type in ^types)
+  end
+
+  @spec filter_by_name(Ecto.Query.t(), [String.t()]) :: Ecto.Query.t()
+  defp filter_by_name(query, [name]) do
+    from(a in query, where: a.preferred_username == ^name and is_nil(a.domain))
+  end
+
+  defp filter_by_name(query, [name, domain]) do
+    from(a in query, where: a.preferred_username == ^name and a.domain == ^domain)
+  end
+
+  @spec preload_followers(Actor.t(), boolean) :: Actor.t()
+  defp preload_followers(actor, true), do: Repo.preload(actor, [:followers])
+  defp preload_followers(actor, false), do: actor
+
+  ##### TODO: continue refactoring from here #####
+
   @doc """
-  List the groups
+  Returns the groups an actor is member of
   """
-  @spec list_groups(number(), number()) :: list(Actor.t())
-  def list_groups(page \\ nil, limit \\ nil) do
+  @spec get_groups_member_of(struct()) :: list()
+  def get_groups_member_of(%Actor{id: actor_id}) do
     Repo.all(
       from(
         a in Actor,
-        where: a.type == ^:Group,
-        where: a.visibility in [^:public, ^:unlisted]
+        join: m in Member,
+        on: a.id == m.parent_id,
+        where: m.actor_id == ^actor_id
       )
-      |> Page.paginate(page, limit)
     )
   end
 
   @doc """
-  Get the default member role depending on the actor openness
+  Returns the members for a group actor
   """
-  @spec get_default_member_role(Actor.t()) :: atom()
-  def get_default_member_role(%Actor{openness: :open}), do: :member
-  def get_default_member_role(%Actor{}), do: :not_approved
-
-  @doc """
-  Get a group by it's title
-  """
-  @spec get_group_by_title(String.t()) :: Actor.t() | nil
-  def get_group_by_title(title) do
-    case String.split(title, "@") do
-      [title] ->
-        get_local_group_by_title(title)
-
-      [title, domain] ->
-        Repo.one(
-          from(a in Actor,
-            where: a.preferred_username == ^title and a.type == "Group" and a.domain == ^domain
-          )
-        )
-    end
-  end
-
-  @doc """
-  Get a local group by it's title
-  """
-  @spec get_local_group_by_title(String.t()) :: Actor.t() | nil
-  def get_local_group_by_title(title) do
-    title
-    |> do_get_local_group_by_title
-    |> Repo.one()
-  end
-
-  @spec do_get_local_group_by_title(String.t()) :: Ecto.Query.t()
-  defp do_get_local_group_by_title(title) do
-    from(a in Actor,
-      where: a.preferred_username == ^title and a.type == "Group" and is_nil(a.domain)
+  @spec get_members_for_group(struct()) :: list()
+  def get_members_for_group(%Actor{id: actor_id}) do
+    Repo.all(
+      from(
+        a in Actor,
+        join: m in Member,
+        on: a.id == m.actor_id,
+        where: m.parent_id == ^actor_id
+      )
     )
   end
 
@@ -274,323 +445,18 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
-  Upsert an actor.
-
-  Conflicts on actor's URL/AP ID. Replaces keys, avatar and banner, name and summary.
+  List the groups
   """
-  @spec insert_or_update_actor(map(), boolean()) :: {:ok, Actor.t()}
-  def insert_or_update_actor(data, preload \\ false) do
-    cs =
-      data
-      |> Actor.remote_actor_creation()
-
-    case Repo.insert(
-           cs,
-           on_conflict: [
-             set: [
-               keys: data.keys,
-               name: data.name,
-               summary: data.summary
-             ]
-           ],
-           conflict_target: [:url]
-         ) do
-      {:ok, actor} ->
-        actor = if preload, do: Repo.preload(actor, [:followers]), else: actor
-        {:ok, actor}
-
-      err ->
-        Logger.debug(inspect(err))
-        {:error, err}
-    end
-  end
-
-  #  def increase_event_count(%Actor{} = actor) do
-  #    event_count = (actor.info["event_count"] || 0) + 1
-  #    new_info = Map.put(actor.info, "note_count", note_count)
-  #
-  #    cs = info_changeset(actor, %{info: new_info})
-  #
-  #    update_and_set_cache(cs)
-  #  end
-
-  @doc """
-  Get an actor by it's URL (ActivityPub ID). The `:preload` option allows preloading the Followers relation.
-
-  Raises `Ecto.NoResultsError` if the Actor does not exist.
-
-  ## Examples
-      iex> get_actor_by_url("https://mastodon.server.tld/users/user")
-      {:ok, %Mobilizon.Actors.Actor{preferred_username: "user"}}
-
-      iex> get_actor_by_url("https://mastodon.server.tld/users/user", true)
-      {:ok, %Mobilizon.Actors.Actor{preferred_username: "user", followers: []}}
-
-      iex> get_actor_by_url("non existent")
-      {:error, :actor_not_found}
-
-  """
-  @spec get_actor_by_url(String.t(), boolean()) :: {:ok, Actor.t()} | {:error, :actor_not_found}
-  def get_actor_by_url(url, preload \\ false) do
-    case Repo.get_by(Actor, url: url) do
-      nil ->
-        {:error, :actor_not_found}
-
-      actor ->
-        actor = if preload, do: Repo.preload(actor, [:followers]), else: actor
-        {:ok, actor}
-    end
-  end
-
-  @doc """
-  Get an actor by it's URL (ActivityPub ID). The `:preload` option allows preloading the Followers relation.
-
-  Raises `Ecto.NoResultsError` if the Actor does not exist.
-
-  ## Examples
-      iex> get_actor_by_url!("https://mastodon.server.tld/users/user")
-      %Mobilizon.Actors.Actor{}
-
-      iex> get_actor_by_url!("https://mastodon.server.tld/users/user", true)
-      {:ok, %Mobilizon.Actors.Actor{preferred_username: "user", followers: []}}
-
-      iex> get_actor_by_url!("non existent")
-      ** (Ecto.NoResultsError)
-
-  """
-  @spec get_actor_by_url!(String.t(), boolean()) :: struct()
-  def get_actor_by_url!(url, preload \\ false) do
-    actor = Repo.get_by!(Actor, url: url)
-    if preload, do: Repo.preload(actor, [:followers]), else: actor
-  end
-
-  @doc """
-  Get an actor by name
-
-  ## Examples
-      iex> get_actor_by_name("tcit")
-      %Mobilizon.Actors.Actor{preferred_username: "tcit", domain: nil}
-
-      iex> get_actor_by_name("tcit@social.tcit.fr")
-      %Mobilizon.Actors.Actor{preferred_username: "tcit", domain: "social.tcit.fr"}
-
-      iex> get_actor_by_name("tcit", :Group)
-      nil
-
-  """
-  @spec get_actor_by_name(String.t(), atom() | nil) :: Actor.t()
-  def get_actor_by_name(name, type \\ nil) do
-    # Base query
-    query = from(a in Actor)
-
-    # If we have Person / Group information
-    query =
-      if type in [:Person, :Group] do
-        from(a in query, where: a.type == ^type)
-      else
-        query
-      end
-
-    # If the name is a remote actor
-    query =
-      case String.split(name, "@") do
-        [name] -> do_get_actor_by_name(query, name)
-        [name, domain] -> do_get_actor_by_name(query, name, domain)
-      end
-
-    Repo.one(query)
-  end
-
-  # Get actor by username and domain is nil
-  @spec do_get_actor_by_name(Ecto.Queryable.t(), String.t()) :: Ecto.Queryable.t()
-  defp do_get_actor_by_name(query, name) do
-    from(a in query, where: a.preferred_username == ^name and is_nil(a.domain))
-  end
-
-  # Get actor by username and domain
-  @spec do_get_actor_by_name(Ecto.Queryable.t(), String.t(), String.t()) :: Ecto.Queryable.t()
-  defp do_get_actor_by_name(query, name, domain) do
-    from(a in query, where: a.preferred_username == ^name and a.domain == ^domain)
-  end
-
-  @doc """
-  Return a local actor by it's preferred username
-  """
-  @spec get_local_actor_by_name(String.t()) :: Actor.t() | nil
-  def get_local_actor_by_name(name) do
-    Repo.one(
-      from(a in Actor,
-        where: a.preferred_username == ^name and is_nil(a.domain)
-      )
-    )
-  end
-
-  @doc """
-  Return a local actor by it's preferred username and preload associations
-
-  Preloads organized_events, followers and followings
-  """
-  @spec get_local_actor_by_name_with_everything(String.t()) :: Actor.t() | nil
-  def get_local_actor_by_name_with_everything(name) do
-    actor = Repo.one(from(a in Actor, where: a.preferred_username == ^name and is_nil(a.domain)))
-    Repo.preload(actor, [:organized_events, :followers, :followings])
-  end
-
-  @doc """
-  Returns actor by name and preloads the organized events
-
-  ## Examples
-      iex> get_actor_by_name_with_everything("tcit")
-      %Mobilizon.Actors.Actor{preferred_username: "tcit", domain: nil, organized_events: []}
-
-      iex> get_actor_by_name_with_everything("tcit@social.tcit.fr")
-      %Mobilizon.Actors.Actor{preferred_username: "tcit", domain: "social.tcit.fr", organized_events: []}
-
-      iex> get_actor_by_name_with_everything("tcit", :Group)
-      nil
-
-  """
-  @spec get_actor_by_name_with_everything(String.t(), atom() | nil) :: Actor.t()
-  def get_actor_by_name_with_everything(name, type \\ nil) do
-    name
-    |> get_actor_by_name(type)
-    |> Repo.preload(:organized_events)
-  end
-
-  @doc """
-  Returns a cached local actor by username
-  """
-  @spec get_cached_local_actor_by_name(String.t()) ::
-          {:ok, Actor.t()} | {:commit, Actor.t()} | {:ignore, any()}
-  def get_cached_local_actor_by_name(name) do
-    Cachex.fetch(:activity_pub, "actor_" <> name, fn "actor_" <> name ->
-      case get_local_actor_by_name(name) do
-        nil -> {:ignore, nil}
-        %Actor{} = actor -> {:commit, actor}
-      end
-    end)
-  end
-
-  @doc """
-  Getting an actor from url, eventually creating it
-  """
-  # TODO: Move this to Mobilizon.Service.ActivityPub
-  @spec get_or_fetch_by_url(String.t(), bool()) :: {:ok, Actor.t()} | {:error, String.t()}
-  def get_or_fetch_by_url(url, preload \\ false) do
-    case get_actor_by_url(url, preload) do
-      {:ok, %Actor{} = actor} ->
-        {:ok, actor}
-
-      _ ->
-        case ActivityPub.make_actor_from_url(url, preload) do
-          {:ok, %Actor{} = actor} ->
-            {:ok, actor}
-
-          _ ->
-            Logger.warn("Could not fetch by AP id")
-            {:error, "Could not fetch by AP id"}
-        end
-    end
-  end
-
-  @doc """
-  Getting an actor from url, eventually creating it
-
-  Returns an error if fetch failed
-  """
-  # TODO: Move this to Mobilizon.Service.ActivityPub
-  @spec get_or_fetch_by_url!(String.t(), bool()) :: Actor.t()
-  def get_or_fetch_by_url!(url, preload \\ false) do
-    case get_actor_by_url(url, preload) do
-      {:ok, actor} ->
-        actor
-
-      _ ->
-        case ActivityPub.make_actor_from_url(url, preload) do
-          {:ok, actor} ->
-            actor
-
-          _ ->
-            raise "Could not fetch by AP id"
-        end
-    end
-  end
-
-  @doc """
-  Find local users by their username
-  """
-  # TODO: This doesn't seem to be used anyway
-  @spec find_local_by_username(String.t()) :: list(Actor.t())
-  def find_local_by_username(username) do
-    actors =
-      Repo.all(
-        from(
-          a in Actor,
-          where:
-            fragment(
-              "f_unaccent(?) <% f_unaccent(?) or
-             f_unaccent(coalesce(?, '')) <% f_unaccent(?)",
-              a.preferred_username,
-              ^username,
-              a.name,
-              ^username
-            ),
-          where: is_nil(a.domain),
-          order_by:
-            fragment(
-              "word_similarity(?, ?) + word_similarity(coalesce(?, ''), ?) desc",
-              a.preferred_username,
-              ^username,
-              a.name,
-              ^username
-            )
-        )
-      )
-
-    Repo.preload(actors, :organized_events)
-  end
-
-  @doc """
-  Find actors by their name or displayed name
-  """
-  @spec find_and_count_actors_by_username_or_name(
-          String.t(),
-          [ActorTypeEnum.t()],
-          integer() | nil,
-          integer() | nil
-        ) ::
-          %{total: integer(), elements: list(Actor.t())}
-  def find_and_count_actors_by_username_or_name(username, _types, page \\ nil, limit \\ nil)
-
-  def find_and_count_actors_by_username_or_name(username, types, page, limit) do
-    query =
+  @spec list_groups(number(), number()) :: list(Actor.t())
+  def list_groups(page \\ nil, limit \\ nil) do
+    Repo.all(
       from(
         a in Actor,
-        where:
-          fragment(
-            "f_unaccent(?) %> f_unaccent(?) or
-             f_unaccent(coalesce(?, '')) %> f_unaccent(?)",
-            a.preferred_username,
-            ^username,
-            a.name,
-            ^username
-          ),
-        where: a.type in ^types,
-        order_by:
-          fragment(
-            "word_similarity(?, ?) + word_similarity(coalesce(?, ''), ?) desc",
-            a.preferred_username,
-            ^username,
-            a.name,
-            ^username
-          )
+        where: a.type == ^:Group,
+        where: a.visibility in [^:public, ^:unlisted]
       )
       |> Page.paginate(page, limit)
-
-    total = Task.async(fn -> Repo.aggregate(query, :count, :id) end)
-    elements = Task.async(fn -> Repo.all(query) end)
-
-    %{total: Task.await(total), elements: Task.await(elements)}
+    )
   end
 
   @doc """
@@ -604,24 +470,11 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
-  Create a new RSA key
-  """
-  @spec create_keys() :: String.t()
-  def create_keys() do
-    key = :public_key.generate_key({:rsa, 2048, 65_537})
-    entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
-    [entry] |> :public_key.pem_encode() |> String.trim_trailing()
-  end
-
-  @doc """
   Create a new person actor
   """
   @spec new_person(map()) :: {:ok, Actor.t()} | any
   def new_person(args) do
-    key = :public_key.generate_key({:rsa, 2048, 65_537})
-    entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
-    pem = [entry] |> :public_key.pem_encode() |> String.trim_trailing()
-    args = Map.put(args, :keys, pem)
+    args = Map.put(args, :keys, Crypto.generate_rsa_2048_private_key())
 
     with {:ok, %Actor{} = person} <-
            %Actor{}
@@ -637,15 +490,11 @@ defmodule Mobilizon.Actors do
   """
   @spec register_bot_account(map()) :: Actor.t()
   def register_bot_account(%{name: name, summary: summary}) do
-    key = :public_key.generate_key({:rsa, 2048, 65_537})
-    entry = :public_key.pem_entry_encode(:RSAPrivateKey, key)
-    pem = [entry] |> :public_key.pem_encode() |> String.trim_trailing()
-
     actor =
       Mobilizon.Actors.Actor.registration_changeset(%Mobilizon.Actors.Actor{}, %{
         preferred_username: name,
         domain: nil,
-        keys: pem,
+        keys: Crypto.generate_rsa_2048_private_key(),
         summary: summary,
         type: :Service
       })
@@ -665,12 +514,20 @@ defmodule Mobilizon.Actors do
 
       _ ->
         %{url: url, preferred_username: preferred_username}
-        |> Actor.relay_creation()
+        |> Actor.relay_creation_changeset()
         |> Repo.insert()
     end
   end
 
-  alias Mobilizon.Actors.Member
+  @doc """
+  Gets a single member of an actor (for example a group)
+  """
+  def get_member(actor_id, parent_id) do
+    case Repo.get_by(Member, actor_id: actor_id, parent_id: parent_id) do
+      nil -> {:error, :member_not_found}
+      member -> {:ok, member}
+    end
+  end
 
   @doc """
   Gets a single member.
@@ -744,16 +601,41 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking member changes.
-
-  ## Examples
-
-      iex> change_member(%Member{})
-      %Ecto.Changeset{data: %Mobilizon.Actors.Member{}}
-
+  Returns the list of administrator members for a group.
   """
-  def change_member(%Member{} = member) do
-    Member.changeset(member, %{})
+  def list_administrator_members_for_group(id, page \\ nil, limit \\ nil) do
+    Repo.all(
+      from(
+        m in Member,
+        where: m.parent_id == ^id and (m.role == ^:creator or m.role == ^:administrator),
+        preload: [:actor]
+      )
+      |> Page.paginate(page, limit)
+    )
+  end
+
+  @doc """
+  Get all group ids where the actor_id is the last administrator
+  """
+  def list_group_id_where_last_administrator(actor_id) do
+    in_query =
+      from(
+        m in Member,
+        where: m.actor_id == ^actor_id and (m.role == ^:creator or m.role == ^:administrator),
+        select: m.parent_id
+      )
+
+    Repo.all(
+      from(
+        m in Member,
+        where: m.role == ^:creator or m.role == ^:administrator,
+        join: m2 in subquery(in_query),
+        on: m.parent_id == m2.parent_id,
+        group_by: m.parent_id,
+        select: m.parent_id,
+        having: count(m.actor_id) == 1
+      )
+    )
   end
 
   @doc """
@@ -888,8 +770,6 @@ defmodule Mobilizon.Actors do
     Bot.changeset(bot, %{})
   end
 
-  alias Mobilizon.Actors.Follower
-
   @doc """
   Gets a single follower.
 
@@ -929,6 +809,84 @@ defmodule Mobilizon.Actors do
         where: f.url == ^url,
         preload: [:actor, :target_actor]
       )
+    )
+  end
+
+  @doc """
+  Get followers from an actor
+
+  If actor A and C both follow actor B, actor B's followers are A and C
+  """
+  @spec get_followers(struct(), number(), number()) :: map()
+  def get_followers(%Actor{id: actor_id} = _actor, page \\ nil, limit \\ nil) do
+    query =
+      from(
+        a in Actor,
+        join: f in Follower,
+        on: a.id == f.actor_id,
+        where: f.target_actor_id == ^actor_id
+      )
+
+    total = Task.async(fn -> Repo.aggregate(query, :count, :id) end)
+    elements = Task.async(fn -> Repo.all(Page.paginate(query, page, limit)) end)
+
+    %{total: Task.await(total), elements: Task.await(elements)}
+  end
+
+  @spec get_full_followers(struct()) :: list()
+  def get_full_followers(%Actor{} = actor) do
+    actor
+    |> get_full_followers_query()
+    |> Repo.all()
+  end
+
+  @spec get_full_external_followers(struct()) :: list()
+  def get_full_external_followers(%Actor{} = actor) do
+    actor
+    |> get_full_followers_query()
+    |> where([a], not is_nil(a.domain))
+    |> Repo.all()
+  end
+
+  @doc """
+  Get followings from an actor
+
+  If actor A follows actor B and C, actor A's followings are B and B
+  """
+  @spec get_followings(struct(), number(), number()) :: list()
+  def get_followings(%Actor{id: actor_id} = _actor, page \\ nil, limit \\ nil) do
+    query =
+      from(
+        a in Actor,
+        join: f in Follower,
+        on: a.id == f.target_actor_id,
+        where: f.actor_id == ^actor_id
+      )
+
+    total = Task.async(fn -> Repo.aggregate(query, :count, :id) end)
+    elements = Task.async(fn -> Repo.all(Page.paginate(query, page, limit)) end)
+
+    %{total: Task.await(total), elements: Task.await(elements)}
+  end
+
+  @spec get_full_followings(struct()) :: list()
+  def get_full_followings(%Actor{id: actor_id} = _actor) do
+    Repo.all(
+      from(
+        a in Actor,
+        join: f in Follower,
+        on: a.id == f.target_actor_id,
+        where: f.actor_id == ^actor_id
+      )
+    )
+  end
+
+  defp get_full_followers_query(%Actor{id: actor_id} = _actor) do
+    from(
+      a in Actor,
+      join: f in Follower,
+      on: a.id == f.actor_id,
+      where: f.target_actor_id == ^actor_id
     )
   end
 
@@ -1006,16 +964,68 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking follower changes.
-
-  ## Examples
-
-      iex> change_follower(Follower{})
-      %Ecto.Changeset{data: %Mobilizon.Actors.Follower{}}
-
+  Make an actor follow another
   """
-  def change_follower(%Follower{} = follower) do
-    Follower.changeset(follower, %{})
+  @spec follow(struct(), struct(), boolean()) :: Follower.t() | {:error, String.t()}
+  def follow(%Actor{} = followed, %Actor{} = follower, url \\ nil, approved \\ true) do
+    with {:suspended, false} <- {:suspended, followed.suspended},
+         # Check if followed has blocked follower
+         {:already_following, false} <- {:already_following, following?(follower, followed)} do
+      do_follow(follower, followed, approved, url)
+    else
+      {:already_following, %Follower{}} ->
+        {:error, :already_following,
+         "Could not follow actor: you are already following #{followed.preferred_username}"}
+
+      {:suspended, _} ->
+        {:error, :suspended,
+         "Could not follow actor: #{followed.preferred_username} has been suspended"}
+    end
+  end
+
+  @doc """
+  Unfollow an actor (remove a `Mobilizon.Actors.Follower`)
+  """
+  @spec unfollow(struct(), struct()) :: {:ok, Follower.t()} | {:error, Ecto.Changeset.t()}
+  def unfollow(%Actor{} = followed, %Actor{} = follower) do
+    case {:already_following, following?(follower, followed)} do
+      {:already_following, %Follower{} = follow} ->
+        delete_follower(follow)
+
+      {:already_following, false} ->
+        {:error, "Could not unfollow actor: you are not following #{followed.preferred_username}"}
+    end
+  end
+
+  @spec do_follow(struct(), struct(), boolean(), String.t()) ::
+          {:ok, Follower.t()} | {:error, Ecto.Changeset.t()}
+  defp do_follow(%Actor{} = follower, %Actor{} = followed, approved, url) do
+    Logger.info(
+      "Making #{follower.preferred_username} follow #{followed.preferred_username} (approved: #{
+        approved
+      })"
+    )
+
+    create_follower(%{
+      "actor_id" => follower.id,
+      "target_actor_id" => followed.id,
+      "approved" => approved,
+      "url" => url
+    })
+  end
+
+  @doc """
+  Returns whether an actor is following another
+  """
+  @spec following?(struct(), struct()) :: Follower.t() | false
+  def following?(
+        %Actor{} = follower_actor,
+        %Actor{} = followed_actor
+      ) do
+    case get_follower(followed_actor, follower_actor) do
+      nil -> false
+      %Follower{} = follow -> follow
+    end
   end
 
   defp remove_banner(%Actor{banner: nil} = actor), do: {:ok, actor}
@@ -1040,5 +1050,20 @@ defmodule Mobilizon.Actors do
         Logger.debug(inspect(error))
         {:ok, actor}
     end
+  end
+
+  @spec delete_files_if_media_changed(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp delete_files_if_media_changed(%Ecto.Changeset{changes: changes, data: data} = changeset) do
+    Enum.each([:avatar, :banner], fn key ->
+      if Map.has_key?(changes, key) do
+        with %Ecto.Changeset{changes: %{url: new_url}} <- changes[key],
+             %{url: old_url} <- data |> Map.from_struct() |> Map.get(key),
+             false <- new_url == old_url do
+          MobilizonWeb.Upload.remove(old_url)
+        end
+      end
+    end)
+
+    changeset
   end
 end

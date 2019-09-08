@@ -113,6 +113,29 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
+
+  @doc """
+  Getting an actor from url, eventually creating it
+  """
+  @spec get_or_fetch_by_url(String.t(), boolean) :: {:ok, Actor.t()} | {:error, String.t()}
+  def get_or_fetch_by_url(url, preload \\ false) do
+    case Actors.get_actor_by_url(url, preload) do
+      {:ok, %Actor{} = actor} ->
+        {:ok, actor}
+
+      _ ->
+        case make_actor_from_url(url, preload) do
+          {:ok, %Actor{} = actor} ->
+            {:ok, actor}
+
+          _ ->
+            Logger.warn("Could not fetch by AP id")
+
+            {:error, "Could not fetch by AP id"}
+        end
+    end
+  end
+
   @doc """
   Create an activity of type "Create"
   """
@@ -279,7 +302,7 @@ defmodule Mobilizon.Service.ActivityPub do
   """
   def follow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
     with {:ok, %Follower{url: follow_url}} <-
-           Actor.follow(followed, follower, activity_id, false),
+           Actors.follow(followed, follower, activity_id, false),
          activity_follow_id <-
            activity_id || follow_url,
          data <- make_follow_data(followed, follower, activity_follow_id),
@@ -298,7 +321,7 @@ defmodule Mobilizon.Service.ActivityPub do
   """
   @spec unfollow(Actor.t(), Actor.t(), String.t(), boolean()) :: {:ok, map()} | any()
   def unfollow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
-    with {:ok, %Follower{id: follow_id}} <- Actor.unfollow(followed, follower),
+    with {:ok, %Follower{id: follow_id}} <- Actors.unfollow(followed, follower),
          # We recreate the follow activity
          data <-
            make_follow_data(
@@ -466,7 +489,7 @@ defmodule Mobilizon.Service.ActivityPub do
   def make_actor_from_url(url, preload \\ false) do
     case fetch_and_prepare_actor_from_url(url) do
       {:ok, data} ->
-        Actors.insert_or_update_actor(data, preload)
+        Actors.upsert_actor(data, preload)
 
       # Request returned 410
       {:error, :actor_deleted} ->
@@ -529,7 +552,7 @@ defmodule Mobilizon.Service.ActivityPub do
 
     followers =
       if actor.followers_url in activity.recipients do
-        Actor.get_full_external_followers(actor)
+        Actors.get_full_external_followers(actor)
       else
         []
       end

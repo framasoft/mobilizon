@@ -31,7 +31,7 @@ defmodule MobilizonWeb.ActivityPubController do
 
   def following(conn, %{"name" => name, "page" => page}) do
     with {page, ""} <- Integer.parse(page),
-         %Actor{} = actor <- Actors.get_local_actor_by_name_with_everything(name) do
+         %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ActorView.render("following.json", %{actor: actor, page: page}))
@@ -39,7 +39,7 @@ defmodule MobilizonWeb.ActivityPubController do
   end
 
   def following(conn, %{"name" => name}) do
-    with %Actor{} = actor <- Actors.get_local_actor_by_name_with_everything(name) do
+    with %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ActorView.render("following.json", %{actor: actor}))
@@ -48,7 +48,7 @@ defmodule MobilizonWeb.ActivityPubController do
 
   def followers(conn, %{"name" => name, "page" => page}) do
     with {page, ""} <- Integer.parse(page),
-         %Actor{} = actor <- Actors.get_local_actor_by_name_with_everything(name) do
+         %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ActorView.render("followers.json", %{actor: actor, page: page}))
@@ -56,7 +56,7 @@ defmodule MobilizonWeb.ActivityPubController do
   end
 
   def followers(conn, %{"name" => name}) do
-    with %Actor{} = actor <- Actors.get_local_actor_by_name_with_everything(name) do
+    with %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ActorView.render("followers.json", %{actor: actor}))

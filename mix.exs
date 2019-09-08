@@ -184,9 +184,9 @@ defmodule Mobilizon.Mixfile do
       Models: [
         Mobilizon.Actors,
         Mobilizon.Actors.Actor,
-        Mobilizon.Actors.ActorOpennessEnum,
-        Mobilizon.Actors.ActorTypeEnum,
-        Mobilizon.Actors.MemberRoleEnum,
+        Mobilizon.Actors.ActorOpenness,
+        Mobilizon.Actors.ActorType,
+        Mobilizon.Actors.MemberRole,
         Mobilizon.Actors.Bot,
         Mobilizon.Actors.Follower,
         Mobilizon.Actors.Member,

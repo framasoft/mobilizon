@@ -24,7 +24,7 @@ defmodule Mobilizon.Service.ActivityPub.Relay do
 
   def follow(target_instance) do
     with %Actor{} = local_actor <- get_actor(),
-         {:ok, %Actor{} = target_actor} <- Actors.get_or_fetch_by_url(target_instance),
+         {:ok, %Actor{} = target_actor} <- ActivityPub.get_or_fetch_by_url(target_instance),
          {:ok, activity} <- Follows.follow(local_actor, target_actor) do
       Logger.info("Relay: followed instance #{target_instance}; id=#{activity.data["id"]}")
       {:ok, activity}
@@ -37,7 +37,7 @@ defmodule Mobilizon.Service.ActivityPub.Relay do
 
   def unfollow(target_instance) do
     with %Actor{} = local_actor <- get_actor(),
-         {:ok, %Actor{} = target_actor} <- Actors.get_or_fetch_by_url(target_instance),
+         {:ok, %Actor{} = target_actor} <- ActivityPub.get_or_fetch_by_url(target_instance),
          {:ok, activity} <- Follows.unfollow(local_actor, target_actor) do
       Logger.info("Relay: unfollowed instance #{target_instance}: id=#{activity.data["id"]}")
       {:ok, activity}
@@ -50,7 +50,7 @@ defmodule Mobilizon.Service.ActivityPub.Relay do
 
   def accept(target_instance) do
     with %Actor{} = local_actor <- get_actor(),
-         {:ok, %Actor{} = target_actor} <- Actors.get_or_fetch_by_url(target_instance),
+         {:ok, %Actor{} = target_actor} <- ActivityPub.get_or_fetch_by_url(target_instance),
          {:ok, activity} <- Follows.accept(target_actor, local_actor) do
       {:ok, activity}
     end
@@ -58,7 +58,7 @@ defmodule Mobilizon.Service.ActivityPub.Relay do
 
   #  def reject(target_instance) do
   #    with %Actor{} = local_actor <- get_actor(),
-  #         {:ok, %Actor{} = target_actor} <- Actors.get_or_fetch_by_url(target_instance),
+  #         {:ok, %Actor{} = target_actor} <- Activity.get_or_fetch_by_url(target_instance),
   #         {:ok, activity} <- Follows.reject(target_actor, local_actor) do
   #      {:ok, activity}
   #    end

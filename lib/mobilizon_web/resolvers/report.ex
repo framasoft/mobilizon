@@ -91,7 +91,7 @@ defmodule MobilizonWeb.Resolvers.Report do
       when is_moderator(role) do
     with {:is_owned, %Actor{}} <- User.owns_actor(user, moderator_id),
          %Report{} = report <- Reports.get_report(report_id),
-         %Actor{} = moderator <- Actors.get_local_actor_with_everything(moderator_id),
+         %Actor{} = moderator <- Actors.get_local_actor_with_preload(moderator_id),
          {:ok, %Note{} = note} <-
            MobilizonWeb.API.Reports.create_report_note(report, moderator, content) do
       {:ok, note}
@@ -106,7 +106,7 @@ defmodule MobilizonWeb.Resolvers.Report do
       when is_moderator(role) do
     with {:is_owned, %Actor{}} <- User.owns_actor(user, moderator_id),
          %Note{} = note <- Reports.get_note(note_id),
-         %Actor{} = moderator <- Actors.get_local_actor_with_everything(moderator_id),
+         %Actor{} = moderator <- Actors.get_local_actor_with_preload(moderator_id),
          {:ok, %Note{} = note} <-
            MobilizonWeb.API.Reports.delete_report_note(note, moderator) do
       {:ok, %{id: note.id}}

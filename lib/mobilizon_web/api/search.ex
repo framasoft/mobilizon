@@ -1,20 +1,21 @@
 defmodule MobilizonWeb.API.Search do
   @moduledoc """
-  API for Search
+  API for search.
   """
-  alias Mobilizon.Service.ActivityPub
+
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Actors.ActorType
   alias Mobilizon.Events
-  alias Mobilizon.Events.{Event, Comment}
+  alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Storage.Page
 
   require Logger
 
   @doc """
-  Search actors
+  Searches actors.
   """
-  @spec search_actors(String.t(), integer(), integer(), String.t()) ::
-          {:ok, %{total: integer(), elements: list(Actor.t())}} | {:error, any()}
+  @spec search_actors(String.t(), integer | nil, integer | nil, ActorType.t()) ::
+          {:ok, Page.t()} | {:error, String.t()}
   def search_actors(search, page \\ 1, limit \\ 10, result_type) do
     search = String.trim(search)
 
@@ -22,31 +23,33 @@ defmodule MobilizonWeb.API.Search do
       search == "" ->
         {:error, "Search can't be empty"}
 
-      # Some URLs could be domain.tld/@username, so keep this condition above handle_search? function
-      url_search?(search) ->
-        # If this is not an actor, skip
+      # Some URLs could be domain.tld/@username, so keep this condition above
+      # the `is_handle` function
+      is_url(search) ->
+        # skip, if it's not an actor
         case process_from_url(search) do
-          %{:total => total, :elements => [%Actor{}] = elements} ->
-            {:ok, %{total: total, elements: elements}}
+          %Page{total: _total, elements: _elements} = page ->
+            {:ok, page}
 
           _ ->
             {:ok, %{total: 0, elements: []}}
         end
 
-      handle_search?(search) ->
+      is_handle(search) ->
         {:ok, process_from_username(search)}
 
       true ->
-        {:ok,
-         Actors.find_and_count_actors_by_username_or_name(search, [result_type], page, limit)}
+        page = Actors.build_actors_by_username_or_name_page(search, [result_type], page, limit)
+
+        {:ok, page}
     end
   end
 
   @doc """
   Search events
   """
-  @spec search_events(String.t(), integer(), integer()) ::
-          {:ok, %{total: integer(), elements: list(Event.t())}} | {:error, any()}
+  @spec search_events(String.t(), integer | nil, integer | nil) ::
+          {:ok, Page.t()} | {:error, String.t()}
   def search_events(search, page \\ 1, limit \\ 10) do
     search = String.trim(search)
 
@@ -54,11 +57,11 @@ defmodule MobilizonWeb.API.Search do
       search == "" ->
         {:error, "Search can't be empty"}
 
-      url_search?(search) ->
-        # If this is not an event, skip
+      is_url(search) ->
+        # skip, if it's w not an actor
         case process_from_url(search) do
-          {total = total, [%Event{} = elements]} ->
-            {:ok, %{total: total, elements: elements}}
+          %Page{total: _total, elements: _elements} = page ->
+            {:ok, page}
 
           _ ->
             {:ok, %{total: 0, elements: []}}
@@ -70,43 +73,36 @@ defmodule MobilizonWeb.API.Search do
   end
 
   # If the search string is an username
-  @spec process_from_username(String.t()) :: %{total: integer(), elements: [Actor.t()]}
+  @spec process_from_username(String.t()) :: Page.t()
   defp process_from_username(search) do
     case ActivityPub.find_or_make_actor_from_nickname(search) do
       {:ok, actor} ->
-        %{total: 1, elements: [actor]}
+        %Page{total: 1, elements: [actor]}
 
       {:error, _err} ->
         Logger.debug(fn -> "Unable to find or make actor '#{search}'" end)
-        %{total: 0, elements: []}
+
+        %Page{total: 0, elements: []}
     end
   end
 
   # If the search string is an URL
-  @spec process_from_url(String.t()) :: %{
-          total: integer(),
-          elements: [Actor.t() | Event.t() | Comment.t()]
-        }
+  @spec process_from_url(String.t()) :: Page.t()
   defp process_from_url(search) do
     case ActivityPub.fetch_object_from_url(search) do
       {:ok, object} ->
-        %{total: 1, elements: [object]}
+        %Page{total: 1, elements: [object]}
 
       {:error, _err} ->
         Logger.debug(fn -> "Unable to find or make object from URL '#{search}'" end)
-        %{total: 0, elements: []}
+
+        %Page{total: 0, elements: []}
     end
   end
 
-  # Is the search an URL search?
-  @spec url_search?(String.t()) :: boolean
-  defp url_search?(search) do
-    String.starts_with?(search, "https://") or String.starts_with?(search, "http://")
-  end
+  @spec is_url(String.t()) :: boolean
+  defp is_url(search), do: String.starts_with?(search, ["http://", "https://"])
 
-  # Is the search an handle search?
-  @spec handle_search?(String.t()) :: boolean
-  defp handle_search?(search) do
-    String.match?(search, ~r/@/)
-  end
+  @spec is_handle(String.t()) :: boolean
+  defp is_handle(search), do: String.match?(search, ~r/@/)
 end

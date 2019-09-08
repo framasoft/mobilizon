@@ -76,7 +76,7 @@ defmodule MobilizonWeb.Resolvers.Group do
       ) do
     with {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
          {:is_owned, %Actor{}} <- User.owns_actor(user, actor_id),
-         {:ok, %Member{} = member} <- Member.get_member(actor_id, group.id),
+         {:ok, %Member{} = member} <- Actors.get_member(actor_id, group.id),
          {:is_admin, true} <- Member.is_administrator(member),
          group <- Actors.delete_group!(group) do
       {:ok, %{id: group.id}}
@@ -109,9 +109,9 @@ defmodule MobilizonWeb.Resolvers.Group do
       ) do
     with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
          {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
-         {:error, :member_not_found} <- Member.get_member(actor.id, group.id),
+         {:error, :member_not_found} <- Actors.get_member(actor.id, group.id),
          {:is_able_to_join, true} <- {:is_able_to_join, Member.can_be_joined(group)},
-         role <- Mobilizon.Actors.get_default_member_role(group),
+         role <- Member.get_default_member_role(group),
          {:ok, _} <- Actors.create_member(%{parent_id: group.id, actor_id: actor.id, role: role}) do
       {
         :ok,
@@ -149,7 +149,7 @@ defmodule MobilizonWeb.Resolvers.Group do
         %{context: %{current_user: user}}
       ) do
     with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
-         {:ok, %Member{} = member} <- Member.get_member(actor.id, group_id),
+         {:ok, %Member{} = member} <- Actors.get_member(actor.id, group_id),
          {:only_administrator, false} <-
            {:only_administrator, check_that_member_is_not_last_administrator(group_id, actor_id)},
          {:ok, _} <-
@@ -176,7 +176,7 @@ defmodule MobilizonWeb.Resolvers.Group do
   # and that it's the actor requesting leaving the group we return true
   @spec check_that_member_is_not_last_administrator(integer(), integer()) :: boolean()
   defp check_that_member_is_not_last_administrator(group_id, actor_id) do
-    case Member.list_administrator_members_for_group(group_id) do
+    case Actors.list_administrator_members_for_group(group_id) do
       [%Member{actor: %Actor{id: member_actor_id}}] ->
         actor_id == member_actor_id
 

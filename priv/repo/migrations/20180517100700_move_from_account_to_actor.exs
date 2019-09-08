@@ -18,7 +18,7 @@ defmodule Mobilizon.Repo.Migrations.MoveFromAccountToActor do
 
     drop(table("groups"))
     rename(table("accounts"), to: table("actors"))
-    Mobilizon.Actors.ActorTypeEnum.create_type()
+    Mobilizon.Actors.ActorType.create_type()
     rename(table("actors"), :username, to: :name)
     rename(table("actors"), :description, to: :summary)
     rename(table("actors"), :display_name, to: :preferred_username)
@@ -86,7 +86,7 @@ defmodule Mobilizon.Repo.Migrations.MoveFromAccountToActor do
       modify(:display_name, :string, null: true)
     end
 
-    Mobilizon.Actors.ActorTypeEnum.drop_type()
+    Mobilizon.Actors.ActorType.drop_type()
 
     rename(table("events"), :organizer_actor_id, to: :organizer_account_id)
 

@@ -2,12 +2,13 @@ defmodule MobilizonWeb.Resolvers.Person do
   @moduledoc """
   Handles the person-related GraphQL calls
   """
+
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.{Actor, Member}
-  alias Mobilizon.Users.User
-  alias Mobilizon.Users
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Users
+  alias Mobilizon.Users.User
 
   @doc """
   Find a person
@@ -206,7 +207,7 @@ defmodule MobilizonWeb.Resolvers.Person do
   # We check that the actor is not the last administrator/creator of a group
   @spec last_admin_of_a_group?(integer()) :: boolean()
   defp last_admin_of_a_group?(actor_id) do
-    length(Member.list_group_id_where_last_administrator(actor_id)) > 0
+    length(Actors.list_group_id_where_last_administrator(actor_id)) > 0
   end
 
   @spec proxify_avatar(Actor.t()) :: Actor.t()

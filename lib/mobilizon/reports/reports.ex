@@ -22,17 +22,6 @@ defmodule Mobilizon.Reports do
   def query(queryable, _params), do: queryable
 
   @doc """
-  Returns the list of reports.
-  """
-  @spec list_reports(integer | nil, integer | nil, atom, atom) :: [Report.t()]
-  def list_reports(page \\ nil, limit \\ nil, sort \\ :updated_at, direction \\ :asc) do
-    list_reports_query()
-    |> Page.paginate(page, limit)
-    |> sort(sort, direction)
-    |> Repo.all()
-  end
-
-  @doc """
   Gets a single report.
   """
   @spec get_report(integer | String.t()) :: Report.t() | nil
@@ -90,17 +79,16 @@ defmodule Mobilizon.Reports do
   Deletes a report.
   """
   @spec delete_report(Report.t()) :: {:ok, Report.t()} | {:error, Ecto.Changeset.t()}
-  def delete_report(%Report{} = report) do
-    Repo.delete(report)
-  end
+  def delete_report(%Report{} = report), do: Repo.delete(report)
 
   @doc """
-  Returns the list of notes for a report.
+  Returns the list of reports.
   """
-  @spec list_notes_for_report(Report.t()) :: [Note.t()]
-  def list_notes_for_report(%Report{id: report_id}) do
-    report_id
-    |> list_notes_for_report_query()
+  @spec list_reports(integer | nil, integer | nil, atom, atom) :: [Report.t()]
+  def list_reports(page \\ nil, limit \\ nil, sort \\ :updated_at, direction \\ :asc) do
+    list_reports_query()
+    |> Page.paginate(page, limit)
+    |> sort(sort, direction)
     |> Repo.all()
   end
 
@@ -134,8 +122,21 @@ defmodule Mobilizon.Reports do
   Deletes a note.
   """
   @spec delete_note(Note.t()) :: {:ok, Note.t()} | {:error, Ecto.Changeset.t()}
-  def delete_note(%Note{} = note) do
-    Repo.delete(note)
+  def delete_note(%Note{} = note), do: Repo.delete(note)
+
+  @doc """
+  Returns the list of notes for a report.
+  """
+  @spec list_notes_for_report(Report.t()) :: [Note.t()]
+  def list_notes_for_report(%Report{id: report_id}) do
+    report_id
+    |> list_notes_for_report_query()
+    |> Repo.all()
+  end
+
+  @spec report_by_url_query(String.t()) :: Ecto.Query.t()
+  defp report_by_url_query(url) do
+    from(r in Report, where: r.uri == ^url)
   end
 
   @spec list_reports_query :: Ecto.Query.t()
@@ -144,11 +145,6 @@ defmodule Mobilizon.Reports do
       r in Report,
       preload: [:reported, :reporter, :manager, :event, :comments, :notes]
     )
-  end
-
-  @spec report_by_url_query(String.t()) :: Ecto.Query.t()
-  defp report_by_url_query(url) do
-    from(r in Report, where: r.uri == ^url)
   end
 
   @spec list_notes_for_report_query(integer | String.t()) :: Ecto.Query.t()

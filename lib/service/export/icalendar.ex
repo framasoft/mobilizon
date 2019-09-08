@@ -44,7 +44,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
   """
   @spec export_public_actor(Actor.t()) :: String.t()
   def export_public_actor(%Actor{} = actor) do
-    with true <- Actor.public_visibility?(actor),
+    with true <- Actor.is_public_visibility(actor),
          {:ok, events, _} <- Events.get_public_events_for_actor(actor) do
       {:ok, %ICalendar{events: events |> Enum.map(&do_export_event/1)} |> ICalendar.to_ics()}
     end

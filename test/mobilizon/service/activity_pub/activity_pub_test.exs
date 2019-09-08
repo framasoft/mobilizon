@@ -11,7 +11,6 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
   alias Mobilizon.Events
   alias Mobilizon.Events.Event
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Actors
   alias Mobilizon.Service.HTTPSignatures.Signature
   alias Mobilizon.Service.ActivityPub
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
@@ -48,7 +47,7 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
     test "returns an actor from url" do
       use_cassette "activity_pub/fetch_framapiaf.org_users_tcit" do
         assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"}} =
-                 Actors.get_or_fetch_by_url("https://framapiaf.org/users/tcit")
+                 ActivityPub.get_or_fetch_by_url("https://framapiaf.org/users/tcit")
       end
     end
   end

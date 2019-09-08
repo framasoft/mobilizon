@@ -101,9 +101,7 @@ defmodule Mobilizon.Users do
   Deletes an user.
   """
   @spec delete_user(User.t()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
-  def delete_user(%User{} = user) do
-    Repo.delete(user)
-  end
+  def delete_user(%User{} = user), do: Repo.delete(user)
 
   @doc """
   Get an user with its actors
@@ -219,9 +217,7 @@ defmodule Mobilizon.Users do
   Counts users.
   """
   @spec count_users :: integer
-  def count_users do
-    Repo.one(from(u in User, select: count(u.id)))
-  end
+  def count_users, do: Repo.one(from(u in User, select: count(u.id)))
 
   @doc """
   Authenticate an user.
