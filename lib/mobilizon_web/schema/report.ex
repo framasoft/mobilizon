@@ -3,6 +3,8 @@ defmodule MobilizonWeb.Schema.ReportType do
   Schema representation for User
   """
   use Absinthe.Schema.Notation
+  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+  alias Mobilizon.Reports
 
   alias MobilizonWeb.Resolvers.Report
 
@@ -17,6 +19,14 @@ defmodule MobilizonWeb.Schema.ReportType do
     field(:reporter, :actor, description: "The actor that created the report")
     field(:event, :event, description: "The event that is being reported")
     field(:comments, list_of(:comment), description: "The comments that are reported")
+
+    field(:notes, list_of(:report_note),
+      description: "The notes made on the event",
+      resolve: dataloader(Reports)
+    )
+
+    field(:inserted_at, :datetime, description: "When the report was created")
+    field(:updated_at, :datetime, description: "When the report was updated")
   end
 
   @desc "A report note object"
@@ -24,8 +34,14 @@ defmodule MobilizonWeb.Schema.ReportType do
     interfaces([:action_log_object])
     field(:id, :id, description: "The internal ID of the report note")
     field(:content, :string, description: "The content of the note")
-    field(:moderator, :actor, description: "The moderator who added the note")
+
+    field(:moderator, :actor,
+      description: "The moderator who added the note",
+      resolve: dataloader(Reports)
+    )
+
     field(:report, :report, description: "The report on which this note is added")
+    field(:inserted_at, :datetime, description: "When the report note was created")
   end
 
   @desc "The list of possible statuses for a report object"
@@ -40,6 +56,7 @@ defmodule MobilizonWeb.Schema.ReportType do
     field :reports, list_of(:report) do
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
+      arg(:status, :report_status, default_value: :open)
       resolve(&Report.list_reports/3)
     end
 
@@ -53,7 +70,7 @@ defmodule MobilizonWeb.Schema.ReportType do
   object :report_mutations do
     @desc "Create a report"
     field :create_report, type: :report do
-      arg(:report_content, :string)
+      arg(:content, :string)
       arg(:reporter_actor_id, non_null(:id))
       arg(:reported_actor_id, non_null(:id))
       arg(:event_id, :id, default_value: nil)

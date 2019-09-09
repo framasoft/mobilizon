@@ -57,6 +57,21 @@ defmodule Mobilizon.Application do
       worker(
         Cachex,
         [
+          :statistics,
+          [
+            limit: 10,
+            expiration:
+              expiration(
+                default: :timer.minutes(60),
+                interval: :timer.seconds(60)
+              )
+          ]
+        ],
+        id: :cache_statistics
+      ),
+      worker(
+        Cachex,
+        [
           :activity_pub,
           [
             limit: 2500,

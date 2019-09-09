@@ -50,8 +50,8 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
 
       assert json_response(res, 200)["errors"] == nil
       assert json_response(res, 200)["data"]["joinEvent"]["role"] == "participant"
-      assert json_response(res, 200)["data"]["joinEvent"]["event"]["id"] == event.id
-      assert json_response(res, 200)["data"]["joinEvent"]["actor"]["id"] == actor.id
+      assert json_response(res, 200)["data"]["joinEvent"]["event"]["id"] == to_string(event.id)
+      assert json_response(res, 200)["data"]["joinEvent"]["actor"]["id"] == to_string(actor.id)
 
       mutation = """
          mutation {
@@ -119,7 +119,7 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "Event with this ID 1042 doesn't exist"
+               "Event with this ID \"1042\" doesn't exist"
     end
 
     test "actor_leave_event/3 should delete a participant from an event", %{
@@ -153,8 +153,10 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["leaveEvent"]["event"]["id"] == event.id
-      assert json_response(res, 200)["data"]["leaveEvent"]["actor"]["id"] == participant.actor.id
+      assert json_response(res, 200)["data"]["leaveEvent"]["event"]["id"] == to_string(event.id)
+
+      assert json_response(res, 200)["data"]["leaveEvent"]["actor"]["id"] ==
+               to_string(participant.actor.id)
 
       query = """
       {

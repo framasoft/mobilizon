@@ -25,7 +25,7 @@ defmodule MobilizonWeb.API.ReportTest do
                Reports.report(%{
                  reporter_actor_id: reporter_id,
                  reported_actor_id: reported_id,
-                 report_content: comment,
+                 content: comment,
                  event_id: event_id,
                  comments_ids: []
                })
@@ -58,7 +58,7 @@ defmodule MobilizonWeb.API.ReportTest do
                Reports.report(%{
                  reporter_actor_id: reporter_id,
                  reported_actor_id: reported_id,
-                 report_content: comment,
+                 content: comment,
                  event_id: nil,
                  comments_ids: [comment_1_id, comment_2_id]
                })
@@ -92,7 +92,7 @@ defmodule MobilizonWeb.API.ReportTest do
                Reports.report(%{
                  reporter_actor_id: reporter_id,
                  reported_actor_id: reported_id,
-                 report_content: comment,
+                 content: comment,
                  event_id: nil,
                  comments_ids: [comment_1_id, comment_2_id],
                  forward: true
@@ -121,7 +121,7 @@ defmodule MobilizonWeb.API.ReportTest do
                Reports.report(%{
                  reporter_actor_id: reporter_id,
                  reported_actor_id: reported_id,
-                 report_content: "This is not a nice thing",
+                 content: "This is not a nice thing",
                  event_id: nil,
                  comments_ids: [comment_1_id],
                  forward: true
@@ -147,7 +147,7 @@ defmodule MobilizonWeb.API.ReportTest do
                Reports.report(%{
                  reporter_actor_id: reporter_id,
                  reported_actor_id: reported_id,
-                 report_content: "This is not a nice thing",
+                 content: "This is not a nice thing",
                  event_id: nil,
                  comments_ids: [comment_1_id],
                  forward: true

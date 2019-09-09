@@ -53,8 +53,8 @@
               </p>
             </div>
             <div class="column sidebar">
-              <div class="field has-addons" v-if="actorIsOrganizer()">
-                <p class="control">
+              <div class="field has-addons">
+                <p class="control" v-if="actorIsOrganizer()">
                   <router-link
                           class="button"
                           :to="{ name: 'EditEvent', params: {eventId: event.uuid}}"
@@ -62,9 +62,14 @@
                     <translate>Edit</translate>
                   </router-link>
                 </p>
-                <p class="control">
+                <p class="control" v-if="actorIsOrganizer()">
                   <a class="button is-danger" @click="openDeleteEventModal()">
                     <translate>Delete</translate>
+                  </a>
+                </p>
+                <p class="control">
+                  <a class="button is-danger" @click="isReportModalActive = true">
+                    <translate>Report</translate>
                   </a>
                 </p>
               </div>
@@ -224,6 +229,9 @@
           </div>
         </div>
       </section>
+      <b-modal :active.sync="isReportModalActive" has-modal-card>
+        <report-modal :on-confirm="reportEvent" title="Report this event" :outside-domain="event.organizerActor.domain" />
+      </b-modal>
       </div>
     </div>
 </template>
@@ -241,6 +249,9 @@ import BIcon from 'buefy/src/components/icon/Icon.vue';
 import EventCard from '@/components/Event/EventCard.vue';
 import EventFullDate from '@/components/Event/EventFullDate.vue';
 import ActorLink from '@/components/Account/ActorLink.vue';
+import ReportModal from '@/components/Report/ReportModal.vue';
+import { IReport } from '@/types/report.model';
+import { CREATE_REPORT } from '@/graphql/report';
 
 @Component({
   components: {
@@ -249,6 +260,7 @@ import ActorLink from '@/components/Account/ActorLink.vue';
     EventCard,
     BIcon,
     DateCalendarIcon,
+    ReportModal,
     // tslint:disable:space-in-parens
     'map-leaflet': () => import(/* webpackChunkName: "map" */ '@/components/Map.vue'),
     // tslint:enable
@@ -274,6 +286,7 @@ export default class Event extends Vue {
   loggedPerson!: IPerson;
   validationSent: boolean = false;
   showMap: boolean = false;
+  isReportModalActive: boolean = false;
 
   EventVisibility = EventVisibility;
 
@@ -285,22 +298,45 @@ export default class Event extends Vue {
       type: 'is-danger',
       title: this.$gettext('Delete event'),
       message: this.$gettextInterpolate(
-        `${prefix}` +
-        'Are you sure you want to delete this event? This action cannot be reverted. <br /><br />' +
-        'To confirm, type your event title "%{eventTitle}"',
-        { participants: this.event.participants.length, eventTitle: this.event.title },
+              `${prefix}` +
+              'Are you sure you want to delete this event? This action cannot be reverted. <br /><br />' +
+              'To confirm, type your event title "%{eventTitle}"',
+              { participants: this.event.participants.length, eventTitle: this.event.title },
       ),
       confirmText: this.$gettextInterpolate(
-        'Delete %{eventTitle}',
-        { eventTitle: this.event.title },
+              'Delete %{eventTitle}',
+              { eventTitle: this.event.title },
       ),
       inputAttrs: {
         placeholder: this.event.title,
         pattern: this.event.title,
       },
-
       onConfirm: () => this.deleteEvent(),
     });
+  }
+
+  async reportEvent(content: string, forward: boolean) {
+    this.isReportModalActive = false;
+    const eventTitle = this.event.title;
+    try {
+      await this.$apollo.mutate<IReport>({
+        mutation: CREATE_REPORT,
+        variables: {
+          eventId: this.event.id,
+          reporterActorId: this.loggedPerson.id,
+          reportedActorId: this.event.organizerActor.id,
+          content,
+        },
+      });
+      this.$buefy.notification.open({
+        message: this.$gettextInterpolate('Event %{eventTitle} reported', { eventTitle }),
+        type: 'is-success',
+        position: 'is-bottom-right',
+        duration: 5000,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async joinEvent() {
@@ -408,7 +444,7 @@ export default class Event extends Vue {
       await this.$apollo.mutate<IParticipant>({
         mutation: DELETE_EVENT,
         variables: {
-          id: this.event.id,
+          eventId: this.event.id,
           actorId: this.loggedPerson.id,
         },
       });

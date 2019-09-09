@@ -22,7 +22,8 @@ defmodule Mobilizon.Admin do
   def list_action_logs(page \\ nil, limit \\ nil) do
     from(
       r in ActionLog,
-      preload: [:actor]
+      preload: [:actor],
+      order_by: [desc: :id]
     )
     |> paginate(page, limit)
     |> Repo.all()

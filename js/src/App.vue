@@ -11,7 +11,7 @@
 <script lang="ts">
 import NavBar from '@/components/NavBar.vue';
 import { Component, Vue } from 'vue-property-decorator';
-import { AUTH_ACCESS_TOKEN, AUTH_USER_ACTOR, AUTH_USER_EMAIL, AUTH_USER_ID } from '@/constants';
+import { AUTH_ACCESS_TOKEN, AUTH_USER_ACTOR, AUTH_USER_EMAIL, AUTH_USER_ID, AUTH_USER_ROLE } from '@/constants';
 import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
 import { ICurrentUser } from '@/types/current-user.model';
 import Footer from '@/components/Footer.vue';
@@ -46,14 +46,16 @@ export default class App extends Vue {
     const userId = localStorage.getItem(AUTH_USER_ID);
     const userEmail = localStorage.getItem(AUTH_USER_EMAIL);
     const accessToken = localStorage.getItem(AUTH_ACCESS_TOKEN);
+    const role = localStorage.getItem(AUTH_USER_ROLE);
 
-    if (userId && userEmail && accessToken) {
+    if (userId && userEmail && accessToken && role) {
       return this.$apollo.mutate({
         mutation: UPDATE_CURRENT_USER_CLIENT,
         variables: {
           id: userId,
           email: userEmail,
           isLoggedIn: true,
+          role,
         },
       });
     }
@@ -74,6 +76,7 @@ export default class App extends Vue {
 @import "~bulma/sass/components/navbar.sass";
 @import "~bulma/sass/components/pagination.sass";
 @import "~bulma/sass/components/dropdown.sass";
+@import "~bulma/sass/components/breadcrumb.sass";
 @import "~bulma/sass/elements/box.sass";
 @import "~bulma/sass/elements/button.sass";
 @import "~bulma/sass/elements/container.sass";
@@ -84,6 +87,7 @@ export default class App extends Vue {
 @import "~bulma/sass/elements/tag.sass";
 @import "~bulma/sass/elements/title.sass";
 @import "~bulma/sass/elements/notification";
+@import "~bulma/sass/elements/table";
 @import "~bulma/sass/grid/_all.sass";
 @import "~bulma/sass/layout/_all.sass";
 
@@ -100,6 +104,7 @@ export default class App extends Vue {
 @import "~buefy/src/scss/components/upload";
 @import "~buefy/src/scss/components/radio";
 @import "~buefy/src/scss/components/switch";
+@import "~buefy/src/scss/components/table";
 
 .router-enter-active,
 .router-leave-active {

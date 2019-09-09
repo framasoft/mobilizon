@@ -17,6 +17,8 @@ defmodule Mobilizon.Reports.Report do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Reports.Note
 
+  @timestamps_opts [type: :utc_datetime]
+
   @derive {Jason.Encoder, only: [:status, :uri]}
   schema "reports" do
     field(:content, :string)
@@ -48,7 +50,7 @@ defmodule Mobilizon.Reports.Report do
   def changeset(report, attrs) do
     report
     |> cast(attrs, [:content, :status, :uri, :reported_id, :reporter_id, :manager_id, :event_id])
-    |> validate_required([:content, :uri, :reported_id, :reporter_id])
+    |> validate_required([:uri, :reported_id, :reporter_id])
   end
 
   def creation_changeset(report, attrs) do

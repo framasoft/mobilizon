@@ -7,7 +7,8 @@ mutation Login($email: String!, $password: String!) {
     refreshToken,
     user {
       id,
-      email
+      email,
+      role
     }
   },
 }

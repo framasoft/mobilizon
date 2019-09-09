@@ -1,3 +1,11 @@
+import EctoEnum
+
+defenum(Mobilizon.Admin.ActionLogAction, [
+  "update",
+  "create",
+  "delete"
+])
+
 defmodule Mobilizon.Admin.ActionLog do
   @moduledoc """
   ActionLog entity schema
@@ -5,11 +13,13 @@ defmodule Mobilizon.Admin.ActionLog do
   use Ecto.Schema
   import Ecto.Changeset
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Admin.ActionLogAction
 
+  @timestamps_opts [type: :utc_datetime]
   @required_attrs [:action, :target_type, :target_id, :changes, :actor_id]
 
   schema "admin_action_logs" do
-    field(:action, :string)
+    field(:action, ActionLogAction)
     field(:target_type, :string)
     field(:target_id, :integer)
     field(:changes, :map)

@@ -4,7 +4,7 @@ defmodule MobilizonWeb.Schema do
   """
   use Absinthe.Schema
 
-  alias Mobilizon.{Actors, Events, Users, Addresses, Media}
+  alias Mobilizon.{Actors, Events, Users, Addresses, Media, Reports}
   alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Events.{Event, Comment, Participant}
 
@@ -26,7 +26,7 @@ defmodule MobilizonWeb.Schema do
 
   @desc "A struct containing the id of the deleted object"
   object :deleted_object do
-    field(:id, :integer)
+    field(:id, :id)
   end
 
   @desc "A JWT and the associated user ID"
@@ -44,7 +44,7 @@ defmodule MobilizonWeb.Schema do
   Represents a notification for an user
   """
   object :notification do
-    field(:id, :integer, description: "The notification ID")
+    field(:id, :id, description: "The notification ID")
     field(:user, :user, description: "The user to transmit the notification to")
     field(:actor, :actor, description: "The notification target profile")
 
@@ -94,6 +94,7 @@ defmodule MobilizonWeb.Schema do
       |> Dataloader.add_source(Events, Events.data())
       |> Dataloader.add_source(Addresses, Addresses.data())
       |> Dataloader.add_source(Media, Media.data())
+      |> Dataloader.add_source(Reports, Reports.data())
 
     Map.put(ctx, :loader, loader)
   end

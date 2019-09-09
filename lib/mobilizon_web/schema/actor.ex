@@ -13,7 +13,7 @@ defmodule MobilizonWeb.Schema.ActorInterface do
 
   @desc "An ActivityPub actor"
   interface :actor do
-    field(:id, :integer, description: "Internal ID for this actor")
+    field(:id, :id, description: "Internal ID for this actor")
     field(:url, :string, description: "The ActivityPub actor's URL")
     field(:type, :actor_type, description: "The type of Actor (Person, Group,…)")
     field(:name, :string, description: "The actor's displayed name")

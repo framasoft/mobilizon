@@ -14,7 +14,7 @@ defmodule MobilizonWeb.Schema.Actors.GroupType do
   object :group do
     interfaces([:actor])
 
-    field(:id, :integer, description: "Internal ID for this group")
+    field(:id, :id, description: "Internal ID for this group")
     field(:url, :string, description: "The ActivityPub actor's URL")
     field(:type, :actor_type, description: "The type of Actor (Person, Group,…)")
     field(:name, :string, description: "The actor's displayed name")
@@ -96,9 +96,7 @@ defmodule MobilizonWeb.Schema.Actors.GroupType do
     field :create_group, :group do
       arg(:preferred_username, non_null(:string), description: "The name for the group")
 
-      arg(:creator_actor_id, non_null(:integer),
-        description: "The identity that creates the group"
-      )
+      arg(:creator_actor_id, non_null(:id), description: "The identity that creates the group")
 
       arg(:name, :string, description: "The displayed name for the group")
       arg(:summary, :string, description: "The summary for the group", default_value: "")
@@ -118,8 +116,8 @@ defmodule MobilizonWeb.Schema.Actors.GroupType do
 
     @desc "Delete a group"
     field :delete_group, :deleted_object do
-      arg(:group_id, non_null(:integer))
-      arg(:actor_id, non_null(:integer))
+      arg(:group_id, non_null(:id))
+      arg(:actor_id, non_null(:id))
 
       resolve(&Group.delete_group/3)
     end

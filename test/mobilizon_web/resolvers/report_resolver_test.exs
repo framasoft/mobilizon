@@ -21,7 +21,7 @@ defmodule MobilizonWeb.Resolvers.ReportResolverTest do
               reporter_actor_id: #{reporter.id},
               reported_actor_id: #{reported.id},
               event_id: #{event.id},
-              report_content: "This is an issue"
+              content: "This is an issue"
             ) {
                 content,
                 reporter {
@@ -43,8 +43,10 @@ defmodule MobilizonWeb.Resolvers.ReportResolverTest do
       assert json_response(res, 200)["errors"] == nil
       assert json_response(res, 200)["data"]["createReport"]["content"] == "This is an issue"
       assert json_response(res, 200)["data"]["createReport"]["status"] == "OPEN"
-      assert json_response(res, 200)["data"]["createReport"]["event"]["id"] == event.id
-      assert json_response(res, 200)["data"]["createReport"]["reporter"]["id"] == reporter.id
+      assert json_response(res, 200)["data"]["createReport"]["event"]["id"] == to_string(event.id)
+
+      assert json_response(res, 200)["data"]["createReport"]["reporter"]["id"] ==
+               to_string(reporter.id)
     end
 
     test "create_report/3 without being connected doesn't create any report", %{conn: conn} do
@@ -55,7 +57,7 @@ defmodule MobilizonWeb.Resolvers.ReportResolverTest do
             createReport(
               reported_actor_id: #{reported.id},
               reporter_actor_id: 5,
-              report_content: "This is an issue"
+              content: "This is an issue"
             ) {
                 content
               }
@@ -109,7 +111,7 @@ defmodule MobilizonWeb.Resolvers.ReportResolverTest do
       assert json_response(res, 200)["data"]["updateReportStatus"]["status"] == "RESOLVED"
 
       assert json_response(res, 200)["data"]["updateReportStatus"]["reporter"]["id"] ==
-               report.reporter.id
+               to_string(report.reporter.id)
     end
 
     test "create_report/3 without being connected doesn't create any report", %{conn: conn} do
@@ -172,9 +174,14 @@ defmodule MobilizonWeb.Resolvers.ReportResolverTest do
     test "get a list of reports", %{conn: conn} do
       %User{} = user_moderator = insert(:user, role: :moderator)
 
-      %Report{id: report_1_id} = insert(:report)
-      %Report{id: report_2_id} = insert(:report)
-      %Report{id: report_3_id} = insert(:report)
+      # Report don't hold millisecond information so we need to wait a bit
+      # between each insert to keep order
+      %Report{id: report_1_id} = insert(:report, content: "My content 1")
+      Process.sleep(1000)
+      %Report{id: report_2_id} = insert(:report, content: "My content 2")
+      Process.sleep(1000)
+      %Report{id: report_3_id} = insert(:report, content: "My content 3")
+      %Report{} = insert(:report, status: :closed)
 
       query = """
       {
@@ -182,7 +189,9 @@ defmodule MobilizonWeb.Resolvers.ReportResolverTest do
           id,
           reported {
             preferredUsername
-          }
+          },
+          content,
+          updatedAt
         }
       }
       """
@@ -196,7 +205,7 @@ defmodule MobilizonWeb.Resolvers.ReportResolverTest do
 
       assert json_response(res, 200)["data"]["reports"]
              |> Enum.map(fn report -> Map.get(report, "id") end) ==
-               Enum.map([report_1_id, report_2_id, report_3_id], &to_string/1)
+               Enum.map([report_3_id, report_2_id, report_1_id], &to_string/1)
 
       query = """
       {
@@ -360,7 +369,9 @@ defmodule MobilizonWeb.Resolvers.ReportResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["deleteReportNote"]["id"] == report_note_id
+
+      assert json_response(res, 200)["data"]["deleteReportNote"]["id"] ==
+               to_string(report_note_id)
     end
   end
 end

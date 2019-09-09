@@ -7,6 +7,7 @@ import App from '@/App.vue';
 import router from '@/router';
 import { apolloProvider } from './vue-apollo';
 import { NotifierPlugin } from '@/plugins/notifier';
+import filters from '@/filters';
 
 const translations = require('@/i18n/translations.json');
 
@@ -14,6 +15,7 @@ Vue.config.productionTip = false;
 
 Vue.use(Buefy);
 Vue.use(NotifierPlugin);
+Vue.use(filters);
 
 const language = (window.navigator as any).userLanguage || window.navigator.language;
 

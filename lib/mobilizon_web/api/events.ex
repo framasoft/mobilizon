@@ -135,4 +135,13 @@ defmodule MobilizonWeb.API.Events do
       }
     end
   end
+
+  @doc """
+  Trigger the deletion of an event
+
+  If the event is deleted by
+  """
+  def delete_event(%Event{} = event, federate \\ true) do
+    ActivityPub.delete(event, federate)
+  end
 end
