@@ -65,7 +65,7 @@ defmodule Mobilizon.Actors.Actor do
   ]
   @attrs @required_attrs ++ @optional_attrs
 
-  @update_required_attrs @required_attrs
+  @update_required_attrs @required_attrs -- [:url]
   @update_optional_attrs [:name, :summary, :manually_approves_followers, :user_id]
   @update_attrs @update_required_attrs ++ @update_optional_attrs
 
