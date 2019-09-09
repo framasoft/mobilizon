@@ -157,9 +157,7 @@ defmodule Mobilizon.ActorsTest do
           event = insert(:event, organizer_actor: actor)
 
           event_found_id =
-            Actors.get_actor_by_name_with_preload(
-              "#{actor.preferred_username}@#{actor.domain}"
-            ).organized_events
+            Actors.get_actor_by_name_with_preload("#{actor.preferred_username}@#{actor.domain}").organized_events
             |> hd
             |> Map.get(:id)
 

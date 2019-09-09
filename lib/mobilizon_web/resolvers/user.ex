@@ -112,7 +112,8 @@ defmodule MobilizonWeb.Resolvers.User do
   """
   @spec create_user(any(), map(), any()) :: tuple()
   def create_user(_parent, args, _resolution) do
-    with {:registrations_open, true} <- {:registrations_open, Config.instance_registrations_open?()},
+    with {:registrations_open, true} <-
+           {:registrations_open, Config.instance_registrations_open?()},
          {:ok, %User{} = user} <- Users.register(args) do
       Activation.send_confirmation_email(user)
       {:ok, user}

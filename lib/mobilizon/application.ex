@@ -93,8 +93,7 @@ defmodule Mobilizon.Application do
   def named_version, do: @name <> " " <> @version
 
   def user_agent do
-    info =
-      "#{MobilizonWeb.Endpoint.url()} <#{Config.get([:instance, :email], "")}>"
+    info = "#{MobilizonWeb.Endpoint.url()} <#{Config.get([:instance, :email], "")}>"
 
     named_version() <> "; " <> info
   end

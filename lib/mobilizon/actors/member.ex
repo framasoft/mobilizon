@@ -8,7 +8,7 @@ defmodule Mobilizon.Actors.Member do
   import Ecto.Changeset
 
   alias Mobilizon.Actors.{Actor, Member, MemberRole}
-  
+
   @type t :: %__MODULE__{
           role: MemberRole.t(),
           parent: Actor.t(),

@@ -16,16 +16,17 @@ defmodule Mobilizon.Service.HTTPSignatures.Signature do
   require Logger
 
   def key_id_to_actor_url(key_id) do
-    %{path: path} = uri =
+    %{path: path} =
+      uri =
       key_id
       |> URI.parse()
       |> Map.put(:fragment, nil)
 
     uri =
-      if not is_nil(path) do
-        Map.put(uri, :path, String.trim_trailing(path, "/publickey"))
-      else
+      if is_nil(path) do
         uri
+      else
+        Map.put(uri, :path, String.trim_trailing(path, "/publickey"))
       end
 
     URI.to_string(uri)

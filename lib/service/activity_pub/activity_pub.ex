@@ -113,7 +113,6 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
-
   @doc """
   Getting an actor from url, eventually creating it
   """
