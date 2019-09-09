@@ -63,7 +63,7 @@
                   </router-link>
                 </p>
                 <p class="control">
-                  <a class="button is-danger" @click="deleteEvent()">
+                  <a class="button is-danger" @click="openDeleteEventModal()">
                     <translate>Delete</translate>
                   </a>
                 </p>
@@ -277,29 +277,30 @@ export default class Event extends Vue {
 
   EventVisibility = EventVisibility;
 
-  async deleteEvent() {
-    const router = this.$router;
-    const eventTitle = this.event.title;
+  async openDeleteEventModal () {
+    const participantsLength = this.event.participants.length;
+    const prefix = participantsLength ? 'There are %{participants} participants. ' : '';
 
-    try {
-      await this.$apollo.mutate<IParticipant>({
-        mutation: DELETE_EVENT,
-        variables: {
-          id: this.event.id,
-          actorId: this.loggedPerson.id,
-        },
-      });
+    this.$buefy.dialog.prompt({
+      type: 'is-danger',
+      title: this.$gettext('Delete event'),
+      message: this.$gettextInterpolate(
+        `${prefix}` +
+        'Are you sure you want to delete this event? This action cannot be reverted. <br /><br />' +
+        'To confirm, type your event title "%{eventTitle}"',
+        { participants: this.event.participants.length, eventTitle: this.event.title },
+      ),
+      confirmText: this.$gettextInterpolate(
+        'Delete %{eventTitle}',
+        { eventTitle: this.event.title },
+      ),
+      inputAttrs: {
+        placeholder: this.event.title,
+        pattern: this.event.title,
+      },
 
-      await router.push({ name: RouteName.HOME });
-      this.$buefy.notification.open({
-        message: this.$gettextInterpolate('Event %{eventTitle} deleted', { eventTitle }),
-        type: 'is-success',
-        position: 'is-bottom-right',
-        duration: 5000,
-      });
-    } catch (error) {
-      console.error(error);
-    }
+      onConfirm: () => this.deleteEvent(),
+    });
   }
 
   async joinEvent() {
@@ -398,6 +399,32 @@ export default class Event extends Vue {
   get emailShareUrl(): string {
     return `mailto:?to=&body=${this.event.url}${encodeURIComponent('\n\n')}${this.event.description}&subject=${this.event.title}`;
   }
+
+  private async deleteEvent() {
+    const router = this.$router;
+    const eventTitle = this.event.title;
+
+    try {
+      await this.$apollo.mutate<IParticipant>({
+        mutation: DELETE_EVENT,
+        variables: {
+          id: this.event.id,
+          actorId: this.loggedPerson.id,
+        },
+      });
+
+      await router.push({ name: RouteName.HOME });
+      this.$buefy.notification.open({
+        message: this.$gettextInterpolate('Event %{eventTitle} deleted', { eventTitle }),
+        type: 'is-success',
+        position: 'is-bottom-right',
+        duration: 5000,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
 }
 </script>
 <style lang="scss" scoped>
