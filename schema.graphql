@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Thu Sep 05 2019 13:00:10 GMT+0200 (GMT+02:00)
+# timestamp: Mon Sep 09 2019 11:37:31 GMT+0200 (heure d’été d’Europe centrale)
 
 schema {
   query: RootQueryType
@@ -243,7 +243,7 @@ type Event {
   local: Boolean
 
   """Online address of the event"""
-  onlineAddress: OnlineAddress
+  onlineAddress: String
 
   """The event options"""
   options: EventOptions
@@ -255,7 +255,7 @@ type Event {
   participants: [Participant]
 
   """Phone address for the event"""
-  phoneAddress: PhoneAddress
+  phoneAddress: String
 
   """The type of the event's address"""
   physicalAddress: Address
@@ -591,11 +591,6 @@ type Member {
   role: Int
 }
 
-type OnlineAddress {
-  info: String
-  url: String
-}
-
 """
 Describes how an actor is opened to follows
 
@@ -702,11 +697,6 @@ type Persons {
 
   """Total elements"""
   total: Int!
-}
-
-type PhoneAddress {
-  info: String
-  phone: String
 }
 
 """A picture"""
@@ -836,9 +826,7 @@ type RootMutationType {
     The picture for the event, either as an object or directly the ID of an existing Picture
     """
     picture: PictureInput
-    public: Boolean
     publishAt: DateTime
-    state: Int
     status: Int
 
     """The list of tags associated to the event"""
@@ -976,7 +964,6 @@ type RootMutationType {
     eventId: ID!
     onlineAddress: String
     options: EventOptionsInput
-    organizerActorId: ID
     phoneAddress: String
     physicalAddress: AddressInput
 
@@ -984,10 +971,7 @@ type RootMutationType {
     The picture for the event, either as an object or directly the ID of an existing Picture
     """
     picture: PictureInput
-    public: Boolean
-    publishAt: DateTime
-    state: Int
-    status: Int
+    status: EventStatus
 
     """The list of tags associated to the event"""
     tags: [String]

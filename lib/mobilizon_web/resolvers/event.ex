@@ -196,9 +196,9 @@ defmodule MobilizonWeb.Resolvers.Event do
     # See https://github.com/absinthe-graphql/absinthe/issues/490
     with args <- Map.put(args, :options, args[:options] || %{}),
          {:is_owned, true, organizer_actor} <- User.owns_actor(user, organizer_actor_id),
-         {:ok, args} <- save_attached_picture(args),
-         {:ok, args} <- save_physical_address(args),
          args_with_organizer <- Map.put(args, :organizer_actor, organizer_actor),
+         {:ok, args_with_organizer} <- save_attached_picture(args_with_organizer),
+         {:ok, args_with_organizer} <- save_physical_address(args_with_organizer),
          {
            :ok,
            %Activity{
@@ -236,9 +236,9 @@ defmodule MobilizonWeb.Resolvers.Event do
     with args <- Map.put(args, :options, args[:options] || %{}),
          {:ok, %Event{} = event} <- Mobilizon.Events.get_event_full(event_id),
          {:is_owned, true, organizer_actor} <- User.owns_actor(user, event.organizer_actor_id),
+         args <- Map.put(args, :organizer_actor, organizer_actor),
          {:ok, args} <- save_attached_picture(args),
          {:ok, args} <- save_physical_address(args),
-         args <- Map.put(args, :organizer_actor, organizer_actor),
          {
            :ok,
            %Activity{
@@ -274,7 +274,7 @@ defmodule MobilizonWeb.Resolvers.Event do
            }
          } = args
        ) do
-    {:ok, Map.put(args, :picture, Map.put(all_pic, :actor_id, args.organizer_actor_id))}
+    {:ok, Map.put(args, :picture, Map.put(all_pic, :actor_id, args.organizer_actor.id))}
   end
 
   # Otherwise if we use a previously uploaded picture we need to fetch it from database
@@ -310,7 +310,7 @@ defmodule MobilizonWeb.Resolvers.Event do
   end
 
   @spec save_physical_address(map()) :: {:ok, map()}
-  defp save_physical_address(%{physical_address: address} = args) do
+  defp save_physical_address(%{physical_address: address} = args) when address != nil do
     with {:ok, %Address{} = address} <- Addresses.create_address(address),
          args <- Map.put(args, :physical_address, address.url) do
       {:ok, args}

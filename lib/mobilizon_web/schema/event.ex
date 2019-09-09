@@ -36,8 +36,8 @@ defmodule MobilizonWeb.Schema.EventType do
       description: "The type of the event's address"
     )
 
-    field(:online_address, :online_address, description: "Online address of the event")
-    field(:phone_address, :phone_address, description: "Phone address for the event")
+    field(:online_address, :string, description: "Online address of the event")
+    field(:phone_address, :string, description: "Phone address for the event")
 
     field(:organizer_actor, :actor,
       resolve: dataloader(Actors),
@@ -208,9 +208,7 @@ defmodule MobilizonWeb.Schema.EventType do
       arg(:description, non_null(:string))
       arg(:begins_on, non_null(:datetime))
       arg(:ends_on, :datetime)
-      arg(:state, :integer)
-      arg(:status, :integer)
-      arg(:public, :boolean)
+      arg(:status, :event_status)
       arg(:visibility, :event_visibility, default_value: :private)
 
       arg(:tags, list_of(:string),
@@ -242,11 +240,8 @@ defmodule MobilizonWeb.Schema.EventType do
       arg(:description, :string)
       arg(:begins_on, :datetime)
       arg(:ends_on, :datetime)
-      arg(:state, :integer)
-      arg(:status, :integer)
-      arg(:public, :boolean)
+      arg(:status, :event_status)
       arg(:visibility, :event_visibility)
-      arg(:organizer_actor_id, :id)
 
       arg(:tags, list_of(:string), description: "The list of tags associated to the event")
 
@@ -255,7 +250,6 @@ defmodule MobilizonWeb.Schema.EventType do
           "The picture for the event, either as an object or directly the ID of an existing Picture"
       )
 
-      arg(:publish_at, :datetime)
       arg(:online_address, :string)
       arg(:phone_address, :string)
       arg(:category, :string)

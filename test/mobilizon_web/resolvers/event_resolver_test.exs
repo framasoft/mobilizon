@@ -486,7 +486,6 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                   description: "description updated",
                   begins_on: "#{begins_on}",
                   event_id: #{event.id},
-                  organizer_actor_id: "#{actor.id}",
                   category: "birthday",
                   tags: ["tag1_updated", "tag2_updated"]
               ) {
@@ -533,7 +532,6 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                   description: "description updated",
                   begins_on: "#{begins_on}",
                   event_id: #{event.id},
-                  organizer_actor_id: "#{actor.id}",
                   category: "birthday",
                   picture: {
                     picture: {
