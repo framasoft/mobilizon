@@ -132,8 +132,7 @@ defmodule Mobilizon.Mixfile do
       test: [
         "ecto.create --quiet",
         "ecto.migrate",
-        "test",
-        "cmd ./script/clean_after_tests"
+        &run_test/1
       ],
       "phx.deps_migrate_serve": [
         "deps.get",
@@ -143,6 +142,11 @@ defmodule Mobilizon.Mixfile do
         "phx.server"
       ]
     ]
+  end
+
+  defp run_test(args) do
+    Mix.Task.run("test", args)
+    File.rm_rf!("test/uploads")
   end
 
   defp docs() do
