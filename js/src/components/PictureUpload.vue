@@ -41,8 +41,12 @@ export default class PictureUpload extends Vue {
 
   imageSrc: string | null = null;
 
+  mounted() {
+    this.updatePreview(this.pictureFile);
+  }
+
   @Watch('pictureFile')
-  onPictureFileChanged (val: File) {
+  onPictureFileChanged(val: File) {
     this.updatePreview(val);
   }
 

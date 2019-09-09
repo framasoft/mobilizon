@@ -174,10 +174,24 @@
   </section>
 </template>
 
+<style lang="scss">
+  @import "@/variables.scss";
+
+  h2.subtitle {
+    margin: 10px 0;
+
+    span {
+      padding: 5px 7px;
+      display: inline;
+      background: $secondary;
+    }
+  }
+</style>
+
 <script lang="ts">
-import { CREATE_EVENT, EDIT_EVENT, FETCH_EVENT } from '@/graphql/event';
+import { CREATE_EVENT, EDIT_EVENT, FETCH_EVENT, FETCH_EVENTS } from '@/graphql/event';
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import { EventModel, EventStatus, EventVisibility, EventVisibilityJoinOptions, CommentModeration } from '@/types/event.model';
+import { EventModel, EventStatus, EventVisibility, EventVisibilityJoinOptions, CommentModeration, IEvent } from '@/types/event.model';
 import { LOGGED_PERSON } from '@/graphql/actor';
 import { IPerson, Person } from '@/types/actor';
 import PictureUpload from '@/components/PictureUpload.vue';
@@ -291,12 +305,7 @@ export default class EditEvent extends Vue {
    * Build variables for Event GraphQL creation query
    */
   private buildVariables() {
-    const obj = {
-      organizerActorId: this.loggedPerson.id,
-      beginsOn: this.event.beginsOn.toISOString(),
-      tags: this.event.tags.map((tag: ITag) => tag.title),
-    };
-    const res = Object.assign({}, this.event, obj);
+    const res = Object.assign(this.event.toEditJSON(), { organizerActorId: this.loggedPerson.id });
 
     delete this.event.options['__typename'];
 
@@ -360,16 +369,4 @@ export default class EditEvent extends Vue {
   // }
 }
 </script>
-<style lang="scss">
-  @import "@/variables.scss";
 
-  h2.subtitle {
-    margin: 10px 0;
-
-    span {
-      padding: 5px 7px;
-      display: inline;
-      background: $secondary;
-    }
-  }
-</style>

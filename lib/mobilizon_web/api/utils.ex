@@ -135,7 +135,7 @@ defmodule MobilizonWeb.API.Utils do
   end
 
   def prepare_content(actor, content, visibility, tags, in_reply_to) do
-    with content <- String.trim(content),
+    with content <- String.trim(content || ""),
          {content_html, mentions, tags} <-
            make_content_html(
              content,
