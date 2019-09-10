@@ -3,6 +3,7 @@ defmodule MobilizonWeb.Resolvers.AdminResolverTest do
   use MobilizonWeb.ConnCase
   import Mobilizon.Factory
 
+  alias Mobilizon.Events.Event
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Users.User
   alias Mobilizon.Reports.{Report, Note}
@@ -62,21 +63,60 @@ defmodule MobilizonWeb.Resolvers.AdminResolverTest do
 
       assert json_response(res, 200)["data"]["actionLogs"] == [
                %{
-                 "action" => "report_update_resolved",
+                 "action" => "NOTE_DELETION",
+                 "actor" => %{"preferredUsername" => moderator_2.preferred_username},
+                 "object" => %{"content" => @note_content}
+               },
+               %{
+                 "action" => "NOTE_CREATION",
+                 "actor" => %{"preferredUsername" => moderator_2.preferred_username},
+                 "object" => %{"content" => @note_content}
+               },
+               %{
+                 "action" => "REPORT_UPDATE_RESOLVED",
                  "actor" => %{"preferredUsername" => moderator.preferred_username},
                  "object" => %{"id" => to_string(report.id), "status" => "RESOLVED"}
-               },
-               %{
-                 "action" => "note_creation",
-                 "actor" => %{"preferredUsername" => moderator_2.preferred_username},
-                 "object" => %{"content" => @note_content}
-               },
-               %{
-                 "action" => "note_deletion",
-                 "actor" => %{"preferredUsername" => moderator_2.preferred_username},
-                 "object" => %{"content" => @note_content}
                }
              ]
+    end
+  end
+
+  describe "Resolver: Get the dashboard statistics" do
+    test "get_dashboard/3 gets dashboard information", %{conn: conn} do
+      %Event{title: title} = insert(:event)
+
+      %User{} = user_admin = insert(:user, role: :administrator)
+
+      query = """
+      {
+        dashboard {
+          lastPublicEventPublished {
+            title
+          }
+          numberOfUsers,
+          numberOfComments,
+          numberOfEvents,
+          numberOfReports
+        }
+      }
+      """
+
+      res =
+        conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "actionLogs"))
+
+      assert json_response(res, 200)["errors"] |> hd |> Map.get("message") ==
+               "You need to be logged-in and an administrator to access dashboard statistics"
+
+      res =
+        conn
+        |> auth_conn(user_admin)
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "actionLogs"))
+
+      assert json_response(res, 200)["errors"] == nil
+
+      assert json_response(res, 200)["data"]["dashboard"]["lastPublicEventPublished"]["title"] ==
+               title
     end
   end
 end

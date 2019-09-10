@@ -44,6 +44,10 @@
                 <router-link :to="{ name: ActorRouteName.CREATE_GROUP }" v-translate>Create group</router-link>
               </span>
 
+              <span class="navbar-item" v-if="currentUser.role === ICurrentUserRole.ADMINISTRATOR">
+                <router-link :to="{ name: AdminRouteName.DASHBOARD }" v-translate>Administration</router-link>
+              </span>
+
               <a v-translate class="navbar-item" v-on:click="logout()">Log out</a>
             </div>
           </div>
@@ -71,10 +75,12 @@ import { LOGGED_PERSON } from '@/graphql/actor';
 import { IPerson } from '@/types/actor';
 import { CONFIG } from '@/graphql/config';
 import { IConfig } from '@/types/config.model';
-import { ICurrentUser } from '@/types/current-user.model';
+import { ICurrentUser, ICurrentUserRole } from '@/types/current-user.model';
 import Logo from '@/components/Logo.vue';
 import SearchField from '@/components/SearchField.vue';
 import { ActorRouteName } from '@/router/actor';
+import { AdminRouteName } from '@/router/admin';
+import { RouteName } from '@/router';
 
 @Component({
   apollo: {
@@ -98,9 +104,11 @@ export default class NavBar extends Vue {
   loggedPerson: IPerson | null = null;
   config!: IConfig;
   currentUser!: ICurrentUser;
+  ICurrentUserRole = ICurrentUserRole;
   showNavbar: boolean = false;
 
   ActorRouteName = ActorRouteName;
+  AdminRouteName = AdminRouteName;
 
   @Watch('currentUser')
   async onCurrentUserChanged() {
@@ -119,7 +127,8 @@ export default class NavBar extends Vue {
   async logout() {
     await logout(this.$apollo.provider.defaultClient);
 
-    return this.$router.push({ path: '/' });
+    if (this.$route.name === RouteName.HOME) return;
+    return this.$router.push({ name: RouteName.HOME });
   }
 }
 </script>

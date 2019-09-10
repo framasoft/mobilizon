@@ -1,8 +1,5 @@
 <template>
-    <translate
-            v-if="!endsOn"
-           :translate-params="{date: formatDate(beginsOn), time: formatTime(beginsOn)}"
-    >The %{ date } at %{ time }</translate>
+    <span v-if="!endsOn">{{ beginsOn | formatDateTimeString }}</span>
     <translate
             v-else-if="isSameDay()"
             :translate-params="{date: formatDate(beginsOn), startTime: formatTime(beginsOn), endTime: formatTime(endsOn)}"
@@ -21,11 +18,13 @@ export default class EventFullDate extends Vue {
   @Prop({ required: false }) endsOn!: string;
 
   formatDate(value) {
-    return value ? new Date(value).toLocaleString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : null;
+    if (!this.$options.filters) return;
+    return this.$options.filters.formatDateString(value);
   }
 
   formatTime(value) {
-    return value ? new Date(value).toLocaleTimeString(undefined, { hour: 'numeric', minute: 'numeric' }) : null;
+    if (!this.$options.filters) return;
+    return this.$options.filters.formatTimeString(value);
   }
 
   isSameDay() {

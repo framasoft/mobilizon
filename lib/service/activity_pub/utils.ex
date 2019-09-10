@@ -164,14 +164,14 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
          {:ok, %Report{} = report} <- Reports.create_report(data) do
       Enum.each(Users.list_moderators(), fn moderator ->
         moderator
-        |> Mobilizon.Email.Admin.report(moderator, report)
+        |> Mobilizon.Email.Admin.report(report)
         |> Mobilizon.Mailer.deliver_later()
       end)
 
       {:ok, report}
     else
       err ->
-        Logger.error("Error while inserting a remote comment inside database")
+        Logger.error("Error while inserting report inside database")
         Logger.debug(inspect(err))
         {:error, err}
     end

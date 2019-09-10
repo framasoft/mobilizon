@@ -7,6 +7,7 @@ defmodule Mobilizon.Reports.Note do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Reports.Report
 
+  @timestamps_opts [type: :utc_datetime]
   @attrs [:content, :moderator_id, :report_id]
 
   @derive {Jason.Encoder, only: [:content]}

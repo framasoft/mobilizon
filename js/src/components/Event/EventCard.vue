@@ -5,7 +5,7 @@
         <div class="tag-container" v-if="event.tags">
           <b-tag v-for="tag in event.tags.slice(0, 3)" :key="tag.slug" type="is-secondary">{{ tag.title }}</b-tag>
         </div>
-        <img src="https://picsum.photos/g/400/225/?random">
+        <img src="https://picsum.photos/g/400/225/?random" />
       </figure>
     </div>
     <div class="content">

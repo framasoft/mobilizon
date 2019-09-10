@@ -15,6 +15,7 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
   alias Mobilizon.Service.HTTPSignatures.Signature
   alias Mobilizon.Service.ActivityPub
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+  import Mock
 
   setup_all do
     HTTPoison.start()
@@ -111,7 +112,6 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
   end
 
   describe "deletion" do
-    # TODO: The delete activity it relayed and fetched once again (and then not found /o\)
     test "it creates a delete activity and deletes the original event" do
       event = insert(:event)
       event = Events.get_event_full_by_url!(event.url)
@@ -122,6 +122,25 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
       assert delete.data["object"] == event.url
 
       assert Events.get_event_by_url(event.url) == nil
+    end
+
+    test "it deletes the original event but only locally if needed" do
+      with_mock ActivityPub.Utils,
+        maybe_federate: fn _ -> :ok end,
+        lazy_put_activity_defaults: fn args -> args end do
+        event = insert(:event)
+        event = Events.get_event_full_by_url!(event.url)
+        {:ok, delete, _} = ActivityPub.delete(event, false)
+
+        assert delete.data["type"] == "Delete"
+        assert delete.data["actor"] == event.organizer_actor.url
+        assert delete.data["object"] == event.url
+        assert delete.local == false
+
+        assert Events.get_event_by_url(event.url) == nil
+
+        assert_called(ActivityPub.Utils.maybe_federate(delete))
+      end
     end
 
     test "it creates a delete activity and deletes the original comment" do

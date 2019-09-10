@@ -6,8 +6,8 @@
 defmodule MobilizonWeb.NodeInfoController do
   use MobilizonWeb, :controller
 
-  alias Mobilizon.{Events, Users}
   alias Mobilizon.CommonConfig
+  alias Mobilizon.Service.Statistics
 
   @instance Application.get_env(:mobilizon, :instance)
   @node_info_supported_versions ["2.0", "2.1"]
@@ -34,7 +34,7 @@ defmodule MobilizonWeb.NodeInfoController do
     response = %{
       version: version,
       software: %{
-        name: "mobilizon",
+        name: "Mobilizon",
         version: Keyword.get(@instance, :version)
       },
       protocols: ["activitypub"],
@@ -45,10 +45,10 @@ defmodule MobilizonWeb.NodeInfoController do
       openRegistrations: CommonConfig.registrations_open?(),
       usage: %{
         users: %{
-          total: Users.count_users()
+          total: Statistics.get_cached_value(:local_users)
         },
-        localPosts: Events.count_local_events(),
-        localComments: Events.count_local_comments()
+        localPosts: Statistics.get_cached_value(:local_events),
+        localComments: Statistics.get_cached_value(:local_comments)
       },
       metadata: %{
         nodeName: CommonConfig.instance_name(),

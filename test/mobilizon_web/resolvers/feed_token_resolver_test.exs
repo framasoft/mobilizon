@@ -43,7 +43,8 @@ defmodule MobilizonWeb.Resolvers.FeedTokenResolverTest do
       assert json_response(res, 200)["data"]["createFeedToken"]["user"]["id"] ==
                to_string(user.id)
 
-      assert json_response(res, 200)["data"]["createFeedToken"]["actor"]["id"] == actor2.id
+      assert json_response(res, 200)["data"]["createFeedToken"]["actor"]["id"] ==
+               to_string(actor2.id)
 
       # The token is present for the user
       query = """
@@ -209,8 +210,12 @@ defmodule MobilizonWeb.Resolvers.FeedTokenResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["deleteFeedToken"]["user"]["id"] == user.id
-      assert json_response(res, 200)["data"]["deleteFeedToken"]["actor"]["id"] == actor.id
+
+      assert json_response(res, 200)["data"]["deleteFeedToken"]["user"]["id"] ==
+               to_string(user.id)
+
+      assert json_response(res, 200)["data"]["deleteFeedToken"]["actor"]["id"] ==
+               to_string(actor.id)
 
       query = """
       {

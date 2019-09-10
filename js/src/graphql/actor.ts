@@ -177,7 +177,7 @@ query($name:String!) {
 
 export const CREATE_GROUP = gql`
   mutation CreateGroup(
-    $creatorActorId: Int!,
+    $creatorActorId: ID!,
     $preferredUsername: String!,
     $name: String!,
     $summary: String,

@@ -24,16 +24,16 @@ defmodule MobilizonWeb.Schema.Actors.MemberType do
   object :member_mutations do
     @desc "Join a group"
     field :join_group, :member do
-      arg(:group_id, non_null(:integer))
-      arg(:actor_id, non_null(:integer))
+      arg(:group_id, non_null(:id))
+      arg(:actor_id, non_null(:id))
 
       resolve(&Resolvers.Group.join_group/3)
     end
 
     @desc "Leave an event"
     field :leave_group, :deleted_member do
-      arg(:group_id, non_null(:integer))
-      arg(:actor_id, non_null(:integer))
+      arg(:group_id, non_null(:id))
+      arg(:actor_id, non_null(:id))
 
       resolve(&Resolvers.Group.leave_group/3)
     end

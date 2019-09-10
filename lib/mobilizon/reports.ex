@@ -30,14 +30,26 @@ defmodule Mobilizon.Reports do
 
   """
   @spec list_reports(integer(), integer(), atom(), atom()) :: list(Report.t())
-  def list_reports(page \\ nil, limit \\ nil, sort \\ :updated_at, direction \\ :asc) do
+  def list_reports(
+        page \\ nil,
+        limit \\ nil,
+        sort \\ :updated_at,
+        direction \\ :desc,
+        status \\ :open
+      ) do
     from(
       r in Report,
-      preload: [:reported, :reporter, :manager, :event, :comments, :notes]
+      preload: [:reported, :reporter, :manager, :event, :comments, :notes],
+      where: r.status == ^status
     )
     |> paginate(page, limit)
     |> sort(sort, direction)
     |> Repo.all()
+  end
+
+  def count_opened_reports() do
+    query = from(r in Report, where: r.status == ^:open)
+    Repo.aggregate(query, :count, :id)
   end
 
   @doc """

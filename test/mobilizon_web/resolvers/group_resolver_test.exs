@@ -163,7 +163,7 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["deleteGroup"]["id"] == group.id
+      assert json_response(res, 200)["data"]["deleteGroup"]["id"] == to_string(group.id)
 
       res =
         conn

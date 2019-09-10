@@ -143,6 +143,7 @@ export default class Login extends Vue {
           id: data.login.user.id,
           email: this.credentials.email,
           isLoggedIn: true,
+          role: data.login.user.role,
         },
       });
 

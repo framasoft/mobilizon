@@ -70,8 +70,8 @@ export const FETCH_EVENT = gql`
       },
       publishAt,
       category,
-      online_address,
-      phone_address,
+      onlineAddress,
+      phoneAddress,
       physicalAddress {
         ${physicalAddressQuery}
       }
@@ -218,8 +218,8 @@ export const CREATE_EVENT = gql`
       },
       publishAt,
       category,
-      online_address,
-      phone_address,
+      onlineAddress,
+      phoneAddress,
       physicalAddress {
         ${physicalAddressQuery}
       },
@@ -240,7 +240,7 @@ export const EDIT_EVENT = gql`
     $description: String,
     $beginsOn: DateTime,
     $endsOn: DateTime,
-    $status: Int,
+    $status: EventStatus,
     $visibility: EventVisibility
     $tags: [String],
     $picture: PictureInput,
@@ -280,8 +280,8 @@ export const EDIT_EVENT = gql`
       },
       publishAt,
       category,
-      online_address,
-      phone_address,
+      onlineAddress,
+      phoneAddress,
       physicalAddress {
         ${physicalAddressQuery}
       },
@@ -296,7 +296,7 @@ export const EDIT_EVENT = gql`
 `;
 
 export const JOIN_EVENT = gql`
-  mutation JoinEvent($eventId: Int!, $actorId: Int!) {
+  mutation JoinEvent($eventId: ID!, $actorId: ID!) {
     joinEvent(
       eventId: $eventId,
       actorId: $actorId
@@ -307,7 +307,7 @@ export const JOIN_EVENT = gql`
 `;
 
 export const LEAVE_EVENT = gql`
-  mutation LeaveEvent($eventId: Int!, $actorId: Int!) {
+  mutation LeaveEvent($eventId: ID!, $actorId: ID!) {
     leaveEvent(
       eventId: $eventId,
       actorId: $actorId
@@ -320,9 +320,9 @@ export const LEAVE_EVENT = gql`
 `;
 
 export const DELETE_EVENT = gql`
-  mutation DeleteEvent($id: Int!, $actorId: Int!) {
+  mutation DeleteEvent($eventId: ID!, $actorId: ID!) {
     deleteEvent(
-      eventId: $id,
+      eventId: $eventId,
       actorId: $actorId
     ) {
         id

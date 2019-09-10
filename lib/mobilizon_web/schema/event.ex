@@ -12,7 +12,8 @@ defmodule MobilizonWeb.Schema.EventType do
 
   @desc "An event"
   object :event do
-    field(:id, :integer, description: "Internal ID for this event")
+    interfaces([:action_log_object])
+    field(:id, :id, description: "Internal ID for this event")
     field(:uuid, :uuid, description: "The Event UUID")
     field(:url, :string, description: "The ActivityPub Event URL")
     field(:local, :boolean, description: "Whether the event is local or not")
@@ -261,8 +262,8 @@ defmodule MobilizonWeb.Schema.EventType do
 
     @desc "Delete an event"
     field :delete_event, :deleted_object do
-      arg(:event_id, non_null(:integer))
-      arg(:actor_id, non_null(:integer))
+      arg(:event_id, non_null(:id))
+      arg(:actor_id, non_null(:id))
 
       resolve(&Event.delete_event/3)
     end
