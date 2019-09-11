@@ -32,7 +32,7 @@ defmodule MobilizonWeb.API.Follows do
 
   def accept(%Actor{} = follower, %Actor{} = followed) do
     with %Follower{approved: false, id: follow_id, url: follow_url} = follow <-
-           Actors.following?(follower, followed),
+           Actors.is_following(follower, followed),
          activity_follow_url <- "#{MobilizonWeb.Endpoint.url()}/accept/follow/#{follow_id}",
          data <-
            ActivityPub.Utils.make_follow_data(followed, follower, follow_url),

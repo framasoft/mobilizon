@@ -44,8 +44,11 @@ defmodule Mobilizon.Actors.Follower do
   @spec ensure_url(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   defp ensure_url(%Ecto.Changeset{data: %__MODULE__{url: nil}} = changeset) do
     case fetch_change(changeset, :url) do
-      {:ok, _url} -> changeset
-      :error -> generate_url(changeset)
+      {:ok, _url} ->
+        changeset
+
+      :error ->
+        generate_url(changeset)
     end
   end
 

@@ -9,7 +9,7 @@ defmodule MobilizonWeb.Resolvers.Member do
   Find members for group
   """
   def find_members_for_group(%Actor{} = actor, _args, _resolution) do
-    members = Actors.memberships_for_group(actor)
+    members = Actors.list_members_for_group(actor)
     {:ok, members}
   end
 end

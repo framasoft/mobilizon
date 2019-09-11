@@ -17,7 +17,7 @@ defmodule Mobilizon.Service.ActivityPub.Relay do
 
   def get_actor do
     with {:ok, %Actor{} = actor} <-
-           Actors.get_or_create_service_actor_by_url("#{MobilizonWeb.Endpoint.url()}/relay") do
+           Actors.get_or_create_actor_by_url("#{MobilizonWeb.Endpoint.url()}/relay") do
       actor
     end
   end

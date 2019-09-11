@@ -22,7 +22,7 @@ defmodule Mix.Tasks.Mobilizon.RelayTest do
         {:ok, target_actor} = Actors.get_actor_by_url(target_instance)
         refute is_nil(target_actor.domain)
 
-        assert Actors.following?(local_actor, target_actor)
+        assert Actors.is_following(local_actor, target_actor)
       end
     end
   end
@@ -36,11 +36,11 @@ defmodule Mix.Tasks.Mobilizon.RelayTest do
 
         %Actor{} = local_actor = Relay.get_actor()
         {:ok, %Actor{} = target_actor} = Actors.get_actor_by_url(target_instance)
-        assert %Follower{} = Actors.following?(local_actor, target_actor)
+        assert %Follower{} = Actors.is_following(local_actor, target_actor)
 
         Mix.Tasks.Mobilizon.Relay.run(["unfollow", target_instance])
 
-        refute Actors.following?(local_actor, target_actor)
+        refute Actors.is_following(local_actor, target_actor)
       end
     end
   end

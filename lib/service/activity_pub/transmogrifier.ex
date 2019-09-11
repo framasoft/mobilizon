@@ -642,7 +642,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   defp get_follow(follow_object) do
     with follow_object_id when not is_nil(follow_object_id) <- Utils.get_url(follow_object),
          {:not_found, %Follower{} = follow} <-
-           {:not_found, Actors.get_follow_by_url(follow_object_id)} do
+           {:not_found, Actors.get_follower_by_url(follow_object_id)} do
       {:ok, follow}
     else
       {:not_found, _err} ->

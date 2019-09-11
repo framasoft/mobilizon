@@ -154,8 +154,11 @@ defmodule Mobilizon.Users.User do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{email: email}} ->
         case EmailChecker.valid?(email) do
-          false -> add_error(changeset, :email, "Email doesn't fit required format")
-          true -> changeset
+          false ->
+            add_error(changeset, :email, "Email doesn't fit required format")
+
+          true ->
+            changeset
         end
 
       _ ->

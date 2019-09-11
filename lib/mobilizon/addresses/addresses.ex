@@ -86,8 +86,11 @@ defmodule Mobilizon.Addresses do
       |> filter_by_contry(Keyword.get(options, :country))
 
     case Keyword.get(options, :single, false) do
-      true -> Repo.one(query)
-      false -> Repo.all(query)
+      true ->
+        Repo.one(query)
+
+      false ->
+        Repo.all(query)
     end
   end
 

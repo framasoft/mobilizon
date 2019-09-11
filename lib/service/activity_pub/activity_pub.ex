@@ -551,7 +551,7 @@ defmodule Mobilizon.Service.ActivityPub do
 
     followers =
       if actor.followers_url in activity.recipients do
-        Actors.get_full_external_followers(actor)
+        Actors.list_external_followers_for_actor(actor)
       else
         []
       end

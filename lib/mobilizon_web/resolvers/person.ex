@@ -207,7 +207,7 @@ defmodule MobilizonWeb.Resolvers.Person do
   # We check that the actor is not the last administrator/creator of a group
   @spec last_admin_of_a_group?(integer()) :: boolean()
   defp last_admin_of_a_group?(actor_id) do
-    length(Actors.list_group_id_where_last_administrator(actor_id)) > 0
+    length(Actors.list_group_ids_where_last_administrator(actor_id)) > 0
   end
 
   @spec proxify_avatar(Actor.t()) :: Actor.t()

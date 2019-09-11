@@ -75,8 +75,11 @@ defmodule Mobilizon.Media do
       |> Repo.transaction()
 
     case transaction do
-      {:ok, %{picture: %Picture{} = picture}} -> {:ok, picture}
-      {:error, :remove, error, _} -> {:error, error}
+      {:ok, %{picture: %Picture{} = picture}} ->
+        {:ok, picture}
+
+      {:error, :remove, error, _} ->
+        {:error, error}
     end
   end
 

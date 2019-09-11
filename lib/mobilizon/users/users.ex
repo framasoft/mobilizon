@@ -59,8 +59,11 @@ defmodule Mobilizon.Users do
     query = user_by_email_query(email, activated)
 
     case Repo.one(query) do
-      nil -> {:error, :user_not_found}
-      user -> {:ok, user}
+      nil ->
+        {:error, :user_not_found}
+
+      user ->
+        {:ok, user}
     end
   end
 
@@ -147,8 +150,11 @@ defmodule Mobilizon.Users do
     case actor do
       nil ->
         case get_actors_for_user(user) do
-          [] -> nil
-          actors -> hd(actors)
+          [] ->
+            nil
+
+          actors ->
+            hd(actors)
         end
 
       actor ->

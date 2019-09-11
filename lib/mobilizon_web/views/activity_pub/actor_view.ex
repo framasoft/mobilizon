@@ -49,7 +49,7 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
   def render("following.json", %{actor: actor, page: page}) do
     %{total: total, elements: following} =
       if Actor.is_public_visibility(actor),
-        do: Actors.get_followings(actor, page),
+        do: Actors.build_followings_for_actor(actor, page),
         else: @private_visibility_empty_collection
 
     following
@@ -60,7 +60,7 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
   def render("following.json", %{actor: actor}) do
     %{total: total, elements: following} =
       if Actor.is_public_visibility(actor),
-        do: Actors.get_followings(actor),
+        do: Actors.build_followings_for_actor(actor),
         else: @private_visibility_empty_collection
 
     %{
@@ -75,7 +75,7 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
   def render("followers.json", %{actor: actor, page: page}) do
     %{total: total, elements: followers} =
       if Actor.is_public_visibility(actor),
-        do: Actors.get_followers(actor, page),
+        do: Actors.build_followers_for_actor(actor, page),
         else: @private_visibility_empty_collection
 
     followers
@@ -86,7 +86,7 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
   def render("followers.json", %{actor: actor}) do
     %{total: total, elements: followers} =
       if Actor.is_public_visibility(actor),
-        do: Actors.get_followers(actor),
+        do: Actors.build_followers_for_actor(actor),
         else: @private_visibility_empty_collection
 
     %{

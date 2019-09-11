@@ -166,11 +166,11 @@ defmodule Mobilizon.ActorsTest do
       end
     end
 
-    test "test get_local_actor_by_username/1 returns local actors with similar usernames", %{
+    test "test list_local_actor_by_username/1 returns local actors with similar usernames", %{
       actor: actor
     } do
       actor2 = insert(:actor, preferred_username: "tcit")
-      [%Actor{id: actor_found_id} | tail] = Actors.get_local_actor_by_username("tcit")
+      [%Actor{id: actor_found_id} | tail] = Actors.list_local_actor_by_username("tcit")
       %Actor{id: actor2_found_id} = hd(tail)
       assert MapSet.new([actor_found_id, actor2_found_id]) == MapSet.new([actor.id, actor2.id])
     end
@@ -416,11 +416,6 @@ defmodule Mobilizon.ActorsTest do
       assert {:ok, %Bot{}} = Actors.delete_bot(bot)
       assert_raise Ecto.NoResultsError, fn -> Actors.get_bot!(bot.id) end
     end
-
-    test "change_bot/1 returns a bot changeset" do
-      bot = insert(:bot)
-      assert %Ecto.Changeset{} = Actors.change_bot(bot)
-    end
   end
 
   describe "followers" do
@@ -458,8 +453,8 @@ defmodule Mobilizon.ActorsTest do
       assert {:ok, %Follower{} = follower} = Actors.create_follower(valid_attrs)
       assert follower.approved == true
 
-      assert %{total: 1, elements: [target_actor]} = Actors.get_followings(actor)
-      assert %{total: 1, elements: [actor]} = Actors.get_followers(target_actor)
+      assert %{total: 1, elements: [target_actor]} = Actors.build_followings_for_actor(actor)
+      assert %{total: 1, elements: [actor]} = Actors.build_followers_for_actor(target_actor)
     end
 
     test "create_follower/1 with valid data but same actors fails to create a follower", %{
@@ -568,8 +563,8 @@ defmodule Mobilizon.ActorsTest do
       assert {:ok, %Member{} = member} = Actors.create_member(valid_attrs)
       assert member.role == :member
 
-      assert [group] = Actors.get_groups_member_of(actor)
-      assert [actor] = Actors.get_members_for_group(group)
+      assert [group] = Actors.list_groups_member_of(actor)
+      assert [actor] = Actors.list_members_for_group(group)
     end
 
     test "create_member/1 with valid data but same actors fails to create a member", %{
