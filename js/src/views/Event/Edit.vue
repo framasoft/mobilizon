@@ -22,10 +22,14 @@
 
         <tag-input v-model="event.tags" :data="tags" path="title" />
 
-        <address-auto-complete v-model="event.physicalAddress" />
-
         <date-time-picker v-model="event.beginsOn" :label="$gettext('Starts on…')" :step="15"/>
         <date-time-picker v-model="event.endsOn" :label="$gettext('Ends on…')" :step="15" />
+
+        <address-auto-complete v-model="event.physicalAddress" />
+
+        <b-field :label="$gettext('Organizer')">
+          <identity-picker v-model="event.organizerActor"></identity-picker>
+        </b-field>
 
         <div class="field">
           <label class="label">{{ $gettext('Description') }}</label>
@@ -192,7 +196,7 @@
 import { CREATE_EVENT, EDIT_EVENT, FETCH_EVENT, FETCH_EVENTS } from '@/graphql/event';
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import { EventModel, EventStatus, EventVisibility, EventVisibilityJoinOptions, CommentModeration, IEvent } from '@/types/event.model';
-import { LOGGED_PERSON } from '@/graphql/actor';
+import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { IPerson, Person } from '@/types/actor';
 import PictureUpload from '@/components/PictureUpload.vue';
 import Editor from '@/components/Editor.vue';
@@ -202,12 +206,13 @@ import { TAGS } from '@/graphql/tags';
 import { ITag } from '@/types/tag.model';
 import AddressAutoComplete from '@/components/Event/AddressAutoComplete.vue';
 import { buildFileFromIPicture, buildFileVariable } from '@/utils/image';
+import IdentityPicker from '@/views/Account/IdentityPicker.vue';
 
 @Component({
-  components: { AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor },
+  components: { AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor, IdentityPicker },
   apollo: {
-    loggedPerson: {
-      query: LOGGED_PERSON,
+    currentActor: {
+      query: CURRENT_ACTOR_CLIENT,
     },
     tags: {
       query: TAGS,
@@ -220,7 +225,7 @@ export default class EditEvent extends Vue {
 
   eventId!: string | undefined;
 
-  loggedPerson = new Person();
+  currentActor = new Person();
   tags: ITag[] = [];
   event = new EventModel();
   pictureFile: File | null = null;
@@ -257,6 +262,7 @@ export default class EditEvent extends Vue {
 
     this.event.beginsOn = now;
     this.event.endsOn = end;
+    this.event.organizerActor = this.event.organizerActor || this.currentActor;
   }
 
   createOrUpdate(e: Event) {
@@ -305,7 +311,10 @@ export default class EditEvent extends Vue {
    * Build variables for Event GraphQL creation query
    */
   private buildVariables() {
-    const res = Object.assign(this.event.toEditJSON(), { organizerActorId: this.loggedPerson.id });
+    let res = this.event.toEditJSON();
+    if (this.event.organizerActor) {
+      res = Object.assign(res, { organizerActorId: this.event.organizerActor.id });
+    }
 
     delete this.event.options['__typename'];
 

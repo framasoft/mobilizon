@@ -1,6 +1,6 @@
 <template>
     <div>
-    <div class="editor" id="tiptab-editor" :data-actor-id="loggedPerson && loggedPerson.id">
+    <div class="editor" id="tiptab-editor" :data-actor-id="currentActor && currentActor.id">
         <editor-menu-bar :editor="editor" v-slot="{ commands, isActive, focused }">
             <div class="menubar bar-is-hidden" :class="{ 'is-focused': focused }">
 
@@ -176,20 +176,20 @@ import { IActor, IPerson } from '@/types/actor';
 import Image from '@/components/Editor/Image';
 import { UPLOAD_PICTURE } from '@/graphql/upload';
 import { listenFileUpload } from '@/utils/upload';
-import { LOGGED_PERSON } from '@/graphql/actor';
+import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 
 @Component({
   components: { EditorContent, EditorMenuBar, EditorMenuBubble },
   apollo: {
-    loggedPerson: {
-      query: LOGGED_PERSON,
+    currentActor: {
+      query: CURRENT_ACTOR_CLIENT,
     },
   },
 })
 export default class CreateEvent extends Vue {
   @Prop({ required: true }) value!: String;
 
-  loggedPerson!: IPerson;
+  currentActor!: IPerson;
 
   editor: Editor = null;
 
@@ -438,7 +438,7 @@ export default class CreateEvent extends Vue {
       variables: {
         file: image,
         name: image.name,
-        actorId: this.loggedPerson.id,
+        actorId: this.currentActor.id,
       },
     });
     if (data.uploadPicture && data.uploadPicture.url) {

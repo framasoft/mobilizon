@@ -57,7 +57,7 @@
             </a>
           </b-dropdown-item>
         </b-dropdown>
-        <a class="button" v-if="loggedPerson.id === person.id" @click="createToken">
+        <a class="button" v-if="currentActor.id === person.id" @click="createToken">
           <translate>Create token</translate>
         </a>
       </div>
@@ -79,7 +79,7 @@
             <a
               class="button"
               @click="deleteProfile()"
-              v-if="loggedPerson && loggedPerson.id === person.id"
+              v-if="currentActor && currentActor.id === person.id"
             >
               <translate>Delete</translate>
             </a>
@@ -91,7 +91,7 @@
 </template>
 
 <script lang="ts">
-import { FETCH_PERSON, LOGGED_PERSON } from '@/graphql/actor';
+import { FETCH_PERSON, CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import EventCard from '@/components/Event/EventCard.vue';
 import { MOBILIZON_INSTANCE_HOST } from '@/api/_entrypoint';
@@ -108,8 +108,8 @@ import { CREATE_FEED_TOKEN_ACTOR } from '@/graphql/feed_tokens';
         };
       },
     },
-    loggedPerson: {
-      query: LOGGED_PERSON,
+    currentActor: {
+      query: CURRENT_ACTOR_CLIENT,
     },
   },
   components: {
@@ -120,6 +120,7 @@ export default class MyAccount extends Vue {
   @Prop({ type: String, required: true }) name!: string;
 
   person!: IPerson;
+  currentActor!: IPerson;
 
   // call again the method if the route changes
   @Watch('$route')

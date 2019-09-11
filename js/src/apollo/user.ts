@@ -12,6 +12,13 @@ export function buildCurrentUserResolver(cache: ApolloCache<NormalizedCacheObjec
         isLoggedIn: false,
         role: ICurrentUserRole.USER,
       },
+      currentActor: {
+        __typename: 'CurrentActor',
+        id: null,
+        preferredUsername: null,
+        name: null,
+        avatar: null,
+      },
     },
   });
 
@@ -25,6 +32,19 @@ export function buildCurrentUserResolver(cache: ApolloCache<NormalizedCacheObjec
             isLoggedIn,
             role,
             __typename: 'CurrentUser',
+          },
+        };
+
+        cache.writeData({ data });
+      },
+      updateCurrentActor: (_, { id, preferredUsername, avatar, name }, { cache }) => {
+        const data = {
+          currentActor: {
+            id,
+            preferredUsername,
+            avatar,
+            name,
+            __typename: 'CurrentActor',
           },
         };
 

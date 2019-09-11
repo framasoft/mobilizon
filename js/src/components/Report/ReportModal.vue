@@ -43,7 +43,7 @@
                 <button
                         class="button"
                         ref="cancelButton"
-                        @click="cancel('button')">
+                        @click="close">
                     {{ cancelText }}
                 </button>
                 <button
@@ -86,11 +86,7 @@ export default class ReportModal extends Vue {
      */
   close() {
     this.isActive = false;
-        // Timeout for the animation complete before destroying
-    setTimeout(() => {
-      this.$destroy();
-      removeElement(this.$el);
-    },         150);
+    this.$emit('close');
   }
 }
 </script>
