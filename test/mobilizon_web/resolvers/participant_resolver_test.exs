@@ -12,7 +12,8 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
       |> DateTime.truncate(:second),
     uuid: "b5126423-f1af-43e4-a923-002a03003ba4",
     url: "some url",
-    category: "meeting"
+    category: "meeting",
+    options: %{}
   }
 
   setup %{conn: conn} do
@@ -386,6 +387,73 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
                  "role" => "participant"
                }
              ]
+    end
+
+    test "stats_participants_for_event/3 give the number of (un)approved participants", %{
+      conn: conn,
+      actor: actor
+    } do
+      event =
+        @event
+        |> Map.put(:organizer_actor_id, actor.id)
+
+      {:ok, event} = Events.create_event(event)
+
+      query = """
+      {
+        event(uuid: "#{event.uuid}") {
+          uuid,
+          participantStats {
+            approved,
+            unapproved
+          }
+        }
+      }
+      """
+
+      res =
+        conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+
+      assert json_response(res, 200)["data"]["event"]["uuid"] == to_string(event.uuid)
+      assert json_response(res, 200)["data"]["event"]["participantStats"]["approved"] == 1
+      assert json_response(res, 200)["data"]["event"]["participantStats"]["unapproved"] == 0
+
+      moderator = insert(:actor)
+
+      Events.create_participant(%{
+        role: :moderator,
+        event_id: event.id,
+        actor_id: moderator.id
+      })
+
+      unapproved = insert(:actor)
+
+      Events.create_participant(%{
+        role: :not_approved,
+        event_id: event.id,
+        actor_id: unapproved.id
+      })
+
+      query = """
+      {
+        event(uuid: "#{event.uuid}") {
+          uuid,
+          participantStats {
+            approved,
+            unapproved
+          }
+        }
+      }
+      """
+
+      res =
+        conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+
+      assert json_response(res, 200)["data"]["event"]["uuid"] == to_string(event.uuid)
+      assert json_response(res, 200)["data"]["event"]["participantStats"]["approved"] == 2
+      assert json_response(res, 200)["data"]["event"]["participantStats"]["unapproved"] == 1
     end
   end
 end

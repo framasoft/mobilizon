@@ -18,6 +18,25 @@
               </div>
               <h1 class="title">{{ event.title }}</h1>
             </div>
+            <span v-if="event.participantStats.approved > 0 && !actorIsParticipant()">
+              <translate
+                      :translate-n="event.participantStats.approved"
+                      :translate-params="{approved: event.participantStats.approved}"
+                      translate-plural="%{ approved } persons are going">
+                One person is going
+              </translate>
+            </span>
+            <span v-else-if="event.participantStats.approved - 1 > 0 && actorIsParticipant()">
+              <translate
+                      :translate-n="event.participantStats.approved - 1"
+                      :translate-params="{approved: event.participantStats.approved - 1}"
+                      translate-plural="You and %{ approved } persons are going">
+                You and one other person are going to this event
+              </translate>
+            </span>
+            <span v-else-if="actorIsParticipant()">
+              <translate>You're the only one going to this event</translate>
+            </span>
             <div v-if="!actorIsOrganizer()" class="participate-button has-text-centered">
               <a v-if="!actorIsParticipant()" @click="isJoinModalActive = true" class="button is-large is-primary is-rounded">
                 <b-icon icon="circle-outline"></b-icon>
@@ -406,6 +425,7 @@ export default class Event extends Vue {
 
           event.participants = event.participants
             .filter(p => p.actor.id !== data.leaveEvent.actor.id);
+          event.participantStats.approved = event.participantStats.approved - 1;
 
           store.writeQuery({ query: FETCH_EVENT, data: { event } });
         },

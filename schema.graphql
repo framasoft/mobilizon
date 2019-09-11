@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Mon Sep 09 2019 20:33:17 GMT+0200 (GMT+02:00)
+# timestamp: Wed Sep 11 2019 11:53:12 GMT+0200 (GMT+02:00)
 
 schema {
   query: RootQueryType
@@ -280,6 +280,7 @@ type Event implements ActionLogObject {
 
   """The event's organizer (as a person)"""
   organizerActor: Actor
+  participantStats: ParticipantStats
 
   """The event's participants"""
   participants: [Participant]
@@ -646,6 +647,14 @@ type Participant {
 
   """The role of this actor at this event"""
   role: Int
+}
+
+type ParticipantStats {
+  """The number of approved participants"""
+  approved: Int
+
+  """The number of unapproved participants"""
+  unapproved: Int
 }
 
 """
