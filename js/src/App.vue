@@ -11,11 +11,20 @@
 <script lang="ts">
 import NavBar from '@/components/NavBar.vue';
 import { Component, Vue } from 'vue-property-decorator';
-import { AUTH_ACCESS_TOKEN, AUTH_USER_ACTOR, AUTH_USER_EMAIL, AUTH_USER_ID, AUTH_USER_ROLE } from '@/constants';
+import {
+  AUTH_ACCESS_TOKEN,
+  AUTH_USER_ACTOR_ID,
+  AUTH_USER_EMAIL,
+  AUTH_USER_ID,
+  AUTH_USER_ROLE,
+} from '@/constants';
 import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
 import { ICurrentUser } from '@/types/current-user.model';
 import Footer from '@/components/Footer.vue';
 import Logo from '@/components/Logo.vue';
+import { CURRENT_ACTOR_CLIENT, IDENTITIES, UPDATE_CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
+import { IPerson } from '@/types/actor';
+import { changeIdentity, saveActorData } from '@/utils/auth';
 
 @Component({
   apollo: {
@@ -30,16 +39,9 @@ import Logo from '@/components/Logo.vue';
   },
 })
 export default class App extends Vue {
-  currentUser!: ICurrentUser;
-
-  actor = localStorage.getItem(AUTH_USER_ACTOR);
-
-  async mounted() {
+  async created() {
     await this.initializeCurrentUser();
-  }
-
-  getUser(): ICurrentUser | false {
-    return this.currentUser.id ? this.currentUser : false;
+    await this.initializeCurrentActor();
   }
 
   private initializeCurrentUser() {
@@ -60,6 +62,27 @@ export default class App extends Vue {
       });
     }
   }
+
+  /**
+   * We fetch from localStorage the latest actor ID used,
+   * then fetch the current identities to set in cache
+   * the current identity used
+   */
+  private async initializeCurrentActor() {
+    const actorId = localStorage.getItem(AUTH_USER_ACTOR_ID);
+
+    const result = await this.$apollo.query({
+      query: IDENTITIES,
+    });
+    const identities = result.data.identities;
+    if (identities.length < 1) return;
+    const activeIdentity = identities.find(identity => identity.id === actorId) || identities[0] as IPerson;
+
+    if (activeIdentity) {
+      console.log('calling changeIdentity with', activeIdentity);
+      return await changeIdentity(this.$apollo.provider.defaultClient, activeIdentity);
+    }
+  }
 }
 </script>
 
@@ -77,6 +100,7 @@ export default class App extends Vue {
 @import "~bulma/sass/components/pagination.sass";
 @import "~bulma/sass/components/dropdown.sass";
 @import "~bulma/sass/components/breadcrumb.sass";
+@import "~bulma/sass/components/list.sass";
 @import "~bulma/sass/elements/box.sass";
 @import "~bulma/sass/elements/button.sass";
 @import "~bulma/sass/elements/container.sass";

@@ -58,7 +58,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import EventCard from '@/components/Event/EventCard.vue';
-import { FETCH_GROUP, LOGGED_PERSON } from '@/graphql/actor';
+import { FETCH_GROUP, CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { IGroup } from '@/types/actor';
 
 @Component({
@@ -71,8 +71,8 @@ import { IGroup } from '@/types/actor';
         };
       },
     },
-    loggedPerson: {
-      query: LOGGED_PERSON,
+    currentActor: {
+      query: CURRENT_ACTOR_CLIENT,
     },
   },
   components: {

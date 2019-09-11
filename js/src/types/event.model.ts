@@ -90,7 +90,7 @@ export interface IEvent {
 
   picture: IPicture | null;
 
-  organizerActor: IActor;
+  organizerActor?: IActor;
   attributedTo: IActor;
   participants: IParticipant[];
 
@@ -159,7 +159,7 @@ export class EventModel implements IEvent {
   relatedEvents: IEvent[] = [];
 
   attributedTo = new Actor();
-  organizerActor = new Actor();
+  organizerActor?: IActor;
 
   tags: ITag[] = [];
   options: IEventOptions = new EventOptions();

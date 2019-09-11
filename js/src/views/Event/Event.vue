@@ -19,11 +19,11 @@
               <h1 class="title">{{ event.title }}</h1>
             </div>
             <div v-if="!actorIsOrganizer()" class="participate-button has-text-centered">
-              <a v-if="!actorIsParticipant()" @click="joinEvent" class="button is-large is-primary is-rounded">
+              <a v-if="!actorIsParticipant()" @click="isJoinModalActive = true" class="button is-large is-primary is-rounded">
                 <b-icon icon="circle-outline"></b-icon>
                 <translate>Join</translate>
               </a>
-              <a v-if="actorIsParticipant()" @click="leaveEvent" class="button is-large is-primary is-rounded">
+              <a v-if="actorIsParticipant()" @click="confirmLeave()" class="button is-large is-primary is-rounded">
                 <b-icon icon="check-circle"></b-icon>
                 <translate>Leave</translate>
               </a>
@@ -229,8 +229,11 @@
           </div>
         </div>
       </section>
-      <b-modal :active.sync="isReportModalActive" has-modal-card>
-        <report-modal :on-confirm="reportEvent" title="Report this event" :outside-domain="event.organizerActor.domain" />
+      <b-modal :active.sync="isReportModalActive" has-modal-card ref="reportModal">
+        <report-modal :on-confirm="reportEvent" title="Report this event" :outside-domain="event.organizerActor.domain" @close="$refs.reportModal.close()" />
+      </b-modal>
+      <b-modal :active.sync="isJoinModalActive" has-modal-card ref="participationModal">
+        <participation-modal :on-confirm="joinEvent" :event="event" :defaultIdentity="currentActor" @close="$refs.participationModal.close()" />
       </b-modal>
       </div>
     </div>
@@ -239,7 +242,7 @@
 <script lang="ts">
 import { DELETE_EVENT, FETCH_EVENT, JOIN_EVENT, LEAVE_EVENT } from '@/graphql/event';
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { LOGGED_PERSON } from '@/graphql/actor';
+import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { EventVisibility, IEvent, IParticipant } from '@/types/event.model';
 import { IPerson } from '@/types/actor';
 import { RouteName } from '@/router';
@@ -250,6 +253,7 @@ import EventCard from '@/components/Event/EventCard.vue';
 import EventFullDate from '@/components/Event/EventFullDate.vue';
 import ActorLink from '@/components/Account/ActorLink.vue';
 import ReportModal from '@/components/Report/ReportModal.vue';
+import ParticipationModal from '@/components/Event/ParticipationModal.vue';
 import { IReport } from '@/types/report.model';
 import { CREATE_REPORT } from '@/graphql/report';
 
@@ -261,6 +265,7 @@ import { CREATE_REPORT } from '@/graphql/report';
     BIcon,
     DateCalendarIcon,
     ReportModal,
+    ParticipationModal,
     // tslint:disable:space-in-parens
     'map-leaflet': () => import(/* webpackChunkName: "map" */ '@/components/Map.vue'),
     // tslint:enable
@@ -274,8 +279,8 @@ import { CREATE_REPORT } from '@/graphql/report';
         };
       },
     },
-    loggedPerson: {
-      query: LOGGED_PERSON,
+    currentActor: {
+      query: CURRENT_ACTOR_CLIENT,
     },
   },
 })
@@ -283,10 +288,11 @@ export default class Event extends Vue {
   @Prop({ type: String, required: true }) uuid!: string;
 
   event!: IEvent;
-  loggedPerson!: IPerson;
+  currentActor!: IPerson;
   validationSent: boolean = false;
   showMap: boolean = false;
   isReportModalActive: boolean = false;
+  isJoinModalActive: boolean = false;
 
   EventVisibility = EventVisibility;
 
@@ -317,13 +323,14 @@ export default class Event extends Vue {
 
   async reportEvent(content: string, forward: boolean) {
     this.isReportModalActive = false;
+    if (!this.event.organizerActor) return;
     const eventTitle = this.event.title;
     try {
       await this.$apollo.mutate<IReport>({
         mutation: CREATE_REPORT,
         variables: {
           eventId: this.event.id,
-          reporterActorId: this.loggedPerson.id,
+          reporterActorId: this.currentActor.id,
           reportedActorId: this.event.organizerActor.id,
           content,
         },
@@ -339,13 +346,14 @@ export default class Event extends Vue {
     }
   }
 
-  async joinEvent() {
+  async joinEvent(identity: IPerson) {
+    this.isJoinModalActive = false;
     try {
       await this.$apollo.mutate<{ joinEvent: IParticipant }>({
         mutation: JOIN_EVENT,
         variables: {
           eventId: this.event.id,
-          actorId: this.loggedPerson.id,
+          actorId: identity.id,
         },
         update: (store, { data }) => {
           if (data == null) return;
@@ -367,13 +375,24 @@ export default class Event extends Vue {
     }
   }
 
+  confirmLeave() {
+    this.$buefy.dialog.confirm({
+      title: `Leaving event « ${this.event.title} »`,
+      message: `Are you sure you want to leave event « ${this.event.title} »`,
+      confirmText: 'Leave event',
+      type: 'is-danger',
+      hasIcon: true,
+      onConfirm: () => this.leaveEvent(),
+    });
+  }
+
   async leaveEvent() {
     try {
       await this.$apollo.mutate<{ leaveEvent: IParticipant }>({
         mutation: LEAVE_EVENT,
         variables: {
           eventId: this.event.id,
-          actorId: this.loggedPerson.id,
+          actorId: this.currentActor.id,
         },
         update: (store, { data }) => {
           if (data == null) return;
@@ -410,14 +429,14 @@ export default class Event extends Vue {
   actorIsParticipant() {
     if (this.actorIsOrganizer()) return true;
 
-    return this.loggedPerson &&
+    return this.currentActor &&
       this.event.participants
-          .some(participant => participant.actor.id === this.loggedPerson.id);
+          .some(participant => participant.actor.id === this.currentActor.id);
   }
 
   actorIsOrganizer() {
-    return this.loggedPerson &&
-      this.loggedPerson.id === this.event.organizerActor.id;
+    return this.currentActor && this.event.organizerActor &&
+      this.currentActor.id === this.event.organizerActor.id;
   }
 
   get twitterShareUrl(): string {
@@ -445,7 +464,7 @@ export default class Event extends Vue {
         mutation: DELETE_EVENT,
         variables: {
           eventId: this.event.id,
-          actorId: this.loggedPerson.id,
+          actorId: this.currentActor.id,
         },
       });
 

@@ -109,7 +109,7 @@ import { EventRouteName } from '@/router/event';
 import { ActorRouteName } from '@/router/actor';
 import { AdminRouteName } from '@/router/admin';
 import { ModerationRouteName } from '@/router/moderation';
-import { LOGGED_PERSON } from '@/graphql/actor';
+import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { IPerson } from '@/types/actor';
 import { DELETE_EVENT } from '@/graphql/event';
 import { uniq } from 'lodash';
@@ -127,15 +127,15 @@ import { uniq } from 'lodash';
         this.errors = uniq(graphQLErrors.map(({ message }) => message));
       },
     },
-    loggedPerson: {
-      query: LOGGED_PERSON,
+    currentActor: {
+      query: CURRENT_ACTOR_CLIENT,
     },
   },
 })
 export default class Report extends Vue {
   @Prop({ required: true }) reportId!: number;
   report!: IReport;
-  loggedPerson!: IPerson;
+  currentActor!: IPerson;
   errors: string[] = [];
 
   ReportStatusEnum = ReportStatusEnum;
@@ -152,7 +152,7 @@ export default class Report extends Vue {
         mutation: CREATE_REPORT_NOTE,
         variables: {
           reportId: this.report.id,
-          moderatorId: this.loggedPerson.id,
+          moderatorId: this.currentActor.id,
           content: this.noteContent,
         },
         update: (store, { data }) => {
@@ -165,7 +165,7 @@ export default class Report extends Vue {
             return;
           }
           const note = data.createReportNote;
-          note.moderator = this.loggedPerson;
+          note.moderator = this.currentActor;
 
           report.notes = report.notes.concat([note]);
 
@@ -199,7 +199,7 @@ export default class Report extends Vue {
         mutation: DELETE_EVENT,
         variables: {
           eventId: this.report.event.id.toString(),
-          actorId: this.loggedPerson.id,
+          actorId: this.currentActor.id,
         },
       });
 
@@ -220,7 +220,7 @@ export default class Report extends Vue {
         mutation: UPDATE_REPORT,
         variables: {
           reportId: this.report.id,
-          moderatorId: this.loggedPerson.id,
+          moderatorId: this.currentActor.id,
           status,
         },
         update: (store, { data }) => {

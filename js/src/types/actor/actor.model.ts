@@ -36,7 +36,7 @@ export class Actor implements IActor {
     return `@${this.preferredUsername}${domain}`;
   }
 
-  displayName(): string {
+  public displayName(): string {
     return this.name != null && this.name !== '' ? this.name : this.usernameWithDomain();
   }
 }

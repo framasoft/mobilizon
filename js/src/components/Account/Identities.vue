@@ -55,7 +55,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { IDENTITIES, LOGGED_PERSON } from '@/graphql/actor';
+import { IDENTITIES } from '@/graphql/actor';
 import { IPerson, Person } from '@/types/actor';
 
 @Component({

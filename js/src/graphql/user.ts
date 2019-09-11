@@ -37,7 +37,7 @@ query {
 `;
 
 export const UPDATE_CURRENT_USER_CLIENT = gql`
-mutation UpdateCurrentUser($id: Int!, $email: String!, $isLoggedIn: Boolean!, $role: UserRole!) {
+mutation UpdateCurrentUser($id: String!, $email: String!, $isLoggedIn: Boolean!, $role: UserRole!) {
   updateCurrentUser(id: $id, email: $email, isLoggedIn: $isLoggedIn, role: $role) @client
 }
 `;

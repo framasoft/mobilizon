@@ -42,7 +42,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { Group, IPerson } from '@/types/actor';
-import { CREATE_GROUP, LOGGED_PERSON } from '@/graphql/actor';
+import { CREATE_GROUP, CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { RouteName } from '@/router';
 import PictureUpload from '@/components/PictureUpload.vue';
 
@@ -51,13 +51,13 @@ import PictureUpload from '@/components/PictureUpload.vue';
     PictureUpload,
   },
   apollo: {
-    loggedPerson: {
-      query: LOGGED_PERSON,
+    currentActor: {
+      query: CURRENT_ACTOR_CLIENT,
     },
   },
 })
 export default class CreateGroup extends Vue {
-  loggedPerson!: IPerson;
+  currentActor!: IPerson;
 
   group = new Group();
 
@@ -74,7 +74,7 @@ export default class CreateGroup extends Vue {
         },
       });
 
-      this.$router.push({ name: RouteName.GROUP, params: { identityName: this.group.preferredUsername } });
+      await this.$router.push({ name: RouteName.GROUP, params: { identityName: this.group.preferredUsername } });
 
       this.$notifier.success(
         this.$gettextInterpolate('Group %{displayName} created', { displayName: this.group.displayName() }),
@@ -111,7 +111,7 @@ export default class CreateGroup extends Vue {
     }
 
     const currentActor = {
-      creatorActorId: this.loggedPerson.id,
+      creatorActorId: this.currentActor.id,
     };
 
     return Object.assign({}, this.group, avatarObj, bannerObj, currentActor);
