@@ -7,7 +7,7 @@ defmodule Mobilizon.Actors.Member do
 
   import Ecto.Changeset
 
-  alias Mobilizon.Actors.{Actor, Member, MemberRole}
+  alias Mobilizon.Actors.{Actor, MemberRole}
 
   @type t :: %__MODULE__{
           role: MemberRole.t(),
@@ -44,13 +44,13 @@ defmodule Mobilizon.Actors.Member do
   @doc """
   Checks whether the member is an administrator (admin or creator) of the group.
   """
-  def is_administrator(%Member{role: :administrator}), do: {:is_admin, true}
-  def is_administrator(%Member{role: :creator}), do: {:is_admin, true}
-  def is_administrator(%Member{}), do: {:is_admin, false}
+  def is_administrator(%__MODULE__{role: :administrator}), do: {:is_admin, true}
+  def is_administrator(%__MODULE__{role: :creator}), do: {:is_admin, true}
+  def is_administrator(%__MODULE__{}), do: {:is_admin, false}
 
   @doc false
-  @spec changeset(t | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
-  def changeset(member, attrs) do
+  @spec changeset(t, map) :: Ecto.Changeset.t()
+  def changeset(%__MODULE__{} = member, attrs) do
     member
     |> cast(attrs, @attrs)
     |> validate_required(@required_attrs)

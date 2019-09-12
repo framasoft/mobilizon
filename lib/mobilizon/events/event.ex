@@ -11,7 +11,6 @@ defmodule Mobilizon.Events.Event do
   alias Mobilizon.Addresses.Address
 
   alias Mobilizon.Events.{
-    Event,
     EventOptions,
     EventStatus,
     EventVisibility,
@@ -115,7 +114,7 @@ defmodule Mobilizon.Events.Event do
 
   @doc false
   @spec changeset(t, map) :: Ecto.Changeset.t()
-  def changeset(%Event{} = event, attrs) do
+  def changeset(%__MODULE__{} = event, attrs) do
     event
     |> cast(attrs, @attrs)
     |> cast_embed(:options)
@@ -124,7 +123,7 @@ defmodule Mobilizon.Events.Event do
 
   @doc false
   @spec update_changeset(t, map) :: Ecto.Changeset.t()
-  def update_changeset(%Event{} = event, attrs) do
+  def update_changeset(%__MODULE__{} = event, attrs) do
     event
     |> Ecto.Changeset.cast(attrs, @update_attrs)
     |> cast_embed(:options)
@@ -136,7 +135,7 @@ defmodule Mobilizon.Events.Event do
   Checks whether an event can be managed.
   """
   @spec can_be_managed_by(t, integer | String.t()) :: boolean
-  def can_be_managed_by(%Event{organizer_actor_id: organizer_actor_id}, actor_id)
+  def can_be_managed_by(%__MODULE__{organizer_actor_id: organizer_actor_id}, actor_id)
       when organizer_actor_id == actor_id do
     {:event_can_be_managed, true}
   end

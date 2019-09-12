@@ -7,7 +7,7 @@ defmodule Mobilizon.Events.Session do
 
   import Ecto.Changeset
 
-  alias Mobilizon.Events.{Event, Session, Track}
+  alias Mobilizon.Events.{Event, Track}
 
   @type t :: %__MODULE__{
           audios_urls: String.t(),
@@ -57,7 +57,7 @@ defmodule Mobilizon.Events.Session do
 
   @doc false
   @spec changeset(t, map) :: Ecto.Changeset.t()
-  def changeset(%Session{} = session, attrs) do
+  def changeset(%__MODULE__{} = session, attrs) do
     session
     |> cast(attrs, @attrs)
     |> validate_required(@required_attrs)

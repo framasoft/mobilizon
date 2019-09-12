@@ -7,7 +7,6 @@ defmodule Mobilizon.Addresses.Address do
 
   import Ecto.Changeset
 
-  alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.Event
 
   @type t :: %__MODULE__{
@@ -56,8 +55,8 @@ defmodule Mobilizon.Addresses.Address do
   end
 
   @doc false
-  @spec changeset(t | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
-  def changeset(%Address{} = address, attrs) do
+  @spec changeset(t, map) :: Ecto.Changeset.t()
+  def changeset(%__MODULE__{} = address, attrs) do
     address
     |> cast(attrs, @attrs)
     |> set_url()

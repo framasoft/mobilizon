@@ -8,7 +8,7 @@ defmodule Mobilizon.Actors.Actor do
   import Ecto.Changeset
 
   alias Mobilizon.{Actors, Config, Crypto}
-  alias Mobilizon.Actors.{Actor, ActorOpenness, ActorType, ActorVisibility, Follower, Member}
+  alias Mobilizon.Actors.{ActorOpenness, ActorType, ActorVisibility, Follower, Member}
   alias Mobilizon.Events.{Event, FeedToken}
   alias Mobilizon.Media.File
   alias Mobilizon.Reports.{Report, Note}
@@ -46,7 +46,7 @@ defmodule Mobilizon.Actors.Actor do
           created_reports: [Report.t()],
           subject_reports: [Report.t()],
           report_notes: [Note.t()],
-          memberships: [Actor.t()]
+          memberships: [t]
         }
 
   @required_attrs [:preferred_username, :keys, :suspended, :url]
@@ -139,7 +139,7 @@ defmodule Mobilizon.Actors.Actor do
     has_many(:created_reports, Report, foreign_key: :reporter_id)
     has_many(:subject_reports, Report, foreign_key: :reported_id)
     has_many(:report_notes, Note, foreign_key: :moderator_id)
-    many_to_many(:memberships, Actor, join_through: Member)
+    many_to_many(:memberships, __MODULE__, join_through: Member)
 
     timestamps()
   end
@@ -147,8 +147,8 @@ defmodule Mobilizon.Actors.Actor do
   @doc """
   Checks whether actor visibility is public.
   """
-  @spec is_public_visibility(Actor.t()) :: boolean
-  def is_public_visibility(%Actor{visibility: visibility}) do
+  @spec is_public_visibility(t) :: boolean
+  def is_public_visibility(%__MODULE__{visibility: visibility}) do
     visibility in [:public, :unlisted]
   end
 
@@ -156,22 +156,22 @@ defmodule Mobilizon.Actors.Actor do
   Returns the display name if available, or the preferred username
   (with the eventual @domain suffix if it's a distant actor).
   """
-  @spec display_name(Actor.t()) :: String.t()
-  def display_name(%Actor{name: name} = actor) when name in [nil, ""] do
+  @spec display_name(t) :: String.t()
+  def display_name(%__MODULE__{name: name} = actor) when name in [nil, ""] do
     preferred_username_and_domain(actor)
   end
 
-  def display_name(%Actor{name: name}), do: name
+  def display_name(%__MODULE__{name: name}), do: name
 
   @doc """
   Returns display name and username.
   """
-  @spec display_name_and_username(Actor.t()) :: String.t()
-  def display_name_and_username(%Actor{name: name} = actor) when name in [nil, ""] do
+  @spec display_name_and_username(t) :: String.t()
+  def display_name_and_username(%__MODULE__{name: name} = actor) when name in [nil, ""] do
     preferred_username_and_domain(actor)
   end
 
-  def display_name_and_username(%Actor{name: name} = actor) do
+  def display_name_and_username(%__MODULE__{name: name} = actor) do
     "#{name} (#{preferred_username_and_domain(actor)})"
   end
 
@@ -179,18 +179,18 @@ defmodule Mobilizon.Actors.Actor do
   Returns the preferred username with the eventual @domain suffix if it's
   a distant actor.
   """
-  @spec preferred_username_and_domain(Actor.t()) :: String.t()
-  def preferred_username_and_domain(%Actor{preferred_username: preferred_username, domain: nil}) do
+  @spec preferred_username_and_domain(t) :: String.t()
+  def preferred_username_and_domain(%__MODULE__{preferred_username: preferred_username, domain: nil}) do
     preferred_username
   end
 
-  def preferred_username_and_domain(%Actor{preferred_username: preferred_username, domain: domain}) do
+  def preferred_username_and_domain(%__MODULE__{preferred_username: preferred_username, domain: domain}) do
     "#{preferred_username}@#{domain}"
   end
 
   @doc false
-  @spec changeset(t | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
-  def changeset(%Actor{} = actor, attrs) do
+  @spec changeset(t, map) :: Ecto.Changeset.t()
+  def changeset(%__MODULE__{} = actor, attrs) do
     actor
     |> cast(attrs, @attrs)
     |> build_urls()
@@ -205,8 +205,8 @@ defmodule Mobilizon.Actors.Actor do
   end
 
   @doc false
-  @spec update_changeset(t | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
-  def update_changeset(%Actor{} = actor, attrs) do
+  @spec update_changeset(t, map) :: Ecto.Changeset.t()
+  def update_changeset(%__MODULE__{} = actor, attrs) do
     actor
     |> cast(attrs, @update_attrs)
     |> cast_embed(:avatar)
@@ -221,8 +221,8 @@ defmodule Mobilizon.Actors.Actor do
   @doc """
   Changeset for person registration.
   """
-  @spec registration_changeset(t | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
-  def registration_changeset(%Actor{} = actor, attrs) do
+  @spec registration_changeset(t, map) :: Ecto.Changeset.t()
+  def registration_changeset(%__MODULE__{} = actor, attrs) do
     actor
     |> cast(attrs, @registration_attrs)
     |> build_urls()
@@ -242,7 +242,7 @@ defmodule Mobilizon.Actors.Actor do
   @spec remote_actor_creation_changeset(map) :: Ecto.Changeset.t()
   def remote_actor_creation_changeset(attrs) do
     changeset =
-      %Actor{}
+      %__MODULE__{}
       |> cast(attrs, @remote_actor_creation_attrs)
       |> validate_required(@remote_actor_creation_required_attrs)
       |> cast_embed(:avatar)
@@ -267,14 +267,14 @@ defmodule Mobilizon.Actors.Actor do
   def relay_creation_changeset(attrs) do
     relay_creation_attrs = build_relay_creation_attrs(attrs)
 
-    cast(%Actor{}, relay_creation_attrs, @relay_creation_attrs)
+    cast(%__MODULE__{}, relay_creation_attrs, @relay_creation_attrs)
   end
 
   @doc """
   Changeset for group creation
   """
-  @spec group_creation(struct(), map()) :: Ecto.Changeset.t()
-  def group_creation(%Actor{} = actor, params) do
+  @spec group_creation_changeset(t, map) :: Ecto.Changeset.t()
+  def group_creation_changeset(%__MODULE__{} = actor, params) do
     actor
     |> cast(params, @group_creation_attrs)
     |> cast_embed(:avatar)
@@ -299,7 +299,7 @@ defmodule Mobilizon.Actors.Actor do
          %Ecto.Changeset{changes: %{preferred_username: username} = changes} = changeset
        ) do
     with nil <- Map.get(changes, :domain, nil),
-         %Actor{preferred_username: _} <- Actors.get_local_actor_by_name(username) do
+         %__MODULE__{preferred_username: _} <- Actors.get_local_actor_by_name(username) do
       add_error(changeset, :preferred_username, "Username is already taken")
     else
       _ -> changeset
@@ -349,8 +349,8 @@ defmodule Mobilizon.Actors.Actor do
   Clear multiple caches for an actor
   """
   # TODO: move to MobilizonWeb
-  @spec clear_cache(struct()) :: {:ok, true}
-  def clear_cache(%Actor{preferred_username: preferred_username, domain: nil}) do
+  @spec clear_cache(t) :: {:ok, true}
+  def clear_cache(%__MODULE__{preferred_username: preferred_username, domain: nil}) do
     Cachex.del(:activity_pub, "actor_" <> preferred_username)
     Cachex.del(:feed, "actor_" <> preferred_username)
     Cachex.del(:ics, "actor_" <> preferred_username)

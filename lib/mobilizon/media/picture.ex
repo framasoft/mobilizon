@@ -23,8 +23,8 @@ defmodule Mobilizon.Media.Picture do
   end
 
   @doc false
-  @spec changeset(t | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
-  def changeset(picture, attrs) do
+  @spec changeset(t, map) :: Ecto.Changeset.t()
+  def changeset(%__MODULE__{} = picture, attrs) do
     picture
     |> cast(attrs, [:actor_id])
     |> cast_embed(:file)

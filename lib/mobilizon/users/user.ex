@@ -11,7 +11,7 @@ defmodule Mobilizon.Users.User do
   alias Mobilizon.Crypto
   alias Mobilizon.Events.FeedToken
   alias Mobilizon.Service.EmailChecker
-  alias Mobilizon.Users.{User, UserRole}
+  alias Mobilizon.Users.UserRole
 
   @type t :: %__MODULE__{
           email: String.t(),
@@ -66,8 +66,8 @@ defmodule Mobilizon.Users.User do
   end
 
   @doc false
-  @spec changeset(t | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
-  def changeset(%User{} = user, attrs) do
+  @spec changeset(t, map) :: Ecto.Changeset.t()
+  def changeset(%__MODULE__{} = user, attrs) do
     changeset =
       user
       |> cast(attrs, @attrs)
@@ -84,8 +84,8 @@ defmodule Mobilizon.Users.User do
   end
 
   @doc false
-  @spec registration_changeset(User.t(), map) :: Ecto.Changeset.t()
-  def registration_changeset(%User{} = user, attrs) do
+  @spec registration_changeset(t, map) :: Ecto.Changeset.t()
+  def registration_changeset(%__MODULE__{} = user, attrs) do
     user
     |> changeset(attrs)
     |> cast_assoc(:default_actor)
@@ -99,14 +99,14 @@ defmodule Mobilizon.Users.User do
   end
 
   @doc false
-  @spec send_password_reset_changeset(User.t(), map) :: Ecto.Changeset.t()
-  def send_password_reset_changeset(%User{} = user, attrs) do
+  @spec send_password_reset_changeset(t, map) :: Ecto.Changeset.t()
+  def send_password_reset_changeset(%__MODULE__{} = user, attrs) do
     cast(user, attrs, [:reset_password_token, :reset_password_sent_at])
   end
 
   @doc false
-  @spec password_reset_changeset(User.t(), map) :: Ecto.Changeset.t()
-  def password_reset_changeset(%User{} = user, attrs) do
+  @spec password_reset_changeset(t, map) :: Ecto.Changeset.t()
+  def password_reset_changeset(%__MODULE__{} = user, attrs) do
     user
     |> cast(attrs, @password_reset_required_attrs)
     |> validate_length(:password,
@@ -120,15 +120,15 @@ defmodule Mobilizon.Users.User do
   @doc """
   Checks whether an user is confirmed. 
   """
-  @spec is_confirmed(User.t()) :: boolean
-  def is_confirmed(%User{confirmed_at: nil}), do: false
-  def is_confirmed(%User{}), do: true
+  @spec is_confirmed(t) :: boolean
+  def is_confirmed(%__MODULE__{confirmed_at: nil}), do: false
+  def is_confirmed(%__MODULE__{}), do: true
 
   @doc """
   Returns whether an user owns an actor.
   """
-  @spec owns_actor(User.t(), integer | String.t()) :: {:is_owned, Actor.t() | nil}
-  def owns_actor(%User{actors: actors}, actor_id) do
+  @spec owns_actor(t, integer | String.t()) :: {:is_owned, Actor.t() | nil}
+  def owns_actor(%__MODULE__{actors: actors}, actor_id) do
     user_actor = Enum.find(actors, fn actor -> "#{actor.id}" == "#{actor_id}" end)
 
     {:is_owned, user_actor}

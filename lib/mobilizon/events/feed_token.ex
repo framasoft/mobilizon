@@ -8,7 +8,6 @@ defmodule Mobilizon.Events.FeedToken do
   import Ecto.Changeset
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.FeedToken
   alias Mobilizon.Users.User
 
   @type t :: %__MODULE__{
@@ -33,7 +32,7 @@ defmodule Mobilizon.Events.FeedToken do
 
   @doc false
   @spec changeset(t, map) :: Ecto.Changeset.t()
-  def changeset(%FeedToken{} = feed_token, attrs) do
+  def changeset(%__MODULE__{} = feed_token, attrs) do
     feed_token
     |> cast(attrs, @attrs)
     |> validate_required(@required_attrs)

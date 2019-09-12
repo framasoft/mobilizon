@@ -7,7 +7,7 @@ defmodule Mobilizon.Events.Track do
 
   import Ecto.Changeset
 
-  alias Mobilizon.Events.{Track, Event, Session}
+  alias Mobilizon.Events.{Event, Session}
 
   @type t :: %__MODULE__{
           color: String.t(),
@@ -34,7 +34,7 @@ defmodule Mobilizon.Events.Track do
 
   @doc false
   @spec changeset(t, map) :: Ecto.Changeset.t()
-  def changeset(%Track{} = track, attrs) do
+  def changeset(%__MODULE__{} = track, attrs) do
     track
     |> cast(attrs, @attrs)
     |> validate_required(@required_attrs)

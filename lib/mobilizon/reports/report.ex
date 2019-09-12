@@ -50,16 +50,16 @@ defmodule Mobilizon.Reports.Report do
   end
 
   @doc false
-  @spec changeset(t | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
-  def changeset(report, attrs) do
+  @spec changeset(t, map) :: Ecto.Changeset.t()
+  def changeset(%__MODULE__{} = report, attrs) do
     report
     |> cast(attrs, @attrs)
     |> validate_required(@required_attrs)
   end
 
   @doc false
-  @spec creation_changeset(Report.t(), map) :: Ecto.Changeset.t()
-  def creation_changeset(report, attrs) do
+  @spec creation_changeset(t, map) :: Ecto.Changeset.t()
+  def creation_changeset(%__MODULE__{} = report, attrs) do
     report
     |> changeset(attrs)
     |> put_assoc(:comments, attrs["comments"])

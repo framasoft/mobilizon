@@ -340,7 +340,7 @@ defmodule Mobilizon.Actors do
   @spec create_group(map) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def create_group(attrs \\ %{}) do
     %Actor{}
-    |> Actor.group_creation(attrs)
+    |> Actor.group_creation_changeset(attrs)
     |> Repo.insert()
   end
 

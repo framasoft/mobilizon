@@ -30,8 +30,8 @@ defmodule Mobilizon.Reports.Note do
   end
 
   @doc false
-  @spec changeset(t | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
-  def changeset(note, attrs) do
+  @spec changeset(t, map) :: Ecto.Changeset.t()
+  def changeset(%__MODULE__{} = note, attrs) do
     note
     |> cast(attrs, @attrs)
     |> validate_required(@required_attrs)

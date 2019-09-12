@@ -9,7 +9,6 @@ defmodule Mobilizon.Events.EventOptions do
 
   alias Mobilizon.Events.{
     EventOffer,
-    EventOptions,
     EventParticipationCondition,
     CommentModeration
   }
@@ -52,7 +51,7 @@ defmodule Mobilizon.Events.EventOptions do
 
   @doc false
   @spec changeset(t, map) :: Ecto.Changeset.t()
-  def changeset(%EventOptions{} = event_options, attrs) do
+  def changeset(%__MODULE__{} = event_options, attrs) do
     cast(event_options, attrs, @attrs)
   end
 end

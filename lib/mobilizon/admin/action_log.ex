@@ -33,8 +33,8 @@ defmodule Mobilizon.Admin.ActionLog do
   end
 
   @doc false
-  @spec changeset(t | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
-  def changeset(action_log, attrs) do
+  @spec changeset(t, map) :: Ecto.Changeset.t()
+  def changeset(%__MODULE__{} = action_log, attrs) do
     action_log
     |> cast(attrs, @attrs)
     |> validate_required(@required_attrs)

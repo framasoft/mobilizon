@@ -10,7 +10,7 @@ defmodule Mobilizon.Events.Participant do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Config
   alias Mobilizon.Events
-  alias Mobilizon.Events.{Event, Participant, ParticipantRole}
+  alias Mobilizon.Events.{Event, ParticipantRole}
 
   @type t :: %__MODULE__{
           role: ParticipantRole.t(),
@@ -41,7 +41,7 @@ defmodule Mobilizon.Events.Participant do
   @spec is_not_only_organizer(integer | String.t(), integer | String.t()) :: boolean
   def is_not_only_organizer(event_id, actor_id) do
     case Events.list_organizers_participants_for_event(event_id) do
-      [%Participant{actor: %Actor{id: participant_actor_id}}] ->
+      [%__MODULE__{actor: %Actor{id: participant_actor_id}}] ->
         participant_actor_id == actor_id
 
       _ ->
@@ -51,7 +51,7 @@ defmodule Mobilizon.Events.Participant do
 
   @doc false
   @spec changeset(t, map) :: Ecto.Changeset.t()
-  def changeset(%Participant{} = participant, attrs) do
+  def changeset(%__MODULE__{} = participant, attrs) do
     participant
     |> cast(attrs, @attrs)
     |> ensure_url()
@@ -60,7 +60,7 @@ defmodule Mobilizon.Events.Participant do
 
   # If there's a blank URL that's because we're doing the first insert
   @spec ensure_url(Ecto.Changeset.t()) :: Ecto.Changeset.t()
-  defp ensure_url(%Ecto.Changeset{data: %Participant{url: nil}} = changeset) do
+  defp ensure_url(%Ecto.Changeset{data: %__MODULE__{url: nil}} = changeset) do
     case fetch_change(changeset, :url) do
       {:ok, _url} ->
         changeset

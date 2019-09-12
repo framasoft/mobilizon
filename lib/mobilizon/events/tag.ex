@@ -7,13 +7,13 @@ defmodule Mobilizon.Events.Tag do
 
   import Ecto.Changeset
 
-  alias Mobilizon.Events.{Tag, TagRelation}
+  alias Mobilizon.Events.TagRelation
   alias Mobilizon.Events.Tag.TitleSlug
 
   @type t :: %__MODULE__{
           title: String.t(),
           slug: TitleSlug.Type.t(),
-          related_tags: [Tag.t()]
+          related_tags: [t]
         }
 
   @required_attrs [:title, :slug]
@@ -23,14 +23,14 @@ defmodule Mobilizon.Events.Tag do
     field(:title, :string)
     field(:slug, TitleSlug.Type)
 
-    many_to_many(:related_tags, Tag, join_through: TagRelation)
+    many_to_many(:related_tags, __MODULE__, join_through: TagRelation)
 
     timestamps()
   end
 
   @doc false
   @spec changeset(t, map) :: Ecto.Changeset.t()
-  def changeset(%Tag{} = tag, attrs) do
+  def changeset(%__MODULE__{} = tag, attrs) do
     tag
     |> cast(attrs, @attrs)
     |> TitleSlug.maybe_generate_slug()

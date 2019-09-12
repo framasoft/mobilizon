@@ -7,7 +7,7 @@ defmodule Mobilizon.Events.TagRelation do
 
   import Ecto.Changeset
 
-  alias Mobilizon.Events.{Tag, TagRelation}
+  alias Mobilizon.Events.Tag
 
   @type t :: %__MODULE__{
           weight: integer,
@@ -29,7 +29,7 @@ defmodule Mobilizon.Events.TagRelation do
 
   @doc false
   @spec changeset(t, map) :: Ecto.Changeset.t()
-  def changeset(%TagRelation{} = tag, attrs) do
+  def changeset(%__MODULE__{} = tag, attrs) do
     # Return if tag_id or link_id are not set because it will fail later otherwise
     with %Ecto.Changeset{errors: [], changes: changes} = changeset <-
            tag

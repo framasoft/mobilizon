@@ -48,13 +48,13 @@ defmodule Mobilizon.Events.Comment do
   Returns the id of the first comment in the conversation.
   """
   @spec get_thread_id(t) :: integer
-  def get_thread_id(%Comment{id: id, origin_comment_id: origin_comment_id}) do
+  def get_thread_id(%__MODULE__{id: id, origin_comment_id: origin_comment_id}) do
     origin_comment_id || id
   end
 
   @doc false
   @spec changeset(t, map) :: Ecto.Changeset.t()
-  def changeset(%Comment{} = comment, attrs) do
+  def changeset(%__MODULE__{} = comment, attrs) do
     uuid = attrs["uuid"] || Ecto.UUID.generate()
     url = attrs["url"] || generate_url(uuid)
 
