@@ -274,7 +274,7 @@ defmodule MobilizonWeb.Resolvers.Event do
       ) do
     with {:ok, %Event{} = event} <- Mobilizon.Events.get_event(event_id),
          {:is_owned, %Actor{}} <- User.owns_actor(user, actor_id),
-         {:event_can_be_managed, true} <- Event.can_event_be_managed_by(event, actor_id),
+         {:event_can_be_managed, true} <- Event.can_be_managed_by(event, actor_id),
          event <- Mobilizon.Events.delete_event!(event) do
       {:ok, %{id: event.id}}
     else

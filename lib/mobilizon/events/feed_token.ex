@@ -1,16 +1,30 @@
 defmodule Mobilizon.Events.FeedToken do
   @moduledoc """
-  Represents a Token for a Feed of events
+  Represents a token for a feed of events.
   """
+
   use Ecto.Schema
+
   import Ecto.Changeset
-  alias Mobilizon.Events.FeedToken
+
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Events.FeedToken
   alias Mobilizon.Users.User
+
+  @type t :: %__MODULE__{
+          token: Ecto.UUID.t(),
+          actor: Actor.t(),
+          user: User.t()
+        }
+
+  @required_attrs [:token, :user_id]
+  @optional_attrs [:actor_id]
+  @attrs @required_attrs ++ @optional_attrs
 
   @primary_key false
   schema "feed_tokens" do
     field(:token, Ecto.UUID, primary_key: true)
+
     belongs_to(:actor, Actor)
     belongs_to(:user, User)
 
@@ -18,9 +32,10 @@ defmodule Mobilizon.Events.FeedToken do
   end
 
   @doc false
+  @spec changeset(t, map) :: Ecto.Changeset.t()
   def changeset(%FeedToken{} = feed_token, attrs) do
     feed_token
-    |> Ecto.Changeset.cast(attrs, [:token, :actor_id, :user_id])
-    |> validate_required([:token, :user_id])
+    |> cast(attrs, @attrs)
+    |> validate_required(@required_attrs)
   end
 end

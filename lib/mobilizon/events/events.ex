@@ -4,6 +4,7 @@ defmodule Mobilizon.Events do
   """
 
   import Ecto.Query
+  import EctoEnum
 
   import Mobilizon.Storage.Ecto
 
@@ -13,13 +14,62 @@ defmodule Mobilizon.Events do
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.User
 
-  def data() do
-    Dataloader.Ecto.new(Repo, query: &query/2)
-  end
+  defenum(EventVisibility, :event_visibility, [
+    :public,
+    :unlisted,
+    :restricted,
+    :private
+  ])
 
-  def query(queryable, _params) do
-    queryable
-  end
+  defenum(JoinOptions, :join_options, [
+    :free,
+    :restricted,
+    :invite
+  ])
+
+  defenum(EventStatus, :event_status, [
+    :tentative,
+    :confirmed,
+    :cancelled
+  ])
+
+  defenum(EventCategory, :event_category, [
+    :business,
+    :conference,
+    :birthday,
+    :demonstration,
+    :meeting
+  ])
+
+  defenum(CommentVisibility, :comment_visibility, [
+    :public,
+    :unlisted,
+    :private,
+    :moderated,
+    :invite
+  ])
+
+  defenum(CommentModeration, :comment_moderation, [
+    :allow_all,
+    :moderated,
+    :closed
+  ])
+
+  defenum(ParticipantRole, :participant_role, [
+    :not_approved,
+    :participant,
+    :moderator,
+    :administrator,
+    :creator
+  ])
+
+  @doc false
+  @spec data :: Dataloader.Ecto.t()
+  def data, do: Dataloader.Ecto.new(Repo, query: &query/2)
+
+  @doc false
+  @spec query(Ecto.Query.t(), map) :: Ecto.Query.t()
+  def query(queryable, _params), do: queryable
 
   def get_public_events_for_actor(%Actor{id: actor_id} = _actor, page \\ nil, limit \\ nil) do
     query =
@@ -537,6 +587,18 @@ defmodule Mobilizon.Events do
 
   def get_tag(id), do: Repo.get(Tag, id)
 
+
+
+  def get_tag_by_slug(slug) do
+    query =
+      from(
+        t in Tag,
+        where: t.slug == ^slug
+      )
+
+    Repo.one(query)
+  end
+
   @doc """
   Get an existing tag or create one
   """
@@ -697,6 +759,9 @@ defmodule Mobilizon.Events do
 
     Repo.all(final_query)
   end
+
+
+
 
   alias Mobilizon.Events.Participant
 

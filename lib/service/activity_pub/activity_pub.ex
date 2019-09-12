@@ -461,8 +461,7 @@ defmodule Mobilizon.Service.ActivityPub do
         local
       ) do
     with {:only_organizer, false} <-
-           {:only_organizer,
-            Participant.check_that_participant_is_not_only_organizer(event_id, actor_id)},
+           {:only_organizer, Participant.is_not_only_organizer(event_id, actor_id)},
          {:ok, %Participant{} = participant} <-
            Mobilizon.Events.get_participant(event_id, actor_id),
          {:ok, %Participant{} = participant} <- Mobilizon.Events.delete_participant(participant),
