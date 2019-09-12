@@ -1,10 +1,12 @@
 <template>
-  <div v-if="code === ErrorCode.REGISTRATION_CLOSED">
-    <translate>Registration is currently closed.</translate>
-  </div>
+  <div>
+    <span v-if="code === ErrorCode.REGISTRATION_CLOSED">
+      {{ $t('Registration is currently closed.') }}
+    </span>
 
-  <div v-else>
-    <translate>Unknown error.</translate>
+    <span v-else>
+      {{ $t('Unknown error.') }}
+    </span>
   </div>
 </template>
 

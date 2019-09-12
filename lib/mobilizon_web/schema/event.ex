@@ -54,6 +54,8 @@ defmodule MobilizonWeb.Schema.EventType do
 
     field(:category, :string, description: "The event's category")
 
+    field(:participant_stats, :participant_stats, resolve: &Event.stats_participants_for_event/3)
+
     field(:participants, list_of(:participant),
       resolve: &Event.list_participants_for_event/3,
       description: "The event's participants"
@@ -90,6 +92,11 @@ defmodule MobilizonWeb.Schema.EventType do
     value(:tentative, description: "The event is tentative")
     value(:confirmed, description: "The event is confirmed")
     value(:cancelled, description: "The event is cancelled")
+  end
+
+  object :participant_stats do
+    field(:approved, :integer, description: "The number of approved participants")
+    field(:unapproved, :integer, description: "The number of unapproved participants")
   end
 
   object :event_offer do

@@ -1,11 +1,13 @@
 <template>
     <div class="identity-picker">
         <img class="image" v-if="currentIdentity.avatar" :src="currentIdentity.avatar.url"  :alt="currentIdentity.avatar.alt"/> {{ currentIdentity.name || `@${currentIdentity.preferredUsername}` }}
-        <b-button type="is-text" @click="isComponentModalActive = true"><translate>Change</translate></b-button>
+        <b-button type="is-text" @click="isComponentModalActive = true">
+            {{ $t('Change') }}
+        </b-button>
         <b-modal :active.sync="isComponentModalActive" has-modal-card>
             <div class="modal-card">
                 <header class="modal-card-head">
-                    <p class="modal-card-title">Pick an identity</p>
+                    <p class="modal-card-title">{{ $t('Pick an identity') }}</p>
                 </header>
                 <section class="modal-card-body">
                     <div class="list is-hoverable">

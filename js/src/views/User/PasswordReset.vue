@@ -2,7 +2,7 @@
   <section class="columns is-mobile is-centered">
     <div class="card column is-half-desktop">
       <h1>
-        <translate>Password reset</translate>
+        {{ $t('Password reset') }}
       </h1>
       <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">{{ error }}</b-message>
       <form @submit="resetAction">
@@ -27,7 +27,7 @@
           />
         </b-field>
         <button class="button is-primary">
-          <translate>Reset my password</translate>
+          {{ $t('Reset my password') }}
         </button>
       </form>
     </div>

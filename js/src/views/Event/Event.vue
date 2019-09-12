@@ -18,14 +18,20 @@
               </div>
               <h1 class="title">{{ event.title }}</h1>
             </div>
+            <span v-if="event.participantStats.approved > 0 && !actorIsParticipant()">
+                {{ $tc('One person is going', event.participantStats.approved, {approved: event.participantStats.approved}) }}
+            </span>
+            <span v-else>
+              {{ $tc('You and one other person are going to this event', event.participantStats.approved - 1, {approved: event.participantStats.approved - 1}) }}
+            </span>
             <div v-if="!actorIsOrganizer()" class="participate-button has-text-centered">
               <a v-if="!actorIsParticipant()" @click="isJoinModalActive = true" class="button is-large is-primary is-rounded">
                 <b-icon icon="circle-outline"></b-icon>
-                <translate>Join</translate>
+                {{ $t('Join') }}
               </a>
               <a v-if="actorIsParticipant()" @click="confirmLeave()" class="button is-large is-primary is-rounded">
                 <b-icon icon="check-circle"></b-icon>
-                <translate>Leave</translate>
+                {{ $t('Leave') }}
               </a>
             </div>
           </div>
@@ -35,7 +41,7 @@
                 <span class="tag" v-if="event.category">{{ event.category }}</span>
                 <span class="tag" v-if="event.tags" v-for="tag in event.tags">{{ tag.title }}</span>
                 <span class="visibility">
-                  <translate v-if="event.visibility === EventVisibility.PUBLIC">public event</translate>
+                  <span v-if="event.visibility === EventVisibility.PUBLIC">{{ $t('public event') }}</span>
                 </span>
               </p>
               <div class="date-and-add-to-calendar">
@@ -45,7 +51,7 @@
                 </div>
                 <a class="add-to-calendar" @click="downloadIcsEvent()">
                   <b-icon icon="calendar-plus" />
-                  <translate>Add to my calendar</translate>
+                  {{ $t('Add to my calendar') }}
                 </a>
               </div>
               <p class="slug">
@@ -59,23 +65,23 @@
                           class="button"
                           :to="{ name: 'EditEvent', params: {eventId: event.uuid}}"
                   >
-                    <translate>Edit</translate>
+                    {{ $t('Edit') }}
                   </router-link>
                 </p>
                 <p class="control" v-if="actorIsOrganizer()">
                   <a class="button is-danger" @click="openDeleteEventModal()">
-                    <translate>Delete</translate>
+                    {{ $t('Delete') }}
                   </a>
                 </p>
                 <p class="control">
                   <a class="button is-danger" @click="isReportModalActive = true">
-                    <translate>Report</translate>
+                    {{ $t('Report') }}
                   </a>
                 </p>
               </div>
               <div class="address-wrapper">
                 <b-icon icon="map" />
-                <translate v-if="!event.physicalAddress">No address defined</translate>
+                <span v-if="!event.physicalAddress">{{ $t('No address defined') }}</span>
                 <div class="address" v-if="event.physicalAddress">
                   <address>
                     <span class="addressDescription">{{ event.physicalAddress.description }}</span>
@@ -84,7 +90,7 @@
   <!--                  <span>{{ event.physicalAddress.region }} {{ event.physicalAddress.country }}</span>-->
                   </address>
                   <span class="map-show-button" @click="showMap = !showMap" v-if="event.physicalAddress && event.physicalAddress.geom">
-                    <translate>Show map</translate>
+                    {{ $t('Show map') }}
                   </span>
                 </div>
                 <b-modal v-if="event.physicalAddress && event.physicalAddress.geom" :active.sync="showMap" :width="800" scroll="keep">
@@ -98,14 +104,14 @@
               </div>
               <div class="organizer">
                 <actor-link :actor="event.organizerActor">
-                  <translate
-                          :translate-params="{name: event.organizerActor.name ? event.organizerActor.name : event.organizerActor.preferredUsername}"
-                          v-if="event.organizerActor">By %{ name }</translate>
+                  <span v-if="event.organizerActor">
+                    {{ $t('By {name}', {name: event.organizerActor.name ? event.organizerActor.name : event.organizerActor.preferredUsername}) }}
+                  </span>
                   <figure v-if="event.organizerActor.avatar" class="image is-48x48">
                     <img
                             class="is-rounded"
                             :src="event.organizerActor.avatar.url"
-                            :alt="$gettextInterpolate('%{actor}\'s avatar', {actor: event.organizerActor.preferredUsername})" />
+                            :alt="$t("{actor}'s avatar", {actor: event.organizerActor.preferredUsername})" />
                   </figure>
                 </actor-link>
               </div>
@@ -125,7 +131,7 @@
 <!--              <span>-->
 <!--                <translate-->
 <!--                        :translate-n="event.participants.length"-->
-<!--                        translate-plural="%{event.participants.length} persons are going"-->
+<!--                        translate-plural="{event.participants.length} persons are going"-->
 <!--                >-->
 <!--                  One person is going.-->
 <!--                </translate>-->
@@ -135,10 +141,10 @@
         <div class="description">
           <div class="description-container container">
             <h3 class="title">
-              <translate>About this event</translate>
+              {{ $t('About this event') }}
             </h3>
             <p v-if="!event.description">
-              <translate>The event organizer didn't add any description.</translate>
+              {{ $t("The event organizer didn't add any description.") }}
             </p>
             <div class="columns" v-else>
               <div class="column is-half">
@@ -202,7 +208,7 @@
         <div class="container">
           <div class="columns">
             <div class="column is-half has-text-centered">
-              <h3 class="title"><translate>Share this event</translate></h3>
+              <h3 class="title">{{ $t('Share this event') }}</h3>
               <div>
                 <b-icon icon="mastodon" size="is-large" type="is-primary" />
                 <a :href="facebookShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="facebook" size="is-large" type="is-primary" /></a>
@@ -215,14 +221,14 @@
             <hr />
             <div class="column is-half has-text-right add-to-calendar">
               <h3 @click="downloadIcsEvent()">
-                <translate>Add to my calendar</translate>
+                {{ $t('Add to my calendar') }}
               </h3>
             </div>
           </div>
         </div>
       </section>
       <section class="more-events container" v-if="event.relatedEvents.length > 0">
-        <h3 class="title has-text-centered"><translate>These events may interest you</translate></h3>
+        <h3 class="title has-text-centered">{{ $t('These events may interest you') }}</h3>
         <div class="columns">
           <div class="column is-one-third-desktop" v-for="relatedEvent in event.relatedEvents" :key="relatedEvent.uuid">
             <EventCard :event="relatedEvent" />
@@ -298,21 +304,23 @@ export default class Event extends Vue {
 
   async openDeleteEventModal () {
     const participantsLength = this.event.participants.length;
-    const prefix = participantsLength ? 'There are %{participants} participants. ' : '';
+    const prefix = participantsLength
+            ? this.$tc('There are {participants} participants.', this.event.participants.length, {
+              participants: this.event.participants.length,
+            })
+            : '';
 
     this.$buefy.dialog.prompt({
       type: 'is-danger',
-      title: this.$gettext('Delete event'),
-      message: this.$gettextInterpolate(
-              `${prefix}` +
-              'Are you sure you want to delete this event? This action cannot be reverted. <br /><br />' +
-              'To confirm, type your event title "%{eventTitle}"',
-              { participants: this.event.participants.length, eventTitle: this.event.title },
-      ),
-      confirmText: this.$gettextInterpolate(
-              'Delete %{eventTitle}',
+      title: this.$t('Delete event') as string,
+      message: `${prefix}
+        ${this.$t('Are you sure you want to delete this event? This action cannot be reverted.')}
+        <br><br>
+        ${this.$t('To confirm, type your event title "{eventTitle}"', { eventTitle: this.event.title })}`,
+      confirmText: this.$t(
+              'Delete {eventTitle}',
               { eventTitle: this.event.title },
-      ),
+      ) as string,
       inputAttrs: {
         placeholder: this.event.title,
         pattern: this.event.title,
@@ -336,7 +344,7 @@ export default class Event extends Vue {
         },
       });
       this.$buefy.notification.open({
-        message: this.$gettextInterpolate('Event %{eventTitle} reported', { eventTitle }),
+        message: this.$t('Event {eventTitle} reported', { eventTitle }) as string,
         type: 'is-success',
         position: 'is-bottom-right',
         duration: 5000,
@@ -406,6 +414,7 @@ export default class Event extends Vue {
 
           event.participants = event.participants
             .filter(p => p.actor.id !== data.leaveEvent.actor.id);
+          event.participantStats.approved = event.participantStats.approved - 1;
 
           store.writeQuery({ query: FETCH_EVENT, data: { event } });
         },
@@ -470,7 +479,7 @@ export default class Event extends Vue {
 
       await router.push({ name: RouteName.HOME });
       this.$buefy.notification.open({
-        message: this.$gettextInterpolate('Event %{eventTitle} deleted', { eventTitle }),
+        message: this.$t('Event {eventTitle} deleted', { eventTitle }) as string,
         type: 'is-success',
         position: 'is-bottom-right',
         duration: 5000,

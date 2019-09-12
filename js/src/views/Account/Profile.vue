@@ -24,46 +24,46 @@
 
         <b-dropdown hoverable has-link aria-role="list">
           <button class="button is-primary" slot="trigger">
-            <translate>Public feeds</translate>
+            {{ $t('Public feeds') }}
             <b-icon icon="menu-down"></b-icon>
           </button>
 
           <b-dropdown-item aria-role="listitem">
             <a :href="feedUrls('atom', true)">
-              <translate>Public RSS/Atom Feed</translate>
+              {{ $t('Public RSS/Atom Feed') }}
             </a>
           </b-dropdown-item>
           <b-dropdown-item aria-role="listitem">
             <a :href="feedUrls('ics', true)">
-              <translate>Public iCal Feed</translate>
+              {{ $t('Public iCal Feed') }}
             </a>
           </b-dropdown-item>
         </b-dropdown>
 
         <b-dropdown hoverable has-link aria-role="list" v-if="person.feedTokens.length > 0">
           <button class="button is-info" slot="trigger">
-            <translate>Private feeds</translate>
+            {{ $t('Private feeds') }}
             <b-icon icon="menu-down"></b-icon>
           </button>
 
           <b-dropdown-item aria-role="listitem">
             <a :href="feedUrls('atom', false)">
-              <translate>RSS/Atom Feed</translate>
+              {{ $t('RSS/Atom Feed') }}
             </a>
           </b-dropdown-item>
           <b-dropdown-item aria-role="listitem">
             <a :href="feedUrls('ics', false)">
-              <translate>iCal Feed</translate>
+              {{ $t('iCal Feed') }}
             </a>
           </b-dropdown-item>
         </b-dropdown>
         <a class="button" v-if="currentActor.id === person.id" @click="createToken">
-          <translate>Create token</translate>
+          {{ $t('Create token') }}
         </a>
       </div>
       <section v-if="person.organizedEvents.length > 0">
         <h2 class="subtitle">
-          <translate>Organized</translate>
+          {{ $t('Organized') }}
         </h2>
         <div class="columns">
           <EventCard
@@ -81,7 +81,7 @@
               @click="deleteProfile()"
               v-if="currentActor && currentActor.id === person.id"
             >
-              <translate>Delete</translate>
+              {{ $t('Delete') }}
             </a>
           </p>
         </div>

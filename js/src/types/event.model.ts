@@ -92,6 +92,10 @@ export interface IEvent {
 
   organizerActor?: IActor;
   attributedTo: IActor;
+  participantStats: {
+    approved: number;
+    unapproved: number;
+  };
   participants: IParticipant[];
 
   relatedEvents: IEvent[];
@@ -154,6 +158,7 @@ export class EventModel implements IEvent {
 
   publishAt = new Date();
 
+  participantStats = { approved: 0, unapproved: 0 };
   participants: IParticipant[] = [];
 
   relatedEvents: IEvent[] = [];

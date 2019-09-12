@@ -1,17 +1,17 @@
 <template>
   <div class="root">
-    <h1 v-translate>Create a new group</h1>
+    <h1>{{ $t('Create a new group') }}</h1>
 
     <div>
-      <b-field :label="$gettext('Group name')">
+      <b-field :label="$t('Group name')">
         <b-input aria-required="true" required v-model="group.preferred_username"/>
       </b-field>
 
-      <b-field :label="$gettext('Group full name')">
+      <b-field :label="$t('Group full name')">
         <b-input aria-required="true" required v-model="group.name"/>
       </b-field>
 
-      <b-field :label="$gettext('Description')">
+      <b-field :label="$t('Description')">
         <b-input aria-required="true" required v-model="group.description" type="textarea"/>
       </b-field>
 
@@ -26,7 +26,7 @@
       </div>
 
       <button class="button is-primary" @click="createGroup()">
-        <translate>Create my group</translate>
+        {{ $t('Create my group') }}
       </button>
     </div>
   </div>
@@ -77,7 +77,7 @@ export default class CreateGroup extends Vue {
       await this.$router.push({ name: RouteName.GROUP, params: { identityName: this.group.preferredUsername } });
 
       this.$notifier.success(
-        this.$gettextInterpolate('Group %{displayName} created', { displayName: this.group.displayName() }),
+        this.$t('Group {displayName} created', { displayName: this.group.displayName() }) as string,
       );
     } catch (err) {
       this.handleError(err);

@@ -747,6 +747,28 @@ defmodule Mobilizon.Events do
     |> paginate(page, limit)
   end
 
+  def count_approved_participants(id) do
+    query =
+      from(
+        p in Participant,
+        where: p.role != ^:not_approved,
+        where: p.event_id == ^id
+      )
+
+    Repo.aggregate(query, :count, :id)
+  end
+
+  def count_unapproved_participants(id) do
+    query =
+      from(
+        p in Participant,
+        where: p.role == ^:not_approved,
+        where: p.event_id == ^id
+      )
+
+    Repo.aggregate(query, :count, :id)
+  end
+
   @doc """
   Returns the list of participations for an actor.
 

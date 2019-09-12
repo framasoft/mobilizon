@@ -25,7 +25,7 @@
       </div>
       <section class="box" v-if="group.organizedEvents.length > 0">
         <h2 class="subtitle">
-          <translate>Organized</translate>
+          {{ $t('Organized') }}
         </h2>
         <div class="columns">
           <EventCard
@@ -39,7 +39,7 @@
       </section>
       <section v-if="group.members.length > 0">
         <h2 class="subtitle">
-          <translate>Members</translate>
+          {{ $t('Members') }}
         </h2>
         <div class="columns">
           <span
@@ -50,7 +50,7 @@
       </section>
     </div>
     <b-message v-else-if="!group && $apollo.loading === false" type="is-danger">
-      <translate>No group found</translate>
+      {{ $t('No group found') }}
     </b-message>
   </section>
 </template>

@@ -204,7 +204,7 @@ export default class Report extends Vue {
       });
 
       this.$buefy.notification.open({
-        message: this.$gettextInterpolate('Event %{eventTitle} deleted', { eventTitle }),
+        message: this.$t('Event {eventTitle} deleted', { eventTitle }) as string,
         type: 'is-success',
         position: 'is-bottom-right',
         duration: 5000,

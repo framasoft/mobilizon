@@ -29,7 +29,7 @@
 <!--      <div v-else-if="event.participants.length === 1">-->
 <!--        <translate-->
 <!--                :translate-params="{name: event.participants[0].actor.preferredUsername}"-->
-<!--        >%{name} organizes this event</translate>-->
+<!--        >{name} organizes this event</translate>-->
 <!--      </div>-->
 <!--      <div v-else>-->
 <!--        <span v-for="participant in event.participants" :key="participant.actor.uuid">-->
@@ -37,7 +37,7 @@
 <!--          <span v-if="participant.role === ParticipantRole.CREATOR">(organizer)</span>,-->
 <!--          &lt;!&ndash; <translate-->
 <!--            :translate-params="{name: participant.actor.preferredUsername}"-->
-<!--          >&nbsp;%{name} is in,</translate>&ndash;&gt;-->
+<!--          >&nbsp;{name} is in,</translate>&ndash;&gt;-->
 <!--        </span>-->
 <!--      </div>-->
     </router-link>

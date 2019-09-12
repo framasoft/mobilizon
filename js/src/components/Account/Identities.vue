@@ -1,7 +1,7 @@
 <template>
   <section>
     <h1 class="title">
-      <translate>My identities</translate>
+      {{ $t('My identities') }}
     </h1>
 
     <ul class="identities">
@@ -24,7 +24,7 @@
     </ul>
 
     <router-link :to="{ name: 'CreateIdentity' }" class="button create-identity is-primary" >
-      <translate>Create a new identity</translate>
+      {{ $t('Create a new identity') }}
     </router-link>
   </section>
 </template>

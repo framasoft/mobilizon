@@ -16,7 +16,7 @@
                 <div class="media-content">
                     <p>Do you want to participate in {{ event.title }}?</p>
 
-                    <b-field :label="$gettext('Identity')">
+                    <b-field :label="$t('Identity')">
                         <identity-picker v-model="identity"></identity-picker>
                     </b-field>
 

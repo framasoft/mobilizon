@@ -95,6 +95,10 @@ export const FETCH_EVENT = gql`
       participants {
         ${participantQuery}
       },
+      participantStats {
+        approved,
+        unapproved
+      },
       tags {
         ${tagsQuery}
       },

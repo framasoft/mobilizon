@@ -16,7 +16,7 @@ export default class SearchField extends Vue {
 
   get defaultPlaceHolder(): string {
       // We can't use "this" inside @Prop's default value.
-    return this.placeholder || this.$gettext('Search');
+    return this.placeholder || this.$t('Search') as string;
   }
 }
 </script>

@@ -1,133 +1,129 @@
 <template>
   <section class="container">
-    <h1 class="title">
-      <translate v-if="isUpdate === false">Create a new event</translate>
-      <translate v-else>Update event {{ event.name }}</translate>
+    <h1 class="title" v-if="isUpdate === false">
+      {{ $t('Create a new event') }}
+    </h1>
+    <h1 class="title" v-else>
+      {{ $t('Update event {name}', { name: event.title }) }}
     </h1>
 
-    <div v-if="$apollo.loading">Loading...</div>
+    <div v-if="$apollo.loading">{{ $t('Loading…') }}</div>
 
     <div class="columns is-centered" v-else>
       <form class="column is-two-thirds-desktop" @submit="createOrUpdate">
         <h2 class="subtitle">
-          <translate>
-            General information
-          </translate>
+          {{ $t('General information') }}
         </h2>
         <picture-upload v-model="pictureFile" />
 
-        <b-field :label="$gettext('Title')">
+        <b-field :label="$t('Title')">
           <b-input aria-required="true" required v-model="event.title" maxlength="64" />
         </b-field>
 
         <tag-input v-model="event.tags" :data="tags" path="title" />
 
-        <date-time-picker v-model="event.beginsOn" :label="$gettext('Starts on…')" :step="15"/>
-        <date-time-picker v-model="event.endsOn" :label="$gettext('Ends on…')" :step="15" />
+        <date-time-picker v-model="event.beginsOn" :label="$t('Starts on…')" :step="15"/>
+        <date-time-picker v-model="event.endsOn" :label="$t('Ends on…')" :step="15" />
 
         <address-auto-complete v-model="event.physicalAddress" />
 
-        <b-field :label="$gettext('Organizer')">
+        <b-field :label="$t('Organizer')">
           <identity-picker v-model="event.organizerActor"></identity-picker>
         </b-field>
 
         <div class="field">
-          <label class="label">{{ $gettext('Description') }}</label>
+          <label class="label">{{ $t('Description') }}</label>
           <editor v-model="event.description" />
         </div>
 
-        <b-field :label="$gettext('Website / URL')">
+        <b-field :label="$t('Website / URL')">
           <b-input v-model="event.onlineAddress" placeholder="URL" />
         </b-field>
 
-        <!--<b-field :label="$gettext('Category')">
+        <!--<b-field :label="$t('Category')">
           <b-select placeholder="Select a category" v-model="event.category">
             <option
               v-for="category in categories"
               :value="category"
               :key="category"
-            >{{ $gettext(category) }}</option>
+            >{{ $t(category) }}</option>
           </b-select>
         </b-field>-->
 
         <h2 class="subtitle">
-          <translate>
-            Who can view this event and participate
-          </translate>
+          {{ $t('Who can view this event and participate') }}
         </h2>
           <div class="field">
             <b-radio v-model="eventVisibilityJoinOptions"
                      name="eventVisibilityJoinOptions"
                      :native-value="EventVisibilityJoinOptions.PUBLIC">
-              <translate>Visible everywhere on the web (public)</translate>
+              {{ $t('Visible everywhere on the web (public)') }}
             </b-radio>
           </div>
           <div class="field">
             <b-radio v-model="eventVisibilityJoinOptions"
                      name="eventVisibilityJoinOptions"
                      :native-value="EventVisibilityJoinOptions.LINK">
-              <translate>Only accessible through link and search (private)</translate>
+              {{ $t('Only accessible through link and search (private)') }}
             </b-radio>
           </div>
         <div class="field">
           <b-radio v-model="eventVisibilityJoinOptions"
                    name="eventVisibilityJoinOptions"
                    :native-value="EventVisibilityJoinOptions.LIMITED">
-            <translate>Page limited to my group (asks for auth)</translate>
+             {{ $t('Page limited to my group (asks for auth)') }}
           </b-radio>
         </div>
 
         <div class="field">
-          <label class="label">Approbation des participations</label>
+          <label class="label">{{ $t('Participation approval') }}</label>
           <b-switch v-model="needsApproval">
-            Je veux approuver chaque demande de participation
+            {{ $t('I want to approve every participation request') }}
           </b-switch>
         </div>
 
         <div class="field">
-          <label class="label">Mise en avant</label>
+          <label class="label">{{ $t('Promotion') }}</label>
           <b-switch v-model="doNotPromote" :disabled="canPromote === false">
-            Ne pas autoriser la mise en avant sur sur Mobilizon
+            {{ $t('Disallow promoting on Mobilizon')}}
           </b-switch>
         </div>
 
         <div class="field">
           <b-switch v-model="limitedPlaces">
-            Places limitées
+            {{ $t('Limited places') }}
           </b-switch>
         </div>
 
         <div class="box" v-if="limitedPlaces">
-          <b-field label="Number of places">
+          <b-field :label="$t('Number of places')">
             <b-numberinput v-model="event.options.maximumAttendeeCapacity"></b-numberinput>
           </b-field>
 
           <b-field>
             <b-switch v-model="event.options.showRemainingAttendeeCapacity">
-              Show remaining number of places
+              {{ $t('Show remaining number of places') }}
             </b-switch>
           </b-field>
 
           <b-field>
             <b-switch v-model="event.options.showParticipationPrice">
-              Display participation price
+              {{ $t('Display participation price') }}
             </b-switch>
           </b-field>
         </div>
 
         <h2 class="subtitle">
-          <translate>
-            Modération des commentaires publics
-          </translate>
+          {{ $t('Public comment moderation') }}
         </h2>
 
-        <label>Comments on the event page</label>
+        <label>{{ $t('Comments on the event page') }}</label>
 
         <div class="field">
           <b-radio v-model="event.options.commentModeration"
                    name="commentModeration"
                    :native-value="CommentModeration.ALLOW_ALL">
-            <translate>Allow all comments</translate>
+            {{ $t('Allow all comments') }}
           </b-radio>
         </div>
 
@@ -135,7 +131,7 @@
           <b-radio v-model="event.options.commentModeration"
                    name="commentModeration"
                    :native-value="CommentModeration.MODERATED">
-            <translate>Moderated comments (shown after approval)</translate>
+            {{ $t('Moderated comments (shown after approval)') }}
           </b-radio>
         </div>
 
@@ -143,21 +139,19 @@
           <b-radio v-model="event.options.commentModeration"
                    name="commentModeration"
                    :native-value="CommentModeration.CLOSED">
-            <translate>Close all comments (except for admins)</translate>
+            {{ $t('Close comments for all (except for admins)') }}
           </b-radio>
         </div>
 
         <h2 class="subtitle">
-          <translate>
-            Status
-          </translate>
+          {{ $t('Status') }}
         </h2>
 
         <div class="field">
           <b-radio v-model="event.status"
                    name="status"
                    :native-value="EventStatus.TENTATIVE">
-            <translate>Tentative: Will be confirmed later</translate>
+            {{ $t('Tentative: Will be confirmed later') }}
           </b-radio>
         </div>
 
@@ -165,13 +159,13 @@
           <b-radio v-model="event.status"
                    name="status"
                    :native-value="EventStatus.CONFIRMED">
-            <translate>Confirmed: Will happen</translate>
+            {{ $t('Confirmed: Will happen') }}
           </b-radio>
         </div>
 
         <button class="button is-primary">
-            <translate v-if="isUpdate === false">Create my event</translate>
-            <translate v-else>Update my event</translate>
+            <span v-if="isUpdate === false">{{ $t('Create my event') }}</span>
+            <span v-else> {{ $t('Update my event') }}</span>
         </button>
       </form>
     </div>

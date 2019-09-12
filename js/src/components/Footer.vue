@@ -1,18 +1,13 @@
 <template>
     <footer class="footer">
         <mobilizon-logo :invert="true" class="logo" />
-        <img src="../assets/footer.png" :alt="$gettext('World map')" />
+        <img src="../assets/footer.png" :alt="$t('World map')" />
         <ul>
-            <li><router-link :to="{ name: 'About'}"><translate>About</translate></router-link></li>
-            <li><router-link :to="{ name: 'Licence'}"><translate>License</translate></router-link></li>
-            <li><router-link :to="{ name: 'Legal'}"><translate>Legal</translate></router-link></li>
+            <li><a href="https://joinmobilizon.org">{{ $t('About') }}</a></li>
+            <li><a href="https://framagit.org/framasoft/mobilizon/blob/master/LICENSE">{{ $t('License') }}</a></li>
         </ul>
         <div class="content has-text-centered">
-            <span
-                    v-translate="{
-            date: new Date().getFullYear(),
-            }"
-            >© The Mobilizon Contributors %{date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks</span>
+            <span>{{ $t('© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks', { date: new Date().getFullYear()}) }}</span>
         </div>
     </footer>
 </template>

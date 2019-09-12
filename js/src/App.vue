@@ -79,7 +79,6 @@ export default class App extends Vue {
     const activeIdentity = identities.find(identity => identity.id === actorId) || identities[0] as IPerson;
 
     if (activeIdentity) {
-      console.log('calling changeIdentity with', activeIdentity);
       return await changeIdentity(this.$apollo.provider.defaultClient, activeIdentity);
     }
   }

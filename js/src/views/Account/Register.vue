@@ -3,7 +3,7 @@
     <section class="hero">
       <div class="hero-body">
         <h1 class="title">
-          <translate>Register an account on Mobilizon!</translate>
+          {{ $t('Register an account on Mobilizon!') }}
         </h1>
       </div>
     </section>
@@ -13,7 +13,7 @@
           <div class="column">
             <form v-if="!validationSent">
               <b-field
-                :label="$gettext('Username')"
+                :label="t('Username')"
                 :type="errors.preferred_username ? 'is-danger' : null"
                 :message="errors.preferred_username"
               >
@@ -30,18 +30,18 @@
                 </b-field>
               </b-field>
 
-              <b-field :label="$gettext('Displayed name')">
+              <b-field :label="$t('Displayed name')">
                 <b-input v-model="person.name"/>
               </b-field>
 
-              <b-field :label="$gettext('Description')">
+              <b-field :label="$t('Description')">
                 <b-input type="textarea" v-model="person.summary"/>
               </b-field>
 
               <b-field grouped>
                 <div class="control">
                   <button type="button" class="button is-primary" @click="submit()">
-                    <translate>Create my profile</translate>
+                     {{ $t('Create my profile') }}
                   </button>
                 </div>
               </b-field>
@@ -50,15 +50,13 @@
             <div v-if="validationSent && !userAlreadyActivated">
               <b-message title="Success" type="is-success">
                 <h2 class="title">
-                  <translate
-                    :translate-params="{ username: person.preferredUsername }"
-                  >Your account is nearly ready, %{username}</translate>
+                  {{ $t('Your account is nearly ready, {username}', { username: person.preferredUsername }) }}
                 </h2>
                 <p>
-                  <translate>A validation email was sent to %{email}</translate>
+                  {{ $t('A validation email was sent to {email}', { email }) }}
                 </p>
                 <p>
-                  <translate>Before you can login, you need to click on the link inside it to validate your account</translate>
+                  {{ $t('Before you can login, you need to click on the link inside it to validate your account') }}
                 </p>
               </b-message>
             </div>

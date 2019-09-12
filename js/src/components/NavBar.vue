@@ -53,28 +53,28 @@
               </div>
 
               <a class="navbar-item">
-                <router-link :to="{ name: 'UpdateIdentity' }" v-translate>My account</router-link>
+                <router-link :to="{ name: 'UpdateIdentity' }">{{ $t('My account') }}</router-link>
               </a>
 
               <a class="navbar-item">
-                <router-link :to="{ name: ActorRouteName.CREATE_GROUP }" v-translate>Create group</router-link>
+                <router-link :to="{ name: ActorRouteName.CREATE_GROUP }">{{ $t('Create group') }}</router-link>
               </a>
 
               <a class="navbar-item" v-if="currentUser.role === ICurrentUserRole.ADMINISTRATOR">
-                <router-link :to="{ name: AdminRouteName.DASHBOARD }" v-translate>Administration</router-link>
+                <router-link :to="{ name: AdminRouteName.DASHBOARD }">{{ $t('Administration') }}</router-link>
               </a>
 
-              <a v-translate class="navbar-item" v-on:click="logout()">Log out</a>
+              <a class="navbar-item" v-on:click="logout()">{{ $t('Log out') }}</a>
             </div>
           </div>
 
           <div class="navbar-item" v-else>
             <div class="buttons">
               <router-link class="button is-primary" v-if="config && config.registrationsOpen" :to="{ name: 'Register' }">
-                <strong v-translate>Sign up</strong>
+                <strong>{{ $t('Sign up') }}</strong>
               </router-link>
 
-              <router-link class="button is-primary" :to="{ name: 'Login' }" v-translate>Log in</router-link>
+              <router-link class="button is-primary" :to="{ name: 'Login' }">{{ $t('Log in') }}</router-link>
             </div>
           </div>
         </div>

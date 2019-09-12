@@ -6,7 +6,7 @@ defmodule MobilizonWeb.Resolvers.Event do
   alias Mobilizon.Addresses
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events
-  alias Mobilizon.Events.{Event, Participant}
+  alias Mobilizon.Events.{Event, Participant, EventOptions}
   alias Mobilizon.Media.Picture
   alias Mobilizon.Users.User
   alias Mobilizon.Actors
@@ -49,6 +49,14 @@ defmodule MobilizonWeb.Resolvers.Event do
   """
   def list_participants_for_event(%Event{uuid: uuid}, _args, _resolution) do
     {:ok, Mobilizon.Events.list_participants_for_event(uuid, 1, 10)}
+  end
+
+  def stats_participants_for_event(%Event{id: id}, _args, _resolution) do
+    {:ok,
+     %{
+       approved: Mobilizon.Events.count_approved_participants(id),
+       unapproved: Mobilizon.Events.count_unapproved_participants(id)
+     }}
   end
 
   @doc """

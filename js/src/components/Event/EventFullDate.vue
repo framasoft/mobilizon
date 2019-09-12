@@ -1,13 +1,12 @@
 <template>
     <span v-if="!endsOn">{{ beginsOn | formatDateTimeString }}</span>
-    <translate
-            v-else-if="isSameDay()"
-            :translate-params="{date: formatDate(beginsOn), startTime: formatTime(beginsOn), endTime: formatTime(endsOn)}"
-    >The %{ date } from %{ startTime } to %{ endTime }</translate>
-    <translate
-            v-else-if="endsOn"
-            :translate-params="{startDate: formatDate(beginsOn), startTime: formatTime(beginsOn), endDate: formatDate(endsOn), endTime: formatTime(endsOn)}"
-    >From the %{ startDate } at %{ startTime } to the %{ endDate } at %{ endTime }</translate>
+    <span v-else-if="isSameDay()">
+        {{ $t('The {date} from {startTime} to {endTime}', {date: formatDate(beginsOn), startTime: formatTime(beginsOn), endTime: formatTime(endsOn)}) }}
+    </span>
+    <span v-else-if="endsOn">
+        {{ $t('From the {startDate} at {startTime} to the {endDate} at {endTime}',
+        {startDate: formatDate(beginsOn), startTime: formatTime(beginsOn), endDate: formatDate(endsOn), endTime: formatTime(endsOn)}) }}
+    </span>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
