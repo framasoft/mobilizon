@@ -36,6 +36,8 @@ defmodule MobilizonWeb.Upload do
 
   alias Mobilizon.Config
 
+  alias MobilizonWeb.MIME
+
   require Logger
 
   @type source ::
@@ -140,7 +142,7 @@ defmodule MobilizonWeb.Upload do
 
   defp prepare_upload(%Plug.Upload{} = file, opts) do
     with {:ok, size} <- check_file_size(file.path, opts.size_limit),
-         {:ok, content_type, name} <- Mobilizon.MIME.file_mime_type(file.path, file.filename) do
+         {:ok, content_type, name} <- MIME.file_mime_type(file.path, file.filename) do
       {:ok,
        %__MODULE__{
          id: UUID.generate(),
