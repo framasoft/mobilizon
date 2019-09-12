@@ -1,14 +1,16 @@
 <template>
     <section class="container">
         <h1>
-            <translate :translate-params="{ search: this.searchTerm }">Search results: « %{ search } »</translate>
+            {{ $t('Search results: "{search}"', { search: this.searchTerm }) }}
         </h1>
         <b-loading :active.sync="$apollo.loading" />
         <b-tabs v-model="activeTab" type="is-boxed" class="searchTabs" @change="changeTab">
             <b-tab-item>
                 <template slot="header">
                     <b-icon icon="calendar"></b-icon>
-                    <span><translate>Events</translate> <b-tag rounded>{{ searchEvents.total }}</b-tag> </span>
+                    <span>
+                        {{ $t('Events') }} <b-tag rounded>{{ searchEvents.total }}</b-tag>
+                    </span>
                 </template>
                 <div v-if="searchEvents.total > 0" class="columns is-multiline">
                     <div class="column is-one-quarter-desktop is-half-mobile"
@@ -20,13 +22,15 @@
                     </div>
                 </div>
                 <b-message v-else-if="$apollo.loading === false" type="is-danger">
-                    <translate>No events found</translate>
+                    {{ $t('No events found') }}
                 </b-message>
             </b-tab-item>
             <b-tab-item>
                 <template slot="header">
                     <b-icon icon="account-multiple"></b-icon>
-                    <span><translate>Groups</translate> <b-tag rounded>{{ searchGroups.total }}</b-tag> </span>
+                    <span>
+                        {{ $t('Groups') }} <b-tag rounded>{{ searchGroups.total }}</b-tag>
+                    </span>
                 </template>
                 <div v-if="searchGroups.total > 0" class="columns is-multiline">
                     <div class="column is-one-quarter-desktop is-half-mobile"
@@ -36,7 +40,7 @@
                     </div>
                 </div>
                 <b-message v-else-if="$apollo.loading === false" type="is-danger">
-                    <translate>No groups found</translate>
+                    {{ $t('No groups found') }}
                 </b-message>
             </b-tab-item>
         </b-tabs>

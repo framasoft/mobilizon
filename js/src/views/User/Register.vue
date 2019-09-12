@@ -3,7 +3,7 @@
     <section class="hero">
       <div class="hero-body">
         <h1 class="title">
-          <translate>Register an account on Mobilizon!</translate>
+          {{ $t('Register an account on Mobilizon!') }}
         </h1>
       </div>
     </section>
@@ -12,28 +12,27 @@
         <div class="columns is-mobile">
           <div class="column">
             <div class="content">
-              <h3 class="title" v-translate>Features</h3>
+              <h3 class="title">{{ $t('Features') }}</h3>
               <ul>
-                <li v-translate>Create your communities and your events</li>
-                <li v-translate>Other stuff…</li>
+                <li>{{ $t('Create your communities and your events') }}</li>
+                <li>{{ $t('Other stuff…') }}</li>
               </ul>
             </div>
-            <p v-translate>
-              Learn more on
+            <i18n path="Learn more on" tag="p">
               <a target="_blank" href="https://joinmobilizon.org">joinmobilizon.org</a>
-            </p>
+            </i18n>
             <hr>
             <div class="content">
-              <h3 class="title" v-translate>About this instance</h3>
+              <h3 class="title">{{ $t('About this instance') }}</h3>
               <p>
-                <translate>Your local administrator resumed it's policy:</translate>
+                {{ $t("Your local administrator resumed it's policy:") }}
               </p>
               <ul>
-                <li v-translate>Please be nice to each other</li>
-                <li v-translate>meditate a bit</li>
+                <li>{{ $t('Please be nice to each other') }}</li>
+                <li>{{ $t('meditate a bit') }}</li>
               </ul>
               <p>
-                <translate>Please read the full rules</translate>
+                {{ $t('Please read the full rules') }}
               </p>
             </div>
           </div>
@@ -72,7 +71,7 @@
               <b-field grouped>
                 <div class="control">
                   <button type="button" class="button is-primary" @click="submit()">
-                    <translate>Register</translate>
+                    {{ $t('Register') }}
                   </button>
                 </div>
                 <div class="control">
@@ -80,7 +79,7 @@
                     class="button is-text"
                     :to="{ name: 'ResendConfirmation', params: { email: credentials.email }}"
                   >
-                    <translate>Didn't receive the instructions ?</translate>
+                    {{ $t("Didn't receive the instructions ?") }}
                   </router-link>
                 </div>
                 <div class="control">
@@ -89,7 +88,7 @@
                     :to="{ name: 'Login', params: { email: credentials.email, password: credentials.password }}"
                     :disabled="sendingValidation"
                   >
-                    <translate>Login</translate>
+                    {{ $t('Login') }}
                   </router-link>
                 </div>
               </b-field>

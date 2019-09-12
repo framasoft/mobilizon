@@ -8,7 +8,7 @@
     <b-upload @input="onFileChanged">
       <a class="button is-primary">
         <b-icon icon="upload"></b-icon>
-        <span>Click to upload</span>
+        <span>{{ $t('Click to upload') }}</span>
       </a>
     </b-upload>
   </div>

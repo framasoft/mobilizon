@@ -1,35 +1,35 @@
 <template>
     <section class="container">
-        <h1 class="title">Administration</h1>
+        <h1 class="title">{{ $t('Administration') }}</h1>
         <div class="tile is-ancestor" v-if="dashboard">
             <div class="tile is-vertical is-4">
                 <div class="tile">
                     <div class="tile is-parent is-vertical is-6">
                         <article class="tile is-child box">
                             <p class="title">{{ dashboard.numberOfEvents }}</p>
-                            <p class="subtitle">événements publiés</p>
+                            <p class="subtitle">{{ $t('Published events')}}</p>
                         </article>
                         <article class="tile is-child box">
                             <p class="title">{{ dashboard.numberOfComments}}</p>
-                            <p class="subtitle">commentaires</p>
+                            <p class="subtitle">{{ $t('Comments')}}</p>
                         </article>
                     </div>
                     <div class="tile is-parent is-vertical">
                         <article class="tile is-child box">
                             <p class="title">{{ dashboard.numberOfUsers }}</p>
-                            <p class="subtitle">utilisateurices</p>
+                            <p class="subtitle">{{ $t('Users')}}</p>
                         </article>
                         <router-link :to="{ name: ModerationRouteName.REPORTS}">
                             <article class="tile is-child box">
                                 <p class="title">{{ dashboard.numberOfReports }}</p>
-                                <p class="subtitle">signalements ouverts</p>
+                                <p class="subtitle">{{ $t('Opened reports')}}</p>
                             </article>
                         </router-link>
                     </div>
                 </div>
                 <div class="tile is-parent" v-if="dashboard.lastPublicEventPublished">
                     <article class="tile is-child box">
-                        <p class="title">Dernier événement publié</p>
+                        <p class="title">{{ $t('Last published event') }}</p>
                         <p class="subtitle">{{ dashboard.lastPublicEventPublished.title }}</p>
                         <figure class="image is-4by3" v-if="dashboard.lastPublicEventPublished.picture">
                             <img :src="dashboard.lastPublicEventPublished.picture.url" />
@@ -40,7 +40,7 @@
             <div class="tile is-parent">
                 <article class="tile is-child box">
                     <div class="content">
-                        <p class="title">Bienvenue sur votre espace d'administration</p>
+                        <p class="title">{{ $t('Welcome on your administration panel') }}</p>
                         <p class="subtitle">With even more content</p>
                         <div class="content">
                             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam semper diam at erat pulvinar, at pulvinar felis blandit. Vestibulum volutpat tellus diam, consequat gravida libero rhoncus ut. Morbi maximus, leo sit amet vehicula eleifend, nunc dui porta orci, quis semper odio felis ut quam.</p>

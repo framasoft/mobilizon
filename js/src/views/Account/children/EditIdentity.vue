@@ -2,16 +2,16 @@
   <div class="root">
     <h1 class="title">
       <span v-if="isUpdate">{{ identity.displayName() }}</span>
-      <translate v-else>I create an identity</translate>
+      <span v-else>{{ $t('I create an identity') }}</span>
     </h1>
 
     <picture-upload v-model="avatarFile" class="picture-upload"></picture-upload>
 
-    <b-field :label="$gettext('Display name')">
+    <b-field :label="$t('Display name')">
       <b-input aria-required="true" required v-model="identity.name" @input="autoUpdateUsername($event)"/>
     </b-field>
 
-    <b-field :label="$gettext('Username')">
+    <b-field :label="$t('Username')">
       <b-field>
         <b-input aria-required="true" required v-model="identity.preferredUsername" :disabled="isUpdate"/>
 
@@ -21,7 +21,7 @@
       </b-field>
     </b-field>
 
-    <b-field :label="$gettext('Description')">
+    <b-field :label="$t('Description')">
       <b-input type="textarea" aria-required="false" v-model="identity.summary"/>
     </b-field>
 
@@ -37,15 +37,15 @@
 
     <b-field class="submit">
       <div class="control">
-        <button v-translate type="button" class="button is-primary" @click="submit()">
-          Save
+        <button type="button" class="button is-primary" @click="submit()">
+          {{ $t('Save') }}
         </button>
       </div>
     </b-field>
 
     <div class="delete-identity" v-if="isUpdate">
-      <span v-translate @click="openDeleteIdentityConfirmation()">
-        Delete this identity
+      <span @click="openDeleteIdentityConfirmation()">
+        {{ $t('Delete this identity') }}
       </span>
     </div>
   </div>
@@ -177,7 +177,7 @@ export default class EditIdentity extends Vue {
       });
 
       this.$notifier.success(
-        this.$gettextInterpolate('Identity %{displayName} deleted', { displayName: this.identity.displayName() }),
+        this.$t('Identity {displayName} deleted', { displayName: this.identity.displayName() }) as string,
       );
       /**
        * If we just deleted the current identity, we need to change it to the next one
@@ -213,7 +213,7 @@ export default class EditIdentity extends Vue {
       });
 
       this.$notifier.success(
-        this.$gettextInterpolate('Identity %{displayName} updated', { displayName: this.identity.displayName() }),
+        this.$t('Identity {displayName} updated', { displayName: this.identity.displayName() }) as string,
       );
     } catch (err) {
       this.handleError(err);
@@ -237,7 +237,7 @@ export default class EditIdentity extends Vue {
       });
 
       this.$notifier.success(
-              this.$gettextInterpolate('Identity %{displayName} created', { displayName: this.identity.displayName() }),
+              this.$t('Identity {displayName} created', { displayName: this.identity.displayName() }) as string,
       );
 
       await this.$router.push({ name: RouteName.UPDATE_IDENTITY, params: { identityName: this.identity.preferredUsername } });
@@ -253,18 +253,17 @@ export default class EditIdentity extends Vue {
   openDeleteIdentityConfirmation() {
     this.$buefy.dialog.prompt({
       type: 'is-danger',
-      title: this.$gettext('Delete your identity'),
-      message: this.$gettextInterpolate(
-        'This will delete / anonymize all content (events, comments, messages, participation...) created from this identity. <br /><br />' +
-        'If this identity is the only administrator of some groups, you need to delete them before being able to delete this identity. ' +
-        'Otherwise this identity will just be removed from the group administrators.<br /><br />' +
-        'To confirm, type your identity username "%{preferredUsername}"',
+      title: this.$t('Delete your identity') as string,
+      message: `${this.$t('This will delete / anonymize all content (events, comments, messages, participations…) created from this identity.')}
+            <br /><br />
+            ${this.$t('If this identity is the only administrator of some groups, you need to delete them before being able to delete this identity.')}
+            ${this.$t('Otherwise this identity will just be removed from the group administrators.')}
+            <br /><br />
+            ${this.$t('To confirm, type your identity username "{preferredUsername}"', { preferredUsername: this.identity.preferredUsername })}`,
+      confirmText: this.$t(
+        'Delete {preferredUsername}',
         { preferredUsername: this.identity.preferredUsername },
-      ),
-      confirmText: this.$gettextInterpolate(
-        'Delete %{preferredUsername}',
-        { preferredUsername: this.identity.preferredUsername },
-      ),
+      ) as string,
       inputAttrs: {
         placeholder: this.identity.preferredUsername,
         pattern: this.identity.preferredUsername,

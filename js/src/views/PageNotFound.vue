@@ -4,20 +4,20 @@
       <div class="column is-centered">
         <img src="../assets/oh_no.jpg" alt="Not found 'oh no' picture">
         <h1 class="title">
-          <translate>The page you're looking for doesn't exist.</translate>
+          {{ $t("The page you're looking for doesn't exist.") }}
         </h1>
         <p>
-          <translate>Please make sure the address is correct and that the page hasn't been moved.</translate>
+          {{ $t("Please make sure the address is correct and that the page hasn't been moved.") }}
         </p>
         <p>
-          <translate>Please contact this instance's Mobilizon admin if you think this is a mistake.</translate>
+          {{ $t("Please contact this instance's Mobilizon admin if you think this is a mistake.") }}
         </p>
         <!--  The following should just be replaced with the SearchField component but it fails for some reason  -->
         <form @submit="enter">
           <b-field class="search">
             <b-input expanded icon="magnify" type="search" :placeholder="searchPlaceHolder" v-model="searchText" />
             <p class="control">
-              <button type="submit" class="button is-primary"><translate>Search</translate></button>
+              <button type="submit" class="button is-primary">{{ $t('Search') }}</button>
             </p>
           </b-field>
         </form>
@@ -39,7 +39,7 @@ export default class PageNotFound extends Vue {
   searchText: string = '';
 
   get searchPlaceHolder(): string {
-    return this.$gettext('Search events, groups, etc.');
+    return this.$t('Search events, groups, etc.') as string;
   }
 
   enter() {

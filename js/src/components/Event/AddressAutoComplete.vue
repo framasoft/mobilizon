@@ -1,10 +1,10 @@
 <template>
     <div>
-        <b-field label="Find an address">
+        <b-field :label="$t('Find an address')">
             <b-autocomplete
                     :data="data"
                     v-model="queryText"
-                    placeholder="e.g. 10 Rue Jangot"
+                    :placeholder="$t('e.g. 10 Rue Jangot')"
                     field="description"
                     :loading="isFetching"
                     @typing="getAsyncData"
@@ -18,12 +18,12 @@
                     </p>
                 </template>
                 <template slot="empty">
-                    <span v-if="queryText.length < 5">Please type at least 5 caracters</span>
-                    <span v-else-if="isFetching">Searching…</span>
+                    <span v-if="queryText.length < 5">{{ $t('Please type at least 5 characters') }}</span>
+                    <span v-else-if="isFetching">{{ $t('Searching…') }}</span>
                     <div v-else class="is-enabled">
-                        <span>No results for « {{ queryText }} »</span>
+                        <span>{{ $t('No results for "{queryText}"', { queryText }) }}</span>
                         <p class="control" @click="addressModalActive = true">
-                            <button type="button" class="button is-primary">Add</button>
+                            <button type="button" class="button is-primary">{{ $t('Add') }}</button>
                         </p>
                     </div>
                 </template>
@@ -32,37 +32,37 @@
         <b-modal :active.sync="addressModalActive" :width="640" has-modal-card scroll="keep">
             <div class="modal-card" style="width: auto">
                 <header class="modal-card-head">
-                    <p class="modal-card-title">Login</p>
+                    <p class="modal-card-title">{{ $t('Add an address') }}</p>
                 </header>
                 <section class="modal-card-body">
                     <form>
-                        <b-field :label="$gettext('Name')">
+                        <b-field :label="$t('Name')">
                             <b-input aria-required="true" required v-model="selected.description" />
                         </b-field>
 
-                        <b-field :label="$gettext('Street')">
+                        <b-field :label="$t('Street')">
                             <b-input v-model="selected.street" />
                         </b-field>
 
-                        <b-field :label="$gettext('Postal Code')">
+                        <b-field :label="$t('Postal Code')">
                             <b-input v-model="selected.postalCode" />
                         </b-field>
 
-                        <b-field :label="$gettext('Locality')">
+                        <b-field :label="$t('Locality')">
                             <b-input v-model="selected.locality" />
                         </b-field>
 
-                        <b-field :label="$gettext('Region')">
+                        <b-field :label="$t('Region')">
                             <b-input v-model="selected.region" />
                         </b-field>
 
-                        <b-field :label="$gettext('Country')">
+                        <b-field :label="$t('Country')">
                             <b-input v-model="selected.country" />
                         </b-field>
                     </form>
                 </section>
                 <footer class="modal-card-foot">
-                    <button class="button" type="button" @click="resetPopup()">Clear</button>
+                    <button class="button" type="button" @click="resetPopup()">{{ $t('Clear') }}</button>
                 </footer>
             </div>
         </b-modal>

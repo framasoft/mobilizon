@@ -2,7 +2,7 @@
   <section class="container">
     <div class="column">
       <h1 class="title">
-        <translate>Password reset</translate>
+        {{ $t('Password reset') }}
       </h1>
       <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">{{ error }}</b-message>
       <form @submit="sendResetPasswordTokenAction" v-if="!validationSent">
@@ -10,17 +10,15 @@
           <b-input aria-required="true" required type="email" v-model="credentials.email"/>
         </b-field>
         <button class="button is-primary">
-          <translate>Send email to reset my password</translate>
+          {{ $t('Send email to reset my password') }}
         </button>
       </form>
       <div v-else>
         <b-message type="is-success" :closable="false" title="Success">
-          <translate
-            :translate-params="{email: credentials.email}"
-          >We just sent an email to %{email}</translate>
+          {{ $t('We just sent an email to {email}', {email: credentials.email}) }}
         </b-message>
         <b-message type="is-info">
-          <translate>Please check you spam folder if you didn't receive the email.</translate>
+          {{ $t("Please check you spam folder if you didn't receive the email.") }}
         </b-message>
       </div>
     </div>

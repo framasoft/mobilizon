@@ -1,7 +1,7 @@
 <template>
   <section>
     <h1>
-      <translate>Event list</translate>
+      {{ $t('Event list') }}
     </h1>
     <b-loading :active.sync="$apollo.loading"></b-loading>
     <div v-if="events.length > 0" class="columns is-multiline">
@@ -13,7 +13,7 @@
       />
     </div>
     <b-message v-if-else="events.length === 0 && $apollo.loading === false" type="is-danger">
-      <translate>No events found</translate>
+      {{ $t('No events found') }}
     </b-message>
   </section>
 </template>
