@@ -587,8 +587,6 @@ defmodule Mobilizon.Events do
 
   def get_tag(id), do: Repo.get(Tag, id)
 
-
-
   def get_tag_by_slug(slug) do
     query =
       from(
@@ -759,9 +757,6 @@ defmodule Mobilizon.Events do
 
     Repo.all(final_query)
   end
-
-
-
 
   alias Mobilizon.Events.Participant
 

@@ -8,11 +8,13 @@ defmodule Mobilizon.Service.ActivityPub.Relay do
   Handles following and unfollowing relays and instances
   """
 
-  alias Mobilizon.Activity
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Events.Activity
   alias Mobilizon.Service.ActivityPub
+
   alias MobilizonWeb.API.Follows
+
   require Logger
 
   def get_actor do

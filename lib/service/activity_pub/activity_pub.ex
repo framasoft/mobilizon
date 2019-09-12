@@ -12,10 +12,9 @@ defmodule Mobilizon.Service.ActivityPub do
 
   alias Mobilizon.Config
   alias Mobilizon.Events
-  alias Mobilizon.Events.{Event, Comment, Participant}
+  alias Mobilizon.Events.{Activity, Event, Comment, Participant}
   alias Mobilizon.Service.ActivityPub.Transmogrifier
   alias Mobilizon.Service.WebFinger
-  alias Mobilizon.Activity
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Follower}

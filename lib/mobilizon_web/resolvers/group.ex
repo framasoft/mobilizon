@@ -4,10 +4,12 @@ defmodule MobilizonWeb.Resolvers.Group do
   """
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Member}
+  alias Mobilizon.Events.Activity
   alias Mobilizon.Users.User
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Activity
+
   alias MobilizonWeb.Resolvers.Person
+
   require Logger
 
   @doc """

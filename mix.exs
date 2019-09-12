@@ -197,6 +197,7 @@ defmodule Mobilizon.Mixfile do
         Mobilizon.Addresses,
         Mobilizon.Addresses.Address,
         Mobilizon.Events,
+        Mobilizon.Events.Activity,
         Mobilizon.Events.Event,
         Mobilizon.Events.Comment,
         Mobilizon.Events.FeedToken,
@@ -218,7 +219,6 @@ defmodule Mobilizon.Mixfile do
         Mobilizon.Users.User,
         Mobilizon.Users.UserRole,
         Mobilizon.Users.Guards,
-        Mobilizon.Activity,
         Mobilizon.Storage.Ecto,
         Mobilizon.Storage.Repo
       ],

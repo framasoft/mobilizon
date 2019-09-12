@@ -9,10 +9,12 @@ defmodule Mobilizon.Service.Federator do
   """
 
   use GenServer
+
   alias Mobilizon.Actors
-  alias Mobilizon.Activity
+  alias Mobilizon.Events.Activity
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Transmogrifier
+
   require Logger
 
   @max_jobs 20

@@ -2,11 +2,13 @@ defmodule MobilizonWeb.Resolvers.Comment do
   @moduledoc """
   Handles the comment-related GraphQL calls
   """
-  require Logger
-  alias Mobilizon.Events.Comment
-  alias Mobilizon.Activity
+
+  alias Mobilizon.Events.{Activity, Comment}
   alias Mobilizon.Users.User
+
   alias MobilizonWeb.API.Comments
+
+  require Logger
 
   def create_comment(_parent, %{text: comment, actor_username: username}, %{
         context: %{current_user: %User{} = _user}

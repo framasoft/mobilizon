@@ -10,24 +10,25 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   Various utils
   """
 
-  alias Mobilizon.Storage.Repo
+  alias Ecto.Changeset
+
   alias Mobilizon.Addresses
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.Event
-  alias Mobilizon.Events.Comment
-  alias Mobilizon.Media.Picture
   alias Mobilizon.Events
-  alias Mobilizon.Activity
+  alias Mobilizon.Events.{Activity, Comment, Event}
+  alias Mobilizon.Media.Picture
   alias Mobilizon.Reports
   alias Mobilizon.Reports.Report
-  alias Mobilizon.Users
   alias Mobilizon.Service.ActivityPub.Converters
-  alias Ecto.Changeset
-  require Logger
+  alias Mobilizon.Storage.Repo
+  alias Mobilizon.Users
+
   alias MobilizonWeb.Router.Helpers, as: Routes
   alias MobilizonWeb.Endpoint
+
+  require Logger
 
   @actor_types ["Group", "Person", "Application"]
 

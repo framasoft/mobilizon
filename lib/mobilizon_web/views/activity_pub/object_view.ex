@@ -1,7 +1,8 @@
 defmodule MobilizonWeb.ActivityPub.ObjectView do
   use MobilizonWeb, :view
+
+  alias Mobilizon.Events.Activity
   alias Mobilizon.Service.ActivityPub.Utils
-  alias Mobilizon.Activity
 
   def render("activity.json", %{activity: %Activity{local: local, data: data} = activity}) do
     %{

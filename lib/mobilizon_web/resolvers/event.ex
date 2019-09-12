@@ -2,12 +2,11 @@ defmodule MobilizonWeb.Resolvers.Event do
   @moduledoc """
   Handles the event-related GraphQL calls
   """
-  alias Mobilizon.Activity
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events
-  alias Mobilizon.Events.{Event, Participant}
+  alias Mobilizon.Events.{Activity, Event, Participant}
   alias Mobilizon.Media.Picture
   alias Mobilizon.Users.User
   alias MobilizonWeb.Resolvers.Person

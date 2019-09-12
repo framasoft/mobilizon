@@ -3,17 +3,18 @@ defmodule MobilizonWeb.API.Reports do
   API for Reports
   """
 
+  import MobilizonWeb.API.Utils
+  import Mobilizon.Service.Admin.ActionLogService
+
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
-  alias Mobilizon.Activity
+  alias Mobilizon.Events.Activity
   alias Mobilizon.Reports, as: ReportsAction
   alias Mobilizon.Reports.{Report, Note}
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Users
   alias Mobilizon.Users.User
-  import MobilizonWeb.API.Utils
-  import Mobilizon.Service.Admin.ActionLogService
 
   @doc """
   Create a report/flag on an actor, and optionally on an event or on comments.

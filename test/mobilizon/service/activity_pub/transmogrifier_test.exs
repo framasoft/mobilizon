@@ -8,11 +8,10 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
   import Mobilizon.Factory
 
-  alias Mobilizon.Activity
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
-  alias Mobilizon.Events.{Comment, Event, Participant}
+  alias Mobilizon.Events.{Activity, Comment, Event, Participant}
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Utils
   alias Mobilizon.Service.ActivityPub.Transmogrifier
@@ -26,7 +25,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     test "it works for incoming events" do
       data = File.read!("test/fixtures/mobilizon-post-activity.json") |> Jason.decode!()
 
-      {:ok, %Mobilizon.Activity{data: data, local: false}, %Event{} = event} =
+      {:ok, %Activity{data: data, local: false}, %Event{} = event} =
         Transmogrifier.handle_incoming(data)
 
       assert data["id"] ==
@@ -116,7 +115,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     test "it works for incoming notices" do
       data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
 
-      {:ok, %Mobilizon.Activity{data: data, local: false}, _} =
+      {:ok, %Activity{data: data, local: false}, _} =
         Transmogrifier.handle_incoming(data)
 
       assert data["id"] == "https://framapiaf.org/users/admin/statuses/99512778738411822/activity"
