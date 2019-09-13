@@ -14,7 +14,7 @@ defmodule Mobilizon.Repo.Migrations.SplitEventVisibilityAndJoinOptions do
     EventVisibility.create_type()
 
     execute(
-      "ALTER TABLE events ALTER COLUMN visibility TYPE event_visibility_type USING visibility::event_visibility"
+      "ALTER TABLE events ALTER COLUMN visibility TYPE event_visibility USING visibility::event_visibility"
     )
 
     JoinOptions.create_type()
@@ -42,7 +42,7 @@ defmodule Mobilizon.Repo.Migrations.SplitEventVisibilityAndJoinOptions do
     EventVisibility.create_type()
 
     execute(
-      "ALTER TABLE events ALTER COLUMN visibility TYPE event_visibility_type USING visibility::event_visibility"
+      "ALTER TABLE events ALTER COLUMN visibility TYPE event_visibility USING visibility::event_visibility"
     )
   end
 end

@@ -115,8 +115,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     test "it works for incoming notices" do
       data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
 
-      {:ok, %Activity{data: data, local: false}, _} =
-        Transmogrifier.handle_incoming(data)
+      {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
 
       assert data["id"] == "https://framapiaf.org/users/admin/statuses/99512778738411822/activity"
 

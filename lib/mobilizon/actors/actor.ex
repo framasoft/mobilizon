@@ -180,11 +180,17 @@ defmodule Mobilizon.Actors.Actor do
   a distant actor.
   """
   @spec preferred_username_and_domain(t) :: String.t()
-  def preferred_username_and_domain(%__MODULE__{preferred_username: preferred_username, domain: nil}) do
+  def preferred_username_and_domain(%__MODULE__{
+        preferred_username: preferred_username,
+        domain: nil
+      }) do
     preferred_username
   end
 
-  def preferred_username_and_domain(%__MODULE__{preferred_username: preferred_username, domain: domain}) do
+  def preferred_username_and_domain(%__MODULE__{
+        preferred_username: preferred_username,
+        domain: domain
+      }) do
     "#{preferred_username}@#{domain}"
   end
 
