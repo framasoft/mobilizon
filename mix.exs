@@ -36,7 +36,7 @@ defmodule Mobilizon.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Mobilizon.Application, []},
+      mod: {Mobilizon, []},
       extra_applications: [:logger, :runtime_tools, :guardian, :bamboo, :geolix, :crypto, :cachex]
     ]
   end

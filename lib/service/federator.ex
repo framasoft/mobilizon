@@ -23,7 +23,7 @@ defmodule Mobilizon.Service.Federator do
     {:ok, args}
   end
 
-  def start_link do
+  def start_link(_) do
     spawn(fn ->
       # 1 minute
       Process.sleep(1000 * 60)
