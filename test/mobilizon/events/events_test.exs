@@ -4,6 +4,7 @@ defmodule Mobilizon.EventsTest do
   import Mobilizon.Factory
 
   alias Mobilizon.Events
+  alias Mobilizon.Storage.Page
 
   @event_valid_attrs %{
     begins_on: "2010-04-17 14:00:00Z",
@@ -47,29 +48,29 @@ defmodule Mobilizon.EventsTest do
       refute Ecto.assoc_loaded?(Events.get_event!(event.id).organizer_actor)
     end
 
-    test "get_event_full!/1 returns the event with given id", %{event: event} do
-      assert Events.get_event_full!(event.id).organizer_actor.preferred_username ==
+    test "get_event_with_preload!/1 returns the event with given id", %{event: event} do
+      assert Events.get_event_with_preload!(event.id).organizer_actor.preferred_username ==
                event.organizer_actor.preferred_username
 
-      assert Events.get_event_full!(event.id).participants == []
+      assert Events.get_event_with_preload!(event.id).participants == []
     end
 
-    test "find_and_count_events_by_name/1 returns events for a given name", %{
+    test "build_events_by_name/1 returns events for a given name", %{
       event: %Event{title: title} = event
     } do
-      assert title == hd(Events.find_and_count_events_by_name(event.title).elements).title
+      assert title == hd(Events.build_events_by_name(event.title).elements).title
 
       %Event{} = event2 = insert(:event, title: "Special event")
 
       assert event2.title ==
-               Events.find_and_count_events_by_name("Special").elements |> hd() |> Map.get(:title)
+               Events.build_events_by_name("Special").elements |> hd() |> Map.get(:title)
 
       assert event2.title ==
-               Events.find_and_count_events_by_name("  Special  ").elements
+               Events.build_events_by_name("  Special  ").elements
                |> hd()
                |> Map.get(:title)
 
-      assert %{elements: [], total: 0} == Events.find_and_count_events_by_name("")
+      assert %Page{elements: [], total: 0} == Events.build_events_by_name("")
     end
 
     test "find_close_events/3 returns events in the area" do
@@ -127,19 +128,15 @@ defmodule Mobilizon.EventsTest do
       assert_raise Ecto.NoResultsError, fn -> Events.get_event!(event.id) end
     end
 
-    test "change_event/1 returns a event changeset", %{event: event} do
-      assert %Ecto.Changeset{} = Events.change_event(event)
-    end
-
-    test "get_public_events_for_actor/1", %{actor: actor, event: event} do
-      assert {:ok, [event_found], 1} = Events.get_public_events_for_actor(actor)
+    test "list_public_events_for_actor/1", %{actor: actor, event: event} do
+      assert {:ok, [event_found], 1} = Events.list_public_events_for_actor(actor)
       assert event_found.title == event.title
     end
 
-    test "get_public_events_for_actor/3", %{actor: actor, event: event} do
+    test "list_public_events_for_actor/3", %{actor: actor, event: event} do
       event1 = insert(:event, organizer_actor: actor)
 
-      case Events.get_public_events_for_actor(actor, 1, 10) do
+      case Events.list_public_events_for_actor(actor, 1, 10) do
         {:ok, events_found, 2} ->
           event_ids = MapSet.new(events_found |> Enum.map(& &1.id))
           assert event_ids == MapSet.new([event.id, event1.id])
@@ -149,10 +146,10 @@ defmodule Mobilizon.EventsTest do
       end
     end
 
-    test "get_public_events_for_actor/3 with limited results", %{actor: actor, event: event} do
+    test "list_public_events_for_actor/3 with limited results", %{actor: actor, event: event} do
       event1 = insert(:event, organizer_actor: actor)
 
-      case Events.get_public_events_for_actor(actor, 1, 1) do
+      case Events.list_public_events_for_actor(actor, 1, 1) do
         {:ok, [%Event{id: event_found_id}], 2} ->
           assert event_found_id in [event.id, event1.id]
 
@@ -229,11 +226,6 @@ defmodule Mobilizon.EventsTest do
       assert {:ok, %Tag{}} = Events.delete_tag(tag)
       assert_raise Ecto.NoResultsError, fn -> Events.get_tag!(tag.id) end
     end
-
-    test "change_tag/1 returns a tag changeset" do
-      tag = insert(:tag)
-      assert %Ecto.Changeset{} = Events.change_tag(tag)
-    end
   end
 
   describe "tags_relations" do
@@ -272,7 +264,7 @@ defmodule Mobilizon.EventsTest do
       assert {:ok, %TagRelation{}} = Events.delete_tag_relation(tag_relation)
     end
 
-    test "tag_neighbors/2 return the connected tags for a given tag", %{
+    test "list_tag_neighbors/2 return the connected tags for a given tag", %{
       tag1: %Tag{} = tag1,
       tag2: %Tag{} = tag2
     } do
@@ -307,7 +299,7 @@ defmodule Mobilizon.EventsTest do
               }} = Events.create_tag_relation(%{tag_id: tag1.id, link_id: tag1.id})
 
       # The order is preserved, since tag4 has one more relation than tag2
-      assert [tag4, tag2] == Events.tag_neighbors(tag1)
+      assert [tag4, tag2] == Events.list_tag_neighbors(tag1)
     end
   end
 
@@ -382,10 +374,6 @@ defmodule Mobilizon.EventsTest do
 
     test "delete_participant/1 deletes the participant", %{participant: participant} do
       assert {:ok, %Participant{}} = Events.delete_participant(participant)
-    end
-
-    test "change_participant/1 returns a participant changeset", %{participant: participant} do
-      assert %Ecto.Changeset{} = Events.change_participant(participant)
     end
   end
 
@@ -481,11 +469,6 @@ defmodule Mobilizon.EventsTest do
       assert {:ok, %Session{}} = Events.delete_session(session)
       assert_raise Ecto.NoResultsError, fn -> Events.get_session!(session.id) end
     end
-
-    test "change_session/1 returns a session changeset" do
-      session = insert(:session)
-      assert %Ecto.Changeset{} = Events.change_session(session)
-    end
   end
 
   describe "tracks" do
@@ -547,11 +530,6 @@ defmodule Mobilizon.EventsTest do
       track = insert(:track)
       assert {:ok, %Track{}} = Events.delete_track(track)
       assert_raise Ecto.NoResultsError, fn -> Events.get_track!(track.id) end
-    end
-
-    test "change_track/1 returns a track changeset" do
-      track = insert(:track)
-      assert %Ecto.Changeset{} = Events.change_track(track)
     end
   end
 
@@ -615,11 +593,6 @@ defmodule Mobilizon.EventsTest do
       comment = insert(:comment)
       assert {:ok, %Comment{}} = Events.delete_comment(comment)
       assert_raise Ecto.NoResultsError, fn -> Events.get_comment!(comment.id) end
-    end
-
-    test "change_comment/1 returns a comment changeset" do
-      comment = insert(:comment)
-      assert %Ecto.Changeset{} = Events.change_comment(comment)
     end
   end
 end

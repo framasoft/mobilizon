@@ -84,10 +84,10 @@ defmodule Mobilizon.Service.ActivityPub do
          {:ok, _activity, %{url: object_url} = _object} <- Transmogrifier.handle_incoming(params) do
       case data["type"] do
         "Event" ->
-          {:ok, Events.get_event_full_by_url!(object_url)}
+          {:ok, Events.get_public_event_by_url_with_preload!(object_url)}
 
         "Note" ->
-          {:ok, Events.get_comment_full_from_url!(object_url)}
+          {:ok, Events.get_comment_from_url_with_preload!(object_url)}
 
         "Actor" ->
           {:ok, Actors.get_actor_by_url!(object_url, true)}
@@ -97,10 +97,10 @@ defmodule Mobilizon.Service.ActivityPub do
       end
     else
       {:existing_event, %Event{url: event_url}} ->
-        {:ok, Events.get_event_full_by_url!(event_url)}
+        {:ok, Events.get_public_event_by_url_with_preload!(event_url)}
 
       {:existing_comment, %Comment{url: comment_url}} ->
-        {:ok, Events.get_comment_full_from_url!(comment_url)}
+        {:ok, Events.get_comment_from_url_with_preload!(comment_url)}
 
       {:existing_actor, {:ok, %Actor{url: actor_url}}} ->
         {:ok, Actors.get_actor_by_url!(actor_url, true)}
@@ -682,8 +682,8 @@ defmodule Mobilizon.Service.ActivityPub do
   """
   @spec fetch_public_activities_for_actor(Actor.t(), integer(), integer()) :: map()
   def fetch_public_activities_for_actor(%Actor{} = actor, page \\ 1, limit \\ 10) do
-    {:ok, events, total_events} = Events.get_public_events_for_actor(actor, page, limit)
-    {:ok, comments, total_comments} = Events.get_public_comments_for_actor(actor, page, limit)
+    {:ok, events, total_events} = Events.list_public_events_for_actor(actor, page, limit)
+    {:ok, comments, total_comments} = Events.list_public_comments_for_actor(actor, page, limit)
 
     event_activities = Enum.map(events, &event_to_activity/1)
 

@@ -39,9 +39,7 @@ defmodule MobilizonWeb.Resolvers.TagResolverTest do
              |> Enum.map(fn tag -> tag["slug"] end)
              |> MapSet.new() ==
                [tag2, tag3]
-               |> Enum.map(fn
-                 tag -> tag.slug
-               end)
+               |> Enum.map(fn tag -> tag.slug end)
                |> MapSet.new()
     end
   end

@@ -65,7 +65,10 @@ defmodule Mobilizon do
         {Cachex, :start_link,
          [
            name,
-           Keyword.merge(cachex_options(limit, default, interval), fallback_options(fallback))
+           Keyword.merge(
+             cachex_options(limit, default, interval),
+             fallback_options(fallback)
+           )
          ]}
     }
   end

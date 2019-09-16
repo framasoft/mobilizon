@@ -68,7 +68,7 @@ defmodule MobilizonWeb.API.Search do
         end
 
       true ->
-        {:ok, Events.find_and_count_events_by_name(search, page, limit)}
+        {:ok, Events.build_events_by_name(search, page, limit)}
     end
   end
 

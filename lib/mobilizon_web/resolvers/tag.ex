@@ -33,7 +33,7 @@ defmodule MobilizonWeb.Resolvers.Tag do
   #  """
   #  def get_related_tags(_parent, %{tag_id: tag_id}, _resolution) do
   #    with %Tag{} = tag <- Mobilizon.Events.get_tag!(tag_id),
-  #         tags <- Mobilizon.Events.tag_neighbors(tag) do
+  #         tags <- Mobilizon.Events.list_tag_neighbors(tag) do
   #      {:ok, tags}
   #    end
   #  end
@@ -42,7 +42,7 @@ defmodule MobilizonWeb.Resolvers.Tag do
   Retrieve the list of related tags for a parent tag
   """
   def get_related_tags(%Tag{} = tag, _args, _resolution) do
-    with tags <- Mobilizon.Events.tag_neighbors(tag) do
+    with tags <- Mobilizon.Events.list_tag_neighbors(tag) do
       {:ok, tags}
     end
   end

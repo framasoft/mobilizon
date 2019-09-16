@@ -25,7 +25,7 @@ defmodule MobilizonWeb.Resolvers.Event do
   end
 
   def find_event(_parent, %{uuid: uuid}, _resolution) do
-    case Mobilizon.Events.get_event_full_by_uuid(uuid) do
+    case Mobilizon.Events.get_public_event_by_uuid_with_preload(uuid) do
       nil ->
         {:error, "Event with UUID #{uuid} not found"}
 
@@ -58,14 +58,14 @@ defmodule MobilizonWeb.Resolvers.Event do
       ) do
     # We get the organizer's next public event
     events =
-      [Events.get_actor_upcoming_public_event(organizer_actor, uuid)]
+      [Events.get_upcoming_public_event_for_actor(organizer_actor, uuid)]
       |> Enum.filter(&is_map/1)
 
     # We find similar events with the same tags
     # uniq_by : It's possible event_from_same_actor is inside events_from_tags
     events =
       events
-      |> Enum.concat(Events.find_similar_events_by_common_tags(tags, @number_of_related_events))
+      |> Enum.concat(Events.list_events_by_tags(tags, @number_of_related_events))
       |> uniq_events()
 
     # TODO: We should use tag_relations to find more appropriate events
@@ -104,7 +104,7 @@ defmodule MobilizonWeb.Resolvers.Event do
       ) do
     with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
          {:has_event, {:ok, %Event{} = event}} <-
-           {:has_event, Mobilizon.Events.get_event_full(event_id)},
+           {:has_event, Mobilizon.Events.get_event_with_preload(event_id)},
          {:error, :participant_not_found} <- Mobilizon.Events.get_participant(event_id, actor_id),
          {:ok, _activity, participant} <- MobilizonWeb.API.Participations.join(event, actor),
          participant <-
@@ -141,7 +141,7 @@ defmodule MobilizonWeb.Resolvers.Event do
       ) do
     with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
          {:has_event, {:ok, %Event{} = event}} <-
-           {:has_event, Mobilizon.Events.get_event_full(event_id)},
+           {:has_event, Mobilizon.Events.get_event_with_preload(event_id)},
          {:ok, _activity, _participant} <- MobilizonWeb.API.Participations.leave(event, actor) do
       {:ok, %{event: %{id: event_id}, actor: %{id: actor_id}}}
     else
@@ -200,7 +200,7 @@ defmodule MobilizonWeb.Resolvers.Event do
       ) do
     # See https://github.com/absinthe-graphql/absinthe/issues/490
     with args <- Map.put(args, :options, args[:options] || %{}),
-         {:ok, %Event{} = event} <- Mobilizon.Events.get_event_full(event_id),
+         {:ok, %Event{} = event} <- Mobilizon.Events.get_event_with_preload(event_id),
          {:is_owned, %Actor{} = organizer_actor} <-
            User.owns_actor(user, event.organizer_actor_id),
          {:ok, args} <- save_attached_picture(args),

@@ -17,12 +17,12 @@ defmodule MobilizonWeb.PageController do
   end
 
   def event(conn, %{"uuid" => uuid}) do
-    {status, event} = Events.get_cached_event_full_by_uuid(uuid)
+    {status, event} = Events.get_cached_public_event_by_uuid_with_preload(uuid)
     render_or_error(conn, &ok_status_and_is_visible?/2, status, :event, event)
   end
 
   def comment(conn, %{"uuid" => uuid}) do
-    {status, comment} = Events.get_cached_comment_full_by_uuid(uuid)
+    {status, comment} = Events.get_cached_comment_by_uuid_with_preload(uuid)
     render_or_error(conn, &ok_status_and_is_visible?/2, status, :comment, comment)
   end
 

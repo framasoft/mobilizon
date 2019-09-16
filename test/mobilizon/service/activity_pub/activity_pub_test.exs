@@ -113,7 +113,7 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
     # TODO: The delete activity it relayed and fetched once again (and then not found /o\)
     test "it creates a delete activity and deletes the original event" do
       event = insert(:event)
-      event = Events.get_event_full_by_url!(event.url)
+      event = Events.get_public_event_by_url_with_preload!(event.url)
       {:ok, delete, _} = ActivityPub.delete(event)
 
       assert delete.data["type"] == "Delete"
@@ -125,7 +125,7 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
 
     test "it creates a delete activity and deletes the original comment" do
       comment = insert(:comment)
-      comment = Events.get_comment_full_from_url!(comment.url)
+      comment = Events.get_comment_from_url_with_preload!(comment.url)
       {:ok, delete, _} = ActivityPub.delete(comment)
 
       assert delete.data["type"] == "Delete"

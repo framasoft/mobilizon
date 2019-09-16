@@ -73,7 +73,7 @@ defmodule MobilizonWeb.API.Reports do
 
   defp get_report_comments(%Actor{id: actor_id}, comment_ids) do
     {:get_report_comments,
-     Events.get_all_comments_by_actor_and_ids(actor_id, comment_ids) |> Enum.map(& &1.url)}
+     Events.list_comments_by_actor_and_ids(actor_id, comment_ids) |> Enum.map(& &1.url)}
   end
 
   defp get_report_comments(_, _), do: {:get_report_comments, nil}

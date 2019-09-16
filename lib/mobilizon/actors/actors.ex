@@ -45,6 +45,7 @@ defmodule Mobilizon.Actors do
     :creator
   ])
 
+  @public_visibility [:public, :unlisted]
   @administrator_roles [:creator, :administrator]
 
   @doc false
@@ -836,7 +837,7 @@ defmodule Mobilizon.Actors do
     from(
       a in Actor,
       where: a.type == ^:Group,
-      where: a.visibility in ^[:public, :unlisted]
+      where: a.visibility in ^@public_visibility
     )
   end
 
