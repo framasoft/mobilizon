@@ -8,8 +8,10 @@ defmodule Mobilizon.Events.Comment do
   import Ecto.Changeset
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Config
   alias Mobilizon.Events.{Comment, CommentVisibility, Event}
+
+  alias MobilizonWeb.Router.Helpers, as: Routes
+  alias MobilizonWeb.Endpoint
 
   @type t :: %__MODULE__{
           text: String.t(),
@@ -66,5 +68,5 @@ defmodule Mobilizon.Events.Comment do
   end
 
   @spec generate_url(String.t()) :: String.t()
-  defp generate_url(uuid), do: "#{Config.instance_hostname()}/comments/#{uuid}"
+  defp generate_url(uuid), do: Routes.page_url(Endpoint, :comment, uuid)
 end

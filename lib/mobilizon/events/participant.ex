@@ -8,9 +8,10 @@ defmodule Mobilizon.Events.Participant do
   import Ecto.Changeset
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Config
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, ParticipantRole}
+
+  alias MobilizonWeb.Endpoint
 
   @type t :: %__MODULE__{
           role: ParticipantRole.t(),
@@ -82,5 +83,5 @@ defmodule Mobilizon.Events.Participant do
   end
 
   @spec generate_url(String.t()) :: String.t()
-  defp generate_url(uuid), do: "#{Config.instance_hostname()}/join/event/#{uuid}"
+  defp generate_url(uuid), do: "#{Endpoint.url()}/join/event/#{uuid}"
 end
