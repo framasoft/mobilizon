@@ -25,8 +25,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Users
 
+  alias MobilizonWeb.{Email, Endpoint}
   alias MobilizonWeb.Router.Helpers, as: Routes
-  alias MobilizonWeb.Endpoint
 
   require Logger
 
@@ -165,8 +165,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
          {:ok, %Report{} = report} <- Reports.create_report(data) do
       Enum.each(Users.list_moderators(), fn moderator ->
         moderator
-        |> Mobilizon.Email.Admin.report(moderator, report)
-        |> Mobilizon.Email.Mailer.deliver_later()
+        |> Email.Admin.report(moderator, report)
+        |> Email.Mailer.deliver_later()
       end)
 
       {:ok, report}

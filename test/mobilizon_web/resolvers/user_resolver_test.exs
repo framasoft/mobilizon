@@ -1,14 +1,18 @@
 defmodule MobilizonWeb.Resolvers.UserResolverTest do
   use MobilizonWeb.ConnCase
-  alias Mobilizon.{Actors, Config, Users}
-  alias Mobilizon.Actors.Actor
-  alias Mobilizon.Users.User
-  alias Mobilizon.Users
-  alias MobilizonWeb.AbsintheHelpers
-  alias Mobilizon.Service.Users.ResetPassword
+
   import Mobilizon.Factory
   import Mock
+
   use Bamboo.Test
+
+  alias Mobilizon.{Actors, Config, Users}
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Service.Users.ResetPassword
+  alias Mobilizon.Users.User
+  alias Mobilizon.Users
+
+  alias MobilizonWeb.{AbsintheHelpers, Email}
 
   @valid_actor_params %{email: "test@test.tld", password: "testest", username: "test"}
   @valid_single_actor_params %{preferred_username: "test2", keys: "yolo"}
@@ -503,7 +507,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert json_response(res, 200)["data"]["resendConfirmationEmail"] == user.email
-      assert_delivered_email(Mobilizon.Email.User.confirmation_email(user))
+      assert_delivered_email(Email.User.confirmation_email(user))
     end
 
     test "test resend_confirmation_email/3 with invalid email resends an validation email",

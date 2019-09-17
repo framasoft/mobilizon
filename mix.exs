@@ -315,9 +315,9 @@ defmodule Mobilizon.Mixfile do
       Tools: [
         Mobilizon.Application,
         Mobilizon.Factory,
-        Mobilizon.Email.Mailer,
-        Mobilizon.EmailView,
-        Mobilizon.Email.User
+        MobilizonWeb.Email.Mailer,
+        MobilizonWeb.Email.User,
+        MobilizonWeb.EmailView
       ]
     ]
   end

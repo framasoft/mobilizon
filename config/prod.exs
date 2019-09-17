@@ -21,7 +21,7 @@ config :mobilizon, Mobilizon.Storage.Repo,
   port: System.get_env("MOBILIZON_DATABASE_PORT") || "5432",
   pool_size: 15
 
-config :mobilizon, Mobilizon.Email.Mailer,
+config :mobilizon, MobilizonWeb.Email.Mailer,
   adapter: Bamboo.SMTPAdapter,
   server: "localhost",
   hostname: "localhost",

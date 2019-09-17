@@ -1,3 +1,3 @@
-defmodule Mobilizon.EmailView do
+defmodule MobilizonWeb.EmailView do
   use MobilizonWeb, :view
 end

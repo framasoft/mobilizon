@@ -1,17 +1,19 @@
-defmodule Mobilizon.Email.Admin do
+defmodule MobilizonWeb.Email.Admin do
   @moduledoc """
   Handles emails sent to admins.
   """
 
-  use Bamboo.Phoenix, view: Mobilizon.EmailView
+  use Bamboo.Phoenix, view: MobilizonWeb.EmailView
 
   import Bamboo.{Email, Phoenix}
 
   import MobilizonWeb.Gettext
 
-  alias Mobilizon.{Config, Email}
+  alias Mobilizon.Config
   alias Mobilizon.Reports.Report
   alias Mobilizon.Users.User
+
+  alias MobilizonWeb.Email
 
   @spec report(User.t(), Report.t(), String.t()) :: Bamboo.Email.t()
   def report(%User{email: email}, %Report{} = report, locale \\ "en") do

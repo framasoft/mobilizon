@@ -1,12 +1,12 @@
 defmodule Mobilizon.Service.Users.ResetPassword do
   @moduledoc false
 
-  alias Mobilizon.Email.Mailer
-  alias Mobilizon.Email.User, as: UserEmail
   alias Mobilizon.Service.Users.Tools
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Users
   alias Mobilizon.Users.User
+
+  alias MobilizonWeb.Email
 
   require Logger
 
@@ -51,8 +51,8 @@ defmodule Mobilizon.Service.Users.ResetPassword do
            ) do
       mail =
         user_updated
-        |> UserEmail.reset_password_email(locale)
-        |> Mailer.deliver_later()
+        |> Email.User.reset_password_email(locale)
+        |> Email.Mailer.deliver_later()
 
       {:ok, mail}
     else

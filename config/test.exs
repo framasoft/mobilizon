@@ -30,7 +30,7 @@ config :mobilizon, Mobilizon.Storage.Repo,
   hostname: System.get_env("MOBILIZON_DATABASE_HOST") || "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
-config :mobilizon, Mobilizon.Email.Mailer, adapter: Bamboo.TestAdapter
+config :mobilizon, MobilizonWeb.Email.Mailer, adapter: Bamboo.TestAdapter
 
 config :mobilizon, MobilizonWeb.Upload, filters: [], link_name: false
 

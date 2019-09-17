@@ -1,16 +1,18 @@
-defmodule Mobilizon.Email.User do
+defmodule MobilizonWeb.Email.User do
   @moduledoc """
   Handles emails sent to users.
   """
 
-  use Bamboo.Phoenix, view: Mobilizon.EmailView
+  use Bamboo.Phoenix, view: MobilizonWeb.EmailView
 
   import Bamboo.{Email, Phoenix}
 
   import MobilizonWeb.Gettext
 
-  alias Mobilizon.{Config, Email}
+  alias Mobilizon.Config
   alias Mobilizon.Users.User
+
+  alias MobilizonWeb.Email
 
   @spec confirmation_email(User.t(), String.t()) :: Bamboo.Email.t()
   def confirmation_email(
