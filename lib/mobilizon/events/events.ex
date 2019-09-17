@@ -90,14 +90,6 @@ defmodule Mobilizon.Events do
 
   @comment_preloads [:actor, :attributed_to, :in_reply_to_comment]
 
-  @doc false
-  @spec data :: Dataloader.Ecto.t()
-  def data, do: Dataloader.Ecto.new(Repo, query: &query/2)
-
-  @doc false
-  @spec query(Ecto.Query.t(), map) :: Ecto.Query.t()
-  def query(queryable, _params), do: queryable
-
   @doc """
   Gets a single event.
   """

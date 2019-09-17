@@ -48,14 +48,6 @@ defmodule Mobilizon.Actors do
   @public_visibility [:public, :unlisted]
   @administrator_roles [:creator, :administrator]
 
-  @doc false
-  @spec data :: Dataloader.Ecto.t()
-  def data, do: Dataloader.Ecto.new(Repo, query: &query/2)
-
-  @doc false
-  @spec query(Ecto.Query.t(), map) :: Ecto.Query.t()
-  def query(queryable, _params), do: queryable
-
   @doc """
   Gets a single actor.
   """

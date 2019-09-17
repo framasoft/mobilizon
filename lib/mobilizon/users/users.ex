@@ -20,14 +20,6 @@ defmodule Mobilizon.Users do
 
   defenum(UserRole, :user_role, [:administrator, :moderator, :user])
 
-  @doc false
-  @spec data :: Dataloader.Ecto.t()
-  def data, do: Dataloader.Ecto.new(Repo, query: &query/2)
-
-  @doc false
-  @spec query(Ecto.Query.t(), map) :: Ecto.Query.t()
-  def query(queryable, _params), do: queryable
-
   @doc """
   Registers an user.
   """

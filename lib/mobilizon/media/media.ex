@@ -10,14 +10,6 @@ defmodule Mobilizon.Media do
   alias Mobilizon.Media.{File, Picture}
   alias Mobilizon.Storage.Repo
 
-  @doc false
-  @spec data :: Dataloader.Ecto.t()
-  def data, do: Dataloader.Ecto.new(Repo, query: &query/2)
-
-  @doc false
-  @spec query(Ecto.Query.t(), map) :: Ecto.Query.t()
-  def query(queryable, _params), do: queryable
-
   @doc """
   Gets a single picture.
   """
