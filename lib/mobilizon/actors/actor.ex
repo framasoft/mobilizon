@@ -351,17 +351,6 @@ defmodule Mobilizon.Actors.Actor do
     |> URI.decode()
   end
 
-  @doc """
-  Clear multiple caches for an actor
-  """
-  # TODO: move to MobilizonWeb
-  @spec clear_cache(t) :: {:ok, true}
-  def clear_cache(%__MODULE__{preferred_username: preferred_username, domain: nil}) do
-    Cachex.del(:activity_pub, "actor_" <> preferred_username)
-    Cachex.del(:feed, "actor_" <> preferred_username)
-    Cachex.del(:ics, "actor_" <> preferred_username)
-  end
-
   @spec build_relay_creation_attrs(map) :: map
   defp build_relay_creation_attrs(%{url: url, preferred_username: preferred_username}) do
     %{

@@ -11,6 +11,7 @@ defmodule MobilizonWeb.ActivityPubController do
   alias Mobilizon.Service.Federator
 
   alias MobilizonWeb.ActivityPub.ActorView
+  alias MobilizonWeb.Cache
 
   require Logger
 
@@ -113,13 +114,7 @@ defmodule MobilizonWeb.ActivityPubController do
   end
 
   def relay(conn, _params) do
-    with {status, actor} <-
-           Cachex.fetch(
-             :activity_pub,
-             "relay_actor",
-             &Mobilizon.Service.ActivityPub.Relay.get_actor/0
-           ),
-         true <- status in [:ok, :commit] do
+    with {:commit, %Actor{} = actor} <- Cache.get_relay() do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ActorView.render("actor.json", %{actor: actor}))

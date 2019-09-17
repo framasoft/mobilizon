@@ -3,8 +3,8 @@ defmodule MobilizonWeb.PageController do
   Controller to load our webapp
   """
   use MobilizonWeb, :controller
-  alias Mobilizon.Actors
-  alias Mobilizon.Events
+
+  alias MobilizonWeb.Cache
 
   plug(:put_layout, false)
   action_fallback(MobilizonWeb.FallbackController)
@@ -12,17 +12,17 @@ defmodule MobilizonWeb.PageController do
   def index(conn, _params), do: render(conn, :index)
 
   def actor(conn, %{"name" => name}) do
-    {status, actor} = Actors.get_cached_local_actor_by_name(name)
+    {status, actor} = Cache.get_local_actor_by_name(name)
     render_or_error(conn, &ok_status?/2, status, :actor, actor)
   end
 
   def event(conn, %{"uuid" => uuid}) do
-    {status, event} = Events.get_cached_public_event_by_uuid_with_preload(uuid)
+    {status, event} = Cache.get_public_event_by_uuid_with_preload(uuid)
     render_or_error(conn, &ok_status_and_is_visible?/2, status, :event, event)
   end
 
   def comment(conn, %{"uuid" => uuid}) do
-    {status, comment} = Events.get_cached_comment_by_uuid_with_preload(uuid)
+    {status, comment} = Cache.get_comment_by_uuid_with_preload(uuid)
     render_or_error(conn, &ok_status_and_is_visible?/2, status, :comment, comment)
   end
 

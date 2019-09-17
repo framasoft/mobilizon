@@ -236,6 +236,7 @@ defmodule Mobilizon.Mixfile do
         MobilizonWeb.Router.Helpers,
         MobilizonWeb.AuthErrorHandler,
         MobilizonWeb.AuthPipeline,
+        MobilizonWeb.Cache,
         MobilizonWeb.ChangesetView,
         MobilizonWeb.Context,
         MobilizonWeb.Endpoint,

@@ -161,24 +161,6 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
-  Gets a cached local actor by username.
-  #TODO: move to MobilizonWeb layer
-  """
-  @spec get_cached_local_actor_by_name(String.t()) ::
-          {:commit, Actor.t()} | {:ignore, any()}
-  def get_cached_local_actor_by_name(name) do
-    Cachex.fetch(:activity_pub, "actor_" <> name, fn "actor_" <> name ->
-      case get_local_actor_by_name(name) do
-        nil ->
-          {:ignore, nil}
-
-        %Actor{} = actor ->
-          {:commit, actor}
-      end
-    end)
-  end
-
-  @doc """
   Creates an actor.
   """
   @spec create_actor(map) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}

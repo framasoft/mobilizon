@@ -225,21 +225,6 @@ defmodule Mobilizon.Events do
     |> Repo.one()
   end
 
-  # TODO: move to MobilizonWeb
-  @spec get_cached_public_event_by_uuid_with_preload(String.t()) ::
-          {:commit, Event.t()} | {:ignore, nil}
-  def get_cached_public_event_by_uuid_with_preload(uuid) do
-    Cachex.fetch(:activity_pub, "event_" <> uuid, fn "event_" <> uuid ->
-      case get_public_event_by_uuid_with_preload(uuid) do
-        %Event{} = event ->
-          {:commit, event}
-
-        nil ->
-          {:ignore, nil}
-      end
-    end)
-  end
-
   @doc """
   Creates an event.
   """
@@ -835,21 +820,6 @@ defmodule Mobilizon.Events do
     Comment
     |> Repo.get_by(uuid: uuid)
     |> Repo.preload(@comment_preloads)
-  end
-
-  # TODO: move to MobilizonWeb
-  @spec get_cached_comment_by_uuid_with_preload(String.t()) ::
-          {:commit, Comment.t()} | {:ignore, nil}
-  def get_cached_comment_by_uuid_with_preload(uuid) do
-    Cachex.fetch(:activity_pub, "comment_" <> uuid, fn "comment_" <> uuid ->
-      case get_comment_from_uuid_with_preload(uuid) do
-        %Comment{} = comment ->
-          {:commit, comment}
-
-        nil ->
-          {:ignore, nil}
-      end
-    end)
   end
 
   @doc """
