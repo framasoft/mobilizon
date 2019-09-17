@@ -419,7 +419,7 @@ defmodule Mobilizon.EventsTest do
     test "list_sessions_for_event/1 returns sessions for an event" do
       event = insert(:event)
       session = insert(:session, event: event)
-      assert Events.list_sessions_for_event(event) |> Enum.map(& &1.id) == [session.id]
+      assert event |> Events.list_sessions_for_event() |> Enum.map(& &1.id) == [session.id]
     end
 
     test "get_session!/1 returns the session with given id" do
@@ -491,7 +491,7 @@ defmodule Mobilizon.EventsTest do
       event = insert(:event)
       track = insert(:track, event: event)
       session = insert(:session, track: track, event: event)
-      assert Events.list_sessions_for_track(track) |> Enum.map(& &1.id) == [session.id]
+      assert track |> Events.list_sessions_for_track() |> Enum.map(& &1.id) == [session.id]
     end
 
     test "get_track!/1 returns the track with given id" do

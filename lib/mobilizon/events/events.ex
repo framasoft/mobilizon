@@ -293,7 +293,9 @@ defmodule Mobilizon.Events do
         is_unlisted \\ false,
         is_future \\ true
       ) do
-    from(e in Event, preload: [:organizer_actor, :participants])
+    query = from(e in Event, preload: [:organizer_actor, :participants])
+
+    query
     |> Page.paginate(page, limit)
     |> sort(sort, direction)
     |> filter_future_events(is_future)
@@ -779,8 +781,10 @@ defmodule Mobilizon.Events do
   @spec get_comment_from_url_with_preload(String.t()) ::
           {:ok, Comment.t()} | {:error, :comment_not_found}
   def get_comment_from_url_with_preload(url) do
+    query = from(c in Comment, where: c.url == ^url)
+
     comment =
-      from(c in Comment, where: c.url == ^url)
+      query
       |> preload_for_comment()
       |> Repo.one()
 

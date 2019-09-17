@@ -115,7 +115,9 @@ defmodule Mobilizon.Actors do
   """
   @spec get_actor_by_name(String.t(), atom | nil) :: Actor.t() | nil
   def get_actor_by_name(name, type \\ nil) do
-    from(a in Actor)
+    query = from(a in Actor)
+
+    query
     |> filter_by_type(type)
     |> filter_by_name(String.split(name, "@"))
     |> Repo.one()
@@ -126,7 +128,9 @@ defmodule Mobilizon.Actors do
   """
   @spec get_local_actor_by_name(String.t()) :: Actor.t() | nil
   def get_local_actor_by_name(name) do
-    from(a in Actor)
+    query = from(a in Actor)
+
+    query
     |> filter_by_name([name])
     |> Repo.one()
   end
