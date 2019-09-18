@@ -39,7 +39,7 @@
           <div class="column">
             <form @submit="submit">
               <b-field
-                label="Email"
+                :label="$t('Email')"
                 :type="errors.email ? 'is-danger' : null"
                 :message="errors.email"
               >
@@ -54,7 +54,7 @@
               </b-field>
 
               <b-field
-                label="Password"
+                :label="$t('Password')"
                 :type="errors.password ? 'is-danger' : null"
                 :message="errors.password"
               >

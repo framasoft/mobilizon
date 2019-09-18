@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Wed Sep 11 2019 11:53:12 GMT+0200 (GMT+02:00)
+# timestamp: Wed Sep 18 2019 17:12:13 GMT+0200 (GMT+02:00)
 
 schema {
   query: RootQueryType
@@ -1187,6 +1187,9 @@ type User {
 
   """The user's ID"""
   id: ID!
+
+  """The list of events this person goes to"""
+  participations(afterDatetime: DateTime, beforeDatetime: DateTime, limit: Int = 10, page: Int = 1): [Participant]
 
   """The user's list of profiles (identities)"""
   profiles: [Person]!

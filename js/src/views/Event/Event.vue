@@ -69,7 +69,7 @@
                   </router-link>
                 </p>
                 <p class="control" v-if="actorIsOrganizer()">
-                  <a class="button is-danger" @click="openDeleteEventModal()">
+                  <a class="button is-danger" @click="openDeleteEventModalWrapper">
                     {{ $t('Delete') }}
                   </a>
                 </p>
@@ -111,7 +111,7 @@
                     <img
                             class="is-rounded"
                             :src="event.organizerActor.avatar.url"
-                            :alt="$t("{actor}'s avatar", {actor: event.organizerActor.preferredUsername})" />
+                            :alt="event.organizerActor.avatar.alt" />
                   </figure>
                 </actor-link>
               </div>
@@ -262,6 +262,7 @@ import ReportModal from '@/components/Report/ReportModal.vue';
 import ParticipationModal from '@/components/Event/ParticipationModal.vue';
 import { IReport } from '@/types/report.model';
 import { CREATE_REPORT } from '@/graphql/report';
+import EventMixin from '@/mixins/event';
 
 @Component({
   components: {
@@ -290,7 +291,7 @@ import { CREATE_REPORT } from '@/graphql/report';
     },
   },
 })
-export default class Event extends Vue {
+export default class Event extends EventMixin {
   @Prop({ type: String, required: true }) uuid!: string;
 
   event!: IEvent;
@@ -302,31 +303,12 @@ export default class Event extends Vue {
 
   EventVisibility = EventVisibility;
 
-  async openDeleteEventModal () {
-    const participantsLength = this.event.participants.length;
-    const prefix = participantsLength
-            ? this.$tc('There are {participants} participants.', this.event.participants.length, {
-              participants: this.event.participants.length,
-            })
-            : '';
-
-    this.$buefy.dialog.prompt({
-      type: 'is-danger',
-      title: this.$t('Delete event') as string,
-      message: `${prefix}
-        ${this.$t('Are you sure you want to delete this event? This action cannot be reverted.')}
-        <br><br>
-        ${this.$t('To confirm, type your event title "{eventTitle}"', { eventTitle: this.event.title })}`,
-      confirmText: this.$t(
-              'Delete {eventTitle}',
-              { eventTitle: this.event.title },
-      ) as string,
-      inputAttrs: {
-        placeholder: this.event.title,
-        pattern: this.event.title,
-      },
-      onConfirm: () => this.deleteEvent(),
-    });
+  /**
+   * Delete the event, then redirect to home.
+   */
+  async openDeleteEventModalWrapper() {
+    await this.openDeleteEventModal(this.event, this.currentActor);
+    await this.$router.push({ name: RouteName.HOME });
   }
 
   async reportEvent(content: string, forward: boolean) {
@@ -462,31 +444,6 @@ export default class Event extends Vue {
 
   get emailShareUrl(): string {
     return `mailto:?to=&body=${this.event.url}${encodeURIComponent('\n\n')}${this.event.description}&subject=${this.event.title}`;
-  }
-
-  private async deleteEvent() {
-    const router = this.$router;
-    const eventTitle = this.event.title;
-
-    try {
-      await this.$apollo.mutate<IParticipant>({
-        mutation: DELETE_EVENT,
-        variables: {
-          eventId: this.event.id,
-          actorId: this.currentActor.id,
-        },
-      });
-
-      await router.push({ name: RouteName.HOME });
-      this.$buefy.notification.open({
-        message: this.$t('Event {eventTitle} deleted', { eventTitle }) as string,
-        type: 'is-success',
-        position: 'is-bottom-right',
-        duration: 5000,
-      });
-    } catch (error) {
-      console.error(error);
-    }
   }
 
 }

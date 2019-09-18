@@ -10,6 +10,8 @@ export interface IActor {
   suspended: boolean;
   avatar: IPicture | null;
   banner: IPicture | null;
+
+  displayName();
 }
 
 export class Actor implements IActor {

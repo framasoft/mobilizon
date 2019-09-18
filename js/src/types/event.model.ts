@@ -50,6 +50,20 @@ export interface IParticipant {
   event: IEvent;
 }
 
+export class Participant implements IParticipant {
+  event!: IEvent;
+  actor!: IActor;
+  role: ParticipantRole = ParticipantRole.NOT_APPROVED;
+
+  constructor(hash?: IParticipant) {
+    if (!hash) return;
+
+    this.event = new EventModel(hash.event);
+    this.actor = new Actor(hash.actor);
+    this.role = hash.role;
+  }
+}
+
 export interface IOffer {
   price: number;
   priceCurrency: string;
@@ -203,6 +217,7 @@ export class EventModel implements IEvent {
     this.onlineAddress = hash.onlineAddress;
     this.phoneAddress = hash.phoneAddress;
     this.physicalAddress = hash.physicalAddress;
+    this.participantStats = hash.participantStats;
 
     this.tags = hash.tags;
     if (hash.options) this.options = hash.options;

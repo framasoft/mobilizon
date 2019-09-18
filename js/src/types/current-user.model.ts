@@ -1,3 +1,5 @@
+import { IParticipant } from '@/types/event.model';
+
 export enum ICurrentUserRole {
   USER = 'USER',
   MODERATOR = 'MODERATOR',
@@ -9,4 +11,5 @@ export interface ICurrentUser {
   email: string;
   isLoggedIn: boolean;
   role: ICurrentUserRole;
+  participations: IParticipant[];
 }

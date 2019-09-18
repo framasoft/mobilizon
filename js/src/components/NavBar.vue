@@ -108,7 +108,7 @@ import { RouteName } from '@/router';
     },
     identities: {
       query: IDENTITIES,
-      update: ({ identities }) => identities.map(identity => new Person(identity)),
+      update: ({ identities }) => identities ? identities.map(identity => new Person(identity)) : [],
     },
     config: {
       query: CONFIG,
@@ -128,11 +128,21 @@ export default class NavBar extends Vue {
   config!: IConfig;
   currentUser!: ICurrentUser;
   ICurrentUserRole = ICurrentUserRole;
-  identities!: IPerson[];
+  identities: IPerson[] = [];
   showNavbar: boolean = false;
 
   ActorRouteName = ActorRouteName;
   AdminRouteName = AdminRouteName;
+
+  @Watch('currentActor')
+  async initializeListOfIdentities() {
+    const { data } = await this.$apollo.query<{ identities: IPerson[] }>({
+      query: IDENTITIES,
+    });
+    if (data) {
+      this.identities = data.identities.map(identity => new Person(identity));
+    }
+  }
 
   // @Watch('currentUser')
   // async onCurrentUserChanged() {

@@ -1,8 +1,8 @@
 <template>
   <div class="container" v-if="config">
-    <section class="hero is-link" v-if="!currentUser.id || !loggedPerson">
+    <section class="hero is-link" v-if="!currentUser.id || !currentActor">
       <div class="hero-body">
-        <div class="container">
+        <div>
           <h1 class="title">{{ config.name }}</h1>
           <h2 class="subtitle">{{ config.description }}</h2>
           <router-link class="button" :to="{ name: 'Register' }" v-if="config.registrationsOpen">
@@ -16,7 +16,7 @@
     </section>
     <section v-else>
       <h1>
-        {{ $t('Welcome back {username}', {username: loggedPerson.preferredUsername}) }}
+        {{ $t('Welcome back {username}', {username: `@${currentActor.preferredUsername}`}) }}
       </h1>
     </section>
     <b-dropdown aria-role="list">
@@ -24,7 +24,7 @@
         <span>{{ $t('Create') }}</span>
         <b-icon icon="menu-down"></b-icon>
       </button>
-
+.organizerActor.id
       <b-dropdown-item aria-role="listitem">
         <router-link :to="{ name: RouteName.CREATE_EVENT }">{{ $t('Event') }}</router-link>
       </b-dropdown-item>
@@ -32,14 +32,14 @@
         <router-link :to="{ name: RouteName.CREATE_GROUP }">{{ $t('Group') }}</router-link>
       </b-dropdown-item>
     </b-dropdown>
-    <section v-if="loggedPerson" class="container">
-      <span class="events-nearby title">
-        {{ $t("Events you're going at") }}
-      </span>
+    <section v-if="currentActor" class="container">
+      <h3 class="title">
+        {{ $t("Upcoming") }}
+      </h3>
       <b-loading :active.sync="$apollo.loading"></b-loading>
-      <div v-if="goingToEvents.size > 0" v-for="row in Array.from(goingToEvents.entries())">
-        <!--   Iterators will be supported in v-for with VueJS 3     -->
-        <date-component :date="row[0]"></date-component>
+      <div v-if="goingToEvents.size > 0" v-for="row in goingToEvents" class="upcoming-events">
+        <span class="date-component-container" v-if="isInLessThanSevenDays(row[0])">
+          <date-component :date="row[0]"></date-component>
           <h3 class="subtitle"
             v-if="isToday(row[0])">
             {{ $tc('You have one event today.', row[1].length, {count: row[1].length}) }}
@@ -49,24 +49,42 @@
             {{ $tc('You have one event tomorrow.', row[1].length, {count: row[1].length}) }}
           </h3>
           <h3 class="subtitle"
-              v-else>
+              v-else-if="isInLessThanSevenDays(row[0])">
               {{ $tc('You have one event in {days} days.', row[1].length, {count: row[1].length, days: calculateDiffDays(row[0])}) }}
           </h3>
-        <div class="columns">
-          <EventCard
-                  v-for="event in row[1]"
-                  :key="event.uuid"
-                  :event="event"
-                  :options="{loggedPerson: loggedPerson}"
-                  class="column is-one-quarter-desktop is-half-mobile"
+        </span>
+        <div class="level">
+          <EventListCard
+                  v-for="participation in row[1]"
+                  v-if="isInLessThanSevenDays(row[0])"
+                  :key="participation[1].event.uuid"
+                  :participation="participation[1]"
+                  class="level-item"
           />
         </div>
       </div>
       <b-message v-else type="is-danger">
         {{ $t("You're not going to any event yet") }}
       </b-message>
+      <span class="view-all">
+        <router-link :to=" { name: EventRouteName.MY_EVENTS }">{{ $t('View everything')}} >></router-link>
+      </span>
     </section>
-    <section class="container">
+    <section v-if="currentActor && lastWeekEvents.length > 0">
+      <h3 class="title">
+        {{ $t("Last week") }}
+      </h3>
+      <b-loading :active.sync="$apollo.loading"></b-loading>
+      <div class="level">
+          <EventListCard
+                  v-for="participation in lastWeekEvents"
+                  :key="participation.event.uuid"
+                  :participation="participation"
+                  class="level-item"
+          />
+      </div>
+    </section>
+    <section>
       <h3 class="events-nearby title">{{ $t('Events nearby you') }}</h3>
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <div v-if="events.length > 0" class="columns is-multiline">
@@ -87,16 +105,18 @@
 import ngeohash from 'ngeohash';
 import { FETCH_EVENTS } from '@/graphql/event';
 import { Component, Vue } from 'vue-property-decorator';
+import EventListCard from '@/components/Event/EventListCard.vue';
 import EventCard from '@/components/Event/EventCard.vue';
-import { LOGGED_PERSON_WITH_GOING_TO_EVENTS } from '@/graphql/actor';
+import { CURRENT_ACTOR_CLIENT, LOGGED_USER_PARTICIPATIONS } from '@/graphql/actor';
 import { IPerson, Person } from '@/types/actor';
 import { ICurrentUser } from '@/types/current-user.model';
 import { CURRENT_USER_CLIENT } from '@/graphql/user';
 import { RouteName } from '@/router';
-import { IEvent } from '@/types/event.model';
+import { EventModel, IEvent, IParticipant, Participant } from '@/types/event.model';
 import DateComponent from '@/components/Event/DateCalendarIcon.vue';
 import { CONFIG } from '@/graphql/config';
 import { IConfig } from '@/types/config.model';
+import { EventRouteName } from '@/router/event';
 
 @Component({
   apollo: {
@@ -104,8 +124,8 @@ import { IConfig } from '@/types/config.model';
       query: FETCH_EVENTS,
       fetchPolicy: 'no-cache', // Debug me: https://github.com/apollographql/apollo-client/issues/3030
     },
-    loggedPerson: {
-      query: LOGGED_PERSON_WITH_GOING_TO_EVENTS,
+    currentActor: {
+      query: CURRENT_ACTOR_CLIENT,
     },
     currentUser: {
       query: CURRENT_USER_CLIENT,
@@ -116,6 +136,7 @@ import { IConfig } from '@/types/config.model';
   },
   components: {
     DateComponent,
+    EventListCard,
     EventCard,
   },
 })
@@ -124,10 +145,12 @@ export default class Home extends Vue {
   locations = [];
   city = { name: null };
   country = { name: null };
-  loggedPerson: IPerson = new Person();
+  currentUserParticipations: IParticipant[] = [];
   currentUser!: ICurrentUser;
+  currentActor!: IPerson;
   config: IConfig = { description: '', name: '', registrationsOpen: false };
   RouteName = RouteName;
+  EventRouteName = EventRouteName;
 
   // get displayed_name() {
   //   return this.loggedPerson && this.loggedPerson.name === null
@@ -135,7 +158,23 @@ export default class Home extends Vue {
   //     : this.loggedPerson.name;
   // }
 
-  isToday(date: string) {
+  async mounted() {
+    const lastWeek = new Date();
+    lastWeek.setDate(new Date().getDate() - 7);
+
+    const { data } = await this.$apollo.query({
+      query: LOGGED_USER_PARTICIPATIONS,
+      variables: {
+        afterDateTime: lastWeek.toISOString(),
+      },
+    });
+
+    if (data) {
+      this.currentUserParticipations = data.loggedUser.participations.map(participation => new Participant(participation));
+    }
+  }
+
+  isToday(date: Date) {
     return (new Date(date)).toDateString() === (new Date()).toDateString();
   }
 
@@ -148,33 +187,41 @@ export default class Home extends Vue {
   }
 
   isBefore(date: string, nbDays: number) :boolean {
-    return this.calculateDiffDays(date) > nbDays;
+    return this.calculateDiffDays(date) < nbDays;
   }
 
-  // FIXME: Use me
   isInLessThanSevenDays(date: string): boolean {
-    return this.isInDays(date, 7);
+    return this.isBefore(date, 7);
   }
 
   calculateDiffDays(date: string): number {
-    const dateObj = new Date(date);
-    return Math.ceil((dateObj.getTime() - (new Date()).getTime()) / 1000 / 60 / 60 / 24);
+    return Math.ceil(((new Date(date)).getTime() - (new Date()).getTime()) / 1000 / 60 / 60 / 24);
   }
 
-  get goingToEvents(): Map<string, IEvent[]> {
-    const res = this.$data.loggedPerson.goingToEvents.filter((event) => {
-      return event.beginsOn != null && this.isBefore(event.beginsOn, 0);
+  get goingToEvents(): Map<string, Map<string, IParticipant>> {
+    const res = this.currentUserParticipations.filter(({ event }) => {
+      return event.beginsOn != null && !this.isBefore(event.beginsOn.toDateString(), 0);
     });
     res.sort(
-            (a: IEvent, b: IEvent) => new Date(a.beginsOn) > new Date(b.beginsOn),
+            (a: IParticipant, b: IParticipant) => a.event.beginsOn.getTime() - b.event.beginsOn.getTime(),
     );
-    return res.reduce((acc: Map<string, IEvent[]>, event: IEvent) => {
-      const day = (new Date(event.beginsOn)).toDateString();
-      const events: IEvent[] = acc.get(day) || [];
-      events.push(event);
-      acc.set(day, events);
+    return res.reduce((acc: Map<string, Map<string, IParticipant>>, participation: IParticipant) => {
+      const day = (new Date(participation.event.beginsOn)).toDateString();
+      const participations: Map<string, IParticipant> = acc.get(day) || new Map();
+      participations.set(participation.event.uuid, participation);
+      acc.set(day, participations);
       return acc;
     },                new Map());
+  }
+
+  get lastWeekEvents() {
+    const res = this.currentUserParticipations.filter(({ event }) => {
+      return event.beginsOn != null && this.isBefore(event.beginsOn.toDateString(), 0);
+    });
+    res.sort(
+          (a: IParticipant, b: IParticipant) => a.event.beginsOn.getTime() - b.event.beginsOn.getTime(),
+      );
+    return res;
   }
 
   geoLocalize() {
@@ -226,7 +273,7 @@ export default class Home extends Vue {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style lang="scss">
 .search-autocomplete {
   border: 1px solid #dbdbdb;
   color: rgba(0, 0, 0, 0.87);
@@ -235,4 +282,34 @@ export default class Home extends Vue {
 .events-nearby {
   margin: 25px auto;
 }
+
+.date-component-container {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem auto;
+
+  h3.subtitle {
+    margin-left: 7px;
+  }
+}
+
+  .upcoming-events {
+    .level {
+      margin-left: 4rem;
+    }
+  }
+
+    section.container {
+        margin: auto auto 3rem;
+    }
+
+  span.view-all {
+    display: block;
+    margin-top: 2rem;
+    text-align: right;
+
+    a {
+      text-decoration: underline;
+    }
+  }
 </style>

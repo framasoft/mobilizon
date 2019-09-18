@@ -5,11 +5,13 @@ import { RouteConfig } from 'vue-router';
 // tslint:disable:space-in-parens
 const editEvent = () => import(/* webpackChunkName: "create-event" */ '@/views/Event/Edit.vue');
 const event = () => import(/* webpackChunkName: "event" */ '@/views/Event/Event.vue');
+const myEvents = () => import(/* webpackChunkName: "event" */ '@/views/Event/MyEvents.vue');
 // tslint:enable
 
 export enum EventRouteName {
   EVENT_LIST = 'EventList',
   CREATE_EVENT = 'CreateEvent',
+  MY_EVENTS = 'MyEvents',
   EDIT_EVENT = 'EditEvent',
   EVENT = 'Event',
   LOCATION = 'Location',
@@ -26,6 +28,12 @@ export const eventRoutes: RouteConfig[] = [
     path: '/events/create',
     name: EventRouteName.CREATE_EVENT,
     component: editEvent,
+    meta: { requiredAuth: true },
+  },
+  {
+    path: '/events/me',
+    name: EventRouteName.MY_EVENTS,
+    component: myEvents,
     meta: { requiredAuth: true },
   },
   {

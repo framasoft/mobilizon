@@ -586,6 +586,61 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
+  Returns the list of participations for an actor.
+
+  Default behaviour is to not return :not_approved participants
+
+  ## Examples
+
+      iex> list_event_participations_for_user(5)
+      [%Participant{}, ...]
+
+  """
+  def list_participations_for_user(
+        user_id,
+        after_datetime \\ nil,
+        before_datetime \\ nil,
+        page \\ nil,
+        limit \\ nil
+      )
+
+  def list_participations_for_user(user_id, %DateTime{} = after_datetime, nil, page, limit) do
+    user_id
+    |> do_list_participations_for_user(page, limit)
+    |> where([_p, e, _a], e.begins_on > ^after_datetime)
+    |> order_by([_p, e, _a], asc: e.begins_on)
+    |> Repo.all()
+  end
+
+  def list_participations_for_user(user_id, nil, %DateTime{} = before_datetime, page, limit) do
+    user_id
+    |> do_list_participations_for_user(page, limit)
+    |> where([_p, e, _a], e.begins_on < ^before_datetime)
+    |> order_by([_p, e, _a], desc: e.begins_on)
+    |> Repo.all()
+  end
+
+  def list_participations_for_user(user_id, nil, nil, page, limit) do
+    user_id
+    |> do_list_participations_for_user(page, limit)
+    |> order_by([_p, e, _a], desc: e.begins_on)
+    |> Repo.all()
+  end
+
+  defp do_list_participations_for_user(user_id, page, limit) do
+    from(
+      p in Participant,
+      join: e in Event,
+      join: a in Actor,
+      on: p.actor_id == a.id,
+      on: p.event_id == e.id,
+      where: a.user_id == ^user_id and p.role != ^:not_approved,
+      preload: [:event, :actor]
+    )
+    |> Page.paginate(page, limit)
+  end
+
+  @doc """
   Deletes a participant.
   """
   @spec delete_participant(Participant.t()) ::
@@ -621,6 +676,11 @@ defmodule Mobilizon.Events do
 
   @doc """
   Returns the list of organizers participants for an event.
+
+  ## Examples
+
+      iex> list_organizers_participants_for_event(id)
+      [%Participant{role: :creator}, ...]
   """
   @spec list_organizers_participants_for_event(
           integer | String.t(),

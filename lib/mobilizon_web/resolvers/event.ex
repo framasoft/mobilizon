@@ -29,12 +29,12 @@ defmodule MobilizonWeb.Resolvers.Event do
   end
 
   def find_event(_parent, %{uuid: uuid}, _resolution) do
-    case Mobilizon.Events.get_public_event_by_uuid_with_preload(uuid) do
-      nil ->
-        {:error, "Event with UUID #{uuid} not found"}
-
-      event ->
+    case {:has_event, Mobilizon.Events.get_public_event_by_uuid_with_preload(uuid)} do
+      {:has_event, %Event{} = event} ->
         {:ok, Map.put(event, :organizer_actor, Person.proxify_pictures(event.organizer_actor))}
+
+      {:has_event, _} ->
+        {:error, "Event with UUID #{uuid} not found"}
     end
   end
 
