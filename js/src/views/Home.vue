@@ -24,7 +24,6 @@
         <span>{{ $t('Create') }}</span>
         <b-icon icon="menu-down"></b-icon>
       </button>
-.organizerActor.id
       <b-dropdown-item aria-role="listitem">
         <router-link :to="{ name: RouteName.CREATE_EVENT }">{{ $t('Event') }}</router-link>
       </b-dropdown-item>
