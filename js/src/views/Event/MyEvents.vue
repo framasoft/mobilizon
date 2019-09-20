@@ -1,5 +1,5 @@
 <template>
-    <main class="container">
+    <main>
         <h1 class="title">
             {{ $t('My events') }}
         </h1>
@@ -87,8 +87,6 @@ import EventListCard from '@/components/Event/EventListCard.vue';
   },
 })
 export default class MyEvents extends Vue {
-  @Prop(String) location!: string;
-
   futurePage: number = 1;
   pastPage: number = 1;
   limit: number = 10;

@@ -4,6 +4,7 @@
       <b-navbar-item tag="router-link" :to="{ name: 'Home' }"><logo /></b-navbar-item>
     </template>
     <template slot="start">
+      <b-navbar-item tag="router-link" :to="{ name: EventRouteName.EXPLORE }">{{ $t('Explore') }}</b-navbar-item>
       <b-navbar-item tag="router-link" :to="{ name: EventRouteName.MY_EVENTS }">{{ $t('Events') }}</b-navbar-item>
     </template>
     <template slot="end">
@@ -78,7 +79,7 @@ import SearchField from '@/components/SearchField.vue';
 import { ActorRouteName } from '@/router/actor';
 import { AdminRouteName } from '@/router/admin';
 import { RouteName } from '@/router';
-import {EventRouteName} from "@/router/event";
+import { EventRouteName } from '@/router/event';
 
 @Component({
   apollo: {
@@ -150,7 +151,6 @@ export default class NavBar extends Vue {
   }
 
   async setIdentity(identity: IPerson) {
-    console.log('setIdentity');
     return await changeIdentity(this.$apollo.provider.defaultClient, identity);
   }
 }

@@ -55,8 +55,8 @@ export default class Map extends Vue {
     return { ...this.defaultOptions, ...this.options };
   }
 
-  get lat() { return this.$props.coords.split(';')[0]; }
-  get lon() { return this.$props.coords.split(';')[1]; }
+  get lat() { return this.$props.coords.split(';')[1]; }
+  get lon() { return this.$props.coords.split(';')[0]; }
 }
 </script>
 <style lang="scss" scoped>

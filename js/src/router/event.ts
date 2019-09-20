@@ -7,12 +7,14 @@ const participations = () => import(/* webpackChunkName: "participations" */ '@/
 const editEvent = () => import(/* webpackChunkName: "edit-event" */ '@/views/Event/Edit.vue');
 const event = () => import(/* webpackChunkName: "event" */ '@/views/Event/Event.vue');
 const myEvents = () => import(/* webpackChunkName: "my-events" */ '@/views/Event/MyEvents.vue');
+const explore = () => import(/* webpackChunkName: "explore" */ '@/views/Event/Explore.vue');
 // tslint:enable
 
 export enum EventRouteName {
   EVENT_LIST = 'EventList',
   CREATE_EVENT = 'CreateEvent',
   MY_EVENTS = 'MyEvents',
+  EXPLORE = 'Explore',
   EDIT_EVENT = 'EditEvent',
   PARTICIPATIONS = 'Participations',
   EVENT = 'Event',
@@ -31,6 +33,12 @@ export const eventRoutes: RouteConfig[] = [
     name: EventRouteName.CREATE_EVENT,
     component: editEvent,
     meta: { requiredAuth: true },
+  },
+  {
+    path: '/events/explore',
+    name: EventRouteName.EXPLORE,
+    component: explore,
+    meta: { requiredAuth: false },
   },
   {
     path: '/events/me',

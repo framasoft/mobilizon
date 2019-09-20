@@ -35,6 +35,7 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
          {:address, address_id} <-
            {:address, get_address(object["location"])},
          {:tags, tags} <- {:tags, fetch_tags(object["tag"])},
+         {:visibility, visibility} <- {:visibility, get_visibility(object)},
          {:options, options} <- {:options, get_options(object)} do
       picture_id =
         with true <- Map.has_key?(object, "attachment") && length(object["attachment"]) > 0,
@@ -59,6 +60,7 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
         "begins_on" => object["startTime"],
         "ends_on" => object["endTime"],
         "category" => object["category"],
+        "visibility" => visibility,
         "join_options" => object["joinOptions"],
         "url" => object["id"],
         "uuid" => object["uuid"],
@@ -146,6 +148,16 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
         "type" => "Hashtag"
       }
     end)
+  end
+
+  @ap_public "https://www.w3.org/ns/activitystreams#Public"
+
+  defp get_visibility(object) do
+    cond do
+      @ap_public in object["to"] -> :public
+      @ap_public in object["cc"] -> :unlisted
+      true -> :private
+    end
   end
 
   @doc """

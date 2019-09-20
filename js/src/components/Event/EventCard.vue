@@ -16,8 +16,10 @@
         <h2 class="title" ref="title">{{ event.title }}</h2>
       </div>
       <span>
-        <span v-if="event.physicalAddress && event.physicalAddress.locality">{{ event.physicalAddress.locality }} - </span>
-        <span v-if="actorDisplayName && actorDisplayName !== '@'">{{ actorDisplayName }}</span>
+        <span v-if="actorDisplayName && actorDisplayName !== '@'">{{ $t('By {name}', { name: actorDisplayName }) }}</span>
+        <span v-if="event.physicalAddress && (event.physicalAddress.locality || event.physicalAddress.description)">
+          - {{ event.physicalAddress.locality || event.physicalAddress.description }}
+        </span>
       </span>
     </div>
 <!--    <div v-if="!mergedOptions.hideDetails" class="details">-->

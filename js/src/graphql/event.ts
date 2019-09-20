@@ -21,7 +21,8 @@ const physicalAddressQuery = `
   postalCode,
   region,
   country,
-  geom
+  geom,
+  id
 `;
 
 const tagsQuery = `
@@ -148,23 +149,25 @@ export const FETCH_EVENTS = gql`
       # online_address,
       # phone_address,
       physicalAddress {
+        id,
         description,
         locality
-      }
+      },
       organizerActor {
+        id,
         avatar {
           url
         },
         preferredUsername,
         name,
       },
-      attributedTo {
-        avatar {
-          url
-        },
-        preferredUsername,
-        name,
-      },
+#      attributedTo {
+#        avatar {
+#          url
+#        },
+#        preferredUsername,
+#        name,
+#      },
       category,
       participants {
         ${participantQuery}

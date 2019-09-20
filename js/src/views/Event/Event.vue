@@ -38,10 +38,11 @@
           <div class="metadata columns">
             <div class="column is-three-quarters-desktop">
               <p class="tags" v-if="event.category || event.tags.length > 0">
-                <span class="tag" v-if="event.category">{{ event.category }}</span>
+<!--                <span class="tag" v-if="event.category">{{ event.category }}</span>-->
                 <span class="tag" v-if="event.tags" v-for="tag in event.tags">{{ tag.title }}</span>
                 <span class="visibility">
-                  <span v-if="event.visibility === EventVisibility.PUBLIC">{{ $t('public event') }}</span>
+                  <span v-if="event.visibility === EventVisibility.PUBLIC">{{ $t('Public event') }}</span>
+                  <span v-if="event.visibility === EventVisibility.UNLISTED">{{ $t('Private event') }}</span>
                 </span>
               </p>
               <div class="date-and-add-to-calendar">
@@ -84,7 +85,7 @@
                 <span v-if="!event.physicalAddress">{{ $t('No address defined') }}</span>
                 <div class="address" v-if="event.physicalAddress">
                   <address>
-                    <span class="addressDescription">{{ event.physicalAddress.description }}</span>
+                    <span class="addressDescription" :title="event.physicalAddress.description">{{ event.physicalAddress.description }}</span>
                     <span>{{ event.physicalAddress.floor }} {{ event.physicalAddress.street }}</span>
                     <span>{{ event.physicalAddress.postalCode }} {{ event.physicalAddress.locality }}</span>
   <!--                  <span>{{ event.physicalAddress.region }} {{ event.physicalAddress.country }}</span>-->
@@ -93,7 +94,7 @@
                     {{ $t('Show map') }}
                   </span>
                 </div>
-                <b-modal v-if="event.physicalAddress && event.physicalAddress.geom" :active.sync="showMap" :width="800" scroll="keep">
+                <b-modal v-if="event.physicalAddress && event.physicalAddress.geom" :active.sync="showMap" scroll="keep">
                   <div class="map">
                     <map-leaflet
                             :coords="event.physicalAddress.geom"
@@ -444,6 +445,8 @@ export default class Event extends EventMixin {
             white-space: nowrap;
             flex: 1 0 auto;
             min-width: 100%;
+            max-width: 4rem;
+            overflow: hidden;
           }
 
           :not(.addressDescription) {

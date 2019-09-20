@@ -1,7 +1,7 @@
 <template>
   <div id="mobilizon">
     <NavBar />
-    <main>
+    <main class="container">
       <router-view />
     </main>
     <mobilizon-footer />
