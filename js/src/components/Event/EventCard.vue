@@ -60,7 +60,6 @@ export interface IEventCardOptions {
 @Component({
   components: {
     DateCalendarIcon,
-    EventCard,
   },
   mounted() {
     lineClamp(this.$refs.title, 3);

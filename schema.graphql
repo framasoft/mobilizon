@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Wed Sep 18 2019 17:12:13 GMT+0200 (GMT+02:00)
+# timestamp: Fri Sep 20 2019 16:55:10 GMT+0200 (GMT+02:00)
 
 schema {
   query: RootQueryType
@@ -244,6 +244,7 @@ type DeletedObject {
 type DeletedParticipant {
   actor: DeletedObject
   event: DeletedObject
+  id: ID
 }
 
 """An event"""
@@ -269,6 +270,9 @@ type Event implements ActionLogObject {
   """Internal ID for this event"""
   id: ID
 
+  """The event's visibility"""
+  joinOptions: EventJoinOptions
+
   """Whether the event is local or not"""
   local: Boolean
 
@@ -283,7 +287,7 @@ type Event implements ActionLogObject {
   participantStats: ParticipantStats
 
   """The event's participants"""
-  participants: [Participant]
+  participants(limit: Int = 10, page: Int = 1, roles: String = ""): [Participant]
 
   """Phone address for the event"""
   phoneAddress: String
@@ -321,7 +325,7 @@ type Event implements ActionLogObject {
   """The Event UUID"""
   uuid: UUID
 
-  """The event's  visibility"""
+  """The event's visibility"""
   visibility: EventVisibility
 }
 
@@ -335,6 +339,18 @@ enum EventCommentModeration {
 
   """Every comment has to be moderated by the admin"""
   MODERATED
+}
+
+"""The list of join options for an event"""
+enum EventJoinOptions {
+  """Anyone can join and is automatically accepted"""
+  FREE
+
+  """Participants must be invited"""
+  INVITE
+
+  """Manual acceptation"""
+  RESTRICTED
 }
 
 type EventOffer {
@@ -462,17 +478,14 @@ enum EventStatus {
 
 """The list of visibility options for an event"""
 enum EventVisibility {
-  """visible only to people invited"""
-  INVITE
-
-  """Visible only after a moderator accepted"""
-  MODERATED
-
   """Visible only to people members of the group or followers of the person"""
   PRIVATE
 
   """Publicly listed and federated. Can be shared."""
   PUBLIC
+
+  """Visible only after a moderator accepted"""
+  RESTRICTED
 
   """Visible only to people with the link - or invited"""
   UNLISTED
@@ -645,8 +658,19 @@ type Participant {
   """The event which the actor participates in"""
   event: Event
 
+  """The participation ID"""
+  id: ID
+
   """The role of this actor at this event"""
-  role: Int
+  role: ParticipantRoleEnum
+}
+
+enum ParticipantRoleEnum {
+  ADMINISTRATOR
+  CREATOR
+  MODERATOR
+  NOT_APPROVED
+  PARTICIPANT
 }
 
 type ParticipantStats {
@@ -855,6 +879,9 @@ enum ReportStatus {
 }
 
 type RootMutationType {
+  """Accept a participation"""
+  acceptParticipation(id: ID!, moderatorActorId: ID!): Participant
+
   """Change default actor for user"""
   changeDefaultActor(preferredUsername: String!): User
 
@@ -867,6 +894,7 @@ type RootMutationType {
     category: String = "meeting"
     description: String!
     endsOn: DateTime
+    joinOptions: EventJoinOptions = FREE
     onlineAddress: String
     options: EventOptionsInput
     organizerActorId: ID!
@@ -997,6 +1025,9 @@ type RootMutationType {
     summary: String = ""
   ): Person
 
+  """Reject a participation"""
+  rejectParticipation(id: ID!, moderatorActorId: ID!): DeletedParticipant
+
   """Resend registration confirmation token"""
   resendConfirmationEmail(email: String!, locale: String = "en"): String
 
@@ -1013,6 +1044,7 @@ type RootMutationType {
     description: String
     endsOn: DateTime
     eventId: ID!
+    joinOptions: EventJoinOptions
     onlineAddress: String
     options: EventOptionsInput
     phoneAddress: String

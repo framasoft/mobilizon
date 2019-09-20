@@ -1,10 +1,10 @@
 <template>
     <span>
-        <router-link v-if="actor.domain === null"
+        <span v-if="actor.domain === null"
                      :to="{name: 'Profile', params: { name: actor.preferredUsername } }"
         >
             <slot></slot>
-        </router-link>
+        </span>
         <a v-else :href="actor.url">
             <slot></slot>
         </a>

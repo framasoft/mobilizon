@@ -103,7 +103,7 @@
                 </b-modal>
               </div>
               <div class="organizer">
-                <actor-link :actor="event.organizerActor">
+                <span>
                   <span v-if="event.organizerActor">
                     {{ $t('By {name}', {name: event.organizerActor.name ? event.organizerActor.name : event.organizerActor.preferredUsername}) }}
                   </span>
@@ -113,31 +113,11 @@
                             :src="event.organizerActor.avatar.url"
                             :alt="event.organizerActor.avatar.alt" />
                   </figure>
-                </actor-link>
+                </span>
               </div>
             </div>
           </div>
         </section>
-
-<!--          <p v-if="actorIsOrganizer()">-->
-<!--            <translate>You are an organizer.</translate>-->
-<!--          </p>-->
-<!--          <div v-else>-->
-<!--            <p v-if="actorIsParticipant()">-->
-<!--              <translate>You announced that you're going to this event.</translate>-->
-<!--            </p>-->
-<!--            <p v-else>-->
-<!--              <translate>Are you going to this event?</translate><br />-->
-<!--              <span>-->
-<!--                <translate-->
-<!--                        :translate-n="event.participants.length"-->
-<!--                        translate-plural="{event.participants.length} persons are going"-->
-<!--                >-->
-<!--                  One person is going.-->
-<!--                </translate>-->
-<!--              </span>-->
-<!--            </p>-->
-<!--          </div>-->
         <div class="description">
           <div class="description-container container">
             <h3 class="title">
@@ -147,63 +127,31 @@
               {{ $t("The event organizer didn't add any description.") }}
             </p>
             <div class="columns" v-else>
-              <div class="column is-half">
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse vehicula ex dapibus augue volutpat, ultrices cursus mi rutrum.
-                  Nunc ante nunc, facilisis a tellus quis, tempor mollis diam. Aenean consectetur quis est a ultrices.
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </p>
-                <p><a href="https://framasoft.org">https://framasoft.org</a>
-                <p>
-                  Nam sit amet est eget velit tristique commodo. Etiam sollicitudin dignissim diam, ut ultricies tortor.
-                  Sed quis blandit diam, a tincidunt nunc. Donec tincidunt tristique neque at rhoncus. Ut eget vulputate felis.
-                  Pellentesque nibh purus, viverra ac augue sed, iaculis feugiat velit. Nulla ut hendrerit elit.
-                  Etiam at justo eu nunc tempus sagittis. Sed ac tincidunt tellus, sit amet luctus velit.
-                  Nam ullamcorper eros eleifend, eleifend diam vitae, lobortis risus.
-                </p>
-                <p>
-                  <em>
-                    Curabitur rhoncus sapien tortor, vitae imperdiet massa scelerisque non.
-                    Aliquam eu augue mi. Donec hendrerit lorem orci.
-                  </em>
-                </p>
-                <p>
-                  Donec volutpat, enim eu laoreet dictum, urna quam varius enim, eu convallis urna est vitae massa.
-                  Morbi porttitor lacus a sem efficitur blandit. Mauris in est in quam tincidunt iaculis non vitae ipsum.
-                  Phasellus eget velit tellus. Curabitur ac neque pharetra velit viverra mollis.
-                </p>
-                <img src="https://framasoft.org/img/biglogo-notxt.png" alt="logo Framasoft"/>
-                <p>Aenean gravida, ante vitae aliquet aliquet, elit quam tristique orci, sit amet dictum lorem ipsum nec tortor.
-                  Vestibulum est eros, faucibus et semper vel, dapibus ac est. Suspendisse potenti. Suspendisse potenti.
-                  Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-                  Nulla molestie nisi ac risus hendrerit, dapibus mattis sapien scelerisque.
-                </p>
-                <p>Maecenas id pretium justo, nec dignissim sapien. Mauris in venenatis odio, in congue augue. </p>
+              <div class="column is-half" v-html="event.description">
               </div>
             </div>
           </div>
         </div>
-<!--      <section class="container">-->
-<!--        <h2 class="title">Participants</h2>-->
-<!--        <span v-if="event.participants.length === 0">No participants yet.</span>-->
-<!--        <div class="columns">-->
-<!--          <router-link-->
-<!--            class="column"-->
-<!--            v-for="participant in event.participants"-->
-<!--            :key="participant.preferredUsername"-->
-<!--            :to="{name: 'Profile', params: { name: participant.actor.preferredUsername }}"-->
-<!--          >-->
-<!--            <div>-->
-<!--              <figure>-->
-<!--                <img v-if="!participant.actor.avatar.url" src="https://picsum.photos/125/125/">-->
-<!--                <img v-else :src="participant.actor.avatar.url">-->
-<!--              </figure>-->
-<!--              <span>{{ participant.actor.preferredUsername }}</span>-->
-<!--            </div>-->
-<!--          </router-link>-->
-<!--        </div>-->
-<!--      </section>-->
+      <section class="container">
+        <h3 class="title">{{ $t('Participants') }}</h3>
+        <router-link v-if="currentActor.id === event.organizerActor.id" :to="{ name: EventRouteName.PARTICIPATIONS, params: { eventId: event.uuid } }">
+          {{ $t('Manage participants') }}
+        </router-link>
+        <span v-if="event.participants.length === 0">{{ $t('No participants yet.') }}</span>
+        <div class="columns">
+          <div
+            class="column"
+            v-for="participant in event.participants"
+            :key="participant.id"
+          >
+              <figure class="image is-48x48">
+                <img v-if="!participant.actor.avatar.url" src="https://picsum.photos/48/48/" class="is-rounded">
+                <img v-else :src="participant.actor.avatar.url" class="is-rounded">
+              </figure>
+              <span>{{ participant.actor.preferredUsername }}</span>
+          </div>
+        </div>
+      </section>
       <section class="share">
         <div class="container">
           <div class="columns">
@@ -236,7 +184,7 @@
         </div>
       </section>
       <b-modal :active.sync="isReportModalActive" has-modal-card ref="reportModal">
-        <report-modal :on-confirm="reportEvent" title="Report this event" :outside-domain="event.organizerActor.domain" @close="$refs.reportModal.close()" />
+        <report-modal :on-confirm="reportEvent" :title="$t('Report this event')" :outside-domain="event.organizerActor.domain" @close="$refs.reportModal.close()" />
       </b-modal>
       <b-modal :active.sync="isJoinModalActive" has-modal-card ref="participationModal">
         <participation-modal :on-confirm="joinEvent" :event="event" :defaultIdentity="currentActor" @close="$refs.participationModal.close()" />
@@ -249,7 +197,7 @@
 import { DELETE_EVENT, FETCH_EVENT, JOIN_EVENT, LEAVE_EVENT } from '@/graphql/event';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
-import { EventVisibility, IEvent, IParticipant } from '@/types/event.model';
+import { EventVisibility, IEvent, IParticipant, ParticipantRole } from '@/types/event.model';
 import { IPerson } from '@/types/actor';
 import { RouteName } from '@/router';
 import { GRAPHQL_API_ENDPOINT } from '@/api/_entrypoint';
@@ -263,6 +211,7 @@ import ParticipationModal from '@/components/Event/ParticipationModal.vue';
 import { IReport } from '@/types/report.model';
 import { CREATE_REPORT } from '@/graphql/report';
 import EventMixin from '@/mixins/event';
+import { EventRouteName } from '@/router/event';
 
 @Component({
   components: {
@@ -283,6 +232,7 @@ import EventMixin from '@/mixins/event';
       variables() {
         return {
           uuid: this.uuid,
+          roles: [ParticipantRole.CREATOR, ParticipantRole.MODERATOR, ParticipantRole.MODERATOR, ParticipantRole.PARTICIPANT].join(),
         };
       },
     },
@@ -302,6 +252,7 @@ export default class Event extends EventMixin {
   isJoinModalActive: boolean = false;
 
   EventVisibility = EventVisibility;
+  EventRouteName = EventRouteName;
 
   /**
    * Delete the event, then redirect to home.
@@ -367,9 +318,10 @@ export default class Event extends EventMixin {
 
   confirmLeave() {
     this.$buefy.dialog.confirm({
-      title: `Leaving event « ${this.event.title} »`,
-      message: `Are you sure you want to leave event « ${this.event.title} »`,
-      confirmText: 'Leave event',
+      title: this.$t('Leaving event "{title}"', { title: this.event.title }) as string,
+      message: this.$t('Are you sure you want to cancel your participation at event "{title}"?', { title: this.event.title }) as string,
+      confirmText: this.$t('Leave event') as string,
+      cancelText: this.$t('Cancel') as string,
       type: 'is-danger',
       hasIcon: true,
       onConfirm: () => this.leaveEvent(),

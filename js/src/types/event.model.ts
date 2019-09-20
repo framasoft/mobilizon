@@ -29,11 +29,11 @@ export enum EventVisibilityJoinOptions {
 }
 
 export enum ParticipantRole {
-  NOT_APPROVED = 'not_approved',
-  PARTICIPANT = 'participant',
-  MODERATOR = 'moderator',
-  ADMINISTRATOR = 'administrator',
-  CREATOR = 'creator',
+  NOT_APPROVED = 'NOT_APPROVED',
+  PARTICIPANT = 'PARTICIPANT',
+  MODERATOR = 'MODERATOR',
+  ADMINISTRATOR = 'ADMINISTRATOR',
+  CREATOR = 'CREATOR',
 }
 
 export enum Category {
@@ -45,12 +45,14 @@ export enum Category {
 }
 
 export interface IParticipant {
+  id?: string;
   role: ParticipantRole;
   actor: IActor;
   event: IEvent;
 }
 
 export class Participant implements IParticipant {
+  id?: string;
   event!: IEvent;
   actor!: IActor;
   role: ParticipantRole = ParticipantRole.NOT_APPROVED;
@@ -58,6 +60,7 @@ export class Participant implements IParticipant {
   constructor(hash?: IParticipant) {
     if (!hash) return;
 
+    this.id = hash.id;
     this.event = new EventModel(hash.event);
     this.actor = new Actor(hash.actor);
     this.role = hash.role;
@@ -83,7 +86,7 @@ export enum CommentModeration {
 }
 
 export interface IEvent {
-  id?: number;
+  id?: string;
   uuid: string;
   url: string;
   local: boolean;
@@ -147,7 +150,7 @@ export class EventOptions implements IEventOptions {
 }
 
 export class EventModel implements IEvent {
-  id?: number;
+  id?: string;
 
   beginsOn = new Date();
   endsOn: Date | null = new Date();
@@ -232,6 +235,7 @@ export class EventModel implements IEvent {
       endsOn: this.endsOn ? this.endsOn.toISOString() : null,
       status: this.status,
       visibility: this.visibility,
+      joinOptions: this.joinOptions,
       tags: this.tags.map(t => t.title),
       picture: this.picture,
       onlineAddress: this.onlineAddress,

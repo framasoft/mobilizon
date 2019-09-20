@@ -32,12 +32,13 @@
         <router-link :to="{ name: RouteName.CREATE_GROUP }">{{ $t('Group') }}</router-link>
       </b-dropdown-item>
     </b-dropdown>
-    <section v-if="currentActor" class="container">
+    <section v-if="currentActor && goingToEvents.size > 0" class="container">
       <h3 class="title">
         {{ $t("Upcoming") }}
       </h3>
+      <pre>{{ Array.from(goingToEvents.entries()) }}</pre>
       <b-loading :active.sync="$apollo.loading"></b-loading>
-      <div v-if="goingToEvents.size > 0" v-for="row in goingToEvents" class="upcoming-events">
+      <div v-for="row in goingToEvents" class="upcoming-events">
         <span class="date-component-container" v-if="isInLessThanSevenDays(row[0])">
           <date-component :date="row[0]"></date-component>
           <h3 class="subtitle"
@@ -63,9 +64,6 @@
           />
         </div>
       </div>
-      <b-message v-else type="is-danger">
-        {{ $t("You're not going to any event yet") }}
-      </b-message>
       <span class="view-all">
         <router-link :to=" { name: EventRouteName.MY_EVENTS }">{{ $t('View everything')}} >></router-link>
       </span>
@@ -78,9 +76,10 @@
       <div class="level">
           <EventListCard
                   v-for="participation in lastWeekEvents"
-                  :key="participation.event.uuid"
+                  :key="participation.id"
                   :participation="participation"
                   class="level-item"
+                  :options="{ hideDate: false }"
           />
       </div>
     </section>
@@ -190,6 +189,10 @@ export default class Home extends Vue {
     return this.calculateDiffDays(date) < nbDays;
   }
 
+  isAfter(date: string, nbDays: number) :boolean {
+    return this.calculateDiffDays(date) >= nbDays;
+  }
+
   isInLessThanSevenDays(date: string): boolean {
     return this.isBefore(date, 7);
   }
@@ -200,7 +203,7 @@ export default class Home extends Vue {
 
   get goingToEvents(): Map<string, Map<string, IParticipant>> {
     const res = this.currentUserParticipations.filter(({ event }) => {
-      return event.beginsOn != null && !this.isBefore(event.beginsOn.toDateString(), 0);
+      return event.beginsOn != null && this.isAfter(event.beginsOn.toDateString(), 0) && this.isBefore(event.beginsOn.toDateString(), 7);
     });
     res.sort(
             (a: IParticipant, b: IParticipant) => a.event.beginsOn.getTime() - b.event.beginsOn.getTime(),
@@ -208,7 +211,7 @@ export default class Home extends Vue {
     return res.reduce((acc: Map<string, Map<string, IParticipant>>, participation: IParticipant) => {
       const day = (new Date(participation.event.beginsOn)).toDateString();
       const participations: Map<string, IParticipant> = acc.get(day) || new Map();
-      participations.set(participation.event.uuid, participation);
+      participations.set(`${participation.event.uuid}${participation.actor.id}`, participation);
       acc.set(day, participations);
       return acc;
     },                new Map());
@@ -273,7 +276,7 @@ export default class Home extends Vue {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss">
+<style lang="scss" scoped>
 .search-autocomplete {
   border: 1px solid #dbdbdb;
   color: rgba(0, 0, 0, 0.87);

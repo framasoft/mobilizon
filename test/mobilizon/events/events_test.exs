@@ -316,13 +316,6 @@ defmodule Mobilizon.EventsTest do
       {:ok, participant: participant, event: event, actor: actor}
     end
 
-    test "list_participants/0 returns all participants", %{
-      participant: %Participant{event_id: participant_event_id, actor_id: participant_actor_id}
-    } do
-      assert [participant_event_id] == Events.list_participants() |> Enum.map(& &1.event_id)
-      assert [participant_actor_id] == Events.list_participants() |> Enum.map(& &1.actor_id)
-    end
-
     test "get_participant!/1 returns the participant for a given event and given actor", %{
       event: %Event{id: event_id},
       actor: %Actor{id: actor_id}

@@ -107,7 +107,7 @@ export default class Group extends Vue {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
   section.container {
     min-height: 30em;
   }

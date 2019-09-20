@@ -59,6 +59,7 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
         "begins_on" => object["startTime"],
         "ends_on" => object["endTime"],
         "category" => object["category"],
+        "join_options" => object["joinOptions"],
         "url" => object["id"],
         "uuid" => object["uuid"],
         "tags" => tags,

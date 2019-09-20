@@ -91,6 +91,7 @@ query LoggedUserParticipations($afterDateTime: DateTime, $beforeDateTime: DateTi
                   remainingAttendeeCapacity
               }
           },
+          id,
           role,
           actor {
               id,

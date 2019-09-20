@@ -10,6 +10,8 @@ defmodule MobilizonWeb.Schema.Events.ParticipantType do
 
   @desc "Represents a participant to an event"
   object :participant do
+    field(:id, :id, description: "The participation ID")
+
     field(
       :event,
       :event,
@@ -24,11 +26,20 @@ defmodule MobilizonWeb.Schema.Events.ParticipantType do
       description: "The actor that participates to the event"
     )
 
-    field(:role, :integer, description: "The role of this actor at this event")
+    field(:role, :participant_role_enum, description: "The role of this actor at this event")
+  end
+
+  enum :participant_role_enum do
+    value(:not_approved)
+    value(:participant)
+    value(:moderator)
+    value(:administrator)
+    value(:creator)
   end
 
   @desc "Represents a deleted participant"
   object :deleted_participant do
+    field(:id, :id)
     field(:event, :deleted_object)
     field(:actor, :deleted_object)
   end
@@ -58,6 +69,22 @@ defmodule MobilizonWeb.Schema.Events.ParticipantType do
       arg(:actor_id, non_null(:id))
 
       resolve(&Resolvers.Event.actor_leave_event/3)
+    end
+
+    @desc "Accept a participation"
+    field :accept_participation, :participant do
+      arg(:id, non_null(:id))
+      arg(:moderator_actor_id, non_null(:id))
+
+      resolve(&Resolvers.Event.accept_participation/3)
+    end
+
+    @desc "Reject a participation"
+    field :reject_participation, :deleted_participant do
+      arg(:id, non_null(:id))
+      arg(:moderator_actor_id, non_null(:id))
+
+      resolve(&Resolvers.Event.reject_participation/3)
     end
   end
 end

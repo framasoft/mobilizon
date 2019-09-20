@@ -82,6 +82,7 @@ export default class App extends Vue {
 @import "~bulma/sass/components/dropdown.sass";
 @import "~bulma/sass/components/breadcrumb.sass";
 @import "~bulma/sass/components/list.sass";
+@import "~bulma/sass/components/tabs";
 @import "~bulma/sass/elements/box.sass";
 @import "~bulma/sass/elements/button.sass";
 @import "~bulma/sass/elements/container.sass";
@@ -112,6 +113,7 @@ export default class App extends Vue {
 @import "~buefy/src/scss/components/radio";
 @import "~buefy/src/scss/components/switch";
 @import "~buefy/src/scss/components/table";
+@import "~buefy/src/scss/components/tabs";
 
 .router-enter-active,
 .router-leave-active {

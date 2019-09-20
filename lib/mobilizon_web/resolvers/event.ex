@@ -42,14 +42,30 @@ defmodule MobilizonWeb.Resolvers.Event do
   List participant for event (separate request)
   """
   def list_participants_for_event(_parent, %{uuid: uuid, page: page, limit: limit}, _resolution) do
-    {:ok, Mobilizon.Events.list_participants_for_event(uuid, page, limit)}
+    {:ok, Mobilizon.Events.list_participants_for_event(uuid, [], page, limit)}
   end
 
   @doc """
   List participants for event (through an event request)
   """
-  def list_participants_for_event(%Event{uuid: uuid}, _args, _resolution) do
-    {:ok, Mobilizon.Events.list_participants_for_event(uuid, 1, 10)}
+  def list_participants_for_event(
+        %Event{uuid: uuid},
+        %{page: page, limit: limit, roles: roles},
+        _resolution
+      ) do
+    roles =
+      case roles do
+        "" ->
+          []
+
+        roles ->
+          roles
+          |> String.split(",")
+          |> Enum.map(&String.downcase/1)
+          |> Enum.map(&String.to_existing_atom/1)
+      end
+
+    {:ok, Mobilizon.Events.list_participants_for_event(uuid, roles, page, limit)}
   end
 
   def stats_participants_for_event(%Event{id: id}, _args, _resolution) do
@@ -173,6 +189,87 @@ defmodule MobilizonWeb.Resolvers.Event do
 
   def actor_leave_event(_parent, _args, _resolution) do
     {:error, "You need to be logged-in to leave an event"}
+  end
+
+  def accept_participation(
+        _parent,
+        %{id: participation_id, moderator_actor_id: moderator_actor_id},
+        %{
+          context: %{
+            current_user: user
+          }
+        }
+      ) do
+    # Check that moderator provided is rightly authenticated
+    with {:is_owned, true, moderator_actor} <- User.owns_actor(user, moderator_actor_id),
+         # Check that participation already exists
+         {:has_participation, %Participant{role: :not_approved} = participation} <-
+           {:has_participation, Mobilizon.Events.get_participant(participation_id)},
+         # Check that moderator has right
+         {:actor_approve_permission, true} <-
+           {:actor_approve_permission,
+            Mobilizon.Events.moderator_for_event?(participation.event.id, moderator_actor_id)},
+         {:ok, _activity, participation} <-
+           MobilizonWeb.API.Participations.accept(participation, moderator_actor) do
+      {:ok, participation}
+    else
+      {:is_owned, false} ->
+        {:error, "Moderator Actor ID is not owned by authenticated user"}
+
+      {:has_participation, %Participant{role: role, id: id}} ->
+        {:error,
+         "Participant #{id} can't be approved since it's already a participant (with role #{role})"}
+
+      {:actor_approve_permission, _} ->
+        {:error, "Provided moderator actor ID doesn't have permission on this event"}
+
+      {:error, :participant_not_found} ->
+        {:error, "Participant not found"}
+    end
+  end
+
+  def reject_participation(
+        _parent,
+        %{id: participation_id, moderator_actor_id: moderator_actor_id},
+        %{
+          context: %{
+            current_user: user
+          }
+        }
+      ) do
+    # Check that moderator provided is rightly authenticated
+    with {:is_owned, true, moderator_actor} <- User.owns_actor(user, moderator_actor_id),
+         # Check that participation really exists
+         {:has_participation, %Participant{} = participation} <-
+           {:has_participation, Mobilizon.Events.get_participant(participation_id)},
+         # Check that moderator has right
+         {:actor_approve_permission, true} <-
+           {:actor_approve_permission,
+            Mobilizon.Events.moderator_for_event?(participation.event.id, moderator_actor_id)},
+         {:ok, _activity, participation} <-
+           MobilizonWeb.API.Participations.reject(participation, moderator_actor) do
+      {
+        :ok,
+        %{
+          id: participation.id,
+          event: %{
+            id: participation.event.id
+          },
+          actor: %{
+            id: participation.actor.id
+          }
+        }
+      }
+    else
+      {:is_owned, false} ->
+        {:error, "Moderator Actor ID is not owned by authenticated user"}
+
+      {:actor_approve_permission, _} ->
+        {:error, "Provided moderator actor ID doesn't have permission on this event"}
+
+      {:has_participation, nil} ->
+        {:error, "Participant not found"}
+    end
   end
 
   @doc """

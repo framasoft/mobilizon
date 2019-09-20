@@ -11,7 +11,8 @@
         <span v-if="participation.event.physicalAddress && participation.event.physicalAddress.locality">{{ participation.event.physicalAddress.locality }} - </span>
         <span v-if="participation.actor.id === participation.event.organizerActor.id">{{ $t("You're organizing this event") }}</span>
         <span v-else>
-          <span>{{ $t('Organized by {name}', { name: participation.event.organizerActor.displayName() } ) }}</span> |
+          <span v-if="participation.event.beginsOn < new Date()">{{ $t('Organized by {name}', { name: participation.event.organizerActor.displayName() } ) }}</span>
+          |
           <span>{{ $t('Going as {name}', { name: participation.actor.displayName() }) }}</span>
         </span>
       </div>
@@ -50,9 +51,9 @@
           <a @click="openDeleteEventModalWrapper"><b-icon icon="delete" /> {{ $t('Delete') }}</a>
         </li>
         <li v-if="!([ParticipantRole.PARTICIPANT, ParticipantRole.NOT_APPROVED].includes(participation.role))">
-          <a @click="">
+          <router-link :to="{ name: EventRouteName.PARTICIPATIONS, params: { eventId: participation.event.uuid } }">
             <b-icon icon="account-multiple-plus" /> {{ $t('Manage participations') }}
-          </a>
+          </router-link>
         </li>
         <li>
           <router-link :to="{ name: EventRouteName.EVENT, params: { uuid: participation.event.uuid } }"><b-icon icon="view-compact" /> {{ $t('View event page') }}</router-link>

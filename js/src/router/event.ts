@@ -3,9 +3,10 @@ import Location from '@/views/Location.vue';
 import { RouteConfig } from 'vue-router';
 
 // tslint:disable:space-in-parens
-const editEvent = () => import(/* webpackChunkName: "create-event" */ '@/views/Event/Edit.vue');
+const participations = () => import(/* webpackChunkName: "participations" */ '@/views/Event/Participants.vue');
+const editEvent = () => import(/* webpackChunkName: "edit-event" */ '@/views/Event/Edit.vue');
 const event = () => import(/* webpackChunkName: "event" */ '@/views/Event/Event.vue');
-const myEvents = () => import(/* webpackChunkName: "event" */ '@/views/Event/MyEvents.vue');
+const myEvents = () => import(/* webpackChunkName: "my-events" */ '@/views/Event/MyEvents.vue');
 // tslint:enable
 
 export enum EventRouteName {
@@ -13,6 +14,7 @@ export enum EventRouteName {
   CREATE_EVENT = 'CreateEvent',
   MY_EVENTS = 'MyEvents',
   EDIT_EVENT = 'EditEvent',
+  PARTICIPATIONS = 'Participations',
   EVENT = 'Event',
   LOCATION = 'Location',
 }
@@ -42,6 +44,13 @@ export const eventRoutes: RouteConfig[] = [
     component: editEvent,
     meta: { requiredAuth: true },
     props: { isUpdate: true },
+  },
+  {
+    path: '/events/participations/:eventId',
+    name: EventRouteName.PARTICIPATIONS,
+    component: participations,
+    meta: { requiredAuth: true },
+    props: true,
   },
   {
     path: '/location/new',

@@ -24,6 +24,7 @@ defmodule MobilizonWeb.API.Events do
            begins_on: begins_on,
            ends_on: ends_on,
            category: category,
+           join_options: join_options,
            options: options
          } <- prepare_args(args),
          event <-
@@ -39,7 +40,8 @@ defmodule MobilizonWeb.API.Events do
                ends_on: ends_on,
                physical_address: physical_address,
                category: category,
-               options: options
+               options: options,
+               join_options: join_options
              }
            ) do
       ActivityPub.create(%{
@@ -73,6 +75,7 @@ defmodule MobilizonWeb.API.Events do
            begins_on: begins_on,
            ends_on: ends_on,
            category: category,
+           join_options: join_options,
            options: options
          } <-
            prepare_args(Map.merge(event, args)),
@@ -89,6 +92,7 @@ defmodule MobilizonWeb.API.Events do
                ends_on: ends_on,
                physical_address: physical_address,
                category: category,
+               join_options: join_options,
                options: options
              },
              event.uuid,
@@ -112,7 +116,8 @@ defmodule MobilizonWeb.API.Events do
            options: options,
            tags: tags,
            begins_on: begins_on,
-           category: category
+           category: category,
+           join_options: join_options
          } = args
        ) do
     with physical_address <- Map.get(args, :physical_address, nil),
@@ -132,6 +137,7 @@ defmodule MobilizonWeb.API.Events do
         begins_on: begins_on,
         ends_on: Map.get(args, :ends_on, nil),
         category: category,
+        join_options: join_options,
         options: options
       }
     end

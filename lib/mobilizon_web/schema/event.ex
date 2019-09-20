@@ -23,7 +23,8 @@ defmodule MobilizonWeb.Schema.EventType do
     field(:begins_on, :datetime, description: "Datetime for when the event begins")
     field(:ends_on, :datetime, description: "Datetime for when the event ends")
     field(:status, :event_status, description: "Status of the event")
-    field(:visibility, :event_visibility, description: "The event's  visibility")
+    field(:visibility, :event_visibility, description: "The event's visibility")
+    field(:join_options, :event_join_options, description: "The event's visibility")
 
     field(:picture, :picture,
       description: "The event's picture",
@@ -56,10 +57,12 @@ defmodule MobilizonWeb.Schema.EventType do
 
     field(:participant_stats, :participant_stats, resolve: &Event.stats_participants_for_event/3)
 
-    field(:participants, list_of(:participant),
-      resolve: &Event.list_participants_for_event/3,
-      description: "The event's participants"
-    )
+    field(:participants, list_of(:participant), description: "The event's participants") do
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
+      arg(:roles, :string, default_value: "")
+      resolve(&Event.list_participants_for_event/3)
+    end
 
     field(:related_events, list_of(:event),
       resolve: &Event.list_related_events/3,
@@ -78,13 +81,18 @@ defmodule MobilizonWeb.Schema.EventType do
   enum :event_visibility do
     value(:public, description: "Publicly listed and federated. Can be shared.")
     value(:unlisted, description: "Visible only to people with the link - or invited")
+    value(:restricted, description: "Visible only after a moderator accepted")
 
     value(:private,
       description: "Visible only to people members of the group or followers of the person"
     )
+  end
 
-    value(:moderated, description: "Visible only after a moderator accepted")
-    value(:invite, description: "visible only to people invited")
+  @desc "The list of join options for an event"
+  enum :event_join_options do
+    value(:free, description: "Anyone can join and is automatically accepted")
+    value(:restricted, description: "Manual acceptation")
+    value(:invite, description: "Participants must be invited")
   end
 
   @desc "The list of possible options for the event's status"
@@ -218,6 +226,7 @@ defmodule MobilizonWeb.Schema.EventType do
       arg(:ends_on, :datetime)
       arg(:status, :event_status)
       arg(:visibility, :event_visibility, default_value: :private)
+      arg(:join_options, :event_join_options, default_value: :free)
 
       arg(:tags, list_of(:string),
         default_value: [],
@@ -250,6 +259,7 @@ defmodule MobilizonWeb.Schema.EventType do
       arg(:ends_on, :datetime)
       arg(:status, :event_status)
       arg(:visibility, :event_visibility)
+      arg(:join_options, :event_join_options)
 
       arg(:tags, list_of(:string), description: "The list of tags associated to the event")
 

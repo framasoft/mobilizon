@@ -1,3 +1,4 @@
+import {EventJoinOptions} from "@/types/event.model";
 <template>
   <section class="container">
     <h1 class="title" v-if="isUpdate === false">
@@ -187,11 +188,17 @@
 </style>
 
 <script lang="ts">
-import { CREATE_EVENT, EDIT_EVENT, FETCH_EVENT, FETCH_EVENTS } from '@/graphql/event';
+import { CREATE_EVENT, EDIT_EVENT, FETCH_EVENT } from '@/graphql/event';
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import { EventModel, EventStatus, EventVisibility, EventVisibilityJoinOptions, CommentModeration, IEvent } from '@/types/event.model';
+import {
+    CommentModeration, EventJoinOptions,
+    EventModel,
+    EventStatus,
+    EventVisibility,
+    EventVisibilityJoinOptions,
+  } from '@/types/event.model';
 import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
-import { IPerson, Person } from '@/types/actor';
+import { Person } from '@/types/actor';
 import PictureUpload from '@/components/PictureUpload.vue';
 import Editor from '@/components/Editor.vue';
 import DateTimePicker from '@/components/Event/DateTimePicker.vue';
@@ -349,6 +356,15 @@ export default class EditEvent extends Vue {
         this.canPromote = false;
         this.doNotPromote = false;
         break;
+    }
+  }
+
+  @Watch('needsApproval')
+  updateEventJoinOptions(needsApproval) {
+    if (needsApproval === true) {
+      this.event.joinOptions = EventJoinOptions.RESTRICTED;
+    } else {
+      this.event.joinOptions = EventJoinOptions.FREE;
     }
   }
 
