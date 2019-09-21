@@ -40,8 +40,8 @@ defmodule MobilizonWeb.Resolvers.MemberResolverTest do
 
       assert json_response(res, 200)["errors"] == nil
       assert json_response(res, 200)["data"]["joinGroup"]["role"] == "not_approved"
-      assert json_response(res, 200)["data"]["joinGroup"]["parent"]["id"] == group.id
-      assert json_response(res, 200)["data"]["joinGroup"]["actor"]["id"] == actor.id
+      assert json_response(res, 200)["data"]["joinGroup"]["parent"]["id"] == to_string(group.id)
+      assert json_response(res, 200)["data"]["joinGroup"]["actor"]["id"] == to_string(actor.id)
 
       mutation = """
          mutation {
@@ -167,8 +167,8 @@ defmodule MobilizonWeb.Resolvers.MemberResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["leaveGroup"]["parent"]["id"] == group.id
-      assert json_response(res, 200)["data"]["leaveGroup"]["actor"]["id"] == actor.id
+      assert json_response(res, 200)["data"]["leaveGroup"]["parent"]["id"] == to_string(group.id)
+      assert json_response(res, 200)["data"]["leaveGroup"]["actor"]["id"] == to_string(actor.id)
     end
 
     test "leave_group/3 should check if the member is the only administrator", %{

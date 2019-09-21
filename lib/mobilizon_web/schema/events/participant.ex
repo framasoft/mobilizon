@@ -46,16 +46,16 @@ defmodule MobilizonWeb.Schema.Events.ParticipantType do
   object :participant_mutations do
     @desc "Join an event"
     field :join_event, :participant do
-      arg(:event_id, non_null(:integer))
-      arg(:actor_id, non_null(:integer))
+      arg(:event_id, non_null(:id))
+      arg(:actor_id, non_null(:id))
 
       resolve(&Resolvers.Event.actor_join_event/3)
     end
 
     @desc "Leave an event"
     field :leave_event, :deleted_participant do
-      arg(:event_id, non_null(:integer))
-      arg(:actor_id, non_null(:integer))
+      arg(:event_id, non_null(:id))
+      arg(:actor_id, non_null(:id))
 
       resolve(&Resolvers.Event.actor_leave_event/3)
     end

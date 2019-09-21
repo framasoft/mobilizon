@@ -2,24 +2,22 @@
   <section class="container">
     <div class="column">
       <h1 class="title">
-        <translate>Resend confirmation email</translate>
+        {{ $t('Resend confirmation email') }}
       </h1>
       <form v-if="!validationSent" @submit="resendConfirmationAction">
         <b-field label="Email">
           <b-input aria-required="true" required type="email" v-model="credentials.email"/>
         </b-field>
         <button class="button is-primary">
-          <translate>Send confirmation email again</translate>
+          {{ $t('Send confirmation email again') }}
         </button>
       </form>
       <div v-else>
         <b-message type="is-success" :closable="false" title="Success">
-          <translate
-            :translate-params="{email: credentials.email}"
-          >If an account with this email exists, we just sent another confirmation email to %{email}</translate>
+          {{ $t('If an account with this email exists, we just sent another confirmation email to {email}', {email: credentials.email}) }}
         </b-message>
         <b-message type="is-info">
-          <translate>Please check you spam folder if you didn't receive the email.</translate>
+          {{ $t("Please check you spam folder if you didn't receive the email.") }}
         </b-message>
       </div>
     </div>

@@ -23,9 +23,11 @@ defmodule Mobilizon.Reports.Report do
           notes: [Note.t()]
         }
 
-  @required_attrs [:content, :uri, :reported_id, :reporter_id]
-  @optional_attrs [:status, :manager_id, :event_id]
+  @required_attrs [:uri, :reported_id, :reporter_id]
+  @optional_attrs [:content, :status, :manager_id, :event_id]
   @attrs @required_attrs ++ @optional_attrs
+
+  @timestamps_opts [type: :utc_datetime]
 
   @derive {Jason.Encoder, only: [:status, :uri]}
   schema "reports" do

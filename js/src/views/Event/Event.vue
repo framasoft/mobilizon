@@ -18,14 +18,20 @@
               </div>
               <h1 class="title">{{ event.title }}</h1>
             </div>
+            <span v-if="event.participantStats.approved > 0 && !actorIsParticipant()">
+                {{ $tc('One person is going', event.participantStats.approved, {approved: event.participantStats.approved}) }}
+            </span>
+            <span v-else>
+              {{ $tc('You and one other person are going to this event', event.participantStats.approved - 1, {approved: event.participantStats.approved - 1}) }}
+            </span>
             <div v-if="!actorIsOrganizer()" class="participate-button has-text-centered">
-              <a v-if="!actorIsParticipant()" @click="joinEvent" class="button is-large is-primary is-rounded">
+              <a v-if="!actorIsParticipant()" @click="isJoinModalActive = true" class="button is-large is-primary is-rounded">
                 <b-icon icon="circle-outline"></b-icon>
-                <translate>Join</translate>
+                {{ $t('Join') }}
               </a>
-              <a v-if="actorIsParticipant()" @click="leaveEvent" class="button is-large is-primary is-rounded">
+              <a v-if="actorIsParticipant()" @click="confirmLeave()" class="button is-large is-primary is-rounded">
                 <b-icon icon="check-circle"></b-icon>
-                <translate>Leave</translate>
+                {{ $t('Leave') }}
               </a>
             </div>
           </div>
@@ -35,7 +41,7 @@
                 <span class="tag" v-if="event.category">{{ event.category }}</span>
                 <span class="tag" v-if="event.tags" v-for="tag in event.tags">{{ tag.title }}</span>
                 <span class="visibility">
-                  <translate v-if="event.visibility === EventVisibility.PUBLIC">public event</translate>
+                  <span v-if="event.visibility === EventVisibility.PUBLIC">{{ $t('public event') }}</span>
                 </span>
               </p>
               <div class="date-and-add-to-calendar">
@@ -45,7 +51,7 @@
                 </div>
                 <a class="add-to-calendar" @click="downloadIcsEvent()">
                   <b-icon icon="calendar-plus" />
-                  <translate>Add to my calendar</translate>
+                  {{ $t('Add to my calendar') }}
                 </a>
               </div>
               <p class="slug">
@@ -53,24 +59,29 @@
               </p>
             </div>
             <div class="column sidebar">
-              <div class="field has-addons" v-if="actorIsOrganizer()">
-                <p class="control">
+              <div class="field has-addons">
+                <p class="control" v-if="actorIsOrganizer()">
                   <router-link
                           class="button"
                           :to="{ name: 'EditEvent', params: {eventId: event.uuid}}"
                   >
-                    <translate>Edit</translate>
+                    {{ $t('Edit') }}
                   </router-link>
                 </p>
+                <p class="control" v-if="actorIsOrganizer()">
+                  <a class="button is-danger" @click="openDeleteEventModal()">
+                    {{ $t('Delete') }}
+                  </a>
+                </p>
                 <p class="control">
-                  <a class="button is-danger" @click="deleteEvent()">
-                    <translate>Delete</translate>
+                  <a class="button is-danger" @click="isReportModalActive = true">
+                    {{ $t('Report') }}
                   </a>
                 </p>
               </div>
               <div class="address-wrapper">
                 <b-icon icon="map" />
-                <translate v-if="!event.physicalAddress">No address defined</translate>
+                <span v-if="!event.physicalAddress">{{ $t('No address defined') }}</span>
                 <div class="address" v-if="event.physicalAddress">
                   <address>
                     <span class="addressDescription">{{ event.physicalAddress.description }}</span>
@@ -79,7 +90,7 @@
   <!--                  <span>{{ event.physicalAddress.region }} {{ event.physicalAddress.country }}</span>-->
                   </address>
                   <span class="map-show-button" @click="showMap = !showMap" v-if="event.physicalAddress && event.physicalAddress.geom">
-                    <translate>Show map</translate>
+                    {{ $t('Show map') }}
                   </span>
                 </div>
                 <b-modal v-if="event.physicalAddress && event.physicalAddress.geom" :active.sync="showMap" :width="800" scroll="keep">
@@ -93,14 +104,14 @@
               </div>
               <div class="organizer">
                 <actor-link :actor="event.organizerActor">
-                  <translate
-                          :translate-params="{name: event.organizerActor.name ? event.organizerActor.name : event.organizerActor.preferredUsername}"
-                          v-if="event.organizerActor">By %{ name }</translate>
+                  <span v-if="event.organizerActor">
+                    {{ $t('By {name}', {name: event.organizerActor.name ? event.organizerActor.name : event.organizerActor.preferredUsername}) }}
+                  </span>
                   <figure v-if="event.organizerActor.avatar" class="image is-48x48">
                     <img
                             class="is-rounded"
                             :src="event.organizerActor.avatar.url"
-                            :alt="$gettextInterpolate('%{actor}\'s avatar', {actor: event.organizerActor.preferredUsername})" />
+                            :alt="$t("{actor}'s avatar", {actor: event.organizerActor.preferredUsername})" />
                   </figure>
                 </actor-link>
               </div>
@@ -120,7 +131,7 @@
 <!--              <span>-->
 <!--                <translate-->
 <!--                        :translate-n="event.participants.length"-->
-<!--                        translate-plural="%{event.participants.length} persons are going"-->
+<!--                        translate-plural="{event.participants.length} persons are going"-->
 <!--                >-->
 <!--                  One person is going.-->
 <!--                </translate>-->
@@ -130,10 +141,10 @@
         <div class="description">
           <div class="description-container container">
             <h3 class="title">
-              <translate>About this event</translate>
+              {{ $t('About this event') }}
             </h3>
             <p v-if="!event.description">
-              <translate>The event organizer didn't add any description.</translate>
+              {{ $t("The event organizer didn't add any description.") }}
             </p>
             <div class="columns" v-else>
               <div class="column is-half">
@@ -197,7 +208,7 @@
         <div class="container">
           <div class="columns">
             <div class="column is-half has-text-centered">
-              <h3 class="title"><translate>Share this event</translate></h3>
+              <h3 class="title">{{ $t('Share this event') }}</h3>
               <div>
                 <b-icon icon="mastodon" size="is-large" type="is-primary" />
                 <a :href="facebookShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="facebook" size="is-large" type="is-primary" /></a>
@@ -210,20 +221,26 @@
             <hr />
             <div class="column is-half has-text-right add-to-calendar">
               <h3 @click="downloadIcsEvent()">
-                <translate>Add to my calendar</translate>
+                {{ $t('Add to my calendar') }}
               </h3>
             </div>
           </div>
         </div>
       </section>
       <section class="more-events container" v-if="event.relatedEvents.length > 0">
-        <h3 class="title has-text-centered"><translate>These events may interest you</translate></h3>
+        <h3 class="title has-text-centered">{{ $t('These events may interest you') }}</h3>
         <div class="columns">
           <div class="column is-one-third-desktop" v-for="relatedEvent in event.relatedEvents" :key="relatedEvent.uuid">
             <EventCard :event="relatedEvent" />
           </div>
         </div>
       </section>
+      <b-modal :active.sync="isReportModalActive" has-modal-card ref="reportModal">
+        <report-modal :on-confirm="reportEvent" title="Report this event" :outside-domain="event.organizerActor.domain" @close="$refs.reportModal.close()" />
+      </b-modal>
+      <b-modal :active.sync="isJoinModalActive" has-modal-card ref="participationModal">
+        <participation-modal :on-confirm="joinEvent" :event="event" :defaultIdentity="currentActor" @close="$refs.participationModal.close()" />
+      </b-modal>
       </div>
     </div>
 </template>
@@ -231,7 +248,7 @@
 <script lang="ts">
 import { DELETE_EVENT, FETCH_EVENT, JOIN_EVENT, LEAVE_EVENT } from '@/graphql/event';
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { LOGGED_PERSON } from '@/graphql/actor';
+import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { EventVisibility, IEvent, IParticipant } from '@/types/event.model';
 import { IPerson } from '@/types/actor';
 import { RouteName } from '@/router';
@@ -241,6 +258,10 @@ import BIcon from 'buefy/src/components/icon/Icon.vue';
 import EventCard from '@/components/Event/EventCard.vue';
 import EventFullDate from '@/components/Event/EventFullDate.vue';
 import ActorLink from '@/components/Account/ActorLink.vue';
+import ReportModal from '@/components/Report/ReportModal.vue';
+import ParticipationModal from '@/components/Event/ParticipationModal.vue';
+import { IReport } from '@/types/report.model';
+import { CREATE_REPORT } from '@/graphql/report';
 
 @Component({
   components: {
@@ -249,6 +270,8 @@ import ActorLink from '@/components/Account/ActorLink.vue';
     EventCard,
     BIcon,
     DateCalendarIcon,
+    ReportModal,
+    ParticipationModal,
     // tslint:disable:space-in-parens
     'map-leaflet': () => import(/* webpackChunkName: "map" */ '@/components/Map.vue'),
     // tslint:enable
@@ -262,8 +285,8 @@ import ActorLink from '@/components/Account/ActorLink.vue';
         };
       },
     },
-    loggedPerson: {
-      query: LOGGED_PERSON,
+    currentActor: {
+      query: CURRENT_ACTOR_CLIENT,
     },
   },
 })
@@ -271,28 +294,57 @@ export default class Event extends Vue {
   @Prop({ type: String, required: true }) uuid!: string;
 
   event!: IEvent;
-  loggedPerson!: IPerson;
+  currentActor!: IPerson;
   validationSent: boolean = false;
   showMap: boolean = false;
+  isReportModalActive: boolean = false;
+  isJoinModalActive: boolean = false;
 
   EventVisibility = EventVisibility;
 
-  async deleteEvent() {
-    const router = this.$router;
-    const eventTitle = this.event.title;
+  async openDeleteEventModal () {
+    const participantsLength = this.event.participants.length;
+    const prefix = participantsLength
+            ? this.$tc('There are {participants} participants.', this.event.participants.length, {
+              participants: this.event.participants.length,
+            })
+            : '';
 
+    this.$buefy.dialog.prompt({
+      type: 'is-danger',
+      title: this.$t('Delete event') as string,
+      message: `${prefix}
+        ${this.$t('Are you sure you want to delete this event? This action cannot be reverted.')}
+        <br><br>
+        ${this.$t('To confirm, type your event title "{eventTitle}"', { eventTitle: this.event.title })}`,
+      confirmText: this.$t(
+              'Delete {eventTitle}',
+              { eventTitle: this.event.title },
+      ) as string,
+      inputAttrs: {
+        placeholder: this.event.title,
+        pattern: this.event.title,
+      },
+      onConfirm: () => this.deleteEvent(),
+    });
+  }
+
+  async reportEvent(content: string, forward: boolean) {
+    this.isReportModalActive = false;
+    if (!this.event.organizerActor) return;
+    const eventTitle = this.event.title;
     try {
-      await this.$apollo.mutate<IParticipant>({
-        mutation: DELETE_EVENT,
+      await this.$apollo.mutate<IReport>({
+        mutation: CREATE_REPORT,
         variables: {
-          id: this.event.id,
-          actorId: this.loggedPerson.id,
+          eventId: this.event.id,
+          reporterActorId: this.currentActor.id,
+          reportedActorId: this.event.organizerActor.id,
+          content,
         },
       });
-
-      await router.push({ name: RouteName.HOME });
       this.$buefy.notification.open({
-        message: this.$gettextInterpolate('Event %{eventTitle} deleted', { eventTitle }),
+        message: this.$t('Event {eventTitle} reported', { eventTitle }) as string,
         type: 'is-success',
         position: 'is-bottom-right',
         duration: 5000,
@@ -302,13 +354,14 @@ export default class Event extends Vue {
     }
   }
 
-  async joinEvent() {
+  async joinEvent(identity: IPerson) {
+    this.isJoinModalActive = false;
     try {
       await this.$apollo.mutate<{ joinEvent: IParticipant }>({
         mutation: JOIN_EVENT,
         variables: {
           eventId: this.event.id,
-          actorId: this.loggedPerson.id,
+          actorId: identity.id,
         },
         update: (store, { data }) => {
           if (data == null) return;
@@ -330,13 +383,24 @@ export default class Event extends Vue {
     }
   }
 
+  confirmLeave() {
+    this.$buefy.dialog.confirm({
+      title: `Leaving event « ${this.event.title} »`,
+      message: `Are you sure you want to leave event « ${this.event.title} »`,
+      confirmText: 'Leave event',
+      type: 'is-danger',
+      hasIcon: true,
+      onConfirm: () => this.leaveEvent(),
+    });
+  }
+
   async leaveEvent() {
     try {
       await this.$apollo.mutate<{ leaveEvent: IParticipant }>({
         mutation: LEAVE_EVENT,
         variables: {
           eventId: this.event.id,
-          actorId: this.loggedPerson.id,
+          actorId: this.currentActor.id,
         },
         update: (store, { data }) => {
           if (data == null) return;
@@ -350,6 +414,7 @@ export default class Event extends Vue {
 
           event.participants = event.participants
             .filter(p => p.actor.id !== data.leaveEvent.actor.id);
+          event.participantStats.approved = event.participantStats.approved - 1;
 
           store.writeQuery({ query: FETCH_EVENT, data: { event } });
         },
@@ -373,14 +438,14 @@ export default class Event extends Vue {
   actorIsParticipant() {
     if (this.actorIsOrganizer()) return true;
 
-    return this.loggedPerson &&
+    return this.currentActor &&
       this.event.participants
-          .some(participant => participant.actor.id === this.loggedPerson.id);
+          .some(participant => participant.actor.id === this.currentActor.id);
   }
 
   actorIsOrganizer() {
-    return this.loggedPerson &&
-      this.loggedPerson.id === this.event.organizerActor.id;
+    return this.currentActor && this.event.organizerActor &&
+      this.currentActor.id === this.event.organizerActor.id;
   }
 
   get twitterShareUrl(): string {
@@ -398,6 +463,32 @@ export default class Event extends Vue {
   get emailShareUrl(): string {
     return `mailto:?to=&body=${this.event.url}${encodeURIComponent('\n\n')}${this.event.description}&subject=${this.event.title}`;
   }
+
+  private async deleteEvent() {
+    const router = this.$router;
+    const eventTitle = this.event.title;
+
+    try {
+      await this.$apollo.mutate<IParticipant>({
+        mutation: DELETE_EVENT,
+        variables: {
+          eventId: this.event.id,
+          actorId: this.currentActor.id,
+        },
+      });
+
+      await router.push({ name: RouteName.HOME });
+      this.$buefy.notification.open({
+        message: this.$t('Event {eventTitle} deleted', { eventTitle }) as string,
+        type: 'is-success',
+        position: 'is-bottom-right',
+        duration: 5000,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
 }
 </script>
 <style lang="scss" scoped>

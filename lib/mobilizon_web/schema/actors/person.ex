@@ -15,7 +15,7 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
   """
   object :person do
     interfaces([:actor])
-    field(:id, :integer, description: "Internal ID for this person")
+    field(:id, :id, description: "Internal ID for this person")
     field(:user, :user, description: "The user this actor is associated to")
 
     field(:member_of, list_of(:member), description: "The list of groups this person is member of")

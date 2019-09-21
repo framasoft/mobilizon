@@ -4,6 +4,7 @@ declare module 'vue/types/vue' {
   interface Vue {
     $notifier: {
       success: (message: string) => void;
+      error: (message: string) => void;
     };
   }
 }
@@ -16,11 +17,21 @@ export class Notifier {
   }
 
   success(message: string) {
-    this.vue.prototype.$notification.open({
+    this.vue.prototype.$buefy.notification.open({
       message,
       duration: 5000,
       position: 'is-bottom-right',
       type: 'is-success',
+      hasIcon: true,
+    });
+  }
+
+  error(message: string) {
+    this.vue.prototype.$buefy.notification.open({
+      message,
+      duration: 5000,
+      position: 'is-bottom-right',
+      type: 'is-danger',
       hasIcon: true,
     });
   }

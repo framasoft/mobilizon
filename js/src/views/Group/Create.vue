@@ -1,17 +1,17 @@
 <template>
   <div class="root">
-    <h1 v-translate>Create a new group</h1>
+    <h1>{{ $t('Create a new group') }}</h1>
 
     <div>
-      <b-field :label="$gettext('Group name')">
+      <b-field :label="$t('Group name')">
         <b-input aria-required="true" required v-model="group.preferred_username"/>
       </b-field>
 
-      <b-field :label="$gettext('Group full name')">
+      <b-field :label="$t('Group full name')">
         <b-input aria-required="true" required v-model="group.name"/>
       </b-field>
 
-      <b-field :label="$gettext('Description')">
+      <b-field :label="$t('Description')">
         <b-input aria-required="true" required v-model="group.description" type="textarea"/>
       </b-field>
 
@@ -26,7 +26,7 @@
       </div>
 
       <button class="button is-primary" @click="createGroup()">
-        <translate>Create my group</translate>
+        {{ $t('Create my group') }}
       </button>
     </div>
   </div>
@@ -42,7 +42,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { Group, IPerson } from '@/types/actor';
-import { CREATE_GROUP, LOGGED_PERSON } from '@/graphql/actor';
+import { CREATE_GROUP, CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { RouteName } from '@/router';
 import PictureUpload from '@/components/PictureUpload.vue';
 
@@ -51,13 +51,13 @@ import PictureUpload from '@/components/PictureUpload.vue';
     PictureUpload,
   },
   apollo: {
-    loggedPerson: {
-      query: LOGGED_PERSON,
+    currentActor: {
+      query: CURRENT_ACTOR_CLIENT,
     },
   },
 })
 export default class CreateGroup extends Vue {
-  loggedPerson!: IPerson;
+  currentActor!: IPerson;
 
   group = new Group();
 
@@ -74,10 +74,10 @@ export default class CreateGroup extends Vue {
         },
       });
 
-      this.$router.push({ name: RouteName.GROUP, params: { identityName: this.group.preferredUsername } });
+      await this.$router.push({ name: RouteName.GROUP, params: { identityName: this.group.preferredUsername } });
 
       this.$notifier.success(
-        this.$gettextInterpolate('Group %{displayName} created', { displayName: this.group.displayName() }),
+        this.$t('Group {displayName} created', { displayName: this.group.displayName() }) as string,
       );
     } catch (err) {
       this.handleError(err);
@@ -111,7 +111,7 @@ export default class CreateGroup extends Vue {
     }
 
     const currentActor = {
-      creatorActorId: this.loggedPerson.id,
+      creatorActorId: this.currentActor.id,
     };
 
     return Object.assign({}, this.group, avatarObj, bannerObj, currentActor);

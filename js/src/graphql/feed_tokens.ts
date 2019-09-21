@@ -12,7 +12,7 @@ query {
 }`;
 
 export const CREATE_FEED_TOKEN_ACTOR = gql`
-mutation createFeedToken($actor_id: Int!) {
+mutation createFeedToken($actor_id: ID!) {
   createFeedToken(actorId: $actor_id) {
     token,
     actor {

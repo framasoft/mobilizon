@@ -1,16 +1,16 @@
 <template>
   <section>
     <h1 class="title" v-if="loading">
-      <translate>Your account is being validated</translate>
+      {{ $t('Your account is being validated') }}
     </h1>
     <div v-else>
       <div v-if="failed">
-        <b-message :title="$gettext('Error while validating account')" type="is-danger">
-          <translate>Either the account is already validated, either the validation token is incorrect.</translate>
+        <b-message :title="$t('Error while validating account')" type="is-danger">
+          {{ $t('Either the account is already validated, either the validation token is incorrect.') }}
         </b-message>
       </div>
       <h1 class="title" v-else>
-        <translate>Your account has been validated</translate>
+        {{ $t('Your account has been validated') }}
       </h1>
     </div>
   </section>

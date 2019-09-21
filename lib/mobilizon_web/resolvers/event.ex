@@ -9,7 +9,10 @@ defmodule MobilizonWeb.Resolvers.Event do
   alias Mobilizon.Events.{Activity, Event, Participant}
   alias Mobilizon.Media.Picture
   alias Mobilizon.Users.User
+  alias Mobilizon.Actors
+  alias Mobilizon.Actors.Actor
   alias MobilizonWeb.Resolvers.Person
+  import Mobilizon.Service.Admin.ActionLogService
 
   # We limit the max number of events that can be retrieved
   @event_max_limit 100
@@ -46,6 +49,14 @@ defmodule MobilizonWeb.Resolvers.Event do
   """
   def list_participants_for_event(%Event{uuid: uuid}, _args, _resolution) do
     {:ok, Mobilizon.Events.list_participants_for_event(uuid, 1, 10)}
+  end
+
+  def stats_participants_for_event(%Event{id: id}, _args, _resolution) do
+    {:ok,
+     %{
+       approved: Mobilizon.Events.count_approved_participants(id),
+       unapproved: Mobilizon.Events.count_unapproved_participants(id)
+     }}
   end
 
   @doc """
@@ -174,10 +185,10 @@ defmodule MobilizonWeb.Resolvers.Event do
     # See https://github.com/absinthe-graphql/absinthe/issues/490
     with args <- Map.put(args, :options, args[:options] || %{}),
          {:is_owned, %Actor{} = organizer_actor} <- User.owns_actor(user, organizer_actor_id),
-         {:ok, args} <- save_attached_picture(args),
-         {:ok, args} <- save_physical_address(args),
          args_with_organizer <- Map.put(args, :organizer_actor, organizer_actor),
-         {:ok, %Activity{data: %{"object" => %{"type" => "Event"} = _object}}, %Event{} = event} <-
+         {:ok, args_with_organizer} <- save_attached_picture(args_with_organizer),
+         {:ok, args_with_organizer} <- save_physical_address(args_with_organizer),
+         {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} <-
            MobilizonWeb.API.Events.create_event(args_with_organizer) do
       {:ok, event}
     else
@@ -200,13 +211,13 @@ defmodule MobilizonWeb.Resolvers.Event do
       ) do
     # See https://github.com/absinthe-graphql/absinthe/issues/490
     with args <- Map.put(args, :options, args[:options] || %{}),
-         {:ok, %Event{} = event} <- Mobilizon.Events.get_event_with_preload(event_id),
+         {:ok, %Event{} = event} <- Events.get_event_with_preload(event_id),
          {:is_owned, %Actor{} = organizer_actor} <-
            User.owns_actor(user, event.organizer_actor_id),
+         args <- Map.put(args, :organizer_actor, organizer_actor),
          {:ok, args} <- save_attached_picture(args),
          {:ok, args} <- save_physical_address(args),
-         args <- Map.put(args, :organizer_actor, organizer_actor),
-         {:ok, %Activity{data: %{"object" => %{"type" => "Event"} = _object}}, %Event{} = event} <-
+         {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} <-
            MobilizonWeb.API.Events.update_event(args, event) do
       {:ok, event}
     else
@@ -229,7 +240,7 @@ defmodule MobilizonWeb.Resolvers.Event do
   defp save_attached_picture(
          %{picture: %{picture: %{file: %Plug.Upload{} = _picture} = all_pic}} = args
        ) do
-    {:ok, Map.put(args, :picture, Map.put(all_pic, :actor_id, args.organizer_actor_id))}
+    {:ok, Map.put(args, :picture, Map.put(all_pic, :actor_id, args.organizer_actor.id))}
   end
 
   # Otherwise if we use a previously uploaded picture we need to fetch it from database
@@ -253,7 +264,7 @@ defmodule MobilizonWeb.Resolvers.Event do
   end
 
   @spec save_physical_address(map()) :: {:ok, map()}
-  defp save_physical_address(%{physical_address: address} = args) do
+  defp save_physical_address(%{physical_address: address} = args) when address != nil do
     with {:ok, %Address{} = address} <- Addresses.create_address(address),
          args <- Map.put(args, :physical_address, address.url) do
       {:ok, args}
@@ -269,26 +280,42 @@ defmodule MobilizonWeb.Resolvers.Event do
   def delete_event(
         _parent,
         %{event_id: event_id, actor_id: actor_id},
-        %{context: %{current_user: user}}
+        %{context: %{current_user: %User{role: role} = user}}
       ) do
-    with {:ok, %Event{} = event} <- Mobilizon.Events.get_event(event_id),
-         {:is_owned, %Actor{}} <- User.owns_actor(user, actor_id),
-         {:event_can_be_managed, true} <- Event.can_be_managed_by(event, actor_id),
-         event <- Mobilizon.Events.delete_event!(event) do
-      {:ok, %{id: event.id}}
+    with {:ok, %Event{local: is_local} = event} <- Events.get_event_with_preload(event_id),
+         {actor_id, ""} <- Integer.parse(actor_id),
+         {:is_owned, %Actor{}} <- User.owns_actor(user, actor_id) do
+      cond do
+        {:event_can_be_managed, true} == Event.can_be_managed_by(event, actor_id) ->
+          do_delete_event(event)
+
+        role in [:moderator, :administrator] ->
+          with {:ok, res} <- do_delete_event(event, !is_local),
+               %Actor{} = actor <- Actors.get_actor(actor_id) do
+            log_action(actor, "delete", event)
+
+            {:ok, res}
+          end
+
+        true ->
+          {:error, "You cannot delete this event"}
+      end
     else
       {:error, :event_not_found} ->
         {:error, "Event not found"}
 
       {:is_owned, nil} ->
         {:error, "Actor id is not owned by authenticated user"}
-
-      {:event_can_be_managed, false} ->
-        {:error, "You cannot delete this event"}
     end
   end
 
   def delete_event(_parent, _args, _resolution) do
     {:error, "You need to be logged-in to delete an event"}
+  end
+
+  defp do_delete_event(event, federate \\ true) when is_boolean(federate) do
+    with {:ok, _activity, event} <- MobilizonWeb.API.Events.delete_event(event) do
+      {:ok, %{id: event.id}}
+    end
   end
 end

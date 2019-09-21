@@ -1,7 +1,7 @@
 <template>
   <section>
     <h1>
-      <translate>Group List</translate>
+      {{ $t('Group List') }}
     </h1>
     <b-loading :active.sync="$apollo.loading"></b-loading>
     <div class="columns">
@@ -13,7 +13,7 @@
       />
     </div>
     <router-link class="button" :to="{ name: RouteName.CREATE_GROUP }">
-      <translate>Create group</translate>
+      {{ $t('Create group') }}
     </router-link>
   </section>
 </template>

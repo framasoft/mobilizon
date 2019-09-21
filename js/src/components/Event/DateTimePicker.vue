@@ -1,6 +1,6 @@
 <template>
     <b-field grouped horizontal :label="label">
-        <b-datepicker expanded v-model="date" :placeholder="$gettext('Click to select')" icon="calendar"></b-datepicker>
+        <b-datepicker expanded v-model="date" :placeholder="$t('Click to select')" icon="calendar"></b-datepicker>
         <b-input expanded type="time" required v-model="time" />
     </b-field>
 </template>

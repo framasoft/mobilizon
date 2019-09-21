@@ -76,7 +76,9 @@ defmodule MobilizonWeb.Resolvers.Group do
         %{group_id: group_id, actor_id: actor_id},
         %{context: %{current_user: user}}
       ) do
-    with {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
+    with {actor_id, ""} <- Integer.parse(actor_id),
+         {group_id, ""} <- Integer.parse(group_id),
+         {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
          {:is_owned, %Actor{}} <- User.owns_actor(user, actor_id),
          {:ok, %Member{} = member} <- Actors.get_member(actor_id, group.id),
          {:is_admin, true} <- Member.is_administrator(member),
@@ -109,7 +111,9 @@ defmodule MobilizonWeb.Resolvers.Group do
         %{group_id: group_id, actor_id: actor_id},
         %{context: %{current_user: user}}
       ) do
-    with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
+    with {actor_id, ""} <- Integer.parse(actor_id),
+         {group_id, ""} <- Integer.parse(group_id),
+         {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
          {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
          {:error, :member_not_found} <- Actors.get_member(actor.id, group.id),
          {:is_able_to_join, true} <- {:is_able_to_join, Member.can_be_joined(group)},
@@ -150,7 +154,9 @@ defmodule MobilizonWeb.Resolvers.Group do
         %{group_id: group_id, actor_id: actor_id},
         %{context: %{current_user: user}}
       ) do
-    with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
+    with {actor_id, ""} <- Integer.parse(actor_id),
+         {group_id, ""} <- Integer.parse(group_id),
+         {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
          {:ok, %Member{} = member} <- Actors.get_member(actor.id, group_id),
          {:only_administrator, false} <-
            {:only_administrator, check_that_member_is_not_last_administrator(group_id, actor_id)},

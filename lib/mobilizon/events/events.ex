@@ -658,6 +658,28 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
+  Counts approved participants.
+  """
+  @spec count_approved_participants(integer | String.t()) :: integer
+  def count_approved_participants(event_id) do
+    event_id
+    |> count_participants_query()
+    |> filter_approved_role()
+    |> Repo.aggregate(:count, :id)
+  end
+
+  @doc """
+  Counts unapproved participants.
+  """
+  @spec count_unapproved_participants(integer | String.t()) :: integer
+  def count_unapproved_participants(event_id) do
+    event_id
+    |> count_participants_query()
+    |> filter_unapproved_role()
+    |> Repo.aggregate(:count, :id)
+  end
+
+  @doc """
   Gets a single session.
   Raises `Ecto.NoResultsError` if the session does not exist.
   """
@@ -1145,6 +1167,11 @@ defmodule Mobilizon.Events do
     from(p in Participant, where: p.actor_id == ^actor_id and p.role == ^:not_approved)
   end
 
+  @spec count_participants_query(integer) :: Ecto.Query.t()
+  defp count_participants_query(event_id) do
+    from(p in Participant, where: p.event_id == ^event_id)
+  end
+
   @spec event_participations_for_actor_query(integer) :: Ecto.Query.t()
   def event_participations_for_actor_query(actor_id) do
     from(
@@ -1244,11 +1271,18 @@ defmodule Mobilizon.Events do
     from(q in query, where: q.visibility == ^:public)
   end
 
-  @spec filter_role(Ecto.Query.t(), boolean) :: Ecto.Query.t()
-  defp filter_role(query, false) do
+  @spec filter_approved_role(Ecto.Query.t()) :: Ecto.Query.t()
+  defp filter_approved_role(query) do
     from(p in query, where: p.role != ^:not_approved)
   end
 
+  @spec filter_unapproved_role(Ecto.Query.t()) :: Ecto.Query.t()
+  defp filter_unapproved_role(query) do
+    from(p in query, where: p.role == ^:not_approved)
+  end
+
+  @spec filter_role(Ecto.Query.t(), boolean) :: Ecto.Query.t()
+  defp filter_role(query, false), do: filter_approved_role(query)
   defp filter_role(query, true), do: query
 
   @spec preload_for_event(Ecto.Query.t()) :: Ecto.Query.t()

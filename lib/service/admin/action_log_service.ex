@@ -22,9 +22,19 @@ defmodule Mobilizon.Service.Admin.ActionLogService do
              "target_type" => to_string(target.__struct__),
              "target_id" => target.id,
              "action" => action,
-             "changes" => Map.from_struct(target) |> Map.take([:status, :uri, :content])
+             "changes" => stringify_struct(target)
            }) do
       {:ok, create_action_log}
     end
   end
+
+  defp stringify_struct(%_{} = struct) do
+    association_fields = struct.__struct__.__schema__(:associations)
+
+    struct
+    |> Map.from_struct()
+    |> Map.drop(association_fields ++ [:__meta__])
+  end
+
+  defp stringify_struct(struct), do: struct
 end

@@ -30,6 +30,6 @@ defmodule Mobilizon.Admin do
 
   @spec list_action_logs_query :: Ecto.Query.t()
   defp list_action_logs_query do
-    from(r in ActionLog, preload: [:actor])
+    from(r in ActionLog, preload: [:actor], order_by: [desc: :id])
   end
 end

@@ -42,6 +42,7 @@ defmodule Mobilizon do
       Mobilizon.Service.Federator,
       cachex_spec(:feed, 2500, 60, 60, &Feed.create_cache/1),
       cachex_spec(:ics, 2500, 60, 60, &ICalendar.create_cache/1),
+      cachex_spec(:statistics, 10, 60, 60),
       cachex_spec(:activity_pub, 2500, 3, 15)
     ]
 

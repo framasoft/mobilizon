@@ -31,8 +31,9 @@ defmodule MobilizonWeb.NodeInfoControllerTest do
   end
 
   test "Get node info", %{conn: conn} do
+    # We clear the cache because it might have been initialized by other tests
+    Cachex.clear(:statistics)
     conn = get(conn, node_info_path(conn, :nodeinfo, "2.1"))
-
     resp = json_response(conn, 200)
 
     assert resp == %{
@@ -44,7 +45,7 @@ defmodule MobilizonWeb.NodeInfoControllerTest do
              "protocols" => ["activitypub"],
              "services" => %{"inbound" => [], "outbound" => ["atom1.0"]},
              "software" => %{
-               "name" => "mobilizon",
+               "name" => "Mobilizon",
                "version" => Config.instance_version(),
                "repository" => Config.instance_repository()
              },

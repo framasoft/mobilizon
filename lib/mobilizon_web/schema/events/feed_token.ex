@@ -36,7 +36,7 @@ defmodule MobilizonWeb.Schema.Events.FeedTokenType do
   object :feed_token_mutations do
     @desc "Create a Feed Token"
     field :create_feed_token, :feed_token do
-      arg(:actor_id, :integer)
+      arg(:actor_id, :id)
 
       resolve(&Resolvers.FeedToken.create_feed_token/3)
     end

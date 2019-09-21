@@ -486,7 +486,6 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                   description: "description updated",
                   begins_on: "#{begins_on}",
                   event_id: #{event.id},
-                  organizer_actor_id: "#{actor.id}",
                   category: "birthday",
                   tags: ["tag1_updated", "tag2_updated"]
               ) {
@@ -533,7 +532,6 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                   description: "description updated",
                   begins_on: "#{begins_on}",
                   event_id: #{event.id},
-                  organizer_actor_id: "#{actor.id}",
                   category: "birthday",
                   picture: {
                     picture: {
@@ -733,7 +731,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["deleteEvent"]["id"] == event.id
+      assert json_response(res, 200)["data"]["deleteEvent"]["id"] == to_string(event.id)
 
       res =
         conn
@@ -815,6 +813,72 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert hd(json_response(res, 200)["errors"])["message"] =~ "cannot delete"
+    end
+
+    test "delete_event/3 allows a event being deleted by a moderator and creates a entry in actionLogs",
+         %{
+           conn: conn,
+           user: _user,
+           actor: _actor
+         } do
+      user_moderator = insert(:user, role: :moderator)
+      actor_moderator = insert(:actor, user: user_moderator)
+
+      actor2 = insert(:actor)
+      event = insert(:event, organizer_actor: actor2)
+
+      mutation = """
+          mutation {
+            deleteEvent(
+              actor_id: #{actor_moderator.id},
+              event_id: #{event.id}
+            ) {
+                id
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user_moderator)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["data"]["deleteEvent"]["id"] == to_string(event.id)
+
+      query = """
+      {
+        actionLogs {
+          action,
+          actor {
+            preferredUsername
+          },
+          object {
+            ... on Report {
+              id,
+              status
+            },
+            ... on ReportNote {
+              content
+            }
+            ... on Event {
+              id,
+              title
+            }
+          }
+        }
+      }
+      """
+
+      res =
+        conn
+        |> auth_conn(user_moderator)
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "actionLogs"))
+
+      assert hd(json_response(res, 200)["data"]["actionLogs"]) == %{
+               "action" => "EVENT_DELETION",
+               "actor" => %{"preferredUsername" => actor_moderator.preferred_username},
+               "object" => %{"title" => event.title, "id" => to_string(event.id)}
+             }
     end
 
     test "list_related_events/3 should give related events", %{

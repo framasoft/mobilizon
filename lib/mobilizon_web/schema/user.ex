@@ -43,6 +43,14 @@ defmodule MobilizonWeb.Schema.UserType do
       resolve: dataloader(Events),
       description: "A list of the feed tokens for this user"
     )
+
+    field(:role, :user_role, description: "The role for the user")
+  end
+
+  enum :user_role do
+    value(:administrator)
+    value(:moderator)
+    value(:user)
   end
 
   @desc "Token"

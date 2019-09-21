@@ -1,5 +1,5 @@
 <template>
-    <b-field label="Enter some tags">
+    <b-field :label="$t('Enter some tags')">
         <b-taginput
                 v-model="tagsStrings"
                 :data="filteredTags"
@@ -7,7 +7,7 @@
                 :allow-new="true"
                 :field="path"
                 icon="label"
-                placeholder="Add a tag"
+                :placeholder="$t('Add a tag')"
                 @typing="getFilteredTags"
         >
         </b-taginput>

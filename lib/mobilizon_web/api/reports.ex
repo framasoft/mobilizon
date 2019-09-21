@@ -22,21 +22,17 @@ defmodule MobilizonWeb.API.Reports do
   def report(
         %{
           reporter_actor_id: reporter_actor_id,
-          reported_actor_id: reported_actor_id,
-          event_id: event_id,
-          comments_ids: comments_ids,
-          report_content: report_content
+          reported_actor_id: reported_actor_id
         } = args
       ) do
     with {:reporter, %Actor{url: reporter_url} = _reporter_actor} <-
            {:reporter, Actors.get_actor!(reporter_actor_id)},
          {:reported, %Actor{url: reported_actor_url} = reported_actor} <-
            {:reported, Actors.get_actor!(reported_actor_id)},
-         {:ok, content} <- make_report_content_html(report_content),
-         {:ok, event} <-
-           if(event_id, do: Events.get_event(event_id), else: {:ok, nil}),
+         {:ok, content} <- args |> Map.get(:content, nil) |> make_report_content_text(),
+         {:ok, event} <- args |> Map.get(:event_id, nil) |> get_event(),
          {:get_report_comments, comments_urls} <-
-           get_report_comments(reported_actor, comments_ids),
+           get_report_comments(reported_actor, Map.get(args, :comments_ids, [])),
          {:make_activity, {:ok, %Activity{} = activity, %Report{} = report}} <-
            {:make_activity,
             ActivityPub.flag(%{
@@ -50,12 +46,16 @@ defmodule MobilizonWeb.API.Reports do
             })} do
       {:ok, activity, report}
     else
+      {:make_activity, err} -> {:error, err}
       {:error, err} -> {:error, err}
       {:actor_id, %{}} -> {:error, "Valid `actor_id` required"}
       {:reporter, nil} -> {:error, "Reporter Actor not found"}
       {:reported, nil} -> {:error, "Reported Actor not found"}
     end
   end
+
+  defp get_event(nil), do: {:ok, nil}
+  defp get_event(event_id), do: Events.get_event(event_id)
 
   @doc """
   Update the state of a report

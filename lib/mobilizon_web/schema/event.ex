@@ -12,7 +12,8 @@ defmodule MobilizonWeb.Schema.EventType do
 
   @desc "An event"
   object :event do
-    field(:id, :integer, description: "Internal ID for this event")
+    interfaces([:action_log_object])
+    field(:id, :id, description: "Internal ID for this event")
     field(:uuid, :uuid, description: "The Event UUID")
     field(:url, :string, description: "The ActivityPub Event URL")
     field(:local, :boolean, description: "Whether the event is local or not")
@@ -36,8 +37,8 @@ defmodule MobilizonWeb.Schema.EventType do
       description: "The type of the event's address"
     )
 
-    field(:online_address, :online_address, description: "Online address of the event")
-    field(:phone_address, :phone_address, description: "Phone address for the event")
+    field(:online_address, :string, description: "Online address of the event")
+    field(:phone_address, :string, description: "Phone address for the event")
 
     field(:organizer_actor, :actor,
       resolve: dataloader(Actors),
@@ -52,6 +53,8 @@ defmodule MobilizonWeb.Schema.EventType do
     )
 
     field(:category, :string, description: "The event's category")
+
+    field(:participant_stats, :participant_stats, resolve: &Event.stats_participants_for_event/3)
 
     field(:participants, list_of(:participant),
       resolve: &Event.list_participants_for_event/3,
@@ -89,6 +92,11 @@ defmodule MobilizonWeb.Schema.EventType do
     value(:tentative, description: "The event is tentative")
     value(:confirmed, description: "The event is confirmed")
     value(:cancelled, description: "The event is cancelled")
+  end
+
+  object :participant_stats do
+    field(:approved, :integer, description: "The number of approved participants")
+    field(:unapproved, :integer, description: "The number of unapproved participants")
   end
 
   object :event_offer do
@@ -208,9 +216,7 @@ defmodule MobilizonWeb.Schema.EventType do
       arg(:description, non_null(:string))
       arg(:begins_on, non_null(:datetime))
       arg(:ends_on, :datetime)
-      arg(:state, :integer)
-      arg(:status, :integer)
-      arg(:public, :boolean)
+      arg(:status, :event_status)
       arg(:visibility, :event_visibility, default_value: :private)
 
       arg(:tags, list_of(:string),
@@ -242,11 +248,8 @@ defmodule MobilizonWeb.Schema.EventType do
       arg(:description, :string)
       arg(:begins_on, :datetime)
       arg(:ends_on, :datetime)
-      arg(:state, :integer)
-      arg(:status, :integer)
-      arg(:public, :boolean)
+      arg(:status, :event_status)
       arg(:visibility, :event_visibility)
-      arg(:organizer_actor_id, :id)
 
       arg(:tags, list_of(:string), description: "The list of tags associated to the event")
 
@@ -255,7 +258,6 @@ defmodule MobilizonWeb.Schema.EventType do
           "The picture for the event, either as an object or directly the ID of an existing Picture"
       )
 
-      arg(:publish_at, :datetime)
       arg(:online_address, :string)
       arg(:phone_address, :string)
       arg(:category, :string)
@@ -267,8 +269,8 @@ defmodule MobilizonWeb.Schema.EventType do
 
     @desc "Delete an event"
     field :delete_event, :deleted_object do
-      arg(:event_id, non_null(:integer))
-      arg(:actor_id, non_null(:integer))
+      arg(:event_id, non_null(:id))
+      arg(:actor_id, non_null(:id))
 
       resolve(&Event.delete_event/3)
     end

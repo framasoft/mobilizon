@@ -2,12 +2,12 @@
   <div class="container">
     <section class="hero">
       <h1 class="title">
-        <translate>Welcome back!</translate>
+        {{ $t('Welcome back!') }}
       </h1>
     </section>
 
     <b-message v-if="errorCode === LoginErrorCode.NEED_TO_LOGIN" title="Info" type="is-info">
-      <translate>You need to login.</translate>
+      {{ $t('You need to login.') }}
     </b-message>
 
     <section v-if="!currentUser.isLoggedIn">
@@ -15,11 +15,11 @@
         <div class="column is-half">
           <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">{{ error }}</b-message>
           <form @submit="loginAction">
-            <b-field :label="$gettext('Email')">
+            <b-field :label="$t('Email')">
               <b-input aria-required="true" required type="email" v-model="credentials.email"/>
             </b-field>
 
-            <b-field :label="$gettext('Password')">
+            <b-field :label="$t('Password')">
               <b-input
                 aria-required="true"
                 required
@@ -31,7 +31,7 @@
 
             <div class="control has-text-centered">
               <button class="button is-primary is-large">
-                <translate>Login</translate>
+                {{ $t('Login') }}
               </button>
             </div>
             <div class="control">
@@ -39,7 +39,7 @@
                 class="button is-text"
                 :to="{ name: 'SendPasswordReset', params: { email: credentials.email }}"
               >
-                <translate>Forgot your password ?</translate>
+                {{ $t('Forgot your password ?') }}
               </router-link>
             </div>
             <div class="control" v-if="config && config.registrationsOpen">
@@ -47,7 +47,7 @@
                 class="button is-text"
                 :to="{ name: 'Register', params: { default_email: credentials.email, default_password: credentials.password }}"
               >
-                <translate>Register</translate>
+                {{ $t('Register') }}
               </router-link>
             </div>
           </form>
@@ -56,7 +56,7 @@
     </section>
 
     <b-message v-else title="Error" type="is-error">
-      <translate>You are already logged-in.</translate>
+      {{ $t('You are already logged-in.') }}
     </b-message>
   </div>
 </template>
@@ -143,6 +143,7 @@ export default class Login extends Vue {
           id: data.login.user.id,
           email: this.credentials.email,
           isLoggedIn: true,
+          role: data.login.user.role,
         },
       });
 

@@ -40,6 +40,25 @@ query {
   }
 }`;
 
+export const CURRENT_ACTOR_CLIENT = gql`
+    query {
+        currentActor @client {
+            id,
+            avatar {
+                url
+            },
+            preferredUsername,
+            name
+        }
+    }
+`;
+
+export const UPDATE_CURRENT_ACTOR_CLIENT = gql`
+    mutation UpdateCurrentActor($id: String!, $avatar: String, $preferredUsername: String!, $name: String!) {
+        updateCurrentActor(id: $id, avatar: $avatar, preferredUsername: $preferredUsername, name: $name) @client
+    }
+`;
+
 export const LOGGED_PERSON_WITH_GOING_TO_EVENTS = gql`
 query {
   loggedPerson {
@@ -177,7 +196,7 @@ query($name:String!) {
 
 export const CREATE_GROUP = gql`
   mutation CreateGroup(
-    $creatorActorId: Int!,
+    $creatorActorId: ID!,
     $preferredUsername: String!,
     $name: String!,
     $summary: String,

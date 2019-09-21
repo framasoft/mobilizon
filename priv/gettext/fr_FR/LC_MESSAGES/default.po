@@ -12,11 +12,6 @@ msgstr ""
 "Plural-Forms: nplurals=2\n"
 
 #, elixir-format
-#: lib/mobilizon_web/controllers/feed_controller.ex:59
-msgid "%{actor}'s public events feed"
-msgstr ""
-
-#, elixir-format
 #: lib/mobilizon_web/templates/email/email.html.eex:8
 #: lib/mobilizon_web/templates/email/email.text.eex:3
 msgid "An email sent by Mobilizon on %{instance}."
@@ -60,4 +55,38 @@ msgstr ""
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:2
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:5
 msgid "You requested a new password for your account on %{host}."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.html.eex:8
+#: lib/mobilizon_web/templates/email/report.text.eex:10
+msgid "Comment: %{comment}"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.html.eex:4
+#: lib/mobilizon_web/templates/email/report.text.eex:6
+msgid "Event: %{event}"
+msgstr ""
+
+#, elixir-format
+#: lib/service/export/feed.ex:161
+msgid "Feed for %{email} on Mobilizon"
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/mobilizon/email/admin.ex:19
+msgid "Mobilizon: New report on instance %{instance}"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.html.eex:1
+#: lib/mobilizon_web/templates/email/report.text.eex:1
+msgid "New report from %{reporter} on %{instance}"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.html.eex:12
+#: lib/mobilizon_web/templates/email/report.text.eex:14
+msgid "Reason: %{content}"
 msgstr ""

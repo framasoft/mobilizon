@@ -99,7 +99,9 @@ const link = authMiddleware
   .concat(errorLink)
   .concat(uploadLink);
 
-const cache = new InMemoryCache({ fragmentMatcher });
+const cache = new InMemoryCache({
+  fragmentMatcher,
+});
 
 const apolloClient = new ApolloClient({
   cache,

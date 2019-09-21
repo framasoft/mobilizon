@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Thu Sep 05 2019 13:00:10 GMT+0200 (GMT+02:00)
+# timestamp: Wed Sep 11 2019 11:53:12 GMT+0200 (GMT+02:00)
 
 schema {
   query: RootQueryType
@@ -9,7 +9,7 @@ schema {
 """An action log"""
 type ActionLog {
   """The action that was done"""
-  action: String
+  action: ActionLogAction
 
   """The actor that acted"""
   actor: Actor
@@ -17,8 +17,21 @@ type ActionLog {
   """Internal ID for this comment"""
   id: ID
 
+  """The time when the action was performed"""
+  insertedAt: DateTime
+
   """The object that was acted upon"""
   object: ActionLogObject
+}
+
+enum ActionLogAction {
+  EVENT_DELETION
+  EVENT_UPDATE
+  NOTE_CREATION
+  NOTE_DELETION
+  REPORT_UPDATE_CLOSED
+  REPORT_UPDATE_OPENED
+  REPORT_UPDATE_RESOLVED
 }
 
 """The objects that can be in an action log"""
@@ -51,7 +64,7 @@ interface Actor {
   followingCount: Int
 
   """Internal ID for this actor"""
-  id: Int
+  id: ID
 
   """The actors RSA Keys"""
   keys: String
@@ -111,7 +124,7 @@ type Address {
 
   """The geocoordinates for the point where this address is"""
   geom: Point
-  id: Int
+  id: ID
 
   """The address's locality"""
   locality: String
@@ -133,7 +146,7 @@ input AddressInput {
 
   """The geocoordinates for the point where this address is"""
   geom: Point
-  id: Int
+  id: ID
 
   """The address's locality"""
   locality: String
@@ -185,6 +198,23 @@ type Config {
   registrationsOpen: Boolean
 }
 
+type Dashboard {
+  """Last public event publish"""
+  lastPublicEventPublished: Event
+
+  """The number of local comments"""
+  numberOfComments: Int
+
+  """The number of local events"""
+  numberOfEvents: Int
+
+  """The number of current opened reports"""
+  numberOfReports: Int
+
+  """The number of local users"""
+  numberOfUsers: Int
+}
+
 """
 The `DateTime` scalar type represents a date and time in the UTC
 timezone. The DateTime appears in a JSON response as an ISO8601 formatted
@@ -207,7 +237,7 @@ type DeletedMember {
 
 """A struct containing the id of the deleted object"""
 type DeletedObject {
-  id: Int
+  id: ID
 }
 
 """Represents a deleted participant"""
@@ -217,7 +247,7 @@ type DeletedParticipant {
 }
 
 """An event"""
-type Event {
+type Event implements ActionLogObject {
   """Who the event is attributed to (often a group)"""
   attributedTo: Actor
 
@@ -237,25 +267,26 @@ type Event {
   endsOn: DateTime
 
   """Internal ID for this event"""
-  id: Int
+  id: ID
 
   """Whether the event is local or not"""
   local: Boolean
 
   """Online address of the event"""
-  onlineAddress: OnlineAddress
+  onlineAddress: String
 
   """The event options"""
   options: EventOptions
 
   """The event's organizer (as a person)"""
   organizerActor: Actor
+  participantStats: ParticipantStats
 
   """The event's participants"""
   participants: [Participant]
 
   """Phone address for the event"""
-  phoneAddress: PhoneAddress
+  phoneAddress: String
 
   """The type of the event's address"""
   physicalAddress: Address
@@ -501,7 +532,7 @@ type Group implements Actor {
   followingCount: Int
 
   """Internal ID for this group"""
-  id: Int
+  id: ID
 
   """The actors RSA Keys"""
   keys: String
@@ -591,11 +622,6 @@ type Member {
   role: Int
 }
 
-type OnlineAddress {
-  info: String
-  url: String
-}
-
 """
 Describes how an actor is opened to follows
 
@@ -621,6 +647,14 @@ type Participant {
 
   """The role of this actor at this event"""
   role: Int
+}
+
+type ParticipantStats {
+  """The number of approved participants"""
+  approved: Int
+
+  """The number of unapproved participants"""
+  unapproved: Int
 }
 
 """
@@ -656,7 +690,7 @@ type Person implements Actor {
   goingToEvents: [Event]
 
   """Internal ID for this person"""
-  id: Int
+  id: ID
 
   """The actors RSA Keys"""
   keys: String
@@ -702,11 +736,6 @@ type Persons {
 
   """Total elements"""
   total: Int!
-}
-
-type PhoneAddress {
-  info: String
-  phone: String
 }
 
 """A picture"""
@@ -773,6 +802,12 @@ type Report implements ActionLogObject {
   """The internal ID of the report"""
   id: ID
 
+  """When the report was created"""
+  insertedAt: DateTime
+
+  """The notes made on the event"""
+  notes: [ReportNote]
+
   """The actor that is being reported"""
   reported: Actor
 
@@ -781,6 +816,9 @@ type Report implements ActionLogObject {
 
   """Whether the report is still active"""
   status: ReportStatus
+
+  """When the report was updated"""
+  updatedAt: DateTime
 
   """The URI of the report"""
   uri: String
@@ -793,6 +831,9 @@ type ReportNote implements ActionLogObject {
 
   """The internal ID of the report note"""
   id: ID
+
+  """When the report note was created"""
+  insertedAt: DateTime
 
   """The moderator who added the note"""
   moderator: Actor
@@ -836,10 +877,8 @@ type RootMutationType {
     The picture for the event, either as an object or directly the ID of an existing Picture
     """
     picture: PictureInput
-    public: Boolean
     publishAt: DateTime
-    state: Int
-    status: Int
+    status: EventStatus
 
     """The list of tags associated to the event"""
     tags: [String] = [""]
@@ -848,7 +887,7 @@ type RootMutationType {
   ): Event
 
   """Create a Feed Token"""
-  createFeedToken(actorId: Int): FeedToken
+  createFeedToken(actorId: ID): FeedToken
 
   """Create a group"""
   createGroup(
@@ -863,7 +902,7 @@ type RootMutationType {
     banner: PictureInput
 
     """The identity that creates the group"""
-    creatorActorId: Int!
+    creatorActorId: ID!
 
     """The displayed name for the group"""
     name: String
@@ -896,7 +935,7 @@ type RootMutationType {
   ): Person
 
   """Create a report"""
-  createReport(commentsIds: [ID] = [""], eventId: ID, reportContent: String, reportedActorId: ID!, reporterActorId: ID!): Report
+  createReport(commentsIds: [ID] = [""], content: String, eventId: ID, reportedActorId: ID!, reporterActorId: ID!): Report
 
   """Create a note on a report"""
   createReportNote(content: String, moderatorId: ID!, reportId: ID!): ReportNote
@@ -905,29 +944,29 @@ type RootMutationType {
   createUser(email: String!, password: String!): User
 
   """Delete an event"""
-  deleteEvent(actorId: Int!, eventId: Int!): DeletedObject
+  deleteEvent(actorId: ID!, eventId: ID!): DeletedObject
 
   """Delete a feed token"""
   deleteFeedToken(token: String!): DeletedFeedToken
 
   """Delete a group"""
-  deleteGroup(actorId: Int!, groupId: Int!): DeletedObject
+  deleteGroup(actorId: ID!, groupId: ID!): DeletedObject
 
   """Delete an identity"""
   deletePerson(preferredUsername: String!): Person
   deleteReportNote(moderatorId: ID!, noteId: ID!): DeletedObject
 
   """Join an event"""
-  joinEvent(actorId: Int!, eventId: Int!): Participant
+  joinEvent(actorId: ID!, eventId: ID!): Participant
 
   """Join a group"""
-  joinGroup(actorId: Int!, groupId: Int!): Member
+  joinGroup(actorId: ID!, groupId: ID!): Member
 
   """Leave an event"""
-  leaveEvent(actorId: Int!, eventId: Int!): DeletedParticipant
+  leaveEvent(actorId: ID!, eventId: ID!): DeletedParticipant
 
   """Leave an event"""
-  leaveGroup(actorId: Int!, groupId: Int!): DeletedMember
+  leaveGroup(actorId: ID!, groupId: ID!): DeletedMember
 
   """Login an user"""
   login(email: String!, password: String!): Login
@@ -976,7 +1015,6 @@ type RootMutationType {
     eventId: ID!
     onlineAddress: String
     options: EventOptionsInput
-    organizerActorId: ID
     phoneAddress: String
     physicalAddress: AddressInput
 
@@ -984,10 +1022,7 @@ type RootMutationType {
     The picture for the event, either as an object or directly the ID of an existing Picture
     """
     picture: PictureInput
-    public: Boolean
-    publishAt: DateTime
-    state: Int
-    status: Int
+    status: EventStatus
 
     """The list of tags associated to the event"""
     tags: [String]
@@ -1035,6 +1070,7 @@ type RootQueryType {
 
   """Get the instance config"""
   config: Config
+  dashboard: Dashboard
 
   """Get an event by uuid"""
   event(uuid: UUID!): Event
@@ -1070,7 +1106,7 @@ type RootQueryType {
   report(id: ID!): Report
 
   """Get all reports"""
-  reports(limit: Int = 10, page: Int = 1): [Report]
+  reports(limit: Int = 10, page: Int = 1, status: ReportStatus = OPEN): [Report]
 
   """Reverse geocode coordinates"""
   reverseGeocode(latitude: Float!, longitude: Float!): [Address]
@@ -1160,6 +1196,15 @@ type User {
 
   """The token sent when requesting password token"""
   resetPasswordToken: String
+
+  """The role for the user"""
+  role: UserRole
+}
+
+enum UserRole {
+  ADMINISTRATOR
+  MODERATOR
+  USER
 }
 
 """Users list"""

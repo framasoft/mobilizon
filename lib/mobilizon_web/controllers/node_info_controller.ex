@@ -6,7 +6,8 @@
 defmodule MobilizonWeb.NodeInfoController do
   use MobilizonWeb, :controller
 
-  alias Mobilizon.{Config, Events, Users}
+  alias Mobilizon.Config
+  alias Mobilizon.Service.Statistics
 
   @node_info_supported_versions ["2.0", "2.1"]
   @node_info_schema_uri "http://nodeinfo.diaspora.software/ns/schema/"
@@ -32,7 +33,7 @@ defmodule MobilizonWeb.NodeInfoController do
     response = %{
       version: version,
       software: %{
-        name: "mobilizon",
+        name: "Mobilizon",
         version: Config.instance_version()
       },
       protocols: ["activitypub"],
@@ -43,10 +44,10 @@ defmodule MobilizonWeb.NodeInfoController do
       openRegistrations: Config.instance_registrations_open?(),
       usage: %{
         users: %{
-          total: Users.count_users()
+          total: Statistics.get_cached_value(:local_users)
         },
-        localPosts: Events.count_local_events(),
-        localComments: Events.count_local_comments()
+        localPosts: Statistics.get_cached_value(:local_events),
+        localComments: Statistics.get_cached_value(:local_comments)
       },
       metadata: %{
         nodeName: Config.instance_name(),

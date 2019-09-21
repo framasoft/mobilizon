@@ -13,6 +13,8 @@ defmodule Mobilizon.Reports.Note do
   @required_attrs [:content, :moderator_id, :report_id]
   @attrs @required_attrs
 
+  @timestamps_opts [type: :utc_datetime]
+
   @type t :: %__MODULE__{
           content: String.t(),
           report: Report.t(),

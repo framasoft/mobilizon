@@ -5,9 +5,11 @@ import Home from '@/views/Home.vue';
 import { UserRouteName, userRoutes } from './user';
 import { EventRouteName, eventRoutes } from '@/router/event';
 import { ActorRouteName, actorRoutes, MyAccountRouteName } from '@/router/actor';
+import { AdminRouteName, adminRoutes } from '@/router/admin';
 import { ErrorRouteName, errorRoutes } from '@/router/error';
 import { authGuardIfNeeded } from '@/router/guards/auth-guard';
 import Search from '@/views/Search.vue';
+import { ModerationRouteName, moderationRoutes } from '@/router/moderation';
 
 Vue.use(Router);
 
@@ -35,6 +37,8 @@ export const RouteName = {
   ...EventRouteName,
   ...ActorRouteName,
   ...MyAccountRouteName,
+  ...AdminRouteName,
+  ...ModerationRouteName,
   ...ErrorRouteName,
 };
 
@@ -46,6 +50,8 @@ const router = new Router({
     ...userRoutes,
     ...eventRoutes,
     ...actorRoutes,
+    ...adminRoutes,
+    ...moderationRoutes,
     ...errorRoutes,
     {
       path: '/search/:searchTerm/:searchType?',

@@ -78,6 +78,9 @@ defmodule MobilizonWeb.Router do
     get("/events/create", PageController, :index)
     get("/events/list", PageController, :index)
     get("/events/:uuid/edit", PageController, :index)
+
+    # This is a hack to ease link generation into emails
+    get("/moderation/reports/:id", PageController, :index, as: "moderation_report")
   end
 
   scope "/", MobilizonWeb do

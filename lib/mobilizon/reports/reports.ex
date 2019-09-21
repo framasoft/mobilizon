@@ -76,12 +76,27 @@ defmodule Mobilizon.Reports do
   @doc """
   Returns the list of reports.
   """
-  @spec list_reports(integer | nil, integer | nil, atom, atom) :: [Report.t()]
-  def list_reports(page \\ nil, limit \\ nil, sort \\ :updated_at, direction \\ :asc) do
-    list_reports_query()
+  @spec list_reports(integer | nil, integer | nil, atom, atom, ReportStatus) :: [Report.t()]
+  def list_reports(
+        page \\ nil,
+        limit \\ nil,
+        sort \\ :updated_at,
+        direction \\ :asc,
+        status \\ :open
+      ) do
+    status
+    |> list_reports_query()
     |> Page.paginate(page, limit)
     |> sort(sort, direction)
     |> Repo.all()
+  end
+
+  @doc """
+  Counts opened reports.
+  """
+  @spec count_opened_reports :: integer
+  def count_opened_reports do
+    Repo.aggregate(count_reports_query(), :count, :id)
   end
 
   @doc """
@@ -131,12 +146,18 @@ defmodule Mobilizon.Reports do
     from(r in Report, where: r.uri == ^url)
   end
 
-  @spec list_reports_query :: Ecto.Query.t()
-  defp list_reports_query do
+  @spec list_reports_query(ReportStatus.t()) :: Ecto.Query.t()
+  defp list_reports_query(status) do
     from(
       r in Report,
-      preload: [:reported, :reporter, :manager, :event, :comments, :notes]
+      preload: [:reported, :reporter, :manager, :event, :comments, :notes],
+      where: r.status == ^status
     )
+  end
+
+  @spec count_reports_query :: Ecto.Query.t()
+  defp count_reports_query do
+    from(r in Report, where: r.status == ^:open)
   end
 
   @spec list_notes_for_report_query(integer | String.t()) :: Ecto.Query.t()

@@ -12,11 +12,11 @@ defmodule MobilizonWeb.Resolvers.Report do
 
   def list_reports(
         _parent,
-        %{page: page, limit: limit},
+        %{page: page, limit: limit, status: status},
         %{context: %{current_user: %User{role: role}}}
       )
       when is_moderator(role) do
-    {:ok, Mobilizon.Reports.list_reports(page, limit)}
+    {:ok, Mobilizon.Reports.list_reports(page, limit, :updated_at, :desc, status)}
   end
 
   def list_reports(_parent, _args, _resolution) do
@@ -25,7 +25,13 @@ defmodule MobilizonWeb.Resolvers.Report do
 
   def get_report(_parent, %{id: id}, %{context: %{current_user: %User{role: role}}})
       when is_moderator(role) do
-    {:ok, Mobilizon.Reports.get_report(id)}
+    case Mobilizon.Reports.get_report(id) do
+      %Report{} = report ->
+        {:ok, report}
+
+      nil ->
+        {:error, "Report not found"}
+    end
   end
 
   def get_report(_parent, _args, _resolution) do

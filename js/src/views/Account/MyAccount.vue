@@ -1,9 +1,9 @@
 <template>
   <section class="container">
-    <div v-if="loggedPerson">
+    <div v-if="currentActor">
       <div class="header">
-        <figure v-if="loggedPerson.banner" class="image is-3by1">
-          <img :src="loggedPerson.banner.url" alt="banner">
+        <figure v-if="currentActor.banner" class="image is-3by1">
+          <img :src="currentActor.banner.url" alt="banner">
         </figure>
       </div>
 
@@ -31,7 +31,7 @@
 </style>
 
 <script lang="ts">
-import { LOGGED_PERSON } from '@/graphql/actor';
+import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import EventCard from '@/components/Event/EventCard.vue';
 import { IPerson } from '@/types/actor';
@@ -42,17 +42,18 @@ import Identities from '@/components/Account/Identities.vue';
     EventCard,
     Identities,
   },
+  apollo: {
+    currentActor: {
+      query: CURRENT_ACTOR_CLIENT,
+    },
+  },
 })
 export default class MyAccount extends Vue {
-  loggedPerson: IPerson | null = null;
+  currentActor!: IPerson;
   currentIdentityName: string | null = null;
 
   @Watch('$route.params.identityName', { immediate: true })
   async onIdentityParamChanged (val: string) {
-    if (!this.loggedPerson) {
-      this.loggedPerson = await this.loadLoggedPerson();
-    }
-
     await this.redirectIfNoIdentitySelected(val);
 
     this.currentIdentityName = val;
@@ -61,17 +62,9 @@ export default class MyAccount extends Vue {
   private async redirectIfNoIdentitySelected (identityParam?: string) {
     if (!!identityParam) return;
 
-    if (!!this.loggedPerson) {
-      this.$router.push({ params: { identityName: this.loggedPerson.preferredUsername } });
+    if (!!this.currentActor) {
+      await this.$router.push({ params: { identityName: this.currentActor.preferredUsername } });
     }
-  }
-
-  private async loadLoggedPerson () {
-    const result = await this.$apollo.query({
-      query: LOGGED_PERSON,
-    });
-
-    return result.data.loggedPerson as IPerson;
   }
 }
 </script>

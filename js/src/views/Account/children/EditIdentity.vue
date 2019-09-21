@@ -2,16 +2,16 @@
   <div class="root">
     <h1 class="title">
       <span v-if="isUpdate">{{ identity.displayName() }}</span>
-      <translate v-else>I create an identity</translate>
+      <span v-else>{{ $t('I create an identity') }}</span>
     </h1>
 
     <picture-upload v-model="avatarFile" class="picture-upload"></picture-upload>
 
-    <b-field :label="$gettext('Display name')">
+    <b-field :label="$t('Display name')">
       <b-input aria-required="true" required v-model="identity.name" @input="autoUpdateUsername($event)"/>
     </b-field>
 
-    <b-field :label="$gettext('Username')">
+    <b-field :label="$t('Username')">
       <b-field>
         <b-input aria-required="true" required v-model="identity.preferredUsername" :disabled="isUpdate"/>
 
@@ -21,21 +21,31 @@
       </b-field>
     </b-field>
 
-    <b-field :label="$gettext('Description')">
+    <b-field :label="$t('Description')">
       <b-input type="textarea" aria-required="false" v-model="identity.summary"/>
     </b-field>
 
+    <b-notification
+          type="is-danger"
+          has-icon
+          aria-close-label="Close notification"
+          role="alert"
+          v-for="error in errors"
+    >
+    {{ error }}
+  </b-notification>
+
     <b-field class="submit">
       <div class="control">
-        <button v-translate type="button" class="button is-primary" @click="submit()">
-          Save
+        <button type="button" class="button is-primary" @click="submit()">
+          {{ $t('Save') }}
         </button>
       </div>
     </b-field>
 
     <div class="delete-identity" v-if="isUpdate">
-      <span v-translate @click="openDeleteIdentityConfirmation()">
-        Delete this identity
+      <span @click="openDeleteIdentityConfirmation()">
+        {{ $t('Delete this identity') }}
       </span>
     </div>
   </div>
@@ -70,18 +80,31 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import { CREATE_PERSON, DELETE_PERSON, FETCH_PERSON, IDENTITIES, LOGGED_PERSON, UPDATE_PERSON } from '../../../graphql/actor';
+import {
+  CREATE_PERSON,
+  CURRENT_ACTOR_CLIENT,
+  DELETE_PERSON,
+  FETCH_PERSON,
+  IDENTITIES,
+  UPDATE_PERSON,
+} from '@/graphql/actor';
 import { IPerson, Person } from '@/types/actor';
 import PictureUpload from '@/components/PictureUpload.vue';
 import { MOBILIZON_INSTANCE_HOST } from '@/api/_entrypoint';
 import { Dialog } from 'buefy/dist/components/dialog';
 import { RouteName } from '@/router';
 import { buildFileFromIPicture, buildFileVariable } from '@/utils/image';
+import { changeIdentity, saveActorData } from '@/utils/auth';
 
 @Component({
   components: {
     PictureUpload,
     Dialog,
+  },
+  apollo: {
+    currentActor: {
+      query: CURRENT_ACTOR_CLIENT,
+    },
   },
 })
 export default class EditIdentity extends Vue {
@@ -94,7 +117,7 @@ export default class EditIdentity extends Vue {
   identity = new Person();
 
   private oldDisplayName: string | null = null;
-  private loggedPerson: IPerson | null = null;
+  private currentActor: IPerson | null = null;
 
   @Watch('isUpdate')
   async isUpdateChanged () {
@@ -134,6 +157,9 @@ export default class EditIdentity extends Vue {
     this.oldDisplayName = newDisplayName;
   }
 
+  /**
+   * Delete an identity
+   */
   async deleteIdentity() {
     try {
       await this.$apollo.mutate({
@@ -150,17 +176,15 @@ export default class EditIdentity extends Vue {
         },
       });
 
-
       this.$notifier.success(
-        this.$gettextInterpolate('Identity %{displayName} deleted', { displayName: this.identity.displayName() }),
+        this.$t('Identity {displayName} deleted', { displayName: this.identity.displayName() }) as string,
       );
-
-      await this.loadLoggedPersonIfNeeded();
-
-      // Refresh the loaded person if we deleted the default identity
-      if (this.loggedPerson && this.identity.id === this.loggedPerson.id) {
-        this.loggedPerson = null;
-        await this.loadLoggedPersonIfNeeded(true);
+      /**
+       * If we just deleted the current identity, we need to change it to the next one
+       */
+      const data = this.$apollo.provider.defaultClient.readQuery<{ identities: IPerson[] }>({ query: IDENTITIES });
+      if (data) {
+        await this.maybeUpdateCurrentActorCache(data.identities[0]);
       }
 
       await this.redirectIfNoIdentitySelected();
@@ -181,6 +205,7 @@ export default class EditIdentity extends Vue {
             const index = data.identities.findIndex(i => i.id === this.identity.id);
 
             this.$set(data.identities, index, updatePerson);
+            this.maybeUpdateCurrentActorCache(updatePerson);
 
             store.writeQuery({ query: IDENTITIES, data });
           }
@@ -188,7 +213,7 @@ export default class EditIdentity extends Vue {
       });
 
       this.$notifier.success(
-        this.$gettextInterpolate('Identity %{displayName} updated', { displayName: this.identity.displayName() }),
+        this.$t('Identity {displayName} updated', { displayName: this.identity.displayName() }) as string,
       );
     } catch (err) {
       this.handleError(err);
@@ -211,11 +236,11 @@ export default class EditIdentity extends Vue {
         },
       });
 
-      this.$router.push({ name: RouteName.UPDATE_IDENTITY, params: { identityName: this.identity.preferredUsername } });
-
       this.$notifier.success(
-        this.$gettextInterpolate('Identity %{displayName} created', { displayName: this.identity.displayName() }),
+              this.$t('Identity {displayName} created', { displayName: this.identity.displayName() }) as string,
       );
+
+      await this.$router.push({ name: RouteName.UPDATE_IDENTITY, params: { identityName: this.identity.preferredUsername } });
     } catch (err) {
       this.handleError(err);
     }
@@ -228,18 +253,17 @@ export default class EditIdentity extends Vue {
   openDeleteIdentityConfirmation() {
     this.$buefy.dialog.prompt({
       type: 'is-danger',
-      title: this.$gettext('Delete your identity'),
-      message: this.$gettextInterpolate(
-        'This will delete / anonymize all content (events, comments, messages, participation...) created from this identity. <br /><br />' +
-        'If this identity is the only administrator of some groups, you need to delete them before being able to delete this identity. ' +
-        'Otherwise this identity will just be removed from the group administrators.<br /><br />' +
-        'To confirm, type your identity username "%{preferredUsername}"',
+      title: this.$t('Delete your identity') as string,
+      message: `${this.$t('This will delete / anonymize all content (events, comments, messages, participations…) created from this identity.')}
+            <br /><br />
+            ${this.$t('If this identity is the only administrator of some groups, you need to delete them before being able to delete this identity.')}
+            ${this.$t('Otherwise this identity will just be removed from the group administrators.')}
+            <br /><br />
+            ${this.$t('To confirm, type your identity username "{preferredUsername}"', { preferredUsername: this.identity.preferredUsername })}`,
+      confirmText: this.$t(
+        'Delete {preferredUsername}',
         { preferredUsername: this.identity.preferredUsername },
-      ),
-      confirmText: this.$gettextInterpolate(
-        'Delete %{preferredUsername}',
-        { preferredUsername: this.identity.preferredUsername },
-      ),
+      ) as string,
       inputAttrs: {
         placeholder: this.identity.preferredUsername,
         pattern: this.identity.preferredUsername,
@@ -263,9 +287,11 @@ export default class EditIdentity extends Vue {
   private handleError(err: any) {
     console.error(err);
 
-    err.graphQLErrors.forEach(({ message }) => {
-      this.errors.push(message);
-    });
+    if (err.graphQLErrors !== undefined) {
+      err.graphQLErrors.forEach(({ message }) => {
+        this.$notifier.error(message);
+      });
+    }
   }
 
   private convertToUsername(value: string | null) {
@@ -287,20 +313,29 @@ export default class EditIdentity extends Vue {
 
     await this.loadLoggedPersonIfNeeded();
 
-    if (!!this.loggedPerson) {
-      this.$router.push({ params: { identityName: this.loggedPerson.preferredUsername } });
+    if (!!this.currentActor) {
+      await this.$router.push({ params: { identityName: this.currentActor.preferredUsername } });
+    }
+  }
+
+  private async maybeUpdateCurrentActorCache(identity: IPerson) {
+    if (this.currentActor) {
+      if (this.currentActor.preferredUsername === this.identity.preferredUsername) {
+        await changeIdentity(this.$apollo.provider.defaultClient, identity);
+      }
+      this.currentActor = identity;
     }
   }
 
   private async loadLoggedPersonIfNeeded (bypassCache = false) {
-    if (this.loggedPerson) return;
+    if (this.currentActor) return;
 
     const result = await this.$apollo.query({
-      query: LOGGED_PERSON,
+      query: CURRENT_ACTOR_CLIENT,
       fetchPolicy: bypassCache ? 'network-only' : undefined,
     });
 
-    this.loggedPerson = result.data.loggedPerson;
+    this.currentActor = result.data.currentActor;
   }
 
   private resetFields () {

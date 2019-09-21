@@ -90,8 +90,12 @@ export interface IEvent {
 
   picture: IPicture | null;
 
-  organizerActor: IActor;
+  organizerActor?: IActor;
   attributedTo: IActor;
+  participantStats: {
+    approved: number;
+    unapproved: number;
+  };
   participants: IParticipant[];
 
   relatedEvents: IEvent[];
@@ -117,15 +121,15 @@ export interface IEventOptions {
 }
 
 export class EventOptions implements IEventOptions {
-  maximumAttendeeCapacity: number = 0;
-  remainingAttendeeCapacity: number = 0;
-  showRemainingAttendeeCapacity: boolean = false;
+  maximumAttendeeCapacity = 0;
+  remainingAttendeeCapacity = 0;
+  showRemainingAttendeeCapacity = false;
   offers: IOffer[] = [];
   participationConditions: IParticipationCondition[] = [];
   attendees: string[] = [];
-  program: string = '';
-  commentModeration: CommentModeration = CommentModeration.ALLOW_ALL;
-  showParticipationPrice: boolean = false;
+  program = '';
+  commentModeration = CommentModeration.ALLOW_ALL;
+  showParticipationPrice = false;
 }
 
 export class EventModel implements IEvent {
@@ -154,12 +158,13 @@ export class EventModel implements IEvent {
 
   publishAt = new Date();
 
+  participantStats = { approved: 0, unapproved: 0 };
   participants: IParticipant[] = [];
 
   relatedEvents: IEvent[] = [];
 
   attributedTo = new Actor();
-  organizerActor = new Actor();
+  organizerActor?: IActor;
 
   tags: ITag[] = [];
   options: IEventOptions = new EventOptions();
@@ -200,6 +205,25 @@ export class EventModel implements IEvent {
     this.physicalAddress = hash.physicalAddress;
 
     this.tags = hash.tags;
-    this.options = hash.options;
+    if (hash.options) this.options = hash.options;
+  }
+
+  toEditJSON () {
+    return {
+      id: this.id,
+      title: this.title,
+      description: this.description,
+      beginsOn: this.beginsOn.toISOString(),
+      endsOn: this.endsOn ? this.endsOn.toISOString() : null,
+      status: this.status,
+      visibility: this.visibility,
+      tags: this.tags.map(t => t.title),
+      picture: this.picture,
+      onlineAddress: this.onlineAddress,
+      phoneAddress: this.phoneAddress,
+      category: this.category,
+      physicalAddress: this.physicalAddress,
+      options: this.options,
+    };
   }
 }

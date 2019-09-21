@@ -124,9 +124,9 @@ defmodule MobilizonWeb.API.Utils do
   #    |> Formatter.html_escape("text/html")
   #  end
 
-  def make_report_content_html(nil), do: {:ok, {nil, [], []}}
+  def make_report_content_text(nil), do: {:ok, nil}
 
-  def make_report_content_html(comment) do
+  def make_report_content_text(comment) do
     max_size = Config.get([:instance, :max_report_comment_size], 1000)
 
     if String.length(comment) <= max_size do
@@ -137,7 +137,7 @@ defmodule MobilizonWeb.API.Utils do
   end
 
   def prepare_content(actor, content, visibility, tags, in_reply_to) do
-    with content <- String.trim(content),
+    with content <- String.trim(content || ""),
          {content_html, mentions, tags} <-
            make_content_html(
              content,

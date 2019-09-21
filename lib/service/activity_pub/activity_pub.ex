@@ -357,9 +357,8 @@ defmodule Mobilizon.Service.ActivityPub do
 
     with {:ok, _} <- Events.delete_event(event),
          {:ok, activity} <- create_activity(data, local),
-         {:ok, object} <- insert_full_object(data),
          :ok <- maybe_federate(activity) do
-      {:ok, activity, object}
+      {:ok, activity, event}
     end
   end
 
@@ -542,7 +541,7 @@ defmodule Mobilizon.Service.ActivityPub do
 
     public = is_public?(activity)
 
-    if public && Config.get([:instance, :allow_relay]) do
+    if public && !is_delete_activity?(activity) && Config.get([:instance, :allow_relay]) do
       Logger.info(fn -> "Relaying #{activity.data["id"]} out" end)
       Mobilizon.Service.ActivityPub.Relay.publish(activity)
     end
@@ -572,6 +571,9 @@ defmodule Mobilizon.Service.ActivityPub do
       })
     end)
   end
+
+  defp is_delete_activity?(%Activity{data: %{"type" => "Delete"}}), do: true
+  defp is_delete_activity?(_), do: false
 
   @doc """
   Publish an activity to a specific inbox

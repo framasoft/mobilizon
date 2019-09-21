@@ -22,7 +22,7 @@ defmodule Mobilizon.Service.Admin.ActionLogServiceTest do
               %ActionLog{
                 target_type: "Elixir.Mobilizon.Reports.Report",
                 target_id: report_id,
-                action: "update",
+                action: :update,
                 actor: moderator
               }} = log_action(moderator, "update", report)
     end
@@ -35,7 +35,7 @@ defmodule Mobilizon.Service.Admin.ActionLogServiceTest do
               %ActionLog{
                 target_type: "Elixir.Mobilizon.Reports.Note",
                 target_id: note_id,
-                action: "create",
+                action: :create,
                 actor: moderator
               }} = log_action(moderator, "create", report)
     end

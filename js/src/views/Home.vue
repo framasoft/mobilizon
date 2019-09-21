@@ -6,64 +6,51 @@
           <h1 class="title">{{ config.name }}</h1>
           <h2 class="subtitle">{{ config.description }}</h2>
           <router-link class="button" :to="{ name: 'Register' }" v-if="config.registrationsOpen">
-            <translate>Register</translate>
+            {{ $t('Register') }}
           </router-link>
           <p v-else>
-            <translate>This instance isn't opened to registrations, but you can register on other instances.</translate>
+            {{ $t("This instance isn't opened to registrations, but you can register on other instances.") }}
           </p>
         </div>
       </div>
     </section>
     <section v-else>
       <h1>
-        <translate
-          :translate-params="{username: loggedPerson.preferredUsername}"
-        >Welcome back %{username}</translate>
+        {{ $t('Welcome back {username}', {username: loggedPerson.preferredUsername}) }}
       </h1>
     </section>
     <b-dropdown aria-role="list">
       <button class="button is-primary" slot="trigger">
-        <span>Create</span>
+        <span>{{ $t('Create') }}</span>
         <b-icon icon="menu-down"></b-icon>
       </button>
 
       <b-dropdown-item aria-role="listitem">
-        <router-link :to="{ name: RouteName.CREATE_EVENT }">Event</router-link>
+        <router-link :to="{ name: RouteName.CREATE_EVENT }">{{ $t('Event') }}</router-link>
       </b-dropdown-item>
       <b-dropdown-item aria-role="listitem">
-        <router-link :to="{ name: RouteName.CREATE_GROUP }">Group</router-link>
+        <router-link :to="{ name: RouteName.CREATE_GROUP }">{{ $t('Group') }}</router-link>
       </b-dropdown-item>
-      <b-dropdown-item aria-role="listitem">Something else</b-dropdown-item>
     </b-dropdown>
     <section v-if="loggedPerson" class="container">
-      <span class="events-nearby title"><translate>Events you're going at</translate></span>
+      <span class="events-nearby title">
+        {{ $t("Events you're going at") }}
+      </span>
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <div v-if="goingToEvents.size > 0" v-for="row in Array.from(goingToEvents.entries())">
         <!--   Iterators will be supported in v-for with VueJS 3     -->
         <date-component :date="row[0]"></date-component>
           <h3 class="subtitle"
-            v-if="isToday(row[0])"
-            v-translate="{count: row[1].length}"
-            :translate-n="row[1].length"
-            translate-plural="You have %{ count } events today"
-          >
-                  You have one event today.
+            v-if="isToday(row[0])">
+            {{ $tc('You have one event today.', row[1].length, {count: row[1].length}) }}
           </h3>
           <h3 class="subtitle"
-              v-else-if="isTomorrow(row[0])"
-              v-translate="{count: row[1].length}"
-              :translate-n="row[1].length"
-              translate-plural="You have %{ count } events tomorrow"
-          >
-              You have one event tomorrow.
+              v-else-if="isTomorrow(row[0])">
+            {{ $tc('You have one event tomorrow.', row[1].length, {count: row[1].length}) }}
           </h3>
           <h3 class="subtitle"
-              v-else
-              v-translate="{count: row[1].length, days: calculateDiffDays(row[0])}"
-              :translate-n="row[1].length"
-              translate-plural="You have %{ count } events in %{ days } days"
-          >
-              You have one event in %{ days } days.
+              v-else>
+              {{ $tc('You have one event in {days} days.', row[1].length, {count: row[1].length, days: calculateDiffDays(row[0])}) }}
           </h3>
         <div class="columns">
           <EventCard
@@ -76,11 +63,11 @@
         </div>
       </div>
       <b-message v-else type="is-danger">
-        <translate>You're not going to any event yet</translate>
+        {{ $t("You're not going to any event yet") }}
       </b-message>
     </section>
     <section class="container">
-      <h3 class="events-nearby title"><translate>Events nearby you</translate></h3>
+      <h3 class="events-nearby title">{{ $t('Events nearby you') }}</h3>
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <div v-if="events.length > 0" class="columns is-multiline">
         <div class="column is-one-third-desktop" v-for="event in events.slice(0, 6)" :key="event.uuid">
@@ -90,7 +77,7 @@
         </div>
       </div>
       <b-message v-else type="is-danger">
-        <translate>No events found</translate>
+        {{ $t('No events found') }}
       </b-message>
     </section>
   </div>

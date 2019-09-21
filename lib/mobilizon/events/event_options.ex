@@ -36,6 +36,7 @@ defmodule Mobilizon.Events.EventOptions do
   ]
 
   @primary_key false
+  @derive Jason.Encoder
   embedded_schema do
     field(:maximum_attendee_capacity, :integer)
     field(:remaining_attendee_capacity, :integer)
