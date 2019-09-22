@@ -1,32 +1,32 @@
 defmodule Mobilizon.Repo.Migrations.SplitEventVisibilityAndJoinOptions do
   use Ecto.Migration
-  alias Mobilizon.Events.EventVisibilityEnum
-  alias Mobilizon.Events.JoinOptionsEnum
+  alias Mobilizon.Events.EventVisibility
+  alias Mobilizon.Events.JoinOptions
 
   @doc """
-  EventVisibilityEnum has dropped some possible values, so we need to recreate it
+  EventVisibility has dropped some possible values, so we need to recreate it
 
   Visibility allowed nullable values previously
   """
   def up do
     execute("ALTER TABLE events ALTER COLUMN visibility TYPE VARCHAR USING visibility::text")
-    EventVisibilityEnum.drop_type()
-    EventVisibilityEnum.create_type()
+    EventVisibility.drop_type()
+    EventVisibility.create_type()
 
     execute(
-      "ALTER TABLE events ALTER COLUMN visibility TYPE event_visibility_type USING visibility::event_visibility_type"
+      "ALTER TABLE events ALTER COLUMN visibility TYPE event_visibility USING visibility::event_visibility"
     )
 
-    JoinOptionsEnum.create_type()
+    JoinOptions.create_type()
 
     alter table(:events) do
-      add(:join_options, JoinOptionsEnum.type(), null: false, default: "free")
+      add(:join_options, JoinOptions.type(), null: false, default: "free")
     end
 
     execute("UPDATE events SET visibility = 'public' WHERE visibility IS NULL")
 
     alter table(:events) do
-      modify(:visibility, EventVisibilityEnum.type(), null: false, default: "public")
+      modify(:visibility, EventVisibility.type(), null: false, default: "public")
     end
   end
 
@@ -35,14 +35,14 @@ defmodule Mobilizon.Repo.Migrations.SplitEventVisibilityAndJoinOptions do
       remove(:join_options)
     end
 
-    JoinOptionsEnum.drop_type()
+    JoinOptions.drop_type()
 
     execute("ALTER TABLE events ALTER COLUMN visibility TYPE VARCHAR USING visibility::text")
-    EventVisibilityEnum.drop_type()
-    EventVisibilityEnum.create_type()
+    EventVisibility.drop_type()
+    EventVisibility.create_type()
 
     execute(
-      "ALTER TABLE events ALTER COLUMN visibility TYPE event_visibility_type USING visibility::event_visibility_type"
+      "ALTER TABLE events ALTER COLUMN visibility TYPE event_visibility USING visibility::event_visibility"
     )
   end
 end

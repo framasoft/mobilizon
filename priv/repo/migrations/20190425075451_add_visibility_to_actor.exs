@@ -1,13 +1,13 @@
 defmodule Mobilizon.Repo.Migrations.AddVisibilityToActor do
   use Ecto.Migration
 
-  alias Mobilizon.Actors.ActorVisibilityEnum
+  alias Mobilizon.Actors.ActorVisibility
 
   def up do
-    ActorVisibilityEnum.create_type()
+    ActorVisibility.create_type()
 
     alter table(:actors) do
-      add(:visibility, ActorVisibilityEnum.type(), default: "private")
+      add(:visibility, ActorVisibility.type(), default: "private")
     end
   end
 
@@ -16,6 +16,6 @@ defmodule Mobilizon.Repo.Migrations.AddVisibilityToActor do
       remove(:visibility)
     end
 
-    ActorVisibilityEnum.drop_type()
+    ActorVisibility.drop_type()
   end
 end

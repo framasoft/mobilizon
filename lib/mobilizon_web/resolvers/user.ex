@@ -2,12 +2,14 @@ defmodule MobilizonWeb.Resolvers.User do
   @moduledoc """
   Handles the user-related GraphQL calls
   """
+
+  alias Mobilizon.{Actors, Config, Users}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.CommonConfig
-  alias Mobilizon.Users.User
-  alias Mobilizon.{Actors, Users}
   alias Mobilizon.Service.Users.{ResetPassword, Activation}
+  alias Mobilizon.Users.User
+
   import Mobilizon.Users.Guards
+
   require Logger
 
   @doc """
@@ -110,7 +112,8 @@ defmodule MobilizonWeb.Resolvers.User do
   """
   @spec create_user(any(), map(), any()) :: tuple()
   def create_user(_parent, args, _resolution) do
-    with {:registrations_open, true} <- {:registrations_open, CommonConfig.registrations_open?()},
+    with {:registrations_open, true} <-
+           {:registrations_open, Config.instance_registrations_open?()},
          {:ok, %User{} = user} <- Users.register(args) do
       Activation.send_confirmation_email(user)
       {:ok, user}
@@ -118,8 +121,8 @@ defmodule MobilizonWeb.Resolvers.User do
       {:registrations_open, false} ->
         {:error, "Registrations are not enabled"}
 
-      err ->
-        err
+      error ->
+        error
     end
   end
 
@@ -139,9 +142,9 @@ defmodule MobilizonWeb.Resolvers.User do
          user: Map.put(user, :default_actor, actor)
        }}
     else
-      err ->
+      error ->
         Logger.info("Unable to validate user with token #{token}")
-        Logger.debug(inspect(err))
+        Logger.debug(inspect(error))
         {:error, "Unable to validate user"}
     end
   end
@@ -213,7 +216,7 @@ defmodule MobilizonWeb.Resolvers.User do
       {:user_actor, _} ->
         {:error, :actor_not_from_user}
 
-      _err ->
+      _error ->
         {:error, :unable_to_change_default_actor}
     end
   end

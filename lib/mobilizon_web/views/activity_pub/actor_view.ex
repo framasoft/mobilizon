@@ -1,10 +1,11 @@
 defmodule MobilizonWeb.ActivityPub.ActorView do
   use MobilizonWeb, :view
 
+  alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Utils
-  alias Mobilizon.Activity
 
   @private_visibility_empty_collection %{elements: [], total: 0}
 
@@ -47,8 +48,8 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
 
   def render("following.json", %{actor: actor, page: page}) do
     %{total: total, elements: following} =
-      if Actor.public_visibility?(actor),
-        do: Actor.get_followings(actor, page),
+      if Actor.is_public_visibility(actor),
+        do: Actors.build_followings_for_actor(actor, page),
         else: @private_visibility_empty_collection
 
     following
@@ -58,8 +59,8 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
 
   def render("following.json", %{actor: actor}) do
     %{total: total, elements: following} =
-      if Actor.public_visibility?(actor),
-        do: Actor.get_followings(actor),
+      if Actor.is_public_visibility(actor),
+        do: Actors.build_followings_for_actor(actor),
         else: @private_visibility_empty_collection
 
     %{
@@ -73,8 +74,8 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
 
   def render("followers.json", %{actor: actor, page: page}) do
     %{total: total, elements: followers} =
-      if Actor.public_visibility?(actor),
-        do: Actor.get_followers(actor, page),
+      if Actor.is_public_visibility(actor),
+        do: Actors.build_followers_for_actor(actor, page),
         else: @private_visibility_empty_collection
 
     followers
@@ -84,8 +85,8 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
 
   def render("followers.json", %{actor: actor}) do
     %{total: total, elements: followers} =
-      if Actor.public_visibility?(actor),
-        do: Actor.get_followers(actor),
+      if Actor.is_public_visibility(actor),
+        do: Actors.build_followers_for_actor(actor),
         else: @private_visibility_empty_collection
 
     %{
@@ -99,7 +100,7 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
 
   def render("outbox.json", %{actor: actor, page: page}) do
     %{total: total, elements: followers} =
-      if Actor.public_visibility?(actor),
+      if Actor.is_public_visibility(actor),
         do: ActivityPub.fetch_public_activities_for_actor(actor, page),
         else: @private_visibility_empty_collection
 
@@ -110,7 +111,7 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
 
   def render("outbox.json", %{actor: actor}) do
     %{total: total, elements: followers} =
-      if Actor.public_visibility?(actor),
+      if Actor.is_public_visibility(actor),
         do: ActivityPub.fetch_public_activities_for_actor(actor),
         else: @private_visibility_empty_collection
 

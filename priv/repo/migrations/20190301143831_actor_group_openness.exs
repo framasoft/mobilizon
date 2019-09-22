@@ -1,12 +1,12 @@
 defmodule Mobilizon.Repo.Migrations.ActorGroupOpenness do
   use Ecto.Migration
-  alias Mobilizon.Actors.ActorOpennessEnum
+  alias Mobilizon.Actors.ActorOpenness
 
   def up do
-    ActorOpennessEnum.create_type()
+    ActorOpenness.create_type()
 
     alter table(:actors) do
-      add(:openness, ActorOpennessEnum.type(), default: "moderated")
+      add(:openness, ActorOpenness.type(), default: "moderated")
     end
   end
 

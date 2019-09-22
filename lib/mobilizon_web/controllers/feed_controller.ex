@@ -8,60 +8,60 @@ defmodule MobilizonWeb.FeedController do
 
   def actor(conn, %{"name" => name, "format" => "atom"}) do
     case Cachex.fetch(:feed, "actor_" <> name) do
-      {status, data} when status in [:ok, :commit] ->
+      {:commit, data} ->
         conn
         |> put_resp_content_type("application/atom+xml")
         |> send_resp(200, data)
 
-      _err ->
+      _ ->
         {:error, :not_found}
     end
   end
 
   def actor(conn, %{"name" => name, "format" => "ics"}) do
     case Cachex.fetch(:ics, "actor_" <> name) do
-      {status, data} when status in [:ok, :commit] ->
+      {:commit, data} ->
         conn
         |> put_resp_content_type("text/calendar")
         |> send_resp(200, data)
 
-      _err ->
+      _ ->
         {:error, :not_found}
     end
   end
 
   def event(conn, %{"uuid" => uuid, "format" => "ics"}) do
     case Cachex.fetch(:ics, "event_" <> uuid) do
-      {status, data} when status in [:ok, :commit] ->
+      {:commit, data} ->
         conn
         |> put_resp_content_type("text/calendar")
         |> send_resp(200, data)
 
-      _err ->
+      _ ->
         {:error, :not_found}
     end
   end
 
   def going(conn, %{"token" => token, "format" => "ics"}) do
     case Cachex.fetch(:ics, "token_" <> token) do
-      {status, data} when status in [:ok, :commit] ->
+      {:commit, data} ->
         conn
         |> put_resp_content_type("text/calendar")
         |> send_resp(200, data)
 
-      _err ->
+      _ ->
         {:error, :not_found}
     end
   end
 
   def going(conn, %{"token" => token, "format" => "atom"}) do
     case Cachex.fetch(:feed, "token_" <> token) do
-      {status, data} when status in [:ok, :commit] ->
+      {:commit, data} ->
         conn
         |> put_resp_content_type("application/atom+xml")
         |> send_resp(200, data)
 
-      _err ->
+      {:ignore, _} ->
         {:error, :not_found}
     end
   end

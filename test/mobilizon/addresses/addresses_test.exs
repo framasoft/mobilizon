@@ -76,23 +76,5 @@ defmodule Mobilizon.AddressesTest do
       assert {:ok, %Address{}} = Addresses.delete_address(address)
       assert_raise Ecto.NoResultsError, fn -> Addresses.get_address!(address.id) end
     end
-
-    test "change_address/1 returns a address changeset" do
-      address = insert(:address)
-      assert %Ecto.Changeset{} = Addresses.change_address(address)
-    end
-
-    test "process_geom/2 with valid data returns a Point element" do
-      attrs = %{"type" => "point", "data" => %{"latitude" => 10, "longitude" => -10}}
-      assert {:ok, %Geo.Point{}} = Addresses.process_geom(attrs)
-    end
-
-    test "process_geom/2 with invalid data returns nil" do
-      attrs = %{"type" => :point, "data" => %{"latitude" => nil, "longitude" => nil}}
-      assert {:error, "Latitude and longitude must be numbers"} = Addresses.process_geom(attrs)
-
-      attrs = %{"type" => :not_valid, "data" => %{"latitude" => nil, "longitude" => nil}}
-      assert {:error, :invalid_type} == Addresses.process_geom(attrs)
-    end
   end
 end

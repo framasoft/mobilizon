@@ -14,9 +14,11 @@ defmodule Mobilizon.DataCase do
 
   use ExUnit.CaseTemplate
 
+  alias Mobilizon.Config
+
   using do
     quote do
-      alias Mobilizon.Repo
+      alias Mobilizon.Storage.Repo
 
       import Ecto
       import Ecto.Changeset
@@ -26,10 +28,10 @@ defmodule Mobilizon.DataCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Mobilizon.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Mobilizon.Storage.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Mobilizon.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(Mobilizon.Storage.Repo, {:shared, self()})
     end
 
     :ok
@@ -52,16 +54,16 @@ defmodule Mobilizon.DataCase do
   end
 
   def ensure_local_uploader(_context) do
-    uploader = Mobilizon.CommonConfig.get([MobilizonWeb.Upload, :uploader])
-    filters = Mobilizon.CommonConfig.get([MobilizonWeb.Upload, :filters])
+    uploader = Config.get([MobilizonWeb.Upload, :uploader])
+    filters = Config.get([MobilizonWeb.Upload, :filters])
 
     unless uploader == MobilizonWeb.Uploaders.Local || filters != [] do
-      Mobilizon.CommonConfig.put([MobilizonWeb.Upload, :uploader], MobilizonWeb.Uploaders.Local)
-      Mobilizon.CommonConfig.put([MobilizonWeb.Upload, :filters], [])
+      Config.put([MobilizonWeb.Upload, :uploader], MobilizonWeb.Uploaders.Local)
+      Config.put([MobilizonWeb.Upload, :filters], [])
 
       on_exit(fn ->
-        Mobilizon.CommonConfig.put([MobilizonWeb.Upload, :uploader], uploader)
-        Mobilizon.CommonConfig.put([MobilizonWeb.Upload, :filters], filters)
+        Config.put([MobilizonWeb.Upload, :uploader], uploader)
+        Config.put([MobilizonWeb.Upload, :filters], filters)
       end)
     end
 

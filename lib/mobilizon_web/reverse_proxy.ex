@@ -260,7 +260,7 @@ defmodule MobilizonWeb.ReverseProxy do
               headers,
               "user-agent",
               0,
-              {"user-agent", Mobilizon.Application.user_agent()}
+              {"user-agent", Mobilizon.user_agent()}
             )
           else
             headers

@@ -1,11 +1,19 @@
 defmodule Mobilizon.Media.Picture do
   @moduledoc """
-  Represents a picture entity
+  Represents a picture entity.
   """
+
   use Ecto.Schema
-  import Ecto.Changeset
-  alias Mobilizon.Media.File
+
+  import Ecto.Changeset, only: [cast: 3, cast_embed: 2]
+
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Media.File
+
+  @type t :: %__MODULE__{
+          file: File.t(),
+          actor: Actor.t()
+        }
 
   schema "pictures" do
     embeds_one(:file, File, on_replace: :update)
@@ -15,7 +23,8 @@ defmodule Mobilizon.Media.Picture do
   end
 
   @doc false
-  def changeset(picture, attrs) do
+  @spec changeset(t, map) :: Ecto.Changeset.t()
+  def changeset(%__MODULE__{} = picture, attrs) do
     picture
     |> cast(attrs, [:actor_id])
     |> cast_embed(:file)

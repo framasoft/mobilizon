@@ -1,12 +1,15 @@
 defmodule Mobilizon.ActorsTest do
+  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+
   use Mobilizon.DataCase
 
-  alias Mobilizon.Actors
-  alias Mobilizon.Actors.{Actor, Member, Follower, Bot}
-  alias Mobilizon.Users
-  alias Mobilizon.Media.File, as: FileModel
   import Mobilizon.Factory
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+
+  alias Mobilizon.{Actors, Config, Users}
+  alias Mobilizon.Actors.{Actor, Member, Follower, Bot}
+  alias Mobilizon.Media.File, as: FileModel
+  alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Storage.Page
 
   describe "actors" do
     @valid_attrs %{
@@ -41,8 +44,6 @@ defmodule Mobilizon.ActorsTest do
     }
 
     @remote_account_url "https://social.tcit.fr/users/tcit"
-    @remote_account_username "tcit"
-    @remote_account_domain "social.tcit.fr"
 
     setup do
       user = insert(:user)
@@ -71,14 +72,14 @@ defmodule Mobilizon.ActorsTest do
       assert actor_id == Users.get_actor_for_user(user).id
     end
 
-    test "get_actor_with_everything/1 returns the actor with it's organized events", %{
+    test "get_actor_with_preload/1 returns the actor with it's organized events", %{
       actor: actor
     } do
-      assert Actors.get_actor_with_everything(actor.id).organized_events == []
+      assert Actors.get_actor_with_preload(actor.id).organized_events == []
       event = insert(:event, organizer_actor: actor)
 
       event_found_id =
-        Actors.get_actor_with_everything(actor.id).organized_events |> hd |> Map.get(:id)
+        Actors.get_actor_with_preload(actor.id).organized_events |> hd |> Map.get(:id)
 
       assert event_found_id == event.id
     end
@@ -98,7 +99,7 @@ defmodule Mobilizon.ActorsTest do
            preferred_username: preferred_username,
            domain: domain,
            avatar: %FileModel{name: picture_name} = _picture
-         } = _actor} = Actors.get_or_fetch_by_url(@remote_account_url)
+         } = _actor} = ActivityPub.get_or_fetch_by_url(@remote_account_url)
 
         assert picture_name == "avatar"
 
@@ -112,53 +113,51 @@ defmodule Mobilizon.ActorsTest do
       end
     end
 
-    test "get_local_actor_by_name_with_everything!/1 returns the local actor with it's organized events",
+    test "get_local_actor_by_name_with_preload!/1 returns the local actor with it's organized events",
          %{
            actor: actor
          } do
-      assert Actors.get_local_actor_by_name_with_everything(actor.preferred_username).organized_events ==
+      assert Actors.get_local_actor_by_name_with_preload(actor.preferred_username).organized_events ==
                []
 
       event = insert(:event, organizer_actor: actor)
 
       event_found_id =
-        Actors.get_local_actor_by_name_with_everything(actor.preferred_username).organized_events
+        Actors.get_local_actor_by_name_with_preload(actor.preferred_username).organized_events
         |> hd
         |> Map.get(:id)
 
       assert event_found_id == event.id
     end
 
-    test "get_actor_by_name_with_everything!/1 returns the local actor with it's organized events",
+    test "get_actor_by_name_with_preload!/1 returns the local actor with it's organized events",
          %{
            actor: actor
          } do
-      assert Actors.get_actor_by_name_with_everything(actor.preferred_username).organized_events ==
+      assert Actors.get_actor_by_name_with_preload(actor.preferred_username).organized_events ==
                []
 
       event = insert(:event, organizer_actor: actor)
 
       event_found_id =
-        Actors.get_actor_by_name_with_everything(actor.preferred_username).organized_events
+        Actors.get_actor_by_name_with_preload(actor.preferred_username).organized_events
         |> hd
         |> Map.get(:id)
 
       assert event_found_id == event.id
     end
 
-    test "get_actor_by_name_with_everything!/1 returns the remote actor with it's organized events" do
+    test "get_actor_by_name_with_preload!/1 returns the remote actor with it's organized events" do
       use_cassette "actors/remote_actor_mastodon_tcit" do
-        with {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(@remote_account_url) do
-          assert Actors.get_actor_by_name_with_everything(
+        with {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_by_url(@remote_account_url) do
+          assert Actors.get_actor_by_name_with_preload(
                    "#{actor.preferred_username}@#{actor.domain}"
                  ).organized_events == []
 
           event = insert(:event, organizer_actor: actor)
 
           event_found_id =
-            Actors.get_actor_by_name_with_everything(
-              "#{actor.preferred_username}@#{actor.domain}"
-            ).organized_events
+            Actors.get_actor_by_name_with_preload("#{actor.preferred_username}@#{actor.domain}").organized_events
             |> hd
             |> Map.get(:id)
 
@@ -167,42 +166,21 @@ defmodule Mobilizon.ActorsTest do
       end
     end
 
-    test "get_or_fetch_by_url/1 returns the local actor for the url", %{
-      actor: %Actor{preferred_username: preferred_username} = actor
-    } do
-      with {:ok, %Actor{domain: domain} = actor} <- Actors.get_or_fetch_by_url(actor.url) do
-        assert preferred_username == actor.preferred_username
-        assert is_nil(domain)
-      end
-    end
-
-    test "get_or_fetch_by_url/1 returns the remote actor for the url" do
-      use_cassette "actors/remote_actor_mastodon_tcit" do
-        with {:ok, %Actor{preferred_username: preferred_username, domain: domain}} <-
-               Actors.get_or_fetch_by_url!(@remote_account_url) do
-          assert preferred_username == @remote_account_username
-          assert domain == @remote_account_domain
-        end
-      end
-    end
-
-    test "test find_local_by_username/1 returns local actors with similar usernames", %{
+    test "test list_local_actor_by_username/1 returns local actors with similar usernames", %{
       actor: actor
     } do
       actor2 = insert(:actor, preferred_username: "tcit")
-      [%Actor{id: actor_found_id} | tail] = Actors.find_local_by_username("tcit")
+      [%Actor{id: actor_found_id} | tail] = Actors.list_local_actor_by_username("tcit")
       %Actor{id: actor2_found_id} = hd(tail)
       assert MapSet.new([actor_found_id, actor2_found_id]) == MapSet.new([actor.id, actor2.id])
     end
 
-    test "test find_and_count_actors_by_username_or_name/4 returns actors with similar usernames",
-         %{
-           actor: %Actor{id: actor_id}
-         } do
+    test "test build_actors_by_username_or_name_page/4 returns actors with similar usernames",
+         %{actor: %Actor{id: actor_id}} do
       use_cassette "actors/remote_actor_mastodon_tcit" do
-        with {:ok, %Actor{id: actor2_id}} <- Actors.get_or_fetch_by_url(@remote_account_url) do
-          %{total: 2, elements: actors} =
-            Actors.find_and_count_actors_by_username_or_name("tcit", [:Person])
+        with {:ok, %Actor{id: actor2_id}} <- ActivityPub.get_or_fetch_by_url(@remote_account_url) do
+          %Page{total: 2, elements: actors} =
+            Actors.build_actors_by_username_or_name_page("tcit", [:Person])
 
           actors_ids = actors |> Enum.map(& &1.id)
 
@@ -211,33 +189,11 @@ defmodule Mobilizon.ActorsTest do
       end
     end
 
-    test "test find_and_count_actors_by_username_or_name/4 returns actors with similar names" do
+    test "test build_actors_by_username_or_name_page/4 returns actors with similar names" do
       %{total: 0, elements: actors} =
-        Actors.find_and_count_actors_by_username_or_name("ohno", [:Person])
+        Actors.build_actors_by_username_or_name_page("ohno", [:Person])
 
       assert actors == []
-    end
-
-    test "test get_public_key_for_url/1 with local actor", %{actor: actor} do
-      assert Actor.get_public_key_for_url(actor.url) ==
-               actor.keys |> Mobilizon.Actors.Actor.prepare_public_key()
-    end
-
-    @remote_actor_key {:ok,
-                       {:RSAPublicKey,
-                        20_890_513_599_005_517_665_557_846_902_571_022_168_782_075_040_010_449_365_706_450_877_170_130_373_892_202_874_869_873_999_284_399_697_282_332_064_948_148_602_583_340_776_692_090_472_558_740_998_357_203_838_580_321_412_679_020_304_645_826_371_196_718_081_108_049_114_160_630_664_514_340_729_769_453_281_682_773_898_619_827_376_232_969_899_348_462_205_389_310_883_299_183_817_817_999_273_916_446_620_095_414_233_374_619_948_098_516_821_650_069_821_783_810_210_582_035_456_563_335_930_330_252_551_528_035_801_173_640_288_329_718_719_895_926_309_416_142_129_926_226_047_930_429_802_084_560_488_897_717_417_403_272_782_469_039_131_379_953_278_833_320_195_233_761_955_815_307_522_871_787_339_192_744_439_894_317_730_207_141_881_699_363_391_788_150_650_217_284_777_541_358_381_165_360_697_136_307_663_640_904_621_178_632_289_787,
-                        65_537}}
-    test "test get_public_key_for_url/1 with remote actor" do
-      use_cassette "actors/remote_actor_mastodon_tcit" do
-        assert Actor.get_public_key_for_url(@remote_account_url) == @remote_actor_key
-      end
-    end
-
-    test "test get_public_key_for_url/1 with remote actor and bad key" do
-      use_cassette "actors/remote_actor_mastodon_tcit_actor_deleted" do
-        assert Actor.get_public_key_for_url(@remote_account_url) ==
-                 {:error, :actor_fetch_error}
-      end
     end
 
     test "create_actor/1 with valid data creates a actor" do
@@ -281,12 +237,12 @@ defmodule Mobilizon.ActorsTest do
       %URI{path: "/media/" <> banner_path} = URI.parse(banner_url)
 
       assert File.exists?(
-               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
                  "/" <> avatar_path
              )
 
       assert File.exists?(
-               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
                  "/" <> banner_path
              )
 
@@ -312,12 +268,12 @@ defmodule Mobilizon.ActorsTest do
       refute actor.suspended
 
       refute File.exists?(
-               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
                  "/" <> avatar_path
              )
 
       assert File.exists?(
-               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
                  "/" <> banner_path
              )
     end
@@ -335,12 +291,12 @@ defmodule Mobilizon.ActorsTest do
       %URI{path: "/media/" <> banner_path} = URI.parse(banner_url)
 
       assert File.exists?(
-               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
                  "/" <> avatar_path
              )
 
       assert File.exists?(
-               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
                  "/" <> banner_path
              )
 
@@ -348,13 +304,9 @@ defmodule Mobilizon.ActorsTest do
       assert_raise Ecto.NoResultsError, fn -> Actors.get_actor!(actor_id) end
 
       refute File.exists?(
-               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
                  "/" <> banner_path
              )
-    end
-
-    test "change_actor/1 returns a actor changeset", %{actor: actor} do
-      assert %Ecto.Changeset{} = Actors.change_actor(actor)
     end
   end
 
@@ -464,11 +416,6 @@ defmodule Mobilizon.ActorsTest do
       assert {:ok, %Bot{}} = Actors.delete_bot(bot)
       assert_raise Ecto.NoResultsError, fn -> Actors.get_bot!(bot.id) end
     end
-
-    test "change_bot/1 returns a bot changeset" do
-      bot = insert(:bot)
-      assert %Ecto.Changeset{} = Actors.change_bot(bot)
-    end
   end
 
   describe "followers" do
@@ -506,8 +453,8 @@ defmodule Mobilizon.ActorsTest do
       assert {:ok, %Follower{} = follower} = Actors.create_follower(valid_attrs)
       assert follower.approved == true
 
-      assert %{total: 1, elements: [target_actor]} = Actor.get_followings(actor)
-      assert %{total: 1, elements: [actor]} = Actor.get_followers(target_actor)
+      assert %{total: 1, elements: [target_actor]} = Actors.build_followings_for_actor(actor)
+      assert %{total: 1, elements: [actor]} = Actors.build_followers_for_actor(target_actor)
     end
 
     test "create_follower/1 with valid data but same actors fails to create a follower", %{
@@ -555,33 +502,28 @@ defmodule Mobilizon.ActorsTest do
       assert_raise Ecto.NoResultsError, fn -> Actors.get_follower!(follower.id) end
     end
 
-    test "change_follower/1 returns a follower changeset", context do
-      follower = create_test_follower(context)
-      assert %Ecto.Changeset{} = Actors.change_follower(follower)
-    end
-
     test "follow/3 makes an actor follow another", %{actor: actor, target_actor: target_actor} do
       # Preloading followers/followings
-      actor = Actors.get_actor_with_everything(actor.id)
-      target_actor = Actors.get_actor_with_everything(target_actor.id)
+      actor = Actors.get_actor_with_preload(actor.id)
+      target_actor = Actors.get_actor_with_preload(target_actor.id)
 
-      {:ok, follower} = Actor.follow(target_actor, actor)
+      {:ok, follower} = Actors.follow(target_actor, actor)
       assert follower.actor.id == actor.id
 
       # Referesh followers/followings
-      actor = Actors.get_actor_with_everything(actor.id)
-      target_actor = Actors.get_actor_with_everything(target_actor.id)
+      actor = Actors.get_actor_with_preload(actor.id)
+      target_actor = Actors.get_actor_with_preload(target_actor.id)
 
       assert target_actor.followers |> Enum.map(& &1.actor_id) == [actor.id]
       assert actor.followings |> Enum.map(& &1.target_actor_id) == [target_actor.id]
 
       # Test if actor is already following target actor
-      assert {:error, :already_following, msg} = Actor.follow(target_actor, actor)
+      assert {:error, :already_following, msg} = Actors.follow(target_actor, actor)
       assert msg =~ "already following"
 
       # Test if target actor is suspended
       target_actor = %{target_actor | suspended: true}
-      assert {:error, :suspended, msg} = Actor.follow(target_actor, actor)
+      assert {:error, :suspended, msg} = Actors.follow(target_actor, actor)
       assert msg =~ "suspended"
     end
   end
@@ -621,8 +563,8 @@ defmodule Mobilizon.ActorsTest do
       assert {:ok, %Member{} = member} = Actors.create_member(valid_attrs)
       assert member.role == :member
 
-      assert [group] = Actor.get_groups_member_of(actor)
-      assert [actor] = Actor.get_members_for_group(group)
+      assert [group] = Actors.list_groups_member_of(actor)
+      assert [actor] = Actors.list_members_for_group(group)
     end
 
     test "create_member/1 with valid data but same actors fails to create a member", %{
@@ -666,11 +608,6 @@ defmodule Mobilizon.ActorsTest do
       member = create_test_member(context)
       assert {:ok, %Member{}} = Actors.delete_member(member)
       assert_raise Ecto.NoResultsError, fn -> Actors.get_member!(member.id) end
-    end
-
-    test "change_member/1 returns a member changeset", context do
-      member = create_test_member(context)
-      assert %Ecto.Changeset{} = Actors.change_member(member)
     end
   end
 end

@@ -31,7 +31,13 @@ defmodule MobilizonWeb.Upload do
   * `MobilizonWeb.Upload.Filter`
 
   """
+
   alias Ecto.UUID
+
+  alias Mobilizon.Config
+
+  alias MobilizonWeb.MIME
+
   require Logger
 
   @type source ::
@@ -110,33 +116,33 @@ defmodule MobilizonWeb.Upload do
     {size_limit, activity_type} =
       case Keyword.get(opts, :type) do
         :banner ->
-          {Mobilizon.CommonConfig.get!([:instance, :banner_upload_limit]), "Image"}
+          {Config.get!([:instance, :banner_upload_limit]), "Image"}
 
         :avatar ->
-          {Mobilizon.CommonConfig.get!([:instance, :avatar_upload_limit]), "Image"}
+          {Config.get!([:instance, :avatar_upload_limit]), "Image"}
 
         _ ->
-          {Mobilizon.CommonConfig.get!([:instance, :upload_limit]), nil}
+          {Config.get!([:instance, :upload_limit]), nil}
       end
 
     %{
       activity_type: Keyword.get(opts, :activity_type, activity_type),
       size_limit: Keyword.get(opts, :size_limit, size_limit),
-      uploader: Keyword.get(opts, :uploader, Mobilizon.CommonConfig.get([__MODULE__, :uploader])),
-      filters: Keyword.get(opts, :filters, Mobilizon.CommonConfig.get([__MODULE__, :filters])),
+      uploader: Keyword.get(opts, :uploader, Config.get([__MODULE__, :uploader])),
+      filters: Keyword.get(opts, :filters, Config.get([__MODULE__, :filters])),
       description: Keyword.get(opts, :description),
       base_url:
         Keyword.get(
           opts,
           :base_url,
-          Mobilizon.CommonConfig.get([__MODULE__, :base_url], MobilizonWeb.Endpoint.url())
+          Config.get([__MODULE__, :base_url], MobilizonWeb.Endpoint.url())
         )
     }
   end
 
   defp prepare_upload(%Plug.Upload{} = file, opts) do
     with {:ok, size} <- check_file_size(file.path, opts.size_limit),
-         {:ok, content_type, name} <- Mobilizon.MIME.file_mime_type(file.path, file.filename) do
+         {:ok, content_type, name} <- MIME.file_mime_type(file.path, file.filename) do
       {:ok,
        %__MODULE__{
          id: UUID.generate(),
@@ -173,7 +179,7 @@ defmodule MobilizonWeb.Upload do
   defp url_from_spec(%__MODULE__{name: name}, base_url, {:file, path}) do
     path =
       URI.encode(path, &char_unescaped?/1) <>
-        if Mobilizon.CommonConfig.get([__MODULE__, :link_name], false) do
+        if Config.get([__MODULE__, :link_name], false) do
           "?name=#{URI.encode(name, &char_unescaped?/1)}"
         else
           ""

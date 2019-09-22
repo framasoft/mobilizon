@@ -61,11 +61,11 @@ config :phoenix, :stacktrace_depth, 20
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :mobilizon, Mobilizon.Mailer, adapter: Bamboo.LocalAdapter
+config :mobilizon, MobilizonWeb.Email.Mailer, adapter: Bamboo.LocalAdapter
 
 # Configure your database
-config :mobilizon, Mobilizon.Repo,
-  types: Mobilizon.PostgresTypes,
+config :mobilizon, Mobilizon.Storage.Repo,
+  types: Mobilizon.Storage.PostgresTypes,
   username: System.get_env("MOBILIZON_DATABASE_USERNAME") || "mobilizon",
   password: System.get_env("MOBILIZON_DATABASE_PASSWORD") || "mobilizon",
   database: System.get_env("MOBILIZON_DATABASE_DBNAME") || "mobilizon_dev",

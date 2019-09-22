@@ -1,16 +1,16 @@
 defmodule MobilizonWeb.API.ReportTest do
   use Mobilizon.DataCase
 
-  alias Mobilizon.Events.Event
-  alias Mobilizon.Events.Comment
-  alias Mobilizon.Actors.Actor
-  alias MobilizonWeb.API.Reports
-  alias Mobilizon.Reports.{Report, Note}
-  alias Mobilizon.Activity
-  alias Mobilizon.Users.User
-  alias Mobilizon.Users
-
   import Mobilizon.Factory
+
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Events.{Comment, Event}
+  alias Mobilizon.Reports.{Report, Note}
+  alias Mobilizon.Users
+  alias Mobilizon.Users.User
+  alias Mobilizon.Service.ActivityPub.Activity
+
+  alias MobilizonWeb.API.Reports
 
   describe "reports" do
     test "creates a report on a event" do

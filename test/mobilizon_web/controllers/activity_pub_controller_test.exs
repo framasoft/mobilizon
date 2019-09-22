@@ -8,7 +8,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
   import Mobilizon.Factory
   alias MobilizonWeb.ActivityPub.ActorView
   alias MobilizonWeb.PageView
-  alias Mobilizon.Actors
+  alias Mobilizon.{Actors, Config}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.ActivityPub
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
@@ -177,7 +177,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
     test "it returns the followers in a collection", %{conn: conn} do
       actor = insert(:actor, visibility: :public)
       actor2 = insert(:actor)
-      Actor.follow(actor, actor2)
+      Actors.follow(actor, actor2)
 
       result =
         conn
@@ -190,7 +190,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
     test "it returns no followers for a private actor", %{conn: conn} do
       actor = insert(:actor, visibility: :private)
       actor2 = insert(:actor)
-      Actor.follow(actor, actor2)
+      Actors.follow(actor, actor2)
 
       result =
         conn
@@ -205,7 +205,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
       Enum.each(1..15, fn _ ->
         other_actor = insert(:actor)
-        Actor.follow(actor, other_actor)
+        Actors.follow(actor, other_actor)
       end)
 
       result =
@@ -229,7 +229,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
     test "it returns the followings in a collection", %{conn: conn} do
       actor = insert(:actor)
       actor2 = insert(:actor, visibility: :public)
-      Actor.follow(actor, actor2)
+      Actors.follow(actor, actor2)
 
       result =
         conn
@@ -242,7 +242,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
     test "it returns no followings for a private actor", %{conn: conn} do
       actor = insert(:actor)
       actor2 = insert(:actor, visibility: :private)
-      Actor.follow(actor, actor2)
+      Actors.follow(actor, actor2)
 
       result =
         conn
@@ -257,7 +257,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
       Enum.each(1..15, fn _ ->
         other_actor = insert(:actor)
-        Actor.follow(other_actor, actor)
+        Actors.follow(other_actor, actor)
       end)
 
       result =
@@ -290,14 +290,14 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
     end
 
     test "with the relay disabled, it returns 404", %{conn: conn} do
-      Mobilizon.CommonConfig.put([:instance, :allow_relay], false)
+      Config.put([:instance, :allow_relay], false)
 
       conn
       |> get(activity_pub_path(conn, :relay))
       |> json_response(404)
       |> assert
 
-      Mobilizon.CommonConfig.put([:instance, :allow_relay], true)
+      Config.put([:instance, :allow_relay], true)
     end
   end
 
@@ -322,7 +322,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
   #      Enum.each(1..15, fn _ ->
   #        actor = Repo.get(Actor, actor.id)
   #        other_actor = insert(:actor)
-  #        Actor.follow(actor, other_actor)
+  #        Actors.follow(actor, other_actor)
   #      end)
 
   #      result =

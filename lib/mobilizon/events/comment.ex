@@ -1,33 +1,42 @@
-import EctoEnum
-
-defenum(Mobilizon.Events.CommentVisibilityEnum, :comment_visibility_type, [
-  :public,
-  :unlisted,
-  :private,
-  :moderated,
-  :invite
-])
-
 defmodule Mobilizon.Events.Comment do
   @moduledoc """
-  An actor comment (for instance on an event or on a group)
+  Represents an actor comment (for instance on an event or on a group).
   """
 
   use Ecto.Schema
+
   import Ecto.Changeset
 
-  alias Mobilizon.Events.Event
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.Comment
+  alias Mobilizon.Events.{Comment, CommentVisibility, Event}
+
   alias MobilizonWeb.Router.Helpers, as: Routes
   alias MobilizonWeb.Endpoint
+
+  @type t :: %__MODULE__{
+          text: String.t(),
+          url: String.t(),
+          local: boolean,
+          visibility: CommentVisibility.t(),
+          uuid: Ecto.UUID.t(),
+          actor: Actor.t(),
+          attributed_to: Actor.t(),
+          event: Event.t(),
+          in_reply_to_comment: t,
+          origin_comment: t
+        }
+
+  @required_attrs [:text, :actor_id, :url]
+  @optional_attrs [:event_id, :in_reply_to_comment_id, :origin_comment_id, :attributed_to_id]
+  @attrs @required_attrs ++ @optional_attrs
 
   schema "comments" do
     field(:text, :string)
     field(:url, :string)
     field(:local, :boolean, default: true)
-    field(:visibility, Mobilizon.Events.CommentVisibilityEnum, default: :public)
+    field(:visibility, CommentVisibility, default: :public)
     field(:uuid, Ecto.UUID)
+
     belongs_to(:actor, Actor, foreign_key: :actor_id)
     belongs_to(:attributed_to, Actor, foreign_key: :attributed_to_id)
     belongs_to(:event, Event, foreign_key: :event_id)
@@ -37,38 +46,27 @@ defmodule Mobilizon.Events.Comment do
     timestamps(type: :utc_datetime)
   end
 
-  @doc false
-  def changeset(comment, attrs) do
-    uuid =
-      if Map.has_key?(attrs, "uuid"),
-        do: attrs["uuid"],
-        else: Ecto.UUID.generate()
-
-    # TODO : really change me right away
-    url =
-      if Map.has_key?(attrs, "url"),
-        do: attrs["url"],
-        else: Routes.page_url(Endpoint, :comment, uuid)
-
-    comment
-    |> Ecto.Changeset.cast(attrs, [
-      :url,
-      :text,
-      :actor_id,
-      :event_id,
-      :in_reply_to_comment_id,
-      :origin_comment_id,
-      :attributed_to_id
-    ])
-    |> put_change(:uuid, uuid)
-    |> put_change(:url, url)
-    |> validate_required([:text, :actor_id, :url])
-  end
-
   @doc """
-  Returns the id of the first comment in the conversation
+  Returns the id of the first comment in the conversation.
   """
-  def get_thread_id(%Comment{id: id, origin_comment_id: origin_comment_id}) do
+  @spec get_thread_id(t) :: integer
+  def get_thread_id(%__MODULE__{id: id, origin_comment_id: origin_comment_id}) do
     origin_comment_id || id
   end
+
+  @doc false
+  @spec changeset(t, map) :: Ecto.Changeset.t()
+  def changeset(%__MODULE__{} = comment, attrs) do
+    uuid = attrs["uuid"] || Ecto.UUID.generate()
+    url = attrs["url"] || generate_url(uuid)
+
+    comment
+    |> cast(attrs, @attrs)
+    |> put_change(:uuid, uuid)
+    |> put_change(:url, url)
+    |> validate_required(@required_attrs)
+  end
+
+  @spec generate_url(String.t()) :: String.t()
+  defp generate_url(uuid), do: Routes.page_url(Endpoint, :comment, uuid)
 end

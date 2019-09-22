@@ -4,7 +4,6 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Comment do
 
   This module allows to convert events from ActivityStream format to our own internal one, and back
   """
-  alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Comment, as: CommentModel
   alias Mobilizon.Events.Event
@@ -20,7 +19,7 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Comment do
   @impl Converter
   @spec as_to_model_data(map()) :: map()
   def as_to_model_data(object) do
-    {:ok, %Actor{id: actor_id}} = Actors.get_or_fetch_by_url(object["actor"])
+    {:ok, %Actor{id: actor_id}} = ActivityPub.get_or_fetch_by_url(object["actor"])
     Logger.debug("Inserting full comment")
     Logger.debug(inspect(object))
 

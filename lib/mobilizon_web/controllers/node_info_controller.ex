@@ -6,10 +6,9 @@
 defmodule MobilizonWeb.NodeInfoController do
   use MobilizonWeb, :controller
 
-  alias Mobilizon.CommonConfig
+  alias Mobilizon.Config
   alias Mobilizon.Service.Statistics
 
-  @instance Application.get_env(:mobilizon, :instance)
   @node_info_supported_versions ["2.0", "2.1"]
   @node_info_schema_uri "http://nodeinfo.diaspora.software/ns/schema/"
 
@@ -35,14 +34,14 @@ defmodule MobilizonWeb.NodeInfoController do
       version: version,
       software: %{
         name: "Mobilizon",
-        version: Keyword.get(@instance, :version)
+        version: Config.instance_version()
       },
       protocols: ["activitypub"],
       services: %{
         inbound: [],
         outbound: ["atom1.0"]
       },
-      openRegistrations: CommonConfig.registrations_open?(),
+      openRegistrations: Config.instance_registrations_open?(),
       usage: %{
         users: %{
           total: Statistics.get_cached_value(:local_users)
@@ -51,14 +50,14 @@ defmodule MobilizonWeb.NodeInfoController do
         localComments: Statistics.get_cached_value(:local_comments)
       },
       metadata: %{
-        nodeName: CommonConfig.instance_name(),
-        nodeDescription: CommonConfig.instance_description()
+        nodeName: Config.instance_name(),
+        nodeDescription: Config.instance_description()
       }
     }
 
     response =
       if version == "2.1" do
-        put_in(response, [:software, :repository], Keyword.get(@instance, :repository))
+        put_in(response, [:software, :repository], Config.instance_repository())
       else
         response
       end

@@ -1,6 +1,6 @@
-defmodule Mobilizon.Mailer do
+defmodule MobilizonWeb.Email.Mailer do
   @moduledoc """
-  Mailer
+  Mobilizon Mailer.
   """
   use Bamboo.Mailer, otp_app: :mobilizon
 end

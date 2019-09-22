@@ -1,12 +1,12 @@
 defmodule Mobilizon.Repo.Migrations.MoveMemberRoleToEnum do
   use Ecto.Migration
-  alias Mobilizon.Actors.MemberRoleEnum
+  alias Mobilizon.Actors.MemberRole
 
   def up do
-    MemberRoleEnum.create_type()
+    MemberRole.create_type()
 
     alter table(:members) do
-      add(:role_tmp, MemberRoleEnum.type(), default: "member")
+      add(:role_tmp, MemberRole.type(), default: "member")
     end
 
     execute("UPDATE members set role_tmp = 'member' where role = 0")
@@ -39,7 +39,7 @@ defmodule Mobilizon.Repo.Migrations.MoveMemberRoleToEnum do
       remove(:role)
     end
 
-    MemberRoleEnum.drop_type()
+    MemberRole.drop_type()
 
     rename(table(:members), :role_tmp, to: :role)
   end

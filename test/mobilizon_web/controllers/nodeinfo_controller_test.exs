@@ -1,7 +1,7 @@
 defmodule MobilizonWeb.NodeInfoControllerTest do
   use MobilizonWeb.ConnCase
 
-  @instance Application.get_env(:mobilizon, :instance)
+  alias Mobilizon.Config
 
   test "Get node info schemas", %{conn: conn} do
     conn = get(conn, node_info_path(conn, :schemas))
@@ -38,16 +38,16 @@ defmodule MobilizonWeb.NodeInfoControllerTest do
 
     assert resp == %{
              "metadata" => %{
-               "nodeName" => Mobilizon.CommonConfig.instance_name(),
-               "nodeDescription" => Mobilizon.CommonConfig.instance_description()
+               "nodeName" => Config.instance_name(),
+               "nodeDescription" => Config.instance_description()
              },
-             "openRegistrations" => Keyword.get(@instance, :registrations_open),
+             "openRegistrations" => Config.instance_registrations_open?(),
              "protocols" => ["activitypub"],
              "services" => %{"inbound" => [], "outbound" => ["atom1.0"]},
              "software" => %{
                "name" => "Mobilizon",
-               "version" => Keyword.get(@instance, :version),
-               "repository" => Keyword.get(@instance, :repository)
+               "version" => Config.instance_version(),
+               "repository" => Config.instance_repository()
              },
              "usage" => %{"localComments" => 0, "localPosts" => 0, "users" => %{"total" => 0}},
              "version" => "2.1"

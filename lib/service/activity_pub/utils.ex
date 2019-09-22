@@ -10,24 +10,25 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   Various utils
   """
 
-  alias Mobilizon.Repo
+  alias Ecto.Changeset
+
   alias Mobilizon.Addresses
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.Event
-  alias Mobilizon.Events.Comment
-  alias Mobilizon.Media.Picture
   alias Mobilizon.Events
-  alias Mobilizon.Activity
+  alias Mobilizon.Events.{Comment, Event}
+  alias Mobilizon.Media.Picture
   alias Mobilizon.Reports
   alias Mobilizon.Reports.Report
+  alias Mobilizon.Service.ActivityPub.{Activity, Converters}
+  alias Mobilizon.Storage.Repo
   alias Mobilizon.Users
-  alias Mobilizon.Service.ActivityPub.Converters
-  alias Ecto.Changeset
-  require Logger
+
+  alias MobilizonWeb.{Email, Endpoint}
   alias MobilizonWeb.Router.Helpers, as: Routes
-  alias MobilizonWeb.Endpoint
+
+  require Logger
 
   @actor_types ["Group", "Person", "Application"]
 
@@ -164,8 +165,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
          {:ok, %Report{} = report} <- Reports.create_report(data) do
       Enum.each(Users.list_moderators(), fn moderator ->
         moderator
-        |> Mobilizon.Email.Admin.report(report)
-        |> Mobilizon.Mailer.deliver_later()
+        |> Email.Admin.report(report)
+        |> Email.Mailer.deliver_later()
       end)
 
       {:ok, report}

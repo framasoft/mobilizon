@@ -7,6 +7,7 @@ defmodule MobilizonWeb.Schema do
   alias Mobilizon.{Actors, Events, Users, Addresses, Media, Reports}
   alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Events.{Event, Comment, Participant}
+  alias Mobilizon.Storage.Repo
 
   import_types(MobilizonWeb.Schema.Custom.UUID)
   import_types(MobilizonWeb.Schema.Custom.Point)
@@ -87,14 +88,17 @@ defmodule MobilizonWeb.Schema do
   end
 
   def context(ctx) do
+    default_query = fn queryable, _params -> queryable end
+    default_source = Dataloader.Ecto.new(Repo, query: default_query)
+
     loader =
       Dataloader.new()
-      |> Dataloader.add_source(Actors, Actors.data())
-      |> Dataloader.add_source(Users, Users.data())
-      |> Dataloader.add_source(Events, Events.data())
-      |> Dataloader.add_source(Addresses, Addresses.data())
-      |> Dataloader.add_source(Media, Media.data())
-      |> Dataloader.add_source(Reports, Reports.data())
+      |> Dataloader.add_source(Actors, default_source)
+      |> Dataloader.add_source(Users, default_source)
+      |> Dataloader.add_source(Events, default_source)
+      |> Dataloader.add_source(Addresses, default_source)
+      |> Dataloader.add_source(Media, default_source)
+      |> Dataloader.add_source(Reports, default_source)
 
     Map.put(ctx, :loader, loader)
   end

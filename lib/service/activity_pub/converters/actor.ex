@@ -33,7 +33,7 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Actor do
       "type" => String.to_existing_atom(object["type"]),
       "preferred_username" => object["preferredUsername"],
       "summary" => object["summary"],
-      "url" => object["url"],
+      "url" => object["id"],
       "name" => object["name"],
       "avatar" => avatar,
       "banner" => banner,

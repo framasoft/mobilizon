@@ -1,8 +1,9 @@
 defmodule Mobilizon.MediaTest do
   use Mobilizon.DataCase
 
-  alias Mobilizon.Media
   import Mobilizon.Factory
+
+  alias Mobilizon.{Config, Media}
 
   describe "media" do
     setup [:ensure_local_uploader]
@@ -48,7 +49,7 @@ defmodule Mobilizon.MediaTest do
       %URI{path: "/media/" <> path} = URI.parse(picture.file.url)
 
       assert File.exists?(
-               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
                  "/" <> path
              )
 
@@ -56,14 +57,9 @@ defmodule Mobilizon.MediaTest do
       assert_raise Ecto.NoResultsError, fn -> Media.get_picture!(picture.id) end
 
       refute File.exists?(
-               Mobilizon.CommonConfig.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
                  "/" <> path
              )
-    end
-
-    test "change_picture/1 returns a picture changeset" do
-      picture = insert(:picture)
-      assert %Ecto.Changeset{} = Media.change_picture(picture)
     end
   end
 end

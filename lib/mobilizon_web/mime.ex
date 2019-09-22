@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/lib/pleroma/mime.ex
 
-defmodule Mobilizon.MIME do
+defmodule MobilizonWeb.MIME do
   @moduledoc """
   Returns the mime-type of a binary and optionally a normalized file-name.
   """

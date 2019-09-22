@@ -3,17 +3,18 @@ defmodule MobilizonWeb.API.Reports do
   API for Reports
   """
 
+  import MobilizonWeb.API.Utils
+  import Mobilizon.Service.Admin.ActionLogService
+
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
-  alias Mobilizon.Activity
+  alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Reports, as: ReportsAction
   alias Mobilizon.Reports.{Report, Note}
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Users
   alias Mobilizon.Users.User
-  import MobilizonWeb.API.Utils
-  import Mobilizon.Service.Admin.ActionLogService
 
   @doc """
   Create a report/flag on an actor, and optionally on an event or on comments.
@@ -61,7 +62,7 @@ defmodule MobilizonWeb.API.Reports do
   """
   def update_report_status(%Actor{} = actor, %Report{} = report, state) do
     with {:valid_state, true} <-
-           {:valid_state, Mobilizon.Reports.ReportStateEnum.valid_value?(state)},
+           {:valid_state, Mobilizon.Reports.ReportStatus.valid_value?(state)},
          {:ok, report} <- ReportsAction.update_report(report, %{"status" => state}),
          {:ok, _} <- log_action(actor, "update", report) do
       {:ok, report}
@@ -72,7 +73,7 @@ defmodule MobilizonWeb.API.Reports do
 
   defp get_report_comments(%Actor{id: actor_id}, comment_ids) do
     {:get_report_comments,
-     Events.get_all_comments_by_actor_and_ids(actor_id, comment_ids) |> Enum.map(& &1.url)}
+     Events.list_comments_by_actor_and_ids(actor_id, comment_ids) |> Enum.map(& &1.url)}
   end
 
   defp get_report_comments(_, _), do: {:get_report_comments, nil}
@@ -89,7 +90,7 @@ defmodule MobilizonWeb.API.Reports do
     with %User{role: role} <- Users.get_user!(user_id),
          {:role, true} <- {:role, role in [:administrator, :moderator]},
          {:ok, %Note{} = note} <-
-           Mobilizon.Reports.create_report_note(%{
+           Mobilizon.Reports.create_note(%{
              "report_id" => report_id,
              "moderator_id" => moderator_id,
              "content" => content
@@ -114,7 +115,7 @@ defmodule MobilizonWeb.API.Reports do
          %User{role: role} <- Users.get_user!(user_id),
          {:role, true} <- {:role, role in [:administrator, :moderator]},
          {:ok, %Note{} = note} <-
-           Mobilizon.Reports.delete_report_note(note),
+           Mobilizon.Reports.delete_note(note),
          {:ok, _} <- log_action(moderator, "delete", note) do
       {:ok, note}
     else

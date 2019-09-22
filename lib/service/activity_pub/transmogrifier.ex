@@ -12,8 +12,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Comment, Participant}
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Utils
-  alias Mobilizon.Service.ActivityPub.Visibility
+  alias Mobilizon.Service.ActivityPub.{Visibility, Utils}
 
   require Logger
 
@@ -139,7 +138,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   def handle_incoming(%{"type" => "Create", "object" => %{"type" => "Note"} = object} = data) do
     Logger.info("Handle incoming to create notes")
 
-    with {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(data["actor"]) do
+    with {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_by_url(data["actor"]) do
       Logger.debug("found actor")
       Logger.debug(inspect(actor))
 
@@ -163,7 +162,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   def handle_incoming(%{"type" => "Create", "object" => %{"type" => "Event"} = object} = data) do
     Logger.info("Handle incoming to create event")
 
-    with {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(data["actor"]) do
+    with {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_by_url(data["actor"]) do
       Logger.debug("found actor")
       Logger.debug(inspect(actor))
 
@@ -187,8 +186,8 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   def handle_incoming(
         %{"type" => "Follow", "object" => followed, "actor" => follower, "id" => id} = _data
       ) do
-    with {:ok, %Actor{} = followed} <- Actors.get_or_fetch_by_url(followed, true),
-         {:ok, %Actor{} = follower} <- Actors.get_or_fetch_by_url(follower),
+    with {:ok, %Actor{} = followed} <- ActivityPub.get_or_fetch_by_url(followed, true),
+         {:ok, %Actor{} = follower} <- ActivityPub.get_or_fetch_by_url(follower),
          {:ok, activity, object} <- ActivityPub.follow(follower, followed, id, false) do
       {:ok, activity, object}
     else
@@ -207,7 +206,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
         } = data
       ) do
     with actor_url <- get_actor(data),
-         {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(actor_url),
+         {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_by_url(actor_url),
          {:object_not_found, {:ok, activity, object}} <-
            {:object_not_found,
             do_handle_incoming_accept_following(accepted_object, actor) ||
@@ -236,7 +235,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
         %{"type" => "Reject", "object" => rejected_object, "actor" => _actor, "id" => id} = data
       ) do
     with actor_url <- get_actor(data),
-         {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(actor_url),
+         {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_by_url(actor_url),
          {:object_not_found, {:ok, activity, object}} <-
            {:object_not_found,
             do_handle_incoming_reject_following(rejected_object, actor) ||
@@ -279,7 +278,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
         %{"type" => "Announce", "object" => object_id, "actor" => _actor, "id" => id} = data
       ) do
     with actor <- get_actor(data),
-         {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(actor),
+         {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_by_url(actor),
          {:ok, object} <- fetch_obj_helper_as_activity_streams(object_id),
          public <- Visibility.is_public?(data),
          {:ok, activity, object} <- ActivityPub.announce(actor, object, id, false, public) do
@@ -347,7 +346,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
         } = data
       ) do
     with actor <- get_actor(data),
-         {:ok, %Actor{} = actor} <- Actors.get_or_fetch_by_url(actor),
+         {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_by_url(actor),
          {:ok, object} <- fetch_obj_helper_as_activity_streams(object_id),
          {:ok, activity, object} <-
            ActivityPub.unannounce(actor, object, id, cancelled_activity_id, false) do
@@ -451,7 +450,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   #       } = data
   #     ) do
   #   with actor <- get_actor(data),
-  #        %Actor{} = actor <- Actors.get_or_fetch_by_url(actor),
+  #        %Actor{} = actor <- ActivityPub.get_or_fetch_by_url(actor),
   #        {:ok, object} <- fetch_obj_helper(object_id) || fetch_obj_helper(object_id),
   #        {:ok, activity, _, _} <- ActivityPub.unlike(actor, object, id, false) do
   #     {:ok, activity}
@@ -642,7 +641,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   defp get_follow(follow_object) do
     with follow_object_id when not is_nil(follow_object_id) <- Utils.get_url(follow_object),
          {:not_found, %Follower{} = follow} <-
-           {:not_found, Actors.get_follow_by_url(follow_object_id)} do
+           {:not_found, Actors.get_follower_by_url(follow_object_id)} do
       {:ok, follow}
     else
       {:not_found, _err} ->

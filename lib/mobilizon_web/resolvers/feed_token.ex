@@ -2,10 +2,11 @@ defmodule MobilizonWeb.Resolvers.FeedToken do
   @moduledoc """
   Handles the feed tokens-related GraphQL calls
   """
-  require Logger
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Users.User
   alias Mobilizon.Events
   alias Mobilizon.Events.FeedToken
+  require Logger
 
   @doc """
   Create an feed token for an user and a defined actor
@@ -14,11 +15,11 @@ defmodule MobilizonWeb.Resolvers.FeedToken do
   def create_feed_token(_parent, %{actor_id: actor_id}, %{
         context: %{current_user: %User{id: id} = user}
       }) do
-    with {:is_owned, true, _actor} <- User.owns_actor(user, actor_id),
+    with {:is_owned, %Actor{}} <- User.owns_actor(user, actor_id),
          {:ok, feed_token} <- Events.create_feed_token(%{"user_id" => id, "actor_id" => actor_id}) do
       {:ok, feed_token}
     else
-      {:is_owned, false} ->
+      {:is_owned, nil} ->
         {:error, "Actor id is not owned by authenticated user"}
     end
   end

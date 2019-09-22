@@ -5,10 +5,13 @@
 
 defmodule MobilizonWeb.ActivityPubController do
   use MobilizonWeb, :controller
-  alias Mobilizon.{Actors, Actors.Actor}
-  alias MobilizonWeb.ActivityPub.ActorView
+
+  alias Mobilizon.{Actors, Actors.Actor, Config}
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.Federator
+
+  alias MobilizonWeb.ActivityPub.ActorView
+  alias MobilizonWeb.Cache
 
   require Logger
 
@@ -17,7 +20,7 @@ defmodule MobilizonWeb.ActivityPubController do
   plug(:relay_active? when action in [:relay])
 
   def relay_active?(conn, _) do
-    if Mobilizon.CommonConfig.get([:instance, :allow_relay]) do
+    if Config.get([:instance, :allow_relay]) do
       conn
     else
       conn
@@ -29,7 +32,7 @@ defmodule MobilizonWeb.ActivityPubController do
 
   def following(conn, %{"name" => name, "page" => page}) do
     with {page, ""} <- Integer.parse(page),
-         %Actor{} = actor <- Actors.get_local_actor_by_name_with_everything(name) do
+         %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ActorView.render("following.json", %{actor: actor, page: page}))
@@ -37,7 +40,7 @@ defmodule MobilizonWeb.ActivityPubController do
   end
 
   def following(conn, %{"name" => name}) do
-    with %Actor{} = actor <- Actors.get_local_actor_by_name_with_everything(name) do
+    with %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ActorView.render("following.json", %{actor: actor}))
@@ -46,7 +49,7 @@ defmodule MobilizonWeb.ActivityPubController do
 
   def followers(conn, %{"name" => name, "page" => page}) do
     with {page, ""} <- Integer.parse(page),
-         %Actor{} = actor <- Actors.get_local_actor_by_name_with_everything(name) do
+         %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ActorView.render("followers.json", %{actor: actor, page: page}))
@@ -54,7 +57,7 @@ defmodule MobilizonWeb.ActivityPubController do
   end
 
   def followers(conn, %{"name" => name}) do
-    with %Actor{} = actor <- Actors.get_local_actor_by_name_with_everything(name) do
+    with %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ActorView.render("followers.json", %{actor: actor}))
@@ -111,13 +114,7 @@ defmodule MobilizonWeb.ActivityPubController do
   end
 
   def relay(conn, _params) do
-    with {status, actor} <-
-           Cachex.fetch(
-             :activity_pub,
-             "relay_actor",
-             &Mobilizon.Service.ActivityPub.Relay.get_actor/0
-           ),
-         true <- status in [:ok, :commit] do
+    with {:commit, %Actor{} = actor} <- Cache.get_relay() do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ActorView.render("actor.json", %{actor: actor}))

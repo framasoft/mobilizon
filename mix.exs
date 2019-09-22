@@ -36,7 +36,7 @@ defmodule Mobilizon.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Mobilizon.Application, []},
+      mod: {Mobilizon, []},
       extra_applications: [:logger, :runtime_tools, :guardian, :bamboo, :geolix, :crypto, :cachex]
     ]
   end
@@ -120,9 +120,20 @@ defmodule Mobilizon.Mixfile do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
-      "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate", "test"],
+      "ecto.setup": [
+        "ecto.create",
+        "ecto.migrate",
+        "run priv/repo/seeds.exs"
+      ],
+      "ecto.reset": [
+        "ecto.drop",
+        "ecto.setup"
+      ],
+      test: [
+        "ecto.create --quiet",
+        "ecto.migrate",
+        &run_test/1
+      ],
       "phx.deps_migrate_serve": [
         "deps.get",
         "ecto.create --quiet",
@@ -131,6 +142,11 @@ defmodule Mobilizon.Mixfile do
         "phx.server"
       ]
     ]
+  end
+
+  defp run_test(args) do
+    Mix.Task.run("test", args)
+    File.rm_rf!("test/uploads")
   end
 
   defp docs() do
@@ -172,15 +188,16 @@ defmodule Mobilizon.Mixfile do
       Models: [
         Mobilizon.Actors,
         Mobilizon.Actors.Actor,
-        Mobilizon.Actors.ActorOpennessEnum,
-        Mobilizon.Actors.ActorTypeEnum,
-        Mobilizon.Actors.MemberRoleEnum,
+        Mobilizon.Actors.ActorOpenness,
+        Mobilizon.Actors.ActorType,
+        Mobilizon.Actors.MemberRole,
         Mobilizon.Actors.Bot,
         Mobilizon.Actors.Follower,
         Mobilizon.Actors.Member,
         Mobilizon.Addresses,
         Mobilizon.Addresses.Address,
         Mobilizon.Events,
+        Mobilizon.Service.ActivityPub.Activity,
         Mobilizon.Events.Event,
         Mobilizon.Events.Comment,
         Mobilizon.Events.FeedToken,
@@ -189,22 +206,21 @@ defmodule Mobilizon.Mixfile do
         Mobilizon.Events.Tag,
         Mobilizon.Events.TagRelations,
         Mobilizon.Events.Track,
-        Mobilizon.Event.EventCategoryEnum,
-        Mobilizon.Events.CommentVisibilityEnum,
-        Mobilizon.Events.EventStatusEnum,
-        Mobilizon.Events.EventVisibilityEnum,
-        Mobilizon.Events.JoinOptionsEnum,
-        Mobilizon.Events.ParticipantRoleEnum,
+        Mobilizon.Event.EventCategory,
+        Mobilizon.Events.CommentVisibility,
+        Mobilizon.Events.EventStatus,
+        Mobilizon.Events.EventVisibility,
+        Mobilizon.Events.JoinOptions,
+        Mobilizon.Events.ParticipantRole,
         Mobilizon.Events.Tag.TitleSlug,
         Mobilizon.Events.Tag.TitleSlug.Type,
         Mobilizon.Events.TagRelation,
         Mobilizon.Users,
         Mobilizon.Users.User,
-        Mobilizon.Users.UserRoleEnum,
+        Mobilizon.Users.UserRole,
         Mobilizon.Users.Guards,
-        Mobilizon.Activity,
-        Mobilizon.Ecto,
-        Mobilizon.Repo
+        Mobilizon.Storage.Ecto,
+        Mobilizon.Storage.Repo
       ],
       APIs: [
         MobilizonWeb.API.Comments,
@@ -220,6 +236,7 @@ defmodule Mobilizon.Mixfile do
         MobilizonWeb.Router.Helpers,
         MobilizonWeb.AuthErrorHandler,
         MobilizonWeb.AuthPipeline,
+        MobilizonWeb.Cache,
         MobilizonWeb.ChangesetView,
         MobilizonWeb.Context,
         MobilizonWeb.Endpoint,
@@ -299,9 +316,9 @@ defmodule Mobilizon.Mixfile do
       Tools: [
         Mobilizon.Application,
         Mobilizon.Factory,
-        Mobilizon.Mailer,
-        Mobilizon.EmailView,
-        Mobilizon.Email.User
+        MobilizonWeb.Email.Mailer,
+        MobilizonWeb.Email.User,
+        MobilizonWeb.EmailView
       ]
     ]
   end

@@ -12,8 +12,8 @@ config :mobilizon, MobilizonWeb.Endpoint,
   cache_static_manifest: "priv/static/manifest.json"
 
 # Configure your database
-config :mobilizon, Mobilizon.Repo,
-  types: Mobilizon.PostgresTypes,
+config :mobilizon, Mobilizon.Storage.Repo,
+  types: Mobilizon.Storage.PostgresTypes,
   username: System.get_env("MOBILIZON_DATABASE_USERNAME") || "mobilizon",
   password: System.get_env("MOBILIZON_DATABASE_PASSWORD") || "mobilizon",
   database: System.get_env("MOBILIZON_DATABASE_DBNAME") || "mobilizon_prod",
@@ -21,7 +21,7 @@ config :mobilizon, Mobilizon.Repo,
   port: System.get_env("MOBILIZON_DATABASE_PORT") || "5432",
   pool_size: 15
 
-config :mobilizon, Mobilizon.Mailer,
+config :mobilizon, MobilizonWeb.Email.Mailer,
   adapter: Bamboo.SMTPAdapter,
   server: "localhost",
   hostname: "localhost",

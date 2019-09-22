@@ -9,10 +9,11 @@ defmodule Mobilizon.Service.Federator do
   """
 
   use GenServer
+
   alias Mobilizon.Actors
-  alias Mobilizon.Activity
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Transmogrifier
+  alias Mobilizon.Service.ActivityPub.{Activity, Transmogrifier}
+
   require Logger
 
   @max_jobs 20
@@ -21,7 +22,7 @@ defmodule Mobilizon.Service.Federator do
     {:ok, args}
   end
 
-  def start_link do
+  def start_link(_) do
     spawn(fn ->
       # 1 minute
       Process.sleep(1000 * 60)

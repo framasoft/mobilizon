@@ -2,20 +2,20 @@ defmodule Mobilizon.Repo.Migrations.FixEventVisibility do
   use Ecto.Migration
 
   def up do
-    Mobilizon.Events.EventVisibilityEnum.create_type()
-    Mobilizon.Events.EventStatusEnum.create_type()
-    Mobilizon.Events.CommentVisibilityEnum.create_type()
+    Mobilizon.Events.EventVisibility.create_type()
+    Mobilizon.Events.EventStatus.create_type()
+    Mobilizon.Events.CommentVisibility.create_type()
 
     alter table(:events) do
       remove(:public)
       remove(:status)
       remove(:state)
-      add(:visibility, Mobilizon.Events.EventVisibilityEnum.type())
-      add(:status, Mobilizon.Events.EventStatusEnum.type())
+      add(:visibility, Mobilizon.Events.EventVisibility.type())
+      add(:status, Mobilizon.Events.EventStatus.type())
     end
 
     alter table(:comments) do
-      add(:visibility, Mobilizon.Events.CommentVisibilityEnum.type())
+      add(:visibility, Mobilizon.Events.CommentVisibility.type())
     end
   end
 
@@ -32,8 +32,8 @@ defmodule Mobilizon.Repo.Migrations.FixEventVisibility do
       remove(:visibility)
     end
 
-    Mobilizon.Events.EventVisibilityEnum.drop_type()
-    Mobilizon.Events.EventStatusEnum.drop_type()
-    Mobilizon.Events.CommentVisibilityEnum.drop_type()
+    Mobilizon.Events.EventVisibility.drop_type()
+    Mobilizon.Events.EventStatus.drop_type()
+    Mobilizon.Events.CommentVisibility.drop_type()
   end
 end

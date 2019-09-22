@@ -1,19 +1,19 @@
 defmodule MobilizonWeb.Resolvers.Config do
   @moduledoc """
-  Handles the config-related GraphQL calls
+  Handles the config-related GraphQL calls.
   """
 
-  import Mobilizon.CommonConfig
+  alias Mobilizon.Config
 
   @doc """
-  Get config
+  Gets config.
   """
   def get_config(_parent, _params, _context) do
     {:ok,
      %{
-       name: instance_name(),
-       registrations_open: registrations_open?(),
-       description: instance_description()
+       name: Config.instance_name(),
+       registrations_open: Config.instance_registrations_open?(),
+       description: Config.instance_description()
      }}
   end
 end

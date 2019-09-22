@@ -10,11 +10,11 @@ defmodule Mobilizon.Service.ActivityPub do
   Every ActivityPub method
   """
 
+  alias Mobilizon.Config
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Comment, Participant}
   alias Mobilizon.Service.ActivityPub.Transmogrifier
   alias Mobilizon.Service.WebFinger
-  alias Mobilizon.Activity
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Follower}
@@ -22,11 +22,10 @@ defmodule Mobilizon.Service.ActivityPub do
   alias Mobilizon.Service.Federator
   alias Mobilizon.Service.HTTPSignatures.Signature
 
-  alias Mobilizon.Service.ActivityPub.Convertible
+  alias Mobilizon.Service.ActivityPub.{Activity, Convertible}
 
   require Logger
-  import Mobilizon.Service.ActivityPub.Utils
-  import Mobilizon.Service.ActivityPub.Visibility
+  import Mobilizon.Service.ActivityPub.{Utils, Visibility}
 
   @doc """
   Get recipients for an activity or object
@@ -84,10 +83,10 @@ defmodule Mobilizon.Service.ActivityPub do
          {:ok, _activity, %{url: object_url} = _object} <- Transmogrifier.handle_incoming(params) do
       case data["type"] do
         "Event" ->
-          {:ok, Events.get_event_full_by_url!(object_url)}
+          {:ok, Events.get_public_event_by_url_with_preload!(object_url)}
 
         "Note" ->
-          {:ok, Events.get_comment_full_from_url!(object_url)}
+          {:ok, Events.get_comment_from_url_with_preload!(object_url)}
 
         "Actor" ->
           {:ok, Actors.get_actor_by_url!(object_url, true)}
@@ -97,10 +96,10 @@ defmodule Mobilizon.Service.ActivityPub do
       end
     else
       {:existing_event, %Event{url: event_url}} ->
-        {:ok, Events.get_event_full_by_url!(event_url)}
+        {:ok, Events.get_public_event_by_url_with_preload!(event_url)}
 
       {:existing_comment, %Comment{url: comment_url}} ->
-        {:ok, Events.get_comment_full_from_url!(comment_url)}
+        {:ok, Events.get_comment_from_url_with_preload!(comment_url)}
 
       {:existing_actor, {:ok, %Actor{url: actor_url}}} ->
         {:ok, Actors.get_actor_by_url!(actor_url, true)}
@@ -109,6 +108,28 @@ defmodule Mobilizon.Service.ActivityPub do
         require Logger
         Logger.error(inspect(e))
         {:error, e}
+    end
+  end
+
+  @doc """
+  Getting an actor from url, eventually creating it
+  """
+  @spec get_or_fetch_by_url(String.t(), boolean) :: {:ok, Actor.t()} | {:error, String.t()}
+  def get_or_fetch_by_url(url, preload \\ false) do
+    case Actors.get_actor_by_url(url, preload) do
+      {:ok, %Actor{} = actor} ->
+        {:ok, actor}
+
+      _ ->
+        case make_actor_from_url(url, preload) do
+          {:ok, %Actor{} = actor} ->
+            {:ok, actor}
+
+          _ ->
+            Logger.warn("Could not fetch by AP id")
+
+            {:error, "Could not fetch by AP id"}
+        end
     end
   end
 
@@ -278,7 +299,7 @@ defmodule Mobilizon.Service.ActivityPub do
   """
   def follow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
     with {:ok, %Follower{url: follow_url}} <-
-           Actor.follow(followed, follower, activity_id, false),
+           Actors.follow(followed, follower, activity_id, false),
          activity_follow_id <-
            activity_id || follow_url,
          data <- make_follow_data(followed, follower, activity_follow_id),
@@ -297,7 +318,7 @@ defmodule Mobilizon.Service.ActivityPub do
   """
   @spec unfollow(Actor.t(), Actor.t(), String.t(), boolean()) :: {:ok, map()} | any()
   def unfollow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
-    with {:ok, %Follower{id: follow_id}} <- Actor.unfollow(followed, follower),
+    with {:ok, %Follower{id: follow_id}} <- Actors.unfollow(followed, follower),
          # We recreate the follow activity
          data <-
            make_follow_data(
@@ -437,8 +458,7 @@ defmodule Mobilizon.Service.ActivityPub do
         local
       ) do
     with {:only_organizer, false} <-
-           {:only_organizer,
-            Participant.check_that_participant_is_not_only_organizer(event_id, actor_id)},
+           {:only_organizer, Participant.is_not_only_organizer(event_id, actor_id)},
          {:ok, %Participant{} = participant} <-
            Mobilizon.Events.get_participant(event_id, actor_id),
          {:ok, %Participant{} = participant} <- Mobilizon.Events.delete_participant(participant),
@@ -464,7 +484,7 @@ defmodule Mobilizon.Service.ActivityPub do
   def make_actor_from_url(url, preload \\ false) do
     case fetch_and_prepare_actor_from_url(url) do
       {:ok, data} ->
-        Actors.insert_or_update_actor(data, preload)
+        Actors.upsert_actor(data, preload)
 
       # Request returned 410
       {:error, :actor_deleted} ->
@@ -520,15 +540,14 @@ defmodule Mobilizon.Service.ActivityPub do
 
     public = is_public?(activity)
 
-    if public && is_delete_activity?(activity) == false &&
-         Mobilizon.CommonConfig.get([:instance, :allow_relay]) do
+    if public && !is_delete_activity?(activity) && Config.get([:instance, :allow_relay]) do
       Logger.info(fn -> "Relaying #{activity.data["id"]} out" end)
       Mobilizon.Service.ActivityPub.Relay.publish(activity)
     end
 
     followers =
       if actor.followers_url in activity.recipients do
-        Actor.get_full_external_followers(actor)
+        Actors.list_external_followers_for_actor(actor)
       else
         []
       end
@@ -664,8 +683,8 @@ defmodule Mobilizon.Service.ActivityPub do
   """
   @spec fetch_public_activities_for_actor(Actor.t(), integer(), integer()) :: map()
   def fetch_public_activities_for_actor(%Actor{} = actor, page \\ 1, limit \\ 10) do
-    {:ok, events, total_events} = Events.get_public_events_for_actor(actor, page, limit)
-    {:ok, comments, total_comments} = Events.get_public_comments_for_actor(actor, page, limit)
+    {:ok, events, total_events} = Events.list_public_events_for_actor(actor, page, limit)
+    {:ok, comments, total_comments} = Events.list_public_comments_for_actor(actor, page, limit)
 
     event_activities = Enum.map(events, &event_to_activity/1)
 

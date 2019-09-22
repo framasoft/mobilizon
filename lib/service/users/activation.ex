@@ -1,10 +1,11 @@
 defmodule Mobilizon.Service.Users.Activation do
   @moduledoc false
 
-  alias Mobilizon.{Mailer, Users}
+  alias Mobilizon.Users
   alias Mobilizon.Users.User
-  alias Mobilizon.Email.User, as: UserEmail
   alias Mobilizon.Service.Users.Tools
+
+  alias MobilizonWeb.Email
 
   require Logger
 
@@ -39,7 +40,7 @@ defmodule Mobilizon.Service.Users.Activation do
 
   def send_confirmation_email(%User{} = user, locale \\ "en") do
     user
-    |> UserEmail.confirmation_email(locale)
-    |> Mailer.deliver_later()
+    |> Email.User.confirmation_email(locale)
+    |> Email.Mailer.deliver_later()
   end
 end

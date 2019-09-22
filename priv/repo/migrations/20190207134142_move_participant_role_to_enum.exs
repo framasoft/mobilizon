@@ -1,12 +1,12 @@
 defmodule Mobilizon.Repo.Migrations.MoveParticipantRoleToEnum do
   use Ecto.Migration
-  alias Mobilizon.Events.ParticipantRoleEnum
+  alias Mobilizon.Events.ParticipantRole
 
   def up do
-    ParticipantRoleEnum.create_type()
+    ParticipantRole.create_type()
 
     alter table(:participants) do
-      add(:role_tmp, ParticipantRoleEnum.type(), default: "participant")
+      add(:role_tmp, ParticipantRole.type(), default: "participant")
     end
 
     execute("UPDATE participants set role_tmp = 'not_approved' where role = 0")
@@ -37,7 +37,7 @@ defmodule Mobilizon.Repo.Migrations.MoveParticipantRoleToEnum do
       remove(:role)
     end
 
-    ParticipantRoleEnum.drop_type()
+    ParticipantRole.drop_type()
 
     rename(table(:participants), :role_tmp, to: :role)
   end

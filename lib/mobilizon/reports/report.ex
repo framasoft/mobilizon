@@ -1,45 +1,50 @@
-import EctoEnum
-
-defenum(Mobilizon.Reports.ReportStateEnum, :report_state, [
-  :open,
-  :closed,
-  :resolved
-])
-
 defmodule Mobilizon.Reports.Report do
   @moduledoc """
-  Report entity
+  Represents a report entity.
   """
+
   use Ecto.Schema
+
   import Ecto.Changeset
-  alias Mobilizon.Events.Comment
-  alias Mobilizon.Events.Event
+
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Reports.Note
+  alias Mobilizon.Events.{Comment, Event}
+  alias Mobilizon.Reports.{Note, ReportStatus}
+
+  @type t :: %__MODULE__{
+          content: String.t(),
+          status: ReportStatus.t(),
+          uri: String.t(),
+          reported: Actor.t(),
+          reporter: Actor.t(),
+          manager: Actor.t(),
+          event: Event.t(),
+          comments: [Comment.t()],
+          notes: [Note.t()]
+        }
+
+  @required_attrs [:uri, :reported_id, :reporter_id]
+  @optional_attrs [:content, :status, :manager_id, :event_id]
+  @attrs @required_attrs ++ @optional_attrs
 
   @timestamps_opts [type: :utc_datetime]
 
   @derive {Jason.Encoder, only: [:status, :uri]}
   schema "reports" do
     field(:content, :string)
-    field(:status, Mobilizon.Reports.ReportStateEnum, default: :open)
+    field(:status, ReportStatus, default: :open)
     field(:uri, :string)
 
     # The reported actor
     belongs_to(:reported, Actor)
-
     # The actor who reported
     belongs_to(:reporter, Actor)
-
     # The actor who last acted on this report
     belongs_to(:manager, Actor)
-
     # The eventual Event inside the report
     belongs_to(:event, Event)
-
     # The eventual Comments inside the report
     many_to_many(:comments, Comment, join_through: "reports_comments", on_replace: :delete)
-
     # The notes associated to the report
     has_many(:notes, Note, foreign_key: :report_id)
 
@@ -47,13 +52,16 @@ defmodule Mobilizon.Reports.Report do
   end
 
   @doc false
-  def changeset(report, attrs) do
+  @spec changeset(t, map) :: Ecto.Changeset.t()
+  def changeset(%__MODULE__{} = report, attrs) do
     report
-    |> cast(attrs, [:content, :status, :uri, :reported_id, :reporter_id, :manager_id, :event_id])
-    |> validate_required([:uri, :reported_id, :reporter_id])
+    |> cast(attrs, @attrs)
+    |> validate_required(@required_attrs)
   end
 
-  def creation_changeset(report, attrs) do
+  @doc false
+  @spec creation_changeset(t, map) :: Ecto.Changeset.t()
+  def creation_changeset(%__MODULE__{} = report, attrs) do
     report
     |> changeset(attrs)
     |> put_assoc(:comments, attrs["comments"])

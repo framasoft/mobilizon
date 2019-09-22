@@ -7,6 +7,9 @@ defmodule MobilizonWeb.MediaProxy do
   @moduledoc """
   Handles proxifying media files
   """
+
+  alias Mobilizon.Config
+
   @base64_opts [padding: false]
 
   def url(nil), do: nil
@@ -66,7 +69,7 @@ defmodule MobilizonWeb.MediaProxy do
 
   def build_url(sig_base64, url_base64, filename \\ nil) do
     [
-      Mobilizon.CommonConfig.get([:media_proxy, :base_url], MobilizonWeb.Endpoint.url()),
+      Config.get([:media_proxy, :base_url], MobilizonWeb.Endpoint.url()),
       "proxy",
       sig_base64,
       url_base64,

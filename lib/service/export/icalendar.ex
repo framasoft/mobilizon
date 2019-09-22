@@ -44,8 +44,8 @@ defmodule Mobilizon.Service.Export.ICalendar do
   """
   @spec export_public_actor(Actor.t()) :: String.t()
   def export_public_actor(%Actor{} = actor) do
-    with true <- Actor.public_visibility?(actor),
-         {:ok, events, _} <- Events.get_public_events_for_actor(actor) do
+    with true <- Actor.is_public_visibility(actor),
+         {:ok, events, _} <- Events.list_public_events_for_actor(actor) do
       {:ok, %ICalendar{events: events |> Enum.map(&do_export_event/1)} |> ICalendar.to_ics()}
     end
   end
@@ -74,7 +74,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
   Create cache for an actor
   """
   def create_cache("event_" <> uuid) do
-    with %Event{} = event <- Events.get_event_full_by_uuid(uuid),
+    with %Event{} = event <- Events.get_public_event_by_uuid_with_preload(uuid),
          {:ok, res} <- export_public_event(event) do
       {:commit, res}
     else

@@ -3,6 +3,7 @@ defmodule MobilizonWeb.API.Groups do
   API for Events
   """
   alias Mobilizon.Actors
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Users.User
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Utils, as: ActivityPubUtils
@@ -22,21 +23,13 @@ defmodule MobilizonWeb.API.Groups do
           banner: _banner
         } = args
       ) do
-    with {:is_owned, true, actor} <- User.owns_actor(user, creator_actor_id),
+    with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, creator_actor_id),
          title <- String.trim(title),
          {:existing_group, nil} <- {:existing_group, Actors.get_group_by_title(title)},
          visibility <- Map.get(args, :visibility, :public),
          {content_html, tags, to, cc} <-
            Utils.prepare_content(actor, summary, visibility, [], nil),
-         group <-
-           ActivityPubUtils.make_group_data(
-             actor.url,
-             to,
-             title,
-             content_html,
-             tags,
-             cc
-           ) do
+         group <- ActivityPubUtils.make_group_data(actor.url, to, title, content_html, tags, cc) do
       ActivityPub.create(%{
         to: ["https://www.w3.org/ns/activitystreams#Public"],
         actor: actor,
@@ -47,7 +40,7 @@ defmodule MobilizonWeb.API.Groups do
       {:existing_group, _} ->
         {:error, "A group with this name already exists"}
 
-      {:is_owned, _} ->
+      {:is_owned, nil} ->
         {:error, "Actor id is not owned by authenticated user"}
     end
   end

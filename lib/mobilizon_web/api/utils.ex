@@ -2,7 +2,9 @@ defmodule MobilizonWeb.API.Utils do
   @moduledoc """
   Utils for API
   """
+
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Config
   alias Mobilizon.Service.Formatter
 
   @doc """
@@ -125,7 +127,7 @@ defmodule MobilizonWeb.API.Utils do
   def make_report_content_text(nil), do: {:ok, nil}
 
   def make_report_content_text(comment) do
-    max_size = Mobilizon.CommonConfig.get([:instance, :max_report_comment_size], 1000)
+    max_size = Config.get([:instance, :max_report_comment_size], 1000)
 
     if String.length(comment) <= max_size do
       {:ok, Formatter.html_escape(comment, "text/plain")}

@@ -44,8 +44,8 @@ defmodule Mobilizon.Service.Export.Feed do
   @spec fetch_actor_event_feed(String.t()) :: String.t()
   defp fetch_actor_event_feed(name) do
     with %Actor{} = actor <- Actors.get_local_actor_by_name(name),
-         {:visibility, true} <- {:visibility, Actor.public_visibility?(actor)},
-         {:ok, events, _count} <- Events.get_public_events_for_actor(actor) do
+         {:visibility, true} <- {:visibility, Actor.is_public_visibility(actor)},
+         {:ok, events, _count} <- Events.list_public_events_for_actor(actor) do
       {:ok, build_actor_feed(actor, events)}
     else
       err ->
