@@ -315,8 +315,9 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
         %{"type" => "Update", "object" => %{"type" => "Event"} = object, "actor" => actor} =
           _update
       ) do
-    with {:ok, %{"actor" => existing_organizer_actor_url} = _existing_event_data} <-
+    with {:ok, %{"actor" => existing_organizer_actor_url} = existing_event_data} <-
            fetch_obj_helper_as_activity_streams(object),
+         object <- Map.merge(existing_event_data, object),
          {:ok, %Actor{url: actor_url}} <- actor |> Utils.get_url() |> Actors.get_actor_by_url(),
          true <- Utils.get_url(existing_organizer_actor_url) == actor_url do
       ActivityPub.update(%{

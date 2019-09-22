@@ -201,7 +201,7 @@ defmodule MobilizonWeb.Resolvers.Event do
         }
       ) do
     # Check that moderator provided is rightly authenticated
-    with {:is_owned, true, moderator_actor} <- User.owns_actor(user, moderator_actor_id),
+    with {:is_owned, moderator_actor} <- User.owns_actor(user, moderator_actor_id),
          # Check that participation already exists
          {:has_participation, %Participant{role: :not_approved} = participation} <-
            {:has_participation, Mobilizon.Events.get_participant(participation_id)},
@@ -213,7 +213,7 @@ defmodule MobilizonWeb.Resolvers.Event do
            MobilizonWeb.API.Participations.accept(participation, moderator_actor) do
       {:ok, participation}
     else
-      {:is_owned, false} ->
+      {:is_owned, nil} ->
         {:error, "Moderator Actor ID is not owned by authenticated user"}
 
       {:has_participation, %Participant{role: role, id: id}} ->
@@ -238,7 +238,7 @@ defmodule MobilizonWeb.Resolvers.Event do
         }
       ) do
     # Check that moderator provided is rightly authenticated
-    with {:is_owned, true, moderator_actor} <- User.owns_actor(user, moderator_actor_id),
+    with {:is_owned, moderator_actor} <- User.owns_actor(user, moderator_actor_id),
          # Check that participation really exists
          {:has_participation, %Participant{} = participation} <-
            {:has_participation, Mobilizon.Events.get_participant(participation_id)},
@@ -261,7 +261,7 @@ defmodule MobilizonWeb.Resolvers.Event do
         }
       }
     else
-      {:is_owned, false} ->
+      {:is_owned, nil} ->
         {:error, "Moderator Actor ID is not owned by authenticated user"}
 
       {:actor_approve_permission, _} ->

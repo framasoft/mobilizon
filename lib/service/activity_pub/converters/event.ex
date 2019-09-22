@@ -186,6 +186,7 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
       "mediaType" => "text/html",
       "startTime" => event.begins_on |> date_to_string(),
       "endTime" => event.ends_on |> date_to_string(),
+      "joinOptions" => to_string(event.join_options),
       "tag" => event.tags |> build_tags(),
       "id" => event.url,
       "url" => event.url

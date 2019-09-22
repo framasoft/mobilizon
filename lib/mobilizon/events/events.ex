@@ -592,7 +592,12 @@ defmodule Mobilizon.Events do
   """
   @spec list_participants_for_event(String.t(), list(atom()), integer | nil, integer | nil) ::
           [Participant.t()]
-  def list_participants_for_event(uuid, roles \\ @default_participant_roles, page, limit) do
+  def list_participants_for_event(
+        uuid,
+        roles \\ @default_participant_roles,
+        page \\ nil,
+        limit \\ nil
+      ) do
     uuid
     |> list_participants_for_event_query()
     |> filter_role(roles)

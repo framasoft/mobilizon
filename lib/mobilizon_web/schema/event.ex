@@ -225,7 +225,7 @@ defmodule MobilizonWeb.Schema.EventType do
       arg(:begins_on, non_null(:datetime))
       arg(:ends_on, :datetime)
       arg(:status, :event_status)
-      arg(:visibility, :event_visibility, default_value: :private)
+      arg(:visibility, :event_visibility, default_value: :public)
       arg(:join_options, :event_join_options, default_value: :free)
 
       arg(:tags, list_of(:string),
@@ -258,8 +258,8 @@ defmodule MobilizonWeb.Schema.EventType do
       arg(:begins_on, :datetime)
       arg(:ends_on, :datetime)
       arg(:status, :event_status)
-      arg(:visibility, :event_visibility)
-      arg(:join_options, :event_join_options)
+      arg(:visibility, :event_visibility, default_value: :public)
+      arg(:join_options, :event_join_options, default_value: :free)
 
       arg(:tags, list_of(:string), description: "The list of tags associated to the event")
 
