@@ -6,12 +6,13 @@ defmodule MobilizonWeb.Resolvers.Event do
   alias Mobilizon.Addresses
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events
-  alias Mobilizon.Events.{Activity, Event, Participant}
+  alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Media.Picture
   alias Mobilizon.Users.User
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias MobilizonWeb.Resolvers.Person
+  alias Mobilizon.Service.ActivityPub.Activity
   import Mobilizon.Service.Admin.ActionLogService
 
   # We limit the max number of events that can be retrieved

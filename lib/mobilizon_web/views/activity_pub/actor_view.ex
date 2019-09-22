@@ -3,7 +3,7 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.Activity
+  alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Utils
 

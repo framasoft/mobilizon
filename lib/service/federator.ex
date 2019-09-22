@@ -11,9 +11,8 @@ defmodule Mobilizon.Service.Federator do
   use GenServer
 
   alias Mobilizon.Actors
-  alias Mobilizon.Events.Activity
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Transmogrifier
+  alias Mobilizon.Service.ActivityPub.{Activity, Transmogrifier}
 
   require Logger
 

@@ -17,11 +17,11 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
-  alias Mobilizon.Events.{Activity, Comment, Event}
+  alias Mobilizon.Events.{Comment, Event}
   alias Mobilizon.Media.Picture
   alias Mobilizon.Reports
   alias Mobilizon.Reports.Report
-  alias Mobilizon.Service.ActivityPub.Converters
+  alias Mobilizon.Service.ActivityPub.{Activity, Converters}
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Users
 

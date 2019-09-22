@@ -1,4 +1,4 @@
-defmodule Mobilizon.Events.Activity do
+defmodule Mobilizon.Service.ActivityPub.Activity do
   @moduledoc """
   Represents an activity.
   """

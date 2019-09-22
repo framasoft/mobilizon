@@ -197,7 +197,7 @@ defmodule Mobilizon.Mixfile do
         Mobilizon.Addresses,
         Mobilizon.Addresses.Address,
         Mobilizon.Events,
-        Mobilizon.Events.Activity,
+        Mobilizon.Service.ActivityPub.Activity,
         Mobilizon.Events.Event,
         Mobilizon.Events.Comment,
         Mobilizon.Events.FeedToken,

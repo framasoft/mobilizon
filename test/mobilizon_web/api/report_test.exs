@@ -4,10 +4,11 @@ defmodule MobilizonWeb.API.ReportTest do
   import Mobilizon.Factory
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.{Activity, Comment, Event}
+  alias Mobilizon.Events.{Comment, Event}
   alias Mobilizon.Reports.{Report, Note}
   alias Mobilizon.Users
   alias Mobilizon.Users.User
+  alias Mobilizon.Service.ActivityPub.Activity
 
   alias MobilizonWeb.API.Reports
 

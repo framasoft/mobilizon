@@ -12,7 +12,7 @@ defmodule Mobilizon.Service.ActivityPub do
 
   alias Mobilizon.Config
   alias Mobilizon.Events
-  alias Mobilizon.Events.{Activity, Event, Comment, Participant}
+  alias Mobilizon.Events.{Event, Comment, Participant}
   alias Mobilizon.Service.ActivityPub.Transmogrifier
   alias Mobilizon.Service.WebFinger
 
@@ -22,11 +22,10 @@ defmodule Mobilizon.Service.ActivityPub do
   alias Mobilizon.Service.Federator
   alias Mobilizon.Service.HTTPSignatures.Signature
 
-  alias Mobilizon.Service.ActivityPub.Convertible
+  alias Mobilizon.Service.ActivityPub.{Activity, Convertible}
 
   require Logger
-  import Mobilizon.Service.ActivityPub.Utils
-  import Mobilizon.Service.ActivityPub.Visibility
+  import Mobilizon.Service.ActivityPub.{Utils, Visibility}
 
   @doc """
   Get recipients for an activity or object

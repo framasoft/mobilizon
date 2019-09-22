@@ -12,8 +12,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Comment, Participant}
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Utils
-  alias Mobilizon.Service.ActivityPub.Visibility
+  alias Mobilizon.Service.ActivityPub.{Visibility, Utils}
 
   require Logger
 

@@ -9,7 +9,7 @@ defmodule MobilizonWeb.API.Reports do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
-  alias Mobilizon.Events.Activity
+  alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Reports, as: ReportsAction
   alias Mobilizon.Reports.{Report, Note}
   alias Mobilizon.Service.ActivityPub

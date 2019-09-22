@@ -11,9 +11,9 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
-  alias Mobilizon.Events.{Activity, Comment, Event, Participant}
+  alias Mobilizon.Events.{Comment, Event, Participant}
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Utils
+  alias Mobilizon.Service.ActivityPub.{Utils, Activity}
   alias Mobilizon.Service.ActivityPub.Transmogrifier
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 

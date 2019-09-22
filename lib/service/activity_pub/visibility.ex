@@ -8,7 +8,7 @@ defmodule Mobilizon.Service.ActivityPub.Visibility do
   Utility functions related to content visibility
   """
 
-  alias Mobilizon.Events.Activity
+  alias Mobilizon.Service.ActivityPub.Activity
 
   @public "https://www.w3.org/ns/activitystreams#Public"
 
