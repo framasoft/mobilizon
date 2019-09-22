@@ -8,8 +8,8 @@ defmodule MobilizonWeb.MediaProxyController do
 
   alias Mobilizon.Config
 
-  alias MobilizonWeb.ReverseProxy
   alias MobilizonWeb.MediaProxy
+  alias MobilizonWeb.ReverseProxy
 
   @default_proxy_opts [max_body_length: 25 * 1_048_576, http: [follow_redirect: true]]
 

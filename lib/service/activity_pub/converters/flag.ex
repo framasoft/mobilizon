@@ -1,11 +1,13 @@
 defmodule Mobilizon.Service.ActivityPub.Converters.Flag do
   @moduledoc """
-  Flag converter
+  Flag converter.
 
-  This module allows to convert reports from ActivityStream format to our own internal one, and back.
+  This module allows to convert reports from ActivityStream format to our own
+  internal one, and back.
 
   Note: Reports are named Flag in AS.
   """
+
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events

@@ -11,11 +11,11 @@ defmodule Mobilizon.Actors.Actor do
   alias Mobilizon.Actors.{ActorOpenness, ActorType, ActorVisibility, Follower, Member}
   alias Mobilizon.Events.{Event, FeedToken}
   alias Mobilizon.Media.File
-  alias Mobilizon.Reports.{Report, Note}
+  alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Users.User
 
-  alias MobilizonWeb.Router.Helpers, as: Routes
   alias MobilizonWeb.Endpoint
+  alias MobilizonWeb.Router.Helpers, as: Routes
 
   require Logger
 

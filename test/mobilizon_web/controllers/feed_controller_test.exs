@@ -1,8 +1,10 @@
 defmodule MobilizonWeb.FeedControllerTest do
   use MobilizonWeb.ConnCase
+
   import Mobilizon.Factory
-  alias MobilizonWeb.Router.Helpers, as: Routes
+
   alias MobilizonWeb.Endpoint
+  alias MobilizonWeb.Router.Helpers, as: Routes
 
   describe "/@:preferred_username/feed/atom" do
     test "it returns an RSS representation of the actor's public events if the actor is publicly visible",

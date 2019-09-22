@@ -2,8 +2,10 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
   @moduledoc """
   [Nominatim](https://wiki.openstreetmap.org/wiki/Nominatim) backend.
   """
-  alias Mobilizon.Service.Geospatial.Provider
+
   alias Mobilizon.Addresses.Address
+  alias Mobilizon.Service.Geospatial.Provider
+
   require Logger
 
   @behaviour Provider
@@ -66,23 +68,22 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
 
   @spec process_data(map()) :: Address.t()
   defp process_data(%{"address" => address} = body) do
-    try do
-      %Address{
-        country: Map.get(address, "country"),
-        locality: Map.get(address, "city"),
-        region: Map.get(address, "state"),
-        description: description(body),
-        floor: Map.get(address, "floor"),
-        geom: [Map.get(body, "lon"), Map.get(body, "lat")] |> Provider.coordinates(),
-        postal_code: Map.get(address, "postcode"),
-        street: street_address(address),
-        origin_id: "osm:" <> to_string(Map.get(body, "osm_id"))
-      }
-    rescue
-      e in ArgumentError ->
-        Logger.warn(inspect(e))
-        nil
-    end
+    %Address{
+      country: Map.get(address, "country"),
+      locality: Map.get(address, "city"),
+      region: Map.get(address, "state"),
+      description: description(body),
+      floor: Map.get(address, "floor"),
+      geom: [Map.get(body, "lon"), Map.get(body, "lat")] |> Provider.coordinates(),
+      postal_code: Map.get(address, "postcode"),
+      street: street_address(address),
+      origin_id: "osm:" <> to_string(Map.get(body, "osm_id"))
+    }
+  rescue
+    error in ArgumentError ->
+      Logger.warn(inspect(error))
+
+      nil
   end
 
   @spec street_address(map()) :: String.t()

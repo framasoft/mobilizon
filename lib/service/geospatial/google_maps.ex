@@ -1,11 +1,13 @@
 defmodule Mobilizon.Service.Geospatial.GoogleMaps do
   @moduledoc """
-  Google Maps [Geocoding service](https://developers.google.com/maps/documentation/geocoding/intro)
+  Google Maps [Geocoding service](https://developers.google.com/maps/documentation/geocoding/intro).
 
-  Note: Endpoint is hardcoded to Google Maps API
+  Note: Endpoint is hardcoded to Google Maps API.
   """
-  alias Mobilizon.Service.Geospatial.Provider
+
   alias Mobilizon.Addresses.Address
+  alias Mobilizon.Service.Geospatial.Provider
+
   require Logger
 
   @behaviour Provider

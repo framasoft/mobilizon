@@ -2,9 +2,11 @@ defmodule Mobilizon.Service.Geospatial.Photon do
   @moduledoc """
   [Photon](https://photon.komoot.de) backend.
   """
-  alias Mobilizon.Service.Geospatial.Provider
-  require Logger
+
   alias Mobilizon.Addresses.Address
+  alias Mobilizon.Service.Geospatial.Provider
+
+  require Logger
 
   @behaviour Provider
 

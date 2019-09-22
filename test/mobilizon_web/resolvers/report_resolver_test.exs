@@ -1,12 +1,14 @@
 defmodule MobilizonWeb.Resolvers.ReportResolverTest do
-  alias MobilizonWeb.AbsintheHelpers
   use MobilizonWeb.ConnCase
+
   import Mobilizon.Factory
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Users.User
   alias Mobilizon.Events.Event
-  alias Mobilizon.Reports.{Report, Note}
+  alias Mobilizon.Reports.{Note, Report}
+  alias Mobilizon.Users.User
+
+  alias MobilizonWeb.AbsintheHelpers
 
   describe "Resolver: Report a content" do
     test "create_report/3 creates a report", %{conn: conn} do

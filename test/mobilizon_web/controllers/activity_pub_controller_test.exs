@@ -4,16 +4,20 @@
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/test/web/web_finger/web_finger_controller_test.exs
 
 defmodule MobilizonWeb.ActivityPubControllerTest do
+  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+
   use MobilizonWeb.ConnCase
+
   import Mobilizon.Factory
-  alias MobilizonWeb.ActivityPub.ActorView
-  alias MobilizonWeb.PageView
+
   alias Mobilizon.{Actors, Config}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.ActivityPub
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
-  alias MobilizonWeb.Router.Helpers, as: Routes
+
+  alias MobilizonWeb.ActivityPub.ActorView
   alias MobilizonWeb.Endpoint
+  alias MobilizonWeb.PageView
+  alias MobilizonWeb.Router.Helpers, as: Routes
 
   setup do
     conn = build_conn() |> put_req_header("accept", "application/activity+json")

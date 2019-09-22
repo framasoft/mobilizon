@@ -7,12 +7,13 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   @moduledoc """
   A module to handle coding from internal to wire ActivityPub and back.
   """
+
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Follower}
   alias Mobilizon.Events
-  alias Mobilizon.Events.{Event, Comment, Participant}
+  alias Mobilizon.Events.{Comment, Event, Participant}
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.{Visibility, Utils}
+  alias Mobilizon.Service.ActivityPub.{Utils, Visibility}
 
   require Logger
 

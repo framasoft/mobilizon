@@ -7,8 +7,8 @@ defmodule Mobilizon.Events.Tag do
 
   import Ecto.Changeset
 
-  alias Mobilizon.Events.TagRelation
   alias Mobilizon.Events.Tag.TitleSlug
+  alias Mobilizon.Events.TagRelation
 
   @type t :: %__MODULE__{
           title: String.t(),

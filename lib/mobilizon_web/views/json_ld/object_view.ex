@@ -1,9 +1,10 @@
 defmodule MobilizonWeb.JsonLD.ObjectView do
   use MobilizonWeb, :view
 
-  alias Mobilizon.Events.Event
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
+  alias Mobilizon.Events.Event
+
   alias MobilizonWeb.JsonLD.ObjectView
   alias MobilizonWeb.MediaProxy
 

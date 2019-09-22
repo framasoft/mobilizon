@@ -1,14 +1,17 @@
 defmodule Mobilizon.Service.ActivityPub.Converters.Comment do
   @moduledoc """
-  Comment converter
+  Comment converter.
 
-  This module allows to convert events from ActivityStream format to our own internal one, and back
+  This module allows to convert events from ActivityStream format to our own
+  internal one, and back.
   """
+
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Comment, as: CommentModel
   alias Mobilizon.Events.Event
-  alias Mobilizon.Service.ActivityPub.Converter
   alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Service.ActivityPub.Converter
+
   require Logger
 
   @behaviour Converter

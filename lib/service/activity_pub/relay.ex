@@ -5,13 +5,13 @@
 
 defmodule Mobilizon.Service.ActivityPub.Relay do
   @moduledoc """
-  Handles following and unfollowing relays and instances
+  Handles following and unfollowing relays and instances.
   """
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Service.ActivityPub.Activity
 
   alias MobilizonWeb.API.Follows
 

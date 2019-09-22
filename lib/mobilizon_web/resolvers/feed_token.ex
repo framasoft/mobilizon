@@ -1,11 +1,13 @@
 defmodule MobilizonWeb.Resolvers.FeedToken do
   @moduledoc """
-  Handles the feed tokens-related GraphQL calls
+  Handles the feed tokens-related GraphQL calls.
   """
+
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Users.User
   alias Mobilizon.Events
   alias Mobilizon.Events.FeedToken
+  alias Mobilizon.Users.User
+
   require Logger
 
   @doc """

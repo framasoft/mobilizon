@@ -1,9 +1,10 @@
 defmodule Mix.Tasks.Mobilizon.Toot do
   @moduledoc """
-  Creates a bot from a source
+  Creates a bot from a source.
   """
 
   use Mix.Task
+
   require Logger
 
   @shortdoc "Toot to an user"

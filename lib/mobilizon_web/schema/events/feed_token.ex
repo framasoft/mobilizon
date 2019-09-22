@@ -1,12 +1,15 @@
 defmodule MobilizonWeb.Schema.Events.FeedTokenType do
   @moduledoc """
-  Schema representation for Participant
+  Schema representation for Participant.
   """
+
   use Absinthe.Schema.Notation
+
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+
+  alias Mobilizon.{Actors, Users}
+
   alias MobilizonWeb.Resolvers
-  alias Mobilizon.Users
-  alias Mobilizon.Actors
 
   @desc "Represents a participant to an event"
   object :feed_token do

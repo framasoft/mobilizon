@@ -1,18 +1,19 @@
 defmodule MobilizonWeb.API.Reports do
   @moduledoc """
-  API for Reports
+  API for Reports.
   """
 
-  import MobilizonWeb.API.Utils
   import Mobilizon.Service.Admin.ActionLogService
+
+  import MobilizonWeb.API.Utils
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
-  alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Reports, as: ReportsAction
-  alias Mobilizon.Reports.{Report, Note}
+  alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Users
   alias Mobilizon.Users.User
 

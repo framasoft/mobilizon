@@ -1,11 +1,13 @@
 defmodule Mobilizon.Service.ActivityPub.Converters.Address do
   @moduledoc """
-  Flag converter
+  Address converter.
 
-  This module allows to convert reports from ActivityStream format to our own internal one, and back.
+  This module allows to convert reports from ActivityStream format to our own
+  internal one, and back.
 
   Note: Reports are named Flag in AS.
   """
+
   alias Mobilizon.Addresses.Address, as: AddressModel
   alias Mobilizon.Service.ActivityPub.Converter
 

@@ -1,14 +1,16 @@
 defmodule MobilizonWeb.Resolvers.Admin do
   @moduledoc """
-  Handles the report-related GraphQL calls
+  Handles the report-related GraphQL calls.
   """
-  alias Mobilizon.Events
-  alias Mobilizon.Users.User
+
   import Mobilizon.Users.Guards
+
   alias Mobilizon.Admin.ActionLog
-  alias Mobilizon.Reports.{Report, Note}
+  alias Mobilizon.Events
   alias Mobilizon.Events.Event
+  alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Service.Statistics
+  alias Mobilizon.Users.User
 
   def list_action_logs(
         _parent,

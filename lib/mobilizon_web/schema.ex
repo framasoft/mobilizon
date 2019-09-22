@@ -1,12 +1,13 @@
 defmodule MobilizonWeb.Schema do
   @moduledoc """
-  GraphQL schema representation
+  GraphQL schema representation.
   """
+
   use Absinthe.Schema
 
-  alias Mobilizon.{Actors, Events, Users, Addresses, Media, Reports}
+  alias Mobilizon.{Actors, Addresses, Events, Media, Reports, Users}
   alias Mobilizon.Actors.{Actor, Follower, Member}
-  alias Mobilizon.Events.{Event, Comment, Participant}
+  alias Mobilizon.Events.{Comment, Event, Participant}
   alias Mobilizon.Storage.Repo
 
   import_types(MobilizonWeb.Schema.Custom.UUID)

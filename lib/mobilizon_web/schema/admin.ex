@@ -1,11 +1,14 @@
 defmodule MobilizonWeb.Schema.AdminType do
   @moduledoc """
-  Schema representation for ActionLog
+  Schema representation for ActionLog.
   """
+
   use Absinthe.Schema.Notation
-  alias MobilizonWeb.Resolvers.Admin
-  alias Mobilizon.Reports.{Report, Note}
+
   alias Mobilizon.Events.Event
+  alias Mobilizon.Reports.{Note, Report}
+
+  alias MobilizonWeb.Resolvers.Admin
 
   @desc "An action log"
   object :action_log do

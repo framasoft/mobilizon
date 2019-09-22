@@ -1,14 +1,12 @@
 defmodule Mobilizon.Service.Export.ICalendar do
   @moduledoc """
-  Export an event to iCalendar format
+  Export an event to iCalendar format.
   """
 
-  alias Mobilizon.Events.{Event, FeedToken}
-  alias Mobilizon.Events
+  alias Mobilizon.{Actors, Events, Users}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Actors
+  alias Mobilizon.Events.{Event, FeedToken}
   alias Mobilizon.Users.User
-  alias Mobilizon.Users
 
   @doc """
   Export a public event to iCalendar format.

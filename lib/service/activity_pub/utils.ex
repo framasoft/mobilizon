@@ -5,25 +5,19 @@
 
 defmodule Mobilizon.Service.ActivityPub.Utils do
   @moduledoc """
-  # Utils
-
-  Various utils
+  # Various ActivityPub related utils.
   """
 
   alias Ecto.Changeset
 
-  alias Mobilizon.Addresses
-  alias Mobilizon.Addresses.Address
-  alias Mobilizon.Actors
+  alias Mobilizon.{Actors, Addresses, Events, Reports, Users}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events
+  alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.{Comment, Event}
   alias Mobilizon.Media.Picture
-  alias Mobilizon.Reports
   alias Mobilizon.Reports.Report
   alias Mobilizon.Service.ActivityPub.{Activity, Converters}
   alias Mobilizon.Storage.Repo
-  alias Mobilizon.Users
 
   alias MobilizonWeb.{Email, Endpoint}
   alias MobilizonWeb.Router.Helpers, as: Routes

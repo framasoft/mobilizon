@@ -4,6 +4,8 @@
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/test/web/activity_pub/transmogrifier_test.exs
 
 defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
+  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+
   use Mobilizon.DataCase
 
   import Mobilizon.Factory
@@ -13,9 +15,8 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
   alias Mobilizon.Events
   alias Mobilizon.Events.{Comment, Event, Participant}
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.{Utils, Activity}
+  alias Mobilizon.Service.ActivityPub.{Activity, Utils}
   alias Mobilizon.Service.ActivityPub.Transmogrifier
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
   setup_all do
     HTTPoison.start()

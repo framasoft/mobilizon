@@ -1,10 +1,14 @@
 defmodule Mobilizon.Service.ActivityPub.UtilsTest do
-  use Mobilizon.DataCase
-  import Mobilizon.Factory
-  alias Mobilizon.Service.ActivityPub.Utils
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
-  alias MobilizonWeb.Router.Helpers, as: Routes
+
+  use Mobilizon.DataCase
+
+  import Mobilizon.Factory
+
+  alias Mobilizon.Service.ActivityPub.Utils
+
   alias MobilizonWeb.Endpoint
+  alias MobilizonWeb.Router.Helpers, as: Routes
 
   setup_all do
     HTTPoison.start()

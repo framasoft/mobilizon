@@ -3,9 +3,8 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Utils
+  alias Mobilizon.Service.ActivityPub.{Activity, Utils}
 
   @private_visibility_empty_collection %{elements: [], total: 0}
 

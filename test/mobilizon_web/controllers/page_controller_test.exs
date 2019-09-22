@@ -1,9 +1,12 @@
 defmodule MobilizonWeb.PageControllerTest do
   use MobilizonWeb.ConnCase
+
   import Mobilizon.Factory
+
   alias Mobilizon.Actors.Actor
-  alias MobilizonWeb.Router.Helpers, as: Routes
+
   alias MobilizonWeb.Endpoint
+  alias MobilizonWeb.Router.Helpers, as: Routes
 
   setup do
     conn = build_conn() |> put_req_header("accept", "text/html")

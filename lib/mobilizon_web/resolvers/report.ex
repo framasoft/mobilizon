@@ -1,14 +1,17 @@
 defmodule MobilizonWeb.Resolvers.Report do
   @moduledoc """
-  Handles the report-related GraphQL calls
+  Handles the report-related GraphQL calls.
   """
-  alias Mobilizon.Reports
-  alias Mobilizon.Reports.{Report, Note}
-  alias Mobilizon.Actors.Actor
-  alias Mobilizon.Actors
-  alias Mobilizon.Users.User
-  alias MobilizonWeb.API.Reports, as: ReportsAPI
+
   import Mobilizon.Users.Guards
+
+  alias Mobilizon.Actors
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Reports
+  alias Mobilizon.Reports.{Note, Report}
+  alias Mobilizon.Users.User
+
+  alias MobilizonWeb.API.Reports, as: ReportsAPI
 
   def list_reports(
         _parent,

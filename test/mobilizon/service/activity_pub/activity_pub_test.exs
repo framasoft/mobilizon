@@ -4,17 +4,19 @@
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/test/web/activity_pub/activity_pub_test.exs
 
 defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
+  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+
   use Mobilizon.DataCase
+
+  import Mock
 
   import Mobilizon.Factory
 
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Events.Event
-  alias Mobilizon.Actors.Actor
-  alias Mobilizon.Service.HTTPSignatures.Signature
   alias Mobilizon.Service.ActivityPub
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
-  import Mock
+  alias Mobilizon.Service.HTTPSignatures.Signature
 
   setup_all do
     HTTPoison.start()

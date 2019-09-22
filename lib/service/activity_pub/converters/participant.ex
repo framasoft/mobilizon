@@ -1,11 +1,13 @@
 defmodule Mobilizon.Service.ActivityPub.Converters.Participant do
   @moduledoc """
-  Flag converter
+  Participant converter.
 
-  This module allows to convert reports from ActivityStream format to our own internal one, and back.
+  This module allows to convert reports from ActivityStream format to our own
+  internal one, and back.
 
   Note: Reports are named Flag in AS.
   """
+
   alias Mobilizon.Events.Participant, as: ParticipantModel
 
   @doc """

@@ -2,8 +2,10 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Actor do
   @moduledoc """
   Actor converter
 
-  This module allows to convert events from ActivityStream format to our own internal one, and back
+  This module allows to convert events from ActivityStream format to our own
+  internal one, and back.
   """
+
   alias Mobilizon.Actors.Actor, as: ActorModel
   alias Mobilizon.Service.ActivityPub.Converter
 

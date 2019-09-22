@@ -1,9 +1,10 @@
 defmodule Mobilizon.Service.Geospatial.Mock do
   @moduledoc """
-  Mock for Geospatial Provider implementations
+  Mock for Geospatial Provider implementations.
   """
-  alias Mobilizon.Service.Geospatial.Provider
+
   alias Mobilizon.Addresses.Address
+  alias Mobilizon.Service.Geospatial.Provider
 
   @behaviour Provider
 

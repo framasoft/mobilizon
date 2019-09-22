@@ -1,12 +1,14 @@
 defmodule MobilizonWeb.Resolvers.AdminResolverTest do
-  alias MobilizonWeb.AbsintheHelpers
   use MobilizonWeb.ConnCase
+
   import Mobilizon.Factory
 
-  alias Mobilizon.Events.Event
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Events.Event
+  alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Users.User
-  alias Mobilizon.Reports.{Report, Note}
+
+  alias MobilizonWeb.AbsintheHelpers
 
   describe "Resolver: List the action logs" do
     @note_content "This a note on a report"

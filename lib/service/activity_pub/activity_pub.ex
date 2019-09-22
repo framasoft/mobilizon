@@ -5,28 +5,19 @@
 
 defmodule Mobilizon.Service.ActivityPub do
   @moduledoc """
-  # ActivityPub
-
-  Every ActivityPub method
+  # ActivityPub context.
   """
 
-  alias Mobilizon.Config
-  alias Mobilizon.Events
-  alias Mobilizon.Events.{Event, Comment, Participant}
-  alias Mobilizon.Service.ActivityPub.Transmogrifier
-  alias Mobilizon.Service.WebFinger
+  import Mobilizon.Service.ActivityPub.{Utils, Visibility}
 
-  alias Mobilizon.Actors
+  alias Mobilizon.{Actors, Config, Events}
   alias Mobilizon.Actors.{Actor, Follower}
-
-  alias Mobilizon.Service.Federator
+  alias Mobilizon.Events.{Comment, Event, Participant}
+  alias Mobilizon.Service.ActivityPub.{Activity, Convertible, Transmogrifier}
+  alias Mobilizon.Service.{Federator, WebFinger}
   alias Mobilizon.Service.HTTPSignatures.Signature
 
-  alias Mobilizon.Service.ActivityPub.{Activity, Convertible}
-
   require Logger
-  import Mobilizon.Service.ActivityPub.Utils
-  import Mobilizon.Service.ActivityPub.Visibility
 
   @doc """
   Get recipients for an activity or object
@@ -452,7 +443,8 @@ defmodule Mobilizon.Service.ActivityPub do
 
   def leave(object, actor, local \\ true)
 
-  # TODO: If we want to use this for exclusion we need to have an extra field for the actor that excluded the participant
+  # TODO: If we want to use this for exclusion we need to have an extra field
+  # for the actor that excluded the participant
   def leave(
         %Event{id: event_id, url: event_url} = event,
         %Actor{id: actor_id, url: actor_url} = _actor,

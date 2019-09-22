@@ -2,9 +2,11 @@ defmodule Mobilizon.Service.Geospatial.Addok do
   @moduledoc """
   [Addok](https://github.com/addok/addok) backend.
   """
-  alias Mobilizon.Service.Geospatial.Provider
-  require Logger
+
   alias Mobilizon.Addresses.Address
+  alias Mobilizon.Service.Geospatial.Provider
+
+  require Logger
 
   @behaviour Provider
 

@@ -1,25 +1,23 @@
 defmodule Mobilizon.Service.ActivityPub.Converters.Event do
   @moduledoc """
-  Event converter
+  Event converter.
 
-  This module allows to convert events from ActivityStream format to our own internal one, and back
+  This module allows to convert events from ActivityStream format to our own
+  internal one, and back.
   """
-  alias Mobilizon.Actors
-  alias Mobilizon.Media
-  alias Mobilizon.Media.Picture
-  alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.Event, as: EventModel
-  alias Mobilizon.Service.ActivityPub.Converter
-  alias Mobilizon.Service.ActivityPub.Converters.Address, as: AddressConverter
-  alias Mobilizon.Service.ActivityPub.Utils
-  alias Mobilizon.Events
-  alias Mobilizon.Events.Tag
-  alias Mobilizon.Addresses
-  alias Mobilizon.Addresses.Address
 
-  @behaviour Converter
+  alias Mobilizon.{Actors, Addresses, Events, Media}
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Addresses.Address
+  alias Mobilizon.Events.Event, as: EventModel
+  alias Mobilizon.Events.Tag
+  alias Mobilizon.Media.Picture
+  alias Mobilizon.Service.ActivityPub.{Converter, Utils}
+  alias Mobilizon.Service.ActivityPub.Converters.Address, as: AddressConverter
 
   require Logger
+
+  @behaviour Converter
 
   @doc """
   Converts an AP object data to our internal data structure

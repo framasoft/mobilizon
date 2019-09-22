@@ -1,23 +1,24 @@
 defmodule Mobilizon.Service.Export.Feed do
   @moduledoc """
-  Serve Atom Syndication Feeds
+  Serve Atom Syndication Feeds.
   """
 
-  alias Mobilizon.Users.User
-  alias Mobilizon.Users
-  alias Mobilizon.Actors
-  alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events
-  alias Mobilizon.Events.{Event, FeedToken}
-  alias Atomex.{Feed, Entry}
   import MobilizonWeb.Gettext
+
+  alias Atomex.{Entry, Feed}
+
+  alias Mobilizon.{Actors, Events, Users}
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Events.{Event, FeedToken}
+  alias Mobilizon.Users.User
+
+  alias MobilizonWeb.{Endpoint, MediaProxy}
   alias MobilizonWeb.Router.Helpers, as: Routes
-  alias MobilizonWeb.Endpoint
-  alias MobilizonWeb.MediaProxy
+
   require Logger
 
   @version Mix.Project.config()[:version]
-  def version(), do: @version
+  def version, do: @version
 
   @spec create_cache(String.t()) :: {:commit, String.t()} | {:ignore, any()}
   def create_cache("actor_" <> name) do

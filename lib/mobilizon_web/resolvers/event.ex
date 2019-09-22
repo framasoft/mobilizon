@@ -1,19 +1,21 @@
 defmodule MobilizonWeb.Resolvers.Event do
   @moduledoc """
-  Handles the event-related GraphQL calls
+  Handles the event-related GraphQL calls.
   """
+
+  import Mobilizon.Service.Admin.ActionLogService
+
+  alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Media.Picture
-  alias Mobilizon.Users.User
-  alias Mobilizon.Actors
-  alias Mobilizon.Actors.Actor
-  alias MobilizonWeb.Resolvers.Person
   alias Mobilizon.Service.ActivityPub.Activity
-  import Mobilizon.Service.Admin.ActionLogService
+  alias Mobilizon.Users.User
+
+  alias MobilizonWeb.Resolvers.Person
 
   # We limit the max number of events that can be retrieved
   @event_max_limit 100

@@ -5,10 +5,10 @@ defmodule MobilizonWeb.API.ReportTest do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.{Comment, Event}
-  alias Mobilizon.Reports.{Report, Note}
+  alias Mobilizon.Reports.{Note, Report}
+  alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Users
   alias Mobilizon.Users.User
-  alias Mobilizon.Service.ActivityPub.Activity
 
   alias MobilizonWeb.API.Reports
 

@@ -16,8 +16,8 @@ defmodule Mobilizon.Events.Event do
     EventVisibility,
     JoinOptions,
     Participant,
-    Tag,
     Session,
+    Tag,
     Track
   }
 

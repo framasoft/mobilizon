@@ -8,8 +8,8 @@ defmodule Mobilizon.Factory do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Crypto
 
-  alias MobilizonWeb.Router.Helpers, as: Routes
   alias MobilizonWeb.Endpoint
+  alias MobilizonWeb.Router.Helpers, as: Routes
   alias MobilizonWeb.Upload
 
   def user_factory do

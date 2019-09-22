@@ -84,7 +84,7 @@ defmodule MobilizonWeb.PageView do
     end
   end
 
-  defp index_file_path() do
+  defp index_file_path do
     Path.join(Application.app_dir(:mobilizon, "priv/static"), "index.html")
   end
 end
