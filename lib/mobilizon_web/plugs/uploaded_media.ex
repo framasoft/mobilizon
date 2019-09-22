@@ -60,7 +60,8 @@ defmodule MobilizonWeb.Plugs.UploadedMedia do
 
   defp get_media(conn, {:static_dir, directory}, _, opts) do
     static_opts =
-      Map.get(opts, :static_plug_opts)
+      opts
+      |> Map.get(:static_plug_opts)
       |> Map.put(:at, [@path])
       |> Map.put(:from, directory)
 

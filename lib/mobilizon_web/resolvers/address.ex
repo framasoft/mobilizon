@@ -12,7 +12,7 @@ defmodule MobilizonWeb.Resolvers.Address do
   """
   @spec search(map(), map(), map()) :: {:ok, list(Address.t())}
   def search(_parent, %{query: query, page: _page, limit: _limit}, %{context: %{ip: ip}}) do
-    country = Geolix.lookup(ip) |> Map.get(:country, nil)
+    country = ip |> Geolix.lookup() |> Map.get(:country, nil)
 
     local_addresses = Task.async(fn -> Addresses.search_addresses(query, country: country) end)
 
@@ -40,7 +40,7 @@ defmodule MobilizonWeb.Resolvers.Address do
   """
   @spec reverse_geocode(map(), map(), map()) :: {:ok, list(Address.t())}
   def reverse_geocode(_parent, %{longitude: longitude, latitude: latitude}, %{context: %{ip: ip}}) do
-    country = Geolix.lookup(ip) |> Map.get(:country, nil)
+    country = ip |> Geolix.lookup() |> Map.get(:country, nil)
 
     local_addresses =
       Task.async(fn -> Addresses.reverse_geocode(longitude, latitude, country: country) end)

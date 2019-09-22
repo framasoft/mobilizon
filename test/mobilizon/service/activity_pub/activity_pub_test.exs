@@ -28,7 +28,7 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
         Signature.sign(actor, %{
           host: "example.com",
           "content-length": 15,
-          digest: Jason.encode!(%{id: "my_id"}) |> Signature.build_digest(),
+          digest: %{id: "my_id"} |> Jason.encode!() |> Signature.build_digest(),
           "(request-target)": Signature.generate_request_target("POST", "/inbox"),
           date: Signature.generate_date_header()
         })

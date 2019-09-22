@@ -33,7 +33,8 @@ defmodule MobilizonWeb.Resolvers.TagResolverTest do
       tags = json_response(res, 200)["data"]["tags"]
       assert tags |> length == 3
 
-      assert Enum.filter(tags, fn tag -> tag["slug"] == tag1.slug end)
+      assert tags
+             |> Enum.filter(fn tag -> tag["slug"] == tag1.slug end)
              |> hd
              |> Map.get("related")
              |> Enum.map(fn tag -> tag["slug"] end)

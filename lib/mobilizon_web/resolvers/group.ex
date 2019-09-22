@@ -31,7 +31,8 @@ defmodule MobilizonWeb.Resolvers.Group do
   def list_groups(_parent, %{page: page, limit: limit}, _resolution) do
     {
       :ok,
-      Actors.list_groups(page, limit)
+      page
+      |> Actors.list_groups(limit)
       |> Enum.map(fn actor -> Person.proxify_pictures(actor) end)
     }
   end

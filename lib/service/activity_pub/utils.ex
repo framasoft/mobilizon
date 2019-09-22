@@ -348,7 +348,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     if is_nil(metadata.options) do
       res
     else
-      options = struct(Mobilizon.Events.EventOptions, metadata.options) |> Map.from_struct()
+      options = Events.EventOptions |> struct(metadata.options) |> Map.from_struct()
 
       Enum.reduce(options, res, fn {key, value}, acc ->
         (value && Map.put(acc, camelize(key), value)) ||

@@ -11,9 +11,10 @@ defmodule MobilizonWeb.Upload.Filter.Dedupe do
   alias MobilizonWeb.Upload
 
   def filter(%Upload{name: name} = upload) do
-    extension = String.split(name, ".") |> List.last()
+    extension = name |> String.split(".") |> List.last()
     shasum = :crypto.hash(:sha256, File.read!(upload.tempfile)) |> Base.encode16(case: :lower)
     filename = shasum <> "." <> extension
+
     {:ok, %Upload{upload | id: shasum, path: filename}}
   end
 end

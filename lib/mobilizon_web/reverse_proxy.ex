@@ -4,12 +4,11 @@
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/lib/pleroma/reverse_proxy.ex
 
 defmodule MobilizonWeb.ReverseProxy do
-  @keep_req_headers ~w(accept user-agent accept-encoding cache-control if-modified-since) ++
-                      ~w(if-unmodified-since if-none-match if-range range)
+  @keep_req_headers ~w(accept user-agent accept-encoding cache-control
+    if-modified-since if-unmodified-since if-none-match if-range range)
   @resp_cache_headers ~w(etag date last-modified cache-control)
-  @keep_resp_headers @resp_cache_headers ++
-                       ~w(content-type content-disposition content-encoding content-range) ++
-                       ~w(accept-ranges vary)
+  @keep_resp_headers @resp_cache_headers ++ ~w(content-type content-disposition
+    content-encoding content-range accept-ranges vary)
   @default_cache_control_header "public, max-age=1209600"
   @valid_resp_codes [200, 206, 304]
   @max_read_duration :timer.seconds(30)
@@ -21,9 +20,11 @@ defmodule MobilizonWeb.ReverseProxy do
 
       MobilizonWeb.ReverseProxy.call(conn, url, options)
 
-  It is not meant to be added into a plug pipeline, but to be called from another plug or controller.
+  It is not meant to be added into a plug pipeline, but to be called from another
+  plug or controller.
 
-  Supports `#{inspect(@methods)}` HTTP methods, and only allows `#{inspect(@valid_resp_codes)}` status codes.
+  Supports `#{inspect(@methods)}` HTTP methods, and only allows
+  `#{inspect(@valid_resp_codes)}` status codes.
 
   Responses are chunked to the client while downloading from the upstream.
 
@@ -32,34 +33,52 @@ defmodule MobilizonWeb.ReverseProxy do
   * request: `#{inspect(@keep_req_headers)}`
   * response: `#{inspect(@keep_resp_headers)}`
 
-  If no caching headers (`#{inspect(@resp_cache_headers)}`) are returned by upstream, `cache-control` will be
-  set to `#{inspect(@default_cache_control_header)}`.
+  If no caching headers (`#{inspect(@resp_cache_headers)}`) are returned by
+  upstream, `cache-control` will be set to `#{inspect(@default_cache_control_header)}`.
 
   Options:
 
-  * `redirect_on_failure` (default `false`). Redirects the client to the real remote URL if there's any HTTP
-  errors. Any error during body processing will not be redirected as the response is chunked. This may expose
-  remote URL, clients IPs, ….
+  * `redirect_on_failure` (default `false`). Redirects the client to the real
+  remote URL if there's any HTTP errors. Any error during body processing will
+  not be redirected as the response is chunked. This may expose remote URL,
+  clients IPs, ….
 
-  * `max_body_length` (default `#{inspect(@max_body_length)}`): limits the content length to be approximately the
-  specified length. It is validated with the `content-length` header and also verified when proxying.
+  * `max_body_length` (default `#{inspect(@max_body_length)}`): limits the
+  content length to be approximately the specified length. It is validated with
+  the `content-length` header and also verified when proxying.
 
-  * `max_read_duration` (default `#{inspect(@max_read_duration)}` ms): the total time the connection is allowed to
-  read from the remote upstream.
+  * `max_read_duration` (default `#{inspect(@max_read_duration)}` ms): the total
+  time the connection is allowed to read from the remote upstream.
 
   * `inline_content_types`:
     * `true` will not alter `content-disposition` (up to the upstream),
     * `false` will add `content-disposition: attachment` to any request,
     * a list of whitelisted content types
 
-    * `keep_user_agent` will forward the client's user-agent to the upstream. This may be useful if the upstream is
-    doing content transformation (encoding, …) depending on the request.
+    * `keep_user_agent` will forward the client's user-agent to the upstream.
+    This may be useful if the upstream is doing content transformation
+    (encoding, …) depending on the request.
 
   * `req_headers`, `resp_headers` additional headers.
 
   * `http`: options for [hackney](https://github.com/benoitc/hackney).
 
   """
+
+  import Plug.Conn
+
+  require Logger
+
+  @type option ::
+          {:keep_user_agent, boolean}
+          | {:max_read_duration, :timer.time() | :infinity}
+          | {:max_body_length, non_neg_integer | :infinity}
+          | {:http, []}
+          | {:req_headers, [{String.t(), String.t()}]}
+          | {:resp_headers, [{String.t(), String.t()}]}
+          | {:inline_content_types, boolean | [String.t()]}
+          | {:redirect_on_failure, boolean}
+
   @hackney Application.get_env(:mobilizon, :hackney, :hackney)
   @httpoison Application.get_env(:mobilizon, :httpoison, HTTPoison)
 
@@ -78,20 +97,7 @@ defmodule MobilizonWeb.ReverseProxy do
     "video/quicktime"
   ]
 
-  require Logger
-  import Plug.Conn
-
-  @type option() ::
-          {:keep_user_agent, boolean}
-          | {:max_read_duration, :timer.time() | :infinity}
-          | {:max_body_length, non_neg_integer() | :infinity}
-          | {:http, []}
-          | {:req_headers, [{String.t(), String.t()}]}
-          | {:resp_headers, [{String.t(), String.t()}]}
-          | {:inline_content_types, boolean() | [String.t()]}
-          | {:redirect_on_failure, boolean()}
-
-  @spec call(Plug.Conn.t(), url :: String.t(), [option()]) :: Plug.Conn.t()
+  @spec call(Plug.Conn.t(), url :: String.t(), [option]) :: Plug.Conn.t()
   def call(_conn, _url, _opts \\ [])
 
   def call(conn = %{method: method}, url, opts) when method in @methods do
@@ -114,7 +120,8 @@ defmodule MobilizonWeb.ReverseProxy do
       response(conn, client, url, code, headers, opts)
     else
       {:ok, code, headers} ->
-        head_response(conn, url, code, headers, opts)
+        conn
+        |> head_response(url, code, headers, opts)
         |> halt()
 
       {:error, {:invalid_http_response, code}} ->

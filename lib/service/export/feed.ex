@@ -57,7 +57,11 @@ defmodule Mobilizon.Service.Export.Feed do
   @spec build_actor_feed(Actor.t(), list(), boolean()) :: String.t()
   defp build_actor_feed(%Actor{} = actor, events, public \\ true) do
     display_name = Actor.display_name(actor)
-    self_url = Routes.feed_url(Endpoint, :actor, actor.preferred_username, "atom") |> URI.decode()
+
+    self_url =
+      Endpoint
+      |> Routes.feed_url(:actor, actor.preferred_username, "atom")
+      |> URI.decode()
 
     title =
       if public,
@@ -66,8 +70,8 @@ defmodule Mobilizon.Service.Export.Feed do
 
     # Title uses default instance language
     feed =
-      Feed.new(
-        self_url,
+      self_url
+      |> Feed.new(
         DateTime.utc_now(),
         Gettext.gettext(MobilizonWeb.Gettext, title, actor: display_name)
       )
@@ -102,7 +106,8 @@ defmodule Mobilizon.Service.Export.Feed do
     description = event.description || ""
 
     entry =
-      Entry.new(event.url, event.publish_at || event.inserted_at, event.title)
+      event.url
+      |> Entry.new(event.publish_at || event.inserted_at, event.title)
       |> Entry.link(event.url, rel: "alternate", type: "text/html")
       |> Entry.content({:cdata, description}, type: "html")
       |> Entry.published(event.publish_at || event.inserted_at)
@@ -156,14 +161,11 @@ defmodule Mobilizon.Service.Export.Feed do
   # Build an atom feed from actor and it's public events
   @spec build_user_feed(list(), User.t(), String.t()) :: String.t()
   defp build_user_feed(events, %User{email: email}, token) do
-    self_url = Routes.feed_url(Endpoint, :going, token, "atom") |> URI.decode()
+    self_url = Endpoint |> Routes.feed_url(:going, token, "atom") |> URI.decode()
 
     # Title uses default instance language
-    Feed.new(
-      self_url,
-      DateTime.utc_now(),
-      gettext("Feed for %{email} on Mobilizon", email: email)
-    )
+    self_url
+    |> Feed.new(DateTime.utc_now(), gettext("Feed for %{email} on Mobilizon", email: email))
     |> Feed.link(self_url, rel: "self")
     |> Feed.generator("Mobilizon", uri: "https://joinmobilizon.org", version: version())
     |> Feed.entries(Enum.map(events, &get_entry/1))

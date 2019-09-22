@@ -47,7 +47,7 @@ defmodule MobilizonWeb.MIME do
 
     new_filename =
       if length(parts) > 1 do
-        Enum.drop(parts, -1) |> Enum.join(".")
+        parts |> Enum.drop(-1) |> Enum.join(".")
       else
         Enum.join(parts)
       end
@@ -60,7 +60,9 @@ defmodule MobilizonWeb.MIME do
         new_filename <> "." <> ext
 
       true ->
-        Enum.join([new_filename, String.split(content_type, "/") |> List.last()], ".")
+        extension = content_type |> String.split("/") |> List.last()
+
+        Enum.join([new_filename, extension], ".")
     end
   end
 

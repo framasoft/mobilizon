@@ -16,7 +16,8 @@ defmodule MobilizonWeb.FeedControllerTest do
       conn =
         conn
         |> get(
-          Routes.feed_url(Endpoint, :actor, actor.preferred_username, "atom")
+          Endpoint
+          |> Routes.feed_url(:actor, actor.preferred_username, "atom")
           |> URI.decode()
         )
 
@@ -48,7 +49,8 @@ defmodule MobilizonWeb.FeedControllerTest do
       conn =
         conn
         |> get(
-          Routes.feed_url(Endpoint, :actor, actor.preferred_username, "atom")
+          Endpoint
+          |> Routes.feed_url(:actor, actor.preferred_username, "atom")
           |> URI.decode()
         )
 
@@ -63,7 +65,8 @@ defmodule MobilizonWeb.FeedControllerTest do
         conn
         |> put_req_header("accept", "application/atom+xml")
         |> get(
-          Routes.feed_url(Endpoint, :actor, actor.preferred_username, "atom")
+          Endpoint
+          |> Routes.feed_url(:actor, actor.preferred_username, "atom")
           |> URI.decode()
         )
 
@@ -93,7 +96,8 @@ defmodule MobilizonWeb.FeedControllerTest do
       conn =
         conn
         |> get(
-          Routes.feed_url(Endpoint, :actor, actor.preferred_username, "ics")
+          Endpoint
+          |> Routes.feed_url(:actor, actor.preferred_username, "ics")
           |> URI.decode()
         )
 
@@ -121,7 +125,8 @@ defmodule MobilizonWeb.FeedControllerTest do
       conn =
         conn
         |> get(
-          Routes.feed_url(Endpoint, :actor, actor.preferred_username, "ics")
+          Endpoint
+          |> Routes.feed_url(:actor, actor.preferred_username, "ics")
           |> URI.decode()
         )
 
@@ -136,7 +141,8 @@ defmodule MobilizonWeb.FeedControllerTest do
         conn
         |> put_req_header("accept", "text/calendar")
         |> get(
-          Routes.feed_url(Endpoint, :actor, actor.preferred_username, "ics")
+          Endpoint
+          |> Routes.feed_url(:actor, actor.preferred_username, "ics")
           |> URI.decode()
         )
 
@@ -163,7 +169,8 @@ defmodule MobilizonWeb.FeedControllerTest do
       conn =
         conn
         |> get(
-          Routes.feed_url(Endpoint, :event, event1.uuid, "ics")
+          Endpoint
+          |> Routes.feed_url(:event, event1.uuid, "ics")
           |> URI.decode()
         )
 
@@ -194,7 +201,8 @@ defmodule MobilizonWeb.FeedControllerTest do
       conn =
         conn
         |> get(
-          Routes.feed_url(Endpoint, :going, feed_token.token, "atom")
+          Endpoint
+          |> Routes.feed_url(:going, feed_token.token, "atom")
           |> URI.decode()
         )
 
@@ -228,7 +236,8 @@ defmodule MobilizonWeb.FeedControllerTest do
         conn
         |> put_req_header("accept", "application/atom+xml")
         |> get(
-          Routes.feed_url(Endpoint, :going, feed_token.token, "atom")
+          Endpoint
+          |> Routes.feed_url(:going, feed_token.token, "atom")
           |> URI.decode()
         )
 
@@ -247,7 +256,8 @@ defmodule MobilizonWeb.FeedControllerTest do
       conn =
         conn
         |> get(
-          Routes.feed_url(Endpoint, :going, "not existing", "atom")
+          Endpoint
+          |> Routes.feed_url(:going, "not existing", "atom")
           |> URI.decode()
         )
 
@@ -272,7 +282,8 @@ defmodule MobilizonWeb.FeedControllerTest do
         conn
         |> put_req_header("accept", "text/calendar")
         |> get(
-          Routes.feed_url(Endpoint, :going, feed_token.token, "ics")
+          Endpoint
+          |> Routes.feed_url(:going, feed_token.token, "ics")
           |> URI.decode()
         )
 
@@ -302,7 +313,8 @@ defmodule MobilizonWeb.FeedControllerTest do
         conn
         |> put_req_header("accept", "text/calendar")
         |> get(
-          Routes.feed_url(Endpoint, :going, feed_token.token, "ics")
+          Endpoint
+          |> Routes.feed_url(:going, feed_token.token, "ics")
           |> URI.decode()
         )
 
@@ -318,7 +330,8 @@ defmodule MobilizonWeb.FeedControllerTest do
       conn =
         conn
         |> get(
-          Routes.feed_url(Endpoint, :going, "not existing", "ics")
+          Endpoint
+          |> Routes.feed_url(:going, "not existing", "ics")
           |> URI.decode()
         )
 

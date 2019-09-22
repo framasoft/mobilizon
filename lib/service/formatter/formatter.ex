@@ -93,7 +93,8 @@ defmodule Mobilizon.Service.Formatter do
   end
 
   def html_escape(text, "text/plain") do
-    Regex.split(@link_regex, text, include_captures: true)
+    @link_regex
+    |> Regex.split(text, include_captures: true)
     |> Enum.map_every(2, fn chunk ->
       {:safe, part} = Phoenix.HTML.html_escape(chunk)
       part

@@ -24,7 +24,8 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     if is_binary(Enum.at(actor, 0)) do
       Enum.at(actor, 0)
     else
-      Enum.find(actor, fn %{"type" => type} -> type in ["Person", "Service", "Application"] end)
+      actor
+      |> Enum.find(fn %{"type" => type} -> type in ["Person", "Service", "Application"] end)
       |> Map.get("id")
     end
   end
