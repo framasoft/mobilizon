@@ -23,7 +23,7 @@ defmodule Mobilizon do
   @spec named_version :: String.t()
   def named_version, do: "#{@name} #{@version}"
 
-  @spec user_agent :: String.t(:w)
+  @spec user_agent :: String.t()
   def user_agent do
     info = "#{MobilizonWeb.Endpoint.url()} <#{Config.get([:instance, :email], "")}>"
 

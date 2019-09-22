@@ -18,6 +18,8 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
   alias Mobilizon.Service.ActivityPub.{Activity, Utils}
   alias Mobilizon.Service.ActivityPub.Transmogrifier
 
+  alias MobilizonWeb.API
+
   setup_all do
     HTTPoison.start()
   end
@@ -845,7 +847,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
       other_actor = insert(:actor)
 
       {:ok, activity, _} =
-        MobilizonWeb.API.Comments.create_comment(
+        API.Comments.create_comment(
           actor.preferred_username,
           "hey, @#{other_actor.preferred_username}, how are ya? #2hu"
         )
@@ -881,8 +883,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     test "it adds the json-ld context and the conversation property" do
       actor = insert(:actor)
 
-      {:ok, activity, _} =
-        MobilizonWeb.API.Comments.create_comment(actor.preferred_username, "hey")
+      {:ok, activity, _} = API.Comments.create_comment(actor.preferred_username, "hey")
 
       {:ok, modified} = Transmogrifier.prepare_outgoing(activity.data)
 
@@ -892,8 +893,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     test "it sets the 'attributedTo' property to the actor of the object if it doesn't have one" do
       actor = insert(:actor)
 
-      {:ok, activity, _} =
-        MobilizonWeb.API.Comments.create_comment(actor.preferred_username, "hey")
+      {:ok, activity, _} = API.Comments.create_comment(actor.preferred_username, "hey")
 
       {:ok, modified} = Transmogrifier.prepare_outgoing(activity.data)
 
@@ -903,8 +903,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     test "it strips internal hashtag data" do
       actor = insert(:actor)
 
-      {:ok, activity, _} =
-        MobilizonWeb.API.Comments.create_comment(actor.preferred_username, "#2hu")
+      {:ok, activity, _} = API.Comments.create_comment(actor.preferred_username, "#2hu")
 
       expected_tag = %{
         "href" => MobilizonWeb.Endpoint.url() <> "/tags/2hu",
@@ -920,8 +919,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     test "it strips internal fields" do
       actor = insert(:actor)
 
-      {:ok, activity, _} =
-        MobilizonWeb.API.Comments.create_comment(actor.preferred_username, "#2hu")
+      {:ok, activity, _} = API.Comments.create_comment(actor.preferred_username, "#2hu")
 
       {:ok, modified} = Transmogrifier.prepare_outgoing(activity.data)
 

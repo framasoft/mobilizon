@@ -6,6 +6,8 @@
 defmodule MobilizonWeb.MediaProxyController do
   use MobilizonWeb, :controller
 
+  alias Plug.Conn
+
   alias Mobilizon.Config
 
   alias MobilizonWeb.MediaProxy
@@ -21,10 +23,10 @@ defmodule MobilizonWeb.MediaProxyController do
       ReverseProxy.call(conn, url, Keyword.get(config, :proxy_opts, @default_proxy_opts))
     else
       false ->
-        send_resp(conn, 404, Plug.Conn.Status.reason_phrase(404))
+        send_resp(conn, 404, Conn.Status.reason_phrase(404))
 
       {:error, :invalid_signature} ->
-        send_resp(conn, 403, Plug.Conn.Status.reason_phrase(403))
+        send_resp(conn, 403, Conn.Status.reason_phrase(403))
 
       {:wrong_filename, filename} ->
         redirect(conn, external: MediaProxy.build_url(sig64, url64, filename))

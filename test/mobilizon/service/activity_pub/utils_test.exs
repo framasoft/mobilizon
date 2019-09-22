@@ -5,7 +5,7 @@ defmodule Mobilizon.Service.ActivityPub.UtilsTest do
 
   import Mobilizon.Factory
 
-  alias Mobilizon.Service.ActivityPub.Utils
+  alias Mobilizon.Service.ActivityPub.{Converter, Utils}
 
   alias MobilizonWeb.Endpoint
   alias MobilizonWeb.Router.Helpers, as: Routes
@@ -28,7 +28,7 @@ defmodule Mobilizon.Service.ActivityPub.UtilsTest do
                "id" => Routes.page_url(Endpoint, :comment, reply.uuid),
                "inReplyTo" => comment.url,
                "attributedTo" => reply.actor.url
-             } == Mobilizon.Service.ActivityPub.Converters.Comment.model_to_as(reply)
+             } == Converter.Comment.model_to_as(reply)
     end
 
     test "comment data from map" do

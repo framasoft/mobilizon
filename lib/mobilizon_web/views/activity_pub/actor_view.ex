@@ -9,7 +9,7 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
   @private_visibility_empty_collection %{elements: [], total: 0}
 
   def render("actor.json", %{actor: actor}) do
-    public_key = Mobilizon.Service.ActivityPub.Utils.pem_to_public_key_pem(actor.keys)
+    public_key = Utils.pem_to_public_key_pem(actor.keys)
 
     %{
       "id" => actor.url,

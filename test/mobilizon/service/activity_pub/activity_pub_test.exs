@@ -16,7 +16,10 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
   alias Mobilizon.Events
   alias Mobilizon.Events.Event
   alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Service.ActivityPub.Converter
   alias Mobilizon.Service.HTTPSignatures.Signature
+
+  alias MobilizonWeb.ActivityPub.ActorView
 
   setup_all do
     HTTPoison.start()
@@ -162,7 +165,7 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
 
     test "it creates an update activity with the new actor data" do
       actor = insert(:actor)
-      actor_data = MobilizonWeb.ActivityPub.ActorView.render("actor.json", %{actor: actor})
+      actor_data = ActorView.render("actor.json", %{actor: actor})
       actor_data = Map.put(actor_data, "summary", @updated_actor_summary)
 
       {:ok, update, updated_actor} =
@@ -191,7 +194,7 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
     test "it creates an update activity with the new event data" do
       actor = insert(:actor)
       event = insert(:event, organizer_actor: actor)
-      event_data = Mobilizon.Service.ActivityPub.Converters.Event.model_to_as(event)
+      event_data = Converter.Event.model_to_as(event)
       event_data = Map.put(event_data, "startTime", @updated_start_time)
 
       {:ok, update, updated_event} =

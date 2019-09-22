@@ -9,6 +9,7 @@ defmodule MobilizonWeb.Resolvers.AdminResolverTest do
   alias Mobilizon.Users.User
 
   alias MobilizonWeb.AbsintheHelpers
+  alias MobilizonWeb.API
 
   describe "Resolver: List the action logs" do
     @note_content "This a note on a report"
@@ -20,12 +21,11 @@ defmodule MobilizonWeb.Resolvers.AdminResolverTest do
       %Actor{} = moderator_2 = insert(:actor, user: user_moderator_2)
 
       %Report{} = report = insert(:report)
-      MobilizonWeb.API.Reports.update_report_status(moderator, report, "resolved")
+      API.Reports.update_report_status(moderator, report, "resolved")
 
-      {:ok, %Note{} = note} =
-        MobilizonWeb.API.Reports.create_report_note(report, moderator_2, @note_content)
+      {:ok, %Note{} = note} = API.Reports.create_report_note(report, moderator_2, @note_content)
 
-      MobilizonWeb.API.Reports.delete_report_note(note, moderator_2)
+      API.Reports.delete_report_note(note, moderator_2)
 
       query = """
       {

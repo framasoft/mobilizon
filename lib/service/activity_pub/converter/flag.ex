@@ -1,4 +1,4 @@
-defmodule Mobilizon.Service.ActivityPub.Converters.Flag do
+defmodule Mobilizon.Service.ActivityPub.Converter.Flag do
   @moduledoc """
   Flag converter.
 
@@ -18,10 +18,10 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Flag do
   @behaviour Converter
 
   @doc """
-  Converts an AP object data to our internal data structure
+  Converts an AP object data to our internal data structure.
   """
   @impl Converter
-  @spec as_to_model_data(map()) :: map()
+  @spec as_to_model_data(map) :: map
   def as_to_model_data(object) do
     with params <- as_to_model(object) do
       %{
@@ -35,6 +35,21 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Flag do
     end
   end
 
+  @doc """
+  Convert an event struct to an ActivityStream representation
+  """
+  @impl Converter
+  @spec model_to_as(EventModel.t()) :: map
+  def model_to_as(%Report{} = report) do
+    %{
+      "type" => "Flag",
+      "to" => ["https://www.w3.org/ns/activitystreams#Public"],
+      "actor" => report.reporter.url,
+      "id" => report.url
+    }
+  end
+
+  @spec as_to_model(map) :: map
   def as_to_model(%{"object" => objects} = object) do
     with {:ok, %Actor{} = reporter} <- Actors.get_actor_by_url(object["actor"]),
          %Actor{} = reported <-
@@ -73,19 +88,5 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Flag do
         "comments" => comments
       }
     end
-  end
-
-  @doc """
-  Convert an event struct to an ActivityStream representation
-  """
-  @impl Converter
-  @spec model_to_as(EventModel.t()) :: map()
-  def model_to_as(%Report{} = report) do
-    %{
-      "type" => "Flag",
-      "to" => ["https://www.w3.org/ns/activitystreams#Public"],
-      "actor" => report.reporter.url,
-      "id" => report.url
-    }
   end
 end

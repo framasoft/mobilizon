@@ -1,4 +1,4 @@
-defmodule Mobilizon.Service.ActivityPub.Converters.Event do
+defmodule Mobilizon.Service.ActivityPub.Converter.Event do
   @moduledoc """
   Event converter.
 
@@ -10,20 +10,27 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.Event, as: EventModel
-  alias Mobilizon.Events.Tag
+  alias Mobilizon.Events.{EventOptions, Tag}
   alias Mobilizon.Media.Picture
-  alias Mobilizon.Service.ActivityPub.{Converter, Utils}
-  alias Mobilizon.Service.ActivityPub.Converters.Address, as: AddressConverter
+  alias Mobilizon.Service.ActivityPub.{Converter, Convertible, Utils}
+  alias Mobilizon.Service.ActivityPub.Converter.Address, as: AddressConverter
+  alias Mobilizon.Service.ActivityPub.Converter.Picture, as: PictureConverter
 
   require Logger
 
   @behaviour Converter
 
+  defimpl Convertible, for: EventModel do
+    alias Mobilizon.Service.ActivityPub.Converter.Event, as: EventConverter
+
+    defdelegate model_to_as(event), to: EventConverter
+  end
+
   @doc """
-  Converts an AP object data to our internal data structure
+  Converts an AP object data to our internal data structure.
   """
   @impl Converter
-  @spec as_to_model_data(map()) :: map()
+  @spec as_to_model_data(map) :: map
   def as_to_model_data(object) do
     Logger.debug("event as_to_model_data")
     Logger.debug(inspect(object))
@@ -71,15 +78,57 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
 
       {:ok, Map.put(entity, "options", options)}
     else
-      err ->
-        {:error, err}
+      error ->
+        {:error, error}
     end
   end
 
+  @doc """
+  Convert an event struct to an ActivityStream representation.
+  """
+  @impl Converter
+  @spec model_to_as(EventModel.t()) :: map
+  def model_to_as(%EventModel{} = event) do
+    to =
+      if event.visibility == :public,
+        do: ["https://www.w3.org/ns/activitystreams#Public"],
+        else: [event.organizer_actor.followers_url]
+
+    res = %{
+      "type" => "Event",
+      "to" => to,
+      "cc" => [],
+      "attributedTo" => event.organizer_actor.url,
+      "name" => event.title,
+      "actor" => event.organizer_actor.url,
+      "uuid" => event.uuid,
+      "category" => event.category,
+      "content" => event.description,
+      "publish_at" => (event.publish_at || event.inserted_at) |> date_to_string(),
+      "updated_at" => event.updated_at |> date_to_string(),
+      "mediaType" => "text/html",
+      "startTime" => event.begins_on |> date_to_string(),
+      "endTime" => event.ends_on |> date_to_string(),
+      "tag" => event.tags |> build_tags(),
+      "id" => event.url,
+      "url" => event.url
+    }
+
+    res =
+      if is_nil(event.physical_address),
+        do: res,
+        else: Map.put(res, "location", AddressConverter.model_to_as(event.physical_address))
+
+    if is_nil(event.picture),
+      do: res,
+      else: Map.put(res, "attachment", [PictureConverter.model_to_as(event.picture)])
+  end
+
   # Get only elements that we have in EventOptions
+  @spec get_options(map) :: map
   defp get_options(object) do
     keys =
-      Mobilizon.Events.EventOptions
+      EventOptions
       |> struct
       |> Map.keys()
       |> List.delete(:__struct__)
@@ -91,6 +140,7 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
     end)
   end
 
+  @spec get_address(map | binary | nil) :: integer | nil
   defp get_address(address_url) when is_bitstring(address_url) do
     get_address(%{"id" => address_url})
   end
@@ -115,8 +165,9 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
 
   defp get_address(nil), do: nil
 
+  @spec do_get_address(map) :: integer | nil
   defp do_get_address(map) do
-    map = Mobilizon.Service.ActivityPub.Converters.Address.as_to_model_data(map)
+    map = Mobilizon.Service.ActivityPub.Converter.Address.as_to_model_data(map)
 
     case Addresses.create_address(map) do
       {:ok, %Address{id: address_id}} ->
@@ -127,6 +178,7 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
     end
   end
 
+  @spec fetch_tags([String.t()]) :: [String.t()]
   defp fetch_tags(tags) do
     Logger.debug("fetching tags")
 
@@ -141,6 +193,7 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
     end)
   end
 
+  @spec build_tags([String.t()]) :: String.t()
   defp build_tags(tags) do
     Enum.map(tags, fn %Tag{} = tag ->
       %{
@@ -203,12 +256,7 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Event do
       else: Map.put(res, "attachment", [Utils.make_picture_data(event.picture)])
   end
 
+  @spec date_to_string(DateTime.t() | nil) :: String.t()
   defp date_to_string(nil), do: nil
-  defp date_to_string(date), do: DateTime.to_iso8601(date)
-end
-
-defimpl Mobilizon.Service.ActivityPub.Convertible, for: Mobilizon.Events.Event do
-  alias Mobilizon.Service.ActivityPub.Converters.Event, as: EventConverter
-
-  defdelegate model_to_as(event), to: EventConverter
+  defp date_to_string(%DateTime{} = date), do: DateTime.to_iso8601(date)
 end

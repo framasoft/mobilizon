@@ -4,12 +4,12 @@ defmodule MobilizonWeb.PageView do
   """
   use MobilizonWeb, :view
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Service.ActivityPub.Utils
+  alias Mobilizon.Service.ActivityPub.{Converter, Utils}
   alias Mobilizon.Service.Metadata
   alias Mobilizon.Service.MetadataUtils
 
   def render("actor.activity-json", %{conn: %{assigns: %{object: actor}}}) do
-    public_key = Mobilizon.Service.ActivityPub.Utils.pem_to_public_key_pem(actor.keys)
+    public_key = Utils.pem_to_public_key_pem(actor.keys)
 
     %{
       "id" => Actor.build_url(actor.preferred_username, :page),
@@ -47,12 +47,12 @@ defmodule MobilizonWeb.PageView do
 
   def render("event.activity-json", %{conn: %{assigns: %{object: event}}}) do
     event
-    |> Mobilizon.Service.ActivityPub.Converters.Event.model_to_as()
+    |> Converter.Event.model_to_as()
     |> Map.merge(Utils.make_json_ld_header())
   end
 
   def render("comment.activity-json", %{conn: %{assigns: %{object: comment}}}) do
-    comment = Mobilizon.Service.ActivityPub.Converters.Comment.model_to_as(comment)
+    comment = Converter.Comment.model_to_as(comment)
 
     %{
       "actor" => comment["actor"],

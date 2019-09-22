@@ -11,7 +11,7 @@ defmodule Mobilizon.Service.ActivityPub.Relay do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Activity
+  alias Mobilizon.Service.ActivityPub.{Activity, Transmogrifier}
 
   alias MobilizonWeb.API.Follows
 
@@ -72,9 +72,7 @@ defmodule Mobilizon.Service.ActivityPub.Relay do
   def publish(%Activity{data: %{"object" => object}} = _activity) do
     with %Actor{id: actor_id} = actor <- get_actor(),
          {:ok, object} <-
-           Mobilizon.Service.ActivityPub.Transmogrifier.fetch_obj_helper_as_activity_streams(
-             object
-           ) do
+           Transmogrifier.fetch_obj_helper_as_activity_streams(object) do
       ActivityPub.announce(actor, object, "#{object["id"]}/announces/#{actor_id}", true, false)
     else
       e ->

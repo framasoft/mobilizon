@@ -1,21 +1,27 @@
-defmodule Mobilizon.Service.ActivityPub.Converters.Actor do
+defmodule Mobilizon.Service.ActivityPub.Converter.Actor do
   @moduledoc """
-  Actor converter
+  Actor converter.
 
   This module allows to convert events from ActivityStream format to our own
   internal one, and back.
   """
 
   alias Mobilizon.Actors.Actor, as: ActorModel
-  alias Mobilizon.Service.ActivityPub.Converter
+  alias Mobilizon.Service.ActivityPub.{Converter, Convertible}
 
   @behaviour Converter
 
+  defimpl Convertible, for: ActorModel do
+    alias Mobilizon.Service.ActivityPub.Converter.Actor, as: ActorConverter
+
+    defdelegate model_to_as(actor), to: ActorConverter
+  end
+
   @doc """
-  Converts an AP object data to our internal data structure
+  Converts an AP object data to our internal data structure.
   """
   @impl Converter
-  @spec as_to_model_data(map()) :: map()
+  @spec as_to_model_data(map) :: map
   def as_to_model_data(object) do
     avatar =
       object["icon"]["url"] &&
@@ -45,10 +51,10 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Actor do
   end
 
   @doc """
-  Convert an actor struct to an ActivityStream representation
+  Convert an actor struct to an ActivityStream representation.
   """
   @impl Converter
-  @spec model_to_as(ActorModel.t()) :: map()
+  @spec model_to_as(ActorModel.t()) :: map
   def model_to_as(%ActorModel{} = actor) do
     %{
       "type" => Atom.to_string(actor.type),
@@ -64,10 +70,4 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Actor do
       "url" => actor.url
     }
   end
-end
-
-defimpl Mobilizon.Service.ActivityPub.Convertible, for: Mobilizon.Actors.Actor do
-  alias Mobilizon.Service.ActivityPub.Converters.Actor, as: ActorConverter
-
-  defdelegate model_to_as(actor), to: ActorConverter
 end

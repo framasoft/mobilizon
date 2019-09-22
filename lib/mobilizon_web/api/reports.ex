@@ -11,7 +11,7 @@ defmodule MobilizonWeb.API.Reports do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Reports, as: ReportsAction
-  alias Mobilizon.Reports.{Note, Report}
+  alias Mobilizon.Reports.{Note, Report, ReportStatus}
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Users
@@ -63,7 +63,7 @@ defmodule MobilizonWeb.API.Reports do
   """
   def update_report_status(%Actor{} = actor, %Report{} = report, state) do
     with {:valid_state, true} <-
-           {:valid_state, Mobilizon.Reports.ReportStatus.valid_value?(state)},
+           {:valid_state, ReportStatus.valid_value?(state)},
          {:ok, report} <- ReportsAction.update_report(report, %{"status" => state}),
          {:ok, _} <- log_action(actor, "update", report) do
       {:ok, report}

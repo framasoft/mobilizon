@@ -13,7 +13,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   alias Mobilizon.Events
   alias Mobilizon.Events.{Comment, Event, Participant}
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.{Utils, Visibility}
+  alias Mobilizon.Service.ActivityPub.{Converter, Convertible, Utils, Visibility}
 
   require Logger
 
@@ -122,7 +122,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   def handle_incoming(%{"id" => ""}), do: :error
 
   def handle_incoming(%{"type" => "Flag"} = data) do
-    with params <- Mobilizon.Service.ActivityPub.Converters.Flag.as_to_model(data) do
+    with params <- Converter.Flag.as_to_model(data) do
       params = %{
         reporter_url: params["reporter"].url,
         reported_actor_url: params["reported"].url,
@@ -868,7 +868,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
 
   def fetch_obj_helper_as_activity_streams(object) do
     with {:ok, object} <- fetch_obj_helper(object) do
-      {:ok, Mobilizon.Service.ActivityPub.Convertible.model_to_as(object)}
+      {:ok, Convertible.model_to_as(object)}
     end
   end
 end

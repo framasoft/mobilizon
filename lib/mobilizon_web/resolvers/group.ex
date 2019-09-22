@@ -9,6 +9,7 @@ defmodule MobilizonWeb.Resolvers.Group do
   alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Users.User
 
+  alias MobilizonWeb.API
   alias MobilizonWeb.Resolvers.Person
 
   require Logger
@@ -51,7 +52,7 @@ defmodule MobilizonWeb.Resolvers.Group do
            %Activity{data: %{"object" => %{"type" => "Group"} = _object}},
            %Actor{} = group
          } <-
-           MobilizonWeb.API.Groups.create_group(
+           API.Groups.create_group(
              user,
              %{
                preferred_username: args.preferred_username,

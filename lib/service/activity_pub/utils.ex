@@ -16,7 +16,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   alias Mobilizon.Events.{Comment, Event}
   alias Mobilizon.Media.Picture
   alias Mobilizon.Reports.Report
-  alias Mobilizon.Service.ActivityPub.{Activity, Converters}
+  alias Mobilizon.Service.ActivityPub.{Activity, Converter}
+  alias Mobilizon.Service.Federator
   alias Mobilizon.Storage.Repo
 
   alias MobilizonWeb.{Email, Endpoint}
@@ -64,7 +65,8 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
         _ -> 5
       end
 
-    Mobilizon.Service.Federator.enqueue(:publish, activity, priority)
+    Federator.enqueue(:publish, activity, priority)
+
     :ok
   end
 
@@ -119,7 +121,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   def insert_full_object(%{"object" => %{"type" => "Event"} = object_data, "type" => "Create"})
       when is_map(object_data) do
     with {:ok, object_data} <-
-           Converters.Event.as_to_model_data(object_data),
+           Converter.Event.as_to_model_data(object_data),
          {:ok, %Event{} = event} <- Events.create_event(object_data) do
       {:ok, event}
     end
@@ -139,7 +141,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   """
   def insert_full_object(%{"object" => %{"type" => "Note"} = object_data, "type" => "Create"})
       when is_map(object_data) do
-    with data <- Converters.Comment.as_to_model_data(object_data),
+    with data <- Converter.Comment.as_to_model_data(object_data),
          {:ok, %Comment{} = comment} <- Events.create_comment(data) do
       {:ok, comment}
     else
@@ -155,7 +157,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   """
   def insert_full_object(%{"type" => "Flag"} = object_data)
       when is_map(object_data) do
-    with data <- Converters.Flag.as_to_model_data(object_data),
+    with data <- Converter.Flag.as_to_model_data(object_data),
          {:ok, %Report{} = report} <- Reports.create_report(data) do
       Enum.each(Users.list_moderators(), fn moderator ->
         moderator
@@ -187,7 +189,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       when is_map(object_data) do
     with {:event_not_found, %Event{} = event} <-
            {:event_not_found, Events.get_event_by_url(event_url)},
-         {:ok, object_data} <- Converters.Event.as_to_model_data(object_data),
+         {:ok, object_data} <- Converter.Event.as_to_model_data(object_data),
          {:ok, %Event{} = event} <- Events.update_event(event, object_data) do
       {:ok, event}
     end
@@ -199,7 +201,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       })
       when is_map(object_data) and type_actor in @actor_types do
     with {:ok, %Actor{} = actor} <- Actors.get_actor_by_url(actor_url),
-         object_data <- Converters.Actor.as_to_model_data(object_data),
+         object_data <- Converter.Actor.as_to_model_data(object_data),
          {:ok, %Actor{} = actor} <- Actors.update_actor(actor, object_data) do
       {:ok, actor}
     end
@@ -245,21 +247,10 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   end
 
   @doc """
-  Convert a picture model into an AS Link representation
+  Convert a picture model into an AS Link representation.
   """
-  # TODO: Move me to Mobilizon.Service.ActivityPub.Converters
-  def make_picture_data(%Picture{file: file} = _picture) do
-    %{
-      "type" => "Document",
-      "url" => [
-        %{
-          "type" => "Link",
-          "mediaType" => file.content_type,
-          "href" => file.url
-        }
-      ],
-      "name" => file.name
-    }
+  def make_picture_data(%Picture{} = picture) do
+    Converter.Picture.model_to_as(picture)
   end
 
   @doc """
@@ -268,7 +259,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   def make_picture_data(picture) when is_map(picture) do
     with {:ok, %{"url" => [%{"href" => url, "mediaType" => content_type}], "size" => size}} <-
            MobilizonWeb.Upload.store(picture.file),
-         {:ok, %Picture{file: _file} = pic} <-
+         {:ok, %Picture{file: _file} = picture} <-
            Mobilizon.Media.create_picture(%{
              "file" => %{
                "url" => url,
@@ -278,7 +269,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
              },
              "actor_id" => picture.actor_id
            }) do
-      make_picture_data(pic)
+      Converter.Picture.model_to_as(picture)
     end
   end
 

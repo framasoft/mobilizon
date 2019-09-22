@@ -67,6 +67,8 @@ defmodule MobilizonWeb.ReverseProxy do
 
   import Plug.Conn
 
+  alias Plug.Conn
+
   require Logger
 
   @type option ::
@@ -131,7 +133,7 @@ defmodule MobilizonWeb.ReverseProxy do
         |> error_or_redirect(
           url,
           code,
-          "Request failed: " <> Plug.Conn.Status.reason_phrase(code),
+          "Request failed: " <> Conn.Status.reason_phrase(code),
           opts
         )
         |> halt()
@@ -147,7 +149,7 @@ defmodule MobilizonWeb.ReverseProxy do
 
   def call(conn, _, _) do
     conn
-    |> send_resp(400, Plug.Conn.Status.reason_phrase(400))
+    |> send_resp(400, Conn.Status.reason_phrase(400))
     |> halt()
   end
 

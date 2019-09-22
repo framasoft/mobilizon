@@ -7,6 +7,7 @@ defmodule MobilizonWeb.API.ReportTest do
   alias Mobilizon.Events.{Comment, Event}
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Service.ActivityPub.Activity
+  alias Mobilizon.Service.Formatter
   alias Mobilizon.Users
   alias Mobilizon.Users.User
 
@@ -86,7 +87,7 @@ defmodule MobilizonWeb.API.ReportTest do
         _comment_2 = insert(:comment, actor: reported)
 
       comment = "This is really not acceptable, remote admin I don't know"
-      encoded_comment = Mobilizon.Service.Formatter.html_escape(comment, "text/plain")
+      encoded_comment = Formatter.html_escape(comment, "text/plain")
 
       assert {:ok, %Activity{} = flag_activity, _} =
                Reports.report(%{
