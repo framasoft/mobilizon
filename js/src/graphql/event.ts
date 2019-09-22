@@ -2,6 +2,7 @@ import gql from 'graphql-tag';
 
 const participantQuery = `
   role,
+  id,
   actor {
     preferredUsername,
     avatar {
@@ -20,7 +21,8 @@ const physicalAddressQuery = `
   postalCode,
   region,
   country,
-  geom
+  geom,
+  id
 `;
 
 const tagsQuery = `
@@ -50,7 +52,7 @@ const optionsQuery = `
 `;
 
 export const FETCH_EVENT = gql`
-  query($uuid:UUID!) {
+  query($uuid:UUID!, $roles: String) {
     event(uuid: $uuid) {
       id,
       uuid,
@@ -63,6 +65,7 @@ export const FETCH_EVENT = gql`
       endsOn,
       status,
       visibility,
+      joinOptions,
       picture {
         id
         url
@@ -92,7 +95,7 @@ export const FETCH_EVENT = gql`
       #     preferredUsername,
       #     name,
       # },
-      participants {
+      participants (roles: $roles) {
         ${participantQuery}
       },
       participantStats {
@@ -146,23 +149,25 @@ export const FETCH_EVENTS = gql`
       # online_address,
       # phone_address,
       physicalAddress {
+        id,
         description,
         locality
-      }
+      },
       organizerActor {
+        id,
         avatar {
           url
         },
         preferredUsername,
         name,
       },
-      attributedTo {
-        avatar {
-          url
-        },
-        preferredUsername,
-        name,
-      },
+#      attributedTo {
+#        avatar {
+#          url
+#        },
+#        preferredUsername,
+#        name,
+#      },
       category,
       participants {
         ${participantQuery}
@@ -183,7 +188,8 @@ export const CREATE_EVENT = gql`
     $beginsOn: DateTime!,
     $endsOn: DateTime,
     $status: EventStatus,
-    $visibility: EventVisibility
+    $visibility: EventVisibility,
+    $joinOptions: EventJoinOptions,
     $tags: [String],
     $picture: PictureInput,
     $onlineAddress: String,
@@ -200,6 +206,7 @@ export const CREATE_EVENT = gql`
       endsOn: $endsOn,
       status: $status,
       visibility: $visibility,
+      joinOptions: $joinOptions,
       tags: $tags,
       picture: $picture,
       onlineAddress: $onlineAddress,
@@ -216,6 +223,7 @@ export const CREATE_EVENT = gql`
       endsOn,
       status,
       visibility,
+      joinOptions,
       picture {
         id
         url
@@ -245,7 +253,8 @@ export const EDIT_EVENT = gql`
     $beginsOn: DateTime,
     $endsOn: DateTime,
     $status: EventStatus,
-    $visibility: EventVisibility
+    $visibility: EventVisibility,
+    $joinOptions: EventJoinOptions,
     $tags: [String],
     $picture: PictureInput,
     $onlineAddress: String,
@@ -262,6 +271,7 @@ export const EDIT_EVENT = gql`
       endsOn: $endsOn,
       status: $status,
       visibility: $visibility,
+      joinOptions: $joinOptions,
       tags: $tags,
       picture: $picture,
       onlineAddress: $onlineAddress,
@@ -278,6 +288,7 @@ export const EDIT_EVENT = gql`
       endsOn,
       status,
       visibility,
+      joinOptions,
       picture {
         id
         url
@@ -323,6 +334,23 @@ export const LEAVE_EVENT = gql`
   }
 `;
 
+export const ACCEPT_PARTICIPANT = gql`
+  mutation AcceptParticipant($id: ID!, $moderatorActorId: ID!) {
+    acceptParticipation(id: $id, moderatorActorId: $moderatorActorId) {
+      role,
+      id
+    }
+  }
+`;
+
+export const REJECT_PARTICIPANT = gql`
+  mutation RejectParticipant($id: ID!, $moderatorActorId: ID!) {
+    rejectParticipation(id: $id, moderatorActorId: $moderatorActorId) {
+      id
+    }
+  }
+`;
+
 export const DELETE_EVENT = gql`
   mutation DeleteEvent($eventId: ID!, $actorId: ID!) {
     deleteEvent(
@@ -330,6 +358,20 @@ export const DELETE_EVENT = gql`
       actorId: $actorId
     ) {
         id
+    }
+  }
+`;
+
+export const PARTICIPANTS = gql`
+  query($uuid: UUID!, $page: Int, $limit: Int, $roles: String) {
+    event(uuid: $uuid) {
+      participants(page: $page, limit: $limit, roles: $roles) {
+        ${participantQuery}
+      },
+      participantStats {
+        approved,
+        unapproved
+      }
     }
   }
 `;

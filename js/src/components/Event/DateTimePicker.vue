@@ -23,11 +23,20 @@ export default class DateTimePicker extends Vue {
   }
 
   @Watch('time')
-  updateDateTime(time) {
+  updateTime(time) {
     const [hours, minutes] = time.split(':', 2);
-    this.value.setHours(hours);
-    this.value.setMinutes(minutes);
-    this.$emit('input', this.value);
+    this.date.setHours(hours);
+    this.date.setMinutes(minutes);
+    this.updateDateTime();
+  }
+
+  @Watch('date')
+    updateDate() {
+    this.updateDateTime();
+  }
+
+  updateDateTime() {
+    this.$emit('input', this.date);
   }
 }
 </script>

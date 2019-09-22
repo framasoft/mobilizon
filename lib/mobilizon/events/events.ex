@@ -522,6 +522,26 @@ defmodule Mobilizon.Events do
 
   @doc """
   Gets a single participant.
+
+  ## Examples
+
+        iex> get_participant(123)
+        %Participant{}
+
+      iex> get_participant(456)
+      nil
+
+  """
+  @spec get_participant(integer) :: Participant.t()
+  def get_participant(participant_id) do
+    Participant
+    |> where([p], p.id == ^participant_id)
+    |> preload([p], [:event, :actor])
+    |> Repo.one()
+  end
+
+  @doc """
+  Gets a single participation for an event and actor.
   """
   @spec get_participant(integer | String.t(), integer | String.t()) ::
           {:ok, Participant.t()} | {:error, :participant_not_found}
@@ -536,8 +556,18 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
-  Gets a single participant.
-  Raises `Ecto.NoResultsError` if the participant does not exist.
+  Gets a single participation for an event and actor.
+
+  Raises `Ecto.NoResultsError` if the Participant does not exist.
+
+  ## Examples
+
+        iex> get_participant!(123, 19)
+        %Participant{}
+
+      iex> get_participant!(456, 5)
+      ** (Ecto.NoResultsError)
+
   """
   @spec get_participant!(integer | String.t(), integer | String.t()) :: Participant.t()
   def get_participant!(event_id, actor_id) do
@@ -554,73 +584,82 @@ defmodule Mobilizon.Events do
     |> Repo.one()
   end
 
-  @doc """
-  Gets the default participant role depending on the event join options.
-  """
-  @spec get_default_participant_role(Event.t()) :: :participant | :not_approved
-  def get_default_participant_role(%Event{join_options: :free}), do: :participant
-  def get_default_participant_role(%Event{join_options: _}), do: :not_approved
-
-  @doc """
-  Creates a participant.
-  """
-  @spec create_participant(map) :: {:ok, Participant.t()} | {:error, Ecto.Changeset.t()}
-  def create_participant(attrs \\ %{}) do
-    with {:ok, %Participant{} = participant} <-
-           %Participant{}
-           |> Participant.changeset(attrs)
-           |> Repo.insert() do
-      {:ok, Repo.preload(participant, [:event, :actor])}
-    end
-  end
-
-  @doc """
-  Updates a participant.
-  """
-  @spec update_participant(Participant.t(), map) ::
-          {:ok, Participant.t()} | {:error, Ecto.Changeset.t()}
-  def update_participant(%Participant{} = participant, attrs) do
-    participant
-    |> Participant.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a participant.
-  """
-  @spec delete_participant(Participant.t()) ::
-          {:ok, Participant.t()} | {:error, Ecto.Changeset.t()}
-  def delete_participant(%Participant{} = participant), do: Repo.delete(participant)
-
-  @doc """
-  Returns the list of participants.
-  """
-  @spec list_participants :: [Participant.t()]
-  def list_participants, do: Repo.all(Participant)
+  @default_participant_roles [:participant, :moderator, :administrator, :creator]
 
   @doc """
   Returns the list of participants for an event.
   Default behaviour is to not return :not_approved participants
   """
-  @spec list_participants_for_event(String.t(), integer | nil, integer | nil, boolean) ::
+  @spec list_participants_for_event(String.t(), list(atom()), integer | nil, integer | nil) ::
           [Participant.t()]
   def list_participants_for_event(
-        event_uuid,
+        uuid,
+        roles \\ @default_participant_roles,
         page \\ nil,
-        limit \\ nil,
-        include_not_improved \\ false
-      )
-
-  def list_participants_for_event(event_uuid, page, limit, include_not_improved) do
-    event_uuid
-    |> participants_for_event()
-    |> filter_role(include_not_improved)
+        limit \\ nil
+      ) do
+    uuid
+    |> list_participants_for_event_query()
+    |> filter_role(roles)
     |> Page.paginate(page, limit)
     |> Repo.all()
   end
 
   @doc """
+  Returns the list of participations for an actor.
+
+  Default behaviour is to not return :not_approved participants
+
+  ## Examples
+
+      iex> list_event_participations_for_user(5)
+      [%Participant{}, ...]
+
+  """
+  @spec list_participations_for_user(
+          integer,
+          DateTime.t() | nil,
+          DateTime.t() | nil,
+          integer | nil,
+          integer | nil
+        ) :: list(Participant.t())
+  def list_participations_for_user(user_id, after_datetime, before_datetime, page, limit) do
+    user_id
+    |> list_participations_for_user_query()
+    |> participation_filter_begins_on(after_datetime, before_datetime)
+    |> Page.paginate(page, limit)
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns the list of moderator participants for an event.
+
+  ## Examples
+
+      iex> moderator_for_event?(5, 3)
+      true
+
+  """
+  @spec moderator_for_event?(integer, integer) :: boolean
+  def moderator_for_event?(event_id, actor_id) do
+    !(Repo.one(
+        from(
+          p in Participant,
+          where:
+            p.event_id == ^event_id and
+              p.actor_id ==
+                ^actor_id and p.role in ^[:moderator, :administrator, :creator]
+        )
+      ) == nil)
+  end
+
+  @doc """
   Returns the list of organizers participants for an event.
+
+  ## Examples
+
+      iex> list_organizers_participants_for_event(id)
+      [%Participant{role: :creator}, ...]
   """
   @spec list_organizers_participants_for_event(
           integer | String.t(),
@@ -678,6 +717,44 @@ defmodule Mobilizon.Events do
     |> filter_unapproved_role()
     |> Repo.aggregate(:count, :id)
   end
+
+  @doc """
+  Gets the default participant role depending on the event join options.
+  """
+  @spec get_default_participant_role(Event.t()) :: :participant | :not_approved
+  def get_default_participant_role(%Event{join_options: :free}), do: :participant
+  def get_default_participant_role(%Event{join_options: _}), do: :not_approved
+
+  @doc """
+  Creates a participant.
+  """
+  @spec create_participant(map) :: {:ok, Participant.t()} | {:error, Ecto.Changeset.t()}
+  def create_participant(attrs \\ %{}) do
+    with {:ok, %Participant{} = participant} <-
+           %Participant{}
+           |> Participant.changeset(attrs)
+           |> Repo.insert() do
+      {:ok, Repo.preload(participant, [:event, :actor])}
+    end
+  end
+
+  @doc """
+  Updates a participant.
+  """
+  @spec update_participant(Participant.t(), map) ::
+          {:ok, Participant.t()} | {:error, Ecto.Changeset.t()}
+  def update_participant(%Participant{} = participant, attrs) do
+    participant
+    |> Participant.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a participant.
+  """
+  @spec delete_participant(Participant.t()) ::
+          {:ok, Participant.t()} | {:error, Ecto.Changeset.t()}
+  def delete_participant(%Participant{} = participant), do: Repo.delete(participant)
 
   @doc """
   Gets a single session.
@@ -1143,17 +1220,6 @@ defmodule Mobilizon.Events do
     )
   end
 
-  @spec participants_for_event(String.t()) :: Ecto.Query.t()
-  defp participants_for_event(event_uuid) do
-    from(
-      p in Participant,
-      join: e in Event,
-      on: p.event_id == e.id,
-      where: e.uuid == ^event_uuid,
-      preload: [:actor]
-    )
-  end
-
   defp organizers_participants_for_event(event_id) do
     from(
       p in Participant,
@@ -1211,6 +1277,30 @@ defmodule Mobilizon.Events do
         :origin_comment,
         :event
       ]
+    )
+  end
+
+  @spec list_participants_for_event_query(String.t()) :: Ecto.Query.t()
+  defp list_participants_for_event_query(event_uuid) do
+    from(
+      p in Participant,
+      join: e in Event,
+      on: p.event_id == e.id,
+      where: e.uuid == ^event_uuid,
+      preload: [:actor]
+    )
+  end
+
+  @spec list_participations_for_user_query(integer()) :: Ecto.Query.t()
+  defp list_participations_for_user_query(user_id) do
+    from(
+      p in Participant,
+      join: e in Event,
+      join: a in Actor,
+      on: p.actor_id == a.id,
+      on: p.event_id == e.id,
+      where: a.user_id == ^user_id and p.role != ^:not_approved,
+      preload: [:event, :actor]
     )
   end
 
@@ -1281,9 +1371,33 @@ defmodule Mobilizon.Events do
     from(p in query, where: p.role == ^:not_approved)
   end
 
-  @spec filter_role(Ecto.Query.t(), boolean) :: Ecto.Query.t()
-  defp filter_role(query, false), do: filter_approved_role(query)
-  defp filter_role(query, true), do: query
+  @spec filter_role(Ecto.Query.t(), list(atom())) :: Ecto.Query.t()
+  defp filter_role(query, []), do: query
+
+  defp filter_role(query, roles) do
+    where(query, [p], p.role in ^roles)
+  end
+
+  defp participation_filter_begins_on(query, nil, nil),
+    do: participation_order_begins_on_desc(query)
+
+  defp participation_filter_begins_on(query, %DateTime{} = after_datetime, nil) do
+    query
+    |> where([_p, e, _a], e.begins_on > ^after_datetime)
+    |> participation_order_begins_on_asc()
+  end
+
+  defp participation_filter_begins_on(query, nil, %DateTime{} = before_datetime) do
+    query
+    |> where([_p, e, _a], e.begins_on < ^before_datetime)
+    |> participation_order_begins_on_desc()
+  end
+
+  defp participation_order_begins_on_asc(query),
+    do: order_by(query, [_p, e, _a], asc: e.begins_on)
+
+  defp participation_order_begins_on_desc(query),
+    do: order_by(query, [_p, e, _a], desc: e.begins_on)
 
   @spec preload_for_event(Ecto.Query.t()) :: Ecto.Query.t()
   defp preload_for_event(query), do: preload(query, ^@event_preloads)

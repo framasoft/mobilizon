@@ -1,3 +1,4 @@
+import {EventJoinOptions} from "@/types/event.model";
 <template>
   <section class="container">
     <h1 class="title" v-if="isUpdate === false">
@@ -54,23 +55,23 @@
           {{ $t('Who can view this event and participate') }}
         </h2>
           <div class="field">
-            <b-radio v-model="eventVisibilityJoinOptions"
-                     name="eventVisibilityJoinOptions"
-                     :native-value="EventVisibilityJoinOptions.PUBLIC">
+            <b-radio v-model="event.visibility"
+                     name="eventVisibility"
+                     :native-value="EventVisibility.PUBLIC">
               {{ $t('Visible everywhere on the web (public)') }}
             </b-radio>
           </div>
           <div class="field">
-            <b-radio v-model="eventVisibilityJoinOptions"
-                     name="eventVisibilityJoinOptions"
-                     :native-value="EventVisibilityJoinOptions.LINK">
+            <b-radio v-model="event.visibility"
+                     name="eventVisibility"
+                     :native-value="EventVisibility.UNLISTED">
               {{ $t('Only accessible through link and search (private)') }}
             </b-radio>
           </div>
         <div class="field">
-          <b-radio v-model="eventVisibilityJoinOptions"
-                   name="eventVisibilityJoinOptions"
-                   :native-value="EventVisibilityJoinOptions.LIMITED">
+          <b-radio v-model="event.visibility"
+                   name="eventVisibility"
+                   :native-value="EventVisibility.PRIVATE">
              {{ $t('Page limited to my group (asks for auth)') }}
           </b-radio>
         </div>
@@ -79,13 +80,6 @@
           <label class="label">{{ $t('Participation approval') }}</label>
           <b-switch v-model="needsApproval">
             {{ $t('I want to approve every participation request') }}
-          </b-switch>
-        </div>
-
-        <div class="field">
-          <label class="label">{{ $t('Promotion') }}</label>
-          <b-switch v-model="doNotPromote" :disabled="canPromote === false">
-            {{ $t('Disallow promoting on Mobilizon')}}
           </b-switch>
         </div>
 
@@ -187,11 +181,17 @@
 </style>
 
 <script lang="ts">
-import { CREATE_EVENT, EDIT_EVENT, FETCH_EVENT, FETCH_EVENTS } from '@/graphql/event';
+import { CREATE_EVENT, EDIT_EVENT, FETCH_EVENT } from '@/graphql/event';
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import { EventModel, EventStatus, EventVisibility, EventVisibilityJoinOptions, CommentModeration, IEvent } from '@/types/event.model';
+import {
+    CommentModeration, EventJoinOptions,
+    EventModel,
+    EventStatus,
+    EventVisibility,
+    EventVisibilityJoinOptions,
+  } from '@/types/event.model';
 import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
-import { IPerson, Person } from '@/types/actor';
+import { Person } from '@/types/actor';
 import PictureUpload from '@/components/PictureUpload.vue';
 import Editor from '@/components/Editor.vue';
 import DateTimePicker from '@/components/Event/DateTimePicker.vue';
@@ -225,10 +225,8 @@ export default class EditEvent extends Vue {
   pictureFile: File | null = null;
 
   EventStatus = EventStatus;
-  EventVisibilityJoinOptions = EventVisibilityJoinOptions;
-  eventVisibilityJoinOptions: EventVisibilityJoinOptions = EventVisibilityJoinOptions.PUBLIC;
+  EventVisibility = EventVisibility;
   needsApproval: boolean = false;
-  doNotPromote: boolean = false;
   canPromote: boolean = true;
   limitedPlaces: boolean = false;
   CommentModeration = CommentModeration;
@@ -332,23 +330,12 @@ export default class EditEvent extends Vue {
     return new EventModel(result.data.event);
   }
 
-  @Watch('eventVisibilityJoinOptions')
-  calculateVisibilityAndJoinOptions(eventVisibilityJoinOptions) {
-    switch (eventVisibilityJoinOptions) {
-      case EventVisibilityJoinOptions.PUBLIC:
-        this.event.visibility = EventVisibility.UNLISTED;
-        this.canPromote = true;
-        break;
-      case EventVisibilityJoinOptions.LINK:
-        this.event.visibility = EventVisibility.PRIVATE;
-        this.canPromote = false;
-        this.doNotPromote = false;
-        break;
-      case EventVisibilityJoinOptions.LIMITED:
-        this.event.visibility = EventVisibility.RESTRICTED;
-        this.canPromote = false;
-        this.doNotPromote = false;
-        break;
+  @Watch('needsApproval')
+  updateEventJoinOptions(needsApproval) {
+    if (needsApproval === true) {
+      this.event.joinOptions = EventJoinOptions.RESTRICTED;
+    } else {
+      this.event.joinOptions = EventJoinOptions.FREE;
     }
   }
 

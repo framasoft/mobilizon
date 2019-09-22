@@ -6,7 +6,7 @@
       </h1>
       <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">{{ error }}</b-message>
       <form @submit="resetAction">
-        <b-field label="Password">
+        <b-field :label="$t('Password')">
           <b-input
             aria-required="true"
             required
@@ -16,7 +16,7 @@
             v-model="credentials.password"
           />
         </b-field>
-        <b-field label="Password (confirmation)">
+        <b-field :label="$t('Password (confirmation)')">
           <b-input
             aria-required="true"
             required

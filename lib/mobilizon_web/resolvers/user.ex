@@ -3,7 +3,7 @@ defmodule MobilizonWeb.Resolvers.User do
   Handles the user-related GraphQL calls
   """
 
-  alias Mobilizon.{Actors, Config, Users}
+  alias Mobilizon.{Actors, Config, Users, Events}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.Users.{ResetPassword, Activation}
   alias Mobilizon.Users.User
@@ -218,6 +218,24 @@ defmodule MobilizonWeb.Resolvers.User do
 
       _error ->
         {:error, :unable_to_change_default_actor}
+    end
+  end
+
+  @doc """
+  Returns the list of events for all of this user's identities are going to
+  """
+  def user_participations(_parent, args, %{
+        context: %{current_user: %User{id: user_id}}
+      }) do
+    with participations <-
+           Events.list_participations_for_user(
+             user_id,
+             Map.get(args, :after_datetime),
+             Map.get(args, :before_datetime),
+             Map.get(args, :page),
+             Map.get(args, :limit)
+           ) do
+      {:ok, participations}
     end
   end
 end

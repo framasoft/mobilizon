@@ -38,10 +38,11 @@
           <div class="metadata columns">
             <div class="column is-three-quarters-desktop">
               <p class="tags" v-if="event.category || event.tags.length > 0">
-                <span class="tag" v-if="event.category">{{ event.category }}</span>
+<!--                <span class="tag" v-if="event.category">{{ event.category }}</span>-->
                 <span class="tag" v-if="event.tags" v-for="tag in event.tags">{{ tag.title }}</span>
                 <span class="visibility">
-                  <span v-if="event.visibility === EventVisibility.PUBLIC">{{ $t('public event') }}</span>
+                  <span v-if="event.visibility === EventVisibility.PUBLIC">{{ $t('Public event') }}</span>
+                  <span v-if="event.visibility === EventVisibility.UNLISTED">{{ $t('Private event') }}</span>
                 </span>
               </p>
               <div class="date-and-add-to-calendar">
@@ -69,7 +70,7 @@
                   </router-link>
                 </p>
                 <p class="control" v-if="actorIsOrganizer()">
-                  <a class="button is-danger" @click="openDeleteEventModal()">
+                  <a class="button is-danger" @click="openDeleteEventModalWrapper">
                     {{ $t('Delete') }}
                   </a>
                 </p>
@@ -84,7 +85,7 @@
                 <span v-if="!event.physicalAddress">{{ $t('No address defined') }}</span>
                 <div class="address" v-if="event.physicalAddress">
                   <address>
-                    <span class="addressDescription">{{ event.physicalAddress.description }}</span>
+                    <span class="addressDescription" :title="event.physicalAddress.description">{{ event.physicalAddress.description }}</span>
                     <span>{{ event.physicalAddress.floor }} {{ event.physicalAddress.street }}</span>
                     <span>{{ event.physicalAddress.postalCode }} {{ event.physicalAddress.locality }}</span>
   <!--                  <span>{{ event.physicalAddress.region }} {{ event.physicalAddress.country }}</span>-->
@@ -93,7 +94,7 @@
                     {{ $t('Show map') }}
                   </span>
                 </div>
-                <b-modal v-if="event.physicalAddress && event.physicalAddress.geom" :active.sync="showMap" :width="800" scroll="keep">
+                <b-modal v-if="event.physicalAddress && event.physicalAddress.geom" :active.sync="showMap" scroll="keep">
                   <div class="map">
                     <map-leaflet
                             :coords="event.physicalAddress.geom"
@@ -103,7 +104,7 @@
                 </b-modal>
               </div>
               <div class="organizer">
-                <actor-link :actor="event.organizerActor">
+                <span>
                   <span v-if="event.organizerActor">
                     {{ $t('By {name}', {name: event.organizerActor.name ? event.organizerActor.name : event.organizerActor.preferredUsername}) }}
                   </span>
@@ -111,33 +112,13 @@
                     <img
                             class="is-rounded"
                             :src="event.organizerActor.avatar.url"
-                            :alt="$t("{actor}'s avatar", {actor: event.organizerActor.preferredUsername})" />
+                            :alt="event.organizerActor.avatar.alt" />
                   </figure>
-                </actor-link>
+                </span>
               </div>
             </div>
           </div>
         </section>
-
-<!--          <p v-if="actorIsOrganizer()">-->
-<!--            <translate>You are an organizer.</translate>-->
-<!--          </p>-->
-<!--          <div v-else>-->
-<!--            <p v-if="actorIsParticipant()">-->
-<!--              <translate>You announced that you're going to this event.</translate>-->
-<!--            </p>-->
-<!--            <p v-else>-->
-<!--              <translate>Are you going to this event?</translate><br />-->
-<!--              <span>-->
-<!--                <translate-->
-<!--                        :translate-n="event.participants.length"-->
-<!--                        translate-plural="{event.participants.length} persons are going"-->
-<!--                >-->
-<!--                  One person is going.-->
-<!--                </translate>-->
-<!--              </span>-->
-<!--            </p>-->
-<!--          </div>-->
         <div class="description">
           <div class="description-container container">
             <h3 class="title">
@@ -147,63 +128,31 @@
               {{ $t("The event organizer didn't add any description.") }}
             </p>
             <div class="columns" v-else>
-              <div class="column is-half">
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse vehicula ex dapibus augue volutpat, ultrices cursus mi rutrum.
-                  Nunc ante nunc, facilisis a tellus quis, tempor mollis diam. Aenean consectetur quis est a ultrices.
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </p>
-                <p><a href="https://framasoft.org">https://framasoft.org</a>
-                <p>
-                  Nam sit amet est eget velit tristique commodo. Etiam sollicitudin dignissim diam, ut ultricies tortor.
-                  Sed quis blandit diam, a tincidunt nunc. Donec tincidunt tristique neque at rhoncus. Ut eget vulputate felis.
-                  Pellentesque nibh purus, viverra ac augue sed, iaculis feugiat velit. Nulla ut hendrerit elit.
-                  Etiam at justo eu nunc tempus sagittis. Sed ac tincidunt tellus, sit amet luctus velit.
-                  Nam ullamcorper eros eleifend, eleifend diam vitae, lobortis risus.
-                </p>
-                <p>
-                  <em>
-                    Curabitur rhoncus sapien tortor, vitae imperdiet massa scelerisque non.
-                    Aliquam eu augue mi. Donec hendrerit lorem orci.
-                  </em>
-                </p>
-                <p>
-                  Donec volutpat, enim eu laoreet dictum, urna quam varius enim, eu convallis urna est vitae massa.
-                  Morbi porttitor lacus a sem efficitur blandit. Mauris in est in quam tincidunt iaculis non vitae ipsum.
-                  Phasellus eget velit tellus. Curabitur ac neque pharetra velit viverra mollis.
-                </p>
-                <img src="https://framasoft.org/img/biglogo-notxt.png" alt="logo Framasoft"/>
-                <p>Aenean gravida, ante vitae aliquet aliquet, elit quam tristique orci, sit amet dictum lorem ipsum nec tortor.
-                  Vestibulum est eros, faucibus et semper vel, dapibus ac est. Suspendisse potenti. Suspendisse potenti.
-                  Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-                  Nulla molestie nisi ac risus hendrerit, dapibus mattis sapien scelerisque.
-                </p>
-                <p>Maecenas id pretium justo, nec dignissim sapien. Mauris in venenatis odio, in congue augue. </p>
+              <div class="column is-half" v-html="event.description">
               </div>
             </div>
           </div>
         </div>
-<!--      <section class="container">-->
-<!--        <h2 class="title">Participants</h2>-->
-<!--        <span v-if="event.participants.length === 0">No participants yet.</span>-->
-<!--        <div class="columns">-->
-<!--          <router-link-->
-<!--            class="column"-->
-<!--            v-for="participant in event.participants"-->
-<!--            :key="participant.preferredUsername"-->
-<!--            :to="{name: 'Profile', params: { name: participant.actor.preferredUsername }}"-->
-<!--          >-->
-<!--            <div>-->
-<!--              <figure>-->
-<!--                <img v-if="!participant.actor.avatar.url" src="https://picsum.photos/125/125/">-->
-<!--                <img v-else :src="participant.actor.avatar.url">-->
-<!--              </figure>-->
-<!--              <span>{{ participant.actor.preferredUsername }}</span>-->
-<!--            </div>-->
-<!--          </router-link>-->
-<!--        </div>-->
-<!--      </section>-->
+      <section class="container">
+        <h3 class="title">{{ $t('Participants') }}</h3>
+        <router-link v-if="currentActor.id === event.organizerActor.id" :to="{ name: EventRouteName.PARTICIPATIONS, params: { eventId: event.uuid } }">
+          {{ $t('Manage participants') }}
+        </router-link>
+        <span v-if="event.participants.length === 0">{{ $t('No participants yet.') }}</span>
+        <div class="columns">
+          <div
+            class="column"
+            v-for="participant in event.participants"
+            :key="participant.id"
+          >
+              <figure class="image is-48x48">
+                <img v-if="!participant.actor.avatar.url" src="https://picsum.photos/48/48/" class="is-rounded">
+                <img v-else :src="participant.actor.avatar.url" class="is-rounded">
+              </figure>
+              <span>{{ participant.actor.preferredUsername }}</span>
+          </div>
+        </div>
+      </section>
       <section class="share">
         <div class="container">
           <div class="columns">
@@ -236,7 +185,7 @@
         </div>
       </section>
       <b-modal :active.sync="isReportModalActive" has-modal-card ref="reportModal">
-        <report-modal :on-confirm="reportEvent" title="Report this event" :outside-domain="event.organizerActor.domain" @close="$refs.reportModal.close()" />
+        <report-modal :on-confirm="reportEvent" :title="$t('Report this event')" :outside-domain="event.organizerActor.domain" @close="$refs.reportModal.close()" />
       </b-modal>
       <b-modal :active.sync="isJoinModalActive" has-modal-card ref="participationModal">
         <participation-modal :on-confirm="joinEvent" :event="event" :defaultIdentity="currentActor" @close="$refs.participationModal.close()" />
@@ -249,7 +198,7 @@
 import { DELETE_EVENT, FETCH_EVENT, JOIN_EVENT, LEAVE_EVENT } from '@/graphql/event';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
-import { EventVisibility, IEvent, IParticipant } from '@/types/event.model';
+import { EventVisibility, IEvent, IParticipant, ParticipantRole } from '@/types/event.model';
 import { IPerson } from '@/types/actor';
 import { RouteName } from '@/router';
 import { GRAPHQL_API_ENDPOINT } from '@/api/_entrypoint';
@@ -262,6 +211,8 @@ import ReportModal from '@/components/Report/ReportModal.vue';
 import ParticipationModal from '@/components/Event/ParticipationModal.vue';
 import { IReport } from '@/types/report.model';
 import { CREATE_REPORT } from '@/graphql/report';
+import EventMixin from '@/mixins/event';
+import { EventRouteName } from '@/router/event';
 
 @Component({
   components: {
@@ -282,6 +233,7 @@ import { CREATE_REPORT } from '@/graphql/report';
       variables() {
         return {
           uuid: this.uuid,
+          roles: [ParticipantRole.CREATOR, ParticipantRole.MODERATOR, ParticipantRole.MODERATOR, ParticipantRole.PARTICIPANT].join(),
         };
       },
     },
@@ -290,7 +242,7 @@ import { CREATE_REPORT } from '@/graphql/report';
     },
   },
 })
-export default class Event extends Vue {
+export default class Event extends EventMixin {
   @Prop({ type: String, required: true }) uuid!: string;
 
   event!: IEvent;
@@ -301,32 +253,14 @@ export default class Event extends Vue {
   isJoinModalActive: boolean = false;
 
   EventVisibility = EventVisibility;
+  EventRouteName = EventRouteName;
 
-  async openDeleteEventModal () {
-    const participantsLength = this.event.participants.length;
-    const prefix = participantsLength
-            ? this.$tc('There are {participants} participants.', this.event.participants.length, {
-              participants: this.event.participants.length,
-            })
-            : '';
-
-    this.$buefy.dialog.prompt({
-      type: 'is-danger',
-      title: this.$t('Delete event') as string,
-      message: `${prefix}
-        ${this.$t('Are you sure you want to delete this event? This action cannot be reverted.')}
-        <br><br>
-        ${this.$t('To confirm, type your event title "{eventTitle}"', { eventTitle: this.event.title })}`,
-      confirmText: this.$t(
-              'Delete {eventTitle}',
-              { eventTitle: this.event.title },
-      ) as string,
-      inputAttrs: {
-        placeholder: this.event.title,
-        pattern: this.event.title,
-      },
-      onConfirm: () => this.deleteEvent(),
-    });
+  /**
+   * Delete the event, then redirect to home.
+   */
+  async openDeleteEventModalWrapper() {
+    await this.openDeleteEventModal(this.event, this.currentActor);
+    await this.$router.push({ name: RouteName.HOME });
   }
 
   async reportEvent(content: string, forward: boolean) {
@@ -385,9 +319,10 @@ export default class Event extends Vue {
 
   confirmLeave() {
     this.$buefy.dialog.confirm({
-      title: `Leaving event « ${this.event.title} »`,
-      message: `Are you sure you want to leave event « ${this.event.title} »`,
-      confirmText: 'Leave event',
+      title: this.$t('Leaving event "{title}"', { title: this.event.title }) as string,
+      message: this.$t('Are you sure you want to cancel your participation at event "{title}"?', { title: this.event.title }) as string,
+      confirmText: this.$t('Leave event') as string,
+      cancelText: this.$t('Cancel') as string,
       type: 'is-danger',
       hasIcon: true,
       onConfirm: () => this.leaveEvent(),
@@ -464,31 +399,6 @@ export default class Event extends Vue {
     return `mailto:?to=&body=${this.event.url}${encodeURIComponent('\n\n')}${this.event.description}&subject=${this.event.title}`;
   }
 
-  private async deleteEvent() {
-    const router = this.$router;
-    const eventTitle = this.event.title;
-
-    try {
-      await this.$apollo.mutate<IParticipant>({
-        mutation: DELETE_EVENT,
-        variables: {
-          eventId: this.event.id,
-          actorId: this.currentActor.id,
-        },
-      });
-
-      await router.push({ name: RouteName.HOME });
-      this.$buefy.notification.open({
-        message: this.$t('Event {eventTitle} deleted', { eventTitle }) as string,
-        type: 'is-success',
-        position: 'is-bottom-right',
-        duration: 5000,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
 }
 </script>
 <style lang="scss" scoped>
@@ -535,6 +445,8 @@ export default class Event extends Vue {
             white-space: nowrap;
             flex: 1 0 auto;
             min-width: 100%;
+            max-width: 4rem;
+            overflow: hidden;
           }
 
           :not(.addressDescription) {

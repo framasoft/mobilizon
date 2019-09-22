@@ -65,7 +65,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { LOGIN } from '@/graphql/auth';
 import { validateEmailField, validateRequiredField } from '@/utils/validators';
-import { saveUserData } from '@/utils/auth';
+import { initializeCurrentActor, saveUserData } from '@/utils/auth';
 import { ILogin } from '@/types/login.model';
 import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
 import { onLogin } from '@/vue-apollo';
@@ -146,6 +146,7 @@ export default class Login extends Vue {
           role: data.login.user.role,
         },
       });
+      await initializeCurrentActor(this.$apollo.provider.defaultClient);
 
       onLogin(this.$apollo);
 

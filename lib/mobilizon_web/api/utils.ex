@@ -7,6 +7,8 @@ defmodule MobilizonWeb.API.Utils do
   alias Mobilizon.Config
   alias Mobilizon.Service.Formatter
 
+  @ap_public "https://www.w3.org/ns/activitystreams#Public"
+
   @doc """
   Determines the full audience based on mentions for a public audience
 
@@ -16,7 +18,7 @@ defmodule MobilizonWeb.API.Utils do
   """
   @spec get_to_and_cc(Actor.t(), list(), map(), String.t()) :: {list(), list()}
   def get_to_and_cc(%Actor{} = actor, mentions, inReplyTo, :public) do
-    to = ["https://www.w3.org/ns/activitystreams#Public" | mentions]
+    to = [@ap_public | mentions]
     cc = [actor.followers_url]
 
     if inReplyTo do
@@ -36,7 +38,7 @@ defmodule MobilizonWeb.API.Utils do
   @spec get_to_and_cc(Actor.t(), list(), map(), String.t()) :: {list(), list()}
   def get_to_and_cc(%Actor{} = actor, mentions, inReplyTo, :unlisted) do
     to = [actor.followers_url | mentions]
-    cc = ["https://www.w3.org/ns/activitystreams#Public"]
+    cc = [@ap_public]
 
     if inReplyTo do
       {Enum.uniq([inReplyTo.actor | to]), cc}
@@ -49,7 +51,7 @@ defmodule MobilizonWeb.API.Utils do
   Determines the full audience based on mentions based on a private audience
 
   Audience is:
-    * `to` : the mentionned actors, actor's followers and the eventual actor we're replying to
+    * `to` : the mentioned actors, actor's followers and the eventual actor we're replying to
     * `cc` : none
   """
   @spec get_to_and_cc(Actor.t(), list(), map(), String.t()) :: {list(), list()}
@@ -62,7 +64,7 @@ defmodule MobilizonWeb.API.Utils do
   Determines the full audience based on mentions based on a direct audience
 
   Audience is:
-    * `to` : the mentionned actors and the eventual actor we're replying to
+    * `to` : the mentioned actors and the eventual actor we're replying to
     * `cc` : none
   """
   @spec get_to_and_cc(Actor.t(), list(), map(), String.t()) :: {list(), list()}

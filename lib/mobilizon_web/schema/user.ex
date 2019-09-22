@@ -45,6 +45,16 @@ defmodule MobilizonWeb.Schema.UserType do
     )
 
     field(:role, :user_role, description: "The role for the user")
+
+    field(:participations, list_of(:participant),
+      description: "The list of events this person goes to"
+    ) do
+      arg(:after_datetime, :datetime)
+      arg(:before_datetime, :datetime)
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
+      resolve(&User.user_participations/3)
+    end
   end
 
   enum :user_role do

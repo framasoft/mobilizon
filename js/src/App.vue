@@ -1,7 +1,7 @@
 <template>
   <div id="mobilizon">
     <NavBar />
-    <main>
+    <main class="container">
       <router-view />
     </main>
     <mobilizon-footer />
@@ -24,7 +24,7 @@ import Footer from '@/components/Footer.vue';
 import Logo from '@/components/Logo.vue';
 import { CURRENT_ACTOR_CLIENT, IDENTITIES, UPDATE_CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { IPerson } from '@/types/actor';
-import { changeIdentity, saveActorData } from '@/utils/auth';
+import { changeIdentity, initializeCurrentActor, saveActorData } from '@/utils/auth';
 
 @Component({
   apollo: {
@@ -40,18 +40,19 @@ import { changeIdentity, saveActorData } from '@/utils/auth';
 })
 export default class App extends Vue {
   async created() {
-    await this.initializeCurrentUser();
-    await this.initializeCurrentActor();
+    if (await this.initializeCurrentUser()) {
+      await initializeCurrentActor(this.$apollo.provider.defaultClient);
+    }
   }
 
-  private initializeCurrentUser() {
+  private async initializeCurrentUser() {
     const userId = localStorage.getItem(AUTH_USER_ID);
     const userEmail = localStorage.getItem(AUTH_USER_EMAIL);
     const accessToken = localStorage.getItem(AUTH_ACCESS_TOKEN);
     const role = localStorage.getItem(AUTH_USER_ROLE);
 
     if (userId && userEmail && accessToken && role) {
-      return this.$apollo.mutate({
+      return await this.$apollo.mutate({
         mutation: UPDATE_CURRENT_USER_CLIENT,
         variables: {
           id: userId,
@@ -61,26 +62,7 @@ export default class App extends Vue {
         },
       });
     }
-  }
-
-  /**
-   * We fetch from localStorage the latest actor ID used,
-   * then fetch the current identities to set in cache
-   * the current identity used
-   */
-  private async initializeCurrentActor() {
-    const actorId = localStorage.getItem(AUTH_USER_ACTOR_ID);
-
-    const result = await this.$apollo.query({
-      query: IDENTITIES,
-    });
-    const identities = result.data.identities;
-    if (identities.length < 1) return;
-    const activeIdentity = identities.find(identity => identity.id === actorId) || identities[0] as IPerson;
-
-    if (activeIdentity) {
-      return await changeIdentity(this.$apollo.provider.defaultClient, activeIdentity);
-    }
+    return false;
   }
 }
 </script>
@@ -100,6 +82,7 @@ export default class App extends Vue {
 @import "~bulma/sass/components/dropdown.sass";
 @import "~bulma/sass/components/breadcrumb.sass";
 @import "~bulma/sass/components/list.sass";
+@import "~bulma/sass/components/tabs";
 @import "~bulma/sass/elements/box.sass";
 @import "~bulma/sass/elements/button.sass";
 @import "~bulma/sass/elements/container.sass";
@@ -107,6 +90,7 @@ export default class App extends Vue {
 @import "~bulma/sass/elements/icon.sass";
 @import "~bulma/sass/elements/image.sass";
 @import "~bulma/sass/elements/other.sass";
+@import "~bulma/sass/elements/progress.sass";
 @import "~bulma/sass/elements/tag.sass";
 @import "~bulma/sass/elements/title.sass";
 @import "~bulma/sass/elements/notification";
@@ -122,12 +106,14 @@ export default class App extends Vue {
 @import "~buefy/src/scss/components/autocomplete";
 @import "~buefy/src/scss/components/form";
 @import "~buefy/src/scss/components/modal";
+@import "~buefy/src/scss/components/progress";
 @import "~buefy/src/scss/components/tag";
 @import "~buefy/src/scss/components/taginput";
 @import "~buefy/src/scss/components/upload";
 @import "~buefy/src/scss/components/radio";
 @import "~buefy/src/scss/components/switch";
 @import "~buefy/src/scss/components/table";
+@import "~buefy/src/scss/components/tabs";
 
 .router-enter-active,
 .router-leave-active {

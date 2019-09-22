@@ -93,16 +93,14 @@ defmodule Mobilizon.EventsTest do
         |> Map.put(:organizer_actor_id, actor.id)
         |> Map.put(:address_id, address.id)
 
-      case Events.create_event(valid_attrs) do
-        {:ok, %Event{} = event} ->
-          assert event.begins_on == DateTime.from_naive!(~N[2010-04-17 14:00:00Z], "Etc/UTC")
-          assert event.description == "some description"
-          assert event.ends_on == DateTime.from_naive!(~N[2010-04-17 14:00:00Z], "Etc/UTC")
-          assert event.title == "some title"
+      {:ok, %Event{} = event} = Events.create_event(valid_attrs)
+      assert event.begins_on == DateTime.from_naive!(~N[2010-04-17 14:00:00Z], "Etc/UTC")
+      assert event.description == "some description"
+      assert event.ends_on == DateTime.from_naive!(~N[2010-04-17 14:00:00Z], "Etc/UTC")
+      assert event.title == "some title"
 
-        err ->
-          flunk("Failed to create an event #{inspect(err)}")
-      end
+      assert hd(Events.list_participants_for_event(event.uuid)).actor.id == actor.id
+      assert hd(Events.list_participants_for_event(event.uuid)).role == :creator
     end
 
     test "create_event/1 with invalid data returns error changeset" do
@@ -316,13 +314,6 @@ defmodule Mobilizon.EventsTest do
       event = insert(:event, organizer_actor: actor)
       participant = insert(:participant, actor: actor, event: event)
       {:ok, participant: participant, event: event, actor: actor}
-    end
-
-    test "list_participants/0 returns all participants", %{
-      participant: %Participant{event_id: participant_event_id, actor_id: participant_actor_id}
-    } do
-      assert [participant_event_id] == Events.list_participants() |> Enum.map(& &1.event_id)
-      assert [participant_actor_id] == Events.list_participants() |> Enum.map(& &1.actor_id)
     end
 
     test "get_participant!/1 returns the participant for a given event and given actor", %{

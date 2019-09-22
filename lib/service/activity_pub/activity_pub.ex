@@ -25,7 +25,8 @@ defmodule Mobilizon.Service.ActivityPub do
   alias Mobilizon.Service.ActivityPub.{Activity, Convertible}
 
   require Logger
-  import Mobilizon.Service.ActivityPub.{Utils, Visibility}
+  import Mobilizon.Service.ActivityPub.Utils
+  import Mobilizon.Service.ActivityPub.Visibility
 
   @doc """
   Get recipients for an activity or object

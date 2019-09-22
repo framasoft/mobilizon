@@ -30,6 +30,7 @@
           has-icon
           aria-close-label="Close notification"
           role="alert"
+          :key="error"
           v-for="error in errors"
     >
     {{ error }}

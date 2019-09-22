@@ -59,25 +59,50 @@ export const UPDATE_CURRENT_ACTOR_CLIENT = gql`
     }
 `;
 
-export const LOGGED_PERSON_WITH_GOING_TO_EVENTS = gql`
-query {
-  loggedPerson {
-    id,
-    avatar {
-        url
-    },
-    preferredUsername,
-    goingToEvents {
-        uuid,
-        title,
-        beginsOn,
-        participants {
-            actor {
-                id,
-                preferredUsername
-            }
-        }
-    },
+export const LOGGED_USER_PARTICIPATIONS = gql`
+query LoggedUserParticipations($afterDateTime: DateTime, $beforeDateTime: DateTime $page: Int, $limit: Int) {
+  loggedUser {
+      participations(afterDatetime: $afterDateTime, beforeDatetime: $beforeDateTime, page: $page, limit: $limit) {
+          event {
+              id,
+              uuid,
+              title,
+              picture {
+                  url,
+                  alt
+              },
+              beginsOn,
+              visibility,
+              organizerActor {
+                  id,
+                  preferredUsername,
+                  name,
+                  domain,
+                  avatar {
+                      url
+                  }
+              },
+              participantStats {
+                  approved,
+                  unapproved
+              },
+              options {
+                  maximumAttendeeCapacity
+                  remainingAttendeeCapacity
+              }
+          },
+          id,
+          role,
+          actor {
+              id,
+              preferredUsername,
+              name,
+              domain,
+              avatar {
+                  url
+              }
+          }
+      }
   }
 }`;
 

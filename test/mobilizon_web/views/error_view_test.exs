@@ -5,7 +5,8 @@ defmodule MobilizonWeb.ErrorViewTest do
   import Phoenix.View
 
   test "renders 404.html" do
-    assert render_to_string(MobilizonWeb.ErrorView, "404.html", []) == "Page not found"
+    assert render_to_string(MobilizonWeb.ErrorView, "404.html", []) =~
+             "We're sorry but mobilizon doesn't work properly without JavaScript enabled. Please enable it to continue."
   end
 
   test "render 500.html" do

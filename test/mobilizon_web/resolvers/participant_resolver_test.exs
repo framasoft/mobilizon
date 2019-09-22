@@ -50,7 +50,7 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["joinEvent"]["role"] == "participant"
+      assert json_response(res, 200)["data"]["joinEvent"]["role"] == "PARTICIPANT"
       assert json_response(res, 200)["data"]["joinEvent"]["event"]["id"] == to_string(event.id)
       assert json_response(res, 200)["data"]["joinEvent"]["actor"]["id"] == to_string(actor.id)
 
@@ -161,10 +161,12 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
 
       query = """
       {
-        participants(uuid: "#{event.uuid}") {
-          role,
-          actor {
-              preferredUsername
+        event(uuid: "#{event.uuid}") {
+          participants {
+            role,
+            actor {
+                preferredUsername
+            }
           }
         }
       }
@@ -174,12 +176,12 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
         conn
         |> get("/api", AbsintheHelpers.query_skeleton(query, "participants"))
 
-      assert json_response(res, 200)["data"]["participants"] == [
+      assert json_response(res, 200)["data"]["event"]["participants"] == [
                %{
                  "actor" => %{
                    "preferredUsername" => participant2.actor.preferred_username
                  },
-                 "role" => "creator"
+                 "role" => "CREATOR"
                }
              ]
     end
@@ -331,10 +333,12 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
 
       query = """
       {
-        participants(uuid: "#{event.uuid}") {
-          role,
-          actor {
-              preferredUsername
+        event(uuid: "#{event.uuid}") {
+          participants(roles: "participant,moderator,administrator,creator") {
+            role,
+            actor {
+                preferredUsername
+            }
           }
         }
       }
@@ -344,12 +348,12 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
         context.conn
         |> get("/api", AbsintheHelpers.query_skeleton(query, "participants"))
 
-      assert json_response(res, 200)["data"]["participants"] == [
+      assert json_response(res, 200)["data"]["event"]["participants"] == [
                %{
                  "actor" => %{
                    "preferredUsername" => context.actor.preferred_username
                  },
-                 "role" => "creator"
+                 "role" => "CREATOR"
                }
              ]
 
@@ -361,12 +365,59 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
       # This one will (as a participant)
       participant2 = insert(:participant, event: event, actor: actor3, role: :participant)
 
+      query = """
+      {
+        event(uuid: "#{event.uuid}") {
+          participants(page: 1, limit: 1, roles: "participant,moderator,administrator,creator") {
+            role,
+            actor {
+                preferredUsername
+            }
+          }
+        }
+      }
+      """
+
       res =
         context.conn
         |> get("/api", AbsintheHelpers.query_skeleton(query, "participants"))
 
       sorted_participants =
-        json_response(res, 200)["data"]["participants"]
+        json_response(res, 200)["data"]["event"]["participants"]
+        |> Enum.sort_by(
+          &(&1
+            |> Map.get("actor")
+            |> Map.get("preferredUsername"))
+        )
+
+      assert sorted_participants == [
+               %{
+                 "actor" => %{
+                   "preferredUsername" => participant2.actor.preferred_username
+                 },
+                 "role" => "PARTICIPANT"
+               }
+             ]
+
+      query = """
+      {
+        event(uuid: "#{event.uuid}") {
+          participants(page: 2, limit: 1, roles: "participant,moderator,administrator,creator") {
+            role,
+            actor {
+                preferredUsername
+            }
+          }
+        }
+      }
+      """
+
+      res =
+        context.conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "participants"))
+
+      sorted_participants =
+        json_response(res, 200)["data"]["event"]["participants"]
         |> Enum.sort_by(
           &(&1
             |> Map.get("actor")
@@ -378,13 +429,7 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
                  "actor" => %{
                    "preferredUsername" => context.actor.preferred_username
                  },
-                 "role" => "creator"
-               },
-               %{
-                 "actor" => %{
-                   "preferredUsername" => participant2.actor.preferred_username
-                 },
-                 "role" => "participant"
+                 "role" => "CREATOR"
                }
              ]
     end
@@ -454,6 +499,283 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
       assert json_response(res, 200)["data"]["event"]["uuid"] == to_string(event.uuid)
       assert json_response(res, 200)["data"]["event"]["participantStats"]["approved"] == 2
       assert json_response(res, 200)["data"]["event"]["participantStats"]["unapproved"] == 1
+    end
+  end
+
+  describe "Participant approval" do
+    test "accept_participation/3", %{conn: conn, actor: actor, user: user} do
+      user_creator = insert(:user)
+      actor_creator = insert(:actor, user: user_creator)
+      event = insert(:event, join_options: :restricted, organizer_actor: actor_creator)
+      insert(:participant, event: event, actor: actor_creator, role: :creator)
+
+      mutation = """
+          mutation {
+            joinEvent(
+              actor_id: #{actor.id},
+              event_id: #{event.id}
+            ) {
+                id,
+                role,
+                actor {
+                  id
+                },
+                event {
+                  id
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["joinEvent"]["role"] == "NOT_APPROVED"
+      assert json_response(res, 200)["data"]["joinEvent"]["event"]["id"] == to_string(event.id)
+      assert json_response(res, 200)["data"]["joinEvent"]["actor"]["id"] == to_string(actor.id)
+      participation_id = json_response(res, 200)["data"]["joinEvent"]["id"]
+
+      mutation = """
+          mutation {
+            acceptParticipation(
+              id: "#{participation_id}",
+              moderator_actor_id: #{actor_creator.id}
+            ) {
+                id,
+                role,
+                actor {
+                  id
+                },
+                event {
+                  id
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user_creator)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["acceptParticipation"]["role"] == "PARTICIPANT"
+
+      assert json_response(res, 200)["data"]["acceptParticipation"]["event"]["id"] ==
+               to_string(event.id)
+
+      assert json_response(res, 200)["data"]["acceptParticipation"]["actor"]["id"] ==
+               to_string(actor.id)
+
+      res =
+        conn
+        |> auth_conn(user_creator)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] =~
+               " can't be approved since it's already a participant (with role participant)"
+    end
+
+    test "accept_participation/3 with bad parameters", %{conn: conn, actor: actor, user: user} do
+      user_creator = insert(:user)
+      actor_creator = insert(:actor, user: user_creator)
+      event = insert(:event, join_options: :restricted)
+      insert(:participant, event: event, role: :creator)
+
+      mutation = """
+          mutation {
+            joinEvent(
+              actor_id: #{actor.id},
+              event_id: #{event.id}
+            ) {
+                id,
+                role,
+                actor {
+                  id
+                },
+                event {
+                  id
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["joinEvent"]["role"] == "NOT_APPROVED"
+      assert json_response(res, 200)["data"]["joinEvent"]["event"]["id"] == to_string(event.id)
+      assert json_response(res, 200)["data"]["joinEvent"]["actor"]["id"] == to_string(actor.id)
+      participation_id = json_response(res, 200)["data"]["joinEvent"]["id"]
+
+      mutation = """
+          mutation {
+            acceptParticipation(
+              id: "#{participation_id}",
+              moderator_actor_id: #{actor_creator.id}
+            ) {
+                id,
+                role,
+                actor {
+                  id
+                },
+                event {
+                  id
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user_creator)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "Provided moderator actor ID doesn't have permission on this event"
+    end
+  end
+
+  describe "reject participation" do
+    test "reject_participation/3", %{conn: conn, actor: actor, user: user} do
+      user_creator = insert(:user)
+      actor_creator = insert(:actor, user: user_creator)
+      event = insert(:event, join_options: :restricted, organizer_actor: actor_creator)
+      insert(:participant, event: event, actor: actor_creator, role: :creator)
+
+      mutation = """
+          mutation {
+            joinEvent(
+              actor_id: #{actor.id},
+              event_id: #{event.id}
+            ) {
+                id,
+                role,
+                actor {
+                  id
+                },
+                event {
+                  id
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["joinEvent"]["role"] == "NOT_APPROVED"
+      assert json_response(res, 200)["data"]["joinEvent"]["event"]["id"] == to_string(event.id)
+      assert json_response(res, 200)["data"]["joinEvent"]["actor"]["id"] == to_string(actor.id)
+      participation_id = json_response(res, 200)["data"]["joinEvent"]["id"]
+
+      mutation = """
+          mutation {
+            rejectParticipation(
+              id: "#{participation_id}",
+              moderator_actor_id: #{actor_creator.id}
+            ) {
+                id,
+                actor {
+                  id
+                },
+                event {
+                  id
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user_creator)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["rejectParticipation"]["id"] == participation_id
+
+      assert json_response(res, 200)["data"]["rejectParticipation"]["event"]["id"] ==
+               to_string(event.id)
+
+      assert json_response(res, 200)["data"]["rejectParticipation"]["actor"]["id"] ==
+               to_string(actor.id)
+
+      res =
+        conn
+        |> auth_conn(user_creator)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] == "Participant not found"
+    end
+
+    test "reject_participation/3 with bad parameters", %{conn: conn, actor: actor, user: user} do
+      user_creator = insert(:user)
+      actor_creator = insert(:actor, user: user_creator)
+      event = insert(:event, join_options: :restricted)
+      insert(:participant, event: event, role: :creator)
+
+      mutation = """
+          mutation {
+            joinEvent(
+              actor_id: #{actor.id},
+              event_id: #{event.id}
+            ) {
+                id,
+                role,
+                actor {
+                  id
+                },
+                event {
+                  id
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["joinEvent"]["role"] == "NOT_APPROVED"
+      assert json_response(res, 200)["data"]["joinEvent"]["event"]["id"] == to_string(event.id)
+      assert json_response(res, 200)["data"]["joinEvent"]["actor"]["id"] == to_string(actor.id)
+      participation_id = json_response(res, 200)["data"]["joinEvent"]["id"]
+
+      mutation = """
+          mutation {
+            rejectParticipation(
+              id: "#{participation_id}",
+              moderator_actor_id: #{actor_creator.id}
+            ) {
+                id,
+                actor {
+                  id
+                },
+                event {
+                  id
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user_creator)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "Provided moderator actor ID doesn't have permission on this event"
     end
   end
 end

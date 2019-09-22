@@ -67,6 +67,7 @@ defmodule Mobilizon.Events.Event do
   @attrs @required_attrs ++ @optional_attrs
 
   @update_required_attrs @required_attrs
+
   @update_optional_attrs [
     :slug,
     :description,
@@ -74,6 +75,7 @@ defmodule Mobilizon.Events.Event do
     :category,
     :status,
     :visibility,
+    :join_options,
     :publish_at,
     :online_address,
     :phone_address,

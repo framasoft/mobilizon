@@ -1,5 +1,5 @@
 <template>
-    <time class="container" :datetime="dateObj.getUTCSeconds()">
+    <time class="datetime-container" :datetime="dateObj.getUTCSeconds()">
         <span class="month">{{ month }}</span>
         <span class="day">{{ day }}</span>
     </time>
@@ -26,7 +26,7 @@ export default class DateCalendarIcon extends Vue {
 </script>
 
 <style lang="scss" scoped>
-  time.container {
+  time.datetime-container {
     background: #f6f7f8;
     border: 1px solid rgba(46,62,72,.12);
     border-radius: 8px;

@@ -1,7 +1,7 @@
 <template>
     <div class="modal-card">
         <header class="modal-card-head">
-            <p class="modal-card-title">Join event {{ event.title }}</p>
+            <p class="modal-card-title">{{ $t('Join event {title}', {title: event.title}) }}</p>
         </header>
 
         <section class="modal-card-body is-flex">
@@ -14,14 +14,18 @@
                             size="is-large"/>
                 </div>
                 <div class="media-content">
-                    <p>Do you want to participate in {{ event.title }}?</p>
+                    <p>{{ $t('Do you want to participate in {title}?', {title: event.title}) }}?</p>
 
                     <b-field :label="$t('Identity')">
                         <identity-picker v-model="identity"></identity-picker>
                     </b-field>
 
+                    <p v-if="event.joinOptions === EventJoinOptions.RESTRICTED">
+                        {{ $t('The event organizer has chosen to approve manually the participations to this event. You will receive a notification when your participation has been approved')}}
+                    </p>
+
                     <p v-if="!event.local">
-                        The event came from another instance. Your participation will be confirmed after we confirm it with the other instance.
+                        {{ $t('The event came from another instance. Your participation will be confirmed after we confirm it with the other instance.') }}
                     </p>
                 </div>
             </div>
@@ -32,13 +36,13 @@
                     class="button"
                     ref="cancelButton"
                     @click="close">
-                Cancel
+                {{ $t('Cancel') }}
             </button>
             <button
                     class="button is-primary"
                     ref="confirmButton"
                     @click="confirm">
-                Confirm my particpation
+                {{ $t('Confirm my particpation') }}
             </button>
         </footer>
     </div>
@@ -46,7 +50,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { IEvent } from '@/types/event.model';
+import { IEvent, EventJoinOptions } from '@/types/event.model';
 import IdentityPicker from '@/views/Account/IdentityPicker.vue';
 import { IPerson } from '@/types/actor';
 
@@ -65,6 +69,8 @@ export default class ReportModal extends Vue {
 
   isActive: boolean = false;
   identity: IPerson = this.defaultIdentity;
+
+  EventJoinOptions = EventJoinOptions;
 
   confirm() {
     this.onConfirm(this.identity);

@@ -127,12 +127,14 @@ export function onLogin(apolloClient) {
 export async function onLogout() {
   // if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient);
 
-  try {
-    await apolloClient.resetStore();
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.log('%cError on cache reset (logout)', 'color: orange;', e.message);
-  }
+  // We don't reset store because we rely on currentUser & currentActor
+  // which are in the cache (even null). Maybe try to rerun cache init after resetStore ?
+  // try {
+  //   await apolloClient.resetStore();
+  // } catch (e) {
+  //   // eslint-disable-next-line no-console
+  //   console.log('%cError on cache reset (logout)', 'color: orange;', e.message);
+  // }
 }
 
 async function refreshAccessToken() {

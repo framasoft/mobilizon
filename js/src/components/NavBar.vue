@@ -1,86 +1,68 @@
 <template>
-  <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
-    <div class="container">
-      <div class="navbar-brand">
-        <router-link class="navbar-item" :to="{ name: 'Home' }"><logo /></router-link>
+  <b-navbar type="is-secondary" shadow wrapper-class="container">
+    <template slot="brand">
+      <b-navbar-item tag="router-link" :to="{ name: 'Home' }"><logo /></b-navbar-item>
+    </template>
+    <template slot="start">
+      <b-navbar-item tag="router-link" :to="{ name: EventRouteName.EXPLORE }">{{ $t('Explore') }}</b-navbar-item>
+      <b-navbar-item tag="router-link" :to="{ name: EventRouteName.MY_EVENTS }">{{ $t('Events') }}</b-navbar-item>
+    </template>
+    <template slot="end">
+      <b-navbar-item tag="div">
+        <search-field />
+      </b-navbar-item>
 
-        <a
-          role="button"
-          class="navbar-burger burger"
-          aria-label="menu"
-          aria-expanded="false"
-          data-target="navbarBasicExample"
-          @click="showNavbar = !showNavbar" :class="{ 'is-active': showNavbar }"
-        >
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
-      </div>
+      <b-navbar-dropdown v-if="currentUser.isLoggedIn" right>
+        <template slot="label" v-if="currentActor" class="navbar-dropdown-profile">
+          <figure class="image is-32x32" v-if="currentActor.avatar">
+            <img class="is-rounded" alt="avatarUrl" :src="currentActor.avatar.url">
+          </figure>
+          <span>{{ currentActor.preferredUsername }}</span>
+        </template>
 
-      <div class="navbar-menu" :class="{ 'is-active': showNavbar }">
-        <div class="navbar-end">
-          <div class="navbar-item">
-            <search-field />
-          </div>
-
-          <div class="navbar-item has-dropdown is-hoverable" v-if="currentUser.isLoggedIn">
-            <a
-              class="navbar-link"
-              v-if="currentActor"
-            >
-              <figure class="image is-24x24" v-if="currentActor.avatar">
-                <img alt="avatarUrl" :src="currentActor.avatar.url">
+        <b-navbar-item tag="span" v-for="identity in identities" v-if="identities.length > 0" :active="identity.id === currentActor.id">
+          <span @click="setIdentity(identity)">
+            <div class="media-left">
+              <figure class="image is-32x32" v-if="identity.avatar">
+                <img class="is-rounded" :src="identity.avatar.url" alt="" />
               </figure>
-              <span>{{ currentActor.preferredUsername }}</span>
-            </a>
-
-            <div class="navbar-dropdown is-boxed">
-              <div v-for="identity in identities" v-if="identities.length > 0">
-                <a class="navbar-item" @click="setIdentity(identity)" :class="{ 'is-active': identity.id === currentActor.id }">
-                   <div class="media-left">
-                      <figure class="image is-24x24" v-if="identity.avatar">
-                        <img class="is-rounded" :src="identity.avatar.url">
-                      </figure>
-                    </div>
-
-                    <div class="media-content">
-                      <h3>{{ identity.displayName() }}</h3>
-                    </div>
-                </a>
-
-                <hr class="navbar-divider">
-              </div>
-
-              <a class="navbar-item">
-                <router-link :to="{ name: 'UpdateIdentity' }">{{ $t('My account') }}</router-link>
-              </a>
-
-              <a class="navbar-item">
-                <router-link :to="{ name: ActorRouteName.CREATE_GROUP }">{{ $t('Create group') }}</router-link>
-              </a>
-
-              <a class="navbar-item" v-if="currentUser.role === ICurrentUserRole.ADMINISTRATOR">
-                <router-link :to="{ name: AdminRouteName.DASHBOARD }">{{ $t('Administration') }}</router-link>
-              </a>
-
-              <a class="navbar-item" v-on:click="logout()">{{ $t('Log out') }}</a>
             </div>
-          </div>
 
-          <div class="navbar-item" v-else>
-            <div class="buttons">
-              <router-link class="button is-primary" v-if="config && config.registrationsOpen" :to="{ name: 'Register' }">
-                <strong>{{ $t('Sign up') }}</strong>
-              </router-link>
-
-              <router-link class="button is-primary" :to="{ name: 'Login' }">{{ $t('Log in') }}</router-link>
+            <div class="media-content">
+              <span>{{ identity.displayName() }}</span>
             </div>
-          </div>
+          </span>
+
+          <hr class="navbar-divider">
+        </b-navbar-item>
+
+
+          <b-navbar-item>
+            <router-link :to="{ name: 'UpdateIdentity' }">{{ $t('My account') }}</router-link>
+          </b-navbar-item>
+
+          <b-navbar-item>
+            <router-link :to="{ name: ActorRouteName.CREATE_GROUP }">{{ $t('Create group') }}</router-link>
+          </b-navbar-item>
+
+          <b-navbar-item v-if="currentUser.role === ICurrentUserRole.ADMINISTRATOR">
+            <router-link :to="{ name: AdminRouteName.DASHBOARD }">{{ $t('Administration') }}</router-link>
+          </b-navbar-item>
+
+          <b-navbar-item v-on:click="logout()">{{ $t('Log out') }}</b-navbar-item>
+      </b-navbar-dropdown>
+
+      <b-navbar-item v-else tag="div">
+        <div class="buttons">
+          <router-link class="button is-primary" v-if="config && config.registrationsOpen" :to="{ name: 'Register' }">
+            <strong>{{ $t('Sign up') }}</strong>
+          </router-link>
+
+          <router-link class="button is-light" :to="{ name: 'Login' }">{{ $t('Log in') }}</router-link>
         </div>
-      </div>
-    </div>
-  </nav>
+      </b-navbar-item>
+    </template>
+  </b-navbar>
 </template>
 
 <script lang="ts">
@@ -97,6 +79,7 @@ import SearchField from '@/components/SearchField.vue';
 import { ActorRouteName } from '@/router/actor';
 import { AdminRouteName } from '@/router/admin';
 import { RouteName } from '@/router';
+import { EventRouteName } from '@/router/event';
 
 @Component({
   apollo: {
@@ -108,7 +91,7 @@ import { RouteName } from '@/router';
     },
     identities: {
       query: IDENTITIES,
-      update: ({ identities }) => identities.map(identity => new Person(identity)),
+      update: ({ identities }) => identities ? identities.map(identity => new Person(identity)) : [],
     },
     config: {
       query: CONFIG,
@@ -128,11 +111,22 @@ export default class NavBar extends Vue {
   config!: IConfig;
   currentUser!: ICurrentUser;
   ICurrentUserRole = ICurrentUserRole;
-  identities!: IPerson[];
+  identities: IPerson[] = [];
   showNavbar: boolean = false;
 
   ActorRouteName = ActorRouteName;
   AdminRouteName = AdminRouteName;
+  EventRouteName = EventRouteName;
+
+  @Watch('currentActor')
+  async initializeListOfIdentities() {
+    const { data } = await this.$apollo.query<{ identities: IPerson[] }>({
+      query: IDENTITIES,
+    });
+    if (data) {
+      this.identities = data.identities.map(identity => new Person(identity));
+    }
+  }
 
   // @Watch('currentUser')
   // async onCurrentUserChanged() {
@@ -165,10 +159,26 @@ export default class NavBar extends Vue {
 @import "../variables.scss";
 
 nav {
-  border-bottom: solid 1px #0a0a0a;
+  /*border-bottom: solid 1px #0a0a0a;*/
 
-  .navbar-item img {
-    max-height: 2.5em;
+  .navbar-dropdown .navbar-item {
+    cursor: pointer;
+
+    span {
+      display: inherit;
+    }
+
+    &.is-active {
+      background: $secondary;
+    }
+
+    img {
+      max-height: 2.5em;
+    }
+  }
+
+  .navbar-item.has-dropdown a.navbar-link figure {
+    margin-right: 0.75rem;
   }
 }
 </style>
