@@ -13,7 +13,7 @@
           <div class="column">
             <form v-if="!validationSent">
               <b-field
-                :label="t('Username')"
+                :label="$t('Username')"
                 :type="errors.preferred_username ? 'is-danger' : null"
                 :message="errors.preferred_username"
               >
