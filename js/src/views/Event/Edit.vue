@@ -17,8 +17,8 @@ import {EventJoinOptions} from "@/types/event.model";
         </h2>
         <picture-upload v-model="pictureFile" />
 
-        <b-field :label="$t('Title')">
-          <b-input aria-required="true" required v-model="event.title" maxlength="64" />
+        <b-field :label="$t('Title')" :type="checkTitleLength[0]" :message="checkTitleLength[1]">
+          <b-input aria-required="true" required v-model="event.title" />
         </b-field>
 
         <tag-input v-model="event.tags" :data="tags" path="title" />
@@ -337,6 +337,10 @@ export default class EditEvent extends Vue {
     } else {
       this.event.joinOptions = EventJoinOptions.FREE;
     }
+  }
+
+  get checkTitleLength() {
+    return this.event.title.length > 80 ? ['is-info', this.$t('The event title will be ellipsed.')] : [undefined, undefined];
   }
 
   // getAddressData(addressData) {
