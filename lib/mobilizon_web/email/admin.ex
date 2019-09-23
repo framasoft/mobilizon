@@ -5,7 +5,7 @@ defmodule MobilizonWeb.Email.Admin do
 
   use Bamboo.Phoenix, view: MobilizonWeb.EmailView
 
-  import Bamboo.{Email, Phoenix}
+  import Bamboo.Phoenix
 
   import MobilizonWeb.Gettext
 
@@ -19,20 +19,17 @@ defmodule MobilizonWeb.Email.Admin do
   def report(%User{email: email}, %Report{} = report, locale \\ "en") do
     Gettext.put_locale(locale)
 
-    instance_url = Config.instance_url()
-
     subject =
       gettext(
-        "Mobilizon: New report on instance %{instance}",
-        instance: instance_url
+        "New report on Mobilizon instance %{instance}",
+        instance: Config.instance_name()
       )
 
-    Email.base_email()
-    |> to(email)
-    |> subject(subject)
-    |> put_header("Reply-To", Config.instance_email_reply_to())
+    Email.base_email(to: email, subject: subject)
+    |> assign(:locale, locale)
+    |> assign(:subject, subject)
     |> assign(:report, report)
-    |> assign(:instance, instance_url)
-    |> render(:report)
+    |> render("report.html")
+    |> Email.premail()
   end
 end

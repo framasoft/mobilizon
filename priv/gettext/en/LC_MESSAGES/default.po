@@ -12,61 +12,13 @@ msgstr ""
 "Plural-Forms: nplurals=2\n"
 
 #, elixir-format
-#: lib/mobilizon_web/templates/email/email.html.eex:8
 #: lib/mobilizon_web/templates/email/email.text.eex:3
 msgid "An email sent by Mobilizon on %{instance}."
 msgstr ""
 
 #, elixir-format
-#: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:1
-#: lib/mobilizon_web/templates/email/registration_confirmation.text.eex:1
-msgid "Confirm the email address"
-msgstr ""
-
-#, elixir-format
-#: lib/mobilizon_web/templates/email/password_reset.html.eex:3
-#: lib/mobilizon_web/templates/email/password_reset.text.eex:7
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:48
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
-msgstr ""
-
-#, elixir-format
-#: lib/mobilizon/email/user.ex:19
-msgid "Mobilizon: Confirmation instructions for %{instance}"
-msgstr ""
-
-#, elixir-format
-#: lib/mobilizon/email/user.ex:34
-msgid "Mobilizon: Reset your password on %{instance} instructions"
-msgstr ""
-
-#, elixir-format
-#: lib/mobilizon_web/templates/email/password_reset.html.eex:1
-#: lib/mobilizon_web/templates/email/password_reset.text.eex:1
-msgid "Password reset"
-msgstr ""
-
-#, elixir-format
-#: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:2
-#: lib/mobilizon_web/templates/email/registration_confirmation.text.eex:5
-msgid "You created an account on %{host} with this email address. You are one click away from activating it. If this wasn't you, please ignore this email."
-msgstr ""
-
-#, elixir-format
-#: lib/mobilizon_web/templates/email/password_reset.html.eex:2
-#: lib/mobilizon_web/templates/email/password_reset.text.eex:5
-msgid "You requested a new password for your account on %{host}."
-msgstr ""
-
-#, elixir-format
-#: lib/mobilizon_web/templates/email/report.html.eex:8
-#: lib/mobilizon_web/templates/email/report.text.eex:10
-msgid "Comment: %{comment}"
-msgstr ""
-
-#, elixir-format
-#: lib/mobilizon_web/templates/email/report.html.eex:4
-#: lib/mobilizon_web/templates/email/report.text.eex:6
-msgid "Event: %{event}"
 msgstr ""
 
 #, elixir-format
@@ -74,19 +26,114 @@ msgstr ""
 msgid "Feed for %{email} on Mobilizon"
 msgstr ""
 
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:122
+msgid "%{instance} is a Mobilizon server."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.html.eex:38
+msgid "%{reporter_name} (%{reporter_username}) reported the following content."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.html.eex:48
+msgid "%{title} by %{creator}"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:58
+msgid "Activate my account"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:91
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:94
+msgid "Ask the community on Framacolibri"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.html.eex:62
+msgid "Comments"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.html.eex:46
+msgid "Event"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:45
+msgid "If you didn't request this, please ignore this email."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/email/user.ex:46
+msgid "Instructions to reset your password on %{instance}"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:123
+msgid "Learn more about Mobilizon."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:13
+msgid "Nearly here!"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:88
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:91
+msgid "Need some help? Something not working properly?"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.html.eex:13
+msgid "New report on %{instance}"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.html.eex:80
+msgid "Reason"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:61
+msgid "Reset Password"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:41
+msgid "Resetting your password is easy. Just press the button below and follow the instructions. We'll have you up and running in no time."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:13
+msgid "Trouble signing in?"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.html.eex:100
+msgid "View the report"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:38
+msgid "You created an account on %{host} with this email address. You are one click away from activating it."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:38
+msgid "You requested a new password for your account on %{server}."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/email/user.ex:25
+msgid "Instructions to confirm your Mobilizon account on %{instance}"
+msgstr ""
+
 #, elixir-format, fuzzy
-#: lib/mobilizon/email/admin.ex:19
-msgid "Mobilizon: New report on instance %{instance}"
-msgstr ""
-
-#, elixir-format
-#: lib/mobilizon_web/templates/email/report.html.eex:1
-#: lib/mobilizon_web/templates/email/report.text.eex:1
-msgid "New report from %{reporter} on %{instance}"
-msgstr ""
-
-#, elixir-format
-#: lib/mobilizon_web/templates/email/report.html.eex:12
-#: lib/mobilizon_web/templates/email/report.text.eex:14
-msgid "Reason: %{content}"
+#: lib/mobilizon_web/email/admin.ex:23
+msgid "New report on Mobilizon instance %{instance}"
 msgstr ""
