@@ -8,132 +8,145 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2019-09-23 18:05+0000\n"
+"Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
+"Language-Team: English <https://weblate.framasoft.org/projects/mobilizon/"
+"backend/en/>\n"
 "Language: en\n"
-"Plural-Forms: nplurals=2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 3.8\n"
+"Content-Transfer-Encoding: 8bit\n"
 
-#, elixir-format
 #: lib/mobilizon_web/templates/email/email.text.eex:3
-msgid "An email sent by Mobilizon on %{instance}."
-msgstr ""
-
 #, elixir-format
+msgid "An email sent by Mobilizon on %{instance}."
+msgstr "An email sent by Mobilizon on %{instance}."
+
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:48
+#, elixir-format
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
 msgstr ""
+"If you didn't request this, please ignore this email. Your password won't "
+"change until you access the link below and create a new one."
 
-#, elixir-format
 #: lib/service/export/feed.ex:161
+#, elixir-format
 msgid "Feed for %{email} on Mobilizon"
-msgstr ""
+msgstr "Feed for %{email} on Mobilizon"
 
-#, elixir-format
 #: lib/mobilizon_web/templates/email/email.html.eex:122
+#, elixir-format
 msgid "%{instance} is a Mobilizon server."
-msgstr ""
+msgstr "%{instance} is a Mobilizon server."
 
-#, elixir-format
 #: lib/mobilizon_web/templates/email/report.html.eex:38
+#, elixir-format
 msgid "%{reporter_name} (%{reporter_username}) reported the following content."
-msgstr ""
+msgstr "%{reporter_name} (%{reporter_username}) reported the following content."
 
-#, elixir-format
 #: lib/mobilizon_web/templates/email/report.html.eex:48
+#, elixir-format
 msgid "%{title} by %{creator}"
-msgstr ""
+msgstr "%{title} by %{creator}"
 
-#, elixir-format
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:58
-msgid "Activate my account"
-msgstr ""
-
 #, elixir-format
+msgid "Activate my account"
+msgstr "Activate my account"
+
 #: lib/mobilizon_web/templates/email/email.html.eex:91
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:94
+#, elixir-format
 msgid "Ask the community on Framacolibri"
-msgstr ""
+msgstr "Ask the community on Framacolibri"
 
-#, elixir-format
 #: lib/mobilizon_web/templates/email/report.html.eex:62
+#, elixir-format
 msgid "Comments"
-msgstr ""
+msgstr "Comments"
 
-#, elixir-format
 #: lib/mobilizon_web/templates/email/report.html.eex:46
+#, elixir-format
 msgid "Event"
-msgstr ""
+msgstr "Event"
 
-#, elixir-format
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:45
+#, elixir-format
 msgid "If you didn't request this, please ignore this email."
-msgstr ""
+msgstr "If you didn't request this, please ignore this email."
 
-#, elixir-format
 #: lib/mobilizon_web/email/user.ex:46
+#, elixir-format
 msgid "Instructions to reset your password on %{instance}"
-msgstr ""
+msgstr "Instructions to reset your password on %{instance}"
 
-#, elixir-format
 #: lib/mobilizon_web/templates/email/email.html.eex:123
+#, elixir-format
 msgid "Learn more about Mobilizon."
-msgstr ""
+msgstr "Learn more about Mobilizon."
 
-#, elixir-format
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:13
-msgid "Nearly here!"
-msgstr ""
-
 #, elixir-format
+msgid "Nearly here!"
+msgstr "Nearly here!"
+
 #: lib/mobilizon_web/templates/email/email.html.eex:88
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:91
+#, elixir-format
 msgid "Need some help? Something not working properly?"
-msgstr ""
+msgstr "Need some help? Something not working properly?"
 
-#, elixir-format
 #: lib/mobilizon_web/templates/email/report.html.eex:13
+#, elixir-format
 msgid "New report on %{instance}"
-msgstr ""
+msgstr "New report on %{instance}"
 
-#, elixir-format
 #: lib/mobilizon_web/templates/email/report.html.eex:80
+#, elixir-format
 msgid "Reason"
-msgstr ""
+msgstr "Reason"
 
-#, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:61
-msgid "Reset Password"
-msgstr ""
-
 #, elixir-format
+msgid "Reset Password"
+msgstr "Reset Password"
+
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:41
+#, elixir-format
 msgid "Resetting your password is easy. Just press the button below and follow the instructions. We'll have you up and running in no time."
 msgstr ""
+"Resetting your password is easy. Just press the button below and follow the "
+"instructions. We'll have you up and running in no time."
 
-#, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:13
+#, elixir-format
 msgid "Trouble signing in?"
-msgstr ""
+msgstr "Trouble signing in?"
 
-#, elixir-format
 #: lib/mobilizon_web/templates/email/report.html.eex:100
-msgid "View the report"
-msgstr ""
-
 #, elixir-format
+msgid "View the report"
+msgstr "View the report"
+
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:38
+#, elixir-format
 msgid "You created an account on %{host} with this email address. You are one click away from activating it."
 msgstr ""
+"You created an account on %{host} with this email address. You are one click "
+"away from activating it."
 
-#, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:38
-msgid "You requested a new password for your account on %{server}."
-msgstr ""
-
 #, elixir-format
-#: lib/mobilizon_web/email/user.ex:25
-msgid "Instructions to confirm your Mobilizon account on %{instance}"
-msgstr ""
+msgid "You requested a new password for your account on %{server}."
+msgstr "You requested a new password for your account on %{server}."
 
-#, elixir-format, fuzzy
+#: lib/mobilizon_web/email/user.ex:25
+#, elixir-format
+msgid "Instructions to confirm your Mobilizon account on %{instance}"
+msgstr "Instructions to confirm your Mobilizon account on %{instance}"
+
 #: lib/mobilizon_web/email/admin.ex:23
+#, elixir-format
 msgid "New report on Mobilizon instance %{instance}"
-msgstr ""
+msgstr "New report on Mobilizon instance %{instance}"
