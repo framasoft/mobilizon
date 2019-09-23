@@ -260,7 +260,6 @@ export default class Event extends EventMixin {
    */
   async openDeleteEventModalWrapper() {
     await this.openDeleteEventModal(this.event, this.currentActor);
-    await this.$router.push({ name: RouteName.HOME });
   }
 
   async reportEvent(content: string, forward: boolean) {

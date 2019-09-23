@@ -35,7 +35,6 @@ export default class EventMixin extends mixins(Vue) {
   }
 
   private async deleteEvent(event: IEvent, currentActor: IPerson) {
-    const router = this.$router;
     const eventTitle = event.title;
 
     try {
@@ -54,6 +53,7 @@ export default class EventMixin extends mixins(Vue) {
         position: 'is-bottom-right',
         duration: 5000,
       });
+      await this.$router.push({ name: RouteName.HOME });
     } catch (error) {
       console.error(error);
     }
