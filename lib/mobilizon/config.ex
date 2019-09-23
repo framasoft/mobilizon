@@ -6,9 +6,6 @@ defmodule Mobilizon.Config do
   @spec instance_config :: keyword
   def instance_config, do: Application.get_env(:mobilizon, :instance)
 
-  @spec instance_url :: String.t()
-  def instance_url, do: instance_config()[:instance]
-
   @spec instance_name :: String.t()
   def instance_name, do: instance_config()[:name]
 

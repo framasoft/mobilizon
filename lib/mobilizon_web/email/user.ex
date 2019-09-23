@@ -5,7 +5,7 @@ defmodule MobilizonWeb.Email.User do
 
   use Bamboo.Phoenix, view: MobilizonWeb.EmailView
 
-  import Bamboo.{Email, Phoenix}
+  import Bamboo.Phoenix
 
   import MobilizonWeb.Gettext
 
@@ -21,21 +21,18 @@ defmodule MobilizonWeb.Email.User do
       ) do
     Gettext.put_locale(locale)
 
-    instance_url = Config.instance_url()
-
     subject =
       gettext(
-        "Mobilizon: Confirmation instructions for %{instance}",
-        instance: instance_url
+        "Instructions to confirm your Mobilizon account on %{instance}",
+        instance: Config.instance_name()
       )
 
-    Email.base_email()
-    |> to(email)
-    |> subject(subject)
-    |> put_header("Reply-To", Config.instance_email_reply_to())
+    Email.base_email(to: email, subject: subject)
+    |> assign(:locale, locale)
     |> assign(:token, confirmation_token)
-    |> assign(:instance, instance_url)
-    |> render(:registration_confirmation)
+    |> assign(:subject, subject)
+    |> render("registration_confirmation.html")
+    |> Email.premail()
   end
 
   @spec reset_password_email(User.t(), String.t()) :: Bamboo.Email.t()
@@ -45,20 +42,17 @@ defmodule MobilizonWeb.Email.User do
       ) do
     Gettext.put_locale(locale)
 
-    instance_url = Config.instance_url()
-
     subject =
       gettext(
-        "Mobilizon: Reset your password on %{instance} instructions",
-        instance: instance_url
+        "Instructions to reset your password on %{instance}",
+        instance: Config.instance_name()
       )
 
-    Email.base_email()
-    |> to(email)
-    |> subject(subject)
-    |> put_header("Reply-To", Config.instance_email_reply_to())
+    Email.base_email(to: email, subject: subject)
+    |> assign(:locale, locale)
     |> assign(:token, reset_password_token)
-    |> assign(:instance, instance_url)
-    |> render(:password_reset)
+    |> assign(:subject, subject)
+    |> render("password_reset.html")
+    |> Email.premail()
   end
 end
