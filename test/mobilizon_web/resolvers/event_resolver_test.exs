@@ -119,22 +119,39 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
     end
 
     test "create_event/3 creates an event with options", %{conn: conn, actor: actor, user: user} do
+      begins_on = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
+      ends_on = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
+
       mutation = """
           mutation {
               createEvent(
                   title: "come to my event",
                   description: "it will be fine",
-                  begins_on: "#{
-        DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
-      }",
+                  begins_on: "#{begins_on}",
+                  ends_on: "#{ends_on}",
+                  status: TENTATIVE,
+                  visibility: UNLISTED,
                   organizer_actor_id: "#{actor.id}",
+                  online_address: "toto@example.com",
+                  phone_address: "0000000000",
+                  category: "super_category",
                   options: {
                     maximumAttendeeCapacity: 30,
                     showRemainingAttendeeCapacity: true
                   }
               ) {
                 title,
-                uuid,
+                description,
+                begins_on,
+                ends_on,
+                status,
+                visibility,
+                organizer_actor {
+                  id
+                },
+                online_address,
+                phone_address,
+                category,
                 options {
                   maximumAttendeeCapacity,
                   showRemainingAttendeeCapacity
@@ -150,14 +167,20 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
 
       assert json_response(res, 200)["errors"] == nil
 
-      assert json_response(res, 200)["data"]["createEvent"]["title"] == "come to my event"
+      event = json_response(res, 200)["data"]["createEvent"]
 
-      assert json_response(res, 200)["data"]["createEvent"]["options"]["maximumAttendeeCapacity"] ==
-               30
-
-      assert json_response(res, 200)["data"]["createEvent"]["options"][
-               "showRemainingAttendeeCapacity"
-             ] == true
+      assert event["title"] == "come to my event"
+      assert event["description"] == "it will be fine"
+      assert event["begins_on"] == begins_on
+      assert event["ends_on"] == ends_on
+      assert event["status"] == "TENTATIVE"
+      assert event["visibility"] == "UNLISTED"
+      assert event["organizer_actor"]["id"] == "#{actor.id}"
+      assert event["online_address"] == "toto@example.com"
+      assert event["phone_address"] == "0000000000"
+      assert event["category"] == "super_category"
+      assert event["options"]["maximumAttendeeCapacity"] == 30
+      assert event["options"]["showRemainingAttendeeCapacity"] == true
     end
 
     test "create_event/3 creates an event with tags", %{conn: conn, actor: actor, user: user} do
@@ -476,25 +499,55 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
 
     test "update_event/3 updates an event", %{conn: conn, actor: actor, user: user} do
       event = insert(:event, organizer_actor: actor)
+      address = insert(:address)
 
       begins_on = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
+      ends_on = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
 
       mutation = """
           mutation {
               updateEvent(
+                  event_id: #{event.id},
                   title: "my event updated",
                   description: "description updated",
                   begins_on: "#{begins_on}",
-                  event_id: #{event.id},
+                  ends_on: "#{ends_on}",
+                  status: TENTATIVE,
+                  tags: ["tag1_updated", "tag2_updated"],
+                  online_address: "toto@example.com",
+                  phone_address: "0000000000",
                   category: "birthday",
-                  tags: ["tag1_updated", "tag2_updated"]
+                  options: {
+                    maximumAttendeeCapacity: 30,
+                    showRemainingAttendeeCapacity: true
+                  },
+                  physical_address: {
+                    street: "#{address.street}",
+                    locality: "#{address.locality}"
+                  }
               ) {
-                title,
                 uuid,
                 url,
+                title,
+                description,
+                begins_on,
+                ends_on,
+                status,
                 tags {
                   title,
                   slug
+                },
+                online_address,
+                phone_address,
+                category,
+                options {
+                  maximumAttendeeCapacity,
+                  showRemainingAttendeeCapacity
+                },
+                physicalAddress {
+                  url,
+                  geom,
+                  street
                 }
               }
             }
@@ -506,11 +559,28 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["updateEvent"]["title"] == "my event updated"
-      assert json_response(res, 200)["data"]["updateEvent"]["uuid"] == event.uuid
-      assert json_response(res, 200)["data"]["updateEvent"]["url"] == event.url
 
-      assert json_response(res, 200)["data"]["updateEvent"]["tags"] == [
+      event_res = json_response(res, 200)["data"]["updateEvent"]
+
+      assert event_res["title"] == "my event updated"
+      assert event_res["description"] == "description updated"
+      assert event_res["begins_on"] == "#{begins_on}"
+      assert event_res["ends_on"] == "#{ends_on}"
+      assert event_res["status"] == "TENTATIVE"
+      assert event_res["online_address"] == "toto@example.com"
+      assert event_res["phone_address"] == "0000000000"
+      assert event_res["category"] == "birthday"
+
+      assert event_res["options"]["maximumAttendeeCapacity"] == 30
+      assert event_res["options"]["showRemainingAttendeeCapacity"] == true
+
+      assert event_res["uuid"] == event.uuid
+      assert event_res["url"] == event.url
+
+      assert event_res["physicalAddress"]["street"] == address.street
+      refute event_res["physicalAddress"]["url"] == address.url
+
+      assert event_res["tags"] == [
                %{"slug" => "tag1-updated", "title" => "tag1_updated"},
                %{"slug" => "tag2-updated", "title" => "tag2_updated"}
              ]

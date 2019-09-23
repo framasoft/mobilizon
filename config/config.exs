@@ -21,8 +21,8 @@ config :mobilizon, :instance,
   upload_limit: 16_000_000,
   avatar_upload_limit: 2_000_000,
   banner_upload_limit: 4_000_000,
-  email_from: "noreply@localhost",
-  email_reply_to: "noreply@localhost"
+  email_from: System.get_env("MOBILIZON_INSTANCE_EMAIL") || "noreply@localhost",
+  email_reply_to: System.get_env("MOBILIZON_INSTANCE_EMAIL") || "noreply@localhost"
 
 config :mime, :types, %{
   "application/activity+json" => ["activity-json"],
