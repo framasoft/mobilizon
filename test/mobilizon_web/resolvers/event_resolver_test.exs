@@ -173,11 +173,11 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       assert event["description"] == "it will be fine"
       assert event["begins_on"] == begins_on
       assert event["ends_on"] == ends_on
-      #      assert event["status"] == "TENTATIVE"
-      #      assert event["visibility"] == "UNLISTED"
+      assert event["status"] == "TENTATIVE"
+      assert event["visibility"] == "UNLISTED"
       assert event["organizer_actor"]["id"] == "#{actor.id}"
-      #      assert event["online_address"] == "toto@example.com"
-      #      assert event["phone_address"] == "0000000000"
+      assert event["online_address"] == "toto@example.com"
+      assert event["phone_address"] == "0000000000"
       assert event["category"] == "super_category"
       assert event["options"]["maximumAttendeeCapacity"] == 30
       assert event["options"]["showRemainingAttendeeCapacity"] == true
@@ -566,9 +566,9 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       assert event_res["description"] == "description updated"
       assert event_res["begins_on"] == "#{begins_on}"
       assert event_res["ends_on"] == "#{ends_on}"
-      #      assert eventResponse["status"] == "TENTATIVE"
-      #      assert eventResponse["online_address"] == "toto@example.com"
-      #      assert eventResponse["phone_address"] == "0000000000"
+      assert event_res["status"] == "TENTATIVE"
+      assert event_res["online_address"] == "toto@example.com"
+      assert event_res["phone_address"] == "0000000000"
       assert event_res["category"] == "birthday"
 
       assert event_res["options"]["maximumAttendeeCapacity"] == 30

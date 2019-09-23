@@ -329,6 +329,9 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "actor" => actor,
       "id" => url || Routes.page_url(Endpoint, :event, uuid),
       "joinOptions" => metadata.join_options,
+      "status" => metadata.status,
+      "onlineAddress" => metadata.online_address,
+      "phoneAddress" => metadata.phone_address,
       "uuid" => uuid,
       "tag" =>
         tags |> Enum.uniq() |> Enum.map(fn tag -> %{"type" => "Hashtag", "name" => "##{tag}"} end)

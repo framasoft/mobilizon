@@ -3,6 +3,7 @@ defmodule MobilizonWeb.API.Events do
   API for Events
   """
   alias Mobilizon.Events.Event
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Utils, as: ActivityPubUtils
   alias Mobilizon.Service.ActivityPub.Activity
@@ -13,39 +14,19 @@ defmodule MobilizonWeb.API.Events do
   """
   @spec create_event(map()) :: {:ok, Activity.t(), Event.t()} | any()
   def create_event(%{organizer_actor: organizer_actor} = args) do
-    with %{
-           title: title,
-           physical_address: physical_address,
-           picture: picture,
-           content_html: content_html,
-           tags: tags,
-           to: to,
-           cc: cc,
-           begins_on: begins_on,
-           ends_on: ends_on,
-           category: category,
-           join_options: join_options,
-           options: options
-         } <- prepare_args(args),
+    with args <- prepare_args(args),
          event <-
            ActivityPubUtils.make_event_data(
-             organizer_actor.url,
-             %{to: to, cc: cc},
-             title,
-             content_html,
-             picture,
-             tags,
-             %{
-               begins_on: begins_on,
-               ends_on: ends_on,
-               physical_address: physical_address,
-               category: category,
-               options: options,
-               join_options: join_options
-             }
+             args.organizer_actor.url,
+             %{to: args.to, cc: args.cc},
+             args.title,
+             args.content_html,
+             args.picture,
+             args.tags,
+             args.metadata
            ) do
       ActivityPub.create(%{
-        to: ["https://www.w3.org/ns/activitystreams#Public"],
+        to: args.to,
         actor: organizer_actor,
         object: event,
         local: true
@@ -64,42 +45,21 @@ defmodule MobilizonWeb.API.Events do
         %Event{} = event
       ) do
     with args <- Map.put(args, :tags, Map.get(args, :tags, [])),
-         %{
-           title: title,
-           physical_address: physical_address,
-           picture: picture,
-           content_html: content_html,
-           tags: tags,
-           to: to,
-           cc: cc,
-           begins_on: begins_on,
-           ends_on: ends_on,
-           category: category,
-           join_options: join_options,
-           options: options
-         } <-
-           prepare_args(Map.merge(event, args)),
+         args <- prepare_args(Map.merge(event, args)),
          event <-
            ActivityPubUtils.make_event_data(
-             organizer_actor.url,
-             %{to: to, cc: cc},
-             title,
-             content_html,
-             picture,
-             tags,
-             %{
-               begins_on: begins_on,
-               ends_on: ends_on,
-               physical_address: physical_address,
-               category: category,
-               join_options: join_options,
-               options: options
-             },
+             args.organizer_actor.url,
+             %{to: args.to, cc: args.cc},
+             args.title,
+             args.content_html,
+             args.picture,
+             args.tags,
+             args.metadata,
              event.uuid,
              event.url
            ) do
       ActivityPub.update(%{
-        to: ["https://www.w3.org/ns/activitystreams#Public"],
+        to: args.to,
         actor: organizer_actor.url,
         cc: [],
         object: event,
@@ -108,37 +68,33 @@ defmodule MobilizonWeb.API.Events do
     end
   end
 
-  defp prepare_args(
-         %{
-           organizer_actor: organizer_actor,
-           title: title,
-           description: description,
-           options: options,
-           tags: tags,
-           begins_on: begins_on,
-           category: category,
-           join_options: join_options
-         } = args
-       ) do
-    with physical_address <- Map.get(args, :physical_address, nil),
-         title <- String.trim(title),
+  defp prepare_args(args) do
+    with %Actor{} = organizer_actor <- Map.get(args, :organizer_actor),
+         title <- args |> Map.get(:title, "") |> String.trim(),
          visibility <- Map.get(args, :visibility, :public),
-         picture <- Map.get(args, :picture, nil),
+         description <- Map.get(args, :description),
+         tags <- Map.get(args, :tags),
          {content_html, tags, to, cc} <-
            Utils.prepare_content(organizer_actor, description, visibility, tags, nil) do
       %{
         title: title,
-        physical_address: physical_address,
-        picture: picture,
         content_html: content_html,
+        picture: Map.get(args, :picture),
         tags: tags,
+        organizer_actor: organizer_actor,
         to: to,
         cc: cc,
-        begins_on: begins_on,
-        ends_on: Map.get(args, :ends_on, nil),
-        category: category,
-        join_options: join_options,
-        options: options
+        metadata: %{
+          begins_on: Map.get(args, :begins_on),
+          ends_on: Map.get(args, :ends_on),
+          physical_address: Map.get(args, :physical_address),
+          category: Map.get(args, :category),
+          options: Map.get(args, :options),
+          join_options: Map.get(args, :join_options),
+          status: Map.get(args, :status),
+          online_address: Map.get(args, :online_address),
+          phone_address: Map.get(args, :phone_address)
+        }
       }
     end
   end
