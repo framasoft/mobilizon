@@ -20,7 +20,7 @@
           <span>{{ currentActor.preferredUsername }}</span>
         </template>
 
-        <b-navbar-item tag="span" v-for="identity in identities" v-if="identities.length > 0" :active="identity.id === currentActor.id">
+        <b-navbar-item tag="span" v-for="identity in identities" v-if="identities.length > 0" :active="identity.id === currentActor.id" :key="identity.id">
           <span @click="setIdentity(identity)">
             <div class="media-left">
               <figure class="image is-32x32" v-if="identity.avatar">
@@ -49,7 +49,9 @@
             <router-link :to="{ name: AdminRouteName.DASHBOARD }">{{ $t('Administration') }}</router-link>
           </b-navbar-item>
 
-          <b-navbar-item v-on:click="logout()">{{ $t('Log out') }}</b-navbar-item>
+          <b-navbar-item tag="span">
+            <span @click="logout">{{ $t('Log out') }}</span>
+          </b-navbar-item>
       </b-navbar-dropdown>
 
       <b-navbar-item v-else tag="div">
@@ -145,9 +147,15 @@ export default class NavBar extends Vue {
 
   async logout() {
     await logout(this.$apollo.provider.defaultClient);
+    this.$buefy.notification.open({
+      message: this.$t('You have been disconnected') as string,
+      type: 'is-success',
+      position: 'is-bottom-right',
+      duration: 5000,
+    });
 
     if (this.$route.name === RouteName.HOME) return;
-    return this.$router.push({ name: RouteName.HOME });
+    await this.$router.push({ name: RouteName.HOME });
   }
 
   async setIdentity(identity: IPerson) {
@@ -159,8 +167,6 @@ export default class NavBar extends Vue {
 @import "../variables.scss";
 
 nav {
-  /*border-bottom: solid 1px #0a0a0a;*/
-
   .navbar-dropdown .navbar-item {
     cursor: pointer;
 
@@ -174,6 +180,10 @@ nav {
 
     img {
       max-height: 2.5em;
+    }
+
+    &:hover {
+      background: whitesmoke;
     }
   }
 
