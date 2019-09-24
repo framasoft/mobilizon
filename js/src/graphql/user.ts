@@ -25,6 +25,14 @@ mutation ValidateUser($token: String!) {
 }
 `;
 
+export const CHANGE_PASSWORD = gql`
+  mutation ChangePassword($oldPassword: String!, $newPassword: String!) {
+    changePassword(oldPassword: $oldPassword, newPassword: $newPassword) {
+      id
+    }
+  }
+`;
+
 export const CURRENT_USER_CLIENT = gql`
 query {
   currentUser @client {

@@ -7,6 +7,7 @@ import SendPasswordReset from '@/views/User/SendPasswordReset.vue';
 import PasswordReset from '@/views/User/PasswordReset.vue';
 import { beforeRegisterGuard } from '@/router/guards/register-guard';
 import { RouteConfig } from 'vue-router';
+import PasswordChange from '@/views/User/PasswordChange.vue';
 
 export enum UserRouteName {
   REGISTER = 'Register',
@@ -16,6 +17,7 @@ export enum UserRouteName {
   PASSWORD_RESET = 'PasswordReset',
   VALIDATE = 'Validate',
   LOGIN = 'Login',
+  PASSWORD_CHANGE = 'PasswordChange',
 }
 
 export const userRoutes: RouteConfig[] = [
@@ -69,5 +71,11 @@ export const userRoutes: RouteConfig[] = [
     component: Login,
     props: true,
     meta: { requiredAuth: false },
+  },
+  {
+    path: '/my-account/password',
+    name: UserRouteName.PASSWORD_CHANGE,
+    component: PasswordChange,
+    meta: { requiredAuth: true },
   },
 ];
