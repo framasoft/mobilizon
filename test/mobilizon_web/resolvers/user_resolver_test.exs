@@ -833,4 +833,193 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
              ] == actor2.preferred_username
     end
   end
+
+  describe "Resolver: Change password for an user" do
+    @email "toto@tata.tld"
+    @old_password "p4ssw0rd"
+    @new_password "upd4t3d"
+
+    test "change_password/3 with valid password", %{conn: conn} do
+      {:ok, %User{} = user} = Users.register(%{email: @email, password: @old_password})
+
+      # Hammer time !
+      {:ok, %User{} = _user} =
+        Users.update_user(user, %{
+          "confirmed_at" => Timex.shift(user.confirmation_sent_at, hours: -3),
+          "confirmation_sent_at" => nil,
+          "confirmation_token" => nil
+        })
+
+      mutation = """
+          mutation {
+            login(
+                  email: "#{@email}",
+                  password: "#{@old_password}",
+              ) {
+                accessToken,
+                refreshToken,
+                user {
+                  id
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert login = json_response(res, 200)["data"]["login"]
+      assert Map.has_key?(login, "accessToken") && not is_nil(login["accessToken"])
+
+      mutation = """
+          mutation {
+            changePassword(old_password: "#{@old_password}", new_password: "#{@new_password}") {
+                id
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["changePassword"]["id"] == to_string(user.id)
+
+      mutation = """
+          mutation {
+            login(
+                  email: "#{@email}",
+                  password: "#{@new_password}",
+              ) {
+                accessToken,
+                refreshToken,
+                user {
+                  id
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert login = json_response(res, 200)["data"]["login"]
+      assert Map.has_key?(login, "accessToken") && not is_nil(login["accessToken"])
+    end
+
+    test "change_password/3 with invalid password", %{conn: conn} do
+      {:ok, %User{} = user} = Users.register(%{email: @email, password: @old_password})
+
+      # Hammer time !
+
+      {:ok, %User{} = _user} =
+        Users.update_user(user, %{
+          "confirmed_at" => Timex.shift(user.confirmation_sent_at, hours: -3),
+          "confirmation_sent_at" => nil,
+          "confirmation_token" => nil
+        })
+
+      mutation = """
+          mutation {
+            changePassword(old_password: "invalid password", new_password: "#{@new_password}") {
+                id
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] == "The current password is invalid"
+    end
+
+    test "change_password/3 with same password", %{conn: conn} do
+      {:ok, %User{} = user} = Users.register(%{email: @email, password: @old_password})
+
+      # Hammer time !
+      {:ok, %User{} = _user} =
+        Users.update_user(user, %{
+          "confirmed_at" => Timex.shift(user.confirmation_sent_at, hours: -3),
+          "confirmation_sent_at" => nil,
+          "confirmation_token" => nil
+        })
+
+      mutation = """
+          mutation {
+            changePassword(old_password: "#{@old_password}", new_password: "#{@old_password}") {
+                id
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "The new password must be different"
+    end
+
+    test "change_password/3 with new password too short", %{conn: conn} do
+      {:ok, %User{} = user} = Users.register(%{email: @email, password: @old_password})
+
+      # Hammer time !
+      {:ok, %User{} = _user} =
+        Users.update_user(user, %{
+          "confirmed_at" => Timex.shift(user.confirmation_sent_at, hours: -3),
+          "confirmation_sent_at" => nil,
+          "confirmation_token" => nil
+        })
+
+      mutation = """
+          mutation {
+            changePassword(old_password: "#{@old_password}", new_password: "new") {
+                id
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "The password you have chosen is too short. Please make sure your password contains at least 6 characters."
+    end
+
+    test "change_password/3 without being authenticated", %{conn: conn} do
+      {:ok, %User{} = user} = Users.register(%{email: @email, password: @old_password})
+
+      # Hammer time !
+      {:ok, %User{} = _user} =
+        Users.update_user(user, %{
+          "confirmed_at" => Timex.shift(user.confirmation_sent_at, hours: -3),
+          "confirmation_sent_at" => nil,
+          "confirmation_token" => nil
+        })
+
+      mutation = """
+          mutation {
+            changePassword(old_password: "#{@old_password}", new_password: "#{@new_password}") {
+                id
+              }
+            }
+      """
+
+      res =
+        conn
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "You need to be logged-in to change your password"
+    end
+  end
 end

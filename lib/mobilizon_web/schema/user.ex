@@ -159,5 +159,12 @@ defmodule MobilizonWeb.Schema.UserType do
       arg(:preferred_username, non_null(:string))
       resolve(&User.change_default_actor/3)
     end
+
+    @desc "Change an user password"
+    field :change_password, :user do
+      arg(:old_password, non_null(:string))
+      arg(:new_password, non_null(:string))
+      resolve(&User.change_password/3)
+    end
   end
 end

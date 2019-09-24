@@ -43,7 +43,9 @@ defmodule Mobilizon.Users.User do
 
   @registration_required_attrs [:email, :password]
 
-  @password_reset_required_attrs [:password, :reset_password_token, :reset_password_sent_at]
+  @password_change_required_attrs [:password]
+  @password_reset_required_attrs @password_change_required_attrs ++
+                                   [:reset_password_token, :reset_password_sent_at]
 
   @confirmation_token_length 30
 
@@ -107,8 +109,22 @@ defmodule Mobilizon.Users.User do
   @doc false
   @spec password_reset_changeset(t, map) :: Ecto.Changeset.t()
   def password_reset_changeset(%__MODULE__{} = user, attrs) do
+    password_change_changeset(user, attrs, @password_reset_required_attrs)
+  end
+
+  @doc """
+  Changeset to change a password
+
+  It checks the minimum requirements for a password and hashes it.
+  """
+  @spec password_change_changeset(t, map) :: Ecto.Changeset.t()
+  def password_change_changeset(
+        %__MODULE__{} = user,
+        attrs,
+        required_attrs \\ @password_change_required_attrs
+      ) do
     user
-    |> cast(attrs, @password_reset_required_attrs)
+    |> cast(attrs, required_attrs)
     |> validate_length(:password,
       min: 6,
       max: 100,
