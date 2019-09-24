@@ -29,7 +29,6 @@ defmodule MobilizonWeb.Email.Admin do
     |> assign(:locale, locale)
     |> assign(:subject, subject)
     |> assign(:report, report)
-    |> render("report.html")
-    |> Email.premail()
+    |> render(:report)
   end
 end
