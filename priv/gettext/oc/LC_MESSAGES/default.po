@@ -3,138 +3,148 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2019-09-25 12:00+0000\n"
+"Last-Translator: Quentin <quentinantonin@free.fr>\n"
+"Language-Team: Occitan <https://weblate.framasoft.org/projects/mobilizon/"
+"backend/oc/>\n"
 "Language: oc\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Translate Toolkit 2.4.0\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 3.8\n"
 
 #: lib/mobilizon_web/templates/email/email.text.eex:3
 #, elixir-format
 msgid "An email sent by Mobilizon on %{instance}."
-msgstr ""
+msgstr "Un corrièl enviat per Mobilizon sus %{instance}."
 
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:48
 #, elixir-format
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
 msgstr ""
+"S’avètz pas demandat aquò, podètz ignorar aqueste corrièl. Vòstre senhal "
+"cambiarà pas mentre que cliquetz pas lo ligam çai-jos e ne definiscatz un "
+"novèl."
 
 #: lib/service/export/feed.ex:161
 #, elixir-format
 msgid "Feed for %{email} on Mobilizon"
-msgstr ""
+msgstr "Flux per %{email} sus Mobilizon"
 
 #: lib/mobilizon_web/templates/email/email.html.eex:122
 #, elixir-format
 msgid "%{instance} is a Mobilizon server."
-msgstr ""
+msgstr "%{instance} es una instància Mobilizon."
 
 #: lib/mobilizon_web/templates/email/report.html.eex:38
 #, elixir-format
 msgid "%{reporter_name} (%{reporter_username}) reported the following content."
 msgstr ""
+"%{reporter_name} (%{reporter_username}) a senhalat lo contengut seguent."
 
 #: lib/mobilizon_web/templates/email/report.html.eex:48
 #, elixir-format
 msgid "%{title} by %{creator}"
-msgstr ""
+msgstr "%{title} per %{creator}"
 
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:58
 #, elixir-format
 msgid "Activate my account"
-msgstr ""
+msgstr "Activar mon compte"
 
 #: lib/mobilizon_web/templates/email/email.html.eex:91
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:94
 #, elixir-format
 msgid "Ask the community on Framacolibri"
-msgstr ""
+msgstr "Demandar a la comunautat sus Framacolibri"
 
 #: lib/mobilizon_web/templates/email/report.html.eex:62
 #, elixir-format
 msgid "Comments"
-msgstr ""
+msgstr "Comentaris"
 
 #: lib/mobilizon_web/templates/email/report.html.eex:46
 #, elixir-format
 msgid "Event"
-msgstr ""
+msgstr "Eveniment"
 
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:45
 #, elixir-format
 msgid "If you didn't request this, please ignore this email."
-msgstr ""
+msgstr "S’avètz pas demandat aquò, mercés d’ignorar aqueste messatge."
 
 #: lib/mobilizon_web/email/user.ex:46
 #, elixir-format
 msgid "Instructions to reset your password on %{instance}"
-msgstr ""
+msgstr "Consignas per reïnincializar vòstre senhal sus %{instance}"
 
 #: lib/mobilizon_web/templates/email/email.html.eex:123
 #, elixir-format
 msgid "Learn more about Mobilizon."
-msgstr ""
+msgstr "Ne saber mai tocant Mobilizon."
 
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:13
 #, elixir-format
 msgid "Nearly here!"
-msgstr ""
+msgstr "I sètz gaireben !"
 
 #: lib/mobilizon_web/templates/email/email.html.eex:88
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:91
 #, elixir-format
 msgid "Need some help? Something not working properly?"
-msgstr ""
+msgstr "Besonh d’ajuda ? Quicòm truca ?"
 
 #: lib/mobilizon_web/templates/email/report.html.eex:13
 #, elixir-format
 msgid "New report on %{instance}"
-msgstr ""
+msgstr "Nòu senhalament sus %{instance}"
 
 #: lib/mobilizon_web/templates/email/report.html.eex:80
 #, elixir-format
 msgid "Reason"
-msgstr ""
+msgstr "Rason"
 
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:61
 #, elixir-format
 msgid "Reset Password"
-msgstr ""
+msgstr "Reïnicializar mon senhal"
 
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:41
 #, elixir-format
 msgid "Resetting your password is easy. Just press the button below and follow the instructions. We'll have you up and running in no time."
 msgstr ""
+"Reïnicializar vòstre senhal es facil. Clicatz simplament lo boton e seguètz "
+"las consignas. Seretz prèst d’aquí un momenton."
 
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:13
 #, elixir-format
 msgid "Trouble signing in?"
-msgstr ""
+msgstr "De dificultats a vos connectar ?"
 
 #: lib/mobilizon_web/templates/email/report.html.eex:100
 #, elixir-format
 msgid "View the report"
-msgstr ""
+msgstr "Veire lo senhalament"
 
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:38
 #, elixir-format
 msgid "You created an account on %{host} with this email address. You are one click away from activating it."
 msgstr ""
+"Avètz creat un compte sus %{host} amb aquesta adreça electronica. Sètz a un "
+"clic de l’activar."
 
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:38
 #, elixir-format
 msgid "You requested a new password for your account on %{server}."
-msgstr ""
+msgstr "Avètz demandat un nòu senhal per vòstre compte sus %{server}."
 
 #: lib/mobilizon_web/email/user.ex:25
 #, elixir-format
 msgid "Instructions to confirm your Mobilizon account on %{instance}"
-msgstr ""
+msgstr "Consignas per confirmar vòstre compte Mobilizon sus %{instance}"
 
 #: lib/mobilizon_web/email/admin.ex:23
 #, elixir-format
 msgid "New report on Mobilizon instance %{instance}"
-msgstr ""
+msgstr "Nòu senhalament sus l’instància Mobilizon %{instance}"
