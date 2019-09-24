@@ -7,6 +7,7 @@ defmodule MobilizonWeb.Resolvers.User do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.Users.{ResetPassword, Activation}
   alias Mobilizon.Users.User
+  alias Mobilizon.Storage.Repo
 
   import Mobilizon.Users.Guards
 
@@ -237,5 +238,35 @@ defmodule MobilizonWeb.Resolvers.User do
            ) do
       {:ok, participations}
     end
+  end
+
+  def change_password(_parent, %{old_password: old_password, new_password: new_password}, %{
+        context: %{current_user: %User{password_hash: old_password_hash} = user}
+      }) do
+    with {:current_password, true} <-
+           {:current_password, Argon2.verify_pass(old_password, old_password_hash)},
+         {:same_password, false} <- {:same_password, old_password == new_password},
+         {:ok, %User{} = user} <-
+           user
+           |> User.password_change_changeset(%{
+             "password" => new_password
+           })
+           |> Repo.update() do
+      {:ok, user}
+    else
+      {:current_password, false} ->
+        {:error, "The current password is invalid"}
+
+      {:same_password, true} ->
+        {:error, "The new password must be different"}
+
+      {:error, %Ecto.Changeset{errors: [password: {"registration.error.password_too_short", _}]}} ->
+        {:error,
+         "The password you have chosen is too short. Please make sure your password contains at least 6 characters."}
+    end
+  end
+
+  def change_password(_parent, _args, _resolution) do
+    {:error, "You need to be logged-in to change your password"}
   end
 end

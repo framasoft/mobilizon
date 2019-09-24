@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Fri Sep 20 2019 16:55:10 GMT+0200 (GMT+02:00)
+# timestamp: Tue Sep 24 2019 18:20:05 GMT+0200 (GMT+02:00)
 
 schema {
   query: RootQueryType
@@ -184,7 +184,7 @@ enum CommentVisibility {
   """Visible only to people members of the group or followers of the person"""
   PRIVATE
 
-  """Publically listed and federated. Can be shared."""
+  """Publicly listed and federated. Can be shared."""
   PUBLIC
 
   """Visible only to people with the link - or invited"""
@@ -885,6 +885,9 @@ type RootMutationType {
   """Change default actor for user"""
   changeDefaultActor(preferredUsername: String!): User
 
+  """Change an user password"""
+  changePassword(newPassword: String!, oldPassword: String!): User
+
   """Create a comment"""
   createComment(actorUsername: String!, text: String!): Comment
 
@@ -911,7 +914,7 @@ type RootMutationType {
     """The list of tags associated to the event"""
     tags: [String] = [""]
     title: String!
-    visibility: EventVisibility = PRIVATE
+    visibility: EventVisibility = PUBLIC
   ): Event
 
   """Create a Feed Token"""
@@ -1044,7 +1047,7 @@ type RootMutationType {
     description: String
     endsOn: DateTime
     eventId: ID!
-    joinOptions: EventJoinOptions
+    joinOptions: EventJoinOptions = FREE
     onlineAddress: String
     options: EventOptionsInput
     phoneAddress: String
@@ -1059,7 +1062,7 @@ type RootMutationType {
     """The list of tags associated to the event"""
     tags: [String]
     title: String
-    visibility: EventVisibility
+    visibility: EventVisibility = PUBLIC
   ): Event
 
   """Update an identity"""
