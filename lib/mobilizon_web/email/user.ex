@@ -31,8 +31,7 @@ defmodule MobilizonWeb.Email.User do
     |> assign(:locale, locale)
     |> assign(:token, confirmation_token)
     |> assign(:subject, subject)
-    |> render("registration_confirmation.html")
-    |> Email.premail()
+    |> render(:registration_confirmation)
   end
 
   @spec reset_password_email(User.t(), String.t()) :: Bamboo.Email.t()
@@ -52,7 +51,6 @@ defmodule MobilizonWeb.Email.User do
     |> assign(:locale, locale)
     |> assign(:token, reset_password_token)
     |> assign(:subject, subject)
-    |> render("password_reset.html")
-    |> Email.premail()
+    |> render(:password_reset)
   end
 end
