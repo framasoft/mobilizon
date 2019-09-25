@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@types/chai": "^4.2.3",
-    "@types/leaflet": "^1.4.4",
+    "@types/leaflet": "^1.5.2",
     "@types/lodash": "^4.14.123",
     "@types/mocha": "^5.2.6",
     "@vue/cli-plugin-babel": "^3.6.0",
