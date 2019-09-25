@@ -1,0 +1,140 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-09-24 14:40+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Translate Toolkit 2.4.0\n"
+
+#: lib/mobilizon_web/templates/email/email.text.eex:3
+#, elixir-format
+msgid "An email sent by Mobilizon on %{instance}."
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:48
+#, elixir-format
+msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
+msgstr ""
+
+#: lib/service/export/feed.ex:161
+#, elixir-format
+msgid "Feed for %{email} on Mobilizon"
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/email.html.eex:122
+#, elixir-format
+msgid "%{instance} is a Mobilizon server."
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/report.html.eex:38
+#, elixir-format
+msgid "%{reporter_name} (%{reporter_username}) reported the following content."
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/report.html.eex:48
+#, elixir-format
+msgid "%{title} by %{creator}"
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:58
+#, elixir-format
+msgid "Activate my account"
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/email.html.eex:91
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:94
+#, elixir-format
+msgid "Ask the community on Framacolibri"
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/report.html.eex:62
+#, elixir-format
+msgid "Comments"
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/report.html.eex:46
+#, elixir-format
+msgid "Event"
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:45
+#, elixir-format
+msgid "If you didn't request this, please ignore this email."
+msgstr ""
+
+#: lib/mobilizon_web/email/user.ex:46
+#, elixir-format
+msgid "Instructions to reset your password on %{instance}"
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/email.html.eex:123
+#, elixir-format
+msgid "Learn more about Mobilizon."
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:13
+#, elixir-format
+msgid "Nearly here!"
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/email.html.eex:88
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:91
+#, elixir-format
+msgid "Need some help? Something not working properly?"
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/report.html.eex:13
+#, elixir-format
+msgid "New report on %{instance}"
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/report.html.eex:80
+#, elixir-format
+msgid "Reason"
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:61
+#, elixir-format
+msgid "Reset Password"
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:41
+#, elixir-format
+msgid "Resetting your password is easy. Just press the button below and follow the instructions. We'll have you up and running in no time."
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:13
+#, elixir-format
+msgid "Trouble signing in?"
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/report.html.eex:100
+#, elixir-format
+msgid "View the report"
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:38
+#, elixir-format
+msgid "You created an account on %{host} with this email address. You are one click away from activating it."
+msgstr ""
+
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:38
+#, elixir-format
+msgid "You requested a new password for your account on %{server}."
+msgstr ""
+
+#: lib/mobilizon_web/email/user.ex:25
+#, elixir-format
+msgid "Instructions to confirm your Mobilizon account on %{instance}"
+msgstr ""
+
+#: lib/mobilizon_web/email/admin.ex:23
+#, elixir-format
+msgid "New report on Mobilizon instance %{instance}"
+msgstr ""
