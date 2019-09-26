@@ -88,7 +88,6 @@ defmodule Mobilizon.Mixfile do
       {:plug_cowboy, "~> 2.0"},
       {:atomex, "0.3.0"},
       {:cachex, "~> 3.1"},
-      {:earmark, "~> 1.4.0"},
       {:geohax, "~> 0.3.0"},
       {:mogrify, "~> 0.7.2"},
       {:auto_linker,
