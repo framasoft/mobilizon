@@ -108,6 +108,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Event do
       "updated_at" => event.updated_at |> date_to_string(),
       "mediaType" => "text/html",
       "startTime" => event.begins_on |> date_to_string(),
+      "joinOptions" => to_string(event.join_options),
       "endTime" => event.ends_on |> date_to_string(),
       "tag" => event.tags |> build_tags(),
       "id" => event.url,
@@ -212,48 +213,6 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Event do
       @ap_public in object["cc"] -> :unlisted
       true -> :private
     end
-  end
-
-  @doc """
-  Convert an event struct to an ActivityStream representation
-  """
-  @impl Converter
-  @spec model_to_as(EventModel.t()) :: map()
-  def model_to_as(%EventModel{} = event) do
-    to =
-      if event.visibility == :public,
-        do: ["https://www.w3.org/ns/activitystreams#Public"],
-        else: [event.organizer_actor.followers_url]
-
-    res = %{
-      "type" => "Event",
-      "to" => to,
-      "cc" => [],
-      "attributedTo" => event.organizer_actor.url,
-      "name" => event.title,
-      "actor" => event.organizer_actor.url,
-      "uuid" => event.uuid,
-      "category" => event.category,
-      "content" => event.description,
-      "publish_at" => (event.publish_at || event.inserted_at) |> date_to_string(),
-      "updated_at" => event.updated_at |> date_to_string(),
-      "mediaType" => "text/html",
-      "startTime" => event.begins_on |> date_to_string(),
-      "endTime" => event.ends_on |> date_to_string(),
-      "joinOptions" => to_string(event.join_options),
-      "tag" => event.tags |> build_tags(),
-      "id" => event.url,
-      "url" => event.url
-    }
-
-    res =
-      if is_nil(event.physical_address),
-        do: res,
-        else: Map.put(res, "location", AddressConverter.model_to_as(event.physical_address))
-
-    if is_nil(event.picture),
-      do: res,
-      else: Map.put(res, "attachment", [Utils.make_picture_data(event.picture)])
   end
 
   @spec date_to_string(DateTime.t() | nil) :: String.t()
