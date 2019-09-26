@@ -115,17 +115,6 @@ defmodule MobilizonWeb.API.Utils do
     |> Formatter.linkify(options)
   end
 
-  #  @doc """
-  #  Formatting text to markdown.
-  #  """
-  #  def format_input(text, "text/markdown", options) do
-  #    text
-  #    |> Formatter.mentions_escape(options)
-  #    |> Earmark.as_html!()
-  #    |> Formatter.linkify(options)
-  #    |> Formatter.html_escape("text/html")
-  #  end
-
   def make_report_content_text(nil), do: {:ok, nil}
 
   def make_report_content_text(comment) do
