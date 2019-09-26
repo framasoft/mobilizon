@@ -3,14 +3,13 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Utils
+  alias Mobilizon.Service.ActivityPub.{Activity, Utils}
 
   @private_visibility_empty_collection %{elements: [], total: 0}
 
   def render("actor.json", %{actor: actor}) do
-    public_key = Mobilizon.Service.ActivityPub.Utils.pem_to_public_key_pem(actor.keys)
+    public_key = Utils.pem_to_public_key_pem(actor.keys)
 
     %{
       "id" => actor.url,

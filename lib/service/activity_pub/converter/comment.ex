@@ -1,25 +1,35 @@
-defmodule Mobilizon.Service.ActivityPub.Converters.Comment do
+defmodule Mobilizon.Service.ActivityPub.Converter.Comment do
   @moduledoc """
-  Comment converter
+  Comment converter.
 
-  This module allows to convert events from ActivityStream format to our own internal one, and back
+  This module allows to convert events from ActivityStream format to our own
+  internal one, and back.
   """
+
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Comment, as: CommentModel
   alias Mobilizon.Events.Event
-  alias Mobilizon.Service.ActivityPub.Converter
   alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Service.ActivityPub.{Converter, Convertible}
+
   require Logger
 
   @behaviour Converter
 
+  defimpl Convertible, for: CommentModel do
+    alias Mobilizon.Service.ActivityPub.Converter.Comment, as: CommentConverter
+
+    defdelegate model_to_as(comment), to: CommentConverter
+  end
+
   @doc """
-  Converts an AP object data to our internal data structure
+  Converts an AP object data to our internal data structure.
   """
   @impl Converter
-  @spec as_to_model_data(map()) :: map()
+  @spec as_to_model_data(map) :: map
   def as_to_model_data(object) do
     {:ok, %Actor{id: actor_id}} = ActivityPub.get_or_fetch_by_url(object["actor"])
+
     Logger.debug("Inserting full comment")
     Logger.debug(inspect(object))
 
@@ -62,6 +72,7 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Comment do
         end
       else
         Logger.debug("No parent object for this comment")
+
         data
       end
 
@@ -72,7 +83,7 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Comment do
   Make an AS comment object from an existing `Comment` structure.
   """
   @impl Converter
-  @spec model_to_as(CommentModel.t()) :: map()
+  @spec model_to_as(CommentModel.t()) :: map
   def model_to_as(%CommentModel{} = comment) do
     object = %{
       "type" => "Note",
@@ -90,10 +101,4 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Comment do
       object
     end
   end
-end
-
-defimpl Mobilizon.Service.ActivityPub.Convertible, for: Mobilizon.Events.Comment do
-  alias Mobilizon.Service.ActivityPub.Converters.Comment, as: CommentConverter
-
-  defdelegate model_to_as(comment), to: CommentConverter
 end

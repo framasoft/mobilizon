@@ -6,7 +6,7 @@ defmodule Mobilizon.ActorsTest do
   import Mobilizon.Factory
 
   alias Mobilizon.{Actors, Config, Users}
-  alias Mobilizon.Actors.{Actor, Member, Follower, Bot}
+  alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
   alias Mobilizon.Media.File, as: FileModel
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Storage.Page
@@ -311,9 +311,6 @@ defmodule Mobilizon.ActorsTest do
   end
 
   describe "groups" do
-    alias Mobilizon.Actors
-    alias Mobilizon.Actors.Actor
-
     @valid_attrs %{
       summary: "some description",
       suspended: true,
@@ -356,11 +353,7 @@ defmodule Mobilizon.ActorsTest do
     end
   end
 
-  alias Mobilizon.Actors
-
   describe "bots" do
-    alias Mobilizon.Actors.Bot
-
     @valid_attrs %{source: "some source", type: "some type"}
     @update_attrs %{source: "some updated source", type: "some updated type"}
     @invalid_attrs %{source: nil, type: nil}
@@ -419,9 +412,6 @@ defmodule Mobilizon.ActorsTest do
   end
 
   describe "followers" do
-    alias Mobilizon.Actors.Follower
-    alias Mobilizon.Actors.Actor
-
     @valid_attrs %{approved: true}
     @update_attrs %{approved: false}
     @invalid_attrs %{approved: nil}
@@ -529,9 +519,6 @@ defmodule Mobilizon.ActorsTest do
   end
 
   describe "members" do
-    alias Mobilizon.Actors.Member
-    alias Mobilizon.Actors.Actor
-
     @valid_attrs %{role: :member}
     @update_attrs %{role: :not_approved}
     @invalid_attrs %{role: nil}

@@ -1,10 +1,12 @@
 defmodule Mobilizon.Service.Geospatial.NominatimTest do
+  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+
   use Mobilizon.DataCase, async: false
-  alias Mobilizon.Service.Geospatial.Nominatim
-  alias Mobilizon.Addresses.Address
 
   import Mock
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+
+  alias Mobilizon.Addresses.Address
+  alias Mobilizon.Service.Geospatial.Nominatim
 
   describe "search address" do
     test "produces a valid search address with options" do

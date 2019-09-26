@@ -3,27 +3,20 @@ defmodule MobilizonWeb.NodeInfoControllerTest do
 
   alias Mobilizon.Config
 
+  alias MobilizonWeb.Endpoint
+  alias MobilizonWeb.Router.Helpers, as: Routes
+
   test "Get node info schemas", %{conn: conn} do
     conn = get(conn, node_info_path(conn, :schemas))
 
     assert json_response(conn, 200) == %{
              "links" => [
                %{
-                 "href" =>
-                   MobilizonWeb.Router.Helpers.node_info_url(
-                     MobilizonWeb.Endpoint,
-                     :nodeinfo,
-                     "2.0"
-                   ),
+                 "href" => Routes.node_info_url(Endpoint, :nodeinfo, "2.0"),
                  "rel" => "http://nodeinfo.diaspora.software/ns/schema/2.0"
                },
                %{
-                 "href" =>
-                   MobilizonWeb.Router.Helpers.node_info_url(
-                     MobilizonWeb.Endpoint,
-                     :nodeinfo,
-                     "2.1"
-                   ),
+                 "href" => Routes.node_info_url(Endpoint, :nodeinfo, "2.1"),
                  "rel" => "http://nodeinfo.diaspora.software/ns/schema/2.1"
                }
              ]

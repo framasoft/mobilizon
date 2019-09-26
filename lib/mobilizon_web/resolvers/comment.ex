@@ -1,11 +1,12 @@
 defmodule MobilizonWeb.Resolvers.Comment do
   @moduledoc """
-  Handles the comment-related GraphQL calls
+  Handles the comment-related GraphQL calls.
   """
 
   alias Mobilizon.Events.Comment
-  alias Mobilizon.Users.User
   alias Mobilizon.Service.ActivityPub.Activity
+  alias Mobilizon.Users.User
+
   alias MobilizonWeb.API.Comments
 
   require Logger

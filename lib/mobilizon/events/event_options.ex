@@ -8,9 +8,9 @@ defmodule Mobilizon.Events.EventOptions do
   import Ecto.Changeset
 
   alias Mobilizon.Events.{
+    CommentModeration,
     EventOffer,
-    EventParticipationCondition,
-    CommentModeration
+    EventParticipationCondition
   }
 
   @type t :: %__MODULE__{

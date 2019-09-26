@@ -4,7 +4,9 @@
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/lib/mix/tasks/pleroma/common.ex
 
 defmodule Mix.Tasks.Mobilizon.Common do
-  @moduledoc "Common functions to be reused in mix tasks"
+  @moduledoc """
+  Common functions to be reused in mix tasks
+  """
 
   def get_option(options, opt, prompt, defval \\ nil, defname \\ nil) do
     display = if defname || defval, do: "#{prompt} [#{defname || defval}]", else: "#{prompt}"
@@ -13,17 +15,21 @@ defmodule Mix.Tasks.Mobilizon.Common do
       case Mix.shell().prompt(display) do
         "\n" ->
           case defval do
-            nil -> get_option(options, opt, prompt, defval)
-            defval -> defval
+            nil ->
+              get_option(options, opt, prompt, defval)
+
+            defval ->
+              defval
           end
 
         opt ->
-          opt |> String.trim()
+          String.trim(opt)
       end
   end
 
   def start_mobilizon do
     Application.put_env(:phoenix, :serve_endpoints, false, persistent: true)
+
     {:ok, _} = Application.ensure_all_started(:mobilizon)
   end
 

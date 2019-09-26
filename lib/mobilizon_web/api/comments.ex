@@ -1,6 +1,6 @@
 defmodule MobilizonWeb.API.Comments do
   @moduledoc """
-  API for Comments
+  API for Comments.
   """
 
   alias Mobilizon.Actors
@@ -8,6 +8,7 @@ defmodule MobilizonWeb.API.Comments do
   alias Mobilizon.Events.Comment
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Utils, as: ActivityPubUtils
+
   alias MobilizonWeb.API.Utils
 
   @doc """

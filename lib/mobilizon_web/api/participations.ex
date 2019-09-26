@@ -1,6 +1,6 @@
 defmodule MobilizonWeb.API.Participations do
   @moduledoc """
-  Common API to join events and groups
+  Common API to join events and groups.
   """
 
   alias Mobilizon.Actors.Actor

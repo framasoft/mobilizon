@@ -1,12 +1,17 @@
 defmodule MobilizonWeb.Schema.Actors.GroupType do
   @moduledoc """
-  Schema representation for Group
+  Schema representation for Group.
   """
+
   use Absinthe.Schema.Notation
+
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
-  import_types(MobilizonWeb.Schema.Actors.MemberType)
-  alias MobilizonWeb.Resolvers.{Member, Group}
+
   alias Mobilizon.Events
+
+  alias MobilizonWeb.Resolvers.{Group, Member}
+
+  import_types(MobilizonWeb.Schema.Actors.MemberType)
 
   @desc """
   Represents a group of actors

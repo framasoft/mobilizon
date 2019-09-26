@@ -198,7 +198,7 @@ defmodule Mobilizon.UploadTest do
     end
   end
 
-  defp upload() do
+  defp upload do
     File.cp!("test/fixtures/image.jpg", "test/fixtures/image_tmp.jpg")
 
     file = %Plug.Upload{

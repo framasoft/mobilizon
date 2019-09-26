@@ -1,13 +1,15 @@
 defmodule MobilizonWeb.Resolvers.Group do
   @moduledoc """
-  Handles the group-related GraphQL calls
+  Handles the group-related GraphQL calls.
   """
+
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Member}
+  alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Users.User
-  alias Mobilizon.Service.ActivityPub
 
+  alias MobilizonWeb.API
   alias MobilizonWeb.Resolvers.Person
 
   require Logger
@@ -31,7 +33,8 @@ defmodule MobilizonWeb.Resolvers.Group do
   def list_groups(_parent, %{page: page, limit: limit}, _resolution) do
     {
       :ok,
-      Actors.list_groups(page, limit)
+      page
+      |> Actors.list_groups(limit)
       |> Enum.map(fn actor -> Person.proxify_pictures(actor) end)
     }
   end
@@ -49,7 +52,7 @@ defmodule MobilizonWeb.Resolvers.Group do
            %Activity{data: %{"object" => %{"type" => "Group"} = _object}},
            %Actor{} = group
          } <-
-           MobilizonWeb.API.Groups.create_group(
+           API.Groups.create_group(
              user,
              %{
                preferred_username: args.preferred_username,

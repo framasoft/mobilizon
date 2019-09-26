@@ -1,6 +1,6 @@
 defmodule MobilizonWeb.API.Utils do
   @moduledoc """
-  Utils for API
+  Utils for API.
   """
 
   alias Mobilizon.Actors.Actor

@@ -1,10 +1,12 @@
 defmodule Mobilizon.Service.Geospatial.GoogleMapsTest do
+  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+
   use Mobilizon.DataCase, async: false
-  alias Mobilizon.Service.Geospatial.GoogleMaps
-  alias Mobilizon.Addresses.Address
 
   import Mock
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+
+  alias Mobilizon.Addresses.Address
+  alias Mobilizon.Service.Geospatial.GoogleMaps
 
   describe "search address" do
     test "without API Key triggers an error" do

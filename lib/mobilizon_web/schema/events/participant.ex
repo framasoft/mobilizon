@@ -1,12 +1,15 @@
 defmodule MobilizonWeb.Schema.Events.ParticipantType do
   @moduledoc """
-  Schema representation for Participant
+  Schema representation for Participant.
   """
+
   use Absinthe.Schema.Notation
+
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+
+  alias Mobilizon.{Actors, Events}
+
   alias MobilizonWeb.Resolvers
-  alias Mobilizon.Events
-  alias Mobilizon.Actors
 
   @desc "Represents a participant to an event"
   object :participant do

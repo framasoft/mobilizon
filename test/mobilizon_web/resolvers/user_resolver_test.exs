@@ -9,8 +9,8 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
   alias Mobilizon.{Actors, Config, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.Users.ResetPassword
-  alias Mobilizon.Users.User
   alias Mobilizon.Users
+  alias Mobilizon.Users.User
 
   alias MobilizonWeb.{AbsintheHelpers, Email}
 

@@ -1,13 +1,14 @@
 defmodule Mobilizon.Service.Geospatial.AddokTest do
-  use Mobilizon.DataCase, async: false
-  alias Mobilizon.Service.Geospatial.Addok
-  alias Mobilizon.Addresses.Address
-
-  import Mock
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
-  @endpoint Application.get_env(:mobilizon, Mobilizon.Service.Geospatial.Addok)
-            |> get_in([:endpoint])
+  use Mobilizon.DataCase, async: false
+
+  import Mock
+
+  alias Mobilizon.Addresses.Address
+  alias Mobilizon.Service.Geospatial.Addok
+
+  @endpoint get_in(Application.get_env(:mobilizon, Addok), [:endpoint])
   @fake_endpoint "https://domain.tld"
 
   describe "search address" do

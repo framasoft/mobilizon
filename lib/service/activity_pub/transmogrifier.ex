@@ -7,12 +7,13 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   @moduledoc """
   A module to handle coding from internal to wire ActivityPub and back.
   """
+
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Follower}
   alias Mobilizon.Events
-  alias Mobilizon.Events.{Event, Comment, Participant}
+  alias Mobilizon.Events.{Comment, Event, Participant}
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.{Visibility, Utils}
+  alias Mobilizon.Service.ActivityPub.{Converter, Convertible, Utils, Visibility}
 
   require Logger
 
@@ -24,7 +25,8 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     if is_binary(Enum.at(actor, 0)) do
       Enum.at(actor, 0)
     else
-      Enum.find(actor, fn %{"type" => type} -> type in ["Person", "Service", "Application"] end)
+      actor
+      |> Enum.find(fn %{"type" => type} -> type in ["Person", "Service", "Application"] end)
       |> Map.get("id")
     end
   end
@@ -120,7 +122,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   def handle_incoming(%{"id" => ""}), do: :error
 
   def handle_incoming(%{"type" => "Flag"} = data) do
-    with params <- Mobilizon.Service.ActivityPub.Converters.Flag.as_to_model(data) do
+    with params <- Converter.Flag.as_to_model(data) do
       params = %{
         reporter_url: params["reporter"].url,
         reported_actor_url: params["reported"].url,
@@ -866,7 +868,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
 
   def fetch_obj_helper_as_activity_streams(object) do
     with {:ok, object} <- fetch_obj_helper(object) do
-      {:ok, Mobilizon.Service.ActivityPub.Convertible.model_to_as(object)}
+      {:ok, Convertible.model_to_as(object)}
     end
   end
 end

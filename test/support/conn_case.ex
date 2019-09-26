@@ -15,6 +15,11 @@ defmodule MobilizonWeb.ConnCase do
 
   use ExUnit.CaseTemplate
 
+  alias Ecto.Adapters.SQL.Sandbox, as: Adapter
+
+  alias Mobilizon.Storage.Repo
+  alias Mobilizon.Users.User
+
   using do
     quote do
       # Import conveniences for testing with connections
@@ -24,7 +29,7 @@ defmodule MobilizonWeb.ConnCase do
       # The default endpoint for testing
       @endpoint MobilizonWeb.Endpoint
 
-      def auth_conn(%Plug.Conn{} = conn, %Mobilizon.Users.User{} = user) do
+      def auth_conn(%Plug.Conn{} = conn, %User{} = user) do
         {:ok, token, _claims} = MobilizonWeb.Guardian.encode_and_sign(user)
 
         conn
@@ -35,11 +40,9 @@ defmodule MobilizonWeb.ConnCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Mobilizon.Storage.Repo)
+    :ok = Adapter.checkout(Repo)
 
-    unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Mobilizon.Storage.Repo, {:shared, self()})
-    end
+    unless tags[:async], do: Adapter.mode(Repo, {:shared, self()})
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end

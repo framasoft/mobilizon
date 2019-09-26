@@ -1,21 +1,21 @@
-defmodule Mobilizon.Service.ActivityPub.Converters.Address do
+defmodule Mobilizon.Service.ActivityPub.Converter.Address do
   @moduledoc """
-  Flag converter
+  Address converter.
 
-  This module allows to convert reports from ActivityStream format to our own internal one, and back.
-
-  Note: Reports are named Flag in AS.
+  This module allows to convert reports from ActivityStream format to our own
+  internal one, and back.
   """
+
   alias Mobilizon.Addresses.Address, as: AddressModel
   alias Mobilizon.Service.ActivityPub.Converter
 
   @behaviour Converter
 
   @doc """
-  Converts an AP object data to our internal data structure
+  Converts an AP object data to our internal data structure.
   """
   @impl Converter
-  @spec as_to_model_data(map()) :: map()
+  @spec as_to_model_data(map) :: map
   def as_to_model_data(object) do
     res = %{
       "description" => object["name"],
@@ -48,10 +48,10 @@ defmodule Mobilizon.Service.ActivityPub.Converters.Address do
   end
 
   @doc """
-  Convert an event struct to an ActivityStream representation
+  Convert an event struct to an ActivityStream representation.
   """
   @impl Converter
-  @spec model_to_as(AddressModel.t()) :: map()
+  @spec model_to_as(AddressModel.t()) :: map
   def model_to_as(%AddressModel{} = address) do
     res = %{
       "type" => "Place",

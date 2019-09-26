@@ -8,8 +8,10 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
   * `:open_data` Whether to use [Open Data or Licenced Data](https://developer.mapquest.com/documentation/open/).
     Defaults to `true`
   """
-  alias Mobilizon.Service.Geospatial.Provider
+
   alias Mobilizon.Addresses.Address
+  alias Mobilizon.Service.Geospatial.Provider
+
   require Logger
 
   @behaviour Provider

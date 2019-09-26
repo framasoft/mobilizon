@@ -1,16 +1,11 @@
 defmodule Mobilizon.Service.ActivityPub.Converter do
   @moduledoc """
-  Converter behaviour
+  Converter behaviour.
 
-  This module allows to convert from ActivityStream format to our own internal one, and back
+  This module allows to convert from ActivityStream format to our own internal
+  one, and back.
   """
-  @callback as_to_model_data(map()) :: map()
-  @callback model_to_as(struct()) :: map()
-end
 
-defprotocol Mobilizon.Service.ActivityPub.Convertible do
-  @type activitystreams :: map()
-
-  @spec model_to_as(t) :: activitystreams
-  def model_to_as(convertible)
+  @callback as_to_model_data(map) :: map
+  @callback model_to_as(struct) :: map
 end

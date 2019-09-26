@@ -1,14 +1,19 @@
 defmodule MobilizonWeb.Schema.EventType do
   @moduledoc """
-  Schema representation for Event
+  Schema representation for Event.
   """
+
   use Absinthe.Schema.Notation
-  alias Mobilizon.{Actors, Addresses}
+
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+
+  alias Mobilizon.{Actors, Addresses}
+
+  alias MobilizonWeb.Resolvers.{Event, Picture, Tag}
+
   import_types(MobilizonWeb.Schema.AddressType)
   import_types(MobilizonWeb.Schema.Events.ParticipantType)
   import_types(MobilizonWeb.Schema.TagType)
-  alias MobilizonWeb.Resolvers.{Picture, Event, Tag}
 
   @desc "An event"
   object :event do

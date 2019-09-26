@@ -1,7 +1,8 @@
-defmodule Mobilizon.Service.ActivityPub.Converters.ActorTest do
+defmodule Mobilizon.Service.ActivityPub.Converter.ActorTest do
   use Mobilizon.DataCase
-  alias Mobilizon.Service.ActivityPub.Converters.Actor, as: ActorConverter
+
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Service.ActivityPub.Converter.Actor, as: ActorConverter
 
   describe "actor to AS" do
     test "valid actor to as" do

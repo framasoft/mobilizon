@@ -1,12 +1,15 @@
 defmodule Mobilizon.Service.Admin.ActionLogServiceTest do
   @moduledoc """
-  Test the ActionLogService module
+  Test the ActionLogService module.
   """
+
   use Mobilizon.DataCase
-  import Mobilizon.Service.Admin.ActionLogService
-  alias Mobilizon.Reports.{Report, Note}
-  alias Mobilizon.Admin.ActionLog
+
   import Mobilizon.Factory
+  import Mobilizon.Service.Admin.ActionLogService
+
+  alias Mobilizon.Admin.ActionLog
+  alias Mobilizon.Reports.{Note, Report}
 
   setup do
     moderator_user = insert(:user, role: :moderator)

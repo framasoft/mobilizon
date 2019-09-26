@@ -14,7 +14,10 @@ defmodule Mobilizon.DataCase do
 
   use ExUnit.CaseTemplate
 
+  alias Ecto.Adapters.SQL.Sandbox, as: Adapter
+
   alias Mobilizon.Config
+  alias Mobilizon.Storage.Repo
 
   using do
     quote do
@@ -28,11 +31,9 @@ defmodule Mobilizon.DataCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Mobilizon.Storage.Repo)
+    :ok = Adapter.checkout(Repo)
 
-    unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Mobilizon.Storage.Repo, {:shared, self()})
-    end
+    unless tags[:async], do: Adapter.mode(Repo, {:shared, self()})
 
     :ok
   end

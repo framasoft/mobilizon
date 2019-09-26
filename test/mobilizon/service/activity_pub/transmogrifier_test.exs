@@ -4,6 +4,8 @@
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/test/web/activity_pub/transmogrifier_test.exs
 
 defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
+  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+
   use Mobilizon.DataCase
 
   import Mobilizon.Factory
@@ -13,9 +15,10 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
   alias Mobilizon.Events
   alias Mobilizon.Events.{Comment, Event, Participant}
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.{Utils, Activity}
+  alias Mobilizon.Service.ActivityPub.{Activity, Utils}
   alias Mobilizon.Service.ActivityPub.Transmogrifier
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+
+  alias MobilizonWeb.API
 
   setup_all do
     HTTPoison.start()
@@ -784,7 +787,9 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
       assert :error == Transmogrifier.handle_incoming(reject_data)
 
       # Organiser is not present since we use factories directly
-      assert Events.list_participants_for_event(event.id) |> Enum.map(& &1.id) ==
+      assert event.id
+             |> Events.list_participants_for_event()
+             |> Enum.map(& &1.id) ==
                []
     end
 
@@ -812,9 +817,10 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
       assert activity.data["actor"] == participant_url
 
       # The only participant left is the organizer
-      assert Events.list_participants_for_event(event.id) |> Enum.map(& &1.id) == [
-               organizer_participation.id
-             ]
+      assert event.id
+             |> Events.list_participants_for_event()
+             |> Enum.map(& &1.id) ==
+               [organizer_participation.id]
     end
 
     test "it refuses Leave activities when actor is the only organizer" do
@@ -841,7 +847,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
       other_actor = insert(:actor)
 
       {:ok, activity, _} =
-        MobilizonWeb.API.Comments.create_comment(
+        API.Comments.create_comment(
           actor.preferred_username,
           "hey, @#{other_actor.preferred_username}, how are ya? #2hu"
         )
@@ -877,8 +883,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     test "it adds the json-ld context and the conversation property" do
       actor = insert(:actor)
 
-      {:ok, activity, _} =
-        MobilizonWeb.API.Comments.create_comment(actor.preferred_username, "hey")
+      {:ok, activity, _} = API.Comments.create_comment(actor.preferred_username, "hey")
 
       {:ok, modified} = Transmogrifier.prepare_outgoing(activity.data)
 
@@ -888,8 +893,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     test "it sets the 'attributedTo' property to the actor of the object if it doesn't have one" do
       actor = insert(:actor)
 
-      {:ok, activity, _} =
-        MobilizonWeb.API.Comments.create_comment(actor.preferred_username, "hey")
+      {:ok, activity, _} = API.Comments.create_comment(actor.preferred_username, "hey")
 
       {:ok, modified} = Transmogrifier.prepare_outgoing(activity.data)
 
@@ -899,8 +903,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     test "it strips internal hashtag data" do
       actor = insert(:actor)
 
-      {:ok, activity, _} =
-        MobilizonWeb.API.Comments.create_comment(actor.preferred_username, "#2hu")
+      {:ok, activity, _} = API.Comments.create_comment(actor.preferred_username, "#2hu")
 
       expected_tag = %{
         "href" => MobilizonWeb.Endpoint.url() <> "/tags/2hu",
@@ -916,8 +919,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     test "it strips internal fields" do
       actor = insert(:actor)
 
-      {:ok, activity, _} =
-        MobilizonWeb.API.Comments.create_comment(actor.preferred_username, "#2hu")
+      {:ok, activity, _} = API.Comments.create_comment(actor.preferred_username, "#2hu")
 
       {:ok, modified} = Transmogrifier.prepare_outgoing(activity.data)
 

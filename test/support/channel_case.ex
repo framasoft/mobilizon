@@ -15,6 +15,10 @@ defmodule MobilizonWeb.ChannelCase do
 
   use ExUnit.CaseTemplate
 
+  alias Ecto.Adapters.SQL.Sandbox, as: Adapter
+
+  alias Mobilizon.Storage.Repo
+
   using do
     quote do
       # Import conveniences for testing with channels
@@ -26,11 +30,9 @@ defmodule MobilizonWeb.ChannelCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Mobilizon.Storage.Repo)
+    :ok = Adapter.checkout(Repo)
 
-    unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Mobilizon.Storage.Repo, {:shared, self()})
-    end
+    unless tags[:async], do: Adapter.mode(Repo, {:shared, self()})
 
     :ok
   end

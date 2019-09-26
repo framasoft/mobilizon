@@ -1,9 +1,9 @@
 defmodule Mobilizon.Service.Users.Activation do
   @moduledoc false
 
+  alias Mobilizon.Service.Users.Tools
   alias Mobilizon.Users
   alias Mobilizon.Users.User
-  alias Mobilizon.Service.Users.Tools
 
   alias MobilizonWeb.Email
 

@@ -1,12 +1,14 @@
 defmodule MobilizonWeb.API.Events do
   @moduledoc """
-  API for Events
+  API for Events.
   """
+
   alias Mobilizon.Events.Event
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Utils, as: ActivityPubUtils
   alias Mobilizon.Service.ActivityPub.Activity
+  alias Mobilizon.Service.ActivityPub.Utils, as: ActivityPubUtils
+
   alias MobilizonWeb.API.Utils
 
   @doc """

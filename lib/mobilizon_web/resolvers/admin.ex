@@ -1,35 +1,36 @@
 defmodule MobilizonWeb.Resolvers.Admin do
   @moduledoc """
-  Handles the report-related GraphQL calls
+  Handles the report-related GraphQL calls.
   """
-  alias Mobilizon.Events
-  alias Mobilizon.Users.User
-  import Mobilizon.Users.Guards
-  alias Mobilizon.Admin.ActionLog
-  alias Mobilizon.Reports.{Report, Note}
-  alias Mobilizon.Events.Event
-  alias Mobilizon.Service.Statistics
 
-  def list_action_logs(_parent, %{page: page, limit: limit}, %{
-        context: %{current_user: %User{role: role}}
-      })
+  import Mobilizon.Users.Guards
+
+  alias Mobilizon.Admin.ActionLog
+  alias Mobilizon.Events
+  alias Mobilizon.Events.Event
+  alias Mobilizon.Reports.{Note, Report}
+  alias Mobilizon.Service.Statistics
+  alias Mobilizon.Users.User
+
+  def list_action_logs(
+        _parent,
+        %{page: page, limit: limit},
+        %{context: %{current_user: %User{role: role}}}
+      )
       when is_moderator(role) do
     with action_logs <- Mobilizon.Admin.list_action_logs(page, limit) do
       action_logs =
-        Enum.map(action_logs, fn %ActionLog{
-                                   target_type: target_type,
-                                   action: action,
-                                   actor: actor,
-                                   id: id,
-                                   inserted_at: inserted_at
-                                 } = action_log ->
+        action_logs
+        |> Enum.map(fn %ActionLog{
+                         target_type: target_type,
+                         action: action,
+                         actor: actor,
+                         id: id,
+                         inserted_at: inserted_at
+                       } = action_log ->
           with data when is_map(data) <-
                  transform_action_log(String.to_existing_atom(target_type), action, action_log) do
-            Map.merge(data, %{
-              actor: actor,
-              id: id,
-              inserted_at: inserted_at
-            })
+            Map.merge(data, %{actor: actor, id: id, inserted_at: inserted_at})
           end
         end)
         |> Enum.filter(& &1)

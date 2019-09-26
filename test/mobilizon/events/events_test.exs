@@ -3,7 +3,9 @@ defmodule Mobilizon.EventsTest do
 
   import Mobilizon.Factory
 
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
+  alias Mobilizon.Events.{Comment, Event, Participant, Session, Tag, TagRelation, Track}
   alias Mobilizon.Storage.Page
 
   @event_valid_attrs %{
@@ -17,8 +19,6 @@ defmodule Mobilizon.EventsTest do
   }
 
   describe "events" do
-    alias Mobilizon.Events.Event
-
     setup do
       actor = insert(:actor)
       event = insert(:event, organizer_actor: actor, visibility: :public)
@@ -176,8 +176,6 @@ defmodule Mobilizon.EventsTest do
   end
 
   describe "tags" do
-    alias Mobilizon.Events.Tag
-
     @valid_attrs %{title: "some title"}
     @update_attrs %{title: "some updated title"}
     @invalid_attrs %{title: nil}
@@ -227,9 +225,6 @@ defmodule Mobilizon.EventsTest do
   end
 
   describe "tags_relations" do
-    alias Mobilizon.Events.TagRelation
-    alias Mobilizon.Events.Tag
-
     setup do
       tag1 = insert(:tag)
       tag2 = insert(:tag)
@@ -302,9 +297,6 @@ defmodule Mobilizon.EventsTest do
   end
 
   describe "participants" do
-    alias Mobilizon.Events.{Participant, Event}
-    alias Mobilizon.Actors.Actor
-
     @valid_attrs %{role: :creator}
     @update_attrs %{role: :moderator}
     @invalid_attrs %{role: :no_such_role}
@@ -369,8 +361,6 @@ defmodule Mobilizon.EventsTest do
   end
 
   describe "sessions" do
-    alias Mobilizon.Events.Session
-
     @valid_attrs %{
       audios_urls: "some audios_urls",
       language: "some language",
@@ -463,8 +453,6 @@ defmodule Mobilizon.EventsTest do
   end
 
   describe "tracks" do
-    alias Mobilizon.Events.Track
-
     @valid_attrs %{color: "some color", description: "some description", name: "some name"}
     @update_attrs %{
       color: "some updated color",
@@ -525,8 +513,6 @@ defmodule Mobilizon.EventsTest do
   end
 
   describe "comments" do
-    alias Mobilizon.Events.Comment
-
     @valid_attrs %{text: "some text"}
     @update_attrs %{text: "some updated text"}
     @invalid_attrs %{text: nil, url: nil}

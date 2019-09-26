@@ -1,15 +1,15 @@
 defmodule MobilizonWeb.Resolvers.User do
   @moduledoc """
-  Handles the user-related GraphQL calls
+  Handles the user-related GraphQL calls.
   """
+
+  import Mobilizon.Users.Guards
 
   alias Mobilizon.{Actors, Config, Users, Events}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Service.Users.{ResetPassword, Activation}
+  alias Mobilizon.Service.Users.{Activation, ResetPassword}
   alias Mobilizon.Users.User
   alias Mobilizon.Storage.Repo
-
-  import Mobilizon.Users.Guards
 
   require Logger
 

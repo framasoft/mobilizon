@@ -1,19 +1,22 @@
 defmodule MobilizonWeb.Resolvers.Event do
   @moduledoc """
-  Handles the event-related GraphQL calls
+  Handles the event-related GraphQL calls.
   """
+
+  import Mobilizon.Service.Admin.ActionLogService
+
+  alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Media.Picture
-  alias Mobilizon.Users.User
-  alias Mobilizon.Actors
-  alias Mobilizon.Actors.Actor
-  alias MobilizonWeb.Resolvers.Person
   alias Mobilizon.Service.ActivityPub.Activity
-  import Mobilizon.Service.Admin.ActionLogService
+  alias Mobilizon.Users.User
+
+  alias MobilizonWeb.API
+  alias MobilizonWeb.Resolvers.Person
 
   # We limit the max number of events that can be retrieved
   @event_max_limit 100
@@ -142,7 +145,7 @@ defmodule MobilizonWeb.Resolvers.Event do
          {:has_event, {:ok, %Event{} = event}} <-
            {:has_event, Mobilizon.Events.get_event_with_preload(event_id)},
          {:error, :participant_not_found} <- Mobilizon.Events.get_participant(event_id, actor_id),
-         {:ok, _activity, participant} <- MobilizonWeb.API.Participations.join(event, actor),
+         {:ok, _activity, participant} <- API.Participations.join(event, actor),
          participant <-
            participant
            |> Map.put(:event, event)
@@ -178,7 +181,7 @@ defmodule MobilizonWeb.Resolvers.Event do
     with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
          {:has_event, {:ok, %Event{} = event}} <-
            {:has_event, Mobilizon.Events.get_event_with_preload(event_id)},
-         {:ok, _activity, _participant} <- MobilizonWeb.API.Participations.leave(event, actor) do
+         {:ok, _activity, _participant} <- API.Participations.leave(event, actor) do
       {:ok, %{event: %{id: event_id}, actor: %{id: actor_id}}}
     else
       {:has_event, _} ->

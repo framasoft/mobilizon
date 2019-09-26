@@ -4,11 +4,6 @@
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/lib/mix/tasks/pleroma/instance.ex
 
 defmodule Mix.Tasks.Mobilizon.Instance do
-  use Mix.Task
-  alias Mix.Tasks.Mobilizon.Common
-
-  @shortdoc "Generates a new config"
-  @preferred_cli_env "prod"
   @moduledoc """
   Generates a new config
 
@@ -31,6 +26,13 @@ defmodule Mix.Tasks.Mobilizon.Instance do
   - `--dbpass DBPASS` - the password to use for the database connection
   """
 
+  use Mix.Task
+
+  alias Mix.Tasks.Mobilizon.Common
+
+  @preferred_cli_env "prod"
+
+  @shortdoc "Generates a new config"
   def run(["gen" | options]) do
     {options, [], []} =
       OptionParser.parse(

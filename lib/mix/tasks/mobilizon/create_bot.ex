@@ -1,13 +1,14 @@
 defmodule Mix.Tasks.Mobilizon.CreateBot do
   @moduledoc """
-  Creates a bot from a source
+  Creates a bot from a source.
   """
 
   use Mix.Task
-  alias Mobilizon.Actors
-  alias Mobilizon.Users
+
+  alias Mobilizon.{Actors, Users}
   alias Mobilizon.Actors.Bot
   alias Mobilizon.Users.User
+
   require Logger
 
   @shortdoc "Register user"
@@ -25,7 +26,8 @@ defmodule Mix.Tasks.Mobilizon.CreateBot do
            }) do
       bot
     else
-      e -> Logger.error(inspect(e))
+      error ->
+        Logger.error(inspect(error))
     end
   end
 end

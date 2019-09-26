@@ -4,11 +4,6 @@
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/lib/mix/tasks/pleroma/relay.ex
 
 defmodule Mix.Tasks.Mobilizon.Relay do
-  use Mix.Task
-  alias Mobilizon.Service.ActivityPub.Relay
-  alias Mix.Tasks.Mobilizon.Common
-
-  @shortdoc "Manages remote relays"
   @moduledoc """
   Manages remote relays
 
@@ -24,6 +19,13 @@ defmodule Mix.Tasks.Mobilizon.Relay do
 
   Example: ``mix mobilizon.relay unfollow https://example.org/relay``
   """
+
+  use Mix.Task
+
+  alias Mix.Tasks.Mobilizon.Common
+  alias Mobilizon.Service.ActivityPub.Relay
+
+  @shortdoc "Manages remote relays"
   def run(["follow", target]) do
     Common.start_mobilizon()
 

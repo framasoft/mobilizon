@@ -6,6 +6,7 @@ defmodule MobilizonWeb.Cache.ActivityPub do
   alias Mobilizon.{Actors, Events, Service}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.{Comment, Event}
+  alias Service.ActivityPub
 
   @cache :activity_pub
 
@@ -65,6 +66,6 @@ defmodule MobilizonWeb.Cache.ActivityPub do
   """
   @spec get_relay :: {:commit, Actor.t()} | {:ignore, nil}
   def get_relay do
-    Cachex.fetch(@cache, "relay_actor", &Service.ActivityPub.Relay.get_actor/0)
+    Cachex.fetch(@cache, "relay_actor", &ActivityPub.Relay.get_actor/0)
   end
 end

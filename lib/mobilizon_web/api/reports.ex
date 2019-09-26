@@ -1,18 +1,19 @@
 defmodule MobilizonWeb.API.Reports do
   @moduledoc """
-  API for Reports
+  API for Reports.
   """
 
-  import MobilizonWeb.API.Utils
   import Mobilizon.Service.Admin.ActionLogService
+
+  import MobilizonWeb.API.Utils
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
-  alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Reports, as: ReportsAction
-  alias Mobilizon.Reports.{Report, Note}
+  alias Mobilizon.Reports.{Note, Report, ReportStatus}
   alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Users
   alias Mobilizon.Users.User
 
@@ -62,7 +63,7 @@ defmodule MobilizonWeb.API.Reports do
   """
   def update_report_status(%Actor{} = actor, %Report{} = report, state) do
     with {:valid_state, true} <-
-           {:valid_state, Mobilizon.Reports.ReportStatus.valid_value?(state)},
+           {:valid_state, ReportStatus.valid_value?(state)},
          {:ok, report} <- ReportsAction.update_report(report, %{"status" => state}),
          {:ok, _} <- log_action(actor, "update", report) do
       {:ok, report}
@@ -73,7 +74,7 @@ defmodule MobilizonWeb.API.Reports do
 
   defp get_report_comments(%Actor{id: actor_id}, comment_ids) do
     {:get_report_comments,
-     Events.list_comments_by_actor_and_ids(actor_id, comment_ids) |> Enum.map(& &1.url)}
+     actor_id |> Events.list_comments_by_actor_and_ids(comment_ids) |> Enum.map(& &1.url)}
   end
 
   defp get_report_comments(_, _), do: {:get_report_comments, nil}

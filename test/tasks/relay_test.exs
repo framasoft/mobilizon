@@ -3,11 +3,13 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 defmodule Mix.Tasks.Mobilizon.RelayTest do
-  alias Mobilizon.Actors.{Actor, Follower}
-  alias Mobilizon.Actors
-  alias Mobilizon.Service.ActivityPub.Relay
-  use Mobilizon.DataCase
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+
+  use Mobilizon.DataCase
+
+  alias Mobilizon.Actors
+  alias Mobilizon.Actors.{Actor, Follower}
+  alias Mobilizon.Service.ActivityPub.Relay
 
   describe "running follow" do
     test "relay is followed" do

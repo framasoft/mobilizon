@@ -6,6 +6,7 @@ defmodule MobilizonWeb.API.Follows do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Follower}
   alias Mobilizon.Service.ActivityPub
+
   require Logger
 
   def follow(%Actor{} = follower, %Actor{} = followed) do

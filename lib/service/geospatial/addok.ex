@@ -2,9 +2,11 @@ defmodule Mobilizon.Service.Geospatial.Addok do
   @moduledoc """
   [Addok](https://github.com/addok/addok) backend.
   """
-  alias Mobilizon.Service.Geospatial.Provider
-  require Logger
+
   alias Mobilizon.Addresses.Address
+  alias Mobilizon.Service.Geospatial.Provider
+
+  require Logger
 
   @behaviour Provider
 
@@ -68,7 +70,7 @@ defmodule Mobilizon.Service.Geospatial.Addok do
         region: Map.get(properties, "state"),
         description: Map.get(properties, "name") || street_address(properties),
         floor: Map.get(properties, "floor"),
-        geom: Map.get(geometry, "coordinates") |> Provider.coordinates(),
+        geom: geometry |> Map.get("coordinates") |> Provider.coordinates(),
         postal_code: Map.get(properties, "postcode"),
         street: properties |> street_address()
       }

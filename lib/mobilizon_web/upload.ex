@@ -36,7 +36,7 @@ defmodule MobilizonWeb.Upload do
 
   alias Mobilizon.Config
 
-  alias MobilizonWeb.MIME
+  alias MobilizonWeb.{MIME, Upload, Uploaders}
 
   require Logger
 
@@ -69,8 +69,8 @@ defmodule MobilizonWeb.Upload do
 
     with {:ok, upload} <- prepare_upload(upload, opts),
          upload = %__MODULE__{upload | path: upload.path || "#{upload.id}/#{upload.name}"},
-         {:ok, upload} <- MobilizonWeb.Upload.Filter.filter(opts.filters, upload),
-         {:ok, url_spec} <- MobilizonWeb.Uploaders.Uploader.put_file(opts.uploader, upload) do
+         {:ok, upload} <- Upload.Filter.filter(opts.filters, upload),
+         {:ok, url_spec} <- Uploaders.Uploader.put_file(opts.uploader, upload) do
       {:ok,
        %{
          "type" => opts.activity_type || get_type(upload.content_type),
@@ -98,7 +98,7 @@ defmodule MobilizonWeb.Upload do
     with opts <- get_opts(opts),
          %URI{path: "/media/" <> path, host: host} <- URI.parse(url),
          {:same_host, true} <- {:same_host, host == MobilizonWeb.Endpoint.host()} do
-      MobilizonWeb.Uploaders.Uploader.remove_file(opts.uploader, path)
+      Uploaders.Uploader.remove_file(opts.uploader, path)
     else
       %URI{} = _uri ->
         {:error, "URL doesn't match pattern"}

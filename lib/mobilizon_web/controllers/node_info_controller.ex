@@ -9,6 +9,9 @@ defmodule MobilizonWeb.NodeInfoController do
   alias Mobilizon.Config
   alias Mobilizon.Service.Statistics
 
+  alias MobilizonWeb.Endpoint
+  alias MobilizonWeb.Router.Helpers, as: Routes
+
   @node_info_supported_versions ["2.0", "2.1"]
   @node_info_schema_uri "http://nodeinfo.diaspora.software/ns/schema/"
 
@@ -18,8 +21,7 @@ defmodule MobilizonWeb.NodeInfoController do
       |> Enum.map(fn version ->
         %{
           rel: @node_info_schema_uri <> version,
-          href:
-            MobilizonWeb.Router.Helpers.node_info_url(MobilizonWeb.Endpoint, :nodeinfo, version)
+          href: Routes.node_info_url(Endpoint, :nodeinfo, version)
         }
       end)
 
