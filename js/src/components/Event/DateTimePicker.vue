@@ -6,7 +6,7 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-@Component({})
+@Component
 export default class DateTimePicker extends Vue {
   @Prop({ required: true, type: Date }) value!: Date;
   @Prop({ required: false, type: String, default: 'Datetime' }) label!: string;

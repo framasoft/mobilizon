@@ -1,64 +1,66 @@
 <template>
-  <article class="box columns">
-    <div class="content column">
-      <div class="title-wrapper">
-        <div class="date-component" v-if="!mergedOptions.hideDate">
-          <date-calendar-icon :date="participation.event.beginsOn" />
-        </div>
-        <h2 class="title" ref="title">{{ participation.event.title }}</h2>
+  <article class="box">
+    <div class="title-wrapper">
+      <div class="date-component" v-if="!mergedOptions.hideDate">
+        <date-calendar-icon :date="participation.event.beginsOn" />
       </div>
-      <div>
-        <span v-if="participation.event.physicalAddress && participation.event.physicalAddress.locality">{{ participation.event.physicalAddress.locality }} - </span>
-        <span v-if="participation.actor.id === participation.event.organizerActor.id">{{ $t("You're organizing this event") }}</span>
-        <span v-else>
-          <span v-if="participation.event.beginsOn < new Date()">{{ $t('Organized by {name}', { name: participation.event.organizerActor.displayName() } ) }}</span>
-          |
-          <span>{{ $t('Going as {name}', { name: participation.actor.displayName() }) }}</span>
-        </span>
-      </div>
-      <div class="columns">
-        <span class="column is-narrow">
-          <b-icon icon="earth" v-if=" participation.event.visibility === EventVisibility.PUBLIC" />
-          <b-icon icon="lock_opened" v-if=" participation.event.visibility === EventVisibility.RESTRICTED" />
-          <b-icon icon="lock" v-if=" participation.event.visibility === EventVisibility.PRIVATE" />
-        </span>
-        <span class="column">
-          <span v-if="!participation.event.options.maximumAttendeeCapacity">
-            {{ $tc('{count} participants', participation.event.participantStats.approved, { count: participation.event.participantStats.approved })}}
-          </span>
-          <b-progress
-                  v-if="participation.event.options.maximumAttendeeCapacity > 0"
-                  type="is-primary"
-                  size="is-medium"
-                  :value="participation.event.participantStats.approved * 100 / participation.event.options.maximumAttendeeCapacity" show-value>
-            {{ $t('{approved} / {total} seats', {approved: participation.event.participantStats.approved, total: participation.event.options.maximumAttendeeCapacity }) }}
-          </b-progress>
-          <span
-            v-if="participation.event.participantStats.unapproved > 0">
-            {{ $tc('{count} requests waiting', participation.event.participantStats.unapproved, { count: participation.event.participantStats.unapproved })}}
-          </span>
-        </span>
-      </div>
+      <h2 class="title" ref="title">{{ participation.event.title }}</h2>
     </div>
-    <div class="actions column is-narrow">
-      <ul>
-        <li v-if="!([ParticipantRole.PARTICIPANT, ParticipantRole.NOT_APPROVED].includes(participation.role))">
-          <router-link :to="{ name: EventRouteName.EDIT_EVENT, params: { eventId: participation.event.uuid }  }">
-            <b-icon icon="pencil" /> {{ $t('Edit') }}
-          </router-link>
-        </li>
-        <li v-if="!([ParticipantRole.PARTICIPANT, ParticipantRole.NOT_APPROVED].includes(participation.role))">
-          <a @click="openDeleteEventModalWrapper"><b-icon icon="delete" /> {{ $t('Delete') }}</a>
-        </li>
-        <li v-if="!([ParticipantRole.PARTICIPANT, ParticipantRole.NOT_APPROVED].includes(participation.role))">
-          <router-link :to="{ name: EventRouteName.PARTICIPATIONS, params: { eventId: participation.event.uuid } }">
-            <b-icon icon="account-multiple-plus" /> {{ $t('Manage participations') }}
-          </router-link>
-        </li>
-        <li>
-          <router-link :to="{ name: EventRouteName.EVENT, params: { uuid: participation.event.uuid } }"><b-icon icon="view-compact" /> {{ $t('View event page') }}</router-link>
-        </li>
-      </ul>
+    <div class="columns">
+      <div class="content column">
+        <div>
+          <span v-if="participation.event.physicalAddress && participation.event.physicalAddress.locality">{{ participation.event.physicalAddress.locality }} - </span>
+          <span v-if="participation.actor.id === participation.event.organizerActor.id">{{ $t("You're organizing this event") }}</span>
+          <span v-else>
+            <span v-if="participation.event.beginsOn < new Date()">{{ $t('Organized by {name}', { name: participation.event.organizerActor.displayName() } ) }}</span>
+            |
+            <span>{{ $t('Going as {name}', { name: participation.actor.displayName() }) }}</span>
+          </span>
+        </div>
+        <div class="columns">
+          <span class="column is-narrow">
+            <b-icon icon="earth" v-if=" participation.event.visibility === EventVisibility.PUBLIC" />
+            <b-icon icon="lock_opened" v-if=" participation.event.visibility === EventVisibility.RESTRICTED" />
+            <b-icon icon="lock" v-if=" participation.event.visibility === EventVisibility.PRIVATE" />
+          </span>
+          <span class="column">
+            <span v-if="!participation.event.options.maximumAttendeeCapacity">
+              {{ $tc('{count} participants', participation.event.participantStats.approved, { count: participation.event.participantStats.approved })}}
+            </span>
+            <b-progress
+                    v-if="participation.event.options.maximumAttendeeCapacity > 0"
+                    type="is-primary"
+                    size="is-medium"
+                    :value="participation.event.participantStats.approved * 100 / participation.event.options.maximumAttendeeCapacity" show-value>
+              {{ $t('{approved} / {total} seats', {approved: participation.event.participantStats.approved, total: participation.event.options.maximumAttendeeCapacity }) }}
+            </b-progress>
+            <span
+              v-if="participation.event.participantStats.unapproved > 0">
+              {{ $tc('{count} requests waiting', participation.event.participantStats.unapproved, { count: participation.event.participantStats.unapproved })}}
+            </span>
+          </span>
+        </div>
+      </div>
+      <div class="actions column is-narrow">
+        <ul>
+          <li v-if="!([ParticipantRole.PARTICIPANT, ParticipantRole.NOT_APPROVED].includes(participation.role))">
+            <router-link :to="{ name: EventRouteName.EDIT_EVENT, params: { eventId: participation.event.uuid }  }">
+              <b-icon icon="pencil" /> {{ $t('Edit') }}
+            </router-link>
+          </li>
+          <li v-if="!([ParticipantRole.PARTICIPANT, ParticipantRole.NOT_APPROVED].includes(participation.role))">
+            <a @click="openDeleteEventModalWrapper"><b-icon icon="delete" /> {{ $t('Delete') }}</a>
+          </li>
+          <li v-if="!([ParticipantRole.PARTICIPANT, ParticipantRole.NOT_APPROVED].includes(participation.role))">
+            <router-link :to="{ name: EventRouteName.PARTICIPATIONS, params: { eventId: participation.event.uuid } }">
+              <b-icon icon="account-multiple-plus" /> {{ $t('Manage participations') }}
+            </router-link>
+          </li>
+          <li>
+            <router-link :to="{ name: EventRouteName.EVENT, params: { uuid: participation.event.uuid } }"><b-icon icon="view-compact" /> {{ $t('View event page') }}</router-link>
+          </li>
+        </ul>
+      </div>
     </div>
     </article>
 </template>

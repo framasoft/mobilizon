@@ -99,8 +99,8 @@ defmodule Mobilizon.EventsTest do
       assert event.ends_on == DateTime.from_naive!(~N[2010-04-17 14:00:00Z], "Etc/UTC")
       assert event.title == "some title"
 
-      assert hd(Events.list_participants_for_event(event.uuid)).actor.id == actor.id
-      assert hd(Events.list_participants_for_event(event.uuid)).role == :creator
+      assert hd(Events.list_participants_for_event(event.id)).actor.id == actor.id
+      assert hd(Events.list_participants_for_event(event.id)).role == :creator
     end
 
     test "create_event/1 with invalid data returns error changeset" do

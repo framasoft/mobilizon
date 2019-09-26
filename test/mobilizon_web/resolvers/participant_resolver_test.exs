@@ -129,13 +129,15 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
       actor: actor
     } do
       event = insert(:event, %{organizer_actor: actor})
-      participant = insert(:participant, %{actor: actor, event: event})
-      participant2 = insert(:participant, %{event: event})
+      insert(:participant, %{actor: actor, event: event, role: :creator})
+      user2 = insert(:user)
+      actor2 = insert(:actor, user: user2)
+      participant2 = insert(:participant, %{event: event, actor: actor2, role: :participant})
 
       mutation = """
           mutation {
             leaveEvent(
-              actor_id: #{participant.actor.id},
+              actor_id: #{participant2.actor.id},
               event_id: #{event.id}
             ) {
                 actor {
@@ -150,40 +152,64 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
 
       res =
         conn
-        |> auth_conn(user)
+        |> auth_conn(user2)
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert json_response(res, 200)["errors"] == nil
       assert json_response(res, 200)["data"]["leaveEvent"]["event"]["id"] == to_string(event.id)
 
       assert json_response(res, 200)["data"]["leaveEvent"]["actor"]["id"] ==
-               to_string(participant.actor.id)
+               to_string(participant2.actor.id)
 
       query = """
       {
-        event(uuid: "#{event.uuid}") {
-          participants {
-            role,
-            actor {
-                preferredUsername
+        person(preferredUsername: "#{actor.preferred_username}") {
+            participations(eventId: "#{event.id}") {
+              event {
+                uuid,
+                title
+              },
+              role
             }
-          }
         }
       }
       """
 
       res =
         conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "participants"))
+        |> auth_conn(user)
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
 
-      assert json_response(res, 200)["data"]["event"]["participants"] == [
+      assert json_response(res, 200)["data"]["person"]["participations"] == [
                %{
-                 "actor" => %{
-                   "preferredUsername" => participant2.actor.preferred_username
+                 "event" => %{
+                   "uuid" => event.uuid,
+                   "title" => event.title
                  },
                  "role" => "CREATOR"
                }
              ]
+
+      query = """
+      {
+        person(preferredUsername: "#{actor2.preferred_username}") {
+            participations(eventId: "#{event.id}") {
+              event {
+                uuid,
+                title
+              },
+              role
+            }
+        }
+      }
+      """
+
+      res =
+        conn
+        |> auth_conn(user2)
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+
+      assert json_response(res, 200)["data"]["person"]["participations"] == []
     end
 
     test "actor_leave_event/3 should check if the participant is the only creator", %{
@@ -324,17 +350,23 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
       assert hd(json_response(res, 200)["errors"])["message"] =~ "Participant not found"
     end
 
-    test "list_participants_for_event/3 returns participants for an event", context do
+    test "list_participants_for_event/3 returns participants for an event", %{
+      conn: conn,
+      actor: actor,
+      user: user
+    } do
       event =
         @event
-        |> Map.put(:organizer_actor_id, context.actor.id)
+        |> Map.put(:organizer_actor_id, actor.id)
 
       {:ok, event} = Events.create_event(event)
 
       query = """
       {
         event(uuid: "#{event.uuid}") {
-          participants(roles: "participant,moderator,administrator,creator") {
+          participants(roles: "participant,moderator,administrator,creator", actor_id: "#{
+        actor.id
+      }") {
             role,
             actor {
                 preferredUsername
@@ -345,13 +377,16 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
       """
 
       res =
-        context.conn
+        conn
+        |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "participants"))
+
+      assert json_response(res, 200)["errors"] == nil
 
       assert json_response(res, 200)["data"]["event"]["participants"] == [
                %{
                  "actor" => %{
-                   "preferredUsername" => context.actor.preferred_username
+                   "preferredUsername" => actor.preferred_username
                  },
                  "role" => "CREATOR"
                }
@@ -368,7 +403,9 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
       query = """
       {
         event(uuid: "#{event.uuid}") {
-          participants(page: 1, limit: 1, roles: "participant,moderator,administrator,creator") {
+          participants(page: 1, limit: 1, roles: "participant,moderator,administrator,creator", actorId: "#{
+        actor.id
+      }") {
             role,
             actor {
                 preferredUsername
@@ -379,7 +416,8 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
       """
 
       res =
-        context.conn
+        conn
+        |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "participants"))
 
       sorted_participants =
@@ -402,7 +440,9 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
       query = """
       {
         event(uuid: "#{event.uuid}") {
-          participants(page: 2, limit: 1, roles: "participant,moderator,administrator,creator") {
+          participants(page: 2, limit: 1, roles: "participant,moderator,administrator,creator", actorId: "#{
+        actor.id
+      }") {
             role,
             actor {
                 preferredUsername
@@ -413,7 +453,8 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
       """
 
       res =
-        context.conn
+        conn
+        |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "participants"))
 
       sorted_participants =
@@ -427,7 +468,7 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
       assert sorted_participants == [
                %{
                  "actor" => %{
-                   "preferredUsername" => context.actor.preferred_username
+                   "preferredUsername" => actor.preferred_username
                  },
                  "role" => "CREATOR"
                }

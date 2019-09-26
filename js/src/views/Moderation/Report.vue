@@ -169,7 +169,7 @@ export default class Report extends Vue {
 
           report.notes = report.notes.concat([note]);
 
-          store.writeQuery({ query: REPORT, data: { report } });
+          store.writeQuery({ query: REPORT, variables: { id: this.report.id }, data: { report } });
         },
       });
 
@@ -235,7 +235,7 @@ export default class Report extends Vue {
           const updatedReport = data.updateReportStatus;
           report.status = updatedReport.status;
 
-          store.writeQuery({ query: REPORT, data: { report } });
+          store.writeQuery({ query: REPORT, variables: { id: this.report.id }, data: { report } });
         },
       });
     } catch (error) {

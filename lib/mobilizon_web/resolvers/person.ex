@@ -6,6 +6,7 @@ defmodule MobilizonWeb.Resolvers.Person do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
+  alias Mobilizon.Events.Participant
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Users
   alias Mobilizon.Users.User
@@ -173,27 +174,33 @@ defmodule MobilizonWeb.Resolvers.Person do
   end
 
   @doc """
-  Returns the list of events this person is going to
+  Returns the participation for a specific event
   """
-  def person_going_to_events(%Actor{id: actor_id}, _args, %{context: %{current_user: user}}) do
-    with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
-         events <- Events.list_event_participations_for_actor(actor) do
-      {:ok, events}
+  def person_participations(%Actor{id: actor_id}, %{event_id: event_id}, %{
+        context: %{current_user: user}
+      }) do
+    with {:is_owned, %Actor{} = _actor} <- User.owns_actor(user, actor_id),
+         {:no_participant, {:ok, %Participant{} = participant}} <-
+           {:no_participant, Events.get_participant(event_id, actor_id)} do
+      {:ok, [participant]}
     else
       {:is_owned, nil} ->
         {:error, "Actor id is not owned by authenticated user"}
+
+      {:no_participant, _} ->
+        {:ok, []}
     end
   end
 
   @doc """
   Returns the list of events this person is going to
   """
-  def person_going_to_events(_parent, %{}, %{context: %{current_user: user}}) do
-    with %Actor{} = actor <- Users.get_actor_for_user(user),
-         events <- Events.list_event_participations_for_actor(actor) do
-      {:ok, events}
+  def person_participations(%Actor{id: actor_id}, _args, %{context: %{current_user: user}}) do
+    with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
+         participations <- Events.list_event_participations_for_actor(actor) do
+      {:ok, participations}
     else
-      {:is_owned, false} ->
+      {:is_owned, nil} ->
         {:error, "Actor id is not owned by authenticated user"}
     end
   end

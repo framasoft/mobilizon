@@ -122,14 +122,18 @@ defmodule Mobilizon.Service.Export.Feed do
          %FeedToken{actor: actor, user: %User{} = user} <- Events.get_feed_token(token) do
       case actor do
         %Actor{} = actor ->
-          events = fetch_identity_going_to_events(actor)
+          events = actor |> fetch_identity_participations() |> participations_to_events()
           {:ok, build_actor_feed(actor, events, false)}
 
         nil ->
           with actors <- Users.get_actors_for_user(user),
                events <-
                  actors
-                 |> Enum.map(&Events.list_event_participations_for_actor/1)
+                 |> Enum.map(fn actor ->
+                   actor
+                   |> Events.list_event_participations_for_actor()
+                   |> participations_to_events()
+                 end)
                  |> Enum.concat() do
             {:ok, build_user_feed(events, user, token)}
           end
@@ -137,10 +141,16 @@ defmodule Mobilizon.Service.Export.Feed do
     end
   end
 
-  defp fetch_identity_going_to_events(%Actor{} = actor) do
+  defp fetch_identity_participations(%Actor{} = actor) do
     with events <- Events.list_event_participations_for_actor(actor) do
       events
     end
+  end
+
+  defp participations_to_events(participations) do
+    participations
+    |> Enum.map(& &1.event_id)
+    |> Enum.map(&Events.get_event_with_preload!/1)
   end
 
   # Build an atom feed from actor and it's public events

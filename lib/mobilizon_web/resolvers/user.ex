@@ -225,10 +225,11 @@ defmodule MobilizonWeb.Resolvers.User do
   @doc """
   Returns the list of events for all of this user's identities are going to
   """
-  def user_participations(_parent, args, %{
-        context: %{current_user: %User{id: user_id}}
+  def user_participations(%User{id: user_id}, args, %{
+        context: %{current_user: %User{id: logged_user_id}}
       }) do
-    with participations <-
+    with true <- user_id == logged_user_id,
+         participations <-
            Events.list_participations_for_user(
              user_id,
              Map.get(args, :after_datetime),

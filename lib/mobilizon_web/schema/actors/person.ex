@@ -56,8 +56,11 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
     )
 
     @desc "The list of events this person goes to"
-    field :going_to_events, list_of(:event) do
-      resolve(&Person.person_going_to_events/3)
+    field(:participations, list_of(:participant),
+      description: "The list of events this person goes to"
+    ) do
+      arg(:event_id, :id)
+      resolve(&Person.person_participations/3)
     end
   end
 

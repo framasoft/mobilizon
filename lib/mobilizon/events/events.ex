@@ -593,12 +593,12 @@ defmodule Mobilizon.Events do
   @spec list_participants_for_event(String.t(), list(atom()), integer | nil, integer | nil) ::
           [Participant.t()]
   def list_participants_for_event(
-        uuid,
+        id,
         roles \\ @default_participant_roles,
         page \\ nil,
         limit \\ nil
       ) do
-    uuid
+    id
     |> list_participants_for_event_query()
     |> filter_role(roles)
     |> Page.paginate(page, limit)
@@ -688,7 +688,7 @@ defmodule Mobilizon.Events do
   Returns the list of participations for an actor.
   """
   @spec list_event_participations_for_actor(Actor.t(), integer | nil, integer | nil) ::
-          [Event.t()]
+          [Participant.t()]
   def list_event_participations_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     actor_id
     |> event_participations_for_actor_query()
@@ -1241,13 +1241,11 @@ defmodule Mobilizon.Events do
   @spec event_participations_for_actor_query(integer) :: Ecto.Query.t()
   def event_participations_for_actor_query(actor_id) do
     from(
-      e in Event,
-      join: p in Participant,
-      join: a in Actor,
-      on: p.actor_id == a.id,
+      p in Participant,
+      join: e in Event,
       on: p.event_id == e.id,
-      where: a.id == ^actor_id and p.role != ^:not_approved,
-      preload: [:picture, :tags]
+      where: p.actor_id == ^actor_id and p.role != ^:not_approved,
+      preload: [:event]
     )
   end
 
@@ -1281,12 +1279,12 @@ defmodule Mobilizon.Events do
   end
 
   @spec list_participants_for_event_query(String.t()) :: Ecto.Query.t()
-  defp list_participants_for_event_query(event_uuid) do
+  defp list_participants_for_event_query(event_id) do
     from(
       p in Participant,
       join: e in Event,
       on: p.event_id == e.id,
-      where: e.uuid == ^event_uuid,
+      where: e.id == ^event_id,
       preload: [:actor]
     )
   end

@@ -1,3 +1,6 @@
+import {ParticipantRole} from "@/types/event.model";
+import {ParticipantRole} from "@/types/event.model";
+import {ParticipantRole} from "@/types/event.model";
 <template>
   <div>
     <b-loading :active.sync="$apollo.loading"></b-loading>
@@ -10,7 +13,7 @@
           <img src="https://picsum.photos/600/200/">
         </figure>
       </div>
-        <section class="container">
+        <section>
           <div class="title-and-participate-button">
             <div class="title-wrapper">
               <div class="date-component">
@@ -18,21 +21,21 @@
               </div>
               <h1 class="title">{{ event.title }}</h1>
             </div>
-            <span v-if="event.participantStats.approved > 0 && !actorIsParticipant()">
-                {{ $tc('One person is going', event.participantStats.approved, {approved: event.participantStats.approved}) }}
-            </span>
-            <span v-else>
-              {{ $tc('You and one other person are going to this event', event.participantStats.approved - 1, {approved: event.participantStats.approved - 1}) }}
-            </span>
-            <div v-if="!actorIsOrganizer()" class="participate-button has-text-centered">
-              <a v-if="!actorIsParticipant()" @click="isJoinModalActive = true" class="button is-large is-primary is-rounded">
-                <b-icon icon="circle-outline"></b-icon>
-                {{ $t('Join') }}
-              </a>
-              <a v-if="actorIsParticipant()" @click="confirmLeave()" class="button is-large is-primary is-rounded">
-                <b-icon icon="check-circle"></b-icon>
-                {{ $t('Leave') }}
-              </a>
+            <div class="has-text-right">
+              <small v-if="event.participantStats.approved > 0 && !actorIsParticipant">
+                  {{ $tc('One person is going', event.participantStats.approved, {approved: event.participantStats.approved}) }}
+              </small>
+              <small v-else>
+                {{ $tc('You and one other person are going to this event', event.participantStats.approved - 1, {approved: event.participantStats.approved - 1}) }}
+              </small>
+              <participation-button
+                      v-if="currentActor.id && !actorIsOrganizer"
+                      :participation="participations[0]"
+                      :current-actor="currentActor"
+                      @joinEvent="joinEvent"
+                      @joinModal="isJoinModalActive = true"
+                      @confirmLeave="confirmLeave"
+              />
             </div>
           </div>
           <div class="metadata columns">
@@ -60,8 +63,8 @@
               </p>
             </div>
             <div class="column sidebar">
-              <div class="field has-addons">
-                <p class="control" v-if="actorIsOrganizer()">
+              <div class="field has-addons" v-if="currentActor.id">
+                <p class="control" v-if="actorIsOrganizer">
                   <router-link
                           class="button"
                           :to="{ name: 'EditEvent', params: {eventId: event.uuid}}"
@@ -69,7 +72,7 @@
                     {{ $t('Edit') }}
                   </router-link>
                 </p>
-                <p class="control" v-if="actorIsOrganizer()">
+                <p class="control" v-if="actorIsOrganizer">
                   <a class="button is-danger" @click="openDeleteEventModalWrapper">
                     {{ $t('Delete') }}
                   </a>
@@ -133,26 +136,6 @@
             </div>
           </div>
         </div>
-      <section class="container">
-        <h3 class="title">{{ $t('Participants') }}</h3>
-        <router-link v-if="currentActor.id === event.organizerActor.id" :to="{ name: EventRouteName.PARTICIPATIONS, params: { eventId: event.uuid } }">
-          {{ $t('Manage participants') }}
-        </router-link>
-        <span v-if="event.participants.length === 0">{{ $t('No participants yet.') }}</span>
-        <div class="columns">
-          <div
-            class="column"
-            v-for="participant in event.participants"
-            :key="participant.id"
-          >
-              <figure class="image is-48x48">
-                <img v-if="!participant.actor.avatar.url" src="https://picsum.photos/48/48/" class="is-rounded">
-                <img v-else :src="participant.actor.avatar.url" class="is-rounded">
-              </figure>
-              <span>{{ participant.actor.preferredUsername }}</span>
-          </div>
-        </div>
-      </section>
       <section class="share">
         <div class="container">
           <div class="columns">
@@ -188,19 +171,35 @@
         <report-modal :on-confirm="reportEvent" :title="$t('Report this event')" :outside-domain="event.organizerActor.domain" @close="$refs.reportModal.close()" />
       </b-modal>
       <b-modal :active.sync="isJoinModalActive" has-modal-card ref="participationModal">
-        <participation-modal :on-confirm="joinEvent" :event="event" :defaultIdentity="currentActor" @close="$refs.participationModal.close()" />
+            <identity-picker v-model="identity">
+              <template v-slot:footer>
+                <footer class="modal-card-foot">
+                  <button
+                          class="button"
+                          ref="cancelButton"
+                          @click="isJoinModalActive = false">
+                    {{ $t('Cancel') }}
+                  </button>
+                  <button
+                          class="button is-primary"
+                          ref="confirmButton"
+                          @click="joinEvent(identity)">
+                    {{ $t('Confirm my particpation') }}
+                  </button>
+                </footer>
+              </template>
+            </identity-picker>
       </b-modal>
       </div>
     </div>
 </template>
 
 <script lang="ts">
-import { DELETE_EVENT, FETCH_EVENT, JOIN_EVENT, LEAVE_EVENT } from '@/graphql/event';
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { EVENT_PERSON_PARTICIPATION, FETCH_EVENT, JOIN_EVENT, LEAVE_EVENT } from '@/graphql/event';
+import { Component, Prop } from 'vue-property-decorator';
 import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { EventVisibility, IEvent, IParticipant, ParticipantRole } from '@/types/event.model';
-import { IPerson } from '@/types/actor';
-import { RouteName } from '@/router';
+import { IPerson, Person } from '@/types/actor';
 import { GRAPHQL_API_ENDPOINT } from '@/api/_entrypoint';
 import DateCalendarIcon from '@/components/Event/DateCalendarIcon.vue';
 import BIcon from 'buefy/src/components/icon/Icon.vue';
@@ -208,11 +207,11 @@ import EventCard from '@/components/Event/EventCard.vue';
 import EventFullDate from '@/components/Event/EventFullDate.vue';
 import ActorLink from '@/components/Account/ActorLink.vue';
 import ReportModal from '@/components/Report/ReportModal.vue';
-import ParticipationModal from '@/components/Event/ParticipationModal.vue';
 import { IReport } from '@/types/report.model';
 import { CREATE_REPORT } from '@/graphql/report';
 import EventMixin from '@/mixins/event';
-import { EventRouteName } from '@/router/event';
+import IdentityPicker from '@/views/Account/IdentityPicker.vue';
+import ParticipationButton from '@/components/Event/ParticipationButton.vue';
 
 @Component({
   components: {
@@ -222,7 +221,8 @@ import { EventRouteName } from '@/router/event';
     BIcon,
     DateCalendarIcon,
     ReportModal,
-    ParticipationModal,
+    IdentityPicker,
+    ParticipationButton,
     // tslint:disable:space-in-parens
     'map-leaflet': () => import(/* webpackChunkName: "map" */ '@/components/Map.vue'),
     // tslint:enable
@@ -233,12 +233,24 @@ import { EventRouteName } from '@/router/event';
       variables() {
         return {
           uuid: this.uuid,
-          roles: [ParticipantRole.CREATOR, ParticipantRole.MODERATOR, ParticipantRole.MODERATOR, ParticipantRole.PARTICIPANT].join(),
         };
       },
     },
     currentActor: {
       query: CURRENT_ACTOR_CLIENT,
+    },
+    participations: {
+      query: EVENT_PERSON_PARTICIPATION,
+      variables() {
+        return {
+          eventId: this.event.id,
+          name: this.currentActor.preferredUsername,
+        };
+      },
+      update: (data) => {
+        if (data && data.person) return data.person.participations;
+        return [];
+      },
     },
   },
 })
@@ -247,13 +259,17 @@ export default class Event extends EventMixin {
 
   event!: IEvent;
   currentActor!: IPerson;
-  validationSent: boolean = false;
+  identity: IPerson = new Person();
+  participations: IParticipant[] = [];
   showMap: boolean = false;
   isReportModalActive: boolean = false;
   isJoinModalActive: boolean = false;
 
   EventVisibility = EventVisibility;
-  EventRouteName = EventRouteName;
+
+  mounted() {
+    this.identity = this.currentActor;
+  }
 
   /**
    * Delete the event, then redirect to home.
@@ -298,6 +314,24 @@ export default class Event extends EventMixin {
         },
         update: (store, { data }) => {
           if (data == null) return;
+
+          const participationCachedData = store.readQuery<{ person: IPerson }>({
+            query: EVENT_PERSON_PARTICIPATION,
+            variables: { eventId: this.event.id, name: identity.preferredUsername },
+          });
+          if (participationCachedData == null) return;
+          const { person } = participationCachedData;
+          if (person === null) {
+            console.error('Cannot update participation cache, because of null value.');
+            return;
+          }
+          person.participations.push(data.joinEvent);
+          store.writeQuery({
+            query: EVENT_PERSON_PARTICIPATION,
+            variables: { eventId: this.event.id, name: identity.preferredUsername },
+            data: { person },
+          });
+
           const cachedData = store.readQuery<{ event: IEvent }>({ query: FETCH_EVENT, variables: { uuid: this.event.uuid } });
           if (cachedData == null) return;
           const { event } = cachedData;
@@ -306,9 +340,13 @@ export default class Event extends EventMixin {
             return;
           }
 
-          event.participants = event.participants.concat([data.joinEvent]);
+          if (data.joinEvent.role === ParticipantRole.NOT_APPROVED) {
+            event.participantStats.unapproved = event.participantStats.unapproved + 1;
+          } else {
+            event.participantStats.approved = event.participantStats.approved + 1;
+          }
 
-          store.writeQuery({ query: FETCH_EVENT, data: { event } });
+          store.writeQuery({ query: FETCH_EVENT, variables: { uuid: this.uuid }, data: { event } });
         },
       });
     } catch (error) {
@@ -338,19 +376,38 @@ export default class Event extends EventMixin {
         },
         update: (store, { data }) => {
           if (data == null) return;
-          const cachedData = store.readQuery<{ event: IEvent }>({ query: FETCH_EVENT, variables: { uuid: this.event.uuid } });
-          if (cachedData == null) return;
-          const { event } = cachedData;
-          if (event === null) {
-            console.error('Cannot update event participant cache, because of null value.');
+
+          const participationCachedData = store.readQuery<{ person: IPerson }>({
+            query: EVENT_PERSON_PARTICIPATION,
+            variables: { eventId: this.event.id, name: this.currentActor.preferredUsername },
+          });
+          if (participationCachedData == null) return;
+          const { person } = participationCachedData;
+          if (person === null) {
+            console.error('Cannot update participation cache, because of null value.');
             return;
           }
+          const participation = person.participations[0];
+          person.participations = [];
+          store.writeQuery({
+            query: EVENT_PERSON_PARTICIPATION,
+            variables: { eventId: this.event.id, name: this.currentActor.preferredUsername },
+            data: { person },
+          });
 
-          event.participants = event.participants
-            .filter(p => p.actor.id !== data.leaveEvent.actor.id);
-          event.participantStats.approved = event.participantStats.approved - 1;
-
-          store.writeQuery({ query: FETCH_EVENT, data: { event } });
+          const eventCachedData = store.readQuery<{ event: IEvent }>({ query: FETCH_EVENT, variables: { uuid: this.event.uuid } });
+          if (eventCachedData == null) return;
+          const { event } = eventCachedData;
+          if (event === null) {
+            console.error('Cannot update event cache, because of null value.');
+            return;
+          }
+          if (participation.role === ParticipantRole.NOT_APPROVED) {
+            event.participantStats.unapproved = event.participantStats.unapproved - 1;
+          } else {
+            event.participantStats.approved = event.participantStats.approved - 1;
+          }
+          store.writeQuery({ query: FETCH_EVENT, variables: { uuid: this.uuid }, data: { event } });
         },
       });
     } catch (error) {
@@ -369,17 +426,14 @@ export default class Event extends EventMixin {
     document.body.removeChild(link);
   }
 
-  actorIsParticipant() {
-    if (this.actorIsOrganizer()) return true;
+  get actorIsParticipant() {
+    if (this.actorIsOrganizer) return true;
 
-    return this.currentActor &&
-      this.event.participants
-          .some(participant => participant.actor.id === this.currentActor.id);
+    return this.participations.length > 0 && this.participations[0].role === ParticipantRole.PARTICIPANT;
   }
 
-  actorIsOrganizer() {
-    return this.currentActor && this.event.organizerActor &&
-      this.currentActor.id === this.event.organizerActor.id;
+  get actorIsOrganizer() {
+    return this.participations.length > 0 && this.participations[0].role === ParticipantRole.CREATOR;
   }
 
   get twitterShareUrl(): string {
