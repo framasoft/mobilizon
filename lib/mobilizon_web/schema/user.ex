@@ -47,7 +47,7 @@ defmodule MobilizonWeb.Schema.UserType do
     field(:role, :user_role, description: "The role for the user")
 
     field(:participations, list_of(:participant),
-      description: "The list of events this person goes to"
+      description: "The list of events this user goes to"
     ) do
       arg(:after_datetime, :datetime)
       arg(:before_datetime, :datetime)

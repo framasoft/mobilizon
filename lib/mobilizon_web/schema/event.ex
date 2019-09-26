@@ -61,6 +61,7 @@ defmodule MobilizonWeb.Schema.EventType do
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
       arg(:roles, :string, default_value: "")
+      arg(:actor_id, :id)
       resolve(&Event.list_participants_for_event/3)
     end
 

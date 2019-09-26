@@ -29,7 +29,7 @@ import {EventJoinOptions} from "@/types/event.model";
         <address-auto-complete v-model="event.physicalAddress" />
 
         <b-field :label="$t('Organizer')">
-          <identity-picker v-model="event.organizerActor"></identity-picker>
+          <identity-picker-wrapper v-model="event.organizerActor"></identity-picker-wrapper>
         </b-field>
 
         <div class="field">
@@ -188,7 +188,6 @@ import {
     EventModel,
     EventStatus,
     EventVisibility,
-    EventVisibilityJoinOptions,
   } from '@/types/event.model';
 import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { Person } from '@/types/actor';
@@ -200,10 +199,10 @@ import { TAGS } from '@/graphql/tags';
 import { ITag } from '@/types/tag.model';
 import AddressAutoComplete from '@/components/Event/AddressAutoComplete.vue';
 import { buildFileFromIPicture, buildFileVariable } from '@/utils/image';
-import IdentityPicker from '@/views/Account/IdentityPicker.vue';
+import IdentityPickerWrapper from '@/views/Account/IdentityPickerWrapper.vue';
 
 @Component({
-  components: { AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor, IdentityPicker },
+  components: { IdentityPickerWrapper, AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor },
   apollo: {
     currentActor: {
       query: CURRENT_ACTOR_CLIENT,

@@ -71,49 +71,10 @@ export default class App extends Vue {
 @import "variables";
 
 /* Bulma imports */
-@import "~bulma/sass/utilities/_all";
-@import "~bulma/sass/base/_all.sass";
-@import "~bulma/sass/components/card.sass";
-@import "~bulma/sass/components/media.sass";
-@import "~bulma/sass/components/message.sass";
-@import "~bulma/sass/components/modal.sass";
-@import "~bulma/sass/components/navbar.sass";
-@import "~bulma/sass/components/pagination.sass";
-@import "~bulma/sass/components/dropdown.sass";
-@import "~bulma/sass/components/breadcrumb.sass";
-@import "~bulma/sass/components/list.sass";
-@import "~bulma/sass/components/tabs";
-@import "~bulma/sass/elements/box.sass";
-@import "~bulma/sass/elements/button.sass";
-@import "~bulma/sass/elements/container.sass";
-@import "~bulma/sass/form/_all";
-@import "~bulma/sass/elements/icon.sass";
-@import "~bulma/sass/elements/image.sass";
-@import "~bulma/sass/elements/other.sass";
-@import "~bulma/sass/elements/progress.sass";
-@import "~bulma/sass/elements/tag.sass";
-@import "~bulma/sass/elements/title.sass";
-@import "~bulma/sass/elements/notification";
-@import "~bulma/sass/elements/table";
-@import "~bulma/sass/grid/_all.sass";
-@import "~bulma/sass/layout/_all.sass";
+@import "~bulma/bulma";
 
 /* Buefy imports */
-@import "~buefy/src/scss/utils/_all";
-@import "~buefy/src/scss/components/datepicker";
-@import "~buefy/src/scss/components/notices";
-@import "~buefy/src/scss/components/dropdown";
-@import "~buefy/src/scss/components/autocomplete";
-@import "~buefy/src/scss/components/form";
-@import "~buefy/src/scss/components/modal";
-@import "~buefy/src/scss/components/progress";
-@import "~buefy/src/scss/components/tag";
-@import "~buefy/src/scss/components/taginput";
-@import "~buefy/src/scss/components/upload";
-@import "~buefy/src/scss/components/radio";
-@import "~buefy/src/scss/components/switch";
-@import "~buefy/src/scss/components/table";
-@import "~buefy/src/scss/components/tabs";
+@import "~buefy/src/scss/buefy";
 
 .router-enter-active,
 .router-leave-active {

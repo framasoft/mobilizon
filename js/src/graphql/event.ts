@@ -10,6 +10,9 @@ const participantQuery = `
     },
     name,
     id
+  },
+  event {
+    id
   }
 `;
 
@@ -52,7 +55,7 @@ const optionsQuery = `
 `;
 
 export const FETCH_EVENT = gql`
-  query($uuid:UUID!, $roles: String) {
+  query($uuid:UUID!) {
     event(uuid: $uuid) {
       id,
       uuid,
@@ -95,9 +98,6 @@ export const FETCH_EVENT = gql`
       #     preferredUsername,
       #     name,
       # },
-      participants (roles: $roles) {
-        ${participantQuery}
-      },
       participantStats {
         approved,
         unapproved
@@ -363,14 +363,33 @@ export const DELETE_EVENT = gql`
 `;
 
 export const PARTICIPANTS = gql`
-  query($uuid: UUID!, $page: Int, $limit: Int, $roles: String) {
+  query($uuid: UUID!, $page: Int, $limit: Int, $roles: String, $actorId: ID!) {
     event(uuid: $uuid) {
-      participants(page: $page, limit: $limit, roles: $roles) {
+      id,
+      participants(page: $page, limit: $limit, roles: $roles, actorId: $actorId) {
         ${participantQuery}
       },
       participantStats {
         approved,
         unapproved
+      }
+    }
+  }
+`;
+
+export const EVENT_PERSON_PARTICIPATION = gql`
+  query($name: String!, $eventId: ID!) {
+    person(preferredUsername: $name) {
+      id,
+      participations(eventId: $eventId) {
+        id,
+        role,
+        actor {
+          id
+        },
+        event {
+          id
+        }
       }
     }
   }

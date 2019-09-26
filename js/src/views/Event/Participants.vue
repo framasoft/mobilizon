@@ -68,6 +68,7 @@ import { IPerson } from '@/types/actor';
           page: 1,
           limit: 10,
           roles: [ParticipantRole.PARTICIPANT].join(),
+          actorId: this.currentActor.id,
         };
       },
     },
@@ -79,6 +80,7 @@ import { IPerson } from '@/types/actor';
           page: 1,
           limit: 20,
           roles: [ParticipantRole.CREATOR].join(),
+          actorId: this.currentActor.id,
         };
       },
       update: data => data.event.participants.map(participation => new Participant(participation)),
@@ -91,6 +93,7 @@ import { IPerson } from '@/types/actor';
           page: 1,
           limit: 20,
           roles: [ParticipantRole.NOT_APPROVED].join(),
+          actorId: this.currentActor.id,
         };
       },
       update: data => data.event.participants.map(participation => new Participant(participation)),

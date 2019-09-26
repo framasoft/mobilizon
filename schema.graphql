@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Tue Sep 24 2019 18:20:05 GMT+0200 (GMT+02:00)
+# timestamp: Wed Sep 25 2019 16:41:05 GMT+0200 (GMT+02:00)
 
 schema {
   query: RootQueryType
@@ -287,7 +287,7 @@ type Event implements ActionLogObject {
   participantStats: ParticipantStats
 
   """The event's participants"""
-  participants(limit: Int = 10, page: Int = 1, roles: String = ""): [Participant]
+  participants(actorId: ID, limit: Int = 10, page: Int = 1, roles: String = ""): [Participant]
 
   """Phone address for the event"""
   phoneAddress: String
@@ -710,9 +710,6 @@ type Person implements Actor {
   """Number of actors following this actor"""
   followingCount: Int
 
-  """The list of events this person goes to"""
-  goingToEvents: [Event]
-
   """Internal ID for this person"""
   id: ID
 
@@ -733,6 +730,9 @@ type Person implements Actor {
 
   """A list of the events this actor has organized"""
   organizedEvents: [Event]
+
+  """The list of events this person goes to"""
+  participations(eventId: ID): [Participant]
 
   """The actor's preferred username"""
   preferredUsername: String
@@ -1128,9 +1128,6 @@ type RootQueryType {
   """Get the current user"""
   loggedUser: User
 
-  """Get all participants for an event uuid"""
-  participants(limit: Int = 10, page: Int = 1, uuid: UUID!): [Participant]
-
   """Get a person by it's preferred username"""
   person(preferredUsername: String!): Person
 
@@ -1223,7 +1220,7 @@ type User {
   """The user's ID"""
   id: ID!
 
-  """The list of events this person goes to"""
+  """The list of events this user goes to"""
   participations(afterDatetime: DateTime, beforeDatetime: DateTime, limit: Int = 10, page: Int = 1): [Participant]
 
   """The user's list of profiles (identities)"""

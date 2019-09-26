@@ -33,7 +33,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
       dtend: event.ends_on,
       description: event.description,
       uid: event.uuid,
-      categories: [event.category] ++ (event.tags |> Enum.map(& &1.slug))
+      categories: event.tags |> Enum.map(& &1.slug)
     }
   end
 
@@ -52,7 +52,8 @@ defmodule Mobilizon.Service.Export.ICalendar do
 
   @spec export_private_actor(Actor.t()) :: String.t()
   def export_private_actor(%Actor{} = actor) do
-    with events <- Events.list_event_participations_for_actor(actor) do
+    with events <-
+           actor |> Events.list_event_participations_for_actor() |> participations_to_events() do
       {:ok, %ICalendar{events: events |> Enum.map(&do_export_event/1)} |> ICalendar.to_ics()}
     end
   end
@@ -107,12 +108,22 @@ defmodule Mobilizon.Service.Export.ICalendar do
           with actors <- Users.get_actors_for_user(user),
                events <-
                  actors
-                 |> Enum.map(&Events.list_event_participations_for_actor/1)
+                 |> Enum.map(fn actor ->
+                   actor
+                   |> Events.list_event_participations_for_actor()
+                   |> participations_to_events()
+                 end)
                  |> Enum.concat() do
             {:ok,
              %ICalendar{events: events |> Enum.map(&do_export_event/1)} |> ICalendar.to_ics()}
           end
       end
     end
+  end
+
+  defp participations_to_events(participations) do
+    participations
+    |> Enum.map(& &1.event_id)
+    |> Enum.map(&Events.get_event_with_preload!/1)
   end
 end

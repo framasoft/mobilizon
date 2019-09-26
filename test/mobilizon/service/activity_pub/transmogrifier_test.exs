@@ -784,7 +784,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
       assert :error == Transmogrifier.handle_incoming(reject_data)
 
       # Organiser is not present since we use factories directly
-      assert Events.list_participants_for_event(event.uuid) |> Enum.map(& &1.id) ==
+      assert Events.list_participants_for_event(event.id) |> Enum.map(& &1.id) ==
                []
     end
 
@@ -812,7 +812,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
       assert activity.data["actor"] == participant_url
 
       # The only participant left is the organizer
-      assert Events.list_participants_for_event(event.uuid) |> Enum.map(& &1.id) == [
+      assert Events.list_participants_for_event(event.id) |> Enum.map(& &1.id) == [
                organizer_participation.id
              ]
     end

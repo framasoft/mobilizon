@@ -35,7 +35,6 @@
       <h3 class="title">
         {{ $t("Upcoming") }}
       </h3>
-      <pre>{{ Array.from(goingToEvents.entries()) }}</pre>
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <div v-for="row in goingToEvents" class="upcoming-events">
         <span class="date-component-container" v-if="isInLessThanSevenDays(row[0])">
@@ -53,13 +52,12 @@
               {{ $tc('You have one event in {days} days.', row[1].length, {count: row[1].length, days: calculateDiffDays(row[0])}) }}
           </h3>
         </span>
-        <div class="level">
+        <div>
           <EventListCard
                   v-for="participation in row[1]"
                   v-if="isInLessThanSevenDays(row[0])"
                   :key="participation[1].event.uuid"
                   :participation="participation[1]"
-                  class="level-item"
           />
         </div>
       </div>
@@ -72,12 +70,11 @@
         {{ $t("Last week") }}
       </h3>
       <b-loading :active.sync="$apollo.loading"></b-loading>
-      <div class="level">
+      <div>
           <EventListCard
                   v-for="participation in lastWeekEvents"
                   :key="participation.id"
                   :participation="participation"
-                  class="level-item"
                   :options="{ hideDate: false }"
           />
       </div>
@@ -294,12 +291,6 @@ export default class Home extends Vue {
     margin-left: 7px;
   }
 }
-
-  .upcoming-events {
-    .level {
-      margin-left: 4rem;
-    }
-  }
 
     section.container {
         margin: auto auto 3rem;

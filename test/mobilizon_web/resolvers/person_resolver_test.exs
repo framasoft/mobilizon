@@ -473,7 +473,9 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
 
       assert hd(json_response(res, 200)["errors"])["message"] == "Person with name riri not found"
     end
+  end
 
+  describe "get_current_person/3" do
     test "get_current_person/3 can return the events the person is going to", context do
       user = insert(:user)
       actor = insert(:actor, user: user)
@@ -481,9 +483,11 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
       query = """
       {
           loggedPerson {
-            goingToEvents {
-              uuid,
-              title
+            participations {
+              event {
+                uuid,
+                title
+              }
             }
           }
         }
@@ -494,7 +498,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
         |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "logged_person"))
 
-      assert json_response(res, 200)["data"]["loggedPerson"]["goingToEvents"] == []
+      assert json_response(res, 200)["data"]["loggedPerson"]["participations"] == []
 
       event = insert(:event, %{organizer_actor: actor})
       insert(:participant, %{actor: actor, event: event})
@@ -504,8 +508,8 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
         |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "logged_person"))
 
-      assert json_response(res, 200)["data"]["loggedPerson"]["goingToEvents"] == [
-               %{"title" => event.title, "uuid" => event.uuid}
+      assert json_response(res, 200)["data"]["loggedPerson"]["participations"] == [
+               %{"event" => %{"title" => event.title, "uuid" => event.uuid}}
              ]
     end
 
@@ -519,9 +523,11 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
       query = """
       {
         person(preferredUsername: "#{actor.preferred_username}") {
-            goingToEvents {
-              uuid,
-              title
+            participations {
+              event {
+                uuid,
+                title
+              }
             }
         }
       }
@@ -532,14 +538,16 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
         |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
 
-      assert json_response(res, 200)["data"]["person"]["goingToEvents"] == []
+      assert json_response(res, 200)["data"]["person"]["participations"] == []
 
       query = """
       {
         person(preferredUsername: "#{actor_from_other_user.preferred_username}") {
-            goingToEvents {
-              uuid,
-              title
+            participations {
+              event {
+                uuid,
+                title
+              }
             }
         }
       }
@@ -550,10 +558,45 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
         |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
 
-      assert json_response(res, 200)["data"]["person"]["goingToEvents"] == nil
+      assert json_response(res, 200)["data"]["person"]["participations"] == nil
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
                "Actor id is not owned by authenticated user"
+    end
+
+    test "find_person/3 can return the participation for an identity on a specific event",
+         context do
+      user = insert(:user)
+      actor = insert(:actor, user: user)
+      event = insert(:event, organizer_actor: actor)
+      insert(:participant, event: event, actor: actor)
+
+      query = """
+      {
+        person(preferredUsername: "#{actor.preferred_username}") {
+            participations(eventId: "#{event.id}") {
+              event {
+                uuid,
+                title
+              }
+            }
+        }
+      }
+      """
+
+      res =
+        context.conn
+        |> auth_conn(user)
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+
+      assert json_response(res, 200)["data"]["person"]["participations"] == [
+               %{
+                 "event" => %{
+                   "uuid" => event.uuid,
+                   "title" => event.title
+                 }
+               }
+             ]
     end
   end
 end

@@ -39,33 +39,41 @@ defmodule MobilizonWeb.Resolvers.Event do
   end
 
   @doc """
-  List participant for event (separate request)
-  """
-  def list_participants_for_event(_parent, %{uuid: uuid, page: page, limit: limit}, _resolution) do
-    {:ok, Mobilizon.Events.list_participants_for_event(uuid, [], page, limit)}
-  end
-
-  @doc """
   List participants for event (through an event request)
   """
   def list_participants_for_event(
-        %Event{uuid: uuid},
-        %{page: page, limit: limit, roles: roles},
-        _resolution
+        %Event{id: event_id},
+        %{page: page, limit: limit, roles: roles, actor_id: actor_id},
+        %{context: %{current_user: %User{} = user}} = _resolution
       ) do
-    roles =
-      case roles do
-        "" ->
-          []
+    with {:is_owned, %Actor{} = _actor} <- User.owns_actor(user, actor_id),
+         # Check that moderator has right
+         {:actor_approve_permission, true} <-
+           {:actor_approve_permission, Mobilizon.Events.moderator_for_event?(event_id, actor_id)} do
+      roles =
+        case roles do
+          "" ->
+            []
 
-        roles ->
-          roles
-          |> String.split(",")
-          |> Enum.map(&String.downcase/1)
-          |> Enum.map(&String.to_existing_atom/1)
-      end
+          roles ->
+            roles
+            |> String.split(",")
+            |> Enum.map(&String.downcase/1)
+            |> Enum.map(&String.to_existing_atom/1)
+        end
 
-    {:ok, Mobilizon.Events.list_participants_for_event(uuid, roles, page, limit)}
+      {:ok, Mobilizon.Events.list_participants_for_event(event_id, roles, page, limit)}
+    else
+      {:is_owned, nil} ->
+        {:error, "Moderator Actor ID is not owned by authenticated user"}
+
+      {:actor_approve_permission, _} ->
+        {:error, "Provided moderator actor ID doesn't have permission on this event"}
+    end
+  end
+
+  def list_participants_for_event(_, _args, _resolution) do
+    {:ok, []}
   end
 
   def stats_participants_for_event(%Event{id: id}, _args, _resolution) do

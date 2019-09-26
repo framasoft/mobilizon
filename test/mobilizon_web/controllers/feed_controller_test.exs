@@ -106,8 +106,8 @@ defmodule MobilizonWeb.FeedControllerTest do
         assert entry.summary in [event1.title, event2.title]
       end)
 
-      assert entry1.categories == [event1.category, tag1.slug]
-      assert entry2.categories == [event2.category, tag1.slug, tag2.slug]
+      assert entry1.categories == [tag1.slug]
+      assert entry2.categories == [tag1.slug, tag2.slug]
     end
 
     test "it returns a 404 page for the actor's public events iCal feed with an actor not publicly visible",
@@ -174,7 +174,7 @@ defmodule MobilizonWeb.FeedControllerTest do
 
       assert entry1.summary == event1.title
 
-      assert entry1.categories == [event1.category, tag1.slug, tag2.slug]
+      assert entry1.categories == [tag1.slug, tag2.slug]
     end
   end
 
@@ -311,6 +311,7 @@ defmodule MobilizonWeb.FeedControllerTest do
 
       [entry1] = ExIcal.parse(conn.resp_body)
       assert entry1.summary == event1.title
+      assert entry1.categories == event1.tags |> Enum.map(& &1.slug)
     end
 
     test "it returns 404 for an not existing feed", %{conn: conn} do
