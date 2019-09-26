@@ -47,6 +47,7 @@ export async function initializeCurrentActor(apollo: ApolloClient<any>) {
 
   const result = await apollo.query({
     query: IDENTITIES,
+    fetchPolicy: 'network-only',
   });
   const identities = result.data.identities;
   if (identities.length < 1) return;
