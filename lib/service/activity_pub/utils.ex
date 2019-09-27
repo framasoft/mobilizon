@@ -58,14 +58,16 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   def maybe_federate(%Activity{local: true} = activity) do
     Logger.debug("Maybe federate an activity")
 
-    priority =
-      case activity.data["type"] do
-        "Delete" -> 10
-        "Create" -> 1
-        _ -> 5
-      end
+    if Mobilizon.Config.get!([:instance, :federating]) do
+      priority =
+        case activity.data["type"] do
+          "Delete" -> 10
+          "Create" -> 1
+          _ -> 5
+        end
 
-    Federator.enqueue(:publish, activity, priority)
+      Federator.enqueue(:publish, activity, priority)
+    end
 
     :ok
   end
