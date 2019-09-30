@@ -334,18 +334,10 @@ export const LEAVE_EVENT = gql`
   }
 `;
 
-export const ACCEPT_PARTICIPANT = gql`
-  mutation AcceptParticipant($id: ID!, $moderatorActorId: ID!) {
-    acceptParticipation(id: $id, moderatorActorId: $moderatorActorId) {
+export const UPDATE_PARTICIPANT = gql`
+  mutation AcceptParticipant($id: ID!, $moderatorActorId: ID!, $role: ParticipantRoleEnum!) {
+    updateParticipation(id: $id, moderatorActorId: $moderatorActorId, role: $role) {
       role,
-      id
-    }
-  }
-`;
-
-export const REJECT_PARTICIPANT = gql`
-  mutation RejectParticipant($id: ID!, $moderatorActorId: ID!) {
-    rejectParticipation(id: $id, moderatorActorId: $moderatorActorId) {
       id
     }
   }
@@ -371,7 +363,8 @@ export const PARTICIPANTS = gql`
       },
       participantStats {
         approved,
-        unapproved
+        unapproved,
+        rejected
       }
     }
   }

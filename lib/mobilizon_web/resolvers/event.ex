@@ -83,7 +83,8 @@ defmodule MobilizonWeb.Resolvers.Event do
     {:ok,
      %{
        approved: Mobilizon.Events.count_approved_participants(id),
-       unapproved: Mobilizon.Events.count_unapproved_participants(id)
+       unapproved: Mobilizon.Events.count_unapproved_participants(id),
+       rejected: Mobilizon.Events.count_rejected_participants(id)
      }}
   end
 
@@ -202,9 +203,9 @@ defmodule MobilizonWeb.Resolvers.Event do
     {:error, "You need to be logged-in to leave an event"}
   end
 
-  def accept_participation(
+  def update_participation(
         _parent,
-        %{id: participation_id, moderator_actor_id: moderator_actor_id},
+        %{id: participation_id, moderator_actor_id: moderator_actor_id, role: new_role},
         %{
           context: %{
             current_user: user
@@ -214,14 +215,15 @@ defmodule MobilizonWeb.Resolvers.Event do
     # Check that moderator provided is rightly authenticated
     with {:is_owned, moderator_actor} <- User.owns_actor(user, moderator_actor_id),
          # Check that participation already exists
-         {:has_participation, %Participant{role: :not_approved} = participation} <-
+         {:has_participation, %Participant{role: old_role} = participation} <-
            {:has_participation, Mobilizon.Events.get_participant(participation_id)},
+         {:same_role, false} <- {:same_role, new_role == old_role},
          # Check that moderator has right
          {:actor_approve_permission, true} <-
            {:actor_approve_permission,
             Mobilizon.Events.moderator_for_event?(participation.event.id, moderator_actor_id)},
          {:ok, _activity, participation} <-
-           MobilizonWeb.API.Participations.accept(participation, moderator_actor) do
+           MobilizonWeb.API.Participations.update(participation, moderator_actor, new_role) do
       {:ok, participation}
     else
       {:is_owned, nil} ->
@@ -234,51 +236,10 @@ defmodule MobilizonWeb.Resolvers.Event do
       {:actor_approve_permission, _} ->
         {:error, "Provided moderator actor ID doesn't have permission on this event"}
 
+      {:same_role, true} ->
+        {:error, "Participant already has role #{new_role}"}
+
       {:error, :participant_not_found} ->
-        {:error, "Participant not found"}
-    end
-  end
-
-  def reject_participation(
-        _parent,
-        %{id: participation_id, moderator_actor_id: moderator_actor_id},
-        %{
-          context: %{
-            current_user: user
-          }
-        }
-      ) do
-    # Check that moderator provided is rightly authenticated
-    with {:is_owned, moderator_actor} <- User.owns_actor(user, moderator_actor_id),
-         # Check that participation really exists
-         {:has_participation, %Participant{} = participation} <-
-           {:has_participation, Mobilizon.Events.get_participant(participation_id)},
-         # Check that moderator has right
-         {:actor_approve_permission, true} <-
-           {:actor_approve_permission,
-            Mobilizon.Events.moderator_for_event?(participation.event.id, moderator_actor_id)},
-         {:ok, _activity, participation} <-
-           MobilizonWeb.API.Participations.reject(participation, moderator_actor) do
-      {
-        :ok,
-        %{
-          id: participation.id,
-          event: %{
-            id: participation.event.id
-          },
-          actor: %{
-            id: participation.actor.id
-          }
-        }
-      }
-    else
-      {:is_owned, nil} ->
-        {:error, "Moderator Actor ID is not owned by authenticated user"}
-
-      {:actor_approve_permission, _} ->
-        {:error, "Provided moderator actor ID doesn't have permission on this event"}
-
-      {:has_participation, nil} ->
         {:error, "Participant not found"}
     end
   end

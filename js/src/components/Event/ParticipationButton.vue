@@ -2,6 +2,7 @@
     <div class="participation-button">
         <b-dropdown aria-role="list" position="is-bottom-left" v-if="participation && participation.role === ParticipantRole.PARTICIPANT">
             <button class="button is-success" type="button" slot="trigger">
+                <b-icon icon="check"></b-icon>
                 <template>
                     <span>{{ $t('I participate') }}</span>
                 </template>
@@ -12,7 +13,7 @@
             <!--                  {{ $t('Change my identity…')}}-->
             <!--                </b-dropdown-item>-->
 
-            <b-dropdown-item :value="false" aria-role="listitem" @click="confirmLeave">
+            <b-dropdown-item :value="false" aria-role="listitem" @click="confirmLeave" class="has-text-danger">
                 {{ $t('Cancel my participation…')}}
             </b-dropdown-item>
         </b-dropdown>
@@ -20,6 +21,7 @@
         <div v-else-if="participation && participation.role === ParticipantRole.NOT_APPROVED">
             <b-dropdown aria-role="list" position="is-bottom-left" class="dropdown-disabled">
                 <button class="button is-success" type="button" slot="trigger">
+                    <b-icon icon="timer-sand-empty"></b-icon>
                     <template>
                         <span>{{ $t('I participate') }}</span>
                     </template>
@@ -30,12 +32,16 @@
                 <!--                  {{ $t('Change my identity…')}}-->
                 <!--                </b-dropdown-item>-->
 
-                <b-dropdown-item :value="false" aria-role="listitem" @click="confirmLeave">
+                <b-dropdown-item :value="false" aria-role="listitem" @click="confirmLeave" class="has-text-danger">
                     {{ $t('Cancel my participation request…')}}
                 </b-dropdown-item>
             </b-dropdown>
             <small>{{ $t('Participation requested!')}}</small><br />
             <small>{{ $t('Waiting for organization team approval.')}}</small>
+        </div>
+
+        <div v-else-if="participation && participation.role === ParticipantRole.REJECTED">
+            <span>{{ $t('Unfortunately, your participation request was rejected by the organizers.')}}</span>
         </div>
 
         <b-dropdown aria-role="list" position="is-bottom-left" v-if="!participation">

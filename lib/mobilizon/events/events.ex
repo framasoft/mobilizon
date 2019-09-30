@@ -70,6 +70,7 @@ defmodule Mobilizon.Events do
 
   defenum(ParticipantRole, :participant_role, [
     :not_approved,
+    :rejected,
     :participant,
     :moderator,
     :administrator,
@@ -719,6 +720,17 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
+  Counts rejected participants.
+  """
+  @spec count_rejected_participants(integer | String.t()) :: integer
+  def count_rejected_participants(event_id) do
+    event_id
+    |> count_participants_query()
+    |> filter_rejected_role()
+    |> Repo.aggregate(:count, :id)
+  end
+
+  @doc """
   Gets the default participant role depending on the event join options.
   """
   @spec get_default_participant_role(Event.t()) :: :participant | :not_approved
@@ -1361,12 +1373,17 @@ defmodule Mobilizon.Events do
 
   @spec filter_approved_role(Ecto.Query.t()) :: Ecto.Query.t()
   defp filter_approved_role(query) do
-    from(p in query, where: p.role != ^:not_approved)
+    from(p in query, where: p.role not in ^[:not_approved, :rejected])
   end
 
   @spec filter_unapproved_role(Ecto.Query.t()) :: Ecto.Query.t()
   defp filter_unapproved_role(query) do
     from(p in query, where: p.role == ^:not_approved)
+  end
+
+  @spec filter_rejected_role(Ecto.Query.t()) :: Ecto.Query.t()
+  defp filter_rejected_role(query) do
+    from(p in query, where: p.role == ^:rejected)
   end
 
   @spec filter_role(Ecto.Query.t(), list(atom())) :: Ecto.Query.t()

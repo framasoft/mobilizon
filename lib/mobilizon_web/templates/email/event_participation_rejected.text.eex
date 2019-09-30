@@ -1,0 +1,7 @@
+<%= gettext "Participation rejected" %>
+
+==
+
+<%= gettext "You requested to participate in event %{title}.", title: @event.title %>
+
+<%= gettext "Unfortunately, the organizers rejected your participation." %>

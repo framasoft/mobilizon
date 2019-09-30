@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Wed Sep 25 2019 16:41:05 GMT+0200 (GMT+02:00)
+# timestamp: Mon Sep 30 2019 09:56:05 GMT+0200 (GMT+02:00)
 
 schema {
   query: RootQueryType
@@ -671,11 +671,15 @@ enum ParticipantRoleEnum {
   MODERATOR
   NOT_APPROVED
   PARTICIPANT
+  REJECTED
 }
 
 type ParticipantStats {
   """The number of approved participants"""
   approved: Int
+
+  """The number of rejected participants"""
+  rejected: Int
 
   """The number of unapproved participants"""
   unapproved: Int
@@ -879,9 +883,6 @@ enum ReportStatus {
 }
 
 type RootMutationType {
-  """Accept a participation"""
-  acceptParticipation(id: ID!, moderatorActorId: ID!): Participant
-
   """Change default actor for user"""
   changeDefaultActor(preferredUsername: String!): User
 
@@ -1028,9 +1029,6 @@ type RootMutationType {
     summary: String = ""
   ): Person
 
-  """Reject a participation"""
-  rejectParticipation(id: ID!, moderatorActorId: ID!): DeletedParticipant
-
   """Resend registration confirmation token"""
   resendConfirmationEmail(email: String!, locale: String = "en"): String
 
@@ -1064,6 +1062,9 @@ type RootMutationType {
     title: String
     visibility: EventVisibility = PUBLIC
   ): Event
+
+  """Accept a participation"""
+  updateParticipation(id: ID!, moderatorActorId: ID!, role: ParticipantRoleEnum!): Participant
 
   """Update an identity"""
   updatePerson(

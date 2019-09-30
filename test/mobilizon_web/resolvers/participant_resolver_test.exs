@@ -1,7 +1,8 @@
 defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
   use MobilizonWeb.ConnCase
+  use Bamboo.Test
   alias Mobilizon.Events
-  alias MobilizonWeb.AbsintheHelpers
+  alias MobilizonWeb.{AbsintheHelpers, Email}
   import Mobilizon.Factory
 
   @event %{
@@ -491,7 +492,8 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
           uuid,
           participantStats {
             approved,
-            unapproved
+            unapproved,
+            rejected
           }
         }
       }
@@ -504,6 +506,7 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
       assert json_response(res, 200)["data"]["event"]["uuid"] == to_string(event.uuid)
       assert json_response(res, 200)["data"]["event"]["participantStats"]["approved"] == 1
       assert json_response(res, 200)["data"]["event"]["participantStats"]["unapproved"] == 0
+      assert json_response(res, 200)["data"]["event"]["participantStats"]["rejected"] == 0
 
       moderator = insert(:actor)
 
@@ -521,13 +524,20 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
         actor_id: unapproved.id
       })
 
+      Events.create_participant(%{
+        role: :rejected,
+        event_id: event.id,
+        actor_id: unapproved.id
+      })
+
       query = """
       {
         event(uuid: "#{event.uuid}") {
           uuid,
           participantStats {
             approved,
-            unapproved
+            unapproved,
+            rejected
           }
         }
       }
@@ -540,11 +550,12 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
       assert json_response(res, 200)["data"]["event"]["uuid"] == to_string(event.uuid)
       assert json_response(res, 200)["data"]["event"]["participantStats"]["approved"] == 2
       assert json_response(res, 200)["data"]["event"]["participantStats"]["unapproved"] == 1
+      assert json_response(res, 200)["data"]["event"]["participantStats"]["rejected"] == 1
     end
   end
 
-  describe "Participant approval" do
-    test "accept_participation/3", %{conn: conn, actor: actor, user: user} do
+  describe "Participation role status update" do
+    test "update_participation/3", %{conn: conn, actor: actor, user: user} do
       user_creator = insert(:user)
       actor_creator = insert(:actor, user: user_creator)
       event = insert(:event, join_options: :restricted, organizer_actor: actor_creator)
@@ -581,8 +592,9 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
 
       mutation = """
           mutation {
-            acceptParticipation(
+            updateParticipation(
               id: "#{participation_id}",
+              role: PARTICIPANT,
               moderator_actor_id: #{actor_creator.id}
             ) {
                 id,
@@ -603,21 +615,25 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["acceptParticipation"]["role"] == "PARTICIPANT"
+      assert json_response(res, 200)["data"]["updateParticipation"]["role"] == "PARTICIPANT"
 
-      assert json_response(res, 200)["data"]["acceptParticipation"]["event"]["id"] ==
+      assert json_response(res, 200)["data"]["updateParticipation"]["event"]["id"] ==
                to_string(event.id)
 
-      assert json_response(res, 200)["data"]["acceptParticipation"]["actor"]["id"] ==
+      assert json_response(res, 200)["data"]["updateParticipation"]["actor"]["id"] ==
                to_string(actor.id)
+
+      participation = Mobilizon.Events.get_participant(participation_id)
+
+      assert_delivered_email(Email.Participation.participation_updated(user, participation))
 
       res =
         conn
         |> auth_conn(user_creator)
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~
-               " can't be approved since it's already a participant (with role participant)"
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "Participant already has role participant"
     end
 
     test "accept_participation/3 with bad parameters", %{conn: conn, actor: actor, user: user} do
@@ -657,8 +673,9 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
 
       mutation = """
           mutation {
-            acceptParticipation(
+            updateParticipation (
               id: "#{participation_id}",
+              role: PARTICIPANT,
               moderator_actor_id: #{actor_creator.id}
             ) {
                 id,
@@ -721,11 +738,13 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
 
       mutation = """
           mutation {
-            rejectParticipation(
+            updateParticipation(
               id: "#{participation_id}",
+              role: REJECTED,
               moderator_actor_id: #{actor_creator.id}
             ) {
                 id,
+                role,
                 actor {
                   id
                 },
@@ -742,20 +761,24 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["rejectParticipation"]["id"] == participation_id
+      assert json_response(res, 200)["data"]["updateParticipation"]["id"] == participation_id
 
-      assert json_response(res, 200)["data"]["rejectParticipation"]["event"]["id"] ==
+      assert json_response(res, 200)["data"]["updateParticipation"]["event"]["id"] ==
                to_string(event.id)
 
-      assert json_response(res, 200)["data"]["rejectParticipation"]["actor"]["id"] ==
+      assert json_response(res, 200)["data"]["updateParticipation"]["actor"]["id"] ==
                to_string(actor.id)
+
+      participation = Mobilizon.Events.get_participant(participation_id)
+      assert_delivered_email(Email.Participation.participation_updated(user, participation))
 
       res =
         conn
         |> auth_conn(user_creator)
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "Participant not found"
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "Participant already has role rejected"
     end
 
     test "reject_participation/3 with bad parameters", %{conn: conn, actor: actor, user: user} do
@@ -795,8 +818,9 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
 
       mutation = """
           mutation {
-            rejectParticipation(
+            updateParticipation (
               id: "#{participation_id}",
+              role: REJECTED,
               moderator_actor_id: #{actor_creator.id}
             ) {
                 id,

@@ -1,20 +1,17 @@
 #, elixir-format
-#: lib/mobilizon_web/templates/email/email.text.eex:3
-msgid "An email sent by Mobilizon on %{instance}."
-msgstr ""
-
-#, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:48
+#: lib/mobilizon_web/templates/email/password_reset.text.eex:12
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
 msgstr ""
 
 #, elixir-format
-#: lib/service/export/feed.ex:161
+#: lib/service/export/feed.ex:169
 msgid "Feed for %{email} on Mobilizon"
 msgstr ""
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/email.html.eex:122
+#: lib/mobilizon_web/templates/email/email.text.eex:6
 msgid "%{instance} is a Mobilizon server."
 msgstr ""
 
@@ -35,17 +32,18 @@ msgstr ""
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/email.html.eex:91
-#: lib/mobilizon_web/templates/email/password_reset.html.eex:94
 msgid "Ask the community on Framacolibri"
 msgstr ""
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/report.html.eex:62
+#: lib/mobilizon_web/templates/email/report.text.eex:11
 msgid "Comments"
 msgstr ""
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/report.html.eex:46
+#: lib/mobilizon_web/templates/email/report.text.eex:6
 msgid "Event"
 msgstr ""
 
@@ -55,7 +53,7 @@ msgid "If you didn't request this, please ignore this email."
 msgstr ""
 
 #, elixir-format
-#: lib/mobilizon_web/email/user.ex:46
+#: lib/mobilizon_web/email/user.ex:45
 msgid "Instructions to reset your password on %{instance}"
 msgstr ""
 
@@ -71,7 +69,6 @@ msgstr ""
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/email.html.eex:88
-#: lib/mobilizon_web/templates/email/password_reset.html.eex:91
 msgid "Need some help? Something not working properly?"
 msgstr ""
 
@@ -82,6 +79,7 @@ msgstr ""
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/report.html.eex:80
+#: lib/mobilizon_web/templates/email/report.text.eex:18
 msgid "Reason"
 msgstr ""
 
@@ -123,4 +121,108 @@ msgstr ""
 #, elixir-format
 #: lib/mobilizon_web/email/admin.ex:23
 msgid "New report on Mobilizon instance %{instance}"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/registration_confirmation.text.eex:1
+msgid "Activate your account"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:13
+msgid "All good!"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:45
+#: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:7
+msgid "An organizer just approved your participation. You're now going to this event!"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:58
+msgid "Go to event page"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:70
+msgid "If you need to cancel your participation, just access the event page through link above and click on the participation button."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:11
+msgid "If you need to cancel your participation, just access the previous link and click on the participation button."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.text.eex:6
+msgid "Learn more about Mobilizon:"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.text.eex:1
+msgid "New report from %{reporter} on %{instance}"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:1
+msgid "Participation approved"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_participation_rejected.text.eex:1
+msgid "Participation rejected"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/password_reset.text.eex:1
+msgid "Password reset"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/password_reset.text.eex:7
+msgid "Resetting your password is easy. Just click the link below and follow the instructions. We'll have you up and running in no time."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:13
+msgid "Sorry!"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:45
+#: lib/mobilizon_web/templates/email/event_participation_rejected.text.eex:7
+msgid "Unfortunately, the organizers rejected your participation."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/registration_confirmation.text.eex:5
+msgid "You created an account on %{host} with this email address. You are one click away from activating it. If this wasn't you, please ignore this email."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/password_reset.text.eex:5
+msgid "You requested a new password for your account on %{host}."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:38
+#: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:38
+msgid "You requested to participate in event %{title}"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:5
+#: lib/mobilizon_web/templates/email/event_participation_rejected.text.eex:5
+msgid "You requested to participate in event %{title}."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/email/participation.ex:73
+msgid "Your participation to event %{title} has been approved"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/email/participation.ex:52
+msgid "Your participation to event %{title} has been rejected"
 msgstr ""

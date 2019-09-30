@@ -4,7 +4,7 @@
             <b-tab-item>
                 <template slot="header">
                     <b-icon icon="information-outline"></b-icon>
-                    <span> Participants <b-tag rounded> {{ participantStats.approved }} </b-tag> </span>
+                    <span>{{ $t('Participants')}} <b-tag rounded> {{ participantStats.approved }} </b-tag> </span>
                 </template>
                 <section v-if="participantsAndCreators.length > 0">
                     <h2 class="title">{{ $t('Participants') }}</h2>
@@ -23,7 +23,7 @@
             <b-tab-item>
                 <template slot="header">
                     <b-icon icon="source-pull"></b-icon>
-                    <span> Demandes <b-tag rounded> {{ participantStats.unapproved }} </b-tag> </span>
+                    <span>{{ $t('Requests') }} <b-tag rounded> {{ participantStats.unapproved }} </b-tag> </span>
                 </template>
                 <section v-if="queue.length > 0">
                     <h2 class="title">{{ $t('Waiting list') }}</h2>
@@ -39,6 +39,25 @@
                     </div>
                 </section>
             </b-tab-item>
+            <b-tab-item>
+                <template slot="header">
+                    <b-icon icon="source-pull"></b-icon>
+                    <span>{{ $t('Rejected')}} <b-tag rounded> {{ participantStats.rejected }} </b-tag> </span>
+                </template>
+                <section v-if="rejected.length > 0">
+                    <h2 class="title">{{ $t('Rejected participations') }}</h2>
+                    <div class="columns">
+                        <div class="column is-one-quarter-desktop" v-for="participant in rejected" :key="participant.actor.id">
+                            <participant-card
+                                    :participant="participant"
+                                    :accept="acceptParticipant"
+                                    :reject="refuseParticipant"
+                                    :exclude="refuseParticipant"
+                            />
+                        </div>
+                    </div>
+                </section>
+            </b-tab-item>
         </b-tabs>
     </main>
 </template>
@@ -46,7 +65,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { IEvent, IParticipant, Participant, ParticipantRole } from '@/types/event.model';
-import { ACCEPT_PARTICIPANT, PARTICIPANTS, REJECT_PARTICIPANT } from '@/graphql/event';
+import { UPDATE_PARTICIPANT, PARTICIPANTS } from '@/graphql/event';
 import ParticipantCard from '@/components/Account/ParticipantCard.vue';
 import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { IPerson } from '@/types/actor';
@@ -98,6 +117,19 @@ import { IPerson } from '@/types/actor';
       },
       update: data => data.event.participants.map(participation => new Participant(participation)),
     },
+    rejected: {
+      query: PARTICIPANTS,
+      variables() {
+        return {
+          uuid: this.eventId,
+          page: 1,
+          limit: 20,
+          roles: [ParticipantRole.REJECTED].join(),
+          actorId: this.currentActor.id,
+        };
+      },
+      update: data => data.event.participants.map(participation => new Participant(participation)),
+    },
   },
 })
 export default class Participants extends Vue {
@@ -108,6 +140,7 @@ export default class Participants extends Vue {
   // participants: IParticipant[] = [];
   organizers: IParticipant[] = [];
   queue: IParticipant[] = [];
+  rejected: IParticipant[] = [];
   event!: IEvent;
 
   ParticipantRole = ParticipantRole;
@@ -156,15 +189,16 @@ export default class Participants extends Vue {
   async acceptParticipant(participant: IParticipant) {
     try {
       const { data } = await this.$apollo.mutate({
-        mutation: ACCEPT_PARTICIPANT,
+        mutation: UPDATE_PARTICIPANT,
         variables: {
           id: participant.id,
           moderatorActorId: this.currentActor.id,
+          role: ParticipantRole.PARTICIPANT,
         },
       });
       if (data) {
-        console.log('accept', data);
-        this.queue.filter(participant => participant !== data.acceptParticipation.id);
+        this.queue.filter(participant => participant !== data.updateParticipation.id);
+        this.rejected.filter(participant => participant !== data.updateParticipation.id);
         this.participants.push(participant);
       }
     } catch (e) {
@@ -175,15 +209,17 @@ export default class Participants extends Vue {
   async refuseParticipant(participant: IParticipant) {
     try {
       const { data } = await this.$apollo.mutate({
-        mutation: REJECT_PARTICIPANT,
+        mutation: UPDATE_PARTICIPANT,
         variables: {
           id: participant.id,
           moderatorActorId: this.currentActor.id,
+          role: ParticipantRole.REJECTED,
         },
       });
       if (data) {
-        this.participants.filter(participant => participant !== data.rejectParticipation.id);
-        this.queue.filter(participant => participant !== data.rejectParticipation.id);
+        this.participants.filter(participant => participant !== data.updateParticipation.id);
+        this.queue.filter(participant => participant !== data.updateParticipation.id);
+        this.rejected.push(participant);
       }
     } catch (e) {
       console.error(e);

@@ -253,5 +253,9 @@
     "{approved} / {total} seats": "{approved} / {total} seats",
     "{count} participants": "{count} participants",
     "{count} requests waiting": "{count} requests waiting",
-    "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks"
+    "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks",
+    "Requests": "Requests",
+    "Rejected": "Rejected",
+    "Rejected participations": "Rejected participations",
+    "Unfortunately, your participation request was rejected by the organizers.": "Unfortunately, your participation request was rejected by the organizers."
 }

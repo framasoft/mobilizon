@@ -14,7 +14,7 @@
       </div>
     </div>
     <footer class="card-footer">
-    <b-button v-if="participant.role === ParticipantRole.NOT_APPROVED" @click="accept(participant)" type="is-success" class="card-footer-item">{{ $t('Approve') }}</b-button>
+    <b-button v-if="[ParticipantRole.NOT_APPROVED, ParticipantRole.REJECTED].includes(participant.role)" @click="accept(participant)" type="is-success" class="card-footer-item">{{ $t('Approve') }}</b-button>
     <b-button v-if="participant.role === ParticipantRole.NOT_APPROVED" @click="reject(participant)" type="is-danger" class="card-footer-item">{{ $t('Reject')}} </b-button>
     <b-button v-if="participant.role === ParticipantRole.PARTICIPANT" @click="exclude(participant)" type="is-danger" class="card-footer-item">{{ $t('Exclude')}} </b-button>
     <span v-if="participant.role === ParticipantRole.CREATOR" class="card-footer-item">{{ $t('Creator')}} </span>
