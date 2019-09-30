@@ -10,16 +10,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-09-23 17:59+0000\n"
+"PO-Revision-Date: 2019-09-30 17:58+0200\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
-"Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/"
-"backend/fr/>\n"
+"Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 3.8\n"
+"X-Generator: Poedit 2.2.3\n"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:48
@@ -134,8 +133,7 @@ msgstr "Vous avez créé un compte sur %{host} avec cette adresse email. Vous ê
 #, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:38
 msgid "You requested a new password for your account on %{server}."
-msgstr ""
-"Vous avez demandé un nouveau mot de passe pour votre compte sur %{server}."
+msgstr "Vous avez demandé un nouveau mot de passe pour votre compte sur %{server}."
 
 #, elixir-format
 #: lib/mobilizon_web/email/user.ex:25
@@ -155,23 +153,26 @@ msgstr "Activer mon compte"
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:13
 msgid "All good!"
-msgstr ""
+msgstr "Tout est bon !"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:45
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:7
 msgid "An organizer just approved your participation. You're now going to this event!"
-msgstr ""
+msgstr "Un⋅e organisateur⋅ice vient d'approuver votre participation. Vous vous rendez maintenant à cet événement !"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:58
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:87
 msgid "Go to event page"
-msgstr ""
+msgstr "Aller à la page de l'événement"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:70
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:99
+#: lib/mobilizon_web/templates/email/event_updated.text.eex:21
 msgid "If you need to cancel your participation, just access the event page through link above and click on the participation button."
-msgstr ""
+msgstr "Si vous voulez annuler votre participation, il suffit d'accéder à la page de l'événement via le lien ci-dessus et de cliquer sur le bouton de participation."
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:11
@@ -191,17 +192,17 @@ msgstr "Nouveau signalement sur %{instance}"
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:1
 msgid "Participation approved"
-msgstr ""
+msgstr "Participation approuvée"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_rejected.text.eex:1
 msgid "Participation rejected"
-msgstr ""
+msgstr "Participation refusée"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:1
 msgid "Password reset"
-msgstr ""
+msgstr "Réinitialisation du mot de passe"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:7
@@ -211,13 +212,13 @@ msgstr "Réinitialiser votre mot de passe est facile. Cliquez simplement sur le 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:13
 msgid "Sorry!"
-msgstr ""
+msgstr "Désolé !"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:45
 #: lib/mobilizon_web/templates/email/event_participation_rejected.text.eex:7
 msgid "Unfortunately, the organizers rejected your participation."
-msgstr ""
+msgstr "Malheureusement, les organisateur⋅ices ont refusé votre participation."
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/registration_confirmation.text.eex:5
@@ -227,27 +228,82 @@ msgstr "Vous avez créé un compte sur %{host} avec cette adresse email. Vous ê
 #, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:5
 msgid "You requested a new password for your account on %{host}."
-msgstr ""
-"Vous avez demandé un nouveau mot de passe pour votre compte sur %{server}."
+msgstr "Vous avez demandé un nouveau mot de passe pour votre compte sur %{server}."
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:38
-#: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:38
 msgid "You requested to participate in event %{title}"
-msgstr ""
+msgstr "Vous avez demandé à participer à l'événement %{title}"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:5
+#: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:38
 #: lib/mobilizon_web/templates/email/event_participation_rejected.text.eex:5
 msgid "You requested to participate in event %{title}."
-msgstr ""
+msgstr "Vous avez demandé à participer à l'événement %{title}."
 
 #, elixir-format
 #: lib/mobilizon_web/email/participation.ex:73
 msgid "Your participation to event %{title} has been approved"
-msgstr ""
+msgstr "Votre participation à l'événement %{title} a été approuvée"
 
 #, elixir-format
 #: lib/mobilizon_web/email/participation.ex:52
 msgid "Your participation to event %{title} has been rejected"
-msgstr ""
+msgstr "Votre participation à l'événement %{title} a été rejetée"
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:68
+msgid "Ending of event"
+msgstr "Fin de l'événement"
+
+#, elixir-format
+#: lib/mobilizon_web/email/event.ex:29
+msgid "Event %{title} has been updated"
+msgstr "L'événement %{title} a été mis à jour"
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:13
+#: lib/mobilizon_web/templates/email/event_updated.text.eex:1
+msgid "Event updated!"
+msgstr "Événement mis à jour"
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_updated.text.eex:16
+msgid "New date and time for ending of event: %{ends_on}"
+msgstr "Nouvelle date et heure de fin de l'événement : %{ends_on}"
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_updated.text.eex:12
+msgid "New date and time for start of event: %{begins_on}"
+msgstr "Nouvelle date et heure de début de l'événement : %{begins_on}"
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_updated.text.eex:8
+msgid "New title: %{title}"
+msgstr "Nouveau titre : %{title}"
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:58
+msgid "Start of event"
+msgstr "Début de l'événement"
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_updated.text.eex:5
+msgid "The event %{title} was just updated"
+msgstr "L'événement %{title} vient d'être mis à jour"
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:38
+msgid "The event %{title} was updated"
+msgstr "L'événement %{title} a été mis à jour"
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:48
+msgid "Title"
+msgstr "Titre"
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_updated.text.eex:19
+msgid "View the updated event on: %{link}"
+msgstr "Voir l'événement mis à jour sur : %{link}"

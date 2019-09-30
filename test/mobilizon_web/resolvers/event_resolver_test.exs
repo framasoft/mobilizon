@@ -1,7 +1,8 @@
 defmodule MobilizonWeb.Resolvers.EventResolverTest do
   use MobilizonWeb.ConnCase
+  use Bamboo.Test
   alias Mobilizon.Events
-  alias MobilizonWeb.AbsintheHelpers
+  alias MobilizonWeb.{AbsintheHelpers, Email}
   import Mobilizon.Factory
 
   @event %{
@@ -499,6 +500,13 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
 
     test "update_event/3 updates an event", %{conn: conn, actor: actor, user: user} do
       event = insert(:event, organizer_actor: actor)
+      _creator = insert(:participant, event: event, actor: actor, role: :creator)
+      participant_user = insert(:user)
+      participant_actor = insert(:actor, user: participant_user)
+
+      _participant =
+        insert(:participant, event: event, actor: participant_actor, role: :participant)
+
       address = insert(:address)
 
       begins_on = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
@@ -584,6 +592,28 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                %{"slug" => "tag1-updated", "title" => "tag1_updated"},
                %{"slug" => "tag2-updated", "title" => "tag2_updated"}
              ]
+
+      {:ok, new_event} = Mobilizon.Events.get_event(event.id)
+
+      assert_delivered_email(
+        Email.Event.event_updated(
+          user,
+          actor,
+          event,
+          new_event,
+          MapSet.new([:title, :begins_on, :ends_on])
+        )
+      )
+
+      assert_delivered_email(
+        Email.Event.event_updated(
+          participant_user,
+          participant_actor,
+          event,
+          new_event,
+          MapSet.new([:title, :begins_on, :ends_on])
+        )
+      )
     end
 
     test "update_event/3 updates an event with a new picture", %{

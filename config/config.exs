@@ -112,6 +112,10 @@ config :auto_linker,
 config :phoenix, :format_encoders, json: Jason, "activity-json": Jason
 config :phoenix, :json_library, Jason
 
+config :ex_cldr,
+  default_locale: "en",
+  default_backend: Mobilizon.Cldr
+
 config :http_signatures,
   adapter: Mobilizon.Service.HTTPSignatures.Signature
 

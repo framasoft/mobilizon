@@ -1,0 +1,21 @@
+<%= gettext "Event updated!" %>
+
+==
+
+<%= gettext "The event %{title} was just updated", title: @old_event.title %>
+
+<%= if MapSet.member?(@changes, :title) do %>
+    <%= gettext "New title: %{title}", title: @event.title %>
+<% end %>
+
+<%= if MapSet.member?(@changes, :begins_on) do %>
+    <%= gettext "New date and time for start of event: %{begins_on}", begins_on: datetime_to_string(@event.begins_on) %>
+<% end %>
+
+<%= if MapSet.member?(@changes, :ends_on) do %>
+    <%= gettext "New date and time for ending of event: %{ends_on}", ends_on: datetime_to_string(@event.ends_on) %>
+<% end %>
+
+<%= gettext "View the updated event on: %{link}", link: page_url(MobilizonWeb.Endpoint, :event, @event.id) %>
+
+<%= gettext "If you need to cancel your participation, just access the event page through link above and click on the participation button." %>

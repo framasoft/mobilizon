@@ -11,7 +11,8 @@ defmodule MobilizonWeb.Email do
   def base_email(args) do
     instance = Config.instance_config()
 
-    new_email(args)
+    args
+    |> new_email()
     |> from(Config.instance_email_from())
     |> put_header("Reply-To", Config.instance_email_reply_to())
     |> assign(:instance, instance)
