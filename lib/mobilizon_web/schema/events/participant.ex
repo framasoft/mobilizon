@@ -38,6 +38,7 @@ defmodule MobilizonWeb.Schema.Events.ParticipantType do
     value(:moderator)
     value(:administrator)
     value(:creator)
+    value(:rejected)
   end
 
   @desc "Represents a deleted participant"
@@ -65,19 +66,12 @@ defmodule MobilizonWeb.Schema.Events.ParticipantType do
     end
 
     @desc "Accept a participation"
-    field :accept_participation, :participant do
+    field :update_participation, :participant do
       arg(:id, non_null(:id))
+      arg(:role, non_null(:participant_role_enum))
       arg(:moderator_actor_id, non_null(:id))
 
-      resolve(&Resolvers.Event.accept_participation/3)
-    end
-
-    @desc "Reject a participation"
-    field :reject_participation, :deleted_participant do
-      arg(:id, non_null(:id))
-      arg(:moderator_actor_id, non_null(:id))
-
-      resolve(&Resolvers.Event.reject_participation/3)
+      resolve(&Resolvers.Event.update_participation/3)
     end
   end
 end

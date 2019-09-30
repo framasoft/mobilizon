@@ -7,6 +7,7 @@ defmodule MobilizonWeb.API.Participations do
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Service.ActivityPub
+  alias MobilizonWeb.Email.Participation
 
   @spec join(Event.t(), Actor.t()) :: {:ok, Participant.t()}
   def join(%Event{id: event_id} = event, %Actor{id: actor_id} = actor) do
@@ -22,10 +23,19 @@ defmodule MobilizonWeb.API.Participations do
     end
   end
 
-  def accept(
-        %Participant{} = participation,
-        %Actor{} = moderator
-      ) do
+  @doc """
+  Update participation status
+  """
+  def update(%Participant{} = participation, %Actor{} = moderator, :participant),
+    do: accept(participation, moderator)
+
+  def update(%Participant{} = participation, %Actor{} = moderator, :rejected),
+    do: reject(participation, moderator)
+
+  defp accept(
+         %Participant{} = participation,
+         %Actor{} = moderator
+       ) do
     with {:ok, activity, _} <-
            ActivityPub.accept(
              %{
@@ -36,15 +46,16 @@ defmodule MobilizonWeb.API.Participations do
              "#{MobilizonWeb.Endpoint.url()}/accept/join/#{participation.id}"
            ),
          {:ok, %Participant{role: :participant} = participation} <-
-           Events.update_participant(participation, %{"role" => :participant}) do
+           Events.update_participant(participation, %{"role" => :participant}),
+         :ok <- Participation.send_emails_to_local_user(participation) do
       {:ok, activity, participation}
     end
   end
 
-  def reject(
-        %Participant{} = participation,
-        %Actor{} = moderator
-      ) do
+  defp reject(
+         %Participant{} = participation,
+         %Actor{} = moderator
+       ) do
     with {:ok, activity, _} <-
            ActivityPub.reject(
              %{
@@ -54,8 +65,9 @@ defmodule MobilizonWeb.API.Participations do
              },
              "#{MobilizonWeb.Endpoint.url()}/reject/join/#{participation.id}"
            ),
-         {:ok, %Participant{} = participation} <-
-           Events.delete_participant(participation) do
+         {:ok, %Participant{role: :rejected} = participation} <-
+           Events.update_participant(participation, %{"role" => :rejected}),
+         :ok <- Participation.send_emails_to_local_user(participation) do
       {:ok, activity, participation}
     end
   end

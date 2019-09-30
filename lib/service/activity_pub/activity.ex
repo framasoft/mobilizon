@@ -8,7 +8,6 @@ defmodule Mobilizon.Service.ActivityPub.Activity do
           local: boolean,
           actor: Actor.t(),
           recipients: [String.t()]
-          # notifications: [???]
         }
 
   defstruct [
@@ -16,6 +15,5 @@ defmodule Mobilizon.Service.ActivityPub.Activity do
     :local,
     :actor,
     :recipients
-    # :notifications
   ]
 end

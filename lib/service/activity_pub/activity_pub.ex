@@ -454,7 +454,8 @@ defmodule Mobilizon.Service.ActivityPub do
            {:only_organizer, Participant.is_not_only_organizer(event_id, actor_id)},
          {:ok, %Participant{} = participant} <-
            Mobilizon.Events.get_participant(event_id, actor_id),
-         {:ok, %Participant{} = participant} <- Mobilizon.Events.delete_participant(participant),
+         {:ok, %Participant{} = participant} <-
+           Events.delete_participant(participant),
          leave_data <- %{
            "type" => "Leave",
            # If it's an exclusion it should be something else

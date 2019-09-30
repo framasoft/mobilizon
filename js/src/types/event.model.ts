@@ -30,6 +30,7 @@ export enum EventVisibilityJoinOptions {
 
 export enum ParticipantRole {
   NOT_APPROVED = 'NOT_APPROVED',
+  REJECTED = 'REJECTED',
   PARTICIPANT = 'PARTICIPANT',
   MODERATOR = 'MODERATOR',
   ADMINISTRATOR = 'ADMINISTRATOR',
@@ -112,6 +113,7 @@ export interface IEvent {
   participantStats: {
     approved: number;
     unapproved: number;
+    rejected: number;
   };
   participants: IParticipant[];
 
@@ -175,7 +177,7 @@ export class EventModel implements IEvent {
 
   publishAt = new Date();
 
-  participantStats = { approved: 0, unapproved: 0 };
+  participantStats = { approved: 0, unapproved: 0, rejected: 0 };
   participants: IParticipant[] = [];
 
   relatedEvents: IEvent[] = [];

@@ -111,6 +111,7 @@ defmodule MobilizonWeb.Schema.EventType do
   object :participant_stats do
     field(:approved, :integer, description: "The number of approved participants")
     field(:unapproved, :integer, description: "The number of unapproved participants")
+    field(:rejected, :integer, description: "The number of rejected participants")
   end
 
   object :event_offer do

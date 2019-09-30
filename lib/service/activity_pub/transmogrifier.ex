@@ -14,6 +14,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   alias Mobilizon.Events.{Comment, Event, Participant}
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.{Converter, Convertible, Utils, Visibility}
+  alias MobilizonWeb.Email.Participation
 
   require Logger
 
@@ -543,10 +544,8 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     end
   end
 
-  @doc """
-  Handle incoming `Accept` activities wrapping a `Join` activity on an event
-  """
-  def do_handle_incoming_accept_join(join_object, %Actor{} = actor_accepting) do
+  # Handle incoming `Accept` activities wrapping a `Join` activity on an event
+  defp do_handle_incoming_accept_join(join_object, %Actor{} = actor_accepting) do
     with {:join_event,
           {:ok,
            %Participant{role: :not_approved, actor: actor, id: join_id, event: event} =
@@ -566,7 +565,9 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
              "#{MobilizonWeb.Endpoint.url()}/accept/join/#{join_id}"
            ),
          {:ok, %Participant{role: :participant}} <-
-           Events.update_participant(participant, %{"role" => :participant}) do
+           Events.update_participant(participant, %{"role" => :participant}),
+         :ok <-
+           Participation.send_emails_to_local_user(participant) do
       {:ok, activity, participant}
     else
       {:join_event, {:ok, %Participant{role: :participant}}} ->
@@ -591,10 +592,8 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     end
   end
 
-  @doc """
-  Handle incoming `Reject` activities wrapping a `Join` activity on an event
-  """
-  def do_handle_incoming_reject_join(join_object, %Actor{} = actor_accepting) do
+  # Handle incoming `Reject` activities wrapping a `Join` activity on an event
+  defp do_handle_incoming_reject_join(join_object, %Actor{} = actor_accepting) do
     with {:join_event,
           {:ok,
            %Participant{role: :not_approved, actor: actor, id: join_id, event: event} =
@@ -613,8 +612,9 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
              },
              "#{MobilizonWeb.Endpoint.url()}/reject/join/#{join_id}"
            ),
-         {:ok, %Participant{}} <-
-           Events.delete_participant(participant) do
+         {:ok, %Participant{role: :rejected} = participant} <-
+           Events.update_participant(participant, %{"role" => :rejected}),
+         :ok <- Participation.send_emails_to_local_user(participant) do
       {:ok, activity, participant}
     else
       {:join_event, {:ok, %Participant{role: :participant}}} ->
