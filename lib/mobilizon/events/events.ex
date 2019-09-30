@@ -262,11 +262,19 @@ defmodule Mobilizon.Events do
   Updates an event.
   """
   @spec update_event(Event.t(), map) :: {:ok, Event.t()} | {:error, Ecto.Changeset.t()}
-  def update_event(%Event{} = event, attrs) do
-    event
-    |> Repo.preload(:tags)
-    |> Event.update_changeset(attrs)
-    |> Repo.update()
+  def update_event(%Event{} = old_event, attrs) do
+    with %Ecto.Changeset{changes: changes} = changeset <-
+           old_event |> Repo.preload(:tags) |> Event.update_changeset(attrs) do
+      with {:ok, %Event{} = new_event} <- Repo.update(changeset) do
+        Mobilizon.Service.Events.Tool.calculate_event_diff_and_send_notifications(
+          old_event,
+          new_event,
+          changes
+        )
+
+        {:ok, new_event}
+      end
+    end
   end
 
   @doc """
@@ -1299,6 +1307,15 @@ defmodule Mobilizon.Events do
       where: e.id == ^event_id,
       preload: [:actor]
     )
+  end
+
+  @spec list_participants_for_event_query(String.t()) :: Ecto.Query.t()
+  def list_local_emails_user_participants_for_event_query(event_id) do
+    Participant
+    |> join(:inner, [p], a in Actor, on: p.actor_id == a.id and is_nil(a.domain))
+    |> join(:left, [_p, a], u in User, on: a.user_id == u.id)
+    |> where([p], p.event_id == ^event_id)
+    |> select([_p, a, u], {a, u})
   end
 
   @spec list_participations_for_user_query(integer()) :: Ecto.Query.t()
