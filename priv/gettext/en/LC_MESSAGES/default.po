@@ -8,15 +8,15 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2019-09-23 18:05+0000\n"
+"PO-Revision-Date: 2019-09-30 17:10+0000\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: English <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/en/>\n"
 "Language: en\n"
 "Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 3.8\n"
-"Content-Transfer-Encoding: 8bit\n"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:48
@@ -157,19 +157,21 @@ msgstr "Activate my account"
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:13
 msgid "All good!"
-msgstr ""
+msgstr "All good!"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:45
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:7
 msgid "An organizer just approved your participation. You're now going to this event!"
 msgstr ""
+"An organizer just approved your participation. You're now going to this "
+"event!"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:58
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:87
 msgid "Go to event page"
-msgstr ""
+msgstr "Go to event page"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:70
@@ -177,16 +179,20 @@ msgstr ""
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:21
 msgid "If you need to cancel your participation, just access the event page through link above and click on the participation button."
 msgstr ""
+"If you need to cancel your participation, just access the event page through "
+"link above and click on the participation button."
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:11
 msgid "If you need to cancel your participation, just access the previous link and click on the participation button."
 msgstr ""
+"If you need to cancel your participation, just access the previous link and "
+"click on the participation button."
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/email.text.eex:6
 msgid "Learn more about Mobilizon:"
-msgstr "Learn more about Mobilizon."
+msgstr "Learn more about Mobilizon:"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/report.text.eex:1
@@ -196,17 +202,17 @@ msgstr "New report on %{instance}"
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:1
 msgid "Participation approved"
-msgstr ""
+msgstr "Participation approved"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_rejected.text.eex:1
 msgid "Participation rejected"
-msgstr ""
+msgstr "Participation rejected"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:1
 msgid "Password reset"
-msgstr ""
+msgstr "Password reset"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:7
@@ -218,13 +224,13 @@ msgstr ""
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:13
 msgid "Sorry!"
-msgstr ""
+msgstr "Sorry!"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:45
 #: lib/mobilizon_web/templates/email/event_participation_rejected.text.eex:7
 msgid "Unfortunately, the organizers rejected your participation."
-msgstr ""
+msgstr "Unfortunately, the organizers rejected your participation."
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/registration_confirmation.text.eex:5
@@ -241,19 +247,19 @@ msgstr "You requested a new password for your account on %{server}."
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:38
 msgid "You requested to participate in event %{title}"
-msgstr ""
+msgstr "You requested to participate in event %{title}"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:5
 #: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:38
 #: lib/mobilizon_web/templates/email/event_participation_rejected.text.eex:5
 msgid "You requested to participate in event %{title}."
-msgstr ""
+msgstr "You requested to participate in event %{title}."
 
 #, elixir-format
 #: lib/mobilizon_web/email/participation.ex:73
 msgid "Your participation to event %{title} has been approved"
-msgstr ""
+msgstr "Your participation to event %{title} has been approved"
 
 #, elixir-format
 #: lib/mobilizon_web/email/participation.ex:52
@@ -314,4 +320,4 @@ msgstr ""
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:19
 msgid "View the updated event on: %{link}"
-msgstr ""
+msgstr "Your participation to event %{title} has been rejected"
