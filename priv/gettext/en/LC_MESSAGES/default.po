@@ -266,7 +266,7 @@ msgid "Ending of event"
 msgstr ""
 
 #, elixir-format
-#: lib/mobilizon_web/email/event.ex:29
+#: lib/mobilizon_web/email/event.ex:30
 msgid "Event %{title} has been updated"
 msgstr ""
 
