@@ -275,6 +275,44 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
                @user_creation.username
     end
 
+    test "create_user/3 doesn't allow two users with the same email", %{conn: conn} do
+      mutation = """
+          mutation {
+            createUser(
+                  email: "#{@user_creation.email}",
+                  password: "#{@user_creation.password}",
+              ) {
+                id,
+                email
+              }
+            }
+      """
+
+      res =
+        conn
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["data"]["createUser"]["email"] == @user_creation.email
+
+      mutation = """
+          mutation {
+            createUser(
+                  email: "#{@user_creation.email}",
+                  password: "#{@user_creation.password}",
+              ) {
+                id,
+                email
+              }
+            }
+      """
+
+      res =
+        conn
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] == "This email is already used."
+    end
+
     test "register_person/3 doesn't register a profile from an unknown email", context do
       mutation = """
           mutation {
@@ -429,7 +467,6 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
   end
 
   describe "Resolver: Validate an user" do
-    @valid_actor_params %{email: "test@test.tld", password: "testest"}
     test "test validate_user/3 validates an user", context do
       {:ok, %User{} = user} = Users.register(@valid_actor_params)
 
