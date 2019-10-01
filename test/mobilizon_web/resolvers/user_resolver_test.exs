@@ -220,6 +220,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
     @user_creation %{
       email: "test@demo.tld",
       password: "long password",
+      locale: "fr_FR",
       username: "toto",
       name: "Sir Toto",
       summary: "Sir Toto, prince of the functional tests"
@@ -236,9 +237,11 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
             createUser(
                   email: "#{@user_creation.email}",
                   password: "#{@user_creation.password}",
+                  locale: "#{@user_creation.locale}"
               ) {
                 id,
-                email
+                email,
+                locale
               }
             }
       """
@@ -248,6 +251,11 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert json_response(res, 200)["data"]["createUser"]["email"] == @user_creation.email
+      assert json_response(res, 200)["data"]["createUser"]["locale"] == @user_creation.locale
+
+      {:ok, user} = Users.get_user_by_email(@user_creation.email)
+
+      assert_delivered_email(Email.User.confirmation_email(user, @user_creation.locale))
 
       mutation = """
           mutation {

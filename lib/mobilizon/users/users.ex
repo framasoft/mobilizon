@@ -24,7 +24,7 @@ defmodule Mobilizon.Users do
   Registers an user.
   """
   @spec register(map) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
-  def register(%{email: _email, password: _password} = args) do
+  def register(args) do
     with {:ok, %User{} = user} <-
            %User{}
            |> User.registration_changeset(args)

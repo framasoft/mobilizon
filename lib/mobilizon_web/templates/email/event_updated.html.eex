@@ -58,7 +58,7 @@
                           <%= gettext "Start of event" %>
                         </td>
                         <td bgcolor="#ffffff" align="left">
-                          <%= datetime_to_string(@event.begins_on) %>
+                          <%= datetime_to_string(@event.begins_on, @locale) %>
                         </td>
                       </tr>
                     <% end %>
@@ -68,7 +68,7 @@
                           <%= gettext "Ending of event" %>
                         </td>
                         <td bgcolor="#ffffff" align="left">
-                          <%= datetime_to_string(@event.ends_on) %>
+                          <%= datetime_to_string(@event.ends_on, @locale) %>
                         </td>
                       </tr>
                     <% end %>

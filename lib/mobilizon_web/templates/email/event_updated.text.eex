@@ -9,11 +9,11 @@
 <% end %>
 
 <%= if MapSet.member?(@changes, :begins_on) do %>
-    <%= gettext "New date and time for start of event: %{begins_on}", begins_on: datetime_to_string(@event.begins_on) %>
+    <%= gettext "New date and time for start of event: %{begins_on}", begins_on: datetime_to_string(@event.begins_on, @locale) %>
 <% end %>
 
 <%= if MapSet.member?(@changes, :ends_on) do %>
-    <%= gettext "New date and time for ending of event: %{ends_on}", ends_on: datetime_to_string(@event.ends_on) %>
+    <%= gettext "New date and time for ending of event: %{ends_on}", ends_on: datetime_to_string(@event.ends_on, @locale) %>
 <% end %>
 
 <%= gettext "View the updated event on: %{link}", link: page_url(MobilizonWeb.Endpoint, :event, @event.id) %>

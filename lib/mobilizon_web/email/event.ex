@@ -24,7 +24,7 @@ defmodule MobilizonWeb.Email.Event do
         changes,
         locale \\ "en"
       ) do
-    Gettext.put_locale(locale)
+    MobilizonWeb.Gettext.put_locale(locale)
 
     subject =
       gettext(

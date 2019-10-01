@@ -38,13 +38,13 @@ defmodule Mobilizon.Service.Events.Tool do
   end
 
   defp send_notification_for_event_update_to_participant(
-         {%Actor{} = actor, %User{} = user},
+         {%Actor{} = actor, %User{locale: locale} = user},
          %Event{} = old_event,
          %Event{} = event,
          diff
        ) do
     user
-    |> Email.Event.event_updated(actor, old_event, event, diff)
+    |> Email.Event.event_updated(actor, old_event, event, diff, locale)
     |> Email.Mailer.deliver_later()
   end
 end

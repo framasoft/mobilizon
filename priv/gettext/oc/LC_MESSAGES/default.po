@@ -133,11 +133,6 @@ msgstr ""
 "clic de l’activar."
 
 #, elixir-format
-#: lib/mobilizon_web/templates/email/password_reset.html.eex:38
-msgid "You requested a new password for your account on %{server}."
-msgstr "Avètz demandat un nòu senhal per vòstre compte sus %{server}."
-
-#, elixir-format
 #: lib/mobilizon_web/email/user.ex:25
 msgid "Instructions to confirm your Mobilizon account on %{instance}"
 msgstr "Consignas per confirmar vòstre compte Mobilizon sus %{instance}"
@@ -232,11 +227,6 @@ msgstr ""
 "clic de l’activar."
 
 #, elixir-format
-#: lib/mobilizon_web/templates/email/password_reset.text.eex:5
-msgid "You requested a new password for your account on %{host}."
-msgstr "Avètz demandat un nòu senhal per vòstre compte sus %{server}."
-
-#, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:38
 msgid "You requested to participate in event %{title}"
 msgstr ""
@@ -313,3 +303,9 @@ msgstr ""
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:19
 msgid "View the updated event on: %{link}"
 msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:38
+#: lib/mobilizon_web/templates/email/password_reset.text.eex:5
+msgid "You requested a new password for your account on %{instance}."
+msgstr "Avètz demandat un nòu senhal per vòstre compte sus %{instance}."
