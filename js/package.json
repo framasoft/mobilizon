@@ -54,7 +54,7 @@
     "apollo-link-error": "^1.1.12",
     "chai": "^4.2.0",
     "dotenv-webpack": "^1.7.0",
-    "eslint": "^6.5.0",
+    "eslint": "^6.5.1",
     "graphql-cli": "^3.0.12",
     "node-sass": "^4.11.0",
     "sass-loader": "^8.0.0",
