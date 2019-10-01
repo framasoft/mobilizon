@@ -116,7 +116,7 @@ defmodule MobilizonWeb.Resolvers.User do
     with {:registrations_open, true} <-
            {:registrations_open, Config.instance_registrations_open?()},
          {:ok, %User{} = user} <- Users.register(args) do
-      Activation.send_confirmation_email(user)
+      Activation.send_confirmation_email(user, Map.get(args, :locale, "en"))
       {:ok, user}
     else
       {:registrations_open, false} ->
@@ -154,10 +154,11 @@ defmodule MobilizonWeb.Resolvers.User do
   Send the confirmation email again.
   We only do this to accounts unconfirmed
   """
-  def resend_confirmation_email(_parent, %{email: email, locale: locale}, _resolution) do
-    with {:ok, user} <- Users.get_user_by_email(email, false),
+  def resend_confirmation_email(_parent, args, _resolution) do
+    with {:ok, %User{locale: locale} = user} <-
+           Users.get_user_by_email(Map.get(args, :email), false),
          {:ok, email} <-
-           Activation.resend_confirmation_email(user, locale) do
+           Activation.resend_confirmation_email(user, Map.get(args, :locale, locale)) do
       {:ok, email}
     else
       {:error, :user_not_found} ->
@@ -171,10 +172,11 @@ defmodule MobilizonWeb.Resolvers.User do
   @doc """
   Send an email to reset the password from an user
   """
-  def send_reset_password(_parent, %{email: email, locale: locale}, _resolution) do
-    with {:ok, user} <- Users.get_user_by_email(email, true),
+  def send_reset_password(_parent, args, _resolution) do
+    with email <- Map.get(args, :email),
+         {:ok, %User{locale: locale} = user} <- Users.get_user_by_email(email, true),
          {:ok, %Bamboo.Email{} = _email_html} <-
-           ResetPassword.send_password_reset_email(user, locale) do
+           ResetPassword.send_password_reset_email(user, Map.get(args, :locale, locale)) do
       {:ok, email}
     else
       {:error, :user_not_found} ->

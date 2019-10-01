@@ -46,7 +46,7 @@ defmodule MobilizonWeb.Email.Participation do
         %Participant{event: event, role: :rejected},
         locale
       ) do
-    Gettext.put_locale(locale)
+    MobilizonWeb.Gettext.put_locale(locale)
 
     subject =
       gettext(
@@ -67,7 +67,7 @@ defmodule MobilizonWeb.Email.Participation do
         %Participant{event: event, role: :participant},
         locale
       ) do
-    Gettext.put_locale(locale)
+    MobilizonWeb.Gettext.put_locale(locale)
 
     subject =
       gettext(

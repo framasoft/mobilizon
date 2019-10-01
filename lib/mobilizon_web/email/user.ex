@@ -19,7 +19,7 @@ defmodule MobilizonWeb.Email.User do
         %User{email: email, confirmation_token: confirmation_token},
         locale \\ "en"
       ) do
-    Gettext.put_locale(locale)
+    MobilizonWeb.Gettext.put_locale(locale)
 
     subject =
       gettext(
@@ -39,7 +39,7 @@ defmodule MobilizonWeb.Email.User do
         %User{email: email, reset_password_token: reset_password_token},
         locale \\ "en"
       ) do
-    Gettext.put_locale(locale)
+    MobilizonWeb.Gettext.put_locale(locale)
 
     subject =
       gettext(

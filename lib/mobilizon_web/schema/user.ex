@@ -46,6 +46,8 @@ defmodule MobilizonWeb.Schema.UserType do
 
     field(:role, :user_role, description: "The role for the user")
 
+    field(:locale, :string, description: "The user's locale")
+
     field(:participations, list_of(:participant),
       description: "The list of events this user goes to"
     ) do
@@ -109,6 +111,7 @@ defmodule MobilizonWeb.Schema.UserType do
     field :create_user, type: :user do
       arg(:email, non_null(:string))
       arg(:password, non_null(:string))
+      arg(:locale, :string)
 
       resolve(handle_errors(&User.create_user/3))
     end
@@ -122,14 +125,14 @@ defmodule MobilizonWeb.Schema.UserType do
     @desc "Resend registration confirmation token"
     field :resend_confirmation_email, type: :string do
       arg(:email, non_null(:string))
-      arg(:locale, :string, default_value: "en")
+      arg(:locale, :string)
       resolve(&User.resend_confirmation_email/3)
     end
 
     @desc "Send a link through email to reset user password"
     field :send_reset_password, type: :string do
       arg(:email, non_null(:string))
-      arg(:locale, :string, default_value: "en")
+      arg(:locale, :string)
       resolve(&User.send_reset_password/3)
     end
 

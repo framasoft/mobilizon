@@ -13,7 +13,7 @@ msgstr ""
 "PO-Revision-Date: 2019-09-30 17:10+0000\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
-"Language: fr_FR\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -131,11 +131,6 @@ msgid "You created an account on %{host} with this email address. You are one cl
 msgstr "Vous avez créé un compte sur %{host} avec cette adresse email. Vous êtes à un clic de l'activer."
 
 #, elixir-format
-#: lib/mobilizon_web/templates/email/password_reset.html.eex:38
-msgid "You requested a new password for your account on %{server}."
-msgstr "Vous avez demandé un nouveau mot de passe pour votre compte sur %{server}."
-
-#, elixir-format
 #: lib/mobilizon_web/email/user.ex:25
 msgid "Instructions to confirm your Mobilizon account on %{instance}"
 msgstr "Instructions pour confirmer votre compte Mobilizon sur %{instance}"
@@ -235,11 +230,6 @@ msgid "You created an account on %{host} with this email address. You are one cl
 msgstr "Vous avez créé un compte sur %{host} avec cette adresse email. Vous êtes à un clic de l'activer."
 
 #, elixir-format
-#: lib/mobilizon_web/templates/email/password_reset.text.eex:5
-msgid "You requested a new password for your account on %{host}."
-msgstr "Vous avez demandé un nouveau mot de passe pour votre compte sur %{server}."
-
-#, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:38
 msgid "You requested to participate in event %{title}"
 msgstr "Vous avez demandé à participer à l'événement %{title}"
@@ -316,3 +306,9 @@ msgstr "Titre"
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:19
 msgid "View the updated event on: %{link}"
 msgstr "Voir l'événement mis à jour sur : %{link}"
+
+#, elixir-format, fuzzy
+#: lib/mobilizon_web/templates/email/password_reset.html.eex:38
+#: lib/mobilizon_web/templates/email/password_reset.text.eex:5
+msgid "You requested a new password for your account on %{instance}."
+msgstr "Vous avez demandé un nouveau mot de passe pour votre compte sur %{instance}."

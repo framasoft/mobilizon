@@ -23,6 +23,7 @@ defmodule Mobilizon.Users.User do
           confirmation_token: String.t(),
           reset_password_sent_at: DateTime.t(),
           reset_password_token: String.t(),
+          locale: String.t(),
           default_actor: Actor.t(),
           actors: [Actor.t()],
           feed_tokens: [FeedToken.t()]
@@ -37,7 +38,8 @@ defmodule Mobilizon.Users.User do
     :confirmation_sent_at,
     :confirmation_token,
     :reset_password_sent_at,
-    :reset_password_token
+    :reset_password_token,
+    :locale
   ]
   @attrs @required_attrs ++ @optional_attrs
 
@@ -59,6 +61,7 @@ defmodule Mobilizon.Users.User do
     field(:confirmation_token, :string)
     field(:reset_password_sent_at, :utc_datetime)
     field(:reset_password_token, :string)
+    field(:locale, :string, default: "en")
 
     belongs_to(:default_actor, Actor)
     has_many(:actors, Actor)
