@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="container">
     <h1>
       {{ $t('Event list') }}
     </h1>

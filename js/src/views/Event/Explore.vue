@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="container">
     <h1 class="title">{{ $t('Explore') }}</h1>
 <!--    <pre>{{ events }}</pre>-->
     <b-loading :active.sync="$apollo.loading"></b-loading>

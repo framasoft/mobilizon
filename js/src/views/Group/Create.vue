@@ -1,5 +1,5 @@
 <template>
-  <div class="root">
+  <div class="container root">
     <h1>{{ $t('Create a new group') }}</h1>
 
     <div>

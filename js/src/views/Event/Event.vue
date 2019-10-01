@@ -1,8 +1,5 @@
-import {ParticipantRole} from "@/types/event.model";
-import {ParticipantRole} from "@/types/event.model";
-import {ParticipantRole} from "@/types/event.model";
 <template>
-  <div>
+  <div class="container">
     <b-loading :active.sync="$apollo.loading"></b-loading>
     <div v-if="event">
       <div class="header-picture container">

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <section class="container">
     <span v-if="code === ErrorCode.REGISTRATION_CLOSED">
       {{ $t('Registration is currently closed.') }}
     </span>
@@ -7,7 +7,7 @@
     <span v-else>
       {{ $t('Unknown error.') }}
     </span>
-  </div>
+  </section>
 </template>
 
 <script lang="ts">

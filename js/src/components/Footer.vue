@@ -1,5 +1,5 @@
 <template>
-    <footer class="footer">
+    <footer class="footer" ref="footer">
         <mobilizon-logo :invert="true" class="logo" />
         <img src="../assets/footer.png" :alt="$t('World map')" />
         <ul>
