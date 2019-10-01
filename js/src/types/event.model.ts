@@ -125,6 +125,8 @@ export interface IEvent {
 
   tags: ITag[];
   options: IEventOptions;
+
+  toEditJSON();
 }
 
 export interface IEventOptions {
@@ -228,7 +230,7 @@ export class EventModel implements IEvent {
     if (hash.options) this.options = hash.options;
   }
 
-  toEditJSON () {
+  toEditJSON() {
     return {
       id: this.id,
       title: this.title,

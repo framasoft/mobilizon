@@ -1,5 +1,5 @@
 <template>
-    <section class="section">
+    <section class="container">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
                 <li><router-link :to="{ name: MyAccountRouteName.UPDATE_IDENTITY }">{{ $t('My account') }}</router-link></li>

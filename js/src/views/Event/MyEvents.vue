@@ -1,5 +1,5 @@
 <template>
-    <main>
+    <main class="container">
         <h1 class="title">
             {{ $t('My events') }}
         </h1>
