@@ -60,7 +60,7 @@ export const UPDATE_CURRENT_ACTOR_CLIENT = gql`
 `;
 
 export const LOGGED_USER_PARTICIPATIONS = gql`
-query LoggedUserParticipations($afterDateTime: DateTime, $beforeDateTime: DateTime $page: Int, $limit: Int) {
+query LoggedUserParticipations($afterDateTime: DateTime, $beforeDateTime: DateTime, $page: Int, $limit: Int) {
   loggedUser {
       participations(afterDatetime: $afterDateTime, beforeDatetime: $beforeDateTime, page: $page, limit: $limit) {
           event {
@@ -105,6 +105,40 @@ query LoggedUserParticipations($afterDateTime: DateTime, $beforeDateTime: DateTi
       }
   }
 }`;
+
+export const LOGGED_USER_DRAFTS = gql`
+    query LoggedUserDrafts($page: Int, $limit: Int) {
+        loggedUser {
+            drafts(page: $page, limit: $limit) {
+                id,
+                uuid,
+                title,
+                picture {
+                    url,
+                    alt
+                },
+                beginsOn,
+                visibility,
+                organizerActor {
+                    id,
+                    preferredUsername,
+                    name,
+                    domain,
+                    avatar {
+                        url
+                    }
+                },
+                participantStats {
+                    approved,
+                    unapproved
+                },
+                options {
+                    maximumAttendeeCapacity
+                    remainingAttendeeCapacity
+                }
+            }
+        }
+    }`;
 
 export const IDENTITIES = gql`
 query {

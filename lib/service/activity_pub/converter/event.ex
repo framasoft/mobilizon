@@ -70,6 +70,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Event do
         "status" => object["status"],
         "online_address" => object["onlineAddress"],
         "phone_address" => object["phoneAddress"],
+        "draft" => object["draft"] || false,
         "url" => object["id"],
         "uuid" => object["uuid"],
         "tags" => tags,
@@ -111,6 +112,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Event do
       "joinOptions" => to_string(event.join_options),
       "endTime" => event.ends_on |> date_to_string(),
       "tag" => event.tags |> build_tags(),
+      "draft" => event.draft,
       "id" => event.url,
       "url" => event.url
     }

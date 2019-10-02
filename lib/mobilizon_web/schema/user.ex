@@ -49,13 +49,19 @@ defmodule MobilizonWeb.Schema.UserType do
     field(:locale, :string, description: "The user's locale")
 
     field(:participations, list_of(:participant),
-      description: "The list of events this user goes to"
+      description: "The list of participations this user has"
     ) do
       arg(:after_datetime, :datetime)
       arg(:before_datetime, :datetime)
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
       resolve(&User.user_participations/3)
+    end
+
+    field(:drafts, list_of(:event), description: "The list of draft events this user has created") do
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
+      resolve(&User.user_drafted_events/3)
     end
   end
 

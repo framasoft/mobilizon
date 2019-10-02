@@ -96,15 +96,13 @@ export interface IEvent {
   slug: string;
   description: string;
   category: Category | null;
-
   beginsOn: Date;
   endsOn: Date | null;
   publishAt: Date;
-
   status: EventStatus;
   visibility: EventVisibility;
-
   joinOptions: EventJoinOptions;
+  draft: boolean;
 
   picture: IPicture | null;
 
@@ -176,6 +174,7 @@ export class EventModel implements IEvent {
   category: Category | null = Category.MEETING;
   joinOptions = EventJoinOptions.FREE;
   status = EventStatus.CONFIRMED;
+  draft = true;
 
   publishAt = new Date();
 
@@ -210,8 +209,8 @@ export class EventModel implements IEvent {
 
     this.status = hash.status;
     this.visibility = hash.visibility;
-
     this.joinOptions = hash.joinOptions;
+    this.draft = hash.draft;
 
     this.picture = hash.picture;
 
@@ -240,6 +239,7 @@ export class EventModel implements IEvent {
       status: this.status,
       visibility: this.visibility,
       joinOptions: this.joinOptions,
+      draft: this.draft,
       tags: this.tags.map(t => t.title),
       picture: this.picture,
       onlineAddress: this.onlineAddress,

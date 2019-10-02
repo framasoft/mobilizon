@@ -31,7 +31,8 @@ defmodule MobilizonWeb.API.Events do
         to: args.to,
         actor: organizer_actor,
         object: event,
-        local: true
+        # For now we don't federate drafts but it will be needed if we want to edit them as groups
+        local: args.metadata.draft == false
       })
     end
   end
@@ -65,7 +66,7 @@ defmodule MobilizonWeb.API.Events do
         actor: organizer_actor.url,
         cc: [],
         object: event,
-        local: true
+        local: args.metadata.draft == false
       })
     end
   end
@@ -95,7 +96,8 @@ defmodule MobilizonWeb.API.Events do
           join_options: Map.get(args, :join_options),
           status: Map.get(args, :status),
           online_address: Map.get(args, :online_address),
-          phone_address: Map.get(args, :phone_address)
+          phone_address: Map.get(args, :phone_address),
+          draft: Map.get(args, :draft)
         }
       }
     end

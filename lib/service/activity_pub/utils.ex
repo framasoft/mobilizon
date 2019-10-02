@@ -319,6 +319,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "status" => metadata.status,
       "onlineAddress" => metadata.online_address,
       "phoneAddress" => metadata.phone_address,
+      "draft" => metadata.draft,
       "uuid" => uuid,
       "tag" =>
         tags |> Enum.uniq() |> Enum.map(fn tag -> %{"type" => "Hashtag", "name" => "##{tag}"} end)

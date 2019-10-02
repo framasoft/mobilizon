@@ -26,6 +26,19 @@
                           v-if="hasMoreFutureParticipations && (futureParticipations.length === limit)" @click="loadMoreFutureParticipations" size="is-large" type="is-primary">{{ $t('Load more') }}</b-button>
             </div>
         </section>
+        <section v-if="drafts.length > 0">
+            <h2 class="subtitle">
+                {{ $t('Drafts') }}
+            </h2>
+            <div class="columns is-multiline">
+                <EventCard
+                        v-for="draft in drafts"
+                        :key="draft.uuid"
+                        :event="draft"
+                        class="is-one-quarter-desktop column"
+                />
+            </div>
+        </section>
         <section v-if="pastParticipations.length > 0">
             <h2 class="subtitle">
                 {{ $t('Past events') }}
@@ -56,13 +69,15 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { LOGGED_USER_PARTICIPATIONS } from '@/graphql/actor';
-import { IParticipant, Participant } from '@/types/event.model';
+import { LOGGED_USER_PARTICIPATIONS, LOGGED_USER_DRAFTS } from '@/graphql/actor';
+import { EventModel, IEvent, IParticipant, Participant } from '@/types/event.model';
 import EventListCard from '@/components/Event/EventListCard.vue';
+import EventCard from '@/components/Event/EventCard.vue';
 
 
 @Component({
   components: {
+    EventCard,
     EventListCard,
   },
   apollo: {
@@ -74,6 +89,14 @@ import EventListCard from '@/components/Event/EventListCard.vue';
         afterDateTime: (new Date()).toISOString(),
       },
       update: data => data.loggedUser.participations.map(participation => new Participant(participation)),
+    },
+    drafts: {
+      query: LOGGED_USER_DRAFTS,
+      variables: {
+        page: 1,
+        limit: 10,
+      },
+      update: data => data.loggedUser.drafts.map(event => new EventModel(event)),
     },
     pastParticipations: {
       query: LOGGED_USER_PARTICIPATIONS,
@@ -96,6 +119,8 @@ export default class MyEvents extends Vue {
 
   pastParticipations: IParticipant[] = [];
   hasMorePastParticipations: boolean = true;
+
+  drafts: IEvent[] = [];
 
   private monthlyParticipations(participations: IParticipant[]): Map<string, Participant[]> {
     const res = participations.filter(({ event }) => event.beginsOn != null);
