@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Mon Sep 30 2019 09:56:05 GMT+0200 (GMT+02:00)
+# timestamp: Wed Oct 02 2019 16:30:43 GMT+0200 (GMT+02:00)
 
 schema {
   query: RootQueryType
@@ -263,6 +263,9 @@ type Event implements ActionLogObject {
 
   """The event's description"""
   description: String
+
+  """Whether or not the event is a draft"""
+  draft: Boolean
 
   """Datetime for when the event ends"""
   endsOn: DateTime
@@ -897,6 +900,7 @@ type RootMutationType {
     beginsOn: DateTime!
     category: String = "meeting"
     description: String!
+    draft: Boolean = false
     endsOn: DateTime
     joinOptions: EventJoinOptions = FREE
     onlineAddress: String
@@ -973,7 +977,7 @@ type RootMutationType {
   createReportNote(content: String, moderatorId: ID!, reportId: ID!): ReportNote
 
   """Create an user"""
-  createUser(email: String!, password: String!): User
+  createUser(email: String!, locale: String, password: String!): User
 
   """Delete an event"""
   deleteEvent(actorId: ID!, eventId: ID!): DeletedObject
@@ -1030,19 +1034,20 @@ type RootMutationType {
   ): Person
 
   """Resend registration confirmation token"""
-  resendConfirmationEmail(email: String!, locale: String = "en"): String
+  resendConfirmationEmail(email: String!, locale: String): String
 
   """Reset user password"""
   resetPassword(locale: String = "en", password: String!, token: String!): Login
 
   """Send a link through email to reset user password"""
-  sendResetPassword(email: String!, locale: String = "en"): String
+  sendResetPassword(email: String!, locale: String): String
 
   """Update an event"""
   updateEvent(
     beginsOn: DateTime
     category: String
     description: String
+    draft: Boolean
     endsOn: DateTime
     eventId: ID!
     joinOptions: EventJoinOptions = FREE
@@ -1212,6 +1217,9 @@ type User {
   """The user's default actor"""
   defaultActor: Person
 
+  """The list of draft events this user has created"""
+  drafts(limit: Int = 10, page: Int = 1): [Event]
+
   """The user's email"""
   email: String!
 
@@ -1221,7 +1229,10 @@ type User {
   """The user's ID"""
   id: ID!
 
-  """The list of events this user goes to"""
+  """The user's locale"""
+  locale: String
+
+  """The list of participations this user has"""
   participations(afterDatetime: DateTime, beforeDatetime: DateTime, limit: Int = 10, page: Int = 1): [Participant]
 
   """The user's list of profiles (identities)"""

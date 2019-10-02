@@ -18,15 +18,15 @@
               </div>
               <h1 class="title">{{ event.title }}</h1>
             </div>
-            <div class="has-text-right">
+            <div class="has-text-right" v-if="new Date(endDate) > new Date()">
               <small v-if="event.participantStats.approved > 0 && !actorIsParticipant">
                   {{ $tc('One person is going', event.participantStats.approved, {approved: event.participantStats.approved}) }}
               </small>
-              <small v-else>
+              <small v-else-if="event.participantStats.approved > 0 && actorIsParticipant">
                 {{ $tc('You and one other person are going to this event', event.participantStats.approved - 1, {approved: event.participantStats.approved - 1}) }}
               </small>
               <participation-button
-                      v-if="currentActor.id && !actorIsOrganizer"
+                      v-if="currentActor.id && !actorIsOrganizer && !event.draft"
                       :participation="participations[0]"
                       :current-actor="currentActor"
                       @joinEvent="joinEvent"
@@ -34,15 +34,25 @@
                       @confirmLeave="confirmLeave"
               />
             </div>
+            <div v-else>
+              <button class="button is-primary" type="button" slot="trigger" disabled>
+                <template>
+                  <span>{{ $t('Event already passed')}}</span>
+                </template>
+                <b-icon icon="menu-down"></b-icon>
+              </button>
+            </div>
           </div>
           <div class="metadata columns">
             <div class="column is-three-quarters-desktop">
               <p class="tags" v-if="event.category || event.tags.length > 0">
+                <b-tag type="is-warning" size="is-medium" v-if="event.draft">{{ $t('Draft') }}</b-tag>
 <!--                <span class="tag" v-if="event.category">{{ event.category }}</span>-->
-                <span class="tag" v-if="event.tags" v-for="tag in event.tags">{{ tag.title }}</span>
-                <span class="visibility">
-                  <span v-if="event.visibility === EventVisibility.PUBLIC">{{ $t('Public event') }}</span>
-                  <span v-if="event.visibility === EventVisibility.UNLISTED">{{ $t('Private event') }}</span>
+                <b-tag type="is-success" v-if="event.tags" v-for="tag in event.tags">{{ tag.title }}</b-tag>
+                <span v-if="event.tags > 0">⋅</span>
+                <span class="visibility" v-if="!event.draft">
+                  <b-tag type="is-info" v-if="event.visibility === EventVisibility.PUBLIC">{{ $t('Public event') }}</b-tag>
+                  <b-tag type="is-info" v-if="event.visibility === EventVisibility.UNLISTED">{{ $t('Private event') }}</b-tag>
                 </span>
               </p>
               <div class="date-and-add-to-calendar">
@@ -50,7 +60,7 @@
                   <b-icon icon="calendar-clock" />
                   <event-full-date :beginsOn="event.beginsOn" :endsOn="event.endsOn" />
                 </div>
-                <a class="add-to-calendar" @click="downloadIcsEvent()">
+                <a class="add-to-calendar" @click="downloadIcsEvent()" v-if="!event.draft">
                   <b-icon icon="calendar-plus" />
                   {{ $t('Add to my calendar') }}
                 </a>
@@ -61,7 +71,7 @@
             </div>
             <div class="column sidebar">
               <div class="field has-addons" v-if="currentActor.id">
-                <p class="control" v-if="actorIsOrganizer">
+                <p class="control" v-if="actorIsOrganizer || event.draft">
                   <router-link
                           class="button"
                           :to="{ name: 'EditEvent', params: {eventId: event.uuid}}"
@@ -69,7 +79,7 @@
                     {{ $t('Edit') }}
                   </router-link>
                 </p>
-                <p class="control" v-if="actorIsOrganizer">
+                <p class="control" v-if="actorIsOrganizer || event.draft">
                   <a class="button is-danger" @click="openDeleteEventModalWrapper">
                     {{ $t('Delete') }}
                   </a>
@@ -133,7 +143,7 @@
             </div>
           </div>
         </div>
-      <section class="share">
+      <section class="share" v-if="!event.draft">
         <div class="container">
           <div class="columns">
             <div class="column is-half has-text-centered">
@@ -433,6 +443,10 @@ export default class Event extends EventMixin {
     return this.participations.length > 0 && this.participations[0].role === ParticipantRole.CREATOR;
   }
 
+  get endDate() {
+    return this.event.endsOn !== null && this.event.endsOn > this.event.beginsOn ? this.event.endsOn : this.event.beginsOn;
+  }
+
   get twitterShareUrl(): string {
     return `https://twitter.com/intent/tweet?url=${encodeURIComponent(this.event.url)}&text=${this.event.title}`;
   }
@@ -597,17 +611,13 @@ export default class Event extends EventMixin {
 
   p.tags {
     span {
-      &.tag {
+      &.tag.is-success {
         &::before {
           content: '#';
         }
         text-transform: uppercase;
+        color: #111111;
       }
-
-      &.visibility::before {
-        content: "⋅"
-      }
-
 
       margin: auto 5px;
     }

@@ -243,6 +243,19 @@ defmodule MobilizonWeb.Resolvers.User do
     end
   end
 
+  @doc """
+  Returns the list of draft events for the current user
+  """
+  def user_drafted_events(%User{id: user_id}, args, %{
+        context: %{current_user: %User{id: logged_user_id}}
+      }) do
+    with {:same_user, true} <- {:same_user, user_id == logged_user_id},
+         events <-
+           Events.list_drafts_for_user(user_id, Map.get(args, :page), Map.get(args, :limit)) do
+      {:ok, events}
+    end
+  end
+
   def change_password(_parent, %{old_password: old_password, new_password: new_password}, %{
         context: %{current_user: %User{password_hash: old_password_hash} = user}
       }) do

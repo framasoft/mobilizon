@@ -15,7 +15,7 @@
         </div>
         <h2 class="title" ref="title">{{ event.title }}</h2>
       </div>
-      <span>
+      <span class="organizer-place-wrapper">
         <span v-if="actorDisplayName && actorDisplayName !== '@'">{{ $t('By {name}', { name: actorDisplayName }) }}</span>
         <span v-if="event.physicalAddress && (event.physicalAddress.locality || event.physicalAddress.description)">
           - {{ event.physicalAddress.locality || event.physicalAddress.description }}
@@ -142,6 +142,17 @@ export default class EventCard extends Vue {
           line-height: 1em;
           font-size: 1.6em;
           padding-bottom: 5px;
+          margin-top: auto;
+        }
+      }
+      span.organizer-place-wrapper {
+        display: flex;
+
+        span:last-child {
+          flex: 1;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
       }
     }

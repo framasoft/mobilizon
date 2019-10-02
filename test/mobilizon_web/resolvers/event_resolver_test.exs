@@ -119,6 +119,97 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       assert json_response(res, 200)["data"]["createEvent"]["title"] == "come to my event"
     end
 
+    test "create_event/3 creates an event as a draft", %{conn: conn, actor: actor, user: user} do
+      mutation = """
+          mutation {
+              createEvent(
+                  title: "come to my event",
+                  description: "it will be fine",
+                  begins_on: "#{
+        DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
+      }",
+                  organizer_actor_id: "#{actor.id}",
+                  category: "birthday",
+                  draft: true
+              ) {
+                title,
+                uuid,
+                id,
+                draft
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["data"]["createEvent"]["title"] == "come to my event"
+      assert json_response(res, 200)["data"]["createEvent"]["draft"] == true
+
+      event_uuid = json_response(res, 200)["data"]["createEvent"]["uuid"]
+      event_id = json_response(res, 200)["data"]["createEvent"]["id"]
+
+      query = """
+      {
+        event(uuid: "#{event_uuid}") {
+          uuid,
+          draft
+        }
+      }
+      """
+
+      res =
+        conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+
+      assert hd(json_response(res, 200)["errors"])["message"] =~ "not found"
+
+      query = """
+      {
+        event(uuid: "#{event_uuid}") {
+          uuid,
+          draft
+        }
+      }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["event"]["draft"] == true
+
+      query = """
+      {
+        person(preferredUsername: "#{actor.preferred_username}") {
+          id,
+          participations(eventId: #{event_id}) {
+            id,
+            role,
+            actor {
+              id
+            },
+            event {
+              id
+            }
+          }
+          }
+      }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["person"]["participations"] == []
+    end
+
     test "create_event/3 creates an event with options", %{conn: conn, actor: actor, user: user} do
       begins_on = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
       ends_on = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
@@ -684,6 +775,157 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                "picture for my event"
     end
 
+    test "update_event/3 respects the draft status", %{conn: conn, actor: actor, user: user} do
+      event = insert(:event, organizer_actor: actor, draft: true)
+
+      mutation = """
+          mutation {
+              updateEvent(
+                  event_id: #{event.id},
+                  title: "my event updated but still draft"
+              ) {
+                draft,
+                title,
+                uuid
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["data"]["updateEvent"]["draft"] == true
+
+      query = """
+      {
+        event(uuid: "#{event.uuid}") {
+          uuid,
+          draft
+        }
+      }
+      """
+
+      res =
+        conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+
+      assert hd(json_response(res, 200)["errors"])["message"] =~ "not found"
+
+      query = """
+      {
+        event(uuid: "#{event.uuid}") {
+          uuid,
+          draft
+        }
+      }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["event"]["draft"] == true
+
+      query = """
+      {
+        person(preferredUsername: "#{actor.preferred_username}") {
+          id,
+          participations(eventId: #{event.id}) {
+            id,
+            role,
+            actor {
+              id
+            },
+            event {
+              id
+            }
+          }
+          }
+      }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["person"]["participations"] == []
+
+      mutation = """
+          mutation {
+              updateEvent(
+                  event_id: #{event.id},
+                  title: "my event updated and no longer draft",
+                  draft: false
+              ) {
+                draft,
+                title,
+                uuid
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["data"]["updateEvent"]["draft"] == false
+
+      query = """
+      {
+        event(uuid: "#{event.uuid}") {
+          uuid,
+          draft
+        }
+      }
+      """
+
+      res =
+        conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["event"]["draft"] == false
+
+      query = """
+      {
+        person(preferredUsername: "#{actor.preferred_username}") {
+          id,
+          participations(eventId: #{event.id}) {
+            role,
+            actor {
+              id
+            },
+            event {
+              id
+            }
+          }
+          }
+      }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+
+      assert json_response(res, 200)["errors"] == nil
+
+      assert json_response(res, 200)["data"]["person"]["participations"] == [
+               %{
+                 "actor" => %{"id" => to_string(actor.id)},
+                 "event" => %{"id" => to_string(event.id)},
+                 "role" => "CREATOR"
+               }
+             ]
+    end
+
     test "list_events/3 returns events", context do
       event = insert(:event)
 
@@ -766,6 +1008,24 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       insert(:event, visibility: :private)
       insert(:event, visibility: :unlisted)
       insert(:event, visibility: :restricted)
+
+      query = """
+      {
+        events {
+          uuid,
+        }
+      }
+      """
+
+      res =
+        context.conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+
+      assert json_response(res, 200)["data"]["events"] |> Enum.map(& &1["uuid"]) == []
+    end
+
+    test "list_events/3 doesn't list draft events", context do
+      insert(:event, visibility: :public, draft: true)
 
       query = """
       {

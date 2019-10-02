@@ -6,6 +6,7 @@ defmodule MobilizonWeb.Schema.EventType do
   use Absinthe.Schema.Notation
 
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+  import MobilizonWeb.Schema.Utils
 
   alias Mobilizon.{Actors, Addresses}
 
@@ -59,6 +60,8 @@ defmodule MobilizonWeb.Schema.EventType do
     )
 
     field(:category, :string, description: "The event's category")
+
+    field(:draft, :boolean, description: "Whether or not the event is a draft")
 
     field(:participant_stats, :participant_stats, resolve: &Event.stats_participants_for_event/3)
 
@@ -252,8 +255,9 @@ defmodule MobilizonWeb.Schema.EventType do
       arg(:category, :string, default_value: "meeting")
       arg(:physical_address, :address_input)
       arg(:options, :event_options_input)
+      arg(:draft, :boolean, default_value: false)
 
-      resolve(&Event.create_event/3)
+      resolve(handle_errors(&Event.create_event/3))
     end
 
     @desc "Update an event"
@@ -280,8 +284,9 @@ defmodule MobilizonWeb.Schema.EventType do
       arg(:category, :string)
       arg(:physical_address, :address_input)
       arg(:options, :event_options_input)
+      arg(:draft, :boolean)
 
-      resolve(&Event.update_event/3)
+      resolve(handle_errors(&Event.update_event/3))
     end
 
     @desc "Delete an event"

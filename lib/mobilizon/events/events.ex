@@ -169,6 +169,7 @@ defmodule Mobilizon.Events do
       url
       |> event_by_url_query()
       |> filter_public_visibility()
+      |> filter_draft()
       |> preload_for_event()
       |> Repo.one()
 
@@ -190,18 +191,32 @@ defmodule Mobilizon.Events do
     url
     |> event_by_url_query()
     |> filter_public_visibility()
+    |> filter_draft()
     |> preload_for_event()
     |> Repo.one!()
   end
 
   @doc """
-  Gets an event by its UUID, with all associations loaded.
+  Gets a public event by its UUID, with all associations loaded.
   """
   @spec get_public_event_by_uuid_with_preload(String.t()) :: Event.t() | nil
   def get_public_event_by_uuid_with_preload(uuid) do
     uuid
     |> event_by_uuid_query()
     |> filter_public_visibility()
+    |> filter_draft()
+    |> preload_for_event()
+    |> Repo.one()
+  end
+
+  @doc """
+  Gets an event by its UUID, with all associations loaded.
+  """
+  @spec get_own_event_by_uuid_with_preload(String.t(), integer()) :: Event.t() | nil
+  def get_own_event_by_uuid_with_preload(uuid, user_id) do
+    uuid
+    |> event_by_uuid_query()
+    |> user_events_query(user_id)
     |> preload_for_event()
     |> Repo.one()
   end
@@ -215,6 +230,7 @@ defmodule Mobilizon.Events do
     |> upcoming_public_event_for_actor_query()
     |> filter_public_visibility()
     |> filter_not_event_uuid(not_event_uuid)
+    |> filter_draft()
     |> Repo.one()
   end
 
@@ -223,16 +239,18 @@ defmodule Mobilizon.Events do
   """
   @spec create_event(map) :: {:ok, Event.t()} | {:error, Ecto.Changeset.t()}
   def create_event(attrs \\ %{}) do
-    with {:ok, %Event{} = event} <- do_create_event(attrs),
+    with {:ok, %Event{draft: false} = event} <- do_create_event(attrs),
          {:ok, %Participant{} = _participant} <-
-           %Participant{}
-           |> Participant.changeset(%{
+           create_participant(%{
              actor_id: event.organizer_actor_id,
              role: :creator,
              event_id: event.id
-           })
-           |> Repo.insert() do
+           }) do
       {:ok, event}
+    else
+      # We don't create a creator participant if the event is a draft
+      {:ok, %Event{draft: true} = event} -> {:ok, event}
+      err -> err
     end
   end
 
@@ -262,10 +280,24 @@ defmodule Mobilizon.Events do
   Updates an event.
   """
   @spec update_event(Event.t(), map) :: {:ok, Event.t()} | {:error, Ecto.Changeset.t()}
-  def update_event(%Event{} = old_event, attrs) do
+  def update_event(
+        %Event{draft: old_draft_status, id: event_id, organizer_actor_id: organizer_actor_id} =
+          old_event,
+        attrs
+      ) do
     with %Ecto.Changeset{changes: changes} = changeset <-
            old_event |> Repo.preload(:tags) |> Event.update_changeset(attrs) do
-      with {:ok, %Event{} = new_event} <- Repo.update(changeset) do
+      with {:ok, %Event{draft: new_draft_status} = new_event} <- Repo.update(changeset) do
+        # If the event is no longer a draft
+        if old_draft_status == true && new_draft_status == false do
+          {:ok, %Participant{} = _participant} =
+            create_participant(%{
+              event_id: event_id,
+              role: :creator,
+              actor_id: organizer_actor_id
+            })
+        end
+
         Mobilizon.Service.Events.Tool.calculate_event_diff_and_send_notifications(
           old_event,
           new_event,
@@ -309,6 +341,7 @@ defmodule Mobilizon.Events do
     |> sort(sort, direction)
     |> filter_future_events(is_future)
     |> filter_unlisted(is_unlisted)
+    |> filter_draft()
     |> Repo.all()
   end
 
@@ -320,6 +353,7 @@ defmodule Mobilizon.Events do
     tags
     |> Enum.map(& &1.id)
     |> events_by_tags_query(limit)
+    |> filter_draft()
     |> Repo.all()
   end
 
@@ -333,6 +367,7 @@ defmodule Mobilizon.Events do
       actor_id
       |> event_for_actor_query()
       |> filter_public_visibility()
+      |> filter_draft()
       |> preload_for_event()
       |> Page.paginate(page, limit)
       |> Repo.all()
@@ -345,6 +380,15 @@ defmodule Mobilizon.Events do
     {:ok, events, events_count}
   end
 
+  @spec list_drafts_for_user(integer, integer | nil, integer | nil) :: [Event.t()]
+  def list_drafts_for_user(user_id, page \\ nil, limit \\ nil) do
+    Event
+    |> user_events_query(user_id)
+    |> filter_draft(true)
+    |> Page.paginate(page, limit)
+    |> Repo.all()
+  end
+
   @doc """
   Finds close events to coordinates.
   Radius is in meters and defaults to 50km.
@@ -354,6 +398,7 @@ defmodule Mobilizon.Events do
     "SRID=#{srid};POINT(#{lon} #{lat})"
     |> Geo.WKT.decode!()
     |> close_events_query(radius)
+    |> filter_draft()
     |> Repo.all()
   end
 
@@ -364,6 +409,7 @@ defmodule Mobilizon.Events do
   def count_local_events do
     count_local_events_query()
     |> filter_public_visibility()
+    |> filter_draft()
     |> Repo.one()
   end
 
@@ -1134,6 +1180,16 @@ defmodule Mobilizon.Events do
     )
   end
 
+  @spec user_events_query(Ecto.Query.t(), number()) :: Ecto.Query.t()
+  defp user_events_query(query, user_id) do
+    from(
+      e in query,
+      join: a in Actor,
+      on: a.id == e.organizer_actor_id,
+      where: a.user_id == ^user_id
+    )
+  end
+
   @spec events_by_name_query(String.t()) :: Ecto.Query.t()
   defp events_by_name_query(name) do
     from(
@@ -1370,6 +1426,11 @@ defmodule Mobilizon.Events do
 
   defp filter_not_event_uuid(query, not_event_uuid) do
     from(e in query, where: e.uuid != ^not_event_uuid)
+  end
+
+  @spec filter_draft(Ecto.Query.t(), boolean) :: Ecto.Query.t()
+  defp filter_draft(query, is_draft \\ false) do
+    from(e in query, where: e.draft == ^is_draft)
   end
 
   @spec filter_future_events(Ecto.Query.t(), boolean) :: Ecto.Query.t()

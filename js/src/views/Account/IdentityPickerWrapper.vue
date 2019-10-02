@@ -5,7 +5,7 @@
             {{ $t('Change') }}
         </b-button>
         <b-modal :active.sync="isComponentModalActive" has-modal-card>
-            <identity-picker :currentIdentity="currentIdentity" @input="relay" />
+            <identity-picker v-model="currentIdentity" @input="relay" />
         </b-modal>
     </div>
 </template>

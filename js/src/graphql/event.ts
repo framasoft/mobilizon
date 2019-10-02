@@ -69,6 +69,7 @@ export const FETCH_EVENT = gql`
       status,
       visibility,
       joinOptions,
+      draft,
       picture {
         id
         url
@@ -190,6 +191,7 @@ export const CREATE_EVENT = gql`
     $status: EventStatus,
     $visibility: EventVisibility,
     $joinOptions: EventJoinOptions,
+    $draft: Boolean,
     $tags: [String],
     $picture: PictureInput,
     $onlineAddress: String,
@@ -207,6 +209,7 @@ export const CREATE_EVENT = gql`
       status: $status,
       visibility: $visibility,
       joinOptions: $joinOptions,
+      draft: $draft,
       tags: $tags,
       picture: $picture,
       onlineAddress: $onlineAddress,
@@ -224,6 +227,7 @@ export const CREATE_EVENT = gql`
       status,
       visibility,
       joinOptions,
+      draft,
       picture {
         id
         url
@@ -255,6 +259,7 @@ export const EDIT_EVENT = gql`
     $status: EventStatus,
     $visibility: EventVisibility,
     $joinOptions: EventJoinOptions,
+    $draft: Boolean,
     $tags: [String],
     $picture: PictureInput,
     $onlineAddress: String,
@@ -272,6 +277,7 @@ export const EDIT_EVENT = gql`
       status: $status,
       visibility: $visibility,
       joinOptions: $joinOptions,
+      draft: $draft,
       tags: $tags,
       picture: $picture,
       onlineAddress: $onlineAddress,
@@ -289,6 +295,7 @@ export const EDIT_EVENT = gql`
       status,
       visibility,
       joinOptions,
+      draft,
       picture {
         id
         url

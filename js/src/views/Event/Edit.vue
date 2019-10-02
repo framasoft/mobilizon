@@ -9,7 +9,7 @@
       </h1>
 
       <div class="columns is-centered">
-        <form class="column is-two-thirds-desktop">
+        <form class="column is-two-thirds-desktop" ref="form">
           <h2 class="subtitle">
             {{ $t('General information') }}
           </h2>
@@ -170,14 +170,16 @@
                 {{ $t('Cancel') }}
               </b-button>
             </span>
-            <span class="navbar-item" v-if="isUpdate === false">
-              <b-button type="is-primary" outlined>
+            <!-- If an event has been published we can't make it draft anymore -->
+            <span class="navbar-item" v-if="event.draft === true">
+              <b-button type="is-primary" outlined @click="createOrUpdateDraft">
                 {{ $t('Save draft') }}
               </b-button>
             </span>
             <span class="navbar-item">
-              <b-button type="is-primary" @click="createOrUpdate" @keyup.enter="createOrUpdate">
+              <b-button type="is-primary" @click="createOrUpdatePublish" @keyup.enter="createOrUpdatePublish">
                 <span v-if="isUpdate === false">{{ $t('Create my event') }}</span>
+                <span v-else-if="event.draft === true"> {{ $t('Publish') }}</span>
                 <span v-else> {{ $t('Update my event') }}</span>
               </b-button>
             </span>
@@ -238,7 +240,7 @@ import {
   EventVisibility, IEvent,
 } from '@/types/event.model';
 import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
-import { Person } from '@/types/actor';
+import { IActor, Person } from '@/types/actor';
 import PictureUpload from '@/components/PictureUpload.vue';
 import Editor from '@/components/Editor.vue';
 import DateTimePicker from '@/components/Event/DateTimePicker.vue';
@@ -312,7 +314,6 @@ export default class EditEvent extends Vue {
     this.observer = new IntersectionObserver((entries, observer) => {
       for (const entry of entries) {
         if (entry) {
-          console.log(entry);
           this.showFixedNavbar = !entry.isIntersecting;
         }
       }
@@ -322,12 +323,29 @@ export default class EditEvent extends Vue {
     this.observer.observe(this.$refs.bottomObserver as Element);
   }
 
-  createOrUpdate(e: Event) {
+  createOrUpdateDraft(e: Event) {
     e.preventDefault();
+    if (this.validateForm()) {
+      if (this.eventId) return this.updateEvent();
 
-    if (this.eventId) return this.updateEvent();
+      return this.createEvent();
+    }
+  }
 
-    return this.createEvent();
+  createOrUpdatePublish(e: Event) {
+    if (this.validateForm()) {
+      this.event.draft = false;
+      this.createOrUpdateDraft(e);
+    }
+  }
+
+  private validateForm() {
+    const form = this.$refs.form as HTMLFormElement;
+    if (form.checkValidity()) {
+      return true;
+    }
+    form.reportValidity();
+    return false;
   }
 
   async createEvent() {
@@ -412,13 +430,16 @@ export default class EditEvent extends Vue {
    * Confirm cancel
    */
   confirmGoBack() {
+    if (!this.isEventModified) {
+      return this.$router.go(-1);
+    }
     const title: string = this.isUpdate ?
             this.$t('Cancel edition') as string :
             this.$t('Cancel creation') as string;
     const message: string = this.isUpdate ?
-            this.$t('Are you sure you want to cancel the event edition? You\'ll lose all modifications.',
+            this.$t("Are you sure you want to cancel the event edition? You'll lose all modifications.",
                     { title: this.event.title }) as string :
-            this.$t('Are you sure you want to cancel the event creation? You\'ll lose all modifications.',
+            this.$t("Are you sure you want to cancel the event creation? You'll lose all modifications.",
                     { title: this.event.title }) as string;
 
     this.$buefy.dialog.confirm({

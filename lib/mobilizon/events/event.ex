@@ -32,6 +32,7 @@ defmodule Mobilizon.Events.Event do
           ends_on: DateTime.t(),
           title: String.t(),
           status: EventStatus.t(),
+          draft: boolean,
           visibility: EventVisibility.t(),
           join_options: JoinOptions.t(),
           publish_at: DateTime.t(),
@@ -57,6 +58,7 @@ defmodule Mobilizon.Events.Event do
     :ends_on,
     :category,
     :status,
+    :draft,
     :visibility,
     :publish_at,
     :online_address,
@@ -74,6 +76,7 @@ defmodule Mobilizon.Events.Event do
     :ends_on,
     :category,
     :status,
+    :draft,
     :visibility,
     :join_options,
     :publish_at,
@@ -93,6 +96,7 @@ defmodule Mobilizon.Events.Event do
     field(:ends_on, :utc_datetime)
     field(:title, :string)
     field(:status, EventStatus, default: :confirmed)
+    field(:draft, :boolean, default: false)
     field(:visibility, EventVisibility, default: :public)
     field(:join_options, JoinOptions, default: :free)
     field(:publish_at, :utc_datetime)

@@ -31,6 +31,20 @@ defmodule MobilizonWeb.Resolvers.Event do
     {:error, :events_max_limit_reached}
   end
 
+  def find_event(
+        _parent,
+        %{uuid: uuid},
+        %{context: %{current_user: %User{id: user_id}}} = _resolution
+      ) do
+    case {:has_event, Mobilizon.Events.get_own_event_by_uuid_with_preload(uuid, user_id)} do
+      {:has_event, %Event{} = event} ->
+        {:ok, Map.put(event, :organizer_actor, Person.proxify_pictures(event.organizer_actor))}
+
+      {:has_event, _} ->
+        {:error, "Event with UUID #{uuid} not found"}
+    end
+  end
+
   def find_event(_parent, %{uuid: uuid}, _resolution) do
     case {:has_event, Mobilizon.Events.get_public_event_by_uuid_with_preload(uuid)} do
       {:has_event, %Event{} = event} ->
@@ -264,6 +278,9 @@ defmodule MobilizonWeb.Resolvers.Event do
     else
       {:is_owned, nil} ->
         {:error, "Organizer actor id is not owned by the user"}
+
+      {:error, %Ecto.Changeset{} = error} ->
+        {:error, error}
     end
   end
 
