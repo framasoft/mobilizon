@@ -219,6 +219,8 @@ import { CREATE_REPORT } from '@/graphql/report';
 import EventMixin from '@/mixins/event';
 import IdentityPicker from '@/views/Account/IdentityPicker.vue';
 import ParticipationButton from '@/components/Event/ParticipationButton.vue';
+import { GraphQLError } from 'graphql';
+import { RouteName } from '@/router';
 
 @Component({
   components: {
@@ -241,6 +243,9 @@ import ParticipationButton from '@/components/Event/ParticipationButton.vue';
         return {
           uuid: this.uuid,
         };
+      },
+      error({ graphQLErrors }) {
+        this.handleErrors(graphQLErrors);
       },
     },
     currentActor: {
@@ -271,7 +276,6 @@ export default class Event extends EventMixin {
   showMap: boolean = false;
   isReportModalActive: boolean = false;
   isJoinModalActive: boolean = false;
-
   EventVisibility = EventVisibility;
 
   mounted() {
@@ -431,6 +435,12 @@ export default class Event extends EventMixin {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  }
+
+  async handleErrors(errors: GraphQLError) {
+    if (errors[0].message.includes('not found')) {
+      await this.$router.push({ name: RouteName.PAGE_NOT_FOUND });
+    }
   }
 
   get actorIsParticipant() {
