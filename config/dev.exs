@@ -12,7 +12,7 @@ config :mobilizon, MobilizonWeb.Endpoint,
   ],
   url: [
     host: System.get_env("MOBILIZON_INSTANCE_HOST") || "mobilizon.local",
-    port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4000,
+    port: 80,
     scheme: "http"
   ],
   debug_errors: true,
