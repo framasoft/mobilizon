@@ -1,11 +1,14 @@
 <template>
   <b-navbar type="is-secondary" shadow wrapper-class="container">
     <template slot="brand">
-      <b-navbar-item tag="router-link" :to="{ name: 'Home' }"><logo /></b-navbar-item>
+      <b-navbar-item tag="router-link" :to="{ name: RouteName.HOME }"><logo /></b-navbar-item>
     </template>
     <template slot="start">
       <b-navbar-item tag="router-link" :to="{ name: EventRouteName.EXPLORE }">{{ $t('Explore') }}</b-navbar-item>
       <b-navbar-item tag="router-link" :to="{ name: EventRouteName.MY_EVENTS }">{{ $t('Events') }}</b-navbar-item>
+      <b-navbar-item tag="span">
+        <b-button tag="router-link" :to="{ name: RouteName.CREATE_EVENT }" type="is-success">{{ $t('Create') }}</b-button>
+      </b-navbar-item>
     </template>
     <template slot="end">
       <b-navbar-item tag="div">
@@ -56,11 +59,11 @@
 
       <b-navbar-item v-else tag="div">
         <div class="buttons">
-          <router-link class="button is-primary" v-if="config && config.registrationsOpen" :to="{ name: 'Register' }">
+          <router-link class="button is-primary" v-if="config && config.registrationsOpen" :to="{ name: RouteName.REGISTER }">
             <strong>{{ $t('Sign up') }}</strong>
           </router-link>
 
-          <router-link class="button is-light" :to="{ name: 'Login' }">{{ $t('Log in') }}</router-link>
+          <router-link class="button is-light" :to="{ name: RouteName.LOGIN }">{{ $t('Log in') }}</router-link>
         </div>
       </b-navbar-item>
     </template>
@@ -114,7 +117,7 @@ export default class NavBar extends Vue {
   currentUser!: ICurrentUser;
   ICurrentUserRole = ICurrentUserRole;
   identities: IPerson[] = [];
-  showNavbar: boolean = false;
+  RouteName = RouteName;
 
   ActorRouteName = ActorRouteName;
   AdminRouteName = AdminRouteName;

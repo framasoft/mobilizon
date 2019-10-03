@@ -1,5 +1,5 @@
 <template>
-    <img svg-inline src="../assets/mobilizon_logo.svg" alt="Mobilizon" :class="{invert: invert}" height="60px">
+    <img svg-inline src="../assets/mobilizon_logo.svg" alt="Mobilizon" :class="{invert: invert}" height="40px">
 </template>
 
 <script lang="ts">

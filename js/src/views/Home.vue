@@ -1,12 +1,12 @@
 <template>
   <div class="container" v-if="config">
-    <section class="hero is-link" v-if="!currentUser.id || !currentActor">
+    <section class="hero is-info" v-if="!currentUser.id || !currentActor">
       <div class="hero-body">
         <div>
           <h1 class="title">{{ config.name }}</h1>
           <h2 class="subtitle">{{ config.description }}</h2>
           <router-link class="button" :to="{ name: 'Register' }" v-if="config.registrationsOpen">
-            {{ $t('Register') }}
+            {{ $t('Sign up') }}
           </router-link>
           <p v-else>
             {{ $t("This instance isn't opened to registrations, but you can register on other instances.") }}
@@ -14,24 +14,12 @@
         </div>
       </div>
     </section>
-    <section v-else>
-      <h1>
-        {{ $t('Welcome back {username}', {username: `@${currentActor.preferredUsername}`}) }}
-      </h1>
+    <section v-else-if="currentActor">
+      <b-message type="is-info">
+        {{ $t('Welcome back {username}', { username: currentActor.displayName() }) }}
+      </b-message>
     </section>
-    <b-dropdown aria-role="list">
-      <button class="button is-primary" slot="trigger">
-        <span>{{ $t('Create') }}</span>
-        <b-icon icon="menu-down"></b-icon>
-      </button>
-      <b-dropdown-item aria-role="listitem">
-        <router-link :to="{ name: RouteName.CREATE_EVENT }">{{ $t('Event') }}</router-link>
-      </b-dropdown-item>
-      <b-dropdown-item aria-role="listitem">
-        <router-link :to="{ name: RouteName.CREATE_GROUP }">{{ $t('Group') }}</router-link>
-      </b-dropdown-item>
-    </b-dropdown>
-    <section v-if="currentActor && goingToEvents.size > 0" class="container">
+    <section v-else-if="currentActor && goingToEvents.size > 0" class="container">
       <h3 class="title">
         {{ $t("Upcoming") }}
       </h3>
@@ -121,6 +109,7 @@ import { EventRouteName } from '@/router/event';
     },
     currentActor: {
       query: CURRENT_ACTOR_CLIENT,
+      update: data => new Person(data.currentActor),
     },
     currentUser: {
       query: CURRENT_USER_CLIENT,
