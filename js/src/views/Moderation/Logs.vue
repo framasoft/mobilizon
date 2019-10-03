@@ -2,8 +2,8 @@
     <section class="container">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
-                <li><router-link :to="{ name: AdminRouteName.DASHBOARD }">Dashboard</router-link></li>
-                <li class="is-active"><router-link :to="{ name: ModerationRouteName.LOGS }" aria-current="page">Logs</router-link></li>
+                <li><router-link :to="{ name: RouteName.DASHBOARD }">Dashboard</router-link></li>
+                <li class="is-active"><router-link :to="{ name: RouteName.LOGS }" aria-current="page">Logs</router-link></li>
             </ul>
         </nav>
         <ul v-if="actionLogs.length > 0">
@@ -12,17 +12,17 @@
                     <img class="image" :src="log.actor.avatar.url" />
                     <span>@{{ log.actor.preferredUsername }}</span>
                     <span v-if="log.action === ActionLogAction.REPORT_UPDATE_CLOSED">
-                        closed <router-link :to="{ name: ModerationRouteName.REPORT, params: { reportId: log.object.id } }">report #{{ log.object.id }}</router-link>
+                        closed <router-link :to="{ name: RouteName.REPORT, params: { reportId: log.object.id } }">report #{{ log.object.id }}</router-link>
                     </span>
                     <span v-else-if="log.action === ActionLogAction.REPORT_UPDATE_OPENED">
-                        reopened <router-link :to="{ name: ModerationRouteName.REPORT, params: { reportId: log.object.id } }">report #{{ log.object.id }}</router-link>
+                        reopened <router-link :to="{ name: RouteName.REPORT, params: { reportId: log.object.id } }">report #{{ log.object.id }}</router-link>
                     </span>
                     <span v-else-if="log.action === ActionLogAction.REPORT_UPDATE_RESOLVED">
-                        marked <router-link :to="{ name: ModerationRouteName.REPORT, params: { reportId: log.object.id } }">report #{{ log.object.id }}</router-link> as resolved
+                        marked <router-link :to="{ name: RouteName.REPORT, params: { reportId: log.object.id } }">report #{{ log.object.id }}</router-link> as resolved
                     </span>
                     <span v-else-if="log.action === ActionLogAction.NOTE_CREATION">
                         added a note on
-                        <router-link v-if="log.object.report" :to="{ name: ModerationRouteName.REPORT, params: { reportId: log.object.report.id } }">report #{{ log.object.report.id }}</router-link>
+                        <router-link v-if="log.object.report" :to="{ name: RouteName.REPORT, params: { reportId: log.object.report.id } }">report #{{ log.object.report.id }}</router-link>
                         <span v-else>a non-existent report</span>
                     </span>
                     <span v-else-if="log.action === ActionLogAction.EVENT_DELETION">
@@ -44,8 +44,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { IActionLog, ActionLogAction } from '@/types/report.model';
 import { LOGS } from '@/graphql/report';
 import ReportCard from '@/components/Report/ReportCard.vue';
-import { AdminRouteName } from '@/router/admin';
-import { ModerationRouteName } from '@/router/moderation';
+import { RouteName } from '@/router';
 
 @Component({
   components: {
@@ -62,8 +61,7 @@ export default class ReportList extends Vue {
   actionLogs?: IActionLog[] = [];
 
   ActionLogAction = ActionLogAction;
-  AdminRouteName = AdminRouteName;
-  ModerationRouteName = ModerationRouteName;
+  RouteName = RouteName;
 }
 </script>
 <style lang="scss">

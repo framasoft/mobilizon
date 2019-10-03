@@ -77,7 +77,7 @@
                 <div class="control">
                   <router-link
                     class="button is-text"
-                    :to="{ name: 'ResendConfirmation', params: { email: credentials.email }}"
+                    :to="{ name: RouteName.RESEND_CONFIRMATION, params: { email: credentials.email }}"
                   >
                     {{ $t("Didn't receive the instructions ?") }}
                   </router-link>
@@ -85,7 +85,7 @@
                 <div class="control">
                   <router-link
                     class="button is-text"
-                    :to="{ name: 'Login', params: { email: credentials.email, password: credentials.password }}"
+                    :to="{ name: RouteName.LOGIN, params: { email: credentials.email, password: credentials.password }}"
                     :disabled="sendingValidation"
                   >
                     {{ $t('Login') }}
@@ -107,7 +107,7 @@
 <script lang="ts">
 import { CREATE_USER } from '@/graphql/user';
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { UserRouteName } from '@/router/user';
+import { RouteName } from '@/router';
 
 @Component
 export default class Register extends Vue {
@@ -121,6 +121,7 @@ export default class Register extends Vue {
   errors: object = {};
   sendingValidation: boolean = false;
   validationSent: boolean = false;
+  RouteName = RouteName;
 
   async submit() {
     try {
@@ -135,7 +136,7 @@ export default class Register extends Vue {
       this.validationSent = true;
 
       this.$router.push({
-        name: UserRouteName.REGISTER_PROFILE,
+        name: RouteName.REGISTER_PROFILE,
         params: { email: this.credentials.email },
       });
     } catch (error) {

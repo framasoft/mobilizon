@@ -5,7 +5,7 @@
         <div>
           <h1 class="title">{{ config.name }}</h1>
           <h2 class="subtitle">{{ config.description }}</h2>
-          <router-link class="button" :to="{ name: 'Register' }" v-if="config.registrationsOpen">
+          <router-link class="button" :to="{ name: RouteName.REGISTER }" v-if="config.registrationsOpen">
             {{ $t('Sign up') }}
           </router-link>
           <p v-else>
@@ -50,7 +50,7 @@
         </div>
       </div>
       <span class="view-all">
-        <router-link :to=" { name: EventRouteName.MY_EVENTS }">{{ $t('View everything')}} >></router-link>
+        <router-link :to=" { name: RouteName.MY_EVENTS }">{{ $t('View everything')}} >></router-link>
       </span>
     </section>
     <section v-if="currentActor && lastWeekEvents.length > 0">
@@ -99,7 +99,6 @@ import { EventModel, IEvent, IParticipant, Participant } from '@/types/event.mod
 import DateComponent from '@/components/Event/DateCalendarIcon.vue';
 import { CONFIG } from '@/graphql/config';
 import { IConfig } from '@/types/config.model';
-import { EventRouteName } from '@/router/event';
 
 @Component({
   apollo: {
@@ -134,7 +133,6 @@ export default class Home extends Vue {
   currentActor!: IPerson;
   config: IConfig = { description: '', name: '', registrationsOpen: false };
   RouteName = RouteName;
-  EventRouteName = EventRouteName;
 
   // get displayed_name() {
   //   return this.loggedPerson && this.loggedPerson.name === null

@@ -4,9 +4,9 @@
         <div class="container" v-if="report">
             <nav class="breadcrumb" aria-label="breadcrumbs">
                 <ul>
-                    <li><router-link :to="{ name: AdminRouteName.DASHBOARD }">Dashboard</router-link></li>
-                    <li><router-link :to="{ name: ModerationRouteName.REPORTS }">Reports</router-link></li>
-                    <li class="is-active"><router-link :to="{ name: ModerationRouteName.REPORT, params: { reportId: this.report.id} }" aria-current="page">Report</router-link></li>
+                    <li><router-link :to="{ name: RouteName.DASHBOARD }">Dashboard</router-link></li>
+                    <li><router-link :to="{ name: RouteName.REPORTS }">Reports</router-link></li>
+                    <li class="is-active"><router-link :to="{ name: RouteName.REPORT, params: { reportId: this.report.id} }" aria-current="page">Report</router-link></li>
                 </ul>
             </nav>
             <div class="buttons">
@@ -22,7 +22,7 @@
                                 <tr>
                                     <td>Compte signalé</td>
                                     <td>
-                                        <router-link :to="{ name: ActorRouteName.PROFILE, params: { name: report.reported.preferredUsername } }">
+                                        <router-link :to="{ name: RouteName.PROFILE, params: { name: report.reported.preferredUsername } }">
                                             <img v-if="report.reported.avatar" class="image" :src="report.reported.avatar.url" /> @{{ report.reported.preferredUsername }}
                                         </router-link>
                                     </td>
@@ -30,7 +30,7 @@
                                 <tr>
                                     <td>Signalé par</td>
                                     <td>
-                                        <router-link :to="{ name: ActorRouteName.PROFILE, params: { name: report.reporter.preferredUsername } }">
+                                        <router-link :to="{ name: RouteName.PROFILE, params: { name: report.reporter.preferredUsername } }">
                                             <img v-if="report.reporter.avatar" class="image" :src="report.reporter.avatar.url" /> @{{ report.reporter.preferredUsername }}
                                         </router-link>
                                     </td>
@@ -66,14 +66,14 @@
             </div>
 
             <div class="box" v-if="report.event">
-                <router-link :to="{ name: EventRouteName.EVENT, params: { uuid: report.event.uuid }}">
+                <router-link :to="{ name: RouteName.EVENT, params: { uuid: report.event.uuid }}">
                     <h3 class="title">{{ report.event.title }}</h3>
                     <p v-html="report.event.description"></p>
                 </router-link>
                 <b-button
                         tag="router-link"
                         type="is-primary"
-                        :to="{ name: EventRouteName.EDIT_EVENT, params: {eventId: report.event.uuid } }"
+                        :to="{ name: RouteName.EDIT_EVENT, params: {eventId: report.event.uuid } }"
                         icon-left="pencil"
                         size="is-small">Edit</b-button>
                 <b-button
@@ -86,7 +86,7 @@
             <h2 class="title" v-if="report.notes.length > 0">Notes</h2>
             <div class="box note" v-for="note in report.notes" :id="`note-${note.id}`">
                 <p>{{ note.content }}</p>
-                <router-link :to="{ name: ActorRouteName.PROFILE, params: { name: note.moderator.preferredUsername } }">
+                <router-link :to="{ name: RouteName.PROFILE, params: { name: note.moderator.preferredUsername } }">
                     <img class="image" :src="note.moderator.avatar.url" /> @{{ note.moderator.preferredUsername }}
                 </router-link><br />
                 <small><a :href="`#note-${note.id}`" v-if="note.insertedAt">{{ note.insertedAt | formatDateTimeString }}</a></small>
@@ -105,10 +105,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { CREATE_REPORT_NOTE, REPORT, REPORTS, UPDATE_REPORT } from '@/graphql/report';
 import { IReport, IReportNote, ReportStatusEnum } from '@/types/report.model';
-import { EventRouteName } from '@/router/event';
-import { ActorRouteName } from '@/router/actor';
-import { AdminRouteName } from '@/router/admin';
-import { ModerationRouteName } from '@/router/moderation';
+import { RouteName } from '@/router';
 import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { IPerson } from '@/types/actor';
 import { DELETE_EVENT } from '@/graphql/event';
@@ -139,10 +136,7 @@ export default class Report extends Vue {
   errors: string[] = [];
 
   ReportStatusEnum = ReportStatusEnum;
-  EventRouteName = EventRouteName;
-  ActorRouteName = ActorRouteName;
-  AdminRouteName = AdminRouteName;
-  ModerationRouteName = ModerationRouteName;
+  RouteName = RouteName;
 
   noteContent: string = '';
 

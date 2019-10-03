@@ -2,8 +2,8 @@
     <section class="container">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
-                <li><router-link :to="{ name: MyAccountRouteName.UPDATE_IDENTITY }">{{ $t('My account') }}</router-link></li>
-                <li class="is-active"><router-link :to="{ name: UserRouteName.PASSWORD_CHANGE }" aria-current="page">{{ $t('Password change') }}</router-link></li>
+                <li><router-link :to="{ name: RouteName.UPDATE_IDENTITY }">{{ $t('My account') }}</router-link></li>
+                <li class="is-active"><router-link :to="{ name: RouteName.PASSWORD_CHANGE }" aria-current="page">{{ $t('Password change') }}</router-link></li>
             </ul>
         </nav>
         <h1 class="title">{{ $t('Password') }}</h1>
@@ -48,8 +48,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { CHANGE_PASSWORD } from '@/graphql/user';
-import { UserRouteName } from '@/router/user';
-import { MyAccountRouteName } from '@/router/actor';
+import { RouteName } from '@/router';
 
 @Component
 export default class PasswordChange extends Vue {
@@ -57,8 +56,7 @@ export default class PasswordChange extends Vue {
   newPassword: string = '';
   errors: string[] = [];
 
-  MyAccountRouteName = MyAccountRouteName;
-  UserRouteName = UserRouteName;
+  RouteName = RouteName;
 
   async resetAction(e) {
     e.preventDefault();

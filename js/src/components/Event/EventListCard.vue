@@ -44,7 +44,7 @@
       <div class="actions column is-narrow">
         <ul>
           <li v-if="!([ParticipantRole.PARTICIPANT, ParticipantRole.NOT_APPROVED].includes(participation.role))">
-            <router-link :to="{ name: EventRouteName.EDIT_EVENT, params: { eventId: participation.event.uuid }  }">
+            <router-link :to="{ name: RouteName.EDIT_EVENT, params: { eventId: participation.event.uuid }  }">
               <b-icon icon="pencil" /> {{ $t('Edit') }}
             </router-link>
           </li>
@@ -52,12 +52,12 @@
             <a @click="openDeleteEventModalWrapper"><b-icon icon="delete" /> {{ $t('Delete') }}</a>
           </li>
           <li v-if="!([ParticipantRole.PARTICIPANT, ParticipantRole.NOT_APPROVED].includes(participation.role))">
-            <router-link :to="{ name: EventRouteName.PARTICIPATIONS, params: { eventId: participation.event.uuid } }">
+            <router-link :to="{ name: RouteName.PARTICIPATIONS, params: { eventId: participation.event.uuid } }">
               <b-icon icon="account-multiple-plus" /> {{ $t('Manage participations') }}
             </router-link>
           </li>
           <li>
-            <router-link :to="{ name: EventRouteName.EVENT, params: { uuid: participation.event.uuid } }"><b-icon icon="view-compact" /> {{ $t('View event page') }}</router-link>
+            <router-link :to="{ name: RouteName.EVENT, params: { uuid: participation.event.uuid } }"><b-icon icon="view-compact" /> {{ $t('View event page') }}</router-link>
           </li>
         </ul>
       </div>
@@ -70,7 +70,6 @@ import { IParticipant, ParticipantRole, EventVisibility } from '@/types/event.mo
 import { Component, Prop } from 'vue-property-decorator';
 import DateCalendarIcon from '@/components/Event/DateCalendarIcon.vue';
 import { IActor, IPerson, Person } from '@/types/actor';
-import { EventRouteName } from '@/router/event';
 import { mixins } from 'vue-class-component';
 import ActorMixin from '@/mixins/actor';
 import { CURRENT_ACTOR_CLIENT, LOGGED_USER_PARTICIPATIONS } from '@/graphql/actor';
@@ -100,8 +99,8 @@ export default class EventListCard extends mixins(ActorMixin, EventMixin) {
   currentActor!: IPerson;
 
   ParticipantRole = ParticipantRole;
-  EventRouteName = EventRouteName;
   EventVisibility = EventVisibility;
+  RouteName = RouteName;
 
   defaultOptions: IEventCardOptions = {
     hideDate: true,
