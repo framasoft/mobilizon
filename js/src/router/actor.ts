@@ -19,32 +19,32 @@ export enum MyAccountRouteName {
 }
 
 export const actorRoutes: RouteConfig[] = [
-  {
-    path: '/groups',
-    name: ActorRouteName.GROUP_LIST,
-    component: GroupList,
-    meta: { requiredAuth: false },
-  },
-  {
-    path: '/groups/create',
-    name: ActorRouteName.CREATE_GROUP,
-    component: CreateGroup,
-    meta: { requiredAuth: true },
-  },
-  {
-    path: '/~:preferredUsername',
-    name: ActorRouteName.GROUP,
-    component: Group,
-    props: true,
-    meta: { requiredAuth: false },
-  },
-  {
-    path: '/@:name',
-    name: ActorRouteName.PROFILE,
-    component: Profile,
-    props: true,
-    meta: { requiredAuth: false },
-  },
+  // {
+  //   path: '/groups',
+  //   name: ActorRouteName.GROUP_LIST,
+  //   component: GroupList,
+  //   meta: { requiredAuth: false },
+  // },
+  // {
+  //   path: '/groups/create',
+  //   name: ActorRouteName.CREATE_GROUP,
+  //   component: CreateGroup,
+  //   meta: { requiredAuth: true },
+  // },
+  // {
+  //   path: '/~:preferredUsername',
+  //   name: ActorRouteName.GROUP,
+  //   component: Group,
+  //   props: true,
+  //   meta: { requiredAuth: false },
+  // },
+  // {
+  //   path: '/@:name',
+  //   name: ActorRouteName.PROFILE,
+  //   component: Profile,
+  //   props: true,
+  //   meta: { requiredAuth: false },
+  // },
   {
     path: '/my-account/identity',
     component: MyAccount,

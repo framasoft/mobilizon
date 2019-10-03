@@ -27,13 +27,10 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { IReport } from '@/types/report.model';
-import { EventRouteName } from '@/router/event';
 
 @Component
 export default class ReportCard extends Vue {
   @Prop({ required: true }) report!: IReport;
-
-  EventRouteName = EventRouteName;
 }
 </script>
 <style lang="scss">

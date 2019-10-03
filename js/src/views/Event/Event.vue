@@ -74,7 +74,7 @@
                 <p class="control" v-if="actorIsOrganizer || event.draft">
                   <router-link
                           class="button"
-                          :to="{ name: 'EditEvent', params: {eventId: event.uuid}}"
+                          :to="{ name: RouteName.EDIT_EVENT, params: {eventId: event.uuid}}"
                   >
                     {{ $t('Edit') }}
                   </router-link>
@@ -277,6 +277,7 @@ export default class Event extends EventMixin {
   isReportModalActive: boolean = false;
   isJoinModalActive: boolean = false;
   EventVisibility = EventVisibility;
+  RouteName = RouteName;
 
   mounted() {
     this.identity = this.currentActor;

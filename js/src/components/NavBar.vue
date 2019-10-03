@@ -1,11 +1,14 @@
 <template>
   <b-navbar type="is-secondary" shadow wrapper-class="container">
     <template slot="brand">
-      <b-navbar-item tag="router-link" :to="{ name: 'Home' }"><logo /></b-navbar-item>
+      <b-navbar-item tag="router-link" :to="{ name: RouteName.HOME }"><logo /></b-navbar-item>
     </template>
     <template slot="start">
-      <b-navbar-item tag="router-link" :to="{ name: EventRouteName.EXPLORE }">{{ $t('Explore') }}</b-navbar-item>
-      <b-navbar-item tag="router-link" :to="{ name: EventRouteName.MY_EVENTS }">{{ $t('Events') }}</b-navbar-item>
+      <b-navbar-item tag="router-link" :to="{ name: RouteName.EXPLORE }">{{ $t('Explore') }}</b-navbar-item>
+      <b-navbar-item tag="router-link" :to="{ name: RouteName.MY_EVENTS }">{{ $t('Events') }}</b-navbar-item>
+      <b-navbar-item tag="span">
+        <b-button tag="router-link" :to="{ name: RouteName.CREATE_EVENT }" type="is-success">{{ $t('Create') }}</b-button>
+      </b-navbar-item>
     </template>
     <template slot="end">
       <b-navbar-item tag="div">
@@ -37,16 +40,16 @@
         </b-navbar-item>
 
 
-          <b-navbar-item>
-            <router-link :to="{ name: 'UpdateIdentity' }">{{ $t('My account') }}</router-link>
+          <b-navbar-item tag="router-link" :to="{ name: RouteName.UPDATE_IDENTITY }">
+            {{ $t('My account') }}
           </b-navbar-item>
 
-          <b-navbar-item>
-            <router-link :to="{ name: ActorRouteName.CREATE_GROUP }">{{ $t('Create group') }}</router-link>
-          </b-navbar-item>
+<!--          <b-navbar-item tag="router-link" :to="{ name: RouteName.CREATE_GROUP }">-->
+<!--            {{ $t('Create group') }}-->
+<!--          </b-navbar-item>-->
 
-          <b-navbar-item v-if="currentUser.role === ICurrentUserRole.ADMINISTRATOR">
-            <router-link :to="{ name: AdminRouteName.DASHBOARD }">{{ $t('Administration') }}</router-link>
+          <b-navbar-item v-if="currentUser.role === ICurrentUserRole.ADMINISTRATOR" tag="router-link" :to="{ name: RouteName.DASHBOARD }">
+            {{ $t('Administration') }}
           </b-navbar-item>
 
           <b-navbar-item tag="span">
@@ -56,11 +59,11 @@
 
       <b-navbar-item v-else tag="div">
         <div class="buttons">
-          <router-link class="button is-primary" v-if="config && config.registrationsOpen" :to="{ name: 'Register' }">
+          <router-link class="button is-primary" v-if="config && config.registrationsOpen" :to="{ name: RouteName.REGISTER }">
             <strong>{{ $t('Sign up') }}</strong>
           </router-link>
 
-          <router-link class="button is-light" :to="{ name: 'Login' }">{{ $t('Log in') }}</router-link>
+          <router-link class="button is-light" :to="{ name: RouteName.LOGIN }">{{ $t('Log in') }}</router-link>
         </div>
       </b-navbar-item>
     </template>
@@ -71,17 +74,14 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { CURRENT_USER_CLIENT } from '@/graphql/user';
 import { changeIdentity, logout } from '@/utils/auth';
-import { CURRENT_ACTOR_CLIENT, IDENTITIES, UPDATE_CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
+import { CURRENT_ACTOR_CLIENT, IDENTITIES } from '@/graphql/actor';
 import { IPerson, Person } from '@/types/actor';
 import { CONFIG } from '@/graphql/config';
 import { IConfig } from '@/types/config.model';
 import { ICurrentUser, ICurrentUserRole } from '@/types/current-user.model';
 import Logo from '@/components/Logo.vue';
 import SearchField from '@/components/SearchField.vue';
-import { ActorRouteName } from '@/router/actor';
-import { AdminRouteName } from '@/router/admin';
 import { RouteName } from '@/router';
-import { EventRouteName } from '@/router/event';
 
 @Component({
   apollo: {
@@ -105,20 +105,12 @@ import { EventRouteName } from '@/router/event';
   },
 })
 export default class NavBar extends Vue {
-  notifications = [
-    { header: 'Coucou' },
-    { title: 'T\'as une notification', subtitle: 'Et elle est cool' },
-  ];
   currentActor!: IPerson;
   config!: IConfig;
   currentUser!: ICurrentUser;
   ICurrentUserRole = ICurrentUserRole;
   identities: IPerson[] = [];
-  showNavbar: boolean = false;
-
-  ActorRouteName = ActorRouteName;
-  AdminRouteName = AdminRouteName;
-  EventRouteName = EventRouteName;
+  RouteName = RouteName;
 
   @Watch('currentActor')
   async initializeListOfIdentities() {
@@ -129,21 +121,6 @@ export default class NavBar extends Vue {
       this.identities = data.identities.map(identity => new Person(identity));
     }
   }
-
-  // @Watch('currentUser')
-  // async onCurrentUserChanged() {
-  //   // Refresh logged person object
-  //   if (this.currentUser.isLoggedIn) {
-  //     const result = await this.$apollo.query({
-  //       query: CURRENT_ACTOR_CLIENT,
-  //     });
-  //     console.log(result);
-  //
-  //     this.loggedPerson = result.data.currentActor;
-  //   } else {
-  //     this.loggedPerson = null;
-  //   }
-  // }
 
   async logout() {
     await logout(this.$apollo.provider.defaultClient);

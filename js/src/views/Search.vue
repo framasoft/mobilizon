@@ -25,24 +25,24 @@
                     {{ $t('No events found') }}
                 </b-message>
             </b-tab-item>
-            <b-tab-item>
-                <template slot="header">
-                    <b-icon icon="account-multiple"></b-icon>
-                    <span>
-                        {{ $t('Groups') }} <b-tag rounded>{{ searchGroups.total }}</b-tag>
-                    </span>
-                </template>
-                <div v-if="searchGroups.total > 0" class="columns is-multiline">
-                    <div class="column is-one-quarter-desktop is-half-mobile"
-                         v-for="group in groups"
-                         :key="group.uuid">
-                        <group-card :group="group" />
-                    </div>
-                </div>
-                <b-message v-else-if="$apollo.loading === false" type="is-danger">
-                    {{ $t('No groups found') }}
-                </b-message>
-            </b-tab-item>
+<!--            <b-tab-item>-->
+<!--                <template slot="header">-->
+<!--                    <b-icon icon="account-multiple"></b-icon>-->
+<!--                    <span>-->
+<!--                        {{ $t('Groups') }} <b-tag rounded>{{ searchGroups.total }}</b-tag>-->
+<!--                    </span>-->
+<!--                </template>-->
+<!--                <div v-if="searchGroups.total > 0" class="columns is-multiline">-->
+<!--                    <div class="column is-one-quarter-desktop is-half-mobile"-->
+<!--                         v-for="group in groups"-->
+<!--                         :key="group.uuid">-->
+<!--                        <group-card :group="group" />-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <b-message v-else-if="$apollo.loading === false" type="is-danger">-->
+<!--                    {{ $t('No groups found') }}-->
+<!--                </b-message>-->
+<!--            </b-tab-item>-->
         </b-tabs>
     </section>
 </template>

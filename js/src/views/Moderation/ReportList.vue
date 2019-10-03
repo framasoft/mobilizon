@@ -2,8 +2,8 @@
     <section class="container">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
-                <li><router-link :to="{ name: AdminRouteName.DASHBOARD }">Dashboard</router-link></li>
-                <li class="is-active"><router-link :to="{ name: ModerationRouteName.REPORTS }" aria-current="page">Reports</router-link></li>
+                <li><router-link :to="{ name: RouteName.DASHBOARD }">Dashboard</router-link></li>
+                <li class="is-active"><router-link :to="{ name: RouteName.REPORTS }" aria-current="page">Reports</router-link></li>
             </ul>
         </nav>
         <b-field>
@@ -22,7 +22,7 @@
         </b-field>
         <ul v-if="reports.length > 0">
             <li v-for="report in reports">
-                <router-link :to="{ name: ModerationRouteName.REPORT, params: { reportId: report.id } }">
+                <router-link :to="{ name: RouteName.REPORT, params: { reportId: report.id } }">
                     <report-card :report="report" />
                 </router-link>
             </li>
@@ -39,8 +39,7 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import { IReport, ReportStatusEnum } from '@/types/report.model';
 import { REPORTS } from '@/graphql/report';
 import ReportCard from '@/components/Report/ReportCard.vue';
-import { AdminRouteName } from '@/router/admin';
-import { ModerationRouteName } from '@/router/moderation';
+import { RouteName } from '@/router';
 
 @Component({
   components: {
@@ -62,8 +61,7 @@ import { ModerationRouteName } from '@/router/moderation';
 export default class ReportList extends Vue {
 
   reports?: IReport[] = [];
-  AdminRouteName = AdminRouteName;
-  ModerationRouteName = ModerationRouteName;
+  RouteName = RouteName;
   ReportStatusEnum = ReportStatusEnum;
   filterReports: ReportStatusEnum = ReportStatusEnum.OPEN;
 
@@ -78,7 +76,7 @@ export default class ReportList extends Vue {
 
   @Watch('filterReports', { immediate: true })
         async onFilterChanged (val: string) {
-    await this.$router.push({ name: ModerationRouteName.REPORTS, params: { filter: val.toLowerCase() } });
+    await this.$router.push({ name: RouteName.REPORTS, params: { filter: val.toLowerCase() } });
   }
 }
 </script>

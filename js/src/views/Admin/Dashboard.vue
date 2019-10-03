@@ -19,7 +19,7 @@
                             <p class="title">{{ dashboard.numberOfUsers }}</p>
                             <p class="subtitle">{{ $t('Users')}}</p>
                         </article>
-                        <router-link :to="{ name: ModerationRouteName.REPORTS}">
+                        <router-link :to="{ name: RouteName.REPORTS}">
                             <article class="tile is-child box">
                                 <p class="title">{{ dashboard.numberOfReports }}</p>
                                 <p class="subtitle">{{ $t('Opened reports')}}</p>
@@ -28,13 +28,15 @@
                     </div>
                 </div>
                 <div class="tile is-parent" v-if="dashboard.lastPublicEventPublished">
-                    <article class="tile is-child box">
-                        <p class="title">{{ $t('Last published event') }}</p>
-                        <p class="subtitle">{{ dashboard.lastPublicEventPublished.title }}</p>
-                        <figure class="image is-4by3" v-if="dashboard.lastPublicEventPublished.picture">
-                            <img :src="dashboard.lastPublicEventPublished.picture.url" />
-                        </figure>
-                    </article>
+                    <router-link :to="{ name: RouteName.EVENT, params: { uuid: dashboard.lastPublicEventPublished.uuid } }">
+                        <article class="tile is-child box">
+                            <p class="title">{{ $t('Last published event') }}</p>
+                            <p class="subtitle">{{ dashboard.lastPublicEventPublished.title }}</p>
+                            <figure class="image is-4by3" v-if="dashboard.lastPublicEventPublished.picture">
+                                <img :src="dashboard.lastPublicEventPublished.picture.url" />
+                            </figure>
+                        </article>
+                    </router-link>
                 </div>
             </div>
             <div class="tile is-parent">
@@ -57,7 +59,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { DASHBOARD } from '@/graphql/admin';
 import { IDashboard } from '@/types/admin.model';
-import { ModerationRouteName } from '@/router/moderation';
+import { RouteName } from '@/router';
 
 @Component({
   apollo: {
@@ -68,6 +70,6 @@ import { ModerationRouteName } from '@/router/moderation';
 })
 export default class Dashboard extends Vue {
   dashboard!: IDashboard;
-  ModerationRouteName = ModerationRouteName;
+  RouteName = RouteName;
 }
 </script>

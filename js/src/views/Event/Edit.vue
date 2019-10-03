@@ -162,7 +162,7 @@
       <div class="container">
         <div class="navbar-menu">
           <div class="navbar-start">
-            <span class="navbar-item" v-if="isUpdate === true && isEventModified">{{ $t('Unsaved changes') }}</span>
+            <span class="navbar-item" v-if="isEventModified">{{ $t('Unsaved changes') }}</span>
           </div>
           <div class="navbar-end">
             <span class="navbar-item">
@@ -293,7 +293,7 @@ export default class EditEvent extends Vue {
 
     if (this.eventId) {
       this.event = await this.getEvent();
-      this.unmodifiedEvent = JSON.parse(JSON.stringify(this.event));
+      this.unmodifiedEvent = JSON.parse(JSON.stringify(this.event.toEditJSON()));
 
       this.pictureFile = await buildFileFromIPicture(this.event.picture);
       this.limitedPlaces = this.event.options.maximumAttendeeCapacity != null;
@@ -301,8 +301,16 @@ export default class EditEvent extends Vue {
   }
 
   created() {
-    const now = new Date();
-    const end = new Date();
+    this.initializeEvent();
+    this.unmodifiedEvent = JSON.parse(JSON.stringify(this.event.toEditJSON()));
+  }
+
+  private initializeEvent() {
+    const roundUpTo = roundTo => x => new Date(Math.ceil(x / roundTo) * roundTo);
+    const roundUpTo15Minutes = roundUpTo(1000 * 60 * 15);
+
+    const now = roundUpTo15Minutes(new Date());
+    const end = roundUpTo15Minutes(new Date());
     end.setUTCHours(now.getUTCHours() + 3);
 
     this.event.beginsOn = now;
@@ -311,7 +319,7 @@ export default class EditEvent extends Vue {
   }
 
   mounted() {
-    this.observer = new IntersectionObserver((entries, observer) => {
+    this.observer = new IntersectionObserver((entries) => {
       for (const entry of entries) {
         if (entry) {
           this.showFixedNavbar = !entry.isIntersecting;
@@ -454,7 +462,7 @@ export default class EditEvent extends Vue {
   }
 
   get isEventModified(): boolean {
-    return JSON.stringify(this.event) !== JSON.stringify(this.unmodifiedEvent);
+    return JSON.stringify(this.event.toEditJSON()) !== JSON.stringify(this.unmodifiedEvent);
   }
 
   // getAddressData(addressData) {

@@ -4,6 +4,7 @@ export const DASHBOARD = gql`
     query {
         dashboard {
             lastPublicEventPublished {
+                uuid,
                 title,
                 picture {
                     alt

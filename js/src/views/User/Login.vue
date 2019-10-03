@@ -37,7 +37,7 @@
             <div class="control">
               <router-link
                 class="button is-text"
-                :to="{ name: 'SendPasswordReset', params: { email: credentials.email }}"
+                :to="{ name: RouteName.SEND_PASSWORD_RESET, params: { email: credentials.email }}"
               >
                 {{ $t('Forgot your password ?') }}
               </router-link>
@@ -45,7 +45,7 @@
             <div class="control" v-if="config && config.registrationsOpen">
               <router-link
                 class="button is-text"
-                :to="{ name: 'Register', params: { default_email: credentials.email, default_password: credentials.password }}"
+                :to="{ name: RouteName.REGISTER, params: { default_email: credentials.email, default_password: credentials.password }}"
               >
                 {{ $t('Register') }}
               </router-link>
@@ -94,6 +94,8 @@ export default class Login extends Vue {
   errorCode: LoginErrorCode | null = null;
   config!: IConfig;
   currentUser!: ICurrentUser;
+
+  RouteName = RouteName;
 
   credentials = {
     email: '',
