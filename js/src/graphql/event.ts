@@ -52,6 +52,7 @@ const optionsQuery = `
   program,
   commentModeration,
   showParticipationPrice
+  __typename
 `;
 
 export const FETCH_EVENT = gql`
@@ -62,7 +63,6 @@ export const FETCH_EVENT = gql`
       url,
       local,
       title,
-      slug,
       description,
       beginsOn,
       endsOn,
@@ -244,6 +244,9 @@ export const CREATE_EVENT = gql`
       },
       options {
         ${optionsQuery}
+      },
+      organizerActor {
+        id
       }
     }
   }
@@ -289,6 +292,8 @@ export const EDIT_EVENT = gql`
       id,
       uuid,
       title,
+      url,
+      local,
       description,
       beginsOn,
       endsOn,
@@ -306,6 +311,20 @@ export const EDIT_EVENT = gql`
       phoneAddress,
       physicalAddress {
         ${physicalAddressQuery}
+      },
+      organizerActor {
+        avatar {
+          url
+        },
+        preferredUsername,
+        domain,
+        name,
+        url,
+        id,
+      },
+      participantStats {
+        approved,
+        unapproved
       },
       tags {
         ${tagsQuery}
