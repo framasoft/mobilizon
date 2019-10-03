@@ -1,4 +1,4 @@
-import { IParticipant } from '@/types/event.model';
+import { IEvent, IParticipant } from '@/types/event.model';
 
 export enum ICurrentUserRole {
   USER = 'USER',
@@ -12,4 +12,5 @@ export interface ICurrentUser {
   isLoggedIn: boolean;
   role: ICurrentUserRole;
   participations: IParticipant[];
+  drafts: IEvent[];
 }

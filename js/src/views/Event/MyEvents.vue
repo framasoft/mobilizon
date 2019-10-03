@@ -83,6 +83,7 @@ import EventCard from '@/components/Event/EventCard.vue';
   apollo: {
     futureParticipations: {
       query: LOGGED_USER_PARTICIPATIONS,
+      fetchPolicy: 'network-only',
       variables: {
         page: 1,
         limit: 10,
@@ -92,6 +93,7 @@ import EventCard from '@/components/Event/EventCard.vue';
     },
     drafts: {
       query: LOGGED_USER_DRAFTS,
+      fetchPolicy: 'network-only',
       variables: {
         page: 1,
         limit: 10,
@@ -100,6 +102,7 @@ import EventCard from '@/components/Event/EventCard.vue';
     },
     pastParticipations: {
       query: LOGGED_USER_PARTICIPATIONS,
+      fetchPolicy: 'network-only',
       variables: {
         page: 1,
         limit: 10,

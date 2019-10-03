@@ -1,3 +1,4 @@
+import {ParticipantRole} from "@/types/event.model";
 <template>
   <section>
     <div class="container">
@@ -234,13 +235,15 @@
 import { CREATE_EVENT, EDIT_EVENT, FETCH_EVENT } from '@/graphql/event';
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import {
-  CommentModeration, EventJoinOptions,
-  EventModel,
-  EventStatus,
-  EventVisibility, IEvent,
-} from '@/types/event.model';
-import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
-import { IActor, Person } from '@/types/actor';
+    CommentModeration,
+    EventJoinOptions,
+    EventModel,
+    EventStatus,
+    EventVisibility,
+    IEvent, ParticipantRole,
+  } from '@/types/event.model';
+import { CURRENT_ACTOR_CLIENT, IDENTITIES, LOGGED_USER_DRAFTS, LOGGED_USER_PARTICIPATIONS } from '@/graphql/actor';
+import { Person } from '@/types/actor';
 import PictureUpload from '@/components/PictureUpload.vue';
 import Editor from '@/components/Editor.vue';
 import DateTimePicker from '@/components/Event/DateTimePicker.vue';
@@ -250,6 +253,7 @@ import { ITag } from '@/types/tag.model';
 import AddressAutoComplete from '@/components/Event/AddressAutoComplete.vue';
 import { buildFileFromIPicture, buildFileVariable } from '@/utils/image';
 import IdentityPickerWrapper from '@/views/Account/IdentityPickerWrapper.vue';
+import { ICurrentUser } from '@/types/current-user.model';
 
 @Component({
   components: { IdentityPickerWrapper, AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor },
@@ -361,6 +365,41 @@ export default class EditEvent extends Vue {
       const { data } = await this.$apollo.mutate({
         mutation: CREATE_EVENT,
         variables: this.buildVariables(),
+        update: (store, { data: { createEvent } }) => {
+          if (createEvent.draft) {
+            const data = store.readQuery<{ loggedUser: ICurrentUser }>({ query: LOGGED_USER_DRAFTS, variables: {
+              page: 1,
+              limit: 10,
+            } });
+
+            if (data) {
+              data.loggedUser.drafts.push(createEvent);
+              store.writeQuery({ query: LOGGED_USER_DRAFTS, variables: {
+                page: 1,
+                limit: 10,
+              }, data });
+            }
+          } else {
+            const data = store.readQuery<{ loggedUser: ICurrentUser }>({ query: LOGGED_USER_PARTICIPATIONS, variables: {
+              page: 1,
+              limit: 10,
+              afterDateTime: (new Date()).toISOString(),
+            } });
+
+            if (data) {
+              data.loggedUser.participations.push({
+                role: ParticipantRole.CREATOR,
+                actor: createEvent.organizerActor,
+                event: createEvent,
+              });
+              store.writeQuery({ query: LOGGED_USER_PARTICIPATIONS, variables: {
+                page: 1,
+                limit: 10,
+                afterDateTime: (new Date()).toISOString(),
+              }, data });
+            }
+          }
+        },
       });
 
       console.log('Event created', data);
@@ -379,6 +418,50 @@ export default class EditEvent extends Vue {
       await this.$apollo.mutate({
         mutation: EDIT_EVENT,
         variables: this.buildVariables(),
+        update: (store, { data: { updateEvent } }) => {
+          if (updateEvent.draft) {
+            const data = store.readQuery<{ loggedUser: ICurrentUser }>({ query: LOGGED_USER_DRAFTS, variables: {
+              page: 1,
+              limit: 10,
+            } });
+
+            if (data) {
+              data.loggedUser.drafts.push(updateEvent);
+              store.writeQuery({ query: LOGGED_USER_DRAFTS, data });
+            }
+          } else {
+            let participationData: { loggedUser: ICurrentUser}|null = null;
+            try {
+              participationData = store.readQuery<{ loggedUser: ICurrentUser }>({
+                query: LOGGED_USER_PARTICIPATIONS, variables: {
+                  page: 1,
+                  limit: 10,
+                  afterDateTime: (new Date()).toISOString(),
+                },
+              });
+            } catch (e) {
+              // no worries, it seems we can't update participation cache because it's not linked to an ID
+            }
+
+            if (participationData) {
+              participationData.loggedUser.participations.push({
+                role: ParticipantRole.CREATOR,
+                actor: updateEvent.organizerActor,
+                event: updateEvent,
+              });
+              store.writeQuery({ query: LOGGED_USER_PARTICIPATIONS, variables: {
+                page: 1,
+                limit: 10,
+                afterDateTime: (new Date()).toISOString(),
+              }, data: participationData });
+            }
+            const resultEvent: IEvent = Object.assign({}, updateEvent);
+            resultEvent.organizerActor = this.event.organizerActor;
+            resultEvent.relatedEvents = [];
+
+            store.writeQuery({ query: FETCH_EVENT, variables: { uuid: updateEvent.uuid }, data: { event: resultEvent } });
+          }
+        },
       });
 
       await this.$router.push({
