@@ -88,6 +88,13 @@ export default class Register extends Vue {
   validationSent: boolean = false;
   sendingValidation: boolean = false;
 
+  async mounted() {
+    // Make sure no one goes to this page if we don't want to
+    if (!this.email) {
+      await this.$router.replace({ name: RouteName.PAGE_NOT_FOUND });
+    }
+  }
+
   async submit() {
     try {
       this.sendingValidation = true;
