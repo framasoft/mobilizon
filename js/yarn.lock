@@ -10514,10 +10514,10 @@ tiptap-utils@^1.8.0:
     prosemirror-tables "^0.9.5"
     prosemirror-utils "^0.9.6"
 
-tiptap@^1.26.0:
-  version "1.26.0"
-  resolved "https://registry.yarnpkg.com/tiptap/-/tiptap-1.26.0.tgz#edaa07b4b9b6836d433d0b8017d26d37cc0cc3c9"
-  integrity sha512-lKJnZ4jL3luu3C5Y5aZIEj2spAfNPSwc5HPB+n9HhpSaWAfGM9XTOLm6I0EIbkLHiCnYNjItlLP6p1g+KPdtSw==
+tiptap@^1.26.0, tiptap@^1.26.1:
+  version "1.26.1"
+  resolved "https://registry.yarnpkg.com/tiptap/-/tiptap-1.26.1.tgz#6e10821823569963754a1544872ebd75056d0dad"
+  integrity sha512-aGg9SjDW1LZmDmznmGPKr/JUjcbgs0QIAHdbCvLp281TD9X2p3tKaCZPZnrsjwGzNpPkB/U8bcx+9IoWtzkmAg==
   dependencies:
     prosemirror-commands "^1.0.8"
     prosemirror-dropcursor "^1.1.2"
