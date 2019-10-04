@@ -70,10 +70,16 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
       resolve(&Person.get_current_person/3)
     end
 
-    @desc "Get a person by it's preferred username"
-    field :person, :person do
+    @desc "Get a person by it's (federated) username"
+    field :fetch_person, :person do
       arg(:preferred_username, non_null(:string))
-      resolve(&Person.find_person/3)
+      resolve(&Person.fetch_person/3)
+    end
+
+    @desc "Get a person by it's ID"
+    field :person, :person do
+      arg(:id, non_null(:id))
+      resolve(&Person.get_person/3)
     end
 
     @desc "Get the persons for an user"
@@ -106,7 +112,7 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
 
     @desc "Update an identity"
     field :update_person, :person do
-      arg(:preferred_username, non_null(:string))
+      arg(:id, non_null(:id))
 
       arg(:name, :string, description: "The displayed name for this profile")
 
@@ -127,7 +133,7 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
 
     @desc "Delete an identity"
     field :delete_person, :person do
-      arg(:preferred_username, non_null(:string))
+      arg(:id, non_null(:id))
 
       resolve(handle_errors(&Person.delete_person/3))
     end

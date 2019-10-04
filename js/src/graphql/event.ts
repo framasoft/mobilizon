@@ -221,6 +221,8 @@ export const CREATE_EVENT = gql`
       id,
       uuid,
       title,
+      url,
+      local,
       description,
       beginsOn,
       endsOn,
@@ -239,14 +241,25 @@ export const CREATE_EVENT = gql`
       physicalAddress {
         ${physicalAddressQuery}
       },
+      organizerActor {
+        avatar {
+          url
+        },
+        preferredUsername,
+        domain,
+        name,
+        url,
+        id,
+      },
+      participantStats {
+        approved,
+        unapproved
+      },
       tags {
         ${tagsQuery}
       },
       options {
         ${optionsQuery}
-      },
-      organizerActor {
-        id
       }
     }
   }
@@ -397,8 +410,8 @@ export const PARTICIPANTS = gql`
 `;
 
 export const EVENT_PERSON_PARTICIPATION = gql`
-  query($name: String!, $eventId: ID!) {
-    person(preferredUsername: $name) {
+  query($actorId: ID!, $eventId: ID!) {
+    person(id: $actorId) {
       id,
       participations(eventId: $eventId) {
         id,

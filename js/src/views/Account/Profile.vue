@@ -104,7 +104,7 @@ import { CREATE_FEED_TOKEN_ACTOR } from '@/graphql/feed_tokens';
       query: FETCH_PERSON,
       variables() {
         return {
-          name: this.$route.params.name,
+          username: this.$route.params.name,
         };
       },
     },

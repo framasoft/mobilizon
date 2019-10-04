@@ -12,15 +12,29 @@ defmodule MobilizonWeb.Resolvers.Person do
   alias Mobilizon.Users.User
 
   @doc """
-  Find a person
+  Get a person
   """
-  def find_person(_parent, %{preferred_username: name}, _resolution) do
-    with {:ok, actor} <- ActivityPub.find_or_make_person_from_nickname(name),
+  def get_person(_parent, %{id: id}, _resolution) do
+    with %Actor{} = actor <- Actors.get_actor_with_preload(id),
          actor <- proxify_pictures(actor) do
       {:ok, actor}
     else
       _ ->
-        {:error, "Person with name #{name} not found"}
+        {:error, "Person with ID #{id} not found"}
+    end
+  end
+
+  @doc """
+  Find a person
+  """
+  def fetch_person(_parent, %{preferred_username: preferred_username}, _resolution) do
+    with {:ok, %Actor{} = actor} <-
+           ActivityPub.find_or_make_actor_from_nickname(preferred_username),
+         actor <- proxify_pictures(actor) do
+      {:ok, actor}
+    else
+      _ ->
+        {:error, "Person with username #{preferred_username} not found"}
     end
   end
 
@@ -74,13 +88,13 @@ defmodule MobilizonWeb.Resolvers.Person do
   """
   def update_person(
         _parent,
-        %{preferred_username: preferred_username} = args,
+        %{id: id} = args,
         %{context: %{current_user: user}} = _resolution
       ) do
     args = Map.put(args, :user_id, user.id)
 
     with {:find_actor, %Actor{} = actor} <-
-           {:find_actor, Actors.get_actor_by_name(preferred_username)},
+           {:find_actor, Actors.get_actor(id)},
          {:is_owned, %Actor{}} <- User.owns_actor(user, actor.id),
          args <- save_attached_pictures(args),
          {:ok, actor} <- Actors.update_actor(actor, args) do
@@ -103,11 +117,11 @@ defmodule MobilizonWeb.Resolvers.Person do
   """
   def delete_person(
         _parent,
-        %{preferred_username: preferred_username} = _args,
+        %{id: id} = _args,
         %{context: %{current_user: user}} = _resolution
       ) do
     with {:find_actor, %Actor{} = actor} <-
-           {:find_actor, Actors.get_actor_by_name(preferred_username)},
+           {:find_actor, Actors.get_actor(id)},
          {:is_owned, %Actor{}} <- User.owns_actor(user, actor.id),
          {:last_identity, false} <- {:last_identity, last_identity?(user)},
          {:last_admin, false} <- {:last_admin, last_admin_of_a_group?(actor.id)},

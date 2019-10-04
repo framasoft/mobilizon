@@ -13,19 +13,14 @@ import NavBar from '@/components/NavBar.vue';
 import { Component, Vue } from 'vue-property-decorator';
 import {
   AUTH_ACCESS_TOKEN,
-  AUTH_USER_ACTOR_ID,
   AUTH_USER_EMAIL,
   AUTH_USER_ID,
   AUTH_USER_ROLE,
 } from '@/constants';
 import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
-import { ICurrentUser } from '@/types/current-user.model';
 import Footer from '@/components/Footer.vue';
 import Logo from '@/components/Logo.vue';
-import { CURRENT_ACTOR_CLIENT, IDENTITIES, UPDATE_CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
-import { IPerson } from '@/types/actor';
-import { changeIdentity, initializeCurrentActor, saveActorData } from '@/utils/auth';
-
+import { initializeCurrentActor } from '@/utils/auth';
 @Component({
   apollo: {
     currentUser: {

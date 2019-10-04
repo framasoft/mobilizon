@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Wed Oct 02 2019 16:30:43 GMT+0200 (GMT+02:00)
+# timestamp: Fri Oct 04 2019 15:04:46 GMT+0200 (GMT+02:00)
 
 schema {
   query: RootQueryType
@@ -989,7 +989,7 @@ type RootMutationType {
   deleteGroup(actorId: ID!, groupId: ID!): DeletedObject
 
   """Delete an identity"""
-  deletePerson(preferredUsername: String!): Person
+  deletePerson(id: ID!): Person
   deleteReportNote(moderatorId: ID!, noteId: ID!): DeletedObject
 
   """Join an event"""
@@ -1082,10 +1082,10 @@ type RootMutationType {
     The banner for the profile, either as an object or directly the ID of an existing Picture
     """
     banner: PictureInput
+    id: ID!
 
     """The displayed name for this profile"""
     name: String
-    preferredUsername: String!
 
     """The summary for this profile"""
     summary: String
@@ -1119,6 +1119,9 @@ type RootQueryType {
   """Get all events"""
   events(limit: Int = 10, page: Int = 1): [Event]
 
+  """Get a person by it's (federated) username"""
+  fetchPerson(preferredUsername: String!): Person
+
   """Get a group by it's preferred username"""
   group(preferredUsername: String!): Group
 
@@ -1134,8 +1137,8 @@ type RootQueryType {
   """Get the current user"""
   loggedUser: User
 
-  """Get a person by it's preferred username"""
-  person(preferredUsername: String!): Person
+  """Get a person by it's ID"""
+  person(id: ID!): Person
 
   """Get a picture"""
   picture(id: String!): Picture

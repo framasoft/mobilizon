@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export const FETCH_PERSON = gql`
-query($name:String!) {
-  person(preferredUsername: $name) {
+query($username: String!) {
+  fetchPerson(preferredUsername: $username) {
     id,
     url,
     name,
@@ -27,6 +27,35 @@ query($name:String!) {
     },
   }
 }
+`;
+
+export const GET_PERSON = gql`
+    query($actorId: ID!) {
+        person(id: $actorId) {
+            id,
+            url,
+            name,
+            domain,
+            summary,
+            preferredUsername,
+            suspended,
+            avatar {
+                name,
+                url
+            },
+            banner {
+                url
+            },
+            feedTokens {
+                token
+            },
+            organizedEvents {
+                uuid,
+                title,
+                beginsOn
+            },
+        }
+    }
 `;
 
 export const LOGGED_PERSON = gql`
@@ -172,9 +201,9 @@ mutation CreatePerson($preferredUsername: String!, $name: String!, $summary: Str
 `;
 
 export const UPDATE_PERSON = gql`
-  mutation UpdatePerson($preferredUsername: String!, $name: String, $summary: String, $avatar: PictureInput) {
+  mutation UpdatePerson($id: ID!, $name: String, $summary: String, $avatar: PictureInput) {
     updatePerson(
-      preferredUsername: $preferredUsername,
+      id: $id,
       name: $name,
       summary: $summary,
       avatar: $avatar
@@ -191,8 +220,8 @@ export const UPDATE_PERSON = gql`
 `;
 
 export const DELETE_PERSON = gql`
-  mutation DeletePerson($preferredUsername: String!) {
-    deletePerson(preferredUsername: $preferredUsername) {
+  mutation DeletePerson($id: ID!) {
+    deletePerson(id: $id) {
       preferredUsername,
     }
   }
@@ -209,6 +238,7 @@ mutation ($preferredUsername: String!, $name: String!, $summary: String!, $email
       summary: $summary,
       email: $email
     ) {
+    id,
     preferredUsername,
     name,
     summary,

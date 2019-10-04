@@ -135,7 +135,7 @@ export default class Register extends Vue {
 
       this.validationSent = true;
 
-      this.$router.push({
+      await this.$router.push({
         name: RouteName.REGISTER_PROFILE,
         params: { email: this.credentials.email },
       });
