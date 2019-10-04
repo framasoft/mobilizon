@@ -27,7 +27,7 @@
     "register-service-worker": "^1.6.2",
     "tippy.js": "^5.0.1",
     "tiptap": "^1.26.0",
-    "tiptap-extensions": "^1.28.0",
+    "tiptap-extensions": "^1.28.1",
     "typeface-signika": "0.0.72",
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.0-rc.6",
