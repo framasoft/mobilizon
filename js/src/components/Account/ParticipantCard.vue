@@ -1,3 +1,20 @@
+<docs>
+```vue
+<participant-card :participant="{ actor: { preferredUsername: 'user1', name: 'someoneIDontLike' }, role: 'REJECTED' }" />
+```
+
+```vue
+<participant-card :participant="{ actor: { preferredUsername: 'user2', name: 'someoneWhoWillWait' }, role: 'NOT_APPROVED' }" />
+```
+
+```vue
+<participant-card :participant="{ actor: { preferredUsername: 'user3', name: 'a_participant' }, role: 'PARTICIPANT' }" />
+```
+
+```vue
+<participant-card :participant="{ actor: { preferredUsername: 'me', name: 'myself' }, role: 'CREATOR' }" />
+```
+</docs>
 <template>
   <article class="card">
     <div class="card-content">
@@ -28,7 +45,7 @@ import { IActor, IPerson, Person } from '@/types/actor';
 import { IParticipant, ParticipantRole } from '@/types/event.model';
 
 @Component
-export default class ActorCard extends Vue {
+export default class ParticipantCard extends Vue {
   @Prop({ required: true }) participant!: IParticipant;
   @Prop({ type: Function }) accept;
   @Prop({ type: Function }) reject;

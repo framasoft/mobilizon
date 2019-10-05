@@ -1,3 +1,16 @@
+<docs>
+### Example
+```vue
+  <DateCalendarIcon date="2019-10-05T18:41:11.720Z" />
+```
+
+```vue
+  <DateCalendarIcon
+    :date="new Date()"
+  />
+```
+</docs>
+
 <template>
     <time class="datetime-container" :datetime="dateObj.getUTCSeconds()">
         <span class="month">{{ month }}</span>
@@ -9,6 +22,9 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component
 export default class DateCalendarIcon extends Vue {
+  /**
+   * `date` can be a string or an actual date object.
+   */
   @Prop({ required: true }) date!: string;
 
   get dateObj() {

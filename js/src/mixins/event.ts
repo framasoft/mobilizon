@@ -45,6 +45,11 @@ export default class EventMixin extends mixins(Vue) {
           actorId: currentActor.id,
         },
       });
+      /**
+       * When the event corresponding has been deleted (by the organizer). A notification is already triggered.
+       *
+       * @type {string}
+       */
       this.$emit('eventDeleted', event.id);
 
       this.$buefy.notification.open({

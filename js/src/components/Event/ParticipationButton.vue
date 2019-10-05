@@ -1,3 +1,27 @@
+<docs>
+A button to set your participation
+
+##### If the participant has been confirmed
+```vue
+<ParticipationButton :participation="{ role: 'PARTICIPANT' }" :currentActor="{ preferredUsername: 'test', avatar: { url: 'https://huit.re/EPX7vs1j' } }" />
+```
+
+##### If the participant has not being approved yet
+```vue
+<ParticipationButton :participation="{ role: 'NOT_APPROVED' }" :currentActor="{ preferredUsername: 'test', avatar: { url: 'https://huit.re/EPX7vs1j' } }" />
+```
+
+##### If the participant has been rejected
+```vue
+<ParticipationButton :participation="{ role: 'REJECTED' }" :currentActor="{ preferredUsername: 'test', avatar: { url: 'https://huit.re/EPX7vs1j' } }" />
+```
+
+##### If the participant doesn't exist yet
+```vue
+<ParticipationButton :participation="null" :currentActor="{ preferredUsername: 'test', avatar: { url: 'https://huit.re/EPX7vs1j' } }" />
+```
+</docs>
+
 <template>
     <div class="participation-button">
         <b-dropdown aria-role="list" position="is-bottom-left" v-if="participation && participation.role === ParticipantRole.PARTICIPANT">

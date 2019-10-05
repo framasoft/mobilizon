@@ -29,30 +29,6 @@
   </section>
 </template>
 
-<style lang="scss" scoped>
-  .identities {
-    border-right: 1px solid grey;
-
-    padding: 15px 0;
-  }
-
-  .media.identity {
-    align-items: center;
-    font-size: 1.3rem;
-    padding-bottom: 0;
-    margin-bottom: 15px;
-    color: #000;
-
-    &.is-current-identity {
-      background-color: rgba(0, 0, 0, 0.1);
-    }
-  }
-
-  .title {
-    margin-bottom: 30px;
-  }
-</style>
-
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { IDENTITIES } from '@/graphql/actor';
@@ -80,3 +56,27 @@ export default class Identities extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .identities {
+    border-right: 1px solid grey;
+
+    padding: 15px 0;
+  }
+
+  .media.identity {
+    align-items: center;
+    font-size: 1.3rem;
+    padding-bottom: 0;
+    margin-bottom: 15px;
+    color: #000;
+
+    &.is-current-identity {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .title {
+    margin-bottom: 30px;
+  }
+</style>

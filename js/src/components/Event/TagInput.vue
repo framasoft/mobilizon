@@ -1,3 +1,29 @@
+<docs>
+### Tag input
+A special input to manage event tags
+
+```vue
+<tag-input :value="[{ title: 'toto' }]" path="title" />
+```
+
+```vue
+<template>
+  <tag-input v-model="tags" :data="sourceTags" path="title" />
+</template>
+<script>
+export default {
+  data() {
+    return {
+      sourceTags: [{ title: 'my tag'}, { title: 'my second tag' }, { title: 'another example'}],
+      tags: []
+    }
+  }
+}
+</script>
+```
+
+</docs>
+
 <template>
     <b-field :label="$t('Enter some tags')">
         <b-taginput
