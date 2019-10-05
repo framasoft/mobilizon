@@ -3,6 +3,8 @@ node_modules
 /dist
 
 /tests/e2e/reports/
+/tests/e2e/screenshots/
+/tests/e2e/videos/
 selenium-debug.log
 
 # local env files

@@ -1,5 +1,5 @@
 <template>
-  <b-navbar type="is-secondary" shadow wrapper-class="container">
+  <b-navbar type="is-secondary" wrapper-class="container">
     <template slot="brand">
       <b-navbar-item tag="router-link" :to="{ name: RouteName.HOME }"><logo /></b-navbar-item>
     </template>

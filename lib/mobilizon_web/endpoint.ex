@@ -4,13 +4,21 @@ defmodule MobilizonWeb.Endpoint do
   """
   use Phoenix.Endpoint, otp_app: :mobilizon
 
+  # For e2e tests
+  if Application.get_env(:mobilizon, :sql_sandbox) do
+    plug(Phoenix.Ecto.SQL.Sandbox,
+      at: "/sandbox",
+      header: "x-session-id",
+      repo: Mobilizon.Storage.Repo
+    )
+  end
+
+  plug(MobilizonWeb.Plugs.UploadedMedia)
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # You should set gzip to true if you are running phoenix.digest
   # when deploying your static files in production.
-
-  plug(MobilizonWeb.Plugs.UploadedMedia)
-
   plug(
     Plug.Static,
     at: "/",

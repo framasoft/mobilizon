@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "build": "vue-cli-service build",
+    "test:unit": "vue-cli-service test:unit",
+    "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
     "analyze-bundle": "yarn run build -- --report-json && webpack-bundle-analyzer ../priv/static/report.json",
     "dev": "vue-cli-service build --watch",
-    "test:e2e": "vue-cli-service test:e2e",
-    "test:unit": "vue-cli-service test:unit",
     "vue-i18n-extract": "vue-i18n-extract"
   },
   "dependencies": {
@@ -44,7 +44,7 @@
     "@types/lodash": "^4.14.141",
     "@types/mocha": "^5.2.6",
     "@vue/cli-plugin-babel": "^3.6.0",
-    "@vue/cli-plugin-e2e-nightwatch": "^3.6.0",
+    "@vue/cli-plugin-e2e-cypress": "^4.0.0-rc.7",
     "@vue/cli-plugin-pwa": "^3.6.0",
     "@vue/cli-plugin-typescript": "^3.6.0",
     "@vue/cli-plugin-unit-mocha": "^3.6.0",

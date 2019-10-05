@@ -3,7 +3,7 @@
 #
 # This configuration file is loaded before any dependency and
 # is restricted to this project.
-use Mix.Config
+import Config
 
 # General application configuration
 config :mobilizon,
@@ -71,10 +71,6 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
-# Import environment specific config. This must remain at the bottom
-# of this file so it overrides the configuration defined above.
-import_config "#{Mix.env()}.exs"
-
 config :mobilizon, MobilizonWeb.Guardian,
   issuer: "mobilizon",
   secret_key: "ty0WM7YBE3ojvxoUQxo8AERrNpfbXnIJ82ovkPdqbUFw31T5LcK8wGjaOiReVQjo"
@@ -136,3 +132,7 @@ config :mobilizon, Mobilizon.Service.Geospatial.GoogleMaps,
 
 config :mobilizon, Mobilizon.Service.Geospatial.MapQuest,
   api_key: System.get_env("GEOSPATIAL_MAP_QUEST_API_KEY") || nil
+
+# Import environment specific config. This must remain at the bottom
+# of this file so it overrides the configuration defined above.
+import_config "#{Mix.env()}.exs"
