@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :mobilizon, MobilizonWeb.Endpoint,
   http: [:inet6, port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4000],

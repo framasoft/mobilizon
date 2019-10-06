@@ -4,6 +4,7 @@ stages:
   - deps
   - front
   - back
+  - e2e
   - deploy
 
 variables:
@@ -19,6 +20,7 @@ variables:
   MOBILIZON_DATABASE_DBNAME: $POSTGRES_DB
   MOBILIZON_DATABASE_HOST: $POSTGRES_HOST
   GEOLITE_CITIES_PATH: "/usr/share/GeoIP/GeoLite2-City.mmdb"
+  MOBILIZON_INSTANCE_REGISTRATIONS_OPEN: "true"
 
 setup_elixir_deps:
   stage: deps
@@ -144,3 +146,26 @@ mix:
     paths:
       - deps
       - _build
+
+e2e:
+  stage: e2e
+  services:
+  - name: mdillon/postgis:10
+    alias: postgres
+  script:
+    - mix deps.get
+    - cd js
+    - yarn install
+    - yarn run build
+    - cd ../
+    - MIX_ENV=e2e mix ecto.create
+    - MIX_ENV=e2e mix ecto.migrate
+    - MIX_ENV=e2e mix phx.server &
+    - cd js
+    - npx wait-on http://localhost:4000
+    - npx cypress run --record --parallel --key $CYPRESS_KEY
+  artifacts:
+    expire_in: 2 day
+    paths:
+      - js/tests/e2e/screenshots/**/*.png
+      - js/tests/e2e/videos/**/*.mp4

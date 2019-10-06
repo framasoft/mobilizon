@@ -118,7 +118,7 @@ defmodule MobilizonWeb.Router do
     get("/:sig/:url/:filename", MediaProxyController, :remote)
   end
 
-  if Mix.env() == :dev do
+  if Mix.env() in [:dev, :e2e] do
     # If using Phoenix
     forward("/sent_emails", Bamboo.SentEmailViewerPlug)
   end

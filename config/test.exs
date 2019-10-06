@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :mobilizon, :instance,
   name: "Test instance",

@@ -1,86 +1,99 @@
 <template>
-  <div class="container" v-if="config">
-    <section class="hero is-info" v-if="!currentUser.id || !currentActor">
-      <div class="hero-body">
-        <div>
-          <h1 class="title">{{ config.name }}</h1>
-          <h2 class="subtitle">{{ config.description }}</h2>
-          <router-link class="button" :to="{ name: RouteName.REGISTER }" v-if="config.registrationsOpen">
-            {{ $t('Sign up') }}
-          </router-link>
-          <p v-else>
-            {{ $t("This instance isn't opened to registrations, but you can register on other instances.") }}
-          </p>
+  <div>
+    <section class="hero is-medium is-light is-bold" v-if="!currentUser.id || !currentActor.id">
+        <div class="hero-body">
+          <div class="container">
+            <div class="columns">
+              <div class="column">
+                <h1 class="title">{{ config.name }}</h1>
+                <h2 class="subtitle">{{ config.description }}</h2>
+                <router-link class="button" :to="{ name: RouteName.REGISTER }" v-if="config.registrationsOpen">
+                  {{ $t('Sign up') }}
+                </router-link>
+                <p v-else>
+                  {{ $t("This instance isn't opened to registrations, but you can register on other instances.") }}
+                </p>
+              </div>
+              <div class="column">
+                <div class="card-image">
+                  <figure class="image is-square">
+                    <img src="https://joinmobilizon.org/img/en/events-mobilizon.png" />
+                  </figure>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
-    <section v-else-if="currentActor">
-      <b-message type="is-info">
-        {{ $t('Welcome back {username}', { username: currentActor.displayName() }) }}
-      </b-message>
-    </section>
-    <section v-else-if="currentActor && goingToEvents.size > 0" class="container">
-      <h3 class="title">
-        {{ $t("Upcoming") }}
-      </h3>
-      <b-loading :active.sync="$apollo.loading"></b-loading>
-      <div v-for="row in goingToEvents" class="upcoming-events">
-        <span class="date-component-container" v-if="isInLessThanSevenDays(row[0])">
-          <date-component :date="row[0]"></date-component>
-          <h3 class="subtitle"
-            v-if="isToday(row[0])">
-            {{ $tc('You have one event today.', row[1].length, {count: row[1].length}) }}
-          </h3>
-          <h3 class="subtitle"
-              v-else-if="isTomorrow(row[0])">
-            {{ $tc('You have one event tomorrow.', row[1].length, {count: row[1].length}) }}
-          </h3>
-          <h3 class="subtitle"
-              v-else-if="isInLessThanSevenDays(row[0])">
-              {{ $tc('You have one event in {days} days.', row[1].length, {count: row[1].length, days: calculateDiffDays(row[0])}) }}
-          </h3>
+      </section>
+    <div class="container" v-if="config">
+      <section v-if="currentActor.id">
+        <b-message type="is-info">
+          {{ $t('Welcome back {username}', { username: currentActor.displayName() }) }}
+        </b-message>
+      </section>
+      <section v-else-if="currentActor && goingToEvents.size > 0" class="container">
+        <h3 class="title">
+          {{ $t("Upcoming") }}
+        </h3>
+        <b-loading :active.sync="$apollo.loading"></b-loading>
+        <div v-for="row in goingToEvents" class="upcoming-events" :key="row[0]">
+          <span class="date-component-container" v-if="isInLessThanSevenDays(row[0])">
+            <date-component :date="row[0]"></date-component>
+            <h3 class="subtitle"
+              v-if="isToday(row[0])">
+              {{ $tc('You have one event today.', row[1].length, {count: row[1].length}) }}
+            </h3>
+            <h3 class="subtitle"
+                v-else-if="isTomorrow(row[0])">
+              {{ $tc('You have one event tomorrow.', row[1].length, {count: row[1].length}) }}
+            </h3>
+            <h3 class="subtitle"
+                v-else-if="isInLessThanSevenDays(row[0])">
+                {{ $tc('You have one event in {days} days.', row[1].length, {count: row[1].length, days: calculateDiffDays(row[0])}) }}
+            </h3>
+          </span>
+          <div>
+            <EventListCard
+                    v-for="participation in row[1]"
+                    v-if="isInLessThanSevenDays(row[0])"
+                    :key="participation[1].event.uuid"
+                    :participation="participation[1]"
+            />
+          </div>
+        </div>
+        <span class="view-all">
+          <router-link :to=" { name: RouteName.MY_EVENTS }">{{ $t('View everything')}} >></router-link>
         </span>
+      </section>
+      <section v-if="currentActor && lastWeekEvents.length > 0">
+        <h3 class="title">
+          {{ $t("Last week") }}
+        </h3>
+        <b-loading :active.sync="$apollo.loading"></b-loading>
         <div>
-          <EventListCard
-                  v-for="participation in row[1]"
-                  v-if="isInLessThanSevenDays(row[0])"
-                  :key="participation[1].event.uuid"
-                  :participation="participation[1]"
-          />
+            <EventListCard
+                    v-for="participation in lastWeekEvents"
+                    :key="participation.id"
+                    :participation="participation"
+                    :options="{ hideDate: false }"
+            />
         </div>
-      </div>
-      <span class="view-all">
-        <router-link :to=" { name: RouteName.MY_EVENTS }">{{ $t('View everything')}} >></router-link>
-      </span>
-    </section>
-    <section v-if="currentActor && lastWeekEvents.length > 0">
-      <h3 class="title">
-        {{ $t("Last week") }}
-      </h3>
-      <b-loading :active.sync="$apollo.loading"></b-loading>
-      <div>
-          <EventListCard
-                  v-for="participation in lastWeekEvents"
-                  :key="participation.id"
-                  :participation="participation"
-                  :options="{ hideDate: false }"
-          />
-      </div>
-    </section>
-    <section>
-      <h3 class="events-nearby title">{{ $t('Events nearby you') }}</h3>
-      <b-loading :active.sync="$apollo.loading"></b-loading>
-      <div v-if="events.length > 0" class="columns is-multiline">
-        <div class="column is-one-third-desktop" v-for="event in events.slice(0, 6)" :key="event.uuid">
-          <EventCard
-            :event="event"
-          />
+      </section>
+      <section>
+        <h3 class="events-nearby title">{{ $t('Events nearby you') }}</h3>
+        <b-loading :active.sync="$apollo.loading"></b-loading>
+        <div v-if="events.length > 0" class="columns is-multiline">
+          <div class="column is-one-third-desktop" v-for="event in events.slice(0, 6)" :key="event.uuid">
+            <EventCard
+              :event="event"
+            />
+          </div>
         </div>
-      </div>
-      <b-message v-else type="is-danger">
-        {{ $t('No events found') }}
-      </b-message>
-    </section>
+        <b-message v-else type="is-danger">
+          {{ $t('No events found') }}
+        </b-message>
+      </section>
+    </div>
   </div>
 </template>
 
@@ -260,6 +273,8 @@ export default class Home extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
+@import "@/variables.scss";
+
 .search-autocomplete {
   border: 1px solid #dbdbdb;
   color: rgba(0, 0, 0, 0.87);
@@ -290,6 +305,16 @@ export default class Home extends Vue {
 
     a {
       text-decoration: underline;
+    }
+  }
+
+  section.hero {
+    margin-top: -3px;
+    background: lighten($secondary, 20%);
+
+    .column figure.image img {
+      width: 480px;
+      height: 350px;
     }
   }
 </style>

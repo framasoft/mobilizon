@@ -1,0 +1,7 @@
+{
+  "pluginsFile": "tests/e2e/plugins/index.js",
+  "projectId": "86dpkx",
+  "baseUrl": "http://localhost:4000",
+  "viewportWidth": 1920,
+  "viewportHeight": 1080
+}

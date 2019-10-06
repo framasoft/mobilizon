@@ -87,6 +87,7 @@ export default class App extends Vue {
 }
 
   body {
-    background: #f6f7f8;
+    // background: #f7f8fa;
+    background: #ebebeb;
   }
 </style>
