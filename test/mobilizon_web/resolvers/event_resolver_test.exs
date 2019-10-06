@@ -185,7 +185,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
 
       query = """
       {
-        person(preferredUsername: "#{actor.preferred_username}") {
+        person(id: "#{actor.id}") {
           id,
           participations(eventId: #{event_id}) {
             id,
@@ -832,7 +832,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
 
       query = """
       {
-        person(preferredUsername: "#{actor.preferred_username}") {
+        person(id: "#{actor.id}") {
           id,
           participations(eventId: #{event.id}) {
             id,
@@ -895,7 +895,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
 
       query = """
       {
-        person(preferredUsername: "#{actor.preferred_username}") {
+        person(id: "#{actor.id}") {
           id,
           participations(eventId: #{event.id}) {
             role,
