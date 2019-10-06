@@ -95,7 +95,7 @@ import { MOBILIZON_INSTANCE_HOST } from '@/api/_entrypoint';
 import { Dialog } from 'buefy/dist/components/dialog';
 import { RouteName } from '@/router';
 import { buildFileFromIPicture, buildFileVariable } from '@/utils/image';
-import { changeIdentity, saveActorData } from '@/utils/auth';
+import { changeIdentity } from '@/utils/auth';
 
 @Component({
   components: {
@@ -165,7 +165,9 @@ export default class EditIdentity extends Vue {
     try {
       await this.$apollo.mutate({
         mutation: DELETE_PERSON,
-        variables: this.identity,
+        variables: {
+          id: this.identity.id,
+        },
         update: (store) => {
           const data = store.readQuery<{ identities: IPerson[] }>({ query: IDENTITIES });
 
@@ -278,11 +280,11 @@ export default class EditIdentity extends Vue {
     const result = await this.$apollo.query({
       query: FETCH_PERSON,
       variables: {
-        name: this.identityName,
+        username: this.identityName,
       },
     });
 
-    return new Person(result.data.person);
+    return new Person(result.data.fetchPerson);
   }
 
   private handleError(err: any) {

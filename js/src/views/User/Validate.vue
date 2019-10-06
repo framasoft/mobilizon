@@ -48,9 +48,12 @@ export default class Validate extends Vue {
       const user = data.validateUser.user;
       console.log(user);
       if (user.defaultActor) {
-        this.$router.push({ name: RouteName.HOME });
+        await this.$router.push({ name: RouteName.HOME });
       } else { // If the user didn't register any profile yet, let's create one for them
-        this.$router.push({ name: RouteName.REGISTER_PROFILE, params: { email: user.email, userAlreadyActivated: 'true' } });
+        await this.$router.push({
+          name: RouteName.REGISTER_PROFILE,
+          params: { email: user.email, userAlreadyActivated: 'true' },
+        });
       }
     } catch (err) {
       console.error(err);

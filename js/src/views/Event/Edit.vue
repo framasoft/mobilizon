@@ -232,7 +232,7 @@ import {ParticipantRole} from "@/types/event.model";
 </style>
 
 <script lang="ts">
-import { CREATE_EVENT, EDIT_EVENT, FETCH_EVENT } from '@/graphql/event';
+import { CREATE_EVENT, EDIT_EVENT, EVENT_PERSON_PARTICIPATION, FETCH_EVENT } from '@/graphql/event';
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import {
     CommentModeration,
@@ -243,7 +243,7 @@ import {
     IEvent, ParticipantRole,
   } from '@/types/event.model';
 import { CURRENT_ACTOR_CLIENT, IDENTITIES, LOGGED_USER_DRAFTS, LOGGED_USER_PARTICIPATIONS } from '@/graphql/actor';
-import { Person } from '@/types/actor';
+import { IPerson, Person } from '@/types/actor';
 import PictureUpload from '@/components/PictureUpload.vue';
 import Editor from '@/components/Editor.vue';
 import DateTimePicker from '@/components/Event/DateTimePicker.vue';
@@ -365,44 +365,9 @@ export default class EditEvent extends Vue {
       const { data } = await this.$apollo.mutate({
         mutation: CREATE_EVENT,
         variables: this.buildVariables(),
-        update: (store, { data: { createEvent } }) => {
-          if (createEvent.draft) {
-            const data = store.readQuery<{ loggedUser: ICurrentUser }>({ query: LOGGED_USER_DRAFTS, variables: {
-              page: 1,
-              limit: 10,
-            } });
-
-            if (data) {
-              data.loggedUser.drafts.push(createEvent);
-              store.writeQuery({ query: LOGGED_USER_DRAFTS, variables: {
-                page: 1,
-                limit: 10,
-              }, data });
-            }
-          } else {
-            const data = store.readQuery<{ loggedUser: ICurrentUser }>({ query: LOGGED_USER_PARTICIPATIONS, variables: {
-              page: 1,
-              limit: 10,
-              afterDateTime: (new Date()).toISOString(),
-            } });
-
-            if (data) {
-              data.loggedUser.participations.push({
-                role: ParticipantRole.CREATOR,
-                actor: createEvent.organizerActor,
-                event: createEvent,
-              });
-              store.writeQuery({ query: LOGGED_USER_PARTICIPATIONS, variables: {
-                page: 1,
-                limit: 10,
-                afterDateTime: (new Date()).toISOString(),
-              }, data });
-            }
-          }
-        },
+        update: (store, { data: { createEvent } }) => this.postCreateOrUpdate(store, createEvent),
+        refetchQueries: ({ data: { createEvent } }) => this.postRefetchQueries(createEvent),
       });
-
-      console.log('Event created', data);
 
       await this.$router.push({
         name: 'Event',
@@ -418,50 +383,8 @@ export default class EditEvent extends Vue {
       await this.$apollo.mutate({
         mutation: EDIT_EVENT,
         variables: this.buildVariables(),
-        update: (store, { data: { updateEvent } }) => {
-          if (updateEvent.draft) {
-            const data = store.readQuery<{ loggedUser: ICurrentUser }>({ query: LOGGED_USER_DRAFTS, variables: {
-              page: 1,
-              limit: 10,
-            } });
-
-            if (data) {
-              data.loggedUser.drafts.push(updateEvent);
-              store.writeQuery({ query: LOGGED_USER_DRAFTS, data });
-            }
-          } else {
-            let participationData: { loggedUser: ICurrentUser}|null = null;
-            try {
-              participationData = store.readQuery<{ loggedUser: ICurrentUser }>({
-                query: LOGGED_USER_PARTICIPATIONS, variables: {
-                  page: 1,
-                  limit: 10,
-                  afterDateTime: (new Date()).toISOString(),
-                },
-              });
-            } catch (e) {
-              // no worries, it seems we can't update participation cache because it's not linked to an ID
-            }
-
-            if (participationData) {
-              participationData.loggedUser.participations.push({
-                role: ParticipantRole.CREATOR,
-                actor: updateEvent.organizerActor,
-                event: updateEvent,
-              });
-              store.writeQuery({ query: LOGGED_USER_PARTICIPATIONS, variables: {
-                page: 1,
-                limit: 10,
-                afterDateTime: (new Date()).toISOString(),
-              }, data: participationData });
-            }
-            const resultEvent: IEvent = Object.assign({}, updateEvent);
-            resultEvent.organizerActor = this.event.organizerActor;
-            resultEvent.relatedEvents = [];
-
-            store.writeQuery({ query: FETCH_EVENT, variables: { uuid: updateEvent.uuid }, data: { event: resultEvent } });
-          }
-        },
+        update: (store, { data: { updateEvent } }) => this.postCreateOrUpdate(store, updateEvent),
+        refetchQueries: ({ data: { updateEvent } }) => this.postRefetchQueries(updateEvent),
       });
 
       await this.$router.push({
@@ -471,6 +394,61 @@ export default class EditEvent extends Vue {
     } catch (err) {
       console.error(err);
     }
+  }
+
+  /**
+   * Put in cache the updated or created event.
+   * If the event is not a draft anymore, also put in cache the participation
+   */
+  private postCreateOrUpdate(store, updateEvent) {
+    const resultEvent: IEvent = Object.assign({}, updateEvent);
+    const organizerActor: IPerson = this.event.organizerActor as Person;
+    resultEvent.organizerActor = organizerActor;
+    resultEvent.relatedEvents = [];
+
+    store.writeQuery({ query: FETCH_EVENT, variables: { uuid: updateEvent.uuid }, data: { event: resultEvent } });
+    if (!updateEvent.draft) {
+      store.writeQuery({
+        query: EVENT_PERSON_PARTICIPATION,
+        variables: { eventId: updateEvent.id, name: organizerActor.preferredUsername },
+        data: {
+          person: {
+            __typename: 'Person',
+            id: organizerActor.id,
+            participations: [{
+              __typename: 'Participant',
+              id: 'unknown',
+              role: ParticipantRole.CREATOR,
+              actor: {
+                __typename: 'Actor',
+                id: organizerActor.id,
+              },
+              event: {
+                __typename: 'Event',
+                id: updateEvent.id,
+              },
+            }],
+          },
+        },
+      });
+    }
+  }
+
+    /**
+     * Refresh drafts or participation cache depending if the event is still draft or not
+     */
+  private postRefetchQueries(updateEvent) {
+    if (updateEvent.draft) {
+      return [{
+        query: LOGGED_USER_DRAFTS,
+      }];
+    }
+    return [{
+      query: LOGGED_USER_PARTICIPATIONS,
+      variables: {
+        afterDateTime: new Date(),
+      },
+    }];
   }
 
   /**

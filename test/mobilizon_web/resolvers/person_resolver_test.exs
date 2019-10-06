@@ -1,18 +1,19 @@
 defmodule MobilizonWeb.Resolvers.PersonResolverTest do
   use MobilizonWeb.ConnCase
   alias MobilizonWeb.AbsintheHelpers
+  alias Mobilizon.Actors.Actor
   import Mobilizon.Factory
 
   @non_existent_username "nonexistent"
 
   describe "Person Resolver" do
-    test "find_person/3 returns a person by it's username", context do
+    test "get_person/3 returns a person by it's username", context do
       user = insert(:user)
       actor = insert(:actor, user: user)
 
       query = """
       {
-        person(preferredUsername: "#{actor.preferred_username}") {
+        person(id: "#{actor.id}") {
             preferredUsername,
         }
       }
@@ -27,7 +28,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
 
       query = """
       {
-        person(preferredUsername: "#{@non_existent_username}") {
+        person(id: "6895567") {
             preferredUsername,
         }
       }
@@ -40,7 +41,46 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
       assert json_response(res, 200)["data"]["person"] == nil
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "Person with name #{@non_existent_username} not found"
+               "Person with ID 6895567 not found"
+    end
+
+    test "find_person/3 returns a person by it's username", context do
+      user = insert(:user)
+      actor = insert(:actor, user: user)
+
+      query = """
+      {
+        fetchPerson(preferredUsername: "#{actor.preferred_username}") {
+            preferredUsername,
+        }
+      }
+      """
+
+      res =
+        context.conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+
+      assert json_response(res, 200)["errors"] == nil
+
+      assert json_response(res, 200)["data"]["fetchPerson"]["preferredUsername"] ==
+               actor.preferred_username
+
+      query = """
+      {
+        fetchPerson(preferredUsername: "#{@non_existent_username}") {
+            preferredUsername,
+        }
+      }
+      """
+
+      res =
+        context.conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+
+      assert json_response(res, 200)["data"]["fetchPerson"] == nil
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "Person with username #{@non_existent_username} not found"
     end
 
     test "get_current_person/3 returns the current logged-in actor", context do
@@ -215,12 +255,12 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
 
     test "update_person/3 updates an existing identity", context do
       user = insert(:user)
-      insert(:actor, user: user, preferred_username: "riri")
+      %Actor{id: person_id} = insert(:actor, user: user, preferred_username: "riri")
 
       mutation = """
           mutation {
             updatePerson(
-              preferredUsername: "riri",
+              id: "#{person_id}",
               name: "riri updated",
               summary: "summary updated",
               banner: {
@@ -286,12 +326,12 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
     test "update_person/3 should fail to update a not owned identity", context do
       user1 = insert(:user)
       user2 = insert(:user)
-      insert(:actor, user: user2, preferred_username: "riri")
+      %Actor{id: person_id} = insert(:actor, user: user2, preferred_username: "riri")
 
       mutation = """
           mutation {
             updatePerson(
-              preferredUsername: "riri",
+              id: "#{person_id}",
               name: "riri updated",
             ) {
               id,
@@ -317,7 +357,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
       mutation = """
           mutation {
             updatePerson(
-              preferredUsername: "not_existing",
+              id: "48918",
               name: "riri updated",
             ) {
               id,
@@ -339,11 +379,11 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
     test "delete_person/3 should fail to update a not owned identity", context do
       user1 = insert(:user)
       user2 = insert(:user)
-      insert(:actor, user: user2, preferred_username: "riri")
+      %Actor{id: person_id} = insert(:actor, user: user2, preferred_username: "riri")
 
       mutation = """
           mutation {
-            deletePerson(preferredUsername: "riri") {
+            deletePerson(id: "#{person_id}") {
               id,
             }
           }
@@ -366,7 +406,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
 
       mutation = """
           mutation {
-            deletePerson(preferredUsername: "fifi") {
+            deletePerson(id: "9798665") {
               id,
             }
           }
@@ -385,11 +425,11 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
 
     test "delete_person/3 should fail to delete the last user identity", context do
       user = insert(:user)
-      insert(:actor, user: user, preferred_username: "riri")
+      %Actor{id: person_id} = insert(:actor, user: user, preferred_username: "riri")
 
       mutation = """
           mutation {
-            deletePerson(preferredUsername: "riri") {
+            deletePerson(id: "#{person_id}") {
               id,
             }
           }
@@ -421,7 +461,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
 
       mutation = """
           mutation {
-            deletePerson(preferredUsername: "last_admin") {
+            deletePerson(id: "#{admin_actor.id}") {
               id,
             }
           }
@@ -440,12 +480,12 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
 
     test "delete_person/3 should delete a user identity", context do
       user = insert(:user)
-      insert(:actor, user: user, preferred_username: "riri")
+      %Actor{id: person_id} = insert(:actor, user: user, preferred_username: "riri")
       insert(:actor, user: user, preferred_username: "fifi")
 
       mutation = """
           mutation {
-            deletePerson(preferredUsername: "riri") {
+            deletePerson(id: "#{person_id}") {
               id,
             }
           }
@@ -460,7 +500,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
 
       query = """
       {
-        person(preferredUsername: "riri") {
+        person(id: "#{person_id}") {
           id,
         }
       }
@@ -471,7 +511,8 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
         |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "Person with name riri not found"
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "Person with ID #{person_id} not found"
     end
   end
 
@@ -522,7 +563,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
 
       query = """
       {
-        person(preferredUsername: "#{actor.preferred_username}") {
+        person(id: "#{actor.id}") {
             participations {
               event {
                 uuid,
@@ -542,7 +583,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
 
       query = """
       {
-        person(preferredUsername: "#{actor_from_other_user.preferred_username}") {
+        person(id: "#{actor_from_other_user.id}") {
             participations {
               event {
                 uuid,
@@ -573,7 +614,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
 
       query = """
       {
-        person(preferredUsername: "#{actor.preferred_username}") {
+        person(id: "#{actor.id}") {
             participations(eventId: "#{event.id}") {
               event {
                 uuid,

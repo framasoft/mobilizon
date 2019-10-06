@@ -69,10 +69,12 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { IPerson } from '@/types/actor';
-import { REGISTER_PERSON } from '@/graphql/actor';
+import { IPerson, Person } from '@/types/actor';
+import { IDENTITIES, REGISTER_PERSON } from '@/graphql/actor';
 import { MOBILIZON_INSTANCE_HOST } from '@/api/_entrypoint';
 import { RouteName } from '@/router';
+import { changeIdentity } from '@/utils/auth';
+import { ICurrentUser } from '@/types/current-user.model';
 
 @Component
 export default class Register extends Vue {
@@ -81,35 +83,42 @@ export default class Register extends Vue {
 
   host?: string = MOBILIZON_INSTANCE_HOST;
 
-  person: IPerson = {
-    preferredUsername: '',
-    name: '',
-    summary: '',
-    url: '',
-    suspended: false,
-    avatar: null,
-    banner: null,
-    domain: null,
-    feedTokens: [],
-    goingToEvents: [],
-    participations: [],
-  };
+  person: IPerson = new Person();
   errors: object = {};
   validationSent: boolean = false;
   sendingValidation: boolean = false;
+
+  async mounted() {
+    // Make sure no one goes to this page if we don't want to
+    if (!this.email) {
+      await this.$router.replace({ name: RouteName.PAGE_NOT_FOUND });
+    }
+  }
 
   async submit() {
     try {
       this.sendingValidation = true;
       this.errors = {};
-      await this.$apollo.mutate({
+      const { data } = await this.$apollo.mutate<{ registerPerson: IPerson }>({
         mutation: REGISTER_PERSON,
         variables: Object.assign({ email: this.email }, this.person),
-      });
-      this.validationSent = true;
+        update: (store, { data }) => {
+          const identitiesData = store.readQuery<{ identities: IPerson[] }>({ query: IDENTITIES });
 
-      if (this.userAlreadyActivated) {
-        this.$router.push({ name: RouteName.HOME });
+          if (identitiesData && data) {
+            identitiesData.identities.push(data.registerPerson);
+            store.writeQuery({ query: IDENTITIES, data: identitiesData });
+          }
+        },
+      });
+      if (data) {
+        this.validationSent = true;
+
+        if (this.userAlreadyActivated) {
+          await changeIdentity(this.$apollo.provider.defaultClient, data.registerPerson);
+
+          await this.$router.push({ name: RouteName.HOME });
+        }
       }
     } catch (error) {
       this.errors = error.graphQLErrors.reduce((acc, error) => {

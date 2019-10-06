@@ -48,7 +48,7 @@
               <p class="tags" v-if="event.category || event.tags.length > 0">
                 <b-tag type="is-warning" size="is-medium" v-if="event.draft">{{ $t('Draft') }}</b-tag>
 <!--                <span class="tag" v-if="event.category">{{ event.category }}</span>-->
-                <b-tag type="is-success" v-if="event.tags" v-for="tag in event.tags">{{ tag.title }}</b-tag>
+                <b-tag type="is-success" v-if="event.tags" v-for="tag in event.tags" :key="tag.title">{{ tag.title }}</b-tag>
                 <span v-if="event.tags > 0">⋅</span>
                 <span class="visibility" v-if="!event.draft">
                   <b-tag type="is-info" v-if="event.visibility === EventVisibility.PUBLIC">{{ $t('Public event') }}</b-tag>
@@ -256,12 +256,15 @@ import { RouteName } from '@/router';
       variables() {
         return {
           eventId: this.event.id,
-          name: this.currentActor.preferredUsername,
+          actorId: this.currentActor.id,
         };
       },
       update: (data) => {
         if (data && data.person) return data.person.participations;
         return [];
+      },
+      skip() {
+        return !this.event.id || !this.currentActor.id;
       },
     },
   },
