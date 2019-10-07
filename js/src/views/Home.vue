@@ -157,6 +157,7 @@ export default class Home extends Vue {
     const lastWeek = new Date();
     lastWeek.setDate(new Date().getDate() - 7);
 
+    if (this.currentUser.isLoggedIn === false) return;
     const { data } = await this.$apollo.query({
       query: LOGGED_USER_PARTICIPATIONS,
       variables: {

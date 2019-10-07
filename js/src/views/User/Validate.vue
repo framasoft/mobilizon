@@ -17,11 +17,13 @@
 </template>
 
 <script lang="ts">
-import { VALIDATE_USER } from '@/graphql/user';
+import { VALIDATE_USER, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { AUTH_USER_ID } from '@/constants';
 import { RouteName } from '@/router';
-import { saveTokenData } from '@/utils/auth';
+import { saveUserData, changeIdentity } from '@/utils/auth';
+import { ILogin } from '@/types/login.model';
+import { ICurrentUserRole } from '@/types/current-user.model';
 
 @Component
 export default class Validate extends Vue {
@@ -36,24 +38,37 @@ export default class Validate extends Vue {
 
   async validateAction() {
     try {
-      const { data } = await this.$apollo.mutate({
+      const { data } = await this.$apollo.mutate<{ validateUser: ILogin }>({
         mutation: VALIDATE_USER,
         variables: {
           token: this.token,
         },
       });
 
-      this.saveUserData(data);
+      if (data) {
+        saveUserData(data.validateUser);
 
-      const user = data.validateUser.user;
-      console.log(user);
-      if (user.defaultActor) {
-        await this.$router.push({ name: RouteName.HOME });
-      } else { // If the user didn't register any profile yet, let's create one for them
-        await this.$router.push({
-          name: RouteName.REGISTER_PROFILE,
-          params: { email: user.email, userAlreadyActivated: 'true' },
+        const user = data.validateUser.user;
+
+        await this.$apollo.mutate({
+          mutation: UPDATE_CURRENT_USER_CLIENT,
+          variables: {
+            id: user.id,
+            email: user.email,
+            isLoggedIn: true,
+            role: ICurrentUserRole.USER,
+          },
         });
+
+        if (user.defaultActor) {
+          await changeIdentity(this.$apollo.provider.defaultClient, user.defaultActor);
+          await this.$router.push({ name: RouteName.HOME });
+        } else { // If the user didn't register any profile yet, let's create one for them
+          await this.$router.push({
+            name: RouteName.REGISTER_PROFILE,
+            params: { email: user.email, userAlreadyActivated: 'true' },
+          });
+        }
       }
     } catch (err) {
       console.error(err);
@@ -61,12 +76,6 @@ export default class Validate extends Vue {
     } finally {
       this.loading = false;
     }
-  }
-
-  saveUserData({ validateUser: login }) {
-    localStorage.setItem(AUTH_USER_ID, login.user.id);
-
-    saveTokenData(login);
   }
 }
 </script>

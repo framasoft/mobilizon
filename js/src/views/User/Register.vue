@@ -36,7 +36,7 @@
           </div>
         </div>
         <div class="column">
-          <form @submit="submit">
+          <form v-on:submit.prevent="submit()">
             <b-field
               :label="$t('Email')"
               :type="errors.email ? 'is-danger' : null"
@@ -69,7 +69,7 @@
 
             <b-field grouped>
               <div class="control">
-                <button type="button" class="button is-primary" @click="submit()">
+                <button class="button is-primary">
                   {{ $t('Register') }}
                 </button>
               </div>

@@ -65,5 +65,8 @@ describe('Registration', () => {
     cy.location().should((loc) => {
       expect(loc.pathname).to.eq('/');
     });
+
+    cy.contains('.navbar-link', 'tester');
+    cy.contains('article.message.is-info', 'Welcome back tester account');
   });
 });

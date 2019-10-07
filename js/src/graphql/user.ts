@@ -18,7 +18,12 @@ mutation ValidateUser($token: String!) {
       id,
       email,
       defaultActor {
-        id
+        id,
+        preferredUsername,
+        name,
+        avatar {
+            url
+        }
       }
     }
   }

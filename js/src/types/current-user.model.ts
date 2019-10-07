@@ -1,4 +1,5 @@
 import { IEvent, IParticipant } from '@/types/event.model';
+import { IPerson } from '@/types/actor/person.model';
 
 export enum ICurrentUserRole {
   USER = 'USER',
@@ -12,5 +13,6 @@ export interface ICurrentUser {
   isLoggedIn: boolean;
   role: ICurrentUserRole;
   participations: IParticipant[];
+  defaultActor: IPerson;
   drafts: IEvent[];
 }
