@@ -23,10 +23,10 @@ variables:
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
-    - ~/.cache/
     - build/
     - deps/
     - js/node_modules
+    - cache/Cypress
 
 lint:
   stage: check
