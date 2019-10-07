@@ -20,32 +20,43 @@ variables:
   GEOLITE_CITIES_PATH: "/usr/share/GeoIP/GeoLite2-City.mmdb"
   MOBILIZON_INSTANCE_REGISTRATIONS_OPEN: "true"
 
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - ~/.cache/
+    - build/
+    - deps/
+    - js/node_modules
+
 lint:
   stage: check
   script:
+    - export EXITVALUE=0
     - mix deps.get
-    - mix credo list
-    - mix format --check-formatted --dry-run
+    - mix credo -a || export EXITVALUE=1
+    - mix format --check-formatted --dry-run || export EXITVALUE=1
     - cd js
     - yarn install
-    - yarn run lint
-  cache:
+    - yarn run lint || export EXITVALUE=1
+    - yarn run build
+    - cd ../
+    - exit $EXITVALUE
+  artifacts:
+    expire_in: 1 day
+    when: on_success
     paths:
-      - deps
-      - js/node_modules
+      - priv/static
 
 deps:
   stage: check
   script:
+    - export EXITVALUE=0
     - mix deps.get
-    - mix hex.outdated
+    - mix hex.outdated || export EXITVALUE=1
     - cd js
-    - yarn outdated
+    - yarn outdated || export EXITVALUE=1
+    - exit $EXITVALUE
   allow_failure: true
-  cache:
-    paths:
-      - deps
-      - js/node_modules
 
 exunit:
   stage: test
@@ -53,15 +64,17 @@ exunit:
   - name: mdillon/postgis:11
     alias: postgres
   before_script:
+    - cd js
+    - yarn install
+    - yarn run build
+    - cd ../
     - mix deps.get
     - MIX_ENV=test mix ecto.create
     - MIX_ENV=test mix ecto.migrate
+  dependencies:
+    - lint
   script:
     - mix coveralls
-  cache:
-    paths:
-      - deps
-      - _build
 
 cypress:
   stage: test
@@ -98,10 +111,6 @@ pages:
     - yarn install
     - yarn run styleguide:build
     - mv styleguide ../public/frontend
-  cache:
-    paths:
-      - deps
-      - js/node_modules
   only:
     - master
   artifacts:
