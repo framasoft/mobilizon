@@ -52,8 +52,6 @@ exunit:
   services:
   - name: mdillon/postgis:11
     alias: postgres
-  dependencies:
-    - js
   before_script:
     - mix deps.get
     - MIX_ENV=test mix ecto.create
