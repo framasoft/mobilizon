@@ -52,14 +52,14 @@ export default {
 
 <template>
   <article class="box">
-    <div class="title-wrapper">
-      <div class="date-component" v-if="!mergedOptions.hideDate">
-        <date-calendar-icon :date="participation.event.beginsOn" />
-      </div>
-      <h2 class="title" ref="title">{{ participation.event.title }}</h2>
-    </div>
     <div class="columns">
       <div class="content column">
+        <div class="title-wrapper">
+          <div class="date-component" v-if="!mergedOptions.hideDate">
+            <date-calendar-icon :date="participation.event.beginsOn" />
+          </div>
+          <h2 class="title" ref="title">{{ participation.event.title }}</h2>
+        </div>
         <div>
           <span v-if="participation.event.physicalAddress && participation.event.physicalAddress.locality">{{ participation.event.physicalAddress.locality }} - </span>
           <span v-if="participation.actor.id === participation.event.organizerActor.id">{{ $t("You're organizing this event") }}</span>
@@ -211,6 +211,7 @@ export default class EventListCard extends mixins(ActorMixin, EventMixin) {
 
       div.title-wrapper {
         display: flex;
+        align-items: center;
 
         div.date-component {
           flex: 0;
@@ -222,6 +223,7 @@ export default class EventListCard extends mixins(ActorMixin, EventMixin) {
           line-height: 1em;
           font-size: 1.6em;
           padding-bottom: 5px;
+          margin: auto 0;
         }
       }
 

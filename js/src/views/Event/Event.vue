@@ -264,7 +264,7 @@ import { RouteName } from '@/router';
         return [];
       },
       skip() {
-        return !this.event.id || !this.currentActor.id;
+        return !this.currentActor || !this.event || !this.event.id || !this.currentActor.id;
       },
     },
   },

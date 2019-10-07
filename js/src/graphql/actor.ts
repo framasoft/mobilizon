@@ -97,6 +97,7 @@ query LoggedUserParticipations($afterDateTime: DateTime, $beforeDateTime: DateTi
               uuid,
               title,
               picture {
+                  id,
                   url,
                   alt
               },
@@ -143,6 +144,7 @@ export const LOGGED_USER_DRAFTS = gql`
                 uuid,
                 title,
                 picture {
+                    id,
                     url,
                     alt
                 },

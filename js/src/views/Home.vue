@@ -1,26 +1,25 @@
 <template>
   <div>
-    <section class="hero is-medium is-light is-bold" v-if="!currentUser.id || !currentActor.id">
+    <section class="hero is-medium is-light is-bold" v-if="config && (!currentUser.id || !currentActor.id)">
         <div class="hero-body">
           <div class="container">
-            <div class="columns">
-              <div class="column">
-                <h1 class="title">{{ config.name }}</h1>
-                <h2 class="subtitle">{{ config.description }}</h2>
-                <router-link class="button" :to="{ name: RouteName.REGISTER }" v-if="config.registrationsOpen">
-                  {{ $t('Sign up') }}
-                </router-link>
-                <p v-else>
-                  {{ $t("This instance isn't opened to registrations, but you can register on other instances.") }}
-                </p>
-              </div>
-              <div class="column">
-                <div class="card-image">
-                  <figure class="image is-square">
-                    <img src="https://joinmobilizon.org/img/en/events-mobilizon.png" />
-                  </figure>
-                </div>
-              </div>
+            <h1 class="title">{{ $t('Gather ⋅ Organize ⋅ Mobilize') }}</h1>
+            <p class="subtitle">{{ $t('Join {instance}, a Mobilizon instance', { instance: config.name }) }}
+            <p>{{ config.description }}</p>
+            <!-- We don't invite to find other instances yet -->
+            <!-- <p v-if="!config.registrationsOpen">
+              {{ $t("This instance isn't opened to registrations, but you can register on other instances.") }}
+            </p> -->
+            <b-message type="is-danger" v-if="!config.registrationsOpen">
+              {{ $t("Unfortunately, this instance isn't opened to registrations") }}
+            </b-message>
+            <div class="buttons">
+              <b-button type="is-primary" tag="router-link" :to="{ name: RouteName.REGISTER }" v-if="config.registrationsOpen">
+                {{ $t('Sign up') }}
+              </b-button>
+              <!-- We don't invite to find other instances yet -->
+              <!-- <b-button v-else type="is-link" tag="a" href="https://joinmastodon.org">{{ $t('Find an instance') }}</b-button> -->
+              <b-button type="is-text" tag="router-link" :to="{ name: RouteName.ABOUT }">{{ $t('Learn more about Mobilizon')}}</b-button>
             </div>
           </div>
         </div>
@@ -31,12 +30,12 @@
           {{ $t('Welcome back {username}', { username: currentActor.displayName() }) }}
         </b-message>
       </section>
-      <section v-else-if="currentActor && goingToEvents.size > 0" class="container">
+      <section v-if="currentActor && goingToEvents.size > 0" class="container">
         <h3 class="title">
           {{ $t("Upcoming") }}
         </h3>
         <b-loading :active.sync="$apollo.loading"></b-loading>
-        <div v-for="row in goingToEvents" class="upcoming-events" :key="row[0]">
+        <div v-for="row of goingToEvents" class="upcoming-events" :key="row[0]">
           <span class="date-component-container" v-if="isInLessThanSevenDays(row[0])">
             <date-component :date="row[0]"></date-component>
             <h3 class="subtitle"
@@ -79,8 +78,8 @@
             />
         </div>
       </section>
-      <section>
-        <h3 class="events-nearby title">{{ $t('Events nearby you') }}</h3>
+      <section class="events-featured">
+        <h3 class="title">{{ $t('Featured events') }}</h3>
         <b-loading :active.sync="$apollo.loading"></b-loading>
         <div v-if="events.length > 0" class="columns is-multiline">
           <div class="column is-one-third-desktop" v-for="event in events.slice(0, 6)" :key="event.uuid">
@@ -129,6 +128,22 @@ import { IConfig } from '@/types/config.model';
     config: {
       query: CONFIG,
     },
+    currentUserParticipations: {
+      query: LOGGED_USER_PARTICIPATIONS,
+      variables() {
+        const lastWeek = new Date();
+        lastWeek.setDate(new Date().getDate() - 7);
+        return {
+          afterDateTime: lastWeek.toISOString(),
+        };
+      },
+      update: (data) => {
+        return data.loggedUser.participations.map(participation => new Participant(participation));
+      },
+      skip() {
+        return this.currentUser.isLoggedIn === false;
+      },
+    },
   },
   components: {
     DateComponent,
@@ -141,34 +156,18 @@ export default class Home extends Vue {
   locations = [];
   city = { name: null };
   country = { name: null };
-  currentUserParticipations: IParticipant[] = [];
   currentUser!: ICurrentUser;
   currentActor!: IPerson;
-  config: IConfig = { description: '', name: '', registrationsOpen: false };
+  config!: IConfig;
   RouteName = RouteName;
+
+  currentUserParticipations: IParticipant[] = [];
 
   // get displayed_name() {
   //   return this.loggedPerson && this.loggedPerson.name === null
   //     ? this.loggedPerson.preferredUsername
   //     : this.loggedPerson.name;
   // }
-
-  async mounted() {
-    const lastWeek = new Date();
-    lastWeek.setDate(new Date().getDate() - 7);
-
-    if (this.currentUser.isLoggedIn === false) return;
-    const { data } = await this.$apollo.query({
-      query: LOGGED_USER_PARTICIPATIONS,
-      variables: {
-        afterDateTime: lastWeek.toISOString(),
-      },
-    });
-
-    if (data) {
-      this.currentUserParticipations = data.loggedUser.participations.map(participation => new Participant(participation));
-    }
-  }
 
   isToday(date: Date) {
     return (new Date(date)).toDateString() === (new Date()).toDateString();
@@ -205,6 +204,7 @@ export default class Home extends Vue {
     res.sort(
             (a: IParticipant, b: IParticipant) => a.event.beginsOn.getTime() - b.event.beginsOn.getTime(),
     );
+
     return res.reduce((acc: Map<string, Map<string, IParticipant>>, participation: IParticipant) => {
       const day = (new Date(participation.event.beginsOn)).toDateString();
       const participations: Map<string, IParticipant> = acc.get(day) || new Map();
@@ -281,8 +281,12 @@ export default class Home extends Vue {
   color: rgba(0, 0, 0, 0.87);
 }
 
-.events-nearby {
+.events-featured {
   margin: 25px auto;
+
+  .columns {
+    margin: 1rem auto 3rem;
+  }
 }
 
 .date-component-container {
@@ -314,8 +318,7 @@ export default class Home extends Vue {
     background: lighten($secondary, 20%);
 
     .column figure.image img {
-      width: 480px;
-      height: 350px;
+      max-width: 400px;
     }
   }
 </style>

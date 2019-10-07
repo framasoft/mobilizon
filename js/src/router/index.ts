@@ -15,6 +15,7 @@ Vue.use(Router);
 
 enum GlobalRouteName {
   HOME = 'Home',
+  ABOUT = 'About',
   PAGE_NOT_FOUND = 'PageNotFound',
   SEARCH = 'Search',
 }
@@ -66,7 +67,12 @@ const router = new Router({
       component: Home,
       meta: { requiredAuth: false },
     },
-
+    {
+      path: '/about',
+      name: RouteName.ABOUT,
+      component: () => import(/* webpackChunkName: "about" */ '@/views/About.vue'),
+      meta: { requiredAuth: false },
+    },
     {
       path: '*',
       name: RouteName.PAGE_NOT_FOUND,

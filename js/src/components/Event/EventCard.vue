@@ -33,7 +33,8 @@ A simple card for an event
         <div class="tag-container" v-if="event.tags">
           <b-tag v-for="tag in event.tags.slice(0, 3)" :key="tag.slug" type="is-secondary">{{ tag.title }}</b-tag>
         </div>
-        <img src="https://picsum.photos/g/400/225/?random" />
+        <img v-if="event.picture" :src="event.picture.url" />
+        <img v-else src="https://picsum.photos/g/400/225/?random" />
       </figure>
     </div>
     <div class="content">
@@ -78,7 +79,6 @@ import { IEvent, ParticipantRole } from '@/types/event.model';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import DateCalendarIcon from '@/components/Event/DateCalendarIcon.vue';
 import { IActor, IPerson, Person } from '@/types/actor';
-const lineClamp = require('line-clamp');
 
 export interface IEventCardOptions {
   hideDate: boolean;
@@ -90,9 +90,6 @@ export interface IEventCardOptions {
 @Component({
   components: {
     DateCalendarIcon,
-  },
-  mounted() {
-    lineClamp(this.$refs.title, 3);
   },
 })
 export default class EventCard extends Vue {
@@ -124,8 +121,34 @@ export default class EventCard extends Vue {
   @import "../../variables";
 
   a.card {
-    border: none;
+    display: block;
     background: $secondary;
+
+    &:hover {
+      // box-shadow: 0 0 5px 0 rgba(0, 0, 0, 1);
+      transform: scale(1.01, 1.01);
+      &:after {
+          opacity: 1;
+      }
+    }
+
+    border-radius: 5px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+
+    &:after {
+      content: "";
+      border-radius: 5px;
+      position: absolute;
+      z-index: -1;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
 
     div.tag-container {
       position: absolute;
@@ -166,11 +189,14 @@ export default class EventCard extends Vue {
         }
 
         .title {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;  
+          overflow: hidden;
           font-weight: 400;
-          line-height: 1em;
           font-size: 1.6em;
-          padding-bottom: 5px;
           margin-top: auto;
+          min-height: 3.5rem;
         }
       }
       span.organizer-place-wrapper {
