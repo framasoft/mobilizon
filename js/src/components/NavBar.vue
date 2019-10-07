@@ -94,6 +94,9 @@ import { RouteName } from '@/router';
     identities: {
       query: IDENTITIES,
       update: ({ identities }) => identities ? identities.map(identity => new Person(identity)) : [],
+      skip() {
+        return this.currentUser.isLoggedIn === false;
+      },
     },
     config: {
       query: CONFIG,
@@ -114,6 +117,7 @@ export default class NavBar extends Vue {
 
   @Watch('currentActor')
   async initializeListOfIdentities() {
+    if (!this.currentUser.isLoggedIn) return;
     const { data } = await this.$apollo.query<{ identities: IPerson[] }>({
       query: IDENTITIES,
     });

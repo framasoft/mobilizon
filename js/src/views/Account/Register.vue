@@ -103,11 +103,13 @@ export default class Register extends Vue {
         mutation: REGISTER_PERSON,
         variables: Object.assign({ email: this.email }, this.person),
         update: (store, { data }) => {
-          const identitiesData = store.readQuery<{ identities: IPerson[] }>({ query: IDENTITIES });
+          if (this.userAlreadyActivated) {
+            const identitiesData = store.readQuery<{ identities: IPerson[] }>({ query: IDENTITIES });
 
-          if (identitiesData && data) {
-            identitiesData.identities.push(data.registerPerson);
-            store.writeQuery({ query: IDENTITIES, data: identitiesData });
+            if (identitiesData && data) {
+              identitiesData.identities.push(data.registerPerson);
+              store.writeQuery({ query: IDENTITIES, data: identitiesData });
+            }
           }
         },
       });
