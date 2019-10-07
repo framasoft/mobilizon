@@ -1,10 +1,8 @@
 image: tcitworld/mobilizon-ci
 
 stages:
-  - deps
-  - front
-  - back
-  - e2e
+  - check
+  - test
   - deploy
 
 variables:
@@ -22,135 +20,67 @@ variables:
   GEOLITE_CITIES_PATH: "/usr/share/GeoIP/GeoLite2-City.mmdb"
   MOBILIZON_INSTANCE_REGISTRATIONS_OPEN: "true"
 
-setup_elixir_deps:
-  stage: deps
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - ~/.cache/Cypress
+    - build/
+    - deps/
+    - js/node_modules
+    - cache/Cypress
+
+lint:
+  stage: check
   script:
+    - export EXITVALUE=0
     - mix deps.get
-    - mix compile
-  cache:
-    paths:
-      - deps
-      - _build
-
-setup_js_deps:
-  stage: deps
-  before_script:
-    - cd js
-  script:
-    - yarn install
-  after_script:
-    - cd ../
-  cache:
-    paths:
-      - js/node_modules
-
-js:
-  stage: front
-  before_script:
+    - mix credo -a || export EXITVALUE=1
+    - mix format --check-formatted --dry-run || export EXITVALUE=1
     - cd js
     - yarn install
-  script:
+    - yarn run lint || export EXITVALUE=1
     - yarn run build
-  after_script:
     - cd ../
-  cache:
-    paths:
-      - js/node_modules
+    - exit $EXITVALUE
   artifacts:
+    expire_in: 1 day
+    when: on_success
     paths:
       - priv/static
-    untracked: false
-    expire_in: 30 days
 
-
-js_deps:
-  stage: front
-  before_script:
-    - cd js
-    - yarn install
+deps:
+  stage: check
   script:
-    - yarn outdated
-  after_script:
-    - cd ../
-  cache:
-    paths:
-      - js/node_modules
+    - export EXITVALUE=0
+    - mix deps.get
+    - mix hex.outdated || export EXITVALUE=1
+    - cd js
+    - yarn outdated || export EXITVALUE=1
+    - exit $EXITVALUE
   allow_failure: true
 
-js_check:
-  stage: front
-  before_script:
-    - cd js
-    - yarn install
-  script:
-    - yarn run lint
-  after_script:
-    - cd ../
-  cache:
-    paths:
-      - js/node_modules
-
-elixir_check:
-  stage: back
-  before_script:
-    - mix deps.get
-  script:
-    - mix credo list
-    - mix format --check-formatted --dry-run
-  cache:
-    paths:
-      - deps
-
-elixir_deps:
-  stage: back
-  before_script:
-    - mix deps.get
-  script:
-    - mix hex.outdated
-  allow_failure: true
-  cache:
-    paths:
-      - deps
-
-pages:
-  stage: deploy
-  before_script:
-    - mix deps.get
-  script:
-    - mix docs
-    - mv doc public
-  cache:
-    paths:
-      - deps
-  only:
-    - master
-  artifacts:
-    expire_in: 1 hour
-    paths:
-      - public
-
-mix:
-  stage: back
+exunit:
+  stage: test
   services:
-  - name: mdillon/postgis:10
+  - name: mdillon/postgis:11
     alias: postgres
-  dependencies:
-    - js
   before_script:
+    - cd js
+    - yarn install
+    - yarn run build
+    - cd ../
     - mix deps.get
     - MIX_ENV=test mix ecto.create
     - MIX_ENV=test mix ecto.migrate
+  dependencies:
+    - lint
   script:
     - mix coveralls
-  cache:
-    paths:
-      - deps
-      - _build
 
-e2e:
-  stage: e2e
+cypress:
+  stage: test
   services:
-  - name: mdillon/postgis:10
+  - name: mdillon/postgis:11
     alias: postgres
   script:
     - mix deps.get
@@ -169,3 +99,22 @@ e2e:
     paths:
       - js/tests/e2e/screenshots/**/*.png
       - js/tests/e2e/videos/**/*.mp4
+
+
+pages:
+  stage: deploy
+  script:
+    - mkdir public
+    - mix deps.get
+    - mix docs
+    - mv doc public/backend
+    - cd js
+    - yarn install
+    - yarn run styleguide:build
+    - mv styleguide ../public/frontend
+  only:
+    - master
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - public

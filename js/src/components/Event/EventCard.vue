@@ -1,3 +1,31 @@
+<docs>
+### EventCard
+
+A simple card for an event
+
+```vue
+<EventCard
+  :event="{ 
+    title: 'Vue Styleguidist first meetup: learn the basics!',
+    beginsOn: new Date(),
+    tags: [
+      {
+        slug: 'test', title: 'Test'
+      },
+      {
+        slug: 'mobilizon', title: 'Mobilizon'
+      },
+    ],
+    organizerActor: {
+      preferredUsername: 'tcit',
+      name: 'Some Random Dude',
+      domain: null
+    }
+  }"
+  />
+```
+</docs>
+
 <template>
   <router-link class="card" :to="{ name: 'Event', params: { uuid: event.uuid } }">
     <div class="card-image" v-if="!event.image">

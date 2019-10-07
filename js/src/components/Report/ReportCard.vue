@@ -1,3 +1,8 @@
+<docs>
+```vue
+<report-card :report="{ reported: { name: 'Some bad guy', preferredUsername: 'kevin' }, reporter: { preferredUsername: 'somePerson34' }, reportContent: 'This is not good'}" />
+```
+</docs>
 <template>
     <div class="card" v-if="report">
         <div class="card-content">

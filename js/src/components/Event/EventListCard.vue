@@ -1,3 +1,55 @@
+<docs>
+A simple card for a participation (we should rename it)
+
+```vue
+<template>
+  <div>
+    <EventListCard
+      :participation="participation"
+      />
+  </div>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      participation: {
+        event: { 
+          title: 'Vue Styleguidist first meetup: learn the basics!',
+          id: 5,
+          uuid: 'some uuid',
+          beginsOn: new Date(),
+          organizerActor: {
+            preferredUsername: 'tcit',
+            name: 'Some Random Dude',
+            domain: null,
+            id: 4,
+            displayName() { return 'Some random dude' }
+          },
+          options: {
+            maximumAttendeeCapacity: 4
+          },
+          participantStats: {
+            approved: 1,
+            unapproved: 2
+          }
+        },
+        actor: {
+          preferredUsername: 'tcit',
+            name: 'Some Random Dude',
+            domain: null,
+            id: 4,
+            displayName() { return 'Some random dude' }
+        },
+        role: 'CREATOR',
+      }
+    }
+  }
+}
+</script>
+```
+</docs>
+
 <template>
   <article class="box">
     <div class="title-wrapper">
@@ -79,6 +131,13 @@ import { ICurrentUser } from '@/types/current-user.model';
 import { IEventCardOptions } from './EventCard.vue';
 const lineClamp = require('line-clamp');
 
+const defaultOptions: IEventCardOptions = {
+  hideDate: true,
+  loggedPerson: false,
+  hideDetails: false,
+  organizerActor: null,
+};
+
 @Component({
   components: {
     DateCalendarIcon,
@@ -93,8 +152,14 @@ const lineClamp = require('line-clamp');
   },
 })
 export default class EventListCard extends mixins(ActorMixin, EventMixin) {
+  /**
+   * The participation associated
+   */
   @Prop({ required: true }) participation!: IParticipant;
-  @Prop({ required: false }) options!: IEventCardOptions;
+  /**
+   * Options are merged with default options
+   */
+  @Prop({ required: false, default: () => defaultOptions }) options!: IEventCardOptions;
 
   currentActor!: IPerson;
 
@@ -102,15 +167,8 @@ export default class EventListCard extends mixins(ActorMixin, EventMixin) {
   EventVisibility = EventVisibility;
   RouteName = RouteName;
 
-  defaultOptions: IEventCardOptions = {
-    hideDate: true,
-    loggedPerson: false,
-    hideDetails: false,
-    organizerActor: null,
-  };
-
   get mergedOptions(): IEventCardOptions {
-    return { ...this.defaultOptions, ...this.options };
+    return { ...defaultOptions, ...this.options };
   }
 
   /**

@@ -1,3 +1,16 @@
+<docs>
+### Datetime Picker
+
+> We're wrapping the Buefy datepicker & an input
+
+### Defaults
+- step: 10
+
+### Example
+```vue
+  <DateTimePicker :value="new Date()" />
+```
+</docs>
 <template>
     <b-field grouped horizontal :label="label">
         <b-datepicker expanded v-model="date" :placeholder="$t('Click to select')" icon="calendar"></b-datepicker>
@@ -8,8 +21,20 @@
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 @Component
 export default class DateTimePicker extends Vue {
-  @Prop({ required: true, type: Date }) value!: Date;
+  /**
+   * @model
+   * The DateTime value
+   */
+  @Prop({ required: true, type: Date, default: () => new Date() }) value!: Date;
+
+  /**
+   * What's shown besides the picker
+   */
   @Prop({ required: false, type: String, default: 'Datetime' }) label!: string;
+
+  /**
+   * The step for the time input
+   */
   @Prop({ required: false, type: Number, default: 1 }) step!: number;
 
   date: Date = this.value;
@@ -23,19 +48,24 @@ export default class DateTimePicker extends Vue {
   }
 
   @Watch('time')
-  updateTime(time) {
+  updateTime(time: string) {
     const [hours, minutes] = time.split(':', 2);
-    this.date.setHours(hours);
-    this.date.setMinutes(minutes);
+    this.date.setHours(parseInt(hours, 10));
+    this.date.setMinutes(parseInt(minutes, 10));
     this.updateDateTime();
   }
 
   @Watch('date')
-    updateDate() {
+  updateDate() {
     this.updateDateTime();
   }
 
   updateDateTime() {
+    /**
+     * Returns the updated date
+     *
+     * @type {DateTime}
+     */
     this.$emit('input', this.date);
   }
 }
