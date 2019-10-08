@@ -2,7 +2,9 @@
   <div id="mobilizon">
     <NavBar />
     <main>
-      <router-view />
+      <transition name="fade">
+        <router-view />
+      </transition>
     </main>
     <mobilizon-footer />
   </div>
@@ -71,18 +73,10 @@ export default class App extends Vue {
 /* Buefy imports */
 @import "~buefy/src/scss/buefy";
 
-.router-enter-active,
-.router-leave-active {
-  transition-property: opacity;
-  transition-duration: 0.25s;
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .75s;
 }
-
-.router-enter-active {
-  transition-delay: 0.25s;
-}
-
-.router-enter,
-.router-leave-active {
+.fade-enter, .fade-leave-to {
   opacity: 0;
 }
 
