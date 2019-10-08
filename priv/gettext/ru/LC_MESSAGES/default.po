@@ -290,7 +290,7 @@ msgstr ""
 msgid "View the updated event on: %{link}"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:38
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:5
 msgid "You requested a new password for your account on %{instance}."
