@@ -45,6 +45,9 @@ defmodule MobilizonWeb.Resolvers.Event do
     end
   end
 
+  defp find_private_event(_parent, %{uuid: uuid}, _resolution),
+    do: {:error, "Event with UUID #{uuid} not found"}
+
   def find_event(parent, %{uuid: uuid} = args, resolution) do
     case {:has_event, Mobilizon.Events.get_public_event_by_uuid_with_preload(uuid)} do
       {:has_event, %Event{} = event} ->
