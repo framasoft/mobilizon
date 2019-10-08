@@ -1,30 +1,30 @@
-## `msgid`s in this file come from POT (.pot) files.
-##
-## Do not add, change, or remove `msgid`s manually here as
-## they're tied to the ones in the corresponding POT file
-## (with the same domain).
-##
-## Use `mix gettext.extract --merge` or `mix gettext.merge`
-## to merge POT files into PO files.
+# # `msgid`s in this file come from POT (.pot) files.
+# #
+# # Do not add, change, or remove `msgid`s manually here as
+# # they're tied to the ones in the corresponding POT file
+# # (with the same domain).
+# #
+# # Use `mix gettext.extract --merge` or `mix gettext.merge`
+# # to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2019-09-30 17:10+0000\n"
+"PO-Revision-Date: 2019-10-08 14:45+0200\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
-"Language-Team: English <https://weblate.framasoft.org/projects/mobilizon/"
-"backend/en/>\n"
+"Language-Team: English <https://weblate.framasoft.org/projects/mobilizon/backend/en/>\n"
 "Language: en\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.8\n"
+"X-Generator: Poedit 2.0.6\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"MIME-Version: 1.0\n"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:48
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:12
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
-msgstr ""
-"If you didn't request this, please ignore this email. Your password won't "
-"change until you access the link below and create a new one."
+msgstr "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
 
 #, elixir-format
 #: lib/service/export/feed.ex:169
@@ -113,9 +113,7 @@ msgstr "Reset Password"
 #, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:41
 msgid "Resetting your password is easy. Just press the button below and follow the instructions. We'll have you up and running in no time."
-msgstr ""
-"Resetting your password is easy. Just press the button below and follow the "
-"instructions. We'll have you up and running in no time."
+msgstr "Resetting your password is easy. Just press the button below and follow the instructions. We'll have you up and running in no time."
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:13
@@ -130,9 +128,7 @@ msgstr "View the report"
 #, elixir-format
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:38
 msgid "You created an account on %{host} with this email address. You are one click away from activating it."
-msgstr ""
-"You created an account on %{host} with this email address. You are one click "
-"away from activating it."
+msgstr "You created an account on %{host} with this email address. You are one click away from activating it."
 
 #, elixir-format
 #: lib/mobilizon_web/email/user.ex:25
@@ -158,9 +154,7 @@ msgstr "All good!"
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:45
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:7
 msgid "An organizer just approved your participation. You're now going to this event!"
-msgstr ""
-"An organizer just approved your participation. You're now going to this "
-"event!"
+msgstr "An organizer just approved your participation. You're now going to this event!"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:58
@@ -173,16 +167,12 @@ msgstr "Go to event page"
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:99
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:21
 msgid "If you need to cancel your participation, just access the event page through link above and click on the participation button."
-msgstr ""
-"If you need to cancel your participation, just access the event page through "
-"link above and click on the participation button."
+msgstr "If you need to cancel your participation, just access the event page through link above and click on the participation button."
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:11
 msgid "If you need to cancel your participation, just access the previous link and click on the participation button."
-msgstr ""
-"If you need to cancel your participation, just access the previous link and "
-"click on the participation button."
+msgstr "If you need to cancel your participation, just access the previous link and click on the participation button."
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/email.text.eex:6
@@ -212,9 +202,7 @@ msgstr "Password reset"
 #, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:7
 msgid "Resetting your password is easy. Just click the link below and follow the instructions. We'll have you up and running in no time."
-msgstr ""
-"Resetting your password is easy. Just press the button below and follow the "
-"instructions. We'll have you up and running in no time."
+msgstr "Resetting your password is easy. Just press the button below and follow the instructions. We'll have you up and running in no time."
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:13
@@ -230,9 +218,7 @@ msgstr "Unfortunately, the organizers rejected your participation."
 #, elixir-format
 #: lib/mobilizon_web/templates/email/registration_confirmation.text.eex:5
 msgid "You created an account on %{host} with this email address. You are one click away from activating it. If this wasn't you, please ignore this email."
-msgstr ""
-"You created an account on %{host} with this email address. You are one click "
-"away from activating it."
+msgstr "You created an account on %{host} with this email address. You are one click away from activating it."
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:38
@@ -312,7 +298,7 @@ msgstr ""
 msgid "View the updated event on: %{link}"
 msgstr "Your participation to event %{title} has been rejected"
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:38
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:5
 msgid "You requested a new password for your account on %{instance}."
