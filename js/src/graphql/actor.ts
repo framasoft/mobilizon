@@ -11,16 +11,19 @@ query($username: String!) {
     preferredUsername,
     suspended,
     avatar {
+      id,
       name,
       url
     },
     banner {
+      id,
       url
     },
     feedTokens {
         token
     },
     organizedEvents {
+        id,
         uuid,
         title,
         beginsOn
@@ -40,6 +43,7 @@ export const GET_PERSON = gql`
             preferredUsername,
             suspended,
             avatar {
+                id,
                 name,
                 url
             },
@@ -50,6 +54,7 @@ export const GET_PERSON = gql`
                 token
             },
             organizedEvents {
+                id,
                 uuid,
                 title,
                 beginsOn
@@ -63,6 +68,7 @@ query {
   loggedPerson {
     id,
     avatar {
+      id,
       url
     },
     preferredUsername,
@@ -109,6 +115,7 @@ query LoggedUserParticipations($afterDateTime: DateTime, $beforeDateTime: DateTi
                   name,
                   domain,
                   avatar {
+                      id,
                       url
                   }
               },
@@ -129,6 +136,7 @@ query LoggedUserParticipations($afterDateTime: DateTime, $beforeDateTime: DateTi
               name,
               domain,
               avatar {
+                  id,
                   url
               }
           }
@@ -156,6 +164,7 @@ export const LOGGED_USER_DRAFTS = gql`
                     name,
                     domain,
                     avatar {
+                        id,
                         url
                     }
                 },
@@ -176,6 +185,7 @@ query {
   identities {
     id,
     avatar {
+        id,
         url
     },
     preferredUsername,
@@ -196,6 +206,7 @@ mutation CreatePerson($preferredUsername: String!, $name: String!, $summary: Str
     name,
     summary,
     avatar {
+      id,
       url
     }
   }
@@ -215,6 +226,7 @@ export const UPDATE_PERSON = gql`
       name,
       summary,
       avatar {
+        id,
         url
       },
     }
