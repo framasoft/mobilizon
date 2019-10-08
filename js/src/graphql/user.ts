@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export const CREATE_USER = gql`
-mutation CreateUser($email: String!, $password: String!) {
-  createUser(email: $email, password: $password) {
+mutation CreateUser($email: String!, $password: String!, $locale: String) {
+  createUser(email: $email, password: $password, locale: $locale) {
     email,
     confirmationSentAt
   }

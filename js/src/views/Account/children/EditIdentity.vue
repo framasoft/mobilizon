@@ -94,7 +94,7 @@ import PictureUpload from '@/components/PictureUpload.vue';
 import { MOBILIZON_INSTANCE_HOST } from '@/api/_entrypoint';
 import { Dialog } from 'buefy/dist/components/dialog';
 import { RouteName } from '@/router';
-import { buildFileFromIPicture, buildFileVariable } from '@/utils/image';
+import { buildFileFromIPicture, buildFileVariable, readFileAsync } from '@/utils/image';
 import { changeIdentity } from '@/utils/auth';
 
 @Component({
@@ -198,9 +198,11 @@ export default class EditIdentity extends Vue {
 
   async updateIdentity() {
     try {
+      const variables = await this.buildVariables();
+
       await this.$apollo.mutate({
         mutation: UPDATE_PERSON,
-        variables: this.buildVariables(),
+        variables,
         update: (store, { data: { updatePerson } }) => {
           const data = store.readQuery<{ identities: IPerson[] }>({ query: IDENTITIES });
 
@@ -225,9 +227,11 @@ export default class EditIdentity extends Vue {
 
   async createIdentity() {
     try {
+      const variables = await this.buildVariables();
+
       await this.$apollo.mutate({
         mutation: CREATE_PERSON,
-        variables: this.buildVariables(),
+        variables,
         update: (store, { data: { createPerson } }) => {
           const data = store.readQuery<{ identities: IPerson[] }>({ query: IDENTITIES });
 
@@ -305,10 +309,21 @@ export default class EditIdentity extends Vue {
                 .replace(/[^a-z0-9._]/g, '');
   }
 
-  private buildVariables() {
+  private async buildVariables() {
     const avatarObj = buildFileVariable(this.avatarFile, 'avatar', `${this.identity.preferredUsername}'s avatar`);
-
-    return Object.assign({}, this.identity, avatarObj);
+    const res = Object.assign({}, this.identity, avatarObj);
+    /**
+     * If the avatar didn't change, no need to try reuploading it
+     */
+    if (this.identity.avatar) {
+      const oldAvatarFile = await buildFileFromIPicture(this.identity.avatar) as File;
+      const oldAvatarFileContent = await readFileAsync(oldAvatarFile);
+      const newAvatarFileContent = await readFileAsync(this.avatarFile as File);
+      if (oldAvatarFileContent === newAvatarFileContent) {
+        res.avatar = null;
+      }
+    }
+    return res;
   }
 
   private async redirectIfNoIdentitySelected (identityParam?: string) {

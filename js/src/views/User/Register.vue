@@ -115,6 +115,7 @@ export default class Register extends Vue {
   credentials = {
     email: this.email,
     password: this.password,
+    locale: 'en',
   };
   errors: object = {};
   sendingValidation: boolean = false;
@@ -122,6 +123,7 @@ export default class Register extends Vue {
   RouteName = RouteName;
 
   async submit() {
+    this.credentials.locale = this.$i18n.locale;
     try {
       this.sendingValidation = true;
       this.errors = {};

@@ -1,204 +1,204 @@
 <template>
   <div class="container">
     <b-loading :active.sync="$apollo.loading"></b-loading>
-    <div v-if="event">
-      <div class="header-picture container">
-        <figure class="image is-3by1" v-if="event.picture">
-          <img :src="event.picture.url">
-        </figure>
-        <figure class="image is-3by1" v-else>
-          <img src="https://picsum.photos/600/200/">
-        </figure>
-      </div>
-        <section>
-          <div class="title-and-participate-button">
-            <div class="title-wrapper">
-              <div class="date-component">
-                <date-calendar-icon :date="event.beginsOn"></date-calendar-icon>
+    <transition appear name="fade" mode="out-in">
+      <div v-if="event">
+        <div class="header-picture container">
+          <figure class="image is-3by1" v-if="event.picture">
+            <img :src="event.picture.url">
+          </figure>
+          <figure class="image is-3by1" v-else>
+            <img src="https://picsum.photos/600/200/">
+          </figure>
+        </div>
+          <section>
+            <div class="title-and-participate-button">
+              <div class="title-wrapper">
+                <div class="date-component">
+                  <date-calendar-icon :date="event.beginsOn"></date-calendar-icon>
+                </div>
+                <h1 class="title">{{ event.title }}</h1>
               </div>
-              <h1 class="title">{{ event.title }}</h1>
+              <div class="has-text-right" v-if="new Date(endDate) > new Date()">
+                <small v-if="event.participantStats.approved > 0 && !actorIsParticipant">
+                    {{ $tc('One person is going', event.participantStats.approved, {approved: event.participantStats.approved}) }}
+                </small>
+                <small v-else-if="event.participantStats.approved > 0 && actorIsParticipant">
+                  {{ $tc('You and one other person are going to this event', event.participantStats.approved - 1, {approved: event.participantStats.approved - 1}) }}
+                </small>
+                <participation-button
+                        v-if="currentActor.id && !actorIsOrganizer && !event.draft"
+                        :participation="participations[0]"
+                        :current-actor="currentActor"
+                        @joinEvent="joinEvent"
+                        @joinModal="isJoinModalActive = true"
+                        @confirmLeave="confirmLeave"
+                />
+              </div>
+              <div v-else>
+                <button class="button is-primary" type="button" slot="trigger" disabled>
+                  <template>
+                    <span>{{ $t('Event already passed')}}</span>
+                  </template>
+                  <b-icon icon="menu-down"></b-icon>
+                </button>
+              </div>
             </div>
-            <div class="has-text-right" v-if="new Date(endDate) > new Date()">
-              <small v-if="event.participantStats.approved > 0 && !actorIsParticipant">
-                  {{ $tc('One person is going', event.participantStats.approved, {approved: event.participantStats.approved}) }}
-              </small>
-              <small v-else-if="event.participantStats.approved > 0 && actorIsParticipant">
-                {{ $tc('You and one other person are going to this event', event.participantStats.approved - 1, {approved: event.participantStats.approved - 1}) }}
-              </small>
-              <participation-button
-                      v-if="currentActor.id && !actorIsOrganizer && !event.draft"
-                      :participation="participations[0]"
-                      :current-actor="currentActor"
-                      @joinEvent="joinEvent"
-                      @joinModal="isJoinModalActive = true"
-                      @confirmLeave="confirmLeave"
-              />
+            <div class="metadata columns">
+              <div class="column is-three-quarters-desktop">
+                <p class="tags" v-if="event.category || event.tags.length > 0">
+                  <b-tag type="is-warning" size="is-medium" v-if="event.draft">{{ $t('Draft') }}</b-tag>
+                  <b-tag type="is-success" v-if="event.tags" v-for="tag in event.tags" :key="tag.title">{{ tag.title }}</b-tag>
+                  <span v-if="event.tags > 0">⋅</span>
+                  <span class="visibility" v-if="!event.draft">
+                    <b-tag type="is-info" v-if="event.visibility === EventVisibility.PUBLIC">{{ $t('Public event') }}</b-tag>
+                    <b-tag type="is-info" v-if="event.visibility === EventVisibility.UNLISTED">{{ $t('Private event') }}</b-tag>
+                  </span>
+                </p>
+                <div class="date-and-add-to-calendar">
+                  <div class="date-and-privacy" v-if="event.beginsOn">
+                    <b-icon icon="calendar-clock" />
+                    <event-full-date :beginsOn="event.beginsOn" :endsOn="event.endsOn" />
+                  </div>
+                  <a class="add-to-calendar" @click="downloadIcsEvent()" v-if="!event.draft">
+                    <b-icon icon="calendar-plus" />
+                    {{ $t('Add to my calendar') }}
+                  </a>
+                </div>
+                <p class="slug">
+                  {{ event.slug }}
+                </p>
+              </div>
+              <div class="column sidebar">
+                <div class="field has-addons" v-if="currentActor.id">
+                  <p class="control" v-if="actorIsOrganizer || event.draft">
+                    <router-link
+                            class="button"
+                            :to="{ name: RouteName.EDIT_EVENT, params: {eventId: event.uuid}}"
+                    >
+                      {{ $t('Edit') }}
+                    </router-link>
+                  </p>
+                  <p class="control" v-if="actorIsOrganizer || event.draft">
+                    <a class="button is-danger" @click="openDeleteEventModalWrapper">
+                      {{ $t('Delete') }}
+                    </a>
+                  </p>
+                  <p class="control">
+                    <a class="button is-danger" @click="isReportModalActive = true">
+                      {{ $t('Report') }}
+                    </a>
+                  </p>
+                </div>
+                <div class="address-wrapper">
+                  <b-icon icon="map" />
+                  <span v-if="!event.physicalAddress">{{ $t('No address defined') }}</span>
+                  <div class="address" v-if="event.physicalAddress">
+                    <address>
+                      <span class="addressDescription" :title="event.physicalAddress.description">{{ event.physicalAddress.description }}</span>
+                      <span>{{ event.physicalAddress.floor }} {{ event.physicalAddress.street }}</span>
+                      <span>{{ event.physicalAddress.postalCode }} {{ event.physicalAddress.locality }}</span>
+                    </address>
+                    <span class="map-show-button" @click="showMap = !showMap" v-if="event.physicalAddress && event.physicalAddress.geom">
+                      {{ $t('Show map') }}
+                    </span>
+                  </div>
+                  <b-modal v-if="event.physicalAddress && event.physicalAddress.geom" :active.sync="showMap" scroll="keep">
+                    <div class="map">
+                      <map-leaflet
+                              :coords="event.physicalAddress.geom"
+                              :popup="event.physicalAddress.description"
+                      />
+                    </div>
+                  </b-modal>
+                </div>
+                <div class="organizer">
+                  <span>
+                    <span v-if="event.organizerActor">
+                      {{ $t('By {name}', {name: event.organizerActor.name ? event.organizerActor.name : event.organizerActor.preferredUsername}) }}
+                    </span>
+                    <figure v-if="event.organizerActor.avatar" class="image is-48x48">
+                      <img
+                              class="is-rounded"
+                              :src="event.organizerActor.avatar.url"
+                              :alt="event.organizerActor.avatar.alt" />
+                    </figure>
+                  </span>
+                </div>
+              </div>
             </div>
-            <div v-else>
-              <button class="button is-primary" type="button" slot="trigger" disabled>
-                <template>
-                  <span>{{ $t('Event already passed')}}</span>
-                </template>
-                <b-icon icon="menu-down"></b-icon>
-              </button>
+          </section>
+          <div class="description">
+            <div class="description-container container">
+              <h3 class="title">
+                {{ $t('About this event') }}
+              </h3>
+              <p v-if="!event.description">
+                {{ $t("The event organizer didn't add any description.") }}
+              </p>
+              <div class="columns" v-else>
+                <div class="column is-half" v-html="event.description">
+                </div>
+              </div>
             </div>
           </div>
-          <div class="metadata columns">
-            <div class="column is-three-quarters-desktop">
-              <p class="tags" v-if="event.category || event.tags.length > 0">
-                <b-tag type="is-warning" size="is-medium" v-if="event.draft">{{ $t('Draft') }}</b-tag>
-<!--                <span class="tag" v-if="event.category">{{ event.category }}</span>-->
-                <b-tag type="is-success" v-if="event.tags" v-for="tag in event.tags" :key="tag.title">{{ tag.title }}</b-tag>
-                <span v-if="event.tags > 0">⋅</span>
-                <span class="visibility" v-if="!event.draft">
-                  <b-tag type="is-info" v-if="event.visibility === EventVisibility.PUBLIC">{{ $t('Public event') }}</b-tag>
-                  <b-tag type="is-info" v-if="event.visibility === EventVisibility.UNLISTED">{{ $t('Private event') }}</b-tag>
-                </span>
-              </p>
-              <div class="date-and-add-to-calendar">
-                <div class="date-and-privacy" v-if="event.beginsOn">
-                  <b-icon icon="calendar-clock" />
-                  <event-full-date :beginsOn="event.beginsOn" :endsOn="event.endsOn" />
+        <section class="share" v-if="!event.draft">
+          <div class="container">
+            <div class="columns">
+              <div class="column is-half has-text-centered">
+                <h3 class="title">{{ $t('Share this event') }}</h3>
+                <div>
+                  <b-icon icon="mastodon" size="is-large" type="is-primary" />
+                  <a :href="facebookShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="facebook" size="is-large" type="is-primary" /></a>
+                  <a :href="twitterShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="twitter" size="is-large" type="is-primary" /></a>
+                  <a :href="emailShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="email" size="is-large" type="is-primary" /></a>
+                  <!--     TODO: mailto: links are not used anymore, we should provide a popup to redact a message instead    -->
+                  <a :href="linkedInShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="linkedin" size="is-large" type="is-primary" /></a>
                 </div>
-                <a class="add-to-calendar" @click="downloadIcsEvent()" v-if="!event.draft">
-                  <b-icon icon="calendar-plus" />
+              </div>
+              <hr />
+              <div class="column is-half has-text-right add-to-calendar">
+                <h3 @click="downloadIcsEvent()">
                   {{ $t('Add to my calendar') }}
-                </a>
-              </div>
-              <p class="slug">
-                {{ event.slug }}
-              </p>
-            </div>
-            <div class="column sidebar">
-              <div class="field has-addons" v-if="currentActor.id">
-                <p class="control" v-if="actorIsOrganizer || event.draft">
-                  <router-link
-                          class="button"
-                          :to="{ name: RouteName.EDIT_EVENT, params: {eventId: event.uuid}}"
-                  >
-                    {{ $t('Edit') }}
-                  </router-link>
-                </p>
-                <p class="control" v-if="actorIsOrganizer || event.draft">
-                  <a class="button is-danger" @click="openDeleteEventModalWrapper">
-                    {{ $t('Delete') }}
-                  </a>
-                </p>
-                <p class="control">
-                  <a class="button is-danger" @click="isReportModalActive = true">
-                    {{ $t('Report') }}
-                  </a>
-                </p>
-              </div>
-              <div class="address-wrapper">
-                <b-icon icon="map" />
-                <span v-if="!event.physicalAddress">{{ $t('No address defined') }}</span>
-                <div class="address" v-if="event.physicalAddress">
-                  <address>
-                    <span class="addressDescription" :title="event.physicalAddress.description">{{ event.physicalAddress.description }}</span>
-                    <span>{{ event.physicalAddress.floor }} {{ event.physicalAddress.street }}</span>
-                    <span>{{ event.physicalAddress.postalCode }} {{ event.physicalAddress.locality }}</span>
-  <!--                  <span>{{ event.physicalAddress.region }} {{ event.physicalAddress.country }}</span>-->
-                  </address>
-                  <span class="map-show-button" @click="showMap = !showMap" v-if="event.physicalAddress && event.physicalAddress.geom">
-                    {{ $t('Show map') }}
-                  </span>
-                </div>
-                <b-modal v-if="event.physicalAddress && event.physicalAddress.geom" :active.sync="showMap" scroll="keep">
-                  <div class="map">
-                    <map-leaflet
-                            :coords="event.physicalAddress.geom"
-                            :popup="event.physicalAddress.description"
-                    />
-                  </div>
-                </b-modal>
-              </div>
-              <div class="organizer">
-                <span>
-                  <span v-if="event.organizerActor">
-                    {{ $t('By {name}', {name: event.organizerActor.name ? event.organizerActor.name : event.organizerActor.preferredUsername}) }}
-                  </span>
-                  <figure v-if="event.organizerActor.avatar" class="image is-48x48">
-                    <img
-                            class="is-rounded"
-                            :src="event.organizerActor.avatar.url"
-                            :alt="event.organizerActor.avatar.alt" />
-                  </figure>
-                </span>
+                </h3>
               </div>
             </div>
           </div>
         </section>
-        <div class="description">
-          <div class="description-container container">
-            <h3 class="title">
-              {{ $t('About this event') }}
-            </h3>
-            <p v-if="!event.description">
-              {{ $t("The event organizer didn't add any description.") }}
-            </p>
-            <div class="columns" v-else>
-              <div class="column is-half" v-html="event.description">
-              </div>
-            </div>
-          </div>
-        </div>
-      <section class="share" v-if="!event.draft">
-        <div class="container">
+        <section class="more-events container" v-if="event.relatedEvents.length > 0">
+          <h3 class="title has-text-centered">{{ $t('These events may interest you') }}</h3>
           <div class="columns">
-            <div class="column is-half has-text-centered">
-              <h3 class="title">{{ $t('Share this event') }}</h3>
-              <div>
-                <b-icon icon="mastodon" size="is-large" type="is-primary" />
-                <a :href="facebookShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="facebook" size="is-large" type="is-primary" /></a>
-                <a :href="twitterShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="twitter" size="is-large" type="is-primary" /></a>
-                <a :href="emailShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="email" size="is-large" type="is-primary" /></a>
-                <!--     TODO: mailto: links are not used anymore, we should provide a popup to redact a message instead    -->
-                <a :href="linkedInShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="linkedin" size="is-large" type="is-primary" /></a>
-              </div>
-            </div>
-            <hr />
-            <div class="column is-half has-text-right add-to-calendar">
-              <h3 @click="downloadIcsEvent()">
-                {{ $t('Add to my calendar') }}
-              </h3>
+            <div class="column is-one-third-desktop" v-for="relatedEvent in event.relatedEvents" :key="relatedEvent.uuid">
+              <EventCard :event="relatedEvent" />
             </div>
           </div>
+        </section>
+        <b-modal :active.sync="isReportModalActive" has-modal-card ref="reportModal">
+          <report-modal :on-confirm="reportEvent" :title="$t('Report this event')" :outside-domain="event.organizerActor.domain" @close="$refs.reportModal.close()" />
+        </b-modal>
+        <b-modal :active.sync="isJoinModalActive" has-modal-card ref="participationModal">
+              <identity-picker v-model="identity">
+                <template v-slot:footer>
+                  <footer class="modal-card-foot">
+                    <button
+                            class="button"
+                            ref="cancelButton"
+                            @click="isJoinModalActive = false">
+                      {{ $t('Cancel') }}
+                    </button>
+                    <button
+                            class="button is-primary"
+                            ref="confirmButton"
+                            @click="joinEvent(identity)">
+                      {{ $t('Confirm my particpation') }}
+                    </button>
+                  </footer>
+                </template>
+              </identity-picker>
+        </b-modal>
         </div>
-      </section>
-      <section class="more-events container" v-if="event.relatedEvents.length > 0">
-        <h3 class="title has-text-centered">{{ $t('These events may interest you') }}</h3>
-        <div class="columns">
-          <div class="column is-one-third-desktop" v-for="relatedEvent in event.relatedEvents" :key="relatedEvent.uuid">
-            <EventCard :event="relatedEvent" />
-          </div>
-        </div>
-      </section>
-      <b-modal :active.sync="isReportModalActive" has-modal-card ref="reportModal">
-        <report-modal :on-confirm="reportEvent" :title="$t('Report this event')" :outside-domain="event.organizerActor.domain" @close="$refs.reportModal.close()" />
-      </b-modal>
-      <b-modal :active.sync="isJoinModalActive" has-modal-card ref="participationModal">
-            <identity-picker v-model="identity">
-              <template v-slot:footer>
-                <footer class="modal-card-foot">
-                  <button
-                          class="button"
-                          ref="cancelButton"
-                          @click="isJoinModalActive = false">
-                    {{ $t('Cancel') }}
-                  </button>
-                  <button
-                          class="button is-primary"
-                          ref="confirmButton"
-                          @click="joinEvent(identity)">
-                    {{ $t('Confirm my particpation') }}
-                  </button>
-                </footer>
-              </template>
-            </identity-picker>
-      </b-modal>
-      </div>
-    </div>
+    </transition>
+  </div>
 </template>
 
 <script lang="ts">
@@ -481,6 +481,13 @@ export default class Event extends EventMixin {
 </script>
 <style lang="scss" scoped>
   @import "../../variables";
+
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
+  }
 
   div.sidebar {
     display: flex;

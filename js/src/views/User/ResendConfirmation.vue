@@ -17,7 +17,7 @@
           {{ $t('If an account with this email exists, we just sent another confirmation email to {email}', {email: credentials.email}) }}
         </b-message>
         <b-message type="is-info">
-          {{ $t("Please check you spam folder if you didn't receive the email.") }}
+          {{ $t("Please check your spam folder if you didn't receive the email.") }}
         </b-message>
       </div>
     </div>

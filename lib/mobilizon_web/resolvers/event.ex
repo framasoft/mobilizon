@@ -31,11 +31,11 @@ defmodule MobilizonWeb.Resolvers.Event do
     {:error, :events_max_limit_reached}
   end
 
-  def find_event(
-        _parent,
-        %{uuid: uuid},
-        %{context: %{current_user: %User{id: user_id}}} = _resolution
-      ) do
+  defp find_private_event(
+         _parent,
+         %{uuid: uuid},
+         %{context: %{current_user: %User{id: user_id}}} = _resolution
+       ) do
     case {:has_event, Mobilizon.Events.get_own_event_by_uuid_with_preload(uuid, user_id)} do
       {:has_event, %Event{} = event} ->
         {:ok, Map.put(event, :organizer_actor, Person.proxify_pictures(event.organizer_actor))}
@@ -45,13 +45,16 @@ defmodule MobilizonWeb.Resolvers.Event do
     end
   end
 
-  def find_event(_parent, %{uuid: uuid}, _resolution) do
+  defp find_private_event(_parent, %{uuid: uuid}, _resolution),
+    do: {:error, "Event with UUID #{uuid} not found"}
+
+  def find_event(parent, %{uuid: uuid} = args, resolution) do
     case {:has_event, Mobilizon.Events.get_public_event_by_uuid_with_preload(uuid)} do
       {:has_event, %Event{} = event} ->
         {:ok, Map.put(event, :organizer_actor, Person.proxify_pictures(event.organizer_actor))}
 
       {:has_event, _} ->
-        {:error, "Event with UUID #{uuid} not found"}
+        find_private_event(parent, args, resolution)
     end
   end
 

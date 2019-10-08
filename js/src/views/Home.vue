@@ -30,7 +30,7 @@
           {{ $t('Welcome back {username}', { username: currentActor.displayName() }) }}
         </b-message>
       </section>
-      <section v-if="currentActor && goingToEvents.size > 0" class="container">
+      <section v-if="currentActor.id && goingToEvents.size > 0" class="container">
         <h3 class="title">
           {{ $t("Upcoming") }}
         </h3>
@@ -81,8 +81,8 @@
       <section class="events-featured">
         <h3 class="title">{{ $t('Featured events') }}</h3>
         <b-loading :active.sync="$apollo.loading"></b-loading>
-        <div v-if="events.length > 0" class="columns is-multiline">
-          <div class="column is-one-third-desktop" v-for="event in events.slice(0, 6)" :key="event.uuid">
+        <div v-if="filteredFeaturedEvents.length > 0" class="columns is-multiline">
+          <div class="column is-one-third-desktop" v-for="event in filteredFeaturedEvents.slice(0, 6)" :key="event.uuid">
             <EventCard
               :event="event"
             />
@@ -152,7 +152,7 @@ import { IConfig } from '@/types/config.model';
   },
 })
 export default class Home extends Vue {
-  events: Event[] = [];
+  events: IEvent[] = [];
   locations = [];
   city = { name: null };
   country = { name: null };
@@ -222,6 +222,11 @@ export default class Home extends Vue {
           (a: IParticipant, b: IParticipant) => a.event.beginsOn.getTime() - b.event.beginsOn.getTime(),
       );
     return res;
+  }
+
+  get filteredFeaturedEvents() {
+    if (!this.currentUser.isLoggedIn || !this.currentActor.id) return this.events;
+    return this.events.filter(event => event.organizerActor && event.organizerActor.id !== this.currentActor.id);
   }
 
   geoLocalize() {
