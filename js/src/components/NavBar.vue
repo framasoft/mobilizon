@@ -15,7 +15,7 @@
         <search-field />
       </b-navbar-item>
 
-      <b-navbar-dropdown v-if="currentUser.isLoggedIn" right>
+      <b-navbar-dropdown v-if="currentActor.id && currentUser.isLoggedIn" right>
         <template slot="label" v-if="currentActor" class="navbar-dropdown-profile">
           <figure class="image is-32x32" v-if="currentActor.avatar">
             <img class="is-rounded" alt="avatarUrl" :src="currentActor.avatar.url">
@@ -97,6 +97,7 @@ import { RouteName } from '@/router';
       skip() {
         return this.currentUser.isLoggedIn === false;
       },
+      error({ graphQLErrors }) { this.handleErrors(graphQLErrors); },
     },
     config: {
       query: CONFIG,
@@ -132,6 +133,12 @@ export default class NavBar extends Vue {
           params: { email: this.currentUser.email, userAlreadyActivated: 'true' },
         });
       }
+    }
+  }
+
+  async handleErrors(errors: GraphQLError) {
+    if (errors[0].message === 'You need to be logged-in to view your list of identities') {
+      await this.logout();
     }
   }
 
