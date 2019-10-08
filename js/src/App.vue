@@ -2,7 +2,7 @@
   <div id="mobilizon">
     <NavBar />
     <main>
-      <transition name="fade">
+      <transition name="fade" mode="out-in">
         <router-view />
       </transition>
     </main>
@@ -74,7 +74,7 @@ export default class App extends Vue {
 @import "~buefy/src/scss/buefy";
 
 .fade-enter-active, .fade-leave-active {
-  transition: opacity .75s;
+  transition: opacity .5s;
 }
 .fade-enter, .fade-leave-to {
   opacity: 0;

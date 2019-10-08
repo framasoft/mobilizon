@@ -39,6 +39,7 @@ describe('Registration', () => {
     cy.get('form').contains('button.button.is-primary', 'Register').click();
 
     cy.url().should('include', '/register/profile');
+    cy.wait(1000);
     cy.get('form .field').first().contains('label', 'Username').parent().find('input').type('tester');
     cy.get('form .field').eq(2).contains('label', 'Displayed name').parent().find('input').type('tester account');
     cy.get('form .field').eq(3).contains('label', 'Description').parent().find('textarea').type('This is a test account');
