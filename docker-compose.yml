@@ -17,7 +17,7 @@ services:
     volumes:
       - '.:/app'
     ports:
-      - "4000:4001"
+      - "4000:4000"
     depends_on:
       - postgres
     environment:
