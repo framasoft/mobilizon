@@ -110,6 +110,10 @@ export const FETCH_EVENT = gql`
         uuid,
         title,
         beginsOn,
+        picture {
+          id,
+          url
+        }
         physicalAddress {
           description
         },

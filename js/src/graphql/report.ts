@@ -25,6 +25,7 @@ export const REPORTS = gql`
                 uuid,
                 title,
                 picture {
+                    id,
                     url
                 }
             },
@@ -58,6 +59,7 @@ const REPORT_FRAGMENT = gql`
             title,
             description,
             picture {
+                id,
                 url
             }
         },

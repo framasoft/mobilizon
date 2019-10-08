@@ -7,7 +7,8 @@ export const DASHBOARD = gql`
                 uuid,
                 title,
                 picture {
-                    alt
+                    id,
+                    alt,
                     url
                 },
             },

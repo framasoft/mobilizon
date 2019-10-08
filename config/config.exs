@@ -10,8 +10,10 @@ config :mobilizon,
   ecto_repos: [Mobilizon.Storage.Repo]
 
 config :mobilizon, :instance,
-  name: System.get_env("MOBILIZON_INSTANCE_NAME") || "Localhost",
-  description: System.get_env("MOBILIZON_INSTANCE_DESCRIPTION") || "This is a Mobilizon instance",
+  name: System.get_env("MOBILIZON_INSTANCE_NAME") || "My Mobilizon Instance",
+  description:
+    System.get_env("MOBILIZON_INSTANCE_DESCRIPTION") ||
+      "Change this to a proper description of your instance",
   version: "1.0.0-dev",
   hostname: System.get_env("MOBILIZON_INSTANCE_HOST") || "localhost",
   registrations_open: System.get_env("MOBILIZON_INSTANCE_REGISTRATIONS_OPEN") || false,

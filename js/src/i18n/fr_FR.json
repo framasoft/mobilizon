@@ -268,5 +268,8 @@
     "{approved} / {total} seats": "{approved} / {total} places",
     "{count} participants": "Un⋅e participant⋅e|{count} participant⋅e⋅s",
     "{count} requests waiting": "Un⋅e demande en attente|{count} demandes en attente",
-    "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© Les contributeurs de Mobilizon {date} - Fait avec Elixir, Phoenix, VueJS & et de l'amour et des semaines"
+    "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© Les contributeurs de Mobilizon {date} - Fait avec Elixir, Phoenix, VueJS & et de l'amour et des semaines",
+    "Organize and take action, freely": "S'organiser et agir, librement",
+    "Join {instance}, a Mobilizon instance": "Rejoignez {instance}, une instance Mobilizon",
+    "Learn more": "En apprendre plus"
 }
