@@ -86,6 +86,7 @@ cypress:
     - mix deps.get
     - cd js
     - yarn install
+    - npx cypress install # just to be sure
     - yarn run build
     - cd ../
     - MIX_ENV=e2e mix ecto.create
