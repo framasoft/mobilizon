@@ -82,6 +82,7 @@ import { ICurrentUser, ICurrentUserRole } from '@/types/current-user.model';
 import Logo from '@/components/Logo.vue';
 import SearchField from '@/components/SearchField.vue';
 import { RouteName } from '@/router';
+import { GraphQLError } from 'graphql';
 
 @Component({
   apollo: {

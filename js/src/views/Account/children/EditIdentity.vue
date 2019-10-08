@@ -310,17 +310,18 @@ export default class EditIdentity extends Vue {
   }
 
   private async buildVariables() {
-    const oldAvatarFile = await buildFileFromIPicture(this.identity.avatar);
-    const oldAvatarFileContent = await readFileAsync(oldAvatarFile);
-    const newAvatarFileContent = await readFileAsync(this.avatarFile);
-
     const avatarObj = buildFileVariable(this.avatarFile, 'avatar', `${this.identity.preferredUsername}'s avatar`);
     const res = Object.assign({}, this.identity, avatarObj);
     /**
      * If the avatar didn't change, no need to try reuploading it
      */
-    if (oldAvatarFileContent === newAvatarFileContent) {
-      res.avatar = {};
+    if (this.identity.avatar) {
+      const oldAvatarFile = await buildFileFromIPicture(this.identity.avatar) as File;
+      const oldAvatarFileContent = await readFileAsync(oldAvatarFile);
+      const newAvatarFileContent = await readFileAsync(this.avatarFile as File);
+      if (oldAvatarFileContent === newAvatarFileContent) {
+        res.avatar = null;
+      }
     }
     return res;
   }

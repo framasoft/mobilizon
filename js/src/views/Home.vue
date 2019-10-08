@@ -152,7 +152,7 @@ import { IConfig } from '@/types/config.model';
   },
 })
 export default class Home extends Vue {
-  events: Event[] = [];
+  events: IEvent[] = [];
   locations = [];
   city = { name: null };
   country = { name: null };
@@ -225,8 +225,8 @@ export default class Home extends Vue {
   }
 
   get filteredFeaturedEvents() {
-    if (this.currentUser.isLoggedIn === false || !this.currentActor.id) return this.events;
-    return this.events.filter(event => event.organizerActor.id !== this.currentActor.id);
+    if (!this.currentUser.isLoggedIn || !this.currentActor.id) return this.events;
+    return this.events.filter(event => event.organizerActor && event.organizerActor.id !== this.currentActor.id);
   }
 
   geoLocalize() {
