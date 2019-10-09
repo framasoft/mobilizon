@@ -8,6 +8,9 @@ query SearchEvents($searchText: String!) {
       title,
       uuid,
       beginsOn,
+      picture {
+        url,
+      },
       tags {
         slug,
         title
