@@ -1433,9 +1433,12 @@ defmodule Mobilizon.Events do
     from(e in query, where: e.draft == ^is_draft)
   end
 
+  # Currently happening events are also future events
   @spec filter_future_events(Ecto.Query.t(), boolean) :: Ecto.Query.t()
   defp filter_future_events(query, true) do
-    from(q in query, where: q.begins_on > ^DateTime.utc_now())
+    from(q in query,
+      where: q.begins_on > ^DateTime.utc_now() or q.ends_on > ^DateTime.utc_now()
+    )
   end
 
   defp filter_future_events(query, false), do: query

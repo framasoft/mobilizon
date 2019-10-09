@@ -254,7 +254,6 @@ import { ITag } from '@/types/tag.model';
 import AddressAutoComplete from '@/components/Event/AddressAutoComplete.vue';
 import { buildFileFromIPicture, buildFileVariable } from '@/utils/image';
 import IdentityPickerWrapper from '@/views/Account/IdentityPickerWrapper.vue';
-import { ICurrentUser } from '@/types/current-user.model';
 
 @Component({
   components: { IdentityPickerWrapper, AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor },
@@ -499,9 +498,9 @@ export default class EditEvent extends Vue {
   /**
    * Confirm cancel
    */
-  confirmGoBack() {
+  confirmGoElsewhere(callback) {
     if (!this.isEventModified) {
-      return this.$router.go(-1);
+      return callback();
     }
     const title: string = this.isUpdate ?
             this.$t('Cancel edition') as string :
@@ -519,8 +518,19 @@ export default class EditEvent extends Vue {
       cancelText: this.$t('Continue editing') as string,
       type: 'is-warning',
       hasIcon: true,
-      onConfirm: () => this.$router.go(-1),
+      onConfirm: callback,
     });
+  }
+
+  /**
+   * Confirm cancel
+   */
+  confirmGoBack() {
+    this.confirmGoElsewhere(() => this.$router.go(-1));
+  }
+
+  beforeRouteLeave(to, from, next) {
+    this.confirmGoElsewhere(() => next());
   }
 
   get isEventModified(): boolean {

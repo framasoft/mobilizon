@@ -14,6 +14,7 @@
     "vue-i18n-extract": "vue-i18n-extract"
   },
   "dependencies": {
+    "@mdi/font": "^4.5.95",
     "apollo-absinthe-upload-link": "^1.5.0",
     "apollo-cache-inmemory": "^1.5.1",
     "apollo-client": "^2.5.1",
@@ -23,22 +24,19 @@
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
     "leaflet": "^1.4.0",
-    "line-clamp": "1.0.0",
     "lodash": "^4.17.11",
     "ngeohash": "^0.6.3",
     "register-service-worker": "^1.6.2",
     "tippy.js": "^5.0.2",
     "tiptap": "^1.26.0",
     "tiptap-extensions": "^1.28.0",
-    "typeface-signika": "0.0.72",
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.0-rc.6",
     "vue-class-component": "^7.0.2",
     "vue-i18n": "^8.14.0",
     "vue-property-decorator": "^8.1.0",
     "vue-router": "^3.0.6",
-    "vue2-leaflet": "^2.0.3",
-    "vuex": "^3.1.0"
+    "vue2-leaflet": "^2.0.3"
   },
   "devDependencies": {
     "@types/chai": "^4.2.3",

@@ -3,60 +3,66 @@
         <b-tabs type="is-boxed" v-if="event">
             <b-tab-item>
                 <template slot="header">
-                    <b-icon icon="information-outline"></b-icon>
+                    <b-icon icon="account-multiple"></b-icon>
                     <span>{{ $t('Participants')}} <b-tag rounded> {{ participantStats.approved }} </b-tag> </span>
                 </template>
-                <section v-if="participantsAndCreators.length > 0">
-                    <h2 class="title">{{ $t('Participants') }}</h2>
-                    <div class="columns">
-                        <div class="column is-one-quarter-desktop" v-for="participant in participantsAndCreators" :key="participant.actor.id">
-                            <participant-card
-                                :participant="participant"
-                                :accept="acceptParticipant"
-                                :reject="refuseParticipant"
-                                :exclude="refuseParticipant"
-                            />
-                        </div>
-                    </div>
-                </section>
+                <template>
+                  <section v-if="participantsAndCreators.length > 0">
+                      <h2 class="title">{{ $t('Participants') }}</h2>
+                      <div class="columns">
+                          <div class="column is-one-quarter-desktop" v-for="participant in participantsAndCreators" :key="participant.actor.id">
+                              <participant-card
+                                  :participant="participant"
+                                  :accept="acceptParticipant"
+                                  :reject="refuseParticipant"
+                                  :exclude="refuseParticipant"
+                              />
+                          </div>
+                      </div>
+                  </section>
+                </template>
             </b-tab-item>
-            <b-tab-item>
+            <b-tab-item :disabled="participantStats.unapproved === 0">
                 <template slot="header">
-                    <b-icon icon="source-pull"></b-icon>
+                    <b-icon icon="account-multiple-plus"></b-icon>
                     <span>{{ $t('Requests') }} <b-tag rounded> {{ participantStats.unapproved }} </b-tag> </span>
                 </template>
-                <section v-if="queue.length > 0">
-                    <h2 class="title">{{ $t('Waiting list') }}</h2>
-                    <div class="columns">
-                        <div class="column is-one-quarter-desktop" v-for="participant in queue" :key="participant.actor.id">
-                            <participant-card
-                                :participant="participant"
-                                :accept="acceptParticipant"
-                                :reject="refuseParticipant"
-                                :exclude="refuseParticipant"
-                            />
-                        </div>
-                    </div>
-                </section>
+                <template>
+                  <section v-if="queue.length > 0">
+                      <h2 class="title">{{ $t('Waiting list') }}</h2>
+                      <div class="columns">
+                          <div class="column is-one-quarter-desktop" v-for="participant in queue" :key="participant.actor.id">
+                              <participant-card
+                                  :participant="participant"
+                                  :accept="acceptParticipant"
+                                  :reject="refuseParticipant"
+                                  :exclude="refuseParticipant"
+                              />
+                          </div>
+                      </div>
+                  </section>
+                </template>
             </b-tab-item>
-            <b-tab-item>
+            <b-tab-item :disabled="participantStats.rejected === 0">
                 <template slot="header">
-                    <b-icon icon="source-pull"></b-icon>
+                    <b-icon icon="account-multiple-minus"></b-icon>
                     <span>{{ $t('Rejected')}} <b-tag rounded> {{ participantStats.rejected }} </b-tag> </span>
                 </template>
-                <section v-if="rejected.length > 0">
-                    <h2 class="title">{{ $t('Rejected participations') }}</h2>
-                    <div class="columns">
-                        <div class="column is-one-quarter-desktop" v-for="participant in rejected" :key="participant.actor.id">
-                            <participant-card
-                                    :participant="participant"
-                                    :accept="acceptParticipant"
-                                    :reject="refuseParticipant"
-                                    :exclude="refuseParticipant"
-                            />
-                        </div>
-                    </div>
-                </section>
+                <template>
+                  <section v-if="rejected.length > 0">
+                      <h2 class="title">{{ $t('Rejected participations') }}</h2>
+                      <div class="columns">
+                          <div class="column is-one-quarter-desktop" v-for="participant in rejected" :key="participant.actor.id">
+                              <participant-card
+                                      :participant="participant"
+                                      :accept="acceptParticipant"
+                                      :reject="refuseParticipant"
+                                      :exclude="refuseParticipant"
+                              />
+                          </div>
+                      </div>
+                  </section>
+                </template>
             </b-tab-item>
         </b-tabs>
     </main>
@@ -231,6 +237,15 @@ export default class Participants extends Vue {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
     section {
-        padding: 3rem 0;
+        padding: 1rem 0;
     }
+</style>
+<style lang="scss">
+  nav.tabs li {
+    margin: 3rem 0 0;
+  }
+
+  .tab-content {
+    background: #fff;
+  }
 </style>

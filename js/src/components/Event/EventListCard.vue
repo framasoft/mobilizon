@@ -58,7 +58,7 @@ export default {
           <div class="date-component" v-if="!mergedOptions.hideDate">
             <date-calendar-icon :date="participation.event.beginsOn" />
           </div>
-          <h2 class="title" ref="title">{{ participation.event.title }}</h2>
+          <h2 class="title">{{ participation.event.title }}</h2>
         </div>
         <div>
           <span v-if="participation.event.physicalAddress && participation.event.physicalAddress.locality">{{ participation.event.physicalAddress.locality }} - </span>
@@ -129,7 +129,6 @@ import EventMixin from '@/mixins/event';
 import { RouteName } from '@/router';
 import { ICurrentUser } from '@/types/current-user.model';
 import { IEventCardOptions } from './EventCard.vue';
-const lineClamp = require('line-clamp');
 
 const defaultOptions: IEventCardOptions = {
   hideDate: true,
@@ -141,9 +140,6 @@ const defaultOptions: IEventCardOptions = {
 @Component({
   components: {
     DateCalendarIcon,
-  },
-  mounted() {
-    lineClamp(this.$refs.title, 3);
   },
   apollo: {
     currentActor: {
@@ -219,6 +215,10 @@ export default class EventListCard extends mixins(ActorMixin, EventMixin) {
         }
 
         .title {
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
           font-weight: 400;
           line-height: 1em;
           font-size: 1.6em;

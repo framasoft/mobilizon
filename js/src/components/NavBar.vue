@@ -5,7 +5,7 @@
     </template>
     <template slot="start">
       <b-navbar-item tag="router-link" :to="{ name: RouteName.EXPLORE }">{{ $t('Explore') }}</b-navbar-item>
-      <b-navbar-item tag="router-link" :to="{ name: RouteName.MY_EVENTS }">{{ $t('Events') }}</b-navbar-item>
+      <b-navbar-item tag="router-link" :to="{ name: RouteName.MY_EVENTS }">{{ $t('My events') }}</b-navbar-item>
       <b-navbar-item tag="span">
         <b-button tag="router-link" :to="{ name: RouteName.CREATE_EVENT }" type="is-success">{{ $t('Create') }}</b-button>
       </b-navbar-item>
