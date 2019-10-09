@@ -266,6 +266,9 @@ import { ICurrentUser } from '@/types/current-user.model';
       query: TAGS,
     },
   },
+  beforeRouteLeave(to, from, next) {
+    this.confirmGoElsewhere(() => next());
+  },
 })
 export default class EditEvent extends Vue {
   @Prop({ type: Boolean, default: false }) isUpdate!: boolean;
@@ -499,9 +502,9 @@ export default class EditEvent extends Vue {
   /**
    * Confirm cancel
    */
-  confirmGoBack() {
+  confirmGoElsewhere(callback) {
     if (!this.isEventModified) {
-      return this.$router.go(-1);
+      return callback();
     }
     const title: string = this.isUpdate ?
             this.$t('Cancel edition') as string :
@@ -519,8 +522,15 @@ export default class EditEvent extends Vue {
       cancelText: this.$t('Continue editing') as string,
       type: 'is-warning',
       hasIcon: true,
-      onConfirm: () => this.$router.go(-1),
+      onConfirm: callback,
     });
+  }
+
+  /**
+   * Confirm cancel
+   */
+  confirmGoBack() {
+    this.confirmGoElsewhere(() => this.$router.go(-1));
   }
 
   get isEventModified(): boolean {
