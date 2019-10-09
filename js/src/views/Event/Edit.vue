@@ -362,22 +362,21 @@ export default class EditEvent extends Vue {
   }
 
   async createEvent() {
-    console.log(this.buildVariables());
-    // try {
-    //   const { data } = await this.$apollo.mutate({
-    //     mutation: CREATE_EVENT,
-    //     variables: this.buildVariables(),
-    //     update: (store, { data: { createEvent } }) => this.postCreateOrUpdate(store, createEvent),
-    //     refetchQueries: ({ data: { createEvent } }) => this.postRefetchQueries(createEvent),
-    //   });
+    try {
+      const { data } = await this.$apollo.mutate({
+        mutation: CREATE_EVENT,
+        variables: this.buildVariables(),
+        update: (store, { data: { createEvent } }) => this.postCreateOrUpdate(store, createEvent),
+        refetchQueries: ({ data: { createEvent } }) => this.postRefetchQueries(createEvent),
+      });
 
-    //   await this.$router.push({
-    //     name: 'Event',
-    //     params: { uuid: data.createEvent.uuid },
-    //   });
-    // } catch (err) {
-    //   console.error(err);
-    // }
+      await this.$router.push({
+        name: 'Event',
+        params: { uuid: data.createEvent.uuid },
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   async updateEvent() {
@@ -532,7 +531,6 @@ export default class EditEvent extends Vue {
 
   @Watch('beginsOn')
   onBeginsOnChanged(beginsOn) {
-    console.log('beginsOnWatcher', beginsOn);
     if (!this.event.endsOn) return;
     const dateBeginsOn = new Date(beginsOn);
     const dateEndsOn = new Date(this.event.endsOn);
