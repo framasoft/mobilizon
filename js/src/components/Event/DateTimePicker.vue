@@ -76,7 +76,6 @@ export default class DateTimePicker extends Vue {
      *
      * @type {Date}
      */
-    console.log('updated this.date with', this.date);
     this.$emit('input', this.date);
   }
 }
