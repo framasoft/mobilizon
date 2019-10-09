@@ -67,13 +67,13 @@ import {ParticipantRole} from "@/types/event.model";
                 {{ $t('Only accessible through link and search (private)') }}
               </b-radio>
             </div>
-          <div class="field">
+          <!-- <div class="field">
             <b-radio v-model="event.visibility"
                      name="eventVisibility"
                      :native-value="EventVisibility.PRIVATE">
                {{ $t('Page limited to my group (asks for auth)') }}
             </b-radio>
-          </div>
+          </div> -->
 
           <div class="field">
             <label class="label">{{ $t('Participation approval') }}</label>
@@ -83,16 +83,17 @@ import {ParticipantRole} from "@/types/event.model";
           </div>
 
           <div class="field">
+            <label class="label">{{ $t('Number of places') }}</label>
             <b-switch v-model="limitedPlaces">
-              {{ $t('Limited places') }}
+              {{ $t('Limited number of places') }}
             </b-switch>
           </div>
 
           <div class="box" v-if="limitedPlaces">
             <b-field :label="$t('Number of places')">
-              <b-numberinput v-model="event.options.maximumAttendeeCapacity"></b-numberinput>
+              <b-numberinput controls-position="compact" min="0" v-model="event.options.maximumAttendeeCapacity"></b-numberinput>
             </b-field>
-
+<!-- 
             <b-field>
               <b-switch v-model="event.options.showRemainingAttendeeCapacity">
                 {{ $t('Show remaining number of places') }}
@@ -103,10 +104,10 @@ import {ParticipantRole} from "@/types/event.model";
               <b-switch v-model="event.options.showParticipationPrice">
                 {{ $t('Display participation price') }}
               </b-switch>
-            </b-field>
+            </b-field> -->
           </div>
 
-          <h2 class="subtitle">
+          <!-- <h2 class="subtitle">
             {{ $t('Public comment moderation') }}
           </h2>
 
@@ -134,7 +135,7 @@ import {ParticipantRole} from "@/types/event.model";
                      :native-value="CommentModeration.CLOSED">
               {{ $t('Close comments for all (except for admins)') }}
             </b-radio>
-          </div>
+          </div> -->
 
           <h2 class="subtitle">
             {{ $t('Status') }}
@@ -361,21 +362,22 @@ export default class EditEvent extends Vue {
   }
 
   async createEvent() {
-    try {
-      const { data } = await this.$apollo.mutate({
-        mutation: CREATE_EVENT,
-        variables: this.buildVariables(),
-        update: (store, { data: { createEvent } }) => this.postCreateOrUpdate(store, createEvent),
-        refetchQueries: ({ data: { createEvent } }) => this.postRefetchQueries(createEvent),
-      });
+    console.log(this.buildVariables());
+    // try {
+    //   const { data } = await this.$apollo.mutate({
+    //     mutation: CREATE_EVENT,
+    //     variables: this.buildVariables(),
+    //     update: (store, { data: { createEvent } }) => this.postCreateOrUpdate(store, createEvent),
+    //     refetchQueries: ({ data: { createEvent } }) => this.postRefetchQueries(createEvent),
+    //   });
 
-      await this.$router.push({
-        name: 'Event',
-        params: { uuid: data.createEvent.uuid },
-      });
-    } catch (err) {
-      console.error(err);
-    }
+    //   await this.$router.push({
+    //     name: 'Event',
+    //     params: { uuid: data.createEvent.uuid },
+    //   });
+    // } catch (err) {
+    //   console.error(err);
+    // }
   }
 
   async updateEvent() {
@@ -526,24 +528,22 @@ export default class EditEvent extends Vue {
     return JSON.stringify(this.event.toEditJSON()) !== JSON.stringify(this.unmodifiedEvent);
   }
 
-  // getAddressData(addressData) {
-  //   if (addressData !== null) {
-  //     this.event.address = {
-  //       geom: {
-  //         data: {
-  //           latitude: addressData.latitude,
-  //           longitude: addressData.longitude
-  //         },
-  //         type: "point"
-  //       },
-  //       addressCountry: addressData.country,
-  //       addressLocality: addressData.locality,
-  //       addressRegion: addressData.administrative_area_level_1,
-  //       postalCode: addressData.postal_code,
-  //       streetAddress: `${addressData.street_number} ${addressData.route}`
-  //     };
-  //   }
-  // }
+  get beginsOn() { return this.event.beginsOn; }
+
+  @Watch('beginsOn')
+  onBeginsOnChanged(beginsOn) {
+    console.log('beginsOnWatcher', beginsOn);
+    if (!this.event.endsOn) return;
+    const dateBeginsOn = new Date(beginsOn);
+    const dateEndsOn = new Date(this.event.endsOn);
+    if (dateEndsOn < dateBeginsOn) {
+      this.event.endsOn = dateBeginsOn;
+      this.event.endsOn.setUTCHours(dateEndsOn.getUTCHours());
+    }
+    if (dateEndsOn === dateBeginsOn) {
+      this.event.endsOn.setUTCHours(dateEndsOn.getUTCHours() + 1);
+    }
+  }
 }
 </script>
 

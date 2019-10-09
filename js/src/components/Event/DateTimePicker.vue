@@ -40,8 +40,12 @@ export default class DateTimePicker extends Vue {
   date: Date = this.value;
   time: string = '00:00';
 
-  created() {
-    let minutes = this.value.getHours() * 60 + this.value.getMinutes();
+  mounted() {
+    this.convertTime();
+  }
+
+  convertTime() {
+    let minutes = this.date.getHours() * 60 + this.date.getMinutes();
     minutes = Math.ceil(minutes / this.step) * this.step;
 
     this.time = [Math.floor(minutes / 60), minutes % 60].map((v) => { return v < 10 ? `0${v}` : v; }).join(':');
@@ -57,15 +61,22 @@ export default class DateTimePicker extends Vue {
 
   @Watch('date')
   updateDate() {
-    this.updateDateTime();
+    this.updateTime(this.time);
+  }
+
+  @Watch('value')
+  updateValue() {
+    this.date = this.value;
+    this.convertTime();
   }
 
   updateDateTime() {
     /**
      * Returns the updated date
      *
-     * @type {DateTime}
+     * @type {Date}
      */
+    console.log('updated this.date with', this.date);
     this.$emit('input', this.date);
   }
 }
