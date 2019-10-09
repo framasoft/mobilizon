@@ -3,6 +3,7 @@
 import Vue from 'vue';
 import Buefy from 'buefy';
 import VueI18n from 'vue-i18n';
+import Component from 'vue-class-component';
 import App from '@/App.vue';
 import router from '@/router';
 import { apolloProvider } from './vue-apollo';
@@ -24,6 +25,13 @@ const i18n = new VueI18n({
   locale: language.replace('-', '_'), // set locale
   messages, // set locale messages
 });
+
+// Register the router hooks with their names
+Component.registerHooks([
+  'beforeRouteEnter',
+  'beforeRouteLeave',
+  'beforeRouteUpdate', // for vue-router 2.2+
+]);
 
 /* eslint-disable no-new */
 new Vue({

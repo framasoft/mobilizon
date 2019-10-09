@@ -254,7 +254,6 @@ import { ITag } from '@/types/tag.model';
 import AddressAutoComplete from '@/components/Event/AddressAutoComplete.vue';
 import { buildFileFromIPicture, buildFileVariable } from '@/utils/image';
 import IdentityPickerWrapper from '@/views/Account/IdentityPickerWrapper.vue';
-import { ICurrentUser } from '@/types/current-user.model';
 
 @Component({
   components: { IdentityPickerWrapper, AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor },
@@ -265,9 +264,6 @@ import { ICurrentUser } from '@/types/current-user.model';
     tags: {
       query: TAGS,
     },
-  },
-  beforeRouteLeave(to, from, next) {
-    this.confirmGoElsewhere(() => next());
   },
 })
 export default class EditEvent extends Vue {
@@ -531,6 +527,10 @@ export default class EditEvent extends Vue {
    */
   confirmGoBack() {
     this.confirmGoElsewhere(() => this.$router.go(-1));
+  }
+
+  beforeRouteLeave(to, from, next) {
+    this.confirmGoElsewhere(() => next());
   }
 
   get isEventModified(): boolean {

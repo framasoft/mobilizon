@@ -73,6 +73,10 @@ export default class App extends Vue {
 /* Buefy imports */
 @import "~buefy/src/scss/buefy";
 
+/* Icons */
+$mdi-font-path: "~@mdi/font/fonts";
+@import "~@mdi/font/scss/materialdesignicons";
+
 .fade-enter-active, .fade-leave-active {
   transition: opacity .5s;
 }
