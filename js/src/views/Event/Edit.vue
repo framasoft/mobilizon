@@ -254,6 +254,7 @@ import { ITag } from '@/types/tag.model';
 import AddressAutoComplete from '@/components/Event/AddressAutoComplete.vue';
 import { buildFileFromIPicture, buildFileVariable } from '@/utils/image';
 import IdentityPickerWrapper from '@/views/Account/IdentityPickerWrapper.vue';
+import { RouteName } from '@/router';
 
 @Component({
   components: { IdentityPickerWrapper, AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor },
@@ -514,7 +515,7 @@ export default class EditEvent extends Vue {
     this.$buefy.dialog.confirm({
       title,
       message,
-      confirmText: this.$t('Cancel') as string,
+      confirmText: this.$t('Abandon edition') as string,
       cancelText: this.$t('Continue editing') as string,
       type: 'is-warning',
       hasIcon: true,
@@ -530,6 +531,7 @@ export default class EditEvent extends Vue {
   }
 
   beforeRouteLeave(to, from, next) {
+    if (to.name === RouteName.EVENT) return next();
     this.confirmGoElsewhere(() => next());
   }
 
