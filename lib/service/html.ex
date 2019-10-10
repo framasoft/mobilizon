@@ -59,6 +59,7 @@ defmodule Mobilizon.Service.HTML.Scrubber.Default do
   Meta.allow_tag_with_these_attributes("strong", [])
   Meta.allow_tag_with_these_attributes("u", [])
   Meta.allow_tag_with_these_attributes("ul", [])
+  Meta.allow_tag_with_these_attributes("img", ["src", "alt"])
 
   Meta.allow_tag_with_this_attribute_values("span", "class", ["h-card"])
   Meta.allow_tag_with_these_attributes("span", [])

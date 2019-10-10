@@ -39,7 +39,7 @@ export default {
                 :allow-new="true"
                 :field="path"
                 icon="label"
-                :placeholder="$t('Add a tag')"
+                :placeholder="$t('Eg: Stockholm, Dance, Chess…')"
                 @typing="getFilteredTags"
         >
         </b-taginput>
