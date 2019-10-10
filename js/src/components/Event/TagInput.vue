@@ -25,7 +25,13 @@ export default {
 </docs>
 
 <template>
-    <b-field :label="$t('Enter some tags')">
+    <b-field>
+        <template slot="label">
+            {{ $t('Add some tags') }}
+            <b-tooltip type="is-dark" :label="$t('You can add tags by hitting the Enter key or by adding a comma')">
+                <b-icon size="is-small" icon="help-circle-outline"></b-icon>
+            </b-tooltip>
+        </template>
         <b-taginput
                 v-model="tagsStrings"
                 :data="filteredTags"
