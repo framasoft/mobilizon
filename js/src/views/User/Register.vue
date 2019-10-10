@@ -149,7 +149,7 @@ export default class Register extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   @import "../../variables";
 
 .avatar-enter-active {
@@ -170,7 +170,10 @@ export default class Register extends Vue {
   }
 
   h2.title {
-    background: $secondary;
+    color: $primary;
+    font-size: 2.5rem;
+    text-decoration: underline;
+    text-decoration-color: $secondary;
     display: inline;
   }
 </style>
