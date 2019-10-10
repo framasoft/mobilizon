@@ -94,7 +94,8 @@ cypress:
     - MIX_ENV=e2e mix phx.server &
     - cd js
     - npx wait-on http://localhost:4000
-    - npx cypress run --record --parallel --key $CYPRESS_KEY
+    # - npx cypress run --record --parallel --key $CYPRESS_KEY
+    - npx cypress run
   artifacts:
     expire_in: 2 day
     paths:

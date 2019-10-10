@@ -268,6 +268,15 @@ import { RouteName } from '@/router';
       },
     },
   },
+  metaInfo() {
+    return {
+      // if no subcomponents specify a metaInfo.title, this title will be used
+      // @ts-ignore
+      title: this.eventTitle,
+      // all titles will be injected into this template
+      titleTemplate: '%s | Mobilizon',
+    };
+  },
 })
 export default class Event extends EventMixin {
   @Prop({ type: String, required: true }) uuid!: string;
@@ -281,6 +290,11 @@ export default class Event extends EventMixin {
   isJoinModalActive: boolean = false;
   EventVisibility = EventVisibility;
   RouteName = RouteName;
+
+  get eventTitle() {
+    if (!this.event) return undefined;
+    return this.event.title;
+  }
 
   mounted() {
     this.identity = this.currentActor;

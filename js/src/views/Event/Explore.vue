@@ -46,6 +46,14 @@ import { RouteName } from '@/router';
       query: FETCH_EVENTS,
     },
   },
+  metaInfo() {
+    return {
+      // if no subcomponents specify a metaInfo.title, this title will be used
+      title: this.$t('Explore') as string,
+      // all titles will be injected into this template
+      titleTemplate: '%s | Mobilizon',
+    };
+  },
 })
 export default class Explore extends Vue {
   events: IEvent[] = [];

@@ -7,6 +7,7 @@ defmodule MobilizonWeb.PageView do
   alias Mobilizon.Service.ActivityPub.{Converter, Utils}
   alias Mobilizon.Service.Metadata
   alias Mobilizon.Service.MetadataUtils
+  alias Mobilizon.Service.Metadata.Instance
 
   def render("actor.activity-json", %{conn: %{assigns: %{object: actor}}}) do
     public_key = Utils.pem_to_public_key_pem(actor.keys)
@@ -80,6 +81,8 @@ defmodule MobilizonWeb.PageView do
 
   def render("index.html", _assigns) do
     with {:ok, index_content} <- File.read(index_file_path()) do
+      tags = Instance.build_tags() |> MetadataUtils.stringify_tags()
+      index_content = String.replace(index_content, "<!--server-generated-meta-->", tags)
       {:safe, index_content}
     end
   end

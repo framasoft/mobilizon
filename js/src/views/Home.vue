@@ -150,6 +150,15 @@ import { IConfig } from '@/types/config.model';
     EventListCard,
     EventCard,
   },
+  metaInfo() {
+    return {
+      // if no subcomponents specify a metaInfo.title, this title will be used
+      // @ts-ignore
+      title: this.instanceName,
+      // all titles will be injected into this template
+      titleTemplate: '%s | Mobilizon',
+    };
+  },
 })
 export default class Home extends Vue {
   events: IEvent[] = [];
@@ -168,6 +177,11 @@ export default class Home extends Vue {
   //     ? this.loggedPerson.preferredUsername
   //     : this.loggedPerson.name;
   // }
+
+  get instanceName() {
+    if (!this.config) return undefined;
+    return this.config.name;
+  }
 
   isToday(date: Date) {
     return (new Date(date)).toDateString() === (new Date()).toDateString();
