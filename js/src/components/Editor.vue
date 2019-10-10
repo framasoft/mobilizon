@@ -520,6 +520,9 @@ export default class EditorComponent extends Vue {
             ul,
             ol {
                 padding-left: 1rem;
+            }
+
+            ul {
                 list-style-type: disc;
             }
 

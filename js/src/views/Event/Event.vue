@@ -137,7 +137,7 @@
                 {{ $t("The event organizer didn't add any description.") }}
               </p>
               <div class="columns" v-else>
-                <div class="column is-half" v-html="event.description">
+                <div class="column is-half description-content" v-html="event.description">
                 </div>
               </div>
             </div>
@@ -660,14 +660,38 @@ export default class Event extends EventMixin {
     border-top: solid 1px #111;
     border-bottom: solid 1px #111;
 
-    p {
-      margin: 10px auto;
+    .description-content {
+      /deep/ h1 {
+        font-size: 2rem;
+      }
 
-      a {
-        display: inline-block;
-        padding: 0.3rem;
-        background: $secondary;
-        color: #111;
+      /deep/ h2 {
+        font-size: 1.5rem;
+      }
+
+      /deep/ h3 {
+        font-size: 1.25rem;
+      }
+
+      /deep/ ul {
+        list-style-type: disc;
+      }
+
+      /deep/ blockquote {
+        border-left: .2em solid #333;
+        display: block;
+        padding-left: 1em;
+      }
+
+      /deep/ p {
+        margin: 10px auto;
+
+        a {
+          display: inline-block;
+          padding: 0.3rem;
+          background: $secondary;
+          color: #111;
+        }
       }
     }
   }

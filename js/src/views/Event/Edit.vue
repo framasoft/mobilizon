@@ -16,7 +16,7 @@
           <picture-upload v-model="pictureFile" />
 
           <b-field :label="$t('Title')" :type="checkTitleLength[0]" :message="checkTitleLength[1]">
-            <b-input aria-required="true" required v-model="event.title" />
+            <b-input size="is-large" aria-required="true" required v-model="event.title" />
           </b-field>
 
           <tag-input v-model="event.tags" :data="tags" path="title" />
