@@ -59,7 +59,7 @@
                 <tr>
                     <td align="center" valign="top" style="padding: 40px 10px 40px 10px;">
                         <a href="<%= MobilizonWeb.Endpoint.url() %>" target="_blank">
-                            <img alt="Logo" src="<%= "#{MobilizonWeb.Endpoint.url()}/img/mobilizon_logo.png" %>" width="366" height="108" style="display: block; width: 366px; max-width: 366px; min-width: 366px; font-family: 'Lato', Helvetica, Arial, sans-serif; color: #ffffff; font-size: 18px;" border="0">
+                            <img alt="<%= Mobilizon.Config.instance_name() %>" src="<%= "#{MobilizonWeb.Endpoint.url()}/img/mobilizon_logo.png" %>" width="366" height="108" style="display: block; width: 366px; max-width: 366px; min-width: 366px; font-family: 'Lato', Helvetica, Arial, sans-serif; color: #ffffff; font-size: 18px;" border="0">
                         </a>
                     </td>
                 </tr>
