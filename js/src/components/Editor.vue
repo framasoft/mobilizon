@@ -1,135 +1,128 @@
 <template>
-    <div>
-    <div class="editor" id="tiptab-editor" :data-actor-id="currentActor && currentActor.id">
-        <editor-menu-bar :editor="editor" v-slot="{ commands, isActive, focused }">
-            <div class="menubar bar-is-hidden" :class="{ 'is-focused': focused }">
+    <div v-if="editor">
+        <div class="editor" id="tiptab-editor" :data-actor-id="currentActor && currentActor.id">
+            <editor-menu-bar :editor="editor" v-slot="{ commands, isActive, focused }">
+                <div class="menubar bar-is-hidden" :class="{ 'is-focused': focused }">
 
-                <button
-                        class="menubar__button"
-                        :class="{ 'is-active': isActive.bold() }"
-                        @click="commands.bold"
-                >
-                    <b-icon icon="format-bold" />
-                </button>
-
-                <button
-                        class="menubar__button"
-                        :class="{ 'is-active': isActive.italic() }"
-                        @click="commands.italic"
-                >
-                    <b-icon icon="format-italic" />
-                </button>
-
-                <button
-                        class="menubar__button"
-                        :class="{ 'is-active': isActive.underline() }"
-                        @click="commands.underline"
-                >
-                    <b-icon icon="format-underline" />
-                </button>
-
-                <button
-                        class="menubar__button"
-                        :class="{ 'is-active': isActive.heading({ level: 1 }) }"
-                        @click="commands.heading({ level: 1 })"
-                >
-                    <b-icon icon="format-header-1" />
-                </button>
-
-                <button
-                        class="menubar__button"
-                        :class="{ 'is-active': isActive.heading({ level: 2 }) }"
-                        @click="commands.heading({ level: 2 })"
-                >
-                    <b-icon icon="format-header-2" />
-                </button>
-
-                <button
-                        class="menubar__button"
-                        :class="{ 'is-active': isActive.heading({ level: 3 }) }"
-                        @click="commands.heading({ level: 3 })"
-                >
-                    <b-icon icon="format-header-3" />
-                </button>
-
-                <button
-                        class="menubar__button"
-                        @click="showImagePrompt(commands.image)"
-                >
-                    <b-icon icon="image" />
-                </button>
-
-                <button
-                        class="menubar__button"
-                        :class="{ 'is-active': isActive.bullet_list() }"
-                        @click="commands.bullet_list"
-                >
-                    <b-icon icon="format-list-bulleted" />
-                </button>
-
-                <button
-                        class="menubar__button"
-                        :class="{ 'is-active': isActive.ordered_list() }"
-                        @click="commands.ordered_list"
-                >
-                    <b-icon icon="format-list-numbered" />
-                </button>
-
-                <button
-                        class="menubar__button"
-                        :class="{ 'is-active': isActive.blockquote() }"
-                        @click="commands.blockquote"
-                >
-                    <b-icon icon="format-quote-close" />
-                </button>
-
-                <button
-                        class="menubar__button"
-                        @click="commands.undo"
-                >
-                    <b-icon icon="undo" />
-                </button>
-
-                <button
-                        class="menubar__button"
-                        @click="commands.redo"
-                >
-                    <b-icon icon="redo" />
-                </button>
-
-            </div>
-        </editor-menu-bar>
-
-        <editor-menu-bubble class="menububble" :editor="editor" @hide="hideLinkMenu" v-slot="{ commands, isActive, getMarkAttrs, menu }">
-            <div
-                    class="menububble"
-                    :class="{ 'is-active': menu.isActive }"
-                    :style="`left: ${menu.left}px; bottom: ${menu.bottom}px;`"
-            >
-
-                <form class="menububble__form" v-if="linkMenuIsActive" @submit.prevent="setLinkUrl(commands.link, linkUrl)">
-                    <input class="menububble__input" type="text" v-model="linkUrl" placeholder="https://" ref="linkInput" @keydown.esc="hideLinkMenu"/>
-                    <button class="menububble__button" @click="setLinkUrl(commands.link, null)" type="button">
-                        <b-icon icon="delete" />
-                    </button>
-                </form>
-
-                <template v-else>
                     <button
-                            class="menububble__button"
-                            @click="showLinkMenu(getMarkAttrs('link'))"
-                            :class="{ 'is-active': isActive.link() }"
+                            class="menubar__button"
+                            :class="{ 'is-active': isActive.bold() }"
+                            @click="commands.bold"
+                            type="button"
                     >
-                        <span>{{ isActive.link() ? 'Update Link' : 'Add Link'}}</span>
+                        <b-icon icon="format-bold" />
+                    </button>
+
+                    <button
+                            class="menubar__button"
+                            :class="{ 'is-active': isActive.italic() }"
+                            @click="commands.italic"
+                            type="button"
+                    >
+                        <b-icon icon="format-italic" />
+                    </button>
+
+                    <button
+                            class="menubar__button"
+                            :class="{ 'is-active': isActive.underline() }"
+                            @click="commands.underline"
+                            type="button"
+                    >
+                        <b-icon icon="format-underline" />
+                    </button>
+
+                    <button
+                            class="menubar__button"
+                            :class="{ 'is-active': isActive.heading({ level: 1 }) }"
+                            @click="commands.heading({ level: 1 })"
+                            type="button"
+                    >
+                        <b-icon icon="format-header-1" />
+                    </button>
+
+                    <button
+                            class="menubar__button"
+                            :class="{ 'is-active': isActive.heading({ level: 2 }) }"
+                            @click="commands.heading({ level: 2 })"
+                            type="button"
+                    >
+                        <b-icon icon="format-header-2" />
+                    </button>
+
+                    <button
+                            class="menubar__button"
+                            :class="{ 'is-active': isActive.heading({ level: 3 }) }"
+                            @click="commands.heading({ level: 3 })"
+                            type="button"
+                    >
+                        <b-icon icon="format-header-3" />
+                    </button>
+
+                    <button
+                            class="menubar__button"
+                            @click="showLinkMenu(commands.link, isActive.link())"
+                            :class="{ 'is-active': isActive.link() }"
+                            type="button"
+                    >
                         <b-icon icon="link" />
                     </button>
-                </template>
 
-            </div>
-        </editor-menu-bubble>
+                    <button
+                            class="menubar__button"
+                            @click="showImagePrompt(commands.image)"
+                            type="button"
+                    >
+                        <b-icon icon="image" />
+                    </button>
 
-        <editor-content class="editor__content" :editor="editor" />
-    </div>
+                    <button
+                            class="menubar__button"
+                            :class="{ 'is-active': isActive.bullet_list() }"
+                            @click="commands.bullet_list"
+                            type="button"
+                    >
+                        <b-icon icon="format-list-bulleted" />
+                    </button>
+
+                    <button
+                            class="menubar__button"
+                            :class="{ 'is-active': isActive.ordered_list() }"
+                            @click="commands.ordered_list"
+                            type="button"
+                    >
+                        <b-icon icon="format-list-numbered" />
+                    </button>
+
+                    <button
+                            class="menubar__button"
+                            :class="{ 'is-active': isActive.blockquote() }"
+                            @click="commands.blockquote"
+                            type="button"
+                    >
+                        <b-icon icon="format-quote-close" />
+                    </button>
+
+                    <button
+                            class="menubar__button"
+                            @click="commands.undo"
+                            type="button"
+                    >
+                        <b-icon icon="undo" />
+                    </button>
+
+                    <button
+                            class="menubar__button"
+                            @click="commands.redo"
+                            type="button"
+                    >
+                        <b-icon icon="redo" />
+                    </button>
+
+                </div>
+            </editor-menu-bar>
+
+            <editor-content class="editor__content" :editor="editor" />
+        </div>
         <div class="suggestion-list" v-show="showSuggestions" ref="suggestions">
             <template v-if="hasResults">
                 <div
@@ -186,18 +179,12 @@ import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
     },
   },
 })
-export default class CreateEvent extends Vue {
-  @Prop({ required: true }) value!: String;
+export default class EditorComponent extends Vue {
+  @Prop({ required: true }) value!: string;
 
   currentActor!: IPerson;
 
-  editor: Editor = null;
-
-    /**
-     * Editor Link
-     */
-  linkUrl!: string|null;
-  linkMenuIsActive: boolean = false;
+  editor: Editor|null = null;
 
     /**
      * Editor Suggestions
@@ -233,14 +220,14 @@ export default class CreateEvent extends Vue {
             this.filteredActors = items;
             this.suggestionRange = range;
             this.renderPopup(virtualNode);
-            // we save the command for inserting a selected mention
-            // this allows us to call it inside of our custom popup
-            // via keyboard navigation and on click
+                      // we save the command for inserting a selected mention
+                      // this allows us to call it inside of our custom popup
+                      // via keyboard navigation and on click
             this.insertMention = command;
           },
-          /**
-           * is called when a suggestion has changed
-           */
+                  /**
+                   * is called when a suggestion has changed
+                   */
           onChange: ({ items, query, range, virtualNode }) => {
             this.query = query;
             this.filteredActors = items;
@@ -249,11 +236,11 @@ export default class CreateEvent extends Vue {
             this.renderPopup(virtualNode);
           },
 
-          /**
-           * is called when a suggestion is cancelled
-           */
+                  /**
+                   * is called when a suggestion is cancelled
+                   */
           onExit: () => {
-            // reset all saved values
+                      // reset all saved values
             this.query = null;
             this.filteredActors = [];
             this.suggestionRange = null;
@@ -261,21 +248,21 @@ export default class CreateEvent extends Vue {
             this.destroyPopup();
           },
 
-          /**
-           * is called on every keyDown event while a suggestion is active
-           */
+                  /**
+                   * is called on every keyDown event while a suggestion is active
+                   */
           onKeyDown: ({ event }) => {
-            // pressing up arrow
+                      // pressing up arrow
             if (event.keyCode === 38) {
               this.upHandler();
               return true;
             }
-            // pressing down arrow
+                      // pressing down arrow
             if (event.keyCode === 40) {
               this.downHandler();
               return true;
             }
-            // pressing enter
+                      // pressing enter
             if (event.keyCode === 13) {
               this.enterHandler();
               return true;
@@ -292,7 +279,7 @@ export default class CreateEvent extends Vue {
                 searchText: query,
               },
             });
-            // TODO: TipTap doesn't handle async for onFilter, hence the following line.
+                      // TODO: TipTap doesn't handle async for onFilter, hence the following line.
             this.filteredActors = result.data.searchPersons.elements;
             return this.filteredActors;
           },
@@ -323,27 +310,28 @@ export default class CreateEvent extends Vue {
 
   @Watch('value')
   onValueChanged(val: string) {
+    if (!this.editor) return;
     if (val !== this.editor.getHTML()) {
       this.editor.setContent(val);
     }
   }
 
-  showLinkMenu(attrs: any) {
-    this.linkUrl = attrs.href;
-    this.linkMenuIsActive = true;
-    this.$nextTick(() => {
-      const linkInput = this.$refs.linkInput as HTMLElement;
-      linkInput.focus();
+  showLinkMenu(command, active: boolean) {
+    if (!this.editor) return;
+    if (active) return command({ href: null });
+    this.$buefy.dialog.prompt({
+      message: this.$t('Enter the link URL') as string,
+      inputAttrs: {
+        type: 'url',
+      },
+      // @ts-ignore https://github.com/buefy/buefy/commit/62539ac4026c8610509850a3a973fc283bac50ef#diff-02b38ee0a78d8316f075e520b3a442ae
+      trapFocus: true,
+      onConfirm: (value) => {
+        command({ href: value });
+        if (!this.editor) return;
+        this.editor.focus();
+      },
     });
-  }
-  hideLinkMenu() {
-    this.linkUrl = '';
-    this.linkMenuIsActive = false;
-  }
-  setLinkUrl(command, url: string) {
-    command({ href: url });
-    this.hideLinkMenu();
-    this.editor.focus();
   }
 
   upHandler() {
@@ -378,6 +366,7 @@ export default class CreateEvent extends Vue {
         label: actor.name,
       },
     });
+    if (!this.editor) return;
     this.editor.focus();
   }
 
@@ -447,6 +436,7 @@ export default class CreateEvent extends Vue {
   }
 
   beforeDestroy() {
+    if (!this.editor) return;
     this.editor.destroy();
   }
 }
@@ -537,10 +527,6 @@ export default class CreateEvent extends Vue {
             li > ol,
             li > ul {
                 margin: 0;
-            }
-
-            a {
-                color: inherit;
             }
 
             blockquote {

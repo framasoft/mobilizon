@@ -1,4 +1,3 @@
-import {ParticipantRole} from "@/types/event.model";
 <template>
   <section>
     <div class="container">
@@ -246,7 +245,7 @@ import {
 import { CURRENT_ACTOR_CLIENT, IDENTITIES, LOGGED_USER_DRAFTS, LOGGED_USER_PARTICIPATIONS } from '@/graphql/actor';
 import { IPerson, Person } from '@/types/actor';
 import PictureUpload from '@/components/PictureUpload.vue';
-import Editor from '@/components/Editor.vue';
+import EditorComponent from '@/components/Editor.vue';
 import DateTimePicker from '@/components/Event/DateTimePicker.vue';
 import TagInput from '@/components/Event/TagInput.vue';
 import { TAGS } from '@/graphql/tags';
@@ -257,7 +256,7 @@ import IdentityPickerWrapper from '@/views/Account/IdentityPickerWrapper.vue';
 import { RouteName } from '@/router';
 
 @Component({
-  components: { IdentityPickerWrapper, AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor },
+  components: { IdentityPickerWrapper, AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor: EditorComponent },
   apollo: {
     currentActor: {
       query: CURRENT_ACTOR_CLIENT,
