@@ -3,13 +3,13 @@
     <b-loading :active.sync="$apollo.loading"></b-loading>
     <transition appear name="fade" mode="out-in">
       <div v-if="event">
-        <div class="header-picture container">
-          <figure class="image is-3by1" v-if="event.picture">
+        <div class="header-picture" :style="`background-image: url('${event.picture ? event.picture.url : 'https://picsum.photos/600/200/'}')`">
+          <!--<figure class="image is-3by1" v-if="event.picture">
             <img :src="event.picture.url">
           </figure>
           <figure class="image is-3by1" v-else>
             <img src="https://picsum.photos/600/200/">
-          </figure>
+          </figure>-->
         </div>
           <section>
             <div class="title-and-participate-button">
@@ -493,6 +493,14 @@ export default class Event extends EventMixin {
   }
   .fade-enter, .fade-leave-to {
     opacity: 0;
+  }
+
+  .header-picture {
+    height: 400px;
+    background-size: cover;
+    // background-position: center center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
   }
 
   div.sidebar {
