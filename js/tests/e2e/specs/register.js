@@ -43,7 +43,7 @@ describe('Registration', () => {
     cy.get('form .field').first().contains('label', 'Username').parent().find('input').type('tester');
     cy.get('form .field').eq(2).contains('label', 'Displayed name').parent().find('input').type('tester account');
     cy.get('form .field').eq(3).contains('label', 'Description').parent().find('textarea').type('This is a test account');
-    cy.get('form .field').last().contains('button', 'Create my profile').click();
+    cy.get('.control.has-text-centered').contains('button', 'Create my profile').click();
 
     cy.contains('article.message.is-success', 'Your account is nearly ready, tester').contains('A validation email was sent to user@email.com');
 
