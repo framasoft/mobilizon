@@ -17,9 +17,9 @@
               <li>{{ $t('Other stuff…') }}</li>
             </ul>
           </div>
-          <i18n path="Learn more on" tag="p">
-            <a target="_blank" href="https://joinmobilizon.org">joinmobilizon.org</a>
-          </i18n>
+          <router-link :to="{ name: RouteName.ABOUT }">
+            {{ $t('Learn more') }}
+          </router-link>
           <hr>
           <div class="content">
             <h3 class="title">{{ $t('About this instance') }}</h3>
