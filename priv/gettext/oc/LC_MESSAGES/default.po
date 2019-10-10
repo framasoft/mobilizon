@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2019-10-10 13:07+0000\n"
+"PO-Revision-Date: 2019-10-15 07:01+0000\n"
 "Last-Translator: Quentin <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/oc/>\n"
@@ -210,7 +210,8 @@ msgstr "Nos dòl !"
 #: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:45
 #: lib/mobilizon_web/templates/email/event_participation_rejected.text.eex:7
 msgid "Unfortunately, the organizers rejected your participation."
-msgstr "Mmalaürosament, los organizaires an regetada vòstra demanda de participacion."
+msgstr ""
+"Malaürosament, los organizaires an regetada vòstra demanda de participacion."
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/registration_confirmation.text.eex:5
