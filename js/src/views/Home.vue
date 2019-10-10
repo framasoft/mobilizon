@@ -5,7 +5,7 @@
           <div class="container">
             <h1 class="title">{{ $t('Gather ⋅ Organize ⋅ Mobilize') }}</h1>
             <p class="subtitle">{{ $t('Join {instance}, a Mobilizon instance', { instance: config.name }) }}
-            <p>{{ config.description }}</p>
+            <p class="instance-description">{{ config.description }}</p>
             <!-- We don't invite to find other instances yet -->
             <!-- <p v-if="!config.registrationsOpen">
               {{ $t("This instance isn't opened to registrations, but you can register on other instances.") }}
@@ -324,6 +324,10 @@ export default class Home extends Vue {
 
     .column figure.image img {
       max-width: 400px;
+    }
+
+    .instance-description {
+      margin-bottom: 1rem;
     }
   }
 </style>

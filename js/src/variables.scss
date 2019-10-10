@@ -5,11 +5,21 @@ $primary-invert: findColorInvert($primary);
 $secondary: #FAB12D;
 $secondary-invert: findColorInvert($secondary);
 
+$success: #78cc8a;
+$success-invert: findColorInvert($success);
+$info: #36bcd4;
+$info-invert: findColorInvert($info);
+$danger: #ff7061;
+$danger-invert: findColorInvert($danger);
+
 $colors: map-merge(
     $colors,
     (
         "primary": ($primary, $primary-invert),
-        "secondary": ($secondary, $secondary-invert)
+        "secondary": ($secondary, $secondary-invert),
+        "success": ($success, $success-invert),
+        "info": ($info, $info-invert),
+        "danger": ($danger, $danger-invert),
     )
 );
 

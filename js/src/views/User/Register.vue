@@ -11,18 +11,18 @@
       <div class="columns">
         <div class="column">
           <div class="content">
-            <h3 class="title">{{ $t('Features') }}</h3>
+            <h2 class="title">{{ $t('Features') }}</h2>
             <ul>
               <li>{{ $t('Create your communities and your events') }}</li>
               <li>{{ $t('Other stuff…') }}</li>
             </ul>
           </div>
-          <i18n path="Learn more on" tag="p">
-            <a target="_blank" href="https://joinmobilizon.org">joinmobilizon.org</a>
-          </i18n>
+          <router-link :to="{ name: RouteName.ABOUT }">
+            {{ $t('Learn more') }}
+          </router-link>
           <hr>
           <div class="content">
-            <h3 class="title">{{ $t('About this instance') }}</h3>
+            <h2 class="title">{{ $t('About this instance') }}</h2>
             <p>
               {{ $t("Your local administrator resumed it's policy:") }}
             </p>
@@ -67,30 +67,28 @@
               />
             </b-field>
 
-            <b-field grouped>
-              <div class="control">
-                <button class="button is-primary">
-                  {{ $t('Register') }}
-                </button>
-              </div>
-              <div class="control">
-                <router-link
-                  class="button is-text"
-                  :to="{ name: RouteName.RESEND_CONFIRMATION, params: { email: credentials.email }}"
-                >
-                  {{ $t("Didn't receive the instructions ?") }}
-                </router-link>
-              </div>
-              <div class="control">
-                <router-link
-                  class="button is-text"
-                  :to="{ name: RouteName.LOGIN, params: { email: credentials.email, password: credentials.password }}"
-                  :disabled="sendingValidation"
-                >
-                  {{ $t('Login') }}
-                </router-link>
-              </div>
-            </b-field>
+            <p class="control has-text-centered">
+              <button class="button is-primary is-large">
+                {{ $t('Register') }}
+              </button>
+            </p>
+            <p class="control">
+              <router-link
+                class="button is-text"
+                :to="{ name: RouteName.RESEND_CONFIRMATION, params: { email: credentials.email }}"
+              >
+                {{ $t("Didn't receive the instructions ?") }}
+              </router-link>
+            </p>
+            <p class="control">
+              <router-link
+                class="button is-text"
+                :to="{ name: RouteName.LOGIN, params: { email: credentials.email, password: credentials.password }}"
+                :disabled="sendingValidation"
+              >
+                {{ $t('Login') }}
+              </router-link>
+            </p>
           </form>
 
           <div v-if="errors.length > 0">
@@ -167,7 +165,11 @@ export default class Register extends Vue {
   display: none;
 }
 
-  h3.title {
+  .container .columns {
+    margin: 1rem auto 3rem;
+  }
+
+  h2.title {
     background: $secondary;
     display: inline;
   }

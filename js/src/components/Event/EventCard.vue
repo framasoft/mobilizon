@@ -46,8 +46,9 @@ A simple card for an event
       </div>
       <span class="organizer-place-wrapper">
         <span v-if="actorDisplayName && actorDisplayName !== '@'">{{ $t('By {name}', { name: actorDisplayName }) }}</span>
+        <span v-if="actorDisplayName && actorDisplayName !== '@'">-</span>
         <span v-if="event.physicalAddress && (event.physicalAddress.locality || event.physicalAddress.description)">
-          - {{ event.physicalAddress.locality || event.physicalAddress.description }}
+          {{ event.physicalAddress.locality || event.physicalAddress.description }}
         </span>
       </span>
     </div>
@@ -201,6 +202,11 @@ export default class EventCard extends Vue {
       }
       span.organizer-place-wrapper {
         display: flex;
+        padding: 0 0.5rem 0.3rem;
+
+        span {
+          padding-right: 0.25rem;
+        }
 
         span:last-child {
           flex: 1;

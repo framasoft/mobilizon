@@ -58,6 +58,10 @@ export default class Explore extends Vue {
 </script>
 
 <style scoped lang="scss">
+  h1.title {
+    margin-top: 1.5rem;
+  }
+
   h3.title {
     margin-bottom: 1.5rem;
   }

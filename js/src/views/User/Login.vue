@@ -1,18 +1,15 @@
 <template>
   <div class="container">
-    <section class="hero">
-      <h1 class="title">
-        {{ $t('Welcome back!') }}
-      </h1>
-    </section>
-
     <b-message v-if="errorCode === LoginErrorCode.NEED_TO_LOGIN" title="Info" type="is-info">
       {{ $t('You need to login.') }}
     </b-message>
 
     <section v-if="!currentUser.isLoggedIn">
       <div class="columns is-mobile is-centered">
-        <div class="column is-half">
+        <div class="column is-half-desktop">
+          <h1 class="title">
+            {{ $t('Welcome back!') }}
+          </h1>
           <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">{{ error }}</b-message>
           <form @submit="loginAction">
             <b-field :label="$t('Email')">
@@ -29,27 +26,27 @@
               />
             </b-field>
 
-            <div class="control has-text-centered">
+            <p class="control has-text-centered">
               <button class="button is-primary is-large">
                 {{ $t('Login') }}
               </button>
-            </div>
-            <div class="control">
+            </p>
+            <p class="control">
               <router-link
                 class="button is-text"
                 :to="{ name: RouteName.SEND_PASSWORD_RESET, params: { email: credentials.email }}"
               >
                 {{ $t('Forgot your password ?') }}
               </router-link>
-            </div>
-            <div class="control" v-if="config && config.registrationsOpen">
+            </p>
+            <p class="control" v-if="config && config.registrationsOpen">
               <router-link
                 class="button is-text"
                 :to="{ name: RouteName.REGISTER, params: { default_email: credentials.email, default_password: credentials.password }}"
               >
                 {{ $t('Register') }}
               </router-link>
-            </div>
+            </p>
           </form>
         </div>
       </div>
@@ -166,3 +163,9 @@ export default class Login extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .container .columns {
+    margin: 1rem auto 3rem;
+  }
+</style>

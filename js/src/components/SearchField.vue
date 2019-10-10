@@ -1,5 +1,5 @@
 <template>
-    <b-input icon="magnify" type="search" rounded :placeholder="defaultPlaceHolder" v-model="searchText" @keyup.native.enter="enter" />
+    <b-input custom-class="searchField" icon="magnify" type="search" rounded :placeholder="defaultPlaceHolder" v-model="searchText" @keyup.native.enter="enter" />
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
@@ -20,3 +20,10 @@ export default class SearchField extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+    input.searchField {
+        box-shadow: none;
+        border-color: #b5b5b5;
+    }
+</style>

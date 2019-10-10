@@ -1,25 +1,29 @@
 <template>
   <section class="container">
-    <div class="column">
-      <h1 class="title">
-        {{ $t('Password reset') }}
-      </h1>
-      <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">{{ error }}</b-message>
-      <form @submit="sendResetPasswordTokenAction" v-if="!validationSent">
-        <b-field label="Email">
-          <b-input aria-required="true" required type="email" v-model="credentials.email"/>
-        </b-field>
-        <button class="button is-primary">
-          {{ $t('Send email to reset my password') }}
-        </button>
-      </form>
-      <div v-else>
-        <b-message type="is-success" :closable="false" title="Success">
-          {{ $t('We just sent an email to {email}', {email: credentials.email}) }}
-        </b-message>
-        <b-message type="is-info">
-          {{ $t("Please check your spam folder if you didn't receive the email.") }}
-        </b-message>
+    <div class="columns is-mobile is-centered">
+      <div class="column is-half-desktop">
+        <h1 class="title">
+          {{ $t('Password reset') }}
+        </h1>
+        <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">{{ error }}</b-message>
+        <form @submit="sendResetPasswordTokenAction" v-if="!validationSent">
+          <b-field label="Email">
+            <b-input aria-required="true" required type="email" v-model="credentials.email"/>
+          </b-field>
+          <p class="control has-text-centered">
+              <b-button type="is-primary">
+              {{ $t('Send me an email to reset my password') }}
+            </b-button>
+          </p>
+        </form>
+        <div v-else>
+          <b-message type="is-success" :closable="false" title="Success">
+            {{ $t('We just sent an email to {email}', {email: credentials.email}) }}
+          </b-message>
+          <b-message type="is-info">
+            {{ $t("Please check your spam folder if you didn't receive the email.") }}
+          </b-message>
+        </div>
       </div>
     </div>
   </section>
@@ -85,3 +89,9 @@ export default class SendPasswordReset extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .container .columns {
+    margin: 1rem auto 3rem;
+  }
+</style>

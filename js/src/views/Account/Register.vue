@@ -1,70 +1,60 @@
 <template>
-  <div>
-    <section class="hero">
-      <div class="hero-body">
+  <section class="container">
+    <div class="columns is-mobile is-centered">
+      <div class="column is-half-desktop">
         <h1 class="title">
           {{ $t('Register an account on Mobilizon!') }}
         </h1>
-      </div>
-    </section>
-    <section>
-      <div class="container">
-        <div class="columns is-mobile">
-          <div class="column">
-            <form v-if="!validationSent">
-              <b-field
-                :label="$t('Username')"
-                :type="errors.preferred_username ? 'is-danger' : null"
-                :message="errors.preferred_username"
-              >
-                <b-field>
-                  <b-input
-                    aria-required="true"
-                    required
-                    expanded
-                    v-model="person.preferredUsername"
-                  />
-                  <p class="control">
-                    <span class="button is-static">@{{ host }}</span>
-                  </p>
-                </b-field>
-              </b-field>
+        <form v-if="!validationSent">
+          <b-field
+            :label="$t('Username')"
+            :type="errors.preferred_username ? 'is-danger' : null"
+            :message="errors.preferred_username"
+          >
+            <b-field>
+              <b-input
+                aria-required="true"
+                required
+                expanded
+                v-model="person.preferredUsername"
+              />
+              <p class="control">
+                <span class="button is-static">@{{ host }}</span>
+              </p>
+            </b-field>
+          </b-field>
 
-              <b-field :label="$t('Displayed name')">
-                <b-input v-model="person.name"/>
-              </b-field>
+          <b-field :label="$t('Displayed name')">
+            <b-input v-model="person.name"/>
+          </b-field>
 
-              <b-field :label="$t('Description')">
-                <b-input type="textarea" v-model="person.summary"/>
-              </b-field>
+          <b-field :label="$t('Description')">
+            <b-input type="textarea" v-model="person.summary"/>
+          </b-field>
 
-              <b-field grouped>
-                <div class="control">
-                  <button type="button" class="button is-primary" @click="submit()">
-                     {{ $t('Create my profile') }}
-                  </button>
-                </div>
-              </b-field>
-            </form>
+          <p class="control has-text-centered">
+            <b-button type="is-primary" size="is-large" @click="submit()">
+               {{ $t('Create my profile') }}
+            </b-button>
+          </p>
+        </form>
 
-            <div v-if="validationSent && !userAlreadyActivated">
-              <b-message title="Success" type="is-success">
-                <h2 class="title">
-                  {{ $t('Your account is nearly ready, {username}', { username: person.preferredUsername }) }}
-                </h2>
-                <p>
-                  {{ $t('A validation email was sent to {email}', { email }) }}
-                </p>
-                <p>
-                  {{ $t('Before you can login, you need to click on the link inside it to validate your account') }}
-                </p>
-              </b-message>
-            </div>
-          </div>
+        <div v-if="validationSent && !userAlreadyActivated">
+          <b-message title="Success" type="is-success" closable="false">
+            <h2 class="title">
+              {{ $t('Your account is nearly ready, {username}', { username: person.preferredUsername }) }}
+            </h2>
+            <p>
+              {{ $t('A validation email was sent to {email}', { email }) }}
+            </p>
+            <p>
+              {{ $t('Before you can login, you need to click on the link inside it to validate your account') }}
+            </p>
+          </b-message>
         </div>
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
 </template>
 
 <script lang="ts">
@@ -88,7 +78,7 @@ export default class Register extends Vue {
   validationSent: boolean = false;
   sendingValidation: boolean = false;
 
-  async mounted() {
+  async created() {
     // Make sure no one goes to this page if we don't want to
     if (!this.email) {
       await this.$router.replace({ name: RouteName.PAGE_NOT_FOUND });
@@ -134,7 +124,7 @@ export default class Register extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .avatar-enter-active {
   transition: opacity 1s ease;
 }
@@ -147,4 +137,8 @@ export default class Register extends Vue {
 .avatar-leave {
   display: none;
 }
+
+  .container .columns {
+    margin: 1rem auto 3rem;
+  }
 </style>
