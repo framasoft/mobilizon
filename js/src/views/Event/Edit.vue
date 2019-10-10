@@ -265,6 +265,14 @@ import { RouteName } from '@/router';
       query: TAGS,
     },
   },
+  metaInfo() {
+    return {
+      // if no subcomponents specify a metaInfo.title, this title will be used
+      title: (this.$props.isUpdate ? this.$t('Event edition') : this.$t('Event creation')) as string,
+      // all titles will be injected into this template
+      titleTemplate: '%s | Mobilizon',
+    };
+  },
 })
 export default class EditEvent extends Vue {
   @Prop({ type: Boolean, default: false }) isUpdate!: boolean;

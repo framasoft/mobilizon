@@ -105,7 +105,16 @@ import { CREATE_USER } from '@/graphql/user';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { RouteName } from '@/router';
 
-@Component
+@Component({
+  metaInfo() {
+    return {
+      // if no subcomponents specify a metaInfo.title, this title will be used
+      title: this.$t('Register an account on Mobilizon!') as string,
+      // all titles will be injected into this template
+      titleTemplate: '%s | Mobilizon',
+    };
+  },
+})
 export default class Register extends Vue {
   @Prop({ type: String, required: false, default: '' }) email!: string;
   @Prop({ type: String, required: false, default: '' }) password!: string;

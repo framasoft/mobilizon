@@ -81,6 +81,14 @@ import { IConfig } from '@/types/config.model';
       query: CURRENT_USER_CLIENT,
     },
   },
+  metaInfo() {
+    return {
+      // if no subcomponents specify a metaInfo.title, this title will be used
+      title: this.$t('Login on Mobilizon!') as string,
+      // all titles will be injected into this template
+      titleTemplate: '%s | Mobilizon',
+    };
+  },
 })
 export default class Login extends Vue {
   @Prop({ type: String, required: false, default: '' }) email!: string;

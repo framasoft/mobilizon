@@ -10,12 +10,14 @@ import { apolloProvider } from './vue-apollo';
 import { NotifierPlugin } from '@/plugins/notifier';
 import filters from '@/filters';
 import messages from '@/i18n/index';
+import VueMeta from 'vue-meta';
 
 Vue.config.productionTip = false;
 
 Vue.use(Buefy);
 Vue.use(NotifierPlugin);
 Vue.use(filters);
+Vue.use(VueMeta);
 
 const language = (window.navigator as any).userLanguage || window.navigator.language;
 

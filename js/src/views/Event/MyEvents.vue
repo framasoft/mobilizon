@@ -111,6 +111,14 @@ import EventCard from '@/components/Event/EventCard.vue';
       update: data => data.loggedUser.participations.map(participation => new Participant(participation)),
     },
   },
+  metaInfo() {
+    return {
+            // if no subcomponents specify a metaInfo.title, this title will be used
+      title: this.$t('My events') as string,
+            // all titles will be injected into this template
+      titleTemplate: '%s | Mobilizon',
+    };
+  },
 })
 export default class MyEvents extends Vue {
   futurePage: number = 1;
