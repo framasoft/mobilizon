@@ -214,7 +214,7 @@ export default class MyEvents extends Vue {
         & > h2 {
             display: block;
             color: $primary;
-            font-size: 3rem;
+            font-size: 2.5rem;
             text-decoration: underline;
             text-decoration-color: $secondary;
         }
