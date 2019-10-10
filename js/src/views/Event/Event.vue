@@ -474,7 +474,13 @@ export default class Event extends EventMixin {
   }
 
   get emailShareUrl(): string {
-    return `mailto:?to=&body=${this.event.url}${encodeURIComponent('\n\n')}${this.event.description}&subject=${this.event.title}`;
+    return `mailto:?to=&body=${this.event.url}${encodeURIComponent('\n\n')}${this.textDescription}&subject=${this.event.title}`;
+  }
+
+  get textDescription(): string {
+    const meta = document.querySelector("meta[property='og:description']");
+    if (!meta) return '';
+    return meta.getAttribute('content') || '';
   }
 
 }
