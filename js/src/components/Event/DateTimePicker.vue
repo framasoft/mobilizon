@@ -13,12 +13,23 @@
 </docs>
 <template>
     <b-field grouped horizontal :label="label">
-        <b-datepicker expanded v-model="date" :placeholder="$t('Click to select')" icon="calendar"></b-datepicker>
+        <b-datepicker
+                :day-names="localeShortWeekDayNamesProxy"
+                :month-names="localeMonthNamesProxy"
+                expanded
+                :first-day-of-week="parseInt($t('firstDayOfWeek'), 10)"
+                :min-date="minDate"
+                v-model="date"
+                :placeholder="$t('Click to select')"
+                icon="calendar"
+        />
         <b-input expanded type="time" required v-model="time" />
     </b-field>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { localeMonthNames, localeShortWeekDayNames } from '@/utils/datetime';
+
 @Component
 export default class DateTimePicker extends Vue {
   /**
@@ -37,8 +48,16 @@ export default class DateTimePicker extends Vue {
    */
   @Prop({ required: false, type: Number, default: 1 }) step!: number;
 
+    /**
+     * Earliest date available for selection
+     */
+  @Prop({ required: false, type: Date, default: null }) minDate!: Date;
+
   date: Date = this.value;
   time: string = '00:00';
+
+  localeShortWeekDayNamesProxy = localeShortWeekDayNames();
+  localeMonthNamesProxy = localeMonthNames();
 
   mounted() {
     this.convertTime();
