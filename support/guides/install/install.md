@@ -86,23 +86,6 @@ Finally, build the front-end with
 yarn run build
 ```
 
-### Testing
-
-Go back to the previous directory
-
-```bash
-cd ..
-```
-
-Now try to run the server
-
-```bash
-mix phx.server
-```
-
-It runs on port 4000.
-
-
 ## Services
 
 ### Systemd
@@ -130,3 +113,25 @@ It will run Mobilizon and enable startup on boot. You can follow the logs with
 ```bash
 sudo journalctl -fu mobilizon.service
 ```
+
+The Elixir server runs on port 4000 on the local interface only, so you need to add a reverse-proxy.
+
+## Reverse proxy
+
+### Nginx
+
+Copy the file from `support/nginx/mobilizon.conf` to `/etc/nginx/sites-available`.
+
+```bash
+sudo cp support/nginx/mobilizon.conf /etc/nginx/sites-available
+```
+
+Then symlink the file into the `/etc/nginx/sites-enabled` directory.
+
+```bash
+sudo ln -s /etc/nginx/sites-available/mobilizon.conf /etc/nginx/sites-enabled/
+```
+
+Edit the file `/etc/nginx/sites-available` and adapt it to your own configuration.
+
+Test the configuration with `sudo nginx -t` and reload nginx with `systemctl reload nginx`.
