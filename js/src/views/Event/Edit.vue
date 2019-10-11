@@ -22,7 +22,7 @@
           <tag-input v-model="event.tags" :data="tags" path="title" />
 
           <date-time-picker v-model="event.beginsOn" :label="$t('Starts on…')" :step="15"/>
-          <date-time-picker v-model="event.endsOn" :label="$t('Ends on…')" :step="15" />
+          <date-time-picker :min-date="minDateForEndsOn" v-model="event.endsOn" :label="$t('Ends on…')" :step="15" />
 
           <address-auto-complete v-model="event.physicalAddress" />
 
@@ -568,6 +568,15 @@ export default class EditEvent extends Vue {
     if (dateEndsOn === dateBeginsOn) {
       this.event.endsOn.setUTCHours(dateEndsOn.getUTCHours() + 1);
     }
+  }
+
+  /**
+   * In event endsOn datepicker, we lock starting with the day before the beginsOn date
+   */
+  get minDateForEndsOn(): Date {
+    const minDate = new Date(this.event.beginsOn);
+    minDate.setDate(minDate.getDate() - 1);
+    return minDate;
   }
 }
 </script>
