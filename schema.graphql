@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Fri Oct 04 2019 15:04:46 GMT+0200 (GMT+02:00)
+# timestamp: Fri Oct 11 2019 11:53:52 GMT+0200 (Central European Summer Time)
 
 schema {
   query: RootQueryType
@@ -680,6 +680,9 @@ enum ParticipantRoleEnum {
 type ParticipantStats {
   """The number of approved participants"""
   approved: Int
+
+  """The number of simple participants (excluding creators)"""
+  participants: Int
 
   """The number of rejected participants"""
   rejected: Int

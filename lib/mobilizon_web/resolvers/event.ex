@@ -101,7 +101,8 @@ defmodule MobilizonWeb.Resolvers.Event do
      %{
        approved: Mobilizon.Events.count_approved_participants(id),
        unapproved: Mobilizon.Events.count_unapproved_participants(id),
-       rejected: Mobilizon.Events.count_rejected_participants(id)
+       rejected: Mobilizon.Events.count_rejected_participants(id),
+       participants: Mobilizon.Events.count_participant_participants(id),
      }}
   end
 
