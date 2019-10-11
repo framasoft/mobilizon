@@ -24,7 +24,7 @@ msgid "Feed for %{email} on Mobilizon"
 msgstr ""
 
 #, elixir-format
-#: lib/mobilizon_web/templates/email/email.html.eex:122
+#: lib/mobilizon_web/templates/email/email.html.eex:153
 #: lib/mobilizon_web/templates/email/email.text.eex:6
 msgid "%{instance} is a Mobilizon server."
 msgstr ""
@@ -45,7 +45,7 @@ msgid "Activate my account"
 msgstr ""
 
 #, elixir-format
-#: lib/mobilizon_web/templates/email/email.html.eex:91
+#: lib/mobilizon_web/templates/email/email.html.eex:122
 msgid "Ask the community on Framacolibri"
 msgstr ""
 
@@ -72,7 +72,7 @@ msgid "Instructions to reset your password on %{instance}"
 msgstr ""
 
 #, elixir-format
-#: lib/mobilizon_web/templates/email/email.html.eex:123
+#: lib/mobilizon_web/templates/email/email.html.eex:154
 msgid "Learn more about Mobilizon."
 msgstr ""
 
@@ -82,7 +82,7 @@ msgid "Nearly here!"
 msgstr ""
 
 #, elixir-format
-#: lib/mobilizon_web/templates/email/email.html.eex:88
+#: lib/mobilizon_web/templates/email/email.html.eex:119
 msgid "Need some help? Something not working properly?"
 msgstr ""
 
@@ -294,4 +294,29 @@ msgstr ""
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:38
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:5
 msgid "You requested a new password for your account on %{instance}."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:91
+msgid "%{b_start}Please do not use it in any real way%{b_end}: everything you create here (accounts, events, identities, etc.) will be automatically deleted every 48 hours."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:94
+msgid "In the meantime, please consider that the software is not (yet) finished. More information %{a_start}on our blog%{a_end}."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:93
+msgid "Mobilizon is under development, we will add new features to this site during regular updates, until the release of %{b_start}version 1 of the software in the first half of 2020%{b_end}."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:90
+msgid "This is a demonstration site to test the beta version of Mobilizon."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:88
+msgid "Warning"
 msgstr ""
