@@ -17,17 +17,24 @@
                 <div class="date-component">
                   <date-calendar-icon :date="event.beginsOn"></date-calendar-icon>
                 </div>
-                <h1 class="title">{{ event.title }}</h1>
+                <div class="title-and-informations">
+                  <h1 class="title">{{ event.title }}</h1>
+                  <span>
+                    <small v-if="event.participantStats.approved > 0 && !actorIsParticipant">
+                      {{ $tc('One person is going', event.participantStats.approved, {approved: event.participantStats.approved}) }}
+                    </small>
+                    <small v-else-if="event.participantStats.approved > 0 && actorIsParticipant">
+                      {{ $tc('You and one other person are going to this event', event.participantStats.participants, { approved: event.participantStats.participants }) }}
+                    </small>
+                    <small v-if="event.options.maximumAttendeeCapacity">
+                        {{ $tc('All the places have already been taken', numberOfPlacesStillAvailable, { places: numberOfPlacesStillAvailable}) }}
+                    </small>
+                  </span>
+                </div>
               </div>
-              <div class="has-text-right" v-if="new Date(endDate) > new Date()">
-                <small v-if="event.participantStats.approved > 0 && !actorIsParticipant">
-                    {{ $tc('One person is going', event.participantStats.approved, {approved: event.participantStats.approved}) }}
-                </small>
-                <small v-else-if="event.participantStats.approved > 0 && actorIsParticipant">
-                  {{ $tc('You and one other person are going to this event', event.participantStats.approved - 1, {approved: event.participantStats.approved - 1}) }}
-                </small>
+              <div class="event-participation has-text-right" v-if="new Date(endDate) > new Date()">
                 <participation-button
-                        v-if="currentActor.id && !actorIsOrganizer && !event.draft"
+                        v-if="currentActor.id && !actorIsOrganizer && !event.draft && (eventCapacityOK || actorIsParticipant)"
                         :participation="participations[0]"
                         :current-actor="currentActor"
                         @joinEvent="joinEvent"
@@ -46,14 +53,14 @@
             </div>
             <div class="metadata columns">
               <div class="column is-three-quarters-desktop">
-                <p class="tags" v-if="event.category || event.tags.length > 0">
+                <p class="tags" v-if="event.tags.length > 0">
                   <b-tag type="is-warning" size="is-medium" v-if="event.draft">{{ $t('Draft') }}</b-tag>
-                  <b-tag type="is-success" v-if="event.tags" v-for="tag in event.tags" :key="tag.title">{{ tag.title }}</b-tag>
-                  <span v-if="event.tags > 0">⋅</span>
-                  <span class="visibility" v-if="!event.draft">
+                    <span class="visibility" v-if="!event.draft">
                     <b-tag type="is-info" v-if="event.visibility === EventVisibility.PUBLIC">{{ $t('Public event') }}</b-tag>
                     <b-tag type="is-info" v-if="event.visibility === EventVisibility.UNLISTED">{{ $t('Private event') }}</b-tag>
                   </span>
+                  <b-tag type="is-success" v-if="event.tags" v-for="tag in event.tags" :key="tag.title">{{ tag.title }}</b-tag>
+                  <span v-if="event.tags > 0">⋅</span>
                 </p>
                 <div class="date-and-add-to-calendar">
                   <div class="date-and-privacy" v-if="event.beginsOn">
@@ -147,6 +154,9 @@
             <div class="columns">
               <div class="column is-half has-text-centered">
                 <h3 class="title">{{ $t('Share this event') }}</h3>
+                <small class="maximumNumberOfPlacesWarning" v-if="!eventCapacityOK">
+                  {{ $t('All the places have already been taken') }}
+                </small>
                 <div>
                   <b-icon icon="mastodon" size="is-large" type="is-primary" />
                   <a :href="facebookShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="facebook" size="is-large" type="is-primary" /></a>
@@ -346,7 +356,7 @@ export default class Event extends EventMixin {
 
           const participationCachedData = store.readQuery<{ person: IPerson }>({
             query: EVENT_PERSON_PARTICIPATION,
-            variables: { eventId: this.event.id, name: identity.preferredUsername },
+            variables: { eventId: this.event.id, actorId: identity.id },
           });
           if (participationCachedData == null) return;
           const { person } = participationCachedData;
@@ -357,7 +367,7 @@ export default class Event extends EventMixin {
           person.participations.push(data.joinEvent);
           store.writeQuery({
             query: EVENT_PERSON_PARTICIPATION,
-            variables: { eventId: this.event.id, name: identity.preferredUsername },
+            variables: { eventId: this.event.id, actorId: identity.id },
             data: { person },
           });
 
@@ -408,7 +418,7 @@ export default class Event extends EventMixin {
 
           const participationCachedData = store.readQuery<{ person: IPerson }>({
             query: EVENT_PERSON_PARTICIPATION,
-            variables: { eventId: this.event.id, name: this.currentActor.preferredUsername },
+            variables: { eventId: this.event.id, actorId: this.currentActor.id },
           });
           if (participationCachedData == null) return;
           const { person } = participationCachedData;
@@ -420,7 +430,7 @@ export default class Event extends EventMixin {
           person.participations = [];
           store.writeQuery({
             query: EVENT_PERSON_PARTICIPATION,
-            variables: { eventId: this.event.id, name: this.currentActor.preferredUsername },
+            variables: { eventId: this.event.id, actorId: this.currentActor.id },
             data: { person },
           });
 
@@ -495,6 +505,15 @@ export default class Event extends EventMixin {
     const meta = document.querySelector("meta[property='og:description']");
     if (!meta) return '';
     return meta.getAttribute('content') || '';
+  }
+
+  get eventCapacityOK(): boolean {
+    if (!this.event.options.maximumAttendeeCapacity) return true;
+    return this.event.options.maximumAttendeeCapacity > this.event.participantStats.participants;
+  }
+
+  get numberOfPlacesStillAvailable(): number {
+    return this.event.options.maximumAttendeeCapacity - this.event.participantStats.participants;
   }
 
 }
@@ -600,22 +619,40 @@ export default class Event extends EventMixin {
     /*align-self: center;*/
     align-items: stretch;
     /*align-content: space-around;*/
-    padding: 15px 10px 0;
+    padding: 7.5px 10px 0;
+    margin-bottom: 1rem;
 
     div.title-wrapper {
       display: flex;
       flex: 1 1 auto;
 
+      div.title-and-informations {
+        h1.title {
+          font-weight: normal;
+          word-break: break-word;
+          font-size: 1.7em;
+          margin-bottom: 0;
+        }
+
+        span small {
+          &:not(:last-child):after {
+            content: '⋅'
+          }
+
+          &:not(:first-child) {
+            padding-left: 3px;
+          }
+        }
+      }
+
 
       div.date-component {
         margin-right: 16px;
       }
+    }
 
-      h1.title {
-        font-weight: normal;
-        word-break: break-word;
-        font-size: 1.7em;
-      }
+    .event-participation small {
+      display: block;
     }
 
     .participate-button {
@@ -660,12 +697,16 @@ export default class Event extends EventMixin {
 
   p.tags {
     span {
-      &.tag.is-success {
-        &::before {
-          content: '#';
+      &.tag {
+        margin: 0 2px 4px;
+
+        &.is-success {
+            &::before {
+                content: '#';
+            }
+            text-transform: uppercase;
+            color: #111111;
         }
-        text-transform: uppercase;
-        color: #111111;
       }
 
       margin: auto 5px;
@@ -733,6 +774,36 @@ export default class Event extends EventMixin {
         padding: 10rem 0;
       }
 
+      h3 {
+        display: block;
+        color: $primary;
+        font-size: 3rem;
+        text-decoration: underline;
+        text-decoration-color: $secondary;
+        cursor: pointer;
+        max-width: 20rem;
+      }
+
+      .column:first-child {
+        h3 {
+          margin: 0 auto 1rem;
+          font-weight: normal;
+        }
+
+        small.maximumNumberOfPlacesWarning {
+          margin: 0 auto 1rem;
+          display: block;
+        }
+      }
+
+      .column:last-child {
+
+        h3 {
+          margin-right: 0;
+          margin-left: auto;
+        }
+      }
+
       .add-to-calendar {
         background-repeat: no-repeat;
         background-size: 400px;
@@ -748,19 +819,6 @@ export default class Event extends EventMixin {
           left: 0;
           height: 40%;
           width: 1px;
-        }
-
-
-        h3 {
-          display: block;
-          color: $primary;
-          font-size: 3rem;
-          text-decoration: underline;
-          text-decoration-color: $secondary;
-          cursor: pointer;
-          max-width: 20rem;
-          margin-right: 0;
-          margin-left: auto;
         }
       }
     }

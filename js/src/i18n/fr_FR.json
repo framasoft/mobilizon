@@ -312,5 +312,6 @@
     "{count} participants": "Un⋅e participant⋅e|{count} participant⋅e⋅s",
     "{count} requests waiting": "Un⋅e demande en attente|{count} demandes en attente",
     "{license} guarantees {respect} of the people who will use it. Since {source}, anyone can audit it, which guarantees its transparency.": "{license} garantit {respect} des personnes qui l'utiliseront. Puisque {source}, il est publiquement auditable, ce qui garantit sa transparence.",
-    "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© Les contributeurs de Mobilizon {date} - Fait avec Elixir, Phoenix, VueJS & et de l'amour et des semaines"
+    "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© Les contributeurs de Mobilizon {date} - Fait avec Elixir, Phoenix, VueJS & et de l'amour et des semaines",
+    "All the places have already been taken": "Toutes les places ont été prises|Une place est encore disponible|{places} places sont encore disponibles"
 }

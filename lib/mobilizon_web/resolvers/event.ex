@@ -101,7 +101,8 @@ defmodule MobilizonWeb.Resolvers.Event do
      %{
        approved: Mobilizon.Events.count_approved_participants(id),
        unapproved: Mobilizon.Events.count_unapproved_participants(id),
-       rejected: Mobilizon.Events.count_rejected_participants(id)
+       rejected: Mobilizon.Events.count_rejected_participants(id),
+       participants: Mobilizon.Events.count_participant_participants(id)
      }}
   end
 
@@ -170,6 +171,9 @@ defmodule MobilizonWeb.Resolvers.Event do
            |> Map.put(:actor, Person.proxify_pictures(actor)) do
       {:ok, participant}
     else
+      {:maximum_attendee_capacity, _} ->
+        {:error, "The event has already reached it's maximum capacity"}
+
       {:has_event, _} ->
         {:error, "Event with this ID #{inspect(event_id)} doesn't exist"}
 
