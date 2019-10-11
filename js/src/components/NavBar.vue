@@ -188,5 +188,9 @@ nav {
   .navbar-item.has-dropdown a.navbar-link figure {
     margin-right: 0.75rem;
   }
+
+  a.navbar-item:focus-within {
+    background-color: inherit;
+  }
 }
 </style>
