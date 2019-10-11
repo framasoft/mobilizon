@@ -8,7 +8,7 @@
         <p>
           <span v-html="$t('Mobilizon is under development, we will add new features to this site during regular updates, until the release of <b>version 1 of the software in the first half of 2020</b>.')" />
           <i18n path="In the meantime, please consider that the software is not (yet) finished. More information {onBlog}.">
-            <a href='https://framablog.org/?p=18299'>{{ $t('on our blog') }}</a>
+            <a slot="onBlog" href='https://framablog.org/?p=18299'>{{ $t('on our blog') }}</a>
           </i18n>
         </p>
       </b-message>

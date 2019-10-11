@@ -3,7 +3,7 @@
     <h1 class="title">{{ $t('Explore') }}</h1>
     <section class="hero">
       <div class="hero-body">
-        <form @submit="submit()">
+        <form @submit.prevent="submit()">
           <b-field :label="$t('Event')" grouped label-position="on-border">
             <b-input icon="magnify" type="search" size="is-large" expanded v-model="searchTerm" :placeholder="$t('For instance: London, Taekwondo, Architecture…')" />
             <p class="control">
