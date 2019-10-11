@@ -34,7 +34,7 @@
               </div>
               <div class="event-participation has-text-right" v-if="new Date(endDate) > new Date()">
                 <participation-button
-                        v-if="currentActor.id && !actorIsOrganizer && !event.draft && (eventCapacityOK || actorIsParticipant)"
+                        v-if="currentActor.id && !actorIsOrganizer && !event.draft && (eventCapacityOK || actorIsParticipant) && event.status !== EventStatus.CANCELLED"
                         :participation="participations[0]"
                         :current-actor="currentActor"
                         @joinEvent="joinEvent"
@@ -55,7 +55,11 @@
               <div class="column is-three-quarters-desktop">
                 <p class="tags" v-if="event.tags.length > 0">
                   <b-tag type="is-warning" size="is-medium" v-if="event.draft">{{ $t('Draft') }}</b-tag>
-                    <span class="visibility" v-if="!event.draft">
+                  <span class="event-status" v-if="event.status !== EventStatus.CONFIRMED">
+                    <b-tag type="is-warning" v-if="event.status === EventStatus.TENTATIVE">{{ $t('Event to be confirmed') }}</b-tag>
+                    <b-tag type="is-danger" v-if="event.status === EventStatus.CANCELLED">{{ $t('Event cancelled') }}</b-tag>
+                  </span>
+                  <span class="visibility" v-if="!event.draft">
                     <b-tag type="is-info" v-if="event.visibility === EventVisibility.PUBLIC">{{ $t('Public event') }}</b-tag>
                     <b-tag type="is-info" v-if="event.visibility === EventVisibility.UNLISTED">{{ $t('Private event') }}</b-tag>
                   </span>
@@ -215,7 +219,7 @@
 import { EVENT_PERSON_PARTICIPATION, FETCH_EVENT, JOIN_EVENT, LEAVE_EVENT } from '@/graphql/event';
 import { Component, Prop } from 'vue-property-decorator';
 import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
-import { EventVisibility, IEvent, IParticipant, ParticipantRole } from '@/types/event.model';
+import { EventStatus, EventVisibility, IEvent, IParticipant, ParticipantRole } from '@/types/event.model';
 import { IPerson, Person } from '@/types/actor';
 import { GRAPHQL_API_ENDPOINT } from '@/api/_entrypoint';
 import DateCalendarIcon from '@/components/Event/DateCalendarIcon.vue';
@@ -299,6 +303,7 @@ export default class Event extends EventMixin {
   isReportModalActive: boolean = false;
   isJoinModalActive: boolean = false;
   EventVisibility = EventVisibility;
+  EventStatus = EventStatus;
   RouteName = RouteName;
 
   get eventTitle() {

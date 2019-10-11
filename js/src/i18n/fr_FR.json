@@ -15,6 +15,7 @@
     "Add": "Ajouter",
     "Additional comments": "Commentaires additionnels",
     "Administration": "Administration",
+    "All the places have already been taken": "Toutes les places ont été prises|Une place est encore disponible|{places} places sont encore disponibles",
     "Allow all comments": "Autoriser tous les commentaires",
     "Approve": "Approuver",
     "Are you going to this event?": "Allez-vous à cet événement ?",
@@ -29,6 +30,7 @@
     "Cancel my participation request…": "Annuler ma demande de participation…",
     "Cancel my participation…": "Annuler ma participation…",
     "Cancel": "Annuler",
+    "Cancelled: Won't happen": "Annulé: N'aura pas lieu",
     "Category": "Catégorie",
     "Change my identity…": "Changer mon identité…",
     "Change my password": "Modifier mon mot de passe",
@@ -80,9 +82,11 @@
     "Enter the link URL": "Entrez l'URL du lien",
     "Error while validating account": "Erreur lors de la validation du compte",
     "Event already passed": "Événement déjà passé",
+    "Event cancelled": "Événement annulé",
     "Event creation": "Création d'événement",
     "Event edition": "Édition d'événement",
     "Event list": "Liste d'événements",
+    "Event to be confirmed": "Événement à confirmer",
     "Event {eventTitle} deleted": "Événement {eventTitle} supprimé",
     "Event {eventTitle} reported": "Événement {eventTitle} signalé",
     "Event": "Événement",
@@ -312,6 +316,5 @@
     "{count} participants": "Un⋅e participant⋅e|{count} participant⋅e⋅s",
     "{count} requests waiting": "Un⋅e demande en attente|{count} demandes en attente",
     "{license} guarantees {respect} of the people who will use it. Since {source}, anyone can audit it, which guarantees its transparency.": "{license} garantit {respect} des personnes qui l'utiliseront. Puisque {source}, il est publiquement auditable, ce qui garantit sa transparence.",
-    "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© Les contributeurs de Mobilizon {date} - Fait avec Elixir, Phoenix, VueJS & et de l'amour et des semaines",
-    "All the places have already been taken": "Toutes les places ont été prises|Une place est encore disponible|{places} places sont encore disponibles"
+    "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© Les contributeurs de Mobilizon {date} - Fait avec Elixir, Phoenix, VueJS & et de l'amour et des semaines"
 }

@@ -692,7 +692,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
           actor,
           event,
           new_event,
-          MapSet.new([:title, :begins_on, :ends_on])
+          MapSet.new([:title, :begins_on, :ends_on, :status])
         )
       )
 
@@ -702,7 +702,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
           participant_actor,
           event,
           new_event,
-          MapSet.new([:title, :begins_on, :ends_on])
+          MapSet.new([:title, :begins_on, :ends_on, :status])
         )
       )
     end
