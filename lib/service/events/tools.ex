@@ -9,7 +9,7 @@ defmodule Mobilizon.Service.Events.Tool do
   alias MobilizonWeb.Email
   alias Mobilizon.Storage.Repo
 
-  @important_changes [:title, :begins_on, :ends_on]
+  @important_changes [:title, :begins_on, :ends_on, :status]
 
   def calculate_event_diff_and_send_notifications(
         %Event{} = old_event,

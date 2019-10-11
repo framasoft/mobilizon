@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-10-11 10:40+0200\n"
+"PO-Revision-Date: 2019-10-11 15:49+0200\n"
 "Last-Translator: Quentin <quentinantonin@free.fr>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
 "Language: fr_FR\n"
@@ -131,12 +131,12 @@ msgid "An organizer just approved your participation. You're now going to this e
 msgstr "Un⋅e organisateur⋅ice vient d'approuver votre participation. Vous allez désormais à cet événement !"
 
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:58
-#: lib/mobilizon_web/templates/email/event_updated.html.eex:87
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:101
 msgid "Go to event page"
 msgstr "Aller à la page de l'événement"
 
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:70
-#: lib/mobilizon_web/templates/email/event_updated.html.eex:99
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:113
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:21
 msgid "If you need to cancel your participation, just access the event page through link above and click on the participation button."
 msgstr "Si vous avez besoin d'annuler votre participation, il suffit d'accéder à la page de l'événement à partir du lien ci-dessus et de cliquer sur le bouton de participation."
@@ -200,7 +200,7 @@ msgstr "Votre participation à l'événement %{title} a été approuvée"
 msgid "Your participation to event %{title} has been rejected"
 msgstr "Votre participation à l'événement %{title} a été rejetée"
 
-#: lib/mobilizon_web/templates/email/event_updated.html.eex:68
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:82
 msgid "Ending of event"
 msgstr "Fin de l'événement"
 
@@ -225,7 +225,7 @@ msgstr "Nouvelle date et heure de début de l'événement : %{begins_on}"
 msgid "New title: %{title}"
 msgstr "Nouveau titre : %{title}"
 
-#: lib/mobilizon_web/templates/email/event_updated.html.eex:58
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:72
 msgid "Start of event"
 msgstr "Début de l'événement"
 
@@ -237,7 +237,7 @@ msgstr "L'événement %{title} vient d'être mis à jour"
 msgid "The event %{title} was updated"
 msgstr "L'événement %{title} a été mis à jour"
 
-#: lib/mobilizon_web/templates/email/event_updated.html.eex:48
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:62
 msgid "Title"
 msgstr "Titre"
 
@@ -269,3 +269,15 @@ msgstr "Ceci est un site de démonstration permettant de tester la version bêta
 #: lib/mobilizon_web/templates/email/email.html.eex:88
 msgid "Warning"
 msgstr "Attention"
+
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:54
+msgid "Event has been cancelled"
+msgstr "L'événement a été annulé"
+
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:50
+msgid "Event has been confirmed"
+msgstr "L'événement a été confirmé"
+
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:52
+msgid "Event status has been set as tentative"
+msgstr "Le statut de l'événement à été défini comme « à confirmer »"

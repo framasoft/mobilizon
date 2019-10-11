@@ -42,6 +42,20 @@
               <tr>
                 <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #777777; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
                   <table width="100%">
+                    <%= if MapSet.member?(@changes, :status) do %>
+                      <tr>
+                        <td bgcolor="#ffffff" align="center">
+                          <%= case @event.status do  %>
+                            <% :confirmed -> %>
+                                <%= gettext "Event has been confirmed" %>
+                            <% :tentative -> %>
+                                <%= gettext "Event status has been set as tentative" %>
+                            <% :cancelled -> %>
+                                <%= gettext "Event has been cancelled" %>
+                          <% end %>
+                        </td>
+                      </tr>
+                    <% end %>
                     <%= if MapSet.member?(@changes, :title) do %>
                       <tr>
                         <td bgcolor="#ffffff" align="left">

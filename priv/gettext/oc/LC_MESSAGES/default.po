@@ -153,13 +153,13 @@ msgstr "L’organizator ven d’aprovar vòstra participacion. Ara anatz a aques
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:58
-#: lib/mobilizon_web/templates/email/event_updated.html.eex:87
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:101
 msgid "Go to event page"
 msgstr "Anar a la pagina de l’eveniment"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:70
-#: lib/mobilizon_web/templates/email/event_updated.html.eex:99
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:113
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:21
 msgid "If you need to cancel your participation, just access the event page through link above and click on the participation button."
 msgstr ""
@@ -240,7 +240,7 @@ msgid "Your participation to event %{title} has been rejected"
 msgstr "Vòstra participacion a l’eveniment %{title} es estada regetada"
 
 #, elixir-format
-#: lib/mobilizon_web/templates/email/event_updated.html.eex:68
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:82
 msgid "Ending of event"
 msgstr "Fin de l’eveniment"
 
@@ -271,7 +271,7 @@ msgid "New title: %{title}"
 msgstr "Títol novèl : %{title}"
 
 #, elixir-format
-#: lib/mobilizon_web/templates/email/event_updated.html.eex:58
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:72
 msgid "Start of event"
 msgstr "Debuta de l’eveniment"
 
@@ -286,7 +286,7 @@ msgid "The event %{title} was updated"
 msgstr "L’eveniment %{title} es estat actualizat"
 
 #, elixir-format
-#: lib/mobilizon_web/templates/email/event_updated.html.eex:48
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:62
 msgid "Title"
 msgstr "Títol"
 
@@ -324,4 +324,19 @@ msgstr ""
 #, elixir-format
 #: lib/mobilizon_web/templates/email/email.html.eex:88
 msgid "Warning"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:54
+msgid "Event has been cancelled"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:50
+msgid "Event has been confirmed"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:52
+msgid "Event status has been set as tentative"
 msgstr ""

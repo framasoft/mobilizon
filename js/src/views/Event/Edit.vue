@@ -140,21 +140,29 @@
             {{ $t('Status') }}
           </h2>
 
-          <div class="field">
-            <b-radio v-model="event.status"
-                     name="status"
-                     :native-value="EventStatus.TENTATIVE">
+          <b-field>
+            <b-radio-button v-model="event.status"
+                            name="status"
+                            type="is-warning"
+                            :native-value="EventStatus.TENTATIVE">
+              <b-icon icon="calendar-question"></b-icon>
               {{ $t('Tentative: Will be confirmed later') }}
-            </b-radio>
-          </div>
-
-          <div class="field">
-            <b-radio v-model="event.status"
-                     name="status"
-                     :native-value="EventStatus.CONFIRMED">
+            </b-radio-button>
+            <b-radio-button v-model="event.status"
+                            name="status"
+                            type="is-success"
+                            :native-value="EventStatus.CONFIRMED">
+              <b-icon icon="calendar-check"></b-icon>
               {{ $t('Confirmed: Will happen') }}
-            </b-radio>
-          </div>
+            </b-radio-button>
+            <b-radio-button v-model="event.status"
+                            name="status"
+                            type="is-danger"
+                            :native-value="EventStatus.CANCELLED">
+              <b-icon icon="calendar-remove"></b-icon>
+              {{ $t("Cancelled: Won't happen") }}
+            </b-radio-button>
+          </b-field>
         </form>
       </div>
     </div>
