@@ -33,4 +33,22 @@ mix test test/mobilizon/actors/actors_test.exs:85
 
 ## Front-end
 
-Waiting for [https://framagit.org/framasoft/mobilizon/merge_requests/42](https://framagit.org/framasoft/mobilizon/merge_requests/42) to be ready.
+### Unit tests
+
+Not done yet.
+
+### End-to-end tests
+
+We use [Cypress](https://cypress.io) for End-to-end testing.
+
+When inside the `js` directory, you can do either
+```bash
+npx cypress run
+```
+to run the tests, or
+```bash
+npx cypress open
+```
+to open the interactive GUI.
+
+Cypress provided [a subscription](https://www.cypress.io/oss-plan) to their recording dashboard since Mobilizon is an Open-Source project. Thanks!
