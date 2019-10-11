@@ -7,11 +7,19 @@ defmodule Mobilizon.Service.Geospatial.PhotonTest do
 
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.Photon
+  alias Mobilizon.Config
+
+  @httpoison_headers [
+    {"User-Agent",
+     "#{Config.instance_name()} #{Config.instance_hostname()} - Mobilizon #{
+       Mix.Project.config()[:version]
+     }"}
+  ]
 
   describe "search address" do
     test "produces a valid search address with options" do
       with_mock HTTPoison,
-        get: fn _url ->
+        get: fn _url, _headers ->
           {:ok, %HTTPoison.Response{status_code: 200, body: "{\"features\": []"}}
         end do
         Photon.search("10 Rue Jangot",
@@ -20,7 +28,10 @@ defmodule Mobilizon.Service.Geospatial.PhotonTest do
         )
 
         assert_called(
-          HTTPoison.get("https://photon.komoot.de/api/?q=10%20Rue%20Jangot&lang=fr&limit=5")
+          HTTPoison.get(
+            "https://photon.komoot.de/api/?q=10%20Rue%20Jangot&lang=fr&limit=5",
+            @httpoison_headers
+          )
         )
       end
     end

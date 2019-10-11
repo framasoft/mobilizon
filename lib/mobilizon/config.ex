@@ -30,6 +30,10 @@ defmodule Mobilizon.Config do
   @spec instance_email_reply_to :: String.t()
   def instance_email_reply_to, do: instance_config()[:email_reply_to]
 
+  @spec instance_user_agent :: String.t()
+  def instance_user_agent,
+    do: "#{instance_name()} #{instance_hostname()} - Mobilizon #{Mix.Project.config()[:version]}"
+
   @spec get(module | atom) :: any
   def get(key), do: get(key, nil)
 

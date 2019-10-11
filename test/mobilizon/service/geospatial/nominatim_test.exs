@@ -7,11 +7,19 @@ defmodule Mobilizon.Service.Geospatial.NominatimTest do
 
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.Nominatim
+  alias Mobilizon.Config
+
+  @httpoison_headers [
+    {"User-Agent",
+     "#{Config.instance_name()} #{Config.instance_hostname()} - Mobilizon #{
+       Mix.Project.config()[:version]
+     }"}
+  ]
 
   describe "search address" do
     test "produces a valid search address with options" do
       with_mock HTTPoison,
-        get: fn _url ->
+        get: fn _url, _headers ->
           {:ok, %HTTPoison.Response{status_code: 200, body: "[]"}}
         end do
         Nominatim.search("10 Rue Jangot",
@@ -21,7 +29,8 @@ defmodule Mobilizon.Service.Geospatial.NominatimTest do
 
         assert_called(
           HTTPoison.get(
-            "https://nominatim.openstreetmap.org/search?format=jsonv2&q=10%20Rue%20Jangot&limit=5&accept-language=fr&addressdetails=1"
+            "https://nominatim.openstreetmap.org/search?format=jsonv2&q=10%20Rue%20Jangot&limit=5&accept-language=fr&addressdetails=1",
+            @httpoison_headers
           )
         )
       end

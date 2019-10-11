@@ -7,20 +7,31 @@ defmodule Mobilizon.Service.Geospatial.AddokTest do
 
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.Addok
+  alias Mobilizon.Config
+
+  @httpoison_headers [
+    {"User-Agent",
+     "#{Config.instance_name()} #{Config.instance_hostname()} - Mobilizon #{
+       Mix.Project.config()[:version]
+     }"}
+  ]
 
   @endpoint get_in(Application.get_env(:mobilizon, Addok), [:endpoint])
   @fake_endpoint "https://domain.tld"
 
   describe "search address" do
     test "produces a valid search address" do
-      with_mock HTTPoison, get: fn _url -> "{}" end do
+      with_mock HTTPoison, get: fn _url, _headers -> "{}" end do
         Addok.search("10 Rue Jangot")
-        assert_called(HTTPoison.get("#{@endpoint}/search/?q=10%20Rue%20Jangot&limit=10"))
+
+        assert_called(
+          HTTPoison.get("#{@endpoint}/search/?q=10%20Rue%20Jangot&limit=10", @httpoison_headers)
+        )
       end
     end
 
     test "produces a valid search address with options" do
-      with_mock HTTPoison, get: fn _url -> "{}" end do
+      with_mock HTTPoison, get: fn _url, _headers -> "{}" end do
         Addok.search("10 Rue Jangot",
           endpoint: @fake_endpoint,
           limit: 5,
@@ -28,7 +39,10 @@ defmodule Mobilizon.Service.Geospatial.AddokTest do
         )
 
         assert_called(
-          HTTPoison.get("#{@fake_endpoint}/search/?q=10%20Rue%20Jangot&limit=5&lat=49&lon=12")
+          HTTPoison.get(
+            "#{@fake_endpoint}/search/?q=10%20Rue%20Jangot&limit=5&lat=49&lon=12",
+            @httpoison_headers
+          )
         )
       end
     end

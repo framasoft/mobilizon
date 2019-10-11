@@ -7,6 +7,14 @@ defmodule Mobilizon.Service.Geospatial.MapQuestTest do
 
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.MapQuest
+  alias Mobilizon.Config
+
+  @httpoison_headers [
+    {"User-Agent",
+     "#{Config.instance_name()} #{Config.instance_hostname()} - Mobilizon #{
+       Mix.Project.config()[:version]
+     }"}
+  ]
 
   describe "search address" do
     test "without API Key triggers an error" do
@@ -17,7 +25,7 @@ defmodule Mobilizon.Service.Geospatial.MapQuestTest do
 
     test "produces a valid search address with options" do
       with_mock HTTPoison,
-        get: fn _url ->
+        get: fn _url, _headers ->
           {:ok,
            %HTTPoison.Response{
              status_code: 200,
@@ -32,7 +40,8 @@ defmodule Mobilizon.Service.Geospatial.MapQuestTest do
 
         assert_called(
           HTTPoison.get(
-            "https://open.mapquestapi.com/geocoding/v1/address?key=toto&location=10%20Rue%20Jangot&maxResults=5"
+            "https://open.mapquestapi.com/geocoding/v1/address?key=toto&location=10%20Rue%20Jangot&maxResults=5",
+            @httpoison_headers
           )
         )
       end

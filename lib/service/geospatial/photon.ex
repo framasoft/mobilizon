@@ -5,6 +5,7 @@ defmodule Mobilizon.Service.Geospatial.Photon do
 
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.Provider
+  alias Mobilizon.Config
 
   require Logger
 
@@ -20,11 +21,13 @@ defmodule Mobilizon.Service.Geospatial.Photon do
   """
   @spec geocode(number(), number(), keyword()) :: list(Address.t())
   def geocode(lon, lat, options \\ []) do
+    user_agent = Keyword.get(options, :user_agent, Config.instance_user_agent())
+    headers = [{"User-Agent", user_agent}]
     url = build_url(:geocode, %{lon: lon, lat: lat}, options)
     Logger.debug("Asking photon for reverse geocoding with #{url}")
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           HTTPoison.get(url),
+           HTTPoison.get(url, headers),
          {:ok, %{"features" => features}} <- Poison.decode(body) do
       process_data(features)
     end
@@ -36,11 +39,13 @@ defmodule Mobilizon.Service.Geospatial.Photon do
   """
   @spec search(String.t(), keyword()) :: list(Address.t())
   def search(q, options \\ []) do
+    user_agent = Keyword.get(options, :user_agent, Config.instance_user_agent())
+    headers = [{"User-Agent", user_agent}]
     url = build_url(:search, %{q: q}, options)
     Logger.debug("Asking photon for addresses with #{url}")
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           HTTPoison.get(url),
+           HTTPoison.get(url, headers),
          {:ok, %{"features" => features}} <- Poison.decode(body) do
       process_data(features)
     end

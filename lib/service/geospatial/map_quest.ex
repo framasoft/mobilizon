@@ -11,6 +11,7 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
 
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.Provider
+  alias Mobilizon.Config
 
   require Logger
 
@@ -29,6 +30,8 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
     api_key = Keyword.get(options, :api_key, @api_key)
     limit = Keyword.get(options, :limit, 10)
     open_data = Keyword.get(options, :open_data, true)
+    user_agent = Keyword.get(options, :user_agent, Config.instance_user_agent())
+    headers = [{"User-Agent", user_agent}]
 
     prefix = if open_data, do: "open", else: "www"
 
@@ -38,7 +41,8 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
            HTTPoison.get(
              "https://#{prefix}.mapquestapi.com/geocoding/v1/reverse?key=#{api_key}&location=#{
                lat
-             },#{lon}&maxResults=#{limit}"
+             },#{lon}&maxResults=#{limit}",
+             headers
            ),
          {:ok, %{"results" => results, "info" => %{"statuscode" => 0}}} <- Poison.decode(body) do
       results |> Enum.map(&process_data/1)
@@ -54,6 +58,8 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
   """
   @spec search(String.t(), keyword()) :: list(Address.t())
   def search(q, options \\ []) do
+    user_agent = Keyword.get(options, :user_agent, Config.instance_user_agent())
+    headers = [{"User-Agent", user_agent}]
     limit = Keyword.get(options, :limit, 10)
     api_key = Keyword.get(options, :api_key, @api_key)
 
@@ -71,7 +77,7 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
     Logger.debug("Asking MapQuest for addresses with #{url}")
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           HTTPoison.get(url),
+           HTTPoison.get(url, headers),
          {:ok, %{"results" => results, "info" => %{"statuscode" => 0}}} <- Poison.decode(body) do
       results |> Enum.map(&process_data/1)
     else
