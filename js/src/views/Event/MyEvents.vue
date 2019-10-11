@@ -70,7 +70,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { LOGGED_USER_PARTICIPATIONS, LOGGED_USER_DRAFTS } from '@/graphql/actor';
-import { EventModel, IEvent, IParticipant, Participant } from '@/types/event.model';
+import { EventModel, IEvent, IParticipant, Participant, ParticipantRole } from '@/types/event.model';
 import EventListCard from '@/components/Event/EventListCard.vue';
 import EventCard from '@/components/Event/EventCard.vue';
 
@@ -134,7 +134,7 @@ export default class MyEvents extends Vue {
   drafts: IEvent[] = [];
 
   private monthlyParticipations(participations: IParticipant[]): Map<string, Participant[]> {
-    const res = participations.filter(({ event }) => event.beginsOn != null);
+    const res = participations.filter(({ event, role }) => event.beginsOn != null && role !== ParticipantRole.REJECTED);
     res.sort(
           (a: IParticipant, b: IParticipant) => a.event.beginsOn.getTime() - b.event.beginsOn.getTime(),
       );

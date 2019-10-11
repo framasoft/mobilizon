@@ -107,7 +107,7 @@ import { IPerson, Person } from '@/types/actor';
 import { ICurrentUser } from '@/types/current-user.model';
 import { CURRENT_USER_CLIENT } from '@/graphql/user';
 import { RouteName } from '@/router';
-import { EventModel, IEvent, IParticipant, Participant } from '@/types/event.model';
+import { EventModel, IEvent, IParticipant, Participant, ParticipantRole } from '@/types/event.model';
 import DateComponent from '@/components/Event/DateCalendarIcon.vue';
 import { CONFIG } from '@/graphql/config';
 import { IConfig } from '@/types/config.model';
@@ -212,8 +212,11 @@ export default class Home extends Vue {
   }
 
   get goingToEvents(): Map<string, Map<string, IParticipant>> {
-    const res = this.currentUserParticipations.filter(({ event }) => {
-      return event.beginsOn != null && this.isAfter(event.beginsOn.toDateString(), 0) && this.isBefore(event.beginsOn.toDateString(), 7);
+    const res = this.currentUserParticipations.filter(({ event, role }) => {
+      return event.beginsOn != null &&
+              this.isAfter(event.beginsOn.toDateString(), 0) &&
+              this.isBefore(event.beginsOn.toDateString(), 7) &&
+              role !== ParticipantRole.REJECTED;
     });
     res.sort(
             (a: IParticipant, b: IParticipant) => a.event.beginsOn.getTime() - b.event.beginsOn.getTime(),
@@ -229,8 +232,8 @@ export default class Home extends Vue {
   }
 
   get lastWeekEvents() {
-    const res = this.currentUserParticipations.filter(({ event }) => {
-      return event.beginsOn != null && this.isBefore(event.beginsOn.toDateString(), 0);
+    const res = this.currentUserParticipations.filter(({ event, role }) => {
+      return event.beginsOn != null && this.isBefore(event.beginsOn.toDateString(), 0) && role !== ParticipantRole.REJECTED;
     });
     res.sort(
           (a: IParticipant, b: IParticipant) => a.event.beginsOn.getTime() - b.event.beginsOn.getTime(),
