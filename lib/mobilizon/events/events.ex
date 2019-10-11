@@ -763,6 +763,17 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
+  Counts participant participants.
+  """
+  @spec count_participant_participants(integer | String.t()) :: integer
+  def count_participant_participants(event_id) do
+    event_id
+    |> count_participants_query()
+    |> filter_participant_role()
+    |> Repo.aggregate(:count, :id)
+  end
+
+  @doc """
   Counts unapproved participants.
   """
   @spec count_unapproved_participants(integer | String.t()) :: integer
@@ -1455,6 +1466,11 @@ defmodule Mobilizon.Events do
   @spec filter_approved_role(Ecto.Query.t()) :: Ecto.Query.t()
   defp filter_approved_role(query) do
     from(p in query, where: p.role not in ^[:not_approved, :rejected])
+  end
+
+  @spec filter_participant_role(Ecto.Query.t()) :: Ecto.Query.t()
+  defp filter_participant_role(query) do
+    from(p in query, where: p.role == ^:participant)
   end
 
   @spec filter_unapproved_role(Ecto.Query.t()) :: Ecto.Query.t()

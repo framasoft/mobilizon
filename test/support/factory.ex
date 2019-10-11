@@ -124,7 +124,8 @@ defmodule Mobilizon.Factory do
       url: Routes.page_url(Endpoint, :event, uuid),
       picture: insert(:picture),
       uuid: uuid,
-      join_options: :free
+      join_options: :free,
+      options: %{}
     }
   end
 

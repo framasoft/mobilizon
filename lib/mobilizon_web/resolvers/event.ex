@@ -170,6 +170,9 @@ defmodule MobilizonWeb.Resolvers.Event do
            |> Map.put(:actor, Person.proxify_pictures(actor)) do
       {:ok, participant}
     else
+      {:maximum_attendee_capacity, _} ->
+        {:error, "The event has already reached it's maximum capacity"}
+
       {:has_event, _} ->
         {:error, "Event with this ID #{inspect(event_id)} doesn't exist"}
 

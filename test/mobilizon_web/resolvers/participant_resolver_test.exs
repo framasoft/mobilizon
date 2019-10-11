@@ -74,6 +74,76 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
       assert hd(json_response(res, 200)["errors"])["message"] =~ "already a participant"
     end
 
+    test "actor_join_event/3 doesn't work if the event already has too much participants", %{
+      conn: conn,
+      actor: actor
+    } do
+      event = insert(:event, options: %{maximum_attendee_capacity: 2})
+      insert(:participant, event: event, actor: actor, role: :creator)
+      insert(:participant, event: event, role: :participant)
+      insert(:participant, event: event, role: :not_approved)
+      insert(:participant, event: event, role: :rejected)
+      user_participant = insert(:user)
+      actor_participant = insert(:actor, user: user_participant)
+
+      mutation = """
+          mutation {
+            joinEvent(
+              actor_id: #{actor_participant.id},
+              event_id: #{event.id}
+            ) {
+                role,
+                actor {
+                  id
+                },
+                event {
+                  id
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user_participant)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert json_response(res, 200)["errors"] == nil
+      assert json_response(res, 200)["data"]["joinEvent"]["role"] == "PARTICIPANT"
+      assert json_response(res, 200)["data"]["joinEvent"]["event"]["id"] == to_string(event.id)
+
+      assert json_response(res, 200)["data"]["joinEvent"]["actor"]["id"] ==
+               to_string(actor_participant.id)
+
+      user_participant_2 = insert(:user)
+      actor_participant_2 = insert(:actor, user: user_participant_2)
+
+      mutation = """
+          mutation {
+            joinEvent(
+              actor_id: #{actor_participant_2.id},
+              event_id: #{event.id}
+            ) {
+                role,
+                actor {
+                  id
+                },
+                event {
+                  id
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user_participant_2)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "The event has already reached it's maximum capacity"
+    end
+
     test "actor_join_event/3 should check the actor is owned by the user", %{
       conn: conn,
       user: user
