@@ -34,7 +34,7 @@
               </div>
               <div class="event-participation has-text-right" v-if="new Date(endDate) > new Date()">
                 <participation-button
-                        v-if="currentActor.id && !actorIsOrganizer && !event.draft && (eventCapacityOK || actorIsParticipant)"
+                        v-if="currentActor.id && !actorIsOrganizer && !event.draft && (eventCapacityOK || actorIsParticipant) && event.status !== EventStatus.CANCELLED"
                         :participation="participations[0]"
                         :current-actor="currentActor"
                         @joinEvent="joinEvent"
