@@ -112,6 +112,7 @@ export interface IEvent {
     approved: number;
     unapproved: number;
     rejected: number;
+    participants: number;
   };
   participants: IParticipant[];
 
@@ -178,7 +179,7 @@ export class EventModel implements IEvent {
 
   publishAt = new Date();
 
-  participantStats = { approved: 0, unapproved: 0, rejected: 0 };
+  participantStats = { approved: 0, unapproved: 0, rejected: 0, participants: 0 };
   participants: IParticipant[] = [];
 
   relatedEvents: IEvent[] = [];
