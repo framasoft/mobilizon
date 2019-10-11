@@ -24,8 +24,9 @@ const language = (window.navigator as any).userLanguage || window.navigator.lang
 Vue.use(VueI18n);
 
 const i18n = new VueI18n({
-  locale: language.replace('-', '_'), // set locale
+  locale: language.split('-')[0], // set locale
   messages, // set locale messages
+  fallbackLocale: 'en_US',
 });
 
 // Register the router hooks with their names
