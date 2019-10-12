@@ -13,7 +13,7 @@
           <h2 class="subtitle">
             {{ $t('General information') }}
           </h2>
-          <picture-upload v-model="pictureFile" />
+          <picture-upload v-model="pictureFile" :textFallback="$t('Headline picture')" />
 
           <b-field :label="$t('Title')" :type="checkTitleLength[0]" :message="checkTitleLength[1]">
             <b-input size="is-large" aria-required="true" required v-model="event.title" />
