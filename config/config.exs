@@ -7,7 +7,8 @@ import Config
 
 # General application configuration
 config :mobilizon,
-  ecto_repos: [Mobilizon.Storage.Repo]
+  ecto_repos: [Mobilizon.Storage.Repo],
+  env: Mix.env()
 
 config :mobilizon, :instance,
   name: System.get_env("MOBILIZON_INSTANCE_NAME") || "My Mobilizon Instance",

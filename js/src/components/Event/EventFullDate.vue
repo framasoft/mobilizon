@@ -20,7 +20,7 @@
 <template>
     <span v-if="!endsOn">{{ beginsOn | formatDateTimeString }}</span>
     <span v-else-if="isSameDay()">
-        {{ $t('The {date} from {startTime} to {endTime}', {date: formatDate(beginsOn), startTime: formatTime(beginsOn), endTime: formatTime(endsOn)}) }}
+        {{ $t('On {date} from {startTime} to {endTime}', {date: formatDate(beginsOn), startTime: formatTime(beginsOn), endTime: formatTime(endsOn)}) }}
     </span>
     <span v-else-if="endsOn">
         {{ $t('From the {startDate} at {startTime} to the {endDate} at {endTime}',

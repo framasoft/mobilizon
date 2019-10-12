@@ -137,8 +137,8 @@ export default class NavBar extends Vue {
     }
   }
 
-  async handleErrors(errors: GraphQLError) {
-    if (errors[0].message === 'You need to be logged-in to view your list of identities') {
+  async handleErrors(errors: GraphQLError[]) {
+    if (errors.length > 0 && errors[0].message === 'You need to be logged-in to view your list of identities') {
       await this.logout();
     }
   }

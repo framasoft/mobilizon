@@ -62,7 +62,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { LOGIN } from '@/graphql/auth';
 import { validateEmailField, validateRequiredField } from '@/utils/validators';
-import { initializeCurrentActor, saveUserData } from '@/utils/auth';
+import { initializeCurrentActor, NoIdentitiesException, saveUserData } from '@/utils/auth';
 import { ILogin } from '@/types/login.model';
 import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
 import { onLogin } from '@/vue-apollo';
@@ -153,7 +153,16 @@ export default class Login extends Vue {
           role: data.login.user.role,
         },
       });
-      await initializeCurrentActor(this.$apollo.provider.defaultClient);
+      try {
+        await initializeCurrentActor(this.$apollo.provider.defaultClient);
+      } catch (e) {
+        if (e instanceof NoIdentitiesException) {
+          return await this.$router.push({
+            name: RouteName.REGISTER_PROFILE,
+            params: { email: this.currentUser.email, userAlreadyActivated: 'true' },
+          });
+        }
+      }
 
       onLogin(this.$apollo);
 

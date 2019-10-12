@@ -1,11 +1,7 @@
 import { onBeforeLoad } from './browser-language';
 
 beforeEach(() => {
-  cy.restoreLocalStorage();
-});
-
-afterEach(() => {
-  cy.saveLocalStorage();
+  cy.clearLocalStorage();
 });
 
 describe('Login', () => {
@@ -41,5 +37,47 @@ describe('Login', () => {
     cy.contains('button.button.is-primary.is-large', 'Login').click();
 
     cy.contains('.message.is-danger', 'User with email not found');
+  });
+
+  it('Tries to login with valid credentials', () => {
+    cy.visit('/login', { onBeforeLoad });
+    cy.get('input[type=email]').type('user@email.com');
+    cy.get('input[type=password]').type('some password');
+    cy.get('form').submit();
+    cy.contains('.navbar-link', 'test_user');
+    cy.contains('article.message.is-info', 'Welcome back I\'m a test user');
+    cy.contains('.navbar-item.has-dropdown', 'test_user').click();
+    cy.get('.navbar-item').last().contains('Log out').click();
+  });
+
+  it('Tries to login with valid credentials but unconfirmed account', () => {
+    cy.visit('/login', { onBeforeLoad });
+    cy.get('input[type=email]').type('unconfirmed@email.com');
+    cy.get('input[type=password]').type('some password');
+    cy.get('form').submit();
+    cy.contains('.message.is-danger', 'User with email not found');
+  });
+
+  it('Tries to login with valid credentials, confirmed account but no profile', () => {
+    cy.visit('/login', { onBeforeLoad });
+    cy.get('input[type=email]').type('confirmed@email.com');
+    cy.get('input[type=password]').type('some password');
+    cy.get('form').submit();
+
+    cy.contains('.message', 'To achieve your registration, please create a first identity profile.');
+    cy.get('form .field').first().contains('label', 'Username').parent().find('input').type('test_user');
+    cy.get('form .field').eq(2).contains('label', 'Displayed name').parent().find('input').type('Duplicate');
+    cy.get('form .field').eq(3).contains('label', 'Description').parent().find('textarea').type('This shouln\'t work because it\' using a dupublicated username');
+    cy.get('.control.has-text-centered').contains('button', 'Create my profile').click();
+    cy.contains('.help.is-danger', 'Username is already taken');
+
+    cy.get('form .field input').first(0).clear().type('test_user_2');
+    cy.get('form .field input').eq(1).type('Not');
+    cy.get('form .field textarea').clear().type('This will now work');
+    cy.get('form').submit();
+    cy.wait(1000);
+
+    cy.contains('.navbar-link', 'test_user_2');
+    cy.contains('article.message.is-info', 'Welcome back DuplicateNot');
   });
 });
