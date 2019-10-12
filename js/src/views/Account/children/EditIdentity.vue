@@ -304,9 +304,13 @@ export default class EditIdentity extends Vue {
   private convertToUsername(value: string | null) {
     if (!value) return '';
 
-    return value.toLowerCase()
+    // https://stackoverflow.com/a/37511463
+    return value.toLocaleLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
                 .replace(/ /g, '_')
-                .replace(/[^a-z0-9._]/g, '');
+                .replace(/[^a-z0-9._]/g, '')
+    ;
   }
 
   private async buildVariables() {
