@@ -187,6 +187,8 @@ nav {
 
   .navbar-item.has-dropdown a.navbar-link figure {
     margin-right: 0.75rem;
+    display: flex;
+    align-items: center;
   }
 
   a.navbar-item:focus-within {
