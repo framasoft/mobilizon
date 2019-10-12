@@ -1,14 +1,6 @@
 // https://docs.cypress.io/api/introduction/api.html
 import { onBeforeLoad } from './browser-language';
 
-beforeEach(() => {
-  cy.restoreLocalStorage();
-});
-
-afterEach(() => {
-  cy.saveLocalStorage();
-});
-
 describe('Homepage', () => {
   it('Checks the footer', () => {
     cy.visit('/', { onBeforeLoad });

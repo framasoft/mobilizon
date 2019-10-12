@@ -37,6 +37,8 @@ export function deleteUserData() {
   }
 }
 
+export class NoIdentitiesException extends Error {}
+
 /**
  * We fetch from localStorage the latest actor ID used,
  * then fetch the current identities to set in cache
@@ -50,7 +52,10 @@ export async function initializeCurrentActor(apollo: ApolloClient<any>) {
     fetchPolicy: 'network-only',
   });
   const identities = result.data.identities;
-  if (identities.length < 1) return;
+  if (identities.length < 1) {
+    console.warn('Logged user has no identities!');
+    throw new NoIdentitiesException;
+  }
   const activeIdentity = identities.find(identity => identity.id === actorId) || identities[0] as IPerson;
 
   if (activeIdentity) {

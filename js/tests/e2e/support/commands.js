@@ -24,6 +24,14 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
+const AUTH_ACCESS_TOKEN = 'auth-access-token';
+const AUTH_REFRESH_TOKEN = 'auth-refresh-token';
+const AUTH_USER_ID = 'auth-user-id';
+const AUTH_USER_EMAIL = 'auth-user-email';
+const AUTH_USER_ACTOR_ID = 'auth-user-actor-id';
+const AUTH_USER_ROLE = 'auth-user-role';
+
+
 let LOCAL_STORAGE_MEMORY = {};
 
 Cypress.Commands.add("saveLocalStorage", () => {
@@ -37,6 +45,54 @@ Cypress.Commands.add("restoreLocalStorage", () => {
         localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
     });
 });
+
+Cypress.Commands.add("clearLocalStorage", () => {
+    Object.keys(LOCAL_STORAGE_MEMORY).forEach(key => {
+        localStorage.removeItem(key);
+    });
+});
+
+Cypress.Commands.add("loginUser", () => {
+    const loginMutation = `
+    mutation Login($email: String!, $password: String!) {
+  login(email: $email, password: $password) {
+    accessToken,
+    refreshToken,
+    user {
+      id,
+      email,
+      role
+    }
+  },
+}`;
+
+    const body = JSON.stringify({
+        operationName: 'Login',
+        query: loginMutation,
+        variables: { email: 'user@email.com', password: 'some password' }
+    });
+
+   cy.request({
+       url: 'http://localhost:4000/api',
+       body: body,
+       method: 'POST',
+       headers: {
+           'Content-Type': 'application/json',
+       },
+   }).then((res) => {
+       console.log(res);
+       const obj = res.body.data.login;
+       console.log(obj);
+
+       localStorage.setItem(AUTH_USER_ID, `${obj.user.id}`);
+       localStorage.setItem(AUTH_USER_EMAIL, obj.user.email);
+       localStorage.setItem(AUTH_USER_ROLE, obj.user.role);
+
+       localStorage.setItem(AUTH_USER_ACTOR_ID, `${obj.id}`);
+       localStorage.setItem(AUTH_ACCESS_TOKEN, obj.accessToken);
+       localStorage.setItem(AUTH_REFRESH_TOKEN, obj.refreshToken);
+   });
+    });
 
 Cypress.Commands.add('checkoutSession', async () => {
     const response = await fetch('/sandbox', {

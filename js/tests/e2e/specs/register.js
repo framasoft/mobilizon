@@ -1,12 +1,10 @@
 import { onBeforeLoad } from './browser-language';
 
 beforeEach(() => {
-  cy.restoreLocalStorage();
   cy.checkoutSession();
 });
 
 afterEach(() => {
-  cy.saveLocalStorage();
   cy.dropSession();
 });
 
@@ -34,7 +32,7 @@ describe('Registration', () => {
 
   it('Tests that registration works', () => {
     cy.visit('/register/user', { onBeforeLoad });
-    cy.get('input[type=email]').type('user@email.com');
+    cy.get('input[type=email]').type('user2register@email.com');
     cy.get('input[type=password]').type('userPassword');
     cy.get('form').contains('button.button.is-primary', 'Register').click();
 
@@ -45,7 +43,7 @@ describe('Registration', () => {
     cy.get('form .field').eq(3).contains('label', 'Description').parent().find('textarea').type('This is a test account');
     cy.get('.control.has-text-centered').contains('button', 'Create my profile').click();
 
-    cy.contains('article.message.is-success', 'Your account is nearly ready, tester').contains('A validation email was sent to user@email.com');
+    cy.contains('article.message.is-success', 'Your account is nearly ready, tester').contains('A validation email was sent to user2register@email.com');
 
     cy.visit('/sent_emails');
 

@@ -5,7 +5,10 @@
         <h1 class="title">
           {{ $t('Register an account on Mobilizon!') }}
         </h1>
-        <form v-if="!validationSent">
+        <b-message v-if="userAlreadyActivated">
+          {{ $t('To achieve your registration, please create a first identity profile.')}}
+        </b-message>
+        <form v-if="!validationSent" @submit.prevent="submit">
           <b-field
             :label="$t('Username')"
             :type="errors.preferred_username ? 'is-danger' : null"
@@ -33,7 +36,7 @@
           </b-field>
 
           <p class="control has-text-centered">
-            <b-button type="is-primary" size="is-large" @click="submit()">
+            <b-button type="is-primary" size="is-large" native-type="submit">
                {{ $t('Create my profile') }}
             </b-button>
           </p>
@@ -117,8 +120,8 @@ export default class Register extends Vue {
         acc[error.details] = error.message;
         return acc;
       },                                       {});
-      console.error(error);
-      console.error(this.errors);
+      console.error('Error while registering person', error);
+      console.error('Errors while registering person', this.errors);
     }
   }
 }
