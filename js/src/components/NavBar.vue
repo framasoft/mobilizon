@@ -23,7 +23,7 @@
           <span>{{ currentActor.preferredUsername }}</span>
         </template>
 
-        <b-navbar-item tag="span" v-for="identity in identities" v-if="identities.length > 0" :active="identity.id === currentActor.id" :key="identity.id">
+        <b-navbar-item tag="span" v-for="identity in identities" v-if="identities.length > 1" :active="identity.id === currentActor.id" :key="identity.id">
           <span @click="setIdentity(identity)">
             <div class="media-left">
               <figure class="image is-32x32" v-if="identity.avatar">
