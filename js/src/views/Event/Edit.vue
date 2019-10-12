@@ -316,7 +316,7 @@ export default class EditEvent extends Vue {
       this.unmodifiedEvent = JSON.parse(JSON.stringify(this.event.toEditJSON()));
 
       this.pictureFile = await buildFileFromIPicture(this.event.picture);
-      this.limitedPlaces = this.event.options.maximumAttendeeCapacity != null;
+      this.limitedPlaces = this.event.options.maximumAttendeeCapacity !== 0;
     }
   }
 
