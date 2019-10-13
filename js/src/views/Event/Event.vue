@@ -1,3 +1,4 @@
+import {ParticipantRole} from "@/types/event.model";
 <template>
   <div class="container">
     <b-loading :active.sync="$apollo.loading"></b-loading>
@@ -350,7 +351,7 @@ export default class Event extends EventMixin {
   async joinEvent(identity: IPerson) {
     this.isJoinModalActive = false;
     try {
-      await this.$apollo.mutate<{ joinEvent: IParticipant }>({
+      const { data } = await this.$apollo.mutate<{ joinEvent: IParticipant }>({
         mutation: JOIN_EVENT,
         variables: {
           eventId: this.event.id,
@@ -393,6 +394,14 @@ export default class Event extends EventMixin {
           store.writeQuery({ query: FETCH_EVENT, variables: { uuid: this.uuid }, data: { event } });
         },
       });
+      if (data) {
+        this.$buefy.notification.open({
+          message: (data.joinEvent.role === ParticipantRole.NOT_APPROVED ? this.$t('Your participation has been requested') : this.$t('Your participation has been confirmed')) as string,
+          type: 'is-success',
+          position: 'is-bottom-right',
+          duration: 5000,
+        });
+      }
     } catch (error) {
       console.error(error);
     }
@@ -412,7 +421,7 @@ export default class Event extends EventMixin {
 
   async leaveEvent() {
     try {
-      await this.$apollo.mutate<{ leaveEvent: IParticipant }>({
+      const { data } = await this.$apollo.mutate<{ leaveEvent: IParticipant }>({
         mutation: LEAVE_EVENT,
         variables: {
           eventId: this.event.id,
@@ -454,6 +463,14 @@ export default class Event extends EventMixin {
           store.writeQuery({ query: FETCH_EVENT, variables: { uuid: this.uuid }, data: { event } });
         },
       });
+      if (data) {
+        this.$buefy.notification.open({
+          message: this.$t('You have cancelled your participation') as string,
+          type: 'is-success',
+          position: 'is-bottom-right',
+          duration: 5000,
+        });
+      }
     } catch (error) {
       console.error(error);
     }
