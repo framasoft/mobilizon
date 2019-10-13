@@ -1,7 +1,5 @@
 const Dotenv = require('dotenv-webpack');
 const path = require('path');
-const PurgecssPlugin = require('purgecss-webpack-plugin');
-const glob = require('glob-all');
 
 module.exports = {
   pluginOptions: {
@@ -15,13 +13,6 @@ module.exports = {
   configureWebpack: {
     plugins: [
       new Dotenv({ path: path.resolve(process.cwd(), '../.env') }),
-      new PurgecssPlugin({
-        paths: glob.sync([
-          path.join(__dirname, './public/index.html'),
-          path.join(__dirname, './src/**/*.vue'),
-          path.join(__dirname, './src/**/*.ts')
-        ])
-      })
     ],
     module: {
       rules: [ // fixes https://github.com/graphql/graphql-js/issues/1272
