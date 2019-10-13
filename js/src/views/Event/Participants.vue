@@ -1,6 +1,9 @@
+import {ParticipantRole} from "@/types/event.model";
+import {ParticipantRole} from "@/types/event.model";
+import {ParticipantRole} from "@/types/event.model";
 <template>
     <main class="container">
-        <b-tabs type="is-boxed" v-if="event">
+        <b-tabs type="is-boxed" v-if="event" v-model="activeTab">
             <b-tab-item>
                 <template slot="header">
                     <b-icon icon="account-multiple"></b-icon>
@@ -69,9 +72,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { IEvent, IParticipant, Participant, ParticipantRole } from '@/types/event.model';
-import { UPDATE_PARTICIPANT, PARTICIPANTS } from '@/graphql/event';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { IEvent, IEventParticipantStats, IParticipant, Participant, ParticipantRole } from '@/types/event.model';
+import { PARTICIPANTS, UPDATE_PARTICIPANT } from '@/graphql/event';
 import ParticipantCard from '@/components/Account/ParticipantCard.vue';
 import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { IPerson } from '@/types/actor';
@@ -96,6 +99,9 @@ import { IPerson } from '@/types/actor';
           actorId: this.currentActor.id,
         };
       },
+      skip() {
+        return !this.currentActor.id;
+      },
     },
     organizers: {
       query: PARTICIPANTS,
@@ -109,6 +115,9 @@ import { IPerson } from '@/types/actor';
         };
       },
       update: data => data.event.participants.map(participation => new Participant(participation)),
+      skip() {
+        return !this.currentActor.id;
+      },
     },
     queue: {
       query: PARTICIPANTS,
@@ -122,6 +131,9 @@ import { IPerson } from '@/types/actor';
         };
       },
       update: data => data.event.participants.map(participation => new Participant(participation)),
+      skip() {
+        return !this.currentActor.id;
+      },
     },
     rejected: {
       query: PARTICIPANTS,
@@ -135,6 +147,9 @@ import { IPerson } from '@/types/actor';
         };
       },
       update: data => data.event.participants.map(participation => new Participant(participation)),
+      skip() {
+        return !this.currentActor.id;
+      },
     },
   },
 })
@@ -143,7 +158,6 @@ export default class Participants extends Vue {
   page: number = 1;
   limit: number = 10;
 
-  // participants: IParticipant[] = [];
   organizers: IParticipant[] = [];
   queue: IParticipant[] = [];
   rejected: IParticipant[] = [];
@@ -153,20 +167,27 @@ export default class Participants extends Vue {
   currentActor!: IPerson;
 
   hasMoreParticipants: boolean = false;
+  activeTab: number = 0;
 
-  get participants(): IParticipant[] {
-    return this.event.participants.map(participant => new Participant(participant));
-  }
-
-  get participantStats(): Object {
+  get participantStats(): IEventParticipantStats | null {
+    if (!this.event) return null;
     return this.event.participantStats;
   }
 
   get participantsAndCreators(): IParticipant[] {
     if (this.event) {
-      return [...this.organizers, ...this.participants];
+      return [...this.organizers, ...this.event.participants]
+          .filter(participant => [ParticipantRole.PARTICIPANT, ParticipantRole.CREATOR].includes(participant.role));
     }
     return [];
+  }
+
+  @Watch('participantStats', { deep: true })
+  watchParticipantStats(stats: IEventParticipantStats) {
+    if (!stats) return;
+    if ((stats.unapproved === 0 && this.activeTab === 1) || stats.rejected === 0 && this.activeTab === 2 ) {
+      this.activeTab = 0;
+    }
   }
 
   loadMoreParticipants() {
@@ -203,9 +224,17 @@ export default class Participants extends Vue {
         },
       });
       if (data) {
-        this.queue.filter(participant => participant !== data.updateParticipation.id);
-        this.rejected.filter(participant => participant !== data.updateParticipation.id);
-        this.participants.push(participant);
+        this.queue = this.queue.filter(participant => participant.id !== data.updateParticipation.id);
+        this.rejected = this.rejected.filter(participant => participant.id !== data.updateParticipation.id);
+        this.event.participantStats.approved += 1;
+        if (participant.role === ParticipantRole.NOT_APPROVED) {
+          this.event.participantStats.unapproved -= 1;
+        }
+        if (participant.role === ParticipantRole.REJECTED) {
+          this.event.participantStats.rejected -= 1;
+        }
+        participant.role = ParticipantRole.PARTICIPANT;
+        this.event.participants.push(participant);
       }
     } catch (e) {
       console.error(e);
@@ -223,8 +252,18 @@ export default class Participants extends Vue {
         },
       });
       if (data) {
-        this.participants.filter(participant => participant !== data.updateParticipation.id);
-        this.queue.filter(participant => participant !== data.updateParticipation.id);
+        this.event.participants = this.event.participants.filter(participant => participant.id !== data.updateParticipation.id);
+        this.queue = this.queue.filter(participant => participant.id !== data.updateParticipation.id);
+        this.event.participantStats.rejected += 1;
+        if (participant.role === ParticipantRole.PARTICIPANT) {
+          this.event.participantStats.participants -= 1;
+          this.event.participantStats.approved -= 1;
+        }
+        if (participant.role === ParticipantRole.NOT_APPROVED) {
+          this.event.participantStats.unapproved -= 1;
+        }
+        participant.role = ParticipantRole.REJECTED;
+        this.rejected = this.rejected.filter(participantIn => participantIn.id !== participant.id);
         this.rejected.push(participant);
       }
     } catch (e) {

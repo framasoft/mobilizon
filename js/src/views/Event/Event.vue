@@ -54,7 +54,7 @@ import {ParticipantRole} from "@/types/event.model";
             </div>
             <div class="metadata columns">
               <div class="column is-three-quarters-desktop">
-                <p class="tags" v-if="event.tags.length > 0">
+                <p class="tags">
                   <b-tag type="is-warning" size="is-medium" v-if="event.draft">{{ $t('Draft') }}</b-tag>
                   <span class="event-status" v-if="event.status !== EventStatus.CONFIRMED">
                     <b-tag type="is-warning" v-if="event.status === EventStatus.TENTATIVE">{{ $t('Event to be confirmed') }}</b-tag>
@@ -64,7 +64,7 @@ import {ParticipantRole} from "@/types/event.model";
                     <b-tag type="is-info" v-if="event.visibility === EventVisibility.PUBLIC">{{ $t('Public event') }}</b-tag>
                     <b-tag type="is-info" v-if="event.visibility === EventVisibility.UNLISTED">{{ $t('Private event') }}</b-tag>
                   </span>
-                  <b-tag type="is-success" v-if="event.tags" v-for="tag in event.tags" :key="tag.title">{{ tag.title }}</b-tag>
+                  <b-tag type="is-success" v-if="event.tags && event.tags.length > 0" v-for="tag in event.tags" :key="tag.title">{{ tag.title }}</b-tag>
                   <span v-if="event.tags > 0">⋅</span>
                 </p>
                 <div class="date-and-add-to-calendar">
@@ -488,7 +488,7 @@ export default class Event extends EventMixin {
   }
 
   async handleErrors(errors: GraphQLError) {
-    if (errors[0].message.includes('not found')) {
+    if (errors[0].message.includes('not found') || errors[0].message.includes('has invalid value $uuid')) {
       await this.$router.push({ name: RouteName.PAGE_NOT_FOUND });
     }
   }

@@ -74,10 +74,14 @@ const router = new Router({
       meta: { requiredAuth: false },
     },
     {
-      path: '*',
+      path: '/404',
       name: RouteName.PAGE_NOT_FOUND,
       component: PageNotFound,
       meta: { requiredAuth: false },
+    },
+    {
+      path: '*',
+      redirect: { name: RouteName.PAGE_NOT_FOUND },
     },
   ],
 });

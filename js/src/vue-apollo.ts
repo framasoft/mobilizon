@@ -11,6 +11,8 @@ import { isServerError } from '@/types/apollo';
 import { REFRESH_TOKEN } from '@/graphql/auth';
 import { AUTH_ACCESS_TOKEN, AUTH_REFRESH_TOKEN } from '@/constants';
 import { logout, saveTokenData } from '@/utils/auth';
+import { SnackbarProgrammatic as Snackbar } from 'buefy';
+import { defaultError, errors, IError, refreshSuggestion } from '@/utils/errors';
 
 // Install the vue plugin
 Vue.use(VueApollo);
@@ -87,13 +89,28 @@ const errorLink = onError(({ graphQLErrors, networkError, forward, operation }) 
   }
 
   if (graphQLErrors) {
-    graphQLErrors.forEach(({ message, locations, path }) =>
-      console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`),
-    );
+    graphQLErrors.forEach(({ message, locations, path }) => {
+      Snackbar.open({ message: computeErrorMessage(message), type: 'is-danger', position: 'is-bottom' });
+      console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
+    });
   }
 
-  if (networkError) console.log(`[Network error]: ${networkError}`);
+  if (networkError) {
+    console.log(`[Network error]: ${networkError}`);
+    Snackbar.open({ message: computeErrorMessage(networkError), type: 'is-danger', position: 'is-bottom' });
+  }
 });
+
+const computeErrorMessage = (message) => {
+  const error: IError = errors.reduce((acc, error) => {
+    if (RegExp(error.match).test(message)) {
+      return error;
+    }
+    return acc;
+  },                                  defaultError);
+
+  return error.suggestRefresh === false ? error.value : `${error.value}<br>${refreshSuggestion}`;
+};
 
 const link = authMiddleware
   .concat(errorLink)

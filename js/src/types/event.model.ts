@@ -86,6 +86,13 @@ export enum CommentModeration {
     CLOSED = 'CLOSED',
 }
 
+export interface IEventParticipantStats {
+  approved: number;
+  unapproved: number;
+  rejected: number;
+  participants: number;
+}
+
 export interface IEvent {
   id?: string;
   uuid: string;
@@ -108,12 +115,7 @@ export interface IEvent {
 
   organizerActor?: IActor;
   attributedTo: IActor;
-  participantStats: {
-    approved: number;
-    unapproved: number;
-    rejected: number;
-    participants: number;
-  };
+  participantStats: IEventParticipantStats;
   participants: IParticipant[];
 
   relatedEvents: IEvent[];
