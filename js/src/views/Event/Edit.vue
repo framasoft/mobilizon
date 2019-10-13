@@ -385,6 +385,14 @@ export default class EditEvent extends Vue {
         refetchQueries: ({ data: { createEvent } }) => this.postRefetchQueries(createEvent),
       });
 
+      this.$buefy.notification.open({
+        message: (this.event.draft ?
+                this.$i18n.t('The event has been created as a draft') :
+                this.$i18n.t('The event has been published')) as string,
+        type: 'is-success',
+        position: 'is-bottom-right',
+        duration: 5000,
+      });
       await this.$router.push({
         name: 'Event',
         params: { uuid: data.createEvent.uuid },
@@ -403,6 +411,12 @@ export default class EditEvent extends Vue {
         refetchQueries: ({ data: { updateEvent } }) => this.postRefetchQueries(updateEvent),
       });
 
+      this.$buefy.notification.open({
+        message: this.updateEventMessage,
+        type: 'is-success',
+        position: 'is-bottom-right',
+        duration: 5000,
+      });
       await this.$router.push({
         name: 'Event',
         params: { uuid: this.eventId as string },
@@ -410,6 +424,11 @@ export default class EditEvent extends Vue {
     } catch (err) {
       console.error(err);
     }
+  }
+
+  get updateEventMessage(): string {
+    if (this.unmodifiedEvent.draft && !this.event.draft) return this.$i18n.t('The event has been updated and published') as string;
+    return (this.event.draft ? this.$i18n.t('The draft event has been updated') : this.$i18n.t('The event has been updated')) as string;
   }
 
   /**

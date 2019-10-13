@@ -17,7 +17,7 @@
     "Upcoming": "Venents",
     "Unknown error.": "Error desconeguda.",
     "Title": "Títol",
-    "The {date} from {startTime} to {endTime}": "Lo {date} de {startTime} fins a {endTime}",
+    "On {date} from {startTime} to {endTime}": "Lo {date} de {startTime} fins a {endTime}",
     "The {date} at {time}": "Lo {date} a {time}",
     "Street": "Carrièra",
     "Status": "Estat",
