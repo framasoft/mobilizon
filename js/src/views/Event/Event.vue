@@ -389,6 +389,7 @@ export default class Event extends EventMixin {
             event.participantStats.unapproved = event.participantStats.unapproved + 1;
           } else {
             event.participantStats.approved = event.participantStats.approved + 1;
+            event.participantStats.participants = event.participantStats.participants + 1;
           }
 
           store.writeQuery({ query: FETCH_EVENT, variables: { uuid: this.uuid }, data: { event } });
@@ -459,6 +460,7 @@ export default class Event extends EventMixin {
             event.participantStats.unapproved = event.participantStats.unapproved - 1;
           } else {
             event.participantStats.approved = event.participantStats.approved - 1;
+            event.participantStats.participants = event.participantStats.participants - 1;
           }
           store.writeQuery({ query: FETCH_EVENT, variables: { uuid: this.uuid }, data: { event } });
         },
