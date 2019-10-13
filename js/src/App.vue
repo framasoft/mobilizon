@@ -2,7 +2,7 @@
   <div id="mobilizon">
     <NavBar />
     <div class="container">
-      <b-message type="is-danger" :title="$t('Warning').toLocaleUpperCase()" closable>
+      <b-message type="is-danger" :title="$t('Warning').toLocaleUpperCase()" closable aria-close-label="Close">
         <p>{{ $t('This is a demonstration site to test the beta version of Mobilizon.') }}</p>
         <p v-html="$t('<b>Please do not use it in any real way</b>: everything you create here (accounts, events, identities, etc.) will be automatically deleted every 48 hours.')" />
         <p>
@@ -99,5 +99,13 @@ $mdi-font-path: "~@mdi/font/fonts";
   body {
     // background: #f7f8fa;
     background: #ebebeb;
+  }
+
+  #mobilizon > .container > .message .message-header {
+    button.delete {
+      background: #4a4a4a;
+    }
+
+    color: #111;
   }
 </style>
