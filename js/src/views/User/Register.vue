@@ -152,7 +152,6 @@ export default class Register extends Vue {
         acc[error.details] = error.message;
         return acc;
       },                                       {});
-      console.log(this.errors);
     }
   }
 }

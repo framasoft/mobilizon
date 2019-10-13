@@ -10,7 +10,7 @@
             <b-input aria-required="true" required type="email" v-model="credentials.email"/>
           </b-field>
           <p class="control has-text-centered">
-            <b-button type="is-primary">
+            <b-button type="is-primary" native-type="submit">
             {{ $t('Send me the confirmation email once again') }}
             </b-button>
           </p>

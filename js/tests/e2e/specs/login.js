@@ -44,9 +44,9 @@ describe('Login', () => {
     cy.get('input[type=email]').type('user@email.com');
     cy.get('input[type=password]').type('some password');
     cy.get('form').submit();
-    cy.contains('.navbar-link', 'test_user');
+    cy.get('.navbar-link span.icon i').should('have.class', 'mdi-account-circle');
     cy.contains('article.message.is-info', 'Welcome back I\'m a test user');
-    cy.contains('.navbar-item.has-dropdown', 'test_user').click();
+    cy.get('.navbar-item.has-dropdown').click();
     cy.get('.navbar-item').last().contains('Log out').click();
   });
 
@@ -77,7 +77,7 @@ describe('Login', () => {
     cy.get('form').submit();
     cy.wait(1000);
 
-    cy.contains('.navbar-link', 'test_user_2');
+    cy.get('.navbar-link span.icon i').should('have.class', 'mdi-account-circle');
     cy.contains('article.message.is-info', 'Welcome back DuplicateNot');
   });
 });

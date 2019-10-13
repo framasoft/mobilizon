@@ -37,7 +37,7 @@ describe('Events', () => {
 
         cy.contains('.navbar-item', 'My events').click();
         cy.contains('.title', EVENT.title);
-        cy.contains('.content.column', 'You\'re organizing this event');
+        cy.contains('.content.column', 'Organized by I\'m a test user');
         cy.contains('.title-wrapper .date-component .datetime-container .month', 'Sep');
         cy.contains('.title-wrapper .date-component .datetime-container .day', '15');
     });
