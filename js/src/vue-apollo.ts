@@ -89,10 +89,16 @@ const errorLink = onError(({ graphQLErrors, networkError, forward, operation }) 
   }
 
   if (graphQLErrors) {
+    const messages: Set<string> = new Set();
+
     graphQLErrors.forEach(({ message, locations, path }) => {
-      Snackbar.open({ message: computeErrorMessage(message), type: 'is-danger', position: 'is-bottom' });
+      messages.add(computeErrorMessage(message));
       console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
     });
+
+    for (const message of messages) {
+      Snackbar.open({ message, type: 'is-danger', position: 'is-bottom' });
+    }
   }
 
   if (networkError) {

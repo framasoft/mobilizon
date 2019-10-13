@@ -76,17 +76,10 @@ A simple card for an event
 </template>
 
 <script lang="ts">
-import { IEvent, ParticipantRole } from '@/types/event.model';
+import { IEvent, IEventCardOptions, ParticipantRole } from '@/types/event.model';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import DateCalendarIcon from '@/components/Event/DateCalendarIcon.vue';
-import { IActor, IPerson, Person } from '@/types/actor';
-
-export interface IEventCardOptions {
-  hideDate: boolean;
-  loggedPerson: IPerson | boolean;
-  hideDetails: boolean;
-  organizerActor: IActor | null;
-}
+import { Person } from '@/types/actor';
 
 @Component({
   components: {

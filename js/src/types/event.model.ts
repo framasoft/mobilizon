@@ -1,4 +1,4 @@
-import { Actor, IActor } from './actor';
+import { Actor, IActor, IPerson } from './actor';
 import { IAddress } from '@/types/address.model';
 import { ITag } from '@/types/tag.model';
 import { IPicture } from '@/types/picture.model';
@@ -43,6 +43,13 @@ export enum Category {
   BIRTHDAY = 'birthday',
   DEMONSTRATION = 'demonstration',
   MEETING = 'meeting',
+}
+
+export interface IEventCardOptions {
+  hideDate: boolean;
+  loggedPerson: IPerson | boolean;
+  hideDetails: boolean;
+  organizerActor: IActor | null;
 }
 
 export interface IParticipant {

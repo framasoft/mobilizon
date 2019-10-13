@@ -43,5 +43,9 @@ export const errors: IError[] = [
     match: /NetworkError when attempting to fetch resource.$/,
     value: i18n.t('Error while communicating with the server.') as string,
   },
-
+  {
+    match: /Provided moderator actor ID doesn't have permission on this event$/,
+    value: i18n.t("The current identity doesn't have any permission on this event. You should probably change it.") as string,
+    suggestRefresh: false,
+  },
 ];

@@ -20,7 +20,7 @@
           <figure class="image is-32x32" v-if="currentActor.avatar">
             <img class="is-rounded" alt="avatarUrl" :src="currentActor.avatar.url">
           </figure>
-          <span>{{ currentActor.preferredUsername }}</span>
+          <b-icon v-else icon="account-circle" />
         </template>
 
         <b-navbar-item tag="span" v-for="identity in identities" v-if="identities.length > 1" :active="identity.id === currentActor.id" :key="identity.id">
@@ -29,10 +29,14 @@
               <figure class="image is-32x32" v-if="identity.avatar">
                 <img class="is-rounded" :src="identity.avatar.url" alt="" />
               </figure>
+              <b-icon v-else icon="account-circle" />
             </div>
 
             <div class="media-content">
               <span>{{ identity.displayName() }}</span>
+              <span class="has-text-grey" v-if="identity.name">
+                @{{ identity.preferredUsername }}
+              </span>
             </div>
           </span>
 
