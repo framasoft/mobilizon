@@ -7,7 +7,7 @@ export const defaultError: IError = {
   value: i18n.t('An error has occurred.') as string,
 };
 
-export interface IError { match: RegExp; value: string; suggestRefresh?: boolean; }
+export interface IError { match: RegExp; value: string|null; suggestRefresh?: boolean; }
 
 export const errors: IError[] = [
   {
@@ -43,5 +43,33 @@ export const errors: IError[] = [
     match: /NetworkError when attempting to fetch resource.$/,
     value: i18n.t('Error while communicating with the server.') as string,
   },
-
+  {
+    match: /Provided moderator actor ID doesn't have permission on this event$/,
+    value: i18n.t("The current identity doesn't have any permission on this event. You should probably change it.") as string,
+    suggestRefresh: false,
+  },
+  {
+    match: /^User with email not found$/,
+    value: null,
+  },
+  {
+    match: /^Username is already taken$/,
+    value: null,
+  },
+  {
+    match: /^No user with this email was found$/,
+    value: null,
+  },
+  {
+    match: /^Impossible to authenticate, either your email or password are invalid.$/,
+    value: null,
+  },
+  {
+    match: /^No user to validate with this email was found$/,
+    value: null,
+  },
+  {
+    match: /^This email is already used.$/,
+    value: null,
+  },
 ];

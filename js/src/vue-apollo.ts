@@ -89,15 +89,28 @@ const errorLink = onError(({ graphQLErrors, networkError, forward, operation }) 
   }
 
   if (graphQLErrors) {
+    const messages: Set<string> = new Set();
+
     graphQLErrors.forEach(({ message, locations, path }) => {
-      Snackbar.open({ message: computeErrorMessage(message), type: 'is-danger', position: 'is-bottom' });
+      const computedMessage = computeErrorMessage(message);
+      if (computedMessage) {
+        console.log('computed message', computedMessage);
+        messages.add(computedMessage);
+      }
       console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
     });
+
+    for (const message of messages) {
+      Snackbar.open({ message, type: 'is-danger', position: 'is-bottom' });
+    }
   }
 
   if (networkError) {
     console.log(`[Network error]: ${networkError}`);
-    Snackbar.open({ message: computeErrorMessage(networkError), type: 'is-danger', position: 'is-bottom' });
+    const computedMessage = computeErrorMessage(networkError);
+    if (computedMessage) {
+      Snackbar.open({ message: computedMessage, type: 'is-danger', position: 'is-bottom' });
+    }
   }
 });
 
@@ -109,6 +122,7 @@ const computeErrorMessage = (message) => {
     return acc;
   },                                  defaultError);
 
+  if (error.value === null) return null;
   return error.suggestRefresh === false ? error.value : `${error.value}<br>${refreshSuggestion}`;
 };
 

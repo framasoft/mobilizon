@@ -55,7 +55,7 @@
             <EventListCard
                     v-for="participation in row[1]"
                     v-if="isInLessThanSevenDays(row[0])"
-                    :key="participation[1].event.uuid"
+                    :key="participation[1].id"
                     :participation="participation[1]"
             />
           </div>

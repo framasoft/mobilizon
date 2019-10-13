@@ -114,7 +114,8 @@ query LoggedUserParticipations($afterDateTime: DateTime, $beforeDateTime: DateTi
               },
               participantStats {
                   approved,
-                  unapproved
+                  unapproved,
+                  participants
               },
               options {
                   maximumAttendeeCapacity

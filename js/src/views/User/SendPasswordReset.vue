@@ -11,7 +11,7 @@
             <b-input aria-required="true" required type="email" v-model="credentials.email"/>
           </b-field>
           <p class="control has-text-centered">
-              <b-button type="is-primary">
+              <b-button type="is-primary" native-type="submit">
               {{ $t('Send me an email to reset my password') }}
             </b-button>
           </p>

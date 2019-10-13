@@ -13,7 +13,7 @@
                     <h3>{{ month[0] }}</h3>
                     <EventListCard
                             v-for="participation in month[1]"
-                            :key="`${participation.event.uuid}${participation.actor.id}`"
+                            :key="participation.id"
                             :participation="participation"
                             :options="{ hideDate: false }"
                             @eventDeleted="eventDeleted"
@@ -48,7 +48,7 @@
                     <h3>{{ month[0] }}</h3>
                     <EventListCard
                             v-for="participation in month[1]"
-                            :key="`${participation.event.uuid}${participation.actor.id}`"
+                            :key="participation.id"
                             :participation="participation"
                             :options="{ hideDate: false }"
                             @eventDeleted="eventDeleted"
