@@ -414,10 +414,10 @@ defmodule Mobilizon.Service.ActivityPub do
   def join(%Event{options: options} = event, %Actor{} = actor, local) do
     # TODO Refactor me for federation
     with maximum_attendee_capacity <-
-           Map.get(options, :maximum_attendee_capacity, 2_000_000) || false,
+           Map.get(options, :maximum_attendee_capacity) || 0,
          {:maximum_attendee_capacity, true} <-
            {:maximum_attendee_capacity,
-            !maximum_attendee_capacity ||
+            maximum_attendee_capacity == 0 ||
               Mobilizon.Events.count_participant_participants(event.id) <
                 maximum_attendee_capacity},
          role <- Mobilizon.Events.get_default_participant_role(event),
