@@ -151,7 +151,7 @@ import {ParticipantRole} from "@/types/event.model";
         <section class="share" v-if="!event.draft">
           <div class="container">
             <div class="columns">
-              <div class="column is-half has-text-centered">
+              <div class="column is-half-desktop has-text-centered">
                 <h3 class="title">{{ $t('Share this event') }}</h3>
                 <small class="maximumNumberOfPlacesWarning" v-if="!eventCapacityOK">
                   {{ $t('All the places have already been taken') }}
@@ -284,6 +284,10 @@ import { RouteName } from '@/router';
       title: this.eventTitle,
       // all titles will be injected into this template
       titleTemplate: '%s | Mobilizon',
+      meta: [
+        // @ts-ignore
+        { name: 'description', content: this.eventDescription },
+      ],
     };
   },
 })
@@ -304,6 +308,11 @@ export default class Event extends EventMixin {
   get eventTitle() {
     if (!this.event) return undefined;
     return this.event.title;
+  }
+
+  get eventDescription() {
+    if (!this.event) return undefined;
+    return this.event.description;
   }
 
   mounted() {
@@ -522,7 +531,8 @@ export default class Event extends EventMixin {
   get textDescription(): string {
     const meta = document.querySelector("meta[property='og:description']");
     if (!meta) return '';
-    return meta.getAttribute('content') || '';
+    const desc = meta.getAttribute('content') || '';
+    return desc.substring(0, 1000);
   }
 
   get eventCapacityOK(): boolean {
@@ -743,10 +753,13 @@ export default class Event extends EventMixin {
   .description {
     padding-top: 10px;
     min-height: 40rem;
-    background-repeat: no-repeat;
-    background-size: 800px;
-    background-position: 95% 101%;
-    background-image: url('../../assets/texting.svg');
+
+    @media screen and (min-width: 1216px) {
+      background-repeat: no-repeat;
+      background-size: 600px;
+      background-position: 95% 101%;
+      background-image: url('../../assets/texting.svg');
+    }
     border-top: solid 1px #111;
     border-bottom: solid 1px #111;
 
