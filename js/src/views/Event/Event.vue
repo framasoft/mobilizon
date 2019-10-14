@@ -161,7 +161,7 @@ import {ParticipantRole} from "@/types/event.model";
                   {{ $t('All the places have already been taken') }}
                 </small>
                 <div>
-                  <b-icon icon="mastodon" size="is-large" type="is-primary" />
+<!--                  <b-icon icon="mastodon" size="is-large" type="is-primary" />-->
                   <a :href="facebookShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="facebook" size="is-large" type="is-primary" /></a>
                   <a :href="twitterShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="twitter" size="is-large" type="is-primary" /></a>
                   <a :href="emailShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="email" size="is-large" type="is-primary" /></a>
