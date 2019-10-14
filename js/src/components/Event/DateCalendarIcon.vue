@@ -50,7 +50,7 @@ export default class DateCalendarIcon extends Vue {
     flex-direction: column;
     justify-content: center;
     /*height: 50px;*/
-    width: 48px;
+    width: 50px;
     padding: 8px;
     text-align: center;
 
