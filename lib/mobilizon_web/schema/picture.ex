@@ -20,7 +20,7 @@ defmodule MobilizonWeb.Schema.PictureType do
     # Either a full picture object
     field(:picture, :picture_input_object)
     # Or directly the ID of an existing picture
-    field(:picture_id, :string)
+    field(:picture_id, :id)
   end
 
   @desc "An attached picture"

@@ -4,14 +4,8 @@ import {ParticipantRole} from "@/types/event.model";
     <b-loading :active.sync="$apollo.loading"></b-loading>
     <transition appear name="fade" mode="out-in">
       <div v-if="event">
-        <div class="header-picture" :style="`background-image: url('${event.picture ? event.picture.url : 'https://picsum.photos/600/200/'}')`">
-          <!--<figure class="image is-3by1" v-if="event.picture">
-            <img :src="event.picture.url">
-          </figure>
-          <figure class="image is-3by1" v-else>
-            <img src="https://picsum.photos/600/200/">
-          </figure>-->
-        </div>
+        <div class="header-picture" v-if="event.picture" :style="`background-image: url('${event.picture.url}')`" />
+        <div class="header-picture-default" v-else />
           <section>
             <div class="title-and-participate-button">
               <div class="title-wrapper">
@@ -552,12 +546,15 @@ export default class Event extends EventMixin {
     opacity: 0;
   }
 
-  .header-picture {
+  .header-picture, .header-picture-default {
     height: 400px;
     background-size: cover;
-    // background-position: center center;
-    background-attachment: fixed;
+    background-position: center;
     background-repeat: no-repeat;
+  }
+
+  .header-picture-default {
+    background-image: url('/img/mobilizon_default_card.png');
   }
 
   div.sidebar {

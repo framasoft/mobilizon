@@ -261,6 +261,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   def make_picture_data(picture) when is_map(picture) do
     with {:ok, %{"url" => [%{"href" => url, "mediaType" => content_type}], "size" => size}} <-
            MobilizonWeb.Upload.store(picture.file),
+         {:picture_exists, nil} <- {:picture_exists, Mobilizon.Media.get_picture_by_url(url)},
          {:ok, %Picture{file: _file} = picture} <-
            Mobilizon.Media.create_picture(%{
              "file" => %{
@@ -272,6 +273,12 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
              "actor_id" => picture.actor_id
            }) do
       Converter.Picture.model_to_as(picture)
+    else
+      {:picture_exists, %Picture{file: _file} = picture} ->
+        Converter.Picture.model_to_as(picture)
+
+      err ->
+        err
     end
   end
 

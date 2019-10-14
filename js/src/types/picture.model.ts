@@ -1,4 +1,5 @@
 export interface IPicture {
+  id: string;
   url: string;
   name: string;
   alt: string;
