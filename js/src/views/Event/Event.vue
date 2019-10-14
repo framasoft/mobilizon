@@ -118,6 +118,10 @@ import {ParticipantRole} from "@/types/event.model";
                     </div>
                   </b-modal>
                 </div>
+                <span class="online-address" v-if="event.onlineAddress">
+                  <b-icon icon="link"></b-icon>
+                  <a :href="event.onlineAddress">{{ urlToHostname(event.onlineAddress) }}</a>
+                </span>
                 <div class="organizer">
                   <span>
                     <span v-if="event.organizerActor">
@@ -544,6 +548,9 @@ export default class Event extends EventMixin {
     return this.event.options.maximumAttendeeCapacity - this.event.participantStats.participants;
   }
 
+  urlToHostname(url: string): string {
+    return (new URL(url)).hostname;
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -625,6 +632,10 @@ export default class Event extends EventMixin {
         width: 100%;
         padding: 25px 5px 0;
       }
+    }
+
+    span.online-address {
+      display: flex;
     }
 
     div.organizer {
