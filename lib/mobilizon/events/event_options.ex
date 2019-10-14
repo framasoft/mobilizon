@@ -49,8 +49,8 @@ defmodule Mobilizon.Events.EventOptions do
     field(:program, :string)
     field(:comment_moderation, CommentModeration)
     field(:show_participation_price, :boolean)
-    field(:show_start_time, :boolean)
-    field(:show_end_time, :boolean)
+    field(:show_start_time, :boolean, default: true)
+    field(:show_end_time, :boolean, default: true)
 
     embeds_many(:offers, EventOffer)
     embeds_many(:participation_condition, EventParticipationCondition)
