@@ -259,7 +259,7 @@ import TagInput from '@/components/Event/TagInput.vue';
 import { TAGS } from '@/graphql/tags';
 import { ITag } from '@/types/tag.model';
 import AddressAutoComplete from '@/components/Event/AddressAutoComplete.vue';
-import { buildFileFromIPicture, buildFileVariable } from '@/utils/image';
+import { buildFileFromIPicture, buildFileVariable, readFileAsync } from '@/utils/image';
 import IdentityPickerWrapper from '@/views/Account/IdentityPickerWrapper.vue';
 import { RouteName } from '@/router';
 
@@ -377,10 +377,12 @@ export default class EditEvent extends Vue {
   }
 
   async createEvent() {
+    const variables = await this.buildVariables();
+
     try {
       const { data } = await this.$apollo.mutate({
         mutation: CREATE_EVENT,
-        variables: this.buildVariables(),
+        variables,
         update: (store, { data: { createEvent } }) => this.postCreateOrUpdate(store, createEvent),
         refetchQueries: ({ data: { createEvent } }) => this.postRefetchQueries(createEvent),
       });
@@ -403,10 +405,12 @@ export default class EditEvent extends Vue {
   }
 
   async updateEvent() {
+    const variables = await this.buildVariables();
+
     try {
       await this.$apollo.mutate({
         mutation: EDIT_EVENT,
-        variables: this.buildVariables(),
+        variables,
         update: (store, { data: { updateEvent } }) => this.postCreateOrUpdate(store, updateEvent),
         refetchQueries: ({ data: { updateEvent } }) => this.postRefetchQueries(updateEvent),
       });
@@ -489,7 +493,7 @@ export default class EditEvent extends Vue {
   /**
    * Build variables for Event GraphQL creation query
    */
-  private buildVariables() {
+  private async buildVariables() {
     let res = this.event.toEditJSON();
     if (this.event.organizerActor) {
       res = Object.assign(res, { organizerActorId: this.event.organizerActor.id });
@@ -502,8 +506,17 @@ export default class EditEvent extends Vue {
     }
 
     const pictureObj = buildFileVariable(this.pictureFile, 'picture');
+    res = Object.assign({}, res, pictureObj);
 
-    return Object.assign({}, res, pictureObj);
+    if (this.event.picture) {
+      const oldPictureFile = await buildFileFromIPicture(this.event.picture) as File;
+      const oldPictureFileContent = await readFileAsync(oldPictureFile);
+      const newPictureFileContent = await readFileAsync(this.pictureFile as File);
+      if (oldPictureFileContent === newPictureFileContent) {
+        res.picture = { pictureId: this.event.picture.id };
+      }
+    }
+    return res;
   }
 
   private async getEvent() {

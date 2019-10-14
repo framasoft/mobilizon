@@ -28,6 +28,7 @@
     margin-right: 30px;
     max-height: 200px;
     max-width: 200px;
+    overflow: hidden;
   }
 
   .image-placeholder {

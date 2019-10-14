@@ -28,13 +28,11 @@ A simple card for an event
 
 <template>
   <router-link class="card" :to="{ name: 'Event', params: { uuid: event.uuid } }">
-    <div class="card-image" v-if="!event.image">
-      <figure class="image is-16by9">
+    <div class="card-image">
+      <figure class="image is-16by9" :style="`background-image: url('${event.picture ? event.picture.url : '/img/mobilizon_default_card.png'}')`">
         <div class="tag-container" v-if="event.tags">
           <b-tag v-for="tag in event.tags.slice(0, 3)" :key="tag.slug" type="is-secondary">{{ tag.title }}</b-tag>
         </div>
-        <img v-if="event.picture" :src="event.picture.url" />
-        <img v-else src="https://picsum.photos/g/400/225/?random" />
       </figure>
     </div>
     <div class="content">
@@ -168,6 +166,11 @@ export default class EventCard extends Vue {
 
     div.card-image {
       background: $secondary;
+
+      figure.image {
+        background-size: cover;
+        background-position: center;
+      }
     }
 
     div.content {

@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Fri Oct 11 2019 11:53:52 GMT+0200 (Central European Summer Time)
+# timestamp: Mon Oct 14 2019 10:27:57 GMT+0200 (Central European Summer Time)
 
 schema {
   query: RootQueryType
@@ -796,7 +796,7 @@ type Picture {
 """An attached picture or a link to a picture"""
 input PictureInput {
   picture: PictureInputObject
-  pictureId: String
+  pictureId: ID
 }
 
 """An attached picture"""
