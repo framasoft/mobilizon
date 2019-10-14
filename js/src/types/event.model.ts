@@ -147,6 +147,8 @@ export interface IEventOptions {
   program: string;
   commentModeration: CommentModeration;
   showParticipationPrice: boolean;
+  showStartTime: boolean;
+  showEndTime: boolean;
 }
 
 export class EventOptions implements IEventOptions {
@@ -159,6 +161,8 @@ export class EventOptions implements IEventOptions {
   program = '';
   commentModeration = CommentModeration.ALLOW_ALL;
   showParticipationPrice = false;
+  showStartTime = true;
+  showEndTime = true;
 }
 
 export class EventModel implements IEvent {

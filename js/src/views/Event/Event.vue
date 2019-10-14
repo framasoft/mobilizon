@@ -64,7 +64,7 @@ import {ParticipantRole} from "@/types/event.model";
                 <div class="date-and-add-to-calendar">
                   <div class="date-and-privacy" v-if="event.beginsOn">
                     <b-icon icon="calendar-clock" />
-                    <event-full-date :beginsOn="event.beginsOn" :endsOn="event.endsOn" />
+                    <event-full-date :beginsOn="event.beginsOn" :show-start-time="event.options.showStartTime" :show-end-time="event.options.showEndTime" :endsOn="event.endsOn" />
                   </div>
                   <a class="add-to-calendar" @click="downloadIcsEvent()" v-if="!event.draft">
                     <b-icon icon="calendar-plus" />

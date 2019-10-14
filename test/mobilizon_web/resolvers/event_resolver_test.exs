@@ -229,7 +229,8 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                   category: "super_category",
                   options: {
                     maximumAttendeeCapacity: 30,
-                    showRemainingAttendeeCapacity: true
+                    showRemainingAttendeeCapacity: true,
+                    showEndTime: false
                   }
               ) {
                 title,
@@ -246,7 +247,8 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                 category,
                 options {
                   maximumAttendeeCapacity,
-                  showRemainingAttendeeCapacity
+                  showRemainingAttendeeCapacity,
+                  showEndTime
                 }
               }
             }
@@ -273,6 +275,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       assert event["category"] == "super_category"
       assert event["options"]["maximumAttendeeCapacity"] == 30
       assert event["options"]["showRemainingAttendeeCapacity"] == true
+      assert event["options"]["showEndTime"] == false
     end
 
     test "create_event/3 creates an event with tags", %{conn: conn, actor: actor, user: user} do

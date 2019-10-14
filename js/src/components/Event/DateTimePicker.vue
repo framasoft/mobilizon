@@ -19,11 +19,18 @@
                 expanded
                 :first-day-of-week="parseInt($t('firstDayOfWeek'), 10)"
                 :min-date="minDate"
-                v-model="date"
+                v-model="dateWithoutTime"
                 :placeholder="$t('Click to select')"
                 icon="calendar"
         />
-        <b-input expanded type="time" required v-model="time" />
+        <b-timepicker
+                placeholder="Type or select a time..."
+                icon="clock"
+                v-model="dateWithTime"
+                expanded
+                size="is-small"
+                inline>
+        </b-timepicker>
     </b-field>
 </template>
 <script lang="ts">
@@ -53,40 +60,26 @@ export default class DateTimePicker extends Vue {
      */
   @Prop({ required: false, type: Date, default: null }) minDate!: Date;
 
-  date: Date = this.value;
-  time: string = '00:00';
+  dateWithoutTime: Date = this.value;
+  dateWithTime: Date = this.dateWithoutTime;
 
   localeShortWeekDayNamesProxy = localeShortWeekDayNames();
   localeMonthNamesProxy = localeMonthNames();
 
-  mounted() {
-    this.convertTime();
+  @Watch('value')
+  updateValue() {
+    this.dateWithoutTime = this.value;
+    this.dateWithTime = this.dateWithoutTime;
   }
 
-  convertTime() {
-    let minutes = this.date.getHours() * 60 + this.date.getMinutes();
-    minutes = Math.ceil(minutes / this.step) * this.step;
-
-    this.time = [Math.floor(minutes / 60), minutes % 60].map((v) => { return v < 10 ? `0${v}` : v; }).join(':');
-  }
-
-  @Watch('time')
-  updateTime(time: string) {
-    const [hours, minutes] = time.split(':', 2);
-    this.date.setHours(parseInt(hours, 10));
-    this.date.setMinutes(parseInt(minutes, 10));
+  @Watch('dateWithoutTime')
+  updateDateWithoutTimeWatcher() {
     this.updateDateTime();
   }
 
-  @Watch('date')
-  updateDate() {
-    this.updateTime(this.time);
-  }
-
-  @Watch('value')
-  updateValue() {
-    this.date = this.value;
-    this.convertTime();
+  @Watch('dateWithTime')
+  updateDateWithTimeWatcher() {
+    this.updateDateTime();
   }
 
   updateDateTime() {
@@ -95,7 +88,17 @@ export default class DateTimePicker extends Vue {
      *
      * @type {Date}
      */
-    this.$emit('input', this.date);
+    this.dateWithoutTime.setHours(this.dateWithTime.getHours());
+    this.dateWithoutTime.setMinutes(this.dateWithTime.getMinutes());
+    this.$emit('input', this.dateWithoutTime);
   }
 }
 </script>
+
+<style lang="scss" scoped>
+    .timepicker {
+        /deep/ .dropdown-content {
+            padding: 0;
+        }
+    }
+</style>

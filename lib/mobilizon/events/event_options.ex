@@ -22,7 +22,9 @@ defmodule Mobilizon.Events.EventOptions do
           comment_moderation: CommentModeration.t(),
           show_participation_price: boolean,
           offers: [EventOffer.t()],
-          participation_condition: [EventParticipationCondition.t()]
+          participation_condition: [EventParticipationCondition.t()],
+          show_start_time: boolean,
+          show_end_time: boolean
         }
 
   @attrs [
@@ -32,7 +34,9 @@ defmodule Mobilizon.Events.EventOptions do
     :attendees,
     :program,
     :comment_moderation,
-    :show_participation_price
+    :show_participation_price,
+    :show_start_time,
+    :show_end_time
   ]
 
   @primary_key false
@@ -45,6 +49,8 @@ defmodule Mobilizon.Events.EventOptions do
     field(:program, :string)
     field(:comment_moderation, CommentModeration)
     field(:show_participation_price, :boolean)
+    field(:show_start_time, :boolean)
+    field(:show_end_time, :boolean)
 
     embeds_many(:offers, EventOffer)
     embeds_many(:participation_condition, EventParticipationCondition)

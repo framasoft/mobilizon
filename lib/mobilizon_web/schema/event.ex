@@ -181,6 +181,9 @@ defmodule MobilizonWeb.Schema.EventType do
     field(:show_participation_price, :boolean,
       description: "Whether or not to show the participation price"
     )
+
+    field(:show_start_time, :boolean, description: "Show event start time")
+    field(:show_end_time, :boolean, description: "Show event end time")
   end
 
   input_object :event_options_input do
@@ -214,6 +217,9 @@ defmodule MobilizonWeb.Schema.EventType do
     field(:show_participation_price, :boolean,
       description: "Whether or not to show the participation price"
     )
+
+    field(:show_start_time, :boolean, description: "Show event start time")
+    field(:show_end_time, :boolean, description: "Show event end time")
   end
 
   object :event_queries do

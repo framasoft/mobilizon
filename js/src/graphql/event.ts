@@ -38,6 +38,8 @@ const optionsQuery = `
   maximumAttendeeCapacity,
   remainingAttendeeCapacity,
   showRemainingAttendeeCapacity,
+  showStartTime,
+  showEndTime,
   offers {
     price,
     priceCurrency,
