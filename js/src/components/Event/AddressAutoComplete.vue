@@ -8,6 +8,7 @@
                     field="description"
                     :loading="isFetching"
                     @typing="getAsyncData"
+                    icon="map-marker"
                     @select="option => selected = option">
 
                 <template slot-scope="{option}">
