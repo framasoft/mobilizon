@@ -25,7 +25,7 @@
         </div>
       </section>
     <div class="container" v-if="config">
-      <section v-if="currentActor.id">
+      <section v-if="currentActor.id && welcomeBack">
         <b-message type="is-info">
           {{ $t('Welcome back {username}', { username: currentActor.displayName() }) }}
         </b-message>
@@ -181,6 +181,14 @@ export default class Home extends Vue {
   get instanceName() {
     if (!this.config) return undefined;
     return this.config.name;
+  }
+
+  get welcomeBack() {
+    return window.localStorage.getItem('welcome-back') === 'yes';
+  }
+
+  mounted() {
+    window.localStorage.removeItem('welcome-back');
   }
 
   isToday(date: Date) {

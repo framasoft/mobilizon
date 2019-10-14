@@ -99,13 +99,20 @@ $mdi-font-path: "~@mdi/font/fonts";
   body {
     // background: #f7f8fa;
     background: #ebebeb;
+
+    main {
+      margin: 1rem auto;
+    }
   }
 
-  #mobilizon > .container > .message .message-header {
-    button.delete {
-      background: #4a4a4a;
-    }
+  #mobilizon > .container > .message {
+    margin: 1rem auto auto;
+    .message-header {
+      button.delete {
+        background: #4a4a4a;
+      }
 
-    color: #111;
+      color: #111;
+    }
   }
 </style>

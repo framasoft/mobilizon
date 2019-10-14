@@ -169,6 +169,7 @@ export default class Login extends Vue {
       if (this.redirect) {
         await this.$router.push(this.redirect);
       } else {
+        window.localStorage.setItem('welcome-back', 'yes');
         await this.$router.push({ name: RouteName.HOME });
       }
     } catch (err) {
