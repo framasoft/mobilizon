@@ -138,7 +138,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Event do
       |> Enum.map(&Utils.camelize/1)
 
     Enum.reduce(object, %{}, fn {key, value}, acc ->
-      (value && key in keys && Map.put(acc, Utils.underscore(key), value)) ||
+      (!is_nil(value) && key in keys && Map.put(acc, Utils.underscore(key), value)) ||
         acc
     end)
   end

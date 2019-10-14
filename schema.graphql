@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Mon Oct 14 2019 10:27:57 GMT+0200 (Central European Summer Time)
+# timestamp: Mon Oct 14 2019 19:26:36 GMT+0200 (Central European Summer Time)
 
 schema {
   query: RootQueryType
@@ -400,11 +400,17 @@ type EventOptions {
   """The number of remaining seats for this event"""
   remainingAttendeeCapacity: Int
 
+  """Show event end time"""
+  showEndTime: Boolean
+
   """Whether or not to show the participation price"""
   showParticipationPrice: Boolean
 
   """Whether or not to show the number of remaining seats for this event"""
   showRemainingAttendeeCapacity: Boolean
+
+  """Show event start time"""
+  showStartTime: Boolean
 }
 
 input EventOptionsInput {
@@ -429,11 +435,17 @@ input EventOptionsInput {
   """The number of remaining seats for this event"""
   remainingAttendeeCapacity: Int
 
+  """Show event end time"""
+  showEndTime: Boolean
+
   """Whether or not to show the participation price"""
   showParticipationPrice: Boolean
 
   """Whether or not to show the number of remaining seats for this event"""
   showRemainingAttendeeCapacity: Boolean
+
+  """Show event start time"""
+  showStartTime: Boolean
 }
 
 type EventParticipationCondition {

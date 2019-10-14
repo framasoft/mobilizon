@@ -21,8 +21,10 @@
 
           <tag-input v-model="event.tags" :data="tags" path="title" />
 
-          <date-time-picker v-model="event.beginsOn" :label="$t('Starts on…')" :step="15"/>
-          <date-time-picker :min-date="minDateForEndsOn" v-model="event.endsOn" :label="$t('Ends on…')" :step="15" />
+          <date-time-picker v-model="event.beginsOn" :label="$t('Starts on…')" />
+          <date-time-picker :min-date="minDateForEndsOn" v-model="event.endsOn" :label="$t('Ends on…')" />
+<!--          <b-switch v-model="endsOnNull">{{ $t('No end date') }}</b-switch>-->
+          <b-button type="is-text" @click="dateSettingsIsOpen = true">{{ $t('Date parameters')}}</b-button>
 
           <address-auto-complete v-model="event.physicalAddress" />
 
@@ -166,6 +168,31 @@
         </form>
       </div>
     </div>
+    <b-modal :active.sync="dateSettingsIsOpen" has-modal-card trap-focus>
+      <form action="">
+        <div class="modal-card" style="width: auto">
+          <header class="modal-card-head">
+            <p class="modal-card-title">{{ $t('Date and time settings') }}</p>
+          </header>
+          <section class="modal-card-body">
+            <b-field :label="$t('Event page settings')">
+              <b-switch v-model="event.options.showStartTime">
+                {{ $t('Show the time when the event begins') }}
+              </b-switch>
+            </b-field>
+            <b-field>
+              <b-switch v-model="event.options.showEndTime">
+                {{ $t('Show the time when the event ends') }}
+              </b-switch>
+            </b-field>
+
+          </section>
+          <footer class="modal-card-foot">
+            <button class="button" type="button" @click="dateSettingsIsOpen = false">{{ $t('OK') }}</button>
+          </footer>
+        </div>
+      </form>
+    </b-modal>
     <span ref="bottomObserver"></span>
     <nav role="navigation" aria-label="main navigation" class="navbar" :class="{'is-fixed-bottom': showFixedNavbar }">
       <div class="container">
@@ -302,6 +329,8 @@ export default class EditEvent extends Vue {
   CommentModeration = CommentModeration;
   showFixedNavbar: boolean = true;
   observer!: IntersectionObserver;
+  dateSettingsIsOpen: boolean = false;
+  endsOnNull: boolean = false;
 
   // categories: string[] = Object.keys(Category);
 
@@ -505,6 +534,10 @@ export default class EditEvent extends Vue {
       delete this.event.physicalAddress['__typename'];
     }
 
+    if (this.endsOnNull) {
+      res.endsOn = null;
+    }
+
     const pictureObj = buildFileVariable(this.pictureFile, 'picture');
     res = Object.assign({}, res, pictureObj);
 
@@ -527,6 +560,9 @@ export default class EditEvent extends Vue {
       },
     });
 
+    if (result.data.event.endsOn === null) {
+      this.endsOnNull = true;
+    }
     return new EventModel(result.data.event);
   }
 
@@ -588,17 +624,17 @@ export default class EditEvent extends Vue {
 
   get beginsOn() { return this.event.beginsOn; }
 
-  @Watch('beginsOn')
+  @Watch('beginsOn', { deep: true })
   onBeginsOnChanged(beginsOn) {
     if (!this.event.endsOn) return;
     const dateBeginsOn = new Date(beginsOn);
     const dateEndsOn = new Date(this.event.endsOn);
     if (dateEndsOn < dateBeginsOn) {
       this.event.endsOn = dateBeginsOn;
-      this.event.endsOn.setUTCHours(dateEndsOn.getUTCHours());
+      this.event.endsOn.setHours(dateEndsOn.getHours());
     }
     if (dateEndsOn === dateBeginsOn) {
-      this.event.endsOn.setUTCHours(dateEndsOn.getUTCHours() + 1);
+      this.event.endsOn.setHours(dateEndsOn.getHours() + 1);
     }
   }
 

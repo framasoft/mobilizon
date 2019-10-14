@@ -76,7 +76,7 @@
                         </td>
                       </tr>
                     <% end %>
-                    <%= if MapSet.member?(@changes, :ends_on) do %>
+                    <%= if MapSet.member?(@changes, :ends_on) && !is_nil(@event.ends_on) do %>
                       <tr>
                         <td bgcolor="#ffffff" align="left">
                           <%= gettext "Ending of event" %>

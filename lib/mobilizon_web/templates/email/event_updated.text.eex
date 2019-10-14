@@ -12,7 +12,7 @@
     <%= gettext "New date and time for start of event: %{begins_on}", begins_on: datetime_to_string(@event.begins_on, @locale) %>
 <% end %>
 
-<%= if MapSet.member?(@changes, :ends_on) do %>
+<%= if MapSet.member?(@changes, :ends_on) && !is_nil(@event.ends_on) do %>
     <%= gettext "New date and time for ending of event: %{ends_on}", ends_on: datetime_to_string(@event.ends_on, @locale) %>
 <% end %>
 

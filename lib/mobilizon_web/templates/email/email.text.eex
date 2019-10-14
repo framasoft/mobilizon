@@ -3,4 +3,8 @@
 
 --
 
+<%= gettext "Need some help? Something not working properly?" %>
+
+<%= gettext "Ask the community on Framacolibri" %> https://framacolibri.org/c/mobilizon/test-mobilizon
+
 <%= gettext "%{instance} is a Mobilizon server.", instance: @instance[:name] %> <%= gettext "Learn more about Mobilizon:" %> https://joinmobilizon.org
