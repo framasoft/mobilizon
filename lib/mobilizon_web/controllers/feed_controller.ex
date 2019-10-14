@@ -8,7 +8,7 @@ defmodule MobilizonWeb.FeedController do
 
   def actor(conn, %{"name" => name, "format" => "atom"}) do
     case Cachex.fetch(:feed, "actor_" <> name) do
-      {:commit, data} ->
+      {status, data} when status in [:commit, :ok] ->
         conn
         |> put_resp_content_type("application/atom+xml")
         |> send_resp(200, data)
@@ -20,7 +20,7 @@ defmodule MobilizonWeb.FeedController do
 
   def actor(conn, %{"name" => name, "format" => "ics"}) do
     case Cachex.fetch(:ics, "actor_" <> name) do
-      {:commit, data} ->
+      {status, data} when status in [:commit, :ok] ->
         conn
         |> put_resp_content_type("text/calendar")
         |> send_resp(200, data)
@@ -32,7 +32,7 @@ defmodule MobilizonWeb.FeedController do
 
   def event(conn, %{"uuid" => uuid, "format" => "ics"}) do
     case Cachex.fetch(:ics, "event_" <> uuid) do
-      {:commit, data} ->
+      {status, data} when status in [:commit, :ok] ->
         conn
         |> put_resp_content_type("text/calendar")
         |> send_resp(200, data)
@@ -44,7 +44,7 @@ defmodule MobilizonWeb.FeedController do
 
   def going(conn, %{"token" => token, "format" => "ics"}) do
     case Cachex.fetch(:ics, "token_" <> token) do
-      {:commit, data} ->
+      {status, data} when status in [:commit, :ok] ->
         conn
         |> put_resp_content_type("text/calendar")
         |> send_resp(200, data)
@@ -56,7 +56,7 @@ defmodule MobilizonWeb.FeedController do
 
   def going(conn, %{"token" => token, "format" => "atom"}) do
     case Cachex.fetch(:feed, "token_" <> token) do
-      {:commit, data} ->
+      {status, data} when status in [:commit, :ok] ->
         conn
         |> put_resp_content_type("application/atom+xml")
         |> send_resp(200, data)

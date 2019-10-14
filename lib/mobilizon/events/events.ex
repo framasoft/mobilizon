@@ -298,6 +298,8 @@ defmodule Mobilizon.Events do
             })
         end
 
+        Cachex.del(:ics, "event_#{new_event.uuid}")
+
         Mobilizon.Service.Events.Tool.calculate_event_diff_and_send_notifications(
           old_event,
           new_event,
