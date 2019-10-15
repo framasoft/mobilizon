@@ -15,6 +15,7 @@ describe('Login', () => {
     cy.url().should('include', '/password-reset/send');
     cy.go('back');
 
+    cy.wait(1000);
     cy.get('form').contains('.control a.button', 'Register').click();
     cy.url().should('include', '/register/user');
 
