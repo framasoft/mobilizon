@@ -38,7 +38,7 @@
           </div>
 
           <b-field :label="$t('Website / URL')">
-            <b-input icon="link" v-model="event.onlineAddress" placeholder="URL" />
+            <b-input icon="link" type="url" v-model="event.onlineAddress" placeholder="URL" />
           </b-field>
 
           <!--<b-field :label="$t('Category')">
