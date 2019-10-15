@@ -359,7 +359,8 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
         context.conn
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "User with email not found"
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "No user with this email was found"
     end
 
     test "register_person/3 can't be called with an existing profile", context do
@@ -780,7 +781,34 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
         context.conn
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "User with email not found"
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "No user with this email was found"
+    end
+
+    test "test login_user/3 with unconfirmed user", context do
+      {:ok, %User{} = user} = Users.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
+
+      mutation = """
+          mutation {
+            login(
+                  email: "#{user.email}",
+                  password: "#{user.password}",
+              ) {
+                accessToken,
+                user {
+                  default_actor {
+                    preferred_username,
+                  }
+                }
+              }
+            }
+      """
+
+      res =
+        context.conn
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] == "User account not confirmed"
     end
   end
 

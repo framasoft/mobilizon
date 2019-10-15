@@ -49,15 +49,11 @@ export const errors: IError[] = [
     suggestRefresh: false,
   },
   {
-    match: /^User with email not found$/,
+    match: /^No user with this email was found$/,
     value: null,
   },
   {
     match: /^Username is already taken$/,
-    value: null,
-  },
-  {
-    match: /^No user with this email was found$/,
     value: null,
   },
   {
@@ -70,6 +66,10 @@ export const errors: IError[] = [
   },
   {
     match: /^This email is already used.$/,
+    value: null,
+  },
+  {
+    match: /^User account not confirmed$/,
     value: null,
   },
 ];

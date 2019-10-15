@@ -3,14 +3,27 @@
     <b-message v-if="errorCode === LoginErrorCode.NEED_TO_LOGIN" title="Info" type="is-info">
       {{ $t('You need to login.') }}
     </b-message>
-
     <section v-if="!currentUser.isLoggedIn">
       <div class="columns is-mobile is-centered">
         <div class="column is-half-desktop">
           <h1 class="title">
             {{ $t('Welcome back!') }}
           </h1>
-          <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">{{ error }}</b-message>
+          <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">
+            <span v-if="error === LoginError.USER_NOT_CONFIRMED">
+              <span>{{ $t("The user account you're trying to login as has not been confirmed yet. Check your email inbox and eventually your spam folder.") }}</span>
+              <i18n path="You may also ask to {resend_confirmation_email}.">
+                <router-link slot="resend_confirmation_email" :to="{ name: RouteName.RESEND_CONFIRMATION }">{{ $t('resend confirmation email') }}</router-link>
+              </i18n>
+            </span>
+            <span v-if="error === LoginError.USER_EMAIL_PASSWORD_INVALID">
+              {{ $t('Impossible to login, your email or password seems incorrect.') }}
+            </span>
+            <!-- TODO: Shouldn't we hide this information ? -->
+            <span v-if="error === LoginError.USER_DOES_NOT_EXIST">
+              {{ $t('No user account with this email was found. Maybe you made a typo?') }}
+            </span>
+          </b-message>
           <form @submit="loginAction">
             <b-field :label="$t('Email')">
               <b-input aria-required="true" required type="email" v-model="credentials.email"/>
@@ -67,7 +80,7 @@ import { ILogin } from '@/types/login.model';
 import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
 import { onLogin } from '@/vue-apollo';
 import { RouteName } from '@/router';
-import { LoginErrorCode } from '@/types/login-error-code.model';
+import { LoginErrorCode, LoginError } from '@/types/login-error-code.model';
 import { ICurrentUser } from '@/types/current-user.model';
 import { CONFIG } from '@/graphql/config';
 import { IConfig } from '@/types/config.model';
@@ -95,6 +108,7 @@ export default class Login extends Vue {
   @Prop({ type: String, required: false, default: '' }) password!: string;
 
   LoginErrorCode = LoginErrorCode;
+  LoginError = LoginError;
 
   errorCode: LoginErrorCode | null = null;
   config!: IConfig;
@@ -106,7 +120,6 @@ export default class Login extends Vue {
     email: '',
     password: '',
   };
-  validationSent = false;
 
   errors: string[] = [];
   rules = {

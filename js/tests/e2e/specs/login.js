@@ -37,7 +37,7 @@ describe('Login', () => {
     cy.get('input[type=password]').type('badPassword').should('have.value', 'badPassword');
     cy.contains('button.button.is-primary.is-large', 'Login').click();
 
-    cy.contains('.message.is-danger', 'User with email not found');
+    cy.contains('.message.is-danger', 'No user account with this email was found. Maybe you made a typo?');
   });
 
   it('Tries to login with valid credentials', () => {
@@ -56,7 +56,7 @@ describe('Login', () => {
     cy.get('input[type=email]').type('unconfirmed@email.com');
     cy.get('input[type=password]').type('some password');
     cy.get('form').submit();
-    cy.contains('.message.is-danger', 'User with email not found');
+    cy.contains('.message.is-danger', 'The user account you\'re trying to login as has not been confirmed yet. Check your email inbox and eventually your spam folder.You may also ask to resend confirmation email.');
   });
 
   it('Tries to login with valid credentials, confirmed account but no profile', () => {
