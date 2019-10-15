@@ -25,9 +25,12 @@
         </div>
       </section>
     <div class="container" v-if="config">
-      <section v-if="currentActor.id && welcomeBack">
-        <b-message type="is-info">
-          {{ $t('Welcome back {username}', { username: currentActor.displayName() }) }}
+      <section v-if="currentActor.id">
+        <b-message type="is-info" v-if="welcomeBack">
+          {{ $t('Welcome back {username}!', { username: currentActor.displayName() }) }}
+        </b-message>
+        <b-message type="is-info" v-if="newRegisteredUser">
+          {{ $t('Welcome to Mobilizon, {username}!', { username: currentActor.displayName() }) }}
         </b-message>
       </section>
       <section v-if="currentActor.id && goingToEvents.size > 0" class="container">
@@ -187,8 +190,17 @@ export default class Home extends Vue {
     return window.localStorage.getItem('welcome-back') === 'yes';
   }
 
+  get newRegisteredUser() {
+    return window.localStorage.getItem('new-registered-user') === 'yes';
+  }
+
   mounted() {
-    window.localStorage.removeItem('welcome-back');
+    if (window.localStorage.getItem('welcome-back')) {
+      window.localStorage.removeItem('welcome-back');
+    }
+    if (window.localStorage.getItem('new-registered-user')) {
+      window.localStorage.removeItem('new-registered-user');
+    }
   }
 
   isToday(date: Date) {

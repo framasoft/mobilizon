@@ -108,6 +108,7 @@ export default class Register extends Vue {
       });
       if (data) {
         this.validationSent = true;
+        window.localStorage.setItem('new-registered-user', 'yes');
 
         if (this.userAlreadyActivated) {
           await changeIdentity(this.$apollo.provider.defaultClient, data.registerPerson);
