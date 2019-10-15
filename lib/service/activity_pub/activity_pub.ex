@@ -480,7 +480,7 @@ defmodule Mobilizon.Service.ActivityPub do
   end
 
   @doc """
-  Create an actor locally by it's URL (AP ID)
+  Create an actor locally by its URL (AP ID)
   """
   @spec make_actor_from_url(String.t(), boolean()) :: {:ok, %Actor{}} | {:error, any()}
   def make_actor_from_url(url, preload \\ false) do
@@ -520,7 +520,7 @@ defmodule Mobilizon.Service.ActivityPub do
   def find_or_make_group_from_nickname(nick), do: find_or_make_actor_from_nickname(nick, :Group)
 
   @doc """
-  Create an actor inside our database from username, using WebFinger to find out it's AP ID and then fetch it
+  Create an actor inside our database from username, using WebFinger to find out its AP ID and then fetch it
   """
   @spec make_actor_from_nickname(String.t()) :: {:ok, %Actor{}} | {:error, any()}
   def make_actor_from_nickname(nickname) do
@@ -611,7 +611,7 @@ defmodule Mobilizon.Service.ActivityPub do
     )
   end
 
-  # Fetching a remote actor's information through it's AP ID
+  # Fetching a remote actor's information through its AP ID
   @spec fetch_and_prepare_actor_from_url(String.t()) :: {:ok, struct()} | {:error, atom()} | any()
   defp fetch_and_prepare_actor_from_url(url) do
     Logger.debug("Fetching and preparing actor from url")

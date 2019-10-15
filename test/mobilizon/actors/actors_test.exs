@@ -72,7 +72,7 @@ defmodule Mobilizon.ActorsTest do
       assert actor_id == Users.get_actor_for_user(user).id
     end
 
-    test "get_actor_with_preload/1 returns the actor with it's organized events", %{
+    test "get_actor_with_preload/1 returns the actor with its organized events", %{
       actor: actor
     } do
       assert Actors.get_actor_with_preload(actor.id).organized_events == []
@@ -113,7 +113,7 @@ defmodule Mobilizon.ActorsTest do
       end
     end
 
-    test "get_local_actor_by_name_with_preload!/1 returns the local actor with it's organized events",
+    test "get_local_actor_by_name_with_preload!/1 returns the local actor with its organized events",
          %{
            actor: actor
          } do
@@ -130,7 +130,7 @@ defmodule Mobilizon.ActorsTest do
       assert event_found_id == event.id
     end
 
-    test "get_actor_by_name_with_preload!/1 returns the local actor with it's organized events",
+    test "get_actor_by_name_with_preload!/1 returns the local actor with its organized events",
          %{
            actor: actor
          } do
@@ -147,7 +147,7 @@ defmodule Mobilizon.ActorsTest do
       assert event_found_id == event.id
     end
 
-    test "get_actor_by_name_with_preload!/1 returns the remote actor with it's organized events" do
+    test "get_actor_by_name_with_preload!/1 returns the remote actor with its organized events" do
       use_cassette "actors/remote_actor_mastodon_tcit" do
         with {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_by_url(@remote_account_url) do
           assert Actors.get_actor_by_name_with_preload(
@@ -230,7 +230,7 @@ defmodule Mobilizon.ActorsTest do
       refute actor.suspended
     end
 
-    test "update_actor/2 with valid data updates the actor and it's media files", %{
+    test "update_actor/2 with valid data updates the actor and its media files", %{
       actor: %Actor{avatar: %{url: avatar_url}, banner: %{url: banner_url}} = actor
     } do
       %URI{path: "/media/" <> avatar_path} = URI.parse(avatar_url)

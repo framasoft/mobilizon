@@ -141,7 +141,7 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "The event has already reached it's maximum capacity"
+               "The event has already reached its maximum capacity"
     end
 
     test "actor_join_event/3 should check the actor is owned by the user", %{

@@ -7,7 +7,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
   @non_existent_username "nonexistent"
 
   describe "Person Resolver" do
-    test "get_person/3 returns a person by it's username", context do
+    test "get_person/3 returns a person by its username", context do
       user = insert(:user)
       actor = insert(:actor, user: user)
 
@@ -44,7 +44,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
                "Person with ID 6895567 not found"
     end
 
-    test "find_person/3 returns a person by it's username", context do
+    test "find_person/3 returns a person by its username", context do
       user = insert(:user)
       actor = insert(:actor, user: user)
 

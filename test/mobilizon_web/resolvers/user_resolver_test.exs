@@ -18,7 +18,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
   @valid_single_actor_params %{preferred_username: "test2", keys: "yolo"}
 
   describe "Resolver: Get an user" do
-    test "find_user/3 returns an user by it's id", context do
+    test "find_user/3 returns an user by its id", context do
       user = insert(:user)
 
       query = """

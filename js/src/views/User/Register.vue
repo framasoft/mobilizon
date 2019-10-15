@@ -25,7 +25,7 @@
           <div class="content">
             <h2 class="title">{{ $t('About this instance') }}</h2>
             <p>
-              {{ $t("Your local administrator resumed it's policy:") }}
+              {{ $t("Your local administrator resumed its policy:") }}
             </p>
             <ul>
               <li>{{ $t('Enjoy discovering Mobilizon!') }}</li>

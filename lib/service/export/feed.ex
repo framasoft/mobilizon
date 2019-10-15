@@ -54,7 +54,7 @@ defmodule Mobilizon.Service.Export.Feed do
     end
   end
 
-  # Build an atom feed from actor and it's public events
+  # Build an atom feed from actor and its public events
   @spec build_actor_feed(Actor.t(), list(), boolean()) :: String.t()
   defp build_actor_feed(%Actor{} = actor, events, public \\ true) do
     display_name = Actor.display_name(actor)
@@ -159,7 +159,7 @@ defmodule Mobilizon.Service.Export.Feed do
     |> Enum.map(&Events.get_event_with_preload!/1)
   end
 
-  # Build an atom feed from actor and it's public events
+  # Build an atom feed from actor and its public events
   @spec build_user_feed(list(), User.t(), String.t()) :: String.t()
   defp build_user_feed(events, %User{email: email}, token) do
     self_url = Endpoint |> Routes.feed_url(:going, token, "atom") |> URI.decode()
