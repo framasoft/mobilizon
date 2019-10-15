@@ -315,7 +315,7 @@
 	"with another identity…": "with another identity…",
 	"with {identity}": "with {identity}",
 	"{approved} / {total} seats": "{approved} / {total} seats",
-	"{count} participants": "{count} participants",
+	"{count} participants": "No participants yet | One participant | {count} participants",
 	"{count} requests waiting": "{count} requests waiting",
 	"{license} guarantees {respect} of the people who will use it. Since {source}, anyone can audit it, which guarantees its transparency.": "{license} guarantees {respect} of the people who will use it. Since {source}, anyone can audit it, which guarantees its transparency.",
 	"© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks"

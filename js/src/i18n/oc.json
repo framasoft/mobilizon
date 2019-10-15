@@ -117,7 +117,7 @@
     "About this event": "Tocant aqueste eveniment",
     "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© Loscontribuidors de Mobilizon {date} - Fach amb Elixir, Phoenix, VueJS e d’amor e de setmanas",
     "{count} requests waiting": "Una demanda en espèra|{count} demandas en espèra",
-    "{count} participants": "Un participant|{count} participants",
+    "{count} participants": "Aucun participant|Un participant|{count} participants",
     "{approved} / {total} seats": "{approved} / {total} plaças",
     "You need to login.": "Vos cal vos connectar.",
     "You are an organizer.": "Sètz un organizaire.",

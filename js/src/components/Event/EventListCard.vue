@@ -55,7 +55,7 @@ export default {
     <div class="columns">
       <div class="content column">
         <div class="title-wrapper">
-          <div class="date-component" v-if="!mergedOptions.hideDate">
+          <div class="date-component">
             <date-calendar-icon :date="participation.event.beginsOn" />
           </div>
           <h2 class="title">{{ participation.event.title }}</h2>
@@ -63,7 +63,7 @@ export default {
         <div class="participation-actor has-text-grey">
           <span v-if="participation.event.physicalAddress && participation.event.physicalAddress.locality">{{ participation.event.physicalAddress.locality }} - </span>
           <span>
-            {{ $t('Organized by {name}', { name: participation.event.organizerActor.displayName() } ) }}</span>
+            <span>{{ $t('Organized by {name}', { name: participation.event.organizerActor.displayName() } ) }}</span>
             <span v-if="participation.role === ParticipantRole.PARTICIPANT">{{ $t('Going as {name}', { name: participation.actor.displayName() }) }}</span>
           </span>
         </div>
@@ -74,9 +74,6 @@ export default {
             <b-icon icon="lock" v-if="participation.event.visibility === EventVisibility.PRIVATE" />
           </span>
           <span class="column is-narrow participant-stats">
-<!--            <span v-if="participation.event.options.maximumAttendeeCapacity !== 0">-->
-<!--              {{ $tc('{count} participants', participation.event.participantStats.participants, { count: participation.event.participantStats.participants })}}-->
-<!--            </span>-->
             <span v-if="participation.event.options.maximumAttendeeCapacity !== 0">
               {{ $t('{approved} / {total} seats', {approved: participation.event.participantStats.participants, total: participation.event.options.maximumAttendeeCapacity }) }}
 <!--              <b-progress-->
@@ -85,7 +82,9 @@ export default {
 <!--                      :value="participation.event.participantStats.participants * 100 / participation.event.options.maximumAttendeeCapacity">-->
 <!--              </b-progress>-->
             </span>
-            <span v-else>{{ $t('No participants yet') }}</span>
+            <span v-else>
+              {{ $tc('{count} participants', participation.event.participantStats.participants, { count: participation.event.participantStats.participants })}}
+            </span>
             <span
               v-if="participation.event.participantStats.unapproved > 0">
               <b-button type="is-text" @click="gotToWithCheck(participation, { name: RouteName.PARTICIPATIONS, params: { eventId: participation.event.uuid } })">
