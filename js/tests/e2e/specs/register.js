@@ -66,6 +66,6 @@ describe('Registration', () => {
     });
 
     cy.get('.navbar-link span.icon i').should('have.class', 'mdi-account-circle');
-    cy.contains('article.message.is-info', 'Welcome back tester account');
+    cy.contains('article.message.is-info', 'Welcome to Mobilizon, tester account!');
   });
 });
