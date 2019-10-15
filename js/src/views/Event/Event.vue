@@ -795,6 +795,10 @@ export default class Event extends EventMixin {
         list-style-type: disc;
       }
 
+      /deep/ li {
+        margin: 10px auto 10px 2rem;
+      }
+
       /deep/ blockquote {
         border-left: .2em solid #333;
         display: block;
