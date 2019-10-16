@@ -24,4 +24,3 @@ NoNewPrivileges=true
 
 [Install]
 WantedBy=multi-user.target
-Alias=mobilizon.service
