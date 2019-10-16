@@ -9,6 +9,8 @@ To launch all the tests:
 mix test
 ```
 
+> If you're using Docker, you can use `make test`
+
 If you want test coverage:
 
 ```bash
@@ -40,6 +42,11 @@ Not done yet.
 ### End-to-end tests
 
 We use [Cypress](https://cypress.io) for End-to-end testing.
+
+You first need to run the webserver with the `e2e` environment: `MIX_ENV=e2e mix phx.server`. The same environment parameters as the `dev` environment must be provided.
+This allows to run database operations in the sandbox and not pollute your database.
+
+Then, run `MIX_ENV=e2e mix run priv/repo/e2e.seed.exs` to have some initial data inside your instance for the tests.
 
 When inside the `js` directory, you can do either
 ```bash

@@ -39,4 +39,4 @@ Just run :
 ```bash
 make start
 ```
-to build and launch a database container and an API container running on localhost.
+to build and launch a database container and an API container running on `localhost:4000`.

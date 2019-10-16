@@ -30,7 +30,7 @@ services:
       MOBILIZON_DATABASE_USERNAME: postgres
       MOBILIZON_DATABASE_DBNAME: mobilizon_dev
       MOBILIZON_DATABASE_HOST: postgres
-    command: "mix phx.deps_migrate_serve"
+    command: "mix phx.server"
 volumes:
   pgdata:
   .:
