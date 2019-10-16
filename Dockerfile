@@ -7,4 +7,4 @@ RUN mix local.hex --force && mix local.rebar --force
 
 WORKDIR /app
 
-EXPOSE 4000 4001 4002
+EXPOSE 4000
