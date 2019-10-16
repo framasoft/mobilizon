@@ -24,7 +24,7 @@ defmodule Mobilizon.Media do
   def get_picture!(id), do: Repo.get!(Picture, id)
 
   @doc """
-  Get a picture by it's URL.
+  Get a picture by its URL.
   """
   @spec get_picture_by_url(String.t()) :: Picture.t() | nil
   def get_picture_by_url(url) do

@@ -14,7 +14,7 @@ defmodule MobilizonWeb.Resolvers.User do
   require Logger
 
   @doc """
-  Find an user by it's ID
+  Find an user by its ID
   """
   def find_user(_parent, %{id: id}, _resolution) do
     Users.get_user_with_actors(id)
@@ -128,7 +128,7 @@ defmodule MobilizonWeb.Resolvers.User do
   end
 
   @doc """
-  Validate an user, get it's actor and a token
+  Validate an user, get its actor and a token
   """
   def validate_user(_parent, %{token: token}, _resolution) do
     with {:check_confirmation_token, {:ok, %User{} = user}} <-

@@ -74,7 +74,7 @@ defmodule Mobilizon.UsersTest do
                Users.authenticate(%{user: user, password: "bad password"})
     end
 
-    test "get_user_by_email/1 finds an user by it's email" do
+    test "get_user_by_email/1 finds an user by its email" do
       {:ok, %User{email: email} = user} = Users.register(%{email: @email, password: @password})
 
       assert email == @email
@@ -83,7 +83,7 @@ defmodule Mobilizon.UsersTest do
       assert {:error, :user_not_found} = Users.get_user_by_email("no email")
     end
 
-    test "get_user_by_email/1 finds an activated user by it's email" do
+    test "get_user_by_email/1 finds an activated user by its email" do
       {:ok, %User{} = user} = Users.register(%{email: @email, password: @password})
 
       {:ok, %User{id: id}} = Users.get_user_by_email(@email, false)

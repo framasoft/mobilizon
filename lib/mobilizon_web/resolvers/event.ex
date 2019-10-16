@@ -172,7 +172,7 @@ defmodule MobilizonWeb.Resolvers.Event do
       {:ok, participant}
     else
       {:maximum_attendee_capacity, _} ->
-        {:error, "The event has already reached it's maximum capacity"}
+        {:error, "The event has already reached its maximum capacity"}
 
       {:has_event, _} ->
         {:error, "Event with this ID #{inspect(event_id)} doesn't exist"}
@@ -329,7 +329,7 @@ defmodule MobilizonWeb.Resolvers.Event do
 
   # If we have an attached picture, just transmit it. It will be handled by
   # Mobilizon.Service.ActivityPub.Utils.make_picture_data/1
-  # However, we need to pass it's actor ID
+  # However, we need to pass its actor ID
   @spec save_attached_picture(map()) :: {:ok, map()}
   defp save_attached_picture(
          %{picture: %{picture: %{file: %Plug.Upload{} = _picture} = all_pic}} = args

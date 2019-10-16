@@ -1134,10 +1134,10 @@ type RootQueryType {
   """Get all events"""
   events(limit: Int = 10, page: Int = 1): [Event]
 
-  """Get a person by it's (federated) username"""
+  """Get a person by its (federated) username"""
   fetchPerson(preferredUsername: String!): Person
 
-  """Get a group by it's preferred username"""
+  """Get a group by its preferred username"""
   group(preferredUsername: String!): Group
 
   """Get all groups"""
@@ -1152,7 +1152,7 @@ type RootQueryType {
   """Get the current user"""
   loggedUser: User
 
-  """Get a person by it's ID"""
+  """Get a person by its ID"""
   person(id: ID!): Person
 
   """Get a picture"""

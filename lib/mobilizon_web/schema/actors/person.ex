@@ -70,13 +70,13 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
       resolve(&Person.get_current_person/3)
     end
 
-    @desc "Get a person by it's (federated) username"
+    @desc "Get a person by its (federated) username"
     field :fetch_person, :person do
       arg(:preferred_username, non_null(:string))
       resolve(&Person.fetch_person/3)
     end
 
-    @desc "Get a person by it's ID"
+    @desc "Get a person by its ID"
     field :person, :person do
       arg(:id, non_null(:id))
       resolve(&Person.get_person/3)

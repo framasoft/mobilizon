@@ -89,7 +89,7 @@ defmodule MobilizonWeb.Schema.Actors.GroupType do
       resolve(&Group.list_groups/3)
     end
 
-    @desc "Get a group by it's preferred username"
+    @desc "Get a group by its preferred username"
     field :group, :group do
       arg(:preferred_username, non_null(:string))
       resolve(&Group.find_group/3)

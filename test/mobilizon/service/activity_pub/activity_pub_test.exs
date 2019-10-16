@@ -42,7 +42,7 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
     end
   end
 
-  describe "fetching actor from it's url" do
+  describe "fetching actor from its url" do
     test "returns an actor from nickname" do
       use_cassette "activity_pub/fetch_tcit@framapiaf.org" do
         assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"} = actor} =

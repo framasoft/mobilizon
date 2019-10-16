@@ -106,7 +106,7 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
                group.preferred_username
     end
 
-    test "find_group/3 returns a group by it's username", context do
+    test "find_group/3 returns a group by its username", context do
       group = insert(:group)
 
       query = """
