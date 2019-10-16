@@ -73,7 +73,7 @@ defmodule MobilizonWeb.API.Events do
 
   defp prepare_args(args) do
     with %Actor{} = organizer_actor <- Map.get(args, :organizer_actor),
-         title <- args |> Map.get(:title, "") |> String.trim(),
+         title <- args |> Map.get(:title, "") |> HtmlSanitizeEx.strip_tags() |> String.trim(),
          visibility <- Map.get(args, :visibility, :public),
          description <- Map.get(args, :description),
          tags <- Map.get(args, :tags),

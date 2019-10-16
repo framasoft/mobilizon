@@ -119,6 +119,48 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       assert json_response(res, 200)["data"]["createEvent"]["title"] == "come to my event"
     end
 
+    test "create_event/3 creates an event and escapes title and description", %{
+      conn: conn,
+      actor: actor,
+      user: user
+    } do
+      mutation = """
+          mutation createEvent($title: String!, $description: String, $begins_on: DateTime, $organizer_actor_id: ID!) {
+              createEvent(
+                  title: $title,
+                  description: $description,
+                  begins_on: $begins_on,
+                  organizer_actor_id: $organizer_actor_id
+              ) {
+                title,
+                description,
+                uuid
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: mutation,
+          variables: %{
+            title:
+              "My Event title <img src=\"http://placekitten.com/g/200/300\" onclick=\"alert('aaa')\" >",
+            description:
+              "<b>My description</b> <img src=\"http://placekitten.com/g/200/300\" onclick=\"alert('aaa')\" >",
+            begins_on: DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601(),
+            organizer_actor_id: "#{actor.id}"
+          }
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["createEvent"]["title"] == "My Event title"
+
+      assert res["data"]["createEvent"]["description"] ==
+               "<b>My description</b> <img src=\"http://placekitten.com/g/200/300\" />"
+    end
+
     test "create_event/3 creates an event as a draft", %{conn: conn, actor: actor, user: user} do
       mutation = """
           mutation {
