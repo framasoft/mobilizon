@@ -15,10 +15,18 @@ import {ParticipantRole} from "@/types/event.model";
                 <div class="title-and-informations">
                   <h1 class="title">{{ event.title }}</h1>
                   <span>
-                    <small v-if="event.participantStats.approved > 0 && !actorIsParticipant">
+                    <router-link v-if="actorIsOrganizer" :to="{ name: RouteName.PARTICIPATIONS, params: {eventId: event.uuid}}">
+                      <small v-if="event.participantStats.approved > 0 && !actorIsParticipant">
+                        {{ $tc('One person is going', event.participantStats.approved, {approved: event.participantStats.approved}) }}
+                      </small>
+                      <small v-else-if="event.participantStats.approved > 0 && actorIsParticipant">
+                        {{ $tc('You and one other person are going to this event', event.participantStats.participants, { approved: event.participantStats.participants }) }}
+                      </small>
+                    </router-link>
+                    <small v-if="event.participantStats.approved > 0 && !actorIsParticipant && !actorIsOrganizer">
                       {{ $tc('One person is going', event.participantStats.approved, {approved: event.participantStats.approved}) }}
                     </small>
-                    <small v-else-if="event.participantStats.approved > 0 && actorIsParticipant">
+                    <small v-else-if="event.participantStats.approved > 0 && actorIsParticipant && !actorIsOrganizer">
                       {{ $tc('You and one other person are going to this event', event.participantStats.participants, { approved: event.participantStats.participants }) }}
                     </small>
                     <small v-if="event.options.maximumAttendeeCapacity">
