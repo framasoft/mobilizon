@@ -177,7 +177,7 @@ defmodule MobilizonWeb.Resolvers.Person do
       {:ok, new_person}
     else
       {:error, :user_not_found} ->
-        {:error, "User with email not found"}
+        {:error, "No user with this email was found"}
 
       {:no_actor, _} ->
         {:error, "You already have a profile for this user"}

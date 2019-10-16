@@ -67,13 +67,16 @@ defmodule MobilizonWeb.Resolvers.User do
   Login an user. Returns a token and the user
   """
   def login_user(_parent, %{email: email, password: password}, _resolution) do
-    with {:ok, %User{} = user} <- Users.get_user_by_email(email, true),
+    with {:ok, %User{confirmed_at: %DateTime{}} = user} <- Users.get_user_by_email(email),
          {:ok, %{access_token: access_token, refresh_token: refresh_token}} <-
            Users.authenticate(%{user: user, password: password}) do
       {:ok, %{access_token: access_token, refresh_token: refresh_token, user: user}}
     else
+      {:ok, %User{confirmed_at: nil} = _user} ->
+        {:error, "User account not confirmed"}
+
       {:error, :user_not_found} ->
-        {:error, "User with email not found"}
+        {:error, "No user with this email was found"}
 
       {:error, :unauthorized} ->
         {:error, "Impossible to authenticate, either your email or password are invalid."}
