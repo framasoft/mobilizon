@@ -178,10 +178,10 @@ Mobilizon can be developed locally. For instructions on how to do this, please s
 
 #### How to make changes
 
-* Make your changes on a separate branch which includes an issue number e.g. `1234-some-new-feature` where 1234 is the issue number where the feature is documented. Make sure the branch is based on `develop`.
+* Make your changes on a separate branch which includes an issue number e.g. `1234-some-new-feature` where 1234 is the issue number where the feature is documented. Make sure the branch is based on `master`.
 * Do not commit changes to files that are irrelevant to your feature or bugfix.
 * Use commit messages descriptive of your changes.
-* Push to the upstream of your new branch.
+* Push to your own repository fork.
 * Create a merge request at GitLab.
 
 #### Git commit messages
