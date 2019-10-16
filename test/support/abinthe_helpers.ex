@@ -1,4 +1,7 @@
 defmodule MobilizonWeb.AbsintheHelpers do
+  use Phoenix.ConnTest
+  @endpoint MobilizonWeb.Endpoint
+
   @moduledoc """
   Absinthe helpers for tests
   """
@@ -15,6 +18,22 @@ defmodule MobilizonWeb.AbsintheHelpers do
       "operationName" => "",
       "query" => "#{query}",
       "variables" => ""
+    }
+  end
+
+  def graphql_query(conn, options) do
+    conn
+    |> post(
+      "/api",
+      build_query(options[:query], options[:variables])
+    )
+    |> json_response(200)
+  end
+
+  defp build_query(query, variables) do
+    %{
+      "query" => query,
+      "variables" => variables
     }
   end
 end
