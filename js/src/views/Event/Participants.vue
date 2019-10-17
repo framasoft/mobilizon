@@ -1,6 +1,3 @@
-import {ParticipantRole} from "@/types/event.model";
-import {ParticipantRole} from "@/types/event.model";
-import {ParticipantRole} from "@/types/event.model";
 <template>
     <main class="container">
         <b-tabs type="is-boxed" v-if="event" v-model="activeTab">

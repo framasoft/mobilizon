@@ -277,7 +277,7 @@ import {
     EventVisibility,
     IEvent, ParticipantRole,
   } from '@/types/event.model';
-import { CURRENT_ACTOR_CLIENT, IDENTITIES, LOGGED_USER_DRAFTS, LOGGED_USER_PARTICIPATIONS } from '@/graphql/actor';
+import { CURRENT_ACTOR_CLIENT, LOGGED_USER_DRAFTS, LOGGED_USER_PARTICIPATIONS } from '@/graphql/actor';
 import { IPerson, Person } from '@/types/actor';
 import PictureUpload from '@/components/PictureUpload.vue';
 import EditorComponent from '@/components/Editor.vue';
@@ -289,6 +289,7 @@ import AddressAutoComplete from '@/components/Event/AddressAutoComplete.vue';
 import { buildFileFromIPicture, buildFileVariable, readFileAsync } from '@/utils/image';
 import IdentityPickerWrapper from '@/views/Account/IdentityPickerWrapper.vue';
 import { RouteName } from '@/router';
+import 'intersection-observer';
 
 @Component({
   components: { IdentityPickerWrapper, AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor: EditorComponent },
