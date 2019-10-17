@@ -99,6 +99,7 @@ $mdi-font-path: "~@mdi/font/fonts";
   body {
     // background: #f7f8fa;
     background: #ebebeb;
+    font-family: BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Fira Sans','Droid Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
 
     main {
       margin: 1rem auto 0;
