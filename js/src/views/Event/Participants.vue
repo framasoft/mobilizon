@@ -12,7 +12,7 @@ import {ParticipantRole} from "@/types/event.model";
                 <template>
                   <section v-if="participantsAndCreators.length > 0">
                       <h2 class="title">{{ $t('Participants') }}</h2>
-                      <div class="columns">
+                      <div class="columns is-multiline">
                           <div class="column is-one-quarter-desktop" v-for="participant in participantsAndCreators" :key="participant.actor.id">
                               <participant-card
                                   :participant="participant"
