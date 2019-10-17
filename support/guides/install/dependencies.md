@@ -9,7 +9,7 @@
   1. On a fresh Debian/Ubuntu, as root user, install basic utility programs needed for the installation
 
 ```
-sudo apt install curl sudo unzip vim
+sudo apt install curl unzip vim
 ```
 
   2. It would be wise to disable root access and to continue this tutorial with a user with sudoers group access
@@ -27,7 +27,7 @@ sudo apt install curl sudo unzip vim
 
 ```
 sudo apt update
-sudo apt install nginx postgresql postgresql-contrib openssl make git esl-erlang elixir postgis 
+sudo apt install nginx postgresql postgresql-contrib openssl make git esl-erlang elixir postgis imagemagick
 ```
 
 Now that dependencies are installed, before running Mobilizon you should start PostgreSQL:
@@ -40,7 +40,7 @@ sudo systemctl start postgresql
   1. Run:
 
 ```
-sudo pacman -S nodejs postgresql openssl git wget unzip base-devel yarn nginx elixir postgis
+sudo pacman -S nodejs postgresql openssl git wget unzip base-devel yarn nginx elixir postgis imagemagick
 ```
 
 Now that dependencies are installed, before running Mobilizon you should start PostgreSQL and Redis:
