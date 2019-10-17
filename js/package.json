@@ -4,7 +4,7 @@
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --modern",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
@@ -24,6 +24,7 @@
     "buefy": "^0.8.2",
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
+    "intersection-observer": "^0.7.0",
     "leaflet": "^1.4.0",
     "lodash": "^4.17.11",
     "ngeohash": "^0.6.3",
@@ -72,7 +73,7 @@
   },
   "browserslist": [
     ">0.25%",
-    "not ie 11",
+    "ie 11",
     "not op_mini all"
   ],
   "engines": {

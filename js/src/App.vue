@@ -101,7 +101,7 @@ $mdi-font-path: "~@mdi/font/fonts";
     background: #ebebeb;
 
     main {
-      margin: 1rem auto;
+      margin: 1rem auto 0;
     }
   }
 
