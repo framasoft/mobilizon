@@ -17,7 +17,7 @@ erl_crash.dump
 
 .env.production
 .env.test
-.env
+/.env
 .env.2
 
 setup_db.psql

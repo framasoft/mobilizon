@@ -1,6 +1,3 @@
-const Dotenv = require('dotenv-webpack');
-const path = require('path');
-
 module.exports = {
   pluginOptions: {
     webpackBundleAnalyzer: {
@@ -11,9 +8,6 @@ module.exports = {
   runtimeCompiler: true,
   outputDir: '../priv/static',
   configureWebpack: {
-    plugins: [
-      new Dotenv({ path: path.resolve(process.cwd(), '../.env') }),
-    ],
     module: {
       rules: [ // fixes https://github.com/graphql/graphql-js/issues/1272
         {
@@ -28,19 +22,14 @@ module.exports = {
     }
   },
   chainWebpack: config => {
-    config
-        .plugin('html')
-        .tap(args => {
-          args[0].minify = {
-            collapseWhitespace: true,
-            removeComments: false,
-            removeRedundantAttributes: true,
-            removeScriptTypeAttributes: true,
-            removeStyleLinkTypeAttributes: true,
-            useShortDoctype: true
-          };
-          return args
-        });
+    // config
+    //     .plugin('html')
+    //     .tap(args => {
+    //       args[0].minify = {
+    //         removeComments: false,
+    //       };
+    //       return args
+    //     });
 
     config.module
         .rule("vue")

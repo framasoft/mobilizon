@@ -74,7 +74,7 @@ defmodule MobilizonWeb.PageView do
       when page in ["actor.html", "event.html", "comment.html"] do
     with {:ok, index_content} <- File.read(index_file_path()) do
       tags = object |> Metadata.build_tags() |> MetadataUtils.stringify_tags()
-      index_content = String.replace(index_content, "<!--server-generated-meta-->", tags)
+      index_content = String.replace(index_content, "<meta name=server-injected-data>", tags)
       {:safe, index_content}
     end
   end
@@ -82,7 +82,7 @@ defmodule MobilizonWeb.PageView do
   def render("index.html", _assigns) do
     with {:ok, index_content} <- File.read(index_file_path()) do
       tags = Instance.build_tags() |> MetadataUtils.stringify_tags()
-      index_content = String.replace(index_content, "<!--server-generated-meta-->", tags)
+      index_content = String.replace(index_content, "<meta name=server-injected-data>", tags)
       {:safe, index_content}
     end
   end
