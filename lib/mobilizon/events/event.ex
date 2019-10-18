@@ -125,6 +125,7 @@ defmodule Mobilizon.Events.Event do
     |> cast(attrs, @attrs)
     |> cast_embed(:options)
     |> validate_required(@required_attrs)
+    |> validate_lengths()
   end
 
   @doc false
@@ -135,6 +136,18 @@ defmodule Mobilizon.Events.Event do
     |> cast_embed(:options)
     |> put_tags(attrs)
     |> validate_required(@update_required_attrs)
+    |> validate_lengths()
+  end
+
+  @spec validate_lengths(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp validate_lengths(%Ecto.Changeset{} = changeset) do
+    changeset
+    |> validate_length(:title, min: 3, max: 200)
+    |> validate_length(:online_address, min: 3, max: 2000)
+    |> validate_length(:phone_address, min: 3, max: 200)
+    |> validate_length(:category, min: 2, max: 100)
+    # |> validate_length(:category, min: 2, max: 100)
+    |> validate_length(:slug, min: 3, max: 200)
   end
 
   @doc """

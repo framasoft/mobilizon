@@ -36,5 +36,7 @@ defmodule Mobilizon.Events.Tag do
     |> TitleSlug.maybe_generate_slug()
     |> validate_required(@required_attrs)
     |> TitleSlug.unique_constraint()
+    |> validate_length(:title, min: 2, max: 20)
+    |> validate_length(:slug, min: 2, max: 20)
   end
 end
