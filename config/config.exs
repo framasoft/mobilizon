@@ -23,7 +23,7 @@ config :mobilizon, :instance,
   # Federation is to be activated with Mobilizon 1.0.0-beta.2
   federating: false,
   remote_limit: 100_000,
-  upload_limit: 16_000_000,
+  upload_limit: 10_000_000,
   avatar_upload_limit: 2_000_000,
   banner_upload_limit: 4_000_000,
   email_from: System.get_env("MOBILIZON_INSTANCE_EMAIL") || "noreply@localhost",
