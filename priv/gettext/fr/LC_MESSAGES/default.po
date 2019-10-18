@@ -10,15 +10,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-10-11 15:49+0200\n"
-"Last-Translator: Quentin <quentinantonin@free.fr>\n"
-"Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
-"Language: fr_FR\n"
+"PO-Revision-Date: 2019-10-17 14:31+0000\n"
+"Last-Translator: Zilverspar <vuod@vivaldi.net>\n"
+"Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/"
+"backend/fr/>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Weblate 3.9\n"
 
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:48
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:12
@@ -280,4 +281,4 @@ msgstr "L'événement a été confirmé"
 
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:52
 msgid "Event status has been set as tentative"
-msgstr "Le statut de l'événement à été défini comme « à confirmer »"
+msgstr "Le statut de l'événement a été défini comme « à confirmer »"
