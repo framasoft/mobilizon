@@ -1,0 +1,8 @@
+CREATE USER <%= database_username %> WITH ENCRYPTED PASSWORD '<%= database_password %>';
+CREATE DATABASE <%= database_name %> OWNER <%= database_username %>;
+
+\c <%= database_name %>
+
+CREATE EXTENSION postgis;
+CREATE EXTENSION pg_trgm;
+CREATE EXTENSION unaccent;
