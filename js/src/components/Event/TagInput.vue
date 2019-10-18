@@ -39,6 +39,8 @@ export default {
                 :allow-new="true"
                 :field="path"
                 icon="label"
+                maxlength="20"
+                maxtags="10"
                 :placeholder="$t('Eg: Stockholm, Dance, Chess…')"
                 @typing="getFilteredTags"
         >
