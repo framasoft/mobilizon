@@ -31,7 +31,7 @@
     "register-service-worker": "^1.6.2",
     "tippy.js": "^5.0.2",
     "tiptap": "^1.26.0",
-    "tiptap-extensions": "^1.28.0",
+    "tiptap-extensions": "^1.28.4",
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.0-rc.6",
     "vue-class-component": "^7.0.2",
