@@ -98,6 +98,7 @@ defmodule Mobilizon.Mixfile do
        ref: "293d77bb6f4a67ac8bde1428735c3b42f22cbb30"},
       {:html_sanitize_ex, "~> 1.3.0"},
       {:ex_cldr_dates_times, "~> 2.0"},
+      {:ex_optimizer, "~> 0.1"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},

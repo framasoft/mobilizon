@@ -44,7 +44,10 @@ config :mobilizon, MobilizonWeb.Endpoint,
 # Upload configuration
 config :mobilizon, MobilizonWeb.Upload,
   uploader: MobilizonWeb.Uploaders.Local,
-  filters: [MobilizonWeb.Upload.Filter.Dedupe],
+  filters: [
+    MobilizonWeb.Upload.Filter.Dedupe,
+    MobilizonWeb.Upload.Filter.Optimize
+  ],
   link_name: true,
   proxy_remote: false,
   proxy_opts: [
