@@ -20,7 +20,7 @@ erl_crash.dump
 /.env
 .env.2
 
-setup_db.psql
+/setup_db.psql
 
 .elixir_ls
 /doc
