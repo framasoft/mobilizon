@@ -1173,12 +1173,12 @@
     webpack "^4.0.0"
     yorkie "^2.0.0"
 
-"@vue/cli-plugin-unit-mocha@^4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@vue/cli-plugin-unit-mocha/-/cli-plugin-unit-mocha-4.0.3.tgz#5bcd7051b21dc2cd8f0a5a0d8dc07a9305624671"
-  integrity sha512-6qOhc2BGVNrFTr7PvcL7q8iPIGAKvRJGyiXBJHzs8eJnhrsp0FQ+nNHKFtQjfnVOpIaT6va4FUB1/ReRutUYLw==
+"@vue/cli-plugin-unit-mocha@^4.0.4":
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/@vue/cli-plugin-unit-mocha/-/cli-plugin-unit-mocha-4.0.4.tgz#b885013784285b3de25da20ef0bd1b0be8346d3c"
+  integrity sha512-EBNpQQQ/8seE1oo3nc7xU0IItYxle93w+3VQu4+csIA7EylmwZI5jFteM8CQaEQSSFPxsJpkPx1OqOS8LgTagQ==
   dependencies:
-    "@vue/cli-shared-utils" "^4.0.3"
+    "@vue/cli-shared-utils" "^4.0.4"
     jsdom "^15.1.0"
     jsdom-global "^3.0.2"
     mocha "^6.1.4"
@@ -1252,10 +1252,10 @@
     webpack-dev-server "^3.4.1"
     webpack-merge "^4.2.1"
 
-"@vue/cli-shared-utils@^4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@vue/cli-shared-utils/-/cli-shared-utils-4.0.3.tgz#10cc29e8caa3f14cffc0416ddf804cf4d10197b9"
-  integrity sha512-MqNg13fDCfzPmj83Wx8115dlGcvpLXGxL0ZFI+0UgO6kpR+RHvjE/yVpr0a/yW5XqQidUZFN6nY2WaA28wGI+Q==
+"@vue/cli-shared-utils@^4.0.3", "@vue/cli-shared-utils@^4.0.4":
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/@vue/cli-shared-utils/-/cli-shared-utils-4.0.4.tgz#ef94325c3954eaac60ca4af9a6de355131ae6e3f"
+  integrity sha512-f8a9MxZJ89zw783gk2yjG6wPu5IHnmrH8whc1jMJhWNKxRTgCkUxevPVQIobiWy1UtMBdDXXOLxd4PRNK9nyxQ==
   dependencies:
     "@hapi/joi" "^15.0.1"
     chalk "^2.4.1"
