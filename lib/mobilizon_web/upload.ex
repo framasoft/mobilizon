@@ -166,7 +166,7 @@ defmodule MobilizonWeb.Upload do
 
   defp check_file_size(_, _), do: :ok
 
-  @picture_content_types ["image/png", "image/jpg", "image/jpeg", "image/webp"]
+  @picture_content_types ["image/gif", "image/png", "image/jpg", "image/jpeg", "image/webp"]
   # Return whether the upload is a picture or not
   defp get_type(content_type) do
     if content_type in @picture_content_types do

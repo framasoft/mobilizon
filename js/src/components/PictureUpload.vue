@@ -53,7 +53,7 @@ import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
 @Component
 export default class PictureUpload extends Vue {
   @Model('change', { type: File }) readonly pictureFile!: File;
-  @Prop({ type: String, required: false, default: 'image/png,image/jpeg' }) accept;
+  @Prop({ type: String, required: false, default: 'image/gif,image/png,image/jpeg,image/webp' }) accept;
   // @ts-ignore
   @Prop({ type: String, required: false, default() { return this.$t('Avatar'); } }) textFallback!: string;
 

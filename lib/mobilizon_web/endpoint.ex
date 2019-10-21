@@ -41,7 +41,7 @@ defmodule MobilizonWeb.Endpoint do
 
   plug(
     Plug.Parsers,
-    parsers: [:urlencoded, :multipart, :json, Absinthe.Plug.Parser],
+    parsers: [:urlencoded, {:multipart, length: 10_000_000}, :json, Absinthe.Plug.Parser],
     pass: ["*/*"],
     json_decoder: Jason
   )
