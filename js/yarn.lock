@@ -9373,7 +9373,7 @@ pn@^1.1.0:
   resolved "https://registry.yarnpkg.com/pn/-/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"
   integrity sha512-2qHaIQr2VLRFoxe2nASzsV6ef4yOOH+Fi9FBOVH6cqeSgUnoyySPZkxzLuzd+RYOQTRpROA0ztTMqxROKSb/nA==
 
-popper.js@^1.15.0:
+popper.js@^1.16.0:
   version "1.16.0"
   resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.16.0.tgz#2e1816bcbbaa518ea6c2e15a466f4cb9c6e2fbb3"
   integrity sha512-+G+EkOPoE5S/zChTpmBSSDYmhXJ5PsW8eMhH8cP/CQHMFPBG/kC9Y5IIw6qNYgdJ+/COf0ddY2li28iHaZRSjw==
@@ -12135,12 +12135,12 @@ tiny-emitter@^2.0.0:
   resolved "https://registry.yarnpkg.com/tiny-emitter/-/tiny-emitter-2.1.0.tgz#1d1a56edfc51c43e863cbb5382a72330e3555423"
   integrity sha512-NB6Dk1A9xgQPMoGqC5CVXn123gWyte215ONT5Pp5a0yt4nlEoO1ZWeCwpncaekPHXO60i47ihFnZPiRPjRMq4Q==
 
-tippy.js@^5.0.2:
-  version "5.0.3"
-  resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-5.0.3.tgz#f019c1e467addd1087a08e9fb43968195076da4f"
-  integrity sha512-6OVy2/pWuzcphHdEAK/2GPOOsT75AY9D7Xhk9U6WHB/dT737avXtgW1K6ch8jrp81PxbXxHgdmeHRPBnqunwpQ==
+tippy.js@^5.0.4:
+  version "5.0.4"
+  resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-5.0.4.tgz#f170da1029ca1abec76312daee8a5eb4ce73d281"
+  integrity sha512-fH6BLbplvZcupnDpcSAs2b92sEkjCP0pIMhrZ40HTuMAnIhQiuyyvj+R+BIY+jAnlP2x4Jo1/6dEqjYRzVcGfw==
   dependencies:
-    popper.js "^1.15.0"
+    popper.js "^1.16.0"
 
 tiptap-commands@^1.12.3:
   version "1.12.3"
