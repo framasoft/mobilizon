@@ -99,6 +99,7 @@ defmodule Mobilizon.Mixfile do
       {:html_sanitize_ex, "~> 1.3.0"},
       {:ex_cldr_dates_times, "~> 2.0"},
       {:ex_optimizer, "~> 0.1"},
+      {:progress_bar, "~> 2.0"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},
