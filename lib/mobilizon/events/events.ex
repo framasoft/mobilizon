@@ -247,7 +247,7 @@ defmodule Mobilizon.Events do
              role: :creator,
              event_id: event.id
            }) do
-      Search.insert_search_event(event)
+      Task.start(fn -> Search.insert_search_event(event) end)
       {:ok, event}
     else
       # We don't create a creator participant if the event is a draft
@@ -299,7 +299,7 @@ defmodule Mobilizon.Events do
           changes
         )
 
-        Search.update_search_event(new_event)
+        Task.start(fn -> Search.update_search_event(new_event) end)
 
         {:ok, new_event}
       end
