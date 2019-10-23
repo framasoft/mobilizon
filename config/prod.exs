@@ -1,7 +1,10 @@
 import Config
 
 config :mobilizon, MobilizonWeb.Endpoint,
-  http: [:inet6, port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4000],
+  http: [
+    port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4000,
+    transport_options: [socket_opts: [:inet6]]
+  ],
   url: [
     host: System.get_env("MOBILIZON_INSTANCE_HOST") || "mobilizon.me",
     port: 443,
