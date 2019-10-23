@@ -30,7 +30,15 @@ services:
       MOBILIZON_DATABASE_USERNAME: postgres
       MOBILIZON_DATABASE_DBNAME: mobilizon_dev
       MOBILIZON_DATABASE_HOST: postgres
-    command: "mix phx.server"
+    command: >
+      sh -c "cd js &&
+      yarn install &&
+      cd ../ &&
+      mix deps.get &&
+      mix compile &&
+      mix ecto.create &&
+      mix ecto.migrate &&
+      mix phx.server"
 volumes:
   pgdata:
   .:

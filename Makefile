@@ -5,11 +5,6 @@ init:
 start: stop
 	@bash docker/message.sh "starting Mobilizon with docker"
 	docker-compose up -d api
-	docker-compose exec api sh -c "cd js && yarn install && cd ../"
-	docker-compose exec api mix deps.get
-	docker-compose exec api mix compile
-	docker-compose exec api mix ecto.create
-	docker-compose exec api mix ecto.migrate
 	@bash docker/message.sh "started"
 stop:
 	@bash docker/message.sh "stopping Mobilizon"
