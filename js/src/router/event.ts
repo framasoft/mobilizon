@@ -1,6 +1,7 @@
 import EventList from '@/views/Event/EventList.vue';
 import Location from '@/views/Location.vue';
 import { RouteConfig } from 'vue-router';
+import { RouteName } from '@/router/index';
 
 // tslint:disable:space-in-parens
 const participations = () => import(/* webpackChunkName: "participations" */ '@/views/Event/Participants.vue');
@@ -19,6 +20,7 @@ export enum EventRouteName {
   PARTICIPATIONS = 'Participations',
   EVENT = 'Event',
   LOCATION = 'Location',
+  TAG = 'Tag',
 }
 
 export const eventRoutes: RouteConfig[] = [
@@ -72,5 +74,10 @@ export const eventRoutes: RouteConfig[] = [
     component: event,
     props: true,
     meta: { requiredAuth: false },
+  },
+  {
+    path: '/tag/:tag',
+    name: EventRouteName.TAG,
+    redirect: '/search/:tag',
   },
 ];
