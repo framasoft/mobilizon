@@ -66,8 +66,14 @@ import {ParticipantRole} from "@/types/event.model";
                     <b-tag type="is-info" v-if="event.visibility === EventVisibility.PUBLIC">{{ $t('Public event') }}</b-tag>
                     <b-tag type="is-info" v-if="event.visibility === EventVisibility.UNLISTED">{{ $t('Private event') }}</b-tag>
                   </span>
-                  <b-tag type="is-success" v-if="event.tags && event.tags.length > 0" v-for="tag in event.tags" :key="tag.title">{{ tag.title }}</b-tag>
-                  <span v-if="event.tags > 0">⋅</span>
+                  <router-link
+                    v-if="event.tags && event.tags.length > 0"
+                    v-for="tag in event.tags"
+                    :key="tag.title"
+                    :to="{ name: RouteName.TAG, params: { tag: tag.title } }"
+                  >
+                    <b-tag type="is-success" >{{ tag.title }}</b-tag>
+                  </router-link>
                 </p>
                 <div class="date-and-add-to-calendar">
                   <div class="date-and-privacy" v-if="event.beginsOn">
@@ -155,7 +161,7 @@ import {ParticipantRole} from "@/types/event.model";
                 {{ $t("The event organizer didn't add any description.") }}
               </p>
               <div class="columns" v-else>
-                <div class="column is-half description-content" v-html="event.description">
+                <div class="column is-half description-content" ref="eventDescriptionElement" v-html="event.description">
                 </div>
               </div>
             </div>
@@ -242,6 +248,7 @@ import IdentityPicker from '@/views/Account/IdentityPicker.vue';
 import ParticipationButton from '@/components/Event/ParticipationButton.vue';
 import { GraphQLError } from 'graphql';
 import { RouteName } from '@/router';
+import HTML = Mocha.reporters.HTML;
 
 @Component({
   components: {
@@ -329,6 +336,41 @@ export default class Event extends EventMixin {
 
   mounted() {
     this.identity = this.currentActor;
+
+    this.$watch('eventDescription', function (eventDescription) {
+      if (!eventDescription) return;
+      const eventDescriptionElement = this.$refs['eventDescriptionElement'] as HTMLElement;
+
+      eventDescriptionElement.addEventListener('click', ($event) => {
+        // TODO: Find the right type for target
+        let { target } : { target: any } = $event;
+        while (target && target.tagName !== 'A') target = target.parentNode;
+        // handle only links that occur inside the component and do not reference external resources
+        if (target && target.matches('.hashtag') && target.href) {
+          // some sanity checks taken from vue-router:
+          // https://github.com/vuejs/vue-router/blob/dev/src/components/link.js#L106
+          const { altKey, ctrlKey, metaKey, shiftKey, button, defaultPrevented } = $event;
+          // don't handle with control keys
+          if (metaKey || altKey || ctrlKey || shiftKey) return;
+          // don't handle when preventDefault called
+          if (defaultPrevented) return;
+          // don't handle right clicks
+          if (button !== undefined && button !== 0) return;
+          // don't handle if `target="_blank"`
+          if (target && target.getAttribute) {
+            const linkTarget = target.getAttribute('target');
+            if (/\b_blank\b/i.test(linkTarget)) return;
+          }
+          // don't handle same page links/anchors
+          const url = new URL(target.href);
+          const to = url.pathname;
+          if (window.location.pathname !== to && $event.preventDefault) {
+            $event.preventDefault();
+            this.$router.push(to);
+          }
+        }
+      });
+    });
   }
 
   /**
@@ -821,6 +863,10 @@ export default class Event extends EventMixin {
           padding: 0.3rem;
           background: $secondary;
           color: #111;
+
+          &:empty {
+            display: none;
+          }
         }
       }
     }

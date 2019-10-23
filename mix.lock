@@ -97,6 +97,7 @@
   "poison": {:hex, :poison, "4.0.1", "bcb755a16fac91cad79bfe9fc3585bb07b9331e50cfe3420a24bcc2d735709ae", [:mix], [], "hexpm"},
   "poolboy": {:hex, :poolboy, "1.5.2", "392b007a1693a64540cead79830443abf5762f5d30cf50bc95cb2c1aaafa006b", [:rebar3], [], "hexpm"},
   "postgrex": {:hex, :postgrex, "0.15.1", "23ce3417de70f4c0e9e7419ad85bdabcc6860a6925fe2c6f3b1b5b1e8e47bf2f", [:mix], [{:connection, "~> 1.0", [hex: :connection, repo: "hexpm", optional: false]}, {:db_connection, "~> 2.1", [hex: :db_connection, repo: "hexpm", optional: false]}, {:decimal, "~> 1.5", [hex: :decimal, repo: "hexpm", optional: false]}, {:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: true]}], "hexpm"},
+  "progress_bar": {:hex, :progress_bar, "2.0.0", "447285f533b4b8717881fdb7160c7360c2f2ab57276f8904ce6d40482857e573", [:mix], [{:decimal, "~> 1.0", [hex: :decimal, repo: "hexpm", optional: false]}], "hexpm"},
   "ranch": {:hex, :ranch, "1.7.1", "6b1fab51b49196860b733a49c07604465a47bdb78aa10c1c16a3d199f7f8c881", [:rebar3], [], "hexpm"},
   "rdf": {:hex, :rdf, "0.6.2", "1b85e37c135e232febeebda6b04ac4aba5f5e2bb1c3a2a6665ed4ccec19ade70", [:mix], [{:decimal, "~> 1.5", [hex: :decimal, repo: "hexpm", optional: false]}], "hexpm"},
   "rsa_ex": {:hex, :rsa_ex, "0.4.0", "e28dd7dc5236e156df434af0e4aa822384c8866c928e17b785d4edb7c253b558", [:mix], [], "hexpm"},

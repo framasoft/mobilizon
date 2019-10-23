@@ -20,7 +20,7 @@ defmodule MobilizonWeb.Upload.Filter.Optimize do
     optimizers = Config.get([__MODULE__, :optimizers], @default_optimizers)
 
     case ExOptimizer.optimize(file, deps: optimizers) do
-      {:ok, res} ->
+      {:ok, _res} ->
         :ok
 
       {:error, err} ->

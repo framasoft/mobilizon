@@ -12,6 +12,7 @@ defmodule Mobilizon.Events do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
+  alias Mobilizon.Service.Search
 
   alias Mobilizon.Events.{
     Comment,
@@ -246,6 +247,7 @@ defmodule Mobilizon.Events do
              role: :creator,
              event_id: event.id
            }) do
+      Search.insert_search_event(event)
       {:ok, event}
     else
       # We don't create a creator participant if the event is a draft
@@ -259,20 +261,11 @@ defmodule Mobilizon.Events do
     with {:ok, %Event{} = event} <-
            %Event{}
            |> Event.changeset(attrs)
+           |> Ecto.Changeset.put_assoc(:tags, Map.get(attrs, "tags", []))
            |> Repo.insert(),
          %Event{} = event <-
-           Repo.preload(event, [:tags, :organizer_actor, :physical_address, :picture]),
-         {:has_tags, true, _} <- {:has_tags, Map.has_key?(attrs, "tags"), event} do
-      event
-      |> Ecto.Changeset.change()
-      |> Ecto.Changeset.put_assoc(:tags, attrs["tags"])
-      |> Repo.update()
-    else
-      {:has_tags, false, event} ->
-        {:ok, event}
-
-      error ->
-        error
+           Repo.preload(event, [:tags, :organizer_actor, :physical_address, :picture]) do
+      {:ok, event}
     end
   end
 
@@ -305,6 +298,8 @@ defmodule Mobilizon.Events do
           new_event,
           changes
         )
+
+        Search.update_search_event(new_event)
 
         {:ok, new_event}
       end
@@ -418,11 +413,14 @@ defmodule Mobilizon.Events do
   @doc """
   Builds a page struct for events by their name.
   """
-  @spec build_events_by_name(String.t(), integer | nil, integer | nil) :: Page.t()
-  def build_events_by_name(name, page \\ nil, limit \\ nil) do
+  @spec build_events_for_search(String.t(), integer | nil, integer | nil) :: Page.t()
+  def build_events_for_search(name, page \\ nil, limit \\ nil)
+  def build_events_for_search("", _page, _limit), do: %Page{total: 0, elements: []}
+
+  def build_events_for_search(name, page, limit) do
     name
-    |> String.trim()
-    |> events_by_name_query()
+    |> normalize_search_string()
+    |> events_for_search_query()
     |> Page.build_page(page, limit)
   end
 
@@ -1203,16 +1201,49 @@ defmodule Mobilizon.Events do
     )
   end
 
-  @spec events_by_name_query(String.t()) :: Ecto.Query.t()
-  defp events_by_name_query(name) do
-    from(
-      e in Event,
-      where:
-        e.visibility == ^:public and
-          fragment("f_unaccent(?) %> f_unaccent(?)", e.title, ^name),
-      order_by: fragment("word_similarity(?, ?) desc", e.title, ^name),
-      preload: [:organizer_actor]
+  defmacro matching_event_ids_and_ranks(search_string) do
+    quote do
+      fragment(
+        """
+        SELECT event_search.id AS id,
+        ts_rank(
+          event_search.document, plainto_tsquery(unaccent(?))
+        ) AS rank
+        FROM event_search
+        WHERE event_search.document @@ plainto_tsquery(unaccent(?))
+        OR event_search.title ILIKE ?
+        """,
+        ^unquote(search_string),
+        ^unquote(search_string),
+        ^"%#{unquote(search_string)}%"
+      )
+    end
+  end
+
+  @spec events_for_search_query(String.t()) :: Ecto.Query.t()
+  defp events_for_search_query(search_string) do
+    Event
+    |> where([e], e.visibility in ^@public_visibility)
+    |> do_event_for_search_query(search_string)
+  end
+
+  @spec do_event_for_search_query(Ecto.Query.t(), String.t()) :: Ecto.Query.t()
+  defp do_event_for_search_query(query, search_string) do
+    from(event in query,
+      join: id_and_rank in matching_event_ids_and_ranks(search_string),
+      on: id_and_rank.id == event.id,
+      order_by: [desc: id_and_rank.rank]
     )
+  end
+
+  @spec normalize_search_string(String.t()) :: String.t()
+  defp normalize_search_string(search_string) do
+    search_string
+    |> String.downcase()
+    |> String.replace(~r/\n/, " ")
+    |> String.replace(~r/\t/, " ")
+    |> String.replace(~r/\s{2,}/, " ")
+    |> String.trim()
   end
 
   @spec events_by_tags_query([integer], integer) :: Ecto.Query.t()
