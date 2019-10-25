@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Mon Oct 14 2019 19:26:36 GMT+0200 (Central European Summer Time)
+# timestamp: Wed Oct 30 2019 17:12:28 GMT+0100 (Central European Standard Time)
 
 schema {
   query: RootQueryType
@@ -690,17 +690,26 @@ enum ParticipantRoleEnum {
 }
 
 type ParticipantStats {
+  """The number of administrators"""
+  administrator: Int
+
+  """The number of creators"""
+  creator: Int
+
   """The number of approved participants"""
-  approved: Int
+  going: Int
+
+  """The number of moderators"""
+  moderator: Int
+
+  """The number of not approved participants"""
+  notApproved: Int
 
   """The number of simple participants (excluding creators)"""
-  participants: Int
+  participant: Int
 
   """The number of rejected participants"""
   rejected: Int
-
-  """The number of unapproved participants"""
-  unapproved: Int
 }
 
 """
@@ -908,7 +917,7 @@ type RootMutationType {
   changePassword(newPassword: String!, oldPassword: String!): User
 
   """Create a comment"""
-  createComment(actorUsername: String!, text: String!): Comment
+  createComment(actorId: ID!, text: String!): Comment
 
   """Create an event"""
   createEvent(

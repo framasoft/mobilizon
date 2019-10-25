@@ -363,7 +363,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       actor: actor,
       user: user
     } do
-      address = insert(:address)
+      address = %{street: "I am a street, please believe me", locality: "Where ever"}
 
       mutation = """
           mutation {
@@ -383,6 +383,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                 title,
                 uuid,
                 physicalAddress {
+                  id,
                   url,
                   geom,
                   street
@@ -403,8 +404,8 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       assert json_response(res, 200)["data"]["createEvent"]["physicalAddress"]["street"] ==
                address.street
 
-      refute json_response(res, 200)["data"]["createEvent"]["physicalAddress"]["url"] ==
-               address.url
+      address_url = json_response(res, 200)["data"]["createEvent"]["physicalAddress"]["url"]
+      address_id = json_response(res, 200)["data"]["createEvent"]["physicalAddress"]["id"]
 
       mutation = """
           mutation {
@@ -417,12 +418,13 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                   organizer_actor_id: "#{actor.id}",
                   category: "birthday",
                   physical_address: {
-                    url: "#{address.url}"
+                    id: "#{address_id}"
                   }
               ) {
                 title,
                 uuid,
                 physicalAddress {
+                  id,
                   url,
                   geom,
                   street
@@ -443,8 +445,11 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       assert json_response(res, 200)["data"]["createEvent"]["physicalAddress"]["street"] ==
                address.street
 
+      assert json_response(res, 200)["data"]["createEvent"]["physicalAddress"]["id"] ==
+               address_id
+
       assert json_response(res, 200)["data"]["createEvent"]["physicalAddress"]["url"] ==
-               address.url
+               address_url
     end
 
     test "create_event/3 creates an event with an attached picture", %{
@@ -501,7 +506,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                "picture for my event"
     end
 
-    test "create_event/3 creates an event with an picture URL", %{
+    test "create_event/3 creates an event with an picture ID", %{
       conn: conn,
       actor: actor,
       user: user

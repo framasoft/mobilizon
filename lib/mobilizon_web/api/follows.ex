@@ -6,6 +6,7 @@ defmodule MobilizonWeb.API.Follows do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Follower}
   alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Service.ActivityPub.Activity
 
   require Logger
 
@@ -32,17 +33,14 @@ defmodule MobilizonWeb.API.Follows do
   end
 
   def accept(%Actor{} = follower, %Actor{} = followed) do
-    with %Follower{approved: false, id: follow_id, url: follow_url} = follow <-
+    with %Follower{approved: false} = follow <-
            Actors.is_following(follower, followed),
-         activity_follow_url <- "#{MobilizonWeb.Endpoint.url()}/accept/follow/#{follow_id}",
-         data <-
-           ActivityPub.Utils.make_follow_data(followed, follower, follow_url),
-         {:ok, activity, _} <-
+         {:ok, %Activity{} = activity, %Follower{approved: true}} <-
            ActivityPub.accept(
-             %{to: [follower.url], actor: followed.url, object: data},
-             activity_follow_url
-           ),
-         {:ok, %Follower{approved: true}} <- Actors.update_follower(follow, %{"approved" => true}) do
+             :follow,
+             follow,
+             %{approved: true}
+           ) do
       {:ok, activity}
     else
       %Follower{approved: true} ->

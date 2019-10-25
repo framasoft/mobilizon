@@ -14,12 +14,10 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
-  alias Mobilizon.Events.Event
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Converter
   alias Mobilizon.Service.HTTPSignatures.Signature
 
-  alias MobilizonWeb.ActivityPub.ActorView
+  @activity_pub_public_audience "https://www.w3.org/ns/activitystreams#Public"
 
   setup_all do
     HTTPoison.start()
@@ -53,7 +51,7 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
     test "returns an actor from url" do
       use_cassette "activity_pub/fetch_framapiaf.org_users_tcit" do
         assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"}} =
-                 ActivityPub.get_or_fetch_by_url("https://framapiaf.org/users/tcit")
+                 ActivityPub.get_or_fetch_actor_by_url("https://framapiaf.org/users/tcit")
       end
     end
   end
@@ -165,28 +163,15 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
 
     test "it creates an update activity with the new actor data" do
       actor = insert(:actor)
-      actor_data = ActorView.render("actor.json", %{actor: actor})
-      actor_data = Map.put(actor_data, "summary", @updated_actor_summary)
+      actor_data = %{summary: @updated_actor_summary}
 
-      {:ok, update, updated_actor} =
-        ActivityPub.update(%{
-          actor: actor_data["url"],
-          to: [actor.url <> "/followers"],
-          cc: [],
-          object: actor_data
-        })
+      {:ok, update, _} = ActivityPub.update(:actor, actor, actor_data, false)
 
       assert update.data["actor"] == actor.url
-      assert update.data["to"] == [actor.url <> "/followers"]
-      assert update.data["object"]["id"] == actor_data["id"]
-      assert update.data["object"]["type"] == actor_data["type"]
+      assert update.data["to"] == [@activity_pub_public_audience]
+      assert update.data["object"]["id"] == actor.url
+      assert update.data["object"]["type"] == "Person"
       assert update.data["object"]["summary"] == @updated_actor_summary
-
-      refute updated_actor.summary == actor.summary
-
-      {:ok, %Actor{} = database_actor} = Mobilizon.Actors.get_actor_by_url(actor.url)
-      assert database_actor.summary == @updated_actor_summary
-      assert database_actor.preferred_username == actor.preferred_username
     end
 
     @updated_start_time DateTime.utc_now() |> DateTime.truncate(:second)
@@ -194,28 +179,15 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
     test "it creates an update activity with the new event data" do
       actor = insert(:actor)
       event = insert(:event, organizer_actor: actor)
-      event_data = Converter.Event.model_to_as(event)
-      event_data = Map.put(event_data, "startTime", @updated_start_time)
+      event_data = %{begins_on: @updated_start_time}
 
-      {:ok, update, updated_event} =
-        ActivityPub.update(%{
-          actor: actor.url,
-          to: [actor.url <> "/followers"],
-          cc: [],
-          object: event_data
-        })
+      {:ok, update, _} = ActivityPub.update(:event, event, event_data)
 
       assert update.data["actor"] == actor.url
-      assert update.data["to"] == [actor.url <> "/followers"]
-      assert update.data["object"]["id"] == event_data["id"]
-      assert update.data["object"]["type"] == event_data["type"]
-      assert update.data["object"]["startTime"] == @updated_start_time
-
-      refute updated_event.begins_on == event.begins_on
-
-      %Event{} = database_event = Mobilizon.Events.get_event_by_url(event.url)
-      assert database_event.begins_on == @updated_start_time
-      assert database_event.title == event.title
+      assert update.data["to"] == [@activity_pub_public_audience]
+      assert update.data["object"]["id"] == event.url
+      assert update.data["object"]["type"] == "Event"
+      assert update.data["object"]["startTime"] == DateTime.to_iso8601(@updated_start_time)
     end
   end
 end

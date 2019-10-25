@@ -4,7 +4,7 @@
             <b-tab-item>
                 <template slot="header">
                     <b-icon icon="account-multiple"></b-icon>
-                    <span>{{ $t('Participants')}} <b-tag rounded> {{ participantStats.approved }} </b-tag> </span>
+                    <span>{{ $t('Participants')}} <b-tag rounded> {{ participantStats.going }} </b-tag> </span>
                 </template>
                 <template>
                   <section v-if="participantsAndCreators.length > 0">
@@ -22,10 +22,10 @@
                   </section>
                 </template>
             </b-tab-item>
-            <b-tab-item :disabled="participantStats.unapproved === 0">
+            <b-tab-item :disabled="participantStats.notApproved === 0">
                 <template slot="header">
                     <b-icon icon="account-multiple-plus"></b-icon>
-                    <span>{{ $t('Requests') }} <b-tag rounded> {{ participantStats.unapproved }} </b-tag> </span>
+                    <span>{{ $t('Requests') }} <b-tag rounded> {{ participantStats.notApproved }} </b-tag> </span>
                 </template>
                 <template>
                   <section v-if="queue.length > 0">
@@ -182,7 +182,7 @@ export default class Participants extends Vue {
   @Watch('participantStats', { deep: true })
   watchParticipantStats(stats: IEventParticipantStats) {
     if (!stats) return;
-    if ((stats.unapproved === 0 && this.activeTab === 1) || stats.rejected === 0 && this.activeTab === 2 ) {
+    if ((stats.notApproved === 0 && this.activeTab === 1) || stats.rejected === 0 && this.activeTab === 2 ) {
       this.activeTab = 0;
     }
   }
@@ -223,9 +223,9 @@ export default class Participants extends Vue {
       if (data) {
         this.queue = this.queue.filter(participant => participant.id !== data.updateParticipation.id);
         this.rejected = this.rejected.filter(participant => participant.id !== data.updateParticipation.id);
-        this.event.participantStats.approved += 1;
+        this.event.participantStats.going += 1;
         if (participant.role === ParticipantRole.NOT_APPROVED) {
-          this.event.participantStats.unapproved -= 1;
+          this.event.participantStats.notApproved -= 1;
         }
         if (participant.role === ParticipantRole.REJECTED) {
           this.event.participantStats.rejected -= 1;
@@ -253,11 +253,11 @@ export default class Participants extends Vue {
         this.queue = this.queue.filter(participant => participant.id !== data.updateParticipation.id);
         this.event.participantStats.rejected += 1;
         if (participant.role === ParticipantRole.PARTICIPANT) {
-          this.event.participantStats.participants -= 1;
-          this.event.participantStats.approved -= 1;
+          this.event.participantStats.participant -= 1;
+          this.event.participantStats.going -= 1;
         }
         if (participant.role === ParticipantRole.NOT_APPROVED) {
-          this.event.participantStats.unapproved -= 1;
+          this.event.participantStats.notApproved -= 1;
         }
         participant.role = ParticipantRole.REJECTED;
         this.rejected = this.rejected.filter(participantIn => participantIn.id !== participant.id);

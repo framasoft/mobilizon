@@ -65,8 +65,7 @@ defmodule Mobilizon.Addresses.Address do
 
   @spec set_url(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   defp set_url(%Ecto.Changeset{changes: changes} = changeset) do
-    uuid = Ecto.UUID.generate()
-    url = Map.get(changes, :url, "#{MobilizonWeb.Endpoint.url()}/address/#{uuid}")
+    url = Map.get(changes, :url, "#{MobilizonWeb.Endpoint.url()}/address/#{Ecto.UUID.generate()}")
 
     put_change(changeset, :url, url)
   end

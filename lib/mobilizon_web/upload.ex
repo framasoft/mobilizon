@@ -73,16 +73,10 @@ defmodule MobilizonWeb.Upload do
          {:ok, url_spec} <- Uploaders.Uploader.put_file(opts.uploader, upload) do
       {:ok,
        %{
-         "type" => opts.activity_type || get_type(upload.content_type),
-         "url" => [
-           %{
-             "type" => "Link",
-             "mediaType" => upload.content_type,
-             "href" => url_from_spec(upload, opts.base_url, url_spec)
-           }
-         ],
-         "size" => upload.size,
-         "name" => Map.get(opts, :description) || upload.name
+         name: Map.get(opts, :description) || upload.name,
+         url: url_from_spec(upload, opts.base_url, url_spec),
+         content_type: upload.content_type,
+         size: upload.size
        }}
     else
       {:error, error} ->
@@ -165,16 +159,6 @@ defmodule MobilizonWeb.Upload do
   end
 
   defp check_file_size(_, _), do: :ok
-
-  @picture_content_types ["image/gif", "image/png", "image/jpg", "image/jpeg", "image/webp"]
-  # Return whether the upload is a picture or not
-  defp get_type(content_type) do
-    if content_type in @picture_content_types do
-      "Image"
-    else
-      "Document"
-    end
-  end
 
   defp url_from_spec(%__MODULE__{name: name}, base_url, {:file, path}) do
     path =

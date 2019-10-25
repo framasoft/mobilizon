@@ -2,7 +2,6 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
   use MobilizonWeb.ConnCase
   alias MobilizonWeb.AbsintheHelpers
   import Mobilizon.Factory
-  require Logger
 
   @non_existent_username "nonexistent"
   @new_group_params %{groupname: "new group"}
@@ -36,7 +35,7 @@ defmodule MobilizonWeb.Resolvers.GroupResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "Actor id is not owned by authenticated user"
+               "Creator actor id is not owned by the current user"
     end
 
     test "create_group/3 creates a group and check a group with this name does not already exist",

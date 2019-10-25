@@ -25,9 +25,9 @@ defmodule Mobilizon.UploadTest do
       {:ok, data} = Upload.store(file)
 
       assert %{
-               "url" => [%{"href" => url, "mediaType" => "image/jpeg"}],
-               "size" => 13_227,
-               "type" => "Image"
+               url: url,
+               content_type: "image/jpeg",
+               size: 13_227
              } = data
 
       assert String.starts_with?(url, MobilizonWeb.Endpoint.url() <> "/media/")
@@ -46,9 +46,7 @@ defmodule Mobilizon.UploadTest do
 
       {:ok, data} = Upload.store(file, base_url: base_url)
 
-      assert %{"url" => [%{"href" => url}]} = data
-
-      assert String.starts_with?(url, base_url <> "/media/")
+      assert String.starts_with?(data.url, base_url <> "/media/")
     end
 
     test "copies the file to the configured folder with deduping" do
@@ -62,7 +60,7 @@ defmodule Mobilizon.UploadTest do
 
       {:ok, data} = Upload.store(file, filters: [MobilizonWeb.Upload.Filter.Dedupe])
 
-      assert List.first(data["url"])["href"] ==
+      assert data.url ==
                MobilizonWeb.Endpoint.url() <>
                  "/media/590523d60d3831ec92d05cdd871078409d5780903910efec5cd35ab1b0f19d11.jpg"
     end
@@ -77,7 +75,7 @@ defmodule Mobilizon.UploadTest do
       }
 
       {:ok, data} = Upload.store(file)
-      assert data["name"] == "an [image.jpg"
+      assert data.name == "an [image.jpg"
     end
 
     test "fixes incorrect content type" do
@@ -90,7 +88,7 @@ defmodule Mobilizon.UploadTest do
       }
 
       {:ok, data} = Upload.store(file, filters: [MobilizonWeb.Upload.Filter.Dedupe])
-      assert hd(data["url"])["mediaType"] == "image/jpeg"
+      assert data.content_type == "image/jpeg"
     end
 
     test "adds missing extension" do
@@ -103,7 +101,7 @@ defmodule Mobilizon.UploadTest do
       }
 
       {:ok, data} = Upload.store(file)
-      assert data["name"] == "an [image.jpg"
+      assert data.name == "an [image.jpg"
     end
 
     test "fixes incorrect file extension" do
@@ -116,7 +114,7 @@ defmodule Mobilizon.UploadTest do
       }
 
       {:ok, data} = Upload.store(file)
-      assert data["name"] == "an [image.jpg"
+      assert data.name == "an [image.jpg"
     end
 
     test "don't modify filename of an unknown type" do
@@ -129,7 +127,7 @@ defmodule Mobilizon.UploadTest do
       }
 
       {:ok, data} = Upload.store(file)
-      assert data["name"] == "test.txt"
+      assert data.name == "test.txt"
     end
 
     test "copies the file to the configured folder with anonymizing filename" do
@@ -143,7 +141,7 @@ defmodule Mobilizon.UploadTest do
 
       {:ok, data} = Upload.store(file, filters: [MobilizonWeb.Upload.Filter.AnonymizeFilename])
 
-      refute data["name"] == "an [image.jpg"
+      refute data.name == "an [image.jpg"
     end
 
     test "escapes invalid characters in url" do
@@ -156,9 +154,8 @@ defmodule Mobilizon.UploadTest do
       }
 
       {:ok, data} = Upload.store(file)
-      [attachment_url | _] = data["url"]
 
-      assert Path.basename(attachment_url["href"]) == "an%E2%80%A6%20image.jpg"
+      assert Path.basename(data.url) == "an%E2%80%A6%20image.jpg"
     end
 
     test "escapes reserved uri characters" do
@@ -171,9 +168,8 @@ defmodule Mobilizon.UploadTest do
       }
 
       {:ok, data} = Upload.store(file)
-      [attachment_url | _] = data["url"]
 
-      assert Path.basename(attachment_url["href"]) ==
+      assert Path.basename(data.url) ==
                "%3A%3F%23%5B%5D%40%21%24%26%5C%27%28%29%2A%2B%2C%3B%3D.jpg"
     end
 
@@ -210,9 +206,9 @@ defmodule Mobilizon.UploadTest do
     {:ok, data} = Upload.store(file)
 
     assert %{
-             "url" => [%{"href" => url, "mediaType" => "image/jpeg"}],
-             "size" => 13_227,
-             "type" => "Image"
+             url: url,
+             size: 13_227,
+             content_type: "image/jpeg"
            } = data
 
     assert String.starts_with?(url, MobilizonWeb.Endpoint.url() <> "/media/")

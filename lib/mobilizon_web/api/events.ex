@@ -3,37 +3,24 @@ defmodule MobilizonWeb.API.Events do
   API for Events.
   """
 
-  alias Mobilizon.Events.Event
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Events.Event
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.Activity
-  alias Mobilizon.Service.ActivityPub.Utils, as: ActivityPubUtils
-
-  alias MobilizonWeb.API.Utils
+  alias Mobilizon.Service.ActivityPub.Utils
 
   @doc """
   Create an event
   """
   @spec create_event(map()) :: {:ok, Activity.t(), Event.t()} | any()
-  def create_event(%{organizer_actor: organizer_actor} = args) do
-    with args <- prepare_args(args),
-         event <-
-           ActivityPubUtils.make_event_data(
-             args.organizer_actor.url,
-             %{to: args.to, cc: args.cc},
-             args.title,
-             args.content_html,
-             args.picture,
-             args.tags,
-             args.metadata
-           ) do
-      ActivityPub.create(%{
-        to: args.to,
-        actor: organizer_actor,
-        object: event,
-        # For now we don't federate drafts but it will be needed if we want to edit them as groups
-        local: args.metadata.draft == false
-      })
+  def create_event(args) do
+    with organizer_actor <- Map.get(args, :organizer_actor),
+         args <-
+           Map.update(args, :picture, nil, fn picture ->
+             process_picture(picture, organizer_actor)
+           end) do
+      # For now we don't federate drafts but it will be needed if we want to edit them as groups
+      ActivityPub.create(:event, args, args.draft == false)
     end
   end
 
@@ -41,65 +28,13 @@ defmodule MobilizonWeb.API.Events do
   Update an event
   """
   @spec update_event(map(), Event.t()) :: {:ok, Activity.t(), Event.t()} | any()
-  def update_event(
-        %{
-          organizer_actor: organizer_actor
-        } = args,
-        %Event{} = event
-      ) do
-    with args <- Map.put(args, :tags, Map.get(args, :tags, [])),
-         args <- prepare_args(Map.merge(event, args)),
-         event <-
-           ActivityPubUtils.make_event_data(
-             args.organizer_actor.url,
-             %{to: args.to, cc: args.cc},
-             args.title,
-             args.content_html,
-             args.picture,
-             args.tags,
-             args.metadata,
-             event.uuid,
-             event.url
-           ) do
-      ActivityPub.update(%{
-        to: args.to,
-        actor: organizer_actor.url,
-        cc: [],
-        object: event,
-        local: args.metadata.draft == false
-      })
-    end
-  end
-
-  defp prepare_args(args) do
-    with %Actor{} = organizer_actor <- Map.get(args, :organizer_actor),
-         title <- args |> Map.get(:title, "") |> HtmlSanitizeEx.strip_tags() |> String.trim(),
-         visibility <- Map.get(args, :visibility, :public),
-         description <- Map.get(args, :description),
-         tags <- Map.get(args, :tags),
-         {content_html, tags, to, cc} <-
-           Utils.prepare_content(organizer_actor, description, visibility, tags, nil) do
-      %{
-        title: title,
-        content_html: content_html,
-        picture: Map.get(args, :picture),
-        tags: tags,
-        organizer_actor: organizer_actor,
-        to: to,
-        cc: cc,
-        metadata: %{
-          begins_on: Map.get(args, :begins_on),
-          ends_on: Map.get(args, :ends_on),
-          physical_address: Map.get(args, :physical_address),
-          category: Map.get(args, :category),
-          options: Map.get(args, :options),
-          join_options: Map.get(args, :join_options),
-          status: Map.get(args, :status),
-          online_address: Map.get(args, :online_address),
-          phone_address: Map.get(args, :phone_address),
-          draft: Map.get(args, :draft)
-        }
-      }
+  def update_event(args, %Event{} = event) do
+    with organizer_actor <- Map.get(args, :organizer_actor),
+         args <-
+           Map.update(args, :picture, nil, fn picture ->
+             process_picture(picture, organizer_actor)
+           end) do
+      ActivityPub.update(:event, event, args, Map.get(args, :draft, false) == false)
     end
   end
 
@@ -110,5 +45,16 @@ defmodule MobilizonWeb.API.Events do
   """
   def delete_event(%Event{} = event, federate \\ true) do
     ActivityPub.delete(event, federate)
+  end
+
+  defp process_picture(nil, _), do: nil
+  defp process_picture(%{picture_id: _picture_id} = args, _), do: args
+
+  defp process_picture(%{picture: picture}, %Actor{id: actor_id}) do
+    %{
+      file:
+        picture |> Map.get(:file) |> Utils.make_picture_data(description: Map.get(picture, :name)),
+      actor_id: actor_id
+    }
   end
 end

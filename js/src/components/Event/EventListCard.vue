@@ -14,7 +14,7 @@ export default {
   data() {
     return {
       participation: {
-        event: { 
+        event: {
           title: 'Vue Styleguidist first meetup: learn the basics!',
           id: 5,
           uuid: 'some uuid',
@@ -31,7 +31,7 @@ export default {
           },
           participantStats: {
             approved: 1,
-            unapproved: 2
+            notApproved: 2
           }
         },
         actor: {
@@ -75,20 +75,20 @@ export default {
           </span>
           <span class="column is-narrow participant-stats">
             <span v-if="participation.event.options.maximumAttendeeCapacity !== 0">
-              {{ $t('{approved} / {total} seats', {approved: participation.event.participantStats.participants, total: participation.event.options.maximumAttendeeCapacity }) }}
+              {{ $t('{approved} / {total} seats', {approved: participation.event.participantStats.participant, total: participation.event.options.maximumAttendeeCapacity }) }}
 <!--              <b-progress-->
 <!--                      v-if="participation.event.options.maximumAttendeeCapacity > 0"-->
 <!--                      size="is-medium"-->
-<!--                      :value="participation.event.participantStats.participants * 100 / participation.event.options.maximumAttendeeCapacity">-->
+<!--                      :value="participation.event.participantStats.participant * 100 / participation.event.options.maximumAttendeeCapacity">-->
 <!--              </b-progress>-->
             </span>
             <span v-else>
-              {{ $tc('{count} participants', participation.event.participantStats.participants, { count: participation.event.participantStats.participants })}}
+              {{ $tc('{count} participants', participation.event.participantStats.participant, { count: participation.event.participantStats.participant })}}
             </span>
             <span
-              v-if="participation.event.participantStats.unapproved > 0">
+              v-if="participation.event.participantStats.notApproved > 0">
               <b-button type="is-text" @click="gotToWithCheck(participation, { name: RouteName.PARTICIPATIONS, params: { eventId: participation.event.uuid } })">
-                {{ $tc('{count} requests waiting', participation.event.participantStats.unapproved, { count: participation.event.participantStats.unapproved })}}
+                {{ $tc('{count} requests waiting', participation.event.participantStats.notApproved, { count: participation.event.participantStats.notApproved })}}
               </b-button>
             </span>
           </span>

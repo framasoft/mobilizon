@@ -94,10 +94,13 @@ export enum CommentModeration {
 }
 
 export interface IEventParticipantStats {
-  approved: number;
-  unapproved: number;
+  notApproved: number;
   rejected: number;
-  participants: number;
+  participant: number;
+  creator: number;
+  moderator: number;
+  administrator: number;
+  going: number;
 }
 
 export interface IEvent {
@@ -192,7 +195,7 @@ export class EventModel implements IEvent {
 
   publishAt = new Date();
 
-  participantStats = { approved: 0, unapproved: 0, rejected: 0, participants: 0 };
+  participantStats = { notApproved: 0, rejected: 0, participant: 0, moderator: 0, administrator: 0, creator: 0, going: 0 };
   participants: IParticipant[] = [];
 
   relatedEvents: IEvent[] = [];

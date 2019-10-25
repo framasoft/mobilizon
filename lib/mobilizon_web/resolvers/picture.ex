@@ -51,7 +51,7 @@ defmodule MobilizonWeb.Resolvers.Picture do
         %{context: %{current_user: user}}
       ) do
     with {:is_owned, %Actor{}} <- User.owns_actor(user, actor_id),
-         {:ok, %{"url" => [%{"href" => url, "mediaType" => content_type}], "size" => size}} <-
+         {:ok, %{name: _name, url: url, content_type: content_type, size: size}} <-
            MobilizonWeb.Upload.store(file),
          args <-
            args

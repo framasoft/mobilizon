@@ -18,8 +18,7 @@ defmodule MobilizonWeb.Plugs.UploadedMediaPlugTest do
     }
 
     {:ok, data} = Upload.store(file)
-    [%{"href" => attachment_url} | _] = data["url"]
-    [attachment_url: attachment_url]
+    [attachment_url: data.url]
   end
 
   setup_all :upload_file

@@ -561,8 +561,8 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
         event(uuid: "#{event.uuid}") {
           uuid,
           participantStats {
-            approved,
-            unapproved,
+            going,
+            notApproved,
             rejected
           }
         }
@@ -574,8 +574,8 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
         |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
 
       assert json_response(res, 200)["data"]["event"]["uuid"] == to_string(event.uuid)
-      assert json_response(res, 200)["data"]["event"]["participantStats"]["approved"] == 1
-      assert json_response(res, 200)["data"]["event"]["participantStats"]["unapproved"] == 0
+      assert json_response(res, 200)["data"]["event"]["participantStats"]["going"] == 1
+      assert json_response(res, 200)["data"]["event"]["participantStats"]["notApproved"] == 0
       assert json_response(res, 200)["data"]["event"]["participantStats"]["rejected"] == 0
 
       moderator = insert(:actor)
@@ -586,18 +586,18 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
         actor_id: moderator.id
       })
 
-      unapproved = insert(:actor)
+      not_approved = insert(:actor)
 
       Events.create_participant(%{
         role: :not_approved,
         event_id: event.id,
-        actor_id: unapproved.id
+        actor_id: not_approved.id
       })
 
       Events.create_participant(%{
         role: :rejected,
         event_id: event.id,
-        actor_id: unapproved.id
+        actor_id: not_approved.id
       })
 
       query = """
@@ -605,8 +605,8 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
         event(uuid: "#{event.uuid}") {
           uuid,
           participantStats {
-            approved,
-            unapproved,
+            going,
+            notApproved,
             rejected
           }
         }
@@ -618,8 +618,8 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
         |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
 
       assert json_response(res, 200)["data"]["event"]["uuid"] == to_string(event.uuid)
-      assert json_response(res, 200)["data"]["event"]["participantStats"]["approved"] == 2
-      assert json_response(res, 200)["data"]["event"]["participantStats"]["unapproved"] == 1
+      assert json_response(res, 200)["data"]["event"]["participantStats"]["going"] == 2
+      assert json_response(res, 200)["data"]["event"]["participantStats"]["notApproved"] == 1
       assert json_response(res, 200)["data"]["event"]["participantStats"]["rejected"] == 1
     end
   end

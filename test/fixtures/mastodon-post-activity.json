@@ -28,9 +28,9 @@
         "attributedTo": "https://framapiaf.org/users/admin",
         "cc": [
             "https://framapiaf.org/users/admin/followers",
-            "http://localtesting.pleroma.lol/users/lain"
+            "https://framapiaf.org/users/tcit"
         ],
-        "content": "<p><span class=\"h-card\"><a href=\"http://localtesting.pleroma.lol/users/lain\" class=\"u-url mention\">@<span>lain</span></a></span></p>",
+        "content": "<p><span class=\"h-card\"><a href=\"https://framapiaf.org/users/tcit\" class=\"u-url mention\">@<span>tcit</span></a></span></p>",
         "conversation": "tag:mastodon.example.org,2018-02-12:objectId=20:objectType=Conversation",
         "id": "https://framapiaf.org/users/admin/statuses/99512778738411822",
         "inReplyTo": null,
@@ -40,8 +40,8 @@
         "summary": "cw",
         "tag": [
             {
-                "href": "http://localtesting.pleroma.lol/users/lain",
-                "name": "@lain@localtesting.pleroma.lol",
+                "href": "https://framapiaf.org/users/tcit",
+                "name": "@tcit@framapiaf.org",
                 "type": "Mention"
             }
         ],

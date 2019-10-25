@@ -38,12 +38,11 @@ defmodule MobilizonWeb.API.Participations do
        ) do
     with {:ok, activity, _} <-
            ActivityPub.accept(
-             %{
-               to: [participation.actor.url],
-               actor: moderator.url,
-               object: participation.url
-             },
-             "#{MobilizonWeb.Endpoint.url()}/accept/join/#{participation.id}"
+             :join,
+             participation,
+             %{role: :participant},
+             true,
+             %{"to" => [moderator.url]}
            ),
          {:ok, %Participant{role: :participant} = participation} <-
            Events.update_participant(participation, %{"role" => :participant}),

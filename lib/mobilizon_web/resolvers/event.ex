@@ -7,11 +7,8 @@ defmodule MobilizonWeb.Resolvers.Event do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Addresses
-  alias Mobilizon.Addresses.Address
   alias Mobilizon.Events
-  alias Mobilizon.Events.{Event, Participant}
-  alias Mobilizon.Media.Picture
+  alias Mobilizon.Events.{Event, Participant, EventParticipantStats}
   alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Users.User
 
@@ -96,14 +93,8 @@ defmodule MobilizonWeb.Resolvers.Event do
     {:ok, []}
   end
 
-  def stats_participants_for_event(%Event{id: id}, _args, _resolution) do
-    {:ok,
-     %{
-       approved: Mobilizon.Events.count_approved_participants(id),
-       unapproved: Mobilizon.Events.count_unapproved_participants(id),
-       rejected: Mobilizon.Events.count_rejected_participants(id),
-       participants: Mobilizon.Events.count_participant_participants(id)
-     }}
+  def stats_participants_going(%EventParticipantStats{} = stats, _args, _resolution) do
+    {:ok, stats.participant + stats.moderator + stats.administrator + stats.creator}
   end
 
   @doc """
@@ -277,8 +268,6 @@ defmodule MobilizonWeb.Resolvers.Event do
     with args <- Map.put(args, :options, args[:options] || %{}),
          {:is_owned, %Actor{} = organizer_actor} <- User.owns_actor(user, organizer_actor_id),
          args_with_organizer <- Map.put(args, :organizer_actor, organizer_actor),
-         {:ok, args_with_organizer} <- save_attached_picture(args_with_organizer),
-         {:ok, args_with_organizer} <- save_physical_address(args_with_organizer),
          {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} <-
            MobilizonWeb.API.Events.create_event(args_with_organizer) do
       {:ok, event}
@@ -309,8 +298,6 @@ defmodule MobilizonWeb.Resolvers.Event do
          {:is_owned, %Actor{} = organizer_actor} <-
            User.owns_actor(user, event.organizer_actor_id),
          args <- Map.put(args, :organizer_actor, organizer_actor),
-         {:ok, args} <- save_attached_picture(args),
-         {:ok, args} <- save_physical_address(args),
          {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} <-
            MobilizonWeb.API.Events.update_event(args, event) do
       {:ok, event}
@@ -326,47 +313,6 @@ defmodule MobilizonWeb.Resolvers.Event do
   def update_event(_parent, _args, _resolution) do
     {:error, "You need to be logged-in to update an event"}
   end
-
-  # If we have an attached picture, just transmit it. It will be handled by
-  # Mobilizon.Service.ActivityPub.Utils.make_picture_data/1
-  # However, we need to pass its actor ID
-  @spec save_attached_picture(map()) :: {:ok, map()}
-  defp save_attached_picture(
-         %{picture: %{picture: %{file: %Plug.Upload{} = _picture} = all_pic}} = args
-       ) do
-    {:ok, Map.put(args, :picture, Map.put(all_pic, :actor_id, args.organizer_actor.id))}
-  end
-
-  # Otherwise if we use a previously uploaded picture we need to fetch it from database
-  @spec save_attached_picture(map()) :: {:ok, map()}
-  defp save_attached_picture(%{picture: %{picture_id: picture_id}} = args) do
-    with %Picture{} = picture <- Mobilizon.Media.get_picture(picture_id) do
-      {:ok, Map.put(args, :picture, picture)}
-    end
-  end
-
-  @spec save_attached_picture(map()) :: {:ok, map()}
-  defp save_attached_picture(args), do: {:ok, args}
-
-  @spec save_physical_address(map()) :: {:ok, map()}
-  defp save_physical_address(%{physical_address: %{url: physical_address_url}} = args)
-       when not is_nil(physical_address_url) do
-    with %Address{} = address <- Addresses.get_address_by_url(physical_address_url),
-         args <- Map.put(args, :physical_address, address.url) do
-      {:ok, args}
-    end
-  end
-
-  @spec save_physical_address(map()) :: {:ok, map()}
-  defp save_physical_address(%{physical_address: address} = args) when address != nil do
-    with {:ok, %Address{} = address} <- Addresses.create_address(address),
-         args <- Map.put(args, :physical_address, address.url) do
-      {:ok, args}
-    end
-  end
-
-  @spec save_physical_address(map()) :: {:ok, map()}
-  defp save_physical_address(args), do: {:ok, args}
 
   @doc """
   Delete an event

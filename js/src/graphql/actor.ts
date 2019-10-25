@@ -113,9 +113,8 @@ query LoggedUserParticipations($afterDateTime: DateTime, $beforeDateTime: DateTi
                   }
               },
               participantStats {
-                  approved,
-                  unapproved,
-                  participants
+                  notApproved
+                  participant
               },
               options {
                   maximumAttendeeCapacity
@@ -161,8 +160,8 @@ export const LOGGED_USER_DRAFTS = gql`
                     }
                 },
                 participantStats {
-                    approved,
-                    unapproved
+                    going,
+                    notApproved
                 },
                 options {
                     maximumAttendeeCapacity

@@ -115,7 +115,7 @@ defmodule Mobilizon.EventsTest do
     end
 
     test "create_event/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Events.create_event(@invalid_attrs)
+      assert {:error, :insert, %Ecto.Changeset{}, _} = Events.create_event(@invalid_attrs)
     end
 
     test "update_event/2 with valid data updates the event", %{event: event} do
@@ -128,7 +128,7 @@ defmodule Mobilizon.EventsTest do
     end
 
     test "update_event/2 with invalid data returns error changeset", %{event: event} do
-      assert {:error, %Ecto.Changeset{}} = Events.update_event(event, @invalid_attrs)
+      assert {:error, :update, %Ecto.Changeset{}, _} = Events.update_event(event, @invalid_attrs)
       assert event.title == Events.get_event!(event.id).title
     end
 
@@ -345,7 +345,8 @@ defmodule Mobilizon.EventsTest do
     end
 
     test "create_participant/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Events.create_participant(@invalid_attrs)
+      assert {:error, :participant, %Ecto.Changeset{}, _} =
+               Events.create_participant(@invalid_attrs)
     end
 
     test "update_participant/2 with valid data updates the participant", %{
