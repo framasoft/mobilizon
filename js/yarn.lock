@@ -3499,7 +3499,7 @@ core-js-pure@^3.0.0:
   resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.3.2.tgz#ace92f9744ef1f6129f73ac4df4936b6df9a3cbe"
   integrity sha512-sw695hB0UxFXrSkUthEby5tMdjOYN3hVC8IGQePF1m3JYb9e/KjT0TOFWzaSzlKwGNglKCgLYUjiJ7uZvactiw==
 
-core-js@^2.4.0, core-js@^2.5.3, core-js@^2.5.7, core-js@^2.6.5, core-js@^2.6.9:
+core-js@^2.4.0, core-js@^2.5.3, core-js@^2.5.7, core-js@^2.6.10, core-js@^2.6.5:
   version "2.6.10"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.10.tgz#8a5b8391f8cc7013da703411ce5b585706300d7f"
   integrity sha512-I39t74+4t+zau64EN1fE5v2W31Adtc/REhzWN+gWRRXg6WH5qAsZm62DHpQ1+Yhe4047T55jvzz7MUqF/dBBlA==
@@ -13087,14 +13087,14 @@ vue-styleguidist@^3.25.0:
     webpack-dev-server "^3.7.1"
     webpack-merge "^4.0.0"
 
-vue-svg-inline-loader@^1.3.0:
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/vue-svg-inline-loader/-/vue-svg-inline-loader-1.3.3.tgz#0d0175d1fc92aeb35deac7ebfdb63a2a4fb47f7d"
-  integrity sha512-bhOvXQyn0wS3hiaDDt2TzUdWc1J1A0YfVjAvr6N5t0U8fcIRx7FkuIk9dS9pTPbFIuIUjyg/c0dH0AG9BtBycA==
+vue-svg-inline-loader@^1.4.3:
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/vue-svg-inline-loader/-/vue-svg-inline-loader-1.4.3.tgz#e2902c29c49c2c464661089fee92449ce76505d4"
+  integrity sha512-7wNZCDpHN8zkr8+eY6cuCUXBSxZcq11yuckHWH58ZiTq1lK0lt4TnxQE94SqYcM5v89j5TylXysgWcapdjSOVw==
   dependencies:
     "@babel/polyfill" "^7.6.0"
     "@babel/runtime" "^7.6.3"
-    core-js "^2.6.9"
+    core-js "^2.6.10"
     loader-utils "^1.2.3"
     svgo "^1.3.0"
 
