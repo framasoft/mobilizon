@@ -37,17 +37,18 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Actor do
           "url" => object["image"]["url"]
         }
 
-    %{
-      "type" => String.to_existing_atom(object["type"]),
-      "preferred_username" => object["preferredUsername"],
-      "summary" => object["summary"],
-      "url" => object["id"],
-      "name" => object["name"],
-      "avatar" => avatar,
-      "banner" => banner,
-      "keys" => object["publicKey"]["publicKeyPem"],
-      "manually_approves_followers" => object["manuallyApprovesFollowers"]
-    }
+    {:ok,
+     %{
+       "type" => String.to_existing_atom(object["type"]),
+       "preferred_username" => object["preferredUsername"],
+       "summary" => object["summary"],
+       "url" => object["id"],
+       "name" => object["name"],
+       "avatar" => avatar,
+       "banner" => banner,
+       "keys" => object["publicKey"]["publicKeyPem"],
+       "manually_approves_followers" => object["manuallyApprovesFollowers"]
+     }}
   end
 
   @doc """

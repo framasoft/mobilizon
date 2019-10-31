@@ -13,6 +13,7 @@ defmodule Mobilizon.Actors.Actor do
   alias Mobilizon.Media.File
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Users.User
+  alias Mobilizon.Mention
 
   alias MobilizonWeb.Endpoint
   alias MobilizonWeb.Router.Helpers, as: Routes
@@ -46,6 +47,7 @@ defmodule Mobilizon.Actors.Actor do
           created_reports: [Report.t()],
           subject_reports: [Report.t()],
           report_notes: [Note.t()],
+          mentions: [Mention.t()],
           memberships: [t]
         }
 
@@ -139,6 +141,7 @@ defmodule Mobilizon.Actors.Actor do
     has_many(:created_reports, Report, foreign_key: :reporter_id)
     has_many(:subject_reports, Report, foreign_key: :reported_id)
     has_many(:report_notes, Note, foreign_key: :moderator_id)
+    has_many(:mentions, Mention)
     many_to_many(:memberships, __MODULE__, join_through: Member)
 
     timestamps()

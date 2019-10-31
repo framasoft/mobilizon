@@ -8,7 +8,8 @@ defmodule Mobilizon.Events.Comment do
   import Ecto.Changeset
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.{Comment, CommentVisibility, Event}
+  alias Mobilizon.Events.{Comment, CommentVisibility, Event, Tag}
+  alias Mobilizon.Mention
 
   alias MobilizonWeb.Endpoint
   alias MobilizonWeb.Router.Helpers, as: Routes
@@ -22,6 +23,8 @@ defmodule Mobilizon.Events.Comment do
           actor: Actor.t(),
           attributed_to: Actor.t(),
           event: Event.t(),
+          tags: [Tag.t()],
+          mentions: [Mention.t()],
           in_reply_to_comment: t,
           origin_comment: t
         }
@@ -42,6 +45,8 @@ defmodule Mobilizon.Events.Comment do
     belongs_to(:event, Event, foreign_key: :event_id)
     belongs_to(:in_reply_to_comment, Comment, foreign_key: :in_reply_to_comment_id)
     belongs_to(:origin_comment, Comment, foreign_key: :origin_comment_id)
+    many_to_many(:tags, Tag, join_through: "comments_tags", on_replace: :delete)
+    has_many(:mentions, Mention)
 
     timestamps(type: :utc_datetime)
   end
@@ -57,16 +62,45 @@ defmodule Mobilizon.Events.Comment do
   @doc false
   @spec changeset(t, map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = comment, attrs) do
-    uuid = attrs["uuid"] || Ecto.UUID.generate()
-    url = attrs["url"] || generate_url(uuid)
+    uuid = Map.get(attrs, :uuid) || Ecto.UUID.generate()
+    url = Map.get(attrs, :url) || generate_url(uuid)
 
     comment
     |> cast(attrs, @attrs)
     |> put_change(:uuid, uuid)
     |> put_change(:url, url)
+    |> put_tags(attrs)
+    |> put_mentions(attrs)
     |> validate_required(@required_attrs)
   end
 
   @spec generate_url(String.t()) :: String.t()
   defp generate_url(uuid), do: Routes.page_url(Endpoint, :comment, uuid)
+
+  @spec put_tags(Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
+  defp put_tags(changeset, %{"tags" => tags}),
+    do: put_assoc(changeset, :tags, Enum.map(tags, &process_tag/1))
+
+  defp put_tags(changeset, %{tags: tags}),
+    do: put_assoc(changeset, :tags, Enum.map(tags, &process_tag/1))
+
+  defp put_tags(changeset, _), do: changeset
+
+  @spec put_mentions(Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
+  defp put_mentions(changeset, %{"mentions" => mentions}),
+    do: put_assoc(changeset, :mentions, Enum.map(mentions, &process_mention/1))
+
+  defp put_mentions(changeset, %{mentions: mentions}),
+    do: put_assoc(changeset, :mentions, Enum.map(mentions, &process_mention/1))
+
+  defp put_mentions(changeset, _), do: changeset
+
+  # We need a changeset instead of a raw struct because of slug which is generated in changeset
+  defp process_tag(tag) do
+    Tag.changeset(%Tag{}, tag)
+  end
+
+  defp process_mention(tag) do
+    Mention.changeset(%Mention{}, tag)
+  end
 end

@@ -35,7 +35,7 @@ defmodule MobilizonWeb.Schema.CommentType do
     @desc "Create a comment"
     field :create_comment, type: :comment do
       arg(:text, non_null(:string))
-      arg(:actor_username, non_null(:string))
+      arg(:actor_id, non_null(:id))
 
       resolve(&Comment.create_comment/3)
     end

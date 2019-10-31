@@ -4,19 +4,19 @@ defmodule MobilizonWeb.Resolvers.Comment do
   """
 
   alias Mobilizon.Events.Comment
-  alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Users.User
+  alias Mobilizon.Actors.Actor
 
   alias MobilizonWeb.API.Comments
 
   require Logger
 
-  def create_comment(_parent, %{text: comment, actor_username: username}, %{
-        context: %{current_user: %User{} = _user}
+  def create_comment(_parent, %{text: text, actor_id: actor_id}, %{
+        context: %{current_user: %User{} = user}
       }) do
-    with {:ok, %Activity{data: %{"object" => %{"type" => "Note"} = _object}},
-          %Comment{} = comment} <-
-           Comments.create_comment(username, comment) do
+    with {:is_owned, %Actor{} = _organizer_actor} <- User.owns_actor(user, actor_id),
+         {:ok, _, %Comment{} = comment} <-
+           Comments.create_comment(%{actor_id: actor_id, text: text}) do
       {:ok, comment}
     end
   end

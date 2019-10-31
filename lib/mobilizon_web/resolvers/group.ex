@@ -6,7 +6,6 @@ defmodule MobilizonWeb.Resolvers.Group do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Users.User
 
   alias MobilizonWeb.API
@@ -47,23 +46,18 @@ defmodule MobilizonWeb.Resolvers.Group do
         args,
         %{context: %{current_user: user}}
       ) do
-    with {
-           :ok,
-           %Activity{data: %{"object" => %{"type" => "Group"} = _object}},
-           %Actor{} = group
-         } <-
-           API.Groups.create_group(
-             user,
-             %{
-               preferred_username: args.preferred_username,
-               creator_actor_id: args.creator_actor_id,
-               name: Map.get(args, "name", args.preferred_username),
-               summary: args.summary,
-               avatar: Map.get(args, "avatar"),
-               banner: Map.get(args, "banner")
-             }
-           ) do
+    with creator_actor_id <- Map.get(args, :creator_actor_id),
+         {:is_owned, %Actor{} = actor} <- User.owns_actor(user, creator_actor_id),
+         args <- Map.put(args, :creator_actor, actor),
+         {:ok, _activity, %Actor{type: :Group} = group} <-
+           API.Groups.create_group(args) do
       {:ok, group}
+    else
+      {:error, err} when is_bitstring(err) ->
+        {:error, err}
+
+      {:is_owned, nil} ->
+        {:error, "Creator actor id is not owned by the current user"}
     end
   end
 

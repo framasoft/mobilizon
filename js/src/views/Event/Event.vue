@@ -16,18 +16,18 @@ import {ParticipantRole} from "@/types/event.model";
                   <h1 class="title">{{ event.title }}</h1>
                   <span>
                     <router-link v-if="actorIsOrganizer" :to="{ name: RouteName.PARTICIPATIONS, params: {eventId: event.uuid}}">
-                      <small v-if="event.participantStats.approved > 0 && !actorIsParticipant">
-                        {{ $tc('One person is going', event.participantStats.approved, {approved: event.participantStats.approved}) }}
+                      <small v-if="event.participantStats.going > 0 && !actorIsParticipant">
+                        {{ $tc('One person is going', event.participantStats.going, {approved: event.participantStats.going}) }}
                       </small>
-                      <small v-else-if="event.participantStats.approved > 0 && actorIsParticipant">
-                        {{ $tc('You and one other person are going to this event', event.participantStats.participants, { approved: event.participantStats.participants }) }}
+                      <small v-else-if="event.participantStats.going > 0 && actorIsParticipant">
+                        {{ $tc('You and one other person are going to this event', event.participantStats.participant, { approved: event.participantStats.participant }) }}
                       </small>
                     </router-link>
-                    <small v-if="event.participantStats.approved > 0 && !actorIsParticipant && !actorIsOrganizer">
-                      {{ $tc('One person is going', event.participantStats.approved, {approved: event.participantStats.approved}) }}
+                    <small v-if="event.participantStats.going > 0 && !actorIsParticipant && !actorIsOrganizer">
+                      {{ $tc('One person is going', event.participantStats.going, {approved: event.participantStats.going}) }}
                     </small>
-                    <small v-else-if="event.participantStats.approved > 0 && actorIsParticipant && !actorIsOrganizer">
-                      {{ $tc('You and one other person are going to this event', event.participantStats.participants, { approved: event.participantStats.participants }) }}
+                    <small v-else-if="event.participantStats.going > 0 && actorIsParticipant && !actorIsOrganizer">
+                      {{ $tc('You and one other person are going to this event', event.participantStats.participant, { approved: event.participantStats.participant }) }}
                     </small>
                     <small v-if="event.options.maximumAttendeeCapacity">
                         {{ $tc('All the places have already been taken', numberOfPlacesStillAvailable, { places: numberOfPlacesStillAvailable}) }}
@@ -443,10 +443,10 @@ export default class Event extends EventMixin {
           }
 
           if (data.joinEvent.role === ParticipantRole.NOT_APPROVED) {
-            event.participantStats.unapproved = event.participantStats.unapproved + 1;
+            event.participantStats.notApproved = event.participantStats.notApproved + 1;
           } else {
-            event.participantStats.approved = event.participantStats.approved + 1;
-            event.participantStats.participants = event.participantStats.participants + 1;
+            event.participantStats.going = event.participantStats.going + 1;
+            event.participantStats.participant = event.participantStats.participant + 1;
           }
 
           store.writeQuery({ query: FETCH_EVENT, variables: { uuid: this.uuid }, data: { event } });
@@ -514,10 +514,10 @@ export default class Event extends EventMixin {
             return;
           }
           if (participation.role === ParticipantRole.NOT_APPROVED) {
-            event.participantStats.unapproved = event.participantStats.unapproved - 1;
+            event.participantStats.notApproved = event.participantStats.notApproved - 1;
           } else {
-            event.participantStats.approved = event.participantStats.approved - 1;
-            event.participantStats.participants = event.participantStats.participants - 1;
+            event.participantStats.going = event.participantStats.going - 1;
+            event.participantStats.participant = event.participantStats.participant - 1;
           }
           store.writeQuery({ query: FETCH_EVENT, variables: { uuid: this.uuid }, data: { event } });
         },
@@ -591,11 +591,11 @@ export default class Event extends EventMixin {
 
   get eventCapacityOK(): boolean {
     if (!this.event.options.maximumAttendeeCapacity) return true;
-    return this.event.options.maximumAttendeeCapacity > this.event.participantStats.participants;
+    return this.event.options.maximumAttendeeCapacity > this.event.participantStats.participant;
   }
 
   get numberOfPlacesStillAvailable(): number {
-    return this.event.options.maximumAttendeeCapacity - this.event.participantStats.participants;
+    return this.event.options.maximumAttendeeCapacity - this.event.participantStats.participant;
   }
 
   urlToHostname(url: string): string|null {

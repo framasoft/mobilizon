@@ -40,7 +40,7 @@ defmodule Mobilizon.Factory do
       following_url: Actor.build_url(preferred_username, :following),
       inbox_url: Actor.build_url(preferred_username, :inbox),
       outbox_url: Actor.build_url(preferred_username, :outbox),
-      user: nil
+      user: build(:user)
     }
   end
 
@@ -100,6 +100,8 @@ defmodule Mobilizon.Factory do
       actor: build(:actor),
       event: build(:event),
       uuid: uuid,
+      mentions: [],
+      tags: build_list(3, :tag),
       in_reply_to_comment: nil,
       url: Routes.page_url(Endpoint, :comment, uuid)
     }
@@ -121,11 +123,13 @@ defmodule Mobilizon.Factory do
       physical_address: build(:address),
       visibility: :public,
       tags: build_list(3, :tag),
+      mentions: [],
       url: Routes.page_url(Endpoint, :event, uuid),
       picture: insert(:picture),
       uuid: uuid,
       join_options: :free,
-      options: %{}
+      options: %{},
+      participant_stats: %{}
     }
   end
 
@@ -195,9 +199,10 @@ defmodule Mobilizon.Factory do
     {:ok, data} = Upload.store(file)
 
     %{
-      "url" => [%{"href" => url, "mediaType" => "image/jpeg"}],
-      "size" => 13_227,
-      "type" => "Image"
+      content_type: "image/jpeg",
+      name: "image.jpg",
+      url: url,
+      size: 13_227
     } = data
 
     %Mobilizon.Media.File{

@@ -17,12 +17,21 @@ defmodule Mobilizon.Service.ActivityPub.UtilsTest do
   describe "make" do
     test "comment data from struct" do
       comment = insert(:comment)
-      reply = insert(:comment, in_reply_to_comment: comment)
+      tag = insert(:tag, title: "MyTag")
+      reply = insert(:comment, in_reply_to_comment: comment, tags: [tag])
 
       assert %{
                "type" => "Note",
                "to" => ["https://www.w3.org/ns/activitystreams#Public"],
-               "content" => reply.text,
+               "cc" => [],
+               "tag" => [
+                 %{
+                   "href" => "http://mobilizon.test/tags/#{tag.slug}",
+                   "name" => "#MyTag",
+                   "type" => "Hashtag"
+                 }
+               ],
+               "content" => "My Comment",
                "actor" => reply.actor.url,
                "uuid" => reply.uuid,
                "id" => Routes.page_url(Endpoint, :comment, reply.uuid),

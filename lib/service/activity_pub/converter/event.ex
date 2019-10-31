@@ -6,15 +6,17 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Event do
   internal one, and back.
   """
 
-  alias Mobilizon.{Actors, Addresses, Events, Media}
+  alias Mobilizon.{Addresses, Media}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.Event, as: EventModel
-  alias Mobilizon.Events.{EventOptions, Tag}
+  alias Mobilizon.Events.EventOptions
   alias Mobilizon.Media.Picture
+  alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.{Converter, Convertible, Utils}
   alias Mobilizon.Service.ActivityPub.Converter.Address, as: AddressConverter
   alias Mobilizon.Service.ActivityPub.Converter.Picture, as: PictureConverter
+  alias Mobilizon.Service.ActivityPub.Converter.Utils, as: ConverterUtils
 
   require Logger
 
@@ -30,16 +32,16 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Event do
   Converts an AP object data to our internal data structure.
   """
   @impl Converter
-  @spec as_to_model_data(map) :: map
+  @spec as_to_model_data(map) :: {:ok, map()} | {:error, any()}
   def as_to_model_data(object) do
     Logger.debug("event as_to_model_data")
     Logger.debug(inspect(object))
 
     with {:actor, {:ok, %Actor{id: actor_id}}} <-
-           {:actor, Actors.get_actor_by_url(object["actor"])},
+           {:actor, ActivityPub.get_or_fetch_actor_by_url(object["actor"])},
          {:address, address_id} <-
            {:address, get_address(object["location"])},
-         {:tags, tags} <- {:tags, fetch_tags(object["tag"])},
+         {:tags, tags} <- {:tags, ConverterUtils.fetch_tags(object["tag"])},
          {:visibility, visibility} <- {:visibility, get_visibility(object)},
          {:options, options} <- {:options, get_options(object)} do
       picture_id =
@@ -58,26 +60,27 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Event do
         end
 
       entity = %{
-        "title" => object["name"],
-        "description" => object["content"],
-        "organizer_actor_id" => actor_id,
-        "picture_id" => picture_id,
-        "begins_on" => object["startTime"],
-        "ends_on" => object["endTime"],
-        "category" => object["category"],
-        "visibility" => visibility,
-        "join_options" => object["joinOptions"],
-        "status" => object["status"],
-        "online_address" => object["onlineAddress"],
-        "phone_address" => object["phoneAddress"],
-        "draft" => object["draft"] || false,
-        "url" => object["id"],
-        "uuid" => object["uuid"],
-        "tags" => tags,
-        "physical_address_id" => address_id
+        title: object["name"],
+        description: object["content"],
+        organizer_actor_id: actor_id,
+        picture_id: picture_id,
+        begins_on: object["startTime"],
+        ends_on: object["endTime"],
+        category: object["category"],
+        visibility: visibility,
+        join_options: Map.get(object, "joinOptions", "free"),
+        options: options,
+        status: object["status"],
+        online_address: object["onlineAddress"],
+        phone_address: object["phoneAddress"],
+        draft: object["draft"] || false,
+        url: object["id"],
+        uuid: object["uuid"],
+        tags: tags,
+        physical_address_id: address_id
       }
 
-      {:ok, Map.put(entity, "options", options)}
+      {:ok, entity}
     else
       error ->
         {:error, error}
@@ -111,7 +114,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Event do
       "startTime" => event.begins_on |> date_to_string(),
       "joinOptions" => to_string(event.join_options),
       "endTime" => event.ends_on |> date_to_string(),
-      "tag" => event.tags |> build_tags(),
+      "tag" => event.tags |> ConverterUtils.build_tags(),
       "draft" => event.draft,
       "id" => event.url,
       "url" => event.url
@@ -179,32 +182,6 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Event do
       _ ->
         nil
     end
-  end
-
-  @spec fetch_tags([String.t()]) :: [String.t()]
-  defp fetch_tags(tags) do
-    Logger.debug("fetching tags")
-
-    Enum.reduce(tags, [], fn tag, acc ->
-      with true <- tag["type"] == "Hashtag",
-           {:ok, %Tag{} = tag} <- Events.get_or_create_tag(tag) do
-        acc ++ [tag]
-      else
-        _err ->
-          acc
-      end
-    end)
-  end
-
-  @spec build_tags([String.t()]) :: String.t()
-  defp build_tags(tags) do
-    Enum.map(tags, fn %Tag{} = tag ->
-      %{
-        "href" => MobilizonWeb.Endpoint.url() <> "/tags/#{tag.slug}",
-        "name" => "##{tag.title}",
-        "type" => "Hashtag"
-      }
-    end)
   end
 
   @ap_public "https://www.w3.org/ns/activitystreams#Public"

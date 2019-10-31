@@ -102,9 +102,9 @@ export const FETCH_EVENT = gql`
       #     name,
       # },
       participantStats {
-        approved,
-        unapproved,
-        participants
+        going,
+        notApproved,
+        participant
       },
       tags {
         ${tagsQuery}
@@ -259,9 +259,9 @@ export const CREATE_EVENT = gql`
         id,
       },
       participantStats {
-        approved,
-        unapproved,
-        participants
+        going,
+        notApproved,
+        participant
       },
       tags {
         ${tagsQuery}
@@ -344,9 +344,9 @@ export const EDIT_EVENT = gql`
         id,
       },
       participantStats {
-        approved,
-        unapproved,
-        participants
+        going,
+        notApproved,
+        participant
       },
       tags {
         ${tagsQuery}
@@ -410,10 +410,10 @@ export const PARTICIPANTS = gql`
         ${participantQuery}
       },
       participantStats {
-        approved,
-        unapproved,
+        going,
+        notApproved,
         rejected,
-        participants
+        participant
       }
     }
   }

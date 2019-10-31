@@ -52,7 +52,7 @@ defmodule Mobilizon.Service.HTTPSignatures.Signature do
   @spec get_public_key_for_url(String.t()) ::
           {:ok, String.t()} | {:error, :actor_fetch_error | :pem_decode_error}
   def get_public_key_for_url(url) do
-    with {:ok, %Actor{keys: keys}} <- ActivityPub.get_or_fetch_by_url(url),
+    with {:ok, %Actor{keys: keys}} <- ActivityPub.get_or_fetch_actor_by_url(url),
          {:ok, public_key} <- prepare_public_key(keys) do
       {:ok, public_key}
     else

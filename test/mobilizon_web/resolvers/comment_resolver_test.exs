@@ -18,7 +18,7 @@ defmodule MobilizonWeb.Resolvers.CommentResolverTest do
           mutation {
               createComment(
                   text: "#{@comment.text}",
-                  actor_username: "#{actor.preferred_username}"
+                  actor_id: "#{actor.id}"
               ) {
                 text,
                 uuid

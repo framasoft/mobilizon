@@ -5,18 +5,20 @@ defmodule Mix.Tasks.Mobilizon.Toot do
 
   use Mix.Task
 
-  alias MobilizonWeb.API
+  alias MobilizonWeb.API.Comments
+  alias Mobilizon.Actors
+  alias Mobilizon.Actors.Actor
 
   require Logger
 
   @shortdoc "Toot to an user"
-  def run([from, content]) do
+  def run([from, text]) do
     Mix.Task.run("app.start")
 
-    case API.Comments.create_comment(from, content) do
-      {:ok, _, _} ->
-        Mix.shell().info("Tooted")
-
+    with {:local_actor, %Actor{} = actor} <- {:local_actor, Actors.get_local_actor_by_name(from)},
+         {:ok, _, _} <- Comments.create_comment(%{actor: actor, text: text}) do
+      Mix.shell().info("Tooted")
+    else
       {:local_actor, _, _} ->
         Mix.shell().error("Failed to toot.\nActor #{from} doesn't exist")
 

@@ -8,7 +8,8 @@ defmodule Mobilizon.Service.ActivityPub do
   # ActivityPub context.
   """
 
-  import Mobilizon.Service.ActivityPub.{Utils, Visibility}
+  import Mobilizon.Service.ActivityPub.Utils
+  import Mobilizon.Service.ActivityPub.Visibility
 
   alias Mobilizon.{Actors, Config, Events}
   alias Mobilizon.Actors.{Actor, Follower}
@@ -16,16 +17,11 @@ defmodule Mobilizon.Service.ActivityPub do
   alias Mobilizon.Service.ActivityPub.{Activity, Converter, Convertible, Relay, Transmogrifier}
   alias Mobilizon.Service.{Federator, WebFinger}
   alias Mobilizon.Service.HTTPSignatures.Signature
+  alias MobilizonWeb.API.Utils, as: APIUtils
+  alias Mobilizon.Service.ActivityPub.Audience
+  alias Mobilizon.Service.ActivityPub.Converter.Utils, as: ConverterUtils
 
   require Logger
-
-  @doc """
-  Get recipients for an activity or object
-  """
-  @spec get_recipients(map()) :: list()
-  def get_recipients(data) do
-    (data["to"] || []) ++ (data["cc"] || [])
-  end
 
   @doc """
   Wraps an object into an activity
@@ -106,8 +102,8 @@ defmodule Mobilizon.Service.ActivityPub do
   @doc """
   Getting an actor from url, eventually creating it
   """
-  @spec get_or_fetch_by_url(String.t(), boolean) :: {:ok, Actor.t()} | {:error, String.t()}
-  def get_or_fetch_by_url(url, preload \\ false) do
+  @spec get_or_fetch_actor_by_url(String.t(), boolean) :: {:ok, Actor.t()} | {:error, String.t()}
+  def get_or_fetch_actor_by_url(url, preload \\ false) do
     case Actors.get_actor_by_url(url, preload) do
       {:ok, %Actor{} = actor} ->
         {:ok, actor}
@@ -126,27 +122,29 @@ defmodule Mobilizon.Service.ActivityPub do
   end
 
   @doc """
-  Create an activity of type "Create"
-  """
-  def create(%{to: to, actor: actor, object: object} = params) do
-    Logger.debug("creating an activity")
-    Logger.debug(inspect(params))
-    Logger.debug(inspect(object))
-    additional = params[:additional] || %{}
-    # only accept false as false value
-    local = !(params[:local] == false)
-    published = params[:published]
+  Create an activity of type `Create`
 
-    with create_data <-
-           make_create_data(
-             %{to: to, actor: actor, published: published, object: object},
-             additional
-           ),
-         {:ok, activity} <- create_activity(create_data, local),
-         {:ok, object} <- insert_full_object(create_data),
+  * Creates the object, which returns AS data
+  * Wraps ActivityStreams data into a `Create` activity
+  * Creates an `Mobilizon.Service.ActivityPub.Activity` from this
+  * Federates (asynchronously) the activity
+  * Returns the activity
+  """
+  @spec create(atom(), map(), boolean, map()) :: {:ok, Activity.t(), struct()} | any()
+  def create(type, args, local \\ false, additional \\ %{}) do
+    Logger.debug("creating an activity")
+    Logger.debug(inspect(args))
+
+    {:ok, entity, create_data} =
+      case type do
+        :event -> create_event(args, additional)
+        :comment -> create_comment(args, additional)
+        :group -> create_group(args, additional)
+      end
+
+    with {:ok, activity} <- create_activity(create_data, local),
          :ok <- maybe_federate(activity) do
-      # {:ok, actor} <- Actors.increase_event_count(actor) do
-      {:ok, activity, object}
+      {:ok, activity, entity}
     else
       err ->
         Logger.error("Something went wrong while creating an activity")
@@ -155,21 +153,52 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
-  def accept(%{to: to, actor: actor, object: object} = params, activity_wrapper_id \\ nil) do
-    # only accept false as false value
-    local = !(params[:local] == false)
+  @doc """
+  Create an activity of type `Update`
 
-    with data <- %{
-           "to" => to,
-           "type" => "Accept",
-           "actor" => actor,
-           "object" => object,
-           "id" => activity_wrapper_id || get_url(object) <> "/activity"
-         },
-         {:ok, activity} <- create_activity(data, local),
-         {:ok, object} <- insert_full_object(data),
+  * Updates the object, which returns AS data
+  * Wraps ActivityStreams data into a `Update` activity
+  * Creates an `Mobilizon.Service.ActivityPub.Activity` from this
+  * Federates (asynchronously) the activity
+  * Returns the activity
+  """
+  @spec update(atom(), struct(), map(), boolean, map()) :: {:ok, Activity.t(), struct()} | any()
+  def update(type, old_entity, args, local \\ false, additional \\ %{}) do
+    Logger.debug("updating an activity")
+    Logger.debug(inspect(args))
+
+    {:ok, entity, update_data} =
+      case type do
+        :event -> update_event(old_entity, args, additional)
+        :actor -> update_actor(old_entity, args, additional)
+      end
+
+    with {:ok, activity} <- create_activity(update_data, local),
          :ok <- maybe_federate(activity) do
-      {:ok, activity, object}
+      {:ok, activity, entity}
+    else
+      err ->
+        Logger.error("Something went wrong while creating an activity")
+        Logger.debug(inspect(err))
+        err
+    end
+  end
+
+  def accept(type, entity, args, local \\ false, additional \\ %{}) do
+    {:ok, entity, update_data} =
+      case type do
+        :join -> accept_join(entity, args, additional)
+        :follow -> accept_follow(entity, args, additional)
+      end
+
+    with {:ok, activity} <- create_activity(update_data, local),
+         :ok <- maybe_federate(activity) do
+      {:ok, activity, entity}
+    else
+      err ->
+        Logger.error("Something went wrong while creating an activity")
+        Logger.debug(inspect(err))
+        err
     end
   end
 
@@ -186,25 +215,6 @@ defmodule Mobilizon.Service.ActivityPub do
          },
          {:ok, activity} <- create_activity(data, local),
          {:ok, object} <- insert_full_object(data),
-         :ok <- maybe_federate(activity) do
-      {:ok, activity, object}
-    end
-  end
-
-  def update(%{to: to, cc: cc, actor: actor, object: object} = params) do
-    # only accept false as false value
-    local = !(params[:local] == false)
-
-    with data <- %{
-           "to" => to,
-           "cc" => cc,
-           "id" => object["url"],
-           "type" => "Update",
-           "actor" => actor,
-           "object" => object
-         },
-         {:ok, activity} <- create_activity(data, local),
-         {:ok, object} <- update_object(object["id"], data),
          :ok <- maybe_federate(activity) do
       {:ok, activity, object}
     end
@@ -290,15 +300,12 @@ defmodule Mobilizon.Service.ActivityPub do
   Make an actor follow another
   """
   def follow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
-    with {:ok, %Follower{url: follow_url}} <-
+    with {:ok, %Follower{} = follower} <-
            Actors.follow(followed, follower, activity_id, false),
-         activity_follow_id <-
-           activity_id || follow_url,
-         data <- make_follow_data(followed, follower, activity_follow_id),
-         {:ok, activity} <- create_activity(data, local),
-         {:ok, object} <- insert_full_object(data),
+         follower_as_data <- Convertible.model_to_as(follower),
+         {:ok, activity} <- create_activity(follower_as_data, local),
          :ok <- maybe_federate(activity) do
-      {:ok, activity, object}
+      {:ok, activity, follower}
     else
       {:error, err, msg} when err in [:already_following, :suspended] ->
         {:error, msg}
@@ -310,16 +317,11 @@ defmodule Mobilizon.Service.ActivityPub do
   """
   @spec unfollow(Actor.t(), Actor.t(), String.t(), boolean()) :: {:ok, map()} | any()
   def unfollow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
-    with {:ok, %Follower{id: follow_id}} <- Actors.unfollow(followed, follower),
+    with {:ok, %Follower{id: follow_id} = follow} <- Actors.unfollow(followed, follower),
          # We recreate the follow activity
-         data <-
-           make_follow_data(
-             followed,
-             follower,
-             "#{MobilizonWeb.Endpoint.url()}/follow/#{follow_id}/activity"
-           ),
-         {:ok, follow_activity} <- create_activity(data, local),
-         {:ok, _object} <- insert_full_object(data),
+         follow_as_data <-
+           Convertible.model_to_as(%{follow | actor: follower, target_actor: followed}),
+         {:ok, follow_activity} <- create_activity(follow_as_data, local),
          activity_unfollow_id <-
            activity_id || "#{MobilizonWeb.Endpoint.url()}/unfollow/#{follow_id}/activity",
          unfollow_data <-
@@ -346,7 +348,7 @@ defmodule Mobilizon.Service.ActivityPub do
       "id" => url <> "/delete"
     }
 
-    with {:ok, _} <- Events.delete_event(event),
+    with {:ok, %Event{} = event} <- Events.delete_event(event),
          {:ok, activity} <- create_activity(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity, event}
@@ -362,11 +364,10 @@ defmodule Mobilizon.Service.ActivityPub do
       "to" => [actor.url <> "/followers", "https://www.w3.org/ns/activitystreams#Public"]
     }
 
-    with {:ok, _} <- Events.delete_comment(comment),
+    with {:ok, %Comment{} = comment} <- Events.delete_comment(comment),
          {:ok, activity} <- create_activity(data, local),
-         {:ok, object} <- insert_full_object(data),
          :ok <- maybe_federate(activity) do
-      {:ok, activity, object}
+      {:ok, activity, comment}
     end
   end
 
@@ -379,11 +380,10 @@ defmodule Mobilizon.Service.ActivityPub do
       "to" => [url <> "/followers", "https://www.w3.org/ns/activitystreams#Public"]
     }
 
-    with {:ok, _} <- Actors.delete_actor(actor),
+    with {:ok, %Actor{} = actor} <- Actors.delete_actor(actor),
          {:ok, activity} <- create_activity(data, local),
-         {:ok, object} <- insert_full_object(data),
          :ok <- maybe_federate(activity) do
-      {:ok, activity, object}
+      {:ok, activity, actor}
     end
   end
 
@@ -434,9 +434,9 @@ defmodule Mobilizon.Service.ActivityPub do
          {:ok, _object} <- insert_full_object(join_data),
          :ok <- maybe_federate(activity) do
       if role === :participant do
-        accept(
-          %{to: [actor.url], actor: event.organizer_actor.url, object: join_data["id"]},
-          "#{MobilizonWeb.Endpoint.url()}/accept/join/#{participant.id}"
+        accept_join(
+          participant,
+          %{}
         )
       end
 
@@ -720,9 +720,233 @@ defmodule Mobilizon.Service.ActivityPub do
     }
   end
 
-  #  # Whether the Public audience is in the activity's audience
-  #  defp is_public?(activity) do
-  #    "https://www.w3.org/ns/activitystreams#Public" in (activity.data["to"] ++
-  #                                                         (activity.data["cc"] || []))
-  #  end
+  # Get recipients for an activity or object
+  @spec get_recipients(map()) :: list()
+  defp get_recipients(data) do
+    (data["to"] || []) ++ (data["cc"] || [])
+  end
+
+  @spec create_event(map(), map()) :: {:ok, map()}
+  defp create_event(args, additional) do
+    with args <- prepare_args_for_event(args),
+         {:ok, %Event{} = event} <- Events.create_event(args),
+         event_as_data <- Convertible.model_to_as(event),
+         audience <-
+           Audience.calculate_to_and_cc_from_mentions(
+             event.organizer_actor,
+             args.mentions,
+             nil,
+             event.visibility
+           ),
+         create_data <-
+           make_create_data(event_as_data, Map.merge(audience, additional)) do
+      {:ok, event, create_data}
+    end
+  end
+
+  @spec create_comment(map(), map()) :: {:ok, map()}
+  defp create_comment(args, additional) do
+    with args <- prepare_args_for_comment(args),
+         {:ok, %Comment{} = comment} <- Events.create_comment(args),
+         comment_as_data <- Convertible.model_to_as(comment),
+         audience <-
+           Audience.calculate_to_and_cc_from_mentions(
+             comment.actor,
+             args.mentions,
+             args.in_reply_to_comment,
+             comment.visibility
+           ),
+         create_data <-
+           make_create_data(comment_as_data, Map.merge(audience, additional)) do
+      {:ok, comment, create_data}
+    end
+  end
+
+  @spec create_group(map(), map()) :: {:ok, map()}
+  defp create_group(args, additional) do
+    with args <- prepare_args_for_group(args),
+         {:ok, %Actor{type: :Group} = group} <- Actors.create_group(args),
+         group_as_data <- Convertible.model_to_as(group),
+         audience <-
+           Audience.calculate_to_and_cc_from_mentions(
+             args.creator_actor,
+             [],
+             nil,
+             :public
+           ),
+         create_data <-
+           make_create_data(group_as_data, Map.merge(audience, additional)) do
+      {:ok, group, create_data}
+    end
+  end
+
+  @spec update_event(Event.t(), map(), map()) ::
+          {:ok, Event.t(), Activity.t()} | any()
+  defp update_event(
+         %Event{} = old_event,
+         args,
+         additional
+       ) do
+    with args <- prepare_args_for_event(args),
+         {:ok, %Event{} = new_event} <- Events.update_event(old_event, args),
+         event_as_data <- Convertible.model_to_as(new_event),
+         audience <-
+           Audience.calculate_to_and_cc_from_mentions(
+             new_event.organizer_actor,
+             Map.get(args, :mentions, []),
+             nil,
+             new_event.visibility
+           ),
+         update_data <- make_update_data(event_as_data, Map.merge(audience, additional)) do
+      {:ok, new_event, update_data}
+    else
+      err ->
+        Logger.error("Something went wrong while creating an update activity")
+        Logger.debug(inspect(err))
+        err
+    end
+  end
+
+  @spec update_actor(Actor.t(), map(), map()) ::
+          {:ok, Actor.t(), Activity.t()} | any()
+  defp update_actor(%Actor{} = old_actor, args, additional) do
+    with {:ok, %Actor{} = new_actor} <- Actors.update_actor(old_actor, args),
+         actor_as_data <- Convertible.model_to_as(new_actor),
+         audience <-
+           Audience.calculate_to_and_cc_from_mentions(
+             new_actor,
+             [],
+             nil,
+             :public
+           ),
+         additional <- Map.merge(additional, %{"actor" => old_actor.url}),
+         update_data <- make_update_data(actor_as_data, Map.merge(audience, additional)) do
+      {:ok, new_actor, update_data}
+    end
+  end
+
+  @spec accept_follow(Follower.t(), map(), map()) ::
+          {:ok, Follower.t(), Activity.t()} | any()
+  defp accept_follow(
+         %Follower{} = follower,
+         args,
+         additional
+       ) do
+    with {:ok, %Follower{} = follower} <- Actors.update_follower(follower, args),
+         follower_as_data <- Convertible.model_to_as(follower),
+         audience <-
+           Audience.calculate_to_and_cc_from_mentions(follower.target_actor),
+         update_data <-
+           make_update_data(
+             follower_as_data,
+             Map.merge(Map.merge(audience, additional), %{
+               "id" => "#{MobilizonWeb.Endpoint.url()}/accept/follow/#{follower.id}"
+             })
+           ) do
+      {:ok, follower, update_data}
+    else
+      err ->
+        Logger.error("Something went wrong while creating an update activity")
+        Logger.debug(inspect(err))
+        err
+    end
+  end
+
+  @spec accept_join(Participant.t(), map(), map()) ::
+          {:ok, Participant.t(), Activity.t()} | any()
+  defp accept_join(
+         %Participant{} = participant,
+         args,
+         additional \\ %{}
+       ) do
+    with {:ok, %Participant{} = participant} <- Events.update_participant(participant, args),
+         participant_as_data <- Convertible.model_to_as(participant),
+         audience <-
+           Audience.calculate_to_and_cc_from_mentions(participant.actor),
+         update_data <-
+           make_accept_join_data(
+             participant_as_data,
+             Map.merge(Map.merge(audience, additional), %{
+               "id" => "#{MobilizonWeb.Endpoint.url()}/accept/join/#{participant.id}"
+             })
+           ) do
+      {:ok, participant, update_data}
+    else
+      err ->
+        Logger.error("Something went wrong while creating an update activity")
+        Logger.debug(inspect(err))
+        err
+    end
+  end
+
+  # Prepare and sanitize arguments for events
+  defp prepare_args_for_event(args) do
+    # If title is not set: we are not updating it
+    args =
+      if Map.has_key?(args, :title) && !is_nil(args.title),
+        do: Map.update(args, :title, "", &String.trim(HtmlSanitizeEx.strip_tags(&1))),
+        else: args
+
+    # If we've been given a description (we might not get one if updating)
+    # sanitize it, HTML it, and extract tags & mentions from it
+    args =
+      if Map.has_key?(args, :description) && !is_nil(args.description) do
+        {description, mentions, tags} =
+          APIUtils.make_content_html(
+            String.trim(args.description),
+            Map.get(args, :tags, []),
+            "text/html"
+          )
+
+        mentions = ConverterUtils.fetch_mentions(Map.get(args, :mentions, []) ++ mentions)
+
+        Map.merge(args, %{
+          description: description,
+          mentions: mentions,
+          tags: tags
+        })
+      else
+        args
+      end
+
+    Map.update(args, :tags, [], &ConverterUtils.fetch_tags/1)
+  end
+
+  # Prepare and sanitize arguments for comments
+  defp prepare_args_for_comment(args) do
+    with in_reply_to_comment <-
+           args |> Map.get(:in_reply_to_comment_id) |> Events.get_comment(),
+         args <- Map.update(args, :visibility, :public, & &1),
+         {text, mentions, tags} <-
+           APIUtils.make_content_html(
+             args |> Map.get(:text, "") |> String.trim(),
+             # Can't put additional tags on a comment
+             [],
+             "text/html"
+           ),
+         tags <- ConverterUtils.fetch_tags(tags),
+         mentions <- Map.get(args, :mentions, []) ++ ConverterUtils.fetch_mentions(mentions),
+         args <-
+           Map.merge(args, %{
+             actor_id: Map.get(args, :actor_id),
+             text: text,
+             mentions: mentions,
+             tags: tags,
+             in_reply_to_comment: in_reply_to_comment,
+             in_reply_to_comment_id:
+               if(is_nil(in_reply_to_comment), do: nil, else: Map.get(in_reply_to_comment, :id))
+           }) do
+      args
+    end
+  end
+
+  defp prepare_args_for_group(args) do
+    with preferred_username <-
+           args |> Map.get(:preferred_username) |> HtmlSanitizeEx.strip_tags() |> String.trim(),
+         summary <- args |> Map.get(:summary, "") |> String.trim(),
+         {summary, _mentions, _tags} <-
+           summary |> String.trim() |> APIUtils.make_content_html([], "text/html") do
+      %{args | preferred_username: preferred_username, summary: summary}
+    end
+  end
 end

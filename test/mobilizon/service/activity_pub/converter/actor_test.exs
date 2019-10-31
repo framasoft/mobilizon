@@ -15,7 +15,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.ActorTest do
 
   describe "AS to Actor" do
     test "valid as data to model" do
-      actor =
+      {:ok, actor} =
         ActorConverter.as_to_model_data(%{
           "type" => "Person",
           "preferredUsername" => "test_account"

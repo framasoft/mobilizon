@@ -88,7 +88,10 @@ defmodule Mobilizon.Actors do
   """
   @spec get_actor_by_url(String.t(), boolean) ::
           {:ok, Actor.t()} | {:error, :actor_not_found}
-  def get_actor_by_url(url, preload \\ false) do
+  def get_actor_by_url(url, preload \\ false)
+  def get_actor_by_url(nil, _preload), do: {:error, :actor_not_found}
+
+  def get_actor_by_url(url, preload) do
     case Repo.get_by(Actor, url: url) do
       nil ->
         {:error, :actor_not_found}
