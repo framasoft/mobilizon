@@ -927,10 +927,10 @@
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.3.tgz#bdfd69d61e464dcc81b25159c270d75a73c1a636"
   integrity sha512-Il2DtDVRGDcqjDtE+rF8iqg1CArehSK84HZJCT7AMITlyXRBpuPhqGLDQMowraqqu1coEaimg4ZOqggt6L6L+A==
 
-"@types/leaflet@^1.5.2":
-  version "1.5.4"
-  resolved "https://registry.yarnpkg.com/@types/leaflet/-/leaflet-1.5.4.tgz#851783ba730ab5430ea3e51a2ab7f35e43968f99"
-  integrity sha512-hAiiY7S25N8Ax+vA7FX29j1Hzn7bTziRnkKSj5jfOpud2JUcp/qZHGKCgxWW2TH581a00fDVBhto4xRox8GHXw==
+"@types/leaflet@^1.5.5":
+  version "1.5.5"
+  resolved "https://registry.yarnpkg.com/@types/leaflet/-/leaflet-1.5.5.tgz#006c0aa89c4b5e62941717fa71a09e846423536c"
+  integrity sha512-Eyh1LMmW4OFgafL6rjLyGkMqFS5IzgwWHMSgTKbrsvwLjLaWH8Ae8CV5liRe8HSM731oOVDwAMIZgg9P0SO9tg==
   dependencies:
     "@types/geojson" "*"
 
