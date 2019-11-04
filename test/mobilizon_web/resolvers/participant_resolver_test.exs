@@ -474,7 +474,7 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
       query = """
       {
         event(uuid: "#{event.uuid}") {
-          participants(page: 1, limit: 1, roles: "participant,moderator,administrator,creator", actorId: "#{
+          participants(page: 2, limit: 1, roles: "participant,moderator,administrator,creator", actorId: "#{
         actor.id
       }") {
             role,
@@ -493,11 +493,7 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
 
       sorted_participants =
         json_response(res, 200)["data"]["event"]["participants"]
-        |> Enum.sort_by(
-          &(&1
-            |> Map.get("actor")
-            |> Map.get("preferredUsername"))
-        )
+        |> Enum.filter(&(&1["role"] == "PARTICIPANT"))
 
       assert sorted_participants == [
                %{
@@ -511,7 +507,7 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
       query = """
       {
         event(uuid: "#{event.uuid}") {
-          participants(page: 2, limit: 1, roles: "participant,moderator,administrator,creator", actorId: "#{
+          participants(page: 1, limit: 1, roles: "participant,moderator,administrator,creator", actorId: "#{
         actor.id
       }") {
             role,
@@ -594,10 +590,12 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
         actor_id: not_approved.id
       })
 
+      rejected = insert(:actor)
+
       Events.create_participant(%{
         role: :rejected,
         event_id: event.id,
-        actor_id: not_approved.id
+        actor_id: rejected.id
       })
 
       query = """

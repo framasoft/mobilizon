@@ -1,11 +1,27 @@
-defmodule Mobilizon.Service.Search do
+defmodule Mobilizon.Service.Workers.BuildSearchWorker do
   @moduledoc """
-  Module to handle search service
+  Worker to build search results
   """
 
+  alias Mobilizon.Events
   alias Mobilizon.Events.Event
   alias Mobilizon.Storage.Repo
   alias Ecto.Adapters.SQL
+
+  use Mobilizon.Service.Workers.WorkerHelper, queue: "search"
+
+  @impl Oban.Worker
+  def perform(%{"op" => "insert_search_event", "event_id" => event_id}, _job) do
+    with {:ok, %Event{} = event} <- Events.get_event_with_preload(event_id) do
+      insert_search_event(event)
+    end
+  end
+
+  def perform(%{"op" => "update_search_event", "event_id" => event_id}, _job) do
+    with {:ok, %Event{} = event} <- Events.get_event_with_preload(event_id) do
+      update_search_event(event)
+    end
+  end
 
   def insert_search_event(%Event{} = event) do
     SQL.query(

@@ -4,6 +4,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Utils do
   """
 
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Events
   alias Mobilizon.Events.Tag
   alias Mobilizon.Mention
   alias Mobilizon.Service.ActivityPub
@@ -66,7 +67,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Utils do
   defp fetch_tag(tag, acc) when is_map(tag) do
     case tag["type"] do
       "Hashtag" ->
-        acc ++ [%{title: tag}]
+        acc ++ [existing_tag_or_data(tag["name"])]
 
       _err ->
         acc
@@ -74,7 +75,18 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Utils do
   end
 
   defp fetch_tag(tag, acc) when is_bitstring(tag) do
-    acc ++ [%{title: tag}]
+    acc ++ [existing_tag_or_data(tag)]
+  end
+
+  defp existing_tag_or_data("#" <> tag_title) do
+    existing_tag_or_data(tag_title)
+  end
+
+  defp existing_tag_or_data(tag_title) do
+    case Events.get_tag_by_title(tag_title) do
+      %Tag{} = tag -> %{title: tag.title, id: tag.id}
+      nil -> %{title: tag_title}
+    end
   end
 
   @spec create_mention(map(), list()) :: list()

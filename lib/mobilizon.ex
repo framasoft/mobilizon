@@ -37,6 +37,7 @@ defmodule Mobilizon do
       # supervisors
       Mobilizon.Storage.Repo,
       MobilizonWeb.Endpoint,
+      {Oban, Application.get_env(:mobilizon, Oban)},
       # workers
       Guardian.DB.Token.SweeperServer,
       Mobilizon.Service.Federator,
@@ -46,9 +47,7 @@ defmodule Mobilizon do
       cachex_spec(:activity_pub, 2500, 3, 15)
     ]
 
-    opts = [strategy: :one_for_one, name: Mobilizon.Supervisor]
-
-    Supervisor.start_link(children, opts)
+    Supervisor.start_link(children, strategy: :one_for_one, name: Mobilizon.Supervisor)
   end
 
   @spec config_change(keyword, keyword, [atom]) :: :ok

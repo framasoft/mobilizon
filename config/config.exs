@@ -139,6 +139,11 @@ config :mobilizon, Mobilizon.Service.Geospatial.GoogleMaps,
 config :mobilizon, Mobilizon.Service.Geospatial.MapQuest,
   api_key: System.get_env("GEOSPATIAL_MAP_QUEST_API_KEY") || nil
 
+config :mobilizon, Oban,
+  repo: Mobilizon.Storage.Repo,
+  prune: {:maxlen, 10_000},
+  queues: [default: 10, search: 20]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

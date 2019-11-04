@@ -13,7 +13,7 @@ defmodule Mobilizon.Events do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.Service.Search
+  alias Mobilizon.Service.Workers.BuildSearchWorker
 
   alias Mobilizon.Events.{
     Comment,
@@ -253,7 +253,9 @@ defmodule Mobilizon.Events do
   def create_event(attrs \\ %{}) do
     with {:ok, %{insert: %Event{} = event}} <- do_create_event(attrs),
          %Event{} = event <- Repo.preload(event, @event_preloads) do
-      Task.start(fn -> Search.insert_search_event(event) end)
+      unless event.draft,
+        do: BuildSearchWorker.enqueue(:insert_search_event, %{"event_id" => event.id})
+
       {:ok, event}
     else
       err -> err
@@ -291,7 +293,7 @@ defmodule Mobilizon.Events do
   We start by updating the event and then insert a first participant if the event is not a draft anymore
   """
   @spec update_event(Event.t(), map) :: {:ok, Event.t()} | {:error, Changeset.t()}
-  def update_event(%Event{} = old_event, attrs) do
+  def update_event(%Event{draft: old_draft} = old_event, attrs) do
     with %Changeset{changes: changes} = changeset <-
            Event.update_changeset(Repo.preload(old_event, :tags), attrs),
          {:ok, %{update: %Event{} = new_event}} <-
@@ -301,7 +303,7 @@ defmodule Mobilizon.Events do
              changeset
            )
            |> Multi.run(:write, fn _repo, %{update: %Event{draft: draft} = event} ->
-             with {:is_draft, false} <- {:is_draft, draft},
+             with {:was_draft, true} <- {:was_draft, old_draft == true && draft == false},
                   {:ok, %Participant{} = participant} <-
                     create_participant(
                       %{
@@ -313,7 +315,7 @@ defmodule Mobilizon.Events do
                     ) do
                {:ok, participant}
              else
-               {:is_draft, true} -> {:ok, nil}
+               {:was_draft, false} -> {:ok, nil}
                err -> err
              end
            end)
@@ -326,7 +328,8 @@ defmodule Mobilizon.Events do
         changes
       )
 
-      Task.start(fn -> Search.update_search_event(new_event) end)
+      unless new_event.draft,
+        do: BuildSearchWorker.enqueue(:update_search_event, %{"event_id" => new_event.id})
 
       {:ok, Repo.preload(new_event, @event_preloads)}
     end
@@ -470,6 +473,16 @@ defmodule Mobilizon.Events do
   def get_tag_by_slug(slug) do
     slug
     |> tag_by_slug_query()
+    |> Repo.one()
+  end
+
+  @doc """
+  Gets a tag by its title.
+  """
+  @spec get_tag_by_title(String.t()) :: Tag.t() | nil
+  def get_tag_by_title(slug) do
+    slug
+    |> tag_by_title_query()
     |> Repo.one()
   end
 
@@ -1349,6 +1362,11 @@ defmodule Mobilizon.Events do
   @spec tag_by_slug_query(String.t()) :: Ecto.Query.t()
   defp tag_by_slug_query(slug) do
     from(t in Tag, where: t.slug == ^slug)
+  end
+
+  @spec tag_by_title_query(String.t()) :: Ecto.Query.t()
+  defp tag_by_title_query(title) do
+    from(t in Tag, where: t.title == ^title, limit: 1)
   end
 
   @spec tags_for_event_query(integer) :: Ecto.Query.t()

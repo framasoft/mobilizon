@@ -179,6 +179,8 @@ defmodule Mobilizon.Events.Event do
   defp put_tags(%Changeset{} = changeset, _), do: changeset
 
   # We need a changeset instead of a raw struct because of slug which is generated in changeset
+  defp process_tag(%{id: _id} = tag), do: tag
+
   defp process_tag(tag) do
     Tag.changeset(%Tag{}, tag)
   end
