@@ -56,6 +56,7 @@ In order to move participant stats to the event table for existing events, you n
 - Added missing `setup_db.psql` file (Geno)
 - Fixed docker setup when using non-GNU make (JohanBaskovec)
 - Fixed actors deletion that didn't cascade to followers
+- Reduced datetime picker input width
 
 ### Security
 - Sanitize event title to avoid XSS

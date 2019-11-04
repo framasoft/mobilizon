@@ -12,26 +12,32 @@
 ```
 </docs>
 <template>
-    <b-field grouped horizontal :label="label">
-        <b-datepicker
-                :day-names="localeShortWeekDayNamesProxy"
-                :month-names="localeMonthNamesProxy"
-                expanded
-                :first-day-of-week="parseInt($t('firstDayOfWeek'), 10)"
-                :min-date="minDate"
-                v-model="dateWithoutTime"
-                :placeholder="$t('Click to select')"
-                icon="calendar"
-        />
-        <b-timepicker
-                placeholder="Type or select a time..."
-                icon="clock"
-                v-model="dateWithTime"
-                expanded
-                size="is-small"
-                inline>
-        </b-timepicker>
-    </b-field>
+    <div class="field is-horizontal">
+        <div class="field-label is-normal">
+            <label class="label">{{ label }}</label>
+        </div>
+        <div class="field-body">
+            <div class="field is-narrow is-grouped">
+                <b-datepicker
+                        :day-names="localeShortWeekDayNamesProxy"
+                        :month-names="localeMonthNamesProxy"
+                        :first-day-of-week="parseInt($t('firstDayOfWeek'), 10)"
+                        :min-date="minDate"
+                        v-model="dateWithoutTime"
+                        :placeholder="$t('Click to select')"
+                        icon="calendar"
+                        class="is-narrow"
+                />
+                <b-timepicker
+                        placeholder="Type or select a time..."
+                        icon="clock"
+                        v-model="dateWithTime"
+                        size="is-small"
+                        inline>
+                </b-timepicker>
+            </div>
+        </div>
+    </div>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
