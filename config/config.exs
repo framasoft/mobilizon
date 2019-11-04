@@ -106,9 +106,7 @@ config :auto_linker,
     # TODO: Set to :no_scheme when it works properly
     validate_tld: true,
     class: false,
-    strip_prefix: false,
-    new_window: false,
-    rel: false
+    strip_prefix: false
   ]
 
 config :phoenix, :format_encoders, json: Jason, "activity-json": Jason
