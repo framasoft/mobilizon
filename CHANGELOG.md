@@ -31,13 +31,14 @@ In order to move participant stats to the event table for existing events, you n
 - Upgraded frontend and backend dependencies
 
 ### Changed
-- Improve Docker setup and docs
-- Handle error message difference between user not found and user not confirmed
-- Upgrade vue-cli to v4, change the way server params injection is made
+- Move participant stats to event table **(read special instructions above)**
 - Limit length (20 characters) and number (10) of tags allowed
 - Added some backend changes and validation for field length
+- Handle error message difference between user not found and user not confirmed
+- Make external links (from URL field and description) open in a new tab with `noopener`
+- Improve Docker setup and docs
+- Upgrade vue-cli to v4, change the way server params injection is made
 - Improve some production ipv6 configuration
-- Move participant stats to event table **(read special instructions above)**
 
 ### Fixed
 - Fix event URL validation and check if hostname is correct before showing it

@@ -134,7 +134,12 @@ import {ParticipantRole} from "@/types/event.model";
                 </div>
                 <span class="online-address" v-if="event.onlineAddress && urlToHostname(event.onlineAddress)">
                   <b-icon icon="link"></b-icon>
-                  <a :href="event.onlineAddress">{{ urlToHostname(event.onlineAddress) }}</a>
+                  <a
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          :href="event.onlineAddress"
+                          :title="$t('View page on {hostname} (in a new window)', {hostname: urlToHostname(event.onlineAddress) })"
+                  >{{ urlToHostname(event.onlineAddress) }}</a>
                 </span>
                 <div class="organizer">
                   <span>
