@@ -1,8 +1,10 @@
 defmodule MobilizonWeb.Resolvers.EventResolverTest do
   use MobilizonWeb.ConnCase
   use Bamboo.Test
+  use Oban.Testing, repo: Mobilizon.Storage.Repo
   alias Mobilizon.Events
   alias MobilizonWeb.{AbsintheHelpers, Email}
+  alias Mobilizon.Service.Workers.BuildSearchWorker
   import Mobilizon.Factory
 
   @event %{
@@ -105,6 +107,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                   organizer_actor_id: "#{actor.id}",
                   category: "birthday"
               ) {
+                id,
                 title,
                 uuid
               }
@@ -117,6 +120,8 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert json_response(res, 200)["data"]["createEvent"]["title"] == "come to my event"
+      {id, ""} = json_response(res, 200)["data"]["createEvent"]["id"] |> Integer.parse()
+      assert_enqueued(worker: BuildSearchWorker, args: %{event_id: id, op: :insert_search_event})
     end
 
     test "create_event/3 creates an event and escapes title and description", %{
@@ -132,6 +137,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                   begins_on: $begins_on,
                   organizer_actor_id: $organizer_actor_id
               ) {
+                id,
                 title,
                 description,
                 uuid
@@ -159,6 +165,9 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
 
       assert res["data"]["createEvent"]["description"] ==
                "<b>My description</b> <img src=\"http://placekitten.com/g/200/300\" />"
+
+      {id, ""} = res["data"]["createEvent"]["id"] |> Integer.parse()
+      assert_enqueued(worker: BuildSearchWorker, args: %{event_id: id, op: :insert_search_event})
     end
 
     test "create_event/3 creates an event as a draft", %{conn: conn, actor: actor, user: user} do
@@ -192,6 +201,12 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
 
       event_uuid = json_response(res, 200)["data"]["createEvent"]["uuid"]
       event_id = json_response(res, 200)["data"]["createEvent"]["id"]
+      {event_id_int, ""} = Integer.parse(event_id)
+
+      refute_enqueued(
+        worker: BuildSearchWorker,
+        args: %{event_id: event_id_int, op: :insert_search_event}
+      )
 
       query = """
       {
@@ -275,6 +290,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                     showEndTime: false
                   }
               ) {
+                id,
                 title,
                 description,
                 begins_on,
@@ -318,6 +334,12 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
       assert event["options"]["maximumAttendeeCapacity"] == 30
       assert event["options"]["showRemainingAttendeeCapacity"] == true
       assert event["options"]["showEndTime"] == false
+      {event_id_int, ""} = Integer.parse(event["id"])
+
+      assert_enqueued(
+        worker: BuildSearchWorker,
+        args: %{event_id: event_id_int, op: :insert_search_event}
+      )
     end
 
     test "create_event/3 creates an event with tags", %{conn: conn, actor: actor, user: user} do
@@ -675,6 +697,7 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                     locality: "#{address.locality}"
                   }
               ) {
+                id,
                 uuid,
                 url,
                 title,
@@ -733,6 +756,13 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                %{"slug" => "tag1-updated", "title" => "tag1_updated"},
                %{"slug" => "tag2-updated", "title" => "tag2_updated"}
              ]
+
+      {event_id_int, ""} = Integer.parse(event_res["id"])
+
+      assert_enqueued(
+        worker: BuildSearchWorker,
+        args: %{event_id: event_id_int, op: :update_search_event}
+      )
 
       {:ok, new_event} = Mobilizon.Events.get_event(event.id)
 
