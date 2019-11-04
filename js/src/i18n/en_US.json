@@ -293,6 +293,7 @@
 	"Welcome to Mobilizon, {username}!": "Welcome to Mobilizon, {username}!",
 	"Who can view this event and participate": "Who can view this event and participate",
 	"World map": "World map",
+	"Write something…": "Write something…",
 	"You and one other person are going to this event": "You're the only one going to this event | You and one other person are going to this event | You and {approved} persons are going to this event.",
 	"You are already a participant of this event.": "You are already a participant of this event.",
 	"You are already logged-in.": "You are already logged-in.",

@@ -296,7 +296,7 @@ export default class EditorComponent extends Vue {
         new History(),
         new Placeholder({
           emptyClass: 'is-empty',
-          emptyNodeText: 'Write something …',
+          emptyNodeText: this.$t('Write something…'),
           showOnlyWhenEditable: false,
         }),
         new Image(),
