@@ -892,7 +892,6 @@ export default class Event extends EventMixin {
         font-size: 3rem;
         text-decoration: underline;
         text-decoration-color: $secondary;
-        cursor: pointer;
         max-width: 20rem;
       }
 
@@ -922,6 +921,9 @@ export default class Event extends EventMixin {
         background-position: 10% 50%;
         background-image: url('../../assets/undraw_events.svg');
         position: relative;
+        h3 {
+          cursor: pointer;
+        }
 
         &::before {
           content:"";
