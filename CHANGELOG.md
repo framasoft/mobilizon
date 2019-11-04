@@ -39,6 +39,7 @@ In order to move participant stats to the event table for existing events, you n
 - Improve Docker setup and docs
 - Upgrade vue-cli to v4, change the way server params injection is made
 - Improve some production ipv6 configuration
+- Limited year range in the DatePicker
 
 ### Fixed
 - Fix event URL validation and check if hostname is correct before showing it
