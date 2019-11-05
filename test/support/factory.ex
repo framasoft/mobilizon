@@ -124,6 +124,7 @@ defmodule Mobilizon.Factory do
       visibility: :public,
       tags: build_list(3, :tag),
       mentions: [],
+      publish_at: DateTime.utc_now(),
       url: Routes.page_url(Endpoint, :event, uuid),
       picture: insert(:picture),
       uuid: uuid,
