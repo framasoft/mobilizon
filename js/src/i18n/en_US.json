@@ -298,6 +298,7 @@
 	"You are already a participant of this event.": "You are already a participant of this event.",
 	"You are already logged-in.": "You are already logged-in.",
 	"You can add tags by hitting the Enter key or by adding a comma": "You can add tags by hitting the Enter key or by adding a comma",
+	"You can't remove your last identity.": "You can't remove your last identity.",
 	"You have been disconnected": "You have been disconnected",
 	"You have cancelled your participation": "You have cancelled your participation",
 	"You have one event in {days} days.": "You have no events in {days} days | You have one event in {days} days. | You have {count} events in {days} days",
