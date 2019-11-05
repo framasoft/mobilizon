@@ -25,6 +25,7 @@
                         :min-date="minDate"
                         v-model="dateWithoutTime"
                         :placeholder="$t('Click to select')"
+                        :years-range="[-2,10]"
                         icon="calendar"
                         class="is-narrow"
                 />
