@@ -134,9 +134,14 @@ export default class EditIdentity extends Vue {
 
     this.resetFields();
     this.identityName = val;
+    const identity = await this.getIdentity();
 
-    if (this.identityName) {
-      this.identity = await this.getIdentity();
+    if (!identity) {
+      return await this.$router.push({ name: 'CreateIdentity' });
+    }
+
+    if (this.identityName && identity) {
+      this.identity = identity;
 
       this.avatarFile = await buildFileFromIPicture(this.identity.avatar);
     }
@@ -280,15 +285,18 @@ export default class EditIdentity extends Vue {
     });
   }
 
-  private async getIdentity() {
-    const result = await this.$apollo.query({
-      query: FETCH_PERSON,
-      variables: {
-        username: this.identityName,
-      },
-    });
-
-    return new Person(result.data.fetchPerson);
+  private async getIdentity(): Promise<Person|null> {
+    try {
+      const result = await this.$apollo.query({
+        query: FETCH_PERSON,
+        variables: {
+          username: this.identityName,
+        },
+      });
+      return new Person(result.data.fetchPerson);
+    } catch (e) {
+      return null;
+    }
   }
 
   private handleError(err: any) {
