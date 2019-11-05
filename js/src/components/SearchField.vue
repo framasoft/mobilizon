@@ -25,5 +25,9 @@ export default class SearchField extends Vue {
     input.searchField {
         box-shadow: none;
         border-color: #b5b5b5;
+
+        &::placeholder {
+            color: gray;
+        }
     }
 </style>
