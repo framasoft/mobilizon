@@ -69,4 +69,20 @@ defmodule Mobilizon.Addresses.Address do
 
     put_change(changeset, :url, url)
   end
+
+  def coords(nil), do: nil
+
+  def coords(%__MODULE__{} = address) do
+    with %Geo.Point{coordinates: {latitude, longitude}, srid: 4326} <- address.geom do
+      {latitude, longitude}
+    end
+  end
+
+  def representation(nil), do: nil
+
+  def representation(%__MODULE__{} = address) do
+    "#{address.street} #{address.postal_code} #{address.locality} #{address.region} #{
+      address.country
+    }"
+  end
 end

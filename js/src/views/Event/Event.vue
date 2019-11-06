@@ -173,8 +173,8 @@ import {ParticipantRole} from "@/types/event.model";
           </div>
         <section class="share" v-if="!event.draft">
           <div class="container">
-            <div class="columns">
-              <div class="column is-half-desktop has-text-centered">
+            <div class="columns is-centered is-multiline">
+              <div class="column is-half-widescreen has-text-centered">
                 <h3 class="title">{{ $t('Share this event') }}</h3>
                 <small class="maximumNumberOfPlacesWarning" v-if="!eventCapacityOK">
                   {{ $t('All the places have already been taken') }}
@@ -189,7 +189,8 @@ import {ParticipantRole} from "@/types/event.model";
                 </div>
               </div>
               <hr />
-              <div class="column is-half has-text-right add-to-calendar">
+              <div class="column is-half-widescreen has-text-right add-to-calendar">
+                <img src="../../assets/undraw_events.svg" class="is-hidden-mobile is-hidden-tablet-only" />
                 <h3 @click="downloadIcsEvent()">
                   {{ $t('Add to my calendar') }}
                 </h3>
@@ -911,18 +912,19 @@ export default class Event extends EventMixin {
 
         h3 {
           margin-right: 0;
-          margin-left: auto;
         }
       }
 
       .add-to-calendar {
-        background-repeat: no-repeat;
-        background-size: 400px;
-        background-position: 10% 50%;
-        background-image: url('../../assets/undraw_events.svg');
-        position: relative;
+        display: flex;
+
         h3 {
+          margin-left: 0;
           cursor: pointer;
+        }
+
+        img {
+          max-width: 400px;
         }
 
         &::before {

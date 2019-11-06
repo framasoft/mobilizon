@@ -49,6 +49,11 @@ export const errors: IError[] = [
     suggestRefresh: false,
   },
   {
+    match: /Cannot remove the last identity of a user/,
+    value: i18n.t("You can't remove your last identity.") as string,
+    suggestRefresh: false,
+  },
+  {
     match: /^No user with this email was found$/,
     value: null,
   },
