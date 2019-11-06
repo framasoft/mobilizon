@@ -127,7 +127,6 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
       locality: Map.get(components, "locality"),
       region: Map.get(components, "administrative_area_level_1"),
       description: description,
-      floor: nil,
       geom: [lon, lat] |> Provider.coordinates(),
       postal_code: Map.get(components, "postal_code"),
       street: street_address(components),

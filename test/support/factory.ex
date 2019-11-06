@@ -83,7 +83,6 @@ defmodule Mobilizon.Factory do
       description: sequence("MyAddress"),
       geom: %Geo.Point{coordinates: {45.75, 4.85}, srid: 4326},
       url: "http://mobilizon.test/address/#{Ecto.UUID.generate()}",
-      floor: "Myfloor",
       country: "My Country",
       locality: "My Locality",
       region: "My Region",

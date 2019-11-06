@@ -1,7 +1,6 @@
 export interface IAddress {
   id?: number;
   description: string;
-  floor: string;
   street: string;
   locality: string;
   postalCode: string;
@@ -15,7 +14,6 @@ export interface IAddress {
 export class Address implements IAddress {
   country: string = '';
   description: string = '';
-  floor: string = '';
   locality: string = '';
   postalCode: string = '';
   region: string = '';

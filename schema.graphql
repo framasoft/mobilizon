@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Wed Oct 30 2019 17:12:28 GMT+0100 (Central European Standard Time)
+# timestamp: Wed Nov 06 2019 12:50:45 GMT+0100 (Central European Standard Time)
 
 schema {
   query: RootQueryType
@@ -119,9 +119,6 @@ type Address {
   country: String
   description: String
 
-  """The floor this event is at"""
-  floor: String
-
   """The geocoordinates for the point where this address is"""
   geom: Point
   id: ID
@@ -140,9 +137,6 @@ type Address {
 input AddressInput {
   country: String
   description: String
-
-  """The floor this event is at"""
-  floor: String
 
   """The geocoordinates for the point where this address is"""
   geom: Point

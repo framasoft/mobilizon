@@ -78,7 +78,6 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
       locality: Map.get(address, "city"),
       region: Map.get(address, "state"),
       description: description(body),
-      floor: Map.get(address, "floor"),
       geom: [Map.get(body, "lon"), Map.get(body, "lat")] |> Provider.coordinates(),
       postal_code: Map.get(address, "postcode"),
       street: street_address(address),

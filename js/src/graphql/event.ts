@@ -18,7 +18,6 @@ const participantQuery = `
 
 const physicalAddressQuery = `
   description,
-  floor,
   street,
   locality,
   postalCode,

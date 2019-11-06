@@ -8,7 +8,6 @@ export const ADDRESS = gql`
             id,
             description,
             geom,
-            floor,
             street,
             locality,
             postalCode,

@@ -115,7 +115,6 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
       locality: Map.get(address, "adminArea5"),
       region: Map.get(address, "adminArea3"),
       description: Map.get(address, "street"),
-      floor: Map.get(address, "floor"),
       geom: [lng, lat] |> Provider.coordinates(),
       postal_code: Map.get(address, "postalCode"),
       street: Map.get(address, "street")

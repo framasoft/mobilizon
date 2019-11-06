@@ -12,7 +12,6 @@ defmodule Mobilizon.AddressesTest do
       locality: "some addressLocality",
       region: "some addressRegion",
       description: "some description",
-      floor: "some floor",
       postal_code: "some postalCode",
       street: "some streetAddress",
       geom: %Geo.Point{coordinates: {10, -10}, srid: 4326}
@@ -22,7 +21,6 @@ defmodule Mobilizon.AddressesTest do
       locality: "some updated addressLocality",
       region: "some updated addressRegion",
       description: "some updated description",
-      floor: "some updated floor",
       postal_code: "some updated postalCode",
       street: "some updated streetAddress",
       geom: %Geo.Point{coordinates: {20, -20}, srid: 4326}
@@ -32,7 +30,6 @@ defmodule Mobilizon.AddressesTest do
     #   addressLocality: nil,
     #   addressRegion: nil,
     #   description: nil,
-    #   floor: nil,
     #   postalCode: nil,
     #   streetAddress: nil,
     #   geom: nil
@@ -54,7 +51,6 @@ defmodule Mobilizon.AddressesTest do
       assert address.locality == "some addressLocality"
       assert address.region == "some addressRegion"
       assert address.description == "some description"
-      assert address.floor == "some floor"
       assert address.postal_code == "some postalCode"
       assert address.street == "some streetAddress"
     end
@@ -66,7 +62,6 @@ defmodule Mobilizon.AddressesTest do
       assert address.locality == "some updated addressLocality"
       assert address.region == "some updated addressRegion"
       assert address.description == "some updated description"
-      assert address.floor == "some updated floor"
       assert address.postal_code == "some updated postalCode"
       assert address.street == "some updated streetAddress"
     end

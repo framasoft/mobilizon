@@ -14,7 +14,6 @@ defmodule Mobilizon.Addresses.Address do
           locality: String.t(),
           region: String.t(),
           description: String.t(),
-          floor: String.t(),
           geom: Geo.PostGIS.Geometry.t(),
           postal_code: String.t(),
           street: String.t(),
@@ -26,7 +25,6 @@ defmodule Mobilizon.Addresses.Address do
   @required_attrs [:url]
   @optional_attrs [
     :description,
-    :floor,
     :geom,
     :country,
     :locality,
@@ -42,7 +40,6 @@ defmodule Mobilizon.Addresses.Address do
     field(:locality, :string)
     field(:region, :string)
     field(:description, :string)
-    field(:floor, :string)
     field(:geom, Geo.PostGIS.Geometry)
     field(:postal_code, :string)
     field(:street, :string)
