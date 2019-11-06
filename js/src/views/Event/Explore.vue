@@ -7,7 +7,7 @@
           <b-field :label="$t('Event')" grouped label-position="on-border">
             <b-input icon="magnify" type="search" size="is-large" expanded v-model="searchTerm" :placeholder="$t('For instance: London, Taekwondo, Architecture…')" />
             <p class="control">
-              <b-button @click="submit" type="is-info" size="is-large">{{ $t('Search') }}</b-button>
+              <b-button @click="submit" type="is-info" size="is-large" v-bind:disabled="searchTerm.trim().length === 0">{{ $t('Search') }}</b-button>
             </p>
           </b-field>
         </form>
