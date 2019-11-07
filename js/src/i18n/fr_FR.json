@@ -298,7 +298,7 @@
     "You are already a participant of this event.": "Vous participez déjà à cet événement.",
     "You are already logged-in.": "Vous êtes déjà connecté.",
     "You can add tags by hitting the Enter key or by adding a comma": "Vous pouvez ajouter des tags en appuyant sur la touche Entrée ou bien en ajoutant une virgule",
-    "You can't remove your last identity.": "Vous ne pouvez pas supprimer votre dernière identité",
+    "You can't remove your last identity.": "Vous ne pouvez pas supprimer votre dernière identité.",
     "You have been disconnected": "Vous avez été déconnecté⋅e",
     "You have cancelled your participation": "Vous avez annulé votre participation",
     "You have one event in {days} days.": "Vous n'avez pas d'événements dans {days} jours | Vous avez un événement dans {days} jours. | Vous avez {count} événements dans {days} jours",
