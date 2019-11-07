@@ -1,10 +1,26 @@
 # Development
-Clone the repo, and start the project through Docker. You'll need both Docker and Docker-Compose.
+
+Clone the repository:
 ```bash
+# With HTTPS
 git clone https://framagit.org/framasoft/mobilizon && cd mobilizon
-make
+
+# With SSH
+git clone git@framagit.org:framasoft/mobilizon.git && cd mobilizon
 ```
-## Manual
+
+Run Mobilizon:
+  * with Docker and Docker-Compose (**Recommended**)
+  * without Docker and Docker-Compose (This involves more work on your part, use Docker and Docker-Compose if you can)
+
+## With Docker and Docker-Compose
+
+  * Install [Docker](https://docs.docker.com/install/#supported-platforms) and [Docker-Compose](https://docs.docker.com/compose/install/) for your system.
+  * Run `make start` to build, then launch a database container and an API container.
+  * Follow the progress of the build with `docker-compose logs -f`.
+  * Access `localhost:4000` in your browser once the containers are fully built and launched.
+
+## Without Docker and Docker-Compose
 
   * Install dependencies:
     * Elixir (and Erlang) by following the instructions at [https://elixir-lang.github.io/install.html](https://elixir-lang.github.io/install.html)
@@ -31,12 +47,3 @@ make
 
 Now you can visit [`localhost:4000`](http://localhost:4000) in your browser
 and see the website (server *and* client) in action.
-
-## Docker
-You need to install the latest supported [Docker](https://docs.docker.com/install/#supported-platforms) and [Docker-Compose](https://docs.docker.com/compose/install/) before using the Docker way of installing Mobilizon.
-
-Just run :
-```bash
-make start
-```
-to build and launch a database container and an API container running on `localhost:4000`.
