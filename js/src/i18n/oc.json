@@ -330,6 +330,7 @@
     "You are already logged-in.": "Sètz ja connectat.",
     "You are an organizer.": "Sètz un organizaire.",
     "You can add tags by hitting the Enter key or by adding a comma": "Podètz ajustar d’etiquetas en tocant la tòca Entrada o en ajustant una vergula",
+    "You can't remove your last identity.": "Podètz pas suprimir vòstra darrièra identitat.",
     "You have been disconnected": "Sètz estat desconnectat",
     "You have cancelled your participation": "Avètz anullada vòstra participacion",
     "You have one event in {days} days.": "Avètz pas cap d’eveniment d’aquí {days} jorns | Avètz un eveniment d’aquí {days} jorns. | Avètz {count} eveniments d’aquí {days} jorns",
