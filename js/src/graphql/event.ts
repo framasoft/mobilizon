@@ -24,7 +24,9 @@ const physicalAddressQuery = `
   region,
   country,
   geom,
-  id
+  type,
+  id,
+  originId
 `;
 
 const tagsQuery = `

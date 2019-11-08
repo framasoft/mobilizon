@@ -1,5 +1,5 @@
 import { Actor, IActor, IPerson } from './actor';
-import { IAddress } from '@/types/address.model';
+import { Address, IAddress } from '@/types/address.model';
 import { ITag } from '@/types/tag.model';
 import { IPicture } from '@/types/picture.model';
 
@@ -239,7 +239,7 @@ export class EventModel implements IEvent {
 
     this.onlineAddress = hash.onlineAddress;
     this.phoneAddress = hash.phoneAddress;
-    this.physicalAddress = hash.physicalAddress;
+    this.physicalAddress = new Address(hash.physicalAddress);
     this.participantStats = hash.participantStats;
 
     this.tags = hash.tags;

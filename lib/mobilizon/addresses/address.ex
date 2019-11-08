@@ -17,6 +17,7 @@ defmodule Mobilizon.Addresses.Address do
           geom: Geo.PostGIS.Geometry.t(),
           postal_code: String.t(),
           street: String.t(),
+          type: String.t(),
           url: String.t(),
           origin_id: String.t(),
           events: [Event.t()]
@@ -31,7 +32,8 @@ defmodule Mobilizon.Addresses.Address do
     :region,
     :postal_code,
     :street,
-    :origin_id
+    :origin_id,
+    :type
   ]
   @attrs @required_attrs ++ @optional_attrs
 
@@ -43,6 +45,7 @@ defmodule Mobilizon.Addresses.Address do
     field(:geom, Geo.PostGIS.Geometry)
     field(:postal_code, :string)
     field(:street, :string)
+    field(:type, :string)
     field(:url, :string)
     field(:origin_id, :string)
 

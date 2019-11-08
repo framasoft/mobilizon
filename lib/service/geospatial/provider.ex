@@ -16,6 +16,7 @@ defmodule Mobilizon.Service.Geospatial.Provider do
   * `:user_agent` User-Agent string to send to the backend. Defaults to `"Mobilizon"`
   * `:lang` Lang in which to prefer results. Used as a request parameter or
     through an `Accept-Language` HTTP header. Defaults to `"en"`.
+  * `:country_code` An ISO 3166 country code. String or `nil`
   * `:limit` Maximum limit for the number of results returned by the backend.
     Defaults to `10`
   * `:api_key` Allows to override the API key (if the backend requires one) set

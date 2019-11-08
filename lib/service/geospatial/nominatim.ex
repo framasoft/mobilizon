@@ -27,8 +27,8 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
            HTTPoison.get(url, headers),
-         {:ok, body} <- Poison.decode(body) do
-      [process_data(body)]
+         {:ok, %{"features" => features}} <- Poison.decode(body) do
+      features |> process_data() |> Enum.filter(& &1)
     end
   end
 
@@ -45,8 +45,8 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
            HTTPoison.get(url, headers),
-         {:ok, body} <- Poison.decode(body) do
-      body |> Enum.map(fn entry -> process_data(entry) end) |> Enum.filter(& &1)
+         {:ok, %{"features" => features}} <- Poison.decode(body) do
+      features |> process_data() |> Enum.filter(& &1)
     end
   end
 
@@ -55,39 +55,53 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
     limit = Keyword.get(options, :limit, 10)
     lang = Keyword.get(options, :lang, "en")
     endpoint = Keyword.get(options, :endpoint, @endpoint)
+    country_code = Keyword.get(options, :country_code)
+    zoom = Keyword.get(options, :zoom)
     api_key = Keyword.get(options, :api_key, @api_key)
 
     url =
       case method do
         :search ->
-          "#{endpoint}/search?format=jsonv2&q=#{URI.encode(args.q)}&limit=#{limit}&accept-language=#{
+          "#{endpoint}/search?format=geocodejson&q=#{URI.encode(args.q)}&limit=#{limit}&accept-language=#{
             lang
-          }&addressdetails=1"
+          }&addressdetails=1&namedetails=1"
 
         :geocode ->
-          "#{endpoint}/reverse?format=jsonv2&lat=#{args.lat}&lon=#{args.lon}&addressdetails=1"
+          url =
+            "#{endpoint}/reverse?format=geocodejson&lat=#{args.lat}&lon=#{args.lon}&accept-language=#{
+              lang
+            }&addressdetails=1&namedetails=1"
+
+          if is_nil(zoom), do: url, else: url <> "&zoom=#{zoom}"
       end
 
+    url = if is_nil(country_code), do: url, else: "#{url}&countrycodes=#{country_code}"
     if is_nil(api_key), do: url, else: url <> "&key=#{api_key}"
   end
 
-  @spec process_data(map()) :: Address.t()
-  defp process_data(%{"address" => address} = body) do
-    %Address{
-      country: Map.get(address, "country"),
-      locality: Map.get(address, "city"),
-      region: Map.get(address, "state"),
-      description: description(body),
-      geom: [Map.get(body, "lon"), Map.get(body, "lat")] |> Provider.coordinates(),
-      postal_code: Map.get(address, "postcode"),
-      street: street_address(address),
-      origin_id: "osm:" <> to_string(Map.get(body, "osm_id"))
-    }
-  rescue
-    error in ArgumentError ->
-      Logger.warn(inspect(error))
+  defp process_data(features) do
+    features
+    |> Enum.map(fn %{
+                     "geometry" => %{"coordinates" => coordinates},
+                     "properties" => %{"geocoding" => geocoding}
+                   } ->
+      address = process_address(geocoding)
+      %Address{address | geom: Provider.coordinates(coordinates)}
+    end)
+  end
 
-      nil
+  defp process_address(geocoding) do
+    %Address{
+      country: Map.get(geocoding, "country"),
+      locality:
+        Map.get(geocoding, "city") || Map.get(geocoding, "town") || Map.get(geocoding, "county"),
+      region: Map.get(geocoding, "state"),
+      description: description(geocoding),
+      postal_code: Map.get(geocoding, "postcode"),
+      type: Map.get(geocoding, "type"),
+      street: street_address(geocoding),
+      origin_id: "nominatim:" <> to_string(Map.get(geocoding, "osm_id"))
+    }
   end
 
   @spec street_address(map()) :: String.t()
@@ -97,8 +111,8 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
         Map.has_key?(body, "road") ->
           Map.get(body, "road")
 
-        Map.has_key?(body, "road") ->
-          Map.get(body, "road")
+        Map.has_key?(body, "street") ->
+          Map.get(body, "street")
 
         Map.has_key?(body, "pedestrian") ->
           Map.get(body, "pedestrian")
@@ -107,7 +121,7 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
           ""
       end
 
-    Map.get(body, "house_number", "") <> " " <> road
+    Map.get(body, "housenumber", "") <> " " <> road
   end
 
   @address29_classes ["amenity", "shop", "tourism", "leisure"]
@@ -115,13 +129,15 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
 
   @spec description(map()) :: String.t()
   defp description(body) do
-    if !Map.has_key?(body, "display_name") do
-      Logger.warn("Address has no display name")
-      raise ArgumentError, message: "Address has no display_name"
-    end
-
-    description = Map.get(body, "display_name")
+    description = Map.get(body, "name")
     address = Map.get(body, "address")
+
+    description =
+      if Map.has_key?(body, "namedetails"),
+        do: body |> Map.get("namedetails") |> Map.get("name", description),
+        else: description
+
+    description = if is_nil(description), do: street_address(body), else: description
 
     if (Map.get(body, "category") in @address29_categories or
           Map.get(body, "class") in @address29_classes) and Map.has_key?(address, "address29") do

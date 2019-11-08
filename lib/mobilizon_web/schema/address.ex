@@ -13,6 +13,7 @@ defmodule MobilizonWeb.Schema.AddressType do
     field(:region, :string)
     field(:country, :string)
     field(:description, :string)
+    field(:type, :string)
     field(:url, :string)
     field(:id, :id)
     field(:origin_id, :string)
@@ -38,6 +39,7 @@ defmodule MobilizonWeb.Schema.AddressType do
     field(:country, :string)
     field(:description, :string)
     field(:url, :string)
+    field(:type, :string)
     field(:id, :id)
     field(:origin_id, :string)
   end
@@ -46,6 +48,7 @@ defmodule MobilizonWeb.Schema.AddressType do
     @desc "Search for an address"
     field :search_address, type: list_of(:address) do
       arg(:query, non_null(:string))
+      arg(:locale, :string, default_value: "en")
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
 
@@ -56,6 +59,8 @@ defmodule MobilizonWeb.Schema.AddressType do
     field :reverse_geocode, type: list_of(:address) do
       arg(:longitude, non_null(:float))
       arg(:latitude, non_null(:float))
+      arg(:zoom, :integer, default_value: 15)
+      arg(:locale, :string, default_value: "en")
 
       resolve(&Resolvers.Address.reverse_geocode/3)
     end

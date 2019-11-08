@@ -5,39 +5,53 @@
                 :style="`height: ${mergedOptions.height}; width: ${mergedOptions.width}`"
                 class="leaflet-map"
                 :center="[lat, lon]"
+                @click="clickMap"
+                @update:zoom="updateZoom"
         >
             <l-tile-layer
-                    url="https://{s}.tile.osm.org/{z}/{x}/{y}.png"
-                    attribution="© OpenStreetMap contributors"
+                    url="https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png"
+                    :attribution="$t('© The OpenStreetMap Contributors')"
             >
 
             </l-tile-layer>
-            <l-marker :lat-lng="[lat, lon]" >
-                <l-popup v-if="popup">{{ popup }}</l-popup>
+            <v-locatecontrol :options="{icon: 'mdi mdi-map-marker'}"/>
+            <l-marker :lat-lng="[lat, lon]" @add="openPopup" @update:latLng="updateDraggableMarkerPosition" :draggable="!readOnly">
+                <l-popup v-if="popupMultiLine">
+                    <span v-for="line in popupMultiLine" :key="line">{{ line }}<br /></span>
+                </l-popup>
             </l-marker>
         </l-map>
     </div>
 </template>
 
 <script lang="ts">
-import { Icon }  from 'leaflet';
+import { Icon, LatLng, LeafletMouseEvent } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { LMap, LTileLayer, LMarker, LPopup } from 'vue2-leaflet';
+import { LMap, LTileLayer, LMarker, LPopup, LIcon } from 'vue2-leaflet';
+import Vue2LeafletLocateControl from '@/components/Map/Vue2LeafletLocateControl.vue';
 
 @Component({
-  components: { LTileLayer, LMap, LMarker, LPopup },
+  components: { LTileLayer, LMap, LMarker, LPopup, LIcon, 'v-locatecontrol': Vue2LeafletLocateControl },
 })
 export default class Map extends Vue {
+  @Prop({ type: Boolean, required: false, default: true }) readOnly!: boolean;
   @Prop({ type: String, required: true }) coords!: string;
-  @Prop({ type: String, required: false }) popup!: string;
+  @Prop({ type: Object, required: false }) marker!: { text: String|String[], icon: String };
   @Prop({ type: Object, required: false }) options!: object;
+  @Prop({ type: Function, required: false, default: () => {} }) updateDraggableMarkerCallback!: Function;
 
-  defaultOptions: object = {
+  defaultOptions: {
+    zoom: Number;
+    height: String;
+    width: String;
+  } = {
     zoom: 15,
     height: '100%',
     width: '100%',
   };
+
+  zoom = this.defaultOptions.zoom;
 
   mounted() {
     // this part resolve an issue where the markers would not appear
@@ -51,12 +65,38 @@ export default class Map extends Vue {
     });
   }
 
+  openPopup(event) {
+    this.$nextTick(() => {
+      event.target.openPopup();
+    });
+  }
+
   get mergedOptions(): object {
     return { ...this.defaultOptions, ...this.options };
   }
 
   get lat() { return this.$props.coords.split(';')[1]; }
   get lon() { return this.$props.coords.split(';')[0]; }
+
+  get popupMultiLine() {
+    if (Array.isArray(this.marker.text)) {
+      return this.marker.text;
+    }
+    return [this.marker.text];
+  }
+
+  clickMap(event: LeafletMouseEvent) {
+    this.updateDraggableMarkerPosition(event.latlng);
+  }
+
+  updateDraggableMarkerPosition(e: LatLng) {
+    console.log('updateDraggableMarkerPosition', e);
+    this.updateDraggableMarkerCallback(e, this.zoom);
+  }
+
+  updateZoom(zoom: Number) {
+    this.zoom = zoom;
+  }
 }
 </script>
 <style lang="scss" scoped>

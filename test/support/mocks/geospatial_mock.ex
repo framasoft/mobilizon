@@ -9,7 +9,9 @@ defmodule Mobilizon.Service.Geospatial.Mock do
   @behaviour Provider
 
   @impl Provider
-  def geocode(_lon, _lat, _options \\ []), do: []
+  def geocode(_lon, _lat, _options \\ [])
+  def geocode(45.75, 4.85, _options), do: [%Address{description: "10 rue Jangot, Lyon"}]
+  def geocode(_lon, _lat, _options), do: [%Address{description: "Anywhere"}]
 
   @impl Provider
   def search(_q, _options \\ []), do: [%Address{description: "10 rue Jangot, Lyon"}]

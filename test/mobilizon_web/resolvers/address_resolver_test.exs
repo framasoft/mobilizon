@@ -26,11 +26,6 @@ defmodule MobilizonWeb.Resolvers.AddressResolverTest do
     end
 
     test "geocode/3 reverse geocodes coordinates", %{conn: conn} do
-      address =
-        insert(:address,
-          description: "10 rue Jangot, Lyon"
-        )
-
       query = """
         {
           reverseGeocode(longitude: -23.01, latitude: 30.01) {
@@ -44,7 +39,8 @@ defmodule MobilizonWeb.Resolvers.AddressResolverTest do
         conn
         |> get("/api", AbsintheHelpers.query_skeleton(query, "address"))
 
-      assert json_response(res, 200)["data"]["reverseGeocode"] == []
+      assert json_response(res, 200)["data"]["reverseGeocode"] |> hd |> Map.get("description") ==
+               "Anywhere"
 
       query = """
         {
@@ -60,7 +56,7 @@ defmodule MobilizonWeb.Resolvers.AddressResolverTest do
         |> get("/api", AbsintheHelpers.query_skeleton(query, "address"))
 
       assert json_response(res, 200)["data"]["reverseGeocode"] |> hd |> Map.get("description") ==
-               address.description
+               "10 rue Jangot, Lyon"
     end
   end
 end

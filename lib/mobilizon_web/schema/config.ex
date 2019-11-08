@@ -13,6 +13,14 @@ defmodule MobilizonWeb.Schema.ConfigType do
     field(:description, :string)
 
     field(:registrations_open, :boolean)
+    field(:country_code, :string)
+    field(:location, :lonlat)
+  end
+
+  object :lonlat do
+    field(:longitude, :float)
+    field(:latitude, :float)
+    field(:accuracy_radius, :integer)
   end
 
   object :config_queries do

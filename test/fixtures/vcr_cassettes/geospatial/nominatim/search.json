@@ -2,17 +2,19 @@
   {
     "request": {
       "body": "",
-      "headers": [],
+      "headers": {
+        "User-Agent": "Test instance mobilizon.test - Mobilizon 1.0.0-beta.1"
+      },
       "method": "get",
       "options": [],
       "request_body": "",
-      "url": "https://nominatim.openstreetmap.org/search?format=jsonv2&q=10%20rue%20Jangot&limit=10&accept-language=en&addressdetails=1"
+      "url": "https://nominatim.openstreetmap.org/search?format=geocodejson&q=10%20rue%20Jangot&limit=10&accept-language=en&addressdetails=1&namedetails=1"
     },
     "response": {
       "binary": false,
-      "body": "[{\"place_id\":41453794,\"licence\":\"Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright\",\"osm_type\":\"node\",\"osm_id\":3078260611,\"boundingbox\":[\"45.7516641\",\"45.7517641\",\"4.8425157\",\"4.8426157\"],\"lat\":\"45.7517141\",\"lon\":\"4.8425657\",\"display_name\":\"10, Rue Jangot, La Guillotière, Lyon 7e Arrondissement, Lyon, Métropole de Lyon, Departemental constituency of Rhône, Auvergne-Rhône-Alpes, Metropolitan France, 69007, France\",\"place_rank\":30,\"category\":\"place\",\"type\":\"house\",\"importance\":0.31100000000000005,\"address\":{\"house_number\":\"10\",\"road\":\"Rue Jangot\",\"suburb\":\"La Guillotière\",\"city_district\":\"Lyon 7e Arrondissement\",\"city\":\"Lyon\",\"county\":\"Lyon\",\"state_district\":\"Departemental constituency of Rhône\",\"state\":\"Auvergne-Rhône-Alpes\",\"country\":\"France\",\"postcode\":\"69007\",\"country_code\":\"fr\"}}]",
+      "body": "{\"type\":\"FeatureCollection\",\"geocoding\":{\"version\":\"0.1.0\",\"attribution\":\"Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright\",\"licence\":\"ODbL\",\"query\":\"10 rue Jangot\"},\"features\":[{\"type\":\"Feature\",\"properties\":{\"geocoding\":{\"place_id\":41453794,\"osm_type\":\"node\",\"osm_id\":3078260611,\"type\":\"house\",\"label\":\"10, Rue Jangot, La Guillotière, Lyon 7e Arrondissement, Lyon, Métropole de Lyon, Departemental constituency of Rhône, Auvergne-Rhône-Alpes, Metropolitan France, 69007, France\",\"name\":null,\"housenumber\":\"10\",\"street\":\"Rue Jangot\",\"postcode\":\"69007\",\"city\":\"Lyon\",\"county\":\"Lyon\",\"state\":\"Auvergne-Rhône-Alpes\",\"country\":\"France\",\"admin\":{\"level2\":\"France\",\"level3\":\"Metropolitan France\",\"level4\":\"Auvergne-Rhône-Alpes\",\"level5\":\"Departemental constituency of Rhône\",\"level6\":\"Métropole de Lyon\",\"level7\":\"Lyon\",\"level8\":\"Lyon\",\"level9\":\"Lyon 7e Arrondissement\"}}},\"geometry\":{\"type\":\"Point\",\"coordinates\":[4.8425657,45.7517141]}}]}",
       "headers": {
-        "Date": "Thu, 14 Mar 2019 10:24:24 GMT",
+        "Date": "Tue, 12 Nov 2019 12:21:46 GMT",
         "Server": "Apache/2.4.29 (Ubuntu)",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "OPTIONS,GET",
