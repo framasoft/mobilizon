@@ -183,7 +183,7 @@
     "Password": "Passwort",
     "Password (confirmation)": "Passwort (Bestätigung)",
     "Password change": "Passwort Ändern",
-    "Password reset": "Passwort zurückgesetzt",
+    "Password reset": "",
     "Past events": "Vergangene Veranstaltungen",
     "Pick an identity": "Wähle eine Identität",
     "Please check your spam folder if you didn't receive the email.": "Bitte schaue auch in deinem Spam-Ordner nach, ob Du die E-Mail nicht erhalten hast.",
@@ -276,5 +276,12 @@
     "Waiting for organization team approval.": "Warte auf die Bestätigung des Organisationsteams.",
     "Waiting list": "Warteliste",
     "Warning": "Warnung",
-    "We just sent an email to {email}": "Wir haben gerade eine E-Mail an {email} gesendet"
+    "We just sent an email to {email}": "Wir haben gerade eine E-Mail an {email} gesendet",
+    "its source code is public": "der Quellcode offen ist",
+    "respect of the fundamental freedoms": "Respekt für die fundamentalen Freiheiten",
+    "{approved} / {total} seats": "{approved} / {total} Plätze",
+    "{count} participants": "Noch keine Teilnehmer | Ein Teilnehmer | {count} Teilnehmer",
+    "{count} requests waiting": "{count} Anfragen ausstehend",
+    "{license} guarantees {respect} of the people who will use it. Since {source}, anyone can audit it, which guarantees its transparency.": "{license} garantiert den {respect} der Leute die es Nutzen. Da {sources}, kann jeder ihn einsehen und analysieren, was Tranzparenz verspricht.",
+    "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© Das Mobilizon Team {date} - Entwickelt mit Elixir, Phoenix, VueJS & viel liebe und viel Zeit"
 }
