@@ -10,15 +10,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-10-11 15:49+0200\n"
-"Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
-"Language-Team: English <https://weblate.framasoft.org/projects/mobilizon/backend/en/>\n"
+"PO-Revision-Date: 2019-11-12 13:24+0000\n"
+"Last-Translator: Pieter David <pieter.david@gmail.com>\n"
+"Language-Team: English <https://weblate.framasoft.org/projects/mobilizon/"
+"backend/en/>\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Weblate 3.9.1\n"
 
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:48
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:12
@@ -243,7 +244,7 @@ msgstr "Title"
 
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:19
 msgid "View the updated event on: %{link}"
-msgstr "Your participation to event %{title} has been rejected"
+msgstr "View the updated event on: %{link}"
 
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:38
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:5
