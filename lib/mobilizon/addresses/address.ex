@@ -14,10 +14,10 @@ defmodule Mobilizon.Addresses.Address do
           locality: String.t(),
           region: String.t(),
           description: String.t(),
-          floor: String.t(),
           geom: Geo.PostGIS.Geometry.t(),
           postal_code: String.t(),
           street: String.t(),
+          type: String.t(),
           url: String.t(),
           origin_id: String.t(),
           events: [Event.t()]
@@ -26,14 +26,14 @@ defmodule Mobilizon.Addresses.Address do
   @required_attrs [:url]
   @optional_attrs [
     :description,
-    :floor,
     :geom,
     :country,
     :locality,
     :region,
     :postal_code,
     :street,
-    :origin_id
+    :origin_id,
+    :type
   ]
   @attrs @required_attrs ++ @optional_attrs
 
@@ -42,10 +42,10 @@ defmodule Mobilizon.Addresses.Address do
     field(:locality, :string)
     field(:region, :string)
     field(:description, :string)
-    field(:floor, :string)
     field(:geom, Geo.PostGIS.Geometry)
     field(:postal_code, :string)
     field(:street, :string)
+    field(:type, :string)
     field(:url, :string)
     field(:origin_id, :string)
 

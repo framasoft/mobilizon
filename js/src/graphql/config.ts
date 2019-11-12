@@ -5,7 +5,13 @@ query {
   config {
     name,
     description,
-    registrationsOpen
+    registrationsOpen,
+    countryCode,
+    location {
+      latitude,
+      longitude,
+      accuracyRadius
+    }
   }
 }
 `;

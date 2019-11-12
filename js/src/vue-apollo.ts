@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueApollo from 'vue-apollo';
 import { ApolloLink, Observable } from 'apollo-link';
-import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
+import { defaultDataIdFromObject, InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
 import { onError } from 'apollo-link-error';
 import { createLink } from 'apollo-absinthe-upload-link';
 import { GRAPHQL_API_ENDPOINT, GRAPHQL_API_FULL_PATH } from './api/_entrypoint';
@@ -132,6 +132,13 @@ const link = authMiddleware
 
 const cache = new InMemoryCache({
   fragmentMatcher,
+  dataIdFromObject: object => {
+    if (object.__typename === 'Address') {
+      // @ts-ignore
+      return object.origin_id;
+    }
+    return defaultDataIdFromObject(object);
+  },
 });
 
 const apolloClient = new ApolloClient({

@@ -1,4 +1,3 @@
-import {ParticipantRole} from "@/types/event.model";
 <template>
   <div class="container">
     <b-loading :active.sync="$apollo.loading"></b-loading>
@@ -15,7 +14,7 @@ import {ParticipantRole} from "@/types/event.model";
                 <div class="title-and-informations">
                   <h1 class="title">{{ event.title }}</h1>
                   <span>
-                    <router-link v-if="actorIsOrganizer" :to="{ name: RouteName.PARTICIPATIONS, params: {eventId: event.uuid}}">
+                    <router-link v-if="actorIsOrganizer && event.draft === false" :to="{ name: RouteName.PARTICIPATIONS, params: {eventId: event.uuid}}">
                       <small v-if="event.participantStats.going > 0 && !actorIsParticipant">
                         {{ $tc('One person is going', event.participantStats.going, {approved: event.participantStats.going}) }}
                       </small>
@@ -111,23 +110,27 @@ import {ParticipantRole} from "@/types/event.model";
                   </p>
                 </div>
                 <div class="address-wrapper">
-                  <b-icon icon="map" />
-                  <span v-if="!event.physicalAddress">{{ $t('No address defined') }}</span>
-                  <div class="address" v-if="event.physicalAddress">
-                    <address>
-                      <span class="addressDescription" :title="event.physicalAddress.description">{{ event.physicalAddress.description }}</span>
-                      <span>{{ event.physicalAddress.floor }} {{ event.physicalAddress.street }}</span>
-                      <span>{{ event.physicalAddress.postalCode }} {{ event.physicalAddress.locality }}</span>
-                    </address>
-                    <span class="map-show-button" @click="showMap = !showMap" v-if="event.physicalAddress && event.physicalAddress.geom">
+                  <span v-if="!physicalAddress">
+                    <b-icon icon="map" />
+                    {{ $t('No address defined') }}
+                  </span>
+                  <div class="address" v-if="physicalAddress">
+                    <span>
+                      <b-icon :icon="physicalAddress.poiInfos.poiIcon.icon" />
+                      <address>
+                        <span class="addressDescription" :title="physicalAddress.poiInfos.name">{{ physicalAddress.poiInfos.name }}</span>
+                        <span>{{ physicalAddress.poiInfos.alternativeName }}</span>
+                      </address>
+                    </span>
+                    <span class="map-show-button" @click="showMap = !showMap" v-if="physicalAddress && physicalAddress.geom">
                       {{ $t('Show map') }}
                     </span>
                   </div>
-                  <b-modal v-if="event.physicalAddress && event.physicalAddress.geom" :active.sync="showMap" scroll="keep">
+                  <b-modal v-if="physicalAddress && physicalAddress.geom" :active.sync="showMap" scroll="keep">
                     <div class="map">
                       <map-leaflet
-                              :coords="event.physicalAddress.geom"
-                              :popup="event.physicalAddress.description"
+                              :coords="physicalAddress.geom"
+                              :marker="{ text: physicalAddress.fullName, icon: physicalAddress.poiInfos.poiIcon.icon }"
                       />
                     </div>
                   </b-modal>
@@ -254,7 +257,7 @@ import IdentityPicker from '@/views/Account/IdentityPicker.vue';
 import ParticipationButton from '@/components/Event/ParticipationButton.vue';
 import { GraphQLError } from 'graphql';
 import { RouteName } from '@/router';
-import HTML = Mocha.reporters.HTML;
+import { Address } from '@/types/address.model';
 
 @Component({
   components: {
@@ -596,11 +599,13 @@ export default class Event extends EventMixin {
   }
 
   get eventCapacityOK(): boolean {
+    if (this.event.draft) return true;
     if (!this.event.options.maximumAttendeeCapacity) return true;
     return this.event.options.maximumAttendeeCapacity > this.event.participantStats.participant;
   }
 
   get numberOfPlacesStillAvailable(): number {
+    if (this.event.draft) return this.event.options.maximumAttendeeCapacity;
     return this.event.options.maximumAttendeeCapacity - this.event.participantStats.participant;
   }
 
@@ -610,6 +615,11 @@ export default class Event extends EventMixin {
     } catch (e) {
       return null;
     }
+  }
+
+  get physicalAddress(): Address|null {
+    if (!this.event.physicalAddress) return null;
+    return new Address(this.event.physicalAddress);
   }
 }
 </script>
@@ -664,25 +674,33 @@ export default class Event extends EventMixin {
           cursor: pointer;
         }
 
-        address {
-          font-style: normal;
-          flex-wrap: wrap;
+        span:first-child {
           display: flex;
-          justify-content: flex-start;
 
-          span.addressDescription {
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            flex: 1 0 auto;
-            min-width: 100%;
-            max-width: 4rem;
-            overflow: hidden;
+          span.icon {
+            align-self: center;
           }
 
-          :not(.addressDescription) {
-            color: rgba(46, 62, 72, .6);
-            flex: 1;
-            min-width: 100%;
+          address {
+            font-style: normal;
+            flex-wrap: wrap;
+            display: flex;
+            justify-content: flex-start;
+
+            span.addressDescription {
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              flex: 1 0 auto;
+              min-width: 100%;
+              max-width: 4rem;
+              overflow: hidden;
+            }
+
+            :not(.addressDescription) {
+              color: rgba(46, 62, 72, .6);
+              flex: 1;
+              min-width: 100%;
+            }
           }
         }
       }

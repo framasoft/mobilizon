@@ -110,6 +110,7 @@
 	"From the {startDate} to the {endDate}": "From the {startDate} to the {endDate}",
 	"Gather ⋅ Organize ⋅ Mobilize": "Gather ⋅ Organize ⋅ Mobilize",
 	"General information": "General information",
+	"Getting location": "Getting location",
 	"Going as {name}": "Going as {name}",
 	"Group List": "Group List",
 	"Group full name": "Group full name",
@@ -160,7 +161,7 @@
 	"No events found": "No events found",
 	"No group found": "No group found",
 	"No groups found": "No groups found",
-	"No results for \"{queryText}\"": "No results for \"{queryText}\"",
+	"No results for \"{queryText}\". You can try another search term or drag and drop the marker on the map": "No results for \"{queryText}\". You can try another search term or drag and drop the marker on the map",
 	"No user account with this email was found. Maybe you made a typo?": "No user account with this email was found. Maybe you made a typo?",
 	"Number of places": "Number of places",
 	"OK": "OK",
@@ -195,7 +196,6 @@
 	"Please make sure the address is correct and that the page hasn't been moved.": "Please make sure the address is correct and that the page hasn't been moved.",
 	"Please read the full rules": "Please read the full rules",
 	"Please refresh the page and retry.": "Please refresh the page and retry.",
-	"Please type at least 5 characters": "Please type at least 5 characters",
 	"Postal Code": "Postal Code",
 	"Private event": "Private event",
 	"Private feeds": "Private feeds",
@@ -327,5 +327,6 @@
 	"{count} participants": "No participants yet | One participant | {count} participants",
 	"{count} requests waiting": "{count} requests waiting",
 	"{license} guarantees {respect} of the people who will use it. Since {source}, anyone can audit it, which guarantees its transparency.": "{license} guarantees {respect} of the people who will use it. Since {source}, anyone can audit it, which guarantees its transparency.",
-	"© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks"
+	"© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks",
+	"© The OpenStreetMap Contributors": "© The OpenStreetMap Contributors"
 }

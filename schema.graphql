@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Wed Oct 30 2019 17:12:28 GMT+0100 (Central European Standard Time)
+# timestamp: Fri Nov 08 2019 17:20:47 GMT+0100 (Central European Standard Time)
 
 schema {
   query: RootQueryType
@@ -119,9 +119,6 @@ type Address {
   country: String
   description: String
 
-  """The floor this event is at"""
-  floor: String
-
   """The geocoordinates for the point where this address is"""
   geom: Point
   id: ID
@@ -134,6 +131,7 @@ type Address {
 
   """The address's street name (with number)"""
   street: String
+  type: String
   url: String
 }
 
@@ -141,9 +139,6 @@ input AddressInput {
   country: String
   description: String
 
-  """The floor this event is at"""
-  floor: String
-
   """The geocoordinates for the point where this address is"""
   geom: Point
   id: ID
@@ -156,6 +151,7 @@ input AddressInput {
 
   """The address's street name (with number)"""
   street: String
+  type: String
   url: String
 }
 
@@ -193,7 +189,9 @@ enum CommentVisibility {
 
 """A config object"""
 type Config {
+  countryCode: String
   description: String
+  location: Lonlat
   name: String
   registrationsOpen: Boolean
 }
@@ -633,6 +631,12 @@ type Login {
 
   """The user associated to this session"""
   user: User!
+}
+
+type Lonlat {
+  accuracyRadius: Int
+  latitude: Float
+  longitude: Float
 }
 
 """
@@ -1177,7 +1181,7 @@ type RootQueryType {
   reverseGeocode(latitude: Float!, longitude: Float!): [Address]
 
   """Search for an address"""
-  searchAddress(limit: Int = 10, page: Int = 1, query: String!): [Address]
+  searchAddress(limit: Int = 10, locale: String = "en", page: Int = 1, query: String!): [Address]
 
   """Search events"""
   searchEvents(limit: Int = 10, page: Int = 1, search: String!): Events

@@ -18,14 +18,15 @@ const participantQuery = `
 
 const physicalAddressQuery = `
   description,
-  floor,
   street,
   locality,
   postalCode,
   region,
   country,
   geom,
-  id
+  type,
+  id,
+  originId
 `;
 
 const tagsQuery = `

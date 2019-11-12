@@ -28,6 +28,7 @@ defmodule Mobilizon.Events.Event do
   alias Mobilizon.Media
   alias Mobilizon.Media.Picture
   alias Mobilizon.Mention
+  alias Mobilizon.Storage.Repo
 
   alias MobilizonWeb.Endpoint
   alias MobilizonWeb.Router.Helpers, as: Routes
@@ -105,7 +106,7 @@ defmodule Mobilizon.Events.Event do
     embeds_one(:participant_stats, EventParticipantStats, on_replace: :update)
     belongs_to(:organizer_actor, Actor, foreign_key: :organizer_actor_id)
     belongs_to(:attributed_to, Actor, foreign_key: :attributed_to_id)
-    belongs_to(:physical_address, Address, on_replace: :update)
+    belongs_to(:physical_address, Address, on_replace: :nilify)
     belongs_to(:picture, Picture, on_replace: :update)
     has_many(:tracks, Track)
     has_many(:sessions, Session)
@@ -194,11 +195,23 @@ defmodule Mobilizon.Events.Event do
         put_assoc(changeset, :physical_address, address)
 
       _ ->
-        changeset
+        cast_assoc(changeset, :physical_address)
     end
   end
 
-  # In case it's a new address
+  # In case it's a new address but the origin_id is an existing one
+  defp put_address(%Changeset{} = changeset, %{physical_address: %{origin_id: origin_id}})
+       when not is_nil(origin_id) do
+    case Repo.get_by(Address, origin_id: origin_id) do
+      %Address{} = address ->
+        put_assoc(changeset, :physical_address, address)
+
+      _ ->
+        cast_assoc(changeset, :physical_address)
+    end
+  end
+
+  # In case it's a new address without any origin_id (manual)
   defp put_address(%Changeset{} = changeset, _attrs) do
     cast_assoc(changeset, :physical_address)
   end
@@ -225,7 +238,7 @@ defmodule Mobilizon.Events.Event do
          %Changeset{changes: %{draft: true}} = changeset,
          _action
        ) do
-    cast_embed(changeset, :participant_stats)
+    put_embed(changeset, :participant_stats, %{creator: 0})
   end
 
   # Created with any other value: publish

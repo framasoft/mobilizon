@@ -3,4 +3,10 @@ export interface IConfig {
   description: string;
 
   registrationsOpen: boolean;
+  countryCode: string;
+  location: {
+    latitude: number;
+    longitude: number;
+    accuracyRadius: number;
+  };
 }

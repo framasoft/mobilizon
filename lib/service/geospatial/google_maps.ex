@@ -1,6 +1,6 @@
 defmodule Mobilizon.Service.Geospatial.GoogleMaps do
   @moduledoc """
-  Google Maps [Geocoding service](https://developers.google.com/maps/documentation/geocoding/intro).
+  Google Maps [Geocoding service](https://developers.google.com/maps/documentation/geocoding/intro). Only works with addresses.
 
   Note: Endpoint is hardcoded to Google Maps API.
   """
@@ -89,7 +89,11 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
           url <> "&address=#{args.q}"
 
         :geocode ->
-          url <> "&latlng=#{args.lat},#{args.lon}&result_type=street_address"
+          zoom = Keyword.get(options, :zoom, 15)
+
+          result_type = if zoom >= 15, do: "street_address", else: "locality"
+
+          url <> "&latlng=#{args.lat},#{args.lon}&result_type=#{result_type}"
 
         :place_details ->
           "https://maps.googleapis.com/maps/api/place/details/json?key=#{api_key}&placeid=#{
@@ -127,7 +131,6 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
       locality: Map.get(components, "locality"),
       region: Map.get(components, "administrative_area_level_1"),
       description: description,
-      floor: nil,
       geom: [lon, lat] |> Provider.coordinates(),
       postal_code: Map.get(components, "postal_code"),
       street: street_address(components),

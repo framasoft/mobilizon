@@ -137,6 +137,9 @@ config :mobilizon, Mobilizon.Service.Geospatial.GoogleMaps,
 config :mobilizon, Mobilizon.Service.Geospatial.MapQuest,
   api_key: System.get_env("GEOSPATIAL_MAP_QUEST_API_KEY") || nil
 
+config :mobilizon, Mobilizon.Service.Geospatial.Mimirsbrunn,
+  endpoint: System.get_env("GEOSPATIAL_MIMIRSBRUNN_ENDPOINT") || nil
+
 config :mobilizon, Oban,
   repo: Mobilizon.Storage.Repo,
   prune: {:maxlen, 10_000},
