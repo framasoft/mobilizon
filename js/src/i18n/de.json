@@ -110,6 +110,7 @@
     "From the {startDate} to the {endDate}": "Vom {startDate} bis zum {endDate}",
     "Gather ⋅ Organize ⋅ Mobilize": "Treffen ⋅ Organisieren ⋅ Mobilisieren",
     "General information": "Allgemeine Informationen",
+    "Getting location": "Standort ermitteln",
     "Going as {name}": "Teilnahme als {name}",
     "Group List": "Gruppenliste",
     "Group full name": "Vollständiger Gruppenname",
@@ -161,6 +162,7 @@
     "No group found": "Keine Gruppe gefunden",
     "No groups found": "Keine Gruppen gefunden",
     "No results for \"{queryText}\"": "Keine Ergebnisse für \"{queryText}\"",
+    "No results for \"{queryText}\". You can try another search term or drag and drop the marker on the map": "Keine Ergebinsse für \"{queryText}\". Du kannst es erneut mit anderen Begriffen versuchen, oder mit Drag&Drop den Marker auf die Karte setzen",
     "No user account with this email was found. Maybe you made a typo?": "Kein Account mit dieser E-Mail gefunden. Vielleicht hast Du dich vertippt?",
     "Number of places": "Anzahl der Plätze",
     "OK": "OK",
@@ -327,5 +329,6 @@
     "{count} participants": "Noch keine Teilnehmer | Ein Teilnehmer | {count} Teilnehmer",
     "{count} requests waiting": "{count} Anfragen ausstehend",
     "{license} guarantees {respect} of the people who will use it. Since {source}, anyone can audit it, which guarantees its transparency.": "{license} garantiert den {respect} der Leute die es Nutzen. Da {sources}, kann jeder ihn einsehen und analysieren, was Tranzparenz verspricht.",
-    "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© Das Mobilizon Team {date} - Entwickelt mit Elixir, Phoenix, VueJS & viel liebe und viel Zeit"
+    "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© Das Mobilizon Team {date} - Entwickelt mit Elixir, Phoenix, VueJS & viel liebe und viel Zeit",
+    "© The OpenStreetMap Contributors": "© OpenStreetMap-Mitwirkende"
 }
