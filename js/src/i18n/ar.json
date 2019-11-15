@@ -1,1 +1,12 @@
-{}
+{
+    "Change password": "تعديل الكلمة السرية",
+    "Forgot your password ?": "هل نسيت كلمتك السرية؟",
+    "New password": "الكلمة السرية الجديدة",
+    "Old password": "الكلمة السرية القديمة",
+    "Password": "الكلمة السرية",
+    "Password (confirmation)": "الكلمة السرية (تأكيد)",
+    "Reset my password": "صفّر كلمتي السرية",
+    "The password was successfully changed": "تم تعديل الكلمة السرية بنجاح",
+    "Username": "إسم المستخدم",
+    "Welcome to Mobilizon, {username}!": "مرحبًا بك إلى موبيليزون ، {username}!"
+}
