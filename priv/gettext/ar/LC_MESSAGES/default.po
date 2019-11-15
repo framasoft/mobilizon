@@ -3,14 +3,17 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-15 10:04+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2019-11-16 10:11+0000\n"
+"Last-Translator: ButterflyOfFire <butterflyoffire@protonmail.com>\n"
+"Language-Team: Arabic <https://weblate.framasoft.org/projects/mobilizon/"
+"backend/ar/>\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Translate Toolkit 2.4.0\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"X-Generator: Weblate 3.9.1\n"
 
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:48
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:12
@@ -27,7 +30,7 @@ msgstr ""
 #: lib/mobilizon_web/templates/email/email.text.eex:6
 #, elixir-format
 msgid "%{instance} is a Mobilizon server."
-msgstr ""
+msgstr "%{instance} هو خادم موبيليزون Mobilizon."
 
 #: lib/mobilizon_web/templates/email/report.html.eex:38
 #, elixir-format
@@ -37,12 +40,12 @@ msgstr ""
 #: lib/mobilizon_web/templates/email/report.html.eex:48
 #, elixir-format
 msgid "%{title} by %{creator}"
-msgstr ""
+msgstr "%{title} لِـ %{creator}"
 
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:58
 #, elixir-format
 msgid "Activate my account"
-msgstr ""
+msgstr "تنشيط حسابي"
 
 #: lib/mobilizon_web/templates/email/email.html.eex:122
 #, elixir-format
@@ -53,7 +56,7 @@ msgstr ""
 #: lib/mobilizon_web/templates/email/report.text.eex:11
 #, elixir-format
 msgid "Comments"
-msgstr ""
+msgstr "التعليقات"
 
 #: lib/mobilizon_web/templates/email/report.html.eex:46
 #: lib/mobilizon_web/templates/email/report.text.eex:6
