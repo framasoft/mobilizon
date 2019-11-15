@@ -71,8 +71,8 @@ defmodule MobilizonWeb.Schema.ReportType do
     @desc "Create a report"
     field :create_report, type: :report do
       arg(:content, :string)
-      arg(:reporter_actor_id, non_null(:id))
-      arg(:reported_actor_id, non_null(:id))
+      arg(:reporter_id, non_null(:id))
+      arg(:reported_id, non_null(:id))
       arg(:event_id, :id, default_value: nil)
       arg(:comments_ids, list_of(:id), default_value: [])
       resolve(&Report.create_report/3)

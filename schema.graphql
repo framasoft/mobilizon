@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Thu Nov 21 2019 15:58:08 GMT+0100 (Central European Standard Time)
+# timestamp: Fri Nov 22 2019 18:34:33 GMT+0100 (Central European Standard Time)
 
 schema {
   query: RootQueryType
@@ -157,13 +157,22 @@ input AddressInput {
 
 """A comment"""
 type Comment {
+  actor: Person
+  deletedAt: DateTime
+  event: Event
+
   """Internal ID for this comment"""
   id: ID
+  inReplyToComment: Comment
+  insertedAt: DateTime
   local: Boolean
+  originComment: Comment
   primaryLanguage: String
   replies: [Comment]
   text: String
   threadLanguages: [String]!
+  totalReplies: Int
+  updatedAt: DateTime
   url: String
   uuid: UUID
   visibility: CommentVisibility
@@ -258,6 +267,9 @@ type Event implements ActionLogObject {
 
   """The event's category"""
   category: String
+
+  """The comments in reply to the event"""
+  comments: [Comment]
 
   """When the event was created"""
   createdAt: DateTime
@@ -845,7 +857,7 @@ input PictureInputObject {
 }
 
 """
-The `Point` scalar type represents Point geographic information compliant string data, 
+The `Point` scalar type represents Point geographic information compliant string data,
 represented as floats separated by a semi-colon. The geodetic system is WGS 84
 """
 scalar Point
@@ -933,7 +945,7 @@ type RootMutationType {
   changePassword(newPassword: String!, oldPassword: String!): User
 
   """Create a comment"""
-  createComment(actorId: ID!, text: String!): Comment
+  createComment(actorId: ID!, eventId: ID, inReplyToCommentId: ID, text: String!): Comment
 
   """Create an event"""
   createEvent(
@@ -1018,6 +1030,7 @@ type RootMutationType {
 
   """Create an user"""
   createUser(email: String!, locale: String, password: String!): User
+  deleteComment(actorId: ID!, commentId: ID!): DeletedObject
 
   """Delete an event"""
   deleteEvent(actorId: ID!, eventId: ID!): DeletedObject
@@ -1207,6 +1220,9 @@ type RootQueryType {
 
   """Get the list of tags"""
   tags(limit: Int = 10, page: Int = 1): [Tag]!
+
+  """Get replies for thread"""
+  thread(id: ID): [Comment]
 
   """Get an user"""
   user(id: ID!): User

@@ -25,12 +25,13 @@
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
     "intersection-observer": "^0.7.0",
+    "javascript-time-ago": "^2.0.4",
     "leaflet": "^1.4.0",
     "leaflet.locatecontrol": "^0.68.0",
     "lodash": "^4.17.11",
     "ngeohash": "^0.6.3",
     "register-service-worker": "^1.6.2",
-    "tippy.js": "^5.0.2",
+    "tippy.js": "4.3.5",
     "tiptap": "^1.26.0",
     "tiptap-extensions": "^1.28.0",
     "vue": "^2.6.10",
@@ -40,6 +41,7 @@
     "vue-meta": "^2.3.1",
     "vue-property-decorator": "^8.1.0",
     "vue-router": "^3.0.6",
+    "vue-scrollto": "^2.17.1",
     "vue2-leaflet": "^2.0.3"
   },
   "devDependencies": {

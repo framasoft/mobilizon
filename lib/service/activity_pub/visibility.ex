@@ -8,6 +8,7 @@ defmodule Mobilizon.Service.ActivityPub.Visibility do
   Utility functions related to content visibility
   """
 
+  alias Mobilizon.Events.Comment
   alias Mobilizon.Service.ActivityPub.Activity
 
   @public "https://www.w3.org/ns/activitystreams#Public"
@@ -17,5 +18,6 @@ defmodule Mobilizon.Service.ActivityPub.Visibility do
   def is_public?(%{data: data}), do: is_public?(data)
   def is_public?(%Activity{data: data}), do: is_public?(data)
   def is_public?(data) when is_map(data), do: @public in (data["to"] ++ (data["cc"] || []))
+  def is_public?(%Comment{deleted_at: deleted_at}), do: !is_nil(deleted_at)
   def is_public?(err), do: raise(ArgumentError, message: "Invalid argument #{inspect(err)}")
 end

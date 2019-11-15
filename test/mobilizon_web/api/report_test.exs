@@ -7,7 +7,6 @@ defmodule MobilizonWeb.API.ReportTest do
   alias Mobilizon.Events.{Comment, Event}
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Service.ActivityPub.Activity
-  alias Mobilizon.Service.Formatter
   alias Mobilizon.Users
   alias Mobilizon.Users.User
 
@@ -24,11 +23,12 @@ defmodule MobilizonWeb.API.ReportTest do
 
       assert {:ok, %Activity{} = flag_activity, _} =
                Reports.report(%{
-                 reporter_actor_id: reporter_id,
-                 reported_actor_id: reported_id,
+                 reporter_id: reporter_id,
+                 reported_id: reported_id,
                  content: comment,
                  event_id: event_id,
-                 comments_ids: []
+                 comments_ids: [],
+                 local: true
                })
 
       assert %Activity{
@@ -37,8 +37,7 @@ defmodule MobilizonWeb.API.ReportTest do
                  "type" => "Flag",
                  "cc" => [],
                  "content" => ^comment,
-                 "object" => [^reported_url, ^event_url],
-                 "state" => "open"
+                 "object" => [^reported_url, ^event_url]
                }
              } = flag_activity
     end
@@ -57,8 +56,8 @@ defmodule MobilizonWeb.API.ReportTest do
 
       assert {:ok, %Activity{} = flag_activity, _} =
                Reports.report(%{
-                 reporter_actor_id: reporter_id,
-                 reported_actor_id: reported_id,
+                 reporter_id: reporter_id,
+                 reported_id: reported_id,
                  content: comment,
                  event_id: nil,
                  comments_ids: [comment_1_id, comment_2_id]
@@ -68,10 +67,11 @@ defmodule MobilizonWeb.API.ReportTest do
                actor: ^reporter_url,
                data: %{
                  "type" => "Flag",
-                 "cc" => [],
                  "content" => ^comment,
                  "object" => [^reported_url, ^comment_1_url, ^comment_2_url],
-                 "state" => "open"
+                 "to" => ["https://www.w3.org/ns/activitystreams#Public"],
+                 "cc" => [],
+                 "actor" => ^reporter_url
                }
              } = flag_activity
     end
@@ -87,16 +87,16 @@ defmodule MobilizonWeb.API.ReportTest do
         _comment_2 = insert(:comment, actor: reported)
 
       comment = "This is really not acceptable, remote admin I don't know"
-      encoded_comment = Formatter.html_escape(comment, "text/plain")
+      encoded_comment = HtmlSanitizeEx.strip_tags(comment)
 
       assert {:ok, %Activity{} = flag_activity, _} =
                Reports.report(%{
-                 reporter_actor_id: reporter_id,
-                 reported_actor_id: reported_id,
+                 reporter_id: reporter_id,
+                 reported_id: reported_id,
                  content: comment,
                  event_id: nil,
                  comments_ids: [comment_1_id, comment_2_id],
-                 forward: true
+                 local: false
                })
 
       assert %Activity{
@@ -107,8 +107,10 @@ defmodule MobilizonWeb.API.ReportTest do
                  "cc" => [^reported_url],
                  "content" => ^encoded_comment,
                  "object" => [^reported_url, ^comment_1_url, ^comment_2_url],
-                 "state" => "open"
-               }
+                 "to" => ["https://www.w3.org/ns/activitystreams#Public"]
+               },
+               local: true,
+               recipients: ["https://www.w3.org/ns/activitystreams#Public", ^reported_url]
              } = flag_activity
     end
 
@@ -120,8 +122,8 @@ defmodule MobilizonWeb.API.ReportTest do
 
       assert {:ok, %Activity{} = flag_activity, %Report{id: report_id} = _report} =
                Reports.report(%{
-                 reporter_actor_id: reporter_id,
-                 reported_actor_id: reported_id,
+                 reporter_id: reporter_id,
+                 reported_id: reported_id,
                  content: "This is not a nice thing",
                  event_id: nil,
                  comments_ids: [comment_1_id],
@@ -146,8 +148,8 @@ defmodule MobilizonWeb.API.ReportTest do
 
       assert {:ok, %Activity{} = flag_activity, %Report{id: report_id} = _report} =
                Reports.report(%{
-                 reporter_actor_id: reporter_id,
-                 reported_actor_id: reported_id,
+                 reporter_id: reporter_id,
+                 reported_id: reported_id,
                  content: "This is not a nice thing",
                  event_id: nil,
                  comments_ids: [comment_1_id],

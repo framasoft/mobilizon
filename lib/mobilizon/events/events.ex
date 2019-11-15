@@ -89,12 +89,21 @@ defmodule Mobilizon.Events do
     :sessions,
     :tracks,
     :tags,
+    :comments,
     :participants,
     :physical_address,
     :picture
   ]
 
-  @comment_preloads [:actor, :attributed_to, :in_reply_to_comment, :tags, :mentions]
+  @comment_preloads [
+    :actor,
+    :attributed_to,
+    :in_reply_to_comment,
+    :origin_comment,
+    :replies,
+    :tags,
+    :mentions
+  ]
 
   @doc """
   Gets a single event.
@@ -1001,6 +1010,29 @@ defmodule Mobilizon.Events do
     |> Repo.all()
   end
 
+  def data() do
+    Dataloader.Ecto.new(Repo, query: &query/2)
+  end
+
+  @doc """
+  Query for comment dataloader
+
+  We only get first comment of thread, and count replies.
+  Read: https://hexdocs.pm/absinthe/ecto.html#dataloader
+  """
+  def query(Comment, _params) do
+    Comment
+    |> join(:left, [c], r in Comment, on: r.origin_comment_id == c.id)
+    |> where([c, _], is_nil(c.in_reply_to_comment_id))
+    |> where([_, r], is_nil(r.deleted_at))
+    |> group_by([c], c.id)
+    |> select([c, r], %{c | total_replies: count(r.id)})
+  end
+
+  def query(queryable, _) do
+    queryable
+  end
+
   @doc """
   Gets a single comment.
   """
@@ -1014,6 +1046,15 @@ defmodule Mobilizon.Events do
   """
   @spec get_comment!(integer | String.t()) :: Comment.t()
   def get_comment!(id), do: Repo.get!(Comment, id)
+
+  def get_comment_with_preload(nil), do: nil
+
+  def get_comment_with_preload(id) do
+    Comment
+    |> where(id: ^id)
+    |> preload_for_comment()
+    |> Repo.one()
+  end
 
   @doc """
   Gets a comment by its URL.
@@ -1071,6 +1112,25 @@ defmodule Mobilizon.Events do
     |> Repo.preload(@comment_preloads)
   end
 
+  def get_threads(event_id) do
+    Comment
+    |> where([c, _], c.event_id == ^event_id and is_nil(c.origin_comment_id))
+    |> join(:left, [c], r in Comment, on: r.origin_comment_id == c.id)
+    |> group_by([c], c.id)
+    |> select([c, r], %{c | total_replies: count(r.id)})
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets paginated replies for root comment
+  """
+  @spec get_thread_replies(integer()) :: [Comment.t()]
+  def get_thread_replies(parent_id) do
+    parent_id
+    |> public_replies_for_thread_query()
+    |> Repo.all()
+  end
+
   def get_or_create_comment(%{"url" => url} = attrs) do
     case Repo.get_by(Comment, url: url) do
       %Comment{} = comment -> {:ok, Repo.preload(comment, @comment_preloads)}
@@ -1103,10 +1163,20 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
-  Deletes a comment.
+  Deletes a comment
+
+  But actually just empty the fields so that threads are not broken.
   """
   @spec delete_comment(Comment.t()) :: {:ok, Comment.t()} | {:error, Changeset.t()}
-  def delete_comment(%Comment{} = comment), do: Repo.delete(comment)
+  def delete_comment(%Comment{} = comment) do
+    comment
+    |> Comment.delete_changeset(%{
+      text: nil,
+      actor_id: nil,
+      deleted_at: DateTime.utc_now()
+    })
+    |> Repo.update()
+  end
 
   @doc """
   Returns the list of public comments.
@@ -1119,7 +1189,7 @@ defmodule Mobilizon.Events do
   @doc """
   Returns the list of public comments for the actor.
   """
-  @spec list_public_events_for_actor(Actor.t(), integer | nil, integer | nil) ::
+  @spec list_public_comments_for_actor(Actor.t(), integer | nil, integer | nil) ::
           {:ok, [Comment.t()], integer}
   def list_public_comments_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     comments =
@@ -1477,6 +1547,13 @@ defmodule Mobilizon.Events do
     Comment
     |> where([c], c.actor_id == ^actor_id and c.visibility in ^@public_visibility)
     |> order_by([c], desc: :id)
+    |> preload_for_comment()
+  end
+
+  defp public_replies_for_thread_query(comment_id) do
+    Comment
+    |> where([c], c.origin_comment_id == ^comment_id and c.visibility in ^@public_visibility)
+    |> group_by([c], [c.in_reply_to_comment_id, c.id])
     |> preload_for_comment()
   end
 

@@ -14,8 +14,15 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Flag do
   alias Mobilizon.Events.Event
   alias Mobilizon.Reports.Report
   alias Mobilizon.Service.ActivityPub.Converter
+  alias Mobilizon.Service.ActivityPub.Convertible
 
   @behaviour Converter
+
+  defimpl Convertible, for: Report do
+    alias Mobilizon.Service.ActivityPub.Converter.Flag, as: FlagConverter
+
+    defdelegate model_to_as(report), to: FlagConverter
+  end
 
   @doc """
   Converts an AP object data to our internal data structure.
@@ -35,18 +42,29 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Flag do
     end
   end
 
+  @audience %{"to" => ["https://www.w3.org/ns/activitystreams#Public"], "cc" => []}
+
   @doc """
   Convert an event struct to an ActivityStream representation
   """
   @impl Converter
-  @spec model_to_as(EventModel.t()) :: map
+  @spec model_to_as(Report.t()) :: map
   def model_to_as(%Report{} = report) do
+    object = [report.reported.url] ++ Enum.map(report.comments, fn comment -> comment.url end)
+
+    object = if report.event, do: object ++ [report.event.url], else: object
+
+    audience =
+      if report.local, do: @audience, else: Map.put(@audience, "cc", [report.reported.url])
+
     %{
       "type" => "Flag",
-      "to" => ["https://www.w3.org/ns/activitystreams#Public"],
       "actor" => report.reporter.url,
-      "id" => report.url
+      "id" => report.url,
+      "content" => report.content,
+      "object" => object
     }
+    |> Map.merge(audience)
   end
 
   @spec as_to_model(map) :: map

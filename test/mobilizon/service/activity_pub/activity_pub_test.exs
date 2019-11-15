@@ -148,13 +148,14 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
     test "it creates a delete activity and deletes the original comment" do
       comment = insert(:comment)
       comment = Events.get_comment_from_url_with_preload!(comment.url)
+      assert is_nil(Events.get_comment_from_url(comment.url).deleted_at)
       {:ok, delete, _} = ActivityPub.delete(comment)
 
       assert delete.data["type"] == "Delete"
       assert delete.data["actor"] == comment.actor.url
       assert delete.data["object"] == comment.url
 
-      assert Events.get_comment_from_url(comment.url) == nil
+      refute is_nil(Events.get_comment_from_url(comment.url).deleted_at)
     end
   end
 

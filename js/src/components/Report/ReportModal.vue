@@ -16,6 +16,23 @@
                                 size="is-large"/>
                     </div>
                     <div class="media-content">
+                        <div class="box" v-if="comment">
+                            <article class="media">
+                                <div class="media-left">
+                                    <figure class="image is-48x48" v-if="comment.actor.avatar">
+                                        <img :src="comment.actor.avatar.url" alt="Image">
+                                    </figure>
+                                    <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+                                </div>
+                                <div class="media-content">
+                                    <div class="content">
+                                        <strong>{{ comment.actor.name }}</strong> <small>@{{ comment.actor.preferredUsername }}</small>
+                                        <br>
+                                        <p v-html="comment.text"></p>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
                         <p>{{ $t('The report will be sent to the moderators of your instance. You can explain why you report this content below.') }}</p>
 
                         <div class="control">
@@ -57,7 +74,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { removeElement } from 'buefy/src/utils/helpers';
+import { IComment } from '@/types/comment.model';
 
 @Component({
   mounted() {
@@ -67,6 +84,7 @@ import { removeElement } from 'buefy/src/utils/helpers';
 export default class ReportModal extends Vue {
   @Prop({ type: Function, default: () => {} }) onConfirm;
   @Prop({ type: String }) title;
+  @Prop({ type: Object }) comment!: IComment;
   @Prop({ type: String, default: '' }) outsideDomain;
   @Prop({ type: String }) cancelText;
   @Prop({ type: String }) confirmText;
@@ -97,8 +115,23 @@ export default class ReportModal extends Vue {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
     .modal-card .modal-card-foot {
         justify-content: flex-end;
+    }
+
+    .modal-card-body {
+        .media-content {
+            .box {
+                .media {
+                    padding-top: 0;
+                    border-top: none;
+                }
+            }
+
+            & > p {
+                margin-bottom: 2rem;
+            }
+        }
     }
 </style>

@@ -8,7 +8,7 @@ defmodule MobilizonWeb.Schema.EventType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   import MobilizonWeb.Schema.Utils
 
-  alias Mobilizon.{Actors, Addresses}
+  alias Mobilizon.{Actors, Addresses, Events}
 
   alias MobilizonWeb.Resolvers.{Event, Picture, Tag}
 
@@ -77,6 +77,10 @@ defmodule MobilizonWeb.Schema.EventType do
       resolve: &Event.list_related_events/3,
       description: "Events related to this one"
     )
+
+    field(:comments, list_of(:comment), description: "The comments in reply to the event") do
+      resolve(dataloader(Events))
+    end
 
     # field(:tracks, list_of(:track))
     # field(:sessions, list_of(:session))

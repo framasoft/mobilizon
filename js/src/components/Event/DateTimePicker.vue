@@ -17,7 +17,7 @@
             <label class="label">{{ label }}</label>
         </div>
         <div class="field-body">
-            <div class="field is-narrow is-grouped">
+            <div class="field is-narrow is-grouped calendar-picker">
                 <b-datepicker
                         :day-names="localeShortWeekDayNamesProxy"
                         :month-names="localeMonthNamesProxy"
@@ -106,6 +106,12 @@ export default class DateTimePicker extends Vue {
     .timepicker {
         /deep/ .dropdown-content {
             padding: 0;
+        }
+    }
+
+    .calendar-picker {
+        /deep/ .dropdown-menu {
+            z-index: 200;
         }
     }
 </style>

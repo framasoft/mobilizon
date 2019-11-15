@@ -2,7 +2,7 @@
   <div class="container">
     <b-loading :active.sync="$apollo.loading"></b-loading>
     <transition appear name="fade" mode="out-in">
-      <div v-if="event">
+      <div>
         <div class="header-picture" v-if="event.picture" :style="`background-image: url('${event.picture.url}')`" />
         <div class="header-picture-default" v-else />
           <section>
@@ -160,7 +160,7 @@
               </div>
             </div>
           </section>
-          <div class="description">
+          <div class="description" :class="{ exists: event.description }">
             <div class="description-container container">
               <h3 class="title">
                 {{ $t('About this event') }}
@@ -174,6 +174,12 @@
               </div>
             </div>
           </div>
+        <section class="comments" ref="commentsObserver">
+          <a href="#comments">
+            <h3 class="title" id="comments">{{ $t('Comments') }}</h3>
+          </a>
+          <comment-tree v-if="loadComments" :event="event" />
+        </section>
         <section class="share" v-if="!event.draft">
           <div class="container">
             <div class="columns is-centered is-multiline">
@@ -199,7 +205,7 @@
               </div>
               <hr />
               <div class="column is-half-widescreen has-text-right add-to-calendar">
-                <img src="../../assets/undraw_events.svg" class="is-hidden-mobile is-hidden-tablet-only" />
+                <img src="../../assets/undraw_events.svg" class="is-hidden-mobile is-hidden-tablet-only" alt="" />
                 <h3 @click="downloadIcsEvent()">
                   {{ $t('Add to my calendar') }}
                 </h3>
@@ -247,7 +253,7 @@
 import { EVENT_PERSON_PARTICIPATION, FETCH_EVENT, JOIN_EVENT, LEAVE_EVENT } from '@/graphql/event';
 import { Component, Prop } from 'vue-property-decorator';
 import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
-import { EventStatus, EventVisibility, IEvent, IParticipant, ParticipantRole } from '@/types/event.model';
+import { EventModel, EventStatus, EventVisibility, IEvent, IParticipant, ParticipantRole } from '@/types/event.model';
 import { IPerson, Person } from '@/types/actor';
 import { GRAPHQL_API_ENDPOINT } from '@/api/_entrypoint';
 import DateCalendarIcon from '@/components/Event/DateCalendarIcon.vue';
@@ -264,6 +270,8 @@ import ParticipationButton from '@/components/Event/ParticipationButton.vue';
 import { GraphQLError } from 'graphql';
 import { RouteName } from '@/router';
 import { Address } from '@/types/address.model';
+import CommentTree from '@/components/Comment/CommentTree.vue';
+import 'intersection-observer';
 
 @Component({
   components: {
@@ -275,6 +283,7 @@ import { Address } from '@/types/address.model';
     ReportModal,
     IdentityPicker,
     ParticipationButton,
+    CommentTree,
     // tslint:disable:space-in-parens
     'map-leaflet': () => import(/* webpackChunkName: "map" */ '@/components/Map.vue'),
     // tslint:enable
@@ -328,7 +337,7 @@ import { Address } from '@/types/address.model';
 export default class Event extends EventMixin {
   @Prop({ type: String, required: true }) uuid!: string;
 
-  event!: IEvent;
+  event: IEvent = new EventModel();
   currentActor!: IPerson;
   identity: IPerson = new Person();
   participations: IParticipant[] = [];
@@ -338,6 +347,8 @@ export default class Event extends EventMixin {
   EventVisibility = EventVisibility;
   EventStatus = EventStatus;
   RouteName = RouteName;
+  observer!: IntersectionObserver;
+  loadComments: boolean = false;
 
   get eventTitle() {
     if (!this.event) return undefined;
@@ -351,10 +362,24 @@ export default class Event extends EventMixin {
 
   mounted() {
     this.identity = this.currentActor;
+    if (this.$route.hash.includes('#comment-')) {
+      this.loadComments = true;
+    }
+
+    this.observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry) {
+          this.loadComments = entry.isIntersecting || this.loadComments;
+        }
+      }
+    },                                       {
+      rootMargin: '-50px 0px -50px',
+    });
+    this.observer.observe(this.$refs.commentsObserver as Element);
 
     this.$watch('eventDescription', function (eventDescription) {
       if (!eventDescription) return;
-      const eventDescriptionElement = this.$refs['eventDescriptionElement'] as HTMLElement;
+      const eventDescriptionElement = this.$refs.eventDescriptionElement as HTMLElement;
 
       eventDescriptionElement.addEventListener('click', ($event) => {
         // TODO: Find the right type for target
@@ -404,8 +429,8 @@ export default class Event extends EventMixin {
         mutation: CREATE_REPORT,
         variables: {
           eventId: this.event.id,
-          reporterActorId: this.currentActor.id,
-          reportedActorId: this.event.organizerActor.id,
+          reporterId: this.currentActor.id,
+          reportedId: this.event.organizerActor.id,
           content,
         },
       });
@@ -845,19 +870,24 @@ export default class Event extends EventMixin {
   }
 
   h3.title {
-    font-size: 3rem;
-    font-weight: 300;
+      font-weight: 300;
   }
 
   .description {
-    padding-top: 10px;
-    min-height: 40rem;
+    padding: 10px 0;
+    min-height: 7rem;
+
+    &.exists {
+      min-height: 40rem;
+    }
 
     @media screen and (min-width: 1216px) {
       background-repeat: no-repeat;
       background-size: 600px;
       background-position: 95% 101%;
-      background-image: url('../../assets/texting.svg');
+      &.exists {
+        background-image: url('../../assets/texting.svg');
+      }
     }
     border-top: solid 1px #111;
     border-bottom: solid 1px #111;
@@ -906,8 +936,17 @@ export default class Event extends EventMixin {
     }
   }
 
+  .comments {
+    margin: 1rem auto 2rem;
+
+    a h3#comments {
+      margin-bottom: 5px;
+    }
+  }
+
   .share {
-    border-bottom: solid 1px #111;
+    border-bottom: solid 1px $primary;
+    border-top: solid 1px $primary;
 
     .diaspora span svg {
       height: 2rem;
@@ -917,7 +956,7 @@ export default class Event extends EventMixin {
     .columns {
 
       & > * {
-        padding: 10rem 0;
+        padding: 2rem 0;
       }
 
       h3 {
@@ -957,7 +996,7 @@ export default class Event extends EventMixin {
         }
 
         img {
-          max-width: 400px;
+          max-width: 250px;
         }
 
         &::before {
@@ -965,7 +1004,6 @@ export default class Event extends EventMixin {
           background: #B3B3B2;
           position: absolute;
           bottom: 25%;
-          left: 0;
           height: 40%;
           width: 1px;
         }

@@ -29,7 +29,8 @@ export const REPORTS = gql`
                     url
                 }
             },
-            status
+            status,
+            content
         }
     }
 `;
@@ -63,10 +64,23 @@ const REPORT_FRAGMENT = gql`
                 url
             }
         },
+        comments {
+            id,
+            text,
+            actor {
+                id,
+                preferredUsername,
+                name,
+                avatar {
+                    url
+                }
+            }
+        }
         notes {
             id,
             content
             moderator {
+                id,
                 preferredUsername,
                 name,
                 avatar {
@@ -94,11 +108,12 @@ export const REPORT = gql`
 export const CREATE_REPORT = gql`
     mutation CreateReport(
         $eventId: ID!,
-        $reporterActorId: ID!,
-        $reportedActorId: ID!,
-        $content: String
+        $reporterId: ID!,
+        $reportedId: ID!,
+        $content: String,
+        $commentsIds: [ID]
     ) {
-        createReport(eventId: $eventId, reporterActorId: $reporterActorId, reportedActorId: $reportedActorId, content: $content) {
+        createReport(eventId: $eventId, reporterId: $reporterId, reportedId: $reportedId, content: $content, commentsIds: $commentsIds) {
             id
         }
     }

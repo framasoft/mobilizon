@@ -14,7 +14,7 @@ defmodule Mobilizon.Reports.Report do
   @type t :: %__MODULE__{
           content: String.t(),
           status: ReportStatus.t(),
-          uri: String.t(),
+          url: String.t(),
           reported: Actor.t(),
           reporter: Actor.t(),
           manager: Actor.t(),
@@ -23,17 +23,18 @@ defmodule Mobilizon.Reports.Report do
           notes: [Note.t()]
         }
 
-  @required_attrs [:uri, :reported_id, :reporter_id]
-  @optional_attrs [:content, :status, :manager_id, :event_id]
+  @required_attrs [:url, :reported_id, :reporter_id]
+  @optional_attrs [:content, :status, :manager_id, :event_id, :local]
   @attrs @required_attrs ++ @optional_attrs
 
   @timestamps_opts [type: :utc_datetime]
 
-  @derive {Jason.Encoder, only: [:status, :uri]}
+  @derive {Jason.Encoder, only: [:status, :url]}
   schema "reports" do
     field(:content, :string)
     field(:status, ReportStatus, default: :open)
-    field(:uri, :string)
+    field(:url, :string)
+    field(:local, :boolean, default: true)
 
     # The reported actor
     belongs_to(:reported, Actor)
@@ -56,14 +57,24 @@ defmodule Mobilizon.Reports.Report do
   def changeset(%__MODULE__{} = report, attrs) do
     report
     |> cast(attrs, @attrs)
+    |> maybe_generate_url()
+    |> maybe_put_comments(attrs)
     |> validate_required(@required_attrs)
   end
 
-  @doc false
-  @spec creation_changeset(t, map) :: Ecto.Changeset.t()
-  def creation_changeset(%__MODULE__{} = report, attrs) do
-    report
-    |> changeset(attrs)
-    |> put_assoc(:comments, attrs["comments"])
+  defp maybe_put_comments(%Ecto.Changeset{} = changeset, %{comments: comments}) do
+    put_assoc(changeset, :comments, comments)
+  end
+
+  defp maybe_put_comments(%Ecto.Changeset{} = changeset, _), do: changeset
+
+  @spec maybe_generate_url(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp maybe_generate_url(%Ecto.Changeset{} = changeset) do
+    with res when res in [:error, {:data, nil}] <- fetch_field(changeset, :url),
+         url <- "#{MobilizonWeb.Endpoint.url()}/report/#{Ecto.UUID.generate()}" do
+      put_change(changeset, :url, url)
+    else
+      _ -> changeset
+    end
   end
 end

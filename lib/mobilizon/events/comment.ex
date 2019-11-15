@@ -29,8 +29,19 @@ defmodule Mobilizon.Events.Comment do
           origin_comment: t
         }
 
-  @required_attrs [:text, :actor_id, :url]
-  @optional_attrs [:event_id, :in_reply_to_comment_id, :origin_comment_id, :attributed_to_id]
+  # When deleting an event we only nihilify everything
+  @required_attrs [:url]
+  @creation_required_attrs @required_attrs ++ [:text, :actor_id]
+  @deletion_required_attrs @required_attrs ++ [:deleted_at]
+  @optional_attrs [
+    :text,
+    :actor_id,
+    :event_id,
+    :in_reply_to_comment_id,
+    :origin_comment_id,
+    :attributed_to_id,
+    :deleted_at
+  ]
   @attrs @required_attrs ++ @optional_attrs
 
   schema "comments" do
@@ -39,12 +50,15 @@ defmodule Mobilizon.Events.Comment do
     field(:local, :boolean, default: true)
     field(:visibility, CommentVisibility, default: :public)
     field(:uuid, Ecto.UUID)
+    field(:total_replies, :integer, virtual: true, default: 0)
+    field(:deleted_at, :utc_datetime)
 
     belongs_to(:actor, Actor, foreign_key: :actor_id)
     belongs_to(:attributed_to, Actor, foreign_key: :attributed_to_id)
     belongs_to(:event, Event, foreign_key: :event_id)
     belongs_to(:in_reply_to_comment, Comment, foreign_key: :in_reply_to_comment_id)
     belongs_to(:origin_comment, Comment, foreign_key: :origin_comment_id)
+    has_many(:replies, Comment, foreign_key: :in_reply_to_comment_id)
     many_to_many(:tags, Tag, join_through: "comments_tags", on_replace: :delete)
     has_many(:mentions, Mention)
 
@@ -62,16 +76,56 @@ defmodule Mobilizon.Events.Comment do
   @doc false
   @spec changeset(t, map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = comment, attrs) do
-    uuid = Map.get(attrs, :uuid) || Ecto.UUID.generate()
-    url = Map.get(attrs, :url) || generate_url(uuid)
+    comment
+    |> common_changeset(attrs)
+    |> validate_required(@creation_required_attrs)
+  end
 
+  @spec delete_changeset(t, map) :: Ecto.Changeset.t()
+  def delete_changeset(%__MODULE__{} = comment, attrs) do
+    comment
+    |> common_changeset(attrs)
+    |> validate_required(@deletion_required_attrs)
+  end
+
+  @doc """
+  Checks whether an comment can be managed.
+  """
+  @spec can_be_managed_by(t, integer | String.t()) :: boolean
+  def can_be_managed_by(%__MODULE__{actor_id: creator_actor_id}, actor_id)
+      when creator_actor_id == actor_id do
+    {:comment_can_be_managed, true}
+  end
+
+  def can_be_managed_by(_comment, _actor), do: {:comment_can_be_managed, false}
+
+  defp common_changeset(%__MODULE__{} = comment, attrs) do
     comment
     |> cast(attrs, @attrs)
-    |> put_change(:uuid, uuid)
-    |> put_change(:url, url)
+    |> maybe_generate_uuid()
+    |> maybe_generate_url()
     |> put_tags(attrs)
     |> put_mentions(attrs)
-    |> validate_required(@required_attrs)
+  end
+
+  @spec maybe_generate_uuid(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp maybe_generate_uuid(%Ecto.Changeset{} = changeset) do
+    case fetch_field(changeset, :uuid) do
+      :error -> put_change(changeset, :uuid, Ecto.UUID.generate())
+      {:data, nil} -> put_change(changeset, :uuid, Ecto.UUID.generate())
+      _ -> changeset
+    end
+  end
+
+  @spec maybe_generate_url(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp maybe_generate_url(%Ecto.Changeset{} = changeset) do
+    with res when res in [:error, {:data, nil}] <- fetch_field(changeset, :url),
+         {changes, uuid} when changes in [:changes, :data] <- fetch_field(changeset, :uuid),
+         url <- generate_url(uuid) do
+      put_change(changeset, :url, url)
+    else
+      _ -> changeset
+    end
   end
 
   @spec generate_url(String.t()) :: String.t()

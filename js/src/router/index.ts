@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import VueScrollTo from 'vue-scrollto';
 import PageNotFound from '@/views/PageNotFound.vue';
 import Home from '@/views/Home.vue';
 import { UserRouteName, userRoutes } from './user';
@@ -20,13 +21,18 @@ enum GlobalRouteName {
   SEARCH = 'Search',
 }
 
-function scrollBehavior(to) {
+function scrollBehavior(to, from, savedPosition) {
   if (to.hash) {
+    VueScrollTo.scrollTo(to.hash, 700);
     return {
       selector: to.hash,
-      // , offset: { x: 0, y: 10 }
+      offset: { x: 0, y: 10 },
     };
   }
+  if (savedPosition) {
+    return savedPosition;
+  }
+
   return { x: 0, y: 0 };
 }
 

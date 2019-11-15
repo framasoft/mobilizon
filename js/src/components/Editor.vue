@@ -1,7 +1,7 @@
 <template>
     <div v-if="editor">
-        <div class="editor" id="tiptab-editor" :data-actor-id="currentActor && currentActor.id">
-            <editor-menu-bar :editor="editor" v-slot="{ commands, isActive, focused }">
+        <div class="editor" :class="{ mode_description: isDescriptionMode }" id="tiptab-editor" :data-actor-id="currentActor && currentActor.id">
+            <editor-menu-bar v-if="isDescriptionMode" :editor="editor" v-slot="{ commands, isActive, focused }">
                 <div class="menubar bar-is-hidden" :class="{ 'is-focused': focused }">
 
                     <button
@@ -121,6 +121,33 @@
                 </div>
             </editor-menu-bar>
 
+            <editor-menu-bubble v-if="isCommentMode" :editor="editor" :keep-in-bounds="true" v-slot="{ commands, isActive, menu }">
+                <div
+                        class="menububble"
+                        :class="{ 'is-active': menu.isActive }"
+                        :style="`left: ${menu.left}px; bottom: ${menu.bottom}px;`"
+                >
+
+                    <button
+                            class="menububble__button"
+                            :class="{ 'is-active': isActive.bold() }"
+                            @click="commands.bold"
+                            type="button"
+                    >
+                        <b-icon icon="format-bold" />
+                    </button>
+
+                    <button
+                            class="menububble__button"
+                            :class="{ 'is-active': isActive.italic() }"
+                            @click="commands.italic"
+                            type="button"
+                    >
+                        <b-icon icon="format-italic" />
+                    </button>
+                </div>
+            </editor-menu-bubble>
+
             <editor-content class="editor__content" :editor="editor" />
         </div>
         <div class="suggestion-list" v-show="showSuggestions" ref="suggestions">
@@ -129,14 +156,14 @@
                         v-for="(actor, index) in filteredActors"
                         :key="actor.id"
                         class="suggestion-list__item"
-                        :class="{ 'is-selected': navigatedUserIndex === index }"
+                        :class="{ 'is-selected': navigatedActorIndex === index }"
                         @click="selectActor(actor)"
                 >
                     {{ actor.name }}
                 </div>
             </template>
             <div v-else class="suggestion-list__item is-empty">
-                No actors found
+                {{ $t('No actors found') }}
             </div>
         </div>
     </div>
@@ -165,11 +192,12 @@ import {
 } from 'tiptap-extensions';
 import tippy, { Instance } from 'tippy.js';
 import { SEARCH_PERSONS } from '@/graphql/search';
-import { IActor, IPerson } from '@/types/actor';
+import { Actor, IActor, IPerson } from '@/types/actor';
 import Image from '@/components/Editor/Image';
 import { UPLOAD_PICTURE } from '@/graphql/upload';
 import { listenFileUpload } from '@/utils/upload';
 import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
+import { IComment } from '@/types/comment.model';
 
 @Component({
   components: { EditorContent, EditorMenuBar, EditorMenuBubble },
@@ -181,6 +209,7 @@ import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 })
 export default class EditorComponent extends Vue {
   @Prop({ required: true }) value!: string;
+  @Prop({ required: false, default: 'description' }) mode!: string;
 
   currentActor!: IPerson;
 
@@ -192,8 +221,16 @@ export default class EditorComponent extends Vue {
   query!: string|null;
   filteredActors: IActor[] = [];
   suggestionRange!: object|null;
-  navigatedUserIndex: number = 0;
+  navigatedActorIndex: number = 0;
   popup!: Instance|null;
+
+  get isDescriptionMode() {
+    return this.mode === 'description';
+  }
+
+  get isCommentMode() {
+    return this.mode === 'comment';
+  }
 
   get hasResults() {
     return this.filteredActors.length;
@@ -232,7 +269,7 @@ export default class EditorComponent extends Vue {
             this.query = query;
             this.filteredActors = items;
             this.suggestionRange = range;
-            this.navigatedUserIndex = 0;
+            this.navigatedActorIndex = 0;
             this.renderPopup(virtualNode);
           },
 
@@ -244,7 +281,7 @@ export default class EditorComponent extends Vue {
             this.query = null;
             this.filteredActors = [];
             this.suggestionRange = null;
-            this.navigatedUserIndex = 0;
+            this.navigatedActorIndex = 0;
             this.destroyPopup();
           },
 
@@ -335,7 +372,7 @@ export default class EditorComponent extends Vue {
   }
 
   upHandler() {
-    this.navigatedUserIndex = ((this.navigatedUserIndex + this.filteredActors.length) - 1) % this.filteredActors.length;
+    this.navigatedActorIndex = ((this.navigatedActorIndex + this.filteredActors.length) - 1) % this.filteredActors.length;
   }
 
   /**
@@ -343,11 +380,11 @@ export default class EditorComponent extends Vue {
    * if it's the last item, navigate to the first one
    */
   downHandler() {
-    this.navigatedUserIndex = (this.navigatedUserIndex + 1) % this.filteredActors.length;
+    this.navigatedActorIndex = (this.navigatedActorIndex + 1) % this.filteredActors.length;
   }
 
   enterHandler() {
-    const actor = this.filteredActors[this.navigatedUserIndex];
+    const actor = this.filteredActors[this.navigatedActorIndex];
     if (actor) {
       this.selectActor(actor);
     }
@@ -359,14 +396,23 @@ export default class EditorComponent extends Vue {
    * @param actor IActor
    */
   selectActor(actor: IActor) {
+    const actorModel = new Actor(actor);
     this.insertMention({
       range: this.suggestionRange,
       attrs: {
-        id: actor.id,
-        label: actor.name,
+        id: actorModel.id,
+        label: actorModel.usernameWithDomain().substring(1), // usernameWithDomain returns with a @ prefix and tiptap adds one itself
       },
     });
     if (!this.editor) return;
+    this.editor.focus();
+  }
+
+  replyToComment(comment: IComment) {
+    console.log('called replyToComment', comment);
+    const actorModel = new Actor(comment.actor);
+    if (!this.editor) return;
+    this.editor.commands.mention({ id: actorModel.id, label: actorModel.usernameWithDomain().substring(1) });
     this.editor.focus();
   }
 
@@ -443,6 +489,8 @@ export default class EditorComponent extends Vue {
 }
 </script>
 <style lang="scss">
+    @import "@/variables.scss";
+
     $color-black: #000;
     $color-white: #eee;
 
@@ -474,7 +522,6 @@ export default class EditorComponent extends Vue {
 
     .editor {
         position: relative;
-        margin: 0 0 1rem;
 
         p.is-empty:first-child::before {
             content: attr(data-empty-text);
@@ -485,18 +532,25 @@ export default class EditorComponent extends Vue {
             font-style: italic;
         }
 
-        &__content {
+        &.mode_description {
             div.ProseMirror {
                 min-height: 10rem;
+            }
+        }
 
+        &__content {
+            div.ProseMirror {
+                min-height: 2.5rem;
                 box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.1);
                 background-color: white;
                 border-radius: 4px;
                 color: #363636;
                 border: 1px solid #dbdbdb;
+                padding: 12px 6px;
 
                 &:focus {
-
+                    border-color: $primary;
+                    outline: none;
                 }
             }
 
@@ -607,7 +661,7 @@ export default class EditorComponent extends Vue {
     .mention {
         background: rgba($color-black, 0.1);
         color: rgba($color-black, 0.6);
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         font-weight: bold;
         border-radius: 5px;
         padding: 0.2rem 0.5rem;

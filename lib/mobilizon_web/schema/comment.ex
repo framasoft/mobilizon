@@ -4,9 +4,12 @@ defmodule MobilizonWeb.Schema.CommentType do
   """
   use Absinthe.Schema.Notation
   alias MobilizonWeb.Resolvers.Comment
+  alias Mobilizon.{Actors, Events}
+  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   @desc "A comment"
   object :comment do
+    interfaces([:action_log_object])
     field(:id, :id, description: "Internal ID for this comment")
     field(:uuid, :uuid)
     field(:url, :string)
@@ -14,8 +17,20 @@ defmodule MobilizonWeb.Schema.CommentType do
     field(:visibility, :comment_visibility)
     field(:text, :string)
     field(:primaryLanguage, :string)
-    field(:replies, list_of(:comment))
+
+    field(:replies, list_of(:comment)) do
+      resolve(dataloader(Events))
+    end
+
+    field(:total_replies, :integer)
+    field(:in_reply_to_comment, :comment, resolve: dataloader(Events))
+    field(:event, :event, resolve: dataloader(Events))
+    field(:origin_comment, :comment, resolve: dataloader(Events))
     field(:threadLanguages, non_null(list_of(:string)))
+    field(:actor, :person, resolve: dataloader(Actors))
+    field(:inserted_at, :datetime)
+    field(:updated_at, :datetime)
+    field(:deleted_at, :datetime)
   end
 
   @desc "The list of visibility options for a comment"
@@ -31,13 +46,30 @@ defmodule MobilizonWeb.Schema.CommentType do
     value(:invite, description: "visible only to people invited")
   end
 
+  object :comment_queries do
+    @desc "Get replies for thread"
+    field :thread, type: list_of(:comment) do
+      arg(:id, :id)
+      resolve(&Comment.get_thread/3)
+    end
+  end
+
   object :comment_mutations do
     @desc "Create a comment"
     field :create_comment, type: :comment do
       arg(:text, non_null(:string))
+      arg(:event_id, :id)
+      arg(:in_reply_to_comment_id, :id)
       arg(:actor_id, non_null(:id))
 
       resolve(&Comment.create_comment/3)
+    end
+
+    field :delete_comment, type: :comment do
+      arg(:comment_id, non_null(:id))
+      arg(:actor_id, non_null(:id))
+
+      resolve(&Comment.delete_comment/3)
     end
   end
 end

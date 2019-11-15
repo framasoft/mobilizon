@@ -20,8 +20,8 @@ defmodule MobilizonWeb.Resolvers.ReportResolverTest do
       mutation = """
           mutation {
             createReport(
-              reporter_actor_id: #{reporter.id},
-              reported_actor_id: #{reported.id},
+              reporter_id: #{reporter.id},
+              reported_id: #{reported.id},
               event_id: #{event.id},
               content: "This is an issue"
             ) {
@@ -57,8 +57,8 @@ defmodule MobilizonWeb.Resolvers.ReportResolverTest do
       mutation = """
           mutation {
             createReport(
-              reported_actor_id: #{reported.id},
-              reporter_actor_id: 5,
+              reported_id: #{reported.id},
+              reporter_id: 5,
               content: "This is an issue"
             ) {
                 content

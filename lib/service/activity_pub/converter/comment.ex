@@ -73,7 +73,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Comment do
 
             # Anything else is kind of a MP
             {:error, parent} ->
-              Logger.debug("Parent object is something we don't handle")
+              Logger.warn("Parent object is something we don't handle")
               Logger.debug(inspect(parent))
               data
           end
@@ -95,7 +95,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Comment do
   """
   @impl Converter
   @spec model_to_as(CommentModel.t()) :: map
-  def model_to_as(%CommentModel{} = comment) do
+  def model_to_as(%CommentModel{deleted_at: nil} = comment) do
     to =
       if comment.visibility == :public,
         do: ["https://www.w3.org/ns/activitystreams#Public"],
@@ -119,5 +119,18 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Comment do
     else
       object
     end
+  end
+
+  @impl Converter
+  @spec model_to_as(CommentModel.t()) :: map
+  def model_to_as(%CommentModel{} = comment) do
+    %{
+      "type" => "Tombstone",
+      "uuid" => comment.uuid,
+      "id" => comment.url,
+      "published" => comment.inserted_at,
+      "updated" => comment.updated_at,
+      "deleted" => comment.deleted_at
+    }
   end
 end

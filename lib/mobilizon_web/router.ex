@@ -49,7 +49,11 @@ defmodule MobilizonWeb.Router do
   scope "/api" do
     pipe_through(:graphql)
 
-    forward("/", Absinthe.Plug, schema: MobilizonWeb.Schema)
+    forward("/", Absinthe.Plug,
+      schema: MobilizonWeb.Schema,
+      analyze_complexity: true,
+      max_complexity: 200
+    )
   end
 
   forward("/graphiql", Absinthe.Plug.GraphiQL, schema: MobilizonWeb.Schema)

@@ -134,7 +134,6 @@ defmodule Mobilizon.Mixfile do
         "ecto.setup"
       ],
       test: [
-        "ecto.create --quiet",
         "ecto.migrate",
         &run_test/1
       ],
