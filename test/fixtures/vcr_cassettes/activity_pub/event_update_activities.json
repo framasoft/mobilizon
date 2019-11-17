@@ -1,0 +1,36 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true"
+      },
+      "request_body": "",
+      "url": "https://test.mobilizon.org/@Alicia"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://litepub.github.io/litepub/context.jsonld\",{\"Hashtag\":\"as:Hashtag\",\"category\":\"sc:category\",\"sc\":\"http://schema.org#\",\"uuid\":\"sc:identifier\"}],\"endpoints\":{\"sharedInbox\":\"https://test.mobilizon.org/inbox\"},\"followers\":\"https://test.mobilizon.org/@Alicia/followers\",\"following\":\"https://test.mobilizon.org/@Alicia/following\",\"id\":\"https://test.mobilizon.org/@Alicia\",\"inbox\":\"https://test.mobilizon.org/@Alicia/inbox\",\"manuallyApprovesFollowers\":false,\"name\":\"Alicia\",\"outbox\":\"https://test.mobilizon.org/@Alicia/outbox\",\"preferredUsername\":\"Alicia\",\"publicKey\":{\"id\":\"https://test.mobilizon.org/@Alicia#main-key\",\"owner\":\"https://test.mobilizon.org/@Alicia\",\"publicKeyPem\":\"-----BEGIN RSA PUBLIC KEY-----\\nMIIBCgKCAQEAvb+emDoC6FCVpfo9Bh608sVsOK+8fun3UIqaR+jr+DZCAjp8ihwa\\nFkXaeOQ744MVS2YdzBEyIlk3sSYD9GezF+zoMbbA8FcnJ5jZhnneRR7ZrEg/cpNx\\nKFVA2ZoQrAABwpnA1iv7ciLoYZKPTDpIZ7Ue5l/k1bYcfTy0d4F3c8YAayWftSWj\\nHy3FK2kZDLdKfpRyfn5a4UI6sao4uD/rHno47g8tPPVA74BBpaTntJfbTWqiR8Vn\\nmNGAzy3+47pVeeg6Rd+AALohzBpHPW3TlJ75mqxPDXk7aDRYXihHrswf4MmKuaXc\\nXdoCu6uxQp41Xf3jVYD+AWw60tv2Oj/d4wIDAQAB\\n-----END RSA PUBLIC KEY-----\\n\\n\"},\"summary\":\"J'aime le karaté, les mangas, coder en python.\",\"type\":\"Person\",\"url\":\"https://test.mobilizon.org/@Alicia\"}",
+      "headers": {
+        "Server": "nginx/1.14.2",
+        "Date": "Sun, 17 Nov 2019 18:12:35 GMT",
+        "Content-Type": "application/activity+json; charset=utf-8",
+        "Content-Length": "1293",
+        "Connection": "keep-alive",
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "",
+        "cache-control": "max-age=0, private, must-revalidate",
+        "x-request-id": "FdgFt2eS9ln4-7YACVtC",
+        "Strict-Transport-Security": "max-age=63072000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
