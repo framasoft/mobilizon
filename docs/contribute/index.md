@@ -40,17 +40,11 @@ This project is part of [Framasoft](https://framasoft.org)'s [Contributopia Camp
 
 ![Framameet illustration on Contributopia Website](https://contributopia.org/img/services-framameet.jpg)
 
-### We practice [Ethical Design](https://2017.ind.ie/ethical-design/)
-
-We endeavour to build technology that respects human rights, human effort, and human experience, and hope you will join in this effort.
-
-[![Ethical Design diagram](https://i.imgur.com/O7RJo60.png)](https://2017.ind.ie/ethical-design/)
-
 ---
 
-## [Code Of Conduct](code_of_conduct.html)
+## [Code Of Conduct](code_of_conduct.md)
 
-We require all participants to read and accept our [Code of Conduct](code_of_conduct.html).
+We require all participants to read and accept our [Code of Conduct](code_of_conduct.md).
 
 ---
 
@@ -70,7 +64,8 @@ Please go through the checklist below before posting any ✨ 💄 🐛
 * **Perform a cursory search** in the issue tracker to see if the enhancement has already been suggested. If it has, add a comment to the existing issue instead of opening a new one.
 * Never report security related issues, vulnerabilities or bugs including sensitive information to the issue tracker, or elsewhere in public. Instead, sensitive bugs must be sent by email to tcit plus mobilizon at framasoft dot org.
 
-> **Note:** If you find a **Closed** issue that seems like it is the same thing that you're experiencing, open a new issue and include a link to the original issue in the body of your new one.
+!!! note
+    If you find a **Closed** issue that seems like it is the same thing that you're experiencing, open a new issue and include a link to the original issue in the body of your new one.
 
 ### Suggesting Features & Enhancements
 
@@ -167,7 +162,7 @@ Unsure where to begin contributing? You can start by looking through issues tagg
 
 #### Local development
 
-Mobilizon can be developed locally. For instructions on how to do this, please see [the documentation](development.html).
+Mobilizon can be developed locally. For instructions on how to do this, please see [the documentation](development.md).
 
 #### Coding & git practices
 
@@ -192,7 +187,7 @@ Mobilizon can be developed locally. For instructions on how to do this, please s
 
 #### Merge requests
 
-* Follow [the code styleguides](styleguide.html).
+* Follow [the code styleguides](styleguide.md).
 * Document new code based on [the documentation styleguide](https://hexdocs.pm/elixir/writing-documentation.html).
 * Each merge request should implement ONE feature or bugfix. If you want to add or fix more than one thing, submit more than one merge request.
 * Fill in the merge request template below.

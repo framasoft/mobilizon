@@ -12,4 +12,4 @@ Then, just run `make` to build containers.
 make
 ```
 
-This will start a database container, an API container and the front-end container running on localhost.
+This will start a database container, an API container also containing the front-end running on `localhost`.

@@ -156,12 +156,7 @@ defmodule Mobilizon.Mixfile do
   defp docs() do
     [
       source_ref: "v#{@version}",
-      extra_section: "GUIDES",
-      main: "introduction",
-      api_reference: false,
       groups_for_modules: groups_for_modules(),
-      extras: extras(),
-      groups_for_extras: groups_for_extras(),
       nest_modules_by_prefix: [
         Mobilizon,
         MobilizonWeb,
@@ -170,20 +165,6 @@ defmodule Mobilizon.Mixfile do
         MobilizonWeb.Schema,
         Mobilizon.Service
       ]
-    ]
-  end
-
-  defp extras() do
-    [
-      "support/guides/development/development.md",
-      "support/guides/development/tests.md",
-      "support/guides/development/styleguide.md",
-      "support/guides/install/install.md",
-      "support/guides/install/dependencies.md",
-      "support/guides/install/docker.md",
-      "support/guides/introduction.md",
-      "support/guides/contributing.md",
-      "support/guides/code_of_conduct.md"
     ]
   end
 
@@ -323,26 +304,6 @@ defmodule Mobilizon.Mixfile do
         MobilizonWeb.Email.Mailer,
         MobilizonWeb.Email.User,
         MobilizonWeb.EmailView
-      ]
-    ]
-  end
-
-  defp groups_for_extras() do
-    [
-      Introduction: [
-        "support/guides/introduction.md",
-        "support/guides/contributing.md",
-        "support/guides/code_of_conduct.md"
-      ],
-      Development: [
-        "support/guides/development/development.md",
-        "support/guides/development/tests.md",
-        "support/guides/development/styleguide.md"
-      ],
-      Production: [
-        "support/guides/install/install.md",
-        "support/guides/install/docker.md",
-        "support/guides/install/dependencies.md"
       ]
     ]
   end

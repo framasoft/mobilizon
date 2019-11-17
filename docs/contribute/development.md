@@ -10,6 +10,7 @@ git clone git@framagit.org:framasoft/mobilizon.git && cd mobilizon
 ```
 
 Run Mobilizon:
+
   * with Docker and Docker-Compose (**Recommended**)
   * without Docker and Docker-Compose (This involves more work on your part, use Docker and Docker-Compose if you can)
 
@@ -25,7 +26,7 @@ Run Mobilizon:
   * Install dependencies:
     * Elixir (and Erlang) by following the instructions at [https://elixir-lang.github.io/install.html](https://elixir-lang.github.io/install.html)
     * [PostgreSQL]() with PostGIS
-    * Install NodeJS (we guarantee support for the latest LTS and later) ![](https://img.shields.io/badge/node-%3E%3D%2010.0+-brightgreen.svg)
+    * Install NodeJS (we guarantee support for the latest LTS and later) ![](https://img.shields.io/badge/node-%3E%3D%2012.0+-brightgreen.svg)
   * Start services:
     * Start postgres
   * Setup services:

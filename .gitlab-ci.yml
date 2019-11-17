@@ -107,6 +107,8 @@ pages:
   stage: deploy
   script:
     - mkdir public
+    - mkdocs build
+    - mv site/* public/
     - mix deps.get
     - mix docs
     - mv doc public/backend

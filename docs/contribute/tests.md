@@ -9,7 +9,8 @@ To launch all the tests:
 mix test
 ```
 
-> If you're using Docker, you can use `make test`
+!!! info
+    If you're using Docker, you can use `make test`
 
 If you want test coverage:
 
@@ -31,7 +32,8 @@ If you want to test a specific test, block or line:
 mix test test/mobilizon/actors/actors_test.exs:85
 ```
 
-> Note: The coveralls.html also works the same
+!!! tip
+    Note: The `coveralls.html` also works the same
 
 ## Front-end
 
@@ -58,4 +60,5 @@ npx cypress open
 ```
 to open the interactive GUI.
 
-Cypress provided [a subscription](https://www.cypress.io/oss-plan) to their recording dashboard since Mobilizon is an Open-Source project. Thanks!
+!!! info
+    Cypress provided [a subscription](https://www.cypress.io/oss-plan) to their recording dashboard since Mobilizon is an Open-Source project. Thanks!
