@@ -1,4 +1,4 @@
-# Mobilizon
+# About Mobilizon
 
 <p align="center">
     <a href="https://joinmobilizon.org">
@@ -43,7 +43,7 @@ There's no lock-in, you can interact with the event without registration.
 
 ## Contributing
 
-We appreciate any contribution to Mobilizon. Check our [Contributing](contributing.html) page for more information.
+We appreciate any contribution to Mobilizon. Check our [Contributing](contribute/index.md) page for more information.
 
 ## Links
 
@@ -54,11 +54,11 @@ We appreciate any contribution to Mobilizon. Check our [Contributing](contributi
   
 ### Discuss
   * 💬 Matrix: `#Mobilizon:matrix.org` [Riot](https://riot.im/app/#/room/#Mobilizon:matrix.org)
-  * #️⃣   IRC: `#mobilizon` on Freenode
+  * IRC: `#mobilizon` on Freenode
   * 🗣️ Forum: [https://framacolibri.org/c/mobilizon](https://framacolibri.org/c/mobilizon)
 
 ### Follow
   * 🐘 Mastodon: [https://framapiaf.org/@mobilizon](https://framapiaf.org/@mobilizon)
   * 🐦 Twitter [https://twitter.com/@joinmobilizon](https://twitter.com/@joinmobilizon)
   
-Note: Most federation code comes from [Pleroma](https://pleroma.social), which is `Copyright © 2017-2018 Pleroma Authors - AGPL-3.0`
+Note: Most federation code comes from [Pleroma](https://pleroma.social), which is `Copyright © 2017-2019 Pleroma Authors - AGPL-3.0`

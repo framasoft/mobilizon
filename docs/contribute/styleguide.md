@@ -5,6 +5,7 @@
 We format our code with the Elixir Formatter and check for issues with [Credo](https://github.com/rrrene/credo) (a few rules are not blocking).
 
 Please run these two commands before pushing code:
+
  * `mix format`
  * `mix credo`
  

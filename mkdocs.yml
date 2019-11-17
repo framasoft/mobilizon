@@ -1,0 +1,47 @@
+site_name: Mobilizon
+repo_name: 'framasoft/mobilizon'
+repo_url: 'https://framagit.org/framasoft/mobilizon'
+extra:
+  repo_icon: gitlab
+  social:
+    - type: 'twitter'
+      link: 'https://twitter.com/joinmobilizon'
+markdown_extensions:
+  - admonition
+  - codehilite
+  - footnotes
+  - meta
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.magiclink
+  - pymdownx.smartsymbols
+  - pymdownx.tilde
+  - pymdownx.mark
+plugins:
+  - search
+  - git-revision-date
+theme:
+  name: 'material'
+  custom_dir: 'docs/theme/'
+  palette:
+    primary: 'yellow'
+    accent: 'deep purple'
+  font: false
+  #logo: 'logo.png'
+  logo:
+    icon: 'calendar_today'
+  feature:
+    tabs: true
+#
+#nav:
+#  - Home: 'index.md'
+#  - About: 'about.md'
+#  - Administration:
+#    - Install: 'administration/install.md'
+#    - Dependencies: 'administration/dependencies.md'
+#    - Docker: 'administration/docker.md'
+#  - Contribute:
+#      - Contribute: 'contribute.md'
+#      - Development: 'contribute/development.md'
+#      - Styleguide:
