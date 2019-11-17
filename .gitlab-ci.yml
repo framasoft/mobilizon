@@ -77,30 +77,30 @@ exunit:
   script:
     - mix coveralls
 
-cypress:
-  stage: test
-  services:
-  - name: mdillon/postgis:11
-    alias: postgres
-  script:
-    - mix deps.get
-    - cd js
-    - yarn install
-    - npx cypress install # just to be sure
-    - yarn run build
-    - cd ../
-    - MIX_ENV=e2e mix ecto.create
-    - MIX_ENV=e2e mix ecto.migrate
-    - MIX_ENV=e2e mix run priv/repo/e2e.seed.exs
-    - MIX_ENV=e2e mix phx.server &
-    - cd js
-    - npx wait-on http://localhost:4000
-    - if [ -z "$CYPRESS_KEY" ]; then npx cypress run; else npx cypress run --record --parallel --key $CYPRESS_KEY; fi
-  artifacts:
-    expire_in: 2 day
-    paths:
-      - js/tests/e2e/screenshots/**/*.png
-      - js/tests/e2e/videos/**/*.mp4
+#cypress:
+#  stage: test
+#  services:
+#  - name: mdillon/postgis:11
+#    alias: postgres
+#  script:
+#    - mix deps.get
+#    - cd js
+#    - yarn install
+#    - npx cypress install # just to be sure
+#    - yarn run build
+#    - cd ../
+#    - MIX_ENV=e2e mix ecto.create
+#    - MIX_ENV=e2e mix ecto.migrate
+#    - MIX_ENV=e2e mix run priv/repo/e2e.seed.exs
+#    - MIX_ENV=e2e mix phx.server &
+#    - cd js
+#    - npx wait-on http://localhost:4000
+#    - if [ -z "$CYPRESS_KEY" ]; then npx cypress run; else npx cypress run --record --parallel --key $CYPRESS_KEY; fi
+#  artifacts:
+#    expire_in: 2 day
+#    paths:
+#      - js/tests/e2e/screenshots/**/*.png
+#      - js/tests/e2e/videos/**/*.mp4
 
 
 pages:
