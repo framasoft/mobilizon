@@ -119,6 +119,7 @@
     "From the {startDate} to the {endDate}": "Del {startDate} fins al {endDate}",
     "Gather ⋅ Organize ⋅ Mobilize": "Amassar ⋅ Organizar ⋅ Mobilizar",
     "General information": "Informacions generalas",
+    "Getting location": "Obtencion de la localizacion",
     "Going as {name}": "Coma {name}",
     "Group": "Grop",
     "Group List": "Lista dels grops",
@@ -183,6 +184,7 @@
     "No groups found": "Cap de grop pas trobat",
     "No participants yet": "Cap de participant pel moment",
     "No results for \"{queryText}\"": "Cap de resultats per « {queryText} »",
+    "No results for \"{queryText}\". You can try another search term or drag and drop the marker on the map": "Cap de resultat per « {queryText} ». Podètz ensajar un autre tèrme de recèrca o botar lo marcador sus la mapa",
     "No user account with this email was found. Maybe you made a typo?": "Pas de compte utilizaire pas trobat amb aquesta adreça. Benlèu qu’avètz fach una deca ?",
     "Number of places": "Nombre de plaças",
     "OK": "OK",
@@ -361,5 +363,6 @@
     "{count} participants": "Cap de participacion pel moment|Un participant|{count} participants",
     "{count} requests waiting": "Una demanda en espèra|{count} demandas en espèra",
     "{license} guarantees {respect} of the people who will use it. Since {source}, anyone can audit it, which guarantees its transparency.": "{license} assegura {respect} del monde que l’utilizaràn. Del moment que {source}, tot lo monde pòt l’inspectar, aquò assegura sa transparéncia.",
-    "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© Los contribuidors de Mobilizon {date} - Fach amb Elixir, Phoenix, VueJS e d’amor e de setmanas"
+    "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© Los contribuidors de Mobilizon {date} - Fach amb Elixir, Phoenix, VueJS e d’amor e de setmanas",
+    "© The OpenStreetMap Contributors": "© Los contribuitors d’OpenStreetMap"
 }
