@@ -11,15 +11,15 @@
             "uuid": "sc:identifier"
         }
     ],
-    "actor": "https://event1.tcit.fr/@tcit",
+    "actor": "https://test.mobilizon.org/@Alicia",
     "cc": [
         "https://framapiaf.org/users/admin/followers",
         "https://framapiaf.org/users/tcit"
     ],
-    "id": "https://event1.tcit.fr/@tcit/events/109ccdfd-ee3e-46e1-a877-6c228763df0c/activity",
+    "id": "https://test.mobilizon.org/events/39026210-0c69-4238-b3cc-986f33f98ed0/activity",
     "object": {
         "attachment": [],
-        "attributedTo": "https://event1.tcit.fr/@tcit",
+        "attributedTo": "https://test.mobilizon.org/@Alicia",
         "startTime": "2018-02-12T14:08:20Z",
         "cc": [
             "https://framapiaf.org/users/admin/followers",
@@ -27,7 +27,7 @@
         ],
         "content": "<p><span class=\"h-card\"><a href=\"https://framapiaf.org/users/tcit\" class=\"u-url mention\">@<span>tcit</span></a></span></p>",
         "category": "TODO remove me",
-        "id": "https://event1.tcit.fr/@tcit/events/109ccdfd-ee3e-46e1-a877-6c228763df0c",
+        "id": "https://test.mobilizon.org/events/39026210-0c69-4238-b3cc-986f33f98ed0",
         "inReplyTo": null,
         "location": {
             "type": "Place",
@@ -55,7 +55,7 @@
             "https://www.w3.org/ns/activitystreams#Public"
         ],
         "type": "Event",
-        "url": "https://event1.tcit.fr/@tcit/events/109ccdfd-ee3e-46e1-a877-6c228763df0c",
+        "url": "https://test.mobilizon.org/events/39026210-0c69-4238-b3cc-986f33f98ed0",
         "uuid": "109ccdfd-ee3e-46e1-a877-6c228763df0c"
     },
     "published": "2018-02-12T14:08:20Z",

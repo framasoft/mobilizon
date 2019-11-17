@@ -1,0 +1,40 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true"
+      },
+      "request_body": "",
+      "url": "https://framapiaf.org/users/Framasoft"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://w3id.org/security/v1\",{\"manuallyApprovesFollowers\":\"as:manuallyApprovesFollowers\",\"toot\":\"http://joinmastodon.org/ns#\",\"featured\":{\"@id\":\"toot:featured\",\"@type\":\"@id\"},\"alsoKnownAs\":{\"@id\":\"as:alsoKnownAs\",\"@type\":\"@id\"},\"movedTo\":{\"@id\":\"as:movedTo\",\"@type\":\"@id\"},\"schema\":\"http://schema.org#\",\"PropertyValue\":\"schema:PropertyValue\",\"value\":\"schema:value\",\"IdentityProof\":\"toot:IdentityProof\",\"discoverable\":\"toot:discoverable\",\"Hashtag\":\"as:Hashtag\",\"focalPoint\":{\"@container\":\"@list\",\"@id\":\"toot:focalPoint\"}}],\"id\":\"https://framapiaf.org/users/Framasoft\",\"type\":\"Person\",\"following\":\"https://framapiaf.org/users/Framasoft/following\",\"followers\":\"https://framapiaf.org/users/Framasoft/followers\",\"inbox\":\"https://framapiaf.org/users/Framasoft/inbox\",\"outbox\":\"https://framapiaf.org/users/Framasoft/outbox\",\"featured\":\"https://framapiaf.org/users/Framasoft/collections/featured\",\"preferredUsername\":\"Framasoft\",\"name\":\"Framasoft\",\"summary\":\"\\u003cp\\u003eLa route est longue mais la voie est libre…\\u003c/p\\u003e\\u003cp\\u003eBesoin d\\u0026apos;aide ? \\u003ca href=\\\"https://contact.framasoft.org\\\" rel=\\\"nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"\\\"\\u003econtact.framasoft.org\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e\\u003c/span\\u003e\\u003c/a\\u003e /!\\\\ Pas de support sur Mastodon /!\\\\\\u003c/p\\u003e\\u003cp\\u003e\\u003ca href=\\\"https://framapiaf.org/tags/Framasoft\\\" class=\\\"mention hashtag\\\" rel=\\\"tag\\\"\\u003e#\\u003cspan\\u003eFramasoft\\u003c/span\\u003e\\u003c/a\\u003e \\u003ca href=\\\"https://framapiaf.org/tags/Libre\\\" class=\\\"mention hashtag\\\" rel=\\\"tag\\\"\\u003e#\\u003cspan\\u003eLibre\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/p\\u003e\",\"url\":\"https://framapiaf.org/@Framasoft\",\"manuallyApprovesFollowers\":false,\"discoverable\":true,\"publicKey\":{\"id\":\"https://framapiaf.org/users/Framasoft#main-key\",\"owner\":\"https://framapiaf.org/users/Framasoft\",\"publicKeyPem\":\"-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0SgyiKbsNd0adHldDHiw\\nCotPzipq0QMrBgvmapnME8obZvrJWTF+imihNBH/DBemQqRb0ABilWvs0hluWCHl\\nouCi4SnlUljjpp2nmMTFUMPeF/GQByZS4ZPmnipgG+/uqkWL0U/206r//6agvw2s\\nmRcuVwo1xR4MZshxdtqXm/Wg9zavDSMLf/66VevieWvVy+5n0ZsqFAFuHrITgrgt\\n6wS8S3IT7de+7F28JeU/zmRFA3/3+IyWrpTx1CY4J+UM11mLbtpLWy3MCAMffchF\\nZh7TAiaJKAVMjT2Ubyr/1nNn9b4FORwOMIgWIGp5OAD1W/xVTW/rmqArAllgUMEW\\nvwIDAQAB\\n-----END PUBLIC KEY-----\\n\"},\"tag\":[{\"type\":\"Hashtag\",\"href\":\"https://framapiaf.org/explore/framasoft\",\"name\":\"#framasoft\"},{\"type\":\"Hashtag\",\"href\":\"https://framapiaf.org/explore/libre\",\"name\":\"#libre\"}],\"attachment\":[{\"type\":\"PropertyValue\",\"name\":\"Contact\",\"value\":\"\\u003ca href=\\\"https://contact.framasoft.org/\\\" rel=\\\"me nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"\\\"\\u003econtact.framasoft.org/\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e\\u003c/span\\u003e\\u003c/a\\u003e\"},{\"type\":\"PropertyValue\",\"name\":\"Découvrir\",\"value\":\"\\u003ca href=\\\"https://framasoft.org\\\" rel=\\\"me nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"\\\"\\u003eframasoft.org\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e\\u003c/span\\u003e\\u003c/a\\u003e\"},{\"type\":\"PropertyValue\",\"name\":\"Soutenir\",\"value\":\"\\u003ca href=\\\"https://soutenir.framasoft.org\\\" rel=\\\"me nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"\\\"\\u003esoutenir.framasoft.org\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e\\u003c/span\\u003e\\u003c/a\\u003e\"}],\"endpoints\":{\"sharedInbox\":\"https://framapiaf.org/inbox\"},\"icon\":{\"type\":\"Image\",\"mediaType\":\"image/jpeg\",\"url\":\"https://framapiaf.s3.framasoft.org/framapiaf/accounts/avatars/000/000/399/original/aa56a445efb72803.jpg\"},\"image\":{\"type\":\"Image\",\"mediaType\":\"image/jpeg\",\"url\":\"https://framapiaf.s3.framasoft.org/framapiaf/accounts/headers/000/000/399/original/94f271e4ef58fc79.jpg\"}}",
+      "headers": {
+        "Date": "Sun, 17 Nov 2019 18:09:19 GMT",
+        "Content-Type": "application/activity+json; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Server": "Mastodon",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Vary": "Accept, Accept-Encoding, Origin",
+        "Cache-Control": "max-age=180, public",
+        "ETag": "W/\"244f2282ec9b1fac35b0381a673683da\"",
+        "Set-Cookie": "_mastodon_session=qFu4eHpJm1RgLVk6TyzbLxfQXMGZFqkybY4uqQNKUSUWboKh0edWetZQgoSPIXzAwTTFICfkkEPIhpQ4HnJU--NF09knzR8oukiQAs--2ax%2FdfLh6pkUpm6WDtngbw%3D%3D; path=/; secure; HttpOnly",
+        "X-Request-Id": "b121b7a6-423e-4378-97e0-e88a9a51928e",
+        "X-Runtime": "0.006326",
+        "X-Cached": "MISS",
+        "Strict-Transport-Security": "max-age=31536000"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
