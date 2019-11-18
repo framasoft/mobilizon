@@ -275,6 +275,9 @@ defmodule MobilizonWeb.Resolvers.Event do
       {:is_owned, nil} ->
         {:error, "Organizer actor id is not owned by the user"}
 
+      {:error, _, %Ecto.Changeset{} = error, _} ->
+        {:error, error}
+
       {:error, %Ecto.Changeset{} = error} ->
         {:error, error}
     end
@@ -292,15 +295,12 @@ defmodule MobilizonWeb.Resolvers.Event do
         %{event_id: event_id} = args,
         %{context: %{current_user: user}} = _resolution
       ) do
-    require Logger
-    Logger.error(inspect(args))
     # See https://github.com/absinthe-graphql/absinthe/issues/490
     with args <- Map.put(args, :options, args[:options] || %{}),
          {:ok, %Event{} = event} <- Events.get_event_with_preload(event_id),
          organizer_actor_id <- args |> Map.get(:organizer_actor_id, event.organizer_actor_id),
          {:is_owned, %Actor{} = organizer_actor} <-
            User.owns_actor(user, organizer_actor_id),
-         :ok <- Logger.error(inspect(organizer_actor)),
          args <- Map.put(args, :organizer_actor, organizer_actor),
          {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} <-
            MobilizonWeb.API.Events.update_event(args, event) do
@@ -311,6 +311,9 @@ defmodule MobilizonWeb.Resolvers.Event do
 
       {:is_owned, nil} ->
         {:error, "User doesn't own actor"}
+
+      {:error, _, %Ecto.Changeset{} = error, _} ->
+        {:error, error}
     end
   end
 

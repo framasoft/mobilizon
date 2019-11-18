@@ -128,7 +128,6 @@ defmodule Mobilizon.Events.Event do
     |> common_changeset(attrs)
     |> put_creator_if_published(:create)
     |> validate_required(@required_attrs)
-    |> validate_lengths()
   end
 
   @doc false
@@ -139,7 +138,6 @@ defmodule Mobilizon.Events.Event do
     |> common_changeset(attrs)
     |> put_creator_if_published(:update)
     |> validate_required(@update_required_attrs)
-    |> validate_lengths()
   end
 
   @spec common_changeset(Changeset.t(), map) :: Changeset.t()
@@ -149,6 +147,8 @@ defmodule Mobilizon.Events.Event do
     |> put_tags(attrs)
     |> put_address(attrs)
     |> put_picture(attrs)
+    |> validate_lengths()
+    |> validate_end_time()
   end
 
   @spec validate_lengths(Changeset.t()) :: Changeset.t()
@@ -160,6 +160,20 @@ defmodule Mobilizon.Events.Event do
     |> validate_length(:category, min: 2, max: 100)
     # |> validate_length(:category, min: 2, max: 100)
     |> validate_length(:slug, min: 3, max: 200)
+  end
+
+  defp validate_end_time(%Changeset{} = changeset) do
+    case fetch_field(changeset, :begins_on) do
+      {_, begins_on} ->
+        validate_change(changeset, :ends_on, fn :ends_on, ends_on ->
+          if begins_on > ends_on,
+            do: [ends_on: "ends_on cannot be set before begins_on"],
+            else: []
+        end)
+
+      :error ->
+        changeset
+    end
   end
 
   @doc """
