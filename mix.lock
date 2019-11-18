@@ -79,7 +79,7 @@
   "mime": {:hex, :mime, "1.3.1", "30ce04ab3175b6ad0bdce0035cba77bba68b813d523d1aac73d9781b4d193cf8", [:mix], [], "hexpm"},
   "mimerl": {:hex, :mimerl, "1.2.0", "67e2d3f571088d5cfd3e550c383094b47159f3eee8ffa08e64106cdf5e981be3", [:rebar3], [], "hexpm"},
   "mimetype_parser": {:hex, :mimetype_parser, "0.1.3", "628ac9fe56aa7edcedb534d68397dd66674ab82493c8ebe39acb9a19b666099d", [:mix], [], "hexpm"},
-  "mix_test_watch": {:hex, :mix_test_watch, "1.0.1", "ae6fc45bbc80b826046fb84208df4b06035e10fae6d44d0cb48c5a2f92ee2e1d", [:mix], [{:file_system, "~> 0.2.1 or ~> 0.3", [hex: :file_system, repo: "hexpm", optional: false]}], "hexpm"},
+  "mix_test_watch": {:hex, :mix_test_watch, "1.0.2", "34900184cbbbc6b6ed616ed3a8ea9b791f9fd2088419352a6d3200525637f785", [:mix], [{:file_system, "~> 0.2.1 or ~> 0.3", [hex: :file_system, repo: "hexpm", optional: false]}], "hexpm"},
   "mmdb2_decoder": {:hex, :mmdb2_decoder, "1.1.0", "2e2347521bb3bf6b81b9ee58d3be2199cb68ea42dcbafcd0d8eb40214d2844cf", [:mix], [], "hexpm"},
   "mochiweb": {:hex, :mochiweb, "2.18.0", "eb55f1db3e6e960fac4e6db4e2db9ec3602cc9f30b86cd1481d56545c3145d2e", [:rebar3], [], "hexpm"},
   "mock": {:hex, :mock, "0.3.3", "42a433794b1291a9cf1525c6d26b38e039e0d3a360732b5e467bfc77ef26c914", [:mix], [{:meck, "~> 0.8.13", [hex: :meck, repo: "hexpm", optional: false]}], "hexpm"},
