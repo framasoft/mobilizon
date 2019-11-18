@@ -387,6 +387,7 @@ export default class EditorComponent extends Vue {
       placement: 'top-start',
       inertia: true,
       duration: [400, 200],
+      // @ts-ignore for some reason
       showOnInit: true,
       arrow: true,
       arrowType: 'round',

@@ -299,6 +299,7 @@ defmodule MobilizonWeb.Schema.EventType do
 
       arg(:online_address, :string)
       arg(:phone_address, :string)
+      arg(:organizer_actor_id, :id)
       arg(:category, :string)
       arg(:physical_address, :address_input)
       arg(:options, :event_options_input)

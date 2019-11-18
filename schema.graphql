@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Fri Nov 08 2019 17:20:47 GMT+0100 (Central European Standard Time)
+# timestamp: Mon Nov 18 2019 16:00:35 GMT+0100 (Central European Standard Time)
 
 schema {
   query: RootQueryType
@@ -1081,6 +1081,7 @@ type RootMutationType {
     joinOptions: EventJoinOptions = FREE
     onlineAddress: String
     options: EventOptionsInput
+    organizerActorId: ID
     phoneAddress: String
     physicalAddress: AddressInput
 
@@ -1178,7 +1179,7 @@ type RootQueryType {
   reports(limit: Int = 10, page: Int = 1, status: ReportStatus = OPEN): [Report]
 
   """Reverse geocode coordinates"""
-  reverseGeocode(latitude: Float!, longitude: Float!): [Address]
+  reverseGeocode(latitude: Float!, locale: String = "en", longitude: Float!, zoom: Int = 15): [Address]
 
   """Search for an address"""
   searchAddress(limit: Int = 10, locale: String = "en", page: Int = 1, query: String!): [Address]

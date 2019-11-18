@@ -10,7 +10,7 @@
     </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import { IActor } from '@/types/actor';
 import IdentityPicker from './IdentityPicker.vue';
 
@@ -21,6 +21,11 @@ export default class IdentityPickerWrapper extends Vue {
   @Prop() value!: IActor;
   isComponentModalActive: boolean = false;
   currentIdentity: IActor = this.value;
+
+  @Watch('value')
+    updateCurrentActor(value) {
+    this.currentIdentity = value;
+  }
 
   relay(identity: IActor) {
     this.currentIdentity = identity;
