@@ -70,7 +70,7 @@ query {
 }`;
 
 export const CURRENT_ACTOR_CLIENT = gql`
-    query {
+    query currentActor {
         currentActor @client {
             id,
             avatar {

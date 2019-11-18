@@ -339,8 +339,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
            ActivityPub.update(:event, old_event, object_data, false) do
       {:ok, activity, new_event}
     else
-      e ->
-        Logger.error(inspect(e))
+      _e ->
         :error
     end
   end
@@ -442,8 +441,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
 
         :error
 
-      e ->
-        Logger.error(inspect(e))
+      _e ->
         :error
     end
   end

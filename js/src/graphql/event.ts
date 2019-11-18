@@ -289,6 +289,7 @@ export const EDIT_EVENT = gql`
     $picture: PictureInput,
     $onlineAddress: String,
     $phoneAddress: String,
+    $organizerActorId: ID,
     $category: String,
     $physicalAddress: AddressInput,
     $options: EventOptionsInput,
@@ -307,6 +308,7 @@ export const EDIT_EVENT = gql`
       picture: $picture,
       onlineAddress: $onlineAddress,
       phoneAddress: $phoneAddress,
+      organizerActorId: $organizerActorId,
       category: $category,
       physicalAddress: $physicalAddress
       options: $options,

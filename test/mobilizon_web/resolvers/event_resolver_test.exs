@@ -95,6 +95,40 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                "Organizer actor id is not owned by the user"
     end
 
+    test "create_event/3 should check that end time is after start time", %{
+      conn: conn,
+      actor: actor,
+      user: user
+    } do
+      begins_on = DateTime.utc_now() |> DateTime.truncate(:second)
+      ends_on = Timex.shift(begins_on, hours: -2)
+
+      mutation = """
+          mutation {
+              createEvent(
+                  title: "come to my event",
+                  description: "it will be fine",
+                  begins_on: "#{DateTime.to_iso8601(begins_on)}",
+                  ends_on: "#{DateTime.to_iso8601(ends_on)}",
+                  organizer_actor_id: "#{actor.id}",
+                  category: "birthday"
+              ) {
+                id,
+                title,
+                uuid
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "ends_on cannot be set before begins_on"
+    end
+
     test "create_event/3 creates an event", %{conn: conn, actor: actor, user: user} do
       mutation = """
           mutation {
@@ -659,6 +693,39 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert hd(json_response(res, 200)["errors"])["message"] == "User doesn't own actor"
+    end
+
+    test "update_event/3 should check end time is after the beginning time", %{
+      conn: conn,
+      actor: actor,
+      user: user
+    } do
+      event = insert(:event, organizer_actor: actor)
+
+      mutation = """
+          mutation {
+              updateEvent(
+                  title: "my event updated",
+                  ends_on: "#{Timex.shift(event.begins_on, hours: -2)}",
+                  event_id: #{event.id}
+              ) {
+                title,
+                uuid,
+                tags {
+                  title,
+                  slug
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "ends_on cannot be set before begins_on"
     end
 
     test "update_event/3 updates an event", %{conn: conn, actor: actor, user: user} do

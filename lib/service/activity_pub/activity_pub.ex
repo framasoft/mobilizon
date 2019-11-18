@@ -93,8 +93,6 @@ defmodule Mobilizon.Service.ActivityPub do
         {:ok, Actors.get_actor_by_url!(actor_url, true)}
 
       e ->
-        require Logger
-        Logger.error(inspect(e))
         {:error, e}
     end
   end
@@ -135,14 +133,13 @@ defmodule Mobilizon.Service.ActivityPub do
     Logger.debug("creating an activity")
     Logger.debug(inspect(args))
 
-    {:ok, entity, create_data} =
-      case type do
-        :event -> create_event(args, additional)
-        :comment -> create_comment(args, additional)
-        :group -> create_group(args, additional)
-      end
-
-    with {:ok, activity} <- create_activity(create_data, local),
+    with {:ok, entity, create_data} <-
+           (case type do
+              :event -> create_event(args, additional)
+              :comment -> create_comment(args, additional)
+              :group -> create_group(args, additional)
+            end),
+         {:ok, activity} <- create_activity(create_data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity, entity}
     else
@@ -167,13 +164,12 @@ defmodule Mobilizon.Service.ActivityPub do
     Logger.debug("updating an activity")
     Logger.debug(inspect(args))
 
-    {:ok, entity, update_data} =
-      case type do
-        :event -> update_event(old_entity, args, additional)
-        :actor -> update_actor(old_entity, args, additional)
-      end
-
-    with {:ok, activity} <- create_activity(update_data, local),
+    with {:ok, entity, update_data} <-
+           (case type do
+              :event -> update_event(old_entity, args, additional)
+              :actor -> update_actor(old_entity, args, additional)
+            end),
+         {:ok, activity} <- create_activity(update_data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity, entity}
     else

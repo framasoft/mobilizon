@@ -203,14 +203,9 @@ defmodule Mobilizon.Actors.Actor do
     actor
     |> cast(attrs, @attrs)
     |> build_urls()
-    |> cast_embed(:avatar)
-    |> cast_embed(:banner)
+    |> common_changeset()
     |> unique_username_validator()
     |> validate_required(@required_attrs)
-    |> unique_constraint(:preferred_username,
-      name: :actors_preferred_username_domain_type_index
-    )
-    |> unique_constraint(:url, name: :actors_url_index)
   end
 
   @doc false
@@ -218,13 +213,8 @@ defmodule Mobilizon.Actors.Actor do
   def update_changeset(%__MODULE__{} = actor, attrs) do
     actor
     |> cast(attrs, @update_attrs)
-    |> cast_embed(:avatar)
-    |> cast_embed(:banner)
+    |> common_changeset()
     |> validate_required(@update_required_attrs)
-    |> unique_constraint(:preferred_username,
-      name: :actors_preferred_username_domain_type_index
-    )
-    |> unique_constraint(:url, name: :actors_url_index)
   end
 
   @doc """
@@ -235,13 +225,8 @@ defmodule Mobilizon.Actors.Actor do
     actor
     |> cast(attrs, @registration_attrs)
     |> build_urls()
-    |> cast_embed(:avatar)
-    |> cast_embed(:banner)
+    |> common_changeset()
     |> unique_username_validator()
-    |> unique_constraint(:preferred_username,
-      name: :actors_preferred_username_domain_type_index
-    )
-    |> unique_constraint(:url, name: :actors_url_index)
     |> validate_required(@registration_required_attrs)
   end
 
@@ -254,19 +239,24 @@ defmodule Mobilizon.Actors.Actor do
       %__MODULE__{}
       |> cast(attrs, @remote_actor_creation_attrs)
       |> validate_required(@remote_actor_creation_required_attrs)
-      |> cast_embed(:avatar)
-      |> cast_embed(:banner)
+      |> common_changeset()
       |> unique_username_validator()
-      |> unique_constraint(:preferred_username,
-        name: :actors_preferred_username_domain_type_index
-      )
-      |> unique_constraint(:url, name: :actors_url_index)
       |> validate_length(:summary, max: 5000)
       |> validate_length(:preferred_username, max: 100)
 
     Logger.debug("Remote actor creation: #{inspect(changeset)}")
 
     changeset
+  end
+
+  @spec common_changeset(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp common_changeset(%Ecto.Changeset{} = changeset) do
+    changeset
+    |> cast_embed(:avatar)
+    |> cast_embed(:banner)
+    |> unique_constraint(:url, name: :actors_url_index)
+    |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_type_index)
+    |> validate_format(:preferred_username, ~r/[a-z0-9_]+/)
   end
 
   @doc """
