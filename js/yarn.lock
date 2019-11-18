@@ -7416,10 +7416,10 @@ leaflet.locatecontrol@^0.68.0:
   resolved "https://registry.yarnpkg.com/leaflet.locatecontrol/-/leaflet.locatecontrol-0.68.0.tgz#fc0d173ef0f6670af192641e5a448f0c58c814d3"
   integrity sha512-jXJCpBvkyH6shjPEOK/DWu/tKX/WdkNeO96jyPrnGelYp9u6wSDj4V1V4aX9+CMTIrEyVB4/4XuU+T7VTRpb6w==
 
-leaflet@^1.4.0:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.5.1.tgz#9afb9d963d66c870066b1342e7a06f92840f46bf"
-  integrity sha512-ekM9KAeG99tYisNBg0IzEywAlp0hYI5XRipsqRXyRTeuU8jcuntilpp+eFf5gaE0xubc9RuSNIVtByEKwqFV0w==
+leaflet@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.6.0.tgz#aecbb044b949ec29469eeb31c77a88e2f448f308"
+  integrity sha512-CPkhyqWUKZKFJ6K8umN5/D2wrJ2+/8UIpXppY7QDnUZW5bZL5+SEI2J7GBpwh4LIupOKqbNSQXgqmrEJopHVNQ==
 
 leven@^2.1.0:
   version "2.1.0"
