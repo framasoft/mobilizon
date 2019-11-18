@@ -7,13 +7,13 @@
 
     <picture-upload v-model="avatarFile" class="picture-upload"></picture-upload>
 
-    <b-field :label="$t('Display name')">
+    <b-field horizontal :label="$t('Display name')">
       <b-input aria-required="true" required v-model="identity.name" @input="autoUpdateUsername($event)"/>
     </b-field>
 
-    <b-field :label="$t('Username')">
-      <b-field>
-        <b-input aria-required="true" required v-model="identity.preferredUsername" :disabled="isUpdate"/>
+    <b-field horizontal custom-class="username-field" expanded :label="$t('Username')" :message="message">
+      <b-field expanded>
+        <b-input aria-required="true" required v-model="identity.preferredUsername" :disabled="isUpdate" :use-html5-validation="!isUpdate" pattern="[a-z0-9_]+"/>
 
         <p class="control">
           <span class="button is-static">@{{ getInstanceHost() }}</span>
@@ -21,7 +21,7 @@
       </b-field>
     </b-field>
 
-    <b-field :label="$t('Description')">
+    <b-field horizontal :label="$t('Description')">
       <b-input type="textarea" aria-required="false" v-model="identity.summary"/>
     </b-field>
 
@@ -77,10 +77,14 @@
     cursor: pointer;
     margin-top: 15px;
   }
+
+  .username-field + .field {
+    margin-bottom: 0;
+  }
 </style>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { Component, Prop, Watch } from 'vue-property-decorator';
 import {
   CREATE_PERSON,
   CURRENT_ACTOR_CLIENT,
@@ -96,6 +100,8 @@ import { Dialog } from 'buefy/dist/components/dialog';
 import { RouteName } from '@/router';
 import { buildFileFromIPicture, buildFileVariable, readFileAsync } from '@/utils/image';
 import { changeIdentity } from '@/utils/auth';
+import { mixins } from 'vue-class-component';
+import identityEditionMixin from '@/mixins/identityEdition';
 
 @Component({
   components: {
@@ -108,17 +114,20 @@ import { changeIdentity } from '@/utils/auth';
     },
   },
 })
-export default class EditIdentity extends Vue {
+export default class EditIdentity extends mixins(identityEditionMixin) {
   @Prop({ type: Boolean }) isUpdate!: boolean;
 
   errors: string[] = [];
 
   identityName!: string | undefined;
   avatarFile: File | null = null;
-  identity = new Person();
 
-  private oldDisplayName: string | null = null;
   private currentActor: IPerson | null = null;
+
+  get message() {
+    if (this.isUpdate) return null;
+    return this.$t('Only alphanumeric characters and underscores are supported.');
+  }
 
   @Watch('isUpdate')
   async isUpdateChanged () {
@@ -151,16 +160,6 @@ export default class EditIdentity extends Vue {
     if (this.isUpdate) return this.updateIdentity();
 
     return this.createIdentity();
-  }
-
-  autoUpdateUsername(newDisplayName: string | null) {
-    const oldUsername = this.convertToUsername(this.oldDisplayName);
-
-    if (this.identity.preferredUsername === oldUsername) {
-      this.identity.preferredUsername = this.convertToUsername(newDisplayName);
-    }
-
-    this.oldDisplayName = newDisplayName;
   }
 
   /**
@@ -307,18 +306,6 @@ export default class EditIdentity extends Vue {
         this.$notifier.error(message);
       });
     }
-  }
-
-  private convertToUsername(value: string | null) {
-    if (!value) return '';
-
-    // https://stackoverflow.com/a/37511463
-    return value.toLocaleLowerCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .replace(/ /g, '_')
-                .replace(/[^a-z0-9._]/g, '')
-    ;
   }
 
   private async buildVariables() {

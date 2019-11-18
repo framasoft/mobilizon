@@ -9,6 +9,10 @@
           {{ $t('To achieve your registration, please create a first identity profile.')}}
         </b-message>
         <form v-if="!validationSent" @submit.prevent="submit">
+          <b-field :label="$t('Display name')">
+            <b-input aria-required="true" required v-model="identity.name" @input="autoUpdateUsername($event)"/>
+          </b-field>
+
           <b-field
             :label="$t('Username')"
             :type="errors.preferred_username ? 'is-danger' : null"
@@ -19,7 +23,7 @@
                 aria-required="true"
                 required
                 expanded
-                v-model="person.preferredUsername"
+                v-model="identity.preferredUsername"
               />
               <p class="control">
                 <span class="button is-static">@{{ host }}</span>
@@ -27,12 +31,8 @@
             </b-field>
           </b-field>
 
-          <b-field :label="$t('Displayed name')">
-            <b-input v-model="person.name"/>
-          </b-field>
-
           <b-field :label="$t('Description')">
-            <b-input type="textarea" v-model="person.summary"/>
+            <b-input type="textarea" v-model="identity.summary"/>
           </b-field>
 
           <p class="control has-text-centered">
@@ -45,7 +45,7 @@
         <div v-if="validationSent && !userAlreadyActivated">
           <b-message title="Success" type="is-success" closable="false">
             <h2 class="title">
-              {{ $t('Your account is nearly ready, {username}', { username: person.preferredUsername }) }}
+              {{ $t('Your account is nearly ready, {username}', { username: identity.preferredUsername }) }}
             </h2>
             <p>
               {{ $t('A validation email was sent to {email}', { email }) }}
@@ -61,22 +61,22 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { IPerson, Person } from '@/types/actor';
+import { Component, Prop } from 'vue-property-decorator';
+import { IPerson } from '@/types/actor';
 import { IDENTITIES, REGISTER_PERSON } from '@/graphql/actor';
 import { MOBILIZON_INSTANCE_HOST } from '@/api/_entrypoint';
 import { RouteName } from '@/router';
 import { changeIdentity } from '@/utils/auth';
-import { ICurrentUser } from '@/types/current-user.model';
+import { mixins } from 'vue-class-component';
+import identityEditionMixin from '@/mixins/identityEdition';
 
 @Component
-export default class Register extends Vue {
+export default class Register extends mixins(identityEditionMixin) {
   @Prop({ type: String, required: true }) email!: string;
   @Prop({ type: Boolean, required: false, default: false }) userAlreadyActivated!: boolean;
 
   host?: string = MOBILIZON_INSTANCE_HOST;
 
-  person: IPerson = new Person();
   errors: object = {};
   validationSent: boolean = false;
   sendingValidation: boolean = false;
@@ -94,7 +94,7 @@ export default class Register extends Vue {
       this.errors = {};
       const { data } = await this.$apollo.mutate<{ registerPerson: IPerson }>({
         mutation: REGISTER_PERSON,
-        variables: Object.assign({ email: this.email }, this.person),
+        variables: Object.assign({ email: this.email }, this.identity),
         update: (store, { data }) => {
           if (this.userAlreadyActivated) {
             const identitiesData = store.readQuery<{ identities: IPerson[] }>({ query: IDENTITIES });
