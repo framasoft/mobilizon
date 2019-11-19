@@ -15,7 +15,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Utils do
   def fetch_tags(tags) when is_list(tags) do
     Logger.debug("fetching tags")
 
-    Enum.reduce(tags, [], &fetch_tag/2)
+    tags |> Enum.flat_map(&fetch_tag/1) |> Enum.uniq() |> Enum.map(&existing_tag_or_data/1)
   end
 
   @spec fetch_mentions([map()]) :: [map()]
@@ -64,23 +64,20 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Utils do
     }
   end
 
-  defp fetch_tag(tag, acc) when is_map(tag) do
+  defp fetch_tag(tag) when is_map(tag) do
     case tag["type"] do
       "Hashtag" ->
-        acc ++ [existing_tag_or_data(tag["name"])]
+        [tag_without_hash(tag["name"])]
 
       _err ->
-        acc
+        []
     end
   end
 
-  defp fetch_tag(tag, acc) when is_bitstring(tag) do
-    acc ++ [existing_tag_or_data(tag)]
-  end
+  defp fetch_tag(tag) when is_bitstring(tag), do: [tag_without_hash(tag)]
 
-  defp existing_tag_or_data("#" <> tag_title) do
-    existing_tag_or_data(tag_title)
-  end
+  defp tag_without_hash("#" <> tag_title), do: tag_title
+  defp tag_without_hash(tag_title), do: tag_title
 
   defp existing_tag_or_data(tag_title) do
     case Events.get_tag_by_title(tag_title) do
