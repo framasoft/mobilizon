@@ -33,15 +33,3 @@ theme:
     icon: 'calendar_today'
   feature:
     tabs: true
-#
-#nav:
-#  - Home: 'index.md'
-#  - About: 'about.md'
-#  - Administration:
-#    - Install: 'administration/install.md'
-#    - Dependencies: 'administration/dependencies.md'
-#    - Docker: 'administration/docker.md'
-#  - Contribute:
-#      - Contribute: 'contribute.md'
-#      - Development: 'contribute/development.md'
-#      - Styleguide:

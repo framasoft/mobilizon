@@ -81,8 +81,10 @@ export class Address implements IAddress {
           }
         } else if (this.locality && this.locality.trim()) {
           alternativeName = `${this.locality}, ${this.region}, ${this.country}`;
-        } else {
+        } else if (this.region && this.region.trim()) {
           alternativeName = `${this.region}, ${this.country}`;
+        } else if (this.country && this.country.trim()) {
+          alternativeName = this.country;
         }
         poiIcon = this.iconForPOI;
         break;
