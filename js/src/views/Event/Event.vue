@@ -184,11 +184,17 @@
                 </small>
                 <div>
 <!--                  <b-icon icon="mastodon" size="is-large" type="is-primary" />-->
-                  <a :href="facebookShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="facebook" size="is-large" type="is-primary" /></a>
+
                   <a :href="twitterShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="twitter" size="is-large" type="is-primary" /></a>
+                  <a :href="facebookShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="facebook" size="is-large" type="is-primary" /></a>
+                  <a :href="linkedInShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="linkedin" size="is-large" type="is-primary" /></a>
+                  <a :href="diasporaShareUrl" class="diaspora" target="_blank" rel="nofollow noopener">
+                    <span data-v-5e15e80a="" class="icon has-text-primary is-large">
+                      <img svg-inline src="../../assets/diaspora-icon.svg" alt="diaspora-logo" />
+                    </span>
+                  </a>
                   <a :href="emailShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="email" size="is-large" type="is-primary" /></a>
                   <!--     TODO: mailto: links are not used anymore, we should provide a popup to redact a message instead    -->
-                  <a :href="linkedInShareUrl" target="_blank" rel="nofollow noopener"><b-icon icon="linkedin" size="is-large" type="is-primary" /></a>
                 </div>
               </div>
               <hr />
@@ -591,6 +597,10 @@ export default class Event extends EventMixin {
     return `mailto:?to=&body=${this.event.url}${encodeURIComponent('\n\n')}${this.textDescription}&subject=${this.event.title}`;
   }
 
+  get diasporaShareUrl(): string {
+    return `https://share.diasporafoundation.org/?title=${encodeURIComponent(this.event.title)}&url=${encodeURIComponent(this.event.url)}`;
+  }
+
   get textDescription(): string {
     const meta = document.querySelector("meta[property='og:description']");
     if (!meta) return '';
@@ -898,6 +908,11 @@ export default class Event extends EventMixin {
 
   .share {
     border-bottom: solid 1px #111;
+
+    .diaspora span svg {
+      height: 2rem;
+      width: 2rem;
+    }
 
     .columns {
 
