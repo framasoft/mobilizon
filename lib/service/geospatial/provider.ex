@@ -9,11 +9,13 @@ defmodule Mobilizon.Service.Geospatial.Provider do
   * `Mobilizon.Service.Geospatial.Addok` [🔗](https://github.com/addok/addok)
   * `Mobilizon.Service.Geospatial.MapQuest` [🔗](https://developer.mapquest.com/documentation/open/)
   * `Mobilizon.Service.Geospatial.GoogleMaps` [🔗](https://developers.google.com/maps/documentation/geocoding/intro)
+  * `Mobilizon.Service.Geospatial.Mimirsbrunn` [🔗](https://github.com/CanalTP/mimirsbrunn)
+  * `Mobilizon.Service.Geospatial.Pelias` [🔗](https://pelias.io)
 
 
   ## Shared options
 
-  * `:user_agent` User-Agent string to send to the backend. Defaults to `"Mobilizon"`
+  * `:user_agent` User-Agent string to send to the backend. Defaults to `"Mobilizon"` or `Mobilizon.Config.instance_user_agent/0`
   * `:lang` Lang in which to prefer results. Used as a request parameter or
     through an `Accept-Language` HTTP header. Defaults to `"en"`.
   * `:country_code` An ISO 3166 country code. String or `nil`
@@ -31,7 +33,10 @@ defmodule Mobilizon.Service.Geospatial.Provider do
 
   ## Options
 
-  Most backends implement all of [the shared options](#module-shared-options).
+  In addition to [the shared options](#module-shared-options), `c:geocode/3` also
+  accepts the following options:
+
+  * `zoom` Level of detail required for the address. Default: 15
 
   ## Examples
 

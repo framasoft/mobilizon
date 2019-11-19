@@ -1,6 +1,8 @@
 defmodule Mobilizon.Service.Geospatial.Pelias do
   @moduledoc """
   [Pelias](https://pelias.io) backend.
+
+  Doesn't provide type of POI.
   """
 
   alias Mobilizon.Addresses.Address
