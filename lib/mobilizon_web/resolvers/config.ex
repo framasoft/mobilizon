@@ -15,13 +15,13 @@ defmodule MobilizonWeb.Resolvers.Config do
     geolix = Geolix.lookup(ip)
 
     country_code =
-      case geolix.city do
+      case Map.get(geolix, :city) do
         %{country: %Country{iso_code: country_code}} -> String.downcase(country_code)
         _ -> nil
       end
 
     location =
-      case geolix.city do
+      case Map.get(geolix, :city) do
         %{location: %Location{} = location} -> Map.from_struct(location)
         _ -> nil
       end
