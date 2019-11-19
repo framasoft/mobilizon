@@ -13,7 +13,7 @@ defmodule MobilizonWeb.Email do
 
     args
     |> new_email()
-    |> from(Config.instance_email_from())
+    |> from({Config.instance_name(), Config.instance_email_from()})
     |> put_header("Reply-To", Config.instance_email_reply_to())
     |> assign(:instance, instance)
     |> put_html_layout({MobilizonWeb.EmailView, "email.html"})
