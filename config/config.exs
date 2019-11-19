@@ -140,6 +140,9 @@ config :mobilizon, Mobilizon.Service.Geospatial.MapQuest,
 config :mobilizon, Mobilizon.Service.Geospatial.Mimirsbrunn,
   endpoint: System.get_env("GEOSPATIAL_MIMIRSBRUNN_ENDPOINT") || nil
 
+config :mobilizon, Mobilizon.Service.Geospatial.Pelias,
+  endpoint: System.get_env("GEOSPATIAL_PELIAS_ENDPOINT") || nil
+
 config :mobilizon, Oban,
   repo: Mobilizon.Storage.Repo,
   prune: {:maxlen, 10_000},

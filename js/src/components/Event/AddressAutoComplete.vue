@@ -25,7 +25,8 @@
                 <template slot="empty">
                     <span v-if="isFetching">{{ $t('Searching…') }}</span>
                     <div v-else class="is-enabled">
-                        <span>{{ $t('No results for "{queryText}". You can try another search term or drag and drop the marker on the map', { queryText }) }}</span>
+                        <span>{{ $t('No results for "{queryText}"') }}</span>
+                        <span>{{ $t('You can try another search term or drag and drop the marker on the map', { queryText }) }}</span>
 <!--                        <p class="control" @click="openNewAddressModal">-->
 <!--                            <button type="button" class="button is-primary">{{ $t('Add') }}</button>-->
 <!--                        </p>-->
