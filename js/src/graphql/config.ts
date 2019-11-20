@@ -11,6 +11,16 @@ query {
       latitude,
       longitude,
       accuracyRadius
+    },
+    maps {
+      tiles {
+        endpoint,
+        attribution
+      }
+    },
+    geocoding {
+      provider,
+      autocomplete
     }
   }
 }

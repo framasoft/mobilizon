@@ -143,6 +143,14 @@ config :mobilizon, Mobilizon.Service.Geospatial.Mimirsbrunn,
 config :mobilizon, Mobilizon.Service.Geospatial.Pelias,
   endpoint: System.get_env("GEOSPATIAL_PELIAS_ENDPOINT") || nil
 
+config :mobilizon, :maps,
+  tiles: [
+    endpoint:
+      System.get_env("MAPS_TILES_ENDPOINT") ||
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    attribution: System.get_env("MAPS_TILES_ATTRIBUTION")
+  ]
+
 config :mobilizon, Oban,
   repo: Mobilizon.Storage.Repo,
   prune: {:maxlen, 10_000},

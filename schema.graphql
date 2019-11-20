@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Mon Nov 18 2019 16:00:35 GMT+0100 (Central European Standard Time)
+# timestamp: Wed Nov 20 2019 10:45:54 GMT+0100 (Central European Standard Time)
 
 schema {
   query: RootQueryType
@@ -191,7 +191,9 @@ enum CommentVisibility {
 type Config {
   countryCode: String
   description: String
+  geocoding: Geocoding
   location: Lonlat
+  maps: Maps
   name: String
   registrationsOpen: Boolean
 }
@@ -531,6 +533,11 @@ type Follower {
   targetActor: Actor
 }
 
+type Geocoding {
+  autocomplete: Boolean
+  provider: String
+}
+
 """
 Represents a group of actors
 
@@ -637,6 +644,10 @@ type Lonlat {
   accuracyRadius: Int
   latitude: Float
   longitude: Float
+}
+
+type Maps {
+  tiles: Tiles
 }
 
 """
@@ -1227,6 +1238,11 @@ type Tag {
 
   """The tag's title"""
   title: String
+}
+
+type Tiles {
+  attribution: String
+  endpoint: String
 }
 
 """
