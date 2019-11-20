@@ -9,4 +9,14 @@ export interface IConfig {
     longitude: number;
     accuracyRadius: number;
   };
+  maps: {
+    tiles: {
+      endpoint: string;
+      attribution: string|null;
+    },
+  };
+  geocoding: {
+    provider: string;
+    autocomplete: boolean;
+  };
 }

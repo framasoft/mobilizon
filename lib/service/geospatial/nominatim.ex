@@ -29,6 +29,8 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
            HTTPoison.get(url, headers),
          {:ok, %{"features" => features}} <- Poison.decode(body) do
       features |> process_data() |> Enum.filter(& &1)
+    else
+      _ -> []
     end
   end
 
@@ -47,6 +49,8 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
            HTTPoison.get(url, headers),
          {:ok, %{"features" => features}} <- Poison.decode(body) do
       features |> process_data() |> Enum.filter(& &1)
+    else
+      _ -> []
     end
   end
 

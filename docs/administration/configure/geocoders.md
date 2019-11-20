@@ -7,8 +7,8 @@ This is needed to set correct address for events, and more easily find events wi
 
 However, providing a geocoding service is quite expensive, especially if you want to cover the whole Earth.
 
-!!!note
-    To give an idea of what hardware is required to self-host a geocoding service, we successfully used Addok, Pelias and Mimirsbrunn on a 8 core/16GB RAM machine without any issues **on French data**.
+!!! note "Hardware setup"
+    To give an idea of what hardware is required to self-host a geocoding service, we successfully installed and used [Addok](#addok), [Pelias](#pelias) and [Mimirsbrunn](#mimirsbrunn) on a 8 cores/16GB RAM machine without any issues **importing only French addresses and data**.
 
 ## List of supported geocoders
 
@@ -27,8 +27,11 @@ This is the list of all geocoders supported by Mobilizon. The current default on
 [Nominatim](https://wiki.openstreetmap.org/wiki/Nominatim) is a GPL-2.0 licenced tool to search data by name and address. It's written in C and PHP and uses PostgreSQL.
 It's the current default search tool on the [OpenStreetMap homepage](https://www.openstreetmap.org).
 
-!!! warning
+!!! warning "Terms"
     When using the official Nominatim OpenStreetMap instance (default endpoint for this geocoder if not configured otherwise), you need to read and accept the [Usage Policy](https://operations.osmfoundation.org/policies/nominatim).
+
+!!! danger "Limitations"
+    Autocomplete is not possible using Nominatim, you'll obtain no suggestions while typing.
 
 Several companies provide hosted instances of Nominatim that you can query via an API, for example see [MapQuest Open Initiative](https://developer.mapquest.com/documentation/open/nominatim-search).
 
@@ -37,14 +40,14 @@ Several companies provide hosted instances of Nominatim that you can query via a
 [Addok](https://github.com/addok/addok) is a WTFPL licenced search engine for address (and only address). It's written in Python and uses Redis. 
 It's used by French government for [adresse.data.gouv.fr](https://adresse.data.gouv.fr).
 
-!!! warning
+!!! warning "Terms"
     When using France's Addok instance at `api-adresse.data.gouv.fr` (default endpoint for this geocoder if not configured otherwise), you need to read and accept the [GCU](https://adresse.data.gouv.fr/cgu) (in French).
 
 ### Photon
 
 [Photon](https://photon.komoot.de/) is an Apache 2.0 licenced search engine written in Java and powered by ElasticSearch.
 
-!!! warning
+!!! warning "Terms"
     The terms of use for the official instance (default endpoint for this geocoder if not configured otherwise) are simply the following:
     > You can use the API for your project, but please be fair - extensive usage will be throttled. We do not guarantee for the availability and usage might be subject of change in the future.
 

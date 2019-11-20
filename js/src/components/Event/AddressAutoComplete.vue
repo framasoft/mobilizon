@@ -7,12 +7,12 @@
                 <span v-else>{{ $t('Getting location') }}</span>
             </template>
             <b-autocomplete
-                    :data="data"
+                    :data="addressData"
                     v-model="queryText"
                     :placeholder="$t('e.g. 10 Rue Jangot')"
                     field="fullName"
                     :loading="isFetching"
-                    @typing="getAsyncData"
+                    @typing="fetchAsyncData"
                     icon="map-marker"
                     expanded
                     @select="updateSelected">
@@ -24,7 +24,7 @@
                 </template>
                 <template slot="empty">
                     <span v-if="isFetching">{{ $t('Searching…') }}</span>
-                    <div v-else class="is-enabled">
+                    <div v-else-if="queryText.length >= 3" class="is-enabled">
                         <span>{{ $t('No results for "{queryText}"') }}</span>
                         <span>{{ $t('You can try another search term or drag and drop the marker on the map', { queryText }) }}</span>
 <!--                        <p class="control" @click="openNewAddressModal">-->
@@ -92,19 +92,25 @@ import { Address, IAddress } from '@/types/address.model';
 import { ADDRESS, REVERSE_GEOCODE } from '@/graphql/address';
 import { Modal } from 'buefy/dist/components/dialog';
 import { LatLng } from 'leaflet';
+import { debounce } from 'lodash';
+import { CONFIG } from '@/graphql/config';
+import { IConfig } from '@/types/config.model';
 
 @Component({
   components: {
     'map-leaflet': () => import(/* webpackChunkName: "map" */ '@/components/Map.vue'),
     Modal,
   },
+  apollo: {
+    config: CONFIG,
+  },
 })
 export default class AddressAutoComplete extends Vue {
 
   @Prop({ required: true }) value!: IAddress;
 
-  data: IAddress[] = [];
-  selected!: IAddress;
+  addressData: IAddress[] = [];
+  selected: IAddress = new Address();
   isFetching: boolean = false;
   queryText: string = this.value && (new Address(this.value)).fullName || '';
   addressModalActive: boolean = false;
@@ -112,25 +118,27 @@ export default class AddressAutoComplete extends Vue {
   private location!: Position;
   private gettingLocationError: any;
   private mapDefaultZoom: number = 15;
+  config!: IConfig;
 
-  @Watch('value')
-  updateEditing() {
-    this.selected = this.value;
-    const address = new Address(this.selected);
-    this.queryText = `${address.poiInfos.name} ${address.poiInfos.alternativeName}`;
+  // We put this in data because of issues like https://github.com/vuejs/vue-class-component/issues/263
+  data() {
+    return {
+      fetchAsyncData: debounce(this.asyncData, 500),
+    };
   }
 
-  async getAsyncData(query) {
+  async asyncData(query: String) {
     if (!query.length) {
-      this.data = [];
+      this.addressData = [];
       this.selected = new Address();
       return;
     }
 
     if (query.length < 3) {
-      this.data = [];
+      this.addressData = [];
       return;
     }
+
     this.isFetching = true;
     const result = await this.$apollo.query({
       query: ADDRESS,
@@ -141,14 +149,29 @@ export default class AddressAutoComplete extends Vue {
       },
     });
 
-    this.data = result.data.searchAddress.map(address => new Address(address));
+    this.addressData = result.data.searchAddress.map(address => new Address(address));
     this.isFetching = false;
+  }
+
+  @Watch('config')
+    watchConfig(config: IConfig) {
+    if (!config.geocoding.autocomplete) {
+      // If autocomplete is disabled, we put a larger debounce value so that we don't request with incomplete address
+      // @ts-ignore
+      this.fetchAsyncData = debounce(this.asyncData, 2000);
+    }
+  }
+
+  @Watch('value')
+  updateEditing() {
+    this.selected = this.value;
+    const address = new Address(this.selected);
+    this.queryText = `${address.poiInfos.name} ${address.poiInfos.alternativeName}`;
   }
 
   updateSelected(option) {
     if (option == null) return;
     this.selected = option;
-    console.log('update selected', this.selected);
     this.$emit('input', this.selected);
   }
 
@@ -174,8 +197,8 @@ export default class AddressAutoComplete extends Vue {
       },
     });
 
-    this.data = result.data.reverseGeocode.map(address => new Address(address));
-    const defaultAddress = new Address(this.data[0]);
+    this.addressData = result.data.reverseGeocode.map(address => new Address(address));
+    const defaultAddress = new Address(this.addressData[0]);
     this.selected = defaultAddress;
     this.$emit('input', this.selected);
     this.queryText = `${defaultAddress.poiInfos.name} ${defaultAddress.poiInfos.alternativeName}`;

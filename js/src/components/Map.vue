@@ -1,5 +1,5 @@
 <template>
-    <div class="map-container">
+    <div class="map-container" v-if="config">
         <l-map
                 :zoom="mergedOptions.zoom"
                 :style="`height: ${mergedOptions.height}; width: ${mergedOptions.width}`"
@@ -9,8 +9,8 @@
                 @update:zoom="updateZoom"
         >
             <l-tile-layer
-                    url="https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png"
-                    :attribution="$t('© The OpenStreetMap Contributors')"
+                    :url="config.maps.tiles.endpoint"
+                    :attribution="attribution"
             >
 
             </l-tile-layer>
@@ -30,9 +30,14 @@ import 'leaflet/dist/leaflet.css';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { LMap, LTileLayer, LMarker, LPopup, LIcon } from 'vue2-leaflet';
 import Vue2LeafletLocateControl from '@/components/Map/Vue2LeafletLocateControl.vue';
+import { CONFIG } from '@/graphql/config';
+import { IConfig } from '@/types/config.model';
 
 @Component({
   components: { LTileLayer, LMap, LMarker, LPopup, LIcon, 'v-locatecontrol': Vue2LeafletLocateControl },
+  apollo: {
+    config: CONFIG,
+  },
 })
 export default class Map extends Vue {
   @Prop({ type: Boolean, required: false, default: true }) readOnly!: boolean;
@@ -52,6 +57,7 @@ export default class Map extends Vue {
   };
 
   zoom = this.defaultOptions.zoom;
+  config!: IConfig;
 
   mounted() {
     // this part resolve an issue where the markers would not appear
@@ -90,12 +96,15 @@ export default class Map extends Vue {
   }
 
   updateDraggableMarkerPosition(e: LatLng) {
-    console.log('updateDraggableMarkerPosition', e);
     this.updateDraggableMarkerCallback(e, this.zoom);
   }
 
   updateZoom(zoom: Number) {
     this.zoom = zoom;
+  }
+
+  get attribution() {
+    return this.config.maps.tiles.attribution || this.$t('© The OpenStreetMap Contributors');
   }
 }
 </script>

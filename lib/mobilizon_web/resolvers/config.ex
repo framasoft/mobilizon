@@ -32,7 +32,17 @@ defmodule MobilizonWeb.Resolvers.Config do
        registrations_open: Config.instance_registrations_open?(),
        description: Config.instance_description(),
        location: location,
-       country_code: country_code
+       country_code: country_code,
+       geocoding: %{
+         provider: Config.instance_geocoding_provider(),
+         autocomplete: Config.instance_geocoding_autocomplete()
+       },
+       maps: %{
+         tiles: %{
+           endpoint: Config.instance_maps_tiles_endpoint(),
+           attribution: Config.instance_maps_tiles_attribution()
+         }
+       }
      }}
   end
 end

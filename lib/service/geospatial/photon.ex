@@ -30,6 +30,8 @@ defmodule Mobilizon.Service.Geospatial.Photon do
            HTTPoison.get(url, headers),
          {:ok, %{"features" => features}} <- Poison.decode(body) do
       process_data(features)
+    else
+      _ -> []
     end
   end
 
@@ -48,6 +50,8 @@ defmodule Mobilizon.Service.Geospatial.Photon do
            HTTPoison.get(url, headers),
          {:ok, %{"features" => features}} <- Poison.decode(body) do
       process_data(features)
+    else
+      _ -> []
     end
   end
 

@@ -29,6 +29,8 @@ defmodule Mobilizon.Service.Geospatial.Addok do
            HTTPoison.get(url, headers),
          {:ok, %{"features" => features}} <- Poison.decode(body) do
       process_data(features)
+    else
+      _ -> []
     end
   end
 
@@ -47,6 +49,8 @@ defmodule Mobilizon.Service.Geospatial.Addok do
            HTTPoison.get(url, headers),
          {:ok, %{"features" => features}} <- Poison.decode(body) do
       process_data(features)
+    else
+      _ -> []
     end
   end
 
