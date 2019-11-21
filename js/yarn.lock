@@ -4446,9 +4446,9 @@ ejs@^2.6.1:
   integrity sha512-7vmuyh5+kuUyJKePhQfRQBhXV5Ce+RnaeeQArKu1EAMpL3WbgMt5WG6uQZpEVvYSSsxMXRKOewtDk9RaTKXRlA==
 
 electron-to-chromium@^1.3.103, electron-to-chromium@^1.3.247, electron-to-chromium@^1.3.306:
-  version "1.3.307"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.307.tgz#e9b98901371d20164af7c0ca5bc820bd4305ccd3"
-  integrity sha512-01rTsAqHwf3D2X6NtlUvzB2hxDj67kiTVIO5GWdFb2unA0QvFvrjyrtc993ByRLF+surlr+9AvJdD0UYs5HzwA==
+  version "1.3.309"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.309.tgz#9e1e5e23c73d04f0364e524afaafd6659289ae1b"
+  integrity sha512-NZd91XD15v2UPLjYXoN/gLnkwIUQjdH4SQLpRCCQiYJH6BBkfgp5pWemBJPr1rZ2dl8Ee3o91O9Sa1QuAfZmog==
 
 elegant-spinner@^1.0.1:
   version "1.0.1"
@@ -5997,7 +5997,7 @@ has-flag@^4.0.0:
   resolved "https://registry.yarnpkg.com/has-flag/-/has-flag-4.0.0.tgz#944771fd9c81c81265c4d6941860da06bb59479b"
   integrity sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==
 
-has-symbols@^1.0.0:
+has-symbols@^1.0.0, has-symbols@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/has-symbols/-/has-symbols-1.0.1.tgz#9f5214758a44196c406d9bd76cebf81ec2dd31e8"
   integrity sha512-PLcsoqu++dmEIZB+6totNFKq/7Do+Z0u4oT0zKOJNl3lYK6vGwwu2hjHs+68OEZbTjiUE9bgOABXbP/GvrS0Kg==
@@ -6991,11 +6991,11 @@ is-svg@^3.0.0:
     html-comment-regex "^1.1.0"
 
 is-symbol@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/is-symbol/-/is-symbol-1.0.2.tgz#a055f6ae57192caee329e7a860118b497a950f38"
-  integrity sha512-HS8bZ9ox60yCJLH9snBpIwv9pYUAkcuLhSA1oero1UB5y9aiQpRA8y2ex945AOtCZL1lJDeIk3G5LthswI46Lw==
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/is-symbol/-/is-symbol-1.0.3.tgz#38e1014b9e6329be0de9d24a414fd7441ec61937"
+  integrity sha512-OwijhaRSgqvhm/0ZdAcXNZt9lYdKFpcRDT5ULUuYXPoT794UNOdU+gpT6Rzo7b4V2HUl/op6GqY894AZwv9faQ==
   dependencies:
-    has-symbols "^1.0.0"
+    has-symbols "^1.0.1"
 
 is-typedarray@~1.0.0:
   version "1.0.0"
@@ -11116,9 +11116,9 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     inherits "^2.0.1"
 
 rope-sequence@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/rope-sequence/-/rope-sequence-1.3.0.tgz#7b8bc1db96f8696f93db05282f799c6078eacce2"
-  integrity sha512-F+Y/pOSJn+illq+2dl2SqJYLil4lll3300mG3ISK3XNa1Ir0Kq+W1Ti0sWOeQGThm15bZsGDXyWF3osZJJ7x8Q==
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/rope-sequence/-/rope-sequence-1.3.2.tgz#a19e02d72991ca71feb6b5f8a91154e48e3c098b"
+  integrity sha512-ku6MFrwEVSVmXLvy3dYph3LAMNS0890K7fabn+0YIRQ2T96T9F4gkFf0vf0WW0JUraNWwGRtInEpH7yO4tbQZg==
 
 run-async@^2.2.0:
   version "2.3.0"
@@ -13128,12 +13128,12 @@ vue-class-component@^7.0.2, vue-class-component@^7.1.0:
   integrity sha512-G9152NzUkz0i0xTfhk0Afc8vzdXxDR1pfN4dTwE72cskkgJtdXfrKBkMfGvDuxUh35U500g5Ve4xL8PEGdWeHg==
 
 vue-cli-plugin-styleguidist@^4.0.1:
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/vue-cli-plugin-styleguidist/-/vue-cli-plugin-styleguidist-4.0.4.tgz#425ac68e3648f8add42151fe7bea37389cac0ffa"
-  integrity sha512-ID7ZMi3FcDTwLj5zH+QmQdM2mnzj8P360ipfqAPvmd4fl6BHz4Bc7LacpLEyANXcaQqAtiiHrnY79qzFs4MEww==
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/vue-cli-plugin-styleguidist/-/vue-cli-plugin-styleguidist-4.0.6.tgz#6e60ad57457b66b911d60518d1ef7c7980ae2622"
+  integrity sha512-wtHVu0vOFOdpIxvEF/JcEBEL5SZTiPAHzxR5aRGmrQBrWg18xtzODshWIpMuPwGmLAu4dN9oxjj1lP2IVe/Y2g==
   dependencies:
     null-loader "^0.1.1"
-    vue-styleguidist "^4.0.4"
+    vue-styleguidist "^4.0.5"
     webpack-merge "^4.2.1"
 
 vue-cli-plugin-webpack-bundle-analyzer@^2.0.0:
@@ -13143,10 +13143,10 @@ vue-cli-plugin-webpack-bundle-analyzer@^2.0.0:
   dependencies:
     webpack-bundle-analyzer "^3.6.0"
 
-vue-docgen-api@^4.0.4:
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/vue-docgen-api/-/vue-docgen-api-4.0.4.tgz#b7a3bad9f733794a5fd6defcc7f7f6d49424b68d"
-  integrity sha512-0Hbp1RloerjilDxPoSsFOceyz+hbnaJjEVaeO+VqnJdYcdac9qDa5dXtLUYt/xZ7MgsTvXStZiVPN1eq94TMhg==
+vue-docgen-api@^4.0.5:
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/vue-docgen-api/-/vue-docgen-api-4.0.5.tgz#1694e5d6766015fe84ca25c9e184d9eac7e757ce"
+  integrity sha512-/H2uqyAw8OKAqQslqn9HDFMuP2LvolegRwjlJPHnL3Tc21JWcQTnAByDLN7cybXohNyT2cQJ/1uEnyPvRBxZzQ==
   dependencies:
     "@babel/parser" "^7.2.3"
     "@babel/types" "^7.0.0"
@@ -13237,10 +13237,10 @@ vue-style-loader@^4.1.0:
     hash-sum "^1.0.2"
     loader-utils "^1.0.2"
 
-vue-styleguidist@^4.0.4:
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/vue-styleguidist/-/vue-styleguidist-4.0.4.tgz#3f47339268037dd6563fa14b15088b4214e797af"
-  integrity sha512-IuULb4txSwQZb7GNYgyxQTHwQuxVs/JWxwBiw8jnQkG9D71lVuUl7nSyXxvgVg0Kw9P2pCb8Uo6JD+x/QG16aw==
+vue-styleguidist@^4.0.5:
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/vue-styleguidist/-/vue-styleguidist-4.0.5.tgz#6d3b85ebc14f2415ad6ff53a8ff4972b24fe2bd7"
+  integrity sha512-648cNdG9sK0UI1fvRzubPP2eHfdM6jhjiAgiuqHdO7MZQLtS78cuEVxZzAUGDeTrhBo93y1QZOSLBW0n2LJeAw==
   dependencies:
     "@vxna/mini-html-webpack-template" "^1.0.0"
     ast-types "^0.12.2"
@@ -13287,7 +13287,7 @@ vue-styleguidist@^4.0.4:
     style-loader "^1.0.0"
     terser-webpack-plugin "^1.3.0"
     to-ast "^1.0.0"
-    vue-docgen-api "^4.0.4"
+    vue-docgen-api "^4.0.5"
     vue-inbrowser-compiler "^4.0.1"
     vue-inbrowser-compiler-utils "^4.0.1"
     webpack-dev-server "^3.7.1"
@@ -13335,9 +13335,9 @@ w3c-hr-time@^1.0.1:
     browser-process-hrtime "^0.1.2"
 
 w3c-keyname@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/w3c-keyname/-/w3c-keyname-2.2.0.tgz#03ac9edf49c14e1325c3abec9251b7ab2f392b1f"
-  integrity sha512-/IjQxaDTusd1dmPycoHN8ZowRbW9KjJ9PC/oHft3dzFMyTBeXjcWQBLMI4N4t/bFvUdCHxQ3nByvKzzxqqvEIw==
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/w3c-keyname/-/w3c-keyname-2.2.1.tgz#c4fe1a4b9e303c95e833b3d854b7d81070400db9"
+  integrity sha512-j5k4xGK6k8TCna/08778KUEL98WvTogiG/TN/YStl8GNeXg5tI3Dvq3+JjwJhP4l7ogs6KWo1VYEdc1Qaioy3Q==
 
 w3c-xmlserializer@^1.1.2:
   version "1.1.2"
