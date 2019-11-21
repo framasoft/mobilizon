@@ -6,6 +6,7 @@ query {
     name,
     description,
     registrationsOpen,
+    demoMode,
     countryCode,
     location {
       latitude,

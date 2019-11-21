@@ -72,6 +72,7 @@
         </td>
     </tr>
     <%= render @view_module, @view_template, assigns %>
+    <% if Mobilizon.Config.instance_demo_mode?() do %>
     <!-- BETA WARNING -->
         <tr>
             <td bgcolor="#f4f4f4" align="center" style="padding: 30px 10px 0px 10px;">
@@ -103,6 +104,7 @@
                 <![endif]-->
             </td>
         </tr>
+    <% end %>
     <!-- SUPPORT CALLOUT -->
         <tr>
             <td bgcolor="#f4f4f4" align="center" style="padding: 30px 10px 0px 10px;">
