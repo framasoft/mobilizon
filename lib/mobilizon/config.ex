@@ -21,6 +21,9 @@ defmodule Mobilizon.Config do
   @spec instance_registrations_open? :: boolean
   def instance_registrations_open?, do: to_boolean(instance_config()[:registrations_open])
 
+  @spec instance_demo_mode? :: boolean
+  def instance_demo_mode?, do: to_boolean(instance_config()[:demo])
+
   @spec instance_repository :: String.t()
   def instance_repository, do: instance_config()[:repository]
 

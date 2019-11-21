@@ -25,6 +25,7 @@ In order to move participant stats to the event table for existing events, you n
 - Add a different welcome message when coming from registration
 - Link to participation page from event page when you are an organizer
 - Added mix commands to manage users and view actors
+- Added a demo mode to show or hide instance warnings that data is deleted
 - Added a warning on login that everything is deleted regularly
 - Updated Occitan translations (Quentin)
 - Updated French translations (Gavy, Zilverspar, ty kayn)

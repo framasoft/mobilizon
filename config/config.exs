@@ -18,6 +18,7 @@ config :mobilizon, :instance,
   version: "1.0.0-dev",
   hostname: System.get_env("MOBILIZON_INSTANCE_HOST") || "localhost",
   registrations_open: System.get_env("MOBILIZON_INSTANCE_REGISTRATIONS_OPEN") || false,
+  demo: System.get_env("MOBILIZON_INSTANCE_DEMO_MODE") || false,
   repository: Mix.Project.config()[:source_url],
   allow_relay: true,
   # Federation is to be activated with Mobilizon 1.0.0-beta.2

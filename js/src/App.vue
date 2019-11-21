@@ -1,7 +1,7 @@
 <template>
   <div id="mobilizon">
     <NavBar />
-    <div class="container">
+    <div class="container" v-if="config && config.demoMode">
       <b-message type="is-danger" :title="$t('Warning').toLocaleUpperCase()" closable aria-close-label="Close">
         <p>{{ $t('This is a demonstration site to test the beta version of Mobilizon.') }}</p>
         <p v-html="$t('<b>Please do not use it in any real way</b>: everything you create here (accounts, events, identities, etc.) will be automatically deleted every 48 hours.')" />
@@ -35,11 +35,14 @@ import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user'
 import Footer from '@/components/Footer.vue';
 import Logo from '@/components/Logo.vue';
 import { initializeCurrentActor } from '@/utils/auth';
+import { CONFIG } from '@/graphql/config';
+import { IConfig } from '@/types/config.model';
 @Component({
   apollo: {
     currentUser: {
       query: CURRENT_USER_CLIENT,
     },
+    config: CONFIG,
   },
   components: {
     Logo,
@@ -48,6 +51,8 @@ import { initializeCurrentActor } from '@/utils/auth';
   },
 })
 export default class App extends Vue {
+  config!: IConfig;
+
   async created() {
     if (await this.initializeCurrentUser()) {
       await initializeCurrentActor(this.$apollo.provider.defaultClient);

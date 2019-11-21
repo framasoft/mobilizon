@@ -13,6 +13,7 @@ defmodule MobilizonWeb.Schema.ConfigType do
     field(:description, :string)
 
     field(:registrations_open, :boolean)
+    field(:demo_mode, :boolean)
     field(:country_code, :string)
     field(:location, :lonlat)
     field(:geocoding, :geocoding)
