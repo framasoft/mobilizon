@@ -137,7 +137,7 @@ defmodule Mobilizon.Users.User do
   end
 
   @doc """
-  Checks whether an user is confirmed. 
+  Checks whether an user is confirmed.
   """
   @spec is_confirmed(t) :: boolean
   def is_confirmed(%__MODULE__{confirmed_at: nil}), do: false
@@ -154,19 +154,21 @@ defmodule Mobilizon.Users.User do
   end
 
   @spec save_confirmation_token(Ecto.Changeset.t()) :: Ecto.Changeset.t()
-  defp save_confirmation_token(%Ecto.Changeset{} = changeset) do
-    case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{email: _email}} ->
-        now = DateTime.utc_now()
-
+  defp save_confirmation_token(
+         %Ecto.Changeset{valid?: true, changes: %{email: _email}} = changeset
+       ) do
+    case fetch_change(changeset, :confirmed_at) do
+      :error ->
         changeset
         |> put_change(:confirmation_token, Crypto.random_string(@confirmation_token_length))
-        |> put_change(:confirmation_sent_at, DateTime.truncate(now, :second))
+        |> put_change(:confirmation_sent_at, DateTime.utc_now() |> DateTime.truncate(:second))
 
       _ ->
         changeset
     end
   end
+
+  defp save_confirmation_token(%Ecto.Changeset{} = changeset), do: changeset
 
   @spec validate_email(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   defp validate_email(%Ecto.Changeset{} = changeset) do
