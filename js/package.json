@@ -21,7 +21,7 @@
     "apollo-client": "^2.5.1",
     "apollo-link": "^1.2.11",
     "apollo-link-http": "^1.5.16",
-    "buefy": "^0.8.2",
+    "buefy": "^0.8.8",
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
     "intersection-observer": "^0.7.0",
