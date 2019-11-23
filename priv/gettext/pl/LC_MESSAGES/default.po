@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2019-11-17 14:11+0000\n"
+"PO-Revision-Date: 2019-11-23 11:12+0000\n"
 "Last-Translator: Marcin Mikołajczak <me@mkljczk.pl>\n"
 "Language-Team: Polish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/pl/>\n"
@@ -27,7 +27,7 @@ msgstr ""
 #: lib/service/export/feed.ex:169
 #, elixir-format
 msgid "Feed for %{email} on Mobilizon"
-msgstr ""
+msgstr "Strumień dla %{email} na Mobilizon"
 
 #: lib/mobilizon_web/templates/email/email.html.eex:153
 #: lib/mobilizon_web/templates/email/email.text.eex:6
@@ -227,6 +227,9 @@ msgstr "Niestety, organizatorzy odrzucili Twoje uczestnictwo."
 #, elixir-format
 msgid "You created an account on %{host} with this email address. You are one click away from activating it. If this wasn't you, please ignore this email."
 msgstr ""
+"Utworzyłeś(-aś) konto na %{host} używając tego adresu e-mail. Zostało Ci "
+"jedno kliknięcie do aktywacji go. Jeżeli to nie Ty, po prostu zignoruj ten "
+"e-mail."
 
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:38
 #, elixir-format
@@ -243,12 +246,12 @@ msgstr ""
 #: lib/mobilizon_web/email/participation.ex:73
 #, elixir-format
 msgid "Your participation to event %{title} has been approved"
-msgstr ""
+msgstr "Twój udział w wydarzeniu %{title} został zatwierdzony"
 
 #: lib/mobilizon_web/email/participation.ex:52
 #, elixir-format
 msgid "Your participation to event %{title} has been rejected"
-msgstr ""
+msgstr "Twój udział w wydarzeniu %(title} został odrzucony"
 
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:82
 #, elixir-format
@@ -269,12 +272,12 @@ msgstr "Zaktualizowano wydarzenie!"
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:16
 #, elixir-format
 msgid "New date and time for ending of event: %{ends_on}"
-msgstr ""
+msgstr "Nowa data i czas zakończenia wydarzenia: %{ends_on}"
 
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:12
 #, elixir-format
 msgid "New date and time for start of event: %{begins_on}"
-msgstr ""
+msgstr "Nowa data i czas rozpoczęcia wydarzenia: %{begins_on}"
 
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:8
 #, elixir-format
@@ -310,7 +313,7 @@ msgstr "Zobacz zaktualizowane wydarzenie na %{link}"
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:5
 #, elixir-format
 msgid "You requested a new password for your account on %{instance}."
-msgstr ""
+msgstr "Poprosiłeś(-aś) o nowe hasło do swojego konta na %{instance}."
 
 #: lib/mobilizon_web/templates/email/email.html.eex:91
 #, elixir-format
@@ -321,11 +324,16 @@ msgstr ""
 #, elixir-format
 msgid "In the meantime, please consider that the software is not (yet) finished. More information %{a_start}on our blog%{a_end}."
 msgstr ""
+"W międzyczasie, pamiętaj o tym że to oprogramowanie nie jest (jeszcze) "
+"ukończone. Więcej informacji %{a_start}na naszym blogu%{a_end}."
 
 #: lib/mobilizon_web/templates/email/email.html.eex:93
 #, elixir-format
 msgid "Mobilizon is under development, we will add new features to this site during regular updates, until the release of %{b_start}version 1 of the software in the first half of 2020%{b_end}."
 msgstr ""
+"Mobilizon jest w fazie rozwoju. Nowe funkcje będą regularnie dodawane, do "
+"wydania %{b_start} pierwszej wersji oprogramowania w pierwszej połowie 2020 "
+"roku%{b_end}."
 
 #: lib/mobilizon_web/templates/email/email.html.eex:90
 #, elixir-format
