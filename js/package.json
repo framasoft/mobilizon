@@ -15,7 +15,7 @@
     "vue-i18n-extract": "vue-i18n-extract"
   },
   "dependencies": {
-    "@mdi/font": "^4.5.95",
+    "@mdi/font": "^4.6.95",
     "apollo-absinthe-upload-link": "^1.5.0",
     "apollo-cache-inmemory": "^1.5.1",
     "apollo-client": "^2.5.1",
