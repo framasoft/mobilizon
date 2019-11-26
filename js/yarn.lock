@@ -1306,10 +1306,10 @@
     source-map "~0.6.1"
     vue-template-es2015-compiler "^1.9.0"
 
-"@vue/eslint-config-typescript@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@vue/eslint-config-typescript/-/eslint-config-typescript-5.0.0.tgz#6e8452f1fda460e935449b8c0b72372106ac215f"
-  integrity sha512-YDeZyirzMDI4sgrYvjJ1kCIMBMF36b56BxNeqyVVvOsd8F7/cggdNdqVsa3PVvMJGFX9bSn7KEUvqbUxphMCuQ==
+"@vue/eslint-config-typescript@^5.0.1":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@vue/eslint-config-typescript/-/eslint-config-typescript-5.0.1.tgz#06d986dd91cadc60583158dadc7c9c4f0372af31"
+  integrity sha512-gpP8zQA0rJ93ROkAW5fbOJB3EG7p6U70Jb0/CVOjhs5zuEXf1WgLk4gP+zUZGwiRpLoXBa5oIRH4hLQDbS1/eg==
 
 "@vue/preload-webpack-plugin@^1.1.0":
   version "1.1.1"
