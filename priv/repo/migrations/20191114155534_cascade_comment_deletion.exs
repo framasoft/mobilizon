@@ -1,7 +1,4 @@
-defmodule Mobilizon.Repo.Migrations.FixCommentsReferences do
-  @moduledoc """
-  For some reason these fields references were all wrong.
-  """
+defmodule Mobilizon.Storage.Repo.Migrations.CascadeCommentDeletion do
   use Ecto.Migration
 
   def up do
@@ -9,8 +6,8 @@ defmodule Mobilizon.Repo.Migrations.FixCommentsReferences do
     drop(constraint(:comments, "comments_origin_comment_id_fkey"))
 
     alter table(:comments) do
-      modify(:in_reply_to_comment_id, references(:comments, on_delete: :nothing))
-      modify(:origin_comment_id, references(:comments, on_delete: :nothing))
+      modify(:in_reply_to_comment_id, references(:comments, on_delete: :nilify_all))
+      modify(:origin_comment_id, references(:comments, on_delete: :nilify_all))
     end
   end
 
@@ -20,7 +17,7 @@ defmodule Mobilizon.Repo.Migrations.FixCommentsReferences do
 
     alter table(:comments) do
       modify(:in_reply_to_comment_id, references(:comments, on_delete: :nothing))
-      modify(:origin_comment_id, references(:comments, on_delete: :delete_all))
+      modify(:origin_comment_id, references(:comments, on_delete: :nothing))
     end
   end
 end

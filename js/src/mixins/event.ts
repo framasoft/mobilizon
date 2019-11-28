@@ -7,7 +7,8 @@ import { IPerson } from '@/types/actor';
 
 @Component
 export default class EventMixin extends mixins(Vue) {
-  async openDeleteEventModal (event: IEvent, currentActor: IPerson) {
+
+  async openDeleteEventModal(event: IEvent, currentActor: IPerson) {
     const participantsLength = event.participantStats.participant;
     const prefix = participantsLength
             ? this.$tc('There are {participants} participants.', event.participantStats.participant, {

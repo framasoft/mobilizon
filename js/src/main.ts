@@ -3,6 +3,7 @@
 import Vue from 'vue';
 import Buefy from 'buefy';
 import Component from 'vue-class-component';
+import VueScrollTo from 'vue-scrollto';
 import App from '@/App.vue';
 import router from '@/router';
 import { apolloProvider } from './vue-apollo';
@@ -17,6 +18,7 @@ Vue.use(Buefy);
 Vue.use(NotifierPlugin);
 Vue.use(filters);
 Vue.use(VueMeta);
+Vue.use(VueScrollTo);
 
 // Register the router hooks with their names
 Component.registerHooks([

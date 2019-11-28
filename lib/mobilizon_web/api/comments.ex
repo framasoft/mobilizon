@@ -9,11 +9,22 @@ defmodule MobilizonWeb.API.Comments do
   @doc """
   Create a comment
 
-  Creates a comment from an actor and a status
+  Creates a comment from an actor
   """
   @spec create_comment(map()) ::
           {:ok, Activity.t(), Comment.t()} | any()
   def create_comment(args) do
     ActivityPub.create(:comment, args, true)
+  end
+
+  @doc """
+  Deletes a comment
+
+  Deletes a comment from an actor
+  """
+  @spec delete_comment(Comment.t()) ::
+          {:ok, Activity.t(), Comment.t()} | any()
+  def delete_comment(%Comment{} = comment) do
+    ActivityPub.delete(comment, true)
   end
 end

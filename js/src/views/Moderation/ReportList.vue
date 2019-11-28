@@ -2,8 +2,8 @@
     <section class="container">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
-                <li><router-link :to="{ name: RouteName.DASHBOARD }">Dashboard</router-link></li>
-                <li class="is-active"><router-link :to="{ name: RouteName.REPORTS }" aria-current="page">Reports</router-link></li>
+                <li><router-link :to="{ name: RouteName.DASHBOARD }">{{ $t('Dashboard') }}</router-link></li>
+                <li class="is-active"><router-link :to="{ name: RouteName.REPORTS }" aria-current="page">{{ $t('Reports') }}</router-link></li>
             </ul>
         </nav>
         <b-field>

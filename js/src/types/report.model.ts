@@ -1,5 +1,6 @@
 import { IActor, IPerson } from '@/types/actor';
 import { IEvent } from '@/types/event.model';
+import { IComment } from '@/types/comment.model';
 
 export enum ReportStatusEnum {
     OPEN = 'OPEN',
@@ -12,6 +13,7 @@ export interface IReport extends IActionLogObject {
   reported: IActor;
   reporter: IPerson;
   event?: IEvent;
+  comments: IComment[];
   content: string;
   notes: IReportNote[];
   insertedAt: Date;
@@ -36,6 +38,7 @@ export enum ActionLogAction {
     REPORT_UPDATE_OPENED = 'REPORT_UPDATE_OPENED',
     REPORT_UPDATE_RESOLVED = 'REPORT_UPDATE_RESOLVED',
     EVENT_DELETION = 'EVENT_DELETION',
+    COMMENT_DELETION = 'COMMENT_DELETION',
 }
 
 export interface IActionLog {

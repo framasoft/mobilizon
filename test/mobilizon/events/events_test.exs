@@ -581,7 +581,7 @@ defmodule Mobilizon.EventsTest do
     test "delete_comment/1 deletes the comment" do
       comment = insert(:comment)
       assert {:ok, %Comment{}} = Events.delete_comment(comment)
-      assert_raise Ecto.NoResultsError, fn -> Events.get_comment!(comment.id) end
+      refute is_nil(Events.get_comment!(comment.id).deleted_at)
     end
   end
 end

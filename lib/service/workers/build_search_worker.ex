@@ -19,7 +19,7 @@ defmodule Mobilizon.Service.Workers.BuildSearchWorker do
 
   def perform(%{"op" => "update_search_event", "event_id" => event_id}, _job) do
     with {:ok, %Event{} = event} <- Events.get_event_with_preload(event_id) do
-      update_search_event(event)
+      insert_search_event(event)
     end
   end
 
@@ -33,30 +33,12 @@ defmodule Mobilizon.Service.Workers.BuildSearchWorker do
             setweight(to_tsvector(unaccent(coalesce($4, ' '))), 'B') ||
             setweight(to_tsvector(unaccent($3)), 'C')
           )
-        );
-      """,
-      [
-        event.id,
-        event.title,
-        HtmlSanitizeEx.strip_tags(event.description),
-        get_tags_string(event)
-      ]
-    )
-  end
-
-  def update_search_event(%Event{} = event) do
-    SQL.query(
-      Repo,
-      """
-        UPDATE event_search
-          SET document =
-            (SELECT
-              setweight(to_tsvector(unaccent($2)), 'A') ||
-              setweight(to_tsvector(unaccent(coalesce($4, ' '))), 'B') ||
-              setweight(to_tsvector(unaccent($3)), 'C')
-            ),
-          title = $2
-          WHERE id = $1;
+        ) ON CONFLICT (id) DO UPDATE SET title = $2, document = (
+          SELECT
+            setweight(to_tsvector(unaccent($2)), 'A') ||
+            setweight(to_tsvector(unaccent(coalesce($4, ' '))), 'B') ||
+            setweight(to_tsvector(unaccent($3)), 'C')
+          );
       """,
       [
         event.id,

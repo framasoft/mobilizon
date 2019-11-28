@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+import { COMMENT_FIELDS_FRAGMENT } from '@/graphql/comment';
 
 const participantQuery = `
   role,
@@ -135,6 +136,7 @@ export const FETCH_EVENT = gql`
       }
     }
   }
+  ${COMMENT_FIELDS_FRAGMENT}
 `;
 
 export const FETCH_EVENTS = gql`

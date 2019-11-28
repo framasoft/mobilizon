@@ -7,7 +7,8 @@
             <div class="list is-hoverable">
                 <a class="list-item" v-for="identity in identities" :class="{ 'is-active': identity.id === currentIdentity.id }" @click="changeCurrentIdentity(identity)">
                     <div class="media">
-                        <img class="media-left image" v-if="identity.avatar" :src="identity.avatar.url" />
+                        <img class="media-left image" v-if="identity.avatar" :src="identity.avatar.url" alt="" />
+                        <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
                         <div class="media-content">
                             <h3>@{{ identity.preferredUsername }}</h3>
                             <small>{{ identity.name }}</small>

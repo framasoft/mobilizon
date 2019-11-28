@@ -2,6 +2,9 @@ declare module 'tiptap' {
     import Vue from 'vue';
     export class Editor {
       public constructor({});
+      public commands: {
+        mention: Function,
+      };
 
       public setOptions({}): void;
       public setContent(content: string): void;

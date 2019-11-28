@@ -91,31 +91,50 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     #   assert activity == returned_activity.data
     # end
 
-    # test "it fetches replied-to activities if we don't have them" do
-    #   data =
-    #     File.read!("test/fixtures/mastodon-post-activity.json")
-    #     |> Jason.decode!()
+    test "it fetches replied-to activities if we don't have them" do
+      data =
+        File.read!("test/fixtures/mastodon-post-activity.json")
+        |> Jason.decode!()
 
-    #   object =
-    #     data["object"]
-    #     |> Map.put("inReplyTo", "https://shitposter.club/notice/2827873")
+      object =
+        data["object"]
+        |> Map.put("inReplyTo", "https://blob.cat/objects/02fdea3d-932c-4348-9ecb-3f9eb3fbdd94")
 
-    #   data =
-    #     data
-    #     |> Map.put("object", object)
+      data =
+        data
+        |> Map.put("object", object)
 
-    #   {:ok, returned_activity, _} = Transmogrifier.handle_incoming(data)
+      {:ok, returned_activity, _} = Transmogrifier.handle_incoming(data)
 
-    #   assert activity =
-    #            Activity.get_create_activity_by_object_ap_id(
-    #              "tag:shitposter.club,2017-05-05:noticeId=2827873:objectType=comment"
-    #            )
+      %Comment{} =
+        origin_comment =
+        Events.get_comment_from_url(
+          "https://blob.cat/objects/02fdea3d-932c-4348-9ecb-3f9eb3fbdd94"
+        )
 
-    #   assert returned_activity.data["object"]["inReplyToAtomUri"] ==
-    #            "https://shitposter.club/notice/2827873"
+      assert returned_activity.data["object"]["inReplyTo"] ==
+               "https://blob.cat/objects/02fdea3d-932c-4348-9ecb-3f9eb3fbdd94"
 
-    #   assert returned_activity.data["object"]["inReplyToStatusId"] == activity.id
-    # end
+      assert returned_activity.data["object"]["inReplyTo"] == origin_comment.url
+    end
+
+    test "it does not crash if the object in inReplyTo can't be fetched" do
+      data =
+        File.read!("test/fixtures/mastodon-post-activity.json")
+        |> Poison.decode!()
+
+      object =
+        data["object"]
+        |> Map.put("inReplyTo", "https://404.site/whatever")
+
+      data =
+        data
+        |> Map.put("object", object)
+
+      assert ExUnit.CaptureLog.capture_log([level: :warn], fn ->
+               {:ok, _returned_activity, _entity} = Transmogrifier.handle_incoming(data)
+             end) =~ "[warn] Parent object is something we don't handle"
+    end
 
     test "it works for incoming notices" do
       use_cassette "activity_pub/mastodon_post_activity" do
@@ -440,10 +459,11 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
         |> Map.put("actor", actor_url)
 
       assert Events.get_comment_from_url(comment_url)
+      assert is_nil(Events.get_comment_from_url(comment_url).deleted_at)
 
       {:ok, %Activity{local: false}, _} = Transmogrifier.handle_incoming(data)
 
-      refute Events.get_comment_from_url(comment_url)
+      refute is_nil(Events.get_comment_from_url(comment_url).deleted_at)
     end
 
     #     TODO : make me ASAP

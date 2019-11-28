@@ -5,7 +5,7 @@ defmodule MobilizonWeb.Schema.AdminType do
 
   use Absinthe.Schema.Notation
 
-  alias Mobilizon.Events.Event
+  alias Mobilizon.Events.{Event, Comment}
   alias Mobilizon.Reports.{Note, Report}
 
   alias MobilizonWeb.Resolvers.Admin
@@ -26,6 +26,7 @@ defmodule MobilizonWeb.Schema.AdminType do
     value(:note_creation)
     value(:note_deletion)
     value(:event_deletion)
+    value(:comment_deletion)
     value(:event_update)
   end
 
@@ -42,6 +43,9 @@ defmodule MobilizonWeb.Schema.AdminType do
 
       %Event{}, _ ->
         :event
+
+      %Comment{}, _ ->
+        :comment
 
       _, _ ->
         nil

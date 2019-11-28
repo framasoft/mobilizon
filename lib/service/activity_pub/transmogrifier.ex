@@ -49,7 +49,8 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     object
     |> Map.put("actor", object["attributedTo"])
     |> fix_attachments
-    |> fix_in_reply_to
+
+    # |> fix_in_reply_to
 
     # |> fix_tag
   end
@@ -127,16 +128,17 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   def handle_incoming(%{"type" => "Flag"} = data) do
     with params <- Converter.Flag.as_to_model(data) do
       params = %{
-        reporter_url: params["reporter"].url,
-        reported_actor_url: params["reported"].url,
-        comments_url: params["comments"] |> Enum.map(& &1.url),
+        reporter_id: params["reporter"].id,
+        reported_id: params["reported"].id,
+        comments_ids: params["comments"] |> Enum.map(& &1.id),
         content: params["content"] || "",
         additional: %{
           "cc" => [params["reported"].url]
-        }
+        },
+        local: false
       }
 
-      ActivityPub.flag(params)
+      ActivityPub.flag(params, false)
     end
   end
 

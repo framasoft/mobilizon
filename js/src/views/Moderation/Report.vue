@@ -4,68 +4,81 @@
         <div class="container" v-if="report">
             <nav class="breadcrumb" aria-label="breadcrumbs">
                 <ul>
-                    <li><router-link :to="{ name: RouteName.DASHBOARD }">Dashboard</router-link></li>
-                    <li><router-link :to="{ name: RouteName.REPORTS }">Reports</router-link></li>
-                    <li class="is-active"><router-link :to="{ name: RouteName.REPORT, params: { reportId: this.report.id} }" aria-current="page">Report</router-link></li>
+                    <li><router-link :to="{ name: RouteName.DASHBOARD }">{{ $t('Dashboard') }}</router-link></li>
+                    <li><router-link :to="{ name: RouteName.REPORTS }">{{ $t('Reports') }}</router-link></li>
+                    <li class="is-active"><router-link :to="{ name: RouteName.REPORT, params: { reportId: this.report.id} }" aria-current="page">{{ $t('Report') }}</router-link></li>
                 </ul>
             </nav>
             <div class="buttons">
-                <b-button v-if="report.status !== ReportStatusEnum.RESOLVED" @click="updateReport(ReportStatusEnum.RESOLVED)" type="is-primary">Mark as resolved</b-button>
-                <b-button v-if="report.status !== ReportStatusEnum.OPEN" @click="updateReport(ReportStatusEnum.OPEN)" type="is-success">Reopen</b-button>
-                <b-button v-if="report.status !== ReportStatusEnum.CLOSED" @click="updateReport(ReportStatusEnum.CLOSED)" type="is-danger">Close</b-button>
+                <b-button v-if="report.status !== ReportStatusEnum.RESOLVED" @click="updateReport(ReportStatusEnum.RESOLVED)" type="is-primary">{{ $t('Mark as resolved') }}</b-button>
+                <b-button v-if="report.status !== ReportStatusEnum.OPEN" @click="updateReport(ReportStatusEnum.OPEN)" type="is-success">{{ $t('Reopen') }}</b-button>
+                <b-button v-if="report.status !== ReportStatusEnum.CLOSED" @click="updateReport(ReportStatusEnum.CLOSED)" type="is-danger">{{ $t('Close') }}</b-button>
             </div>
-            <div class="columns">
-                <div class="column">
-                    <div class="table-container">
-                        <table class="box table is-striped">
-                            <tbody>
-                                <tr>
-                                    <td>Compte signalé</td>
-                                    <td>
-                                        <router-link :to="{ name: RouteName.PROFILE, params: { name: report.reported.preferredUsername } }">
-                                            <img v-if="report.reported.avatar" class="image" :src="report.reported.avatar.url" /> @{{ report.reported.preferredUsername }}
-                                        </router-link>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Signalé par</td>
-                                    <td>
-                                        <router-link :to="{ name: RouteName.PROFILE, params: { name: report.reporter.preferredUsername } }">
-                                            <img v-if="report.reporter.avatar" class="image" :src="report.reporter.avatar.url" /> @{{ report.reporter.preferredUsername }}
-                                        </router-link>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Signalé</td>
-                                    <td>{{ report.insertedAt | formatDateTimeString }}</td>
-                                </tr>
-                                <tr v-if="report.updatedAt !== report.insertedAt">
-                                    <td>Mis à jour</td>
-                                    <td>{{ report.updatedAt | formatDateTimeString }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Statut</td>
-                                    <td>
-                                        <span v-if="report.status === ReportStatusEnum.OPEN">Ouvert</span>
-                                        <span v-else-if="report.status === ReportStatusEnum.CLOSED">Fermé</span>
-                                        <span v-else-if="report.status === ReportStatusEnum.RESOLVED">Résolu</span>
-                                        <span v-else>Inconnu</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="column">
-                    <div class="box">
-                        <p v-if="report.content">{{ report.content }}</p>
-                        <p v-else>Pas de commentaire</p>
-                    </div>
-                </div>
+            <div class="table-container">
+                <table class="table is-striped is-fullwidth">
+                    <tbody>
+                        <tr>
+                            <td>{{ $t('Reported identity') }}</td>
+                            <td>
+                                <router-link :to="{ name: RouteName.PROFILE, params: { name: report.reported.preferredUsername } }">
+                                    <img v-if="report.reported.avatar" class="image" :src="report.reported.avatar.url" /> @{{ report.reported.preferredUsername }}
+                                </router-link>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>{{ $t('Reported by') }}</td>
+                            <td>
+                                <router-link :to="{ name: RouteName.PROFILE, params: { name: report.reporter.preferredUsername } }">
+                                    <img v-if="report.reporter.avatar" class="image" :src="report.reporter.avatar.url" /> @{{ report.reporter.preferredUsername }}
+                                </router-link>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>{{ $t('Reported')}}</td>
+                            <td>{{ report.insertedAt | formatDateTimeString }}</td>
+                        </tr>
+                        <tr v-if="report.updatedAt !== report.insertedAt">
+                            <td>{{ $t('Updated') }}</td>
+                            <td>{{ report.updatedAt | formatDateTimeString }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ $t('Status') }}</td>
+                            <td>
+                                <span v-if="report.status === ReportStatusEnum.OPEN">{{ $t('Open') }}</span>
+                                <span v-else-if="report.status === ReportStatusEnum.CLOSED">{{ $t('Closed') }}</span>
+                                <span v-else-if="report.status === ReportStatusEnum.RESOLVED">{{ $t('Resolved') }}</span>
+                                <span v-else>{{ $t('Unknown') }}</span>
+                            </td>
+                        </tr>
+                        <tr v-if="report.event && report.comments.length > 0">
+                            <td>{{ $t('Event') }}</td>
+                            <td>
+                                <router-link :to="{ name: RouteName.EVENT, params: { uuid: report.event.uuid }}">{{ report.event.title }}</router-link>
+                                <span class="is-pulled-right">
+                                    <b-button
+                                            tag="router-link"
+                                            type="is-primary"
+                                            :to="{ name: RouteName.EDIT_EVENT, params: {eventId: report.event.uuid } }"
+                                            icon-left="pencil"
+                                            size="is-small">{{ $t('Edit') }}</b-button>
+                                    <b-button
+                                            type="is-danger"
+                                            @click="confirmDelete()"
+                                            icon-left="delete"
+                                            size="is-small">{{ $t('Delete') }}</b-button>
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
-            <div class="box" v-if="report.event">
+            <div class="box report-content">
+                <p v-if="report.content" v-html="nl2br(report.content)"></p>
+                <p v-else>{{ $t('No comment') }}</p>
+            </div>
+
+            <div class="box" v-if="report.event && report.comments.length === 0">
                 <router-link :to="{ name: RouteName.EVENT, params: { uuid: report.event.uuid }}">
                     <h3 class="title">{{ report.event.title }}</h3>
                     <p v-html="report.event.description"></p>
@@ -75,28 +88,50 @@
                         type="is-primary"
                         :to="{ name: RouteName.EDIT_EVENT, params: {eventId: report.event.uuid } }"
                         icon-left="pencil"
-                        size="is-small">Edit</b-button>
+                        size="is-small">{{ $t('Edit') }}</b-button>
                 <b-button
                         type="is-danger"
                         @click="confirmDelete()"
                         icon-left="delete"
-                        size="is-small">Delete</b-button>
+                        size="is-small">{{ $t('Delete') }}</b-button>
             </div>
 
-            <h2 class="title" v-if="report.notes.length > 0">Notes</h2>
+            <ul v-for="comment in report.comments" v-if="report.comments.length > 0">
+                <li>
+                    <div class="box" v-if="comment">
+                        <article class="media">
+                            <div class="media-left">
+                                <figure class="image is-48x48" v-if="comment.actor.avatar">
+                                    <img :src="comment.actor.avatar.url" alt="Image">
+                                </figure>
+                                <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+                            </div>
+                            <div class="media-content">
+                                <div class="content">
+                                    <strong>{{ comment.actor.name }}</strong> <small>@{{ comment.actor.preferredUsername }}</small>
+                                    <br>
+                                    <p v-html="comment.text"></p>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </li>
+            </ul>
+
+            <h2 class="title" v-if="report.notes.length > 0">{{ $t('Notes') }}</h2>
             <div class="box note" v-for="note in report.notes" :id="`note-${note.id}`">
                 <p>{{ note.content }}</p>
                 <router-link :to="{ name: RouteName.PROFILE, params: { name: note.moderator.preferredUsername } }">
-                    <img class="image" :src="note.moderator.avatar.url" /> @{{ note.moderator.preferredUsername }}
+                    <img alt="" class="image" :src="note.moderator.avatar.url" /> @{{ note.moderator.preferredUsername }}
                 </router-link><br />
                 <small><a :href="`#note-${note.id}`" v-if="note.insertedAt">{{ note.insertedAt | formatDateTimeString }}</a></small>
             </div>
 
             <form @submit="addNote()">
-                <b-field label="Nouvelle note">
+                <b-field :label="$t('New note')">
                     <b-input type="textarea" v-model="noteContent"></b-input>
                 </b-field>
-                <b-button type="submit" @click="addNote">Ajouter une note</b-button>
+                <b-button type="submit" @click="addNote">{{ $t('Ajouter une note') }}</b-button>
             </form>
         </div>
     </section>
@@ -110,6 +145,7 @@ import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { IPerson } from '@/types/actor';
 import { DELETE_EVENT } from '@/graphql/event';
 import { uniq } from 'lodash';
+import { nl2br } from '@/utils/html';
 
 @Component({
   apollo: {
@@ -137,6 +173,7 @@ export default class Report extends Vue {
 
   ReportStatusEnum = ReportStatusEnum;
   RouteName = RouteName;
+  nl2br = nl2br;
 
   noteContent: string = '';
 
@@ -175,9 +212,9 @@ export default class Report extends Vue {
 
   confirmDelete() {
     this.$buefy.dialog.confirm({
-      title: 'Deleting event',
-      message: 'Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the conversation with the event creator or edit its event instead.',
-      confirmText: 'Delete Event',
+      title: this.$t('Deleting event') as string,
+      message: this.$t('Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the conversation with the event creator or edit its event instead.') as string,
+      confirmText: this.$t('Delete Event') as string,
       type: 'is-danger',
       hasIcon: true,
       onConfirm: () => this.deleteEvent(),
@@ -232,6 +269,7 @@ export default class Report extends Vue {
           store.writeQuery({ query: REPORT, variables: { id: this.report.id }, data: { report } });
         },
       });
+      await this.$router.push({ name: RouteName.REPORTS });
     } catch (error) {
       console.error(error);
     }
@@ -248,7 +286,9 @@ export default class Report extends Vue {
 
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+    @import "@/variables.scss";
+
     .container li {
         margin: 10px auto;
     }
@@ -261,5 +301,9 @@ export default class Report extends Vue {
 
     .dialog .modal-card-foot {
         justify-content: flex-end;
+    }
+
+    .report-content {
+        border-left: 4px solid $primary;
     }
 </style>

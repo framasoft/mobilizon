@@ -7,7 +7,7 @@ defmodule MobilizonWeb.Resolvers.Admin do
 
   alias Mobilizon.Admin.ActionLog
   alias Mobilizon.Events
-  alias Mobilizon.Events.Event
+  alias Mobilizon.Events.{Event, Comment}
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Service.Statistics
   alias Mobilizon.Users.User
@@ -87,6 +87,15 @@ defmodule MobilizonWeb.Resolvers.Admin do
     %{
       action: :event_deletion,
       object: convert_changes_to_struct(Event, changes)
+    }
+  end
+
+  defp transform_action_log(Comment, :delete, %ActionLog{
+         changes: changes
+       }) do
+    %{
+      action: :comment_deletion,
+      object: convert_changes_to_struct(Comment, changes)
     }
   end
 

@@ -46,10 +46,10 @@ defmodule MobilizonWeb.Resolvers.Report do
   """
   def create_report(
         _parent,
-        %{reporter_actor_id: reporter_actor_id} = args,
+        %{reporter_id: reporter_id} = args,
         %{context: %{current_user: user}} = _resolution
       ) do
-    with {:is_owned, %Actor{}} <- User.owns_actor(user, reporter_actor_id),
+    with {:is_owned, %Actor{}} <- User.owns_actor(user, reporter_id),
          {:ok, _, %Report{} = report} <- ReportsAPI.report(args) do
       {:ok, report}
     else

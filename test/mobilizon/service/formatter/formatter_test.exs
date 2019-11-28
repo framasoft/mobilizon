@@ -117,37 +117,32 @@ defmodule Mobilizon.Service.FormatterTest do
   describe "add_user_links" do
     test "gives a replacement for user links, using local nicknames in user links text" do
       text = "@gsimg According to @archa_eme_, that is @daggsy. Also hello @archaeme@archae.me"
-      gsimg = insert(:actor, preferred_username: "gsimg")
+      _gsimg = insert(:actor, preferred_username: "gsimg")
 
-      archaeme =
+      _archaeme =
         insert(:actor, preferred_username: "archa_eme_", url: "https://archeme/@archa_eme_")
 
-      archaeme_remote = insert(:actor, preferred_username: "archaeme", domain: "archae.me")
+      _archaeme_remote = insert(:actor, preferred_username: "archaeme", domain: "archae.me")
 
       {text, mentions, []} = Formatter.linkify(text)
 
       assert length(mentions) == 3
 
       expected_text =
-        "<span class='h-card'><a data-user='#{gsimg.id}' class='u-url mention' href='#{gsimg.url}'>@<span>gsimg</span></a></span> According to <span class='h-card'><a data-user='#{
-          archaeme.id
-        }' class='u-url mention' href='#{"https://archeme/@archa_eme_"}'>@<span>archa_eme_</span></a></span>, that is @daggsy. Also hello <span class='h-card'><a data-user='#{
-          archaeme_remote.id
-        }' class='u-url mention' href='#{archaeme_remote.url}'>@<span>archaeme</span></a></span>"
+        "<span class='h-card mention'>@<span>gsimg</span></span> According to <span class='h-card mention'>@<span>archa_eme_</span></span>, that is @daggsy. Also hello <span class='h-card mention'>@<span>archaeme</span></span>"
 
       assert expected_text == text
     end
 
     test "gives a replacement for single-character local nicknames" do
       text = "@o hi"
-      o = insert(:actor, preferred_username: "o")
+      _o = insert(:actor, preferred_username: "o")
 
       {text, mentions, []} = Formatter.linkify(text)
 
       assert length(mentions) == 1
 
-      expected_text =
-        "<span class='h-card'><a data-user='#{o.id}' class='u-url mention' href='#{o.url}'>@<span>o</span></a></span> hi"
+      expected_text = "<span class='h-card mention'>@<span>o</span></span> hi"
 
       assert expected_text == text
     end

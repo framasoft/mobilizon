@@ -14,6 +14,7 @@ defmodule Mobilizon.Events.Event do
   alias Mobilizon.Addresses
 
   alias Mobilizon.Events.{
+    Comment,
     EventOptions,
     EventStatus,
     EventVisibility,
@@ -111,6 +112,7 @@ defmodule Mobilizon.Events.Event do
     has_many(:tracks, Track)
     has_many(:sessions, Session)
     has_many(:mentions, Mention)
+    has_many(:comments, Comment)
     many_to_many(:tags, Tag, join_through: "events_tags", on_replace: :delete)
     many_to_many(:participants, Actor, join_through: Participant)
 

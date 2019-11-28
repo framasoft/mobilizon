@@ -11,15 +11,18 @@ defmodule Mobilizon.Service.ActivityPub do
   import Mobilizon.Service.ActivityPub.Utils
   import Mobilizon.Service.ActivityPub.Visibility
 
-  alias Mobilizon.{Actors, Config, Events}
+  alias Mobilizon.{Actors, Config, Events, Reports, Users}
   alias Mobilizon.Actors.{Actor, Follower}
   alias Mobilizon.Events.{Comment, Event, Participant}
+  alias Mobilizon.Reports.Report
+  alias Mobilizon.Tombstone
   alias Mobilizon.Service.ActivityPub.{Activity, Converter, Convertible, Relay, Transmogrifier}
   alias Mobilizon.Service.{Federator, WebFinger}
   alias Mobilizon.Service.HTTPSignatures.Signature
   alias MobilizonWeb.API.Utils, as: APIUtils
   alias Mobilizon.Service.ActivityPub.Audience
   alias Mobilizon.Service.ActivityPub.Converter.Utils, as: ConverterUtils
+  alias MobilizonWeb.Email.{Admin, Mailer}
 
   require Logger
 
@@ -133,7 +136,8 @@ defmodule Mobilizon.Service.ActivityPub do
     Logger.debug("creating an activity")
     Logger.debug(inspect(args))
 
-    with {:ok, entity, create_data} <-
+    with {:tombstone, nil} <- {:tombstone, check_for_tombstones(args)},
+         {:ok, entity, create_data} <-
            (case type do
               :event -> create_event(args, additional)
               :comment -> create_comment(args, additional)
@@ -345,6 +349,8 @@ defmodule Mobilizon.Service.ActivityPub do
     }
 
     with {:ok, %Event{} = event} <- Events.delete_event(event),
+         {:ok, %Tombstone{} = _tombstone} <-
+           Tombstone.create_tombstone(%{uri: event.url, actor_id: actor.id}),
          {:ok, activity} <- create_activity(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity, event}
@@ -361,6 +367,8 @@ defmodule Mobilizon.Service.ActivityPub do
     }
 
     with {:ok, %Comment{} = comment} <- Events.delete_comment(comment),
+         {:ok, %Tombstone{} = _tombstone} <-
+           Tombstone.create_tombstone(%{uri: comment.url, actor_id: actor.id}),
          {:ok, activity} <- create_activity(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity, comment}
@@ -383,25 +391,25 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
-  def flag(params) do
-    # only accept false as false value
-    local = !(params[:local] == false)
-    forward = !(params[:forward] == false)
-
-    additional = params[:additional] || %{}
-
-    additional =
-      if forward do
-        Map.merge(additional, %{"to" => [], "cc" => [params.reported_actor_url]})
-      else
-        Map.merge(additional, %{"to" => [], "cc" => []})
-      end
-
-    with flag_data <- make_flag_data(params, additional),
-         {:ok, activity} <- create_activity(flag_data, local),
-         {:ok, object} <- insert_full_object(flag_data),
+  def flag(args, local \\ false, _additional \\ %{}) do
+    with {:build_args, args} <- {:build_args, prepare_args_for_report(args)},
+         {:create_report, {:ok, %Report{} = report}} <-
+           {:create_report, Reports.create_report(args)},
+         report_as_data <- Convertible.model_to_as(report),
+         {:ok, activity} <- create_activity(report_as_data, local),
          :ok <- maybe_federate(activity) do
-      {:ok, activity, object}
+      Enum.each(Users.list_moderators(), fn moderator ->
+        moderator
+        |> Admin.report(report)
+        |> Mailer.deliver_later()
+      end)
+
+      {:ok, activity, report}
+    else
+      err ->
+        Logger.error("Something went wrong while creating an activity")
+        Logger.debug(inspect(err))
+        err
     end
   end
 
@@ -776,6 +784,10 @@ defmodule Mobilizon.Service.ActivityPub do
     end
   end
 
+  @spec check_for_tombstones(map()) :: Tombstone.t() | nil
+  defp check_for_tombstones(%{url: url}), do: Tombstone.find_tombstone(url)
+  defp check_for_tombstones(_), do: nil
+
   @spec update_event(Event.t(), map(), map()) ::
           {:ok, Event.t(), Activity.t()} | any()
   defp update_event(
@@ -930,7 +942,12 @@ defmodule Mobilizon.Service.ActivityPub do
              tags: tags,
              in_reply_to_comment: in_reply_to_comment,
              in_reply_to_comment_id:
-               if(is_nil(in_reply_to_comment), do: nil, else: Map.get(in_reply_to_comment, :id))
+               if(is_nil(in_reply_to_comment), do: nil, else: Map.get(in_reply_to_comment, :id)),
+             origin_comment_id:
+               if(is_nil(in_reply_to_comment),
+                 do: nil,
+                 else: Comment.get_thread_id(in_reply_to_comment)
+               )
            }) do
       args
     end
@@ -943,6 +960,29 @@ defmodule Mobilizon.Service.ActivityPub do
          {summary, _mentions, _tags} <-
            summary |> String.trim() |> APIUtils.make_content_html([], "text/html") do
       %{args | preferred_username: preferred_username, summary: summary}
+    end
+  end
+
+  defp prepare_args_for_report(args) do
+    with {:reporter, %Actor{} = reporter_actor} <-
+           {:reporter, Actors.get_actor!(args.reporter_id)},
+         {:reported, %Actor{} = reported_actor} <-
+           {:reported, Actors.get_actor!(args.reported_id)},
+         content <- HtmlSanitizeEx.strip_tags(args.content),
+         event <- Events.get_comment(Map.get(args, :event_id)),
+         {:get_report_comments, comments} <-
+           {:get_report_comments,
+            Events.list_comments_by_actor_and_ids(
+              reported_actor.id,
+              Map.get(args, :comments_ids, [])
+            )} do
+      Map.merge(args, %{
+        reporter: reporter_actor,
+        reported: reported_actor,
+        content: content,
+        event: event,
+        comments: comments
+      })
     end
   end
 end

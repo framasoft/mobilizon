@@ -224,7 +224,7 @@ defmodule Mobilizon.Factory do
     %Mobilizon.Reports.Report{
       content: "This is problematic",
       status: :open,
-      uri: "http://mobilizon.test/report/deae1020-54b8-47df-9eea-d8c0e943e57f/activity",
+      url: "http://mobilizon.test/report/deae1020-54b8-47df-9eea-d8c0e943e57f/activity",
       reported: build(:actor),
       reporter: build(:actor),
       event: build(:event),

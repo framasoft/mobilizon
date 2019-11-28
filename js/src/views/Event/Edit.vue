@@ -94,7 +94,7 @@
             <b-field :label="$t('Number of places')">
               <b-numberinput controls-position="compact" min="0" v-model="event.options.maximumAttendeeCapacity"></b-numberinput>
             </b-field>
-<!-- 
+<!--
             <b-field>
               <b-switch v-model="event.options.showRemainingAttendeeCapacity">
                 {{ $t('Show remaining number of places') }}
@@ -108,11 +108,9 @@
             </b-field> -->
           </div>
 
-          <!-- <h2 class="subtitle">
+          <h2 class="subtitle">
             {{ $t('Public comment moderation') }}
           </h2>
-
-          <label>{{ $t('Comments on the event page') }}</label>
 
           <div class="field">
             <b-radio v-model="event.options.commentModeration"
@@ -122,13 +120,13 @@
             </b-radio>
           </div>
 
-          <div class="field">
-            <b-radio v-model="event.options.commentModeration"
-                     name="commentModeration"
-                     :native-value="CommentModeration.MODERATED">
-              {{ $t('Moderated comments (shown after approval)') }}
-            </b-radio>
-          </div>
+<!--          <div class="field">-->
+<!--            <b-radio v-model="event.options.commentModeration"-->
+<!--                     name="commentModeration"-->
+<!--                     :native-value="CommentModeration.MODERATED">-->
+<!--              {{ $t('Moderated comments (shown after approval)') }}-->
+<!--            </b-radio>-->
+<!--          </div>-->
 
           <div class="field">
             <b-radio v-model="event.options.commentModeration"
@@ -136,7 +134,7 @@
                      :native-value="CommentModeration.CLOSED">
               {{ $t('Close comments for all (except for admins)') }}
             </b-radio>
-          </div> -->
+          </div>
 
           <h2 class="subtitle">
             {{ $t('Status') }}
@@ -542,13 +540,17 @@ export default class EditEvent extends Vue {
     const pictureObj = buildFileVariable(this.pictureFile, 'picture');
     res = Object.assign({}, res, pictureObj);
 
-    if (this.event.picture) {
-      const oldPictureFile = await buildFileFromIPicture(this.event.picture) as File;
-      const oldPictureFileContent = await readFileAsync(oldPictureFile);
-      const newPictureFileContent = await readFileAsync(this.pictureFile as File);
-      if (oldPictureFileContent === newPictureFileContent) {
-        res.picture = { pictureId: this.event.picture.id };
+    try {
+      if (this.event.picture) {
+        const oldPictureFile = await buildFileFromIPicture(this.event.picture) as File;
+        const oldPictureFileContent = await readFileAsync(oldPictureFile);
+        const newPictureFileContent = await readFileAsync(this.pictureFile as File);
+        if (oldPictureFileContent === newPictureFileContent) {
+          res.picture = { pictureId: this.event.picture.id };
+        }
       }
+    } catch (e) {
+      console.error(e);
     }
     return res;
   }

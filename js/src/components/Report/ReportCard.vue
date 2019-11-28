@@ -9,8 +9,9 @@
             <div class="media">
                 <div class="media-left">
                     <figure class="image is-48x48" v-if="report.reported.avatar">
-                        <img :src="report.reported.avatar.url" />
+                        <img alt="" :src="report.reported.avatar.url" />
                     </figure>
+                    <b-icon v-else size="is-large" icon="account-circle" />
                 </div>
                 <div class="media-content">
                     <p class="title is-4">{{ report.reported.name }}</p>
@@ -19,12 +20,8 @@
             </div>
 
             <div class="content columns">
-                <div class="column is-one-quarter box">Reported by <img v-if="report.reporter.avatar" class="image" :src="report.reporter.avatar.url" /> @{{ report.reporter.preferredUsername }}</div>
-                <div class="column box" v-if="report.event">
-                    <img class="image" v-if="report.event.picture" :src="report.event.picture.url" />
-                    <span>{{ report.event.title }}</span>
-                </div>
-                <div class="column box" v-if="report.reportContent">{{ report.reportContent }}</div>
+                <div class="column is-one-quarter-desktop">Reported by <img v-if="report.reporter.avatar" class="image" :src="report.reporter.avatar.url" /> @{{ report.reporter.preferredUsername }}</div>
+                <div class="column" v-if="report.content">{{ report.content }}</div>
             </div>
         </div>
     </div>

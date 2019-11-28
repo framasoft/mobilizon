@@ -2,6 +2,7 @@ import { Actor, IActor, IPerson } from './actor';
 import { Address, IAddress } from '@/types/address.model';
 import { ITag } from '@/types/tag.model';
 import { IPicture } from '@/types/picture.model';
+import { IComment } from '@/types/comment.model';
 
 export enum EventStatus {
   TENTATIVE = 'TENTATIVE',
@@ -129,6 +130,7 @@ export interface IEvent {
   participants: IParticipant[];
 
   relatedEvents: IEvent[];
+  comments: IComment[];
 
   onlineAddress?: string;
   phoneAddress?: string;
@@ -199,9 +201,10 @@ export class EventModel implements IEvent {
   participants: IParticipant[] = [];
 
   relatedEvents: IEvent[] = [];
+  comments: IComment[] = [];
 
   attributedTo = new Actor();
-  organizerActor?: IActor;
+  organizerActor?: IActor = new Actor();
 
   tags: ITag[] = [];
   options: IEventOptions = new EventOptions();
