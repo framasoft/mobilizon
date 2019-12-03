@@ -14,14 +14,14 @@ defmodule Mix.Tasks.Mobilizon.RelayTest do
   describe "running follow" do
     test "relay is followed" do
       use_cassette "relay/fetch_relay_follow" do
-        target_instance = "http://localhost:8080/actor"
+        target_instance = "mobilizon1.com"
 
         Mix.Tasks.Mobilizon.Relay.run(["follow", target_instance])
 
         local_actor = Relay.get_actor()
         assert local_actor.url =~ "/relay"
 
-        {:ok, target_actor} = Actors.get_actor_by_url(target_instance)
+        {:ok, target_actor} = Actors.get_actor_by_url("http://#{target_instance}/relay")
         refute is_nil(target_actor.domain)
 
         assert Actors.is_following(local_actor, target_actor)
@@ -32,12 +32,15 @@ defmodule Mix.Tasks.Mobilizon.RelayTest do
   describe "running unfollow" do
     test "relay is unfollowed" do
       use_cassette "relay/fetch_relay_unfollow" do
-        target_instance = "http://localhost:8080/actor"
+        target_instance = "mobilizon1.com"
 
         Mix.Tasks.Mobilizon.Relay.run(["follow", target_instance])
 
         %Actor{} = local_actor = Relay.get_actor()
-        {:ok, %Actor{} = target_actor} = Actors.get_actor_by_url(target_instance)
+
+        {:ok, %Actor{} = target_actor} =
+          Actors.get_actor_by_url("http://#{target_instance}/relay")
+
         assert %Follower{} = Actors.is_following(local_actor, target_actor)
 
         Mix.Tasks.Mobilizon.Relay.run(["unfollow", target_instance])

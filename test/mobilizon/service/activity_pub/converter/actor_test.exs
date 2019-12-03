@@ -8,8 +8,8 @@ defmodule Mobilizon.Service.ActivityPub.Converter.ActorTest do
     test "valid actor to as" do
       data = ActorConverter.model_to_as(%Actor{type: :Person, preferred_username: "test_account"})
       assert is_map(data)
-      assert data["type"] == "Person"
-      assert data["preferred_username"] == "test_account"
+      assert data["type"] == :Person
+      assert data["preferredUsername"] == "test_account"
     end
   end
 
@@ -17,12 +17,13 @@ defmodule Mobilizon.Service.ActivityPub.Converter.ActorTest do
     test "valid as data to model" do
       {:ok, actor} =
         ActorConverter.as_to_model_data(%{
+          "id" => "https://somedomain.tld/users/someone",
           "type" => "Person",
           "preferredUsername" => "test_account"
         })
 
-      assert actor["type"] == :Person
-      assert actor["preferred_username"] == "test_account"
+      assert actor.type == "Person"
+      assert actor.preferred_username == "test_account"
     end
   end
 end

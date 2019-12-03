@@ -11,12 +11,31 @@
   "actor": "http://mobilizon2.test/@admin",
   "@context": [
     "https://www.w3.org/ns/activitystreams",
-    "https://w3id.org/security/v1",
+    "https://litepub.social/litepub/context.jsonld",
     {
-      "sensitive": "as:sensitive",
-      "movedTo": "as:movedTo",
-      "manuallyApprovesFollowers": "as:manuallyApprovesFollowers",
-      "Hashtag": "as:Hashtag"
+      "Hashtag": "as:Hashtag",
+      "category": "sc:category",
+      "ical": "http://www.w3.org/2002/12/cal/ical#",
+      "joinMode": {
+        "@id": "mz:joinMode",
+        "@type": "mz:joinModeType"
+      },
+      "joinModeType": {
+        "@id": "mz:joinModeType",
+        "@type": "rdfs:Class"
+      },
+      "maximumAttendeeCapacity": "sc:maximumAttendeeCapacity",
+      "mz": "https://joinmobilizon.org/ns#",
+      "repliesModerationOption": {
+        "@id": "mz:repliesModerationOption",
+        "@type": "mz:repliesModerationOptionType"
+      },
+      "repliesModerationOptionType": {
+        "@id": "mz:repliesModerationOptionType",
+        "@type": "rdfs:Class"
+      },
+      "sc": "http://schema.org#",
+      "uuid": "sc:identifier"
     }
   ]
 }

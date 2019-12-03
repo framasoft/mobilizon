@@ -35,7 +35,11 @@
               <tr>
                 <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
                   <p style="margin: 0;">
-                    <%= gettext "%{reporter_name} (%{reporter_username}) reported the following content.", reporter_name: @report.reporter.name, reporter_username: Mobilizon.Actors.Actor.preferred_username_and_domain(@report.reporter) %>
+                    <%= if @report.reporter.type == :Application and @report.reporter.preferred_username == "relay" do %>
+                      <%= gettext "Someone on %{instance} reported the following content.", instance: @report.reporter.domain %>
+                    <% else %>
+                      <%= gettext "%{reporter_name} (%{reporter_username}) reported the following content.", reporter_name: @report.reporter.name, reporter_username: Mobilizon.Actors.Actor.preferred_username_and_domain(@report.reporter) %>
+                    <% end %>
                   </p>
                 </td>
               </tr>
@@ -59,10 +63,10 @@
               <%= if Map.has_key?(@report, :comments) && length(@report.comments) > 0 do %>
               <tr>
               <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
-                <p><%= gettext "Comments" %></p>
+                <h3><%= gettext "Comments" %></h3>
                 <%= for comment <- @report.comments do %>
                   <p style="margin: 0;">
-                    <%= comment.text %>
+                    <%= HtmlSanitizeEx.strip_tags(comment.text) %>
                   </p>
                 <% end %>
                 <table cellspacing="0" cellpadding="0" border="0" width="100%" style="width: 100% !important;">

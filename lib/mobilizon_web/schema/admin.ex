@@ -71,5 +71,49 @@ defmodule MobilizonWeb.Schema.AdminType do
     field :dashboard, type: :dashboard do
       resolve(&Admin.get_dashboard/3)
     end
+
+    field :relay_followers, type: :paginated_follower_list do
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
+      resolve(&Admin.list_relay_followers/3)
+    end
+
+    field :relay_followings, type: :paginated_follower_list do
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
+      arg(:order_by, :string, default_value: :updated_at)
+      arg(:direction, :string, default_value: :desc)
+      resolve(&Admin.list_relay_followings/3)
+    end
+  end
+
+  object :admin_mutations do
+    @desc "Add a relay subscription"
+    field :add_relay, type: :follower do
+      arg(:address, non_null(:string))
+
+      resolve(&Admin.create_relay/3)
+    end
+
+    @desc "Delete a relay subscription"
+    field :remove_relay, type: :follower do
+      arg(:address, non_null(:string))
+
+      resolve(&Admin.remove_relay/3)
+    end
+
+    @desc "Accept a relay subscription"
+    field :accept_relay, type: :follower do
+      arg(:address, non_null(:string))
+
+      resolve(&Admin.accept_subscription/3)
+    end
+
+    @desc "Reject a relay subscription"
+    field :reject_relay, type: :follower do
+      arg(:address, non_null(:string))
+
+      resolve(&Admin.reject_subscription/3)
+    end
   end
 end

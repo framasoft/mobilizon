@@ -17,7 +17,7 @@ defmodule MobilizonWeb.API.Reports do
   Create a report/flag on an actor, and optionally on an event or on comments.
   """
   def report(args) do
-    case {:make_activity, ActivityPub.flag(args, Map.get(args, :local, false) == false)} do
+    case {:make_activity, ActivityPub.flag(args, Map.get(args, :forward, false) == true)} do
       {:make_activity, {:ok, %Activity{} = activity, %Report{} = report}} ->
         {:ok, activity, report}
 

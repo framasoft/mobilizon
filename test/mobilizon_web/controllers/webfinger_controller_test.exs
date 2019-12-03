@@ -9,6 +9,11 @@ defmodule MobilizonWeb.WebFingerTest do
   alias Mobilizon.Service.WebFinger
   import Mobilizon.Factory
 
+  setup_all do
+    Mobilizon.Config.put([:instance, :federating], true)
+    :ok
+  end
+
   test "GET /.well-known/host-meta", %{conn: conn} do
     conn = get(conn, "/.well-known/host-meta")
 

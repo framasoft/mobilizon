@@ -1,0 +1,39 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true"
+      },
+      "request_body": "",
+      "url": "http://niu.moe/users/rye"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://w3id.org/security/v1\",{\"manuallyApprovesFollowers\":\"as:manuallyApprovesFollowers\",\"toot\":\"http://joinmastodon.org/ns#\",\"featured\":{\"@id\":\"toot:featured\",\"@type\":\"@id\"},\"alsoKnownAs\":{\"@id\":\"as:alsoKnownAs\",\"@type\":\"@id\"},\"movedTo\":{\"@id\":\"as:movedTo\",\"@type\":\"@id\"},\"schema\":\"http://schema.org#\",\"PropertyValue\":\"schema:PropertyValue\",\"value\":\"schema:value\",\"IdentityProof\":\"toot:IdentityProof\",\"discoverable\":\"toot:discoverable\",\"focalPoint\":{\"@container\":\"@list\",\"@id\":\"toot:focalPoint\"}}],\"id\":\"https://niu.moe/users/rye\",\"type\":\"Person\",\"following\":\"https://niu.moe/users/rye/following\",\"followers\":\"https://niu.moe/users/rye/followers\",\"inbox\":\"https://niu.moe/users/rye/inbox\",\"outbox\":\"https://niu.moe/users/rye/outbox\",\"featured\":\"https://niu.moe/users/rye/collections/featured\",\"preferredUsername\":\"rye\",\"name\":\"♡ rye ♡\",\"summary\":\"\\u003cp\\u003eicon from \\u003ca href=\\\"https://twitter.com/_nitronic/status/1137776178687725568\\\" rel=\\\"nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"ellipsis\\\"\\u003etwitter.com/_nitronic/status/1\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e137776178687725568\\u003c/span\\u003e\\u003c/a\\u003e くコ:彡\\u003c/p\\u003e\\u003cp\\u003eCome back with a warrant\\u003c/p\\u003e\",\"url\":\"https://niu.moe/@rye\",\"manuallyApprovesFollowers\":false,\"discoverable\":false,\"publicKey\":{\"id\":\"https://niu.moe/users/rye#main-key\",\"owner\":\"https://niu.moe/users/rye\",\"publicKeyPem\":\"-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA83uRWjCFO35FwfA38mzv\\nEL0TUaXB7+2hYvPwNrn1WY6me5DRbqB5zzMrzWMGr0HSooqNqEYBafGsmVTWUqIk\\nKM9ehtIBraJI+mT5X7DPR3LrXOJF4a9EEslg8XvAk8MN9IrAhm6UljnvB67RtDcA\\nTNB01VWy9yWnxFRtz9o/EMoBPyw5giOaXE2ibVNP8lQIqGKuuBKPzPjSJygdvQ5q\\nxfow2z1TpKRqdsNDqn4n6U6zCXYTzkr0J71/tGw7fsgfv78l0Wjrc7EcuBk74OaG\\nC65UDiu3X4Q6kxCfCEhPSfuwLN+UZkzxcn6goWR0iYpWs57+4tFKu9nJYP4QJ0K9\\nTwIDAQAB\\n-----END PUBLIC KEY-----\\n\"},\"tag\":[],\"attachment\":[],\"endpoints\":{\"sharedInbox\":\"https://niu.moe/inbox\"},\"icon\":{\"type\":\"Image\",\"mediaType\":\"image/png\",\"url\":\"https://cdn.niu.moe/accounts/avatars/000/033/323/original/e4d637b2c8755a7e.png\"},\"image\":{\"type\":\"Image\",\"mediaType\":\"image/jpeg\",\"url\":\"https://cdn.niu.moe/accounts/headers/000/033/323/original/cc89e1bc66b99a65.jpeg\"}}",
+      "headers": {
+        "Cache-Control": "max-age=180, public",
+        "Content-Type": "application/activity+json; charset=utf-8",
+        "Date": "Fri, 06 Dec 2019 10:26:01 GMT",
+        "Etag": "W/\"b3c2a8220a20671e8ca5c7e3371e7f5a\"",
+        "Server": "Caddy",
+        "Set-Cookie": "_mastodon_session=lSwFzD6GF6%2FjEL7hWLHU61n7%2B8kC60xvZYlPZG8EBtcndPzfd2%2B976zDOf1ALGZkvqj3CdpYHbZyq%2B7cwfkX--Ut%2BKGA8YibOTCEhb--a0sE5cHGI5PicAmO2yDlZw%3D%3D; path=/; secure; HttpOnly",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Vary": "Accept, Accept-Encoding, Origin",
+        "X-Cached": "MISS",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "X-Request-Id": "0cc18bab-2d72-47b2-8778-8646402e1148",
+        "X-Runtime": "0.009213",
+        "X-Xss-Protection": "1; mode=block",
+        "Transfer-Encoding": "chunked"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

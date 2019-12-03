@@ -15,6 +15,7 @@ defmodule Mobilizon.Service.HTTPSignatures.Signature do
 
   require Logger
 
+  @spec key_id_to_actor_url(String.t()) :: String.t()
   def key_id_to_actor_url(key_id) do
     %{path: path} =
       uri =
@@ -46,12 +47,10 @@ defmodule Mobilizon.Service.HTTPSignatures.Signature do
     end
   end
 
-  @doc """
-  Gets a public key for a given ActivityPub actor ID (url).
-  """
+  # Gets a public key for a given ActivityPub actor ID (url).
   @spec get_public_key_for_url(String.t()) ::
           {:ok, String.t()} | {:error, :actor_fetch_error | :pem_decode_error}
-  def get_public_key_for_url(url) do
+  defp get_public_key_for_url(url) do
     with {:ok, %Actor{keys: keys}} <- ActivityPub.get_or_fetch_actor_by_url(url),
          {:ok, public_key} <- prepare_public_key(keys) do
       {:ok, public_key}
@@ -103,16 +102,10 @@ defmodule Mobilizon.Service.HTTPSignatures.Signature do
     end
   end
 
-  def generate_date_header(date \\ Timex.now("GMT")) do
-    case Timex.format(date, "%a, %d %b %Y %H:%M:%S %Z", :strftime) do
-      {:ok, date} ->
-        date
+  def generate_date_header, do: generate_date_header(NaiveDateTime.utc_now())
 
-      {:error, err} ->
-        Logger.error("Unable to generate date header")
-        Logger.debug(inspect(err))
-        nil
-    end
+  def generate_date_header(%NaiveDateTime{} = date) do
+    Timex.format!(date, "{WDshort}, {0D} {Mshort} {YYYY} {h24}:{m}:{s} GMT")
   end
 
   def generate_request_target(method, path), do: "#{method} #{path}"

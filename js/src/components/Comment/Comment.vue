@@ -11,7 +11,8 @@
                 <div class="content">
                     <span class="first-line" v-if="!comment.deletedAt">
                         <strong>{{ comment.actor.name }}</strong>
-                        <small>@{{ comment.actor.preferredUsername }}</small>
+                        <small v-if="comment.actor.domain">@{{ comment.actor.preferredUsername }}@{{ comment.actor.domain }}</small>
+                        <small v-else>@{{ comment.actor.preferredUsername }}</small>
                         <a class="comment-link has-text-grey" :href="commentId">
                             <small>{{ timeago(new Date(comment.updatedAt)) }}</small>
                         </a>
@@ -202,7 +203,7 @@ export default class Comment extends Vue {
 
   timeago(dateTime): String {
     if (this.timeAgoInstance != null) {
-            // @ts-ignore
+      // @ts-ignore
       return this.timeAgoInstance.format(dateTime);
     }
     return '';
@@ -213,7 +214,7 @@ export default class Comment extends Vue {
   }
 
   get commentFromOrganizer(): boolean {
-    return this.event.organizerActor !== undefined && this.comment.actor.id === this.event.organizerActor.id;
+    return this.event.organizerActor !== undefined && this.comment.actor && this.comment.actor.id === this.event.organizerActor.id;
   }
 
   get commentId(): String {
@@ -230,6 +231,7 @@ export default class Comment extends Vue {
         title: this.$t('Report this comment'),
         comment: this.comment,
         onConfirm: this.reportComment,
+        outsideDomain: this.comment.actor.domain,
       },
     });
   }
@@ -244,6 +246,7 @@ export default class Comment extends Vue {
           reportedId: this.comment.actor.id,
           commentsIds: [this.comment.id],
           content,
+          forward,
         },
       });
       this.$buefy.notification.open({

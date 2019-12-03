@@ -28,13 +28,22 @@ defmodule MobilizonWeb.PageController do
 
   defp render_or_error(conn, check_fn, status, object_type, object) do
     if check_fn.(status, object) do
-      render(conn, object_type, object: object)
+      case object do
+        %Mobilizon.Tombstone{} ->
+          conn
+          |> put_status(:gone)
+          |> render(object_type, object: object)
+
+        _ ->
+          render(conn, object_type, object: object)
+      end
     else
       {:error, :not_found}
     end
   end
 
   defp is_visible?(%{visibility: v}), do: v in [:public, :unlisted]
+  defp is_visible?(%Mobilizon.Tombstone{}), do: true
 
   defp ok_status?(status), do: status in [:ok, :commit]
   defp ok_status?(status, _), do: ok_status?(status)

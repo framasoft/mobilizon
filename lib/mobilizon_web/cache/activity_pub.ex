@@ -3,10 +3,12 @@ defmodule MobilizonWeb.Cache.ActivityPub do
   The ActivityPub related functions.
   """
 
-  alias Mobilizon.{Actors, Events, Service}
+  alias Mobilizon.{Actors, Events, Service, Tombstone}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.{Comment, Event}
   alias Service.ActivityPub
+  alias MobilizonWeb.Router.Helpers, as: Routes
+  alias MobilizonWeb.Endpoint
 
   @cache :activity_pub
 
@@ -39,7 +41,12 @@ defmodule MobilizonWeb.Cache.ActivityPub do
           {:commit, event}
 
         nil ->
-          {:ignore, nil}
+          with url <- Routes.page_url(Endpoint, :event, uuid),
+               %Tombstone{} = tomstone <- Tombstone.find_tombstone(url) do
+            tomstone
+          else
+            _ -> {:ignore, nil}
+          end
       end
     end)
   end

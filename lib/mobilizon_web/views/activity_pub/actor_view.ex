@@ -4,44 +4,13 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.{Activity, Utils}
+  alias Mobilizon.Service.ActivityPub.{Activity, Utils, Convertible}
 
   @private_visibility_empty_collection %{elements: [], total: 0}
 
   def render("actor.json", %{actor: actor}) do
-    public_key = Utils.pem_to_public_key_pem(actor.keys)
-
-    %{
-      "id" => actor.url,
-      "type" => to_string(actor.type),
-      "following" => actor.following_url,
-      "followers" => actor.followers_url,
-      "inbox" => actor.inbox_url,
-      "outbox" => actor.outbox_url,
-      "preferredUsername" => actor.preferred_username,
-      "name" => actor.name,
-      "summary" => actor.summary,
-      "url" => actor.url,
-      "manuallyApprovesFollowers" => actor.manually_approves_followers,
-      "publicKey" => %{
-        "id" => "#{actor.url}#main-key",
-        "owner" => actor.url,
-        "publicKeyPem" => public_key
-      },
-      # TODO : Make have actors have an uuid
-      # "uuid" => actor.uuid
-      "endpoints" => %{
-        "sharedInbox" => actor.shared_inbox_url
-      }
-      #      "icon" => %{
-      #        "type" => "Image",
-      #        "url" => User.avatar_url(actor)
-      #      },
-      #      "image" => %{
-      #        "type" => "Image",
-      #        "url" => User.banner_url(actor)
-      #      }
-    }
+    actor
+    |> Convertible.model_to_as()
     |> Map.merge(Utils.make_json_ld_header())
   end
 

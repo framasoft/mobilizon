@@ -1,10 +1,10 @@
 import Vue from 'vue';
 import VueApollo from 'vue-apollo';
-import { ApolloLink, Observable } from 'apollo-link';
+import { ApolloLink, Observable, split } from 'apollo-link';
 import { defaultDataIdFromObject, InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
 import { onError } from 'apollo-link-error';
 import { createLink } from 'apollo-absinthe-upload-link';
-import { GRAPHQL_API_ENDPOINT, GRAPHQL_API_FULL_PATH } from './api/_entrypoint';
+import { GRAPHQL_API_ENDPOINT, GRAPHQL_API_FULL_PATH, MOBILIZON_INSTANCE_HOST } from './api/_entrypoint';
 import { ApolloClient } from 'apollo-client';
 import { buildCurrentUserResolver } from '@/apollo/user';
 import { isServerError } from '@/types/apollo';
@@ -13,13 +13,18 @@ import { AUTH_ACCESS_TOKEN, AUTH_REFRESH_TOKEN } from '@/constants';
 import { logout, saveTokenData } from '@/utils/auth';
 import { SnackbarProgrammatic as Snackbar } from 'buefy';
 import { defaultError, errors, IError, refreshSuggestion } from '@/utils/errors';
+import { Socket as PhoenixSocket } from 'phoenix';
+import * as AbsintheSocket from '@absinthe/socket';
+import { createAbsintheSocketLink } from '@absinthe/socket-apollo-link';
+import { getMainDefinition } from 'apollo-utilities';
 
 // Install the vue plugin
 Vue.use(VueApollo);
 
-// Http endpoint
+// Endpoints
 const httpServer = GRAPHQL_API_ENDPOINT || 'http://localhost:4000';
 const httpEndpoint = GRAPHQL_API_FULL_PATH || `${httpServer}/api`;
+const wsEndpoint = `ws${httpServer.substring(httpServer.indexOf(':'))}/graphql_socket`;
 
 const fragmentMatcher = new IntrospectionFragmentMatcher({
   introspectionQueryResultData: {
@@ -58,10 +63,6 @@ const authMiddleware = new ApolloLink((operation, forward) => {
   if (forward) return forward(operation);
 
   return null;
-});
-
-const uploadLink = createLink({
-  uri: httpEndpoint,
 });
 
 let refreshingTokenPromise: Promise<boolean> | undefined;
@@ -126,9 +127,38 @@ const computeErrorMessage = (message) => {
   return error.suggestRefresh === false ? error.value : `${error.value}<br>${refreshSuggestion}`;
 };
 
-const link = authMiddleware
+const uploadLink = createLink({
+  uri: httpEndpoint,
+});
+
+const phoenixSocket = new PhoenixSocket(wsEndpoint, {
+  params: () => {
+    const token = localStorage.getItem(AUTH_ACCESS_TOKEN);
+    if (token) {
+      return { token };
+    }
+    return {};
+
+  },
+});
+
+const absintheSocket = AbsintheSocket.create(phoenixSocket);
+const wsLink = createAbsintheSocketLink(absintheSocket);
+
+const link = split(
+    // split based on operation type
+    ({ query }) => {
+      const definition = getMainDefinition(query);
+      return definition.kind === 'OperationDefinition' &&
+          definition.operation === 'subscription';
+    },
+    wsLink,
+    uploadLink,
+);
+
+const fullLink = authMiddleware
   .concat(errorLink)
-  .concat(uploadLink);
+  .concat(link);
 
 const cache = new InMemoryCache({
   fragmentMatcher,
@@ -143,7 +173,7 @@ const cache = new InMemoryCache({
 
 const apolloClient = new ApolloClient({
   cache,
-  link,
+  link: fullLink,
   connectToDevTools: true,
   resolvers: buildCurrentUserResolver(cache),
 });

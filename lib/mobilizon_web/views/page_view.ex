@@ -4,69 +4,34 @@ defmodule MobilizonWeb.PageView do
   """
   use MobilizonWeb, :view
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Service.ActivityPub.{Converter, Utils}
+  alias Mobilizon.Tombstone
+  alias Mobilizon.Service.ActivityPub.{Convertible, Utils}
   alias Mobilizon.Service.Metadata
   alias Mobilizon.Service.MetadataUtils
   alias Mobilizon.Service.Metadata.Instance
+  alias Mobilizon.Events.{Comment, Event}
 
-  def render("actor.activity-json", %{conn: %{assigns: %{object: actor}}}) do
-    public_key = Utils.pem_to_public_key_pem(actor.keys)
-
-    %{
-      "id" => Actor.build_url(actor.preferred_username, :page),
-      "type" => "Person",
-      "following" => Actor.build_url(actor.preferred_username, :following),
-      "followers" => Actor.build_url(actor.preferred_username, :followers),
-      "inbox" => Actor.build_url(actor.preferred_username, :inbox),
-      "outbox" => Actor.build_url(actor.preferred_username, :outbox),
-      "preferredUsername" => actor.preferred_username,
-      "name" => actor.name,
-      "summary" => actor.summary,
-      "url" => actor.url,
-      "manuallyApprovesFollowers" => actor.manually_approves_followers,
-      "publicKey" => %{
-        "id" => "#{actor.url}#main-key",
-        "owner" => actor.url,
-        "publicKeyPem" => public_key
-      },
-      # TODO : Make have actors have an uuid
-      # "uuid" => actor.uuid
-      "endpoints" => %{
-        "sharedInbox" => actor.shared_inbox_url
-      }
-      #      "icon" => %{
-      #        "type" => "Image",
-      #        "url" => User.avatar_url(actor)
-      #      },
-      #      "image" => %{
-      #        "type" => "Image",
-      #        "url" => User.banner_url(actor)
-      #      }
-    }
+  def render("actor.activity-json", %{conn: %{assigns: %{object: %Actor{} = actor}}}) do
+    actor
+    |> Convertible.model_to_as()
     |> Map.merge(Utils.make_json_ld_header())
   end
 
-  def render("event.activity-json", %{conn: %{assigns: %{object: event}}}) do
+  def render("event.activity-json", %{conn: %{assigns: %{object: %Event{} = event}}}) do
     event
-    |> Converter.Event.model_to_as()
+    |> Convertible.model_to_as()
     |> Map.merge(Utils.make_json_ld_header())
   end
 
-  def render("comment.activity-json", %{conn: %{assigns: %{object: comment}}}) do
-    comment = Converter.Comment.model_to_as(comment)
+  def render("event.activity-json", %{conn: %{assigns: %{object: %Tombstone{} = event}}}) do
+    event
+    |> Convertible.model_to_as()
+    |> Map.merge(Utils.make_json_ld_header())
+  end
 
-    %{
-      "actor" => comment["actor"],
-      "uuid" => comment["uuid"],
-      # The activity should have attributedTo, not the comment itself
-      #      "attributedTo" => comment.attributed_to,
-      "type" => "Note",
-      "id" => comment["id"],
-      "content" => comment["content"],
-      "mediaType" => "text/html"
-      # "published" => Timex.format!(comment.inserted_at, "{ISO:Extended}"),
-      # "updated" => Timex.format!(comment.updated_at, "{ISO:Extended}")
-    }
+  def render("comment.activity-json", %{conn: %{assigns: %{object: %Comment{} = comment}}}) do
+    comment
+    |> Convertible.model_to_as()
     |> Map.merge(Utils.make_json_ld_header())
   end
 
@@ -74,7 +39,9 @@ defmodule MobilizonWeb.PageView do
       when page in ["actor.html", "event.html", "comment.html"] do
     with {:ok, index_content} <- File.read(index_file_path()) do
       tags = object |> Metadata.build_tags() |> MetadataUtils.stringify_tags()
-      index_content = String.replace(index_content, "<meta name=server-injected-data>", tags)
+
+      index_content = replace_meta(index_content, tags)
+
       {:safe, index_content}
     end
   end
@@ -82,12 +49,21 @@ defmodule MobilizonWeb.PageView do
   def render("index.html", _assigns) do
     with {:ok, index_content} <- File.read(index_file_path()) do
       tags = Instance.build_tags() |> MetadataUtils.stringify_tags()
-      index_content = String.replace(index_content, "<meta name=server-injected-data>", tags)
+
+      index_content = replace_meta(index_content, tags)
+
       {:safe, index_content}
     end
   end
 
   defp index_file_path do
     Path.join(Application.app_dir(:mobilizon, "priv/static"), "index.html")
+  end
+
+  # TODO: Find why it's different in dev/prod and during tests
+  defp replace_meta(index_content, tags) do
+    index_content
+    |> String.replace("<meta name=\"server-injected-data\" />", tags)
+    |> String.replace("<meta name=server-injected-data>", tags)
   end
 end

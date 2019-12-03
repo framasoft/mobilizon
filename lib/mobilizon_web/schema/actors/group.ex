@@ -27,7 +27,6 @@ defmodule MobilizonWeb.Schema.Actors.GroupType do
     field(:local, :boolean, description: "If the actor is from this instance")
     field(:summary, :string, description: "The actor's summary")
     field(:preferred_username, :string, description: "The actor's preferred username")
-    field(:keys, :string, description: "The actors RSA Keys")
 
     field(:manually_approves_followers, :boolean,
       description: "Whether the actors manually approves followers"

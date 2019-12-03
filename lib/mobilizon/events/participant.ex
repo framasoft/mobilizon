@@ -57,6 +57,7 @@ defmodule Mobilizon.Events.Participant do
     |> cast(attrs, @attrs)
     |> ensure_url()
     |> validate_required(@required_attrs)
+    |> unique_constraint(:actor_id, name: :participants_event_id_actor_id_index)
   end
 
   # If there's a blank URL that's because we're doing the first insert

@@ -39,6 +39,21 @@ defmodule Mobilizon.Events.EventParticipantStats do
   @doc false
   @spec changeset(t, map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = event_options, attrs) do
-    cast(event_options, attrs, @attrs)
+    event_options
+    |> cast(attrs, @attrs)
+    |> validate_stats()
+  end
+
+  defp validate_stats(%Ecto.Changeset{} = changeset) do
+    changeset
+    |> validate_number(:not_approved, greater_than_or_equal_to: 0)
+    |> validate_number(:rejected, greater_than_or_equal_to: 0)
+    |> validate_number(:participant, greater_than_or_equal_to: 0)
+    |> validate_number(:moderator, greater_than_or_equal_to: 0)
+    |> validate_number(:administrator, greater_than_or_equal_to: 0)
+    |> validate_number(:creator, greater_than_or_equal_to: 0)
+
+    # TODO: Replace me with something like the following
+    # Enum.reduce(@attrs, fn key, changeset -> validate_number(changeset, key, greater_than_or_equal_to: 0) end)
   end
 end

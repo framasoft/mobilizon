@@ -19,6 +19,11 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
   alias MobilizonWeb.PageView
   alias MobilizonWeb.Router.Helpers, as: Routes
 
+  setup_all do
+    Mobilizon.Config.put([:instance, :federating], true)
+    :ok
+  end
+
   setup do
     conn = build_conn() |> put_req_header("accept", "application/activity+json")
     {:ok, conn: conn}
@@ -34,7 +39,10 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
       actor = Actors.get_actor!(actor.id)
 
-      assert json_response(conn, 200) == ActorView.render("actor.json", %{actor: actor})
+      assert json_response(conn, 200) ==
+               ActorView.render("actor.json", %{actor: actor})
+               |> Jason.encode!()
+               |> Jason.decode!()
     end
   end
 

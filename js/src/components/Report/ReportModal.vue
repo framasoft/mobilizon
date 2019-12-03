@@ -44,11 +44,8 @@
                             />
                         </div>
 
-                        <p v-if="outsideDomain">
-                            {{ $t('The content came from another server. Transfer an anonymous copy of the report?') }}
-                        </p>
-
                         <div class="control" v-if="outsideDomain">
+                            <p>{{ $t('The content came from another server. Transfer an anonymous copy of the report?') }}</p>
                             <b-switch v-model="forward">{{ $t('Transfer to {outsideDomain}', { outsideDomain }) }}</b-switch>
                         </div>
                     </div>

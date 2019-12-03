@@ -17,7 +17,10 @@ defmodule Mobilizon.Service.ActivityPub.Visibility do
   def is_public?(%{data: %{"type" => "Tombstone"}}), do: false
   def is_public?(%{data: data}), do: is_public?(data)
   def is_public?(%Activity{data: data}), do: is_public?(data)
-  def is_public?(data) when is_map(data), do: @public in (data["to"] ++ (data["cc"] || []))
+
+  def is_public?(data) when is_map(data),
+    do: @public in (Map.get(data, "to", []) ++ Map.get(data, "cc", []))
+
   def is_public?(%Comment{deleted_at: deleted_at}), do: !is_nil(deleted_at)
   def is_public?(err), do: raise(ArgumentError, message: "Invalid argument #{inspect(err)}")
 end

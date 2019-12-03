@@ -7,7 +7,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Actor do
   """
 
   alias Mobilizon.Actors.Actor, as: ActorModel
-  alias Mobilizon.Service.ActivityPub.{Converter, Convertible}
+  alias Mobilizon.Service.ActivityPub.{Converter, Convertible, Utils}
 
   @behaviour Converter
 
@@ -22,33 +22,40 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Actor do
   """
   @impl Converter
   @spec as_to_model_data(map) :: map
-  def as_to_model_data(object) do
+  def as_to_model_data(data) do
     avatar =
-      object["icon"]["url"] &&
+      data["icon"]["url"] &&
         %{
-          "name" => object["icon"]["name"] || "avatar",
-          "url" => object["icon"]["url"]
+          "name" => data["icon"]["name"] || "avatar",
+          "url" => MobilizonWeb.MediaProxy.url(data["icon"]["url"])
         }
 
     banner =
-      object["image"]["url"] &&
+      data["image"]["url"] &&
         %{
-          "name" => object["image"]["name"] || "banner",
-          "url" => object["image"]["url"]
+          "name" => data["image"]["name"] || "banner",
+          "url" => MobilizonWeb.MediaProxy.url(data["image"]["url"])
         }
 
-    {:ok,
-     %{
-       "type" => String.to_existing_atom(object["type"]),
-       "preferred_username" => object["preferredUsername"],
-       "summary" => object["summary"],
-       "url" => object["id"],
-       "name" => object["name"],
-       "avatar" => avatar,
-       "banner" => banner,
-       "keys" => object["publicKey"]["publicKeyPem"],
-       "manually_approves_followers" => object["manuallyApprovesFollowers"]
-     }}
+    actor_data = %{
+      url: data["id"],
+      avatar: avatar,
+      banner: banner,
+      name: data["name"],
+      preferred_username: data["preferredUsername"],
+      summary: data["summary"],
+      keys: data["publicKey"]["publicKeyPem"],
+      inbox_url: data["inbox"],
+      outbox_url: data["outbox"],
+      following_url: data["following"],
+      followers_url: data["followers"],
+      shared_inbox_url: data["endpoints"]["sharedInbox"],
+      domain: URI.parse(data["id"]).host,
+      manually_approves_followers: data["manuallyApprovesFollowers"],
+      type: data["type"]
+    }
+
+    {:ok, actor_data}
   end
 
   @doc """
@@ -57,18 +64,51 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Actor do
   @impl Converter
   @spec model_to_as(ActorModel.t()) :: map
   def model_to_as(%ActorModel{} = actor) do
-    %{
-      "type" => Atom.to_string(actor.type),
-      "to" => ["https://www.w3.org/ns/activitystreams#Public"],
-      "preferred_username" => actor.preferred_username,
+    actor_data = %{
+      "id" => actor.url,
+      "type" => actor.type,
+      "preferredUsername" => actor.preferred_username,
       "name" => actor.name,
       "summary" => actor.summary,
-      "following" => ActorModel.build_url(actor.preferred_username, :following),
-      "followers" => ActorModel.build_url(actor.preferred_username, :followers),
-      "inbox" => ActorModel.build_url(actor.preferred_username, :inbox),
-      "outbox" => ActorModel.build_url(actor.preferred_username, :outbox),
-      "id" => ActorModel.build_url(actor.preferred_username, :page),
-      "url" => actor.url
+      "following" => actor.following_url,
+      "followers" => actor.followers_url,
+      "inbox" => actor.inbox_url,
+      "outbox" => actor.outbox_url,
+      "url" => actor.url,
+      "endpoints" => %{
+        "sharedInbox" => actor.shared_inbox_url
+      },
+      "manuallyApprovesFollowers" => actor.manually_approves_followers,
+      "publicKey" => %{
+        "id" => "#{actor.url}#main-key",
+        "owner" => actor.url,
+        "publicKeyPem" =>
+          if(is_nil(actor.domain) and not is_nil(actor.keys),
+            do: Utils.pem_to_public_key_pem(actor.keys),
+            else: actor.keys
+          )
+      }
     }
+
+    actor_data =
+      if is_nil(actor.avatar) do
+        actor_data
+      else
+        Map.put(actor_data, "icon", %{
+          "type" => "Image",
+          "mediaType" => actor.avatar.content_type,
+          "url" => actor.avatar.url
+        })
+      end
+
+    if is_nil(actor.banner) do
+      actor_data
+    else
+      Map.put(actor_data, "image", %{
+        "type" => "Image",
+        "mediaType" => actor.banner.content_type,
+        "url" => actor.banner.url
+      })
+    end
   end
 end

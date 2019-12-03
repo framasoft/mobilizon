@@ -314,7 +314,10 @@ defmodule Mobilizon.EventsTest do
 
     setup do
       actor = insert(:actor)
-      event = insert(:event, organizer_actor: actor)
+
+      event =
+        insert(:event, organizer_actor: actor, participant_stats: %{creator: 1, participant: 1})
+
       participant = insert(:participant, actor: actor, event: event)
       {:ok, participant: participant, event: event, actor: actor}
     end
@@ -364,7 +367,8 @@ defmodule Mobilizon.EventsTest do
     test "update_participant/2 with invalid data returns error changeset", %{
       participant: participant
     } do
-      assert {:error, %Ecto.Changeset{}} = Events.update_participant(participant, @invalid_attrs)
+      assert {:error, :participant, %Ecto.Changeset{}, %{}} =
+               Events.update_participant(participant, @invalid_attrs)
     end
 
     test "delete_participant/1 deletes the participant", %{participant: participant} do

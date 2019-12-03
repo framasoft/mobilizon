@@ -18,7 +18,9 @@ export const REPORTS = gql`
                 name,
                 avatar {
                     url
-                }
+                },
+                domain,
+                type
             },
             event {
                 id,
@@ -52,7 +54,9 @@ const REPORT_FRAGMENT = gql`
             name,
             avatar {
                 url
-            }
+            },
+            domain,
+            type
         },
         event {
             id,
@@ -111,9 +115,10 @@ export const CREATE_REPORT = gql`
         $reporterId: ID!,
         $reportedId: ID!,
         $content: String,
-        $commentsIds: [ID]
+        $commentsIds: [ID],
+        $forward: Boolean
     ) {
-        createReport(eventId: $eventId, reporterId: $reporterId, reportedId: $reportedId, content: $content, commentsIds: $commentsIds) {
+        createReport(eventId: $eventId, reporterId: $reporterId, reportedId: $reportedId, content: $content, commentsIds: $commentsIds, forward: $forward) {
             id
         }
     }

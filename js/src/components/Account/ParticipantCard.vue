@@ -26,7 +26,8 @@
         </div>
         <div class="media-content">
           <span class="title" ref="title">{{ actorDisplayName }}</span><br>
-          <small class="has-text-grey">@{{ participant.actor.preferredUsername }}</small>
+          <small class="has-text-grey" v-if="participant.actor.domain">@{{ participant.actor.preferredUsername }}@{{ participant.actor.domain }}</small>
+          <small class="has-text-grey" v-else>@{{ participant.actor.preferredUsername }}</small>
         </div>
       </div>
     </div>
@@ -41,7 +42,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { IActor, IPerson, Person } from '@/types/actor';
+import { Person } from '@/types/actor';
 import { IParticipant, ParticipantRole } from '@/types/event.model';
 
 @Component

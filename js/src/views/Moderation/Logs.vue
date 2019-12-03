@@ -64,7 +64,7 @@ export default class ReportList extends Vue {
   RouteName = RouteName;
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
     .container li {
         margin: 10px auto;
     }

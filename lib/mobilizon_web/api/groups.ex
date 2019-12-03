@@ -17,7 +17,8 @@ defmodule MobilizonWeb.API.Groups do
            args |> Map.get(:preferred_username) |> HtmlSanitizeEx.strip_tags() |> String.trim(),
          {:existing_group, nil} <-
            {:existing_group, Actors.get_local_group_by_title(preferred_username)},
-         {:ok, %Activity{} = activity, %Actor{} = group} <- ActivityPub.create(:group, args, true) do
+         {:ok, %Activity{} = activity, %Actor{} = group} <-
+           ActivityPub.create(:group, args, true, %{"actor" => args.creator_actor.url}) do
       {:ok, activity, group}
     else
       {:existing_group, _} ->

@@ -16,7 +16,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component({
   beforeDestroy() {
-        // @ts-ignore
+    // @ts-ignore
     this.parentContainer.removeLayer(this);
   },
 })

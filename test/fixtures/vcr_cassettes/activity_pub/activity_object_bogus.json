@@ -1,0 +1,116 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true"
+      },
+      "request_body": "",
+      "url": "https://framapiaf.org/users/admin"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://w3id.org/security/v1\",{\"manuallyApprovesFollowers\":\"as:manuallyApprovesFollowers\",\"toot\":\"http://joinmastodon.org/ns#\",\"featured\":{\"@id\":\"toot:featured\",\"@type\":\"@id\"},\"alsoKnownAs\":{\"@id\":\"as:alsoKnownAs\",\"@type\":\"@id\"},\"movedTo\":{\"@id\":\"as:movedTo\",\"@type\":\"@id\"},\"schema\":\"http://schema.org#\",\"PropertyValue\":\"schema:PropertyValue\",\"value\":\"schema:value\",\"IdentityProof\":\"toot:IdentityProof\",\"discoverable\":\"toot:discoverable\",\"focalPoint\":{\"@container\":\"@list\",\"@id\":\"toot:focalPoint\"}}],\"id\":\"https://framapiaf.org/users/admin\",\"type\":\"Service\",\"following\":\"https://framapiaf.org/users/admin/following\",\"followers\":\"https://framapiaf.org/users/admin/followers\",\"inbox\":\"https://framapiaf.org/users/admin/inbox\",\"outbox\":\"https://framapiaf.org/users/admin/outbox\",\"featured\":\"https://framapiaf.org/users/admin/collections/featured\",\"preferredUsername\":\"admin\",\"name\":\"Administrateur\",\"summary\":\"\\u003cp\\u003eJe ne suis qu\\u0026apos;un compte inutile. Merci nous de contacter via \\u003ca href=\\\"https://contact.framasoft.org/\\\" rel=\\\"nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"\\\"\\u003econtact.framasoft.org/\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/p\\u003e\",\"url\":\"https://framapiaf.org/@admin\",\"manuallyApprovesFollowers\":false,\"discoverable\":null,\"publicKey\":{\"id\":\"https://framapiaf.org/users/admin#main-key\",\"owner\":\"https://framapiaf.org/users/admin\",\"publicKeyPem\":\"-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyHaU/AZ5dWtSxZXkPa89\\nDUQ4z+JQHGGUG/xkGuq0v8P6qJfQqtHPBO5vH0IQJqluXWQS96gqTwjZnYevcpNA\\nveYv0K25DWszx5Ehz6JX2/sSvu2rNUcQ3YZvSjdo/Yy1u5Fuc5lLmvw8uFzXYekD\\nWovTMOnp4mIKpVEm/G/v4w8jvFEKw88h743vwaEIim88GEQItMxzGAV6zSqV1DWO\\nLxtoRsinslJYfAG46ex4YUATFveWvOUeWk5W1sEa5f3c0moaTmBM/PAAo8vLxhlw\\nJhsHihsCH+BcXKVMjW8OCqYYqISMxEifUBX63HcJt78ELHpOuc1c2eG59PomtTjQ\\nywIDAQAB\\n-----END PUBLIC KEY-----\\n\"},\"tag\":[],\"attachment\":[{\"type\":\"PropertyValue\",\"name\":\"News\",\"value\":\"\\u003cspan class=\\\"h-card\\\"\\u003e\\u003ca href=\\\"https://framapiaf.org/@Framasoft\\\" class=\\\"u-url mention\\\"\\u003e@\\u003cspan\\u003eFramasoft\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/span\\u003e\"},{\"type\":\"PropertyValue\",\"name\":\"Support\",\"value\":\"\\u003ca href=\\\"https://contact.framasoft.org/\\\" rel=\\\"me nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"\\\"\\u003econtact.framasoft.org/\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e\\u003c/span\\u003e\\u003c/a\\u003e\"},{\"type\":\"PropertyValue\",\"name\":\"Soutenir\",\"value\":\"\\u003ca href=\\\"https://soutenir.framasoft.org/\\\" rel=\\\"me nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"\\\"\\u003esoutenir.framasoft.org/\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e\\u003c/span\\u003e\\u003c/a\\u003e\"},{\"type\":\"PropertyValue\",\"name\":\"Site\",\"value\":\"\\u003ca href=\\\"https://framasoft.org/\\\" rel=\\\"me nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"\\\"\\u003eframasoft.org/\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e\\u003c/span\\u003e\\u003c/a\\u003e\"}],\"endpoints\":{\"sharedInbox\":\"https://framapiaf.org/inbox\"},\"icon\":{\"type\":\"Image\",\"mediaType\":\"image/jpeg\",\"url\":\"https://framapiaf.s3.framasoft.org/framapiaf/accounts/avatars/000/000/002/original/85fbb27ad5e3cf71.jpg\"},\"image\":{\"type\":\"Image\",\"mediaType\":\"image/jpeg\",\"url\":\"https://framapiaf.s3.framasoft.org/framapiaf/accounts/headers/000/000/002/original/6aba75f1ab1ab6de.jpg\"}}",
+      "headers": {
+        "Date": "Sun, 15 Dec 2019 20:24:11 GMT",
+        "Content-Type": "application/activity+json; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Server": "Mastodon",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Vary": "Accept, Accept-Encoding, Origin",
+        "Cache-Control": "max-age=180, public",
+        "ETag": "W/\"773e09a2a60446fe74d997858877f7e0\"",
+        "Set-Cookie": "_mastodon_session=XoZzbDOQtPbBNtbz7WoWZ4ZHTySKGQUeb1Hl3%2BxqZV%2FvxVEOMGMjKArqNF%2F78EJaF5TS%2FKcHPhwonEfsI5cz--jZG8CkvbBBmaJMDx--WRqeW2u0rVAHoNKcMNfLYA%3D%3D; path=/; secure; HttpOnly",
+        "X-Request-Id": "2a29bc1c-9dc8-4e36-b6d5-106c2f649959",
+        "X-Runtime": "0.012324",
+        "X-Cached": "MISS",
+        "Strict-Transport-Security": "max-age=31536000"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json",
+        "Date": "Sun, 15 Dec 2019 20:24:11 GMT",
+        "Signature": "keyId=\"http://mobilizon.test/relay#main-key\",algorithm=\"rsa-sha256\",headers=\"(request-target) date host\",signature=\"C6AGJG5xDdDBYfoAgBaL0iG0/Ru9qpvUij5vvONxJJpcjwc4LIePLaCid4LWK4aiY/z67M+LgopmD7xRn2Qht+Cyu3Kh38t5dS8EI0RWR4JesRyBauCZpzbRJG2w5SES4BPt53+5AuvPZZ81BBgPYF4A7ITBn550NLocesuFFsJJZHwfNqRCUm4cmx57/tnLBr0S4w/VDn6iQ3TBSlXdUJ7N9Za9y7p+vfkFT2PqSXu55HdWLX5NvaiVl2m7JKBCxCrB3i4Lr/Og5bsKhi6LiUoc7Lp0LX1tNftp6NOGgBIo0982NQ0v2jGsMj+eGU2stDl6bz3Z9SRnyyxirz+fag==\""
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true",
+        "recv_timeout": 20000,
+        "connect_timeout": 10000
+      },
+      "request_body": "",
+      "url": "https://info.pleroma.site/activity.json"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\n        \"@context\": \"https://www.w3.org/ns/activitystreams\",\n        \"actor\": \"https://queer.hacktivis.me/users/lanodan\",\n        \"announcement_count\": 3,\n        \"announcements\": [\n            \"https://io.markegli.com/users/mark\",\n            \"https://voluntaryism.club/users/sevvie\",\n            \"https://pleroma.pla1.net/users/pla\"\n        ],\n        \"attachment\": [],\n        \"attributedTo\": \"https://queer.hacktivis.me/users/lanodan\",\n        \"content\": \"<p>this post was not actually written by Haelwenn</p>\",\n        \"id\": \"https://info.pleroma.site/activity.json\",\n        \"published\": \"2018-09-01T22:15:00Z\",\n        \"tag\": [],\n        \"to\": [\n            \"https://www.w3.org/ns/activitystreams#Public\"\n        ],\n        \"type\": \"Note\"\n}\n",
+      "headers": {
+        "Server": "nginx",
+        "Date": "Sun, 15 Dec 2019 20:24:11 GMT",
+        "Content-Type": "application/json",
+        "Content-Length": "750",
+        "Last-Modified": "Sat, 01 Sep 2018 22:56:24 GMT",
+        "Connection": "keep-alive",
+        "ETag": "\"5b8b1918-2ee\"",
+        "Accept-Ranges": "bytes"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true"
+      },
+      "request_body": "",
+      "url": "https://queer.hacktivis.me/users/lanodan"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://queer.hacktivis.me/schemas/litepub-0.1.jsonld\",{\"@language\":\"und\"}],\"attachment\":[],\"discoverable\":false,\"endpoints\":{\"oauthAuthorizationEndpoint\":\"https://queer.hacktivis.me/oauth/authorize\",\"oauthRegistrationEndpoint\":\"https://queer.hacktivis.me/api/v1/apps\",\"oauthTokenEndpoint\":\"https://queer.hacktivis.me/oauth/token\",\"sharedInbox\":\"https://queer.hacktivis.me/inbox\",\"uploadMedia\":\"https://queer.hacktivis.me/api/ap/upload_media\"},\"followers\":\"https://queer.hacktivis.me/users/lanodan/followers\",\"following\":\"https://queer.hacktivis.me/users/lanodan/following\",\"icon\":{\"type\":\"Image\",\"url\":\"https://queer.hacktivis.me/media/c8e81887-7d81-4cdc-91b3-c624ea79e6c9/425f089961270eff91b66d45f8faeeb12a725a5f87a6a52bfc54c43bd89f5fe9.png\"},\"id\":\"https://queer.hacktivis.me/users/lanodan\",\"image\":{\"type\":\"Image\",\"url\":\"https://queer.hacktivis.me/media/37b6ce56-8c24-4e64-bd70-a76e84ab0c69/53a48a3a49ed5e5637a84e4f3663df17f8d764244bbc1027ba03cfc446e8b7bd.jpg\"},\"inbox\":\"https://queer.hacktivis.me/users/lanodan/inbox\",\"manuallyApprovesFollowers\":true,\"name\":\"Haelwenn /ɛlwən/ 🐺\",\"outbox\":\"https://queer.hacktivis.me/users/lanodan/outbox\",\"preferredUsername\":\"lanodan\",\"publicKey\":{\"id\":\"https://queer.hacktivis.me/users/lanodan#main-key\",\"owner\":\"https://queer.hacktivis.me/users/lanodan\",\"publicKeyPem\":\"-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsWOgdjSMc010qvxC3njI\\nXJlFWMJ5gJ8QXCW/PajYdsHPM6d+jxBNJ6zp9/tIRa2m7bWHTSkuHQ7QthOpt6vu\\n+dAWpKRLS607SPLItn/qUcyXvgN+H8shfyhMxvkVs9jXdtlBsLUVE7UNpN0dxzqe\\nI79QWbf7o4amgaIWGRYB+OYMnIxKt+GzIkivZdSVSYjfxNnBYkMCeUxm5EpPIxKS\\nP5bBHAVRRambD5NUmyKILuC60/rYuc/C+vmgpY2HCWFS2q6o34dPr9enwL6t4b3m\\nS1t/EJHk9rGaaDqSGkDEfyQI83/7SDebWKuETMKKFLZi1vMgQIFuOYCIhN6bIiZm\\npQIDAQAB\\n-----END PUBLIC KEY-----\\n\\n\"},\"summary\":\"---<br>Website: <a href=\\\"https://hacktivis.me/\\\">https://hacktivis.me/</a><br>Pronouns: she/fae, elle/iel<br>Lang: en, fr, (LSF), ...<br>```<br>🦊🦄⚧🂡ⓥ :anarchy: 👿🐧 :gentoo:<br>Pleroma dev (backend, mastofe)<br><br>banner from: <a href=\\\"https://soc.flyingcube.tech/objects/56f79be2-9013-4559-9826-f7dc392417db\\\">https://soc.flyingcube.tech/objects/56f79be2-9013-4559-9826-f7dc392417db</a><br>Federation-bots: <a class='hashtag' data-tag='nobot' href='https://queer.hacktivis.me/tag/nobot' rel='tag'>#nobot</a>\",\"tag\":[{\"icon\":{\"type\":\"Image\",\"url\":\"https://queer.hacktivis.me/emoji/custom/symbols/anarchy.png\"},\"name\":\":anarchy:\",\"type\":\"Emoji\"},{\"icon\":{\"type\":\"Image\",\"url\":\"https://queer.hacktivis.me/emoji/custom/gentoo.png\"},\"name\":\":gentoo:\",\"type\":\"Emoji\"}],\"type\":\"Person\",\"url\":\"https://queer.hacktivis.me/users/lanodan\"}",
+      "headers": {
+        "Server": "nginx/1.16.1",
+        "Date": "Sun, 15 Dec 2019 20:24:12 GMT",
+        "Content-Type": "application/activity+json; charset=utf-8",
+        "Content-Length": "2693",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=20",
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "Link,X-RateLimit-Reset,X-RateLimit-Limit,X-RateLimit-Remaining,X-Request-Id,Idempotency-Key",
+        "cache-control": "max-age=0, private, must-revalidate",
+        "content-security-policy": "default-src 'none'; base-uri 'self'; frame-ancestors 'none'; img-src 'self' data: https:; media-src 'self' https:; style-src 'self' 'unsafe-inline'; font-src 'self'; manifest-src 'self'; connect-src 'self' https://queer.hacktivis.me wss://queer.hacktivis.me; script-src 'self'; upgrade-insecure-requests;",
+        "expect-ct": "enforce, max-age=2592000",
+        "referrer-policy": "no-referrer",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-download-options": "noopen",
+        "x-frame-options": "DENY",
+        "x-permitted-cross-domain-policies": "none",
+        "x-request-id": "FeClJfdJwAn7WY0ABtmh",
+        "x-xss-protection": "1; mode=block"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

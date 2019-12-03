@@ -12,6 +12,8 @@ defmodule Mobilizon.Actors do
   alias Mobilizon.{Crypto, Events}
   alias Mobilizon.Media.File
   alias Mobilizon.Storage.{Page, Repo}
+  alias Mobilizon.Service.Workers.BackgroundWorker
+  alias Mobilizon.Service.ActivityPub
 
   require Logger
 
@@ -47,6 +49,7 @@ defmodule Mobilizon.Actors do
 
   @public_visibility [:public, :unlisted]
   @administrator_roles [:creator, :administrator]
+  @actor_preloads [:user, :organized_events, :comments]
 
   @doc """
   Gets a single actor.
@@ -224,16 +227,24 @@ defmodule Mobilizon.Actors do
     end
   end
 
+  def delete_actor(%Actor{} = actor) do
+    BackgroundWorker.enqueue("delete_actor", %{"actor_id" => actor.id})
+  end
+
   @doc """
   Deletes an actor.
   """
-  @spec delete_actor(Actor.t()) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
-  def delete_actor(%Actor{domain: nil} = actor) do
+  @spec perform(atom(), Actor.t()) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
+  def perform(:delete_actor, %Actor{} = actor) do
+    actor = Repo.preload(actor, @actor_preloads)
+
     transaction =
       Multi.new()
-      |> Multi.delete(:actor, actor)
-      |> Multi.run(:remove_banner, fn _, %{actor: %Actor{}} -> remove_banner(actor) end)
-      |> Multi.run(:remove_avatar, fn _, %{actor: %Actor{}} -> remove_avatar(actor) end)
+      |> Multi.run(:delete_organized_events, fn _, _ -> delete_actor_organized_events(actor) end)
+      |> Multi.run(:empty_comments, fn _, _ -> delete_actor_empty_comments(actor) end)
+      |> Multi.run(:remove_banner, fn _, _ -> remove_banner(actor) end)
+      |> Multi.run(:remove_avatar, fn _, _ -> remove_avatar(actor) end)
+      |> Multi.update(:actor, Actor.delete_changeset(actor))
       |> Repo.transaction()
 
     case transaction do
@@ -244,8 +255,6 @@ defmodule Mobilizon.Actors do
         {:error, error}
     end
   end
-
-  def delete_actor(%Actor{} = actor), do: Repo.delete(actor)
 
   @doc """
   Returns the list of actors.
@@ -486,9 +495,9 @@ defmodule Mobilizon.Actors do
     |> Repo.insert()
   end
 
-  @spec get_or_create_actor_by_url(String.t(), String.t()) ::
+  @spec get_or_create_instance_actor_by_url(String.t(), String.t()) ::
           {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
-  def get_or_create_actor_by_url(url, preferred_username \\ "relay") do
+  def get_or_create_instance_actor_by_url(url, preferred_username \\ "relay") do
     case get_actor_by_url(url) do
       {:ok, %Actor{} = actor} ->
         {:ok, actor}
@@ -571,9 +580,12 @@ defmodule Mobilizon.Actors do
   """
   @spec update_follower(Follower.t(), map) :: {:ok, Follower.t()} | {:error, Ecto.Changeset.t()}
   def update_follower(%Follower{} = follower, attrs) do
-    follower
-    |> Follower.changeset(attrs)
-    |> Repo.update()
+    with {:ok, %Follower{} = follower} <-
+           follower
+           |> Follower.changeset(attrs)
+           |> Repo.update() do
+      {:ok, Repo.preload(follower, [:actor, :target_actor])}
+    end
   end
 
   @doc """
@@ -597,10 +609,10 @@ defmodule Mobilizon.Actors do
   Returns the list of followers for an actor.
   If actor A and C both follow actor B, actor B's followers are A and C.
   """
-  @spec list_followers_for_actor(Actor.t()) :: [Follower.t()]
-  def list_followers_for_actor(%Actor{id: actor_id}) do
+  @spec list_followers_actors_for_actor(Actor.t()) :: [Actor.t()]
+  def list_followers_actors_for_actor(%Actor{id: actor_id}) do
     actor_id
-    |> followers_for_actor_query()
+    |> follower_actors_for_actor_query()
     |> Repo.all()
   end
 
@@ -610,9 +622,19 @@ defmodule Mobilizon.Actors do
   @spec list_external_followers_for_actor(Actor.t()) :: [Follower.t()]
   def list_external_followers_for_actor(%Actor{id: actor_id}) do
     actor_id
-    |> followers_for_actor_query()
-    |> filter_external()
+    |> list_external_follower_actors_for_actor_query()
     |> Repo.all()
+  end
+
+  @doc """
+  Returns the paginated list of external followers for an actor.
+  """
+  @spec list_external_followers_for_actor_paginated(Actor.t(), integer | nil, integer | nil) ::
+          Page.t()
+  def list_external_followers_for_actor_paginated(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
+    actor_id
+    |> list_external_followers_for_actor_query()
+    |> Page.build_page(page, limit)
   end
 
   @doc """
@@ -621,7 +643,7 @@ defmodule Mobilizon.Actors do
   @spec build_followers_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t()
   def build_followers_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     actor_id
-    |> followers_for_actor_query()
+    |> follower_actors_for_actor_query()
     |> Page.build_page(page, limit)
   end
 
@@ -632,8 +654,23 @@ defmodule Mobilizon.Actors do
   @spec list_followings_for_actor(Actor.t()) :: [Follower.t()]
   def list_followings_for_actor(%Actor{id: actor_id}) do
     actor_id
-    |> followings_for_actor_query()
+    |> followings_actors_for_actor_query()
     |> Repo.all()
+  end
+
+  @doc """
+  Returns the list of external followings for an actor.
+  """
+  @spec list_external_followings_for_actor_paginated(Actor.t(), integer | nil, integer | nil) ::
+          Page.t()
+  def list_external_followings_for_actor_paginated(
+        %Actor{id: actor_id},
+        page \\ nil,
+        limit \\ nil
+      ) do
+    actor_id
+    |> list_external_followings_for_actor_query()
+    |> Page.build_page(page, limit)
   end
 
   @doc """
@@ -642,7 +679,7 @@ defmodule Mobilizon.Actors do
   @spec build_followings_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t()
   def build_followings_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     actor_id
-    |> followings_for_actor_query()
+    |> followings_actors_for_actor_query()
     |> Page.build_page(page, limit)
   end
 
@@ -747,7 +784,7 @@ defmodule Mobilizon.Actors do
   defp actor_with_preload_query(actor_id) do
     from(
       a in Actor,
-      where: a.id == ^actor_id,
+      where: a.id == ^actor_id and not a.suspended,
       preload: [:organized_events, :followers, :followings]
     )
   end
@@ -885,12 +922,13 @@ defmodule Mobilizon.Actors do
   defp follower_by_followed_and_following_query(followed_id, follower_id) do
     from(
       f in Follower,
-      where: f.target_actor_id == ^followed_id and f.actor_id == ^follower_id
+      where: f.target_actor_id == ^followed_id and f.actor_id == ^follower_id,
+      preload: [:actor, :target_actor]
     )
   end
 
-  @spec followers_for_actor_query(integer | String.t()) :: Ecto.Query.t()
-  defp followers_for_actor_query(actor_id) do
+  @spec follower_actors_for_actor_query(integer | String.t()) :: Ecto.Query.t()
+  defp follower_actors_for_actor_query(actor_id) do
     from(
       a in Actor,
       join: f in Follower,
@@ -899,14 +937,56 @@ defmodule Mobilizon.Actors do
     )
   end
 
-  @spec followings_for_actor_query(integer | String.t()) :: Ecto.Query.t()
-  defp followings_for_actor_query(actor_id) do
+  @spec follower_for_actor_query(integer | String.t()) :: Ecto.Query.t()
+  defp follower_for_actor_query(actor_id) do
+    from(
+      f in Follower,
+      join: a in Actor,
+      on: a.id == f.actor_id,
+      where: f.target_actor_id == ^actor_id
+    )
+  end
+
+  @spec followings_actors_for_actor_query(integer | String.t()) :: Ecto.Query.t()
+  defp followings_actors_for_actor_query(actor_id) do
     from(
       a in Actor,
       join: f in Follower,
       on: a.id == f.target_actor_id,
       where: f.actor_id == ^actor_id
     )
+  end
+
+  @spec followings_for_actor_query(integer | String.t()) :: Ecto.Query.t()
+  defp followings_for_actor_query(actor_id) do
+    from(
+      f in Follower,
+      join: a in Actor,
+      on: a.id == f.target_actor_id,
+      where: f.actor_id == ^actor_id
+    )
+  end
+
+  @spec list_external_follower_actors_for_actor_query(integer) :: Ecto.Query.t()
+  defp list_external_follower_actors_for_actor_query(actor_id) do
+    actor_id
+    |> follower_actors_for_actor_query()
+    |> filter_external()
+  end
+
+  @spec list_external_followers_for_actor_query(integer) :: Ecto.Query.t()
+  defp list_external_followers_for_actor_query(actor_id) do
+    actor_id
+    |> follower_for_actor_query()
+    |> filter_follower_actors_external()
+  end
+
+  @spec list_external_followings_for_actor_query(integer) :: Ecto.Query.t()
+  defp list_external_followings_for_actor_query(actor_id) do
+    actor_id
+    |> followings_for_actor_query()
+    |> filter_follower_actors_external()
+    |> order_by(desc: :updated_at)
   end
 
   @spec filter_local(Ecto.Query.t()) :: Ecto.Query.t()
@@ -919,8 +999,16 @@ defmodule Mobilizon.Actors do
     from(a in query, where: not is_nil(a.domain))
   end
 
+  @spec filter_follower_actors_external(Ecto.Query.t()) :: Ecto.Query.t()
+  defp filter_follower_actors_external(query) do
+    query
+    |> where([_f, a], not is_nil(a.domain))
+    |> preload([f, a], [:target_actor, :actor])
+  end
+
   @spec filter_by_type(Ecto.Query.t(), ActorType.t()) :: Ecto.Query.t()
-  defp filter_by_type(query, type) when type in [:Person, :Group] do
+  defp filter_by_type(query, type)
+       when type in [:Person, :Group, :Application, :Service, :Organisation] do
     from(a in query, where: a.type == ^type)
   end
 
@@ -943,4 +1031,36 @@ defmodule Mobilizon.Actors do
   @spec preload_followers(Actor.t(), boolean) :: Actor.t()
   defp preload_followers(actor, true), do: Repo.preload(actor, [:followers])
   defp preload_followers(actor, false), do: actor
+
+  defp delete_actor_organized_events(%Actor{organized_events: organized_events}) do
+    res =
+      Enum.map(organized_events, fn event ->
+        event =
+          Repo.preload(event, [:organizer_actor, :participants, :picture, :mentions, :comments])
+
+        ActivityPub.delete(event, false)
+      end)
+
+    if Enum.all?(res, fn {status, _, _} -> status == :ok end) do
+      {:ok, res}
+    else
+      {:error, res}
+    end
+  end
+
+  defp delete_actor_empty_comments(%Actor{comments: comments}) do
+    res =
+      Enum.map(comments, fn comment ->
+        comment =
+          Repo.preload(comment, [:actor, :mentions, :event, :in_reply_to_comment, :origin_comment])
+
+        ActivityPub.delete(comment, false)
+      end)
+
+    if Enum.all?(res, fn {status, _, _} -> status == :ok end) do
+      {:ok, res}
+    else
+      {:error, res}
+    end
+  end
 end

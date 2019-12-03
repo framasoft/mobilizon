@@ -30,7 +30,7 @@ defmodule Mix.Tasks.Mobilizon.Relay do
     Common.start_mobilizon()
 
     case Relay.follow(target) do
-      {:ok, _activity} ->
+      {:ok, _activity, _follow} ->
         # put this task to sleep to allow the genserver to push out the messages
         :timer.sleep(500)
 
@@ -43,7 +43,7 @@ defmodule Mix.Tasks.Mobilizon.Relay do
     Common.start_mobilizon()
 
     case Relay.unfollow(target) do
-      {:ok, _activity} ->
+      {:ok, _activity, _follow} ->
         # put this task to sleep to allow the genserver to push out the messages
         :timer.sleep(500)
 

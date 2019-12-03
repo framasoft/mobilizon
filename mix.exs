@@ -60,6 +60,7 @@ defmodule Mobilizon.Mixfile do
       {:cowboy, "~> 2.6"},
       {:guardian, "~> 2.0"},
       {:guardian_db, "~> 2.0.2"},
+      {:guardian_phoenix, "~> 2.0"},
       {:argon2_elixir, "~> 2.0"},
       {:cors_plug, "~> 2.0"},
       {:ecto_autoslug_field, "~> 2.0"},

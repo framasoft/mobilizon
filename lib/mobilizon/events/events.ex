@@ -97,6 +97,7 @@ defmodule Mobilizon.Events do
 
   @comment_preloads [
     :actor,
+    :event,
     :attributed_to,
     :in_reply_to_comment,
     :origin_comment,
@@ -722,6 +723,13 @@ defmodule Mobilizon.Events do
     |> Repo.all()
   end
 
+  @spec list_actors_participants_for_event(String.t()) :: [Actor.t()]
+  def list_actors_participants_for_event(id) do
+    id
+    |> list_participant_actors_for_event_query
+    |> Repo.all()
+  end
+
   @doc """
   Returns the list of participations for an actor.
 
@@ -864,30 +872,15 @@ defmodule Mobilizon.Events do
            |> Multi.run(:update_event_participation_stats, fn _repo,
                                                               %{
                                                                 participant:
-                                                                  %Participant{
-                                                                    role: role,
-                                                                    event_id: event_id
-                                                                  } = _participant
+                                                                  %Participant{role: new_role} =
+                                                                    participant
                                                               } ->
-             with {:update_event_participation_stats, true} <-
-                    {:update_event_participation_stats, update_event_participation_stats},
-                  {:ok, %Event{} = event} <- get_event(event_id),
-                  %EventParticipantStats{} = participant_stats <-
-                    Map.get(event, :participant_stats),
-                  %EventParticipantStats{} = participant_stats <-
-                    Map.update(participant_stats, role, 0, &(&1 + 1)),
-                  {:ok, %Event{} = event} <-
-                    event
-                    |> Event.update_changeset(%{
-                      participant_stats: Map.from_struct(participant_stats)
-                    })
-                    |> Repo.update() do
-               {:ok, event}
-             else
-               {:update_event_participation_stats, false} -> {:ok, nil}
-               {:error, :event_not_found} -> {:error, :event_not_found}
-               err -> {:error, err}
-             end
+             update_participant_stats(
+               participant,
+               nil,
+               new_role,
+               update_event_participation_stats
+             )
            end)
            |> Repo.transaction() do
       {:ok, Repo.preload(participant, [:event, :actor])}
@@ -899,10 +892,21 @@ defmodule Mobilizon.Events do
   """
   @spec update_participant(Participant.t(), map) ::
           {:ok, Participant.t()} | {:error, Changeset.t()}
-  def update_participant(%Participant{} = participant, attrs) do
-    participant
-    |> Participant.changeset(attrs)
-    |> Repo.update()
+  def update_participant(%Participant{role: old_role} = participant, attrs) do
+    with {:ok, %{participant: %Participant{} = participant}} <-
+           Multi.new()
+           |> Multi.update(:participant, Participant.changeset(participant, attrs))
+           |> Multi.run(:update_event_participation_stats, fn _repo,
+                                                              %{
+                                                                participant:
+                                                                  %Participant{role: new_role} =
+                                                                    participant
+                                                              } ->
+             update_participant_stats(participant, old_role, new_role)
+           end)
+           |> Repo.transaction() do
+      {:ok, Repo.preload(participant, [:event, :actor])}
+    end
   end
 
   @doc """
@@ -910,7 +914,71 @@ defmodule Mobilizon.Events do
   """
   @spec delete_participant(Participant.t()) ::
           {:ok, Participant.t()} | {:error, Changeset.t()}
-  def delete_participant(%Participant{} = participant), do: Repo.delete(participant)
+  def delete_participant(%Participant{role: old_role} = participant) do
+    with {:ok, %{participant: %Participant{} = participant}} <-
+           Multi.new()
+           |> Multi.delete(:participant, participant)
+           |> Multi.run(:update_event_participation_stats, fn _repo,
+                                                              %{
+                                                                participant:
+                                                                  %Participant{} = participant
+                                                              } ->
+             update_participant_stats(participant, old_role, nil)
+           end)
+           |> Repo.transaction() do
+      {:ok, participant}
+    end
+  end
+
+  defp update_participant_stats(
+         %Participant{
+           event_id: event_id
+         } = _participant,
+         old_role,
+         new_role,
+         update_event_participation_stats \\ true
+       ) do
+    with {:update_event_participation_stats, true} <-
+           {:update_event_participation_stats, update_event_participation_stats},
+         {:ok, %Event{} = event} <- get_event(event_id),
+         %EventParticipantStats{} = participant_stats <-
+           Map.get(event, :participant_stats),
+         %EventParticipantStats{} = participant_stats <-
+           do_update_participant_stats(participant_stats, old_role, new_role),
+         {:ok, %Event{} = event} <-
+           event
+           |> Event.update_changeset(%{
+             participant_stats: Map.from_struct(participant_stats)
+           })
+           |> Repo.update() do
+      {:ok, event}
+    else
+      {:update_event_participation_stats, false} ->
+        {:ok, nil}
+
+      {:error, :event_not_found} ->
+        {:error, :event_not_found}
+
+      err ->
+        {:error, err}
+    end
+  end
+
+  defp do_update_participant_stats(participant_stats, old_role, new_role) do
+    participant_stats
+    |> decrease_participant_stats(old_role)
+    |> increase_participant_stats(new_role)
+  end
+
+  defp increase_participant_stats(participant_stats, nil), do: participant_stats
+
+  defp increase_participant_stats(participant_stats, role),
+    do: Map.update(participant_stats, role, 0, &(&1 + 1))
+
+  defp decrease_participant_stats(participant_stats, nil), do: participant_stats
+
+  defp decrease_participant_stats(participant_stats, role),
+    do: Map.update(participant_stats, role, 0, &(&1 - 1))
 
   @doc """
   Gets a single session.
@@ -1170,11 +1238,7 @@ defmodule Mobilizon.Events do
   @spec delete_comment(Comment.t()) :: {:ok, Comment.t()} | {:error, Changeset.t()}
   def delete_comment(%Comment{} = comment) do
     comment
-    |> Comment.delete_changeset(%{
-      text: nil,
-      actor_id: nil,
-      deleted_at: DateTime.utc_now()
-    })
+    |> Comment.delete_changeset()
     |> Repo.update()
   end
 
@@ -1561,14 +1625,22 @@ defmodule Mobilizon.Events do
   defp list_participants_for_event_query(event_id) do
     from(
       p in Participant,
-      join: e in Event,
-      on: p.event_id == e.id,
-      where: e.id == ^event_id,
+      where: p.event_id == ^event_id,
       preload: [:actor]
     )
   end
 
-  @spec list_participants_for_event_query(String.t()) :: Ecto.Query.t()
+  @spec list_participant_actors_for_event_query(String.t()) :: Ecto.Query.t()
+  defp list_participant_actors_for_event_query(event_id) do
+    from(
+      a in Actor,
+      join: p in Participant,
+      on: p.actor_id == a.id,
+      where: p.event_id == ^event_id
+    )
+  end
+
+  @spec list_local_emails_user_participants_for_event_query(String.t()) :: Ecto.Query.t()
   def list_local_emails_user_participants_for_event_query(event_id) do
     Participant
     |> join(:inner, [p], a in Actor, on: p.actor_id == a.id and is_nil(a.domain))

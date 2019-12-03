@@ -409,9 +409,9 @@ export default class EditorComponent extends Vue {
   }
 
   replyToComment(comment: IComment) {
-    console.log('called replyToComment', comment);
     const actorModel = new Actor(comment.actor);
     if (!this.editor) return;
+    console.log(this.editor.commands);
     this.editor.commands.mention({ id: actorModel.id, label: actorModel.usernameWithDomain().substring(1) });
     this.editor.focus();
   }

@@ -34,16 +34,14 @@ defmodule Mobilizon.Service.Formatter do
 
   def mention_handler("@" <> nickname, buffer, _opts, acc) do
     case Actors.get_actor_by_name(nickname) do
-      %Actor{preferred_username: preferred_username} = actor ->
-        link = "<span class='h-card mention'>@<span>#{preferred_username}</span></span>"
+      #      %Actor{preferred_username: preferred_username} = actor ->
+      #        link = "<span class='h-card mention'>@<span>#{preferred_username}</span></span>"
+      #
+      #        {link, %{acc | mentions: MapSet.put(acc.mentions, {"@" <> nickname, actor})}}
 
-        {link, %{acc | mentions: MapSet.put(acc.mentions, {"@" <> nickname, actor})}}
-
-      %Actor{type: :Person, id: id, url: url, preferred_username: preferred_username} = actor ->
+      %Actor{type: :Person, id: id, preferred_username: preferred_username} = actor ->
         link =
-          "<span class='h-card'><a data-user='#{id}' class='u-url mention' href='#{url}'>@<span>#{
-            preferred_username
-          }</span></a></span>"
+          "<span class='h-card mention' data-user='#{id}'>@<span>#{preferred_username}</span></span>"
 
         {link, %{acc | mentions: MapSet.put(acc.mentions, {"@" <> nickname, actor})}}
 

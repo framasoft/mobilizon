@@ -20,7 +20,7 @@ markdown_extensions:
   - pymdownx.mark
 plugins:
   - search
-  - git-revision-date
+  - git-revision-date-localized
 theme:
   name: 'material'
   custom_dir: 'docs/theme/'

@@ -22,30 +22,36 @@ defmodule MobilizonWeb.HTTPSignaturePlug do
   end
 
   def call(conn, _opts) do
-    [signature | _] = get_req_header(conn, "signature")
+    case get_req_header(conn, "signature") do
+      [signature | _] ->
+        if signature do
+          # set (request-target) header to the appropriate value
+          # we also replace the digest header with the one we computed
+          conn =
+            conn
+            |> put_req_header(
+              "(request-target)",
+              String.downcase("#{conn.method}") <> " #{conn.request_path}"
+            )
 
-    if signature do
-      # set (request-target) header to the appropriate value
-      # we also replace the digest header with the one we computed
-      conn =
-        conn
-        |> put_req_header(
-          "(request-target)",
-          String.downcase("#{conn.method}") <> " #{conn.request_path}"
-        )
+          conn =
+            if conn.assigns[:digest] do
+              conn
+              |> put_req_header("digest", conn.assigns[:digest])
+            else
+              conn
+            end
 
-      conn =
-        if conn.assigns[:digest] do
-          conn
-          |> put_req_header("digest", conn.assigns[:digest])
+          signature_valid = HTTPSignatures.validate_conn(conn)
+          Logger.debug("Is signature valid ? #{inspect(signature_valid)}")
+          assign(conn, :valid_signature, signature_valid)
         else
+          Logger.debug("No signature header!")
           conn
         end
 
-      assign(conn, :valid_signature, HTTPSignatures.validate_conn(conn))
-    else
-      Logger.debug("No signature header!")
-      conn
+      _ ->
+        conn
     end
   end
 end

@@ -17,7 +17,7 @@
       "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://litepub.github.io/litepub/context.jsonld\",{\"Hashtag\":\"as:Hashtag\",\"category\":\"sc:category\",\"sc\":\"http://schema.org#\",\"uuid\":\"sc:identifier\"}],\"endpoints\":{\"sharedInbox\":\"https://test.mobilizon.org/inbox\"},\"followers\":\"https://test.mobilizon.org/@Alicia/followers\",\"following\":\"https://test.mobilizon.org/@Alicia/following\",\"id\":\"https://test.mobilizon.org/@Alicia\",\"inbox\":\"https://test.mobilizon.org/@Alicia/inbox\",\"manuallyApprovesFollowers\":false,\"name\":\"Alicia\",\"outbox\":\"https://test.mobilizon.org/@Alicia/outbox\",\"preferredUsername\":\"Alicia\",\"publicKey\":{\"id\":\"https://test.mobilizon.org/@Alicia#main-key\",\"owner\":\"https://test.mobilizon.org/@Alicia\",\"publicKeyPem\":\"-----BEGIN RSA PUBLIC KEY-----\\nMIIBCgKCAQEAvb+emDoC6FCVpfo9Bh608sVsOK+8fun3UIqaR+jr+DZCAjp8ihwa\\nFkXaeOQ744MVS2YdzBEyIlk3sSYD9GezF+zoMbbA8FcnJ5jZhnneRR7ZrEg/cpNx\\nKFVA2ZoQrAABwpnA1iv7ciLoYZKPTDpIZ7Ue5l/k1bYcfTy0d4F3c8YAayWftSWj\\nHy3FK2kZDLdKfpRyfn5a4UI6sao4uD/rHno47g8tPPVA74BBpaTntJfbTWqiR8Vn\\nmNGAzy3+47pVeeg6Rd+AALohzBpHPW3TlJ75mqxPDXk7aDRYXihHrswf4MmKuaXc\\nXdoCu6uxQp41Xf3jVYD+AWw60tv2Oj/d4wIDAQAB\\n-----END RSA PUBLIC KEY-----\\n\\n\"},\"summary\":\"J'aime le karaté, les mangas, coder en python.\",\"type\":\"Person\",\"url\":\"https://test.mobilizon.org/@Alicia\"}",
       "headers": {
         "Server": "nginx/1.14.2",
-        "Date": "Sun, 17 Nov 2019 18:12:35 GMT",
+        "Date": "Mon, 09 Dec 2019 17:24:25 GMT",
         "Content-Type": "application/activity+json; charset=utf-8",
         "Content-Length": "1293",
         "Connection": "keep-alive",
@@ -25,9 +25,47 @@
         "access-control-allow-origin": "*",
         "access-control-expose-headers": "",
         "cache-control": "max-age=0, private, must-revalidate",
-        "x-request-id": "FdgFt2eS9ln4-7YACVtC",
+        "x-request-id": "Fd7D2yizsbKxZroABLnC",
         "Strict-Transport-Security": "max-age=63072000; includeSubDomains",
         "X-Content-Type-Options": "nosniff"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true"
+      },
+      "request_body": "",
+      "url": "https://framapiaf.org/users/tcit"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://w3id.org/security/v1\",{\"manuallyApprovesFollowers\":\"as:manuallyApprovesFollowers\",\"toot\":\"http://joinmastodon.org/ns#\",\"featured\":{\"@id\":\"toot:featured\",\"@type\":\"@id\"},\"alsoKnownAs\":{\"@id\":\"as:alsoKnownAs\",\"@type\":\"@id\"},\"movedTo\":{\"@id\":\"as:movedTo\",\"@type\":\"@id\"},\"schema\":\"http://schema.org#\",\"PropertyValue\":\"schema:PropertyValue\",\"value\":\"schema:value\",\"IdentityProof\":\"toot:IdentityProof\",\"discoverable\":\"toot:discoverable\",\"Hashtag\":\"as:Hashtag\",\"focalPoint\":{\"@container\":\"@list\",\"@id\":\"toot:focalPoint\"}}],\"id\":\"https://framapiaf.org/users/tcit\",\"type\":\"Person\",\"following\":\"https://framapiaf.org/users/tcit/following\",\"followers\":\"https://framapiaf.org/users/tcit/followers\",\"inbox\":\"https://framapiaf.org/users/tcit/inbox\",\"outbox\":\"https://framapiaf.org/users/tcit/outbox\",\"featured\":\"https://framapiaf.org/users/tcit/collections/featured\",\"preferredUsername\":\"tcit\",\"name\":\"💼 Thomas Citharel (Work)\",\"summary\":\"\\u003cp\\u003e\\u003ca href=\\\"https://framapiaf.org/tags/Framasoft\\\" class=\\\"mention hashtag\\\" rel=\\\"tag\\\"\\u003e#\\u003cspan\\u003eFramasoft\\u003c/span\\u003e\\u003c/a\\u003e \\u003ca href=\\\"https://framapiaf.org/tags/FreeSoftware\\\" class=\\\"mention hashtag\\\" rel=\\\"tag\\\"\\u003e#\\u003cspan\\u003eFreeSoftware\\u003c/span\\u003e\\u003c/a\\u003e \\u003ca href=\\\"https://framapiaf.org/tags/Activism\\\" class=\\\"mention hashtag\\\" rel=\\\"tag\\\"\\u003e#\\u003cspan\\u003eActivism\\u003c/span\\u003e\\u003c/a\\u003e \\u003ca href=\\\"https://framapiaf.org/tags/wallabag\\\" class=\\\"mention hashtag\\\" rel=\\\"tag\\\"\\u003e#\\u003cspan\\u003ewallabag\\u003c/span\\u003e\\u003c/a\\u003e \\u003ca href=\\\"https://framapiaf.org/tags/Federation\\\" class=\\\"mention hashtag\\\" rel=\\\"tag\\\"\\u003e#\\u003cspan\\u003eFederation\\u003c/span\\u003e\\u003c/a\\u003e \\u003ca href=\\\"https://framapiaf.org/tags/Nextcloud\\\" class=\\\"mention hashtag\\\" rel=\\\"tag\\\"\\u003e#\\u003cspan\\u003eNextcloud\\u003c/span\\u003e\\u003c/a\\u003e \\u003ca href=\\\"https://framapiaf.org/tags/Mobilizon\\\" class=\\\"mention hashtag\\\" rel=\\\"tag\\\"\\u003e#\\u003cspan\\u003eMobilizon\\u003c/span\\u003e\\u003c/a\\u003e \\u003ca href=\\\"https://framapiaf.org/tags/Libre\\\" class=\\\"mention hashtag\\\" rel=\\\"tag\\\"\\u003e#\\u003cspan\\u003eLibre\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/p\\u003e\",\"url\":\"https://framapiaf.org/@tcit\",\"manuallyApprovesFollowers\":false,\"discoverable\":true,\"publicKey\":{\"id\":\"https://framapiaf.org/users/tcit#main-key\",\"owner\":\"https://framapiaf.org/users/tcit\",\"publicKeyPem\":\"-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApscVCt06lrIiB5jT6Kqk\\nZZwPVoPkhR7HzoTGb8rnklZuOyP4goHIuBDnurklztkmDCaM7DbsUWAPgRVtwWFE\\nWuQrOenb7BPRe/m99pJfUTkBQU3IeuRMD/5Fc3OTIhHQOltTSiB900srCUxjysfw\\nnV5JFciCz8YAXTNJZD34qyv8DbtC/pCJM7wMd9Hl3ohxSPETa6CJUaTdlNwlYJa2\\nMOMCj6/7Iv5oAg14FT9lwqS5lF7jPHk9Z7PNc2wPmNVgIYA2n9d5k7JY8TdM8iu4\\nHLnIbJuqDd1uitlYgy1qsdsxjv4U2Y7Nytc+3ZKHtGsCzUltYL5kC7uWrFpGoWo1\\n0QIDAQAB\\n-----END PUBLIC KEY-----\\n\"},\"tag\":[{\"type\":\"Hashtag\",\"href\":\"https://framapiaf.org/explore/activism\",\"name\":\"#activism\"},{\"type\":\"Hashtag\",\"href\":\"https://framapiaf.org/explore/federation\",\"name\":\"#federation\"},{\"type\":\"Hashtag\",\"href\":\"https://framapiaf.org/explore/framasoft\",\"name\":\"#framasoft\"},{\"type\":\"Hashtag\",\"href\":\"https://framapiaf.org/explore/freesoftware\",\"name\":\"#freesoftware\"},{\"type\":\"Hashtag\",\"href\":\"https://framapiaf.org/explore/libre\",\"name\":\"#libre\"},{\"type\":\"Hashtag\",\"href\":\"https://framapiaf.org/explore/mobilizon\",\"name\":\"#mobilizon\"},{\"type\":\"Hashtag\",\"href\":\"https://framapiaf.org/explore/nextcloud\",\"name\":\"#nextcloud\"},{\"type\":\"Hashtag\",\"href\":\"https://framapiaf.org/explore/wallabag\",\"name\":\"#wallabag\"}],\"attachment\":[{\"type\":\"PropertyValue\",\"name\":\"Personal account\",\"value\":\"\\u003ca href=\\\"https://social.tcit.fr/@tcit\\\" rel=\\\"me nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"\\\"\\u003esocial.tcit.fr/@tcit\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e\\u003c/span\\u003e\\u003c/a\\u003e\"},{\"type\":\"PropertyValue\",\"name\":\"Location\",\"value\":\"Nantes, France\"},{\"type\":\"PropertyValue\",\"name\":\"Works at\",\"value\":\"\\u003cspan class=\\\"h-card\\\"\\u003e\\u003ca href=\\\"https://framapiaf.org/@Framasoft\\\" class=\\\"u-url mention\\\"\\u003e@\\u003cspan\\u003eFramasoft\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/span\\u003e\"},{\"type\":\"PropertyValue\",\"name\":\"Website\",\"value\":\"\\u003ca href=\\\"https://tcit.fr\\\" rel=\\\"me nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"\\\"\\u003etcit.fr\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e\\u003c/span\\u003e\\u003c/a\\u003e\"},{\"type\":\"IdentityProof\",\"name\":\"tcit\",\"signatureAlgorithm\":\"keybase\",\"signatureValue\":\"f66b45be42803010fe2f4d80e729b41bbe5ed056e2ff1286b7b5a5ea9c724cc70f\"}],\"endpoints\":{\"sharedInbox\":\"https://framapiaf.org/inbox\"},\"icon\":{\"type\":\"Image\",\"mediaType\":\"image/jpeg\",\"url\":\"https://framapiaf.s3.framasoft.org/framapiaf/accounts/avatars/000/000/001/original/da0cad7ffd20eb61.jpg\"},\"image\":{\"type\":\"Image\",\"mediaType\":\"image/jpeg\",\"url\":\"https://framapiaf.s3.framasoft.org/framapiaf/accounts/headers/000/000/001/original/198d058b3086d82d.jpg\"}}",
+      "headers": {
+        "Date": "Mon, 09 Dec 2019 17:24:25 GMT",
+        "Content-Type": "application/activity+json; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Server": "Mastodon",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Vary": "Accept, Accept-Encoding, Origin",
+        "Cache-Control": "max-age=180, public",
+        "ETag": "W/\"11665b12333a8c7708de7b17f58147b2\"",
+        "Set-Cookie": "_mastodon_session=l2BJyxnUWpNcZQ0u%2FaLJvf95IOy5b4PC1p1MVB7IGImBVhYbt6c0v6dcZcbtJzV%2FhPHF649GTTHeMixcyk1w--6lGoR%2F%2FAOMyZRQJi--fGHpQLKpoTLyRrgQQ7WW8g%3D%3D; path=/; secure; HttpOnly",
+        "X-Request-Id": "7d05233c-4a2d-4cf9-bcb6-6f405f6a370a",
+        "X-Runtime": "0.011783",
+        "X-Cached": "MISS",
+        "Strict-Transport-Security": "max-age=31536000"
       },
       "status_code": 200,
       "type": "ok"

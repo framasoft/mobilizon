@@ -3,23 +3,29 @@
     "request": {
       "body": "",
       "headers": {
-        "Accept": "application/activity+json"
+        "Accept": "application/json, application/activity+json, application/jrd+json"
       },
       "method": "get",
       "options": {
         "follow_redirect": "true"
       },
       "request_body": "",
-      "url": "http://localhost:8080/actor"
+      "url": "http://mobilizon1.com/.well-known/webfinger?resource=acct:relay@mobilizon1.com"
     },
     "response": {
       "binary": false,
-      "body": "{\"@context\": \"https://www.w3.org/ns/activitystreams\", \"endpoints\": {\"sharedInbox\": \"http://localhost:8080/inbox\"}, \"followers\": \"http://localhost:8080/followers\", \"following\": \"http://localhost:8080/following\", \"inbox\": \"http://localhost:8080/inbox\", \"name\": \"ActivityRelay\", \"type\": \"Application\", \"id\": \"http://localhost:8080/actor\", \"publicKey\": {\"id\": \"http://localhost:8080/actor#main-key\", \"owner\": \"http://localhost:8080/actor\", \"publicKeyPem\": \"-----BEGIN PUBLIC KEY-----\\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvs6UuAo26Sb3BiOK7xay\\nsBzqvXI3xd55JAP0pAk2faF+Vl3r67/g9MoND96JqCVMuzSJZ9oSsqa6ilJCxG3p\\nXUUfQUvqAMGW49cCvga86DG17Ennjbc4C6WIQtoW3Wm5OdDciPY2Dx+pSXdTOajB\\nFX6RHUZcgqHENrsm3jPZI138e/2OJeqdxv4/5t2xdPXEpWdPGitX9AJhrqPY4lzg\\nzQ9Y9wS2eS1CVL9vZZRf9Z4RiZvAfVb0s1iS/IUxrf4TYERRFJxEoDLD2SZVrkq6\\nvhGldCfw2ZnfTftA1ToXguC9S6nSaz+li0ajNjpK/xjZjlKvn0I078UPPe5LUlsb\\nUcYZvBx5PC5rV8yKMLlgxnTY8PqC8LEVc453wO7Ai4M5TeB0SUyEycZHSyLfvQXV\\nThEN/07u1UaJViY3U5S/SihyoCQUfJXQ3jx2SjGgM32/aJ3IwxgveLaTsaZ0VVKM\\nbawEFw6iAcWYM06hZSB6j6dkL1xh+FYGEQTPMYMqUOJi2r1cD8yMLe8dTFOmwMLt\\nBnf7xxvnjKJcv3e9zGRWIdLkQbBQn3BEuRTCUMgljipxdjbeE5/JSP1kQLB94ncb\\nb9gvYgtemJKvT8m37+HOi9MI4BMIlDwpRWjqPZmkNvkegR/1KPjJSsyAnGdd89ne\\np442vUqPyXIq0tSCDmjmU+cCAwEAAQ==\\n-----END PUBLIC KEY-----\"}, \"summary\": \"ActivityRelay bot\", \"preferredUsername\": \"relay\", \"url\": \"http://localhost:8080/actor\"}",
+      "body": "{\"aliases\":[\"http://mobilizon1.com/relay\"],\"links\":[{\"href\":\"http://mobilizon1.com/relay\",\"rel\":\"self\",\"type\":\"application/activity+json\"},{\"href\":\"http://mobilizon1.com/relay\",\"rel\":\"https://webfinger.net/rel/profile-page/\",\"type\":\"text/html\"}],\"subject\":\"acct:relay@mobilizon1.com\"}",
       "headers": {
+        "Server": "nginx/1.16.1",
+        "Date": "Fri, 13 Dec 2019 09:41:40 GMT",
         "Content-Type": "application/json; charset=utf-8",
-        "Content-Length": "1368",
-        "Date": "Thu, 01 Aug 2019 14:44:38 GMT",
-        "Server": "Python/3.7 aiohttp/3.3.2"
+        "Content-Length": "284",
+        "Connection": "keep-alive",
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "",
+        "cache-control": "max-age=0, private, must-revalidate",
+        "x-request-id": "Fd_k7OtPJ28p8-MAAAOh"
       },
       "status_code": 200,
       "type": "ok"
@@ -27,30 +33,68 @@
   },
   {
     "request": {
-      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://litepub.github.io/litepub/context.jsonld\",{\"Hashtag\":\"as:Hashtag\",\"category\":\"sc:category\",\"sc\":\"http://schema.org#\",\"uuid\":\"sc:identifier\"}],\"actor\":\"http://mobilizon.test/relay\",\"cc\":[\"https://www.w3.org/ns/activitystreams#Public\"],\"id\":\"http://mobilizon.test/follow/69/activity\",\"object\":\"http://localhost:8080/actor\",\"to\":[\"http://localhost:8080/actor\"],\"type\":\"Follow\"}",
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true"
+      },
+      "request_body": "",
+      "url": "http://mobilizon1.com/relay"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://litepub.social/litepub/context.jsonld\",{\"Hashtag\":\"as:Hashtag\",\"category\":\"sc:category\",\"ical\":\"http://www.w3.org/2002/12/cal/ical#\",\"joinMode\":{\"@id\":\"mz:joinMode\",\"@type\":\"mz:joinModeType\"},\"joinModeType\":{\"@id\":\"mz:joinModeType\",\"@type\":\"rdfs:Class\"},\"maximumAttendeeCapacity\":\"sc:maximumAttendeeCapacity\",\"mz\":\"https://joinmobilizon.org/ns#\",\"repliesModerationOption\":{\"@id\":\"mz:repliesModerationOption\",\"@type\":\"mz:repliesModerationOptionType\"},\"repliesModerationOptionType\":{\"@id\":\"mz:repliesModerationOptionType\",\"@type\":\"rdfs:Class\"},\"sc\":\"http://schema.org#\",\"uuid\":\"sc:identifier\"}],\"endpoints\":{\"sharedInbox\":\"http://mobilizon1.com/inbox\"},\"followers\":\"http://mobilizon1.com/relay/followers\",\"following\":\"http://mobilizon1.com/relay/following\",\"id\":\"http://mobilizon1.com/relay\",\"inbox\":\"http://mobilizon1.com/inbox\",\"manuallyApprovesFollowers\":false,\"name\":\"Mobilizon\",\"outbox\":null,\"preferredUsername\":\"relay\",\"publicKey\":{\"id\":\"http://mobilizon1.com/relay#main-key\",\"owner\":\"http://mobilizon1.com/relay\",\"publicKeyPem\":\"-----BEGIN RSA PUBLIC KEY-----\\nMIIBCgKCAQEAqBbeHMV5UVw0AIVch7fWDp2it5rqbGZX6yXPYnnT8LHhdvfv3DFk\\npk74BN66MzNqsthvSVznu2BEil0sEKD5rQoE9Yirhzz/LN9SlnU+u6262nBA18E3\\nkQ10RgL2jpZ9e8Om6qYqarhN7draupJXYRKEaUoEFPT09ABbwQv+4K1YadU8klJi\\nHJ6D+IIHiXNizfsxVLDKpbUKStMYeEzyfqCkWw0EQEuzc3O7Aci5lwCMkCts2993\\nsTbNyzsYAVWJNcy/An1F1P+K4iZhWEtZInQz67MBtjMWtQUhyWib0e671HdBiWM6\\nkZq74U8c6RR6eMzBLuY7YAUCG6nWg90zxwIDAQAB\\n-----END RSA PUBLIC KEY-----\\n\\n\"},\"summary\":\"Change this to a proper description of your instance\",\"type\":\"Application\",\"url\":\"http://mobilizon1.com/relay\"}",
+      "headers": {
+        "Server": "nginx/1.16.1",
+        "Date": "Fri, 13 Dec 2019 09:41:41 GMT",
+        "Content-Type": "application/activity+json",
+        "Content-Length": "1657",
+        "Connection": "keep-alive",
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "",
+        "cache-control": "max-age=0, private, must-revalidate",
+        "x-request-id": "Fd_k7PjOAWuySL0AAAPB"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://litepub.social/litepub/context.jsonld\",{\"Hashtag\":\"as:Hashtag\",\"category\":\"sc:category\",\"ical\":\"http://www.w3.org/2002/12/cal/ical#\",\"joinMode\":{\"@id\":\"mz:joinMode\",\"@type\":\"mz:joinModeType\"},\"joinModeType\":{\"@id\":\"mz:joinModeType\",\"@type\":\"rdfs:Class\"},\"maximumAttendeeCapacity\":\"sc:maximumAttendeeCapacity\",\"mz\":\"https://joinmobilizon.org/ns#\",\"repliesModerationOption\":{\"@id\":\"mz:repliesModerationOption\",\"@type\":\"mz:repliesModerationOptionType\"},\"repliesModerationOptionType\":{\"@id\":\"mz:repliesModerationOptionType\",\"@type\":\"rdfs:Class\"},\"sc\":\"http://schema.org#\",\"uuid\":\"sc:identifier\"}],\"actor\":\"http://mobilizon.test/relay\",\"cc\":[\"https://www.w3.org/ns/activitystreams#Public\"],\"id\":\"http://mobilizon.test/follow/b7791977-2a75-4715-815b-6e7125065b71\",\"object\":\"http://mobilizon1.com/relay\",\"to\":[\"http://mobilizon1.com/relay\"],\"type\":\"Follow\"}",
       "headers": {
         "Content-Type": "application/activity+json",
-        "signature": "keyId=\"http://mobilizon.test/relay#main-key\",algorithm=\"rsa-sha256\",headers=\"(request-target) content-length date digest host\",signature=\"UADlb5eaeqmujO5zGfK1mWB3WZFXU6lkUgSvEf5YyQMOIkMaudDwTfNPIa4IYh2VMLwyYSjOOXxkcBdCw4f9UnMBQBhomPNRNkJ0QBzoxILPmyxddAojH9IzwwAUL/nHSGWaO116bkCux0OcEM5AVIrCT6dENep39lOjnOGPelBB5mKMS78AxH4pU/5tTGFKmNgiRL4Q06ezPUJHKauRrMwzcqZYdjUn+U9MDBDrYyfAzqQlgBPU/fMCjwusndxaICb9c+40YE3WaXzKewIivfrMoOBzWyw6ZsgAG8/NoOH+8z9Z+hBvdjCUXeG2bvAPPclNkSJillwIA2PnMOVgpw==\"",
-        "digest": "SHA-256=Ady0Dj2bEXe201P9bThLaj1Kw/7O1cfrjN9IifEfVBg=",
-        "date": "Thu, 01 Aug 2019 14:44:38 GMT"
+        "signature": "keyId=\"http://mobilizon.test/relay#main-key\",algorithm=\"rsa-sha256\",headers=\"(request-target) content-length date digest host\",signature=\"WbyGHT/WdvdRpWek8uCGHrFSblLpg+Iq802R5S2cjNj035OKpxRmu1r8u9Qr5KGIKgZn6LHt9YmB+PNlwsubPtTSkJpE8AAUDMHLKgCrH7A5Q6x6GlARl5bHNo4QtOxkXvnEbn31xfNDNp70QqZb/emw95TnELYUlMLZds0qYutT8U4WdDhSWcVytQmKJWNZXxEj+KlMDUaxag3lGscJ/HY0F+yGNov7FHthid1Y4LTGFsp/tismnMTlba12NH/kXPHtduNsX8uxFslM2ODwqAaospTGEpXmr9CPgbNy7626qgYaR2RdB/fYlCayLI4JJIlH8gOdocGHPrWNtVEHaQ==\"",
+        "digest": "SHA-256=ibNFcsnBeCCjWZo9We60tKfbRN3el0WCMVdOxtuC1cg=",
+        "date": "Fri, 13 Dec 2019 09:41:41 GMT"
       },
       "method": "post",
       "options": {
         "pool": "default"
       },
       "request_body": "",
-      "url": "http://localhost:8080/inbox"
+      "url": "http://mobilizon1.com/inbox"
     },
     "response": {
       "binary": false,
-      "body": "signature check failed, signature did not match key",
+      "body": "# HTTPoison.Error at POST /inbox\n\nException:\n\n    ** (HTTPoison.Error) :nxdomain\n        (httpoison) lib/httpoison.ex:128: HTTPoison.request!/5\n        (mobilizon) lib/service/activity_pub/activity_pub.ex:610: Mobilizon.Service.ActivityPub.fetch_and_prepare_actor_from_url/1\n        (mobilizon) lib/service/activity_pub/activity_pub.ex:473: Mobilizon.Service.ActivityPub.make_actor_from_url/2\n        (mobilizon) lib/service/activity_pub/activity_pub.ex:122: Mobilizon.Service.ActivityPub.get_or_fetch_actor_by_url/2\n        (mobilizon) lib/service/http_signatures/signature.ex:54: Mobilizon.Service.HTTPSignatures.Signature.get_public_key_for_url/1\n        (mobilizon) lib/service/http_signatures/signature.ex:74: Mobilizon.Service.HTTPSignatures.Signature.fetch_public_key/1\n        (http_signatures) lib/http_signatures/http_signatures.ex:40: HTTPSignatures.validate_conn/1\n        (mobilizon) lib/mobilizon_web/http_signature.ex:45: MobilizonWeb.HTTPSignaturePlug.call/2\n        (mobilizon) MobilizonWeb.Router.activity_pub_signature/2\n        (mobilizon) lib/mobilizon_web/router.ex:1: MobilizonWeb.Router.__pipe_through7__/1\n        (phoenix) lib/phoenix/router.ex:283: Phoenix.Router.__call__/2\n        (mobilizon) lib/mobilizon_web/endpoint.ex:1: MobilizonWeb.Endpoint.plug_builder_call/2\n        (mobilizon) lib/plug/debugger.ex:122: MobilizonWeb.Endpoint.\"call (overridable 3)\"/2\n        (mobilizon) lib/mobilizon_web/endpoint.ex:1: MobilizonWeb.Endpoint.call/2\n        (phoenix) lib/phoenix/endpoint/cowboy2_handler.ex:42: Phoenix.Endpoint.Cowboy2Handler.init/4\n        (cowboy) /home/tcit/dev/frama/mobilizon/deps/cowboy/src/cowboy_handler.erl:41: :cowboy_handler.execute/2\n        (cowboy) /home/tcit/dev/frama/mobilizon/deps/cowboy/src/cowboy_stream_h.erl:320: :cowboy_stream_h.execute/3\n        (cowboy) /home/tcit/dev/frama/mobilizon/deps/cowboy/src/cowboy_stream_h.erl:302: :cowboy_stream_h.request_process/3\n        (stdlib) proc_lib.erl:249: :proc_lib.init_p_do_apply/3\n    \n\n## Connection details\n\n### Params\n\n    %{\"@context\" => [\"https://www.w3.org/ns/activitystreams\", \"https://litepub.social/litepub/context.jsonld\", %{\"Hashtag\" => \"as:Hashtag\", \"category\" => \"sc:category\", \"ical\" => \"http://www.w3.org/2002/12/cal/ical#\", \"joinMode\" => %{\"@id\" => \"mz:joinMode\", \"@type\" => \"mz:joinModeType\"}, \"joinModeType\" => %{\"@id\" => \"mz:joinModeType\", \"@type\" => \"rdfs:Class\"}, \"maximumAttendeeCapacity\" => \"sc:maximumAttendeeCapacity\", \"mz\" => \"https://joinmobilizon.org/ns#\", \"repliesModerationOption\" => %{\"@id\" => \"mz:repliesModerationOption\", \"@type\" => \"mz:repliesModerationOptionType\"}, \"repliesModerationOptionType\" => %{\"@id\" => \"mz:repliesModerationOptionType\", \"@type\" => \"rdfs:Class\"}, \"sc\" => \"http://schema.org#\", \"uuid\" => \"sc:identifier\"}], \"actor\" => \"http://mobilizon.test/relay\", \"cc\" => [\"https://www.w3.org/ns/activitystreams#Public\"], \"id\" => \"http://mobilizon.test/follow/b7791977-2a75-4715-815b-6e7125065b71\", \"object\" => \"http://mobilizon1.com/relay\", \"to\" => [\"http://mobilizon1.com/relay\"], \"type\" => \"Follow\"}\n\n### Request info\n\n  * URI: http://mobilizon1.com:80/inbox\n  * Query string: \n\n### Headers\n  \n  * connection: upgrade\n  * content-length: 912\n  * content-type: application/activity+json\n  * date: Fri, 13 Dec 2019 09:41:41 GMT\n  * digest: SHA-256=ibNFcsnBeCCjWZo9We60tKfbRN3el0WCMVdOxtuC1cg=\n  * host: mobilizon1.com\n  * signature: keyId=\"http://mobilizon.test/relay#main-key\",algorithm=\"rsa-sha256\",headers=\"(request-target) content-length date digest host\",signature=\"WbyGHT/WdvdRpWek8uCGHrFSblLpg+Iq802R5S2cjNj035OKpxRmu1r8u9Qr5KGIKgZn6LHt9YmB+PNlwsubPtTSkJpE8AAUDMHLKgCrH7A5Q6x6GlARl5bHNo4QtOxkXvnEbn31xfNDNp70QqZb/emw95TnELYUlMLZds0qYutT8U4WdDhSWcVytQmKJWNZXxEj+KlMDUaxag3lGscJ/HY0F+yGNov7FHthid1Y4LTGFsp/tismnMTlba12NH/kXPHtduNsX8uxFslM2ODwqAaospTGEpXmr9CPgbNy7626qgYaR2RdB/fYlCayLI4JJIlH8gOdocGHPrWNtVEHaQ==\"\n  * user-agent: hackney/1.15.2\n  * x-forwarded-for: 127.0.0.1\n  * x-real-ip: 127.0.0.1\n\n### Session\n\n    %{}\n",
       "headers": {
-        "Content-Length": "51",
-        "Content-Type": "text/plain; charset=utf-8",
-        "Date": "Thu, 01 Aug 2019 14:44:38 GMT",
-        "Server": "Python/3.7 aiohttp/3.3.2"
+        "Server": "nginx/1.16.1",
+        "Date": "Fri, 13 Dec 2019 09:41:41 GMT",
+        "Content-Type": "text/markdown; charset=utf-8",
+        "Content-Length": "3977",
+        "Connection": "keep-alive",
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "",
+        "cache-control": "max-age=0, private, must-revalidate",
+        "x-request-id": "Fd_k7PoZpCCBYRQAAAPh"
       },
-      "status_code": 401,
+      "status_code": 500,
       "type": "ok"
     }
   }

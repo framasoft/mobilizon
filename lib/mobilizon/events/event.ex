@@ -13,6 +13,8 @@ defmodule Mobilizon.Events.Event do
 
   alias Mobilizon.Addresses
 
+  alias Mobilizon.Events
+
   alias Mobilizon.Events.{
     Comment,
     EventOptions,
@@ -73,6 +75,7 @@ defmodule Mobilizon.Events.Event do
     :category,
     :status,
     :draft,
+    :local,
     :visibility,
     :join_options,
     :publish_at,
@@ -190,13 +193,16 @@ defmodule Mobilizon.Events.Event do
   def can_be_managed_by(_event, _actor), do: {:event_can_be_managed, false}
 
   @spec put_tags(Changeset.t(), map) :: Changeset.t()
-  defp put_tags(%Changeset{} = changeset, %{tags: tags}),
-    do: put_assoc(changeset, :tags, Enum.map(tags, &process_tag/1))
+  defp put_tags(%Changeset{} = changeset, %{tags: tags}) do
+    put_assoc(changeset, :tags, Enum.map(tags, &process_tag/1))
+  end
 
   defp put_tags(%Changeset{} = changeset, _), do: changeset
 
   # We need a changeset instead of a raw struct because of slug which is generated in changeset
-  defp process_tag(%{id: _id} = tag), do: tag
+  defp process_tag(%{id: id} = _tag) do
+    Events.get_tag(id)
+  end
 
   defp process_tag(tag) do
     Tag.changeset(%Tag{}, tag)

@@ -9,10 +9,10 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
   use Mobilizon.DataCase
 
   import Mobilizon.Factory
+  import ExUnit.CaptureLog
 
-  alias Mobilizon.Actors
+  alias Mobilizon.{Actors, Events, Tombstone}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events
   alias Mobilizon.Events.{Comment, Event, Participant}
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.{Activity, Utils}
@@ -131,7 +131,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
         data
         |> Map.put("object", object)
 
-      assert ExUnit.CaptureLog.capture_log([level: :warn], fn ->
+      assert capture_log([level: :warn], fn ->
                {:ok, _returned_activity, _entity} = Transmogrifier.handle_incoming(data)
              end) =~ "[warn] Parent object is something we don't handle"
     end
@@ -145,7 +145,10 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
         assert data["id"] ==
                  "https://framapiaf.org/users/admin/statuses/99512778738411822/activity"
 
-        assert data["to"] == ["https://www.w3.org/ns/activitystreams#Public"]
+        assert data["to"] == [
+                 "https://www.w3.org/ns/activitystreams#Public",
+                 "https://framapiaf.org/users/tcit"
+               ]
 
         #      assert data["cc"] == [
         #               "https://framapiaf.org/users/admin/followers",
@@ -466,26 +469,70 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
       refute is_nil(Events.get_comment_from_url(comment_url).deleted_at)
     end
 
-    #     TODO : make me ASAP
-    #     test "it fails for incoming deletes with spoofed origin" do
-    #       activity = insert(:note_activity)
+    test "it fails for incoming deletes with spoofed origin" do
+      comment = insert(:comment)
 
-    #       data =
-    #         File.read!("test/fixtures/mastodon-delete.json")
-    #         |> Jason.decode!()
+      announce_data =
+        File.read!("test/fixtures/mastodon-announce.json")
+        |> Jason.decode!()
+        |> Map.put("object", comment.url)
 
-    #       object =
-    #         data["object"]
-    #         |> Map.put("id", activity.data["object"]["id"])
+      {:ok, %Activity{local: false}, _} = Transmogrifier.handle_incoming(announce_data)
 
-    #       data =
-    #         data
-    #         |> Map.put("object", object)
+      data =
+        File.read!("test/fixtures/mastodon-delete.json")
+        |> Jason.decode!()
 
-    #       :error = Transmogrifier.handle_incoming(data)
+      object =
+        data["object"]
+        |> Map.put("id", comment.url)
 
-    #       assert Repo.get(Activity, activity.id)
-    #     end
+      data =
+        data
+        |> Map.put("object", object)
+
+      :error = Transmogrifier.handle_incoming(data)
+
+      assert Events.get_comment_from_url(comment.url)
+    end
+
+    test "it works for incoming actor deletes" do
+      %Actor{url: url} = actor = insert(:actor, url: "https://framapiaf.org/users/admin")
+      %Event{url: event1_url} = event1 = insert(:event, organizer_actor: actor)
+      insert(:event, organizer_actor: actor)
+
+      %Comment{url: comment1_url} = comment1 = insert(:comment, actor: actor)
+      insert(:comment, actor: actor)
+
+      data =
+        File.read!("test/fixtures/mastodon-delete-user.json")
+        |> Poison.decode!()
+
+      {:ok, _activity, _actor} = Transmogrifier.handle_incoming(data)
+      assert %{success: 1, failure: 0} == Oban.drain_queue(:background)
+
+      assert {:ok, %Actor{suspended: true}} = Actors.get_actor_by_url(url)
+      assert {:error, :event_not_found} = Events.get_event(event1.id)
+      assert %Tombstone{} = Tombstone.find_tombstone(event1_url)
+      assert %Comment{deleted_at: deleted_at} = Events.get_comment(comment1.id)
+      refute is_nil(deleted_at)
+      assert %Tombstone{} = Tombstone.find_tombstone(comment1_url)
+    end
+
+    test "it fails for incoming actor deletes with spoofed origin" do
+      %{url: url} = insert(:actor)
+
+      data =
+        File.read!("test/fixtures/mastodon-delete-user.json")
+        |> Poison.decode!()
+        |> Map.put("actor", url)
+
+      assert capture_log(fn ->
+               assert :error == Transmogrifier.handle_incoming(data)
+             end) =~ "Object origin check failed"
+
+      assert Actors.get_actor_by_url(url)
+    end
 
     test "it works for incoming unannounces with an existing notice" do
       use_cassette "activity_pub/mastodon_unannounce_activity" do
@@ -743,13 +790,14 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
     end
 
     test "it accepts Flag activities" do
-      %Actor{url: reporter_url} = _reporter = insert(:actor)
+      %Actor{url: reporter_url} = Mobilizon.Service.ActivityPub.Relay.get_actor()
       %Actor{url: reported_url} = reported = insert(:actor)
 
       %Comment{url: comment_url} = _comment = insert(:comment, actor: reported)
 
       message = %{
         "@context" => "https://www.w3.org/ns/activitystreams",
+        "to" => [],
         "cc" => [reported_url],
         "object" => [reported_url, comment_url],
         "type" => "Flag",
@@ -762,11 +810,11 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
       assert activity.data["object"] == [reported_url, comment_url]
       assert activity.data["content"] == "blocked AND reported!!!"
       assert activity.data["actor"] == reporter_url
-      assert activity.data["cc"] == [reported_url]
+      assert activity.data["cc"] == []
     end
 
     test "it accepts Join activities" do
-      %Actor{url: _organizer_url} = organizer = insert(:actor)
+      %Actor{url: organizer_url} = organizer = insert(:actor)
       %Actor{url: participant_url} = _participant = insert(:actor)
 
       %Event{url: event_url} = _event = insert(:event, organizer_actor: organizer)
@@ -779,8 +827,12 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
 
       assert {:ok, activity, _} = Transmogrifier.handle_incoming(join_data)
 
-      assert activity.data["object"] == event_url
-      assert activity.data["actor"] == participant_url
+      assert activity.data["type"] == "Accept"
+      assert activity.data["object"]["object"] == event_url
+      assert activity.data["object"]["id"] =~ "/join/event/"
+      assert activity.data["object"]["type"] =~ "Join"
+      assert activity.data["actor"] == organizer_url
+      assert activity.data["id"] =~ "/accept/join/"
     end
 
     test "it accepts Accept activities for Join activities" do
@@ -821,12 +873,17 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
         |> Map.put("object", participation.url)
 
       {:ok, reject_activity, _} = Transmogrifier.handle_incoming(reject_data)
-      assert reject_activity.data["object"] == join_activity.data["id"]
-      assert reject_activity.data["object"] =~ "/join/"
+      assert reject_activity.data["object"]["id"] == join_activity.data["id"]
+      assert reject_activity.data["object"]["id"] =~ "/join/"
       assert reject_activity.data["id"] =~ "/reject/join/"
 
       # We don't accept already rejected Reject activities
-      assert :error == Transmogrifier.handle_incoming(reject_data)
+      assert capture_log([level: :warn], fn ->
+               assert :error == Transmogrifier.handle_incoming(reject_data)
+             end) =~
+               "Unable to process Reject activity \"http://mastodon.example.org/users/admin#rejects/follows/4\". Object \"#{
+                 join_activity.data["id"]
+               }\" wasn't found."
 
       # Organiser is not present since we use factories directly
       assert event.id
@@ -913,15 +970,6 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
       assert Enum.member?(object["tag"], expected_mention)
     end
 
-    #     test "it adds the sensitive property" do
-    #       user = insert(:user)
-
-    #       {:ok, activity} = CommonAPI.post(user, %{"status" => "#nsfw hey"})
-    #       {:ok, modified} = Transmogrifier.prepare_outgoing(activity.data)
-
-    #       assert modified["object"]["sensitive"]
-    #     end
-
     test "it adds the json-ld context and the conversation property" do
       actor = insert(:actor)
 
@@ -975,125 +1023,28 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
       assert is_nil(modified["object"]["announcement_count"])
       assert is_nil(modified["object"]["context_id"])
     end
+  end
 
-    #   describe "actor rewriting" do
-    #     test "it fixes the actor URL property to be a proper URI" do
-    #       data = %{
-    #         "url" => %{"href" => "http://example.com"}
-    #       }
+  describe "actor origin check" do
+    test "it rejects objects with a bogus origin" do
+      use_cassette "activity_pub/object_bogus_origin" do
+        {:error, _} = ActivityPub.fetch_object_from_url("https://info.pleroma.site/activity.json")
+      end
+    end
 
-    #       rewritten = Transmogrifier.maybe_fix_user_object(data)
-    #       assert rewritten["url"] == "http://example.com"
-    #     end
-    #   end
+    test "it rejects activities which reference objects with bogus origins" do
+      use_cassette "activity_pub/activity_object_bogus" do
+        data = %{
+          "@context" => "https://www.w3.org/ns/activitystreams",
+          "id" => "https://framapiaf.org/users/admin/activities/1234",
+          "actor" => "https://framapiaf.org/users/admin",
+          "to" => ["https://www.w3.org/ns/activitystreams#Public"],
+          "object" => "https://info.pleroma.site/activity.json",
+          "type" => "Announce"
+        }
 
-    #   describe "actor origin containment" do
-    #     test "it rejects objects with a bogus origin" do
-    #       {:error, _} = ActivityPub.fetch_object_from_id("https://info.pleroma.site/activity.json")
-    #     end
-
-    #     test "it rejects activities which reference objects with bogus origins" do
-    #       data = %{
-    #         "@context" => "https://www.w3.org/ns/activitystreams",
-    #         "id" => "http://mastodon.example.org/users/admin/activities/1234",
-    #         "actor" => "http://mastodon.example.org/users/admin",
-    #         "to" => ["https://www.w3.org/ns/activitystreams#Public"],
-    #         "object" => "https://info.pleroma.site/activity.json",
-    #         "type" => "Announce"
-    #       }
-
-    #       :error = Transmogrifier.handle_incoming(data)
-    #     end
-
-    #     test "it rejects objects when attributedTo is wrong (variant 1)" do
-    #       {:error, _} = ActivityPub.fetch_object_from_id("https://info.pleroma.site/activity2.json")
-    #     end
-
-    #     test "it rejects activities which reference objects that have an incorrect attribution (variant 1)" do
-    #       data = %{
-    #         "@context" => "https://www.w3.org/ns/activitystreams",
-    #         "id" => "http://mastodon.example.org/users/admin/activities/1234",
-    #         "actor" => "http://mastodon.example.org/users/admin",
-    #         "to" => ["https://www.w3.org/ns/activitystreams#Public"],
-    #         "object" => "https://info.pleroma.site/activity2.json",
-    #         "type" => "Announce"
-    #       }
-
-    #       :error = Transmogrifier.handle_incoming(data)
-    #     end
-
-    #     test "it rejects objects when attributedTo is wrong (variant 2)" do
-    #       {:error, _} = ActivityPub.fetch_object_from_id("https://info.pleroma.site/activity3.json")
-    #     end
-
-    #     test "it rejects activities which reference objects that have an incorrect attribution (variant 2)" do
-    #       data = %{
-    #         "@context" => "https://www.w3.org/ns/activitystreams",
-    #         "id" => "http://mastodon.example.org/users/admin/activities/1234",
-    #         "actor" => "http://mastodon.example.org/users/admin",
-    #         "to" => ["https://www.w3.org/ns/activitystreams#Public"],
-    #         "object" => "https://info.pleroma.site/activity3.json",
-    #         "type" => "Announce"
-    #       }
-
-    #       :error = Transmogrifier.handle_incoming(data)
-    #     end
-    #   end
-
-    #   describe "general origin containment" do
-    #     test "contain_origin_from_id() catches obvious spoofing attempts" do
-    #       data = %{
-    #         "id" => "http://example.com/~alyssa/activities/1234.json"
-    #       }
-
-    #       :error =
-    #         Transmogrifier.contain_origin_from_id(
-    #           "http://example.org/~alyssa/activities/1234.json",
-    #           data
-    #         )
-    #     end
-
-    #     test "contain_origin_from_id() allows alternate IDs within the same origin domain" do
-    #       data = %{
-    #         "id" => "http://example.com/~alyssa/activities/1234.json"
-    #       }
-
-    #       :ok =
-    #         Transmogrifier.contain_origin_from_id(
-    #           "http://example.com/~alyssa/activities/1234",
-    #           data
-    #         )
-    #     end
-
-    #     test "contain_origin_from_id() allows matching IDs" do
-    #       data = %{
-    #         "id" => "http://example.com/~alyssa/activities/1234.json"
-    #       }
-
-    #       :ok =
-    #         Transmogrifier.contain_origin_from_id(
-    #           "http://example.com/~alyssa/activities/1234.json",
-    #           data
-    #         )
-    #     end
-
-    #     test "users cannot be collided through fake direction spoofing attempts" do
-    #       user =
-    #         insert(:user, %{
-    #           nickname: "rye@niu.moe",
-    #           local: false,
-    #           ap_id: "https://niu.moe/users/rye",
-    #           follower_address: User.ap_followers(%User{nickname: "rye@niu.moe"})
-    #         })
-
-    #       {:error, _} = User.get_or_fetch_by_ap_id("https://n1u.moe/users/rye")
-    #     end
-
-    #     test "all objects with fake directions are rejected by the object fetcher" do
-    #       {:error, _} =
-    #         ActivityPub.fetch_and_contain_remote_object_from_id(
-    #           "https://info.pleroma.site/activity4.json"
-    #         )
-    #     end
+        :error = Transmogrifier.handle_incoming(data)
+      end
+    end
   end
 end

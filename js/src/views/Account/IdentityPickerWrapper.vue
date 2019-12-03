@@ -1,7 +1,9 @@
 <template>
     <div class="identity-picker">
         <span v-if="inline" class="inline">
-            <img class="image" v-if="currentIdentity.avatar" :src="currentIdentity.avatar.url"  :alt="currentIdentity.avatar.alt"/> {{ currentIdentity.name || `@${currentIdentity.preferredUsername}` }}
+            <img class="image" v-if="currentIdentity.avatar" :src="currentIdentity.avatar.url"  :alt="currentIdentity.avatar.alt"/>
+            <b-icon v-else size="is-small" icon="account-circle" />
+            {{ currentIdentity.name || `@${currentIdentity.preferredUsername}` }}
             <b-button type="is-text" @click="isComponentModalActive = true">
                 {{ $t('Change') }}
             </b-button>

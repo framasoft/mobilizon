@@ -3,6 +3,7 @@ defmodule MobilizonWeb.Endpoint do
   Endpoint for Mobilizon app
   """
   use Phoenix.Endpoint, otp_app: :mobilizon
+  use Absinthe.Phoenix.Endpoint
 
   # For e2e tests
   if Application.get_env(:mobilizon, :sql_sandbox) do
@@ -12,6 +13,11 @@ defmodule MobilizonWeb.Endpoint do
       repo: Mobilizon.Storage.Repo
     )
   end
+
+  socket("/graphql_socket", MobilizonWeb.GraphQLSocket,
+    websocket: true,
+    longpoll: false
+  )
 
   plug(MobilizonWeb.Plugs.UploadedMedia)
 

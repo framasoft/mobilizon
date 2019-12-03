@@ -1,12 +1,13 @@
 defmodule Mobilizon.ActorsTest do
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
-
   use Mobilizon.DataCase
+  use Oban.Testing, repo: Mobilizon.Storage.Repo
 
   import Mobilizon.Factory
 
-  alias Mobilizon.{Actors, Config, Users}
+  alias Mobilizon.{Actors, Config, Users, Events, Tombstone}
   alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
+  alias Mobilizon.Events.{Event, Comment}
   alias Mobilizon.Media.File, as: FileModel
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Storage.Page
@@ -287,6 +288,12 @@ defmodule Mobilizon.ActorsTest do
     test "delete_actor/1 deletes the actor", %{
       actor: %Actor{avatar: %{url: avatar_url}, banner: %{url: banner_url}, id: actor_id} = actor
     } do
+      %Event{url: event1_url} = event1 = insert(:event, organizer_actor: actor)
+      insert(:event, organizer_actor: actor)
+
+      %Comment{url: comment1_url} = comment1 = insert(:comment, actor: actor)
+      insert(:comment, actor: actor)
+
       %URI{path: "/media/" <> avatar_path} = URI.parse(avatar_url)
       %URI{path: "/media/" <> banner_path} = URI.parse(banner_url)
 
@@ -300,8 +307,34 @@ defmodule Mobilizon.ActorsTest do
                  "/" <> banner_path
              )
 
-      assert {:ok, %Actor{}} = Actors.delete_actor(actor)
-      assert_raise Ecto.NoResultsError, fn -> Actors.get_actor!(actor_id) end
+      assert {:ok, %Oban.Job{}} = Actors.delete_actor(actor)
+
+      assert_enqueued(
+        worker: Mobilizon.Service.Workers.BackgroundWorker,
+        args: %{"actor_id" => actor.id, "op" => "delete_actor"}
+      )
+
+      assert %{success: 1, failure: 0} == Oban.drain_queue(:background)
+
+      assert %Actor{
+               name: nil,
+               summary: nil,
+               suspended: true,
+               avatar: nil,
+               banner: nil,
+               user_id: nil
+             } = Actors.get_actor(actor_id)
+
+      assert {:error, :event_not_found} = Events.get_event(event1.id)
+      assert %Tombstone{} = Tombstone.find_tombstone(event1_url)
+      assert %Comment{deleted_at: deleted_at} = Events.get_comment(comment1.id)
+      refute is_nil(deleted_at)
+      assert %Tombstone{} = Tombstone.find_tombstone(comment1_url)
+
+      refute File.exists?(
+               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+                 "/" <> avatar_path
+             )
 
       refute File.exists?(
                Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>

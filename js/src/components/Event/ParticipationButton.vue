@@ -26,11 +26,11 @@ A button to set your participation
     <div class="participation-button">
         <b-dropdown aria-role="list" position="is-bottom-left" v-if="participation && participation.role === ParticipantRole.PARTICIPANT">
             <button class="button is-success" type="button" slot="trigger">
-                <b-icon icon="check"></b-icon>
+                <b-icon icon="check" />
                 <template>
                     <span>{{ $t('I participate') }}</span>
                 </template>
-                <b-icon icon="menu-down"></b-icon>
+                <b-icon icon="menu-down" />
             </button>
 
             <!--                <b-dropdown-item :value="false" aria-role="listitem">-->
@@ -45,11 +45,11 @@ A button to set your participation
         <div v-else-if="participation && participation.role === ParticipantRole.NOT_APPROVED">
             <b-dropdown aria-role="list" position="is-bottom-left" class="dropdown-disabled">
                 <button class="button is-success" type="button" slot="trigger">
-                    <b-icon icon="timer-sand-empty"></b-icon>
+                    <b-icon icon="timer-sand-empty" />
                     <template>
                         <span>{{ $t('I participate') }}</span>
                     </template>
-                    <b-icon icon="menu-down"></b-icon>
+                    <b-icon icon="menu-down" />
                 </button>
 
                 <!--                <b-dropdown-item :value="false" aria-role="listitem">-->
@@ -73,7 +73,7 @@ A button to set your participation
                 <template>
                     <span>{{ $t('Participate') }}</span>
                 </template>
-                <b-icon icon="menu-down"></b-icon>
+                <b-icon icon="menu-down" />
             </button>
 
             <b-dropdown-item :value="true" aria-role="listitem" @click="joinEvent(currentActor)">
@@ -84,12 +84,12 @@ A button to set your participation
                         </figure>
                     </div>
                     <div class="media-content">
-                        <span>{{ $t('with {identity}', {identity: currentActor.preferredUsername }) }}</span>
+                        <span>{{ $t('as {identity}', {identity: currentActor.preferredUsername }) }}</span>
                     </div>
                 </div>
             </b-dropdown-item>
 
-            <b-dropdown-item :value="false" aria-role="listitem" @click="joinModal">
+            <b-dropdown-item :value="false" aria-role="listitem" @click="joinModal" v-if="identities.length > 1">
                 {{ $t('with another identity…')}}
             </b-dropdown-item>
         </b-dropdown>
@@ -99,14 +99,32 @@ A button to set your participation
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { IParticipant, ParticipantRole } from '@/types/event.model';
-import { IPerson } from '@/types/actor';
+import { IPerson, Person } from '@/types/actor';
+import { IDENTITIES } from '@/graphql/actor';
+import { CURRENT_USER_CLIENT } from '@/graphql/user';
+import { ICurrentUser } from '@/types/current-user.model';
 
-@Component
+@Component({
+  apollo: {
+    currentUser: {
+      query: CURRENT_USER_CLIENT,
+    },
+    identities: {
+      query: IDENTITIES,
+      update: ({ identities }) => identities ? identities.map(identity => new Person(identity)) : [],
+      skip() {
+        return this.currentUser.isLoggedIn === false;
+      },
+    },
+  },
+})
 export default class ParticipationButton extends Vue {
   @Prop({ required: true }) participation!: IParticipant;
   @Prop({ required: true }) currentActor!: IPerson;
 
   ParticipantRole = ParticipantRole;
+  currentUser!: ICurrentUser;
+  identities: IPerson[] = [];
 
   joinEvent(actor: IPerson) {
     this.$emit('joinEvent', actor);

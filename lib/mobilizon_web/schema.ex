@@ -20,6 +20,7 @@ defmodule MobilizonWeb.Schema do
   import_types(MobilizonWeb.Schema.ActorInterface)
   import_types(MobilizonWeb.Schema.Actors.PersonType)
   import_types(MobilizonWeb.Schema.Actors.GroupType)
+  import_types(MobilizonWeb.Schema.Actors.ApplicationType)
   import_types(MobilizonWeb.Schema.CommentType)
   import_types(MobilizonWeb.Schema.SearchType)
   import_types(MobilizonWeb.Schema.ConfigType)
@@ -140,5 +141,13 @@ defmodule MobilizonWeb.Schema do
     import_fields(:feed_token_mutations)
     import_fields(:picture_mutations)
     import_fields(:report_mutations)
+    import_fields(:admin_mutations)
+  end
+
+  @desc """
+  Root subscription
+  """
+  subscription do
+    import_fields(:person_subscriptions)
   end
 end

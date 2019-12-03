@@ -27,7 +27,6 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
     field(:local, :boolean, description: "If the actor is from this instance")
     field(:summary, :string, description: "The actor's summary")
     field(:preferred_username, :string, description: "The actor's preferred username")
-    field(:keys, :string, description: "The actors RSA Keys")
 
     field(:manually_approves_followers, :boolean,
       description: "Whether the actors manually approves followers"
@@ -158,6 +157,16 @@ defmodule MobilizonWeb.Schema.Actors.PersonType do
       )
 
       resolve(handle_errors(&Person.register_person/3))
+    end
+  end
+
+  object :person_subscriptions do
+    field :event_person_participation_changed, :person do
+      arg(:person_id, non_null(:id))
+
+      config(fn args, _ ->
+        {:ok, topic: args.person_id}
+      end)
     end
   end
 end

@@ -9,6 +9,7 @@ defmodule MobilizonWeb.WebFingerController do
   """
   use MobilizonWeb, :controller
 
+  plug(MobilizonWeb.Plugs.Federating)
   alias Mobilizon.Service.WebFinger
 
   @doc """

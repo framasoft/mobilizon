@@ -148,6 +148,21 @@ defmodule MobilizonWeb.Upload do
     end
   end
 
+  defp prepare_upload(%{body: body, name: name} = _file, opts) do
+    with :ok <- check_binary_size(body, opts.size_limit),
+         tmp_path <- tempfile_for_image(body),
+         {:ok, content_type, name} <- MIME.file_mime_type(tmp_path, name) do
+      {:ok,
+       %__MODULE__{
+         id: UUID.generate(),
+         name: name,
+         tempfile: tmp_path,
+         content_type: content_type,
+         size: byte_size(body)
+       }}
+    end
+  end
+
   defp check_file_size(path, size_limit) when is_integer(size_limit) and size_limit > 0 do
     with {:ok, %{size: size}} <- File.stat(path),
          true <- size <= size_limit do
@@ -159,6 +174,23 @@ defmodule MobilizonWeb.Upload do
   end
 
   defp check_file_size(_, _), do: :ok
+
+  defp check_binary_size(binary, size_limit)
+       when is_integer(size_limit) and size_limit > 0 and byte_size(binary) >= size_limit do
+    {:error, :file_too_large}
+  end
+
+  defp check_binary_size(_, _), do: :ok
+
+  # Creates a tempfile using the Plug.Upload Genserver which cleans them up
+  # automatically.
+  defp tempfile_for_image(data) do
+    {:ok, tmp_path} = Plug.Upload.random_file("temp_files")
+    {:ok, tmp_file} = File.open(tmp_path, [:write, :raw, :binary])
+    IO.binwrite(tmp_file, data)
+
+    tmp_path
+  end
 
   defp url_from_spec(%__MODULE__{name: name}, base_url, {:file, path}) do
     path =

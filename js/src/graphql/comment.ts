@@ -13,6 +13,7 @@ export const COMMENT_FIELDS_FRAGMENT = gql`
                 url
             },
             id,
+            domain,
             preferredUsername,
             name
         },

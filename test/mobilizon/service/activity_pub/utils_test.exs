@@ -5,7 +5,7 @@ defmodule Mobilizon.Service.ActivityPub.UtilsTest do
 
   import Mobilizon.Factory
 
-  alias Mobilizon.Service.ActivityPub.{Converter, Utils}
+  alias Mobilizon.Service.ActivityPub.Converter
 
   alias MobilizonWeb.Endpoint
   alias MobilizonWeb.Router.Helpers, as: Routes
@@ -36,7 +36,8 @@ defmodule Mobilizon.Service.ActivityPub.UtilsTest do
                "uuid" => reply.uuid,
                "id" => Routes.page_url(Endpoint, :comment, reply.uuid),
                "inReplyTo" => comment.url,
-               "attributedTo" => reply.actor.url
+               "attributedTo" => reply.actor.url,
+               "mediaType" => "text/html"
              } == Converter.Comment.model_to_as(reply)
     end
 
@@ -44,7 +45,7 @@ defmodule Mobilizon.Service.ActivityPub.UtilsTest do
       comment = insert(:comment)
       reply = insert(:comment, in_reply_to_comment: comment)
       to = ["https://www.w3.org/ns/activitystreams#Public"]
-      comment_data = Utils.make_comment_data(reply.actor.url, to, reply.text, comment.url)
+      comment_data = Converter.Comment.model_to_as(reply)
       assert comment_data["type"] == "Note"
       assert comment_data["to"] == to
       assert comment_data["content"] == reply.text

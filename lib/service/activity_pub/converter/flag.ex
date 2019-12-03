@@ -15,6 +15,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Flag do
   alias Mobilizon.Reports.Report
   alias Mobilizon.Service.ActivityPub.Converter
   alias Mobilizon.Service.ActivityPub.Convertible
+  alias Mobilizon.Service.ActivityPub.Relay
 
   @behaviour Converter
 
@@ -42,8 +43,6 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Flag do
     end
   end
 
-  @audience %{"to" => ["https://www.w3.org/ns/activitystreams#Public"], "cc" => []}
-
   @doc """
   Convert an event struct to an ActivityStream representation
   """
@@ -54,17 +53,13 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Flag do
 
     object = if report.event, do: object ++ [report.event.url], else: object
 
-    audience =
-      if report.local, do: @audience, else: Map.put(@audience, "cc", [report.reported.url])
-
     %{
       "type" => "Flag",
-      "actor" => report.reporter.url,
+      "actor" => Relay.get_actor().url,
       "id" => report.url,
       "content" => report.content,
       "object" => object
     }
-    |> Map.merge(audience)
   end
 
   @spec as_to_model(map) :: map
@@ -91,7 +86,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Flag do
              end
            end),
 
-         # Remove the reported user from the object list.
+         # Remove the reported actor and the event from the object list.
          comments <-
            Enum.filter(objects, fn url ->
              !(url == reported.url || (!is_nil(event) && event.url == url))

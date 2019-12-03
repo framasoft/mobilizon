@@ -12,6 +12,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Comment do
   alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Service.ActivityPub.{Converter, Convertible}
   alias Mobilizon.Service.ActivityPub.Converter.Utils, as: ConverterUtils
+  alias Mobilizon.Tombstone, as: TombstoneModel
 
   require Logger
 
@@ -32,9 +33,11 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Comment do
     Logger.debug("We're converting raw ActivityStream data to a comment entity")
     Logger.debug(inspect(object))
 
-    with {:ok, %Actor{id: actor_id}} <- ActivityPub.get_or_fetch_actor_by_url(object["actor"]),
-         {:tags, tags} <- {:tags, ConverterUtils.fetch_tags(object["tag"])},
-         {:mentions, mentions} <- {:mentions, ConverterUtils.fetch_mentions(object["tag"])} do
+    with author_url <- Map.get(object, "actor") || Map.get(object, "attributedTo"),
+         {:ok, %Actor{id: actor_id}} <- ActivityPub.get_or_fetch_actor_by_url(author_url),
+         {:tags, tags} <- {:tags, ConverterUtils.fetch_tags(Map.get(object, "tag", []))},
+         {:mentions, mentions} <-
+           {:mentions, ConverterUtils.fetch_mentions(Map.get(object, "tag", []))} do
       Logger.debug("Inserting full comment")
       Logger.debug(inspect(object))
 
@@ -70,6 +73,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Comment do
               data
               |> Map.put(:in_reply_to_comment_id, id)
               |> Map.put(:origin_comment_id, comment |> CommentModel.get_thread_id())
+              |> Map.put(:event_id, comment.event_id)
 
             # Anything else is kind of a MP
             {:error, parent} ->
@@ -106,6 +110,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Comment do
       "to" => to,
       "cc" => [],
       "content" => comment.text,
+      "mediaType" => "text/html",
       "actor" => comment.actor.url,
       "attributedTo" => comment.actor.url,
       "uuid" => comment.uuid,
@@ -114,23 +119,27 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Comment do
         ConverterUtils.build_mentions(comment.mentions) ++ ConverterUtils.build_tags(comment.tags)
     }
 
-    if comment.in_reply_to_comment do
-      object |> Map.put("inReplyTo", comment.in_reply_to_comment.url || comment.event.url)
-    else
-      object
+    cond do
+      comment.in_reply_to_comment ->
+        Map.put(object, "inReplyTo", comment.in_reply_to_comment.url)
+
+      comment.event ->
+        Map.put(object, "inReplyTo", comment.event.url)
+
+      true ->
+        object
     end
   end
 
   @impl Converter
   @spec model_to_as(CommentModel.t()) :: map
+  @doc """
+  A "soft-deleted" comment is a tombstone
+  """
   def model_to_as(%CommentModel{} = comment) do
-    %{
-      "type" => "Tombstone",
-      "uuid" => comment.uuid,
-      "id" => comment.url,
-      "published" => comment.inserted_at,
-      "updated" => comment.updated_at,
-      "deleted" => comment.deleted_at
-    }
+    Convertible.model_to_as(%TombstoneModel{
+      uri: comment.url,
+      inserted_at: comment.deleted_at
+    })
   end
 end

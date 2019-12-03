@@ -16,6 +16,7 @@ defmodule MobilizonWeb.Router do
   pipeline :activity_pub_signature do
     plug(:accepts, ["activity-json", "html"])
     plug(MobilizonWeb.HTTPSignaturePlug)
+    plug(MobilizonWeb.Plugs.MappedSignatureToIdentity)
   end
 
   pipeline :relay do
@@ -91,6 +92,8 @@ defmodule MobilizonWeb.Router do
 
   scope "/", MobilizonWeb do
     pipe_through(:activity_pub_and_html)
+    pipe_through(:activity_pub_signature)
+
     get("/@:name", PageController, :actor)
     get("/events/:uuid", PageController, :event)
     get("/comments/:uuid", PageController, :comment)
