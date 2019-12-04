@@ -1,1 +1,1 @@
-Please read our full contributing document at [https://framasoft.frama.io/mobilizon/backend/contributing.html](https://framasoft.frama.io/mobilizon/backend/contributing.html)
+Please read our full contributing document at [https://docs.joinmobilizon.org/contribute/](https://docs.joinmobilizon.org/contribute/)
