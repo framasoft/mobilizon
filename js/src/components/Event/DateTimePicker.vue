@@ -22,8 +22,9 @@
                         :day-names="localeShortWeekDayNamesProxy"
                         :month-names="localeMonthNamesProxy"
                         :first-day-of-week="parseInt($t('firstDayOfWeek'), 10)"
-                        :min-date="minDate"
-                        v-model="dateWithoutTime"
+                        :min-date="minDatetime"
+                        :max-date="maxDatetime"
+                        v-model="dateWithTime"
                         :placeholder="$t('Click to select')"
                         :years-range="[-2,10]"
                         icon="calendar"
@@ -33,6 +34,8 @@
                         placeholder="Type or select a time..."
                         icon="clock"
                         v-model="dateWithTime"
+                        :min-time="minDatetime"
+                        :max-time="maxDatetime"
                         size="is-small"
                         inline>
                 </b-timepicker>
@@ -65,23 +68,21 @@ export default class DateTimePicker extends Vue {
     /**
      * Earliest date available for selection
      */
-  @Prop({ required: false, type: Date, default: null }) minDate!: Date;
+  @Prop({ required: false, type: Date, default: null }) minDatetime!: Date;
 
-  dateWithoutTime: Date = this.value;
-  dateWithTime: Date = this.dateWithoutTime;
+      /**
+     * Latest date available for selection
+     */
+  @Prop({ required: false, type: Date, default: null }) maxDatetime!: Date;
+
+  dateWithTime: Date = this.value;
 
   localeShortWeekDayNamesProxy = localeShortWeekDayNames();
   localeMonthNamesProxy = localeMonthNames();
 
   @Watch('value')
   updateValue() {
-    this.dateWithoutTime = this.value;
-    this.dateWithTime = this.dateWithoutTime;
-  }
-
-  @Watch('dateWithoutTime')
-  updateDateWithoutTimeWatcher() {
-    this.updateDateTime();
+    this.dateWithTime = this.value;
   }
 
   @Watch('dateWithTime')
@@ -95,9 +96,7 @@ export default class DateTimePicker extends Vue {
      *
      * @type {Date}
      */
-    this.dateWithoutTime.setHours(this.dateWithTime.getHours());
-    this.dateWithoutTime.setMinutes(this.dateWithTime.getMinutes());
-    this.$emit('input', this.dateWithoutTime);
+    this.$emit('input', this.dateWithTime);
   }
 }
 </script>

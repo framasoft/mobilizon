@@ -22,7 +22,7 @@
           <tag-input v-model="event.tags" :data="tags" path="title" />
 
           <date-time-picker v-model="event.beginsOn" :label="$t('Starts on…')" />
-          <date-time-picker :min-date="minDateForEndsOn" v-model="event.endsOn" :label="$t('Ends on…')" />
+          <date-time-picker :min-datetime="event.beginsOn" v-model="event.endsOn" :label="$t('Ends on…')" />
 <!--          <b-switch v-model="endsOnNull">{{ $t('No end date') }}</b-switch>-->
           <b-button type="is-text" @click="dateSettingsIsOpen = true">{{ $t('Date parameters')}}</b-button>
 
@@ -625,7 +625,7 @@ export default class EditEvent extends Vue {
     return JSON.stringify(this.event.toEditJSON()) !== JSON.stringify(this.unmodifiedEvent);
   }
 
-  get beginsOn() { return this.event.beginsOn; }
+  get beginsOn(): Date { return this.event.beginsOn; }
 
   @Watch('beginsOn', { deep: true })
   onBeginsOnChanged(beginsOn) {
@@ -634,7 +634,7 @@ export default class EditEvent extends Vue {
     const dateEndsOn = new Date(this.event.endsOn);
     if (dateEndsOn < dateBeginsOn) {
       this.event.endsOn = dateBeginsOn;
-      this.event.endsOn.setHours(dateEndsOn.getHours());
+      this.event.endsOn.setHours(dateBeginsOn.getHours() + 1);
     }
     if (dateEndsOn === dateBeginsOn) {
       this.event.endsOn.setHours(dateEndsOn.getHours() + 1);
