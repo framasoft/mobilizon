@@ -96,7 +96,7 @@ defmodule Mobilizon.Mixfile do
       {:http_signatures,
        git: "https://git.pleroma.social/pleroma/http_signatures.git",
        ref: "293d77bb6f4a67ac8bde1428735c3b42f22cbb30"},
-      {:html_sanitize_ex, "~> 1.3.0"},
+      {:html_sanitize_ex, "~> 1.4.0"},
       {:ex_cldr_dates_times, "~> 2.0"},
       {:ex_optimizer, "~> 0.1"},
       {:progress_bar, "~> 2.0"},
