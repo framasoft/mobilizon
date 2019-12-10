@@ -92,7 +92,7 @@
 
           <div class="box" v-if="limitedPlaces">
             <b-field :label="$t('Number of places')">
-              <b-numberinput controls-position="compact" min="0" v-model="event.options.maximumAttendeeCapacity" />
+              <b-numberinput controls-position="compact" min="1" v-model="event.options.maximumAttendeeCapacity" />
             </b-field>
 <!--
             <b-field>
@@ -344,7 +344,7 @@ export default class EditEvent extends Vue {
       this.unmodifiedEvent = JSON.parse(JSON.stringify(this.event.toEditJSON()));
 
       this.pictureFile = await buildFileFromIPicture(this.event.picture);
-      this.limitedPlaces = this.event.options.maximumAttendeeCapacity !== 0;
+      this.limitedPlaces = this.event.options.maximumAttendeeCapacity > 0;
     }
   }
 
@@ -572,6 +572,15 @@ export default class EditEvent extends Vue {
       this.endsOnNull = true;
     }
     return new EventModel(result.data.event);
+  }
+
+  @Watch('limitedPlaces')
+  updatedEventCapacityOptions(limitedPlaces: boolean) {
+    if (! limitedPlaces) {
+      this.event.options.maximumAttendeeCapacity = 0
+      this.event.options.remainingAttendeeCapacity = 0
+      this.event.options.showRemainingAttendeeCapacity = false
+    }
   }
 
   @Watch('needsApproval')
