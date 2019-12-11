@@ -58,7 +58,7 @@ export default {
           <div class="date-component">
             <date-calendar-icon :date="participation.event.beginsOn" />
           </div>
-          <h2 class="title">{{ participation.event.title }}</h2>
+          <router-link :to="{ name: RouteName.EVENT, params: { uuid: participation.event.uuid } }"><h2 class="title">{{participation.event.title }}</h2></router-link>
         </div>
         <div class="participation-actor has-text-grey">
           <span v-if="participation.event.physicalAddress && participation.event.physicalAddress.locality">{{ participation.event.physicalAddress.locality }} - </span>
