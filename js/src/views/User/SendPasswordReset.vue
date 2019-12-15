@@ -63,7 +63,7 @@ export default class SendPasswordReset extends Vue {
   }
 
   removeError(message: string) {
-    this.errors.splice(this.errors.indexOf(message))
+    this.errors.splice(this.errors.indexOf(message));
   }
 
   async sendResetPasswordTokenAction(e) {
@@ -81,7 +81,7 @@ export default class SendPasswordReset extends Vue {
     } catch (err) {
       console.error(err);
       err.graphQLErrors.forEach(({ message }) => {
-        if (this.errors.indexOf(message) < 0){
+        if (this.errors.indexOf(message) < 0) {
           this.errors.push(message);
         }
       });

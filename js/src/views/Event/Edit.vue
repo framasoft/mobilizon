@@ -289,6 +289,8 @@ import IdentityPickerWrapper from '@/views/Account/IdentityPickerWrapper.vue';
 import { RouteName } from '@/router';
 import 'intersection-observer';
 
+const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
+
 @Component({
   components: { IdentityPickerWrapper, AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor: EditorComponent },
   apollo: {
@@ -576,10 +578,12 @@ export default class EditEvent extends Vue {
 
   @Watch('limitedPlaces')
   updatedEventCapacityOptions(limitedPlaces: boolean) {
-    if (! limitedPlaces) {
-      this.event.options.maximumAttendeeCapacity = 0
-      this.event.options.remainingAttendeeCapacity = 0
-      this.event.options.showRemainingAttendeeCapacity = false
+    if (!limitedPlaces) {
+      this.event.options.maximumAttendeeCapacity = 0;
+      this.event.options.remainingAttendeeCapacity = 0;
+      this.event.options.showRemainingAttendeeCapacity = false;
+    } else {
+      this.event.options.maximumAttendeeCapacity = this.event.options.maximumAttendeeCapacity || DEFAULT_LIMIT_NUMBER_OF_PLACES;
     }
   }
 
