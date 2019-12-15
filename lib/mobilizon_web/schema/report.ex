@@ -75,6 +75,7 @@ defmodule MobilizonWeb.Schema.ReportType do
       arg(:reported_id, non_null(:id))
       arg(:event_id, :id, default_value: nil)
       arg(:comments_ids, list_of(:id), default_value: [])
+      arg(:forward, :boolean, default_value: false)
       resolve(&Report.create_report/3)
     end
 

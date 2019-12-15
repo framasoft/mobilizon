@@ -171,7 +171,7 @@ defmodule Mobilizon.Service.ActivityPub.ActivityPubTest do
       assert update.data["actor"] == actor.url
       assert update.data["to"] == [@activity_pub_public_audience]
       assert update.data["object"]["id"] == actor.url
-      assert update.data["object"]["type"] == "Person"
+      assert update.data["object"]["type"] == :Person
       assert update.data["object"]["summary"] == @updated_actor_summary
     end
 

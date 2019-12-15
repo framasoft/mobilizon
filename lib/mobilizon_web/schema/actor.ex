@@ -3,13 +3,10 @@ defmodule MobilizonWeb.Schema.ActorInterface do
   Schema representation for Actor
   """
   use Absinthe.Schema.Notation
-  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.{Events}
 
   import_types(MobilizonWeb.Schema.Actors.FollowerType)
   import_types(MobilizonWeb.Schema.EventType)
-  #  import_types(MobilizonWeb.Schema.PictureType)
 
   @desc "An ActivityPub actor"
   interface :actor do
@@ -21,7 +18,6 @@ defmodule MobilizonWeb.Schema.ActorInterface do
     field(:local, :boolean, description: "If the actor is from this instance")
     field(:summary, :string, description: "The actor's summary")
     field(:preferred_username, :string, description: "The actor's preferred username")
-    field(:keys, :string, description: "The actors RSA Keys")
 
     field(:manually_approves_followers, :boolean,
       description: "Whether the actors manually approves followers"
@@ -38,23 +34,15 @@ defmodule MobilizonWeb.Schema.ActorInterface do
     field(:followersCount, :integer, description: "Number of followers for this actor")
     field(:followingCount, :integer, description: "Number of actors following this actor")
 
-    # This one should have a privacy setting
-    field(:organized_events, list_of(:event),
-      resolve: dataloader(Events),
-      description: "A list of the events this actor has organized"
-    )
-
-    # This one is for the person itself **only**
-    # field(:feed, list_of(:event), description: "List of events the actor sees in his or her feed")
-
-    # field(:memberships, list_of(:member))
-
     resolve_type(fn
       %Actor{type: :Person}, _ ->
         :person
 
       %Actor{type: :Group}, _ ->
         :group
+
+      %Actor{type: :Application}, _ ->
+        :application
 
       _, _ ->
         nil

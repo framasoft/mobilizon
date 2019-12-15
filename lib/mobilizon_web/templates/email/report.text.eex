@@ -4,20 +4,26 @@
 
 <%= if Map.has_key?(@report, :event) do %>
     <%= gettext "Event" %>
+
     <%= @report.event.title %>
 <% end %>
 
+
 <%= if Map.has_key?(@report, :comments) && length(@report.comments) > 0 do %>
     <%= gettext "Comments" %>
+
     <%= for comment <- @report.comments do %>
         <%= comment.text %>
     <% end %>
 <% end %>
 
+
 <%= if @report.content do %>
     <%= gettext "Reason" %>
+
     <%= @report.content %>
 <% end %>
+
 
 View the report: <%= moderation_report_url(MobilizonWeb.Endpoint, :index, @report.id) %>
 

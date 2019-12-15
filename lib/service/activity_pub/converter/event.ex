@@ -6,14 +6,13 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Event do
   internal one, and back.
   """
 
-  alias Mobilizon.{Addresses, Media}
+  alias Mobilizon.Addresses
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.Event, as: EventModel
-  alias Mobilizon.Events.EventOptions
   alias Mobilizon.Media.Picture
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.{Converter, Convertible, Utils}
+  alias Mobilizon.Service.ActivityPub.{Converter, Convertible}
   alias Mobilizon.Service.ActivityPub.Converter.Address, as: AddressConverter
   alias Mobilizon.Service.ActivityPub.Converter.Picture, as: PictureConverter
   alias Mobilizon.Service.ActivityPub.Converter.Utils, as: ConverterUtils
@@ -37,26 +36,25 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Event do
     Logger.debug("event as_to_model_data")
     Logger.debug(inspect(object))
 
-    with {:actor, {:ok, %Actor{id: actor_id}}} <-
-           {:actor, ActivityPub.get_or_fetch_actor_by_url(object["actor"])},
+    with author_url <- Map.get(object, "actor") || Map.get(object, "attributedTo"),
+         {:actor, {:ok, %Actor{id: actor_id, domain: actor_domain}}} <-
+           {:actor, ActivityPub.get_or_fetch_actor_by_url(author_url)},
          {:address, address_id} <-
            {:address, get_address(object["location"])},
          {:tags, tags} <- {:tags, ConverterUtils.fetch_tags(object["tag"])},
+         {:mentions, mentions} <- {:mentions, ConverterUtils.fetch_mentions(object["tag"])},
          {:visibility, visibility} <- {:visibility, get_visibility(object)},
          {:options, options} <- {:options, get_options(object)} do
       picture_id =
         with true <- Map.has_key?(object, "attachment") && length(object["attachment"]) > 0,
-             %Picture{id: picture_id} <-
-               Media.get_picture_by_url(
-                 object["attachment"]
-                 |> hd
-                 |> Map.get("url")
-                 |> hd
-                 |> Map.get("href")
-               ) do
+             {:ok, %Picture{id: picture_id}} <-
+               object["attachment"]
+               |> hd
+               |> PictureConverter.find_or_create_picture(actor_id) do
           picture_id
         else
-          _ -> nil
+          _err ->
+            nil
         end
 
       entity = %{
@@ -68,16 +66,20 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Event do
         ends_on: object["endTime"],
         category: object["category"],
         visibility: visibility,
-        join_options: Map.get(object, "joinOptions", "free"),
+        join_options: Map.get(object, "joinMode", "free"),
+        local: is_nil(actor_domain),
         options: options,
-        status: object["status"],
+        status: object |> Map.get("ical:status", "CONFIRMED") |> String.downcase(),
         online_address: object["onlineAddress"],
         phone_address: object["phoneAddress"],
-        draft: object["draft"] || false,
+        draft: false,
         url: object["id"],
         uuid: object["uuid"],
         tags: tags,
-        physical_address_id: address_id
+        mentions: mentions,
+        physical_address_id: address_id,
+        updated_at: object["updated"],
+        publish_at: object["published"]
       }
 
       {:ok, entity}
@@ -108,14 +110,17 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Event do
       "uuid" => event.uuid,
       "category" => event.category,
       "content" => event.description,
-      "publish_at" => (event.publish_at || event.inserted_at) |> date_to_string(),
-      "updated_at" => event.updated_at |> date_to_string(),
+      "published" => (event.publish_at || event.inserted_at) |> date_to_string(),
+      "updated" => event.updated_at |> date_to_string(),
       "mediaType" => "text/html",
       "startTime" => event.begins_on |> date_to_string(),
-      "joinOptions" => to_string(event.join_options),
+      "joinMode" => to_string(event.join_options),
       "endTime" => event.ends_on |> date_to_string(),
       "tag" => event.tags |> ConverterUtils.build_tags(),
-      "draft" => event.draft,
+      "maximumAttendeeCapacity" => event.options.maximum_attendee_capacity,
+      "repliesModerationOption" => event.options.comment_moderation,
+      # "draft" => event.draft,
+      "ical:status" => event.status |> to_string |> String.upcase(),
       "id" => event.url,
       "url" => event.url
     }
@@ -133,17 +138,10 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Event do
   # Get only elements that we have in EventOptions
   @spec get_options(map) :: map
   defp get_options(object) do
-    keys =
-      EventOptions
-      |> struct
-      |> Map.keys()
-      |> List.delete(:__struct__)
-      |> Enum.map(&Utils.camelize/1)
-
-    Enum.reduce(object, %{}, fn {key, value}, acc ->
-      (!is_nil(value) && key in keys && Map.put(acc, Utils.underscore(key), value)) ||
-        acc
-    end)
+    %{
+      maximum_attendee_capacity: object["maximumAttendeeCapacity"],
+      comment_moderation: object["repliesModerationOption"]
+    }
   end
 
   @spec get_address(map | binary | nil) :: integer | nil
@@ -186,13 +184,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Event do
 
   @ap_public "https://www.w3.org/ns/activitystreams#Public"
 
-  defp get_visibility(object) do
-    cond do
-      @ap_public in object["to"] -> :public
-      @ap_public in object["cc"] -> :unlisted
-      true -> :private
-    end
-  end
+  defp get_visibility(object), do: if(@ap_public in object["to"], do: :public, else: :unlisted)
 
   @spec date_to_string(DateTime.t() | nil) :: String.t()
   defp date_to_string(nil), do: nil

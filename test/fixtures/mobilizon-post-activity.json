@@ -1,13 +1,30 @@
 {
     "@context": [
         "https://www.w3.org/ns/activitystreams",
-        "https://w3id.org/security/v1",
+        "https://litepub.social/litepub/context.jsonld",
         {
-            "mblzn": "https://joinmobilizon.org/ns#",
             "Hashtag": "as:Hashtag",
+            "category": "sc:category",
+            "ical": "http://www.w3.org/2002/12/cal/ical#",
+            "joinMode": {
+                "@id": "mz:joinMode",
+                "@type": "mz:joinModeType"
+            },
+            "joinModeType": {
+                "@id": "mz:joinModeType",
+                "@type": "rdfs:Class"
+            },
+            "maximumAttendeeCapacity": "sc:maximumAttendeeCapacity",
+            "mz": "https://joinmobilizon.org/ns#",
+            "repliesModerationOption": {
+                "@id": "mz:repliesModerationOption",
+                "@type": "mz:repliesModerationOptionType"
+            },
+            "repliesModerationOptionType": {
+                "@id": "mz:repliesModerationOptionType",
+                "@type": "rdfs:Class"
+            },
             "sc": "http://schema.org#",
-            "Place": "sc:Place",
-            "PostalAddress": "sc:PostalAddress",
             "uuid": "sc:identifier"
         }
     ],

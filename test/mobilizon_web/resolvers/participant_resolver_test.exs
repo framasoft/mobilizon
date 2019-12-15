@@ -199,7 +199,9 @@ defmodule MobilizonWeb.Resolvers.ParticipantResolverTest do
       user: user,
       actor: actor
     } do
-      event = insert(:event, %{organizer_actor: actor})
+      event =
+        insert(:event, %{organizer_actor: actor, participant_stats: %{creator: 1, participant: 1}})
+
       insert(:participant, %{actor: actor, event: event, role: :creator})
       user2 = insert(:user)
       actor2 = insert(:actor, user: user2)

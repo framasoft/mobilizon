@@ -32,7 +32,6 @@ defmodule Mobilizon.Events.Comment do
   # When deleting an event we only nihilify everything
   @required_attrs [:url]
   @creation_required_attrs @required_attrs ++ [:text, :actor_id]
-  @deletion_required_attrs @required_attrs ++ [:deleted_at]
   @optional_attrs [
     :text,
     :actor_id,
@@ -81,11 +80,13 @@ defmodule Mobilizon.Events.Comment do
     |> validate_required(@creation_required_attrs)
   end
 
-  @spec delete_changeset(t, map) :: Ecto.Changeset.t()
-  def delete_changeset(%__MODULE__{} = comment, attrs) do
+  @spec delete_changeset(t) :: Ecto.Changeset.t()
+  def delete_changeset(%__MODULE__{} = comment) do
     comment
-    |> common_changeset(attrs)
-    |> validate_required(@deletion_required_attrs)
+    |> change()
+    |> put_change(:text, nil)
+    |> put_change(:actor_id, nil)
+    |> put_change(:deleted_at, DateTime.utc_now() |> DateTime.truncate(:second))
   end
 
   @doc """

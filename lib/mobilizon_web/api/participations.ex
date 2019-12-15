@@ -4,7 +4,6 @@ defmodule MobilizonWeb.API.Participations do
   """
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Service.ActivityPub
   alias MobilizonWeb.Email.Participation
@@ -36,16 +35,13 @@ defmodule MobilizonWeb.API.Participations do
          %Participant{} = participation,
          %Actor{} = moderator
        ) do
-    with {:ok, activity, _} <-
+    with {:ok, activity, %Participant{role: :participant} = participation} <-
            ActivityPub.accept(
              :join,
              participation,
-             %{role: :participant},
              true,
-             %{"to" => [moderator.url]}
+             %{"actor" => moderator.url}
            ),
-         {:ok, %Participant{role: :participant} = participation} <-
-           Events.update_participant(participation, %{"role" => :participant}),
          :ok <- Participation.send_emails_to_local_user(participation) do
       {:ok, activity, participation}
     end
@@ -55,17 +51,12 @@ defmodule MobilizonWeb.API.Participations do
          %Participant{} = participation,
          %Actor{} = moderator
        ) do
-    with {:ok, activity, _} <-
+    with {:ok, activity, %Participant{role: :rejected} = participation} <-
            ActivityPub.reject(
-             %{
-               to: [participation.actor.url],
-               actor: moderator.url,
-               object: participation.url
-             },
-             "#{MobilizonWeb.Endpoint.url()}/reject/join/#{participation.id}"
+             :join,
+             participation,
+             %{"actor" => moderator.url}
            ),
-         {:ok, %Participant{role: :rejected} = participation} <-
-           Events.update_participant(participation, %{"role" => :rejected}),
          :ok <- Participation.send_emails_to_local_user(participation) do
       {:ok, activity, participation}
     end

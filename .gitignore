@@ -19,6 +19,7 @@ erl_crash.dump
 .env.test
 /.env
 .env.2
+.env.1
 
 /setup_db.psql
 

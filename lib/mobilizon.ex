@@ -37,6 +37,7 @@ defmodule Mobilizon do
       # supervisors
       Mobilizon.Storage.Repo,
       MobilizonWeb.Endpoint,
+      {Absinthe.Subscription, [MobilizonWeb.Endpoint]},
       {Oban, Application.get_env(:mobilizon, Oban)},
       # workers
       Guardian.DB.Token.SweeperServer,
@@ -44,7 +45,8 @@ defmodule Mobilizon do
       cachex_spec(:feed, 2500, 60, 60, &Feed.create_cache/1),
       cachex_spec(:ics, 2500, 60, 60, &ICalendar.create_cache/1),
       cachex_spec(:statistics, 10, 60, 60),
-      cachex_spec(:activity_pub, 2500, 3, 15)
+      cachex_spec(:activity_pub, 2500, 3, 15),
+      internal_actor()
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Mobilizon.Supervisor)
@@ -88,4 +90,12 @@ defmodule Mobilizon do
   @spec fallback_options(function | nil) :: keyword
   defp fallback_options(nil), do: []
   defp fallback_options(fallback), do: [fallback: fallback(default: fallback)]
+
+  defp internal_actor() do
+    %{
+      id: :internal_actor_init,
+      start: {Task, :start_link, [&Mobilizon.Service.ActivityPub.Relay.init/0]},
+      restart: :temporary
+    }
+  end
 end

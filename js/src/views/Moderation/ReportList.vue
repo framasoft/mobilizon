@@ -9,15 +9,15 @@
         <b-field>
             <b-radio-button v-model="filterReports"
                             :native-value="ReportStatusEnum.OPEN">
-                Ouvert
+                {{ $t('Open') }}
             </b-radio-button>
             <b-radio-button v-model="filterReports"
                             :native-value="ReportStatusEnum.RESOLVED">
-                Résolus
+                {{ $t('Resolved') }}
             </b-radio-button>
             <b-radio-button v-model="filterReports"
                             :native-value="ReportStatusEnum.CLOSED">
-                Fermés
+                {{ $t('Closed') }}
             </b-radio-button>
         </b-field>
         <ul v-if="reports.length > 0">
@@ -28,9 +28,9 @@
             </li>
         </ul>
         <div v-else>
-            <b-message v-if="filterReports === ReportStatusEnum.OPEN" type="is-info">No open reports yet</b-message>
-            <b-message v-if="filterReports === ReportStatusEnum.RESOLVED" type="is-info">No resolved reports yet</b-message>
-            <b-message v-if="filterReports === ReportStatusEnum.CLOSED" type="is-info">No closed reports yet</b-message>
+            <b-message v-if="filterReports === ReportStatusEnum.OPEN" type="is-info">{{ $t('No open reports yet') }}</b-message>
+            <b-message v-if="filterReports === ReportStatusEnum.RESOLVED" type="is-info">{{ $t('No resolved reports yet') }}</b-message>
+            <b-message v-if="filterReports === ReportStatusEnum.CLOSED" type="is-info">{{ $t('No closed reports yet') }}</b-message>
         </div>
     </section>
 </template>
@@ -80,8 +80,3 @@ export default class ReportList extends Vue {
   }
 }
 </script>
-<style lang="scss">
-    .container li {
-        margin: 10px auto;
-    }
-</style>

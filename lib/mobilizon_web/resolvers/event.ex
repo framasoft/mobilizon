@@ -245,6 +245,9 @@ defmodule MobilizonWeb.Resolvers.Event do
         {:error,
          "Participant #{id} can't be approved since it's already a participant (with role #{role})"}
 
+      {:has_participation, nil} ->
+        {:error, "Participant not found"}
+
       {:actor_approve_permission, _} ->
         {:error, "Provided moderator actor ID doesn't have permission on this event"}
 

@@ -97,7 +97,7 @@ defmodule MobilizonWeb.Resolvers.Person do
            {:find_actor, Actors.get_actor(id)},
          {:is_owned, %Actor{}} <- User.owns_actor(user, actor.id),
          args <- save_attached_pictures(args),
-         {:ok, actor} <- Actors.update_actor(actor, args) do
+         {:ok, _activity, %Actor{} = actor} <- ActivityPub.update(:actor, actor, args, true) do
       {:ok, actor}
     else
       {:find_actor, nil} ->

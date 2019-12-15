@@ -121,4 +121,99 @@ defmodule MobilizonWeb.Resolvers.AdminResolverTest do
                title
     end
   end
+
+  describe "Resolver: Get the list of relay followers" do
+    test "test list_relay_followers/3 returns relay followers", %{conn: conn} do
+      %User{} = user_admin = insert(:user, role: :administrator)
+
+      follower_actor =
+        insert(:actor,
+          domain: "localhost",
+          user: nil,
+          url: "http://localhost:8080/actor",
+          preferred_username: "instance_actor",
+          name: "I am an instance actor"
+        )
+
+      %Actor{} = relay_actor = Mobilizon.Service.ActivityPub.Relay.get_actor()
+      insert(:follower, actor: follower_actor, target_actor: relay_actor)
+
+      query = """
+      {
+        relayFollowers {
+          elements {
+            actor {
+              preferredUsername,
+              domain,
+            },
+            approved
+          },
+          total
+        }
+      }
+      """
+
+      res =
+        conn
+        |> auth_conn(user_admin)
+        |> AbsintheHelpers.graphql_query(query: query)
+
+      assert is_nil(res["errors"])
+
+      assert hd(res["data"]["relayFollowers"]["elements"]) == %{
+               "actor" => %{"preferredUsername" => "instance_actor", "domain" => "localhost"},
+               "approved" => false
+             }
+    end
+
+    test "test list_relay_followers/3 returns relay followings", %{conn: conn} do
+      %User{} = user_admin = insert(:user, role: :administrator)
+
+      %Actor{
+        preferred_username: following_actor_preferred_username,
+        domain: following_actor_domain
+      } =
+        following_actor =
+        insert(:actor,
+          domain: "localhost",
+          user: nil,
+          url: "http://localhost:8080/actor",
+          preferred_username: "instance_actor",
+          name: "I am an instance actor"
+        )
+
+      %Actor{} = relay_actor = Mobilizon.Service.ActivityPub.Relay.get_actor()
+      insert(:follower, actor: relay_actor, target_actor: following_actor)
+
+      query = """
+      {
+        relayFollowings {
+          elements {
+            targetActor {
+              preferredUsername,
+              domain,
+            },
+            approved
+          },
+          total
+        }
+      }
+      """
+
+      res =
+        conn
+        |> auth_conn(user_admin)
+        |> AbsintheHelpers.graphql_query(query: query)
+
+      assert is_nil(res["errors"])
+
+      assert hd(res["data"]["relayFollowings"]["elements"]) == %{
+               "targetActor" => %{
+                 "preferredUsername" => following_actor_preferred_username,
+                 "domain" => following_actor_domain
+               },
+               "approved" => false
+             }
+    end
+  end
 end

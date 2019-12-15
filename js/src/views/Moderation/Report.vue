@@ -27,7 +27,10 @@
                         </tr>
                         <tr>
                             <td>{{ $t('Reported by') }}</td>
-                            <td>
+                            <td v-if="report.reporter.type === ActorType.APPLICATION">
+                                {{ report.reporter.domain }}
+                            </td>
+                            <td v-else>
                                 <router-link :to="{ name: RouteName.PROFILE, params: { name: report.reporter.preferredUsername } }">
                                     <img v-if="report.reporter.avatar" class="image" :src="report.reporter.avatar.url" /> @{{ report.reporter.preferredUsername }}
                                 </router-link>
@@ -55,15 +58,15 @@
                             <td>
                                 <router-link :to="{ name: RouteName.EVENT, params: { uuid: report.event.uuid }}">{{ report.event.title }}</router-link>
                                 <span class="is-pulled-right">
-                                    <b-button
-                                            tag="router-link"
-                                            type="is-primary"
-                                            :to="{ name: RouteName.EDIT_EVENT, params: {eventId: report.event.uuid } }"
-                                            icon-left="pencil"
-                                            size="is-small">{{ $t('Edit') }}</b-button>
+<!--                                    <b-button-->
+<!--                                            tag="router-link"-->
+<!--                                            type="is-primary"-->
+<!--                                            :to="{ name: RouteName.EDIT_EVENT, params: {eventId: report.event.uuid } }"-->
+<!--                                            icon-left="pencil"-->
+<!--                                            size="is-small">{{ $t('Edit') }}</b-button>-->
                                     <b-button
                                             type="is-danger"
-                                            @click="confirmDelete()"
+                                            @click="confirmEventDelete()"
                                             icon-left="delete"
                                             size="is-small">{{ $t('Delete') }}</b-button>
                                 </span>
@@ -74,24 +77,24 @@
             </div>
 
             <div class="box report-content">
-                <p v-if="report.content" v-html="nl2br(report.content)"></p>
+                <p v-if="report.content" v-html="nl2br(report.content)" />
                 <p v-else>{{ $t('No comment') }}</p>
             </div>
 
             <div class="box" v-if="report.event && report.comments.length === 0">
                 <router-link :to="{ name: RouteName.EVENT, params: { uuid: report.event.uuid }}">
                     <h3 class="title">{{ report.event.title }}</h3>
-                    <p v-html="report.event.description"></p>
+                    <p v-html="report.event.description" />
                 </router-link>
-                <b-button
-                        tag="router-link"
-                        type="is-primary"
-                        :to="{ name: RouteName.EDIT_EVENT, params: {eventId: report.event.uuid } }"
-                        icon-left="pencil"
-                        size="is-small">{{ $t('Edit') }}</b-button>
+<!--                <b-button-->
+<!--                        tag="router-link"-->
+<!--                        type="is-primary"-->
+<!--                        :to="{ name: RouteName.EDIT_EVENT, params: {eventId: report.event.uuid } }"-->
+<!--                        icon-left="pencil"-->
+<!--                        size="is-small">{{ $t('Edit') }}</b-button>-->
                 <b-button
                         type="is-danger"
-                        @click="confirmDelete()"
+                        @click="confirmEventDelete()"
                         icon-left="delete"
                         size="is-small">{{ $t('Delete') }}</b-button>
             </div>
@@ -101,17 +104,25 @@
                     <div class="box" v-if="comment">
                         <article class="media">
                             <div class="media-left">
-                                <figure class="image is-48x48" v-if="comment.actor.avatar">
+                                <figure class="image is-48x48" v-if="comment.actor && comment.actor.avatar">
                                     <img :src="comment.actor.avatar.url" alt="Image">
                                 </figure>
                                 <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
                             </div>
                             <div class="media-content">
                                 <div class="content">
-                                    <strong>{{ comment.actor.name }}</strong> <small>@{{ comment.actor.preferredUsername }}</small>
+                                    <span v-if="comment.actor">
+                                        <strong>{{ comment.actor.name }}</strong> <small>@{{ comment.actor.preferredUsername }}</small>
+                                    </span>
+                                    <span v-else>{{ $t('Unknown actor') }}</span>
                                     <br>
-                                    <p v-html="comment.text"></p>
+                                    <p v-html="comment.text" />
                                 </div>
+                                <b-button
+                                        type="is-danger"
+                                        @click="confirmCommentDelete(comment)"
+                                        icon-left="delete"
+                                        size="is-small">{{ $t('Delete') }}</b-button>
                             </div>
                         </article>
                     </div>
@@ -131,21 +142,23 @@
                 <b-field :label="$t('New note')">
                     <b-input type="textarea" v-model="noteContent"></b-input>
                 </b-field>
-                <b-button type="submit" @click="addNote">{{ $t('Ajouter une note') }}</b-button>
+                <b-button type="submit" @click="addNote">{{ $t('Add a note') }}</b-button>
             </form>
         </div>
     </section>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { CREATE_REPORT_NOTE, REPORT, REPORTS, UPDATE_REPORT } from '@/graphql/report';
+import { CREATE_REPORT_NOTE, REPORT, UPDATE_REPORT } from '@/graphql/report';
 import { IReport, IReportNote, ReportStatusEnum } from '@/types/report.model';
 import { RouteName } from '@/router';
 import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
-import { IPerson } from '@/types/actor';
+import { IPerson, ActorType } from '@/types/actor';
 import { DELETE_EVENT } from '@/graphql/event';
 import { uniq } from 'lodash';
 import { nl2br } from '@/utils/html';
+import { DELETE_COMMENT } from '@/graphql/comment';
+import { IComment } from '@/types/comment.model';
 
 @Component({
   apollo: {
@@ -164,6 +177,12 @@ import { nl2br } from '@/utils/html';
       query: CURRENT_ACTOR_CLIENT,
     },
   },
+  metaInfo() {
+    return {
+      title: this.$t('Report') as string,
+      titleTemplate: '%s | Mobilizon',
+    };
+  },
 })
 export default class Report extends Vue {
   @Prop({ required: true }) reportId!: number;
@@ -173,6 +192,7 @@ export default class Report extends Vue {
 
   ReportStatusEnum = ReportStatusEnum;
   RouteName = RouteName;
+  ActorType = ActorType;
   nl2br = nl2br;
 
   noteContent: string = '';
@@ -210,7 +230,7 @@ export default class Report extends Vue {
     }
   }
 
-  confirmDelete() {
+  confirmEventDelete() {
     this.$buefy.dialog.confirm({
       title: this.$t('Deleting event') as string,
       message: this.$t('Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the conversation with the event creator or edit its event instead.') as string,
@@ -218,6 +238,17 @@ export default class Report extends Vue {
       type: 'is-danger',
       hasIcon: true,
       onConfirm: () => this.deleteEvent(),
+    });
+  }
+
+  confirmCommentDelete(comment: IComment) {
+    this.$buefy.dialog.confirm({
+      title: this.$t('Deleting comment') as string,
+      message: this.$t('Are you sure you want to <b>delete</b> this comment? This action cannot be undone.') as string,
+      confirmText: this.$t('Delete Comment') as string,
+      type: 'is-danger',
+      hasIcon: true,
+      onConfirm: () => this.deleteComment(comment),
     });
   }
 
@@ -240,6 +271,21 @@ export default class Report extends Vue {
         position: 'is-bottom-right',
         duration: 5000,
       });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async deleteComment(comment: IComment) {
+    try {
+      await this.$apollo.mutate({
+        mutation: DELETE_COMMENT,
+        variables: {
+          commentId: comment.id,
+          actorId: this.currentActor.id,
+        },
+      });
+      this.$notifier.success(this.$t('Comment deleted') as string);
     } catch (error) {
       console.error(error);
     }
@@ -288,10 +334,6 @@ export default class Report extends Vue {
 </script>
 <style lang="scss" scoped>
     @import "@/variables.scss";
-
-    .container li {
-        margin: 10px auto;
-    }
 
     tbody td img.image, .note img.image {
         display: inline;

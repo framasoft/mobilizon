@@ -22,7 +22,7 @@ config :mobilizon, :instance,
   repository: Mix.Project.config()[:source_url],
   allow_relay: true,
   # Federation is to be activated with Mobilizon 1.0.0-beta.2
-  federating: false,
+  federating: true,
   remote_limit: 100_000,
   upload_limit: 10_000_000,
   avatar_upload_limit: 2_000_000,
@@ -63,7 +63,7 @@ config :mobilizon, MobilizonWeb.Upload,
 config :mobilizon, MobilizonWeb.Uploaders.Local, uploads: "uploads"
 
 config :mobilizon, :media_proxy,
-  enabled: false,
+  enabled: true,
   proxy_opts: [
     redirect_on_failure: false,
     max_body_length: 25 * 1_048_576,
@@ -107,7 +107,9 @@ config :auto_linker,
     # TODO: Set to :no_scheme when it works properly
     validate_tld: true,
     class: false,
-    strip_prefix: false
+    strip_prefix: false,
+    new_window: true,
+    rel: "noopener noreferrer ugc"
   ]
 
 config :phoenix, :format_encoders, json: Jason, "activity-json": Jason
@@ -119,6 +121,8 @@ config :ex_cldr,
 
 config :http_signatures,
   adapter: Mobilizon.Service.HTTPSignatures.Signature
+
+config :mobilizon, :activitypub, sign_object_fetches: true
 
 config :mobilizon, Mobilizon.Service.Geospatial.Nominatim,
   endpoint:
@@ -155,7 +159,7 @@ config :mobilizon, :maps,
 config :mobilizon, Oban,
   repo: Mobilizon.Storage.Repo,
   prune: {:maxlen, 10_000},
-  queues: [default: 10, search: 20]
+  queues: [default: 10, search: 20, background: 5]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

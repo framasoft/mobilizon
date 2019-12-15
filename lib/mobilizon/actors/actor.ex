@@ -7,9 +7,9 @@ defmodule Mobilizon.Actors.Actor do
 
   import Ecto.Changeset
 
-  alias Mobilizon.{Actors, Config, Crypto}
+  alias Mobilizon.{Actors, Config, Crypto, Share}
   alias Mobilizon.Actors.{ActorOpenness, ActorType, ActorVisibility, Follower, Member}
-  alias Mobilizon.Events.{Event, FeedToken}
+  alias Mobilizon.Events.{Event, FeedToken, Comment}
   alias Mobilizon.Media.File
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Users.User
@@ -43,11 +43,14 @@ defmodule Mobilizon.Actors.Actor do
           followers: [Follower.t()],
           followings: [Follower.t()],
           organized_events: [Event.t()],
+          comments: [Comment.t()],
           feed_tokens: [FeedToken.t()],
           created_reports: [Report.t()],
           subject_reports: [Report.t()],
           report_notes: [Note.t()],
           mentions: [Mention.t()],
+          shares: [Share.t()],
+          owner_shares: [Share.t()],
           memberships: [t]
         }
 
@@ -137,11 +140,14 @@ defmodule Mobilizon.Actors.Actor do
     has_many(:followers, Follower, foreign_key: :target_actor_id)
     has_many(:followings, Follower, foreign_key: :actor_id)
     has_many(:organized_events, Event, foreign_key: :organizer_actor_id)
+    has_many(:comments, Comment, foreign_key: :actor_id)
     has_many(:feed_tokens, FeedToken, foreign_key: :actor_id)
     has_many(:created_reports, Report, foreign_key: :reporter_id)
     has_many(:subject_reports, Report, foreign_key: :reported_id)
     has_many(:report_notes, Note, foreign_key: :moderator_id)
     has_many(:mentions, Mention)
+    has_many(:shares, Share, foreign_key: :actor_id)
+    has_many(:owner_shares, Share, foreign_key: :owner_actor_id)
     many_to_many(:memberships, __MODULE__, join_through: Member)
 
     timestamps()
@@ -215,6 +221,19 @@ defmodule Mobilizon.Actors.Actor do
     |> cast(attrs, @update_attrs)
     |> common_changeset()
     |> validate_required(@update_required_attrs)
+  end
+
+  @doc false
+  @spec delete_changeset(t) :: Ecto.Changeset.t()
+  def delete_changeset(%__MODULE__{} = actor) do
+    actor
+    |> change()
+    |> put_change(:name, nil)
+    |> put_change(:summary, nil)
+    |> put_change(:suspended, true)
+    |> put_change(:avatar, nil)
+    |> put_change(:banner, nil)
+    |> put_change(:user_id, nil)
   end
 
   @doc """

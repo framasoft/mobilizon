@@ -1,6 +1,8 @@
+import {ParticipantRole} from "@/types/event.model";
+import {ParticipantRole} from "@/types/event.model";
 <template>
   <div class="container">
-    <b-loading :active.sync="$apollo.loading"></b-loading>
+    <b-loading :active.sync="$apollo.loading" />
     <transition appear name="fade" mode="out-in">
       <div>
         <div class="header-picture" v-if="event.picture" :style="`background-image: url('${event.picture.url}')`" />
@@ -9,7 +11,7 @@
             <div class="title-and-participate-button">
               <div class="title-wrapper">
                 <div class="date-component">
-                  <date-calendar-icon :date="event.beginsOn"></date-calendar-icon>
+                  <date-calendar-icon :date="event.beginsOn" />
                 </div>
                 <div class="title-and-informations">
                   <h1 class="title">{{ event.title }}</h1>
@@ -49,7 +51,7 @@
                   <template>
                     <span>{{ $t('Event already passed')}}</span>
                   </template>
-                  <b-icon icon="menu-down"></b-icon>
+                  <b-icon icon="menu-down" />
                 </button>
               </div>
             </div>
@@ -64,6 +66,9 @@
                   <span class="visibility" v-if="!event.draft">
                     <b-tag type="is-info" v-if="event.visibility === EventVisibility.PUBLIC">{{ $t('Public event') }}</b-tag>
                     <b-tag type="is-info" v-if="event.visibility === EventVisibility.UNLISTED">{{ $t('Private event') }}</b-tag>
+                  </span>
+                  <span v-if="!event.local">
+                    <b-tag type="is-primary">{{ event.organizerActor.domain }}</b-tag>
                   </span>
                   <router-link
                     v-if="event.tags && event.tags.length > 0"
@@ -136,7 +141,7 @@
                   </b-modal>
                 </div>
                 <span class="online-address" v-if="event.onlineAddress && urlToHostname(event.onlineAddress)">
-                  <b-icon icon="link"></b-icon>
+                  <b-icon icon="link" />
                   <a
                           target="_blank"
                           rel="noopener noreferrer"
@@ -250,8 +255,14 @@
 </template>
 
 <script lang="ts">
-import { EVENT_PERSON_PARTICIPATION, FETCH_EVENT, JOIN_EVENT, LEAVE_EVENT } from '@/graphql/event';
-import { Component, Prop } from 'vue-property-decorator';
+import {
+    EVENT_PERSON_PARTICIPATION,
+    EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED,
+    FETCH_EVENT,
+    JOIN_EVENT,
+    LEAVE_EVENT,
+  } from '@/graphql/event';
+import { Component, Prop, Watch } from 'vue-property-decorator';
 import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { EventModel, EventStatus, EventVisibility, IEvent, IParticipant, ParticipantRole } from '@/types/event.model';
 import { IPerson, Person } from '@/types/actor';
@@ -311,6 +322,15 @@ import 'intersection-observer';
           actorId: this.currentActor.id,
         };
       },
+      subscribeToMore: {
+        document: EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED,
+        variables() {
+          return {
+            eventId: this.event.id,
+            actorId: this.currentActor.id,
+          };
+        },
+      },
       update: (data) => {
         if (data && data.person) return data.person.participations;
         return [];
@@ -341,6 +361,7 @@ export default class Event extends EventMixin {
   currentActor!: IPerson;
   identity: IPerson = new Person();
   participations: IParticipant[] = [];
+  oldParticipationRole!: String;
   showMap: boolean = false;
   isReportModalActive: boolean = false;
   isJoinModalActive: boolean = false;
@@ -432,14 +453,10 @@ export default class Event extends EventMixin {
           reporterId: this.currentActor.id,
           reportedId: this.event.organizerActor.id,
           content,
+          forward,
         },
       });
-      this.$buefy.notification.open({
-        message: this.$t('Event {eventTitle} reported', { eventTitle }) as string,
-        type: 'is-success',
-        position: 'is-bottom-right',
-        duration: 5000,
-      });
+      this.$notifier.success(this.$t('Event {eventTitle} reported', { eventTitle }) as string);
     } catch (error) {
       console.error(error);
     }
@@ -493,12 +510,11 @@ export default class Event extends EventMixin {
         },
       });
       if (data) {
-        this.$buefy.notification.open({
-          message: (data.joinEvent.role === ParticipantRole.NOT_APPROVED ? this.$t('Your participation has been requested') : this.$t('Your participation has been confirmed')) as string,
-          type: 'is-success',
-          position: 'is-bottom-right',
-          duration: 5000,
-        });
+        if (data.joinEvent.role === ParticipantRole.NOT_APPROVED) {
+          this.participationRequestedMessage();
+        } else {
+          this.participationConfirmedMessage();
+        }
       }
     } catch (error) {
       console.error(error);
@@ -563,16 +579,53 @@ export default class Event extends EventMixin {
         },
       });
       if (data) {
-        this.$buefy.notification.open({
-          message: this.$t('You have cancelled your participation') as string,
-          type: 'is-success',
-          position: 'is-bottom-right',
-          duration: 5000,
-        });
+        this.participationCancelledMessage();
       }
     } catch (error) {
       console.error(error);
     }
+  }
+
+  @Watch('participations')
+  watchParticipations() {
+    if (this.participations.length > 0) {
+      if (this.oldParticipationRole
+              && this.participations[0].role !== ParticipantRole.NOT_APPROVED
+              && this.oldParticipationRole !== this.participations[0].role) {
+        switch (this.participations[0].role) {
+          case ParticipantRole.PARTICIPANT:
+            this.participationConfirmedMessage();
+            break;
+          case ParticipantRole.REJECTED:
+            this.participationRejectedMessage();
+            break;
+          default:
+            this.participationChangedMessage();
+            break;
+        }
+      }
+      this.oldParticipationRole = this.participations[0].role;
+    }
+  }
+
+  private participationConfirmedMessage() {
+    this.$notifier.success(this.$t('Your participation has been confirmed') as string);
+  }
+
+  private participationRequestedMessage() {
+    this.$notifier.success(this.$t('Your participation has been requested') as string);
+  }
+
+  private participationRejectedMessage() {
+    this.$notifier.error(this.$t('Your participation has been rejected') as string);
+  }
+
+  private participationChangedMessage() {
+    this.$notifier.info(this.$t('Your participation status has been changed') as string);
+  }
+
+  private participationCancelledMessage() {
+    this.$notifier.success(this.$t('You have cancelled your participation') as string);
   }
 
   async downloadIcsEvent() {

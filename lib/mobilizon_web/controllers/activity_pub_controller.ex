@@ -17,6 +17,7 @@ defmodule MobilizonWeb.ActivityPubController do
 
   action_fallback(:errors)
 
+  plug(MobilizonWeb.Plugs.Federating when action in [:inbox, :relay])
   plug(:relay_active? when action in [:relay])
 
   def relay_active?(conn, _) do
@@ -114,7 +115,7 @@ defmodule MobilizonWeb.ActivityPubController do
   end
 
   def relay(conn, _params) do
-    with {:commit, %Actor{} = actor} <- Cache.get_relay() do
+    with {status, %Actor{} = actor} when status in [:commit, :ok] <- Cache.get_relay() do
       conn
       |> put_resp_header("content-type", "application/activity+json")
       |> json(ActorView.render("actor.json", %{actor: actor}))

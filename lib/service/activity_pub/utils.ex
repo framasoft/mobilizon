@@ -8,20 +8,11 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   # Various ActivityPub related utils.
   """
 
-  alias Ecto.Changeset
-
-  alias Mobilizon.{Actors, Addresses, Events, Reports, Users}
+  alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Addresses.Address
-  alias Mobilizon.Events.{Comment, Event}
   alias Mobilizon.Media.Picture
-  alias Mobilizon.Reports.Report
   alias Mobilizon.Service.ActivityPub.{Activity, Converter}
   alias Mobilizon.Service.Federator
-  alias Mobilizon.Storage.Repo
-
-  alias MobilizonWeb.{Email, Endpoint}
-  alias MobilizonWeb.Router.Helpers, as: Routes
 
   require Logger
 
@@ -37,12 +28,31 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     %{
       "@context" => [
         "https://www.w3.org/ns/activitystreams",
-        "https://litepub.github.io/litepub/context.jsonld",
+        "https://litepub.social/litepub/context.jsonld",
         %{
           "sc" => "http://schema.org#",
+          "ical" => "http://www.w3.org/2002/12/cal/ical#",
           "Hashtag" => "as:Hashtag",
           "category" => "sc:category",
-          "uuid" => "sc:identifier"
+          "uuid" => "sc:identifier",
+          "maximumAttendeeCapacity" => "sc:maximumAttendeeCapacity",
+          "mz" => "https://joinmobilizon.org/ns#",
+          "repliesModerationOptionType" => %{
+            "@id" => "mz:repliesModerationOptionType",
+            "@type" => "rdfs:Class"
+          },
+          "repliesModerationOption" => %{
+            "@id" => "mz:repliesModerationOption",
+            "@type" => "mz:repliesModerationOptionType"
+          },
+          "joinModeType" => %{
+            "@id" => "mz:joinModeType",
+            "@type" => "rdfs:Class"
+          },
+          "joinMode" => %{
+            "@id" => "mz:joinMode",
+            "@type" => "mz:joinModeType"
+          }
         }
       ]
     }
@@ -112,128 +122,56 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     Map.put_new_lazy(map, "published", &make_date/0)
   end
 
-  @doc """
-  Inserts a full object if it is contained in an activity.
-  """
-  def insert_full_object(object_data)
-
-  @doc """
-  Inserts a full object if it is contained in an activity.
-  """
-  def insert_full_object(%{"object" => %{"type" => "Event"} = object_data, "type" => "Create"})
-      when is_map(object_data) do
-    with {:ok, object_data} <-
-           Converter.Event.as_to_model_data(object_data),
-         {:ok, %Event{} = event} <- Events.create_event(object_data) do
-      {:ok, event}
-    end
+  def get_actor(%{"actor" => actor}) when is_binary(actor) do
+    actor
   end
 
-  def insert_full_object(%{"object" => %{"type" => "Group"} = object_data, "type" => "Create"})
-      when is_map(object_data) do
-    with object_data <-
-           Map.put(object_data, "preferred_username", object_data["preferredUsername"]),
-         {:ok, %Actor{} = group} <- Actors.create_group(object_data) do
-      {:ok, group}
-    end
-  end
-
-  @doc """
-  Inserts a full object if it is contained in an activity.
-  """
-  def insert_full_object(%{"object" => %{"type" => "Note"} = object_data, "type" => "Create"})
-      when is_map(object_data) do
-    with data <- Converter.Comment.as_to_model_data(object_data),
-         {:ok, %Comment{} = comment} <- Events.create_comment(data) do
-      {:ok, comment}
+  def get_actor(%{"actor" => actor}) when is_list(actor) do
+    if is_binary(Enum.at(actor, 0)) do
+      Enum.at(actor, 0)
     else
-      err ->
-        Logger.error("Error while inserting a remote comment inside database")
-        Logger.debug(inspect(err))
-        {:error, err}
+      actor
+      |> Enum.find(fn %{"type" => type} -> type in ["Person", "Service", "Application"] end)
+      |> Map.get("id")
     end
+  end
+
+  def get_actor(%{"actor" => %{"id" => id}}) when is_bitstring(id) do
+    id
+  end
+
+  def get_actor(%{"actor" => nil, "attributedTo" => actor}) when not is_nil(actor) do
+    get_actor(%{"actor" => actor})
   end
 
   @doc """
-  Inserts a full object if it is contained in an activity.
+  Checks that an incoming AP object's actor matches the domain it came from.
   """
-  def insert_full_object(%{"type" => "Flag"} = object_data)
-      when is_map(object_data) do
-    with data <- Converter.Flag.as_to_model_data(object_data),
-         {:ok, %Report{} = report} <- Reports.create_report(data) do
-      Enum.each(Users.list_moderators(), fn moderator ->
-        moderator
-        |> Email.Admin.report(report)
-        |> Email.Mailer.deliver_later()
-      end)
+  def origin_check?(id, %{"actor" => actor} = params) when not is_nil(actor) do
+    id_uri = URI.parse(id)
+    actor_uri = URI.parse(get_actor(params))
 
-      {:ok, report}
-    else
-      err ->
-        Logger.error("Error while inserting report inside database")
-        Logger.debug(inspect(err))
-        {:error, err}
-    end
+    compare_uris?(actor_uri, id_uri)
   end
 
-  def insert_full_object(_), do: {:ok, nil}
+  def origin_check?(_id, %{"actor" => nil}), do: false
 
-  @doc """
-  Update an object
-  """
-  @spec update_object(struct(), map()) :: {:ok, struct()} | any()
-  def update_object(object, object_data)
+  def origin_check?(id, %{"attributedTo" => actor} = params),
+    do: origin_check?(id, Map.put(params, "actor", actor))
 
-  def update_object(event_url, %{
-        "object" => %{"type" => "Event"} = object_data,
-        "type" => "Update"
-      })
-      when is_map(object_data) do
-    with {:event_not_found, %Event{} = event} <-
-           {:event_not_found, Events.get_event_by_url(event_url)},
-         {:ok, object_data} <- Converter.Event.as_to_model_data(object_data),
-         {:ok, %Event{} = event} <- Events.update_event(event, object_data) do
-      {:ok, event}
-    end
+  def origin_check?(_id, _data), do: false
+
+  defp compare_uris?(%URI{} = id_uri, %URI{} = other_uri), do: id_uri.host == other_uri.host
+
+  def origin_check_from_id?(id, other_id) when is_binary(other_id) do
+    id_uri = URI.parse(id)
+    other_uri = URI.parse(other_id)
+
+    compare_uris?(id_uri, other_uri)
   end
 
-  def update_object(actor_url, %{
-        "object" => %{"type" => type_actor} = object_data,
-        "type" => "Update"
-      })
-      when is_map(object_data) and type_actor in @actor_types do
-    with {:ok, %Actor{} = actor} <- Actors.get_actor_by_url(actor_url),
-         object_data <- Converter.Actor.as_to_model_data(object_data),
-         {:ok, %Actor{} = actor} <- Actors.update_actor(actor, object_data) do
-      {:ok, actor}
-    end
-  end
-
-  def update_object(_, _), do: {:ok, nil}
-
-  #### Like-related helpers
-
-  #  @doc """
-  #  Returns an existing like if a user already liked an object
-  #  """
-  #  def get_existing_like(actor, %{data: %{"id" => id}}) do
-  #    query =
-  #      from(
-  #        activity in Activity,
-  #        where: fragment("(?)->>'actor' = ?", activity.data, ^actor),
-  #        # this is to use the index
-  #        where:
-  #          fragment(
-  #            "coalesce((?)->'object'->>'id', (?)->>'object') = ?",
-  #            activity.data,
-  #            activity.data,
-  #            ^id
-  #          ),
-  #        where: fragment("(?)->>'type' = 'Like'", activity.data)
-  #      )
-  #
-  #    Repo.one(query)
-  #  end
+  def origin_check_from_id?(id, %{"id" => other_id} = _params) when is_binary(other_id),
+    do: origin_check_from_id?(id, other_id)
 
   @doc """
   Save picture data from %Plug.Upload{} and return AS Link data.
@@ -283,255 +221,6 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
   end
 
   def make_picture_data(nil), do: nil
-
-  @doc """
-  Make an AP event object from an set of values
-  """
-  @spec make_event_data(
-          String.t(),
-          map(),
-          String.t(),
-          String.t(),
-          map(),
-          list(),
-          map(),
-          String.t()
-        ) :: map()
-  def make_event_data(
-        actor,
-        %{to: to, cc: cc} = _audience,
-        title,
-        content_html,
-        picture \\ nil,
-        tags \\ [],
-        metadata \\ %{},
-        uuid \\ nil,
-        url \\ nil
-      ) do
-    Logger.debug("Making event data")
-    uuid = uuid || Ecto.UUID.generate()
-
-    res = %{
-      "type" => "Event",
-      "to" => to,
-      "cc" => cc || [],
-      "content" => content_html,
-      "name" => title,
-      "startTime" => metadata.begins_on,
-      "endTime" => metadata.ends_on,
-      "category" => metadata.category,
-      "actor" => actor,
-      "id" => url || Routes.page_url(Endpoint, :event, uuid),
-      "joinOptions" => metadata.join_options,
-      "status" => metadata.status,
-      "onlineAddress" => metadata.online_address,
-      "phoneAddress" => metadata.phone_address,
-      "draft" => metadata.draft,
-      "uuid" => uuid,
-      "tag" =>
-        tags |> Enum.uniq() |> Enum.map(fn tag -> %{"type" => "Hashtag", "name" => "##{tag}"} end)
-    }
-
-    res =
-      if is_nil(metadata.physical_address),
-        do: res,
-        else: Map.put(res, "location", make_address_data(metadata.physical_address))
-
-    res =
-      if is_nil(picture), do: res, else: Map.put(res, "attachment", [make_picture_data(picture)])
-
-    if is_nil(metadata.options) do
-      res
-    else
-      options = Events.EventOptions |> struct(metadata.options) |> Map.from_struct()
-
-      Enum.reduce(options, res, fn {key, value}, acc ->
-        (!is_nil(value) && Map.put(acc, camelize(key), value)) ||
-          acc
-      end)
-    end
-  end
-
-  def make_address_data(%Address{} = address) do
-    #    res = %{
-    #      "type" => "Place",
-    #      "name" => address.description,
-    #      "id" => address.url,
-    #      "address" => %{
-    #        "type" => "PostalAddress",
-    #        "streetAddress" => address.street,
-    #        "postalCode" => address.postal_code,
-    #        "addressLocality" => address.locality,
-    #        "addressRegion" => address.region,
-    #        "addressCountry" => address.country
-    #      }
-    #    }
-    #
-    #    if is_nil(address.geom) do
-    #      res
-    #    else
-    #      Map.put(res, "geo", %{
-    #        "type" => "GeoCoordinates",
-    #        "latitude" => address.geom.coordinates |> elem(0),
-    #        "longitude" => address.geom.coordinates |> elem(1)
-    #      })
-    #    end
-    address.url
-  end
-
-  def make_address_data(address) when is_map(address) do
-    Address
-    |> struct(address)
-    |> make_address_data()
-  end
-
-  def make_address_data(address_url) when is_bitstring(address_url) do
-    with %Address{} = address <- Addresses.get_address_by_url(address_url) do
-      address.url
-    end
-  end
-
-  @doc """
-  Make an AP comment object from an set of values
-  """
-  def make_comment_data(
-        actor,
-        to,
-        content_html,
-        # attachments,
-        inReplyTo \\ nil,
-        tags \\ [],
-        # _cw \\ nil,
-        cc \\ []
-      ) do
-    Logger.debug("Making comment data")
-    uuid = Ecto.UUID.generate()
-
-    object = %{
-      "type" => "Note",
-      "to" => to,
-      "cc" => cc,
-      "content" => content_html,
-      # "summary" => cw,
-      # "attachment" => attachments,
-      "actor" => actor,
-      "id" => Routes.page_url(Endpoint, :comment, uuid),
-      "uuid" => uuid,
-      "tag" => tags |> Enum.uniq()
-    }
-
-    if inReplyTo do
-      object
-      |> Map.put("inReplyTo", inReplyTo)
-    else
-      object
-    end
-  end
-
-  def make_group_data(
-        actor,
-        to,
-        preferred_username,
-        content_html,
-        # attachments,
-        tags \\ [],
-        # _cw \\ nil,
-        cc \\ []
-      ) do
-    uuid = Ecto.UUID.generate()
-
-    %{
-      "type" => "Group",
-      "to" => to,
-      "cc" => cc,
-      "summary" => content_html,
-      "attributedTo" => actor,
-      "preferredUsername" => preferred_username,
-      "id" => Actor.build_url(preferred_username, :page),
-      "uuid" => uuid,
-      "tag" => tags |> Enum.map(fn {_, tag} -> tag end) |> Enum.uniq()
-    }
-  end
-
-  #### Like-related helpers
-
-  @doc """
-  Returns an existing like if a user already liked an object
-  """
-  # @spec get_existing_like(Actor.t, map()) :: nil
-  # def get_existing_like(%Actor{url: url} = actor, %{data: %{"id" => id}}) do
-  #   nil
-  # end
-
-  # def make_like_data(%Actor{url: url} = actor, %{data: %{"id" => id}} = object, activity_id) do
-  #   data = %{
-  #     "type" => "Like",
-  #     "actor" => url,
-  #     "object" => id,
-  #     "to" => [actor.followers_url, object.data["actor"]],
-  #     "cc" => ["https://www.w3.org/ns/activitystreams#Public"],
-  #     "context" => object.data["context"]
-  #   }
-
-  #   if activity_id, do: Map.put(data, "id", activity_id), else: data
-  # end
-
-  def update_element_in_object(property, element, object) do
-    with new_data <-
-           object.data
-           |> Map.put("#{property}_count", length(element))
-           |> Map.put("#{property}s", element),
-         changeset <- Changeset.change(object, data: new_data),
-         {:ok, object} <- Repo.update(changeset) do
-      {:ok, object}
-    end
-  end
-
-  #  def update_likes_in_object(likes, object) do
-  #    update_element_in_object("like", likes, object)
-  #  end
-  #
-  #  def add_like_to_object(%Activity{data: %{"actor" => actor}}, object) do
-  #    with likes <- [actor | object.data["likes"] || []] |> Enum.uniq() do
-  #      update_likes_in_object(likes, object)
-  #    end
-  #  end
-  #
-  #  def remove_like_from_object(%Activity{data: %{"actor" => actor}}, object) do
-  #    with likes <- (object.data["likes"] || []) |> List.delete(actor) do
-  #      update_likes_in_object(likes, object)
-  #    end
-  #  end
-
-  #### Follow-related helpers
-
-  @doc """
-  Makes a follow activity data for the given followed and follower
-  """
-  def make_follow_data(%Actor{url: followed_id}, %Actor{url: follower_id}, activity_id) do
-    Logger.debug("Make follow data")
-
-    data = %{
-      "type" => "Follow",
-      "actor" => follower_id,
-      "to" => [followed_id],
-      "cc" => ["https://www.w3.org/ns/activitystreams#Public"],
-      "object" => followed_id
-    }
-
-    data =
-      if activity_id,
-        do: Map.put(data, "id", activity_id),
-        else: data
-
-    Logger.debug(inspect(data))
-
-    data
-  end
-
-  #### Announce-related helpers
-
-  require Logger
 
   @doc """
   Make announce activity data for the given actor and object
@@ -673,42 +362,6 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     |> Map.merge(additional)
   end
 
-  #### Flag-related helpers
-  @spec make_flag_data(map(), map()) :: map()
-  def make_flag_data(params, additional) do
-    object = [params.reported_actor_url] ++ params.comments_url
-
-    object = if params[:event_url], do: object ++ [params.event_url], else: object
-
-    %{
-      "type" => "Flag",
-      "id" => "#{MobilizonWeb.Endpoint.url()}/report/#{Ecto.UUID.generate()}",
-      "actor" => params.reporter_url,
-      "content" => params.content,
-      "object" => object,
-      "state" => "open"
-    }
-    |> Map.merge(additional)
-  end
-
-  def make_join_data(%Event{} = event, %Actor{} = actor) do
-    %{
-      "type" => "Join",
-      "id" => "#{actor.url}/join/event/id",
-      "actor" => actor.url,
-      "object" => event.url
-    }
-  end
-
-  def make_join_data(%Actor{type: :Group} = event, %Actor{} = actor) do
-    %{
-      "type" => "Join",
-      "id" => "#{actor.url}/join/group/id",
-      "actor" => actor.url,
-      "object" => event.url
-    }
-  end
-
   @doc """
   Make accept join activity data
   """
@@ -718,7 +371,6 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
       "type" => "Accept",
       "to" => object["to"],
       "cc" => object["cc"],
-      "actor" => object["actor"],
       "object" => object,
       "id" => object["id"] <> "/activity"
     }
@@ -741,37 +393,39 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
     end
   end
 
-  @doc """
-  Converts PEM encoded keys to a private key representation
-  """
-  def pem_to_private_key(pem) do
-    [private_key_code] = :public_key.pem_decode(pem)
-    :public_key.pem_entry_decode(private_key_code)
-  end
-
-  @doc """
-  Converts PEM encoded keys to a PEM public key representation
-  """
   def pem_to_public_key_pem(pem) do
     public_key = pem_to_public_key(pem)
     public_key = :public_key.pem_entry_encode(:RSAPublicKey, public_key)
     :public_key.pem_encode([public_key])
   end
 
-  def camelize(word) when is_atom(word) do
-    camelize(to_string(word))
+  defp make_signature(id, date) do
+    uri = URI.parse(id)
+
+    signature =
+      Mobilizon.Service.ActivityPub.Relay.get_actor()
+      |> Mobilizon.Service.HTTPSignatures.Signature.sign(%{
+        "(request-target)": "get #{uri.path}",
+        host: uri.host,
+        date: date
+      })
+
+    [{:Signature, signature}]
   end
 
-  def camelize(word) when is_bitstring(word) do
-    {first, rest} = String.split_at(Macro.camelize(word), 1)
-    String.downcase(first) <> rest
+  def sign_fetch(headers, id, date) do
+    if Mobilizon.Config.get([:activitypub, :sign_object_fetches]) do
+      headers ++ make_signature(id, date)
+    else
+      headers
+    end
   end
 
-  def underscore(word) when is_atom(word) do
-    underscore(to_string(word))
-  end
-
-  def underscore(word) when is_bitstring(word) do
-    Macro.underscore(word)
+  def maybe_date_fetch(headers, date) do
+    if Mobilizon.Config.get([:activitypub, :sign_object_fetches]) do
+      headers ++ [{:Date, date}]
+    else
+      headers
+    end
   end
 end

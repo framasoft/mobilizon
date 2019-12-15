@@ -1,9 +1,10 @@
 # source: http://localhost:4000/api
-# timestamp: Fri Nov 22 2019 18:34:33 GMT+0100 (Central European Standard Time)
+# timestamp: Wed Dec 11 2019 15:24:29 GMT+0100 (heure normale d’Europe centrale)
 
 schema {
   query: RootQueryType
   mutation: RootMutationType
+  subscription: RootSubscriptionType
 }
 
 """An action log"""
@@ -25,6 +26,7 @@ type ActionLog {
 }
 
 enum ActionLogAction {
+  COMMENT_DELETION
   EVENT_DELETION
   EVENT_UPDATE
   NOTE_CREATION
@@ -66,9 +68,6 @@ interface Actor {
   """Internal ID for this actor"""
   id: ID
 
-  """The actors RSA Keys"""
-  keys: String
-
   """If the actor is from this instance"""
   local: Boolean
 
@@ -77,9 +76,6 @@ interface Actor {
 
   """The actor's displayed name"""
   name: String
-
-  """A list of the events this actor has organized"""
-  organizedEvents: [Event]
 
   """The actor's preferred username"""
   preferredUsername: String
@@ -155,8 +151,62 @@ input AddressInput {
   url: String
 }
 
+"""
+Represents an application
+
+"""
+type Application implements Actor {
+  """The actor's avatar picture"""
+  avatar: Picture
+
+  """The actor's banner picture"""
+  banner: Picture
+
+  """The actor's domain if (null if it's this instance)"""
+  domain: String
+
+  """List of followers"""
+  followers: [Follower]
+
+  """Number of followers for this actor"""
+  followersCount: Int
+
+  """List of followings"""
+  following: [Follower]
+
+  """Number of actors following this actor"""
+  followingCount: Int
+
+  """Internal ID for this application"""
+  id: ID
+
+  """If the actor is from this instance"""
+  local: Boolean
+
+  """Whether the actors manually approves followers"""
+  manuallyApprovesFollowers: Boolean
+
+  """The actor's displayed name"""
+  name: String
+
+  """The actor's preferred username"""
+  preferredUsername: String
+
+  """The actor's summary"""
+  summary: String
+
+  """If the actor is suspended"""
+  suspended: Boolean
+
+  """The type of Actor (Person, Group,…)"""
+  type: ActorType
+
+  """The ActivityPub actor's URL"""
+  url: String
+}
+
 """A comment"""
-type Comment {
+type Comment implements ActionLogObject {
   actor: Person
   deletedAt: DateTime
   event: Event
@@ -542,8 +592,14 @@ type Follower {
   """Whether the follow has been approved by the target actor"""
   approved: Boolean
 
+  """When the follow was created"""
+  insertedAt: DateTime
+
   """What or who the profile follows"""
   targetActor: Actor
+
+  """When the follow was updated"""
+  updatedAt: DateTime
 }
 
 type Geocoding {
@@ -579,9 +635,6 @@ type Group implements Actor {
 
   """Internal ID for this group"""
   id: ID
-
-  """The actors RSA Keys"""
-  keys: String
 
   """If the actor is from this instance"""
   local: Boolean
@@ -693,6 +746,14 @@ enum Openness {
   OPEN
 }
 
+type PaginatedFollowerList {
+  """A list of followers"""
+  elements: [Follower]
+
+  """The total number of elements in the list"""
+  total: Int
+}
+
 """Represents a participant to an event"""
 type Participant {
   """The actor that participates to the event"""
@@ -771,9 +832,6 @@ type Person implements Actor {
 
   """Internal ID for this person"""
   id: ID
-
-  """The actors RSA Keys"""
-  keys: String
 
   """If the actor is from this instance"""
   local: Boolean
@@ -857,7 +915,7 @@ input PictureInputObject {
 }
 
 """
-The `Point` scalar type represents Point geographic information compliant string data,
+The `Point` scalar type represents Point geographic information compliant string data, 
 represented as floats separated by a semi-colon. The geodetic system is WGS 84
 """
 scalar Point
@@ -941,11 +999,66 @@ type RootMutationType {
   """Change default actor for user"""
   changeDefaultActor(preferredUsername: String!): User
 
-  """Change an user password"""
-  changePassword(newPassword: String!, oldPassword: String!): User
+  """Create a new person for user"""
+  createPerson(
+    """
+    The avatar for the profile, either as an object or directly the ID of an existing Picture
+    """
+    avatar: PictureInput
 
-  """Create a comment"""
-  createComment(actorId: ID!, eventId: ID, inReplyToCommentId: ID, text: String!): Comment
+    """
+    The banner for the profile, either as an object or directly the ID of an existing Picture
+    """
+    banner: PictureInput
+
+    """The displayed name for the new profile"""
+    name: String = ""
+    preferredUsername: String!
+
+    """The summary for the new profile"""
+    summary: String = ""
+  ): Person
+
+  """Upload a picture"""
+  uploadPicture(actorId: ID!, alt: String, file: Upload!, name: String!): Picture
+
+  """Delete an event"""
+  deleteEvent(actorId: ID!, eventId: ID!): DeletedObject
+
+  """Create a note on a report"""
+  createReportNote(content: String, moderatorId: ID!, reportId: ID!): ReportNote
+
+  """Accept a relay subscription"""
+  acceptRelay(address: String!): Follower
+
+  """Delete a feed token"""
+  deleteFeedToken(token: String!): DeletedFeedToken
+
+  """Validate an user after registration"""
+  validateUser(token: String!): Login
+
+  """Resend registration confirmation token"""
+  resendConfirmationEmail(email: String!, locale: String): String
+
+  """Update an identity"""
+  updatePerson(
+    """
+    The avatar for the profile, either as an object or directly the ID of an existing Picture
+    """
+    avatar: PictureInput
+
+    """
+    The banner for the profile, either as an object or directly the ID of an existing Picture
+    """
+    banner: PictureInput
+    id: ID!
+
+    """The displayed name for this profile"""
+    name: String
+
+    """The summary for this profile"""
+    summary: String
+  ): Person
 
   """Create an event"""
   createEvent(
@@ -974,95 +1087,6 @@ type RootMutationType {
     visibility: EventVisibility = PUBLIC
   ): Event
 
-  """Create a Feed Token"""
-  createFeedToken(actorId: ID): FeedToken
-
-  """Create a group"""
-  createGroup(
-    """
-    The avatar for the group, either as an object or directly the ID of an existing Picture
-    """
-    avatar: PictureInput
-
-    """
-    The banner for the group, either as an object or directly the ID of an existing Picture
-    """
-    banner: PictureInput
-
-    """The identity that creates the group"""
-    creatorActorId: ID!
-
-    """The displayed name for the group"""
-    name: String
-
-    """The name for the group"""
-    preferredUsername: String!
-
-    """The summary for the group"""
-    summary: String = ""
-  ): Group
-
-  """Create a new person for user"""
-  createPerson(
-    """
-    The avatar for the profile, either as an object or directly the ID of an existing Picture
-    """
-    avatar: PictureInput
-
-    """
-    The banner for the profile, either as an object or directly the ID of an existing Picture
-    """
-    banner: PictureInput
-
-    """The displayed name for the new profile"""
-    name: String = ""
-    preferredUsername: String!
-
-    """The summary for the new profile"""
-    summary: String = ""
-  ): Person
-
-  """Create a report"""
-  createReport(commentsIds: [ID] = [""], content: String, eventId: ID, reportedActorId: ID!, reporterActorId: ID!): Report
-
-  """Create a note on a report"""
-  createReportNote(content: String, moderatorId: ID!, reportId: ID!): ReportNote
-
-  """Create an user"""
-  createUser(email: String!, locale: String, password: String!): User
-  deleteComment(actorId: ID!, commentId: ID!): DeletedObject
-
-  """Delete an event"""
-  deleteEvent(actorId: ID!, eventId: ID!): DeletedObject
-
-  """Delete a feed token"""
-  deleteFeedToken(token: String!): DeletedFeedToken
-
-  """Delete a group"""
-  deleteGroup(actorId: ID!, groupId: ID!): DeletedObject
-
-  """Delete an identity"""
-  deletePerson(id: ID!): Person
-  deleteReportNote(moderatorId: ID!, noteId: ID!): DeletedObject
-
-  """Join an event"""
-  joinEvent(actorId: ID!, eventId: ID!): Participant
-
-  """Join a group"""
-  joinGroup(actorId: ID!, groupId: ID!): Member
-
-  """Leave an event"""
-  leaveEvent(actorId: ID!, eventId: ID!): DeletedParticipant
-
-  """Leave an event"""
-  leaveGroup(actorId: ID!, groupId: ID!): DeletedMember
-
-  """Login an user"""
-  login(email: String!, password: String!): Login
-
-  """Refresh a token"""
-  refreshToken(refreshToken: String!): RefreshedToken
-
   """Register a first profile on registration"""
   registerPerson(
     """
@@ -1086,14 +1110,24 @@ type RootMutationType {
     summary: String = ""
   ): Person
 
-  """Resend registration confirmation token"""
-  resendConfirmationEmail(email: String!, locale: String): String
+  """Accept a participation"""
+  updateParticipation(id: ID!, moderatorActorId: ID!, role: ParticipantRoleEnum!): Participant
 
-  """Reset user password"""
-  resetPassword(locale: String = "en", password: String!, token: String!): Login
+  """Delete a group"""
+  deleteGroup(actorId: ID!, groupId: ID!): DeletedObject
+  deleteComment(actorId: ID!, commentId: ID!): Comment
 
-  """Send a link through email to reset user password"""
-  sendResetPassword(email: String!, locale: String): String
+  """Create an user"""
+  createUser(email: String!, locale: String, password: String!): User
+
+  """Leave an event"""
+  leaveEvent(actorId: ID!, eventId: ID!): DeletedParticipant
+
+  """Refresh a token"""
+  refreshToken(refreshToken: String!): RefreshedToken
+
+  """Join a group"""
+  joinGroup(actorId: ID!, groupId: ID!): Member
 
   """Update an event"""
   updateEvent(
@@ -1122,37 +1156,73 @@ type RootMutationType {
     visibility: EventVisibility = PUBLIC
   ): Event
 
-  """Accept a participation"""
-  updateParticipation(id: ID!, moderatorActorId: ID!, role: ParticipantRoleEnum!): Participant
+  """Reset user password"""
+  resetPassword(locale: String = "en", password: String!, token: String!): Login
 
-  """Update an identity"""
-  updatePerson(
+  """Create a report"""
+  createReport(commentsIds: [ID] = [""], content: String, eventId: ID, forward: Boolean = false, reportedId: ID!, reporterId: ID!): Report
+
+  """Update a report"""
+  updateReportStatus(moderatorId: ID!, reportId: ID!, status: ReportStatus!): Report
+  deleteReportNote(moderatorId: ID!, noteId: ID!): DeletedObject
+
+  """Delete a relay subscription"""
+  removeRelay(address: String!): Follower
+
+  """Create a comment"""
+  createComment(actorId: ID!, eventId: ID, inReplyToCommentId: ID, text: String!): Comment
+
+  """Delete an identity"""
+  deletePerson(id: ID!): Person
+
+  """Reject a relay subscription"""
+  rejectRelay(address: String!): Follower
+
+  """Login an user"""
+  login(email: String!, password: String!): Login
+
+  """Leave an event"""
+  leaveGroup(actorId: ID!, groupId: ID!): DeletedMember
+
+  """Change an user password"""
+  changePassword(newPassword: String!, oldPassword: String!): User
+
+  """Add a relay subscription"""
+  addRelay(address: String!): Follower
+
+  """Join an event"""
+  joinEvent(actorId: ID!, eventId: ID!): Participant
+
+  """Create a group"""
+  createGroup(
     """
-    The avatar for the profile, either as an object or directly the ID of an existing Picture
+    The avatar for the group, either as an object or directly the ID of an existing Picture
     """
     avatar: PictureInput
 
     """
-    The banner for the profile, either as an object or directly the ID of an existing Picture
+    The banner for the group, either as an object or directly the ID of an existing Picture
     """
     banner: PictureInput
-    id: ID!
 
-    """The displayed name for this profile"""
+    """The identity that creates the group"""
+    creatorActorId: ID!
+
+    """The displayed name for the group"""
     name: String
 
-    """The summary for this profile"""
-    summary: String
-  ): Person
+    """The name for the group"""
+    preferredUsername: String!
 
-  """Update a report"""
-  updateReportStatus(moderatorId: ID!, reportId: ID!, status: ReportStatus!): Report
+    """The summary for the group"""
+    summary: String = ""
+  ): Group
 
-  """Upload a picture"""
-  uploadPicture(actorId: ID!, alt: String, file: Upload!, name: String!): Picture
+  """Send a link through email to reset user password"""
+  sendResetPassword(email: String!, locale: String): String
 
-  """Validate an user after registration"""
-  validateUser(token: String!): Login
+  """Create a Feed Token"""
+  createFeedToken(actorId: ID): FeedToken
 }
 
 """
@@ -1196,6 +1266,8 @@ type RootQueryType {
 
   """Get a picture"""
   picture(id: String!): Picture
+  relayFollowers(limit: Int = 10, page: Int = 1): PaginatedFollowerList
+  relayFollowings(direction: String = "desc", limit: Int = 10, orderBy: String = "updated_at", page: Int = 1): PaginatedFollowerList
 
   """Get a report by id"""
   report(id: ID!): Report
@@ -1229,6 +1301,10 @@ type RootQueryType {
 
   """List instance users"""
   users(direction: SortDirection = DESC, limit: Int = 10, page: Int = 1, sort: SortableUserField = ID): Users
+}
+
+type RootSubscriptionType {
+  eventPersonParticipationChanged(personId: ID!): Person
 }
 
 """The list of possible options for the event's status"""

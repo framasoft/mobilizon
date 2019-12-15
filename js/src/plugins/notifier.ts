@@ -1,10 +1,12 @@
 import Vue from 'vue';
+import { ColorModifiers } from 'buefy/types/helpers';
 
 declare module 'vue/types/vue' {
   interface Vue {
     $notifier: {
       success: (message: string) => void;
       error: (message: string) => void;
+      info: (message: string) => void;
     };
   }
 }
@@ -17,21 +19,23 @@ export class Notifier {
   }
 
   success(message: string) {
-    this.vue.prototype.$buefy.notification.open({
-      message,
-      duration: 5000,
-      position: 'is-bottom-right',
-      type: 'is-success',
-      hasIcon: true,
-    });
+    this.notification(message, 'is-success');
   }
 
   error(message: string) {
+    this.notification(message, 'is-danger');
+  }
+
+  info(message: string) {
+    this.notification(message, 'is-info');
+  }
+
+  private notification(message: string, type: ColorModifiers) {
     this.vue.prototype.$buefy.notification.open({
       message,
       duration: 5000,
       position: 'is-bottom-right',
-      type: 'is-danger',
+      type,
       hasIcon: true,
     });
   }

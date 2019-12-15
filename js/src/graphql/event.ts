@@ -10,7 +10,8 @@ const participantQuery = `
       url
     },
     name,
-    id
+    id,
+    domain
   },
   event {
     id
@@ -427,6 +428,24 @@ export const PARTICIPANTS = gql`
 export const EVENT_PERSON_PARTICIPATION = gql`
   query($actorId: ID!, $eventId: ID!) {
     person(id: $actorId) {
+      id,
+      participations(eventId: $eventId) {
+        id,
+        role,
+        actor {
+          id
+        },
+        event {
+          id
+        }
+      }
+    }
+  }
+`;
+
+export const EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED = gql`
+  subscription ($actorId: ID!, $eventId: ID!) {
+    eventPersonParticipationChanged(personId: $actorId) {
       id,
       participations(eventId: $eventId) {
         id,

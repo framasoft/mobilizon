@@ -14,6 +14,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Utils do
   @spec fetch_tags([String.t()]) :: [Tag.t()]
   def fetch_tags(tags) when is_list(tags) do
     Logger.debug("fetching tags")
+    Logger.debug(inspect(tags))
 
     tags |> Enum.flat_map(&fetch_tag/1) |> Enum.uniq() |> Enum.map(&existing_tag_or_data/1)
   end
@@ -63,6 +64,8 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Utils do
       "type" => "Mention"
     }
   end
+
+  defp fetch_tag(%{title: title}), do: [title]
 
   defp fetch_tag(tag) when is_map(tag) do
     case tag["type"] do

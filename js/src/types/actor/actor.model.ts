@@ -1,5 +1,13 @@
 import { IPicture } from '@/types/picture.model';
 
+export enum ActorType {
+  PERSON = 'PERSON',
+  APPLICATION = 'APPLICATION',
+  GROUP = 'GROUP',
+  ORGANISATION = 'ORGANISATION',
+  SERVICE = 'SERVICE',
+}
+
 export interface IActor {
   id?: number;
   url: string;
@@ -10,6 +18,7 @@ export interface IActor {
   suspended: boolean;
   avatar: IPicture | null;
   banner: IPicture | null;
+  type: ActorType;
 }
 
 export class Actor implements IActor {
@@ -22,6 +31,7 @@ export class Actor implements IActor {
   summary: string = '';
   suspended: boolean = false;
   url: string = '';
+  type: ActorType = ActorType.PERSON;
 
   constructor (hash: IActor | {} = {}) {
     Object.assign(this, hash);

@@ -6,11 +6,15 @@ defmodule MobilizonWeb.Resolvers.Admin do
   import Mobilizon.Users.Guards
 
   alias Mobilizon.Admin.ActionLog
+  alias Mobilizon.Actors
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Comment}
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Service.Statistics
   alias Mobilizon.Users.User
+  alias Mobilizon.Storage.Page
+  alias Mobilizon.Service.ActivityPub.Relay
 
   def list_action_logs(
         _parent,
@@ -135,5 +139,77 @@ defmodule MobilizonWeb.Resolvers.Admin do
 
   def get_dashboard(_parent, _args, _resolution) do
     {:error, "You need to be logged-in and an administrator to access dashboard statistics"}
+  end
+
+  def list_relay_followers(_parent, %{page: page, limit: limit}, %{
+        context: %{current_user: %User{role: role}}
+      })
+      when is_admin(role) do
+    with %Actor{} = relay_actor <- Relay.get_actor() do
+      %Page{} =
+        page = Actors.list_external_followers_for_actor_paginated(relay_actor, page, limit)
+
+      {:ok, page}
+    end
+  end
+
+  def list_relay_followings(_parent, %{page: page, limit: limit}, %{
+        context: %{current_user: %User{role: role}}
+      })
+      when is_admin(role) do
+    with %Actor{} = relay_actor <- Relay.get_actor() do
+      %Page{} =
+        page = Actors.list_external_followings_for_actor_paginated(relay_actor, page, limit)
+
+      {:ok, page}
+    end
+  end
+
+  def create_relay(_parent, %{address: address}, %{context: %{current_user: %User{role: role}}})
+      when is_admin(role) do
+    case Relay.follow(address) do
+      {:ok, _activity, follow} ->
+        {:ok, follow}
+
+      {:error, {:error, err}} when is_bitstring(err) ->
+        {:error, err}
+    end
+  end
+
+  def remove_relay(_parent, %{address: address}, %{context: %{current_user: %User{role: role}}})
+      when is_admin(role) do
+    case Relay.unfollow(address) do
+      {:ok, _activity, follow} ->
+        {:ok, follow}
+
+      {:error, {:error, err}} when is_bitstring(err) ->
+        {:error, err}
+    end
+  end
+
+  def accept_subscription(_parent, %{address: address}, %{
+        context: %{current_user: %User{role: role}}
+      })
+      when is_admin(role) do
+    case Relay.accept(address) do
+      {:ok, _activity, follow} ->
+        {:ok, follow}
+
+      {:error, {:error, err}} when is_bitstring(err) ->
+        {:error, err}
+    end
+  end
+
+  def reject_subscription(_parent, %{address: address}, %{
+        context: %{current_user: %User{role: role}}
+      })
+      when is_admin(role) do
+    case Relay.reject(address) do
+      {:ok, _activity, follow} ->
+        {:ok, follow}
+
+      {:error, {:error, err}} when is_bitstring(err) ->
+        {:error, err}
+    end
   end
 end

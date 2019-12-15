@@ -29,7 +29,7 @@
           <address-auto-complete v-model="event.physicalAddress" />
 
           <b-field :label="$t('Organizer')">
-            <identity-picker-wrapper v-model="event.organizerActor"></identity-picker-wrapper>
+            <identity-picker-wrapper v-model="event.organizerActor" />
           </b-field>
 
           <div class="field">
@@ -92,7 +92,7 @@
 
           <div class="box" v-if="limitedPlaces">
             <b-field :label="$t('Number of places')">
-              <b-numberinput controls-position="compact" min="0" v-model="event.options.maximumAttendeeCapacity"></b-numberinput>
+              <b-numberinput controls-position="compact" min="0" v-model="event.options.maximumAttendeeCapacity" />
             </b-field>
 <!--
             <b-field>
@@ -145,21 +145,21 @@
                             name="status"
                             type="is-warning"
                             :native-value="EventStatus.TENTATIVE">
-              <b-icon icon="calendar-question"></b-icon>
+              <b-icon icon="calendar-question" />
               {{ $t('Tentative: Will be confirmed later') }}
             </b-radio-button>
             <b-radio-button v-model="event.status"
                             name="status"
                             type="is-success"
                             :native-value="EventStatus.CONFIRMED">
-              <b-icon icon="calendar-check"></b-icon>
+              <b-icon icon="calendar-check" />
               {{ $t('Confirmed: Will happen') }}
             </b-radio-button>
             <b-radio-button v-model="event.status"
                             name="status"
                             type="is-danger"
                             :native-value="EventStatus.CANCELLED">
-              <b-icon icon="calendar-remove"></b-icon>
+              <b-icon icon="calendar-remove" />
               {{ $t("Cancelled: Won't happen") }}
             </b-radio-button>
           </b-field>
@@ -191,7 +191,7 @@
         </div>
       </form>
     </b-modal>
-    <span ref="bottomObserver"></span>
+    <span ref="bottomObserver" />
     <nav role="navigation" aria-label="main navigation" class="navbar" :class="{'is-fixed-bottom': showFixedNavbar }">
       <div class="container">
         <div class="navbar-menu">
@@ -393,6 +393,11 @@ export default class EditEvent extends Vue {
       this.event.draft = false;
       this.createOrUpdateDraft(e);
     }
+  }
+
+  @Watch('currentActor')
+  setCurrentActor() {
+    this.event.organizerActor = this.currentActor;
   }
 
   private validateForm() {

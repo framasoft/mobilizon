@@ -19,10 +19,14 @@ defmodule Mobilizon.Actors.Follower do
   @required_attrs [:url, :approved, :target_actor_id, :actor_id]
   @attrs @required_attrs
 
+  @timestamps_opts [type: :utc_datetime]
+
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "followers" do
     field(:approved, :boolean, default: false)
     field(:url, :string)
+
+    timestamps()
 
     belongs_to(:target_actor, Actor)
     belongs_to(:actor, Actor)

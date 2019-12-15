@@ -20,7 +20,14 @@
             </div>
 
             <div class="content columns">
-                <div class="column is-one-quarter-desktop">Reported by <img v-if="report.reporter.avatar" class="image" :src="report.reporter.avatar.url" /> @{{ report.reporter.preferredUsername }}</div>
+                <div class="column is-one-quarter-desktop">
+                    <span v-if="report.reporter.type === ActorType.APPLICATION">
+                        {{ $t('Reported by someone on {domain}', { domain: report.reporter.domain}) }}
+                    </span>
+                    <span v-else>
+                        {{ $t('Reported by {reporter}', { reporter: report.reporter.preferredUsername}) }}
+                    </span>
+                </div>
                 <div class="column" v-if="report.content">{{ report.content }}</div>
             </div>
         </div>
@@ -29,10 +36,13 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { IReport } from '@/types/report.model';
+import { ActorType } from '@/types/actor';
 
 @Component
 export default class ReportCard extends Vue {
   @Prop({ required: true }) report!: IReport;
+
+  ActorType = ActorType;
 }
 </script>
 <style lang="scss">

@@ -14,7 +14,8 @@ defmodule MobilizonWeb.API.ReportTest do
 
   describe "reports" do
     test "creates a report on a event" do
-      %Actor{id: reporter_id, url: reporter_url} = insert(:actor)
+      %Actor{url: relay_reporter_url} = Mobilizon.Service.ActivityPub.Relay.get_actor()
+      %Actor{id: reporter_id} = insert(:actor)
       %Actor{id: reported_id, url: reported_url} = reported = insert(:actor)
 
       %Event{id: event_id, url: event_url} = _event = insert(:event, organizer_actor: reported)
@@ -28,11 +29,11 @@ defmodule MobilizonWeb.API.ReportTest do
                  content: comment,
                  event_id: event_id,
                  comments_ids: [],
-                 local: true
+                 forward: false
                })
 
       assert %Activity{
-               actor: ^reporter_url,
+               actor: ^relay_reporter_url,
                data: %{
                  "type" => "Flag",
                  "cc" => [],
@@ -43,7 +44,8 @@ defmodule MobilizonWeb.API.ReportTest do
     end
 
     test "creates a report on several comments" do
-      %Actor{id: reporter_id, url: reporter_url} = insert(:actor)
+      %Actor{url: relay_reporter_url} = Mobilizon.Service.ActivityPub.Relay.get_actor()
+      %Actor{id: reporter_id} = insert(:actor)
       %Actor{id: reported_id, url: reported_url} = reported = insert(:actor)
 
       %Comment{id: comment_1_id, url: comment_1_url} =
@@ -64,20 +66,21 @@ defmodule MobilizonWeb.API.ReportTest do
                })
 
       assert %Activity{
-               actor: ^reporter_url,
+               actor: ^relay_reporter_url,
                data: %{
                  "type" => "Flag",
                  "content" => ^comment,
                  "object" => [^reported_url, ^comment_1_url, ^comment_2_url],
-                 "to" => ["https://www.w3.org/ns/activitystreams#Public"],
+                 "to" => [],
                  "cc" => [],
-                 "actor" => ^reporter_url
+                 "actor" => ^relay_reporter_url
                }
              } = flag_activity
     end
 
     test "creates a report that gets federated" do
-      %Actor{id: reporter_id, url: reporter_url} = insert(:actor)
+      %Actor{url: relay_reporter_url} = Mobilizon.Service.ActivityPub.Relay.get_actor()
+      %Actor{id: reporter_id} = insert(:actor)
       %Actor{id: reported_id, url: reported_url} = reported = insert(:actor)
 
       %Comment{id: comment_1_id, url: comment_1_url} =
@@ -96,21 +99,21 @@ defmodule MobilizonWeb.API.ReportTest do
                  content: comment,
                  event_id: nil,
                  comments_ids: [comment_1_id, comment_2_id],
-                 local: false
+                 forward: true
                })
 
       assert %Activity{
-               actor: ^reporter_url,
+               actor: ^relay_reporter_url,
                data: %{
                  "type" => "Flag",
-                 "actor" => ^reporter_url,
+                 "actor" => ^relay_reporter_url,
                  "cc" => [^reported_url],
                  "content" => ^encoded_comment,
                  "object" => [^reported_url, ^comment_1_url, ^comment_2_url],
-                 "to" => ["https://www.w3.org/ns/activitystreams#Public"]
+                 "to" => []
                },
                local: true,
-               recipients: ["https://www.w3.org/ns/activitystreams#Public", ^reported_url]
+               recipients: [^reported_url]
              } = flag_activity
     end
 

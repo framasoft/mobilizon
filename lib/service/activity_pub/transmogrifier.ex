@@ -20,108 +20,6 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
 
   require Logger
 
-  def get_actor(%{"actor" => actor}) when is_binary(actor) do
-    actor
-  end
-
-  def get_actor(%{"actor" => actor}) when is_list(actor) do
-    if is_binary(Enum.at(actor, 0)) do
-      Enum.at(actor, 0)
-    else
-      actor
-      |> Enum.find(fn %{"type" => type} -> type in ["Person", "Service", "Application"] end)
-      |> Map.get("id")
-    end
-  end
-
-  def get_actor(%{"actor" => %{"id" => id}}) when is_bitstring(id) do
-    id
-  end
-
-  def get_actor(%{"actor" => nil, "attributedTo" => actor}) when not is_nil(actor) do
-    get_actor(%{"actor" => actor})
-  end
-
-  @doc """
-  Modifies an incoming AP object (mastodon format) to our internal format.
-  """
-  def fix_object(object) do
-    object
-    |> Map.put("actor", object["attributedTo"])
-    |> fix_attachments
-
-    # |> fix_in_reply_to
-
-    # |> fix_tag
-  end
-
-  def fix_in_reply_to(%{"inReplyTo" => in_reply_to} = object)
-      when not is_nil(in_reply_to) and is_bitstring(in_reply_to) do
-    in_reply_to |> do_fix_in_reply_to(object)
-  end
-
-  def fix_in_reply_to(%{"inReplyTo" => in_reply_to} = object)
-      when not is_nil(in_reply_to) and is_map(in_reply_to) do
-    if is_bitstring(in_reply_to["id"]) do
-      in_reply_to["id"] |> do_fix_in_reply_to(object)
-    end
-  end
-
-  def fix_in_reply_to(%{"inReplyTo" => in_reply_to} = object)
-      when not is_nil(in_reply_to) and is_list(in_reply_to) do
-    if is_bitstring(Enum.at(in_reply_to, 0)) do
-      in_reply_to |> Enum.at(0) |> do_fix_in_reply_to(object)
-    end
-  end
-
-  def fix_in_reply_to(%{"inReplyTo" => in_reply_to} = object)
-      when not is_nil(in_reply_to) do
-    Logger.warn("inReplyTo ID seem incorrect: #{inspect(in_reply_to)}")
-    do_fix_in_reply_to("", object)
-  end
-
-  def fix_in_reply_to(object), do: object
-
-  def do_fix_in_reply_to(in_reply_to_id, object) do
-    case fetch_obj_helper(in_reply_to_id) do
-      {:ok, replied_object} ->
-        object
-        |> Map.put("inReplyTo", replied_object.url)
-
-      {:error, {:error, :not_supported}} ->
-        Logger.info("Object reply origin has not a supported type")
-        object
-
-      e ->
-        Logger.warn("Couldn't fetch #{in_reply_to_id} #{inspect(e)}")
-        object
-    end
-  end
-
-  def fix_attachments(object) do
-    attachments =
-      (object["attachment"] || [])
-      |> Enum.map(fn data ->
-        url = [%{"type" => "Link", "mediaType" => data["mediaType"], "href" => data["url"]}]
-        Map.put(data, "url", url)
-      end)
-
-    object
-    |> Map.put("attachment", attachments)
-  end
-
-  def fix_tag(object) do
-    tags =
-      (object["tag"] || [])
-      |> Enum.filter(fn data -> data["type"] == "Hashtag" and data["name"] end)
-      |> Enum.map(fn data -> String.slice(data["name"], 1..-1) end)
-
-    combined = (object["tag"] || []) ++ tags
-
-    object
-    |> Map.put("tag", combined)
-  end
-
   def handle_incoming(%{"id" => nil}), do: :error
   def handle_incoming(%{"id" => ""}), do: :error
 
@@ -135,6 +33,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
         additional: %{
           "cc" => [params["reported"].url]
         },
+        event_id: if(is_nil(params["event"]), do: nil, else: params["event"].id || nil),
         local: false
       }
 
@@ -158,7 +57,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     Logger.info("Handle incoming to create notes")
 
     with {:ok, object_data} <-
-           object |> fix_object() |> Converter.Comment.as_to_model_data(),
+           object |> Converter.Comment.as_to_model_data(),
          {:existing_comment, {:error, :comment_not_found}} <-
            {:existing_comment, Events.get_comment_from_url_with_preload(object_data.url)},
          {:ok, %Activity{} = activity, %Comment{} = comment} <-
@@ -186,7 +85,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     Logger.info("Handle incoming to create event")
 
     with {:ok, object_data} <-
-           object |> fix_object() |> Converter.Event.as_to_model_data(),
+           object |> Converter.Event.as_to_model_data(),
          {:existing_event, nil} <- {:existing_event, Events.get_event_by_url(object_data.url)},
          {:ok, %Activity{} = activity, %Event{} = event} <-
            ActivityPub.create(:event, object_data, false) do
@@ -273,36 +172,25 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     end
   end
 
-  #
-  #  def handle_incoming(
-  #        %{"type" => "Like", "object" => object_id, "actor" => actor, "id" => id} = data
-  #      ) do
-  #    with %User{} = actor <- User.get_or_fetch_by_ap_id(actor),
-  #         {:ok, object} <-
-  #           fetch_obj_helper(object_id) || ActivityPub.fetch_object_from_id(object_id),
-  #         {:ok, activity, object} <- ActivityPub.like(actor, object, id, false) do
-  #      {:ok, activity}
-  #    else
-  #      _e -> :error
-  #    end
-  #  end
-  # #
   def handle_incoming(
-        %{"type" => "Announce", "object" => object_id, "actor" => _actor, "id" => _id} = data
+        %{"type" => "Announce", "object" => object, "actor" => _actor, "id" => _id} = data
       ) do
     with actor <- get_actor(data),
          # TODO: Is the following line useful?
-         {:ok, %Actor{} = _actor} <- ActivityPub.get_or_fetch_actor_by_url(actor),
+         {:ok, %Actor{id: actor_id} = _actor} <- ActivityPub.get_or_fetch_actor_by_url(actor),
          :ok <- Logger.debug("Fetching contained object"),
-         {:ok, object} <- fetch_obj_helper_as_activity_streams(object_id),
+         {:ok, object} <- fetch_obj_helper_as_activity_streams(object),
          :ok <- Logger.debug("Handling contained object"),
          create_data <-
            make_create_data(object),
          :ok <- Logger.debug(inspect(object)),
-         {:ok, _activity, object} <- handle_incoming(create_data),
+         {:ok, _activity, entity} <- handle_incoming(create_data),
          :ok <- Logger.debug("Finished processing contained object"),
-         {:ok, activity} <- ActivityPub.create_activity(data, false) do
-      {:ok, activity, object}
+         {:ok, activity} <- ActivityPub.create_activity(data, false),
+         {:ok, %Actor{id: object_owner_actor_id}} <- Actors.get_actor_by_url(object["actor"]),
+         {:ok, %Mobilizon.Share{} = _share} <-
+           Mobilizon.Share.create(object["id"], actor_id, object_owner_actor_id) do
+      {:ok, activity, entity}
     else
       e ->
         Logger.debug(inspect(e))
@@ -318,7 +206,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
       when object_type in ["Person", "Group", "Application", "Service", "Organization"] do
     with {:ok, %Actor{} = old_actor} <- Actors.get_actor_by_url(object["id"]),
          {:ok, object_data} <-
-           object |> fix_object() |> Converter.Actor.as_to_model_data(),
+           object |> Converter.Actor.as_to_model_data(),
          {:ok, %Activity{} = activity, %Actor{} = new_actor} <-
            ActivityPub.update(:actor, old_actor, object_data, false) do
       {:ok, activity, new_actor}
@@ -331,12 +219,15 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
 
   def handle_incoming(
         %{"type" => "Update", "object" => %{"type" => "Event"} = object, "actor" => _actor} =
-          _update
+          update_data
       ) do
-    with %Event{} = old_event <-
-           Events.get_event_by_url(object["id"]),
+    with actor <- get_actor(update_data),
+         {:ok, %Actor{url: actor_url}} <- Actors.get_actor_by_url(actor),
+         {:ok, %Event{} = old_event} <-
+           object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
          {:ok, object_data} <-
-           object |> fix_object() |> Converter.Event.as_to_model_data(),
+           object |> Converter.Event.as_to_model_data(),
+         {:origin_check, true} <- {:origin_check, origin_check?(actor_url, update_data)},
          {:ok, %Activity{} = activity, %Event{} = new_event} <-
            ActivityPub.update(:event, old_event, object_data, false) do
       {:ok, activity, new_event}
@@ -396,16 +287,18 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   def handle_incoming(
         %{"type" => "Delete", "object" => object, "actor" => _actor, "id" => _id} = data
       ) do
-    object_id = Utils.get_url(object)
-
     with actor <- get_actor(data),
-         {:ok, %Actor{url: _actor_url}} <- Actors.get_actor_by_url(actor),
-         {:ok, object} <- fetch_obj_helper(object_id),
-         #  TODO : Validate that DELETE comes indeed form right domain (see above)
-         #  :ok <- contain_origin(actor_url, object.data),
+         {:ok, %Actor{url: actor_url}} <- Actors.get_actor_by_url(actor),
+         object_id <- Utils.get_url(object),
+         {:origin_check, true} <- {:origin_check, origin_check_from_id?(actor_url, object_id)},
+         {:ok, object} <- ActivityPub.fetch_object_from_url(object_id),
          {:ok, activity, object} <- ActivityPub.delete(object, false) do
       {:ok, activity, object}
     else
+      {:origin_check, false} ->
+        Logger.warn("Object origin check failed")
+        :error
+
       e ->
         Logger.debug(inspect(e))
         :error
@@ -413,12 +306,13 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   end
 
   def handle_incoming(
-        %{"type" => "Join", "object" => object, "actor" => _actor, "id" => _id} = data
+        %{"type" => "Join", "object" => object, "actor" => _actor, "id" => id} = data
       ) do
     with actor <- get_actor(data),
          {:ok, %Actor{url: _actor_url} = actor} <- Actors.get_actor_by_url(actor),
-         {:ok, object} <- fetch_obj_helper(object),
-         {:ok, activity, object} <- ActivityPub.join(object, actor, false) do
+         object <- Utils.get_url(object),
+         {:ok, object} <- ActivityPub.fetch_object_from_url(object),
+         {:ok, activity, object} <- ActivityPub.join(object, actor, false, %{url: id}) do
       {:ok, activity, object}
     else
       e ->
@@ -432,7 +326,8 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
       ) do
     with actor <- get_actor(data),
          {:ok, %Actor{} = actor} <- Actors.get_actor_by_url(actor),
-         {:ok, object} <- fetch_obj_helper(object),
+         object <- Utils.get_url(object),
+         {:ok, object} <- ActivityPub.fetch_object_from_url(object),
          {:ok, activity, object} <- ActivityPub.leave(object, actor, false) do
       {:ok, activity, object}
     else
@@ -487,7 +382,6 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
            ActivityPub.accept(
              :follow,
              follow,
-             %{approved: true},
              false
            ) do
       {:ok, activity, follow}
@@ -511,23 +405,11 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
   Handle incoming `Reject` activities wrapping a `Follow` activity
   """
   def do_handle_incoming_reject_following(follow_object, %Actor{} = actor) do
-    with {:follow,
-          {:ok,
-           %Follower{approved: false, actor: follower, id: follow_id, target_actor: followed} =
-             follow}} <-
+    with {:follow, {:ok, %Follower{approved: false, target_actor: followed} = follow}} <-
            {:follow, get_follow(follow_object)},
          {:same_actor, true} <- {:same_actor, actor.id == followed.id},
          {:ok, activity, _} <-
-           ActivityPub.reject(
-             %{
-               to: [follower.url],
-               actor: actor.url,
-               object: follow_object,
-               local: false
-             },
-             "#{MobilizonWeb.Endpoint.url()}/reject/follow/#{follow_id}"
-           ),
-         {:ok, %Follower{}} <- Actors.delete_follower(follow) do
+           ActivityPub.reject(:follow, follow) do
       {:ok, activity, follow}
     else
       {:follow, _} ->
@@ -547,7 +429,8 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
 
   # Handle incoming `Accept` activities wrapping a `Join` activity on an event
   defp do_handle_incoming_accept_join(join_object, %Actor{} = actor_accepting) do
-    with {:join_event, {:ok, %Participant{role: :not_approved, event: event} = participant}} <-
+    with {:join_event, {:ok, %Participant{role: role, event: event} = participant}}
+         when role in [:not_approved, :rejected] <-
            {:join_event, get_participant(join_object)},
          # TODO: The actor that accepts the Join activity may another one that the event organizer ?
          # Or maybe for groups it's the group that sends the Accept activity
@@ -556,7 +439,6 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
            ActivityPub.accept(
              :join,
              participant,
-             %{role: :participant},
              false
            ),
          :ok <-
@@ -587,32 +469,20 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
 
   # Handle incoming `Reject` activities wrapping a `Join` activity on an event
   defp do_handle_incoming_reject_join(join_object, %Actor{} = actor_accepting) do
-    with {:join_event,
-          {:ok,
-           %Participant{role: :not_approved, actor: actor, id: join_id, event: event} =
-             participant}} <-
+    with {:join_event, {:ok, %Participant{event: event, role: role} = participant}}
+         when role != :rejected <-
            {:join_event, get_participant(join_object)},
          # TODO: The actor that accepts the Join activity may another one that the event organizer ?
          # Or maybe for groups it's the group that sends the Accept activity
          {:same_actor, true} <- {:same_actor, actor_accepting.id == event.organizer_actor_id},
-         {:ok, activity, _} <-
-           ActivityPub.reject(
-             %{
-               to: [actor.url],
-               actor: actor_accepting.url,
-               object: join_object,
-               local: false
-             },
-             "#{MobilizonWeb.Endpoint.url()}/reject/join/#{join_id}"
-           ),
-         {:ok, %Participant{role: :rejected} = participant} <-
-           Events.update_participant(participant, %{"role" => :rejected}),
+         {:ok, activity, participant} <-
+           ActivityPub.reject(:join, participant, false),
          :ok <- Participation.send_emails_to_local_user(participant) do
       {:ok, activity, participant}
     else
-      {:join_event, {:ok, %Participant{role: :participant}}} ->
-        Logger.debug(
-          "Tried to handle an Reject activity on a Join activity with a event object but the participant is already validated"
+      {:join_event, {:ok, %Participant{role: :rejected}}} ->
+        Logger.warn(
+          "Tried to handle an Reject activity on a Join activity with a event object but the participant is already rejected"
         )
 
         nil
@@ -662,49 +532,6 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
     end
   end
 
-  def set_reply_to_uri(%{"inReplyTo" => in_reply_to} = object) do
-    with false <- String.starts_with?(in_reply_to, "http"),
-         {:ok, replied_to_object} <- fetch_obj_helper(in_reply_to) do
-      Map.put(object, "inReplyTo", replied_to_object["external_url"] || in_reply_to)
-    else
-      _e -> object
-    end
-  end
-
-  def set_reply_to_uri(obj), do: obj
-  #
-  #  # Prepares the object of an outgoing create activity.
-  def prepare_object(object) do
-    object
-    #    |> set_sensitive
-    # |> add_hashtags
-    |> add_mention_tags
-    #    |> add_emoji_tags
-    |> add_attributed_to
-    #    |> prepare_attachments
-    |> set_reply_to_uri
-  end
-
-  @doc """
-  internal -> Mastodon
-  """
-  def prepare_outgoing(%{"type" => "Create", "object" => %{"type" => "Note"} = object} = data) do
-    Logger.debug("Prepare outgoing for a note creation")
-
-    object =
-      object
-      |> prepare_object
-
-    data =
-      data
-      |> Map.put("object", object)
-      |> Map.merge(Utils.make_json_ld_header())
-
-    Logger.debug("Finished prepare outgoing for a note creation")
-
-    {:ok, data}
-  end
-
   def prepare_outgoing(%{"type" => _type} = data) do
     data =
       data
@@ -712,145 +539,6 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
 
     {:ok, data}
   end
-
-  # def prepare_outgoing(%Event{} = event) do
-  #   event =
-  #     event
-  #     |> Map.from_struct()
-  #     |> Map.drop([:__meta__])
-  #     |> Map.put(:"@context", "https://www.w3.org/ns/activitystreams")
-  #     |> prepare_object
-
-  #   {:ok, event}
-  # end
-
-  # def prepare_outgoing(%Comment{} = comment) do
-  #   comment =
-  #     comment
-  #     |> Map.from_struct()
-  #     |> Map.drop([:__meta__])
-  #     |> Map.put(:"@context", "https://www.w3.org/ns/activitystreams")
-  #     |> prepare_object
-
-  #   {:ok, comment}
-  # end
-
-  #
-  #  def maybe_fix_object_url(data) do
-  #    if is_binary(data["object"]) and not String.starts_with?(data["object"], "http") do
-  #      case ActivityPub.fetch_object_from_id(data["object"]) do
-  #        {:ok, relative_object} ->
-  #          if relative_object.data["external_url"] do
-  #            data =
-  #              data
-  #              |> Map.put("object", relative_object.data["external_url"])
-  #          else
-  #            data
-  #          end
-  #
-  #        e ->
-  #          Logger.error("Couldn't fetch #{data["object"]} #{inspect(e)}")
-  #          data
-  #      end
-  #    else
-  #      data
-  #    end
-  #  end
-  #
-
-  def add_hashtags(object) do
-    tags =
-      (object["tag"] || [])
-      |> Enum.map(fn tag ->
-        %{
-          "href" => MobilizonWeb.Endpoint.url() <> "/tags/#{tag}",
-          "name" => "##{tag}",
-          "type" => "Hashtag"
-        }
-      end)
-
-    object
-    |> Map.put("tag", tags)
-  end
-
-  def add_mention_tags(object) do
-    Logger.debug("add mention tags")
-    Logger.debug(inspect(object))
-
-    recipients =
-      (object["to"] ++ (object["cc"] || [])) -- ["https://www.w3.org/ns/activitystreams#Public"]
-
-    mentions =
-      recipients
-      |> Enum.filter(& &1)
-      |> Enum.map(fn url ->
-        case Actors.get_actor_by_url(url) do
-          {:ok, actor} -> actor
-          _ -> nil
-        end
-      end)
-      |> Enum.filter(& &1)
-      |> Enum.map(fn actor ->
-        %{
-          "type" => "Mention",
-          "href" => actor.url,
-          "name" => "@#{Actor.preferred_username_and_domain(actor)}"
-        }
-      end)
-
-    tags = object["tag"] || []
-
-    object
-    |> Map.put("tag", tags ++ mentions)
-  end
-
-  #
-  #  # TODO: we should probably send mtime instead of unix epoch time for updated
-  #  def add_emoji_tags(object) do
-  #    tags = object["tag"] || []
-  #    emoji = object["emoji"] || []
-  #
-  #    out =
-  #      emoji
-  #      |> Enum.map(fn {name, url} ->
-  #        %{
-  #          "icon" => %{"url" => url, "type" => "Image"},
-  #          "name" => ":" <> name <> ":",
-  #          "type" => "Emoji",
-  #          "updated" => "1970-01-01T00:00:00Z",
-  #          "id" => url
-  #        }
-  #      end)
-  #
-  #    object
-  #    |> Map.put("tag", tags ++ out)
-  #  end
-  #
-
-  #
-  #  def set_sensitive(object) do
-  #    tags = object["tag"] || []
-  #    Map.put(object, "sensitive", "nsfw" in tags)
-  #  end
-  #
-  def add_attributed_to(object) do
-    attributed_to = object["attributedTo"] || object["actor"]
-
-    object |> Map.put("attributedTo", attributed_to)
-  end
-
-  #
-  #  def prepare_attachments(object) do
-  #    attachments =
-  #      (object["attachment"] || [])
-  #      |> Enum.map(fn data ->
-  #        [%{"mediaType" => media_type, "href" => href} | _] = data["url"]
-  #        %{"url" => href, "mediaType" => media_type, "name" => data["name"], "type" => "Document"}
-  #      end)
-  #
-  #    object
-  #    |> Map.put("attachment", attachments)
-  #  end
 
   @spec fetch_obj_helper(map() | String.t()) :: Event.t() | Comment.t() | Actor.t() | any()
   def fetch_obj_helper(object) do
@@ -862,7 +550,7 @@ defmodule Mobilizon.Service.ActivityPub.Transmogrifier do
         {:ok, object}
 
       err ->
-        Logger.info("Error while fetching #{inspect(object)}")
+        Logger.warn("Error while fetching #{inspect(object)}")
         {:error, err}
     end
   end

@@ -38,6 +38,13 @@
                         </article>
                     </router-link>
                 </div>
+                <div class="tile is-parent">
+                    <router-link :to="{ name: RouteName.RELAYS }">
+                        <article class="tile is-child box">
+                            <p class="subtitle">{{ $t('Instances') }}</p>
+                        </article>
+                    </router-link>
+                </div>
             </div>
             <div class="tile is-parent">
                 <article class="tile is-child box">
@@ -66,6 +73,12 @@ import { RouteName } from '@/router';
     dashboard: {
       query: DASHBOARD,
     },
+  },
+  metaInfo() {
+    return {
+      title: this.$t('Administration') as string,
+      titleTemplate: '%s | Mobilizon',
+    };
   },
 })
 export default class Dashboard extends Vue {

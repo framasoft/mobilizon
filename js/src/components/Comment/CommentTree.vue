@@ -221,7 +221,7 @@ export default class CommentTree extends Vue {
             data: { thread: replies },
           });
 
-            // @ts-ignore
+          // @ts-ignore
           const parentCommentIndex = oldComments.findIndex(oldComment => oldComment.id === comment.originComment.id);
           const parentComment = oldComments[parentCommentIndex];
           parentComment.replies = replies;

@@ -3,6 +3,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
   alias MobilizonWeb.AbsintheHelpers
   alias Mobilizon.Actors.Actor
   import Mobilizon.Factory
+  use Oban.Testing, repo: Mobilizon.Storage.Repo
 
   @non_existent_username "nonexistent"
 
@@ -478,7 +479,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
                "Cannot remove the last administrator of a group"
     end
 
-    test "delete_person/3 should delete a user identity", context do
+    test "delete_person/3 should delete an actor identity", context do
       user = insert(:user)
       %Actor{id: person_id} = insert(:actor, user: user, preferred_username: "riri")
       insert(:actor, user: user, preferred_username: "fifi")
@@ -497,6 +498,13 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert json_response(res, 200)["errors"] == nil
+
+      assert_enqueued(
+        worker: Mobilizon.Service.Workers.BackgroundWorker,
+        args: %{"actor_id" => person_id, "op" => "delete_actor"}
+      )
+
+      assert %{success: 1, failure: 0} == Oban.drain_queue(:background)
 
       query = """
       {

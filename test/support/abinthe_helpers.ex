@@ -25,7 +25,7 @@ defmodule MobilizonWeb.AbsintheHelpers do
     conn
     |> post(
       "/api",
-      build_query(options[:query], options[:variables])
+      build_query(options[:query], Keyword.get(options, :variables, %{}))
     )
     |> json_response(200)
   end

@@ -242,7 +242,7 @@ export class EventModel implements IEvent {
 
     this.onlineAddress = hash.onlineAddress;
     this.phoneAddress = hash.phoneAddress;
-    this.physicalAddress = new Address(hash.physicalAddress);
+    this.physicalAddress = hash.physicalAddress ? new Address(hash.physicalAddress) : undefined;
     this.participantStats = hash.participantStats;
 
     this.tags = hash.tags;

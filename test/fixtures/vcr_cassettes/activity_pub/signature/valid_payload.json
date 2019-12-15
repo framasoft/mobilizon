@@ -1,0 +1,40 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/activity+json"
+      },
+      "method": "get",
+      "options": {
+        "follow_redirect": "true"
+      },
+      "request_body": "",
+      "url": "https://framapiaf.org/users/admin"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"@context\":[\"https://www.w3.org/ns/activitystreams\",\"https://w3id.org/security/v1\",{\"manuallyApprovesFollowers\":\"as:manuallyApprovesFollowers\",\"toot\":\"http://joinmastodon.org/ns#\",\"featured\":{\"@id\":\"toot:featured\",\"@type\":\"@id\"},\"alsoKnownAs\":{\"@id\":\"as:alsoKnownAs\",\"@type\":\"@id\"},\"movedTo\":{\"@id\":\"as:movedTo\",\"@type\":\"@id\"},\"schema\":\"http://schema.org#\",\"PropertyValue\":\"schema:PropertyValue\",\"value\":\"schema:value\",\"IdentityProof\":\"toot:IdentityProof\",\"discoverable\":\"toot:discoverable\",\"focalPoint\":{\"@container\":\"@list\",\"@id\":\"toot:focalPoint\"}}],\"id\":\"https://framapiaf.org/users/admin\",\"type\":\"Service\",\"following\":\"https://framapiaf.org/users/admin/following\",\"followers\":\"https://framapiaf.org/users/admin/followers\",\"inbox\":\"https://framapiaf.org/users/admin/inbox\",\"outbox\":\"https://framapiaf.org/users/admin/outbox\",\"featured\":\"https://framapiaf.org/users/admin/collections/featured\",\"preferredUsername\":\"admin\",\"name\":\"Administrateur\",\"summary\":\"\\u003cp\\u003eJe ne suis qu\\u0026apos;un compte inutile. Merci nous de contacter via \\u003ca href=\\\"https://contact.framasoft.org/\\\" rel=\\\"nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"\\\"\\u003econtact.framasoft.org/\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/p\\u003e\",\"url\":\"https://framapiaf.org/@admin\",\"manuallyApprovesFollowers\":false,\"discoverable\":null,\"publicKey\":{\"id\":\"https://framapiaf.org/users/admin#main-key\",\"owner\":\"https://framapiaf.org/users/admin\",\"publicKeyPem\":\"-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyHaU/AZ5dWtSxZXkPa89\\nDUQ4z+JQHGGUG/xkGuq0v8P6qJfQqtHPBO5vH0IQJqluXWQS96gqTwjZnYevcpNA\\nveYv0K25DWszx5Ehz6JX2/sSvu2rNUcQ3YZvSjdo/Yy1u5Fuc5lLmvw8uFzXYekD\\nWovTMOnp4mIKpVEm/G/v4w8jvFEKw88h743vwaEIim88GEQItMxzGAV6zSqV1DWO\\nLxtoRsinslJYfAG46ex4YUATFveWvOUeWk5W1sEa5f3c0moaTmBM/PAAo8vLxhlw\\nJhsHihsCH+BcXKVMjW8OCqYYqISMxEifUBX63HcJt78ELHpOuc1c2eG59PomtTjQ\\nywIDAQAB\\n-----END PUBLIC KEY-----\\n\"},\"tag\":[],\"attachment\":[{\"type\":\"PropertyValue\",\"name\":\"News\",\"value\":\"\\u003cspan class=\\\"h-card\\\"\\u003e\\u003ca href=\\\"https://framapiaf.org/@Framasoft\\\" class=\\\"u-url mention\\\"\\u003e@\\u003cspan\\u003eFramasoft\\u003c/span\\u003e\\u003c/a\\u003e\\u003c/span\\u003e\"},{\"type\":\"PropertyValue\",\"name\":\"Support\",\"value\":\"\\u003ca href=\\\"https://contact.framasoft.org/\\\" rel=\\\"me nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"\\\"\\u003econtact.framasoft.org/\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e\\u003c/span\\u003e\\u003c/a\\u003e\"},{\"type\":\"PropertyValue\",\"name\":\"Soutenir\",\"value\":\"\\u003ca href=\\\"https://soutenir.framasoft.org/\\\" rel=\\\"me nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"\\\"\\u003esoutenir.framasoft.org/\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e\\u003c/span\\u003e\\u003c/a\\u003e\"},{\"type\":\"PropertyValue\",\"name\":\"Site\",\"value\":\"\\u003ca href=\\\"https://framasoft.org/\\\" rel=\\\"me nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\\u003cspan class=\\\"invisible\\\"\\u003ehttps://\\u003c/span\\u003e\\u003cspan class=\\\"\\\"\\u003eframasoft.org/\\u003c/span\\u003e\\u003cspan class=\\\"invisible\\\"\\u003e\\u003c/span\\u003e\\u003c/a\\u003e\"}],\"endpoints\":{\"sharedInbox\":\"https://framapiaf.org/inbox\"},\"icon\":{\"type\":\"Image\",\"mediaType\":\"image/jpeg\",\"url\":\"https://framapiaf.s3.framasoft.org/framapiaf/accounts/avatars/000/000/002/original/85fbb27ad5e3cf71.jpg\"},\"image\":{\"type\":\"Image\",\"mediaType\":\"image/jpeg\",\"url\":\"https://framapiaf.s3.framasoft.org/framapiaf/accounts/headers/000/000/002/original/6aba75f1ab1ab6de.jpg\"}}",
+      "headers": {
+        "Date": "Fri, 06 Dec 2019 10:25:59 GMT",
+        "Content-Type": "application/activity+json; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Server": "Mastodon",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Vary": "Accept, Accept-Encoding, Origin",
+        "Cache-Control": "max-age=180, public",
+        "ETag": "W/\"773e09a2a60446fe74d997858877f7e0\"",
+        "Set-Cookie": "_mastodon_session=U%2BUwfKRPF9LVzxKAjxaywz3ySEufApGuEhddpwvpJm7%2B0cDzsW0%2Fn64%2FwOLOYuE9SLOTCjU4Ufc3yaoLvdKx--x1HVRQfU7bAeHgaF--IV9oyi7ODNo19cAi%2FULzew%3D%3D; path=/; secure; HttpOnly",
+        "X-Request-Id": "f36578b7-2f1a-49d1-b2c4-0cc0d652160b",
+        "X-Runtime": "0.010705",
+        "X-Cached": "MISS",
+        "Strict-Transport-Security": "max-age=31536000"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

@@ -47,8 +47,8 @@ defmodule MobilizonWeb.Resolvers.Group do
         %{context: %{current_user: user}}
       ) do
     with creator_actor_id <- Map.get(args, :creator_actor_id),
-         {:is_owned, %Actor{} = actor} <- User.owns_actor(user, creator_actor_id),
-         args <- Map.put(args, :creator_actor, actor),
+         {:is_owned, %Actor{} = creator_actor} <- User.owns_actor(user, creator_actor_id),
+         args <- Map.put(args, :creator_actor, creator_actor),
          {:ok, _activity, %Actor{type: :Group} = group} <-
            API.Groups.create_group(args) do
       {:ok, group}

@@ -28,7 +28,7 @@ defmodule Mobilizon.Tombstone do
   def changeset(%__MODULE__{} = tombstone, attrs) do
     tombstone
     |> cast(attrs, @attrs)
-    |> validate_required(@attrs)
+    |> validate_required(@required_attrs)
   end
 
   @spec create_tombstone(map()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
