@@ -5,7 +5,10 @@
         <h1 class="title">
           {{ $t('Password reset') }}
         </h1>
-        <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">{{ error }}</b-message>
+        <b-message 
+        title="Error" type="is-danger" v-for="error in errors" :key="error" @close="removeError(error)">
+          {{ error }}
+        </b-message>
         <form @submit="sendResetPasswordTokenAction" v-if="!validationSent">
           <b-field label="Email">
             <b-input aria-required="true" required type="email" v-model="credentials.email"/>
@@ -59,6 +62,10 @@ export default class SendPasswordReset extends Vue {
     this.credentials.email = this.email;
   }
 
+  removeError(message: string) {
+    this.errors.splice(this.errors.indexOf(message))
+  }
+
   async sendResetPasswordTokenAction(e) {
     e.preventDefault();
 
@@ -74,7 +81,9 @@ export default class SendPasswordReset extends Vue {
     } catch (err) {
       console.error(err);
       err.graphQLErrors.forEach(({ message }) => {
-        this.errors.push(message);
+        if (this.errors.indexOf(message) < 0){
+          this.errors.push(message);
+        }
       });
     }
   }
