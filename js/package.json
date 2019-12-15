@@ -38,7 +38,7 @@
     "ngeohash": "^0.6.3",
     "phoenix": "^1.4.11",
     "register-service-worker": "^1.6.2",
-    "tippy.js": "4.3.5",
+    "tippy.js": "5.1.2",
     "tiptap": "^1.26.0",
     "tiptap-extensions": "^1.28.0",
     "vue": "^2.6.10",
