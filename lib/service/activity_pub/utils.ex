@@ -32,6 +32,7 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
         %{
           "sc" => "http://schema.org#",
           "ical" => "http://www.w3.org/2002/12/cal/ical#",
+          "pt" => "https://joinpeertube.org/ns#",
           "Hashtag" => "as:Hashtag",
           "category" => "sc:category",
           "uuid" => "sc:identifier",
@@ -44,6 +45,10 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
           "repliesModerationOption" => %{
             "@id" => "mz:repliesModerationOption",
             "@type" => "mz:repliesModerationOptionType"
+          },
+          "commentsEnabled" => %{
+            "@type" => "sc:Boolean",
+            "@id" => "pt:commentsEnabled"
           },
           "joinModeType" => %{
             "@id" => "mz:joinModeType",

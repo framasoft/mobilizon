@@ -10,7 +10,7 @@ To match usernames to actors, Mobilizon uses [WebFinger](https://tools.ietf.org/
 
 ## Instance subscriptions
 
-Instances subscribe to each other through an internal actor named `relay@instance.tld` that publishes (through `Announce`) every created content to it's followers. Each content creation share is saved so that updates and deletes are correctly sent to every
+Instances subscribe to each other through an internal actor named `relay@instance.tld` that publishes (through `Announce`) every created content to it's followers. Each content creation share is saved so that updates and deletes are correctly sent to every relay subscriber.
 
 ## Activities
 
@@ -46,6 +46,9 @@ See [the corresponding issue](https://framagit.org/framasoft/mobilizon/issues/32
 
 Accepted values: `allow_all`, `closed`, `moderated` (not used at the moment)
 
+!!! info
+    We also support PeerTube's `commentEnabled` property as a fallback. It is set to `true` only when `repliesModeration` is equal to `allow_all`.
+
 Example:
 ```json
 {
@@ -53,6 +56,7 @@ Example:
     "...",
     {
       "mz": "https://joinmobilizon.org/ns#",
+      "pt": "https://joinpeertube.org/ns#",
       "repliesModerationOption": {
         "@id": "mz:repliesModerationOption",
         "@type": "mz:repliesModerationOptionType"
@@ -60,11 +64,16 @@ Example:
       "repliesModerationOptionType": {
         "@id": "mz:repliesModerationOptionType",
         "@type": "rdfs:Class"
+      },
+      "commentsEnabled": {
+        "@id": "pt:commentsEnabled",
+        "@type": "sc:Boolean"
       }
     }
   ],
   "...": "...",
   "repliesModerationOption": "allow_all",
+  "commentsEnabled": true,
   "type": "Event",
   "url": "http://mobilizon1.com/events/8cf76e9f-c426-4912-9cd6-c7030b969611"
 }
