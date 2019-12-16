@@ -21,7 +21,7 @@
     "@absinthe/socket-apollo-link": "^0.2.1",
     "@mdi/font": "^4.5.95",
     "apollo-absinthe-upload-link": "^1.5.0",
-    "apollo-cache-inmemory": "^1.5.1",
+    "apollo-cache-inmemory": "^1.6.5",
     "apollo-client": "^2.5.1",
     "apollo-link": "^1.2.11",
     "apollo-link-http": "^1.5.16",
