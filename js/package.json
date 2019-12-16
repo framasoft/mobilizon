@@ -49,7 +49,7 @@
     "vue-property-decorator": "^8.1.0",
     "vue-router": "^3.0.6",
     "vue-scrollto": "^2.17.1",
-    "vue2-leaflet": "^2.0.3"
+    "vue2-leaflet": "^2.3.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.3",
