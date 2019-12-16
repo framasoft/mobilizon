@@ -116,7 +116,7 @@ import { CREATE_REPORT } from '@/graphql/report';
   },
   components: {
     editor: () => import(/* webpackChunkName: "editor" */ '@/components/Editor.vue'),
-    Comment,
+    comment: () => import(/* webpackChunkName: "comment" */ './Comment.vue'),
   },
 })
 export default class Comment extends Vue {
@@ -223,7 +223,6 @@ export default class Comment extends Vue {
   }
 
   reportModal() {
-    console.log('report modal');
     this.$buefy.modal.open({
       parent: this,
       component: ReportModal,
