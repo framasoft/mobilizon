@@ -328,6 +328,7 @@ defmodule Mobilizon.Service.ActivityPub do
     with audience <-
            Audience.calculate_to_and_cc_from_mentions(event),
          {:ok, %Event{} = event} <- Events.delete_event(event),
+         {:ok, true} <- Cachex.del(:activity_pub, "event_#{event.uuid}"),
          {:ok, %Tombstone{} = _tombstone} <-
            Tombstone.create_tombstone(%{uri: event.url, actor_id: actor.id}),
          Share.delete_all_by_uri(event.url),
@@ -350,6 +351,7 @@ defmodule Mobilizon.Service.ActivityPub do
     with audience <-
            Audience.calculate_to_and_cc_from_mentions(comment),
          {:ok, %Comment{} = comment} <- Events.delete_comment(comment),
+         {:ok, true} <- Cachex.del(:activity_pub, "comment_#{comment.uuid}"),
          {:ok, %Tombstone{} = _tombstone} <-
            Tombstone.create_tombstone(%{uri: comment.url, actor_id: actor.id}),
          Share.delete_all_by_uri(comment.url),
@@ -730,6 +732,7 @@ defmodule Mobilizon.Service.ActivityPub do
        ) do
     with args <- prepare_args_for_event(args),
          {:ok, %Event{} = new_event} <- Events.update_event(old_event, args),
+         {:ok, true} <- Cachex.del(:activity_pub, "event_#{new_event.uuid}"),
          event_as_data <- Convertible.model_to_as(new_event),
          audience <-
            Audience.calculate_to_and_cc_from_mentions(new_event),
@@ -748,6 +751,7 @@ defmodule Mobilizon.Service.ActivityPub do
   defp update_actor(%Actor{} = old_actor, args, additional) do
     with {:ok, %Actor{} = new_actor} <- Actors.update_actor(old_actor, args),
          actor_as_data <- Convertible.model_to_as(new_actor),
+         {:ok, true} <- Cachex.del(:activity_pub, "actor_#{new_actor.preferred_username}"),
          audience <-
            Audience.calculate_to_and_cc_from_mentions(new_actor),
          additional <- Map.merge(additional, %{"actor" => old_actor.url}),

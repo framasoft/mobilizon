@@ -249,6 +249,7 @@ defmodule Mobilizon.Actors do
 
     case transaction do
       {:ok, %{actor: %Actor{} = actor}} ->
+        {:ok, true} = Cachex.del(:activity_pub, "actor_#{actor.preferred_username}")
         {:ok, actor}
 
       {:error, remove, error, _} when remove in [:remove_banner, :remove_avatar] ->
