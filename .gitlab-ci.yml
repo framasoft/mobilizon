@@ -107,8 +107,6 @@ pages:
   stage: deploy
   script:
     - mkdir public
-    # We use Python 3.5 in the current Stretch-based image. See https://github.com/timvink/mkdocs-git-revision-date-localized-plugin/issues/3
-    - sed -i "s+print(f\"WARNING - plugin locale setting '{plugin_locale}' will overwrite mkdocs locale '{mkdocs_locale}'\")+print(\"WARNING - plugin locale setting will overwrite mkdocs locale\")+g" /usr/local/lib/python3.5/dist-packages/mkdocs_git_revision_date_localized_plugin/plugin.py
     - mkdocs build
     - mv site/* public/
     - mix deps.get
