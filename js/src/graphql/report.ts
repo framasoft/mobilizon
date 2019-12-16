@@ -7,6 +7,7 @@ export const REPORTS = gql`
             reported {
                 id,
                 preferredUsername,
+                domain,
                 name,
                 avatar {
                     url
@@ -46,7 +47,8 @@ const REPORT_FRAGMENT = gql`
             name,
             avatar {
                 url
-            }
+            },
+            domain
         },
         reporter {
             id,
@@ -74,6 +76,7 @@ const REPORT_FRAGMENT = gql`
             actor {
                 id,
                 preferredUsername,
+                domain,
                 name,
                 avatar {
                     url

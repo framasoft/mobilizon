@@ -171,6 +171,7 @@ export const FETCH_EVENTS = gql`
           url
         },
         preferredUsername,
+        domain,
         name,
       },
 #      attributedTo {
