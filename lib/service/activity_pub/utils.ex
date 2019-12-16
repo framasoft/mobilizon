@@ -32,10 +32,31 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
         %{
           "sc" => "http://schema.org#",
           "ical" => "http://www.w3.org/2002/12/cal/ical#",
+          "pt" => "https://joinpeertube.org/ns#",
           "Hashtag" => "as:Hashtag",
           "category" => "sc:category",
           "uuid" => "sc:identifier",
           "maximumAttendeeCapacity" => "sc:maximumAttendeeCapacity",
+          "location" => %{
+            "@id" => "sc:location",
+            "@type" => "sc:Place"
+          },
+          "Place" => "sc:Place",
+          "PostalAddress" => "sc:PostalAddress",
+          "GeoCoordinates" => "sc:GeoCoordinates",
+          "address" => %{
+            "@id" => "sc:address",
+            "@type" => "sc:PostalAddress"
+          },
+          "geo" => %{
+            "@id" => "sc:geo",
+            "@type" => "sc:GeoCoordinates"
+          },
+          "addressCountry" => "sc:addressCountry",
+          "addressRegion" => "sc:addressRegion",
+          "postalCode" => "sc:postalCode",
+          "addressLocality" => "sc:addressLocality",
+          "streetAddress" => "sc:streetAddress",
           "mz" => "https://joinmobilizon.org/ns#",
           "repliesModerationOptionType" => %{
             "@id" => "mz:repliesModerationOptionType",
@@ -44,6 +65,10 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
           "repliesModerationOption" => %{
             "@id" => "mz:repliesModerationOption",
             "@type" => "mz:repliesModerationOptionType"
+          },
+          "commentsEnabled" => %{
+            "@type" => "sc:Boolean",
+            "@id" => "pt:commentsEnabled"
           },
           "joinModeType" => %{
             "@id" => "mz:joinModeType",

@@ -119,6 +119,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Event do
       "tag" => event.tags |> ConverterUtils.build_tags(),
       "maximumAttendeeCapacity" => event.options.maximum_attendee_capacity,
       "repliesModerationOption" => event.options.comment_moderation,
+      "commentsEnabled" => event.options.comment_moderation == :allow_all,
       # "draft" => event.draft,
       "ical:status" => event.status |> to_string |> String.upcase(),
       "id" => event.url,
@@ -140,7 +141,12 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Event do
   defp get_options(object) do
     %{
       maximum_attendee_capacity: object["maximumAttendeeCapacity"],
-      comment_moderation: object["repliesModerationOption"]
+      comment_moderation:
+        Map.get(
+          object,
+          "repliesModerationOption",
+          if(Map.get(object, "commentsEnabled", true), do: :allow_all, else: :closed)
+        )
     }
   end
 

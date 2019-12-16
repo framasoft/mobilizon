@@ -10,7 +10,7 @@ To match usernames to actors, Mobilizon uses [WebFinger](https://tools.ietf.org/
 
 ## Instance subscriptions
 
-Instances subscribe to each other through an internal actor named `relay@instance.tld` that publishes (through `Announce`) every created content to it's followers. Each content creation share is saved so that updates and deletes are correctly sent to every
+Instances subscribe to each other through an internal actor named `relay@instance.tld` that publishes (through `Announce`) every created content to it's followers. Each content creation share is saved so that updates and deletes are correctly sent to every relay subscriber.
 
 ## Activities
 
@@ -46,6 +46,9 @@ See [the corresponding issue](https://framagit.org/framasoft/mobilizon/issues/32
 
 Accepted values: `allow_all`, `closed`, `moderated` (not used at the moment)
 
+!!! info
+    We also support PeerTube's `commentEnabled` property as a fallback. It is set to `true` only when `repliesModeration` is equal to `allow_all`.
+
 Example:
 ```json
 {
@@ -53,6 +56,7 @@ Example:
     "...",
     {
       "mz": "https://joinmobilizon.org/ns#",
+      "pt": "https://joinpeertube.org/ns#",
       "repliesModerationOption": {
         "@id": "mz:repliesModerationOption",
         "@type": "mz:repliesModerationOptionType"
@@ -60,11 +64,16 @@ Example:
       "repliesModerationOptionType": {
         "@id": "mz:repliesModerationOptionType",
         "@type": "rdfs:Class"
+      },
+      "commentsEnabled": {
+        "@id": "pt:commentsEnabled",
+        "@type": "sc:Boolean"
       }
     }
   ],
   "...": "...",
   "repliesModerationOption": "allow_all",
+  "commentsEnabled": true,
   "type": "Event",
   "url": "http://mobilizon1.com/events/8cf76e9f-c426-4912-9cd6-c7030b969611"
 }
@@ -100,5 +109,63 @@ Example:
   "joinMode": "restricted",
   "type": "Event",
   "url": "http://mobilizon1.com/events/8cf76e9f-c426-4912-9cd6-c7030b969611"
+}
+```
+
+#### location
+
+We use Schema.org's `location` property on `Event`.
+[The ActivityStream vocabulary to represent places](https://www.w3.org/TR/activitystreams-vocabulary/#places) is quite limited so instead of using `Place` from ActivityStreams we use `Place` from Schema.org.
+
+A [Schema.org `Place` type](https://schema.org/Place) has [an `address` property](https://schema.org/address), which we assume to be [of `PostalAddress` type](https://schema.org/PostalAddress) and [a `geo` property](https://schema.org/geo), which is assumed to be of [`GeoCoordinates` type](https://schema.org/GeoCoordinates).
+
+```json
+{
+  "@context": [
+    "...",
+    {
+      "GeoCoordinates": "sc:GeoCoordinates",
+      "Place": "sc:Place",
+      "PostalAddress": "sc:PostalAddress",
+      "address": {
+        "@id": "sc:address",
+        "@type": "sc:PostalAddress"
+      },
+      "addressCountry": "sc:addressCountry",
+      "addressLocality": "sc:addressLocality",
+      "addressRegion": "sc:addressRegion",
+      "geo": {
+        "@id": "sc:geo",
+        "@type": "sc:GeoCoordinates"
+      },
+      "location": {
+        "@id": "sc:location",
+        "@type": "sc:Place"
+      },
+      "postalCode": "sc:postalCode",
+      "sc": "http://schema.org#",
+      "streetAddress": "sc:streetAddress",
+    }
+  ],
+  "id": "http://mobilizon2.com/events/945f350d-a3e6-4bcd-9bf2-0bd2e4d353c5",
+  "location": {
+      "address": {
+        "addressCountry": "France",
+        "addressLocality": "Lyon",
+        "addressRegion": "Auvergne-Rhône-Alpes",
+        "postalCode": "69007",
+        "streetAddress": "10 Rue Jangot",
+        "type": "PostalAddress"
+      },
+      "geo": {
+        "latitude": 4.8425657,
+        "longitude": 45.7517141,
+        "type": "GeoCoordinates"
+      },
+      "id": "http://mobilizon2.com/address/bdf7fb53-7177-46f3-8fb3-93c25a802522",
+      "name": "10 Rue Jangot",
+      "type": "Place"
+    },
+  "type": "Event"
 }
 ```
