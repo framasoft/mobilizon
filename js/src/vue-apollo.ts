@@ -4,7 +4,7 @@ import { ApolloLink, Observable, split } from 'apollo-link';
 import { defaultDataIdFromObject, InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
 import { onError } from 'apollo-link-error';
 import { createLink } from 'apollo-absinthe-upload-link';
-import { GRAPHQL_API_ENDPOINT, GRAPHQL_API_FULL_PATH, MOBILIZON_INSTANCE_HOST } from './api/_entrypoint';
+import { GRAPHQL_API_ENDPOINT, GRAPHQL_API_FULL_PATH } from './api/_entrypoint';
 import { ApolloClient } from 'apollo-client';
 import { buildCurrentUserResolver } from '@/apollo/user';
 import { isServerError } from '@/types/apollo';
@@ -24,7 +24,8 @@ Vue.use(VueApollo);
 // Endpoints
 const httpServer = GRAPHQL_API_ENDPOINT || 'http://localhost:4000';
 const httpEndpoint = GRAPHQL_API_FULL_PATH || `${httpServer}/api`;
-const wsEndpoint = `ws${httpServer.substring(httpServer.indexOf(':'))}/graphql_socket`;
+const webSocketPrefix = process.env.NODE_ENV === 'production' ? 'wss' : 'ws';
+const wsEndpoint = `${webSocketPrefix}${httpServer.substring(httpServer.indexOf(':'))}/graphql_socket`;
 
 const fragmentMatcher = new IntrospectionFragmentMatcher({
   introspectionQueryResultData: {
