@@ -2,7 +2,9 @@
   <section class="container">
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
-        <li class="is-active"><router-link :to="{ name: RouteName.UPDATE_IDENTITY }" aria-current="page">{{ $t('My account') }}</router-link></li>
+        <li class="is-active">
+          <router-link :to="{ name: RouteName.UPDATE_IDENTITY }" aria-current="page">{{ $t('My account') }}</router-link>
+        </li>
       </ul>
     </nav>
     <div v-if="currentActor">
@@ -14,13 +16,13 @@
 
       <div class="columns">
         <div class="identities column is-4">
-          <identities v-bind:currentIdentityName="currentIdentityName"></identities>
+          <identities :currentIdentityName="currentIdentityName" />
           <div class="buttons">
             <b-button tag="router-link" type="is-secondary" :to="{ name: RouteName.PASSWORD_CHANGE }">{{ $t('Change password') }}</b-button>
           </div>
         </div>
         <div class="column is-8">
-          <router-view></router-view>
+          <router-view />
         </div>
       </div>
     </div>
@@ -68,13 +70,13 @@ export default class MyAccount extends Vue {
   RouteName = RouteName;
 
   @Watch('$route.params.identityName', { immediate: true })
-  async onIdentityParamChanged (val: string) {
+  async onIdentityParamChanged(val: string) {
     await this.redirectIfNoIdentitySelected(val);
 
     this.currentIdentityName = val;
   }
 
-  private async redirectIfNoIdentitySelected (identityParam?: string) {
+  private async redirectIfNoIdentitySelected(identityParam?: string) {
     if (!!identityParam) return;
 
     if (!!this.currentActor) {

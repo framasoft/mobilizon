@@ -1,10 +1,10 @@
 import { Component, Mixins, Vue } from 'vue-property-decorator';
 import { Person } from '@/types/actor';
 
-@Component
+@Component({})
 export default class IdentityEditionMixin extends Mixins(Vue) {
 
-  identity = new Person();
+  identity: Person = new Person();
   oldDisplayName: string | null = null;
 
   autoUpdateUsername(newDisplayName: string | null) {
