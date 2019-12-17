@@ -1,5 +1,5 @@
 {
-	"<b>Please do not use it in any real way</b>: everything you create here (accounts, events, identities, etc.) will be automatically deleted every 48 hours.": "<b>Please do not use it in any real way</b>: everything you create here (accounts, events, identities, etc.) will be automatically deleted every 48 hours.",
+	"<b>Please do not use it in any real way.</b>": "<b>Please do not use it in any real way.</b>",
 	"A user-friendly, emancipatory and ethical tool for gathering, organising, and mobilising.": "A user-friendly, emancipatory and ethical tool for gathering, organising, and mobilising.",
 	"A validation email was sent to {email}": "A validation email was sent to {email}",
 	"Abandon edition": "Abandon edition",
@@ -280,7 +280,6 @@
 	"Upcoming": "Upcoming",
 	"Update event {name}": "Update event {name}",
 	"Update my event": "Update my event",
-	"User accounts and every other data is currently deleted every 48 hours, so you may want to register again.": "User accounts and every other data is currently deleted every 48 hours, so you may want to register again.",
 	"Username": "Username",
 	"Users": "Users",
 	"View a reply": "|View one reply|View {totalReplies} replies",

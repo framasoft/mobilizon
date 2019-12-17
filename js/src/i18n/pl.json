@@ -1,5 +1,4 @@
 {
-    "<b>Please do not use it in any real way</b>: everything you create here (accounts, events, identities, etc.) will be automatically deleted every 48 hours.": "<b>Nie używaj go do rzeczywistego działania</b>: wszystko co tu utworzysz (konta, wydarzenia, tożsamości itp.) zostanie automatycznie usunięte po 48 godzinach.",
     "A validation email was sent to {email}": "Wiadomość potwierdzającą została wysłana na {email}",
     "Abandon edition": "Porzuć edycję",
     "About": "Informacje",
@@ -266,7 +265,6 @@
     "Unsaved changes": "Niezapisane zmiany",
     "Update event {name}": "Zaktualizuj wydarzenie {name}",
     "Update my event": "Zaktualizuj wydarzenie",
-    "User accounts and every other data is currently deleted every 48 hours, so you may want to register again.": "Konta użytkowników i inne dane są usuwane co 48 godzin, więc możesz potrzebować zarejestrować się ponownie.",
     "Username": "Nazwa użytkownika",
     "Users": "Użytkownicy",
     "View event page": "Zobacz stronę wydarzenia",

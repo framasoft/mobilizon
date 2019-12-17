@@ -21,264 +21,347 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 3.9\n"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:48
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:12
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
 msgstr "Si vous n'avez pas demandé ceci, vous pouvez ignorer cet email. Votre mot de passe ne changera pas tant que vous n'accédez pas au lien ci-dessous et que vous en définissiez un nouveau."
 
+#, elixir-format
 #: lib/service/export/feed.ex:169
 msgid "Feed for %{email} on Mobilizon"
 msgstr "Flux pour %{email} sur Mobilizon"
 
-#: lib/mobilizon_web/templates/email/email.html.eex:153
-#: lib/mobilizon_web/templates/email/email.text.eex:6
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:155
+#: lib/mobilizon_web/templates/email/email.text.eex:16
 msgid "%{instance} is a Mobilizon server."
 msgstr "%{instance} est une instance Mobilizon."
 
-#: lib/mobilizon_web/templates/email/report.html.eex:38
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.html.eex:41
 msgid "%{reporter_name} (%{reporter_username}) reported the following content."
 msgstr "%{reporter_name} (%{reporter_username}) a signalé le contenu suivant."
 
-#: lib/mobilizon_web/templates/email/report.html.eex:48
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.html.eex:52
 msgid "%{title} by %{creator}"
 msgstr "%{title} par %{creator}"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:58
 msgid "Activate my account"
 msgstr "Activer mon compte"
 
-#: lib/mobilizon_web/templates/email/email.html.eex:122
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:124
+#: lib/mobilizon_web/templates/email/email.text.eex:14
 msgid "Ask the community on Framacolibri"
 msgstr "Demander à la communauté sur Framacolibri"
 
-#: lib/mobilizon_web/templates/email/report.html.eex:62
-#: lib/mobilizon_web/templates/email/report.text.eex:11
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.html.eex:66
+#: lib/mobilizon_web/templates/email/report.text.eex:13
 msgid "Comments"
 msgstr "Commentaires"
 
-#: lib/mobilizon_web/templates/email/report.html.eex:46
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.html.eex:50
 #: lib/mobilizon_web/templates/email/report.text.eex:6
 msgid "Event"
 msgstr "Événement"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:45
 msgid "If you didn't request this, please ignore this email."
 msgstr "Si vous n'avez pas demandé ceci, merci d'ignorer cet email."
 
+#, elixir-format
 #: lib/mobilizon_web/email/user.ex:45
 msgid "Instructions to reset your password on %{instance}"
 msgstr "Instructions pour réinitialiser votre mot de passe sur %{instance}"
 
-#: lib/mobilizon_web/templates/email/email.html.eex:154
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:156
 msgid "Learn more about Mobilizon."
 msgstr "En apprendre plus à propos de Mobilizon."
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:13
 msgid "Nearly here!"
 msgstr "Vous y êtes presque !"
 
-#: lib/mobilizon_web/templates/email/email.html.eex:119
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:121
+#: lib/mobilizon_web/templates/email/email.text.eex:12
 msgid "Need some help? Something not working properly?"
 msgstr "Besoin d'aide ? Quelque chose ne fonctionne pas correctement ?"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/report.html.eex:13
 msgid "New report on %{instance}"
 msgstr "Nouveau signalement sur %{instance}"
 
-#: lib/mobilizon_web/templates/email/report.html.eex:80
-#: lib/mobilizon_web/templates/email/report.text.eex:18
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.html.eex:84
+#: lib/mobilizon_web/templates/email/report.text.eex:22
 msgid "Reason"
 msgstr "Raison"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:61
 msgid "Reset Password"
 msgstr "Réinitialiser mon mot de passe"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:41
 msgid "Resetting your password is easy. Just press the button below and follow the instructions. We'll have you up and running in no time."
 msgstr "Réinitialiser votre mot de passe est facile. Cliquez simplement sur le bouton et suivez les inscriptions. Vous serez opérationnel en un rien de temps."
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:13
 msgid "Trouble signing in?"
 msgstr "Des problèmes à vous connecter ?"
 
-#: lib/mobilizon_web/templates/email/report.html.eex:100
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.html.eex:104
 msgid "View the report"
 msgstr "Voir le signalement"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:38
 msgid "You created an account on %{host} with this email address. You are one click away from activating it."
 msgstr "Vous avez créé un compte sur %{host} avec cette adresse email. Vous êtes à un clic de l'activer."
 
+#, elixir-format
 #: lib/mobilizon_web/email/user.ex:25
 msgid "Instructions to confirm your Mobilizon account on %{instance}"
 msgstr "Instructions pour confirmer votre compte Mobilizon sur %{instance}"
 
+#, elixir-format
 #: lib/mobilizon_web/email/admin.ex:23
 msgid "New report on Mobilizon instance %{instance}"
 msgstr "Nouveau signalement sur l'instance Mobilizon %{instance}"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/registration_confirmation.text.eex:1
 msgid "Activate your account"
 msgstr "Activer mon compte"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:13
 msgid "All good!"
 msgstr "Tout est bon !"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:45
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:7
 msgid "An organizer just approved your participation. You're now going to this event!"
 msgstr "Un⋅e organisateur⋅ice vient d'approuver votre participation. Vous allez désormais à cet événement !"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:58
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:101
 msgid "Go to event page"
 msgstr "Aller à la page de l'événement"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:70
-#: lib/mobilizon_web/templates/email/event_updated.html.eex:113
-#: lib/mobilizon_web/templates/email/event_updated.text.eex:21
+#: lib/mobilizon_web/templates/email/event_updated.html.eex:113 lib/mobilizon_web/templates/email/event_updated.text.eex:21
 msgid "If you need to cancel your participation, just access the event page through link above and click on the participation button."
 msgstr "Si vous avez besoin d'annuler votre participation, il suffit d'accéder à la page de l'événement à partir du lien ci-dessus et de cliquer sur le bouton de participation."
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:11
 msgid "If you need to cancel your participation, just access the previous link and click on the participation button."
 msgstr "Si vous avez besoin d'annuler votre participation, accédez au lien ci-dessus et cliquez sur le bouton de participation."
 
-#: lib/mobilizon_web/templates/email/email.text.eex:6
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.text.eex:16
 msgid "Learn more about Mobilizon:"
 msgstr "En apprendre plus à propos de Mobilizon :"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/report.text.eex:1
 msgid "New report from %{reporter} on %{instance}"
 msgstr "Nouveau signalement sur %{instance}"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:1
 msgid "Participation approved"
 msgstr "Participation approuvée"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_rejected.text.eex:1
 msgid "Participation rejected"
 msgstr "Participation refusée"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:1
 msgid "Password reset"
 msgstr "Réinitialisation du mot de passe"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:7
 msgid "Resetting your password is easy. Just click the link below and follow the instructions. We'll have you up and running in no time."
 msgstr "Réinitialiser votre mot de passe est facile. Cliquez simplement sur le bouton et suivez les inscriptions. Vous serez opérationnel en un rien de temps."
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:13
 msgid "Sorry!"
 msgstr "Désolé !"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:45
 #: lib/mobilizon_web/templates/email/event_participation_rejected.text.eex:7
 msgid "Unfortunately, the organizers rejected your participation."
 msgstr "Malheureusement, les organisateur⋅ices ont rejeté votre demande de participation."
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/registration_confirmation.text.eex:5
 msgid "You created an account on %{host} with this email address. You are one click away from activating it. If this wasn't you, please ignore this email."
 msgstr "Vous avez créé un compte sur %{host} avec cette adresse email. Vous êtes à un clic de l'activer."
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:38
 msgid "You requested to participate in event %{title}"
 msgstr "Vous avez demandé à participer à l'événement %{title}"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:5
-#: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:38
-#: lib/mobilizon_web/templates/email/event_participation_rejected.text.eex:5
+#: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:38 lib/mobilizon_web/templates/email/event_participation_rejected.text.eex:5
 msgid "You requested to participate in event %{title}."
 msgstr "Vous avez demandé à participer à l'événement %{title}."
 
+#, elixir-format
 #: lib/mobilizon_web/email/participation.ex:73
 msgid "Your participation to event %{title} has been approved"
 msgstr "Votre participation à l'événement %{title} a été approuvée"
 
+#, elixir-format
 #: lib/mobilizon_web/email/participation.ex:52
 msgid "Your participation to event %{title} has been rejected"
 msgstr "Votre participation à l'événement %{title} a été rejetée"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:82
 msgid "Ending of event"
 msgstr "Fin de l'événement"
 
+#, elixir-format
 #: lib/mobilizon_web/email/event.ex:30
 msgid "Event %{title} has been updated"
 msgstr "L'événement %{title} a été mis à jour"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:13
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:1
 msgid "Event updated!"
 msgstr "Événement mis à jour !"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:16
 msgid "New date and time for ending of event: %{ends_on}"
 msgstr "Nouvelle date et heure de fin de l'événement : %{ends_on}"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:12
 msgid "New date and time for start of event: %{begins_on}"
 msgstr "Nouvelle date et heure de début de l'événement : %{begins_on}"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:8
 msgid "New title: %{title}"
 msgstr "Nouveau titre : %{title}"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:72
 msgid "Start of event"
 msgstr "Début de l'événement"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:5
 msgid "The event %{title} was just updated"
 msgstr "L'événement %{title} vient d'être mis à jour"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:38
 msgid "The event %{title} was updated"
 msgstr "L'événement %{title} a été mis à jour"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:62
 msgid "Title"
 msgstr "Titre"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:19
 msgid "View the updated event on: %{link}"
 msgstr "Voir l'événement mis à jour sur : %{link}"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:38
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:5
 msgid "You requested a new password for your account on %{instance}."
 msgstr "Vous avez demandé un nouveau mot de passe pour votre compte sur %{instance}."
 
-#: lib/mobilizon_web/templates/email/email.html.eex:91
-msgid "%{b_start}Please do not use it in any real way%{b_end}: everything you create here (accounts, events, identities, etc.) will be automatically deleted every 48 hours."
-msgstr "%{b_start}Merci de ne pas en faire une utilisation réelle%{b_end} : tout ce que vous créerez ici (comptes, événements, identités, etc.) sera automatiquement effacé toutes les 48 heures."
-
-#: lib/mobilizon_web/templates/email/email.html.eex:94
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:95
 msgid "In the meantime, please consider that the software is not (yet) finished. More information %{a_start}on our blog%{a_end}."
 msgstr "D'ici là, veuillez considérer que le logiciel n'est pas (encore) fini. Plus d'informations %{a_start}sur notre blog%{a_end}."
 
-#: lib/mobilizon_web/templates/email/email.html.eex:93
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:94
 msgid "Mobilizon is under development, we will add new features to this site during regular updates, until the release of %{b_start}version 1 of the software in the first half of 2020%{b_end}."
 msgstr "Mobilizon est en cours de développement, nous ajouterons de nouvelles fonctionnalités à ce site lors de mises à jour régulières, jusqu'à la publication de %{b_start}la version 1 du logiciel au premier semestre 2020%{b_end}."
 
-#: lib/mobilizon_web/templates/email/email.html.eex:90
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:91
+#: lib/mobilizon_web/templates/email/email.text.eex:6
 msgid "This is a demonstration site to test the beta version of Mobilizon."
 msgstr "Ceci est un site de démonstration permettant de tester la version bêta de Mobilizon."
 
-#: lib/mobilizon_web/templates/email/email.html.eex:88
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:89
 msgid "Warning"
 msgstr "Attention"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:54
 msgid "Event has been cancelled"
 msgstr "L'événement a été annulé"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:50
 msgid "Event has been confirmed"
 msgstr "L'événement a été confirmé"
 
+#, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:52
 msgid "Event status has been set as tentative"
 msgstr "Le statut de l'événement a été défini comme « à confirmer »"
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.html.eex:92
+msgid "%{b_start}Please do not use it in any real way%{b_end}"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/report.html.eex:39
+msgid "Someone on %{instance} reported the following content."
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.text.eex:10
+msgid "In the meantime, please consider that the software is not (yet) finished. More information on our blog:"
+msgstr "D'ici là, veuillez considérer que le logiciel n'est pas (encore) fini. Plus d'informations %{a_start}sur notre blog%{a_end}."
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.text.eex:9
+msgid "Mobilizon is under development, we will add new features to this site during regular updates, until the release of version 1 of the software in the first half of 2020."
+msgstr "Mobilizon est en cours de développement, nous ajouterons de nouvelles fonctionnalités à ce site lors de mises à jour régulières, jusqu'à la publication de %{b_start}la version 1 du logiciel au premier semestre 2020%{b_end}."
+
+#, elixir-format
+#: lib/mobilizon_web/templates/email/email.text.eex:7
+msgid "Please do not use it in any real way"
+msgstr ""

@@ -1,5 +1,4 @@
 {
-    "<b>Please do not use it in any real way</b>: everything you create here (accounts, events, identities, etc.) will be automatically deleted every 48 hours.": "<b>Var god använd inte på riktigt</b>: allting du skapar här (konton, evenemang, identiteter, etc.) kommer tas bort automatiskt var 48e timme.",
     "A user-friendly, emancipatory and ethical tool for gathering, organising, and mobilising.": "Ett användarvänligt, frigörande och etiskt verktyg för att samlas, organisera och mobilisera.",
     "A validation email was sent to {email}": "Ett valideringsmail skickades till {email}",
     "Abandon edition": "Överge redigering",
@@ -274,7 +273,6 @@
     "Upcoming": "Kommande",
     "Update event {name}": "Uppdatera evenemang {name}",
     "Update my event": "Uppdatera mitt evenemang",
-    "User accounts and every other data is currently deleted every 48 hours, so you may want to register again.": "Användarkonton och all annan data tas bort var 48e timme, så du vill kanske registrera igen.",
     "Username": "Användarnamn",
     "Users": "Användare",
     "View event page": "Visa evenemangsidan",
