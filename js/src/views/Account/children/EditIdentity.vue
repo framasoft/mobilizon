@@ -1,11 +1,11 @@
 <template>
-  <div class="root">
+  <div class="root" v-if="identity">
     <h1 class="title">
       <span v-if="isUpdate">{{ identity.displayName() }}</span>
       <span v-else>{{ $t('I create an identity') }}</span>
     </h1>
 
-    <picture-upload v-model="avatarFile" class="picture-upload"></picture-upload>
+    <picture-upload v-model="avatarFile" class="picture-upload" />
 
     <b-field horizontal :label="$t('Display name')">
       <b-input aria-required="true" required v-model="identity.name" @input="autoUpdateUsername($event)"/>
@@ -16,7 +16,7 @@
         <b-input aria-required="true" required v-model="identity.preferredUsername" :disabled="isUpdate" :use-html5-validation="!isUpdate" pattern="[a-z0-9_]+"/>
 
         <p class="control">
-          <span class="button is-static">@{{ getInstanceHost() }}</span>
+          <span class="button is-static">@{{ getInstanceHost }}</span>
         </p>
       </b-field>
     </b-field>
@@ -112,14 +112,24 @@ import identityEditionMixin from '@/mixins/identityEdition';
     currentActor: {
       query: CURRENT_ACTOR_CLIENT,
     },
+    identity: {
+      query: FETCH_PERSON,
+      variables() {
+        return {
+          username: this.identityName,
+        };
+      },
+      skip() { return !this.identityName; },
+      update: data => new Person(data.fetchPerson),
+    },
   },
 })
 export default class EditIdentity extends mixins(identityEditionMixin) {
   @Prop({ type: Boolean }) isUpdate!: boolean;
+  @Prop({ type: String }) identityName!: string;
 
   errors: string[] = [];
 
-  identityName!: string | undefined;
   avatarFile: File | null = null;
 
   private currentActor: IPerson | null = null;
@@ -134,24 +144,18 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
     this.resetFields();
   }
 
-  @Watch('$route.params.identityName', { immediate: true })
-  async onIdentityParamChanged (val: string) {
+  @Watch('identityName', { immediate: true })
+  async onIdentityParamChanged(val) {
     // Only used when we update the identity
-    if (this.isUpdate !== true) return;
+    if (!this.isUpdate) return;
 
     await this.redirectIfNoIdentitySelected(val);
 
-    this.resetFields();
-    this.identityName = val;
-    const identity = await this.getIdentity();
-
-    if (!identity) {
+    if (!this.identityName) {
       return await this.$router.push({ name: 'CreateIdentity' });
     }
 
-    if (this.identityName && identity) {
-      this.identity = identity;
-
+    if (this.identityName && this.identity) {
       this.avatarFile = await buildFileFromIPicture(this.identity.avatar);
     }
   }
@@ -257,7 +261,7 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
     }
   }
 
-  getInstanceHost() {
+  get getInstanceHost() {
     return MOBILIZON_INSTANCE_HOST;
   }
 
@@ -282,20 +286,6 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
 
       onConfirm: () => this.deleteIdentity(),
     });
-  }
-
-  private async getIdentity(): Promise<Person|null> {
-    try {
-      const result = await this.$apollo.query({
-        query: FETCH_PERSON,
-        variables: {
-          username: this.identityName,
-        },
-      });
-      return new Person(result.data.fetchPerson);
-    } catch (e) {
-      return null;
-    }
   }
 
   private handleError(err: any) {
@@ -325,7 +315,7 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
     return res;
   }
 
-  private async redirectIfNoIdentitySelected (identityParam?: string) {
+  private async redirectIfNoIdentitySelected(identityParam?: string) {
     if (!!identityParam) return;
 
     await this.loadLoggedPersonIfNeeded();
@@ -356,7 +346,6 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
   }
 
   private resetFields () {
-    this.identityName = undefined;
     this.identity = new Person();
     this.oldDisplayName = null;
     this.avatarFile = null;
