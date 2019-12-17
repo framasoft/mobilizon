@@ -116,18 +116,44 @@ defmodule MobilizonWeb.Resolvers.User do
   """
   @spec create_user(any(), map(), any()) :: tuple()
   def create_user(_parent, args, _resolution) do
-    with {:registrations_open, true} <-
-           {:registrations_open, Config.instance_registrations_open?()},
+    with :registration_ok <- check_registration_config(args),
          {:ok, %User{} = user} <- Users.register(args) do
       Activation.send_confirmation_email(user, Map.get(args, :locale, "en"))
       {:ok, user}
     else
-      {:registrations_open, false} ->
+      :registration_closed ->
         {:error, "Registrations are not enabled"}
+
+      :not_whitelisted ->
+        {:error, "Your email is not on the whitelist"}
 
       error ->
         error
     end
+  end
+
+  @spec check_registration_config(map()) :: atom()
+  defp check_registration_config(%{email: email}) do
+    cond do
+      Config.instance_registrations_open?() ->
+        :registration_ok
+
+      Config.instance_registrations_whitelist?() ->
+        check_white_listed_email?(email)
+
+      true ->
+        :registration_closed
+    end
+  end
+
+  @spec check_white_listed_email?(String.t()) :: :registration_ok | :not_whitelisted
+  defp check_white_listed_email?(email) do
+    [_, domain] = String.split(email, "@", parts: 2, trim: true)
+
+    if domain in Config.instance_registrations_whitelist() or
+         email in Config.instance_registrations_whitelist(),
+       do: :registration_ok,
+       else: :not_whitelisted
   end
 
   @doc """

@@ -2,11 +2,10 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
   use MobilizonWeb.ConnCase
 
   import Mobilizon.Factory
-  import Mock
 
   use Bamboo.Test
 
-  alias Mobilizon.{Actors, Config, Users}
+  alias Mobilizon.{Actors, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.Users.ResetPassword
   alias Mobilizon.Users
@@ -321,6 +320,123 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
       assert hd(json_response(res, 200)["errors"])["message"] == "This email is already used."
     end
 
+    test "create_user/3 doesn't allow registration when registration is closed", %{conn: conn} do
+      Mobilizon.Config.put([:instance, :registrations_open], false)
+      Mobilizon.Config.put([:instance, :registration_email_whitelist], [])
+
+      mutation = """
+          mutation createUser($email: String!, $password: String!) {
+            createUser(
+                  email: $email,
+                  password: $password,
+              ) {
+                id,
+                email
+              }
+            }
+      """
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: mutation,
+          variables: %{email: @user_creation.email, password: @user_creation.password}
+        )
+
+      assert hd(res["errors"])["message"] == "Registrations are not enabled"
+      Mobilizon.Config.put([:instance, :registrations_open], true)
+    end
+
+    test "create_user/3 doesn't allow registration when user email is not on the whitelist", %{
+      conn: conn
+    } do
+      Mobilizon.Config.put([:instance, :registrations_open], false)
+      Mobilizon.Config.put([:instance, :registration_email_whitelist], ["random.org"])
+
+      mutation = """
+          mutation createUser($email: String!, $password: String!) {
+            createUser(
+                  email: $email,
+                  password: $password,
+              ) {
+                id,
+                email
+              }
+            }
+      """
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: mutation,
+          variables: %{email: @user_creation.email, password: @user_creation.password}
+        )
+
+      assert hd(res["errors"])["message"] == "Your email is not on the whitelist"
+      Mobilizon.Config.put([:instance, :registrations_open], true)
+      Mobilizon.Config.put([:instance, :registration_email_whitelist], [])
+    end
+
+    test "create_user/3 allows registration when user email domain is on the whitelist", %{
+      conn: conn
+    } do
+      Mobilizon.Config.put([:instance, :registrations_open], false)
+      Mobilizon.Config.put([:instance, :registration_email_whitelist], ["demo.tld"])
+
+      mutation = """
+          mutation createUser($email: String!, $password: String!) {
+            createUser(
+                  email: $email,
+                  password: $password,
+              ) {
+                id,
+                email
+              }
+            }
+      """
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: mutation,
+          variables: %{email: @user_creation.email, password: @user_creation.password}
+        )
+
+      refute res["errors"]
+      assert res["data"]["createUser"]["email"] == @user_creation.email
+      Mobilizon.Config.put([:instance, :registrations_open], true)
+      Mobilizon.Config.put([:instance, :registration_email_whitelist], [])
+    end
+
+    test "create_user/3 allows registration when user email is on the whitelist", %{conn: conn} do
+      Mobilizon.Config.put([:instance, :registrations_open], false)
+      Mobilizon.Config.put([:instance, :registration_email_whitelist], [@user_creation.email])
+
+      mutation = """
+          mutation createUser($email: String!, $password: String!) {
+            createUser(
+                  email: $email,
+                  password: $password,
+              ) {
+                id,
+                email
+              }
+            }
+      """
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: mutation,
+          variables: %{email: @user_creation.email, password: @user_creation.password}
+        )
+
+      refute res["errors"]
+      assert res["data"]["createUser"]["email"] == @user_creation.email
+      Mobilizon.Config.put([:instance, :registrations_open], true)
+      Mobilizon.Config.put([:instance, :registration_email_whitelist], [])
+    end
+
     test "register_person/3 doesn't register a profile from an unknown email", context do
       mutation = """
           mutation {
@@ -449,29 +565,6 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
                "Email doesn't fit required format"
-    end
-
-    test "test create_user/3 doesn't create a user when registration is disabled", context do
-      with_mock Config, instance_registrations_open?: fn -> false end do
-        mutation = """
-            mutation {
-              createUser(
-                    email: "#{@user_creation.email}",
-                    password: "#{@user_creation.password}",
-                ) {
-                  id,
-                  email
-                }
-              }
-        """
-
-        res =
-          context.conn
-          |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
-
-        assert hd(json_response(res, 200)["errors"])["message"] ==
-                 "Registrations are not enabled"
-      end
     end
   end
 

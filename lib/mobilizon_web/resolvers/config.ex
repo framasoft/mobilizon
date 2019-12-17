@@ -30,6 +30,7 @@ defmodule MobilizonWeb.Resolvers.Config do
      %{
        name: Config.instance_name(),
        registrations_open: Config.instance_registrations_open?(),
+       registrations_whitelist: Config.instance_registrations_whitelist?(),
        demo_mode: Config.instance_demo_mode?(),
        description: Config.instance_description(),
        location: location,

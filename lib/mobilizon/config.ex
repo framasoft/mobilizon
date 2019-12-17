@@ -21,6 +21,12 @@ defmodule Mobilizon.Config do
   @spec instance_registrations_open? :: boolean
   def instance_registrations_open?, do: to_boolean(instance_config()[:registrations_open])
 
+  @spec instance_registrations_whitelist :: list(String.t())
+  def instance_registrations_whitelist, do: instance_config()[:registration_email_whitelist]
+
+  @spec instance_registrations_whitelist? :: boolean
+  def instance_registrations_whitelist?, do: length(instance_registrations_whitelist()) > 0
+
   @spec instance_demo_mode? :: boolean
   def instance_demo_mode?, do: to_boolean(instance_config()[:demo])
 

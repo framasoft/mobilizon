@@ -12,7 +12,7 @@ export const beforeRegisterGuard: NavigationGuard = async function (to, from, ne
 
   const config: IConfig = data.config;
 
-  if (!config.registrationsOpen) {
+  if (!config.registrationsOpen && !config.registrationsWhitelist) {
     return next({
       name: ErrorRouteName.ERROR,
       query: { code: ErrorCode.REGISTRATION_CLOSED },
