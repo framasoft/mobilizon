@@ -118,7 +118,15 @@ defmodule Mobilizon.Service.ActivityPub do
   Getting an actor from url, eventually creating it
   """
   @spec get_or_fetch_actor_by_url(String.t(), boolean) :: {:ok, Actor.t()} | {:error, String.t()}
-  def get_or_fetch_actor_by_url(url, preload \\ false) do
+  def get_or_fetch_actor_by_url(url, preload \\ false)
+
+  def get_or_fetch_actor_by_url("https://www.w3.org/ns/activitystreams#Public", _preload) do
+    with %Actor{url: url} <- Relay.get_actor() do
+      get_or_fetch_actor_by_url(url)
+    end
+  end
+
+  def get_or_fetch_actor_by_url(url, preload) do
     case Actors.get_actor_by_url(url, preload) do
       {:ok, %Actor{} = actor} ->
         {:ok, actor}
