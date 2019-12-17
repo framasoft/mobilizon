@@ -23,10 +23,6 @@
             <span v-if="error === LoginError.USER_DOES_NOT_EXIST">
               {{ $t('No user account with this email was found. Maybe you made a typo?') }}
             </span>
-            <!-- Warning that we delete everything every now and then -->
-            <span v-if="error === LoginError.USER_DOES_NOT_EXIST && config.demoMode">
-              {{ $t('User accounts and every other data is currently deleted every 48 hours, so you may want to register again.') }}
-            </span>
           </b-message>
           <form @submit="loginAction">
             <b-field :label="$t('Email')">

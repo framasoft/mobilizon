@@ -89,7 +89,7 @@
                             <%= gettext "Warning" %>
                         </h2>
                         <p style="margin: 0; color: #111111"><%= gettext "This is a demonstration site to test the beta version of Mobilizon." %></p>
-                        <p style="margin: 0; color: #111111;"><%= gettext("%{b_start}Please do not use it in any real way%{b_end}: everything you create here (accounts, events, identities, etc.) will be automatically deleted every 48 hours.", b_start: "<b>", b_end: "</b>") |> raw() %></p>
+                        <p style="margin: 0; color: #111111;"><%= gettext("%{b_start}Please do not use it in any real way%{b_end}", b_start: "<b>", b_end: "</b>") |> raw() %></p>
                         <p style="margin: 0; color: #111111;">
                             <%= gettext("Mobilizon is under development, we will add new features to this site during regular updates, until the release of %{b_start}version 1 of the software in the first half of 2020%{b_end}.", b_start: "<b>", b_end: "</b>") |> raw() %>
                             <%= gettext("In the meantime, please consider that the software is not (yet) finished. More information %{a_start}on our blog%{a_end}.", a_start: "<a target='_blank' style='color: #424056;' href='https://framablog.org/?p=18299'>", a_end: "</a>") |> raw() %>

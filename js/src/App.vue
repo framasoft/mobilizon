@@ -3,8 +3,7 @@
     <NavBar />
     <div class="container" v-if="config && config.demoMode">
       <b-message type="is-danger" :title="$t('Warning').toLocaleUpperCase()" closable aria-close-label="Close">
-        <p>{{ $t('This is a demonstration site to test the beta version of Mobilizon.') }}</p>
-        <p v-html="$t('<b>Please do not use it in any real way</b>: everything you create here (accounts, events, identities, etc.) will be automatically deleted every 48 hours.')" />
+        <p v-html="`${$t('This is a demonstration site to test the beta version of Mobilizon.')} ${$t('<b>Please do not use it in any real way.</b>')}`" />
         <p>
           <span v-html="$t('Mobilizon is under development, we will add new features to this site during regular updates, until the release of <b>version 1 of the software in the first half of 2020</b>.')" />
           <i18n path="In the meantime, please consider that the software is not (yet) finished. More information {onBlog}.">
