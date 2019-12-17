@@ -15,7 +15,7 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.{Comment, Event, Participant}
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.{Activity, Utils}
+  alias Mobilizon.Service.ActivityPub.{Activity, Utils, Convertible}
   alias Mobilizon.Service.ActivityPub.Transmogrifier
 
   alias MobilizonWeb.API
@@ -71,25 +71,23 @@ defmodule Mobilizon.Service.ActivityPub.TransmogrifierTest do
   end
 
   describe "handle incoming notices" do
-    # test "it ignores an incoming comment if we already have it" do
-    #   comment = insert(:comment)
+    test "it ignores an incoming comment if we already have it" do
+      comment = insert(:comment)
 
-    #   activity = %{
-    #     "type" => "Create",
-    #     "to" => ["https://www.w3.org/ns/activitystreams#Public"],
-    #     "actor" => comment.actor.url,
-    #     "object" => Utils.make_comment_data(comment)
-    #   }
+      activity = %{
+        "type" => "Create",
+        "to" => ["https://www.w3.org/ns/activitystreams#Public"],
+        "actor" => comment.actor.url,
+        "object" => Convertible.model_to_as(comment)
+      }
 
-    #   data =
-    #     File.read!("test/fixtures/mastodon-post-activity.json")
-    #     |> Jason.decode!()
-    #     |> Map.put("object", activity["object"])
+      data =
+        File.read!("test/fixtures/mastodon-post-activity.json")
+        |> Jason.decode!()
+        |> Map.put("object", activity["object"])
 
-    #   {:ok, returned_activity, _} = Transmogrifier.handle_incoming(data)
-
-    #   assert activity == returned_activity.data
-    # end
+      assert {:ok, nil, _} = Transmogrifier.handle_incoming(data)
+    end
 
     test "it fetches replied-to activities if we don't have them" do
       data =
