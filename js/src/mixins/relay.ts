@@ -39,6 +39,6 @@ export default class RelayMixin extends Vue {
   }
 
   isInstance(actor: IActor): boolean {
-    return actor.type === ActorType.APPLICATION && actor.preferredUsername === 'relay';
+    return actor.type === ActorType.APPLICATION && (actor.preferredUsername === 'relay' || actor.preferredUsername === actor.domain);
   }
 }
