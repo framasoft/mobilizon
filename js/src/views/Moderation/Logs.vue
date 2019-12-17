@@ -65,10 +65,6 @@ export default class ReportList extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-    .container li {
-        margin: 10px auto;
-    }
-
     img.image {
         display: inline;
         height: 1.5em;
