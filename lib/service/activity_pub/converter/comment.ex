@@ -10,7 +10,7 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Comment do
   alias Mobilizon.Events.Comment, as: CommentModel
   alias Mobilizon.Events.Event
   alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.{Converter, Convertible}
+  alias Mobilizon.Service.ActivityPub.{Converter, Convertible, Visibility}
   alias Mobilizon.Service.ActivityPub.Converter.Utils, as: ConverterUtils
   alias Mobilizon.Tombstone, as: TombstoneModel
 
@@ -34,7 +34,8 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Comment do
     Logger.debug(inspect(object))
 
     with author_url <- Map.get(object, "actor") || Map.get(object, "attributedTo"),
-         {:ok, %Actor{id: actor_id}} <- ActivityPub.get_or_fetch_actor_by_url(author_url),
+         {:ok, %Actor{id: actor_id, domain: domain}} <-
+           ActivityPub.get_or_fetch_actor_by_url(author_url),
          {:tags, tags} <- {:tags, ConverterUtils.fetch_tags(Map.get(object, "tag", []))},
          {:mentions, mentions} <-
            {:mentions, ConverterUtils.fetch_mentions(Map.get(object, "tag", []))} do
@@ -49,7 +50,9 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Comment do
         event_id: nil,
         uuid: object["uuid"],
         tags: tags,
-        mentions: mentions
+        mentions: mentions,
+        local: is_nil(domain),
+        visibility: if(Visibility.is_public?(object), do: :public, else: :private)
       }
 
       # We fetch the parent object
