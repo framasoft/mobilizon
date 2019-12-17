@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-15 10:04+0000\n"
-"PO-Revision-Date: 2019-11-16 10:11+0000\n"
+"PO-Revision-Date: 2019-12-17 08:39+0000\n"
 "Last-Translator: ButterflyOfFire <butterflyoffire@protonmail.com>\n"
 "Language-Team: Arabic <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/ar/>\n"
@@ -51,7 +51,7 @@ msgstr "تنشيط حسابي"
 #: lib/mobilizon_web/templates/email/email.html.eex:124
 #: lib/mobilizon_web/templates/email/email.text.eex:14
 msgid "Ask the community on Framacolibri"
-msgstr ""
+msgstr "أطلب مِن المجتمَع على Framacolibri"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/report.html.eex:66
@@ -63,7 +63,7 @@ msgstr "التعليقات"
 #: lib/mobilizon_web/templates/email/report.html.eex:50
 #: lib/mobilizon_web/templates/email/report.text.eex:6
 msgid "Event"
-msgstr ""
+msgstr "الفعالية"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:45
@@ -78,7 +78,7 @@ msgstr ""
 #, elixir-format
 #: lib/mobilizon_web/templates/email/email.html.eex:156
 msgid "Learn more about Mobilizon."
-msgstr ""
+msgstr "تعلّم المزيد عن Mobilizon."
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:13
@@ -100,12 +100,12 @@ msgstr ""
 #: lib/mobilizon_web/templates/email/report.html.eex:84
 #: lib/mobilizon_web/templates/email/report.text.eex:22
 msgid "Reason"
-msgstr ""
+msgstr "السبب"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:61
 msgid "Reset Password"
-msgstr ""
+msgstr "تصفير الكلمة السرية"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:41
@@ -140,12 +140,12 @@ msgstr ""
 #, elixir-format
 #: lib/mobilizon_web/templates/email/registration_confirmation.text.eex:1
 msgid "Activate your account"
-msgstr ""
+msgstr "فعّل حسابي"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:13
 msgid "All good!"
-msgstr ""
+msgstr "كل شيء على ما يرام!"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:45
@@ -157,7 +157,7 @@ msgstr ""
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:58
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:101
 msgid "Go to event page"
-msgstr ""
+msgstr "الإنتقال إلى صفحة الفعالية"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:70
@@ -173,7 +173,7 @@ msgstr ""
 #, elixir-format
 #: lib/mobilizon_web/templates/email/email.text.eex:16
 msgid "Learn more about Mobilizon:"
-msgstr ""
+msgstr "معرفة المزيد عن Mobilizon:"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/report.text.eex:1
@@ -193,7 +193,7 @@ msgstr ""
 #, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:1
 msgid "Password reset"
-msgstr ""
+msgstr "تصفير الكلمة السرية"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:7
@@ -203,7 +203,7 @@ msgstr ""
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:13
 msgid "Sorry!"
-msgstr ""
+msgstr "المعذرة!"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:45
@@ -240,7 +240,7 @@ msgstr ""
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:82
 msgid "Ending of event"
-msgstr ""
+msgstr "نهاية الفعالية"
 
 #, elixir-format
 #: lib/mobilizon_web/email/event.ex:30
@@ -251,7 +251,7 @@ msgstr ""
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:13
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:1
 msgid "Event updated!"
-msgstr ""
+msgstr "تم تحديث الفعالية!"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:16
@@ -266,12 +266,12 @@ msgstr ""
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:8
 msgid "New title: %{title}"
-msgstr ""
+msgstr "العنوان الجديد: %{title}"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:72
 msgid "Start of event"
-msgstr ""
+msgstr "بداية الفعالية"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:5
@@ -286,7 +286,7 @@ msgstr ""
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:62
 msgid "Title"
-msgstr ""
+msgstr "العنوان"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:19
@@ -318,7 +318,7 @@ msgstr ""
 #, elixir-format
 #: lib/mobilizon_web/templates/email/email.html.eex:89
 msgid "Warning"
-msgstr ""
+msgstr "تنبيه"
 
 #, elixir-format
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:54
