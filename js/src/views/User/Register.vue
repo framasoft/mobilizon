@@ -29,7 +29,6 @@
             </p>
             <ul>
               <li>{{ $t('Enjoy discovering Mobilizon!') }}</li>
-              <li>{{ $t("All data will be deleted every 48 hours, so please don't use this for anything real.") }}</li>
             </ul>
 <!--            <p>-->
 <!--              {{ $t('Please read the full rules') }}-->
@@ -37,6 +36,7 @@
           </div>
         </div>
         <div class="column">
+          <b-message type="is-warning" v-if="config.registrationsWhitelist">{{ $t('Registrations are restricted by whitelisting.') }}</b-message>
           <form v-on:submit.prevent="submit()">
             <b-field
               :label="$t('Email')"
@@ -105,6 +105,8 @@
 import { CREATE_USER } from '@/graphql/user';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { RouteName } from '@/router';
+import { IConfig } from '@/types/config.model';
+import { CONFIG } from '@/graphql/config';
 
 @Component({
   metaInfo() {
@@ -114,6 +116,9 @@ import { RouteName } from '@/router';
       // all titles will be injected into this template
       titleTemplate: '%s | Mobilizon',
     };
+  },
+  apollo: {
+    config: CONFIG,
   },
 })
 export default class Register extends Vue {
@@ -129,6 +134,7 @@ export default class Register extends Vue {
   sendingValidation: boolean = false;
   validationSent: boolean = false;
   RouteName = RouteName;
+  config!: IConfig;
 
   async submit() {
     this.credentials.locale = this.$i18n.locale;

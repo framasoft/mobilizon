@@ -3,6 +3,7 @@ export interface IConfig {
   description: string;
 
   registrationsOpen: boolean;
+  registrationsWhitelist: boolean;
   demoMode: boolean;
   countryCode: string;
   location: {

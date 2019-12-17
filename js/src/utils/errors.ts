@@ -49,6 +49,11 @@ export const errors: IError[] = [
     suggestRefresh: false,
   },
   {
+    match: /Your email is not on the whitelist$/,
+    value: i18n.t("Your email is not whitelisted, you can't register.") as string,
+    suggestRefresh: false,
+  },
+  {
     match: /Cannot remove the last identity of a user/,
     value: i18n.t("You can't remove your last identity.") as string,
     suggestRefresh: false,

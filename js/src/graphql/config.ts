@@ -6,6 +6,7 @@ query {
     name,
     description,
     registrationsOpen,
+    registrationsWhitelist,
     demoMode,
     countryCode,
     location {
