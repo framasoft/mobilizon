@@ -20,6 +20,8 @@ defmodule MobilizonWeb.Router do
   end
 
   pipeline :relay do
+    plug(MobilizonWeb.HTTPSignaturePlug)
+    plug(MobilizonWeb.Plugs.MappedSignatureToIdentity)
     plug(:accepts, ["activity-json", "json"])
   end
 
