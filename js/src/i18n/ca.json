@@ -1,1 +1,27 @@
-{}
+{
+    "<b>Please do not use it in any real way.</b>": "<b>No ho facis servir més que proves, sisplau</b>",
+    "A user-friendly, emancipatory and ethical tool for gathering, organising, and mobilising.": "Una eina senzilla, emancipatòria i ètica per a reunir-nos, organitzar-nos i mobilitzar-nos.",
+    "A validation email was sent to {email}": "S'ha enviat un mail de validació a {email}",
+    "Abandon edition": "Canceŀla l'edició",
+    "About": "Quant a",
+    "About Mobilizon": "Quant a Mobilizon",
+    "About this event": "Sobre aquesta activitat",
+    "About this instance": "Sobre aquesta instància",
+    "Accepted": "Acceptada",
+    "Add": "Afegeix",
+    "Add a note": "Afegeix una nota",
+    "Add an address": "Afegeix una adreça",
+    "Add an instance": "Afegeix una instància",
+    "Add some tags": "Afegeix algunes etiquetes",
+    "Add to my calendar": "Afegeix al meu calendari",
+    "Additional comments": "Altres comentaris",
+    "Administration": "Administració",
+    "All the places have already been taken": "No hi ha més places disponibles|Hi ha una plaça disponible|Hi ha {places} disponibles",
+    "Allow all comments": "Permet tots els comentaris",
+    "An error has occurred.": "Hi ha hagut un error.",
+    "Approve": "Aprova",
+    "Are you sure you want to <b>delete</b> this comment? This action cannot be undone.": "Segur que vols <b>esborrar</b> aquest comentari? Aquesta acció és irreversible.",
+    "Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the conversation with the event creator or edit its event instead.": "Segur que vols <b>esborrar</b> aquesta activitat? Aquesta acció és irreversible. En comptes d'això, pots parlar amb la persona creadora de l'activitat o modificar l'activitat.",
+    "Are you sure you want to cancel the event creation? You'll lose all modifications.": "Segur que vols esborrar aquesta activitat? Perdràs tots els canvis.",
+    "Are you sure you want to cancel the event edition? You'll lose all modifications.": "Segur que vols canceŀlar l'edició? Perdràs tots els canvis que hagis fet."
+}
