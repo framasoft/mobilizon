@@ -14,7 +14,6 @@ defmodule MobilizonWeb.Router do
   end
 
   pipeline :activity_pub_signature do
-    plug(:accepts, ["activity-json", "html"])
     plug(MobilizonWeb.HTTPSignaturePlug)
     plug(MobilizonWeb.Plugs.MappedSignatureToIdentity)
   end
