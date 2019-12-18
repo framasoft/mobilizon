@@ -30,6 +30,9 @@ mix mobilizon.instance gen [<options>]
 
 ### move_participant_stats
 
+!!! tip "Environment"
+    You need to run these commands with the appropriate environment loaded
+
 Task to move participant stats directly on the `event` table (so there's no need to count event participants each time).
 This task should **only be run once** when migrating from `v1.0.0-beta.1` to `v1.0.0-beta.2`.
 
@@ -40,6 +43,9 @@ mix mobilizon.move_participant_stats
 ```
 
 ### setup_search
+
+!!! tip "Environment"
+    You need to run these commands with the appropriate environment loaded
 
 Task to setup search for existing events.
 
