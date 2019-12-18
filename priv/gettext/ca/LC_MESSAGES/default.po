@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-12-17 11:48+0000\n"
 "PO-Revision-Date: 2019-12-18 00:43+0000\n"
-"Last-Translator: Francesc <francescgali@protonmail.com>\n"
+"Last-Translator: fadelkon <fadelkon@posteo.net>\n"
 "Language-Team: Catalan <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/ca/>\n"
 "Language: ca\n"
@@ -36,7 +36,7 @@ msgstr "%{instance} és un servidor de Mobilizon."
 #: lib/mobilizon_web/templates/email/report.html.eex:41
 #, elixir-format
 msgid "%{reporter_name} (%{reporter_username}) reported the following content."
-msgstr ""
+msgstr "%{reporter_name} (%{reporter_username}) ha denunciat aquest contingut."
 
 #: lib/mobilizon_web/templates/email/report.html.eex:52
 #, elixir-format
