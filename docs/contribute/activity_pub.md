@@ -115,7 +115,7 @@ Example:
 #### location
 
 We use Schema.org's `location` property on `Event`.
-[The ActivityStream vocabulary to represent places](https://www.w3.org/TR/activitystreams-vocabulary/#places) is quite limited so instead of just using `Place` from ActivityStreams we also a a few properties from Schema.org's `Place` vocabulary.
+[The ActivityStream vocabulary to represent places](https://www.w3.org/TR/activitystreams-vocabulary/#places) is quite limited so instead of just using `Place` from ActivityStreams we also add a few properties from Schema.org's `Place` vocabulary.
 
 We add [an `address` property](https://schema.org/address), which we assume to be [of `PostalAddress` type](https://schema.org/PostalAddress).
 
