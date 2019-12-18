@@ -6,6 +6,7 @@ export interface IComment {
   uuid?: string;
   url?: string;
   text: string;
+  local: boolean;
   actor: IActor;
   inReplyToComment?: IComment;
   originComment?: IComment;
@@ -20,6 +21,7 @@ export class CommentModel implements IComment {
   actor: IActor = new Actor();
   id?: string;
   text: string = '';
+  local: boolean = true;
   url?: string;
   uuid?: string;
   inReplyToComment?: IComment = undefined;

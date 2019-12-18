@@ -39,7 +39,8 @@ defmodule Mobilizon.Events.Comment do
     :in_reply_to_comment_id,
     :origin_comment_id,
     :attributed_to_id,
-    :deleted_at
+    :deleted_at,
+    :local
   ]
   @attrs @required_attrs ++ @optional_attrs
 

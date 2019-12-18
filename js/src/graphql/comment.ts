@@ -8,6 +8,7 @@ export const COMMENT_FIELDS_FRAGMENT = gql`
         url,
         text,
         visibility,
+        local,
         actor {
             avatar {
                 url

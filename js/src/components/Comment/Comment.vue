@@ -13,11 +13,11 @@
                         <strong>{{ comment.actor.name }}</strong>
                         <small v-if="comment.actor.domain">@{{ comment.actor.preferredUsername }}@{{ comment.actor.domain }}</small>
                         <small v-else>@{{ comment.actor.preferredUsername }}</small>
-                        <a class="comment-link has-text-grey" :href="commentId">
+                        <a class="comment-link has-text-grey" :href="commentURL">
                             <small>{{ timeago(new Date(comment.updatedAt)) }}</small>
                         </a>
                     </span>
-                    <a v-else class="comment-link has-text-grey" :href="commentId">
+                    <a v-else class="comment-link has-text-grey" :href="commentURL">
                         <span>{{ $t('[deleted]') }}</span>
                     </a>
                     <span class="icons" v-if="!comment.deletedAt">
@@ -220,6 +220,11 @@ export default class Comment extends Vue {
   get commentId(): String {
     if (this.comment.originComment) return `#comment-${this.comment.originComment.uuid}:${this.comment.uuid}`;
     return `#comment-${this.comment.uuid}`;
+  }
+
+  get commentURL(): String {
+    if (!this.comment.local && this.comment.url) return this.comment.url;
+    return this.commentId;
   }
 
   reportModal() {
