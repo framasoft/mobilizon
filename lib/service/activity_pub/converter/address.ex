@@ -35,11 +35,11 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Address do
         })
       end
 
-    if is_nil(object["geo"]) do
+    if is_nil(object["latitude"]) or is_nil(object["longitude"]) do
       res
     else
       geo = %Geo.Point{
-        coordinates: {object["geo"]["latitude"], object["geo"]["longitude"]},
+        coordinates: {object["latitude"], object["longitude"]},
         srid: 4326
       }
 
@@ -70,11 +70,9 @@ defmodule Mobilizon.Service.ActivityPub.Converter.Address do
     if is_nil(address.geom) do
       res
     else
-      Map.put(res, "geo", %{
-        "type" => "GeoCoordinates",
-        "latitude" => address.geom.coordinates |> elem(0),
-        "longitude" => address.geom.coordinates |> elem(1)
-      })
+      res
+      |> Map.put("latitude", address.geom.coordinates |> elem(0))
+      |> Map.put("longitude", address.geom.coordinates |> elem(1))
     end
   end
 end

@@ -41,16 +41,10 @@ defmodule Mobilizon.Service.ActivityPub.Utils do
             "@id" => "sc:location",
             "@type" => "sc:Place"
           },
-          "Place" => "sc:Place",
           "PostalAddress" => "sc:PostalAddress",
-          "GeoCoordinates" => "sc:GeoCoordinates",
           "address" => %{
             "@id" => "sc:address",
             "@type" => "sc:PostalAddress"
-          },
-          "geo" => %{
-            "@id" => "sc:geo",
-            "@type" => "sc:GeoCoordinates"
           },
           "addressCountry" => "sc:addressCountry",
           "addressRegion" => "sc:addressRegion",
