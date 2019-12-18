@@ -115,17 +115,15 @@ Example:
 #### location
 
 We use Schema.org's `location` property on `Event`.
-[The ActivityStream vocabulary to represent places](https://www.w3.org/TR/activitystreams-vocabulary/#places) is quite limited so instead of using `Place` from ActivityStreams we use `Place` from Schema.org.
+[The ActivityStream vocabulary to represent places](https://www.w3.org/TR/activitystreams-vocabulary/#places) is quite limited so instead of just using `Place` from ActivityStreams we also a a few properties from Schema.org's `Place` vocabulary.
 
-A [Schema.org `Place` type](https://schema.org/Place) has [an `address` property](https://schema.org/address), which we assume to be [of `PostalAddress` type](https://schema.org/PostalAddress) and [a `geo` property](https://schema.org/geo), which is assumed to be of [`GeoCoordinates` type](https://schema.org/GeoCoordinates).
+We add [an `address` property](https://schema.org/address), which we assume to be [of `PostalAddress` type](https://schema.org/PostalAddress).
 
 ```json
 {
   "@context": [
     "...",
     {
-      "GeoCoordinates": "sc:GeoCoordinates",
-      "Place": "sc:Place",
       "PostalAddress": "sc:PostalAddress",
       "address": {
         "@id": "sc:address",
@@ -134,14 +132,6 @@ A [Schema.org `Place` type](https://schema.org/Place) has [an `address` property
       "addressCountry": "sc:addressCountry",
       "addressLocality": "sc:addressLocality",
       "addressRegion": "sc:addressRegion",
-      "geo": {
-        "@id": "sc:geo",
-        "@type": "sc:GeoCoordinates"
-      },
-      "location": {
-        "@id": "sc:location",
-        "@type": "sc:Place"
-      },
       "postalCode": "sc:postalCode",
       "sc": "http://schema.org#",
       "streetAddress": "sc:streetAddress",
@@ -157,11 +147,8 @@ A [Schema.org `Place` type](https://schema.org/Place) has [an `address` property
         "streetAddress": "10 Rue Jangot",
         "type": "PostalAddress"
       },
-      "geo": {
-        "latitude": 4.8425657,
-        "longitude": 45.7517141,
-        "type": "GeoCoordinates"
-      },
+      "latitude": 4.8425657,
+      "longitude": 45.7517141,
       "id": "http://mobilizon2.com/address/bdf7fb53-7177-46f3-8fb3-93c25a802522",
       "name": "10 Rue Jangot",
       "type": "Place"

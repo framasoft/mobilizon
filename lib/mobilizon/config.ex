@@ -13,7 +13,7 @@ defmodule Mobilizon.Config do
   def instance_description, do: instance_config()[:description]
 
   @spec instance_version :: String.t()
-  def instance_version, do: instance_config()[:version]
+  def instance_version, do: Mix.Project.config()[:version]
 
   @spec instance_hostname :: String.t()
   def instance_hostname, do: instance_config()[:hostname]
