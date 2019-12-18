@@ -11,7 +11,7 @@ export default class RelayMixin extends Vue {
 
   checkedRows: IFollower[] = [];
   page: number = 1;
-  perPage: number = 2;
+  perPage: number = 10;
 
   toggle(row) {
     this.$refs.table.toggleDetails(row);
