@@ -934,7 +934,7 @@ defmodule Mobilizon.Actors do
       a in Actor,
       join: f in Follower,
       on: a.id == f.actor_id,
-      where: f.target_actor_id == ^actor_id
+      where: f.target_actor_id == ^actor_id and f.approved == true
     )
   end
 
