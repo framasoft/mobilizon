@@ -304,7 +304,7 @@
     "The user account you're trying to login as has not been confirmed yet. Check your email inbox and eventually your spam folder.": "El compte al qual intentes accedir encara no està confirmat. Comprova el teu correu a la safata d'entrada i, si cal, a la de brossa.",
     "There are {participants} participants.": "Hi ha {participants} participants.",
     "These events may interest you": "Pot ser que t'interessin aquestes activitats",
-    "This installation (called “instance“) can easily {interconnect}, thanks to {protocol}.": "Aquesta instaŀlació (o \"instància\") es pot {interconnect} gràcies al {protocol}.",
+    "This installation (called “instance“) can easily {interconnect}, thanks to {protocol}.": "Aquesta instaŀlació (o \"instància\") es pot {interconnect} fàcilment, gràcies al {protocol}.",
     "This instance isn't opened to registrations, but you can register on other instances.": "Aquesta instància no té el registre obert, però en pots buscar una altra.",
     "This is a demonstration site to test the beta version of Mobilizon.": "Aquesta és una instància de proves i demostració de la versió beta de Mobilizon.",
     "This will delete / anonymize all content (events, comments, messages, participations…) created from this identity.": "Això farà que s'esborrin o s'anonimitzin tots els continguts (activitats, comentaris, missatges, participacions…) que s'hagin creat des d'aquesta identitat.",
