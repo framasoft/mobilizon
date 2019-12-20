@@ -123,7 +123,7 @@ export default class AddressAutoComplete extends Vue {
   // We put this in data because of issues like https://github.com/vuejs/vue-class-component/issues/263
   data() {
     return {
-      fetchAsyncData: debounce(this.asyncData, 500),
+      fetchAsyncData: debounce(this.asyncData, 200),
     };
   }
 
