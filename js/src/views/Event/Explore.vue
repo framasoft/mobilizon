@@ -1,10 +1,10 @@
 <template>
-  <div class="container">
+  <div class="section container">
     <h1 class="title">{{ $t('Explore') }}</h1>
     <section class="hero">
       <div class="hero-body">
         <form @submit.prevent="submit()">
-          <b-field :label="$t('Event')" grouped label-position="on-border">
+          <b-field :label="$t('Event')" grouped group-multiline label-position="on-border">
             <b-input icon="magnify" type="search" size="is-large" expanded v-model="searchTerm" :placeholder="$t('For instance: London, Taekwondo, Architecture…')" />
             <p class="control">
               <b-button @click="submit" type="is-info" size="is-large" v-bind:disabled="searchTerm.trim().length === 0">{{ $t('Search') }}</b-button>
@@ -17,7 +17,7 @@
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <h3 class="title">{{ $t('Featured events') }}</h3>
       <div v-if="events.length > 0" class="columns is-multiline">
-        <div class="column is-one-quarter-desktop" v-for="event in events" :key="event.uuid">
+        <div class="column is-one-third-desktop" v-for="event in events" :key="event.uuid">
           <EventCard
             :event="event"
           />
@@ -66,6 +66,16 @@ export default class Explore extends Vue {
 </script>
 
 <style scoped lang="scss">
+  @import "@/variables.scss";
+
+  main > .container {
+    background: $white;
+
+    .hero-body {
+      padding: 1rem 1.5rem;
+    }
+  }
+
   h1.title {
     margin-top: 1.5rem;
   }

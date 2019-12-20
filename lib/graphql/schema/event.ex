@@ -122,6 +122,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     )
 
     field(:not_approved, :integer, description: "The number of not approved participants")
+    field(:not_confirmed, :integer, description: "The number of not confirmed participants")
     field(:rejected, :integer, description: "The number of rejected participants")
 
     field(:participant, :integer,
@@ -177,6 +178,10 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       description: "Whether or not to show the number of remaining seats for this event"
     )
 
+    field(:anonymous_participation, :boolean,
+      description: "Whether or not to allow anonymous participation (if the server allows it)"
+    )
+
     field(:offers, list_of(:event_offer), description: "The list of offers to show for this event")
 
     field(:participation_conditions, list_of(:event_participation_condition),
@@ -209,6 +214,11 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
 
     field(:show_remaining_attendee_capacity, :boolean,
       description: "Whether or not to show the number of remaining seats for this event"
+    )
+
+    field(:anonymous_participation, :boolean,
+      default_value: false,
+      description: "Whether or not to allow anonymous participation (if the server allows it)"
     )
 
     field(:offers, list_of(:event_offer_input),

@@ -122,6 +122,7 @@ defmodule Mobilizon.Factory do
       visibility: :public,
       tags: build_list(3, :tag),
       mentions: [],
+      local: true,
       publish_at: DateTime.utc_now(),
       url: Routes.page_url(Endpoint, :event, uuid),
       picture: insert(:picture),
@@ -140,7 +141,11 @@ defmodule Mobilizon.Factory do
       actor: build(:actor),
       role: :creator,
       url: "#{Endpoint.url()}/join/event/#{uuid}",
-      id: uuid
+      id: uuid,
+      metadata: %{
+        email: nil,
+        confirmation_token: nil
+      }
     }
   end
 

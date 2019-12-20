@@ -1,13 +1,15 @@
 defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
   use Mobilizon.Web.ConnCase
   use Bamboo.Test
+  use Mobilizon.Tests.Helpers
+
+  alias Mobilizon.Config
+  alias Mobilizon.Events
+  alias Mobilizon.Events.{Event, EventParticipantStats, Participant}
+  alias Mobilizon.GraphQL.AbsintheHelpers
+  alias Mobilizon.Web.Email
 
   import Mobilizon.Factory
-
-  alias Mobilizon.Events
-  alias Mobilizon.GraphQL.AbsintheHelpers
-
-  alias Mobilizon.Web.Email
 
   @event %{
     description: "some body",
@@ -480,7 +482,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
       query = """
       {
         event(uuid: "#{event.uuid}") {
-          participants(page: 2, limit: 1, roles: "participant,moderator,administrator,creator", actorId: "#{
+          participants(page: 1, limit: 1, roles: "participant,moderator,administrator,creator", actorId: "#{
         actor.id
       }") {
             role,
@@ -513,7 +515,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
       query = """
       {
         event(uuid: "#{event.uuid}") {
-          participants(page: 1, limit: 1, roles: "participant,moderator,administrator,creator", actorId: "#{
+          participants(page: 2, limit: 1, roles: "participant,moderator,administrator,creator", actorId: "#{
         actor.id
       }") {
             role,
@@ -697,7 +699,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
       assert json_response(res, 200)["data"]["updateParticipation"]["actor"]["id"] ==
                to_string(actor.id)
 
-      participation = Mobilizon.Events.get_participant(participation_id)
+      participation = Events.get_participant(participation_id)
 
       assert_delivered_email(Email.Participation.participation_updated(user, participation))
 
@@ -843,7 +845,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
       assert json_response(res, 200)["data"]["updateParticipation"]["actor"]["id"] ==
                to_string(actor.id)
 
-      participation = Mobilizon.Events.get_participant(participation_id)
+      participation = Events.get_participant(participation_id)
       assert_delivered_email(Email.Participation.participation_updated(user, participation))
 
       res =
@@ -915,6 +917,428 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
                "Provided moderator actor ID doesn't have permission on this event"
+    end
+  end
+
+  describe "Participate with anonymous user" do
+    @email "test@test.tld"
+    @mutation """
+        mutation JoinEvent($actorId: ID!, $eventId: ID!, $email: String) {
+          joinEvent(
+            actorId: $actorId,
+            eventId: $eventId,
+            email: $email
+          ) {
+              role,
+              actor {
+                id
+              },
+              event {
+                id
+              }
+            }
+          }
+    """
+
+    @confirmation_mutation """
+      mutation ConfirmParticipation($confirmationToken: String!) {
+        confirmParticipation(confirmationToken: $confirmationToken) {
+          role,
+          actor {
+            id
+          },
+          event {
+            id
+          }
+        }
+      }
+    """
+
+    @cancel_participation_mutation """
+      mutation LeaveEvent($actorId: ID!, $eventId: ID!, $token: String) {
+          leaveEvent(
+            actorId: $actorId,
+            eventId: $eventId,
+            token: $token
+          ) {
+              id
+            }
+          }
+    """
+
+    clear_config([:anonymous, :participation])
+
+    setup %{conn: conn, actor: actor, user: user} do
+      Mobilizon.Config.clear_config_cache()
+      anonymous_actor_id = Config.anonymous_actor_id()
+      {:ok, conn: conn, actor: actor, user: user, anonymous_actor_id: anonymous_actor_id}
+    end
+
+    test "I can't participate if anonymous participation is enabled on the server but disabled for this event",
+         %{conn: conn, anonymous_actor_id: actor_id} do
+      event = insert(:event, options: %{anonymous_participation: false})
+      Config.put([:anonymous, :participation, :allowed], true)
+      Config.put([:anonymous, :participation, :validation, :email, :enabled], true)
+      Config.put([:anonymous, :participation, :validation, :email, :confirmation_required], false)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @mutation,
+          variables: %{actorId: actor_id, eventId: event.id}
+        )
+
+      assert hd(res["errors"])["message"] == "Anonymous participation is not enabled"
+    end
+
+    test "I can't participate if anonymous participation is enabled on the server and enabled for the event but the event is remote",
+         %{conn: conn, anonymous_actor_id: actor_id} do
+      event = insert(:event, options: %{anonymous_participation: true}, local: false)
+      Config.put([:anonymous, :participation, :allowed], true)
+      Config.put([:anonymous, :participation, :validation, :email, :enabled], true)
+      Config.put([:anonymous, :participation, :validation, :email, :confirmation_required], false)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @mutation,
+          variables: %{actorId: actor_id, eventId: event.id}
+        )
+
+      assert hd(res["errors"])["message"] == "Anonymous participation is not enabled"
+    end
+
+    test "I can't participate without being logged in when using anonymous user and providing no email when required",
+         %{conn: conn, anonymous_actor_id: actor_id} do
+      event = insert(:event, options: %{anonymous_participation: true})
+      Config.put([:anonymous, :participation, :allowed], true)
+      Config.put([:anonymous, :participation, :validation, :email, :enabled], true)
+      Config.put([:anonymous, :participation, :validation, :email, :confirmation_required], false)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @mutation,
+          variables: %{actorId: actor_id, eventId: event.id}
+        )
+
+      assert hd(res["errors"])["message"] == "A valid email is required by your instance"
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @mutation,
+          variables: %{actorId: actor_id, eventId: event.id, email: "bad_email"}
+        )
+
+      assert hd(res["errors"])["message"] == "A valid email is required by your instance"
+    end
+
+    test "I can participate without being logged in when using anonymous user when providing email",
+         %{conn: conn, anonymous_actor_id: actor_id} do
+      event = insert(:event, options: %{anonymous_participation: true})
+      Config.put([:anonymous, :participation, :allowed], true)
+      Config.put([:anonymous, :participation, :validation, :email, :enabled], true)
+      Config.put([:anonymous, :participation, :validation, :email, :confirmation_required], false)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @mutation,
+          variables: %{actorId: actor_id, eventId: event.id, email: @email}
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["joinEvent"]["role"] == "PARTICIPANT"
+      assert res["data"]["joinEvent"]["event"]["id"] == to_string(event.id)
+      assert res["data"]["joinEvent"]["actor"]["id"] == to_string(actor_id)
+
+      %Participant{} = participant = event.id |> Events.list_participants_for_event() |> hd
+
+      assert participant.metadata.email == @email
+
+      # When confirmation_required is false, participant has already the participant role
+      assert participant.role == :participant
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @mutation,
+          variables: %{actorId: actor_id, eventId: event.id, email: @email}
+        )
+
+      assert hd(res["errors"])["message"] == "You are already a participant of this event"
+    end
+
+    test "Participating without being logged in when using anonymous user and providing email sends a confirmation email",
+         %{conn: conn, anonymous_actor_id: actor_id} do
+      event = insert(:event, options: %{anonymous_participation: true})
+      Config.put([:anonymous, :participation, :allowed], true)
+      Config.put([:anonymous, :participation, :validation, :email, :enabled], true)
+      Config.put([:anonymous, :participation, :validation, :email, :confirmation_required], true)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @mutation,
+          variables: %{actorId: actor_id, eventId: event.id, email: @email}
+        )
+
+      assert res["errors"] == nil
+      # Not approved until email confirmation
+      assert res["data"]["joinEvent"]["role"] == "NOT_CONFIRMED"
+      assert res["data"]["joinEvent"]["event"]["id"] == to_string(event.id)
+      assert res["data"]["joinEvent"]["actor"]["id"] == to_string(actor_id)
+
+      assert %Participant{
+               metadata: %{confirmation_token: confirmation_token},
+               role: :not_confirmed
+             } = participant = event.id |> Events.list_participants_for_event([]) |> hd()
+
+      # hack to avoid preloading event in participant
+      participant = Map.put(participant, :event, event)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @mutation,
+          variables: %{actorId: actor_id, eventId: event.id, email: @email}
+        )
+
+      assert hd(res["errors"])["message"] == "You are already a participant of this event"
+
+      assert_delivered_email(
+        Email.Participation.anonymous_participation_confirmation(@email, participant)
+      )
+
+      conn
+      |> AbsintheHelpers.graphql_query(
+        query: @confirmation_mutation,
+        variables: %{confirmationToken: confirmation_token}
+      )
+
+      assert %Participant{role: :participant} =
+               event.id |> Events.list_participants_for_event() |> hd()
+    end
+
+    test "I can participate anonymously and and confirm my participation with bad token",
+         %{conn: conn, anonymous_actor_id: actor_id} do
+      event = insert(:event, options: %{anonymous_participation: true})
+      Config.put([:anonymous, :participation, :allowed], true)
+      Config.put([:anonymous, :participation, :validation, :email, :enabled], true)
+      Config.put([:anonymous, :participation, :validation, :email, :confirmation_required], true)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @mutation,
+          variables: %{actorId: actor_id, eventId: event.id, email: @email}
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["joinEvent"]["role"] == "NOT_CONFIRMED"
+      assert res["data"]["joinEvent"]["event"]["id"] == to_string(event.id)
+      assert res["data"]["joinEvent"]["actor"]["id"] == to_string(actor_id)
+
+      %Participant{} = participant = event.id |> Events.list_participants_for_event([]) |> hd
+
+      assert participant.metadata.email == @email
+
+      # When confirmation_required is false, participant has already the participant role
+      assert participant.role == :not_confirmed
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @confirmation_mutation,
+          variables: %{confirmationToken: "bad token"}
+        )
+
+      assert hd(res["errors"])["message"] == "This token is invalid"
+
+      assert %Participant{role: :not_confirmed} =
+               event.id |> Events.list_participants_for_event([]) |> hd()
+    end
+
+    test "I can participate anonymously but change my mind and cancel my participation",
+         %{conn: conn, anonymous_actor_id: actor_id} do
+      event = insert(:event, options: %{anonymous_participation: true})
+      Config.put([:anonymous, :participation, :allowed], true)
+      Config.put([:anonymous, :participation, :validation, :email, :enabled], true)
+      Config.put([:anonymous, :participation, :validation, :email, :confirmation_required], true)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @mutation,
+          variables: %{actorId: actor_id, eventId: event.id, email: @email}
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["joinEvent"]["role"] == "NOT_CONFIRMED"
+      assert res["data"]["joinEvent"]["event"]["id"] == to_string(event.id)
+      assert res["data"]["joinEvent"]["actor"]["id"] == to_string(actor_id)
+
+      {:ok, %Event{participant_stats: %{not_confirmed: 1}}} = Events.get_event(event.id)
+
+      %Participant{} = participant = event.id |> Events.list_participants_for_event([]) |> hd
+
+      assert participant.metadata.email == @email
+
+      # When confirmation_required is false, participant has already the participant role
+      assert participant.role == :not_confirmed
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @cancel_participation_mutation,
+          variables: %{
+            actorId: actor_id,
+            eventId: event.id,
+            token: "bad token"
+          }
+        )
+
+      assert hd(res["errors"])["message"] == "Participant not found"
+
+      assert %Participant{
+               id: participant_id,
+               role: :not_confirmed,
+               metadata: %{cancellation_token: cancellation_token}
+             } = event.id |> Events.list_participants_for_event([]) |> hd()
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @cancel_participation_mutation,
+          variables: %{
+            actorId: actor_id,
+            eventId: event.id,
+            token: cancellation_token
+          }
+        )
+
+      assert res["data"]["leaveEvent"]["id"] == participant_id
+
+      {:ok, %Event{participant_stats: %{not_confirmed: 0}}} = Events.get_event(event.id)
+      assert Events.list_participants_for_event(event.id, []) == []
+    end
+
+    test "I can participate anonymously, confirm my participation and then be confirmed by the organizer",
+         %{conn: conn, anonymous_actor_id: actor_id, actor: event_creator_actor, user: user} do
+      event =
+        insert(:event,
+          options: %{anonymous_participation: true},
+          join_options: :restricted,
+          organizer_actor: event_creator_actor,
+          participant_stats: %{creator: 1}
+        )
+
+      insert(:participant, event: event, actor: event_creator_actor, role: :creator)
+      Config.put([:anonymous, :participation, :allowed], true)
+      Config.put([:anonymous, :participation, :validation, :email, :enabled], true)
+      Config.put([:anonymous, :participation, :validation, :email, :confirmation_required], true)
+
+      assert {:ok,
+              %Event{
+                participant_stats: %EventParticipantStats{
+                  not_confirmed: 0,
+                  not_approved: 0,
+                  creator: 1,
+                  participant: 0
+                }
+              }} = Events.get_event(event.id)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @mutation,
+          variables: %{actorId: actor_id, eventId: event.id, email: @email}
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["joinEvent"]["role"] == "NOT_CONFIRMED"
+      assert res["data"]["joinEvent"]["event"]["id"] == to_string(event.id)
+      assert res["data"]["joinEvent"]["actor"]["id"] == to_string(actor_id)
+
+      assert {:ok,
+              %Event{
+                participant_stats: %EventParticipantStats{
+                  not_confirmed: 1,
+                  not_approved: 0,
+                  creator: 1,
+                  participant: 0
+                }
+              }} = Events.get_event(event.id)
+
+      assert %Participant{
+               role: :not_confirmed,
+               metadata: %{confirmation_token: confirmation_token, email: @email}
+             } = event.id |> Events.list_participants_for_event([]) |> hd
+
+      conn
+      |> AbsintheHelpers.graphql_query(
+        query: @confirmation_mutation,
+        variables: %{confirmationToken: confirmation_token}
+      )
+
+      assert {:ok,
+              %Event{
+                participant_stats: %EventParticipantStats{
+                  not_confirmed: 0,
+                  not_approved: 1,
+                  creator: 1,
+                  participant: 0
+                }
+              }} = Events.get_event(event.id)
+
+      assert %Participant{role: :not_approved, id: participant_id} =
+               event.id |> Events.list_participants_for_event([]) |> hd
+
+      update_participation_mutation = """
+          mutation UpdateParticipation($participantId: ID!, $role: String!, $moderatorActorId: ID!) {
+            updateParticipation(id: $participantId, role: $role, moderatorActorId: $moderatorActorId) {
+                id,
+                role,
+                actor {
+                  id
+                },
+                event {
+                  id
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: update_participation_mutation,
+          variables: %{
+            participantId: participant_id,
+            role: "PARTICIPANT",
+            moderatorActorId: event_creator_actor.id
+          }
+        )
+
+      assert res["errors"] == nil
+
+      assert %Participant{role: :participant} =
+               event.id |> Events.list_participants_for_event([]) |> hd
+
+      assert {:ok,
+              %Event{
+                participant_stats: %EventParticipantStats{
+                  not_confirmed: 0,
+                  not_approved: 0,
+                  creator: 1,
+                  participant: 1
+                }
+              }} = Events.get_event(event.id)
+
+      participant = Events.get_participant(participant_id)
+      assert_delivered_email(Email.Participation.participation_updated(@email, participant))
     end
   end
 end

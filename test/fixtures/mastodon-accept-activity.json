@@ -13,7 +13,7 @@
     "id": "http://mobilizon.test/follows/fdfds"
   },
   "nickname": "lain",
-  "id": "\"id\": \"http://mobilizon.test/accepts/follows/fdfds",
+  "id": "http://mobilizon.test/accepts/follows/fdfds",
   "actor": "http://mobilizon.test/@thomas0",
   "@context": [
     "https://www.w3.org/ns/activitystreams",

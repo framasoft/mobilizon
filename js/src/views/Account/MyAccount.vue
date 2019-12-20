@@ -1,5 +1,5 @@
 <template>
-  <section class="container">
+  <section class="section container">
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li class="is-active">

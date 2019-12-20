@@ -8,7 +8,7 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias Mobilizon.{Actors, Events}
-  alias Mobilizon.GraphQL.Resolvers.Event
+  alias Mobilizon.GraphQL.Resolvers.Participant
 
   @desc "Represents a participant to an event"
   object :participant do
@@ -29,10 +29,21 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
     )
 
     field(:role, :participant_role_enum, description: "The role of this actor at this event")
+
+    field(:metadata, :participant_metadata,
+      description: "The metadata associated to this participant"
+    )
+  end
+
+  object :participant_metadata do
+    field(:cancellation_token, :string,
+      description: "The eventual token to leave an event when user is anonymous"
+    )
   end
 
   enum :participant_role_enum do
     value(:not_approved)
+    value(:not_confirmed)
     value(:participant)
     value(:moderator)
     value(:administrator)
@@ -52,16 +63,18 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
     field :join_event, :participant do
       arg(:event_id, non_null(:id))
       arg(:actor_id, non_null(:id))
+      arg(:email, :string)
 
-      resolve(&Event.actor_join_event/3)
+      resolve(&Participant.actor_join_event/3)
     end
 
     @desc "Leave an event"
     field :leave_event, :deleted_participant do
       arg(:event_id, non_null(:id))
       arg(:actor_id, non_null(:id))
+      arg(:token, :string)
 
-      resolve(&Event.actor_leave_event/3)
+      resolve(&Participant.actor_leave_event/3)
     end
 
     @desc "Accept a participation"
@@ -70,7 +83,13 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
       arg(:role, non_null(:participant_role_enum))
       arg(:moderator_actor_id, non_null(:id))
 
-      resolve(&Event.update_participation/3)
+      resolve(&Participant.update_participation/3)
+    end
+
+    @desc "Confirm a participation"
+    field :confirm_participation, :participant do
+      arg(:confirmation_token, non_null(:string))
+      resolve(&Participant.confirm_participation_from_token/3)
     end
   end
 end

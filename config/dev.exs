@@ -73,3 +73,5 @@ config :mobilizon, Mobilizon.Storage.Repo,
   port: System.get_env("MOBILIZON_DATABASE_PORT") || "5432",
   pool_size: 10,
   show_sensitive_data_on_connection_error: true
+
+config :mobilizon, :activitypub, sign_object_fetches: false

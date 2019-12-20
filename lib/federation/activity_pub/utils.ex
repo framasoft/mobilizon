@@ -73,6 +73,10 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
           "joinMode" => %{
             "@id" => "mz:joinMode",
             "@type" => "mz:joinModeType"
+          },
+          "anonymousParticipationEnabled" => %{
+            "@id" => "mz:anonymousParticipationEnabled",
+            "@type" => "sc:Boolean"
           }
         }
       ]

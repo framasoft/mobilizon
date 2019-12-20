@@ -103,3 +103,45 @@ export const REJECT_RELAY = gql`
     }
     ${RELAY_FRAGMENT}
 `;
+
+export const ADMIN_SETTINGS_FRAGMENT = gql`
+    fragment adminSettingsFragment on AdminSettings {
+        instanceName,
+        instanceDescription,
+        instanceTerms,
+        instanceTermsType,
+        instanceTermsUrl
+        registrationsOpen
+    }
+`;
+
+export const ADMIN_SETTINGS = gql`
+    query {
+        adminSettings {
+            ...adminSettingsFragment
+        }
+    }
+    ${ADMIN_SETTINGS_FRAGMENT}
+`;
+
+export const SAVE_ADMIN_SETTINGS = gql`
+    mutation SaveAdminSettings(
+        $instanceName: String,
+        $instanceDescription: String,
+        $instanceTerms: String,
+        $instanceTermsType: InstanceTermsType,
+        $instanceTermsUrl: String,
+        $registrationsOpen: Boolean) {
+        saveAdminSettings(
+            instanceName: $instanceName,
+            instanceDescription: $instanceDescription,
+            instanceTerms: $instanceTerms,
+            instanceTermsType: $instanceTermsType,
+            instanceTermsUrl: $instanceTermsUrl,
+            registrationsOpen: $registrationsOpen
+        ) {
+            ...adminSettingsFragment
+        }
+    }
+    ${ADMIN_SETTINGS_FRAGMENT}
+`;

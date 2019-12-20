@@ -7,3 +7,18 @@ export interface IDashboard {
   numberOfComments: number;
   numberOfReports: number;
 }
+
+export enum InstanceTermsType {
+  DEFAULT = 'DEFAULT',
+  URL = 'URL',
+  CUSTOM = 'CUSTOM',
+}
+
+export interface IAdminSettings {
+  instanceName: string;
+  instanceDescription: string;
+  instanceTerms: string;
+  instanceTermsType: InstanceTermsType;
+  instanceTermsUrl: string|null;
+  registrationsOpen: boolean;
+}

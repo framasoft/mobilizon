@@ -1,7 +1,10 @@
 import EventList from '@/views/Event/EventList.vue';
 import Location from '@/views/Location.vue';
 import { RouteConfig } from 'vue-router';
-import { RouteName } from '@/router/index';
+import ParticipationWithAccount from '@/components/Participation/ParticipationWithAccount.vue';
+import UnloggedParticipation from '@/components/Participation/UnloggedParticipation.vue';
+import ParticipationWithoutAccount from '@/components/Participation/ParticipationWithoutAccount.vue';
+import ConfirmParticipation from '@/components/Participation/ConfirmParticipation.vue';
 
 // tslint:disable:space-in-parens
 const participations = () => import(/* webpackChunkName: "participations" */ '@/views/Event/Participants.vue');
@@ -19,6 +22,10 @@ export enum EventRouteName {
   EDIT_EVENT = 'EditEvent',
   PARTICIPATIONS = 'Participations',
   EVENT = 'Event',
+  EVENT_PARTICIPATE_WITH_ACCOUNT = 'EVENT_PARTICIPATE_WITH_ACCOUNT',
+  EVENT_PARTICIPATE_WITHOUT_ACCOUNT = 'EVENT_PARTICIPATE_WITHOUT_ACCOUNT',
+  EVENT_PARTICIPATE_LOGGED_OUT = 'EVENT_PARTICIPATE_LOGGED_OUT',
+  EVENT_PARTICIPATE_CONFIRM = 'EVENT_PARTICIPATE_CONFIRM',
   LOCATION = 'Location',
   TAG = 'Tag',
 }
@@ -74,6 +81,30 @@ export const eventRoutes: RouteConfig[] = [
     component: event,
     props: true,
     meta: { requiredAuth: false },
+  },
+  {
+    path: '/events/:uuid/participate',
+    name: EventRouteName.EVENT_PARTICIPATE_LOGGED_OUT,
+    component: UnloggedParticipation,
+    props: true,
+  },
+  {
+    path: '/events/:uuid/participate/with-account',
+    name: EventRouteName.EVENT_PARTICIPATE_WITH_ACCOUNT,
+    component: ParticipationWithAccount,
+    props: true,
+  },
+  {
+    path: '/events/:uuid/participate/without-account',
+    name: EventRouteName.EVENT_PARTICIPATE_WITHOUT_ACCOUNT,
+    component: ParticipationWithoutAccount,
+    props: true,
+  },
+  {
+    path: '/participation/email/confirm/:token',
+    name: EventRouteName.EVENT_PARTICIPATE_CONFIRM,
+    component: ConfirmParticipation,
+    props: true,
   },
   {
     path: '/tag/:tag',

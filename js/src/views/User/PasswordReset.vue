@@ -1,5 +1,5 @@
 <template>
-  <section class="container columns is-mobile is-centered">
+  <section class="section container columns is-mobile is-centered">
     <div class="card column is-half-desktop">
       <h1>
         {{ $t('Password reset') }}

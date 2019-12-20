@@ -10,11 +10,9 @@ defmodule Mobilizon.Federation.WebFinger do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-
   alias Mobilizon.Federation.WebFinger.XmlBuilder
-
   alias Mobilizon.Web.Endpoint
-
+  alias Mobilizon.Web.Router.Helpers, as: Routes
   require Jason
   require Logger
 
@@ -69,6 +67,10 @@ defmodule Mobilizon.Federation.WebFinger do
           "rel" => "https://webfinger.net/rel/profile-page/",
           "type" => "text/html",
           "href" => actor.url
+        },
+        %{
+          "rel" => "http://ostatus.org/schema/1.0/subscribe",
+          "template" => "#{Routes.page_url(Endpoint, :interact, uri: nil)}{uri}"
         }
       ]
     }

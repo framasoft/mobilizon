@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <section class="section container">
         <h1 class="title">{{ $t('Instances') }}</h1>
         <div class="tabs is-boxed">
             <ul>
@@ -18,7 +18,7 @@
             </ul>
         </div>
         <router-view></router-view>
-    </div>
+    </section>
 </template>
 
 <script lang="ts">

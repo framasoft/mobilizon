@@ -1,14 +1,82 @@
 import { mixins } from 'vue-class-component';
 import { Component, Vue } from 'vue-property-decorator';
-import { IEvent, IParticipant } from '@/types/event.model';
-import { DELETE_EVENT } from '@/graphql/event';
+import { IEvent, IParticipant, ParticipantRole } from '@/types/event.model';
+import { DELETE_EVENT, EVENT_PERSON_PARTICIPATION, FETCH_EVENT, LEAVE_EVENT } from '@/graphql/event';
 import { RouteName } from '@/router';
-import { IPerson } from '@/types/actor';
+import { IActor, IPerson } from '@/types/actor';
 
 @Component
 export default class EventMixin extends mixins(Vue) {
 
-  async openDeleteEventModal(event: IEvent, currentActor: IPerson) {
+  protected async leaveEvent(
+      event: IEvent,
+      actorId: number,
+      token: String|null = null,
+      anonymousParticipationConfirmed: boolean|null = null,
+  ) {
+    try {
+      const { data } = await this.$apollo.mutate<{ leaveEvent: IParticipant }>({
+        mutation: LEAVE_EVENT,
+        variables: {
+          eventId: event.id,
+          actorId,
+          token,
+        },
+        update: (store, { data }) => {
+          if (data == null) return;
+          let participation;
+
+          if (!token) {
+            const participationCachedData = store.readQuery<{ person: IPerson }>({
+              query: EVENT_PERSON_PARTICIPATION,
+              variables: { eventId: event.id, actorId },
+            });
+            if (participationCachedData == null) return;
+            const { person } = participationCachedData;
+            if (person === null) {
+              console.error('Cannot update participation cache, because of null value.');
+              return;
+            }
+            participation = person.participations[0];
+            person.participations = [];
+            store.writeQuery({
+              query: EVENT_PERSON_PARTICIPATION,
+              variables: { eventId: event.id, actorId },
+              data: { person },
+            });
+          }
+
+          const eventCachedData = store.readQuery<{ event: IEvent }>({ query: FETCH_EVENT, variables: { uuid: event.uuid } });
+          if (eventCachedData == null) return;
+          const { event: eventCached } = eventCachedData;
+          if (eventCached === null) {
+            console.error('Cannot update event cache, because of null value.');
+            return;
+          }
+          if (participation && participation.role === ParticipantRole.NOT_APPROVED) {
+            eventCached.participantStats.notApproved = eventCached.participantStats.notApproved - 1;
+          } else if (anonymousParticipationConfirmed === false) {
+            eventCached.participantStats.notConfirmed = eventCached.participantStats.notApproved - 1;
+          } else {
+            eventCached.participantStats.going = eventCached.participantStats.going - 1;
+            eventCached.participantStats.participant = eventCached.participantStats.participant - 1;
+          }
+          store.writeQuery({ query: FETCH_EVENT, variables: { uuid: event.uuid }, data: { event: eventCached } });
+        },
+      });
+      if (data) {
+        this.participationCancelledMessage();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  private participationCancelledMessage() {
+    this.$notifier.success(this.$t('You have cancelled your participation') as string);
+  }
+
+  protected async openDeleteEventModal(event: IEvent, currentActor: IPerson) {
     const participantsLength = event.participantStats.participant;
     const prefix = participantsLength
             ? this.$tc('There are {participants} participants.', event.participantStats.participant, {

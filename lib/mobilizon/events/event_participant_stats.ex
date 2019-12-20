@@ -8,6 +8,7 @@ defmodule Mobilizon.Events.EventParticipantStats do
 
   @type t :: %__MODULE__{
           not_approved: integer(),
+          not_confirmed: integer(),
           rejected: integer(),
           participant: integer(),
           moderator: integer(),
@@ -17,6 +18,7 @@ defmodule Mobilizon.Events.EventParticipantStats do
 
   @attrs [
     :not_approved,
+    :not_confirmed,
     :rejected,
     :participant,
     :moderator,
@@ -29,6 +31,7 @@ defmodule Mobilizon.Events.EventParticipantStats do
   @derive Jason.Encoder
   embedded_schema do
     field(:not_approved, :integer, default: 0)
+    field(:not_confirmed, :integer, default: 0)
     field(:rejected, :integer, default: 0)
     field(:participant, :integer, default: 0)
     field(:moderator, :integer, default: 0)
@@ -47,6 +50,7 @@ defmodule Mobilizon.Events.EventParticipantStats do
   defp validate_stats(%Ecto.Changeset{} = changeset) do
     changeset
     |> validate_number(:not_approved, greater_than_or_equal_to: 0)
+    |> validate_number(:not_confirmed, greater_than_or_equal_to: 0)
     |> validate_number(:rejected, greater_than_or_equal_to: 0)
     |> validate_number(:participant, greater_than_or_equal_to: 0)
     |> validate_number(:moderator, greater_than_or_equal_to: 0)

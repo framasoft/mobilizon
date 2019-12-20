@@ -1,0 +1,11 @@
+<%= gettext "Participation confirmation" %>
+
+==
+
+<%= gettext "You requested to participate in event %{title}.", title: @participant.event.title %>
+
+<%= gettext "If you didn't request this email, you can simply ignore it." %>
+
+<%= participation_email_confirmation_url(Mobilizon.Web.Endpoint, :index, @participant.metadata.confirmation_token) %>
+
+<%= gettext "If you need to cancel your participation, just access the previous link and click on the participation button." %>

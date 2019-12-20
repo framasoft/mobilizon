@@ -68,6 +68,17 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
 
       assert json_response(conn, 404)
     end
+
+    test "it redirects for remote events", %{conn: conn} do
+      event = insert(:event, local: false, url: "https://someremote.url/events/here")
+
+      conn =
+        conn
+        |> put_req_header("accept", "application/activity+json")
+        |> get(Routes.page_url(Endpoint, :event, event.uuid))
+
+      assert redirected_to(conn) == "https://someremote.url/events/here"
+    end
   end
 
   describe "/comments/:uuid" do
@@ -81,6 +92,17 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
 
       assert json_response(conn, 200) ==
                PageView.render("comment.activity-json", %{conn: %{assigns: %{object: comment}}})
+    end
+
+    test "it redirects for remote comments", %{conn: conn} do
+      comment = insert(:comment, local: false, url: "https://someremote.url/comments/here")
+
+      conn =
+        conn
+        |> put_req_header("accept", "application/activity+json")
+        |> get(Routes.page_url(Endpoint, :comment, comment.uuid))
+
+      assert redirected_to(conn) == "https://someremote.url/comments/here"
     end
 
     test "it returns 404 for non-public comments", %{conn: conn} do
@@ -278,6 +300,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
         |> json_response(200)
 
       assert length(result["first"]["orderedItems"]) == 10
+
       #  assert result["first"]["totalItems"] == 15
       #  assert result["totalItems"] == 15
 

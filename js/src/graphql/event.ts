@@ -14,7 +14,11 @@ const participantQuery = `
     domain
   },
   event {
-    id
+    id,
+    uuid
+  },
+  metadata {
+    cancellationToken
   }
 `;
 
@@ -41,6 +45,7 @@ const optionsQuery = `
   maximumAttendeeCapacity,
   remainingAttendeeCapacity,
   showRemainingAttendeeCapacity,
+  anonymousParticipation,
   showStartTime,
   showEndTime,
   offers {
@@ -366,10 +371,11 @@ export const EDIT_EVENT = gql`
 `;
 
 export const JOIN_EVENT = gql`
-  mutation JoinEvent($eventId: ID!, $actorId: ID!) {
+  mutation JoinEvent($eventId: ID!, $actorId: ID!, $email: String) {
     joinEvent(
       eventId: $eventId,
-      actorId: $actorId
+      actorId: $actorId,
+      email: $email
     ) {
         ${participantQuery}
     }
@@ -377,14 +383,29 @@ export const JOIN_EVENT = gql`
 `;
 
 export const LEAVE_EVENT = gql`
-  mutation LeaveEvent($eventId: ID!, $actorId: ID!) {
+  mutation LeaveEvent($eventId: ID!, $actorId: ID!, $token: String) {
     leaveEvent(
       eventId: $eventId,
-      actorId: $actorId
+      actorId: $actorId,
+      token: $token
     ) {
       actor {
         id
       }
+    }
+  }
+`;
+
+export const CONFIRM_PARTICIPATION = gql`
+  mutation ConfirmParticipation($token: String!) {
+    confirmParticipation(confirmationToken: $token) {
+      actor {
+        id,
+      },
+      event {
+        uuid
+      },
+      role
     }
   }
 `;

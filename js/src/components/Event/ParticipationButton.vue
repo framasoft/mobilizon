@@ -25,17 +25,13 @@ A button to set your participation
 <template>
     <div class="participation-button">
         <b-dropdown aria-role="list" position="is-bottom-left" v-if="participation && participation.role === ParticipantRole.PARTICIPANT">
-            <button class="button is-success" type="button" slot="trigger">
+            <button class="button is-success is-large" type="button" slot="trigger">
                 <b-icon icon="check" />
                 <template>
                     <span>{{ $t('I participate') }}</span>
                 </template>
                 <b-icon icon="menu-down" />
             </button>
-
-            <!--                <b-dropdown-item :value="false" aria-role="listitem">-->
-            <!--                  {{ $t('Change my identity…')}}-->
-            <!--                </b-dropdown-item>-->
 
             <b-dropdown-item :value="false" aria-role="listitem" @click="confirmLeave" class="has-text-danger">
                 {{ $t('Cancel my participation…')}}
@@ -44,7 +40,7 @@ A button to set your participation
 
         <div v-else-if="participation && participation.role === ParticipantRole.NOT_APPROVED">
             <b-dropdown aria-role="list" position="is-bottom-left" class="dropdown-disabled">
-                <button class="button is-success" type="button" slot="trigger">
+                <button class="button is-success is-large" type="button" slot="trigger">
                     <b-icon icon="timer-sand-empty" />
                     <template>
                         <span>{{ $t('I participate') }}</span>
@@ -68,8 +64,8 @@ A button to set your participation
             <span>{{ $t('Unfortunately, your participation request was rejected by the organizers.')}}</span>
         </div>
 
-        <b-dropdown aria-role="list" position="is-bottom-left" v-if="!participation">
-            <button class="button is-primary" type="button" slot="trigger">
+        <b-dropdown aria-role="list" position="is-bottom-left" v-else-if="!participation && currentActor.id">
+            <button class="button is-primary is-large" type="button" slot="trigger">
                 <template>
                     <span>{{ $t('Participate') }}</span>
                 </template>
@@ -93,22 +89,29 @@ A button to set your participation
                 {{ $t('with another identity…')}}
             </b-dropdown-item>
         </b-dropdown>
+        <b-button tag="router-link" :to="{ name: RouteName.EVENT_PARTICIPATE_LOGGED_OUT, params: { uuid: event.uuid } }" v-else-if="!participation && hasAnonymousParticipationMethods" type="is-primary" size="is-large" native-type="button">{{ $t('Participate') }}</b-button>
+        <b-button tag="router-link" :to="{ name: RouteName.EVENT_PARTICIPATE_WITH_ACCOUNT, params: { uuid: event.uuid } }" v-else-if="!currentActor.id" type="is-primary" size="is-large" native-type="button">{{ $t('Participate') }}</b-button>
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { IParticipant, ParticipantRole } from '@/types/event.model';
+import { EventModel, IEvent, IParticipant, ParticipantRole } from '@/types/event.model';
 import { IPerson, Person } from '@/types/actor';
-import { IDENTITIES } from '@/graphql/actor';
+import { CURRENT_ACTOR_CLIENT, IDENTITIES } from '@/graphql/actor';
 import { CURRENT_USER_CLIENT } from '@/graphql/user';
-import { ICurrentUser } from '@/types/current-user.model';
+import { CONFIG } from '@/graphql/config';
+import { IConfig } from '@/types/config.model';
+import { RouteName } from '@/router';
+import { FETCH_EVENT } from '@/graphql/event';
 
 @Component({
   apollo: {
     currentUser: {
       query: CURRENT_USER_CLIENT,
     },
+    currentActor: CURRENT_ACTOR_CLIENT,
+    config: CONFIG,
     identities: {
       query: IDENTITIES,
       update: ({ identities }) => identities ? identities.map(identity => new Person(identity)) : [],
@@ -120,11 +123,13 @@ import { ICurrentUser } from '@/types/current-user.model';
 })
 export default class ParticipationButton extends Vue {
   @Prop({ required: true }) participation!: IParticipant;
+  @Prop({ required: true }) event!: IEvent;
   @Prop({ required: true }) currentActor!: IPerson;
 
   ParticipantRole = ParticipantRole;
-  currentUser!: ICurrentUser;
   identities: IPerson[] = [];
+  config!: IConfig;
+  RouteName = RouteName;
 
   joinEvent(actor: IPerson) {
     this.$emit('joinEvent', actor);
@@ -138,10 +143,13 @@ export default class ParticipationButton extends Vue {
     this.$emit('confirmLeave');
   }
 
+  get hasAnonymousParticipationMethods(): boolean {
+    return this.event.options.anonymousParticipation;
+  }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     .participation-button {
         .dropdown {
             display: flex;
@@ -151,9 +159,11 @@ export default class ParticipationButton extends Vue {
                 opacity: 0.5;
             }
         }
+    }
 
-        button {
-            font-size: 1.5rem;
+    .anonymousParticipationModal {
+        /deep/ .animation-content {
+            z-index: 1;
         }
     }
 </style>

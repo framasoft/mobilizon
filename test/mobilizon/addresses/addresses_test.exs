@@ -25,6 +25,7 @@ defmodule Mobilizon.AddressesTest do
       street: "some updated streetAddress",
       geom: %Geo.Point{coordinates: {20, -20}, srid: 4326}
     }
+
     # @invalid_attrs %{
     #   addressCountry: nil,
     #   addressLocality: nil,

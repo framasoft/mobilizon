@@ -1,5 +1,5 @@
 <template>
-    <main class="container">
+    <section class="section container">
         <h1 class="title">
             {{ $t('My events') }}
         </h1>
@@ -10,7 +10,7 @@
             </h2>
             <transition-group name="list" tag="p">
                 <div v-for="month in monthlyFutureParticipations" :key="month[0]">
-                    <h3>{{ month[0] }}</h3>
+                    <h3 class="upcoming-month">{{ month[0] }}</h3>
                     <EventListCard
                             v-for="participation in month[1]"
                             :key="participation.id"
@@ -64,7 +64,7 @@
         <b-message v-if="futureParticipations.length === 0 && pastParticipations.length === 0 && $apollo.loading === false" type="is-danger">
             {{ $t('No events found') }}
         </b-message>
-    </main>
+    </section>
 </template>
 
 <script lang="ts">
@@ -212,13 +212,15 @@ export default class MyEvents extends Vue {
 <style lang="scss" scoped>
     @import "../../variables";
 
+    main > .container {
+        background: $white;
+    }
+
     .participation {
         margin: 1rem auto;
     }
 
     section {
-        margin: 3rem auto;
-
         & > h2 {
             display: block;
             color: $primary;
@@ -230,6 +232,10 @@ export default class MyEvents extends Vue {
         h3 {
             margin-top: 2rem;
             font-weight: bold;
+        }
+
+        .upcoming-month {
+            text-transform: capitalize;
         }
     }
 </style>

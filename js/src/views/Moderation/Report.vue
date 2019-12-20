@@ -1,5 +1,5 @@
 <template>
-    <section class="container">
+    <section class="container section">
         <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">{{ error }}</b-message>
         <div class="container" v-if="report">
             <nav class="breadcrumb" aria-label="breadcrumbs">
@@ -133,7 +133,8 @@
             <div class="box note" v-for="note in report.notes" :id="`note-${note.id}`">
                 <p>{{ note.content }}</p>
                 <router-link :to="{ name: RouteName.PROFILE, params: { name: note.moderator.preferredUsername } }">
-                    <img alt="" class="image" :src="note.moderator.avatar.url" /> @{{ note.moderator.preferredUsername }}
+                    <img alt="" class="image" :src="note.moderator.avatar.url" v-if="note.moderator.avatar" />
+                    @{{ note.moderator.preferredUsername }}
                 </router-link><br />
                 <small><a :href="`#note-${note.id}`" v-if="note.insertedAt">{{ note.insertedAt | formatDateTimeString }}</a></small>
             </div>

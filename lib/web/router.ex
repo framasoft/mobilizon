@@ -58,8 +58,6 @@ defmodule Mobilizon.Web.Router do
     )
   end
 
-  ## FEDERATION
-
   scope "/.well-known", Mobilizon.Web do
     pipe_through(:well_known)
 
@@ -110,8 +108,10 @@ defmodule Mobilizon.Web.Router do
   end
 
   ## MOBILIZON
-
-  forward("/graphiql", Absinthe.Plug.GraphiQL, schema: Mobilizon.Web.Schema)
+  scope "/graphiql" do
+    pipe_through(:graphql)
+    forward("/", Absinthe.Plug.GraphiQL, schema: Mobilizon.GraphQL.Schema)
+  end
 
   scope "/", Mobilizon.Web do
     pipe_through(:browser)
@@ -125,6 +125,12 @@ defmodule Mobilizon.Web.Router do
 
     # This is a hack to ease link generation into emails
     get("/moderation/reports/:id", PageController, :index, as: "moderation_report")
+
+    get("/participation/email/confirm/:token", PageController, :index,
+      as: "participation_email_confirmation"
+    )
+
+    get("/interact", PageController, :interact)
   end
 
   scope "/proxy/", Mobilizon.Web do

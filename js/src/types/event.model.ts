@@ -31,6 +31,7 @@ export enum EventVisibilityJoinOptions {
 
 export enum ParticipantRole {
   NOT_APPROVED = 'NOT_APPROVED',
+  NOT_CONFIRMED = 'NOT_CONFIRMED',
   REJECTED = 'REJECTED',
   PARTICIPANT = 'PARTICIPANT',
   MODERATOR = 'MODERATOR',
@@ -58,6 +59,7 @@ export interface IParticipant {
   role: ParticipantRole;
   actor: IActor;
   event: IEvent;
+  metadata: { cancellationToken?: string };
 }
 
 export class Participant implements IParticipant {
@@ -65,6 +67,7 @@ export class Participant implements IParticipant {
   event!: IEvent;
   actor!: IActor;
   role: ParticipantRole = ParticipantRole.NOT_APPROVED;
+  metadata = {};
 
   constructor(hash?: IParticipant) {
     if (!hash) return;
@@ -73,6 +76,7 @@ export class Participant implements IParticipant {
     this.event = new EventModel(hash.event);
     this.actor = new Actor(hash.actor);
     this.role = hash.role;
+    this.metadata = hash.metadata;
   }
 }
 
@@ -96,6 +100,7 @@ export enum CommentModeration {
 
 export interface IEventParticipantStats {
   notApproved: number;
+  notConfirmed: number;
   rejected: number;
   participant: number;
   creator: number;
@@ -146,6 +151,7 @@ export interface IEventOptions {
   maximumAttendeeCapacity: number;
   remainingAttendeeCapacity: number;
   showRemainingAttendeeCapacity: boolean;
+  anonymousParticipation: boolean;
   offers: IOffer[];
   participationConditions: IParticipationCondition[];
   attendees: string[];
@@ -160,6 +166,7 @@ export class EventOptions implements IEventOptions {
   maximumAttendeeCapacity = 0;
   remainingAttendeeCapacity = 0;
   showRemainingAttendeeCapacity = false;
+  anonymousParticipation = false;
   offers: IOffer[] = [];
   participationConditions: IParticipationCondition[] = [];
   attendees: string[] = [];
@@ -197,7 +204,7 @@ export class EventModel implements IEvent {
 
   publishAt = new Date();
 
-  participantStats = { notApproved: 0, rejected: 0, participant: 0, moderator: 0, administrator: 0, creator: 0, going: 0 };
+  participantStats = { notApproved: 0, notConfirmed: 0, rejected: 0, participant: 0, moderator: 0, administrator: 0, creator: 0, going: 0 };
   participants: IParticipant[] = [];
 
   relatedEvents: IEvent[] = [];

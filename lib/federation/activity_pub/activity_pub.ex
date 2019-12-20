@@ -426,19 +426,25 @@ defmodule Mobilizon.Federation.ActivityPub do
     # TODO Refactor me for federation
     with {:maximum_attendee_capacity, true} <-
            {:maximum_attendee_capacity, check_attendee_capacity(event)},
+         role <-
+           additional
+           |> Map.get(:metadata, %{})
+           |> Map.get(:role, Mobilizon.Events.get_default_participant_role(event)),
          {:ok, %Participant{} = participant} <-
            Mobilizon.Events.create_participant(%{
-             role: :not_approved,
+             role: role,
              event_id: event.id,
              actor_id: actor.id,
-             url: Map.get(additional, :url)
+             url: Map.get(additional, :url),
+             metadata: Map.get(additional, :metadata)
            }),
          join_data <- Convertible.model_to_as(participant),
          audience <-
            Audience.calculate_to_and_cc_from_mentions(participant),
          {:ok, activity} <- create_activity(Map.merge(join_data, audience), local),
          :ok <- maybe_federate(activity) do
-      if event.local && Mobilizon.Events.get_default_participant_role(event) === :participant do
+      if event.local && Mobilizon.Events.get_default_participant_role(event) === :participant &&
+           role == :participant do
         accept(
           :join,
           participant,
@@ -464,19 +470,24 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
-  def leave(object, actor, local \\ true)
+  def leave(object, actor, local \\ true, additional \\ %{})
 
   # TODO: If we want to use this for exclusion we need to have an extra field
   # for the actor that excluded the participant
   def leave(
         %Event{id: event_id, url: event_url} = _event,
         %Actor{id: actor_id, url: actor_url} = _actor,
-        local
+        local,
+        additional
       ) do
     with {:only_organizer, false} <-
            {:only_organizer, Participant.is_not_only_organizer(event_id, actor_id)},
          {:ok, %Participant{} = participant} <-
-           Mobilizon.Events.get_participant(event_id, actor_id),
+           Mobilizon.Events.get_participant(
+             event_id,
+             actor_id,
+             Map.get(additional, :metadata, %{})
+           ),
          {:ok, %Participant{} = participant} <-
            Events.delete_participant(participant),
          leave_data <- %{
@@ -604,6 +615,7 @@ defmodule Mobilizon.Federation.ActivityPub do
 
     digest = Signature.build_digest(json)
     date = Signature.generate_date_header()
+
     # request_target = Signature.generate_request_target("POST", path)
 
     signature =
@@ -823,7 +835,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   @spec reject_join(Participant.t(), map()) :: {:ok, Participant.t(), Activity.t()} | any()
   defp reject_join(%Participant{} = participant, additional) do
     with {:ok, %Participant{} = participant} <-
-           Events.update_participant(participant, %{approved: false, role: :rejected}),
+           Events.update_participant(participant, %{role: :rejected}),
          Absinthe.Subscription.publish(Endpoint, participant.actor,
            event_person_participation_changed: participant.actor.id
          ),
@@ -907,6 +919,18 @@ defmodule Mobilizon.Federation.ActivityPub do
       else
         args
       end
+
+    # Check that we can only allow anonymous participation if our instance allows it
+    {_, options} =
+      Map.get_and_update(
+        Map.get(args, :options, %{anonymous_participation: false}),
+        :anonymous_participation,
+        fn value ->
+          {value, value && Mobilizon.Config.anonymous_participation?()}
+        end
+      )
+
+    args = Map.put(args, :options, options)
 
     Map.update(args, :tags, [], &ConverterUtils.fetch_tags/1)
   end

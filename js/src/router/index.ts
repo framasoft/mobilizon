@@ -19,6 +19,8 @@ enum GlobalRouteName {
   ABOUT = 'About',
   PAGE_NOT_FOUND = 'PageNotFound',
   SEARCH = 'Search',
+  TERMS = 'TERMS',
+  INTERACT = 'INTERACT',
 }
 
 function scrollBehavior(to, from, savedPosition) {
@@ -77,6 +79,18 @@ const router = new Router({
       path: '/about',
       name: RouteName.ABOUT,
       component: () => import(/* webpackChunkName: "about" */ '@/views/About.vue'),
+      meta: { requiredAuth: false },
+    },
+    {
+      path: '/terms',
+      name: RouteName.TERMS,
+      component: () => import(/* webpackChunkName: "cookies" */ '@/views/Terms.vue'),
+      meta: { requiredAuth: false },
+    },
+    {
+      path: '/interact',
+      name: RouteName.INTERACT,
+      component: () => import(/* webpackChunkName: "cookies" */ '@/views/Interact.vue'),
       meta: { requiredAuth: false },
     },
     {

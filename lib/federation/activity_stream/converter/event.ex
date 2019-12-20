@@ -121,6 +121,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       "maximumAttendeeCapacity" => event.options.maximum_attendee_capacity,
       "repliesModerationOption" => event.options.comment_moderation,
       "commentsEnabled" => event.options.comment_moderation == :allow_all,
+      "anonymousParticipationEnabled" => event.options.anonymous_participation,
       # "draft" => event.draft,
       "ical:status" => event.status |> to_string |> String.upcase(),
       "id" => event.url,
@@ -142,6 +143,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   defp get_options(object) do
     %{
       maximum_attendee_capacity: object["maximumAttendeeCapacity"],
+      anonymous_participation: object["anonymousParticipationEnabled"],
       comment_moderation:
         Map.get(
           object,

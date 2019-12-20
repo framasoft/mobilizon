@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="address-autocomplete">
         <b-field expanded>
             <template slot="label">
                 {{ $t('Find an address') }}
@@ -245,6 +245,10 @@ export default class AddressAutoComplete extends Vue {
 }
 </script>
 <style lang="scss">
+    .address-autocomplete {
+        margin-bottom: 0.75rem;
+    }
+
     .autocomplete {
         .dropdown-menu {
             z-index: 2000;
