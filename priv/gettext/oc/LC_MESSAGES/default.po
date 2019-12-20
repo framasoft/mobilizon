@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2019-12-17 11:27+0000\n"
-"Last-Translator: Quentin <quentinantonin@free.fr>\n"
+"PO-Revision-Date: 2019-12-19 20:13+0000\n"
+"Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/oc/>\n"
 "Language: oc\n"
@@ -83,13 +83,13 @@ msgstr "Ne saber mai tocant Mobilizon."
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:13
 #, elixir-format
 msgid "Nearly here!"
-msgstr "I sètz gaireben !"
+msgstr "I sètz gaireben !"
 
 #: lib/mobilizon_web/templates/email/email.html.eex:121
 #: lib/mobilizon_web/templates/email/email.text.eex:12
 #, elixir-format
 msgid "Need some help? Something not working properly?"
-msgstr "Besonh d’ajuda ? Quicòm truca ?"
+msgstr "Besonh d’ajuda ? Quicòm truca ?"
 
 #: lib/mobilizon_web/templates/email/report.html.eex:13
 #, elixir-format
@@ -151,7 +151,9 @@ msgstr "Aquò’s tot bon !"
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:7
 #, elixir-format
 msgid "An organizer just approved your participation. You're now going to this event!"
-msgstr "L’organizator ven d’aprovar vòstra participacion. Ara anatz a aqueste eveniment !"
+msgstr ""
+"L’organizator ven d’aprovar vòstra participacion. Ara anatz a aqueste "
+"eveniment !"
 
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:58
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:101
@@ -205,7 +207,7 @@ msgstr "Reïnicializar vòstre senhal es facil. Clicatz simplament lo boton e se
 #: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:13
 #, elixir-format
 msgid "Sorry!"
-msgstr "Nos dòl !"
+msgstr "Nos dòl !"
 
 #: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:45
 #: lib/mobilizon_web/templates/email/event_participation_rejected.text.eex:7
@@ -254,7 +256,7 @@ msgstr "L’eveniment %{title} es estat actualizat"
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:1
 #, elixir-format
 msgid "Event updated!"
-msgstr "Eveniment actualizat !"
+msgstr "Eveniment actualizat !"
 
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:16
 #, elixir-format
@@ -347,12 +349,12 @@ msgstr "L’estatut de l’eveniment es estat definit coma « de confirmar »"
 #: lib/mobilizon_web/templates/email/email.html.eex:92
 #, elixir-format
 msgid "%{b_start}Please do not use it in any real way%{b_end}"
-msgstr "%{b_start}Mercés de l'utilizar pas d'un biais real%{b_end}"
+msgstr "%{b_start}Mercés de l’utilizar pas d’un biais real%{b_end}"
 
 #: lib/mobilizon_web/templates/email/report.html.eex:39
 #, elixir-format
 msgid "Someone on %{instance} reported the following content."
-msgstr "Qualqu'un de %{instance} a senhalat aqueste contengut."
+msgstr "Qualqu’un de %{instance} a senhalat aqueste contengut."
 
 #: lib/mobilizon_web/templates/email/email.text.eex:10
 #, elixir-format
@@ -372,4 +374,4 @@ msgstr ""
 #: lib/mobilizon_web/templates/email/email.text.eex:7
 #, elixir-format
 msgid "Please do not use it in any real way"
-msgstr "Mercés de l'utilizar pas d'un biais real"
+msgstr "Mercés de l’utilizar pas d’un biais real"
