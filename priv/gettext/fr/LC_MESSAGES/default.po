@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-01-08 20:37+0000\n"
+"PO-Revision-Date: 2020-01-09 21:14+0000\n"
 "Last-Translator: matograine <tom.ngr@zaclys.net>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/fr/>\n"
@@ -23,9 +23,12 @@ msgstr ""
 
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:48
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:12
-#, elixir-format
+#, elixir-format, fuzzy
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
-msgstr "Si vous n'avez pas demandé ceci, vous pouvez ignorer cet email. Votre mot de passe ne changera pas tant que vous n'accédez pas au lien ci-dessous et que vous en définissiez un nouveau."
+msgstr ""
+"Si vous n'avez pas demandé ceci, vous pouvez ignorer cet email. Votre mot de "
+"passe ne changera pas tant que vous n'en créerez pas un nouveau en cliquant "
+"sur le lien ci-dessous."
 
 #: lib/service/export/feed.ex:169
 #, elixir-format
@@ -362,6 +365,6 @@ msgid "Mobilizon is under development, we will add new features to this site dur
 msgstr "Mobilizon est en cours de développement, nous ajouterons de nouvelles fonctionnalités à ce site lors de mises à jour régulières, jusqu'à la publication de %{b_start}la version 1 du logiciel au premier semestre 2020%{b_end}."
 
 #: lib/mobilizon_web/templates/email/email.text.eex:7
-#, elixir-format, fuzzy
+#, elixir-format
 msgid "Please do not use it in any real way"
 msgstr "Veuillez ne pas l'utiliser pour un cas réel"
