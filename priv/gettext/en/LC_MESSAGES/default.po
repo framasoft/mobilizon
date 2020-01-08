@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-01-03 13:14+0000\n"
-"Last-Translator: Paul B <paul+weblate@bonaud.fr>\n"
+"PO-Revision-Date: 2020-01-09 21:14+0000\n"
+"Last-Translator: Côme 744 <come.allart@netc.fr>\n"
 "Language-Team: English <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/en/>\n"
 "Language: en\n"
@@ -344,12 +344,12 @@ msgstr "Event status has been set as tentative"
 #: lib/mobilizon_web/templates/email/email.html.eex:92
 #, elixir-format
 msgid "%{b_start}Please do not use it in any real way%{b_end}"
-msgstr ""
+msgstr "%{b_start}Please do not use it in any real way%{b_end}"
 
 #: lib/mobilizon_web/templates/email/report.html.eex:39
 #, elixir-format
 msgid "Someone on %{instance} reported the following content."
-msgstr ""
+msgstr "Someone on %{instance} reported the following content."
 
 #: lib/mobilizon_web/templates/email/email.text.eex:10
 #, elixir-format
@@ -364,4 +364,4 @@ msgstr "Mobilizon is under development, we will add new features to this site du
 #: lib/mobilizon_web/templates/email/email.text.eex:7
 #, elixir-format
 msgid "Please do not use it in any real way"
-msgstr ""
+msgstr "Please do not use it in any real way"
