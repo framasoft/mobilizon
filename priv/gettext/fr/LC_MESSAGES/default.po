@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2020-01-08 20:37+0000\n"
-"Last-Translator: Côme 744 <come.allart@netc.fr>\n"
+"Last-Translator: matograine <tom.ngr@zaclys.net>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/fr/>\n"
 "Language: fr\n"
@@ -344,12 +344,12 @@ msgstr "Le statut de l'événement a été défini comme « à confirmer »"
 #: lib/mobilizon_web/templates/email/email.html.eex:92
 #, elixir-format
 msgid "%{b_start}Please do not use it in any real way%{b_end}"
-msgstr ""
+msgstr "%{b_start}Veuillez ne pas l'utiliser pour aucun évènement réel%{b_end}"
 
 #: lib/mobilizon_web/templates/email/report.html.eex:39
 #, elixir-format
 msgid "Someone on %{instance} reported the following content."
-msgstr ""
+msgstr "Quelqu'un sur %{instance} a signalé le contenu suivant."
 
 #: lib/mobilizon_web/templates/email/email.text.eex:10
 #, elixir-format
