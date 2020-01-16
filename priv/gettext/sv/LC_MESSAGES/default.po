@@ -3,20 +3,25 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-16 05:18+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2020-01-17 06:15+0000\n"
+"Last-Translator: Filip Bengtsson <filip@libreradio.org>\n"
+"Language-Team: Swedish <https://weblate.framasoft.org/projects/mobilizon/"
+"backend/sv/>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Translate Toolkit 2.4.0\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 3.9.1\n"
 
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:48
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:12
 #, elixir-format
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
 msgstr ""
+"Du kan ignorera det här meddelandet om du inte frågade efter det. Ditt "
+"lösenord kommer inte ändras förrän du har öppnat länken nedan och skapat ett "
+"nytt."
 
 #: lib/service/export/feed.ex:169
 #, elixir-format
@@ -27,186 +32,199 @@ msgstr ""
 #: lib/mobilizon_web/templates/email/email.text.eex:16
 #, elixir-format
 msgid "%{instance} is a Mobilizon server."
-msgstr ""
+msgstr "%{instance} är en Mobilizon-server."
 
 #: lib/mobilizon_web/templates/email/report.html.eex:41
 #, elixir-format
 msgid "%{reporter_name} (%{reporter_username}) reported the following content."
-msgstr ""
+msgstr "%{reporter_name} (%{reporter_username}) har anmält följande innehåll."
 
 #: lib/mobilizon_web/templates/email/report.html.eex:52
 #, elixir-format
 msgid "%{title} by %{creator}"
-msgstr ""
+msgstr "%{title} av %{creator}"
 
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:58
 #, elixir-format
 msgid "Activate my account"
-msgstr ""
+msgstr "Aktivera mitt konto"
 
 #: lib/mobilizon_web/templates/email/email.html.eex:124
 #: lib/mobilizon_web/templates/email/email.text.eex:14
 #, elixir-format
 msgid "Ask the community on Framacolibri"
-msgstr ""
+msgstr "Fråga människorna på Framacolibri"
 
 #: lib/mobilizon_web/templates/email/report.html.eex:66
 #: lib/mobilizon_web/templates/email/report.text.eex:13
 #, elixir-format
 msgid "Comments"
-msgstr ""
+msgstr "Kommentarer"
 
 #: lib/mobilizon_web/templates/email/report.html.eex:50
 #: lib/mobilizon_web/templates/email/report.text.eex:6
 #, elixir-format
 msgid "Event"
-msgstr ""
+msgstr "Evenemang"
 
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:45
 #, elixir-format
 msgid "If you didn't request this, please ignore this email."
 msgstr ""
+"Du kan strunta i det här meddelandet om det inte var du frågade efter det."
 
 #: lib/mobilizon_web/email/user.ex:45
 #, elixir-format
 msgid "Instructions to reset your password on %{instance}"
-msgstr ""
+msgstr "Instruktioner för att återställa ditt lösenord på %{instance}"
 
 #: lib/mobilizon_web/templates/email/email.html.eex:156
 #, elixir-format
 msgid "Learn more about Mobilizon."
-msgstr ""
+msgstr "Läs mer om Mobilizon."
 
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:13
 #, elixir-format
 msgid "Nearly here!"
-msgstr ""
+msgstr "Snart framme!"
 
 #: lib/mobilizon_web/templates/email/email.html.eex:121
 #: lib/mobilizon_web/templates/email/email.text.eex:12
 #, elixir-format
 msgid "Need some help? Something not working properly?"
-msgstr ""
+msgstr "Behöver du hjälp? Är det något som krånglar?"
 
 #: lib/mobilizon_web/templates/email/report.html.eex:13
 #, elixir-format
 msgid "New report on %{instance}"
-msgstr ""
+msgstr "Ny anmälan på %{instance}"
 
 #: lib/mobilizon_web/templates/email/report.html.eex:84
 #: lib/mobilizon_web/templates/email/report.text.eex:22
 #, elixir-format
 msgid "Reason"
-msgstr ""
+msgstr "Motivering"
 
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:61
 #, elixir-format
 msgid "Reset Password"
-msgstr ""
+msgstr "Återställ lösenordet"
 
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:41
 #, elixir-format
 msgid "Resetting your password is easy. Just press the button below and follow the instructions. We'll have you up and running in no time."
 msgstr ""
+"Det är enkelt att återställa ditt lösenord, klicka bara på knappen nedan och "
+"följ instruktionerna. Du kommer vara igång igen på nolltid."
 
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:13
 #, elixir-format
 msgid "Trouble signing in?"
-msgstr ""
+msgstr "Svårt att logga in?"
 
 #: lib/mobilizon_web/templates/email/report.html.eex:104
 #, elixir-format
 msgid "View the report"
-msgstr ""
+msgstr "Visa anmälan"
 
 #: lib/mobilizon_web/templates/email/registration_confirmation.html.eex:38
 #, elixir-format
 msgid "You created an account on %{host} with this email address. You are one click away from activating it."
 msgstr ""
+"Du har skapat ett konto på %{host} med den här e-postadressen. Nu återstår "
+"bara ett klick för att aktivera det."
 
 #: lib/mobilizon_web/email/user.ex:25
 #, elixir-format
 msgid "Instructions to confirm your Mobilizon account on %{instance}"
-msgstr ""
+msgstr "Instruktioner för att bekräfta ditt Mobilizon-konto på %{instance}"
 
 #: lib/mobilizon_web/email/admin.ex:23
 #, elixir-format
 msgid "New report on Mobilizon instance %{instance}"
-msgstr ""
+msgstr "Ny anmälan på Mobilizon-instansen %{instance}"
 
 #: lib/mobilizon_web/templates/email/registration_confirmation.text.eex:1
 #, elixir-format
 msgid "Activate your account"
-msgstr ""
+msgstr "Aktivera ditt konto"
 
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:13
 #, elixir-format
 msgid "All good!"
-msgstr ""
+msgstr "Allt är i sin ordning!"
 
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:45
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:7
 #, elixir-format
 msgid "An organizer just approved your participation. You're now going to this event!"
 msgstr ""
+"En organisatör godkände nyss ditt deltagande. Nu kan du delta i det här "
+"evenemanget!"
 
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:58
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:101
 #, elixir-format
 msgid "Go to event page"
-msgstr ""
+msgstr "Gå till evenemangets sida"
 
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:70
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:113 lib/mobilizon_web/templates/email/event_updated.text.eex:21
 #, elixir-format
 msgid "If you need to cancel your participation, just access the event page through link above and click on the participation button."
 msgstr ""
+"Om du behöver lämna återbud är det bara att gå till evenemangets sida, på "
+"länken ovan, och klicka på deltagande-knappen."
 
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:11
 #, elixir-format
 msgid "If you need to cancel your participation, just access the previous link and click on the participation button."
 msgstr ""
+"Om du behöver lämna återbud är det bara att gå till förra sidan och klicka "
+"på deltagande-knappen."
 
 #: lib/mobilizon_web/templates/email/email.text.eex:16
 #, elixir-format
 msgid "Learn more about Mobilizon:"
-msgstr ""
+msgstr "Lär dig mer om Mobilizon:"
 
 #: lib/mobilizon_web/templates/email/report.text.eex:1
 #, elixir-format
 msgid "New report from %{reporter} on %{instance}"
-msgstr ""
+msgstr "Ny anmälan från %{reporter} på %{instance}"
 
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:1
 #, elixir-format
 msgid "Participation approved"
-msgstr ""
+msgstr "Ditt deltagande har godkänts"
 
 #: lib/mobilizon_web/templates/email/event_participation_rejected.text.eex:1
 #, elixir-format
 msgid "Participation rejected"
-msgstr ""
+msgstr "Ditt deltagande har inte godkänts"
 
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:1
 #, elixir-format
 msgid "Password reset"
-msgstr ""
+msgstr "Återställ lösenord"
 
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:7
 #, elixir-format
 msgid "Resetting your password is easy. Just click the link below and follow the instructions. We'll have you up and running in no time."
 msgstr ""
+"Det är enkelt att återställa ditt lösenord, klicka bara på knappen nedan och "
+"följ instruktionerna. Du kommer vara igång igen på nolltid."
 
 #: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:13
 #, elixir-format
 msgid "Sorry!"
-msgstr ""
+msgstr "Vi beklagar!"
 
 #: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:45
 #: lib/mobilizon_web/templates/email/event_participation_rejected.text.eex:7
 #, elixir-format
 msgid "Unfortunately, the organizers rejected your participation."
-msgstr ""
+msgstr "Organisatörerna har tyvärr gjort avslag på ditt deltagande."
 
 #: lib/mobilizon_web/templates/email/registration_confirmation.text.eex:5
 #, elixir-format
