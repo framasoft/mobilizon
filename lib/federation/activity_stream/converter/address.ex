@@ -1,4 +1,4 @@
-defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Address do
+defmodule Mobilizon.Federation.ActivityStream.Converter.Address do
   @moduledoc """
   Address converter.
 
@@ -8,7 +8,7 @@ defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Address do
 
   alias Mobilizon.Addresses.Address, as: AddressModel
 
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.Converter
+  alias Mobilizon.Federation.ActivityStream.Converter
 
   @behaviour Converter
 

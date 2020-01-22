@@ -1,4 +1,4 @@
-defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Follower do
+defmodule Mobilizon.Federation.ActivityStream.Converter.Follower do
   @moduledoc """
   Participant converter.
 
@@ -9,10 +9,10 @@ defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Follower do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Actors.Follower, as: FollowerModel
 
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.Convertible
+  alias Mobilizon.Federation.ActivityStream.Convertible
 
   defimpl Convertible, for: FollowerModel do
-    alias Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Follower,
+    alias Mobilizon.Federation.ActivityStream.Converter.Follower,
       as: FollowerConverter
 
     defdelegate model_to_as(follower), to: FollowerConverter

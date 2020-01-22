@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/lib/pleroma/web/web_finger/web_finger.ex
 
-defmodule Mobilizon.Federation.ActivityPub.WebFinger do
+defmodule Mobilizon.Federation.WebFinger do
   @moduledoc """
   Performs the WebFinger requests and responses (JSON only).
   """
@@ -11,7 +11,7 @@ defmodule Mobilizon.Federation.ActivityPub.WebFinger do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
 
-  alias Mobilizon.Federation.ActivityPub.WebFinger.XmlBuilder
+  alias Mobilizon.Federation.WebFinger.XmlBuilder
 
   require Jason
   require Logger

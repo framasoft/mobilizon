@@ -1,4 +1,4 @@
-defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Flag do
+defmodule Mobilizon.Federation.ActivityStream.Converter.Flag do
   @moduledoc """
   Flag converter.
 
@@ -14,13 +14,13 @@ defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Flag do
   alias Mobilizon.Events.Event
   alias Mobilizon.Reports.Report
 
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.{Converter, Convertible}
   alias Mobilizon.Federation.ActivityPub.Relay
+  alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
 
   @behaviour Converter
 
   defimpl Convertible, for: Report do
-    alias Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Flag, as: FlagConverter
+    alias Mobilizon.Federation.ActivityStream.Converter.Flag, as: FlagConverter
 
     defdelegate model_to_as(report), to: FlagConverter
   end

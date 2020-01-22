@@ -1,4 +1,4 @@
-defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Event do
+defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   @moduledoc """
   Event converter.
 
@@ -13,17 +13,17 @@ defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Event do
   alias Mobilizon.Media.Picture
 
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.{Converter, Convertible}
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Address, as: AddressConverter
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Picture, as: PictureConverter
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Utils, as: ConverterUtils
+  alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
+  alias Mobilizon.Federation.ActivityStream.Converter.Address, as: AddressConverter
+  alias Mobilizon.Federation.ActivityStream.Converter.Picture, as: PictureConverter
+  alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
 
   require Logger
 
   @behaviour Converter
 
   defimpl Convertible, for: EventModel do
-    alias Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Event, as: EventConverter
+    alias Mobilizon.Federation.ActivityStream.Converter.Event, as: EventConverter
 
     defdelegate model_to_as(event), to: EventConverter
   end

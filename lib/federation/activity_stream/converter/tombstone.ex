@@ -1,4 +1,4 @@
-defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Tombstone do
+defmodule Mobilizon.Federation.ActivityStream.Converter.Tombstone do
   @moduledoc """
   Comment converter.
 
@@ -7,14 +7,14 @@ defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Tombstone do
 
   alias Mobilizon.Tombstone, as: TombstoneModel
 
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.{Converter, Convertible}
+  alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
 
   require Logger
 
   @behaviour Converter
 
   defimpl Convertible, for: TombstoneModel do
-    alias Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Tombstone, as: TombstoneConverter
+    alias Mobilizon.Federation.ActivityStream.Converter.Tombstone, as: TombstoneConverter
 
     defdelegate model_to_as(comment), to: TombstoneConverter
   end

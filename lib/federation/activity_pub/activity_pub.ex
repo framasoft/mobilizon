@@ -22,13 +22,13 @@ defmodule Mobilizon.Federation.ActivityPub do
     Federator,
     Relay,
     Transmogrifier,
-    Visibility,
-    WebFinger
+    Visibility
   }
 
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.{Converter, Convertible}
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Utils, as: ConverterUtils
+  alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
+  alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
   alias Mobilizon.Federation.HTTPSignatures.Signature
+  alias Mobilizon.Federation.WebFinger
 
   alias MobilizonWeb.API.Utils, as: APIUtils
   alias MobilizonWeb.Email.{Admin, Mailer}
@@ -38,7 +38,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   @doc """
   Wraps an object into an activity
   """
-  @spec create_activity(map(), boolean()) :: {:ok, %Activity{}}
+  @spec create_activity(map, boolean) :: {:ok, Activity.t()}
   def create_activity(map, local \\ true) when is_map(map) do
     with map <- lazy_put_activity_defaults(map) do
       {:ok,

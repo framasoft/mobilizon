@@ -10,7 +10,7 @@ defmodule MobilizonWeb.WebFingerController do
 
   use MobilizonWeb, :controller
 
-  alias Mobilizon.Federation.ActivityPub.WebFinger
+  alias Mobilizon.Federation.WebFinger
 
   plug(MobilizonWeb.Plugs.Federating)
 

@@ -1,9 +1,9 @@
-defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.ActorTest do
+defmodule Mobilizon.Federation.ActivityStream.Converter.ActorTest do
   use Mobilizon.DataCase
 
   alias Mobilizon.Actors.Actor
 
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Actor, as: ActorConverter
+  alias Mobilizon.Federation.ActivityStream.Converter.Actor, as: ActorConverter
 
   describe "actor to AS" do
     test "valid actor to as" do

@@ -1,4 +1,4 @@
-defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Utils do
+defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
   @moduledoc """
   Various utils for converters.
   """
@@ -29,9 +29,7 @@ defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Utils do
   end
 
   def fetch_address(%{id: id}) do
-    with {id, ""} <- Integer.parse(id) do
-      %{id: id}
-    end
+    with {id, ""} <- Integer.parse(id), do: %{id: id}
   end
 
   def fetch_address(address) when is_map(address) do

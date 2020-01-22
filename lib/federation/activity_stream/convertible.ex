@@ -1,4 +1,4 @@
-defprotocol Mobilizon.Federation.ActivityPub.ActivityStream.Convertible do
+defprotocol Mobilizon.Federation.ActivityStream.Convertible do
   @moduledoc """
   Convertible protocol.
   """

@@ -15,7 +15,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.{Activity, Utils}
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.{Converter, Convertible}
+  alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
 
   alias MobilizonWeb.Email.Participation
 

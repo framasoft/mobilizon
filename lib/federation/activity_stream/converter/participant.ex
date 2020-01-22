@@ -1,4 +1,4 @@
-defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Participant do
+defmodule Mobilizon.Federation.ActivityStream.Converter.Participant do
   @moduledoc """
   Participant converter.
 
@@ -8,10 +8,10 @@ defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Participant 
 
   alias Mobilizon.Events.Participant, as: ParticipantModel
 
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.Convertible
+  alias Mobilizon.Federation.ActivityStream.Convertible
 
   defimpl Convertible, for: ParticipantModel do
-    alias Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Participant, as: ParticipantConverter
+    alias Mobilizon.Federation.ActivityStream.Converter.Participant, as: ParticipantConverter
 
     defdelegate model_to_as(participant), to: ParticipantConverter
   end

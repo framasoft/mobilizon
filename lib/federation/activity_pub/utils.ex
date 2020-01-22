@@ -13,7 +13,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   alias Mobilizon.Media.Picture
 
   alias Mobilizon.Federation.ActivityPub.{Activity, Federator, Relay}
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.Converter
+  alias Mobilizon.Federation.ActivityStream.Converter
   alias Mobilizon.Federation.HTTPSignatures
 
   require Logger

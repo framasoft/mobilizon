@@ -1,4 +1,4 @@
-defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Actor do
+defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
   @moduledoc """
   Actor converter.
 
@@ -9,12 +9,12 @@ defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Actor do
   alias Mobilizon.Actors.Actor, as: ActorModel
 
   alias Mobilizon.Federation.ActivityPub.Utils
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.{Converter, Convertible}
+  alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
 
   @behaviour Converter
 
   defimpl Convertible, for: ActorModel do
-    alias Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Actor, as: ActorConverter
+    alias Mobilizon.Federation.ActivityStream.Converter.Actor, as: ActorConverter
 
     defdelegate model_to_as(actor), to: ActorConverter
   end

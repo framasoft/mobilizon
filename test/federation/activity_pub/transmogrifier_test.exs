@@ -18,7 +18,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Utils
   alias Mobilizon.Federation.ActivityPub.{Activity, Relay, Transmogrifier}
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.{Convertible}
+  alias Mobilizon.Federation.ActivityStream.{Convertible}
 
   alias MobilizonWeb.API
 

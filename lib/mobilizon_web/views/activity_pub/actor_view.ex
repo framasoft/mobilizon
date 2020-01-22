@@ -6,7 +6,7 @@ defmodule MobilizonWeb.ActivityPub.ActorView do
 
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.{Activity, Utils}
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.Convertible
+  alias Mobilizon.Federation.ActivityStream.Convertible
 
   @private_visibility_empty_collection %{elements: [], total: 0}
 

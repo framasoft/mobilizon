@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/lib/xml_builder.ex
 
-defmodule Mobilizon.Federation.ActivityPub.WebFinger.XmlBuilder do
+defmodule Mobilizon.Federation.WebFinger.XmlBuilder do
   @moduledoc """
   Builds XRD for WebFinger host_meta.
   """

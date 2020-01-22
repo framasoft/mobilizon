@@ -1,4 +1,4 @@
-defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Comment do
+defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
   @moduledoc """
   Comment converter.
 
@@ -13,15 +13,15 @@ defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Comment do
 
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Visibility
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.{Converter, Convertible}
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Utils, as: ConverterUtils
+  alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
+  alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
 
   require Logger
 
   @behaviour Converter
 
   defimpl Convertible, for: CommentModel do
-    alias Mobilizon.Federation.ActivityPub.ActivityStream.Converter.Comment, as: CommentConverter
+    alias Mobilizon.Federation.ActivityStream.Converter.Comment, as: CommentConverter
 
     defdelegate model_to_as(comment), to: CommentConverter
   end

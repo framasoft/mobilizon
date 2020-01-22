@@ -9,7 +9,7 @@ defmodule MobilizonWeb.WebFingerControllerTest do
   import Mobilizon.Factory
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Federation.ActivityPub.WebFinger
+  alias Mobilizon.Federation.WebFinger
 
   setup_all do
     Mobilizon.Config.put([:instance, :federating], true)

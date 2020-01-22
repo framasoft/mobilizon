@@ -14,7 +14,7 @@ defmodule MobilizonWeb.PageView do
   alias Mobilizon.Service.Metadata.Utils, as: MetadataUtils
 
   alias Mobilizon.Federation.ActivityPub.Utils
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.Convertible
+  alias Mobilizon.Federation.ActivityStream.Convertible
 
   def render("actor.activity-json", %{conn: %{assigns: %{object: %Actor{} = actor}}}) do
     actor

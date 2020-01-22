@@ -3,13 +3,13 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/test/web/web_finger/web_finger_test.exs
 
-defmodule Mobilizon.Federation.ActivityPub.WebFingerTest do
+defmodule Mobilizon.Federation.WebFingerTest do
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
   use Mobilizon.DataCase
 
   import Mobilizon.Factory
 
-  alias Mobilizon.Federation.ActivityPub.WebFinger
+  alias Mobilizon.Federation.WebFinger
 
   @mastodon_account "tcit@social.tcit.fr"
   @mastodon_account_username "tcit"

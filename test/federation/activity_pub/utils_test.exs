@@ -5,7 +5,7 @@ defmodule Mobilizon.Federation.ActivityPub.UtilsTest do
 
   import Mobilizon.Factory
 
-  alias Mobilizon.Federation.ActivityPub.ActivityStream.Converter
+  alias Mobilizon.Federation.ActivityStream.Converter
 
   alias MobilizonWeb.Endpoint
   alias MobilizonWeb.Router.Helpers, as: Routes

@@ -1,4 +1,4 @@
-defmodule Mobilizon.Federation.ActivityPub.ActivityStream.Converter do
+defmodule Mobilizon.Federation.ActivityStream.Converter do
   @moduledoc """
   Converter behaviour.
 

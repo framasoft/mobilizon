@@ -12,7 +12,8 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
   alias Mobilizon.Actors.{Actor, Follower}
 
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier, WebFinger}
+  alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier}
+  alias Mobilizon.Federation.WebFinger
 
   alias MobilizonWeb.API.Follows
 
