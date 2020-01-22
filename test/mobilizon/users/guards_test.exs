@@ -1,4 +1,4 @@
-defmodule Mobilizon.Service.Users.ToolsTest do
+defmodule Mobilizon.Users.GuardsTest do
   use Mobilizon.DataCase
 
   import Mobilizon.Factory

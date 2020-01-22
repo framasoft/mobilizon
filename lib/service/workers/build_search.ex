@@ -1,4 +1,4 @@
-defmodule Mobilizon.Service.Workers.BuildSearchWorker do
+defmodule Mobilizon.Service.Workers.BuildSearch do
   @moduledoc """
   Worker to build search results
   """
@@ -8,7 +8,7 @@ defmodule Mobilizon.Service.Workers.BuildSearchWorker do
   alias Mobilizon.Storage.Repo
   alias Ecto.Adapters.SQL
 
-  use Mobilizon.Service.Workers.WorkerHelper, queue: "search"
+  use Mobilizon.Service.Workers.Helper, queue: "search"
 
   @impl Oban.Worker
   def perform(%{"op" => "insert_search_event", "event_id" => event_id}, _job) do

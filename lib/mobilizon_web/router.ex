@@ -14,13 +14,13 @@ defmodule MobilizonWeb.Router do
   end
 
   pipeline :activity_pub_signature do
-    plug(MobilizonWeb.HTTPSignaturePlug)
-    plug(MobilizonWeb.Plugs.MappedSignatureToIdentity)
+    plug(Mobilizon.Federation.Plugs.HTTPSignatures)
+    plug(Mobilizon.Federation.Plugs.MappedSignatureToIdentity)
   end
 
   pipeline :relay do
-    plug(MobilizonWeb.HTTPSignaturePlug)
-    plug(MobilizonWeb.Plugs.MappedSignatureToIdentity)
+    plug(Mobilizon.Federation.Plugs.HTTPSignatures)
+    plug(Mobilizon.Federation.Plugs.MappedSignatureToIdentity)
     plug(:accepts, ["activity-json", "json"])
   end
 

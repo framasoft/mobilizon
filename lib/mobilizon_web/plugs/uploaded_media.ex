@@ -35,8 +35,7 @@ defmodule MobilizonWeb.Plugs.UploadedMedia do
         %{query_params: %{"name" => name}} = conn ->
           name = String.replace(name, "\"", "\\\"")
 
-          conn
-          |> put_resp_header("content-disposition", "filename=\"#{name}\"")
+          put_resp_header(conn, "content-disposition", "filename=\"#{name}\"")
 
         conn ->
           conn
@@ -77,11 +76,7 @@ defmodule MobilizonWeb.Plugs.UploadedMedia do
   end
 
   defp get_media(conn, {:url, url}, true, _) do
-    conn
-    |> MobilizonWeb.ReverseProxy.call(
-      url,
-      Config.get([Mobilizon.Upload, :proxy_opts], [])
-    )
+    MobilizonWeb.ReverseProxy.call(conn, url, Config.get([Mobilizon.Upload, :proxy_opts], []))
   end
 
   defp get_media(conn, {:url, url}, _, _) do

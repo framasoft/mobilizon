@@ -1,4 +1,4 @@
-defmodule Mobilizon.Service.EmailChecker do
+defmodule MobilizonWeb.Email.Checker do
   @moduledoc """
   Provides a function to test emails against a "not so bad" regex.
   """

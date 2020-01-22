@@ -2,8 +2,8 @@ defmodule Mobilizon.Service.Statistics do
   @moduledoc """
   A module that provides cached statistics
   """
-  alias Mobilizon.Events
-  alias Mobilizon.Users
+
+  alias Mobilizon.{Events, Users}
 
   def get_cached_value(key) do
     case Cachex.fetch(:statistics, key, fn key ->

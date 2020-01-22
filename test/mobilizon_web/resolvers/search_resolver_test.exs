@@ -1,8 +1,10 @@
 defmodule MobilizonWeb.Resolvers.SearchResolverTest do
   use MobilizonWeb.ConnCase
-  alias MobilizonWeb.AbsintheHelpers
+
   import Mobilizon.Factory
-  alias Mobilizon.Service.Workers.BuildSearchWorker
+
+  alias Mobilizon.Service.Workers
+  alias MobilizonWeb.AbsintheHelpers
 
   setup %{conn: conn} do
     user = insert(:user)
@@ -17,7 +19,7 @@ defmodule MobilizonWeb.Resolvers.SearchResolverTest do
     insert(:actor, user: user, preferred_username: "test_person")
     insert(:actor, type: :Group, preferred_username: "test_group")
     event = insert(:event, title: "test_event")
-    BuildSearchWorker.insert_search_event(event)
+    Workers.BuildSearch.insert_search_event(event)
 
     query = """
     {
@@ -51,7 +53,7 @@ defmodule MobilizonWeb.Resolvers.SearchResolverTest do
     actor = insert(:actor, user: user, preferred_username: "test_person")
     insert(:actor, type: :Group, preferred_username: "test_group")
     event = insert(:event, title: "test_event")
-    BuildSearchWorker.insert_search_event(event)
+    Workers.BuildSearch.insert_search_event(event)
 
     query = """
     {
@@ -84,7 +86,7 @@ defmodule MobilizonWeb.Resolvers.SearchResolverTest do
     insert(:actor, user: user, preferred_username: "test_person")
     group = insert(:actor, type: :Group, preferred_username: "test_group")
     event = insert(:event, title: "test_event")
-    BuildSearchWorker.insert_search_event(event)
+    Workers.BuildSearch.insert_search_event(event)
 
     query = """
     {
@@ -118,9 +120,9 @@ defmodule MobilizonWeb.Resolvers.SearchResolverTest do
     event1 = insert(:event, title: "Pineapple fashion week")
     event2 = insert(:event, title: "I love pineAPPLE")
     event3 = insert(:event, title: "Hello")
-    BuildSearchWorker.insert_search_event(event1)
-    BuildSearchWorker.insert_search_event(event2)
-    BuildSearchWorker.insert_search_event(event3)
+    Workers.BuildSearch.insert_search_event(event1)
+    Workers.BuildSearch.insert_search_event(event2)
+    Workers.BuildSearch.insert_search_event(event3)
 
     query = """
     {
@@ -161,9 +163,9 @@ defmodule MobilizonWeb.Resolvers.SearchResolverTest do
     event1 = insert(:event, title: "Pineapple fashion week")
     event2 = insert(:event, title: "I love pineAPPLE")
     event3 = insert(:event, title: "Hello")
-    BuildSearchWorker.insert_search_event(event1)
-    BuildSearchWorker.insert_search_event(event2)
-    BuildSearchWorker.insert_search_event(event3)
+    Workers.BuildSearch.insert_search_event(event1)
+    Workers.BuildSearch.insert_search_event(event2)
+    Workers.BuildSearch.insert_search_event(event3)
 
     query = """
     {
@@ -198,7 +200,7 @@ defmodule MobilizonWeb.Resolvers.SearchResolverTest do
     insert(:actor, user: user, preferred_username: "person", name: "Torréfaction du Kafé")
     insert(:actor, type: :Group, preferred_username: "group", name: "Kafé group")
     event = insert(:event, title: "Tour du monde des Kafés")
-    BuildSearchWorker.insert_search_event(event)
+    Workers.BuildSearch.insert_search_event(event)
 
     # Elaborate query
     query = """
@@ -230,7 +232,7 @@ defmodule MobilizonWeb.Resolvers.SearchResolverTest do
     insert(:actor, user: user, preferred_username: "person", name: "Torréfaction du Kafé")
     group = insert(:actor, type: :Group, preferred_username: "group", name: "Kafé group")
     event = insert(:event, title: "Tour du monde des Kafés")
-    BuildSearchWorker.insert_search_event(event)
+    Workers.BuildSearch.insert_search_event(event)
 
     # Elaborate query
     query = """

@@ -1,4 +1,4 @@
-defmodule Mobilizon.Service.Workers.BackgroundWorker do
+defmodule Mobilizon.Service.Workers.Background do
   @moduledoc """
   Worker to build search results
   """
@@ -6,7 +6,7 @@ defmodule Mobilizon.Service.Workers.BackgroundWorker do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
 
-  use Mobilizon.Service.Workers.WorkerHelper, queue: "background"
+  use Mobilizon.Service.Workers.Helper, queue: "background"
 
   @impl Oban.Worker
   def perform(%{"op" => "delete_actor", "actor_id" => actor_id}, _job) do

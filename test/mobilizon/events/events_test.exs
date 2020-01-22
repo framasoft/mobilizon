@@ -6,8 +6,8 @@ defmodule Mobilizon.EventsTest do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Events.{Comment, Event, Participant, Session, Tag, TagRelation, Track}
+  alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.Page
-  alias Mobilizon.Service.Workers.BuildSearchWorker
 
   @event_valid_attrs %{
     begins_on: "2010-04-17 14:00:00Z",
@@ -23,7 +23,7 @@ defmodule Mobilizon.EventsTest do
     setup do
       actor = insert(:actor)
       event = insert(:event, organizer_actor: actor, visibility: :public)
-      BuildSearchWorker.insert_search_event(event)
+      Workers.BuildSearch.insert_search_event(event)
       {:ok, actor: actor, event: event}
     end
 
@@ -63,7 +63,7 @@ defmodule Mobilizon.EventsTest do
       assert title == hd(Events.build_events_for_search(event.title).elements).title
 
       %Event{} = event2 = insert(:event, title: "Special event")
-      BuildSearchWorker.insert_search_event(event2)
+      Workers.BuildSearch.insert_search_event(event2)
 
       assert event2.title ==
                Events.build_events_for_search("Special").elements |> hd() |> Map.get(:title)
@@ -76,7 +76,7 @@ defmodule Mobilizon.EventsTest do
       tag1 = insert(:tag, title: "coucou")
       tag2 = insert(:tag, title: "hola")
       %Event{} = event3 = insert(:event, title: "Nothing like it", tags: [tag1, tag2])
-      BuildSearchWorker.insert_search_event(event3)
+      Workers.BuildSearch.insert_search_event(event3)
 
       assert event3.title ==
                Events.build_events_for_search("hola").elements |> hd() |> Map.get(:title)

@@ -662,9 +662,7 @@ defmodule Mobilizon.Federation.ActivityPub do
     {:ok, comments, total_comments} = Events.list_public_comments_for_actor(actor, page, limit)
 
     event_activities = Enum.map(events, &event_to_activity/1)
-
     comment_activities = Enum.map(comments, &comment_to_activity/1)
-
     activities = event_activities ++ comment_activities
 
     %{elements: activities, total: total_events + total_comments}
@@ -740,13 +738,8 @@ defmodule Mobilizon.Federation.ActivityPub do
   defp check_for_tombstones(%{url: url}), do: Tombstone.find_tombstone(url)
   defp check_for_tombstones(_), do: nil
 
-  @spec update_event(Event.t(), map(), map()) ::
-          {:ok, Event.t(), Activity.t()} | any()
-  defp update_event(
-         %Event{} = old_event,
-         args,
-         additional
-       ) do
+  @spec update_event(Event.t(), map(), map()) :: {:ok, Event.t(), Activity.t()} | any()
+  defp update_event(%Event{} = old_event, args, additional) do
     with args <- prepare_args_for_event(args),
          {:ok, %Event{} = new_event} <- Events.update_event(old_event, args),
          {:ok, true} <- Cachex.del(:activity_pub, "event_#{new_event.uuid}"),
@@ -763,8 +756,7 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
-  @spec update_actor(Actor.t(), map(), map()) ::
-          {:ok, Actor.t(), Activity.t()} | any()
+  @spec update_actor(Actor.t(), map, map) :: {:ok, Actor.t(), Activity.t()} | any
   defp update_actor(%Actor{} = old_actor, args, additional) do
     with {:ok, %Actor{} = new_actor} <- Actors.update_actor(old_actor, args),
          actor_as_data <- Convertible.model_to_as(new_actor),
@@ -777,12 +769,8 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
-  @spec accept_follow(Follower.t(), map()) ::
-          {:ok, Follower.t(), Activity.t()} | any()
-  defp accept_follow(
-         %Follower{} = follower,
-         additional
-       ) do
+  @spec accept_follow(Follower.t(), map) :: {:ok, Follower.t(), Activity.t()} | any
+  defp accept_follow(%Follower{} = follower, additional) do
     with {:ok, %Follower{} = follower} <- Actors.update_follower(follower, %{approved: true}),
          follower_as_data <- Convertible.model_to_as(follower),
          update_data <-
@@ -804,12 +792,8 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
-  @spec accept_join(Participant.t(), map()) ::
-          {:ok, Participant.t(), Activity.t()} | any()
-  defp accept_join(
-         %Participant{} = participant,
-         additional
-       ) do
+  @spec accept_join(Participant.t(), map) :: {:ok, Participant.t(), Activity.t()} | any
+  defp accept_join(%Participant{} = participant, additional) do
     with {:ok, %Participant{} = participant} <-
            Events.update_participant(participant, %{role: :participant}),
          Absinthe.Subscription.publish(MobilizonWeb.Endpoint, participant.actor,
@@ -834,8 +818,7 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
-  @spec reject_join(Participant.t(), map()) ::
-          {:ok, Participant.t(), Activity.t()} | any()
+  @spec reject_join(Participant.t(), map()) :: {:ok, Participant.t(), Activity.t()} | any()
   defp reject_join(%Participant{} = participant, additional) do
     with {:ok, %Participant{} = participant} <-
            Events.update_participant(participant, %{approved: false, role: :rejected}),
@@ -866,8 +849,7 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
-  @spec reject_follow(Follower.t(), map()) ::
-          {:ok, Follower.t(), Activity.t()} | any()
+  @spec reject_follow(Follower.t(), map()) :: {:ok, Follower.t(), Activity.t()} | any()
   defp reject_follow(%Follower{} = follower, additional) do
     with {:ok, %Follower{} = follower} <- Actors.delete_follower(follower),
          follower_as_data <- Convertible.model_to_as(follower),

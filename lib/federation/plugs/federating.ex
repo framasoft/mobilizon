@@ -3,10 +3,11 @@
 # Copyright © 2017-2019 Pleroma Authors <https://pleroma.social/>
 # SPDX-License-Identifier: AGPL-3.0-only
 
-defmodule MobilizonWeb.Plugs.Federating do
+defmodule Mobilizon.Federation.Plugs.Federating do
   @moduledoc """
   Restrict ActivityPub routes when not federating
   """
+
   import Plug.Conn
 
   def init(options) do

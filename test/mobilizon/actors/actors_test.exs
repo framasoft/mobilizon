@@ -9,6 +9,7 @@ defmodule Mobilizon.ActorsTest do
   alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
   alias Mobilizon.Events.{Event, Comment}
   alias Mobilizon.Media.File, as: FileModel
+  alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.Page
 
   alias Mobilizon.Federation.ActivityPub
@@ -311,7 +312,7 @@ defmodule Mobilizon.ActorsTest do
       assert {:ok, %Oban.Job{}} = Actors.delete_actor(actor)
 
       assert_enqueued(
-        worker: Mobilizon.Service.Workers.BackgroundWorker,
+        worker: Workers.Background,
         args: %{"actor_id" => actor.id, "op" => "delete_actor"}
       )
 

@@ -1,9 +1,13 @@
 defmodule MobilizonWeb.Resolvers.PersonResolverTest do
   use MobilizonWeb.ConnCase
-  alias MobilizonWeb.AbsintheHelpers
-  alias Mobilizon.Actors.Actor
-  import Mobilizon.Factory
   use Oban.Testing, repo: Mobilizon.Storage.Repo
+
+  import Mobilizon.Factory
+
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Service.Workers
+
+  alias MobilizonWeb.AbsintheHelpers
 
   @non_existent_username "nonexistent"
 
@@ -500,7 +504,7 @@ defmodule MobilizonWeb.Resolvers.PersonResolverTest do
       assert json_response(res, 200)["errors"] == nil
 
       assert_enqueued(
-        worker: Mobilizon.Service.Workers.BackgroundWorker,
+        worker: Workers.Background,
         args: %{"actor_id" => person_id, "op" => "delete_actor"}
       )
 

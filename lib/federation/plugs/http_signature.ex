@@ -3,14 +3,13 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/lib/pleroma/plugs/http_signature.ex
 
-defmodule MobilizonWeb.HTTPSignaturePlug do
+defmodule Mobilizon.Federation.Plugs.HTTPSignatures do
   @moduledoc """
-  # HTTPSignaturePlug
-
   Plug to check HTTP Signatures on every incoming request
   """
 
   import Plug.Conn
+
   require Logger
 
   def init(options) do

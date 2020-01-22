@@ -3,7 +3,7 @@ defmodule MobilizonWeb.API.Reports do
   API for Reports.
   """
 
-  import Mobilizon.Service.Admin.ActionLogService
+  import Mobilizon.Service.Admin.ActionLog
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Reports, as: ReportsAction

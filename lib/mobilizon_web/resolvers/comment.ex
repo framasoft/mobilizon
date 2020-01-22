@@ -3,7 +3,7 @@ defmodule MobilizonWeb.Resolvers.Comment do
   Handles the comment-related GraphQL calls.
   """
 
-  import Mobilizon.Service.Admin.ActionLogService
+  import Mobilizon.Service.Admin.ActionLog
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor

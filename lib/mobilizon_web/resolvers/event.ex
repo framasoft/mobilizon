@@ -3,7 +3,7 @@ defmodule MobilizonWeb.Resolvers.Event do
   Handles the event-related GraphQL calls.
   """
 
-  import Mobilizon.Service.Admin.ActionLogService
+  import Mobilizon.Service.Admin.ActionLog
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor

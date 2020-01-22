@@ -283,10 +283,10 @@ defmodule Mobilizon.Mixfile do
         Mobilizon.Federation.HTTPSignatures.Signature,
         Mobilizon.Federation.WebFinger,
         Mobilizon.Federation.WebFinger.XmlBuilder,
+        Mobilizon.Federation.Plugs.HTTPSignatures,
         MobilizonWeb.ActivityPub.ActorView,
         MobilizonWeb.ActivityPub.ObjectView,
         MobilizonWeb.ActivityPubController,
-        MobilizonWeb.HTTPSignaturePlug,
         MobilizonWeb.WebFingerController,
         MobilizonWeb.NodeInfoController
       ],

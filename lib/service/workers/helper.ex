@@ -3,12 +3,13 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/lib/pleroma/workers/worker_helper.ex
 
-defmodule Mobilizon.Service.Workers.WorkerHelper do
+defmodule Mobilizon.Service.Workers.Helper do
   @moduledoc """
   Tools to ease dealing with workers
   """
+
   alias Mobilizon.Config
-  alias Mobilizon.Service.Workers.WorkerHelper
+  alias Mobilizon.Storage.Repo
 
   def worker_args(queue) do
     case Config.get([:workers, :retries, queue]) do
@@ -39,11 +40,11 @@ defmodule Mobilizon.Service.Workers.WorkerHelper do
       def enqueue(operation, params, worker_args \\ []) do
         params = Map.merge(%{"op" => operation}, params)
         queue_atom = String.to_existing_atom(unquote(queue))
-        worker_args = worker_args ++ WorkerHelper.worker_args(queue_atom)
+        worker_args = worker_args ++ __MODULE__.worker_args(queue_atom)
 
         unquote(caller_module)
         |> apply(:new, [params, worker_args])
-        |> Mobilizon.Storage.Repo.insert()
+        |> Repo.insert()
       end
     end
   end

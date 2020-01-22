@@ -7,10 +7,11 @@ defmodule Mix.Tasks.Mobilizon.SetupSearch do
 
   use Mix.Task
 
-  alias Mobilizon.Service.Workers.BuildSearchWorker
-  alias Mobilizon.Storage.Repo
-  alias Mobilizon.Events.Event
   import Ecto.Query
+
+  alias Mobilizon.Events.Event
+  alias Mobilizon.Service.Workers
+  alias Mobilizon.Storage.Repo
 
   require Logger
 
@@ -30,7 +31,7 @@ defmodule Mix.Tasks.Mobilizon.SetupSearch do
   end
 
   defp insert_search_event([%Event{url: url} = event | events], nb_events) do
-    case BuildSearchWorker.insert_search_event(event) do
+    case Workers.BuildSearch.insert_search_event(event) do
       {:ok, _} ->
         Logger.debug("Added event #{url} to the search")
 

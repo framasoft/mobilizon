@@ -1,12 +1,12 @@
-defmodule Mobilizon.Service.Admin.ActionLogServiceTest do
+defmodule Mobilizon.Service.Admin.ActionLogTest do
   @moduledoc """
-  Test the ActionLogService module.
+  Test the ActionLog module.
   """
 
   use Mobilizon.DataCase
 
   import Mobilizon.Factory
-  import Mobilizon.Service.Admin.ActionLogService
+  import Mobilizon.Service.Admin.ActionLog
 
   alias Mobilizon.Admin.ActionLog
   alias Mobilizon.Reports.{Note, Report}

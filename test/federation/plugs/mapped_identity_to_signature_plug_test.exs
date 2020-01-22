@@ -3,9 +3,10 @@
 # Copyright © 2017-2019 Pleroma Authors <https://pleroma.social/>
 # SPDX-License-Identifier: AGPL-3.0-only
 
-defmodule MobilizonWeb.Plugs.MappedSignatureToIdentityPlugTest do
+defmodule Mobilizon.Federation.Plugs.MappedSignatureToIdentityTest do
   use MobilizonWeb.ConnCase
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+
   alias MobilizonWeb.Plugs.MappedSignatureToIdentity
 
   defp set_signature(conn, key_id) do

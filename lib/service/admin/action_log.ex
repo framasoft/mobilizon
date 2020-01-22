@@ -1,12 +1,11 @@
-defmodule Mobilizon.Service.Admin.ActionLogService do
+defmodule Mobilizon.Service.Admin.ActionLog do
   @moduledoc """
   Module to handle action log creations.
   """
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Admin
+  alias Mobilizon.{Admin, Users}
   alias Mobilizon.Admin.ActionLog
-  alias Mobilizon.Users
   alias Mobilizon.Users.User
 
   @doc """
