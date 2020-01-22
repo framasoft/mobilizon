@@ -120,7 +120,7 @@ config :ex_cldr,
   default_backend: Mobilizon.Cldr
 
 config :http_signatures,
-  adapter: Mobilizon.Service.HTTPSignatures.Signature
+  adapter: Mobilizon.Federation.HTTPSignatures.Signature
 
 config :mobilizon, :activitypub, sign_object_fetches: true
 

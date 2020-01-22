@@ -6,8 +6,9 @@ defmodule MobilizonWeb.API.Search do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.ActorType
   alias Mobilizon.Events
-  alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Storage.Page
+
+  alias Mobilizon.Federation.ActivityPub
 
   require Logger
 

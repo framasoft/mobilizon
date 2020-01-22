@@ -5,7 +5,9 @@ defmodule MobilizonWeb.API.Participations do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.{Event, Participant}
-  alias Mobilizon.Service.ActivityPub
+
+  alias Mobilizon.Federation.ActivityPub
+
   alias MobilizonWeb.Email.Participation
 
   @spec join(Event.t(), Actor.t()) :: {:ok, Participant.t()}

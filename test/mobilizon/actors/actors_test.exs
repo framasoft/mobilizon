@@ -9,8 +9,9 @@ defmodule Mobilizon.ActorsTest do
   alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
   alias Mobilizon.Events.{Event, Comment}
   alias Mobilizon.Media.File, as: FileModel
-  alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Storage.Page
+
+  alias Mobilizon.Federation.ActivityPub
 
   describe "actors" do
     @valid_attrs %{

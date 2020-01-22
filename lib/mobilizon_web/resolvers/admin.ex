@@ -11,10 +11,11 @@ defmodule MobilizonWeb.Resolvers.Admin do
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Comment}
   alias Mobilizon.Reports.{Note, Report}
-  alias Mobilizon.Service.Statistics
   alias Mobilizon.Users.User
+  alias Mobilizon.Service.Statistics
   alias Mobilizon.Storage.Page
-  alias Mobilizon.Service.ActivityPub.Relay
+
+  alias Mobilizon.Federation.ActivityPub.Relay
 
   def list_action_logs(
         _parent,

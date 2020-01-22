@@ -182,7 +182,6 @@ defmodule Mobilizon.Mixfile do
         Mobilizon.Addresses,
         Mobilizon.Addresses.Address,
         Mobilizon.Events,
-        Mobilizon.Service.ActivityPub.Activity,
         Mobilizon.Events.Event,
         Mobilizon.Events.Comment,
         Mobilizon.Events.FeedToken,
@@ -205,7 +204,8 @@ defmodule Mobilizon.Mixfile do
         Mobilizon.Users.UserRole,
         Mobilizon.Users.Guards,
         Mobilizon.Storage.Ecto,
-        Mobilizon.Storage.Repo
+        Mobilizon.Storage.Repo,
+        Mobilizon.Federation.ActivityPub.Activity
       ],
       APIs: [
         MobilizonWeb.API.Comments,
@@ -276,19 +276,19 @@ defmodule Mobilizon.Mixfile do
         MobilizonWeb.Schema.Utils
       ],
       ActivityPub: [
+        Mobilizon.Federation.ActivityPub,
+        Mobilizon.Federation.ActivityPub.Federator,
+        Mobilizon.Federation.ActivityPub.Transmogrifier,
+        Mobilizon.Federation.ActivityPub.Utils,
+        Mobilizon.Federation.ActivityPub.WebFinger,
+        Mobilizon.Federation.ActivityPub.WebFinger.XmlBuilder,
+        Mobilizon.Federation.HTTPSignatures.Signature,
         MobilizonWeb.ActivityPub.ActorView,
         MobilizonWeb.ActivityPub.ObjectView,
         MobilizonWeb.ActivityPubController,
-        Mobilizon.Service.ActivityPub,
-        Mobilizon.Service.ActivityPub.Transmogrifier,
-        Mobilizon.Service.ActivityPub.Utils,
         MobilizonWeb.HTTPSignaturePlug,
         MobilizonWeb.WebFingerController,
-        MobilizonWeb.NodeInfoController,
-        Mobilizon.Service.HTTPSignatures.Signature,
-        Mobilizon.Service.WebFinger,
-        Mobilizon.Service.XmlBuilder,
-        Mobilizon.Service.Federator
+        MobilizonWeb.NodeInfoController
       ],
       Services: [
         Mobilizon.Service.EmailChecker,

@@ -5,8 +5,9 @@ defmodule MobilizonWeb.API.Groups do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Activity
+
+  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Activity
 
   @doc """
   Create a group

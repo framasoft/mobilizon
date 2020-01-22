@@ -15,6 +15,7 @@ defmodule Mobilizon do
   import Cachex.Spec
 
   alias Mobilizon.Config
+  alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Service.Export.{Feed, ICalendar}
 
   @name Mix.Project.config()[:name]
@@ -41,7 +42,7 @@ defmodule Mobilizon do
       {Oban, Application.get_env(:mobilizon, Oban)},
       # workers
       Guardian.DB.Token.SweeperServer,
-      Mobilizon.Service.Federator,
+      ActivityPub.Federator,
       cachex_spec(:feed, 2500, 60, 60, &Feed.create_cache/1),
       cachex_spec(:ics, 2500, 60, 60, &ICalendar.create_cache/1),
       cachex_spec(:statistics, 10, 60, 60),
@@ -94,7 +95,7 @@ defmodule Mobilizon do
   defp internal_actor() do
     %{
       id: :internal_actor_init,
-      start: {Task, :start_link, [&Mobilizon.Service.ActivityPub.Relay.init/0]},
+      start: {Task, :start_link, [&ActivityPub.Relay.init/0]},
       restart: :temporary
     }
   end

@@ -23,7 +23,7 @@ defmodule Mix.Tasks.Mobilizon.Relay do
   use Mix.Task
 
   alias Mix.Tasks.Mobilizon.Common
-  alias Mobilizon.Service.ActivityPub.Relay
+  alias Mobilizon.Federation.ActivityPub.Relay
 
   @shortdoc "Manages remote relays"
   def run(["follow", target]) do

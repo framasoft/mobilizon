@@ -8,6 +8,8 @@ defmodule MobilizonWeb.Resolvers.AdminResolverTest do
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Users.User
 
+  alias Mobilizon.Federation.ActivityPub.Relay
+
   alias MobilizonWeb.AbsintheHelpers
   alias MobilizonWeb.API
 
@@ -135,7 +137,7 @@ defmodule MobilizonWeb.Resolvers.AdminResolverTest do
           name: "I am an instance actor"
         )
 
-      %Actor{} = relay_actor = Mobilizon.Service.ActivityPub.Relay.get_actor()
+      %Actor{} = relay_actor = Relay.get_actor()
       insert(:follower, actor: follower_actor, target_actor: relay_actor)
 
       query = """
@@ -182,7 +184,7 @@ defmodule MobilizonWeb.Resolvers.AdminResolverTest do
           name: "I am an instance actor"
         )
 
-      %Actor{} = relay_actor = Mobilizon.Service.ActivityPub.Relay.get_actor()
+      %Actor{} = relay_actor = Relay.get_actor()
       insert(:follower, actor: relay_actor, target_actor: following_actor)
 
       query = """

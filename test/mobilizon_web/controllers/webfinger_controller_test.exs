@@ -3,14 +3,17 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/test/web/web_finger/web_finger_test.exs
 
-defmodule MobilizonWeb.WebFingerTest do
+defmodule MobilizonWeb.WebFingerControllerTest do
   use MobilizonWeb.ConnCase
-  alias Mobilizon.Actors.Actor
-  alias Mobilizon.Service.WebFinger
+
   import Mobilizon.Factory
+
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Federation.ActivityPub.WebFinger
 
   setup_all do
     Mobilizon.Config.put([:instance, :federating], true)
+
     :ok
   end
 

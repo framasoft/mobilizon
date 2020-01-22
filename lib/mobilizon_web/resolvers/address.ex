@@ -2,9 +2,11 @@ defmodule MobilizonWeb.Resolvers.Address do
   @moduledoc """
   Handles the comment-related GraphQL calls
   """
-  require Logger
+
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial
+
+  require Logger
 
   @doc """
   Search an address

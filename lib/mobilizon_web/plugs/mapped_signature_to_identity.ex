@@ -7,12 +7,15 @@ defmodule MobilizonWeb.Plugs.MappedSignatureToIdentity do
   @moduledoc """
   Get actor identity from Signature when handing fetches
   """
-  alias Mobilizon.Service.HTTPSignatures.Signature
-  alias Mobilizon.Actors.Actor
-  alias Mobilizon.Service.ActivityPub.Utils
-  alias Mobilizon.Service.ActivityPub
 
   import Plug.Conn
+
+  alias Mobilizon.Actors.Actor
+
+  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Utils
+  alias Mobilizon.Federation.HTTPSignatures.Signature
+
   require Logger
 
   def init(options), do: options

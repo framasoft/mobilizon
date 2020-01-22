@@ -9,7 +9,8 @@ defmodule Mix.Tasks.Mobilizon.RelayTest do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Follower}
-  alias Mobilizon.Service.ActivityPub.Relay
+
+  alias Mobilizon.Federation.ActivityPub.Relay
 
   describe "running follow" do
     test "relay is followed" do

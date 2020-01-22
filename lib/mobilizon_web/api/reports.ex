@@ -8,10 +8,11 @@ defmodule MobilizonWeb.API.Reports do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Reports, as: ReportsAction
   alias Mobilizon.Reports.{Note, Report, ReportStatus}
-  alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Users
   alias Mobilizon.Users.User
+
+  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Activity
 
   @doc """
   Create a report/flag on an actor, and optionally on an event or on comments.

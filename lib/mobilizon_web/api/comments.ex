@@ -3,8 +3,9 @@ defmodule MobilizonWeb.API.Comments do
   API for Comments.
   """
   alias Mobilizon.Events.Comment
-  alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Activity
+
+  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Activity
 
   @doc """
   Create a comment

@@ -9,8 +9,9 @@ defmodule MobilizonWeb.Resolvers.Event do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Participant, EventParticipantStats}
-  alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Users.User
+
+  alias Mobilizon.Federation.ActivityPub.Activity
 
   alias MobilizonWeb.API
   alias MobilizonWeb.Resolvers.Person

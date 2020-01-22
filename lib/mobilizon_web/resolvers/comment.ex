@@ -3,14 +3,15 @@ defmodule MobilizonWeb.Resolvers.Comment do
   Handles the comment-related GraphQL calls.
   """
 
+  import Mobilizon.Service.Admin.ActionLogService
+
+  alias Mobilizon.Actors
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Events.Comment, as: CommentModel
   alias Mobilizon.Users.User
-  alias Mobilizon.Actors.Actor
-  alias Mobilizon.Actors
 
   alias MobilizonWeb.API.Comments
-  import Mobilizon.Service.Admin.ActionLogService
 
   require Logger
 

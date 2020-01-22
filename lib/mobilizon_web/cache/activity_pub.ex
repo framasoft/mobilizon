@@ -3,10 +3,12 @@ defmodule MobilizonWeb.Cache.ActivityPub do
   The ActivityPub related functions.
   """
 
-  alias Mobilizon.{Actors, Events, Service, Tombstone}
+  alias Mobilizon.{Actors, Events, Tombstone}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.{Comment, Event}
-  alias Service.ActivityPub
+
+  alias Mobilizon.Federation.ActivityPub.Relay
+
   alias MobilizonWeb.Router.Helpers, as: Routes
   alias MobilizonWeb.Endpoint
 
@@ -73,6 +75,6 @@ defmodule MobilizonWeb.Cache.ActivityPub do
   """
   @spec get_relay :: {:commit, Actor.t()} | {:ignore, nil}
   def get_relay do
-    Cachex.fetch(@cache, "relay_actor", &ActivityPub.Relay.get_actor/0)
+    Cachex.fetch(@cache, "relay_actor", &Relay.get_actor/0)
   end
 end

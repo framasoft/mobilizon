@@ -2,14 +2,19 @@ defmodule MobilizonWeb.PageView do
   @moduledoc """
   View for our webapp
   """
+
   use MobilizonWeb, :view
+
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Tombstone
-  alias Mobilizon.Service.ActivityPub.{Convertible, Utils}
-  alias Mobilizon.Service.Metadata
-  alias Mobilizon.Service.MetadataUtils
-  alias Mobilizon.Service.Metadata.Instance
   alias Mobilizon.Events.{Comment, Event}
+  alias Mobilizon.Tombstone
+
+  alias Mobilizon.Service.Metadata
+  alias Mobilizon.Service.Metadata.Instance
+  alias Mobilizon.Service.Metadata.Utils, as: MetadataUtils
+
+  alias Mobilizon.Federation.ActivityPub.Utils
+  alias Mobilizon.Federation.ActivityPub.ActivityStream.Convertible
 
   def render("actor.activity-json", %{conn: %{assigns: %{object: %Actor{} = actor}}}) do
     actor

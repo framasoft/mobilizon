@@ -11,9 +11,10 @@ defmodule Mobilizon.Actors do
   alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
   alias Mobilizon.{Crypto, Events}
   alias Mobilizon.Media.File
-  alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Service.Workers.BackgroundWorker
-  alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Storage.{Page, Repo}
+
+  alias Mobilizon.Federation.ActivityPub
 
   require Logger
 

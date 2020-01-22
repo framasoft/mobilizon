@@ -7,8 +7,9 @@ defmodule MobilizonWeb.API.SearchTest do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Events.Event
-  alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Storage.Page
+
+  alias Mobilizon.Federation.ActivityPub
 
   alias MobilizonWeb.API.Search
 

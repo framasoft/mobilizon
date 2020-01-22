@@ -8,8 +8,8 @@ defmodule MobilizonWeb.Resolvers.User do
   alias Mobilizon.{Actors, Config, Users, Events}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.Users.{Activation, ResetPassword}
-  alias Mobilizon.Users.User
   alias Mobilizon.Storage.Repo
+  alias Mobilizon.Users.User
 
   require Logger
 

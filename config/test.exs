@@ -24,8 +24,8 @@ config :logger,
 # Configure your database
 config :mobilizon, Mobilizon.Storage.Repo,
   types: Mobilizon.Storage.PostgresTypes,
-  username: System.get_env("MOBILIZON_DATABASE_USERNAME") || "mobilizon",
-  password: System.get_env("MOBILIZON_DATABASE_PASSWORD") || "mobilizon",
+  username: System.get_env("MOBILIZON_DATABASE_USERNAME") || "postgres",
+  password: System.get_env("MOBILIZON_DATABASE_PASSWORD") || "postgres",
   database: System.get_env("MOBILIZON_DATABASE_DBNAME") || "mobilizon_test",
   hostname: System.get_env("MOBILIZON_DATABASE_HOST") || "localhost",
   pool: Ecto.Adapters.SQL.Sandbox

@@ -12,7 +12,8 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
 
   alias Mobilizon.{Actors, Config}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Service.ActivityPub
+
+  alias Mobilizon.Federation.ActivityPub
 
   alias MobilizonWeb.ActivityPub.ActorView
   alias MobilizonWeb.Endpoint
@@ -318,7 +319,7 @@ defmodule MobilizonWeb.ActivityPubControllerTest do
   #    test "it returns the following in a collection", %{conn: conn} do
   #      actor = insert(:actor)
   #      actor2 = insert(:actor)
-  #      Mobilizon.Service.ActivityPub.follow(actor, actor2)
+  #      Mobilizon.Federation.ActivityPub.follow(actor, actor2)
 
   #      result =
   #        conn

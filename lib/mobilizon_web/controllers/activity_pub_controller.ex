@@ -7,8 +7,9 @@ defmodule MobilizonWeb.ActivityPubController do
   use MobilizonWeb, :controller
 
   alias Mobilizon.{Actors, Actors.Actor, Config}
-  alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.Federator
+
+  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Federator
 
   alias MobilizonWeb.ActivityPub.ActorView
   alias MobilizonWeb.Cache

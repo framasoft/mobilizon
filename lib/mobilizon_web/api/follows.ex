@@ -5,8 +5,9 @@ defmodule MobilizonWeb.API.Follows do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Follower}
-  alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Activity
+
+  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Activity
 
   require Logger
 
