@@ -12,7 +12,7 @@ defmodule MobilizonWeb.WebFingerController do
 
   alias Mobilizon.Federation.WebFinger
 
-  plug(Mobilizon.Federation.Plugs.Federating)
+  plug(MobilizonWeb.Plugs.Federating)
 
   @doc """
   Provides /.well-known/host-meta

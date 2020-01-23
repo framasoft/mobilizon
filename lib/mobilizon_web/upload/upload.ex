@@ -27,7 +27,7 @@ defmodule MobilizonWeb.Upload do
 
   Related behaviors:
 
-  * `MobilizonWeb.Uploaders.Uploader`
+  * `MobilizonWeb.Upload.Uploader`
   * `MobilizonWeb.Upload.Filter`
 
   """
@@ -36,7 +36,7 @@ defmodule MobilizonWeb.Upload do
 
   alias Mobilizon.Config
 
-  alias MobilizonWeb.{MIME, Upload, Uploaders}
+  alias MobilizonWeb.Upload.{Filter, MIME, Uploader}
 
   require Logger
 
@@ -69,8 +69,8 @@ defmodule MobilizonWeb.Upload do
 
     with {:ok, upload} <- prepare_upload(upload, opts),
          upload = %__MODULE__{upload | path: upload.path || "#{upload.id}/#{upload.name}"},
-         {:ok, upload} <- Upload.Filter.filter(opts.filters, upload),
-         {:ok, url_spec} <- Uploaders.Uploader.put_file(opts.uploader, upload) do
+         {:ok, upload} <- Filter.filter(opts.filters, upload),
+         {:ok, url_spec} <- Uploader.put_file(opts.uploader, upload) do
       {:ok,
        %{
          name: Map.get(opts, :description) || upload.name,
@@ -92,7 +92,7 @@ defmodule MobilizonWeb.Upload do
     with opts <- get_opts(opts),
          %URI{path: "/media/" <> path, host: host} <- URI.parse(url),
          {:same_host, true} <- {:same_host, host == MobilizonWeb.Endpoint.host()} do
-      Uploaders.Uploader.remove_file(opts.uploader, path)
+      Uploader.remove_file(opts.uploader, path)
     else
       %URI{} = _uri ->
         {:error, "URL doesn't match pattern"}

@@ -1,11 +1,3 @@
-import EctoEnum
-
-defenum(Mobilizon.Admin.ActionLogAction, [
-  "update",
-  "create",
-  "delete"
-])
-
 defmodule Mobilizon.Admin.ActionLog do
   @moduledoc """
   Represents an action log entity.

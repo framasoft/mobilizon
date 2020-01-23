@@ -6,7 +6,7 @@ defmodule MobilizonWeb.Router do
 
   pipeline :graphql do
     #    plug(:accepts, ["json"])
-    plug(MobilizonWeb.AuthPipeline)
+    plug(MobilizonWeb.Auth.Pipeline)
   end
 
   pipeline :well_known do
@@ -14,13 +14,13 @@ defmodule MobilizonWeb.Router do
   end
 
   pipeline :activity_pub_signature do
-    plug(Mobilizon.Federation.Plugs.HTTPSignatures)
-    plug(Mobilizon.Federation.Plugs.MappedSignatureToIdentity)
+    plug(MobilizonWeb.Plugs.HTTPSignatures)
+    plug(MobilizonWeb.Plugs.MappedSignatureToIdentity)
   end
 
   pipeline :relay do
-    plug(Mobilizon.Federation.Plugs.HTTPSignatures)
-    plug(Mobilizon.Federation.Plugs.MappedSignatureToIdentity)
+    plug(MobilizonWeb.Plugs.HTTPSignatures)
+    plug(MobilizonWeb.Plugs.MappedSignatureToIdentity)
     plug(:accepts, ["activity-json", "json"])
   end
 
@@ -58,7 +58,7 @@ defmodule MobilizonWeb.Router do
     )
   end
 
-  forward("/graphiql", Absinthe.Plug.GraphiQL, schema: MobilizonWeb.Schema)
+  ## FEDERATION
 
   scope "/.well-known", MobilizonWeb do
     pipe_through(:well_known)
@@ -67,28 +67,6 @@ defmodule MobilizonWeb.Router do
     get("/webfinger", WebFingerController, :webfinger)
     get("/nodeinfo", NodeInfoController, :schemas)
     get("/nodeinfo/:version", NodeInfoController, :nodeinfo)
-  end
-
-  scope "/", MobilizonWeb do
-    pipe_through(:atom_and_ical)
-
-    get("/@:name/feed/:format", FeedController, :actor)
-    get("/events/:uuid/export/:format", FeedController, :event)
-    get("/events/going/:token/:format", FeedController, :going)
-  end
-
-  scope "/", MobilizonWeb do
-    pipe_through(:browser)
-
-    # Because the "/events/:uuid" route caches all these, we need to force them
-    get("/events/create", PageController, :index)
-    get("/events/list", PageController, :index)
-    get("/events/me", PageController, :index)
-    get("/events/explore", PageController, :index)
-    get("/events/:uuid/edit", PageController, :index)
-
-    # This is a hack to ease link generation into emails
-    get("/moderation/reports/:id", PageController, :index, as: "moderation_report")
   end
 
   scope "/", MobilizonWeb do
@@ -119,6 +97,34 @@ defmodule MobilizonWeb.Router do
 
     get("/", ActivityPubController, :relay)
     post("/inbox", ActivityPubController, :inbox)
+  end
+
+  ## FEED
+
+  scope "/", MobilizonWeb do
+    pipe_through(:atom_and_ical)
+
+    get("/@:name/feed/:format", FeedController, :actor)
+    get("/events/:uuid/export/:format", FeedController, :event)
+    get("/events/going/:token/:format", FeedController, :going)
+  end
+
+  ## MOBILIZON
+
+  forward("/graphiql", Absinthe.Plug.GraphiQL, schema: MobilizonWeb.Schema)
+
+  scope "/", MobilizonWeb do
+    pipe_through(:browser)
+
+    # Because the "/events/:uuid" route caches all these, we need to force them
+    get("/events/create", PageController, :index)
+    get("/events/list", PageController, :index)
+    get("/events/me", PageController, :index)
+    get("/events/explore", PageController, :index)
+    get("/events/:uuid/edit", PageController, :index)
+
+    # This is a hack to ease link generation into emails
+    get("/moderation/reports/:id", PageController, :index, as: "moderation_report")
   end
 
   scope "/proxy/", MobilizonWeb do

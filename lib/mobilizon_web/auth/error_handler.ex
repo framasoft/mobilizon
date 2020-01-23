@@ -1,4 +1,4 @@
-defmodule MobilizonWeb.AuthErrorHandler do
+defmodule MobilizonWeb.Auth.ErrorHandler do
   @moduledoc """
   In case we have an auth error
   """

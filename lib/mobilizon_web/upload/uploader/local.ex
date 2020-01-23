@@ -3,12 +3,12 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/lib/pleroma/uploaders/local.ex
 
-defmodule MobilizonWeb.Uploaders.Local do
+defmodule MobilizonWeb.Upload.Uploader.Local do
   @moduledoc """
   Local uploader for files
   """
 
-  @behaviour MobilizonWeb.Uploaders.Uploader
+  @behaviour MobilizonWeb.Upload.Uploader
 
   alias Mobilizon.Config
 

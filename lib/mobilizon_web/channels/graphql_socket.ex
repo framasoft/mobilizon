@@ -8,7 +8,7 @@ defmodule MobilizonWeb.GraphQLSocket do
 
   def connect(%{"token" => token}, socket) do
     with {:ok, authed_socket} <-
-           Guardian.Phoenix.Socket.authenticate(socket, MobilizonWeb.Guardian, token),
+           Guardian.Phoenix.Socket.authenticate(socket, MobilizonWeb.Auth.Guardian, token),
          %User{} = user <- Guardian.Phoenix.Socket.current_resource(authed_socket) do
       authed_socket =
         Absinthe.Phoenix.Socket.put_options(socket,

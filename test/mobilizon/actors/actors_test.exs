@@ -14,6 +14,8 @@ defmodule Mobilizon.ActorsTest do
 
   alias Mobilizon.Federation.ActivityPub
 
+  alias MobilizonWeb.Upload.Uploader
+
   describe "actors" do
     @valid_attrs %{
       summary: "some description",
@@ -241,12 +243,12 @@ defmodule Mobilizon.ActorsTest do
       %URI{path: "/media/" <> banner_path} = URI.parse(banner_url)
 
       assert File.exists?(
-               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> avatar_path
              )
 
       assert File.exists?(
-               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> banner_path
              )
 
@@ -271,12 +273,12 @@ defmodule Mobilizon.ActorsTest do
       refute actor.suspended
 
       refute File.exists?(
-               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> avatar_path
              )
 
       assert File.exists?(
-               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> banner_path
              )
     end
@@ -300,12 +302,12 @@ defmodule Mobilizon.ActorsTest do
       %URI{path: "/media/" <> banner_path} = URI.parse(banner_url)
 
       assert File.exists?(
-               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> avatar_path
              )
 
       assert File.exists?(
-               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> banner_path
              )
 
@@ -334,12 +336,12 @@ defmodule Mobilizon.ActorsTest do
       assert %Tombstone{} = Tombstone.find_tombstone(comment1_url)
 
       refute File.exists?(
-               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> avatar_path
              )
 
       refute File.exists?(
-               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> banner_path
              )
     end

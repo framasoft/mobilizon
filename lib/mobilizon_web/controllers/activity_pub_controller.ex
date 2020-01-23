@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/lib/pleroma/web/activity_pub/activity_pub_controller.ex
 
-defmodule Mobilizon.Federation.ActivityPubController do
-  use Mobilizon.Federation, :controller
+defmodule MobilizonWeb.ActivityPubController do
+  use MobilizonWeb, :controller
 
   alias Mobilizon.{Actors, Config}
   alias Mobilizon.Actors.Actor
@@ -19,7 +19,7 @@ defmodule Mobilizon.Federation.ActivityPubController do
 
   action_fallback(:errors)
 
-  plug(Mobilizon.Federation.Plugs.Federating when action in [:inbox, :relay])
+  plug(MobilizonWeb.Plugs.Federating when action in [:inbox, :relay])
   plug(:relay_active? when action in [:relay])
 
   def relay_active?(conn, _) do

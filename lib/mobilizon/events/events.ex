@@ -7,9 +7,10 @@ defmodule Mobilizon.Events do
 
   import Ecto.Query
   import EctoEnum
-  alias Ecto.{Multi, Changeset}
 
   import Mobilizon.Storage.Ecto
+
+  alias Ecto.{Multi, Changeset}
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
@@ -331,14 +332,14 @@ defmodule Mobilizon.Events do
            |> Repo.transaction() do
       Cachex.del(:ics, "event_#{new_event.uuid}")
 
-      Email.Events.calculate_event_diff_and_send_notifications(
+      Email.Event.calculate_event_diff_and_send_notifications(
         old_event,
         new_event,
         changes
       )
 
       unless new_event.draft,
-        do: BuildSearch.enqueue(:update_search_event, %{"event_id" => new_event.id})
+        do: Workers.BuildSearch.enqueue(:update_search_event, %{"event_id" => new_event.id})
 
       {:ok, Repo.preload(new_event, @event_preloads)}
     end

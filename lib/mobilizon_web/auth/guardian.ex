@@ -1,7 +1,8 @@
-defmodule MobilizonWeb.Guardian do
+defmodule MobilizonWeb.Auth.Guardian do
   @moduledoc """
   Handles the JWT tokens encoding and decoding
   """
+
   use Guardian,
     otp_app: :mobilizon,
     permissions: %{
@@ -11,6 +12,7 @@ defmodule MobilizonWeb.Guardian do
 
   alias Mobilizon.Users
   alias Mobilizon.Users.User
+
   require Logger
 
   def subject_for_token(%User{} = user, _claims) do

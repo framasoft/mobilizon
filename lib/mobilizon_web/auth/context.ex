@@ -1,10 +1,11 @@
-defmodule MobilizonWeb.Context do
+defmodule MobilizonWeb.Auth.Context do
   @moduledoc """
   Guardian context for MobilizonWeb
   """
   @behaviour Plug
 
   import Plug.Conn
+
   alias Mobilizon.Users.User
 
   def init(opts) do
@@ -17,8 +18,7 @@ defmodule MobilizonWeb.Context do
     context =
       case Guardian.Plug.current_resource(conn) do
         %User{} = user ->
-          context
-          |> Map.put(:current_user, user)
+          Map.put(context, :current_user, user)
 
         nil ->
           context

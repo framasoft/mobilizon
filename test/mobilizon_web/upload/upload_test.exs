@@ -9,6 +9,7 @@ defmodule Mobilizon.UploadTest do
   alias Mobilizon.Config
 
   alias MobilizonWeb.Upload
+  alias MobilizonWeb.Upload.Uploader
 
   describe "Storing a file with the Local uploader" do
     setup [:ensure_local_uploader]
@@ -184,7 +185,7 @@ defmodule Mobilizon.UploadTest do
 
     test "delete a not existing file" do
       file =
-        Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+        Config.get!([Uploader.Local, :uploads]) <>
           "/not_existing/definitely.jpg"
 
       refute File.exists?(file)
@@ -214,6 +215,6 @@ defmodule Mobilizon.UploadTest do
     assert String.starts_with?(url, MobilizonWeb.Endpoint.url() <> "/media/")
 
     %URI{path: "/media/" <> path} = URI.parse(url)
-    {Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <> "/" <> path, url}
+    {Config.get!([Uploader.Local, :uploads]) <> "/" <> path, url}
   end
 end

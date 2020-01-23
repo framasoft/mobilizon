@@ -1,6 +1,6 @@
 defmodule MobilizonWeb.Cache.ActivityPub do
   @moduledoc """
-  The ActivityPub related functions.
+  ActivityPub related cache.
   """
 
   alias Mobilizon.{Actors, Events, Tombstone}
@@ -9,8 +9,8 @@ defmodule MobilizonWeb.Cache.ActivityPub do
 
   alias Mobilizon.Federation.ActivityPub.Relay
 
-  alias MobilizonWeb.Router.Helpers, as: Routes
   alias MobilizonWeb.Endpoint
+  alias MobilizonWeb.Router.Helpers, as: Routes
 
   @cache :activity_pub
 

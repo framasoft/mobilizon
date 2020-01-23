@@ -24,8 +24,8 @@ config :logger,
 # Configure your database
 config :mobilizon, Mobilizon.Storage.Repo,
   types: Mobilizon.Storage.PostgresTypes,
-  username: System.get_env("MOBILIZON_DATABASE_USERNAME") || "postgres",
-  password: System.get_env("MOBILIZON_DATABASE_PASSWORD") || "postgres",
+  username: System.get_env("MOBILIZON_DATABASE_USERNAME") || "mobilizon",
+  password: System.get_env("MOBILIZON_DATABASE_PASSWORD") || "mobilizon",
   database: System.get_env("MOBILIZON_DATABASE_DBNAME") || "mobilizon_test",
   hostname: System.get_env("MOBILIZON_DATABASE_HOST") || "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
@@ -34,7 +34,7 @@ config :mobilizon, MobilizonWeb.Email.Mailer, adapter: Bamboo.TestAdapter
 
 config :mobilizon, MobilizonWeb.Upload, filters: [], link_name: false
 
-config :mobilizon, MobilizonWeb.Uploaders.Local, uploads: "test/uploads"
+config :mobilizon, MobilizonWeb.Upload.Uploader.Local, uploads: "test/uploads"
 
 config :exvcr,
   vcr_cassette_library_dir: "test/fixtures/vcr_cassettes"
