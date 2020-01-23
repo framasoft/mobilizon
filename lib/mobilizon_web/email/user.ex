@@ -149,9 +149,9 @@ defmodule MobilizonWeb.Email.User do
 
       _ ->
         case Timex.before?(
-              Timex.shift(Map.get(user, key), hours: 1),
-              DateTime.utc_now() |> DateTime.truncate(:second)
-            ) do
+               Timex.shift(Map.get(user, key), hours: 1),
+               DateTime.utc_now() |> DateTime.truncate(:second)
+             ) do
           true ->
             :ok
 

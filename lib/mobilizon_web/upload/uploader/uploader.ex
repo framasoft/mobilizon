@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/lib/pleroma/uploaders/uploader.ex
 
-defmodule MobilizonWeb.Uploaders.Uploader do
+defmodule MobilizonWeb.Upload.Uploader do
   @moduledoc """
   Defines the contract to put and get an uploaded file to any backend.
   """

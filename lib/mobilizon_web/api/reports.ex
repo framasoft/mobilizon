@@ -3,12 +3,10 @@ defmodule MobilizonWeb.API.Reports do
   API for Reports.
   """
 
-  import Mobilizon.Service.Admin.ActionLog
-
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.{Admin, Users}
   alias Mobilizon.Reports, as: ReportsAction
   alias Mobilizon.Reports.{Note, Report, ReportStatus}
-  alias Mobilizon.Users
   alias Mobilizon.Users.User
 
   alias Mobilizon.Federation.ActivityPub
@@ -34,7 +32,7 @@ defmodule MobilizonWeb.API.Reports do
     with {:valid_state, true} <-
            {:valid_state, ReportStatus.valid_value?(state)},
          {:ok, report} <- ReportsAction.update_report(report, %{"status" => state}),
-         {:ok, _} <- log_action(actor, "update", report) do
+         {:ok, _} <- Admin.log_action(actor, "update", report) do
       {:ok, report}
     else
       {:valid_state, false} -> {:error, "Unsupported state"}
@@ -58,7 +56,7 @@ defmodule MobilizonWeb.API.Reports do
              "moderator_id" => moderator_id,
              "content" => content
            }),
-         {:ok, _} <- log_action(moderator, "create", note) do
+         {:ok, _} <- Admin.log_action(moderator, "create", note) do
       {:ok, note}
     else
       {:role, false} ->
@@ -79,7 +77,7 @@ defmodule MobilizonWeb.API.Reports do
          {:role, true} <- {:role, role in [:administrator, :moderator]},
          {:ok, %Note{} = note} <-
            Mobilizon.Reports.delete_note(note),
-         {:ok, _} <- log_action(moderator, "delete", note) do
+         {:ok, _} <- Admin.log_action(moderator, "delete", note) do
       {:ok, note}
     else
       {:role, false} ->

@@ -14,4 +14,3 @@ defmodule Mobilizon.Service.Formatter.HTML do
 
   def filter_tags(html), do: Scrubber.scrub(html, DefaultScrubbler)
 end
-

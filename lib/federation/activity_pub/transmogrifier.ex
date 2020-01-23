@@ -221,7 +221,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         %{"type" => "Update", "object" => %{"type" => "Event"} = object, "actor" => _actor} =
           update_data
       ) do
-        with actor <- Utils.get_actor(update_data),
+    with actor <- Utils.get_actor(update_data),
          {:ok, %Actor{url: actor_url}} <- Actors.get_actor_by_url(actor),
          {:ok, %Event{} = old_event} <-
            object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
@@ -289,7 +289,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     with actor <- Utils.get_actor(data),
          {:ok, %Actor{url: actor_url}} <- Actors.get_actor_by_url(actor),
          object_id <- Utils.get_url(object),
-         {:origin_check, true} <- {:origin_check, Utils.origin_check_from_id?(actor_url, object_id)},
+         {:origin_check, true} <-
+           {:origin_check, Utils.origin_check_from_id?(actor_url, object_id)},
          {:ok, object} <- ActivityPub.fetch_object_from_url(object_id),
          {:ok, activity, object} <- ActivityPub.delete(object, false) do
       {:ok, activity, object}

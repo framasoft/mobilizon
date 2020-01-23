@@ -3,10 +3,10 @@
 # Copyright © 2017-2019 Pleroma Authors <https://pleroma.social/>
 # SPDX-License-Identifier: AGPL-3.0-only
 
-defmodule Mobilizon.Federation.Plug.FederatingTest do
+defmodule MobilizonWeb.Plug.FederatingTest do
   use MobilizonWeb.ConnCase
 
-  alias Mobilizon.Federation.Plugs.Federating
+  alias MobilizonWeb.Plugs.Federating
 
   test "returns and halt the conn when federating is disabled" do
     Mobilizon.Config.put([:instance, :federating], false)

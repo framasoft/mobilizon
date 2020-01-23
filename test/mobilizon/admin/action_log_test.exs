@@ -6,8 +6,8 @@ defmodule Mobilizon.Service.Admin.ActionLogTest do
   use Mobilizon.DataCase
 
   import Mobilizon.Factory
-  import Mobilizon.Service.Admin.ActionLog
 
+  alias Mobilizon.Admin
   alias Mobilizon.Admin.ActionLog
   alias Mobilizon.Reports.{Note, Report}
 
@@ -27,7 +27,7 @@ defmodule Mobilizon.Service.Admin.ActionLogTest do
                 target_id: report_id,
                 action: :update,
                 actor: moderator
-              }} = log_action(moderator, "update", report)
+              }} = Admin.log_action(moderator, "update", report)
     end
 
     test "log the creation of a report note", %{moderator: moderator} do
@@ -40,7 +40,7 @@ defmodule Mobilizon.Service.Admin.ActionLogTest do
                 target_id: note_id,
                 action: :create,
                 actor: moderator
-              }} = log_action(moderator, "create", report)
+              }} = Admin.log_action(moderator, "create", report)
     end
   end
 end

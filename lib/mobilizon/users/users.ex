@@ -13,6 +13,8 @@ defmodule Mobilizon.Users do
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.User
 
+  alias MobilizonWeb.Auth
+
   @type tokens :: %{
           required(:access_token) => String.t(),
           required(:refresh_token) => String.t()
@@ -247,7 +249,7 @@ defmodule Mobilizon.Users do
   @spec generate_access_token(User.t()) :: {:ok, String.t()}
   def generate_access_token(user) do
     with {:ok, access_token, _claims} <-
-           MobilizonWeb.Guardian.encode_and_sign(user, %{}, token_type: "access") do
+           Auth.Guardian.encode_and_sign(user, %{}, token_type: "access") do
       {:ok, access_token}
     end
   end
@@ -258,7 +260,7 @@ defmodule Mobilizon.Users do
   @spec generate_refresh_token(User.t()) :: {:ok, String.t()}
   def generate_refresh_token(user) do
     with {:ok, refresh_token, _claims} <-
-           MobilizonWeb.Guardian.encode_and_sign(user, %{}, token_type: "refresh") do
+           Auth.Guardian.encode_and_sign(user, %{}, token_type: "refresh") do
       {:ok, refresh_token}
     end
   end

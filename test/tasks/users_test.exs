@@ -1,10 +1,11 @@
 defmodule Mix.Tasks.Mobilizon.UsersTest do
   use Mobilizon.DataCase
 
+  import Mobilizon.Factory
+
   alias Mobilizon.Users
   alias Mobilizon.Users.User
   alias Mix.Tasks.Mobilizon.Users.{New, Delete, Show, Modify}
-  import Mobilizon.Factory
 
   Mix.shell(Mix.Shell.Process)
 

@@ -9,6 +9,7 @@ defmodule Mobilizon.Service.Workers.Helper do
   """
 
   alias Mobilizon.Config
+  alias Mobilizon.Service.Workers.Helper
   alias Mobilizon.Storage.Repo
 
   def worker_args(queue) do
@@ -40,7 +41,7 @@ defmodule Mobilizon.Service.Workers.Helper do
       def enqueue(operation, params, worker_args \\ []) do
         params = Map.merge(%{"op" => operation}, params)
         queue_atom = String.to_existing_atom(unquote(queue))
-        worker_args = worker_args ++ __MODULE__.worker_args(queue_atom)
+        worker_args = worker_args ++ Helper.worker_args(queue_atom)
 
         unquote(caller_module)
         |> apply(:new, [params, worker_args])

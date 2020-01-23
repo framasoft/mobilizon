@@ -158,7 +158,11 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
 
       assert json_response(res, 200)["data"]["createEvent"]["title"] == "come to my event"
       {id, ""} = json_response(res, 200)["data"]["createEvent"]["id"] |> Integer.parse()
-      assert_enqueued(worker: Workers.BuildSearch, args: %{event_id: id, op: :insert_search_event})
+
+      assert_enqueued(
+        worker: Workers.BuildSearch,
+        args: %{event_id: id, op: :insert_search_event}
+      )
     end
 
     test "create_event/3 creates an event and escapes title and description", %{
@@ -204,7 +208,11 @@ defmodule MobilizonWeb.Resolvers.EventResolverTest do
                "<b>My description</b> <img src=\"http://placekitten.com/g/200/300\" />"
 
       {id, ""} = res["data"]["createEvent"]["id"] |> Integer.parse()
-      assert_enqueued(worker: Workers.BuildSearch, args: %{event_id: id, op: :insert_search_event})
+
+      assert_enqueued(
+        worker: Workers.BuildSearch,
+        args: %{event_id: id, op: :insert_search_event}
+      )
     end
 
     test "create_event/3 creates an event as a draft", %{conn: conn, actor: actor, user: user} do

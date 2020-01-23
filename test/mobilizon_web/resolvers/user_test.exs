@@ -5,10 +5,8 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
   use Bamboo.Test
 
-  alias Mobilizon.{Actors, Users}
+  alias Mobilizon.{Actors, Config, Users}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Service.Users.ResetPassword
-  alias Mobilizon.Users
   alias Mobilizon.Users.User
 
   alias MobilizonWeb.{AbsintheHelpers, Email}
@@ -321,8 +319,8 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
     end
 
     test "create_user/3 doesn't allow registration when registration is closed", %{conn: conn} do
-      Mobilizon.Config.put([:instance, :registrations_open], false)
-      Mobilizon.Config.put([:instance, :registration_email_whitelist], [])
+      Config.put([:instance, :registrations_open], false)
+      Config.put([:instance, :registration_email_whitelist], [])
 
       mutation = """
           mutation createUser($email: String!, $password: String!) {
@@ -344,14 +342,14 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
         )
 
       assert hd(res["errors"])["message"] == "Registrations are not enabled"
-      Mobilizon.Config.put([:instance, :registrations_open], true)
+      Config.put([:instance, :registrations_open], true)
     end
 
     test "create_user/3 doesn't allow registration when user email is not on the whitelist", %{
       conn: conn
     } do
-      Mobilizon.Config.put([:instance, :registrations_open], false)
-      Mobilizon.Config.put([:instance, :registration_email_whitelist], ["random.org"])
+      Config.put([:instance, :registrations_open], false)
+      Config.put([:instance, :registration_email_whitelist], ["random.org"])
 
       mutation = """
           mutation createUser($email: String!, $password: String!) {
@@ -373,15 +371,15 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
         )
 
       assert hd(res["errors"])["message"] == "Your email is not on the whitelist"
-      Mobilizon.Config.put([:instance, :registrations_open], true)
-      Mobilizon.Config.put([:instance, :registration_email_whitelist], [])
+      Config.put([:instance, :registrations_open], true)
+      Config.put([:instance, :registration_email_whitelist], [])
     end
 
     test "create_user/3 allows registration when user email domain is on the whitelist", %{
       conn: conn
     } do
-      Mobilizon.Config.put([:instance, :registrations_open], false)
-      Mobilizon.Config.put([:instance, :registration_email_whitelist], ["demo.tld"])
+      Config.put([:instance, :registrations_open], false)
+      Config.put([:instance, :registration_email_whitelist], ["demo.tld"])
 
       mutation = """
           mutation createUser($email: String!, $password: String!) {
@@ -404,13 +402,13 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
       refute res["errors"]
       assert res["data"]["createUser"]["email"] == @user_creation.email
-      Mobilizon.Config.put([:instance, :registrations_open], true)
-      Mobilizon.Config.put([:instance, :registration_email_whitelist], [])
+      Config.put([:instance, :registrations_open], true)
+      Config.put([:instance, :registration_email_whitelist], [])
     end
 
     test "create_user/3 allows registration when user email is on the whitelist", %{conn: conn} do
-      Mobilizon.Config.put([:instance, :registrations_open], false)
-      Mobilizon.Config.put([:instance, :registration_email_whitelist], [@user_creation.email])
+      Config.put([:instance, :registrations_open], false)
+      Config.put([:instance, :registration_email_whitelist], [@user_creation.email])
 
       mutation = """
           mutation createUser($email: String!, $password: String!) {
@@ -433,8 +431,8 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
       refute res["errors"]
       assert res["data"]["createUser"]["email"] == @user_creation.email
-      Mobilizon.Config.put([:instance, :registrations_open], true)
-      Mobilizon.Config.put([:instance, :registration_email_whitelist], [])
+      Config.put([:instance, :registrations_open], true)
+      Config.put([:instance, :registration_email_whitelist], [])
     end
 
     test "register_person/3 doesn't register a profile from an unknown email", context do
@@ -637,7 +635,7 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
                "You requested again a confirmation email too soon"
 
       # Hammer time !
-      Mobilizon.Users.update_user(user, %{
+      Users.update_user(user, %{
         confirmation_sent_at: Timex.shift(user.confirmation_sent_at, hours: -3)
       })
 
@@ -709,8 +707,8 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
     test "test reset_password/3 with valid email", context do
       {:ok, %User{} = user} = Users.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
       %Actor{} = insert(:actor, user: user)
-      {:ok, _email_sent} = ResetPassword.send_password_reset_email(user)
-      %User{reset_password_token: reset_password_token} = Mobilizon.Users.get_user!(user.id)
+      {:ok, _email_sent} = Email.User.send_password_reset_email(user)
+      %User{reset_password_token: reset_password_token} = Users.get_user!(user.id)
 
       mutation = """
           mutation {
@@ -734,8 +732,8 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
     test "test reset_password/3 with a password too short", context do
       %User{} = user = insert(:user)
-      {:ok, _email_sent} = ResetPassword.send_password_reset_email(user)
-      %User{reset_password_token: reset_password_token} = Mobilizon.Users.get_user!(user.id)
+      {:ok, _email_sent} = Email.User.send_password_reset_email(user)
+      %User{reset_password_token: reset_password_token} = Users.get_user!(user.id)
 
       mutation = """
           mutation {
@@ -760,8 +758,8 @@ defmodule MobilizonWeb.Resolvers.UserResolverTest do
 
     test "test reset_password/3 with an invalid token", context do
       %User{} = user = insert(:user)
-      {:ok, _email_sent} = ResetPassword.send_password_reset_email(user)
-      %User{} = Mobilizon.Users.get_user!(user.id)
+      {:ok, _email_sent} = Email.User.send_password_reset_email(user)
+      %User{} = Users.get_user!(user.id)
 
       mutation = """
           mutation {

@@ -5,6 +5,8 @@ defmodule Mobilizon.MediaTest do
 
   alias Mobilizon.{Config, Media}
 
+  alias MobilizonWeb.Upload.Uploader
+
   describe "media" do
     setup [:ensure_local_uploader]
     alias Mobilizon.Media.Picture
@@ -49,7 +51,7 @@ defmodule Mobilizon.MediaTest do
       %URI{path: "/media/" <> path} = URI.parse(picture.file.url)
 
       assert File.exists?(
-               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> path
              )
 
@@ -57,7 +59,7 @@ defmodule Mobilizon.MediaTest do
       assert_raise Ecto.NoResultsError, fn -> Media.get_picture!(picture.id) end
 
       refute File.exists?(
-               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> path
              )
     end

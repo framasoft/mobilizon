@@ -3,9 +3,7 @@ defmodule MobilizonWeb.Resolvers.Comment do
   Handles the comment-related GraphQL calls.
   """
 
-  import Mobilizon.Service.Admin.ActionLog
-
-  alias Mobilizon.Actors
+  alias Mobilizon.{Actors, Admin, Events}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Events.Comment, as: CommentModel
@@ -49,7 +47,7 @@ defmodule MobilizonWeb.Resolvers.Comment do
         role in [:moderator, :administrator] ->
           with {:ok, res} <- do_delete_comment(comment),
                %Actor{} = actor <- Actors.get_actor(actor_id) do
-            log_action(actor, "delete", comment)
+            Admin.log_action(actor, "delete", comment)
 
             {:ok, res}
           end

@@ -30,7 +30,7 @@ defmodule MobilizonWeb.ConnCase do
       @endpoint MobilizonWeb.Endpoint
 
       def auth_conn(%Plug.Conn{} = conn, %User{} = user) do
-        {:ok, token, _claims} = MobilizonWeb.Guardian.encode_and_sign(user)
+        {:ok, token, _claims} = MobilizonWeb.Auth.Guardian.encode_and_sign(user)
 
         conn
         |> Plug.Conn.put_req_header("authorization", "Bearer #{token}")
