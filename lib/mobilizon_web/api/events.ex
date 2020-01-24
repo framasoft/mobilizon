@@ -5,9 +5,9 @@ defmodule MobilizonWeb.API.Events do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Event
-  alias Mobilizon.Service.ActivityPub
-  alias Mobilizon.Service.ActivityPub.Activity
-  alias Mobilizon.Service.ActivityPub.Utils
+
+  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.{Activity, Utils}
 
   @doc """
   Create an event

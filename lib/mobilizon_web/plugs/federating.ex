@@ -7,6 +7,7 @@ defmodule MobilizonWeb.Plugs.Federating do
   @moduledoc """
   Restrict ActivityPub routes when not federating
   """
+
   import Plug.Conn
 
   def init(options) do

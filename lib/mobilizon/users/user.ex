@@ -10,8 +10,9 @@ defmodule Mobilizon.Users.User do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Crypto
   alias Mobilizon.Events.FeedToken
-  alias Mobilizon.Service.EmailChecker
   alias Mobilizon.Users.UserRole
+
+  alias MobilizonWeb.Email
 
   @type t :: %__MODULE__{
           email: String.t(),
@@ -176,7 +177,7 @@ defmodule Mobilizon.Users.User do
 
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{email: email}} ->
-        case EmailChecker.valid?(email) do
+        case Email.Checker.valid?(email) do
           false ->
             add_error(changeset, :email, "Email doesn't fit required format")
 

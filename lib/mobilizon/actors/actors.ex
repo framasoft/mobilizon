@@ -11,9 +11,10 @@ defmodule Mobilizon.Actors do
   alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
   alias Mobilizon.{Crypto, Events}
   alias Mobilizon.Media.File
+  alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.{Page, Repo}
-  alias Mobilizon.Service.Workers.BackgroundWorker
-  alias Mobilizon.Service.ActivityPub
+
+  alias Mobilizon.Federation.ActivityPub
 
   require Logger
 
@@ -228,7 +229,7 @@ defmodule Mobilizon.Actors do
   end
 
   def delete_actor(%Actor{} = actor) do
-    BackgroundWorker.enqueue("delete_actor", %{"actor_id" => actor.id})
+    Workers.Background.enqueue("delete_actor", %{"actor_id" => actor.id})
   end
 
   @doc """

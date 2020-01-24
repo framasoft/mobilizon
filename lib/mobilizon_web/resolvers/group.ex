@@ -5,8 +5,9 @@ defmodule MobilizonWeb.Resolvers.Group do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Member}
-  alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Users.User
+
+  alias Mobilizon.Federation.ActivityPub
 
   alias MobilizonWeb.API
   alias MobilizonWeb.Resolvers.Person

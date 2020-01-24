@@ -7,13 +7,13 @@ defmodule Mobilizon.Events do
 
   import Ecto.Query
   import EctoEnum
-  alias Ecto.{Multi, Changeset}
 
   import Mobilizon.Storage.Ecto
 
+  alias Ecto.{Multi, Changeset}
+
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.Service.Workers.BuildSearchWorker
 
   alias Mobilizon.Events.{
     Comment,
@@ -27,8 +27,11 @@ defmodule Mobilizon.Events do
     Track
   }
 
+  alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.User
+
+  alias MobilizonWeb.Email
 
   defenum(EventVisibility, :event_visibility, [
     :public,
@@ -264,7 +267,7 @@ defmodule Mobilizon.Events do
     with {:ok, %{insert: %Event{} = event}} <- do_create_event(attrs),
          %Event{} = event <- Repo.preload(event, @event_preloads) do
       unless event.draft,
-        do: BuildSearchWorker.enqueue(:insert_search_event, %{"event_id" => event.id})
+        do: Workers.BuildSearch.enqueue(:insert_search_event, %{"event_id" => event.id})
 
       {:ok, event}
     else
@@ -308,10 +311,7 @@ defmodule Mobilizon.Events do
            Event.update_changeset(Repo.preload(old_event, :tags), attrs),
          {:ok, %{update: %Event{} = new_event}} <-
            Multi.new()
-           |> Multi.update(
-             :update,
-             changeset
-           )
+           |> Multi.update(:update, changeset)
            |> Multi.run(:write, fn _repo, %{update: %Event{draft: draft} = event} ->
              with {:was_draft, true} <- {:was_draft, old_draft == true && draft == false},
                   {:ok, %Participant{} = participant} <-
@@ -332,14 +332,14 @@ defmodule Mobilizon.Events do
            |> Repo.transaction() do
       Cachex.del(:ics, "event_#{new_event.uuid}")
 
-      Mobilizon.Service.Events.Tool.calculate_event_diff_and_send_notifications(
+      Email.Event.calculate_event_diff_and_send_notifications(
         old_event,
         new_event,
         changes
       )
 
       unless new_event.draft,
-        do: BuildSearchWorker.enqueue(:update_search_event, %{"event_id" => new_event.id})
+        do: Workers.BuildSearch.enqueue(:update_search_event, %{"event_id" => new_event.id})
 
       {:ok, Repo.preload(new_event, @event_preloads)}
     end

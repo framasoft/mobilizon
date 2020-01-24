@@ -44,7 +44,7 @@ config :mobilizon, MobilizonWeb.Endpoint,
 
 # Upload configuration
 config :mobilizon, MobilizonWeb.Upload,
-  uploader: MobilizonWeb.Uploaders.Local,
+  uploader: MobilizonWeb.Upload.Uploader.Local,
   filters: [
     MobilizonWeb.Upload.Filter.Dedupe,
     MobilizonWeb.Upload.Filter.Optimize
@@ -60,7 +60,7 @@ config :mobilizon, MobilizonWeb.Upload,
     ]
   ]
 
-config :mobilizon, MobilizonWeb.Uploaders.Local, uploads: "uploads"
+config :mobilizon, MobilizonWeb.Upload.Uploader.Local, uploads: "uploads"
 
 config :mobilizon, :media_proxy,
   enabled: true,
@@ -78,7 +78,7 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
-config :mobilizon, MobilizonWeb.Guardian,
+config :mobilizon, MobilizonWeb.Auth.Guardian,
   issuer: "mobilizon",
   secret_key: "ty0WM7YBE3ojvxoUQxo8AERrNpfbXnIJ82ovkPdqbUFw31T5LcK8wGjaOiReVQjo"
 
@@ -120,7 +120,7 @@ config :ex_cldr,
   default_backend: Mobilizon.Cldr
 
 config :http_signatures,
-  adapter: Mobilizon.Service.HTTPSignatures.Signature
+  adapter: Mobilizon.Federation.HTTPSignatures.Signature
 
 config :mobilizon, :activitypub, sign_object_fetches: true
 

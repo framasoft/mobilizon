@@ -7,9 +7,10 @@ defmodule MobilizonWeb.Resolvers.User do
 
   alias Mobilizon.{Actors, Config, Users, Events}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Service.Users.{Activation, ResetPassword}
-  alias Mobilizon.Users.User
   alias Mobilizon.Storage.Repo
+  alias Mobilizon.Users.User
+
+  alias MobilizonWeb.{Auth, Email}
 
   require Logger
 
@@ -93,9 +94,9 @@ defmodule MobilizonWeb.Resolvers.User do
         },
         _context
       ) do
-    with {:ok, user, _claims} <- MobilizonWeb.Guardian.resource_from_token(refresh_token),
+    with {:ok, user, _claims} <- Auth.Guardian.resource_from_token(refresh_token),
          {:ok, _old, {exchanged_token, _claims}} <-
-           MobilizonWeb.Guardian.exchange(refresh_token, ["access", "refresh"], "access"),
+           Auth.Guardian.exchange(refresh_token, ["access", "refresh"], "access"),
          {:ok, refresh_token} <- Users.generate_refresh_token(user) do
       {:ok, %{access_token: exchanged_token, refresh_token: refresh_token}}
     else
@@ -118,7 +119,7 @@ defmodule MobilizonWeb.Resolvers.User do
   def create_user(_parent, args, _resolution) do
     with :registration_ok <- check_registration_config(args),
          {:ok, %User{} = user} <- Users.register(args) do
-      Activation.send_confirmation_email(user, Map.get(args, :locale, "en"))
+      Email.User.send_confirmation_email(user, Map.get(args, :locale, "en"))
       {:ok, user}
     else
       :registration_closed ->
@@ -161,7 +162,7 @@ defmodule MobilizonWeb.Resolvers.User do
   """
   def validate_user(_parent, %{token: token}, _resolution) do
     with {:check_confirmation_token, {:ok, %User{} = user}} <-
-           {:check_confirmation_token, Activation.check_confirmation_token(token)},
+           {:check_confirmation_token, Email.User.check_confirmation_token(token)},
          {:get_actor, actor} <- {:get_actor, Users.get_actor_for_user(user)},
          {:ok, %{access_token: access_token, refresh_token: refresh_token}} <-
            Users.generate_tokens(user) do
@@ -187,7 +188,7 @@ defmodule MobilizonWeb.Resolvers.User do
     with {:ok, %User{locale: locale} = user} <-
            Users.get_user_by_email(Map.get(args, :email), false),
          {:ok, email} <-
-           Activation.resend_confirmation_email(user, Map.get(args, :locale, locale)) do
+           Email.User.resend_confirmation_email(user, Map.get(args, :locale, locale)) do
       {:ok, email}
     else
       {:error, :user_not_found} ->
@@ -205,7 +206,7 @@ defmodule MobilizonWeb.Resolvers.User do
     with email <- Map.get(args, :email),
          {:ok, %User{locale: locale} = user} <- Users.get_user_by_email(email, true),
          {:ok, %Bamboo.Email{} = _email_html} <-
-           ResetPassword.send_password_reset_email(user, Map.get(args, :locale, locale)) do
+           Email.User.send_password_reset_email(user, Map.get(args, :locale, locale)) do
       {:ok, email}
     else
       {:error, :user_not_found} ->
@@ -222,7 +223,7 @@ defmodule MobilizonWeb.Resolvers.User do
   """
   def reset_password(_parent, %{password: password, token: token}, _resolution) do
     with {:ok, %User{} = user} <-
-           ResetPassword.check_reset_password_token(password, token),
+           Email.User.check_reset_password_token(password, token),
          {:ok, %{access_token: access_token, refresh_token: refresh_token}} <-
            Users.authenticate(%{user: user, password: password}) do
       {:ok, %{access_token: access_token, refresh_token: refresh_token, user: user}}
@@ -233,11 +234,7 @@ defmodule MobilizonWeb.Resolvers.User do
   def change_default_actor(
         _parent,
         %{preferred_username: username},
-        %{
-          context: %{
-            current_user: user
-          }
-        }
+        %{context: %{current_user: user}}
       ) do
     with %Actor{id: actor_id} <- Actors.get_local_actor_by_name(username),
          {:user_actor, true} <-

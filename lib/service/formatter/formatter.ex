@@ -10,18 +10,18 @@ defmodule Mobilizon.Service.Formatter do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Service.HTML
+  alias Mobilizon.Service.Formatter.HTML
 
   @link_regex ~r"((?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~%:/?#[\]@!\$&'\(\)\*\+,;=.]+)|[0-9a-z+\-\.]+:[0-9a-z$-_.+!*'(),]+"ui
   @markdown_characters_regex ~r/(`|\*|_|{|}|[|]|\(|\)|#|\+|-|\.|!)/
 
   @auto_linker_config hashtag: true,
-                      hashtag_handler: &Mobilizon.Service.Formatter.hashtag_handler/4,
+                      hashtag_handler: &__MODULE__.hashtag_handler/4,
                       mention: true,
-                      mention_handler: &Mobilizon.Service.Formatter.mention_handler/4
+                      mention_handler: &__MODULE__.mention_handler/4
 
   def escape_mention_handler("@" <> nickname = mention, buffer, _, _) do
-    case Mobilizon.Actors.get_actor_by_name(nickname) do
+    case Actors.get_actor_by_name(nickname) do
       %Actor{} ->
         # escape markdown characters with `\\`
         # (we don't want something like @user__name to be parsed by markdown)

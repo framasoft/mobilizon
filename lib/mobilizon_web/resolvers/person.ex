@@ -7,9 +7,10 @@ defmodule MobilizonWeb.Resolvers.Person do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Events.Participant
-  alias Mobilizon.Service.ActivityPub
   alias Mobilizon.Users
   alias Mobilizon.Users.User
+
+  alias Mobilizon.Federation.ActivityPub
 
   @doc """
   Get a person

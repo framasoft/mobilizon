@@ -6,15 +6,16 @@ defmodule MobilizonWeb.API.ReportTest do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.{Comment, Event}
   alias Mobilizon.Reports.{Note, Report}
-  alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Users
   alias Mobilizon.Users.User
+
+  alias Mobilizon.Federation.ActivityPub.{Activity, Relay}
 
   alias MobilizonWeb.API.Reports
 
   describe "reports" do
     test "creates a report on a event" do
-      %Actor{url: relay_reporter_url} = Mobilizon.Service.ActivityPub.Relay.get_actor()
+      %Actor{url: relay_reporter_url} = Relay.get_actor()
       %Actor{id: reporter_id} = insert(:actor)
       %Actor{id: reported_id, url: reported_url} = reported = insert(:actor)
 
@@ -44,7 +45,7 @@ defmodule MobilizonWeb.API.ReportTest do
     end
 
     test "creates a report on several comments" do
-      %Actor{url: relay_reporter_url} = Mobilizon.Service.ActivityPub.Relay.get_actor()
+      %Actor{url: relay_reporter_url} = Relay.get_actor()
       %Actor{id: reporter_id} = insert(:actor)
       %Actor{id: reported_id, url: reported_url} = reported = insert(:actor)
 
@@ -79,7 +80,7 @@ defmodule MobilizonWeb.API.ReportTest do
     end
 
     test "creates a report that gets federated" do
-      %Actor{url: relay_reporter_url} = Mobilizon.Service.ActivityPub.Relay.get_actor()
+      %Actor{url: relay_reporter_url} = Relay.get_actor()
       %Actor{id: reporter_id} = insert(:actor)
       %Actor{id: reported_id, url: reported_url} = reported = insert(:actor)
 

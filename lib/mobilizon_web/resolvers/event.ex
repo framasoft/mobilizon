@@ -3,14 +3,12 @@ defmodule MobilizonWeb.Resolvers.Event do
   Handles the event-related GraphQL calls.
   """
 
-  import Mobilizon.Service.Admin.ActionLogService
-
-  alias Mobilizon.Actors
+  alias Mobilizon.{Actors, Admin, Events}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Participant, EventParticipantStats}
-  alias Mobilizon.Service.ActivityPub.Activity
   alias Mobilizon.Users.User
+
+  alias Mobilizon.Federation.ActivityPub.Activity
 
   alias MobilizonWeb.API
   alias MobilizonWeb.Resolvers.Person
@@ -342,7 +340,7 @@ defmodule MobilizonWeb.Resolvers.Event do
         role in [:moderator, :administrator] ->
           with {:ok, res} <- do_delete_event(event, !is_local),
                %Actor{} = actor <- Actors.get_actor(actor_id) do
-            log_action(actor, "delete", event)
+            Admin.log_action(actor, "delete", event)
 
             {:ok, res}
           end

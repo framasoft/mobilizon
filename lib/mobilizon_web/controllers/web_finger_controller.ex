@@ -7,10 +7,12 @@ defmodule MobilizonWeb.WebFingerController do
   @moduledoc """
   Handles Webfinger requests
   """
+
   use MobilizonWeb, :controller
 
+  alias Mobilizon.Federation.WebFinger
+
   plug(MobilizonWeb.Plugs.Federating)
-  alias Mobilizon.Service.WebFinger
 
   @doc """
   Provides /.well-known/host-meta

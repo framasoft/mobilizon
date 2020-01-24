@@ -9,8 +9,12 @@ defmodule Mobilizon.ActorsTest do
   alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
   alias Mobilizon.Events.{Event, Comment}
   alias Mobilizon.Media.File, as: FileModel
-  alias Mobilizon.Service.ActivityPub
+  alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.Page
+
+  alias Mobilizon.Federation.ActivityPub
+
+  alias MobilizonWeb.Upload.Uploader
 
   describe "actors" do
     @valid_attrs %{
@@ -239,12 +243,12 @@ defmodule Mobilizon.ActorsTest do
       %URI{path: "/media/" <> banner_path} = URI.parse(banner_url)
 
       assert File.exists?(
-               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> avatar_path
              )
 
       assert File.exists?(
-               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> banner_path
              )
 
@@ -269,12 +273,12 @@ defmodule Mobilizon.ActorsTest do
       refute actor.suspended
 
       refute File.exists?(
-               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> avatar_path
              )
 
       assert File.exists?(
-               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> banner_path
              )
     end
@@ -298,19 +302,19 @@ defmodule Mobilizon.ActorsTest do
       %URI{path: "/media/" <> banner_path} = URI.parse(banner_url)
 
       assert File.exists?(
-               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> avatar_path
              )
 
       assert File.exists?(
-               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> banner_path
              )
 
       assert {:ok, %Oban.Job{}} = Actors.delete_actor(actor)
 
       assert_enqueued(
-        worker: Mobilizon.Service.Workers.BackgroundWorker,
+        worker: Workers.Background,
         args: %{"actor_id" => actor.id, "op" => "delete_actor"}
       )
 
@@ -332,12 +336,12 @@ defmodule Mobilizon.ActorsTest do
       assert %Tombstone{} = Tombstone.find_tombstone(comment1_url)
 
       refute File.exists?(
-               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> avatar_path
              )
 
       refute File.exists?(
-               Config.get!([MobilizonWeb.Uploaders.Local, :uploads]) <>
+               Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> banner_path
              )
     end

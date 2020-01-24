@@ -3,8 +3,9 @@ defmodule MobilizonWeb.Resolvers.Config do
   Handles the config-related GraphQL calls.
   """
 
-  alias Mobilizon.Config
   alias Geolix.Adapter.MMDB2.Record.{Country, Location}
+
+  alias Mobilizon.Config
 
   @doc """
   Gets config.
