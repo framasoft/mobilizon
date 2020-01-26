@@ -216,14 +216,14 @@ defmodule Mobilizon.Mixfile do
         Mobilizon.Federation.ActivityPub.Activity
       ],
       APIs: [
-        Mobilizon.Web.API.Comments,
-        Mobilizon.Web.API.Events,
-        Mobilizon.Web.API.Follows,
-        Mobilizon.Web.API.Groups,
-        Mobilizon.Web.API.Participations,
-        Mobilizon.Web.API.Reports,
-        Mobilizon.Web.API.Search,
-        Mobilizon.Web.API.Utils
+        Mobilizon.GraphQL.API.Comments,
+        Mobilizon.GraphQL.API.Events,
+        Mobilizon.GraphQL.API.Follows,
+        Mobilizon.GraphQL.API.Groups,
+        Mobilizon.GraphQL.API.Participations,
+        Mobilizon.GraphQL.API.Reports,
+        Mobilizon.GraphQL.API.Search,
+        Mobilizon.GraphQL.API.Utils
       ],
       Web: [
         Mobilizon.Web,
