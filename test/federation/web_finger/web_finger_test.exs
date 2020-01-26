@@ -33,7 +33,10 @@ defmodule Mobilizon.Federation.WebFingerTest do
       actor = insert(:actor)
 
       {:ok, result} =
-        WebFinger.webfinger("#{actor.preferred_username}@#{Mobilizon.Web.Endpoint.host()}", "JSON")
+        WebFinger.webfinger(
+          "#{actor.preferred_username}@#{Mobilizon.Web.Endpoint.host()}",
+          "JSON"
+        )
 
       assert is_map(result)
     end
