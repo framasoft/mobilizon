@@ -1,6 +1,6 @@
 import Config
 
-config :mobilizon, MobilizonWeb.Endpoint,
+config :mobilizon, Mobilizon.Web.Endpoint,
   http: [
     port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4000,
     transport_options: [socket_opts: [:inet6]]
@@ -24,7 +24,7 @@ config :mobilizon, Mobilizon.Storage.Repo,
   port: System.get_env("MOBILIZON_DATABASE_PORT") || "5432",
   pool_size: 15
 
-config :mobilizon, MobilizonWeb.Email.Mailer,
+config :mobilizon, Mobilizon.Web.Email.Mailer,
   adapter: Bamboo.SMTPAdapter,
   server: "localhost",
   hostname: "localhost",
@@ -53,7 +53,7 @@ config :mobilizon, Mobilizon.Service.Geospatial, service: Mobilizon.Service.Geos
 # To get SSL working, you will need to add the `https` key
 # to the previous section and set your `:url` port to 443:
 #
-#     config :mobilizon, MobilizonWeb.Endpoint,
+#     config :mobilizon, Mobilizon.Web.Endpoint,
 #       ...
 #       url: [host: "example.com", port: 443],
 #       https: [:inet6,
@@ -68,7 +68,7 @@ config :mobilizon, Mobilizon.Service.Geospatial, service: Mobilizon.Service.Geos
 # We also recommend setting `force_ssl`, ensuring no data is
 # ever sent via http, always redirecting to https:
 #
-#     config :mobilizon, MobilizonWeb.Endpoint,
+#     config :mobilizon, Mobilizon.Web.Endpoint,
 #       force_ssl: [hsts: true]
 #
 # Check `Plug.SSL` for all available options in `force_ssl`.
@@ -83,5 +83,5 @@ config :mobilizon, Mobilizon.Service.Geospatial, service: Mobilizon.Service.Geos
 # Alternatively, you can configure exactly which server to
 # start per endpoint:
 #
-#     config :mobilizon, MobilizonWeb.Endpoint, server: true
+#     config :mobilizon, Mobilizon.Web.Endpoint, server: true
 #

@@ -34,7 +34,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Picture do
       when is_bitstring(picture_url) do
     with {:ok, %HTTPoison.Response{body: body}} <- HTTPoison.get(picture_url),
          {:ok, %{name: name, url: url, content_type: content_type, size: size}} <-
-           MobilizonWeb.Upload.store(%{body: body, name: name}),
+           Mobilizon.Web.Upload.store(%{body: body, name: name}),
          {:picture_exists, nil} <- {:picture_exists, Mobilizon.Media.get_picture_by_url(url)} do
       Mobilizon.Media.create_picture(%{
         "file" => %{

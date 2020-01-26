@@ -1,5 +1,5 @@
-defmodule MobilizonWeb.Resolvers.EventTest do
-  use MobilizonWeb.ConnCase
+defmodule Mobilizon.Web.Resolvers.EventTest do
+  use Mobilizon.Web.ConnCase
   use Bamboo.Test
   use Oban.Testing, repo: Mobilizon.Storage.Repo
 
@@ -10,7 +10,7 @@ defmodule MobilizonWeb.Resolvers.EventTest do
 
   alias Mobilizon.GraphQL.AbsintheHelpers
 
-  alias MobilizonWeb.Email
+  alias Mobilizon.Web.Email
 
   @event %{
     description: "some body",

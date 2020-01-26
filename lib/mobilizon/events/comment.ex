@@ -11,8 +11,8 @@ defmodule Mobilizon.Events.Comment do
   alias Mobilizon.Events.{Comment, CommentVisibility, Event, Tag}
   alias Mobilizon.Mention
 
-  alias MobilizonWeb.Endpoint
-  alias MobilizonWeb.Router.Helpers, as: Routes
+  alias Mobilizon.Web.Endpoint
+  alias Mobilizon.Web.Router.Helpers, as: Routes
 
   @type t :: %__MODULE__{
           text: String.t(),

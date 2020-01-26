@@ -5,7 +5,7 @@ defmodule Mobilizon.GraphQL.AbsintheHelpers do
 
   use Phoenix.ConnTest
 
-  @endpoint MobilizonWeb.Endpoint
+  @endpoint Mobilizon.Web.Endpoint
 
   def query_skeleton(query, query_name) do
     %{

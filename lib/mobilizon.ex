@@ -26,7 +26,7 @@ defmodule Mobilizon do
 
   @spec user_agent :: String.t()
   def user_agent do
-    info = "#{MobilizonWeb.Endpoint.url()} <#{Config.get([:instance, :email], "")}>"
+    info = "#{Mobilizon.Web.Endpoint.url()} <#{Config.get([:instance, :email], "")}>"
 
     "#{named_version()}; #{info}"
   end
@@ -37,8 +37,8 @@ defmodule Mobilizon do
     children = [
       # supervisors
       Mobilizon.Storage.Repo,
-      MobilizonWeb.Endpoint,
-      {Absinthe.Subscription, [MobilizonWeb.Endpoint]},
+      Mobilizon.Web.Endpoint,
+      {Absinthe.Subscription, [Mobilizon.Web.Endpoint]},
       {Oban, Application.get_env(:mobilizon, Oban)},
       # workers
       Guardian.DB.Token.SweeperServer,
@@ -55,7 +55,7 @@ defmodule Mobilizon do
 
   @spec config_change(keyword, keyword, [atom]) :: :ok
   def config_change(changed, _new, removed) do
-    MobilizonWeb.Endpoint.config_change(changed, removed)
+    Mobilizon.Web.Endpoint.config_change(changed, removed)
 
     :ok
   end

@@ -14,7 +14,7 @@ defmodule Mobilizon.ActorsTest do
 
   alias Mobilizon.Federation.ActivityPub
 
-  alias MobilizonWeb.Upload.Uploader
+  alias Mobilizon.Web.Upload.Uploader
 
   describe "actors" do
     @valid_attrs %{
@@ -258,7 +258,7 @@ defmodule Mobilizon.ActorsTest do
         filename: "image.jpg"
       }
 
-      {:ok, data} = MobilizonWeb.Upload.store(file)
+      {:ok, data} = Mobilizon.Web.Upload.store(file)
 
       assert {:ok, actor} =
                Actors.update_actor(

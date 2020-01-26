@@ -19,8 +19,8 @@ defmodule Mobilizon.DataCase do
   alias Mobilizon.Config
   alias Mobilizon.Storage.Repo
 
-  alias MobilizonWeb.Upload
-  alias MobilizonWeb.Upload.Uploader
+  alias Mobilizon.Web.Upload
+  alias Mobilizon.Web.Upload.Uploader
 
   using do
     quote do

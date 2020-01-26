@@ -62,7 +62,7 @@ defmodule Mobilizon.Media do
       Multi.new()
       |> Multi.delete(:picture, picture)
       |> Multi.run(:remove, fn _repo, %{picture: %Picture{file: %File{url: url}}} ->
-        MobilizonWeb.Upload.remove(url)
+        Mobilizon.Web.Upload.remove(url)
       end)
       |> Repo.transaction()
 

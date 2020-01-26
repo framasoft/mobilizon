@@ -198,7 +198,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   Save picture data from %Plug.Upload{} and return AS Link data.
   """
   def make_picture_data(%Plug.Upload{} = picture, opts) do
-    case MobilizonWeb.Upload.store(picture, opts) do
+    case Mobilizon.Web.Upload.store(picture, opts) do
       {:ok, picture} ->
         picture
 
@@ -219,7 +219,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   """
   def make_picture_data(picture) when is_map(picture) do
     with {:ok, %{"url" => [%{"href" => url, "mediaType" => content_type}], "size" => size}} <-
-           MobilizonWeb.Upload.store(picture.file),
+           Mobilizon.Web.Upload.store(picture.file),
          {:picture_exists, nil} <- {:picture_exists, Mobilizon.Media.get_picture_by_url(url)},
          {:ok, %Picture{file: _file} = picture} <-
            Mobilizon.Media.create_picture(%{

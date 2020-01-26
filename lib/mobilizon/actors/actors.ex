@@ -755,7 +755,7 @@ defmodule Mobilizon.Actors do
 
   @spec safe_remove_file(String.t(), Actor.t()) :: {:ok, Actor.t()}
   defp safe_remove_file(url, %Actor{} = actor) do
-    case MobilizonWeb.Upload.remove(url) do
+    case Mobilizon.Web.Upload.remove(url) do
       {:ok, _value} ->
         {:ok, actor}
 
@@ -774,7 +774,7 @@ defmodule Mobilizon.Actors do
         with %Ecto.Changeset{changes: %{url: new_url}} <- changes[key],
              %{url: old_url} <- data |> Map.from_struct() |> Map.get(key),
              false <- new_url == old_url do
-          MobilizonWeb.Upload.remove(old_url)
+          Mobilizon.Web.Upload.remove(old_url)
         end
       end
     end)

@@ -13,7 +13,7 @@ defmodule Mobilizon.Users do
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.User
 
-  alias MobilizonWeb.Auth
+  alias Mobilizon.Web.Auth
 
   @type tokens :: %{
           required(:access_token) => String.t(),

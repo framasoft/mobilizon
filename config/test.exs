@@ -6,7 +6,7 @@ config :mobilizon, :instance,
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
-config :mobilizon, MobilizonWeb.Endpoint,
+config :mobilizon, Mobilizon.Web.Endpoint,
   http: [
     port: System.get_env("MOBILIZON_INSTANCE_PORT") || 80
   ],
@@ -30,11 +30,11 @@ config :mobilizon, Mobilizon.Storage.Repo,
   hostname: System.get_env("MOBILIZON_DATABASE_HOST") || "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
-config :mobilizon, MobilizonWeb.Email.Mailer, adapter: Bamboo.TestAdapter
+config :mobilizon, Mobilizon.Web.Email.Mailer, adapter: Bamboo.TestAdapter
 
-config :mobilizon, MobilizonWeb.Upload, filters: [], link_name: false
+config :mobilizon, Mobilizon.Web.Upload, filters: [], link_name: false
 
-config :mobilizon, MobilizonWeb.Upload.Uploader.Local, uploads: "test/uploads"
+config :mobilizon, Mobilizon.Web.Upload.Uploader.Local, uploads: "test/uploads"
 
 config :exvcr,
   vcr_cassette_library_dir: "test/fixtures/vcr_cassettes"

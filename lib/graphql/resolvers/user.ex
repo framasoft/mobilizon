@@ -10,7 +10,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Users.User
 
-  alias MobilizonWeb.{Auth, Email}
+  alias Mobilizon.Web.{Auth, Email}
 
   require Logger
 

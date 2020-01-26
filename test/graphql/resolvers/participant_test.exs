@@ -1,5 +1,5 @@
 defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
-  use MobilizonWeb.ConnCase
+  use Mobilizon.Web.ConnCase
   use Bamboo.Test
 
   import Mobilizon.Factory
@@ -7,7 +7,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
   alias Mobilizon.Events
   alias Mobilizon.GraphQL.AbsintheHelpers
 
-  alias MobilizonWeb.Email
+  alias Mobilizon.Web.Email
 
   @event %{
     description: "some body",

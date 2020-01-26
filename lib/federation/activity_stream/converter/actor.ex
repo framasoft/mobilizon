@@ -29,14 +29,14 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
       data["icon"]["url"] &&
         %{
           "name" => data["icon"]["name"] || "avatar",
-          "url" => MobilizonWeb.MediaProxy.url(data["icon"]["url"])
+          "url" => Mobilizon.Web.MediaProxy.url(data["icon"]["url"])
         }
 
     banner =
       data["image"]["url"] &&
         %{
           "name" => data["image"]["name"] || "banner",
-          "url" => MobilizonWeb.MediaProxy.url(data["image"]["url"])
+          "url" => Mobilizon.Web.MediaProxy.url(data["image"]["url"])
         }
 
     actor_data = %{

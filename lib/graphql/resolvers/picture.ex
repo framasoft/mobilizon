@@ -18,7 +18,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Picture do
   @doc """
   Get picture for an event that has an attached
 
-  See MobilizonWeb.Resolvers.Event.create_event/3
+  See Mobilizon.Web.Resolvers.Event.create_event/3
   """
   def picture(%{picture: picture} = _parent, _args, _resolution), do: {:ok, picture}
   def picture(_parent, %{id: picture_id}, _resolution), do: do_fetch_picture(picture_id)
@@ -53,7 +53,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Picture do
       ) do
     with {:is_owned, %Actor{}} <- User.owns_actor(user, actor_id),
          {:ok, %{name: _name, url: url, content_type: content_type, size: size}} <-
-           MobilizonWeb.Upload.store(file),
+           Mobilizon.Web.Upload.store(file),
          args <-
            args
            |> Map.put(:url, url)

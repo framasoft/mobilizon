@@ -1,6 +1,6 @@
 defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
   use Oban.Testing, repo: Mobilizon.Storage.Repo
-  use MobilizonWeb.ConnCase
+  use Mobilizon.Web.ConnCase
 
   import Mobilizon.Factory
 
@@ -121,7 +121,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
                actor.preferred_username
 
       assert json_response(res, 200)["data"]["loggedPerson"]["avatar"]["url"] =~
-               MobilizonWeb.Endpoint.url()
+               Mobilizon.Web.Endpoint.url()
     end
 
     test "create_person/3 creates a new identity", context do
@@ -255,7 +255,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
                "The beautiful atlantic way"
 
       assert json_response(res, 200)["data"]["createPerson"]["banner"]["url"] =~
-               MobilizonWeb.Endpoint.url() <> "/media/"
+               Mobilizon.Web.Endpoint.url() <> "/media/"
     end
 
     test "update_person/3 updates an existing identity", context do
@@ -325,7 +325,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
 
       assert res_person["banner"]["id"]
       assert res_person["banner"]["name"] == "The beautiful atlantic way"
-      assert res_person["banner"]["url"] =~ MobilizonWeb.Endpoint.url() <> "/media/"
+      assert res_person["banner"]["url"] =~ Mobilizon.Web.Endpoint.url() <> "/media/"
     end
 
     test "update_person/3 should fail to update a not owned identity", context do

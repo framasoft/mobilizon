@@ -1,0 +1,29 @@
+defmodule Mobilizon.Web.Auth.Context do
+  @moduledoc """
+  Guardian context for Mobilizon.Web
+  """
+  @behaviour Plug
+
+  import Plug.Conn
+
+  alias Mobilizon.Users.User
+
+  def init(opts) do
+    opts
+  end
+
+  def call(conn, _) do
+    context = %{ip: to_string(:inet_parse.ntoa(conn.remote_ip))}
+
+    context =
+      case Guardian.Plug.current_resource(conn) do
+        %User{} = user ->
+          Map.put(context, :current_user, user)
+
+        nil ->
+          context
+      end
+
+    put_private(conn, :absinthe, %{context: context})
+  end
+end

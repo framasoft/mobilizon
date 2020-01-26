@@ -1,5 +1,5 @@
 defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
-  use MobilizonWeb.ConnCase
+  use Mobilizon.Web.ConnCase
 
   import Mobilizon.Factory
 

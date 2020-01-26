@@ -961,7 +961,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       }
 
       expected_tag = %{
-        "href" => MobilizonWeb.Endpoint.url() <> "/tags/2hu",
+        "href" => Mobilizon.Web.Endpoint.url() <> "/tags/2hu",
         "type" => "Hashtag",
         "name" => "#2hu"
       }
@@ -996,7 +996,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       {:ok, activity, _} = API.Comments.create_comment(%{actor_id: actor.id, text: "#2hu"})
 
       expected_tag = %{
-        "href" => MobilizonWeb.Endpoint.url() <> "/tags/2hu",
+        "href" => Mobilizon.Web.Endpoint.url() <> "/tags/2hu",
         "type" => "Hashtag",
         "name" => "#2hu"
       }

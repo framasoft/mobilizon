@@ -1,5 +1,5 @@
 defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
-  use MobilizonWeb.ConnCase
+  use Mobilizon.Web.ConnCase
 
   import Mobilizon.Factory
 

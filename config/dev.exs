@@ -6,7 +6,7 @@ import Config
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with brunch.io to recompile .js and .css sources.
-config :mobilizon, MobilizonWeb.Endpoint,
+config :mobilizon, Mobilizon.Web.Endpoint,
   http: [
     port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4000
   ],
@@ -39,7 +39,7 @@ config :mobilizon, MobilizonWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :mobilizon, MobilizonWeb.Endpoint,
+config :mobilizon, Mobilizon.Web.Endpoint,
   live_reload: [
     patterns: [
       ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
@@ -61,7 +61,7 @@ config :phoenix, :stacktrace_depth, 20
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :mobilizon, MobilizonWeb.Email.Mailer, adapter: Bamboo.LocalAdapter
+config :mobilizon, Mobilizon.Web.Email.Mailer, adapter: Bamboo.LocalAdapter
 
 # Configure your database
 config :mobilizon, Mobilizon.Storage.Repo,

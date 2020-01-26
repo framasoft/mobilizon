@@ -65,6 +65,6 @@ defmodule Mobilizon.Actors.Follower do
 
     changeset
     |> put_change(:id, uuid)
-    |> put_change(:url, "#{MobilizonWeb.Endpoint.url()}/follow/#{uuid}")
+    |> put_change(:url, "#{Mobilizon.Web.Endpoint.url()}/follow/#{uuid}")
   end
 end

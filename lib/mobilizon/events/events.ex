@@ -31,7 +31,7 @@ defmodule Mobilizon.Events do
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.User
 
-  alias MobilizonWeb.Email
+  alias Mobilizon.Web.Email
 
   defenum(EventVisibility, :event_visibility, [
     :public,

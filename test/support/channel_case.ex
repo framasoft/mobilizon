@@ -1,4 +1,4 @@
-defmodule MobilizonWeb.ChannelCase do
+defmodule Mobilizon.Web.ChannelCase do
   @moduledoc """
   This module defines the test case to be used by
   channel tests.
@@ -25,7 +25,7 @@ defmodule MobilizonWeb.ChannelCase do
       use Phoenix.ChannelTest
 
       # The default endpoint for testing
-      @endpoint MobilizonWeb.Endpoint
+      @endpoint Mobilizon.Web.Endpoint
     end
   end
 

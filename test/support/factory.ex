@@ -8,9 +8,9 @@ defmodule Mobilizon.Factory do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Crypto
 
-  alias MobilizonWeb.Endpoint
-  alias MobilizonWeb.Router.Helpers, as: Routes
-  alias MobilizonWeb.Upload
+  alias Mobilizon.Web.Endpoint
+  alias Mobilizon.Web.Router.Helpers, as: Routes
+  alias Mobilizon.Web.Upload
 
   def user_factory do
     %Mobilizon.Users.User{
@@ -60,7 +60,7 @@ defmodule Mobilizon.Factory do
       target_actor: build(:actor),
       actor: build(:actor),
       id: uuid,
-      url: "#{MobilizonWeb.Endpoint.url()}/follows/#{uuid}"
+      url: "#{Mobilizon.Web.Endpoint.url()}/follows/#{uuid}"
     }
   end
 

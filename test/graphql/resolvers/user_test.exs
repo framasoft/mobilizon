@@ -1,5 +1,5 @@
 defmodule Mobilizon.GraphQL.Resolvers.UserTest do
-  use MobilizonWeb.ConnCase
+  use Mobilizon.Web.ConnCase
   use Bamboo.Test
 
   import Mobilizon.Factory
@@ -10,7 +10,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
   alias Mobilizon.GraphQL.AbsintheHelpers
 
-  alias MobilizonWeb.Email
+  alias Mobilizon.Web.Email
 
   @valid_actor_params %{email: "test@test.tld", password: "testest", username: "test"}
   @valid_single_actor_params %{preferred_username: "test2", keys: "yolo"}

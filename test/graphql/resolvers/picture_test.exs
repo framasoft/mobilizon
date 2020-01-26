@@ -1,5 +1,5 @@
 defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
-  use MobilizonWeb.ConnCase
+  use Mobilizon.Web.ConnCase
   use Bamboo.Test
 
   import Mobilizon.Factory
@@ -43,7 +43,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
       assert json_response(res, 200)["data"]["picture"]["size"] == 13_120
 
       assert json_response(res, 200)["data"]["picture"]["url"] =~
-               MobilizonWeb.Endpoint.url()
+               Mobilizon.Web.Endpoint.url()
     end
 
     test "picture/3 returns nothing on a non-existent picture", context do

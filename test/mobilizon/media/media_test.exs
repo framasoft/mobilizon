@@ -5,7 +5,7 @@ defmodule Mobilizon.MediaTest do
 
   alias Mobilizon.{Config, Media}
 
-  alias MobilizonWeb.Upload.Uploader
+  alias Mobilizon.Web.Upload.Uploader
 
   describe "media" do
     setup [:ensure_local_uploader]

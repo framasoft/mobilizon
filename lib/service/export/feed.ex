@@ -3,7 +3,7 @@ defmodule Mobilizon.Service.Export.Feed do
   Serve Atom Syndication Feeds.
   """
 
-  import MobilizonWeb.Gettext
+  import Mobilizon.Web.Gettext
 
   alias Atomex.{Entry, Feed}
 
@@ -12,8 +12,8 @@ defmodule Mobilizon.Service.Export.Feed do
   alias Mobilizon.Events.{Event, FeedToken}
   alias Mobilizon.Users.User
 
-  alias MobilizonWeb.{Endpoint, MediaProxy}
-  alias MobilizonWeb.Router.Helpers, as: Routes
+  alias Mobilizon.Web.{Endpoint, MediaProxy}
+  alias Mobilizon.Web.Router.Helpers, as: Routes
 
   require Logger
 
@@ -74,7 +74,7 @@ defmodule Mobilizon.Service.Export.Feed do
       self_url
       |> Feed.new(
         DateTime.utc_now(),
-        Gettext.gettext(MobilizonWeb.Gettext, title, actor: display_name)
+        Gettext.gettext(Mobilizon.Web.Gettext, title, actor: display_name)
       )
       |> Feed.author(display_name, uri: actor.url)
       |> Feed.link(self_url, rel: "self")

@@ -1,5 +1,5 @@
 defmodule Mobilizon.GraphQL.Resolvers.ConfigTest do
-  use MobilizonWeb.ConnCase
+  use Mobilizon.Web.ConnCase
   use Bamboo.Test
 
   alias Mobilizon.GraphQL.AbsintheHelpers

@@ -1,5 +1,5 @@
-defmodule MobilizonWeb.Resolvers.GroupTest do
-  use MobilizonWeb.ConnCase
+defmodule Mobilizon.Web.Resolvers.GroupTest do
+  use Mobilizon.Web.ConnCase
 
   import Mobilizon.Factory
 

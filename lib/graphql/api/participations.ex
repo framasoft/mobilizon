@@ -8,7 +8,7 @@ defmodule Mobilizon.GraphQL.API.Participations do
 
   alias Mobilizon.Federation.ActivityPub
 
-  alias MobilizonWeb.Email.Participation
+  alias Mobilizon.Web.Email.Participation
 
   @spec join(Event.t(), Actor.t()) :: {:ok, Participant.t()}
   def join(%Event{id: event_id} = event, %Actor{id: actor_id} = actor) do
