@@ -53,7 +53,9 @@ defmodule MobilizonWeb.API.Events do
   defp process_picture(%{picture: picture}, %Actor{id: actor_id}) do
     %{
       file:
-        picture |> Map.get(:file) |> Utils.make_picture_data(description: Map.get(picture, :name)),
+        picture
+        |> Map.get(:file)
+        |> Utils.make_picture_data(description: Map.get(picture, :name)),
       actor_id: actor_id
     }
   end

@@ -1,10 +1,12 @@
-defmodule MobilizonWeb.AbsintheHelpers do
-  use Phoenix.ConnTest
-  @endpoint MobilizonWeb.Endpoint
-
+defmodule Mobilizon.GraphQL.AbsintheHelpers do
   @moduledoc """
   Absinthe helpers for tests
   """
+
+  use Phoenix.ConnTest
+
+  @endpoint MobilizonWeb.Endpoint
+
   def query_skeleton(query, query_name) do
     %{
       "operationName" => "#{query_name}",
@@ -23,10 +25,7 @@ defmodule MobilizonWeb.AbsintheHelpers do
 
   def graphql_query(conn, options) do
     conn
-    |> post(
-      "/api",
-      build_query(options[:query], Keyword.get(options, :variables, %{}))
-    )
+    |> post("/api", build_query(options[:query], Keyword.get(options, :variables, %{})))
     |> json_response(200)
   end
 

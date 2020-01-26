@@ -52,7 +52,7 @@ defmodule MobilizonWeb.Router do
     pipe_through(:graphql)
 
     forward("/", Absinthe.Plug,
-      schema: MobilizonWeb.Schema,
+      schema: Mobilizon.GraphQL.Schema,
       analyze_complexity: true,
       max_complexity: 200
     )
