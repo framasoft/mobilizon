@@ -7,11 +7,12 @@ defmodule Mix.Tasks.Mobilizon.MoveParticipantStats do
 
   use Mix.Task
 
-  alias Mobilizon.Storage.Repo
+  import Ecto.Query
+
   alias Mobilizon.Events
   alias Mobilizon.Events.Event
   alias Mobilizon.Events.ParticipantRole
-  import Ecto.Query
+  alias Mobilizon.Storage.Repo
 
   require Logger
 

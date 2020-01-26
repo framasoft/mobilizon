@@ -1,4 +1,4 @@
-defmodule MobilizonWeb.API.Follows do
+defmodule Mobilizon.GraphQL.API.Follows do
   @moduledoc """
   Common API for following, unfollowing, accepting and rejecting stuff.
   """

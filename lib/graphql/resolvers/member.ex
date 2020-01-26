@@ -2,6 +2,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
   @moduledoc """
   Handles the member-related GraphQL calls
   """
+
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor}
 

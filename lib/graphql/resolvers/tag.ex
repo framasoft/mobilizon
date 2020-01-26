@@ -2,6 +2,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Tag do
   @moduledoc """
   Handles the tag-related GraphQL calls
   """
+
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Tag}
 

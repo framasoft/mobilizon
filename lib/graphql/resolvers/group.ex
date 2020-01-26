@@ -7,11 +7,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Users.User
 
+  alias Mobilizon.GraphQL.API
   alias Mobilizon.GraphQL.Resolvers.Person
 
   alias Mobilizon.Federation.ActivityPub
-
-  alias MobilizonWeb.API
 
   require Logger
 

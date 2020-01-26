@@ -1,7 +1,8 @@
-defmodule MobilizonWeb.API.Comments do
+defmodule Mobilizon.GraphQL.API.Comments do
   @moduledoc """
   API for Comments.
   """
+
   alias Mobilizon.Events.Comment
 
   alias Mobilizon.Federation.ActivityPub
@@ -12,8 +13,7 @@ defmodule MobilizonWeb.API.Comments do
 
   Creates a comment from an actor
   """
-  @spec create_comment(map()) ::
-          {:ok, Activity.t(), Comment.t()} | any()
+  @spec create_comment(map) :: {:ok, Activity.t(), Comment.t()} | any
   def create_comment(args) do
     ActivityPub.create(:comment, args, true)
   end
@@ -23,8 +23,7 @@ defmodule MobilizonWeb.API.Comments do
 
   Deletes a comment from an actor
   """
-  @spec delete_comment(Comment.t()) ::
-          {:ok, Activity.t(), Comment.t()} | any()
+  @spec delete_comment(Comment.t()) :: {:ok, Activity.t(), Comment.t()} | any
   def delete_comment(%Comment{} = comment) do
     ActivityPub.delete(comment, true)
   end

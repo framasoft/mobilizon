@@ -1,4 +1,4 @@
-defmodule MobilizonWeb.API.ReportTest do
+defmodule Mobilizon.GraphQL.API.ReportTest do
   use Mobilizon.DataCase
 
   import Mobilizon.Factory
@@ -9,9 +9,9 @@ defmodule MobilizonWeb.API.ReportTest do
   alias Mobilizon.Users
   alias Mobilizon.Users.User
 
-  alias Mobilizon.Federation.ActivityPub.{Activity, Relay}
+  alias Mobilizon.GraphQL.API.Reports
 
-  alias MobilizonWeb.API.Reports
+  alias Mobilizon.Federation.ActivityPub.{Activity, Relay}
 
   describe "reports" do
     test "creates a report on a event" do

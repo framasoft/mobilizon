@@ -30,7 +30,8 @@ defmodule Mobilizon.Federation.ActivityPub do
   alias Mobilizon.Federation.HTTPSignatures.Signature
   alias Mobilizon.Federation.WebFinger
 
-  alias MobilizonWeb.API.Utils, as: APIUtils
+  alias Mobilizon.GraphQL.API.Utils, as: APIUtils
+
   alias MobilizonWeb.Email.{Admin, Mailer}
 
   require Logger

@@ -1,4 +1,4 @@
-defmodule MobilizonWeb.API.Search do
+defmodule Mobilizon.GraphQL.API.Search do
   @moduledoc """
   API for search.
   """

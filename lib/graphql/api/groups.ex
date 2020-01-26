@@ -1,4 +1,4 @@
-defmodule MobilizonWeb.API.Groups do
+defmodule Mobilizon.GraphQL.API.Groups do
   @moduledoc """
   API for Groups.
   """
@@ -12,7 +12,7 @@ defmodule MobilizonWeb.API.Groups do
   @doc """
   Create a group
   """
-  @spec create_group(map()) :: {:ok, Activity.t(), Actor.t()} | any()
+  @spec create_group(map) :: {:ok, Activity.t(), Actor.t()} | any
   def create_group(args) do
     with preferred_username <-
            args |> Map.get(:preferred_username) |> HtmlSanitizeEx.strip_tags() |> String.trim(),

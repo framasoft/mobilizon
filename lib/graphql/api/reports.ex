@@ -1,4 +1,4 @@
-defmodule MobilizonWeb.API.Reports do
+defmodule Mobilizon.GraphQL.API.Reports do
   @moduledoc """
   API for Reports.
   """

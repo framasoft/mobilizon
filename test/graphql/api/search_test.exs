@@ -1,4 +1,4 @@
-defmodule MobilizonWeb.API.SearchTest do
+defmodule Mobilizon.GraphQL.API.SearchTest do
   use ExUnit.Case, async: false
 
   import Mock
@@ -9,9 +9,9 @@ defmodule MobilizonWeb.API.SearchTest do
   alias Mobilizon.Events.Event
   alias Mobilizon.Storage.Page
 
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.GraphQL.API.Search
 
-  alias MobilizonWeb.API.Search
+  alias Mobilizon.Federation.ActivityPub
 
   test "search an user by username" do
     with_mock ActivityPub,

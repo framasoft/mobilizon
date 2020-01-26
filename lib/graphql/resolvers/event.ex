@@ -8,11 +8,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   alias Mobilizon.Events.{Event, Participant, EventParticipantStats}
   alias Mobilizon.Users.User
 
+  alias Mobilizon.GraphQL.API
   alias Mobilizon.GraphQL.Resolvers.Person
 
   alias Mobilizon.Federation.ActivityPub.Activity
-
-  alias MobilizonWeb.API
 
   # We limit the max number of events that can be retrieved
   @event_max_limit 100
@@ -231,7 +230,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
            {:actor_approve_permission,
             Mobilizon.Events.moderator_for_event?(participation.event.id, moderator_actor_id)},
          {:ok, _activity, participation} <-
-           MobilizonWeb.API.Participations.update(participation, moderator_actor, new_role) do
+           API.Participations.update(participation, moderator_actor, new_role) do
       {:ok, participation}
     else
       {:is_owned, nil} ->
@@ -268,7 +267,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
          {:is_owned, %Actor{} = organizer_actor} <- User.owns_actor(user, organizer_actor_id),
          args_with_organizer <- Map.put(args, :organizer_actor, organizer_actor),
          {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} <-
-           MobilizonWeb.API.Events.create_event(args_with_organizer) do
+           API.Events.create_event(args_with_organizer) do
       {:ok, event}
     else
       {:is_owned, nil} ->
@@ -302,7 +301,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
            User.owns_actor(user, organizer_actor_id),
          args <- Map.put(args, :organizer_actor, organizer_actor),
          {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} <-
-           MobilizonWeb.API.Events.update_event(args, event) do
+           API.Events.update_event(args, event) do
       {:ok, event}
     else
       {:error, :event_not_found} ->
@@ -360,7 +359,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   end
 
   defp do_delete_event(event, federate \\ true) when is_boolean(federate) do
-    with {:ok, _activity, event} <- MobilizonWeb.API.Events.delete_event(event) do
+    with {:ok, _activity, event} <- API.Events.delete_event(event) do
       {:ok, %{id: event.id}}
     end
   end

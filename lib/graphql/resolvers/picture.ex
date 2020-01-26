@@ -2,6 +2,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Picture do
   @moduledoc """
   Handles the picture-related GraphQL calls
   """
+
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Media
   alias Mobilizon.Media.Picture

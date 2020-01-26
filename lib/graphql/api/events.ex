@@ -1,4 +1,4 @@
-defmodule MobilizonWeb.API.Events do
+defmodule Mobilizon.GraphQL.API.Events do
   @moduledoc """
   API for Events.
   """
@@ -12,7 +12,7 @@ defmodule MobilizonWeb.API.Events do
   @doc """
   Create an event
   """
-  @spec create_event(map()) :: {:ok, Activity.t(), Event.t()} | any()
+  @spec create_event(map) :: {:ok, Activity.t(), Event.t()} | any
   def create_event(args) do
     with organizer_actor <- Map.get(args, :organizer_actor),
          args <-
@@ -27,7 +27,7 @@ defmodule MobilizonWeb.API.Events do
   @doc """
   Update an event
   """
-  @spec update_event(map(), Event.t()) :: {:ok, Activity.t(), Event.t()} | any()
+  @spec update_event(map, Event.t()) :: {:ok, Activity.t(), Event.t()} | any
   def update_event(args, %Event{} = event) do
     with organizer_actor <- Map.get(args, :organizer_actor),
          args <-

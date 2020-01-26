@@ -9,7 +9,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
   alias Mobilizon.Events.Comment, as: CommentModel
   alias Mobilizon.Users.User
 
-  alias MobilizonWeb.API.Comments
+  alias Mobilizon.GraphQL.API.Comments
 
   require Logger
 

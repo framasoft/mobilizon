@@ -20,7 +20,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
   alias Mobilizon.Federation.ActivityPub.{Activity, Relay, Transmogrifier}
   alias Mobilizon.Federation.ActivityStream.{Convertible}
 
-  alias MobilizonWeb.API
+  alias Mobilizon.GraphQL.API
 
   setup_all do
     HTTPoison.start()

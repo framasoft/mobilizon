@@ -2,7 +2,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Search do
   @moduledoc """
   Handles the event-related GraphQL calls
   """
-  alias MobilizonWeb.API.Search
+
+  alias Mobilizon.GraphQL.API.Search
 
   @doc """
   Search persons

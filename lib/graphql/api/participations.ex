@@ -1,4 +1,4 @@
-defmodule MobilizonWeb.API.Participations do
+defmodule Mobilizon.GraphQL.API.Participations do
   @moduledoc """
   Common API to join events and groups.
   """
@@ -27,11 +27,13 @@ defmodule MobilizonWeb.API.Participations do
   @doc """
   Update participation status
   """
-  def update(%Participant{} = participation, %Actor{} = moderator, :participant),
-    do: accept(participation, moderator)
+  def update(%Participant{} = participation, %Actor{} = moderator, :participant) do
+    accept(participation, moderator)
+  end
 
-  def update(%Participant{} = participation, %Actor{} = moderator, :rejected),
-    do: reject(participation, moderator)
+  def update(%Participant{} = participation, %Actor{} = moderator, :rejected) do
+    reject(participation, moderator)
+  end
 
   defp accept(
          %Participant{} = participation,

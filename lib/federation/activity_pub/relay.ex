@@ -15,7 +15,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
   alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier}
   alias Mobilizon.Federation.WebFinger
 
-  alias MobilizonWeb.API.Follows
+  alias Mobilizon.GraphQL.API.Follows
 
   require Logger
 

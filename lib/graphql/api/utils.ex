@@ -1,4 +1,4 @@
-defmodule MobilizonWeb.API.Utils do
+defmodule Mobilizon.GraphQL.API.Utils do
   @moduledoc """
   Utils for API.
   """
@@ -10,11 +10,7 @@ defmodule MobilizonWeb.API.Utils do
   Creates HTML content from text and mentions
   """
   @spec make_content_html(String.t(), list(), String.t()) :: String.t()
-  def make_content_html(
-        text,
-        additional_tags,
-        content_type
-      ) do
+  def make_content_html(text, additional_tags, content_type) do
     with {text, mentions, tags} <- format_input(text, content_type, []) do
       {text, mentions, additional_tags ++ Enum.map(tags, fn {_, tag} -> tag end)}
     end
@@ -24,9 +20,7 @@ defmodule MobilizonWeb.API.Utils do
     text
     |> Formatter.html_escape("text/plain")
     |> Formatter.linkify(options)
-    |> (fn {text, mentions, tags} ->
-          {String.replace(text, ~r/\r?\n/, "<br>"), mentions, tags}
-        end).()
+    |> (fn {text, mentions, tags} -> {String.replace(text, ~r/\r?\n/, "<br>"), mentions, tags} end).()
   end
 
   def format_input(text, "text/html", options) do
