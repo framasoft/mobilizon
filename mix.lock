@@ -52,7 +52,7 @@
   "file_info": {:hex, :file_info, "0.0.4", "2e0e77f211e833f38ead22cb29ce53761d457d80b3ffe0ffe0eb93880b0963b2", [:mix], [{:mimetype_parser, "~> 0.1.2", [hex: :mimetype_parser, repo: "hexpm", optional: false]}], "hexpm"},
   "file_system": {:hex, :file_system, "0.2.7", "e6f7f155970975789f26e77b8b8d8ab084c59844d8ecfaf58cbda31c494d14aa", [:mix], [], "hexpm"},
   "gen_smtp": {:hex, :gen_smtp, "0.15.0", "9f51960c17769b26833b50df0b96123605a8024738b62db747fece14eb2fbfcc", [:rebar3], [], "hexpm"},
-  "geo": {:hex, :geo, "3.3.2", "30c7b458bcb0ab1ca73a997b26d22c68643d9ffe1726e475e0759499b6024cff", [:mix], [], "hexpm"},
+  "geo": {:hex, :geo, "3.3.3", "1119302b20d21515fbcec0a180b82653524067873ed333e7fa1f55e39959d702", [:mix], [], "hexpm"},
   "geo_postgis": {:hex, :geo_postgis, "3.3.0", "a40774f26c69411c016426e45dbd354139eaa172903fe512862de78b7e8f1e79", [:mix], [{:geo, "~> 3.3", [hex: :geo, repo: "hexpm", optional: false]}, {:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: true]}, {:poison, "~> 2.2 or ~> 3.0 or ~> 4.0", [hex: :poison, repo: "hexpm", optional: true]}, {:postgrex, "~> 0.14", [hex: :postgrex, repo: "hexpm", optional: false]}], "hexpm"},
   "geohax": {:hex, :geohax, "0.3.0", "c2e7d8cc6cdf4158120b50fcbe03a296da561d2089eb7ad68d84b6f5d3df5607", [:mix], [], "hexpm"},
   "geolix": {:hex, :geolix, "1.0.0", "b225d930fb0418871ce7d89dabf293bd80eb5bd66db1887f80510c122f4ef271", [:mix], [{:poolboy, "~> 1.0", [hex: :poolboy, repo: "hexpm", optional: false]}], "hexpm"},
