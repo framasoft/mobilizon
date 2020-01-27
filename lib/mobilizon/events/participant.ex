@@ -11,7 +11,7 @@ defmodule Mobilizon.Events.Participant do
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, ParticipantRole}
 
-  alias MobilizonWeb.Endpoint
+  alias Mobilizon.Web.Endpoint
 
   @type t :: %__MODULE__{
           role: ParticipantRole.t(),

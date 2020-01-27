@@ -33,8 +33,8 @@ defmodule Mobilizon.Events.Event do
   alias Mobilizon.Mention
   alias Mobilizon.Storage.Repo
 
-  alias MobilizonWeb.Endpoint
-  alias MobilizonWeb.Router.Helpers, as: Routes
+  alias Mobilizon.Web.Endpoint
+  alias Mobilizon.Web.Router.Helpers, as: Routes
 
   @type t :: %__MODULE__{
           url: String.t(),

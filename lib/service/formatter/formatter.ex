@@ -52,7 +52,7 @@ defmodule Mobilizon.Service.Formatter do
 
   def hashtag_handler("#" <> tag = tag_text, _buffer, _opts, acc) do
     tag = String.downcase(tag)
-    url = "#{MobilizonWeb.Endpoint.url()}/tag/#{tag}"
+    url = "#{Mobilizon.Web.Endpoint.url()}/tag/#{tag}"
     link = "<a class='hashtag' data-tag='#{tag}' href='#{url}' rel='tag'>#{tag_text}</a>"
 
     {link, %{acc | tags: MapSet.put(acc.tags, {tag_text, tag})}}

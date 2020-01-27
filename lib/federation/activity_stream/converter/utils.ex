@@ -40,7 +40,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
   def build_tags(tags) do
     Enum.map(tags, fn %Tag{} = tag ->
       %{
-        "href" => MobilizonWeb.Endpoint.url() <> "/tags/#{tag.slug}",
+        "href" => Mobilizon.Web.Endpoint.url() <> "/tags/#{tag.slug}",
         "name" => "##{tag.title}",
         "type" => "Hashtag"
       }

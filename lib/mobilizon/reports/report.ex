@@ -71,7 +71,7 @@ defmodule Mobilizon.Reports.Report do
   @spec maybe_generate_url(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   defp maybe_generate_url(%Ecto.Changeset{} = changeset) do
     with res when res in [:error, {:data, nil}] <- fetch_field(changeset, :url),
-         url <- "#{MobilizonWeb.Endpoint.url()}/report/#{Ecto.UUID.generate()}" do
+         url <- "#{Mobilizon.Web.Endpoint.url()}/report/#{Ecto.UUID.generate()}" do
       put_change(changeset, :url, url)
     else
       _ -> changeset

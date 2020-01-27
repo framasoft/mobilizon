@@ -17,7 +17,7 @@ defmodule Mobilizon.Federation.WebFinger do
   require Logger
 
   def host_meta do
-    base_url = MobilizonWeb.Endpoint.url()
+    base_url = Mobilizon.Web.Endpoint.url()
 
     {
       :XRD,
@@ -35,7 +35,7 @@ defmodule Mobilizon.Federation.WebFinger do
   end
 
   def webfinger(resource, "JSON") do
-    host = MobilizonWeb.Endpoint.host()
+    host = Mobilizon.Web.Endpoint.host()
     regex = ~r/(acct:)?(?<name>\w+)@#{host}/
 
     with %{"name" => name} <- Regex.named_captures(regex, resource),
@@ -59,7 +59,7 @@ defmodule Mobilizon.Federation.WebFinger do
   @spec represent_actor(Actor.t(), String.t()) :: struct()
   def represent_actor(actor, "JSON") do
     %{
-      "subject" => "acct:#{actor.preferred_username}@#{MobilizonWeb.Endpoint.host()}",
+      "subject" => "acct:#{actor.preferred_username}@#{Mobilizon.Web.Endpoint.host()}",
       "aliases" => [actor.url],
       "links" => [
         %{"rel" => "self", "type" => "application/activity+json", "href" => actor.url},

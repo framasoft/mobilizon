@@ -7,8 +7,8 @@ defmodule Mobilizon.Federation.ActivityPub.UtilsTest do
 
   alias Mobilizon.Federation.ActivityStream.Converter
 
-  alias MobilizonWeb.Endpoint
-  alias MobilizonWeb.Router.Helpers, as: Routes
+  alias Mobilizon.Web.Endpoint
+  alias Mobilizon.Web.Router.Helpers, as: Routes
 
   setup_all do
     HTTPoison.start()

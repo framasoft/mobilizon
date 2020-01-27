@@ -2,7 +2,7 @@ import Config
 
 import_config "dev.exs"
 
-config :mobilizon, MobilizonWeb.Endpoint,
+config :mobilizon, Mobilizon.Web.Endpoint,
   http: [
     port: 4000
   ],

@@ -24,7 +24,7 @@ defmodule Mobilizon.Federation.WebFingerTest do
     test "returns a link to the xml lrdd" do
       host_info = WebFinger.host_meta()
 
-      assert String.contains?(host_info, MobilizonWeb.Endpoint.url())
+      assert String.contains?(host_info, Mobilizon.Web.Endpoint.url())
     end
   end
 
@@ -33,7 +33,10 @@ defmodule Mobilizon.Federation.WebFingerTest do
       actor = insert(:actor)
 
       {:ok, result} =
-        WebFinger.webfinger("#{actor.preferred_username}@#{MobilizonWeb.Endpoint.host()}", "JSON")
+        WebFinger.webfinger(
+          "#{actor.preferred_username}@#{Mobilizon.Web.Endpoint.host()}",
+          "JSON"
+        )
 
       assert is_map(result)
     end

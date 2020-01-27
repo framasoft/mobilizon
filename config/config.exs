@@ -36,18 +36,18 @@ config :mime, :types, %{
 }
 
 # Configures the endpoint
-config :mobilizon, MobilizonWeb.Endpoint,
+config :mobilizon, Mobilizon.Web.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "1yOazsoE0Wqu4kXk3uC5gu3jDbShOimTCzyFL3OjCdBmOXMyHX87Qmf3+Tu9s0iM",
-  render_errors: [view: MobilizonWeb.ErrorView, accepts: ~w(html json)],
+  render_errors: [view: Mobilizon.Web.ErrorView, accepts: ~w(html json)],
   pubsub: [name: Mobilizon.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Upload configuration
-config :mobilizon, MobilizonWeb.Upload,
-  uploader: MobilizonWeb.Upload.Uploader.Local,
+config :mobilizon, Mobilizon.Web.Upload,
+  uploader: Mobilizon.Web.Upload.Uploader.Local,
   filters: [
-    MobilizonWeb.Upload.Filter.Dedupe,
-    MobilizonWeb.Upload.Filter.Optimize
+    Mobilizon.Web.Upload.Filter.Dedupe,
+    Mobilizon.Web.Upload.Filter.Optimize
   ],
   link_name: true,
   proxy_remote: false,
@@ -60,7 +60,7 @@ config :mobilizon, MobilizonWeb.Upload,
     ]
   ]
 
-config :mobilizon, MobilizonWeb.Upload.Uploader.Local, uploads: "uploads"
+config :mobilizon, Mobilizon.Web.Upload.Uploader.Local, uploads: "uploads"
 
 config :mobilizon, :media_proxy,
   enabled: true,
@@ -78,7 +78,7 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
-config :mobilizon, MobilizonWeb.Auth.Guardian,
+config :mobilizon, Mobilizon.Web.Auth.Guardian,
   issuer: "mobilizon",
   secret_key: "ty0WM7YBE3ojvxoUQxo8AERrNpfbXnIJ82ovkPdqbUFw31T5LcK8wGjaOiReVQjo"
 

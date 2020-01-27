@@ -1,7 +1,7 @@
 defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
   alias Phoenix.HTML.Tag
   alias Mobilizon.Actors.Actor
-  alias MobilizonWeb.MediaProxy
+  alias Mobilizon.Web.MediaProxy
 
   def build_tags(%Actor{} = actor) do
     tags = [

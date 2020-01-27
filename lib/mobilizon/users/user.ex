@@ -12,7 +12,7 @@ defmodule Mobilizon.Users.User do
   alias Mobilizon.Events.FeedToken
   alias Mobilizon.Users.UserRole
 
-  alias MobilizonWeb.Email
+  alias Mobilizon.Web.Email
 
   @type t :: %__MODULE__{
           email: String.t(),

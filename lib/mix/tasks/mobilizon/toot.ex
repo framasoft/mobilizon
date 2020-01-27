@@ -5,9 +5,10 @@ defmodule Mix.Tasks.Mobilizon.Toot do
 
   use Mix.Task
 
-  alias MobilizonWeb.API.Comments
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
+
+  alias Mobilizon.GraphQL.API.Comments
 
   require Logger
 

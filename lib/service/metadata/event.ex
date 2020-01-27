@@ -2,8 +2,8 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Event do
   alias Phoenix.HTML
   alias Phoenix.HTML.Tag
   alias Mobilizon.Events.Event
-  alias MobilizonWeb.JsonLD.ObjectView
-  alias MobilizonWeb.MediaProxy
+  alias Mobilizon.Web.JsonLD.ObjectView
+  alias Mobilizon.Web.MediaProxy
 
   def build_tags(%Event{} = event) do
     event = Map.put(event, :description, process_description(event.description))

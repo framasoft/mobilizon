@@ -1,4 +1,4 @@
-defmodule MobilizonWeb.ConnCase do
+defmodule Mobilizon.Web.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -24,13 +24,13 @@ defmodule MobilizonWeb.ConnCase do
     quote do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
-      import MobilizonWeb.Router.Helpers
+      import Mobilizon.Web.Router.Helpers
 
       # The default endpoint for testing
-      @endpoint MobilizonWeb.Endpoint
+      @endpoint Mobilizon.Web.Endpoint
 
       def auth_conn(%Plug.Conn{} = conn, %User{} = user) do
-        {:ok, token, _claims} = MobilizonWeb.Auth.Guardian.encode_and_sign(user)
+        {:ok, token, _claims} = Mobilizon.Web.Auth.Guardian.encode_and_sign(user)
 
         conn
         |> Plug.Conn.put_req_header("authorization", "Bearer #{token}")

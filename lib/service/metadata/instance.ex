@@ -6,7 +6,7 @@ defmodule Mobilizon.Service.Metadata.Instance do
   alias Phoenix.HTML
   alias Phoenix.HTML.Tag
   alias Mobilizon.Config
-  alias MobilizonWeb.Endpoint
+  alias Mobilizon.Web.Endpoint
 
   def build_tags() do
     description = process_description(Config.instance_description())

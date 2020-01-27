@@ -15,7 +15,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
   alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier}
   alias Mobilizon.Federation.WebFinger
 
-  alias MobilizonWeb.API.Follows
+  alias Mobilizon.GraphQL.API.Follows
 
   require Logger
 
@@ -28,7 +28,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
   @spec get_actor() :: Actor.t() | {:error, Ecto.Changeset.t()}
   def get_actor do
     with {:ok, %Actor{} = actor} <-
-           Actors.get_or_create_instance_actor_by_url("#{MobilizonWeb.Endpoint.url()}/relay") do
+           Actors.get_or_create_instance_actor_by_url("#{Mobilizon.Web.Endpoint.url()}/relay") do
       actor
     end
   end
