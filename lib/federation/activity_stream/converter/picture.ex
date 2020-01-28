@@ -6,7 +6,10 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Picture do
   internal one, and back.
   """
 
+  alias Mobilizon.Media
   alias Mobilizon.Media.Picture, as: PictureModel
+
+  alias Mobilizon.Web.Upload
 
   @doc """
   Convert a picture struct to an ActivityStream representation.
@@ -34,9 +37,9 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Picture do
       when is_bitstring(picture_url) do
     with {:ok, %HTTPoison.Response{body: body}} <- HTTPoison.get(picture_url),
          {:ok, %{name: name, url: url, content_type: content_type, size: size}} <-
-           Mobilizon.Web.Upload.store(%{body: body, name: name}),
-         {:picture_exists, nil} <- {:picture_exists, Mobilizon.Media.get_picture_by_url(url)} do
-      Mobilizon.Media.create_picture(%{
+           Upload.store(%{body: body, name: name}),
+         {:picture_exists, nil} <- {:picture_exists, Media.get_picture_by_url(url)} do
+      Media.create_picture(%{
         "file" => %{
           "url" => url,
           "name" => name,

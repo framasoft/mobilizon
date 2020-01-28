@@ -12,6 +12,8 @@ defmodule Mobilizon.Service.Formatter do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.Formatter.HTML
 
+  alias Mobilizon.Web.Endpoint
+
   @link_regex ~r"((?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~%:/?#[\]@!\$&'\(\)\*\+,;=.]+)|[0-9a-z+\-\.]+:[0-9a-z$-_.+!*'(),]+"ui
   @markdown_characters_regex ~r/(`|\*|_|{|}|[|]|\(|\)|#|\+|-|\.|!)/
 
@@ -52,7 +54,7 @@ defmodule Mobilizon.Service.Formatter do
 
   def hashtag_handler("#" <> tag = tag_text, _buffer, _opts, acc) do
     tag = String.downcase(tag)
-    url = "#{Mobilizon.Web.Endpoint.url()}/tag/#{tag}"
+    url = "#{Endpoint.url()}/tag/#{tag}"
     link = "<a class='hashtag' data-tag='#{tag}' href='#{url}' rel='tag'>#{tag_text}</a>"
 
     {link, %{acc | tags: MapSet.put(acc.tags, {tag_text, tag})}}

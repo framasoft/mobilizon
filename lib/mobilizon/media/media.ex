@@ -10,6 +10,8 @@ defmodule Mobilizon.Media do
   alias Mobilizon.Media.{File, Picture}
   alias Mobilizon.Storage.Repo
 
+  alias Mobilizon.Web.Upload
+
   @doc """
   Gets a single picture.
   """
@@ -62,7 +64,7 @@ defmodule Mobilizon.Media do
       Multi.new()
       |> Multi.delete(:picture, picture)
       |> Multi.run(:remove, fn _repo, %{picture: %Picture{file: %File{url: url}}} ->
-        Mobilizon.Web.Upload.remove(url)
+        Upload.remove(url)
       end)
       |> Repo.transaction()
 

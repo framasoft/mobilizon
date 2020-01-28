@@ -12,6 +12,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
 
   alias Mobilizon.Federation.ActivityPub
 
+  alias Mobilizon.Web.{MediaProxy, Upload}
+
   @doc """
   Get a person
   """
@@ -157,7 +159,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
         pic = args[key][:picture]
 
         with {:ok, %{name: name, url: url, content_type: content_type, size: _size}} <-
-               Mobilizon.Web.Upload.store(pic.file, type: key, description: pic.alt) do
+               Upload.store(pic.file, type: key, description: pic.alt) do
           Map.put(args, key, %{"name" => name, "url" => url, "mediaType" => content_type})
         end
       else
@@ -236,7 +238,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
 
   @spec proxify_avatar(Actor.t()) :: Actor.t()
   defp proxify_avatar(%Actor{avatar: %{url: avatar_url} = avatar} = actor) do
-    actor |> Map.put(:avatar, avatar |> Map.put(:url, Mobilizon.Web.MediaProxy.url(avatar_url)))
+    actor |> Map.put(:avatar, avatar |> Map.put(:url, MediaProxy.url(avatar_url)))
   end
 
   @spec proxify_avatar(Actor.t()) :: Actor.t()
@@ -244,7 +246,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
 
   @spec proxify_banner(Actor.t()) :: Actor.t()
   defp proxify_banner(%Actor{banner: %{url: banner_url} = banner} = actor) do
-    actor |> Map.put(:banner, banner |> Map.put(:url, Mobilizon.Web.MediaProxy.url(banner_url)))
+    actor |> Map.put(:banner, banner |> Map.put(:url, MediaProxy.url(banner_url)))
   end
 
   @spec proxify_banner(Actor.t()) :: Actor.t()

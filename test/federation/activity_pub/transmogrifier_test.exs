@@ -22,6 +22,8 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
   alias Mobilizon.GraphQL.API
 
+  alias Mobilizon.Web.Endpoint
+
   setup_all do
     HTTPoison.start()
   end
@@ -961,7 +963,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       }
 
       expected_tag = %{
-        "href" => Mobilizon.Web.Endpoint.url() <> "/tags/2hu",
+        "href" => Endpoint.url() <> "/tags/2hu",
         "type" => "Hashtag",
         "name" => "#2hu"
       }
@@ -996,7 +998,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       {:ok, activity, _} = API.Comments.create_comment(%{actor_id: actor.id, text: "#2hu"})
 
       expected_tag = %{
-        "href" => Mobilizon.Web.Endpoint.url() <> "/tags/2hu",
+        "href" => Endpoint.url() <> "/tags/2hu",
         "type" => "Hashtag",
         "name" => "#2hu"
       }

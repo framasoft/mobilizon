@@ -10,7 +10,7 @@ defmodule Mobilizon.Web.MediaProxyTest do
 
   alias Mobilizon.Config
 
-  alias Mobilizon.Web.MediaProxyController
+  alias Mobilizon.Web.{Endpoint, MediaProxyController}
 
   setup do
     enabled = Config.get([:media_proxy, :enabled])
@@ -35,8 +35,8 @@ defmodule Mobilizon.Web.MediaProxyTest do
     end
 
     test "ignores local url" do
-      local_url = Mobilizon.Web.Endpoint.url() <> "/hello"
-      local_root = Mobilizon.Web.Endpoint.url()
+      local_url = Endpoint.url() <> "/hello"
+      local_root = Endpoint.url()
       assert url(local_url) == local_url
       assert url(local_root) == local_root
     end
@@ -47,7 +47,7 @@ defmodule Mobilizon.Web.MediaProxyTest do
 
       assert String.starts_with?(
                encoded,
-               Config.get([:media_proxy, :base_url], Mobilizon.Web.Endpoint.url())
+               Config.get([:media_proxy, :base_url], Endpoint.url())
              )
 
       assert String.ends_with?(encoded, "/logo.png")
@@ -84,16 +84,16 @@ defmodule Mobilizon.Web.MediaProxyTest do
     end
 
     test "validates signature" do
-      secret_key_base = Config.get([Mobilizon.Web.Endpoint, :secret_key_base])
+      secret_key_base = Config.get([Endpoint, :secret_key_base])
 
       on_exit(fn ->
-        Config.put([Mobilizon.Web.Endpoint, :secret_key_base], secret_key_base)
+        Config.put([Endpoint, :secret_key_base], secret_key_base)
       end)
 
       encoded = url("https://pleroma.social")
 
       Config.put(
-        [Mobilizon.Web.Endpoint, :secret_key_base],
+        [Endpoint, :secret_key_base],
         "00000000000000000000000000000000000000000000000"
       )
 

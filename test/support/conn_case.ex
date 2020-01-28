@@ -20,6 +20,8 @@ defmodule Mobilizon.Web.ConnCase do
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Users.User
 
+  alias Mobilizon.Web.Auth
+
   using do
     quote do
       # Import conveniences for testing with connections
@@ -30,7 +32,7 @@ defmodule Mobilizon.Web.ConnCase do
       @endpoint Mobilizon.Web.Endpoint
 
       def auth_conn(%Plug.Conn{} = conn, %User{} = user) do
-        {:ok, token, _claims} = Mobilizon.Web.Auth.Guardian.encode_and_sign(user)
+        {:ok, token, _claims} = Auth.Guardian.encode_and_sign(user)
 
         conn
         |> Plug.Conn.put_req_header("authorization", "Bearer #{token}")

@@ -11,6 +11,8 @@ defmodule Mobilizon.Web.WebFingerControllerTest do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.WebFinger
 
+  alias Mobilizon.Web.Endpoint
+
   setup_all do
     Mobilizon.Config.put([:instance, :federating], true)
 
@@ -22,7 +24,7 @@ defmodule Mobilizon.Web.WebFingerControllerTest do
 
     assert response(conn, 200) ==
              "<?xml version=\"1.0\" encoding=\"UTF-8\"?><XRD xmlns=\"http://docs.oasis-open.org/ns/xri/xrd-1.0\"><Link rel=\"lrdd\" template=\"#{
-               Mobilizon.Web.Endpoint.url()
+               Endpoint.url()
              }/.well-known/webfinger?resource={uri}\" type=\"application/xrd+xml\" /></XRD>"
 
     assert {"content-type", "application/xrd+xml; charset=utf-8"} in conn.resp_headers

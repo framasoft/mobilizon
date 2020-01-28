@@ -8,6 +8,8 @@ defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
 
   alias Mobilizon.GraphQL.AbsintheHelpers
 
+  alias Mobilizon.Web.Endpoint
+
   setup %{conn: conn} do
     user = insert(:user)
     actor = insert(:actor, user: user)
@@ -42,8 +44,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
 
       assert json_response(res, 200)["data"]["picture"]["size"] == 13_120
 
-      assert json_response(res, 200)["data"]["picture"]["url"] =~
-               Mobilizon.Web.Endpoint.url()
+      assert json_response(res, 200)["data"]["picture"]["url"] =~ Endpoint.url()
     end
 
     test "picture/3 returns nothing on a non-existent picture", context do

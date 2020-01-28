@@ -8,7 +8,7 @@ defmodule Mobilizon.UploadTest do
 
   alias Mobilizon.Config
 
-  alias Mobilizon.Web.Upload
+  alias Mobilizon.Web.{Endpoint, Upload}
   alias Mobilizon.Web.Upload.Uploader
 
   describe "Storing a file with the Local uploader" do
@@ -31,7 +31,7 @@ defmodule Mobilizon.UploadTest do
                size: 13_227
              } = data
 
-      assert String.starts_with?(url, Mobilizon.Web.Endpoint.url() <> "/media/")
+      assert String.starts_with?(url, Endpoint.url() <> "/media/")
     end
 
     test "returns a media url with configured base_url" do
@@ -59,10 +59,10 @@ defmodule Mobilizon.UploadTest do
         filename: "an [image.jpg"
       }
 
-      {:ok, data} = Upload.store(file, filters: [Mobilizon.Web.Upload.Filter.Dedupe])
+      {:ok, data} = Upload.store(file, filters: [Upload.Filter.Dedupe])
 
       assert data.url ==
-               Mobilizon.Web.Endpoint.url() <>
+               Endpoint.url() <>
                  "/media/590523d60d3831ec92d05cdd871078409d5780903910efec5cd35ab1b0f19d11.jpg"
     end
 
@@ -88,7 +88,7 @@ defmodule Mobilizon.UploadTest do
         filename: "an [image.jpg"
       }
 
-      {:ok, data} = Upload.store(file, filters: [Mobilizon.Web.Upload.Filter.Dedupe])
+      {:ok, data} = Upload.store(file, filters: [Upload.Filter.Dedupe])
       assert data.content_type == "image/jpeg"
     end
 
@@ -140,7 +140,7 @@ defmodule Mobilizon.UploadTest do
         filename: "an [image.jpg"
       }
 
-      {:ok, data} = Upload.store(file, filters: [Mobilizon.Web.Upload.Filter.AnonymizeFilename])
+      {:ok, data} = Upload.store(file, filters: [Upload.Filter.AnonymizeFilename])
 
       refute data.name == "an [image.jpg"
     end
@@ -212,7 +212,7 @@ defmodule Mobilizon.UploadTest do
              content_type: "image/jpeg"
            } = data
 
-    assert String.starts_with?(url, Mobilizon.Web.Endpoint.url() <> "/media/")
+    assert String.starts_with?(url, Endpoint.url() <> "/media/")
 
     %URI{path: "/media/" <> path} = URI.parse(url)
     {Config.get!([Uploader.Local, :uploads]) <> "/" <> path, url}

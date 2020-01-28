@@ -14,6 +14,8 @@ defmodule Mobilizon.Web.Plugs.UploadedMedia do
 
   alias Mobilizon.Config
 
+  alias Mobilizon.Web.{ReverseProxy, Upload}
+
   require Logger
 
   # no slashes
@@ -41,7 +43,7 @@ defmodule Mobilizon.Web.Plugs.UploadedMedia do
           conn
       end
 
-    config = Config.get([Mobilizon.Web.Upload])
+    config = Config.get([Upload])
 
     with uploader <- Keyword.fetch!(config, :uploader),
          proxy_remote = Keyword.get(config, :proxy_remote, false),
@@ -76,7 +78,7 @@ defmodule Mobilizon.Web.Plugs.UploadedMedia do
   end
 
   defp get_media(conn, {:url, url}, true, _) do
-    Mobilizon.Web.ReverseProxy.call(conn, url, Config.get([Mobilizon.Upload, :proxy_opts], []))
+    ReverseProxy.call(conn, url, Config.get([Mobilizon.Upload, :proxy_opts], []))
   end
 
   defp get_media(conn, {:url, url}, _, _) do

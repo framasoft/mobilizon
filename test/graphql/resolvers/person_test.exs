@@ -9,6 +9,8 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
 
   alias Mobilizon.GraphQL.AbsintheHelpers
 
+  alias Mobilizon.Web.Endpoint
+
   @non_existent_username "nonexistent"
 
   describe "Person Resolver" do
@@ -120,8 +122,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       assert json_response(res, 200)["data"]["loggedPerson"]["preferredUsername"] ==
                actor.preferred_username
 
-      assert json_response(res, 200)["data"]["loggedPerson"]["avatar"]["url"] =~
-               Mobilizon.Web.Endpoint.url()
+      assert json_response(res, 200)["data"]["loggedPerson"]["avatar"]["url"] =~ Endpoint.url()
     end
 
     test "create_person/3 creates a new identity", context do
@@ -255,7 +256,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
                "The beautiful atlantic way"
 
       assert json_response(res, 200)["data"]["createPerson"]["banner"]["url"] =~
-               Mobilizon.Web.Endpoint.url() <> "/media/"
+               Endpoint.url() <> "/media/"
     end
 
     test "update_person/3 updates an existing identity", context do
@@ -325,7 +326,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
 
       assert res_person["banner"]["id"]
       assert res_person["banner"]["name"] == "The beautiful atlantic way"
-      assert res_person["banner"]["url"] =~ Mobilizon.Web.Endpoint.url() <> "/media/"
+      assert res_person["banner"]["url"] =~ Endpoint.url() <> "/media/"
     end
 
     test "update_person/3 should fail to update a not owned identity", context do

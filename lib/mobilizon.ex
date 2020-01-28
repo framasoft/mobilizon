@@ -14,7 +14,7 @@ defmodule Mobilizon do
 
   import Cachex.Spec
 
-  alias Mobilizon.Config
+  alias Mobilizon.{Config, Storage, Web}
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Service.Export.{Feed, ICalendar}
 
@@ -26,7 +26,7 @@ defmodule Mobilizon do
 
   @spec user_agent :: String.t()
   def user_agent do
-    info = "#{Mobilizon.Web.Endpoint.url()} <#{Config.get([:instance, :email], "")}>"
+    info = "#{Web.Endpoint.url()} <#{Config.get([:instance, :email], "")}>"
 
     "#{named_version()}; #{info}"
   end
@@ -36,9 +36,9 @@ defmodule Mobilizon do
   def start(_type, _args) do
     children = [
       # supervisors
-      Mobilizon.Storage.Repo,
-      Mobilizon.Web.Endpoint,
-      {Absinthe.Subscription, [Mobilizon.Web.Endpoint]},
+      Storage.Repo,
+      Web.Endpoint,
+      {Absinthe.Subscription, [Web.Endpoint]},
       {Oban, Application.get_env(:mobilizon, Oban)},
       # workers
       Guardian.DB.Token.SweeperServer,
@@ -55,7 +55,7 @@ defmodule Mobilizon do
 
   @spec config_change(keyword, keyword, [atom]) :: :ok
   def config_change(changed, _new, removed) do
-    Mobilizon.Web.Endpoint.config_change(changed, removed)
+    Web.Endpoint.config_change(changed, removed)
 
     :ok
   end
