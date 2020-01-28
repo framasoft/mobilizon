@@ -92,7 +92,7 @@ defmodule Mobilizon do
   defp fallback_options(nil), do: []
   defp fallback_options(fallback), do: [fallback: fallback(default: fallback)]
 
-  defp internal_actor() do
+  defp internal_actor do
     %{
       id: :internal_actor_init,
       start: {Task, :start_link, [&ActivityPub.Relay.init/0]},

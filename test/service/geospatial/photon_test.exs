@@ -6,8 +6,8 @@ defmodule Mobilizon.Service.Geospatial.PhotonTest do
   import Mock
 
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.Service.Geospatial.Photon
   alias Mobilizon.Config
+  alias Mobilizon.Service.Geospatial.Photon
 
   @httpoison_headers [
     {"User-Agent",

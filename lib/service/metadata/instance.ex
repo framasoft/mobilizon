@@ -5,10 +5,11 @@ defmodule Mobilizon.Service.Metadata.Instance do
 
   alias Phoenix.HTML
   alias Phoenix.HTML.Tag
+
   alias Mobilizon.Config
   alias Mobilizon.Web.Endpoint
 
-  def build_tags() do
+  def build_tags do
     description = process_description(Config.instance_description())
     title = "#{Config.instance_name()} - Mobilizon"
 

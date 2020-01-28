@@ -8,8 +8,8 @@ defmodule Mobilizon.Service.Geospatial.Mimirsbrunn do
   """
 
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.Service.Geospatial.Provider
   alias Mobilizon.Config
+  alias Mobilizon.Service.Geospatial.Provider
 
   require Logger
 

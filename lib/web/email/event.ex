@@ -15,7 +15,7 @@ defmodule Mobilizon.Web.Email.Event do
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Users.User
 
-  alias Mobilizon.Web.{Gettext, Email}
+  alias Mobilizon.Web.{Email, Gettext}
 
   @important_changes [:title, :begins_on, :ends_on, :status]
 

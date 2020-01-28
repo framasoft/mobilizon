@@ -10,7 +10,7 @@ defmodule Mobilizon.Federation.ActivityPub do
 
   import Mobilizon.Federation.ActivityPub.Utils
 
-  alias Mobilizon.{Actors, Config, Events, Reports, Users, Share}
+  alias Mobilizon.{Actors, Config, Events, Reports, Share, Users}
   alias Mobilizon.Actors.{Actor, Follower}
   alias Mobilizon.Events.{Comment, Event, Participant}
   alias Mobilizon.Reports.Report

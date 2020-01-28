@@ -10,8 +10,7 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
 
   alias Mobilizon.Federation.ActivityPub.Relay
 
-  alias Mobilizon.GraphQL.API
-  alias Mobilizon.GraphQL.AbsintheHelpers
+  alias Mobilizon.GraphQL.{AbsintheHelpers, API}
 
   describe "Resolver: List the action logs" do
     @note_content "This a note on a report"

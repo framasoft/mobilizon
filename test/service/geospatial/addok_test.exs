@@ -6,8 +6,8 @@ defmodule Mobilizon.Service.Geospatial.AddokTest do
   import Mock
 
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.Service.Geospatial.Addok
   alias Mobilizon.Config
+  alias Mobilizon.Service.Geospatial.Addok
 
   @httpoison_headers [
     {"User-Agent",

@@ -1,9 +1,11 @@
 defmodule Mix.Tasks.Mobilizon.ActorsTest do
   use Mobilizon.DataCase
 
-  alias Mobilizon.Actors.Actor
-  alias Mix.Tasks.Mobilizon.Actors.Show
   import Mobilizon.Factory
+
+  alias Mix.Tasks.Mobilizon.Actors.Show
+
+  alias Mobilizon.Actors.Actor
 
   Mix.shell(Mix.Shell.Process)
 

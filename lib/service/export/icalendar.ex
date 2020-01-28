@@ -5,8 +5,8 @@ defmodule Mobilizon.Service.Export.ICalendar do
 
   alias Mobilizon.{Actors, Events, Users}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.{Event, FeedToken}
   alias Mobilizon.Addresses.Address
+  alias Mobilizon.Events.{Event, FeedToken}
   alias Mobilizon.Users.User
 
   @doc """

@@ -21,7 +21,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
 
   require Logger
 
-  def init() do
+  def init do
     # Wait for everything to settle.
     Process.sleep(1000 * 5)
     get_actor()

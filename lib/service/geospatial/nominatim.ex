@@ -4,8 +4,8 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
   """
 
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.Service.Geospatial.Provider
   alias Mobilizon.Config
+  alias Mobilizon.Service.Geospatial.Provider
 
   require Logger
 

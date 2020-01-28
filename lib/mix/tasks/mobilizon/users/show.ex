@@ -2,10 +2,12 @@ defmodule Mix.Tasks.Mobilizon.Users.Show do
   @moduledoc """
   Task to display an user details
   """
+
   use Mix.Task
+
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Users
   alias Mobilizon.Users.User
-  alias Mobilizon.Actors.Actor
 
   @shortdoc "Show a Mobilizon user details"
 

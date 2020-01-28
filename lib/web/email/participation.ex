@@ -9,9 +9,9 @@ defmodule Mobilizon.Web.Email.Participation do
 
   import Mobilizon.Web.Gettext
 
-  alias Mobilizon.Users.User
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Participant
+  alias Mobilizon.Users.User
 
   alias Mobilizon.Web.{Email, Gettext}
 

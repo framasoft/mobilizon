@@ -7,13 +7,12 @@ defmodule Mobilizon.Actors.Actor do
 
   import Ecto.Changeset
 
-  alias Mobilizon.{Actors, Config, Crypto, Share}
+  alias Mobilizon.{Actors, Config, Crypto, Mention, Share}
   alias Mobilizon.Actors.{ActorOpenness, ActorType, ActorVisibility, Follower, Member}
-  alias Mobilizon.Events.{Event, FeedToken, Comment}
+  alias Mobilizon.Events.{Comment, Event, FeedToken}
   alias Mobilizon.Media.File
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Users.User
-  alias Mobilizon.Mention
 
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Router.Helpers, as: Routes

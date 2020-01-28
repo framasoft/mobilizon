@@ -6,31 +6,27 @@ defmodule Mobilizon.Events.Event do
   use Ecto.Schema
 
   import Ecto.Changeset
+
   alias Ecto.Changeset
 
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.{Addresses, Events, Media, Mention}
   alias Mobilizon.Addresses.Address
-
-  alias Mobilizon.Addresses
-
-  alias Mobilizon.Events
 
   alias Mobilizon.Events.{
     Comment,
     EventOptions,
+    EventParticipantStats,
     EventStatus,
     EventVisibility,
     JoinOptions,
-    EventParticipantStats,
     Participant,
     Session,
     Tag,
     Track
   }
 
-  alias Mobilizon.Media
   alias Mobilizon.Media.Picture
-  alias Mobilizon.Mention
   alias Mobilizon.Storage.Repo
 
   alias Mobilizon.Web.Endpoint

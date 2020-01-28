@@ -3,9 +3,10 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
 
   import Mobilizon.Factory
 
+  alias Mix.Tasks.Mobilizon.Users.{Delete, Modify, New, Show}
+
   alias Mobilizon.Users
   alias Mobilizon.Users.User
-  alias Mix.Tasks.Mobilizon.Users.{New, Delete, Show, Modify}
 
   Mix.shell(Mix.Shell.Process)
 
