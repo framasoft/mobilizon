@@ -80,7 +80,7 @@ defmodule Mobilizon.Mixfile do
       {:bamboo, "~> 1.0"},
       {:bamboo_smtp, "~> 2.0"},
       {:geolix, "~> 1.0"},
-      {:geolix_adapter_mmdb2, "~> 0.2.0"},
+      {:geolix_adapter_mmdb2, "~> 0.3.0"},
       {:absinthe, "~> 1.4.16"},
       {:absinthe_phoenix, "~> 1.4.0"},
       {:absinthe_plug, "~> 1.4.6"},
@@ -98,7 +98,7 @@ defmodule Mobilizon.Mixfile do
        git: "https://git.pleroma.social/pleroma/http_signatures.git",
        ref: "293d77bb6f4a67ac8bde1428735c3b42f22cbb30"},
       {:html_sanitize_ex, "~> 1.4.0"},
-      {:ex_cldr_dates_times, "~> 2.0"},
+      {:ex_cldr_dates_times, "~> 2.2"},
       {:ex_optimizer, "~> 0.1"},
       {:progress_bar, "~> 2.0"},
       {:oban, "~> 0.12.0"},
@@ -111,7 +111,7 @@ defmodule Mobilizon.Mixfile do
       {:ex_unit_notifier, "~> 0.1", only: :test},
       {:dialyxir, "~> 1.0.0-rc.4", only: [:dev], runtime: false},
       {:exvcr, "~> 0.10", only: :test},
-      {:credo, "~> 1.1.2", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.2.1", only: [:dev, :test], runtime: false},
       {:mock, "~> 0.3.4", only: :test},
       {:elixir_feed_parser, "~> 2.1.0", only: :test}
     ]
