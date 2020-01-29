@@ -85,6 +85,7 @@ export default class App extends Vue {
 
 /* Bulma imports */
 @import "~bulma/bulma";
+@import '~bulma-divider';
 
 /* Buefy imports */
 @import "~buefy/src/scss/buefy";
@@ -102,12 +103,12 @@ $mdi-font-path: "~@mdi/font/fonts";
 
   body {
     // background: #f7f8fa;
-    background: #ebebeb;
+    background: $body-background-color;
     font-family: BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Fira Sans','Droid Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
 
-    main {
-      margin: 1rem auto 0;
-    }
+    /*main {*/
+    /*  margin: 1rem auto 0;*/
+    /*}*/
   }
 
   #mobilizon > .container > .message {

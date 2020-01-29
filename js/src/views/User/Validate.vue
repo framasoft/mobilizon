@@ -1,5 +1,5 @@
 <template>
-  <section class="container">
+  <section class="section container">
     <h1 class="title" v-if="loading">
       {{ $t('Your account is being validated') }}
     </h1>

@@ -9,6 +9,33 @@ query {
     registrationsWhitelist,
     demoMode,
     countryCode,
+    anonymous {
+      participation {
+        allowed,
+        validation {
+          email {
+            enabled,
+            confirmationRequired
+          },
+          captcha {
+            enabled
+          }
+        }
+      }
+      eventCreation {
+        allowed,
+        validation {
+          email {
+            enabled,
+            confirmationRequired
+          },
+          captcha {
+            enabled
+          }
+        }
+      }
+      actorId
+    },
     location {
       latitude,
       longitude,
@@ -23,6 +50,18 @@ query {
     geocoding {
       provider,
       autocomplete
+    }
+  }
+}
+`;
+
+export const TERMS = gql`
+query Terms($locale: String) {
+  config {
+    terms(locale: $locale) {
+      type,
+      url,
+      bodyHtml
     }
   }
 }

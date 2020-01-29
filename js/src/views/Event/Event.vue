@@ -1,5 +1,3 @@
-import {ParticipantRole} from "@/types/event.model";
-import {ParticipantRole} from "@/types/event.model";
 <template>
   <div class="container">
     <b-loading :active.sync="$apollo.loading" />
@@ -7,7 +5,7 @@ import {ParticipantRole} from "@/types/event.model";
       <div>
         <div class="header-picture" v-if="event.picture" :style="`background-image: url('${event.picture.url}')`" />
         <div class="header-picture-default" v-else />
-          <section>
+          <section class="section">
             <div class="title-and-participate-button">
               <div class="title-wrapper">
                 <div class="date-component">
@@ -33,18 +31,39 @@ import {ParticipantRole} from "@/types/event.model";
                     <small v-if="event.options.maximumAttendeeCapacity">
                         {{ $tc('All the places have already been taken', numberOfPlacesStillAvailable, { places: numberOfPlacesStillAvailable}) }}
                     </small>
+                    <b-tooltip type="is-dark" v-if="!event.local" :label="$t('The actual number of participants may differ, as this event is hosted on another instance.')">
+                      <b-icon size="is-small" icon="help-circle-outline" />
+                    </b-tooltip>
                   </span>
                 </div>
               </div>
               <div class="event-participation has-text-right" v-if="new Date(endDate) > new Date()">
                 <participation-button
-                        v-if="currentActor.id && !actorIsOrganizer && !event.draft && (eventCapacityOK || actorIsParticipant) && event.status !== EventStatus.CANCELLED"
+                        v-if="anonymousParticipation === null && (config.anonymous.participation.allowed || (currentActor.id && !actorIsOrganizer && !event.draft && (eventCapacityOK || actorIsParticipant) && event.status !== EventStatus.CANCELLED))"
                         :participation="participations[0]"
+                        :event="event"
                         :current-actor="currentActor"
                         @joinEvent="joinEvent"
                         @joinModal="isJoinModalActive = true"
                         @confirmLeave="confirmLeave"
                 />
+                <b-button type="is-text" v-if="anonymousParticipation !== null" @click="cancelAnonymousParticipation">{{ $t('Cancel anonymous participation')}}</b-button>
+                <small v-if="anonymousParticipation">
+                  {{ $t('You are participating in this event anonymously')}}
+                  <b-tooltip :label="$t('This information is saved only on your computer. Click for details')">
+                    <router-link :to="{ name: RouteName.TERMS }">
+                      <b-icon size="is-small" icon="help-circle-outline" />
+                    </router-link>
+                  </b-tooltip>
+                </small>
+                <small v-else-if="anonymousParticipation === false">
+                  {{ $t("You are participating in this event anonymously but didn't confirm participation")}}
+                  <b-tooltip :label="$t('This information is saved only on your computer. Click for details')">
+                    <router-link :to="{ name: RouteName.TERMS }">
+                      <b-icon size="is-small" icon="help-circle-outline" />
+                    </router-link>
+                  </b-tooltip>
+                </small>
               </div>
               <div v-else>
                 <button class="button is-primary" type="button" slot="trigger" disabled>
@@ -68,7 +87,9 @@ import {ParticipantRole} from "@/types/event.model";
                     <b-tag type="is-info" v-if="event.visibility === EventVisibility.UNLISTED">{{ $t('Private event') }}</b-tag>
                   </span>
                   <span v-if="!event.local">
-                    <b-tag type="is-primary">{{ event.organizerActor.domain }}</b-tag>
+                    <a :href="event.url">
+                      <b-tag type="is-primary">{{ event.organizerActor.domain }}</b-tag>
+                    </a>
                   </span>
                   <router-link
                     v-if="event.tags && event.tags.length > 0"
@@ -165,7 +186,7 @@ import {ParticipantRole} from "@/types/event.model";
               </div>
             </div>
           </section>
-          <div class="description" :class="{ exists: event.description }">
+          <section class="description section" :class="{ exists: event.description }">
             <div class="description-container container">
               <h3 class="title">
                 {{ $t('About this event') }}
@@ -178,14 +199,14 @@ import {ParticipantRole} from "@/types/event.model";
                 </div>
               </div>
             </div>
-          </div>
-        <section class="comments" ref="commentsObserver">
+          </section>
+        <section class="comments section" ref="commentsObserver">
           <a href="#comments">
             <h3 class="title" id="comments">{{ $t('Comments') }}</h3>
           </a>
           <comment-tree v-if="loadComments" :event="event" />
         </section>
-        <section class="share" v-if="!event.draft">
+        <section class="share section" v-if="!event.draft">
           <div class="container">
             <div class="columns is-centered is-multiline">
               <div class="column is-half-widescreen has-text-centered">
@@ -218,7 +239,7 @@ import {ParticipantRole} from "@/types/event.model";
             </div>
           </div>
         </section>
-        <section class="more-events container" v-if="event.relatedEvents.length > 0">
+        <section class="more-events section container" v-if="event.relatedEvents.length > 0">
           <h3 class="title has-text-centered">{{ $t('These events may interest you') }}</h3>
           <div class="columns">
             <div class="column is-one-third-desktop" v-for="relatedEvent in event.relatedEvents" :key="relatedEvent.uuid">
@@ -283,6 +304,14 @@ import { RouteName } from '@/router';
 import { Address } from '@/types/address.model';
 import CommentTree from '@/components/Comment/CommentTree.vue';
 import 'intersection-observer';
+import { CONFIG } from '@/graphql/config';
+import {
+  AnonymousParticipationNotFoundError,
+  getLeaveTokenForParticipation,
+  isParticipatingInThisEvent,
+        removeAnonymousParticipation,
+} from '@/services/AnonymousParticipationStorage';
+import { IConfig } from '@/types/config.model';
 
 @Component({
   components: {
@@ -339,6 +368,7 @@ import 'intersection-observer';
         return !this.currentActor || !this.event || !this.event.id || !this.currentActor.id;
       },
     },
+    config: CONFIG,
   },
   metaInfo() {
     return {
@@ -360,6 +390,7 @@ export default class Event extends EventMixin {
   event: IEvent = new EventModel();
   currentActor!: IPerson;
   identity: IPerson = new Person();
+  config!: IConfig;
   participations: IParticipant[] = [];
   oldParticipationRole!: String;
   showMap: boolean = false;
@@ -370,6 +401,7 @@ export default class Event extends EventMixin {
   RouteName = RouteName;
   observer!: IntersectionObserver;
   loadComments: boolean = false;
+  anonymousParticipation: boolean|null = null;
 
   get eventTitle() {
     if (!this.event) return undefined;
@@ -381,10 +413,20 @@ export default class Event extends EventMixin {
     return this.event.description;
   }
 
-  mounted() {
+  async mounted() {
     this.identity = this.currentActor;
     if (this.$route.hash.includes('#comment-')) {
       this.loadComments = true;
+    }
+
+    try {
+      this.anonymousParticipation = await this.anonymousParticipationConfirmed();
+    } catch (e) {
+      if (e instanceof AnonymousParticipationNotFoundError) {
+        this.anonymousParticipation = null;
+      } else {
+        console.error(e);
+      }
     }
 
     this.observer = new IntersectionObserver((entries) => {
@@ -529,61 +571,12 @@ export default class Event extends EventMixin {
       cancelText: this.$t('Cancel') as string,
       type: 'is-danger',
       hasIcon: true,
-      onConfirm: () => this.leaveEvent(),
+      onConfirm: () => {
+        if (this.currentActor.id) {
+          this.leaveEvent(this.event, this.currentActor.id);
+        }
+      },
     });
-  }
-
-  async leaveEvent() {
-    try {
-      const { data } = await this.$apollo.mutate<{ leaveEvent: IParticipant }>({
-        mutation: LEAVE_EVENT,
-        variables: {
-          eventId: this.event.id,
-          actorId: this.currentActor.id,
-        },
-        update: (store, { data }) => {
-          if (data == null) return;
-
-          const participationCachedData = store.readQuery<{ person: IPerson }>({
-            query: EVENT_PERSON_PARTICIPATION,
-            variables: { eventId: this.event.id, actorId: this.currentActor.id },
-          });
-          if (participationCachedData == null) return;
-          const { person } = participationCachedData;
-          if (person === null) {
-            console.error('Cannot update participation cache, because of null value.');
-            return;
-          }
-          const participation = person.participations[0];
-          person.participations = [];
-          store.writeQuery({
-            query: EVENT_PERSON_PARTICIPATION,
-            variables: { eventId: this.event.id, actorId: this.currentActor.id },
-            data: { person },
-          });
-
-          const eventCachedData = store.readQuery<{ event: IEvent }>({ query: FETCH_EVENT, variables: { uuid: this.event.uuid } });
-          if (eventCachedData == null) return;
-          const { event } = eventCachedData;
-          if (event === null) {
-            console.error('Cannot update event cache, because of null value.');
-            return;
-          }
-          if (participation.role === ParticipantRole.NOT_APPROVED) {
-            event.participantStats.notApproved = event.participantStats.notApproved - 1;
-          } else {
-            event.participantStats.going = event.participantStats.going - 1;
-            event.participantStats.participant = event.participantStats.participant - 1;
-          }
-          store.writeQuery({ query: FETCH_EVENT, variables: { uuid: this.uuid }, data: { event } });
-        },
-      });
-      if (data) {
-        this.participationCancelledMessage();
-      }
-    } catch (error) {
-      console.error(error);
-    }
   }
 
   @Watch('participations')
@@ -622,10 +615,6 @@ export default class Event extends EventMixin {
 
   private participationChangedMessage() {
     this.$notifier.info(this.$t('Your participation status has been changed') as string);
-  }
-
-  private participationCancelledMessage() {
-    this.$notifier.success(this.$t('You have cancelled your participation') as string);
   }
 
   async downloadIcsEvent() {
@@ -709,10 +698,29 @@ export default class Event extends EventMixin {
     if (!this.event.physicalAddress) return null;
     return new Address(this.event.physicalAddress);
   }
+
+  async anonymousParticipationConfirmed(): Promise<boolean> {
+    return await isParticipatingInThisEvent(this.uuid);
+  }
+
+  async cancelAnonymousParticipation() {
+    const token = await getLeaveTokenForParticipation(this.uuid) as String;
+    await this.leaveEvent(this.event, this.config.anonymous.actorId, token);
+    await removeAnonymousParticipation(this.uuid);
+    this.anonymousParticipation = null;
+  }
 }
 </script>
 <style lang="scss" scoped>
   @import "../../variables";
+
+  .section {
+    padding: 1rem 1.5rem;
+  }
+
+  main > .container {
+    background: $white;
+  }
 
   .fade-enter-active, .fade-leave-active {
     transition: opacity .5s;
@@ -821,14 +829,14 @@ export default class Event extends EventMixin {
 
   div.title-and-participate-button {
     display: flex;
-    flex-wrap: wrap;
+    // flex-wrap: wrap;
     /*flex-flow: row wrap;*/
     justify-content: space-between;
     /*align-self: center;*/
     align-items: stretch;
     /*align-content: space-around;*/
     padding: 7.5px 10px 0;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 
     div.title-wrapper {
       display: flex;
@@ -906,7 +914,7 @@ export default class Event extends EventMixin {
   p.tags {
     span {
       &.tag {
-        margin: 0 2px 4px;
+        margin: 0 2px;
 
         &.is-success {
             &::before {
@@ -919,7 +927,7 @@ export default class Event extends EventMixin {
 
       margin: auto 5px;
     }
-    margin-bottom: 1rem;
+    //margin-bottom: 1rem;
   }
 
   h3.title {
@@ -927,7 +935,7 @@ export default class Event extends EventMixin {
   }
 
   .description {
-    padding: 10px 0;
+    //padding: 10px 0;
     min-height: 7rem;
 
     &.exists {
@@ -942,8 +950,8 @@ export default class Event extends EventMixin {
         background-image: url('../../assets/texting.svg');
       }
     }
-    border-top: solid 1px #111;
-    border-bottom: solid 1px #111;
+    border-top: solid 1px lighten($primary, 60%);
+    border-bottom: solid 1px lighten($primary, 60%);
 
     .description-content {
       /deep/ h1 {
@@ -990,8 +998,6 @@ export default class Event extends EventMixin {
   }
 
   .comments {
-    margin: 1rem auto 2rem;
-
     a h3#comments {
       margin-bottom: 5px;
     }

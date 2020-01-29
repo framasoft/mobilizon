@@ -17,6 +17,7 @@ defmodule Mobilizon.Events.EventOptions do
           maximum_attendee_capacity: integer,
           remaining_attendee_capacity: integer,
           show_remaining_attendee_capacity: boolean,
+          anonymous_participation: boolean,
           attendees: [String.t()],
           program: String.t(),
           comment_moderation: CommentModeration.t(),
@@ -31,6 +32,7 @@ defmodule Mobilizon.Events.EventOptions do
     :maximum_attendee_capacity,
     :remaining_attendee_capacity,
     :show_remaining_attendee_capacity,
+    :anonymous_participation,
     :attendees,
     :program,
     :comment_moderation,
@@ -45,6 +47,7 @@ defmodule Mobilizon.Events.EventOptions do
     field(:maximum_attendee_capacity, :integer)
     field(:remaining_attendee_capacity, :integer)
     field(:show_remaining_attendee_capacity, :boolean)
+    field(:anonymous_participation, :boolean)
     field(:attendees, {:array, :string})
     field(:program, :string)
     field(:comment_moderation, CommentModeration)

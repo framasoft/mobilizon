@@ -1,5 +1,5 @@
 <template>
-  <section class="container">
+  <section class="section container">
     <div class="columns is-mobile is-centered">
       <div class="column is-half-desktop">
         <h1 class="title">

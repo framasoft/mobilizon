@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Tue Dec 17 2019 11:21:37 GMT+0100 (heure normale d’Europe centrale)
+# timestamp: Fri Jan 24 2020 10:31:31 GMT+0100 (GMT+01:00)
 
 schema {
   query: RootQueryType
@@ -151,6 +151,59 @@ input AddressInput {
   url: String
 }
 
+type AdminSettings {
+  instanceDescription: String
+  instanceName: String
+  instanceTerms: String
+  instanceTermsType: InstanceTermsType
+  instanceTermsUrl: String
+  registrationsOpen: Boolean
+}
+
+type Anonymous {
+  actorId: ID
+  eventCreation: AnonymousEventCreation
+  participation: AnonymousParticipation
+}
+
+type AnonymousEventCreation {
+  allowed: Boolean
+  validation: AnonymousEventCreationValidation
+}
+
+type AnonymousEventCreationValidation {
+  captcha: AnonymousEventCreationValidationCaptcha
+  email: AnonymousEventCreationValidationEmail
+}
+
+type AnonymousEventCreationValidationCaptcha {
+  enabled: Boolean
+}
+
+type AnonymousEventCreationValidationEmail {
+  confirmationRequired: Boolean
+  enabled: Boolean
+}
+
+type AnonymousParticipation {
+  allowed: Boolean
+  validation: AnonymousParticipationValidation
+}
+
+type AnonymousParticipationValidation {
+  captcha: AnonymousParticipationValidationCaptcha
+  email: AnonymousParticipationValidationEmail
+}
+
+type AnonymousParticipationValidationCaptcha {
+  enabled: Boolean
+}
+
+type AnonymousParticipationValidationEmail {
+  confirmationRequired: Boolean
+  enabled: Boolean
+}
+
 """
 Represents an application
 
@@ -248,6 +301,7 @@ enum CommentVisibility {
 
 """A config object"""
 type Config {
+  anonymous: Anonymous
   countryCode: String
   demoMode: Boolean
   description: String
@@ -257,6 +311,9 @@ type Config {
   name: String
   registrationsOpen: Boolean
   registrationsWhitelist: Boolean
+
+  """The instance's terms"""
+  terms(locale: String = "en"): Terms
 }
 
 type Dashboard {
@@ -443,6 +500,11 @@ input EventOfferInput {
 }
 
 type EventOptions {
+  """
+  Whether or not to allow anonymous participation (if the server allows it)
+  """
+  anonymousParticipation: Boolean
+
   """The list of special attendees"""
   attendees: [String]
 
@@ -478,6 +540,11 @@ type EventOptions {
 }
 
 input EventOptionsInput {
+  """
+  Whether or not to allow anonymous participation (if the server allows it)
+  """
+  anonymousParticipation: Boolean
+
   """The list of special attendees"""
   attendees: [String]
 
@@ -695,6 +762,12 @@ enum GroupType {
   GROUP
 }
 
+enum InstanceTermsType {
+  CUSTOM
+  DEFAULT
+  URL
+}
+
 """A JWT and the associated user ID"""
 type Login {
   """A JWT Token for this session"""
@@ -766,8 +839,16 @@ type Participant {
   """The participation ID"""
   id: ID
 
+  """The metadata associated to this participant"""
+  metadata: ParticipantMetadata
+
   """The role of this actor at this event"""
   role: ParticipantRoleEnum
+}
+
+type ParticipantMetadata {
+  """The eventual token to leave an event when user is anonymous"""
+  cancellationToken: String
 }
 
 enum ParticipantRoleEnum {
@@ -775,6 +856,7 @@ enum ParticipantRoleEnum {
   CREATOR
   MODERATOR
   NOT_APPROVED
+  NOT_CONFIRMED
   PARTICIPANT
   REJECTED
 }
@@ -794,6 +876,9 @@ type ParticipantStats {
 
   """The number of not approved participants"""
   notApproved: Int
+
+  """The number of not confirmed participants"""
+  notConfirmed: Int
 
   """The number of simple participants (excluding creators)"""
   participant: Int
@@ -997,6 +1082,66 @@ enum ReportStatus {
 }
 
 type RootMutationType {
+  """Validate an user after registration"""
+  validateUser(token: String!): Login
+
+  """Confirm a participation"""
+  confirmParticipation(confirmationToken: String!): Participant
+  deleteReportNote(moderatorId: ID!, noteId: ID!): DeletedObject
+
+  """Delete a feed token"""
+  deleteFeedToken(token: String!): DeletedFeedToken
+
+  """Add a relay subscription"""
+  addRelay(address: String!): Follower
+
+  """Create a report"""
+  createReport(commentsIds: [ID] = [""], content: String, eventId: ID, forward: Boolean = false, reportedId: ID!, reporterId: ID!): Report
+
+  """Update a report"""
+  updateReportStatus(moderatorId: ID!, reportId: ID!, status: ReportStatus!): Report
+
+  """Delete a relay subscription"""
+  removeRelay(address: String!): Follower
+  deleteComment(actorId: ID!, commentId: ID!): Comment
+
+  """Reject a relay subscription"""
+  rejectRelay(address: String!): Follower
+
+  """Delete a group"""
+  deleteGroup(actorId: ID!, groupId: ID!): DeletedObject
+
+  """Reset user password"""
+  resetPassword(locale: String = "en", password: String!, token: String!): Login
+
+  """Join an event"""
+  joinEvent(actorId: ID!, email: String, eventId: ID!): Participant
+
+  """Create a group"""
+  createGroup(
+    """
+    The avatar for the group, either as an object or directly the ID of an existing Picture
+    """
+    avatar: PictureInput
+
+    """
+    The banner for the group, either as an object or directly the ID of an existing Picture
+    """
+    banner: PictureInput
+
+    """The identity that creates the group"""
+    creatorActorId: ID!
+
+    """The displayed name for the group"""
+    name: String
+
+    """The name for the group"""
+    preferredUsername: String!
+
+    """The summary for the group"""
+    summary: String = ""
+  ): Group
+
   """Create an event"""
   createEvent(
     beginsOn: DateTime!
@@ -1023,25 +1168,6 @@ type RootMutationType {
     title: String!
     visibility: EventVisibility = PUBLIC
   ): Event
-
-  """Create a Feed Token"""
-  createFeedToken(actorId: ID): FeedToken
-
-  """Create a report"""
-  createReport(commentsIds: [ID] = [""], content: String, eventId: ID, forward: Boolean = false, reportedId: ID!, reporterId: ID!): Report
-
-  """Change default actor for user"""
-  changeDefaultActor(preferredUsername: String!): User
-  deleteComment(actorId: ID!, commentId: ID!): Comment
-
-  """Delete an event"""
-  deleteEvent(actorId: ID!, eventId: ID!): DeletedObject
-
-  """Join an event"""
-  joinEvent(actorId: ID!, eventId: ID!): Participant
-
-  """Reset user password"""
-  resetPassword(locale: String = "en", password: String!, token: String!): Login
 
   """Update an event"""
   updateEvent(
@@ -1070,11 +1196,30 @@ type RootMutationType {
     visibility: EventVisibility = PUBLIC
   ): Event
 
-  """Change an user password"""
-  changePassword(newPassword: String!, oldPassword: String!): User
+  """Accept a relay subscription"""
+  acceptRelay(address: String!): Follower
 
-  """Delete a feed token"""
-  deleteFeedToken(token: String!): DeletedFeedToken
+  """Leave an event"""
+  leaveGroup(actorId: ID!, groupId: ID!): DeletedMember
+
+  """Delete an identity"""
+  deletePerson(id: ID!): Person
+  saveAdminSettings(instanceDescription: String, instanceName: String, instanceTerms: String, instanceTermsType: InstanceTermsType, instanceTermsUrl: String, registrationsOpen: Boolean): AdminSettings
+
+  """Refresh a token"""
+  refreshToken(refreshToken: String!): RefreshedToken
+
+  """Upload a picture"""
+  uploadPicture(actorId: ID!, alt: String, file: Upload!, name: String!): Picture
+
+  """Login an user"""
+  login(email: String!, password: String!): Login
+
+  """Send a link through email to reset user password"""
+  sendResetPassword(email: String!, locale: String): String
+
+  """Create a comment"""
+  createComment(actorId: ID!, eventId: ID, inReplyToCommentId: ID, text: String!): Comment
 
   """Register a first profile on registration"""
   registerPerson(
@@ -1099,20 +1244,37 @@ type RootMutationType {
     summary: String = ""
   ): Person
 
-  """Delete an identity"""
-  deletePerson(id: ID!): Person
+  """Update an identity"""
+  updatePerson(
+    """
+    The avatar for the profile, either as an object or directly the ID of an existing Picture
+    """
+    avatar: PictureInput
 
-  """Leave an event"""
-  leaveEvent(actorId: ID!, eventId: ID!): DeletedParticipant
+    """
+    The banner for the profile, either as an object or directly the ID of an existing Picture
+    """
+    banner: PictureInput
+    id: ID!
 
-  """Accept a participation"""
-  updateParticipation(id: ID!, moderatorActorId: ID!, role: ParticipantRoleEnum!): Participant
+    """The displayed name for this profile"""
+    name: String
 
-  """Login an user"""
-  login(email: String!, password: String!): Login
+    """The summary for this profile"""
+    summary: String
+  ): Person
 
-  """Upload a picture"""
-  uploadPicture(actorId: ID!, alt: String, file: Upload!, name: String!): Picture
+  """Delete an event"""
+  deleteEvent(actorId: ID!, eventId: ID!): DeletedObject
+
+  """Join a group"""
+  joinGroup(actorId: ID!, groupId: ID!): Member
+
+  """Change default actor for user"""
+  changeDefaultActor(preferredUsername: String!): User
+
+  """Create an user"""
+  createUser(email: String!, locale: String, password: String!): User
 
   """Create a new person for user"""
   createPerson(
@@ -1134,96 +1296,23 @@ type RootMutationType {
     summary: String = ""
   ): Person
 
-  """Send a link through email to reset user password"""
-  sendResetPassword(email: String!, locale: String): String
+  """Create a note on a report"""
+  createReportNote(content: String, moderatorId: ID!, reportId: ID!): ReportNote
 
-  """Create a comment"""
-  createComment(actorId: ID!, eventId: ID, inReplyToCommentId: ID, text: String!): Comment
-
-  """Create a group"""
-  createGroup(
-    """
-    The avatar for the group, either as an object or directly the ID of an existing Picture
-    """
-    avatar: PictureInput
-
-    """
-    The banner for the group, either as an object or directly the ID of an existing Picture
-    """
-    banner: PictureInput
-
-    """The identity that creates the group"""
-    creatorActorId: ID!
-
-    """The displayed name for the group"""
-    name: String
-
-    """The name for the group"""
-    preferredUsername: String!
-
-    """The summary for the group"""
-    summary: String = ""
-  ): Group
-
-  """Update a report"""
-  updateReportStatus(moderatorId: ID!, reportId: ID!, status: ReportStatus!): Report
-
-  """Create an user"""
-  createUser(email: String!, locale: String, password: String!): User
-  deleteReportNote(moderatorId: ID!, noteId: ID!): DeletedObject
-
-  """Update an identity"""
-  updatePerson(
-    """
-    The avatar for the profile, either as an object or directly the ID of an existing Picture
-    """
-    avatar: PictureInput
-
-    """
-    The banner for the profile, either as an object or directly the ID of an existing Picture
-    """
-    banner: PictureInput
-    id: ID!
-
-    """The displayed name for this profile"""
-    name: String
-
-    """The summary for this profile"""
-    summary: String
-  ): Person
-
-  """Join a group"""
-  joinGroup(actorId: ID!, groupId: ID!): Member
-
-  """Delete a group"""
-  deleteGroup(actorId: ID!, groupId: ID!): DeletedObject
+  """Change an user password"""
+  changePassword(newPassword: String!, oldPassword: String!): User
 
   """Resend registration confirmation token"""
   resendConfirmationEmail(email: String!, locale: String): String
 
-  """Delete a relay subscription"""
-  removeRelay(address: String!): Follower
-
-  """Refresh a token"""
-  refreshToken(refreshToken: String!): RefreshedToken
-
-  """Add a relay subscription"""
-  addRelay(address: String!): Follower
-
-  """Reject a relay subscription"""
-  rejectRelay(address: String!): Follower
-
   """Leave an event"""
-  leaveGroup(actorId: ID!, groupId: ID!): DeletedMember
+  leaveEvent(actorId: ID!, eventId: ID!, token: String): DeletedParticipant
 
-  """Validate an user after registration"""
-  validateUser(token: String!): Login
+  """Accept a participation"""
+  updateParticipation(id: ID!, moderatorActorId: ID!, role: ParticipantRoleEnum!): Participant
 
-  """Create a note on a report"""
-  createReportNote(content: String, moderatorId: ID!, reportId: ID!): ReportNote
-
-  """Accept a relay subscription"""
-  acceptRelay(address: String!): Follower
+  """Create a Feed Token"""
+  createFeedToken(actorId: ID): FeedToken
 }
 
 """
@@ -1233,6 +1322,7 @@ Root Query
 type RootQueryType {
   """Get the list of action logs"""
   actionLogs(limit: Int = 10, page: Int = 1): [ActionLog]
+  adminSettings: AdminSettings
 
   """Get the instance config"""
   config: Config
@@ -1332,6 +1422,12 @@ type Tag {
 
   """The tag's title"""
   title: String
+}
+
+type Terms {
+  bodyHtml: String
+  type: InstanceTermsType
+  url: String
 }
 
 type Tiles {

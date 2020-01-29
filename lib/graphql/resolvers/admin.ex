@@ -5,17 +5,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
 
   import Mobilizon.Users.Guards
 
-  alias Mobilizon.Actors
+  alias Mobilizon.{Actors, Admin, Config, Events}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Admin.ActionLog
-  alias Mobilizon.Events
+  alias Mobilizon.Admin.{ActionLog, Setting}
+  alias Mobilizon.Config
   alias Mobilizon.Events.{Comment, Event}
+  alias Mobilizon.Events.{Comment, Event}
+  alias Mobilizon.Federation.ActivityPub.Relay
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Service.Statistics
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
-
-  alias Mobilizon.Federation.ActivityPub.Relay
 
   def list_action_logs(
         _parent,
@@ -130,6 +130,43 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
 
   def get_dashboard(_parent, _args, _resolution) do
     {:error, "You need to be logged-in and an administrator to access dashboard statistics"}
+  end
+
+  def get_settings(_parent, _args, %{
+        context: %{current_user: %User{role: role}}
+      })
+      when is_admin(role) do
+    {:ok,
+     %{
+       instance_description: Config.instance_description(),
+       instance_name: Config.instance_name(),
+       registrations_open: Config.instance_registrations_open?(),
+       instance_terms: Config.instance_terms(),
+       instance_terms_type: Config.instance_terms_type(),
+       instance_terms_url: Config.instance_terms_url()
+     }}
+  end
+
+  def get_settings(_parent, _args, _resolution) do
+    {:error, "You need to be logged-in and an administrator to access admin settings"}
+  end
+
+  def save_settings(_parent, args, %{
+        context: %{current_user: %User{role: role}}
+      })
+      when is_admin(role) do
+    with {:ok, res} <- Admin.save_settings("instance", args) do
+      res =
+        res |> Enum.map(fn {key, %Setting{value: value}} -> {key, value} end) |> Enum.into(%{})
+
+      Config.clear_config_cache()
+
+      {:ok, res}
+    end
+  end
+
+  def save_settings(_parent, _args, _resolution) do
+    {:error, "You need to be logged-in and an administrator to save admin settings"}
   end
 
   def list_relay_followers(

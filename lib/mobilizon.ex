@@ -20,6 +20,7 @@ defmodule Mobilizon do
 
   @name Mix.Project.config()[:name]
   @version Mix.Project.config()[:version]
+  @env Mix.env()
 
   @spec named_version :: String.t()
   def named_version, do: "#{@name} #{@version}"
@@ -34,21 +35,23 @@ defmodule Mobilizon do
   @spec start(:normal | {:takeover, node} | {:failover, node}, term) ::
           {:ok, pid} | {:ok, pid, term} | {:error, term}
   def start(_type, _args) do
-    children = [
-      # supervisors
-      Storage.Repo,
-      Web.Endpoint,
-      {Absinthe.Subscription, [Web.Endpoint]},
-      {Oban, Application.get_env(:mobilizon, Oban)},
-      # workers
-      Guardian.DB.Token.SweeperServer,
-      ActivityPub.Federator,
-      cachex_spec(:feed, 2500, 60, 60, &Feed.create_cache/1),
-      cachex_spec(:ics, 2500, 60, 60, &ICalendar.create_cache/1),
-      cachex_spec(:statistics, 10, 60, 60),
-      cachex_spec(:activity_pub, 2500, 3, 15),
-      internal_actor()
-    ]
+    children =
+      [
+        # supervisors
+        Storage.Repo,
+        Web.Endpoint,
+        {Absinthe.Subscription, [Web.Endpoint]},
+        {Oban, Application.get_env(:mobilizon, Oban)},
+        # workers
+        Guardian.DB.Token.SweeperServer,
+        ActivityPub.Federator,
+        cachex_spec(:feed, 2500, 60, 60, &Feed.create_cache/1),
+        cachex_spec(:ics, 2500, 60, 60, &ICalendar.create_cache/1),
+        cachex_spec(:statistics, 10, 60, 60),
+        cachex_spec(:config, 10, 60, 60),
+        cachex_spec(:activity_pub, 2500, 3, 15)
+      ] ++
+        task_children(@env)
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Mobilizon.Supervisor)
   end
@@ -92,10 +95,21 @@ defmodule Mobilizon do
   defp fallback_options(nil), do: []
   defp fallback_options(fallback), do: [fallback: fallback(default: fallback)]
 
-  defp internal_actor do
+  defp task_children(:test), do: []
+  defp task_children(_), do: [relay_actor(), anonymous_actor()]
+
+  defp relay_actor do
     %{
-      id: :internal_actor_init,
+      id: :relay_actor_init,
       start: {Task, :start_link, [&ActivityPub.Relay.init/0]},
+      restart: :temporary
+    }
+  end
+
+  defp anonymous_actor do
+    %{
+      id: :anonymous_actor_init,
+      start: {Task, :start_link, [&Mobilizon.Config.anonymous_actor_id/0]},
       restart: :temporary
     }
   end

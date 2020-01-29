@@ -11,8 +11,7 @@ defmodule Mobilizon.Users.User do
   alias Mobilizon.Crypto
   alias Mobilizon.Events.FeedToken
   alias Mobilizon.Users.UserRole
-
-  alias Mobilizon.Web.Email
+  alias Mobilizon.Web.Email.Checker
 
   @type t :: %__MODULE__{
           email: String.t(),
@@ -79,7 +78,7 @@ defmodule Mobilizon.Users.User do
       |> cast(attrs, @attrs)
       |> validate_required(@required_attrs)
       |> unique_constraint(:email, message: "This email is already used.")
-      |> validate_email()
+      |> Checker.validate_changeset()
       |> validate_length(:password, min: 6, max: 200, message: "The chosen password is too short.")
 
     if Map.has_key?(attrs, :default_actor) do
@@ -170,25 +169,6 @@ defmodule Mobilizon.Users.User do
   end
 
   defp save_confirmation_token(%Ecto.Changeset{} = changeset), do: changeset
-
-  @spec validate_email(Ecto.Changeset.t()) :: Ecto.Changeset.t()
-  defp validate_email(%Ecto.Changeset{} = changeset) do
-    changeset = validate_length(changeset, :email, min: 3, max: 250)
-
-    case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{email: email}} ->
-        case Email.Checker.valid?(email) do
-          false ->
-            add_error(changeset, :email, "Email doesn't fit required format")
-
-          true ->
-            changeset
-        end
-
-      _ ->
-        changeset
-    end
-  end
 
   @spec hash_password(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   defp hash_password(%Ecto.Changeset{} = changeset) do

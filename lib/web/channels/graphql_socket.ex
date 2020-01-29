@@ -2,7 +2,7 @@ defmodule Mobilizon.Web.GraphQLSocket do
   use Phoenix.Socket
 
   use Absinthe.Phoenix.Socket,
-    schema: Mobilizon.Web.Schema
+    schema: Mobilizon.GraphQL.Schema
 
   alias Mobilizon.Users.User
 

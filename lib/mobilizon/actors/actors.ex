@@ -499,17 +499,22 @@ defmodule Mobilizon.Actors do
     |> Repo.insert()
   end
 
-  @spec get_or_create_instance_actor_by_url(String.t(), String.t()) ::
-          {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
-  def get_or_create_instance_actor_by_url(url, preferred_username \\ "relay") do
-    case get_actor_by_url(url) do
+  @spec get_or_create_internal_actor(String.t()) :: {:ok, Actor.t()}
+  def get_or_create_internal_actor(username) do
+    case username |> Actor.build_url(:page) |> get_actor_by_url() do
       {:ok, %Actor{} = actor} ->
         {:ok, actor}
 
       _ ->
-        %{url: url, preferred_username: preferred_username}
-        |> Actor.relay_creation_changeset()
-        |> Repo.insert()
+        case username do
+          "anonymous" ->
+            Actor.build_anonymous_actor_creation_attrs()
+            |> Repo.insert()
+
+          "relay" ->
+            Actor.build_relay_creation_attrs()
+            |> Repo.insert()
+        end
     end
   end
 

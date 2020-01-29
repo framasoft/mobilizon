@@ -1,5 +1,5 @@
 <template>
-    <section class="container">
+    <section class="section container">
         <h1 class="title">{{ $t('Administration') }}</h1>
         <div class="tile is-ancestor" v-if="dashboard">
             <div class="tile is-vertical is-4">
@@ -42,6 +42,13 @@
                     <router-link :to="{ name: RouteName.RELAYS }">
                         <article class="tile is-child box">
                             <p class="subtitle">{{ $t('Instances') }}</p>
+                        </article>
+                    </router-link>
+                </div>
+                <div class="tile is-parent">
+                    <router-link :to="{ name: RouteName.ADMIN_SETTINGS }">
+                        <article class="tile is-child box">
+                            <p class="subtitle">{{ $t('Settings') }}</p>
                         </article>
                     </router-link>
                 </div>

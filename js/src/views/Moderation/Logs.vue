@@ -1,5 +1,5 @@
 <template>
-    <section class="container">
+    <section class="section container">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
                 <li><router-link :to="{ name: RouteName.DASHBOARD }">Dashboard</router-link></li>
@@ -9,7 +9,7 @@
         <ul v-if="actionLogs.length > 0">
             <li v-for="log in actionLogs">
                 <div class="box">
-                    <img class="image" :src="log.actor.avatar.url" />
+                    <img class="image" :src="log.actor.avatar.url" v-if="log.actor.avatar" />
                     <span>@{{ log.actor.preferredUsername }}</span>
                     <span v-if="log.action === ActionLogAction.REPORT_UPDATE_CLOSED">
                         closed <router-link :to="{ name: RouteName.REPORT, params: { reportId: log.object.id } }">report #{{ log.object.id }}</router-link>

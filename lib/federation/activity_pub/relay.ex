@@ -17,8 +17,6 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
 
   alias Mobilizon.GraphQL.API.Follows
 
-  alias Mobilizon.Web.Endpoint
-
   require Logger
 
   def init do
@@ -30,7 +28,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
   @spec get_actor() :: Actor.t() | {:error, Ecto.Changeset.t()}
   def get_actor do
     with {:ok, %Actor{} = actor} <-
-           Actors.get_or_create_instance_actor_by_url("#{Endpoint.url()}/relay") do
+           Actors.get_or_create_internal_actor("relay") do
       actor
     end
   end

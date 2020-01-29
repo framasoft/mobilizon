@@ -9,6 +9,7 @@ defmodule Mobilizon.Admin do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.{Admin, Users}
   alias Mobilizon.Admin.ActionLog
+  alias Mobilizon.Admin.Setting
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.User
 
@@ -17,6 +18,8 @@ defmodule Mobilizon.Admin do
     "create",
     "delete"
   ])
+
+  alias Ecto.Multi
 
   @doc """
   Creates a action_log.
@@ -71,4 +74,48 @@ defmodule Mobilizon.Admin do
   end
 
   defp stringify_struct(struct), do: struct
+
+  def get_admin_setting_value(group, name, fallback \\ nil)
+      when is_bitstring(group) and is_bitstring(name) do
+    case Repo.get_by(Setting, group: group, name: name) do
+      nil -> fallback
+      %Setting{value: ""} -> fallback
+      %Setting{value: nil} -> fallback
+      %Setting{value: value} -> value
+    end
+  end
+
+  def set_admin_setting_value(group, name, value) do
+    Setting
+    |> Setting.changeset(%{group: group, name: name, value: value})
+    |> Repo.insert(on_conflict: :replace_all, conflict_target: [:group, :name])
+  end
+
+  def save_settings(group, args) do
+    Multi.new()
+    |> do_save_setting(group, args)
+    |> Repo.transaction()
+  end
+
+  defp do_save_setting(transaction, _group, args) when args == %{}, do: transaction
+
+  defp do_save_setting(transaction, group, args) do
+    key = hd(Map.keys(args))
+    {val, rest} = Map.pop(args, key)
+
+    transaction =
+      Multi.insert(
+        transaction,
+        key,
+        Setting.changeset(%Setting{}, %{
+          group: group,
+          name: Atom.to_string(key),
+          value: to_string(val)
+        }),
+        on_conflict: :replace_all,
+        conflict_target: [:group, :name]
+      )
+
+    do_save_setting(transaction, group, rest)
+  end
 end

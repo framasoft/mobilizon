@@ -8,117 +8,127 @@
         {{ $t('Update event {name}', { name: event.title }) }}
       </h1>
 
-      <div class="columns is-centered">
-        <form class="column is-two-thirds-desktop" ref="form">
-          <h2 class="subtitle">
-            {{ $t('General information') }}
-          </h2>
-          <picture-upload v-model="pictureFile" :textFallback="$t('Headline picture')" />
+      <form ref="form">
+        <h2 class="subtitle">
+          {{ $t('General information') }}
+        </h2>
+        <picture-upload v-model="pictureFile" :textFallback="$t('Headline picture')" />
 
-          <b-field :label="$t('Title')" :type="checkTitleLength[0]" :message="checkTitleLength[1]">
-            <b-input size="is-large" aria-required="true" required v-model="event.title" />
-          </b-field>
+        <b-field :label="$t('Title')" :type="checkTitleLength[0]" :message="checkTitleLength[1]">
+          <b-input size="is-large" aria-required="true" required v-model="event.title" />
+        </b-field>
 
-          <tag-input v-model="event.tags" :data="tags" path="title" />
+        <tag-input v-model="event.tags" :data="tags" path="title" />
 
-          <date-time-picker v-model="event.beginsOn" :label="$t('Starts on…')" />
-          <date-time-picker :min-datetime="event.beginsOn" v-model="event.endsOn" :label="$t('Ends on…')" />
+        <date-time-picker v-model="event.beginsOn" :label="$t('Starts on…')" />
+        <date-time-picker :min-datetime="event.beginsOn" v-model="event.endsOn" :label="$t('Ends on…')" />
 <!--          <b-switch v-model="endsOnNull">{{ $t('No end date') }}</b-switch>-->
-          <b-button type="is-text" @click="dateSettingsIsOpen = true">{{ $t('Date parameters')}}</b-button>
+        <b-button type="is-text" @click="dateSettingsIsOpen = true">{{ $t('Date parameters')}}</b-button>
 
-          <address-auto-complete v-model="event.physicalAddress" />
+        <address-auto-complete v-model="event.physicalAddress" />
 
-          <b-field :label="$t('Organizer')">
-            <identity-picker-wrapper v-model="event.organizerActor" />
-          </b-field>
+        <b-field :label="$t('Organizer')">
+          <identity-picker-wrapper v-model="event.organizerActor" />
+        </b-field>
 
+        <div class="field">
+          <label class="label">{{ $t('Description') }}</label>
+          <editor v-model="event.description" />
+        </div>
+
+        <b-field :label="$t('Website / URL')">
+          <b-input icon="link" type="url" v-model="event.onlineAddress" placeholder="URL" />
+        </b-field>
+
+        <!--<b-field :label="$t('Category')">
+          <b-select placeholder="Select a category" v-model="event.category">
+            <option
+              v-for="category in categories"
+              :value="category"
+              :key="category"
+            >{{ $t(category) }}</option>
+          </b-select>
+        </b-field>-->
+
+        <h2 class="subtitle">
+          {{ $t('Who can view this event and participate') }}
+        </h2>
           <div class="field">
-            <label class="label">{{ $t('Description') }}</label>
-            <editor v-model="event.description" />
-          </div>
-
-          <b-field :label="$t('Website / URL')">
-            <b-input icon="link" type="url" v-model="event.onlineAddress" placeholder="URL" />
-          </b-field>
-
-          <!--<b-field :label="$t('Category')">
-            <b-select placeholder="Select a category" v-model="event.category">
-              <option
-                v-for="category in categories"
-                :value="category"
-                :key="category"
-              >{{ $t(category) }}</option>
-            </b-select>
-          </b-field>-->
-
-          <h2 class="subtitle">
-            {{ $t('Who can view this event and participate') }}
-          </h2>
-            <div class="field">
-              <b-radio v-model="event.visibility"
-                       name="eventVisibility"
-                       :native-value="EventVisibility.PUBLIC">
-                {{ $t('Visible everywhere on the web (public)') }}
-              </b-radio>
-            </div>
-            <div class="field">
-              <b-radio v-model="event.visibility"
-                       name="eventVisibility"
-                       :native-value="EventVisibility.UNLISTED">
-                {{ $t('Only accessible through link and search (private)') }}
-              </b-radio>
-            </div>
-          <!-- <div class="field">
             <b-radio v-model="event.visibility"
                      name="eventVisibility"
-                     :native-value="EventVisibility.PRIVATE">
-               {{ $t('Page limited to my group (asks for auth)') }}
+                     :native-value="EventVisibility.PUBLIC">
+              {{ $t('Visible everywhere on the web (public)') }}
             </b-radio>
-          </div> -->
-
-          <div class="field">
-            <label class="label">{{ $t('Participation approval') }}</label>
-            <b-switch v-model="needsApproval">
-              {{ $t('I want to approve every participation request') }}
-            </b-switch>
           </div>
-
           <div class="field">
-            <label class="label">{{ $t('Number of places') }}</label>
-            <b-switch v-model="limitedPlaces">
-              {{ $t('Limited number of places') }}
-            </b-switch>
+            <b-radio v-model="event.visibility"
+                     name="eventVisibility"
+                     :native-value="EventVisibility.UNLISTED">
+              {{ $t('Only accessible through link and search (private)') }}
+            </b-radio>
           </div>
+        <!-- <div class="field">
+          <b-radio v-model="event.visibility"
+                   name="eventVisibility"
+                   :native-value="EventVisibility.PRIVATE">
+             {{ $t('Page limited to my group (asks for auth)') }}
+          </b-radio>
+        </div> -->
 
-          <div class="box" v-if="limitedPlaces">
-            <b-field :label="$t('Number of places')">
-              <b-numberinput controls-position="compact" min="1" v-model="event.options.maximumAttendeeCapacity" />
-            </b-field>
+        <div class="field" v-if="config && config.anonymous.participation.allowed">
+          <label class="label">{{ $t('Anonymous participations') }}</label>
+          <b-switch v-model="event.options.anonymousParticipation">
+            {{ $t('I want to allow people to participate without an account.') }}
+            <small v-if="config.anonymous.participation.validation.email.confirmationRequired">
+              <br>
+              {{ $t('Anonymous participants will be asked to confirm their participation through e-mail.') }}
+            </small>
+          </b-switch>
+        </div>
+
+        <div class="field">
+          <label class="label">{{ $t('Participation approval') }}</label>
+          <b-switch v-model="needsApproval">
+            {{ $t('I want to approve every participation request') }}
+          </b-switch>
+        </div>
+
+        <div class="field">
+          <label class="label">{{ $t('Number of places') }}</label>
+          <b-switch v-model="limitedPlaces">
+            {{ $t('Limited number of places') }}
+          </b-switch>
+        </div>
+
+        <div class="box" v-if="limitedPlaces">
+          <b-field :label="$t('Number of places')">
+            <b-numberinput controls-position="compact" min="1" v-model="event.options.maximumAttendeeCapacity" />
+          </b-field>
 <!--
-            <b-field>
-              <b-switch v-model="event.options.showRemainingAttendeeCapacity">
-                {{ $t('Show remaining number of places') }}
-              </b-switch>
-            </b-field>
+          <b-field>
+            <b-switch v-model="event.options.showRemainingAttendeeCapacity">
+              {{ $t('Show remaining number of places') }}
+            </b-switch>
+          </b-field>
 
-            <b-field>
-              <b-switch v-model="event.options.showParticipationPrice">
-                {{ $t('Display participation price') }}
-              </b-switch>
-            </b-field> -->
-          </div>
+          <b-field>
+            <b-switch v-model="event.options.showParticipationPrice">
+              {{ $t('Display participation price') }}
+            </b-switch>
+          </b-field> -->
+        </div>
 
-          <h2 class="subtitle">
-            {{ $t('Public comment moderation') }}
-          </h2>
+        <h2 class="subtitle">
+          {{ $t('Public comment moderation') }}
+        </h2>
 
-          <div class="field">
-            <b-radio v-model="event.options.commentModeration"
-                     name="commentModeration"
-                     :native-value="CommentModeration.ALLOW_ALL">
-              {{ $t('Allow all comments') }}
-            </b-radio>
-          </div>
+        <div class="field">
+          <b-radio v-model="event.options.commentModeration"
+                   name="commentModeration"
+                   :native-value="CommentModeration.ALLOW_ALL">
+            {{ $t('Allow all comments') }}
+          </b-radio>
+        </div>
 
 <!--          <div class="field">-->
 <!--            <b-radio v-model="event.options.commentModeration"-->
@@ -128,43 +138,42 @@
 <!--            </b-radio>-->
 <!--          </div>-->
 
-          <div class="field">
-            <b-radio v-model="event.options.commentModeration"
-                     name="commentModeration"
-                     :native-value="CommentModeration.CLOSED">
-              {{ $t('Close comments for all (except for admins)') }}
-            </b-radio>
-          </div>
+        <div class="field">
+          <b-radio v-model="event.options.commentModeration"
+                   name="commentModeration"
+                   :native-value="CommentModeration.CLOSED">
+            {{ $t('Close comments for all (except for admins)') }}
+          </b-radio>
+        </div>
 
-          <h2 class="subtitle">
-            {{ $t('Status') }}
-          </h2>
+        <h2 class="subtitle">
+          {{ $t('Status') }}
+        </h2>
 
-          <b-field>
-            <b-radio-button v-model="event.status"
-                            name="status"
-                            type="is-warning"
-                            :native-value="EventStatus.TENTATIVE">
-              <b-icon icon="calendar-question" />
-              {{ $t('Tentative: Will be confirmed later') }}
-            </b-radio-button>
-            <b-radio-button v-model="event.status"
-                            name="status"
-                            type="is-success"
-                            :native-value="EventStatus.CONFIRMED">
-              <b-icon icon="calendar-check" />
-              {{ $t('Confirmed: Will happen') }}
-            </b-radio-button>
-            <b-radio-button v-model="event.status"
-                            name="status"
-                            type="is-danger"
-                            :native-value="EventStatus.CANCELLED">
-              <b-icon icon="calendar-remove" />
-              {{ $t("Cancelled: Won't happen") }}
-            </b-radio-button>
-          </b-field>
-        </form>
-      </div>
+        <b-field>
+          <b-radio-button v-model="event.status"
+                          name="status"
+                          type="is-warning"
+                          :native-value="EventStatus.TENTATIVE">
+            <b-icon icon="calendar-question" />
+            {{ $t('Tentative: Will be confirmed later') }}
+          </b-radio-button>
+          <b-radio-button v-model="event.status"
+                          name="status"
+                          type="is-success"
+                          :native-value="EventStatus.CONFIRMED">
+            <b-icon icon="calendar-check" />
+            {{ $t('Confirmed: Will happen') }}
+          </b-radio-button>
+          <b-radio-button v-model="event.status"
+                          name="status"
+                          type="is-danger"
+                          :native-value="EventStatus.CANCELLED">
+            <b-icon icon="calendar-remove" />
+            {{ $t("Cancelled: Won't happen") }}
+          </b-radio-button>
+        </b-field>
+      </form>
     </div>
     <b-modal :active.sync="dateSettingsIsOpen" has-modal-card trap-focus>
       <form action="">
@@ -227,6 +236,10 @@
 <style lang="scss" scoped>
   @import "@/variables.scss";
 
+  main section > .container {
+    background: $white;
+  }
+
   h2.subtitle {
     margin: 10px 0;
 
@@ -239,8 +252,7 @@
 
   section {
     & > .container {
-      margin-bottom: 2rem;
-      padding: 1rem;
+      padding: 2rem 1.5rem;
     }
 
     nav.navbar {
@@ -288,18 +300,17 @@ import { buildFileFromIPicture, buildFileVariable, readFileAsync } from '@/utils
 import IdentityPickerWrapper from '@/views/Account/IdentityPickerWrapper.vue';
 import { RouteName } from '@/router';
 import 'intersection-observer';
+import { CONFIG } from '@/graphql/config';
+import { IConfig } from '@/types/config.model';
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 
 @Component({
   components: { IdentityPickerWrapper, AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor: EditorComponent },
   apollo: {
-    currentActor: {
-      query: CURRENT_ACTOR_CLIENT,
-    },
-    tags: {
-      query: TAGS,
-    },
+    currentActor: CURRENT_ACTOR_CLIENT,
+    tags: TAGS,
+    config: CONFIG,
   },
   metaInfo() {
     return {
@@ -319,6 +330,7 @@ export default class EditEvent extends Vue {
   currentActor = new Person();
   tags: ITag[] = [];
   event: IEvent = new EventModel();
+  config!: IConfig;
   unmodifiedEvent!: IEvent;
   pictureFile: File | null = null;
 

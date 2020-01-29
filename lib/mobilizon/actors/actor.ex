@@ -97,20 +97,6 @@ defmodule Mobilizon.Actors.Actor do
   @remote_actor_creation_attrs @remote_actor_creation_required_attrs ++
                                  @remote_actor_creation_optional_attrs
 
-  @relay_creation_attrs [
-    :type,
-    :name,
-    :summary,
-    :url,
-    :keys,
-    :preferred_username,
-    :domain,
-    :inbox_url,
-    :followers_url,
-    :following_url,
-    :shared_inbox_url
-  ]
-
   @group_creation_required_attrs [:url, :outbox_url, :inbox_url, :type, :preferred_username]
   @group_creation_optional_attrs [:shared_inbox_url, :name, :domain, :summary]
   @group_creation_attrs @group_creation_required_attrs ++ @group_creation_optional_attrs
@@ -278,16 +264,6 @@ defmodule Mobilizon.Actors.Actor do
   end
 
   @doc """
-  Changeset for relay creation.
-  """
-  @spec relay_creation_changeset(map) :: Ecto.Changeset.t()
-  def relay_creation_changeset(attrs) do
-    relay_creation_attrs = build_relay_creation_attrs(attrs)
-
-    cast(%__MODULE__{}, relay_creation_attrs, @relay_creation_attrs)
-  end
-
-  @doc """
   Changeset for group creation
   """
   @spec group_creation_changeset(t, map) :: Ecto.Changeset.t()
@@ -349,6 +325,10 @@ defmodule Mobilizon.Actors.Actor do
 
   def build_url(username, :inbox, _args), do: "#{build_url(username, :page)}/inbox"
 
+  # Relay has a special URI
+  def build_url("relay", :page, _args),
+    do: Endpoint |> Routes.activity_pub_url(:relay) |> URI.decode()
+
   def build_url(preferred_username, :page, args) do
     Endpoint
     |> Routes.page_url(:actor, preferred_username, args)
@@ -362,24 +342,40 @@ defmodule Mobilizon.Actors.Actor do
     |> URI.decode()
   end
 
-  @spec build_relay_creation_attrs(map) :: map
-  defp build_relay_creation_attrs(%{url: url, preferred_username: preferred_username}) do
-    %{
+  @spec build_relay_creation_attrs :: Ecto.Changeset.t()
+  def build_relay_creation_attrs do
+    data = %{
       "name" => Config.get([:instance, :name], "Mobilizon"),
       "summary" =>
         Config.get(
           [:instance, :description],
           "An internal service actor for this Mobilizon instance"
         ),
-      "url" => url,
       "keys" => Crypto.generate_rsa_2048_private_key(),
-      "preferred_username" => preferred_username,
+      "preferred_username" => "relay",
       "domain" => nil,
-      "inbox_url" => "#{Endpoint.url()}/inbox",
-      "followers_url" => "#{url}/followers",
-      "following_url" => "#{url}/following",
-      "shared_inbox_url" => "#{Endpoint.url()}/inbox",
       "type" => :Application
     }
+
+    %__MODULE__{}
+    |> Ecto.Changeset.cast(data, @attrs)
+    |> build_urls()
+    |> put_change(:inbox_url, "#{Endpoint.url()}/inbox")
+  end
+
+  @spec build_anonymous_actor_creation_attrs :: Ecto.Changeset.t()
+  def build_anonymous_actor_creation_attrs do
+    data = %{
+      "name" => "Mobilizon Anonymous Actor",
+      "summary" => "A fake person for anonymous participations",
+      "keys" => Crypto.generate_rsa_2048_private_key(),
+      "preferred_username" => "anonymous",
+      "domain" => nil,
+      "type" => :Person
+    }
+
+    %__MODULE__{}
+    |> Ecto.Changeset.cast(data, @attrs)
+    |> build_urls()
   end
 end

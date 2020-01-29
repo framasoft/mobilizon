@@ -1,5 +1,5 @@
 <template>
-  <section class="container has-text-centered not-found">
+  <section class="section container has-text-centered not-found">
     <div class="columns is-vertical">
       <div class="column is-centered">
         <img src="../assets/oh_no.jpg" alt="Not found 'oh no' picture">

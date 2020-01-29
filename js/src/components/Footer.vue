@@ -4,6 +4,7 @@
         <img src="../assets/footer.png" :alt="$t('World map')" />
         <ul>
             <li><a href="https://joinmobilizon.org">{{ $t('About') }}</a></li>
+            <li><router-link :to="{ name: RouteName.TERMS }">{{ $t('Terms') }}</router-link></li>
             <li><a href="https://framagit.org/framasoft/mobilizon/blob/master/LICENSE">{{ $t('License') }}</a></li>
         </ul>
         <div class="content has-text-centered">
@@ -14,6 +15,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import Logo from './Logo.vue';
+import { RouteName } from '@/router';
 
 @Component({
   components: {
@@ -21,6 +23,7 @@ import Logo from './Logo.vue';
   },
 })
 export default class Footer extends Vue {
+  RouteName = RouteName;
 }
 </script>
 <style lang="scss" scoped>

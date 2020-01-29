@@ -10,6 +10,7 @@ defmodule Mobilizon.Events.Participant do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, ParticipantRole}
+  alias Mobilizon.Web.Email.Checker
 
   alias Mobilizon.Web.Endpoint
 
@@ -27,6 +28,12 @@ defmodule Mobilizon.Events.Participant do
   schema "participants" do
     field(:role, ParticipantRole, default: :participant)
     field(:url, :string)
+
+    embeds_one :metadata, Metadata, on_replace: :delete do
+      field(:email, :string)
+      field(:confirmation_token, :string)
+      field(:cancellation_token, :string)
+    end
 
     belongs_to(:event, Event, primary_key: true)
     belongs_to(:actor, Actor, primary_key: true)
@@ -55,9 +62,16 @@ defmodule Mobilizon.Events.Participant do
   def changeset(%__MODULE__{} = participant, attrs) do
     participant
     |> cast(attrs, @attrs)
+    |> cast_embed(:metadata, with: &metadata_changeset/2)
     |> ensure_url()
     |> validate_required(@required_attrs)
     |> unique_constraint(:actor_id, name: :participants_event_id_actor_id_index)
+  end
+
+  defp metadata_changeset(schema, params) do
+    schema
+    |> cast(params, [:email, :confirmation_token, :cancellation_token])
+    |> Checker.validate_changeset()
   end
 
   # If there's a blank URL that's because we're doing the first insert

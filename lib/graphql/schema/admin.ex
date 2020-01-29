@@ -60,6 +60,21 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
     field(:number_of_reports, :integer, description: "The number of current opened reports")
   end
 
+  object :admin_settings do
+    field(:instance_name, :string)
+    field(:instance_description, :string)
+    field(:instance_terms, :string)
+    field(:instance_terms_type, :instance_terms_type)
+    field(:instance_terms_url, :string)
+    field(:registrations_open, :boolean)
+  end
+
+  enum :instance_terms_type do
+    value(:url, as: "URL")
+    value(:default, as: "DEFAULT")
+    value(:custom, as: "CUSTOM")
+  end
+
   object :admin_queries do
     @desc "Get the list of action logs"
     field :action_logs, type: list_of(:action_log) do
@@ -70,6 +85,10 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
 
     field :dashboard, type: :dashboard do
       resolve(&Admin.get_dashboard/3)
+    end
+
+    field :admin_settings, type: :admin_settings do
+      resolve(&Admin.get_settings/3)
     end
 
     field :relay_followers, type: :paginated_follower_list do
@@ -114,6 +133,17 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
       arg(:address, non_null(:string))
 
       resolve(&Admin.reject_subscription/3)
+    end
+
+    field :save_admin_settings, type: :admin_settings do
+      arg(:instance_name, :string)
+      arg(:instance_description, :string)
+      arg(:instance_terms, :string)
+      arg(:instance_terms_type, :instance_terms_type)
+      arg(:instance_terms_url, :string)
+      arg(:registrations_open, :boolean)
+
+      resolve(&Admin.save_settings/3)
     end
   end
 end

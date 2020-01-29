@@ -40,6 +40,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
                  "https://test.mobilizon.org/events/39026210-0c69-4238-b3cc-986f33f98ed0/activity"
 
         assert data["to"] == ["https://www.w3.org/ns/activitystreams#Public"]
+
         #
         #      assert data["cc"] == [
         #               "https://framapiaf.org/users/admin/followers",
@@ -843,7 +844,8 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
       %Event{} = event = insert(:event, organizer_actor: organizer, join_options: :restricted)
 
-      {:ok, join_activity, participation} = ActivityPub.join(event, participant_actor)
+      {:ok, join_activity, participation} =
+        ActivityPub.join(event, participant_actor, false, %{metadata: %{role: :not_approved}})
 
       accept_data =
         File.read!("test/fixtures/mastodon-accept-activity.json")

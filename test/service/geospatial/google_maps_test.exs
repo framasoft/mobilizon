@@ -1,7 +1,7 @@
 defmodule Mobilizon.Service.Geospatial.GoogleMapsTest do
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
-  use Mobilizon.DataCase, async: false
+  use Mobilizon.DataCase
 
   import Mock
 

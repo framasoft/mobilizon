@@ -1,5 +1,5 @@
 <template>
-    <section class="container">
+    <section class="container section">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
                 <li><router-link :to="{ name: RouteName.DASHBOARD }">{{ $t('Dashboard') }}</router-link></li>

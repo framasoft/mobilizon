@@ -3,15 +3,19 @@
         <b-tabs type="is-boxed" v-if="event" v-model="activeTab">
             <b-tab-item>
                 <template slot="header">
-                    <b-icon icon="account-multiple"></b-icon>
+                    <b-icon icon="account-multiple" />
                     <span>{{ $t('Participants')}} <b-tag rounded> {{ participantStats.going }} </b-tag> </span>
                 </template>
                 <template>
                   <section v-if="participantsAndCreators.length > 0">
                       <h2 class="title">{{ $t('Participants') }}</h2>
+                      <p v-if="confirmedAnonymousParticipantsCountCount > 1">
+                          {{ $tc('And no anonymous participations|And one anonymous participation|And {count} anonymous participations', confirmedAnonymousParticipantsCountCount, { count: confirmedAnonymousParticipantsCountCount}) }}
+                      </p>
                       <div class="columns is-multiline">
                           <div class="column is-one-quarter-desktop" v-for="participant in participantsAndCreators" :key="participant.actor.id">
                               <participant-card
+                                  v-if="participant.actor.id !== config.anonymous.actorId"
                                   :participant="participant"
                                   :accept="acceptParticipant"
                                   :reject="refuseParticipant"
@@ -24,7 +28,7 @@
             </b-tab-item>
             <b-tab-item :disabled="participantStats.notApproved === 0">
                 <template slot="header">
-                    <b-icon icon="account-multiple-plus"></b-icon>
+                    <b-icon icon="account-multiple-plus" />
                     <span>{{ $t('Requests') }} <b-tag rounded> {{ participantStats.notApproved }} </b-tag> </span>
                 </template>
                 <template>
@@ -75,7 +79,8 @@ import { PARTICIPANTS, UPDATE_PARTICIPANT } from '@/graphql/event';
 import ParticipantCard from '@/components/Account/ParticipantCard.vue';
 import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { IPerson } from '@/types/actor';
-
+import { CONFIG } from '@/graphql/config';
+import { IConfig } from '@/types/config.model';
 
 @Component({
   components: {
@@ -85,6 +90,7 @@ import { IPerson } from '@/types/actor';
     currentActor: {
       query: CURRENT_ACTOR_CLIENT,
     },
+    config: CONFIG,
     event: {
       query: PARTICIPANTS,
       variables() {
@@ -159,6 +165,7 @@ export default class Participants extends Vue {
   queue: IParticipant[] = [];
   rejected: IParticipant[] = [];
   event!: IEvent;
+  config!: IConfig;
 
   ParticipantRole = ParticipantRole;
   currentActor!: IPerson;
@@ -177,6 +184,10 @@ export default class Participants extends Vue {
           .filter(participant => [ParticipantRole.PARTICIPANT, ParticipantRole.CREATOR].includes(participant.role));
     }
     return [];
+  }
+
+  get confirmedAnonymousParticipantsCountCount(): number {
+    return this.participantsAndCreators.filter(({ actor: { id } }) => id === this.config.anonymous.actorId).length;
   }
 
   @Watch('participantStats', { deep: true })

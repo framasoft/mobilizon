@@ -5,7 +5,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
 
   alias Mobilizon.{Actors, Admin, Events}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.{Event, EventParticipantStats, Participant}
+  alias Mobilizon.Events.{Event, EventParticipantStats}
   alias Mobilizon.Users.User
 
   alias Mobilizon.GraphQL.API
@@ -19,7 +19,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
 
   def list_events(_parent, %{page: page, limit: limit}, _resolution)
       when limit < @event_max_limit do
-    {:ok, Mobilizon.Events.list_events(page, limit)}
+    {:ok, Events.list_events(page, limit)}
   end
 
   def list_events(_parent, %{page: _page, limit: _limit}, _resolution) do
@@ -31,7 +31,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
          %{uuid: uuid},
          %{context: %{current_user: %User{id: user_id}}} = _resolution
        ) do
-    case {:has_event, Mobilizon.Events.get_own_event_by_uuid_with_preload(uuid, user_id)} do
+    case {:has_event, Events.get_own_event_by_uuid_with_preload(uuid, user_id)} do
       {:has_event, %Event{} = event} ->
         {:ok, Map.put(event, :organizer_actor, Person.proxify_pictures(event.organizer_actor))}
 
@@ -45,7 +45,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   end
 
   def find_event(parent, %{uuid: uuid} = args, resolution) do
-    case {:has_event, Mobilizon.Events.get_public_event_by_uuid_with_preload(uuid)} do
+    case {:has_event, Events.get_public_event_by_uuid_with_preload(uuid)} do
       {:has_event, %Event{} = event} ->
         {:ok, Map.put(event, :organizer_actor, Person.proxify_pictures(event.organizer_actor))}
 
@@ -65,7 +65,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     with {:is_owned, %Actor{} = _actor} <- User.owns_actor(user, actor_id),
          # Check that moderator has right
          {:actor_approve_permission, true} <-
-           {:actor_approve_permission, Mobilizon.Events.moderator_for_event?(event_id, actor_id)} do
+           {:actor_approve_permission, Events.moderator_for_event?(event_id, actor_id)} do
       roles =
         case roles do
           "" ->
@@ -78,7 +78,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
             |> Enum.map(&String.to_existing_atom/1)
         end
 
-      {:ok, Mobilizon.Events.list_participants_for_event(event_id, roles, page, limit)}
+      {:ok, Events.list_participants_for_event(event_id, roles, page, limit)}
     else
       {:is_owned, nil} ->
         {:error, "Moderator Actor ID is not owned by authenticated user"}
@@ -141,118 +141,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   end
 
   defp uniq_events(events), do: Enum.uniq_by(events, fn event -> event.uuid end)
-
-  @doc """
-  Join an event for an actor
-  """
-  def actor_join_event(
-        _parent,
-        %{actor_id: actor_id, event_id: event_id},
-        %{context: %{current_user: user}}
-      ) do
-    with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
-         {:has_event, {:ok, %Event{} = event}} <-
-           {:has_event, Mobilizon.Events.get_event_with_preload(event_id)},
-         {:error, :participant_not_found} <- Mobilizon.Events.get_participant(event_id, actor_id),
-         {:ok, _activity, participant} <- API.Participations.join(event, actor),
-         participant <-
-           participant
-           |> Map.put(:event, event)
-           |> Map.put(:actor, Person.proxify_pictures(actor)) do
-      {:ok, participant}
-    else
-      {:maximum_attendee_capacity, _} ->
-        {:error, "The event has already reached its maximum capacity"}
-
-      {:has_event, _} ->
-        {:error, "Event with this ID #{inspect(event_id)} doesn't exist"}
-
-      {:is_owned, nil} ->
-        {:error, "Actor id is not owned by authenticated user"}
-
-      {:error, :event_not_found} ->
-        {:error, "Event id not found"}
-
-      {:ok, %Participant{}} ->
-        {:error, "You are already a participant of this event"}
-    end
-  end
-
-  def actor_join_event(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to join an event"}
-  end
-
-  @doc """
-  Leave an event for an actor
-  """
-  def actor_leave_event(
-        _parent,
-        %{actor_id: actor_id, event_id: event_id},
-        %{context: %{current_user: user}}
-      ) do
-    with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
-         {:has_event, {:ok, %Event{} = event}} <-
-           {:has_event, Mobilizon.Events.get_event_with_preload(event_id)},
-         {:ok, _activity, _participant} <- API.Participations.leave(event, actor) do
-      {:ok, %{event: %{id: event_id}, actor: %{id: actor_id}}}
-    else
-      {:has_event, _} ->
-        {:error, "Event with this ID #{inspect(event_id)} doesn't exist"}
-
-      {:is_owned, nil} ->
-        {:error, "Actor id is not owned by authenticated user"}
-
-      {:only_organizer, true} ->
-        {:error, "You can't leave event because you're the only event creator participant"}
-
-      {:error, :participant_not_found} ->
-        {:error, "Participant not found"}
-    end
-  end
-
-  def actor_leave_event(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to leave an event"}
-  end
-
-  def update_participation(
-        _parent,
-        %{id: participation_id, moderator_actor_id: moderator_actor_id, role: new_role},
-        %{context: %{current_user: user}}
-      ) do
-    # Check that moderator provided is rightly authenticated
-    with {:is_owned, moderator_actor} <- User.owns_actor(user, moderator_actor_id),
-         # Check that participation already exists
-         {:has_participation, %Participant{role: old_role} = participation} <-
-           {:has_participation, Mobilizon.Events.get_participant(participation_id)},
-         {:same_role, false} <- {:same_role, new_role == old_role},
-         # Check that moderator has right
-         {:actor_approve_permission, true} <-
-           {:actor_approve_permission,
-            Mobilizon.Events.moderator_for_event?(participation.event.id, moderator_actor_id)},
-         {:ok, _activity, participation} <-
-           API.Participations.update(participation, moderator_actor, new_role) do
-      {:ok, participation}
-    else
-      {:is_owned, nil} ->
-        {:error, "Moderator Actor ID is not owned by authenticated user"}
-
-      {:has_participation, %Participant{role: role, id: id}} ->
-        {:error,
-         "Participant #{id} can't be approved since it's already a participant (with role #{role})"}
-
-      {:has_participation, nil} ->
-        {:error, "Participant not found"}
-
-      {:actor_approve_permission, _} ->
-        {:error, "Provided moderator actor ID doesn't have permission on this event"}
-
-      {:same_role, true} ->
-        {:error, "Participant already has role #{new_role}"}
-
-      {:error, :participant_not_found} ->
-        {:error, "Participant not found"}
-    end
-  end
 
   @doc """
   Create an event

@@ -156,6 +156,28 @@ config :mobilizon, :maps,
     attribution: System.get_env("MAPS_TILES_ATTRIBUTION")
   ]
 
+config :mobilizon, :anonymous,
+  participation: [
+    allowed: true,
+    validation: %{
+      email: [
+        enabled: true,
+        confirmation_required: true
+      ],
+      captcha: [enabled: false]
+    }
+  ],
+  event_creation: [
+    allowed: false,
+    validation: %{
+      email: [
+        enabled: true,
+        confirmation_required: true
+      ],
+      captcha: [enabled: false]
+    }
+  ]
+
 config :mobilizon, Oban,
   repo: Mobilizon.Storage.Repo,
   prune: {:maxlen, 10_000},

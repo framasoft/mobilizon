@@ -76,6 +76,7 @@ defmodule Mobilizon.Events do
 
   defenum(ParticipantRole, :participant_role, [
     :not_approved,
+    :not_confirmed,
     :rejected,
     :participant,
     :moderator,
@@ -661,9 +662,39 @@ defmodule Mobilizon.Events do
   @doc """
   Gets a single participation for an event and actor.
   """
-  @spec get_participant(integer | String.t(), integer | String.t()) ::
+  @spec get_participant(integer | String.t(), integer | String.t(), map()) ::
           {:ok, Participant.t()} | {:error, :participant_not_found}
-  def get_participant(event_id, actor_id) do
+  def get_participant(event_id, actor_id, params \\ %{})
+
+  # This one if to check someone doesn't go to the same event twice
+  def get_participant(event_id, actor_id, %{email: email}) do
+    case Participant
+         |> where([p], event_id: ^event_id, actor_id: ^actor_id)
+         |> where([p], fragment("? ->>'email' = ?", p.metadata, ^email))
+         |> Repo.one() do
+      %Participant{} = participant ->
+        {:ok, participant}
+
+      nil ->
+        {:error, :participant_not_found}
+    end
+  end
+
+  # This one if for finding participants by their cancellation token when wanting to cancel a participation
+  def get_participant(event_id, actor_id, %{cancellation_token: cancellation_token}) do
+    case Participant
+         |> where([p], event_id: ^event_id, actor_id: ^actor_id)
+         |> where([p], fragment("? ->>'cancellation_token' = ?", p.metadata, ^cancellation_token))
+         |> Repo.one() do
+      %Participant{} = participant ->
+        {:ok, participant}
+
+      nil ->
+        {:error, :participant_not_found}
+    end
+  end
+
+  def get_participant(event_id, actor_id, %{}) do
     case Repo.get_by(Participant, event_id: event_id, actor_id: actor_id) do
       %Participant{} = participant ->
         {:ok, participant}
@@ -671,6 +702,14 @@ defmodule Mobilizon.Events do
       nil ->
         {:error, :participant_not_found}
     end
+  end
+
+  @spec get_participant_by_confirmation_token(String.t()) :: Participant.t()
+  def get_participant_by_confirmation_token(confirmation_token) do
+    Participant
+    |> where([p], fragment("? ->>'confirmation_token' = ?", p.metadata, ^confirmation_token))
+    |> preload([p], [:actor, :event])
+    |> Repo.one()
   end
 
   @doc """
@@ -706,7 +745,7 @@ defmodule Mobilizon.Events do
 
   @doc """
   Returns the list of participants for an event.
-  Default behaviour is to not return :not_approved participants
+  Default behaviour is to not return :not_approved or :not_confirmed participants
   """
   @spec list_participants_for_event(String.t(), list(atom()), integer | nil, integer | nil) ::
           [Participant.t()]

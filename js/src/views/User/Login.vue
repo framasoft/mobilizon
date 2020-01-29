@@ -1,74 +1,68 @@
 <template>
-  <div class="container">
-    <b-message v-if="errorCode === LoginErrorCode.NEED_TO_LOGIN" title="Info" type="is-info">
-      {{ $t('You need to login.') }}
-    </b-message>
-    <section v-if="!currentUser.isLoggedIn">
-      <div class="columns is-mobile is-centered">
-        <div class="column is-half-desktop">
-          <h1 class="title">
-            {{ $t('Welcome back!') }}
-          </h1>
-          <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">
-            <span v-if="error === LoginError.USER_NOT_CONFIRMED">
-              <span>{{ $t("The user account you're trying to login as has not been confirmed yet. Check your email inbox and eventually your spam folder.") }}</span>
-              <i18n path="You may also ask to {resend_confirmation_email}.">
-                <router-link slot="resend_confirmation_email" :to="{ name: RouteName.RESEND_CONFIRMATION }">{{ $t('resend confirmation email') }}</router-link>
-              </i18n>
-            </span>
-            <span v-if="error === LoginError.USER_EMAIL_PASSWORD_INVALID">
-              {{ $t('Impossible to login, your email or password seems incorrect.') }}
-            </span>
-            <!-- TODO: Shouldn't we hide this information ? -->
-            <span v-if="error === LoginError.USER_DOES_NOT_EXIST">
-              {{ $t('No user account with this email was found. Maybe you made a typo?') }}
-            </span>
-          </b-message>
-          <form @submit="loginAction">
-            <b-field :label="$t('Email')">
-              <b-input aria-required="true" required type="email" v-model="credentials.email"/>
-            </b-field>
+  <section class="section container" v-if="!currentUser.isLoggedIn">
+    <div class="columns is-mobile is-centered">
+      <div class="column is-half-desktop">
+        <h1 class="title">
+          {{ $t('Welcome back!') }}
+        </h1>
+        <b-message v-if="errorCode === LoginErrorCode.NEED_TO_LOGIN" title="Info" type="is-info">
+          {{ $t('You need to login.') }}
+        </b-message>
+        <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">
+          <span v-if="error === LoginError.USER_NOT_CONFIRMED">
+            <span>{{ $t("The user account you're trying to login as has not been confirmed yet. Check your email inbox and eventually your spam folder.") }}</span>
+            <i18n path="You may also ask to {resend_confirmation_email}.">
+              <router-link slot="resend_confirmation_email" :to="{ name: RouteName.RESEND_CONFIRMATION }">{{ $t('resend confirmation email') }}</router-link>
+            </i18n>
+          </span>
+          <span v-if="error === LoginError.USER_EMAIL_PASSWORD_INVALID">
+            {{ $t('Impossible to login, your email or password seems incorrect.') }}
+          </span>
+          <!-- TODO: Shouldn't we hide this information ? -->
+          <span v-if="error === LoginError.USER_DOES_NOT_EXIST">
+            {{ $t('No user account with this email was found. Maybe you made a typo?') }}
+          </span>
+        </b-message>
+        <form @submit="loginAction">
+          <b-field :label="$t('Email')">
+            <b-input aria-required="true" required type="email" v-model="credentials.email"/>
+          </b-field>
 
-            <b-field :label="$t('Password')">
-              <b-input
-                aria-required="true"
-                required
-                type="password"
-                password-reveal
-                v-model="credentials.password"
-              />
-            </b-field>
+          <b-field :label="$t('Password')">
+            <b-input
+              aria-required="true"
+              required
+              type="password"
+              password-reveal
+              v-model="credentials.password"
+            />
+          </b-field>
 
-            <p class="control has-text-centered">
-              <button class="button is-primary is-large">
-                {{ $t('Login') }}
-              </button>
-            </p>
-            <p class="control">
-              <router-link
-                class="button is-text"
-                :to="{ name: RouteName.SEND_PASSWORD_RESET, params: { email: credentials.email }}"
-              >
-                {{ $t('Forgot your password ?') }}
-              </router-link>
-            </p>
-            <p class="control" v-if="config && config.registrationsOpen">
-              <router-link
-                class="button is-text"
-                :to="{ name: RouteName.REGISTER, params: { default_email: credentials.email, default_password: credentials.password }}"
-              >
-                {{ $t('Register') }}
-              </router-link>
-            </p>
-          </form>
-        </div>
+          <p class="control has-text-centered">
+            <button class="button is-primary is-large">
+              {{ $t('Login') }}
+            </button>
+          </p>
+          <p class="control">
+            <router-link
+              class="button is-text"
+              :to="{ name: RouteName.SEND_PASSWORD_RESET, params: { email: credentials.email }}"
+            >
+              {{ $t('Forgot your password ?') }}
+            </router-link>
+          </p>
+          <p class="control" v-if="config && config.registrationsOpen">
+            <router-link
+              class="button is-text"
+              :to="{ name: RouteName.REGISTER, params: { default_email: credentials.email, default_password: credentials.password }}"
+            >
+              {{ $t('Register') }}
+            </router-link>
+          </p>
+        </form>
       </div>
-    </section>
-
-    <b-message v-else title="Error" type="is-error">
-      {{ $t('You are already logged-in.') }}
-    </b-message>
-  </div>
+    </div>
+  </section>
 </template>
 
 <script lang="ts">

@@ -32,3 +32,11 @@ $navbar-height: 4rem;
 // Footer
 $footer-padding: 3rem 1.5rem 4rem;
 $footer-background-color: $primary;
+
+$body-background-color: #f8f7fa;
+$fullhd-enabled: false;
+$hero-body-padding-medium: 6rem 1.5rem;
+
+main > .container {
+    background: $white;
+}

@@ -1,23 +1,24 @@
 defmodule Mobilizon.Service.Geospatial.NominatimTest do
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
-
   use Mobilizon.DataCase, async: false
-
+  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
   import Mock
 
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Config
   alias Mobilizon.Service.Geospatial.Nominatim
 
-  @httpoison_headers [
-    {"User-Agent",
-     "#{Config.instance_name()} #{Config.instance_hostname()} - Mobilizon #{
-       Mix.Project.config()[:version]
-     }"}
-  ]
+  setup do
+    # Config.instance_user_agent/0 makes database calls so because of ownership connection
+    # we need to define it like this instead of a constant
+    # See https://hexdocs.pm/ecto_sql/Ecto.Adapters.SQL.Sandbox.html
+    {:ok,
+     httpoison_headers: [
+       {"User-Agent", Config.instance_user_agent()}
+     ]}
+  end
 
   describe "search address" do
-    test "produces a valid search address with options" do
+    test "produces a valid search address with options", %{httpoison_headers: httpoison_headers} do
       with_mock HTTPoison,
         get: fn _url, _headers ->
           {:ok, %HTTPoison.Response{status_code: 200, body: "[]"}}
@@ -30,7 +31,7 @@ defmodule Mobilizon.Service.Geospatial.NominatimTest do
         assert_called(
           HTTPoison.get(
             "https://nominatim.openstreetmap.org/search?format=geocodejson&q=10%20Rue%20Jangot&limit=5&accept-language=fr&addressdetails=1&namedetails=1",
-            @httpoison_headers
+            httpoison_headers
           )
         )
       end

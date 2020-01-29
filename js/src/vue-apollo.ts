@@ -102,9 +102,9 @@ const errorLink = onError(({ graphQLErrors, networkError, forward, operation }) 
       console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
     });
 
-    for (const message of messages) {
-      Snackbar.open({ message, type: 'is-danger', position: 'is-bottom' });
-    }
+    // for (const message of messages) {
+    //   Snackbar.open({ message, type: 'is-danger', position: 'is-bottom' });
+    // }
   }
 
   if (networkError) {

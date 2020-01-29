@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="hero is-medium is-light is-bold" v-if="config && (!currentUser.id || !currentActor.id)">
+    <section class="hero is-light is-bold" v-if="config && (!currentUser.id || !currentActor.id)">
         <div class="hero-body">
           <div class="container">
             <h1 class="title">{{ $t('Gather ⋅ Organize ⋅ Mobilize') }}</h1>
@@ -24,7 +24,7 @@
           </div>
         </div>
       </section>
-    <div class="container" v-if="config">
+    <div class="container section" v-if="config">
       <section v-if="currentActor.id">
         <b-message type="is-info" v-if="welcomeBack">
           {{ $t('Welcome back {username}!', { username: currentActor.displayName() }) }}
@@ -316,7 +316,15 @@ export default class Home extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-@import "@/variables.scss";
+  @import "@/variables.scss";
+
+  main > div > .container {
+    background: $white;
+  }
+
+  .section {
+    padding: 1rem 1.5rem;
+  }
 
 .search-autocomplete {
   border: 1px solid #dbdbdb;
@@ -324,8 +332,6 @@ export default class Home extends Vue {
 }
 
 .events-featured {
-  margin: 25px auto;
-
   .columns {
     margin: 1rem auto 3rem;
   }
