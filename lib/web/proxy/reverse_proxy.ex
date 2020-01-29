@@ -69,6 +69,8 @@ defmodule Mobilizon.Web.ReverseProxy do
 
   alias Plug.Conn
 
+  alias Mobilizon.Web.MediaProxy
+
   require Logger
 
   @type option ::
@@ -111,7 +113,7 @@ defmodule Mobilizon.Web.ReverseProxy do
     req_headers = build_req_headers(conn.req_headers, opts)
 
     opts =
-      if filename = Mobilizon.Web.MediaProxy.filename(url) do
+      if filename = MediaProxy.filename(url) do
         Keyword.put_new(opts, :attachment_name, filename)
       else
         opts

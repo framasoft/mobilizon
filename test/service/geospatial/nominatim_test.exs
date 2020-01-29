@@ -6,8 +6,8 @@ defmodule Mobilizon.Service.Geospatial.NominatimTest do
   import Mock
 
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.Service.Geospatial.Nominatim
   alias Mobilizon.Config
+  alias Mobilizon.Service.Geospatial.Nominatim
 
   @httpoison_headers [
     {"User-Agent",

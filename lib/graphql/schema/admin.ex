@@ -5,7 +5,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
 
   use Absinthe.Schema.Notation
 
-  alias Mobilizon.Events.{Event, Comment}
+  alias Mobilizon.Events.{Comment, Event}
   alias Mobilizon.Reports.{Note, Report}
 
   alias Mobilizon.GraphQL.Resolvers.Admin

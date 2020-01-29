@@ -16,8 +16,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
   alias Mobilizon.Federation.ActivityPub
 
   alias Mobilizon.Web.ActivityPub.ActorView
-  alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.PageView
+  alias Mobilizon.Web.{Endpoint, PageView}
   alias Mobilizon.Web.Router.Helpers, as: Routes
 
   setup_all do
@@ -104,7 +103,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
         conn =
           conn
           |> assign(:valid_signature, true)
-          |> post("#{Mobilizon.Web.Endpoint.url()}/inbox", data)
+          |> post("#{Endpoint.url()}/inbox", data)
 
         assert "ok" == json_response(conn, 200)
         :timer.sleep(500)

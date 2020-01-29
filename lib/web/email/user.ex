@@ -13,7 +13,7 @@ defmodule Mobilizon.Web.Email.User do
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Users.User
 
-  alias Mobilizon.Web.Email
+  alias Mobilizon.Web.{Email, Gettext}
 
   require Logger
 
@@ -22,7 +22,7 @@ defmodule Mobilizon.Web.Email.User do
         %User{email: email, confirmation_token: confirmation_token},
         locale \\ "en"
       ) do
-    Mobilizon.Web.Gettext.put_locale(locale)
+    Gettext.put_locale(locale)
 
     subject =
       gettext(
@@ -42,7 +42,7 @@ defmodule Mobilizon.Web.Email.User do
         %User{email: email, reset_password_token: reset_password_token},
         locale \\ "en"
       ) do
-    Mobilizon.Web.Gettext.put_locale(locale)
+    Gettext.put_locale(locale)
 
     subject =
       gettext(

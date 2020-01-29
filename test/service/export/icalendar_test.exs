@@ -1,11 +1,13 @@
 defmodule Mobilizon.Service.ICalendarTest do
-  alias Mobilizon.Service.Export.ICalendar, as: ICalendarService
-  alias Mobilizon.Events.Event
-  alias Mobilizon.Addresses.Address
-  alias ICalendar.Value
   use Mobilizon.DataCase
 
   import Mobilizon.Factory
+
+  alias ICalendar.Value
+
+  alias Mobilizon.Addresses.Address
+  alias Mobilizon.Events.Event
+  alias Mobilizon.Service.Export.ICalendar, as: ICalendarService
 
   describe "export an event to ics" do
     test "export basic infos" do

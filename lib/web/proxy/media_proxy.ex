@@ -10,6 +10,8 @@ defmodule Mobilizon.Web.MediaProxy do
 
   alias Mobilizon.Config
 
+  alias Mobilizon.Web.Endpoint
+
   @base64_opts [padding: false]
 
   def url(nil), do: nil
@@ -22,7 +24,7 @@ defmodule Mobilizon.Web.MediaProxy do
     config = Application.get_env(:mobilizon, :media_proxy, [])
 
     if !Keyword.get(config, :enabled, false) or
-         String.starts_with?(url, Mobilizon.Web.Endpoint.url()) do
+         String.starts_with?(url, Endpoint.url()) do
       url
     else
       encode_url(url)
@@ -30,7 +32,7 @@ defmodule Mobilizon.Web.MediaProxy do
   end
 
   def encode_url(url) do
-    secret = Application.get_env(:mobilizon, Mobilizon.Web.Endpoint)[:secret_key_base]
+    secret = Application.get_env(:mobilizon, Endpoint)[:secret_key_base]
 
     # Must preserve `%2F` for compatibility with S3
     # https://git.pleroma.social/pleroma/pleroma/issues/580
@@ -52,7 +54,7 @@ defmodule Mobilizon.Web.MediaProxy do
   end
 
   def decode_url(sig, url) do
-    secret = Application.get_env(:mobilizon, Mobilizon.Web.Endpoint)[:secret_key_base]
+    secret = Application.get_env(:mobilizon, Endpoint)[:secret_key_base]
     sig = Base.url_decode64!(sig, @base64_opts)
     local_sig = :crypto.hmac(:sha, secret, url)
 
@@ -69,7 +71,7 @@ defmodule Mobilizon.Web.MediaProxy do
 
   def build_url(sig_base64, url_base64, filename \\ nil) do
     [
-      Config.get([:media_proxy, :base_url], Mobilizon.Web.Endpoint.url()),
+      Config.get([:media_proxy, :base_url], Endpoint.url()),
       "proxy",
       sig_base64,
       url_base64,

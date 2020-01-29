@@ -11,6 +11,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
 
   alias Mobilizon.Federation.ActivityPub
 
+  alias Mobilizon.Web.Endpoint
+
   require Logger
 
   @spec fetch_tags([String.t()]) :: [Tag.t()]
@@ -40,7 +42,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
   def build_tags(tags) do
     Enum.map(tags, fn %Tag{} = tag ->
       %{
-        "href" => Mobilizon.Web.Endpoint.url() <> "/tags/#{tag.slug}",
+        "href" => Endpoint.url() <> "/tags/#{tag.slug}",
         "name" => "##{tag.title}",
         "type" => "Hashtag"
       }
@@ -60,7 +62,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
   defp build_mention(%Actor{} = actor) do
     %{
       "href" => actor.url,
-      "name" => "@#{Mobilizon.Actors.Actor.preferred_username_and_domain(actor)}",
+      "name" => "@#{Actor.preferred_username_and_domain(actor)}",
       "type" => "Mention"
     }
   end

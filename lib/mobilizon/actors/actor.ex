@@ -7,13 +7,12 @@ defmodule Mobilizon.Actors.Actor do
 
   import Ecto.Changeset
 
-  alias Mobilizon.{Actors, Config, Crypto, Share}
+  alias Mobilizon.{Actors, Config, Crypto, Mention, Share}
   alias Mobilizon.Actors.{ActorOpenness, ActorType, ActorVisibility, Follower, Member}
-  alias Mobilizon.Events.{Event, FeedToken, Comment}
+  alias Mobilizon.Events.{Comment, Event, FeedToken}
   alias Mobilizon.Media.File
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Users.User
-  alias Mobilizon.Mention
 
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Router.Helpers, as: Routes
@@ -336,7 +335,7 @@ defmodule Mobilizon.Actors.Actor do
     |> put_change(:followers_url, build_url(username, :followers))
     |> put_change(:following_url, build_url(username, :following))
     |> put_change(:inbox_url, build_url(username, :inbox))
-    |> put_change(:shared_inbox_url, "#{Mobilizon.Web.Endpoint.url()}/inbox")
+    |> put_change(:shared_inbox_url, "#{Endpoint.url()}/inbox")
     |> put_change(:url, build_url(username, :page))
   end
 
@@ -376,10 +375,10 @@ defmodule Mobilizon.Actors.Actor do
       "keys" => Crypto.generate_rsa_2048_private_key(),
       "preferred_username" => preferred_username,
       "domain" => nil,
-      "inbox_url" => "#{Mobilizon.Web.Endpoint.url()}/inbox",
+      "inbox_url" => "#{Endpoint.url()}/inbox",
       "followers_url" => "#{url}/followers",
       "following_url" => "#{url}/following",
-      "shared_inbox_url" => "#{Mobilizon.Web.Endpoint.url()}/inbox",
+      "shared_inbox_url" => "#{Endpoint.url()}/inbox",
       "type" => :Application
     }
   end

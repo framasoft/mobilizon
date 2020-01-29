@@ -3,10 +3,11 @@ defmodule Mobilizon.Service.Workers.BuildSearch do
   Worker to build search results
   """
 
+  alias Ecto.Adapters.SQL
+
   alias Mobilizon.Events
   alias Mobilizon.Events.Event
   alias Mobilizon.Storage.Repo
-  alias Ecto.Adapters.SQL
 
   use Mobilizon.Service.Workers.Helper, queue: "search"
 

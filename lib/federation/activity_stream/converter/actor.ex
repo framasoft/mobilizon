@@ -11,6 +11,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
   alias Mobilizon.Federation.ActivityPub.Utils
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
 
+  alias Mobilizon.Web.MediaProxy
+
   @behaviour Converter
 
   defimpl Convertible, for: ActorModel do
@@ -29,14 +31,14 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
       data["icon"]["url"] &&
         %{
           "name" => data["icon"]["name"] || "avatar",
-          "url" => Mobilizon.Web.MediaProxy.url(data["icon"]["url"])
+          "url" => MediaProxy.url(data["icon"]["url"])
         }
 
     banner =
       data["image"]["url"] &&
         %{
           "name" => data["image"]["name"] || "banner",
-          "url" => Mobilizon.Web.MediaProxy.url(data["image"]["url"])
+          "url" => MediaProxy.url(data["image"]["url"])
         }
 
     actor_data = %{

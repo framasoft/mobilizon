@@ -10,7 +10,7 @@ defmodule Mobilizon.Events do
 
   import Mobilizon.Storage.Ecto
 
-  alias Ecto.{Multi, Changeset}
+  alias Ecto.{Changeset, Multi}
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
@@ -1078,7 +1078,7 @@ defmodule Mobilizon.Events do
     |> Repo.all()
   end
 
-  def data() do
+  def data do
     Dataloader.Ecto.new(Repo, query: &query/2)
   end
 

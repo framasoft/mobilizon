@@ -7,6 +7,7 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.{Comment, Event, Participant}
   alias Mobilizon.Share
+  alias Mobilizon.Storage.Repo
 
   require Logger
 
@@ -108,7 +109,7 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
   end
 
   def calculate_to_and_cc_from_mentions(%Participant{} = participant) do
-    participant = Mobilizon.Storage.Repo.preload(participant, [:actor, :event])
+    participant = Repo.preload(participant, [:actor, :event])
 
     actor_participants_urls =
       participant.event.id
@@ -132,13 +133,13 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
   defp add_event_author(nil), do: []
 
   defp add_event_author(%Event{} = event) do
-    [Mobilizon.Storage.Repo.preload(event, [:organizer_actor]).organizer_actor.url]
+    [Repo.preload(event, [:organizer_actor]).organizer_actor.url]
   end
 
   defp add_comment_author(nil), do: nil
 
   defp add_comment_author(%Comment{} = comment) do
-    case Mobilizon.Storage.Repo.preload(comment, [:actor]) do
+    case Repo.preload(comment, [:actor]) do
       %Comment{actor: %Actor{url: url}} ->
         url
 

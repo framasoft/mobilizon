@@ -6,8 +6,8 @@ defmodule Mobilizon.GraphQL.Schema.ReportType do
 
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
-  alias Mobilizon.Reports
   alias Mobilizon.GraphQL.Resolvers.Report
+  alias Mobilizon.Reports
 
   @desc "A report object"
   object :report do

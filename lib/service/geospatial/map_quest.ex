@@ -10,8 +10,8 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
   """
 
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.Service.Geospatial.Provider
   alias Mobilizon.Config
+  alias Mobilizon.Service.Geospatial.Provider
 
   require Logger
 

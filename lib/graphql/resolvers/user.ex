@@ -5,7 +5,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
   import Mobilizon.Users.Guards
 
-  alias Mobilizon.{Actors, Config, Users, Events}
+  alias Mobilizon.{Actors, Config, Events, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Users.User

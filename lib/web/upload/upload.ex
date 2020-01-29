@@ -36,6 +36,7 @@ defmodule Mobilizon.Web.Upload do
 
   alias Mobilizon.Config
 
+  alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Upload.{Filter, MIME, Uploader}
 
   require Logger
@@ -91,7 +92,7 @@ defmodule Mobilizon.Web.Upload do
   def remove(url, opts \\ []) do
     with opts <- get_opts(opts),
          %URI{path: "/media/" <> path, host: host} <- URI.parse(url),
-         {:same_host, true} <- {:same_host, host == Mobilizon.Web.Endpoint.host()} do
+         {:same_host, true} <- {:same_host, host == Endpoint.host()} do
       Uploader.remove_file(opts.uploader, path)
     else
       %URI{} = _uri ->
@@ -129,7 +130,7 @@ defmodule Mobilizon.Web.Upload do
         Keyword.get(
           opts,
           :base_url,
-          Config.get([__MODULE__, :base_url], Mobilizon.Web.Endpoint.url())
+          Config.get([__MODULE__, :base_url], Endpoint.url())
         )
     }
   end

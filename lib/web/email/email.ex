@@ -7,6 +7,8 @@ defmodule Mobilizon.Web.Email do
 
   alias Mobilizon.Config
 
+  alias Mobilizon.Web.EmailView
+
   @spec base_email(keyword()) :: Bamboo.Email.t()
   def base_email(args) do
     instance = Config.instance_config()
@@ -16,7 +18,7 @@ defmodule Mobilizon.Web.Email do
     |> from({Config.instance_name(), Config.instance_email_from()})
     |> put_header("Reply-To", Config.instance_email_reply_to())
     |> assign(:instance, instance)
-    |> put_html_layout({Mobilizon.Web.EmailView, "email.html"})
-    |> put_text_layout({Mobilizon.Web.EmailView, "email.text"})
+    |> put_html_layout({EmailView, "email.html"})
+    |> put_text_layout({EmailView, "email.text"})
   end
 end

@@ -6,8 +6,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   internal one, and back.
   """
 
-  alias Mobilizon.Addresses
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Addresses
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.Event, as: EventModel
   alias Mobilizon.Media.Picture

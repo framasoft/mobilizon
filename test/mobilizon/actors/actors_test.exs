@@ -5,9 +5,9 @@ defmodule Mobilizon.ActorsTest do
 
   import Mobilizon.Factory
 
-  alias Mobilizon.{Actors, Config, Users, Events, Tombstone}
+  alias Mobilizon.{Actors, Config, Events, Tombstone, Users}
   alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
-  alias Mobilizon.Events.{Event, Comment}
+  alias Mobilizon.Events.{Comment, Event}
   alias Mobilizon.Media.File, as: FileModel
   alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.Page

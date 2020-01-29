@@ -17,9 +17,11 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
 
   alias Mobilizon.GraphQL.API.Follows
 
+  alias Mobilizon.Web.Endpoint
+
   require Logger
 
-  def init() do
+  def init do
     # Wait for everything to settle.
     Process.sleep(1000 * 5)
     get_actor()
@@ -28,7 +30,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
   @spec get_actor() :: Actor.t() | {:error, Ecto.Changeset.t()}
   def get_actor do
     with {:ok, %Actor{} = actor} <-
-           Actors.get_or_create_instance_actor_by_url("#{Mobilizon.Web.Endpoint.url()}/relay") do
+           Actors.get_or_create_instance_actor_by_url("#{Endpoint.url()}/relay") do
       actor
     end
   end

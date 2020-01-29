@@ -4,10 +4,12 @@ defmodule Mobilizon.Share do
   """
 
   use Ecto.Schema
+
   import Ecto.Changeset
   import Ecto.Query
-  alias Mobilizon.Storage.Repo
+
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Storage.Repo
 
   @type t :: %__MODULE__{
           uri: String.t(),

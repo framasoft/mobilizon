@@ -10,7 +10,7 @@ defmodule Mobilizon.Federation.ActivityPub do
 
   import Mobilizon.Federation.ActivityPub.Utils
 
-  alias Mobilizon.{Actors, Config, Events, Reports, Users, Share}
+  alias Mobilizon.{Actors, Config, Events, Reports, Share, Users}
   alias Mobilizon.Actors.{Actor, Follower}
   alias Mobilizon.Events.{Comment, Event, Participant}
   alias Mobilizon.Reports.Report
@@ -32,6 +32,7 @@ defmodule Mobilizon.Federation.ActivityPub do
 
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
 
+  alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Email.{Admin, Mailer}
 
   require Logger
@@ -318,7 +319,7 @@ defmodule Mobilizon.Federation.ActivityPub do
            Convertible.model_to_as(%{follow | actor: follower, target_actor: followed}),
          {:ok, follow_activity} <- create_activity(follow_as_data, local),
          activity_unfollow_id <-
-           activity_id || "#{Mobilizon.Web.Endpoint.url()}/unfollow/#{follow_id}/activity",
+           activity_id || "#{Endpoint.url()}/unfollow/#{follow_id}/activity",
          unfollow_data <-
            make_unfollow_data(follower, followed, follow_activity, activity_unfollow_id),
          {:ok, activity} <- create_activity(unfollow_data, local),
@@ -483,7 +484,7 @@ defmodule Mobilizon.Federation.ActivityPub do
            # If it's an exclusion it should be something else
            "actor" => actor_url,
            "object" => event_url,
-           "id" => "#{Mobilizon.Web.Endpoint.url()}/leave/event/#{participant.id}"
+           "id" => "#{Endpoint.url()}/leave/event/#{participant.id}"
          },
          audience <-
            Audience.calculate_to_and_cc_from_mentions(participant),
@@ -778,7 +779,7 @@ defmodule Mobilizon.Federation.ActivityPub do
            make_accept_join_data(
              follower_as_data,
              Map.merge(additional, %{
-               "id" => "#{Mobilizon.Web.Endpoint.url()}/accept/follow/#{follower.id}",
+               "id" => "#{Endpoint.url()}/accept/follow/#{follower.id}",
                "to" => [follower.actor.url],
                "cc" => [],
                "actor" => follower.target_actor.url
@@ -797,7 +798,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   defp accept_join(%Participant{} = participant, additional) do
     with {:ok, %Participant{} = participant} <-
            Events.update_participant(participant, %{role: :participant}),
-         Absinthe.Subscription.publish(Mobilizon.Web.Endpoint, participant.actor,
+         Absinthe.Subscription.publish(Endpoint, participant.actor,
            event_person_participation_changed: participant.actor.id
          ),
          participant_as_data <- Convertible.model_to_as(participant),
@@ -807,7 +808,7 @@ defmodule Mobilizon.Federation.ActivityPub do
            make_accept_join_data(
              participant_as_data,
              Map.merge(Map.merge(audience, additional), %{
-               "id" => "#{Mobilizon.Web.Endpoint.url()}/accept/join/#{participant.id}"
+               "id" => "#{Endpoint.url()}/accept/join/#{participant.id}"
              })
            ) do
       {:ok, participant, update_data}
@@ -823,7 +824,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   defp reject_join(%Participant{} = participant, additional) do
     with {:ok, %Participant{} = participant} <-
            Events.update_participant(participant, %{approved: false, role: :rejected}),
-         Absinthe.Subscription.publish(Mobilizon.Web.Endpoint, participant.actor,
+         Absinthe.Subscription.publish(Endpoint, participant.actor,
            event_person_participation_changed: participant.actor.id
          ),
          participant_as_data <- Convertible.model_to_as(participant),
@@ -839,7 +840,7 @@ defmodule Mobilizon.Federation.ActivityPub do
            reject_data
            |> Map.merge(audience)
            |> Map.merge(%{
-             "id" => "#{Mobilizon.Web.Endpoint.url()}/reject/join/#{participant.id}"
+             "id" => "#{Endpoint.url()}/reject/join/#{participant.id}"
            }) do
       {:ok, participant, update_data}
     else
@@ -866,7 +867,7 @@ defmodule Mobilizon.Federation.ActivityPub do
            reject_data
            |> Map.merge(audience)
            |> Map.merge(%{
-             "id" => "#{Mobilizon.Web.Endpoint.url()}/reject/follow/#{follower.id}"
+             "id" => "#{Endpoint.url()}/reject/follow/#{follower.id}"
            }) do
       {:ok, follower, update_data}
     else

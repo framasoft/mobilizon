@@ -9,6 +9,8 @@ defmodule Mobilizon.Actors.Follower do
 
   alias Mobilizon.Actors.Actor
 
+  alias Mobilizon.Web.Endpoint
+
   @type t :: %__MODULE__{
           approved: boolean,
           url: String.t(),
@@ -65,6 +67,6 @@ defmodule Mobilizon.Actors.Follower do
 
     changeset
     |> put_change(:id, uuid)
-    |> put_change(:url, "#{Mobilizon.Web.Endpoint.url()}/follow/#{uuid}")
+    |> put_change(:url, "#{Endpoint.url()}/follow/#{uuid}")
   end
 end

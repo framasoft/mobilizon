@@ -11,6 +11,8 @@ defmodule Mobilizon.Federation.WebFingerTest do
 
   alias Mobilizon.Federation.WebFinger
 
+  alias Mobilizon.Web.Endpoint
+
   @mastodon_account "tcit@social.tcit.fr"
   @mastodon_account_username "tcit"
   @pleroma_account "lain@pleroma.soykaf.com"
@@ -24,7 +26,7 @@ defmodule Mobilizon.Federation.WebFingerTest do
     test "returns a link to the xml lrdd" do
       host_info = WebFinger.host_meta()
 
-      assert String.contains?(host_info, Mobilizon.Web.Endpoint.url())
+      assert String.contains?(host_info, Endpoint.url())
     end
   end
 
@@ -34,7 +36,7 @@ defmodule Mobilizon.Federation.WebFingerTest do
 
       {:ok, result} =
         WebFinger.webfinger(
-          "#{actor.preferred_username}@#{Mobilizon.Web.Endpoint.host()}",
+          "#{actor.preferred_username}@#{Endpoint.host()}",
           "JSON"
         )
 

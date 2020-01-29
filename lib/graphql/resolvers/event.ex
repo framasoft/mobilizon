@@ -5,7 +5,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
 
   alias Mobilizon.{Actors, Admin, Events}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.{Event, Participant, EventParticipantStats}
+  alias Mobilizon.Events.{Event, EventParticipantStats, Participant}
   alias Mobilizon.Users.User
 
   alias Mobilizon.GraphQL.API
