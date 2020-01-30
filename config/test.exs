@@ -8,11 +8,13 @@ config :mobilizon, :instance,
 # you can enable the server option below.
 config :mobilizon, Mobilizon.Web.Endpoint,
   http: [
-    port: System.get_env("MOBILIZON_INSTANCE_PORT") || 80
+    port: 80
   ],
   url: [
-    host: System.get_env("MOBILIZON_INSTANCE_HOST") || "mobilizon.test"
+    host: "mobilizon.test",
+    scheme: "http"
   ],
+  secret_key_base: "some secret",
   server: false
 
 # Print only warnings and errors during test
@@ -26,7 +28,7 @@ config :logger,
 # Configure your database
 config :mobilizon, Mobilizon.Storage.Repo,
   types: Mobilizon.Storage.PostgresTypes,
-  username: System.get_env("MOBILIZON_DATABASE_USERNAME") || "mobilizon",
+  username: System.get_env("MOBILIZON_DATABASE_USERNAME") || "mobilizon_test",
   password: System.get_env("MOBILIZON_DATABASE_PASSWORD") || "mobilizon",
   database: System.get_env("MOBILIZON_DATABASE_DBNAME") || "mobilizon_test",
   hostname: System.get_env("MOBILIZON_DATABASE_HOST") || "localhost",
@@ -44,3 +46,9 @@ config :exvcr,
 config :mobilizon, Mobilizon.Service.Geospatial, service: Mobilizon.Service.Geospatial.Mock
 
 config :mobilizon, Oban, queues: false, prune: :disabled
+
+config :mobilizon, Mobilizon.Web.Auth.Guardian, secret_key: "some secret"
+
+if System.get_env("DOCKER", "false") == "false" && File.exists?("./config/test.secret.exs") do
+  import_config "test.secret.exs"
+end

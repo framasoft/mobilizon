@@ -3,7 +3,7 @@
 Manages remote relays
 
 !!! tip "Environment"
-    You need to run these commands with the appropriate environment loaded
+    You need to run these commands with the appropriate environment loaded, so probably prefix with `MIX_ENV=prod`.
 
 ## Make your instance follow a mobilizon instance
 

@@ -7,7 +7,7 @@ We format our code with the Elixir Formatter and check for issues with [Credo](h
 Please run these two commands before pushing code:
 
  * `mix format`
- * `mix credo`
+ * `mix credo --strict -a`
  
 These two commands must not return an error code, since they are required to pass inside CI.
 

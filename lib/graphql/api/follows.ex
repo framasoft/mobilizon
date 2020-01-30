@@ -54,8 +54,8 @@ defmodule Mobilizon.GraphQL.API.Follows do
   def reject(%Actor{} = follower, %Actor{} = followed) do
     Logger.debug("We're trying to reject a follow")
 
-    with %Follower{} = follow <-
-           Actors.is_following(follower, followed),
+    with {:follower, %Follower{} = follow} <-
+           {:follower, Actors.is_following(follower, followed)},
          {:ok, %Activity{} = activity, %Follower{} = follow} <-
            ActivityPub.reject(
              :follow,
@@ -64,7 +64,10 @@ defmodule Mobilizon.GraphQL.API.Follows do
            ) do
       {:ok, activity, follow}
     else
-      %Follower{approved: true} ->
+      {:follower, nil} ->
+        {:error, "Follow not found"}
+
+      {:follower, %Follower{approved: true}} ->
         {:error, "Follow already accepted"}
     end
   end

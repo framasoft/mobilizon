@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Special operations
+Config has moved from `.env` files to a more traditional way to handle things in the Elixir world, with `.exs` files.
+
+To migrate existing configuration, you can simply run `mix mobilizon.instance gen` and fill in the adequate values previously in `.env` files (you don't need to perform the operations to create the database).
+
+A minimal file template [is available](https://framagit.org/framasoft/mobilizon/blob/master/priv/templates/config.template.eex) to check for missing configuration.
+
+Also make sure to remove the `EnvironmentFile=` line from the systemd service and set `Environment=MIX_ENV=prod` instead. See [the updated file](https://framagit.org/framasoft/mobilizon/blob/master/support/systemd/mobilizon.service).
+
+### Added
+- Possibility to participate anonymously to an event
+- Possibility to participate to a remote event (being redirected by providing federated identity)
+
 ## [1.0.0-beta.2] - 2019-12-18
 
 ### Special operations

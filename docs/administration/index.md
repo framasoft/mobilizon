@@ -1,13 +1,14 @@
 # Install
 
+!!! info "Docker"
+    
+    Docker production installation is not yet supported. See [issue #352](https://framagit.org/framasoft/mobilizon/issues/352).
+
 ## Pre-requisites
 
 * A Linux machine with **root access**
 * A **domain name** (or subdomain) for the Mobilizon server, e.g. `example.net`
-* An **SMTP server** to deliver emails 
-
-!!! tip
-    You can also install Mobilizon [with Docker](docker.md).
+* An **SMTP server** to deliver emails
 
 ## Dependencies
 
@@ -88,12 +89,33 @@ Mobilizon provides a command line tool to generate configuration
 mix mobilizon.instance gen
 ```
 
-This will ask you questions about your instance and generate a `.env.prod` file.
+This will ask you questions about your setup and your instance to generate a `prod.secret.exs` file in the `config/` folder, and a `setup_db.psql` file to setup the database.
 
+### Database setup
 
-### Migration
+The `setup_db.psql` file contains SQL instructions to create a PostgreSQL user and database with the chosen credentials and add the required extensions to the Mobilizon database.
 
-Run database migrations: `mix ecto.migrate`. You will have to do this again after most updates.
+Execute
+```bash
+sudo -u postgres psql -f setup_db.psql
+```
+
+!!! warning
+
+    When it's done, don't forget to remove the `setup_db.psql` file.
+
+### Database Migration
+
+Run database migrations: 
+```bash
+MIX_ENV=prod mix ecto.migrate
+```
+
+!!! note
+
+    Note the `MIX_ENV=prod` environment variable prefix in front of the command. You will have to use it for each `mix` command from now on.
+
+You will have to do this again after most updates.
 
 !!! tip
     If some migrations fail, it probably means you're not using a recent enough version of PostgreSQL, or that you haven't installed the required extensions.
@@ -147,3 +169,13 @@ sudo ln -s /etc/nginx/sites-available/mobilizon.conf /etc/nginx/sites-enabled/
 Edit the file `/etc/nginx/sites-available` and adapt it to your own configuration.
 
 Test the configuration with `sudo nginx -t` and reload nginx with `systemctl reload nginx`.
+
+## Optional tasks
+
+### Geolocation databases
+
+Mobilizon can use geolocation from MMDB format data from sources like [MaxMind GeoIP](https://dev.maxmind.com/geoip/geoip2/geolite2/) databases or [db-ip.com](https://db-ip.com/db/download/ip-to-city-lite) databases. This allows showing events happening near the user's location.
+
+You will need to download the City database and put it into `priv/data/GeoLite2-City.mmdb`.
+
+Mobilizon will only show a warning at startup if the database is missing, but it isn't required.

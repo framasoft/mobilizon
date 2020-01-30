@@ -37,7 +37,7 @@ defmodule Mobilizon.Addresses do
     %Address{}
     |> Address.changeset(attrs)
     |> Repo.insert(
-      on_conflict: :replace_all_except_primary_key,
+      on_conflict: {:replace_all_except, [:id]},
       conflict_target: [:origin_id]
     )
   end

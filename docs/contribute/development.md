@@ -1,11 +1,12 @@
 # Development
 
 Clone the repository:
-```bash
-# With HTTPS
-git clone https://framagit.org/framasoft/mobilizon && cd mobilizon
 
-# With SSH
+```bash tab="HTTPS"
+git clone https://framagit.org/framasoft/mobilizon && cd mobilizon
+```
+
+```bash tab="SSH"
 git clone git@framagit.org:framasoft/mobilizon.git && cd mobilizon
 ```
 
@@ -14,19 +15,19 @@ Run Mobilizon:
   * with Docker and Docker-Compose (**Recommended**)
   * without Docker and Docker-Compose (This involves more work on your part, use Docker and Docker-Compose if you can)
 
-## With Docker and Docker-Compose
+## With Docker
 
   * Install [Docker](https://docs.docker.com/install/#supported-platforms) and [Docker-Compose](https://docs.docker.com/compose/install/) for your system.
   * Run `make start` to build, then launch a database container and an API container.
   * Follow the progress of the build with `docker-compose logs -f`.
   * Access `localhost:4000` in your browser once the containers are fully built and launched.
 
-## Without Docker and Docker-Compose
+## Without Docker
 
   * Install dependencies:
-    * Elixir (and Erlang) by following the instructions at [https://elixir-lang.github.io/install.html](https://elixir-lang.github.io/install.html)
-    * [PostgreSQL]() with PostGIS
-    * Install NodeJS (we guarantee support for the latest LTS and later) ![](https://img.shields.io/badge/node-%3E%3D%2012.0+-brightgreen.svg)
+    * [Elixir (and Erlang)](https://elixir-lang.org/install.html)
+    * PostgreSQL >= 9.6 with PostGIS
+    * [Install NodeJS](https://nodejs.org/en/download/) (we guarantee support for the latest LTS and later) ![](https://img.shields.io/badge/node-%3E%3D%2012.0+-brightgreen.svg)
   * Start services:
     * Start postgres
   * Setup services:
@@ -48,3 +49,9 @@ Run Mobilizon:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) in your browser
 and see the website (server *and* client) in action.
+
+## FAQ
+
+### Issues with argon2 when creating users.
+
+This is because you installed deps through Docker and are now using Mobilizon without it, or the other way around. Just `rm -r deps/argon2_elixir` and trigger `mix deps.get` again.

@@ -5,7 +5,7 @@ init:
 start: stop
 	@bash docker/message.sh "starting Mobilizon with docker"
 	docker-compose up -d api
-	@bash docker/message.sh "started"
+	@bash docker/message.sh "Docker server started."
 stop:
 	@bash docker/message.sh "stopping Mobilizon"
 	docker-compose down

@@ -9,7 +9,7 @@ ExecStart=/usr/local/bin/mix phx.server
 ExecReload=/bin/kill $MAINPID
 KillMode=process
 Restart=on-failure
-EnvironmentFile=/var/www/mobilizon/.env
+Environment=MIX_ENV=prod
 
 ; Some security directives.
 ; Use private /tmp and /var/tmp folders inside a new file system namespace, which are discarded after the process stops.
