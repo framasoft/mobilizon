@@ -112,10 +112,10 @@ pages:
     - mix deps.get
     - mix docs
     - mv doc public/backend
-    - cd js
-    - yarn install
-    - yarn run styleguide:build
-    - mv styleguide ../public/frontend
+    #- cd js
+    #- yarn install
+    #- yarn run styleguide:build
+    #- mv styleguide ../public/frontend
   only:
     - master
   artifacts:
