@@ -57,7 +57,7 @@
     "@types/leaflet": "^1.5.2",
     "@types/leaflet.locatecontrol": "^0.60.7",
     "@types/lodash": "^4.14.141",
-    "@types/mocha": "^5.2.6",
+    "@types/mocha": "^7.0.1",
     "@vue/cli-plugin-babel": "^4.0.3",
     "@vue/cli-plugin-e2e-cypress": "^4.0.3",
     "@vue/cli-plugin-pwa": "^4.0.3",
