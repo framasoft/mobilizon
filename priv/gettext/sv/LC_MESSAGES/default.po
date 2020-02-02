@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-16 05:18+0000\n"
-"PO-Revision-Date: 2020-01-17 06:15+0000\n"
+"PO-Revision-Date: 2020-02-02 01:07+0000\n"
 "Last-Translator: Filip Bengtsson <filip@libreradio.org>\n"
 "Language-Team: Swedish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/sv/>\n"
@@ -26,7 +26,7 @@ msgstr ""
 #: lib/service/export/feed.ex:169
 #, elixir-format
 msgid "Feed for %{email} on Mobilizon"
-msgstr ""
+msgstr "Flöde för %{email} på Mobilizon"
 
 #: lib/mobilizon_web/templates/email/email.html.eex:155
 #: lib/mobilizon_web/templates/email/email.text.eex:16
@@ -230,89 +230,92 @@ msgstr "Organisatörerna har tyvärr gjort avslag på ditt deltagande."
 #, elixir-format
 msgid "You created an account on %{host} with this email address. You are one click away from activating it. If this wasn't you, please ignore this email."
 msgstr ""
+"Du har skapat ett konto på %{host} med den här e-postadressen. Det återstår "
+"bara ett klick för att aktivera den. Om det inte var du som gjorde det kan "
+"du strunta i det här meddelandet."
 
 #: lib/mobilizon_web/templates/email/event_participation_approved.html.eex:38
 #, elixir-format
 msgid "You requested to participate in event %{title}"
-msgstr ""
+msgstr "Du har bett om att få delta i evenemanget %{title}"
 
 #: lib/mobilizon_web/templates/email/event_participation_approved.text.eex:5
 #: lib/mobilizon_web/templates/email/event_participation_rejected.html.eex:38 lib/mobilizon_web/templates/email/event_participation_rejected.text.eex:5
 #, elixir-format
 msgid "You requested to participate in event %{title}."
-msgstr ""
+msgstr "Du har bett om att få delta i evenemanget %{title}."
 
 #: lib/mobilizon_web/email/participation.ex:73
 #, elixir-format
 msgid "Your participation to event %{title} has been approved"
-msgstr ""
+msgstr "Din förfrågan om att få delta i evenemanget %{title} har godkännts"
 
 #: lib/mobilizon_web/email/participation.ex:52
 #, elixir-format
 msgid "Your participation to event %{title} has been rejected"
-msgstr ""
+msgstr "Din förfrågan om att få delta i evenemanget %{title} har fått avslag"
 
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:82
 #, elixir-format
 msgid "Ending of event"
-msgstr ""
+msgstr "Evenemangets slut"
 
 #: lib/mobilizon_web/email/event.ex:30
 #, elixir-format
 msgid "Event %{title} has been updated"
-msgstr ""
+msgstr "Evenemanget %{title} har uppdaterats"
 
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:13
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:1
 #, elixir-format
 msgid "Event updated!"
-msgstr ""
+msgstr "Evenemang uppdaterat!"
 
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:16
 #, elixir-format
 msgid "New date and time for ending of event: %{ends_on}"
-msgstr ""
+msgstr "Nytt datum och tid för evenemangets slut: %{ends_on}"
 
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:12
 #, elixir-format
 msgid "New date and time for start of event: %{begins_on}"
-msgstr ""
+msgstr "Nytt datum och tid för evenemangets början: %{begins_on}"
 
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:8
 #, elixir-format
 msgid "New title: %{title}"
-msgstr ""
+msgstr "Ny titel: %{title}"
 
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:72
 #, elixir-format
 msgid "Start of event"
-msgstr ""
+msgstr "Evenemangets början"
 
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:5
 #, elixir-format
 msgid "The event %{title} was just updated"
-msgstr ""
+msgstr "Evenemanget %{title} uppdaterades nyss"
 
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:38
 #, elixir-format
 msgid "The event %{title} was updated"
-msgstr ""
+msgstr "Evenemanget %{title} uppdaterades"
 
 #: lib/mobilizon_web/templates/email/event_updated.html.eex:62
 #, elixir-format
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 #: lib/mobilizon_web/templates/email/event_updated.text.eex:19
 #, elixir-format
 msgid "View the updated event on: %{link}"
-msgstr ""
+msgstr "Visa det uppdaterade evenemanget på %{link}"
 
 #: lib/mobilizon_web/templates/email/password_reset.html.eex:38
 #: lib/mobilizon_web/templates/email/password_reset.text.eex:5
 #, elixir-format
 msgid "You requested a new password for your account on %{instance}."
-msgstr ""
+msgstr "Du har bett om ett nytt lösenord för ditt konto på %{instance}."
 
 #: lib/mobilizon_web/templates/email/email.html.eex:95
 #, elixir-format
