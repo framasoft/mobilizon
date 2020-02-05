@@ -30,7 +30,7 @@
     "buefy": "^0.8.2",
     "bulma-divider": "^0.2.0",
     "graphql": "^14.5.8",
-    "graphql-tag": "^2.10.1",
+    "graphql-tag": "^2.10.2",
     "intersection-observer": "^0.7.0",
     "javascript-time-ago": "^2.0.4",
     "leaflet": "^1.4.0",
