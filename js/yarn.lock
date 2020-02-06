@@ -964,10 +964,10 @@
     request-promise "^4.1.1"
     yargs "^8.0.2"
 
-"@mdi/font@^4.5.95":
-  version "4.8.95"
-  resolved "https://registry.yarnpkg.com/@mdi/font/-/font-4.8.95.tgz#e026255815fbac2d5155fdf5cd3069b8dc599900"
-  integrity sha512-mfEjd6kkuheZ15CBU7g/q+De9+dah/SEgVH0uZsgCJTSYa+CkXIen35aNyHoixgcEfPV4Or0NLJvyYM5CXUnbQ==
+"@mdi/font@^4.9.95":
+  version "4.9.95"
+  resolved "https://registry.yarnpkg.com/@mdi/font/-/font-4.9.95.tgz#00ed2ffe289c9230f146e74559c07542d3f4475a"
+  integrity sha512-m2sbAs+SMwRnWpkMriBxEulwuhmqRyh6X+hdOZlqSxYZUM2C2TaDnQ4gcilzdoAgru2XYnWViZ/xPuSDGgRXVw==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"

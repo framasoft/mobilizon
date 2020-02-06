@@ -19,7 +19,7 @@
   "dependencies": {
     "@absinthe/socket": "^0.2.1",
     "@absinthe/socket-apollo-link": "^0.2.1",
-    "@mdi/font": "^4.5.95",
+    "@mdi/font": "^4.9.95",
     "apollo-absinthe-upload-link": "^1.5.0",
     "apollo-cache-inmemory": "^1.5.1",
     "apollo-client": "^2.5.1",
