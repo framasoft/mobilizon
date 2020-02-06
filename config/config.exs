@@ -10,15 +10,15 @@ config :mobilizon,
   ecto_repos: [Mobilizon.Storage.Repo],
   env: Mix.env()
 
+config :mobilizon, Mobilizon.Storage.Repo, types: Mobilizon.Storage.PostgresTypes
+
 config :mobilizon, :instance,
-  name: System.get_env("MOBILIZON_INSTANCE_NAME") || "My Mobilizon Instance",
-  description:
-    System.get_env("MOBILIZON_INSTANCE_DESCRIPTION") ||
-      "Change this to a proper description of your instance",
-  hostname: System.get_env("MOBILIZON_INSTANCE_HOST") || "localhost",
-  registrations_open: System.get_env("MOBILIZON_INSTANCE_REGISTRATIONS_OPEN") || false,
+  name: "My Mobilizon Instance",
+  description: "Change this to a proper description of your instance",
+  hostname: "localhost",
+  registrations_open: false,
   registration_email_whitelist: [],
-  demo: System.get_env("MOBILIZON_INSTANCE_DEMO_MODE") || false,
+  demo: false,
   repository: Mix.Project.config()[:source_url],
   allow_relay: true,
   # Federation is to be activated with Mobilizon 1.0.0-beta.2
@@ -27,8 +27,8 @@ config :mobilizon, :instance,
   upload_limit: 10_000_000,
   avatar_upload_limit: 2_000_000,
   banner_upload_limit: 4_000_000,
-  email_from: System.get_env("MOBILIZON_INSTANCE_EMAIL") || "noreply@localhost",
-  email_reply_to: System.get_env("MOBILIZON_INSTANCE_EMAIL") || "noreply@localhost"
+  email_from: "noreply@localhost",
+  email_reply_to: "noreply@localhost"
 
 config :mime, :types, %{
   "application/activity+json" => ["activity-json"],
@@ -37,10 +37,17 @@ config :mime, :types, %{
 
 # Configures the endpoint
 config :mobilizon, Mobilizon.Web.Endpoint,
-  url: [host: "localhost"],
+  http: [
+    transport_options: [socket_opts: [:inet6]]
+  ],
+  url: [
+    host: "mobilizon.local",
+    scheme: "https"
+  ],
   secret_key_base: "1yOazsoE0Wqu4kXk3uC5gu3jDbShOimTCzyFL3OjCdBmOXMyHX87Qmf3+Tu9s0iM",
   render_errors: [view: Mobilizon.Web.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: Mobilizon.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: Mobilizon.PubSub, adapter: Phoenix.PubSub.PG2],
+  cache_static_manifest: "priv/static/manifest.json"
 
 # Upload configuration
 config :mobilizon, Mobilizon.Web.Upload,
@@ -73,14 +80,31 @@ config :mobilizon, :media_proxy,
     ]
   ]
 
+config :mobilizon, Mobilizon.Web.Email.Mailer,
+  adapter: Bamboo.SMTPAdapter,
+  server: "localhost",
+  hostname: "localhost",
+  port: 25,
+  # or {:system, "SMTP_USERNAME"}
+  username: nil,
+  # or {:system, "SMTP_PASSWORD"}
+  password: nil,
+  # can be `:always` or `:never`
+  tls: :if_available,
+  # or {":system", ALLOWED_TLS_VERSIONS"} w/ comma seprated values (e.g. "tlsv1.1,tlsv1.2")
+  allowed_tls_versions: [:tlsv1, :"tlsv1.1", :"tlsv1.2"],
+  # can be `true`
+  ssl: false,
+  retries: 1,
+  # can be `true`
+  no_mx_lookups: false
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
-config :mobilizon, Mobilizon.Web.Auth.Guardian,
-  issuer: "mobilizon",
-  secret_key: "ty0WM7YBE3ojvxoUQxo8AERrNpfbXnIJ82ovkPdqbUFw31T5LcK8wGjaOiReVQjo"
+config :mobilizon, Mobilizon.Web.Auth.Guardian, issuer: "mobilizon"
 
 config :guardian, Guardian.DB,
   repo: Mobilizon.Storage.Repo,
@@ -96,7 +120,7 @@ config :geolix,
     %{
       id: :city,
       adapter: Geolix.Adapter.MMDB2,
-      source: System.get_env("GEOLITE_CITIES_PATH") || "priv/data/GeoLite2-City.mmdb"
+      source: "priv/data/GeoLite2-City.mmdb"
     }
   ]
 
@@ -124,36 +148,31 @@ config :http_signatures,
 
 config :mobilizon, :activitypub, sign_object_fetches: true
 
+config :mobilizon, Mobilizon.Service.Geospatial, service: Mobilizon.Service.Geospatial.Nominatim
+
 config :mobilizon, Mobilizon.Service.Geospatial.Nominatim,
-  endpoint:
-    System.get_env("GEOSPATIAL_NOMINATIM_ENDPOINT") || "https://nominatim.openstreetmap.org",
-  api_key: System.get_env("GEOSPATIAL_NOMINATIM_API_KEY") || nil
+  endpoint: "https://nominatim.openstreetmap.org",
+  api_key: nil
 
 config :mobilizon, Mobilizon.Service.Geospatial.Addok,
-  endpoint: System.get_env("GEOSPATIAL_ADDOK_ENDPOINT") || "https://api-adresse.data.gouv.fr"
+  endpoint: "https://api-adresse.data.gouv.fr"
 
-config :mobilizon, Mobilizon.Service.Geospatial.Photon,
-  endpoint: System.get_env("GEOSPATIAL_PHOTON_ENDPOINT") || "https://photon.komoot.de"
+config :mobilizon, Mobilizon.Service.Geospatial.Photon, endpoint: "https://photon.komoot.de"
 
 config :mobilizon, Mobilizon.Service.Geospatial.GoogleMaps,
-  api_key: System.get_env("GEOSPATIAL_GOOGLE_MAPS_API_KEY") || nil,
-  fetch_place_details: System.get_env("GEOSPATIAL_GOOGLE_MAPS_FETCH_PLACE_DETAILS") || true
+  api_key: nil,
+  fetch_place_details: true
 
-config :mobilizon, Mobilizon.Service.Geospatial.MapQuest,
-  api_key: System.get_env("GEOSPATIAL_MAP_QUEST_API_KEY") || nil
+config :mobilizon, Mobilizon.Service.Geospatial.MapQuest, api_key: nil
 
-config :mobilizon, Mobilizon.Service.Geospatial.Mimirsbrunn,
-  endpoint: System.get_env("GEOSPATIAL_MIMIRSBRUNN_ENDPOINT") || nil
+config :mobilizon, Mobilizon.Service.Geospatial.Mimirsbrunn, endpoint: nil
 
-config :mobilizon, Mobilizon.Service.Geospatial.Pelias,
-  endpoint: System.get_env("GEOSPATIAL_PELIAS_ENDPOINT") || nil
+config :mobilizon, Mobilizon.Service.Geospatial.Pelias, endpoint: nil
 
 config :mobilizon, :maps,
   tiles: [
-    endpoint:
-      System.get_env("MAPS_TILES_ENDPOINT") ||
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    attribution: System.get_env("MAPS_TILES_ATTRIBUTION")
+    endpoint: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    attribution: "© The OpenStreetMap Contributors"
   ]
 
 config :mobilizon, :anonymous,

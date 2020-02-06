@@ -707,7 +707,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   # Get recipients for an activity or object
   @spec get_recipients(map()) :: list()
   defp get_recipients(data) do
-    (data["to"] || []) ++ (data["cc"] || [])
+    Map.get(data, "to", []) ++ Map.get(data, "cc", [])
   end
 
   @spec create_event(map(), map()) :: {:ok, map()}
@@ -870,17 +870,18 @@ defmodule Mobilizon.Federation.ActivityPub do
          audience <-
            follower.actor |> Audience.calculate_to_and_cc_from_mentions() |> Map.merge(additional),
          reject_data <- %{
-           "to" => follower.actor.url,
+           "to" => [follower.actor.url],
            "type" => "Reject",
-           "actor" => follower.actor.url,
+           "actor" => follower.target_actor.url,
            "object" => follower_as_data
          },
          update_data <-
-           reject_data
-           |> Map.merge(audience)
+           audience
+           |> Map.merge(reject_data)
            |> Map.merge(%{
              "id" => "#{Endpoint.url()}/reject/follow/#{follower.id}"
            }) do
+      Logger.error(inspect(update_data))
       {:ok, follower, update_data}
     else
       err ->

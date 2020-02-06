@@ -1,0 +1,31 @@
+# Mobilizon instance configuration
+
+import Config
+
+config :mobilizon, Mobilizon.Web.Endpoint,
+   url: [host: "<%= instance_domain %>", scheme: "https", port: <%= instance_port %>],
+   http: [ip: {<%= String.replace(listen_ip, ".", ", ") %>}, port: <%= listen_port %>],
+   secret_key_base: "<%= instance_secret %>"
+
+config :mobilizon, Mobilizon.Web.Auth.Guardian,
+  secret_key: "<%= auth_secret %>"
+
+config :mobilizon, :instance,
+  name: "<%= instance_name %>",
+  description: "Change this to a proper description of your instance",
+  hostname: "<%= instance_domain %>",
+  registrations_open: false,
+  demo: false,
+  allow_relay: true,
+  federating: true,
+  email_from: "tcit@tcit.fr",
+  email_reply_to: "tcit@tcit.fr"
+
+config :mobilizon, Mobilizon.Storage.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  username: "<%= database_username %>",
+  password: "<%= database_password %>",
+  database: "<%= database_name %>",
+  hostname: "<%= database_host %>",
+  port: "<%= database_port %>",
+  pool_size: 10

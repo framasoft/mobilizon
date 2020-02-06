@@ -15,7 +15,7 @@ mix mobilizon.instance gen [<options>]
 
 ### Options
 * `-f`, `--force` Whether to erase existing files
-* `-o`, `--output PATH` The path to output the `.env` file. Defaults to `.env.production`.
+* `-o`, `--output PATH` The path to output the `prod.secret.exs` file. Defaults to `config/prod.secret.exs`.
 * `--output_psql PATH` The path to output the SQL script. Defaults to `setup_db.psql`.
 * `--domain DOMAIN` The instance's domain
 * `--instance_name INSTANCE_NAME` The instance's name
@@ -25,34 +25,3 @@ mix mobilizon.instance gen [<options>]
 * `--dbuser DBUSER` The database user (aka role) to use for the database connection 
 * `--dbpass DBPASS` The database user's password to use for the database connection 
 * `--dbport DBPORT` The database port
-
-## Depreciated commands
-
-### move_participant_stats
-
-!!! tip "Environment"
-    You need to run these commands with the appropriate environment loaded
-
-Task to move participant stats directly on the `event` table (so there's no need to count event participants each time).
-This task should **only be run once** when migrating from `v1.0.0-beta.1` to `v1.0.0-beta.2`.
-
-This task will be removed in version `v1.0.0-beta.3`.
-
-```bash
-mix mobilizon.move_participant_stats
-```
-
-### setup_search
-
-!!! tip "Environment"
-    You need to run these commands with the appropriate environment loaded
-
-Task to setup search for existing events.
-
-This task should **only be run once** when migrating from `v1.0.0-beta.1` to `v1.0.0-beta.2`.
-
-This task will be removed in version `v1.0.0-beta.3`.
-
-```bash
-mix mobilizon.setup_search
-```

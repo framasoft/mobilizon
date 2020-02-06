@@ -238,12 +238,12 @@ msgid "You requested to participate in event %{title}."
 msgstr "You requested to participate in event %{title}."
 
 #, elixir-format
-#: lib/web/email/participation.ex:73
+#: lib/web/email/participation.ex:91
 msgid "Your participation to event %{title} has been approved"
 msgstr "Your participation to event %{title} has been approved"
 
 #, elixir-format
-#: lib/web/email/participation.ex:52
+#: lib/web/email/participation.ex:70
 msgid "Your participation to event %{title} has been rejected"
 msgstr "Your participation to event %{title} has been rejected"
 
@@ -376,7 +376,7 @@ msgid "Confirm my participation"
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/participation.ex:95
+#: lib/web/email/participation.ex:113
 msgid "Confirm your participation to event %{title}"
 msgstr ""
 

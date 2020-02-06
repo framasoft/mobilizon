@@ -405,14 +405,14 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   Handle incoming `Reject` activities wrapping a `Follow` activity
   """
   def do_handle_incoming_reject_following(follow_object, %Actor{} = actor) do
-    with {:follow, {:ok, %Follower{approved: false, target_actor: followed} = follow}} <-
+    with {:follow, {:ok, %Follower{target_actor: followed} = follow}} <-
            {:follow, get_follow(follow_object)},
          {:same_actor, true} <- {:same_actor, actor.id == followed.id},
          {:ok, activity, _} <-
            ActivityPub.reject(:follow, follow) do
       {:ok, activity, follow}
     else
-      {:follow, _} ->
+      {:follow, _err} ->
         Logger.debug(
           "Tried to handle a Reject activity but it's not containing a Follow activity"
         )

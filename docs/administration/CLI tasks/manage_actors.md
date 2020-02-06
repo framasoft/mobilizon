@@ -1,7 +1,7 @@
 # Manage actors
 
 !!! tip "Environment"
-    You need to run these commands with the appropriate environment loaded
+    You need to run these commands with the appropriate environment loaded, so probably prefix with `MIX_ENV=prod`.
 
 ## List all available commands 
 ```bash

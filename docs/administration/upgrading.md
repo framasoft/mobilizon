@@ -10,7 +10,7 @@ Some tasks (like database migrations) can take a while, so we advise you to run 
 
 # Backup
 
-Always make sure your database and `.env.production` file are properly backuped before performing upgrades.
+Always make sure your database and `config` folder are properly backuped before performing upgrades.
 
 Unless stated otherwise in the release notes, the following steps are enough to upgrade Mobilizon.
 
@@ -57,7 +57,7 @@ cd ../
 
 ### Recompile Mobilizon
 ```bash
-mix compile
+MIX_ENV=prod mix compile
 ```
 Let's switch back to your regular user.
 
@@ -72,7 +72,7 @@ Go back to the `mobilizon` user.
 ```bash
 sudo -i -u mobilizon
 cd live
-mix ecto.migrate
+MIX_ENV=prod mix ecto.migrate
 ```
 ### Restart Mobilizon
 Let's switch back one last time to your regular user.

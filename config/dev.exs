@@ -8,10 +8,10 @@ import Config
 # with brunch.io to recompile .js and .css sources.
 config :mobilizon, Mobilizon.Web.Endpoint,
   http: [
-    port: System.get_env("MOBILIZON_INSTANCE_PORT") || 4000
+    port: 4000
   ],
   url: [
-    host: System.get_env("MOBILIZON_INSTANCE_HOST") || "mobilizon.local",
+    host: System.get_env("MOBILIZON_INSTANCE_HOST", "mobilizon.local"),
     port: 80,
     scheme: "http"
   ],
@@ -65,13 +65,36 @@ config :mobilizon, Mobilizon.Web.Email.Mailer, adapter: Bamboo.LocalAdapter
 
 # Configure your database
 config :mobilizon, Mobilizon.Storage.Repo,
-  types: Mobilizon.Storage.PostgresTypes,
-  username: System.get_env("MOBILIZON_DATABASE_USERNAME") || "mobilizon",
-  password: System.get_env("MOBILIZON_DATABASE_PASSWORD") || "mobilizon",
-  database: System.get_env("MOBILIZON_DATABASE_DBNAME") || "mobilizon_dev",
-  hostname: System.get_env("MOBILIZON_DATABASE_HOST") || "localhost",
-  port: System.get_env("MOBILIZON_DATABASE_PORT") || "5432",
+  username: System.get_env("MOBILIZON_DATABASE_USERNAME", "mobilizon"),
+  password: System.get_env("MOBILIZON_DATABASE_PASSWORD", "mobilizon"),
+  database: System.get_env("MOBILIZON_DATABASE_DBNAME", "mobilizon_dev"),
+  hostname: System.get_env("MOBILIZON_DATABASE_HOST", "localhost"),
+  port: "5432",
   pool_size: 10,
   show_sensitive_data_on_connection_error: true
 
+config :mobilizon, :instance,
+  name: System.get_env("MOBILIZON_INSTANCE_NAME", "Mobilizon"),
+  hostname: System.get_env("MOBILIZON_INSTANCE_HOST", "Mobilizon"),
+  email_from: System.get_env("MOBILIZON_INSTANCE_EMAIL"),
+  email_reply_to: System.get_env("MOBILIZON_INSTANCE_EMAIL"),
+  registrations_open: System.get_env("MOBILIZON_INSTANCE_REGISTRATIONS_OPEN") == "true"
+
 config :mobilizon, :activitypub, sign_object_fetches: false
+
+require Logger
+
+cond do
+  System.get_env("INSTANCE_CONFIG") &&
+      File.exists?("./config/#{System.get_env("INSTANCE_CONFIG")}") ->
+    import_config System.get_env("INSTANCE_CONFIG")
+
+  System.get_env("DOCKER", "false") == "false" && File.exists?("./config/dev.secret.exs") ->
+    import_config "dev.secret.exs"
+
+  System.get_env("DOCKER", "false") == "true" ->
+    Logger.info("Using environment configuration for Docker")
+
+  true ->
+    Logger.error("No configuration file found")
+end

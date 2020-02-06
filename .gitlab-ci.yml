@@ -24,7 +24,7 @@ cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
     - ~/.cache/Cypress
-    - build/
+    - _build/
     - deps/
     - js/node_modules
     - cache/Cypress
@@ -34,7 +34,7 @@ lint:
   script:
     - export EXITVALUE=0
     - mix deps.get
-    - mix credo -a || export EXITVALUE=1
+    - mix credo --strict -a || export EXITVALUE=1
     - mix format --check-formatted --dry-run || export EXITVALUE=1
     - cd js
     - yarn install

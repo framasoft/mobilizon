@@ -15,12 +15,6 @@ erl_crash.dump
 # variables.
 /config/*.secret.exs
 
-.env.production
-.env.test
-/.env
-.env.2
-.env.1
-
 /setup_db.psql
 
 .elixir_ls
@@ -35,6 +29,7 @@ site/
 test/fixtures/image_tmp.jpg
 test/uploads/
 uploads/*
+release/
 !uploads/.gitkeep
 .idea
 *.mo
