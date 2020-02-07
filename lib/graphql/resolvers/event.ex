@@ -5,6 +5,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
 
   alias Mobilizon.{Actors, Admin, Events}
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Config
   alias Mobilizon.Events.{Event, EventParticipantStats}
   alias Mobilizon.Users.User
 
@@ -44,14 +45,29 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     {:error, "Event with UUID #{uuid} not found"}
   end
 
-  def find_event(parent, %{uuid: uuid} = args, resolution) do
-    case {:has_event, Events.get_public_event_by_uuid_with_preload(uuid)} do
-      {:has_event, %Event{} = event} ->
-        {:ok, Map.put(event, :organizer_actor, Person.proxify_pictures(event.organizer_actor))}
+  def find_event(parent, %{uuid: uuid} = args, %{context: context} = resolution) do
+    require Logger
+    Logger.error(inspect(context))
 
+    with {:has_event, %Event{} = event} <-
+           {:has_event, Events.get_public_event_by_uuid_with_preload(uuid)},
+         {:access_valid, true} <-
+           {:access_valid, Map.has_key?(context, :current_user) || check_event_access(event)} do
+      {:ok, Map.put(event, :organizer_actor, Person.proxify_pictures(event.organizer_actor))}
+    else
       {:has_event, _} ->
         find_private_event(parent, args, resolution)
+
+      {:access_valid, _} ->
+        {:error, "Event with UUID #{uuid} not found"}
     end
+  end
+
+  def check_event_access(%Event{local: true}), do: true
+
+  def check_event_access(%Event{url: url}) do
+    relay_actor_id = Config.relay_actor_id()
+    Events.check_if_event_has_instance_follow(url, relay_actor_id)
   end
 
   @doc """

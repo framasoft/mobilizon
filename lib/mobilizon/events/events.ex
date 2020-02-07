@@ -12,7 +12,7 @@ defmodule Mobilizon.Events do
 
   alias Ecto.{Changeset, Multi}
 
-  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Actors.{Actor, Follower}
   alias Mobilizon.Addresses.Address
 
   alias Mobilizon.Events.{
@@ -28,6 +28,7 @@ defmodule Mobilizon.Events do
   }
 
   alias Mobilizon.Service.Workers
+  alias Mobilizon.Share
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.User
 
@@ -228,6 +229,14 @@ defmodule Mobilizon.Events do
     |> Repo.one()
   end
 
+  @spec check_if_event_has_instance_follow(String.t(), integer()) :: boolean()
+  def check_if_event_has_instance_follow(event_uri, follower_actor_id) do
+    Share
+    |> join(:inner, [s], f in Follower, on: f.target_actor_id == s.actor_id)
+    |> where([s, f], f.actor_id == ^follower_actor_id and s.uri == ^event_uri)
+    |> Repo.exists?()
+  end
+
   @doc """
   Gets an event by its UUID, with all associations loaded.
   """
@@ -379,6 +388,7 @@ defmodule Mobilizon.Events do
     |> filter_future_events(is_future)
     |> filter_unlisted(is_unlisted)
     |> filter_draft()
+    |> filter_local_or_from_followed_instances_events()
     |> Repo.all()
   end
 
@@ -461,6 +471,7 @@ defmodule Mobilizon.Events do
     name
     |> normalize_search_string()
     |> events_for_search_query()
+    |> filter_local_or_from_followed_instances_events()
     |> Page.build_page(page, limit)
   end
 
@@ -1756,6 +1767,14 @@ defmodule Mobilizon.Events do
   end
 
   defp filter_future_events(query, false), do: query
+
+  defp filter_local_or_from_followed_instances_events(query) do
+    from(q in query,
+      left_join: s in Share,
+      on: s.uri == q.url,
+      where: q.local == true or not is_nil(s.uri)
+    )
+  end
 
   @spec filter_unlisted(Ecto.Query.t(), boolean) :: Ecto.Query.t()
   defp filter_unlisted(query, true) do
