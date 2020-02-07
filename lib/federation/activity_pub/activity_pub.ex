@@ -881,7 +881,6 @@ defmodule Mobilizon.Federation.ActivityPub do
            |> Map.merge(%{
              "id" => "#{Endpoint.url()}/reject/follow/#{follower.id}"
            }) do
-      Logger.error(inspect(update_data))
       {:ok, follower, update_data}
     else
       err ->

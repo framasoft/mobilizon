@@ -73,7 +73,7 @@ yarn install
 
 Finally, we can build the front-end (this can take a few seconds)
 ```bash
-yarn run build
+NODE_ENV=production yarn run build
 ```
 
 Let's go back to the main directory

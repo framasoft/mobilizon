@@ -87,7 +87,7 @@ const tabsName = {
         };
       },
       skip() {
-        return !this.searchTerm;
+        return !this.searchTerm || this.isURL(this.searchTerm);
       },
     },
   },
@@ -103,6 +103,13 @@ export default class Search extends Vue {
   searchEvents: SearchEvent = { total: 0, elements: [] };
   searchGroups: SearchGroup = { total: 0, elements: [] };
   activeTab: SearchTabs = tabsName[this.searchType];
+
+  @Watch('searchEvents')
+  async redirectURLToEvent() {
+    if (this.searchEvents.total === 1 && this.isURL(this.searchTerm)) {
+      return await this.$router.replace({ name: RouteName.EVENT, params: { uuid: this.searchEvents.elements[0].uuid } });
+    }
+  }
 
   changeTab(index: number) {
     switch (index) {
@@ -134,6 +141,12 @@ export default class Search extends Vue {
 
   get groups(): IGroup[] {
     return this.searchGroups.elements.map(group => Object.assign(new Group(), group));
+  }
+
+  isURL(url: string): boolean {
+    const a  = document.createElement('a');
+    a.href = url;
+    return (a.host && a.host !== window.location.host) as boolean;
   }
 
 }

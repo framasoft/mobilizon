@@ -35,7 +35,20 @@
     ],
     "id": "https://test.mobilizon.org/events/39026210-0c69-4238-b3cc-986f33f98ed0/activity",
     "object": {
-        "attachment": [],
+        "attachment": [
+            {
+                "href": "https://something.org",
+                "mediaType": "text/html",
+                "name": "Another link",
+                "type": "Link"
+            },
+            {
+                "href": "https://google.com",
+                "mediaType": "text/html",
+                "name": "Website",
+                "type": "Link"
+            }
+        ],
         "attributedTo": "https://test.mobilizon.org/@Alicia",
         "startTime": "2018-02-12T14:08:20Z",
         "cc": [

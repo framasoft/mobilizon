@@ -46,11 +46,16 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
          {:mentions, mentions} <- {:mentions, ConverterUtils.fetch_mentions(object["tag"])},
          {:visibility, visibility} <- {:visibility, get_visibility(object)},
          {:options, options} <- {:options, get_options(object)} do
+      attachments =
+        object
+        |> Map.get("attachment", [])
+        |> Enum.filter(fn attachment -> Map.get(attachment, "type", "Document") == "Document" end)
+
       picture_id =
-        with true <- Map.has_key?(object, "attachment") && length(object["attachment"]) > 0,
+        with true <- length(attachments) > 0,
              {:ok, %Picture{id: picture_id}} <-
-               object["attachment"]
-               |> hd
+               attachments
+               |> hd()
                |> PictureConverter.find_or_create_picture(actor_id) do
           picture_id
         else
@@ -71,7 +76,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
         local: is_nil(actor_domain),
         options: options,
         status: object |> Map.get("ical:status", "CONFIRMED") |> String.downcase(),
-        online_address: object["onlineAddress"],
+        online_address: object |> Map.get("attachment", []) |> get_online_address(),
         phone_address: object["phoneAddress"],
         draft: false,
         url: object["id"],
@@ -122,6 +127,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       "repliesModerationOption" => event.options.comment_moderation,
       "commentsEnabled" => event.options.comment_moderation == :allow_all,
       "anonymousParticipationEnabled" => event.options.anonymous_participation,
+      "attachment" => [],
       # "draft" => event.draft,
       "ical:status" => event.status |> to_string |> String.upcase(),
       "id" => event.url,
@@ -133,9 +139,34 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
         do: res,
         else: Map.put(res, "location", AddressConverter.model_to_as(event.physical_address))
 
-    if is_nil(event.picture),
+    res =
+      if is_nil(event.picture),
+        do: res,
+        else:
+          Map.update(
+            res,
+            "attachment",
+            [],
+            &(&1 ++ [PictureConverter.model_to_as(event.picture)])
+          )
+
+    if is_nil(event.online_address),
       do: res,
-      else: Map.put(res, "attachment", [PictureConverter.model_to_as(event.picture)])
+      else:
+        Map.update(
+          res,
+          "attachment",
+          [],
+          &(&1 ++
+              [
+                %{
+                  "type" => "Link",
+                  "href" => event.online_address,
+                  "mediaType" => "text/html",
+                  "name" => "Website"
+                }
+              ])
+        )
   end
 
   # Get only elements that we have in EventOptions
@@ -198,4 +229,21 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   @spec date_to_string(DateTime.t() | nil) :: String.t()
   defp date_to_string(nil), do: nil
   defp date_to_string(%DateTime{} = date), do: DateTime.to_iso8601(date)
+
+  defp get_online_address(attachments) do
+    Enum.find_value(attachments, [], fn attachment ->
+      case attachment do
+        %{
+          "type" => "Link",
+          "href" => url,
+          "mediaType" => "text/html",
+          "name" => "Website"
+        } ->
+          url
+
+        _ ->
+          nil
+      end
+    end)
+  end
 end
