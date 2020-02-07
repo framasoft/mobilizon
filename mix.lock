@@ -46,7 +46,7 @@
   "ex_unit_notifier": {:hex, :ex_unit_notifier, "0.1.4", "36a2dcab829f506e01bf17816590680dd1474407926d43e64c1263e627c364b8", [:mix], [], "hexpm"},
   "exactor": {:hex, :exactor, "2.2.4", "5efb4ddeb2c48d9a1d7c9b465a6fffdd82300eb9618ece5d34c3334d5d7245b1", [:mix], [], "hexpm"},
   "excoveralls": {:hex, :excoveralls, "0.12.2", "a513defac45c59e310ac42fcf2b8ae96f1f85746410f30b1ff2b710a4b6cd44b", [:mix], [{:hackney, "~> 1.0", [hex: :hackney, repo: "hexpm", optional: false]}, {:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: false]}], "hexpm"},
-  "exgravatar": {:hex, :exgravatar, "2.0.1", "66d595c7d63dd6bbac442c5542a724375ae29144059c6fe093e61553850aace4", [:mix], [], "hexpm"},
+  "exgravatar": {:hex, :exgravatar, "2.0.2", "638412896170409da114f98947d3f8d4f38e851b0e329c1cc4cd324d5e2ea081", [:mix], [], "hexpm"},
   "exjsx": {:hex, :exjsx, "4.0.0", "60548841e0212df401e38e63c0078ec57b33e7ea49b032c796ccad8cde794b5c", [:mix], [{:jsx, "~> 2.8.0", [hex: :jsx, repo: "hexpm", optional: false]}], "hexpm"},
   "exvcr": {:hex, :exvcr, "0.11.0", "59d5c11c9022852e9265d223fbde38c512cc350404f695a7b838cd7fb8dabed8", [:mix], [{:exactor, "~> 2.2", [hex: :exactor, repo: "hexpm", optional: false]}, {:exjsx, "~> 4.0", [hex: :exjsx, repo: "hexpm", optional: false]}, {:httpoison, "~> 1.0", [hex: :httpoison, repo: "hexpm", optional: true]}, {:httpotion, "~> 3.1", [hex: :httpotion, repo: "hexpm", optional: true]}, {:ibrowse, "~> 4.4", [hex: :ibrowse, repo: "hexpm", optional: true]}, {:meck, "~> 0.8", [hex: :meck, repo: "hexpm", optional: false]}], "hexpm"},
   "file_info": {:hex, :file_info, "0.0.4", "2e0e77f211e833f38ead22cb29ce53761d457d80b3ffe0ffe0eb93880b0963b2", [:mix], [{:mimetype_parser, "~> 0.1.2", [hex: :mimetype_parser, repo: "hexpm", optional: false]}], "hexpm"},
