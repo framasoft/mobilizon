@@ -19,6 +19,10 @@ Also make sure to remove the `EnvironmentFile=` line from the systemd service an
 - Possibility to participate anonymously to an event
 - Possibility to participate to a remote event (being redirected by providing federated identity)
 
+### Fixed
+- Fixed URL search
+- Fixed content accessed through URL search being public
+
 ## [1.0.0-beta.2] - 2019-12-18
 
 ### Special operations
