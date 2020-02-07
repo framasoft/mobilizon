@@ -70,6 +70,8 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         assert event.physical_address.url ==
                  "https://event1.tcit.fr/address/eeecc11d-0030-43e8-a897-6422876372jd"
 
+        assert event.online_address == "https://google.com"
+
         {:ok, %Actor{}} = Actors.get_actor_by_url(object["actor"])
       end
     end

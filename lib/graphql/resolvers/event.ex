@@ -46,9 +46,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   end
 
   def find_event(parent, %{uuid: uuid} = args, %{context: context} = resolution) do
-    require Logger
-    Logger.error(inspect(context))
-
     with {:has_event, %Event{} = event} <-
            {:has_event, Events.get_public_event_by_uuid_with_preload(uuid)},
          {:access_valid, true} <-
