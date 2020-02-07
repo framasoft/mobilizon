@@ -14,7 +14,9 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Event do
       Tag.tag(:meta, property: "og:title", content: event.title),
       Tag.tag(:meta, property: "og:url", content: event.url),
       Tag.tag(:meta, property: "og:description", content: event.description),
-      Tag.tag(:meta, property: "og:type", content: "website")
+      Tag.tag(:meta, property: "og:type", content: "website"),
+      # Tell Search Engines what's the origin
+      Tag.tag(:link, rel: "canonical", href: event.url)
     ]
 
     tags =
