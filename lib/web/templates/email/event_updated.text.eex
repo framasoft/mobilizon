@@ -16,6 +16,6 @@
     <%= gettext "New date and time for ending of event: %{ends_on}", ends_on: datetime_to_string(@event.ends_on, @locale) %>
 <% end %>
 
-<%= gettext "View the updated event on: %{link}", link: page_url(Mobilizon.Web.Endpoint, :event, @event.id) %>
+<%= gettext "View the updated event on: %{link}", link: page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) %>
 
 <%= gettext "If you need to cancel your participation, just access the event page through link above and click on the participation button." %>
