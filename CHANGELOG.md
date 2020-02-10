@@ -22,6 +22,7 @@ Also make sure to remove the `EnvironmentFile=` line from the systemd service an
 ### Fixed
 - Fixed URL search
 - Fixed content accessed through URL search being public
+- Fix event links in some emails
 
 ## [1.0.0-beta.2] - 2019-12-18
 

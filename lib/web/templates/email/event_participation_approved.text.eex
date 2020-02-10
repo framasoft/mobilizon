@@ -6,6 +6,6 @@
 
 <%= gettext "An organizer just approved your participation. You're now going to this event!" %>
 
-<%= page_url(Mobilizon.Web.Endpoint, :event, @event.id) %>
+<%= page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) %>
 
 <%= gettext "If you need to cancel your participation, just access the previous link and click on the participation button." %>
