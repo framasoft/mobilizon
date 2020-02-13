@@ -1367,7 +1367,7 @@ defmodule Mobilizon.Events do
   """
   @spec create_feed_token(map) :: {:ok, FeedToken.t()} | {:error, Changeset.t()}
   def create_feed_token(attrs \\ %{}) do
-    attrs = Map.put(attrs, "token", Ecto.UUID.generate())
+    attrs = Map.put(attrs, :token, Ecto.UUID.generate())
 
     %FeedToken{}
     |> FeedToken.changeset(attrs)

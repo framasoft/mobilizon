@@ -1,0 +1,10 @@
+<%= gettext "Verify email address" %>
+
+==
+
+<%= gettext "Confirm the new address to change your email." %>
+
+<%= user_email_validation_url(Mobilizon.Web.Endpoint, :index, @token) %>
+
+
+<%= gettext "If this change wasn't initiated by you, please ignore this email. The email address for the Mobilizon account won't change until you access the link above." %>

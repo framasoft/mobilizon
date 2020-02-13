@@ -31,7 +31,7 @@ defmodule Mobilizon.Users do
            %User{}
            |> User.registration_changeset(args)
            |> Repo.insert() do
-      Events.create_feed_token(%{"user_id" => user.id})
+      Events.create_feed_token(%{user_id: user.id})
 
       {:ok, user}
     end
@@ -267,7 +267,10 @@ defmodule Mobilizon.Users do
 
   @spec user_by_email_query(String.t(), boolean | nil) :: Ecto.Query.t()
   defp user_by_email_query(email, nil) do
-    from(u in User, where: u.email == ^email, preload: :default_actor)
+    from(u in User,
+      where: u.email == ^email or u.unconfirmed_email == ^email,
+      preload: :default_actor
+    )
   end
 
   defp user_by_email_query(email, true) do
@@ -281,7 +284,7 @@ defmodule Mobilizon.Users do
   defp user_by_email_query(email, false) do
     from(
       u in User,
-      where: u.email == ^email and is_nil(u.confirmed_at),
+      where: (u.email == ^email or u.unconfirmed_email == ^email) and is_nil(u.confirmed_at),
       preload: :default_actor
     )
   end

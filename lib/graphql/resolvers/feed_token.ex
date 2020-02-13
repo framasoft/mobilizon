@@ -20,7 +20,7 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedToken do
         %{context: %{current_user: %User{id: id} = user}}
       ) do
     with {:is_owned, %Actor{}} <- User.owns_actor(user, actor_id),
-         {:ok, feed_token} <- Events.create_feed_token(%{"user_id" => id, "actor_id" => actor_id}) do
+         {:ok, feed_token} <- Events.create_feed_token(%{user_id: id, actor_id: actor_id}) do
       {:ok, feed_token}
     else
       {:is_owned, nil} ->
@@ -33,7 +33,7 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedToken do
   """
   @spec create_feed_token(any, map, map) :: {:ok, FeedToken.t()}
   def create_feed_token(_parent, %{}, %{context: %{current_user: %User{id: id}}}) do
-    with {:ok, feed_token} <- Events.create_feed_token(%{"user_id" => id}) do
+    with {:ok, feed_token} <- Events.create_feed_token(%{user_id: id}) do
       {:ok, feed_token}
     end
   end

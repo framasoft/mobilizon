@@ -61,9 +61,10 @@ defmodule Mobilizon.Web.Email.User do
     with %User{} = user <- Users.get_user_by_activation_token(token),
          {:ok, %User{} = user} <-
            Users.update_user(user, %{
-             "confirmed_at" => DateTime.utc_now() |> DateTime.truncate(:second),
-             "confirmation_sent_at" => nil,
-             "confirmation_token" => nil
+             confirmed_at: DateTime.utc_now() |> DateTime.truncate(:second),
+             confirmation_sent_at: nil,
+             confirmation_token: nil,
+             email: user.unconfirmed_email || user.email
            }) do
       Logger.info("User #{user.email} has been confirmed")
       {:ok, user}
@@ -139,6 +140,48 @@ defmodule Mobilizon.Web.Email.User do
     else
       {:error, reason} -> {:error, reason}
     end
+  end
+
+  def send_email_reset_old_email(
+        %User{locale: user_locale, email: email, unconfirmed_email: unconfirmed_email} = _user,
+        _locale \\ "en"
+      ) do
+    Gettext.put_locale(user_locale)
+
+    subject =
+      gettext(
+        "Mobilizon on %{instance}: email changed",
+        instance: Config.instance_name()
+      )
+
+    Email.base_email(to: email, subject: subject)
+    |> assign(:locale, user_locale)
+    |> assign(:subject, subject)
+    |> assign(:new_email, unconfirmed_email)
+    |> render(:email_changed_old)
+  end
+
+  def send_email_reset_new_email(
+        %User{
+          locale: user_locale,
+          unconfirmed_email: unconfirmed_email,
+          confirmation_token: confirmation_token
+        } = _user,
+        _locale \\ "en"
+      ) do
+    Gettext.put_locale(user_locale)
+
+    subject =
+      gettext(
+        "Mobilizon on %{instance}: confirm your email address",
+        instance: Config.instance_name()
+      )
+
+    Email.base_email(to: unconfirmed_email, subject: subject)
+    |> assign(:locale, user_locale)
+    |> assign(:subject, subject)
+    |> assign(:token, confirmation_token)
+    |> render(:email_changed_new)
   end
 
   @spec we_can_send_email(User.t(), atom) :: :ok | {:error, :email_too_soon}

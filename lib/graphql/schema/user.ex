@@ -178,5 +178,21 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       arg(:new_password, non_null(:string))
       resolve(&User.change_password/3)
     end
+
+    field :change_email, :user do
+      arg(:email, non_null(:string))
+      arg(:password, non_null(:string))
+      resolve(&User.change_email/3)
+    end
+
+    field :validate_email, :user do
+      arg(:token, non_null(:string))
+      resolve(&User.validate_email/3)
+    end
+
+    field :delete_account, :deleted_object do
+      arg(:password, non_null(:string))
+      resolve(&User.delete_account/3)
+    end
   end
 end

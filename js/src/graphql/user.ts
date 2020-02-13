@@ -30,9 +30,44 @@ mutation ValidateUser($token: String!) {
 }
 `;
 
+export const LOGGED_USER = gql`
+  query {
+    loggedUser {
+      id,
+      email
+    }
+  }
+`;
+
 export const CHANGE_PASSWORD = gql`
   mutation ChangePassword($oldPassword: String!, $newPassword: String!) {
     changePassword(oldPassword: $oldPassword, newPassword: $newPassword) {
+      id
+    }
+  }
+`;
+
+export const CHANGE_EMAIL = gql`
+  mutation ChangeEmail($email: String!, $password: String!) {
+    changeEmail(email: $email, password: $password) {
+      id
+    }
+  }
+`;
+
+export const VALIDATE_EMAIL = gql`
+  mutation ValidateEmail($token: String!) {
+    validateEmail(
+      token: $token
+    ) {
+      id
+    }
+  }
+`;
+
+export const DELETE_ACCOUNT = gql`
+  mutation DeleteAccount($password: String!) {
+    deleteAccount (password: $password) {
       id
     }
   }

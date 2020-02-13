@@ -18,6 +18,8 @@ Also make sure to remove the `EnvironmentFile=` line from the systemd service an
 ### Added
 - Possibility to participate anonymously to an event
 - Possibility to participate to a remote event (being redirected by providing federated identity)
+- Possibility to change email address for the account
+- Possibility to delete your account
 
 ### Fixed
 - Fixed URL search

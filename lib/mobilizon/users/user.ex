@@ -39,11 +39,12 @@ defmodule Mobilizon.Users.User do
     :confirmation_token,
     :reset_password_sent_at,
     :reset_password_token,
-    :locale
+    :locale,
+    :unconfirmed_email
   ]
   @attrs @required_attrs ++ @optional_attrs
 
-  @registration_required_attrs [:email, :password]
+  @registration_required_attrs @required_attrs ++ [:password]
 
   @password_change_required_attrs [:password]
   @password_reset_required_attrs @password_change_required_attrs ++
@@ -61,6 +62,7 @@ defmodule Mobilizon.Users.User do
     field(:confirmation_token, :string)
     field(:reset_password_sent_at, :utc_datetime)
     field(:reset_password_token, :string)
+    field(:unconfirmed_email, :string)
     field(:locale, :string, default: "en")
 
     belongs_to(:default_actor, Actor)
@@ -99,7 +101,7 @@ defmodule Mobilizon.Users.User do
     |> save_confirmation_token()
     |> unique_constraint(
       :confirmation_token,
-      message: "The registration is already in use, this looks like an issue on our side."
+      message: "The registration token is already in use, this looks like an issue on our side."
     )
   end
 

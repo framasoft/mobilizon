@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Fri Jan 24 2020 10:31:31 GMT+0100 (GMT+01:00)
+# timestamp: Thu Feb 13 2020 11:32:20 GMT+0100 (GMT+01:00)
 
 schema {
   query: RootQueryType
@@ -543,7 +543,7 @@ input EventOptionsInput {
   """
   Whether or not to allow anonymous participation (if the server allows it)
   """
-  anonymousParticipation: Boolean
+  anonymousParticipation: Boolean = false
 
   """The list of special attendees"""
   attendees: [String]
@@ -1082,65 +1082,34 @@ enum ReportStatus {
 }
 
 type RootMutationType {
-  """Validate an user after registration"""
-  validateUser(token: String!): Login
+  saveAdminSettings(instanceDescription: String, instanceName: String, instanceTerms: String, instanceTermsType: InstanceTermsType, instanceTermsUrl: String, registrationsOpen: Boolean): AdminSettings
+  changeEmail(email: String!, password: String!): User
 
-  """Confirm a participation"""
-  confirmParticipation(confirmationToken: String!): Participant
-  deleteReportNote(moderatorId: ID!, noteId: ID!): DeletedObject
+  """Create a comment"""
+  createComment(actorId: ID!, eventId: ID, inReplyToCommentId: ID, text: String!): Comment
 
-  """Delete a feed token"""
-  deleteFeedToken(token: String!): DeletedFeedToken
+  """Create an user"""
+  createUser(email: String!, locale: String, password: String!): User
 
-  """Add a relay subscription"""
-  addRelay(address: String!): Follower
-
-  """Create a report"""
-  createReport(commentsIds: [ID] = [""], content: String, eventId: ID, forward: Boolean = false, reportedId: ID!, reporterId: ID!): Report
-
-  """Update a report"""
-  updateReportStatus(moderatorId: ID!, reportId: ID!, status: ReportStatus!): Report
-
-  """Delete a relay subscription"""
-  removeRelay(address: String!): Follower
-  deleteComment(actorId: ID!, commentId: ID!): Comment
-
-  """Reject a relay subscription"""
-  rejectRelay(address: String!): Follower
-
-  """Delete a group"""
-  deleteGroup(actorId: ID!, groupId: ID!): DeletedObject
-
-  """Reset user password"""
-  resetPassword(locale: String = "en", password: String!, token: String!): Login
-
-  """Join an event"""
-  joinEvent(actorId: ID!, email: String, eventId: ID!): Participant
-
-  """Create a group"""
-  createGroup(
+  """Update an identity"""
+  updatePerson(
     """
-    The avatar for the group, either as an object or directly the ID of an existing Picture
+    The avatar for the profile, either as an object or directly the ID of an existing Picture
     """
     avatar: PictureInput
 
     """
-    The banner for the group, either as an object or directly the ID of an existing Picture
+    The banner for the profile, either as an object or directly the ID of an existing Picture
     """
     banner: PictureInput
+    id: ID!
 
-    """The identity that creates the group"""
-    creatorActorId: ID!
-
-    """The displayed name for the group"""
+    """The displayed name for this profile"""
     name: String
 
-    """The name for the group"""
-    preferredUsername: String!
-
-    """The summary for the group"""
-    summary: String = ""
-  ): Group
+    """The summary for this profile"""
+    summary: String
+  ): Person
 
   """Create an event"""
   createEvent(
@@ -1168,6 +1137,147 @@ type RootMutationType {
     title: String!
     visibility: EventVisibility = PUBLIC
   ): Event
+  validateEmail(token: String!): User
+
+  """Delete an event"""
+  deleteEvent(actorId: ID!, eventId: ID!): DeletedObject
+
+  """Accept a participation"""
+  updateParticipation(id: ID!, moderatorActorId: ID!, role: ParticipantRoleEnum!): Participant
+
+  """Leave an event"""
+  leaveEvent(actorId: ID!, eventId: ID!, token: String): DeletedParticipant
+
+  """Delete an identity"""
+  deletePerson(id: ID!): Person
+
+  """Refresh a token"""
+  refreshToken(refreshToken: String!): RefreshedToken
+
+  """Validate an user after registration"""
+  validateUser(token: String!): Login
+
+  """Upload a picture"""
+  uploadPicture(actorId: ID!, alt: String, file: Upload!, name: String!): Picture
+
+  """Delete a feed token"""
+  deleteFeedToken(token: String!): DeletedFeedToken
+
+  """Create a note on a report"""
+  createReportNote(content: String, moderatorId: ID!, reportId: ID!): ReportNote
+
+  """Leave an event"""
+  leaveGroup(actorId: ID!, groupId: ID!): DeletedMember
+
+  """Create a Feed Token"""
+  createFeedToken(actorId: ID): FeedToken
+
+  """Send a link through email to reset user password"""
+  sendResetPassword(email: String!, locale: String): String
+
+  """Delete a relay subscription"""
+  removeRelay(address: String!): Follower
+
+  """Change default actor for user"""
+  changeDefaultActor(preferredUsername: String!): User
+  deleteReportNote(moderatorId: ID!, noteId: ID!): DeletedObject
+
+  """Create a report"""
+  createReport(commentsIds: [ID] = [""], content: String, eventId: ID, forward: Boolean = false, reportedId: ID!, reporterId: ID!): Report
+
+  """Register a first profile on registration"""
+  registerPerson(
+    """
+    The avatar for the profile, either as an object or directly the ID of an existing Picture
+    """
+    avatar: PictureInput
+
+    """
+    The banner for the profile, either as an object or directly the ID of an existing Picture
+    """
+    banner: PictureInput
+
+    """The email from the user previously created"""
+    email: String!
+
+    """The displayed name for the new profile"""
+    name: String = ""
+    preferredUsername: String!
+
+    """The summary for the new profile"""
+    summary: String = ""
+  ): Person
+
+  """Delete a group"""
+  deleteGroup(actorId: ID!, groupId: ID!): DeletedObject
+  deleteAccount(password: String!): DeletedObject
+
+  """Add a relay subscription"""
+  addRelay(address: String!): Follower
+
+  """Reset user password"""
+  resetPassword(locale: String = "en", password: String!, token: String!): Login
+
+  """Create a group"""
+  createGroup(
+    """
+    The avatar for the group, either as an object or directly the ID of an existing Picture
+    """
+    avatar: PictureInput
+
+    """
+    The banner for the group, either as an object or directly the ID of an existing Picture
+    """
+    banner: PictureInput
+
+    """The identity that creates the group"""
+    creatorActorId: ID!
+
+    """The displayed name for the group"""
+    name: String
+
+    """The name for the group"""
+    preferredUsername: String!
+
+    """The summary for the group"""
+    summary: String = ""
+  ): Group
+
+  """Confirm a participation"""
+  confirmParticipation(confirmationToken: String!): Participant
+  deleteComment(actorId: ID!, commentId: ID!): Comment
+
+  """Join an event"""
+  joinEvent(actorId: ID!, email: String, eventId: ID!): Participant
+
+  """Accept a relay subscription"""
+  acceptRelay(address: String!): Follower
+
+  """Join a group"""
+  joinGroup(actorId: ID!, groupId: ID!): Member
+
+  """Reject a relay subscription"""
+  rejectRelay(address: String!): Follower
+
+  """Create a new person for user"""
+  createPerson(
+    """
+    The avatar for the profile, either as an object or directly the ID of an existing Picture
+    """
+    avatar: PictureInput
+
+    """
+    The banner for the profile, either as an object or directly the ID of an existing Picture
+    """
+    banner: PictureInput
+
+    """The displayed name for the new profile"""
+    name: String = ""
+    preferredUsername: String!
+
+    """The summary for the new profile"""
+    summary: String = ""
+  ): Person
 
   """Update an event"""
   updateEvent(
@@ -1196,123 +1306,17 @@ type RootMutationType {
     visibility: EventVisibility = PUBLIC
   ): Event
 
-  """Accept a relay subscription"""
-  acceptRelay(address: String!): Follower
-
-  """Leave an event"""
-  leaveGroup(actorId: ID!, groupId: ID!): DeletedMember
-
-  """Delete an identity"""
-  deletePerson(id: ID!): Person
-  saveAdminSettings(instanceDescription: String, instanceName: String, instanceTerms: String, instanceTermsType: InstanceTermsType, instanceTermsUrl: String, registrationsOpen: Boolean): AdminSettings
-
-  """Refresh a token"""
-  refreshToken(refreshToken: String!): RefreshedToken
-
-  """Upload a picture"""
-  uploadPicture(actorId: ID!, alt: String, file: Upload!, name: String!): Picture
-
-  """Login an user"""
-  login(email: String!, password: String!): Login
-
-  """Send a link through email to reset user password"""
-  sendResetPassword(email: String!, locale: String): String
-
-  """Create a comment"""
-  createComment(actorId: ID!, eventId: ID, inReplyToCommentId: ID, text: String!): Comment
-
-  """Register a first profile on registration"""
-  registerPerson(
-    """
-    The avatar for the profile, either as an object or directly the ID of an existing Picture
-    """
-    avatar: PictureInput
-
-    """
-    The banner for the profile, either as an object or directly the ID of an existing Picture
-    """
-    banner: PictureInput
-
-    """The email from the user previously created"""
-    email: String!
-
-    """The displayed name for the new profile"""
-    name: String = ""
-    preferredUsername: String!
-
-    """The summary for the new profile"""
-    summary: String = ""
-  ): Person
-
-  """Update an identity"""
-  updatePerson(
-    """
-    The avatar for the profile, either as an object or directly the ID of an existing Picture
-    """
-    avatar: PictureInput
-
-    """
-    The banner for the profile, either as an object or directly the ID of an existing Picture
-    """
-    banner: PictureInput
-    id: ID!
-
-    """The displayed name for this profile"""
-    name: String
-
-    """The summary for this profile"""
-    summary: String
-  ): Person
-
-  """Delete an event"""
-  deleteEvent(actorId: ID!, eventId: ID!): DeletedObject
-
-  """Join a group"""
-  joinGroup(actorId: ID!, groupId: ID!): Member
-
-  """Change default actor for user"""
-  changeDefaultActor(preferredUsername: String!): User
-
-  """Create an user"""
-  createUser(email: String!, locale: String, password: String!): User
-
-  """Create a new person for user"""
-  createPerson(
-    """
-    The avatar for the profile, either as an object or directly the ID of an existing Picture
-    """
-    avatar: PictureInput
-
-    """
-    The banner for the profile, either as an object or directly the ID of an existing Picture
-    """
-    banner: PictureInput
-
-    """The displayed name for the new profile"""
-    name: String = ""
-    preferredUsername: String!
-
-    """The summary for the new profile"""
-    summary: String = ""
-  ): Person
-
-  """Create a note on a report"""
-  createReportNote(content: String, moderatorId: ID!, reportId: ID!): ReportNote
-
   """Change an user password"""
   changePassword(newPassword: String!, oldPassword: String!): User
+
+  """Update a report"""
+  updateReportStatus(moderatorId: ID!, reportId: ID!, status: ReportStatus!): Report
 
   """Resend registration confirmation token"""
   resendConfirmationEmail(email: String!, locale: String): String
 
-  """Leave an event"""
-  leaveEvent(actorId: ID!, eventId: ID!, token: String): DeletedParticipant
-
-  """Accept a participation"""
-  updateParticipation(id: ID!, moderatorActorId: ID!, role: ParticipantRoleEnum!): Participant
-
-  """Create a Feed Token"""
-  createFeedToken(actorId: ID): FeedToken
+  """Login an user"""
+  login(email: String!, password: String!): Login
 }
 
 """

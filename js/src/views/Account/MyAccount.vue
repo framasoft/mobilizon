@@ -18,7 +18,7 @@
         <div class="identities column is-4">
           <identities :currentIdentityName="currentIdentityName" />
           <div class="buttons">
-            <b-button tag="router-link" type="is-secondary" :to="{ name: RouteName.PASSWORD_CHANGE }">{{ $t('Change password') }}</b-button>
+            <b-button tag="router-link" type="is-secondary" :to="{ name: RouteName.ACCOUNT_SETTINGS }">{{ $t('Account settings') }}</b-button>
           </div>
         </div>
         <div class="column is-8">
