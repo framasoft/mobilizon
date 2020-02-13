@@ -186,7 +186,7 @@ defmodule Mobilizon.Actors do
            %Actor{}
            |> Actor.registration_changeset(args)
            |> Repo.insert() do
-      Events.create_feed_token(%{"user_id" => args["user_id"], "actor_id" => person.id})
+      Events.create_feed_token(%{user_id: args["user_id"], actor_id: person.id})
 
       {:ok, person}
     end

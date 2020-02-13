@@ -130,6 +130,8 @@ defmodule Mobilizon.Web.Router do
       as: "participation_email_confirmation"
     )
 
+    get("/validate/email/:token", PageController, :index, as: "user_email_validation")
+
     get("/interact", PageController, :interact)
   end
 

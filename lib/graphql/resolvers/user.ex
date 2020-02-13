@@ -7,12 +7,15 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
   alias Mobilizon.{Actors, Config, Events, Users}
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Crypto
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Users.User
 
   alias Mobilizon.Web.{Auth, Email}
 
   require Logger
+
+  @confirmation_token_length 30
 
   @doc """
   Find an user by its ID
@@ -297,5 +300,83 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
   def change_password(_parent, _args, _resolution) do
     {:error, "You need to be logged-in to change your password"}
+  end
+
+  def change_email(_parent, %{email: new_email, password: password}, %{
+        context: %{current_user: %User{email: old_email, password_hash: password_hash} = user}
+      }) do
+    with {:current_password, true} <-
+           {:current_password, Argon2.verify_pass(password, password_hash)},
+         {:same_email, false} <- {:same_email, new_email == old_email},
+         {:email_valid, true} <- {:email_valid, Email.Checker.valid?(new_email)},
+         {:ok, %User{} = user} <-
+           user
+           |> User.changeset(%{
+             unconfirmed_email: new_email,
+             confirmation_token: Crypto.random_string(@confirmation_token_length),
+             confirmation_sent_at: DateTime.utc_now() |> DateTime.truncate(:second)
+           })
+           |> Repo.update() do
+      user
+      |> Email.User.send_email_reset_old_email()
+      |> Email.Mailer.deliver_later()
+
+      user
+      |> Email.User.send_email_reset_new_email()
+      |> Email.Mailer.deliver_later()
+
+      {:ok, user}
+    else
+      {:current_password, false} ->
+        {:error, "The password provided is invalid"}
+
+      {:same_email, true} ->
+        {:error, "The new email must be different"}
+
+      {:email_valid, _} ->
+        {:error, "The new email doesn't seem to be valid"}
+    end
+  end
+
+  def change_email(_parent, _args, _resolution) do
+    {:error, "You need to be logged-in to change your email"}
+  end
+
+  def validate_email(_parent, %{token: token}, _resolution) do
+    with %User{} = user <- Users.get_user_by_activation_token(token),
+         {:ok, %User{} = user} <-
+           user
+           |> User.changeset(%{
+             email: user.unconfirmed_email,
+             unconfirmed_email: nil,
+             confirmation_token: nil,
+             confirmation_sent_at: nil
+           })
+           |> Repo.update() do
+      {:ok, user}
+    end
+  end
+
+  def delete_account(_parent, %{password: password}, %{
+        context: %{current_user: %User{password_hash: password_hash} = user}
+      }) do
+    with {:current_password, true} <-
+           {:current_password, Argon2.verify_pass(password, password_hash)},
+         actors <- Users.get_actors_for_user(user),
+         # Detach actors from user
+         :ok <- Enum.each(actors, fn actor -> Actors.update_actor(actor, %{user_id: nil}) end),
+         # Launch a background job to delete actors
+         :ok <- Enum.each(actors, &Actors.delete_actor/1),
+         # Delete user
+         {:ok, user} <- Users.delete_user(user) do
+      {:ok, user}
+    else
+      {:current_password, false} ->
+        {:error, "The password provided is invalid"}
+    end
+  end
+
+  def delete_account(_parent, _args, _resolution) do
+    {:error, "You need to be logged-in to delete your account"}
   end
 end

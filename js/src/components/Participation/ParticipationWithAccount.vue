@@ -66,7 +66,8 @@ export default class ParticipationWithAccount extends Vue {
   }
 
   private async webFingerFetch(hostname: string, identity: string): Promise<string> {
-    const data = await ((await fetch(`http://${hostname}/.well-known/webfinger?resource=acct:${identity}`)).json());
+    const scheme = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+    const data = await ((await fetch(`${scheme}://${hostname}/.well-known/webfinger?resource=acct:${identity}`)).json());
     if (data && Array.isArray(data.links)) {
       const link: { template: string } = data.links.find((link: any) => {
         return link && typeof link.template === 'string' && link.rel === 'http://ostatus.org/schema/1.0/subscribe';

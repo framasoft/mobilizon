@@ -1,16 +1,56 @@
 defmodule Mobilizon.GraphQL.Resolvers.UserTest do
   use Mobilizon.Web.ConnCase
   use Bamboo.Test
+  use Oban.Testing, repo: Mobilizon.Storage.Repo
 
   import Mobilizon.Factory
 
-  alias Mobilizon.{Actors, Config, Users}
+  alias Mobilizon.{Actors, Config, Events, Users}
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Events.{Comment, Event, Participant}
   alias Mobilizon.Users.User
 
   alias Mobilizon.GraphQL.AbsintheHelpers
 
   alias Mobilizon.Web.Email
+
+  @change_email_mutation """
+      mutation ChangeEmail($email: String!, $password: String!) {
+        changeEmail(email: $email, password: $password) {
+            id
+          }
+        }
+  """
+
+  @login_mutation """
+      mutation Login($email: String!, $password: String!) {
+        login(email: $email, password: $password) {
+            accessToken,
+            refreshToken,
+            user {
+              id
+            }
+          }
+        }
+  """
+
+  @validate_email_mutation """
+      mutation ValidateEmail($token: String!) {
+        validateEmail(
+              token: $token
+          ) {
+            id
+          }
+        }
+  """
+
+  @delete_user_account_mutation """
+    mutation DeleteAccount($password: String!) {
+      deleteAccount (password: $password) {
+        id
+      }
+    }
+  """
 
   @valid_actor_params %{email: "test@test.tld", password: "testest", username: "test"}
   @valid_single_actor_params %{preferred_username: "test2", keys: "yolo"}
@@ -1185,6 +1225,262 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
                "You need to be logged-in to change your password"
+    end
+  end
+
+  describe "Resolver: Change email for an user" do
+    @old_email "old@domain.tld"
+    @new_email "new@domain.tld"
+    @password "p4ssw0rd"
+
+    test "change_email/3 with valid email", %{conn: conn} do
+      {:ok, %User{} = user} = Users.register(%{email: @old_email, password: @password})
+
+      # Hammer time !
+      {:ok, %User{} = _user} =
+        Users.update_user(user, %{
+          confirmed_at: Timex.shift(user.confirmation_sent_at, hours: -3),
+          confirmation_sent_at: nil,
+          confirmation_token: nil
+        })
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @login_mutation,
+          variables: %{email: @old_email, password: @password}
+        )
+
+      login = res["data"]["login"]
+      assert Map.has_key?(login, "accessToken") && not is_nil(login["accessToken"])
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @change_email_mutation,
+          variables: %{email: @new_email, password: @password}
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["changeEmail"]["id"] == to_string(user.id)
+
+      user = Users.get_user!(user.id)
+      assert user.email == @old_email
+      assert user.unconfirmed_email == @new_email
+
+      assert_delivered_email(Email.User.send_email_reset_old_email(user))
+      assert_delivered_email(Email.User.send_email_reset_new_email(user))
+
+      conn
+      |> AbsintheHelpers.graphql_query(
+        query: @validate_email_mutation,
+        variables: %{token: user.confirmation_token}
+      )
+
+      user = Users.get_user!(user.id)
+      assert user.email == @new_email
+      assert user.unconfirmed_email == nil
+    end
+
+    test "change_email/3 with invalid password", %{conn: conn} do
+      {:ok, %User{} = user} = Users.register(%{email: @old_email, password: @password})
+
+      # Hammer time !
+      {:ok, %User{} = _user} =
+        Users.update_user(user, %{
+          confirmed_at: Timex.shift(user.confirmation_sent_at, hours: -3),
+          confirmation_sent_at: nil,
+          confirmation_token: nil
+        })
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @change_email_mutation,
+          variables: %{email: @new_email, password: "invalid_password"}
+        )
+
+      assert hd(res["errors"])["message"] == "The password provided is invalid"
+    end
+
+    test "change_email/3 with same email", %{conn: conn} do
+      {:ok, %User{} = user} = Users.register(%{email: @old_email, password: @password})
+
+      # Hammer time !
+      {:ok, %User{} = _user} =
+        Users.update_user(user, %{
+          confirmed_at: Timex.shift(user.confirmation_sent_at, hours: -3),
+          confirmation_sent_at: nil,
+          confirmation_token: nil
+        })
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @change_email_mutation,
+          variables: %{email: @old_email, password: @password}
+        )
+
+      assert hd(res["errors"])["message"] == "The new email must be different"
+    end
+
+    test "change_email/3 with invalid email", %{conn: conn} do
+      {:ok, %User{} = user} = Users.register(%{email: @old_email, password: @password})
+
+      # Hammer time !
+      {:ok, %User{} = _user} =
+        Users.update_user(user, %{
+          confirmed_at: Timex.shift(user.confirmation_sent_at, hours: -3),
+          confirmation_sent_at: nil,
+          confirmation_token: nil
+        })
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @change_email_mutation,
+          variables: %{email: "invalid email", password: @password}
+        )
+
+      assert hd(res["errors"])["message"] == "The new email doesn't seem to be valid"
+    end
+
+    test "change_password/3 without being authenticated", %{conn: conn} do
+      {:ok, %User{} = user} = Users.register(%{email: @old_email, password: @password})
+
+      # Hammer time !
+      {:ok, %User{} = _user} =
+        Users.update_user(user, %{
+          confirmed_at: Timex.shift(user.confirmation_sent_at, hours: -3),
+          confirmation_sent_at: nil,
+          confirmation_token: nil
+        })
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @change_email_mutation,
+          variables: %{email: @new_email, password: @password}
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "You need to be logged-in to change your email"
+    end
+  end
+
+  describe "Resolver: User deletes it's account" do
+    @email "mail@domain.tld"
+    @password "p4ssw0rd"
+
+    test "delete_account/3 with valid password", %{conn: conn} do
+      {:ok, %User{} = user} = Users.register(%{email: @email, password: @password})
+
+      # Hammer time !
+      {:ok, %User{} = user} =
+        Users.update_user(user, %{
+          confirmed_at: Timex.shift(user.confirmation_sent_at, hours: -3),
+          confirmation_sent_at: nil,
+          confirmation_token: nil
+        })
+
+      %Actor{} = actor1 = insert(:actor, user: user)
+      %Actor{} = actor2 = insert(:actor, user: user)
+      %Event{id: event_id} = event = insert(:event, organizer_actor: actor1)
+
+      %Participant{id: participant_id} =
+        insert(:participant, event: event, actor: actor2, role: :participant)
+
+      %Comment{id: comment_id} = insert(:comment, actor: actor2, event: event)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @delete_user_account_mutation,
+          variables: %{password: @password}
+        )
+
+      assert res["data"]["deleteAccount"]["id"] == to_string(user.id)
+
+      assert [
+               %Oban.Job{args: %{"actor_id" => actor2_id, "op" => "delete_actor"}},
+               %Oban.Job{args: %{"actor_id" => actor1_id, "op" => "delete_actor"}}
+             ] = all_enqueued(queue: :background)
+
+      assert MapSet.new([actor1.id, actor2.id]) == MapSet.new([actor1_id, actor2_id])
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Users.get_user!(user.id)
+      end
+
+      assert %{success: 2, failure: 0} == Oban.drain_queue(:background)
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Events.get_event!(event_id)
+      end
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Events.get_comment!(comment_id)
+      end
+
+      # Actors are not deleted but emptied (to keep the  username reserved)
+      actor1 = Actors.get_actor!(actor1_id)
+      assert actor1.suspended
+      assert is_nil(actor1.name)
+
+      actor2 = Actors.get_actor!(actor2_id)
+      assert actor2.suspended
+      assert is_nil(actor2.name)
+
+      assert is_nil(Events.get_participant(participant_id))
+    end
+
+    test "delete_account/3 with invalid password", %{conn: conn} do
+      {:ok, %User{} = user} = Users.register(%{email: @email, password: @password})
+
+      # Hammer time !
+      {:ok, %User{} = user} =
+        Users.update_user(user, %{
+          confirmed_at: Timex.shift(user.confirmation_sent_at, hours: -3),
+          confirmation_sent_at: nil,
+          confirmation_token: nil
+        })
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @delete_user_account_mutation,
+          variables: %{password: "invalid password"}
+        )
+
+      assert hd(res["errors"])["message"] == "The password provided is invalid"
+    end
+
+    test "delete_account/3 without being authenticated", %{conn: conn} do
+      {:ok, %User{} = user} = Users.register(%{email: @email, password: @password})
+
+      # Hammer time !
+      {:ok, %User{} = _user} =
+        Users.update_user(user, %{
+          confirmed_at: Timex.shift(user.confirmation_sent_at, hours: -3),
+          confirmation_sent_at: nil,
+          confirmation_token: nil
+        })
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @delete_user_account_mutation,
+          variables: %{password: "invalid password"}
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "You need to be logged-in to delete your account"
     end
   end
 end

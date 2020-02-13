@@ -7,7 +7,8 @@ import SendPasswordReset from '@/views/User/SendPasswordReset.vue';
 import PasswordReset from '@/views/User/PasswordReset.vue';
 import { beforeRegisterGuard } from '@/router/guards/register-guard';
 import { RouteConfig } from 'vue-router';
-import PasswordChange from '@/views/User/PasswordChange.vue';
+import AccountSettings from '@/views/User/AccountSettings.vue';
+import EmailValidate from '@/views/User/EmailValidate.vue';
 
 export enum UserRouteName {
   REGISTER = 'Register',
@@ -17,7 +18,7 @@ export enum UserRouteName {
   PASSWORD_RESET = 'PasswordReset',
   VALIDATE = 'Validate',
   LOGIN = 'Login',
-  PASSWORD_CHANGE = 'PasswordChange',
+  ACCOUNT_SETTINGS = 'ACCOUNT_SETTINGS',
 }
 
 export const userRoutes: RouteConfig[] = [
@@ -59,6 +60,13 @@ export const userRoutes: RouteConfig[] = [
     props: true,
   },
   {
+    path: '/validate/email/:token',
+    name: UserRouteName.VALIDATE,
+    component: EmailValidate,
+    props: true,
+    meta: { requiresAuth: false },
+  },
+  {
     path: '/validate/:token',
     name: UserRouteName.VALIDATE,
     component: Validate,
@@ -73,9 +81,9 @@ export const userRoutes: RouteConfig[] = [
     meta: { requiredAuth: false },
   },
   {
-    path: '/my-account/password',
-    name: UserRouteName.PASSWORD_CHANGE,
-    component: PasswordChange,
+    path: '/my-account/settings',
+    name: UserRouteName.ACCOUNT_SETTINGS,
+    component: AccountSettings,
     meta: { requiredAuth: true },
   },
 ];

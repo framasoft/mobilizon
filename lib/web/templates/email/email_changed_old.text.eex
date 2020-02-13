@@ -1,0 +1,9 @@
+<%= gettext "New email address" %>
+
+==
+
+<%= gettext "The email address for your account on %{host} is being changed to:", host: @instance[:name] %>
+
+<%= @new_email %>
+
+<%= gettext "If you did not ask to change your email, it is likely that someone has gained access to your account. Please change your password immediately or contact the server admin if you're locked out of your account." %>
