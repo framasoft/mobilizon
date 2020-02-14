@@ -8,38 +8,45 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2020-02-14 21:08+0000\n"
+"Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
+"Language-Team: Occitan <https://weblate.framasoft.org/projects/mobilizon/"
+"backend-errors/oc/>\n"
 "Language: oc\n"
-"Plural-Forms: nplurals=2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 3.10.3\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 msgid "can't be blank"
-msgstr ""
+msgstr "pòt pas èsser void"
 
 msgid "has already been taken"
-msgstr ""
+msgstr "es ja pres"
 
 msgid "is invalid"
-msgstr ""
+msgstr "es invalid"
 
 msgid "must be accepted"
-msgstr ""
+msgstr "deu èsser acceptat"
 
 msgid "has invalid format"
-msgstr ""
+msgstr "a un format invalid"
 
 msgid "has an invalid entry"
-msgstr ""
+msgstr "a una entrada invalida"
 
 msgid "is reserved"
-msgstr ""
+msgstr "es reservat"
 
 msgid "does not match confirmation"
-msgstr ""
+msgstr "correspond pas a la confirmacion"
 
 msgid "is still associated with this entry"
-msgstr ""
+msgstr "es encara associat a aquesta entrada"
 
 msgid "are still associated with this entry"
-msgstr ""
+msgstr "son encara associats a aquesta entrada"
 
 msgid "should be %{count} character(s)"
 msgid_plural "should be %{count} character(s)"
@@ -72,16 +79,16 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "must be less than %{number}"
-msgstr ""
+msgstr "deu èsser inferior a %{number}"
 
 msgid "must be greater than %{number}"
-msgstr ""
+msgstr "deu èsser superior a %{number}"
 
 msgid "must be less than or equal to %{number}"
-msgstr ""
+msgstr "deu èsser inferior o egal a %{number}"
 
 msgid "must be greater than or equal to %{number}"
-msgstr ""
+msgstr "deu èsser superior o egal a %{number}"
 
 msgid "must be equal to %{number}"
-msgstr ""
+msgstr "deu èsser egal a %{number}"
