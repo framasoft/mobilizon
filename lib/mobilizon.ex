@@ -47,6 +47,12 @@ defmodule Mobilizon do
         ActivityPub.Federator,
         cachex_spec(:feed, 2500, 60, 60, &Feed.create_cache/1),
         cachex_spec(:ics, 2500, 60, 60, &ICalendar.create_cache/1),
+        cachex_spec(
+          :actor_key_rotation,
+          2500,
+          div(Application.get_env(:mobilizon, :activitypub)[:actor_key_rotation_delay], 60),
+          60 * 30
+        ),
         cachex_spec(:statistics, 10, 60, 60),
         cachex_spec(:config, 10, 60, 60),
         cachex_spec(:activity_pub, 2500, 3, 15)

@@ -43,7 +43,8 @@ defmodule Mobilizon.Web.Plugs.HTTPSignatures do
 
           signature_valid = HTTPSignatures.validate_conn(conn)
           Logger.debug("Is signature valid ? #{inspect(signature_valid)}")
-          assign(conn, :valid_signature, signature_valid)
+          date_valid = date_valid?(conn)
+          assign(conn, :valid_signature, signature_valid && date_valid)
         else
           Logger.debug("No signature header!")
           conn
@@ -51,6 +52,17 @@ defmodule Mobilizon.Web.Plugs.HTTPSignatures do
 
       _ ->
         conn
+    end
+  end
+
+  @spec date_valid?(Plug.Conn.t()) :: boolean()
+  defp date_valid?(conn) do
+    with [date | _] <- get_req_header(conn, "date") || [""],
+         {:ok, date} <- Timex.parse(date, "{WDshort}, {0D} {Mshort} {YYYY} {h24}:{m}:{s} GMT") do
+      Timex.diff(date, DateTime.utc_now(), :hours) <= 12 &&
+        Timex.diff(date, DateTime.utc_now(), :hours) >= -12
+    else
+      _ -> false
     end
   end
 end

@@ -146,7 +146,11 @@ config :ex_cldr,
 config :http_signatures,
   adapter: Mobilizon.Federation.HTTPSignatures.Signature
 
-config :mobilizon, :activitypub, sign_object_fetches: true
+config :mobilizon, :activitypub,
+  # One day
+  actor_stale_period: 3_600 * 48,
+  actor_key_rotation_delay: 3_600 * 48,
+  sign_object_fetches: true
 
 config :mobilizon, Mobilizon.Service.Geospatial, service: Mobilizon.Service.Geospatial.Nominatim
 
