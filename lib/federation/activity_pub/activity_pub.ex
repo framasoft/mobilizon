@@ -73,8 +73,8 @@ defmodule Mobilizon.Federation.ActivityPub do
     with {:not_http, true} <- {:not_http, String.starts_with?(url, "http")},
          {:existing_event, nil} <- {:existing_event, Events.get_event_by_url(url)},
          {:existing_comment, nil} <- {:existing_comment, Events.get_comment_from_url(url)},
-         {:existing_actor, {:error, :actor_not_found}} <-
-           {:existing_actor, Actors.get_actor_by_url(url)},
+         {:existing_actor, {:error, _err}} <-
+           {:existing_actor, get_or_fetch_actor_by_url(url)},
          {:ok, %{body: body, status_code: code}} when code in 200..299 <-
            HTTPoison.get(
              url,
@@ -126,7 +126,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   end
 
   @doc """
-  Getting an actor from url, eventually creating it
+  Getting an actor from url, eventually creating it if we don't have it locally or if it needs an update
   """
   @spec get_or_fetch_actor_by_url(String.t(), boolean) :: {:ok, Actor.t()} | {:error, String.t()}
   def get_or_fetch_actor_by_url(url, preload \\ false)
@@ -138,12 +138,13 @@ defmodule Mobilizon.Federation.ActivityPub do
   end
 
   def get_or_fetch_actor_by_url(url, preload) do
-    case Actors.get_actor_by_url(url, preload) do
-      {:ok, %Actor{} = actor} ->
-        {:ok, actor}
-
+    with {:ok, %Actor{} = cached_actor} <- Actors.get_actor_by_url(url, preload),
+         false <- Actors.needs_update?(cached_actor) do
+      {:ok, cached_actor}
+    else
       _ ->
-        case make_actor_from_url(url, preload) do
+        # For tests, see https://github.com/jjh42/mock#not-supported---mocking-internal-function-calls and Mobilizon.Federation.ActivityPubTest
+        case __MODULE__.make_actor_from_url(url, preload) do
           {:ok, %Actor{} = actor} ->
             {:ok, actor}
 
@@ -351,6 +352,7 @@ defmodule Mobilizon.Federation.ActivityPub do
          {:ok, %Tombstone{} = _tombstone} <-
            Tombstone.create_tombstone(%{uri: event.url, actor_id: actor.id}),
          Share.delete_all_by_uri(event.url),
+         :ok <- check_for_actor_key_rotation(actor),
          {:ok, activity} <- create_activity(Map.merge(data, audience), local),
          :ok <- maybe_federate(activity) do
       {:ok, activity, event}
@@ -374,6 +376,7 @@ defmodule Mobilizon.Federation.ActivityPub do
          {:ok, %Tombstone{} = _tombstone} <-
            Tombstone.create_tombstone(%{uri: comment.url, actor_id: actor.id}),
          Share.delete_all_by_uri(comment.url),
+         :ok <- check_for_actor_key_rotation(actor),
          {:ok, activity} <- create_activity(Map.merge(data, audience), local),
          :ok <- maybe_federate(activity) do
       {:ok, activity, comment}
@@ -1011,5 +1014,16 @@ defmodule Mobilizon.Federation.ActivityPub do
         comments: comments
       })
     end
+  end
+
+  defp check_for_actor_key_rotation(%Actor{} = actor) do
+    if Actors.should_rotate_actor_key(actor) do
+      Actors.schedule_key_rotation(
+        actor,
+        Application.get_env(:mobilizon, :activitypub)[:actor_key_rotation_delay]
+      )
+    end
+
+    :ok
   end
 end

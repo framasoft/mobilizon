@@ -260,6 +260,13 @@ defmodule Mobilizon.Actors do
     end
   end
 
+  @spec actor_key_rotation(Actor.t()) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
+  def actor_key_rotation(%Actor{} = actor) do
+    actor
+    |> Actor.changeset(%{keys: Crypto.generate_rsa_2048_private_key()})
+    |> Repo.update()
+  end
+
   @doc """
   Returns the list of actors.
   """
@@ -744,6 +751,40 @@ defmodule Mobilizon.Actors do
   @spec is_following(Actor.t(), Actor.t()) :: Follower.t() | nil
   def is_following(%Actor{} = follower_actor, %Actor{} = followed_actor) do
     get_follower_by_followed_and_following(followed_actor, follower_actor)
+  end
+
+  @doc """
+  Whether the actor needs to be updated.
+
+  Local actors obviously don't need to be updated
+  """
+  @spec needs_update?(Actor.t()) :: boolean
+  def needs_update?(%Actor{domain: nil}), do: false
+
+  def needs_update?(%Actor{last_refreshed_at: nil, domain: domain}) when not is_nil(domain),
+    do: true
+
+  def needs_update?(%Actor{domain: domain} = actor) when not is_nil(domain) do
+    DateTime.diff(DateTime.utc_now(), actor.last_refreshed_at) >=
+      Application.get_env(:mobilizon, :activitypub)[:actor_stale_period]
+  end
+
+  def needs_update?(_), do: true
+
+  @spec should_rotate_actor_key(Actor.t()) :: boolean
+  def should_rotate_actor_key(%Actor{id: actor_id}) do
+    with {:ok, value} when is_boolean(value) <- Cachex.exists?(:actor_key_rotation, actor_id) do
+      value
+    end
+  end
+
+  @spec schedule_key_rotation(Actor.t(), integer()) :: nil
+  def schedule_key_rotation(%Actor{id: actor_id} = actor, delay) do
+    Cachex.put(:actor_key_rotation, actor_id, true)
+
+    Workers.Background.enqueue("actor_key_rotation", %{"actor_id" => actor.id}, schedule_in: delay)
+
+    :ok
   end
 
   @spec remove_banner(Actor.t()) :: {:ok, Actor.t()}

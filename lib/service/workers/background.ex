@@ -14,4 +14,10 @@ defmodule Mobilizon.Service.Workers.Background do
       Actors.perform(:delete_actor, actor)
     end
   end
+
+  def perform(%{"op" => "actor_key_rotation", "actor_id" => actor_id}, _job) do
+    with %Actor{} = actor <- Actors.get_actor(actor_id) do
+      Actors.actor_key_rotation(actor)
+    end
+  end
 end

@@ -50,7 +50,8 @@ defmodule Mobilizon.Actors.Actor do
           mentions: [Mention.t()],
           shares: [Share.t()],
           owner_shares: [Share.t()],
-          memberships: [t]
+          memberships: [t],
+          last_refreshed_at: DateTime.t()
         }
 
   @required_attrs [:preferred_username, :keys, :suspended, :url]
@@ -65,6 +66,7 @@ defmodule Mobilizon.Actors.Actor do
     :domain,
     :summary,
     :manually_approves_followers,
+    :last_refreshed_at,
     :user_id
   ]
   @attrs @required_attrs ++ @optional_attrs
@@ -118,6 +120,7 @@ defmodule Mobilizon.Actors.Actor do
     field(:openness, ActorOpenness, default: :moderated)
     field(:visibility, ActorVisibility, default: :private)
     field(:suspended, :boolean, default: false)
+    field(:last_refreshed_at, :utc_datetime)
 
     embeds_one(:avatar, File, on_replace: :update)
     embeds_one(:banner, File, on_replace: :update)
@@ -261,6 +264,7 @@ defmodule Mobilizon.Actors.Actor do
     |> unique_constraint(:url, name: :actors_url_index)
     |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_type_index)
     |> validate_format(:preferred_username, ~r/[a-z0-9_]+/)
+    |> put_change(:last_refreshed_at, DateTime.utc_now() |> DateTime.truncate(:second))
   end
 
   @doc """

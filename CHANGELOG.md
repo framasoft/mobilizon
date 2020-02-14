@@ -21,6 +21,11 @@ Also make sure to remove the `EnvironmentFile=` line from the systemd service an
 - Possibility to change email address for the account
 - Possibility to delete your account
 
+### Changed
+- Signature validation also now checks if `Date` header has acceptable values
+- Actor profiles are now stale after two days and have to be refetched
+- Actor keys are rotated some time after sending a `Delete` activity
+
 ### Fixed
 - Fixed URL search
 - Fixed content accessed through URL search being public

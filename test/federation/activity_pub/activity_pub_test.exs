@@ -10,6 +10,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
   import Mock
   import Mobilizon.Factory
 
+  alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
 
@@ -47,10 +48,72 @@ defmodule Mobilizon.Federation.ActivityPubTest do
       end
     end
 
+    @actor_url "https://framapiaf.org/users/tcit"
     test "returns an actor from url" do
+      # Initial fetch
       use_cassette "activity_pub/fetch_framapiaf.org_users_tcit" do
         assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"}} =
-                 ActivityPub.get_or_fetch_actor_by_url("https://framapiaf.org/users/tcit")
+                 ActivityPub.get_or_fetch_actor_by_url(@actor_url)
+      end
+
+      # Fetch uses cache if Actors.needs_update? returns false
+      with_mocks([
+        {Actors, [:passthrough],
+         [
+           get_actor_by_url: fn @actor_url, false ->
+             {:ok,
+              %Actor{
+                preferred_username: "tcit",
+                domain: "framapiaf.org"
+              }}
+           end,
+           needs_update?: fn _ -> false end
+         ]},
+        {ActivityPub, [:passthrough],
+         make_actor_from_url: fn @actor_url, false ->
+           {:ok,
+            %Actor{
+              preferred_username: "tcit",
+              domain: "framapiaf.org"
+            }}
+         end}
+      ]) do
+        assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"}} =
+                 ActivityPub.get_or_fetch_actor_by_url(@actor_url)
+
+        assert_called(Actors.needs_update?(:_))
+        refute called(ActivityPub.make_actor_from_url(@actor_url, false))
+      end
+
+      # Fetch doesn't use cache if Actors.needs_update? returns true
+      with_mocks([
+        {Actors, [:passthrough],
+         [
+           get_actor_by_url: fn @actor_url, false ->
+             {:ok,
+              %Actor{
+                preferred_username: "tcit",
+                domain: "framapiaf.org"
+              }}
+           end,
+           needs_update?: fn _ -> true end
+         ]},
+        {ActivityPub, [:passthrough],
+         make_actor_from_url: fn @actor_url, false ->
+           {:ok,
+            %Actor{
+              preferred_username: "tcit",
+              domain: "framapiaf.org"
+            }}
+         end}
+      ]) do
+        assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"}} =
+                 ActivityPub.get_or_fetch_actor_by_url(@actor_url)
+
+        assert_called(ActivityPub.get_or_fetch_actor_by_url(@actor_url))
+        assert_called(Actors.get_actor_by_url(@actor_url, false))
+        assert_called(Actors.needs_update?(:_))
+        assert_called(ActivityPub.make_actor_from_url(@actor_url, false))
       end
     end
   end

@@ -39,6 +39,7 @@ defmodule Mobilizon.Factory do
       following_url: Actor.build_url(preferred_username, :following),
       inbox_url: Actor.build_url(preferred_username, :inbox),
       outbox_url: Actor.build_url(preferred_username, :outbox),
+      last_refreshed_at: DateTime.utc_now(),
       user: build(:user)
     }
   end
