@@ -1,1 +1,11 @@
-{}
+{
+    "<b>Please do not use it in any real way.</b>": "<b>Por favor, no lo use de ninguna forma real</b>",
+    "A validation email was sent to {email}": "Un correo electrónico de confirmación fue enviado a {email}",
+    "About Mobilizon": "A propósito de Mobilizon",
+    "About this event": "Sobre este acontecimiento",
+    "About this instance": "Sobre esta instancia",
+    "Accepted": "Aceptado",
+    "Account settings": "Configuración de la cuenta",
+    "Add a note": "Añada una nota",
+    "Add an address": "Añada una dirección"
+}
