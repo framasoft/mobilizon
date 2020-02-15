@@ -3,158 +3,168 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-02-15 01:23+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2020-02-16 02:08+0000\n"
+"Last-Translator: framail <pedro@blinktil.com.br>\n"
+"Language-Team: Portuguese (Brazil) <https://weblate.framasoft.org/projects/"
+"mobilizon/backend/pt_BR/>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Translate Toolkit 2.4.0\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 3.10.3\n"
 
 #: lib/web/templates/email/password_reset.html.eex:48
 #: lib/web/templates/email/password_reset.text.eex:12
 #, elixir-format
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
 msgstr ""
+"Se você não fez essa solicitação, favor ignorar este email.  Sua senha não "
+"será modificada até que você acesse o link abaixo e crie uma nova senha."
 
 #: lib/service/export/feed.ex:169
 #, elixir-format
 msgid "Feed for %{email} on Mobilizon"
-msgstr ""
+msgstr "Feed para %{email} sobre o  Mobilizon"
 
 #: lib/web/templates/email/email.html.eex:155
 #: lib/web/templates/email/email.text.eex:16
 #, elixir-format
 msgid "%{instance} is a Mobilizon server."
-msgstr ""
+msgstr "%{instance} é um servidor Mobilizon."
 
 #: lib/web/templates/email/report.html.eex:41
 #, elixir-format
 msgid "%{reporter_name} (%{reporter_username}) reported the following content."
-msgstr ""
+msgstr "%{reporter_name} (%{reporter_username}) reportou o seguinte conteúdo."
 
 #: lib/web/templates/email/report.html.eex:52
 #, elixir-format
 msgid "%{title} by %{creator}"
-msgstr ""
+msgstr "%{title} por %{creator}"
 
 #: lib/web/templates/email/registration_confirmation.html.eex:58
 #, elixir-format
 msgid "Activate my account"
-msgstr ""
+msgstr "Ativar a minha conta"
 
 #: lib/web/templates/email/email.html.eex:124
 #: lib/web/templates/email/email.text.eex:14
 #, elixir-format
 msgid "Ask the community on Framacolibri"
-msgstr ""
+msgstr "Perguntar à comunidade Framacolibri"
 
 #: lib/web/templates/email/report.html.eex:66
 #: lib/web/templates/email/report.text.eex:13
 #, elixir-format
 msgid "Comments"
-msgstr ""
+msgstr "Comentários"
 
 #: lib/web/templates/email/report.html.eex:50
 #: lib/web/templates/email/report.text.eex:6
 #, elixir-format
 msgid "Event"
-msgstr ""
+msgstr "Evento"
 
 #: lib/web/templates/email/registration_confirmation.html.eex:45
 #, elixir-format
 msgid "If you didn't request this, please ignore this email."
-msgstr ""
+msgstr "Se você não não solicitou isso, favor ignorar este email."
 
 #: lib/web/email/user.ex:48
 #, elixir-format
 msgid "Instructions to reset your password on %{instance}"
-msgstr ""
+msgstr "Instruções para reiniciar a senha de %{instance}"
 
 #: lib/web/templates/email/email.html.eex:156
 #, elixir-format
 msgid "Learn more about Mobilizon."
-msgstr ""
+msgstr "Aprenda mais sobre Mobilizon."
 
 #: lib/web/templates/email/registration_confirmation.html.eex:13
 #, elixir-format
 msgid "Nearly here!"
-msgstr ""
+msgstr "Você está quase lá!"
 
 #: lib/web/templates/email/email.html.eex:121
 #: lib/web/templates/email/email.text.eex:12
 #, elixir-format
 msgid "Need some help? Something not working properly?"
-msgstr ""
+msgstr "Precisa de ajuda? Algo não está funcionando bem?"
 
 #: lib/web/templates/email/report.html.eex:13
 #, elixir-format
 msgid "New report on %{instance}"
-msgstr ""
+msgstr "Novo relato em %{instance}"
 
 #: lib/web/templates/email/report.html.eex:84
 #: lib/web/templates/email/report.text.eex:22
 #, elixir-format
 msgid "Reason"
-msgstr ""
+msgstr "Razão"
 
 #: lib/web/templates/email/password_reset.html.eex:61
 #, elixir-format
 msgid "Reset Password"
-msgstr ""
+msgstr "Reinicializar a senha"
 
 #: lib/web/templates/email/password_reset.html.eex:41
 #, elixir-format
 msgid "Resetting your password is easy. Just press the button below and follow the instructions. We'll have you up and running in no time."
 msgstr ""
+"Reinicializar a sua senha é fácil. Apenas aperte o botão abaixo e siga as "
+"instruções. Tudo estará funcionando em breve."
 
 #: lib/web/templates/email/password_reset.html.eex:13
 #, elixir-format
 msgid "Trouble signing in?"
-msgstr ""
+msgstr "Problemas para conectar?"
 
 #: lib/web/templates/email/report.html.eex:104
 #, elixir-format
 msgid "View the report"
-msgstr ""
+msgstr "Veja o relato"
 
 #: lib/web/templates/email/registration_confirmation.html.eex:38
 #, elixir-format
 msgid "You created an account on %{host} with this email address. You are one click away from activating it."
 msgstr ""
+"Você criou uma conta em %{host} com este endereço de email. Falta um clique "
+"pra você ativar sua conta."
 
 #: lib/web/email/user.ex:28
 #, elixir-format
 msgid "Instructions to confirm your Mobilizon account on %{instance}"
-msgstr ""
+msgstr "Instruções para confirmar sua conta Mobilizon na instância %{instance}"
 
 #: lib/web/email/admin.ex:23
 #, elixir-format
 msgid "New report on Mobilizon instance %{instance}"
-msgstr ""
+msgstr "Novo relato na instância Mobilizon %{instance}"
 
 #: lib/web/templates/email/registration_confirmation.text.eex:1
 #, elixir-format
 msgid "Activate your account"
-msgstr ""
+msgstr "Ativar sua conta"
 
 #: lib/web/templates/email/event_participation_approved.html.eex:13
 #, elixir-format
 msgid "All good!"
-msgstr ""
+msgstr "Tudo correto!"
 
 #: lib/web/templates/email/event_participation_approved.html.eex:45
 #: lib/web/templates/email/event_participation_approved.text.eex:7
 #, elixir-format
 msgid "An organizer just approved your participation. You're now going to this event!"
 msgstr ""
+"Um organizador acaba de aprovar a sua participação. Você estará indo neste "
+"evento!"
 
 #: lib/web/templates/email/event_participation_approved.html.eex:58
 #: lib/web/templates/email/event_updated.html.eex:101
 #, elixir-format
 msgid "Go to event page"
-msgstr ""
+msgstr "Va para a página do evento"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:70
 #: lib/web/templates/email/event_participation_approved.html.eex:70 lib/web/templates/email/event_updated.html.eex:113
@@ -162,22 +172,26 @@ msgstr ""
 #, elixir-format
 msgid "If you need to cancel your participation, just access the event page through link above and click on the participation button."
 msgstr ""
+"Se você precisar cancelar a sua participação apenas acesse a página do "
+"evento através do link acima e clique no botão participação."
 
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:11
 #: lib/web/templates/email/event_participation_approved.text.eex:11
 #, elixir-format
 msgid "If you need to cancel your participation, just access the previous link and click on the participation button."
 msgstr ""
+"Se você precisa cancela ra sua participação, apenas acesso o link anterior e "
+"clique no botão de participação."
 
 #: lib/web/templates/email/email.text.eex:16
 #, elixir-format
 msgid "Learn more about Mobilizon:"
-msgstr ""
+msgstr "Saiba mais sobre Mobilizon:"
 
 #: lib/web/templates/email/report.text.eex:1
 #, elixir-format
 msgid "New report from %{reporter} on %{instance}"
-msgstr ""
+msgstr "Novo relato sobre  %{reporter} na  %{instance}"
 
 #: lib/web/templates/email/event_participation_approved.text.eex:1
 #, elixir-format
