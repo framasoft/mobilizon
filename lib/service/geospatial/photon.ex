@@ -13,6 +13,11 @@ defmodule Mobilizon.Service.Geospatial.Photon do
 
   @endpoint Application.get_env(:mobilizon, __MODULE__) |> get_in([:endpoint])
 
+  @http_options [
+    follow_redirect: true,
+    ssl: [{:versions, [:"tlsv1.2"]}]
+  ]
+
   @impl Provider
   @doc """
   Photon implementation for `c:Mobilizon.Service.Geospatial.Provider.geocode/3`.
@@ -27,7 +32,7 @@ defmodule Mobilizon.Service.Geospatial.Photon do
     Logger.debug("Asking photon for reverse geocoding with #{url}")
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           HTTPoison.get(url, headers),
+           HTTPoison.get(url, headers, @http_options),
          {:ok, %{"features" => features}} <- Poison.decode(body) do
       process_data(features)
     else
@@ -47,7 +52,7 @@ defmodule Mobilizon.Service.Geospatial.Photon do
     Logger.debug("Asking photon for addresses with #{url}")
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           HTTPoison.get(url, headers),
+           HTTPoison.get(url, headers, @http_options),
          {:ok, %{"features" => features}} <- Poison.decode(body) do
       process_data(features)
     else

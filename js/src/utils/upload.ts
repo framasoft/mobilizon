@@ -3,8 +3,8 @@
  */
 export function listenFileUpload(): Promise<File> {
   return new Promise((resolve, reject) => {
-    const inputElement = document.createElement('input');
-    inputElement.type = 'file';
+    const inputElement = document.createElement("input");
+    inputElement.type = "file";
     inputElement.onchange = () => {
       if (inputElement.files && inputElement.files.length > 0) {
         resolve(inputElement.files[0]);
@@ -21,8 +21,8 @@ export function listenFileUpload(): Promise<File> {
  */
 export function listenFileUploads(): Promise<FileList> {
   return new Promise((resolve, reject) => {
-    const inputElement = document.createElement('input');
-    inputElement.type = 'file';
+    const inputElement = document.createElement("input");
+    inputElement.type = "file";
     inputElement.multiple = true;
     inputElement.onchange = () => {
       if (inputElement.files && inputElement.files.length > 0) {

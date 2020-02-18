@@ -1,14 +1,14 @@
 <template>
-    <li class="setting-menu-item" :class="{ active: isActive }">
-        <router-link v-if="menuItem.to" :to="menuItem.to">
-            <span>{{ menuItem.title }}</span>
-        </router-link>
-        <span v-else>{{ menuItem.title }}</span>
-    </li>
+  <li class="setting-menu-item" :class="{ active: isActive }">
+    <router-link v-if="menuItem.to" :to="menuItem.to">
+      <span>{{ menuItem.title }}</span>
+    </router-link>
+    <span v-else>{{ menuItem.title }}</span>
+  </li>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { ISettingMenuSection } from '@/types/setting-menu.model';
+import { Component, Prop, Vue } from "vue-property-decorator";
+import { ISettingMenuSection } from "@/types/setting-menu.model";
 
 @Component
 export default class SettingMenuItem extends Vue {
@@ -28,27 +28,28 @@ export default class SettingMenuItem extends Vue {
 </script>
 
 <style lang="scss" scoped>
-    @import "@/variables.scss";
+@import "@/variables.scss";
 
-    li.setting-menu-item {
-        font-size: 1.05rem;
-        background-color: #fff1de;
-        color: $primary;
-        margin: auto;
+li.setting-menu-item {
+  font-size: 1.05rem;
+  background-color: #fff1de;
+  color: $primary;
+  margin: auto;
 
-        span {
-            padding: 5px 15px;
-            display: block;
-        }
+  span {
+    padding: 5px 15px;
+    display: block;
+  }
 
-        a {
-            display: block;
-            color: inherit;
-        }
+  a {
+    display: block;
+    color: inherit;
+  }
 
-        &:hover, &.active {
-            cursor: pointer;
-            background-color: lighten(#fea72b, 10%);
-        }
-    }
+  &:hover,
+  &.active {
+    cursor: pointer;
+    background-color: lighten(#fea72b, 10%);
+  }
+}
 </style>

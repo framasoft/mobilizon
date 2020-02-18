@@ -4,7 +4,7 @@ defmodule Mobilizon.Repo.Migrations.FixEventVisibility do
   def up do
     Mobilizon.Events.EventVisibility.create_type()
     Mobilizon.Events.EventStatus.create_type()
-    Mobilizon.Events.CommentVisibility.create_type()
+    Mobilizon.Conversations.CommentVisibility.create_type()
 
     alter table(:events) do
       remove(:public)
@@ -15,7 +15,7 @@ defmodule Mobilizon.Repo.Migrations.FixEventVisibility do
     end
 
     alter table(:comments) do
-      add(:visibility, Mobilizon.Events.CommentVisibility.type())
+      add(:visibility, Mobilizon.Conversations.CommentVisibility.type())
     end
   end
 
@@ -34,6 +34,6 @@ defmodule Mobilizon.Repo.Migrations.FixEventVisibility do
 
     Mobilizon.Events.EventVisibility.drop_type()
     Mobilizon.Events.EventStatus.drop_type()
-    Mobilizon.Events.CommentVisibility.drop_type()
+    Mobilizon.Conversations.CommentVisibility.drop_type()
   end
 end

@@ -1,10 +1,11 @@
-import { IEvent, IParticipant } from '@/types/event.model';
-import { IPerson } from '@/types/actor/person.model';
+import { IEvent, IParticipant } from "@/types/event.model";
+import { IPerson } from "@/types/actor/person.model";
+import { Paginate } from "./paginate";
 
 export enum ICurrentUserRole {
-  USER = 'USER',
-  MODERATOR = 'MODERATOR',
-  ADMINISTRATOR = 'ADMINISTRATOR',
+  USER = "USER",
+  MODERATOR = "MODERATOR",
+  ADMINISTRATOR = "ADMINISTRATOR",
 }
 
 export interface ICurrentUser {
@@ -12,7 +13,15 @@ export interface ICurrentUser {
   email: string;
   isLoggedIn: boolean;
   role: ICurrentUserRole;
-  participations: IParticipant[];
+  participations: Paginate<IParticipant>;
   defaultActor: IPerson;
   drafts: IEvent[];
+  settings: IUserSettings;
+}
+
+export interface IUserSettings {
+  timezone: string;
+  notificationOnDay: string;
+  notificationEachWeek: string;
+  notificationBeforeEvent: string;
 }

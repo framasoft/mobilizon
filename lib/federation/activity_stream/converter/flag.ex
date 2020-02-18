@@ -10,6 +10,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Flag do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Conversations
   alias Mobilizon.Events
   alias Mobilizon.Events.Event
   alias Mobilizon.Reports.Report
@@ -91,7 +92,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Flag do
            Enum.filter(objects, fn url ->
              !(url == reported.url || (!is_nil(event) && event.url == url))
            end),
-         comments <- Enum.map(comments, &Events.get_comment_from_url/1) do
+         comments <- Enum.map(comments, &Conversations.get_comment_from_url/1) do
       %{
         "reporter" => reporter,
         "uri" => object["id"],

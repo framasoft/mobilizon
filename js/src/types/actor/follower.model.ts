@@ -1,4 +1,4 @@
-import { IActor } from '@/types/actor/actor.model';
+import { IActor } from "@/types/actor/actor.model";
 
 export interface IFollower {
   id?: string;

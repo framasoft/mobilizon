@@ -1,130 +1,153 @@
 <template>
-    <section>
-        <div class="setting-title">
-            <h2>{{ $t('Email') }}</h2>
-        </div>
-        <i18n tag="p" class="content" v-if="loggedUser" path="Your current email is {email}. You use it to log in.">
-            <b slot="email">{{ loggedUser.email }}</b>
-        </i18n>
-        <b-notification
-                type="is-danger"
-                has-icon
-                aria-close-label="Close notification"
-                role="alert"
-                :key="error"
-                v-for="error in changeEmailErrors"
-        >
-            {{ error }}
-        </b-notification>
-        <form @submit.prevent="resetEmailAction" ref="emailForm" class="form">
-            <b-field :label="$t('New email')">
-                <b-input
-                        aria-required="true"
-                        required
-                        type="email"
-                        v-model="newEmail"
-                />
-            </b-field>
-            <p class="help">{{ $t("You'll receive a confirmation email.") }}</p>
-            <b-field :label="$t('Password')">
-                <b-input
-                        aria-required="true"
-                        required
-                        type="password"
-                        password-reveal
-                        minlength="6"
-                        v-model="passwordForEmailChange"
-                />
-            </b-field>
-            <button class="button is-primary" :disabled="!($refs.emailForm && $refs.emailForm.checkValidity())">
-                {{ $t('Change my email') }}
-            </button>
-        </form>
-        <div class="setting-title">
-            <h2>{{ $t('Password') }}</h2>
-        </div>
-        <b-notification
-                type="is-danger"
-                has-icon
-                aria-close-label="Close notification"
-                role="alert"
-                :key="error"
-                v-for="error in changePasswordErrors"
-        >
-            {{ error }}
-        </b-notification>
-        <form @submit.prevent="resetPasswordAction" ref="passwordForm" class="form">
-            <b-field :label="$t('Old password')">
-                <b-input
-                        aria-required="true"
-                        required
-                        type="password"
-                        password-reveal
-                        minlength="6"
-                        v-model="oldPassword"
-                />
-            </b-field>
-            <b-field :label="$t('New password')">
-                <b-input
-                        aria-required="true"
-                        required
-                        type="password"
-                        password-reveal
-                        minlength="6"
-                        v-model="newPassword"
-                />
-            </b-field>
-            <button class="button is-primary" :disabled="!($refs.passwordForm && $refs.passwordForm.checkValidity())">
-                {{ $t('Change my password') }}
-            </button>
-        </form>
-        <div class="setting-title">
-            <h2>{{ $t('Delete account') }}</h2>
-        </div>
-        <p class="content">{{ $t('Deleting my account will delete all of my identities.')}}</p>
-        <b-button @click="openDeleteAccountModal" type="is-danger">{{ $t('Delete my account') }}</b-button>
+  <section>
+    <div class="setting-title">
+      <h2>{{ $t("Email") }}</h2>
+    </div>
+    <i18n
+      tag="p"
+      class="content"
+      v-if="loggedUser"
+      path="Your current email is {email}. You use it to log in."
+    >
+      <b slot="email">{{ loggedUser.email }}</b>
+    </i18n>
+    <b-notification
+      type="is-danger"
+      has-icon
+      aria-close-label="Close notification"
+      role="alert"
+      :key="error"
+      v-for="error in changeEmailErrors"
+      >{{ error }}</b-notification
+    >
+    <form @submit.prevent="resetEmailAction" ref="emailForm" class="form">
+      <b-field :label="$t('New email')">
+        <b-input aria-required="true" required type="email" v-model="newEmail" />
+      </b-field>
+      <p class="help">{{ $t("You'll receive a confirmation email.") }}</p>
+      <b-field :label="$t('Password')">
+        <b-input
+          aria-required="true"
+          required
+          type="password"
+          password-reveal
+          minlength="6"
+          v-model="passwordForEmailChange"
+        />
+      </b-field>
+      <button
+        class="button is-primary"
+        :disabled="!($refs.emailForm && $refs.emailForm.checkValidity())"
+      >
+        {{ $t("Change my email") }}
+      </button>
+    </form>
+    <div class="setting-title">
+      <h2>{{ $t("Password") }}</h2>
+    </div>
+    <b-notification
+      type="is-danger"
+      has-icon
+      aria-close-label="Close notification"
+      role="alert"
+      :key="error"
+      v-for="error in changePasswordErrors"
+      >{{ error }}</b-notification
+    >
+    <form @submit.prevent="resetPasswordAction" ref="passwordForm" class="form">
+      <b-field :label="$t('Old password')">
+        <b-input
+          aria-required="true"
+          required
+          type="password"
+          password-reveal
+          minlength="6"
+          v-model="oldPassword"
+        />
+      </b-field>
+      <b-field :label="$t('New password')">
+        <b-input
+          aria-required="true"
+          required
+          type="password"
+          password-reveal
+          minlength="6"
+          v-model="newPassword"
+        />
+      </b-field>
+      <button
+        class="button is-primary"
+        :disabled="!($refs.passwordForm && $refs.passwordForm.checkValidity())"
+      >
+        {{ $t("Change my password") }}
+      </button>
+    </form>
+    <div class="setting-title">
+      <h2>{{ $t("Delete account") }}</h2>
+    </div>
+    <p class="content">{{ $t("Deleting my account will delete all of my identities.") }}</p>
+    <b-button @click="openDeleteAccountModal" type="is-danger">
+      {{ $t("Delete my account") }}
+    </b-button>
 
-        <b-modal :active.sync="isDeleteAccountModalActive"
-                 has-modal-card full-screen :can-cancel="false">
-            <section class="hero is-primary is-fullheight">
-                <div class="hero-body has-text-centered">
-                    <div class="container">
-                        <div class="columns">
-                            <div class="column is-one-third-desktop is-offset-one-third-desktop">
-                                <h1 class="title">
-                                    {{ $t('Deleting your Mobilizon account') }}
-                                </h1>
-                                <p class="content">
-                                    {{ $t("Are you really sure you want to delete your whole account? You'll lose everything. Identities, settings, events created, messages and participations will be gone forever.") }}
-                                    <br>
-                                    <b>{{ $t('There will be no way to recover your data.') }}</b>
-                                </p>
-                                <p class="content">{{ $t('Please enter your password to confirm this action.')}}</p>
-                                <form @submit.prevent="deleteAccount">
-                                    <b-field>
-                                        <b-input type="password" v-model="passwordForAccountDeletion" password-reveal icon="lock" :placeholder="$t('Password')"/>
-                                    </b-field>
-                                    <b-button native-type="submit" type="is-danger" size="is-large">{{ $t('Delete everything') }}</b-button>
-                                </form>
-                                <div class="cancel-button">
-                                    <b-button type="is-light" @click="isDeleteAccountModalActive = false">{{ $t('Cancel') }}</b-button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <b-modal
+      :active.sync="isDeleteAccountModalActive"
+      has-modal-card
+      full-screen
+      :can-cancel="false"
+    >
+      <section class="hero is-primary is-fullheight">
+        <div class="hero-body has-text-centered">
+          <div class="container">
+            <div class="columns">
+              <div class="column is-one-third-desktop is-offset-one-third-desktop">
+                <h1 class="title">{{ $t("Deleting your Mobilizon account") }}</h1>
+                <p class="content">
+                  {{
+                    $t(
+                      "Are you really sure you want to delete your whole account? You'll lose everything. Identities, settings, events created, messages and participations will be gone forever."
+                    )
+                  }}
+                  <br />
+                  <b>{{ $t("There will be no way to recover your data.") }}</b>
+                </p>
+                <p class="content">
+                  {{ $t("Please enter your password to confirm this action.") }}
+                </p>
+                <form @submit.prevent="deleteAccount">
+                  <b-field>
+                    <b-input
+                      type="password"
+                      v-model="passwordForAccountDeletion"
+                      password-reveal
+                      icon="lock"
+                      :placeholder="$t('Password')"
+                    />
+                  </b-field>
+                  <b-button native-type="submit" type="is-danger" size="is-large">
+                    {{ $t("Delete everything") }}
+                  </b-button>
+                </form>
+                <div class="cancel-button">
+                  <b-button type="is-light" @click="isDeleteAccountModalActive = false">
+                    {{ $t("Cancel") }}
+                  </b-button>
                 </div>
-            </section>
-        </b-modal>
-    </section>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </b-modal>
+  </section>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { CHANGE_EMAIL, CHANGE_PASSWORD, DELETE_ACCOUNT, LOGGED_USER } from '@/graphql/user';
-import { RouteName } from '@/router';
-import { Refs } from '@/shims-vue';
-import { ICurrentUser } from '@/types/current-user.model';
-import { logout } from '@/utils/auth';
+import { Component, Vue, Ref } from "vue-property-decorator";
+import { CHANGE_EMAIL, CHANGE_PASSWORD, DELETE_ACCOUNT, LOGGED_USER } from "../../graphql/user";
+import RouteName from "../../router/name";
+import { ICurrentUser } from "../../types/current-user.model";
+import { logout } from "../../utils/auth";
 
 @Component({
   apollo: {
@@ -132,21 +155,25 @@ import { logout } from '@/utils/auth';
   },
 })
 export default class AccountSettings extends Vue {
-  $refs!: Refs<{
-    passwordForm: HTMLElement,
-  }>;
+  @Ref("passwordForm") readonly passwordForm!: HTMLElement;
+
   loggedUser!: ICurrentUser;
 
-  passwordForEmailChange: string = '';
-  newEmail: string = '';
+  passwordForEmailChange = "";
+
+  newEmail = "";
+
   changeEmailErrors: string[] = [];
 
-  oldPassword: string = '';
-  newPassword: string = '';
+  oldPassword = "";
+
+  newPassword = "";
+
   changePasswordErrors: string[] = [];
 
-  isDeleteAccountModalActive: boolean = false;
-  passwordForAccountDeletion: string = '';
+  isDeleteAccountModalActive = false;
+
+  passwordForAccountDeletion = "";
 
   RouteName = RouteName;
 
@@ -162,11 +189,15 @@ export default class AccountSettings extends Vue {
         },
       });
 
-      this.$notifier.info(this.$t("The account's email address was changed. Check your emails to verify it.") as string);
-      this.newEmail = '';
-      this.passwordForEmailChange = '';
+      this.$notifier.info(
+        this.$t(
+          "The account's email address was changed. Check your emails to verify it."
+        ) as string
+      );
+      this.newEmail = "";
+      this.passwordForEmailChange = "";
     } catch (err) {
-      this.handleErrors('email', err);
+      this.handleErrors("email", err);
     }
   }
 
@@ -182,14 +213,14 @@ export default class AccountSettings extends Vue {
         },
       });
 
-      this.$notifier.success(this.$t('The password was successfully changed') as string);
+      this.$notifier.success(this.$t("The password was successfully changed") as string);
     } catch (err) {
-      this.handleErrors('password', err);
+      this.handleErrors("password", err);
     }
   }
 
   protected async openDeleteAccountModal() {
-    this.passwordForAccountDeletion = '';
+    this.passwordForAccountDeletion = "";
     this.isDeleteAccountModalActive = true;
   }
 
@@ -203,15 +234,15 @@ export default class AccountSettings extends Vue {
       });
       await logout(this.$apollo.provider.defaultClient);
       this.$buefy.notification.open({
-        message: this.$t('Your account has been successfully deleted') as string,
-        type: 'is-success',
-        position: 'is-bottom-right',
+        message: this.$t("Your account has been successfully deleted") as string,
+        type: "is-success",
+        position: "is-bottom-right",
         duration: 5000,
       });
 
       return await this.$router.push({ name: RouteName.HOME });
     } catch (err) {
-      this.handleErrors('delete', err);
+      this.handleErrors("delete", err);
     }
   }
 
@@ -219,12 +250,12 @@ export default class AccountSettings extends Vue {
     console.error(err);
 
     if (err.graphQLErrors !== undefined) {
-      err.graphQLErrors.forEach(({ message }) => {
+      err.graphQLErrors.forEach(({ message }: { message: string }) => {
         switch (type) {
-          case 'email':
+          case "email":
             this.changeEmailErrors.push(this.convertMessage(message) as string);
             break;
-          case 'password':
+          case "password":
             this.changePasswordErrors.push(this.convertMessage(message) as string);
             break;
         }
@@ -234,40 +265,40 @@ export default class AccountSettings extends Vue {
 
   private convertMessage(message: string) {
     switch (message) {
-      case 'The password provided is invalid':
-        return this.$t('The password provided is invalid');
-      case 'The new email must be different':
-        return this.$t('The new email must be different');
+      case "The password provided is invalid":
+        return this.$t("The password provided is invalid");
+      case "The new email must be different":
+        return this.$t("The new email must be different");
       case "The new email doesn't seem to be valid":
         return this.$t("The new email doesn't seem to be valid");
-      case 'The current password is invalid':
-        return this.$t('The current password is invalid');
-      case 'The new password must be different':
-        return this.$t('The new password must be different');
+      case "The current password is invalid":
+        return this.$t("The current password is invalid");
+      case "The new password must be different":
+        return this.$t("The new password must be different");
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-    @import "@/variables.scss";
+@import "@/variables.scss";
 
-    .setting-title {
-        margin-top: 3rem;
+.setting-title {
+  margin-top: 3rem;
 
-        h2 {
-            display: inline;
-            background: $secondary;
-            padding: 2px 7.5px;
-            text-transform: uppercase;
-            font-size: 1.25rem;
-        }
-    }
+  h2 {
+    display: inline;
+    background: $secondary;
+    padding: 2px 7.5px;
+    text-transform: uppercase;
+    font-size: 1.25rem;
+  }
+}
 
-    .cancel-button {
-        margin-top: 2rem;
-    }
+.cancel-button {
+  margin-top: 2rem;
+}
 
-    /deep/ .modal .modal-background {
-        background-color: initial;
-    }
+/deep/ .modal .modal-background {
+  background-color: initial;
+}
 </style>

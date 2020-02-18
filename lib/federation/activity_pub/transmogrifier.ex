@@ -8,16 +8,18 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   A module to handle coding from internal to wire ActivityPub and back.
   """
 
-  alias Mobilizon.Actors
-  alias Mobilizon.Actors.{Actor, Follower}
-  alias Mobilizon.Events
-  alias Mobilizon.Events.{Comment, Event, Participant}
+  alias Mobilizon.{Actors, Conversations, Events, Resources, Todos}
+  alias Mobilizon.Actors.{Actor, Follower, Member}
+  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Events.{Event, Participant}
+  alias Mobilizon.Resources.Resource
+  alias Mobilizon.Todos.{Todo, TodoList}
 
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.{Activity, Utils}
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
 
-  alias Mobilizon.Web.Email.Participation
+  alias Mobilizon.Web.Email.{Group, Participation}
 
   require Logger
 
@@ -57,10 +59,10 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   def handle_incoming(%{"type" => "Create", "object" => %{"type" => "Note"} = object}) do
     Logger.info("Handle incoming to create notes")
 
-    with {:ok, object_data} <-
+    with object_data <-
            object |> Converter.Comment.as_to_model_data(),
          {:existing_comment, {:error, :comment_not_found}} <-
-           {:existing_comment, Events.get_comment_from_url_with_preload(object_data.url)},
+           {:existing_comment, Conversations.get_comment_from_url_with_preload(object_data.url)},
          {:ok, %Activity{} = activity, %Comment{} = comment} <-
            ActivityPub.create(:comment, object_data, false) do
       {:ok, activity, comment}
@@ -85,7 +87,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   def handle_incoming(%{"type" => "Create", "object" => %{"type" => "Event"} = object}) do
     Logger.info("Handle incoming to create event")
 
-    with {:ok, object_data} <-
+    with object_data <-
            object |> Converter.Event.as_to_model_data(),
          {:existing_event, nil} <- {:existing_event, Events.get_event_by_url(object_data.url)},
          {:ok, %Activity{} = activity, %Event{} = event} <-
@@ -106,6 +108,86 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     else
       e ->
         Logger.warn("Unable to handle Follow activity #{inspect(e)}")
+        :error
+    end
+  end
+
+  def handle_incoming(%{
+        "type" => "Create",
+        "object" => %{"type" => "TodoList", "id" => object_url} = object,
+        "actor" => actor_url
+      }) do
+    Logger.info("Handle incoming to create a todo list")
+
+    with {:existing_todo_list, nil} <-
+           {:existing_todo_list, Todos.get_todo_list_by_url(object_url)},
+         {:ok, %Actor{url: actor_url}} <- ActivityPub.get_or_fetch_actor_by_url(actor_url),
+         object_data when is_map(object_data) <-
+           object |> Converter.TodoList.as_to_model_data(),
+         {:ok, %Activity{} = activity, %TodoList{} = todo_list} <-
+           ActivityPub.create(:todo_list, object_data, false, %{"actor" => actor_url}) do
+      {:ok, activity, todo_list}
+    else
+      {:error, :group_not_found} -> :error
+      {:existing_todo_list, %TodoList{} = todo_list} -> {:ok, nil, todo_list}
+    end
+  end
+
+  def handle_incoming(%{
+        "type" => "Create",
+        "object" => %{"type" => "Todo", "id" => object_url} = object
+      }) do
+    Logger.info("Handle incoming to create a todo")
+
+    with {:existing_todo, nil} <-
+           {:existing_todo, Todos.get_todo_by_url(object_url)},
+         object_data <-
+           object |> Converter.Todo.as_to_model_data(),
+         {:ok, %Activity{} = activity, %Todo{} = todo} <-
+           ActivityPub.create(:todo, object_data, false) do
+      {:ok, activity, todo}
+    else
+      {:existing_todo, %Todo{} = todo} -> {:ok, nil, todo}
+    end
+  end
+
+  def handle_incoming(
+        %{
+          "type" => activity_type,
+          "object" => %{"type" => object_type, "id" => object_url} = object,
+          "to" => to
+        } = data
+      )
+      when activity_type in ["Create", "Add"] and
+             object_type in ["Document", "ResourceCollection"] do
+    Logger.info("Handle incoming to create a resource")
+    Logger.debug(inspect(data))
+
+    group_url = hd(to)
+
+    with {:existing_resource, nil} <-
+           {:existing_resource, Resources.get_resource_by_url(object_url)},
+         object_data when is_map(object_data) <-
+           object |> Converter.Resource.as_to_model_data(),
+         {:member, true} <-
+           {:member, Actors.is_member?(object_data.creator_id, object_data.actor_id)},
+         {:ok, %Activity{} = activity, %Resource{} = resource} <-
+           ActivityPub.create(:resource, object_data, false),
+         {:ok, %Actor{type: :Group, id: group_id} = group} <- Actors.get_actor_by_url(group_url),
+         announce_id <- "#{object_url}/announces/#{group_id}",
+         {:ok, _activity, _resource} <- ActivityPub.announce(group, object, announce_id) do
+      {:ok, activity, resource}
+    else
+      {:existing_resource, %Resource{} = resource} ->
+        {:ok, nil, resource}
+
+      {:member, false} ->
+        # At some point this should refresh the list of group members
+        # if the group is not local before simply returning an error
+        :error
+
+      {:error, e} ->
+        Logger.error(inspect(e))
         :error
     end
   end
@@ -205,7 +287,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       })
       when object_type in ["Person", "Group", "Application", "Service", "Organization"] do
     with {:ok, %Actor{} = old_actor} <- Actors.get_actor_by_url(object["id"]),
-         {:ok, object_data} <-
+         object_data <-
            object |> Converter.Actor.as_to_model_data(),
          {:ok, %Activity{} = activity, %Actor{} = new_actor} <-
            ActivityPub.update(:actor, old_actor, object_data, false) do
@@ -225,7 +307,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:ok, %Actor{url: actor_url}} <- Actors.get_actor_by_url(actor),
          {:ok, %Event{} = old_event} <-
            object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
-         {:ok, object_data} <- Converter.Event.as_to_model_data(object),
+         object_data <- Converter.Event.as_to_model_data(object),
          {:origin_check, true} <- {:origin_check, Utils.origin_check?(actor_url, update_data)},
          {:ok, %Activity{} = activity, %Event{} = new_event} <-
            ActivityPub.update(:event, old_event, object_data, false) do
@@ -350,6 +432,26 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
+  def handle_incoming(
+        %{
+          "type" => "Invite",
+          "object" => object,
+          "actor" => _actor,
+          "id" => id,
+          "target" => target
+        } = data
+      ) do
+    with {:ok, %Actor{} = actor} <- data |> Utils.get_actor() |> Actors.get_actor_by_url(),
+         {:ok, object} <- object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
+         {:ok, %Actor{} = target} <-
+           target |> Utils.get_url() |> ActivityPub.get_or_fetch_actor_by_url(),
+         {:ok, activity, %Member{} = member} <-
+           ActivityPub.invite(object, actor, target, false, %{url: id}),
+         :ok <- Group.send_invite_to_user(member) do
+      {:ok, activity, member}
+    end
+  end
+
   #
   #  # TODO
   #  # Accept
@@ -373,8 +475,9 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   #   end
   # end
 
-  def handle_incoming(_) do
+  def handle_incoming(object) do
     Logger.info("Handing something not supported")
+    Logger.debug(inspect(object))
     {:error, :not_supported}
   end
 
@@ -436,12 +539,37 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
   # Handle incoming `Accept` activities wrapping a `Join` activity on an event
   defp do_handle_incoming_accept_join(join_object, %Actor{} = actor_accepting) do
-    with {:join_event, {:ok, %Participant{role: role, event: event} = participant}}
-         when role in [:not_approved, :rejected] <-
-           {:join_event, get_participant(join_object)},
-         # TODO: The actor that accepts the Join activity may another one that the event organizer ?
-         # Or maybe for groups it's the group that sends the Accept activity
-         {:same_actor, true} <- {:same_actor, actor_accepting.id == event.organizer_actor_id},
+    case get_participant(join_object) do
+      {:ok, participant} ->
+        do_handle_incoming_accept_join_event(participant, actor_accepting)
+
+      {:error, _err} ->
+        case get_member(join_object) do
+          {:ok, member} ->
+            do_handle_incoming_accept_join_group(member, actor_accepting)
+
+          {:error, _err} ->
+            nil
+        end
+    end
+  end
+
+  defp do_handle_incoming_accept_join_event(%Participant{role: :participant}, _actor) do
+    Logger.debug(
+      "Tried to handle an Accept activity on a Join activity with a event object but the participant is already validated"
+    )
+
+    nil
+  end
+
+  defp do_handle_incoming_accept_join_event(
+         %Participant{role: role, event: event} = participant,
+         %Actor{} = actor_accepting
+       )
+       when role in [:not_approved, :rejected] do
+    # TODO: The actor that accepts the Join activity may another one that the event organizer ?
+    # Or maybe for groups it's the group that sends the Accept activity
+    with {:same_actor, true} <- {:same_actor, actor_accepting.id == event.organizer_actor_id},
          {:ok, %Activity{} = activity, %Participant{role: :participant} = participant} <-
            ActivityPub.accept(
              :join,
@@ -452,25 +580,36 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
            Participation.send_emails_to_local_user(participant) do
       {:ok, activity, participant}
     else
-      {:join_event, {:ok, %Participant{role: :participant}}} ->
-        Logger.debug(
-          "Tried to handle an Accept activity on a Join activity with a event object but the participant is already validated"
-        )
-
-        nil
-
-      {:join_event, _err} ->
-        Logger.debug(
-          "Tried to handle an Accept activity but it's not containing a Join activity on a event"
-        )
-
-        nil
-
       {:same_actor} ->
         {:error, "Actor who accepted the join wasn't the event organizer. Quite odd."}
 
       {:ok, %Participant{role: :participant} = _follow} ->
         {:error, "Participant"}
+    end
+  end
+
+  defp do_handle_incoming_accept_join_group(%Member{role: :member}, _actor) do
+    Logger.debug(
+      "Tried to handle an Accept activity on a Join activity with a group object but the member is already validated"
+    )
+
+    nil
+  end
+
+  defp do_handle_incoming_accept_join_group(
+         %Member{role: role, parent: _group} = member,
+         %Actor{} = _actor_accepting
+       )
+       when role in [:not_approved, :rejected, :invited] do
+    # TODO: The actor that accepts the Join activity may another one that the event organizer ?
+    # Or maybe for groups it's the group that sends the Accept activity
+    with {:ok, %Activity{} = activity, %Member{role: :member} = member} <-
+           ActivityPub.accept(
+             :invite,
+             member,
+             false
+           ) do
+      {:ok, activity, member}
     end
   end
 
@@ -509,8 +648,6 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
-  # TODO: Add do_handle_incoming_accept_join/1 on Groups
-
   defp get_follow(follow_object) do
     with follow_object_id when not is_nil(follow_object_id) <- Utils.get_url(follow_object),
          {:not_found, %Follower{} = follow} <-
@@ -533,6 +670,21 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     else
       {:not_found, _err} ->
         {:error, "Participant URL not found"}
+
+      _ ->
+        {:error, "ActivityPub ID not found in Accept Join object"}
+    end
+  end
+
+  @spec get_member(String.t() | map()) :: {:ok, Member.t()} | {:error, String.t()}
+  defp get_member(member_object) do
+    with member_object_id when not is_nil(member_object_id) <- Utils.get_url(member_object),
+         %Member{} = member <-
+           Actors.get_member_by_url(member_object_id) do
+      {:ok, member}
+    else
+      {:error, :member_not_found} ->
+        {:error, "Member URL not found"}
 
       _ ->
         {:error, "ActivityPub ID not found in Accept Join object"}

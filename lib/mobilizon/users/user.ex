@@ -10,7 +10,7 @@ defmodule Mobilizon.Users.User do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Crypto
   alias Mobilizon.Events.FeedToken
-  alias Mobilizon.Users.UserRole
+  alias Mobilizon.Users.{Setting, UserRole}
   alias Mobilizon.Web.Email.Checker
 
   @type t :: %__MODULE__{
@@ -68,6 +68,7 @@ defmodule Mobilizon.Users.User do
     belongs_to(:default_actor, Actor)
     has_many(:actors, Actor)
     has_many(:feed_tokens, FeedToken, foreign_key: :user_id)
+    has_one(:settings, Setting)
 
     timestamps()
   end

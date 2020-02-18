@@ -115,6 +115,11 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     value(:cancelled, description: "The event is cancelled")
   end
 
+  object :paginated_event_list do
+    field(:elements, list_of(:event), description: "A list of events")
+    field(:total, :integer, description: "The total number of events in the list")
+  end
+
   object :participant_stats do
     field(:going, :integer,
       description: "The number of approved participants",
@@ -201,6 +206,11 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
 
     field(:show_start_time, :boolean, description: "Show event start time")
     field(:show_end_time, :boolean, description: "Show event end time")
+
+    field(:hide_organizer_when_group_event, :boolean,
+      description:
+        "Whether to show or hide the person organizer when event is organized by a group"
+    )
   end
 
   input_object :event_options_input do
@@ -242,6 +252,11 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
 
     field(:show_start_time, :boolean, description: "Show event start time")
     field(:show_end_time, :boolean, description: "Show event end time")
+
+    field(:hide_organizer_when_group_event, :boolean,
+      description:
+        "Whether to show or hide the person organizer when event is organized by a group"
+    )
   end
 
   object :event_queries do
@@ -284,6 +299,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       arg(:online_address, :string)
       arg(:phone_address, :string)
       arg(:organizer_actor_id, non_null(:id))
+      arg(:attributed_to_id, :id)
       arg(:category, :string, default_value: "meeting")
       arg(:physical_address, :address_input)
       arg(:options, :event_options_input)
@@ -314,6 +330,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       arg(:online_address, :string)
       arg(:phone_address, :string)
       arg(:organizer_actor_id, :id)
+      arg(:attributed_to_id, :id)
       arg(:category, :string)
       arg(:physical_address, :address_input)
       arg(:options, :event_options_input)

@@ -1,20 +1,19 @@
-import { Component, Vue } from 'vue-property-decorator';
-import { Refs } from '@/shims-vue';
-import { ActorType, IActor } from '@/types/actor';
-import { IFollower } from '@/types/actor/follower.model';
+import { Component, Vue, Ref } from "vue-property-decorator";
+import { ActorType, IActor } from "@/types/actor";
+import { IFollower } from "@/types/actor/follower.model";
 
 @Component
 export default class RelayMixin extends Vue {
-  $refs!: Refs<{
-    table: any,
-  }>;
+  @Ref("table") readonly table!: any;
 
   checkedRows: IFollower[] = [];
-  page: number = 1;
-  perPage: number = 10;
 
-  toggle(row) {
-    this.$refs.table.toggleDetails(row);
+  page = 1;
+
+  perPage = 10;
+
+  toggle(row: object) {
+    this.table.toggleDetails(row);
   }
 
   async onPageChange(page: number) {
@@ -38,7 +37,10 @@ export default class RelayMixin extends Vue {
     });
   }
 
-  isInstance(actor: IActor): boolean {
-    return actor.type === ActorType.APPLICATION && (actor.preferredUsername === 'relay' || actor.preferredUsername === actor.domain);
+  static isInstance(actor: IActor): boolean {
+    return (
+      actor.type === ActorType.APPLICATION &&
+      (actor.preferredUsername === "relay" || actor.preferredUsername === actor.domain)
+    );
   }
 }

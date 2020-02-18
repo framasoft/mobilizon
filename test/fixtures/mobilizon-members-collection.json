@@ -1,0 +1,84 @@
+{
+    "@context": [
+      "https://www.w3.org/ns/activitystreams",
+      "https://litepub.social/litepub/context.jsonld",
+      {
+        "Hashtag": "as:Hashtag",
+        "PostalAddress": "sc:PostalAddress",
+        "address": {
+          "@id": "sc:address",
+          "@type": "sc:PostalAddress"
+        },
+        "addressCountry": "sc:addressCountry",
+        "addressLocality": "sc:addressLocality",
+        "addressRegion": "sc:addressRegion",
+        "anonymousParticipationEnabled": {
+          "@id": "mz:anonymousParticipationEnabled",
+          "@type": "sc:Boolean"
+        },
+        "category": "sc:category",
+        "commentsEnabled": {
+          "@id": "pt:commentsEnabled",
+          "@type": "sc:Boolean"
+        },
+        "ical": "http://www.w3.org/2002/12/cal/ical#",
+        "joinMode": {
+          "@id": "mz:joinMode",
+          "@type": "mz:joinModeType"
+        },
+        "joinModeType": {
+          "@id": "mz:joinModeType",
+          "@type": "rdfs:Class"
+        },
+        "location": {
+          "@id": "sc:location",
+          "@type": "sc:Place"
+        },
+        "maximumAttendeeCapacity": "sc:maximumAttendeeCapacity",
+        "mz": "https://joinmobilizon.org/ns#",
+        "participationMessage": {
+          "@id": "mz:participationMessage",
+          "@type": "sc:Text"
+        },
+        "postalCode": "sc:postalCode",
+        "pt": "https://joinpeertube.org/ns#",
+        "repliesModerationOption": {
+          "@id": "mz:repliesModerationOption",
+          "@type": "mz:repliesModerationOptionType"
+        },
+        "repliesModerationOptionType": {
+          "@id": "mz:repliesModerationOptionType",
+          "@type": "rdfs:Class"
+        },
+        "sc": "http://schema.org#",
+        "streetAddress": "sc:streetAddress",
+        "uuid": "sc:identifier"
+      }
+    ],
+    "attributedTo": "http://mobilizon.test/@demo",
+    "first": {
+      "attributedTo": "http://mobilizon.test/@demo",
+      "id": "http://mobilizon.test/@demo/members?page=1",
+      "orderedItems": [
+        {
+          "actor": "http://mobilizon.test/@tcit",
+          "id": "http://mobilizon.test/member/2fec2e84-5719-48f9-92bd-077f50ff2e6e",
+          "object": "http://mobilizon.test/@demo",
+          "role": "administrator",
+          "type": "Member"
+        },
+        {
+          "actor": "http://mobilizon2.com/@tcit",
+          "id": "http://mobilizon.test/member/13b0fc1e-2ceb-401c-bef7-0eba02fb92dc",
+          "object": "http://mobilizon.test/@demo",
+          "role": "member",
+          "type": "Member"
+        }
+      ],
+      "partOf": "http://mobilizon.test/@demo/members",
+      "type": "OrderedCollectionPage"
+    },
+    "id": "http://mobilizon.test/@demo/members",
+    "totalItems": 2,
+    "type": "OrderedCollection"
+  }

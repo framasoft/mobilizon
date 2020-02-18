@@ -10,11 +10,13 @@ defmodule Mobilizon.Federation.ActivityPubTest do
   import Mock
   import Mobilizon.Factory
 
-  alias Mobilizon.Actors
+  alias Mobilizon.{Actors, Conversations, Events}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events
+  alias Mobilizon.Resources.Resource
+  alias Mobilizon.Todos.{Todo, TodoList}
 
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Utils
   alias Mobilizon.Federation.HTTPSignatures.Signature
 
   @activity_pub_public_audience "https://www.w3.org/ns/activitystreams#Public"
@@ -189,7 +191,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
     end
 
     test "it deletes the original event but only locally if needed" do
-      with_mock ActivityPub.Utils,
+      with_mock Utils,
         maybe_federate: fn _ -> :ok end,
         lazy_put_activity_defaults: fn args -> args end do
         event = insert(:event)
@@ -203,21 +205,21 @@ defmodule Mobilizon.Federation.ActivityPubTest do
 
         assert Events.get_event_by_url(event.url) == nil
 
-        assert_called(ActivityPub.Utils.maybe_federate(delete))
+        assert_called(Utils.maybe_federate(delete))
       end
     end
 
     test "it creates a delete activity and deletes the original comment" do
       comment = insert(:comment)
-      comment = Events.get_comment_from_url_with_preload!(comment.url)
-      assert is_nil(Events.get_comment_from_url(comment.url).deleted_at)
+      comment = Conversations.get_comment_from_url_with_preload!(comment.url)
+      assert is_nil(Conversations.get_comment_from_url(comment.url).deleted_at)
       {:ok, delete, _} = ActivityPub.delete(comment)
 
       assert delete.data["type"] == "Delete"
       assert delete.data["actor"] == comment.actor.url
       assert delete.data["object"] == comment.url
 
-      refute is_nil(Events.get_comment_from_url(comment.url).deleted_at)
+      refute is_nil(Conversations.get_comment_from_url(comment.url).deleted_at)
     end
   end
 
@@ -251,6 +253,290 @@ defmodule Mobilizon.Federation.ActivityPubTest do
       assert update.data["object"]["id"] == event.url
       assert update.data["object"]["type"] == "Event"
       assert update.data["object"]["startTime"] == DateTime.to_iso8601(@updated_start_time)
+    end
+  end
+
+  describe "create a todo list" do
+    @todo_list_title "My TODO-list"
+
+    test "it creates a todo list" do
+      with_mock Utils, [:passthrough], maybe_federate: fn _ -> :ok end do
+        actor = insert(:actor)
+        group = insert(:group)
+
+        {:ok, create_data, %TodoList{url: todo_list_url}} =
+          ActivityPub.create(:todo_list, %{title: @todo_list_title, actor_id: group.id}, true, %{
+            "actor" => actor.url
+          })
+
+        assert create_data.local
+        assert create_data.data["object"]["id"] == todo_list_url
+        assert create_data.data["object"]["type"] == "TodoList"
+        assert create_data.data["object"]["title"] == @todo_list_title
+        assert create_data.data["to"] == [group.url]
+        assert create_data.data["actor"] == actor.url
+
+        assert_called(Utils.maybe_federate(create_data))
+      end
+    end
+  end
+
+  describe "create a todo" do
+    @todo_title "Finish this thing"
+
+    test "it creates a todo" do
+      with_mock Utils, [:passthrough], maybe_federate: fn _ -> :ok end do
+        actor = insert(:actor)
+        todo_list = insert(:todo_list)
+
+        {:ok, create_data, %Todo{url: todo_url}} =
+          ActivityPub.create(
+            :todo,
+            %{title: @todo_title, todo_list_id: todo_list.id, creator_id: actor.id},
+            true,
+            %{"actor" => actor.url}
+          )
+
+        assert create_data.local
+        assert create_data.data["object"]["id"] == todo_url
+        assert create_data.data["object"]["type"] == "Todo"
+        assert create_data.data["object"]["name"] == @todo_title
+        assert create_data.data["to"] == [todo_list.actor.url]
+        assert create_data.data["actor"] == actor.url
+
+        assert_called(Utils.maybe_federate(create_data))
+      end
+    end
+  end
+
+  @resource_url "https://framasoft.org/fr/full"
+  @resource_title "my resource"
+  @updated_resource_title "my updated resource"
+  @folder_title "my folder"
+  describe "create resources" do
+    test "it creates a resource" do
+      with_mock Utils, [:passthrough], maybe_federate: fn _ -> :ok end do
+        actor = insert(:actor)
+        group = insert(:group)
+
+        {:ok, create_data, %Resource{url: url}} =
+          ActivityPub.create(
+            :resource,
+            %{
+              title: @resource_title,
+              creator_id: actor.id,
+              actor_id: group.id,
+              parent_id: nil,
+              resource_url: @resource_url,
+              type: :link
+            },
+            true
+          )
+
+        assert create_data.local
+        assert create_data.data["type"] == "Create"
+        assert create_data.data["object"]["id"] == url
+        assert create_data.data["object"]["type"] == "Document"
+        assert create_data.data["object"]["name"] == @resource_title
+
+        assert create_data.data["object"]["url"] == @resource_url
+
+        assert create_data.data["to"] == [group.url]
+        assert create_data.data["actor"] == actor.url
+        assert create_data.data["attributedTo"] == [actor.url]
+
+        assert_called(Utils.maybe_federate(create_data))
+      end
+    end
+
+    test "it creates a folder" do
+      with_mock Utils, [:passthrough], maybe_federate: fn _ -> :ok end do
+        actor = insert(:actor)
+        group = insert(:group)
+
+        {:ok, create_data, %Resource{url: url}} =
+          ActivityPub.create(
+            :resource,
+            %{
+              title: @folder_title,
+              creator_id: actor.id,
+              actor_id: group.id,
+              parent_id: nil,
+              type: :folder
+            },
+            true
+          )
+
+        assert create_data.local
+        assert create_data.data["type"] == "Create"
+        assert create_data.data["object"]["id"] == url
+        assert create_data.data["object"]["type"] == "ResourceCollection"
+        assert create_data.data["object"]["name"] == @folder_title
+        assert create_data.data["to"] == [group.url]
+        assert create_data.data["actor"] == actor.url
+        assert create_data.data["attributedTo"] == [actor.url]
+
+        assert_called(Utils.maybe_federate(create_data))
+      end
+    end
+
+    test "it creates a resource in a folder" do
+      with_mock Utils, [:passthrough], maybe_federate: fn _ -> :ok end do
+        actor = insert(:actor)
+        group = insert(:group)
+
+        %Resource{id: parent_id, url: parent_url} =
+          insert(:resource, type: :folder, resource_url: nil, actor: group)
+
+        {:ok, create_data, %Resource{url: url}} =
+          ActivityPub.create(
+            :resource,
+            %{
+              title: @resource_title,
+              creator_id: actor.id,
+              actor_id: group.id,
+              parent_id: parent_id,
+              resource_url: @resource_url,
+              type: :link
+            },
+            true
+          )
+
+        assert create_data.local
+        assert create_data.data["type"] == "Add"
+        assert create_data.data["target"] == parent_url
+        assert create_data.data["object"]["id"] == url
+        assert create_data.data["object"]["type"] == "Document"
+        assert create_data.data["object"]["name"] == @resource_title
+
+        assert create_data.data["object"]["url"] == @resource_url
+
+        assert create_data.data["to"] == [group.url]
+        assert create_data.data["actor"] == actor.url
+        assert create_data.data["attributedTo"] == [actor.url]
+
+        assert_called(Utils.maybe_federate(create_data))
+      end
+    end
+  end
+
+  describe "move resources" do
+    test "rename resource" do
+      with_mock Utils, [:passthrough], maybe_federate: fn _ -> :ok end do
+        actor = insert(:actor)
+        group = insert(:group)
+
+        %Resource{} =
+          resource =
+          insert(:resource,
+            resource_url: @resource_url,
+            actor: group,
+            creator: actor,
+            title: @resource_title
+          )
+
+        {:ok, update_data, %Resource{url: url}} =
+          ActivityPub.update(
+            :resource,
+            resource,
+            %{
+              title: @updated_resource_title
+            },
+            true
+          )
+
+        assert update_data.local
+        assert update_data.data["type"] == "Update"
+        assert update_data.data["object"]["id"] == url
+        assert update_data.data["object"]["type"] == "Document"
+        assert update_data.data["object"]["name"] == @updated_resource_title
+
+        assert update_data.data["object"]["url"] == @resource_url
+
+        assert update_data.data["to"] == [group.url]
+        assert update_data.data["actor"] == actor.url
+        assert update_data.data["attributedTo"] == [actor.url]
+
+        assert_called(Utils.maybe_federate(update_data))
+      end
+    end
+
+    test "move resource" do
+      with_mock Utils, [:passthrough], maybe_federate: fn _ -> :ok end do
+        actor = insert(:actor)
+        group = insert(:group)
+
+        %Resource{} =
+          resource =
+          insert(:resource,
+            resource_url: @resource_url,
+            actor: group,
+            creator: actor,
+            title: @resource_title
+          )
+
+        %Resource{id: parent_id, url: parent_url} =
+          insert(:resource, type: :folder, resource_url: nil, actor: group)
+
+        {:ok, update_data, %Resource{url: url}} =
+          ActivityPub.move(
+            :resource,
+            resource,
+            %{
+              parent_id: parent_id
+            },
+            true
+          )
+
+        assert update_data.local
+        assert update_data.data["type"] == "Move"
+        assert update_data.data["object"]["id"] == url
+        assert update_data.data["object"]["type"] == "Document"
+        assert update_data.data["object"]["name"] == @resource_title
+
+        assert update_data.data["object"]["url"] == @resource_url
+
+        assert update_data.data["to"] == [group.url]
+        assert update_data.data["actor"] == actor.url
+        assert update_data.data["origin"] == nil
+        assert update_data.data["target"] == parent_url
+
+        assert_called(Utils.maybe_federate(update_data))
+      end
+    end
+  end
+
+  describe "delete resources" do
+    test "delete resource" do
+      with_mock Utils, [:passthrough], maybe_federate: fn _ -> :ok end do
+        actor = insert(:actor)
+        group = insert(:group)
+
+        %Resource{} =
+          resource =
+          insert(:resource,
+            resource_url: @resource_url,
+            actor: group,
+            creator: actor,
+            title: @resource_title
+          )
+
+        {:ok, update_data, %Resource{url: url}} =
+          ActivityPub.delete(
+            resource,
+            true
+          )
+
+        assert update_data.local
+        assert update_data.data["type"] == "Delete"
+        assert update_data.data["object"] == url
+        assert update_data.data["to"] == [group.url]
+        # TODO : Add actor parameter to ActivityPub.delete/2
+        # assert update_data.data["actor"] == actor.url
+        # assert update_data.data["attributedTo"] == [actor.url]
+
+        assert_called(Utils.maybe_federate(update_data))
+      end
     end
   end
 end

@@ -5,7 +5,8 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.{Comment, Event, Participant}
+  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Share
   alias Mobilizon.Storage.Repo
 

@@ -46,9 +46,11 @@ config :exvcr,
 
 config :mobilizon, Mobilizon.Service.Geospatial, service: Mobilizon.Service.Geospatial.Mock
 
-config :mobilizon, Oban, queues: false, prune: :disabled
+config :mobilizon, Oban, queues: false, prune: :disabled, crontab: false
 
 config :mobilizon, Mobilizon.Web.Auth.Guardian, secret_key: "some secret"
+
+config :mobilizon, :activitypub, sign_object_fetches: false
 
 if System.get_env("DOCKER", "false") == "false" && File.exists?("./config/test.secret.exs") do
   import_config "test.secret.exs"

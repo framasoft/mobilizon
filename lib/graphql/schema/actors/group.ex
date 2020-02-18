@@ -5,10 +5,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
 
   use Absinthe.Schema.Notation
 
-  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
-
-  alias Mobilizon.Events
-  alias Mobilizon.GraphQL.Resolvers.{Group, Member}
+  alias Mobilizon.GraphQL.Resolvers.{Conversation, Group, Member, Resource, Todos}
   alias Mobilizon.GraphQL.Schema
 
   import_types(Schema.Actors.MemberType)
@@ -44,10 +41,15 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     field(:followingCount, :integer, description: "Number of actors following this actor")
 
     # This one should have a privacy setting
-    field(:organized_events, list_of(:event),
-      resolve: dataloader(Events),
-      description: "A list of the events this actor has organized"
-    )
+    field :organized_events, :paginated_event_list do
+      resolve(&Group.find_events_for_group/3)
+      description("A list of the events this actor has organized")
+    end
+
+    field :conversations, :paginated_conversation_list do
+      resolve(&Conversation.find_conversations_for_actor/3)
+      description("A list of the conversations for this group")
+    end
 
     field(:types, :group_type, description: "The type of group : Group, Community,…")
 
@@ -55,10 +57,22 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       description: "Whether the group is opened to all or has restricted access"
     )
 
-    field(:members, non_null(list_of(:member)),
-      resolve: &Member.find_members_for_group/3,
-      description: "List of group members"
-    )
+    field :members, :paginated_member_list do
+      resolve(&Member.find_members_for_group/3)
+      description("List of group members")
+    end
+
+    field :resources, :paginated_resource_list do
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
+      resolve(&Resource.find_resources_for_group/3)
+      description("A paginated list of the resources this group has")
+    end
+
+    field :todo_lists, :paginated_todo_list_list do
+      resolve(&Todos.find_todo_lists_for_group/3)
+      description("A paginated list of the todo lists this group has")
+    end
   end
 
   @desc """
@@ -80,9 +94,14 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     value(:open, description: "The actor is open to followings")
   end
 
+  object :paginated_group_list do
+    field(:elements, list_of(:group), description: "A list of groups")
+    field(:total, :integer, description: "The total number of elements in the list")
+  end
+
   object :group_queries do
     @desc "Get all groups"
-    field :groups, list_of(:group) do
+    field :groups, :paginated_group_list do
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
       resolve(&Group.list_groups/3)

@@ -1,21 +1,39 @@
-{"__schema":
-  {"types":[
-    {
-      "possibleTypes":[
-        {"name":"Person"},
-        {"name":"Group"}
-        ],
-        "name":"Actor",
-        "kind":"INTERFACE"
-    },
-    {
-      "possibleTypes":[
-        {"name":"Event"},
-        {"name":"Person"},
-        {"name":"Group"}
-      ],
-      "name":"SearchResult",
-      "kind":"UNION"}
-  ]
+{
+  "__schema": {
+    "types": [
+      {
+        "kind": "INTERFACE",
+        "name": "ActionLogObject",
+        "possibleTypes": [
+          {
+            "name": "Event"
+          },
+          {
+            "name": "Comment"
+          },
+          {
+            "name": "Report"
+          },
+          {
+            "name": "ReportNote"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "Actor",
+        "possibleTypes": [
+          {
+            "name": "Person"
+          },
+          {
+            "name": "Group"
+          },
+          {
+            "name": "Application"
+          }
+        ]
+      }
+    ]
   }
 }

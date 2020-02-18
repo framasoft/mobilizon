@@ -224,6 +224,19 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
     end
   end
 
+  @doc """
+  Returns the list of events this person is going to
+  """
+  def person_memberships(%Actor{id: actor_id}, _args, %{context: %{current_user: user}}) do
+    with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
+         participations <- Actors.list_members_for_actor(actor) do
+      {:ok, participations}
+    else
+      {:is_owned, nil} ->
+        {:error, "Actor id is not owned by authenticated user"}
+    end
+  end
+
   def proxify_pictures(%Actor{} = actor) do
     actor
     |> proxify_avatar

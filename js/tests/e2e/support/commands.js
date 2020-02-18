@@ -24,162 +24,131 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-const AUTH_ACCESS_TOKEN = 'auth-access-token';
-const AUTH_REFRESH_TOKEN = 'auth-refresh-token';
-const AUTH_USER_ID = 'auth-user-id';
-const AUTH_USER_EMAIL = 'auth-user-email';
-const AUTH_USER_ACTOR_ID = 'auth-user-actor-id';
-const AUTH_USER_ROLE = 'auth-user-role';
+const AUTH_ACCESS_TOKEN = "auth-access-token";
+const AUTH_REFRESH_TOKEN = "auth-refresh-token";
+const AUTH_USER_ID = "auth-user-id";
+const AUTH_USER_EMAIL = "auth-user-email";
+const AUTH_USER_ACTOR_ID = "auth-user-actor-id";
+const AUTH_USER_ROLE = "auth-user-role";
 
-
-let LOCAL_STORAGE_MEMORY = {};
+const LOCAL_STORAGE_MEMORY = {};
 
 Cypress.Commands.add("saveLocalStorage", () => {
-    Object.keys(localStorage).forEach(key => {
-        LOCAL_STORAGE_MEMORY[key] = localStorage[key];
-    });
+  Object.keys(localStorage).forEach((key) => {
+    LOCAL_STORAGE_MEMORY[key] = localStorage[key];
+  });
 });
 
 Cypress.Commands.add("restoreLocalStorage", () => {
-    Object.keys(LOCAL_STORAGE_MEMORY).forEach(key => {
-        localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
-    });
+  Object.keys(LOCAL_STORAGE_MEMORY).forEach((key) => {
+    localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
+  });
 });
 
 Cypress.Commands.add("clearLocalStorage", () => {
-    Object.keys(LOCAL_STORAGE_MEMORY).forEach(key => {
-        localStorage.removeItem(key);
-    });
+  Object.keys(LOCAL_STORAGE_MEMORY).forEach((key) => {
+    localStorage.removeItem(key);
+  });
 });
 
 Cypress.Commands.add("loginUser", () => {
-    const loginMutation = `
+  console.log("Going to login an user");
+  const loginMutation = `
     mutation Login($email: String!, $password: String!) {
-  login(email: $email, password: $password) {
-    accessToken,
-    refreshToken,
-    user {
-      id,
-      email,
-      role
-    }
-  },
-}`;
+      login(email: $email, password: $password) {
+        accessToken,
+        refreshToken,
+        user {
+          id,
+          email,
+          role
+        }
+      },
+    }`;
 
-    const body = JSON.stringify({
-        operationName: 'Login',
-        query: loginMutation,
-        variables: { email: 'user@email.com', password: 'some password' }
-    });
+  const body = JSON.stringify({
+    operationName: "Login",
+    query: loginMutation,
+    variables: { email: "user@email.com", password: "some password" },
+  });
 
-   cy.request({
-       url: 'http://localhost:4000/api',
-       body: body,
-       method: 'POST',
-       headers: {
-           'Content-Type': 'application/json',
-       },
-   }).then((res) => {
-       console.log(res);
-       const obj = res.body.data.login;
-       console.log(obj);
+  cy.request({
+    url: "http://localhost:4000/api",
+    body,
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((res) => {
+    console.log("Reply from server when logging-in", res);
+    const obj = res.body.data.login;
+    console.log("Login data: ", obj);
 
-       localStorage.setItem(AUTH_USER_ID, `${obj.user.id}`);
-       localStorage.setItem(AUTH_USER_EMAIL, obj.user.email);
-       localStorage.setItem(AUTH_USER_ROLE, obj.user.role);
+    localStorage.setItem(AUTH_USER_ID, `${obj.user.id}`);
+    localStorage.setItem(AUTH_USER_EMAIL, obj.user.email);
+    localStorage.setItem(AUTH_USER_ROLE, obj.user.role);
 
-       localStorage.setItem(AUTH_USER_ACTOR_ID, `${obj.id}`);
-       localStorage.setItem(AUTH_ACCESS_TOKEN, obj.accessToken);
-       localStorage.setItem(AUTH_REFRESH_TOKEN, obj.refreshToken);
-   });
-    });
-
-Cypress.Commands.add('checkoutSession', async () => {
-    const response = await fetch('/sandbox', {
-        cache: 'no-store',
-        method: 'POST',
-    });
-
-    const sessionId = await response.text();
-    return Cypress.env('sessionId', sessionId);
+    localStorage.setItem(AUTH_USER_ACTOR_ID, `${obj.id}`);
+    localStorage.setItem(AUTH_ACCESS_TOKEN, obj.accessToken);
+    localStorage.setItem(AUTH_REFRESH_TOKEN, obj.refreshToken);
+  });
 });
 
-Cypress.Commands.add('dropSession', () =>
-  cy.waitForFetches().then(() =>
-    fetch('/sandbox', {
-      method: 'DELETE',
-      headers: { 'x-session-id': Cypress.env('sessionId') },
-    }),
-  ),
-);
+// const increaseFetches = () => {
+//   const count = Cypress.env('fetchCount') || 0;
+//   Cypress.env('fetchCount', count + 1);
+// };
 
+const decreaseFetches = () => {
+  const count = Cypress.env("fetchCount") || 0;
+  Cypress.env("fetchCount", count - 1);
+};
 
-
-const increaseFetches = () => {
-    const count = Cypress.env('fetchCount') || 0;
-    Cypress.env('fetchCount', count + 1);
+const buildTrackableFetchWithSessionId = (fetch) => (fetchUrl, fetchOptions) => {
+  const { headers } = fetchOptions;
+  const modifiedHeaders = {
+    "x-session-id": Cypress.env("sessionId"),
+    ...headers,
   };
-  
-  const decreaseFetches = () => {
-    const count = Cypress.env('fetchCount') || 0;
-    Cypress.env('fetchCount', count - 1);
-  };
-  
-  const buildTrackableFetchWithSessionId = fetch => (fetchUrl, fetchOptions) => {
-    const { headers } = fetchOptions;
-    const modifiedHeaders = Object.assign(
-      { 'x-session-id': Cypress.env('sessionId') },
-      headers,
-    );
-  
-    const modifiedOptions = Object.assign({}, fetchOptions, {
-      headers: modifiedHeaders,
-    });
-  
-    return fetch(fetchUrl, modifiedOptions)
-      .then(result => {
-        decreaseFetches();
-        return Promise.resolve(result);
-      })
-      .catch(result => {
-        decreaseFetches();
-        return Promise.reject(result);
-      });
-  };
-  
-  Cypress.on('window:before:load', win => {
-    cy.stub(win, 'fetch', buildTrackableFetchWithSessionId(fetch));
-  });
-  
-  Cypress.Commands.add('waitForFetches', () => {
-    if (Cypress.env('fetchCount') <= 0) {
-      return;
-    }
-  
-    cy.wait(100).then(() => cy.waitForFetches());
-  });
 
-  Cypress.Commands.add(
-    'iframeLoaded',
-    { prevSubject: 'element' },
-    ($iframe) => {
-      const contentWindow = $iframe.prop('contentWindow')
-      return new Promise(resolve => {
-        if (
-          contentWindow &&
-          contentWindow.document.readyState === 'complete'
-        ) {
-          resolve(contentWindow)
-        } else {
-          $iframe.on('load', () => {
-            resolve(contentWindow)
-          })
-        }
-      })
+  const modifiedOptions = { ...fetchOptions, headers: modifiedHeaders };
+
+  return fetch(fetchUrl, modifiedOptions)
+    .then((result) => {
+      decreaseFetches();
+      return Promise.resolve(result);
     })
-  
-  Cypress.Commands.add(
-    'getInDocument',
-    { prevSubject: 'document' },
-    (document, selector) => Cypress.$(selector, document)
-  )
+    .catch((result) => {
+      decreaseFetches();
+      return Promise.reject(result);
+    });
+};
+
+Cypress.on("window:before:load", (win) => {
+  cy.stub(win, "fetch", buildTrackableFetchWithSessionId(fetch));
+});
+
+Cypress.Commands.add("waitForFetches", () => {
+  if (Cypress.env("fetchCount") <= 0) {
+    return;
+  }
+
+  cy.wait(100).then(() => cy.waitForFetches());
+});
+
+Cypress.Commands.add("iframeLoaded", { prevSubject: "element" }, ($iframe) => {
+  const contentWindow = $iframe.prop("contentWindow");
+  return new Promise((resolve) => {
+    if (contentWindow && contentWindow.document.readyState === "complete") {
+      resolve(contentWindow);
+    } else {
+      $iframe.on("load", () => {
+        resolve(contentWindow);
+      });
+    }
+  });
+});
+
+Cypress.Commands.add("getInDocument", { prevSubject: "document" }, (document, selector) =>
+  Cypress.$(selector, document)
+);

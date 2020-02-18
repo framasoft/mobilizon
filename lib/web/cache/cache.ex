@@ -20,5 +20,8 @@ defmodule Mobilizon.Web.Cache do
   defdelegate get_local_actor_by_name(name), to: ActivityPub
   defdelegate get_public_event_by_uuid_with_preload(uuid), to: ActivityPub
   defdelegate get_comment_by_uuid_with_preload(uuid), to: ActivityPub
+  defdelegate get_resource_by_uuid_with_preload(uuid), to: ActivityPub
+  defdelegate get_todo_list_by_uuid_with_preload(uuid), to: ActivityPub
+  defdelegate get_todo_by_uuid_with_preload(uuid), to: ActivityPub
   defdelegate get_relay, to: ActivityPub
 end

@@ -1,50 +1,41 @@
 <template>
-  <div class="container root">
-    <h1>{{ $t('Create a new group') }}</h1>
+  <section class="section container">
+    <h1>{{ $t("Create a new group") }}</h1>
 
     <div>
       <b-field :label="$t('Group name')">
-        <b-input aria-required="true" required v-model="group.preferred_username"/>
+        <b-input aria-required="true" required v-model="group.preferredUsername" />
       </b-field>
 
       <b-field :label="$t('Group full name')">
-        <b-input aria-required="true" required v-model="group.name"/>
+        <b-input aria-required="true" required v-model="group.name" />
       </b-field>
 
       <b-field :label="$t('Description')">
-        <b-input aria-required="true" required v-model="group.description" type="textarea"/>
+        <b-input aria-required="true" required v-model="group.summary" type="textarea" />
       </b-field>
 
       <div>
         Avatar
-        <picture-upload v-model="avatarFile"></picture-upload>
+        <picture-upload v-model="avatarFile" />
       </div>
 
       <div>
         Banner
-        <picture-upload v-model="avatarFile"></picture-upload>
+        <picture-upload v-model="avatarFile" />
       </div>
 
-      <button class="button is-primary" @click="createGroup()">
-        {{ $t('Create my group') }}
-      </button>
+      <button class="button is-primary" @click="createGroup()">{{ $t("Create my group") }}</button>
     </div>
-  </div>
+  </section>
 </template>
 
-<style lang="scss" scoped>
-  .root {
-    width: 400px;
-    margin: auto;
-  }
-</style>
-
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { Group, IPerson } from '@/types/actor';
-import { CREATE_GROUP, CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
-import { RouteName } from '@/router';
-import PictureUpload from '@/components/PictureUpload.vue';
+import { Component, Vue } from "vue-property-decorator";
+import { Group, IPerson } from "@/types/actor";
+import { CREATE_GROUP, CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
+import PictureUpload from "@/components/PictureUpload.vue";
+import RouteName from "../../router/name";
 
 @Component({
   components: {
@@ -62,6 +53,7 @@ export default class CreateGroup extends Vue {
   group = new Group();
 
   avatarFile: File | null = null;
+
   bannerFile: File | null = null;
 
   async createGroup() {
@@ -74,10 +66,15 @@ export default class CreateGroup extends Vue {
         },
       });
 
-      await this.$router.push({ name: RouteName.GROUP, params: { identityName: this.group.preferredUsername } });
+      await this.$router.push({
+        name: RouteName.GROUP,
+        params: { identityName: this.group.preferredUsername },
+      });
 
       this.$notifier.success(
-        this.$t('Group {displayName} created', { displayName: this.group.displayName() }) as string,
+        this.$t("Group {displayName} created", {
+          displayName: this.group.displayName(),
+        }) as string
       );
     } catch (err) {
       this.handleError(err);
@@ -114,7 +111,12 @@ export default class CreateGroup extends Vue {
       creatorActorId: this.currentActor.id,
     };
 
-    return Object.assign({}, this.group, avatarObj, bannerObj, currentActor);
+    return {
+      ...this.group,
+      ...avatarObj,
+      ...bannerObj,
+      ...currentActor,
+    };
   }
 
   private handleError(err: any) {

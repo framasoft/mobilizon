@@ -1,5 +1,5 @@
 # source: http://localhost:4000/api
-# timestamp: Wed Mar 04 2020 10:26:53 GMT+0100 (GMT+01:00)
+# timestamp: Tue May 05 2020 17:26:14 GMT+0200 (heure d’été d’Europe centrale)
 
 schema {
   query: RootQueryType
@@ -311,9 +311,27 @@ type Config {
   name: String
   registrationsOpen: Boolean
   registrationsWhitelist: Boolean
+  resourceProviders: [ResourceProvider]
 
   """The instance's terms"""
   terms(locale: String = "en"): Terms
+}
+
+"""A conversation"""
+type Conversation {
+  actor: Actor
+
+  """The comments for the conversation"""
+  comments(limit: Int = 10, page: Int = 1): PaginatedCommentList
+  creator: Person
+
+  """Internal ID for this conversation"""
+  id: ID
+  insertedAt: DateTime
+  lastComment: Comment
+  slug: String
+  title: String
+  updatedAt: DateTime
 }
 
 type Dashboard {
@@ -411,7 +429,7 @@ type Event implements ActionLogObject {
   participantStats: ParticipantStats
 
   """The event's participants"""
-  participants(actorId: ID, limit: Int = 10, page: Int = 1, roles: String = ""): [Participant]
+  participants(actorId: ID, limit: Int = 10, page: Int = 1, roles: String = ""): PaginatedParticipantList
 
   """Phone address for the event"""
   phoneAddress: String
@@ -511,6 +529,11 @@ type EventOptions {
   """The policy on public comment moderation under the event"""
   commentModeration: EventCommentModeration
 
+  """
+  Whether to show or hide the person organizer when event is organized by a group
+  """
+  hideOrganizerWhenGroupEvent: Boolean
+
   """The maximum attendee capacity for this event"""
   maximumAttendeeCapacity: Int
 
@@ -550,6 +573,11 @@ input EventOptionsInput {
 
   """The policy on public comment moderation under the event"""
   commentModeration: EventCommentModeration
+
+  """
+  Whether to show or hide the person organizer when event is organized by a group
+  """
+  hideOrganizerWhenGroupEvent: Boolean
 
   """The maximum attendee capacity for this event"""
   maximumAttendeeCapacity: Int
@@ -686,6 +714,9 @@ type Group implements Actor {
   """The actor's banner picture"""
   banner: Picture
 
+  """A list of the conversations for this group"""
+  conversations: PaginatedConversationList
+
   """The actor's domain if (null if it's this instance)"""
   domain: String
 
@@ -711,7 +742,7 @@ type Group implements Actor {
   manuallyApprovesFollowers: Boolean
 
   """List of group members"""
-  members: [Member]!
+  members: PaginatedMemberList
 
   """The actor's displayed name"""
   name: String
@@ -720,16 +751,22 @@ type Group implements Actor {
   openness: Openness
 
   """A list of the events this actor has organized"""
-  organizedEvents: [Event]
+  organizedEvents: PaginatedEventList
 
   """The actor's preferred username"""
   preferredUsername: String
+
+  """A paginated list of the resources this group has"""
+  resources(limit: Int = 10, page: Int = 1): PaginatedResourceList
 
   """The actor's summary"""
   summary: String
 
   """If the actor is suspended"""
   suspended: Boolean
+
+  """A paginated list of the todo lists this group has"""
+  todoLists: PaginatedTodoListList
 
   """The type of Actor (Person, Group,…)"""
   type: ActorType
@@ -798,12 +835,32 @@ type Member {
   """Which profile is member of"""
   actor: Person
 
+  """The member's ID"""
+  id: ID
+
   """Of which the profile is member"""
   parent: Group
 
   """The role of this membership"""
-  role: Int
+  role: MemberRoleEnum
 }
+
+enum MemberRoleEnum {
+  ADMINISTRATOR
+  CREATOR
+  INVITED
+  MEMBER
+  MODERATOR
+  NOT_APPROVED
+  REJECTED
+}
+
+"""
+The `Naive DateTime` scalar type represents a naive date and time without
+timezone. The DateTime appears in a JSON response as an ISO8601 formatted
+string.
+"""
+scalar NaiveDateTime
 
 """
 Describes how an actor is opened to follows
@@ -820,11 +877,83 @@ enum Openness {
   OPEN
 }
 
+type PaginatedCommentList {
+  """A list of comments"""
+  elements: [Comment]
+
+  """The total number of comments in the list"""
+  total: Int
+}
+
+type PaginatedConversationList {
+  """A list of conversation"""
+  elements: [Conversation]
+
+  """The total number of comments in the list"""
+  total: Int
+}
+
+type PaginatedEventList {
+  """A list of events"""
+  elements: [Event]
+
+  """The total number of events in the list"""
+  total: Int
+}
+
 type PaginatedFollowerList {
   """A list of followers"""
   elements: [Follower]
 
   """The total number of elements in the list"""
+  total: Int
+}
+
+type PaginatedGroupList {
+  """A list of groups"""
+  elements: [Group]
+
+  """The total number of elements in the list"""
+  total: Int
+}
+
+type PaginatedMemberList {
+  """A list of members"""
+  elements: [Member]
+
+  """The total number of elements in the list"""
+  total: Int
+}
+
+type PaginatedParticipantList {
+  """A list of participants"""
+  elements: [Participant]
+
+  """The total number of participants in the list"""
+  total: Int
+}
+
+type PaginatedResourceList {
+  """A list of resources"""
+  elements: [Resource]
+
+  """The total number of resources in the list"""
+  total: Int
+}
+
+type PaginatedTodoList {
+  """A list of todos"""
+  elements: [Todo]
+
+  """The total number of todos in the list"""
+  total: Int
+}
+
+type PaginatedTodoListList {
+  """A list of todo lists"""
+  elements: [TodoList]
+
+  """The total number of todo lists in the list"""
   total: Int
 }
 
@@ -933,6 +1062,9 @@ type Person implements Actor {
 
   """The list of groups this person is member of"""
   memberOf: [Member]
+
+  """The list of group this person is member of"""
+  memberships: PaginatedMemberList
 
   """The actor's displayed name"""
   name: String
@@ -1087,97 +1219,83 @@ enum ReportStatus {
   RESOLVED
 }
 
+"""A resource"""
+type Resource {
+  """The resource's owner"""
+  actor: Actor
+
+  """Children resources in folder"""
+  children: PaginatedResourceList
+
+  """The resource's creator"""
+  creator: Actor
+
+  """The resource's ID"""
+  id: ID
+
+  """The resource's creation date"""
+  insertedAt: NaiveDateTime
+
+  """The resource's metadata"""
+  metadata: ResourceMetadata
+
+  """The resource's parent"""
+  parent: Resource
+
+  """The resource's path"""
+  path: String
+
+  """The resource's URL"""
+  resourceUrl: String
+
+  """The resource's summary"""
+  summary: String
+
+  """The resource's title"""
+  title: String
+
+  """The resource's type (if it's a folder)"""
+  type: String
+
+  """The resource's last update date"""
+  updatedAt: NaiveDateTime
+
+  """The resource's URL"""
+  url: String
+}
+
+type ResourceMetadata {
+  authorName: String
+  authorUrl: String
+
+  """The resource's metadata description"""
+  description: String
+  faviconUrl: String
+  height: Int
+  html: String
+
+  """The resource's metadata image"""
+  imageRemoteUrl: String
+  providerName: String
+  providerUrl: String
+
+  """The resource's metadata title"""
+  title: String
+
+  """The type of the resource"""
+  type: String
+  width: Int
+}
+
+type ResourceProvider {
+  endpoint: String
+  software: String
+  type: String
+}
+
 type RootMutationType {
-  """Send a link through email to reset user password"""
-  sendResetPassword(email: String!, locale: String): String
-
-  """Update an event"""
-  updateEvent(
-    beginsOn: DateTime
-    category: String
-    description: String
-    draft: Boolean
-    endsOn: DateTime
-    eventId: ID!
-    joinOptions: EventJoinOptions = FREE
-    onlineAddress: String
-    options: EventOptionsInput
-    organizerActorId: ID
-    phoneAddress: String
-    physicalAddress: AddressInput
-
-    """
-    The picture for the event, either as an object or directly the ID of an existing Picture
-    """
-    picture: PictureInput
-    status: EventStatus
-
-    """The list of tags associated to the event"""
-    tags: [String]
-    title: String
-    visibility: EventVisibility = PUBLIC
-  ): Event
-  validateEmail(token: String!): User
-
-  """Change default actor for user"""
-  changeDefaultActor(preferredUsername: String!): User
-
-  """Leave an event"""
-  leaveEvent(actorId: ID!, eventId: ID!, token: String): DeletedParticipant
-  deleteAccount(password: String!): DeletedObject
-
-  """Delete a group"""
-  deleteGroup(actorId: ID!, groupId: ID!): DeletedObject
-
   """Create an user"""
   createUser(email: String!, locale: String, password: String!): User
-
-  """Add a relay subscription"""
-  addRelay(address: String!): Follower
-
-  """Delete an identity"""
-  deletePerson(id: ID!): Person
-
-  """Accept a relay subscription"""
-  acceptRelay(address: String!): Follower
-
-  """Refresh a token"""
-  refreshToken(refreshToken: String!): RefreshedToken
-
-  """Update an identity"""
-  updatePerson(
-    """
-    The avatar for the profile, either as an object or directly the ID of an existing Picture
-    """
-    avatar: PictureInput
-
-    """
-    The banner for the profile, either as an object or directly the ID of an existing Picture
-    """
-    banner: PictureInput
-    id: ID!
-
-    """The displayed name for this profile"""
-    name: String
-
-    """The summary for this profile"""
-    summary: String
-  ): Person
-
-  """Create a report"""
-  createReport(commentsIds: [ID] = [""], content: String, eventId: ID, forward: Boolean = false, reportedId: ID!, reporterId: ID!): Report
-
-  """Delete a feed token"""
-  deleteFeedToken(token: String!): DeletedFeedToken
-
-  """Reset user password"""
-  resetPassword(locale: String = "en", password: String!, token: String!): Login
-
-  """Login an user"""
-  login(email: String!, password: String!): Login
-
-  """Leave an event"""
-  leaveGroup(actorId: ID!, groupId: ID!): DeletedMember
 
   """Register a first profile on registration"""
   registerPerson(
@@ -1202,23 +1320,224 @@ type RootMutationType {
     summary: String = ""
   ): Person
 
-  """Delete a relay subscription"""
-  removeRelay(address: String!): Follower
+  """Join a group"""
+  joinGroup(actorId: ID!, groupId: ID!): Member
+
+  """Create a Feed Token"""
+  createFeedToken(actorId: ID): FeedToken
+
+  """Get a preview for a resource link"""
+  previewResourceLink(resourceUrl: String!): ResourceMetadata
+
+  """Create a note on a report"""
+  createReportNote(content: String, moderatorId: ID!, reportId: ID!): ReportNote
+
+  """Create a conversation"""
+  createConversation(actorId: ID!, creatorId: ID!, text: String!, title: String!): Conversation
+  inviteMember(actorId: ID!, groupId: ID!, targetActorUsername: String!): Member
+
+  """Leave an event"""
+  leaveEvent(actorId: ID!, eventId: ID!, token: String): DeletedParticipant
+
+  """Login an user"""
+  login(email: String!, password: String!): Login
+
+  """Change default actor for user"""
+  changeDefaultActor(preferredUsername: String!): User
+
+  """Join an event"""
+  joinEvent(actorId: ID!, email: String, eventId: ID!, message: String): Participant
+
+  """Create a todo"""
+  createTodo(assignedToId: ID, dueDate: DateTime, status: Boolean, title: String!, todoListId: ID!): Todo
 
   """Change an user password"""
   changePassword(newPassword: String!, oldPassword: String!): User
 
+  """Create a new person for user"""
+  createPerson(
+    """
+    The avatar for the profile, either as an object or directly the ID of an existing Picture
+    """
+    avatar: PictureInput
+
+    """
+    The banner for the profile, either as an object or directly the ID of an existing Picture
+    """
+    banner: PictureInput
+
+    """The displayed name for the new profile"""
+    name: String = ""
+    preferredUsername: String!
+
+    """The summary for the new profile"""
+    summary: String = ""
+  ): Person
+  replyToConversation(conversationId: ID!, text: String!): Conversation
+
   """Resend registration confirmation token"""
   resendConfirmationEmail(email: String!, locale: String): String
 
-  """Confirm a participation"""
-  confirmParticipation(confirmationToken: String!): Participant
+  """Create a todo list"""
+  createTodoList(groupId: ID!, title: String!): TodoList
 
   """Delete an event"""
   deleteEvent(actorId: ID!, eventId: ID!): DeletedObject
 
+  """Change an user email"""
+  changeEmail(email: String!, password: String!): User
+  updateConversation(conversationId: ID!, title: String!): Conversation
+
+  """Create an event"""
+  createEvent(
+    attributedToId: ID
+    beginsOn: DateTime!
+    category: String = "meeting"
+    description: String!
+    draft: Boolean = false
+    endsOn: DateTime
+    joinOptions: EventJoinOptions = FREE
+    onlineAddress: String
+    options: EventOptionsInput
+    organizerActorId: ID!
+    phoneAddress: String
+    physicalAddress: AddressInput
+
+    """
+    The picture for the event, either as an object or directly the ID of an existing Picture
+    """
+    picture: PictureInput
+    publishAt: DateTime
+    status: EventStatus
+
+    """The list of tags associated to the event"""
+    tags: [String] = [""]
+    title: String!
+    visibility: EventVisibility = PUBLIC
+  ): Event
+
+  """Delete a feed token"""
+  deleteFeedToken(token: String!): DeletedFeedToken
+
+  """Delete a resource"""
+  deleteResource(id: ID!): DeletedObject
+
+  """Reset user password"""
+  resetPassword(locale: String = "en", password: String!, token: String!): Login
+  deleteReportNote(moderatorId: ID!, noteId: ID!): DeletedObject
+
+  """Delete an identity"""
+  deletePerson(id: ID!): Person
+
+  """Upload a picture"""
+  uploadPicture(actorId: ID!, alt: String, file: Upload!, name: String!): Picture
+
+  """Refresh a token"""
+  refreshToken(refreshToken: String!): RefreshedToken
+
+  """Delete a group"""
+  deleteGroup(actorId: ID!, groupId: ID!): DeletedObject
+
+  """Update a resource"""
+  updateResource(actorId: ID, id: ID!, parentId: ID, path: String, resourceUrl: String, summary: String, title: String): Resource
+
+  """Create a comment"""
+  createComment(actorId: ID!, eventId: ID, inReplyToCommentId: ID, text: String!): Comment
+
+  """Create a resource"""
+  createResource(actorId: ID!, parentId: ID, path: String! = "/", resourceUrl: String, summary: String, title: String, type: String): Resource
+
   """Update a report"""
   updateReportStatus(moderatorId: ID!, reportId: ID!, status: ReportStatus!): Report
+
+  """Update an event"""
+  updateEvent(
+    attributedToId: ID
+    beginsOn: DateTime
+    category: String
+    description: String
+    draft: Boolean
+    endsOn: DateTime
+    eventId: ID!
+    joinOptions: EventJoinOptions = FREE
+    onlineAddress: String
+    options: EventOptionsInput
+    organizerActorId: ID
+    phoneAddress: String
+    physicalAddress: AddressInput
+
+    """
+    The picture for the event, either as an object or directly the ID of an existing Picture
+    """
+    picture: PictureInput
+    status: EventStatus
+
+    """The list of tags associated to the event"""
+    tags: [String]
+    title: String
+    visibility: EventVisibility = PUBLIC
+  ): Event
+
+  """Confirm a participation"""
+  confirmParticipation(confirmationToken: String!): Participant
+  deleteConversation(conversationId: ID!): Conversation
+
+  """Reject a relay subscription"""
+  rejectRelay(address: String!): Follower
+
+  """Accept a participation"""
+  updateParticipation(id: ID!, moderatorActorId: ID!, role: ParticipantRoleEnum!): Participant
+
+  """Delete a todo"""
+  deleteTodo(id: ID!): DeletedObject
+  deleteComment(actorId: ID!, commentId: ID!): Comment
+
+  """Validate an user email"""
+  validateEmail(token: String!): User
+
+  """Send a link through email to reset user password"""
+  sendResetPassword(email: String!, locale: String): String
+
+  """Update a comment"""
+  updateComment(commentId: ID!, text: String!): Comment
+
+  """Accept a relay subscription"""
+  acceptRelay(address: String!): Follower
+
+  """Create a report"""
+  createReport(commentsIds: [ID] = [""], content: String, eventId: ID, forward: Boolean = false, reportedId: ID!, reporterId: ID!): Report
+
+  """Delete a relay subscription"""
+  removeRelay(address: String!): Follower
+
+  """Update an identity"""
+  updatePerson(
+    """
+    The avatar for the profile, either as an object or directly the ID of an existing Picture
+    """
+    avatar: PictureInput
+
+    """
+    The banner for the profile, either as an object or directly the ID of an existing Picture
+    """
+    banner: PictureInput
+    id: ID!
+
+    """The displayed name for this profile"""
+    name: String
+
+    """The summary for this profile"""
+    summary: String
+  ): Person
+
+  """Validate an user after registration"""
+  validateUser(token: String!): Login
+
+  """Leave an event"""
+  leaveGroup(actorId: ID!, groupId: ID!): DeletedMember
+
+  """Delete an account"""
+  deleteAccount(password: String!): DeletedObject
 
   """Create a group"""
   createGroup(
@@ -1245,83 +1564,12 @@ type RootMutationType {
     summary: String = ""
   ): Group
 
-  """Validate an user after registration"""
-  validateUser(token: String!): Login
-
-  """Join an event"""
-  joinEvent(actorId: ID!, email: String, eventId: ID!, message: String): Participant
-  deleteReportNote(moderatorId: ID!, noteId: ID!): DeletedObject
-  deleteComment(actorId: ID!, commentId: ID!): Comment
-
-  """Reject a relay subscription"""
-  rejectRelay(address: String!): Follower
-
-  """Create a comment"""
-  createComment(actorId: ID!, eventId: ID, inReplyToCommentId: ID, text: String!): Comment
-
-  """Create a note on a report"""
-  createReportNote(content: String, moderatorId: ID!, reportId: ID!): ReportNote
-
-  """Accept a participation"""
-  updateParticipation(id: ID!, moderatorActorId: ID!, role: ParticipantRoleEnum!): Participant
-
-  """Create a Feed Token"""
-  createFeedToken(actorId: ID): FeedToken
-
-  """Join a group"""
-  joinGroup(actorId: ID!, groupId: ID!): Member
-
-  """Create a new person for user"""
-  createPerson(
-    """
-    The avatar for the profile, either as an object or directly the ID of an existing Picture
-    """
-    avatar: PictureInput
-
-    """
-    The banner for the profile, either as an object or directly the ID of an existing Picture
-    """
-    banner: PictureInput
-
-    """The displayed name for the new profile"""
-    name: String = ""
-    preferredUsername: String!
-
-    """The summary for the new profile"""
-    summary: String = ""
-  ): Person
-
-  """Upload a picture"""
-  uploadPicture(actorId: ID!, alt: String, file: Upload!, name: String!): Picture
-
-  """Create an event"""
-  createEvent(
-    beginsOn: DateTime!
-    category: String = "meeting"
-    description: String!
-    draft: Boolean = false
-    endsOn: DateTime
-    joinOptions: EventJoinOptions = FREE
-    onlineAddress: String
-    options: EventOptionsInput
-    organizerActorId: ID!
-    phoneAddress: String
-    physicalAddress: AddressInput
-
-    """
-    The picture for the event, either as an object or directly the ID of an existing Picture
-    """
-    picture: PictureInput
-    publishAt: DateTime
-    status: EventStatus
-
-    """The list of tags associated to the event"""
-    tags: [String] = [""]
-    title: String!
-    visibility: EventVisibility = PUBLIC
-  ): Event
+  """Add a relay subscription"""
+  addRelay(address: String!): Follower
   saveAdminSettings(instanceDescription: String, instanceName: String, instanceTerms: String, instanceTermsType: InstanceTermsType, instanceTermsUrl: String, registrationsOpen: Boolean): AdminSettings
-  changeEmail(email: String!, password: String!): User
+
+  """Update a todo"""
+  updateTodo(assignedToId: ID, dueDate: DateTime, id: ID!, status: Boolean, title: String, todoListId: ID): Todo
 }
 
 """
@@ -1335,6 +1583,9 @@ type RootQueryType {
 
   """Get the instance config"""
   config: Config
+
+  """Get a conversation"""
+  conversation(id: ID!): Conversation
   dashboard: Dashboard
 
   """Get an event by uuid"""
@@ -1350,7 +1601,7 @@ type RootQueryType {
   group(preferredUsername: String!): Group
 
   """Get all groups"""
-  groups(limit: Int = 10, page: Int = 1): [Group]
+  groups(limit: Int = 10, page: Int = 1): PaginatedGroupList
 
   """Get the persons for an user"""
   identities: [Person]
@@ -1375,6 +1626,9 @@ type RootQueryType {
   """Get all reports"""
   reports(limit: Int = 10, page: Int = 1, status: ReportStatus = OPEN): [Report]
 
+  """Get a resource"""
+  resource(id: ID, path: String, username: String): Resource
+
   """Reverse geocode coordinates"""
   reverseGeocode(latitude: Float!, locale: String = "en", longitude: Float!, zoom: Int = 15): [Address]
 
@@ -1395,6 +1649,12 @@ type RootQueryType {
 
   """Get replies for thread"""
   thread(id: ID): [Comment]
+
+  """Get a todo"""
+  todo(id: ID!): Todo
+
+  """Get a todo list"""
+  todoList(id: ID!): TodoList
 
   """Get an user"""
   user(id: ID!): User
@@ -1444,6 +1704,45 @@ type Tiles {
   endpoint: String
 }
 
+"""A todo"""
+type Todo {
+  """The todos's assigned person"""
+  assignedTo: Actor
+
+  """The todo's creator"""
+  creator: Actor
+
+  """The todo's due date"""
+  dueDate: DateTime
+
+  """The todo's ID"""
+  id: ID
+
+  """The todo's status"""
+  status: Boolean
+
+  """The todo's title"""
+  title: String
+
+  """The todo list this todo is attached to"""
+  todoList: TodoList
+}
+
+"""A todo list"""
+type TodoList {
+  """The actor that owns this todo list"""
+  actor: Actor
+
+  """The todo list's ID"""
+  id: ID
+
+  """The todo list's title"""
+  title: String
+
+  """The todo-list's todos"""
+  todos: PaginatedTodoList
+}
+
 """
 Represents an uploaded file.
 
@@ -1478,6 +1777,9 @@ type User {
 
   """The user's locale"""
   locale: String
+
+  """The list of memberships for this user"""
+  memberships(limit: Int = 10, page: Int = 1): PaginatedMemberList
 
   """The list of participations this user has"""
   participations(afterDatetime: DateTime, beforeDatetime: DateTime, limit: Int = 10, page: Int = 1): [Participant]

@@ -8,8 +8,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   alias Mobilizon.{Actors, Config, Events, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Crypto
-  alias Mobilizon.Storage.Repo
-  alias Mobilizon.Users.User
+  alias Mobilizon.Storage.{Page, Repo}
+  alias Mobilizon.Users.{Setting, User}
 
   alias Mobilizon.Web.{Auth, Email}
 
@@ -245,7 +245,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
         %{context: %{current_user: %User{id: logged_user_id}}}
       ) do
     with true <- user_id == logged_user_id,
-         participations <-
+         %Page{} = page <-
            Events.list_participations_for_user(
              user_id,
              Map.get(args, :after_datetime),
@@ -253,7 +253,26 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
              Map.get(args, :page),
              Map.get(args, :limit)
            ) do
-      {:ok, participations}
+      {:ok, page}
+    end
+  end
+
+  @doc """
+  Returns the list of groups this user is a member is a member of
+  """
+  def user_memberships(
+        %User{id: user_id},
+        %{page: page, limit: limit} = _args,
+        %{context: %{current_user: %User{id: logged_user_id}}}
+      ) do
+    with true <- user_id == logged_user_id,
+         memberships <-
+           Actors.list_memberships_for_user(
+             user_id,
+             page,
+             limit
+           ) do
+      {:ok, memberships}
     end
   end
 
@@ -378,5 +397,43 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
   def delete_account(_parent, _args, _resolution) do
     {:error, "You need to be logged-in to delete your account"}
+  end
+
+  @spec user_settings(User.t(), map(), map()) :: {:ok, list(Setting.t())} | {:error, String.t()}
+  def user_settings(%User{id: user_id} = user, _args, %{
+        context: %{current_user: %User{id: logged_user_id}}
+      }) do
+    with {:same_user, true} <- {:same_user, user_id == logged_user_id},
+         {:setting, settings} <- {:setting, Users.get_setting(user)} do
+      {:ok, settings}
+    else
+      {:same_user, _} ->
+        {:error, "User requested is not logged-in"}
+    end
+  end
+
+  @spec set_user_setting(map(), map(), map()) :: {:ok, Setting.t()} | {:error, any()}
+  def set_user_setting(_parent, attrs, %{
+        context: %{current_user: %User{id: logged_user_id}}
+      }) do
+    attrs = Map.put(attrs, :user_id, logged_user_id)
+
+    res =
+      case Users.get_setting(logged_user_id) do
+        nil ->
+          Users.create_setting(attrs)
+
+        %Setting{} = setting ->
+          Users.update_setting(setting, attrs)
+      end
+
+    case res do
+      {:ok, %Setting{} = setting} ->
+        {:ok, setting}
+
+      {:error, changeset} ->
+        Logger.debug(inspect(changeset))
+        {:error, "Error while saving user setting"}
+    end
   end
 end

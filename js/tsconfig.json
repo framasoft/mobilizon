@@ -2,36 +2,22 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "resolveJsonModule": true,
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "esModuleInterop": true,
-    "noImplicitAny": false,
     "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
     "sourceMap": true,
-    "skipLibCheck": true,
     "baseUrl": ".",
-    "typeRoots": [ "node_modules/@types", "src/typings" ],
-    "types": [
-      "webpack-env",
-      "mocha",
-      "chai",
-      "leaflet"
-    ],
+    "types": ["webpack-env", "mocha", "chai"],
+    "typeRoots": ["./@types", "./node_modules/@types"],
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["src/*"]
     },
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable",
-      "scripthost"
-    ]
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
   },
   "include": [
     "src/**/*.ts",
@@ -40,7 +26,5 @@
     "tests/**/*.ts",
     "tests/**/*.tsx"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

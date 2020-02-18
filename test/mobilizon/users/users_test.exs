@@ -2,7 +2,7 @@ defmodule Mobilizon.UsersTest do
   use Mobilizon.DataCase
 
   alias Mobilizon.Users
-  alias Mobilizon.Users.User
+  alias Mobilizon.Users.{Setting, User}
   import Mobilizon.Factory
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
@@ -99,6 +99,62 @@ defmodule Mobilizon.UsersTest do
       assert {:error, :user_not_found} = Users.get_user_by_email(@email, false)
       {:ok, %User{id: id}} = Users.get_user_by_email(@email, true)
       assert id == user.id
+    end
+  end
+
+  describe "user_settings" do
+    @valid_attrs %{timezone: "Europe/Paris", notification_each_week: true}
+    @update_attrs %{timezone: "Atlantic/Cape_Verde", notification_each_week: false}
+    @invalid_attrs %{timezone: nil, notification_each_week: nil}
+
+    def setting_fixture(attrs \\ %{}) do
+      {:ok, setting} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Users.create_setting()
+
+      setting
+    end
+
+    test "get_setting!/1 returns the setting with given id" do
+      %User{id: user_id} = insert(:user)
+      setting = setting_fixture(user_id: user_id)
+      assert Users.get_setting!(setting.user_id) == setting
+    end
+
+    test "create_setting/1 with valid data creates a setting" do
+      %User{id: user_id} = insert(:user)
+
+      assert {:ok, %Setting{} = setting} =
+               Users.create_setting(Map.put(@valid_attrs, :user_id, user_id))
+
+      assert setting.timezone == "Europe/Paris"
+      assert setting.notification_each_week == true
+    end
+
+    test "create_setting/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Users.create_setting(@invalid_attrs)
+    end
+
+    test "update_setting/2 with valid data updates the setting" do
+      %User{id: user_id} = insert(:user)
+      setting = setting_fixture(user_id: user_id)
+      assert {:ok, %Setting{} = setting} = Users.update_setting(setting, @update_attrs)
+      assert setting.timezone == "Atlantic/Cape_Verde"
+      assert setting.notification_each_week == false
+    end
+
+    test "delete_setting/1 deletes the setting" do
+      %User{id: user_id} = insert(:user)
+      setting = setting_fixture(user_id: user_id)
+      assert {:ok, %Setting{}} = Users.delete_setting(setting)
+      assert_raise Ecto.NoResultsError, fn -> Users.get_setting!(setting.user_id) end
+    end
+
+    test "change_setting/1 returns a setting changeset" do
+      %User{id: user_id} = insert(:user)
+      setting = setting_fixture(user_id: user_id)
+      assert %Ecto.Changeset{} = Users.change_setting(setting)
     end
   end
 end

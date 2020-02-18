@@ -3,25 +3,30 @@
     <div class="columns is-mobile is-centered">
       <div class="column is-half-desktop">
         <h1 class="title">
-          {{ $t('Password reset') }}
+          {{ $t("Password reset") }}
         </h1>
-        <b-message 
-        title="Error" type="is-danger" v-for="error in errors" :key="error" @close="removeError(error)">
+        <b-message
+          title="Error"
+          type="is-danger"
+          v-for="error in errors"
+          :key="error"
+          @close="removeError(error)"
+        >
           {{ error }}
         </b-message>
         <form @submit="sendResetPasswordTokenAction" v-if="!validationSent">
           <b-field label="Email">
-            <b-input aria-required="true" required type="email" v-model="credentials.email"/>
+            <b-input aria-required="true" required type="email" v-model="credentials.email" />
           </b-field>
           <p class="control has-text-centered">
-              <b-button type="is-primary" native-type="submit">
-              {{ $t('Send me an email to reset my password') }}
+            <b-button type="is-primary" native-type="submit">
+              {{ $t("Send me an email to reset my password") }}
             </b-button>
           </p>
         </form>
         <div v-else>
           <b-message type="is-success" :closable="false" title="Success">
-            {{ $t('We just sent an email to {email}', {email: credentials.email}) }}
+            {{ $t("We just sent an email to {email}", { email: credentials.email }) }}
           </b-message>
           <b-message type="is-info">
             {{ $t("Please check your spam folder if you didn't receive the email.") }}
@@ -33,23 +38,26 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { validateEmailField, validateRequiredField } from '@/utils/validators';
-import { SEND_RESET_PASSWORD } from '@/graphql/auth';
+import { Component, Prop, Vue } from "vue-property-decorator";
+import { validateEmailField, validateRequiredField } from "../../utils/validators";
+import { SEND_RESET_PASSWORD } from "../../graphql/auth";
 
 @Component
 export default class SendPasswordReset extends Vue {
-  @Prop({ type: String, required: false, default: '' }) email!: string;
+  @Prop({ type: String, required: false, default: "" }) email!: string;
 
   credentials = {
-    email: '',
+    email: "",
   } as { email: string };
-  validationSent: boolean = false;
+
+  validationSent = false;
+
   errors: string[] = [];
+
   state = {
     email: {
       status: null,
-      msg: '',
+      msg: "",
     } as { status: boolean | null; msg: string },
   };
 
@@ -66,7 +74,7 @@ export default class SendPasswordReset extends Vue {
     this.errors.splice(this.errors.indexOf(message));
   }
 
-  async sendResetPasswordTokenAction(e) {
+  async sendResetPasswordTokenAction(e: Event) {
     e.preventDefault();
 
     try {
@@ -80,7 +88,7 @@ export default class SendPasswordReset extends Vue {
       this.validationSent = true;
     } catch (err) {
       console.error(err);
-      err.graphQLErrors.forEach(({ message }) => {
+      err.graphQLErrors.forEach(({ message }: { message: string }) => {
         if (this.errors.indexOf(message) < 0) {
           this.errors.push(message);
         }
@@ -92,7 +100,7 @@ export default class SendPasswordReset extends Vue {
     this.state = {
       email: {
         status: null,
-        msg: '',
+        msg: "",
       },
     };
   }
@@ -100,7 +108,7 @@ export default class SendPasswordReset extends Vue {
 </script>
 
 <style lang="scss" scoped>
-  .container .columns {
-    margin: 1rem auto 3rem;
-  }
+.container .columns {
+  margin: 1rem auto 3rem;
+}
 </style>

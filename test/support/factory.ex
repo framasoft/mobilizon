@@ -22,6 +22,16 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  def settings_factory do
+    %Mobilizon.Users.Setting{
+      timezone: nil,
+      notification_on_day: false,
+      notification_each_week: false,
+      notification_before_event: false,
+      user_id: nil
+    }
+  end
+
   def actor_factory do
     preferred_username = sequence("thomas")
 
@@ -39,16 +49,28 @@ defmodule Mobilizon.Factory do
       following_url: Actor.build_url(preferred_username, :following),
       inbox_url: Actor.build_url(preferred_username, :inbox),
       outbox_url: Actor.build_url(preferred_username, :outbox),
+      shared_inbox_url: "#{Endpoint.url()}/inbox",
       last_refreshed_at: DateTime.utc_now(),
       user: build(:user)
     }
   end
 
   def group_factory do
+    preferred_username = sequence("myGroup")
+
     struct!(
       actor_factory(),
       %{
-        type: :Group
+        preferred_username: preferred_username,
+        type: :Group,
+        url: Actor.build_url(preferred_username, :page),
+        followers_url: Actor.build_url(preferred_username, :followers),
+        following_url: Actor.build_url(preferred_username, :following),
+        members_url: Actor.build_url(preferred_username, :members),
+        resources_url: Actor.build_url(preferred_username, :resources),
+        inbox_url: Actor.build_url(preferred_username, :inbox),
+        outbox_url: Actor.build_url(preferred_username, :outbox),
+        user: nil
       }
     )
   end
@@ -94,7 +116,7 @@ defmodule Mobilizon.Factory do
   def comment_factory do
     uuid = Ecto.UUID.generate()
 
-    %Mobilizon.Events.Comment{
+    %Mobilizon.Conversations.Comment{
       text: "My Comment",
       actor: build(:actor),
       event: build(:event),
@@ -130,7 +152,8 @@ defmodule Mobilizon.Factory do
       uuid: uuid,
       join_options: :free,
       options: %{},
-      participant_stats: %{}
+      participant_stats: %{},
+      status: :confirmed
     }
   end
 
@@ -175,10 +198,14 @@ defmodule Mobilizon.Factory do
   end
 
   def member_factory do
+    uuid = Ecto.UUID.generate()
+
     %Mobilizon.Actors.Member{
       parent: build(:actor),
       actor: build(:actor),
-      role: :not_approved
+      role: :not_approved,
+      id: uuid,
+      url: "#{Endpoint.url()}/member/#{uuid}"
     }
   end
 
@@ -242,6 +269,49 @@ defmodule Mobilizon.Factory do
       content: "My opinion",
       moderator: build(:actor),
       report: build(:report)
+    }
+  end
+
+  def todo_list_factory do
+    uuid = Ecto.UUID.generate()
+
+    %Mobilizon.Todos.TodoList{
+      title: sequence("todo list"),
+      actor: build(:group),
+      id: uuid,
+      url: Routes.todo_list_url(Endpoint, :todo_list, uuid)
+    }
+  end
+
+  def todo_factory do
+    uuid = Ecto.UUID.generate()
+
+    %Mobilizon.Todos.Todo{
+      id: uuid,
+      title: sequence("my todo"),
+      todo_list: build(:todo_list),
+      status: false,
+      due_date: Timex.shift(DateTime.utc_now(), hours: 2),
+      assigned_to: build(:actor),
+      url: Routes.todo_url(Endpoint, :todo, uuid),
+      creator: build(:actor)
+    }
+  end
+
+  def resource_factory do
+    uuid = Ecto.UUID.generate()
+    title = sequence("my resource")
+
+    %Mobilizon.Resources.Resource{
+      id: uuid,
+      title: title,
+      type: :link,
+      resource_url: "https://somewebsite.com/path",
+      actor: build(:group),
+      creator: build(:actor),
+      parent: nil,
+      url: Routes.resource_url(Endpoint, :resource, uuid),
+      path: "/#{title}"
     }
   end
 end

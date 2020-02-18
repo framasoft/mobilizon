@@ -12,40 +12,41 @@
 ```
 </docs>
 <template>
-    <div class="field is-horizontal">
-        <div class="field-label is-normal">
-            <label class="label">{{ label }}</label>
-        </div>
-        <div class="field-body">
-            <div class="field is-narrow is-grouped calendar-picker">
-                <b-datepicker
-                        :day-names="localeShortWeekDayNamesProxy"
-                        :month-names="localeMonthNamesProxy"
-                        :first-day-of-week="parseInt($t('firstDayOfWeek'), 10)"
-                        :min-date="minDatetime"
-                        :max-date="maxDatetime"
-                        v-model="dateWithTime"
-                        :placeholder="$t('Click to select')"
-                        :years-range="[-2,10]"
-                        icon="calendar"
-                        class="is-narrow"
-                />
-                <b-timepicker
-                        placeholder="Type or select a time..."
-                        icon="clock"
-                        v-model="dateWithTime"
-                        :min-time="minDatetime"
-                        :max-time="maxDatetime"
-                        size="is-small"
-                        inline>
-                </b-timepicker>
-            </div>
-        </div>
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">{{ label }}</label>
     </div>
+    <div class="field-body">
+      <div class="field is-narrow is-grouped calendar-picker">
+        <b-datepicker
+          :day-names="localeShortWeekDayNamesProxy"
+          :month-names="localeMonthNamesProxy"
+          :first-day-of-week="parseInt($t('firstDayOfWeek'), 10)"
+          :min-date="minDatetime"
+          :max-date="maxDatetime"
+          v-model="dateWithTime"
+          :placeholder="$t('Click to select')"
+          :years-range="[-2, 10]"
+          icon="calendar"
+          class="is-narrow"
+        />
+        <b-timepicker
+          placeholder="Type or select a time..."
+          icon="clock"
+          v-model="dateWithTime"
+          :min-time="minDatetime"
+          :max-time="maxDatetime"
+          size="is-small"
+          inline
+        >
+        </b-timepicker>
+      </div>
+    </div>
+  </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import { localeMonthNames, localeShortWeekDayNames } from '@/utils/datetime';
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { localeMonthNames, localeShortWeekDayNames } from "@/utils/datetime";
 
 @Component
 export default class DateTimePicker extends Vue {
@@ -58,34 +59,35 @@ export default class DateTimePicker extends Vue {
   /**
    * What's shown besides the picker
    */
-  @Prop({ required: false, type: String, default: 'Datetime' }) label!: string;
+  @Prop({ required: false, type: String, default: "Datetime" }) label!: string;
 
   /**
    * The step for the time input
    */
   @Prop({ required: false, type: Number, default: 1 }) step!: number;
 
-    /**
-     * Earliest date available for selection
-     */
+  /**
+   * Earliest date available for selection
+   */
   @Prop({ required: false, type: Date, default: null }) minDatetime!: Date;
 
-      /**
-     * Latest date available for selection
-     */
+  /**
+   * Latest date available for selection
+   */
   @Prop({ required: false, type: Date, default: null }) maxDatetime!: Date;
 
   dateWithTime: Date = this.value;
 
   localeShortWeekDayNamesProxy = localeShortWeekDayNames();
+
   localeMonthNamesProxy = localeMonthNames();
 
-  @Watch('value')
+  @Watch("value")
   updateValue() {
     this.dateWithTime = this.value;
   }
 
-  @Watch('dateWithTime')
+  @Watch("dateWithTime")
   updateDateWithTimeWatcher() {
     this.updateDateTime();
   }
@@ -96,21 +98,21 @@ export default class DateTimePicker extends Vue {
      *
      * @type {Date}
      */
-    this.$emit('input', this.dateWithTime);
+    this.$emit("input", this.dateWithTime);
   }
 }
 </script>
 
 <style lang="scss" scoped>
-    .timepicker {
-        /deep/ .dropdown-content {
-            padding: 0;
-        }
-    }
+.timepicker {
+  /deep/ .dropdown-content {
+    padding: 0;
+  }
+}
 
-    .calendar-picker {
-        /deep/ .dropdown-menu {
-            z-index: 200;
-        }
-    }
+.calendar-picker {
+  /deep/ .dropdown-menu {
+    z-index: 200;
+  }
+}
 </style>

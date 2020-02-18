@@ -1,4 +1,5 @@
-import { InstanceTermsType } from '@/types/admin.model';
+import { InstanceTermsType } from "./admin.model";
+import { IProvider } from "./resource";
 
 export interface IConfig {
   name: string;
@@ -20,31 +21,31 @@ export interface IConfig {
         email: {
           enabled: boolean;
           confirmationRequired: boolean;
-        },
+        };
         captcha: {
           enabled: boolean;
-        },
-      }
-    }
+        };
+      };
+    };
     eventCreation: {
       allowed: boolean;
       validation: {
         email: {
           enabled: boolean;
           confirmationRequired: boolean;
-        },
+        };
         captcha: {
-          enabled: boolean,
-        },
-      }
-    }
-    actorId,
+          enabled: boolean;
+        };
+      };
+    };
+    actorId: string;
   };
   maps: {
     tiles: {
       endpoint: string;
-      attribution: string|null;
-    },
+      attribution: string | null;
+    };
   };
   geocoding: {
     provider: string;
@@ -55,4 +56,6 @@ export interface IConfig {
     type: InstanceTermsType;
     url: string;
   };
+  resourceProviders: IProvider[];
+  timezones: string[];
 }

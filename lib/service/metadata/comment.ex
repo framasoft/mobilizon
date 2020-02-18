@@ -1,6 +1,6 @@
-defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Comment do
+defimpl Mobilizon.Service.Metadata, for: Mobilizon.Conversations.Comment do
   alias Phoenix.HTML.Tag
-  alias Mobilizon.Events.Comment
+  alias Mobilizon.Conversations.Comment
 
   def build_tags(%Comment{} = comment) do
     [

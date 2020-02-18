@@ -7,8 +7,9 @@ defmodule Mobilizon.Events.EventOptions do
 
   import Ecto.Changeset
 
+  alias Mobilizon.Conversations.CommentModeration
+
   alias Mobilizon.Events.{
-    CommentModeration,
     EventOffer,
     EventParticipationCondition
   }
@@ -25,7 +26,8 @@ defmodule Mobilizon.Events.EventOptions do
           offers: [EventOffer.t()],
           participation_condition: [EventParticipationCondition.t()],
           show_start_time: boolean,
-          show_end_time: boolean
+          show_end_time: boolean,
+          hide_organizer_when_group_event: boolean
         }
 
   @attrs [
@@ -38,7 +40,8 @@ defmodule Mobilizon.Events.EventOptions do
     :comment_moderation,
     :show_participation_price,
     :show_start_time,
-    :show_end_time
+    :show_end_time,
+    :hide_organizer_when_group_event
   ]
 
   @primary_key false
@@ -54,6 +57,7 @@ defmodule Mobilizon.Events.EventOptions do
     field(:show_participation_price, :boolean)
     field(:show_start_time, :boolean, default: true)
     field(:show_end_time, :boolean, default: true)
+    field(:hide_organizer_when_group_event, :boolean, default: false)
 
     embeds_many(:offers, EventOffer)
     embeds_many(:participation_condition, EventParticipationCondition)

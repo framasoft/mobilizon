@@ -1,61 +1,70 @@
-export default {
+export interface IPOIIcon {
+  icon: string;
+  color?: string;
+}
+
+interface IPOIIcons {
+  [key: string]: IPOIIcon;
+}
+
+export const poiIcons: IPOIIcons = {
   default: {
-    icon: 'map-marker',
-    color: '#5C6F84',
+    icon: "map-marker",
+    color: "#5C6F84",
   },
   defaultAdministrative: {
-    icon: 'city',
-    color: '#5c6f84',
+    icon: "city",
+    color: "#5c6f84",
   },
   defaultStreet: {
-    icon: 'road-variant',
-    color: '#5c6f84',
+    icon: "road-variant",
+    color: "#5c6f84",
   },
   defaultAddress: {
-    icon: 'home',
-    color: '#5c6f84',
+    icon: "home",
+    color: "#5c6f84",
   },
   place_house: {
-    icon: 'home',
-    color: '#5c6f84',
+    icon: "home",
+    color: "#5c6f84",
   },
   theatre: {
-    icon: 'drama-masks',
+    icon: "drama-masks",
   },
   parking: {
-    icon: 'parking',
+    icon: "parking",
   },
   police: {
-    icon: 'police-badge',
+    icon: "police-badge",
   },
   post_office: {
-    icon: 'email',
+    icon: "email",
   },
   university: {
-    icon: 'school',
+    icon: "school",
   },
   college: {
-    icon: 'school',
+    icon: "school",
   },
   park: {
-    icon: 'pine-tree',
+    icon: "pine-tree",
   },
   garden: {
-    icon: 'pine-tree',
+    icon: "pine-tree",
   },
   bicycle_rental: {
-    icon: 'bicycle',
+    icon: "bicycle",
   },
   hospital: {
-    icon: 'hospital-box',
+    icon: "hospital-box",
   },
   townhall: {
-    icon: 'office-building',
+    icon: "office-building",
   },
   toilets: {
-    icon: 'human-male-female',
+    icon: "human-male-female",
   },
   hairdresser: {
-    icon: 'content-cut',
+    icon: "content-cut",
   },
 };

@@ -5,9 +5,10 @@ defmodule Mobilizon.GraphQL.Schema do
 
   use Absinthe.Schema
 
-  alias Mobilizon.{Actors, Addresses, Events, Media, Reports, Users}
+  alias Mobilizon.{Actors, Addresses, Conversations, Events, Media, Reports, Todos, Users}
   alias Mobilizon.Actors.{Actor, Follower, Member}
-  alias Mobilizon.Events.{Comment, Event, Participant}
+  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.GraphQL.Schema
   alias Mobilizon.Storage.Repo
 
@@ -22,8 +23,12 @@ defmodule Mobilizon.GraphQL.Schema do
   import_types(Schema.Actors.PersonType)
   import_types(Schema.Actors.GroupType)
   import_types(Schema.Actors.ApplicationType)
-  import_types(Schema.CommentType)
+  import_types(Schema.Conversations.CommentType)
+  import_types(Schema.Conversations.ConversationType)
   import_types(Schema.SearchType)
+  import_types(Schema.ResourceType)
+  import_types(Schema.Todos.TodoListType)
+  import_types(Schema.Todos.TodoType)
   import_types(Schema.ConfigType)
   import_types(Schema.ReportType)
   import_types(Schema.AdminType)
@@ -98,10 +103,12 @@ defmodule Mobilizon.GraphQL.Schema do
       Dataloader.new()
       |> Dataloader.add_source(Actors, default_source)
       |> Dataloader.add_source(Users, default_source)
-      |> Dataloader.add_source(Events, Events.data())
+      |> Dataloader.add_source(Events, default_source)
+      |> Dataloader.add_source(Conversations, Conversations.data())
       |> Dataloader.add_source(Addresses, default_source)
       |> Dataloader.add_source(Media, default_source)
       |> Dataloader.add_source(Reports, default_source)
+      |> Dataloader.add_source(Todos, default_source)
 
     Map.put(ctx, :loader, loader)
   end
@@ -126,6 +133,10 @@ defmodule Mobilizon.GraphQL.Schema do
     import_fields(:picture_queries)
     import_fields(:report_queries)
     import_fields(:admin_queries)
+    import_fields(:todo_list_queries)
+    import_fields(:todo_queries)
+    import_fields(:conversation_queries)
+    import_fields(:resource_queries)
   end
 
   @desc """
@@ -143,6 +154,10 @@ defmodule Mobilizon.GraphQL.Schema do
     import_fields(:picture_mutations)
     import_fields(:report_mutations)
     import_fields(:admin_mutations)
+    import_fields(:todo_list_mutations)
+    import_fields(:todo_mutations)
+    import_fields(:conversation_mutations)
+    import_fields(:resource_mutations)
   end
 
   @desc """

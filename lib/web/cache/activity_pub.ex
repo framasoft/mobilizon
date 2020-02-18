@@ -3,12 +3,13 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
   ActivityPub related cache.
   """
 
-  alias Mobilizon.{Actors, Events, Tombstone}
+  alias Mobilizon.{Actors, Conversations, Events, Resources, Todos, Tombstone}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.{Comment, Event}
-
+  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Events.Event
   alias Mobilizon.Federation.ActivityPub.Relay
-
+  alias Mobilizon.Resources.Resource
+  alias Mobilizon.Todos.{Todo, TodoList}
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Router.Helpers, as: Routes
 
@@ -60,9 +61,60 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
           {:commit, Comment.t()} | {:ignore, nil}
   def get_comment_by_uuid_with_preload(uuid) do
     Cachex.fetch(@cache, "comment_" <> uuid, fn "comment_" <> uuid ->
-      case Events.get_comment_from_uuid_with_preload(uuid) do
+      case Conversations.get_comment_from_uuid_with_preload(uuid) do
         %Comment{} = comment ->
           {:commit, comment}
+
+        nil ->
+          {:ignore, nil}
+      end
+    end)
+  end
+
+  @doc """
+  Gets a resource by its UUID, with all associations loaded.
+  """
+  @spec get_resource_by_uuid_with_preload(String.t()) ::
+          {:commit, Resource.t()} | {:ignore, nil}
+  def get_resource_by_uuid_with_preload(uuid) do
+    Cachex.fetch(@cache, "resource_" <> uuid, fn "resource_" <> uuid ->
+      case Resources.get_resource_with_preloads(uuid) do
+        %Resource{} = resource ->
+          {:commit, resource}
+
+        nil ->
+          {:ignore, nil}
+      end
+    end)
+  end
+
+  @doc """
+  Gets a todo list by its UUID, with all associations loaded.
+  """
+  @spec get_todo_list_by_uuid_with_preload(String.t()) ::
+          {:commit, TodoList.t()} | {:ignore, nil}
+  def get_todo_list_by_uuid_with_preload(uuid) do
+    Cachex.fetch(@cache, "todo_list_" <> uuid, fn "todo_list_" <> uuid ->
+      case Todos.get_todo_list(uuid) do
+        %TodoList{} = todo_list ->
+          {:commit, todo_list}
+
+        nil ->
+          {:ignore, nil}
+      end
+    end)
+  end
+
+  @doc """
+  Gets a todo by its UUID, with all associations loaded.
+  """
+  @spec get_todo_by_uuid_with_preload(String.t()) ::
+          {:commit, Todo.t()} | {:ignore, nil}
+  def get_todo_by_uuid_with_preload(uuid) do
+    Cachex.fetch(@cache, "todo_" <> uuid, fn "todo_" <> uuid ->
+      case Todos.get_todo(uuid) do
+        %Todo{} = todo ->
+          {:commit, todo}
 
         nil ->
           {:ignore, nil}

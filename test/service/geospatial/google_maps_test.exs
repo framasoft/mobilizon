@@ -8,6 +8,11 @@ defmodule Mobilizon.Service.Geospatial.GoogleMapsTest do
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.GoogleMaps
 
+  @http_options [
+    follow_redirect: true,
+    ssl: [{:versions, [:"tlsv1.2"]}]
+  ]
+
   describe "search address" do
     test "without API Key triggers an error" do
       assert_raise ArgumentError, "API Key required to use Google Maps", fn ->
@@ -17,7 +22,7 @@ defmodule Mobilizon.Service.Geospatial.GoogleMapsTest do
 
     test "produces a valid search address with options" do
       with_mock HTTPoison,
-        get: fn _url ->
+        get: fn _url, _headers, _options ->
           {:ok,
            %HTTPoison.Response{status_code: 200, body: "{\"status\": \"OK\", \"results\": []}"}}
         end do
@@ -29,7 +34,9 @@ defmodule Mobilizon.Service.Geospatial.GoogleMapsTest do
 
         assert_called(
           HTTPoison.get(
-            "https://maps.googleapis.com/maps/api/geocode/json?limit=5&key=toto&language=fr&address=10%20Rue%20Jangot"
+            "https://maps.googleapis.com/maps/api/geocode/json?limit=5&key=toto&language=fr&address=10%20Rue%20Jangot",
+            [],
+            @http_options
           )
         )
       end

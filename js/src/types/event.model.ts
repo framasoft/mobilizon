@@ -1,51 +1,51 @@
-import { Actor, IActor, IPerson } from './actor';
-import { Address, IAddress } from '@/types/address.model';
-import { ITag } from '@/types/tag.model';
-import { IPicture } from '@/types/picture.model';
-import { IComment } from '@/types/comment.model';
-import { Paginate } from '@/types/paginate';
+import { Address, IAddress } from "@/types/address.model";
+import { ITag } from "@/types/tag.model";
+import { IPicture } from "@/types/picture.model";
+import { IComment } from "@/types/comment.model";
+import { Paginate } from "@/types/paginate";
+import { Actor, Group, IActor, IPerson } from "./actor";
 
 export enum EventStatus {
-  TENTATIVE = 'TENTATIVE',
-  CONFIRMED = 'CONFIRMED',
-  CANCELLED = 'CANCELLED',
+  TENTATIVE = "TENTATIVE",
+  CONFIRMED = "CONFIRMED",
+  CANCELLED = "CANCELLED",
 }
 
 export enum EventVisibility {
-  PUBLIC = 'PUBLIC',
-  UNLISTED = 'UNLISTED',
-  RESTRICTED = 'RESTRICTED',
-  PRIVATE = 'PRIVATE',
+  PUBLIC = "PUBLIC",
+  UNLISTED = "UNLISTED",
+  RESTRICTED = "RESTRICTED",
+  PRIVATE = "PRIVATE",
 }
 
 export enum EventJoinOptions {
-  FREE = 'FREE',
-  RESTRICTED = 'RESTRICTED',
-  INVITE = 'INVITE',
+  FREE = "FREE",
+  RESTRICTED = "RESTRICTED",
+  INVITE = "INVITE",
 }
 
 export enum EventVisibilityJoinOptions {
-  PUBLIC = 'PUBLIC',
-  LINK = 'LINK',
-  LIMITED = 'LIMITED',
+  PUBLIC = "PUBLIC",
+  LINK = "LINK",
+  LIMITED = "LIMITED",
 }
 
 export enum ParticipantRole {
-  NOT_APPROVED = 'NOT_APPROVED',
-  NOT_CONFIRMED = 'NOT_CONFIRMED',
-  REJECTED = 'REJECTED',
-  PARTICIPANT = 'PARTICIPANT',
-  MODERATOR = 'MODERATOR',
-  ADMINISTRATOR = 'ADMINISTRATOR',
-  CREATOR = 'CREATOR',
+  NOT_APPROVED = "NOT_APPROVED",
+  NOT_CONFIRMED = "NOT_CONFIRMED",
+  REJECTED = "REJECTED",
+  PARTICIPANT = "PARTICIPANT",
+  MODERATOR = "MODERATOR",
+  ADMINISTRATOR = "ADMINISTRATOR",
+  CREATOR = "CREATOR",
 }
 
 export enum Category {
-  BUSINESS = 'business',
-  CONFERENCE = 'conference',
-  BIRTHDAY = 'birthday',
-  DEMONSTRATION = 'demonstration',
-  MEETING = 'meeting',
+  BUSINESS = "business",
+  CONFERENCE = "conference",
+  BIRTHDAY = "birthday",
+  DEMONSTRATION = "demonstration",
+  MEETING = "meeting",
 }
 
 export interface IEventCardOptions {
@@ -60,16 +60,21 @@ export interface IParticipant {
   role: ParticipantRole;
   actor: IActor;
   event: IEvent;
-  metadata: { cancellationToken?: string, message?: string };
+  metadata: { cancellationToken?: string; message?: string };
   insertedAt?: Date;
 }
 
 export class Participant implements IParticipant {
   id?: string;
+
   event!: IEvent;
+
   actor!: IActor;
+
   role: ParticipantRole = ParticipantRole.NOT_APPROVED;
+
   metadata = {};
+
   insertedAt?: Date;
 
   constructor(hash?: IParticipant) {
@@ -97,9 +102,9 @@ export interface IParticipationCondition {
 }
 
 export enum CommentModeration {
-    ALLOW_ALL = 'ALLOW_ALL',
-    MODERATED = 'MODERATED',
-    CLOSED = 'CLOSED',
+  ALLOW_ALL = "ALLOW_ALL",
+  MODERATED = "MODERATED",
+  CLOSED = "CLOSED",
 }
 
 export interface IEventParticipantStats {
@@ -134,7 +139,7 @@ export interface IEvent {
   picture: IPicture | null;
 
   organizerActor?: IActor;
-  attributedTo: IActor;
+  attributedTo?: IActor;
   participantStats: IEventParticipantStats;
   participants: Paginate<IParticipant>;
 
@@ -148,7 +153,7 @@ export interface IEvent {
   tags: ITag[];
   options: IEventOptions;
 
-  toEditJSON();
+  toEditJSON(): IEventEditJSON;
 }
 
 export interface IEventOptions {
@@ -156,6 +161,7 @@ export interface IEventOptions {
   remainingAttendeeCapacity: number;
   showRemainingAttendeeCapacity: boolean;
   anonymousParticipation: boolean;
+  hideOrganizerWhenGroupEvent: boolean;
   offers: IOffer[];
   participationConditions: IParticipationCondition[];
   attendees: string[];
@@ -168,16 +174,29 @@ export interface IEventOptions {
 
 export class EventOptions implements IEventOptions {
   maximumAttendeeCapacity = 0;
+
   remainingAttendeeCapacity = 0;
+
   showRemainingAttendeeCapacity = false;
+
   anonymousParticipation = false;
+
+  hideOrganizerWhenGroupEvent = false;
+
   offers: IOffer[] = [];
+
   participationConditions: IParticipationCondition[] = [];
+
   attendees: string[] = [];
-  program = '';
+
+  program = "";
+
   commentModeration = CommentModeration.ALLOW_ALL;
+
   showParticipationPrice = false;
+
   showStartTime = true;
+
   showEndTime = true;
 }
 
@@ -185,39 +204,64 @@ export class EventModel implements IEvent {
   id?: string;
 
   beginsOn = new Date();
+
   endsOn: Date | null = new Date();
 
-  title = '';
-  url = '';
-  uuid = '';
-  slug = '';
-  description = '';
+  title = "";
+
+  url = "";
+
+  uuid = "";
+
+  slug = "";
+
+  description = "";
+
   local = true;
 
-  onlineAddress: string | undefined = '';
-  phoneAddress: string | undefined = '';
+  onlineAddress: string | undefined = "";
+
+  phoneAddress: string | undefined = "";
+
   physicalAddress?: IAddress;
 
   picture: IPicture | null = null;
 
   visibility = EventVisibility.PUBLIC;
+
   category: Category | null = Category.MEETING;
+
   joinOptions = EventJoinOptions.FREE;
+
   status = EventStatus.CONFIRMED;
+
   draft = true;
 
   publishAt = new Date();
 
-  participantStats = { notApproved: 0, notConfirmed: 0, rejected: 0, participant: 0, moderator: 0, administrator: 0, creator: 0, going: 0 };
+  participantStats = {
+    notApproved: 0,
+    notConfirmed: 0,
+    rejected: 0,
+    participant: 0,
+    moderator: 0,
+    administrator: 0,
+    creator: 0,
+    going: 0,
+  };
+
   participants!: Paginate<IParticipant>;
 
   relatedEvents: IEvent[] = [];
+
   comments: IComment[] = [];
 
-  attributedTo = new Actor();
+  attributedTo?: IActor = new Actor();
+
   organizerActor?: IActor = new Actor();
 
   tags: ITag[] = [];
+
   options: IEventOptions = new EventOptions();
 
   constructor(hash?: IEvent) {
@@ -246,7 +290,7 @@ export class EventModel implements IEvent {
     this.picture = hash.picture;
 
     this.organizerActor = new Actor(hash.organizerActor);
-    this.attributedTo = new Actor(hash.attributedTo);
+    this.attributedTo = new Group(hash.attributedTo);
     this.participants = hash.participants;
 
     this.relatedEvents = hash.relatedEvents;
@@ -260,7 +304,7 @@ export class EventModel implements IEvent {
     if (hash.options) this.options = hash.options;
   }
 
-  toEditJSON() {
+  toEditJSON(): IEventEditJSON {
     return {
       id: this.id,
       title: this.title,
@@ -271,13 +315,35 @@ export class EventModel implements IEvent {
       visibility: this.visibility,
       joinOptions: this.joinOptions,
       draft: this.draft,
-      tags: this.tags.map(t => t.title),
+      tags: this.tags.map((t) => t.title),
       picture: this.picture,
       onlineAddress: this.onlineAddress,
       phoneAddress: this.phoneAddress,
       category: this.category,
       physicalAddress: this.physicalAddress,
       options: this.options,
+      //      organizerActorId: this.organizerActor && this.organizerActor.id ? this.organizerActor.id : null,
+      attributedToId: this.attributedTo && this.attributedTo.id ? this.attributedTo.id : null,
     };
   }
+}
+
+interface IEventEditJSON {
+  id?: string;
+  title: string;
+  description: string;
+  category: Category | null;
+  beginsOn: string;
+  endsOn: string | null;
+  status: EventStatus;
+  visibility: EventVisibility;
+  joinOptions: EventJoinOptions;
+  draft: boolean;
+  picture: IPicture | { pictureId: string } | null;
+  attributedToId: string | null;
+  onlineAddress?: string;
+  phoneAddress?: string;
+  physicalAddress?: IAddress;
+  tags: string[];
+  options: IEventOptions;
 }

@@ -1,16 +1,21 @@
-import { Node, Plugin } from 'tiptap';
-import { UPLOAD_PICTURE } from '@/graphql/upload';
-import { apolloProvider } from '@/vue-apollo';
-import ApolloClient from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import { Node } from "tiptap";
+import { UPLOAD_PICTURE } from "@/graphql/upload";
+import apolloProvider from "@/vue-apollo";
+import ApolloClient from "apollo-client";
+import { NormalizedCacheObject } from "apollo-cache-inmemory";
+import { NodeType, NodeSpec } from "prosemirror-model";
+import { EditorState, Plugin, TextSelection } from "prosemirror-state";
+import { DispatchFn } from "tiptap-commands";
+import { EditorView } from "prosemirror-view";
+
+/* eslint-disable class-methods-use-this */
 
 export default class Image extends Node {
-
   get name() {
-    return 'image';
+    return "image";
   }
 
-  get schema() {
+  get schema(): NodeSpec {
     return {
       inline: true,
       attrs: {
@@ -22,25 +27,25 @@ export default class Image extends Node {
           default: null,
         },
       },
-      group: 'inline',
+      group: "inline",
       draggable: true,
       parseDOM: [
         {
-          tag: 'img[src]',
-          getAttrs: dom => ({
-            src: dom.getAttribute('src'),
-            title: dom.getAttribute('title'),
-            alt: dom.getAttribute('alt'),
+          tag: "img[src]",
+          getAttrs: (dom: any) => ({
+            src: dom.getAttribute("src"),
+            title: dom.getAttribute("title"),
+            alt: dom.getAttribute("alt"),
           }),
         },
       ],
-      toDOM: node => ['img', node.attrs],
+      toDOM: (node: any) => ["img", node.attrs],
     };
   }
 
-  commands({ type }) {
-    return attrs => (state, dispatch) => {
-      const { selection } = state;
+  commands({ type }: { type: NodeType }): any {
+    return (attrs: { [key: string]: string }) => (state: EditorState, dispatch: DispatchFn) => {
+      const { selection }: { selection: TextSelection } = state;
       const position = selection.$cursor ? selection.$cursor.pos : selection.$to.pos;
       const node = type.create(attrs);
       const transaction = state.tr.insert(position, node);
@@ -53,28 +58,39 @@ export default class Image extends Node {
       new Plugin({
         props: {
           handleDOMEvents: {
-            async drop(view, event: DragEvent) {
-              if (!(event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files.length)) {
-                return;
+            drop(view: EditorView<any>, event: Event) {
+              const realEvent = event as DragEvent;
+              if (
+                !(
+                  realEvent.dataTransfer &&
+                  realEvent.dataTransfer.files &&
+                  realEvent.dataTransfer.files.length
+                )
+              ) {
+                return false;
               }
 
-              const images = Array
-                                .from(event.dataTransfer.files)
-                                .filter((file: any) => (/image/i).test(file.type));
+              const images = Array.from(realEvent.dataTransfer.files).filter((file: any) =>
+                /image/i.test(file.type)
+              );
 
               if (images.length === 0) {
-                return;
+                return false;
               }
 
-              event.preventDefault();
+              realEvent.preventDefault();
 
               const { schema } = view.state;
-              const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
-              const client = apolloProvider.defaultClient as ApolloClient<InMemoryCache>;
-              const editorElem = document.getElementById('tiptab-editor');
+              const coordinates = view.posAtCoords({
+                left: realEvent.clientX,
+                top: realEvent.clientY,
+              });
+              if (!coordinates) return false;
+              const client = apolloProvider.defaultClient as ApolloClient<NormalizedCacheObject>;
+              const editorElem = document.getElementById("tiptab-editor");
               const actorId = editorElem && editorElem.dataset.actorId;
 
-              for (const image of images) {
+              images.forEach(async (image) => {
                 const { data } = await client.mutate({
                   mutation: UPLOAD_PICTURE,
                   variables: {
@@ -86,12 +102,12 @@ export default class Image extends Node {
                 const node = schema.nodes.image.create({ src: data.uploadPicture.url });
                 const transaction = view.state.tr.insert(coordinates.pos, node);
                 view.dispatch(transaction);
-              }
+              });
+              return true;
             },
           },
         },
       }),
     ];
   }
-
 }

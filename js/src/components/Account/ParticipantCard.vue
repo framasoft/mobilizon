@@ -25,32 +25,58 @@
           </figure>
         </div>
         <div class="media-content">
-          <span ref="title">{{ actorDisplayName }}</span><br>
-          <small class="has-text-grey" v-if="participant.actor.domain">@{{ participant.actor.preferredUsername }}@{{ participant.actor.domain }}</small>
+          <span ref="title">{{ actorDisplayName }}</span
+          ><br />
+          <small class="has-text-grey" v-if="participant.actor.domain"
+            >@{{ participant.actor.preferredUsername }}@{{ participant.actor.domain }}</small
+          >
           <small class="has-text-grey" v-else>@{{ participant.actor.preferredUsername }}</small>
         </div>
       </div>
     </div>
     <footer class="card-footer">
-    <b-button v-if="[ParticipantRole.NOT_APPROVED, ParticipantRole.REJECTED].includes(participant.role)" @click="accept(participant)" type="is-success" class="card-footer-item">{{ $t('Approve') }}</b-button>
-    <b-button v-if="participant.role === ParticipantRole.NOT_APPROVED" @click="reject(participant)" type="is-danger" class="card-footer-item">{{ $t('Reject')}}</b-button>
-    <b-button v-if="participant.role === ParticipantRole.PARTICIPANT" @click="exclude(participant)" type="is-danger" class="card-footer-item">{{ $t('Exclude')}}</b-button>
-    <span v-if="participant.role === ParticipantRole.CREATOR" class="card-footer-item">{{ $t('Creator')}}</span>
-  </footer>
+      <b-button
+        v-if="[ParticipantRole.NOT_APPROVED, ParticipantRole.REJECTED].includes(participant.role)"
+        @click="accept(participant)"
+        type="is-success"
+        class="card-footer-item"
+        >{{ $t("Approve") }}</b-button
+      >
+      <b-button
+        v-if="participant.role === ParticipantRole.NOT_APPROVED"
+        @click="reject(participant)"
+        type="is-danger"
+        class="card-footer-item"
+        >{{ $t("Reject") }}</b-button
+      >
+      <b-button
+        v-if="participant.role === ParticipantRole.PARTICIPANT"
+        @click="exclude(participant)"
+        type="is-danger"
+        class="card-footer-item"
+        >{{ $t("Exclude") }}</b-button
+      >
+      <span v-if="participant.role === ParticipantRole.CREATOR" class="card-footer-item">{{
+        $t("Creator")
+      }}</span>
+    </footer>
   </article>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { Person } from '@/types/actor';
-import { IParticipant, ParticipantRole } from '@/types/event.model';
+import { Component, Prop, Vue } from "vue-property-decorator";
+import { Person } from "../../types/actor";
+import { IParticipant, ParticipantRole } from "../../types/event.model";
 
 @Component
 export default class ParticipantCard extends Vue {
   @Prop({ required: true }) participant!: IParticipant;
-  @Prop({ type: Function }) accept;
-  @Prop({ type: Function }) reject;
-  @Prop({ type: Function }) exclude;
+
+  @Prop({ type: Function }) accept!: Function;
+
+  @Prop({ type: Function }) reject!: Function;
+
+  @Prop({ type: Function }) exclude!: Function;
 
   ParticipantRole = ParticipantRole;
 
@@ -58,13 +84,12 @@ export default class ParticipantCard extends Vue {
     const actor = new Person(this.participant.actor);
     return actor.displayName();
   }
-
 }
 </script>
 
 <style lang="scss">
-  @import "../../variables.scss";
-  .card-footer-item {
-    height: $control-height;
-  }
+@import "../../variables.scss";
+.card-footer-item {
+  height: $control-height;
+}
 </style>

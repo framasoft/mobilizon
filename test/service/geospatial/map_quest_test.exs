@@ -9,6 +9,11 @@ defmodule Mobilizon.Service.Geospatial.MapQuestTest do
   alias Mobilizon.Config
   alias Mobilizon.Service.Geospatial.MapQuest
 
+  @http_options [
+    follow_redirect: true,
+    ssl: [{:versions, [:"tlsv1.2"]}]
+  ]
+
   setup do
     # Config.instance_user_agent/0 makes database calls so because of ownership connection
     # we need to define it like this instead of a constant
@@ -28,7 +33,7 @@ defmodule Mobilizon.Service.Geospatial.MapQuestTest do
 
     test "produces a valid search address with options", %{httpoison_headers: httpoison_headers} do
       with_mock HTTPoison,
-        get: fn _url, _headers ->
+        get: fn _url, _headers, _options ->
           {:ok,
            %HTTPoison.Response{
              status_code: 200,
@@ -44,7 +49,8 @@ defmodule Mobilizon.Service.Geospatial.MapQuestTest do
         assert_called(
           HTTPoison.get(
             "https://open.mapquestapi.com/geocoding/v1/address?key=toto&location=10%20Rue%20Jangot&maxResults=5",
-            httpoison_headers
+            httpoison_headers,
+            @http_options
           )
         )
       end

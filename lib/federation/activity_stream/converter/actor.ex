@@ -25,7 +25,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
   Converts an AP object data to our internal data structure.
   """
   @impl Converter
-  @spec as_to_model_data(map) :: map
+  @spec as_to_model_data(map()) :: {:ok, map()}
   def as_to_model_data(data) do
     avatar =
       data["icon"]["url"] &&
@@ -41,7 +41,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
           "url" => MediaProxy.url(data["image"]["url"])
         }
 
-    actor_data = %{
+    %{
       url: data["id"],
       avatar: avatar,
       banner: banner,
@@ -53,20 +53,20 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
       outbox_url: data["outbox"],
       following_url: data["following"],
       followers_url: data["followers"],
+      members_url: data["members"],
+      resources_url: data["resources"],
       shared_inbox_url: data["endpoints"]["sharedInbox"],
       domain: URI.parse(data["id"]).host,
       manually_approves_followers: data["manuallyApprovesFollowers"],
       type: data["type"]
     }
-
-    {:ok, actor_data}
   end
 
   @doc """
   Convert an actor struct to an ActivityStream representation.
   """
   @impl Converter
-  @spec model_to_as(ActorModel.t()) :: map
+  @spec model_to_as(ActorModel.t()) :: map()
   def model_to_as(%ActorModel{} = actor) do
     actor_data = %{
       "id" => actor.url,
@@ -76,6 +76,9 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
       "summary" => actor.summary,
       "following" => actor.following_url,
       "followers" => actor.followers_url,
+      "members" => actor.members_url,
+      "resources" => actor.resources_url,
+      "todos" => actor.todos_url,
       "inbox" => actor.inbox_url,
       "outbox" => actor.outbox_url,
       "url" => actor.url,
@@ -93,6 +96,13 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
           )
       }
     }
+
+    actor_data =
+      if actor.type == :Group do
+        Map.put(actor_data, "members", actor.members_url)
+      else
+        actor_data
+      end
 
     actor_data =
       if is_nil(actor.avatar) do

@@ -1,18 +1,18 @@
-import { IPicture } from '@/types/picture.model';
+import { IPicture } from "@/types/picture.model";
 
 export enum ActorType {
-  PERSON = 'PERSON',
-  APPLICATION = 'APPLICATION',
-  GROUP = 'GROUP',
-  ORGANISATION = 'ORGANISATION',
-  SERVICE = 'SERVICE',
+  PERSON = "PERSON",
+  APPLICATION = "APPLICATION",
+  GROUP = "GROUP",
+  ORGANISATION = "ORGANISATION",
+  SERVICE = "SERVICE",
 }
 
 export interface IActor {
-  id?: number;
+  id?: string;
   url: string;
   name: string;
-  domain: string|null;
+  domain: string | null;
   summary: string;
   preferredUsername: string;
   suspended: boolean;
@@ -22,18 +22,27 @@ export interface IActor {
 }
 
 export class Actor implements IActor {
-  id?: number;
+  id?: string;
+
   avatar: IPicture | null = null;
+
   banner: IPicture | null = null;
+
   domain: string | null = null;
-  name: string = '';
-  preferredUsername: string = '';
-  summary: string = '';
-  suspended: boolean = false;
-  url: string = '';
+
+  name = "";
+
+  preferredUsername = "";
+
+  summary = "";
+
+  suspended = false;
+
+  url = "";
+
   type: ActorType = ActorType.PERSON;
 
-  constructor (hash: IActor | {} = {}) {
+  constructor(hash: IActor | {} = {}) {
     Object.assign(this, hash);
   }
 
@@ -42,11 +51,18 @@ export class Actor implements IActor {
   }
 
   usernameWithDomain(): string {
-    const domain = this.domain ? `@${this.domain}` : '';
+    const domain = this.domain ? `@${this.domain}` : "";
     return `@${this.preferredUsername}${domain}`;
   }
 
   public displayName(): string {
-    return this.name != null && this.name !== '' ? this.name : this.usernameWithDomain();
+    return this.name != null && this.name !== "" ? this.name : this.usernameWithDomain();
   }
+}
+
+export function usernameWithDomain(actor: IActor): string {
+  if (actor.domain) {
+    return `${actor.preferredUsername}@${actor.domain}`;
+  }
+  return actor.preferredUsername;
 }

@@ -11,6 +11,10 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Picture do
 
   alias Mobilizon.Web.Upload
 
+  @http_options [
+    ssl: [{:versions, [:"tlsv1.2"]}]
+  ]
+
   @doc """
   Convert a picture struct to an ActivityStream representation.
   """
@@ -35,7 +39,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Picture do
         actor_id
       )
       when is_bitstring(picture_url) do
-    with {:ok, %HTTPoison.Response{body: body}} <- HTTPoison.get(picture_url),
+    with {:ok, %HTTPoison.Response{body: body}} <- HTTPoison.get(picture_url, [], @http_options),
          {:ok, %{name: name, url: url, content_type: content_type, size: size}} <-
            Upload.store(%{body: body, name: name}),
          {:picture_exists, nil} <- {:picture_exists, Media.get_picture_by_url(url)} do

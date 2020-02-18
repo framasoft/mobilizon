@@ -1,28 +1,27 @@
-import Vue from 'vue';
-import Router from 'vue-router';
-import VueScrollTo from 'vue-scrollto';
-import PageNotFound from '@/views/PageNotFound.vue';
-import Home from '@/views/Home.vue';
-import { UserRouteName, userRoutes } from './user';
-import { EventRouteName, eventRoutes } from '@/router/event';
-import { ActorRouteName } from '@/router/actor';
-import { ErrorRouteName, errorRoutes } from '@/router/error';
-import { authGuardIfNeeded } from '@/router/guards/auth-guard';
-import Search from '@/views/Search.vue';
-import { SettingsRouteName, settingsRoutes } from '@/router/settings';
+import Vue from "vue";
+import Router, { Route } from "vue-router";
+import VueScrollTo from "vue-scrollto";
+import { PositionResult } from "vue-router/types/router.d";
+import PageNotFound from "../views/PageNotFound.vue";
+import Home from "../views/Home.vue";
+import { eventRoutes } from "./event";
+import { actorRoutes } from "./actor";
+import { errorRoutes } from "./error";
+import { authGuardIfNeeded } from "./guards/auth-guard";
+import Search from "../views/Search.vue";
+import { settingsRoutes } from "./settings";
+import { groupsRoutes } from "./groups";
+import { conversationRoutes } from "./conversation";
+import { userRoutes } from "./user";
+import RouteName from "./name";
 
 Vue.use(Router);
 
-enum GlobalRouteName {
-  HOME = 'Home',
-  ABOUT = 'About',
-  PAGE_NOT_FOUND = 'PageNotFound',
-  SEARCH = 'Search',
-  TERMS = 'TERMS',
-  INTERACT = 'INTERACT',
-}
-
-function scrollBehavior(to, from, savedPosition) {
+function scrollBehavior(
+  to: Route,
+  from: Route,
+  savedPosition: any
+): PositionResult | undefined | null {
   if (to.hash) {
     VueScrollTo.scrollTo(to.hash, 700);
     return {
@@ -37,65 +36,57 @@ function scrollBehavior(to, from, savedPosition) {
   return { x: 0, y: 0 };
 }
 
-// Hack to merge enums
-// tslint:disable:variable-name
-export const RouteName = {
-  ...GlobalRouteName,
-  ...UserRouteName,
-  ...EventRouteName,
-  ...ActorRouteName,
-  ...SettingsRouteName,
-  ...ErrorRouteName,
-};
-
 const router = new Router({
   scrollBehavior,
-  mode: 'history',
-  base: '/',
+  mode: "history",
+  base: "/",
   routes: [
     ...userRoutes,
     ...eventRoutes,
     ...settingsRoutes,
+    ...actorRoutes,
+    ...groupsRoutes,
+    ...conversationRoutes,
     ...errorRoutes,
     {
-      path: '/search/:searchTerm/:searchType?',
+      path: "/search/:searchTerm/:searchType?",
       name: RouteName.SEARCH,
       component: Search,
       props: true,
       meta: { requiredAuth: false },
     },
     {
-      path: '/',
+      path: "/",
       name: RouteName.HOME,
       component: Home,
       meta: { requiredAuth: false },
     },
     {
-      path: '/about',
+      path: "/about",
       name: RouteName.ABOUT,
-      component: () => import(/* webpackChunkName: "about" */ '@/views/About.vue'),
+      component: () => import(/* webpackChunkName: "about" */ "@/views/About.vue"),
       meta: { requiredAuth: false },
     },
     {
-      path: '/terms',
+      path: "/terms",
       name: RouteName.TERMS,
-      component: () => import(/* webpackChunkName: "cookies" */ '@/views/Terms.vue'),
+      component: () => import(/* webpackChunkName: "cookies" */ "@/views/Terms.vue"),
       meta: { requiredAuth: false },
     },
     {
-      path: '/interact',
+      path: "/interact",
       name: RouteName.INTERACT,
-      component: () => import(/* webpackChunkName: "cookies" */ '@/views/Interact.vue'),
+      component: () => import(/* webpackChunkName: "cookies" */ "@/views/Interact.vue"),
       meta: { requiredAuth: false },
     },
     {
-      path: '/404',
+      path: "/404",
       name: RouteName.PAGE_NOT_FOUND,
       component: PageNotFound,
       meta: { requiredAuth: false },
     },
     {
-      path: '*',
+      path: "*",
       redirect: { name: RouteName.PAGE_NOT_FOUND },
     },
   ],

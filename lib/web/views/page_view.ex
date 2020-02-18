@@ -6,7 +6,9 @@ defmodule Mobilizon.Web.PageView do
   use Mobilizon.Web, :view
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.{Comment, Event}
+  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Events.Event
+  alias Mobilizon.Resources.Resource
   alias Mobilizon.Tombstone
 
   alias Mobilizon.Service.Metadata
@@ -40,35 +42,56 @@ defmodule Mobilizon.Web.PageView do
     |> Map.merge(Utils.make_json_ld_header())
   end
 
-  def render(page, %{object: object} = _assigns)
+  def render("resource.activity-json", %{conn: %{assigns: %{object: %Resource{} = resource}}}) do
+    resource
+    |> Convertible.model_to_as()
+    |> Map.merge(Utils.make_json_ld_header())
+  end
+
+  def render(page, %{object: object, conn: conn} = _assigns)
       when page in ["actor.html", "event.html", "comment.html"] do
+    tags = object |> Metadata.build_tags()
+    inject_tags(conn, tags)
+  end
+
+  def render("index.html", %{conn: conn}) do
+    tags = Instance.build_tags()
+    inject_tags(conn, tags)
+  end
+
+  @spec inject_tags(Conn.t(), List.t()) :: {:safe, String.t()}
+  defp inject_tags(conn, tags) do
     with {:ok, index_content} <- File.read(index_file_path()) do
-      tags = object |> Metadata.build_tags() |> MetadataUtils.stringify_tags()
+      locale = get_locale(conn)
 
-      index_content = replace_meta(index_content, tags)
-
-      {:safe, index_content}
+      do_replacements(index_content, MetadataUtils.stringify_tags(tags), locale)
     end
   end
 
-  def render("index.html", _assigns) do
-    with {:ok, index_content} <- File.read(index_file_path()) do
-      tags = Instance.build_tags() |> MetadataUtils.stringify_tags()
-
-      index_content = replace_meta(index_content, tags)
-
-      {:safe, index_content}
-    end
-  end
-
+  @spec index_file_path :: String.t()
   defp index_file_path do
     Path.join(Application.app_dir(:mobilizon, "priv/static"), "index.html")
   end
 
+  @spec replace_meta(String.t(), String.t()) :: String.t()
   # TODO: Find why it's different in dev/prod and during tests
   defp replace_meta(index_content, tags) do
     index_content
     |> String.replace("<meta name=\"server-injected-data\" />", tags)
     |> String.replace("<meta name=server-injected-data>", tags)
   end
+
+  @spec do_replacements(String.t(), String.t(), String.t()) :: {:safe, String.t()}
+  defp do_replacements(index_content, tags, locale) do
+    index_content
+    |> replace_meta(tags)
+    |> String.replace("<html lang=\"en\">", "<html lang=\"#{locale}\">")
+    |> String.replace("<html lang=en>", "<html lang=\"#{locale}\">")
+    |> (&{:safe, &1}).()
+  end
+
+  @spec get_locale(Conn.t()) :: String.t()
+  defp get_locale(%{private: %{cldr_locale: nil}}), do: "en"
+  defp get_locale(%{private: %{cldr_locale: %{requested_locale_name: locale}}}), do: locale
+  defp get_locale(_), do: "en"
 end

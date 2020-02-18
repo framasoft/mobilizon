@@ -21,6 +21,11 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
 
   @api_key_missing_message "API Key required to use MapQuest"
 
+  @http_options [
+    follow_redirect: true,
+    ssl: [{:versions, [:"tlsv1.2"]}]
+  ]
+
   @impl Provider
   @doc """
   MapQuest implementation for `c:Mobilizon.Service.Geospatial.Provider.geocode/3`.
@@ -42,7 +47,8 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
              "https://#{prefix}.mapquestapi.com/geocoding/v1/reverse?key=#{api_key}&location=#{
                lat
              },#{lon}&maxResults=#{limit}",
-             headers
+             headers,
+             @http_options
            ),
          {:ok, %{"results" => results, "info" => %{"statuscode" => 0}}} <- Poison.decode(body) do
       results |> Enum.map(&process_data/1)
@@ -77,7 +83,7 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
     Logger.debug("Asking MapQuest for addresses with #{url}")
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           HTTPoison.get(url, headers),
+           HTTPoison.get(url, headers, @http_options),
          {:ok, %{"results" => results, "info" => %{"statuscode" => 0}}} <- Poison.decode(body) do
       results |> Enum.map(&process_data/1)
     else

@@ -12,7 +12,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
     {:ok, conn: conn, actor: actor, user: user}
   end
 
-  describe "Member Resolver" do
+  describe "Member Resolver to join a group" do
     test "join_group/3 should create a member", %{conn: conn, user: user, actor: actor} do
       group = insert(:group)
 
@@ -39,7 +39,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["joinGroup"]["role"] == "not_approved"
+      assert json_response(res, 200)["data"]["joinGroup"]["role"] == "NOT_APPROVED"
       assert json_response(res, 200)["data"]["joinGroup"]["parent"]["id"] == to_string(group.id)
       assert json_response(res, 200)["data"]["joinGroup"]["actor"]["id"] == to_string(actor.id)
 
@@ -136,7 +136,9 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
 
       assert hd(json_response(res, 200)["errors"])["message"] =~ "Group id not found"
     end
+  end
 
+  describe "Member Resolver to leave from a group" do
     test "leave_group/3 should delete a member from a group", %{
       conn: conn,
       user: user,
@@ -284,6 +286,213 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert hd(json_response(res, 200)["errors"])["message"] =~ "Member not found"
+    end
+  end
+
+  describe "Member Resolver to invite to a group" do
+    @invite_member_mutation """
+      mutation InviteMember($groupId: ID!, $targetActorUsername: String!) {
+        inviteMember(groupId: $groupId, targetActorUsername: $targetActorUsername) {
+          parent {
+            id
+          },
+          actor {
+            id
+          },
+          role
+        }
+      }
+    """
+
+    setup %{conn: conn, actor: actor, user: user} do
+      group = insert(:group)
+      target_actor = insert(:actor, user: user)
+
+      {:ok, conn: conn, actor: actor, user: user, group: group, target_actor: target_actor}
+    end
+
+    test "invite_member/3 invites a local actor to a group", %{
+      conn: conn,
+      user: user,
+      actor: actor,
+      group: group,
+      target_actor: target_actor
+    } do
+      _admin_member = insert(:member, %{actor: actor, parent: group, role: :creator})
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @invite_member_mutation,
+          variables: %{
+            groupId: group.id,
+            targetActorUsername: target_actor.preferred_username
+          }
+        )
+
+      assert is_nil(res["errors"])
+      assert res["data"]["inviteMember"]["role"] == "INVITED"
+      assert res["data"]["inviteMember"]["parent"]["id"] == to_string(group.id)
+      assert res["data"]["inviteMember"]["actor"]["id"] == to_string(target_actor.id)
+    end
+
+    test "invite_member/3 invites a remote actor to a group", %{
+      conn: conn,
+      user: user,
+      actor: actor,
+      group: group
+    } do
+      _admin_member = insert(:member, %{actor: actor, parent: group, role: :creator})
+      target_actor = insert(:actor, domain: "remote.tld")
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @invite_member_mutation,
+          variables: %{
+            groupId: group.id,
+            targetActorUsername: "#{target_actor.preferred_username}@#{target_actor.domain}"
+          }
+        )
+
+      assert is_nil(res["errors"])
+      assert res["data"]["inviteMember"]["role"] == "INVITED"
+      assert res["data"]["inviteMember"]["parent"]["id"] == to_string(group.id)
+      assert res["data"]["inviteMember"]["actor"]["id"] == to_string(target_actor.id)
+    end
+
+    test "invite_member/3 fails to invite a local actor to a group that invitor isn't in", %{
+      conn: conn,
+      user: user,
+      actor: actor,
+      group: group,
+      target_actor: target_actor
+    } do
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @invite_member_mutation,
+          variables: %{
+            groupId: group.id,
+            targetActorUsername: target_actor.preferred_username
+          }
+        )
+
+      assert hd(res["errors"])["message"] == "You are not a member of this group"
+    end
+
+    test "invite_member/3 fails to invite a non existing local actor", %{
+      conn: conn,
+      user: user,
+      actor: actor,
+      group: group
+    } do
+      insert(:member, %{actor: actor, parent: group, role: :administrator})
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @invite_member_mutation,
+          variables: %{
+            groupId: group.id,
+            targetActorUsername: "not_existing"
+          }
+        )
+
+      assert hd(res["errors"])["message"] == "Actor invited doesn't exist"
+    end
+
+    test "invite_member/3 fails to invite a non existing remote actor", %{
+      conn: conn,
+      user: user,
+      actor: actor,
+      group: group
+    } do
+      insert(:member, %{actor: actor, parent: group, role: :administrator})
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @invite_member_mutation,
+          variables: %{
+            groupId: group.id,
+            targetActorUsername: "not_existing@nowhere.absolute"
+          }
+        )
+
+      assert hd(res["errors"])["message"] == "Actor invited doesn't exist"
+    end
+
+    test "invite_member/3 fails to invite a actor for a non-existing group", %{
+      conn: conn,
+      user: user,
+      actor: actor,
+      target_actor: target_actor
+    } do
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @invite_member_mutation,
+          variables: %{
+            groupId: "780907988778",
+            targetActorUsername: target_actor.preferred_username
+          }
+        )
+
+      assert hd(res["errors"])["message"] == "Group id not found"
+    end
+
+    test "invite_member/3 fails to invite a actor if we are not an admin for the group", %{
+      conn: conn,
+      user: user,
+      actor: actor,
+      group: group,
+      target_actor: target_actor
+    } do
+      _admin_member = insert(:member, %{actor: actor, parent: group, role: :member})
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @invite_member_mutation,
+          variables: %{
+            groupId: group.id,
+            targetActorUsername: target_actor.preferred_username
+          }
+        )
+
+      assert hd(res["errors"])["message"] == "You cannot invite to this group"
+    end
+
+    test "invite_member/3 fails to invite a actor if it's already a member of the group", %{
+      conn: conn,
+      user: user,
+      actor: actor,
+      group: group,
+      target_actor: target_actor
+    } do
+      insert(:member, %{actor: actor, parent: group, role: :member})
+      insert(:member, %{actor: target_actor, parent: group, role: :member})
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @invite_member_mutation,
+          variables: %{
+            groupId: group.id,
+            targetActorUsername: target_actor.preferred_username
+          }
+        )
+
+      assert hd(res["errors"])["message"] == "You cannot invite to this group"
     end
   end
 end

@@ -1,5 +1,5 @@
-import { IGroup, IPerson } from '@/types/actor';
-import { IEvent } from '@/types/event.model';
+import { IGroup, IPerson } from "@/types/actor";
+import { IEvent } from "@/types/event.model";
 
 export interface SearchEvent {
   total: number;

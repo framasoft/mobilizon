@@ -10,15 +10,20 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
   import Mobilizon.Factory
   import ExUnit.CaptureLog
+  import Mock
 
-  alias Mobilizon.{Actors, Events, Tombstone}
-  alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.{Comment, Event, Participant}
+  alias Mobilizon.{Actors, Conversations, Events, Resources, Tombstone}
+  alias Mobilizon.Actors.{Actor, Member}
+  alias Mobilizon.Collections.Resource
+  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Events.{Event, Participant}
+  alias Mobilizon.Resources.Resource
+  alias Mobilizon.Todos.{Todo, TodoList}
 
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Utils
   alias Mobilizon.Federation.ActivityPub.{Activity, Relay, Transmogrifier}
-  alias Mobilizon.Federation.ActivityStream.{Convertible}
+  alias Mobilizon.Federation.ActivityStream.Convertible
 
   alias Mobilizon.GraphQL.API
 
@@ -77,7 +82,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
     end
   end
 
-  describe "handle incoming notices" do
+  describe "handle incoming comments" do
     test "it ignores an incoming comment if we already have it" do
       comment = insert(:comment)
 
@@ -113,7 +118,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
       %Comment{} =
         origin_comment =
-        Events.get_comment_from_url(
+        Conversations.get_comment_from_url(
           "https://blob.cat/objects/02fdea3d-932c-4348-9ecb-3f9eb3fbdd94"
         )
 
@@ -241,7 +246,446 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
       # assert data["object"]["url"] == "https://prismo.news/posts/83"
     end
+  end
 
+  describe "handle incoming todo lists" do
+    test "it ignores an incoming todo list if we already have it" do
+      todo_list = insert(:todo_list)
+      actor = insert(:actor)
+
+      activity = %{
+        "type" => "Create",
+        "to" => ["https://www.w3.org/ns/activitystreams#Public"],
+        "actor" => actor.url,
+        "object" => Convertible.model_to_as(todo_list)
+      }
+
+      data =
+        File.read!("test/fixtures/mastodon-post-activity.json")
+        |> Jason.decode!()
+        |> Map.put("object", activity["object"])
+
+      assert {:ok, nil, _} = Transmogrifier.handle_incoming(data)
+    end
+
+    test "it accepts incoming todo lists" do
+      actor = insert(:actor)
+      group = insert(:group, domain: "morebilizon.com")
+
+      activity = %{
+        "type" => "Create",
+        "to" => ["https://www.w3.org/ns/activitystreams#Public"],
+        "actor" => actor.url,
+        "object" => %{
+          "type" => "TodoList",
+          "actor" => group.url,
+          "id" => "https://mobilizon.app/todo-list/gjfkghfkd",
+          "name" => "My new todo list"
+        }
+      }
+
+      assert {:ok, %Activity{data: data, local: false}, %TodoList{}} =
+               Transmogrifier.handle_incoming(activity)
+
+      assert data["actor"] == actor.url
+      assert data["object"]["actor"] == group.url
+    end
+
+    @mobilizon_group_url "https://mobilizon.app/@mygroupe"
+    test "it accepts incoming todo lists and fetches the group if needed" do
+      group = insert(:group, domain: "morebilizon.com", url: @mobilizon_group_url)
+      %Actor{url: actor_url} = actor = insert(:actor)
+
+      with_mock ActivityPub, [:passthrough],
+        get_or_fetch_actor_by_url: fn url ->
+          case url do
+            @mobilizon_group_url -> {:ok, group}
+            actor_url -> {:ok, actor}
+          end
+        end do
+        activity = %{
+          "type" => "Create",
+          "to" => ["https://www.w3.org/ns/activitystreams#Public"],
+          "actor" => actor.url,
+          "object" => %{
+            "type" => "TodoList",
+            "actor" => @mobilizon_group_url,
+            "id" => "https://mobilizon.app/todo-list/gjfkghfkd",
+            "name" => "My new todo list"
+          }
+        }
+
+        assert {:ok, %Activity{data: data, local: false}, %TodoList{}} =
+                 Transmogrifier.handle_incoming(activity)
+
+        assert data["actor"] == actor.url
+        assert data["object"]["actor"] == @mobilizon_group_url
+      end
+    end
+
+    test "it accepts incoming todo lists and handles group being not found" do
+      %Actor{url: actor_url} = actor = insert(:actor)
+
+      with_mock ActivityPub, [:passthrough],
+        get_or_fetch_actor_by_url: fn url ->
+          case url do
+            @mobilizon_group_url -> {:error, "Not found"}
+            ^actor_url -> {:ok, actor}
+          end
+        end do
+        activity = %{
+          "type" => "Create",
+          "to" => ["https://www.w3.org/ns/activitystreams#Public"],
+          "actor" => actor_url,
+          "object" => %{
+            "type" => "TodoList",
+            "actor" => @mobilizon_group_url,
+            "id" => "https://mobilizon.app/todo-list/gjfkghfkd",
+            "name" => "My new todo list"
+          }
+        }
+
+        assert :error = Transmogrifier.handle_incoming(activity)
+      end
+    end
+  end
+
+  describe "handle incoming todos" do
+    test "it ignores an incoming todo if we already have it" do
+      todo = insert(:todo)
+      actor = insert(:actor)
+
+      activity = %{
+        "type" => "Create",
+        "to" => ["https://www.w3.org/ns/activitystreams#Public"],
+        "actor" => actor.url,
+        "object" => Convertible.model_to_as(todo)
+      }
+
+      data =
+        File.read!("test/fixtures/mastodon-post-activity.json")
+        |> Jason.decode!()
+        |> Map.put("object", activity["object"])
+
+      assert {:ok, nil, _} = Transmogrifier.handle_incoming(data)
+    end
+
+    test "it accepts incoming todos" do
+      actor = insert(:actor)
+      todo_list = insert(:todo_list)
+
+      activity = %{
+        "type" => "Create",
+        "to" => ["https://www.w3.org/ns/activitystreams#Public"],
+        "actor" => actor.url,
+        "object" => %{
+          "type" => "Todo",
+          "actor" => actor.url,
+          "todoList" => todo_list.url,
+          "id" => "https://mobilizon.app/todo/gjfkghfkd",
+          "name" => "My new todo",
+          "status" => false
+        }
+      }
+
+      assert {:ok, %Activity{data: data, local: false},
+              %Todo{todo_list: %TodoList{id: todo_list_id}}} =
+               Transmogrifier.handle_incoming(activity)
+
+      assert data["actor"] == actor.url
+      assert data["object"]["todoList"] == todo_list.url
+      assert todo_list_id == todo_list.id
+    end
+
+    @mobilizon_group_url "https://mobilizon.app/@mygroupe"
+    test "it accepts incoming todos and fetches the todo list if needed" do
+      group = insert(:group, domain: "morebilizon.com", url: @mobilizon_group_url)
+      %Actor{url: actor_url} = actor = insert(:actor)
+
+      with_mock ActivityPub, [:passthrough],
+        get_or_fetch_actor_by_url: fn url ->
+          case url do
+            @mobilizon_group_url -> {:ok, group}
+            actor_url -> {:ok, actor}
+          end
+        end do
+        activity = %{
+          "type" => "Create",
+          "to" => ["https://www.w3.org/ns/activitystreams#Public"],
+          "actor" => actor.url,
+          "object" => %{
+            "type" => "TodoList",
+            "actor" => @mobilizon_group_url,
+            "id" => "https://mobilizon.app/todo-list/gjfkghfkd",
+            "name" => "My new todo list"
+          }
+        }
+
+        assert {:ok, %Activity{data: data, local: false}, %TodoList{}} =
+                 Transmogrifier.handle_incoming(activity)
+
+        assert data["actor"] == actor.url
+        assert data["object"]["actor"] == @mobilizon_group_url
+      end
+    end
+
+    test "it accepts incoming todo lists and handles group being not found" do
+      %Actor{url: actor_url} = actor = insert(:actor)
+
+      with_mock ActivityPub, [:passthrough],
+        get_or_fetch_actor_by_url: fn url ->
+          case url do
+            @mobilizon_group_url -> {:error, "Not found"}
+            ^actor_url -> {:ok, actor}
+          end
+        end do
+        activity = %{
+          "type" => "Create",
+          "to" => ["https://www.w3.org/ns/activitystreams#Public"],
+          "actor" => actor_url,
+          "object" => %{
+            "type" => "TodoList",
+            "actor" => @mobilizon_group_url,
+            "id" => "https://mobilizon.app/todo-list/gjfkghfkd",
+            "name" => "My new todo list"
+          }
+        }
+
+        assert :error = Transmogrifier.handle_incoming(activity)
+      end
+    end
+  end
+
+  describe "handle incoming resources" do
+    test "it ignores an incoming resource if we already have it" do
+      actor = insert(:actor)
+      group = insert(:group)
+      %Resource{} = resource = insert(:resource, actor: group, creator: actor)
+
+      activity = %{
+        "type" => "Add",
+        "to" => [group.url],
+        "actor" => actor.url,
+        "target" => group.resources_url,
+        "object" => Convertible.model_to_as(resource)
+      }
+
+      assert {:ok, nil, _} = Transmogrifier.handle_incoming(activity)
+    end
+
+    test "it accepts incoming resources" do
+      creator =
+        insert(:actor,
+          domain: "mobilizon.app",
+          url: "https://mobilizon.app/@myremoteactor",
+          preferred_username: "myremoteactor"
+        )
+
+      group =
+        insert(:group,
+          domain: "somewhere.com",
+          url: "https://somewhere.com/@myremotegroup",
+          preferred_username: "myremotegroup"
+        )
+
+      insert(:member, parent: group, actor: creator, role: :member)
+
+      activity = %{
+        "type" => "Add",
+        "to" => [group.url],
+        "actor" => creator.url,
+        "target" => group.resources_url,
+        "object" => %{
+          "type" => "Document",
+          "actor" => creator.url,
+          "attributedTo" => [group.url],
+          "id" => "https://mobilizon.app/resource/gjfkghfkd",
+          "name" => "My new resource",
+          "summary" => "A description for the resource",
+          "url" => "https://framasoft.org"
+        }
+      }
+
+      assert {:ok, %Activity{data: data, local: false}, %Resource{} = resource} =
+               Transmogrifier.handle_incoming(activity)
+
+      assert resource.actor_id == group.id
+      assert resource.creator_id == creator.id
+      assert resource.title == "My new resource"
+      assert resource.type == :link
+      assert is_nil(resource.parent_id)
+    end
+
+    test "it accepts incoming folders" do
+      creator =
+        insert(:actor,
+          domain: "mobilizon.app",
+          url: "https://mobilizon.app/@myremoteactor",
+          preferred_username: "myremoteactor"
+        )
+
+      group =
+        insert(:group,
+          domain: "somewhere.com",
+          url: "https://somewhere.com/@myremotegroup",
+          preferred_username: "myremotegroup"
+        )
+
+      insert(:member, parent: group, actor: creator, role: :member)
+
+      activity = %{
+        "type" => "Add",
+        "to" => [group.url],
+        "actor" => creator.url,
+        "target" => group.resources_url,
+        "object" => %{
+          "type" => "ResourceCollection",
+          "actor" => creator.url,
+          "attributedTo" => [group.url],
+          "id" => "https://mobilizon.app/resource/gjfkghfkd",
+          "name" => "My new folder"
+        }
+      }
+
+      assert {:ok, %Activity{data: data, local: false}, %Resource{} = resource} =
+               Transmogrifier.handle_incoming(activity)
+
+      assert resource.actor_id == group.id
+      assert resource.creator_id == creator.id
+      assert resource.title == "My new folder"
+      assert resource.type == :folder
+      assert is_nil(resource.parent_id)
+    end
+
+    @parent_url "http://mobilizon1.com/resource/e4ce71bd-6bcc-4c61-9774-7999dde0cc68"
+    test "it accepts incoming resources that are in a folder" do
+      creator =
+        insert(:actor,
+          domain: "mobilizon1.com",
+          url: "http://mobilizon1.com/@tcit",
+          preferred_username: "tcit",
+          user: nil
+        )
+
+      group =
+        insert(:group,
+          domain: "mobilizon1.com",
+          url: "http://mobilizon1.com/@demo",
+          preferred_username: "demo",
+          resources_url: "http://mobilizon1.com/@demo/resources"
+        )
+
+      insert(:member, parent: group, actor: creator, role: :member)
+
+      parent_resource =
+        insert(:resource,
+          type: :folder,
+          title: "folder",
+          path: "/folder",
+          actor: group,
+          creator: creator
+        )
+
+      activity = %{
+        "type" => "Add",
+        "to" => [group.url],
+        "actor" => creator.url,
+        "target" => parent_resource.url,
+        "object" => %{
+          "type" => "Document",
+          "actor" => creator.url,
+          "attributedTo" => [group.url],
+          "id" => "https://mobilizon.app/resource/gjfkghfkd",
+          "name" => "My new resource",
+          "summary" => "A description for the resource",
+          "context" => parent_resource.url,
+          "url" => "https://framasoft.org"
+        }
+      }
+
+      assert {:ok, %Activity{data: data, local: false}, %Resource{} = resource} =
+               Transmogrifier.handle_incoming(activity)
+
+      assert resource.actor_id == group.id
+      assert resource.creator_id == creator.id
+      assert resource.title == "My new resource"
+      assert resource.type == :link
+      refute is_nil(resource.parent_id)
+      assert resource.parent_id == parent_resource.id
+    end
+
+    test "it accepts incoming resources and handles group being not found" do
+      creator =
+        insert(:actor,
+          domain: "mobilizon.app",
+          url: "https://mobilizon.app/@myremoteactor",
+          preferred_username: "myremoteactor"
+        )
+
+      group =
+        insert(:group,
+          domain: "somewhere.com",
+          url: "https://somewhere.com/@myremotegroup",
+          preferred_username: "myremotegroup"
+        )
+
+      insert(:member, parent: group, actor: creator, role: :member)
+
+      activity = %{
+        "type" => "Add",
+        "to" => [group.url],
+        "actor" => creator.url,
+        "target" => group.resources_url,
+        "object" => %{
+          "type" => "Document",
+          "actor" => "https://someurl.com/notfound",
+          "attributedTo" => "https://someurl.com/notfound",
+          "id" => "https://mobilizon.app/resource/gjfkghfkd",
+          "name" => "My new resource",
+          "summary" => "A description for the resource",
+          "url" => "https://framasoft.org"
+        }
+      }
+
+      assert :error = Transmogrifier.handle_incoming(activity)
+    end
+
+    test "it refuses incoming resources if actor is not a member of the group" do
+      creator =
+        insert(:actor,
+          domain: "mobilizon.app",
+          url: "https://mobilizon.app/@myremoteactor",
+          preferred_username: "myremoteactor"
+        )
+
+      group =
+        insert(:group,
+          domain: "somewhere.com",
+          url: "https://somewhere.com/@myremotegroup",
+          preferred_username: "myremotegroup"
+        )
+
+      activity = %{
+        "type" => "Add",
+        "to" => [group.url],
+        "actor" => creator.url,
+        "target" => group.resources_url,
+        "object" => %{
+          "type" => "Document",
+          "actor" => creator.url,
+          "attributedTo" => [group.url],
+          "id" => "https://mobilizon.app/resource/gjfkghfkd",
+          "name" => "My new resource",
+          "summary" => "A description for the resource",
+          "url" => "https://framasoft.org"
+        }
+      }
+
+      assert :error = Transmogrifier.handle_incoming(activity)
+    end
+  end
+
+  describe "handle incoming follow requests" do
     test "it works for incoming follow requests" do
       use_cassette "activity_pub/mastodon_follow_activity" do
         actor = insert(:actor)
@@ -262,6 +706,18 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       end
     end
 
+    test "it rejects activities without a valid ID" do
+      actor = insert(:actor)
+
+      data =
+        File.read!("test/fixtures/mastodon-follow-activity.json")
+        |> Jason.decode!()
+        |> Map.put("object", actor.url)
+        |> Map.put("id", "")
+
+      :error = Transmogrifier.handle_incoming(data)
+    end
+
     #     test "it works for incoming follow requests from hubzilla" do
     #       user = insert(:user)
 
@@ -278,58 +734,60 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
     #       assert data["id"] == "https://hubzilla.example.org/channel/kaniini#follows/2"
     #       assert User.is_following(User.get_by_ap_id(data["actor"]), user)
     #     end
+  end
 
-    # test "it works for incoming likes" do
-    #   %Comment{url: url} = insert(:comment)
+  # test "it works for incoming likes" do
+  #   %Comment{url: url} = insert(:comment)
 
-    #   data =
-    #     File.read!("test/fixtures/mastodon-like.json")
-    #     |> Jason.decode!()
-    #     |> Map.put("object", url)
+  #   data =
+  #     File.read!("test/fixtures/mastodon-like.json")
+  #     |> Jason.decode!()
+  #     |> Map.put("object", url)
 
-    #   {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
+  #   {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
 
-    #   assert data["actor"] == "http://mastodon.example.org/users/admin"
-    #   assert data["type"] == "Like"
-    #   assert data["id"] == "http://mastodon.example.org/users/admin#likes/2"
-    #   assert data["object"] == url
-    # end
+  #   assert data["actor"] == "http://mastodon.example.org/users/admin"
+  #   assert data["type"] == "Like"
+  #   assert data["id"] == "http://mastodon.example.org/users/admin#likes/2"
+  #   assert data["object"] == url
+  # end
 
-    # test "it returns an error for incoming unlikes wihout a like activity" do
-    #   %Comment{url: url} = insert(:comment)
+  # test "it returns an error for incoming unlikes wihout a like activity" do
+  #   %Comment{url: url} = insert(:comment)
 
-    #   data =
-    #     File.read!("test/fixtures/mastodon-undo-like.json")
-    #     |> Jason.decode!()
-    #     |> Map.put("object", url)
+  #   data =
+  #     File.read!("test/fixtures/mastodon-undo-like.json")
+  #     |> Jason.decode!()
+  #     |> Map.put("object", url)
 
-    #   assert Transmogrifier.handle_incoming(data) == {:error, :not_supported}
-    # end
+  #   assert Transmogrifier.handle_incoming(data) == {:error, :not_supported}
+  # end
 
-    # test "it works for incoming unlikes with an existing like activity" do
-    #   comment = insert(:comment)
+  # test "it works for incoming unlikes with an existing like activity" do
+  #   comment = insert(:comment)
 
-    #   like_data =
-    #     File.read!("test/fixtures/mastodon-like.json")
-    #     |> Jason.decode!()
-    #     |> Map.put("object", comment.url)
+  #   like_data =
+  #     File.read!("test/fixtures/mastodon-like.json")
+  #     |> Jason.decode!()
+  #     |> Map.put("object", comment.url)
 
-    #   {:ok, %Activity{data: like_data, local: false}} = Transmogrifier.handle_incoming(like_data)
+  #   {:ok, %Activity{data: like_data, local: false}} = Transmogrifier.handle_incoming(like_data)
 
-    #   data =
-    #     File.read!("test/fixtures/mastodon-undo-like.json")
-    #     |> Jason.decode!()
-    #     |> Map.put("object", like_data)
-    #     |> Map.put("actor", like_data["actor"])
+  #   data =
+  #     File.read!("test/fixtures/mastodon-undo-like.json")
+  #     |> Jason.decode!()
+  #     |> Map.put("object", like_data)
+  #     |> Map.put("actor", like_data["actor"])
 
-    #   {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
+  #   {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
 
-    #   assert data["actor"] == "http://mastodon.example.org/users/admin"
-    #   assert data["type"] == "Undo"
-    #   assert data["id"] == "http://mastodon.example.org/users/admin#likes/2/undo"
-    #   assert data["object"]["id"] == "http://mastodon.example.org/users/admin#likes/2"
-    # end
+  #   assert data["actor"] == "http://mastodon.example.org/users/admin"
+  #   assert data["type"] == "Undo"
+  #   assert data["id"] == "http://mastodon.example.org/users/admin#likes/2/undo"
+  #   assert data["object"]["id"] == "http://mastodon.example.org/users/admin#likes/2"
+  # end
 
+  describe "handle incoming follow announces" do
     test "it works for incoming announces" do
       use_cassette "activity_pub/mastodon_announce_activity" do
         data = File.read!("test/fixtures/mastodon-announce.json") |> Jason.decode!()
@@ -345,7 +803,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         assert data["object"] ==
                  "https://framapiaf.org/users/Framasoft/statuses/102501959686438400"
 
-        assert %Comment{} = Events.get_comment_from_url(data["object"])
+        assert %Comment{} = Conversations.get_comment_from_url(data["object"])
       end
     end
 
@@ -369,7 +827,9 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         assert data["object"] == comment.url
       end
     end
+  end
 
+  describe "handle incoming update activities" do
     test "it works for incoming update activities on actors" do
       use_cassette "activity_pub/update_actor_activity" do
         data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
@@ -448,7 +908,9 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
     #       user = User.get_cached_by_ap_id(data["actor"])
     #       assert user.info["locked"] == true
     #     end
+  end
 
+  describe "handle incoming delete activities" do
     test "it works for incoming deletes" do
       %Actor{url: actor_url} = actor = insert(:actor)
       %Comment{url: comment_url} = insert(:comment, actor: nil, actor_id: actor.id)
@@ -466,12 +928,12 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         |> Map.put("object", object)
         |> Map.put("actor", actor_url)
 
-      assert Events.get_comment_from_url(comment_url)
-      assert is_nil(Events.get_comment_from_url(comment_url).deleted_at)
+      assert Conversations.get_comment_from_url(comment_url)
+      assert is_nil(Conversations.get_comment_from_url(comment_url).deleted_at)
 
       {:ok, %Activity{local: false}, _} = Transmogrifier.handle_incoming(data)
 
-      refute is_nil(Events.get_comment_from_url(comment_url).deleted_at)
+      refute is_nil(Conversations.get_comment_from_url(comment_url).deleted_at)
     end
 
     test "it fails for incoming deletes with spoofed origin" do
@@ -498,7 +960,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
       :error = Transmogrifier.handle_incoming(data)
 
-      assert Events.get_comment_from_url(comment.url)
+      assert Conversations.get_comment_from_url(comment.url)
     end
 
     test "it works for incoming actor deletes" do
@@ -519,7 +981,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       assert {:ok, %Actor{suspended: true}} = Actors.get_actor_by_url(url)
       assert {:error, :event_not_found} = Events.get_event(event1.id)
       assert %Tombstone{} = Tombstone.find_tombstone(event1_url)
-      assert %Comment{deleted_at: deleted_at} = Events.get_comment(comment1.id)
+      assert %Comment{deleted_at: deleted_at} = Conversations.get_comment(comment1.id)
       refute is_nil(deleted_at)
       assert %Tombstone{} = Tombstone.find_tombstone(comment1_url)
     end
@@ -538,7 +1000,9 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
       assert Actors.get_actor_by_url(url)
     end
+  end
 
+  describe "handle incoming undo activities" do
     test "it works for incoming unannounces with an existing notice" do
       use_cassette "activity_pub/mastodon_unannounce_activity" do
         comment = insert(:comment)
@@ -595,83 +1059,85 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         refute Actors.is_following(followed, actor)
       end
     end
+  end
 
-    #     test "it works for incoming blocks" do
-    #       user = insert(:user)
+  #     test "it works for incoming blocks" do
+  #       user = insert(:user)
 
-    #       data =
-    #         File.read!("test/fixtures/mastodon-block-activity.json")
-    #         |> Jason.decode!()
-    #         |> Map.put("object", user.ap_id)
+  #       data =
+  #         File.read!("test/fixtures/mastodon-block-activity.json")
+  #         |> Jason.decode!()
+  #         |> Map.put("object", user.ap_id)
 
-    #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
+  #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
 
-    #       assert data["type"] == "Block"
-    #       assert data["object"] == user.ap_id
-    #       assert data["actor"] == "http://mastodon.example.org/users/admin"
+  #       assert data["type"] == "Block"
+  #       assert data["object"] == user.ap_id
+  #       assert data["actor"] == "http://mastodon.example.org/users/admin"
 
-    #       blocker = User.get_by_ap_id(data["actor"])
+  #       blocker = User.get_by_ap_id(data["actor"])
 
-    #       assert User.blocks?(blocker, user)
-    #     end
+  #       assert User.blocks?(blocker, user)
+  #     end
 
-    #     test "incoming blocks successfully tear down any follow relationship" do
-    #       blocker = insert(:user)
-    #       blocked = insert(:user)
+  #     test "incoming blocks successfully tear down any follow relationship" do
+  #       blocker = insert(:user)
+  #       blocked = insert(:user)
 
-    #       data =
-    #         File.read!("test/fixtures/mastodon-block-activity.json")
-    #         |> Jason.decode!()
-    #         |> Map.put("object", blocked.ap_id)
-    #         |> Map.put("actor", blocker.ap_id)
+  #       data =
+  #         File.read!("test/fixtures/mastodon-block-activity.json")
+  #         |> Jason.decode!()
+  #         |> Map.put("object", blocked.ap_id)
+  #         |> Map.put("actor", blocker.ap_id)
 
-    #       {:ok, blocker} = User.follow(blocker, blocked)
-    #       {:ok, blocked} = User.follow(blocked, blocker)
+  #       {:ok, blocker} = User.follow(blocker, blocked)
+  #       {:ok, blocked} = User.follow(blocked, blocker)
 
-    #       assert User.following?(blocker, blocked)
-    #       assert User.following?(blocked, blocker)
+  #       assert User.following?(blocker, blocked)
+  #       assert User.following?(blocked, blocker)
 
-    #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
+  #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
 
-    #       assert data["type"] == "Block"
-    #       assert data["object"] == blocked.ap_id
-    #       assert data["actor"] == blocker.ap_id
+  #       assert data["type"] == "Block"
+  #       assert data["object"] == blocked.ap_id
+  #       assert data["actor"] == blocker.ap_id
 
-    #       blocker = User.get_by_ap_id(data["actor"])
-    #       blocked = User.get_by_ap_id(data["object"])
+  #       blocker = User.get_by_ap_id(data["actor"])
+  #       blocked = User.get_by_ap_id(data["object"])
 
-    #       assert User.blocks?(blocker, blocked)
+  #       assert User.blocks?(blocker, blocked)
 
-    #       refute User.following?(blocker, blocked)
-    #       refute User.following?(blocked, blocker)
-    #     end
+  #       refute User.following?(blocker, blocked)
+  #       refute User.following?(blocked, blocker)
+  #     end
 
-    #     test "it works for incoming unblocks with an existing block" do
-    #       user = insert(:user)
+  #     test "it works for incoming unblocks with an existing block" do
+  #       user = insert(:user)
 
-    #       block_data =
-    #         File.read!("test/fixtures/mastodon-block-activity.json")
-    #         |> Jason.decode!()
-    #         |> Map.put("object", user.ap_id)
+  #       block_data =
+  #         File.read!("test/fixtures/mastodon-block-activity.json")
+  #         |> Jason.decode!()
+  #         |> Map.put("object", user.ap_id)
 
-    #       {:ok, %Activity{data: _, local: false}} = Transmogrifier.handle_incoming(block_data)
+  #       {:ok, %Activity{data: _, local: false}} = Transmogrifier.handle_incoming(block_data)
 
-    #       data =
-    #         File.read!("test/fixtures/mastodon-unblock-activity.json")
-    #         |> Jason.decode!()
-    #         |> Map.put("object", block_data)
+  #       data =
+  #         File.read!("test/fixtures/mastodon-unblock-activity.json")
+  #         |> Jason.decode!()
+  #         |> Map.put("object", block_data)
 
-    #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
-    #       assert data["type"] == "Undo"
-    #       assert data["object"]["type"] == "Block"
-    #       assert data["object"]["object"] == user.ap_id
-    #       assert data["actor"] == "http://mastodon.example.org/users/admin"
+  #       {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
+  #       assert data["type"] == "Undo"
+  #       assert data["object"]["type"] == "Block"
+  #       assert data["object"]["object"] == user.ap_id
+  #       assert data["actor"] == "http://mastodon.example.org/users/admin"
 
-    #       blocker = User.get_by_ap_id(data["actor"])
+  #       blocker = User.get_by_ap_id(data["actor"])
 
-    #       refute User.blocks?(blocker, user)
-    #     end
+  #       refute User.blocks?(blocker, user)
+  #     end
 
+  describe "handle incoming follow accept activities" do
     test "it works for incoming accepts which were pre-accepted" do
       follower = insert(:actor)
       followed = insert(:actor)
@@ -743,7 +1209,9 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
       refute Actors.is_following(follower, followed)
     end
+  end
 
+  describe "handle incoming follow reject activities" do
     test "it fails for incoming rejects which cannot be correlated" do
       follower = insert(:actor)
       followed = insert(:actor)
@@ -781,19 +1249,9 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
       refute Actors.is_following(follower, followed)
     end
+  end
 
-    test "it rejects activities without a valid ID" do
-      actor = insert(:actor)
-
-      data =
-        File.read!("test/fixtures/mastodon-follow-activity.json")
-        |> Jason.decode!()
-        |> Map.put("object", actor.url)
-        |> Map.put("id", "")
-
-      :error = Transmogrifier.handle_incoming(data)
-    end
-
+  describe "handle incoming flag activities" do
     test "it accepts Flag activities" do
       %Actor{url: reporter_url} = Relay.get_actor()
       %Actor{url: reported_url} = reported = insert(:actor)
@@ -817,7 +1275,9 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       assert activity.data["actor"] == reporter_url
       assert activity.data["cc"] == []
     end
+  end
 
+  describe "handle incoming join activities" do
     @join_message "I want to get in!"
     test "it accepts Join activities" do
       %Actor{url: organizer_url} = organizer = insert(:actor)
@@ -846,7 +1306,9 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       assert activity.data["actor"] == organizer_url
       assert activity.data["id"] =~ "/accept/join/"
     end
+  end
 
+  describe "handle incoming accept join activities" do
     test "it accepts Accept activities for Join activities" do
       %Actor{url: organizer_url} = organizer = insert(:actor)
       %Actor{} = participant_actor = insert(:actor)
@@ -870,7 +1332,9 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       # We don't accept already accepted Accept activities
       :error = Transmogrifier.handle_incoming(accept_data)
     end
+  end
 
+  describe "handle incoming reject join activities" do
     test "it accepts Reject activities for Join activities" do
       %Actor{url: organizer_url} = organizer = insert(:actor)
       %Actor{} = participant_actor = insert(:actor)
@@ -905,7 +1369,9 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
              |> Enum.map(& &1.id) ==
                []
     end
+  end
 
+  describe "handle incoming leave activities on events" do
     test "it accepts Leave activities" do
       %Actor{url: _organizer_url} = organizer = insert(:actor)
       %Actor{url: participant_url} = participant_actor = insert(:actor)
@@ -952,6 +1418,58 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         |> Map.put("object", event_url)
 
       assert :error = Transmogrifier.handle_incoming(join_data)
+    end
+  end
+
+  describe "handle Invite activities on group" do
+    test "it accepts Invite activities" do
+      %Actor{url: group_url, id: group_id} = group = insert(:group)
+      %Actor{url: group_admin_url, id: group_admin_id} = group_admin = insert(:actor)
+
+      %Member{} =
+        _group_admin_member =
+        insert(:member, parent: group, actor: group_admin, role: :administrator)
+
+      %Actor{url: invitee_url, id: invitee_id} = _invitee = insert(:actor)
+
+      invite_data =
+        File.read!("test/fixtures/mobilizon-invite-activity.json")
+        |> Jason.decode!()
+        |> Map.put("actor", group_admin_url)
+        |> Map.put("object", group_url)
+        |> Map.put("target", invitee_url)
+
+      assert {:ok, activity, %Member{}} = Transmogrifier.handle_incoming(invite_data)
+      assert %Member{} = member = Actors.get_member_by_url(invite_data["id"])
+      assert member.actor.id == invitee_id
+      assert member.parent.id == group_id
+      assert member.role == :invited
+      assert member.invited_by_id == group_admin_id
+    end
+
+    test "it refuses Invite activities for " do
+      %Actor{url: group_url, id: group_id} = group = insert(:group)
+      %Actor{url: group_admin_url, id: group_admin_id} = group_admin = insert(:actor)
+
+      %Member{} =
+        _group_admin_member =
+        insert(:member, parent: group, actor: group_admin, role: :administrator)
+
+      %Actor{url: invitee_url, id: invitee_id} = _invitee = insert(:actor)
+
+      invite_data =
+        File.read!("test/fixtures/mobilizon-invite-activity.json")
+        |> Jason.decode!()
+        |> Map.put("actor", group_admin_url)
+        |> Map.put("object", group_url)
+        |> Map.put("target", invitee_url)
+
+      assert {:ok, activity, %Member{}} = Transmogrifier.handle_incoming(invite_data)
+      assert %Member{} = member = Actors.get_member_by_url(invite_data["id"])
+      assert member.actor.id == invitee_id
+      assert member.parent.id == group_id
+      assert member.role == :invited
+      assert member.invited_by_id == group_admin_id
     end
   end
 

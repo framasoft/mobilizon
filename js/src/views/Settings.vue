@@ -1,34 +1,40 @@
 <template>
-    <aside class="section container">
-        <h1 class="title">{{ $t('Settings') }}</h1>
-        <div class="columns">
-            <SettingsMenu class="column is-one-quarter-desktop" :menu="menu" />
-            <div class="column">
-                <nav class="breadcrumb" aria-label="breadcrumbs">
-                    <ul>
-                        <li v-for="route in routes.get($route.name)" :class="{ 'is-active': route.to.name === $route.name }"><router-link :to="{ name: route.to.name }">{{ route.title }}</router-link></li>
-                    </ul>
-                </nav>
-                <router-view />
-            </div>
-        </div>
-    </aside>
+  <aside class="section container">
+    <h1 class="title">{{ $t("Settings") }}</h1>
+    <div class="columns">
+      <SettingsMenu class="column is-one-quarter-desktop" :menu="menu" />
+      <div class="column">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li
+              v-for="route in routes.get($route.name)"
+              :class="{ 'is-active': route.to.name === $route.name }"
+              :key="route.to.name"
+            >
+              <router-link :to="{ name: route.to.name }">{{ route.title }}</router-link>
+            </li>
+          </ul>
+        </nav>
+        <router-view />
+      </div>
+    </div>
+  </aside>
 </template>
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
-import SettingsMenu from '@/components/Settings/SettingsMenu.vue';
-import { RouteName } from '@/router';
-import { ISettingMenuSection } from '@/types/setting-menu.model';
-import { Route } from 'vue-router';
-import { IPerson, Person } from '@/types/actor';
-import { IDENTITIES } from '@/graphql/actor';
+import { Component, Vue, Watch } from "vue-property-decorator";
+import { Route } from "vue-router";
+import SettingsMenu from "../components/Settings/SettingsMenu.vue";
+import RouteName from "../router/name";
+import { ISettingMenuSection } from "../types/setting-menu.model";
+import { IPerson, Person } from "../types/actor";
+import { IDENTITIES } from "../graphql/actor";
 
 @Component({
   components: { SettingsMenu },
   apollo: {
     identities: {
       query: IDENTITIES,
-      update: (data) => { return data.identities.map(identity => new Person(identity)); },
+      update: (data) => data.identities.map((identity: IPerson) => new Person(identity)),
     },
   },
 })
@@ -36,80 +42,82 @@ export default class Settings extends Vue {
   RouteName = RouteName;
 
   menu: ISettingMenuSection[] = [];
+
   identities!: IPerson[];
+
   newIdentity!: ISettingMenuSection;
 
   mounted() {
     this.newIdentity = {
-      title: this.$t('New profile') as string,
+      title: this.$t("New profile") as string,
       to: { name: RouteName.CREATE_IDENTITY } as Route,
     };
     this.menu = [
       {
-        title: this.$t('Account') as string,
+        title: this.$t("Account") as string,
         to: { name: RouteName.ACCOUNT_SETTINGS } as Route,
         items: [
           {
-            title: this.$t('General') as string,
+            title: this.$t("General") as string,
             to: { name: RouteName.ACCOUNT_SETTINGS_GENERAL } as Route,
           },
           {
-            title: this.$t('Preferences') as string,
+            title: this.$t("Preferences") as string,
             to: { name: RouteName.PREFERENCES } as Route,
           },
           {
-            title: this.$t('Notifications') as string,
+            title: this.$t("Notifications") as string,
             to: { name: RouteName.NOTIFICATIONS } as Route,
           },
         ],
       },
       {
-        title: this.$t('Profiles') as string,
+        title: this.$t("Profiles") as string,
         to: { name: RouteName.IDENTITIES } as Route,
         items: [this.newIdentity],
       },
       {
-        title: this.$t('Moderation') as string,
+        title: this.$t("Moderation") as string,
         to: { name: RouteName.MODERATION } as Route,
         items: [
           {
-            title: this.$t('Reports') as string,
+            title: this.$t("Reports") as string,
             to: { name: RouteName.REPORTS } as Route,
             items: [
               {
-                title: this.$t('Report') as string,
+                title: this.$t("Report") as string,
                 to: { name: RouteName.REPORT } as Route,
               },
             ],
           },
           {
-            title: this.$t('Moderation log') as string,
+            title: this.$t("Moderation log") as string,
             to: { name: RouteName.REPORT_LOGS } as Route,
           },
         ],
       },
       {
-        title: this.$t('Admin') as string,
+        title: this.$t("Admin") as string,
         to: { name: RouteName.ADMIN } as Route,
         items: [
           {
-            title: this.$t('Dashboard') as string,
+            title: this.$t("Dashboard") as string,
             to: { name: RouteName.ADMIN_DASHBOARD } as Route,
           },
           {
-            title: this.$t('Instance settings') as string,
+            title: this.$t("Instance settings") as string,
             to: { name: RouteName.ADMIN_SETTINGS } as Route,
           },
           {
-            title: this.$t('Federation') as string,
+            title: this.$t("Federation") as string,
             to: { name: RouteName.RELAYS } as Route,
             items: [
               {
-                title: this.$t('Followings') as string,
+                title: this.$t("Followings") as string,
                 to: { name: RouteName.RELAY_FOLLOWINGS } as Route,
               },
               {
-                title: this.$t('Followers') as string,
+                title: this.$t("Followers") as string,
                 to: { name: RouteName.RELAY_FOLLOWERS } as Route,
               },
             ],
@@ -119,17 +127,20 @@ export default class Settings extends Vue {
     ];
   }
 
-  @Watch('identities')
-    updateIdentities(identities) {
+  @Watch("identities")
+  updateIdentities(identities: IPerson[]) {
     if (!identities) return;
     if (!this.menu[1].items) return;
     this.menu[1].items = [];
-    this.menu[1].items.push(...identities.map((identity: IPerson) => {
-      return {
-        to: { name: RouteName.UPDATE_IDENTITY, params: { identityName: identity.preferredUsername } } as unknown as Route,
+    this.menu[1].items.push(
+      ...identities.map((identity: IPerson) => ({
+        to: ({
+          name: RouteName.UPDATE_IDENTITY,
+          params: { identityName: identity.preferredUsername },
+        } as unknown) as Route,
         title: `@${identity.preferredUsername}`,
-      };
-    }));
+      }))
+    );
     this.menu[1].items.push(this.newIdentity);
   }
 
@@ -138,7 +149,7 @@ export default class Settings extends Vue {
   }
 
   getPath(object: ISettingMenuSection[]) {
-    function iter(menu: ISettingMenuSection[]|ISettingMenuSection, acc: ISettingMenuSection[])  {
+    function iter(menu: ISettingMenuSection[] | ISettingMenuSection, acc: ISettingMenuSection[]) {
       if (Array.isArray(menu)) {
         return menu.forEach((item: ISettingMenuSection) => {
           iter(item, acc.concat(item));
@@ -160,7 +171,7 @@ export default class Settings extends Vue {
 </script>
 
 <style lang="scss" scoped>
-    aside.section {
-        padding-top: 1rem;
-    }
+aside.section {
+  padding-top: 1rem;
+}
 </style>

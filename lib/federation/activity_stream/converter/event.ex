@@ -63,7 +63,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
             nil
         end
 
-      entity = %{
+      %{
         title: object["name"],
         description: object["content"],
         organizer_actor_id: actor_id,
@@ -87,11 +87,6 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
         updated_at: object["updated"],
         publish_at: object["published"]
       }
-
-      {:ok, entity}
-    else
-      error ->
-        {:error, error}
     end
   end
 

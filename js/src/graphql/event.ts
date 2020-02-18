@@ -1,29 +1,33 @@
-import gql from 'graphql-tag';
-import { COMMENT_FIELDS_FRAGMENT } from '@/graphql/comment';
+import gql from "graphql-tag";
+import { COMMENT_FIELDS_FRAGMENT } from "@/graphql/comment";
 
 const participantQuery = `
+  role,
+  id,
+  actor {
+    preferredUsername,
+    avatar {
+      url
+    },
+    name,
+    id,
+    domain
+  },
+  event {
+    id,
+    uuid
+  },
+  metadata {
+    cancellationToken,
+    message
+  },
+  insertedAt
+`;
+
+const participantsQuery = `
   total,
   elements {
-    role,
-    id,
-    actor {
-      preferredUsername,
-      avatar {
-        url
-      },
-      name,
-      id,
-      domain
-    },
-    event {
-      id,
-      uuid
-    },
-    metadata {
-      cancellationToken,
-      message
-    },
-    insertedAt
+    ${participantQuery}
   }
 `;
 
@@ -66,7 +70,8 @@ const optionsQuery = `
   attendees,
   program,
   commentModeration,
-  showParticipationPrice
+  showParticipationPrice,
+  hideOrganizerWhenGroupEvent,
   __typename
 `;
 
@@ -106,14 +111,19 @@ export const FETCH_EVENT = gql`
         name,
         url,
         id,
+        summary
       },
-      # attributedTo {
-      #     avatar {
-      #      url,
-      #     }
-      #     preferredUsername,
-      #     name,
-      # },
+      attributedTo {
+        avatar {
+          url,
+        }
+        preferredUsername,
+        name,
+        summary,
+        domain,
+        url,
+        id
+      },
       participantStats {
         going,
         notApproved,
@@ -147,7 +157,6 @@ export const FETCH_EVENT = gql`
       }
     }
   }
-  ${COMMENT_FIELDS_FRAGMENT}
 `;
 
 export const FETCH_EVENTS = gql`
@@ -193,7 +202,7 @@ export const FETCH_EVENTS = gql`
 #      },
       category,
       participants {
-        ${participantQuery}
+        ${participantsQuery}
       },
       tags {
         slug,
@@ -206,6 +215,7 @@ export const FETCH_EVENTS = gql`
 export const CREATE_EVENT = gql`
   mutation createEvent(
     $organizerActorId: ID!,
+    $attributedToId: ID,
     $title: String!,
     $description: String!,
     $beginsOn: DateTime!,
@@ -224,6 +234,7 @@ export const CREATE_EVENT = gql`
   ) {
     createEvent(
       organizerActorId: $organizerActorId,
+      attributedToId: $attributedToId,
       title: $title,
       description: $description,
       beginsOn: $beginsOn,
@@ -262,6 +273,16 @@ export const CREATE_EVENT = gql`
       phoneAddress,
       physicalAddress {
         ${physicalAddressQuery}
+      },
+      attributedTo {
+        id,
+        domain,
+        name,
+        url,
+        preferredUsername,
+        avatar {
+          url
+        }
       },
       organizerActor {
         avatar {
@@ -304,6 +325,7 @@ export const EDIT_EVENT = gql`
     $onlineAddress: String,
     $phoneAddress: String,
     $organizerActorId: ID,
+    $attributedToId: ID,
     $category: String,
     $physicalAddress: AddressInput,
     $options: EventOptionsInput,
@@ -323,6 +345,7 @@ export const EDIT_EVENT = gql`
       onlineAddress: $onlineAddress,
       phoneAddress: $phoneAddress,
       organizerActorId: $organizerActorId,
+      attributedToId: $attributedToId,
       category: $category,
       physicalAddress: $physicalAddress
       options: $options,
@@ -349,6 +372,16 @@ export const EDIT_EVENT = gql`
       phoneAddress,
       physicalAddress {
         ${physicalAddressQuery}
+      },
+      attributedTo {
+        id,
+        domain,
+        name,
+        url,
+        preferredUsername,
+        avatar {
+          url
+        }
       },
       organizerActor {
         avatar {
@@ -390,11 +423,7 @@ export const JOIN_EVENT = gql`
 
 export const LEAVE_EVENT = gql`
   mutation LeaveEvent($eventId: ID!, $actorId: ID!, $token: String) {
-    leaveEvent(
-      eventId: $eventId,
-      actorId: $actorId,
-      token: $token
-    ) {
+    leaveEvent(eventId: $eventId, actorId: $actorId, token: $token) {
       actor {
         id
       }
@@ -406,11 +435,11 @@ export const CONFIRM_PARTICIPATION = gql`
   mutation ConfirmParticipation($token: String!) {
     confirmParticipation(confirmationToken: $token) {
       actor {
-        id,
-      },
+        id
+      }
       event {
         uuid
-      },
+      }
       role
     }
   }
@@ -419,7 +448,7 @@ export const CONFIRM_PARTICIPATION = gql`
 export const UPDATE_PARTICIPANT = gql`
   mutation AcceptParticipant($id: ID!, $moderatorActorId: ID!, $role: ParticipantRoleEnum!) {
     updateParticipation(id: $id, moderatorActorId: $moderatorActorId, role: $role) {
-      role,
+      role
       id
     }
   }
@@ -427,11 +456,8 @@ export const UPDATE_PARTICIPANT = gql`
 
 export const DELETE_EVENT = gql`
   mutation DeleteEvent($eventId: ID!, $actorId: ID!) {
-    deleteEvent(
-      eventId: $eventId,
-      actorId: $actorId
-    ) {
-        id
+    deleteEvent(eventId: $eventId, actorId: $actorId) {
+      id
     }
   }
 `;
@@ -441,7 +467,7 @@ export const PARTICIPANTS = gql`
     event(uuid: $uuid) {
       id,
       participants(page: $page, limit: $limit, roles: $roles, actorId: $actorId) {
-        ${participantQuery}
+        ${participantsQuery}
       },
       participantStats {
         going,
@@ -456,13 +482,13 @@ export const PARTICIPANTS = gql`
 export const EVENT_PERSON_PARTICIPATION = gql`
   query($actorId: ID!, $eventId: ID!) {
     person(id: $actorId) {
-      id,
+      id
       participations(eventId: $eventId) {
-        id,
-        role,
+        id
+        role
         actor {
           id
-        },
+        }
         event {
           id
         }
@@ -472,15 +498,15 @@ export const EVENT_PERSON_PARTICIPATION = gql`
 `;
 
 export const EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED = gql`
-  subscription ($actorId: ID!, $eventId: ID!) {
+  subscription($actorId: ID!, $eventId: ID!) {
     eventPersonParticipationChanged(personId: $actorId) {
-      id,
+      id
       participations(eventId: $eventId) {
-        id,
-        role,
+        id
+        role
         actor {
           id
-        },
+        }
         event {
           id
         }

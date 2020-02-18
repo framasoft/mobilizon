@@ -1,13 +1,33 @@
 <template>
   <div class="section container">
-    <h1 class="title">{{ $t('Explore') }}</h1>
+    <h1 class="title">{{ $t("Explore") }}</h1>
     <section class="hero">
       <div class="hero-body">
         <form @submit.prevent="submit()">
-          <b-field :label="$t('Event')" grouped group-multiline label-position="on-border">
-            <b-input icon="magnify" type="search" size="is-large" expanded v-model="searchTerm" :placeholder="$t('For instance: London, Taekwondo, Architecture…')" />
+          <b-field
+            :label="$t('Event')"
+            grouped
+            group-multiline
+            label-position="on-border"
+            label-for="search"
+          >
+            <b-input
+              icon="magnify"
+              type="search"
+              id="search"
+              size="is-large"
+              expanded
+              v-model="searchTerm"
+              :placeholder="$t('For instance: London, Taekwondo, Architecture…')"
+            />
             <p class="control">
-              <b-button @click="submit" type="is-info" size="is-large" v-bind:disabled="searchTerm.trim().length === 0">{{ $t('Search') }}</b-button>
+              <b-button
+                @click="submit"
+                type="is-info"
+                size="is-large"
+                v-bind:disabled="searchTerm.trim().length === 0"
+                >{{ $t("Search") }}</b-button
+              >
             </p>
           </b-field>
         </form>
@@ -15,27 +35,25 @@
     </section>
     <section class="events-featured">
       <b-loading :active.sync="$apollo.loading"></b-loading>
-      <h3 class="title">{{ $t('Featured events') }}</h3>
+      <h2 class="title">{{ $t("Featured events") }}</h2>
       <div v-if="events.length > 0" class="columns is-multiline">
         <div class="column is-one-third-desktop" v-for="event in events" :key="event.uuid">
-          <EventCard
-            :event="event"
-          />
+          <EventCard :event="event" />
         </div>
       </div>
-      <b-message v-else-if="events.length === 0 && $apollo.loading === false" type="is-danger">
-        {{ $t('No events found') }}
-      </b-message>
+      <b-message v-else-if="events.length === 0 && $apollo.loading === false" type="is-danger">{{
+        $t("No events found")
+      }}</b-message>
     </section>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import EventCard from '@/components/Event/EventCard.vue';
-import { FETCH_EVENTS } from '@/graphql/event';
-import { IEvent } from '@/types/event.model';
-import { RouteName } from '@/router';
+import { Component, Vue } from "vue-property-decorator";
+import EventCard from "@/components/Event/EventCard.vue";
+import { FETCH_EVENTS } from "@/graphql/event";
+import { IEvent } from "@/types/event.model";
+import RouteName from "../../router/name";
 
 @Component({
   components: {
@@ -49,46 +67,50 @@ import { RouteName } from '@/router';
   metaInfo() {
     return {
       // if no subcomponents specify a metaInfo.title, this title will be used
-      title: this.$t('Explore') as string,
+      title: this.$t("Explore") as string,
       // all titles will be injected into this template
-      titleTemplate: '%s | Mobilizon',
+      titleTemplate: "%s | Mobilizon",
     };
   },
 })
 export default class Explore extends Vue {
   events: IEvent[] = [];
-  searchTerm: string = '';
+
+  searchTerm = "";
 
   submit() {
-    this.$router.push({ name: RouteName.SEARCH, params: { searchTerm: this.searchTerm } });
+    this.$router.push({
+      name: RouteName.SEARCH,
+      params: { searchTerm: this.searchTerm },
+    });
   }
 }
 </script>
 
 <style scoped lang="scss">
-  @import "@/variables.scss";
+@import "@/variables.scss";
 
-  main > .container {
-    background: $white;
+main > .container {
+  background: $white;
 
-    .hero-body {
-      padding: 1rem 1.5rem;
-    }
+  .hero-body {
+    padding: 1rem 1.5rem;
   }
+}
 
-  h1.title {
-    margin-top: 1.5rem;
+h1.title {
+  margin-top: 1.5rem;
+}
+
+h3.title {
+  margin-bottom: 1.5rem;
+}
+
+.events-featured {
+  margin: 25px auto;
+
+  .columns {
+    margin: 1rem auto 3rem;
   }
-
-  h3.title {
-    margin-bottom: 1.5rem;
-  }
-
-  .events-featured {
-    margin: 25px auto;
-
-    .columns {
-      margin: 1rem auto 3rem;
-    }
 }
 </style>

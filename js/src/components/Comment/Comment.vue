@@ -1,112 +1,130 @@
 <template>
-    <li :class="{ reply: comment.inReplyToComment }">
-        <article class="media" :class="{ selected: commentSelected, organizer: commentFromOrganizer }" :id="commentId">
-            <figure class="media-left" v-if="!comment.deletedAt && comment.actor.avatar">
-                <p class="image is-48x48">
-                    <img :src="comment.actor.avatar.url" alt="">
-                </p>
-            </figure>
-            <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
-            <div class="media-content">
-                <div class="content">
-                    <span class="first-line" v-if="!comment.deletedAt">
-                        <strong>{{ comment.actor.name }}</strong>
-                        <small v-if="comment.actor.domain">@{{ comment.actor.preferredUsername }}@{{ comment.actor.domain }}</small>
-                        <small v-else>@{{ comment.actor.preferredUsername }}</small>
-                        <a class="comment-link has-text-grey" :href="commentURL">
-                            <small>{{ timeago(new Date(comment.updatedAt)) }}</small>
-                        </a>
-                    </span>
-                    <a v-else class="comment-link has-text-grey" :href="commentURL">
-                        <span>{{ $t('[deleted]') }}</span>
-                    </a>
-                    <span class="icons" v-if="!comment.deletedAt">
-                        <span v-if="comment.actor.id === currentActor.id"
-                              @click="$emit('delete-comment', comment)">
-                            <b-icon
-                                icon="delete"
-                                size="is-small"
-                            />
-                        </span>
-                        <span @click="reportModal()">
-                            <b-icon
-                                    icon="alert"
-                                    size="is-small"
-                            />
-                        </span>
-                    </span>
-                    <br>
-                    <div v-if="!comment.deletedAt" v-html="comment.text" />
-                    <div v-else>{{ $t('[This comment has been deleted]') }}</div>
-                    <span class="load-replies" v-if="comment.totalReplies">
-                        <span v-if="!showReplies" @click="fetchReplies">
-                            {{ $tc('View a reply', comment.totalReplies, { totalReplies: comment.totalReplies }) }}
-                        </span>
-                        <span v-else-if="comment.totalReplies && showReplies" @click="showReplies = false">
-                            {{ $t('Hide replies') }}
-                        </span>
-                    </span>
-                </div>
-                <nav class="reply-action level is-mobile" v-if="currentActor.id && event.options.commentModeration !== CommentModeration.CLOSED">
-                    <div class="level-left">
-                      <span style="cursor: pointer" class="level-item" @click="createReplyToComment(comment)">
-                        <span class="icon is-small">
-                          <b-icon icon="reply" />
-                        </span>
-                        {{ $t('Reply') }}
-                      </span>
-                    </div>
-                </nav>
-            </div>
-        </article>
-        <form class="reply" @submit.prevent="replyToComment" v-if="currentActor.id" v-show="replyTo">
-            <article class="media reply">
-                <figure class="media-left" v-if="currentActor.avatar">
-                    <p class="image is-48x48">
-                        <img :src="currentActor.avatar.url" alt="">
-                    </p>
-                </figure>
-                <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
-                <div class="media-content">
-                    <div class="content">
-                        <span class="first-line">
-                            <strong>{{ currentActor.name}}</strong>
-                            <small>@{{ currentActor.preferredUsername }}</small>
-                        </span>
-                        <br>
-                        <span class="editor-line">
-                            <editor class="editor" ref="commenteditor" v-model="newComment.text" mode="comment" />
-                            <b-button :disabled="newComment.text.trim().length === 0" native-type="submit" type="is-info">{{ $t('Post a reply') }}</b-button>
-                        </span>
-                    </div>
-                </div>
-            </article>
-        </form>
-        <transition-group name="comment-replies" v-if="showReplies" class="comment-replies" tag="ul">
-            <comment
-                    class="reply"
-                    v-for="reply in comment.replies"
-                    :key="reply.id"
-                    :comment="reply"
-                    :event="event"
-                    @create-comment="$emit('create-comment', $event)"
-                    @delete-comment="$emit('delete-comment', $event)" />
-        </transition-group>
-    </li>
+  <li :class="{ reply: comment.inReplyToComment }">
+    <article
+      class="media"
+      :class="{ selected: commentSelected, organizer: commentFromOrganizer }"
+      :id="commentId"
+    >
+      <figure class="media-left" v-if="!comment.deletedAt && comment.actor.avatar">
+        <p class="image is-48x48">
+          <img :src="comment.actor.avatar.url" alt="" />
+        </p>
+      </figure>
+      <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+      <div class="media-content">
+        <div class="content">
+          <span class="first-line" v-if="!comment.deletedAt">
+            <strong>{{ comment.actor.name }}</strong>
+            <small v-if="comment.actor.domain"
+              >@{{ comment.actor.preferredUsername }}@{{ comment.actor.domain }}</small
+            >
+            <small v-else>@{{ comment.actor.preferredUsername }}</small>
+            <a class="comment-link has-text-grey" :href="commentURL">
+              <small>{{ timeago(new Date(comment.updatedAt)) }}</small>
+            </a>
+          </span>
+          <a v-else class="comment-link has-text-grey" :href="commentURL">
+            <span>{{ $t("[deleted]") }}</span>
+          </a>
+          <span class="icons" v-if="!comment.deletedAt">
+            <button
+              v-if="comment.actor.id === currentActor.id"
+              @click="$emit('delete-comment', comment)"
+            >
+              <b-icon icon="delete" size="is-small" aria-hidden="true" />
+              <span class="visually-hidden">{{ $t("Delete") }}</span>
+            </button>
+            <button @click="reportModal()">
+              <b-icon icon="alert" size="is-small" />
+              <span class="visually-hidden">{{ $t("Report") }}</span>
+            </button>
+          </span>
+          <br />
+          <div v-if="!comment.deletedAt" v-html="comment.text" />
+          <div v-else>{{ $t("[This comment has been deleted]") }}</div>
+          <span class="load-replies" v-if="comment.totalReplies">
+            <span v-if="!showReplies" @click="fetchReplies">
+              {{
+                $tc("View a reply", comment.totalReplies, { totalReplies: comment.totalReplies })
+              }}
+            </span>
+            <span v-else-if="comment.totalReplies && showReplies" @click="showReplies = false">
+              {{ $t("Hide replies") }}
+            </span>
+          </span>
+        </div>
+        <nav
+          class="reply-action level is-mobile"
+          v-if="currentActor.id && event.options.commentModeration !== CommentModeration.CLOSED"
+        >
+          <div class="level-left">
+            <span
+              style="cursor: pointer;"
+              class="level-item"
+              @click="createReplyToComment(comment)"
+            >
+              <span class="icon is-small">
+                <b-icon icon="reply" />
+              </span>
+              {{ $t("Reply") }}
+            </span>
+          </div>
+        </nav>
+      </div>
+    </article>
+    <form class="reply" @submit.prevent="replyToComment" v-if="currentActor.id" v-show="replyTo">
+      <article class="media reply">
+        <figure class="media-left" v-if="currentActor.avatar">
+          <p class="image is-48x48">
+            <img :src="currentActor.avatar.url" alt="" />
+          </p>
+        </figure>
+        <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+        <div class="media-content">
+          <div class="content">
+            <span class="first-line">
+              <strong>{{ currentActor.name }}</strong>
+              <small>@{{ currentActor.preferredUsername }}</small>
+            </span>
+            <br />
+            <span class="editor-line">
+              <editor class="editor" ref="commentEditor" v-model="newComment.text" mode="comment" />
+              <b-button
+                :disabled="newComment.text.trim().length === 0"
+                native-type="submit"
+                type="is-info"
+                >{{ $t("Post a reply") }}</b-button
+              >
+            </span>
+          </div>
+        </div>
+      </article>
+    </form>
+    <transition-group name="comment-replies" v-if="showReplies" class="comment-replies" tag="ul">
+      <comment
+        class="reply"
+        v-for="reply in comment.replies"
+        :key="reply.id"
+        :comment="reply"
+        :event="event"
+        @create-comment="$emit('create-comment', $event)"
+        @delete-comment="$emit('delete-comment', $event)"
+      />
+    </transition-group>
+  </li>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { CommentModel, IComment } from '@/types/comment.model';
-import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
-import { IPerson } from '@/types/actor';
-import { Refs } from '@/shims-vue';
-import EditorComponent from '@/components/Editor.vue';
-import TimeAgo from 'javascript-time-ago';
-import { COMMENTS_THREADS, FETCH_THREAD_REPLIES } from '@/graphql/comment';
-import { IEvent, CommentModeration } from '@/types/event.model';
-import ReportModal from '@/components/Report/ReportModal.vue';
-import { IReport } from '@/types/report.model';
-import { CREATE_REPORT } from '@/graphql/report';
+import { Component, Prop, Vue, Ref } from "vue-property-decorator";
+import EditorComponent from "@/components/Editor.vue";
+import TimeAgo from "javascript-time-ago";
+import { CommentModel, IComment } from "../../types/comment.model";
+import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
+import { IPerson } from "../../types/actor";
+import { COMMENTS_THREADS, FETCH_THREAD_REPLIES } from "../../graphql/comment";
+import { IEvent, CommentModeration } from "../../types/event.model";
+import ReportModal from "../Report/ReportModal.vue";
+import { IReport } from "../../types/report.model";
+import { CREATE_REPORT } from "../../graphql/report";
 
 @Component({
   apollo: {
@@ -115,23 +133,29 @@ import { CREATE_REPORT } from '@/graphql/report';
     },
   },
   components: {
-    editor: () => import(/* webpackChunkName: "editor" */ '@/components/Editor.vue'),
-    comment: () => import(/* webpackChunkName: "comment" */ './Comment.vue'),
+    editor: () => import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
+    comment: () => import(/* webpackChunkName: "comment" */ "./Comment.vue"),
   },
 })
 export default class Comment extends Vue {
   @Prop({ required: true, type: Object }) comment!: IComment;
+
   @Prop({ required: true, type: Object }) event!: IEvent;
 
-  $refs!: Refs<{
-    commenteditor: EditorComponent,
-  }>;
+  // Hack because Vue only exports it's own interface.
+  // See https://github.com/kaorun343/vue-property-decorator/issues/257
+  @Ref() readonly commentEditor!: EditorComponent & { replyToComment: (comment: IComment) => void };
 
   currentActor!: IPerson;
+
   newComment: IComment = new CommentModel();
-  replyTo: boolean = false;
-  showReplies: boolean = false;
-  timeAgoInstance = null;
+
+  replyTo = false;
+
+  showReplies = false;
+
+  timeAgoInstance: TimeAgo | null = null;
+
   CommentModeration = CommentModeration;
 
   async mounted() {
@@ -140,7 +164,7 @@ export default class Comment extends Vue {
     TimeAgo.addLocale(locale);
     this.timeAgoInstance = new TimeAgo(localeName);
 
-    const hash = this.$route.hash;
+    const { hash } = this.$route;
     if (hash.includes(`#comment-${this.comment.uuid}`)) {
       this.fetchReplies();
     }
@@ -153,18 +177,17 @@ export default class Comment extends Vue {
       return;
     }
     this.replyTo = true;
-        // this.newComment.inReplyToComment = comment;
+    // this.newComment.inReplyToComment = comment;
     await this.$nextTick();
     await this.$nextTick(); // For some reason commenteditor needs two $nextTick() to fully render
-    const commentEditor = this.$refs.commenteditor;
-    commentEditor.replyToComment(comment);
+    this.commentEditor.replyToComment(comment);
   }
 
   replyToComment() {
     this.newComment.inReplyToComment = this.comment;
     this.newComment.originComment = this.comment.originComment || this.comment;
     this.newComment.actor = this.currentActor;
-    this.$emit('create-comment', this.newComment);
+    this.$emit("create-comment", this.newComment);
     this.newComment = new CommentModel();
     this.replyTo = false;
   }
@@ -188,7 +211,7 @@ export default class Comment extends Vue {
     if (!eventData) return;
     const { event } = eventData;
     const { comments } = event;
-    const parentCommentIndex = comments.findIndex(oldComment => oldComment.id === parentId);
+    const parentCommentIndex = comments.findIndex((oldComment) => oldComment.id === parentId);
     const parentComment = comments[parentCommentIndex];
     if (!parentComment) return;
     parentComment.replies = thread;
@@ -201,12 +224,11 @@ export default class Comment extends Vue {
     this.showReplies = true;
   }
 
-  timeago(dateTime): String {
+  timeago(dateTime: Date): string {
     if (this.timeAgoInstance != null) {
-      // @ts-ignore
       return this.timeAgoInstance.format(dateTime);
     }
-    return '';
+    return "";
   }
 
   get commentSelected(): boolean {
@@ -214,15 +236,20 @@ export default class Comment extends Vue {
   }
 
   get commentFromOrganizer(): boolean {
-    return this.event.organizerActor !== undefined && this.comment.actor && this.comment.actor.id === this.event.organizerActor.id;
+    return (
+      this.event.organizerActor !== undefined &&
+      this.comment.actor &&
+      this.comment.actor.id === this.event.organizerActor.id
+    );
   }
 
-  get commentId(): String {
-    if (this.comment.originComment) return `#comment-${this.comment.originComment.uuid}:${this.comment.uuid}`;
+  get commentId(): string {
+    if (this.comment.originComment)
+      return `#comment-${this.comment.originComment.uuid}:${this.comment.uuid}`;
     return `#comment-${this.comment.uuid}`;
   }
 
-  get commentURL(): String {
+  get commentURL(): string {
     if (!this.comment.local && this.comment.url) return this.comment.url;
     return this.commentId;
   }
@@ -232,7 +259,7 @@ export default class Comment extends Vue {
       parent: this,
       component: ReportModal,
       props: {
-        title: this.$t('Report this comment'),
+        title: this.$t("Report this comment"),
         comment: this.comment,
         onConfirm: this.reportComment,
         outsideDomain: this.comment.actor.domain,
@@ -240,7 +267,7 @@ export default class Comment extends Vue {
     });
   }
 
-  async reportComment(content: String, forward: boolean) {
+  async reportComment(content: string, forward: boolean) {
     try {
       await this.$apollo.mutate<IReport>({
         mutation: CREATE_REPORT,
@@ -254,9 +281,11 @@ export default class Comment extends Vue {
         },
       });
       this.$buefy.notification.open({
-        message: this.$t('Comment from @{username} reported', { username: this.comment.actor.preferredUsername }) as string,
-        type: 'is-success',
-        position: 'is-bottom-right',
+        message: this.$t("Comment from @{username} reported", {
+          username: this.comment.actor.preferredUsername,
+        }) as string,
+        type: "is-success",
+        position: "is-bottom-right",
         duration: 5000,
       });
     } catch (error) {
@@ -266,93 +295,105 @@ export default class Comment extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-    @import "@/variables.scss";
+@import "@/variables.scss";
 
-    .first-line {
-        * {
-            padding: 0 5px 0 0;
-        }
-    }
+form.reply {
+  padding-bottom: 1rem;
+}
 
-    .editor-line {
-        display: flex;
-        max-width: calc(80rem - 64px);
+.first-line {
+  * {
+    padding: 0 5px 0 0;
+  }
+}
 
-        .editor {
-            flex: 1;
-            padding-right: 10px;
-            margin-bottom: 0;
-        }
-    }
+.editor-line {
+  display: flex;
+  max-width: calc(80rem - 64px);
 
-    .comment-link small:hover {
-        color: hsl(0, 0%, 21%);
-    }
+  .editor {
+    flex: 1;
+    padding-right: 10px;
+    margin-bottom: 0;
+  }
+}
 
-    .root-comment .comment-replies > .reply {
-        padding-left: 3rem;
-    }
+.comment-link small:hover {
+  color: hsl(0, 0%, 21%);
+}
 
-    .media .media-content {
+.root-comment .comment-replies > .reply {
+  padding-left: 3rem;
+}
 
-        .content .editor-line {
-            display: flex;
-            align-items: center;
-        }
+.media .media-content {
+  .content .editor-line {
+    display: flex;
+    align-items: center;
+  }
 
-        .icons {
-            display: none;
-        }
-    }
+  .icons {
+    display: none;
+  }
+}
 
-    .media:hover .media-content .icons {
-        display: inline;
-        cursor: pointer;
-    }
+.media:hover .media-content .icons {
+  display: inline;
 
-    .load-replies {
-        cursor: pointer;
-    }
+  button {
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
+}
 
-    article {
-        border-radius: 4px;
+.load-replies {
+  cursor: pointer;
+}
 
-        &.selected {
-            background-color: lighten($secondary, 30%);
-        }
-        &.organizer:not(.selected) {
-            background-color: lighten($primary, 50%);
-        }
-    }
+article {
+  border-radius: 4px;
 
-    .comment-replies-enter-active,
-    .comment-replies-leave-active,
-    .comment-replies-move {
-        transition: 500ms cubic-bezier(0.59, 0.12, 0.34, 0.95);
-        transition-property: opacity, transform;
-    }
+  &.selected {
+    background-color: lighten($secondary, 30%);
+  }
+  &.organizer:not(.selected) {
+    background-color: lighten($primary, 50%);
+  }
+}
 
-    .comment-replies-enter {
-        opacity: 0;
-        transform: translateX(50px) scaleY(0.5);
-    }
+.comment-replies-enter-active,
+.comment-replies-leave-active,
+.comment-replies-move {
+  transition: 500ms cubic-bezier(0.59, 0.12, 0.34, 0.95);
+  transition-property: opacity, transform;
+}
 
-    .comment-replies-enter-to {
-        opacity: 1;
-        transform: translateX(0) scaleY(1);
-    }
+.comment-replies-enter {
+  opacity: 0;
+  transform: translateX(50px) scaleY(0.5);
+}
 
-    .comment-replies-leave-active {
-        position: absolute;
-    }
+.comment-replies-enter-to {
+  opacity: 1;
+  transform: translateX(0) scaleY(1);
+}
 
-    .comment-replies-leave-to {
-        opacity: 0;
-        transform: scaleY(0);
-        transform-origin: center top;
-    }
+.comment-replies-leave-active {
+  position: absolute;
+}
 
-    .reply-action .icon {
-        padding-right: 0.4rem;
-    }
+.comment-replies-leave-to {
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: center top;
+}
+
+.reply-action .icon {
+  padding-right: 0.4rem;
+}
+
+.visually-hidden {
+  display: none;
+}
 </style>

@@ -1,4 +1,4 @@
-import { ICurrentUser } from '@/types/current-user.model';
+import { ICurrentUser } from "@/types/current-user.model";
 
 export interface IToken {
   accessToken: string;

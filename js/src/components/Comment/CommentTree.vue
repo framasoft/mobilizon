@@ -1,60 +1,66 @@
 <template>
-    <div class="columns">
-        <div class="column is-two-thirds-desktop">
-            <form class="new-comment" v-if="currentActor.id && event.options.commentModeration !== CommentModeration.CLOSED" @submit.prevent="createCommentForEvent(newComment)" @keyup.ctrl.enter="createCommentForEvent(newComment)">
-                <article class="media">
-                    <figure class="media-left">
-                        <identity-picker-wrapper :inline="false" v-model="newComment.actor" />
-                    </figure>
-                    <div class="media-content">
-                        <div class="field">
-                            <p class="control">
-                                <editor ref="commenteditor" mode="comment" v-model="newComment.text" />
-                            </p>
-                        </div>
-                        <div class="send-comment">
-                            <b-button native-type="submit" type="is-info">{{ $t('Post a comment') }}</b-button>
-                        </div>
-                    </div>
-                </article>
-            </form>
-            <b-notification v-else-if="event.options.commentModeration === CommentModeration.CLOSED" :closable="false">
-                {{ $t('Comments have been closed.') }}
-            </b-notification>
-            <transition name="comment-empty-list" mode="out-in">
-                <transition-group name="comment-list" v-if="comments.length" class="comment-list" tag="ul">
-                    <comment
-                            class="root-comment"
-                            :comment="comment"
-                            :event="event"
-                            v-for="comment in orderedComments"
-                            v-if="!comment.deletedAt || comment.totalReplies > 0"
-                            :key="comment.id"
-                            @create-comment="createCommentForEvent"
-                            @delete-comment="deleteComment"
-                    />
-                </transition-group>
-                <div v-else class="no-comments">
-                    <span>{{ $t('No comments yet') }}</span>
-                    <img src="../../assets/undraw_just_saying.svg" alt="" />
-                </div>
-            </transition>
+  <div>
+    <form
+      class="new-comment"
+      v-if="currentActor.id && event.options.commentModeration !== CommentModeration.CLOSED"
+      @submit.prevent="createCommentForEvent(newComment)"
+      @keyup.ctrl.enter="createCommentForEvent(newComment)"
+    >
+      <article class="media">
+        <figure class="media-left">
+          <identity-picker-wrapper :inline="false" v-model="newComment.actor" />
+        </figure>
+        <div class="media-content">
+          <div class="field">
+            <p class="control">
+              <editor ref="commenteditor" mode="comment" v-model="newComment.text" />
+            </p>
+          </div>
+          <div class="send-comment">
+            <b-button native-type="submit" type="is-info">{{ $t("Post a comment") }}</b-button>
+          </div>
         </div>
-    </div>
+      </article>
+    </form>
+    <b-notification
+      v-else-if="event.options.commentModeration === CommentModeration.CLOSED"
+      :closable="false"
+      >{{ $t("Comments have been closed.") }}</b-notification
+    >
+    <transition name="comment-empty-list" mode="out-in">
+      <transition-group name="comment-list" v-if="comments.length" class="comment-list" tag="ul">
+        <comment
+          class="root-comment"
+          :comment="comment"
+          :event="event"
+          v-for="comment in filteredOrderedComments"
+          :key="comment.id"
+          @create-comment="createCommentForEvent"
+          @delete-comment="deleteComment"
+        />
+      </transition-group>
+      <div v-else class="no-comments">
+        <span>{{ $t("No comments yet") }}</span>
+        <img src="../../assets/undraw_just_saying.svg" alt />
+      </div>
+    </transition>
+  </div>
 </template>
 
 <script lang="ts">
-import { Prop, Vue, Component, Watch } from 'vue-property-decorator';
-import { CommentModel, IComment } from '@/types/comment.model';
+import { Prop, Vue, Component, Watch } from "vue-property-decorator";
+import Comment from "@/components/Comment/Comment.vue";
+import IdentityPickerWrapper from "@/views/Account/IdentityPickerWrapper.vue";
+import { CommentModel, IComment } from "../../types/comment.model";
 import {
-    CREATE_COMMENT_FROM_EVENT,
-    DELETE_COMMENT, COMMENTS_THREADS, FETCH_THREAD_REPLIES,
-} from '@/graphql/comment';
-import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
-import { IPerson } from '@/types/actor';
-import Comment from '@/components/Comment/Comment.vue';
-import { IEvent, CommentModeration } from '@/types/event.model';
-import IdentityPickerWrapper from '@/views/Account/IdentityPickerWrapper.vue';
+  CREATE_COMMENT_FROM_EVENT,
+  DELETE_COMMENT,
+  COMMENTS_THREADS,
+  FETCH_THREAD_REPLIES,
+} from "../../graphql/comment";
+import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
+import { IPerson } from "../../types/actor";
+import { IEvent, CommentModeration } from "../../types/event.model";
 
 @Component({
   apollo: {
@@ -69,7 +75,7 @@ import IdentityPickerWrapper from '@/views/Account/IdentityPickerWrapper.vue';
         };
       },
       update(data) {
-        return data.event.comments.map((comment) => new CommentModel(comment));
+        return data.event.comments.map((comment: IComment) => new CommentModel(comment));
       },
       skip() {
         return !this.event.uuid;
@@ -79,18 +85,21 @@ import IdentityPickerWrapper from '@/views/Account/IdentityPickerWrapper.vue';
   components: {
     Comment,
     IdentityPickerWrapper,
-    editor: () => import(/* webpackChunkName: "editor" */ '@/components/Editor.vue'),
+    editor: () => import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
   },
 })
 export default class CommentTree extends Vue {
   @Prop({ required: false, type: Object }) event!: IEvent;
 
   newComment: IComment = new CommentModel();
+
   currentActor!: IPerson;
+
   comments: IComment[] = [];
+
   CommentModeration = CommentModeration;
 
-  @Watch('currentActor')
+  @Watch("currentActor")
   watchCurrentActor(currentActor: IPerson) {
     this.newComment.actor = currentActor;
   }
@@ -123,10 +132,13 @@ export default class CommentTree extends Vue {
           const { event } = commentThreadsData;
           const { comments: oldComments } = event;
 
-          // if it's no a root comment, we first need to find existing replies and add the new reply to it
-          if (comment.originComment) {
-            // @ts-ignore
-            const parentCommentIndex = oldComments.findIndex(oldComment => oldComment.id === comment.originComment.id);
+          // if it's no a root comment, we first need to find
+          // existing replies and add the new reply to it
+          if (comment.originComment !== undefined) {
+            const { originComment } = comment;
+            const parentCommentIndex = oldComments.findIndex(
+              (oldComment) => oldComment.id === originComment.id
+            );
             const parentComment = oldComments[parentCommentIndex];
 
             let oldReplyList: IComment[] = [];
@@ -204,15 +216,15 @@ export default class CommentTree extends Vue {
 
         if (comment.originComment) {
           // we have deleted a reply to a thread
-          const data = store.readQuery<{ thread: IComment[] }>({
+          const localData = store.readQuery<{ thread: IComment[] }>({
             query: FETCH_THREAD_REPLIES,
             variables: {
               threadId: comment.originComment.id,
             },
           });
-          if (!data) return;
-          const { thread: oldReplyList } = data;
-          const replies = oldReplyList.filter(reply => reply.id !== deletedCommentId);
+          if (!localData) return;
+          const { thread: oldReplyList } = localData;
+          const replies = oldReplyList.filter((reply) => reply.id !== deletedCommentId);
           store.writeQuery({
             query: FETCH_THREAD_REPLIES,
             variables: {
@@ -221,8 +233,11 @@ export default class CommentTree extends Vue {
             data: { thread: replies },
           });
 
-          // @ts-ignore
-          const parentCommentIndex = oldComments.findIndex(oldComment => oldComment.id === comment.originComment.id);
+          const { originComment } = comment;
+
+          const parentCommentIndex = oldComments.findIndex(
+            (oldComment) => oldComment.id === originComment.id
+          );
           const parentComment = oldComments[parentCommentIndex];
           parentComment.replies = replies;
           parentComment.totalReplies -= 1;
@@ -230,7 +245,7 @@ export default class CommentTree extends Vue {
           event.comments = oldComments;
         } else {
           // we have deleted a thread itself
-          event.comments = oldComments.filter(reply => reply.id !== deletedCommentId);
+          event.comments = oldComments.filter((reply) => reply.id !== deletedCommentId);
         }
         store.writeQuery({
           query: COMMENTS_THREADS,
@@ -245,84 +260,92 @@ export default class CommentTree extends Vue {
   }
 
   get orderedComments(): IComment[] {
-    return this.comments.filter((comment => comment.inReplyToComment == null)).sort((a, b) => {
-      if (a.updatedAt && b.updatedAt) {
-        return (new Date(b.updatedAt)).getTime() - (new Date(a.updatedAt)).getTime();
-      }
-      return 0;
-    });
+    return this.comments
+      .filter((comment) => comment.inReplyToComment == null)
+      .sort((a, b) => {
+        if (a.updatedAt && b.updatedAt) {
+          return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+        }
+        return 0;
+      });
+  }
+
+  get filteredOrderedComments(): IComment[] {
+    return this.orderedComments.filter((comment) => !comment.deletedAt || comment.totalReplies > 0);
   }
 }
 </script>
 
 <style lang="scss" scoped>
-    .new-comment {
-        .media-content {
-            display: flex;
-            align-items: center;
-            align-content: center;
+form.new-comment {
+  padding-bottom: 1rem;
 
-            .field {
-                flex: 1;
-                padding-right: 10px;
-                margin-bottom: 0;
-            }
-        }
+  .media-content {
+    display: flex;
+    align-items: center;
+    align-content: center;
+
+    .field {
+      flex: 1;
+      padding-right: 10px;
+      margin-bottom: 0;
     }
+  }
+}
 
-    .no-comments {
-        display: flex;
-        flex-direction: column;
+.no-comments {
+  display: flex;
+  flex-direction: column;
 
-        span {
-            text-align: center;
-            margin-bottom: 10px;
-        }
+  span {
+    text-align: center;
+    margin-bottom: 10px;
+  }
 
-        img {
-            max-width: 250px;
-            align-self: center;
-        }
-    }
+  img {
+    max-width: 250px;
+    align-self: center;
+  }
+}
 
-    ul.comment-list li {
-        margin-bottom: 16px;
-    }
+ul.comment-list li {
+  margin-bottom: 16px;
+}
 
-    .comment-list-enter-active,
-    .comment-list-leave-active,
-    .comment-list-move {
-        transition: 500ms cubic-bezier(0.59, 0.12, 0.34, 0.95);
-        transition-property: opacity, transform;
-    }
+.comment-list-enter-active,
+.comment-list-leave-active,
+.comment-list-move {
+  transition: 500ms cubic-bezier(0.59, 0.12, 0.34, 0.95);
+  transition-property: opacity, transform;
+}
 
-    .comment-list-enter {
-        opacity: 0;
-        transform: translateX(50px) scaleY(0.5);
-    }
+.comment-list-enter {
+  opacity: 0;
+  transform: translateX(50px) scaleY(0.5);
+}
 
-    .comment-list-enter-to {
-        opacity: 1;
-        transform: translateX(0) scaleY(1);
-    }
+.comment-list-enter-to {
+  opacity: 1;
+  transform: translateX(0) scaleY(1);
+}
 
-    .comment-list-leave-active,
-    .comment-empty-list-active {
-        position: absolute;
-    }
+.comment-list-leave-active,
+.comment-empty-list-active {
+  position: absolute;
+}
 
-    .comment-list-leave-to,
-    .comment-empty-list-leave-to {
-        opacity: 0;
-        transform: scaleY(0);
-        transform-origin: center top;
-    }
+.comment-list-leave-to,
+.comment-empty-list-leave-to {
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: center top;
+}
 
-    /*.comment-empty-list-enter-active {*/
-    /*    transition: opacity .5s;*/
-    /*}*/
+/*.comment-empty-list-enter-active {*/
+/*    transition: opacity .5s;*/
+/*}*/
 
-    /*.comment-empty-list-enter {*/
-    /*    opacity: 0;*/
-    /*}*/
+/*.comment-empty-list-enter {*/
+/*    opacity: 0;*/
+/*}*/
 </style>

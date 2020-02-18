@@ -5,9 +5,10 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
   import Mobilizon.Factory
 
-  alias Mobilizon.{Actors, Config, Events, Users}
+  alias Mobilizon.{Actors, Config, Conversations, Events, Users}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.{Comment, Event, Participant}
+  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Users.User
 
   alias Mobilizon.GraphQL.AbsintheHelpers
@@ -1424,7 +1425,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       end
 
       assert_raise Ecto.NoResultsError, fn ->
-        Events.get_comment!(comment_id)
+        Conversations.get_comment!(comment_id)
       end
 
       # Actors are not deleted but emptied (to keep the  username reserved)

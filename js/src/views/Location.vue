@@ -3,17 +3,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
 export default class Location extends Vue {
   @Prop(String) address!: string;
 
-  description = 'Paris, France';
+  description = "Paris, France";
+
   center = { lat: 48.85, lng: 2.35 };
+
   markers: any[] = [];
 
-  setPlace(place) {
+  setPlace(place: any) {
     this.center = {
       lat: place.geometry.location.lat(),
       lng: place.geometry.location.lng(),
@@ -24,7 +26,7 @@ export default class Location extends Vue {
       },
     ];
 
-    this.$emit('input', place.formatted_address);
+    this.$emit("input", place.formatted_address);
   }
 }
 </script>

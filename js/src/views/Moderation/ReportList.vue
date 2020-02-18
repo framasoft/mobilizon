@@ -1,39 +1,42 @@
 <template>
-    <section>
-        <b-field>
-            <b-radio-button v-model="filterReports"
-                            :native-value="ReportStatusEnum.OPEN">
-                {{ $t('Open') }}
-            </b-radio-button>
-            <b-radio-button v-model="filterReports"
-                            :native-value="ReportStatusEnum.RESOLVED">
-                {{ $t('Resolved') }}
-            </b-radio-button>
-            <b-radio-button v-model="filterReports"
-                            :native-value="ReportStatusEnum.CLOSED">
-                {{ $t('Closed') }}
-            </b-radio-button>
-        </b-field>
-        <ul v-if="reports.length > 0">
-            <li v-for="report in reports">
-                <router-link :to="{ name: RouteName.REPORT, params: { reportId: report.id } }">
-                    <report-card :report="report" />
-                </router-link>
-            </li>
-        </ul>
-        <div v-else>
-            <b-message v-if="filterReports === ReportStatusEnum.OPEN" type="is-info">{{ $t('No open reports yet') }}</b-message>
-            <b-message v-if="filterReports === ReportStatusEnum.RESOLVED" type="is-info">{{ $t('No resolved reports yet') }}</b-message>
-            <b-message v-if="filterReports === ReportStatusEnum.CLOSED" type="is-info">{{ $t('No closed reports yet') }}</b-message>
-        </div>
-    </section>
+  <section>
+    <b-field>
+      <b-radio-button v-model="filterReports" :native-value="ReportStatusEnum.OPEN">{{
+        $t("Open")
+      }}</b-radio-button>
+      <b-radio-button v-model="filterReports" :native-value="ReportStatusEnum.RESOLVED">{{
+        $t("Resolved")
+      }}</b-radio-button>
+      <b-radio-button v-model="filterReports" :native-value="ReportStatusEnum.CLOSED">{{
+        $t("Closed")
+      }}</b-radio-button>
+    </b-field>
+    <ul v-if="reports.length > 0">
+      <li v-for="report in reports">
+        <router-link :to="{ name: RouteName.REPORT, params: { reportId: report.id } }">
+          <report-card :report="report" />
+        </router-link>
+      </li>
+    </ul>
+    <div v-else>
+      <b-message v-if="filterReports === ReportStatusEnum.OPEN" type="is-info">
+        {{ $t("No open reports yet") }}
+      </b-message>
+      <b-message v-if="filterReports === ReportStatusEnum.RESOLVED" type="is-info">
+        {{ $t("No resolved reports yet") }}
+      </b-message>
+      <b-message v-if="filterReports === ReportStatusEnum.CLOSED" type="is-info">
+        {{ $t("No closed reports yet") }}
+      </b-message>
+    </div>
+  </section>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import { IReport, ReportStatusEnum } from '@/types/report.model';
-import { REPORTS } from '@/graphql/report';
-import ReportCard from '@/components/Report/ReportCard.vue';
-import { RouteName } from '@/router';
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { IReport, ReportStatusEnum } from "@/types/report.model";
+import { REPORTS } from "@/graphql/report";
+import ReportCard from "@/components/Report/ReportCard.vue";
+import RouteName from "../../router/name";
 
 @Component({
   components: {
@@ -42,7 +45,7 @@ import { RouteName } from '@/router';
   apollo: {
     reports: {
       query: REPORTS,
-      fetchPolicy: 'no-cache',
+      fetchPolicy: "no-cache",
       variables() {
         return {
           status: this.filterReports,
@@ -53,14 +56,16 @@ import { RouteName } from '@/router';
   },
 })
 export default class ReportList extends Vue {
-
   reports?: IReport[] = [];
+
   RouteName = RouteName;
+
   ReportStatusEnum = ReportStatusEnum;
+
   filterReports: ReportStatusEnum = ReportStatusEnum.OPEN;
 
-  @Watch('$route.params.filter', { immediate: true })
-        onRouteFilterChanged (val: string) {
+  @Watch("$route.params.filter", { immediate: true })
+  onRouteFilterChanged(val: string) {
     if (!val) return;
     const filter = val.toUpperCase();
     if (filter in ReportStatusEnum) {
@@ -68,9 +73,12 @@ export default class ReportList extends Vue {
     }
   }
 
-  @Watch('filterReports', { immediate: true })
-        async onFilterChanged (val: string) {
-    await this.$router.push({ name: RouteName.REPORTS, params: { filter: val.toLowerCase() } });
+  @Watch("filterReports", { immediate: true })
+  async onFilterChanged(val: string) {
+    await this.$router.push({
+      name: RouteName.REPORTS,
+      params: { filter: val.toLowerCase() },
+    });
   }
 }
 </script>

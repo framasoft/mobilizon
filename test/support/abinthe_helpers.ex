@@ -3,7 +3,10 @@ defmodule Mobilizon.GraphQL.AbsintheHelpers do
   Absinthe helpers for tests
   """
 
-  use Phoenix.ConnTest
+  import Plug.Conn
+  import Phoenix.ConnTest
+
+  alias Plug.Conn
 
   @endpoint Mobilizon.Web.Endpoint
 
@@ -23,6 +26,7 @@ defmodule Mobilizon.GraphQL.AbsintheHelpers do
     }
   end
 
+  @spec graphql_query(Conn.t(), Keyword.t()) :: map | no_return
   def graphql_query(conn, options) do
     conn
     |> post("/api", build_query(options[:query], Keyword.get(options, :variables, %{})))

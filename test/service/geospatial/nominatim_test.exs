@@ -7,6 +7,11 @@ defmodule Mobilizon.Service.Geospatial.NominatimTest do
   alias Mobilizon.Config
   alias Mobilizon.Service.Geospatial.Nominatim
 
+  @http_options [
+    follow_redirect: true,
+    ssl: [{:versions, [:"tlsv1.2"]}]
+  ]
+
   setup do
     # Config.instance_user_agent/0 makes database calls so because of ownership connection
     # we need to define it like this instead of a constant
@@ -20,7 +25,7 @@ defmodule Mobilizon.Service.Geospatial.NominatimTest do
   describe "search address" do
     test "produces a valid search address with options", %{httpoison_headers: httpoison_headers} do
       with_mock HTTPoison,
-        get: fn _url, _headers ->
+        get: fn _url, _headers, _options ->
           {:ok, %HTTPoison.Response{status_code: 200, body: "[]"}}
         end do
         Nominatim.search("10 Rue Jangot",
@@ -31,7 +36,8 @@ defmodule Mobilizon.Service.Geospatial.NominatimTest do
         assert_called(
           HTTPoison.get(
             "https://nominatim.openstreetmap.org/search?format=geocodejson&q=10%20Rue%20Jangot&limit=5&accept-language=fr&addressdetails=1&namedetails=1",
-            httpoison_headers
+            httpoison_headers,
+            @http_options
           )
         )
       end

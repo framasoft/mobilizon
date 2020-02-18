@@ -67,6 +67,47 @@ defmodule Mobilizon.Web.ActivityPubController do
     end
   end
 
+  def members(conn, %{"name" => name, "page" => page}) do
+    with {page, ""} <- Integer.parse(page),
+         %Actor{} = group <- Actors.get_local_actor_by_name_with_preload(name) do
+      conn
+      |> put_resp_header("content-type", "application/activity+json")
+      |> json(
+        ActorView.render("members.json", %{
+          group: group,
+          page: page,
+          actor_applicant: Map.get(conn.assigns, :actor)
+        })
+      )
+    end
+  end
+
+  def members(conn, %{"name" => name}) do
+    with %Actor{} = group <- Actors.get_local_actor_by_name_with_preload(name) do
+      conn
+      |> put_resp_header("content-type", "application/activity+json")
+      |> json(
+        ActorView.render("members.json", %{
+          group: group,
+          actor_applicant: Map.get(conn.assigns, :actor)
+        })
+      )
+    end
+  end
+
+  def resources(conn, %{"name" => name}) do
+    with %Actor{} = group <- Actors.get_local_actor_by_name_with_preload(name) do
+      conn
+      |> put_resp_header("content-type", "application/activity+json")
+      |> json(
+        ActorView.render("resources.json", %{
+          group: group,
+          actor_applicant: Map.get(conn.assigns, :actor)
+        })
+      )
+    end
+  end
+
   def outbox(conn, %{"name" => name, "page" => page}) do
     with {page, ""} <- Integer.parse(page),
          %Actor{} = actor <- Actors.get_local_actor_by_name(name) do

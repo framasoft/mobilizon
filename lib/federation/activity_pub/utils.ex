@@ -24,6 +24,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   # so figure out what the actor's URI is based on what we have.
   def get_url(%{"id" => id}), do: id
   def get_url(id) when is_bitstring(id), do: id
+  def get_url(ids) when is_list(ids), do: get_url(hd(ids))
   def get_url(_), do: nil
 
   def make_json_ld_header do
@@ -176,6 +177,11 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   @doc """
   Checks that an incoming AP object's actor matches the domain it came from.
   """
+  def origin_check?(id, %{"attributedTo" => actor} = params) do
+    params = params |> Map.put("actor", actor) |> Map.delete("attributedTo")
+    origin_check?(id, params)
+  end
+
   def origin_check?(id, %{"actor" => actor} = params) when not is_nil(actor) do
     id_uri = URI.parse(id)
     actor_uri = URI.parse(get_actor(params))
@@ -184,9 +190,6 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   end
 
   def origin_check?(_id, %{"actor" => nil}), do: false
-
-  def origin_check?(id, %{"attributedTo" => actor} = params),
-    do: origin_check?(id, Map.put(params, "actor", actor))
 
   def origin_check?(_id, _data), do: false
 
@@ -257,25 +260,24 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   def make_announce_data(actor, object, activity_id, public \\ true)
 
   def make_announce_data(
-        %Actor{url: actor_url, followers_url: actor_followers_url} = _actor,
+        %Actor{} = actor,
         %{"id" => url, "type" => type} = _object,
         activity_id,
         public
       )
       when type in @actor_types do
-    do_make_announce_data(actor_url, actor_followers_url, url, url, activity_id, public)
+    do_make_announce_data(actor, url, url, activity_id, public)
   end
 
   def make_announce_data(
-        %Actor{url: actor_url, followers_url: actor_followers_url} = _actor,
+        %Actor{} = actor,
         %{"id" => url, "type" => type, "actor" => object_actor_url} = _object,
         activity_id,
         public
       )
-      when type in ["Note", "Event"] do
+      when type in ["Note", "Event", "ResourceCollection", "Document"] do
     do_make_announce_data(
-      actor_url,
-      actor_followers_url,
+      actor,
       object_actor_url,
       url,
       activity_id,
@@ -284,8 +286,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   end
 
   defp do_make_announce_data(
-         actor_url,
-         actor_followers_url,
+         %Actor{type: actor_type} = actor,
          object_actor_url,
          object_url,
          activity_id,
@@ -293,15 +294,19 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
        ) do
     {to, cc} =
       if public do
-        {[actor_followers_url, object_actor_url],
+        {[actor.followers_url, object_actor_url],
          ["https://www.w3.org/ns/activitystreams#Public"]}
       else
-        {[actor_followers_url], []}
+        if actor_type == :Group do
+          {[actor.members_url], []}
+        else
+          {[actor.followers_url], []}
+        end
       end
 
     data = %{
       "type" => "Announce",
-      "actor" => actor_url,
+      "actor" => actor.url,
       "object" => object_url,
       "to" => to,
       "cc" => cc
@@ -407,6 +412,51 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   end
 
   @doc """
+  Make add activity data
+  """
+  @spec make_add_data(map(), map()) :: map()
+  def make_add_data(object, target, additional \\ %{}) do
+    Logger.debug("Making add data")
+    Logger.debug(inspect(object))
+    Logger.debug(inspect(additional))
+
+    %{
+      "type" => "Add",
+      "to" => object["to"],
+      "cc" => object["cc"],
+      "actor" => object["actor"],
+      "object" => object,
+      "target" => Map.get(target, :url, target),
+      "id" => object["id"] <> "/add"
+    }
+    |> Map.merge(additional)
+  end
+
+  @doc """
+  Make move activity data
+  """
+  @spec make_add_data(map(), map()) :: map()
+  def make_move_data(object, origin, target, additional \\ %{}) do
+    Logger.debug("Making move data")
+    Logger.debug(inspect(object))
+    Logger.debug(inspect(origin))
+    Logger.debug(inspect(target))
+    Logger.debug(inspect(additional))
+
+    %{
+      "type" => "Move",
+      "to" => object["to"],
+      "cc" => object["cc"],
+      "actor" => object["actor"],
+      "object" => object,
+      "origin" => if(is_nil(origin), do: origin, else: Map.get(origin, :url, origin)),
+      "target" => if(is_nil(target), do: target, else: Map.get(target, :url, target)),
+      "id" => object["id"] <> "/move"
+    }
+    |> Map.merge(additional)
+  end
+
+  @doc """
   Converts PEM encoded keys to a public key representation
   """
   def pem_to_public_key(pem) do
@@ -428,11 +478,11 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     :public_key.pem_encode([public_key])
   end
 
-  defp make_signature(id, date) do
+  def make_signature(actor, id, date) do
     uri = URI.parse(id)
 
     signature =
-      Relay.get_actor()
+      actor
       |> HTTPSignatures.Signature.sign(%{
         "(request-target)": "get #{uri.path}",
         host: uri.host,
@@ -442,14 +492,32 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     [{:Signature, signature}]
   end
 
-  def sign_fetch(headers, id, date) do
+  @doc """
+  Sign a request with the instance Relay actor.
+  """
+  @spec sign_fetch_relay(List.t(), String.t(), String.t()) :: List.t()
+  def sign_fetch_relay(headers, id, date) do
+    with %Actor{} = actor <- Relay.get_actor() do
+      sign_fetch(headers, actor, id, date)
+    end
+  end
+
+  @doc """
+  Sign a request with an actor.
+  """
+  @spec sign_fetch(List.t(), Actor.t(), String.t(), String.t()) :: List.t()
+  def sign_fetch(headers, actor, id, date) do
     if Mobilizon.Config.get([:activitypub, :sign_object_fetches]) do
-      headers ++ make_signature(id, date)
+      headers ++ make_signature(actor, id, date)
     else
       headers
     end
   end
 
+  @doc """
+  Add the Date header to the request if we sign object fetches
+  """
+  @spec maybe_date_fetch(List.t(), String.t()) :: List.t()
   def maybe_date_fetch(headers, date) do
     if Mobilizon.Config.get([:activitypub, :sign_object_fetches]) do
       headers ++ [{:Date, date}]

@@ -7,7 +7,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
   """
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.Comment, as: CommentModel
+  alias Mobilizon.Conversations.Comment, as: CommentModel
   alias Mobilizon.Events.Event
   alias Mobilizon.Tombstone, as: TombstoneModel
 
@@ -60,42 +60,36 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
       # We fetch the parent object
       Logger.debug("We're fetching the parent object")
 
-      data =
-        if Map.has_key?(object, "inReplyTo") && object["inReplyTo"] != nil &&
-             object["inReplyTo"] != "" do
-          Logger.debug(fn -> "Object has inReplyTo #{object["inReplyTo"]}" end)
+      if Map.has_key?(object, "inReplyTo") && object["inReplyTo"] != nil &&
+           object["inReplyTo"] != "" do
+        Logger.debug(fn -> "Object has inReplyTo #{object["inReplyTo"]}" end)
 
-          case ActivityPub.fetch_object_from_url(object["inReplyTo"]) do
-            # Reply to an event (Event)
-            {:ok, %Event{id: id}} ->
-              Logger.debug("Parent object is an event")
-              data |> Map.put(:event_id, id)
+        case ActivityPub.fetch_object_from_url(object["inReplyTo"]) do
+          # Reply to an event (Event)
+          {:ok, %Event{id: id}} ->
+            Logger.debug("Parent object is an event")
+            data |> Map.put(:event_id, id)
 
-            # Reply to a comment (Comment)
-            {:ok, %CommentModel{id: id} = comment} ->
-              Logger.debug("Parent object is another comment")
+          # Reply to a comment (Comment)
+          {:ok, %CommentModel{id: id} = comment} ->
+            Logger.debug("Parent object is another comment")
 
-              data
-              |> Map.put(:in_reply_to_comment_id, id)
-              |> Map.put(:origin_comment_id, comment |> CommentModel.get_thread_id())
-              |> Map.put(:event_id, comment.event_id)
+            data
+            |> Map.put(:in_reply_to_comment_id, id)
+            |> Map.put(:origin_comment_id, comment |> CommentModel.get_thread_id())
+            |> Map.put(:event_id, comment.event_id)
 
-            # Anything else is kind of a MP
-            {:error, parent} ->
-              Logger.warn("Parent object is something we don't handle")
-              Logger.debug(inspect(parent))
-              data
-          end
-        else
-          Logger.debug("No parent object for this comment")
-
-          data
+          # Anything else is kind of a MP
+          {:error, parent} ->
+            Logger.warn("Parent object is something we don't handle")
+            Logger.debug(inspect(parent))
+            data
         end
+      else
+        Logger.debug("No parent object for this comment")
 
-      {:ok, data}
-    else
-      err ->
-        {:error, err}
+        data
+      end
     end
   end
 

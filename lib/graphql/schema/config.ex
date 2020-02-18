@@ -20,6 +20,8 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     field(:geocoding, :geocoding)
     field(:maps, :maps)
     field(:anonymous, :anonymous)
+    field(:resource_providers, list_of(:resource_provider))
+    field(:timezones, list_of(:string))
 
     field(:terms, :terms, description: "The instance's terms") do
       arg(:locale, :string, default_value: "en")
@@ -95,6 +97,12 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
 
   object :anonymous_event_creation_validation_captcha do
     field(:enabled, :boolean)
+  end
+
+  object :resource_provider do
+    field(:type, :string)
+    field(:endpoint, :string)
+    field(:software, :string)
   end
 
   object :config_queries do

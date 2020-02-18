@@ -64,6 +64,13 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
       arg(:event_id, :id)
       resolve(&Person.person_participations/3)
     end
+
+    @desc "The list of group this person is member of"
+    field(:memberships, :paginated_member_list,
+      description: "The list of group this person is member of"
+    ) do
+      resolve(&Person.person_memberships/3)
+    end
   end
 
   object :person_queries do

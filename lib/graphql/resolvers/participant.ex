@@ -105,7 +105,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
 
   @spec do_actor_join_event(Actor.t(), integer | String.t(), map()) ::
           {:ok, Participant.t()} | {:error, String.t()}
-  defp do_actor_join_event(actor, event_id, args \\ %{}) do
+  defp do_actor_join_event(actor, event_id, args) do
     with {:has_event, {:ok, %Event{} = event}} <-
            {:has_event, Events.get_event_with_preload(event_id)},
          {:ok, _activity, participant} <- Participations.join(event, actor, args),

@@ -1,11 +1,11 @@
-import { formatDateString, formatTimeString, formatDateTimeString } from './datetime';
-import { nl2br } from '@/filters/utils';
+import nl2br from "@/filters/utils";
+import { formatDateString, formatTimeString, formatDateTimeString } from "./datetime";
 
 export default {
-  install(vue) {
-    vue.filter('formatDateString', formatDateString);
-    vue.filter('formatTimeString', formatTimeString);
-    vue.filter('formatDateTimeString', formatDateTimeString);
-    vue.filter('nl2br', nl2br);
+  install(vue: any) {
+    vue.filter("formatDateString", formatDateString);
+    vue.filter("formatTimeString", formatTimeString);
+    vue.filter("formatDateTimeString", formatDateTimeString);
+    vue.filter("nl2br", nl2br);
   },
 };

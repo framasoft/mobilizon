@@ -13,8 +13,9 @@ defmodule Mobilizon.Events.Event do
   alias Mobilizon.{Addresses, Events, Media, Mention}
   alias Mobilizon.Addresses.Address
 
+  alias Mobilizon.Conversations.Comment
+
   alias Mobilizon.Events.{
-    Comment,
     EventOptions,
     EventParticipantStats,
     EventStatus,
@@ -78,7 +79,8 @@ defmodule Mobilizon.Events.Event do
     :online_address,
     :phone_address,
     :picture_id,
-    :physical_address_id
+    :physical_address_id,
+    :attributed_to_id
   ]
   @attrs @required_attrs ++ @optional_attrs
 

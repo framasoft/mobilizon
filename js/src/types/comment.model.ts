@@ -1,5 +1,5 @@
-import { Actor, IActor } from '@/types/actor';
-import { EventModel, IEvent } from '@/types/event.model';
+import { Actor, IActor } from "@/types/actor";
+import { EventModel, IEvent } from "@/types/event.model";
 
 export interface IComment {
   id?: string;
@@ -19,18 +19,30 @@ export interface IComment {
 
 export class CommentModel implements IComment {
   actor: IActor = new Actor();
+
   id?: string;
-  text: string = '';
-  local: boolean = true;
+
+  text = "";
+
+  local = true;
+
   url?: string;
+
   uuid?: string;
+
   inReplyToComment?: IComment = undefined;
+
   originComment?: IComment = undefined;
+
   replies: IComment[] = [];
+
   event?: IEvent = undefined;
+
   updatedAt?: Date = undefined;
+
   deletedAt?: Date = undefined;
-  totalReplies: number = 0;
+
+  totalReplies = 0;
 
   constructor(hash?: IComment) {
     if (!hash) return;
@@ -48,5 +60,4 @@ export class CommentModel implements IComment {
     this.deletedAt = hash.deletedAt;
     this.totalReplies = hash.totalReplies;
   }
-
 }

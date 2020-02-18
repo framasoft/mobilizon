@@ -2,35 +2,54 @@
   <section class="section container" v-if="!currentUser.isLoggedIn">
     <div class="columns is-mobile is-centered">
       <div class="column is-half-desktop">
-        <h1 class="title">
-          {{ $t('Welcome back!') }}
-        </h1>
-        <b-message v-if="errorCode === LoginErrorCode.NEED_TO_LOGIN" title="Info" type="is-info">
-          {{ $t('You need to login.') }}
-        </b-message>
+        <h1 class="title">{{ $t("Welcome back!") }}</h1>
+        <b-message
+          v-if="errorCode === LoginErrorCode.NEED_TO_LOGIN"
+          title="Info"
+          type="is-info"
+          :aria-close-label="$t('Close')"
+          >{{ $t("You need to login.") }}</b-message
+        >
         <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">
           <span v-if="error === LoginError.USER_NOT_CONFIRMED">
-            <span>{{ $t("The user account you're trying to login as has not been confirmed yet. Check your email inbox and eventually your spam folder.") }}</span>
+            <span>
+              {{
+                $t(
+                  "The user account you're trying to login as has not been confirmed yet. Check your email inbox and eventually your spam folder."
+                )
+              }}
+            </span>
             <i18n path="You may also ask to {resend_confirmation_email}.">
-              <router-link slot="resend_confirmation_email" :to="{ name: RouteName.RESEND_CONFIRMATION }">{{ $t('resend confirmation email') }}</router-link>
+              <router-link
+                slot="resend_confirmation_email"
+                :to="{ name: RouteName.RESEND_CONFIRMATION }"
+                >{{ $t("resend confirmation email") }}</router-link
+              >
             </i18n>
           </span>
-          <span v-if="error === LoginError.USER_EMAIL_PASSWORD_INVALID">
-            {{ $t('Impossible to login, your email or password seems incorrect.') }}
-          </span>
-          <!-- TODO: Shouldn't we hide this information ? -->
-          <span v-if="error === LoginError.USER_DOES_NOT_EXIST">
-            {{ $t('No user account with this email was found. Maybe you made a typo?') }}
-          </span>
+          <span v-if="error === LoginError.USER_EMAIL_PASSWORD_INVALID">{{
+            $t("Impossible to login, your email or password seems incorrect.")
+          }}</span>
+          <!-- TODO: Shouldn't we hide this information? -->
+          <span v-if="error === LoginError.USER_DOES_NOT_EXIST">{{
+            $t("No user account with this email was found. Maybe you made a typo?")
+          }}</span>
         </b-message>
         <form @submit="loginAction">
-          <b-field :label="$t('Email')">
-            <b-input aria-required="true" required type="email" v-model="credentials.email"/>
-          </b-field>
-
-          <b-field :label="$t('Password')">
+          <b-field :label="$t('Email')" label-for="email">
             <b-input
               aria-required="true"
+              required
+              id="email"
+              type="email"
+              v-model="credentials.email"
+            />
+          </b-field>
+
+          <b-field :label="$t('Password')" label-for="password">
+            <b-input
+              aria-required="true"
+              id="password"
               required
               type="password"
               password-reveal
@@ -39,25 +58,27 @@
           </b-field>
 
           <p class="control has-text-centered">
-            <button class="button is-primary is-large">
-              {{ $t('Login') }}
-            </button>
+            <button class="button is-primary is-large">{{ $t("Login") }}</button>
           </p>
           <p class="control">
             <router-link
               class="button is-text"
-              :to="{ name: RouteName.SEND_PASSWORD_RESET, params: { email: credentials.email }}"
+              :to="{ name: RouteName.SEND_PASSWORD_RESET, params: { email: credentials.email } }"
+              >{{ $t("Forgot your password ?") }}</router-link
             >
-              {{ $t('Forgot your password ?') }}
-            </router-link>
           </p>
           <p class="control" v-if="config && config.registrationsOpen">
             <router-link
               class="button is-text"
-              :to="{ name: RouteName.REGISTER, params: { default_email: credentials.email, default_password: credentials.password }}"
+              :to="{
+                name: RouteName.REGISTER,
+                params: {
+                  default_email: credentials.email,
+                  default_password: credentials.password,
+                },
+              }"
+              >{{ $t("Register") }}</router-link
             >
-              {{ $t('Register') }}
-            </router-link>
           </p>
         </form>
       </div>
@@ -66,18 +87,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { LOGIN } from '@/graphql/auth';
-import { validateEmailField, validateRequiredField } from '@/utils/validators';
-import { initializeCurrentActor, NoIdentitiesException, saveUserData } from '@/utils/auth';
-import { ILogin } from '@/types/login.model';
-import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
-import { onLogin } from '@/vue-apollo';
-import { RouteName } from '@/router';
-import { LoginErrorCode, LoginError } from '@/types/login-error-code.model';
-import { ICurrentUser } from '@/types/current-user.model';
-import { CONFIG } from '@/graphql/config';
-import { IConfig } from '@/types/config.model';
+import { Component, Prop, Vue } from "vue-property-decorator";
+import { LOGIN } from "../../graphql/auth";
+import { validateEmailField, validateRequiredField } from "../../utils/validators";
+import { initializeCurrentActor, NoIdentitiesException, saveUserData } from "../../utils/auth";
+import { ILogin } from "../../types/login.model";
+import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from "../../graphql/user";
+import RouteName from "../../router/name";
+import { LoginErrorCode, LoginError } from "../../types/login-error-code.model";
+import { ICurrentUser } from "../../types/current-user.model";
+import { CONFIG } from "../../graphql/config";
+import { IConfig } from "../../types/config.model";
 
 @Component({
   apollo: {
@@ -91,31 +111,36 @@ import { IConfig } from '@/types/config.model';
   metaInfo() {
     return {
       // if no subcomponents specify a metaInfo.title, this title will be used
-      title: this.$t('Login on Mobilizon!') as string,
+      title: this.$t("Login on Mobilizon!") as string,
       // all titles will be injected into this template
-      titleTemplate: '%s | Mobilizon',
+      titleTemplate: "%s | Mobilizon",
     };
   },
 })
 export default class Login extends Vue {
-  @Prop({ type: String, required: false, default: '' }) email!: string;
-  @Prop({ type: String, required: false, default: '' }) password!: string;
+  @Prop({ type: String, required: false, default: "" }) email!: string;
+
+  @Prop({ type: String, required: false, default: "" }) password!: string;
 
   LoginErrorCode = LoginErrorCode;
+
   LoginError = LoginError;
 
   errorCode: LoginErrorCode | null = null;
+
   config!: IConfig;
+
   currentUser!: ICurrentUser;
 
   RouteName = RouteName;
 
   credentials = {
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   };
 
   errors: string[] = [];
+
   rules = {
     required: validateRequiredField,
     email: validateEmailField,
@@ -127,9 +152,9 @@ export default class Login extends Vue {
     this.credentials.email = this.email;
     this.credentials.password = this.password;
 
-    const query = this.$route.query;
-    this.errorCode = query['code'] as LoginErrorCode;
-    this.redirect = query['redirect'] as string;
+    const { query } = this.$route;
+    this.errorCode = query.code as LoginErrorCode;
+    this.redirect = query.redirect as string;
   }
 
   async loginAction(e: Event) {
@@ -146,7 +171,7 @@ export default class Login extends Vue {
         },
       });
       if (data == null) {
-        throw new Error('Data is undefined');
+        throw new Error("Data is undefined");
       }
 
       saveUserData(data.login);
@@ -162,35 +187,36 @@ export default class Login extends Vue {
       });
       try {
         await initializeCurrentActor(this.$apollo.provider.defaultClient);
-      } catch (e) {
-        if (e instanceof NoIdentitiesException) {
-          return await this.$router.push({
+      } catch (err) {
+        if (err instanceof NoIdentitiesException) {
+          return this.$router.push({
             name: RouteName.REGISTER_PROFILE,
-            params: { email: this.currentUser.email, userAlreadyActivated: 'true' },
+            params: {
+              email: this.currentUser.email,
+              userAlreadyActivated: "true",
+            },
           });
         }
       }
 
-      onLogin(this.$apollo);
-
       if (this.redirect) {
-        await this.$router.push(this.redirect);
-      } else {
-        window.localStorage.setItem('welcome-back', 'yes');
-        await this.$router.push({ name: RouteName.HOME });
+        return this.$router.push(this.redirect);
       }
+      window.localStorage.setItem("welcome-back", "yes");
+      return this.$router.push({ name: RouteName.HOME });
     } catch (err) {
       console.error(err);
-      err.graphQLErrors.forEach(({ message }) => {
+      err.graphQLErrors.forEach(({ message }: { message: string }) => {
         this.errors.push(message);
       });
+      return undefined;
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  .container .columns {
-    margin: 1rem auto 3rem;
-  }
+.container .columns {
+  margin: 1rem auto 3rem;
+}
 </style>

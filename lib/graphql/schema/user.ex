@@ -51,7 +51,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
 
     field(:locale, :string, description: "The user's locale")
 
-    field(:participations, list_of(:participant),
+    field(:participations, :paginated_participant_list,
       description: "The list of participations this user has"
     ) do
       arg(:after_datetime, :datetime)
@@ -61,10 +61,22 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       resolve(&User.user_participations/3)
     end
 
+    field(:memberships, :paginated_member_list,
+      description: "The list of memberships for this user"
+    ) do
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
+      resolve(&User.user_memberships/3)
+    end
+
     field(:drafts, list_of(:event), description: "The list of draft events this user has created") do
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
       resolve(&User.user_drafted_events/3)
+    end
+
+    field(:settings, :user_settings, description: "The list of settings for this user") do
+      resolve(&User.user_settings/3)
     end
   end
 
@@ -89,6 +101,22 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
   @desc "The list of possible options for the event's status"
   enum :sortable_user_field do
     value(:id)
+  end
+
+  object :user_settings do
+    field(:timezone, :string, description: "The timezone for this user")
+
+    field(:notification_on_day, :boolean,
+      description: "Whether this user will receive an email at the start of the day of an event."
+    )
+
+    field(:notification_each_week, :boolean,
+      description: "Whether this user will receive an weekly event recap"
+    )
+
+    field(:notification_before_event, :boolean,
+      description: "Whether this user will receive a notification right before event"
+    )
   end
 
   object :user_queries do
@@ -179,20 +207,31 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       resolve(&User.change_password/3)
     end
 
+    @desc "Change an user email"
     field :change_email, :user do
       arg(:email, non_null(:string))
       arg(:password, non_null(:string))
       resolve(&User.change_email/3)
     end
 
+    @desc "Validate an user email"
     field :validate_email, :user do
       arg(:token, non_null(:string))
       resolve(&User.validate_email/3)
     end
 
+    @desc "Delete an account"
     field :delete_account, :deleted_object do
       arg(:password, non_null(:string))
       resolve(&User.delete_account/3)
+    end
+
+    field :set_user_settings, :user_settings do
+      arg(:timezone, :string)
+      arg(:notification_on_day, :boolean)
+      arg(:notification_each_week, :boolean)
+      arg(:notification_before_event, :boolean)
+      resolve(&User.set_user_setting/3)
     end
   end
 end

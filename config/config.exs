@@ -46,7 +46,7 @@ config :mobilizon, Mobilizon.Web.Endpoint,
   ],
   secret_key_base: "1yOazsoE0Wqu4kXk3uC5gu3jDbShOimTCzyFL3OjCdBmOXMyHX87Qmf3+Tu9s0iM",
   render_errors: [view: Mobilizon.Web.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: Mobilizon.PubSub, adapter: Phoenix.PubSub.PG2],
+  pubsub_server: Mobilizon.PubSub,
   cache_static_manifest: "priv/static/manifest.json"
 
 # Upload configuration
@@ -114,6 +114,8 @@ config :guardian, Guardian.DB,
   # token_types: ["refresh_token"],
   # default: 60 minutes
   sweep_interval: 60
+
+config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
 
 config :geolix,
   databases: [
@@ -204,7 +206,26 @@ config :mobilizon, :anonymous,
 config :mobilizon, Oban,
   repo: Mobilizon.Storage.Repo,
   prune: {:maxlen, 10_000},
-  queues: [default: 10, search: 20, background: 5]
+  queues: [default: 10, search: 5, mailers: 10, background: 5]
+
+config :mobilizon, :rich_media,
+  parsers: [
+    Mobilizon.Service.RichMedia.Parsers.OEmbed,
+    Mobilizon.Service.RichMedia.Parsers.OGP,
+    Mobilizon.Service.RichMedia.Parsers.TwitterCard,
+    Mobilizon.Service.RichMedia.Parsers.Fallback
+  ]
+
+config :mobilizon, Mobilizon.Service.ResourceProviders,
+  types: [],
+  providers: %{}
+
+config :mobilizon, :external_resource_providers, %{
+  "https://drive.google.com/" => :google_drive,
+  "https://docs.google.com/document/" => :google_docs,
+  "https://docs.google.com/presentation/" => :google_presentation,
+  "https://docs.google.com/spreadsheets/" => :google_spreadsheets
+}
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

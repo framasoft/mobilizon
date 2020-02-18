@@ -3,7 +3,7 @@ defmodule Mobilizon.Service.Statistics do
   A module that provides cached statistics
   """
 
-  alias Mobilizon.{Events, Users}
+  alias Mobilizon.{Conversations, Events, Users}
 
   def get_cached_value(key) do
     case Cachex.fetch(:statistics, key, fn key ->
@@ -26,6 +26,6 @@ defmodule Mobilizon.Service.Statistics do
   end
 
   defp create_cache(:local_comments) do
-    Events.count_local_comments()
+    Conversations.count_local_comments()
   end
 end
