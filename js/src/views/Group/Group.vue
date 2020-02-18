@@ -24,9 +24,9 @@
         </div>
       </div>
       <section class="box" v-if="group.organizedEvents.length > 0">
-        <h2 class="subtitle">
+        <subtitle>
           {{ $t('Organized') }}
-        </h2>
+        </subtitle>
         <div class="columns">
           <EventCard
             v-for="event in group.organizedEvents"
@@ -38,9 +38,9 @@
         </div>
       </section>
       <section v-if="group.members.length > 0">
-        <h2 class="subtitle">
+        <subtitle>
           {{ $t('Members') }}
-        </h2>
+        </subtitle>
         <div class="columns">
           <span
             v-for="member in group.members"
@@ -60,6 +60,7 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import EventCard from '@/components/Event/EventCard.vue';
 import { FETCH_GROUP, CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { IGroup } from '@/types/actor';
+import Subtitle from '@/components/Utils/Subtitle.vue';
 
 @Component({
   apollo: {
@@ -76,6 +77,7 @@ import { IGroup } from '@/types/actor';
     },
   },
   components: {
+    Subtitle,
     EventCard,
   },
 })

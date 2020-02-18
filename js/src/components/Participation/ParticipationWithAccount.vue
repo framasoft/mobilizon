@@ -8,7 +8,7 @@
                     </div>
                     <vertical-divider :content="$t('Or')" />
                     <div class="column">
-                        <h3 class="subtitle">{{ $t('I have an account on another Mobilizon instance.')}}</h3>
+                        <subtitle>{{ $t('I have an account on another Mobilizon instance.')}}</subtitle>
                         <p>{{ $t('Other software may also support this.') }}</p>
                         <p>{{ $t('We will redirect you to your instance in order to interact with this event') }}</p>
                         <form @submit.prevent="redirectToInstance">
@@ -41,9 +41,10 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { RouteName } from '@/router';
 import VerticalDivider from '@/components/Utils/VerticalDivider.vue';
+import Subtitle from '@/components/Utils/Subtitle.vue';
 
 @Component({
-  components: { VerticalDivider },
+  components: { Subtitle, VerticalDivider },
 })
 export default class ParticipationWithAccount extends Vue {
   @Prop({ type: String, required: true }) uuid!: string;

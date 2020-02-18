@@ -31,24 +31,41 @@ A simple card for an event
     <div class="card-image">
       <figure class="image is-16by9" :style="`background-image: url('${event.picture ? event.picture.url : '/img/mobilizon_default_card.png'}')`">
         <div class="tag-container" v-if="event.tags">
-          <b-tag v-for="tag in event.tags.slice(0, 3)" :key="tag.slug" type="is-secondary">{{ tag.title }}</b-tag>
+          <b-tag v-for="tag in event.tags.slice(0, 3)" :key="tag.slug" type="is-light">{{ tag.title }}</b-tag>
         </div>
       </figure>
     </div>
-    <div class="content">
-      <div class="title-wrapper">
-        <div class="date-component">
+    <div class="card-content">
+      <div class="media">
+        <div class="media-left">
           <date-calendar-icon v-if="!mergedOptions.hideDate" :date="event.beginsOn" />
         </div>
-        <h2 class="title" ref="title">{{ event.title }}</h2>
+        <div class="media-content">
+          <p class="event-title">{{ event.title }}</p>
+          <div class="event-subtitle" v-if="event.physicalAddress">
+<!--            <p>{{ $t('By @{username}', { username: actor.preferredUsername }) }}</p>-->
+            <span>
+                {{ event.physicalAddress.description }}, {{ event.physicalAddress.locality }}
+            </span>
+          </div>
+        </div>
       </div>
-      <span class="organizer-place-wrapper">
-        <span v-if="actorDisplayName && actorDisplayName !== '@'">{{ $t('By {name}', { name: actorDisplayName }) }}</span>
-        <span v-if="event.physicalAddress && (event.physicalAddress.locality || event.physicalAddress.description)">
-          {{ event.physicalAddress.locality || event.physicalAddress.description }}
-        </span>
-      </span>
     </div>
+<!--    <div class="date-and-title">-->
+<!--      <div class="date-component">-->
+<!--        <date-calendar-icon v-if="!mergedOptions.hideDate" :date="event.beginsOn" />-->
+<!--      </div>-->
+<!--      <div class="title-wrapper">-->
+<!--        <h4>{{ event.title }}</h4>-->
+<!--        <div class="organizer-place-wrapper has-text-grey">-->
+<!--          <span>{{ $t('By @{username}', { username: actor.preferredUsername }) }}</span>-->
+<!--           ·-->
+<!--          <span v-if="event.physicalAddress">-->
+<!--            {{ event.physicalAddress.description }}, {{ event.physicalAddress.locality }}-->
+<!--          </span>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
 <!--    <div v-if="!mergedOptions.hideDetails" class="details">-->
 <!--      <div v-if="event.participants.length > 0 &&-->
 <!--      mergedOptions.loggedPerson &&-->
@@ -76,7 +93,7 @@ A simple card for an event
 import { IEvent, IEventCardOptions, ParticipantRole } from '@/types/event.model';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import DateCalendarIcon from '@/components/Event/DateCalendarIcon.vue';
-import { Person } from '@/types/actor';
+import { Actor, Person } from '@/types/actor';
 
 @Component({
   components: {
@@ -100,9 +117,8 @@ export default class EventCard extends Vue {
     return { ...this.defaultOptions, ...this.options };
   }
 
-  get actorDisplayName(): string {
-    const actor = Object.assign(new Person(), this.event.organizerActor || this.mergedOptions.organizerActor);
-    return actor.displayName();
+  get actor(): Actor {
+    return Object.assign(new Person(), this.event.organizerActor || this.mergedOptions.organizerActor);
   }
 
 }
@@ -145,20 +161,16 @@ export default class EventCard extends Vue {
       position: absolute;
       top: 10px;
       right: 0;
-      margin-right: -5px;
+      margin-right: -3px;
       z-index: 10;
       max-width: 40%;
 
       span.tag {
         margin: 5px auto;
-        box-shadow: 0 0 5px 0 rgba(0, 0, 0, 1);
-        /*word-break: break-all;*/
         text-overflow: ellipsis;
         overflow: hidden;
         display: block;
-        /*text-align: right;*/
         font-size: 1em;
-        /*padding: 0 1px;*/
         line-height: 1.75em;
       }
     }
@@ -172,47 +184,33 @@ export default class EventCard extends Vue {
       }
     }
 
-    div.content {
-      padding: 5px;
-      background: $secondary;
+    .card-content {
+      padding: 0.5rem;
 
-      div.title-wrapper {
-        display: flex;
-
-        div.date-component {
-          flex: 0;
-          margin-right: 16px;
-        }
-
-        .title {
+      .event-title {
+        font-size: 1.25rem;
+        line-height: 1.25rem;
           display: -webkit-box;
           -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;  
+          -webkit-box-orient: vertical;
           overflow: hidden;
-          font-weight: 400;
-          font-size: 1.4em;
-          margin-top: auto;
-          min-height: 3.4rem;
-        }
+          min-height: 2.4rem;
       }
-      span.organizer-place-wrapper {
-        display: flex;
-        padding: 0 0.5rem 0.3rem;
+
+      .event-subtitle {
+        font-size: 0.85rem;
+          display: inline-flex;
+          flex-wrap: wrap;
 
         span {
-          padding-right: 0.25rem;
-        }
+            width: 15rem;
+            display: block;
+            overflow: hidden;
 
-        span:not(:last-child):after {
-          content: '-';
-          padding-left: 0.25rem;
-        }
+            flex-grow: 1;
 
-        span:last-child {
-          flex: 1;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
       }
     }

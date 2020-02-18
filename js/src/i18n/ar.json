@@ -17,7 +17,7 @@
     "Approve": "قبول",
     "Are you sure you want to cancel your participation at event \"{title}\"?": "هل أنت متأكد مِن أنك تريد الغاء مشاركتك في فعالية \"{title}\"؟",
     "Avatar": "الصورة الرمزية",
-    "By {name}": "حسب {name}",
+    "By @{username}": "حسب @{username}",
     "Cancel": "الغاء",
     "Cancel creation": "إلغاء الإنشاء",
     "Cancel edition": "إلغاء التحرير",

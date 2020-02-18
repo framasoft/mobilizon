@@ -37,7 +37,7 @@
 	"Avatar": "Avatar",
 	"Back to previous page": "Back to previous page",
 	"Before you can login, you need to click on the link inside it to validate your account": "Before you can login, you need to click on the link inside it to validate your account",
-	"By {name}": "By {name}",
+	"By @{username}": "By @{username}",
 	"Cancel anonymous participation": "Cancel anonymous participation",
 	"Cancel creation": "Cancel creation",
 	"Cancel edition": "Cancel edition",

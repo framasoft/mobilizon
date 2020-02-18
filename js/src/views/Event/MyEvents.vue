@@ -5,9 +5,9 @@
         </h1>
         <b-loading :active.sync="$apollo.loading"></b-loading>
         <section v-if="futureParticipations.length > 0">
-            <h2 class="subtitle">
+            <subtitle>
                 {{ $t('Upcoming') }}
-            </h2>
+            </subtitle>
             <transition-group name="list" tag="p">
                 <div v-for="month in monthlyFutureParticipations" :key="month[0]">
                     <h3 class="upcoming-month">{{ month[0] }}</h3>
@@ -27,9 +27,9 @@
             </div>
         </section>
         <section v-if="drafts.length > 0">
-            <h2 class="subtitle">
+            <subtitle>
                 {{ $t('Drafts') }}
-            </h2>
+            </subtitle>
             <div class="columns is-multiline">
                 <EventCard
                         v-for="draft in drafts"
@@ -40,9 +40,9 @@
             </div>
         </section>
         <section v-if="pastParticipations.length > 0">
-            <h2 class="subtitle">
+            <subtitle>
                 {{ $t('Past events') }}
-            </h2>
+            </subtitle>
             <transition-group name="list" tag="p">
                 <div v-for="month in monthlyPastParticipations" :key="month[0]">
                     <h3>{{ month[0] }}</h3>
@@ -73,10 +73,12 @@ import { LOGGED_USER_PARTICIPATIONS, LOGGED_USER_DRAFTS } from '@/graphql/actor'
 import { EventModel, IEvent, IParticipant, Participant, ParticipantRole } from '@/types/event.model';
 import EventListCard from '@/components/Event/EventListCard.vue';
 import EventCard from '@/components/Event/EventCard.vue';
+import Subtitle from '@/components/Utils/Subtitle.vue';
 
 
 @Component({
   components: {
+    Subtitle,
     EventCard,
     EventListCard,
   },
@@ -221,19 +223,6 @@ export default class MyEvents extends Vue {
     }
 
     section {
-        & > h2 {
-            display: block;
-            color: $primary;
-            font-size: 2.5rem;
-            text-decoration: underline;
-            text-decoration-color: $secondary;
-        }
-
-        h3 {
-            margin-top: 2rem;
-            font-weight: bold;
-        }
-
         .upcoming-month {
             text-transform: capitalize;
         }

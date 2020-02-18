@@ -2,10 +2,10 @@
 
 $primary: #424056;
 $primary-invert: findColorInvert($primary);
-$secondary: #FAB12D;
+$secondary: #ffcc85;
 $secondary-invert: findColorInvert($secondary);
 
-$success: #78cc8a;
+$success: #0ECCAF;
 $success-invert: findColorInvert($success);
 $info: #36bcd4;
 $info-invert: findColorInvert($info);
@@ -39,4 +39,28 @@ $hero-body-padding-medium: 6rem 1.5rem;
 
 main > .container {
     background: $white;
+}
+
+$title-color: #3C376E;
+$title-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial, serif;
+$title-weight: 700;
+$title-size: 40px;
+$title-sub-size: 45px;
+$title-sup-size: 30px;
+
+$subtitle-color: #3A384C;
+$subtitle-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial, serif;
+$subtitle-weight: 400;
+$subtitle-size: 32px;
+$subtitle-sub-size: 30px;
+$subtitle-sup-size: 15px;
+.title {
+    margin: 30px auto 45px;
+}
+
+.subtitle {
+    background: $secondary;
+    display: inline;
+    padding: 3px 8px;
+    margin: 15px auto 30px;
 }

@@ -22,6 +22,7 @@ Also make sure to remove the `EnvironmentFile=` line from the systemd service an
 - Possibility to delete your account
 
 ### Changed
+- Improved a bit color theme
 - Signature validation also now checks if `Date` header has acceptable values
 - Actor profiles are now stale after two days and have to be refetched
 - Actor keys are rotated some time after sending a `Delete` activity

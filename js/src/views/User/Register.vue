@@ -10,26 +10,30 @@
     <section>
       <div class="columns">
         <div class="column">
-          <div class="content">
-            <h2 class="title">{{ $t('Features') }}</h2>
-            <ul>
-              <li>{{ $t('Create and manage several identities from the same account') }}</li>
-              <li>{{ $t('Create, edit or delete events') }}</li>
-              <li>{{ $t('Register for an event by choosing one of your identities') }}</li>
-            </ul>
+          <div>
+            <subtitle>{{ $t('Features') }}</subtitle>
+            <div class="content">
+              <ul>
+                <li>{{ $t('Create and manage several identities from the same account') }}</li>
+                <li>{{ $t('Create, edit or delete events') }}</li>
+                <li>{{ $t('Register for an event by choosing one of your identities') }}</li>
+              </ul>
+            </div>
           </div>
           <router-link :to="{ name: RouteName.ABOUT }">
             {{ $t('Learn more') }}
           </router-link>
           <hr>
           <div class="content">
-            <h2 class="title">{{ $t('About this instance') }}</h2>
-            <p>
-              {{ $t("Your local administrator resumed its policy:") }}
-            </p>
-            <ul>
-              <li>{{ $t('Enjoy discovering Mobilizon!') }}</li>
-            </ul>
+            <subtitle>{{ $t('About this instance') }}</subtitle>
+            <div class="content">
+              <p>
+                {{ $t("Your local administrator resumed its policy:") }}
+              </p>
+              <ul>
+                <li>{{ $t('Enjoy discovering Mobilizon!') }}</li>
+              </ul>
+            </div>
 <!--            <p>-->
 <!--              {{ $t('Please read the full rules') }}-->
 <!--            </p>-->
@@ -107,8 +111,10 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { RouteName } from '@/router';
 import { IConfig } from '@/types/config.model';
 import { CONFIG } from '@/graphql/config';
+import Subtitle from '@/components/Utils/Subtitle.vue';
 
 @Component({
+  components: { Subtitle },
   metaInfo() {
     return {
       // if no subcomponents specify a metaInfo.title, this title will be used

@@ -173,7 +173,7 @@
                 <div class="organizer">
                   <span>
                     <span v-if="event.organizerActor">
-                      {{ $t('By {name}', {name: event.organizerActor.name ? event.organizerActor.name : event.organizerActor.preferredUsername}) }}
+                      {{ $t('By @{username}', {username: event.organizerActor.preferredUsername}) }}
                     </span>
                     <figure v-if="event.organizerActor.avatar" class="image is-48x48">
                       <img
@@ -188,9 +188,9 @@
           </section>
           <section class="description section" :class="{ exists: event.description }">
             <div class="description-container container">
-              <h3 class="title">
+              <subtitle>
                 {{ $t('About this event') }}
-              </h3>
+              </subtitle>
               <p v-if="!event.description">
                 {{ $t("The event organizer didn't add any description.") }}
               </p>
@@ -202,7 +202,7 @@
           </section>
         <section class="comments section" ref="commentsObserver">
           <a href="#comments">
-            <h3 class="title" id="comments">{{ $t('Comments') }}</h3>
+            <subtitle id="comments">{{ $t('Comments') }}</subtitle>
           </a>
           <comment-tree v-if="loadComments" :event="event" />
         </section>
@@ -312,9 +312,11 @@ import {
         removeAnonymousParticipation,
 } from '@/services/AnonymousParticipationStorage';
 import { IConfig } from '@/types/config.model';
+import Subtitle from '@/components/Utils/Subtitle.vue';
 
 @Component({
   components: {
+    Subtitle,
     ActorLink,
     EventFullDate,
     EventCard,
@@ -848,6 +850,7 @@ export default class Event extends EventMixin {
           word-break: break-word;
           font-size: 1.7em;
           margin-bottom: 0;
+          margin-top: 0;
         }
 
         span small {

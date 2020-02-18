@@ -7,22 +7,22 @@
                     <div class="tile is-parent is-vertical is-6">
                         <article class="tile is-child box">
                             <p class="title">{{ dashboard.numberOfEvents }}</p>
-                            <p class="subtitle">{{ $t('Published events')}}</p>
+                            <p>{{ $t('Published events')}}</p>
                         </article>
                         <article class="tile is-child box">
                             <p class="title">{{ dashboard.numberOfComments}}</p>
-                            <p class="subtitle">{{ $t('Comments')}}</p>
+                            <p>{{ $t('Comments')}}</p>
                         </article>
                     </div>
                     <div class="tile is-parent is-vertical">
                         <article class="tile is-child box">
                             <p class="title">{{ dashboard.numberOfUsers }}</p>
-                            <p class="subtitle">{{ $t('Users')}}</p>
+                            <p>{{ $t('Users')}}</p>
                         </article>
                         <router-link :to="{ name: RouteName.REPORTS}">
                             <article class="tile is-child box">
                                 <p class="title">{{ dashboard.numberOfReports }}</p>
-                                <p class="subtitle">{{ $t('Opened reports')}}</p>
+                                <p>{{ $t('Opened reports')}}</p>
                             </article>
                         </router-link>
                     </div>
@@ -41,14 +41,14 @@
                 <div class="tile is-parent">
                     <router-link :to="{ name: RouteName.RELAYS }">
                         <article class="tile is-child box">
-                            <p class="subtitle">{{ $t('Instances') }}</p>
+                            <span>{{ $t('Instances') }}</span>
                         </article>
                     </router-link>
                 </div>
                 <div class="tile is-parent">
                     <router-link :to="{ name: RouteName.ADMIN_SETTINGS }">
                         <article class="tile is-child box">
-                            <p class="subtitle">{{ $t('Settings') }}</p>
+                            <span>{{ $t('Settings') }}</span>
                         </article>
                     </router-link>
                 </div>

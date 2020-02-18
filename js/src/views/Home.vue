@@ -4,7 +4,7 @@
         <div class="hero-body">
           <div class="container">
             <h1 class="title">{{ $t('Gather ⋅ Organize ⋅ Mobilize') }}</h1>
-            <p class="subtitle">{{ $t('Join {instance}, a Mobilizon instance', { instance: config.name }) }}
+            <p>{{ $t('Join {instance}, a Mobilizon instance', { instance: config.name }) }}</p>
             <p class="instance-description">{{ config.description }}</p>
             <!-- We don't invite to find other instances yet -->
             <!-- <p v-if="!config.registrationsOpen">
@@ -41,18 +41,18 @@
         <div v-for="row of goingToEvents" class="upcoming-events" :key="row[0]">
           <span class="date-component-container" v-if="isInLessThanSevenDays(row[0])">
             <date-component :date="row[0]" />
-            <h3 class="subtitle"
+            <subtitle
               v-if="isToday(row[0])">
               {{ $tc('You have one event today.', row[1].length, {count: row[1].length}) }}
-            </h3>
-            <h3 class="subtitle"
+            </subtitle>
+            <subtitle
                 v-else-if="isTomorrow(row[0])">
               {{ $tc('You have one event tomorrow.', row[1].length, {count: row[1].length}) }}
-            </h3>
-            <h3 class="subtitle"
+            </subtitle>
+            <subtitle
                 v-else-if="isInLessThanSevenDays(row[0])">
                 {{ $tc('You have one event in {days} days.', row[1].length, {count: row[1].length, days: calculateDiffDays(row[0])}) }}
-            </h3>
+            </subtitle>
           </span>
           <div>
             <EventListCard
@@ -114,6 +114,7 @@ import { EventModel, IEvent, IParticipant, Participant, ParticipantRole } from '
 import DateComponent from '@/components/Event/DateCalendarIcon.vue';
 import { CONFIG } from '@/graphql/config';
 import { IConfig } from '@/types/config.model';
+import Subtitle from '@/components/Utils/Subtitle.vue';
 
 @Component({
   apollo: {
@@ -149,6 +150,7 @@ import { IConfig } from '@/types/config.model';
     },
   },
   components: {
+    Subtitle,
     DateComponent,
     EventListCard,
     EventCard,
@@ -366,6 +368,10 @@ export default class Home extends Vue {
   section.hero {
     margin-top: -3px;
     background: lighten($secondary, 20%);
+
+    .title {
+      color: $primary;
+    }
 
     .column figure.image img {
       max-width: 400px;

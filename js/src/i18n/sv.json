@@ -26,7 +26,7 @@
     "Are you sure you want to delete this event? This action cannot be reverted.": "Är du säker på att du vill radera det här evenemanget? Den här handlingen kan inte ångras.",
     "Avatar": "Avatar",
     "Before you can login, you need to click on the link inside it to validate your account": "Innan du loggar in måste du klicka på länken inuti det för att validera ditt konto",
-    "By {name}": "Av {name}",
+    "By @{username}": "Av @{username}",
     "Cancel": "Avbryt",
     "Cancel creation": "Avbryt skapandet",
     "Cancel edition": "Avbryt redigeringen",

@@ -25,7 +25,7 @@
           </figure>
         </div>
         <div class="media-content">
-          <span class="title" ref="title">{{ actorDisplayName }}</span><br>
+          <span ref="title">{{ actorDisplayName }}</span><br>
           <small class="has-text-grey" v-if="participant.actor.domain">@{{ participant.actor.preferredUsername }}@{{ participant.actor.domain }}</small>
           <small class="has-text-grey" v-else>@{{ participant.actor.preferredUsername }}</small>
         </div>
