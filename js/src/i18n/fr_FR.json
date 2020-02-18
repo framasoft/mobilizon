@@ -37,7 +37,7 @@
     "Avatar": "Avatar",
     "Back to previous page": "Retour à la page précédente",
     "Before you can login, you need to click on the link inside it to validate your account": "Avant que vous puissiez vous enregistrer, vous devez cliquer sur le lien à l'intérieur pour valider votre compte",
-    "By {name}": "Par {name}",
+    "By @{username}": "Par @{username}",
     "Cancel": "Annuler",
     "Cancel anonymous participation": "Annuler ma participation anonyme",
     "Cancel creation": "Annuler la création",

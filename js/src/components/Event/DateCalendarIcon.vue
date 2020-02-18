@@ -56,6 +56,7 @@ export default class DateCalendarIcon extends Vue {
 
     span {
       display: block;
+      font-weight: 600;
 
       &.month {
         color: #fa3e3e;
@@ -66,7 +67,6 @@ export default class DateCalendarIcon extends Vue {
       }
 
       &.day {
-        font-weight: 300;
         font-size: 20px;
         line-height: 20px;
       }

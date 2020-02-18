@@ -20,7 +20,7 @@
     "Are you sure you want to delete this event? This action cannot be reverted.": "Czy na pewno chcesz usunąć to wydarzenie? To działanie nie może zostać odwrócone.",
     "Avatar": "Awatar",
     "Before you can login, you need to click on the link inside it to validate your account": "Zanim się zalogujesz, musisz odwiedzić odnośnik znajdujący się w niej, aby potwierdzić swoje konto",
-    "By {name}": "Od {name}",
+    "By @{username}": "Od @{username}",
     "Cancel": "Anuluj",
     "Cancel creation": "Anuluj tworzenie",
     "Cancel edition": "Anuluj edycję",

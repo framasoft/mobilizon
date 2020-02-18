@@ -9,9 +9,9 @@
       </h1>
 
       <form ref="form">
-        <h2 class="subtitle">
+        <subtitle>
           {{ $t('General information') }}
-        </h2>
+        </subtitle>
         <picture-upload v-model="pictureFile" :textFallback="$t('Headline picture')" />
 
         <b-field :label="$t('Title')" :type="checkTitleLength[0]" :message="checkTitleLength[1]">
@@ -50,9 +50,9 @@
           </b-select>
         </b-field>-->
 
-        <h2 class="subtitle">
+        <subtitle>
           {{ $t('Who can view this event and participate') }}
-        </h2>
+        </subtitle>
           <div class="field">
             <b-radio v-model="event.visibility"
                      name="eventVisibility"
@@ -118,9 +118,9 @@
           </b-field> -->
         </div>
 
-        <h2 class="subtitle">
+        <subtitle>
           {{ $t('Public comment moderation') }}
-        </h2>
+        </subtitle>
 
         <div class="field">
           <b-radio v-model="event.options.commentModeration"
@@ -146,9 +146,9 @@
           </b-radio>
         </div>
 
-        <h2 class="subtitle">
+        <subtitle>
           {{ $t('Status') }}
-        </h2>
+        </subtitle>
 
         <b-field>
           <b-radio-button v-model="event.status"
@@ -302,11 +302,12 @@ import { RouteName } from '@/router';
 import 'intersection-observer';
 import { CONFIG } from '@/graphql/config';
 import { IConfig } from '@/types/config.model';
+import Subtitle from '@/components/Utils/Subtitle.vue';
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 
 @Component({
-  components: { IdentityPickerWrapper, AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor: EditorComponent },
+  components: { Subtitle, IdentityPickerWrapper, AddressAutoComplete, TagInput, DateTimePicker, PictureUpload, Editor: EditorComponent },
   apollo: {
     currentActor: CURRENT_ACTOR_CLIENT,
     tags: TAGS,

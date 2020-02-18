@@ -28,7 +28,7 @@
     "Are you sure you want to delete this event? This action cannot be reverted.": "Segur que vols esborrar aquesta activitat? Aquesta acció és irreversible.",
     "Avatar": "Avatar",
     "Before you can login, you need to click on the link inside it to validate your account": "Per a validar el compte i poder entrar, has de clicar l'enllaç que t'hem enviat en el mail",
-    "By {name}": "De {name}",
+    "By @{username}": "De @{username}",
     "Cancel": "Canceŀla",
     "Cancel creation": "Canceŀla la creació",
     "Cancel edition": "Canceŀla l'edició",

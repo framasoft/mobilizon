@@ -2,7 +2,7 @@
     <section class="section container hero">
         <div class="hero-body" v-if="event">
             <div class="container">
-                <h2 class="subtitle">{{ $t('You wish to participate to the following event')}}</h2>
+                <subtitle>{{ $t('You wish to participate to the following event')}}</subtitle>
                 <EventListViewCard v-if="event" :event="event" />
                 <div class="columns has-text-centered">
                     <div class="column">
@@ -58,9 +58,10 @@ import { EventModel, IEvent } from '@/types/event.model';
 import VerticalDivider from '@/components/Utils/VerticalDivider.vue';
 import { CONFIG } from '@/graphql/config';
 import { IConfig } from '@/types/config.model';
+import Subtitle from '@/components/Utils/Subtitle.vue';
 
 @Component({
-  components: { VerticalDivider, EventListViewCard, EventListCard },
+  components: { VerticalDivider, EventListViewCard, EventListCard, Subtitle },
   apollo: {
     event: {
       query: FETCH_EVENT,

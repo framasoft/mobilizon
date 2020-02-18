@@ -35,7 +35,7 @@
     "Avatar": "Avatar",
     "Back to previous page": "Palaa edelliselle sivulle",
     "Before you can login, you need to click on the link inside it to validate your account": "Sinun on ennen sisäänkirjautumista vahvistettava tilisi napsauttamalla siinä olevaa linkkiä",
-    "By {name}": "Tehnyt {name}",
+    "By @{username}": "Tehnyt @{username}",
     "Cancel": "Peruuta",
     "Cancel anonymous participation": "Peruuta anonyymi osallistuminen",
     "Cancel creation": "Peruuta luonti",
