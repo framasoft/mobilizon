@@ -8,80 +8,87 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2020-02-22 21:08+0000\n"
+"Last-Translator: Filip Bengtsson <filip@libreradio.org>\n"
+"Language-Team: Swedish <https://weblate.framasoft.org/projects/mobilizon/"
+"backend-errors/sv/>\n"
 "Language: sv\n"
-"Plural-Forms: nplurals=2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 3.11\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 msgid "can't be blank"
-msgstr ""
+msgstr "får inte lämnas tomt"
 
 msgid "has already been taken"
-msgstr ""
+msgstr "används redan"
 
 msgid "is invalid"
-msgstr ""
+msgstr "är ogiltig(t)"
 
 msgid "must be accepted"
-msgstr ""
+msgstr "måste godkännas"
 
 msgid "has invalid format"
-msgstr ""
+msgstr "ogiltigt format"
 
 msgid "has an invalid entry"
-msgstr ""
+msgstr "har ett ogiltigt inlägg"
 
 msgid "is reserved"
-msgstr ""
+msgstr "har reserverats"
 
 msgid "does not match confirmation"
-msgstr ""
+msgstr "stämmer inte överens med bekräftelsen"
 
 msgid "is still associated with this entry"
-msgstr ""
+msgstr "är fortfarande kopplat till det här inlägget"
 
 msgid "are still associated with this entry"
-msgstr ""
+msgstr "är fortfarande kopplade till det här inlägget"
 
 msgid "should be %{count} character(s)"
 msgid_plural "should be %{count} character(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "måste innehålla %{count} tecken"
+msgstr[1] "måste innehålla %{count} tecken"
 
 msgid "should have %{count} item(s)"
 msgid_plural "should have %{count} item(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "måste ha %{count} objekt"
+msgstr[1] "måste ha %{count} objekt"
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "måste innehålla minst %{count} tecken"
+msgstr[1] "måste innehålla minst %{count} tecken"
 
 msgid "should have at least %{count} item(s)"
 msgid_plural "should have at least %{count} item(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "måste ha minst %{count} objekt"
+msgstr[1] "måste ha minst %{count} objekt"
 
 msgid "should be at most %{count} character(s)"
 msgid_plural "should be at most %{count} character(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "får inte innehålla fler än %{count} tecken"
+msgstr[1] "får inte innehålla fler än %{count} tecken"
 
 msgid "should have at most %{count} item(s)"
 msgid_plural "should have at most %{count} item(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "får inte ha fler än %{count} objekt"
+msgstr[1] "får inte ha fler än %{count} objekt"
 
 msgid "must be less than %{number}"
-msgstr ""
+msgstr "måste vara mindre än %{number}"
 
 msgid "must be greater than %{number}"
-msgstr ""
+msgstr "måste vara större än %{number}"
 
 msgid "must be less than or equal to %{number}"
-msgstr ""
+msgstr "måste vara mindre än eller lika med %{number}"
 
 msgid "must be greater than or equal to %{number}"
-msgstr ""
+msgstr "måste vara större än eller lika med %{number}"
 
 msgid "must be equal to %{number}"
-msgstr ""
+msgstr "måste vara lika med %{number}"

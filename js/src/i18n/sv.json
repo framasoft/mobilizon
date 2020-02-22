@@ -1,4 +1,5 @@
 {
+    "<b>Please do not use it in any real way.</b>": "<b>Använd gärna inte det på riktigt.</b>",
     "A user-friendly, emancipatory and ethical tool for gathering, organising, and mobilising.": "Ett användarvänligt, frigörande och etiskt verktyg för att samlas, organisera och mobilisera.",
     "A validation email was sent to {email}": "Ett valideringsmail skickades till {email}",
     "Abandon edition": "Överge redigering",
@@ -7,6 +8,7 @@
     "About this event": "Om det här evenemanget",
     "About this instance": "Om den här instansen",
     "Accepted": "Accepterad",
+    "Account settings": "Kontoinställningar",
     "Add": "Lägg till",
     "Add a note": "Lägg till en kommentar",
     "Add an address": "Lägg till en adress",
@@ -17,6 +19,7 @@
     "Administration": "Administration",
     "All the places have already been taken": "Alla platser är bokade|Det finns en plats kvar|Det finns {places} kvar",
     "Allow all comments": "Tillåt alla kommentarer",
+    "Allow registrations": "Tillåt kontoregistrering",
     "An error has occurred.": "Ett fel har uppstått.",
     "Approve": "Godkänn",
     "Are you sure you want to <b>delete</b> this comment? This action cannot be undone.": "Är du säker på att du vill <b>radera</b> den här kommentaren? Detta kan inte ångras.",
