@@ -8,17 +8,25 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2020-02-24 09:08+0000\n"
+"Last-Translator: ButterflyOfFire <butterflyoffire@protonmail.com>\n"
+"Language-Team: Arabic <https://weblate.framasoft.org/projects/mobilizon/"
+"backend-errors/ar/>\n"
 "Language: ar\n"
-"Plural-Forms: nplurals=6\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"X-Generator: Weblate 3.11\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 msgid "can't be blank"
-msgstr ""
+msgstr "لا يمكن أن يترك فارغا"
 
 msgid "has already been taken"
-msgstr ""
+msgstr "تم حجزه مِن قَبل"
 
 msgid "is invalid"
-msgstr ""
+msgstr "غير صالح"
 
 msgid "must be accepted"
 msgstr ""
@@ -30,7 +38,7 @@ msgid "has an invalid entry"
 msgstr ""
 
 msgid "is reserved"
-msgstr ""
+msgstr "محجوز"
 
 msgid "does not match confirmation"
 msgstr ""
