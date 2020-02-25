@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2020-02-19 12:08+0000\n"
+"PO-Revision-Date: 2020-02-26 15:11+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/oc/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 3.11\n"
+"X-Generator: Weblate 3.11.2\n"
 
 #: lib/web/templates/email/password_reset.html.eex:48
 #: lib/web/templates/email/password_reset.text.eex:12
@@ -419,6 +419,8 @@ msgstr "Un ID intèrn d’utilizaire"
 msgctxt "terms"
 msgid "Any of the information we collect from you may be used in the following ways:"
 msgstr ""
+"Qual que siá informacion que reculem de vosautres pòt èsser utilizada dels "
+"biaisses seguents :"
 
 #: lib/web/templates/api/terms.html.eex:4
 #, elixir-format
@@ -436,7 +438,7 @@ msgstr "Partegetz pas cap d’informacion perilhosa sus Mobilizon."
 #, elixir-format
 msgctxt "terms"
 msgid "Do we disclose any information to outside parties?"
-msgstr ""
+msgstr "Divulgam d’informacions amb de tèrças partidas ?"
 
 #: lib/web/templates/api/terms.html.eex:101
 #, elixir-format
@@ -541,7 +543,7 @@ msgstr "Per qué utilizam vòstras informacions ?"
 #, elixir-format
 msgctxt "terms"
 msgid "What is our data retention policy?"
-msgstr ""
+msgstr "Quinas son nòstras politicas de conservacions de donadas ?"
 
 #: lib/web/templates/api/terms.html.eex:92
 #, elixir-format
