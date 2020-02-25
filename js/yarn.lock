@@ -1077,10 +1077,10 @@
   dependencies:
     "@types/leaflet" "*"
 
-"@types/leaflet@*", "@types/leaflet@^1.5.2":
-  version "1.5.8"
-  resolved "https://registry.yarnpkg.com/@types/leaflet/-/leaflet-1.5.8.tgz#1c550803672fc5866b8b2c38512009f2b5d4205d"
-  integrity sha512-qpi5n4LmwenUFZ+VZ7ytRgHK+ZAclIvloL2zoKCmmj244WD2hBcLbUZ6Szvajfe3sIkSYEJ8WZ1p9VYl8tRsMA==
+"@types/leaflet@*", "@types/leaflet@^1.5.9":
+  version "1.5.9"
+  resolved "https://registry.yarnpkg.com/@types/leaflet/-/leaflet-1.5.9.tgz#3e56efd5dab7c2d1f56200620939d11c973946c2"
+  integrity sha512-vFj2Y764lC6PpmmoFTui3yEMAKf+Dy08eGIaFgM+efJoKNxDP/bsEr2UHloP6kkJqc+4VO9+KYea2ZhiZCnNrQ==
   dependencies:
     "@types/geojson" "*"
 
