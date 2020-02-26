@@ -13437,16 +13437,17 @@ vue-hot-reload-api@^2.3.0:
   resolved "https://registry.yarnpkg.com/vue-hot-reload-api/-/vue-hot-reload-api-2.3.4.tgz#532955cc1eb208a3d990b3a9f9a70574657e08f2"
   integrity sha512-BXq3jwIagosjgNVae6tkHzzIk6a8MHFtzAdwhnV5VlvPTFxDCvIttgSiHWjdGoTJvXtmRu5HacExfdarRcFhog==
 
-vue-i18n-extract@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/vue-i18n-extract/-/vue-i18n-extract-1.0.2.tgz#0a136e12d1634d6799e187aad81a7003d02f67a5"
-  integrity sha512-+zwDKvle4KcfloXZnj5hF01ViKDiFr5RMx5507D7oyDXpSleRpekF5YHgZa/+Ra6Go68//z0Nya58J9tKFsCjw==
+vue-i18n-extract@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/vue-i18n-extract/-/vue-i18n-extract-1.0.3.tgz#ed889343eddd6be0e3866f8d35f679283ae112ff"
+  integrity sha512-7lmLv6+MmiUh8oIZiFTucNNms2yEAEOZwPz6tH4eZ9F7N2jeu2uC1bExvfIq45CawC2hHy2gITNxYG6rzASUhw==
   dependencies:
     cli-table3 "^0.5.1"
     dot-object "^1.7.1"
     esm "^3.2.13"
     glob "^7.1.3"
     is-valid-glob "^1.0.0"
+    js-yaml "^3.13.1"
     yargs "^13.2.2"
 
 vue-i18n@^8.14.0:
