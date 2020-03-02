@@ -76,7 +76,7 @@
     "sass-loader": "^8.0.0",
     "tslint": "^6.0.0",
     "tslint-config-airbnb": "^5.11.2",
-    "typescript": "^3.6.3",
+    "typescript": "^3.8.3",
     "vue-cli-plugin-styleguidist": "^4.0.1",
     "vue-cli-plugin-webpack-bundle-analyzer": "^2.0.0",
     "vue-i18n-extract": "^1.0.2",
