@@ -1,37 +1,43 @@
 <template>
-  <section class="section container columns is-mobile is-centered">
-    <div class="card column is-half-desktop">
-      <h1>{{ $t("Password reset") }}</h1>
-      <b-message
-        title="Error"
-        type="is-danger"
-        v-for="error in errors"
-        :key="error"
-        >{{ error }}</b-message
-      >
-      <form @submit="resetAction">
-        <b-field :label="$t('Password')">
-          <b-input
-            aria-required="true"
-            required
-            type="password"
-            password-reveal
-            minlength="6"
-            v-model="credentials.password"
-          />
-        </b-field>
-        <b-field :label="$t('Password (confirmation)')">
-          <b-input
-            aria-required="true"
-            required
-            type="password"
-            password-reveal
-            minlength="6"
-            v-model="credentials.passwordConfirmation"
-          />
-        </b-field>
-        <button class="button is-primary">{{ $t("Reset my password") }}</button>
-      </form>
+  <section class="section container">
+    <div class="columns is-mobile is-centered">
+      <div class="column is-half-desktop">
+        <h1 class="title">
+          {{ $t("Password reset") }}
+        </h1>
+        <b-message
+          title="Error"
+          type="is-danger"
+          v-for="error in errors"
+          :key="error"
+          >{{ error }}</b-message
+        >
+        <form @submit="resetAction">
+          <b-field :label="$t('Password')">
+            <b-input
+              aria-required="true"
+              required
+              type="password"
+              password-reveal
+              minlength="6"
+              v-model="credentials.password"
+            />
+          </b-field>
+          <b-field :label="$t('Password (confirmation)')">
+            <b-input
+              aria-required="true"
+              required
+              type="password"
+              password-reveal
+              minlength="6"
+              v-model="credentials.password_confirmation"
+            />
+          </b-field>
+          <button class="button is-primary">
+            {{ $t("Reset my password") }}
+          </button>
+        </form>
+      </div>
     </div>
   </section>
 </template>
@@ -97,3 +103,12 @@ export default class PasswordReset extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+section.section.container {
+  background: $white;
+}
+.container .columns {
+  margin: 1rem auto 3rem;
+}
+</style>
