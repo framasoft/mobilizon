@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import { ColorModifiers } from 'buefy/types/helpers';
+import { Route, RawLocation } from 'vue-router';
 
 declare module 'vue/types/vue' {
   interface Vue {
@@ -8,6 +9,23 @@ declare module 'vue/types/vue' {
       error: (message: string) => void;
       info: (message: string) => void;
     };
+    beforeRouteEnter?(
+        to: Route,
+        from: Route,
+        next: (to?: RawLocation | false | ((vm: Vue) => void)) => void,
+    ): void;
+
+    beforeRouteLeave?(
+        to: Route,
+        from: Route,
+        next: (to?: RawLocation | false | ((vm: Vue) => void)) => void,
+    ): void;
+
+    beforeRouteUpdate?(
+        to: Route,
+        from: Route,
+        next: (to?: RawLocation | false | ((vm: Vue) => void)) => void,
+    ): void;
   }
 }
 

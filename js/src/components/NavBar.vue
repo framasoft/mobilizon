@@ -29,7 +29,7 @@
               <figure class="image is-32x32" v-if="identity.avatar">
                 <img class="is-rounded" :src="identity.avatar.url" alt="" />
               </figure>
-              <b-icon v-else icon="account-circle" />
+              <b-icon v-else size="is-medium" icon="account-circle" />
             </div>
 
             <div class="media-content">
@@ -178,6 +178,10 @@ nav {
 
     &.is-active {
       background: $secondary;
+    }
+
+    span.icon.is-medium {
+      display: flex;
     }
 
     img {

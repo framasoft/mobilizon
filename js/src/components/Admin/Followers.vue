@@ -6,7 +6,6 @@
                 :loading="$apollo.queries.relayFollowers.loading"
                 ref="table"
                 :checked-rows.sync="checkedRows"
-                :is-row-checkable="(row) => row.id !== 3"
                 detailed
                 :show-detail-icon="false"
                 paginated

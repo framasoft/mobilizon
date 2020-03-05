@@ -65,7 +65,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
 
     field(:participant_stats, :participant_stats)
 
-    field(:participants, list_of(:participant), description: "The event's participants") do
+    field(:participants, :paginated_participant_list, description: "The event's participants") do
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
       arg(:roles, :string, default_value: "")

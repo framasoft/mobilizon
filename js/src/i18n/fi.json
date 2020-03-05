@@ -22,7 +22,6 @@
     "Allow all comments": "Salli kaikki kommentit",
     "Allow registrations": "Salli rekisteröityminen",
     "An error has occurred.": "Tapahtui virhe.",
-    "And no anonymous participations|And one anonymous participation|And {count} anonymous participations": "Ei anonyymejä osallistujia|Myös yksi anonyymi osallistuja|Myös {count} anonyymiä osallistujaa",
     "Anonymous participants will be asked to confirm their participation through e-mail.": "Anonyymejä osallistujia pyydetään vahvistamaan osallistumisensa sähköpostitse.",
     "Anonymous participations": "Anonyymit osallistujat",
     "Approve": "Hyväksy",

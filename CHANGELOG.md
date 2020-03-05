@@ -16,8 +16,9 @@ A minimal file template [is available](https://framagit.org/framasoft/mobilizon/
 Also make sure to remove the `EnvironmentFile=` line from the systemd service and set `Environment=MIX_ENV=prod` instead. See [the updated file](https://framagit.org/framasoft/mobilizon/blob/master/support/systemd/mobilizon.service).
 
 ### Added
-- Possibility to participate anonymously to an event
+- Possibility to participate to an event without an account
 - Possibility to participate to a remote event (being redirected by providing federated identity)
+- Possibility to add a note as a participant when event participation is manually validated (required when participating without an account)
 - Possibility to change email address for the account
 - Possibility to delete your account
 
@@ -26,6 +27,7 @@ Also make sure to remove the `EnvironmentFile=` line from the systemd service an
 - Signature validation also now checks if `Date` header has acceptable values
 - Actor profiles are now stale after two days and have to be refetched
 - Actor keys are rotated some time after sending a `Delete` activity
+- Improved event participations managing interface
 
 ### Fixed
 - Fixed URL search

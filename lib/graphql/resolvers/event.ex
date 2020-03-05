@@ -102,7 +102,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   end
 
   def list_participants_for_event(_, _args, _resolution) do
-    {:ok, []}
+    {:ok, %{total: 0, elements: []}}
   end
 
   def stats_participants_going(%EventParticipantStats{} = stats, _args, _resolution) do

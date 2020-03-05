@@ -1,3 +1,4 @@
+import {ParticipantRole} from "@/types/event.model";
 <template>
     <main class="container">
         <b-tabs type="is-boxed" v-if="event" v-model="activeTab">
@@ -7,22 +8,17 @@
                     <span>{{ $t('Participants')}} <b-tag rounded> {{ participantStats.going }} </b-tag> </span>
                 </template>
                 <template>
-                  <section v-if="participantsAndCreators.length > 0">
+                  <section v-if="participants && participants.total > 0">
                       <h2 class="title">{{ $t('Participants') }}</h2>
-                      <p v-if="confirmedAnonymousParticipantsCountCount > 1">
-                          {{ $tc('And no anonymous participations|And one anonymous participation|And {count} anonymous participations', confirmedAnonymousParticipantsCountCount, { count: confirmedAnonymousParticipantsCountCount}) }}
-                      </p>
-                      <div class="columns is-multiline">
-                          <div class="column is-one-quarter-desktop" v-for="participant in participantsAndCreators" :key="participant.actor.id">
-                              <participant-card
-                                  v-if="participant.actor.id !== config.anonymous.actorId"
-                                  :participant="participant"
-                                  :accept="acceptParticipant"
-                                  :reject="refuseParticipant"
-                                  :exclude="refuseParticipant"
-                              />
-                          </div>
-                      </div>
+                      <ParticipationTable
+                              :data="participants.elements"
+                              :accept-participant="acceptParticipant"
+                              :refuse-participant="refuseParticipant"
+                              :showRole="true"
+                              :total="participants.total"
+                              :perPage="PARTICIPANTS_PER_PAGE"
+                              @page-change="(page) => participantPage = page"
+                      />
                   </section>
                 </template>
             </b-tab-item>
@@ -32,18 +28,16 @@
                     <span>{{ $t('Requests') }} <b-tag rounded> {{ participantStats.notApproved }} </b-tag> </span>
                 </template>
                 <template>
-                  <section v-if="queue.length > 0">
+                  <section v-if="queue && queue.total > 0">
                       <h2 class="title">{{ $t('Waiting list') }}</h2>
-                      <div class="columns">
-                          <div class="column is-one-quarter-desktop" v-for="participant in queue" :key="participant.actor.id">
-                              <participant-card
-                                  :participant="participant"
-                                  :accept="acceptParticipant"
-                                  :reject="refuseParticipant"
-                                  :exclude="refuseParticipant"
-                              />
-                          </div>
-                      </div>
+                      <ParticipationTable
+                              :data="queue.elements"
+                              :accept-participant="acceptParticipant"
+                              :refuse-participant="refuseParticipant"
+                              :total="queue.total"
+                              :perPage="PARTICIPANTS_PER_PAGE"
+                              @page-change="(page) => queuePage = page"
+                      />
                   </section>
                 </template>
             </b-tab-item>
@@ -53,18 +47,16 @@
                     <span>{{ $t('Rejected')}} <b-tag rounded> {{ participantStats.rejected }} </b-tag> </span>
                 </template>
                 <template>
-                  <section v-if="rejected.length > 0">
+                  <section v-if="rejected && rejected.total > 0">
                       <h2 class="title">{{ $t('Rejected participations') }}</h2>
-                      <div class="columns">
-                          <div class="column is-one-quarter-desktop" v-for="participant in rejected" :key="participant.actor.id">
-                              <participant-card
-                                      :participant="participant"
-                                      :accept="acceptParticipant"
-                                      :reject="refuseParticipant"
-                                      :exclude="refuseParticipant"
-                              />
-                          </div>
-                      </div>
+                      <ParticipationTable
+                              :data="rejected.elements"
+                              :accept-participant="acceptParticipant"
+                              :refuse-participant="refuseParticipant"
+                              :total="rejected.total"
+                              :perPage="PARTICIPANTS_PER_PAGE"
+                              @page-change="(page) => rejectedPage = page"
+                      />
                   </section>
                 </template>
             </b-tab-item>
@@ -81,9 +73,15 @@ import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
 import { IPerson } from '@/types/actor';
 import { CONFIG } from '@/graphql/config';
 import { IConfig } from '@/types/config.model';
+import ParticipationTable from '@/components/Event/ParticipationTable.vue';
+import { Paginate } from '@/types/paginate';
+
+const PARTICIPANTS_PER_PAGE = 20;
+const MESSAGE_ELLIPSIS_LENGTH = 130;
 
 @Component({
   components: {
+    ParticipationTable,
     ParticipantCard,
   },
   apollo: {
@@ -97,7 +95,7 @@ import { IConfig } from '@/types/config.model';
         return {
           uuid: this.eventId,
           page: 1,
-          limit: 10,
+          limit: PARTICIPANTS_PER_PAGE,
           roles: [ParticipantRole.PARTICIPANT].join(),
           actorId: this.currentActor.id,
         };
@@ -106,18 +104,18 @@ import { IConfig } from '@/types/config.model';
         return !this.currentActor.id;
       },
     },
-    organizers: {
+    participants: {
       query: PARTICIPANTS,
       variables() {
         return {
           uuid: this.eventId,
-          page: 1,
-          limit: 20,
-          roles: [ParticipantRole.CREATOR].join(),
+          page: this.participantPage,
+          limit: PARTICIPANTS_PER_PAGE,
+          roles: [ParticipantRole.CREATOR, ParticipantRole.PARTICIPANT].join(),
           actorId: this.currentActor.id,
         };
       },
-      update: data => data.event.participants.map(participation => new Participant(participation)),
+      update(data) { return this.dataTransform(data); },
       skip() {
         return !this.currentActor.id;
       },
@@ -127,13 +125,13 @@ import { IConfig } from '@/types/config.model';
       variables() {
         return {
           uuid: this.eventId,
-          page: 1,
-          limit: 20,
+          page: this.queuePage,
+          limit: PARTICIPANTS_PER_PAGE,
           roles: [ParticipantRole.NOT_APPROVED].join(),
           actorId: this.currentActor.id,
         };
       },
-      update: data => data.event.participants.map(participation => new Participant(participation)),
+      update(data) { return this.dataTransform(data); },
       skip() {
         return !this.currentActor.id;
       },
@@ -143,17 +141,20 @@ import { IConfig } from '@/types/config.model';
       variables() {
         return {
           uuid: this.eventId,
-          page: 1,
-          limit: 20,
+          page: this.rejectedPage,
+          limit: PARTICIPANTS_PER_PAGE,
           roles: [ParticipantRole.REJECTED].join(),
           actorId: this.currentActor.id,
         };
       },
-      update: data => data.event.participants.map(participation => new Participant(participation)),
+      update(data) { return this.dataTransform(data); },
       skip() {
         return !this.currentActor.id;
       },
     },
+  },
+  filters: {
+    ellipsize: (text?: string) => text && text.substr(0, MESSAGE_ELLIPSIS_LENGTH).concat('…'),
   },
 })
 export default class Participants extends Vue {
@@ -161,9 +162,15 @@ export default class Participants extends Vue {
   page: number = 1;
   limit: number = 10;
 
-  organizers: IParticipant[] = [];
-  queue: IParticipant[] = [];
-  rejected: IParticipant[] = [];
+  participants!: Paginate<IParticipant>;
+  participantPage: number = 1;
+
+  queue!: Paginate<IParticipant>;
+  queuePage: number = 1;
+
+  rejected!: Paginate<IParticipant>;
+  rejectedPage: number = 1;
+
   event!: IEvent;
   config!: IConfig;
 
@@ -173,21 +180,18 @@ export default class Participants extends Vue {
   hasMoreParticipants: boolean = false;
   activeTab: number = 0;
 
+  PARTICIPANTS_PER_PAGE = PARTICIPANTS_PER_PAGE;
+
+  dataTransform(data): Paginate<Participant> {
+    return {
+      total: data.event.participants.total,
+      elements: data.event.participants.elements.map(participation => new Participant(participation)),
+    };
+  }
+
   get participantStats(): IEventParticipantStats | null {
     if (!this.event) return null;
     return this.event.participantStats;
-  }
-
-  get participantsAndCreators(): IParticipant[] {
-    if (this.event) {
-      return [...this.organizers, ...this.event.participants]
-          .filter(participant => [ParticipantRole.PARTICIPANT, ParticipantRole.CREATOR].includes(participant.role));
-    }
-    return [];
-  }
-
-  get confirmedAnonymousParticipantsCountCount(): number {
-    return this.participantsAndCreators.filter(({ actor: { id } }) => id === this.config.anonymous.actorId).length;
   }
 
   @Watch('participantStats', { deep: true })
@@ -232,8 +236,8 @@ export default class Participants extends Vue {
         },
       });
       if (data) {
-        this.queue = this.queue.filter(participant => participant.id !== data.updateParticipation.id);
-        this.rejected = this.rejected.filter(participant => participant.id !== data.updateParticipation.id);
+        this.queue.elements = this.queue.elements.filter(participant => participant.id !== data.updateParticipation.id);
+        this.rejected.elements = this.rejected.elements.filter(participant => participant.id !== data.updateParticipation.id);
         this.event.participantStats.going += 1;
         if (participant.role === ParticipantRole.NOT_APPROVED) {
           this.event.participantStats.notApproved -= 1;
@@ -242,7 +246,7 @@ export default class Participants extends Vue {
           this.event.participantStats.rejected -= 1;
         }
         participant.role = ParticipantRole.PARTICIPANT;
-        this.event.participants.push(participant);
+        this.event.participants.elements.push(participant);
       }
     } catch (e) {
       console.error(e);
@@ -260,8 +264,10 @@ export default class Participants extends Vue {
         },
       });
       if (data) {
-        this.event.participants = this.event.participants.filter(participant => participant.id !== data.updateParticipation.id);
-        this.queue = this.queue.filter(participant => participant.id !== data.updateParticipation.id);
+        this.event.participants.elements = this.event.participants.elements.filter(
+            participant => participant.id !== data.updateParticipation.id,
+        );
+        this.queue.elements = this.queue.elements.filter(participant => participant.id !== data.updateParticipation.id);
         this.event.participantStats.rejected += 1;
         if (participant.role === ParticipantRole.PARTICIPANT) {
           this.event.participantStats.participant -= 1;
@@ -271,8 +277,8 @@ export default class Participants extends Vue {
           this.event.participantStats.notApproved -= 1;
         }
         participant.role = ParticipantRole.REJECTED;
-        this.rejected = this.rejected.filter(participantIn => participantIn.id !== participant.id);
-        this.rejected.push(participant);
+        this.rejected.elements = this.rejected.elements.filter(participantIn => participantIn.id !== participant.id);
+        this.rejected.elements.push(participant);
       }
     } catch (e) {
       console.error(e);

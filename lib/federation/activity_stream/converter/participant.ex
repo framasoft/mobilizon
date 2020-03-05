@@ -25,7 +25,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Participant do
       "type" => "Join",
       "id" => participant.url,
       "actor" => participant.actor.url,
-      "object" => participant.event.url
+      "object" => participant.event.url,
+      "participationMessage" => Map.get(participant.metadata, :message)
     }
   end
 end

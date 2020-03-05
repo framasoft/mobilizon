@@ -63,7 +63,7 @@ export const eventRoutes: RouteConfig[] = [
     props: { isUpdate: true },
   },
   {
-    path: '/events/participations/:eventId',
+    path: '/events/:eventId/participations',
     name: EventRouteName.PARTICIPATIONS,
     component: participations,
     meta: { requiredAuth: true },

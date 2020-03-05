@@ -21,7 +21,8 @@ Supported Activity | Supported Object
 `Create` | `Note`, `Event`
 `Delete` | `Object`
 `Flag` | `Object`
-`Follow` | `Object`  
+`Follow` | `Object`
+`Join` | `Event`
 `Reject` | `Follow`, `Join`
 `Remove` | `Note`, `Event`
 `Undo` | `Announce`, `Follow`
@@ -154,5 +155,29 @@ We add [an `address` property](https://schema.org/address), which we assume to b
       "type": "Place"
     },
   "type": "Event"
+}
+```
+
+### Join
+
+#### participationMessage
+
+We add a `participationMessage` property on a `Join` activity so that participants may transmit a note to event organizers, to motivate their participation when event participations are manually approved. This field is restricted to plain text.
+
+```json
+{
+  "type": "Join",
+  "object": "http://mobilizon.test/events/some-uuid",
+  "id": "http://mobilizon2.test/@admin/join/event/1",
+  "actor": "http://mobilizon2.test/@admin",
+  "participationMessage": "I want to join !",
+  "@context": [
+    {
+      "participationMessage": {
+        "@id": "mz:participationMessage",
+        "@type": "sc:Text"
+      }
+    }
+  ]
 }
 ```

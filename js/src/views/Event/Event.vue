@@ -45,6 +45,7 @@
                         :current-actor="currentActor"
                         @joinEvent="joinEvent"
                         @joinModal="isJoinModalActive = true"
+                        @joinEventWithConfirmation="joinEventWithConfirmation"
                         @confirmLeave="confirmLeave"
                 />
                 <b-button type="is-text" v-if="anonymousParticipation !== null" @click="cancelAnonymousParticipation">{{ $t('Cancel anonymous participation')}}</b-button>
@@ -263,12 +264,43 @@
                     <button
                             class="button is-primary"
                             ref="confirmButton"
-                            @click="joinEvent(identity)">
+                            @click="event.joinOptions === EventJoinOptions.RESTRICTED ? joinEventWithConfirmation(identity) : joinEvent(identity)">
                       {{ $t('Confirm my particpation') }}
                     </button>
                   </footer>
                 </template>
               </identity-picker>
+        </b-modal>
+        <b-modal :active.sync="isJoinConfirmationModalActive" has-modal-card ref="joinConfirmationModal">
+          <div class="modal-card">
+            <header class="modal-card-head">
+              <p class="modal-card-title">{{ $t('Participation confirmation')}}</p>
+            </header>
+
+            <section class="modal-card-body">
+              <p>{{ $t('The event organiser has chosen to validate manually participations. Do you want to add a little note to explain why you want to participate to this event?') }}</p>
+              <form @submit.prevent="joinEvent(actorForConfirmation, messageForConfirmation)">
+                <b-field :label="$t('Message')">
+                  <b-input
+                          type="textarea"
+                          size="is-medium"
+                          v-model="messageForConfirmation"
+                          minlength="10">
+                  </b-input>
+                </b-field>
+                <div class="buttons">
+                  <b-button
+                          native-type="button"
+                          class="button"
+                          ref="cancelButton"
+                          @click="isJoinConfirmationModalActive = false">
+                    {{ $t('Cancel') }}
+                  </b-button>
+                  <b-button type="is-primary" native-type="submit">{{ $t('Confirm my participation') }}</b-button>
+                </div>
+              </form>
+            </section>
+          </div>
         </b-modal>
         </div>
     </transition>
@@ -281,11 +313,10 @@ import {
     EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED,
     FETCH_EVENT,
     JOIN_EVENT,
-    LEAVE_EVENT,
   } from '@/graphql/event';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 import { CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
-import { EventModel, EventStatus, EventVisibility, IEvent, IParticipant, ParticipantRole } from '@/types/event.model';
+import { EventModel, EventStatus, EventVisibility, IEvent, IParticipant, ParticipantRole, EventJoinOptions } from '@/types/event.model';
 import { IPerson, Person } from '@/types/actor';
 import { GRAPHQL_API_ENDPOINT } from '@/api/_entrypoint';
 import DateCalendarIcon from '@/components/Event/DateCalendarIcon.vue';
@@ -398,12 +429,16 @@ export default class Event extends EventMixin {
   showMap: boolean = false;
   isReportModalActive: boolean = false;
   isJoinModalActive: boolean = false;
+  isJoinConfirmationModalActive: boolean = false;
   EventVisibility = EventVisibility;
   EventStatus = EventStatus;
+  EventJoinOptions = EventJoinOptions;
   RouteName = RouteName;
   observer!: IntersectionObserver;
   loadComments: boolean = false;
   anonymousParticipation: boolean|null = null;
+  actorForConfirmation!: IPerson;
+  messageForConfirmation: string = '';
 
   get eventTitle() {
     if (!this.event) return undefined;
@@ -506,7 +541,13 @@ export default class Event extends EventMixin {
     }
   }
 
-  async joinEvent(identity: IPerson) {
+  joinEventWithConfirmation(actor: IPerson) {
+    this.isJoinConfirmationModalActive = true;
+    this.actorForConfirmation = actor;
+  }
+
+  async joinEvent(identity: IPerson, message: string|null = null) {
+    this.isJoinConfirmationModalActive = false;
     this.isJoinModalActive = false;
     try {
       const { data } = await this.$apollo.mutate<{ joinEvent: IParticipant }>({
@@ -514,6 +555,7 @@ export default class Event extends EventMixin {
         variables: {
           eventId: this.event.id,
           actorId: identity.id,
+          message,
         },
         update: (store, { data }) => {
           if (data == null) return;
