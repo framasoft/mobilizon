@@ -3,6 +3,7 @@ import { Address, IAddress } from '@/types/address.model';
 import { ITag } from '@/types/tag.model';
 import { IPicture } from '@/types/picture.model';
 import { IComment } from '@/types/comment.model';
+import { Paginate } from '@/types/paginate';
 
 export enum EventStatus {
   TENTATIVE = 'TENTATIVE',
@@ -59,7 +60,8 @@ export interface IParticipant {
   role: ParticipantRole;
   actor: IActor;
   event: IEvent;
-  metadata: { cancellationToken?: string };
+  metadata: { cancellationToken?: string, message?: string };
+  insertedAt?: Date;
 }
 
 export class Participant implements IParticipant {
@@ -68,6 +70,7 @@ export class Participant implements IParticipant {
   actor!: IActor;
   role: ParticipantRole = ParticipantRole.NOT_APPROVED;
   metadata = {};
+  insertedAt?: Date;
 
   constructor(hash?: IParticipant) {
     if (!hash) return;
@@ -77,6 +80,7 @@ export class Participant implements IParticipant {
     this.actor = new Actor(hash.actor);
     this.role = hash.role;
     this.metadata = hash.metadata;
+    this.insertedAt = hash.insertedAt;
   }
 }
 
@@ -132,7 +136,7 @@ export interface IEvent {
   organizerActor?: IActor;
   attributedTo: IActor;
   participantStats: IEventParticipantStats;
-  participants: IParticipant[];
+  participants: Paginate<IParticipant>;
 
   relatedEvents: IEvent[];
   comments: IComment[];
@@ -205,7 +209,7 @@ export class EventModel implements IEvent {
   publishAt = new Date();
 
   participantStats = { notApproved: 0, notConfirmed: 0, rejected: 0, participant: 0, moderator: 0, administrator: 0, creator: 0, going: 0 };
-  participants: IParticipant[] = [];
+  participants!: Paginate<IParticipant>;
 
   relatedEvents: IEvent[] = [];
   comments: IComment[] = [];

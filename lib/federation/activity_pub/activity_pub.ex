@@ -439,7 +439,10 @@ defmodule Mobilizon.Federation.ActivityPub do
              event_id: event.id,
              actor_id: actor.id,
              url: Map.get(additional, :url),
-             metadata: Map.get(additional, :metadata)
+             metadata:
+               additional
+               |> Map.get(:metadata, %{})
+               |> Map.update(:message, nil, &String.trim(HtmlSanitizeEx.strip_tags(&1)))
            }),
          join_data <- Convertible.model_to_as(participant),
          audience <-

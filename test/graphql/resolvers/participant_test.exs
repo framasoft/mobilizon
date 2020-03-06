@@ -7,6 +7,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, EventParticipantStats, Participant}
   alias Mobilizon.GraphQL.AbsintheHelpers
+  alias Mobilizon.Storage.Page
   alias Mobilizon.Web.Email
 
   import Mobilizon.Factory
@@ -446,9 +447,11 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
           participants(roles: "participant,moderator,administrator,creator", actor_id: "#{
         actor.id
       }") {
-            role,
-            actor {
-                preferredUsername
+            elements {
+              role,
+              actor {
+                  preferredUsername
+              }
             }
           }
         }
@@ -462,7 +465,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
 
       assert json_response(res, 200)["errors"] == nil
 
-      assert json_response(res, 200)["data"]["event"]["participants"] == [
+      assert json_response(res, 200)["data"]["event"]["participants"]["elements"] == [
                %{
                  "actor" => %{
                    "preferredUsername" => actor.preferred_username
@@ -485,9 +488,11 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
           participants(page: 1, limit: 1, roles: "participant,moderator,administrator,creator", actorId: "#{
         actor.id
       }") {
-            role,
-            actor {
-                preferredUsername
+            elements {
+              role,
+              actor {
+                  preferredUsername
+              }
             }
           }
         }
@@ -500,7 +505,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
         |> get("/api", AbsintheHelpers.query_skeleton(query, "participants"))
 
       sorted_participants =
-        json_response(res, 200)["data"]["event"]["participants"]
+        json_response(res, 200)["data"]["event"]["participants"]["elements"]
         |> Enum.filter(&(&1["role"] == "PARTICIPANT"))
 
       assert sorted_participants == [
@@ -518,9 +523,11 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
           participants(page: 2, limit: 1, roles: "participant,moderator,administrator,creator", actorId: "#{
         actor.id
       }") {
-            role,
-            actor {
-                preferredUsername
+            elements {
+              role,
+              actor {
+                  preferredUsername
+              }
             }
           }
         }
@@ -533,7 +540,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
         |> get("/api", AbsintheHelpers.query_skeleton(query, "participants"))
 
       sorted_participants =
-        json_response(res, 200)["data"]["event"]["participants"]
+        json_response(res, 200)["data"]["event"]["participants"]["elements"]
         |> Enum.sort_by(
           &(&1
             |> Map.get("actor")
@@ -1053,7 +1060,8 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
       assert res["data"]["joinEvent"]["event"]["id"] == to_string(event.id)
       assert res["data"]["joinEvent"]["actor"]["id"] == to_string(actor_id)
 
-      %Participant{} = participant = event.id |> Events.list_participants_for_event() |> hd
+      %Participant{} =
+        participant = event.id |> Events.list_participants_for_event() |> Map.get(:elements) |> hd
 
       assert participant.metadata.email == @email
 
@@ -1093,7 +1101,9 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
       assert %Participant{
                metadata: %{confirmation_token: confirmation_token},
                role: :not_confirmed
-             } = participant = event.id |> Events.list_participants_for_event([]) |> hd()
+             } =
+               participant =
+               event.id |> Events.list_participants_for_event([]) |> Map.get(:elements) |> hd()
 
       # hack to avoid preloading event in participant
       participant = Map.put(participant, :event, event)
@@ -1118,7 +1128,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
       )
 
       assert %Participant{role: :participant} =
-               event.id |> Events.list_participants_for_event() |> hd()
+               event.id |> Events.list_participants_for_event() |> Map.get(:elements) |> hd()
     end
 
     test "I can participate anonymously and and confirm my participation with bad token",
@@ -1140,7 +1150,9 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
       assert res["data"]["joinEvent"]["event"]["id"] == to_string(event.id)
       assert res["data"]["joinEvent"]["actor"]["id"] == to_string(actor_id)
 
-      %Participant{} = participant = event.id |> Events.list_participants_for_event([]) |> hd
+      %Participant{} =
+        participant =
+        event.id |> Events.list_participants_for_event([]) |> Map.get(:elements) |> hd
 
       assert participant.metadata.email == @email
 
@@ -1157,7 +1169,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
       assert hd(res["errors"])["message"] == "This token is invalid"
 
       assert %Participant{role: :not_confirmed} =
-               event.id |> Events.list_participants_for_event([]) |> hd()
+               event.id |> Events.list_participants_for_event([]) |> Map.get(:elements) |> hd()
     end
 
     test "I can participate anonymously but change my mind and cancel my participation",
@@ -1181,7 +1193,9 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
 
       {:ok, %Event{participant_stats: %{not_confirmed: 1}}} = Events.get_event(event.id)
 
-      %Participant{} = participant = event.id |> Events.list_participants_for_event([]) |> hd
+      %Participant{} =
+        participant =
+        event.id |> Events.list_participants_for_event([]) |> Map.get(:elements) |> hd
 
       assert participant.metadata.email == @email
 
@@ -1205,7 +1219,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
                id: participant_id,
                role: :not_confirmed,
                metadata: %{cancellation_token: cancellation_token}
-             } = event.id |> Events.list_participants_for_event([]) |> hd()
+             } = event.id |> Events.list_participants_for_event([]) |> Map.get(:elements) |> hd()
 
       res =
         conn
@@ -1221,7 +1235,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
       assert res["data"]["leaveEvent"]["id"] == participant_id
 
       {:ok, %Event{participant_stats: %{not_confirmed: 0}}} = Events.get_event(event.id)
-      assert Events.list_participants_for_event(event.id, []) == []
+      assert Events.list_participants_for_event(event.id, []) == %Page{elements: [], total: 0}
     end
 
     test "I can participate anonymously, confirm my participation and then be confirmed by the organizer",
@@ -1274,7 +1288,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
       assert %Participant{
                role: :not_confirmed,
                metadata: %{confirmation_token: confirmation_token, email: @email}
-             } = event.id |> Events.list_participants_for_event([]) |> hd
+             } = event.id |> Events.list_participants_for_event([]) |> Map.get(:elements) |> hd
 
       conn
       |> AbsintheHelpers.graphql_query(
@@ -1293,7 +1307,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
               }} = Events.get_event(event.id)
 
       assert %Participant{role: :not_approved, id: participant_id} =
-               event.id |> Events.list_participants_for_event([]) |> hd
+               event.id |> Events.list_participants_for_event([]) |> Map.get(:elements) |> hd
 
       update_participation_mutation = """
           mutation UpdateParticipation($participantId: ID!, $role: String!, $moderatorActorId: ID!) {
@@ -1325,7 +1339,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
       assert res["errors"] == nil
 
       assert %Participant{role: :participant} =
-               event.id |> Events.list_participants_for_event([]) |> hd
+               event.id |> Events.list_participants_for_event([]) |> Map.get(:elements) |> hd
 
       assert {:ok,
               %Event{

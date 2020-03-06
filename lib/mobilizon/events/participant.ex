@@ -18,11 +18,15 @@ defmodule Mobilizon.Events.Participant do
           role: ParticipantRole.t(),
           url: String.t(),
           event: Event.t(),
-          actor: Actor.t()
+          actor: Actor.t(),
+          metadata: Map.t()
         }
 
   @required_attrs [:url, :role, :event_id, :actor_id]
   @attrs @required_attrs
+  @metadata_attrs [:email, :confirmation_token, :cancellation_token, :message]
+
+  @timestamps_opts [type: :utc_datetime]
 
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "participants" do
@@ -33,6 +37,7 @@ defmodule Mobilizon.Events.Participant do
       field(:email, :string)
       field(:confirmation_token, :string)
       field(:cancellation_token, :string)
+      field(:message, :string)
     end
 
     belongs_to(:event, Event, primary_key: true)
@@ -70,7 +75,7 @@ defmodule Mobilizon.Events.Participant do
 
   defp metadata_changeset(schema, params) do
     schema
-    |> cast(params, [:email, :confirmation_token, :cancellation_token])
+    |> cast(params, @metadata_attrs)
     |> Checker.validate_changeset()
   end
 

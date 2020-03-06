@@ -17,12 +17,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   """
   def actor_join_event(
         _parent,
-        %{actor_id: actor_id, event_id: event_id},
+        %{actor_id: actor_id, event_id: event_id} = args,
         %{context: %{current_user: %User{} = user}}
       ) do
     case User.owns_actor(user, actor_id) do
       {:is_owned, %Actor{} = actor} ->
-        do_actor_join_event(actor, event_id)
+        do_actor_join_event(actor, event_id, args)
 
       _ ->
         {:error, "Actor id is not owned by authenticated user"}
@@ -136,7 +136,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
         _parent,
         %{actor_id: actor_id, event_id: event_id, token: token},
         _resolution
-      ) do
+      )
+      when not is_nil(token) do
     with {:anonymous_participation_enabled, true} <-
            {:anonymous_participation_enabled, Config.anonymous_participation?()},
          {:anonymous_actor_id, true} <-

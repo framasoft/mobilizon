@@ -818,6 +818,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       assert activity.data["cc"] == []
     end
 
+    @join_message "I want to get in!"
     test "it accepts Join activities" do
       %Actor{url: organizer_url} = organizer = insert(:actor)
       %Actor{url: participant_url} = _participant = insert(:actor)
@@ -829,13 +830,19 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         |> Jason.decode!()
         |> Map.put("actor", participant_url)
         |> Map.put("object", event_url)
+        |> Map.put("participationMessage", @join_message)
 
-      assert {:ok, activity, _} = Transmogrifier.handle_incoming(join_data)
+      assert {:ok, activity, %Participant{} = participant} =
+               Transmogrifier.handle_incoming(join_data)
+
+      assert participant.metadata.message == @join_message
+      assert participant.role == :participant
 
       assert activity.data["type"] == "Accept"
       assert activity.data["object"]["object"] == event_url
       assert activity.data["object"]["id"] =~ "/join/event/"
       assert activity.data["object"]["type"] =~ "Join"
+      assert activity.data["object"]["participationMessage"] == @join_message
       assert activity.data["actor"] == organizer_url
       assert activity.data["id"] =~ "/accept/join/"
     end
@@ -894,6 +901,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       # Organiser is not present since we use factories directly
       assert event.id
              |> Events.list_participants_for_event()
+             |> Map.get(:elements)
              |> Enum.map(& &1.id) ==
                []
     end
@@ -924,6 +932,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       # The only participant left is the organizer
       assert event.id
              |> Events.list_participants_for_event()
+             |> Map.get(:elements)
              |> Enum.map(& &1.id) ==
                [organizer_participation.id]
     end

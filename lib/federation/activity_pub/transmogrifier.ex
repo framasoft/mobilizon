@@ -306,13 +306,20 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   end
 
   def handle_incoming(
-        %{"type" => "Join", "object" => object, "actor" => _actor, "id" => id} = data
+        %{
+          "type" => "Join",
+          "object" => object,
+          "actor" => _actor,
+          "id" => id,
+          "participationMessage" => note
+        } = data
       ) do
     with actor <- Utils.get_actor(data),
          {:ok, %Actor{url: _actor_url} = actor} <- Actors.get_actor_by_url(actor),
          object <- Utils.get_url(object),
          {:ok, object} <- ActivityPub.fetch_object_from_url(object),
-         {:ok, activity, object} <- ActivityPub.join(object, actor, false, %{url: id}) do
+         {:ok, activity, object} <-
+           ActivityPub.join(object, actor, false, %{url: id, metadata: %{message: note}}) do
       {:ok, activity, object}
     else
       e ->

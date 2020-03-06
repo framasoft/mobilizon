@@ -1,3 +1,4 @@
+import {EventJoinOptions} from "@/types/event.model";
 <docs>
 A button to set your participation
 
@@ -80,7 +81,7 @@ A button to set your participation
                         </figure>
                     </div>
                     <div class="media-content">
-                        <span>{{ $t('as {identity}', {identity: currentActor.preferredUsername }) }}</span>
+                        <span>{{ $t('as {identity}', {identity: currentActor.name || `@${currentActor.preferredUsername}` }) }}</span>
                     </div>
                 </div>
             </b-dropdown-item>
@@ -96,14 +97,13 @@ A button to set your participation
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { EventModel, IEvent, IParticipant, ParticipantRole } from '@/types/event.model';
+import { EventJoinOptions, IEvent, IParticipant, ParticipantRole } from '@/types/event.model';
 import { IPerson, Person } from '@/types/actor';
 import { CURRENT_ACTOR_CLIENT, IDENTITIES } from '@/graphql/actor';
 import { CURRENT_USER_CLIENT } from '@/graphql/user';
 import { CONFIG } from '@/graphql/config';
 import { IConfig } from '@/types/config.model';
 import { RouteName } from '@/router';
-import { FETCH_EVENT } from '@/graphql/event';
 
 @Component({
   apollo: {
@@ -132,7 +132,11 @@ export default class ParticipationButton extends Vue {
   RouteName = RouteName;
 
   joinEvent(actor: IPerson) {
-    this.$emit('joinEvent', actor);
+    if (this.event.joinOptions === EventJoinOptions.RESTRICTED) {
+      this.$emit('joinEventWithConfirmation', actor);
+    } else {
+      this.$emit('joinEvent', actor);
+    }
   }
 
   joinModal() {

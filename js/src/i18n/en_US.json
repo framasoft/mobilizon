@@ -23,7 +23,6 @@
 	"Allow all comments": "Allow all comments",
 	"Allow registrations": "Allow registrations",
 	"An error has occurred.": "An error has occurred.",
-	"And no anonymous participations|And one anonymous participation|And {count} anonymous participations": "And no anonymous participations|And one anonymous participation|And {count} anonymous participations",
 	"Anonymous participants will be asked to confirm their participation through e-mail.": "Anonymous participants will be asked to confirm their participation through e-mail.",
 	"Anonymous participations": "Anonymous participations",
 	"Approve": "Approve",
@@ -467,5 +466,17 @@
 	"{count} requests waiting": "{count} requests waiting",
 	"{license} guarantees {respect} of the people who will use it. Since {source}, anyone can audit it, which guarantees its transparency.": "{license} guarantees {respect} of the people who will use it. Since {source}, anyone can audit it, which guarantees its transparency.",
 	"© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks",
-	"© The OpenStreetMap Contributors": "© The OpenStreetMap Contributors"
+	"© The OpenStreetMap Contributors": "© The OpenStreetMap Contributors",
+	"The event organizer manually approves participations. Since you've chosen to participate without an account, please explain why you want to participate to this event.": "The event organizer manually approves participations. Since you've chosen to participate without an account, please explain why you want to participate to this event.",
+	"If you want, you may send a message to the event organizer here.": "If you want, you may send a message to the event organizer here.",
+	"Message": "Message",
+	"Anonymous participant": "Anonymous participant",
+	"No message": "No message",
+	"No participant to approve|Approve participant|Approve {number} participants": "No participant to approve|Approve participant|Approve {number} participants",
+	"No participant to reject|Reject participant|Reject {number} participants": "No participant to reject|Reject participant|Reject {number} participants",
+	"Role": "Role",
+	"Participant": "Participant",
+	"Participation confirmation": "Participation confirmation",
+	"The event organiser has chosen to validate manually participations. Do you want to add a little note to explain why you want to participate to this event?": "The event organiser has chosen to validate manually participations. Do you want to add a little note to explain why you want to participate to this event?",
+	"Confirm my participation": "Confirm my participation"
 }

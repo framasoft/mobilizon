@@ -2,23 +2,28 @@ import gql from 'graphql-tag';
 import { COMMENT_FIELDS_FRAGMENT } from '@/graphql/comment';
 
 const participantQuery = `
-  role,
-  id,
-  actor {
-    preferredUsername,
-    avatar {
-      url
+  total,
+  elements {
+    role,
+    id,
+    actor {
+      preferredUsername,
+      avatar {
+        url
+      },
+      name,
+      id,
+      domain
     },
-    name,
-    id,
-    domain
-  },
-  event {
-    id,
-    uuid
-  },
-  metadata {
-    cancellationToken
+    event {
+      id,
+      uuid
+    },
+    metadata {
+      cancellationToken,
+      message
+    },
+    insertedAt
   }
 `;
 
@@ -371,11 +376,12 @@ export const EDIT_EVENT = gql`
 `;
 
 export const JOIN_EVENT = gql`
-  mutation JoinEvent($eventId: ID!, $actorId: ID!, $email: String) {
+  mutation JoinEvent($eventId: ID!, $actorId: ID!, $email: String, $message: String) {
     joinEvent(
       eventId: $eventId,
       actorId: $actorId,
-      email: $email
+      email: $email,
+      message: $message
     ) {
         ${participantQuery}
     }

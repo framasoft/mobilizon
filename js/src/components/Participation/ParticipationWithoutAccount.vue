@@ -7,18 +7,24 @@
                     <b-message type="is-info">{{ $t("Your email will only be used to confirm that you're a real person and send you eventual updates for this event. It will NOT be transmitted to other instances or to the event organizer.") }}</b-message>
                     <b-message type="is-danger" v-if="error">{{ error }}</b-message>
                     <b-field :label="$t('Email')">
-                        <b-field>
-                            <b-input
-                                    type="email"
-                                    v-model="anonymousParticipation.email"
-                                    placeholder="Your email"
-                                    required>
-                            </b-input>
-                            <p class="control">
-                                <b-button type="is-primary" native-type="submit">{{ $t('Send email') }}</b-button>
-                            </p>
-                        </b-field>
+                        <b-input
+                                type="email"
+                                v-model="anonymousParticipation.email"
+                                placeholder="Your email"
+                                required>
+                        </b-input>
                     </b-field>
+                    <p v-if="event.joinOptions === EventJoinOptions.RESTRICTED">{{ $t("The event organizer manually approves participations. Since you've chosen to participate without an account, please explain why you want to participate to this event.") }}</p>
+                    <p v-else>{{ $t("If you want, you may send a message to the event organizer here.") }}</p>
+                    <b-field :label="$t('Message')">
+                        <b-input
+                                type="textarea"
+                                v-model="anonymousParticipation.message"
+                                minlength="10"
+                                :required="event.joinOptions === EventJoinOptions.RESTRICTED">
+                        </b-input>
+                    </b-field>
+                    <b-button type="is-primary" native-type="submit">{{ $t('Send email') }}</b-button>
                     <div class="has-text-centered">
                         <b-button native-type="button" tag="a" type="is-text" @click="$router.go(-1)">
                             {{ $t('Back to previous page') }}
@@ -31,7 +37,7 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { EventModel, IEvent, IParticipant, ParticipantRole } from '@/types/event.model';
+import { EventModel, IEvent, IParticipant, ParticipantRole, EventJoinOptions } from '@/types/event.model';
 import { FETCH_EVENT, JOIN_EVENT } from '@/graphql/event';
 import { IConfig } from '@/types/config.model';
 import { CONFIG } from '@/graphql/config';
@@ -55,10 +61,11 @@ import { RouteName } from '@/router';
 })
 export default class ParticipationWithoutAccount extends Vue {
   @Prop({ type: String, required: true }) uuid!: string;
-  anonymousParticipation: { email: String } = { email: '' };
+  anonymousParticipation: { email: String, message: String } = { email: '', message: '' };
   event!: IEvent;
   config!: IConfig;
   error: String|boolean = false;
+  EventJoinOptions = EventJoinOptions;
 
   async joinEvent() {
     this.error = false;
@@ -69,6 +76,7 @@ export default class ParticipationWithoutAccount extends Vue {
           eventId: this.event.id,
           actorId: this.config.anonymous.actorId,
           email: this.anonymousParticipation.email,
+          message: this.anonymousParticipation.message,
         },
         update: (store, { data }) => {
           if (data == null) return;

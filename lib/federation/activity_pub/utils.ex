@@ -77,6 +77,10 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
           "anonymousParticipationEnabled" => %{
             "@id" => "mz:anonymousParticipationEnabled",
             "@type" => "sc:Boolean"
+          },
+          "participationMessage" => %{
+            "@id" => "mz:participationMessage",
+            "@type" => "sc:Text"
           }
         }
       ]

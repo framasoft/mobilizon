@@ -759,7 +759,7 @@ defmodule Mobilizon.Events do
   Default behaviour is to not return :not_approved or :not_confirmed participants
   """
   @spec list_participants_for_event(String.t(), list(atom()), integer | nil, integer | nil) ::
-          [Participant.t()]
+          Page.t()
   def list_participants_for_event(
         id,
         roles \\ @default_participant_roles,
@@ -769,8 +769,7 @@ defmodule Mobilizon.Events do
     id
     |> list_participants_for_event_query()
     |> filter_role(roles)
-    |> Page.paginate(page, limit)
-    |> Repo.all()
+    |> Page.build_page(page, limit)
   end
 
   @spec list_actors_participants_for_event(String.t()) :: [Actor.t()]

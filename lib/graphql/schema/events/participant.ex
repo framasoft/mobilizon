@@ -33,12 +33,21 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
     field(:metadata, :participant_metadata,
       description: "The metadata associated to this participant"
     )
+
+    field(:inserted_at, :datetime, description: "The datetime this participant was created")
   end
 
   object :participant_metadata do
     field(:cancellation_token, :string,
       description: "The eventual token to leave an event when user is anonymous"
     )
+
+    field(:message, :string, description: "The eventual message the participant left")
+  end
+
+  object :paginated_participant_list do
+    field(:elements, list_of(:participant), description: "A list of participants")
+    field(:total, :integer, description: "The total number of participants in the list")
   end
 
   enum :participant_role_enum do
@@ -64,6 +73,7 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
       arg(:event_id, non_null(:id))
       arg(:actor_id, non_null(:id))
       arg(:email, :string)
+      arg(:message, :string)
 
       resolve(&Participant.actor_join_event/3)
     end
