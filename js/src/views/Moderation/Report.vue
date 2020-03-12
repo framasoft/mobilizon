@@ -1,14 +1,7 @@
 <template>
-    <section class="container section">
+    <section>
         <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">{{ error }}</b-message>
         <div class="container" v-if="report">
-            <nav class="breadcrumb" aria-label="breadcrumbs">
-                <ul>
-                    <li><router-link :to="{ name: RouteName.DASHBOARD }">{{ $t('Dashboard') }}</router-link></li>
-                    <li><router-link :to="{ name: RouteName.REPORTS }">{{ $t('Reports') }}</router-link></li>
-                    <li class="is-active"><router-link :to="{ name: RouteName.REPORT, params: { reportId: this.report.id} }" aria-current="page">{{ $t('Report') }}</router-link></li>
-                </ul>
-            </nav>
             <div class="buttons">
                 <b-button v-if="report.status !== ReportStatusEnum.RESOLVED" @click="updateReport(ReportStatusEnum.RESOLVED)" type="is-primary">{{ $t('Mark as resolved') }}</b-button>
                 <b-button v-if="report.status !== ReportStatusEnum.OPEN" @click="updateReport(ReportStatusEnum.OPEN)" type="is-success">{{ $t('Reopen') }}</b-button>

@@ -7,7 +7,6 @@ import SendPasswordReset from '@/views/User/SendPasswordReset.vue';
 import PasswordReset from '@/views/User/PasswordReset.vue';
 import { beforeRegisterGuard } from '@/router/guards/register-guard';
 import { RouteConfig } from 'vue-router';
-import AccountSettings from '@/views/User/AccountSettings.vue';
 import EmailValidate from '@/views/User/EmailValidate.vue';
 
 export enum UserRouteName {
@@ -18,7 +17,6 @@ export enum UserRouteName {
   PASSWORD_RESET = 'PasswordReset',
   VALIDATE = 'Validate',
   LOGIN = 'Login',
-  ACCOUNT_SETTINGS = 'ACCOUNT_SETTINGS',
 }
 
 export const userRoutes: RouteConfig[] = [
@@ -79,11 +77,5 @@ export const userRoutes: RouteConfig[] = [
     component: Login,
     props: true,
     meta: { requiredAuth: false },
-  },
-  {
-    path: '/my-account/settings',
-    name: UserRouteName.ACCOUNT_SETTINGS,
-    component: AccountSettings,
-    meta: { requiredAuth: true },
   },
 ];

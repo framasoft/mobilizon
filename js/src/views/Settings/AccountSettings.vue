@@ -1,11 +1,5 @@
 <template>
-    <section class="section container">
-        <nav class="breadcrumb" aria-label="breadcrumbs">
-            <ul>
-                <li><router-link :to="{ name: RouteName.UPDATE_IDENTITY }">{{ $t('My account') }}</router-link></li>
-                <li class="is-active"><router-link :to="{ name: RouteName.ACCOUNT_SETTINGS }" aria-current="page">{{ $t('Account settings') }}</router-link></li>
-            </ul>
-        </nav>
+    <section>
         <div class="setting-title">
             <h2>{{ $t('Email') }}</h2>
         </div>
