@@ -1,11 +1,5 @@
 <template>
-    <section class="section container">
-        <nav class="breadcrumb" aria-label="breadcrumbs">
-            <ul>
-                <li><router-link :to="{ name: RouteName.DASHBOARD }">Dashboard</router-link></li>
-                <li class="is-active"><router-link :to="{ name: RouteName.LOGS }" aria-current="page">Logs</router-link></li>
-            </ul>
-        </nav>
+    <section>
         <ul v-if="actionLogs.length > 0">
             <li v-for="log in actionLogs">
                 <div class="box">

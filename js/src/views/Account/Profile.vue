@@ -116,7 +116,7 @@ import { CREATE_FEED_TOKEN_ACTOR } from '@/graphql/feed_tokens';
     EventCard,
   },
 })
-export default class MyAccount extends Vue {
+export default class Profile extends Vue {
   @Prop({ type: String, required: true }) name!: string;
 
   person!: IPerson;

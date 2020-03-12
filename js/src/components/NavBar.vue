@@ -52,7 +52,7 @@
 <!--            {{ $t('Create group') }}-->
 <!--          </b-navbar-item>-->
 
-          <b-navbar-item v-if="currentUser.role === ICurrentUserRole.ADMINISTRATOR" tag="router-link" :to="{ name: RouteName.DASHBOARD }">
+          <b-navbar-item v-if="currentUser.role === ICurrentUserRole.ADMINISTRATOR" tag="router-link" :to="{ name: RouteName.ADMIN_DASHBOARD }">
             {{ $t('Administration') }}
           </b-navbar-item>
 

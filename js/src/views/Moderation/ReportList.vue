@@ -1,11 +1,5 @@
 <template>
-    <section class="container section">
-        <nav class="breadcrumb" aria-label="breadcrumbs">
-            <ul>
-                <li><router-link :to="{ name: RouteName.DASHBOARD }">{{ $t('Dashboard') }}</router-link></li>
-                <li class="is-active"><router-link :to="{ name: RouteName.REPORTS }" aria-current="page">{{ $t('Reports') }}</router-link></li>
-            </ul>
-        </nav>
+    <section>
         <b-field>
             <b-radio-button v-model="filterReports"
                             :native-value="ReportStatusEnum.OPEN">

@@ -1,5 +1,5 @@
 <template>
-    <section class="section container">
+    <section>
         <h1 class="title">{{ $t('Instances') }}</h1>
         <div class="tabs is-boxed">
             <ul>

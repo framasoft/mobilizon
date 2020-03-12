@@ -1,11 +1,5 @@
 <template>
-    <section class="container section" v-if="adminSettings">
-        <nav class="breadcrumb" aria-label="breadcrumbs">
-            <ul>
-                <li><router-link :to="{ name: RouteName.DASHBOARD }">{{ $t('Dashboard') }}</router-link></li>
-                <li class="is-active"><router-link :to="{ name: RouteName.ADMIN_SETTINGS }" aria-current="page">{{ $t('Admin settings') }}</router-link></li>
-            </ul>
-        </nav>
+    <section v-if="adminSettings">
         <form @submit.prevent="updateSettings">
             <b-field :label="$t('Instance Name')">
                 <b-input v-model="adminSettings.instanceName" />
