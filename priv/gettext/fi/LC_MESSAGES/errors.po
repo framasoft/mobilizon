@@ -8,80 +8,87 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2020-03-14 20:08+0000\n"
+"Last-Translator: Taru Luojola <taru.luojola@posteo.net>\n"
+"Language-Team: Finnish <https://weblate.framasoft.org/projects/mobilizon/"
+"backend-errors/fi/>\n"
 "Language: fi\n"
-"Plural-Forms: nplurals=2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 3.11.2\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 msgid "can't be blank"
-msgstr ""
+msgstr "ei voi olla tyhjä"
 
 msgid "has already been taken"
-msgstr ""
+msgstr "on jo varattu"
 
 msgid "is invalid"
-msgstr ""
+msgstr "ei kelpaa"
 
 msgid "must be accepted"
-msgstr ""
+msgstr "on hyväksyttävä"
 
 msgid "has invalid format"
-msgstr ""
+msgstr "on väärässä muodossa"
 
 msgid "has an invalid entry"
-msgstr ""
+msgstr "sisältää vääränlaista tietoa"
 
 msgid "is reserved"
-msgstr ""
+msgstr "on varattu"
 
 msgid "does not match confirmation"
-msgstr ""
+msgstr "ei vastaa vahvistusta"
 
 msgid "is still associated with this entry"
-msgstr ""
+msgstr "on yhä liitetty tähän kohteeseen"
 
 msgid "are still associated with this entry"
-msgstr ""
+msgstr "ovat yhä liitettyjä tähän kohteeseen"
 
 msgid "should be %{count} character(s)"
 msgid_plural "should be %{count} character(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "tulee olla %{count} merkki"
+msgstr[1] "tulee olla %{count} merkkiä"
 
 msgid "should have %{count} item(s)"
 msgid_plural "should have %{count} item(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "tulee olla %{count} kohta"
+msgstr[1] "tulee olla %{count} kohtaa"
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "tulee olla vähintään %{count} merkki"
+msgstr[1] "tulee olla vähintään %{count} merkkiä"
 
 msgid "should have at least %{count} item(s)"
 msgid_plural "should have at least %{count} item(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "tulee olla vähintään %{count} kohta"
+msgstr[1] "tulee olla vähintään %{count} kohtaa"
 
 msgid "should be at most %{count} character(s)"
 msgid_plural "should be at most %{count} character(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "tulee olla enintään %{count} merkki"
+msgstr[1] "tulee olla enintään %{count} merkkiä"
 
 msgid "should have at most %{count} item(s)"
 msgid_plural "should have at most %{count} item(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "tulee olla enintään %{count} kohta"
+msgstr[1] "tulee olla enintään %{count} kohtaa"
 
 msgid "must be less than %{number}"
-msgstr ""
+msgstr "tulee olla pienempi kuin %{number}"
 
 msgid "must be greater than %{number}"
-msgstr ""
+msgstr "tulee olla suurempi kuin %{number}"
 
 msgid "must be less than or equal to %{number}"
-msgstr ""
+msgstr "tulee olla enintään %{number}"
 
 msgid "must be greater than or equal to %{number}"
-msgstr ""
+msgstr "tulee olla vähintään %{number}"
 
 msgid "must be equal to %{number}"
-msgstr ""
+msgstr "tulee olla tasas %{number}"
