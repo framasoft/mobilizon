@@ -8,35 +8,43 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2020-03-28 14:08+0000\n"
+"Last-Translator: Marcin Mikołajczak <me@mkljczk.pl>\n"
+"Language-Team: Polish <https://weblate.framasoft.org/projects/mobilizon/"
+"backend-errors/pl/>\n"
 "Language: pl\n"
-"Plural-Forms: nplurals=3\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 3.11.2\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 msgid "can't be blank"
-msgstr ""
+msgstr "nie może być pusty"
 
 msgid "has already been taken"
-msgstr ""
+msgstr "jest już zajęty"
 
 msgid "is invalid"
-msgstr ""
+msgstr "jest nieprawidłowy"
 
 msgid "must be accepted"
-msgstr ""
+msgstr "musi być zaakceptowany"
 
 msgid "has invalid format"
-msgstr ""
+msgstr "ma niewłaściwy format"
 
 msgid "has an invalid entry"
-msgstr ""
+msgstr "ma nieprawidłowy wpis"
 
 msgid "is reserved"
-msgstr ""
+msgstr "jest zarezerwowany"
 
 msgid "does not match confirmation"
-msgstr ""
+msgstr "nie pasuje do potwierdzenia"
 
 msgid "is still associated with this entry"
-msgstr ""
+msgstr "jest wciąż powiązany z tym wpisem"
 
 msgid "are still associated with this entry"
 msgstr ""
