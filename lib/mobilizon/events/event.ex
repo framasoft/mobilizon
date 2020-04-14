@@ -167,7 +167,7 @@ defmodule Mobilizon.Events.Event do
     case fetch_field(changeset, :begins_on) do
       {_, begins_on} ->
         validate_change(changeset, :ends_on, fn :ends_on, ends_on ->
-          if Date.compare(begins_on, ends_on) == :gt,
+          if DateTime.compare(begins_on, ends_on) == :gt,
             do: [ends_on: "ends_on cannot be set before begins_on"],
             else: []
         end)
