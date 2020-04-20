@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-02-15 01:23+0000\n"
-"PO-Revision-Date: 2020-04-19 12:08+0000\n"
+"PO-Revision-Date: 2020-04-21 04:08+0000\n"
 "Last-Translator: framail <pedro@blinktil.com.br>\n"
 "Language-Team: Portuguese (Brazil) <https://weblate.framasoft.org/projects/"
 "mobilizon/backend/pt_BR/>\n"
@@ -19,13 +19,13 @@ msgstr ""
 #, elixir-format
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
 msgstr ""
-"Se você não fez essa solicitação, favor ignorar este email.  Sua senha não "
+"Se você não fez essa solicitação, favor ignorar este email. Sua senha não "
 "será modificada até que você acesse o link abaixo e crie uma nova senha."
 
 #: lib/service/export/feed.ex:169
 #, elixir-format
 msgid "Feed for %{email} on Mobilizon"
-msgstr "Feed para %{email} sobre o  Mobilizon"
+msgstr "Feed para %{email} sobre o Mobilizon"
 
 #: lib/web/templates/email/email.html.eex:155
 #: lib/web/templates/email/email.text.eex:16
@@ -191,7 +191,7 @@ msgstr "Saiba mais sobre Mobilizon:"
 #: lib/web/templates/email/report.text.eex:1
 #, elixir-format
 msgid "New report from %{reporter} on %{instance}"
-msgstr "Novo relato sobre  %{reporter} na  %{instance}"
+msgstr "Novo relato sobre %{reporter} na %{instance}"
 
 #: lib/web/templates/email/event_participation_approved.text.eex:1
 #, elixir-format
@@ -481,10 +481,11 @@ msgid "If you're not connected, we don't store any information on your device, u
 msgstr ""
 "Se você não estiver conectado, nós não armazenamos nenhuma informação no seu "
 "aparelho, a menos que você participe de um evento\n"
-"anonimamente. Neste caso nos armazenamos o hash do UUID e o status da "
-"participação no seu navegador, de modo que nós podemos\n"
-"exibir o status da participação. Apagando esta informação vai somente "
-"impedir de exibir o status da participação no seu navegador."
+"  anonimamente. Neste caso nos armazenamos o hash do UUID e o status da "
+"participação no seu navegador, de modo que nós \n"
+"  podemos exibir o status da participação. Apagando esta informação vai "
+"somente impedir de exibir o status da participação .\n"
+"  no seu navegador."
 
 #: lib/web/templates/api/terms.html.eex:123
 #, elixir-format
@@ -741,55 +742,65 @@ msgstr ""
 msgctxt "terms"
 msgid "To provide the core functionality of Mobilizon. Depending on this instance's policy you may only be able to\n    interact with other people's content and post your own content if you are logged in."
 msgstr ""
+"Para proporcionar a funcionalidade central do Mobilizon. Dependendo da "
+"política desta instância, Você deva ser capaz de\n"
+"    interagir com o conteúdo e publicações de outras pessoas e colocar o seu "
+"próprio conteúdo se você estiver logado (dentro do sistema)."
 
 #: lib/web/templates/api/terms.html.eex:1
 #, elixir-format
 msgctxt "terms"
 msgid "What information do we collect?"
-msgstr ""
+msgstr "Quais informações coletamos?"
 
 #: lib/web/templates/email/email_changed_new.html.eex:38
 #: lib/web/templates/email/email_changed_new.text.eex:5
 #, elixir-format
 msgid "Confirm the new address to change your email."
-msgstr ""
+msgstr "Confirme o novo endereço para mudar seu email."
 
 #: lib/web/templates/email/email_changed_new.html.eex:64
 #: lib/web/templates/email/email_changed_new.text.eex:10
 #, elixir-format
 msgid "If this change wasn't initiated by you, please ignore this email. The email address for the Mobilizon account won't change until you access the link above."
 msgstr ""
+"Se esta mudança não foi iniciada por você, favor ignorar este email. Este "
+"endereço de email para a conta Mobilizon não irá mudar até que você acesse o "
+"link abaixo."
 
 #: lib/web/templates/email/email_changed_old.html.eex:62
 #: lib/web/templates/email/email_changed_old.text.eex:9
 #, elixir-format
 msgid "If you did not ask to change your email, it is likely that someone has gained access to your account. Please change your password immediately or contact the server admin if you're locked out of your account."
 msgstr ""
+"Se você não pediu para mudar o seu email, é provável que alguém conseguiu "
+"acessar a sua conta. Favor trocar a sua senha imediatamente ou contate o "
+"administrador do servidor se você estiver impedido de entrar na sua conta."
 
 #: lib/web/email/user.ex:175
 #, elixir-format
 msgid "Mobilizon on %{instance}: confirm your email address"
-msgstr ""
+msgstr "Mobilizon da instância %{instance}: confirma seu endereço de email"
 
 #: lib/web/email/user.ex:152
 #, elixir-format
 msgid "Mobilizon on %{instance}: email changed"
-msgstr ""
+msgstr "Mobilizon da instância %{instance}: email alterado"
 
 #: lib/web/templates/email/email_changed_old.html.eex:13
 #: lib/web/templates/email/email_changed_old.text.eex:1
 #, elixir-format
 msgid "New email address"
-msgstr ""
+msgstr "Novo endereço de email"
 
 #: lib/web/templates/email/email_changed_old.html.eex:38
 #: lib/web/templates/email/email_changed_old.text.eex:5
 #, elixir-format
 msgid "The email address for your account on %{host} is being changed to:"
-msgstr ""
+msgstr "O endereço de email para sua conta em %{host} foi mudado para:"
 
 #: lib/web/templates/email/email_changed_new.html.eex:13
 #: lib/web/templates/email/email_changed_new.html.eex:51 lib/web/templates/email/email_changed_new.text.eex:1
 #, elixir-format
 msgid "Verify email address"
-msgstr ""
+msgstr "Verificar endereço de email"
