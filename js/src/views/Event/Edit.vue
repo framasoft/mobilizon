@@ -1,8 +1,12 @@
 <template>
   <section>
     <div class="container">
-      <h1 class="title" v-if="isUpdate === false">{{ $t("Create a new event") }}</h1>
-      <h1 class="title" v-else>{{ $t("Update event {name}", { name: event.title }) }}</h1>
+      <h1 class="title" v-if="isUpdate === true">
+        {{ $t("Update event {name}", { name: event.title }) }}
+      </h1>
+      <h1 class="title" v-else>
+        {{ $t("Create a new event") }}
+      </h1>
 
       <form ref="form">
         <subtitle>{{ $t("General information") }}</subtitle>
@@ -404,6 +408,10 @@ const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 export default class EditEvent extends Vue {
   @Prop({ required: false, type: String }) eventId: undefined | string;
 
+  @Prop({ type: Boolean, default: false }) isUpdate!: boolean;
+
+  @Prop({ type: Boolean, default: false }) isDuplicate!: boolean;
+
   currentActor = new Person();
 
   tags: ITag[] = [];
@@ -439,10 +447,6 @@ export default class EditEvent extends Vue {
   created() {
     this.initializeEvent();
     this.unmodifiedEvent = JSON.parse(JSON.stringify(this.event.toEditJSON()));
-  }
-
-  get isUpdate(): boolean {
-    return this.eventId !== undefined;
   }
 
   @Watch("eventId", { immediate: true })
@@ -491,7 +495,7 @@ export default class EditEvent extends Vue {
   createOrUpdateDraft(e: Event) {
     e.preventDefault();
     if (this.validateForm()) {
-      if (this.eventId) return this.updateEvent();
+      if (this.eventId && !this.isDuplicate) return this.updateEvent();
 
       return this.createEvent();
     }
@@ -715,6 +719,11 @@ export default class EditEvent extends Vue {
 
     if (result.data.event.endsOn === null) {
       this.endsOnNull = true;
+    }
+    // as stated here : https://github.com/elixir-ecto/ecto/issues/1684
+    // "Ecto currently silently transforms empty strings into nil"
+    if (result.data.event.description === null) {
+      result.data.event.description = "";
     }
     return new EventModel(result.data.event);
   }

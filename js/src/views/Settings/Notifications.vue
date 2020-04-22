@@ -1,6 +1,5 @@
 <template>
   <div v-if="loggedUser">
-    <h2 class="subtitle">{{ $t("No notification settings yet") }}</h2>
     <div class="field">
       <b-checkbox disabled v-model="notificationEventUpdates">
         <strong>{{ $t("Important event updates") }}</strong>
