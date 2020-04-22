@@ -77,6 +77,9 @@ export default class EventMixin extends mixins(Vue) {
   }
 
   protected async openDeleteEventModal(event: IEvent, currentActor: IPerson) {
+    function escapeRegExp(string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+    }  	  
     const participantsLength = event.participantStats.participant;
     const prefix = participantsLength
             ? this.$tc('There are {participants} participants.', event.participantStats.participant, {
@@ -97,7 +100,7 @@ export default class EventMixin extends mixins(Vue) {
             ) as string,
       inputAttrs: {
         placeholder: event.title,
-        pattern: event.title,
+        pattern: escapeRegExp(event.title),
       },
       onConfirm: () => this.deleteEvent(event, currentActor),
     });
