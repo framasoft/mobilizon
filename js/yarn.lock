@@ -2670,10 +2670,10 @@ buble@0.19.8, buble@^0.19.7:
     os-homedir "^2.0.0"
     regexpu-core "^4.5.4"
 
-buefy@^0.8.2:
-  version "0.8.10"
-  resolved "https://registry.yarnpkg.com/buefy/-/buefy-0.8.10.tgz#e00a9e9ced4babcf01ada300c451fafced2a2b42"
-  integrity sha512-Lw/UP3Ku7o+oqam9TIoRMG5SrytGQwXWAoxAtqt6Wb9eSsMEqp/5o+jZnz8oteR06YWgjdSIfOv2YeEdjEkQCg==
+buefy@^0.8.16:
+  version "0.8.16"
+  resolved "https://registry.yarnpkg.com/buefy/-/buefy-0.8.16.tgz#b4c2edf0c57887a9052113630a21924d28c7d2da"
+  integrity sha512-Y5VaJbPlAjiEF8UhfzTTU4kmfLgkC6DwV4FklATGyxrqnezza+niTPgbdt+URaiw4KWzhO8BdTUIOrE5EPrOcQ==
   dependencies:
     bulma "0.7.5"
 
