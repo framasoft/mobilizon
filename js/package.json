@@ -45,7 +45,7 @@
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.0-rc.6",
     "vue-class-component": "^7.0.2",
-    "vue-i18n": "^8.14.0",
+    "vue-i18n": "^8.17.6",
     "vue-meta": "^2.3.1",
     "vue-property-decorator": "^8.1.0",
     "vue-router": "^3.0.6",
