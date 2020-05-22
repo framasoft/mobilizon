@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2020-02-26 15:11+0000\n"
+"PO-Revision-Date: 2020-05-21 20:24+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/oc/>\n"
@@ -688,6 +688,7 @@ msgstr "Adreça electronica novèla"
 #, elixir-format
 msgid "The email address for your account on %{host} is being changed to:"
 msgstr ""
+"L’adreça electronica per vòstre compte sus %{host} es a èsser cambiada per :"
 
 #: lib/web/templates/email/email_changed_new.html.eex:13
 #: lib/web/templates/email/email_changed_new.html.eex:51 lib/web/templates/email/email_changed_new.text.eex:1
