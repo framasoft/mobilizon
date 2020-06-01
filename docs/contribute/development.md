@@ -45,6 +45,30 @@ Run Mobilizon:
       ``` create extension if not exists postgis; ```
 
     * Run migrations: `mix ecto.migrate`.
+    * Generate a Guardian secret with `mix guardian.gen.secret`:
+      ```bash
+      $ mix guardian.gen.secret
+      $ TTRcgYH/Y0rk8ph5fqExVWRWjK03cqymfTa70leljmLMsBChtm+6MM+pRrL76Io3
+      ```
+    * Create a `config/dev.secret.exs` file and add the Guardian config:
+
+      ```elixir
+      import Config
+
+      config :mobilizon, Mobilizon.Web.Auth.Guardian,
+        secret_key: "TTRcgYH/Y0rk8ph5fqExVWRWjK03cqymfTa70leljmLMsBChtm+6MM+pRrL76Io3"
+
+      ```
+    * Generate your first user with the `mix mobilizon.users.new` task
+
+      ```bash
+        $ mix mobilizon.users.new john.doe@localhost.com
+          An user has been created with the following information:
+            - email: john.doe@localhost.com
+            - password: r/EKpKr5o7ngQY+r
+            - Role: user
+          The user will be prompted to create a new profile after login for the first time.
+      ```
   * Start Phoenix endpoint with `mix phx.server`. The client development server will also automatically be launched and will reload on file change.
 
 Now you can visit [`localhost:4000`](http://localhost:4000) in your browser
