@@ -69,7 +69,7 @@ config :mobilizon, Mobilizon.Storage.Repo,
   password: System.get_env("MOBILIZON_DATABASE_PASSWORD", "mobilizon"),
   database: System.get_env("MOBILIZON_DATABASE_DBNAME", "mobilizon_dev"),
   hostname: System.get_env("MOBILIZON_DATABASE_HOST", "localhost"),
-  port: "5432",
+  port: System.get_env("MOBILIZON_DATABASE_PORT", "5432"),
   pool_size: 10,
   show_sensitive_data_on_connection_error: true
 

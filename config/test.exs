@@ -32,6 +32,7 @@ config :mobilizon, Mobilizon.Storage.Repo,
   password: System.get_env("MOBILIZON_DATABASE_PASSWORD") || "mobilizon",
   database: System.get_env("MOBILIZON_DATABASE_DBNAME") || "mobilizon_test",
   hostname: System.get_env("MOBILIZON_DATABASE_HOST") || "localhost",
+  port: System.get_env("MOBILIZON_DATABASE_PORT") || "5432",
   pool: Ecto.Adapters.SQL.Sandbox
 
 config :mobilizon, Mobilizon.Web.Email.Mailer, adapter: Bamboo.TestAdapter
