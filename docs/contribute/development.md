@@ -62,7 +62,7 @@ Run Mobilizon:
     * Generate your first user with the `mix mobilizon.users.new` task
 
       ```bash
-        $ mix mobilizon.users.new john.doe@localhost.com
+        $ mix mobilizon.users.new john.doe@localhost.com --admin
           An user has been created with the following information:
             - email: john.doe@localhost.com
             - password: r/EKpKr5o7ngQY+r
