@@ -71,7 +71,7 @@
             <![endif]-->
         </td>
     </tr>
-    <%= render @view_module, @view_template, assigns %>
+    <%= @inner_content %>
     <% if Mobilizon.Config.instance_demo_mode?() do %>
     <!-- BETA WARNING -->
         <tr>

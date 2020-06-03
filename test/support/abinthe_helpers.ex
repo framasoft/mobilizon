@@ -3,7 +3,6 @@ defmodule Mobilizon.GraphQL.AbsintheHelpers do
   Absinthe helpers for tests
   """
 
-  import Plug.Conn
   import Phoenix.ConnTest
 
   alias Plug.Conn

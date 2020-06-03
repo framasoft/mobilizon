@@ -508,7 +508,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
             actorId: actor.id,
             roles: "participant,moderator,administrator,creator",
             page: 1,
-            limit: 1
+            limit: 2
           }
         )
 
@@ -516,11 +516,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
 
       sorted_participants =
         res["data"]["event"]["participants"]["elements"]
-        |> Enum.sort_by(
-          &(&1
-            |> Map.get("actor")
-            |> Map.get("preferredUsername"))
-        )
+        |> Enum.filter(&(&1["role"] == "CREATOR"))
 
       assert sorted_participants == [
                %{
@@ -540,8 +536,8 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
             uuid: event.uuid,
             actorId: actor.id,
             roles: "participant,moderator,administrator,creator",
-            page: 2,
-            limit: 1
+            page: 1,
+            limit: 2
           }
         )
 
@@ -1321,7 +1317,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
                |> hd
 
       update_participation_mutation = """
-          mutation UpdateParticipation($participantId: ID!, $role: String!, $moderatorActorId: ID!) {
+          mutation UpdateParticipation($participantId: ID!, $role: ParticipantRoleEnum!, $moderatorActorId: ID!) {
             updateParticipation(id: $participantId, role: $role, moderatorActorId: $moderatorActorId) {
                 id,
                 role,
