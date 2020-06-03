@@ -1,55 +1,55 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const SEARCH_EVENTS = gql`
-query SearchEvents($searchText: String!) {
-  searchEvents(search: $searchText) {
-    total,
-    elements {
-      title,
-      uuid,
-      beginsOn,
-      picture {
-        url,
-      },
-      tags {
-        slug,
+  query SearchEvents($searchText: String!) {
+    searchEvents(search: $searchText) {
+      total
+      elements {
         title
-      },
-      __typename
+        uuid
+        beginsOn
+        picture {
+          url
+        }
+        tags {
+          slug
+          title
+        }
+        __typename
+      }
     }
   }
-}
 `;
 
 export const SEARCH_GROUPS = gql`
-query SearchGroups($searchText: String!) {
-  searchGroups(search: $searchText) {
-    total,
-    elements {
-      avatar {
-        url
-      },
-      domain,
-      preferredUsername,
-      name,
-      __typename
+  query SearchGroups($searchText: String!) {
+    searchGroups(search: $searchText) {
+      total
+      elements {
+        avatar {
+          url
+        }
+        domain
+        preferredUsername
+        name
+        __typename
+      }
     }
   }
-}
 `;
 
 export const SEARCH_PERSONS = gql`
-  query SearchPersons($searchText: String!) {
-    searchPersons(search: $searchText) {
-      total,
+  query SearchPersons($searchText: String!, $page: Int, $limit: Int) {
+    searchPersons(search: $searchText, page: $page, limit: $limit) {
+      total
       elements {
-        id,
+        id
         avatar {
           url
-        },
-        domain,
-        preferredUsername,
-        name,
+        }
+        domain
+        preferredUsername
+        name
         __typename
       }
     }

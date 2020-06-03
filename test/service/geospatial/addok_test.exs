@@ -9,6 +9,11 @@ defmodule Mobilizon.Service.Geospatial.AddokTest do
   alias Mobilizon.Config
   alias Mobilizon.Service.Geospatial.Addok
 
+  @http_options [
+    follow_redirect: true,
+    ssl: [{:versions, [:"tlsv1.2"]}]
+  ]
+
   setup do
     # Config.instance_user_agent/0 makes database calls so because of ownership connection
     # we need to define it like this instead of a constant
@@ -24,17 +29,21 @@ defmodule Mobilizon.Service.Geospatial.AddokTest do
 
   describe "search address" do
     test "produces a valid search address", %{httpoison_headers: httpoison_headers} do
-      with_mock HTTPoison, get: fn _url, _headers -> "{}" end do
+      with_mock HTTPoison, get: fn _url, _headers, _options -> "{}" end do
         Addok.search("10 Rue Jangot")
 
         assert_called(
-          HTTPoison.get("#{@endpoint}/search/?q=10%20Rue%20Jangot&limit=10", httpoison_headers)
+          HTTPoison.get(
+            "#{@endpoint}/search/?q=10%20Rue%20Jangot&limit=10",
+            httpoison_headers,
+            @http_options
+          )
         )
       end
     end
 
     test "produces a valid search address with options", %{httpoison_headers: httpoison_headers} do
-      with_mock HTTPoison, get: fn _url, _headers -> "{}" end do
+      with_mock HTTPoison, get: fn _url, _headers, _options -> "{}" end do
         Addok.search("10 Rue Jangot",
           endpoint: @fake_endpoint,
           limit: 5,
@@ -44,7 +53,8 @@ defmodule Mobilizon.Service.Geospatial.AddokTest do
         assert_called(
           HTTPoison.get(
             "#{@fake_endpoint}/search/?q=10%20Rue%20Jangot&limit=5&lat=49&lon=12",
-            httpoison_headers
+            httpoison_headers,
+            @http_options
           )
         )
       end

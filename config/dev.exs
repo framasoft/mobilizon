@@ -19,7 +19,16 @@ config :mobilizon, Mobilizon.Web.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    yarn: ["run", "dev", cd: Path.expand("../js", __DIR__)]
+    # yarn: ["run", "dev", cd: Path.expand("../js", __DIR__)]
+    node: [
+      "node_modules/webpack/bin/webpack.js",
+      "--mode",
+      "development",
+      "--watch-stdin",
+      "--config",
+      "node_modules/@vue/cli-service/webpack.config.js",
+      cd: Path.expand("../js", __DIR__)
+    ]
   ]
 
 # ## SSL Support
@@ -80,7 +89,7 @@ config :mobilizon, :instance,
   email_reply_to: System.get_env("MOBILIZON_INSTANCE_EMAIL"),
   registrations_open: System.get_env("MOBILIZON_INSTANCE_REGISTRATIONS_OPEN") == "true"
 
-config :mobilizon, :activitypub, sign_object_fetches: false
+# config :mobilizon, :activitypub, sign_object_fetches: false
 
 require Logger
 

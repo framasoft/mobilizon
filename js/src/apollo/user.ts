@@ -1,19 +1,19 @@
-import { ApolloCache } from 'apollo-cache';
-import { NormalizedCacheObject } from 'apollo-cache-inmemory';
-import { ICurrentUserRole } from '@/types/current-user.model';
+import { ApolloCache } from "apollo-cache";
+import { NormalizedCacheObject } from "apollo-cache-inmemory";
+import { ICurrentUserRole } from "@/types/current-user.model";
 
-export function buildCurrentUserResolver(cache: ApolloCache<NormalizedCacheObject>) {
+export default function buildCurrentUserResolver(cache: ApolloCache<NormalizedCacheObject>) {
   cache.writeData({
     data: {
       currentUser: {
-        __typename: 'CurrentUser',
+        __typename: "CurrentUser",
         id: null,
         email: null,
         isLoggedIn: false,
         role: ICurrentUserRole.USER,
       },
       currentActor: {
-        __typename: 'CurrentActor',
+        __typename: "CurrentActor",
         id: null,
         preferredUsername: null,
         name: null,
@@ -24,31 +24,49 @@ export function buildCurrentUserResolver(cache: ApolloCache<NormalizedCacheObjec
 
   return {
     Mutation: {
-      updateCurrentUser: (_, { id, email, isLoggedIn, role }, { cache }) => {
+      updateCurrentUser: (
+        _: any,
+        {
+          id,
+          email,
+          isLoggedIn,
+          role,
+        }: { id: string; email: string; isLoggedIn: boolean; role: string },
+        { cache: localCache }: { cache: ApolloCache<NormalizedCacheObject> }
+      ) => {
         const data = {
           currentUser: {
             id,
             email,
             isLoggedIn,
             role,
-            __typename: 'CurrentUser',
+            __typename: "CurrentUser",
           },
         };
 
-        cache.writeData({ data });
+        localCache.writeData({ data });
       },
-      updateCurrentActor: (_, { id, preferredUsername, avatar, name }, { cache }) => {
+      updateCurrentActor: (
+        _: any,
+        {
+          id,
+          preferredUsername,
+          avatar,
+          name,
+        }: { id: string; preferredUsername: string; avatar: string; name: string },
+        { cache: localCache }: { cache: ApolloCache<NormalizedCacheObject> }
+      ) => {
         const data = {
           currentActor: {
             id,
             preferredUsername,
             avatar,
             name,
-            __typename: 'CurrentActor',
+            __typename: "CurrentActor",
           },
         };
 
-        cache.writeData({ data });
+        localCache.writeData({ data });
       },
     },
   };

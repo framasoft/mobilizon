@@ -8,7 +8,8 @@ defmodule Mobilizon.Reports.Report do
   import Ecto.Changeset
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.{Comment, Event}
+  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Events.Event
   alias Mobilizon.Reports.{Note, ReportStatus}
 
   alias Mobilizon.Web.Endpoint

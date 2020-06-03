@@ -1,78 +1,62 @@
 <template>
-  <section class="container">
-    <h1>
-      {{ $t('Group List') }}
-    </h1>
-    <b-loading :active.sync="$apollo.loading"></b-loading>
+  <section class="container section">
+    <h1>{{ $t("Group List") }} ({{ groups.total }})</h1>
+    <b-loading :active.sync="$apollo.loading" />
     <div class="columns">
       <GroupCard
-        v-for="group in groups"
+        v-for="group in groups.elements"
         :key="group.uuid"
         :group="group"
         class="column is-one-quarter-desktop is-half-mobile"
       />
     </div>
-    <router-link class="button" :to="{ name: RouteName.CREATE_GROUP }">
-      {{ $t('Create group') }}
-    </router-link>
+    <router-link class="button" :to="{ name: RouteName.CREATE_GROUP }">{{
+      $t("Create group")
+    }}</router-link>
   </section>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { RouteName } from '@/router';
+import { Component, Vue } from "vue-property-decorator";
+import { LIST_GROUPS } from "@/graphql/actor";
+import { Group, IGroup } from "@/types/actor";
+import GroupCard from "@/components/Group/GroupCard.vue";
+import RouteName from "../../router/name";
 
-@Component
+@Component({
+  apollo: {
+    groups: {
+      query: LIST_GROUPS,
+    },
+  },
+  components: {
+    GroupCard,
+  },
+})
 export default class GroupList extends Vue {
-  groups = [];
+  groups: { elements: IGroup[]; total: number } = { elements: [], total: 0 };
+
   loading = true;
 
   RouteName = RouteName;
+  //
+  // usernameWithDomain(actor) {
+  //   return actor.username + (actor.domain === null ? '' : `@${actor.domain}`);
+  // }
 
-  created() {
-    this.fetchData();
-  }
-
-  usernameWithDomain(actor) {
-    return actor.username + (actor.domain === null ? '' : `@${actor.domain}`);
-  }
-
-  fetchData() {
-    // FIXME: remove eventFetch
-    // eventFetch('/groups', this.$store)
-    //   .then(response => response.json())
-    //   .then((data) => {
-    //     console.log(data);
-    //     this.loading = false;
-    //     this.groups = data.data;
-    //   });
-  }
-
-  deleteGroup(group) {
-    const router = this.$router;
-    // FIXME: remove eventFetch
-    // eventFetch(`/groups/${this.usernameWithDomain(group)}`, this.$store, { method: 'DELETE' })
-    //   .then(response => response.json())
-    //   .then(() => router.push('/groups'));
-  }
-
-  viewActor(actor) {
-    this.$router.push({
-      name: RouteName.GROUP,
-      params: { name: this.usernameWithDomain(actor) },
-    });
-  }
-
-  joinGroup(group) {
-    const router = this.$router;
-    // FIXME: remove eventFetch
-    // eventFetch(`/groups/${this.usernameWithDomain(group)}/join`, this.$store, { method: 'POST' })
-    //   .then(response => response.json())
-    //   .then(() => router.push({ name: 'Group', params: { name: this.usernameWithDomain(group) } }));
-  }
+  // viewActor(actor) {
+  //   this.$router.push({
+  //     name: RouteName.GROUP,
+  //     params: { name: this.usernameWithDomain(actor) },
+  //   });
+  // }
+  //
+  // joinGroup(group) {
+  //   const router = this.$router;
+  //   // FIXME: remove eventFetch
+  //   // eventFetch(`/groups/${this.usernameWithDomain(group)}/join`, this.$store, { method: 'POST' })
+  //   //   .then(response => response.json())
+  //   //   .then(() => router.push({ name: 'Group', params: { name: this.usernameWithDomain(group) } }));
+  // }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>

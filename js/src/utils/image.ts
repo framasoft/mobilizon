@@ -1,4 +1,4 @@
-import { IPicture } from '@/types/picture.model';
+import { IPicture } from "@/types/picture.model";
 
 export async function buildFileFromIPicture(obj: IPicture | null) {
   if (!obj) return null;
@@ -23,7 +23,7 @@ export function buildFileVariable<T>(file: File | null, name: string, alt?: stri
   };
 }
 
-export function readFileAsync(file: File): Promise<string|ArrayBuffer|null> {
+export function readFileAsync(file: File): Promise<string | ArrayBuffer | null> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 

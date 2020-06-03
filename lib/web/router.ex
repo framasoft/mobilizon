@@ -30,6 +30,10 @@ defmodule Mobilizon.Web.Router do
 
   pipeline :activity_pub_and_html do
     plug(:accepts, ["html", "activity-json"])
+
+    plug(Cldr.Plug.AcceptLanguage,
+      cldr_backend: Mobilizon.Cldr
+    )
   end
 
   pipeline :atom_and_ical do
@@ -38,6 +42,11 @@ defmodule Mobilizon.Web.Router do
 
   pipeline :browser do
     plug(Plug.Static, at: "/", from: "priv/static")
+
+    plug(Cldr.Plug.AcceptLanguage,
+      cldr_backend: Mobilizon.Cldr
+    )
+
     plug(:accepts, ["html"])
     plug(:fetch_session)
     plug(:fetch_flash)
@@ -72,8 +81,13 @@ defmodule Mobilizon.Web.Router do
     pipe_through(:activity_pub_signature)
 
     get("/@:name", PageController, :actor)
+    get("/events/me", PageController, :index)
     get("/events/:uuid", PageController, :event)
     get("/comments/:uuid", PageController, :comment)
+    get("/resource/:uuid", PageController, :resource, as: "resource")
+    get("/todo-list/:uuid", PageController, :todo_list, as: "todo_list")
+    get("/todo/:uuid", PageController, :todo, as: "todo")
+    get("/@:name/resources", PageController, :resources)
   end
 
   scope "/", Mobilizon.Web do
@@ -82,6 +96,8 @@ defmodule Mobilizon.Web.Router do
     get("/@:name/outbox", ActivityPubController, :outbox)
     get("/@:name/following", ActivityPubController, :following)
     get("/@:name/followers", ActivityPubController, :followers)
+    get("/@:name/members", ActivityPubController, :members)
+    get("/@:name/todo-lists", ActivityPubController, :todo_lists)
   end
 
   scope "/", Mobilizon.Web do
@@ -131,6 +147,7 @@ defmodule Mobilizon.Web.Router do
     )
 
     get("/validate/email/:token", PageController, :index, as: "user_email_validation")
+    get("/groups/me", PageController, :index, as: "my_groups")
 
     get("/interact", PageController, :interact)
   end

@@ -16,7 +16,6 @@ defmodule Mobilizon.Events do
   alias Mobilizon.Addresses.Address
 
   alias Mobilizon.Events.{
-    Comment,
     Event,
     EventParticipantStats,
     FeedToken,
@@ -61,20 +60,6 @@ defmodule Mobilizon.Events do
     :meeting
   ])
 
-  defenum(CommentVisibility, :comment_visibility, [
-    :public,
-    :unlisted,
-    :private,
-    :moderated,
-    :invite
-  ])
-
-  defenum(CommentModeration, :comment_moderation, [
-    :allow_all,
-    :moderated,
-    :closed
-  ])
-
   defenum(ParticipantRole, :participant_role, [
     :not_approved,
     :not_confirmed,
@@ -98,17 +83,6 @@ defmodule Mobilizon.Events do
     :participants,
     :physical_address,
     :picture
-  ]
-
-  @comment_preloads [
-    :actor,
-    :event,
-    :attributed_to,
-    :in_reply_to_comment,
-    :origin_comment,
-    :replies,
-    :tags,
-    :mentions
   ]
 
   @doc """
@@ -425,6 +399,14 @@ defmodule Mobilizon.Events do
       |> Repo.one()
 
     {:ok, events, events_count}
+  end
+
+  @spec list_organized_events_for_group(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  def list_organized_events_for_group(%Actor{id: group_id}, page \\ nil, limit \\ nil) do
+    group_id
+    |> event_for_group_query()
+    |> preload_for_event()
+    |> Page.build_page(page, limit)
   end
 
   @spec list_drafts_for_user(integer, integer | nil, integer | nil) :: [Event.t()]
@@ -796,13 +778,12 @@ defmodule Mobilizon.Events do
           DateTime.t() | nil,
           integer | nil,
           integer | nil
-        ) :: list(Participant.t())
+        ) :: Page.t()
   def list_participations_for_user(user_id, after_datetime, before_datetime, page, limit) do
     user_id
     |> list_participations_for_user_query()
     |> participation_filter_begins_on(after_datetime, before_datetime)
-    |> Page.paginate(page, limit)
-    |> Repo.all()
+    |> Page.build_page(page, limit)
   end
 
   @doc """
@@ -1127,219 +1108,6 @@ defmodule Mobilizon.Events do
     |> Repo.all()
   end
 
-  def data do
-    Dataloader.Ecto.new(Repo, query: &query/2)
-  end
-
-  @doc """
-  Query for comment dataloader
-
-  We only get first comment of thread, and count replies.
-  Read: https://hexdocs.pm/absinthe/ecto.html#dataloader
-  """
-  def query(Comment, _params) do
-    Comment
-    |> join(:left, [c], r in Comment, on: r.origin_comment_id == c.id)
-    |> where([c, _], is_nil(c.in_reply_to_comment_id))
-    |> where([_, r], is_nil(r.deleted_at))
-    |> group_by([c], c.id)
-    |> select([c, r], %{c | total_replies: count(r.id)})
-  end
-
-  def query(queryable, _) do
-    queryable
-  end
-
-  @doc """
-  Gets a single comment.
-  """
-  @spec get_comment(integer | String.t()) :: Comment.t()
-  def get_comment(nil), do: nil
-  def get_comment(id), do: Repo.get(Comment, id)
-
-  @doc """
-  Gets a single comment.
-  Raises `Ecto.NoResultsError` if the comment does not exist.
-  """
-  @spec get_comment!(integer | String.t()) :: Comment.t()
-  def get_comment!(id), do: Repo.get!(Comment, id)
-
-  def get_comment_with_preload(nil), do: nil
-
-  def get_comment_with_preload(id) do
-    Comment
-    |> where(id: ^id)
-    |> preload_for_comment()
-    |> Repo.one()
-  end
-
-  @doc """
-  Gets a comment by its URL.
-  """
-  @spec get_comment_from_url(String.t()) :: Comment.t() | nil
-  def get_comment_from_url(url), do: Repo.get_by(Comment, url: url)
-
-  @doc """
-  Gets a comment by its URL.
-  Raises `Ecto.NoResultsError` if the comment does not exist.
-  """
-  @spec get_comment_from_url!(String.t()) :: Comment.t()
-  def get_comment_from_url!(url), do: Repo.get_by!(Comment, url: url)
-
-  @doc """
-  Gets a comment by its URL, with all associations loaded.
-  """
-  @spec get_comment_from_url_with_preload(String.t()) ::
-          {:ok, Comment.t()} | {:error, :comment_not_found}
-  def get_comment_from_url_with_preload(url) do
-    query = from(c in Comment, where: c.url == ^url)
-
-    comment =
-      query
-      |> preload_for_comment()
-      |> Repo.one()
-
-    case comment do
-      %Comment{} = comment ->
-        {:ok, comment}
-
-      nil ->
-        {:error, :comment_not_found}
-    end
-  end
-
-  @doc """
-  Gets a comment by its URL, with all associations loaded.
-  Raises `Ecto.NoResultsError` if the comment does not exist.
-  """
-  @spec get_comment_from_url_with_preload(String.t()) :: Comment.t()
-  def get_comment_from_url_with_preload!(url) do
-    Comment
-    |> Repo.get_by!(url: url)
-    |> Repo.preload(@comment_preloads)
-  end
-
-  @doc """
-  Gets a comment by its UUID, with all associations loaded.
-  """
-  @spec get_comment_from_uuid_with_preload(String.t()) :: Comment.t()
-  def get_comment_from_uuid_with_preload(uuid) do
-    Comment
-    |> Repo.get_by(uuid: uuid)
-    |> Repo.preload(@comment_preloads)
-  end
-
-  def get_threads(event_id) do
-    Comment
-    |> where([c, _], c.event_id == ^event_id and is_nil(c.origin_comment_id))
-    |> join(:left, [c], r in Comment, on: r.origin_comment_id == c.id)
-    |> group_by([c], c.id)
-    |> select([c, r], %{c | total_replies: count(r.id)})
-    |> Repo.all()
-  end
-
-  @doc """
-  Gets paginated replies for root comment
-  """
-  @spec get_thread_replies(integer()) :: [Comment.t()]
-  def get_thread_replies(parent_id) do
-    parent_id
-    |> public_replies_for_thread_query()
-    |> Repo.all()
-  end
-
-  def get_or_create_comment(%{"url" => url} = attrs) do
-    case Repo.get_by(Comment, url: url) do
-      %Comment{} = comment -> {:ok, Repo.preload(comment, @comment_preloads)}
-      nil -> create_comment(attrs)
-    end
-  end
-
-  @doc """
-  Creates a comment.
-  """
-  @spec create_comment(map) :: {:ok, Comment.t()} | {:error, Changeset.t()}
-  def create_comment(attrs \\ %{}) do
-    with {:ok, %Comment{} = comment} <-
-           %Comment{}
-           |> Comment.changeset(attrs)
-           |> Repo.insert(),
-         %Comment{} = comment <- Repo.preload(comment, @comment_preloads) do
-      {:ok, comment}
-    end
-  end
-
-  @doc """
-  Updates a comment.
-  """
-  @spec update_comment(Comment.t(), map) :: {:ok, Comment.t()} | {:error, Changeset.t()}
-  def update_comment(%Comment{} = comment, attrs) do
-    comment
-    |> Comment.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a comment
-
-  But actually just empty the fields so that threads are not broken.
-  """
-  @spec delete_comment(Comment.t()) :: {:ok, Comment.t()} | {:error, Changeset.t()}
-  def delete_comment(%Comment{} = comment) do
-    comment
-    |> Comment.delete_changeset()
-    |> Repo.update()
-  end
-
-  @doc """
-  Returns the list of public comments.
-  """
-  @spec list_comments :: [Comment.t()]
-  def list_comments do
-    Repo.all(from(c in Comment, where: c.visibility == ^:public))
-  end
-
-  @doc """
-  Returns the list of public comments for the actor.
-  """
-  @spec list_public_comments_for_actor(Actor.t(), integer | nil, integer | nil) ::
-          {:ok, [Comment.t()], integer}
-  def list_public_comments_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
-    comments =
-      actor_id
-      |> public_comments_for_actor_query()
-      |> Page.paginate(page, limit)
-      |> Repo.all()
-
-    count_comments =
-      actor_id
-      |> count_comments_query()
-      |> Repo.one()
-
-    {:ok, comments, count_comments}
-  end
-
-  @doc """
-  Returns the list of comments by an actor and a list of ids.
-  """
-  @spec list_comments_by_actor_and_ids(integer | String.t(), [integer | String.t()]) ::
-          [Comment.t()]
-  def list_comments_by_actor_and_ids(actor_id, comment_ids \\ [])
-  def list_comments_by_actor_and_ids(_actor_id, []), do: []
-
-  def list_comments_by_actor_and_ids(actor_id, comment_ids) do
-    Comment
-    |> where([c], c.id in ^comment_ids)
-    |> where([c], c.actor_id == ^actor_id)
-    |> Repo.all()
-  end
-
-  @doc """
-  Counts local comments.
-  """
-  @spec count_local_comments :: integer
-  def count_local_comments, do: Repo.one(count_local_comments_query())
-
   @doc """
   Gets a single feed token.
   """
@@ -1425,6 +1193,15 @@ defmodule Mobilizon.Events do
     from(
       e in Event,
       where: e.organizer_actor_id == ^actor_id,
+      order_by: [desc: :id]
+    )
+  end
+
+  @spec event_for_group_query(integer | String.t()) :: Ecto.Query.t()
+  defp event_for_group_query(group_id) do
+    from(
+      e in Event,
+      where: e.attributed_to_id == ^group_id,
       order_by: [desc: :id]
     )
   end
@@ -1656,20 +1433,6 @@ defmodule Mobilizon.Events do
     from(s in Session, where: s.track_id == ^track_id)
   end
 
-  defp public_comments_for_actor_query(actor_id) do
-    Comment
-    |> where([c], c.actor_id == ^actor_id and c.visibility in ^@public_visibility)
-    |> order_by([c], desc: :id)
-    |> preload_for_comment()
-  end
-
-  defp public_replies_for_thread_query(comment_id) do
-    Comment
-    |> where([c], c.origin_comment_id == ^comment_id and c.visibility in ^@public_visibility)
-    |> group_by([c], [c.in_reply_to_comment_id, c.id])
-    |> preload_for_comment()
-  end
-
   @spec list_participants_for_event_query(String.t()) :: Ecto.Query.t()
   defp list_participants_for_event_query(event_id) do
     from(
@@ -1708,20 +1471,6 @@ defmodule Mobilizon.Events do
       on: p.event_id == e.id,
       where: a.user_id == ^user_id and p.role != ^:not_approved,
       preload: [:event, :actor]
-    )
-  end
-
-  @spec count_comments_query(integer) :: Ecto.Query.t()
-  defp count_comments_query(actor_id) do
-    from(c in Comment, select: count(c.id), where: c.actor_id == ^actor_id)
-  end
-
-  @spec count_local_comments_query :: Ecto.Query.t()
-  defp count_local_comments_query do
-    from(
-      c in Comment,
-      select: count(c.id),
-      where: c.local == ^true and c.visibility in ^@public_visibility
     )
   end
 
@@ -1825,6 +1574,17 @@ defmodule Mobilizon.Events do
     |> participation_order_begins_on_desc()
   end
 
+  defp participation_filter_begins_on(
+         query,
+         %DateTime{} = after_datetime,
+         %DateTime{} = before_datetime
+       ) do
+    query
+    |> where([_p, e, _a], e.begins_on < ^before_datetime)
+    |> where([_p, e, _a], e.begins_on > ^after_datetime)
+    |> participation_order_begins_on_asc()
+  end
+
   defp participation_order_begins_on_asc(query),
     do: order_by(query, [_p, e, _a], asc: e.begins_on)
 
@@ -1833,7 +1593,4 @@ defmodule Mobilizon.Events do
 
   @spec preload_for_event(Ecto.Query.t()) :: Ecto.Query.t()
   defp preload_for_event(query), do: preload(query, ^@event_preloads)
-
-  @spec preload_for_comment(Ecto.Query.t()) :: Ecto.Query.t()
-  defp preload_for_comment(query), do: preload(query, ^@comment_preloads)
 end

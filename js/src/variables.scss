@@ -6,7 +6,7 @@ $primary-invert: findColorInvert($primary);
 $secondary: #ffd599;
 $secondary-invert: findColorInvert($secondary);
 
-$success: #0ECCAF;
+$success: #0eccaf;
 $success-invert: findColorInvert($success);
 $info: #36bcd4;
 $info-invert: findColorInvert($info);
@@ -14,14 +14,29 @@ $danger: #ff7061;
 $danger-invert: findColorInvert($danger);
 
 $colors: map-merge(
-    $colors,
-    (
-        "primary": ($primary, $primary-invert),
-        "secondary": ($secondary, $secondary-invert),
-        "success": ($success, $success-invert),
-        "info": ($info, $info-invert),
-        "danger": ($danger, $danger-invert),
-    )
+  $colors,
+  (
+    "primary": (
+      $primary,
+      $primary-invert,
+    ),
+    "secondary": (
+      $secondary,
+      $secondary-invert,
+    ),
+    "success": (
+      $success,
+      $success-invert,
+    ),
+    "info": (
+      $info,
+      $info-invert,
+    ),
+    "danger": (
+      $danger,
+      $danger-invert,
+    ),
+  )
 );
 
 // Navbar
@@ -29,39 +44,40 @@ $navbar-background-color: $secondary;
 $navbar-item-color: $primary;
 $navbar-height: 4rem;
 
-
 // Footer
 $footer-padding: 3rem 1.5rem 4rem;
 $footer-background-color: $primary;
 
-$body-background-color: #f8f7fa;
+$body-background-color: #efeef4;
 $fullhd-enabled: false;
 $hero-body-padding-medium: 6rem 1.5rem;
 
 main > .container {
-    background: $white;
+  background: $body-background-color;
 }
 
-$title-color: #3C376E;
-$title-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial, serif;
+$title-color: #3c376e;
+$title-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial,
+  serif;
 $title-weight: 700;
 $title-size: 40px;
 $title-sub-size: 45px;
 $title-sup-size: 30px;
 
-$subtitle-color: #3A384C;
-$subtitle-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial, serif;
+$subtitle-color: #3a384c;
+$subtitle-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial,
+  serif;
 $subtitle-weight: 400;
 $subtitle-size: 32px;
 $subtitle-sub-size: 30px;
 $subtitle-sup-size: 15px;
 .title {
-    margin: 30px auto 45px;
+  margin: 30px auto 45px;
 }
 
 .subtitle {
-    background: $secondary;
-    display: inline;
-    padding: 3px 8px;
-    margin: 15px auto 30px;
+  background: $secondary;
+  display: inline;
+  padding: 3px 8px;
+  margin: 15px auto 30px;
 }

@@ -5,9 +5,10 @@ defmodule Mobilizon.ActorsTest do
 
   import Mobilizon.Factory
 
-  alias Mobilizon.{Actors, Config, Events, Tombstone, Users}
+  alias Mobilizon.{Actors, Config, Conversations, Events, Tombstone, Users}
   alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
-  alias Mobilizon.Events.{Comment, Event}
+  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Events.Event
   alias Mobilizon.Media.File, as: FileModel
   alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.Page
@@ -331,7 +332,7 @@ defmodule Mobilizon.ActorsTest do
 
       assert {:error, :event_not_found} = Events.get_event(event1.id)
       assert %Tombstone{} = Tombstone.find_tombstone(event1_url)
-      assert %Comment{deleted_at: deleted_at} = Events.get_comment(comment1.id)
+      assert %Comment{deleted_at: deleted_at} = Conversations.get_comment(comment1.id)
       refute is_nil(deleted_at)
       assert %Tombstone{} = Tombstone.find_tombstone(comment1_url)
 
@@ -363,7 +364,11 @@ defmodule Mobilizon.ActorsTest do
     @invalid_attrs %{summary: nil, suspended: nil, preferred_username: nil, name: nil}
 
     test "create_group/1 with valid data creates a group" do
-      assert {:ok, %Actor{} = group} = Actors.create_group(@valid_attrs)
+      %Actor{id: actor_id} = insert(:actor)
+
+      assert {:ok, %Actor{} = group} =
+               Actors.create_group(Map.put(@valid_attrs, :creator_actor_id, actor_id))
+
       assert group.summary == "some description"
       refute group.suspended
       assert group.preferred_username == "some-title"
@@ -372,21 +377,23 @@ defmodule Mobilizon.ActorsTest do
     test "create_group/1 with an existing profile username fails" do
       _actor = insert(:actor, preferred_username: @valid_attrs.preferred_username)
 
-      assert {:error,
-              %Ecto.Changeset{errors: [preferred_username: {"Username is already taken", []}]}} =
-               Actors.create_group(@valid_attrs)
+      assert {:error, :insert_group,
+              %Ecto.Changeset{errors: [preferred_username: {"Username is already taken", []}]},
+              %{}} = Actors.create_group(@valid_attrs)
     end
 
     test "create_group/1 with an existing group username fails" do
-      assert {:ok, %Actor{} = group} = Actors.create_group(@valid_attrs)
+      %Actor{id: actor_id} = insert(:actor)
+      attrs = Map.put(@valid_attrs, :creator_actor_id, actor_id)
+      assert {:ok, %Actor{} = group} = Actors.create_group(attrs)
 
-      assert {:error,
-              %Ecto.Changeset{errors: [preferred_username: {"Username is already taken", []}]}} =
-               Actors.create_group(@valid_attrs)
+      assert {:error, :insert_group,
+              %Ecto.Changeset{errors: [preferred_username: {"Username is already taken", []}]},
+              %{}} = Actors.create_group(attrs)
     end
 
     test "create_group/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Actors.create_group(@invalid_attrs)
+      assert {:error, :insert_group, %Ecto.Changeset{}, %{}} = Actors.create_group(@invalid_attrs)
     end
   end
 
@@ -588,7 +595,7 @@ defmodule Mobilizon.ActorsTest do
       assert member.role == :member
 
       assert [group] = Actors.list_groups_member_of(actor)
-      assert [actor] = Actors.list_members_for_group(group)
+      assert %Page{elements: [actor], total: 1} = Actors.list_members_for_group(group)
     end
 
     test "create_member/1 with valid data but same actors fails to create a member", %{

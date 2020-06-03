@@ -16,7 +16,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.ActorTest do
 
   describe "AS to Actor" do
     test "valid as data to model" do
-      {:ok, actor} =
+      actor =
         ActorConverter.as_to_model_data(%{
           "id" => "https://somedomain.tld/users/someone",
           "type" => "Person",

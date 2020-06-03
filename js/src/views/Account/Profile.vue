@@ -3,14 +3,14 @@
     <div v-if="person">
       <div class="card-image" v-if="person.banner">
         <figure class="image">
-          <img :src="person.banner.url">
+          <img :src="person.banner.url" />
         </figure>
       </div>
       <div class="card-content">
         <div class="media">
           <div class="media-left">
             <figure class="image is-48x48" v-if="person.avatar">
-              <img :src="person.avatar.url">
+              <img :src="person.avatar.url" />
             </figure>
           </div>
           <div class="media-content">
@@ -24,46 +24,46 @@
 
         <b-dropdown hoverable has-link aria-role="list">
           <button class="button is-primary" slot="trigger">
-            {{ $t('Public feeds') }}
+            {{ $t("Public feeds") }}
             <b-icon icon="menu-down"></b-icon>
           </button>
 
           <b-dropdown-item aria-role="listitem">
             <a :href="feedUrls('atom', true)">
-              {{ $t('Public RSS/Atom Feed') }}
+              {{ $t("Public RSS/Atom Feed") }}
             </a>
           </b-dropdown-item>
           <b-dropdown-item aria-role="listitem">
             <a :href="feedUrls('ics', true)">
-              {{ $t('Public iCal Feed') }}
+              {{ $t("Public iCal Feed") }}
             </a>
           </b-dropdown-item>
         </b-dropdown>
 
         <b-dropdown hoverable has-link aria-role="list" v-if="person.feedTokens.length > 0">
           <button class="button is-info" slot="trigger">
-            {{ $t('Private feeds') }}
+            {{ $t("Private feeds") }}
             <b-icon icon="menu-down"></b-icon>
           </button>
 
           <b-dropdown-item aria-role="listitem">
             <a :href="feedUrls('atom', false)">
-              {{ $t('RSS/Atom Feed') }}
+              {{ $t("RSS/Atom Feed") }}
             </a>
           </b-dropdown-item>
           <b-dropdown-item aria-role="listitem">
             <a :href="feedUrls('ics', false)">
-              {{ $t('iCal Feed') }}
+              {{ $t("iCal Feed") }}
             </a>
           </b-dropdown-item>
         </b-dropdown>
         <a class="button" v-if="currentActor.id === person.id" @click="createToken">
-          {{ $t('Create token') }}
+          {{ $t("Create token") }}
         </a>
       </div>
       <section v-if="person.organizedEvents.length > 0">
         <h2 class="subtitle">
-          {{ $t('Organized') }}
+          {{ $t("Organized") }}
         </h2>
         <div class="columns">
           <EventCard
@@ -81,7 +81,7 @@
               @click="deleteProfile()"
               v-if="currentActor && currentActor.id === person.id"
             >
-              {{ $t('Delete') }}
+              {{ $t("Delete") }}
             </a>
           </p>
         </div>
@@ -91,12 +91,12 @@
 </template>
 
 <script lang="ts">
-import { FETCH_PERSON, CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import EventCard from '@/components/Event/EventCard.vue';
-import { MOBILIZON_INSTANCE_HOST } from '@/api/_entrypoint';
-import { IPerson } from '@/types/actor';
-import { CREATE_FEED_TOKEN_ACTOR } from '@/graphql/feed_tokens';
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import EventCard from "@/components/Event/EventCard.vue";
+import { FETCH_PERSON, CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
+import { MOBILIZON_INSTANCE_HOST } from "../../api/_entrypoint";
+import { IPerson } from "../../types/actor";
+import { CREATE_FEED_TOKEN_ACTOR } from "../../graphql/feed_tokens";
 
 @Component({
   apollo: {
@@ -120,23 +120,24 @@ export default class Profile extends Vue {
   @Prop({ type: String, required: true }) name!: string;
 
   person!: IPerson;
+
   currentActor!: IPerson;
 
-  // call again the method if the route changes
-  @Watch('$route')
-  onRouteChange() {
-    // this.fetchData()
-  }
+  // // call again the method if the route changes
+  // @Watch('$route')
+  // onRouteChange() {
+  //   // this.fetchData()
+  // }
 
-  feedUrls(format, isPublic = true): string {
-    let url = format === 'ics' ? 'webcal:' : '';
+  feedUrls(format: "ics" | "webcal:" | "atom", isPublic = true): string {
+    let url = format === "ics" ? "webcal:" : "";
     url += `//${MOBILIZON_INSTANCE_HOST}/`;
     if (isPublic === true) {
       url += `@${this.person.preferredUsername}/feed/`;
     } else {
       url += `events/going/${this.person.feedTokens[0].token}/`;
     }
-    return url + (format === 'ics' ? 'ics' : 'atom');
+    return url + (format === "ics" ? "ics" : "atom");
   }
 
   async createToken() {
@@ -150,7 +151,7 @@ export default class Profile extends Vue {
 }
 </script>
 <style lang="scss">
-  @import "../../variables";
-  @import "~bulma/sass/utilities/_all";
-  @import "~bulma/sass/components/dropdown.sass";
+@import "../../variables";
+@import "~bulma/sass/utilities/_all";
+@import "~bulma/sass/components/dropdown.sass";
 </style>

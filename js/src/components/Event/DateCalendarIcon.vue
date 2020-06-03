@@ -12,13 +12,13 @@
 </docs>
 
 <template>
-    <time class="datetime-container" :datetime="dateObj.getUTCSeconds()">
-        <span class="month">{{ month }}</span>
-        <span class="day">{{ day }}</span>
-    </time>
+  <time class="datetime-container" :datetime="dateObj.getUTCSeconds()">
+    <span class="month">{{ month }}</span>
+    <span class="day">{{ day }}</span>
+  </time>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
 export default class DateCalendarIcon extends Vue {
@@ -32,44 +32,44 @@ export default class DateCalendarIcon extends Vue {
   }
 
   get month() {
-    return this.dateObj.toLocaleString(undefined, { month: 'short' });
+    return this.dateObj.toLocaleString(undefined, { month: "short" });
   }
 
   get day() {
-    return this.dateObj.toLocaleString(undefined, { day: 'numeric' });
+    return this.dateObj.toLocaleString(undefined, { day: "numeric" });
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  time.datetime-container {
-    background: #f6f7f8;
-    border: 1px solid rgba(46,62,72,.12);
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    /*height: 50px;*/
-    width: 50px;
-    padding: 8px;
-    text-align: center;
+time.datetime-container {
+  background: #f6f7f8;
+  border: 1px solid rgba(46, 62, 72, 0.12);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /*height: 50px;*/
+  width: 50px;
+  padding: 8px;
+  text-align: center;
 
-    span {
-      display: block;
-      font-weight: 600;
+  span {
+    display: block;
+    font-weight: 600;
 
-      &.month {
-        color: #fa3e3e;
-        padding: 2px 0;
-        font-size: 12px;
-        line-height: 12px;
-        text-transform: uppercase;
-      }
+    &.month {
+      color: #fa3e3e;
+      padding: 2px 0;
+      font-size: 12px;
+      line-height: 12px;
+      text-transform: uppercase;
+    }
 
-      &.day {
-        font-size: 20px;
-        line-height: 20px;
-      }
+    &.day {
+      font-size: 20px;
+      line-height: 20px;
     }
   }
+}
 </style>

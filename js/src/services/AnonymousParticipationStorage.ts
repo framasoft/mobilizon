@@ -1,9 +1,9 @@
-import { IEvent } from '@/types/event.model';
+import { IEvent } from "@/types/event.model";
 
-const ANONYMOUS_PARTICIPATIONS_LOCALSTORAGE_KEY = 'ANONYMOUS_PARTICIPATIONS';
+const ANONYMOUS_PARTICIPATIONS_LOCALSTORAGE_KEY = "ANONYMOUS_PARTICIPATIONS";
 
 interface IAnonymousParticipation {
-  token: String;
+  token: string;
   expiration: Date;
   confirmed: boolean;
 }
@@ -19,14 +19,16 @@ class AnonymousParticipationNotFoundError extends Error {
 /**
  * Fetch existing anonymous participations saved inside this browser
  */
-function getLocalAnonymousParticipations(): Map<String, IAnonymousParticipation> {
-  return jsonToMap(localStorage.getItem(ANONYMOUS_PARTICIPATIONS_LOCALSTORAGE_KEY) || mapToJson(new Map()));
+function getLocalAnonymousParticipations(): Map<string, IAnonymousParticipation> {
+  return jsonToMap(
+    localStorage.getItem(ANONYMOUS_PARTICIPATIONS_LOCALSTORAGE_KEY) || mapToJson(new Map())
+  );
 }
 
-function mapToJson(map): string {
+function mapToJson(map: Map<any, any>): string {
   return JSON.stringify([...map]);
 }
-function jsonToMap(jsonStr): Map<String, IAnonymousParticipation> {
+function jsonToMap(jsonStr: string): Map<string, IAnonymousParticipation> {
   return new Map(JSON.parse(jsonStr));
 }
 
@@ -34,7 +36,9 @@ function jsonToMap(jsonStr): Map<String, IAnonymousParticipation> {
  * Purge participations which expiration has been reached
  * @param participations Map
  */
-function purgeOldParticipations(participations: Map<String, IAnonymousParticipation>): Map<String, IAnonymousParticipation> {
+function purgeOldParticipations(
+  participations: Map<string, IAnonymousParticipation>
+): Map<string, IAnonymousParticipation> {
   for (const [hashedUUID, { expiration }] of participations) {
     if (expiration < new Date()) {
       participations.delete(hashedUUID);
@@ -48,7 +52,10 @@ function purgeOldParticipations(participations: Map<String, IAnonymousParticipat
  * @param hashedUUID
  * @param participation
  */
-function insertLocalAnonymousParticipation(hashedUUID: String, participation: IAnonymousParticipation) {
+function insertLocalAnonymousParticipation(
+  hashedUUID: string,
+  participation: IAnonymousParticipation
+) {
   const participations = purgeOldParticipations(getLocalAnonymousParticipations());
   participations.set(hashedUUID, participation);
   localStorage.setItem(ANONYMOUS_PARTICIPATIONS_LOCALSTORAGE_KEY, mapToJson(participations));
@@ -62,19 +69,23 @@ function buildExpiration(event: IEvent): Date {
 }
 
 async function addLocalUnconfirmedAnonymousParticipation(event: IEvent, cancellationToken: string) {
-    /**
-     * We hash the event UUID so that we can't know which events an anonymous user goes by looking up it's localstorage
-     */
+  /**
+   * We hash the event UUID so that we can't know which events an anonymous user goes by looking up it's localstorage
+   */
   const hashedUUID = await digestMessage(event.uuid);
 
-    /**
-     * We round expiration to first day of next 3 months so that it's difficult to find event from date
-     */
+  /**
+   * We round expiration to first day of next 3 months so that it's difficult to find event from date
+   */
   const expiration = buildExpiration(event);
-  insertLocalAnonymousParticipation(hashedUUID, { token: cancellationToken, expiration, confirmed: false });
+  insertLocalAnonymousParticipation(hashedUUID, {
+    token: cancellationToken,
+    expiration,
+    confirmed: false,
+  });
 }
 
-async function confirmLocalAnonymousParticipation(uuid: String) {
+async function confirmLocalAnonymousParticipation(uuid: string) {
   const participations = purgeOldParticipations(getLocalAnonymousParticipations());
   const hashedUUID = await digestMessage(uuid);
   const participation = participations.get(hashedUUID);
@@ -85,37 +96,37 @@ async function confirmLocalAnonymousParticipation(uuid: String) {
   }
 }
 
-async function isParticipatingInThisEvent(eventUUID: String): Promise<boolean> {
+async function isParticipatingInThisEvent(eventUUID: string): Promise<boolean> {
   const participation = await getParticipation(eventUUID);
   return participation !== undefined && participation.confirmed;
 }
 
-async function getParticipation(eventUUID: String): Promise<IAnonymousParticipation> {
+async function getParticipation(eventUUID: string): Promise<IAnonymousParticipation> {
   const hashedUUID = await digestMessage(eventUUID);
   const participation = purgeOldParticipations(getLocalAnonymousParticipations()).get(hashedUUID);
   if (participation) {
     return participation;
   }
-  throw new AnonymousParticipationNotFoundError('Participation not found');
+  throw new AnonymousParticipationNotFoundError("Participation not found");
 }
 
-async function getLeaveTokenForParticipation(eventUUID: String): Promise<String> {
+async function getLeaveTokenForParticipation(eventUUID: string): Promise<string> {
   return (await getParticipation(eventUUID)).token;
 }
 
-async function removeAnonymousParticipation(eventUUID: String): Promise<void> {
+async function removeAnonymousParticipation(eventUUID: string): Promise<void> {
   const hashedUUID = await digestMessage(eventUUID);
   const participations = purgeOldParticipations(getLocalAnonymousParticipations());
   participations.delete(hashedUUID);
   localStorage.setItem(ANONYMOUS_PARTICIPATIONS_LOCALSTORAGE_KEY, mapToJson(participations));
 }
 
-async function digestMessage(message): Promise<string> {
+async function digestMessage(message: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(message);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 export {

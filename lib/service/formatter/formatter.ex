@@ -95,7 +95,9 @@ defmodule Mobilizon.Service.Formatter do
   end
 
   def html_escape(text, "text/html") do
-    HTML.filter_tags(text)
+    with {:ok, content} <- HTML.filter_tags(text) do
+      content
+    end
   end
 
   def html_escape(text, "text/plain") do

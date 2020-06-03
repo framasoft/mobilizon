@@ -4,31 +4,65 @@ defmodule Mobilizon.Web.PageController do
   """
   use Mobilizon.Web, :controller
 
-  alias Mobilizon.Events.{Comment, Event}
+  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Events.Event
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Tombstone
-  alias Mobilizon.Web.Cache
+  alias Mobilizon.Web.{ActivityPubController, Cache}
 
   plug(:put_layout, false)
   action_fallback(Mobilizon.Web.FallbackController)
 
+  @spec index(Plug.Conn.t(), any) :: Plug.Conn.t()
   def index(conn, _params), do: render(conn, :index)
 
+  @spec actor(Plug.Conn.t(), map) :: {:error, :not_found} | Plug.Conn.t()
   def actor(conn, %{"name" => name}) do
     {status, actor} = Cache.get_local_actor_by_name(name)
     render_or_error(conn, &ok_status?/3, status, :actor, actor)
   end
 
+  @spec event(Plug.Conn.t(), map) :: {:error, :not_found} | Plug.Conn.t()
   def event(conn, %{"uuid" => uuid}) do
     {status, event} = Cache.get_public_event_by_uuid_with_preload(uuid)
     render_or_error(conn, &checks?/3, status, :event, event)
   end
 
+  @spec comment(Plug.Conn.t(), map) :: {:error, :not_found} | Plug.Conn.t()
   def comment(conn, %{"uuid" => uuid}) do
     {status, comment} = Cache.get_comment_by_uuid_with_preload(uuid)
     render_or_error(conn, &checks?/3, status, :comment, comment)
   end
 
+  @spec resource(Plug.Conn.t(), map()) :: Plug.Conn.t() | {:error, :not_found}
+  def resource(conn, %{"uuid" => uuid}) do
+    {status, resource} = Cache.get_resource_by_uuid_with_preload(uuid)
+    render_or_error(conn, &checks?/3, status, :resource, resource)
+  end
+
+  def resources(conn, %{"name" => _name}) do
+    case get_format(conn) do
+      "html" ->
+        render(conn, :index)
+
+      "activity-json" ->
+        ActivityPubController.call(conn, :resources)
+    end
+  end
+
+  @spec todo_list(Plug.Conn.t(), map) :: {:error, :not_found} | Plug.Conn.t()
+  def todo_list(conn, %{"uuid" => uuid}) do
+    {status, todo_list} = Cache.get_todo_list_by_uuid_with_preload(uuid)
+    render_or_error(conn, &checks?/3, status, :todo_list, todo_list)
+  end
+
+  @spec todo(Plug.Conn.t(), map) :: {:error, :not_found} | Plug.Conn.t()
+  def todo(conn, %{"uuid" => uuid}) do
+    {status, todo} = Cache.get_todo_by_uuid_with_preload(uuid)
+    render_or_error(conn, &checks?/3, status, :todo, todo)
+  end
+
+  @spec interact(Plug.Conn.t(), map()) :: Plug.Conn.t() | {:error, :not_found}
   def interact(conn, %{"uri" => uri}) do
     case ActivityPub.fetch_object_from_url(uri) do
       {:ok, %Event{uuid: uuid}} -> redirect(conn, to: "/events/#{uuid}")
@@ -60,6 +94,7 @@ defmodule Mobilizon.Web.PageController do
 
   defp is_visible?(%{visibility: v}), do: v in [:public, :unlisted]
   defp is_visible?(%Tombstone{}), do: true
+  defp is_visible?(_), do: true
 
   defp ok_status?(status), do: status in [:ok, :commit]
   defp ok_status?(_conn, status, _), do: ok_status?(status)
@@ -75,6 +110,6 @@ defmodule Mobilizon.Web.PageController do
     end
   end
 
-  defp is_local?(%Event{local: local}), do: if(local, do: true, else: :remote)
-  defp is_local?(%Comment{local: local}), do: if(local, do: true, else: :remote)
+  defp is_local?(%{local: local}), do: if(local, do: true, else: :remote)
+  defp is_local?(_), do: false
 end

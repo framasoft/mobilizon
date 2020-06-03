@@ -207,7 +207,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       assert res["data"]["createEvent"]["title"] == "My Event title"
 
       assert res["data"]["createEvent"]["description"] ==
-               "<b>My description</b> <img src=\"http://placekitten.com/g/200/300\" />"
+               "<b>My description</b> <img src=\"http://placekitten.com/g/200/300\"/>"
 
       {id, ""} = res["data"]["createEvent"]["id"] |> Integer.parse()
 

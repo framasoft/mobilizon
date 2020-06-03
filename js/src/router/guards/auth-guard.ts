@@ -1,12 +1,14 @@
-import { NavigationGuard } from 'vue-router';
-import { UserRouteName } from '@/router/user';
-import { LoginErrorCode } from '@/types/login-error-code.model';
-import { AUTH_ACCESS_TOKEN } from '@/constants';
+import { NavigationGuard } from "vue-router";
+import { UserRouteName } from "@/router/user";
+import { LoginErrorCode } from "@/types/login-error-code.model";
+import { AUTH_ACCESS_TOKEN } from "@/constants";
 
-export const authGuardIfNeeded: NavigationGuard = async function (to, from, next) {
+// eslint-disable-next-line import/prefer-default-export
+export const authGuardIfNeeded: NavigationGuard = async (to, from, next) => {
   if (to.meta.requiredAuth !== true) return next();
 
-  // We can't use "currentUser" from apollo here because we may not have loaded the user from the local storage yet
+  // We can't use "currentUser" from apollo here
+  // because we may not have loaded the user from the local storage yet
   if (!localStorage.getItem(AUTH_ACCESS_TOKEN)) {
     return next({
       name: UserRouteName.LOGIN,

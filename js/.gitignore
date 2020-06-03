@@ -2,12 +2,12 @@
 node_modules
 /dist
 
-/tests/e2e/reports/
-/tests/e2e/screenshots/
 /tests/e2e/videos/
-selenium-debug.log
+/tests/e2e/screenshots/
 
-styleguide/
+# local env files
+.env.local
+.env.*.local
 
 # Log files
 npm-debug.log*
@@ -21,5 +21,4 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
-*.sw*
-
+*.sw?

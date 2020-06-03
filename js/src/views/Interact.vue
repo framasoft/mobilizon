@@ -1,18 +1,19 @@
 <template>
-    <div class="container section">
-        <b-notification v-if="$apollo.queries.searchEvents.loading">{{ $t('Redirecting to event…') }}</b-notification>
-        <b-notification v-if="$apollo.queries.searchEvents.skip" type="is-danger">{{ $t('Resource provided is not an URL') }}</b-notification>
-    </div>
+  <div class="container section">
+    <b-notification v-if="$apollo.queries.searchEvents.loading">
+      {{ $t("Redirecting to event…") }}
+    </b-notification>
+    <b-notification v-if="$apollo.queries.searchEvents.skip" type="is-danger">
+      {{ $t("Resource provided is not an URL") }}
+    </b-notification>
+  </div>
 </template>
 
 <script lang="ts">
-import {
-        Component,
-        Vue,
-    } from 'vue-property-decorator';
-import { RouteName } from '@/router';
-import { SEARCH_EVENTS } from '@/graphql/search';
-import { IEvent } from '@/types/event.model';
+import { Component, Vue } from "vue-property-decorator";
+import { SEARCH_EVENTS } from "@/graphql/search";
+import { IEvent } from "@/types/event.model";
+import RouteName from "../router/name";
 
 @Component({
   apollo: {
@@ -35,9 +36,16 @@ import { IEvent } from '@/types/event.model';
         }
       },
       async result({ data }) {
-        if (data.searchEvents && data.searchEvents.total > 0 && data.searchEvents.elements.length > 0) {
+        if (
+          data.searchEvents &&
+          data.searchEvents.total > 0 &&
+          data.searchEvents.elements.length > 0
+        ) {
           const event = data.searchEvents.elements[0];
-          return await this.$router.replace({ name: RouteName.EVENT, params: { uuid: event.uuid } });
+          return await this.$router.replace({
+            name: RouteName.EVENT,
+            params: { uuid: event.uuid },
+          });
         }
       },
     },
@@ -45,13 +53,14 @@ import { IEvent } from '@/types/event.model';
 })
 export default class Interact extends Vue {
   searchEvents!: IEvent[];
+
   RouteName = RouteName;
 }
 </script>
 <style lang="scss">
-    @import "@/variables.scss";
+@import "@/variables.scss";
 
-    main > .container {
-        background: $white;
-    }
+main > .container {
+  background: $white;
+}
 </style>

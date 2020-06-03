@@ -9,8 +9,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Admin.{ActionLog, Setting}
   alias Mobilizon.Config
-  alias Mobilizon.Events.{Comment, Event}
-  alias Mobilizon.Events.{Comment, Event}
+  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Events.Event
   alias Mobilizon.Federation.ActivityPub.Relay
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Service.Statistics

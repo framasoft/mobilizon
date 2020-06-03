@@ -1,6 +1,6 @@
 defmodule Mobilizon.Service.Workers.Background do
   @moduledoc """
-  Worker to build search results
+  Worker to perform various actions in the background
   """
 
   alias Mobilizon.Actors

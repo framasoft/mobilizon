@@ -15,7 +15,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
     {:ok, conn: conn, actor: actor, user: user}
   end
 
-  describe "Group Resolver" do
+  describe "create a group" do
     test "create_group/3 should check the user owns the identity", %{conn: conn, user: user} do
       another_actor = insert(:actor)
 
@@ -84,65 +84,130 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
       assert hd(json_response(res, 200)["errors"])["message"] ==
                "A group with this name already exists"
     end
+  end
 
-    test "list_groups/3 returns all public or unlisted groups", context do
+  describe "list groups" do
+    test "list_groups/3 returns all public or unlisted groups", %{conn: conn} do
       group = insert(:group, visibility: :unlisted)
       insert(:group, visibility: :private)
 
       query = """
       {
         groups {
-            preferredUsername,
+            elements {
+              preferredUsername,
+            },
+            total
         }
       }
       """
 
-      res =
-        context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "groups"))
+      res = AbsintheHelpers.graphql_query(conn, query: query)
 
-      assert length(json_response(res, 200)["data"]["groups"]) == 1
+      assert res["data"]["groups"]["total"] == 1
 
-      assert hd(json_response(res, 200)["data"]["groups"])["preferredUsername"] ==
+      assert hd(res["data"]["groups"]["elements"])["preferredUsername"] ==
                group.preferred_username
     end
+  end
 
-    test "find_group/3 returns a group by its username", context do
-      group = insert(:group)
-
-      query = """
-      {
-        group(preferredUsername: "#{group.preferred_username}") {
+  describe "find a group" do
+    @group_query """
+      query Group($preferredUsername: String!) {
+        group(preferredUsername: $preferredUsername) {
             preferredUsername,
+            members {
+              total,
+              elements {
+                role,
+                actor {
+                  preferredUsername
+                }
+              }
+            }
         }
       }
-      """
+    """
+
+    test "find_group/3 returns a group by its username", %{conn: conn, actor: actor, user: user} do
+      group = insert(:group)
+      insert(:member, parent: group, actor: actor, role: :administrator)
+      insert(:member, parent: group, role: :member)
 
       res =
-        context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "group"))
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @group_query,
+          variables: %{
+            preferredUsername: group.preferred_username
+          }
+        )
 
-      assert json_response(res, 200)["data"]["group"]["preferredUsername"] ==
+      assert res["errors"] == nil
+
+      assert res["data"]["group"]["preferredUsername"] ==
                group.preferred_username
 
-      query = """
-      {
-        group(preferredUsername: "#{@non_existent_username}") {
-            preferredUsername,
-        }
-      }
-      """
+      assert res["data"]["group"]["members"]["total"] == 2
 
       res =
-        context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "group"))
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @group_query,
+          variables: %{
+            preferredUsername: group.preferred_username,
+            actorId: actor.id
+          }
+        )
 
-      assert json_response(res, 200)["data"]["group"] == nil
+      assert res["errors"] == nil
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert res["data"]["group"]["members"]["total"] == 2
+      assert hd(res["data"]["group"]["members"]["elements"])["role"] == "ADMINISTRATOR"
+
+      assert hd(res["data"]["group"]["members"]["elements"])["actor"]["preferredUsername"] ==
+               actor.preferred_username
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @group_query,
+          variables: %{preferredUsername: @non_existent_username}
+        )
+
+      assert res["data"]["group"] == nil
+
+      assert hd(res["errors"])["message"] ==
                "Group with name #{@non_existent_username} not found"
     end
 
+    test "find_group doesn't list group members access if group is private", %{
+      conn: conn,
+      actor: actor
+    } do
+      group = insert(:group, visibility: :private)
+      insert(:member, parent: group, actor: actor, role: :administrator)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @group_query,
+          variables: %{
+            preferredUsername: group.preferred_username
+          }
+        )
+
+      assert res["errors"] == nil
+
+      assert res["data"]["group"]["preferredUsername"] ==
+               group.preferred_username
+
+      assert res["data"]["group"]["members"] == %{"elements" => [], "total" => 1}
+    end
+  end
+
+  describe "delete a group" do
     test "delete_group/3 deletes a group", %{conn: conn, user: user, actor: actor} do
       group = insert(:group)
       insert(:member, parent: group, actor: actor, role: :administrator)

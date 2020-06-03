@@ -2,18 +2,36 @@
   <div class="root" v-if="identity">
     <h1 class="title">
       <span v-if="isUpdate">{{ identity.displayName() }}</span>
-      <span v-else>{{ $t('I create an identity') }}</span>
+      <span v-else>{{ $t("I create an identity") }}</span>
     </h1>
 
     <picture-upload v-model="avatarFile" class="picture-upload" />
 
     <b-field horizontal :label="$t('Display name')">
-      <b-input aria-required="true" required v-model="identity.name" @input="autoUpdateUsername($event)"/>
+      <b-input
+        aria-required="true"
+        required
+        v-model="identity.name"
+        @input="autoUpdateUsername($event)"
+      />
     </b-field>
 
-    <b-field horizontal custom-class="username-field" expanded :label="$t('Username')" :message="message">
+    <b-field
+      horizontal
+      custom-class="username-field"
+      expanded
+      :label="$t('Username')"
+      :message="message"
+    >
       <b-field expanded>
-        <b-input aria-required="true" required v-model="identity.preferredUsername" :disabled="isUpdate" :use-html5-validation="!isUpdate" pattern="[a-z0-9_]+"/>
+        <b-input
+          aria-required="true"
+          required
+          v-model="identity.preferredUsername"
+          :disabled="isUpdate"
+          :use-html5-validation="!isUpdate"
+          pattern="[a-z0-9_]+"
+        />
 
         <p class="control">
           <span class="button is-static">@{{ getInstanceHost }}</span>
@@ -22,69 +40,65 @@
     </b-field>
 
     <b-field horizontal :label="$t('Description')">
-      <b-input type="textarea" aria-required="false" v-model="identity.summary"/>
+      <b-input type="textarea" aria-required="false" v-model="identity.summary" />
     </b-field>
 
     <b-notification
-          type="is-danger"
-          has-icon
-          aria-close-label="Close notification"
-          role="alert"
-          :key="error"
-          v-for="error in errors"
+      type="is-danger"
+      has-icon
+      aria-close-label="Close notification"
+      role="alert"
+      :key="error"
+      v-for="error in errors"
+      >{{ error }}</b-notification
     >
-    {{ error }}
-  </b-notification>
 
     <b-field class="submit">
       <div class="control">
-        <button type="button" class="button is-primary" @click="submit()">
-          {{ $t('Save') }}
-        </button>
+        <button type="button" class="button is-primary" @click="submit()">{{ $t("Save") }}</button>
       </div>
     </b-field>
 
     <div class="delete-identity" v-if="isUpdate">
-      <span @click="openDeleteIdentityConfirmation()">
-        {{ $t('Delete this identity') }}
-      </span>
+      <span @click="openDeleteIdentityConfirmation()">{{ $t("Delete this identity") }}</span>
     </div>
   </div>
 </template>
 
 <style scoped type="scss">
-  h1 {
-    display: flex;
-    justify-content: center;
-  }
+h1 {
+  display: flex;
+  justify-content: center;
+}
 
-  .picture-upload {
-    margin: 30px 0;
-  }
+.picture-upload {
+  margin: 30px 0;
+}
 
-  .submit,
-  .delete-identity {
-    display: flex;
-    justify-content: center;
-  }
+.submit,
+.delete-identity {
+  display: flex;
+  justify-content: center;
+}
 
-  .submit {
-    margin: 30px 0;
-  }
+.submit {
+  margin: 30px 0;
+}
 
-  .delete-identity {
-    text-decoration: underline;
-    cursor: pointer;
-    margin-top: 15px;
-  }
+.delete-identity {
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 15px;
+}
 
-  .username-field + .field {
-    margin-bottom: 0;
-  }
+.username-field + .field {
+  margin-bottom: 0;
+}
 </style>
 
 <script lang="ts">
-import { Component, Prop, Watch } from 'vue-property-decorator';
+import { Component, Prop, Watch } from "vue-property-decorator";
+import { mixins } from "vue-class-component";
 import {
   CREATE_PERSON,
   CURRENT_ACTOR_CLIENT,
@@ -92,21 +106,18 @@ import {
   FETCH_PERSON,
   IDENTITIES,
   UPDATE_PERSON,
-} from '@/graphql/actor';
-import { IPerson, Person } from '@/types/actor';
-import PictureUpload from '@/components/PictureUpload.vue';
-import { MOBILIZON_INSTANCE_HOST } from '@/api/_entrypoint';
-import { Dialog } from 'buefy/dist/components/dialog';
-import { RouteName } from '@/router';
-import { buildFileFromIPicture, buildFileVariable, readFileAsync } from '@/utils/image';
-import { changeIdentity } from '@/utils/auth';
-import { mixins } from 'vue-class-component';
-import identityEditionMixin from '@/mixins/identityEdition';
+} from "../../../graphql/actor";
+import { IPerson, Person } from "../../../types/actor";
+import PictureUpload from "../../../components/PictureUpload.vue";
+import { MOBILIZON_INSTANCE_HOST } from "../../../api/_entrypoint";
+import RouteName from "../../../router/name";
+import { buildFileFromIPicture, buildFileVariable, readFileAsync } from "../../../utils/image";
+import { changeIdentity } from "../../../utils/auth";
+import identityEditionMixin from "../../../mixins/identityEdition";
 
 @Component({
   components: {
     PictureUpload,
-    Dialog,
   },
   apollo: {
     currentActor: {
@@ -119,13 +130,16 @@ import identityEditionMixin from '@/mixins/identityEdition';
           username: this.identityName,
         };
       },
-      skip() { return !this.identityName; },
-      update: data => new Person(data.fetchPerson),
+      skip() {
+        return !this.identityName;
+      },
+      update: (data) => new Person(data.fetchPerson),
     },
   },
 })
 export default class EditIdentity extends mixins(identityEditionMixin) {
   @Prop({ type: Boolean }) isUpdate!: boolean;
+
   @Prop({ type: String }) identityName!: string;
 
   errors: string[] = [];
@@ -136,23 +150,23 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
 
   get message() {
     if (this.isUpdate) return null;
-    return this.$t('Only alphanumeric characters and underscores are supported.');
+    return this.$t("Only alphanumeric characters and underscores are supported.");
   }
 
-  @Watch('isUpdate')
-  async isUpdateChanged () {
+  @Watch("isUpdate")
+  async isUpdateChanged() {
     this.resetFields();
   }
 
-  @Watch('identityName', { immediate: true })
-  async onIdentityParamChanged(val) {
+  @Watch("identityName", { immediate: true })
+  async onIdentityParamChanged(val: string) {
     // Only used when we update the identity
     if (!this.isUpdate) return;
 
     await this.redirectIfNoIdentitySelected(val);
 
     if (!this.identityName) {
-      return await this.$router.push({ name: 'CreateIdentity' });
+      return await this.$router.push({ name: "CreateIdentity" });
     }
 
     if (this.identityName && this.identity) {
@@ -177,10 +191,12 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
           id: this.identity.id,
         },
         update: (store) => {
-          const data = store.readQuery<{ identities: IPerson[] }>({ query: IDENTITIES });
+          const data = store.readQuery<{ identities: IPerson[] }>({
+            query: IDENTITIES,
+          });
 
           if (data) {
-            data.identities = data.identities.filter(i => i.id !== this.identity.id);
+            data.identities = data.identities.filter((i) => i.id !== this.identity.id);
 
             store.writeQuery({ query: IDENTITIES, data });
           }
@@ -188,12 +204,16 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
       });
 
       this.$notifier.success(
-        this.$t('Identity {displayName} deleted', { displayName: this.identity.displayName() }) as string,
+        this.$t("Identity {displayName} deleted", {
+          displayName: this.identity.displayName(),
+        }) as string
       );
       /**
        * If we just deleted the current identity, we need to change it to the next one
        */
-      const data = this.$apollo.provider.defaultClient.readQuery<{ identities: IPerson[] }>({ query: IDENTITIES });
+      const data = this.$apollo.provider.defaultClient.readQuery<{
+        identities: IPerson[];
+      }>({ query: IDENTITIES });
       if (data) {
         await this.maybeUpdateCurrentActorCache(data.identities[0]);
       }
@@ -212,10 +232,12 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
         mutation: UPDATE_PERSON,
         variables,
         update: (store, { data: { updatePerson } }) => {
-          const data = store.readQuery<{ identities: IPerson[] }>({ query: IDENTITIES });
+          const data = store.readQuery<{ identities: IPerson[] }>({
+            query: IDENTITIES,
+          });
 
           if (data) {
-            const index = data.identities.findIndex(i => i.id === this.identity.id);
+            const index = data.identities.findIndex((i) => i.id === this.identity.id);
 
             this.$set(data.identities, index, updatePerson);
             this.maybeUpdateCurrentActorCache(updatePerson);
@@ -226,7 +248,9 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
       });
 
       this.$notifier.success(
-        this.$t('Identity {displayName} updated', { displayName: this.identity.displayName() }) as string,
+        this.$t("Identity {displayName} updated", {
+          displayName: this.identity.displayName(),
+        }) as string
       );
     } catch (err) {
       this.handleError(err);
@@ -241,7 +265,9 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
         mutation: CREATE_PERSON,
         variables,
         update: (store, { data: { createPerson } }) => {
-          const data = store.readQuery<{ identities: IPerson[] }>({ query: IDENTITIES });
+          const data = store.readQuery<{ identities: IPerson[] }>({
+            query: IDENTITIES,
+          });
 
           if (data) {
             data.identities.push(createPerson);
@@ -252,10 +278,15 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
       });
 
       this.$notifier.success(
-              this.$t('Identity {displayName} created', { displayName: this.identity.displayName() }) as string,
+        this.$t("Identity {displayName} created", {
+          displayName: this.identity.displayName(),
+        }) as string
       );
 
-      await this.$router.push({ name: RouteName.UPDATE_IDENTITY, params: { identityName: this.identity.preferredUsername } });
+      await this.$router.push({
+        name: RouteName.UPDATE_IDENTITY,
+        params: { identityName: this.identity.preferredUsername },
+      });
     } catch (err) {
       this.handleError(err);
     }
@@ -267,18 +298,25 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
 
   openDeleteIdentityConfirmation() {
     this.$buefy.dialog.prompt({
-      type: 'is-danger',
-      title: this.$t('Delete your identity') as string,
-      message: `${this.$t('This will delete / anonymize all content (events, comments, messages, participations…) created from this identity.')}
+      type: "is-danger",
+      title: this.$t("Delete your identity") as string,
+      message: `${this.$t(
+        "This will delete / anonymize all content (events, comments, messages, participations…) created from this identity."
+      )}
             <br /><br />
-            ${this.$t('If this identity is the only administrator of some groups, you need to delete them before being able to delete this identity.')}
-            ${this.$t('Otherwise this identity will just be removed from the group administrators.')}
+            ${this.$t(
+              "If this identity is the only administrator of some groups, you need to delete them before being able to delete this identity."
+            )}
+            ${this.$t(
+              "Otherwise this identity will just be removed from the group administrators."
+            )}
             <br /><br />
-            ${this.$t('To confirm, type your identity username "{preferredUsername}"', { preferredUsername: this.identity.preferredUsername })}`,
-      confirmText: this.$t(
-        'Delete {preferredUsername}',
-        { preferredUsername: this.identity.preferredUsername },
-      ) as string,
+            ${this.$t('To confirm, type your identity username "{preferredUsername}"', {
+              preferredUsername: this.identity.preferredUsername,
+            })}`,
+      confirmText: this.$t("Delete {preferredUsername}", {
+        preferredUsername: this.identity.preferredUsername,
+      }) as string,
       inputAttrs: {
         placeholder: this.identity.preferredUsername,
         pattern: this.identity.preferredUsername,
@@ -292,20 +330,24 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
     console.error(err);
 
     if (err.graphQLErrors !== undefined) {
-      err.graphQLErrors.forEach(({ message }) => {
+      err.graphQLErrors.forEach(({ message }: { message: string }) => {
         this.$notifier.error(message);
       });
     }
   }
 
   private async buildVariables() {
-    const avatarObj = buildFileVariable(this.avatarFile, 'avatar', `${this.identity.preferredUsername}'s avatar`);
-    const res = Object.assign({}, this.identity, avatarObj);
+    const avatarObj = buildFileVariable(
+      this.avatarFile,
+      "avatar",
+      `${this.identity.preferredUsername}'s avatar`
+    );
+    const res = { ...this.identity, ...avatarObj };
     /**
      * If the avatar didn't change, no need to try reuploading it
      */
     if (this.identity.avatar) {
-      const oldAvatarFile = await buildFileFromIPicture(this.identity.avatar) as File;
+      const oldAvatarFile = (await buildFileFromIPicture(this.identity.avatar)) as File;
       const oldAvatarFileContent = await readFileAsync(oldAvatarFile);
       const newAvatarFileContent = await readFileAsync(this.avatarFile as File);
       if (oldAvatarFileContent === newAvatarFileContent) {
@@ -316,12 +358,14 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
   }
 
   private async redirectIfNoIdentitySelected(identityParam?: string) {
-    if (!!identityParam) return;
+    if (identityParam) return;
 
     await this.loadLoggedPersonIfNeeded();
 
-    if (!!this.currentActor) {
-      await this.$router.push({ params: { identityName: this.currentActor.preferredUsername } });
+    if (this.currentActor) {
+      await this.$router.push({
+        params: { identityName: this.currentActor.preferredUsername },
+      });
     }
   }
 
@@ -334,18 +378,18 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
     }
   }
 
-  private async loadLoggedPersonIfNeeded (bypassCache = false) {
+  private async loadLoggedPersonIfNeeded(bypassCache = false) {
     if (this.currentActor) return;
 
     const result = await this.$apollo.query({
       query: CURRENT_ACTOR_CLIENT,
-      fetchPolicy: bypassCache ? 'network-only' : undefined,
+      fetchPolicy: bypassCache ? "network-only" : undefined,
     });
 
     this.currentActor = result.data.currentActor;
   }
 
-  private resetFields () {
+  private resetFields() {
     this.identity = new Person();
     this.oldDisplayName = null;
     this.avatarFile = null;

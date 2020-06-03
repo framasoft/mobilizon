@@ -28,9 +28,11 @@ defmodule Mobilizon.Web.Endpoint do
   plug(
     Plug.Static,
     at: "/",
-    from: :mobilizon,
+    from: {:mobilizon, "priv/static"},
     gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt)
+    only:
+      ~w(index.html manifest.json service-worker.js css fonts images js favicon.ico robots.txt),
+    only_matching: ["precache-manifest"]
   )
 
   # Code reloading can be explicitly enabled under the

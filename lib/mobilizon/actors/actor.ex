@@ -9,7 +9,8 @@ defmodule Mobilizon.Actors.Actor do
 
   alias Mobilizon.{Actors, Config, Crypto, Mention, Share}
   alias Mobilizon.Actors.{ActorOpenness, ActorType, ActorVisibility, Follower, Member}
-  alias Mobilizon.Events.{Comment, Event, FeedToken}
+  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Events.{Event, FeedToken}
   alias Mobilizon.Media.File
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Users.User
@@ -67,7 +68,8 @@ defmodule Mobilizon.Actors.Actor do
     :summary,
     :manually_approves_followers,
     :last_refreshed_at,
-    :user_id
+    :user_id,
+    :visibility
   ]
   @attrs @required_attrs ++ @optional_attrs
 
@@ -92,15 +94,25 @@ defmodule Mobilizon.Actors.Actor do
     :shared_inbox_url,
     :following_url,
     :followers_url,
+    :members_url,
+    :resources_url,
     :name,
     :summary,
-    :manually_approves_followers
+    :manually_approves_followers,
+    :visibility
   ]
   @remote_actor_creation_attrs @remote_actor_creation_required_attrs ++
                                  @remote_actor_creation_optional_attrs
 
-  @group_creation_required_attrs [:url, :outbox_url, :inbox_url, :type, :preferred_username]
-  @group_creation_optional_attrs [:shared_inbox_url, :name, :domain, :summary]
+  @group_creation_required_attrs [
+    :url,
+    :outbox_url,
+    :inbox_url,
+    :type,
+    :preferred_username,
+    :members_url
+  ]
+  @group_creation_optional_attrs [:shared_inbox_url, :name, :domain, :summary, :visibility]
   @group_creation_attrs @group_creation_required_attrs ++ @group_creation_optional_attrs
 
   schema "actors" do
@@ -110,6 +122,9 @@ defmodule Mobilizon.Actors.Actor do
     field(:following_url, :string)
     field(:followers_url, :string)
     field(:shared_inbox_url, :string)
+    field(:members_url, :string)
+    field(:resources_url, :string)
+    field(:todos_url, :string)
     field(:type, ActorType, default: :Person)
     field(:name, :string)
     field(:domain, :string, default: nil)
@@ -274,18 +289,13 @@ defmodule Mobilizon.Actors.Actor do
   def group_creation_changeset(%__MODULE__{} = actor, params) do
     actor
     |> cast(params, @group_creation_attrs)
-    |> cast_embed(:avatar)
-    |> cast_embed(:banner)
     |> build_urls(:Group)
+    |> common_changeset()
     |> put_change(:domain, nil)
     |> put_change(:keys, Crypto.generate_rsa_2048_private_key())
     |> put_change(:type, :Group)
     |> unique_username_validator()
     |> validate_required(@group_creation_required_attrs)
-    |> unique_constraint(:preferred_username,
-      name: :actors_preferred_username_domain_type_index
-    )
-    |> unique_constraint(:url, name: :actors_url_index)
     |> validate_length(:summary, max: 5000)
     |> validate_length(:preferred_username, max: 100)
   end
@@ -309,13 +319,14 @@ defmodule Mobilizon.Actors.Actor do
   @spec build_urls(Ecto.Changeset.t(), ActorType.t()) :: Ecto.Changeset.t()
   defp build_urls(changeset, type \\ :Person)
 
-  defp build_urls(%Ecto.Changeset{changes: %{preferred_username: username}} = changeset, _type) do
+  defp build_urls(%Ecto.Changeset{changes: %{preferred_username: username}} = changeset, type) do
     changeset
     |> put_change(:outbox_url, build_url(username, :outbox))
     |> put_change(:followers_url, build_url(username, :followers))
     |> put_change(:following_url, build_url(username, :following))
     |> put_change(:inbox_url, build_url(username, :inbox))
     |> put_change(:shared_inbox_url, "#{Endpoint.url()}/inbox")
+    |> put_change(:members_url, if(type == :Group, do: build_url(username, :members), else: nil))
     |> put_change(:url, build_url(username, :page))
   end
 
@@ -333,14 +344,16 @@ defmodule Mobilizon.Actors.Actor do
   def build_url("relay", :page, _args),
     do: Endpoint |> Routes.activity_pub_url(:relay) |> URI.decode()
 
-  def build_url(preferred_username, :page, args) do
+  def build_url(preferred_username, endpoint, args) when endpoint in [:page, :resources] do
+    endpoint = if endpoint == :page, do: :actor, else: endpoint
+
     Endpoint
-    |> Routes.page_url(:actor, preferred_username, args)
+    |> Routes.page_url(endpoint, preferred_username, args)
     |> URI.decode()
   end
 
   def build_url(preferred_username, endpoint, args)
-      when endpoint in [:outbox, :following, :followers] do
+      when endpoint in [:outbox, :following, :followers, :members, :todos] do
     Endpoint
     |> Routes.activity_pub_url(endpoint, preferred_username, args)
     |> URI.decode()

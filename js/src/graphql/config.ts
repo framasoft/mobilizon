@@ -1,68 +1,81 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const CONFIG = gql`
-query {
-  config {
-    name,
-    description,
-    registrationsOpen,
-    registrationsWhitelist,
-    demoMode,
-    countryCode,
-    anonymous {
-      participation {
-        allowed,
-        validation {
-          email {
-            enabled,
-            confirmationRequired
-          },
-          captcha {
-            enabled
+  query {
+    config {
+      name
+      description
+      registrationsOpen
+      registrationsWhitelist
+      demoMode
+      countryCode
+      anonymous {
+        participation {
+          allowed
+          validation {
+            email {
+              enabled
+              confirmationRequired
+            }
+            captcha {
+              enabled
+            }
           }
         }
-      }
-      eventCreation {
-        allowed,
-        validation {
-          email {
-            enabled,
-            confirmationRequired
-          },
-          captcha {
-            enabled
+        eventCreation {
+          allowed
+          validation {
+            email {
+              enabled
+              confirmationRequired
+            }
+            captcha {
+              enabled
+            }
           }
         }
+        actorId
       }
-      actorId
-    },
-    location {
-      latitude,
-      longitude,
-      accuracyRadius
-    },
-    maps {
-      tiles {
-        endpoint,
-        attribution
+      location {
+        latitude
+        longitude
+        accuracyRadius
       }
-    },
-    geocoding {
-      provider,
-      autocomplete
+      maps {
+        tiles {
+          endpoint
+          attribution
+        }
+      }
+      geocoding {
+        provider
+        autocomplete
+      }
+      resourceProviders {
+        type
+        endpoint
+        software
+      }
     }
   }
-}
 `;
 
 export const TERMS = gql`
-query Terms($locale: String) {
-  config {
-    terms(locale: $locale) {
-      type,
-      url,
-      bodyHtml
+  query Terms($locale: String) {
+    config {
+      terms(locale: $locale) {
+        type
+        url
+        bodyHtml
+      }
     }
   }
-}
+`;
+
+export const TIMEZONES = gql`
+  query {
+    config {
+      timezones
+    }
+  }
 `;

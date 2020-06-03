@@ -16,6 +16,11 @@ defmodule Mobilizon.Federation.WebFinger do
   require Jason
   require Logger
 
+  @http_options [
+    follow_redirect: true,
+    ssl: [{:versions, [:"tlsv1.2"]}]
+  ]
+
   def host_meta do
     base_url = Endpoint.url()
 
@@ -116,7 +121,7 @@ defmodule Mobilizon.Federation.WebFinger do
            HTTPoison.get(
              address,
              [Accept: "application/json, application/activity+json, application/jrd+json"],
-             follow_redirect: true
+             @http_options
            ),
          %{status_code: status_code, body: body} when status_code in 200..299 <- response,
          {:ok, doc} <- Jason.decode(body) do

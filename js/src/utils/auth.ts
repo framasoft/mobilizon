@@ -5,14 +5,14 @@ import {
   AUTH_USER_EMAIL,
   AUTH_USER_ID,
   AUTH_USER_ROLE,
-} from '@/constants';
-import { ILogin, IToken } from '@/types/login.model';
-import { UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
-import { onLogout } from '@/vue-apollo';
-import ApolloClient from 'apollo-client';
-import { ICurrentUserRole } from '@/types/current-user.model';
-import { IPerson } from '@/types/actor';
-import { IDENTITIES, UPDATE_CURRENT_ACTOR_CLIENT } from '@/graphql/actor';
+} from "@/constants";
+import { ILogin, IToken } from "@/types/login.model";
+import { UPDATE_CURRENT_USER_CLIENT } from "@/graphql/user";
+import ApolloClient from "apollo-client";
+import { ICurrentUserRole } from "@/types/current-user.model";
+import { IPerson } from "@/types/actor";
+import { IDENTITIES, UPDATE_CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
+import { NormalizedCacheObject } from "apollo-cache-inmemory";
 
 export function saveUserData(obj: ILogin) {
   localStorage.setItem(AUTH_USER_ID, `${obj.user.id}`);
@@ -49,21 +49,21 @@ export async function initializeCurrentActor(apollo: ApolloClient<any>) {
 
   const result = await apollo.query({
     query: IDENTITIES,
-    fetchPolicy: 'network-only',
+    fetchPolicy: "network-only",
   });
-  const identities = result.data.identities;
+  const { identities } = result.data;
   if (identities.length < 1) {
-    console.warn('Logged user has no identities!');
-    throw new NoIdentitiesException;
+    console.warn("Logged user has no identities!");
+    throw new NoIdentitiesException();
   }
-  const activeIdentity = identities.find(identity => identity.id === actorId) || identities[0] as IPerson;
+  const activeIdentity = identities.find((identity: IPerson) => identity.id === actorId) || (identities[0] as IPerson);
 
   if (activeIdentity) {
     return await changeIdentity(apollo, activeIdentity);
   }
 }
 
-export async function changeIdentity(apollo: ApolloClient<any>, identity: IPerson) {
+export async function changeIdentity(apollo: ApolloClient<NormalizedCacheObject>, identity: IPerson) {
   await apollo.mutate({
     mutation: UPDATE_CURRENT_ACTOR_CLIENT,
     variables: identity,
@@ -71,7 +71,7 @@ export async function changeIdentity(apollo: ApolloClient<any>, identity: IPerso
   saveActorData(identity);
 }
 
-export async function logout(apollo: ApolloClient<any>) {
+export async function logout(apollo: ApolloClient<NormalizedCacheObject>) {
   await apollo.mutate({
     mutation: UPDATE_CURRENT_USER_CLIENT,
     variables: {
@@ -93,6 +93,4 @@ export async function logout(apollo: ApolloClient<any>) {
   });
 
   deleteUserData();
-
-  await onLogout();
 }

@@ -1,35 +1,33 @@
 <template>
   <section class="section container">
-    <h1 class="title" v-if="loading">
-      {{ $t('Your account is being validated') }}
-    </h1>
+    <h1 class="title" v-if="loading">{{ $t("Your account is being validated") }}</h1>
     <div v-else>
       <div v-if="failed">
         <b-message :title="$t('Error while validating account')" type="is-danger">
-          {{ $t('Either the account is already validated, either the validation token is incorrect.') }}
+          {{
+            $t("Either the account is already validated, either the validation token is incorrect.")
+          }}
         </b-message>
       </div>
-      <h1 class="title" v-else>
-        {{ $t('Your account has been validated') }}
-      </h1>
+      <h1 class="title" v-else>{{ $t("Your account has been validated") }}</h1>
     </div>
   </section>
 </template>
 
 <script lang="ts">
-import { VALIDATE_USER, UPDATE_CURRENT_USER_CLIENT } from '@/graphql/user';
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { AUTH_USER_ID } from '@/constants';
-import { RouteName } from '@/router';
-import { saveUserData, changeIdentity } from '@/utils/auth';
-import { ILogin } from '@/types/login.model';
-import { ICurrentUserRole } from '@/types/current-user.model';
+import { Component, Prop, Vue } from "vue-property-decorator";
+import { VALIDATE_USER, UPDATE_CURRENT_USER_CLIENT } from "../../graphql/user";
+import RouteName from "../../router/name";
+import { saveUserData, changeIdentity } from "../../utils/auth";
+import { ILogin } from "../../types/login.model";
+import { ICurrentUserRole } from "../../types/current-user.model";
 
 @Component
 export default class Validate extends Vue {
   @Prop({ type: String, required: true }) token!: string;
 
   loading = true;
+
   failed = false;
 
   async created() {
@@ -48,7 +46,7 @@ export default class Validate extends Vue {
       if (data) {
         saveUserData(data.validateUser);
 
-        const user = data.validateUser.user;
+        const { user } = data.validateUser;
 
         await this.$apollo.mutate({
           mutation: UPDATE_CURRENT_USER_CLIENT,
@@ -63,10 +61,11 @@ export default class Validate extends Vue {
         if (user.defaultActor) {
           await changeIdentity(this.$apollo.provider.defaultClient, user.defaultActor);
           await this.$router.push({ name: RouteName.HOME });
-        } else { // If the user didn't register any profile yet, let's create one for them
+        } else {
+          // If the user didn't register any profile yet, let's create one for them
           await this.$router.push({
             name: RouteName.REGISTER_PROFILE,
-            params: { email: user.email, userAlreadyActivated: 'true' },
+            params: { email: user.email, userAlreadyActivated: "true" },
           });
         }
       }

@@ -3,7 +3,7 @@ defmodule Mobilizon.GraphQL.API.Comments do
   API for Comments.
   """
 
-  alias Mobilizon.Events.Comment
+  alias Mobilizon.Conversations.Comment
 
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Activity
@@ -16,6 +16,10 @@ defmodule Mobilizon.GraphQL.API.Comments do
   @spec create_comment(map) :: {:ok, Activity.t(), Comment.t()} | any
   def create_comment(args) do
     ActivityPub.create(:comment, args, true)
+  end
+
+  def update_comment(%Comment{} = comment, args) do
+    ActivityPub.update(:comment, comment, args, true)
   end
 
   @doc """

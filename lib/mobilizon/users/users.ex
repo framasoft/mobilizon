@@ -11,7 +11,7 @@ defmodule Mobilizon.Users do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Storage.{Page, Repo}
-  alias Mobilizon.Users.User
+  alias Mobilizon.Users.{Setting, User}
 
   alias Mobilizon.Web.Auth
 
@@ -43,6 +43,15 @@ defmodule Mobilizon.Users do
   """
   @spec get_user!(integer | String.t()) :: User.t()
   def get_user!(id), do: Repo.get!(User, id)
+
+  @spec get_user(integer | String.t()) :: User.t() | nil
+  def get_user(id), do: Repo.get(User, id)
+
+  def get_user_with_settings!(id) do
+    User
+    |> Repo.get(id)
+    |> Repo.preload([:settings])
+  end
 
   @doc """
   Gets an user by its email.
@@ -263,6 +272,96 @@ defmodule Mobilizon.Users do
            Auth.Guardian.encode_and_sign(user, %{}, token_type: "refresh") do
       {:ok, refresh_token}
     end
+  end
+
+  @doc """
+  Gets a settings for an user.
+
+  Raises `Ecto.NoResultsError` if the Setting does not exist.
+
+  ## Examples
+
+      iex> get_setting!(123)
+      %Setting{}
+
+      iex> get_setting!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_setting!(user_id), do: Repo.get!(Setting, user_id)
+
+  @spec get_setting(User.t()) :: Setting.t()
+  def get_setting(%User{id: user_id}), do: get_setting(user_id)
+
+  @spec get_setting(String.t() | integer()) :: Setting.t()
+  def get_setting(user_id), do: Repo.get(Setting, user_id)
+
+  @doc """
+  Creates a setting.
+
+  ## Examples
+
+      iex> create_setting(%{field: value})
+      {:ok, %Setting{}}
+
+      iex> create_setting(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_setting(attrs \\ %{}) do
+    %Setting{}
+    |> Setting.changeset(attrs)
+    |> Repo.insert(
+      on_conflict: {:replace_all_except, [:user_id, :inserted_at]},
+      conflict_target: :user_id
+    )
+  end
+
+  @doc """
+  Updates a setting.
+
+  ## Examples
+
+      iex> update_setting(setting, %{field: new_value})
+      {:ok, %Setting{}}
+
+      iex> update_setting(setting, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_setting(%Setting{} = setting, attrs) do
+    setting
+    |> Setting.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a setting.
+
+  ## Examples
+
+      iex> delete_setting(setting)
+      {:ok, %Setting{}}
+
+      iex> delete_setting(setting)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_setting(%Setting{} = setting) do
+    Repo.delete(setting)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking setting changes.
+
+  ## Examples
+
+      iex> change_setting(setting)
+      %Ecto.Changeset{source: %Setting{}}
+
+  """
+  def change_setting(%Setting{} = setting) do
+    Setting.changeset(setting, %{})
   end
 
   @spec user_by_email_query(String.t(), boolean | nil) :: Ecto.Query.t()

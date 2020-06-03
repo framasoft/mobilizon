@@ -139,6 +139,29 @@ defmodule Mobilizon.Config do
         :enabled
       ]
 
+  def instance_resource_providers do
+    types = get_in(Application.get_env(:mobilizon, Mobilizon.Service.ResourceProviders), [:types])
+
+    providers =
+      get_in(Application.get_env(:mobilizon, Mobilizon.Service.ResourceProviders), [:providers])
+
+    providers_map = :maps.filter(fn key, _value -> key in Keyword.values(types) end, providers)
+
+    case Enum.count(providers_map) do
+      0 ->
+        []
+
+      _ ->
+        Enum.map(providers_map, fn {key, value} ->
+          %{
+            type: key,
+            software: types |> Enum.find(fn {_key, val} -> val == key end) |> elem(0),
+            endpoint: value
+          }
+        end)
+    end
+  end
+
   def anonymous_actor_id, do: get_cached_value(:anonymous_actor_id)
   def relay_actor_id, do: get_cached_value(:relay_actor_id)
 

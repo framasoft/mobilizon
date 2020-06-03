@@ -1,7 +1,7 @@
 export function validateEmailField(value: string) {
-  return value.includes('@') || 'Invalid e-mail.';
+  return value.includes("@") || "Invalid e-mail.";
 }
 
 export function validateRequiredField(value: any) {
-  return !!value || 'Required.';
+  return !!value || "Required.";
 }

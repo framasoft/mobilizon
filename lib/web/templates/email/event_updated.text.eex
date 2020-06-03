@@ -4,6 +4,17 @@
 
 <%= gettext "The event %{title} was just updated", title: @old_event.title %>
 
+<%= if MapSet.member?(@changes, :status) do %>
+    <%= case @event.status do %>
+    <% :confirmed -> %>
+    <%= gettext "Event has been confirmed" %>
+    <% :tentative -> %>
+    <%= gettext "Event status has been set as tentative" %>
+    <% :cancelled -> %>
+    <%= gettext "Event has been cancelled" %>
+    <% end %>
+<% end %>
+
 <%= if MapSet.member?(@changes, :title) do %>
     <%= gettext "New title: %{title}", title: @event.title %>
 <% end %>

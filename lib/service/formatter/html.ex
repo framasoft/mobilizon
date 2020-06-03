@@ -8,9 +8,11 @@ defmodule Mobilizon.Service.Formatter.HTML do
   Service to filter tags out of HTML content.
   """
 
-  alias HtmlSanitizeEx.Scrubber
+  alias FastSanitize.Sanitizer
 
-  alias Mobilizon.Service.Formatter.DefaultScrubbler
+  alias Mobilizon.Service.Formatter.{DefaultScrubbler, OEmbed}
 
-  def filter_tags(html), do: Scrubber.scrub(html, DefaultScrubbler)
+  def filter_tags(html), do: Sanitizer.scrub(html, DefaultScrubbler)
+
+  def filter_tags_for_oembed(html), do: Sanitizer.scrub(html, OEmbed)
 end

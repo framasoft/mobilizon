@@ -10,7 +10,6 @@ defmodule Mobilizon.Service.Workers.Helper do
 
   alias Mobilizon.Config
   alias Mobilizon.Service.Workers.Helper
-  alias Mobilizon.Storage.Repo
 
   def worker_args(queue) do
     case Config.get([:workers, :retries, queue]) do
@@ -45,7 +44,7 @@ defmodule Mobilizon.Service.Workers.Helper do
 
         unquote(caller_module)
         |> apply(:new, [params, worker_args])
-        |> Repo.insert()
+        |> Oban.insert()
       end
     end
   end

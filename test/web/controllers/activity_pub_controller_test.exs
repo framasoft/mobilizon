@@ -336,46 +336,96 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
     end
   end
 
-  #
-  #  describe "/@:preferred_username/following" do
-  #    test "it returns the following in a collection", %{conn: conn} do
-  #      actor = insert(:actor)
-  #      actor2 = insert(:actor)
-  #      Mobilizon.Federation.ActivityPub.follow(actor, actor2)
+  describe "/@actor/members for a group" do
+    test "it returns the members in a group", %{conn: conn} do
+      actor = insert(:actor)
 
-  #      result =
-  #        conn
-  #        |> get("/@#{actor.preferred_username}/following")
-  #        |> json_response(200)
+      assert {:ok, %Actor{} = group} =
+               Actors.create_group(%{
+                 creator_actor_id: actor.id,
+                 preferred_username: "my_group",
+                 visibility: :public
+               })
 
-  #      assert result["first"]["orderedItems"] == [actor2.url]
-  #    end
+      result =
+        conn
+        |> get(Actor.build_url(group.preferred_username, :members))
+        |> json_response(200)
 
-  #    test "it works for more than 10 actors", %{conn: conn} do
-  #      actor = insert(:actor)
+      assert hd(result["first"]["orderedItems"])["actor"] == actor.url
+      assert hd(result["first"]["orderedItems"])["object"] == group.url
+      assert hd(result["first"]["orderedItems"])["role"] == "administrator"
+      assert hd(result["first"]["orderedItems"])["type"] == "Member"
+    end
 
-  #      Enum.each(1..15, fn _ ->
-  #        actor = Repo.get(Actor, actor.id)
-  #        other_actor = insert(:actor)
-  #        Actors.follow(actor, other_actor)
-  #      end)
+    test "it returns no members for a private group", %{conn: conn} do
+      actor = insert(:actor)
 
-  #      result =
-  #        conn
-  #        |> get("/@#{actor.preferred_username}/following")
-  #        |> json_response(200)
+      assert {:ok, %Actor{} = group} =
+               Actors.create_group(%{creator_actor_id: actor.id, preferred_username: "my_group"})
 
-  #      assert length(result["first"]["orderedItems"]) == 10
-  #      assert result["first"]["totalItems"] == 15
-  #      assert result["totalItems"] == 15
+      result =
+        conn
+        |> get(Actor.build_url(actor.preferred_username, :members))
+        |> json_response(200)
 
-  #      result =
-  #        conn
-  #        |> get("/@#{actor.preferred_username}/following?page=2")
-  #        |> json_response(200)
+      assert result["first"]["orderedItems"] == []
+    end
 
-  #      assert length(result["orderedItems"]) == 5
-  #      assert result["totalItems"] == 15
-  #    end
-  #  end
+    test "it works for more than 10 actors", %{conn: conn} do
+      actor = insert(:actor, preferred_username: "my_admin")
+
+      assert {:ok, %Actor{} = group} =
+               Actors.create_group(%{
+                 creator_actor_id: actor.id,
+                 preferred_username: "my_group",
+                 visibility: :public
+               })
+
+      Enum.each(1..15, fn _ ->
+        other_actor = insert(:actor)
+        insert(:member, actor: other_actor, parent: group, role: :member)
+      end)
+
+      result =
+        conn
+        |> get(Actor.build_url(group.preferred_username, :members))
+        |> json_response(200)
+
+      assert length(result["first"]["orderedItems"]) == 10
+      # 15 members + 1 admin
+      assert result["totalItems"] == 16
+
+      result =
+        conn
+        |> get(Actor.build_url(group.preferred_username, :members, page: 2))
+        |> json_response(200)
+
+      assert length(result["orderedItems"]) == 6
+    end
+
+    test "it returns members for a private group but request is signed by an actor", %{conn: conn} do
+      actor_group_admin = insert(:actor)
+      actor_applicant = insert(:actor)
+
+      assert {:ok, %Actor{} = group} =
+               Actors.create_group(%{
+                 creator_actor_id: actor_group_admin.id,
+                 preferred_username: "my_group"
+               })
+
+      insert(:member, actor: actor_applicant, parent: group, role: :member)
+
+      result =
+        conn
+        |> assign(:actor, actor_applicant)
+        |> get(Actor.build_url(group.preferred_username, :members))
+        |> json_response(200)
+
+      assert [admin_member | [member]] = result["first"]["orderedItems"]
+      assert admin_member["role"] == "administrator"
+      assert member["role"] == "member"
+      assert result["totalItems"] == 2
+    end
+  end
 end

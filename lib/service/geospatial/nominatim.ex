@@ -14,6 +14,11 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
   @endpoint Application.get_env(:mobilizon, __MODULE__) |> get_in([:endpoint])
   @api_key Application.get_env(:mobilizon, __MODULE__) |> get_in([:api_key])
 
+  @http_options [
+    follow_redirect: true,
+    ssl: [{:versions, [:"tlsv1.2"]}]
+  ]
+
   @impl Provider
   @doc """
   Nominatim implementation for `c:Mobilizon.Service.Geospatial.Provider.geocode/3`.
@@ -26,7 +31,7 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
     Logger.debug("Asking Nominatim for geocode with #{url}")
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           HTTPoison.get(url, headers),
+           HTTPoison.get(url, headers, @http_options),
          {:ok, %{"features" => features}} <- Poison.decode(body) do
       features |> process_data() |> Enum.filter(& &1)
     else
@@ -46,7 +51,7 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
     Logger.debug("Asking Nominatim for addresses with #{url}")
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           HTTPoison.get(url, headers),
+           HTTPoison.get(url, headers, @http_options),
          {:ok, %{"features" => features}} <- Poison.decode(body) do
       features |> process_data() |> Enum.filter(& &1)
     else

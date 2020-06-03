@@ -19,7 +19,7 @@ defmodule Mobilizon.Web.Email.Event do
 
   @important_changes [:title, :begins_on, :ends_on, :status]
 
-  @spec event_updated(User.t(), Actor.t(), Event.t(), Event.t(), list(), String.t()) ::
+  @spec event_updated(User.t(), Actor.t(), Event.t(), Event.t(), MapSet.t(), String.t()) ::
           Bamboo.Email.t()
   def event_updated(
         %User{} = user,
@@ -81,5 +81,13 @@ defmodule Mobilizon.Web.Email.Event do
     user
     |> Email.Event.event_updated(actor, old_event, event, diff, locale)
     |> Email.Mailer.deliver_later()
+  end
+
+  defp send_notification_for_event_update_to_participant(user, old_event, new_event, diff) do
+    require Logger
+    Logger.error(inspect(user))
+    Logger.error(inspect(old_event))
+    Logger.error(inspect(new_event))
+    Logger.error(inspect(diff))
   end
 end

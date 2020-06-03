@@ -43,11 +43,13 @@ defmodule Mobilizon.Actors do
   ])
 
   defenum(MemberRole, :member_role, [
+    :invited,
     :not_approved,
     :member,
     :moderator,
     :administrator,
-    :creator
+    :creator,
+    :rejected
   ])
 
   @public_visibility [:public, :unlisted]
@@ -341,9 +343,19 @@ defmodule Mobilizon.Actors do
   """
   @spec create_group(map) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def create_group(attrs \\ %{}) do
-    %Actor{}
-    |> Actor.group_creation_changeset(attrs)
-    |> Repo.insert()
+    with {:ok, %{insert_group: %Actor{} = group, add_admin_member: %Member{} = _admin_member}} <-
+           Multi.new()
+           |> Multi.insert(:insert_group, Actor.group_creation_changeset(%Actor{}, attrs))
+           |> Multi.insert(:add_admin_member, fn %{insert_group: group} ->
+             Member.changeset(%Member{}, %{
+               parent_id: group.id,
+               actor_id: attrs.creator_actor_id,
+               role: :administrator
+             })
+           end)
+           |> Repo.transaction() do
+      {:ok, group}
+    end
   end
 
   @doc """
@@ -354,11 +366,10 @@ defmodule Mobilizon.Actors do
   @doc """
   Lists the groups.
   """
-  @spec list_groups(integer | nil, integer | nil) :: [Actor.t()]
+  @spec list_groups(integer | nil, integer | nil) :: Page.t()
   def list_groups(page \\ nil, limit \\ nil) do
     groups_query()
-    |> Page.paginate(page, limit)
-    |> Repo.all()
+    |> Page.build_page(page, limit)
   end
 
   @doc """
@@ -369,6 +380,16 @@ defmodule Mobilizon.Actors do
     actor_id
     |> groups_member_of_query()
     |> Repo.all()
+  end
+
+  @doc """
+  Gets a single member.
+  """
+  @spec get_member(integer | String.t()) :: Member.t() | nil
+  def get_member(id) do
+    Member
+    |> Repo.get(id)
+    |> Repo.preload([:actor, :parent, :invited_by])
   end
 
   @doc """
@@ -393,6 +414,44 @@ defmodule Mobilizon.Actors do
     end
   end
 
+  @spec get_member(integer | String.t(), integer | String.t(), list()) ::
+          {:ok, Member.t()} | {:error, :member_not_found}
+  def get_member(actor_id, parent_id, roles) do
+    case Member
+         |> where([m], m.actor_id == ^actor_id and m.parent_id == ^parent_id and m.role in ^roles)
+         |> Repo.one() do
+      nil ->
+        {:error, :member_not_found}
+
+      member ->
+        {:ok, member}
+    end
+  end
+
+  @spec is_member?(integer | String.t(), integer | String.t()) :: boolean()
+  def is_member?(actor_id, parent_id) do
+    match?(
+      {:ok, %Member{}},
+      get_member(actor_id, parent_id, [
+        :member,
+        :moderator,
+        :administrator,
+        :creator
+      ])
+    )
+  end
+
+  @doc """
+  Gets a single member of an actor (for example a group).
+  """
+  @spec get_member_by_url(String.t()) :: Member.t() | nil
+  def get_member_by_url(url) do
+    Member
+    |> where(url: ^url)
+    |> preload([:actor, :parent, :invited_by])
+    |> Repo.one()
+  end
+
   @doc """
   Creates a member.
   """
@@ -402,7 +461,7 @@ defmodule Mobilizon.Actors do
            %Member{}
            |> Member.changeset(attrs)
            |> Repo.insert() do
-      {:ok, Repo.preload(member, [:actor, :parent])}
+      {:ok, Repo.preload(member, [:actor, :parent, :invited_by])}
     end
   end
 
@@ -423,35 +482,68 @@ defmodule Mobilizon.Actors do
   def delete_member(%Member{} = member), do: Repo.delete(member)
 
   @doc """
+  Returns the list of memberships for an user.
+
+  Default behaviour is to not return :not_approved memberships
+
+  ## Examples
+
+      iex> list_event_participations_for_user(5)
+      %Page{total: 3, elements: [%Participant{}, ...]}
+
+  """
+  @spec list_memberships_for_user(
+          integer,
+          integer | nil,
+          integer | nil
+        ) :: Page.t()
+  def list_memberships_for_user(user_id, page, limit) do
+    user_id
+    |> list_members_for_user_query()
+    |> Page.build_page(page, limit)
+  end
+
+  @doc """
   Returns the list of members for an actor.
   """
-  @spec list_members_for_actor(Actor.t()) :: [Member.t()]
-  def list_members_for_actor(%Actor{id: actor_id}) do
+  @spec list_members_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  def list_members_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     actor_id
     |> members_for_actor_query()
-    |> Repo.all()
+    |> Page.build_page(page, limit)
   end
 
   @doc """
   Returns the list of members for a group.
   """
-  @spec list_members_for_group(Actor.t()) :: [Member.t()]
-  def list_members_for_group(%Actor{id: group_id, type: :Group}) do
+  @spec list_members_for_group(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  def list_members_for_group(%Actor{id: group_id, type: :Group}, page \\ nil, limit \\ nil) do
     group_id
     |> members_for_group_query()
-    |> Repo.all()
+    |> Page.build_page(page, limit)
+  end
+
+  @spec list_external_members_for_group(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  def list_external_members_for_group(
+        %Actor{id: group_id, type: :Group},
+        page \\ nil,
+        limit \\ nil
+      ) do
+    group_id
+    |> members_for_group_query()
+    |> filter_external()
+    |> Page.build_page(page, limit)
   end
 
   @doc """
   Returns the list of administrator members for a group.
   """
   @spec list_administrator_members_for_group(integer | String.t(), integer | nil, integer | nil) ::
-          [Member.t()]
+          Page.t()
   def list_administrator_members_for_group(id, page \\ nil, limit \\ nil) do
     id
     |> administrator_members_for_group_query()
-    |> Page.paginate(page, limit)
-    |> Repo.all()
+    |> Page.build_page(page, limit)
   end
 
   @doc """
@@ -906,6 +998,17 @@ defmodule Mobilizon.Actors do
       a in Actor,
       where: a.type == ^:Group,
       where: a.visibility in ^@public_visibility
+    )
+  end
+
+  @spec list_members_for_user_query(integer()) :: Ecto.Query.t()
+  defp list_members_for_user_query(user_id) do
+    from(
+      m in Member,
+      join: a in Actor,
+      on: m.actor_id == a.id,
+      where: a.user_id == ^user_id and m.role != ^:not_approved,
+      preload: [:parent, :actor, :invited_by]
     )
   end
 

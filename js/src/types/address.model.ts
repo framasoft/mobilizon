@@ -1,4 +1,4 @@
-import poiIcons from '@/utils/poiIcons';
+import { poiIcons, IPOIIcon } from "@/utils/poiIcons";
 
 export interface IAddress {
   id?: string;
@@ -15,19 +15,29 @@ export interface IAddress {
 }
 
 export class Address implements IAddress {
-  country: string = '';
-  description: string = '';
-  locality: string = '';
-  postalCode: string = '';
-  region: string = '';
-  street: string = '';
-  type: string = '';
-  id?: string = '';
-  originId?: string = '';
-  url?: string = '';
-  geom?: string = '';
+  country = "";
 
-  constructor(hash?) {
+  description = "";
+
+  locality = "";
+
+  postalCode = "";
+
+  region = "";
+
+  street = "";
+
+  type = "";
+
+  id?: string = "";
+
+  originId?: string = "";
+
+  url?: string = "";
+
+  geom?: string = "";
+
+  constructor(hash?: IAddress) {
     if (!hash) return;
 
     this.id = hash.id;
@@ -44,36 +54,40 @@ export class Address implements IAddress {
   }
 
   get poiInfos() {
-      /* generate name corresponding to poi type */
-    let name = '';
-    let alternativeName = '';
-    let poiIcon = poiIcons.default;
+    /* generate name corresponding to poi type */
+    let name = "";
+    let alternativeName = "";
+    let poiIcon: IPOIIcon = poiIcons.default;
     // Google Maps doesn't have a type
-    if (this.type == null && this.description === this.street) this.type = 'house';
+    if (this.type == null && this.description === this.street) this.type = "house";
 
     switch (this.type) {
-      case 'house':
+      case "house":
         name = this.description;
-        alternativeName = [this.postalCode, this.locality, this.country].filter(zone => zone).join(', ');
+        alternativeName = [this.postalCode, this.locality, this.country]
+          .filter((zone) => zone)
+          .join(", ");
         poiIcon = poiIcons.defaultAddress;
         break;
-      case 'street':
-      case 'secondary':
+      case "street":
+      case "secondary":
         name = this.description;
-        alternativeName = [this.postalCode, this.locality, this.country].filter(zone => zone).join(', ');
+        alternativeName = [this.postalCode, this.locality, this.country]
+          .filter((zone) => zone)
+          .join(", ");
         poiIcon = poiIcons.defaultStreet;
         break;
-      case 'zone':
-      case 'city':
-      case 'administrative':
+      case "zone":
+      case "city":
+      case "administrative":
         name = this.postalCode ? `${this.description} (${this.postalCode})` : this.description;
-        alternativeName = [this.region, this.country].filter(zone => zone).join(', ');
+        alternativeName = [this.region, this.country].filter((zone) => zone).join(", ");
         poiIcon = poiIcons.defaultAdministrative;
         break;
       default:
         // POI
         name = this.description;
-        alternativeName = '';
+        alternativeName = "";
         if (this.street && this.street.trim()) {
           alternativeName = `${this.street}`;
           if (this.locality) {
@@ -97,11 +111,11 @@ export class Address implements IAddress {
     return `${name}, ${alternativeName}`;
   }
 
-  get iconForPOI() {
+  get iconForPOI(): IPOIIcon {
     if (this.type == null) {
       return poiIcons.default;
     }
-    const type = this.type.split(':').pop() || '';
+    const type = this.type.split(":").pop() || "";
     if (poiIcons[type]) return poiIcons[type];
     return poiIcons.default;
   }

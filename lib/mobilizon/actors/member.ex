@@ -8,6 +8,7 @@ defmodule Mobilizon.Actors.Member do
   import Ecto.Changeset
 
   alias Mobilizon.Actors.{Actor, MemberRole}
+  alias Mobilizon.Web.Endpoint
 
   @type t :: %__MODULE__{
           role: MemberRole.t(),
@@ -15,13 +16,21 @@ defmodule Mobilizon.Actors.Member do
           actor: Actor.t()
         }
 
-  @required_attrs [:parent_id, :actor_id]
-  @optional_attrs [:role]
+  @required_attrs [:parent_id, :actor_id, :url]
+  @optional_attrs [:role, :invited_by_id]
   @attrs @required_attrs ++ @optional_attrs
+  @metadata_attrs []
 
+  @primary_key {:id, :binary_id, autogenerate: true}
   schema "members" do
     field(:role, MemberRole, default: :member)
+    field(:url, :string)
 
+    embeds_one :metadata, Metadata, on_replace: :delete do
+      # TODO : Use this space to put notes when someone is invited / requested to join
+    end
+
+    belongs_to(:invited_by, Actor)
     belongs_to(:parent, Actor)
     belongs_to(:actor, Actor)
 
@@ -44,16 +53,49 @@ defmodule Mobilizon.Actors.Member do
   @doc """
   Checks whether the member is an administrator (admin or creator) of the group.
   """
-  def is_administrator(%__MODULE__{role: :administrator}), do: {:is_admin, true}
-  def is_administrator(%__MODULE__{role: :creator}), do: {:is_admin, true}
-  def is_administrator(%__MODULE__{}), do: {:is_admin, false}
+  def is_administrator(%__MODULE__{role: :administrator}), do: true
+  def is_administrator(%__MODULE__{role: :creator}), do: true
+  def is_administrator(%__MODULE__{}), do: false
 
   @doc false
   @spec changeset(t, map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = member, attrs) do
     member
     |> cast(attrs, @attrs)
+    |> cast_embed(:metadata, with: &metadata_changeset/2)
+    |> ensure_url()
     |> validate_required(@required_attrs)
+    # On both parent_id and actor_id
     |> unique_constraint(:parent_id, name: :members_actor_parent_unique_index)
+    |> unique_constraint(:url, name: :members_url_index)
+  end
+
+  defp metadata_changeset(schema, params) do
+    schema
+    |> cast(params, @metadata_attrs)
+  end
+
+  # If there's a blank URL that's because we're doing the first insert
+  @spec ensure_url(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp ensure_url(%Ecto.Changeset{data: %__MODULE__{url: nil}} = changeset) do
+    case fetch_change(changeset, :url) do
+      {:ok, _url} ->
+        changeset
+
+      :error ->
+        generate_url(changeset)
+    end
+  end
+
+  # Most time just go with the given URL
+  defp ensure_url(%Ecto.Changeset{} = changeset), do: changeset
+
+  @spec generate_url(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp generate_url(%Ecto.Changeset{} = changeset) do
+    uuid = Ecto.UUID.generate()
+
+    changeset
+    |> put_change(:id, uuid)
+    |> put_change(:url, "#{Endpoint.url()}/member/#{uuid}")
   end
 end

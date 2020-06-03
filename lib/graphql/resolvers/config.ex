@@ -100,7 +100,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
           endpoint: Config.instance_maps_tiles_endpoint(),
           attribution: Config.instance_maps_tiles_attribution()
         }
-      }
+      },
+      resource_providers: Config.instance_resource_providers(),
+      timezones: Tzdata.zone_list()
     }
   end
 end

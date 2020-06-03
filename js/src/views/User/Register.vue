@@ -2,54 +2,52 @@
   <div class="section container">
     <section class="hero">
       <div class="hero-body">
-        <h1 class="title">
-          {{ $t('Register an account on Mobilizon!') }}
-        </h1>
+        <h1 class="title">{{ $t("Register an account on Mobilizon!") }}</h1>
       </div>
     </section>
     <section>
       <div class="columns">
         <div class="column">
           <div>
-            <subtitle>{{ $t('Features') }}</subtitle>
+            <subtitle>{{ $t("Features") }}</subtitle>
             <div class="content">
               <ul>
-                <li>{{ $t('Create and manage several identities from the same account') }}</li>
-                <li>{{ $t('Create, edit or delete events') }}</li>
-                <li>{{ $t('Register for an event by choosing one of your identities') }}</li>
+                <li>{{ $t("Create and manage several identities from the same account") }}</li>
+                <li>{{ $t("Create, edit or delete events") }}</li>
+                <li>{{ $t("Register for an event by choosing one of your identities") }}</li>
               </ul>
             </div>
           </div>
-          <router-link :to="{ name: RouteName.ABOUT }">
-            {{ $t('Learn more') }}
-          </router-link>
-          <hr>
+          <router-link :to="{ name: RouteName.ABOUT }">{{ $t("Learn more") }}</router-link>
+          <hr />
           <div class="content">
-            <subtitle>{{ $t('About this instance') }}</subtitle>
+            <subtitle>{{ $t("About this instance") }}</subtitle>
             <div class="content">
-              <p>
-                {{ $t("Your local administrator resumed its policy:") }}
-              </p>
+              <p>{{ $t("Your local administrator resumed its policy:") }}</p>
               <ul>
-                <li>{{ $t('Enjoy discovering Mobilizon!') }}</li>
+                <li>{{ $t("Enjoy discovering Mobilizon!") }}</li>
               </ul>
             </div>
-<!--            <p>-->
-<!--              {{ $t('Please read the full rules') }}-->
-<!--            </p>-->
+            <!--            <p>-->
+            <!--              {{ $t('Please read the full rules') }}-->
+            <!--            </p>-->
           </div>
         </div>
         <div class="column">
-          <b-message type="is-warning" v-if="config.registrationsWhitelist">{{ $t('Registrations are restricted by whitelisting.') }}</b-message>
+          <b-message type="is-warning" v-if="config.registrationsWhitelist">
+            {{ $t("Registrations are restricted by whitelisting.") }}
+          </b-message>
           <form v-on:submit.prevent="submit()">
             <b-field
               :label="$t('Email')"
               :type="errors.email ? 'is-danger' : null"
               :message="errors.email"
+              label-for="email"
             >
               <b-input
                 aria-required="true"
                 required
+                id="email"
                 type="email"
                 v-model="credentials.email"
                 @blur="showGravatar = true"
@@ -61,10 +59,12 @@
               :label="$t('Password')"
               :type="errors.password ? 'is-danger' : null"
               :message="errors.password"
+              label-for="password"
             >
               <b-input
                 aria-required="true"
                 required
+                id="password"
                 type="password"
                 password-reveal
                 minlength="6"
@@ -73,26 +73,25 @@
             </b-field>
 
             <p class="control has-text-centered">
-              <button class="button is-primary is-large">
-                {{ $t('Register') }}
-              </button>
+              <button class="button is-primary is-large">{{ $t("Register") }}</button>
             </p>
             <p class="control">
               <router-link
                 class="button is-text"
-                :to="{ name: RouteName.RESEND_CONFIRMATION, params: { email: credentials.email }}"
+                :to="{ name: RouteName.RESEND_CONFIRMATION, params: { email: credentials.email } }"
+                >{{ $t("Didn't receive the instructions ?") }}</router-link
               >
-                {{ $t("Didn't receive the instructions ?") }}
-              </router-link>
             </p>
             <p class="control">
               <router-link
                 class="button is-text"
-                :to="{ name: RouteName.LOGIN, params: { email: credentials.email, password: credentials.password }}"
+                :to="{
+                  name: RouteName.LOGIN,
+                  params: { email: credentials.email, password: credentials.password },
+                }"
                 :disabled="sendingValidation"
+                >{{ $t("Login") }}</router-link
               >
-                {{ $t('Login') }}
-              </router-link>
             </p>
           </form>
 
@@ -106,21 +105,21 @@
 </template>
 
 <script lang="ts">
-import { CREATE_USER } from '@/graphql/user';
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { RouteName } from '@/router';
-import { IConfig } from '@/types/config.model';
-import { CONFIG } from '@/graphql/config';
-import Subtitle from '@/components/Utils/Subtitle.vue';
+import { Component, Prop, Vue } from "vue-property-decorator";
+import { CREATE_USER } from "../../graphql/user";
+import RouteName from "../../router/name";
+import { IConfig } from "../../types/config.model";
+import { CONFIG } from "../../graphql/config";
+import Subtitle from "../../components/Utils/Subtitle.vue";
 
 @Component({
   components: { Subtitle },
   metaInfo() {
     return {
       // if no subcomponents specify a metaInfo.title, this title will be used
-      title: this.$t('Register an account on Mobilizon!') as string,
+      title: this.$t("Register an account on Mobilizon!") as string,
       // all titles will be injected into this template
-      titleTemplate: '%s | Mobilizon',
+      titleTemplate: "%s | Mobilizon",
     };
   },
   apollo: {
@@ -128,18 +127,24 @@ import Subtitle from '@/components/Utils/Subtitle.vue';
   },
 })
 export default class Register extends Vue {
-  @Prop({ type: String, required: false, default: '' }) email!: string;
-  @Prop({ type: String, required: false, default: '' }) password!: string;
+  @Prop({ type: String, required: false, default: "" }) email!: string;
+
+  @Prop({ type: String, required: false, default: "" }) password!: string;
 
   credentials = {
     email: this.email,
     password: this.password,
-    locale: 'en',
+    locale: "en",
   };
+
   errors: object = {};
-  sendingValidation: boolean = false;
-  validationSent: boolean = false;
+
+  sendingValidation = false;
+
+  validationSent = false;
+
   RouteName = RouteName;
+
   config!: IConfig;
 
   async submit() {
@@ -161,17 +166,17 @@ export default class Register extends Vue {
       });
     } catch (error) {
       console.error(error);
-      this.errors = error.graphQLErrors.reduce((acc, error) => {
-        acc[error.details] = error.message;
+      this.errors = error.graphQLErrors.reduce((acc: { [key: string]: any }, localError: any) => {
+        acc[localError.details] = localError.message;
         return acc;
-      },                                       {});
+      }, {});
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  @import "../../variables";
+@import "../../variables";
 
 .avatar-enter-active {
   transition: opacity 1s ease;
@@ -186,15 +191,15 @@ export default class Register extends Vue {
   display: none;
 }
 
-  .container .columns {
-    margin: 1rem auto 3rem;
-  }
+.container .columns {
+  margin: 1rem auto 3rem;
+}
 
-  h2.title {
-    color: $primary;
-    font-size: 2.5rem;
-    text-decoration: underline;
-    text-decoration-color: $secondary;
-    display: inline;
-  }
+h2.title {
+  color: $primary;
+  font-size: 2.5rem;
+  text-decoration: underline;
+  text-decoration-color: $secondary;
+  display: inline;
+}
 </style>

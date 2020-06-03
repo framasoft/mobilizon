@@ -1,30 +1,36 @@
 <template>
-    <div style="display: none;">
-        <slot v-if="ready"></slot>
-    </div>
+  <div style="display: none;">
+    <slot v-if="ready"></slot>
+  </div>
 </template>
 
 <script lang="ts">
 /**
- * Fork of https://github.com/domoritz/leaflet-locatecontrol to try to trigger location manually (not done ATM)
+ * Fork of https://github.com/domoritz/leaflet-locatecontrol
+ * to try to trigger location manually (not done ATM)
  */
 
-import L, { DomEvent } from 'leaflet';
-import { findRealParent, propsBinder } from 'vue2-leaflet';
-import 'leaflet.locatecontrol';
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import L, { DomEvent } from "leaflet";
+import { findRealParent, propsBinder } from "vue2-leaflet";
+import "leaflet.locatecontrol";
+import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component({
   beforeDestroy() {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     this.parentContainer.removeLayer(this);
   },
 })
 export default class Vue2LeafletLocateControl extends Vue {
-  @Prop({ type: Object, default: () => { return {}; } }) options;
+  @Prop({ type: Object, default: () => ({}) }) options!: object;
+
   @Prop({ type: Boolean, default: true }) visible = true;
-  ready: boolean = false;
+
+  ready = false;
+
   mapObject!: any;
+
   parentContainer: any;
 
   mounted() {
@@ -43,5 +49,5 @@ export default class Vue2LeafletLocateControl extends Vue {
 </script>
 
 <style>
-    @import "~leaflet.locatecontrol/dist/L.Control.Locate.css";
+@import "~leaflet.locatecontrol/dist/L.Control.Locate.css";
 </style>

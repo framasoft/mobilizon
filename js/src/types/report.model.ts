@@ -1,11 +1,11 @@
-import { IActor, IPerson } from '@/types/actor';
-import { IEvent } from '@/types/event.model';
-import { IComment } from '@/types/comment.model';
+import { IActor, IPerson } from "@/types/actor";
+import { IEvent } from "@/types/event.model";
+import { IComment } from "@/types/comment.model";
 
 export enum ReportStatusEnum {
-    OPEN = 'OPEN',
-    CLOSED = 'CLOSED',
-    RESOLVED = 'RESOLVED',
+  OPEN = "OPEN",
+  CLOSED = "CLOSED",
+  RESOLVED = "RESOLVED",
 }
 
 export interface IReport extends IActionLogObject {
@@ -21,7 +21,7 @@ export interface IReport extends IActionLogObject {
   status: ReportStatusEnum;
 }
 
-export interface IReportNote extends IActionLogObject{
+export interface IReportNote extends IActionLogObject {
   id: string;
   content: string;
   moderator: IActor;
@@ -32,18 +32,18 @@ export interface IActionLogObject {
 }
 
 export enum ActionLogAction {
-    NOTE_CREATION = 'NOTE_CREATION',
-    NOTE_DELETION = 'NOTE_DELETION',
-    REPORT_UPDATE_CLOSED = 'REPORT_UPDATE_CLOSED',
-    REPORT_UPDATE_OPENED = 'REPORT_UPDATE_OPENED',
-    REPORT_UPDATE_RESOLVED = 'REPORT_UPDATE_RESOLVED',
-    EVENT_DELETION = 'EVENT_DELETION',
-    COMMENT_DELETION = 'COMMENT_DELETION',
+  NOTE_CREATION = "NOTE_CREATION",
+  NOTE_DELETION = "NOTE_DELETION",
+  REPORT_UPDATE_CLOSED = "REPORT_UPDATE_CLOSED",
+  REPORT_UPDATE_OPENED = "REPORT_UPDATE_OPENED",
+  REPORT_UPDATE_RESOLVED = "REPORT_UPDATE_RESOLVED",
+  EVENT_DELETION = "EVENT_DELETION",
+  COMMENT_DELETION = "COMMENT_DELETION",
 }
 
 export interface IActionLog {
   id: string;
-  object: IReport|IReportNote|IEvent;
+  object: IReport | IReportNote | IEvent;
   actor: IActor;
   action: ActionLogAction;
   insertedAt: Date;

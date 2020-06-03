@@ -39,8 +39,9 @@ defmodule Mobilizon do
       [
         # supervisors
         Storage.Repo,
+        {Phoenix.PubSub, name: Mobilizon.PubSub},
         Web.Endpoint,
-        {Absinthe.Subscription, [Web.Endpoint]},
+        {Absinthe.Subscription, Web.Endpoint},
         {Oban, Application.get_env(:mobilizon, Oban)},
         # workers
         Guardian.DB.Token.SweeperServer,
@@ -55,6 +56,7 @@ defmodule Mobilizon do
         ),
         cachex_spec(:statistics, 10, 60, 60),
         cachex_spec(:config, 10, 60, 60),
+        cachex_spec(:rich_media_cache, 10, 60, 60),
         cachex_spec(:activity_pub, 2500, 3, 15)
       ] ++
         task_children(@env)

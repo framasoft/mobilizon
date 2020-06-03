@@ -1,4 +1,4 @@
-import { IEvent } from '@/types/event.model';
+import { IEvent } from "@/types/event.model";
 
 export interface IDashboard {
   lastPublicEventPublished: IEvent;
@@ -9,9 +9,9 @@ export interface IDashboard {
 }
 
 export enum InstanceTermsType {
-  DEFAULT = 'DEFAULT',
-  URL = 'URL',
-  CUSTOM = 'CUSTOM',
+  DEFAULT = "DEFAULT",
+  URL = "URL",
+  CUSTOM = "CUSTOM",
 }
 
 export interface IAdminSettings {
@@ -19,6 +19,6 @@ export interface IAdminSettings {
   instanceDescription: string;
   instanceTerms: string;
   instanceTermsType: InstanceTermsType;
-  instanceTermsUrl: string|null;
+  instanceTermsUrl: string | null;
   registrationsOpen: boolean;
 }
