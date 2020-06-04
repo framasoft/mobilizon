@@ -637,8 +637,8 @@ defmodule Mobilizon.Events do
 
   ## Examples
 
-        iex> get_participant(123)
-        %Participant{}
+      iex> get_participant(123)
+      %Participant{}
 
       iex> get_participant(456)
       nil
@@ -712,8 +712,8 @@ defmodule Mobilizon.Events do
 
   ## Examples
 
-        iex> get_participant!(123, 19)
-        %Participant{}
+      iex> get_participant!(123, 19)
+      %Participant{}
 
       iex> get_participant!(456, 5)
       ** (Ecto.NoResultsError)

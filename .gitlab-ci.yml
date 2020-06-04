@@ -108,8 +108,9 @@ pages:
     - mkdir public
     - mkdocs build
     - mv site/* public/
-    - mix deps.get
-    - mix docs
+    # Mix docs disabled because of https://github.com/elixir-lang/ex_doc/issues/1172
+    # - mix deps.get
+    # - mix docs
     - mv doc public/backend
     #- cd js
     #- yarn install

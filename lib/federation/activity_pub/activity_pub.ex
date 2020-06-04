@@ -185,11 +185,11 @@ defmodule Mobilizon.Federation.ActivityPub do
   @doc """
   Create an activity of type `Create`
 
-  * Creates the object, which returns AS data
-  * Wraps ActivityStreams data into a `Create` activity
-  * Creates an `Mobilizon.Federation.ActivityPub.Activity` from this
-  * Federates (asynchronously) the activity
-  * Returns the activity
+    * Creates the object, which returns AS data
+    * Wraps ActivityStreams data into a `Create` activity
+    * Creates an `Mobilizon.Federation.ActivityPub.Activity` from this
+    * Federates (asynchronously) the activity
+    * Returns the activity
   """
   @spec create(atom(), map(), boolean, map()) :: {:ok, Activity.t(), struct()} | any()
   def create(type, args, local \\ false, additional \\ %{}) do
@@ -220,11 +220,11 @@ defmodule Mobilizon.Federation.ActivityPub do
   @doc """
   Create an activity of type `Update`
 
-  * Updates the object, which returns AS data
-  * Wraps ActivityStreams data into a `Update` activity
-  * Creates an `Mobilizon.Federation.ActivityPub.Activity` from this
-  * Federates (asynchronously) the activity
-  * Returns the activity
+    * Updates the object, which returns AS data
+    * Wraps ActivityStreams data into a `Update` activity
+    * Creates an `Mobilizon.Federation.ActivityPub.Activity` from this
+    * Federates (asynchronously) the activity
+    * Returns the activity
   """
   @spec update(atom(), struct(), map(), boolean, map()) :: {:ok, Activity.t(), struct()} | any()
   def update(type, old_entity, args, local \\ false, additional \\ %{}) do
