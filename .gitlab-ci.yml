@@ -111,7 +111,7 @@ pages:
     # Mix docs disabled because of https://github.com/elixir-lang/ex_doc/issues/1172
     # - mix deps.get
     # - mix docs
-    - mv doc public/backend
+    # - mv doc public/backend
     #- cd js
     #- yarn install
     #- yarn run styleguide:build
