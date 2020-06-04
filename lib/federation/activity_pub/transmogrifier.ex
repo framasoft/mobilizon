@@ -48,13 +48,13 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   Handles a `Create` activity for `Note` (comments) objects
 
   The following actions are performed
-  * Fetch the author of the activity
-  * Convert the ActivityStream data to the comment model format (it also finds and inserts tags)
-  * Get (by it's URL) or create the comment with this data
-  * Insert eventual mentions in the database
-  * Convert the comment back in ActivityStreams data
-  * Wrap this data back into a `Create` activity
-  * Return the activity and the comment object
+    * Fetch the author of the activity
+    * Convert the ActivityStream data to the comment model format (it also finds and inserts tags)
+    * Get (by it's URL) or create the comment with this data
+    * Insert eventual mentions in the database
+    * Convert the comment back in ActivityStreams data
+    * Wrap this data back into a `Create` activity
+    * Return the activity and the comment object
   """
   def handle_incoming(%{"type" => "Create", "object" => %{"type" => "Note"} = object}) do
     Logger.info("Handle incoming to create notes")
@@ -76,13 +76,13 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   Handles a `Create` activity for `Event` objects
 
   The following actions are performed
-  * Fetch the author of the activity
-  * Convert the ActivityStream data to the event model format (it also finds and inserts tags)
-  * Get (by it's URL) or create the event with this data
-  * Insert eventual mentions in the database
-  * Convert the event back in ActivityStreams data
-  * Wrap this data back into a `Create` activity
-  * Return the activity and the event object
+    * Fetch the author of the activity
+    * Convert the ActivityStream data to the event model format (it also finds and inserts tags)
+    * Get (by it's URL) or create the event with this data
+    * Insert eventual mentions in the database
+    * Convert the event back in ActivityStreams data
+    * Wrap this data back into a `Create` activity
+    * Return the activity and the event object
   """
   def handle_incoming(%{"type" => "Create", "object" => %{"type" => "Event"} = object}) do
     Logger.info("Handle incoming to create event")

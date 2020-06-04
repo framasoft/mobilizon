@@ -9,9 +9,9 @@ defmodule Mobilizon.Web.Upload.Filter do
 
   This behaviour allows to run filtering actions just before a file is uploaded. This allows to:
 
-  * morph in place the temporary file
-  * change any field of a `Mobilizon.Upload` struct
-  * cancel/stop the upload
+    * morph in place the temporary file
+    * change any field of a `Mobilizon.Upload` struct
+    * cancel/stop the upload
   """
 
   require Logger

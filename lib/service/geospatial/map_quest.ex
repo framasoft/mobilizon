@@ -5,8 +5,8 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
   ## Options
   In addition to the [the shared options](Mobilizon.Service.Geospatial.Provider.html#module-shared-options),
   MapQuest methods support the following options:
-  * `:open_data` Whether to use [Open Data or Licenced Data](https://developer.mapquest.com/documentation/open/).
-    Defaults to `true`
+    * `:open_data` Whether to use [Open Data or Licenced Data](https://developer.mapquest.com/documentation/open/).
+      Defaults to `true`
   """
 
   alias Mobilizon.Addresses.Address

@@ -30,38 +30,38 @@ defmodule Mobilizon.Web.ReverseProxy do
 
   Some request / responses headers are preserved:
 
-  * request: `#{inspect(@keep_req_headers)}`
-  * response: `#{inspect(@keep_resp_headers)}`
+    * request: `#{inspect(@keep_req_headers)}`
+    * response: `#{inspect(@keep_resp_headers)}`
 
   If no caching headers (`#{inspect(@resp_cache_headers)}`) are returned by
   upstream, `cache-control` will be set to `#{inspect(@default_cache_control_header)}`.
 
   Options:
 
-  * `redirect_on_failure` (default `false`). Redirects the client to the real
-  remote URL if there's any HTTP errors. Any error during body processing will
-  not be redirected as the response is chunked. This may expose remote URL,
-  clients IPs, ….
+    * `redirect_on_failure` (default `false`). Redirects the client to the real
+    remote URL if there's any HTTP errors. Any error during body processing will
+    not be redirected as the response is chunked. This may expose remote URL,
+    clients IPs, ….
 
-  * `max_body_length` (default `#{inspect(@max_body_length)}`): limits the
-  content length to be approximately the specified length. It is validated with
-  the `content-length` header and also verified when proxying.
+    * `max_body_length` (default `#{inspect(@max_body_length)}`): limits the
+    content length to be approximately the specified length. It is validated with
+    the `content-length` header and also verified when proxying.
 
-  * `max_read_duration` (default `#{inspect(@max_read_duration)}` ms): the total
-  time the connection is allowed to read from the remote upstream.
+    * `max_read_duration` (default `#{inspect(@max_read_duration)}` ms): the total
+    time the connection is allowed to read from the remote upstream.
 
-  * `inline_content_types`:
-    * `true` will not alter `content-disposition` (up to the upstream),
-    * `false` will add `content-disposition: attachment` to any request,
-    * a list of whitelisted content types
+    * `inline_content_types`:
+      * `true` will not alter `content-disposition` (up to the upstream),
+      * `false` will add `content-disposition: attachment` to any request,
+      * a list of whitelisted content types
 
-    * `keep_user_agent` will forward the client's user-agent to the upstream.
-    This may be useful if the upstream is doing content transformation
-    (encoding, …) depending on the request.
+      * `keep_user_agent` will forward the client's user-agent to the upstream.
+      This may be useful if the upstream is doing content transformation
+      (encoding, …) depending on the request.
 
-  * `req_headers`, `resp_headers` additional headers.
+    * `req_headers`, `resp_headers` additional headers.
 
-  * `http`: options for [hackney](https://github.com/benoitc/hackney).
+    * `http`: options for [hackney](https://github.com/benoitc/hackney).
 
   """
 

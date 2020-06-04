@@ -21,14 +21,14 @@ defmodule Mobilizon.Web.Upload.Uploader do
 
   Returns:
 
-  * `:ok` which assumes `{:ok, upload.path}`
-  * `{:ok, spec}` where spec is:
-    * `{:file, filename :: String.t}` to handle reads with `get_file/1` (recommended)
+    * `:ok` which assumes `{:ok, upload.path}`
+    * `{:ok, spec}` where spec is:
+      * `{:file, filename :: String.t}` to handle reads with `get_file/1` (recommended)
 
-    This allows to correctly proxy or redirect requests to the backend, while allowing to migrate backends without breaking any URL.
-  * `{url, url :: String.t}` to bypass `get_file/2` and use the `url` directly in the activity.
-  * `{:error, String.t}` error information if the file failed to be saved to the backend.
-  * `:wait_callback` will wait for an http post request at `/api/pleroma/upload_callback/:upload_path` and call the uploader's `http_callback/3` method.
+      This allows to correctly proxy or redirect requests to the backend, while allowing to migrate backends without breaking any URL.
+    * `{url, url :: String.t}` to bypass `get_file/2` and use the `url` directly in the activity.
+    * `{:error, String.t}` error information if the file failed to be saved to the backend.
+    * `:wait_callback` will wait for an http post request at `/api/pleroma/upload_callback/:upload_path` and call the uploader's `http_callback/3` method.
 
   """
   @type file_spec :: {:file | :url, String.t()}

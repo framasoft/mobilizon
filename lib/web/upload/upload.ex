@@ -8,27 +8,27 @@ defmodule Mobilizon.Web.Upload do
   Manage user uploads
 
   Options:
-  * `:type`: presets for activity type (defaults to Document) and size limits from app configuration
-  * `:description`: upload alternative text
-  * `:base_url`: override base url
-  * `:uploader`: override uploader
-  * `:filters`: override filters
-  * `:size_limit`: override size limit
-  * `:activity_type`: override activity type
+    * `:type`: presets for activity type (defaults to Document) and size limits from app configuration
+    * `:description`: upload alternative text
+    * `:base_url`: override base url
+    * `:uploader`: override uploader
+    * `:filters`: override filters
+    * `:size_limit`: override size limit
+    * `:activity_type`: override activity type
 
   The `%Mobilizon.Web.Upload{}` struct: all documented fields are meant to be overwritten in filters:
 
-  * `:id` - the upload id.
-  * `:name` - the upload file name.
-  * `:path` - the upload path: set at first to `id/name` but can be changed. Keep in mind that the path
-    is once created permanent and changing it (especially in uploaders) is probably a bad idea!
-  * `:tempfile` - path to the temporary file. Prefer in-place changes on the file rather than changing the
-  path as the temporary file is also tracked by `Plug.Upload{}` and automatically deleted once the request is over.
+    * `:id` - the upload id.
+    * `:name` - the upload file name.
+    * `:path` - the upload path: set at first to `id/name` but can be changed. Keep in mind that the path
+      is once created permanent and changing it (especially in uploaders) is probably a bad idea!
+    * `:tempfile` - path to the temporary file. Prefer in-place changes on the file rather than changing the
+    path as the temporary file is also tracked by `Plug.Upload{}` and automatically deleted once the request is over.
 
   Related behaviors:
 
-  * `Mobilizon.Web.Upload.Uploader`
-  * `Mobilizon.Web.Upload.Filter`
+    * `Mobilizon.Web.Upload.Uploader`
+    * `Mobilizon.Web.Upload.Filter`
 
   """
 
