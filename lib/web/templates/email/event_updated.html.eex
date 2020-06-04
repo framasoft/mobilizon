@@ -86,6 +86,24 @@
                         </td>
                       </tr>
                     <% end %>
+                    <%= if MapSet.member?(@changes, :physical_address) do %>
+                      <tr>
+                        <td bgcolor="#ffffff" align="left">
+                          <%= gettext "Event address" %>
+                        </td>
+                        <%= unless is_nil(@event.physical_address) do %>
+                          <td bgcolor="#ffffff" align="left">
+                            <p>
+                              <%= Mobilizon.Addresses.Address.representation(@event.physical_address) %>
+                            </p>
+                          </td>
+                        <% else %>
+                          <td bgcolor="#ffffff" align="left">
+                            <%= gettext "Physical address was removed" %>
+                          </td>
+                        <% end %>
+                      </tr>
+                    <% end %>
                 </table>
                 </td>
               </tr>

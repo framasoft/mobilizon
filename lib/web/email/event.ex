@@ -17,7 +17,7 @@ defmodule Mobilizon.Web.Email.Event do
 
   alias Mobilizon.Web.{Email, Gettext}
 
-  @important_changes [:title, :begins_on, :ends_on, :status]
+  @important_changes [:title, :begins_on, :ends_on, :status, :physical_address]
 
   @spec event_updated(User.t(), Actor.t(), Event.t(), Event.t(), MapSet.t(), String.t()) ::
           Bamboo.Email.t()
