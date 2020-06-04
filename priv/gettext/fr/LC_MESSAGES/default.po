@@ -10,16 +10,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-02-14 21:08+0000\n"
+"PO-Revision-Date: 2020-06-04 12:02+0200\n"
 "Last-Translator: matograine <tom.ngr@zaclys.net>\n"
-"Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/"
-"backend/fr/>\n"
+"Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 3.10.3\n"
+"X-Generator: Poedit 2.3\n"
 
 #: lib/web/templates/email/password_reset.html.eex:48 lib/web/templates/email/password_reset.text.eex:12
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
@@ -125,11 +124,11 @@ msgstr "Tout est bon !"
 msgid "An organizer just approved your participation. You're now going to this event!"
 msgstr "Un⋅e organisateur⋅ice vient d'approuver votre participation. Vous allez désormais à cet événement !"
 
-#: lib/web/templates/email/event_participation_approved.html.eex:58 lib/web/templates/email/event_updated.html.eex:101
+#: lib/web/templates/email/before_event_notification.html.eex:51 lib/web/templates/email/event_participation_approved.html.eex:58 lib/web/templates/email/event_updated.html.eex:101
 msgid "Go to event page"
 msgstr "Aller à la page de l'événement"
 
-#: lib/web/templates/email/anonymous_participation_confirmation.html.eex:70 lib/web/templates/email/event_participation_approved.html.eex:70 lib/web/templates/email/event_updated.html.eex:113 lib/web/templates/email/event_updated.text.eex:21
+#: lib/web/templates/email/anonymous_participation_confirmation.html.eex:70 lib/web/templates/email/before_event_notification.html.eex:63 lib/web/templates/email/before_event_notification.text.eex:5 lib/web/templates/email/event_participation_approved.html.eex:70 lib/web/templates/email/event_updated.html.eex:113 lib/web/templates/email/event_updated.text.eex:32
 msgid "If you need to cancel your participation, just access the event page through link above and click on the participation button."
 msgstr "Si vous avez besoin d'annuler votre participation, il suffit d'accéder à la page de l'événement à partir du lien ci-dessus et de cliquer sur le bouton de participation."
 
@@ -201,15 +200,15 @@ msgstr "L'événement %{title} a été mis à jour"
 msgid "Event updated!"
 msgstr "Événement mis à jour !"
 
-#: lib/web/templates/email/event_updated.text.eex:16
+#: lib/web/templates/email/event_updated.text.eex:27
 msgid "New date and time for ending of event: %{ends_on}"
 msgstr "Nouvelle date et heure de fin de l'événement : %{ends_on}"
 
-#: lib/web/templates/email/event_updated.text.eex:12
+#: lib/web/templates/email/event_updated.text.eex:23
 msgid "New date and time for start of event: %{begins_on}"
 msgstr "Nouvelle date et heure de début de l'événement : %{begins_on}"
 
-#: lib/web/templates/email/event_updated.text.eex:8
+#: lib/web/templates/email/event_updated.text.eex:19
 msgid "New title: %{title}"
 msgstr "Nouveau titre : %{title}"
 
@@ -229,7 +228,7 @@ msgstr "L'événement %{title} a été mis à jour"
 msgid "Title"
 msgstr "Titre"
 
-#: lib/web/templates/email/event_updated.text.eex:19
+#: lib/web/templates/email/event_updated.text.eex:30
 msgid "View the updated event on: %{link}"
 msgstr "Voir l'événement mis à jour sur : %{link}"
 
@@ -253,15 +252,15 @@ msgstr "Ceci est un site de démonstration permettant de tester la version bêta
 msgid "Warning"
 msgstr "Attention"
 
-#: lib/web/templates/email/event_updated.html.eex:54
+#: lib/web/templates/email/event_updated.html.eex:54 lib/web/templates/email/event_updated.text.eex:14
 msgid "Event has been cancelled"
 msgstr "L'événement a été annulé"
 
-#: lib/web/templates/email/event_updated.html.eex:50
+#: lib/web/templates/email/event_updated.html.eex:50 lib/web/templates/email/event_updated.text.eex:10
 msgid "Event has been confirmed"
 msgstr "L'événement a été confirmé"
 
-#: lib/web/templates/email/event_updated.html.eex:52
+#: lib/web/templates/email/event_updated.html.eex:52 lib/web/templates/email/event_updated.text.eex:12
 msgid "Event status has been set as tentative"
 msgstr "Le statut de l'événement a été défini comme « à confirmer »"
 
@@ -275,7 +274,7 @@ msgstr "Quelqu'un sur %{instance} a signalé le contenu suivant."
 
 #: lib/web/templates/email/email.text.eex:10
 msgid "In the meantime, please consider that the software is not (yet) finished. More information on our blog:"
-msgstr "D'ici là, veuillez considérer que le logiciel n'est pas (encore) fini. Plus d'informations sur notre blog."
+msgstr "D'ici là, veuillez considérer que le logiciel n'est pas (encore) fini. Plus d'informations sur notre blog :"
 
 #: lib/web/templates/email/email.text.eex:9
 msgid "Mobilizon is under development, we will add new features to this site during regular updates, until the release of version 1 of the software in the first half of 2020."
@@ -302,24 +301,19 @@ msgid "Participation confirmation"
 msgstr "Confirmation de participation"
 
 #: lib/web/templates/api/terms.html.eex:108
-#, fuzzy
 msgctxt "terms"
 msgid "An internal ID for your current selected identity"
-msgstr "Une identité interne pour l'identité sélectionnée actuellement."
+msgstr "Une identité interne pour l'identité sélectionnée actuellement"
 
 #: lib/web/templates/api/terms.html.eex:107
-#, fuzzy
 msgctxt "terms"
 msgid "An internal user ID"
 msgstr "Une identité utilisateur interne"
 
 #: lib/web/templates/api/terms.html.eex:45
-#, fuzzy
 msgctxt "terms"
 msgid "Any of the information we collect from you may be used in the following ways:"
-msgstr ""
-"Les informations que nous vous nous fournissez pourront être utilisées ainsi "
-":"
+msgstr "Les informations que nous vous nous fournissez pourront être utilisées ainsi :"
 
 #: lib/web/templates/api/terms.html.eex:4
 msgctxt "terms"
@@ -327,13 +321,11 @@ msgid "Basic account information"
 msgstr "Informations basiques du compte"
 
 #: lib/web/templates/api/terms.html.eex:28
-#, fuzzy
 msgctxt "terms"
 msgid "Do not share any dangerous information over Mobilizon."
 msgstr "Ne partagez aucune information dangereuse relative à Mobilizon."
 
 #: lib/web/templates/api/terms.html.eex:126
-#, fuzzy
 msgctxt "terms"
 msgid "Do we disclose any information to outside parties?"
 msgstr "Partageons-nous des informations à des tiers ?"
@@ -356,8 +348,7 @@ msgstr "adresses IP et autres métadonnées"
 #: lib/web/templates/api/terms.html.eex:111
 msgctxt "terms"
 msgid "If you delete these informations, you need to login again."
-msgstr ""
-"Si vous supprimez ces informations, vous devrez vous connecter de nouveau."
+msgstr "Si vous supprimez ces informations, vous devrez vous connecter de nouveau."
 
 #: lib/web/templates/api/terms.html.eex:113
 msgctxt "terms"
@@ -366,20 +357,12 @@ msgid ""
 "  anonymously. In that case we store the hash of the UUID and participation status in your browser so that we may\n"
 "  display participation status. Deleting these informations will only stop displaying participation status in your\n"
 "  browser."
-msgstr ""
-"Si vous n'êtes pas connecté.e, nous ne conserverons aucune information sur "
-"votre appareil, sauf si vous participez anonymement à un évènement. Dans ce "
-"cas nous conservons le hash de l'UUID et les statuts de participation dans "
-"votre navigateur pour pouvoir les afficher. Supprimer ces informations aura "
-"pour seule conséquence que votre participation ne sera plus affichée dans "
-"votre navigateur."
+msgstr "Si vous n'êtes pas connecté.e, nous ne conserverons aucune information sur votre appareil, sauf si vous participez anonymement à un évènement. Dans ce cas nous conservons le hash de l'UUID et les statuts de participation dans votre navigateur pour pouvoir les afficher. Supprimer ces informations aura pour seule conséquence que votre participation ne sera plus affichée dans votre navigateur."
 
 #: lib/web/templates/api/terms.html.eex:123
 msgctxt "terms"
 msgid "Note: These informations are stored in your localStorage and not your cookies."
-msgstr ""
-"Attention : Ces informations sont conservées dans votre stockage local et "
-"non vos cookies."
+msgstr "Attention : Ces informations sont conservées dans votre stockage local et non vos cookies."
 
 #: lib/web/templates/api/terms.html.eex:18
 msgctxt "terms"
@@ -387,28 +370,21 @@ msgid "Published events and comments"
 msgstr "Évènements publiés et commentaires"
 
 #: lib/web/templates/api/terms.html.eex:83
-#, fuzzy
 msgctxt "terms"
 msgid "Retain the IP addresses associated with registered users no more than 12 months."
-msgstr ""
-"Ne conservez les adresses IP associées aux utilisateurs enregistrés pas plus "
-"de 12 mois."
+msgstr "Ne conservez les adresses IP associées aux utilisateurs enregistrés pas plus de 12 mois."
 
 #: lib/web/templates/api/terms.html.eex:109
 msgctxt "terms"
 msgid "Tokens to authenticate you"
-msgstr ""
+msgstr "Jetons pour vous identifer"
 
 #: lib/web/templates/api/terms.html.eex:35
-#, fuzzy
 msgctxt "terms"
 msgid "We also may retain server logs which include the IP address of every request to our server."
-msgstr ""
-"Nous pouvons également conserver les données d'authentification y compris "
-"les adresses IP de toutes les requêtes de notre serveur."
+msgstr "Nous pouvons également conserver les données d'authentification y compris les adresses IP de toutes les requêtes de notre serveur."
 
 #: lib/web/templates/api/terms.html.eex:5
-#, fuzzy
 msgctxt "terms"
 msgid ""
 "We collect information from you when you register on this server and gather data when you participate in the\n"
@@ -419,21 +395,10 @@ msgid ""
 "      header image. The username, display name, biography, profile picture and header image are always listed publicly.\n"
 "      You may, however, visit this server without registering."
 msgstr ""
-"Nous collectons des informations sur vous lorsque vous vous inscrivez sur ce "
-"serveur et récupérons des données lorsque vous utilisez la plateforme en "
-"lisant, écrivant, et en interagissant avec les contenus partagés. Si vous "
-"vous inscrivez sur ce serveur, nous vous demanderons une adresse courriel, "
-"un mot de passe et au moins un nom d'utilisateur.ice. Votre adresse courriel "
-"sera vérifiée par l'envoi d'un courriel de confirmation contenant un lien "
-"unique. Si ce lien est visité, nous saurons que vous contrôlez l'adresse. "
-"Vous pouvez également entrer des informations supplémentaires au profil, "
-"comme un pseudonyme affiché, une biographie, une image de profil et une "
-"image d'en-tête. Le nom d'utilisateur, le pseudonyme affiché, la biographie, "
-"les images de profil et d'en-tête sont toujours publiques. Vous pouvez "
-"toutefois utiliser ce serveur sans vous inscrire."
+"Nous collectons des informations sur vous lorsque vous vous inscrivez sur ce serveur et récupérons des données lorsque vous utilisez la plateforme en lisant, écrivant, et en interagissant avec les contenus partagés. Si vous vous inscrivez sur ce serveur, nous vous demanderons une adresse courriel, un mot de passe et au moins un nom d'utilisateur.ice. Votre adresse courriel sera vérifiée par l'envoi d'un courriel de confirmation contenant un lien unique. Si ce lien est visité, nous saurons que vous contrôlez l'adresse. Vous pouvez également entrer des informations supplémentaires au profil, comme un pseudonyme affiché, une biographie, une image de profil et une image d'en-tête. Le nom d'utilisateur, le pseudonyme affiché, la biographie, les images de profil et d'en-tête "
+"sont toujours publiques. Vous pouvez toutefois utiliser ce serveur sans vous inscrire."
 
 #: lib/web/templates/api/terms.html.eex:130
-#, fuzzy
 msgctxt "terms"
 msgid ""
 "We do not sell, trade, or otherwise transfer to outside parties your personally identifiable information. This\n"
@@ -441,46 +406,28 @@ msgid ""
 "  you, so long as those parties agree to keep this information confidential. We may also release your information\n"
 "  when we believe release is appropriate to comply with the law, enforce our site policies, or protect ours or\n"
 "  others rights, property, or safety."
-msgstr ""
-"Nous ne vendons ni ne transférons à aucun tiers les informations permettant "
-"de vous identifier. Ceci n'inclut pas les parties tierces qui nous aident "
-"dans la maintenance de ce site, gérer notre commerce, ou vous rendre "
-"service, tant que ces parties s'engagent à garder cette information "
-"confidentielle. Nous pouvons également publier ces informations si nous "
-"considérons que cela est nécessaire pour respecter la loi, respecter nos "
-"CGU, ou protéger nos droits, nos propriétés, ou notre sécurité, ou celles de "
-"tiers."
+msgstr "Nous ne vendons ni ne transférons à aucun tiers les informations permettant de vous identifier. Ceci n'inclut pas les parties tierces qui nous aident dans la maintenance de ce site, gérer notre commerce, ou vous rendre service, tant que ces parties s'engagent à garder cette information confidentielle. Nous pouvons également publier ces informations si nous considérons que cela est nécessaire pour respecter la loi, respecter nos CGU, ou protéger nos droits, nos propriétés, ou notre sécurité, ou celles de tiers."
 
 #: lib/web/templates/api/terms.html.eex:62
-#, fuzzy
 msgctxt "terms"
 msgid ""
 "We implement a variety of security measures to maintain the safety of your personal information when you enter,\n"
 "  submit, or access your personal information. Among other things, your browser session, as well as the traffic between\n"
 "  your applications and the API, are secured with SSL/TLS, and your password is hashed using a strong one-way\n"
 "  algorithm."
-msgstr ""
-"Nous utilisons plusieurs mesures de sécurité pour assurer la confidentialité "
-"de vos informations personnelles lorsque vous soumettez ou accédez à vos "
-"informations. Entre autres, votre session de navigateur et la connection "
-"entre vos applications et l'API sont sécurisés par SSL/TLS, et votre mot de "
-"passe est hashé avec un algorythme fort à sens unique."
+msgstr "Nous utilisons plusieurs mesures de sécurité pour assurer la confidentialité de vos informations personnelles lorsque vous soumettez ou accédez à vos informations. Entre autres, votre session de navigateur et la connection entre vos applications et l'API sont sécurisés par SSL/TLS, et votre mot de passe est hashé avec un algorythme fort à sens unique."
 
 #: lib/web/templates/api/terms.html.eex:103
 msgctxt "terms"
 msgid "We store the following information on your device when you connect:"
-msgstr ""
-"Nous conservons les informations suivantes sur votre appareil lorsque vous "
-"vous connectez :"
+msgstr "Nous conservons les informations suivantes sur votre appareil lorsque vous vous connectez :"
 
 #: lib/web/templates/api/terms.html.eex:72
-#, fuzzy
 msgctxt "terms"
 msgid "We will make a good faith effort to:"
 msgstr "Nous mettrons tout en possible pour :"
 
 #: lib/web/templates/api/terms.html.eex:43
-#, fuzzy
 msgctxt "terms"
 msgid "What do we use your information for?"
 msgstr "Comment utilisons-nous vos informations ?"
@@ -495,12 +442,9 @@ msgctxt "terms"
 msgid ""
 "You can request and download an archive of your content, including your posts, media attachments, profile picture,\n"
 "  and header image."
-msgstr ""
-"Vous pouvez demander, télécharger, et archiver vos données. Ceci inclut vos "
-"posts, médias liés, images de profil et d'en-tête."
+msgstr "Vous pouvez demander, télécharger, et archiver vos données. Ceci inclut vos posts, médias liés, images de profil et d'en-tête."
 
 #: lib/web/templates/api/terms.html.eex:100
-#, fuzzy
 msgctxt "terms"
 msgid "You may irreversibly delete your account at any time."
 msgstr "Vous pouvez supprimer votre compte à tout moment de façon irréversible."
@@ -511,11 +455,7 @@ msgid ""
 "Your content may be downloaded by other servers in the network. Your content is delivered to the servers\n"
 "  following your instance, and direct messages are delivered to the servers of the recipients, in so far as these\n"
 "  recipients reside on a different server than this one."
-msgstr ""
-"Vos publications peuvent être téléchargées par d'autres serveurs du réseau. "
-"Vos publications sont transmises aux serveurs abonnés à votre instance, et "
-"les messages directs sont transmis aux serveurs des destinataire, si celleux-"
-"ci sont inscrit.e.s sur une autre instance que la vôtre."
+msgstr "Vos publications peuvent être téléchargées par d'autres serveurs du réseau. Vos publications sont transmises aux serveurs abonnés à votre instance, et les messages directs sont transmis aux serveurs des destinataire, si celleux-ci sont inscrit.e.s sur une autre instance que la vôtre."
 
 #: lib/web/templates/api/terms.html.eex:20
 msgctxt "terms"
@@ -525,77 +465,49 @@ msgid ""
 "      these other instances. The action of joining an event is federated as well. Please keep in mind that the operators\n"
 "      of the server and any receiving server may view such messages, and that recipients may screenshot, copy or\n"
 "      otherwise re-share them."
-msgstr ""
-"Vos évènements et commentaires sont transmis aux instances qui suivent la "
-"vôtre, ce qui signifie que d'autres serveurs possèderont des copies de ces "
-"contenus. Lorsque vous supprimez un évènement ou un commentaire, ceci est "
-"transmis de la même façon aux autres instances. L'action de rejoindre un "
-"évènement est fédérée de la même manière. Veuillez noter que les "
-"administrateurs de cette instances et de toutes les instances fédérées "
-"peuvent voir ces messages, et que les destinataires peuvent les copier, en "
-"faire des captures d'écran et les re-partager de différentes façons."
+msgstr "Vos évènements et commentaires sont transmis aux instances qui suivent la vôtre, ce qui signifie que d'autres serveurs possèderont des copies de ces contenus. Lorsque vous supprimez un évènement ou un commentaire, ceci est transmis de la même façon aux autres instances. L'action de rejoindre un évènement est fédérée de la même manière. Veuillez noter que les administrateurs de cette instances et de toutes les instances fédérées peuvent voir ces messages, et que les destinataires peuvent les copier, en faire des captures d'écran et les re-partager de différentes façons."
 
 #: lib/web/templates/api/terms.html.eex:159
-#, fuzzy
 msgctxt "terms"
 msgid "Changes to our Privacy Policy"
 msgstr "Modifications de notre politique de confidentialité"
 
 #: lib/web/templates/api/terms.html.eex:154
-#, fuzzy
 msgctxt "terms"
 msgid "If this server is in the EU or the EEA: Our site, products and services are all directed to people who are at least 16 years old. If you are under the age of 16, per the requirements of the GDPR (<a href=\"https://en.wikipedia.org/wiki/General_Data_Protection_Regulation\">General Data Protection Regulation</a>) do not use this site."
-msgstr ""
-"Si ce serveur est dans l'Union Européenne ou dans l'Espace Economique "
-"Européen : nos sites, produits et services sont tous destinés aux personnes "
-"âgées de plus de 16 ans. Si vous avez moins de 16 ans, suivant le RGPD (<a "
-"href=\"https://fr.wikipedia.org/wiki/"
-"R%C3%A8glement_g%C3%A9n%C3%A9ral_sur_la_protection_des_donn%C3%A9es\">"
-"Règlement général sur la protection des données</a>), n'utilisez pas ce site."
+msgstr "Si ce serveur est dans l'Union Européenne ou dans l'Espace Economique Européen : nos sites, produits et services sont tous destinés aux personnes âgées de plus de 16 ans. Si vous avez moins de 16 ans, suivant le RGPD (<a href=\"https://fr.wikipedia.org/wiki/R%C3%A8glement_g%C3%A9n%C3%A9ral_sur_la_protection_des_donn%C3%A9es\">Règlement général sur la protection des données</a>), n'utilisez pas ce site."
 
 #: lib/web/templates/api/terms.html.eex:155
-#, fuzzy
 msgctxt "terms"
 msgid "If this server is in the USA: Our site, products and services are all directed to people who are at least 13 years old. If you are under the age of 13, per the requirements of COPPA (<a href=\"https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act\">Children's Online Privacy Protection Act</a>) do not use this site."
-msgstr ""
-"Si le serveur est situé aux Etats-Unis : Notre site, nos produits et "
-"services sont tous à destination de personnes agées d'au moins 13 ans. Si "
-"vous avez moins de 13 ans, d'après les recommandations de COOPA (<a href=\""
-"https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act\">"
-"Children's Online Privacy Protection Act</a>) n'utilisez pas ce site."
+msgstr "Si le serveur est situé aux Etats-Unis : Notre site, nos produits et services sont tous à destination de personnes agées d'au moins 13 ans. Si vous avez moins de 13 ans, d'après les recommandations de COOPA (<a href=\"https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act\">Children's Online Privacy Protection Act</a>) n'utilisez pas ce site."
 
 #: lib/web/templates/api/terms.html.eex:161
-#, fuzzy
 msgctxt "terms"
 msgid "If we decide to change our privacy policy, we will post those changes on this page."
-msgstr ""
-"Si nous décidons de changer notre politique de confidentialité, nous "
-"présenterons ces changements sur cette page."
+msgstr "Si nous décidons de changer notre politique de confidentialité, nous présenterons ces changements sur cette page."
 
 #: lib/web/templates/api/terms.html.eex:156
-#, fuzzy
 msgctxt "terms"
 msgid "Law requirements can be different if this server is in another jurisdiction."
-msgstr ""
-"Les conditions juridiques peuvent différer si le serveur est sous une autre "
-"juridiction."
+msgstr "Les conditions juridiques peuvent différer si le serveur est sous une autre juridiction."
 
 #: lib/web/templates/api/terms.html.eex:163
 msgctxt "terms"
 msgid "Originally adapted from the <a href=\"https://mastodon.social/terms\">Mastodon</a> and <a href=\"https://github.com/discourse/discourse\">Discourse</a> privacy policies."
-msgstr ""
+msgstr "Adaptée à l'origine des politiques de confidentialité de <a href=\"https://mastodon.social/terms\">Mastodon</a> et <a href=\"https://github.com/discourse/discourse\">Discourse</a>."
 
 #: lib/web/templates/api/terms.html.eex:75
 msgctxt "terms"
 msgid ""
 "Retain server logs containing the IP address of all requests to this server, in so far as such logs are kept, no more\n"
 "        than 90 days."
-msgstr ""
+msgstr "Conserver les journaux du serveur contenant l'adresse IP de toutes les demandes adressées à ce serveur, dans la mesure où ces journaux sont conservés, pas plus de 90 jours."
 
 #: lib/web/templates/api/terms.html.eex:152
 msgctxt "terms"
 msgid "Site usage by children"
-msgstr ""
+msgstr "Utilisation du site par les enfants"
 
 #: lib/web/templates/api/terms.html.eex:55
 msgctxt "terms"
@@ -603,29 +515,28 @@ msgid ""
 "The email address you provide may be used to send you information, updates and notifications about other people\n"
 "    interacting with your content or sending you messages and to respond to inquiries, and/or other requests or\n"
 "    questions."
-msgstr ""
+msgstr "L'adresse électronique que vous fournissez peut être utilisée pour vous envoyer des informations, des mises à jour et des notifications concernant d'autres personnes qui interagissent avec votre contenu ou vous envoient des messages et pour répondre à des demandes, et/ou à d'autres requêtes ou questions."
 
 #: lib/web/templates/api/terms.html.eex:162
 msgctxt "terms"
 msgid "This document is CC-BY-SA. It was last updated January 16, 2020."
-msgstr ""
+msgstr "Ce document est CC-BY-SA. Il a été mis à jour pour la dernière fois le 16 janvier 2020."
 
 #: lib/web/templates/api/terms.html.eex:53
 msgctxt "terms"
 msgid ""
 "To aid moderation of the community, for example comparing your IP address with other known ones to determine ban\n"
 "    evasion or other violations."
-msgstr ""
+msgstr "Pour aider à la modération de la communauté, par exemple en comparant votre adresse IP avec d'autres adresses connues afin de déterminer s'il y a contournement d'un bannissement ou d'autres violations."
 
 #: lib/web/templates/api/terms.html.eex:51
 msgctxt "terms"
 msgid ""
 "To provide the core functionality of Mobilizon. Depending on this instance's policy you may only be able to\n"
 "    interact with other people's content and post your own content if you are logged in."
-msgstr ""
+msgstr "Fournir la fonctionnalité de base de Mobilizon. Selon la politique de cette instance, vous ne pourrez interagir avec le contenu d'autres personnes et publier votre propre contenu que si vous êtes connecté."
 
 #: lib/web/templates/api/terms.html.eex:1
-#, fuzzy
 msgctxt "terms"
 msgid "What information do we collect?"
 msgstr "Quelles informations collectons-nous ?"
@@ -661,3 +572,61 @@ msgstr "L'adresse email pour votre compte sur %{host} est en train d'être chang
 #: lib/web/templates/email/email_changed_new.html.eex:13 lib/web/templates/email/email_changed_new.html.eex:51 lib/web/templates/email/email_changed_new.text.eex:1
 msgid "Verify email address"
 msgstr "Vérifier l'adresse email"
+
+#: lib/web/templates/email/on_day_notification.html.eex:70 lib/web/templates/email/on_day_notification.text.eex:14
+msgid "If you need to cancel your participation, just access the event page through the link above and click on the participation button."
+msgid_plural "If you need to cancel your participation, just access the event page through the links above and click on the participation button."
+msgstr[0] "Si vous avez besoin d'annuler votre participation, il suffit d'accéder à la page de l'événement à partir du lien ci-dessus et de cliquer sur le bouton de participation."
+msgstr[1] "Si vous avez besoin d'annuler votre participation, il suffit d'accéder à la page de l'événement à partir du lien ci-dessus et de cliquer sur le bouton de participation."
+
+#: lib/web/email/notification.ex:46
+msgid "One event planned today"
+msgid_plural "%{nb_events} events planned today"
+msgstr[0] "Un événement prévu aujourd'hui"
+msgstr[1] "%{nb_events} événements prévus aujourd'hui"
+
+#: lib/web/templates/email/on_day_notification.html.eex:38 lib/web/templates/email/on_day_notification.text.eex:4
+msgid "You have one event today:"
+msgid_plural "You have %{total} events today:"
+msgstr[0] "Vous avez un événement aujourd'hui :"
+msgstr[1] "Vous avez %{total} événements aujourd'hui :"
+
+#: lib/web/templates/email/group_invite.html.eex:38 lib/web/templates/email/group_invite.text.eex:5
+msgid "%{inviter} just invited you to join their group %{group}"
+msgstr "%{inviter} vient de vous inviter à rejoindre son groupe %{group}"
+
+#: lib/web/templates/email/group_invite.html.eex:13 lib/web/templates/email/group_invite.text.eex:1
+msgid "Come along!"
+msgstr "Rejoignez-nous !"
+
+#: lib/web/email/notification.ex:24
+msgid "Don't forget to go to %{title}"
+msgstr "N'oubliez pas de vous rendre à %{title}"
+
+#: lib/web/templates/email/on_day_notification.html.eex:13 lib/web/templates/email/on_day_notification.text.eex:1
+msgid "Events today"
+msgstr "Événement"
+
+#: lib/web/templates/email/before_event_notification.html.eex:38 lib/web/templates/email/before_event_notification.text.eex:3
+msgid "Get ready for %{title}"
+msgstr "Préparez vous pour %{title}"
+
+#: lib/web/templates/email/group_invite.html.eex:59
+msgid "See my groups"
+msgstr "Voir mes groupes"
+
+#: lib/web/templates/email/group_invite.html.eex:45 lib/web/templates/email/group_invite.text.eex:7
+msgid "To accept this invitation, head over to your groups."
+msgstr "Pour accepter cette invitation, rendez-vous dans vos groupes."
+
+#: lib/web/templates/email/before_event_notification.html.eex:13 lib/web/templates/email/before_event_notification.text.eex:1
+msgid "Upcoming event"
+msgstr "Événement à venir"
+
+#: lib/web/templates/email/before_event_notification.text.eex:4
+msgid "View the event on: %{link}"
+msgstr "Voir l'événement mis à jour sur : %{link}"
+
+#: lib/web/email/group.ex:28
+msgid "You have been invited by %{inviter} to join group %{group}"
+msgstr "Vous avez été invité par %{inviter} à rejoindre le groupe %{group}"
