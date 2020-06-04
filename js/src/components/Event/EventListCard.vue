@@ -98,6 +98,20 @@
               >{{ $t("Edit") }}</b-button
             >
           </li>
+          <li>
+            <b-button
+              type="is-text"
+              @click="
+                gotToWithCheck(participation, {
+                  name: RouteName.DUPLICATE_EVENT,
+                  params: { eventId: participation.event.uuid },
+                })
+              "
+              icon-left="content-duplicate"
+            >
+              {{ $t("Duplicate") }}
+            </b-button>
+          </li>
           <li
             v-if="
               ![ParticipantRole.PARTICIPANT, ParticipantRole.NOT_APPROVED].includes(

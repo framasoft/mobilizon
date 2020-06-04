@@ -232,6 +232,18 @@
                   </b-dropdown-item>
                   <b-dropdown-item
                     aria-role="listitem"
+                    has-link
+                    v-if="actorIsOrganizer || event.draft"
+                  >
+                    <router-link
+                      :to="{ name: RouteName.DUPLICATE_EVENT, params: { eventId: event.uuid } }"
+                    >
+                      {{ $t("Duplicate") }}
+                      <b-icon icon="content-duplicate" />
+                    </router-link>
+                  </b-dropdown-item>
+                  <b-dropdown-item
+                    aria-role="listitem"
                     v-if="actorIsOrganizer || event.draft"
                     @click="openDeleteEventModalWrapper"
                   >

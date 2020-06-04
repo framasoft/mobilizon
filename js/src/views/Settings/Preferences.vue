@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h2 class="subtitle">{{ $t("No preferences yet") }}</h2>
     <b-field :label="$t('Timezone')">
       <b-select
         :placeholder="$t('Select a timezone')"

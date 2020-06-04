@@ -1,4 +1,4 @@
-import { RouteConfig } from "vue-router";
+import { RouteConfig, Route } from "vue-router";
 import EventList from "../views/Event/EventList.vue";
 import Location from "../views/Location.vue";
 
@@ -15,6 +15,7 @@ export enum EventRouteName {
   MY_EVENTS = "MyEvents",
   EXPLORE = "Explore",
   EDIT_EVENT = "EditEvent",
+  DUPLICATE_EVENT = "DuplicateEvent",
   PARTICIPATIONS = "Participations",
   EVENT = "Event",
   EVENT_PARTICIPATE_WITH_ACCOUNT = "EVENT_PARTICIPATE_WITH_ACCOUNT",
@@ -55,7 +56,14 @@ export const eventRoutes: RouteConfig[] = [
     name: EventRouteName.EDIT_EVENT,
     component: editEvent,
     meta: { requiredAuth: true },
-    props: true,
+    props: (route: Route) => ({ ...route.params, ...{ isUpdate: true } }),
+  },
+  {
+    path: "/events/duplicate/:eventId",
+    name: EventRouteName.DUPLICATE_EVENT,
+    component: editEvent,
+    meta: { requiredAuth: true },
+    props: (route: Route) => ({ ...route.params, ...{ isDuplicate: true } }),
   },
   {
     path: "/events/:eventId/participations",

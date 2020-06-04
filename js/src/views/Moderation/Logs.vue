@@ -42,7 +42,7 @@
       </li>
     </ul>
     <div v-else>
-      <b-message type="is-info">No moderation logs yet</b-message>
+      <b-message type="is-info">{{ $t('No moderation logs yet') }}</b-message>
     </div>
   </section>
 </template>

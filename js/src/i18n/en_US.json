@@ -567,5 +567,22 @@
   "List title": "List title",
   "Create a new list": "Create a new list",
   "Your timezone is currently set to {timezone}.": "Your timezone is currently set to {timezone}.",
-  "Timezone detected as {timezone}.": "Timezone detected as {timezone}."
+  "Timezone detected as {timezone}.": "Timezone detected as {timezone}.",
+  "Bold": "Bold",
+  "Italic": "Italic",
+  "Duplicate": "Duplicate",
+  "Home": "Home",
+  "Important event updates": "Important event updates",
+  "Like title update, start or end date change, event being confirmed or cancelled.": "Like title update, start or end date change, event being confirmed or cancelled.",
+  "Notification on the day of the event": "Notification on the day of the event",
+  "We'll use your timezone settings to send a recap of the morning of the event.": "We'll use your timezone settings to send a recap of the morning of the event.",
+  "You can pick your timezone into your preferences.": "You can pick your timezone into your preferences.",
+  "Recap every week": "Recap every week",
+  "You'll get a weekly recap every Monday for upcoming events, if you have any.": "You'll get a weekly recap every Monday for upcoming events, if you have any.",
+  "Notification before the event": "Notification before the event",
+  "We'll send you an email one hour before the event begins, to be sure you won't forget about it.": "We'll send you an email one hour before the event begins, to be sure you won't forget about it.",
+  "Timezone": "Timezone",
+  "Select a timezone": "Select a timezone",
+  "Other": "Other",
+  "No moderation logs yet": "No moderation logs yet"
 }
