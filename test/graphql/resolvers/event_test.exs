@@ -844,7 +844,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         args: %{event_id: event_id_int, op: :update_search_event}
       )
 
-      {:ok, new_event} = Mobilizon.Events.get_event(event.id)
+      {:ok, new_event} = Mobilizon.Events.get_event_with_preload(event.id)
 
       assert_delivered_email(
         Email.Event.event_updated(
@@ -852,7 +852,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
           actor,
           event,
           new_event,
-          MapSet.new([:title, :begins_on, :ends_on, :status])
+          MapSet.new([:title, :begins_on, :ends_on, :status, :physical_address])
         )
       )
 
@@ -862,7 +862,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
           participant_actor,
           event,
           new_event,
-          MapSet.new([:title, :begins_on, :ends_on, :status])
+          MapSet.new([:title, :begins_on, :ends_on, :status, :physical_address])
         )
       )
     end

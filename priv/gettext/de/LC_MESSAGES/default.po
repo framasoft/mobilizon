@@ -164,14 +164,14 @@ msgstr ""
 
 #, elixir-format
 #: lib/web/templates/email/before_event_notification.html.eex:51
-#: lib/web/templates/email/event_participation_approved.html.eex:58 lib/web/templates/email/event_updated.html.eex:101
+#: lib/web/templates/email/event_participation_approved.html.eex:58 lib/web/templates/email/event_updated.html.eex:119
 msgid "Go to event page"
 msgstr "Gehe zur Veranstaltungs-Seite"
 
 #, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:70
 #: lib/web/templates/email/before_event_notification.html.eex:63 lib/web/templates/email/before_event_notification.text.eex:5
-#: lib/web/templates/email/event_participation_approved.html.eex:70 lib/web/templates/email/event_updated.html.eex:113
+#: lib/web/templates/email/event_participation_approved.html.eex:70 lib/web/templates/email/event_updated.html.eex:131
 #: lib/web/templates/email/event_updated.text.eex:32
 msgid "If you need to cancel your participation, just access the event page through link above and click on the participation button."
 msgstr ""
@@ -788,4 +788,14 @@ msgstr "Zeige die aktualisierte Veranstaltung unter: %{link}"
 #, elixir-format
 #: lib/web/email/group.ex:28
 msgid "You have been invited by %{inviter} to join group %{group}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/event_updated.html.eex:92
+msgid "Event address"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/event_updated.html.eex:102
+msgid "Physical address was removed"
 msgstr ""
