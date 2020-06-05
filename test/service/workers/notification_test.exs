@@ -207,4 +207,120 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       )
     end
   end
+
+  describe "A weekly_notification job sends an email" do
+    test "if the user is still participating" do
+      %User{id: user_id} = user = insert(:user)
+
+      settings =
+        insert(:settings, user_id: user_id, notification_each_week: true, timezone: "Europe/Paris")
+
+      user = Map.put(user, :settings, settings)
+      %Actor{} = actor = insert(:actor, user: user)
+
+      %Participant{} = participant = insert(:participant, role: :participant, actor: actor)
+
+      Notification.perform(
+        %{"op" => "weekly_notification", "user_id" => user_id},
+        nil
+      )
+
+      assert_delivered_email(
+        NotificationMailer.weekly_notification(
+          user,
+          [participant],
+          1
+        )
+      )
+    end
+
+    test "unless the person is no longer participating" do
+      %Event{id: event_id} = insert(:event)
+
+      %User{id: user_id} = user = insert(:user)
+
+      settings =
+        insert(:settings, user_id: user_id, notification_each_week: true, timezone: "Europe/Paris")
+
+      user = Map.put(user, :settings, settings)
+      %Actor{} = actor = insert(:actor, user: user)
+
+      {:ok, %Participant{} = participant} =
+        Events.create_participant(%{actor_id: actor.id, event_id: event_id, role: :participant})
+
+      actor = Map.put(participant.actor, :user, user)
+      participant = Map.put(participant, :actor, actor)
+
+      assert {:ok, %Participant{}} = Events.delete_participant(participant)
+
+      Notification.perform(
+        %{"op" => "weekly_notification", "user_id" => user_id},
+        nil
+      )
+
+      refute_delivered_email(
+        NotificationMailer.weekly_notification(
+          user,
+          [participant],
+          1
+        )
+      )
+    end
+
+    test "unless the event has been cancelled" do
+      %User{id: user_id} = user = insert(:user)
+
+      settings =
+        insert(:settings, user_id: user_id, notification_each_week: true, timezone: "Europe/Paris")
+
+      user = Map.put(user, :settings, settings)
+      %Actor{} = actor = insert(:actor, user: user)
+      %Event{} = event = insert(:event, status: :cancelled)
+
+      %Participant{} =
+        participant = insert(:participant, role: :participant, event: event, actor: actor)
+
+      Notification.perform(
+        %{"op" => "weekly_notification", "user_id" => user_id},
+        nil
+      )
+
+      refute_delivered_email(
+        NotificationMailer.weekly_notification(
+          user,
+          [participant],
+          1
+        )
+      )
+    end
+
+    test "with a lot of events" do
+      %User{id: user_id} = user = insert(:user)
+
+      settings =
+        insert(:settings, user_id: user_id, notification_each_week: true, timezone: "Europe/Paris")
+
+      user = Map.put(user, :settings, settings)
+      %Actor{} = actor = insert(:actor, user: user)
+
+      participants =
+        Enum.reduce(0..10, [], fn _i, acc ->
+          %Participant{} = participant = insert(:participant, role: :participant, actor: actor)
+          acc ++ [participant]
+        end)
+
+      Notification.perform(
+        %{"op" => "weekly_notification", "user_id" => user_id},
+        nil
+      )
+
+      refute_delivered_email(
+        NotificationMailer.weekly_notification(
+          user,
+          participants,
+          3
+        )
+      )
+    end
+  end
 end

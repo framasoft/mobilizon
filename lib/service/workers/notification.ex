@@ -28,29 +28,55 @@ defmodule Mobilizon.Service.Workers.Notification do
   end
 
   def perform(%{"op" => "on_day_notification", "user_id" => user_id}, _job) do
-    %User{locale: locale, settings: %Setting{timezone: timezone, notification_on_day: true}} =
-      user = Users.get_user_with_settings!(user_id)
-
-    now = DateTime.utc_now()
-    %DateTime{} = now_shifted = shift_zone(now, timezone)
-    start = %{now_shifted | hour: 8, minute: 0, second: 0, microsecond: {0, 0}}
-    tomorrow = DateTime.add(start, 3600 * 24)
-
-    with %Page{
+    with %User{locale: locale, settings: %Setting{timezone: timezone, notification_on_day: true}} =
+           user <- Users.get_user_with_settings!(user_id),
+         {start, tomorrow} <- calculate_start_end(1, timezone),
+         %Page{
            elements: participations,
            total: total
-         } <-
+         }
+         when total > 0 <-
            Events.list_participations_for_user(user_id, start, tomorrow, 1, 5),
-         true <-
-           Enum.all?(participations, fn participation ->
+         participations <-
+           Enum.filter(participations, fn participation ->
              participation.event.status == :confirmed
            end),
-         true <- total > 0 do
+         true <- length(participations) > 0 do
       user
       |> Notification.on_day_notification(participations, total, locale)
       |> Mailer.deliver_later()
 
       :ok
+    else
+      _ -> :ok
+    end
+  end
+
+  def perform(%{"op" => "weekly_notification", "user_id" => user_id}, _job) do
+    with %User{
+           locale: locale,
+           settings: %Setting{timezone: timezone, notification_each_week: true}
+         } = user <- Users.get_user_with_settings!(user_id),
+         {start, end_week} <- calculate_start_end(7, timezone),
+         %Page{
+           elements: participations,
+           total: total
+         }
+         when total > 0 <-
+           Events.list_participations_for_user(user_id, start, end_week, 1, 5),
+         participations <-
+           Enum.filter(participations, fn participation ->
+             participation.event.status == :confirmed
+           end),
+         true <- length(participations) > 0 do
+      user
+      |> Notification.weekly_notification(participations, total, locale)
+      |> Mailer.deliver_later()
+
+      :ok
+    else
+      _err ->
+        :ok
     end
   end
 
@@ -59,5 +85,17 @@ defmodule Mobilizon.Service.Workers.Notification do
       {:ok, shift_datetime} -> shift_datetime
       {:error, _} -> datetime
     end
+  end
+
+  defp calculate_start_end(days, timezone) do
+    now = DateTime.utc_now()
+    %DateTime{} = now_shifted = shift_zone(now, timezone)
+    start = %{now_shifted | hour: 8, minute: 0, second: 0, microsecond: {0, 0}}
+
+    {:ok, %NaiveDateTime{} = tomorrow} =
+      Date.utc_today() |> Date.add(days) |> NaiveDateTime.new(~T[08:00:00])
+
+    {:ok, %DateTime{} = tomorrow} = DateTime.from_naive(tomorrow, timezone)
+    {start, tomorrow}
   end
 end

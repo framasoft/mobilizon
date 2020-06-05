@@ -1,0 +1,14 @@
+<%= gettext "Events this week" %>
+==
+
+<%= ngettext "You have one event this week:", "You have %{total} events this week:", @total, total: @total %>
+
+<%= if @total > 1 do %>
+  <%= for participation <- @participations do %>
+  - <%= participation.event.begins_on |> DateTime.shift_zone!(@timezone) |> datetime_to_string(@locale) %> - <%= participation.event.title %> <%= page_url(Mobilizon.Web.Endpoint, :event, participation.event.uuid) %>
+  <% end %>
+<% else %>
+  <%= DateTime.shift_zone!(@participation.event.begins_on, @timezone) |> datetime_to_string(@locale) %> - <%= @participation.event.title %> <%= page_url(Mobilizon.Web.Endpoint, :event, @participation.event.uuid) %>
+<% end %>
+
+<%= ngettext "If you need to cancel your participation, just access the event page through the link above and click on the participation button.", "If you need to cancel your participation, just access the event page through the links above and click on the participation button.", @total %>
