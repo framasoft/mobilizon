@@ -1,5 +1,4 @@
 <template>
-  <!-- <img src="../assets/mobilizon_logo.svg" alt="Mobilizon" :class="{ invert: invert }" height="40" /> -->
   <MobilizonLogo />
 </template>
 
@@ -7,7 +6,7 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
-import MobilizonLogo from "../assets/mobilizon_logo.svg";
+import MobilizonLogo from "../assets/mobilizon_logo.svg?inline";
 @Component({
   components: {
     MobilizonLogo,

@@ -2,8 +2,8 @@
   <section class="section container hero is-fullheight">
     <div class="hero-body">
       <div class="container">
-        <div class="columns">
-          <div class="column">
+        <div class="columns is-vcentered">
+          <div class="column has-text-centered">
             <b-button
               type="is-primary"
               size="is-medium"
