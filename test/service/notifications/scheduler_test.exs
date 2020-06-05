@@ -144,4 +144,92 @@ defmodule Mobilizon.Service.Notifications.SchedulerTest do
       Scheduler.on_day_notification(participant)
     end
   end
+
+  describe "Joining an event registers a job for notification on week of the event" do
+    test "if the user has allowed it" do
+      %User{id: user_id} = user = insert(:user, locale: "fr")
+
+      settings =
+        insert(:settings, user_id: user_id, notification_each_week: true, timezone: "Europe/Paris")
+
+      user = Map.put(user, :settings, settings)
+      actor = insert(:actor, user: user)
+
+      # Make sure event happens next week
+      %Date{} = event_day = Date.utc_today() |> Date.add(7)
+      {:ok, %NaiveDateTime{} = event_date} = event_day |> NaiveDateTime.new(~T[16:00:00])
+      {:ok, begins_on} = DateTime.from_naive(event_date, "Etc/UTC")
+
+      %Event{} = event = insert(:event, begins_on: begins_on)
+
+      %Participant{} = participant = insert(:participant, actor: actor, event: event)
+
+      Scheduler.weekly_notification(participant)
+
+      {:ok, scheduled_at} =
+        begins_on
+        |> DateTime.to_date()
+        |> calculate_first_day_of_week("fr")
+        |> NaiveDateTime.new(~T[08:00:00])
+
+      {:ok, scheduled_at} = DateTime.from_naive(scheduled_at, "Europe/Paris")
+
+      assert_enqueued(
+        worker: Notification,
+        args: %{user_id: user_id, op: :weekly_notification},
+        scheduled_at: scheduled_at
+      )
+    end
+
+    test "not if the user hasn't allowed it" do
+      %User{id: user_id} = user = insert(:user)
+      actor = insert(:actor, user: user)
+
+      %Participant{} = participant = insert(:participant, actor: actor)
+
+      Scheduler.weekly_notification(participant)
+
+      refute_enqueued(
+        worker: Notification,
+        args: %{user_id: user_id, op: :weekly_notification}
+      )
+    end
+
+    test "not if it's too late" do
+      %User{id: user_id} = user = insert(:user)
+
+      settings =
+        insert(:settings, user_id: user_id, notification_on_day: true, timezone: "Europe/Paris")
+
+      user = Map.put(user, :settings, settings)
+      actor = insert(:actor, user: user)
+
+      {:ok, begins_on} =
+        Date.utc_today()
+        |> calculate_first_day_of_week("fr")
+        |> NaiveDateTime.new(~T[05:00:00])
+
+      {:ok, begins_on} = DateTime.from_naive(begins_on, "Europe/Paris")
+
+      %Event{} = event = insert(:event, begins_on: begins_on)
+
+      %Participant{} = participant = insert(:participant, actor: actor, event: event)
+
+      Scheduler.weekly_notification(participant)
+
+      refute_enqueued(
+        worker: Notification,
+        args: %{user_id: user_id, op: :weekly_notification}
+      )
+    end
+  end
+
+  defp calculate_first_day_of_week(%Date{} = date, locale) do
+    day_number = Date.day_of_week(date)
+    first_day_number = Cldr.Calendar.first_day_for_locale(locale)
+
+    if day_number == first_day_number,
+      do: date,
+      else: calculate_first_day_of_week(Date.add(date, -1), locale)
+  end
 end

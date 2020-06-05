@@ -56,4 +56,28 @@ defmodule Mobilizon.Web.Email.Notification do
     |> assign(:subject, subject)
     |> render(:on_day_notification)
   end
+
+  def weekly_notification(
+        %User{email: email, settings: %Setting{timezone: timezone}},
+        participations,
+        total,
+        locale \\ "en"
+      ) do
+    Gettext.put_locale(locale)
+    participation = hd(participations)
+
+    subject =
+      ngettext("One event planned this week", "%{nb_events} events planned this week", total,
+        nb_events: total
+      )
+
+    Email.base_email(to: email, subject: subject)
+    |> assign(:locale, locale)
+    |> assign(:participation, participation)
+    |> assign(:participations, participations)
+    |> assign(:total, total)
+    |> assign(:timezone, timezone)
+    |> assign(:subject, subject)
+    |> render(:notification_each_week)
+  end
 end
