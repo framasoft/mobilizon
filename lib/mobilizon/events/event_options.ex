@@ -66,6 +66,8 @@ defmodule Mobilizon.Events.EventOptions do
   @doc false
   @spec changeset(t, map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = event_options, attrs) do
-    cast(event_options, attrs, @attrs)
+    event_options
+    |> cast(attrs, @attrs)
+    |> validate_number(:maximum_attendee_capacity, greater_than_or_equal_to: 0)
   end
 end

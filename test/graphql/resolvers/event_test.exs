@@ -29,6 +29,15 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
   end
 
   describe "Event Resolver" do
+    @find_event_query """
+    query Event($uuid: UUID!) {
+        event(uuid: $uuid) {
+          uuid,
+          draft
+        }
+      }
+    """
+
     test "find_event/3 returns an event", context do
       event =
         @event
@@ -36,35 +45,77 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
 
       {:ok, event} = Events.create_event(event)
 
-      query = """
-      {
-        event(uuid: "#{event.uuid}") {
-          uuid,
-        }
-      }
-      """
+      res =
+        context.conn
+        |> AbsintheHelpers.graphql_query(query: @find_event_query, variables: %{uuid: event.uuid})
+
+      assert res["data"]["event"]["uuid"] == to_string(event.uuid)
 
       res =
         context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+        |> AbsintheHelpers.graphql_query(query: @find_event_query, variables: %{uuid: "bad uuid"})
 
-      assert json_response(res, 200)["data"]["event"]["uuid"] == to_string(event.uuid)
-
-      query = """
-      {
-        event(uuid: "bad uuid") {
-          uuid,
-        }
-      }
-      """
+      assert [%{"message" => "Argument \"uuid\" has invalid value $uuid."}] = res["errors"]
 
       res =
         context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+        |> AbsintheHelpers.graphql_query(
+          query: @find_event_query,
+          variables: %{uuid: "b5126423-f1af-43e4-a923-002a03003ba5"}
+        )
 
-      assert [%{"message" => "Argument \"uuid\" has invalid value \"bad uuid\"."}] =
-               json_response(res, 200)["errors"]
+      assert [%{"message" => "Event with UUID b5126423-f1af-43e4-a923-002a03003ba5 not found"}] =
+               res["errors"]
     end
+
+    @create_event_mutation """
+    mutation CreateEvent(
+      $title: String!,
+      $description: String,
+      $begins_on: DateTime!,
+      $ends_on: DateTime,
+      $status: EventStatus,
+      $visibility: EventVisibility,
+      $organizer_actor_id: ID!,
+      $online_address: String,
+      $options: EventOptionsInput,
+      $draft: Boolean
+      ) {
+      createEvent(
+          title: $title,
+          description: $description,
+          begins_on: $begins_on,
+          ends_on: $ends_on,
+          status: $status,
+          visibility: $visibility,
+          organizer_actor_id: $organizer_actor_id,
+          online_address: $online_address,
+          options: $options,
+          draft: $draft
+      ) {
+        id,
+        uuid,
+        title,
+        description,
+        begins_on,
+        ends_on,
+        status,
+        visibility,
+        organizer_actor {
+          id
+        },
+        online_address,
+        phone_address,
+        category,
+        draft,
+        options {
+          maximumAttendeeCapacity,
+          showRemainingAttendeeCapacity,
+          showEndTime
+        }
+      }
+    }
+    """
 
     test "create_event/3 should check the organizer_actor_id is owned by the user", %{
       conn: conn,
@@ -74,29 +125,22 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
 
       begins_on = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
 
-      mutation = """
-          mutation {
-              createEvent(
-                  title: "come to my event",
-                  description: "it will be fine",
-                  begins_on: "#{begins_on}",
-                  organizer_actor_id: "#{another_actor.id}",
-                  category: "birthday"
-              ) {
-                title,
-                uuid
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @create_event_mutation,
+          variables: %{
+            title: "come to my event",
+            description: "it will be fine",
+            begins_on: "#{begins_on}",
+            organizer_actor_id: "#{another_actor.id}"
+          }
+        )
 
-      assert json_response(res, 200)["data"]["createEvent"] == nil
+      assert res["data"]["createEvent"] == nil
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert hd(res["errors"])["message"] ==
                "Organizer actor id is not owned by the user"
     end
 
@@ -106,60 +150,42 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       user: user
     } do
       begins_on = DateTime.utc_now() |> DateTime.truncate(:second)
-      ends_on = Timex.shift(begins_on, hours: -2)
-
-      mutation = """
-          mutation {
-              createEvent(
-                  title: "come to my event",
-                  description: "it will be fine",
-                  begins_on: "#{DateTime.to_iso8601(begins_on)}",
-                  ends_on: "#{DateTime.to_iso8601(ends_on)}",
-                  organizer_actor_id: "#{actor.id}",
-                  category: "birthday"
-              ) {
-                id,
-                title,
-                uuid
-              }
-            }
-      """
+      ends_on = DateTime.add(begins_on, -2 * 3600)
 
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @create_event_mutation,
+          variables: %{
+            title: "come to my event",
+            description: "it will be fine",
+            begins_on: "#{begins_on}",
+            ends_on: "#{ends_on}",
+            organizer_actor_id: "#{actor.id}"
+          }
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert hd(res["errors"])["message"] ==
                "ends_on cannot be set before begins_on"
     end
 
     test "create_event/3 creates an event", %{conn: conn, actor: actor, user: user} do
-      mutation = """
-          mutation {
-              createEvent(
-                  title: "come to my event",
-                  description: "it will be fine",
-                  begins_on: "#{
-        DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
-      }",
-                  organizer_actor_id: "#{actor.id}",
-                  category: "birthday"
-              ) {
-                id,
-                title,
-                uuid
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @create_event_mutation,
+          variables: %{
+            title: "come to my event",
+            description: "it will be fine",
+            begins_on: "#{DateTime.utc_now()}",
+            organizer_actor_id: "#{actor.id}"
+          }
+        )
 
-      assert json_response(res, 200)["data"]["createEvent"]["title"] == "come to my event"
-      {id, ""} = json_response(res, 200)["data"]["createEvent"]["id"] |> Integer.parse()
+      assert res["data"]["createEvent"]["title"] == "come to my event"
+      {id, ""} = res["data"]["createEvent"]["id"] |> Integer.parse()
 
       assert_enqueued(
         worker: Workers.BuildSearch,
@@ -172,27 +198,11 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       actor: actor,
       user: user
     } do
-      mutation = """
-          mutation createEvent($title: String!, $description: String, $begins_on: DateTime, $organizer_actor_id: ID!) {
-              createEvent(
-                  title: $title,
-                  description: $description,
-                  begins_on: $begins_on,
-                  organizer_actor_id: $organizer_actor_id
-              ) {
-                id,
-                title,
-                description,
-                uuid
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
         |> AbsintheHelpers.graphql_query(
-          query: mutation,
+          query: @create_event_mutation,
           variables: %{
             title:
               "My Event title <img src=\"http://placekitten.com/g/200/300\" onclick=\"alert('aaa')\" >",
@@ -218,36 +228,25 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
     end
 
     test "create_event/3 creates an event as a draft", %{conn: conn, actor: actor, user: user} do
-      mutation = """
-          mutation {
-              createEvent(
-                  title: "come to my event",
-                  description: "it will be fine",
-                  begins_on: "#{
-        DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
-      }",
-                  organizer_actor_id: "#{actor.id}",
-                  category: "birthday",
-                  draft: true
-              ) {
-                title,
-                uuid,
-                id,
-                draft
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @create_event_mutation,
+          variables: %{
+            title: "come to my event",
+            description: "it will be fine",
+            begins_on: "#{DateTime.utc_now()}",
+            organizer_actor_id: "#{actor.id}",
+            draft: true
+          }
+        )
 
-      assert json_response(res, 200)["data"]["createEvent"]["title"] == "come to my event"
-      assert json_response(res, 200)["data"]["createEvent"]["draft"] == true
+      assert res["data"]["createEvent"]["title"] == "come to my event"
+      assert res["data"]["createEvent"]["draft"] == true
 
-      event_uuid = json_response(res, 200)["data"]["createEvent"]["uuid"]
-      event_id = json_response(res, 200)["data"]["createEvent"]["id"]
+      event_uuid = res["data"]["createEvent"]["uuid"]
+      event_id = res["data"]["createEvent"]["id"]
       {event_id_int, ""} = Integer.parse(event_id)
 
       refute_enqueued(
@@ -255,43 +254,25 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         args: %{event_id: event_id_int, op: :insert_search_event}
       )
 
-      query = """
-      {
-        event(uuid: "#{event_uuid}") {
-          uuid,
-          draft
-        }
-      }
-      """
-
       res =
         conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+        |> AbsintheHelpers.graphql_query(query: @find_event_query, variables: %{uuid: event_uuid})
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "not found"
-
-      query = """
-      {
-        event(uuid: "#{event_uuid}") {
-          uuid,
-          draft
-        }
-      }
-      """
+      assert hd(res["errors"])["message"] =~ "not found"
 
       res =
         conn
         |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+        |> AbsintheHelpers.graphql_query(query: @find_event_query, variables: %{uuid: event_uuid})
 
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["event"]["draft"] == true
+      assert res["errors"] == nil
+      assert res["data"]["event"]["draft"] == true
 
       query = """
-      {
-        person(id: "#{actor.id}") {
+      query Person($actor_id: ID!, $event_id: ID) {
+        person(id: $actor_id) {
           id,
-          participations(eventId: #{event_id}) {
+          participations(eventId: $event_id) {
             id,
             role,
             actor {
@@ -308,65 +289,44 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       res =
         conn
         |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+        |> AbsintheHelpers.graphql_query(
+          query: query,
+          variables: %{actor_id: actor.id, event_id: event_id}
+        )
 
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["person"]["participations"] == []
+      assert res["errors"] == nil
+      assert res["data"]["person"]["participations"] == []
     end
 
     test "create_event/3 creates an event with options", %{conn: conn, actor: actor, user: user} do
       begins_on = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
       ends_on = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
 
-      mutation = """
-          mutation {
-              createEvent(
-                  title: "come to my event",
-                  description: "it will be fine",
-                  begins_on: "#{begins_on}",
-                  ends_on: "#{ends_on}",
-                  status: TENTATIVE,
-                  visibility: UNLISTED,
-                  organizer_actor_id: "#{actor.id}",
-                  online_address: "toto@example.com",
-                  phone_address: "0000000000",
-                  category: "super_category",
-                  options: {
-                    maximumAttendeeCapacity: 30,
-                    showRemainingAttendeeCapacity: true,
-                    showEndTime: false
-                  }
-              ) {
-                id,
-                title,
-                description,
-                begins_on,
-                ends_on,
-                status,
-                visibility,
-                organizer_actor {
-                  id
-                },
-                online_address,
-                phone_address,
-                category,
-                options {
-                  maximumAttendeeCapacity,
-                  showRemainingAttendeeCapacity,
-                  showEndTime
-                }
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @create_event_mutation,
+          variables: %{
+            title: "come to my event",
+            description: "it will be fine",
+            begins_on: "#{begins_on}",
+            ends_on: "#{ends_on}",
+            status: "TENTATIVE",
+            visibility: "UNLISTED",
+            organizer_actor_id: "#{actor.id}",
+            online_address: "toto@example.com",
+            options: %{
+              maximumAttendeeCapacity: 30,
+              showRemainingAttendeeCapacity: true,
+              showEndTime: false
+            }
+          }
+        )
 
-      assert json_response(res, 200)["errors"] == nil
+      assert res["errors"] == nil
 
-      event = json_response(res, 200)["data"]["createEvent"]
+      event = res["data"]["createEvent"]
 
       assert event["title"] == "come to my event"
       assert event["description"] == "it will be fine"
@@ -376,8 +336,6 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       assert event["visibility"] == "UNLISTED"
       assert event["organizer_actor"]["id"] == "#{actor.id}"
       assert event["online_address"] == "toto@example.com"
-      assert event["phone_address"] == "0000000000"
-      assert event["category"] == "super_category"
       assert event["options"]["maximumAttendeeCapacity"] == 30
       assert event["options"]["showRemainingAttendeeCapacity"] == true
       assert event["options"]["showEndTime"] == false
@@ -387,6 +345,32 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         worker: Workers.BuildSearch,
         args: %{event_id: event_id_int, op: :insert_search_event}
       )
+    end
+
+    test "create_event/3 creates an event an invalid options", %{
+      conn: conn,
+      actor: actor,
+      user: user
+    } do
+      begins_on = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @create_event_mutation,
+          variables: %{
+            title: "come to my event",
+            description: "it will be fine",
+            begins_on: "#{begins_on}",
+            organizer_actor_id: "#{actor.id}",
+            options: %{
+              maximumAttendeeCapacity: -5
+            }
+          }
+        )
+
+      assert hd(res["errors"])["message"] == "must be greater than or equal to %{number}"
     end
 
     test "create_event/3 creates an event with tags", %{conn: conn, actor: actor, user: user} do
