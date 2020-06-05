@@ -11371,7 +11371,7 @@ react-simple-code-editor@^0.11.0:
   resolved "https://registry.yarnpkg.com/react-simple-code-editor/-/react-simple-code-editor-0.11.0.tgz#bb57c7c29b570f2ab229872599eac184f5bc673c"
   integrity sha512-xGfX7wAzspl113ocfKQAR8lWPhavGWHL3xSzNLeseDRHysT+jzRBi/ExdUqevSMos+7ZtdfeuBOXtgk9HTwsrw==
 
-react-styleguidist@^11.0.6:
+react-styleguidist@^11.0.8:
   version "11.0.8"
   resolved "https://registry.yarnpkg.com/react-styleguidist/-/react-styleguidist-11.0.8.tgz#68edbaf6b71d529a07be208ad148ad6040b7d9d9"
   integrity sha512-ckqBfipqgFmCl5/Lk5AnaLRbizOwd34YEUCsGLYvMwinzeemoDt6jUgojJhZDnytFzvaIutEqCaXSW72c6X4TQ==
@@ -14076,12 +14076,12 @@ vue-class-component@^7.1.0, vue-class-component@^7.2.3:
   resolved "https://registry.yarnpkg.com/vue-class-component/-/vue-class-component-7.2.3.tgz#a5b1abd53513a72ad51098752e2dedd499807cca"
   integrity sha512-oEqYpXKaFN+TaXU+mRLEx8dX0ah85aAJEe61mpdoUrq0Bhe/6sWhyZX1JjMQLhVsHAkncyhedhmCdDVSasUtDw==
 
-vue-cli-plugin-styleguidist@~4.24.0:
-  version "4.24.0"
-  resolved "https://registry.yarnpkg.com/vue-cli-plugin-styleguidist/-/vue-cli-plugin-styleguidist-4.24.0.tgz#c59c408116e67ea1e1d404f728f952c2e4d5b978"
-  integrity sha512-KWGTF3Z81peNi1dS5ZBpCg4J6Thvprn1dQPsBlL1Y+3M06+0U/HHE9BNJRDAViIrIFcB3mKa9SzM6oSbV6IqTw==
+vue-cli-plugin-styleguidist@~4.24.1:
+  version "4.24.1"
+  resolved "https://registry.yarnpkg.com/vue-cli-plugin-styleguidist/-/vue-cli-plugin-styleguidist-4.24.1.tgz#0ac3fee6ce3b9836b1ff1c2bd8cddc962b1e528a"
+  integrity sha512-SK4aP2xIjyVqBHEj6rDjymOErDhvebQ84i4W1raU1IUjP1VBEsFqTMrWzPe9y9R+wt4KFaR9EOX87j2MqS+gYg==
   dependencies:
-    vue-styleguidist "^4.24.0"
+    vue-styleguidist "^4.24.1"
     webpack-merge "^4.2.1"
 
 vue-docgen-api@^4.24.0:
@@ -14202,10 +14202,10 @@ vue-style-loader@^4.1.0, vue-style-loader@^4.1.2:
     hash-sum "^1.0.2"
     loader-utils "^1.0.2"
 
-vue-styleguidist@^4.24.0:
-  version "4.24.0"
-  resolved "https://registry.yarnpkg.com/vue-styleguidist/-/vue-styleguidist-4.24.0.tgz#af7bf5fd15ca02b42fa8a9d2ac01fa19042cd848"
-  integrity sha512-WH9ANTJn7vfGM+fMQwl1iQrpaK4VhPK8oyxf7fpY7V1xvOdvrhsqRzSnmVeGSyQIw/+mNAg3R/OKHUtt028h8w==
+vue-styleguidist@^4.24.1:
+  version "4.24.1"
+  resolved "https://registry.yarnpkg.com/vue-styleguidist/-/vue-styleguidist-4.24.1.tgz#1c1e569e838cbe59e97fe1cea175c3e03e625a79"
+  integrity sha512-N3YVnNKQk57E+R/cAUi/QvZLxqzpPaMASv43jyFlf6GdK3p3smQ/4jHB7yheg8nJdjG/4BV+CV88VZV+HnUmSg==
   dependencies:
     "@vxna/mini-html-webpack-template" "^1.0.0"
     ast-types "^0.13.2"
@@ -14250,7 +14250,7 @@ vue-styleguidist@^4.24.0:
     react-icons "^3.7.0"
     react-lifecycles-compat "^3.0.4"
     react-simple-code-editor "^0.11.0"
-    react-styleguidist "^11.0.6"
+    react-styleguidist "^11.0.8"
     rewrite-imports "^2.0.3"
     style-loader "^1.0.0"
     terser-webpack-plugin "^2.2.2"
