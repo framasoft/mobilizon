@@ -256,11 +256,11 @@
                     aria-role="menuitem"
                     v-if="actorIsOrganizer || event.draft"
                   />
-                  <b-dropdown-item has-link aria-role="listitem">
-                    <a href="#share_section">
+                  <b-dropdown-item aria-role="listitem" v-if="!event.draft" @click="triggerShare()">
+                    <span>
                       {{ $t("Share this event") }}
                       <b-icon icon="share" />
-                    </a>
+                    </span>
                   </b-dropdown-item>
                   <b-dropdown-item
                     aria-role="listitem"
@@ -416,6 +416,9 @@
             @close="$refs.reportModal.close()"
           />
         </b-modal>
+        <b-modal :active.sync="isShareModalActive" has-modal-card ref="shareModal">
+          <share-event-modal :event="event" :eventCapacityOK="eventCapacityOK" />
+        </b-modal>
         <b-modal :active.sync="isJoinModalActive" has-modal-card ref="participationModal">
           <identity-picker v-model="identity">
             <template v-slot:footer>
@@ -550,9 +553,11 @@ import PopoverActorCard from "../../components/Account/PopoverActorCard.vue";
     Tag,
     ActorCard,
     PopoverActorCard,
-    // tslint:disable:space-in-parens
     "map-leaflet": () => import(/* webpackChunkName: "map" */ "../../components/Map.vue"),
-    // tslint:enable
+    ShareEventModal: () =>
+      import(
+        /* webpackChunkName: "shareEventModal" */ "../../components/Event/ShareEventModal.vue"
+      ),
   },
   apollo: {
     event: {
@@ -630,6 +635,8 @@ export default class Event extends EventMixin {
   showMap = false;
 
   isReportModalActive = false;
+
+  isShareModalActive = false;
 
   isJoinModalActive = false;
 
@@ -908,6 +915,25 @@ export default class Event extends EventMixin {
     document.body.removeChild(link);
   }
 
+  triggerShare() {
+    // @ts-ignore-start
+    if (navigator.share) {
+      navigator
+        // @ts-ignore
+        .share({
+          title: this.event.title,
+          text: Event.textDescription,
+          url: this.event.url,
+        })
+        .then(() => console.log("Successful share"))
+        .catch((error: any) => console.log("Error sharing", error));
+    } else {
+      this.isShareModalActive = true;
+      // send popup
+    }
+    // @ts-ignore-end
+  }
+
   async handleErrors(errors: GraphQLError[]) {
     if (
       errors[0].message.includes("not found") ||
@@ -935,34 +961,6 @@ export default class Event extends EventMixin {
     return this.event.endsOn !== null && this.event.endsOn > this.event.beginsOn
       ? this.event.endsOn
       : this.event.beginsOn;
-  }
-
-  get twitterShareUrl(): string {
-    return `https://twitter.com/intent/tweet?url=${encodeURIComponent(this.event.url)}&text=${
-      this.event.title
-    }`;
-  }
-
-  get facebookShareUrl(): string {
-    return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(this.event.url)}`;
-  }
-
-  get linkedInShareUrl(): string {
-    return `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
-      this.event.url
-    )}&title=${this.event.title}`;
-  }
-
-  get emailShareUrl(): string {
-    return `mailto:?to=&body=${this.event.url}${encodeURIComponent("\n\n")}${
-      Event.textDescription
-    }&subject=${this.event.title}`;
-  }
-
-  get diasporaShareUrl(): string {
-    return `https://share.diasporafoundation.org/?title=${encodeURIComponent(
-      this.event.title
-    )}&url=${encodeURIComponent(this.event.url)}`;
   }
 
   static get textDescription(): string {
