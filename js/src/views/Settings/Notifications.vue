@@ -1,14 +1,19 @@
 <template>
   <div v-if="loggedUser">
+    <div class="setting-title">
+      <h2>{{ $t("Participation notifications") }}</h2>
+    </div>
     <div class="field">
-      <b-checkbox disabled v-model="notificationEventUpdates">
-        <strong>{{ $t("Important event updates") }}</strong>
-        <p>
-          {{
-            $t("Like title update, start or end date change, event being confirmed or cancelled.")
-          }}
-        </p>
-      </b-checkbox>
+      <strong>{{
+        $t("We'll always send you emails to notifiy about important event updates")
+      }}</strong>
+      <p>
+        {{
+          $t(
+            "Like title or physical address update, start or end date change or event being confirmed or cancelled."
+          )
+        }}
+      </p>
     </div>
     <div class="field">
       <b-checkbox v-model="notificationOnDay" @input="updateSetting({ notificationOnDay })">
@@ -61,8 +66,6 @@ import { ICurrentUser } from "../../types/current-user.model";
 })
 export default class Notifications extends Vue {
   loggedUser!: ICurrentUser;
-
-  notificationEventUpdates = true;
 
   notificationOnDay = true;
 
