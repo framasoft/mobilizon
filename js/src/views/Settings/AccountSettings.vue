@@ -279,11 +279,11 @@ export default class AccountSettings extends Vue {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 @import "@/variables.scss";
 
 .setting-title {
-  margin-top: 3rem;
+  margin-top: 1rem;
 
   h2 {
     display: inline;
@@ -293,7 +293,9 @@ export default class AccountSettings extends Vue {
     font-size: 1.25rem;
   }
 }
+</style>
 
+<style lang="scss" scoped>
 .cancel-button {
   margin-top: 2rem;
 }
