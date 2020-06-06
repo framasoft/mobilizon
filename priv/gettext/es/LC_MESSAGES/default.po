@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2020-06-05 09:02+0000\n"
+"PO-Revision-Date: 2020-06-07 09:24+0000\n"
 "Last-Translator: Berto Te <ateira@3fpj.com>\n"
 "Language-Team: Spanish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/es/>\n"
@@ -898,12 +898,12 @@ msgstr "Ver el evento actualizado en: %{link}"
 msgid "You have been invited by %{inviter} to join group %{group}"
 msgstr "%{Inviter} te ha invitado a unirte al grupo %{group}"
 
-#, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:92
-msgid "Event address"
-msgstr ""
-
 #, elixir-format
+msgid "Event address"
+msgstr "Dirección del evento"
+
 #: lib/web/templates/email/event_updated.html.eex:102
+#, elixir-format
 msgid "Physical address was removed"
-msgstr ""
+msgstr "Dirección física fue eliminada"
