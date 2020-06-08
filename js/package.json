@@ -26,7 +26,7 @@
     "bulma-divider": "^0.2.0",
     "core-js": "^3.6.4",
     "eslint-plugin-cypress": "^2.10.3",
-    "graphql": "^15.0.0",
+    "graphql": "^15.1.0",
     "graphql-tag": "^2.10.3",
     "intersection-observer": "^0.10.0",
     "javascript-time-ago": "^2.0.4",
