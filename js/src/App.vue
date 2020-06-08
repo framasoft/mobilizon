@@ -128,7 +128,7 @@ $mdi-font-path: "~@mdi/font/fonts";
 body {
   // background: #f7f8fa;
   background: $body-background-color;
-  font-family: BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans",
+  font-family: BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, "Segoe UI", "Fira Sans",
     "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
   /*main {*/

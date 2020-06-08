@@ -19,9 +19,17 @@ export interface ICurrentUser {
   settings: IUserSettings;
 }
 
+export enum INotificationPendingParticipationEnum {
+  NONE = "NONE",
+  DIRECT = "DIRECT",
+  ONE_DAY = "ONE_DAY",
+  ONE_HOUR = "ONE_HOUR",
+}
+
 export interface IUserSettings {
   timezone: string;
   notificationOnDay: string;
   notificationEachWeek: string;
   notificationBeforeEvent: string;
+  notificationPendingParticipation: INotificationPendingParticipationEnum;
 }

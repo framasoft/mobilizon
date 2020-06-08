@@ -224,6 +224,124 @@ defmodule Mobilizon.Service.Notifications.SchedulerTest do
     end
   end
 
+  describe "Asking to participate registers a job for notification" do
+    test "if the user has allowed it" do
+      %User{id: user_id} = user = insert(:user, locale: "fr")
+
+      settings =
+        insert(:settings,
+          user_id: user_id,
+          notification_pending_participation: :one_day,
+          timezone: "Europe/Paris"
+        )
+
+      user = Map.put(user, :settings, settings)
+      actor = insert(:actor, user: user)
+
+      # Make sure event happens next week
+      %Date{} = event_day = Date.utc_today() |> Date.add(3)
+      {:ok, %NaiveDateTime{} = event_date} = event_day |> NaiveDateTime.new(~T[16:00:00])
+      {:ok, begins_on} = DateTime.from_naive(event_date, "Etc/UTC")
+
+      %Event{} = event = insert(:event, begins_on: begins_on, local: true, organizer_actor: actor)
+
+      %Participant{} = _participant = insert(:participant, event: event, role: :not_approved)
+
+      Scheduler.pending_participation_notification(event)
+
+      {:ok, scheduled_at} = NaiveDateTime.new(Date.utc_today(), ~T[18:00:00])
+      {:ok, scheduled_at} = DateTime.from_naive(scheduled_at, "Europe/Paris")
+
+      assert_enqueued(
+        worker: Notification,
+        args: %{user_id: user_id, event_id: event.id, op: :pending_participation_notification},
+        scheduled_at: scheduled_at
+      )
+    end
+
+    test "not if the user hasn't allowed it" do
+      %User{id: user_id} = user = insert(:user)
+      actor = insert(:actor, user: user)
+
+      %Participant{} = insert(:participant)
+
+      %Event{} = event = insert(:event, local: true, organizer_actor: actor)
+
+      Scheduler.pending_participation_notification(event)
+
+      refute_enqueued(
+        worker: Notification,
+        args: %{user_id: user_id, event_id: event.id, op: :pending_participation_notification}
+      )
+    end
+
+    test "right away if the user has allowed it" do
+      %User{id: user_id} = user = insert(:user, locale: "fr")
+
+      settings =
+        insert(:settings,
+          user_id: user_id,
+          notification_pending_participation: :direct,
+          timezone: "Europe/Paris"
+        )
+
+      user = Map.put(user, :settings, settings)
+      actor = insert(:actor, user: user)
+
+      # Make sure event happens next week
+      %Date{} = event_day = Date.utc_today() |> Date.add(3)
+      {:ok, %NaiveDateTime{} = event_date} = event_day |> NaiveDateTime.new(~T[16:00:00])
+      {:ok, begins_on} = DateTime.from_naive(event_date, "Etc/UTC")
+
+      %Event{} = event = insert(:event, begins_on: begins_on, local: true, organizer_actor: actor)
+
+      %Participant{} = _participant = insert(:participant, event: event, role: :not_approved)
+
+      Scheduler.pending_participation_notification(event)
+
+      assert_enqueued(
+        worker: Notification,
+        args: %{user_id: user_id, event_id: event.id, op: :pending_participation_notification}
+      )
+    end
+
+    test "every hour" do
+      %User{id: user_id} = user = insert(:user, locale: "fr")
+
+      settings =
+        insert(:settings,
+          user_id: user_id,
+          notification_pending_participation: :one_hour,
+          timezone: "Europe/Paris"
+        )
+
+      user = Map.put(user, :settings, settings)
+      actor = insert(:actor, user: user)
+
+      # Make sure event happens next week
+      %Date{} = event_day = Date.utc_today() |> Date.add(3)
+      {:ok, %NaiveDateTime{} = event_date} = event_day |> NaiveDateTime.new(~T[16:00:00])
+      {:ok, begins_on} = DateTime.from_naive(event_date, "Etc/UTC")
+
+      %Event{} = event = insert(:event, begins_on: begins_on, local: true, organizer_actor: actor)
+
+      %Participant{} = _participant = insert(:participant, event: event, role: :not_approved)
+
+      Scheduler.pending_participation_notification(event)
+
+      scheduled_at =
+        DateTime.utc_now()
+        |> DateTime.shift_zone!("Europe/Paris")
+        |> (&%{&1 | minute: 0, second: 0, microsecond: {0, 0}}).()
+
+      assert_enqueued(
+        worker: Notification,
+        args: %{user_id: user_id, event_id: event.id, op: :pending_participation_notification},
+        scheduled_at: scheduled_at
+      )
+    end
+  end
+
   defp calculate_first_day_of_week(%Date{} = date, locale) do
     day_number = Date.day_of_week(date)
     first_day_number = Cldr.Calendar.first_day_for_locale(locale)

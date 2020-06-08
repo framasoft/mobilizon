@@ -28,6 +28,7 @@ defmodule Mobilizon.Factory do
       notification_on_day: false,
       notification_each_week: false,
       notification_before_event: false,
+      notification_pending_participation: :one_day,
       user_id: nil
     }
   end
