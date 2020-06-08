@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [1.0.0-beta.3] - 2020-06-15
 
 ### Special operations
 Config has moved from `.env` files to a more traditional way to handle things in the Elixir world, with `.exs` files.
@@ -16,18 +16,25 @@ A minimal file template [is available](https://framagit.org/framasoft/mobilizon/
 Also make sure to remove the `EnvironmentFile=` line from the systemd service and set `Environment=MIX_ENV=prod` instead. See [the updated file](https://framagit.org/framasoft/mobilizon/blob/master/support/systemd/mobilizon.service).
 
 ### Added
-- Possibility to participate to an event without an account
+- Possibility to participate to an event without an account (confirmation through email required)
 - Possibility to participate to a remote event (being redirected by providing federated identity)
 - Possibility to add a note as a participant when event participation is manually validated (required when participating without an account)
+- Email notifications for events (one hour before, on the day of the event, each week)
+- Email notifications for pending participation approval requests (disabled, directly, at most 1 per hour, at most 1 per day)
 - Possibility to change email address for the account
 - Possibility to delete your account
+- Duplicate an event
+- Ability to handle basic administration settings in the admin panel
+- Added physical address change to the list of important changes that trigger event notifications
 
 ### Changed
+- Configuration handling (see above)
 - Improved a bit color theme
 - Signature validation also now checks if `Date` header has acceptable values
 - Actor profiles are now stale after two days and have to be refetched
 - Actor keys are rotated some time after sending a `Delete` activity
 - Improved event participations managing interface
+- Improved public event page
 
 ### Fixed
 - Fixed URL search
