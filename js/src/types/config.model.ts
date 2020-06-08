@@ -58,4 +58,7 @@ export interface IConfig {
   };
   resourceProviders: IProvider[];
   timezones: string[];
+  features: {
+    groups: boolean;
+  };
 }

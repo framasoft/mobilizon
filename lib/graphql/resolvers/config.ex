@@ -102,7 +102,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
         }
       },
       resource_providers: Config.instance_resource_providers(),
-      timezones: Tzdata.zone_list()
+      timezones: Tzdata.zone_list(),
+      features: %{
+        groups: Config.instance_group_feature_enabled?()
+      }
     }
   end
 end

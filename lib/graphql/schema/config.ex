@@ -22,6 +22,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     field(:anonymous, :anonymous)
     field(:resource_providers, list_of(:resource_provider))
     field(:timezones, list_of(:string))
+    field(:features, :features)
 
     field(:terms, :terms, description: "The instance's terms") do
       arg(:locale, :string, default_value: "en")
@@ -103,6 +104,10 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     field(:type, :string)
     field(:endpoint, :string)
     field(:software, :string)
+  end
+
+  object :features do
+    field(:groups, :boolean)
   end
 
   object :config_queries do
