@@ -2,7 +2,6 @@
   <section class="section container has-text-centered not-found">
     <div class="columns is-vertical">
       <div class="column is-centered">
-        <img src="../assets/oh_no.jpg" alt="Not found 'oh no' picture" />
         <h1 class="title">{{ $t("The page you're looking for doesn't exist.") }}</h1>
         <p>
           {{ $t("Please make sure the address is correct and that the page hasn't been moved.") }}
