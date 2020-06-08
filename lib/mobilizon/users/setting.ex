@@ -5,7 +5,7 @@ defmodule Mobilizon.Users.Setting do
 
   use Ecto.Schema
   import Ecto.Changeset
-  alias Mobilizon.Users.User
+  alias Mobilizon.Users.{NotificationPendingNotificationDelay, User}
 
   @required_attrs [:user_id]
 
@@ -13,7 +13,8 @@ defmodule Mobilizon.Users.Setting do
     :timezone,
     :notification_on_day,
     :notification_each_week,
-    :notification_before_event
+    :notification_before_event,
+    :notification_pending_participation
   ]
 
   @attrs @required_attrs ++ @optional_attrs
@@ -24,6 +25,11 @@ defmodule Mobilizon.Users.Setting do
     field(:notification_on_day, :boolean)
     field(:notification_each_week, :boolean)
     field(:notification_before_event, :boolean)
+
+    field(:notification_pending_participation, NotificationPendingNotificationDelay,
+      default: :none
+    )
+
     belongs_to(:user, User, primary_key: true, type: :id, foreign_key: :id, define_field: false)
 
     timestamps()

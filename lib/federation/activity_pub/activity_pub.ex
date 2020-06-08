@@ -504,14 +504,25 @@ defmodule Mobilizon.Federation.ActivityPub do
            Audience.calculate_to_and_cc_from_mentions(participant),
          {:ok, activity} <- create_activity(Map.merge(join_data, audience), local),
          :ok <- maybe_federate(activity) do
-      if event.local && Mobilizon.Events.get_default_participant_role(event) === :participant &&
-           role == :participant do
-        accept(
-          :join,
-          participant,
-          true,
-          %{"actor" => event.organizer_actor.url}
-        )
+      if event.local do
+        cond do
+          Mobilizon.Events.get_default_participant_role(event) === :participant &&
+              role == :participant ->
+            accept(
+              :join,
+              participant,
+              true,
+              %{"actor" => event.organizer_actor.url}
+            )
+
+          Mobilizon.Events.get_default_participant_role(event) === :not_approved &&
+              role == :not_approved ->
+            Scheduler.pending_participation_notification(event)
+            {:ok, activity, participant}
+
+          true ->
+            {:ok, activity, participant}
+        end
       else
         {:ok, activity, participant}
       end

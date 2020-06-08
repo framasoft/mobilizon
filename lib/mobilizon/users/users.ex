@@ -22,6 +22,8 @@ defmodule Mobilizon.Users do
 
   defenum(UserRole, :user_role, [:administrator, :moderator, :user])
 
+  defenum(NotificationPendingNotificationDelay, none: 0, direct: 1, one_hour: 5, one_day: 10)
+
   @doc """
   Registers an user.
   """

@@ -323,4 +323,32 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       )
     end
   end
+
+  describe "A pending_participation_notification job sends an email" do
+    test "if there are participants to approve" do
+      %User{id: user_id} = user = insert(:user)
+
+      %Event{id: event_id} = event = insert(:event)
+
+      %Participant{} = insert(:participant, event: event, role: :not_approved)
+      %Participant{} = insert(:participant, event: event, role: :not_approved)
+
+      Notification.perform(
+        %{
+          "op" => "pending_participation_notification",
+          "user_id" => user_id,
+          "event_id" => event_id
+        },
+        nil
+      )
+
+      assert_delivered_email(
+        NotificationMailer.pending_participation_notification(
+          user,
+          event,
+          2
+        )
+      )
+    end
+  end
 end

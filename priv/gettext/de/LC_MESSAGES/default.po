@@ -29,7 +29,7 @@ msgid "Feed for %{email} on Mobilizon"
 msgstr "Feed für %{email} auf Mobilizon"
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:155
+#: lib/web/templates/email/email.html.eex:151
 #: lib/web/templates/email/email.text.eex:16
 msgid "%{instance} is a Mobilizon server."
 msgstr "%{instance} ist ein Mobilizon-Server."
@@ -51,7 +51,7 @@ msgid "Activate my account"
 msgstr "Aktiviere meinen Account"
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:124
+#: lib/web/templates/email/email.html.eex:120
 #: lib/web/templates/email/email.text.eex:14
 msgid "Ask the community on Framacolibri"
 msgstr "Frag die Gemeinschaft auf Framacolibri"
@@ -79,7 +79,7 @@ msgid "Instructions to reset your password on %{instance}"
 msgstr "Anweisungen um dein Passwort auf %{instance} zurückzusetzen"
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:156
+#: lib/web/templates/email/email.html.eex:152
 msgid "Learn more about Mobilizon."
 msgstr "Lerne mehr über Mobilizon."
 
@@ -89,7 +89,7 @@ msgid "Nearly here!"
 msgstr "Fast hier!"
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:121
+#: lib/web/templates/email/email.html.eex:117
 #: lib/web/templates/email/email.text.eex:12
 msgid "Need some help? Something not working properly?"
 msgstr "Brauchst Du Hilfe? Funktioniert etwas nicht richtig?"
@@ -324,14 +324,14 @@ msgstr ""
 "Du hast ein neues Passwort für deinen Account auf %{instance} angefragt."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:95
+#: lib/web/templates/email/email.html.eex:91
 msgid "In the meantime, please consider that the software is not (yet) finished. More information %{a_start}on our blog%{a_end}."
 msgstr ""
 "Bitte beachte in der Zwischenzeit, dass diese Software (noch) fertiggestellt "
 "ist. Weitere Informationen %{a_start}in unserem Blog%{a_end}."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:94
+#: lib/web/templates/email/email.html.eex:90
 msgid "Mobilizon is under development, we will add new features to this site during regular updates, until the release of %{b_start}version 1 of the software in the first half of 2020%{b_end}."
 msgstr ""
 "Mobilizon befindet sich in der Entwicklung, wir werden neue Funktionen "
@@ -339,13 +339,13 @@ msgstr ""
 "in der ersten Hälfte von 2020 veröffentlicht wird%{b_end}."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:91
+#: lib/web/templates/email/email.html.eex:87
 #: lib/web/templates/email/email.text.eex:6
 msgid "This is a demonstration site to test the beta version of Mobilizon."
 msgstr "Dies ist eine Demo-Seite, um die Beta-Version von Mobilizon zu testen."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:89
+#: lib/web/templates/email/email.html.eex:85
 msgid "Warning"
 msgstr "Warnung"
 
@@ -368,7 +368,7 @@ msgid "Event status has been set as tentative"
 msgstr "Veranstaltung wurde als vorläufig markiert"
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:92
+#: lib/web/templates/email/email.html.eex:88
 msgid "%{b_start}Please do not use it in any real way%{b_end}"
 msgstr ""
 
@@ -708,7 +708,8 @@ msgid "Verify email address"
 msgstr "Bestätig E-Mail Adresse"
 
 #, elixir-format
-#: lib/web/templates/email/on_day_notification.html.eex:70
+#: lib/web/templates/email/notification_each_week.html.eex:70
+#: lib/web/templates/email/notification_each_week.text.eex:14 lib/web/templates/email/on_day_notification.html.eex:70
 #: lib/web/templates/email/on_day_notification.text.eex:14
 msgid "If you need to cancel your participation, just access the event page through the link above and click on the participation button."
 msgid_plural "If you need to cancel your participation, just access the event page through the links above and click on the participation button."
@@ -798,4 +799,58 @@ msgstr ""
 #, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:102
 msgid "Physical address was removed"
+msgstr ""
+
+#, elixir-format
+#: lib/web/email/notification.ex:70
+msgid "One event planned this week"
+msgid_plural "%{nb_events} events planned this week"
+msgstr[0] ""
+msgstr[1] ""
+
+#, elixir-format
+#: lib/web/email/notification.ex:92
+msgid "One participation request for event %{title} to process"
+msgid_plural "%{number_participation_requests} participation requests for event %{title} to process"
+msgstr[0] ""
+msgstr[1] ""
+
+#, elixir-format
+#: lib/web/templates/email/notification_each_week.html.eex:38
+#: lib/web/templates/email/notification_each_week.text.eex:4
+msgid "You have one event this week:"
+msgid_plural "You have %{total} events this week:"
+msgstr[0] ""
+msgstr[1] ""
+
+#, elixir-format
+#: lib/web/templates/email/pending_participation_notification.html.eex:38
+#: lib/web/templates/email/pending_participation_notification.text.eex:4
+msgid "You have one pending participation to process:"
+msgid_plural "You have %{number_participation_requests} participation requests to process:"
+msgstr[0] ""
+msgstr[1] ""
+
+#, elixir-format
+#: lib/web/templates/email/notification_each_week.html.eex:13
+#: lib/web/templates/email/notification_each_week.text.eex:1
+msgid "Events this week"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/pending_participation_notification.html.eex:51
+#: lib/web/templates/email/pending_participation_notification.text.eex:6
+msgid "Manage pending participation requests"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/pending_participation_notification.html.eex:13
+#: lib/web/templates/email/pending_participation_notification.text.eex:1
+msgid "Pending participations to process"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/pending_participation_notification.html.eex:64
+#: lib/web/templates/email/pending_participation_notification.text.eex:8
+msgid "You receive this email because you chose to get notifications for pending participations to your events. You may disable or change the configuration for these notification in your Mobilizon user settings."
 msgstr ""

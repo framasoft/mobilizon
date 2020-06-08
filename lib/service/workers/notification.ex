@@ -80,6 +80,28 @@ defmodule Mobilizon.Service.Workers.Notification do
     end
   end
 
+  def perform(
+        %{
+          "op" => "pending_participation_notification",
+          "user_id" => user_id,
+          "event_id" => event_id
+        },
+        _job
+      ) do
+    with %User{} = user <- Users.get_user(user_id),
+         {:ok, %Event{} = event} <- Events.get_event(event_id),
+         %Page{total: total} when total > 0 <-
+           Events.list_participants_for_event(event_id, [:not_approved]) do
+      user
+      |> Notification.pending_participation_notification(event, total)
+      |> Mailer.deliver_later()
+    else
+      err ->
+        require Logger
+        Logger.error(inspect(err))
+    end
+  end
+
   defp shift_zone(datetime, timezone) do
     case DateTime.shift_zone(datetime, timezone) do
       {:ok, shift_datetime} -> shift_datetime

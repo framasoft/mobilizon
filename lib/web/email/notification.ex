@@ -7,7 +7,7 @@ defmodule Mobilizon.Web.Email.Notification do
   import Bamboo.Phoenix
   import Mobilizon.Web.Gettext
 
-  alias Mobilizon.Events.Participant
+  alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Users.{Setting, User}
   alias Mobilizon.Web.{Email, Gettext}
 
@@ -79,5 +79,29 @@ defmodule Mobilizon.Web.Email.Notification do
     |> assign(:timezone, timezone)
     |> assign(:subject, subject)
     |> render(:notification_each_week)
+  end
+
+  def pending_participation_notification(
+        %User{locale: locale, email: email},
+        %Event{} = event,
+        total
+      ) do
+    Gettext.put_locale(locale)
+
+    subject =
+      ngettext(
+        "One participation request for event %{title} to process",
+        "%{number_participation_requests} participation requests for event %{title} to process",
+        total,
+        number_participation_requests: total,
+        title: event.title
+      )
+
+    Email.base_email(to: email, subject: subject)
+    |> assign(:locale, locale)
+    |> assign(:event, event)
+    |> assign(:total, total)
+    |> assign(:subject, subject)
+    |> render(:pending_participation_notification)
   end
 end
