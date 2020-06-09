@@ -7,6 +7,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Config
   alias Mobilizon.Reports
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Users.User
@@ -47,7 +48,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
   def create_report(
         _parent,
         %{reporter_id: reporter_id} = args,
-        %{context: %{current_user: user}} = _resolution
+        %{context: %{current_user: %User{} = user}} = _resolution
       ) do
     with {:is_owned, %Actor{}} <- User.owns_actor(user, reporter_id),
          {:ok, _, %Report{} = report} <- API.Reports.report(args) do
@@ -55,6 +56,31 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
     else
       {:is_owned, nil} ->
         {:error, "Reporter actor id is not owned by authenticated user"}
+
+      _error ->
+        {:error, "Error while saving report"}
+    end
+  end
+
+  @doc """
+  Create a report anonymously if allowed
+  """
+  def create_report(
+        _parent,
+        %{reporter_id: reporter_id} = args,
+        _resolution
+      ) do
+    with {:anonymous_reporting_allowed, true} <-
+           {:anonymous_reporting_allowed, Config.anonymous_reporting?()},
+         {:wrong_id, true} <- {:wrong_id, reporter_id == to_string(Config.anonymous_actor_id())},
+         {:ok, _, %Report{} = report} <- API.Reports.report(args) do
+      {:ok, report}
+    else
+      {:anonymous_reporting_allowed, _} ->
+        {:error, "You need to be logged-in to create reports"}
+
+      {:wrong_id, _} ->
+        {:error, "Reporter ID is not the anonymous actor id"}
 
       _error ->
         {:error, "Error while saving report"}

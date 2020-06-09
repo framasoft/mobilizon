@@ -34,6 +34,9 @@ export const CONFIG = gql`
             }
           }
         }
+        reports {
+          allowed
+        }
         actorId
       }
       location {

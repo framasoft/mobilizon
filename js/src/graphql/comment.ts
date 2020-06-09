@@ -62,7 +62,7 @@ export const COMMENTS_THREADS = gql`
       }
     }
   }
-  ${COMMENT_RECURSIVE_FRAGMENT}
+  ${COMMENT_FIELDS_FRAGMENT}
 `;
 
 export const CREATE_COMMENT_FROM_EVENT = gql`

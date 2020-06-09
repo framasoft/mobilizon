@@ -89,6 +89,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
             }
           }
         },
+        reports: %{
+          allowed: Config.anonymous_reporting?()
+        },
         actor_id: Config.anonymous_actor_id()
       },
       geocoding: %{

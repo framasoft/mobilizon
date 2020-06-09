@@ -26,6 +26,7 @@ Also make sure to remove the `EnvironmentFile=` line from the systemd service an
 - Duplicate an event
 - Ability to handle basic administration settings in the admin panel
 - Added physical address change to the list of important changes that trigger event notifications
+- Config option to allow anonymous reporting
 
 ### Changed
 - Configuration handling (see above)

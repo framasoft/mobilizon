@@ -60,9 +60,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     end
   end
 
-  def check_event_access(%Event{local: true}), do: true
+  @spec check_event_access(Event.t()) :: boolean()
+  defp check_event_access(%Event{local: true}), do: true
 
-  def check_event_access(%Event{url: url}) do
+  defp check_event_access(%Event{url: url}) do
     relay_actor_id = Config.relay_actor_id()
     Events.check_if_event_has_instance_follow(url, relay_actor_id)
   end

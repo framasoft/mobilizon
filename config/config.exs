@@ -202,6 +202,9 @@ config :mobilizon, :anonymous,
       ],
       captcha: [enabled: false]
     }
+  ],
+  reports: [
+    allowed: false
   ]
 
 config :mobilizon, Oban,

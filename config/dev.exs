@@ -92,6 +92,11 @@ config :mobilizon, :instance,
 
 # config :mobilizon, :activitypub, sign_object_fetches: false
 
+config :mobilizon, :anonymous,
+  reports: [
+    allowed: true
+  ]
+
 require Logger
 
 cond do

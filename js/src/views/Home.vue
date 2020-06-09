@@ -154,7 +154,7 @@ import Subtitle from "../components/Utils/Subtitle.vue";
         };
       },
       update: (data) =>
-        data.loggedUser.participations.map(
+        data.loggedUser.participations.elements.map(
           (participation: IParticipant) => new Participant(participation)
         ),
       skip() {
