@@ -594,5 +594,12 @@
   "No notifications": "No notifications",
   "Direct": "Direct",
   "Every hour": "Every hour",
-  "Every day": "Every day"
+  "Every day": "Every day",
+  "report #{report_number}": "report #{report_number}",
+  "{actor} closed {report}": "{actor} closed {report}",
+  "a non-existent report": "a non-existent report",
+  "{actor} reopened {report}": "{actor} reopened {report}",
+  "{actor} marked {report} as resolved": "{actor} marked {report} as resolved",
+  "{actor} added a note on {report}": "{actor} added a note on {report}",
+  "{actor} deleted an event named \"{title}\"": "{actor} deleted an event named \"{title}\""
 }

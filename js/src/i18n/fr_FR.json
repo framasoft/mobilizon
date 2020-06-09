@@ -597,10 +597,17 @@
   "We'll always send you emails to notify about important event updates": "Nous vous enverrons toujours des emails pour vous notifier à propos des mises à jour importantes des événements",
   "Like title or physical address update, start or end date change or event being confirmed or cancelled.": "Comme la mise à jour du titre ou de l'addresse de l'événement, un changement de date de début ou de fin, ou bien l'événement devenant confirmé ou bien annulé.",
   "Organizer notifications": "Notifications pour organisateur·ice",
-  "Notifications for manually approved participations to an event": "Notifications pour l'approbabtion manuelle des participations à un événement",
+  "Notifications for manually approved participations to an event": "Notifications pour l'approbation manuelle des participations à un événement",
   "We'll send you an email when there new participations requests.": "Nous vous enverrons un email lorsqu'il y aura de nouvelles demandes de participation.",
   "No notifications": "Pas de notifications",
   "Direct": "Direct",
   "Every hour": "À chaque heure",
-  "Every day": "Chaque jour"
+  "Every day": "Chaque jour",
+  "report #{report_number}": "le signalement #{report_number}",
+  "{actor} closed {report}": "{actor} a fermé {report}",
+  "a non-existent report": "un signalement non-existant",
+  "{actor} reopened {report}": "{actor} a réouvert {report}",
+  "{actor} marked {report} as resolved": "{actor} a marqué {report} comme résolu",
+  "{actor} added a note on {report}": "{actor} a ajouté une note sur {report}",
+  "{actor} deleted an event named \"{title}\"": "{actor} a supprimé un événement nommé \"{title}\""
 }
