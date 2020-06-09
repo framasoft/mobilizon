@@ -39,7 +39,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   object :lonlat do
     field(:longitude, :float)
     field(:latitude, :float)
-    field(:accuracy_radius, :integer)
+    # field(:accuracy_radius, :integer)
   end
 
   object :geocoding do
