@@ -18,8 +18,8 @@ cond do
       File.exists?("./config/#{System.get_env("INSTANCE_CONFIG")}") ->
     import_config System.get_env("INSTANCE_CONFIG")
 
-  File.exists?("./config/dev.secret.exs") ->
-    import_config "dev.secret.exs"
+  File.exists?("./config/prod.secret.exs") ->
+    import_config "prod.secret.exs"
 
   true ->
     require Logger
