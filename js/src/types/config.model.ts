@@ -39,6 +39,9 @@ export interface IConfig {
         };
       };
     };
+    reports: {
+      allowed: boolean;
+    };
     actorId: string;
   };
   maps: {

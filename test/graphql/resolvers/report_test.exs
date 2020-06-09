@@ -1,9 +1,11 @@
 defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
   use Mobilizon.Web.ConnCase
+  use Mobilizon.Tests.Helpers
 
   import Mobilizon.Factory
 
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Config
   alias Mobilizon.Events.Event
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Users.User
@@ -11,67 +13,124 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
   alias Mobilizon.GraphQL.AbsintheHelpers
 
   describe "Resolver: Report a content" do
+    @create_report_mutation """
+    mutation CreateReport($reporterId: ID!, $reportedId: ID!, $eventId: ID, $content: String) {
+      createReport(
+        reporterId: $reporterId,
+        reportedId: $reportedId,
+        eventId: $eventId,
+        content: $content
+      ) {
+          content,
+          reporter {
+            id
+          },
+          event {
+            id
+          },
+          status
+        }
+      }
+    """
+
+    clear_config([:anonymous, :reports])
+
+    setup %{conn: conn} do
+      Mobilizon.Config.clear_config_cache()
+      anonymous_actor_id = Config.anonymous_actor_id()
+      {:ok, conn: conn, anonymous_actor_id: anonymous_actor_id}
+    end
+
     test "create_report/3 creates a report", %{conn: conn} do
       %User{} = user_reporter = insert(:user)
       %Actor{} = reporter = insert(:actor, user: user_reporter)
       %Actor{} = reported = insert(:actor)
       %Event{} = event = insert(:event, organizer_actor: reported)
 
-      mutation = """
-          mutation {
-            createReport(
-              reporter_id: #{reporter.id},
-              reported_id: #{reported.id},
-              event_id: #{event.id},
-              content: "This is an issue"
-            ) {
-                content,
-                reporter {
-                  id
-                },
-                event {
-                  id
-                },
-                status
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user_reporter)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @create_report_mutation,
+          variables: %{
+            reportedId: reported.id,
+            reporterId: reporter.id,
+            eventId: event.id,
+            content: "This is an issue"
+          }
+        )
 
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["createReport"]["content"] == "This is an issue"
-      assert json_response(res, 200)["data"]["createReport"]["status"] == "OPEN"
-      assert json_response(res, 200)["data"]["createReport"]["event"]["id"] == to_string(event.id)
+      assert res["errors"] == nil
+      assert res["data"]["createReport"]["content"] == "This is an issue"
+      assert res["data"]["createReport"]["status"] == "OPEN"
+      assert res["data"]["createReport"]["event"]["id"] == to_string(event.id)
 
-      assert json_response(res, 200)["data"]["createReport"]["reporter"]["id"] ==
+      assert res["data"]["createReport"]["reporter"]["id"] ==
                to_string(reporter.id)
     end
 
     test "create_report/3 without being connected doesn't create any report", %{conn: conn} do
       %Actor{} = reported = insert(:actor)
 
-      mutation = """
-          mutation {
-            createReport(
-              reported_id: #{reported.id},
-              reporter_id: 5,
-              content: "This is an issue"
-            ) {
-                content
-              }
-            }
-      """
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @create_report_mutation,
+          variables: %{
+            reportedId: reported.id,
+            reporterId: 5,
+            content: "This is an issue"
+          }
+        )
+
+      assert res["errors"] |> hd |> Map.get("message") ==
+               "You need to be logged-in to create reports"
+    end
+
+    test "create_report/3 anonymously creates a report if config has allowed", %{
+      conn: conn,
+      anonymous_actor_id: anonymous_actor_id
+    } do
+      %Actor{} = reported = insert(:actor)
+      Config.put([:anonymous, :reports, :allowed], true)
 
       res =
         conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @create_report_mutation,
+          variables: %{
+            reportedId: reported.id,
+            reporterId: anonymous_actor_id,
+            content: "This is an issue"
+          }
+        )
 
-      assert json_response(res, 200)["errors"] |> hd |> Map.get("message") ==
-               "You need to be logged-in to create reports"
+      assert is_nil(res["errors"])
+      assert res["data"]["createReport"]["content"] == "This is an issue"
+      assert res["data"]["createReport"]["status"] == "OPEN"
+
+      assert res["data"]["createReport"]["reporter"]["id"] ==
+               to_string(anonymous_actor_id)
+    end
+
+    test "create_report/3 anonymously doesn't creates a report if the anonymous actor ID is wrong",
+         %{conn: conn} do
+      %Actor{} = reported = insert(:actor)
+      Config.put([:anonymous, :reports, :allowed], true)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @create_report_mutation,
+          variables: %{
+            reportedId: reported.id,
+            reporterId: 53,
+            content: "This is an issue"
+          }
+        )
+
+      assert res["errors"] |> hd |> Map.get("message") ==
+               "Reporter ID is not the anonymous actor id"
     end
   end
 

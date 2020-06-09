@@ -272,7 +272,7 @@
                       <b-icon icon="calendar-plus" />
                     </span>
                   </b-dropdown-item>
-                  <b-dropdown-item aria-role="listitem">
+                  <b-dropdown-item aria-role="listitem" v-if="ableToReport">
                     <span @click="isReportModalActive = true">
                       {{ $t("Report") }}
                       <b-icon icon="flag" />
@@ -750,14 +750,25 @@ export default class Event extends EventMixin {
 
   async reportEvent(content: string, forward: boolean) {
     this.isReportModalActive = false;
+    // @ts-ignore
+    this.$refs.reportModal.close();
     if (!this.event.organizerActor) return;
     const eventTitle = this.event.title;
+    let reporterId = null;
+    if (this.currentActor.id) {
+      reporterId = this.currentActor.id;
+    } else {
+      if (this.config.anonymous.reports.allowed) {
+        reporterId = this.config.anonymous.actorId;
+      }
+    }
+    if (!reporterId) return;
     try {
       await this.$apollo.mutate<IReport>({
         mutation: CREATE_REPORT,
         variables: {
           eventId: this.event.id,
-          reporterId: this.currentActor.id,
+          reporterId,
           reportedId: this.event.organizerActor.id,
           content,
           forward,
@@ -995,6 +1006,12 @@ export default class Event extends EventMixin {
     await this.leaveEvent(this.event, this.config.anonymous.actorId, token);
     await removeAnonymousParticipation(this.uuid);
     this.anonymousParticipation = null;
+  }
+
+  get ableToReport(): boolean {
+    return (
+      this.config && (this.currentActor.id != undefined || this.config.anonymous.reports.allowed)
+    );
   }
 }
 </script>

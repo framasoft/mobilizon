@@ -59,6 +59,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   object :anonymous do
     field(:participation, :anonymous_participation)
     field(:event_creation, :anonymous_event_creation)
+    field(:reports, :anonymous_reports)
     field(:actor_id, :id)
   end
 
@@ -98,6 +99,10 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
 
   object :anonymous_event_creation_validation_captcha do
     field(:enabled, :boolean)
+  end
+
+  object :anonymous_reports do
+    field(:allowed, :boolean)
   end
 
   object :resource_provider do

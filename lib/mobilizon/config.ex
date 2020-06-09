@@ -139,6 +139,10 @@ defmodule Mobilizon.Config do
         :enabled
       ]
 
+  @spec anonymous_reporting? :: boolean
+  def anonymous_reporting?,
+    do: Application.get_env(:mobilizon, :anonymous)[:reports][:allowed]
+
   def instance_resource_providers do
     types = get_in(Application.get_env(:mobilizon, Mobilizon.Service.ResourceProviders), [:types])
 
