@@ -1,6 +1,6 @@
 <template>
   <section class="container section hero is-fullheight">
-    <div class="hero-body">
+    <div class="hero-body" v-if="event">
       <div class="container">
         <form @submit.prevent="joinEvent">
           <p>
@@ -111,15 +111,22 @@ export default class ParticipationWithoutAccount extends Vue {
           actorId: this.config.anonymous.actorId,
           email: this.anonymousParticipation.email,
           message: this.anonymousParticipation.message,
+          locale: this.$i18n.locale,
         },
         update: (store, { data }) => {
-          if (data == null) return;
+          if (data == null) {
+            console.error("Cannot update event participant cache, because of data null value.");
+            return;
+          }
 
           const cachedData = store.readQuery<{ event: IEvent }>({
             query: FETCH_EVENT,
             variables: { uuid: this.event.uuid },
           });
-          if (cachedData == null) return;
+          if (cachedData == null) {
+            console.error("Cannot update event participant cache, because of cached null value.");
+            return;
+          }
           const { event } = cachedData;
           if (event === null) {
             console.error("Cannot update event participant cache, because of null value.");
@@ -132,6 +139,7 @@ export default class ParticipationWithoutAccount extends Vue {
             event.participantStats.going = event.participantStats.going + 1;
             event.participantStats.participant = event.participantStats.participant + 1;
           }
+          console.log("just before writequery");
 
           store.writeQuery({
             query: FETCH_EVENT,
@@ -140,23 +148,26 @@ export default class ParticipationWithoutAccount extends Vue {
           });
         },
       });
+      console.log("finished with store", data);
       if (data && data.joinEvent.metadata.cancellationToken) {
         await addLocalUnconfirmedAnonymousParticipation(
           this.event,
           data.joinEvent.metadata.cancellationToken
         );
-        return this.$router.push({
-          name: RouteName.EVENT,
-          params: { uuid: this.event.uuid },
-        });
+        console.log("done with crypto stuff");
       }
     } catch (e) {
-      console.log(JSON.stringify(e));
+      console.error(e);
       if (e.message === "GraphQL error: You are already a participant of this event") {
         this.error = this.$t(
           "This email is already registered as participant for this event"
         ) as string;
       }
+    } finally {
+      return this.$router.push({
+        name: RouteName.EVENT,
+        params: { uuid: this.event.uuid },
+      });
     }
   }
 }

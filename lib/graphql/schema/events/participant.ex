@@ -43,6 +43,7 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
     )
 
     field(:message, :string, description: "The eventual message the participant left")
+    field(:locale, :string, description: "The participant's locale")
   end
 
   object :paginated_participant_list do
@@ -74,6 +75,7 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
       arg(:actor_id, non_null(:id))
       arg(:email, :string)
       arg(:message, :string)
+      arg(:locale, :string)
 
       resolve(&Participant.actor_join_event/3)
     end

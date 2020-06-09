@@ -21,10 +21,11 @@ defmodule Mobilizon.Web.Email.Participation do
         %Participant{actor: %Actor{user_id: nil, id: actor_id} = _actor} = participation
       ) do
     if actor_id == Config.anonymous_actor_id() do
-      %{email: email} = Map.get(participation, :metadata)
+      %{email: email, locale: locale} = Map.get(participation, :metadata)
+      locale = locale || "en"
 
       email
-      |> participation_updated(participation)
+      |> participation_updated(participation, locale)
       |> Email.Mailer.deliver_later()
     end
 
@@ -37,9 +38,9 @@ defmodule Mobilizon.Web.Email.Participation do
   def send_emails_to_local_user(
         %Participant{actor: %Actor{user_id: user_id} = _actor} = participation
       ) do
-    with %User{} = user <- Users.get_user!(user_id) do
+    with %User{locale: locale} = user <- Users.get_user!(user_id) do
       user
-      |> participation_updated(participation)
+      |> participation_updated(participation, locale)
       |> Email.Mailer.deliver_later()
 
       :ok

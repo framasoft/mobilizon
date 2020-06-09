@@ -24,7 +24,7 @@ defmodule Mobilizon.Events.Participant do
 
   @required_attrs [:url, :role, :event_id, :actor_id]
   @attrs @required_attrs
-  @metadata_attrs [:email, :confirmation_token, :cancellation_token, :message]
+  @metadata_attrs [:email, :confirmation_token, :cancellation_token, :message, :locale]
 
   @timestamps_opts [type: :utc_datetime]
 
@@ -38,6 +38,7 @@ defmodule Mobilizon.Events.Participant do
       field(:confirmation_token, :string)
       field(:cancellation_token, :string)
       field(:message, :string)
+      field(:locale, :string)
     end
 
     belongs_to(:event, Event, primary_key: true)
