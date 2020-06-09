@@ -806,8 +806,8 @@ defmodule Mobilizon.Federation.ActivityPub do
     Logger.debug(inspect(url))
 
     res =
-      with %HTTPoison.Response{status_code: 200, body: body} <-
-             HTTPoison.get!(url, [Accept: "application/activity+json"],
+      with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
+             HTTPoison.get(url, [Accept: "application/activity+json"],
                follow_redirect: true,
                ssl: [{:versions, [:"tlsv1.2"]}]
              ),
