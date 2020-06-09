@@ -226,7 +226,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   defp date_to_string(%DateTime{} = date), do: DateTime.to_iso8601(date)
 
   defp get_online_address(attachments) do
-    Enum.find_value(attachments, [], fn attachment ->
+    Enum.find_value(attachments, fn attachment ->
       case attachment do
         %{
           "type" => "Link",
