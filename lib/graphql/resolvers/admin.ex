@@ -157,7 +157,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
       when is_admin(role) do
     with {:ok, res} <- Admin.save_settings("instance", args) do
       res =
-        res |> Enum.map(fn {key, %Setting{value: value}} -> {key, value} end) |> Enum.into(%{})
+        res
+        |> Enum.map(fn {key, %Setting{value: value}} ->
+          case value do
+            "true" -> {key, true}
+            "false" -> {key, false}
+            value -> {key, value}
+          end
+        end)
+        |> Enum.into(%{})
 
       Config.clear_config_cache()
 

@@ -105,7 +105,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { ADMIN_SETTINGS, SAVE_ADMIN_SETTINGS } from "@/graphql/admin";
-import { IAdminSettings, InstanceTermsType } from "@/types/admin.model";
+import { IAdminSettings, InstanceTermsType } from "../../types/admin.model";
 import RouteName from "../../router/name";
 
 @Component({
