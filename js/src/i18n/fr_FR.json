@@ -609,5 +609,14 @@
   "{actor} reopened {report}": "{actor} a réouvert {report}",
   "{actor} marked {report} as resolved": "{actor} a marqué {report} comme résolu",
   "{actor} added a note on {report}": "{actor} a ajouté une note sur {report}",
-  "{actor} deleted an event named \"{title}\"": "{actor} a supprimé un événement nommé \"{title}\""
+  "{actor} deleted an event named \"{title}\"": "{actor} a supprimé un événement nommé \"{title}\"",
+  "If the direction given by the development team does not suit you, you have the legal right to create your own version of the software, with your own governance choices.": "Si la direction donnée par l’équipe de développement ne vous convient pas, vous avez légalement le droit de créer votre version du logiciel avec vos propres choix de gouvernance.",
+  "change the world, one byte at a time": "changer le monde, un octet à la fois",
+  "Concieved with care for humans": "Conçu avec soin pour les humains",
+  "digital habits of activists": "les usages numériques de militant·es",
+  "Register on this instance": "S'inscrire sur cette instance",
+  "Mobilizon is not developed by a secretive start-up, but by a group of friends who strive to {change_world}. So while we do work slower, we remain attentive and in touch with our users.": "Moblizon n’est pas développé par une start-up inaccessible, mais par un groupe d’ami·e·s qui s’évertuent à {change_world}. Alors, certes, on va moins vite, mais on reste à l’écoute et dans l’échange.",
+  "We asked professional designers to help us develop our vision for Mobilizon. We took time to study the {digital_habits} in order to understand the features they need to gather, organize, and mobilize.": "Nous avons demandé de l’aide à des professionnel·les du design pour concevoir ce que pourrait être Mobilizon. Nous avons pris le temps d’étudier {digital_habits} afin de comprendre les fonctionnalités dont ils et elles ont besoin pour se rassembler, s’organiser, se mobiliser.",
+  "So that, right from its conception, Mobilizon would {fit_needs_uses_people} who are going to use it.": "Afin que Mobilizon corresponde, dès sa conception, {fit_needs_uses_people} des personnes qui sont vouées à l’utiliser.",
+  "fit the needs and uses of the people": "aux besoins et usages"
 }

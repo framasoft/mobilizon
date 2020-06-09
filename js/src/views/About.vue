@@ -5,11 +5,13 @@
         <div class="container">
           <h1 class="title">{{ $t("About Mobilizon") }}</h1>
           <p class="subtitle">
-            {{
-              $t(
-                "A user-friendly, emancipatory and ethical tool for gathering, organising, and mobilising."
-              )
-            }}
+            <span>
+              {{
+                $t(
+                  "A user-friendly, emancipatory and ethical tool for gathering, organising, and mobilising."
+                )
+              }}
+            </span>
           </p>
           <b-button
             icon-left="open-in-new"
@@ -122,15 +124,20 @@
               }}</a>
             </i18n>
             <p>
-              If the direction given by the development team does not suit you, you have the legal
-              right to create your own version of the software, with your own governance choices.
+              {{
+                $t(
+                  "If the direction given by the development team does not suit you, you have the legal right to create your own version of the software, with your own governance choices."
+                )
+              }}
             </p>
-            <p>
-              Mobilizon is not developed by a secretive start-up, but by a group of friends who
-              strive to
-              <a href="https://framasoft.org">change the world, one byte at a time</a>. So while we
-              do work slower, we remain attentive and in touch with our users.
-            </p>
+            <i18n
+              tag="p"
+              path="Mobilizon is not developed by a secretive start-up, but by a group of friends who strive to {change_world}. So while we do work slower, we remain attentive and in touch with our users."
+            >
+              <a slot="change_world" href="https://framasoft.org">{{
+                $t("change the world, one byte at a time")
+              }}</a>
+            </i18n>
           </div>
           <div class="column has-text-right-desktop has-text-centered-mobile">
             <img src="img/about/software-to-the-people-mobilizon.png" width="300" alt="" />
@@ -140,17 +147,19 @@
       <section>
         <div class="columns">
           <div class="column has-text-right-desktop">
-            <h2 class="title">Concieved with care for humans</h2>
-            <p>
-              We asked professional designers to help us develop our vision for Mobilizon. We took
-              time to study the
-              <b>digital habits of activists</b> in order to understand the features they need to
-              gather, organize, and mobilize.
-            </p>
-            <p>
-              So that, right from its conception, Mobilizon would
-              <b>fit the needs and uses of the people</b> who are going to use it.
-            </p>
+            <h2 class="title">{{ $t("Concieved with care for humans") }}</h2>
+            <i18n
+              tag="p"
+              path="We asked professional designers to help us develop our vision for Mobilizon. We took time to study the {digital_habits} in order to understand the features they need to gather, organize, and mobilize."
+            >
+              <b slot="digital_habits">{{ $t("digital habits of activists") }}</b>
+            </i18n>
+            <i18n
+              tag="p"
+              path="So that, right from its conception, Mobilizon would {fit_needs_uses_people} who are going to use it."
+            >
+              <b slot="fit_needs_uses_people">{{ $t("fit the needs and uses of the people") }}</b>
+            </i18n>
           </div>
           <div class="column has-text-left-desktop has-text-centered-mobile">
             <img src="img/about/concieved-mobilizon.png" width="300" alt="" />
@@ -164,7 +173,7 @@
         <div class="container has-text-centered">
           <div class="columns">
             <div class="column">
-              <h2 class="title">Register on this instance</h2>
+              <h2 class="title">{{ $t("Register on this instance") }}</h2>
               <b-button
                 type="is-secondary"
                 size="is-large"
@@ -205,7 +214,16 @@ export default class About extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/variables.scss";
+@import "../variables.scss";
+
+.hero.is-primary .subtitle {
+  padding: 1rem;
+  display: block;
+
+  span {
+    color: lighten($primary, 10%);
+  }
+}
 
 .hero.register {
   background: lighten($primary, 20%);

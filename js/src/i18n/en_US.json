@@ -601,5 +601,14 @@
   "{actor} reopened {report}": "{actor} reopened {report}",
   "{actor} marked {report} as resolved": "{actor} marked {report} as resolved",
   "{actor} added a note on {report}": "{actor} added a note on {report}",
-  "{actor} deleted an event named \"{title}\"": "{actor} deleted an event named \"{title}\""
+  "{actor} deleted an event named \"{title}\"": "{actor} deleted an event named \"{title}\"",
+  "If the direction given by the development team does not suit you, you have the legal right to create your own version of the software, with your own governance choices.": "If the direction given by the development team does not suit you, you have the legal right to create your own version of the software, with your own governance choices.",
+  "change the world, one byte at a time": "change the world, one byte at a time",
+  "Concieved with care for humans": "Concieved with care for humans",
+  "digital habits of activists": "digital habits of activists",
+  "Register on this instance": "Register on this instance",
+  "Mobilizon is not developed by a secretive start-up, but by a group of friends who strive to {change_world}. So while we do work slower, we remain attentive and in touch with our users.": "Mobilizon is not developed by a secretive start-up, but by a group of friends who strive to {change_world}. So while we do work slower, we remain attentive and in touch with our users.",
+  "We asked professional designers to help us develop our vision for Mobilizon. We took time to study the {digital_habits} in order to understand the features they need to gather, organize, and mobilize.": "We asked professional designers to help us develop our vision for Mobilizon. We took time to study the {digital_habits} in order to understand the features they need to gather, organize, and mobilize.",
+  "So that, right from its conception, Mobilizon would {fit_needs_uses_people} who are going to use it.": "So that, right from its conception, Mobilizon would {fit_needs_uses_people} who are going to use it.",
+  "fit the needs and uses of the people": "fit the needs and uses of the people"
 }
