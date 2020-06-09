@@ -409,12 +409,13 @@ export const EDIT_EVENT = gql`
 `;
 
 export const JOIN_EVENT = gql`
-  mutation JoinEvent($eventId: ID!, $actorId: ID!, $email: String, $message: String) {
+  mutation JoinEvent($eventId: ID!, $actorId: ID!, $email: String, $message: String, $locale: String) {
     joinEvent(
       eventId: $eventId,
       actorId: $actorId,
       email: $email,
-      message: $message
+      message: $message,
+      locale: $locale
     ) {
         ${participantQuery}
     }

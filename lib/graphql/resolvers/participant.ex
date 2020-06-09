@@ -69,7 +69,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
            Config.anonymous_participation_email_confirmation_required?() do
         args
         |> Map.get(:email)
-        |> Email.Participation.anonymous_participation_confirmation(participant)
+        |> Email.Participation.anonymous_participation_confirmation(
+          participant,
+          Map.get(args, :locale, "en")
+        )
         |> Email.Mailer.deliver_later()
       end
 
