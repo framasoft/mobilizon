@@ -60,7 +60,7 @@ defmodule Mobilizon.Web.PageView do
   end
 
   @spec inject_tags(Conn.t(), List.t()) :: {:safe, String.t()}
-  defp inject_tags(conn, tags) do
+  def inject_tags(conn, tags) do
     with {:ok, index_content} <- File.read(index_file_path()) do
       locale = get_locale(conn)
 

@@ -3,11 +3,12 @@ defmodule Mobilizon.Web.ErrorView do
   View for errors
   """
   use Mobilizon.Web, :view
+  alias Mobilizon.Service.Metadata.Instance
+  alias Mobilizon.Web.PageView
 
-  def render("404.html", _assigns) do
-    with {:ok, index_content} <- File.read(index_file_path()) do
-      {:safe, index_content}
-    end
+  def render("404.html", %{conn: conn}) do
+    tags = Instance.build_tags()
+    PageView.inject_tags(conn, tags)
   end
 
   def render("404.json", _assigns) do
@@ -47,9 +48,5 @@ defmodule Mobilizon.Web.ErrorView do
     require Logger
     Logger.warn("Template #{inspect(template)} not found")
     render("500.html", assigns)
-  end
-
-  defp index_file_path do
-    Path.join(Application.app_dir(:mobilizon, "priv/static"), "index.html")
   end
 end
