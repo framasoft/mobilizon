@@ -1,48 +1,74 @@
 <template>
   <section>
     <ul v-if="actionLogs.length > 0">
-      <li v-for="log in actionLogs">
+      <li v-for="log in actionLogs" :key="log.id">
         <div class="box">
           <img class="image" :src="log.actor.avatar.url" v-if="log.actor.avatar" />
-          <span>@{{ log.actor.preferredUsername }}</span>
-          <span v-if="log.action === ActionLogAction.REPORT_UPDATE_CLOSED">
-            closed
-            <router-link :to="{ name: RouteName.REPORT, params: { reportId: log.object.id } }"
-              >report #{{ log.object.id }}</router-link
-            >
-          </span>
-          <span v-else-if="log.action === ActionLogAction.REPORT_UPDATE_OPENED">
-            reopened
-            <router-link :to="{ name: RouteName.REPORT, params: { reportId: log.object.id } }"
-              >report #{{ log.object.id }}</router-link
-            >
-          </span>
-          <span v-else-if="log.action === ActionLogAction.REPORT_UPDATE_RESOLVED">
-            marked
-            <router-link :to="{ name: RouteName.REPORT, params: { reportId: log.object.id } }"
-              >report #{{ log.object.id }}</router-link
-            >as resolved
-          </span>
-          <span v-else-if="log.action === ActionLogAction.NOTE_CREATION">
-            added a note on
+          <i18n
+            v-if="log.action === ActionLogAction.REPORT_UPDATE_CLOSED"
+            tag="span"
+            path="{actor} closed {report}"
+          >
+            <span slot="actor">@{{ log.actor.preferredUsername }}</span>
+            <router-link
+              :to="{ name: RouteName.REPORT, params: { reportId: log.object.id } }"
+              slot="report"
+              >{{ $t("report #{report_number}", { report_number: log.object.id }) }}
+            </router-link>
+          </i18n>
+          <i18n
+            v-else-if="log.action === ActionLogAction.REPORT_UPDATE_OPENED"
+            tag="span"
+            path="{actor} reopened {report}"
+          >
+            <span slot="actor">@{{ log.actor.preferredUsername }}</span>
+            <router-link
+              :to="{ name: RouteName.REPORT, params: { reportId: log.object.id } }"
+              slot="report"
+              >{{ $t("report #{report_number}", { report_number: log.object.id }) }}
+            </router-link>
+          </i18n>
+          <i18n
+            v-else-if="log.action === ActionLogAction.REPORT_UPDATE_RESOLVED"
+            tag="span"
+            path="{actor} marked {report} as resolved"
+          >
+            <span slot="actor">@{{ log.actor.preferredUsername }}</span>
+            <router-link
+              :to="{ name: RouteName.REPORT, params: { reportId: log.object.id } }"
+              slot="report"
+              >{{ $t("report #{report_number}", { report_number: log.object.id }) }}
+            </router-link>
+          </i18n>
+          <i18n
+            v-else-if="log.action === ActionLogAction.NOTE_CREATION"
+            tag="span"
+            path="{actor} added a note on {report}"
+          >
+            <span slot="actor">@{{ log.actor.preferredUsername }}</span>
             <router-link
               v-if="log.object.report"
               :to="{ name: RouteName.REPORT, params: { reportId: log.object.report.id } }"
-              >report #{{ log.object.report.id }}</router-link
-            >
-            <span v-else>a non-existent report</span>
-          </span>
-          <span v-else-if="log.action === ActionLogAction.EVENT_DELETION"
-            >deleted an event named « {{ log.object.title }} »</span
+              slot="report"
+              >{{ $t("report #{report_number}", { report_number: log.object.report.id }) }}
+            </router-link>
+            <span v-else slot="report">{{ $t("a non-existent report") }}</span>
+          </i18n>
+          <i18n
+            v-else-if="log.action === ActionLogAction.EVENT_DELETION"
+            tag="span"
+            path='{actor} deleted an event named "{title}"'
           >
+            <span slot="actor">@{{ log.actor.preferredUsername }}</span>
+            <span slot="title">{{ log.object.title }}</span>
+          </i18n>
           <br />
           <small>{{ log.insertedAt | formatDateTimeString }}</small>
         </div>
-        <!--                <pre>{{ log }}</pre>-->
       </li>
     </ul>
     <div v-else>
-      <b-message type="is-info">{{ $t('No moderation logs yet') }}</b-message>
+      <b-message type="is-info">{{ $t("No moderation logs yet") }}</b-message>
     </div>
   </section>
 </template>
@@ -73,7 +99,7 @@ export default class ReportList extends Vue {
 </script>
 <style lang="scss" scoped>
 img.image {
-  display: inline;
+  display: inline-block;
   height: 1.5em;
   vertical-align: text-bottom;
 }
