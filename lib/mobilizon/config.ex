@@ -162,6 +162,8 @@ defmodule Mobilizon.Config do
     end
   end
 
+  def instance_group_feature_enabled?, do: Application.get_env(:mobilizon, :instance)[:groups]
+
   def anonymous_actor_id, do: get_cached_value(:anonymous_actor_id)
   def relay_actor_id, do: get_cached_value(:relay_actor_id)
 

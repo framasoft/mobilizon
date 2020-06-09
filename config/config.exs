@@ -21,8 +21,9 @@ config :mobilizon, :instance,
   demo: false,
   repository: Mix.Project.config()[:source_url],
   allow_relay: true,
-  # Federation is to be activated with Mobilizon 1.0.0-beta.2
   federating: true,
+  # Groups are to be activated with Mobilizon 1.0.0
+  groups: false,
   remote_limit: 100_000,
   upload_limit: 10_000_000,
   avatar_upload_limit: 2_000_000,

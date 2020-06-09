@@ -51,7 +51,7 @@
               />
             </b-field>
           </div>
-          <div class="column">
+          <div class="column" v-if="config && config.features.groups">
             <b-field :label="$t('Group')" v-if="event.organizerActor">
               <group-picker-wrapper v-model="event.attributedTo" :identity="event.organizerActor" />
             </b-field>

@@ -12,9 +12,12 @@
       <b-navbar-item tag="router-link" :to="{ name: RouteName.MY_EVENTS }">{{
         $t("My events")
       }}</b-navbar-item>
-      <b-navbar-item tag="router-link" :to="{ name: RouteName.MY_GROUPS }">{{
-        $t("My groups")
-      }}</b-navbar-item>
+      <b-navbar-item
+        tag="router-link"
+        :to="{ name: RouteName.MY_GROUPS }"
+        v-if="config && config.features.groups"
+        >{{ $t("My groups") }}</b-navbar-item
+      >
       <b-navbar-item tag="span">
         <b-button tag="router-link" :to="{ name: RouteName.CREATE_EVENT }" type="is-success">{{
           $t("Create")

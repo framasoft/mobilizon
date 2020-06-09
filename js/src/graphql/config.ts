@@ -56,6 +56,9 @@ export const CONFIG = gql`
         endpoint
         software
       }
+      features {
+        groups
+      }
     }
   }
 `;

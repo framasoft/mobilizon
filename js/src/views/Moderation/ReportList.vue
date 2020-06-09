@@ -12,7 +12,7 @@
       }}</b-radio-button>
     </b-field>
     <ul v-if="reports.length > 0">
-      <li v-for="report in reports">
+      <li v-for="report in reports" :key="report.id">
         <router-link :to="{ name: RouteName.REPORT, params: { reportId: report.id } }">
           <report-card :report="report" />
         </router-link>
