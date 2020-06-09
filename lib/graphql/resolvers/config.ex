@@ -3,8 +3,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
   Handles the config-related GraphQL calls.
   """
 
-  alias Geolix.Adapter.MMDB2.Record.{Country, Location}
-
   alias Mobilizon.Config
 
   @doc """
@@ -15,13 +13,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
 
     country_code =
       case Map.get(geolix, :city) do
-        %{country: %Country{iso_code: country_code}} -> String.downcase(country_code)
+        %{country: %{iso_code: country_code}} -> String.downcase(country_code)
         _ -> nil
       end
 
     location =
       case Map.get(geolix, :city) do
-        %{location: %Location{} = location} -> Map.from_struct(location)
+        %{location: %{} = location} -> location
         _ -> nil
       end
 

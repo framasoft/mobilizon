@@ -42,7 +42,7 @@ export const CONFIG = gql`
       location {
         latitude
         longitude
-        accuracyRadius
+        # accuracyRadius
       }
       maps {
         tiles {

@@ -12,7 +12,7 @@ export interface IConfig {
   location: {
     latitude: number;
     longitude: number;
-    accuracyRadius: number;
+    // accuracyRadius: number;
   };
   anonymous: {
     participation: {
