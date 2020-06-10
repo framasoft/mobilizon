@@ -71,7 +71,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
           Common.get_option(
             options,
             :domain,
-            "What domain will your instance use? (e.g framameet.org)"
+            "What domain will your instance use? (e.g mobilizon.org)"
           ),
           ":"
         ) ++ [443]
@@ -80,10 +80,16 @@ defmodule Mix.Tasks.Mobilizon.Instance do
         Common.get_option(
           options,
           :name,
-          "What is the name of your instance? (e.g. Framameet)"
+          "What is the name of your instance? (e.g. Mobilizon)"
         )
 
-      email = Common.get_option(options, :admin_email, "What is your admin email address?")
+      email =
+        Common.get_option(
+          options,
+          :admin_email,
+          "What's the address email will be send with?",
+          "noreply@#{domain}"
+        )
 
       dbhost =
         Common.get_option(options, :dbhost, "What is the hostname of your database?", "localhost")
@@ -121,14 +127,6 @@ defmodule Mix.Tasks.Mobilizon.Instance do
           4000
         )
 
-      listen_ip =
-        Common.get_option(
-          options,
-          :listen_ip,
-          "What ip will the app listen to (leave it if you are using the default setup with nginx)?",
-          "127.0.0.1"
-        )
-
       instance_secret = :crypto.strong_rand_bytes(64) |> Base.encode64() |> binary_part(0, 64)
       auth_secret = :crypto.strong_rand_bytes(64) |> Base.encode64() |> binary_part(0, 64)
 
@@ -149,7 +147,6 @@ defmodule Mix.Tasks.Mobilizon.Instance do
           version: Mobilizon.Mixfile.project() |> Keyword.get(:version),
           instance_secret: instance_secret,
           auth_secret: auth_secret,
-          listen_ip: listen_ip,
           listen_port: listen_port
         )
 
