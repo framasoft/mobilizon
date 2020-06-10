@@ -19,7 +19,7 @@
           <span
             v-html="
               $t(
-                'Mobilizon is under development, we will add new features to this site during regular updates, until the release of <b>version 1 of the software in the first half of 2020</b>.'
+                'Mobilizon is under development, we will add new features to this site during regular updates, until the release of <b>version 1 of the software in the fall of 2020</b>.'
               )
             "
           />
@@ -142,8 +142,6 @@ body {
     button.delete {
       background: #4a4a4a;
     }
-
-    color: #111;
   }
 }
 </style>
