@@ -230,12 +230,12 @@ msgid "You requested to participate in event %{title}."
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/participation.ex:91
+#: lib/web/email/participation.ex:92
 msgid "Your participation to event %{title} has been approved"
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/participation.ex:70
+#: lib/web/email/participation.ex:71
 msgid "Your participation to event %{title} has been rejected"
 msgstr ""
 
@@ -307,11 +307,6 @@ msgid "In the meantime, please consider that the software is not (yet) finished.
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:90
-msgid "Mobilizon is under development, we will add new features to this site during regular updates, until the release of %{b_start}version 1 of the software in the first half of 2020%{b_end}."
-msgstr ""
-
-#, elixir-format
 #: lib/web/templates/email/email.html.eex:87
 #: lib/web/templates/email/email.text.eex:6
 msgid "This is a demonstration site to test the beta version of Mobilizon."
@@ -356,11 +351,6 @@ msgid "In the meantime, please consider that the software is not (yet) finished.
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/email.text.eex:9
-msgid "Mobilizon is under development, we will add new features to this site during regular updates, until the release of version 1 of the software in the first half of 2020."
-msgstr ""
-
-#, elixir-format
 #: lib/web/templates/email/email.text.eex:7
 msgid "Please do not use it in any real way"
 msgstr ""
@@ -371,7 +361,7 @@ msgid "Confirm my participation"
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/participation.ex:113
+#: lib/web/email/participation.ex:114
 msgid "Confirm your participation to event %{title}"
 msgstr ""
 
@@ -822,4 +812,14 @@ msgstr ""
 #: lib/web/templates/email/pending_participation_notification.html.eex:64
 #: lib/web/templates/email/pending_participation_notification.text.eex:8
 msgid "You receive this email because you chose to get notifications for pending participations to your events. You may disable or change the configuration for these notification in your Mobilizon user settings."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/email.html.eex:90
+msgid "Mobilizon is under development, we will add new features to this site during regular updates, until the release of %{b_start}version 1 of the software in the fall of 2020%{b_end}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/email.text.eex:9
+msgid "Mobilizon is under development, we will add new features to this site during regular updates, until the release of version 1 of the software in the fall of 2020."
 msgstr ""
