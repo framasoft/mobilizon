@@ -3,8 +3,8 @@
 import Config
 
 config :mobilizon, Mobilizon.Web.Endpoint,
-   url: [host: "<%= instance_domain %>", scheme: "https", port: <%= instance_port %>],
-   http: [ip: {<%= String.replace(listen_ip, ".", ", ") %>}, port: <%= listen_port %>],
+   url: [host: "<%= instance_domain %>"],
+   http: [port: <%= listen_port %>],
    secret_key_base: "<%= instance_secret %>"
 
 config :mobilizon, Mobilizon.Web.Auth.Guardian,
@@ -18,8 +18,8 @@ config :mobilizon, :instance,
   demo: false,
   allow_relay: true,
   federating: true,
-  email_from: "tcit@tcit.fr",
-  email_reply_to: "tcit@tcit.fr"
+  email_from: "<%= instance_email %>",
+  email_reply_to: "<%= instance_email %>"
 
 config :mobilizon, Mobilizon.Storage.Repo,
   adapter: Ecto.Adapters.Postgres,
