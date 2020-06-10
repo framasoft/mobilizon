@@ -37,9 +37,10 @@ import { ITag } from "../../types/tag.model";
       },
       set(tagStrings) {
         const tagEntities = tagStrings.map((tag: string | ITag) => {
-          if (!(tag instanceof String)) {
+          if (typeof tag !== "string") {
             return tag;
           }
+          // @ts-ignore
           return { title: tag, slug: tag } as ITag;
         });
         this.$emit("input", tagEntities);
