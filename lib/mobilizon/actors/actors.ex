@@ -210,12 +210,23 @@ defmodule Mobilizon.Actors do
   Conflicts on actor's URL/AP ID, replaces keys, avatar and banner, name and summary.
   """
   @spec upsert_actor(map, boolean) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
-  def upsert_actor(%{keys: keys, name: name, summary: summary} = data, preload \\ false) do
+  def upsert_actor(
+        %{keys: keys, name: name, summary: summary, avatar: avatar, banner: banner} = data,
+        preload \\ false
+      ) do
     insert =
       data
       |> Actor.remote_actor_creation_changeset()
       |> Repo.insert(
-        on_conflict: [set: [keys: keys, name: name, summary: summary]],
+        on_conflict: [
+          set: [
+            keys: keys,
+            name: name,
+            summary: summary,
+            avatar: transform_media_file(avatar),
+            banner: transform_media_file(banner)
+          ]
+        ],
         conflict_target: [:url]
       )
 
@@ -229,6 +240,18 @@ defmodule Mobilizon.Actors do
         Logger.debug(inspect(error))
 
         {:error, error}
+    end
+  end
+
+  defp transform_media_file(nil), do: nil
+
+  defp transform_media_file(file) do
+    file = for({key, val} <- file, into: %{}, do: {String.to_atom(key), val})
+
+    if is_nil(file) do
+      nil
+    else
+      struct(Mobilizon.Media.File, file)
     end
   end
 
