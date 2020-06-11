@@ -24,7 +24,7 @@
               $t("We'll use your timezone settings to send a recap of the morning of the event.")
             }}
           </p>
-          <span v-if="loggedUser.settings.timezone">{{
+          <span v-if="loggedUser.settings && loggedUser.settings.timezone">{{
             $t("Your timezone is currently set to {timezone}.", {
               timezone: loggedUser.settings.timezone,
             })
@@ -113,6 +113,16 @@ export default class Notifications extends Vue {
       [INotificationPendingParticipationEnum.ONE_HOUR]: this.$t("Every hour"),
       [INotificationPendingParticipationEnum.ONE_DAY]: this.$t("Every day"),
     };
+  }
+
+  @Watch("loggedUser")
+  setSettings() {
+    if (this.loggedUser && this.loggedUser.settings) {
+      this.notificationOnDay = this.loggedUser.settings.notificationOnDay;
+      this.notificationEachWeek = this.loggedUser.settings.notificationEachWeek;
+      this.notificationBeforeEvent = this.loggedUser.settings.notificationBeforeEvent;
+      this.notificationPendingParticipation = this.loggedUser.settings.notificationPendingParticipation;
+    }
   }
 
   async updateSetting(variables: object) {

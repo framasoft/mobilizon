@@ -58,11 +58,10 @@ import Logo from "./components/Logo.vue";
 import { initializeCurrentActor } from "./utils/auth";
 import { CONFIG } from "./graphql/config";
 import { IConfig } from "./types/config.model";
+import { ICurrentUser } from "./types/current-user.model";
 @Component({
   apollo: {
-    currentUser: {
-      query: CURRENT_USER_CLIENT,
-    },
+    currentUser: CURRENT_USER_CLIENT,
     config: CONFIG,
   },
   components: {
@@ -73,6 +72,7 @@ import { IConfig } from "./types/config.model";
 })
 export default class App extends Vue {
   config!: IConfig;
+  currentUser!: ICurrentUser;
 
   async created() {
     if (await this.initializeCurrentUser()) {
