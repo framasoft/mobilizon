@@ -28,8 +28,8 @@ export enum INotificationPendingParticipationEnum {
 
 export interface IUserSettings {
   timezone: string;
-  notificationOnDay: string;
-  notificationEachWeek: string;
-  notificationBeforeEvent: string;
+  notificationOnDay: boolean;
+  notificationEachWeek: boolean;
+  notificationBeforeEvent: boolean;
   notificationPendingParticipation: INotificationPendingParticipationEnum;
 }

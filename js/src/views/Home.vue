@@ -30,7 +30,7 @@
         </div>
       </div>
     </section>
-    <div class="container section" v-if="config">
+    <div class="container section" v-if="config && loggedUser && loggedUser.settings">
       <section v-if="currentActor.id">
         <b-message type="is-info" v-if="welcomeBack">{{
           $t("Welcome back {username}!", { username: currentActor.displayName() })
@@ -102,6 +102,7 @@
         <b-message v-else type="is-danger">{{ $t("No events found") }}</b-message>
       </section>
     </div>
+    <settings-onboard v-else-if="config && loggedUser && loggedUser.settings == undefined" />
   </div>
 </template>
 
@@ -114,7 +115,7 @@ import EventCard from "../components/Event/EventCard.vue";
 import { CURRENT_ACTOR_CLIENT, LOGGED_USER_PARTICIPATIONS } from "../graphql/actor";
 import { IPerson, Person } from "../types/actor";
 import { ICurrentUser } from "../types/current-user.model";
-import { CURRENT_USER_CLIENT } from "../graphql/user";
+import { CURRENT_USER_CLIENT, USER_SETTINGS } from "../graphql/user";
 import RouteName from "../router/name";
 import {
   EventModel,
@@ -138,12 +139,12 @@ import Subtitle from "../components/Utils/Subtitle.vue";
       query: CURRENT_ACTOR_CLIENT,
       update: (data) => new Person(data.currentActor),
     },
-    currentUser: {
-      query: CURRENT_USER_CLIENT,
+    currentUser: CURRENT_USER_CLIENT,
+    loggedUser: {
+      query: USER_SETTINGS,
+      fetchPolicy: "no-cache",
     },
-    config: {
-      query: CONFIG,
-    },
+    config: CONFIG,
     currentUserParticipations: {
       query: LOGGED_USER_PARTICIPATIONS,
       variables() {
@@ -167,6 +168,7 @@ import Subtitle from "../components/Utils/Subtitle.vue";
     DateComponent,
     EventListCard,
     EventCard,
+    "settings-onboard": () => import("./User/SettingsOnboard.vue"),
   },
   metaInfo() {
     return {
@@ -188,6 +190,8 @@ export default class Home extends Vue {
   country = { name: null };
 
   currentUser!: ICurrentUser;
+
+  loggedUser!: ICurrentUser;
 
   currentActor!: IPerson;
 
