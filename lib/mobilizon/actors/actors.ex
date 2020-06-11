@@ -73,9 +73,9 @@ defmodule Mobilizon.Actors do
   Gets an actor with preloaded relations.
   """
   @spec get_actor_with_preload(integer | String.t()) :: Actor.t() | nil
-  def get_actor_with_preload(id) do
+  def get_actor_with_preload(id, include_suspended \\ false) do
     id
-    |> actor_with_preload_query()
+    |> actor_with_preload_query(include_suspended)
     |> Repo.one()
   end
 
@@ -87,6 +87,14 @@ defmodule Mobilizon.Actors do
     id
     |> actor_with_preload_query()
     |> filter_local()
+    |> Repo.one()
+  end
+
+  @spec get_remote_actor_with_preload(integer | String.t(), boolean()) :: Actor.t() | nil
+  def get_remote_actor_with_preload(id, include_suspended \\ false) do
+    id
+    |> actor_with_preload_query(include_suspended)
+    |> filter_external()
     |> Repo.one()
   end
 
@@ -255,27 +263,41 @@ defmodule Mobilizon.Actors do
     end
   end
 
-  def delete_actor(%Actor{} = actor) do
-    Workers.Background.enqueue("delete_actor", %{"actor_id" => actor.id})
+  @delete_actor_default_options [reserve_username: true]
+
+  def delete_actor(%Actor{} = actor, options \\ @delete_actor_default_options) do
+    delete_actor_options = Keyword.merge(@delete_actor_default_options, options)
+
+    Workers.Background.enqueue("delete_actor", %{
+      "actor_id" => actor.id,
+      "reserve_username" => Keyword.get(delete_actor_options, :reserve_username, true)
+    })
   end
 
   @doc """
   Deletes an actor.
   """
   @spec perform(atom(), Actor.t()) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
-  def perform(:delete_actor, %Actor{} = actor) do
+  def perform(:delete_actor, %Actor{} = actor, options \\ @delete_actor_default_options) do
     actor = Repo.preload(actor, @actor_preloads)
 
-    transaction =
+    delete_actor_options = Keyword.merge(@delete_actor_default_options, options)
+
+    multi =
       Multi.new()
       |> Multi.run(:delete_organized_events, fn _, _ -> delete_actor_organized_events(actor) end)
       |> Multi.run(:empty_comments, fn _, _ -> delete_actor_empty_comments(actor) end)
       |> Multi.run(:remove_banner, fn _, _ -> remove_banner(actor) end)
       |> Multi.run(:remove_avatar, fn _, _ -> remove_avatar(actor) end)
-      |> Multi.update(:actor, Actor.delete_changeset(actor))
-      |> Repo.transaction()
 
-    case transaction do
+    multi =
+      if Keyword.get(delete_actor_options, :reserve_username, true) do
+        Multi.update(multi, :actor, Actor.delete_changeset(actor))
+      else
+        Multi.delete(multi, :actor, actor)
+      end
+
+    case Repo.transaction(multi) do
       {:ok, %{actor: %Actor{} = actor}} ->
         {:ok, true} = Cachex.del(:activity_pub, "actor_#{actor.preferred_username}")
         {:ok, actor}
@@ -295,8 +317,57 @@ defmodule Mobilizon.Actors do
   @doc """
   Returns the list of actors.
   """
-  @spec list_actors :: [Actor.t()]
-  def list_actors, do: Repo.all(Actor)
+  @spec list_actors(String.t(), String.t(), boolean, boolean, integer, integer) :: Page.t()
+  def list_actors(
+        type \\ :Person,
+        preferred_username \\ "",
+        name \\ "",
+        domain \\ "",
+        local \\ true,
+        suspended \\ false,
+        page \\ nil,
+        limit \\ nil
+      )
+
+  def list_actors(
+        :Person,
+        preferred_username,
+        name,
+        domain,
+        local,
+        suspended,
+        page,
+        limit
+      ) do
+    person_query()
+    |> filter_suspended(suspended)
+    |> filter_preferred_username(preferred_username)
+    |> filter_name(name)
+    |> filter_domain(domain)
+    |> filter_remote(local)
+    |> Page.build_page(page, limit)
+  end
+
+  defp filter_preferred_username(query, ""), do: query
+
+  defp filter_preferred_username(query, preferred_username),
+    do: where(query, [a], ilike(a.preferred_username, ^"%#{preferred_username}%"))
+
+  defp filter_name(query, ""), do: query
+
+  defp filter_name(query, name),
+    do: where(query, [a], ilike(a.name, ^"%#{name}%"))
+
+  defp filter_domain(query, ""), do: query
+
+  defp filter_domain(query, domain),
+    do: where(query, [a], ilike(a.domain, ^"%#{domain}%"))
+
+  defp filter_remote(query, true), do: filter_local(query)
+  defp filter_remote(query, false), do: filter_external(query)
+
+  defp filter_suspended(query, true), do: where(query, [a], a.suspended)
+  defp filter_suspended(query, false), do: where(query, [a], not a.suspended)
 
   @doc """
   Returns the list of local actors by their username.
@@ -945,13 +1016,19 @@ defmodule Mobilizon.Actors do
     changeset
   end
 
-  @spec actor_with_preload_query(integer | String.t()) :: Ecto.Query.t()
-  defp actor_with_preload_query(actor_id) do
-    from(
-      a in Actor,
-      where: a.id == ^actor_id and not a.suspended,
-      preload: [:organized_events, :followers, :followings]
-    )
+  @spec actor_with_preload_query(integer | String.t(), boolean()) :: Ecto.Query.t()
+  defp actor_with_preload_query(actor_id, include_suspended \\ false)
+
+  defp actor_with_preload_query(actor_id, false) do
+    actor_id
+    |> actor_with_preload_query(true)
+    |> where([a], not a.suspended)
+  end
+
+  defp actor_with_preload_query(actor_id, true) do
+    Actor
+    |> where([a], a.id == ^actor_id)
+    |> preload([a], [:organized_events, :followers, :followings])
   end
 
   @spec actor_by_username_query(String.t()) :: Ecto.Query.t()
@@ -998,6 +1075,11 @@ defmodule Mobilizon.Actors do
           ^username
         )
     )
+  end
+
+  @spec person_query :: Ecto.Query.t()
+  defp person_query do
+    from(a in Actor, where: a.type == ^:Person)
   end
 
   @spec group_query :: Ecto.Query.t()

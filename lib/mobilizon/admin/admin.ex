@@ -16,7 +16,9 @@ defmodule Mobilizon.Admin do
   defenum(ActionLogAction, [
     "update",
     "create",
-    "delete"
+    "delete",
+    "suspend",
+    "unsuspend"
   ])
 
   alias Ecto.Multi

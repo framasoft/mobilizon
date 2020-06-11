@@ -16,15 +16,17 @@
           </div>
           <div class="tile is-parent is-vertical">
             <article class="tile is-child box">
-              <p class="dashboard-number">{{ dashboard.numberOfUsers }}</p>
-              <p>{{ $t("Users") }}</p>
+              <router-link :to="{ name: RouteName.USERS }">
+                <p class="dashboard-number">{{ dashboard.numberOfUsers }}</p>
+                <p>{{ $t("Users") }}</p>
+              </router-link>
             </article>
-            <router-link :to="{ name: RouteName.REPORTS }">
-              <article class="tile is-child box">
+            <article class="tile is-child box">
+              <router-link :to="{ name: RouteName.REPORTS }">
                 <p class="dashboard-number">{{ dashboard.numberOfReports }}</p>
                 <p>{{ $t("Opened reports") }}</p>
-              </article>
-            </router-link>
+              </router-link>
+            </article>
           </div>
         </div>
         <div class="tile is-parent" v-if="dashboard.lastPublicEventPublished">
@@ -79,5 +81,11 @@ export default class Dashboard extends Vue {
   font-size: 40px;
   font-weight: 700;
   line-height: 1.125;
+}
+
+article.tile {
+  a {
+    color: #4a4a4a;
+  }
 }
 </style>

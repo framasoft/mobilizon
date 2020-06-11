@@ -10,6 +10,7 @@ defmodule Mobilizon.Service.Export.Feed do
   alias Mobilizon.{Actors, Events, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.{Event, FeedToken}
+  alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
 
   alias Mobilizon.Web.{Endpoint, MediaProxy}
@@ -148,12 +149,12 @@ defmodule Mobilizon.Service.Export.Feed do
   end
 
   defp fetch_identity_participations(%Actor{} = actor) do
-    with events <- Events.list_event_participations_for_actor(actor) do
-      events
+    with %Page{} = page <- Events.list_event_participations_for_actor(actor) do
+      page
     end
   end
 
-  defp participations_to_events(participations) do
+  defp participations_to_events(%Page{elements: participations}) do
     participations
     |> Enum.map(& &1.event_id)
     |> Enum.map(&Events.get_event_with_preload!/1)

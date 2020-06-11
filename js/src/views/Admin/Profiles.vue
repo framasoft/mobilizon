@@ -1,0 +1,138 @@
+<template>
+  <div v-if="persons">
+    <b-switch v-model="local">{{ $t("Local") }}</b-switch>
+    <b-switch v-model="suspended">{{ $t("Suspended") }}</b-switch>
+    <b-table
+      :data="persons.elements"
+      :loading="$apollo.queries.persons.loading"
+      paginated
+      backend-pagination
+      backend-filtering
+      :total="persons.total"
+      :per-page="PROFILES_PER_PAGE"
+      @page-change="onPageChange"
+      @filters-change="onFiltersChange"
+    >
+      <template slot-scope="props">
+        <b-table-column field="preferredUsername" :label="$t('Username')" searchable>
+          <template slot="searchable" slot-scope="props">
+            <b-input
+              v-model="props.filters.preferredUsername"
+              placeholder="Search..."
+              icon="magnify"
+              size="is-small"
+            />
+          </template>
+          <router-link :to="{ name: RouteName.ADMIN_PROFILE, params: { id: props.row.id } }">
+            <article class="media">
+              <figure class="media-left" v-if="props.row.avatar">
+                <p class="image is-48x48">
+                  <img :src="props.row.avatar.url" />
+                </p>
+              </figure>
+              <div class="media-content">
+                <div class="content">
+                  <strong v-if="props.row.name">{{ props.row.name }}</strong
+                  ><br v-if="props.row.name" />
+                  <small>@{{ props.row.preferredUsername }}</small>
+                </div>
+              </div>
+            </article>
+          </router-link>
+        </b-table-column>
+
+        <b-table-column field="domain" :label="$t('Domain')" searchable>
+          <template slot="searchable" slot-scope="props">
+            <b-input
+              v-model="props.filters.domain"
+              placeholder="Search..."
+              icon="magnify"
+              size="is-small"
+            />
+          </template>
+          {{ props.row.domain }}
+        </b-table-column>
+      </template>
+      <template slot="empty">
+        <section class="section">
+          <div class="content has-text-grey has-text-centered">
+            <p>{{ $t("No profile matches the filters") }}</p>
+          </div>
+        </section>
+      </template>
+    </b-table>
+  </div>
+</template>
+<script lang="ts">
+import { Component, Vue, Watch } from "vue-property-decorator";
+import { LIST_PROFILES } from "../../graphql/actor";
+import RouteName from "../../router/name";
+
+const PROFILES_PER_PAGE = 10;
+
+@Component({
+  apollo: {
+    persons: {
+      query: LIST_PROFILES,
+      variables() {
+        return {
+          preferredUsername: this.preferredUsername,
+          name: this.name,
+          domain: this.domain,
+          local: this.local,
+          suspended: this.suspended,
+          page: 1,
+          limit: PROFILES_PER_PAGE,
+        };
+      },
+    },
+  },
+})
+export default class Profiles extends Vue {
+  page = 1;
+  preferredUsername = "";
+  name = "";
+  domain = "";
+  local = true;
+  suspended = false;
+
+  PROFILES_PER_PAGE = PROFILES_PER_PAGE;
+  RouteName = RouteName;
+
+  async onPageChange(page: number) {
+    this.page = page;
+    await this.$apollo.queries.persons.fetchMore({
+      variables: {
+        preferredUsername: this.preferredUsername,
+        name: this.name,
+        domain: this.domain,
+        local: this.local,
+        suspended: this.suspended,
+        page: this.page,
+        limit: PROFILES_PER_PAGE,
+      },
+      updateQuery: (previousResult, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return previousResult;
+        const newProfiles = fetchMoreResult.persons.elements;
+        return {
+          persons: {
+            __typename: previousResult.persons.__typename,
+            total: previousResult.persons.total,
+            elements: [...previousResult.persons.elements, ...newProfiles],
+          },
+        };
+      },
+    });
+  }
+
+  onFiltersChange({ preferredUsername, domain }: { preferredUsername: string; domain: string }) {
+    this.preferredUsername = preferredUsername;
+    this.domain = domain;
+  }
+
+  @Watch("domain")
+  domainNotLocal() {
+    this.local = this.domain === "";
+  }
+}
+</script>

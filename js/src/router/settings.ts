@@ -12,6 +12,10 @@ import ReportList from "@/views/Moderation/ReportList.vue";
 import Report from "@/views/Moderation/Report.vue";
 import Logs from "@/views/Moderation/Logs.vue";
 import EditIdentity from "@/views/Account/children/EditIdentity.vue";
+import Users from "../views/Admin/Users.vue";
+import Profiles from "../views/Admin/Profiles.vue";
+import AdminProfile from "../views/Admin/AdminProfile.vue";
+import AdminUserProfile from "../views/Admin/AdminUserProfile.vue";
 
 export enum SettingsRouteName {
   SETTINGS = "SETTINGS",
@@ -25,6 +29,10 @@ export enum SettingsRouteName {
   RELAYS = "Relays",
   RELAY_FOLLOWINGS = "Followings",
   RELAY_FOLLOWERS = "Followers",
+  USERS = "USERS",
+  PROFILES = "PROFILES",
+  ADMIN_PROFILE = "ADMIN_PROFILE",
+  ADMIN_USER_PROFILE = "ADMIN_USER_PROFILE",
   MODERATION = "MODERATION",
   REPORTS = "Reports",
   REPORT = "Report",
@@ -84,6 +92,34 @@ export const settingsRoutes: RouteConfig[] = [
         path: "admin/settings",
         name: SettingsRouteName.ADMIN_SETTINGS,
         component: AdminSettings,
+        props: true,
+        meta: { requiredAuth: true },
+      },
+      {
+        path: "admin/users",
+        name: SettingsRouteName.USERS,
+        component: Users,
+        props: true,
+        meta: { requiredAuth: true },
+      },
+      {
+        path: "admin/users/:id",
+        name: SettingsRouteName.ADMIN_USER_PROFILE,
+        component: AdminUserProfile,
+        props: true,
+        meta: { requiredAuth: true },
+      },
+      {
+        path: "admin/profiles",
+        name: SettingsRouteName.PROFILES,
+        component: Profiles,
+        props: true,
+        meta: { requiredAuth: true },
+      },
+      {
+        path: "admin/profiles/:id",
+        name: SettingsRouteName.ADMIN_PROFILE,
+        component: AdminProfile,
         props: true,
         meta: { requiredAuth: true },
       },

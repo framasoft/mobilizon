@@ -401,6 +401,14 @@ defmodule Mobilizon.Events do
     {:ok, events, events_count}
   end
 
+  @spec list_organized_events_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  def list_organized_events_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
+    actor_id
+    |> event_for_actor_query()
+    |> preload_for_event()
+    |> Page.build_page(page, limit)
+  end
+
   @spec list_organized_events_for_group(Actor.t(), integer | nil, integer | nil) :: Page.t()
   def list_organized_events_for_group(%Actor{id: group_id}, page \\ nil, limit \\ nil) do
     group_id
@@ -842,13 +850,11 @@ defmodule Mobilizon.Events do
   @doc """
   Returns the list of participations for an actor.
   """
-  @spec list_event_participations_for_actor(Actor.t(), integer | nil, integer | nil) ::
-          [Participant.t()]
+  @spec list_event_participations_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t()
   def list_event_participations_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     actor_id
     |> event_participations_for_actor_query()
-    |> Page.paginate(page, limit)
-    |> Repo.all()
+    |> Page.build_page(page, limit)
   end
 
   @doc """
@@ -1414,7 +1420,8 @@ defmodule Mobilizon.Events do
       join: e in Event,
       on: p.event_id == e.id,
       where: p.actor_id == ^actor_id and p.role != ^:not_approved,
-      preload: [:event]
+      preload: [:event],
+      order_by: [desc: e.begins_on]
     )
   end
 

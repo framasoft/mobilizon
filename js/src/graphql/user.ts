@@ -64,8 +64,8 @@ export const VALIDATE_EMAIL = gql`
 `;
 
 export const DELETE_ACCOUNT = gql`
-  mutation DeleteAccount($password: String!) {
-    deleteAccount(password: $password) {
+  mutation DeleteAccount($password: String, $userId: ID!) {
+    deleteAccount(password: $password, userId: $userId) {
       id
     }
   }
@@ -133,4 +133,59 @@ export const SET_USER_SETTINGS = gql`
     }
   }
   ${USER_SETTINGS_FRAGMENT}
+`;
+
+export const LIST_USERS = gql`
+  query ListUsers($email: String, $page: Int, $limit: Int) {
+    users(email: $email, page: $page, limit: $limit) {
+      total
+      elements {
+        id
+        email
+        locale
+        confirmedAt
+        disabled
+        actors {
+          id
+          preferredUsername
+          avatar {
+            url
+          }
+          name
+          summary
+        }
+        settings {
+          timezone
+        }
+      }
+    }
+  }
+`;
+
+export const GET_USER = gql`
+  query GetUser($id: ID!) {
+    user(id: $id) {
+      id
+      email
+      confirmedAt
+      confirmationSentAt
+      locale
+      disabled
+      defaultActor {
+        id
+      }
+      actors {
+        id
+        preferredUsername
+        name
+        avatar {
+          url
+        }
+      }
+      participations {
+        total
+      }
+      role
+    }
+  }
 `;

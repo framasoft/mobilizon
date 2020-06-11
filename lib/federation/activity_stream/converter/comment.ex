@@ -36,7 +36,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
     Logger.debug(inspect(object))
 
     with author_url <- Map.get(object, "actor") || Map.get(object, "attributedTo"),
-         {:ok, %Actor{id: actor_id, domain: domain}} <-
+         {:ok, %Actor{id: actor_id, domain: domain, suspended: false}} <-
            ActivityPub.get_or_fetch_actor_by_url(author_url),
          {:tags, tags} <- {:tags, ConverterUtils.fetch_tags(Map.get(object, "tag", []))},
          {:mentions, mentions} <-
@@ -90,6 +90,9 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
 
         data
       end
+    else
+      {:ok, %Actor{suspended: true}} ->
+        :error
     end
   end
 

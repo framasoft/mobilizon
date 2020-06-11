@@ -1,6 +1,7 @@
 defmodule Mobilizon.UsersTest do
   use Mobilizon.DataCase
 
+  alias Mobilizon.Storage.Page
   alias Mobilizon.Users
   alias Mobilizon.Users.{Setting, User}
   import Mobilizon.Factory
@@ -13,7 +14,7 @@ defmodule Mobilizon.UsersTest do
 
     test "list_users/0 returns all users" do
       user = insert(:user)
-      users = Users.list_users(nil, nil, :id, :desc)
+      %Page{elements: users, total: 1} = Users.list_users("", nil, nil, :id, :desc)
       assert [user.id] == users |> Enum.map(& &1.id)
     end
 
@@ -52,9 +53,15 @@ defmodule Mobilizon.UsersTest do
       assert user = Users.get_user!(user.id)
     end
 
-    test "delete_user/1 deletes the user" do
+    test "delete_user/1 empties the user" do
       user = insert(:user)
       assert {:ok, %User{}} = Users.delete_user(user)
+      assert Users.get_user(user.id).disabled == true
+    end
+
+    test "delete_user/1 deletes the user" do
+      user = insert(:user)
+      assert {:ok, %User{}} = Users.delete_user(user, reserve_email: false)
       assert_raise Ecto.NoResultsError, fn -> Users.get_user!(user.id) end
     end
 

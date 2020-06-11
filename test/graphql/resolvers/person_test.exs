@@ -14,7 +14,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
   @non_existent_username "nonexistent"
 
   describe "Person Resolver" do
-    test "get_person/3 returns a person by its username", context do
+    test "get_person/3 returns a person by its username", %{conn: conn} do
       user = insert(:user)
       actor = insert(:actor, user: user)
 
@@ -27,7 +27,8 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       """
 
       res =
-        context.conn
+        conn
+        |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
 
       assert json_response(res, 200)["data"]["person"]["preferredUsername"] ==
@@ -42,7 +43,8 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       """
 
       res =
-        context.conn
+        conn
+        |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
 
       assert json_response(res, 200)["data"]["person"] == nil
@@ -506,7 +508,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
 
       assert_enqueued(
         worker: Workers.Background,
-        args: %{"actor_id" => person_id, "op" => "delete_actor"}
+        args: %{"actor_id" => person_id, "op" => "delete_actor", "reserve_username" => true}
       )
 
       assert %{success: 1, failure: 0} == Oban.drain_queue(:background)
@@ -538,9 +540,11 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       {
           loggedPerson {
             participations {
-              event {
-                uuid,
-                title
+              elements {
+                event {
+                  uuid,
+                  title
+                }
               }
             }
           }
@@ -552,7 +556,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
         |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "logged_person"))
 
-      assert json_response(res, 200)["data"]["loggedPerson"]["participations"] == []
+      assert json_response(res, 200)["data"]["loggedPerson"]["participations"]["elements"] == []
 
       event = insert(:event, %{organizer_actor: actor})
       insert(:participant, %{actor: actor, event: event})
@@ -562,10 +566,26 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
         |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "logged_person"))
 
-      assert json_response(res, 200)["data"]["loggedPerson"]["participations"] == [
+      assert json_response(res, 200)["data"]["loggedPerson"]["participations"]["elements"] == [
                %{"event" => %{"title" => event.title, "uuid" => event.uuid}}
              ]
     end
+
+    @person_participations """
+    query PersonParticipations($actorId: ID!) {
+      person(id: $actorId) {
+          participations {
+            total,
+            elements {
+              event {
+                uuid,
+                title
+              }
+            }
+          }
+      }
+    }
+    """
 
     test "find_person/3 can return the events an identity is going to if it's the same actor",
          context do
@@ -574,47 +594,27 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       insert(:actor, user: user)
       actor_from_other_user = insert(:actor)
 
-      query = """
-      {
-        person(id: "#{actor.id}") {
-            participations {
-              event {
-                uuid,
-                title
-              }
-            }
-        }
-      }
-      """
+      res =
+        context.conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @person_participations,
+          variables: %{actorId: actor.id}
+        )
+
+      assert res["data"]["person"]["participations"]["elements"] == []
 
       res =
         context.conn
         |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+        |> AbsintheHelpers.graphql_query(
+          query: @person_participations,
+          variables: %{actorId: actor_from_other_user.id}
+        )
 
-      assert json_response(res, 200)["data"]["person"]["participations"] == []
+      assert res["data"]["person"]["participations"]["elements"] == nil
 
-      query = """
-      {
-        person(id: "#{actor_from_other_user.id}") {
-            participations {
-              event {
-                uuid,
-                title
-              }
-            }
-        }
-      }
-      """
-
-      res =
-        context.conn
-        |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
-
-      assert json_response(res, 200)["data"]["person"]["participations"] == nil
-
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert hd(res["errors"])["message"] ==
                "Actor id is not owned by authenticated user"
     end
 
@@ -629,9 +629,11 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       {
         person(id: "#{actor.id}") {
             participations(eventId: "#{event.id}") {
-              event {
-                uuid,
-                title
+              elements {
+                event {
+                  uuid,
+                  title
+                }
               }
             }
         }
@@ -643,7 +645,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
         |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
 
-      assert json_response(res, 200)["data"]["person"]["participations"] == [
+      assert json_response(res, 200)["data"]["person"]["participations"]["elements"] == [
                %{
                  "event" => %{
                    "uuid" => event.uuid,
@@ -651,6 +653,116 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
                  }
                }
              ]
+    end
+  end
+
+  describe "suspend_profile/3" do
+    @suspend_profile_mutation """
+    mutation SuspendProfile($id: ID!) {
+      suspendProfile(id: $id) {
+        id
+      }
+    }
+    """
+
+    @person_query """
+    query Person($id: ID!) {
+        person(id: $id) {
+          id,
+          suspended
+        }
+      }
+    """
+
+    @moderation_logs_query """
+    {
+      actionLogs {
+        action,
+        actor {
+          id,
+          preferredUsername
+        },
+        object {
+          ...on Person {
+            id,
+            preferredUsername
+          }
+        }
+      }
+    }
+    """
+
+    test "suspends a remote profile", %{conn: conn} do
+      modo = insert(:user, role: :moderator)
+      %Actor{id: modo_actor_id} = insert(:actor, user: modo)
+      %Actor{id: remote_profile_id} = insert(:actor, domain: "mobilizon.org", user: nil)
+
+      res =
+        conn
+        |> auth_conn(modo)
+        |> AbsintheHelpers.graphql_query(
+          query: @suspend_profile_mutation,
+          variables: %{id: remote_profile_id}
+        )
+
+      assert is_nil(res["errors"])
+      assert res["data"]["suspendProfile"]["id"] == to_string(remote_profile_id)
+
+      assert %{success: 1, failure: 0} == Oban.drain_queue(:background)
+
+      res =
+        conn
+        |> auth_conn(modo)
+        |> AbsintheHelpers.graphql_query(
+          query: @person_query,
+          variables: %{id: remote_profile_id}
+        )
+
+      assert res["data"]["person"]["suspended"] == true
+
+      res =
+        conn
+        |> auth_conn(modo)
+        |> AbsintheHelpers.graphql_query(query: @moderation_logs_query)
+
+      actionlog = hd(res["data"]["actionLogs"])
+      refute is_nil(actionlog)
+      assert actionlog["action"] == "ACTOR_SUSPENSION"
+      assert actionlog["actor"]["id"] == to_string(modo_actor_id)
+      assert actionlog["object"]["id"] == to_string(remote_profile_id)
+    end
+
+    test "doesn't suspend if profile is local", %{conn: conn} do
+      modo = insert(:user, role: :moderator)
+      %Actor{} = insert(:actor, user: modo)
+      %Actor{id: profile_id} = insert(:actor)
+
+      res =
+        conn
+        |> auth_conn(modo)
+        |> AbsintheHelpers.graphql_query(
+          query: @suspend_profile_mutation,
+          variables: %{id: profile_id}
+        )
+
+      assert hd(res["errors"])["message"] == "No remote profile found with this ID"
+    end
+
+    test "doesn't suspend if user is not at least moderator", %{conn: conn} do
+      fake_modo = insert(:user)
+      %Actor{} = insert(:actor, user: fake_modo)
+      %Actor{id: remote_profile_id} = insert(:actor, domain: "mobilizon.org", user: nil)
+
+      res =
+        conn
+        |> auth_conn(fake_modo)
+        |> AbsintheHelpers.graphql_query(
+          query: @suspend_profile_mutation,
+          variables: %{id: remote_profile_id}
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "Only moderators and administrators can suspend a profile"
     end
   end
 end

@@ -122,6 +122,14 @@ export default class Settings extends Vue {
               },
             ],
           },
+          {
+            title: this.$t("Users") as string,
+            to: { name: RouteName.USERS } as Route,
+          },
+          {
+            title: this.$t("Profiles") as string,
+            to: { name: RouteName.PROFILES } as Route,
+          },
         ],
       },
     ];

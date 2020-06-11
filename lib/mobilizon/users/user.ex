@@ -25,6 +25,7 @@ defmodule Mobilizon.Users.User do
           reset_password_token: String.t(),
           locale: String.t(),
           default_actor: Actor.t(),
+          disabled: boolean(),
           actors: [Actor.t()],
           feed_tokens: [FeedToken.t()]
         }
@@ -40,7 +41,8 @@ defmodule Mobilizon.Users.User do
     :reset_password_sent_at,
     :reset_password_token,
     :locale,
-    :unconfirmed_email
+    :unconfirmed_email,
+    :disabled
   ]
   @attrs @required_attrs ++ @optional_attrs
 
@@ -64,6 +66,7 @@ defmodule Mobilizon.Users.User do
     field(:reset_password_token, :string)
     field(:unconfirmed_email, :string)
     field(:locale, :string, default: "en")
+    field(:disabled, :boolean, default: false)
 
     belongs_to(:default_actor, Actor)
     has_many(:actors, Actor)
@@ -89,6 +92,13 @@ defmodule Mobilizon.Users.User do
     else
       changeset
     end
+  end
+
+  def delete_changeset(%__MODULE__{} = user) do
+    user
+    |> change()
+    |> put_change(:disabled, true)
+    |> put_change(:default_actor_id, nil)
   end
 
   @doc false

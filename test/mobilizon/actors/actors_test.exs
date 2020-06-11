@@ -59,7 +59,8 @@ defmodule Mobilizon.ActorsTest do
     end
 
     test "list_actors/0 returns all actors", %{actor: %Actor{id: actor_id}} do
-      assert actor_id == hd(Actors.list_actors()).id
+      assert %Page{total: 1, elements: [%Actor{id: id}]} = Actors.list_actors()
+      assert id == actor_id
     end
 
     test "get_actor!/1 returns the actor with given id", %{actor: %Actor{id: actor_id} = actor} do
@@ -316,7 +317,7 @@ defmodule Mobilizon.ActorsTest do
 
       assert_enqueued(
         worker: Workers.Background,
-        args: %{"actor_id" => actor.id, "op" => "delete_actor"}
+        args: %{"actor_id" => actor.id, "op" => "delete_actor", "reserve_username" => true}
       )
 
       assert %{success: 1, failure: 0} == Oban.drain_queue(:background)

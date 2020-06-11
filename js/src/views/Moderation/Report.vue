@@ -32,8 +32,8 @@
               <td>
                 <router-link
                   :to="{
-                    name: RouteName.PROFILE,
-                    params: { name: report.reported.preferredUsername },
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: report.reported.id },
                   }"
                 >
                   <img
@@ -53,8 +53,8 @@
               <td v-else>
                 <router-link
                   :to="{
-                    name: RouteName.PROFILE,
-                    params: { name: report.reporter.preferredUsername },
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: report.reporter.id },
                   }"
                 >
                   <img
@@ -139,7 +139,7 @@
         >
       </div>
 
-      <ul v-for="comment in report.comments" v-if="report.comments.length > 0">
+      <ul v-for="comment in report.comments" v-if="report.comments.length > 0" :key="comment.id">
         <li>
           <div class="box" v-if="comment">
             <article class="media">
@@ -173,11 +173,9 @@
       </ul>
 
       <h2 class="title" v-if="report.notes.length > 0">{{ $t("Notes") }}</h2>
-      <div class="box note" v-for="note in report.notes" :id="`note-${note.id}`">
+      <div class="box note" v-for="note in report.notes" :id="`note-${note.id}`" :key="note.id">
         <p>{{ note.content }}</p>
-        <router-link
-          :to="{ name: RouteName.PROFILE, params: { name: note.moderator.preferredUsername } }"
-        >
+        <router-link :to="{ name: RouteName.ADMIN_PROFILE, params: { id: note.moderator.id } }">
           <img alt class="image" :src="note.moderator.avatar.url" v-if="note.moderator.avatar" />
           @{{ note.moderator.preferredUsername }}
         </router-link>

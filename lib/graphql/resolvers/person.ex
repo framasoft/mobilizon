@@ -3,10 +3,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   Handles the person-related GraphQL calls
   """
 
+  import Mobilizon.Users.Guards
+
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Admin
   alias Mobilizon.Events
   alias Mobilizon.Events.Participant
+  alias Mobilizon.Storage.Page
   alias Mobilizon.Users
   alias Mobilizon.Users.User
 
@@ -17,8 +21,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   @doc """
   Get a person
   """
-  def get_person(_parent, %{id: id}, _resolution) do
-    with %Actor{} = actor <- Actors.get_actor_with_preload(id),
+  def get_person(_parent, %{id: id}, %{context: %{current_user: %User{role: role}}}) do
+    with %Actor{suspended: suspended} = actor <- Actors.get_actor_with_preload(id, true),
+         true <- suspended == false or is_moderator(role),
          actor <- proxify_pictures(actor) do
       {:ok, actor}
     else
@@ -39,6 +44,30 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
       _ ->
         {:error, "Person with username #{preferred_username} not found"}
     end
+  end
+
+  def list_persons(
+        _parent,
+        %{
+          preferred_username: preferred_username,
+          name: name,
+          domain: domain,
+          local: local,
+          suspended: suspended,
+          page: page,
+          limit: limit
+        },
+        %{
+          context: %{current_user: %User{role: role}}
+        }
+      )
+      when is_moderator(role) do
+    {:ok,
+     Actors.list_actors(:Person, preferred_username, name, domain, local, suspended, page, limit)}
+  end
+
+  def list_persons(_parent, _args, _resolution) do
+    {:error, "You need to be logged-in and a moderator to list persons"}
   end
 
   @doc """
@@ -201,25 +230,41 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
     with {:is_owned, %Actor{} = _actor} <- User.owns_actor(user, actor_id),
          {:no_participant, {:ok, %Participant{} = participant}} <-
            {:no_participant, Events.get_participant(event_id, actor_id)} do
-      {:ok, [participant]}
+      {:ok, %Page{elements: [participant], total: 1}}
     else
       {:is_owned, nil} ->
         {:error, "Actor id is not owned by authenticated user"}
 
       {:no_participant, _} ->
-        {:ok, []}
+        {:ok, %Page{elements: [], total: 0}}
     end
   end
 
   @doc """
   Returns the list of events this person is going to
   """
-  def person_participations(%Actor{id: actor_id}, _args, %{context: %{current_user: user}}) do
-    with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
-         participations <- Events.list_event_participations_for_actor(actor) do
-      {:ok, participations}
+  def person_participations(%Actor{id: actor_id} = actor, %{page: page, limit: limit}, %{
+        context: %{current_user: %User{role: role} = user}
+      }) do
+    {:is_owned, actor_found} = User.owns_actor(user, actor_id)
+
+    res =
+      cond do
+        not is_nil(actor_found) ->
+          true
+
+        is_moderator(role) ->
+          true
+
+        true ->
+          false
+      end
+
+    with {:is_owned, true} <- {:is_owned, res},
+         %Page{} = page <- Events.list_event_participations_for_actor(actor, page, limit) do
+      {:ok, page}
     else
-      {:is_owned, nil} ->
+      {:is_owned, false} ->
         {:error, "Actor id is not owned by authenticated user"}
     end
   end
@@ -241,6 +286,95 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
     actor
     |> proxify_avatar
     |> proxify_banner
+  end
+
+  def user_for_person(%Actor{type: :Person, user_id: user_id}, _args, %{
+        context: %{current_user: %User{role: role}}
+      })
+      when is_moderator(role) do
+    with false <- is_nil(user_id),
+         %User{} = user <- Users.get_user(user_id) do
+      {:ok, user}
+    else
+      true ->
+        {:ok, nil}
+
+      _ ->
+        {:error, "User not found"}
+    end
+  end
+
+  def user_for_person(_, _args, _resolution), do: {:error, nil}
+
+  def organized_events_for_person(
+        %Actor{user_id: actor_user_id} = actor,
+        %{page: page, limit: limit},
+        %{
+          context: %{current_user: %User{id: user_id, role: role}}
+        }
+      ) do
+    with true <- actor_user_id == user_id or is_moderator(role),
+         %Page{} = page <- Events.list_organized_events_for_actor(actor, page, limit) do
+      {:ok, page}
+    end
+  end
+
+  def suspend_profile(_parent, %{id: id}, %{
+        context: %{current_user: %User{role: role} = user}
+      })
+      when is_moderator(role) do
+    with {:moderator_actor, %Actor{} = moderator_actor} <-
+           {:moderator_actor, Users.get_actor_for_user(user)},
+         %Actor{suspended: false} = actor <- Actors.get_remote_actor_with_preload(id),
+         {:ok, _} <- Actors.delete_actor(actor),
+         {:ok, _} <- Admin.log_action(moderator_actor, "suspend", actor) do
+      {:ok, actor}
+    else
+      {:moderator_actor, nil} ->
+        {:error, "No actor found for the moderator user"}
+
+      %Actor{suspended: true} ->
+        {:error, "Actor already suspended"}
+
+      nil ->
+        {:error, "No remote profile found with this ID"}
+
+      {:error, _} ->
+        {:error, "Error while performing background task"}
+    end
+  end
+
+  def suspend_profile(_parent, _args, _resolution) do
+    {:error, "Only moderators and administrators can suspend a profile"}
+  end
+
+  def unsuspend_profile(_parent, %{id: id}, %{
+        context: %{current_user: %User{role: role} = user}
+      })
+      when is_moderator(role) do
+    with {:moderator_actor, %Actor{} = moderator_actor} <-
+           {:moderator_actor, Users.get_actor_for_user(user)},
+         %Actor{preferred_username: preferred_username, domain: domain} = actor <-
+           Actors.get_remote_actor_with_preload(id, true),
+         {:ok, _} <- Actors.update_actor(actor, %{suspended: false}),
+         {:ok, %Actor{} = actor} <-
+           ActivityPub.make_actor_from_nickname("#{preferred_username}@#{domain}"),
+         {:ok, _} <- Admin.log_action(moderator_actor, "unsuspend", actor) do
+      {:ok, actor}
+    else
+      {:moderator_actor, nil} ->
+        {:error, "No actor found for the moderator user"}
+
+      nil ->
+        {:error, "No remote profile found with this ID"}
+
+      {:error, _} ->
+        {:error, "Error while performing background task"}
+    end
+  end
+
+  def unsuspend_profile(_parent, _args, _resolution) do
+    {:error, "Only moderators and administrators can unsuspend a profile"}
   end
 
   # We check that the actor is not the last administrator/creator of a group

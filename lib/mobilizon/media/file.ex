@@ -18,6 +18,7 @@ defmodule Mobilizon.Media.File do
   @optional_attrs [:content_type, :size]
   @attrs @required_attrs ++ @optional_attrs
 
+  @derive Jason.Encoder
   embedded_schema do
     field(:name, :string)
     field(:url, :string)

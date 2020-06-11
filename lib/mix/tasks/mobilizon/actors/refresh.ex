@@ -34,7 +34,7 @@ defmodule Mix.Tasks.Mobilizon.Actors.Refresh do
     #{total} actors to process
     """)
 
-    query = from(a in Actor, where: not is_nil(a.domain))
+    query = from(a in Actor, where: not is_nil(a.domain) and not a.suspended)
 
     {:ok, _res} =
       Repo.transaction(

@@ -17,9 +17,13 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
   Represents a person identity
   """
   object :person do
-    interfaces([:actor])
+    interfaces([:actor, :action_log_object])
     field(:id, :id, description: "Internal ID for this person")
-    field(:user, :user, description: "The user this actor is associated to")
+
+    field(:user, :user,
+      description: "The user this actor is associated to",
+      resolve: &Person.user_for_person/3
+    )
 
     field(:member_of, list_of(:member), description: "The list of groups this person is member of")
 
@@ -52,16 +56,21 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
     )
 
     # This one should have a privacy setting
-    field(:organized_events, list_of(:event),
-      resolve: dataloader(Events),
+    field(:organized_events, :paginated_event_list,
       description: "A list of the events this actor has organized"
-    )
+    ) do
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
+      resolve(&Person.organized_events_for_person/3)
+    end
 
     @desc "The list of events this person goes to"
-    field(:participations, list_of(:participant),
+    field(:participations, :paginated_participant_list,
       description: "The list of events this person goes to"
     ) do
       arg(:event_id, :id)
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
       resolve(&Person.person_participations/3)
     end
 
@@ -94,6 +103,17 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
     @desc "Get the persons for an user"
     field :identities, list_of(:person) do
       resolve(&Person.identities/3)
+    end
+
+    field :persons, :persons do
+      arg(:preferred_username, :string, default_value: "")
+      arg(:name, :string, default_value: "")
+      arg(:domain, :string, default_value: "")
+      arg(:local, :boolean, default_value: true)
+      arg(:suspended, :boolean, default_value: false)
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
+      resolve(&Person.list_persons/3)
     end
   end
 
@@ -167,6 +187,16 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
       )
 
       resolve(handle_errors(&Person.register_person/3))
+    end
+
+    field :suspend_profile, :deleted_object do
+      arg(:id, :id, description: "The profile ID to suspend")
+      resolve(&Person.suspend_profile/3)
+    end
+
+    field :unsuspend_profile, :person do
+      arg(:id, :id, description: "The profile ID to unsuspend")
+      resolve(&Person.unsuspend_profile/3)
     end
   end
 

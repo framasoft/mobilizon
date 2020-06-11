@@ -4,8 +4,7 @@ defmodule Mobilizon.EventsTest do
   import Mobilizon.Factory
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.{Conversations, Events}
-  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Participant, Session, Tag, TagRelation, Track}
   alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.Page

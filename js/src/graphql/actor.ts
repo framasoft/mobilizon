@@ -32,7 +32,13 @@ export const FETCH_PERSON = gql`
 `;
 
 export const GET_PERSON = gql`
-  query($actorId: ID!) {
+  query(
+    $actorId: ID!
+    $organizedEventsPage: Int
+    $organizedEventsLimit: Int
+    $participationPage: Int
+    $participationLimit: Int
+  ) {
     person(id: $actorId) {
       id
       url
@@ -51,10 +57,63 @@ export const GET_PERSON = gql`
       feedTokens {
         token
       }
-      organizedEvents {
-        uuid
-        title
-        beginsOn
+      organizedEvents(page: $organizedEventsPage, limit: $organizedEventsLimit) {
+        total
+        elements {
+          id
+          uuid
+          title
+          beginsOn
+        }
+      }
+      participations(page: $participationPage, limit: $participationLimit) {
+        total
+        elements {
+          id
+          event {
+            id
+            uuid
+            title
+            beginsOn
+          }
+        }
+      }
+      user {
+        id
+        email
+      }
+    }
+  }
+`;
+
+export const LIST_PROFILES = gql`
+  query ListProfiles(
+    $preferredUsername: String
+    $name: String
+    $domain: String
+    $local: Boolean
+    $suspended: Boolean
+    $page: Int
+    $limit: Int
+  ) {
+    persons(
+      preferredUsername: $preferredUsername
+      name: $name
+      domain: $domain
+      local: $local
+      suspended: $suspended
+      page: $page
+      limit: $limit
+    ) {
+      total
+      elements {
+        id
+        preferredUsername
+        domain
+        name
+        avatar {
+          url
+        }
       }
     }
   }
@@ -502,6 +561,22 @@ export const CREATE_GROUP = gql`
       banner {
         url
       }
+    }
+  }
+`;
+
+export const SUSPEND_PROFILE = gql`
+  mutation SuspendProfile($id: ID!) {
+    suspendProfile(id: $id) {
+      id
+    }
+  }
+`;
+
+export const UNSUSPEND_PROFILE = gql`
+  mutation UnSuspendProfile($id: ID!) {
+    unsuspendProfile(id: $id) {
+      id
     }
   }
 `;

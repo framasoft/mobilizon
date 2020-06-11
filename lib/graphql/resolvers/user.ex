@@ -8,6 +8,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   alias Mobilizon.{Actors, Config, Events, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Crypto
+  alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.{Setting, User}
 
@@ -20,8 +21,11 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   Find an user by its ID
   """
-  def find_user(_parent, %{id: id}, _resolution) do
-    Users.get_user_with_actors(id)
+  def find_user(_parent, %{id: id}, %{context: %{current_user: %User{role: role}}})
+      when is_moderator(role) do
+    with {:ok, %User{} = user} <- Users.get_user_with_actors(id) do
+      {:ok, user}
+    end
   end
 
   @doc """
@@ -38,19 +42,16 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   List instance users
   """
-  def list_and_count_users(
+  def list_users(
         _parent,
-        %{page: page, limit: limit, sort: sort, direction: direction},
+        %{email: email, page: page, limit: limit, sort: sort, direction: direction},
         %{context: %{current_user: %User{role: role}}}
       )
       when is_moderator(role) do
-    total = Task.async(&Users.count_users/0)
-    elements = Task.async(fn -> Users.list_users(page, limit, sort, direction) end)
-
-    {:ok, %{total: Task.await(total), elements: Task.await(elements)}}
+    {:ok, Users.list_users(email, page, limit, sort, direction)}
   end
 
-  def list_and_count_users(_parent, _args, _resolution) do
+  def list_users(_parent, _args, _resolution) do
     {:error, "You need to have admin access to list users"}
   end
 
@@ -242,9 +243,9 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   def user_participations(
         %User{id: user_id},
         args,
-        %{context: %{current_user: %User{id: logged_user_id}}}
+        %{context: %{current_user: %User{id: logged_user_id, role: role}}}
       ) do
-    with true <- user_id == logged_user_id,
+    with true <- user_id == logged_user_id or is_moderator(role),
          %Page{} = page <-
            Events.list_participations_for_user(
              user_id,
@@ -379,19 +380,21 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   def delete_account(_parent, %{password: password}, %{
         context: %{current_user: %User{password_hash: password_hash} = user}
       }) do
-    with {:current_password, true} <-
-           {:current_password, Argon2.verify_pass(password, password_hash)},
-         actors <- Users.get_actors_for_user(user),
-         # Detach actors from user
-         :ok <- Enum.each(actors, fn actor -> Actors.update_actor(actor, %{user_id: nil}) end),
-         # Launch a background job to delete actors
-         :ok <- Enum.each(actors, &Actors.delete_actor/1),
-         # Delete user
-         {:ok, user} <- Users.delete_user(user) do
-      {:ok, user}
-    else
+    case {:current_password, Argon2.verify_pass(password, password_hash)} do
+      {:current_password, true} ->
+        do_delete_account(user)
+
       {:current_password, false} ->
         {:error, "The password provided is invalid"}
+    end
+  end
+
+  def delete_account(_parent, %{user_id: user_id}, %{
+        context: %{current_user: %User{role: role}}
+      })
+      when is_moderator(role) do
+    with %User{} = user <- Users.get_user(user_id) do
+      do_delete_account(%User{} = user)
     end
   end
 
@@ -399,7 +402,36 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     {:error, "You need to be logged-in to delete your account"}
   end
 
+  defp do_delete_account(%User{} = user) do
+    with actors <- Users.get_actors_for_user(user),
+         activated <- not is_nil(user.confirmed_at),
+         # Detach actors from user
+         :ok <-
+           if(activated,
+             do: :ok,
+             else: Enum.each(actors, fn actor -> Actors.update_actor(actor, %{user_id: nil}) end)
+           ),
+         # Launch a background job to delete actors
+         :ok <-
+           Enum.each(actors, fn actor ->
+             ActivityPub.delete(actor, true)
+           end),
+         # Delete user
+         {:ok, user} <- Users.delete_user(user, reserve_email: activated) do
+      {:ok, user}
+    end
+  end
+
   @spec user_settings(User.t(), map(), map()) :: {:ok, list(Setting.t())} | {:error, String.t()}
+  def user_settings(%User{} = user, _args, %{
+        context: %{current_user: %User{role: role}}
+      })
+      when is_moderator(role) do
+    with {:setting, settings} <- {:setting, Users.get_setting(user)} do
+      {:ok, settings}
+    end
+  end
+
   def user_settings(%User{id: user_id} = user, _args, %{
         context: %{current_user: %User{id: logged_user_id}}
       }) do

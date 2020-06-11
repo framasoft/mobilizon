@@ -201,6 +201,23 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
                "Event with this ID \"1042\" doesn't exist"
     end
 
+    @person_participations """
+    query PersonParticipations($actorId: ID!, $eventId: ID) {
+      person(id: $actorId) {
+          participations(eventId: $eventId) {
+            total,
+            elements {
+              event {
+                uuid,
+                title
+              },
+              role
+            }
+          }
+      }
+    }
+    """
+
     test "actor_leave_event/3 should delete a participant from an event", %{
       conn: conn,
       user: user,
@@ -241,26 +258,15 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
       assert json_response(res, 200)["data"]["leaveEvent"]["actor"]["id"] ==
                to_string(participant2.actor.id)
 
-      query = """
-      {
-        person(id: "#{actor.id}") {
-            participations(eventId: "#{event.id}") {
-              event {
-                uuid,
-                title
-              },
-              role
-            }
-        }
-      }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+        |> AbsintheHelpers.graphql_query(
+          query: @person_participations,
+          variables: %{actorId: actor.id, eventId: event.id}
+        )
 
-      assert json_response(res, 200)["data"]["person"]["participations"] == [
+      assert res["data"]["person"]["participations"]["elements"] == [
                %{
                  "event" => %{
                    "uuid" => event.uuid,
@@ -270,26 +276,15 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
                }
              ]
 
-      query = """
-      {
-        person(id: "#{actor2.id}") {
-            participations(eventId: "#{event.id}") {
-              event {
-                uuid,
-                title
-              },
-              role
-            }
-        }
-      }
-      """
-
       res =
         conn
         |> auth_conn(user2)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+        |> AbsintheHelpers.graphql_query(
+          query: @person_participations,
+          variables: %{actorId: actor2.id, eventId: event.id}
+        )
 
-      assert json_response(res, 200)["data"]["person"]["participations"] == []
+      assert res["data"]["person"]["participations"]["elements"] == []
     end
 
     test "actor_leave_event/3 should check if the participant is the only creator", %{
