@@ -30,6 +30,22 @@
         </div>
       </div>
     </section>
+    <div class="container section" v-if="config && (!currentUser.id || !currentActor.id)">
+      <section class="events-featured">
+        <h3 class="title">{{ $t("Featured events") }}</h3>
+        <b-loading :active.sync="$apollo.loading" />
+        <div v-if="filteredFeaturedEvents.length > 0" class="columns is-multiline">
+          <div
+            class="column is-one-third-desktop"
+            v-for="event in filteredFeaturedEvents.slice(0, 6)"
+            :key="event.uuid"
+          >
+            <EventCard :event="event" />
+          </div>
+        </div>
+        <b-message v-else type="is-danger">{{ $t("No events found") }}</b-message>
+      </section>
+    </div>
     <div class="container section" v-if="config && loggedUser && loggedUser.settings">
       <section v-if="currentActor.id">
         <b-message type="is-info" v-if="welcomeBack">{{
@@ -299,7 +315,11 @@ export default class Home extends Vue {
    */
   get filteredFeaturedEvents() {
     return this.events.filter(
-      ({ id }) => !this.currentUserParticipations.map(({ event: { id } }) => id).includes(id)
+      ({ id }) =>
+        !this.currentUserParticipations
+          .filter((participation) => participation.role === ParticipantRole.CREATOR)
+          .map(({ event: { id } }) => id)
+          .includes(id)
     );
   }
 

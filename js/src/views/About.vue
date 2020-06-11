@@ -24,7 +24,7 @@
         </div>
       </div>
     </div>
-    <div class="container" id="mobilizon">
+    <div class="container">
       <section>
         <div class="columns">
           <div class="column has-text-left-desktop">
@@ -46,7 +46,11 @@
             />
           </div>
           <div class="column has-text-right-desktop has-text-centered-mobile">
-            <img src="img/about/action-mobilizon.png" width="300" alt="" />
+            <img
+              src="img/about/action-mobilizon.png"
+              width="300"
+              :alt="$t('Organize and take action, freely')"
+            />
           </div>
         </div>
       </section>
@@ -81,7 +85,11 @@
             </p>
           </div>
           <div class="column has-text-left-desktop has-text-centered-mobile">
-            <img src="img/about/common-mobilizon.png" width="300" alt="" />
+            <img
+              src="img/about/common-mobilizon.png"
+              width="300"
+              :alt="$t('Let\'s create a new common')"
+            />
           </div>
         </div>
       </section>
@@ -140,7 +148,11 @@
             </i18n>
           </div>
           <div class="column has-text-right-desktop has-text-centered-mobile">
-            <img src="img/about/software-to-the-people-mobilizon.png" width="300" alt="" />
+            <img
+              src="img/about/software-to-the-people-mobilizon.png"
+              width="300"
+              :alt="('Software to the people')"
+            />
           </div>
         </div>
       </section>
@@ -162,7 +174,11 @@
             </i18n>
           </div>
           <div class="column has-text-left-desktop has-text-centered-mobile">
-            <img src="img/about/concieved-mobilizon.png" width="300" alt="" />
+            <img
+              src="img/about/concieved-mobilizon.png"
+              width="300"
+              :alt="$t('Concieved with care for humans')"
+            />
           </div>
         </div>
       </section>
@@ -216,6 +232,12 @@ export default class About extends Vue {
 <style lang="scss" scoped>
 @import "../variables.scss";
 
+a:not(.button) {
+  padding: 0.3rem;
+  background: #ffd599;
+  color: #111;
+}
+
 .hero.is-primary .subtitle {
   padding: 1rem;
   display: block;
@@ -267,6 +289,7 @@ section {
 
   .blockquote-footer a {
     color: #6c757d;
+    background: initial;
 
     &:before {
       content: "\2014\00A0";

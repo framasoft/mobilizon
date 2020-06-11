@@ -98,7 +98,7 @@
               >{{ $t("Edit") }}</b-button
             >
           </li>
-          <li>
+          <li v-if="participation.role === ParticipantRole.CREATOR">
             <b-button
               type="is-text"
               @click="

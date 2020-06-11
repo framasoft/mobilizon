@@ -1,8 +1,9 @@
 <template>
-  <label>
+  <label for="navSearchField">
     <span class="visually-hidden">{{ defaultPlaceHolder }}</span>
     <b-input
       custom-class="searchField"
+      id="navSearchField"
       icon="magnify"
       type="search"
       rounded
