@@ -52,6 +52,12 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
     test "delete existing user" do
       insert(:user, email: @email)
       Delete.run([@email, "-y"])
+      assert {:ok, %User{disabled: true}} = Users.get_user_by_email(@email)
+    end
+
+    test "full delete existing user" do
+      insert(:user, email: @email)
+      Delete.run([@email, "-y", "-f"])
       assert {:error, :user_not_found} == Users.get_user_by_email(@email)
     end
 

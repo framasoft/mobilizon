@@ -485,13 +485,16 @@ export const EVENT_PERSON_PARTICIPATION = gql`
     person(id: $actorId) {
       id
       participations(eventId: $eventId) {
-        id
-        role
-        actor {
+        total
+        elements {
           id
-        }
-        event {
-          id
+          role
+          actor {
+            id
+          }
+          event {
+            id
+          }
         }
       }
     }
@@ -503,13 +506,16 @@ export const EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED = gql`
     eventPersonParticipationChanged(personId: $actorId) {
       id
       participations(eventId: $eventId) {
-        id
-        role
-        actor {
+        total
+        elements {
           id
-        }
-        event {
-          id
+          role
+          actor {
+            id
+          }
+          event {
+            id
+          }
         }
       }
     }

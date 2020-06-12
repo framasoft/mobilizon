@@ -273,16 +273,18 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         person(id: $actor_id) {
           id,
           participations(eventId: $event_id) {
-            id,
-            role,
-            actor {
-              id
-            },
-            event {
-              id
+            elements {
+              id,
+              role,
+              actor {
+                id
+              },
+              event {
+                id
+              }
             }
           }
-          }
+        }
       }
       """
 
@@ -295,7 +297,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         )
 
       assert res["errors"] == nil
-      assert res["data"]["person"]["participations"] == []
+      assert res["data"]["person"]["participations"]["elements"] == []
     end
 
     test "create_event/3 creates an event with options", %{conn: conn, actor: actor, user: user} do
@@ -979,16 +981,18 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         person(id: "#{actor.id}") {
           id,
           participations(eventId: #{event.id}) {
-            id,
-            role,
-            actor {
-              id
-            },
-            event {
-              id
+            elements {
+              id,
+              role,
+              actor {
+                id
+              },
+              event {
+                id
+              }
             }
           }
-          }
+        }
       }
       """
 
@@ -998,7 +1002,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
 
       assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["person"]["participations"] == []
+      assert json_response(res, 200)["data"]["person"]["participations"]["elements"] == []
 
       mutation = """
           mutation {
@@ -1042,15 +1046,17 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         person(id: "#{actor.id}") {
           id,
           participations(eventId: #{event.id}) {
-            role,
-            actor {
-              id
-            },
-            event {
-              id
+            elements {
+              role,
+              actor {
+                id
+              },
+              event {
+                id
+              }
             }
           }
-          }
+        }
       }
       """
 
@@ -1061,7 +1067,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
 
       assert json_response(res, 200)["errors"] == nil
 
-      assert json_response(res, 200)["data"]["person"]["participations"] == [
+      assert json_response(res, 200)["data"]["person"]["participations"]["elements"] == [
                %{
                  "actor" => %{"id" => to_string(actor.id)},
                  "event" => %{"id" => to_string(event.id)},

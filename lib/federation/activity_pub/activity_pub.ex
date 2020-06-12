@@ -423,7 +423,8 @@ defmodule Mobilizon.Federation.ActivityPub do
       "to" => [url <> "/followers", "https://www.w3.org/ns/activitystreams#Public"]
     }
 
-    with {:ok, %Oban.Job{}} <- Actors.delete_actor(actor),
+    # We completely delete the actor if activity is remote
+    with {:ok, %Oban.Job{}} <- Actors.delete_actor(actor, reserve_username: local),
          {:ok, activity} <- create_activity(data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity, actor}

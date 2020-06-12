@@ -38,7 +38,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
     Logger.debug(inspect(object))
 
     with author_url <- Map.get(object, "actor") || Map.get(object, "attributedTo"),
-         {:actor, {:ok, %Actor{id: actor_id, domain: actor_domain}}} <-
+         {:actor, {:ok, %Actor{id: actor_id, domain: actor_domain, suspended: false}}} <-
            {:actor, ActivityPub.get_or_fetch_actor_by_url(author_url)},
          {:address, address_id} <-
            {:address, get_address(object["location"])},
@@ -87,6 +87,9 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
         updated_at: object["updated"],
         publish_at: object["published"]
       }
+    else
+      {:ok, %Actor{suspended: true}} ->
+        :error
     end
   end
 

@@ -39,11 +39,13 @@ export enum ActionLogAction {
   REPORT_UPDATE_RESOLVED = "REPORT_UPDATE_RESOLVED",
   EVENT_DELETION = "EVENT_DELETION",
   COMMENT_DELETION = "COMMENT_DELETION",
+  ACTOR_SUSPENSION = "ACTOR_SUSPENSION",
+  ACTOR_UNSUSPENSION = "ACTOR_UNSUSPENSION",
 }
 
 export interface IActionLog {
   id: string;
-  object: IReport | IReportNote | IEvent;
+  object: IReport | IReportNote | IEvent | IComment | IActor;
   actor: IActor;
   action: ActionLogAction;
   insertedAt: Date;

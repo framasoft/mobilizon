@@ -66,3 +66,10 @@ export function usernameWithDomain(actor: IActor): string {
   }
   return actor.preferredUsername;
 }
+
+export function displayNameAndUsername(actor: IActor): string {
+  if (actor.name) {
+    return `${actor.name} (@${usernameWithDomain(actor)})`;
+  }
+  return usernameWithDomain(actor);
+}

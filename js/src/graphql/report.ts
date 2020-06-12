@@ -178,6 +178,12 @@ export const LOGS = gql`
           id
           title
         }
+        ... on Person {
+          id
+          preferredUsername
+          domain
+          name
+        }
       }
       insertedAt
     }

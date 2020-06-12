@@ -18,7 +18,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
     field(:id, non_null(:id), description: "The user's ID")
     field(:email, non_null(:string), description: "The user's email")
 
-    field(:profiles, non_null(list_of(:person)),
+    field(:actors, non_null(list_of(:person)),
       description: "The user's list of profiles (identities)"
     )
 
@@ -50,6 +50,8 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
     field(:role, :user_role, description: "The role for the user")
 
     field(:locale, :string, description: "The user's locale")
+
+    field(:disabled, :boolean, description: "Whether the user is disabled")
 
     field(:participations, :paginated_participant_list,
       description: "The list of participations this user has"
@@ -144,13 +146,14 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
 
     @desc "List instance users"
     field :users, :users do
+      arg(:email, :string, default_value: "")
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
 
       arg(:sort, :sortable_user_field, default_value: :id)
       arg(:direction, :sort_direction, default_value: :desc)
 
-      resolve(&User.list_and_count_users/3)
+      resolve(&User.list_users/3)
     end
   end
 
@@ -233,7 +236,8 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
 
     @desc "Delete an account"
     field :delete_account, :deleted_object do
-      arg(:password, non_null(:string))
+      arg(:password, :string)
+      arg(:user_id, :id)
       resolve(&User.delete_account/3)
     end
 

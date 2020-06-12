@@ -15,6 +15,7 @@ export interface IPerson extends IActor {
   goingToEvents: IEvent[];
   participations: IParticipant[];
   memberships: Paginate<IMember>;
+  user?: ICurrentUser;
 }
 
 export class Person extends Actor implements IPerson {
@@ -25,6 +26,8 @@ export class Person extends Actor implements IPerson {
   participations: IParticipant[] = [];
 
   memberships!: Paginate<IMember>;
+
+  user!: ICurrentUser;
 
   constructor(hash: IPerson | {} = {}) {
     super(hash);

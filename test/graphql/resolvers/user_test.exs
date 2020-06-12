@@ -57,8 +57,9 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
   @valid_single_actor_params %{preferred_username: "test2", keys: "yolo"}
 
   describe "Resolver: Get an user" do
-    test "find_user/3 returns an user by its id", context do
+    test "find_user/3 returns an user by its id", %{conn: conn} do
       user = insert(:user)
+      modo = insert(:user, role: :moderator)
 
       query = """
       {
@@ -69,7 +70,8 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       """
 
       res =
-        context.conn
+        conn
+        |> auth_conn(modo)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "user"))
 
       assert json_response(res, 200)["data"]["user"]["email"] == user.email
@@ -83,7 +85,8 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       """
 
       res =
-        context.conn
+        conn
+        |> auth_conn(modo)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "user"))
 
       assert json_response(res, 200)["data"]["user"] == nil
@@ -1414,9 +1417,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
       assert MapSet.new([actor1.id, actor2.id]) == MapSet.new([actor1_id, actor2_id])
 
-      assert_raise Ecto.NoResultsError, fn ->
-        Users.get_user!(user.id)
-      end
+      assert Users.get_user(user.id).disabled == true
 
       assert %{success: 2, failure: 0} == Oban.drain_queue(:background)
 

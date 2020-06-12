@@ -9,7 +9,11 @@
             tag="span"
             path="{actor} closed {report}"
           >
-            <span slot="actor">@{{ log.actor.preferredUsername }}</span>
+            <router-link
+              slot="actor"
+              :to="{ name: RouteName.ADMIN_PROFILE, params: { id: log.actor.id } }"
+              >@{{ log.actor.preferredUsername }}</router-link
+            >
             <router-link
               :to="{ name: RouteName.REPORT, params: { reportId: log.object.id } }"
               slot="report"
@@ -21,7 +25,11 @@
             tag="span"
             path="{actor} reopened {report}"
           >
-            <span slot="actor">@{{ log.actor.preferredUsername }}</span>
+            <router-link
+              slot="actor"
+              :to="{ name: RouteName.ADMIN_PROFILE, params: { id: log.actor.id } }"
+              >@{{ log.actor.preferredUsername }}</router-link
+            >
             <router-link
               :to="{ name: RouteName.REPORT, params: { reportId: log.object.id } }"
               slot="report"
@@ -33,7 +41,11 @@
             tag="span"
             path="{actor} marked {report} as resolved"
           >
-            <span slot="actor">@{{ log.actor.preferredUsername }}</span>
+            <router-link
+              slot="actor"
+              :to="{ name: RouteName.ADMIN_PROFILE, params: { id: log.actor.id } }"
+              >@{{ log.actor.preferredUsername }}</router-link
+            >
             <router-link
               :to="{ name: RouteName.REPORT, params: { reportId: log.object.id } }"
               slot="report"
@@ -45,7 +57,11 @@
             tag="span"
             path="{actor} added a note on {report}"
           >
-            <span slot="actor">@{{ log.actor.preferredUsername }}</span>
+            <router-link
+              slot="actor"
+              :to="{ name: RouteName.ADMIN_PROFILE, params: { id: log.actor.id } }"
+              >@{{ log.actor.preferredUsername }}</router-link
+            >
             <router-link
               v-if="log.object.report"
               :to="{ name: RouteName.REPORT, params: { reportId: log.object.report.id } }"
@@ -59,8 +75,28 @@
             tag="span"
             path='{actor} deleted an event named "{title}"'
           >
-            <span slot="actor">@{{ log.actor.preferredUsername }}</span>
-            <span slot="title">{{ log.object.title }}</span>
+            <router-link
+              slot="actor"
+              :to="{ name: RouteName.ADMIN_PROFILE, params: { id: log.actor.id } }"
+              >@{{ log.actor.preferredUsername }}</router-link
+            >
+            <b slot="title">{{ log.object.title }}</b>
+          </i18n>
+          <i18n
+            v-else-if="log.action === ActionLogAction.ACTOR_SUSPENSION"
+            tag="span"
+            path="{actor} suspended profile {profile}"
+          >
+            <router-link
+              slot="actor"
+              :to="{ name: RouteName.ADMIN_PROFILE, params: { id: log.actor.id } }"
+              >@{{ log.actor.preferredUsername }}</router-link
+            >
+            <router-link
+              slot="profile"
+              :to="{ name: RouteName.ADMIN_PROFILE, params: { id: log.object.id } }"
+              >{{ displayNameAndUsername(log.object) }}
+            </router-link>
           </i18n>
           <br />
           <small>{{ log.insertedAt | formatDateTimeString }}</small>
@@ -78,6 +114,7 @@ import { IActionLog, ActionLogAction } from "@/types/report.model";
 import { LOGS } from "@/graphql/report";
 import ReportCard from "@/components/Report/ReportCard.vue";
 import RouteName from "../../router/name";
+import { displayNameAndUsername } from "../../types/actor";
 
 @Component({
   components: {
@@ -95,6 +132,8 @@ export default class ReportList extends Vue {
   ActionLogAction = ActionLogAction;
 
   RouteName = RouteName;
+
+  displayNameAndUsername = displayNameAndUsername;
 }
 </script>
 <style lang="scss" scoped>

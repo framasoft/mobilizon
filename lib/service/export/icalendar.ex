@@ -7,6 +7,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.{Event, FeedToken}
+  alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
 
   @doc """
@@ -123,7 +124,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
     end
   end
 
-  defp participations_to_events(participations) do
+  defp participations_to_events(%Page{elements: participations}) do
     participations
     |> Enum.map(& &1.event_id)
     |> Enum.map(&Events.get_event_with_preload!/1)

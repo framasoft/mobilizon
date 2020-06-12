@@ -16,6 +16,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   alias Mobilizon.Service.Statistics
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
+  require Logger
 
   def list_action_logs(
         _parent,
@@ -93,6 +94,20 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     %{
       action: :comment_deletion,
       object: convert_changes_to_struct(Comment, changes)
+    }
+  end
+
+  defp transform_action_log(Actor, :suspend, %ActionLog{changes: changes}) do
+    %{
+      action: :actor_suspension,
+      object: convert_changes_to_struct(Actor, changes)
+    }
+  end
+
+  defp transform_action_log(Actor, :unsuspend, %ActionLog{changes: changes}) do
+    %{
+      action: :actor_unsuspension,
+      object: convert_changes_to_struct(Actor, changes)
     }
   end
 

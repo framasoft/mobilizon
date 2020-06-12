@@ -8,8 +8,10 @@ defmodule Mobilizon.Users do
 
   import Mobilizon.Storage.Ecto
 
+  alias Ecto.Multi
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
+  alias Mobilizon.Events.FeedToken
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.{Setting, User}
 
@@ -46,7 +48,8 @@ defmodule Mobilizon.Users do
   @spec get_user!(integer | String.t()) :: User.t()
   def get_user!(id), do: Repo.get!(User, id)
 
-  @spec get_user(integer | String.t()) :: User.t() | nil
+  @spec get_user(integer | String.t() | nil) :: User.t() | nil
+  def get_user(nil), do: nil
   def get_user(id), do: Repo.get(User, id)
 
   def get_user_with_settings!(id) do
@@ -105,11 +108,35 @@ defmodule Mobilizon.Users do
     end
   end
 
+  @delete_user_default_options [reserve_email: true]
+
   @doc """
   Deletes an user.
   """
   @spec delete_user(User.t()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
-  def delete_user(%User{} = user), do: Repo.delete(user)
+  def delete_user(%User{id: user_id} = user, options \\ @delete_user_default_options) do
+    delete_user_options = Keyword.merge(@delete_user_default_options, options)
+
+    multi =
+      Multi.new()
+      |> Multi.delete_all(:settings, from(s in Setting, where: s.user_id == ^user_id))
+      |> Multi.delete_all(:feed_tokens, from(f in FeedToken, where: f.user_id == ^user_id))
+
+    multi =
+      if Keyword.get(delete_user_options, :reserve_email, true) do
+        Multi.update(multi, :user, User.delete_changeset(user))
+      else
+        Multi.delete(multi, :user, user)
+      end
+
+    case Repo.transaction(multi) do
+      {:ok, %{user: %User{} = user}} ->
+        {:ok, user}
+
+      {:error, remove, error, _} when remove in [:settings, :feed_tokens] ->
+        {:error, error}
+    end
+  end
 
   @doc """
   Get an user with its actors
@@ -196,12 +223,22 @@ defmodule Mobilizon.Users do
   @doc """
   Returns the list of users.
   """
-  @spec list_users(integer | nil, integer | nil, atom | nil, atom | nil) :: [User.t()]
-  def list_users(page \\ nil, limit \\ nil, sort \\ nil, direction \\ nil) do
+  @spec list_users(String.t(), integer | nil, integer | nil, atom | nil, atom | nil) :: Page.t()
+  def list_users(email \\ "", page \\ nil, limit \\ nil, sort \\ nil, direction \\ nil)
+
+  def list_users("", page, limit, sort, direction) do
     User
-    |> Page.paginate(page, limit)
     |> sort(sort, direction)
-    |> Repo.all()
+    |> preload([u], [:actors, :feed_tokens, :settings, :default_actor])
+    |> Page.build_page(page, limit)
+  end
+
+  def list_users(email, page, limit, sort, direction) do
+    User
+    |> where([u], ilike(u.email, ^"%#{email}%"))
+    |> sort(sort, direction)
+    |> preload([u], [:actors, :feed_tokens, :settings, :default_actor])
+    |> Page.build_page(page, limit)
   end
 
   @doc """

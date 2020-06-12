@@ -59,7 +59,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   def handle_incoming(%{"type" => "Create", "object" => %{"type" => "Note"} = object}) do
     Logger.info("Handle incoming to create notes")
 
-    with object_data <-
+    with object_data when is_map(object_data) <-
            object |> Converter.Comment.as_to_model_data(),
          {:existing_comment, {:error, :comment_not_found}} <-
            {:existing_comment, Conversations.get_comment_from_url_with_preload(object_data.url)},
@@ -87,7 +87,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   def handle_incoming(%{"type" => "Create", "object" => %{"type" => "Event"} = object}) do
     Logger.info("Handle incoming to create event")
 
-    with object_data <-
+    with object_data when is_map(object_data) <-
            object |> Converter.Event.as_to_model_data(),
          {:existing_event, nil} <- {:existing_event, Events.get_event_by_url(object_data.url)},
          {:ok, %Activity{} = activity, %Event{} = event} <-
