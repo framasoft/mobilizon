@@ -162,7 +162,7 @@ defmodule Mobilizon.Events do
     event =
       url
       |> event_by_url_query()
-      |> filter_public_visibility()
+      |> filter_unlisted_and_public_visibility()
       |> filter_draft()
       |> preload_for_event()
       |> Repo.one()
@@ -184,7 +184,7 @@ defmodule Mobilizon.Events do
   def get_public_event_by_url_with_preload!(url) do
     url
     |> event_by_url_query()
-    |> filter_public_visibility()
+    |> filter_unlisted_and_public_visibility()
     |> filter_draft()
     |> preload_for_event()
     |> Repo.one!()
@@ -197,7 +197,7 @@ defmodule Mobilizon.Events do
   def get_public_event_by_uuid_with_preload(uuid) do
     uuid
     |> event_by_uuid_query()
-    |> filter_public_visibility()
+    |> filter_unlisted_and_public_visibility()
     |> filter_draft()
     |> preload_for_event()
     |> Repo.one()
@@ -345,13 +345,12 @@ defmodule Mobilizon.Events do
   @doc """
   Returns the list of events.
   """
-  @spec list_events(integer | nil, integer | nil, atom, atom, boolean, boolean) :: [Event.t()]
+  @spec list_events(integer | nil, integer | nil, atom, atom, boolean) :: [Event.t()]
   def list_events(
         page \\ nil,
         limit \\ nil,
         sort \\ :begins_on,
         direction \\ :asc,
-        is_unlisted \\ false,
         is_future \\ true
       ) do
     query = from(e in Event, preload: [:organizer_actor, :participants])
@@ -360,7 +359,6 @@ defmodule Mobilizon.Events do
     |> Page.paginate(page, limit)
     |> sort(sort, direction)
     |> filter_future_events(is_future)
-    |> filter_unlisted(is_unlisted)
     |> filter_draft()
     |> filter_local_or_from_followed_instances_events()
     |> Repo.all()
@@ -445,7 +443,7 @@ defmodule Mobilizon.Events do
   @spec count_local_events :: integer
   def count_local_events do
     count_local_events_query()
-    |> filter_public_visibility()
+    |> filter_unlisted_and_public_visibility()
     |> filter_draft()
     |> Repo.one()
   end
@@ -1273,7 +1271,7 @@ defmodule Mobilizon.Events do
   @spec events_for_search_query(String.t()) :: Ecto.Query.t()
   defp events_for_search_query(search_string) do
     Event
-    |> where([e], e.visibility in ^@public_visibility)
+    |> where([e], e.visibility == ^:public)
     |> do_event_for_search_query(search_string)
   end
 
@@ -1304,7 +1302,7 @@ defmodule Mobilizon.Events do
       join: te in "events_tags",
       on: e.id == te.event_id,
       where: e.begins_on > ^DateTime.utc_now(),
-      where: e.visibility in ^@public_visibility,
+      where: e.visibility == ^:public,
       where: te.tag_id in ^tags_ids,
       order_by: [asc: e.begins_on],
       limit: ^limit
@@ -1498,7 +1496,12 @@ defmodule Mobilizon.Events do
 
   @spec filter_public_visibility(Ecto.Query.t()) :: Ecto.Query.t()
   defp filter_public_visibility(query) do
-    from(e in query, where: e.visibility in ^@public_visibility)
+    from(e in query, where: e.visibility == ^:public)
+  end
+
+  @spec filter_unlisted_and_public_visibility(Ecto.Query.t()) :: Ecto.Query.t()
+  defp filter_unlisted_and_public_visibility(query) do
+    from(q in query, where: q.visibility in ^@public_visibility)
   end
 
   @spec filter_not_event_uuid(Ecto.Query.t(), String.t() | nil) :: Ecto.Query.t()
@@ -1528,15 +1531,6 @@ defmodule Mobilizon.Events do
       on: s.uri == q.url,
       where: q.local == true or not is_nil(s.uri)
     )
-  end
-
-  @spec filter_unlisted(Ecto.Query.t(), boolean) :: Ecto.Query.t()
-  defp filter_unlisted(query, true) do
-    from(q in query, where: q.visibility in ^@public_visibility)
-  end
-
-  defp filter_unlisted(query, false) do
-    from(q in query, where: q.visibility == ^:public)
   end
 
   @spec filter_approved_role(Ecto.Query.t()) :: Ecto.Query.t()
