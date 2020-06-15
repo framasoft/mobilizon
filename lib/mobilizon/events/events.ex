@@ -356,11 +356,12 @@ defmodule Mobilizon.Events do
     query = from(e in Event, preload: [:organizer_actor, :participants])
 
     query
-    |> Page.paginate(page, limit)
     |> sort(sort, direction)
     |> filter_future_events(is_future)
+    |> filter_public_visibility()
     |> filter_draft()
     |> filter_local_or_from_followed_instances_events()
+    |> Page.paginate(page, limit)
     |> Repo.all()
   end
 
