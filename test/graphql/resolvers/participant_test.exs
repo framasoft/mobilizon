@@ -554,7 +554,8 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
 
     test "stats_participants_for_event/3 give the number of (un)approved participants", %{
       conn: conn,
-      actor: actor
+      actor: actor,
+      user: user
     } do
       event =
         @event
@@ -577,6 +578,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
 
       res =
         conn
+        |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
 
       assert json_response(res, 200)["data"]["event"]["uuid"] == to_string(event.uuid)
@@ -623,12 +625,33 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
 
       res =
         conn
+        |> auth_conn(user)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
 
       assert json_response(res, 200)["data"]["event"]["uuid"] == to_string(event.uuid)
       assert json_response(res, 200)["data"]["event"]["participantStats"]["going"] == 2
       assert json_response(res, 200)["data"]["event"]["participantStats"]["notApproved"] == 1
       assert json_response(res, 200)["data"]["event"]["participantStats"]["rejected"] == 1
+
+      query = """
+      {
+        event(uuid: "#{event.uuid}") {
+          uuid,
+          participantStats {
+            going,
+            notApproved,
+            rejected
+          }
+        }
+      }
+      """
+
+      res =
+        conn
+        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+
+      assert is_nil(json_response(res, 200)["errors"])
+      assert json_response(res, 200)["data"]["event"]["going"] == nil
     end
   end
 

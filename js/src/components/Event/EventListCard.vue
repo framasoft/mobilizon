@@ -7,31 +7,11 @@
             <date-calendar-icon :date="participation.event.beginsOn" />
           </div>
           <router-link :to="{ name: RouteName.EVENT, params: { uuid: participation.event.uuid } }">
-            <h2 class="title">{{ participation.event.title }}</h2>
+            <h3 class="title">{{ participation.event.title }}</h3>
           </router-link>
         </div>
         <div class="participation-actor has-text-grey">
-          <span
-            v-if="
-              participation.event.physicalAddress && participation.event.physicalAddress.locality
-            "
-            >{{ participation.event.physicalAddress.locality }} -</span
-          >
           <span>
-            <span>
-              {{
-                $t("Organized by {name}", {
-                  name: participation.event.organizerActor.displayName(),
-                })
-              }}
-            </span>
-            <span v-if="participation.role === ParticipantRole.PARTICIPANT">
-              {{ $t("Going as {name}", { name: participation.actor.displayName() }) }}
-            </span>
-          </span>
-        </div>
-        <div class="columns">
-          <span class="column is-narrow">
             <b-icon icon="earth" v-if="participation.event.visibility === EventVisibility.PUBLIC" />
             <b-icon
               icon="link"
@@ -42,7 +22,42 @@
               v-else-if="participation.event.visibility === EventVisibility.PRIVATE"
             />
           </span>
-          <span class="column is-narrow participant-stats">
+          <span
+            v-if="
+              participation.event.physicalAddress && participation.event.physicalAddress.locality
+            "
+            >{{ participation.event.physicalAddress.locality }} -</span
+          >
+          <span>
+            <i18n tag="span" path="Organized by {name}">
+              <popover-actor-card
+                slot="name"
+                :actor="participation.event.organizerActor"
+                :inline="true"
+              >
+                {{ participation.event.organizerActor.displayName() }}
+              </popover-actor-card>
+            </i18n>
+            <i18n
+              v-if="participation.role === ParticipantRole.PARTICIPANT"
+              path="Going as {name}"
+              tag="span"
+            >
+              <popover-actor-card slot="name" :actor="participation.actor" :inline="true">
+                {{ participation.actor.displayName() }}
+              </popover-actor-card>
+            </i18n>
+          </span>
+        </div>
+        <div>
+          <span
+            class="participant-stats"
+            v-if="
+              ![ParticipantRole.PARTICIPANT, ParticipantRole.NOT_APPROVED].includes(
+                participation.role
+              )
+            "
+          >
             <span v-if="participation.event.options.maximumAttendeeCapacity !== 0">
               {{
                 $t("{approved} / {total} seats", {
@@ -176,6 +191,7 @@ import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import EventMixin from "../../mixins/event";
 import RouteName from "../../router/name";
 import { changeIdentity } from "../../utils/auth";
+import PopoverActorCard from "../Account/PopoverActorCard.vue";
 
 const defaultOptions: IEventCardOptions = {
   hideDate: true,
@@ -187,6 +203,7 @@ const defaultOptions: IEventCardOptions = {
 @Component({
   components: {
     DateCalendarIcon,
+    PopoverActorCard,
   },
   apollo: {
     currentActor: {

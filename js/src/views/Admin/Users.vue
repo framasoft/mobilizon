@@ -35,7 +35,12 @@
           </router-link>
         </b-table-column>
         <b-table-column field="confirmedAt" :label="$t('Confirmed at')" :centered="true">
-          {{ props.row.confirmedAt | formatDateTimeString }}
+          <template v-if="props.row.confirmedAt">
+            {{ props.row.confirmedAt | formatDateTimeString }}
+          </template>
+          <template v-else>
+            {{ $t("Not confirmed") }}
+          </template>
         </b-table-column>
         <b-table-column field="locale" :label="$t('Language')" :centered="true">
           {{ props.row.locale }}

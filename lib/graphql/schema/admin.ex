@@ -9,6 +9,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
   alias Mobilizon.Conversations.Comment
   alias Mobilizon.Events.Event
   alias Mobilizon.Reports.{Note, Report}
+  alias Mobilizon.Users.User
 
   alias Mobilizon.GraphQL.Resolvers.Admin
 
@@ -32,6 +33,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
     value(:event_update)
     value(:actor_suspension)
     value(:actor_unsuspension)
+    value(:user_deletion)
   end
 
   @desc "The objects that can be in an action log"
@@ -53,6 +55,9 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
 
       %Actor{type: "Person"}, _ ->
         :person
+
+      %User{}, _ ->
+        :user
 
       _, _ ->
         nil

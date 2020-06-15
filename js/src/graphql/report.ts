@@ -184,6 +184,11 @@ export const LOGS = gql`
           domain
           name
         }
+        ... on User {
+          id
+          email
+          confirmedAt
+        }
       }
       insertedAt
     }
