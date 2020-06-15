@@ -444,11 +444,6 @@ export default class EditEvent extends Vue {
 
   endsOnNull = false;
 
-  created() {
-    this.initializeEvent();
-    this.unmodifiedEvent = JSON.parse(JSON.stringify(this.event.toEditJSON()));
-  }
-
   @Watch("eventId", { immediate: true })
   resetFormForCreation(eventId: string) {
     if (eventId === undefined) {
@@ -486,10 +481,12 @@ export default class EditEvent extends Vue {
       }
     );
     this.observer.observe(this.$refs.bottomObserver as Element);
-    this.unmodifiedEvent = JSON.parse(JSON.stringify(this.event.toEditJSON()));
 
     this.pictureFile = await buildFileFromIPicture(this.event.picture);
     this.limitedPlaces = this.event.options.maximumAttendeeCapacity > 0;
+    if (!(this.isUpdate || this.isDuplicate)) {
+      this.initializeEvent();
+    }
   }
 
   createOrUpdateDraft(e: Event) {
@@ -511,6 +508,13 @@ export default class EditEvent extends Vue {
   @Watch("currentActor")
   setCurrentActor() {
     this.event.organizerActor = this.currentActor;
+  }
+
+  @Watch("event")
+  setInitialData() {
+    if (this.isUpdate && this.unmodifiedEvent === undefined && this.event && this.event.uuid) {
+      this.unmodifiedEvent = JSON.parse(JSON.stringify(this.event.toEditJSON()));
+    }
   }
 
   resetAttributedToOnOrganizerChange() {
@@ -621,21 +625,24 @@ export default class EditEvent extends Vue {
           person: {
             __typename: "Person",
             id: organizerActor.id,
-            participations: [
-              {
-                __typename: "Participant",
-                id: "unknown",
-                role: ParticipantRole.CREATOR,
-                actor: {
-                  __typename: "Actor",
-                  id: organizerActor.id,
+            participations: {
+              total: 1,
+              elements: [
+                {
+                  __typename: "Participant",
+                  id: "unknown",
+                  role: ParticipantRole.CREATOR,
+                  actor: {
+                    __typename: "Actor",
+                    id: organizerActor.id,
+                  },
+                  event: {
+                    __typename: "Event",
+                    id: updateEvent.id,
+                  },
                 },
-                event: {
-                  __typename: "Event",
-                  id: updateEvent.id,
-                },
-              },
-            ],
+              ],
+            },
           },
         },
       });

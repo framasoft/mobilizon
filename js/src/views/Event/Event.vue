@@ -592,7 +592,7 @@ import PopoverActorCard from "../../components/Account/PopoverActorCard.vue";
         },
       },
       update: (data) => {
-        if (data && data.person) return data.person.participations;
+        if (data && data.person) return data.person.participations.elements;
         return [];
       },
       skip() {
@@ -809,7 +809,8 @@ export default class Event extends EventMixin {
             console.error("Cannot update participation cache, because of null value.");
             return;
           }
-          person.participations.push(data.joinEvent);
+          person.participations.elements.push(data.joinEvent);
+          person.participations.total += 1;
           store.writeQuery({
             query: EVENT_PERSON_PARTICIPATION,
             variables: { eventId: this.event.id, actorId: identity.id },

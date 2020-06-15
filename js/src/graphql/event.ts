@@ -96,7 +96,6 @@ export const FETCH_EVENT = gql`
         name
       },
       publishAt,
-      category,
       onlineAddress,
       phoneAddress,
       physicalAddress {

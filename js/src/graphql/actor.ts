@@ -23,9 +23,12 @@ export const FETCH_PERSON = gql`
         token
       }
       organizedEvents {
-        uuid
-        title
-        beginsOn
+        total
+        elements {
+          uuid
+          title
+          beginsOn
+        }
       }
     }
   }

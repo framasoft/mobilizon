@@ -219,8 +219,14 @@ export default class NavBar extends Vue {
 @import "../variables.scss";
 
 nav {
-  .navbar-item svg {
-    height: 1.75rem;
+  .navbar-item {
+    a.button.is-success {
+      background: #1e7d97;
+    }
+
+    svg {
+      height: 1.75rem;
+    }
   }
 
   .navbar-dropdown .navbar-item {

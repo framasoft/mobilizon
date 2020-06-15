@@ -484,7 +484,6 @@
   "{count} participants": "No participants yet | One participant | {count} participants",
   "{count} requests waiting": "{count} requests waiting",
   "{license} guarantees {respect} of the people who will use it. Since {source}, anyone can audit it, which guarantees its transparency.": "{license} guarantees {respect} of the people who will use it. Since {source}, anyone can audit it, which guarantees its transparency.",
-  "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks",
   "© The OpenStreetMap Contributors": "© The OpenStreetMap Contributors",
   "@{username} ({role})": "@{username} ({role})",
   "@{username}": "@{username}",
@@ -641,5 +640,7 @@
   "terms of service": "terms of service",
   "Please read the instance's {fullRules}": "Please read the instance's {fullRules}",
   "I agree to the {instanceRules} and {termsOfService}": "I agree to the {instanceRules} and {termsOfService}",
-  "This email is already used.": "This email is already used."
+  "This email is already used.": "This email is already used.",
+  "Powered by {mobilizon}. © 2018 - {date} The Mobilizon Contributors - Made with the financial support of {contributors}.": "Powered by {mobilizon}. © 2018 - {date} The Mobilizon Contributors - Made with the financial support of {contributors}.",
+  "more than 1360 contributors": "more than 1360 contributors"
 }
