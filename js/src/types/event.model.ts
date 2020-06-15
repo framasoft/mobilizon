@@ -272,7 +272,6 @@ export class EventModel implements IEvent {
     this.title = hash.title;
     this.slug = hash.slug;
     this.description = hash.description;
-    this.category = hash.category;
 
     this.beginsOn = new Date(hash.beginsOn);
     if (hash.endsOn) this.endsOn = new Date(hash.endsOn);
@@ -328,7 +327,6 @@ interface IEventEditJSON {
   id?: string;
   title: string;
   description: string;
-  category: Category | null;
   beginsOn: string;
   endsOn: string | null;
   status: EventStatus;
