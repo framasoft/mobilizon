@@ -58,11 +58,11 @@ export const COMMENTS_THREADS = gql`
       id
       uuid
       comments {
-        ...CommentFields
+        ...CommentRecursive
       }
     }
   }
-  ${COMMENT_FIELDS_FRAGMENT}
+  ${COMMENT_RECURSIVE_FRAGMENT}
 `;
 
 export const CREATE_COMMENT_FROM_EVENT = gql`
