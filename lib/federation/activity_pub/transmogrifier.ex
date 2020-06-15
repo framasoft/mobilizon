@@ -175,7 +175,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
            {:member, Actors.is_member?(object_data.creator_id, object_data.actor_id)},
          {:ok, %Activity{} = activity, %Resource{} = resource} <-
            ActivityPub.create(:resource, object_data, false),
-         {:ok, %Actor{type: :Group, id: group_id} = group} <- Actors.get_actor_by_url(group_url),
+         {:ok, %Actor{type: :Group, id: group_id} = group} <-
+           ActivityPub.get_or_fetch_actor_by_url(group_url),
          announce_id <- "#{object_url}/announces/#{group_id}",
          {:ok, _activity, _resource} <- ActivityPub.announce(group, object, announce_id) do
       {:ok, activity, resource}
@@ -262,7 +263,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       ) do
     with actor <- Utils.get_actor(data),
          # TODO: Is the following line useful?
-         {:ok, %Actor{id: actor_id} = _actor} <- ActivityPub.get_or_fetch_actor_by_url(actor),
+         {:ok, %Actor{id: actor_id, suspended: false} = _actor} <-
+           ActivityPub.get_or_fetch_actor_by_url(actor),
          :ok <- Logger.debug("Fetching contained object"),
          {:ok, object} <- fetch_obj_helper_as_activity_streams(object),
          :ok <- Logger.debug("Handling contained object"),
@@ -271,7 +273,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:ok, _activity, entity} <- handle_incoming(create_data),
          :ok <- Logger.debug("Finished processing contained object"),
          {:ok, activity} <- ActivityPub.create_activity(data, false),
-         {:ok, %Actor{id: object_owner_actor_id}} <- Actors.get_actor_by_url(object["actor"]),
+         {:ok, %Actor{id: object_owner_actor_id}} <-
+           ActivityPub.get_or_fetch_actor_by_url(object["actor"]),
          {:ok, %Mobilizon.Share{} = _share} <-
            Mobilizon.Share.create(object["id"], actor_id, object_owner_actor_id) do
       {:ok, activity, entity}
@@ -288,7 +291,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         "actor" => _actor_id
       })
       when object_type in ["Person", "Group", "Application", "Service", "Organization"] do
-    with {:ok, %Actor{} = old_actor} <- Actors.get_actor_by_url(object["id"]),
+    with {:ok, %Actor{suspended: false} = old_actor} <-
+           ActivityPub.get_or_fetch_actor_by_url(object["id"]),
          object_data <-
            object |> Converter.Actor.as_to_model_data(),
          {:ok, %Activity{} = activity, %Actor{} = new_actor} <-
@@ -306,7 +310,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
           update_data
       ) do
     with actor <- Utils.get_actor(update_data),
-         {:ok, %Actor{url: actor_url}} <- Actors.get_actor_by_url(actor),
+         {:ok, %Actor{url: actor_url, suspended: false}} <-
+           ActivityPub.get_or_fetch_actor_by_url(actor),
          {:ok, %Event{} = old_event} <-
            object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
          object_data <- Converter.Event.as_to_model_data(object),
@@ -351,8 +356,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
           "id" => id
         } = _data
       ) do
-    with {:ok, %Actor{domain: nil} = followed} <- Actors.get_actor_by_url(followed),
-         {:ok, %Actor{} = follower} <- Actors.get_actor_by_url(follower),
+    with {:ok, %Actor{domain: nil} = followed} <- ActivityPub.get_or_fetch_actor_by_url(followed),
+         {:ok, %Actor{} = follower} <- ActivityPub.get_or_fetch_actor_by_url(follower),
          {:ok, activity, object} <- ActivityPub.unfollow(follower, followed, id, false) do
       {:ok, activity, object}
     else
@@ -371,7 +376,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         %{"type" => "Delete", "object" => object, "actor" => _actor, "id" => _id} = data
       ) do
     with actor <- Utils.get_actor(data),
-         {:ok, %Actor{url: actor_url}} <- Actors.get_actor_by_url(actor),
+         {:ok, %Actor{url: actor_url}} <- ActivityPub.get_or_fetch_actor_by_url(actor),
          object_id <- Utils.get_url(object),
          {:origin_check, true} <-
            {:origin_check, Utils.origin_check_from_id?(actor_url, object_id)},
@@ -399,7 +404,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         } = data
       ) do
     with actor <- Utils.get_actor(data),
-         {:ok, %Actor{url: _actor_url} = actor} <- Actors.get_actor_by_url(actor),
+         {:ok, %Actor{url: _actor_url, suspended: false} = actor} <-
+           ActivityPub.get_or_fetch_actor_by_url(actor),
          object <- Utils.get_url(object),
          {:ok, object} <- ActivityPub.fetch_object_from_url(object),
          {:ok, activity, object} <-
@@ -416,7 +422,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         %{"type" => "Leave", "object" => object, "actor" => actor, "id" => _id} = data
       ) do
     with actor <- Utils.get_actor(data),
-         {:ok, %Actor{} = actor} <- Actors.get_actor_by_url(actor),
+         {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_actor_by_url(actor),
          object <- Utils.get_url(object),
          {:ok, object} <- ActivityPub.fetch_object_from_url(object),
          {:ok, activity, object} <- ActivityPub.leave(object, actor, false) do
@@ -443,7 +449,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
           "target" => target
         } = data
       ) do
-    with {:ok, %Actor{} = actor} <- data |> Utils.get_actor() |> Actors.get_actor_by_url(),
+    with {:ok, %Actor{} = actor} <-
+           data |> Utils.get_actor() |> ActivityPub.get_or_fetch_actor_by_url(),
          {:ok, object} <- object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
          {:ok, %Actor{} = target} <-
            target |> Utils.get_url() |> ActivityPub.get_or_fetch_actor_by_url(),

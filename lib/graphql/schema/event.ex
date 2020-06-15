@@ -8,7 +8,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   import Mobilizon.GraphQL.Helpers.Error
 
-  alias Mobilizon.{Actors, Addresses, Conversations, Events}
+  alias Mobilizon.{Actors, Addresses, Conversations}
   alias Mobilizon.GraphQL.Resolvers.{Event, Picture, Tag}
   alias Mobilizon.GraphQL.Schema
 
