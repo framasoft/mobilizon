@@ -82,7 +82,7 @@ export const errors: IError[] = [
   },
   {
     match: /^This email is already used.$/,
-    value: null,
+    value: i18n.t("This email is already used.") as string,
   },
   {
     match: /^User account not confirmed$/,

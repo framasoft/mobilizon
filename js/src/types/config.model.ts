@@ -59,6 +59,7 @@ export interface IConfig {
     type: InstanceTermsType;
     url: string;
   };
+  rules: string;
   resourceProviders: IProvider[];
   timezones: string[];
   features: {

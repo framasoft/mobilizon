@@ -106,7 +106,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
       timezones: Tzdata.zone_list(),
       features: %{
         groups: Config.instance_group_feature_enabled?()
-      }
+      },
+      rules: Config.instance_rules()
     }
   end
 end

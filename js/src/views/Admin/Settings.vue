@@ -15,6 +15,9 @@
           <p class="content" v-else>{{ $t("Registration is closed.") }}</p>
         </b-switch>
       </b-field>
+      <b-field :label="$t('Instance Rules')">
+        <b-input type="textarea" v-model="adminSettings.instanceRules" />
+      </b-field>
       <b-field :label="$t('Instance Terms Source')">
         <div class="columns">
           <div class="column is-one-third-desktop">

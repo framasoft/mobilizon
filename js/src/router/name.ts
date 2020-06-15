@@ -13,6 +13,7 @@ enum GlobalRouteName {
   SEARCH = "Search",
   TERMS = "TERMS",
   INTERACT = "INTERACT",
+  RULES = "RULES",
 }
 
 // Hack to merge enums

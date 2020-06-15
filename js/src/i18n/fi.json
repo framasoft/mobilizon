@@ -37,7 +37,7 @@
   "Are you sure you want to delete this event? This action cannot be reverted.": "Haluatko varmasti poistaa tämän tapahtuman? Toimintoa ei voi perua.",
   "Avatar": "Avatar",
   "Back to previous page": "Palaa edelliselle sivulle",
-  "Before you can login, you need to click on the link inside it to validate your account": "Sinun on ennen sisäänkirjautumista vahvistettava tilisi napsauttamalla siinä olevaa linkkiä",
+  "Before you can login, you need to click on the link inside it to validate your account.": "Sinun on ennen sisäänkirjautumista vahvistettava tilisi napsauttamalla siinä olevaa linkkiä.",
   "By @{username}": "Tehnyt @{username}",
   "Cancel": "Peruuta",
   "Cancel anonymous participation": "Peruuta anonyymi osallistuminen",

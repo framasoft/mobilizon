@@ -20,5 +20,6 @@ export interface IAdminSettings {
   instanceTerms: string;
   instanceTermsType: InstanceTermsType;
   instanceTermsUrl: string | null;
+  instanceRules: string;
   registrationsOpen: boolean;
 }

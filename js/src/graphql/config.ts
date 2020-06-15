@@ -78,6 +78,14 @@ export const TERMS = gql`
   }
 `;
 
+export const RULES = gql`
+  query Rules {
+    config {
+      rules
+    }
+  }
+`;
+
 export const TIMEZONES = gql`
   query {
     config {

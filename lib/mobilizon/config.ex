@@ -42,6 +42,11 @@ defmodule Mobilizon.Config do
     Mobilizon.Admin.get_admin_setting_value("instance", "instance_terms_url")
   end
 
+  @spec instance_rules :: String.t()
+  def instance_rules do
+    Mobilizon.Admin.get_admin_setting_value("instance", "instance_rules")
+  end
+
   @spec instance_version :: String.t()
   def instance_version, do: Mix.Project.config()[:version]
 

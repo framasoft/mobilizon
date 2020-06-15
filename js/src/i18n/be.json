@@ -27,7 +27,7 @@
   "Are you sure you want to cancel your participation at event \"{title}\"?": "Вы сапраўды хочаце адмовіцца ад удзелу ў падзеі «{title}»?",
   "Are you sure you want to delete this event? This action cannot be reverted.": "Вы сапраўды хочаце выдаліць гэту падзею? Гэта дзеянне нельга адмяніць.",
   "Avatar": "Аватар",
-  "Before you can login, you need to click on the link inside it to validate your account": "Каб увайсці з уліковым запісам, патрэбна спачатку перайсці па спасылцы, якая прыйшла вам у лісце",
+  "Before you can login, you need to click on the link inside it to validate your account.": "Каб увайсці з уліковым запісам, патрэбна спачатку перайсці па спасылцы, якая прыйшла вам у лісце.",
   "By @{username}": "Ад @{username}",
   "Cancel": "Адмяніць",
   "Cancel creation": "Адмяніць стварэнне",

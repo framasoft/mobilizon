@@ -28,7 +28,7 @@
   "Are you sure you want to cancel your participation at event \"{title}\"?": "Är du säker på att du vill avsluta ditt deltagande i evenemanget \"{title}\"?",
   "Are you sure you want to delete this event? This action cannot be reverted.": "Är du säker på att du vill radera det här evenemanget? Den här handlingen kan inte ångras.",
   "Avatar": "Avatar",
-  "Before you can login, you need to click on the link inside it to validate your account": "Innan du loggar in måste du klicka på länken inuti det för att validera ditt konto",
+  "Before you can login, you need to click on the link inside it to validate your account.": "Innan du loggar in måste du klicka på länken inuti det för att validera ditt konto.",
   "By @{username}": "Av @{username}",
   "Cancel": "Avbryt",
   "Cancel creation": "Avbryt skapandet",
