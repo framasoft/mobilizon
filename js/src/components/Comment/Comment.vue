@@ -1,24 +1,27 @@
 <template>
   <li :class="{ reply: comment.inReplyToComment }">
-    <article
-      class="media"
-      :class="{ selected: commentSelected, organizer: commentFromOrganizer }"
-      :id="commentId"
-    >
-      <figure class="media-left" v-if="!comment.deletedAt && comment.actor.avatar">
-        <p class="image is-48x48">
-          <img :src="comment.actor.avatar.url" alt="" />
-        </p>
-      </figure>
-      <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+    <article class="media" :class="{ selected: commentSelected }" :id="commentId">
+      <popover-actor-card :actor="comment.actor" :inline="true" v-if="comment.actor">
+        <figure class="media-left" v-if="!comment.deletedAt && comment.actor.avatar">
+          <p class="image is-48x48 is-rounded">
+            <img :src="comment.actor.avatar.url" alt="" />
+          </p>
+        </figure>
+        <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+      </popover-actor-card>
+      <div v-else>
+        <figure class="media-left" v-if="!comment.deletedAt && comment.actor.avatar">
+          <p class="image is-48x48 is-rounded">
+            <img :src="comment.actor.avatar.url" alt="" />
+          </p>
+        </figure>
+        <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+      </div>
       <div class="media-content">
         <div class="content">
           <span class="first-line" v-if="!comment.deletedAt">
-            <strong>{{ comment.actor.name }}</strong>
-            <small v-if="comment.actor.domain"
-              >@{{ comment.actor.preferredUsername }}@{{ comment.actor.domain }}</small
-            >
-            <small v-else>@{{ comment.actor.preferredUsername }}</small>
+            <strong :class="{ organizer: commentFromOrganizer }">{{ comment.actor.name }}</strong>
+            <small>@{{ usernameWithDomain(comment.actor) }}</small>
             <a class="comment-link has-text-grey" :href="commentURL">
               <small>{{ timeago(new Date(comment.updatedAt)) }}</small>
             </a>
@@ -55,7 +58,11 @@
         </div>
         <nav
           class="reply-action level is-mobile"
-          v-if="currentActor.id && event.options.commentModeration !== CommentModeration.CLOSED"
+          v-if="
+            currentActor.id &&
+            event.options.commentModeration !== CommentModeration.CLOSED &&
+            !comment.deletedAt
+          "
         >
           <div class="level-left">
             <span
@@ -100,17 +107,22 @@
         </div>
       </article>
     </form>
-    <transition-group name="comment-replies" v-if="showReplies" class="comment-replies" tag="ul">
-      <comment
-        class="reply"
-        v-for="reply in comment.replies"
-        :key="reply.id"
-        :comment="reply"
-        :event="event"
-        @create-comment="$emit('create-comment', $event)"
-        @delete-comment="$emit('delete-comment', $event)"
-      />
-    </transition-group>
+    <div class="replies">
+      <div class="left">
+        <div class="vertical-border" @click="showReplies = false" />
+      </div>
+      <transition-group name="comment-replies" v-if="showReplies" class="comment-replies" tag="ul">
+        <comment
+          class="reply"
+          v-for="reply in comment.replies"
+          :key="reply.id"
+          :comment="reply"
+          :event="event"
+          @create-comment="$emit('create-comment', $event)"
+          @delete-comment="$emit('delete-comment', $event)"
+        />
+      </transition-group>
+    </div>
   </li>
 </template>
 <script lang="ts">
@@ -119,12 +131,13 @@ import EditorComponent from "@/components/Editor.vue";
 import TimeAgo from "javascript-time-ago";
 import { CommentModel, IComment } from "../../types/comment.model";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
-import { IPerson } from "../../types/actor";
+import { IPerson, usernameWithDomain } from "../../types/actor";
 import { COMMENTS_THREADS, FETCH_THREAD_REPLIES } from "../../graphql/comment";
 import { IEvent, CommentModeration } from "../../types/event.model";
 import ReportModal from "../Report/ReportModal.vue";
 import { IReport } from "../../types/report.model";
 import { CREATE_REPORT } from "../../graphql/report";
+import PopoverActorCard from "../../components/Account/PopoverActorCard.vue";
 
 @Component({
   apollo: {
@@ -135,6 +148,7 @@ import { CREATE_REPORT } from "../../graphql/report";
   components: {
     editor: () => import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
     comment: () => import(/* webpackChunkName: "comment" */ "./Comment.vue"),
+    PopoverActorCard,
   },
 })
 export default class Comment extends Vue {
@@ -157,6 +171,8 @@ export default class Comment extends Vue {
   timeAgoInstance: TimeAgo | null = null;
 
   CommentModeration = CommentModeration;
+
+  usernameWithDomain = usernameWithDomain;
 
   async mounted() {
     const localeName = this.$i18n.locale;
@@ -302,8 +318,21 @@ form.reply {
 }
 
 .first-line {
+  margin-bottom: 3px;
+
   * {
     padding: 0 5px 0 0;
+  }
+
+  strong.organizer {
+    background: $primary;
+    border-radius: 12px;
+    color: white;
+    padding: 0 6px;
+  }
+
+  & > small {
+    margin-left: 0.3rem;
   }
 }
 
@@ -322,8 +351,27 @@ form.reply {
   color: hsl(0, 0%, 21%);
 }
 
-.root-comment .comment-replies > .reply {
-  padding-left: 3rem;
+.root-comment .replies {
+  display: flex;
+
+  .left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 10px;
+
+    .vertical-border {
+      width: 3px;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.05);
+      margin: 10px calc(1rem + 1px);
+      cursor: pointer;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
 }
 
 .media .media-content {
@@ -353,12 +401,10 @@ form.reply {
 
 article {
   border-radius: 4px;
+  margin-bottom: 5px;
 
   &.selected {
     background-color: lighten($secondary, 30%);
-  }
-  &.organizer:not(.selected) {
-    background-color: lighten($primary, 50%);
   }
 }
 

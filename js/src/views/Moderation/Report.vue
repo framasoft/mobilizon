@@ -40,6 +40,7 @@
                     v-if="report.reported.avatar"
                     class="image"
                     :src="report.reported.avatar.url"
+                    alt=""
                   />
                   @{{ report.reported.preferredUsername }}
                 </router-link>
@@ -61,6 +62,7 @@
                     v-if="report.reporter.avatar"
                     class="image"
                     :src="report.reporter.avatar.url"
+                    alt=""
                   />
                   @{{ report.reporter.preferredUsername }}
                 </router-link>
@@ -188,8 +190,8 @@
       </div>
 
       <form @submit="addNote()">
-        <b-field :label="$t('New note')">
-          <b-input type="textarea" v-model="noteContent"></b-input>
+        <b-field :label="$t('New note')" label-for="newNoteInput">
+          <b-input type="textarea" v-model="noteContent" id="newNoteInput"></b-input>
         </b-field>
         <b-button type="submit" @click="addNote">{{ $t("Add a note") }}</b-button>
       </form>

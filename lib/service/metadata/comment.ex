@@ -2,7 +2,7 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Conversations.Comment do
   alias Phoenix.HTML.Tag
   alias Mobilizon.Conversations.Comment
 
-  def build_tags(%Comment{} = comment) do
+  def build_tags(%Comment{} = comment, _locale \\ "en") do
     [
       Tag.tag(:meta, property: "og:title", content: comment.actor.preferred_username),
       Tag.tag(:meta, property: "og:url", content: comment.url),

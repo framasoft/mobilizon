@@ -73,7 +73,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
       ) do
     with {actor_id, ""} <- Integer.parse(actor_id),
          {:is_owned, %Actor{} = _organizer_actor} <- User.owns_actor(user, actor_id),
-         %CommentModel{} = comment <- Conversations.get_comment_with_preload(comment_id) do
+         %CommentModel{deleted_at: nil} = comment <-
+           Conversations.get_comment_with_preload(comment_id) do
       cond do
         {:comment_can_be_managed, true} == CommentModel.can_be_managed_by(comment, actor_id) ->
           do_delete_comment(comment)
@@ -90,6 +91,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
           {:error, "You cannot delete this comment"}
       end
     else
+      %CommentModel{deleted_at: deleted_at} when not is_nil(deleted_at) ->
+        {:error, "Comment is already deleted"}
+
       {:is_owned, nil} ->
         {:error, "Actor id is not owned by authenticated user"}
     end

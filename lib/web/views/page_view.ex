@@ -50,20 +50,19 @@ defmodule Mobilizon.Web.PageView do
 
   def render(page, %{object: object, conn: conn} = _assigns)
       when page in ["actor.html", "event.html", "comment.html"] do
-    tags = object |> Metadata.build_tags()
-    inject_tags(conn, tags)
+    locale = get_locale(conn)
+    tags = object |> Metadata.build_tags(locale)
+    inject_tags(tags, locale)
   end
 
   def render("index.html", %{conn: conn}) do
     tags = Instance.build_tags()
-    inject_tags(conn, tags)
+    inject_tags(tags, get_locale(conn))
   end
 
-  @spec inject_tags(Conn.t(), List.t()) :: {:safe, String.t()}
-  def inject_tags(conn, tags) do
+  @spec inject_tags(List.t(), String.t()) :: {:safe, String.t()}
+  def inject_tags(tags, locale \\ "en") do
     with {:ok, index_content} <- File.read(index_file_path()) do
-      locale = get_locale(conn)
-
       do_replacements(index_content, MetadataUtils.stringify_tags(tags), locale)
     end
   end

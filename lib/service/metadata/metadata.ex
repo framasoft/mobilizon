@@ -3,5 +3,5 @@ defprotocol Mobilizon.Service.Metadata do
   Build tags
   """
 
-  def build_tags(entity)
+  def build_tags(entity, locale \\ "en")
 end

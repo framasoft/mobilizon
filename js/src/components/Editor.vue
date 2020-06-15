@@ -443,7 +443,6 @@ export default class EditorComponent extends Vue {
   replyToComment(comment: IComment) {
     const actorModel = new Actor(comment.actor);
     if (!this.editor) return;
-    console.log(this.editor.commands);
     this.editor.commands.mention({
       id: actorModel.id,
       label: actorModel.usernameWithDomain().substring(1),
@@ -697,12 +696,19 @@ $color-white: #eee;
   font-size: 0.9rem;
   font-weight: bold;
   border-radius: 5px;
-  padding: 0.2rem 0.5rem;
+  padding: 0.2rem;
   white-space: nowrap;
+  margin-right: 0.2rem;
 }
 .mention-suggestion {
   color: rgba($color-black, 0.6);
 }
+
+.mention .mention {
+  background: initial;
+  margin-right: 0;
+}
+
 .suggestion-list {
   padding: 0.2rem;
   border: 2px solid rgba($color-black, 0.1);
