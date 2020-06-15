@@ -39,9 +39,13 @@
           </b-field>
 
           <p class="control has-text-centered">
-            <b-button type="is-primary" size="is-large" native-type="submit">{{
-              $t("Create my profile")
-            }}</b-button>
+            <b-button
+              type="is-primary"
+              size="is-large"
+              native-type="submit"
+              :disabled="sendingValidation"
+              >{{ $t("Create my profile") }}</b-button
+            >
           </p>
         </form>
 
@@ -54,11 +58,13 @@
                 })
               }}
             </h2>
-            <p>{{ $t("A validation email was sent to {email}", { email }) }}</p>
+            <i18n path="A validation email was sent to {email}" tag="p">
+              <code slot="email">{{ email }}</code>
+            </i18n>
             <p>
               {{
                 $t(
-                  "Before you can login, you need to click on the link inside it to validate your account"
+                  "Before you can login, you need to click on the link inside it to validate your account."
                 )
               }}
             </p>
@@ -141,6 +147,7 @@ export default class Register extends mixins(identityEditionMixin) {
       );
       console.error("Error while registering person", errorCatched);
       console.error("Errors while registering person", this.errors);
+      this.sendingValidation = false;
     }
   }
 }

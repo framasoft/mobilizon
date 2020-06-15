@@ -111,6 +111,7 @@ export const ADMIN_SETTINGS_FRAGMENT = gql`
     instanceTerms
     instanceTermsType
     instanceTermsUrl
+    instanceRules
     registrationsOpen
   }
 `;
@@ -131,6 +132,7 @@ export const SAVE_ADMIN_SETTINGS = gql`
     $instanceTerms: String
     $instanceTermsType: InstanceTermsType
     $instanceTermsUrl: String
+    $instanceRules: String
     $registrationsOpen: Boolean
   ) {
     saveAdminSettings(
@@ -139,6 +141,7 @@ export const SAVE_ADMIN_SETTINGS = gql`
       instanceTerms: $instanceTerms
       instanceTermsType: $instanceTermsType
       instanceTermsUrl: $instanceTermsUrl
+      instanceRules: $instanceRules
       registrationsOpen: $registrationsOpen
     ) {
       ...adminSettingsFragment

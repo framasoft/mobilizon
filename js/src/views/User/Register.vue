@@ -3,6 +3,12 @@
     <section class="hero">
       <div class="hero-body">
         <h1 class="title">{{ $t("Register an account on Mobilizon!") }}</h1>
+        <i18n tag="p" path="{instanceName} is an instance of the {mobilizon} software.">
+          <b slot="instanceName">{{ config.name }}</b>
+          <a href="https://joinmobilizon.org" target="_blank" slot="mobilizon">{{
+            $t("Mobilizon")
+          }}</a>
+        </i18n>
       </div>
     </section>
     <section>
@@ -22,15 +28,12 @@
           <hr />
           <div class="content">
             <subtitle>{{ $t("About this instance") }}</subtitle>
-            <div class="content">
-              <p>{{ $t("Your local administrator resumed its policy:") }}</p>
-              <ul>
-                <li>{{ $t("Enjoy discovering Mobilizon!") }}</li>
-              </ul>
-            </div>
-            <!--            <p>-->
-            <!--              {{ $t('Please read the full rules') }}-->
-            <!--            </p>-->
+            <div class="content" v-html="config.description"></div>
+            <i18n path="Please read the instance's {fullRules}" tag="p">
+              <router-link slot="fullRules" :to="{ name: RouteName.RULES }">{{
+                $t("full rules")
+              }}</router-link>
+            </i18n>
           </div>
         </div>
         <div class="column">
@@ -72,8 +75,26 @@
               />
             </b-field>
 
+            <b-checkbox required>
+              <i18n tag="span" path="I agree to the {instanceRules} and {termsOfService}">
+                <router-link slot="instanceRules" :to="{ name: RouteName.RULES }">{{
+                  $t("instance rules")
+                }}</router-link>
+                <router-link slot="termsOfService" :to="{ name: RouteName.TERMS }">{{
+                  $t("terms of service")
+                }}</router-link>
+              </i18n>
+            </b-checkbox>
+
             <p class="control has-text-centered">
-              <button class="button is-primary is-large">{{ $t("Register") }}</button>
+              <b-button
+                type="is-primary"
+                size="is-large"
+                :disabled="sendingForm"
+                native-type="submit"
+              >
+                {{ $t("Register") }}
+              </b-button>
             </p>
             <p class="control">
               <router-link
@@ -89,7 +110,6 @@
                   name: RouteName.LOGIN,
                   params: { email: credentials.email, password: credentials.password },
                 }"
-                :disabled="sendingValidation"
                 >{{ $t("Login") }}</router-link
               >
             </p>
@@ -139,18 +159,16 @@ export default class Register extends Vue {
 
   errors: object = {};
 
-  sendingValidation = false;
-
-  validationSent = false;
+  sendingForm = false;
 
   RouteName = RouteName;
 
   config!: IConfig;
 
   async submit() {
+    this.sendingForm = true;
     this.credentials.locale = this.$i18n.locale;
     try {
-      this.sendingValidation = true;
       this.errors = {};
 
       await this.$apollo.mutate({
@@ -158,9 +176,7 @@ export default class Register extends Vue {
         variables: this.credentials,
       });
 
-      this.validationSent = true;
-
-      await this.$router.push({
+      return this.$router.push({
         name: RouteName.REGISTER_PROFILE,
         params: { email: this.credentials.email },
       });
@@ -170,6 +186,7 @@ export default class Register extends Vue {
         acc[localError.details] = localError.message;
         return acc;
       }, {});
+      this.sendingForm = false;
     }
   }
 }

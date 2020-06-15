@@ -74,6 +74,12 @@ const router = new Router({
       meta: { requiredAuth: false },
     },
     {
+      path: "/rules",
+      name: RouteName.RULES,
+      component: () => import(/* webpackChunkName: "cookies" */ "@/views/Rules.vue"),
+      meta: { requiredAuth: false },
+    },
+    {
       path: "/interact",
       name: RouteName.INTERACT,
       component: () => import(/* webpackChunkName: "cookies" */ "@/views/Interact.vue"),

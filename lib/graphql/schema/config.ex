@@ -28,6 +28,8 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
       arg(:locale, :string, default_value: "en")
       resolve(&Config.terms/3)
     end
+
+    field(:rules, :string, description: "The instance's rules")
   end
 
   object :terms do

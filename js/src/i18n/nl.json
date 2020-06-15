@@ -21,7 +21,7 @@
   "Are you sure you want to cancel your participation at event \"{title}\"?": "Bent u zeker dat u uw deelname aan het evenement \"{title}\" wil annuleren?",
   "Are you sure you want to delete this event? This action cannot be reverted.": "Bent u zeker dat u dit evenement wil verwijderen? Dit kan niet ongedaan gemaakt worden.",
   "Avatar": "Profielfoto",
-  "Before you can login, you need to click on the link inside it to validate your account": "Voordat u zich kan aanmelden, moet u op de link erin klikken om uw account te valideren",
+  "Before you can login, you need to click on the link inside it to validate your account.": "Voordat u zich kan aanmelden, moet u op de link erin klikken om uw account te valideren.",
   "By @{username}": "Door @{username}",
   "Cancel": "Annuleren",
   "Cancel creation": "Aanmaken annuleren",

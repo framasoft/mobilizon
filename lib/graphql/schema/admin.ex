@@ -73,6 +73,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
     field(:instance_terms, :string)
     field(:instance_terms_type, :instance_terms_type)
     field(:instance_terms_url, :string)
+    field(:instance_rules, :string)
     field(:registrations_open, :boolean)
   end
 
@@ -148,6 +149,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
       arg(:instance_terms, :string)
       arg(:instance_terms_type, :instance_terms_type)
       arg(:instance_terms_url, :string)
+      arg(:instance_rules, :string)
       arg(:registrations_open, :boolean)
 
       resolve(&Admin.save_settings/3)

@@ -158,7 +158,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
        registrations_open: Config.instance_registrations_open?(),
        instance_terms: Config.instance_terms(),
        instance_terms_type: Config.instance_terms_type(),
-       instance_terms_url: Config.instance_terms_url()
+       instance_terms_url: Config.instance_terms_url(),
+       instance_rules: Config.instance_rules()
      }}
   end
 
