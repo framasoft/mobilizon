@@ -425,6 +425,16 @@ defmodule Mobilizon.Events do
     |> Repo.all()
   end
 
+  @spec is_user_moderator_for_event?(integer | String.t(), integer | String.t()) :: boolean
+  def is_user_moderator_for_event?(user_id, event_id) do
+    Participant
+    |> join(:inner, [p], a in Actor, on: p.actor_id == a.id)
+    |> where([p, _a], p.event_id == ^event_id)
+    |> where([_p, a], a.user_id == ^user_id)
+    |> where([p, _a], p.role == ^:creator)
+    |> Repo.exists?()
+  end
+
   @doc """
   Finds close events to coordinates.
   Radius is in meters and defaults to 50km.
@@ -741,7 +751,8 @@ defmodule Mobilizon.Events do
     |> Repo.one()
   end
 
-  @default_participant_roles [:participant, :moderator, :administrator, :creator]
+  @moderator_roles [:moderator, :administrator, :creator]
+  @default_participant_roles [:participant] ++ @moderator_roles
 
   @doc """
   Returns the list of participants for an event.
@@ -810,7 +821,7 @@ defmodule Mobilizon.Events do
           where:
             p.event_id == ^event_id and
               p.actor_id ==
-                ^actor_id and p.role in ^[:moderator, :administrator, :creator]
+                ^actor_id and p.role in ^@moderator_roles
         )
       ) == nil)
   end

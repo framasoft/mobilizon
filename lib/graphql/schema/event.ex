@@ -63,7 +63,10 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
 
     field(:draft, :boolean, description: "Whether or not the event is a draft")
 
-    field(:participant_stats, :participant_stats)
+    field(:participant_stats, :participant_stats,
+      description: "Statistics on the event",
+      resolve: &Event.stats_participants/3
+    )
 
     field(:participants, :paginated_participant_list, description: "The event's participants") do
       arg(:page, :integer, default_value: 1)
@@ -121,11 +124,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
   end
 
   object :participant_stats do
-    field(:going, :integer,
-      description: "The number of approved participants",
-      resolve: &Event.stats_participants_going/3
-    )
-
+    field(:going, :integer, description: "The number of approved participants")
     field(:not_approved, :integer, description: "The number of not approved participants")
     field(:not_confirmed, :integer, description: "The number of not confirmed participants")
     field(:rejected, :integer, description: "The number of rejected participants")

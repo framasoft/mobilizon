@@ -92,7 +92,7 @@
             v-model="event.visibility"
             name="eventVisibility"
             :native-value="EventVisibility.UNLISTED"
-            >{{ $t("Only accessible through link and search (private)") }}</b-radio
+            >{{ $t("Only accessible through link (private)") }}</b-radio
           >
         </div>
         <!-- <div class="field">

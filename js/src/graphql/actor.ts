@@ -206,6 +206,7 @@ export const LOGGED_USER_PARTICIPATIONS = gql`
               preferredUsername
               name
               domain
+              summary
               avatar {
                 url
               }
@@ -226,6 +227,7 @@ export const LOGGED_USER_PARTICIPATIONS = gql`
             preferredUsername
             name
             domain
+            summary
             avatar {
               url
             }

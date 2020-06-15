@@ -111,6 +111,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     }
   end
 
+  defp transform_action_log(User, :delete, %ActionLog{changes: changes}) do
+    %{
+      action: :user_deletion,
+      object: convert_changes_to_struct(User, changes)
+    }
+  end
+
   # Changes are stored as %{"key" => "value"} so we need to convert them back as struct
   defp convert_changes_to_struct(struct, %{"report_id" => _report_id} = changes) do
     with data <- for({key, val} <- changes, into: %{}, do: {String.to_atom(key), val}),

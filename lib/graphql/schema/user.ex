@@ -15,7 +15,8 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
 
   @desc "A local user of Mobilizon"
   object :user do
-    field(:id, non_null(:id), description: "The user's ID")
+    interfaces([:action_log_object])
+    field(:id, :id, description: "The user's ID")
     field(:email, non_null(:string), description: "The user's email")
 
     field(:actors, non_null(list_of(:person)),
