@@ -17,6 +17,7 @@ export const COMMENT_FIELDS_FRAGMENT = gql`
       domain
       preferredUsername
       name
+      summary
     }
     totalReplies
     updatedAt
@@ -58,11 +59,11 @@ export const COMMENTS_THREADS = gql`
       id
       uuid
       comments {
-        ...CommentRecursive
+        ...CommentFields
       }
     }
   }
-  ${COMMENT_RECURSIVE_FRAGMENT}
+  ${COMMENT_FIELDS_FRAGMENT}
 `;
 
 export const CREATE_COMMENT_FROM_EVENT = gql`

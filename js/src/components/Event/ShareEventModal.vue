@@ -40,7 +40,7 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { IEvent } from "../../types/event.model";
 // @ts-ignore
-import DiasporaLogo from "../../assets/diaspora-icon.svg";
+import DiasporaLogo from "../../assets/diaspora-icon.svg?inline";
 
 @Component({
   components: {

@@ -4,9 +4,10 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Event do
   alias Mobilizon.Events.Event
   alias Mobilizon.Web.JsonLD.ObjectView
   alias Mobilizon.Web.MediaProxy
+  import Mobilizon.Web.Gettext
 
-  def build_tags(%Event{} = event) do
-    event = Map.put(event, :description, process_description(event.description))
+  def build_tags(%Event{} = event, locale \\ "en") do
+    event = Map.put(event, :description, process_description(event.description, locale))
 
     tags = [
       Tag.content_tag(:title, event.title <> " - Mobilizon"),
@@ -39,7 +40,14 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Event do
       ]
   end
 
-  defp process_description(description) do
+  defp process_description(nil, locale), do: process_description("", locale)
+
+  defp process_description("", locale) do
+    Gettext.put_locale(locale)
+    gettext("The event organizer didn't add any description.")
+  end
+
+  defp process_description(description, _locale) do
     description
     |> HtmlSanitizeEx.strip_tags()
     |> String.slice(0..200)

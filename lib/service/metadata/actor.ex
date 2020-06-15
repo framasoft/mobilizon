@@ -3,7 +3,7 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Web.MediaProxy
 
-  def build_tags(%Actor{} = actor) do
+  def build_tags(%Actor{} = actor, _locale \\ "en") do
     tags = [
       Tag.tag(:meta, property: "og:title", content: Actor.display_name_and_username(actor)),
       Tag.tag(:meta, property: "og:url", content: actor.url),

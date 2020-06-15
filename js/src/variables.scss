@@ -6,38 +6,30 @@ $primary-invert: findColorInvert($primary);
 $secondary: #ffd599;
 $secondary-invert: findColorInvert($secondary);
 
-$success: #0eccaf;
+$success: #1E7D97;
 $success-invert: findColorInvert($success);
 $info: #36bcd4;
 $info-invert: findColorInvert($info);
 $danger: #ff7061;
 $danger-invert: findColorInvert($danger);
 
-$colors: map-merge(
-  $colors,
-  (
-    "primary": (
-      $primary,
+$colors: map-merge($colors,
+  ("primary": ($primary,
       $primary-invert,
     ),
-    "secondary": (
-      $secondary,
+    "secondary": ($secondary,
       $secondary-invert,
     ),
-    "success": (
-      $success,
+    "success": ($success,
       $success-invert,
     ),
-    "info": (
-      $info,
+    "info": ($info,
       $info-invert,
     ),
-    "danger": (
-      $danger,
+    "danger": ($danger,
       $danger-invert,
     ),
-  )
-);
+  ));
 
 // Navbar
 $navbar-background-color: $secondary;
@@ -52,25 +44,34 @@ $body-background-color: #efeef4;
 $fullhd-enabled: false;
 $hero-body-padding-medium: 6rem 1.5rem;
 
-main > .container {
+main>.container {
   background: $body-background-color;
 }
 
 $title-color: #3c376e;
-$title-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial,
-  serif;
+$title-family: "Liberation Sans",
+"Helvetica Neue",
+Roboto,
+Helvetica,
+Arial,
+serif;
 $title-weight: 700;
 $title-size: 40px;
 $title-sub-size: 45px;
 $title-sup-size: 30px;
 
 $subtitle-color: #3a384c;
-$subtitle-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial,
-  serif;
+$subtitle-family: "Liberation Sans",
+"Helvetica Neue",
+Roboto,
+Helvetica,
+Arial,
+serif;
 $subtitle-weight: 400;
 $subtitle-size: 32px;
 $subtitle-sub-size: 30px;
 $subtitle-sup-size: 15px;
+
 .title {
   margin: 30px auto 45px;
 }

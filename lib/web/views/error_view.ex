@@ -6,9 +6,9 @@ defmodule Mobilizon.Web.ErrorView do
   alias Mobilizon.Service.Metadata.Instance
   alias Mobilizon.Web.PageView
 
-  def render("404.html", %{conn: conn}) do
+  def render("404.html", _assigns) do
     tags = Instance.build_tags()
-    PageView.inject_tags(conn, tags)
+    PageView.inject_tags(tags)
   end
 
   def render("404.json", _assigns) do

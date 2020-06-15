@@ -10,7 +10,6 @@ defmodule Mobilizon.Federation.ActivityPub.Federator do
 
   use GenServer
 
-  alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier}

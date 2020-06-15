@@ -6,7 +6,7 @@ defmodule Mobilizon.GraphQL.Schema.Conversations.CommentType do
 
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
-  alias Mobilizon.{Actors, Events}
+  alias Mobilizon.{Actors, Conversations}
   alias Mobilizon.GraphQL.Resolvers.Comment
 
   @desc "A comment"
@@ -21,13 +21,13 @@ defmodule Mobilizon.GraphQL.Schema.Conversations.CommentType do
     field(:primaryLanguage, :string)
 
     field(:replies, list_of(:comment)) do
-      resolve(dataloader(Events))
+      resolve(dataloader(Conversations))
     end
 
     field(:total_replies, :integer)
-    field(:in_reply_to_comment, :comment, resolve: dataloader(Events))
+    field(:in_reply_to_comment, :comment, resolve: dataloader(Conversations))
     field(:event, :event, resolve: dataloader(Events))
-    field(:origin_comment, :comment, resolve: dataloader(Events))
+    field(:origin_comment, :comment, resolve: dataloader(Conversations))
     field(:threadLanguages, non_null(list_of(:string)))
     field(:actor, :person, resolve: dataloader(Actors))
     field(:inserted_at, :datetime)
