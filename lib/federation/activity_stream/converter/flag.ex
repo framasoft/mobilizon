@@ -8,13 +8,13 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Flag do
   Note: Reports are named Flag in AS.
   """
 
-  alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Conversations
   alias Mobilizon.Events
   alias Mobilizon.Events.Event
   alias Mobilizon.Reports.Report
 
+  alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Relay
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
 
@@ -65,10 +65,10 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Flag do
 
   @spec as_to_model(map) :: map
   def as_to_model(%{"object" => objects} = object) do
-    with {:ok, %Actor{} = reporter} <- Actors.get_actor_by_url(object["actor"]),
+    with {:ok, %Actor{} = reporter} <- ActivityPub.get_or_fetch_actor_by_url(object["actor"]),
          %Actor{} = reported <-
            Enum.reduce_while(objects, nil, fn url, _ ->
-             case Actors.get_actor_by_url(url) do
+             case ActivityPub.get_or_fetch_actor_by_url(url) do
                {:ok, %Actor{} = actor} ->
                  {:halt, actor}
 

@@ -8,10 +8,10 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   Various ActivityPub related utils.
   """
 
-  alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Media.Picture
 
+  alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.{Activity, Federator, Relay}
   alias Mobilizon.Federation.ActivityStream.Converter
   alias Mobilizon.Federation.HTTPSignatures
@@ -118,7 +118,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     to = to ++ (data["cc"] || [])
 
     to
-    |> Enum.map(fn url -> Actors.get_actor_by_url(url) end)
+    |> Enum.map(fn url -> ActivityPub.get_or_fetch_actor_by_url(url) end)
     |> Enum.map(fn {status, actor} ->
       case status do
         :ok ->

@@ -163,6 +163,7 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
+  @spec get_or_fetch_actor_by_url(String.t(), boolean()) :: {:ok, Actor.t()} | {:error, any()}
   def get_or_fetch_actor_by_url(url, preload) do
     with {:ok, %Actor{} = cached_actor} <- Actors.get_actor_by_url(url, preload),
          false <- Actors.needs_update?(cached_actor) do
@@ -295,7 +296,7 @@ defmodule Mobilizon.Federation.ActivityPub do
         local \\ true,
         public \\ true
       ) do
-    with {:ok, %Actor{id: object_owner_actor_id}} <- Actors.get_actor_by_url(object["actor"]),
+    with {:ok, %Actor{id: object_owner_actor_id}} <- get_or_fetch_actor_by_url(object["actor"]),
          {:ok, %Share{} = _share} <- Share.create(object["id"], actor.id, object_owner_actor_id),
          announce_data <- make_announce_data(actor, object, activity_id, public),
          {:ok, activity} <- create_activity(announce_data, local),
