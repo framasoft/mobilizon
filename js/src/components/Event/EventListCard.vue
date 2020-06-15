@@ -34,10 +34,13 @@
           <span class="column is-narrow">
             <b-icon icon="earth" v-if="participation.event.visibility === EventVisibility.PUBLIC" />
             <b-icon
-              icon="lock-open"
-              v-if="participation.event.visibility === EventVisibility.UNLISTED"
+              icon="link"
+              v-else-if="participation.event.visibility === EventVisibility.UNLISTED"
             />
-            <b-icon icon="lock" v-if="participation.event.visibility === EventVisibility.PRIVATE" />
+            <b-icon
+              icon="lock"
+              v-else-if="participation.event.visibility === EventVisibility.PRIVATE"
+            />
           </span>
           <span class="column is-narrow participant-stats">
             <span v-if="participation.event.options.maximumAttendeeCapacity !== 0">

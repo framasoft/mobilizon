@@ -23,7 +23,7 @@
         <div class="columns">
           <span class="column is-narrow">
             <b-icon icon="earth" v-if="event.visibility === EventVisibility.PUBLIC" />
-            <b-icon icon="lock-open" v-if="event.visibility === EventVisibility.UNLISTED" />
+            <b-icon icon="link" v-if="event.visibility === EventVisibility.UNLISTED" />
             <b-icon icon="lock" v-if="event.visibility === EventVisibility.PRIVATE" />
           </span>
           <span class="column is-narrow participant-stats">

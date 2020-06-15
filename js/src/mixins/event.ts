@@ -41,8 +41,9 @@ export default class EventMixin extends mixins(Vue) {
               console.error("Cannot update participation cache, because of null value.");
               return;
             }
-            [participation] = person.participations;
-            person.participations = [];
+            [participation] = person.participations.elements;
+            person.participations.elements = [];
+            person.participations.total = 0;
             store.writeQuery({
               query: EVENT_PERSON_PARTICIPATION,
               variables: { eventId: event.id, actorId },
@@ -89,8 +90,8 @@ export default class EventMixin extends mixins(Vue) {
 
   protected async openDeleteEventModal(event: IEvent, currentActor: IPerson) {
     function escapeRegExp(string: string) {
-      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-    }  	  
+      return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+    }
     const participantsLength = event.participantStats.participant;
     const prefix = participantsLength
       ? this.$tc("There are {participants} participants.", event.participantStats.participant, {

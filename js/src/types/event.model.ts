@@ -127,7 +127,6 @@ export interface IEvent {
   title: string;
   slug: string;
   description: string;
-  category: Category | null;
   beginsOn: Date;
   endsOn: Date | null;
   publishAt: Date;
@@ -229,8 +228,6 @@ export class EventModel implements IEvent {
 
   visibility = EventVisibility.PUBLIC;
 
-  category: Category | null = Category.MEETING;
-
   joinOptions = EventJoinOptions.FREE;
 
   status = EventStatus.CONFIRMED;
@@ -319,7 +316,6 @@ export class EventModel implements IEvent {
       picture: this.picture,
       onlineAddress: this.onlineAddress,
       phoneAddress: this.phoneAddress,
-      category: this.category,
       physicalAddress: this.physicalAddress,
       options: this.options,
       //      organizerActorId: this.organizerActor && this.organizerActor.id ? this.organizerActor.id : null,

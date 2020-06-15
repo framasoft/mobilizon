@@ -591,7 +591,6 @@
   "{going}/{capacity} available places": "Pas de places restantes|{going}/{capacity} places restantes",
   "{license} guarantees {respect} of the people who will use it. Since {source}, anyone can audit it, which guarantees its transparency.": "{license} garantit {respect} des personnes qui l'utiliseront. Puisque {source}, il est publiquement auditable, ce qui garantit sa transparence.",
   "{title} ({count} todos)": "{title} ({count} todos)",
-  "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© Les contributeurs de Mobilizon {date} - Fait avec Elixir, Phoenix, VueJS & et de l'amour et des semaines",
   "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap",
   "Participation notifications": "Notifications de participation",
   "We'll always send you emails to notify about important event updates": "Nous vous enverrons toujours des emails pour vous notifier à propos des mises à jour importantes des événements",
@@ -664,5 +663,7 @@
   "terms of service": "conditions générales d'utilisation",
   "Please read the instance's {fullRules}": "Merci de lire les {fullRules} de l'instance",
   "I agree to the {instanceRules} and {termsOfService}": "J'accepte les {instanceRules} et les {termsOfService}",
-  "This email is already used.": "Cette adresse email est déjà utilisée."
+  "This email is already used.": "Cette adresse email est déjà utilisée.",
+  "Powered by {mobilizon}. © 2018 - {date} The Mobilizon Contributors - Made with the financial support of {contributors}.": "Propulsé par {mobilizon}. © 2018 - {date} Les contributeur·ices Mobilizon - Fait avec le soutien financier de {contributors}.",
+  "more than 1360 contributors": "plus de 1360 contributeur·ices"
 }

@@ -13,7 +13,7 @@ export interface IFeedToken {
 export interface IPerson extends IActor {
   feedTokens: IFeedToken[];
   goingToEvents: IEvent[];
-  participations: IParticipant[];
+  participations: Paginate<IParticipant>;
   memberships: Paginate<IMember>;
   user?: ICurrentUser;
 }
@@ -23,7 +23,7 @@ export class Person extends Actor implements IPerson {
 
   goingToEvents: IEvent[] = [];
 
-  participations: IParticipant[] = [];
+  participations!: Paginate<IParticipant>;
 
   memberships!: Paginate<IMember>;
 
