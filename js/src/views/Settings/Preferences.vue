@@ -1,5 +1,16 @@
 <template>
   <div>
+    <b-field :label="$t('Language')">
+      <b-select
+        :loading="!config || !loggedUser"
+        v-model="$i18n.locale"
+        :placeholder="$t('Select a language')"
+      >
+        <option v-for="(language, lang) in languages" :value="lang" :key="lang">
+          {{ language }}
+        </option>
+      </b-select>
+    </b-field>
     <b-field :label="$t('Timezone')">
       <b-select
         :placeholder="$t('Select a timezone')"
@@ -17,19 +28,20 @@
         </optgroup>
       </b-select>
     </b-field>
-    <span>{{
+    <em>{{
       $t("Timezone detected as {timezone}.", {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       })
-    }}</span>
+    }}</em>
   </div>
 </template>
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { TIMEZONES } from "../../graphql/config";
-import { USER_SETTINGS, SET_USER_SETTINGS } from "../../graphql/user";
+import { USER_SETTINGS, SET_USER_SETTINGS, UPDATE_USER_LOCALE } from "../../graphql/user";
 import { IConfig } from "../../types/config.model";
 import { ICurrentUser } from "../../types/current-user.model";
+import langs from "../../i18n/langs.json";
 
 @Component({
   apollo: {
@@ -44,12 +56,19 @@ export default class Preferences extends Vue {
 
   selectedTimezone: string | null = null;
 
+  locale: string | null = null;
+
   @Watch("loggedUser")
   setSavedTimezone(loggedUser: ICurrentUser) {
     if (loggedUser && loggedUser.settings.timezone) {
       this.selectedTimezone = loggedUser.settings.timezone;
     } else {
       this.selectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    }
+    if (loggedUser && loggedUser.locale) {
+      this.locale = loggedUser.locale;
+    } else {
+      this.locale = this.$i18n.locale;
     }
   }
 
@@ -77,12 +96,38 @@ export default class Preferences extends Vue {
     }, {});
   }
 
+  get languages(): object {
+    return this.$i18n.availableLocales.reduce((acc: object, lang: string) => {
+      // @ts-ignore
+      if (langs[lang]) {
+        return {
+          ...acc,
+          // @ts-ignore
+          [lang]: langs[lang],
+        };
+      }
+      return acc;
+    }, {} as object);
+  }
+
   @Watch("selectedTimezone")
   async updateTimezone() {
-    await this.$apollo.mutate<{ setUserSetting: string }>({
-      mutation: SET_USER_SETTINGS,
+    if (this.selectedTimezone !== this.loggedUser.settings.timezone) {
+      await this.$apollo.mutate<{ setUserSetting: string }>({
+        mutation: SET_USER_SETTINGS,
+        variables: {
+          timezone: this.selectedTimezone,
+        },
+      });
+    }
+  }
+
+  @Watch("$i18n.locale")
+  async updateLocale() {
+    await this.$apollo.mutate({
+      mutation: UPDATE_USER_LOCALE,
       variables: {
-        timezone: this.selectedTimezone,
+        locale: this.$i18n.locale,
       },
     });
   }

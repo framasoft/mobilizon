@@ -250,5 +250,10 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       arg(:notification_pending_participation, :notification_pending_participation_enum)
       resolve(&User.set_user_setting/3)
     end
+
+    field :update_locale, :user do
+      arg(:locale, :string)
+      resolve(&User.update_locale/3)
+    end
   end
 end

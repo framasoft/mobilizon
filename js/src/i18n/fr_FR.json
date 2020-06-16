@@ -667,5 +667,6 @@
   "more than 1360 contributors": "plus de 1360 contributeur·ices",
   "{moderator} has unsuspended profile {profile}": "{moderator} a annulé la suspension de {profile}",
   "{moderator} has deleted user {user}": "{moderator} a supprimé l'utilisateur·ice {user}",
-  "Change timezone": "Changer de fuseau horaire"
+  "Change timezone": "Changer de fuseau horaire",
+  "Select a language": "Choisissez une langue"
 }

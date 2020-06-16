@@ -644,5 +644,6 @@
   "more than 1360 contributors": "more than 1360 contributors",
   "{moderator} has unsuspended profile {profile}": "{moderator} has unsuspended profile {profile}",
   "{moderator} has deleted user {user}": "{moderator} has deleted user {user}",
-  "Change timezone": "Change timezone"
+  "Change timezone": "Change timezone",
+  "Select a language": "Select a language"
 }

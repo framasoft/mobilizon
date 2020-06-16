@@ -17,12 +17,12 @@ export interface ICurrentUser {
   defaultActor: IPerson;
   drafts: IEvent[];
   settings: IUserSettings;
+  locale: string;
 }
 
 export interface IUser extends ICurrentUser {
   confirmedAt: Date;
   confirmationSendAt: Date;
-  locale: String;
   actors: IPerson[];
   disabled: boolean;
 }

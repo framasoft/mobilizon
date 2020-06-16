@@ -106,6 +106,7 @@ export const USER_SETTINGS_FRAGMENT = gql`
 export const USER_SETTINGS = gql`
   query UserSetting {
     loggedUser {
+      locale
       settings {
         ...UserSettingFragment
       }
@@ -186,6 +187,15 @@ export const GET_USER = gql`
         total
       }
       role
+    }
+  }
+`;
+
+export const UPDATE_USER_LOCALE = gql`
+  mutation UpdateUserLocale($locale: String!) {
+    updateLocale(locale: $locale) {
+      id
+      locale
     }
   }
 `;
