@@ -222,6 +222,7 @@ nav {
   .navbar-item {
     a.button.is-success {
       background: #1e7d97;
+      font-weight: bold;
     }
 
     svg {
