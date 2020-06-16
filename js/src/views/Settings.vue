@@ -66,7 +66,7 @@ export default class Settings extends Vue {
             to: { name: RouteName.PREFERENCES } as Route,
           },
           {
-            title: this.$t("Notifications") as string,
+            title: this.$t("Email notifications") as string,
             to: { name: RouteName.NOTIFICATIONS } as Route,
           },
         ],

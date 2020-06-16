@@ -6,14 +6,12 @@
       </div>
       <div class="field">
         <strong>{{
-          $t("We'll always send you emails to notify about important event updates")
+          $t(
+            "Mobilizon will send you an email when the events you are attending have important changes: date and time, address, confirmation or cancellation, etc."
+          )
         }}</strong>
         <p>
-          {{
-            $t(
-              "Like title or physical address update, start or end date change or event being confirmed or cancelled."
-            )
-          }}
+          {{ $t("Other notification options:") }}
         </p>
       </div>
       <div class="field">
@@ -24,11 +22,16 @@
               $t("We'll use your timezone settings to send a recap of the morning of the event.")
             }}
           </p>
-          <span v-if="loggedUser.settings && loggedUser.settings.timezone">{{
-            $t("Your timezone is currently set to {timezone}.", {
-              timezone: loggedUser.settings.timezone,
-            })
-          }}</span>
+          <div v-if="loggedUser.settings && loggedUser.settings.timezone">
+            <em>{{
+              $t("Your timezone is currently set to {timezone}.", {
+                timezone: loggedUser.settings.timezone,
+              })
+            }}</em>
+            <router-link class="change-timezone" :to="{ name: RouteName.PREFERENCES }">{{
+              $t("Change timezone")
+            }}</router-link>
+          </div>
           <span v-else>{{ $t("You can pick your timezone into your preferences.") }}</span>
         </b-checkbox>
       </div>
@@ -60,7 +63,7 @@
       <div class="setting-title">
         <h2>{{ $t("Organizer notifications") }}</h2>
       </div>
-      <div class="field">
+      <div class="field is-primary">
         <strong>{{ $t("Notifications for manually approved participations to an event") }}</strong>
         <b-select
           v-model="notificationPendingParticipation"
@@ -73,9 +76,6 @@
             >{{ value }}</option
           >
         </b-select>
-        <p>
-          {{ $t("We'll send you an email when there new participations requests.") }}
-        </p>
       </div>
     </section>
   </div>
@@ -87,6 +87,7 @@ import {
   ICurrentUser,
   INotificationPendingParticipationEnum,
 } from "../../types/current-user.model";
+import RouteName from "../../router/name";
 
 @Component({
   apollo: {
@@ -106,12 +107,14 @@ export default class Notifications extends Vue {
 
   notificationPendingParticipationValues: object = {};
 
+  RouteName = RouteName;
+
   mounted() {
     this.notificationPendingParticipationValues = {
-      [INotificationPendingParticipationEnum.NONE]: this.$t("No notifications"),
-      [INotificationPendingParticipationEnum.DIRECT]: this.$t("Direct"),
-      [INotificationPendingParticipationEnum.ONE_HOUR]: this.$t("Every hour"),
-      [INotificationPendingParticipationEnum.ONE_DAY]: this.$t("Every day"),
+      [INotificationPendingParticipationEnum.NONE]: this.$t("Do not receive any mail"),
+      [INotificationPendingParticipationEnum.DIRECT]: this.$t("Receive one email per request"),
+      [INotificationPendingParticipationEnum.ONE_HOUR]: this.$t("Hourly email summary"),
+      [INotificationPendingParticipationEnum.ONE_DAY]: this.$t("Daily email summary"),
     };
   }
 
@@ -133,3 +136,36 @@ export default class Notifications extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+@import "../../variables.scss";
+
+.field {
+  .b-checkbox.checkbox {
+    align-items: normal;
+
+    /deep/ & input:checked + .check {
+      background-color: $accent;
+      border-color: $accent;
+    }
+  }
+  &:not(:last-child) {
+    margin-bottom: 1.5rem;
+  }
+
+  a.change-timezone {
+    color: $accent;
+    text-decoration: underline;
+    text-decoration-color: #fea72b;
+    text-decoration-thickness: 2px;
+    margin-left: 5px;
+  }
+  // /deep/ .select select {
+  //   &:active,
+  //   &:focus {
+  //     border-color: $primary;
+  //     box-shadow: 0 0 0 0.125em rgba($primary, 0.25);
+  //   }
+  // }
+}
+</style>

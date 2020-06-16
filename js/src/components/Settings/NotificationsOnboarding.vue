@@ -6,14 +6,12 @@
       </div>
       <div class="field">
         <strong>{{
-          $t("We'll always send you emails to notify about important event updates")
+          $t(
+            "Mobilizon will send you an email when the events you are attending have important changes: date and time, address, confirmation or cancellation, etc."
+          )
         }}</strong>
         <p>
-          {{
-            $t(
-              "Like title or physical address update, start or end date change or event being confirmed or cancelled."
-            )
-          }}
+          {{ $t("Other notification options:") }}
         </p>
       </div>
       <div class="field">

@@ -283,7 +283,8 @@ export default class AccountSettings extends Vue {
 @import "@/variables.scss";
 
 .setting-title {
-  margin-top: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
 
   h2 {
     display: inline;
