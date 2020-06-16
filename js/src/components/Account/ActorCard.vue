@@ -1,5 +1,5 @@
 <template>
-  <div class="clickable">
+  <div :class="{ clickable: popover }">
     <div class="media" style="align-items: top;">
       <div class="media-left">
         <figure class="image is-32x32" v-if="actor.avatar">
@@ -13,7 +13,7 @@
           {{ actor.name || `@${usernameWithDomain(actor)}` }}
         </p>
         <p class="has-text-grey" v-if="actor.name">@{{ usernameWithDomain(actor) }}</p>
-        <p v-if="full">{{ actor.summary }}</p>
+        <p v-if="full" class="summary" :class="{ limit: limit }">{{ actor.summary }}</p>
       </div>
     </div>
   </div>
@@ -28,7 +28,9 @@ export default class ActorCard extends Vue {
 
   @Prop({ required: false, type: Boolean, default: false }) full!: boolean;
 
-  @Prop({ required: false, type: Boolean, default: true }) popover!: boolean;
+  @Prop({ required: false, type: Boolean, default: false }) popover!: boolean;
+
+  @Prop({ required: false, type: Boolean, default: true }) limit!: boolean;
 
   usernameWithDomain = usernameWithDomain;
 }
@@ -36,6 +38,14 @@ export default class ActorCard extends Vue {
 <style lang="scss" scoped>
 .clickable {
   cursor: pointer;
+}
+
+.summary.limit {
+  max-width: 25rem;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
 }
 </style>
 

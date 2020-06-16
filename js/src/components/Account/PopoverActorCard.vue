@@ -2,7 +2,7 @@
   <v-popover offset="16" trigger="hover" :class="{ inline }" class="clickable">
     <slot></slot>
     <template slot="popover" class="popover">
-      <actor-card :full="true" :actor="actor" :popover="false" />
+      <actor-card :full="true" :actor="actor" :popover="true" />
     </template>
   </v-popover>
 </template>
