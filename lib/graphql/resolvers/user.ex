@@ -479,9 +479,9 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   end
 
   def update_locale(_parent, %{locale: locale}, %{
-        context: %{current_user: %User{id: logged_user_id, locale: current_locale} = user}
+        context: %{current_user: %User{locale: current_locale} = user}
       }) do
-    with true == current_locale != locale,
+    with true <- current_locale != locale,
          {:ok, %User{} = updated_user} <- Users.update_user(user, %{locale: locale}) do
       {:ok, updated_user}
     end
