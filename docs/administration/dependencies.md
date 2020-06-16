@@ -9,6 +9,15 @@ This documentation is appropriate for Debian 10 (Buster) and Ubuntu 18.04 LTS.
 We advise to make sure your webserver is secure enough.
 For instance you can require authentication through SSH keys and not passwords, install Fail2Ban to block repeated login attempts and block unused ports by installing and configuring a firewall.
 
+### Upgrade system
+
+Just to be sure your system is up-to-date before doing anything else:
+
+```bash
+sudo apt update
+sudo apt dist-upgrade
+```
+
 ### Basic tools
 We begin by making sure some basic tools are installed: 
 

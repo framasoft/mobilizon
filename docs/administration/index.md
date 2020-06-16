@@ -7,7 +7,7 @@
 ## Pre-requisites
 
 * A Linux machine with **root access**
-* A **domain name** (or subdomain) for the Mobilizon server, e.g. `example.net`
+* A **domain name** (or subdomain) for the Mobilizon server, e.g. `your-mobilizon-domain.com`
 * An **SMTP server** to deliver emails
 
 ## Dependencies
@@ -53,10 +53,13 @@ Install Elixir dependencies
 mix deps.get
 ```
 
-Then compile these dependencies and Mobilizon (this can take a few minutes)
+!!! note
+    When asked for `Shall I install Hex?` or `Shall I install rebar3?`, hit the enter key to confirm.
+
+Then compile these dependencies and Mobilizon (this can take a few minutes, and can output all kinds of warnings, such as depreciation issues)
 
 ```bash
-mix compile
+MIX_ENV=prod mix compile
 ```
 
 Go into the `js/` directory
@@ -73,7 +76,7 @@ yarn install
 
 Finally, we can build the front-end (this can take a few seconds)
 ```bash
-NODE_ENV=production yarn run build
+yarn run build
 ```
 
 Let's go back to the main directory
@@ -86,7 +89,7 @@ cd ../
 Mobilizon provides a command line tool to generate configuration
 
 ```bash
-mix mobilizon.instance gen
+MIX_ENV=prod mix mobilizon.instance gen
 ```
 
 This will ask you questions about your setup and your instance to generate a `prod.secret.exs` file in the `config/` folder, and a `setup_db.psql` file to setup the database.
@@ -95,9 +98,25 @@ This will ask you questions about your setup and your instance to generate a `pr
 
 The `setup_db.psql` file contains SQL instructions to create a PostgreSQL user and database with the chosen credentials and add the required extensions to the Mobilizon database.
 
-Execute
+Exit running as the mobilizon user (as it shouldn't have `root`/`sudo` rights) and execute in the `/home/mobilizon/live` directory:
 ```bash
 sudo -u postgres psql -f setup_db.psql
+```
+
+It should output something like:
+```
+CREATE ROLE
+CREATE DATABASE
+You are now connected to database "mobilizon_prod" as user "postgres".
+CREATE EXTENSION
+CREATE EXTENSION
+CREATE EXTENSION
+```
+
+Let's get back to our `mobilizon` user:
+```bash
+sudo -i -u mobilizon
+cd live
 ```
 
 !!! warning
@@ -121,6 +140,8 @@ You will have to do this again after most updates.
     If some migrations fail, it probably means you're not using a recent enough version of PostgreSQL, or that you haven't installed the required extensions.
 
 ## Services
+
+We can quit using the `mobilizon` user again.
 
 ### Systemd
 
@@ -148,6 +169,12 @@ It will run Mobilizon and enable startup on boot. You can follow the logs with
 sudo journalctl -fu mobilizon.service
 ```
 
+You should see something like this:
+```
+Running Mobilizon.Web.Endpoint with cowboy 2.8.0 at :::4000 (http)
+Access Mobilizon.Web.Endpoint at https://your-mobilizon-domain.com
+```
+
 The Mobilizon server runs on port 4000 on the local interface only, so you need to add a reverse-proxy.
 
 ## Reverse proxy
@@ -170,12 +197,54 @@ Edit the file `/etc/nginx/sites-available` and adapt it to your own configuratio
 
 Test the configuration with `sudo nginx -t` and reload nginx with `systemctl reload nginx`.
 
+### Let's Encrypt
+
+The nginx configuration template handles the HTTP-01 challenge with the webroot plugin:
+```bash
+sudo mkdir /var/www/certbot
+```
+
+Run certbot with (don't forget to adapt the command)
+```bash
+sudo certbot certonly --rsa-key-size 4096 --webroot -w /var/www/certbot/ --email your@email.com --agree-tos --text --renew-hook "/usr/sbin/nginx -s reload" -d your-mobilizon-domain.com
+```
+
+Then adapt the nginx configuration `/etc/nginx/sites-available/mobilizon.conf` by uncommenting certificate paths and removing obsolete blocks.
+
+Finish by testing the configuration with `sudo nginx -t` and reloading nginx with `systemctl reload nginx`.
+
+You should now be able to load https://your-mobilizon-domain.com inside your browser.
+
+## Creating your first user
+
+Login back as the `mobilizon` system user:
+
+```bash
+sudo -i -u mobilizon
+cd live
+```
+
+Create a new user:
+```
+ MIX_ENV=prod mix mobilizon.users.new "your@email.com" --admin --password "Y0urP4ssw0rd"
+```
+
+!!! danger
+    Don't forget to prefix the command with an empty space so that the chosen password isn't kept in your shell history.
+
+!!! tip
+    You can ignore the `--password` option and Mobilizon will generate one for you.
+
+See the [full documentation](./CLI tasks/manage_users.md#create-a-new-user) for this command.
+
+You may now login with your credentials and discover Mobilizon. Feel free to explore [configuration documentation](./configure) as well.
+
 ## Optional tasks
 
 ### Geolocation databases
 
 Mobilizon can use geolocation from MMDB format data from sources like [MaxMind GeoIP](https://dev.maxmind.com/geoip/geoip2/geolite2/) databases or [db-ip.com](https://db-ip.com/db/download/ip-to-city-lite) databases. This allows showing events happening near the user's location.
 
-You will need to download the City database and put it into `priv/data/GeoLite2-City.mmdb`.
+You will need to download the City database and put it into `priv/data/GeoLite2-City.mmdb`. Finish by restarting the `mobilizon` service.
 
 Mobilizon will only show a warning at startup if the database is missing, but it isn't required.

@@ -4,12 +4,14 @@ After=network.target postgresql.service
 
 [Service]
 User=mobilizon
-WorkingDirectory=/home/mobilizon/mobilizon
-ExecStart=/usr/local/bin/mix phx.server
+WorkingDirectory=/home/mobilizon/live
+ExecStart=/usr/bin/env mix phx.server
 ExecReload=/bin/kill $MAINPID
 KillMode=process
 Restart=on-failure
 Environment=MIX_ENV=prod
+
+SyslogIdentifier=mobilizon
 
 ; Some security directives.
 ; Use private /tmp and /var/tmp folders inside a new file system namespace, which are discarded after the process stops.
