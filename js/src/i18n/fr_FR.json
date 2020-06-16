@@ -588,7 +588,7 @@
   "{approved} / {total} seats": "{approved} / {total} places",
   "{count} participants": "Aucun⋅e participant⋅e | Un⋅e participant⋅e | {count} participant⋅e⋅s",
   "{count} requests waiting": "Une demande en attente|{count} demandes en attente",
-  "{going}/{capacity} available places": "Pas de places restantes|{going}/{capacity} places restantes",
+  "{available}/{capacity} available places": "Pas de places restantes|{available}/{capacity} places restantes|{available}/{capacity} places restantes",
   "{license} guarantees {respect} of the people who will use it. Since {source}, anyone can audit it, which guarantees its transparency.": "{license} garantit {respect} des personnes qui l'utiliseront. Puisque {source}, il est publiquement auditable, ce qui garantit sa transparence.",
   "{title} ({count} todos)": "{title} ({count} todos)",
   "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap",
