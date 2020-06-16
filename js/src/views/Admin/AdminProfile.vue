@@ -24,20 +24,9 @@
         </li>
       </ul>
     </nav>
-    <article class="media">
-      <figure class="media-left" v-if="person.avatar">
-        <p class="image is-48x48">
-          <img :src="person.avatar.url" alt="" />
-        </p>
-      </figure>
-      <div class="media-content">
-        <div class="content">
-          <strong v-if="person.name">{{ person.name }}</strong>
-          <small>@{{ usernameWithDomain(person) }}</small>
-          <p v-html="person.summary" />
-        </div>
-      </div>
-    </article>
+    <div class="actor-card">
+      <actor-card :actor="person" :full="true" :popover="false" :limit="false" />
+    </div>
     <table v-if="metadata.length > 0" class="table is-fullwidth">
       <tbody>
         <tr v-for="{ key, value, link } in metadata" :key="key">
@@ -146,6 +135,7 @@ import { IPerson } from "../../types/actor";
 import { usernameWithDomain } from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
 import { IEvent } from "../../types/event.model";
+import ActorCard from "../../components/Account/ActorCard.vue";
 
 const EVENTS_PER_PAGE = 10;
 
@@ -164,6 +154,9 @@ const EVENTS_PER_PAGE = 10;
         return !this.id;
       },
     },
+  },
+  components: {
+    ActorCard,
   },
 })
 export default class AdminProfile extends Vue {
@@ -314,5 +307,11 @@ export default class AdminProfile extends Vue {
 table,
 section {
   margin: 2rem 0;
+}
+
+.actor-card {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
 }
 </style>
