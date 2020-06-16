@@ -169,10 +169,15 @@
                   >
                     <span v-if="event.options.maximumAttendeeCapacity">
                       {{
-                        $tc("{going}/{capacity} available places", event.participantStats.going, {
-                          approved: event.participantStats.going,
-                          capacity: event.options.maximumAttendeeCapacity,
-                        })
+                        $tc(
+                          "{available}/{capacity} available places",
+                          event.options.maximumAttendeeCapacity - event.participantStats.going,
+                          {
+                            available:
+                              event.options.maximumAttendeeCapacity - event.participantStats.going,
+                            capacity: event.options.maximumAttendeeCapacity,
+                          }
+                        )
                       }}
                     </span>
                     <span v-else>
@@ -186,10 +191,15 @@
                   <span v-else>
                     <span v-if="event.options.maximumAttendeeCapacity">
                       {{
-                        $tc("{going}/{capacity} available places", event.participantStats.going, {
-                          approved: event.participantStats.going,
-                          capacity: event.options.maximumAttendeeCapacity,
-                        })
+                        $tc(
+                          "{available}/{capacity} available places",
+                          event.options.maximumAttendeeCapacity - event.participantStats.going,
+                          {
+                            available:
+                              event.options.maximumAttendeeCapacity - event.participantStats.going,
+                            capacity: event.options.maximumAttendeeCapacity,
+                          }
+                        )
                       }}
                     </span>
                     <span v-else>

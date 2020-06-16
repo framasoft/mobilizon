@@ -583,7 +583,7 @@
   "{approved} / {total} seats": "Asientos {approved}/{total}",
   "{count} participants": "Aún no hay participantes|Un participante|{count} participantes",
   "{count} requests waiting": "{count} solicitudes en espera",
-  "{going}/{capacity} available places": "No quedan plazas|{going}/{capacity} plazas disponibles",
+  "{available}/{capacity} available places": "No quedan plazas|{available}/{capacity} plazas disponibles",
   "{license} guarantees {respect} of the people who will use it. Since {source}, anyone can audit it, which guarantees its transparency.": "{license} garantiza {respect} de las personas que lo usarán. Desde {source}, cualquiera puede auditarlo, lo que garantiza su transparencia.",
   "{title} ({count} todos)": "{title} ({count} trabajos pendientes)",
   "© The Mobilizon Contributors {date} - Made with Elixir, Phoenix, VueJS & with some love and some weeks": "© The Mobilizon Contributors {date} - Hecho con Elixir, Phoenix, VueJS y con un poco de amor y algunas semanas",
