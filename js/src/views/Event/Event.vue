@@ -944,7 +944,6 @@ export default class Event extends EventMixin {
         // @ts-ignore
         .share({
           title: this.event.title,
-          text: Event.textDescription,
           url: this.event.url,
         })
         .then(() => console.log("Successful share"))
@@ -983,13 +982,6 @@ export default class Event extends EventMixin {
     return this.event.endsOn !== null && this.event.endsOn > this.event.beginsOn
       ? this.event.endsOn
       : this.event.beginsOn;
-  }
-
-  static get textDescription(): string {
-    const meta = document.querySelector("meta[property='og:description']");
-    if (!meta) return "";
-    const desc = meta.getAttribute("content") || "";
-    return desc.substring(0, 1000);
   }
 
   get eventCapacityOK(): boolean {

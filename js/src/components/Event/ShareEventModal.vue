@@ -67,23 +67,13 @@ export default class ShareEventModal extends Vue {
   }
 
   get emailShareUrl(): string {
-    return `mailto:?to=&body=${this.event.url}${encodeURIComponent(
-      "\n\n"
-      // @ts-ignore
-    )}${ShareEventModal.textDescription}&subject=${this.event.title}`;
+    return `mailto:?to=&body=${this.event.url}&subject=${this.event.title}`;
   }
 
   get diasporaShareUrl(): string {
     return `https://share.diasporafoundation.org/?title=${encodeURIComponent(
       this.event.title
     )}&url=${encodeURIComponent(this.event.url)}`;
-  }
-
-  static get textDescription(): string {
-    const meta = document.querySelector("meta[property='og:description']");
-    if (!meta) return "";
-    const desc = meta.getAttribute("content") || "";
-    return desc.substring(0, 1000);
   }
 }
 </script>
