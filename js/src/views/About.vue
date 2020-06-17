@@ -232,12 +232,6 @@ export default class About extends Vue {
 <style lang="scss" scoped>
 @import "../variables.scss";
 
-a:not(.button) {
-  padding: 0.3rem;
-  background: #ffd599;
-  color: #111;
-}
-
 .hero.is-primary {
   background: $background-color;
   .subtitle {
