@@ -42,10 +42,8 @@
       </b-table-column>
       <b-table-column field="actor.preferredUsername" :label="$t('Participant')" sortable>
         <article class="media">
-          <figure class="media-left" v-if="props.row.actor.avatar">
-            <p class="image is-48x48">
-              <img :src="props.row.actor.avatar.url" alt="" />
-            </p>
+          <figure class="media-left image is-48x48" v-if="props.row.actor.avatar">
+            <img class="is-rounded" :src="props.row.actor.avatar.url" alt="" />
           </figure>
           <b-icon
             class="media-left"

@@ -19,7 +19,7 @@
         >{{ $t("My groups") }}</b-navbar-item
       >
       <b-navbar-item tag="span">
-        <b-button tag="router-link" :to="{ name: RouteName.CREATE_EVENT }" type="is-success">{{
+        <b-button tag="router-link" :to="{ name: RouteName.CREATE_EVENT }" type="is-primary">{{
           $t("Create")
         }}</b-button>
       </b-navbar-item>
@@ -220,8 +220,7 @@ export default class NavBar extends Vue {
 
 nav {
   .navbar-item {
-    a.button.is-success {
-      background: #1e7d97;
+    a.button {
       font-weight: bold;
     }
 
@@ -247,10 +246,6 @@ nav {
 
     img {
       max-height: 2.5em;
-    }
-
-    &:hover {
-      background: whitesmoke;
     }
   }
 

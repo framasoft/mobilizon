@@ -484,6 +484,9 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     with true <- current_locale != locale,
          {:ok, %User{} = updated_user} <- Users.update_user(user, %{locale: locale}) do
       {:ok, updated_user}
+    else
+      false ->
+        {:ok, user}
     end
   end
 end

@@ -17,7 +17,7 @@
             </p>
           </div>
           <div class="send-comment">
-            <b-button native-type="submit" type="is-info">{{ $t("Post a comment") }}</b-button>
+            <b-button native-type="submit" type="is-primary">{{ $t("Post a comment") }}</b-button>
           </div>
         </div>
       </article>

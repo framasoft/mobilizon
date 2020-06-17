@@ -116,6 +116,8 @@ export default class App extends Vue {
 $mdi-font-path: "~@mdi/font/fonts";
 @import "~@mdi/font/scss/materialdesignicons";
 
+@import "common";
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s;

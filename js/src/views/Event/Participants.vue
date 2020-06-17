@@ -331,6 +331,12 @@ export default class Participants extends Vue {
 section {
   padding: 1rem 0;
 }
+
+/deep/ .tabs.is-boxed {
+  a {
+    text-decoration: none;
+  }
+}
 </style>
 <style lang="scss">
 nav.tabs li {

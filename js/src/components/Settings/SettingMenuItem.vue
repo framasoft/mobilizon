@@ -33,7 +33,7 @@ export default class SettingMenuItem extends Vue {
 li.setting-menu-item {
   font-size: 1.05rem;
   background-color: #fff1de;
-  color: $primary;
+  color: $background-color;
   margin: auto;
 
   span {

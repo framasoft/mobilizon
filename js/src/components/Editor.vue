@@ -581,7 +581,7 @@ $color-white: #eee;
       padding: 12px 6px;
 
       &:focus {
-        border-color: $primary;
+        border-color: $background-color;
         outline: none;
       }
     }

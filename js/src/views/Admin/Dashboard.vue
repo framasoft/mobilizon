@@ -83,9 +83,9 @@ export default class Dashboard extends Vue {
   line-height: 1.125;
 }
 
-article.tile {
-  a {
-    color: #4a4a4a;
-  }
+.tile a,
+article.tile a {
+  color: #4a4a4a;
+  text-decoration: none;
 }
 </style>

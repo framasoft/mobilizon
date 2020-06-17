@@ -66,10 +66,14 @@ export default class Follows extends Vue {
   relayFollowers: Paginate<IFollower> = { elements: [], total: 0 };
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .tab-item {
   form {
     margin-bottom: 1.5rem;
   }
+}
+
+a {
+  text-decoration: none !important;
 }
 </style>

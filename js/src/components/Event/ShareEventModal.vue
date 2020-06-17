@@ -6,6 +6,24 @@
 
     <section class="modal-card-body is-flex" v-if="event">
       <div class="container has-text-centered">
+        <b-notification
+          type="is-warning"
+          v-if="event.visibility !== EventVisibility.PUBLIC"
+          :closable="false"
+        >
+          {{
+            $t(
+              "This event is accessible only through it's link. Be careful where you post this link."
+            )
+          }}
+        </b-notification>
+        <b-notification
+          type="is-danger"
+          v-if="event.status === EventStatus.CANCELLED"
+          :closable="false"
+        >
+          {{ $t("This event has been cancelled.") }}
+        </b-notification>
         <small class="maximumNumberOfPlacesWarning" v-if="!eventCapacityOK">
           {{ $t("All the places have already been taken") }}
         </small>
@@ -38,7 +56,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { IEvent } from "../../types/event.model";
+import { IEvent, EventVisibility, EventStatus } from "../../types/event.model";
 // @ts-ignore
 import DiasporaLogo from "../../assets/diaspora-icon.svg?inline";
 
@@ -50,6 +68,10 @@ import DiasporaLogo from "../../assets/diaspora-icon.svg?inline";
 export default class ShareEventModal extends Vue {
   @Prop({ type: Object, required: true }) event!: IEvent;
   @Prop({ type: Boolean, required: false, default: true }) eventCapacityOK!: boolean;
+
+  EventVisibility = EventVisibility;
+  EventStatus = EventStatus;
+
   get twitterShareUrl(): string {
     return `https://twitter.com/intent/tweet?url=${encodeURIComponent(this.event.url)}&text=${
       this.event.title

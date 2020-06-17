@@ -182,4 +182,7 @@ export default class Settings extends Vue {
 aside.section {
   padding-top: 1rem;
 }
+.breadcrumb ul li a {
+  text-decoration: none;
+}
 </style>

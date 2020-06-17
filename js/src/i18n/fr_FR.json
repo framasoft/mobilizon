@@ -668,5 +668,7 @@
   "{moderator} has unsuspended profile {profile}": "{moderator} a annulé la suspension de {profile}",
   "{moderator} has deleted user {user}": "{moderator} a supprimé l'utilisateur·ice {user}",
   "Change timezone": "Changer de fuseau horaire",
-  "Select a language": "Choisissez une langue"
+  "Select a language": "Choisissez une langue",
+  "This event is accessible only through it's link. Be careful where you post this link.": "Cet événement est accessible uniquement à travers son lien. Faites attention où vous le diffusez.",
+  "This event has been cancelled.": "Cet événement a été annulé."
 }

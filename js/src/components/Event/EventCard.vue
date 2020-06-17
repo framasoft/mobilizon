@@ -140,6 +140,7 @@ export default class EventCard extends Vue {
 a.card {
   display: block;
   background: $secondary;
+  color: #3c376e;
 
   &:hover {
     // box-shadow: 0 0 5px 0 rgba(0, 0, 0, 1);
@@ -180,8 +181,10 @@ a.card {
       text-overflow: ellipsis;
       overflow: hidden;
       display: block;
-      font-size: 1em;
+      font-size: 0.9em;
       line-height: 1.75em;
+      background-color: #e6e4f4;
+      color: #3c376e;
     }
   }
 
@@ -198,19 +201,21 @@ a.card {
     padding: 0.5rem;
 
     .event-title {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       line-height: 1.25rem;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
       min-height: 2.4rem;
+      font-weight: bold;
     }
 
     .event-subtitle {
       font-size: 0.85rem;
       display: inline-flex;
       flex-wrap: wrap;
+      color: #3c376e;
 
       span {
         width: 15rem;

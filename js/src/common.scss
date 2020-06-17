@@ -1,0 +1,28 @@
+a {
+  text-decoration: underline;
+  text-decoration-color: #fea72b;
+  text-decoration-thickness: 2px;
+
+  &.navbar-item,
+  &.dropdown-item,
+  &.card,
+  &.button,
+  &[href="#comments"],
+  &.router-link-active,
+  &.comment-link,
+  &.pagination-link {
+    text-decoration: none;
+  }
+}
+
+input.input {
+  border-color: $input-border-color !important;
+}
+
+.section {
+  padding: 1rem 2rem 4rem;
+}
+
+figure img.is-rounded {
+  border: 1px solid #cdcaea;
+}

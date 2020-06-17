@@ -18,3 +18,8 @@ export default class SettingsMenu extends Vue {
   }
 }
 </script>
+<style lang="scss" scoped>
+/deep/ a {
+  text-decoration: none;
+}
+</style>

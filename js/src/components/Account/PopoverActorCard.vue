@@ -1,5 +1,5 @@
 <template>
-  <v-popover offset="16" trigger="hover" :class="{ inline }" class="clickable">
+  <v-popover offset="16" trigger="click" :class="{ inline }" class="clickable">
     <slot></slot>
     <template slot="popover" class="popover">
       <actor-card :full="true" :actor="actor" :popover="true" />
