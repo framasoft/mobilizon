@@ -238,17 +238,20 @@ a:not(.button) {
   color: #111;
 }
 
-.hero.is-primary .subtitle {
-  padding: 1rem;
-  display: block;
+.hero.is-primary {
+  background: $background-color;
+  .subtitle {
+    padding: 1rem;
+    display: block;
 
-  span {
-    color: lighten($primary, 10%);
+    span {
+      color: lighten($background-color, 10%);
+    }
   }
 }
 
 .hero.register {
-  background: lighten($primary, 20%);
+  background: lighten($background-color, 20%);
 }
 
 section {

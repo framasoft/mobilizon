@@ -141,31 +141,16 @@ export default class Notifications extends Vue {
 @import "../../variables.scss";
 
 .field {
-  .b-checkbox.checkbox {
-    align-items: normal;
-
-    /deep/ & input:checked + .check {
-      background-color: $accent;
-      border-color: $accent;
-    }
-  }
   &:not(:last-child) {
     margin-bottom: 1.5rem;
   }
 
   a.change-timezone {
-    color: $accent;
+    color: $primary;
     text-decoration: underline;
     text-decoration-color: #fea72b;
     text-decoration-thickness: 2px;
     margin-left: 5px;
   }
-  // /deep/ .select select {
-  //   &:active,
-  //   &:focus {
-  //     border-color: $primary;
-  //     box-shadow: 0 0 0 0.125em rgba($primary, 0.25);
-  //   }
-  // }
 }
 </style>

@@ -139,3 +139,13 @@ export default class Settings extends Vue {
   }
 }
 </script>
+<style lang="scss" scoped>
+@import "../../variables.scss";
+
+.notification a {
+  color: $primary !important;
+  text-decoration: underline !important;
+  text-decoration-color: #fea72b !important;
+  text-decoration-thickness: 2px !important;
+}
+</style>

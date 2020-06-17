@@ -176,4 +176,8 @@ img.image {
   height: 1.5em;
   vertical-align: text-bottom;
 }
+
+a {
+  text-decoration: none;
+}
 </style>

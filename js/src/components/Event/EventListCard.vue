@@ -310,6 +310,10 @@ article.box {
         margin-right: 16px;
       }
 
+      a {
+        text-decoration: none;
+      }
+
       .title {
         display: -webkit-box;
         -webkit-line-clamp: 1;
@@ -321,10 +325,6 @@ article.box {
         padding-bottom: 5px;
         margin: auto 0;
       }
-    }
-
-    /deep/ progress + .progress-value {
-      color: lighten($primary, 20%) !important;
     }
   }
 
@@ -345,11 +345,15 @@ article.box {
         /deep/ span:last-child {
           padding-left: 4px;
         }
+
+        &:hover {
+          background: #f5f5f5;
+        }
       }
 
       * {
         font-size: 0.8rem;
-        color: $primary;
+        color: $background-color;
       }
     }
   }

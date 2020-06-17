@@ -377,16 +377,11 @@ export default class Home extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 @import "@/variables.scss";
 
 main > div > .container {
   background: $white;
-}
-
-.section {
-  padding: 1rem 1.5rem;
 }
 
 .search-autocomplete {
@@ -429,7 +424,7 @@ section.hero {
   background: lighten($secondary, 20%);
 
   .title {
-    color: $primary;
+    color: $background-color;
   }
 
   .column figure.image img {

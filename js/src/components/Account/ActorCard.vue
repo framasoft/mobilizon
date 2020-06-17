@@ -50,6 +50,8 @@ export default class ActorCard extends Vue {
 </style>
 
 <style lang="scss">
+@import "../../variables.scss";
+
 .tooltip {
   display: block !important;
   z-index: 10000;
@@ -135,7 +137,7 @@ export default class ActorCard extends Vue {
     $color: #f9f9f9;
 
     .popover-inner {
-      background: $color;
+      background: lighten($background-color, 65%);
       color: black;
       padding: 24px;
       border-radius: 5px;

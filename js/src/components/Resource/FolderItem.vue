@@ -161,7 +161,7 @@ a {
       display: block;
       font-weight: 500;
       margin-bottom: 5px;
-      color: $primary;
+      color: $background-color;
       overflow: hidden;
       text-overflow: ellipsis;
       text-decoration: none;

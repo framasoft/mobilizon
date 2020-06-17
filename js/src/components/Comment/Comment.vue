@@ -1,21 +1,22 @@
 <template>
   <li :class="{ reply: comment.inReplyToComment }">
     <article class="media" :class="{ selected: commentSelected }" :id="commentId">
-      <popover-actor-card :actor="comment.actor" :inline="true" v-if="comment.actor">
-        <figure class="media-left" v-if="!comment.deletedAt && comment.actor.avatar">
-          <p class="image is-48x48 is-rounded">
-            <img :src="comment.actor.avatar.url" alt="" />
-          </p>
+      <popover-actor-card
+        class="media-left"
+        :actor="comment.actor"
+        :inline="true"
+        v-if="comment.actor"
+      >
+        <figure class="image is-48x48" v-if="!comment.deletedAt && comment.actor.avatar">
+          <img class="is-rounded" :src="comment.actor.avatar.url" alt="" />
         </figure>
         <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
       </popover-actor-card>
-      <div v-else>
-        <figure class="media-left" v-if="!comment.deletedAt && comment.actor.avatar">
-          <p class="image is-48x48 is-rounded">
-            <img :src="comment.actor.avatar.url" alt="" />
-          </p>
+      <div v-else class="media-left">
+        <figure class="image is-48x48" v-if="!comment.deletedAt && comment.actor.avatar">
+          <img class="is-rounded" :src="comment.actor.avatar.url" alt="" />
         </figure>
-        <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+        <b-icon v-else size="is-large" icon="account-circle" />
       </div>
       <div class="media-content">
         <div class="content">
@@ -325,7 +326,7 @@ form.reply {
   }
 
   strong.organizer {
-    background: $primary;
+    background: $background-color;
     border-radius: 12px;
     color: white;
     padding: 0 6px;

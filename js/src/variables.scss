@@ -1,10 +1,16 @@
 @import "~bulma/sass/utilities/_all";
 
-$primary: #424056;
+$bleuvert: #1e7d97;
+$jaune: #ffd599;
+$violet: #424056;
+
+$primary: $bleuvert;
 $primary-invert: findColorInvert($primary);
 //$secondary: #ffcc85;
-$secondary: #ffd599;
+$secondary: $jaune;
 $secondary-invert: findColorInvert($secondary);
+
+$background-color: $violet;
 
 $success: #0eccaf;
 $success-invert: findColorInvert($success);
@@ -12,6 +18,8 @@ $info: #36bcd4;
 $info-invert: findColorInvert($info);
 $danger: #ff7061;
 $danger-invert: findColorInvert($danger);
+$link: $primary;
+$link-invert: $primary-invert;
 
 $colors: map-merge(
   $colors,
@@ -36,17 +44,21 @@ $colors: map-merge(
       $danger,
       $danger-invert,
     ),
+    "link": (
+      $link,
+      $link-invert,
+    ),
   )
 );
 
 // Navbar
 $navbar-background-color: $secondary;
-$navbar-item-color: $primary;
+$navbar-item-color: $background-color;
 $navbar-height: 4rem;
 
 // Footer
 $footer-padding: 3rem 1.5rem 1rem;
-$footer-background-color: $primary;
+$footer-background-color: $background-color;
 
 $body-background-color: #efeef4;
 $fullhd-enabled: false;
@@ -82,7 +94,6 @@ $subtitle-sup-size: 15px;
   margin: 15px auto 30px;
 }
 
-$accent: #1e7d97;
-
-$breadcrumb-item-color: $accent;
+$input-border-color: #dbdbdb;
+$breadcrumb-item-color: $primary;
 $checkbox-background-color: #fff;

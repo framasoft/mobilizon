@@ -645,5 +645,7 @@
   "{moderator} has unsuspended profile {profile}": "{moderator} has unsuspended profile {profile}",
   "{moderator} has deleted user {user}": "{moderator} has deleted user {user}",
   "Change timezone": "Change timezone",
-  "Select a language": "Select a language"
+  "Select a language": "Select a language",
+  "This event is accessible only through it's link. Be careful where you post this link.": "This event is accessible only through it's link. Be careful where you post this link.",
+  "This event has been cancelled.": "This event has been cancelled."
 }

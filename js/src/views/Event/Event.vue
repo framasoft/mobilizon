@@ -68,6 +68,15 @@
                   <tag>{{ tag.title }}</tag>
                 </router-link>
               </p>
+              <b-tag type="is-warning" size="is-medium" v-if="event.draft">{{ $t("Draft") }}</b-tag>
+              <span class="event-status" v-if="event.status !== EventStatus.CONFIRMED">
+                <b-tag type="is-warning" v-if="event.status === EventStatus.TENTATIVE">{{
+                  $t("Event to be confirmed")
+                }}</b-tag>
+                <b-tag type="is-danger" v-if="event.status === EventStatus.CANCELLED">{{
+                  $t("Event cancelled")
+                }}</b-tag>
+              </span>
             </div>
             <div class="column is-3-tablet">
               <div>
@@ -138,15 +147,6 @@
                 </div>
               </div>
               <div class="has-text-right">
-                <tag type="is-warning" size="is-medium" v-if="event.draft">{{ $t("Draft") }}</tag>
-                <span class="event-status" v-if="event.status !== EventStatus.CONFIRMED">
-                  <tag type="is-warning" v-if="event.status === EventStatus.TENTATIVE">{{
-                    $t("Event to be confirmed")
-                  }}</tag>
-                  <tag type="is-danger" v-if="event.status === EventStatus.CANCELLED">{{
-                    $t("Event cancelled")
-                  }}</tag>
-                </span>
                 <template class="visibility" v-if="!event.draft">
                   <p v-if="event.visibility === EventVisibility.PUBLIC">
                     {{ $t("Public event") }}
@@ -164,6 +164,7 @@
                 </template>
                 <p>
                   <router-link
+                    class="participations-link"
                     v-if="actorIsOrganizer && event.draft === false"
                     :to="{ name: RouteName.PARTICIPATIONS, params: { eventId: event.uuid } }"
                   >
@@ -224,10 +225,10 @@
                   <b-icon icon="ticket-confirmation-outline" />
                 </p>
                 <b-dropdown position="is-bottom-left" aria-role="list">
-                  <span slot="trigger" role="button">
+                  <b-button slot="trigger" role="button" icon-right="dots-horizontal">
                     Actions
-                    <b-icon icon="dots-horizontal" />
-                  </span>
+                    <!-- <b-icon icon="dots-horizontal" /> -->
+                  </b-button>
                   <b-dropdown-item
                     aria-role="listitem"
                     has-link
@@ -1022,7 +1023,7 @@ export default class Event extends EventMixin {
 @import "../../variables";
 
 .section {
-  padding: 1rem 1.5rem;
+  padding: 1rem 2rem 4rem;
 }
 
 .fade-enter-active,
@@ -1084,6 +1085,9 @@ div.sidebar {
   background: white;
 
   p.tags {
+    a {
+      text-decoration: none;
+    }
     span {
       &.tag {
         margin: 0 2px;
@@ -1229,71 +1233,6 @@ div.sidebar {
   }
 }
 
-.share {
-  border-bottom: solid 1px $primary;
-  border-top: solid 1px $primary;
-
-  .diaspora span svg {
-    height: 2rem;
-    width: 2rem;
-  }
-
-  .columns {
-    & > * {
-      padding: 2rem 0;
-    }
-
-    h3 {
-      display: block;
-      color: $primary;
-      font-size: 3rem;
-      text-decoration: underline;
-      text-decoration-color: $secondary;
-      max-width: 20rem;
-    }
-
-    .column:first-child {
-      h3 {
-        margin: 0 auto 1rem;
-        font-weight: normal;
-      }
-
-      small.maximumNumberOfPlacesWarning {
-        margin: 0 auto 1rem;
-        display: block;
-      }
-    }
-
-    .column:last-child {
-      h3 {
-        margin-right: 0;
-      }
-    }
-
-    .add-to-calendar {
-      display: flex;
-
-      h3 {
-        margin-left: 0;
-        cursor: pointer;
-      }
-
-      img {
-        max-width: 250px;
-      }
-
-      &::before {
-        content: "";
-        background: #b3b3b2;
-        position: absolute;
-        bottom: 25%;
-        height: 40%;
-        width: 1px;
-      }
-    }
-  }
-}
-
 .more-events {
   background: white;
 }
@@ -1309,5 +1248,13 @@ button.dropdown-item {
   width: 100%;
   padding-right: 1rem;
   text-align: right;
+}
+
+a.participations-link {
+  text-decoration: none;
+}
+
+.event-status .tag {
+  font-size: 1rem;
 }
 </style>

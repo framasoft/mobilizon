@@ -20,7 +20,7 @@ export default class Logo extends Vue {
 @import "../variables.scss";
 
 svg {
-  fill: $primary;
+  fill: $background-color;
 
   &.invert {
     fill: $secondary;

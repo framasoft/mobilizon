@@ -32,7 +32,7 @@ export default class SettingMenuSection extends Vue {
 li {
   font-size: 1.3rem;
   background-color: $secondary;
-  color: $primary;
+  color: $background-color;
   margin: 2px auto;
 
   &.active {

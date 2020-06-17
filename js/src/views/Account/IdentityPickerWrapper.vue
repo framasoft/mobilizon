@@ -9,7 +9,7 @@
       <div class="media">
         <div class="media-left">
           <figure class="image is-48x48" v-if="currentIdentity.avatar">
-            <img class="image" :src="currentIdentity.avatar.url" alt="" />
+            <img class="image is-rounded" :src="currentIdentity.avatar.url" alt="" />
           </figure>
           <b-icon v-else size="is-large" icon="account-circle" />
         </div>
@@ -29,12 +29,9 @@
       </div>
     </div>
     <span v-else class="block" @click="isComponentModalActive = true">
-      <img
-        class="image is-48x48"
-        v-if="currentIdentity.avatar"
-        :src="currentIdentity.avatar.url"
-        alt=""
-      />
+      <figure class="image is-48x48" v-if="currentIdentity.avatar">
+        <img class="is-rounded" :src="currentIdentity.avatar.url" alt="" />
+      </figure>
       <b-icon v-else size="is-large" icon="account-circle" />
     </span>
     <b-modal :active.sync="isComponentModalActive" has-modal-card>
