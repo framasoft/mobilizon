@@ -14238,12 +14238,12 @@ vue-class-component@^7.2.3:
   resolved "https://registry.yarnpkg.com/vue-class-component/-/vue-class-component-7.2.3.tgz#a5b1abd53513a72ad51098752e2dedd499807cca"
   integrity sha512-oEqYpXKaFN+TaXU+mRLEx8dX0ah85aAJEe61mpdoUrq0Bhe/6sWhyZX1JjMQLhVsHAkncyhedhmCdDVSasUtDw==
 
-vue-cli-plugin-styleguidist@~4.24.0:
-  version "4.24.1"
-  resolved "https://registry.yarnpkg.com/vue-cli-plugin-styleguidist/-/vue-cli-plugin-styleguidist-4.24.1.tgz#0ac3fee6ce3b9836b1ff1c2bd8cddc962b1e528a"
-  integrity sha512-SK4aP2xIjyVqBHEj6rDjymOErDhvebQ84i4W1raU1IUjP1VBEsFqTMrWzPe9y9R+wt4KFaR9EOX87j2MqS+gYg==
+vue-cli-plugin-styleguidist@~4.24.3:
+  version "4.24.3"
+  resolved "https://registry.yarnpkg.com/vue-cli-plugin-styleguidist/-/vue-cli-plugin-styleguidist-4.24.3.tgz#fcb7d2cf32820f0673fb3fded3ab0cc4e4a08cba"
+  integrity sha512-jiLLg5k18S5mJ1R4qgOP9kPrSKwiUlXQbpPlZIL5FOBSS/tKU4Cr4xgP5xY0TXMrlBGpODSzPUZU0Cy5uxrDUg==
   dependencies:
-    vue-styleguidist "^4.24.1"
+    vue-styleguidist "^4.24.3"
     webpack-merge "^4.2.1"
 
 vue-cli-plugin-svg@~0.1.3:
@@ -14373,10 +14373,10 @@ vue-style-loader@^4.1.0, vue-style-loader@^4.1.2:
     hash-sum "^1.0.2"
     loader-utils "^1.0.2"
 
-vue-styleguidist@^4.24.1:
-  version "4.24.1"
-  resolved "https://registry.yarnpkg.com/vue-styleguidist/-/vue-styleguidist-4.24.1.tgz#1c1e569e838cbe59e97fe1cea175c3e03e625a79"
-  integrity sha512-N3YVnNKQk57E+R/cAUi/QvZLxqzpPaMASv43jyFlf6GdK3p3smQ/4jHB7yheg8nJdjG/4BV+CV88VZV+HnUmSg==
+vue-styleguidist@^4.24.3:
+  version "4.24.3"
+  resolved "https://registry.yarnpkg.com/vue-styleguidist/-/vue-styleguidist-4.24.3.tgz#aa4d67112e83de62a5331037c582f67e67f2ee85"
+  integrity sha512-HhAQ6BczU2dwGa62yrg9kD8St1dGIG+Z//p0VnOBT9t9VaJeaO/nQ9uDNsCHDDEJ79DzT4mvnQQodw6CWkY3Eg==
   dependencies:
     "@vxna/mini-html-webpack-template" "^1.0.0"
     ast-types "^0.13.2"
