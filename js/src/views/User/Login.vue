@@ -67,6 +67,11 @@
               >{{ $t("Forgot your password ?") }}</router-link
             >
           </p>
+          <router-link
+            class="button is-text"
+            :to="{ name: RouteName.RESEND_CONFIRMATION, params: { email: credentials.email } }"
+            >{{ $t("Didn't receive the instructions ?") }}</router-link
+          >
           <p class="control" v-if="config && config.registrationsOpen">
             <router-link
               class="button is-text"

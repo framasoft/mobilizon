@@ -670,5 +670,14 @@
   "Change timezone": "Changer de fuseau horaire",
   "Select a language": "Choisissez une langue",
   "This event is accessible only through it's link. Be careful where you post this link.": "Cet événement est accessible uniquement à travers son lien. Faites attention où vous le diffusez.",
-  "This event has been cancelled.": "Cet événement a été annulé."
+  "This event has been cancelled.": "Cet événement a été annulé.",
+  "Actions": "Actions",
+  "Everything": "Tous",
+  "Not approved": "Non approuvé·es",
+  "No participant matches the filters": "Aucun·e participant·e ne correspond aux filtres",
+  "Send the confirmation email again": "Envoyer l'email de confirmation à nouveau",
+  "Forgot your password?": "Mot de passe oublié ?",
+  "Enter your email address below, and we'll email you instructions on how to change your password.": "Indiquez votre adresse e-mail ci-dessous. Nous vous enverrons des instructions concernant la modification de votre mot de passe.",
+  "Submit": "Valider",
+  "Email address": "Adresse email"
 }

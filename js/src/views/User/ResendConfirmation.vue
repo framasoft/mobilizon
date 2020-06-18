@@ -6,13 +6,16 @@
           {{ $t("Resend confirmation email") }}
         </h1>
         <form v-if="!validationSent" @submit="resendConfirmationAction">
-          <b-field label="Email">
+          <b-field :label="$t('Email address')">
             <b-input aria-required="true" required type="email" v-model="credentials.email" />
           </b-field>
-          <p class="control has-text-centered">
+          <p class="control">
             <b-button type="is-primary" native-type="submit">
-              {{ $t("Send me the confirmation email once again") }}
+              {{ $t("Send the confirmation email again") }}
             </b-button>
+            <router-link :to="{ name: RouteName.LOGIN }" class="button is-text">{{
+              $t("Cancel")
+            }}</router-link>
           </p>
         </form>
         <div v-else>
@@ -37,6 +40,7 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { validateEmailField, validateRequiredField } from "../../utils/validators";
 import { RESEND_CONFIRMATION_EMAIL } from "../../graphql/auth";
+import RouteName from "../../router/name";
 
 @Component
 export default class ResendConfirmation extends Vue {
@@ -49,6 +53,8 @@ export default class ResendConfirmation extends Vue {
   validationSent = false;
 
   error = false;
+
+  RouteName = RouteName;
 
   state = {
     email: {
