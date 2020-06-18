@@ -4,11 +4,11 @@ defmodule Mobilizon.Web.ErrorView do
   """
   use Mobilizon.Web, :view
   alias Mobilizon.Service.Metadata.Instance
-  alias Mobilizon.Web.PageView
+  import Mobilizon.Web.Views.Utils
 
-  def render("404.html", _assigns) do
+  def render("404.html", %{conn: conn}) do
     tags = Instance.build_tags()
-    PageView.inject_tags(tags)
+    inject_tags(tags, get_locale(conn))
   end
 
   def render("404.json", _assigns) do

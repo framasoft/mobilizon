@@ -7,6 +7,7 @@ export enum UserRouteName {
   RESEND_CONFIRMATION = "ResendConfirmation",
   SEND_PASSWORD_RESET = "SendPasswordReset",
   PASSWORD_RESET = "PasswordReset",
+  EMAIL_VALIDATE = "EMAIL_VALIDATE",
   VALIDATE = "Validate",
   LOGIN = "Login",
 }
@@ -54,7 +55,7 @@ export const userRoutes: RouteConfig[] = [
   },
   {
     path: "/validate/email/:token",
-    name: UserRouteName.VALIDATE,
+    name: UserRouteName.EMAIL_VALIDATE,
     component: () => import("@/views/User/EmailValidate.vue"),
     props: true,
     meta: { requiresAuth: false },

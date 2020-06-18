@@ -168,14 +168,17 @@
                     v-if="actorIsOrganizer && event.draft === false"
                     :to="{ name: RouteName.PARTICIPATIONS, params: { eventId: event.uuid } }"
                   >
+                    <!-- We retire one because of the event creator who is a participant -->
                     <span v-if="event.options.maximumAttendeeCapacity">
                       {{
                         $tc(
                           "{available}/{capacity} available places",
-                          event.options.maximumAttendeeCapacity - event.participantStats.going,
+                          event.options.maximumAttendeeCapacity -
+                            (event.participantStats.going - 1),
                           {
                             available:
-                              event.options.maximumAttendeeCapacity - event.participantStats.going,
+                              event.options.maximumAttendeeCapacity -
+                              (event.participantStats.going - 1),
                             capacity: event.options.maximumAttendeeCapacity,
                           }
                         )
@@ -183,8 +186,8 @@
                     </span>
                     <span v-else>
                       {{
-                        $tc("No one is going to this event", event.participantStats.going, {
-                          going: event.participantStats.going,
+                        $tc("No one is going to this event", event.participantStats.going - 1, {
+                          going: event.participantStats.going - 1,
                         })
                       }}
                     </span>
@@ -226,7 +229,7 @@
                 </p>
                 <b-dropdown position="is-bottom-left" aria-role="list">
                   <b-button slot="trigger" role="button" icon-right="dots-horizontal">
-                    Actions
+                    {{ $t("Actions") }}
                     <!-- <b-icon icon="dots-horizontal" /> -->
                   </b-button>
                   <b-dropdown-item
