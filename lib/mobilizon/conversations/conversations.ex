@@ -68,7 +68,9 @@ defmodule Mobilizon.Conversations do
     Comment
     |> join(:left, [c], r in Comment, on: r.origin_comment_id == c.id)
     |> where([c, _], is_nil(c.in_reply_to_comment_id))
-    |> where([_, r], is_nil(r.deleted_at))
+    # TODO: This was added because we don't want to count deleted comments in total_replies.
+    # However, it also excludes all top-level comments with deleted replies from being selected
+    # |> where([_, r], is_nil(r.deleted_at))
     |> group_by([c], c.id)
     |> select([c, r], %{c | total_replies: count(r.id)})
   end

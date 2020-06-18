@@ -409,6 +409,10 @@ article {
   }
 }
 
+.comment-replies {
+  flex-grow: 1;
+}
+
 .comment-replies-enter-active,
 .comment-replies-leave-active,
 .comment-replies-move {
