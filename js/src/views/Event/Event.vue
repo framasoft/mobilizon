@@ -174,11 +174,11 @@
                         $tc(
                           "{available}/{capacity} available places",
                           event.options.maximumAttendeeCapacity -
-                            (event.participantStats.going - 1),
+                            event.participantStats.participant,
                           {
                             available:
                               event.options.maximumAttendeeCapacity -
-                              (event.participantStats.going - 1),
+                              event.participantStats.participant,
                             capacity: event.options.maximumAttendeeCapacity,
                           }
                         )
@@ -186,8 +186,8 @@
                     </span>
                     <span v-else>
                       {{
-                        $tc("No one is going to this event", event.participantStats.going - 1, {
-                          going: event.participantStats.going - 1,
+                        $tc("No one is going to this event", event.participantStats.participant, {
+                          going: event.participantStats.participant,
                         })
                       }}
                     </span>
@@ -197,10 +197,12 @@
                       {{
                         $tc(
                           "{available}/{capacity} available places",
-                          event.options.maximumAttendeeCapacity - event.participantStats.going,
+                          event.options.maximumAttendeeCapacity -
+                            event.participantStats.participant,
                           {
                             available:
-                              event.options.maximumAttendeeCapacity - event.participantStats.going,
+                              event.options.maximumAttendeeCapacity -
+                              event.participantStats.participant,
                             capacity: event.options.maximumAttendeeCapacity,
                           }
                         )
@@ -208,8 +210,8 @@
                     </span>
                     <span v-else>
                       {{
-                        $tc("No one is going to this event", event.participantStats.going, {
-                          going: event.participantStats.going,
+                        $tc("No one is going to this event", event.participantStats.participant, {
+                          going: event.participantStats.participant,
                         })
                       }}
                     </span>

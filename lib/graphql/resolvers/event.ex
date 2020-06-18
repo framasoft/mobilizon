@@ -107,22 +107,29 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     {:ok, %{total: 0, elements: []}}
   end
 
-  def stats_participants_going(%EventParticipantStats{} = stats, _args, _resolution) do
-    {:ok, stats.participant + stats.moderator + stats.administrator + stats.creator}
-  end
-
   def stats_participants(
         %Event{participant_stats: %EventParticipantStats{} = stats, id: event_id} = _event,
         _args,
         %{context: %{current_user: %User{id: user_id} = _user}} = _resolution
       ) do
-    going = stats.participant + stats.moderator + stats.administrator + stats.creator
-
     if Events.is_user_moderator_for_event?(user_id, event_id) do
-      {:ok, Map.put(stats, :going, going)}
+      {:ok,
+       Map.put(
+         stats,
+         :going,
+         stats.participant + stats.moderator + stats.administrator + stats.creator
+       )}
     else
-      {:ok, %{going: going}}
+      {:ok, %{participant: stats.participant}}
     end
+  end
+
+  def stats_participants(
+        %Event{participant_stats: %EventParticipantStats{participant: participant}},
+        _args,
+        _resolution
+      ) do
+    {:ok, %EventParticipantStats{participant: participant}}
   end
 
   def stats_participants(_event, _args, _resolution) do

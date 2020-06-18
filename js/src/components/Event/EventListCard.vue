@@ -63,11 +63,11 @@
                 $tc(
                   "{available}/{capacity} available places",
                   participation.event.options.maximumAttendeeCapacity -
-                    (participation.event.participantStats.going - 1),
+                    participation.event.participantStats.participant,
                   {
                     available:
                       participation.event.options.maximumAttendeeCapacity -
-                      (participation.event.participantStats.going - 1),
+                      participation.event.participantStats.participant,
                     capacity: participation.event.options.maximumAttendeeCapacity,
                   }
                 )
