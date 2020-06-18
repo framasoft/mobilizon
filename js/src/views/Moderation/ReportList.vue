@@ -82,3 +82,9 @@ export default class ReportList extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+section > ul li > a {
+  text-decoration: none;
+}
+</style>
