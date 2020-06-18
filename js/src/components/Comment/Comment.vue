@@ -100,7 +100,7 @@
               <b-button
                 :disabled="newComment.text.trim().length === 0"
                 native-type="submit"
-                type="is-info"
+                type="is-primary"
                 >{{ $t("Post a reply") }}</b-button
               >
             </span>

@@ -1365,8 +1365,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       assert event.id
              |> Events.list_participants_for_event()
              |> Map.get(:elements)
-             |> Enum.map(& &1.id) ==
-               []
+             |> Enum.map(& &1.role) == [:rejected]
     end
   end
 

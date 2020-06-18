@@ -60,10 +60,17 @@
           >
             <span v-if="participation.event.options.maximumAttendeeCapacity !== 0">
               {{
-                $t("{approved} / {total} seats", {
-                  approved: participation.event.participantStats.participant,
-                  total: participation.event.options.maximumAttendeeCapacity,
-                })
+                $tc(
+                  "{available}/{capacity} available places",
+                  participation.event.options.maximumAttendeeCapacity -
+                    (participation.event.participantStats.going - 1),
+                  {
+                    available:
+                      participation.event.options.maximumAttendeeCapacity -
+                      (participation.event.participantStats.going - 1),
+                    capacity: participation.event.options.maximumAttendeeCapacity,
+                  }
+                )
               }}
             </span>
             <span v-else>
@@ -79,6 +86,7 @@
                 @click="
                   gotToWithCheck(participation, {
                     name: RouteName.PARTICIPATIONS,
+                    query: { role: ParticipantRole.NOT_APPROVED },
                     params: { eventId: participation.event.uuid },
                   })
                 "

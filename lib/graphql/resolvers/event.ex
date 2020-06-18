@@ -92,7 +92,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
             |> Enum.map(&String.to_existing_atom/1)
         end
 
-      {:ok, Events.list_participants_for_event(event_id, roles, page, limit)}
+      participants = Events.list_participants_for_event(event_id, roles, page, limit)
+      {:ok, participants}
     else
       {:is_owned, nil} ->
         {:error, "Moderator Actor ID is not owned by authenticated user"}
@@ -115,17 +116,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
         _args,
         %{context: %{current_user: %User{id: user_id} = _user}} = _resolution
       ) do
-    if Events.is_user_moderator_for_event?(user_id, event_id) do
-      stats =
-        Map.put(
-          stats,
-          :going,
-          stats.participant + stats.moderator + stats.administrator + stats.creator
-        )
+    going = stats.participant + stats.moderator + stats.administrator + stats.creator
 
-      {:ok, stats}
+    if Events.is_user_moderator_for_event?(user_id, event_id) do
+      {:ok, Map.put(stats, :going, going)}
     else
-      {:ok, %EventParticipantStats{}}
+      {:ok, %{going: going}}
     end
   end
 

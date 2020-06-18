@@ -212,6 +212,7 @@ export const LOGGED_USER_PARTICIPATIONS = gql`
               }
             }
             participantStats {
+              going
               notApproved
               participant
             }

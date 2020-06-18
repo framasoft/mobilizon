@@ -752,7 +752,6 @@ defmodule Mobilizon.Events do
   end
 
   @moderator_roles [:moderator, :administrator, :creator]
-  @default_participant_roles [:participant] ++ @moderator_roles
 
   @doc """
   Returns the list of participants for an event.
@@ -762,13 +761,14 @@ defmodule Mobilizon.Events do
           Page.t()
   def list_participants_for_event(
         id,
-        roles \\ @default_participant_roles,
+        roles \\ [],
         page \\ nil,
         limit \\ nil
       ) do
     id
     |> list_participants_for_event_query()
     |> filter_role(roles)
+    |> order_by(asc: :role)
     |> Page.build_page(page, limit)
   end
 

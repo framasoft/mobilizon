@@ -1,5 +1,4 @@
 import gql from "graphql-tag";
-import { COMMENT_FIELDS_FRAGMENT } from "@/graphql/comment";
 
 const participantQuery = `
   role,
@@ -466,6 +465,8 @@ export const PARTICIPANTS = gql`
   query($uuid: UUID!, $page: Int, $limit: Int, $roles: String, $actorId: ID!) {
     event(uuid: $uuid) {
       id,
+      uuid,
+      title,
       participants(page: $page, limit: $limit, roles: $roles, actorId: $actorId) {
         ${participantsQuery}
       },

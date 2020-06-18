@@ -3,8 +3,15 @@
     <div class="columns is-mobile is-centered">
       <div class="column is-half-desktop">
         <h1 class="title">
-          {{ $t("Password reset") }}
+          {{ $t("Forgot your password?") }}
         </h1>
+        <p>
+          {{
+            $t(
+              "Enter your email address below, and we'll email you instructions on how to change your password."
+            )
+          }}
+        </p>
         <b-message
           title="Error"
           type="is-danger"
@@ -15,13 +22,16 @@
           {{ error }}
         </b-message>
         <form @submit="sendResetPasswordTokenAction" v-if="!validationSent">
-          <b-field label="Email">
+          <b-field :label="$t('Email address')">
             <b-input aria-required="true" required type="email" v-model="credentials.email" />
           </b-field>
-          <p class="control has-text-centered">
+          <p class="control">
             <b-button type="is-primary" native-type="submit">
-              {{ $t("Send me an email to reset my password") }}
+              {{ $t("Submit") }}
             </b-button>
+            <router-link :to="{ name: RouteName.LOGIN }" class="button is-text">{{
+              $t("Cancel")
+            }}</router-link>
           </p>
         </form>
         <div v-else>
@@ -41,6 +51,7 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { validateEmailField, validateRequiredField } from "../../utils/validators";
 import { SEND_RESET_PASSWORD } from "../../graphql/auth";
+import RouteName from "../../router/name";
 
 @Component
 export default class SendPasswordReset extends Vue {
@@ -51,6 +62,8 @@ export default class SendPasswordReset extends Vue {
   } as { email: string };
 
   validationSent = false;
+
+  RouteName = RouteName;
 
   errors: string[] = [];
 
