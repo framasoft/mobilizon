@@ -14,501 +14,866 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.1\n"
 
+#, elixir-format
 #: lib/web/templates/email/password_reset.html.eex:48
 #: lib/web/templates/email/password_reset.text.eex:12
-#, elixir-format
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
 msgstr ""
 "Jos et lähettänyt pyyntöä, voit jättää tämän viestin huomiotta. Salasanasi "
 "ei vaihdu, ennen kuin käytät alla olevaa linkkiä ja luot uuden salasanan."
 
-#: lib/service/export/feed.ex:169
 #, elixir-format
+#: lib/service/export/feed.ex:170
 msgid "Feed for %{email} on Mobilizon"
 msgstr "Mobilizon-syöte osoitteeseen %{email}"
 
+#, elixir-format
 #: lib/web/templates/email/email.html.eex:151
 #: lib/web/templates/email/email.text.eex:16
-#, elixir-format
 msgid "%{instance} is a Mobilizon server."
 msgstr "%{instance} on Mobilizon-palvelin."
 
-#: lib/web/templates/email/report.html.eex:41
 #, elixir-format
+#: lib/web/templates/email/report.html.eex:41
 msgid "%{reporter_name} (%{reporter_username}) reported the following content."
 msgstr "%{reporter_name} (%{reporter_username}) raportoi seuraavan sisällön."
 
-#: lib/web/templates/email/report.html.eex:52
 #, elixir-format
+#: lib/web/templates/email/report.html.eex:52
 msgid "%{title} by %{creator}"
 msgstr "%{title} luojalta %{creator}"
 
-#: lib/web/templates/email/registration_confirmation.html.eex:58
 #, elixir-format
+#: lib/web/templates/email/registration_confirmation.html.eex:58
 msgid "Activate my account"
 msgstr "Aktivoi tilini"
 
+#, elixir-format
 #: lib/web/templates/email/email.html.eex:120
 #: lib/web/templates/email/email.text.eex:14
-#, elixir-format
 msgid "Ask the community on Framacolibri"
 msgstr "Kysy yhteisöltä Framacolibrissa"
 
+#, elixir-format
 #: lib/web/templates/email/report.html.eex:66
 #: lib/web/templates/email/report.text.eex:13
-#, elixir-format
 msgid "Comments"
 msgstr "Kommentit"
 
+#, elixir-format
 #: lib/web/templates/email/report.html.eex:50
 #: lib/web/templates/email/report.text.eex:6
-#, elixir-format
 msgid "Event"
 msgstr "Tapahtuma"
 
-#: lib/web/templates/email/registration_confirmation.html.eex:45
 #, elixir-format
+#: lib/web/templates/email/registration_confirmation.html.eex:45
 msgid "If you didn't request this, please ignore this email."
 msgstr "Jos et lähettänyt pyyntöä, voit jättää tämän viestin huomiotta."
 
-#: lib/web/email/user.ex:48
 #, elixir-format
+#: lib/web/email/user.ex:48
 msgid "Instructions to reset your password on %{instance}"
 msgstr "Ohjeet salasanan palauttamiseen palvelimella %{instance}"
 
-#: lib/web/templates/email/email.html.eex:152
 #, elixir-format
+#: lib/web/templates/email/email.html.eex:152
 msgid "Learn more about Mobilizon."
 msgstr "Lue lisää Mobilizonista."
 
-#: lib/web/templates/email/registration_confirmation.html.eex:13
 #, elixir-format
+#: lib/web/templates/email/registration_confirmation.html.eex:13
 msgid "Nearly here!"
 msgstr "Melkein valmista!"
 
+#, elixir-format
 #: lib/web/templates/email/email.html.eex:117
 #: lib/web/templates/email/email.text.eex:12
-#, elixir-format
 msgid "Need some help? Something not working properly?"
 msgstr "Tarvitsetko apua? Eikö kaikki toimi niin kuin pitäisi?"
 
-#: lib/web/templates/email/report.html.eex:13
 #, elixir-format
+#: lib/web/templates/email/report.html.eex:13
 msgid "New report on %{instance}"
 msgstr "Uusi raportti palvelimella %{instance}"
 
+#, elixir-format
 #: lib/web/templates/email/report.html.eex:84
 #: lib/web/templates/email/report.text.eex:22
-#, elixir-format
 msgid "Reason"
 msgstr "Syy"
 
-#: lib/web/templates/email/password_reset.html.eex:61
 #, elixir-format
+#: lib/web/templates/email/password_reset.html.eex:61
 msgid "Reset Password"
 msgstr "Palauta salasana"
 
-#: lib/web/templates/email/password_reset.html.eex:41
 #, elixir-format
+#: lib/web/templates/email/password_reset.html.eex:41
 msgid "Resetting your password is easy. Just press the button below and follow the instructions. We'll have you up and running in no time."
 msgstr ""
 "Salasana on helppo palauttaa. Paina alla olevaa painiketta ja noudata "
 "ohjeita. Pääset tuota pikaa jatkamaan käyttöä."
 
-#: lib/web/templates/email/password_reset.html.eex:13
 #, elixir-format
+#: lib/web/templates/email/password_reset.html.eex:13
 msgid "Trouble signing in?"
 msgstr "Ongelmia sisäänkirjautumisessa?"
 
-#: lib/web/templates/email/report.html.eex:104
 #, elixir-format
+#: lib/web/templates/email/report.html.eex:104
 msgid "View the report"
 msgstr "Näytä raportti"
 
-#: lib/web/templates/email/registration_confirmation.html.eex:38
 #, elixir-format
+#: lib/web/templates/email/registration_confirmation.html.eex:38
 msgid "You created an account on %{host} with this email address. You are one click away from activating it."
 msgstr ""
 "Loit palvelimelle %{host} tilin tällä sähköpostiosoitteella. Aktivoi se "
 "yhdellä napsautuksella."
 
-#: lib/web/email/user.ex:28
 #, elixir-format
+#: lib/web/email/user.ex:28
 msgid "Instructions to confirm your Mobilizon account on %{instance}"
 msgstr "Ohjeet Mobilizon-tilin vahvistamiseen palvelimella %{instance}"
 
-#: lib/web/email/admin.ex:23
 #, elixir-format
+#: lib/web/email/admin.ex:23
 msgid "New report on Mobilizon instance %{instance}"
 msgstr "Uusi raportti Mobilizon-palvelimella %{instance}"
 
-#: lib/web/templates/email/registration_confirmation.text.eex:1
 #, elixir-format
+#: lib/web/templates/email/registration_confirmation.text.eex:1
 msgid "Activate your account"
 msgstr "Aktivoi tilisi"
 
-#: lib/web/templates/email/event_participation_approved.html.eex:13
 #, elixir-format
+#: lib/web/templates/email/event_participation_approved.html.eex:13
 msgid "All good!"
 msgstr "Kaikki kunnossa!"
 
+#, elixir-format
 #: lib/web/templates/email/event_participation_approved.html.eex:45
 #: lib/web/templates/email/event_participation_approved.text.eex:7
-#, elixir-format
 msgid "An organizer just approved your participation. You're now going to this event!"
 msgstr ""
 "Järjestäjä hyväksyi juuri osallistumisesi. Olet nyt mukana tapahtumassa!"
 
+#, elixir-format
 #: lib/web/templates/email/before_event_notification.html.eex:51
 #: lib/web/templates/email/event_participation_approved.html.eex:58 lib/web/templates/email/event_updated.html.eex:119
-#, elixir-format
 msgid "Go to event page"
 msgstr "Siirry tapahtuman sivulle"
 
+#, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:70
 #: lib/web/templates/email/before_event_notification.html.eex:63 lib/web/templates/email/before_event_notification.text.eex:5
 #: lib/web/templates/email/event_participation_approved.html.eex:70 lib/web/templates/email/event_updated.html.eex:131
 #: lib/web/templates/email/event_updated.text.eex:32
-#, elixir-format
 msgid "If you need to cancel your participation, just access the event page through link above and click on the participation button."
 msgstr ""
 "Jos haluat perua osallistumisesi, siirry tapahtuman sivulle yllä olevasta "
 "linkistä ja napsauta siellä osallistumispainiketta."
 
+#, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:11
 #: lib/web/templates/email/event_participation_approved.text.eex:11
-#, elixir-format
 msgid "If you need to cancel your participation, just access the previous link and click on the participation button."
 msgstr ""
 "Jos haluat perua osallistumisesi, avaa edellä oleva linkki ja napsauta "
 "siellä osallistumispainiketta."
 
-#: lib/web/templates/email/email.text.eex:16
 #, elixir-format
+#: lib/web/templates/email/email.text.eex:16
 msgid "Learn more about Mobilizon:"
 msgstr "Lue lisää Mobilizonista:"
 
-#: lib/web/templates/email/report.text.eex:1
 #, elixir-format
+#: lib/web/templates/email/report.text.eex:1
 msgid "New report from %{reporter} on %{instance}"
 msgstr "Uusi raportti käyttäjältä %{reporter} palvelimella %{instance}"
 
-#: lib/web/templates/email/event_participation_approved.text.eex:1
 #, elixir-format
+#: lib/web/templates/email/event_participation_approved.text.eex:1
 msgid "Participation approved"
 msgstr "Osallistuminen hyväksytty"
 
-#: lib/web/templates/email/event_participation_rejected.text.eex:1
 #, elixir-format
+#: lib/web/templates/email/event_participation_rejected.text.eex:1
 msgid "Participation rejected"
 msgstr "Osallistuminen hylätty"
 
-#: lib/web/templates/email/password_reset.text.eex:1
 #, elixir-format
+#: lib/web/templates/email/password_reset.text.eex:1
 msgid "Password reset"
 msgstr "Salasanan palautus"
 
-#: lib/web/templates/email/password_reset.text.eex:7
 #, elixir-format
+#: lib/web/templates/email/password_reset.text.eex:7
 msgid "Resetting your password is easy. Just click the link below and follow the instructions. We'll have you up and running in no time."
 msgstr ""
 "Salasana on helppo palauttaa. Paina alla olevaa linkkiä ja noudata ohjeita. "
 "Pääset tuota pikaa jatkamaan käyttöä."
 
-#: lib/web/templates/email/event_participation_rejected.html.eex:13
 #, elixir-format
+#: lib/web/templates/email/event_participation_rejected.html.eex:13
 msgid "Sorry!"
 msgstr "Anteeksi!"
 
+#, elixir-format
 #: lib/web/templates/email/event_participation_rejected.html.eex:45
 #: lib/web/templates/email/event_participation_rejected.text.eex:7
-#, elixir-format
 msgid "Unfortunately, the organizers rejected your participation."
 msgstr "Ikävä kyllä järjestäjät hylkäsivät osallistumisesi."
 
-#: lib/web/templates/email/registration_confirmation.text.eex:5
 #, elixir-format
+#: lib/web/templates/email/registration_confirmation.text.eex:5
 msgid "You created an account on %{host} with this email address. You are one click away from activating it. If this wasn't you, please ignore this email."
 msgstr ""
 "Loit palvelimelle %{host} tilin tällä sähköpostiosoitteella. Aktivoi se "
 "yhdellä napsautuksella. Jos et luonut tiliä itse, voit jättää tämän viestin "
 "huomiotta."
 
+#, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:38
 #: lib/web/templates/email/event_participation_approved.html.eex:38
-#, elixir-format
 msgid "You requested to participate in event %{title}"
 msgstr "Lähetit pyynnön osallistua tapahtumaan %{title}"
 
+#, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:5
 #: lib/web/templates/email/event_participation_approved.text.eex:5 lib/web/templates/email/event_participation_rejected.html.eex:38
 #: lib/web/templates/email/event_participation_rejected.text.eex:5
-#, elixir-format
 msgid "You requested to participate in event %{title}."
 msgstr "Lähetit pyynnön osallistua tapahtumaan %{title}."
 
-#: lib/web/email/participation.ex:92
 #, elixir-format
+#: lib/web/email/participation.ex:92
 msgid "Your participation to event %{title} has been approved"
 msgstr "Osallistumisesi tapahtumaan %{title} on hyväksytty"
 
-#: lib/web/email/participation.ex:71
 #, elixir-format
+#: lib/web/email/participation.ex:71
 msgid "Your participation to event %{title} has been rejected"
 msgstr "Osallistumisesi tapahtumaan %{title) on hylätty"
 
-#: lib/web/templates/email/event_updated.html.eex:82
 #, elixir-format
+#: lib/web/templates/email/event_updated.html.eex:82
 msgid "Ending of event"
 msgstr "Tapahtuman päättyminen"
 
-#: lib/web/email/event.ex:35
 #, elixir-format
+#: lib/web/email/event.ex:35
 msgid "Event %{title} has been updated"
 msgstr "Tapahtumaa %{title} on päivitetty"
 
+#, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:13
 #: lib/web/templates/email/event_updated.text.eex:1
-#, elixir-format
 msgid "Event updated!"
 msgstr "Tapahtuma päivitetty!"
 
-#: lib/web/templates/email/event_updated.text.eex:27
 #, elixir-format
+#: lib/web/templates/email/event_updated.text.eex:27
 msgid "New date and time for ending of event: %{ends_on}"
 msgstr "Tapahtumalla on uusi päättymisaika: %{ends_on}"
 
-#: lib/web/templates/email/event_updated.text.eex:23
 #, elixir-format
+#: lib/web/templates/email/event_updated.text.eex:23
 msgid "New date and time for start of event: %{begins_on}"
 msgstr "Tapahtumalla on uusi alkamisaika: %{begins_on}"
 
-#: lib/web/templates/email/event_updated.text.eex:19
 #, elixir-format
+#: lib/web/templates/email/event_updated.text.eex:19
 msgid "New title: %{title}"
 msgstr "Uusi otsikko: %{title}"
 
-#: lib/web/templates/email/event_updated.html.eex:72
 #, elixir-format
+#: lib/web/templates/email/event_updated.html.eex:72
 msgid "Start of event"
 msgstr "Tapahtuman alku"
 
-#: lib/web/templates/email/event_updated.text.eex:5
 #, elixir-format
+#: lib/web/templates/email/event_updated.text.eex:5
 msgid "The event %{title} was just updated"
 msgstr "Tapahtumaa %{title} päivitettiin juuri"
 
-#: lib/web/templates/email/event_updated.html.eex:38
 #, elixir-format
+#: lib/web/templates/email/event_updated.html.eex:38
 msgid "The event %{title} was updated"
 msgstr "Tapahtumaa %{title} päivitettiin"
 
-#: lib/web/templates/email/event_updated.html.eex:62
 #, elixir-format
+#: lib/web/templates/email/event_updated.html.eex:62
 msgid "Title"
 msgstr "Otsikko"
 
-#: lib/web/templates/email/event_updated.text.eex:30
 #, elixir-format
+#: lib/web/templates/email/event_updated.text.eex:30
 msgid "View the updated event on: %{link}"
 msgstr "Katso päivitetty tapahtuma: %{linkki}"
 
+#, elixir-format
 #: lib/web/templates/email/password_reset.html.eex:38
 #: lib/web/templates/email/password_reset.text.eex:5
-#, elixir-format
 msgid "You requested a new password for your account on %{instance}."
 msgstr "Pyysit uutta salasanaa tilillesi palvelimella %{instance}."
 
-#: lib/web/templates/email/email.html.eex:91
 #, elixir-format
+#: lib/web/templates/email/email.html.eex:91
 msgid "In the meantime, please consider that the software is not (yet) finished. More information %{a_start}on our blog%{a_end}."
 msgstr ""
 "Huomaathan, että ohjelma ei ole (vielä) täysin valmis. Lisätietoja "
 "%{a_start}blogissamme%{a_end}."
 
+#, elixir-format
 #: lib/web/templates/email/email.html.eex:87
 #: lib/web/templates/email/email.text.eex:6
-#, elixir-format
 msgid "This is a demonstration site to test the beta version of Mobilizon."
 msgstr "Tällä esittelysivulla voit koekäyttää Mobilizonin beetaversiota."
 
-#: lib/web/templates/email/email.html.eex:85
 #, elixir-format
+#: lib/web/templates/email/email.html.eex:85
 msgid "Warning"
 msgstr "Varoitus"
 
+#, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:54
 #: lib/web/templates/email/event_updated.text.eex:14
-#, elixir-format
 msgid "Event has been cancelled"
 msgstr "Tapahtuma on peruttu"
 
+#, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:50
 #: lib/web/templates/email/event_updated.text.eex:10
-#, elixir-format
 msgid "Event has been confirmed"
 msgstr "Tapahtuma on vahvistettu"
 
+#, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:52
 #: lib/web/templates/email/event_updated.text.eex:12
-#, elixir-format
 msgid "Event status has been set as tentative"
 msgstr "Tapahtuma on merkitty alustavaksi"
 
-#: lib/web/templates/email/email.html.eex:88
 #, elixir-format
+#: lib/web/templates/email/email.html.eex:88
 msgid "%{b_start}Please do not use it in any real way%{b_end}"
 msgstr "%{b_start}Älä käytä todellisiin tarkoituksiin%{b_end}"
 
-#: lib/web/templates/email/report.html.eex:39
 #, elixir-format
+#: lib/web/templates/email/report.html.eex:39
 msgid "Someone on %{instance} reported the following content."
 msgstr "Seuraava sisältö raportoitiin palvelimelta %{instance}."
 
-#: lib/web/templates/email/email.text.eex:10
 #, elixir-format
+#: lib/web/templates/email/email.text.eex:10
 msgid "In the meantime, please consider that the software is not (yet) finished. More information on our blog:"
 msgstr ""
 "Huomaathan, että ohjelma ei ole (vielä) täysin valmis. Lisätietoja "
 "blogissamme:"
 
-#: lib/web/templates/email/email.text.eex:7
 #, elixir-format
+#: lib/web/templates/email/email.text.eex:7
 msgid "Please do not use it in any real way"
 msgstr "Älä käytä todellisiin tarkoituksiin"
 
-#: lib/web/templates/email/anonymous_participation_confirmation.html.eex:58
 #, elixir-format
+#: lib/web/templates/email/anonymous_participation_confirmation.html.eex:58
 msgid "Confirm my participation"
 msgstr "Vahvista osallistumiseni"
 
-#: lib/web/email/participation.ex:114
 #, elixir-format
+#: lib/web/email/participation.ex:114
 msgid "Confirm your participation to event %{title}"
 msgstr "Vahvista osallistumisesi tapahtumaan %{title}"
 
+#, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:45
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:7
-#, elixir-format
 msgid "If you didn't request this email, you can simply ignore it."
 msgstr "Jos et lähettänyt pyyntöä, voit jättää tämän viestin huomiotta."
 
+#, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:13
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:1
-#, elixir-format
 msgid "Participation confirmation"
 msgstr "Osallistumisen vahvistus"
 
-#: lib/web/templates/api/terms.html.eex:108
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:75
 msgctxt "terms"
 msgid "An internal ID for your current selected identity"
 msgstr "Valittuna olevan identiteettisi sisäinen tunniste"
 
-#: lib/web/templates/api/terms.html.eex:107
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:74
 msgctxt "terms"
 msgid "An internal user ID"
 msgstr "Sisäinen käyttäjätunniste"
 
-#: lib/web/templates/api/terms.html.eex:45
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:37
 msgctxt "terms"
 msgid "Any of the information we collect from you may be used in the following ways:"
 msgstr "Kaikkia sinulta kerättäviä tietoja voidaan käyttää seuraavin tavoin:"
 
-#: lib/web/templates/api/terms.html.eex:4
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:9
 msgctxt "terms"
 msgid "Basic account information"
 msgstr "Tilin perustiedot"
 
-#: lib/web/templates/api/terms.html.eex:28
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:25
 msgctxt "terms"
 msgid "Do not share any dangerous information over Mobilizon."
 msgstr "Älä jaa vaarallisia tietoja Mobilizonin kautta."
 
-#: lib/web/templates/api/terms.html.eex:126
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:90
 msgctxt "terms"
 msgid "Do we disclose any information to outside parties?"
 msgstr "Luovutetaanko tietoja ulkopuolisille?"
 
-#: lib/web/templates/api/terms.html.eex:101
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:68
 msgctxt "terms"
 msgid "Do we use cookies?"
 msgstr "Käytetäänkö evästeitä?"
 
-#: lib/web/templates/api/terms.html.eex:59
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:51
 msgctxt "terms"
 msgid "How do we protect your information?"
 msgstr "Kuinka tietojasi suojataan?"
 
-#: lib/web/templates/api/terms.html.eex:32
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:29
 msgctxt "terms"
 msgid "IPs and other metadata"
 msgstr "IP-osoitteet ja muu metadata"
 
-#: lib/web/templates/api/terms.html.eex:111
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:78
 msgctxt "terms"
 msgid "If you delete these informations, you need to login again."
 msgstr "Jos poistat nämä tiedot, joudut kirjautumaan uudelleen."
 
-#: lib/web/templates/api/terms.html.eex:113
 #, elixir-format
-msgctxt "terms"
-msgid "If you're not connected, we don't store any information on your device, unless you participate in an event\n  anonymously. In that case we store the hash of the UUID and participation status in your browser so that we may\n  display participation status. Deleting these informations will only stop displaying participation status in your\n  browser."
-msgstr ""
-"Jos et ole kirjautunut, laitteellesi ei tallenneta mitään tietoja, paitsi "
-"jos osallistut tapahtumaan anonyymisti.\n"
-"  Siinä tapauksessa UUID:n tarkiste ja osallistumisen tila tallennetaan "
-"selaimeesi, jotta osallistumisen tila\n"
-"  voidaan näyttää. Näiden tietojen poisto vaikuttaa vain siten, että "
-"osallistumisen tilaa ei enää näytetä\n"
-"  selaimessa."
-
-#: lib/web/templates/api/terms.html.eex:123
-#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:87
 msgctxt "terms"
 msgid "Note: These informations are stored in your localStorage and not your cookies."
 msgstr "Huomaa: Nämä tiedot tallennetaan localStorage-tietoina eikä evästeinä."
 
-#: lib/web/templates/api/terms.html.eex:18
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:17
 msgctxt "terms"
 msgid "Published events and comments"
 msgstr "Julkaistut tapahtumat ja kommentit"
 
-#: lib/web/templates/api/terms.html.eex:83
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:64
 msgctxt "terms"
 msgid "Retain the IP addresses associated with registered users no more than 12 months."
 msgstr ""
 "Säilyttämään rekisteröityjen käyttäjien IP-osoitteita enintään 12 kuukautta."
 
-#: lib/web/templates/api/terms.html.eex:109
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:76
 msgctxt "terms"
 msgid "Tokens to authenticate you"
 msgstr "Tunnistautumismerkkisi"
 
-#: lib/web/templates/api/terms.html.eex:35
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:31
 msgctxt "terms"
 msgid "We also may retain server logs which include the IP address of every request to our server."
 msgstr ""
 "Myös palvelinlokeja, jotka sisältävät jokaisen palvelimelle tehdyn pyynnön "
 "IP-osoitteen, saatetaan säilyttää."
 
-#: lib/web/templates/api/terms.html.eex:5
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:70
 msgctxt "terms"
-msgid "We collect information from you when you register on this server and gather data when you participate in the\n      platform by reading, writing, and interacting with content shared here. If you register on this server, you will\n      be asked to enter an e-mail address, a password and at least an username. Your e-mail address will be verified by\n      an email containing a unique link. If that link is visited, we know that you control the e-mail address. You may\n      also enter additional profile information such as a display name and biography, and upload a profile picture and\n      header image. The username, display name, biography, profile picture and header image are always listed publicly.\n      You may, however, visit this server without registering."
+msgid "We store the following information on your device when you connect:"
+msgstr "Kun muodostat yhteyden, laitteellesi tallennetaan seuraavat tiedot:"
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:58
+msgctxt "terms"
+msgid "We will make a good faith effort to:"
+msgstr "Pyrimme parhaamme mukaan seuraavaan:"
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:35
+msgctxt "terms"
+msgid "What do we use your information for?"
+msgstr "Mihin käytämme tietojasi?"
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:57
+msgctxt "terms"
+msgid "What is our data retention policy?"
+msgstr "Millainen tietojensäilytyskäytäntö meillä on?"
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:67
+msgctxt "terms"
+msgid "You may irreversibly delete your account at any time."
+msgstr "Voit milloin tahansa poistaa tilisi pysyvästi."
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:115
+msgctxt "terms"
+msgid "Changes to our Privacy Policy"
+msgstr "Muutokset tietosuojakäytäntöön"
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:106
+msgctxt "terms"
+msgid "If this server is in the EU or the EEA: Our site, products and services are all directed to people who are at least 16 years old. If you are under the age of 16, per the requirements of the GDPR (<a href=\"https://en.wikipedia.org/wiki/General_Data_Protection_Regulation\">General Data Protection Regulation</a>) do not use this site."
+msgstr ""
+"Jos palvelin sijaitsee EU:n tai EEA:n alueella: Sivusto ja sen tuotteet ja "
+"palvelut on tarkoitettu vähintään 16 vuoden ikäisille. Jos olet alle 16 "
+"vuotta, yleisen tietosuoja-asetuksen (<a href=\"https://fi.wikipedia.org/"
+"wiki/Yleinen_tietosuoja-asetus\">yleinen tietosuoja-asetus</a>) mukaisesti "
+"et voi käyttää tätä sivustoa."
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:109
+msgctxt "terms"
+msgid "If this server is in the USA: Our site, products and services are all directed to people who are at least 13 years old. If you are under the age of 13, per the requirements of COPPA (<a href=\"https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act\">Children's Online Privacy Protection Act</a>) do not use this site."
+msgstr ""
+"Jos palvelin sijaitsee Yhdysvalloissa: Sivusto ja sen tuotteet ja palvelut "
+"on tarkoitettu vähintään 13 vuoden ikäisille. Jos olet alle 13 vuotta, COPPA-"
+"lain (<a href=\"https://en.wikipedia.org/wiki/Children%"
+"27s_Online_Privacy_Protection_Act\">Children's Online Privacy Protection "
+"Act</a>) mukaisesti et voi käyttää tätä sivustoa."
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:117
+msgctxt "terms"
+msgid "If we decide to change our privacy policy, we will post those changes on this page."
+msgstr ""
+"Jos päätämme muuttaa tietosuojakäytäntöämme, muutoksesta kerrotaan tällä "
+"sivulla."
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:112
+msgctxt "terms"
+msgid "Law requirements can be different if this server is in another jurisdiction."
+msgstr ""
+"Lakisääteiset vaatimukset saattavat poiketa tästä, jos palvelin sijaitsee "
+"muulla lainkäyttöalueella."
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:103
+msgctxt "terms"
+msgid "Site usage by children"
+msgstr "Lapset sivuston käyttäjinä"
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:47
+msgctxt "terms"
+msgid "The email address you provide may be used to send you information, updates and notifications about other people\n    interacting with your content or sending you messages and to respond to inquiries, and/or other requests or\n    questions."
+msgstr ""
+"Antamaasi sähköpostiosoitteeseen voidaan lähettää tietoja, päivityksiä ja "
+"ilmoituksia, kun muut vaikuttavat\n"
+"    julkaisemaasi sisältöön, lähettävät sinulle viestejä tai vastaavat "
+"kyselyihisi, tai muihin pyyntöihin tai kysymyksiin\n"
+"    liittyen."
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:45
+msgctxt "terms"
+msgid "To aid moderation of the community, for example comparing your IP address with other known ones to determine ban\n    evasion or other violations."
+msgstr ""
+"Auttamaan yhteisön moderoinnissa esimerkiksi vertaamalla IP-osoitettasi "
+"muihin tiedossa oleviin osoitteisiin\n"
+"    porttikieltojen kiertämisen tai muiden rikkomusten havaitsemiseksi."
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:43
+msgctxt "terms"
+msgid "To provide the core functionality of Mobilizon. Depending on this instance's policy you may only be able to\n    interact with other people's content and post your own content if you are logged in."
+msgstr ""
+"Mobilizonin perustoimintojen toteuttamiseksi. Palvelimen käytännöstä "
+"riippuen muiden tekemään sisältöön\n"
+"    vaikuttaminen ja oman sisällön julkaiseminen saattaa olla mahdollista "
+"vain sisäänkirjautuneena."
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:6
+msgctxt "terms"
+msgid "What information do we collect?"
+msgstr "Mitä tietoja kerätään?"
+
+#, elixir-format
+#: lib/web/templates/email/email_changed_new.html.eex:38
+#: lib/web/templates/email/email_changed_new.text.eex:5
+msgid "Confirm the new address to change your email."
+msgstr "Vahvista uusi sähköpostiosoite, jotta se vaihdetaan."
+
+#, elixir-format
+#: lib/web/templates/email/email_changed_new.html.eex:64
+#: lib/web/templates/email/email_changed_new.text.eex:10
+msgid "If this change wasn't initiated by you, please ignore this email. The email address for the Mobilizon account won't change until you access the link above."
+msgstr ""
+"Jos et pyytänyt vaihtoa, voit jättää tämän viestin huomiotta. Mobilizon-"
+"tilin sähköpostiosoitetta ei vaihdeta, ellei yllä olevaa linkkiä avata."
+
+#, elixir-format
+#: lib/web/templates/email/email_changed_old.html.eex:62
+#: lib/web/templates/email/email_changed_old.text.eex:9
+msgid "If you did not ask to change your email, it is likely that someone has gained access to your account. Please change your password immediately or contact the server admin if you're locked out of your account."
+msgstr ""
+"Jos et pyytänyt sähköpostiosoitteen vaihtoa, joku on todennäköisesti päässyt "
+"käyttämään tiliäsi. Vaihda salasanasi viipymättä, tai ota yhteyttä "
+"palvelimen ylläpitäjään, jos et pääse käyttämään tiliäsi."
+
+#, elixir-format
+#: lib/web/email/user.ex:175
+msgid "Mobilizon on %{instance}: confirm your email address"
+msgstr "Mobilizon palvelimella %{instance}: vahvista sähköpostiosoitteesi"
+
+#, elixir-format
+#: lib/web/email/user.ex:152
+msgid "Mobilizon on %{instance}: email changed"
+msgstr "Mobilizon palvelimella %{instance}: sähköpostiosoite vaihdettu"
+
+#, elixir-format
+#: lib/web/templates/email/email_changed_old.html.eex:13
+#: lib/web/templates/email/email_changed_old.text.eex:1
+msgid "New email address"
+msgstr "Uusi sähköpostiosoite"
+
+#, elixir-format
+#: lib/web/templates/email/email_changed_old.html.eex:38
+#: lib/web/templates/email/email_changed_old.text.eex:5
+msgid "The email address for your account on %{host} is being changed to:"
+msgstr "Palvelimella %{host} olevan tilisi sähköpostiosoitteeksi vaihdetaan:"
+
+#, elixir-format
+#: lib/web/templates/email/email_changed_new.html.eex:13
+#: lib/web/templates/email/email_changed_new.html.eex:51 lib/web/templates/email/email_changed_new.text.eex:1
+msgid "Verify email address"
+msgstr "Vahvista sähköpostiosoite"
+
+#, elixir-format
+#: lib/web/templates/email/notification_each_week.html.eex:70
+#: lib/web/templates/email/notification_each_week.text.eex:14 lib/web/templates/email/on_day_notification.html.eex:70
+#: lib/web/templates/email/on_day_notification.text.eex:14
+msgid "If you need to cancel your participation, just access the event page through the link above and click on the participation button."
+msgid_plural "If you need to cancel your participation, just access the event page through the links above and click on the participation button."
+msgstr[0] ""
+"Jos haluat perua osallistumisesi, siirry tapahtuman sivulle yllä olevasta "
+"linkistä ja napsauta siellä osallistumispainiketta."
+msgstr[1] ""
+"Jos haluat perua osallistumisesi, siirry tapahtuman sivulle yllä olevasta "
+"linkistä ja napsauta siellä osallistumispainiketta."
+
+#, elixir-format
+#: lib/web/email/notification.ex:46
+msgid "One event planned today"
+msgid_plural "%{nb_events} events planned today"
+msgstr[0] "Yksi suunniteltu tapahtuma tänään"
+msgstr[1] "%{nb_events} suunniteltua tapahtumaa tänään"
+
+#, elixir-format
+#: lib/web/templates/email/on_day_notification.html.eex:38
+#: lib/web/templates/email/on_day_notification.text.eex:4
+msgid "You have one event today:"
+msgid_plural "You have %{total} events today:"
+msgstr[0] "Sinulla on tänään yksi tapahtuma:"
+msgstr[1] "Sinulla on tänään %{total} tapahtumaa:"
+
+#, elixir-format
+#: lib/web/templates/email/group_invite.html.eex:38
+#: lib/web/templates/email/group_invite.text.eex:5
+msgid "%{inviter} just invited you to join their group %{group}"
+msgstr "%{inviter} kutsui sinut ryhmään %{group}"
+
+#, elixir-format
+#: lib/web/templates/email/group_invite.html.eex:13
+#: lib/web/templates/email/group_invite.text.eex:1
+msgid "Come along!"
+msgstr "Tule mukaan!"
+
+#, elixir-format
+#: lib/web/email/notification.ex:24
+msgid "Don't forget to go to %{title}"
+msgstr "Muista %{title}"
+
+#, elixir-format
+#: lib/web/templates/email/on_day_notification.html.eex:13
+#: lib/web/templates/email/on_day_notification.text.eex:1
+msgid "Events today"
+msgstr "Tapahtuma"
+
+#, elixir-format
+#: lib/web/templates/email/before_event_notification.html.eex:38
+#: lib/web/templates/email/before_event_notification.text.eex:3
+msgid "Get ready for %{title}"
+msgstr "%{title} tulee, oletko valmis?"
+
+#, elixir-format
+#: lib/web/templates/email/group_invite.html.eex:59
+msgid "See my groups"
+msgstr "Näytä omat ryhmät"
+
+#, elixir-format
+#: lib/web/templates/email/group_invite.html.eex:45
+#: lib/web/templates/email/group_invite.text.eex:7
+msgid "To accept this invitation, head over to your groups."
+msgstr "Hyväksy kutsu siirtymällä omiin ryhmiisi."
+
+#, elixir-format
+#: lib/web/templates/email/before_event_notification.html.eex:13
+#: lib/web/templates/email/before_event_notification.text.eex:1
+msgid "Upcoming event"
+msgstr "Tuleva tapahtuma"
+
+#, elixir-format
+#: lib/web/templates/email/before_event_notification.text.eex:4
+msgid "View the event on: %{link}"
+msgstr "Katso päivitetty tapahtuma: %{linkki}"
+
+#, elixir-format
+#: lib/web/email/group.ex:28
+msgid "You have been invited by %{inviter} to join group %{group}"
+msgstr "%{inviter} kutsui sinut ryhmään %{group}"
+
+#, elixir-format
+#: lib/web/templates/email/event_updated.html.eex:92
+msgid "Event address"
+msgstr "Tapahtuman osoite"
+
+#, elixir-format
+#: lib/web/templates/email/event_updated.html.eex:102
+msgid "Physical address was removed"
+msgstr "Käyntiosoite poistettiin"
+
+#, elixir-format
+#: lib/web/email/notification.ex:70
+msgid "One event planned this week"
+msgid_plural "%{nb_events} events planned this week"
+msgstr[0] "Yksi suunniteltu tapahtuma tällä viikolla"
+msgstr[1] "%{nb_events} suunniteltua tapahtumaa tällä viikolla"
+
+#, elixir-format
+#: lib/web/email/notification.ex:92
+msgid "One participation request for event %{title} to process"
+msgid_plural "%{number_participation_requests} participation requests for event %{title} to process"
+msgstr[0] "Yksi osallistujapyyntö tapahtumaan %{title} odottaa käsittelyä"
+msgstr[1] ""
+"%{number_participation_requests} osallistujapyyntöä tapahtumaan %{title} "
+"odottaa käsittelyä"
+
+#, elixir-format
+#: lib/web/templates/email/notification_each_week.html.eex:38
+#: lib/web/templates/email/notification_each_week.text.eex:4
+msgid "You have one event this week:"
+msgid_plural "You have %{total} events this week:"
+msgstr[0] "Sinulla on tällä viikolla yksi tapahtuma:"
+msgstr[1] "Sinulla on tällä viikolla %{total} tapahtumaa:"
+
+#, elixir-format
+#: lib/web/templates/email/pending_participation_notification.html.eex:38
+#: lib/web/templates/email/pending_participation_notification.text.eex:4
+msgid "You have one pending participation to process:"
+msgid_plural "You have %{number_participation_requests} participation requests to process:"
+msgstr[0] "Yksi osallistujapyyntö odottaa käsittelyäsi:"
+msgstr[1] ""
+"%{number_participation_requests} osallistujapyyntöä odottaa käsittelyäsi:"
+
+#, elixir-format
+#: lib/web/templates/email/notification_each_week.html.eex:13
+#: lib/web/templates/email/notification_each_week.text.eex:1
+msgid "Events this week"
+msgstr "Tämän viikon tapahtumat"
+
+#, elixir-format
+#: lib/web/templates/email/pending_participation_notification.html.eex:51
+#: lib/web/templates/email/pending_participation_notification.text.eex:6
+msgid "Manage pending participation requests"
+msgstr "Hallinnoi odottavia osallistujapyyntöjä"
+
+#, elixir-format
+#: lib/web/templates/email/pending_participation_notification.html.eex:13
+#: lib/web/templates/email/pending_participation_notification.text.eex:1
+msgid "Pending participations to process"
+msgstr "Osallistujapyyntöjä odottamassa käsittelyä"
+
+#, elixir-format
+#: lib/web/templates/email/pending_participation_notification.html.eex:64
+#: lib/web/templates/email/pending_participation_notification.text.eex:8
+msgid "You receive this email because you chose to get notifications for pending participations to your events. You may disable or change the configuration for these notification in your Mobilizon user settings."
+msgstr ""
+"Sait tämän viestin, koska olet tilannut ilmoitukset tapahtumiesi "
+"osallistujapyynnöistä. Voit muuttaa ilmoitusasetuksia Mobilizon-"
+"käyttäjäasetuksista."
+
+#, elixir-format
+#: lib/web/templates/email/email.html.eex:90
+msgid "Mobilizon is under development, we will add new features to this site during regular updates, until the release of %{b_start}version 1 of the software in the fall of 2020%{b_end}."
+msgstr ""
+"Mobilizonin kehitystyö on vielä käynnissä, ja tälle sivulle lisätään "
+"säännöllisesti uusia ominaisuuksia, kunnes %{b_start}ohjelman versio 1 "
+"julkaistaan vuoden 2020 alkupuoliskolla%{b_end}."
+
+#, elixir-format
+#: lib/web/templates/email/email.text.eex:9
+msgid "Mobilizon is under development, we will add new features to this site during regular updates, until the release of version 1 of the software in the fall of 2020."
+msgstr ""
+"Mobilizonin kehitystyö on vielä käynnissä, ja tälle sivulle lisätään "
+"säännöllisesti uusia ominaisuuksia, kunnes ohjelman versio 1 julkaistaan "
+"vuoden 2020 alkupuoliskolla."
+
+#, elixir-format
+#: lib/service/metadata/event.ex:47
+msgid "The event organizer didn't add any description."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:54
+msgctxt "terms"
+msgid "We implement a variety of security measures to maintain the safety of your personal information when you enter, submit, or access your personal information. Among other things, your browser session, as well as the traffic between your applications and the API, are secured with SSL/TLS, and your password is hashed using a strong one-way algorithm."
+msgstr ""
+"Henkilötietojasi suojataan niiden syöttämisen, lähettämisen ja käyttämisen "
+"aikana erilaisin turvallisuustoimin.\n"
+"  Muun muassa selainistunnon sekä sovellusten ja sovellusrajapinnan välinen "
+"tietoliikenne ovat SSL/TLS-suojattuja,\n"
+"  ja salasanasi salataan vahvalla yksisuuntaisella algoritmilla."
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:94
+msgctxt "terms"
+msgid "No. We do not sell, trade, or otherwise transfer to outside parties your personally identifiable information. This does not include trusted third parties who assist us in operating our site, conducting our business, or servicing you, so long as those parties agree to keep this information confidential. We may also release your information when we believe release is appropriate to comply with the law, enforce our site policies, or protect ours or others rights, property, or safety."
+msgstr ""
+"Emme myy tai muulla tavoin luovuta henkilötietoja ulkopuolisille. Tämä ei "
+"koske luotettuja kolmansia\n"
+"  osapuolia, joita käytämme apuna sivuston toiminnassa, liiketoiminnassamme "
+"sekä palvelujen tuottamisessa.\n"
+"  Myös nämä kolmannet osapuolet ovat sitoutuneet pitämään tiedot "
+"luottamuksellisina. Saatamme luovuttaa\n"
+"  luovuttaa tietojasi myös siinä tapauksessa, jos katsomme sen olevan "
+"välttämätöntä lain tai sivustomme\n"
+"  noudattamisen tahi meidän tai muiden oikeuksien, omaisuuden tai "
+"turvallisuuden suojelemisen kannalta."
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:61
+msgctxt "terms"
+msgid "Retain server logs containing the IP address of all requests to this server, in so far as such logs are kept, no more than 90 days."
+msgstr ""
+"Säilyttämään kaikkien palvelimelle tehtyjen pyyntöjen IP-osoitteet "
+"sisältäviä palvelinlokeja, mikäli sellaisia\n"
+"        pidetään, enintään 90 päivän ajan."
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:10
+msgctxt "terms"
+msgid "We collect information from you when you register on this instance and gather data when you participate in the platform by reading, writing, and interacting with content shared here. If you register on this instance, you will be asked to enter <b>an e-mail address, a password</b> (hashed) and at least <b>an username</b>. Your e-mail address will be verified by an email containing a unique link. If that link is visited, we know that you control the e-mail address. You may also enter additional profile information such as <b>a display name and biography, and upload a profile picture and header image</b>. The username, display name, biography, profile picture and header image <b>are always listed publicly</b>. <b>You may however visit this instance without registering</b>."
 msgstr ""
 "Sinusta kerätään tietoja, kun rekisteröidyt tälle palvelimelle ja kun "
 "osallistut alustan käyttöön lukemalla ja\n"
@@ -524,87 +889,23 @@ msgstr ""
 "aina julkista tietoa. Voit myös käyttää\n"
 "      palvelinta rekisteröitymättä."
 
-#: lib/web/templates/api/terms.html.eex:130
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:80
 msgctxt "terms"
-msgid "We do not sell, trade, or otherwise transfer to outside parties your personally identifiable information. This\n  does not include trusted third parties who assist us in operating our site, conducting our business, or servicing\n  you, so long as those parties agree to keep this information confidential. We may also release your information\n  when we believe release is appropriate to comply with the law, enforce our site policies, or protect ours or\n  others rights, property, or safety."
+msgid "If you're not connected, we don't store any information on your device, unless you participate in an event anonymously. In this specific case we store the hash of an unique identifier for the event and participation status in your browser so that we may display participation status. Deleting these informations will only stop displaying participation status in your browser."
 msgstr ""
-"Emme myy tai muulla tavoin luovuta henkilötietoja ulkopuolisille. Tämä ei "
-"koske luotettuja kolmansia\n"
-"  osapuolia, joita käytämme apuna sivuston toiminnassa, liiketoiminnassamme "
-"sekä palvelujen tuottamisessa.\n"
-"  Myös nämä kolmannet osapuolet ovat sitoutuneet pitämään tiedot "
-"luottamuksellisina. Saatamme luovuttaa\n"
-"  luovuttaa tietojasi myös siinä tapauksessa, jos katsomme sen olevan "
-"välttämätöntä lain tai sivustomme\n"
-"  noudattamisen tahi meidän tai muiden oikeuksien, omaisuuden tai "
-"turvallisuuden suojelemisen kannalta."
+"Jos et ole kirjautunut, laitteellesi ei tallenneta mitään tietoja, paitsi "
+"jos osallistut tapahtumaan anonyymisti.\n"
+"  Siinä tapauksessa UUID:n tarkiste ja osallistumisen tila tallennetaan "
+"selaimeesi, jotta osallistumisen tila\n"
+"  voidaan näyttää. Näiden tietojen poisto vaikuttaa vain siten, että "
+"osallistumisen tilaa ei enää näytetä\n"
+"  selaimessa."
 
-#: lib/web/templates/api/terms.html.eex:62
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:19
 msgctxt "terms"
-msgid "We implement a variety of security measures to maintain the safety of your personal information when you enter,\n  submit, or access your personal information. Among other things, your browser session, as well as the traffic between\n  your applications and the API, are secured with SSL/TLS, and your password is hashed using a strong one-way\n  algorithm."
-msgstr ""
-"Henkilötietojasi suojataan niiden syöttämisen, lähettämisen ja käyttämisen "
-"aikana erilaisin turvallisuustoimin.\n"
-"  Muun muassa selainistunnon sekä sovellusten ja sovellusrajapinnan välinen "
-"tietoliikenne ovat SSL/TLS-suojattuja,\n"
-"  ja salasanasi salataan vahvalla yksisuuntaisella algoritmilla."
-
-#: lib/web/templates/api/terms.html.eex:103
-#, elixir-format
-msgctxt "terms"
-msgid "We store the following information on your device when you connect:"
-msgstr "Kun muodostat yhteyden, laitteellesi tallennetaan seuraavat tiedot:"
-
-#: lib/web/templates/api/terms.html.eex:72
-#, elixir-format
-msgctxt "terms"
-msgid "We will make a good faith effort to:"
-msgstr "Pyrimme parhaamme mukaan seuraavaan:"
-
-#: lib/web/templates/api/terms.html.eex:43
-#, elixir-format
-msgctxt "terms"
-msgid "What do we use your information for?"
-msgstr "Mihin käytämme tietojasi?"
-
-#: lib/web/templates/api/terms.html.eex:71
-#, elixir-format
-msgctxt "terms"
-msgid "What is our data retention policy?"
-msgstr "Millainen tietojensäilytyskäytäntö meillä on?"
-
-#: lib/web/templates/api/terms.html.eex:92
-#, elixir-format
-msgctxt "terms"
-msgid "You can request and download an archive of your content, including your posts, media attachments, profile picture,\n  and header image."
-msgstr ""
-"Voit pyytää omasta sisällöstäsi ladattavaksi arkiston, joka sisältää "
-"julkaisusi, tiedostoliitteesi, profiilikuvasi ja\n"
-"  otsikkokuvasi."
-
-#: lib/web/templates/api/terms.html.eex:100
-#, elixir-format
-msgctxt "terms"
-msgid "You may irreversibly delete your account at any time."
-msgstr "Voit milloin tahansa poistaa tilisi pysyvästi."
-
-#: lib/web/templates/api/terms.html.eex:142
-#, elixir-format
-msgctxt "terms"
-msgid "Your content may be downloaded by other servers in the network. Your content is delivered to the servers\n  following your instance, and direct messages are delivered to the servers of the recipients, in so far as these\n  recipients reside on a different server than this one."
-msgstr ""
-"Muut palvelimet verkossa voivat ladata sisältöäsi. Sisältösi välitetään omaa "
-"palvelintasi seuraaville\n"
-"  palvelimille, ja suorat viestit välitetään viestien vastaanottajien "
-"palvelimille, mikäli vastaanottajat ovat\n"
-"  muulla kuin tällä palvelimella."
-
-#: lib/web/templates/api/terms.html.eex:20
-#, elixir-format
-msgctxt "terms"
-msgid "Your events and comments are delivered to other instances that follow your own, meaning they are delivered to\n      different servers and copies are stored there. When you delete events or comments, this is likewise delivered to\n      these other instances. The action of joining an event is federated as well. Please keep in mind that the operators\n      of the server and any receiving server may view such messages, and that recipients may screenshot, copy or\n      otherwise re-share them."
+msgid "Your <b>events</b> and <b>comments</b> are delivered to other instances that follow your own, meaning they are delivered to different instances and copies are stored there. When you delete events or comments, this is likewise delivered to these other instances. All interactions related to events features - such as joining an event - or group features - such as managing resources - are federated as well. Please keep in mind that the operators of the instance and any receiving instances may view such messages and informations, and that recipients may screenshot, copy or otherwise re-share them."
 msgstr ""
 "Omat tapahtumasi ja kommenttisi välitetään omaa palvelintasi seuraaville "
 "palvelimille, mikä tarkoittaa, että niistä\n"
@@ -616,334 +917,369 @@ msgstr ""
 "että vastaanottajat voivat kopioida viestin\n"
 "  tekstinä tai kuvankaappauksena tai muulla tavoin levittää niitä edelleen."
 
-#: lib/web/templates/api/terms.html.eex:159
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:99
 msgctxt "terms"
-msgid "Changes to our Privacy Policy"
-msgstr "Muutokset tietosuojakäytäntöön"
-
-#: lib/web/templates/api/terms.html.eex:154
-#, elixir-format
-msgctxt "terms"
-msgid "If this server is in the EU or the EEA: Our site, products and services are all directed to people who are at least 16 years old. If you are under the age of 16, per the requirements of the GDPR (<a href=\"https://en.wikipedia.org/wiki/General_Data_Protection_Regulation\">General Data Protection Regulation</a>) do not use this site."
+msgid "Your content may be downloaded by other instances in the network. Your public events and comments are delivered to the instances following your own instance. Content created through a group is fowarded to all the instances of all the members of the group, in so far as these members reside on a different instance than this one."
 msgstr ""
-"Jos palvelin sijaitsee EU:n tai EEA:n alueella: Sivusto ja sen tuotteet ja "
-"palvelut on tarkoitettu vähintään 16 vuoden ikäisille. Jos olet alle 16 "
-"vuotta, yleisen tietosuoja-asetuksen (<a href=\"https://fi.wikipedia.org/"
-"wiki/Yleinen_tietosuoja-asetus\">yleinen tietosuoja-asetus</a>) mukaisesti "
-"et voi käyttää tätä sivustoa."
 
-#: lib/web/templates/api/terms.html.eex:155
 #, elixir-format
+#: lib/web/templates/api/terms.html.eex:23
 msgctxt "terms"
-msgid "If this server is in the USA: Our site, products and services are all directed to people who are at least 13 years old. If you are under the age of 13, per the requirements of COPPA (<a href=\"https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act\">Children's Online Privacy Protection Act</a>) do not use this site."
+msgid "Accepting these Terms"
 msgstr ""
-"Jos palvelin sijaitsee Yhdysvalloissa: Sivusto ja sen tuotteet ja palvelut "
-"on tarkoitettu vähintään 13 vuoden ikäisille. Jos olet alle 13 vuotta, COPPA-"
-"lain (<a href=\"https://en.wikipedia.org/wiki/Children%"
-"27s_Online_Privacy_Protection_Act\">Children's Online Privacy Protection "
-"Act</a>) mukaisesti et voi käyttää tätä sivustoa."
 
-#: lib/web/templates/api/terms.html.eex:161
 #, elixir-format
+#: lib/web/templates/api/terms.html.eex:27
 msgctxt "terms"
-msgid "If we decide to change our privacy policy, we will post those changes on this page."
+msgid "Changes to these Terms"
 msgstr ""
-"Jos päätämme muuttaa tietosuojakäytäntöämme, muutoksesta kerrotaan tällä "
-"sivulla."
 
-#: lib/web/templates/api/terms.html.eex:156
 #, elixir-format
+#: lib/web/templates/api/terms.html.eex:30
 msgctxt "terms"
-msgid "Law requirements can be different if this server is in another jurisdiction."
+msgid "We reserve the right to modify these Terms at any time. For instance, we may need to change these Terms if we come out with a new feature or for some other reason."
 msgstr ""
-"Lakisääteiset vaatimukset saattavat poiketa tästä, jos palvelin sijaitsee "
-"muulla lainkäyttöalueella."
 
-#: lib/web/templates/api/terms.html.eex:163
 #, elixir-format
+#: lib/web/templates/api/terms.html.eex:85
 msgctxt "terms"
-msgid "Originally adapted from the <a href=\"https://mastodon.social/terms\">Mastodon</a> and <a href=\"https://github.com/discourse/discourse\">Discourse</a> privacy policies."
+msgid "A lot of the content on the Service is from you and others, and we don't review, verify or authenticate it, and it may include inaccuracies or false information. We make no representations, warranties, or guarantees relating to the quality, suitability, truth, accuracy or completeness of any content contained in the Service. You acknowledge sole responsibility for and assume all risk arising from your use of or reliance on any content."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:60
+msgctxt "terms"
+msgid "Also, you agree that you will not do any of the following in connection with the Service or other users:"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:65
+msgctxt "terms"
+msgid "Circumvent or attempt to circumvent any filtering, security measures, rate limits or other features designed to protect the Service, users of the Service, or third parties."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:64
+msgctxt "terms"
+msgid "Collect any personal information about other users, or intimidate, threaten, stalk or otherwise harass other users of the Service;"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:55
+msgctxt "terms"
+msgid "Content that is illegal or unlawful, that would otherwise create liability;"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:56
+msgctxt "terms"
+msgid "Content that may infringe or violate any patent, trademark, trade secret, copyright, right of privacy, right of publicity or other intellectual or other right of any party;"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:42
+msgctxt "terms"
+msgid "Creating Accounts"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:89
+msgctxt "terms"
+msgid "Entire Agreement"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:92
+msgctxt "terms"
+msgid "Feedback"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:83
+msgctxt "terms"
+msgid "Hyperlinks and Third Party Content"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:88
+msgctxt "terms"
+msgid "If you breach any of these Terms, we have the right to suspend or disable your access to or use of the Service."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:36
+msgctxt "terms"
+msgid "If you continue to use the Service after the revised Terms go into effect, then you have accepted the revised Terms."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:63
+msgctxt "terms"
+msgid "Impersonate or post on behalf of any person or entity or otherwise misrepresent your affiliation with a person or entity;"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:48
+msgctxt "terms"
+msgid "Our Service allows you and other users to post, link and otherwise make available content. You are responsible for the content that you make available to the Service, including its legality, reliability, and appropriateness."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:39
+msgctxt "terms"
+msgid "Privacy Policy"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:95
+msgctxt "terms"
+msgid "Questions & Contact Information"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:87
+msgctxt "terms"
+msgid "Termination"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:62
+msgctxt "terms"
+msgid "Use the Service in any manner that could interfere with, disrupt, negatively affect or inhibit other users from fully enjoying the Service or that could damage, disable, overburden or impair the functioning of the Service;"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:49
+msgctxt "terms"
+msgid "When you post, link or otherwise make available content to the Service, you grant us the right and license to display and distribute your content on or through the Service (including via applications). We may format your content for display throughout the Service, but we will not edit or revise the substance of your content itself. The displaying and distribution of your content happens strictly only according to the visibility rules you have set for the content. We will not modify the visibility of the content you have set."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:47
+msgctxt "terms"
+msgid "Your Content & Conduct"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:84
+msgctxt "terms"
+msgid "<b>%{instance_name}</b> makes no claim or representation regarding, and accepts no responsibility for third party websites accessible by hyperlink from the Service or websites linking to the Service. When you leave the Service, you should be aware that these Terms and our policies no longer govern. The inclusion of any link does not imply endorsement by <b>%{instance_name}</b> of the site. Use of any such linked website is at the user's own risk."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:68
+msgctxt "terms"
+msgid "Finally, your use of the Service is also subject to acceptance of <a href=\"/rules\">the instance's own specific rules</a> regarding the code of conduct and moderation rules. Breaking those rules may also result in your account being disabled or suspended."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:81
+msgctxt "terms"
+msgid "For full details about the Mobilizon software <a href=\"https://joinmobilizon.org\">see here</a>."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:40
+msgctxt "terms"
+msgid "For information about how we collect and use information about users of the Service, please check out our <a href=\"/privacy\">privacy policy</a>."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:18
+msgctxt "terms"
+msgid "Here are the important things you need to know about accessing and using the <b>%{instance_name}</b> (<a href=\"https://%{instance_url}\">%{instance_url}</a>) website and service (collectively, \"Service\"). These are our terms of service (\"Terms\"). Please read them carefully."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:33
+msgctxt "terms"
+msgid "If we make major changes, we will notify our users in a clear and prominent manner. Minor changes may only be highlighted in the footer of our website. It is your responsibility to check the website regularly for changes to these Terms."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:53
+msgctxt "terms"
+msgid "In order to make <b>%{instance_name}</b> a great place for all of us, please do not post, link and otherwise make available on or through the Service any of the following:"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:57
+msgctxt "terms"
+msgid "Private information of any third party (e.g., addresses, phone numbers, email addresses, Social Security numbers and credit card numbers); and"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:52
+msgctxt "terms"
+msgid "Since Mobilizon is a distributed network, it is possible, depending on the visibility rules set to your content, that your content has been distributed to other Mobilizon instances. When you delete your content, we will request those other instances to also delete the content. Our responsibility on the content being deleted from those other instances ends here. If for some reason, some other instance does not delete the content, we cannot be held responsible."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:90
+msgctxt "terms"
+msgid "These Terms constitute the entire agreement between you and <b>%{instance_name}</b> regarding the use of the Service, superseding any prior agreements between you and <b>%{instance_name}</b> relating to your use of the Service."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:80
+msgctxt "terms"
+msgid "This Service runs on a Mobilizon instance. This source code is licensed under an <a href=\"https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)\">AGPLv3 license</a> which means you are allowed to and even encouraged to take the source code, modify it and use it."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:58
+msgctxt "terms"
+msgid "Viruses, corrupted data or other harmful, disruptive or destructive files or code."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:50
+msgctxt "terms"
+msgid "We cannot be held responsible should a programming or administrative error make your content visible to a larger audience than you had intended. Aside from our limited right to your content, you retain all of your rights to the content you post, link and otherwise make available on or through the Service."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:45
+msgctxt "terms"
+msgid "We will not be liable for any loss that you may incur as a result of someone else using your email or password, either with or without your knowledge."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:43
+msgctxt "terms"
+msgid "When you create an account you also agree to maintain the security and confidentiality of your password and accept all risks of unauthorized access to your account data and any other information you provide to <b>%{instance_name}</b>."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:51
+msgctxt "terms"
+msgid "You can remove the content that you posted by deleting it. Once you delete your content, it will not appear on the Service, but copies of your deleted content may remain in our system or backups for some period of time. Web server access logs might also be stored for some time in the system."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:24
+msgctxt "terms"
+msgid "If you access or use the Service, it means you agree to be bound by all of the terms below. So, before you use the Service, please read all of the terms. If you don't agree to all of the terms below, please do not use the Service. Also, if a term does not make sense to you, please let us know by contacting %{contact}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:96
+msgctxt "terms"
+msgid "Questions or comments about the Service may be directed to us at %{contact}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:79
+msgctxt "terms"
+msgid "Source code"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/privacy.html.eex:3
+#: lib/web/templates/api/terms.html.eex:15
+msgctxt "terms"
+msgid "Some terms, technical or otherwise, used in the text below may cover concepts that are difficult to grasp. We provide <a href=\"/glossary\">a glossary</a> to help you understand them better."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:93
+msgctxt "terms"
+msgid "We love feedback. Please let us know what you think of the Service, these Terms and, in general, <b>%{instance_name}</b>."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:74
+msgctxt "terms"
+msgid "Instance administrators (and community moderators, given the relevant access) are responsible for monitoring and acting on flagged content and other user reports, and have the right and responsibility to remove or edit content that is not aligned to this Instance set of rules, or to suspend, block or ban (temporarily or permanently) any account, community, or instance for breaking these terms, or for other behaviours that they deem inappropriate, threatening, offensive, or harmful."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:71
+msgctxt "terms"
+msgid "Our responsability"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:20
+msgctxt "terms"
+msgid "When we say “we”, “our”, or “us” in this document, we are referring to the owners, operators and administrators of this Mobilizon instance. The Mobilizon software is provided by the team of Mobilizon contributors, supported by <a href=\"https://framasoft.org\">Framasoft</a>, a french not-for-profit popular educational organization advocating for Free/Libre Software. Unless explicity stated, this Mobilizon instance is an independant service using Mobilizon's source code. You may find more informations about this instance on the <a href=\"/about/instance\">\"About this instance\" page</a>."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:6
+msgctxt "terms"
+msgid "<b>%{instance_name}</b> will not use or transmit or resell your personal data"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:44
+msgctxt "terms"
+msgid "If you discover or suspect any Service security breaches, please let us know as soon as possible. For security holes in the Mobilizon software itself, please contact <a href=\"https://framagit.org/framasoft/mobilizon/\">its contributors</a> directly."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:77
+msgctxt "terms"
+msgid "Instance administrators should ensure that every community hosted on the instance is properly moderated according to the defined rules."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/api/terms.html.eex:98
+msgctxt "terms"
+msgid "Originally adapted from the <a href=\"https://joindiaspora.com/terms\">Diaspora*</a> and <a href=\"https://github.com/appdotnet/terms-of-service\">App.net</a> privacy policies, also licensed under <a href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>."
 msgstr ""
 "Omaksuttu alun perin <a href=\"https://mastodon.social/terms\">Mastodonin</a>"
 " ja <a href=\"https://github.com/discourse/discourse\">Discoursen</a> "
 "tietosuojakäytännöistä."
 
-#: lib/web/templates/api/terms.html.eex:75
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:119
 msgctxt "terms"
-msgid "Retain server logs containing the IP address of all requests to this server, in so far as such logs are kept, no more\n        than 90 days."
+msgid "Originally adapted from the <a href=\"https://mastodon.social/terms\">Mastodon</a> and <a href=\"https://github.com/discourse/discourse\">Discourse</a> privacy policies, also licensed under <a href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>."
 msgstr ""
-"Säilyttämään kaikkien palvelimelle tehtyjen pyyntöjen IP-osoitteet "
-"sisältäviä palvelinlokeja, mikäli sellaisia\n"
-"        pidetään, enintään 90 päivän ajan."
+"Omaksuttu alun perin <a href=\"https://mastodon.social/terms\">Mastodonin</a>"
+" ja <a href=\"https://github.com/discourse/discourse\">Discoursen</a> "
+"tietosuojakäytännöistä."
 
-#: lib/web/templates/api/terms.html.eex:152
 #, elixir-format
+#: lib/web/templates/api/terms.html.eex:3
 msgctxt "terms"
-msgid "Site usage by children"
-msgstr "Lapset sivuston käyttäjinä"
+msgid "Short version"
+msgstr ""
 
-#: lib/web/templates/api/terms.html.eex:55
 #, elixir-format
+#: lib/web/templates/api/terms.html.eex:9
 msgctxt "terms"
-msgid "The email address you provide may be used to send you information, updates and notifications about other people\n    interacting with your content or sending you messages and to respond to inquiries, and/or other requests or\n    questions."
+msgid "The service is provided without warranties and these terms may change in the future"
 msgstr ""
-"Antamaasi sähköpostiosoitteeseen voidaan lähettää tietoja, päivityksiä ja "
-"ilmoituksia, kun muut vaikuttavat\n"
-"    julkaisemaasi sisältöön, lähettävät sinulle viestejä tai vastaavat "
-"kyselyihisi, tai muihin pyyntöihin tai kysymyksiin\n"
-"    liittyen."
 
-#: lib/web/templates/api/terms.html.eex:162
 #, elixir-format
+#: lib/web/templates/api/privacy.html.eex:118
 msgctxt "terms"
-msgid "This document is CC-BY-SA. It was last updated January 16, 2020."
+msgid "This document is licensed under <a href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>. It was last updated June 18, 2020."
 msgstr ""
-"Tämän asiakirjan käyttöoikeutena on CC-BY-SA. Päivitetty viimeksi 16.1.2020."
 
-#: lib/web/templates/api/terms.html.eex:53
 #, elixir-format
+#: lib/web/templates/api/terms.html.eex:97
 msgctxt "terms"
-msgid "To aid moderation of the community, for example comparing your IP address with other known ones to determine ban\n    evasion or other violations."
+msgid "This document is licensed under <a href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>. It was last updated June 22, 2020."
 msgstr ""
-"Auttamaan yhteisön moderoinnissa esimerkiksi vertaamalla IP-osoitettasi "
-"muihin tiedossa oleviin osoitteisiin\n"
-"    porttikieltojen kiertämisen tai muiden rikkomusten havaitsemiseksi."
 
-#: lib/web/templates/api/terms.html.eex:51
 #, elixir-format
+#: lib/web/templates/api/terms.html.eex:8
 msgctxt "terms"
-msgid "To provide the core functionality of Mobilizon. Depending on this instance's policy you may only be able to\n    interact with other people's content and post your own content if you are logged in."
+msgid "You must respect other people and <b>%{instance_name}</b>'s rules when using the service"
 msgstr ""
-"Mobilizonin perustoimintojen toteuttamiseksi. Palvelimen käytännöstä "
-"riippuen muiden tekemään sisältöön\n"
-"    vaikuttaminen ja oman sisällön julkaiseminen saattaa olla mahdollista "
-"vain sisäänkirjautuneena."
 
-#: lib/web/templates/api/terms.html.eex:1
 #, elixir-format
+#: lib/web/templates/api/terms.html.eex:7
 msgctxt "terms"
-msgid "What information do we collect?"
-msgstr "Mitä tietoja kerätään?"
-
-#: lib/web/templates/email/email_changed_new.html.eex:38
-#: lib/web/templates/email/email_changed_new.text.eex:5
-#, elixir-format
-msgid "Confirm the new address to change your email."
-msgstr "Vahvista uusi sähköpostiosoite, jotta se vaihdetaan."
-
-#: lib/web/templates/email/email_changed_new.html.eex:64
-#: lib/web/templates/email/email_changed_new.text.eex:10
-#, elixir-format
-msgid "If this change wasn't initiated by you, please ignore this email. The email address for the Mobilizon account won't change until you access the link above."
+msgid "You must respect the law when using <b>%{instance_name}</b>"
 msgstr ""
-"Jos et pyytänyt vaihtoa, voit jättää tämän viestin huomiotta. Mobilizon-"
-"tilin sähköpostiosoitetta ei vaihdeta, ellei yllä olevaa linkkiä avata."
 
-#: lib/web/templates/email/email_changed_old.html.eex:62
-#: lib/web/templates/email/email_changed_old.text.eex:9
 #, elixir-format
-msgid "If you did not ask to change your email, it is likely that someone has gained access to your account. Please change your password immediately or contact the server admin if you're locked out of your account."
+#: lib/web/templates/api/terms.html.eex:5
+msgctxt "terms"
+msgid "Your content is yours"
 msgstr ""
-"Jos et pyytänyt sähköpostiosoitteen vaihtoa, joku on todennäköisesti päässyt "
-"käyttämään tiliäsi. Vaihda salasanasi viipymättä, tai ota yhteyttä "
-"palvelimen ylläpitäjään, jos et pääse käyttämään tiliäsi."
-
-#: lib/web/email/user.ex:175
-#, elixir-format
-msgid "Mobilizon on %{instance}: confirm your email address"
-msgstr "Mobilizon palvelimella %{instance}: vahvista sähköpostiosoitteesi"
-
-#: lib/web/email/user.ex:152
-#, elixir-format
-msgid "Mobilizon on %{instance}: email changed"
-msgstr "Mobilizon palvelimella %{instance}: sähköpostiosoite vaihdettu"
-
-#: lib/web/templates/email/email_changed_old.html.eex:13
-#: lib/web/templates/email/email_changed_old.text.eex:1
-#, elixir-format
-msgid "New email address"
-msgstr "Uusi sähköpostiosoite"
-
-#: lib/web/templates/email/email_changed_old.html.eex:38
-#: lib/web/templates/email/email_changed_old.text.eex:5
-#, elixir-format
-msgid "The email address for your account on %{host} is being changed to:"
-msgstr "Palvelimella %{host} olevan tilisi sähköpostiosoitteeksi vaihdetaan:"
-
-#: lib/web/templates/email/email_changed_new.html.eex:13
-#: lib/web/templates/email/email_changed_new.html.eex:51 lib/web/templates/email/email_changed_new.text.eex:1
-#, elixir-format
-msgid "Verify email address"
-msgstr "Vahvista sähköpostiosoite"
-
-#: lib/web/templates/email/notification_each_week.html.eex:70
-#: lib/web/templates/email/notification_each_week.text.eex:14 lib/web/templates/email/on_day_notification.html.eex:70
-#: lib/web/templates/email/on_day_notification.text.eex:14
-#, elixir-format
-msgid "If you need to cancel your participation, just access the event page through the link above and click on the participation button."
-msgid_plural "If you need to cancel your participation, just access the event page through the links above and click on the participation button."
-msgstr[0] ""
-"Jos haluat perua osallistumisesi, siirry tapahtuman sivulle yllä olevasta "
-"linkistä ja napsauta siellä osallistumispainiketta."
-msgstr[1] ""
-"Jos haluat perua osallistumisesi, siirry tapahtuman sivulle yllä olevasta "
-"linkistä ja napsauta siellä osallistumispainiketta."
-
-#: lib/web/email/notification.ex:46
-#, elixir-format
-msgid "One event planned today"
-msgid_plural "%{nb_events} events planned today"
-msgstr[0] "Yksi suunniteltu tapahtuma tänään"
-msgstr[1] "%{nb_events} suunniteltua tapahtumaa tänään"
-
-#: lib/web/templates/email/on_day_notification.html.eex:38
-#: lib/web/templates/email/on_day_notification.text.eex:4
-#, elixir-format
-msgid "You have one event today:"
-msgid_plural "You have %{total} events today:"
-msgstr[0] "Sinulla on tänään yksi tapahtuma:"
-msgstr[1] "Sinulla on tänään %{total} tapahtumaa:"
-
-#: lib/web/templates/email/group_invite.html.eex:38
-#: lib/web/templates/email/group_invite.text.eex:5
-#, elixir-format
-msgid "%{inviter} just invited you to join their group %{group}"
-msgstr "%{inviter} kutsui sinut ryhmään %{group}"
-
-#: lib/web/templates/email/group_invite.html.eex:13
-#: lib/web/templates/email/group_invite.text.eex:1
-#, elixir-format
-msgid "Come along!"
-msgstr "Tule mukaan!"
-
-#: lib/web/email/notification.ex:24
-#, elixir-format
-msgid "Don't forget to go to %{title}"
-msgstr "Muista %{title}"
-
-#: lib/web/templates/email/on_day_notification.html.eex:13
-#: lib/web/templates/email/on_day_notification.text.eex:1
-#, elixir-format
-msgid "Events today"
-msgstr "Tapahtuma"
-
-#: lib/web/templates/email/before_event_notification.html.eex:38
-#: lib/web/templates/email/before_event_notification.text.eex:3
-#, elixir-format
-msgid "Get ready for %{title}"
-msgstr "%{title} tulee, oletko valmis?"
-
-#: lib/web/templates/email/group_invite.html.eex:59
-#, elixir-format
-msgid "See my groups"
-msgstr "Näytä omat ryhmät"
-
-#: lib/web/templates/email/group_invite.html.eex:45
-#: lib/web/templates/email/group_invite.text.eex:7
-#, elixir-format
-msgid "To accept this invitation, head over to your groups."
-msgstr "Hyväksy kutsu siirtymällä omiin ryhmiisi."
-
-#: lib/web/templates/email/before_event_notification.html.eex:13
-#: lib/web/templates/email/before_event_notification.text.eex:1
-#, elixir-format
-msgid "Upcoming event"
-msgstr "Tuleva tapahtuma"
-
-#: lib/web/templates/email/before_event_notification.text.eex:4
-#, elixir-format
-msgid "View the event on: %{link}"
-msgstr "Katso päivitetty tapahtuma: %{linkki}"
-
-#: lib/web/email/group.ex:28
-#, elixir-format
-msgid "You have been invited by %{inviter} to join group %{group}"
-msgstr "%{inviter} kutsui sinut ryhmään %{group}"
-
-#: lib/web/templates/email/event_updated.html.eex:92
-#, elixir-format
-msgid "Event address"
-msgstr "Tapahtuman osoite"
-
-#: lib/web/templates/email/event_updated.html.eex:102
-#, elixir-format
-msgid "Physical address was removed"
-msgstr "Käyntiosoite poistettiin"
-
-#: lib/web/email/notification.ex:70
-#, elixir-format
-msgid "One event planned this week"
-msgid_plural "%{nb_events} events planned this week"
-msgstr[0] "Yksi suunniteltu tapahtuma tällä viikolla"
-msgstr[1] "%{nb_events} suunniteltua tapahtumaa tällä viikolla"
-
-#: lib/web/email/notification.ex:92
-#, elixir-format
-msgid "One participation request for event %{title} to process"
-msgid_plural "%{number_participation_requests} participation requests for event %{title} to process"
-msgstr[0] "Yksi osallistujapyyntö tapahtumaan %{title} odottaa käsittelyä"
-msgstr[1] ""
-"%{number_participation_requests} osallistujapyyntöä tapahtumaan %{title} "
-"odottaa käsittelyä"
-
-#: lib/web/templates/email/notification_each_week.html.eex:38
-#: lib/web/templates/email/notification_each_week.text.eex:4
-#, elixir-format
-msgid "You have one event this week:"
-msgid_plural "You have %{total} events this week:"
-msgstr[0] "Sinulla on tällä viikolla yksi tapahtuma:"
-msgstr[1] "Sinulla on tällä viikolla %{total} tapahtumaa:"
-
-#: lib/web/templates/email/pending_participation_notification.html.eex:38
-#: lib/web/templates/email/pending_participation_notification.text.eex:4
-#, elixir-format
-msgid "You have one pending participation to process:"
-msgid_plural "You have %{number_participation_requests} participation requests to process:"
-msgstr[0] "Yksi osallistujapyyntö odottaa käsittelyäsi:"
-msgstr[1] ""
-"%{number_participation_requests} osallistujapyyntöä odottaa käsittelyäsi:"
-
-#: lib/web/templates/email/notification_each_week.html.eex:13
-#: lib/web/templates/email/notification_each_week.text.eex:1
-#, elixir-format
-msgid "Events this week"
-msgstr "Tämän viikon tapahtumat"
-
-#: lib/web/templates/email/pending_participation_notification.html.eex:51
-#: lib/web/templates/email/pending_participation_notification.text.eex:6
-#, elixir-format
-msgid "Manage pending participation requests"
-msgstr "Hallinnoi odottavia osallistujapyyntöjä"
-
-#: lib/web/templates/email/pending_participation_notification.html.eex:13
-#: lib/web/templates/email/pending_participation_notification.text.eex:1
-#, elixir-format
-msgid "Pending participations to process"
-msgstr "Osallistujapyyntöjä odottamassa käsittelyä"
-
-#: lib/web/templates/email/pending_participation_notification.html.eex:64
-#: lib/web/templates/email/pending_participation_notification.text.eex:8
-#, elixir-format
-msgid "You receive this email because you chose to get notifications for pending participations to your events. You may disable or change the configuration for these notification in your Mobilizon user settings."
-msgstr ""
-"Sait tämän viestin, koska olet tilannut ilmoitukset tapahtumiesi "
-"osallistujapyynnöistä. Voit muuttaa ilmoitusasetuksia Mobilizon-"
-"käyttäjäasetuksista."
-
-#: lib/web/templates/email/email.html.eex:90
-#, elixir-format
-msgid "Mobilizon is under development, we will add new features to this site during regular updates, until the release of %{b_start}version 1 of the software in the fall of 2020%{b_end}."
-msgstr ""
-"Mobilizonin kehitystyö on vielä käynnissä, ja tälle sivulle lisätään "
-"säännöllisesti uusia ominaisuuksia, kunnes %{b_start}ohjelman versio 1 "
-"julkaistaan vuoden 2020 alkupuoliskolla%{b_end}."
-
-#: lib/web/templates/email/email.text.eex:9
-#, elixir-format
-msgid "Mobilizon is under development, we will add new features to this site during regular updates, until the release of version 1 of the software in the fall of 2020."
-msgstr ""
-"Mobilizonin kehitystyö on vielä käynnissä, ja tälle sivulle lisätään "
-"säännöllisesti uusia ominaisuuksia, kunnes ohjelman versio 1 julkaistaan "
-"vuoden 2020 alkupuoliskolla."

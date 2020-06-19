@@ -23,7 +23,10 @@
               size="is-small"
             />
           </template>
-          <router-link :to="{ name: RouteName.ADMIN_PROFILE, params: { id: props.row.id } }">
+          <router-link
+            class="profile"
+            :to="{ name: RouteName.ADMIN_PROFILE, params: { id: props.row.id } }"
+          >
             <article class="media">
               <figure class="media-left" v-if="props.row.avatar">
                 <p class="image is-48x48">
@@ -136,3 +139,8 @@ export default class Profiles extends Vue {
   }
 }
 </script>
+<style lang="scss" scoped>
+a.profile {
+  text-decoration: none;
+}
+</style>

@@ -1,6 +1,6 @@
 <template>
   <div class="container section">
-    <h2 class="title">{{ $t("Privacy Policy") }}</h2>
+    <h2 class="title">{{ $t("Terms") }}</h2>
     <div class="content" v-html="config.terms.bodyHtml" />
   </div>
 </template>
@@ -10,7 +10,6 @@ import { Component, Vue, Watch } from "vue-property-decorator";
 import { TERMS } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
 import { InstanceTermsType } from "@/types/admin.model";
-import RouteName from "../router/name";
 
 @Component({
   apollo: {
@@ -49,14 +48,10 @@ export default class Terms extends Vue {
       window.location.replace(this.config.terms.url);
     }
   }
-
-  RouteName = RouteName;
 }
 </script>
 <style lang="scss" scoped>
-@import "@/variables.scss";
-
-main > .container {
-  background: $white;
+.content /deep/ li {
+  margin-bottom: 1rem;
 }
 </style>

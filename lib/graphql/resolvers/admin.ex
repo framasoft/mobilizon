@@ -161,11 +161,16 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     {:ok,
      %{
        instance_description: Config.instance_description(),
+       instance_long_description: Config.instance_long_description(),
        instance_name: Config.instance_name(),
        registrations_open: Config.instance_registrations_open?(),
+       contact: Config.contact(),
        instance_terms: Config.instance_terms(),
        instance_terms_type: Config.instance_terms_type(),
        instance_terms_url: Config.instance_terms_url(),
+       instance_privacy_policy: Config.instance_privacy(),
+       instance_privacy_policy_type: Config.instance_privacy_type(),
+       instance_privacy_policy_url: Config.instance_privacy_url(),
        instance_rules: Config.instance_rules()
      }}
   end

@@ -28,6 +28,7 @@
             />
           </template>
           <router-link
+            class="user-profile"
             :to="{ name: RouteName.ADMIN_USER_PROFILE, params: { id: props.row.id } }"
             :class="{ disabled: props.row.disabled }"
           >
@@ -49,6 +50,7 @@
 
       <template slot="detail" slot-scope="props">
         <router-link
+          class="profile"
           v-for="actor in props.row.actors"
           :key="actor.id"
           :to="{ name: RouteName.ADMIN_PROFILE, params: { id: actor.id } }"
@@ -130,6 +132,10 @@ export default class Users extends Vue {
 
 <style lang="scss" scoped>
 @import "../../variables.scss";
+a.profile,
+a.user-profile {
+  text-decoration: none;
+}
 a.disabled {
   color: $danger;
   text-decoration: line-through;

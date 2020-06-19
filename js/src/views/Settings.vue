@@ -1,5 +1,5 @@
 <template>
-  <aside class="section container">
+  <div class="section container">
     <h1 class="title">{{ $t("Settings") }}</h1>
     <div class="columns">
       <SettingsMenu class="column is-one-quarter-desktop" :menu="menu" />
@@ -18,7 +18,7 @@
         <router-view />
       </div>
     </div>
-  </aside>
+  </div>
 </template>
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";

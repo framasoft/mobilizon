@@ -75,14 +75,25 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
   object :admin_settings do
     field(:instance_name, :string)
     field(:instance_description, :string)
+    field(:instance_long_description, :string)
+    field(:contact, :string)
     field(:instance_terms, :string)
     field(:instance_terms_type, :instance_terms_type)
     field(:instance_terms_url, :string)
+    field(:instance_privacy_policy, :string)
+    field(:instance_privacy_policy_type, :instance_privacy_type)
+    field(:instance_privacy_policy_url, :string)
     field(:instance_rules, :string)
     field(:registrations_open, :boolean)
   end
 
   enum :instance_terms_type do
+    value(:url, as: "URL")
+    value(:default, as: "DEFAULT")
+    value(:custom, as: "CUSTOM")
+  end
+
+  enum :instance_privacy_type do
     value(:url, as: "URL")
     value(:default, as: "DEFAULT")
     value(:custom, as: "CUSTOM")
@@ -151,9 +162,14 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
     field :save_admin_settings, type: :admin_settings do
       arg(:instance_name, :string)
       arg(:instance_description, :string)
+      arg(:instance_long_description, :string)
+      arg(:contact, :string)
       arg(:instance_terms, :string)
       arg(:instance_terms_type, :instance_terms_type)
       arg(:instance_terms_url, :string)
+      arg(:instance_privacy_policy, :string)
+      arg(:instance_privacy_policy_type, :instance_privacy_type)
+      arg(:instance_privacy_policy_url, :string)
       arg(:instance_rules, :string)
       arg(:registrations_open, :boolean)
 

@@ -156,14 +156,21 @@
         <div
           v-for="(actor, index) in filteredActors"
           :key="actor.id"
-          class="suggestion-list__item"
+          class="media suggestion-list__item"
           :class="{ 'is-selected': navigatedActorIndex === index }"
           @click="selectActor(actor)"
         >
-          {{ actor.name }}
+          <div class="media-left">
+            <figure class="image is-16x16" v-if="actor.avatar">
+              <img :src="actor.avatar.url" alt="" />
+            </figure>
+          </div>
+          <div class="media-content">
+            {{ actor.name }}
+          </div>
         </div>
       </template>
-      <div v-else class="suggestion-list__item is-empty">{{ $t("No actors found") }}</div>
+      <div v-else class="suggestion-list__item is-empty">{{ $t("No profiles found") }}</div>
     </div>
   </div>
 </template>
@@ -189,7 +196,7 @@ import {
   Placeholder,
   Mention,
 } from "tiptap-extensions";
-import tippy, { Instance } from "tippy.js";
+import tippy, { Instance, sticky } from "tippy.js";
 import { SEARCH_PERSONS } from "../graphql/search";
 import { Actor, IActor, IPerson } from "../types/actor";
 import Image from "./Editor/Image";
@@ -226,7 +233,7 @@ export default class EditorComponent extends Vue {
 
   navigatedActorIndex = 0;
 
-  popup!: Instance | null;
+  popup!: Instance[] | null;
 
   get isDescriptionMode() {
     return this.mode === "description";
@@ -319,18 +326,15 @@ export default class EditorComponent extends Vue {
            * is called on every keyDown event while a suggestion is active
            */
           onKeyDown: ({ event }: { event: KeyboardEvent }) => {
-            // pressing up arrow
-            if (event.keyCode === 38) {
+            if (event.key === "ArrowUp") {
               this.upHandler();
               return true;
             }
-            // pressing down arrow
-            if (event.keyCode === 40) {
+            if (event.key === "ArrowDown") {
               this.downHandler();
               return true;
             }
-            // pressing enter
-            if (event.keyCode === 13) {
+            if (event.key === "Enter") {
               this.enterHandler();
               return true;
             }
@@ -440,6 +444,7 @@ export default class EditorComponent extends Vue {
     this.editor.focus();
   }
 
+  /** We use this to programatically insert an actor mention when creating a reply to comment */
   replyToComment(comment: IComment) {
     const actorModel = new Actor(comment.actor);
     if (!this.editor) return;
@@ -455,40 +460,31 @@ export default class EditorComponent extends Vue {
    * tiptap provides a virtualNode object for using popper.js (or tippy.js) for popups
    * @param node
    */
-  renderPopup(node: any) {
+  renderPopup(node: Element) {
     if (this.popup) {
       return;
     }
-    this.popup = tippy(node, {
+    this.popup = tippy("#mobilizon", {
+      // @ts-ignore
+      getReferenceClientRect: node.getBoundingClientRect,
+      appendTo: () => document.body,
       content: this.$refs.suggestions as HTMLElement,
       trigger: "mouseenter",
       interactive: true,
+      sticky: true, // make sure position of tippy is updated when content changes
+      plugins: [sticky],
+      showOnCreate: true,
       theme: "dark",
       placement: "top-start",
       inertia: true,
       duration: [400, 200],
-      showOnInit: true,
-      arrow: true,
-      arrowType: "round",
-    }) as Instance;
-    // we have to update tippy whenever the DOM is updated
-    if (MutationObserver) {
-      this.observer = new MutationObserver(() => {
-        if (this.popup != null && this.popup.popperInstance) {
-          this.popup.popperInstance.scheduleUpdate();
-        }
-      });
-      this.observer.observe(this.$refs.suggestions as HTMLElement, {
-        childList: true,
-        subtree: true,
-        characterData: true,
-      });
-    }
+    }) as Instance[];
   }
 
   destroyPopup() {
     if (this.popup) {
-      this.popup.destroy();
+      // @ts-ignore
+      this.popup[0].destroy();
       this.popup = null;
     }
     if (this.observer) {
@@ -517,6 +513,7 @@ export default class EditorComponent extends Vue {
 
   beforeDestroy() {
     if (!this.editor) return;
+    this.destroyPopup();
     this.editor.destroy();
   }
 }
@@ -733,32 +730,19 @@ $color-white: #eee;
       opacity: 0.5;
     }
   }
+
+  .media + .media {
+    margin-top: 0;
+    padding-top: 0;
+  }
 }
-.tippy-tooltip.dark-theme {
+.tippy-box[data-theme~="dark"] {
   background-color: $color-black;
   padding: 0;
   font-size: 1rem;
   text-align: inherit;
   color: $color-white;
   border-radius: 5px;
-  .tippy-backdrop {
-    display: none;
-  }
-  .tippy-roundarrow {
-    fill: $color-black;
-  }
-  .tippy-popper[x-placement^="top"] & .tippy-arrow {
-    border-top-color: $color-black;
-  }
-  .tippy-popper[x-placement^="bottom"] & .tippy-arrow {
-    border-bottom-color: $color-black;
-  }
-  .tippy-popper[x-placement^="left"] & .tippy-arrow {
-    border-left-color: $color-black;
-  }
-  .tippy-popper[x-placement^="right"] & .tippy-arrow {
-    border-right-color: $color-black;
-  }
 }
 
 .visually-hidden {
