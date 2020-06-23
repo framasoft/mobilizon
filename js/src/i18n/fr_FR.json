@@ -283,7 +283,7 @@
   "No instance to remove|Remove instance|Remove {number} instances": "Pas d'instances à supprimer|Supprimer une instance|Supprimer {number} instances",
   "No message": "Pas de message",
   "No moderation logs yet": "Pas encore de journaux de modération",
-  "No one is going to this event": "Personne n'a va encore|Une personne y va|{going} personnes y vont",
+  "No one is going to this event": "Personne n'a va|Une personne y va|{going} personnes y vont",
   "No open reports yet": "Aucun signalement ouvert pour le moment",
   "No participant to approve|Approve participant|Approve {number} participants": "Aucun⋅e participant⋅e à valider|Valider le ou la participant⋅e|Valider {number} participant⋅es",
   "No participant to reject|Reject participant|Reject {number} participants": "Aucun⋅e participant⋅e à refuser|Refuser le ou la participant⋅e|Refuser {number} participant⋅es",
