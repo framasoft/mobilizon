@@ -755,6 +755,10 @@ export default class Event extends EventMixin {
         }
       });
     });
+
+    this.$on('eventDeleted', () => {
+      return this.$router.push({ name: RouteName.HOME });
+    })
   }
 
   /**

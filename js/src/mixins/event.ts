@@ -142,7 +142,6 @@ export default class EventMixin extends mixins(Vue) {
         position: "is-bottom-right",
         duration: 5000,
       });
-      await this.$router.push({ name: RouteName.HOME });
     } catch (error) {
       console.error(error);
     }
