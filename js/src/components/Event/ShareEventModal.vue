@@ -27,6 +27,26 @@
         <small class="maximumNumberOfPlacesWarning" v-if="!eventCapacityOK">
           {{ $t("All the places have already been taken") }}
         </small>
+        <b-field>
+          <b-input ref="eventURLInput" :value="event.url" expanded />
+          <p class="control">
+            <b-tooltip
+              :label="$t('URL copied to clipboard')"
+              :active="showCopiedTooltip"
+              always
+              type="is-success"
+              position="is-left"
+            >
+              <b-button
+                type="is-primary"
+                icon-right="content-paste"
+                native-type="button"
+                @click="copyURL"
+                @keyup.enter="copyURL"
+              />
+            </b-tooltip>
+          </p>
+        </b-field>
         <div>
           <!--                  <b-icon icon="mastodon" size="is-large" type="is-primary" />-->
 
@@ -55,7 +75,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Ref } from "vue-property-decorator";
 import { IEvent, EventVisibility, EventStatus } from "../../types/event.model";
 // @ts-ignore
 import DiasporaLogo from "../../assets/diaspora-icon.svg?inline";
@@ -68,9 +88,12 @@ import DiasporaLogo from "../../assets/diaspora-icon.svg?inline";
 export default class ShareEventModal extends Vue {
   @Prop({ type: Object, required: true }) event!: IEvent;
   @Prop({ type: Boolean, required: false, default: true }) eventCapacityOK!: boolean;
+  @Ref("eventURLInput") readonly eventURLInput!: any;
 
   EventVisibility = EventVisibility;
   EventStatus = EventStatus;
+
+  showCopiedTooltip: boolean = false;
 
   get twitterShareUrl(): string {
     return `https://twitter.com/intent/tweet?url=${encodeURIComponent(this.event.url)}&text=${
@@ -96,6 +119,15 @@ export default class ShareEventModal extends Vue {
     return `https://share.diasporafoundation.org/?title=${encodeURIComponent(
       this.event.title
     )}&url=${encodeURIComponent(this.event.url)}`;
+  }
+
+  copyURL() {
+    this.eventURLInput.$refs.input.select();
+    document.execCommand("copy");
+    this.showCopiedTooltip = true;
+    setTimeout(() => {
+      this.showCopiedTooltip = false;
+    }, 2000);
   }
 }
 </script>
