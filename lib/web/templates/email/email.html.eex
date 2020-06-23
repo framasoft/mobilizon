@@ -3,165 +3,159 @@
 <!-- QUESTIONS? TWEET US @LITMUSAPP -->
 <!DOCTYPE html>
 <html lang="<%= @locale %>">
-<head>
-<title><%= @subject %></title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<style type="text/css">
-    /* CLIENT-SPECIFIC STYLES */
-    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-    img { -ms-interpolation-mode: bicubic; }
-
-    /* RESET STYLES */
-    img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
-    table { border-collapse: collapse !important; }
-    body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; }
-
-    /* iOS BLUE LINKS */
-    a[x-apple-data-detectors] {
-        color: inherit !important;
-        text-decoration: none !important;
-        font-size: inherit !important;
-        font-family: inherit !important;
-        font-weight: inherit !important;
-        line-height: inherit !important;
-    }
-
-    /* MOBILE STYLES */
-    @media screen and (max-width:600px){
-        h1 {
-            font-size: 32px !important;
-            line-height: 32px !important;
-        }
-    }
-
-    /* ANDROID CENTER FIX */
-    div[style*="margin: 16px 0;"] { margin: 0 !important; }
-</style>
-</head>
-<body style="background-color: #f4f4f4; margin: 0 !important; padding: 0 !important;">
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-    <!-- LOGO -->
-    <tr>
-        <td bgcolor="#424056" align="center">
-            <!--[if (gte mso 9)|(IE)]>
+  <head>
+    <title><%= @subject %></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <style type="text/css">
+      /* CLIENT-SPECIFIC STYLES */
+      body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+      table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+      img { -ms-interpolation-mode: bicubic; }
+      
+      /* RESET STYLES */
+      img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+      table { border-collapse: collapse !important; }
+      body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; }
+      
+      /* iOS BLUE LINKS */
+      a[x-apple-data-detectors] {
+          color: inherit !important;
+          text-decoration: none !important;
+          font-size: inherit !important;
+          font-family: inherit !important;
+          font-weight: inherit !important;
+          line-height: inherit !important;
+      }
+      
+      /* MOBILE STYLES */
+      @media screen and (max-width:600px){
+          h1 {
+              font-size: 32px !important;
+              line-height: 32px !important;
+          }
+      }
+      
+      /* ANDROID CENTER FIX */
+      div[style*="margin: 16px 0;"] { margin: 0 !important; }
+    </style>
+  </head>
+  <body style="background-color: #ECEBF2; margin: 0 !important; padding: 0 !important;">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <!-- LOGO -->
+      <tr>
+        <td bgcolor="#474467" align="center">
+          <!--[if (gte mso 9)|(IE)]>
             <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
-            <tr>
-            <td align="center" valign="top" width="600">
-            <![endif]-->
-            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
-                <tr>
-                    <td align="center" valign="top" style="padding: 40px 10px 40px 10px;">
-                        <a href="<%= Mobilizon.Web.Endpoint.url() %>" target="_blank">
-                            <img alt="<%= Mobilizon.Config.instance_name() %>" src="<%= "#{Mobilizon.Web.Endpoint.url()}/img/mobilizon_logo.png" %>" width="366" height="108" style="display: block; width: 366px; max-width: 366px; min-width: 366px; font-family: 'Lato', Helvetica, Arial, sans-serif; color: #ffffff; font-size: 18px;" border="0">
-                        </a>
-                    </td>
-                </tr>
-            </table>
-            <!--[if (gte mso 9)|(IE)]>
-            </td>
-            </tr>
-            </table>
-            <![endif]-->
-        </td>
-    </tr>
-    <%= @inner_content %>
-    <% if Mobilizon.Config.instance_demo_mode?() do %>
-    <!-- BETA WARNING -->
-        <tr>
-            <td bgcolor="#f4f4f4" align="center" style="padding: 30px 10px 0px 10px;">
-                <!--[if (gte mso 9)|(IE)]>
-                <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
-                <tr>
-                <td align="center" valign="top" width="600">
-                <![endif]-->
-                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
-                    <!-- HEADLINE -->
-                    <tr>
-                      <td bgcolor="#ff7061" align="center" style="padding: 30px 30px 30px 30px; border-radius: 4px 4px 4px 4px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
-                        <h2 style="font-size: 25px; font-weight: 400; color: #111111; margin: 0;">
-                            <%= gettext "Warning" %>
-                        </h2>
-                        <p style="margin: 0; color: #111111"><%= gettext "This is a demonstration site to test the beta version of Mobilizon." %></p>
-                        <p style="margin: 0; color: #111111;"><%= gettext("%{b_start}Please do not use it in any real way%{b_end}", b_start: "<b>", b_end: "</b>") |> raw() %></p>
-                        <p style="margin: 0; color: #111111;">
-                            <%= gettext("Mobilizon is under development, we will add new features to this site during regular updates, until the release of %{b_start}version 1 of the software in the fall of 2020%{b_end}.", b_start: "<b>", b_end: "</b>") |> raw() %>
-                            <%= gettext("In the meantime, please consider that the software is not (yet) finished. More information %{a_start}on our blog%{a_end}.", a_start: "<a target='_blank' style='color: #424056;' href='https://framablog.org/?p=18299'>", a_end: "</a>") |> raw() %>
-                        </p>
-                      </td>
-                    </tr>
-                </table>
-                <!--[if (gte mso 9)|(IE)]>
-                </td>
-                </tr>
-                </table>
-                <![endif]-->
-            </td>
-        </tr>
-    <% end %>
-    <!-- SUPPORT CALLOUT -->
-        <tr>
-            <td bgcolor="#f4f4f4" align="center" style="padding: 30px 10px 0px 10px;">
-                <!--[if (gte mso 9)|(IE)]>
-                <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
-                <tr>
-                <td align="center" valign="top" width="600">
-                <![endif]-->
-                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
-                    <!-- HEADLINE -->
-                    <tr>
-                      <td bgcolor="#C6C2ED" align="center" style="padding: 30px 30px 30px 30px; border-radius: 4px 4px 4px 4px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
-                        <h2 style="font-size: 20px; font-weight: 400; color: #111111; margin: 0;">
-                            <%= gettext "Need some help? Something not working properly?" %>
-                        </h2>
-                        <p style="margin: 0;"><a href="https://framacolibri.org/c/mobilizon/test-mobilizon" target="_blank" style="color: #424056;">
-                            <%= gettext "Ask the community on Framacolibri" %>
-                        </a></p>
-                      </td>
-                    </tr>
-                </table>
-                <!--[if (gte mso 9)|(IE)]>
-                </td>
-                </tr>
-                </table>
-                <![endif]-->
-            </td>
-        </tr>
-    <!-- FOOTER -->
-    <tr>
-        <td bgcolor="#f4f4f4" align="center" style="padding: 0px 10px 0px 10px;">
-            <!--[if (gte mso 9)|(IE)]>
-            <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
-            <tr>
-            <td align="center" valign="top" width="600">
-            <![endif]-->
-            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
-              <!-- UNSUBSCRIBE -->
-              <!--<tr>
-                <td bgcolor="#f4f4f4" align="left" style="padding: 30px 30px 30px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 18px;" >
-                  <p style="margin: 0;">If these emails get annoying, please feel free to <a href="http://litmus.com" target="_blank" style="color: #111111; font-weight: 700;">unsubscribe</a>.</p>
-                </td>
-              </tr>-->
-              <!-- ADDRESS -->
               <tr>
-                <td bgcolor="#f4f4f4" align="center" style="padding: 0px 30px 30px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 18px;" >
-                  <p style="margin: 0;">
-                  <%= gettext "%{instance} is a Mobilizon server.", instance: @instance[:name] %>
-                  <a href="https://joinmobilizon.org"><%= gettext "Learn more about Mobilizon." %></a>
+                <td align="center" valign="top" width="600">
+          <![endif]-->
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
+            <tr>
+              <td align="center" valign="top" style="padding: 40px 10px 40px 10px;">
+                <a href="<%= Mobilizon.Web.Endpoint.url() %>" target="_blank">
+                  <img alt="<%= Mobilizon.Config.instance_name() %>" src="<%= "#{Mobilizon.Web.Endpoint.url()}/img/mobilizon_logo.png" %>" width="366" height="108" style="display: block; width: 366px; max-width: 366px; min-width: 366px; font-family: 'Roboto', Helvetica, Arial, sans-serif; color: #ffffff; font-size: 18px;" border="0">
+                </a>
+              </td>
+            </tr>
+          </table>
+          <!--[if (gte mso 9)|(IE)]>
+          </td>
+        </tr>
+      </table>
+          <![endif]-->
+        </td>
+      </tr>
+      <%= @inner_content %>
+      <%= if Mobilizon.Config.instance_demo_mode?() do %>
+        <!-- BETA WARNING -->
+        <tr>
+          <td bgcolor="#ECEBF2" align="center" style="padding: 30px 10px 0px 10px;">
+            <!--[if (gte mso 9)|(IE)]>
+              <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
+                <tr>
+                  <td align="center" valign="top" width="600">
+            <![endif]-->
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
+              <!-- HEADLINE -->
+              <tr>
+                <td bgcolor="#FFD599" align="center" style="padding: 30px 30px 30px 30px; border-radius: 4px 4px 4px 4px; color: #3A384C; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+                  <h2 style="font-size: 25px; font-weight: 400; color: #D35204; margin: 0;">
+                    <%= gettext "Warning" %>
+                  </h2>
+                  <br>
+                  <p style="margin: 0; color: #3A384C"><%= gettext "This is a demonstration site to test the beta version of Mobilizon." %></p>
+                  <p style="margin: 0; color: #3A384C;"><%= gettext("%{b_start}Please do not use it for real purposes.%{b_end}", b_start: "<b>", b_end: "</b>") |> raw() %></p>
+                  <p style="margin: 0; color: #3A384C;">
+                    <%= gettext("Mobilizon is still under development, we will add new features along the updates, until the release of %{b_start}version 1 of the software in the fall of 2020%{b_end}.", b_start: "<b>", b_end: "</b>") |> raw() %>
+                    <%= gettext("In the meantime, please consider this the software as not (yet) finished. Read more %{a_start}on the Framasoft blog%{a_end}.", a_start: "<a target='_blank' style='color: #474467;' href='https://framablog.org/?p=18299'>", a_end: "</a>") |> raw() %>
                   </p>
                 </td>
               </tr>
             </table>
             <!--[if (gte mso 9)|(IE)]>
             </td>
-            </tr>
-            </table>
+          </tr>
+        </table>
             <![endif]-->
+          </td>
+        </tr>
+      <% end %>
+      <!-- SUPPORT CALLOUT -->
+      <tr>
+        <td bgcolor="#ECEBF2" align="center" style="padding: 30px 10px 0px 10px;">
+          <!--[if (gte mso 9)|(IE)]>
+            <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
+              <tr>
+                <td align="center" valign="top" width="600">
+          <![endif]-->
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
+            <!-- HEADLINE -->
+            <tr>
+              <td bgcolor="#757199" align="center" style="padding: 30px 30px 30px 30px; border-radius: 4px 4px 4px 4px; color: #3A384C; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+                <h2 style="font-size: 20px; font-weight: 400; color: #111111; margin: 0;">
+                  <%= gettext "Need help? Is something not working as expected?" %>
+                </h2>
+                <p style="margin: 0;"><a href="https://framacolibri.org/c/mobilizon/test-mobilizon" target="_blank" style="color: #474467;">
+                    <%= gettext "Ask the community on Framacolibri" %>
+                  </a></p>
+              </td>
+            </tr>
+          </table>
+          <!--[if (gte mso 9)|(IE)]>
+          </td>
+        </tr>
+      </table>
+          <![endif]-->
         </td>
-    </tr>
-</table>
-
-</body>
+      </tr>
+      <!-- FOOTER -->
+      <tr>
+        <td bgcolor="#ECEBF2" align="center" style="padding: 0px 10px 0px 10px;">
+          <!--[if (gte mso 9)|(IE)]>
+            <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
+              <tr>
+                <td align="center" valign="top" width="600">
+          <![endif]-->
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
+            <!-- ADDRESS -->
+            <tr>
+              <td bgcolor="#ECEBF2" align="center" style="padding: 30px 30px 30px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 18px;" >
+                <p style="margin: 0;">
+                  <%= gettext("<b>%{instance}</b> is a Mobilizon instance.", instance: @instance[:name]) |> raw %>
+                  <a href="https://joinmobilizon.org"><%= gettext "Learn more about Mobilizon." %></a>
+                </p>
+              </td>
+            </tr>
+          </table>
+          <!--[if (gte mso 9)|(IE)]>
+          </td>
+        </tr>
+      </table>
+          <![endif]-->
+        </td>
+      </tr>
+    </table>
+  </body>
 </html>

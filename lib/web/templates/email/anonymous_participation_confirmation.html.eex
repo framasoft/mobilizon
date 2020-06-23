@@ -1,81 +1,81 @@
 <!-- HERO -->
-    <tr>
-        <td bgcolor="#424056" align="center" style="padding: 0px 10px 0px 10px;">
-            <!--[if (gte mso 9)|(IE)]>
-            <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
-            <tr>
-            <td align="center" valign="top" width="600">
-            <![endif]-->
-            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
-                <tr>
-                    <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
-                      <h1 style="font-size: 48px; font-weight: 400; margin: 0;">
-                      <%= gettext "Participation confirmation" %>
-                      </h1>
-                    </td>
-                </tr>
-            </table>
-            <!--[if (gte mso 9)|(IE)]>
-            </td>
-            </tr>
-            </table>
-            <![endif]-->
+<tr>
+  <td bgcolor="#474467" align="center" style="padding: 0px 10px 0px 10px;">
+    <!--[if (gte mso 9)|(IE)]>
+      <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
+        <tr>
+          <td align="center" valign="top" width="600">
+    <![endif]-->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
+      <tr>
+        <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #3A384C; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
+          <h1 style="font-size: 48px; font-weight: 400; margin: 0;">
+            <%= gettext "Confirm your e-mail" %>
+          </h1>
         </td>
-    </tr>
-    <!-- COPY BLOCK -->
-    <tr>
-        <td bgcolor="#f4f4f4" align="center" style="padding: 0px 10px 0px 10px;">
-            <!--[if (gte mso 9)|(IE)]>
-            <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
-            <tr>
-            <td align="center" valign="top" width="600">
-            <![endif]-->
-            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
-              <!-- COPY -->
-              <tr>
-                <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
-                  <p style="margin: 0;">
-                    <%= gettext "You requested to participate in event %{title}", title: @participant.event.title %>
-                  </p>
-                </td>
-              </tr>
-              <tr>
-                <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #777777; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
-                  <p style="margin: 0">
-                    <%= gettext "If you didn't request this email, you can simply ignore it." %>
-                  </p>
-                </td>
-              </tr>
-              <!-- BULLETPROOF BUTTON -->
-              <tr>
-                <td bgcolor="#ffffff" align="left">
-                  <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                    <tr>
-                      <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
-                        <table border="0" cellspacing="0" cellpadding="0">
-                          <tr>
-                              <td align="center" style="border-radius: 3px;" bgcolor="#424056"><a href="<%= participation_email_confirmation_url(Mobilizon.Web.Endpoint, :index, @participant.metadata.confirmation_token) %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #424056; display: inline-block;">
-                              <%= gettext "Confirm my participation" %>
-                              </a></td>
-                          </tr>
-                        </table>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-              <tr>
-                <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #777777; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 20px;" >
-                  <p style="margin: 0">
-                    <%= gettext "If you need to cancel your participation, just access the event page through link above and click on the participation button." %>
-                  </p>
-                </td>
-              </tr>
-            </table>
-            <!--[if (gte mso 9)|(IE)]>
-            </td>
-            </tr>
-            </table>
-            <![endif]-->
+      </tr>
+    </table>
+    <!--[if (gte mso 9)|(IE)]>
+    </td>
+  </tr>
+</table>
+    <![endif]-->
+  </td>
+</tr>
+<!-- COPY BLOCK -->
+<tr>
+  <td bgcolor="#E6E4F4" align="center" style="padding: 0px 10px 0px 10px;">
+    <!--[if (gte mso 9)|(IE)]>
+      <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
+        <tr>
+          <td align="center" valign="top" width="600">
+    <![endif]-->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
+      <!-- COPY -->
+      <tr>
+        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+          <p style="margin: 0;">
+            <%= gettext "Hi there! You just registered to join this event: « %{title} ». Please confirm the e-mail address you provided:", title: @participant.event.title %>
+          </p>
         </td>
-    </tr>
+      </tr>
+      <tr>
+        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+          <p style="margin: 0">
+            <%= gettext "If you wish to cancel your attendance, visit the event page through the link above and click the « I'm attending » button." %>
+          </p>
+        </td>
+      </tr>
+      <!-- BULLETPROOF BUTTON -->
+      <tr>
+        <td bgcolor="#ffffff" align="left">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+              <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
+                <table border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td align="center" style="border-radius: 3px;" bgcolor="#474467"><a href="<%= participation_email_confirmation_url(Mobilizon.Web.Endpoint, :index, @participant.metadata.confirmation_token) %>" target="_blank" style="font-size: 20px; font-family: 'Roboto', Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #474467; display: inline-block;">
+                        <%= gettext "Confirm my e-mail address" %>
+                      </a></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #757199; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 20px;" >
+          <p style="margin: 0">
+            <%= gettext "If you didn't trigger this alert, you may safely ignore it." %>
+          </p>
+        </td>
+      </tr>
+    </table>
+    <!--[if (gte mso 9)|(IE)]>
+    </td>
+  </tr>
+</table>
+    <![endif]-->
+  </td>
+</tr>
