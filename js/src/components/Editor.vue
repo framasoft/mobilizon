@@ -687,24 +687,6 @@ $color-white: #eee;
     color: $color-white;
   }
 }
-.mention {
-  background: rgba($color-black, 0.1);
-  color: rgba($color-black, 0.6);
-  font-size: 0.9rem;
-  font-weight: bold;
-  border-radius: 5px;
-  padding: 0.2rem;
-  white-space: nowrap;
-  margin-right: 0.2rem;
-}
-.mention-suggestion {
-  color: rgba($color-black, 0.6);
-}
-
-.mention .mention {
-  background: initial;
-  margin-right: 0;
-}
 
 .suggestion-list {
   padding: 0.2rem;

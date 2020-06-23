@@ -79,5 +79,10 @@ export default class IdentityPickerWrapper extends Vue {
   .inline {
     cursor: pointer;
   }
+
+  .media {
+    border-top: none;
+    padding-top: 0;
+  }
 }
 </style>
