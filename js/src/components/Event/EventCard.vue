@@ -218,7 +218,7 @@ a.card {
       color: #3c376e;
 
       span {
-        width: 15rem;
+        width: 14rem;
         display: block;
         overflow: hidden;
 

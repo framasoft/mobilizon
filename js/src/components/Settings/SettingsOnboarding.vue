@@ -4,10 +4,18 @@
       <div class="setting-title">
         <h2>{{ $t("Settings") }}</h2>
       </div>
+      <h3>{{ $t("Timezone") }}</h3>
       <p>
-        <h3>{{ $t("Timezone") }}</h3>
-        {{ $t("We use your timezone to make sure you get notifications for an event at the correct time.") }}
-        {{ $t("Your timezone was detected as {timezone}.", { timezone: Intl.DateTimeFormat().resolvedOptions().timeZone }) }}
+        {{
+          $t(
+            "We use your timezone to make sure you get notifications for an event at the correct time."
+          )
+        }}
+        {{
+          $t("Your timezone was detected as {timezone}.", {
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          })
+        }}
       </p>
       <div class="has-text-centered">
         <router-link :to="{ name: RouteName.PREFERENCES }" class="button is-primary is-outlined">{{
