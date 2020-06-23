@@ -11,6 +11,8 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     # Instance name
     field(:name, :string)
     field(:description, :string)
+    field(:long_description, :string)
+    field(:contact, :string)
 
     field(:registrations_open, :boolean)
     field(:registrations_whitelist, :boolean)
@@ -23,10 +25,17 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     field(:resource_providers, list_of(:resource_provider))
     field(:timezones, list_of(:string))
     field(:features, :features)
+    field(:version, :string)
+    field(:federating, :boolean)
 
     field(:terms, :terms, description: "The instance's terms") do
       arg(:locale, :string, default_value: "en")
       resolve(&Config.terms/3)
+    end
+
+    field(:privacy, :privacy, description: "The instance's privacy policy") do
+      arg(:locale, :string, default_value: "en")
+      resolve(&Config.privacy/3)
     end
 
     field(:rules, :string, description: "The instance's rules")
@@ -35,6 +44,12 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   object :terms do
     field(:url, :string)
     field(:type, :instance_terms_type)
+    field(:body_html, :string)
+  end
+
+  object :privacy do
+    field(:url, :string)
+    field(:type, :instance_privacy_type)
     field(:body_html, :string)
   end
 

@@ -108,9 +108,14 @@ export const ADMIN_SETTINGS_FRAGMENT = gql`
   fragment adminSettingsFragment on AdminSettings {
     instanceName
     instanceDescription
+    instanceLongDescription
+    contact
     instanceTerms
     instanceTermsType
     instanceTermsUrl
+    instancePrivacyPolicy
+    instancePrivacyPolicyType
+    instancePrivacyPolicyUrl
     instanceRules
     registrationsOpen
   }
@@ -129,18 +134,28 @@ export const SAVE_ADMIN_SETTINGS = gql`
   mutation SaveAdminSettings(
     $instanceName: String
     $instanceDescription: String
+    $instanceLongDescription: String
+    $contact: String
     $instanceTerms: String
     $instanceTermsType: InstanceTermsType
     $instanceTermsUrl: String
+    $instancePrivacyPolicy: String
+    $instancePrivacyPolicyType: InstancePrivacyType
+    $instancePrivacyPolicyUrl: String
     $instanceRules: String
     $registrationsOpen: Boolean
   ) {
     saveAdminSettings(
       instanceName: $instanceName
       instanceDescription: $instanceDescription
+      instanceLongDescription: $instanceLongDescription
+      contact: $contact
       instanceTerms: $instanceTerms
       instanceTermsType: $instanceTermsType
       instanceTermsUrl: $instanceTermsUrl
+      instancePrivacyPolicy: $instancePrivacyPolicy
+      instancePrivacyPolicyType: $instancePrivacyPolicyType
+      instancePrivacyPolicyUrl: $instancePrivacyPolicyUrl
       instanceRules: $instanceRules
       registrationsOpen: $registrationsOpen
     ) {

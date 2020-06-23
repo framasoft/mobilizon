@@ -1,9 +1,11 @@
-import { InstanceTermsType } from "./admin.model";
+import { InstanceTermsType, InstancePrivacyType } from "./admin.model";
 import { IProvider } from "./resource";
 
 export interface IConfig {
   name: string;
   description: string;
+  longDescription: string;
+  contact: string;
 
   registrationsOpen: boolean;
   registrationsWhitelist: boolean;
@@ -59,10 +61,17 @@ export interface IConfig {
     type: InstanceTermsType;
     url: string;
   };
+  privacy: {
+    bodyHtml: string;
+    type: InstancePrivacyType;
+    url: string;
+  };
   rules: string;
   resourceProviders: IProvider[];
   timezones: string[];
   features: {
     groups: boolean;
   };
+  federating: boolean;
+  version: string;
 }

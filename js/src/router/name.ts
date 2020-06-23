@@ -9,9 +9,13 @@ import { UserRouteName } from "./user";
 enum GlobalRouteName {
   HOME = "Home",
   ABOUT = "About",
+  ABOUT_MOBILIZON = "ABOUT_MOBILIZON",
+  ABOUT_INSTANCE = "ABOUT_INSTANCE",
   PAGE_NOT_FOUND = "PageNotFound",
   SEARCH = "Search",
   TERMS = "TERMS",
+  PRIVACY = "PRIVACY",
+  GLOSSARY = "GLOSSARY",
   INTERACT = "INTERACT",
   RULES = "RULES",
 }

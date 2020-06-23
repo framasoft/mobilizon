@@ -66,18 +66,45 @@ const router = new Router({
       name: RouteName.ABOUT,
       component: () => import(/* webpackChunkName: "about" */ "@/views/About.vue"),
       meta: { requiredAuth: false },
-    },
-    {
-      path: "/terms",
-      name: RouteName.TERMS,
-      component: () => import(/* webpackChunkName: "cookies" */ "@/views/Terms.vue"),
-      meta: { requiredAuth: false },
-    },
-    {
-      path: "/rules",
-      name: RouteName.RULES,
-      component: () => import(/* webpackChunkName: "cookies" */ "@/views/Rules.vue"),
-      meta: { requiredAuth: false },
+      redirect: { name: RouteName.ABOUT_INSTANCE },
+      children: [
+        {
+          path: "mobilizon",
+          name: RouteName.ABOUT_MOBILIZON,
+          component: () =>
+            import(/* webpackChunkName: "about" */ "@/views/About/AboutMobilizon.vue"),
+        },
+        {
+          path: "instance",
+          name: RouteName.ABOUT_INSTANCE,
+          component: () =>
+            import(/* webpackChunkName: "about" */ "@/views/About/AboutInstance.vue"),
+        },
+        {
+          path: "/terms",
+          name: RouteName.TERMS,
+          component: () => import(/* webpackChunkName: "cookies" */ "@/views/About/Terms.vue"),
+          meta: { requiredAuth: false },
+        },
+        {
+          path: "/privacy",
+          name: RouteName.PRIVACY,
+          component: () => import(/* webpackChunkName: "cookies" */ "@/views/About/Privacy.vue"),
+          meta: { requiredAuth: false },
+        },
+        {
+          path: "/rules",
+          name: RouteName.RULES,
+          component: () => import(/* webpackChunkName: "cookies" */ "@/views/About/Rules.vue"),
+          meta: { requiredAuth: false },
+        },
+        {
+          path: "/glossary",
+          name: RouteName.GLOSSARY,
+          component: () => import(/* webpackChunkName: "cookies" */ "@/views/About/Glossary.vue"),
+          meta: { requiredAuth: false },
+        },
+      ],
     },
     {
       path: "/interact",

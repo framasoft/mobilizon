@@ -1,5 +1,5 @@
 <template>
-  <aside class="section container">
+  <div class="section container">
     <h1 class="title">{{ $t("Settings") }}</h1>
     <div class="columns">
       <SettingsMenu class="column is-one-quarter-desktop" :menu="menu" />
@@ -18,7 +18,7 @@
         <router-view />
       </div>
     </div>
-  </aside>
+  </div>
 </template>
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
@@ -28,6 +28,8 @@ import RouteName from "../router/name";
 import { ISettingMenuSection } from "../types/setting-menu.model";
 import { IPerson, Person } from "../types/actor";
 import { IDENTITIES } from "../graphql/actor";
+import { CURRENT_USER_CLIENT } from "../graphql/user";
+import { ICurrentUser, ICurrentUserRole } from "../types/current-user.model";
 
 @Component({
   components: { SettingsMenu },
@@ -36,6 +38,7 @@ import { IDENTITIES } from "../graphql/actor";
       query: IDENTITIES,
       update: (data) => data.identities.map((identity: IPerson) => new Person(identity)),
     },
+    currentUser: CURRENT_USER_CLIENT,
   },
 })
 export default class Settings extends Vue {
@@ -46,6 +49,8 @@ export default class Settings extends Vue {
   identities!: IPerson[];
 
   newIdentity!: ISettingMenuSection;
+
+  currentUser!: ICurrentUser;
 
   mounted() {
     this.newIdentity = {
@@ -76,7 +81,11 @@ export default class Settings extends Vue {
         to: { name: RouteName.IDENTITIES } as Route,
         items: [this.newIdentity],
       },
-      {
+    ];
+    if (
+      [ICurrentUserRole.MODERATOR, ICurrentUserRole.ADMINISTRATOR].includes(this.currentUser.role)
+    ) {
+      this.menu.push({
         title: this.$t("Moderation") as string,
         to: { name: RouteName.MODERATION } as Route,
         items: [
@@ -94,9 +103,19 @@ export default class Settings extends Vue {
             title: this.$t("Moderation log") as string,
             to: { name: RouteName.REPORT_LOGS } as Route,
           },
+          {
+            title: this.$t("Users") as string,
+            to: { name: RouteName.USERS } as Route,
+          },
+          {
+            title: this.$t("Profiles") as string,
+            to: { name: RouteName.PROFILES } as Route,
+          },
         ],
-      },
-      {
+      });
+    }
+    if (this.currentUser.role === ICurrentUserRole.ADMINISTRATOR) {
+      this.menu.push({
         title: this.$t("Admin") as string,
         to: { name: RouteName.ADMIN } as Route,
         items: [
@@ -122,17 +141,9 @@ export default class Settings extends Vue {
               },
             ],
           },
-          {
-            title: this.$t("Users") as string,
-            to: { name: RouteName.USERS } as Route,
-          },
-          {
-            title: this.$t("Profiles") as string,
-            to: { name: RouteName.PROFILES } as Route,
-          },
         ],
-      },
-    ];
+      });
+    }
   }
 
   @Watch("identities")

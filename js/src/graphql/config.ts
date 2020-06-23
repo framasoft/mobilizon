@@ -78,10 +78,42 @@ export const TERMS = gql`
   }
 `;
 
+export const ABOUT = gql`
+  query About {
+    config {
+      name
+      description
+      longDescription
+      contact
+      registrationsOpen
+      registrationsWhitelist
+      anonymous {
+        participation {
+          allowed
+        }
+      }
+      version
+      federating
+    }
+  }
+`;
+
 export const RULES = gql`
   query Rules {
     config {
       rules
+    }
+  }
+`;
+
+export const PRIVACY = gql`
+  query Privacy($locale: String) {
+    config {
+      privacy(locale: $locale) {
+        type
+        url
+        bodyHtml
+      }
     }
   }
 `;

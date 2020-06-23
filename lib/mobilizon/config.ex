@@ -5,6 +5,7 @@ defmodule Mobilizon.Config do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Service.GitStatus
 
   @spec instance_config :: keyword
   def instance_config, do: Application.get_env(:mobilizon, :instance)
@@ -27,19 +28,51 @@ defmodule Mobilizon.Config do
         instance_config()[:description]
       )
 
+  @spec instance_long_description :: String.t()
+  def instance_long_description,
+    do:
+      Mobilizon.Admin.get_admin_setting_value(
+        "instance",
+        "instance_long_description"
+      )
+
+  @spec contact :: String.t()
+  def contact do
+    Mobilizon.Admin.get_admin_setting_value("instance", "contact")
+  end
+
   @spec instance_terms(String.t()) :: String.t()
   def instance_terms(locale \\ "en") do
     Mobilizon.Admin.get_admin_setting_value("instance", "instance_terms", generate_terms(locale))
   end
 
-  @spec instance_terms :: String.t()
+  @spec instance_terms_type :: String.t()
   def instance_terms_type do
     Mobilizon.Admin.get_admin_setting_value("instance", "instance_terms_type", "DEFAULT")
   end
 
-  @spec instance_terms :: String.t()
+  @spec instance_terms_url :: String.t()
   def instance_terms_url do
     Mobilizon.Admin.get_admin_setting_value("instance", "instance_terms_url")
+  end
+
+  @spec instance_privacy(String.t()) :: String.t()
+  def instance_privacy(locale \\ "en") do
+    Mobilizon.Admin.get_admin_setting_value(
+      "instance",
+      "instance_privacy_policy",
+      generate_privacy(locale)
+    )
+  end
+
+  @spec instance_privacy_type :: String.t()
+  def instance_privacy_type do
+    Mobilizon.Admin.get_admin_setting_value("instance", "instance_privacy_policy_type", "DEFAULT")
+  end
+
+  @spec instance_privacy_url :: String.t()
+  def instance_privacy_url do
+    Mobilizon.Admin.get_admin_setting_value("instance", "instance_privacy_policy_url")
   end
 
   @spec instance_rules :: String.t()
@@ -48,7 +81,9 @@ defmodule Mobilizon.Config do
   end
 
   @spec instance_version :: String.t()
-  def instance_version, do: Mix.Project.config()[:version]
+  def instance_version do
+    GitStatus.commit()
+  end
 
   @spec instance_hostname :: String.t()
   def instance_hostname, do: instance_config()[:hostname]
@@ -84,7 +119,10 @@ defmodule Mobilizon.Config do
 
   @spec instance_user_agent :: String.t()
   def instance_user_agent,
-    do: "#{instance_name()} #{instance_hostname()} - Mobilizon #{Mix.Project.config()[:version]}"
+    do: "#{instance_name()} #{instance_hostname()} - Mobilizon #{instance_version()}"
+
+  @spec instance_federating :: String.t()
+  def instance_federating, do: instance_config()[:federating]
 
   @spec instance_geocoding_provider :: atom()
   def instance_geocoding_provider,
@@ -255,7 +293,38 @@ defmodule Mobilizon.Config do
     Phoenix.View.render_to_string(
       Mobilizon.Web.APIView,
       "terms.html",
-      []
+      %{
+        instance_name: instance_name(),
+        instance_url: instance_hostname(),
+        instance_contact: instance_contact_html()
+      }
     )
+  end
+
+  def generate_privacy(locale) do
+    import Mobilizon.Web.Gettext
+    put_locale(locale)
+
+    Phoenix.View.render_to_string(
+      Mobilizon.Web.APIView,
+      "privacy.html",
+      %{instance_name: instance_name()}
+    )
+  end
+
+  defp instance_contact_html do
+    contact = contact()
+
+    cond do
+      String.contains?(contact, "@") ->
+        "<a href=\"mailto:#{contact}\">#{contact}</a>"
+
+      String.match?(contact, ~r/^https?:\/\//) ->
+        %URI{host: host} = URI.parse(contact)
+        "<a href=\"#{contact}\">#{host}</a>"
+
+      true ->
+        contact
+    end
   end
 end

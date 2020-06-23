@@ -41,6 +41,19 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
     {:ok, %{body_html: body_html, type: type, url: url}}
   end
 
+  def privacy(_parent, %{locale: locale}, _resolution) do
+    type = Config.instance_privacy_type()
+
+    {url, body_html} =
+      case type do
+        "URL" -> {Config.instance_privacy_url(), nil}
+        "DEFAULT" -> {nil, Config.generate_privacy(locale)}
+        _ -> {nil, Config.instance_privacy(locale)}
+      end
+
+    {:ok, %{body_html: body_html, type: type, url: url}}
+  end
+
   defp config_cache do
     case Cachex.fetch(:config, "full_config", fn _key ->
            case build_config_cache() do
@@ -58,8 +71,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
       name: Config.instance_name(),
       registrations_open: Config.instance_registrations_open?(),
       registrations_whitelist: Config.instance_registrations_whitelist?(),
+      contact: Config.contact(),
       demo_mode: Config.instance_demo_mode?(),
       description: Config.instance_description(),
+      long_description: Config.instance_long_description(),
       anonymous: %{
         participation: %{
           allowed: Config.anonymous_participation?(),
@@ -107,7 +122,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
       features: %{
         groups: Config.instance_group_feature_enabled?()
       },
-      rules: Config.instance_rules()
+      rules: Config.instance_rules(),
+      version: Config.instance_version(),
+      federating: Config.instance_federating()
     }
   end
 end

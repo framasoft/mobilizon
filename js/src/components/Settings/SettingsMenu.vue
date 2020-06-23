@@ -1,7 +1,13 @@
 <template>
-  <ul>
-    <SettingMenuSection v-for="section in menuValue" :key="section.title" :menu-section="section" />
-  </ul>
+  <aside>
+    <ul>
+      <SettingMenuSection
+        v-for="section in menuValue"
+        :key="section.title"
+        :menu-section="section"
+      />
+    </ul>
+  </aside>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
