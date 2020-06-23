@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-06-23 18:35+0200\n"
+"PO-Revision-Date: 2020-06-23 19:08+0200\n"
 "Last-Translator: Côme 744 <come.allart@netc.fr>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
 "Language: fr\n"
@@ -86,7 +86,7 @@ msgstr "Réinitialiser votre mot de passe est facile. Cliquez simplement sur le 
 
 #: lib/web/templates/email/password_reset.html.eex:13
 msgid "Trouble signing in?"
-msgstr "Des problèmes à vous connecter ?"
+msgstr "Des problèmes pour vous connecter ?"
 
 #: lib/web/templates/email/report.html.eex:104
 msgid "View the report"
