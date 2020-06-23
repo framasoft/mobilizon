@@ -32,7 +32,7 @@
       </div>
     </section>
     <hr />
-    <section class="long-description">
+    <section class="long-description content">
       <div v-html="config.longDescription" />
     </section>
     <hr />
