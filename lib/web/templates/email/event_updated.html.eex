@@ -1,142 +1,142 @@
 <!-- HERO -->
-    <tr>
-        <td bgcolor="#424056" align="center" style="padding: 0px 10px 0px 10px;">
-            <!--[if (gte mso 9)|(IE)]>
-            <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
-            <tr>
-            <td align="center" valign="top" width="600">
-            <![endif]-->
-            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
-                <tr>
-                    <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
-                      <h1 style="font-size: 48px; font-weight: 400; margin: 0;">
-                      <%= gettext "Event updated!" %>
-                      </h1>
-                    </td>
-                </tr>
-            </table>
-            <!--[if (gte mso 9)|(IE)]>
-            </td>
-            </tr>
-            </table>
-            <![endif]-->
+<tr>
+  <td bgcolor="#474467" align="center" style="padding: 0px 10px 0px 10px;">
+    <!--[if (gte mso 9)|(IE)]>
+      <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
+        <tr>
+          <td align="center" valign="top" width="600">
+    <![endif]-->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
+      <tr>
+        <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
+          <h1 style="font-size: 48px; font-weight: 400; margin: 0;">
+            <%= gettext "Event updated!" %>
+          </h1>
         </td>
-    </tr>
-    <!-- COPY BLOCK -->
-    <tr>
-        <td bgcolor="#f4f4f4" align="center" style="padding: 0px 10px 0px 10px;">
-            <!--[if (gte mso 9)|(IE)]>
-            <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
-            <tr>
-            <td align="center" valign="top" width="600">
-            <![endif]-->
-            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
-              <!-- COPY -->
+      </tr>
+    </table>
+    <!--[if (gte mso 9)|(IE)]>
+    </td>
+  </tr>
+</table>
+    <![endif]-->
+  </td>
+</tr>
+<!-- COPY BLOCK -->
+<tr>
+  <td bgcolor="#f4f4f4" align="center" style="padding: 0px 10px 0px 10px;">
+    <!--[if (gte mso 9)|(IE)]>
+      <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
+        <tr>
+          <td align="center" valign="top" width="600">
+    <![endif]-->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
+      <!-- COPY -->
+      <tr>
+        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+          <p style="margin: 0;">
+            <%= gettext "The event %{title} was updated", title: @old_event.title %>
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #777777; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+          <table width="100%">
+            <%= if MapSet.member?(@changes, :status) do %>
               <tr>
-                <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
-                  <p style="margin: 0;">
-                    <%= gettext "The event %{title} was updated", title: @old_event.title %>
-                  </p>
+                <td bgcolor="#ffffff" align="center">
+                  <%= case @event.status do  %>
+                    <% :confirmed -> %>
+                    <%= gettext "Event has been confirmed" %>
+                    <% :tentative -> %>
+                    <%= gettext "Event status has been set as tentative" %>
+                    <% :cancelled -> %>
+                    <%= gettext "Event has been cancelled" %>
+                  <% end %>
                 </td>
               </tr>
-              <tr>
-                <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #777777; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
-                  <table width="100%">
-                    <%= if MapSet.member?(@changes, :status) do %>
-                      <tr>
-                        <td bgcolor="#ffffff" align="center">
-                          <%= case @event.status do  %>
-                            <% :confirmed -> %>
-                                <%= gettext "Event has been confirmed" %>
-                            <% :tentative -> %>
-                                <%= gettext "Event status has been set as tentative" %>
-                            <% :cancelled -> %>
-                                <%= gettext "Event has been cancelled" %>
-                          <% end %>
-                        </td>
-                      </tr>
-                    <% end %>
-                    <%= if MapSet.member?(@changes, :title) do %>
-                      <tr>
-                        <td bgcolor="#ffffff" align="left">
-                          <%= gettext "Title" %>
-                        </td>
-                        <td bgcolor="#ffffff" align="left">
-                          <%= @event.title %>
-                        </td>
-                      </tr>
-                    <% end %>
-                    <%= if MapSet.member?(@changes, :begins_on) do %>
-                      <tr>
-                        <td bgcolor="#ffffff" align="left">
-                          <%= gettext "Start of event" %>
-                        </td>
-                        <td bgcolor="#ffffff" align="left">
-                          <%= datetime_to_string(@event.begins_on, @locale) %>
-                        </td>
-                      </tr>
-                    <% end %>
-                    <%= if MapSet.member?(@changes, :ends_on) && !is_nil(@event.ends_on) do %>
-                      <tr>
-                        <td bgcolor="#ffffff" align="left">
-                          <%= gettext "Ending of event" %>
-                        </td>
-                        <td bgcolor="#ffffff" align="left">
-                          <%= datetime_to_string(@event.ends_on, @locale) %>
-                        </td>
-                      </tr>
-                    <% end %>
-                    <%= if MapSet.member?(@changes, :physical_address) do %>
-                      <tr>
-                        <td bgcolor="#ffffff" align="left">
-                          <%= gettext "Event address" %>
-                        </td>
-                        <%= unless is_nil(@event.physical_address) do %>
-                          <td bgcolor="#ffffff" align="left">
-                            <p>
-                              <%= Mobilizon.Addresses.Address.representation(@event.physical_address) %>
-                            </p>
-                          </td>
-                        <% else %>
-                          <td bgcolor="#ffffff" align="left">
-                            <%= gettext "Physical address was removed" %>
-                          </td>
-                        <% end %>
-                      </tr>
-                    <% end %>
-                </table>
-                </td>
-              </tr>
-              <!-- BULLETPROOF BUTTON -->
+            <% end %>
+            <%= if MapSet.member?(@changes, :title) do %>
               <tr>
                 <td bgcolor="#ffffff" align="left">
-                  <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                    <tr>
-                      <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
-                        <table border="0" cellspacing="0" cellpadding="0">
-                          <tr>
-                              <td align="center" style="border-radius: 3px;" bgcolor="#424056"><a href="<%= page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #424056; display: inline-block;">
-                              <%= gettext "Go to event page" %>
-                              </a></td>
-                          </tr>
-                        </table>
-                      </td>
-                    </tr>
-                  </table>
+                  <%= gettext "Title" %>
+                </td>
+                <td bgcolor="#ffffff" align="left">
+                  <%= @event.title %>
                 </td>
               </tr>
+            <% end %>
+            <%= if MapSet.member?(@changes, :begins_on) do %>
               <tr>
-                <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #777777; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 20px;" >
-                  <p style="margin: 0">
-                    <%= gettext "If you need to cancel your participation, just access the event page through link above and click on the participation button." %>
-                  </p>
+                <td bgcolor="#ffffff" align="left">
+                  <%= gettext "Start of event" %>
+                </td>
+                <td bgcolor="#ffffff" align="left">
+                  <%= datetime_to_string(@event.begins_on, @locale) %>
                 </td>
               </tr>
-            </table>
-            <!--[if (gte mso 9)|(IE)]>
-            </td>
-            </tr>
-            </table>
-            <![endif]-->
+            <% end %>
+            <%= if MapSet.member?(@changes, :ends_on) && !is_nil(@event.ends_on) do %>
+              <tr>
+                <td bgcolor="#ffffff" align="left">
+                  <%= gettext "Ending of event" %>
+                </td>
+                <td bgcolor="#ffffff" align="left">
+                  <%= datetime_to_string(@event.ends_on, @locale) %>
+                </td>
+              </tr>
+            <% end %>
+            <%= if MapSet.member?(@changes, :physical_address) do %>
+              <tr>
+                <td bgcolor="#ffffff" align="left">
+                  <%= gettext "Event address" %>
+                </td>
+                <%= unless is_nil(@event.physical_address) do %>
+                  <td bgcolor="#ffffff" align="left">
+                    <p>
+                      <%= Mobilizon.Addresses.Address.representation(@event.physical_address) %>
+                    </p>
+                  </td>
+                <% else %>
+                  <td bgcolor="#ffffff" align="left">
+                    <%= gettext "Physical address was removed" %>
+                  </td>
+                <% end %>
+              </tr>
+            <% end %>
+          </table>
         </td>
-    </tr>
+      </tr>
+      <!-- BULLETPROOF BUTTON -->
+      <tr>
+        <td bgcolor="#ffffff" align="left">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+              <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
+                <table border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td align="center" style="border-radius: 3px;" bgcolor="#474467"><a href="<%= page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #474467; display: inline-block;">
+                        <%= gettext "Go to event page" %>
+                      </a></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #777777; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 20px;" >
+          <p style="margin: 0">
+            <%= gettext "If you need to cancel your participation, just access the event page through link above and click on the participation button." %>
+          </p>
+        </td>
+      </tr>
+    </table>
+    <!--[if (gte mso 9)|(IE)]>
+    </td>
+  </tr>
+</table>
+    <![endif]-->
+  </td>
+</tr>

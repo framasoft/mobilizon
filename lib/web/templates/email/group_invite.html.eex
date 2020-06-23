@@ -1,6 +1,6 @@
 <!-- HERO -->
 <tr>
-  <td bgcolor="#424056" align="center" style="padding: 0px 10px 0px 10px;">
+  <td bgcolor="#474467" align="center" style="padding: 0px 10px 0px 10px;">
     <!--[if (gte mso 9)|(IE)]>
       <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
         <tr>
@@ -54,8 +54,8 @@
               <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                 <table border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td align="center" style="border-radius: 3px;" bgcolor="#424056">
-                      <a href="<%= my_groups_url(Mobilizon.Web.Endpoint, :index) %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #424056; display: inline-block;">
+                    <td align="center" style="border-radius: 3px;" bgcolor="#474467">
+                      <a href="<%= my_groups_url(Mobilizon.Web.Endpoint, :index) %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #474467; display: inline-block;">
                         <%= gettext "See my groups" %>
                       </a>
                     </td>
