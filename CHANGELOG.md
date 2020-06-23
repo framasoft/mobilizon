@@ -25,8 +25,11 @@ Also make sure to remove the `EnvironmentFile=` line from the systemd service an
 - Possibility to delete your account
 - Duplicate an event
 - Ability to handle basic administration settings in the admin panel
-- Added physical address change to the list of important changes that trigger event notifications
 - Config option to allow anonymous reporting
+- Basic user and profile management admin interface to suspend local users or remote profiles
+- Default Terms of service and Privacy policies
+- As an admin, possibility to add rules and contact information
+- Allow user to change language
 
 ### Changed
 - Configuration handling (see above)
@@ -35,6 +38,7 @@ Also make sure to remove the `EnvironmentFile=` line from the systemd service an
 - Actor profiles are now stale after two days and have to be refetched
 - Actor keys are rotated some time after sending a `Delete` activity
 - Improved event participations managing interface
+- Added physical address change to the list of important changes that trigger event notifications
 - Improved public event page
 
 ### Fixed
