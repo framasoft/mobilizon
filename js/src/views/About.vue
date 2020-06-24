@@ -134,7 +134,10 @@ export default class About extends Vue {
 }
 
 .hero.register {
-  background: lighten($background-color, 20%);
+  .title {
+    color: $violet-1;
+  }
+  background: $purple-2;
 }
 
 aside.menu {

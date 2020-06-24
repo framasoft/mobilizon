@@ -42,9 +42,11 @@ export default class DateCalendarIcon extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import "../../variables.scss";
+
 time.datetime-container {
-  background: #f6f7f8;
-  border: 1px solid rgba(46, 62, 72, 0.12);
+  background: $backgrounds;
+  border: 1px solid $borders;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -59,7 +61,7 @@ time.datetime-container {
     font-weight: 600;
 
     &.month {
-      color: #fa3e3e;
+      color: $danger;
       padding: 2px 0;
       font-size: 12px;
       line-height: 12px;
@@ -67,6 +69,7 @@ time.datetime-container {
     }
 
     &.day {
+      color: $violet-3;
       font-size: 20px;
       line-height: 20px;
     }

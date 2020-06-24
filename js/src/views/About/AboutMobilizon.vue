@@ -184,10 +184,6 @@ export default class AboutMobilizon extends Vue {}
   }
 }
 
-.hero.register {
-  background: lighten($background-color, 20%);
-}
-
 section {
   padding: 3rem 0;
 
