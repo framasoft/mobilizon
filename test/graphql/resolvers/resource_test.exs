@@ -154,7 +154,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
   }
   """
 
-  @resource_url "https://framasoft.org/fr/full"
+  @resource_url "https://joinmobilizon.org"
   @resource_title "my resource"
   @updated_resource_title "my updated resource"
   @folder_title "my folder"
@@ -405,10 +405,10 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
       assert is_nil(res["errors"])
 
       assert res["data"]["createResource"]["metadata"]["faviconUrl"] ==
-               "https://framasoft.org/icons/favicon.png"
+               "https://joinmobilizon.org/icons/favicon.png"
 
       assert res["data"]["createResource"]["metadata"]["imageRemoteUrl"] ==
-               "https://framasoft.org/img/opengraph/full.jpg"
+               "https://joinmobilizon.org/img/opengraph/home.jpg"
 
       assert res["data"]["createResource"]["path"] == "/#{@resource_title}"
       assert res["data"]["createResource"]["resourceUrl"] == @resource_url
@@ -461,10 +461,10 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
       assert is_nil(res["errors"])
 
       assert res["data"]["createResource"]["metadata"]["faviconUrl"] ==
-               "https://framasoft.org/icons/favicon.png"
+               "https://joinmobilizon.org/icons/favicon.png"
 
       assert res["data"]["createResource"]["metadata"]["imageRemoteUrl"] ==
-               "https://framasoft.org/img/opengraph/full.jpg"
+               "https://joinmobilizon.org/img/opengraph/home.jpg"
 
       assert res["data"]["createResource"]["path"] == "#{parent_path}/#{@resource_title}"
       assert res["data"]["createResource"]["resourceUrl"] == @resource_url
