@@ -7,6 +7,7 @@ defmodule Mobilizon.Service.Workers.BuildSearch do
 
   alias Mobilizon.Events
   alias Mobilizon.Events.Event
+  alias Mobilizon.Service.Formatter.HTML
   alias Mobilizon.Storage.Repo
 
   use Mobilizon.Service.Workers.Helper, queue: "search"
@@ -44,7 +45,7 @@ defmodule Mobilizon.Service.Workers.BuildSearch do
       [
         event.id,
         event.title,
-        HtmlSanitizeEx.strip_tags(event.description),
+        HTML.strip_tags(event.description),
         get_tags_string(event)
       ]
     )

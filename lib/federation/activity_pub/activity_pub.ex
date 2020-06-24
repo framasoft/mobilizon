@@ -45,6 +45,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   alias Mobilizon.Federation.WebFinger
 
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
+  alias Mobilizon.Service.Formatter.HTML
   alias Mobilizon.Service.Notifications.Scheduler
   alias Mobilizon.Service.RichMedia.Parser
 
@@ -499,7 +500,7 @@ defmodule Mobilizon.Federation.ActivityPub do
              metadata:
                additional
                |> Map.get(:metadata, %{})
-               |> Map.update(:message, nil, &String.trim(HtmlSanitizeEx.strip_tags(&1)))
+               |> Map.update(:message, nil, &String.trim(HTML.strip_tags(&1)))
            }),
          join_data <- Convertible.model_to_as(participant),
          audience <-
@@ -1257,7 +1258,7 @@ defmodule Mobilizon.Federation.ActivityPub do
     # If title is not set: we are not updating it
     args =
       if Map.has_key?(args, :title) && !is_nil(args.title),
-        do: Map.update(args, :title, "", &String.trim(HtmlSanitizeEx.strip_tags(&1))),
+        do: Map.update(args, :title, "", &String.trim/1),
         else: args
 
     # If we've been given a description (we might not get one if updating)
@@ -1344,7 +1345,7 @@ defmodule Mobilizon.Federation.ActivityPub do
 
   defp prepare_args_for_group(args) do
     with preferred_username <-
-           args |> Map.get(:preferred_username) |> HtmlSanitizeEx.strip_tags() |> String.trim(),
+           args |> Map.get(:preferred_username) |> HTML.strip_tags() |> String.trim(),
          summary <- args |> Map.get(:summary, "") |> String.trim(),
          {summary, _mentions, _tags} <-
            summary |> String.trim() |> APIUtils.make_content_html([], "text/html") do
@@ -1357,7 +1358,7 @@ defmodule Mobilizon.Federation.ActivityPub do
            {:reporter, Actors.get_actor!(args.reporter_id)},
          {:reported, %Actor{} = reported_actor} <-
            {:reported, Actors.get_actor!(args.reported_id)},
-         content <- HtmlSanitizeEx.strip_tags(args.content),
+         content <- HTML.strip_tags(args.content),
          event <- Conversations.get_comment(Map.get(args, :event_id)),
          {:get_report_comments, comments} <-
            {:get_report_comments,

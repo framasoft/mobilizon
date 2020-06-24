@@ -7,6 +7,7 @@ defmodule Mobilizon.Service.Metadata.Instance do
   alias Phoenix.HTML.Tag
 
   alias Mobilizon.Config
+  alias Mobilizon.Service.Formatter.HTML, as: HTMLFormatter
   alias Mobilizon.Web.Endpoint
 
   def build_tags do
@@ -40,7 +41,7 @@ defmodule Mobilizon.Service.Metadata.Instance do
 
   defp process_description(description) do
     description
-    |> HtmlSanitizeEx.strip_tags()
+    |> HTMLFormatter.strip_tags()
     |> String.slice(0..200)
     |> (&"#{&1}…").()
   end

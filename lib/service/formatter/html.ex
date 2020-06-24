@@ -14,5 +14,15 @@ defmodule Mobilizon.Service.Formatter.HTML do
 
   def filter_tags(html), do: Sanitizer.scrub(html, DefaultScrubbler)
 
+  def strip_tags(html) do
+    case FastSanitize.strip_tags(html) do
+      {:ok, html} ->
+        html
+
+      _ ->
+        raise "Failed to filter tags"
+    end
+  end
+
   def filter_tags_for_oembed(html), do: Sanitizer.scrub(html, OEmbed)
 end
