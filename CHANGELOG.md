@@ -6,9 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Completely replaced HTMLSanitizeEx with FastSanitize [!490](https://framagit.org/framasoft/mobilizon/-/merge_requests/490)
+
 ### Fixed
 
-- Fixed notification scheduler (!486)[https://framagit.org/framasoft/mobilizon/-/merge_requests/486]
+- Fixed notification scheduler [!486](https://framagit.org/framasoft/mobilizon/-/merge_requests/486)
+- Fixed event title escaping [!490](https://framagit.org/framasoft/mobilizon/-/merge_requests/490)
 
 ## [1.0.0-beta.3] - 2020-06-24
 

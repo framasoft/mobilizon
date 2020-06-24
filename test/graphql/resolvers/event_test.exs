@@ -193,7 +193,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       )
     end
 
-    test "create_event/3 creates an event and escapes title and description", %{
+    test "create_event/3 creates an event and escapes title", %{
       conn: conn,
       actor: actor,
       user: user
@@ -214,7 +214,9 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         )
 
       assert res["errors"] == nil
-      assert res["data"]["createEvent"]["title"] == "My Event title"
+
+      assert res["data"]["createEvent"]["title"] ==
+               "My Event title <img src=\"http://placekitten.com/g/200/300\" onclick=\"alert('aaa')\" >"
 
       assert res["data"]["createEvent"]["description"] ==
                "<b>My description</b> <img src=\"http://placekitten.com/g/200/300\"/>"

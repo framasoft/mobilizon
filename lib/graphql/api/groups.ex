@@ -8,6 +8,7 @@ defmodule Mobilizon.GraphQL.API.Groups do
 
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Activity
+  alias Mobilizon.Service.Formatter.HTML
 
   @doc """
   Create a group
@@ -15,7 +16,7 @@ defmodule Mobilizon.GraphQL.API.Groups do
   @spec create_group(map) :: {:ok, Activity.t(), Actor.t()} | any
   def create_group(args) do
     with preferred_username <-
-           args |> Map.get(:preferred_username) |> HtmlSanitizeEx.strip_tags() |> String.trim(),
+           args |> Map.get(:preferred_username) |> HTML.strip_tags() |> String.trim(),
          {:existing_group, nil} <-
            {:existing_group, Actors.get_local_group_by_title(preferred_username)},
          {:ok, %Activity{} = activity, %Actor{} = group} <-

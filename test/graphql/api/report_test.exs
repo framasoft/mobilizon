@@ -7,6 +7,7 @@ defmodule Mobilizon.GraphQL.API.ReportTest do
   alias Mobilizon.Conversations.Comment
   alias Mobilizon.Events.Event
   alias Mobilizon.Reports.{Note, Report}
+  alias Mobilizon.Service.Formatter.HTML
   alias Mobilizon.Users
   alias Mobilizon.Users.User
 
@@ -92,7 +93,7 @@ defmodule Mobilizon.GraphQL.API.ReportTest do
         _comment_2 = insert(:comment, actor: reported)
 
       comment = "This is really not acceptable, remote admin I don't know"
-      encoded_comment = HtmlSanitizeEx.strip_tags(comment)
+      encoded_comment = HTML.strip_tags(comment)
 
       assert {:ok, %Activity{} = flag_activity, _} =
                Reports.report(%{
