@@ -41,7 +41,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
 
         send_date =
           cond do
-            begins_on < DateTime.utc_now() ->
+            DateTime.compare(begins_on, DateTime.utc_now()) == :lt ->
               nil
 
             hour > 8 ->
@@ -60,7 +60,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
           "Participation notification should be sent at #{inspect(send_date)} (user timezone)"
         )
 
-        if DateTime.utc_now() > send_date do
+        if is_nil(send_date) or DateTime.compare(DateTime.utc_now(), send_date) == :gt do
           {:ok, "Too late to send same day notifications"}
         else
           Notification.enqueue(:on_day_notification, %{user_id: user_id}, scheduled_at: send_date)
@@ -91,7 +91,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
         )
 
         notification_date =
-          unless begins_on < DateTime.utc_now() do
+          if Date.compare(begins_on, DateTime.utc_now()) == :gt do
             notification_day = calculate_first_day_of_week(DateTime.to_date(begins_on), locale)
 
             {:ok, %NaiveDateTime{} = notification_date} =
@@ -101,7 +101,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
             {:ok, %DateTime{} = notification_date} =
               DateTime.from_naive(notification_date, timezone)
 
-            unless notification_date < DateTime.utc_now() do
+            if Date.compare(notification_date, DateTime.utc_now()) == :gt do
               notification_date
             else
               nil
@@ -204,7 +204,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
     {:ok, send_at} = NaiveDateTime.new(day, ~T[18:00:00])
     {:ok, send_at} = DateTime.from_naive(send_at, timezone)
 
-    if send_at < DateTime.utc_now() do
+    if DateTime.compare(send_at, DateTime.utc_now()) == :lt do
       calculate_first_day_of_week(Date.add(day, 1), timezone)
     else
       send_at
