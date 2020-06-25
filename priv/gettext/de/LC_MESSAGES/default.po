@@ -82,11 +82,6 @@ msgid "Nearly here!"
 msgstr "Fast hier!"
 
 #, elixir-format
-#: lib/web/templates/email/email.text.eex:12
-msgid "Need some help? Something not working properly?"
-msgstr "Brauchst Du Hilfe? Funktioniert etwas nicht richtig?"
-
-#, elixir-format
 #: lib/web/templates/email/report.html.eex:84
 #: lib/web/templates/email/report.text.eex:22
 msgid "Reason"
@@ -326,18 +321,6 @@ msgstr "Veranstaltung wurde bestätigt"
 #: lib/web/templates/email/event_updated.text.eex:12
 msgid "Event status has been set as tentative"
 msgstr "Veranstaltung wurde als vorläufig markiert"
-
-#, elixir-format
-#: lib/web/templates/email/email.text.eex:10
-msgid "In the meantime, please consider that the software is not (yet) finished. More information on our blog:"
-msgstr ""
-"Bitte beachten: Bis auf weiteres ist die Entwicklung der Software (noch) "
-"nicht abgeschlossen. Weitere Informationen %{a_start}in unserem Blog%{a_end}."
-
-#, elixir-format
-#: lib/web/templates/email/email.text.eex:7
-msgid "Please do not use it in any real way"
-msgstr ""
 
 #, elixir-format
 #: lib/web/email/participation.ex:114
@@ -722,15 +705,7 @@ msgid "You receive this email because you chose to get notifications for pending
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/email.text.eex:9
-msgid "Mobilizon is under development, we will add new features to this site during regular updates, until the release of version 1 of the software in the fall of 2020."
-msgstr ""
-"Mobilizon befindet sich in der Entwicklung.Bis zur Veröffentlichung von "
-"Version 1.0 im ersten Halbjahr 2020 werden wir es über regelmäßige Updates "
-"mit neuen Funktionen versorgen."
-
-#, elixir-format
-#: lib/service/metadata/event.ex:47
+#: lib/service/metadata/event.ex:48
 msgid "The event organizer didn't add any description."
 msgstr ""
 
@@ -1178,6 +1153,7 @@ msgstr ""
 
 #, elixir-format
 #: lib/web/templates/email/email.html.eex:118
+#: lib/web/templates/email/email.text.eex:12
 msgid "Need help? Is something not working as expected?"
 msgstr "Brauchst Du Hilfe? Funktioniert etwas nicht richtig?"
 
@@ -1215,12 +1191,32 @@ msgid "You requested a new password for your account on <b>%{instance}</b>."
 msgstr ""
 "Du hast ein neues Passwort für deinen Account auf %{instance} angefragt."
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/web/templates/email/email.html.eex:146
 msgid "<b>%{instance}</b> is a Mobilizon instance."
 msgstr "%{instance} ist ein Mobilizon-Server."
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:70
 msgid "If you didn't trigger this alert, you may safely ignore it."
 msgstr "Wenn Du dies nicht angefragt hast, ignoriere diese E-Mail."
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/email.text.eex:10
+msgid "In the meantime, please consider this the software as not (yet) finished. Read more on the Framasoft blog:"
+msgstr ""
+"Bitte beachte in der Zwischenzeit, dass diese Software (noch) fertiggestellt "
+"ist. Weitere Informationen %{a_start}in unserem Blog%{a_end}."
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/email.text.eex:9
+msgid "Mobilizon is still under development, we will add new features along the updates, until the release of version 1 of the software in the fall of 2020."
+msgstr ""
+"Mobilizon befindet sich in der Entwicklung, wir werden neue Funktionen "
+"während regulären Updates hinzufügen, bis %{b_start}Version 1 der Software "
+"in der ersten Hälfte von 2020 veröffentlicht wird%{b_end}."
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/email.text.eex:7
+msgid "Please do not use it for real purposes."
+msgstr ""
