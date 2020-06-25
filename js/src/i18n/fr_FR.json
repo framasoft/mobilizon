@@ -695,5 +695,6 @@
   "A place for your code of conduct, rules or guidelines. You can use HTML tags.": "Une section appropriée pour votre code de conduite, règles ou lignes directrices. Vous pouvez utiliser des balises HTML.",
   "contact uninformed": "contact non renseigné",
   "Can be an email or a link, or just plain text.": "Peut être une adresse email ou bien un lien, ou alors du simple texte brut.",
-  "URL copied to clipboard": "URL copiée dans le presse-papiers"
+  "URL copied to clipboard": "URL copiée dans le presse-papiers",
+  "Report #{reportNumber}": "Signalement #{reportNumber}"
 }

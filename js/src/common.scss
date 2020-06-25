@@ -1,6 +1,6 @@
 a {
   text-decoration: underline;
-  text-decoration-color: #ED8D07;
+  text-decoration-color: #ed8d07;
   text-decoration-thickness: 2px;
 
   &.navbar-item,
@@ -15,6 +15,10 @@ a {
   &.list-item {
     text-decoration: none;
   }
+}
+
+nav.breadcrumb ul li a {
+  text-decoration: none;
 }
 
 input.input {

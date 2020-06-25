@@ -1,145 +1,159 @@
 <template>
-  <section>
-    <div class="setting-title">
-      <h2>{{ $t("Email") }}</h2>
-    </div>
-    <i18n
-      tag="p"
-      class="content"
-      v-if="loggedUser"
-      path="Your current email is {email}. You use it to log in."
-    >
-      <b slot="email">{{ loggedUser.email }}</b>
-    </i18n>
-    <b-notification
-      type="is-danger"
-      has-icon
-      aria-close-label="Close notification"
-      role="alert"
-      :key="error"
-      v-for="error in changeEmailErrors"
-      >{{ error }}</b-notification
-    >
-    <form @submit.prevent="resetEmailAction" ref="emailForm" class="form">
-      <b-field :label="$t('New email')">
-        <b-input aria-required="true" required type="email" v-model="newEmail" />
-      </b-field>
-      <p class="help">{{ $t("You'll receive a confirmation email.") }}</p>
-      <b-field :label="$t('Password')">
-        <b-input
-          aria-required="true"
-          required
-          type="password"
-          password-reveal
-          minlength="6"
-          v-model="passwordForEmailChange"
-        />
-      </b-field>
-      <button
-        class="button is-primary"
-        :disabled="!($refs.emailForm && $refs.emailForm.checkValidity())"
+  <div>
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+      <ul>
+        <li>
+          <router-link :to="{ name: RouteName.ACCOUNT_SETTINGS }">{{ $t("Account") }}</router-link>
+        </li>
+        <li class="is-active">
+          <router-link :to="{ name: RouteName.ACCOUNT_SETTINGS_GENERAL }">{{
+            $t("General")
+          }}</router-link>
+        </li>
+      </ul>
+    </nav>
+    <section>
+      <div class="setting-title">
+        <h2>{{ $t("Email") }}</h2>
+      </div>
+      <i18n
+        tag="p"
+        class="content"
+        v-if="loggedUser"
+        path="Your current email is {email}. You use it to log in."
       >
-        {{ $t("Change my email") }}
-      </button>
-    </form>
-    <div class="setting-title">
-      <h2>{{ $t("Password") }}</h2>
-    </div>
-    <b-notification
-      type="is-danger"
-      has-icon
-      aria-close-label="Close notification"
-      role="alert"
-      :key="error"
-      v-for="error in changePasswordErrors"
-      >{{ error }}</b-notification
-    >
-    <form @submit.prevent="resetPasswordAction" ref="passwordForm" class="form">
-      <b-field :label="$t('Old password')">
-        <b-input
-          aria-required="true"
-          required
-          type="password"
-          password-reveal
-          minlength="6"
-          v-model="oldPassword"
-        />
-      </b-field>
-      <b-field :label="$t('New password')">
-        <b-input
-          aria-required="true"
-          required
-          type="password"
-          password-reveal
-          minlength="6"
-          v-model="newPassword"
-        />
-      </b-field>
-      <button
-        class="button is-primary"
-        :disabled="!($refs.passwordForm && $refs.passwordForm.checkValidity())"
+        <b slot="email">{{ loggedUser.email }}</b>
+      </i18n>
+      <b-notification
+        type="is-danger"
+        has-icon
+        aria-close-label="Close notification"
+        role="alert"
+        :key="error"
+        v-for="error in changeEmailErrors"
+        >{{ error }}</b-notification
       >
-        {{ $t("Change my password") }}
-      </button>
-    </form>
-    <div class="setting-title">
-      <h2>{{ $t("Delete account") }}</h2>
-    </div>
-    <p class="content">{{ $t("Deleting my account will delete all of my identities.") }}</p>
-    <b-button @click="openDeleteAccountModal" type="is-danger">
-      {{ $t("Delete my account") }}
-    </b-button>
+      <form @submit.prevent="resetEmailAction" ref="emailForm" class="form">
+        <b-field :label="$t('New email')">
+          <b-input aria-required="true" required type="email" v-model="newEmail" />
+        </b-field>
+        <p class="help">{{ $t("You'll receive a confirmation email.") }}</p>
+        <b-field :label="$t('Password')">
+          <b-input
+            aria-required="true"
+            required
+            type="password"
+            password-reveal
+            minlength="6"
+            v-model="passwordForEmailChange"
+          />
+        </b-field>
+        <button
+          class="button is-primary"
+          :disabled="!($refs.emailForm && $refs.emailForm.checkValidity())"
+        >
+          {{ $t("Change my email") }}
+        </button>
+      </form>
+      <div class="setting-title">
+        <h2>{{ $t("Password") }}</h2>
+      </div>
+      <b-notification
+        type="is-danger"
+        has-icon
+        aria-close-label="Close notification"
+        role="alert"
+        :key="error"
+        v-for="error in changePasswordErrors"
+        >{{ error }}</b-notification
+      >
+      <form @submit.prevent="resetPasswordAction" ref="passwordForm" class="form">
+        <b-field :label="$t('Old password')">
+          <b-input
+            aria-required="true"
+            required
+            type="password"
+            password-reveal
+            minlength="6"
+            v-model="oldPassword"
+          />
+        </b-field>
+        <b-field :label="$t('New password')">
+          <b-input
+            aria-required="true"
+            required
+            type="password"
+            password-reveal
+            minlength="6"
+            v-model="newPassword"
+          />
+        </b-field>
+        <button
+          class="button is-primary"
+          :disabled="!($refs.passwordForm && $refs.passwordForm.checkValidity())"
+        >
+          {{ $t("Change my password") }}
+        </button>
+      </form>
+      <div class="setting-title">
+        <h2>{{ $t("Delete account") }}</h2>
+      </div>
+      <p class="content">{{ $t("Deleting my account will delete all of my identities.") }}</p>
+      <b-button @click="openDeleteAccountModal" type="is-danger">
+        {{ $t("Delete my account") }}
+      </b-button>
 
-    <b-modal
-      :active.sync="isDeleteAccountModalActive"
-      has-modal-card
-      full-screen
-      :can-cancel="false"
-    >
-      <section class="hero is-primary is-fullheight">
-        <div class="hero-body has-text-centered">
-          <div class="container">
-            <div class="columns">
-              <div class="column is-one-third-desktop is-offset-one-third-desktop">
-                <h1 class="title">{{ $t("Deleting your Mobilizon account") }}</h1>
-                <p class="content">
-                  {{
-                    $t(
-                      "Are you really sure you want to delete your whole account? You'll lose everything. Identities, settings, events created, messages and participations will be gone forever."
-                    )
-                  }}
-                  <br />
-                  <b>{{ $t("There will be no way to recover your data.") }}</b>
-                </p>
-                <p class="content">
-                  {{ $t("Please enter your password to confirm this action.") }}
-                </p>
-                <form @submit.prevent="deleteAccount">
-                  <b-field>
-                    <b-input
-                      type="password"
-                      v-model="passwordForAccountDeletion"
-                      password-reveal
-                      icon="lock"
-                      :placeholder="$t('Password')"
-                    />
-                  </b-field>
-                  <b-button native-type="submit" type="is-danger" size="is-large">
-                    {{ $t("Delete everything") }}
-                  </b-button>
-                </form>
-                <div class="cancel-button">
-                  <b-button type="is-light" @click="isDeleteAccountModalActive = false">
-                    {{ $t("Cancel") }}
-                  </b-button>
+      <b-modal
+        :active.sync="isDeleteAccountModalActive"
+        has-modal-card
+        full-screen
+        :can-cancel="false"
+      >
+        <section class="hero is-primary is-fullheight">
+          <div class="hero-body has-text-centered">
+            <div class="container">
+              <div class="columns">
+                <div class="column is-one-third-desktop is-offset-one-third-desktop">
+                  <h1 class="title">{{ $t("Deleting your Mobilizon account") }}</h1>
+                  <p class="content">
+                    {{
+                      $t(
+                        "Are you really sure you want to delete your whole account? You'll lose everything. Identities, settings, events created, messages and participations will be gone forever."
+                      )
+                    }}
+                    <br />
+                    <b>{{ $t("There will be no way to recover your data.") }}</b>
+                  </p>
+                  <p class="content">
+                    {{ $t("Please enter your password to confirm this action.") }}
+                  </p>
+                  <form @submit.prevent="deleteAccount">
+                    <b-field>
+                      <b-input
+                        type="password"
+                        v-model="passwordForAccountDeletion"
+                        password-reveal
+                        icon="lock"
+                        :placeholder="$t('Password')"
+                      />
+                    </b-field>
+                    <b-button native-type="submit" type="is-danger" size="is-large">
+                      {{ $t("Delete everything") }}
+                    </b-button>
+                  </form>
+                  <div class="cancel-button">
+                    <b-button type="is-light" @click="isDeleteAccountModalActive = false">
+                      {{ $t("Cancel") }}
+                    </b-button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-    </b-modal>
-  </section>
+        </section>
+      </b-modal>
+    </section>
+  </div>
 </template>
 
 <script lang="ts">

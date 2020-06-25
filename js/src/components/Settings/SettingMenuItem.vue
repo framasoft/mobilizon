@@ -1,24 +1,25 @@
 <template>
   <li class="setting-menu-item" :class="{ active: isActive }">
-    <router-link v-if="menuItem.to" :to="menuItem.to">
-      <span>{{ menuItem.title }}</span>
+    <router-link v-if="to" :to="to">
+      <span>{{ title }}</span>
     </router-link>
-    <span v-else>{{ menuItem.title }}</span>
+    <span v-else>{{ title }}</span>
   </li>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { ISettingMenuSection } from "@/types/setting-menu.model";
+import { Route } from "vue-router";
 
 @Component
 export default class SettingMenuItem extends Vue {
-  @Prop({ required: true, type: Object }) menuItem!: ISettingMenuSection;
+  @Prop({ required: false, type: String }) title!: string;
+  @Prop({ required: true, type: Object }) to!: Route;
 
   get isActive() {
-    if (!this.menuItem.to) return false;
-    if (this.menuItem.to.name === this.$route.name) {
-      if (this.menuItem.to.params) {
-        return this.menuItem.to.params.identityName === this.$route.params.identityName;
+    if (!this.to) return false;
+    if (this.to.name === this.$route.name) {
+      if (this.to.params) {
+        return this.to.params.identityName === this.$route.params.identityName;
       }
       return true;
     }
