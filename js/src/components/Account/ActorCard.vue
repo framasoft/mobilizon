@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ clickable: popover }">
+  <div>
     <div class="media" style="align-items: top;">
       <div class="media-left">
         <figure class="image is-32x32" v-if="actor.avatar">
@@ -36,10 +36,6 @@ export default class ActorCard extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-.clickable {
-  cursor: pointer;
-}
-
 .summary.limit {
   max-width: 25rem;
   display: -webkit-box;
