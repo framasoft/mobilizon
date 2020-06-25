@@ -80,6 +80,7 @@
             <EventListCard
               v-for="participation in row[1]"
               v-if="isInLessThanSevenDays(row[0])"
+              @eventDeleted="eventDeleted"
               :key="participation[1].id"
               :participation="participation[1]"
             />
@@ -99,6 +100,7 @@
             v-for="participation in lastWeekEvents"
             :key="participation.id"
             :participation="participation"
+            @eventDeleted="eventDeleted"
             :options="{ hideDate: false }"
           />
         </div>
@@ -163,6 +165,7 @@ import Subtitle from "../components/Utils/Subtitle.vue";
     config: CONFIG,
     currentUserParticipations: {
       query: LOGGED_USER_PARTICIPATIONS,
+      fetchPolicy: "network-only",
       variables() {
         const lastWeek = new Date();
         lastWeek.setDate(new Date().getDate() - 7);
@@ -353,6 +356,12 @@ export default class Home extends Vue {
         timeout: 5000,
         maximumAge: 0,
       }
+    );
+  }
+
+  eventDeleted(eventid: string) {
+    this.currentUserParticipations = this.currentUserParticipations.filter(
+      (participation) => participation.event.id !== eventid
     );
   }
 
