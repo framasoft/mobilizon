@@ -696,5 +696,12 @@
   "contact uninformed": "contact non renseigné",
   "Can be an email or a link, or just plain text.": "Peut être une adresse email ou bien un lien, ou alors du simple texte brut.",
   "URL copied to clipboard": "URL copiée dans le presse-papiers",
-  "Report #{reportNumber}": "Signalement #{reportNumber}"
+  "Report #{reportNumber}": "Signalement #{reportNumber}",
+  "Move \"{resourceName}\"": "Déplacer « {resourceName} »",
+  "Parent folder": "Dossier parent",
+  "(this folder)": "(ce dossier)",
+  "(this link)": "(ce lien)",
+  "Move resource to {folder}": "Déplacer la ressource dans {folder}",
+  "Create a folder": "Créer un dossier",
+  "No resources in this folder": "Aucune ressource dans ce dossier"
 }

@@ -66,7 +66,7 @@
     <section>
       <div class="list-header">
         <div class="list-header-right">
-          <b-checkbox v-model="checkedAll" />
+          <b-checkbox v-model="checkedAll" v-if="resource.children.total > 0" />
           <div class="actions" v-if="validCheckedResources.length > 0">
             <small>
               {{
@@ -85,7 +85,12 @@
           </div>
         </div>
       </div>
-      <draggable v-model="resource.children.elements" :sort="false" :group="groupObject">
+      <draggable
+        v-model="resource.children.elements"
+        :sort="false"
+        :group="groupObject"
+        v-if="resource.children.total > 0"
+      >
         <transition-group>
           <div v-for="localResource in resource.children.elements" :key="localResource.id">
             <div class="resource-item">
@@ -100,18 +105,22 @@
                 v-if="localResource.type !== 'folder'"
                 @delete="deleteResource"
                 @rename="handleRename"
+                @move="handleMove"
               />
               <folder-item
                 :resource="localResource"
                 :group="resource.actor"
                 @delete="deleteResource"
-                @rename="handleRename"
+                @move="handleMove"
                 v-else
               />
             </div>
           </div>
         </transition-group>
       </draggable>
+      <div class="content has-text-centered has-text-grey">
+        <p>{{ $t("No resources in this folder") }}</p>
+      </div>
     </section>
     <b-modal :active.sync="renameModal" has-modal-card>
       <div class="modal-card">
@@ -123,6 +132,18 @@
 
             <b-button native-type="submit">{{ $t("Rename resource") }}</b-button>
           </form>
+        </section>
+      </div>
+    </b-modal>
+    <b-modal :active.sync="moveModal" has-modal-card>
+      <div class="modal-card">
+        <section class="modal-card-body">
+          <resource-selector
+            :initialResource="updatedResource"
+            :username="resource.actor.preferredUsername"
+            @updateResource="moveResource"
+            @closeMoveModal="moveModal = false"
+          />
         </section>
       </div>
     </b-modal>
@@ -190,9 +211,10 @@ import {
 import { CONFIG } from "../../graphql/config";
 import { IConfig } from "../../types/config.model";
 import ResourceMixin from "../../mixins/resource";
+import ResourceSelector from "../../components/Resource/ResourceSelector.vue";
 
 @Component({
-  components: { FolderItem, ResourceItem, Draggable },
+  components: { FolderItem, ResourceItem, Draggable, ResourceSelector },
   apollo: {
     resource: {
       query: GET_RESOURCE,
@@ -252,6 +274,8 @@ export default class Resources extends Mixins(ResourceMixin) {
   createResourceModal = false;
 
   createLinkResourceModal = false;
+
+  moveModal = false;
 
   renameModal = false;
 
@@ -332,6 +356,8 @@ export default class Resources extends Mixins(ResourceMixin) {
 
   createSentenceForType(type: string) {
     switch (type) {
+      case "folder":
+        return this.$t("Create a folder");
       case "pad":
         return this.$t("Create a pad");
       case "calc":
@@ -347,7 +373,6 @@ export default class Resources extends Mixins(ResourceMixin) {
   }
 
   createResourceFromProvider(provider: IProvider) {
-    console.log(provider);
     this.newResource.resourceUrl = this.generateFullResourceUrl(provider);
     this.newResource.type = provider.software;
     this.createResourceModal = true;
@@ -445,23 +470,99 @@ export default class Resources extends Mixins(ResourceMixin) {
 
   handleRename(resource: IResource) {
     this.renameModal = true;
-    this.updatedResource = resource;
+    this.updatedResource = Object.assign({}, resource);
+  }
+
+  handleMove(resource: IResource) {
+    this.moveModal = true;
+    this.updatedResource = Object.assign({}, resource);
+  }
+
+  async moveResource(resource: IResource, oldParent: IResource | undefined) {
+    const parentPath = oldParent && oldParent.path ? oldParent.path || "/" : "/";
+    await this.updateResource(resource, parentPath);
+    this.moveModal = false;
   }
 
   async renameResource() {
     await this.updateResource(this.updatedResource);
+    this.renameModal = false;
   }
 
-  async updateResource(resource: IResource) {
+  async updateResource(resource: IResource, parentPath: string | null = null) {
     try {
-      if (!resource.parent) return;
       await this.$apollo.mutate<{ updateResource: IResource }>({
         mutation: UPDATE_RESOURCE,
         variables: {
           id: resource.id,
           title: resource.title,
-          parentId: resource.parent.id,
+          parentId: resource.parent ? resource.parent.id : null,
           path: resource.path,
+        },
+        update: (store, { data }) => {
+          if (!data || data.updateResource == null || parentPath == null) return;
+          if (!this.resource.actor) return;
+
+          console.log("Removing ressource from old parent");
+          const oldParentCachedData = store.readQuery<{ resource: IResource }>({
+            query: GET_RESOURCE,
+            variables: {
+              path: parentPath,
+              username: this.resource.actor.preferredUsername,
+            },
+          });
+          if (oldParentCachedData == null) return;
+          const { resource: oldParentCachedResource } = oldParentCachedData;
+          if (oldParentCachedResource == null) {
+            console.error("Cannot update resource cache, because of null value.");
+            return;
+          }
+          const resource: IResource = data.updateResource;
+
+          oldParentCachedResource.children.elements = oldParentCachedResource.children.elements.filter(
+            (cachedResource) => cachedResource.id !== resource.id
+          );
+
+          store.writeQuery({
+            query: GET_RESOURCE,
+            variables: {
+              path: parentPath,
+              username: this.resource.actor.preferredUsername,
+            },
+            data: { oldParentCachedResource },
+          });
+          console.log("Finished removing ressource from old parent");
+
+          console.log("Adding resource to new parent");
+          if (!resource.parent || !resource.parent.path) {
+            console.log("No cache found for new parent");
+            return;
+          }
+          const newParentCachedData = store.readQuery<{ resource: IResource }>({
+            query: GET_RESOURCE,
+            variables: {
+              path: resource.parent.path,
+              username: this.resource.actor.preferredUsername,
+            },
+          });
+          if (newParentCachedData == null) return;
+          const { resource: newParentCachedResource } = newParentCachedData;
+          if (newParentCachedResource == null) {
+            console.error("Cannot update resource cache, because of null value.");
+            return;
+          }
+
+          newParentCachedResource.children.elements.push(resource);
+
+          store.writeQuery({
+            query: GET_RESOURCE,
+            variables: {
+              path: resource.parent.path,
+              username: this.resource.actor.preferredUsername,
+            },
+            data: { newParentCachedResource },
+          });
+          console.log("Finished adding resource to new parent");
         },
       });
     } catch (e) {

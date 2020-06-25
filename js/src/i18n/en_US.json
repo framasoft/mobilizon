@@ -696,5 +696,12 @@
   "Can be an email or a link, or just plain text.": "Can be an email or a link, or just plain text.",
   "No profiles found": "No profiles found",
   "URL copied to clipboard": "URL copied to clipboard",
-  "Report #{reportNumber}": "Report #{reportNumber}"
+  "Report #{reportNumber}": "Report #{reportNumber}",
+  "Move \"{resourceName}\"": "Move \"{resourceName}\"",
+  "Parent folder": "Parent folder",
+  "(this folder)": "(this folder)",
+  "(this link)": "(this link)",
+  "Move resource to {folder}": "Move resource to {folder}",
+  "Create a folder": "Create a folder",
+  "No resources in this folder": "No resources in this folder"
 }
