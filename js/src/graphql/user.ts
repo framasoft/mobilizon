@@ -106,6 +106,7 @@ export const USER_SETTINGS_FRAGMENT = gql`
 export const USER_SETTINGS = gql`
   query UserSetting {
     loggedUser {
+      id
       locale
       settings {
         ...UserSettingFragment

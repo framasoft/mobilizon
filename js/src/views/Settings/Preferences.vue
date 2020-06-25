@@ -1,38 +1,50 @@
 <template>
   <div>
-    <b-field :label="$t('Language')">
-      <b-select
-        :loading="!config || !loggedUser"
-        v-model="$i18n.locale"
-        :placeholder="$t('Select a language')"
-      >
-        <option v-for="(language, lang) in languages" :value="lang" :key="lang">
-          {{ language }}
-        </option>
-      </b-select>
-    </b-field>
-    <b-field :label="$t('Timezone')">
-      <b-select
-        :placeholder="$t('Select a timezone')"
-        :loading="!config || !loggedUser"
-        v-model="selectedTimezone"
-      >
-        <optgroup :label="group" v-for="(groupTimezones, group) in timezones" :key="group">
-          <option
-            v-for="timezone in groupTimezones"
-            :value="`${group}/${timezone}`"
-            :key="timezone"
-          >
-            {{ sanitize(timezone) }}
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+      <ul>
+        <li>
+          <router-link :to="{ name: RouteName.ACCOUNT_SETTINGS }">{{ $t("Account") }}</router-link>
+        </li>
+        <li class="is-active">
+          <router-link :to="{ name: RouteName.PREFERENCES }">{{ $t("Preferences") }}</router-link>
+        </li>
+      </ul>
+    </nav>
+    <div>
+      <b-field :label="$t('Language')">
+        <b-select
+          :loading="!config || !loggedUser"
+          v-model="$i18n.locale"
+          :placeholder="$t('Select a language')"
+        >
+          <option v-for="(language, lang) in languages" :value="lang" :key="lang">
+            {{ language }}
           </option>
-        </optgroup>
-      </b-select>
-    </b-field>
-    <em>{{
-      $t("Timezone detected as {timezone}.", {
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      })
-    }}</em>
+        </b-select>
+      </b-field>
+      <b-field :label="$t('Timezone')">
+        <b-select
+          :placeholder="$t('Select a timezone')"
+          :loading="!config || !loggedUser"
+          v-model="selectedTimezone"
+        >
+          <optgroup :label="group" v-for="(groupTimezones, group) in timezones" :key="group">
+            <option
+              v-for="timezone in groupTimezones"
+              :value="`${group}/${timezone}`"
+              :key="timezone"
+            >
+              {{ sanitize(timezone) }}
+            </option>
+          </optgroup>
+        </b-select>
+      </b-field>
+      <em>{{
+        $t("Timezone detected as {timezone}.", {
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        })
+      }}</em>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -42,6 +54,7 @@ import { USER_SETTINGS, SET_USER_SETTINGS, UPDATE_USER_LOCALE } from "../../grap
 import { IConfig } from "../../types/config.model";
 import { ICurrentUser } from "../../types/current-user.model";
 import langs from "../../i18n/langs.json";
+import RouteName from "../../router/name";
 
 @Component({
   apollo: {
@@ -57,6 +70,8 @@ export default class Preferences extends Vue {
   selectedTimezone: string | null = null;
 
   locale: string | null = null;
+
+  RouteName = RouteName;
 
   @Watch("loggedUser")
   setSavedTimezone(loggedUser: ICurrentUser) {

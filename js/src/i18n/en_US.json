@@ -695,5 +695,6 @@
   "contact uninformed": "contact uninformed",
   "Can be an email or a link, or just plain text.": "Can be an email or a link, or just plain text.",
   "No profiles found": "No profiles found",
-  "URL copied to clipboard": "URL copied to clipboard"
+  "URL copied to clipboard": "URL copied to clipboard",
+  "Report #{reportNumber}": "Report #{reportNumber}"
 }

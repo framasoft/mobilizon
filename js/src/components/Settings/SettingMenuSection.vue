@@ -1,27 +1,35 @@
 <template>
   <li :class="{ active: sectionActive }">
-    <router-link v-if="menuSection.to" :to="menuSection.to">{{ menuSection.title }}</router-link>
-    <b v-else>{{ menuSection.title }}</b>
+    <router-link v-if="to" :to="to">{{ title }}</router-link>
+    <b v-else>{{ title }}</b>
     <ul>
-      <setting-menu-item :menu-item="item" v-for="item in menuSection.items" :key="item.title" />
+      <slot></slot>
     </ul>
   </li>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { ISettingMenuSection } from "@/types/setting-menu.model";
 import SettingMenuItem from "@/components/Settings/SettingMenuItem.vue";
+import { Route } from "vue-router";
 @Component({
   components: { SettingMenuItem },
 })
 export default class SettingMenuSection extends Vue {
-  @Prop({ required: true, type: Object }) menuSection!: ISettingMenuSection;
+  @Prop({ required: false, type: String }) title!: string;
+  @Prop({ required: true, type: Object }) to!: Route;
 
-  get sectionActive(): boolean | undefined {
-    return (
-      this.menuSection.items &&
-      this.menuSection.items.some(({ to }) => to && to.name === this.$route.name)
-    );
+  get sectionActive() {
+    if (this.$slots.default) {
+      return this.$slots.default.some(
+        ({
+          componentOptions: {
+            // @ts-ignore
+            propsData: { to },
+          },
+        }) => to && to.name === this.$route.name
+      );
+    }
+    return false;
   }
 }
 </script>

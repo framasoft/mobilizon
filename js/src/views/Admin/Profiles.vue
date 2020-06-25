@@ -1,69 +1,81 @@
 <template>
-  <div v-if="persons">
-    <b-switch v-model="local">{{ $t("Local") }}</b-switch>
-    <b-switch v-model="suspended">{{ $t("Suspended") }}</b-switch>
-    <b-table
-      :data="persons.elements"
-      :loading="$apollo.queries.persons.loading"
-      paginated
-      backend-pagination
-      backend-filtering
-      :total="persons.total"
-      :per-page="PROFILES_PER_PAGE"
-      @page-change="onPageChange"
-      @filters-change="onFiltersChange"
-    >
-      <template slot-scope="props">
-        <b-table-column field="preferredUsername" :label="$t('Username')" searchable>
-          <template slot="searchable" slot-scope="props">
-            <b-input
-              v-model="props.filters.preferredUsername"
-              placeholder="Search..."
-              icon="magnify"
-              size="is-small"
-            />
-          </template>
-          <router-link
-            class="profile"
-            :to="{ name: RouteName.ADMIN_PROFILE, params: { id: props.row.id } }"
-          >
-            <article class="media">
-              <figure class="media-left" v-if="props.row.avatar">
-                <p class="image is-48x48">
-                  <img :src="props.row.avatar.url" />
-                </p>
-              </figure>
-              <div class="media-content">
-                <div class="content">
-                  <strong v-if="props.row.name">{{ props.row.name }}</strong
-                  ><br v-if="props.row.name" />
-                  <small>@{{ props.row.preferredUsername }}</small>
+  <div>
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+      <ul>
+        <li>
+          <router-link :to="{ name: RouteName.MODERATION }">{{ $t("Moderation") }}</router-link>
+        </li>
+        <li class="is-active">
+          <router-link :to="{ name: RouteName.PROFILES }">{{ $t("Profiles") }}</router-link>
+        </li>
+      </ul>
+    </nav>
+    <div v-if="persons">
+      <b-switch v-model="local">{{ $t("Local") }}</b-switch>
+      <b-switch v-model="suspended">{{ $t("Suspended") }}</b-switch>
+      <b-table
+        :data="persons.elements"
+        :loading="$apollo.queries.persons.loading"
+        paginated
+        backend-pagination
+        backend-filtering
+        :total="persons.total"
+        :per-page="PROFILES_PER_PAGE"
+        @page-change="onPageChange"
+        @filters-change="onFiltersChange"
+      >
+        <template slot-scope="props">
+          <b-table-column field="preferredUsername" :label="$t('Username')" searchable>
+            <template slot="searchable" slot-scope="props">
+              <b-input
+                v-model="props.filters.preferredUsername"
+                placeholder="Search..."
+                icon="magnify"
+                size="is-small"
+              />
+            </template>
+            <router-link
+              class="profile"
+              :to="{ name: RouteName.ADMIN_PROFILE, params: { id: props.row.id } }"
+            >
+              <article class="media">
+                <figure class="media-left" v-if="props.row.avatar">
+                  <p class="image is-48x48">
+                    <img :src="props.row.avatar.url" />
+                  </p>
+                </figure>
+                <div class="media-content">
+                  <div class="content">
+                    <strong v-if="props.row.name">{{ props.row.name }}</strong
+                    ><br v-if="props.row.name" />
+                    <small>@{{ props.row.preferredUsername }}</small>
+                  </div>
                 </div>
-              </div>
-            </article>
-          </router-link>
-        </b-table-column>
+              </article>
+            </router-link>
+          </b-table-column>
 
-        <b-table-column field="domain" :label="$t('Domain')" searchable>
-          <template slot="searchable" slot-scope="props">
-            <b-input
-              v-model="props.filters.domain"
-              placeholder="Search..."
-              icon="magnify"
-              size="is-small"
-            />
-          </template>
-          {{ props.row.domain }}
-        </b-table-column>
-      </template>
-      <template slot="empty">
-        <section class="section">
-          <div class="content has-text-grey has-text-centered">
-            <p>{{ $t("No profile matches the filters") }}</p>
-          </div>
-        </section>
-      </template>
-    </b-table>
+          <b-table-column field="domain" :label="$t('Domain')" searchable>
+            <template slot="searchable" slot-scope="props">
+              <b-input
+                v-model="props.filters.domain"
+                placeholder="Search..."
+                icon="magnify"
+                size="is-small"
+              />
+            </template>
+            {{ props.row.domain }}
+          </b-table-column>
+        </template>
+        <template slot="empty">
+          <section class="section">
+            <div class="content has-text-grey has-text-centered">
+              <p>{{ $t("No profile matches the filters") }}</p>
+            </div>
+          </section>
+        </template>
+      </b-table>
+    </div>
   </div>
 </template>
 <script lang="ts">

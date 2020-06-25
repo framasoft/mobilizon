@@ -17,6 +17,10 @@ a {
   }
 }
 
+nav.breadcrumb ul li a {
+  text-decoration: none;
+}
+
 input.input {
   border-color: $input-border-color !important;
 }

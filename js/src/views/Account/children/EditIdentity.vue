@@ -1,66 +1,91 @@
 <template>
-  <div class="root" v-if="identity">
-    <h1 class="title">
-      <span v-if="isUpdate">{{ identity.displayName() }}</span>
-      <span v-else>{{ $t("I create an identity") }}</span>
-    </h1>
+  <div>
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+      <ul>
+        <li>
+          <router-link :to="{ name: RouteName.IDENTITIES }">{{ $t("Profiles") }}</router-link>
+        </li>
+        <li class="is-active" v-if="isUpdate && identity">
+          <router-link
+            :to="{
+              name: RouteName.UPDATE_IDENTITY,
+              params: { identityName: identity.preferredUsername },
+            }"
+            >{{ identity.name }}</router-link
+          >
+        </li>
+        <li class="is-active" v-else>
+          <router-link :to="{ name: RouteName.CREATE_IDENTITY }">{{
+            $t("New profile")
+          }}</router-link>
+        </li>
+      </ul>
+    </nav>
+    <div class="root" v-if="identity">
+      <h1 class="title">
+        <span v-if="isUpdate">{{ identity.displayName() }}</span>
+        <span v-else>{{ $t("I create an identity") }}</span>
+      </h1>
 
-    <picture-upload v-model="avatarFile" class="picture-upload" />
+      <picture-upload v-model="avatarFile" class="picture-upload" />
 
-    <b-field horizontal :label="$t('Display name')">
-      <b-input
-        aria-required="true"
-        required
-        v-model="identity.name"
-        @input="autoUpdateUsername($event)"
-      />
-    </b-field>
-
-    <b-field
-      horizontal
-      custom-class="username-field"
-      expanded
-      :label="$t('Username')"
-      :message="message"
-    >
-      <b-field expanded>
+      <b-field horizontal :label="$t('Display name')">
         <b-input
           aria-required="true"
           required
-          v-model="identity.preferredUsername"
-          :disabled="isUpdate"
-          :use-html5-validation="!isUpdate"
-          pattern="[a-z0-9_]+"
+          v-model="identity.name"
+          @input="autoUpdateUsername($event)"
         />
-
-        <p class="control">
-          <span class="button is-static">@{{ getInstanceHost }}</span>
-        </p>
       </b-field>
-    </b-field>
 
-    <b-field horizontal :label="$t('Description')">
-      <b-input type="textarea" aria-required="false" v-model="identity.summary" />
-    </b-field>
+      <b-field
+        horizontal
+        custom-class="username-field"
+        expanded
+        :label="$t('Username')"
+        :message="message"
+      >
+        <b-field expanded>
+          <b-input
+            aria-required="true"
+            required
+            v-model="identity.preferredUsername"
+            :disabled="isUpdate"
+            :use-html5-validation="!isUpdate"
+            pattern="[a-z0-9_]+"
+          />
 
-    <b-notification
-      type="is-danger"
-      has-icon
-      aria-close-label="Close notification"
-      role="alert"
-      :key="error"
-      v-for="error in errors"
-      >{{ error }}</b-notification
-    >
+          <p class="control">
+            <span class="button is-static">@{{ getInstanceHost }}</span>
+          </p>
+        </b-field>
+      </b-field>
 
-    <b-field class="submit">
-      <div class="control">
-        <button type="button" class="button is-primary" @click="submit()">{{ $t("Save") }}</button>
+      <b-field horizontal :label="$t('Description')">
+        <b-input type="textarea" aria-required="false" v-model="identity.summary" />
+      </b-field>
+
+      <b-notification
+        type="is-danger"
+        has-icon
+        aria-close-label="Close notification"
+        role="alert"
+        :key="error"
+        v-for="error in errors"
+        >{{ error }}</b-notification
+      >
+
+      <b-field class="submit">
+        <div class="control">
+          <button type="button" class="button is-primary" @click="submit()">
+            {{ $t("Save") }}
+          </button>
+        </div>
+      </b-field>
+
+      <div class="delete-identity" v-if="isUpdate">
+        <span @click="openDeleteIdentityConfirmation()">{{ $t("Delete this identity") }}</span>
       </div>
-    </b-field>
-
-    <div class="delete-identity" v-if="isUpdate">
-      <span @click="openDeleteIdentityConfirmation()">{{ $t("Delete this identity") }}</span>
     </div>
   </div>
 </template>
@@ -147,6 +172,8 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
   avatarFile: File | null = null;
 
   private currentActor: IPerson | null = null;
+
+  RouteName = RouteName;
 
   get message() {
     if (this.isUpdate) return null;
