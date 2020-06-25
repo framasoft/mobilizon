@@ -50,10 +50,12 @@ module.exports = {
 
   ignorePatterns: ["src/typings/*.d.ts", "vue.config.js"],
 
-  overrides: [{
-    files: ["**/__tests__/*.{j,t}s?(x)", "**/tests/unit/**/*.spec.{j,t}s?(x)"],
-    env: {
-      mocha: true,
+  overrides: [
+    {
+      files: ["**/__tests__/*.{j,t}s?(x)", "**/tests/unit/**/*.spec.{j,t}s?(x)"],
+      env: {
+        mocha: true,
+      },
     },
-  }],
+  ],
 };

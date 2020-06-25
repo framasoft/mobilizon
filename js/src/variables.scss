@@ -7,19 +7,19 @@ $violet: #424056;
 /**
  * Text body, paragraphs
  */
-$violet-1: #3A384C;
+$violet-1: #3a384c;
 $violet-2: #474467;
 
 /**
  * Titles, dark borders, buttons
  */
-$violet-3: #3C376E;
+$violet-3: #3c376e;
 
 /**
  * Borders
  */
-$borders: #D7D6DE;
-$backgrounds: #ECEBF2;
+$borders: #d7d6de;
+$backgrounds: #ecebf2;
 
 /**
  * Text
@@ -29,15 +29,15 @@ $purple-1: #757199;
 /**
  * Background
  */
-$purple-2: #CDCAEA;
-$purple-3: #E6E4F4;
+$purple-2: #cdcaea;
+$purple-3: #e6e4f4;
 
-$orange-2: #ED8D07;
-$orange-3: #D35204;
+$orange-2: #ed8d07;
+$orange-3: #d35204;
 
-$yellow-1: #FFD599;
-$yellow-2: #FFF1DE;
-$yellow-3: #FBD5CB;
+$yellow-1: #ffd599;
+$yellow-2: #fff1de;
+$yellow-3: #fbd5cb;
 $yellow-4: #f7ba30;
 
 $primary: $bleuvert;
@@ -47,36 +47,45 @@ $secondary-invert: findColorInvert($secondary);
 
 $background-color: $violet-2;
 
-$success: #0D8758;
+$success: #0d8758;
 $success-invert: findColorInvert($success);
 $info: #36bcd4;
 $info-invert: findColorInvert($info);
-$danger: #FF2E54;
+$danger: #ff2e54;
 $danger-invert: findColorInvert($danger);
 $link: $primary;
 $link-invert: $primary-invert;
 $text: $violet-1;
 
-$colors: map-merge($colors,
-  ("primary": ($primary,
+$colors: map-merge(
+  $colors,
+  (
+    "primary": (
+      $primary,
       $primary-invert,
     ),
-    "secondary": ($secondary,
+    "secondary": (
+      $secondary,
       $secondary-invert,
     ),
-    "success": ($success,
+    "success": (
+      $success,
       $success-invert,
     ),
-    "info": ($info,
+    "info": (
+      $info,
       $info-invert,
     ),
-    "danger": ($danger,
+    "danger": (
+      $danger,
       $danger-invert,
     ),
-    "link": ($link,
+    "link": (
+      $link,
       $link-invert,
     ),
-  ));
+  )
+);
 
 // Navbar
 $navbar-background-color: $secondary;
@@ -91,29 +100,21 @@ $body-background-color: #efeef4;
 $fullhd-enabled: false;
 $hero-body-padding-medium: 6rem 1.5rem;
 
-main>.container {
+main > .container {
   background: $body-background-color;
 }
 
 $title-color: #3c376e;
-$title-family: "Liberation Sans",
-"Helvetica Neue",
-Roboto,
-Helvetica,
-Arial,
-serif;
+$title-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial,
+  serif;
 $title-weight: 700;
 $title-size: 40px;
 $title-sub-size: 45px;
 $title-sup-size: 30px;
 
 $subtitle-color: #3a384c;
-$subtitle-family: "Liberation Sans",
-"Helvetica Neue",
-Roboto,
-Helvetica,
-Arial,
-serif;
+$subtitle-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial,
+  serif;
 $subtitle-weight: 400;
 $subtitle-size: 32px;
 $subtitle-sub-size: 30px;
