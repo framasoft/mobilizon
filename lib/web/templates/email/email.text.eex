@@ -4,12 +4,12 @@
 --
 
 <%= gettext "This is a demonstration site to test the beta version of Mobilizon." %>
-<%= gettext "Please do not use it in any real way" %>
+<%= gettext "Please do not use it for real purposes." %>
 
-<%= gettext "Mobilizon is under development, we will add new features to this site during regular updates, until the release of version 1 of the software in the fall of 2020." %>
-<%= gettext "In the meantime, please consider that the software is not (yet) finished. More information on our blog:" %> https://framablog.org/2019/10/15/mobilizon-lifting-the-veil-on-the-beta-release/
+<%= gettext "Mobilizon is still under development, we will add new features along the updates, until the release of version 1 of the software in the fall of 2020." %>
+<%= gettext "In the meantime, please consider this the software as not (yet) finished. Read more on the Framasoft blog:" %> https://framablog.org/2019/10/15/mobilizon-lifting-the-veil-on-the-beta-release/
 
-<%= gettext "Need some help? Something not working properly?" %>
+<%= gettext "Need help? Is something not working as expected?" %>
 
 <%= gettext "Ask the community on Framacolibri" %> https://framacolibri.org/c/mobilizon/test-mobilizon
 

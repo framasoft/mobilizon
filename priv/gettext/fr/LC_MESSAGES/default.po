@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-06-23 19:09+0200\n"
+"PO-Revision-Date: 2020-06-25 09:31+0200\n"
 "Last-Translator: Côme 744 <come.allart@netc.fr>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
 "Language: fr\n"
@@ -67,10 +67,6 @@ msgstr "En apprendre plus à propos de Mobilizon."
 #: lib/web/templates/email/registration_confirmation.html.eex:13
 msgid "Nearly here!"
 msgstr "Vous y êtes presque !"
-
-#: lib/web/templates/email/email.text.eex:12
-msgid "Need some help? Something not working properly?"
-msgstr "Besoin d'aide ? Quelque chose ne fonctionne pas correctement ?"
 
 #: lib/web/templates/email/report.html.eex:84 lib/web/templates/email/report.text.eex:22
 msgid "Reason"
@@ -243,14 +239,6 @@ msgstr "L'événement a été confirmé"
 #: lib/web/templates/email/event_updated.html.eex:52 lib/web/templates/email/event_updated.text.eex:12
 msgid "Event status has been set as tentative"
 msgstr "Le statut de l'événement a été défini comme « à confirmer »"
-
-#: lib/web/templates/email/email.text.eex:10
-msgid "In the meantime, please consider that the software is not (yet) finished. More information on our blog:"
-msgstr "D'ici là, veuillez considérer que le logiciel n'est pas (encore) fini. Plus d'informations sur notre blog :"
-
-#: lib/web/templates/email/email.text.eex:7
-msgid "Please do not use it in any real way"
-msgstr "Veuillez ne pas l'utiliser pour un cas réel"
 
 #: lib/web/email/participation.ex:114
 msgid "Confirm your participation to event %{title}"
@@ -555,11 +543,7 @@ msgstr "Demandes de participation en attente"
 msgid "You receive this email because you chose to get notifications for pending participations to your events. You may disable or change the configuration for these notification in your Mobilizon user settings."
 msgstr "Vous recevez ce courriel parce que vous avez choisi de recevoir des notifications pour les participations en attente à vos événements. Vous pouvez désactiver ou modifier la configuration de ces notifications dans vos paramètres d'utilisateur·ice Mobilizon."
 
-#: lib/web/templates/email/email.text.eex:9
-msgid "Mobilizon is under development, we will add new features to this site during regular updates, until the release of version 1 of the software in the fall of 2020."
-msgstr "Mobilizon est en cours de développement, nous ajouterons de nouvelles fonctionnalités à ce site lors de mises à jour régulières, jusqu'à la publication de la version 1 du logiciel à l'automne 2020."
-
-#: lib/service/metadata/event.ex:47
+#: lib/service/metadata/event.ex:48
 msgid "The event organizer didn't add any description."
 msgstr "L'organisateur·ice de l'événement n'a pas ajouté de description."
 
@@ -753,7 +737,7 @@ msgstr "Afin de faire de <b>%{instance_name}</b> un endroit idéal pour nous tou
 #: lib/web/templates/api/terms.html.eex:57
 msgctxt "terms"
 msgid "Private information of any third party (e.g., addresses, phone numbers, email addresses, Social Security numbers and credit card numbers); and"
-msgstr "Les informations privées de toute personne tierce (par exemple, les adresses, les numéros de téléphone, les adresses électroniques, les numéros de sécurité sociale et les numéros de carte de crédit) ;"
+msgstr "Les informations privées de toute personne tierce (par exemple, les adresses, les numéros de téléphone, les adresses électroniques, les numéros de sécurité sociale et les numéros de carte de crédit) ; et"
 
 #: lib/web/templates/api/terms.html.eex:52
 msgctxt "terms"
@@ -923,7 +907,7 @@ msgstr "D'ici là, veuillez considérer que le logiciel n'est pas (encore) fini.
 msgid "Mobilizon is still under development, we will add new features along the updates, until the release of %{b_start}version 1 of the software in the fall of 2020%{b_end}."
 msgstr "Mobilizon est en cours de développement, nous y ajouterons de nouvelles fonctionnalités lors de mises à jour régulières, jusqu'à la publication de %{b_start}la version 1 du logiciel à l'automne 2020%{b_end}."
 
-#: lib/web/templates/email/email.html.eex:118
+#: lib/web/templates/email/email.html.eex:118 lib/web/templates/email/email.text.eex:12
 msgid "Need help? Is something not working as expected?"
 msgstr "Besoin d'aide ? Quelque chose ne fonctionne pas correctement ?"
 
@@ -958,3 +942,15 @@ msgstr "<b>%{instance}</b> est une instance Mobilizon."
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:70
 msgid "If you didn't trigger this alert, you may safely ignore it."
 msgstr "Si vous n'avez pas déclenché cette alerte, vous pouvez ignorer cet email sans souci."
+
+#: lib/web/templates/email/email.text.eex:10
+msgid "In the meantime, please consider this the software as not (yet) finished. Read more on the Framasoft blog:"
+msgstr "D'ici là, veuillez considérer que le logiciel n'est pas (encore) fini. Retrouvez plus d'informations sur le blog de Framasoft:"
+
+#: lib/web/templates/email/email.text.eex:9
+msgid "Mobilizon is still under development, we will add new features along the updates, until the release of version 1 of the software in the fall of 2020."
+msgstr "Mobilizon est en cours de développement, nous y ajouterons de nouvelles fonctionnalités lors de mises à jour régulières, jusqu'à la publication de %{b_start}la version 1 du logiciel à l'automne 2020%{b_end}."
+
+#: lib/web/templates/email/email.text.eex:7
+msgid "Please do not use it for real purposes."
+msgstr "Veuillez ne pas l'utiliser pour un cas réel."

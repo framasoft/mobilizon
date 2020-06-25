@@ -77,11 +77,6 @@ msgid "Nearly here!"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/email.text.eex:12
-msgid "Need some help? Something not working properly?"
-msgstr ""
-
-#, elixir-format
 #: lib/web/templates/email/report.html.eex:84
 #: lib/web/templates/email/report.text.eex:22
 msgid "Reason"
@@ -306,16 +301,6 @@ msgstr ""
 #: lib/web/templates/email/event_updated.html.eex:52
 #: lib/web/templates/email/event_updated.text.eex:12
 msgid "Event status has been set as tentative"
-msgstr ""
-
-#, elixir-format
-#: lib/web/templates/email/email.text.eex:10
-msgid "In the meantime, please consider that the software is not (yet) finished. More information on our blog:"
-msgstr ""
-
-#, elixir-format
-#: lib/web/templates/email/email.text.eex:7
-msgid "Please do not use it in any real way"
 msgstr ""
 
 #, elixir-format
@@ -702,12 +687,7 @@ msgid "You receive this email because you chose to get notifications for pending
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/email.text.eex:9
-msgid "Mobilizon is under development, we will add new features to this site during regular updates, until the release of version 1 of the software in the fall of 2020."
-msgstr ""
-
-#, elixir-format
-#: lib/service/metadata/event.ex:47
+#: lib/service/metadata/event.ex:48
 msgid "The event organizer didn't add any description."
 msgstr ""
 
@@ -1148,6 +1128,7 @@ msgstr ""
 
 #, elixir-format
 #: lib/web/templates/email/email.html.eex:118
+#: lib/web/templates/email/email.text.eex:12
 msgid "Need help? Is something not working as expected?"
 msgstr ""
 
@@ -1181,12 +1162,27 @@ msgstr ""
 msgid "You requested a new password for your account on <b>%{instance}</b>."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/web/templates/email/email.html.eex:146
 msgid "<b>%{instance}</b> is a Mobilizon instance."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:70
 msgid "If you didn't trigger this alert, you may safely ignore it."
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/email.text.eex:10
+msgid "In the meantime, please consider this the software as not (yet) finished. Read more on the Framasoft blog:"
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/email.text.eex:9
+msgid "Mobilizon is still under development, we will add new features along the updates, until the release of version 1 of the software in the fall of 2020."
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/email.text.eex:7
+msgid "Please do not use it for real purposes."
 msgstr ""
