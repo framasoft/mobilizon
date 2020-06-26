@@ -20,7 +20,7 @@
               name: RouteName.CONVERSATION_LIST,
               params: { preferredUsername: conversation.actor.preferredUsername },
             }"
-            >{{ $t("Conversations") }}</router-link
+            >{{ $t("Discussions") }}</router-link
           >
         </li>
         <li class="is-active">

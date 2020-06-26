@@ -29,7 +29,7 @@
       class="actions"
       v-if="!inline"
       @delete="$emit('delete', resource.id)"
-      @move="$emit('move', resource.id)"
+      @move="$emit('move', resource)"
       @rename="$emit('rename', resource)"
     />
   </div>

@@ -1,6 +1,6 @@
 <template>
   <section class="section container">
-    <h1>{{ $t("Create a new conversation") }}</h1>
+    <h1>{{ $t("Create a discussion") }}</h1>
 
     <form @submit.prevent="createConversation">
       <b-field :label="$t('Title')">
@@ -11,7 +11,7 @@
         <editor v-model="conversation.text" />
       </b-field>
 
-      <button class="button is-primary" type="submit">{{ $t("Create my group") }}</button>
+      <button class="button is-primary" type="submit">{{ $t("Create the discussion") }}</button>
     </form>
   </section>
 </template>

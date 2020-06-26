@@ -20,7 +20,7 @@
               name: RouteName.CONVERSATION_LIST,
               params: { preferredUsername: usernameWithDomain(group) },
             }"
-            >{{ $t("Conversations") }}</router-link
+            >{{ $t("Discussions") }}</router-link
           >
         </li>
       </ul>
@@ -39,7 +39,7 @@
           name: RouteName.CREATE_CONVERSATION,
           params: { preferredUsername: this.preferredUsername },
         }"
-        >{{ $t("New conversation") }}</b-button
+        >{{ $t("New discussion") }}</b-button
       >
     </section>
   </div>

@@ -30,7 +30,17 @@ defmodule Mobilizon.Service.RichMedia.Parsers.OGP do
   defp transform_tags(data) do
     data
     |> Map.put(:image_remote_url, Map.get(data, :image))
-    |> Map.put(:width, Map.get(data, :"image:width"))
-    |> Map.put(:height, Map.get(data, :"image:height"))
+    |> Map.put(:width, get_integer_value(data, :"image:width"))
+    |> Map.put(:height, get_integer_value(data, :"image:height"))
+  end
+
+  @spec get_integer_value(Map.t(), atom()) :: integer() | nil
+  defp get_integer_value(data, key) do
+    with value when not is_nil(value) <- Map.get(data, key),
+         {value, ""} <- Integer.parse(value) do
+      value
+    else
+      _ -> nil
+    end
   end
 end

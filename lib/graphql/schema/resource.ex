@@ -4,6 +4,8 @@ defmodule Mobilizon.GraphQL.Schema.ResourceType do
   """
   use Absinthe.Schema.Notation
   alias Mobilizon.GraphQL.Resolvers.Resource
+  alias Mobilizon.Resources
+  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   @desc "A resource"
   object :resource do
@@ -19,7 +21,8 @@ defmodule Mobilizon.GraphQL.Schema.ResourceType do
     field(:updated_at, :naive_datetime, description: "The resource's last update date")
     field(:type, :string, description: "The resource's type (if it's a folder)")
     field(:path, :string, description: "The resource's path")
-    field(:parent, :resource, description: "The resource's parent")
+
+    field(:parent, :resource, description: "The resource's parent", resolve: dataloader(Resources))
 
     field :children, :paginated_resource_list do
       description("Children resources in folder")

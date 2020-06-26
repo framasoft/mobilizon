@@ -29,7 +29,7 @@
       class="actions"
       v-if="!inline"
       @delete="$emit('delete', resource.id)"
-      @move="$emit('move', resource.id)"
+      @move="$emit('move', resource)"
       @rename="$emit('rename', resource)"
     />
   </div>
@@ -70,8 +70,6 @@ export default class FolderItem extends Mixins(ResourceMixin) {
   usernameWithDomain = usernameWithDomain;
 
   async onChange(evt: ChangeEvent<IResource>): Promise<Route | undefined> {
-    console.log("into folder item");
-    console.log(evt);
     if (evt.added && evt.added.element) {
       const movedResource = evt.added.element as IResource;
       const updatedResource = await this.moveResource(movedResource);

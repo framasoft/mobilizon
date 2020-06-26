@@ -18,6 +18,7 @@ export const GET_RESOURCE = gql`
       summary
       url
       path
+      type
       metadata {
         ...ResourceMetadataBasicFields
         authorName
@@ -28,6 +29,8 @@ export const GET_RESOURCE = gql`
       }
       parent {
         id
+        path
+        type
       }
       actor {
         id
@@ -44,6 +47,11 @@ export const GET_RESOURCE = gql`
           type
           path
           resourceUrl
+          parent {
+            id
+            path
+            type
+          }
           metadata {
             ...ResourceMetadataBasicFields
           }
@@ -112,7 +120,12 @@ export const UPDATE_RESOURCE = gql`
       summary
       url
       path
+      type
       resourceUrl
+      parent {
+        id
+        path
+      }
     }
   }
 `;

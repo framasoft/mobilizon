@@ -5,7 +5,18 @@ defmodule Mobilizon.GraphQL.Schema do
 
   use Absinthe.Schema
 
-  alias Mobilizon.{Actors, Addresses, Conversations, Events, Media, Reports, Todos, Users}
+  alias Mobilizon.{
+    Actors,
+    Addresses,
+    Conversations,
+    Events,
+    Media,
+    Reports,
+    Resources,
+    Todos,
+    Users
+  }
+
   alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Conversations.Comment
   alias Mobilizon.Events.{Event, Participant}
@@ -109,6 +120,7 @@ defmodule Mobilizon.GraphQL.Schema do
       |> Dataloader.add_source(Addresses, default_source)
       |> Dataloader.add_source(Media, default_source)
       |> Dataloader.add_source(Reports, default_source)
+      |> Dataloader.add_source(Resources, default_source)
       |> Dataloader.add_source(Todos, default_source)
 
     Map.put(ctx, :loader, loader)
