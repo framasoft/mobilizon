@@ -54,7 +54,7 @@ config :mobilizon, Mobilizon.Service.Geospatial.Nominatim,
 
 ### Addok
 
-[Addok](https://github.com/addok/addok) is a WTFPL licenced search engine for address (and only address). It's written in Python and uses Redis. 
+[Addok](https://github.com/addok/addok) is a MIT licenced search engine for address (and only address). It's written in Python and uses Redis. 
 It's used by French government for [adresse.data.gouv.fr](https://adresse.data.gouv.fr).
 
 !!! warning "Terms"
@@ -64,6 +64,18 @@ It's used by French government for [adresse.data.gouv.fr](https://adresse.data.g
 ```elixir
 config :mobilizon, Mobilizon.Service.Geospatial.Addok,
   endpoint: "https://api-adresse.data.gouv.fr"
+```
+
+The default endpoint is limited to France. Geo coding outside of France will return an empty result. Moreover, as France is implicit for this endpoint, country is not part of the result.
+To conform to `Provider` interface, this provider return "France" as the country.
+
+If plugged to another endpoint, in another country, it could be useful to change the default country. This can be done in `prod.secret.exs`:
+
+** change endpoint default country **
+```elixir
+config :mobilizon, Mobilizon.Service.Geospatial.Addok,
+  endpoint: "https://another-endpoint.tld"
+  default_country: "Country"
 ```
 
 ### Photon

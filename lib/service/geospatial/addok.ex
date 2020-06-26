@@ -12,6 +12,8 @@ defmodule Mobilizon.Service.Geospatial.Addok do
   @behaviour Provider
 
   @endpoint Application.get_env(:mobilizon, __MODULE__) |> get_in([:endpoint])
+  @default_country Application.get_env(:mobilizon, __MODULE__) |> get_in([:default_country]) ||
+                     "France"
 
   @http_options [
     follow_redirect: true,
@@ -79,9 +81,9 @@ defmodule Mobilizon.Service.Geospatial.Addok do
     features
     |> Enum.map(fn %{"geometry" => geometry, "properties" => properties} ->
       %Address{
-        country: Map.get(properties, "country"),
+        country: Map.get(properties, "country", @default_country),
         locality: Map.get(properties, "city"),
-        region: Map.get(properties, "state"),
+        region: Map.get(properties, "context"),
         description: Map.get(properties, "name") || street_address(properties),
         geom: geometry |> Map.get("coordinates") |> Provider.coordinates(),
         postal_code: Map.get(properties, "postcode"),
