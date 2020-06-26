@@ -34,8 +34,9 @@ defmodule Mobilizon.Service.RichMedia.Parsers.OGP do
     |> Map.put(:height, get_integer_value(data, :"image:height"))
   end
 
+  @spec get_integer_value(Map.t(), atom()) :: integer() | nil
   defp get_integer_value(data, key) do
-    with value <- Map.get(data, key),
+    with value when not is_nil(value) <- Map.get(data, key),
          {value, ""} <- Integer.parse(value) do
       value
     else
