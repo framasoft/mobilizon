@@ -510,10 +510,7 @@
   "Website": "Website",
   "Actor": "Actor",
   "Statut": "Statut",
-  "Conversations": "Conversations",
   "Text": "Text",
-  "New conversation": "New conversation",
-  "Create a new conversation": "Create a new conversation",
   "All group members and other eventual server admins will still be able to view this information.": "All group members and other eventual server admins will still be able to view this information.",
   "Upcoming events": "Upcoming events",
   "View all upcoming events": "View all upcoming events",
@@ -525,7 +522,6 @@
   "Post a public message": "Post a public message",
   "View all todos": "View all todos",
   "Discussions": "Discussions",
-  "View all conversations": "View all conversations",
   "No public upcoming events": "No public upcoming events",
   "Latest posts": "Latest posts",
   "Invite a new member": "Invite a new member",
@@ -703,5 +699,9 @@
   "(this link)": "(this link)",
   "Move resource to {folder}": "Move resource to {folder}",
   "Create a folder": "Create a folder",
-  "No resources in this folder": "No resources in this folder"
+  "No resources in this folder": "No resources in this folder",
+  "New discussion": "New discussion",
+  "Create a discussion": "Create a discussion",
+  "Create the discussion": "Create the discussion",
+  "View all discussions": "View all discussions"
 }

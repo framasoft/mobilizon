@@ -133,7 +133,7 @@
               name: RouteName.CONVERSATION_LIST,
               params: { preferredUsername: usernameWithDomain(group) },
             }"
-            >{{ $t("View all conversations") }}</router-link
+            >{{ $t("View all discussions") }}</router-link
           >
         </section>
       </div>

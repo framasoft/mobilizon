@@ -78,11 +78,9 @@
   "Confirmed: Will happen": "Confirmé : aura lieu",
   "Contact": "Contact",
   "Continue editing": "Continuer la modification",
-  "Conversations": "Conversations",
   "Country": "Pays",
   "Create": "Créer",
   "Create a calc": "Créer un calc",
-  "Create a new conversation": "Créer une nouvelle conversation",
   "Create a new event": "Créer un nouvel évènement",
   "Create a new group": "Créer un nouveau groupe",
   "Create a new identity": "Créer une nouvelle identité",
@@ -260,7 +258,6 @@
   "My groups": "Mes groupes",
   "My identities": "Mes identités",
   "Name": "Nom",
-  "New conversation": "Nouvelle conversation",
   "New email": "Nouvelle adresse e-mail",
   "New folder": "Nouveau dossier",
   "New link": "Nouveau lien",
@@ -478,7 +475,6 @@
   "Username": "Pseudo",
   "Users": "Utilisateur⋅ice⋅s",
   "View a reply": "Aucune réponse | Voir une réponse | Voir {totalReplies} réponses",
-  "View all conversations": "Voir toutes les conversations",
   "View all resources": "Voir toutes les resources",
   "View all todos": "Voir tous les todos",
   "View all upcoming events": "Voir tous les événements à venir",
@@ -703,5 +699,9 @@
   "(this link)": "(ce lien)",
   "Move resource to {folder}": "Déplacer la ressource dans {folder}",
   "Create a folder": "Créer un dossier",
-  "No resources in this folder": "Aucune ressource dans ce dossier"
+  "No resources in this folder": "Aucune ressource dans ce dossier",
+  "New discussion": "Nouvelle discussion",
+  "Create a discussion": "Créer une discussion",
+  "Create the discussion": "Créer la discussion",
+  "View all discussions": "Voir toutes les discussions"
 }
