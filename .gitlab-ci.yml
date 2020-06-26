@@ -39,7 +39,7 @@ lint:
     - cd js
     - yarn install
     #- yarn run lint || export EXITVALUE=1
-    - yarn run prettier -c .
+    - yarn run prettier --ignore-path="src/i18n/*" -c . || export EXITVALUE=1
     - yarn run build
     - cd ../
     - exit $EXITVALUE
