@@ -9,6 +9,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Crypto
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Service.Auth.Authenticator
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.{Setting, User}
 
@@ -59,18 +60,16 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   Login an user. Returns a token and the user
   """
   def login_user(_parent, %{email: email, password: password}, _resolution) do
-    with {:ok, %User{confirmed_at: %DateTime{}} = user} <- Users.get_user_by_email(email),
-         {:ok, %{access_token: access_token, refresh_token: refresh_token}} <-
-           Users.authenticate(%{user: user, password: password}) do
-      {:ok, %{access_token: access_token, refresh_token: refresh_token, user: user}}
-    else
-      {:ok, %User{confirmed_at: nil} = _user} ->
-        {:error, "User account not confirmed"}
+    case Authenticator.authenticate(email, password) do
+      {:ok,
+       %{access_token: _access_token, refresh_token: _refresh_token, user: _user} =
+           user_and_tokens} ->
+        {:ok, user_and_tokens}
 
       {:error, :user_not_found} ->
         {:error, "No user with this email was found"}
 
-      {:error, :unauthorized} ->
+      {:error, _error} ->
         {:error, "Impossible to authenticate, either your email or password are invalid."}
     end
   end
@@ -82,7 +81,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     with {:ok, user, _claims} <- Auth.Guardian.resource_from_token(refresh_token),
          {:ok, _old, {exchanged_token, _claims}} <-
            Auth.Guardian.exchange(refresh_token, ["access", "refresh"], "access"),
-         {:ok, refresh_token} <- Users.generate_refresh_token(user) do
+         {:ok, refresh_token} <- Authenticator.generate_refresh_token(user) do
       {:ok, %{access_token: exchanged_token, refresh_token: refresh_token}}
     else
       {:error, message} ->
@@ -151,7 +150,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
            {:check_confirmation_token, Email.User.check_confirmation_token(token)},
          {:get_actor, actor} <- {:get_actor, Users.get_actor_for_user(user)},
          {:ok, %{access_token: access_token, refresh_token: refresh_token}} <-
-           Users.generate_tokens(user) do
+           Authenticator.generate_tokens(user) do
       {:ok,
        %{
          access_token: access_token,
@@ -192,10 +191,15 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   def send_reset_password(_parent, args, _resolution) do
     with email <- Map.get(args, :email),
          {:ok, %User{locale: locale} = user} <- Users.get_user_by_email(email, true),
+         {:can_reset_password, true} <-
+           {:can_reset_password, Authenticator.can_reset_password?(user)},
          {:ok, %Bamboo.Email{} = _email_html} <-
            Email.User.send_password_reset_email(user, Map.get(args, :locale, locale)) do
       {:ok, email}
     else
+      {:can_reset_password, false} ->
+        {:error, "This user can't reset their password"}
+
       {:error, :user_not_found} ->
         # TODO : implement rate limits for this endpoint
         {:error, "No user with this email was found"}
@@ -209,10 +213,10 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   Reset the password from an user
   """
   def reset_password(_parent, %{password: password, token: token}, _resolution) do
-    with {:ok, %User{} = user} <-
+    with {:ok, %User{email: email} = user} <-
            Email.User.check_reset_password_token(password, token),
          {:ok, %{access_token: access_token, refresh_token: refresh_token}} <-
-           Users.authenticate(%{user: user, password: password}) do
+           Authenticator.authenticate(email, password) do
       {:ok, %{access_token: access_token, refresh_token: refresh_token, user: user}}
     end
   end
@@ -295,10 +299,12 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   def change_password(
         _parent,
         %{old_password: old_password, new_password: new_password},
-        %{context: %{current_user: %User{password_hash: old_password_hash} = user}}
+        %{context: %{current_user: %User{} = user}}
       ) do
-    with {:current_password, true} <-
-           {:current_password, Argon2.verify_pass(old_password, old_password_hash)},
+    with {:can_change_password, true} <-
+           {:can_change_password, Authenticator.can_change_password?(user)},
+         {:current_password, {:ok, %User{}}} <-
+           {:current_password, Authenticator.login(user.email, old_password)},
          {:same_password, false} <- {:same_password, old_password == new_password},
          {:ok, %User{} = user} <-
            user
@@ -306,7 +312,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
            |> Repo.update() do
       {:ok, user}
     else
-      {:current_password, false} ->
+      {:current_password, _} ->
         {:error, "The current password is invalid"}
 
       {:same_password, true} ->
@@ -323,10 +329,12 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   end
 
   def change_email(_parent, %{email: new_email, password: password}, %{
-        context: %{current_user: %User{email: old_email, password_hash: password_hash} = user}
+        context: %{current_user: %User{email: old_email} = user}
       }) do
-    with {:current_password, true} <-
-           {:current_password, Argon2.verify_pass(password, password_hash)},
+    with {:can_change_password, true} <-
+           {:can_change_password, Authenticator.can_change_email?(user)},
+         {:current_password, {:ok, %User{}}} <-
+           {:current_password, Authenticator.login(user.email, password)},
          {:same_email, false} <- {:same_email, new_email == old_email},
          {:email_valid, true} <- {:email_valid, Email.Checker.valid?(new_email)},
          {:ok, %User{} = user} <-
@@ -347,7 +355,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
       {:ok, user}
     else
-      {:current_password, false} ->
+      {:current_password, _} ->
         {:error, "The password provided is invalid"}
 
       {:same_email, true} ->
@@ -377,14 +385,24 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     end
   end
 
-  def delete_account(_parent, %{password: password}, %{
-        context: %{current_user: %User{password_hash: password_hash} = user}
+  def delete_account(_parent, args, %{
+        context: %{current_user: %User{email: email} = user}
       }) do
-    case {:current_password, Argon2.verify_pass(password, password_hash)} do
-      {:current_password, true} ->
+    with {:user_has_password, true} <- {:user_has_password, Authenticator.has_password?(user)},
+         {:confirmation_password, password} when not is_nil(password) <-
+           {:confirmation_password, Map.get(args, :password)},
+         {:current_password, {:ok, _}} <-
+           {:current_password, Authenticator.authenticate(email, password)} do
+      do_delete_account(user)
+    else
+      # If the user hasn't got any password (3rd-party auth)
+      {:user_has_password, false} ->
         do_delete_account(user)
 
-      {:current_password, false} ->
+      {:confirmation_password, nil} ->
+        {:error, "The password provided is invalid"}
+
+      {:current_password, _} ->
         {:error, "The password provided is invalid"}
     end
   end

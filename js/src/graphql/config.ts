@@ -62,6 +62,13 @@ export const CONFIG = gql`
       features {
         groups
       }
+      auth {
+        ldap
+        oauthProviders {
+          id
+          label
+        }
+      }
     }
   }
 `;

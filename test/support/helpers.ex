@@ -7,6 +7,7 @@ defmodule Mobilizon.Tests.Helpers do
   @moduledoc """
   Helpers for use in tests.
   """
+  alias Mobilizon.Config
 
   defmacro clear_config(config_path) do
     quote do
@@ -17,11 +18,17 @@ defmodule Mobilizon.Tests.Helpers do
 
   defmacro clear_config(config_path, do: yield) do
     quote do
-      setup do
-        initial_setting = Mobilizon.Config.get(unquote(config_path))
-        unquote(yield)
-        on_exit(fn -> Mobilizon.Config.put(unquote(config_path), initial_setting) end)
-        :ok
+      initial_setting = Config.get(unquote(config_path))
+      unquote(yield)
+      on_exit(fn -> Config.put(unquote(config_path), initial_setting) end)
+      :ok
+    end
+  end
+
+  defmacro clear_config(config_path, temp_setting) do
+    quote do
+      clear_config(unquote(config_path)) do
+        Config.put(unquote(config_path), unquote(temp_setting))
       end
     end
   end

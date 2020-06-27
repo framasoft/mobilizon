@@ -703,5 +703,10 @@
   "{number} participations": "Aucune participation|Une participation|{number} participations",
   "{profile} (by default)": "{profile} (par défault)",
   "{title} ({count} todos)": "{title} ({count} todos)",
-  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap"
+  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap",
+  "Sign in with": "Se connecter avec",
+  "Your email address was automatically set based on your {provider} account.": "Votre adresse email a été définie automatiquement en se basant sur votre compte {provider}.",
+  "You can't change your password because you are registered through {provider}.": "Vous ne pouvez pas changer votre mot de passe car vous vous êtes enregistré via {provider}.",
+  "Error while login with {provider}. Retry or login another way.": "Erreur lors de la connexion avec {provider}. Réessayez ou bien connectez vous autrement.",
+  "Error while login with {provider}. This login provider doesn't exist.": "Erreur lors de la connexion avec {provider}. Cette méthode de connexion n'existe pas."
 }

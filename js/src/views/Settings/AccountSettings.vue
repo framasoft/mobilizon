@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="loggedUser">
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li>
@@ -24,6 +24,13 @@
       >
         <b slot="email">{{ loggedUser.email }}</b>
       </i18n>
+      <b-message v-if="!canChangeEmail" type="is-warning" :closable="false">
+        {{
+          $t("Your email address was automatically set based on your {provider} account.", {
+            provider: providerName(loggedUser.provider),
+          })
+        }}
+      </b-message>
       <b-notification
         type="is-danger"
         has-icon
@@ -33,7 +40,7 @@
         v-for="error in changeEmailErrors"
         >{{ error }}</b-notification
       >
-      <form @submit.prevent="resetEmailAction" ref="emailForm" class="form">
+      <form @submit.prevent="resetEmailAction" ref="emailForm" class="form" v-if="canChangeEmail">
         <b-field :label="$t('New email')">
           <b-input aria-required="true" required type="email" v-model="newEmail" />
         </b-field>
@@ -58,6 +65,13 @@
       <div class="setting-title">
         <h2>{{ $t("Password") }}</h2>
       </div>
+      <b-message v-if="!canChangePassword" type="is-warning" :closable="false">
+        {{
+          $t("You can't change your password because you are registered through {provider}.", {
+            provider: providerName(loggedUser.provider),
+          })
+        }}
+      </b-message>
       <b-notification
         type="is-danger"
         has-icon
@@ -67,7 +81,12 @@
         v-for="error in changePasswordErrors"
         >{{ error }}</b-notification
       >
-      <form @submit.prevent="resetPasswordAction" ref="passwordForm" class="form">
+      <form
+        @submit.prevent="resetPasswordAction"
+        ref="passwordForm"
+        class="form"
+        v-if="canChangePassword"
+      >
         <b-field :label="$t('Old password')">
           <b-input
             aria-required="true"
@@ -124,11 +143,11 @@
                     <br />
                     <b>{{ $t("There will be no way to recover your data.") }}</b>
                   </p>
-                  <p class="content">
+                  <p class="content" v-if="hasUserGotAPassword">
                     {{ $t("Please enter your password to confirm this action.") }}
                   </p>
                   <form @submit.prevent="deleteAccount">
-                    <b-field>
+                    <b-field v-if="hasUserGotAPassword">
                       <b-input
                         type="password"
                         v-model="passwordForAccountDeletion"
@@ -160,8 +179,8 @@
 import { Component, Vue, Ref } from "vue-property-decorator";
 import { CHANGE_EMAIL, CHANGE_PASSWORD, DELETE_ACCOUNT, LOGGED_USER } from "../../graphql/user";
 import RouteName from "../../router/name";
-import { ICurrentUser } from "../../types/current-user.model";
-import { logout } from "../../utils/auth";
+import { IUser, IAuthProvider } from "../../types/current-user.model";
+import { logout, SELECTED_PROVIDERS } from "../../utils/auth";
 
 @Component({
   apollo: {
@@ -171,7 +190,7 @@ import { logout } from "../../utils/auth";
 export default class AccountSettings extends Vue {
   @Ref("passwordForm") readonly passwordForm!: HTMLElement;
 
-  loggedUser!: ICurrentUser;
+  loggedUser!: IUser;
 
   passwordForEmailChange = "";
 
@@ -243,7 +262,7 @@ export default class AccountSettings extends Vue {
       await this.$apollo.mutate({
         mutation: DELETE_ACCOUNT,
         variables: {
-          password: this.passwordForAccountDeletion,
+          password: this.hasUserGotAPassword ? this.passwordForAccountDeletion : null,
         },
       });
       await logout(this.$apollo.provider.defaultClient);
@@ -258,6 +277,28 @@ export default class AccountSettings extends Vue {
     } catch (err) {
       this.handleErrors("delete", err);
     }
+  }
+
+  get canChangePassword() {
+    return !this.loggedUser.provider;
+  }
+
+  get canChangeEmail() {
+    return !this.loggedUser.provider;
+  }
+
+  providerName(id: string) {
+    if (SELECTED_PROVIDERS[id]) {
+      return SELECTED_PROVIDERS[id];
+    }
+    return id;
+  }
+
+  get hasUserGotAPassword(): boolean {
+    return (
+      this.loggedUser &&
+      (this.loggedUser.provider == null || this.loggedUser.provider == IAuthProvider.LDAP)
+    );
   }
 
   private handleErrors(type: string, err: any) {

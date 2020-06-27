@@ -40,13 +40,17 @@ defmodule Mobilizon.Users.User do
     :confirmation_token,
     :reset_password_sent_at,
     :reset_password_token,
+    :default_actor_id,
     :locale,
     :unconfirmed_email,
-    :disabled
+    :disabled,
+    :provider
   ]
   @attrs @required_attrs ++ @optional_attrs
 
   @registration_required_attrs @required_attrs ++ [:password]
+
+  @auth_provider_required_attrs @required_attrs ++ [:provider]
 
   @password_change_required_attrs [:password]
   @password_reset_required_attrs @password_change_required_attrs ++
@@ -67,6 +71,7 @@ defmodule Mobilizon.Users.User do
     field(:unconfirmed_email, :string)
     field(:locale, :string, default: "en")
     field(:disabled, :boolean, default: false)
+    field(:provider, :string)
 
     belongs_to(:default_actor, Actor)
     has_many(:actors, Actor)
@@ -114,6 +119,16 @@ defmodule Mobilizon.Users.User do
       :confirmation_token,
       message: "The registration token is already in use, this looks like an issue on our side."
     )
+  end
+
+  @doc false
+  @spec auth_provider_changeset(t, map) :: Ecto.Changeset.t()
+  def auth_provider_changeset(%__MODULE__{} = user, attrs) do
+    user
+    |> changeset(attrs)
+    |> cast_assoc(:default_actor)
+    |> put_change(:confirmed_at, DateTime.utc_now() |> DateTime.truncate(:second))
+    |> validate_required(@auth_provider_required_attrs)
   end
 
   @doc false

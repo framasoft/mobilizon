@@ -74,4 +74,13 @@ export interface IConfig {
   };
   federating: boolean;
   version: string;
+  auth: {
+    ldap: boolean;
+    oauthProviders: IOAuthProvider[];
+  };
+}
+
+export interface IOAuthProvider {
+  id: string;
+  label: string;
 }

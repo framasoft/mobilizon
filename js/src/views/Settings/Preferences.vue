@@ -52,7 +52,7 @@ import { Component, Vue, Watch } from "vue-property-decorator";
 import { TIMEZONES } from "../../graphql/config";
 import { USER_SETTINGS, SET_USER_SETTINGS, UPDATE_USER_LOCALE } from "../../graphql/user";
 import { IConfig } from "../../types/config.model";
-import { ICurrentUser } from "../../types/current-user.model";
+import { IUser } from "../../types/current-user.model";
 import langs from "../../i18n/langs.json";
 import RouteName from "../../router/name";
 
@@ -65,7 +65,7 @@ import RouteName from "../../router/name";
 export default class Preferences extends Vue {
   config!: IConfig;
 
-  loggedUser!: ICurrentUser;
+  loggedUser!: IUser;
 
   selectedTimezone: string | null = null;
 
@@ -74,7 +74,7 @@ export default class Preferences extends Vue {
   RouteName = RouteName;
 
   @Watch("loggedUser")
-  setSavedTimezone(loggedUser: ICurrentUser) {
+  setSavedTimezone(loggedUser: IUser) {
     if (loggedUser && loggedUser.settings.timezone) {
       this.selectedTimezone = loggedUser.settings.timezone;
     } else {

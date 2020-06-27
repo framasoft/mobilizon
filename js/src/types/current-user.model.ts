@@ -9,15 +9,11 @@ export enum ICurrentUserRole {
 }
 
 export interface ICurrentUser {
-  id: number;
+  id: string;
   email: string;
   isLoggedIn: boolean;
   role: ICurrentUserRole;
-  participations: Paginate<IParticipant>;
-  defaultActor: IPerson;
-  drafts: IEvent[];
-  settings: IUserSettings;
-  locale: string;
+  defaultActor?: IPerson;
 }
 
 export interface IUser extends ICurrentUser {
@@ -25,6 +21,22 @@ export interface IUser extends ICurrentUser {
   confirmationSendAt: Date;
   actors: IPerson[];
   disabled: boolean;
+  participations: Paginate<IParticipant>;
+  drafts: IEvent[];
+  settings: IUserSettings;
+  locale: string;
+  provider?: string;
+}
+
+export enum IAuthProvider {
+  LDAP = "ldap",
+  GOOGLE = "google",
+  DISCORD = "discord",
+  GITHUB = "github",
+  KEYCLOAK = "keycloak",
+  FACEBOOK = "facebook",
+  GITLAB = "gitlab",
+  TWITTER = "twitter",
 }
 
 export enum INotificationPendingParticipationEnum {

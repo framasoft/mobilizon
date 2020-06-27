@@ -703,5 +703,10 @@
   "New discussion": "New discussion",
   "Create a discussion": "Create a discussion",
   "Create the discussion": "Create the discussion",
-  "View all discussions": "View all discussions"
+  "View all discussions": "View all discussions",
+  "Sign in with": "Sign in with",
+  "Your email address was automatically set based on your {provider} account.": "Your email address was automatically set based on your {provider} account.",
+  "You can't change your password because you are registered through {provider}.": "You can't change your password because you are registered through {provider}.",
+  "Error while login with {provider}. Retry or login another way.": "Error while login with {provider}. Retry or login another way.",
+  "Error while login with {provider}. This login provider doesn't exist.": "Error while login with {provider}. This login provider doesn't exist."
 }

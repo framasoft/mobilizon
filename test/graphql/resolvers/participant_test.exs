@@ -991,7 +991,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
           }
     """
 
-    clear_config([:anonymous, :participation])
+    setup do: clear_config([:anonymous, :participation])
 
     setup %{conn: conn, actor: actor, user: user} do
       Mobilizon.Config.clear_config_cache()

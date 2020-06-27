@@ -18,7 +18,7 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { VALIDATE_USER, UPDATE_CURRENT_USER_CLIENT } from "../../graphql/user";
 import RouteName from "../../router/name";
-import { saveUserData, changeIdentity } from "../../utils/auth";
+import { saveUserData, saveTokenData, changeIdentity } from "../../utils/auth";
 import { ILogin } from "../../types/login.model";
 import { ICurrentUserRole } from "../../types/current-user.model";
 
@@ -45,6 +45,7 @@ export default class Validate extends Vue {
 
       if (data) {
         saveUserData(data.validateUser);
+        saveTokenData(data.validateUser);
 
         const { user } = data.validateUser;
 

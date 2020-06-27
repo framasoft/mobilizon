@@ -124,7 +124,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
       },
       rules: Config.instance_rules(),
       version: Config.instance_version(),
-      federating: Config.instance_federating()
+      federating: Config.instance_federating(),
+      auth: %{
+        ldap: Config.ldap_enabled?(),
+        oauth_providers: Config.oauth_consumer_strategies()
+      }
     }
   end
 end

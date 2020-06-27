@@ -95,10 +95,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { USER_SETTINGS, SET_USER_SETTINGS } from "../../graphql/user";
-import {
-  ICurrentUser,
-  INotificationPendingParticipationEnum,
-} from "../../types/current-user.model";
+import { IUser, INotificationPendingParticipationEnum } from "../../types/current-user.model";
 import RouteName from "../../router/name";
 
 @Component({
@@ -107,7 +104,7 @@ import RouteName from "../../router/name";
   },
 })
 export default class Notifications extends Vue {
-  loggedUser!: ICurrentUser;
+  loggedUser!: IUser;
 
   notificationOnDay = true;
 
