@@ -63,6 +63,8 @@ defmodule Mobilizon.Service.Geospatial.AddokTest do
     test "returns a valid address from search" do
       use_cassette "geospatial/addok/search" do
         assert %Address{
+                 country: "France",
+                 region: "69, Rhône, Auvergne-Rhône-Alpes",
                  locality: "Lyon",
                  description: "10 Rue Jangot",
                  postal_code: "69007",
@@ -75,6 +77,8 @@ defmodule Mobilizon.Service.Geospatial.AddokTest do
     test "returns a valid address from reverse geocode" do
       use_cassette "geospatial/addok/geocode" do
         assert %Address{
+                 country: "France",
+                 region: "69, Rhône, Auvergne-Rhône-Alpes",
                  locality: "Lyon",
                  description: "10 Rue Jangot",
                  postal_code: "69007",
