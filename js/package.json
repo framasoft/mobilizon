@@ -54,7 +54,7 @@
   "devDependencies": {
     "@types/chai": "^4.2.11",
     "@types/javascript-time-ago": "^2.0.1",
-    "@types/leaflet": "^1.5.2",
+    "@types/leaflet": "^1.5.13",
     "@types/leaflet.locatecontrol": "^0.60.7",
     "@types/lodash": "^4.14.141",
     "@types/mocha": "^5.2.4",
