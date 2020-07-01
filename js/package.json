@@ -29,7 +29,7 @@
     "graphql": "^15.0.0",
     "graphql-tag": "^2.10.3",
     "intersection-observer": "^0.11.0",
-    "javascript-time-ago": "^2.0.4",
+    "javascript-time-ago": "^2.0.8",
     "leaflet": "^1.4.0",
     "leaflet.locatecontrol": "^0.72.0",
     "lodash": "^4.17.11",
