@@ -98,7 +98,7 @@ defmodule Mobilizon.Mixfile do
       {:bamboo_smtp, "~> 2.0"},
       {:geolix, "~> 1.0"},
       {:geolix_adapter_mmdb2, "~> 0.5.0"},
-      {:absinthe, "~> 1.5.1"},
+      {:absinthe, "~> 1.5.2"},
       {:absinthe_phoenix, "~> 2.0.0"},
       {:absinthe_plug, "~> 1.5.0"},
       {:dataloader, "~> 1.0.6"},
