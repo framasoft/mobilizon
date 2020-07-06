@@ -708,5 +708,7 @@
   "Your email address was automatically set based on your {provider} account.": "Your email address was automatically set based on your {provider} account.",
   "You can't change your password because you are registered through {provider}.": "You can't change your password because you are registered through {provider}.",
   "Error while login with {provider}. Retry or login another way.": "Error while login with {provider}. Retry or login another way.",
-  "Error while login with {provider}. This login provider doesn't exist.": "Error while login with {provider}. This login provider doesn't exist."
+  "Error while login with {provider}. This login provider doesn't exist.": "Error while login with {provider}. This login provider doesn't exist.",
+  "This user has been disabled": "This user has been disabled",
+  "You can't reset your password because you use a 3rd-party auth provider to login.": "You can't reset your password because you use a 3rd-party auth provider to login."
 }
