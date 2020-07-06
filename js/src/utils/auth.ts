@@ -94,3 +94,14 @@ export async function logout(apollo: ApolloClient<NormalizedCacheObject>) {
 
   deleteUserData();
 }
+
+export const SELECTED_PROVIDERS: { [key: string]: string } = {
+  twitter: "Twitter",
+  discord: "Discord",
+  facebook: "Facebook",
+  github: "Github",
+  gitlab: "Gitlab",
+  google: "Google",
+  keycloak: "Keycloak",
+  ldap: "LDAP",
+};

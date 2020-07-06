@@ -33,7 +33,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
       }
     """
 
-    clear_config([:anonymous, :reports])
+    setup do: clear_config([:anonymous, :reports])
 
     setup %{conn: conn} do
       Mobilizon.Config.clear_config_cache()

@@ -202,10 +202,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   """
   def register_person(_parent, args, _resolution) do
     with {:ok, %User{} = user} <- Users.get_user_by_email(args.email),
-         {:no_actor, nil} <- {:no_actor, Users.get_actor_for_user(user)},
+         user_actor <- Users.get_actor_for_user(user),
+         no_actor <- is_nil(user_actor),
+         {:no_actor, true} <- {:no_actor, no_actor},
          args <- Map.put(args, :user_id, user.id),
          args <- save_attached_pictures(args),
-         {:ok, %Actor{} = new_person} <- Actors.new_person(args) do
+         {:ok, %Actor{} = new_person} <- Actors.new_person(args, true) do
       {:ok, new_person}
     else
       {:error, :user_not_found} ->

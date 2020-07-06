@@ -186,6 +186,24 @@ defmodule Mobilizon.Config do
   def anonymous_reporting?,
     do: Application.get_env(:mobilizon, :anonymous)[:reports][:allowed]
 
+  @spec oauth_consumer_strategies() :: list({atom(), String.t()})
+  def oauth_consumer_strategies do
+    [:auth, :oauth_consumer_strategies]
+    |> get([])
+    |> Enum.map(fn strategy ->
+      case strategy do
+        {id, label} when is_atom(id) -> %{id: id, label: label}
+        id when is_atom(id) -> %{id: id, label: nil}
+      end
+    end)
+  end
+
+  @spec oauth_consumer_enabled? :: boolean()
+  def oauth_consumer_enabled?, do: oauth_consumer_strategies() != []
+
+  @spec ldap_enabled? :: boolean()
+  def ldap_enabled?, do: get([:ldap, :enabled], false)
+
   def instance_resource_providers do
     types = get_in(Application.get_env(:mobilizon, Mobilizon.Service.ResourceProviders), [:types])
 

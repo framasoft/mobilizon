@@ -10,6 +10,26 @@
           :aria-close-label="$t('Close')"
           >{{ $t("You need to login.") }}</b-message
         >
+        <b-message
+          v-else-if="errorCode === LoginError.LOGIN_PROVIDER_ERROR"
+          type="is-danger"
+          :aria-close-label="$t('Close')"
+          >{{
+            $t("Error while login with {provider}. Retry or login another way.", {
+              provider: $route.query.provider,
+            })
+          }}</b-message
+        >
+        <b-message
+          v-else-if="errorCode === LoginError.LOGIN_PROVIDER_NOT_FOUND"
+          type="is-danger"
+          :aria-close-label="$t('Close')"
+          >{{
+            $t("Error while login with {provider}. This login provider doesn't exist.", {
+              provider: $route.query.provider,
+            })
+          }}</b-message
+        >
         <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">
           <span v-if="error === LoginError.USER_NOT_CONFIRMED">
             <span>
@@ -60,6 +80,11 @@
           <p class="control has-text-centered">
             <button class="button is-primary is-large">{{ $t("Login") }}</button>
           </p>
+
+          <div class="control" v-if="config && config.auth.oauthProviders.length > 0">
+            <auth-providers :oauthProviders="config.auth.oauthProviders" />
+          </div>
+
           <p class="control">
             <router-link
               class="button is-text"
@@ -103,6 +128,7 @@ import { LoginErrorCode, LoginError } from "../../types/login-error-code.model";
 import { ICurrentUser } from "../../types/current-user.model";
 import { CONFIG } from "../../graphql/config";
 import { IConfig } from "../../types/config.model";
+import AuthProviders from "../../components/User/AuthProviders.vue";
 
 @Component({
   apollo: {
@@ -112,6 +138,9 @@ import { IConfig } from "../../types/config.model";
     currentUser: {
       query: CURRENT_USER_CLIENT,
     },
+  },
+  components: {
+    AuthProviders,
   },
   metaInfo() {
     return {

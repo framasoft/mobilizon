@@ -35,6 +35,15 @@ export const LOGGED_USER = gql`
     loggedUser {
       id
       email
+      defaultActor {
+        id
+        preferredUsername
+        name
+        avatar {
+          url
+        }
+      }
+      provider
     }
   }
 `;
@@ -64,7 +73,7 @@ export const VALIDATE_EMAIL = gql`
 `;
 
 export const DELETE_ACCOUNT = gql`
-  mutation DeleteAccount($password: String, $userId: ID!) {
+  mutation DeleteAccount($password: String, $userId: ID) {
     deleteAccount(password: $password, userId: $userId) {
       id
     }

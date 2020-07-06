@@ -15,13 +15,6 @@ defmodule Mobilizon.Users do
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.{Setting, User}
 
-  alias Mobilizon.Web.Auth
-
-  @type tokens :: %{
-          required(:access_token) => String.t(),
-          required(:refresh_token) => String.t()
-        }
-
   defenum(UserRole, :user_role, [:administrator, :moderator, :user])
 
   defenum(NotificationPendingNotificationDelay, none: 0, direct: 1, one_hour: 5, one_day: 10)
@@ -34,6 +27,18 @@ defmodule Mobilizon.Users do
     with {:ok, %User{} = user} <-
            %User{}
            |> User.registration_changeset(args)
+           |> Repo.insert() do
+      Events.create_feed_token(%{user_id: user.id})
+
+      {:ok, user}
+    end
+  end
+
+  @spec create_external(String.t(), String.t()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  def create_external(email, provider) do
+    with {:ok, %User{} = user} <-
+           %User{}
+           |> User.auth_provider_changeset(%{email: email, provider: provider})
            |> Repo.insert() do
       Events.create_feed_token(%{user_id: user.id})
 
@@ -73,6 +78,16 @@ defmodule Mobilizon.Users do
       user ->
         {:ok, user}
     end
+  end
+
+  @doc """
+  Gets an user by its email.
+  """
+  @spec get_user_by_email!(String.t(), boolean | nil) :: User.t()
+  def get_user_by_email!(email, activated \\ nil) do
+    email
+    |> user_by_email_query(activated)
+    |> Repo.one!()
   end
 
   @doc """
@@ -266,52 +281,6 @@ defmodule Mobilizon.Users do
   """
   @spec count_users :: integer
   def count_users, do: Repo.one(from(u in User, select: count(u.id)))
-
-  @doc """
-  Authenticate an user.
-  """
-  @spec authenticate(User.t()) :: {:ok, tokens} | {:error, :unauthorized}
-  def authenticate(%{user: %User{password_hash: password_hash} = user, password: password}) do
-    # Does password match the one stored in the database?
-    if Argon2.verify_pass(password, password_hash) do
-      {:ok, _tokens} = generate_tokens(user)
-    else
-      {:error, :unauthorized}
-    end
-  end
-
-  @doc """
-  Generates access token and refresh token for an user.
-  """
-  @spec generate_tokens(User.t()) :: {:ok, tokens}
-  def generate_tokens(user) do
-    with {:ok, access_token} <- generate_access_token(user),
-         {:ok, refresh_token} <- generate_refresh_token(user) do
-      {:ok, %{access_token: access_token, refresh_token: refresh_token}}
-    end
-  end
-
-  @doc """
-  Generates access token for an user.
-  """
-  @spec generate_access_token(User.t()) :: {:ok, String.t()}
-  def generate_access_token(user) do
-    with {:ok, access_token, _claims} <-
-           Auth.Guardian.encode_and_sign(user, %{}, token_type: "access") do
-      {:ok, access_token}
-    end
-  end
-
-  @doc """
-  Generates refresh token for an user.
-  """
-  @spec generate_refresh_token(User.t()) :: {:ok, String.t()}
-  def generate_refresh_token(user) do
-    with {:ok, refresh_token, _claims} <-
-           Auth.Guardian.encode_and_sign(user, %{}, token_type: "refresh") do
-      {:ok, refresh_token}
-    end
-  end
 
   @doc """
   Gets a settings for an user.

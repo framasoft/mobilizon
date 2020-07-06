@@ -9,6 +9,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Conversations.Comment
   alias Mobilizon.Events.{Event, Participant}
+  alias Mobilizon.Service.Auth.Authenticator
   alias Mobilizon.Users.User
 
   alias Mobilizon.GraphQL.AbsintheHelpers
@@ -45,8 +46,14 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
         }
   """
 
+  @send_reset_password_mutation """
+    mutation SendResetPassword($email: String!) {
+      sendResetPassword(email: $email)
+    }
+  """
+
   @delete_user_account_mutation """
-    mutation DeleteAccount($password: String!) {
+    mutation DeleteAccount($password: String) {
       deleteAccount (password: $password) {
         id
       }
@@ -712,45 +719,50 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
   end
 
   describe "Resolver: Send reset password" do
-    test "test send_reset_password/3 with valid email", context do
-      user = insert(:user)
-
-      mutation = """
-          mutation {
-            sendResetPassword(
-                  email: "#{user.email}"
-              )
-            }
-      """
+    test "test send_reset_password/3 with valid email", %{conn: conn} do
+      %User{email: email} = insert(:user)
 
       res =
-        context.conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @send_reset_password_mutation,
+          variables: %{email: email}
+        )
 
-      assert json_response(res, 200)["data"]["sendResetPassword"] == user.email
+      assert res["data"]["sendResetPassword"] == email
     end
 
-    test "test send_reset_password/3 with invalid email", context do
-      mutation = """
-          mutation {
-            sendResetPassword(
-                  email: "oh no"
-              )
-            }
-      """
+    test "test send_reset_password/3 with invalid email", %{conn: conn} do
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @send_reset_password_mutation,
+          variables: %{email: "not an email"}
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "No user with this email was found"
+    end
+
+    test "test send_reset_password/3 for an LDAP user", %{conn: conn} do
+      {:ok, %User{email: email}} = Users.create_external("some@users.com", "ldap")
 
       res =
-        context.conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @send_reset_password_mutation,
+          variables: %{email: email}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
-               "No user with this email was found"
+      assert hd(res["errors"])["message"] ==
+               "This user can't reset their password"
     end
   end
 
   describe "Resolver: Reset user's password" do
     test "test reset_password/3 with valid email", context do
       {:ok, %User{} = user} = Users.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
+      Users.update_user(user, %{confirmed_at: DateTime.utc_now()})
       %Actor{} = insert(:actor, user: user)
       {:ok, _email_sent} = Email.User.send_password_reset_email(user)
       %User{reset_password_token: reset_password_token} = Users.get_user!(user.id)
@@ -772,6 +784,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
         context.conn
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
+      assert is_nil(json_response(res, 200)["errors"])
       assert json_response(res, 200)["data"]["resetPassword"]["user"]["id"] == to_string(user.id)
     end
 
@@ -829,7 +842,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
   end
 
   describe "Resolver: Login a user" do
-    test "test login_user/3 with valid credentials", context do
+    test "test login_user/3 with valid credentials", %{conn: conn} do
       {:ok, %User{} = user} = Users.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
 
       {:ok, %User{} = _user} =
@@ -839,30 +852,18 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
           "confirmation_token" => nil
         })
 
-      mutation = """
-          mutation {
-            login(
-                  email: "#{user.email}",
-                  password: "#{user.password}",
-              ) {
-                accessToken,
-                refreshToken,
-                user {
-                  id
-                }
-              }
-            }
-      """
-
       res =
-        context.conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @login_mutation,
+          variables: %{email: user.email, password: user.password}
+        )
 
-      assert login = json_response(res, 200)["data"]["login"]
+      assert login = res["data"]["login"]
       assert Map.has_key?(login, "accessToken") && not is_nil(login["accessToken"])
     end
 
-    test "test login_user/3 with invalid password", context do
+    test "test login_user/3 with invalid password", %{conn: conn} do
       {:ok, %User{} = user} = Users.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
 
       {:ok, %User{} = _user} =
@@ -872,79 +873,40 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
           "confirmation_token" => nil
         })
 
-      mutation = """
-          mutation {
-            login(
-                  email: "#{user.email}",
-                  password: "bad password",
-              ) {
-                accessToken,
-                user {
-                  default_actor {
-                    preferred_username,
-                  }
-                }
-              }
-            }
-      """
-
       res =
-        context.conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @login_mutation,
+          variables: %{email: user.email, password: "bad password"}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert hd(res["errors"])["message"] ==
                "Impossible to authenticate, either your email or password are invalid."
     end
 
-    test "test login_user/3 with invalid email", context do
-      mutation = """
-          mutation {
-            login(
-                  email: "bad email",
-                  password: "bad password",
-              ) {
-                accessToken,
-                user {
-                  default_actor {
-                    preferred_username,
-                  }
-                }
-              }
-            }
-      """
-
+    test "test login_user/3 with invalid email", %{conn: conn} do
       res =
-        context.conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @login_mutation,
+          variables: %{email: "bad email", password: "bad password"}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert hd(res["errors"])["message"] ==
                "No user with this email was found"
     end
 
-    test "test login_user/3 with unconfirmed user", context do
+    test "test login_user/3 with unconfirmed user", %{conn: conn} do
       {:ok, %User{} = user} = Users.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
 
-      mutation = """
-          mutation {
-            login(
-                  email: "#{user.email}",
-                  password: "#{user.password}",
-              ) {
-                accessToken,
-                user {
-                  default_actor {
-                    preferred_username,
-                  }
-                }
-              }
-            }
-      """
-
       res =
-        context.conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @login_mutation,
+          variables: %{email: user.email, password: user.password}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "User account not confirmed"
+      assert hd(res["errors"])["message"] == "No user with this email was found"
     end
   end
 
@@ -970,7 +932,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
     test "test refresh_token/3 with an appropriate token", context do
       user = insert(:user)
-      {:ok, refresh_token} = Users.generate_refresh_token(user)
+      {:ok, refresh_token} = Authenticator.generate_refresh_token(user)
 
       mutation = """
           mutation {
@@ -1439,6 +1401,18 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       assert is_nil(actor2.name)
 
       assert is_nil(Events.get_participant(participant_id))
+    end
+
+    test "delete_account/3 with 3rd-party auth login", %{conn: conn} do
+      {:ok, %User{} = user} = Users.create_external(@email, "keycloak")
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(query: @delete_user_account_mutation)
+
+      assert is_nil(res["errors"])
+      assert res["data"]["deleteAccount"]["id"] == to_string(user.id)
     end
 
     test "delete_account/3 with invalid password", %{conn: conn} do

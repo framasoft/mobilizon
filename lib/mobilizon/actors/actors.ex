@@ -13,6 +13,7 @@ defmodule Mobilizon.Actors do
   alias Mobilizon.Media.File
   alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.{Page, Repo}
+  alias Mobilizon.Users
 
   alias Mobilizon.Federation.ActivityPub
 
@@ -189,14 +190,19 @@ defmodule Mobilizon.Actors do
   Creates a new person actor.
   """
   @spec new_person(map) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
-  def new_person(args) do
+  def new_person(args, default_actor \\ false) do
     args = Map.put(args, :keys, Crypto.generate_rsa_2048_private_key())
 
-    with {:ok, %Actor{} = person} <-
+    with {:ok, %Actor{id: person_id} = person} <-
            %Actor{}
            |> Actor.registration_changeset(args)
            |> Repo.insert() do
-      Events.create_feed_token(%{user_id: args["user_id"], actor_id: person.id})
+      Events.create_feed_token(%{user_id: args.user_id, actor_id: person.id})
+
+      if default_actor do
+        user = Users.get_user!(args.user_id)
+        Users.update_user(user, %{default_actor_id: person_id})
+      end
 
       {:ok, person}
     end

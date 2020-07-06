@@ -52,6 +52,8 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
 
     field(:locale, :string, description: "The user's locale")
 
+    field(:provider, :string, description: "The user's login provider")
+
     field(:disabled, :boolean, description: "Whether the user is disabled")
 
     field(:participations, :paginated_participant_list,

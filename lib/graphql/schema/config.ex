@@ -39,6 +39,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     end
 
     field(:rules, :string, description: "The instance's rules")
+    field(:auth, :auth, description: "The instance auth methods")
   end
 
   object :terms do
@@ -130,6 +131,16 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
 
   object :features do
     field(:groups, :boolean)
+  end
+
+  object :auth do
+    field(:ldap, :boolean, description: "Whether or not LDAP auth is enabled")
+    field(:oauth_providers, list_of(:oauth_provider), description: "List of oauth providers")
+  end
+
+  object :oauth_provider do
+    field(:id, :string, description: "The provider ID")
+    field(:label, :string, description: "The label for the auth provider")
   end
 
   object :config_queries do

@@ -113,6 +113,11 @@ const router = new Router({
       meta: { requiredAuth: false },
     },
     {
+      path: "/auth/:provider/callback",
+      name: "auth-callback",
+      component: () => import("@/views/User/ProviderValidation.vue"),
+    },
+    {
       path: "/404",
       name: RouteName.PAGE_NOT_FOUND,
       component: PageNotFound,

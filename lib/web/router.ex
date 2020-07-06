@@ -150,6 +150,10 @@ defmodule Mobilizon.Web.Router do
     get("/groups/me", PageController, :index, as: "my_groups")
 
     get("/interact", PageController, :interact)
+
+    get("/auth/:provider", AuthController, :request)
+    get("/auth/:provider/callback", AuthController, :callback)
+    post("/auth/:provider/callback", AuthController, :callback)
   end
 
   scope "/proxy/", Mobilizon.Web do

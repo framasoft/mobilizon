@@ -18,7 +18,8 @@ defmodule Mobilizon.Factory do
       role: :user,
       confirmed_at: DateTime.utc_now() |> DateTime.truncate(:second),
       confirmation_sent_at: nil,
-      confirmation_token: nil
+      confirmation_token: nil,
+      provider: nil
     }
   end
 

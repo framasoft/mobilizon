@@ -46,6 +46,23 @@ defmodule Mobilizon.Mixfile do
   defp elixirc_paths(:dev), do: ["lib", "test/support/factory.ex"]
   defp elixirc_paths(_), do: ["lib"]
 
+  # Specifies OAuth dependencies.
+  defp oauth_deps do
+    oauth_strategy_packages =
+      System.get_env("OAUTH_CONSUMER_STRATEGIES")
+      |> to_string()
+      |> String.split()
+      |> Enum.map(fn strategy_entry ->
+        with [_strategy, dependency] <- String.split(strategy_entry, ":") do
+          dependency
+        else
+          [strategy] -> "ueberauth_#{strategy}"
+        end
+      end)
+
+    for s <- oauth_strategy_packages, do: {String.to_atom(s), ">= 0.0.0"}
+  end
+
   # Specifies your project dependencies.
   #
   # Type `mix help deps` for examples and options.
@@ -81,7 +98,7 @@ defmodule Mobilizon.Mixfile do
       {:bamboo_smtp, "~> 2.0"},
       {:geolix, "~> 1.0"},
       {:geolix_adapter_mmdb2, "~> 0.5.0"},
-      {:absinthe, "~> 1.5.1"},
+      {:absinthe, "~> 1.5.2"},
       {:absinthe_phoenix, "~> 2.0.0"},
       {:absinthe_plug, "~> 1.5.0"},
       {:dataloader, "~> 1.0.6"},
@@ -104,6 +121,16 @@ defmodule Mobilizon.Mixfile do
       {:floki, "~> 0.26.0"},
       {:ip_reserved, "~> 0.1.0"},
       {:fast_sanitize, "~> 0.1"},
+      {:ueberauth, "~> 0.6"},
+      {:ueberauth_twitter, "~> 0.3"},
+      {:ueberauth_github, "~> 0.7"},
+      {:ueberauth_facebook, "~> 0.8"},
+      {:ueberauth_discord, "~> 0.5"},
+      {:ueberauth_google, "~> 0.9"},
+      {:ueberauth_keycloak_strategy,
+       git: "https://github.com/tcitworld/ueberauth_keycloak.git", branch: "upgrade-deps"},
+      {:ueberauth_gitlab_strategy,
+       git: "https://github.com/tcitworld/ueberauth_gitlab.git", branch: "upgrade-deps"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},
@@ -116,7 +143,7 @@ defmodule Mobilizon.Mixfile do
       {:credo, "~> 1.4.0", only: [:dev, :test], runtime: false},
       {:mock, "~> 0.3.4", only: :test},
       {:elixir_feed_parser, "~> 2.1.0", only: :test}
-    ]
+    ] ++ oauth_deps()
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

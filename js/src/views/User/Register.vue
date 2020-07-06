@@ -96,6 +96,7 @@
                 {{ $t("Register") }}
               </b-button>
             </p>
+
             <p class="control">
               <router-link
                 class="button is-text"
@@ -113,6 +114,11 @@
                 >{{ $t("Login") }}</router-link
               >
             </p>
+
+            <hr />
+            <div class="control" v-if="config && config.auth.oauthProviders.length > 0">
+              <auth-providers :oauthProviders="config.auth.oauthProviders" />
+            </div>
           </form>
 
           <div v-if="errors.length > 0">
@@ -131,9 +137,10 @@ import RouteName from "../../router/name";
 import { IConfig } from "../../types/config.model";
 import { CONFIG } from "../../graphql/config";
 import Subtitle from "../../components/Utils/Subtitle.vue";
+import AuthProviders from "../../components/User/AuthProviders.vue";
 
 @Component({
-  components: { Subtitle },
+  components: { Subtitle, AuthProviders },
   metaInfo() {
     return {
       // if no subcomponents specify a metaInfo.title, this title will be used
