@@ -54,6 +54,9 @@
           <span v-if="error === LoginError.USER_DOES_NOT_EXIST">{{
             $t("No user account with this email was found. Maybe you made a typo?")
           }}</span>
+          <span v-if="error === LoginError.USER_DISABLED">
+            {{ $t("This user has been disabled") }}
+          </span>
         </b-message>
         <form @submit="loginAction">
           <b-field :label="$t('Email')" label-for="email">

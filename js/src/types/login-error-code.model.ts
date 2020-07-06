@@ -8,4 +8,9 @@ export enum LoginError {
   USER_EMAIL_PASSWORD_INVALID = "Impossible to authenticate, either your email or password are invalid.",
   LOGIN_PROVIDER_ERROR = "Error with Login Provider",
   LOGIN_PROVIDER_NOT_FOUND = "Login Provider not found",
+  USER_DISABLED = "This user has been disabled",
+}
+
+export enum ResetError {
+  USER_IMPOSSIBLE_TO_RESET = "This user can't reset their password",
 }

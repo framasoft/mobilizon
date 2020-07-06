@@ -69,6 +69,9 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
       {:error, :user_not_found} ->
         {:error, "No user with this email was found"}
 
+      {:error, :disabled_user} ->
+        {:error, "This user has been disabled"}
+
       {:error, _error} ->
         {:error, "Impossible to authenticate, either your email or password are invalid."}
     end

@@ -67,13 +67,20 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticator do
                # Then we can verify the user's password
                :ok <- bind_user(connection, base, uid_field, uid, password) do
             case fetch_user(email) do
-              %User{} = user ->
+              %User{disabled: false} = user ->
                 user
+
+              %User{disabled: true} = _user ->
+                {:error, :disabled_user}
 
               _ ->
                 register_user(email)
             end
           else
+            {:error, err}
+            when err in [:ldap_search_email_not_found, :ldap_search_email_not_found] ->
+              {:ldap, err}
+
             {:error, error} ->
               {:error, error}
 
