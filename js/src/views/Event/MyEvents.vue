@@ -169,13 +169,24 @@ export default class MyEvents extends Vue {
 
   drafts: IEvent[] = [];
 
-  static monthlyParticipations(participations: IParticipant[]): Map<string, Participant[]> {
+  static monthlyParticipations(
+    participations: IParticipant[],
+    revertSort: boolean = false
+  ): Map<string, Participant[]> {
     const res = participations.filter(
       ({ event, role }) => event.beginsOn != null && role !== ParticipantRole.REJECTED
     );
-    res.sort(
-      (a: IParticipant, b: IParticipant) => a.event.beginsOn.getTime() - b.event.beginsOn.getTime()
-    );
+    if (revertSort) {
+      res.sort(
+        (a: IParticipant, b: IParticipant) =>
+          b.event.beginsOn.getTime() - a.event.beginsOn.getTime()
+      );
+    } else {
+      res.sort(
+        (a: IParticipant, b: IParticipant) =>
+          a.event.beginsOn.getTime() - b.event.beginsOn.getTime()
+      );
+    }
     return res.reduce((acc: Map<string, IParticipant[]>, participation: IParticipant) => {
       const month = new Date(participation.event.beginsOn).toLocaleDateString(undefined, {
         year: "numeric",
@@ -193,7 +204,7 @@ export default class MyEvents extends Vue {
   }
 
   get monthlyPastParticipations(): Map<string, Participant[]> {
-    return MyEvents.monthlyParticipations(this.pastParticipations);
+    return MyEvents.monthlyParticipations(this.pastParticipations, true);
   }
 
   loadMoreFutureParticipations() {
@@ -206,13 +217,19 @@ export default class MyEvents extends Vue {
       },
       // Transform the previous result with new data
       updateQuery: (previousResult, { fetchMoreResult }) => {
+        const oldParticipations = previousResult.loggedUser.participations;
         const newParticipations = fetchMoreResult.loggedUser.participations;
-        this.hasMoreFutureParticipations = newParticipations.length === this.limit;
+        this.hasMoreFutureParticipations =
+          newParticipations.total === oldParticipations.length + newParticipations.length;
 
         return {
           loggedUser: {
             __typename: previousResult.loggedUser.__typename,
-            participations: [...previousResult.loggedUser.participations, ...newParticipations],
+            participations: {
+              __typename: newParticipations.__typename,
+              total: newParticipations.total,
+              elements: [...oldParticipations.elements, ...newParticipations.elements],
+            },
           },
         };
       },
@@ -229,13 +246,19 @@ export default class MyEvents extends Vue {
       },
       // Transform the previous result with new data
       updateQuery: (previousResult, { fetchMoreResult }) => {
+        const oldParticipations = previousResult.loggedUser.participations;
         const newParticipations = fetchMoreResult.loggedUser.participations;
-        this.hasMorePastParticipations = newParticipations.length === this.limit;
+        this.hasMorePastParticipations =
+          newParticipations.total === oldParticipations.length + newParticipations.length;
 
         return {
           loggedUser: {
             __typename: previousResult.loggedUser.__typename,
-            participations: [...previousResult.loggedUser.participations, ...newParticipations],
+            participations: {
+              __typename: newParticipations.__typename,
+              total: newParticipations.total,
+              elements: [...oldParticipations.elements, ...newParticipations.elements],
+            },
           },
         };
       },
