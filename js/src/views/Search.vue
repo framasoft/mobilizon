@@ -13,7 +13,7 @@
         </template>
         <div v-if="searchEvents.total > 0" class="columns is-multiline">
           <div
-            class="column is-one-quarter-desktop is-half-mobile"
+            class="column is-one-quarter-desktop"
             v-for="event in searchEvents.elements"
             :key="event.uuid"
           >
