@@ -34,8 +34,8 @@
           placeholder="Type or select a time..."
           icon="clock"
           v-model="dateWithTime"
-          :min-time="minDatetime"
-          :max-time="maxDatetime"
+          :min-time="minTime"
+          :max-time="maxTime"
           size="is-small"
           inline
         >
@@ -99,6 +99,28 @@ export default class DateTimePicker extends Vue {
      * @type {Date}
      */
     this.$emit("input", this.dateWithTime);
+  }
+
+  get minTime(): Date | null {
+    if (this.minDatetime && this.datesAreOnSameDay(this.dateWithTime, this.minDatetime)) {
+      return this.minDatetime;
+    }
+    return null;
+  }
+
+  get maxTime(): Date | null {
+    if (this.maxDatetime && this.datesAreOnSameDay(this.dateWithTime, this.maxDatetime)) {
+      return this.maxDatetime;
+    }
+    return null;
+  }
+
+  private datesAreOnSameDay(first: Date, second: Date): boolean {
+    return (
+      first.getFullYear() === second.getFullYear() &&
+      first.getMonth() === second.getMonth() &&
+      first.getDate() === second.getDate()
+    );
   }
 }
 </script>
