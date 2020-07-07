@@ -217,4 +217,167 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
              }
     end
   end
+
+  @admin_settings_fragment """
+  fragment adminSettingsFragment on AdminSettings {
+    instanceName
+    instanceDescription
+    instanceLongDescription
+    contact
+    instanceTerms
+    instanceTermsType
+    instanceTermsUrl
+    instancePrivacyPolicy
+    instancePrivacyPolicyType
+    instancePrivacyPolicyUrl
+    instanceRules
+    registrationsOpen
+  }
+  """
+
+  describe "Resolver: Get the instance admin settings" do
+    @admin_settings_query """
+    query {
+      adminSettings {
+        ...adminSettingsFragment
+      }
+    }
+    #{@admin_settings_fragment}
+    """
+
+    setup %{conn: conn} do
+      Cachex.clear(:config)
+      [conn: conn]
+    end
+
+    test "from config files", %{conn: conn} do
+      admin = insert(:user, role: :administrator)
+
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(query: @admin_settings_query)
+
+      assert res["data"]["adminSettings"]["instanceName"] ==
+               Application.get_env(:mobilizon, :instance)[:name]
+
+      assert res["data"]["adminSettings"]["registrationsOpen"] ==
+               Application.get_env(:mobilizon, :instance)[:registrations_open]
+    end
+
+    @instance_name "My Awesome Instance"
+    test "from DB", %{conn: conn} do
+      admin = insert(:user, role: :administrator)
+      insert(:admin_setting, group: "instance", name: "instance_name", value: @instance_name)
+      insert(:admin_setting, group: "instance", name: "registrations_open", value: "false")
+
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(query: @admin_settings_query)
+
+      assert res["data"]["adminSettings"]["instanceName"] == @instance_name
+
+      assert res["data"]["adminSettings"]["registrationsOpen"] == false
+    end
+
+    test "unless user isn't admin", %{conn: conn} do
+      admin = insert(:user)
+
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(query: @admin_settings_query)
+
+      assert hd(res["errors"])["message"] ==
+               "You need to be logged-in and an administrator to access admin settings"
+    end
+  end
+
+  describe "Resolver: Update the instance admin settings" do
+    setup %{conn: conn} do
+      Cachex.clear(:config)
+      [conn: conn]
+    end
+
+    @update_instance_admin_settings_mutation """
+    mutation SaveAdminSettings(
+      $instanceName: String
+      $instanceDescription: String
+      $instanceLongDescription: String
+      $contact: String
+      $instanceTerms: String
+      $instanceTermsType: InstanceTermsType
+      $instanceTermsUrl: String
+      $instancePrivacyPolicy: String
+      $instancePrivacyPolicyType: InstancePrivacyType
+      $instancePrivacyPolicyUrl: String
+      $instanceRules: String
+      $registrationsOpen: Boolean
+      ) {
+      saveAdminSettings(
+        instanceName: $instanceName
+        instanceDescription: $instanceDescription
+        instanceLongDescription: $instanceLongDescription
+        contact: $contact
+        instanceTerms: $instanceTerms
+        instanceTermsType: $instanceTermsType
+        instanceTermsUrl: $instanceTermsUrl
+        instancePrivacyPolicy: $instancePrivacyPolicy
+        instancePrivacyPolicyType: $instancePrivacyPolicyType
+        instancePrivacyPolicyUrl: $instancePrivacyPolicyUrl
+        instanceRules: $instanceRules
+        registrationsOpen: $registrationsOpen
+      ) {
+        ...adminSettingsFragment
+      }
+    }
+    #{@admin_settings_fragment}
+    """
+
+    @new_instance_name "new Instance Name"
+
+    test "does the setting update and updates instance actor as well", %{conn: conn} do
+      admin = insert(:user, role: :administrator)
+
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(query: @admin_settings_query)
+
+      assert res["data"]["adminSettings"]["instanceName"] ==
+               Application.get_env(:mobilizon, :instance)[:name]
+
+      assert res["data"]["adminSettings"]["registrationsOpen"] ==
+               Application.get_env(:mobilizon, :instance)[:registrations_open]
+
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_instance_admin_settings_mutation,
+          variables: %{"instanceName" => @new_instance_name, "registrationsOpen" => false}
+        )
+
+      assert res["data"]["saveAdminSettings"]["instanceName"] == @new_instance_name
+      assert res["data"]["saveAdminSettings"]["registrationsOpen"] == false
+
+      assert %Actor{name: @new_instance_name} = Relay.get_actor()
+    end
+
+    test "unless user isn't admin", %{conn: conn} do
+      admin = insert(:user)
+
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_instance_admin_settings_mutation,
+          variables: %{"instanceName" => @new_instance_name, "registrationsOpen" => false}
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "You need to be logged-in and an administrator to save admin settings"
+    end
+  end
 end

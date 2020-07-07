@@ -720,7 +720,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   """
   # credo:disable-for-lines:47
   @spec publish(Actor.t(), Activity.t()) :: :ok
-  def publish(actor, activity) do
+  def publish(actor, %Activity{recipients: recipients} = activity) do
     Logger.debug("Publishing an activity")
     Logger.debug(inspect(activity))
 
@@ -733,24 +733,26 @@ defmodule Mobilizon.Federation.ActivityPub do
       Relay.publish(activity)
     end
 
-    followers =
+    {recipients, followers} =
       if actor.followers_url in activity.recipients do
-        Actors.list_external_followers_for_actor(actor)
+        {Enum.filter(recipients, fn recipient -> recipient != actor.followers_url end),
+         Actors.list_external_followers_for_actor(actor)}
       else
-        []
+        {recipients, []}
       end
 
     # If we want to send to all members of the group, because this server is the one the group is on
-    members =
+    {recipients, members} =
       if is_announce_activity?(activity) and actor.type == :Group and
            actor.members_url in activity.recipients and is_nil(actor.domain) do
-        Actors.list_external_members_for_group(actor)
+        {Enum.filter(recipients, fn recipient -> recipient != actor.members_url end),
+         Actors.list_external_members_for_group(actor)}
       else
-        []
+        {recipients, []}
       end
 
     remote_inboxes =
-      (remote_actors(activity) ++ followers ++ members)
+      (remote_actors(recipients) ++ followers ++ members)
       |> Enum.map(fn follower -> follower.shared_inbox_url || follower.inbox_url end)
       |> Enum.uniq()
 
@@ -1045,7 +1047,7 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
-  @spec update_actor(Todo.t(), map, map) :: {:ok, Todo.t(), Activity.t()} | any
+  @spec update_todo(Todo.t(), map, map) :: {:ok, Todo.t(), Activity.t()} | any
   defp update_todo(%Todo{} = old_todo, args, additional) do
     with {:ok, %Todo{todo_list_id: todo_list_id} = todo} <- Todos.update_todo(old_todo, args),
          %TodoList{actor_id: group_id} = todo_list <- Todos.get_todo_list(todo_list_id),

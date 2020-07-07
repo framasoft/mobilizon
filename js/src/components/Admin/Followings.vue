@@ -56,18 +56,20 @@
           </template>
         </b-table-column>
 
-        <b-table-column field="targetActor.updatedAt" :label="$t('Date')" sortable>{{
-          props.row.updatedAt | formatDateTimeString
-        }}</b-table-column>
+        <b-table-column field="targetActor.updatedAt" :label="$t('Date')" sortable>
+          <span :title="$options.filters.formatDateTimeString(props.row.updatedAt)">{{
+            timeago(props.row.updatedAt)
+          }}</span></b-table-column
+        >
       </template>
 
       <template slot="detail" slot-scope="props">
         <article>
           <div class="content">
-            <strong>{{ props.row.targetActor.domain }}</strong>
-            <small>@{{ props.row.targetActor.preferredUsername }}</small>
-            <small>31m</small>
-            <br />
+            <strong>{{ props.row.targetActor.name }}</strong>
+            <small v-if="props.row.actor.preferredUsername !== 'relay'"
+              >@{{ props.row.targetActor.preferredUsername }}</small
+            >
             <p v-html="props.row.targetActor.summary" />
           </div>
         </article>

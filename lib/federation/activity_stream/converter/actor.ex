@@ -21,12 +21,14 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
     defdelegate model_to_as(actor), to: ActorConverter
   end
 
+  @allowed_types ["Application", "Group", "Organization", "Person", "Service"]
+
   @doc """
   Converts an AP object data to our internal data structure.
   """
   @impl Converter
   @spec as_to_model_data(map()) :: {:ok, map()}
-  def as_to_model_data(data) do
+  def as_to_model_data(%{"type" => type} = data) when type in @allowed_types do
     avatar =
       data["icon"]["url"] &&
         %{
@@ -61,6 +63,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
       type: data["type"]
     }
   end
+
+  def as_to_model_data(_), do: :error
 
   @doc """
   Convert an actor struct to an ActivityStream representation.

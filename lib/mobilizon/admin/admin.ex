@@ -99,6 +99,10 @@ defmodule Mobilizon.Admin do
     |> Repo.transaction()
   end
 
+  def clear_settings(group) do
+    Setting |> where([s], s.group == ^group) |> Repo.delete_all()
+  end
+
   defp do_save_setting(transaction, _group, args) when args == %{}, do: transaction
 
   defp do_save_setting(transaction, group, args) do

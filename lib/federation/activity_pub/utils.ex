@@ -114,10 +114,9 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
 
   def maybe_federate(_), do: :ok
 
-  def remote_actors(%{data: %{"to" => to} = data}) do
-    to = to ++ (data["cc"] || [])
-
-    to
+  @spec remote_actors(list(String.t())) :: list(Actor.t())
+  def remote_actors(recipients) do
+    recipients
     |> Enum.map(fn url -> ActivityPub.get_or_fetch_actor_by_url(url) end)
     |> Enum.map(fn {status, actor} ->
       case status do

@@ -316,4 +316,12 @@ defmodule Mobilizon.Factory do
       path: "/#{title}"
     }
   end
+
+  def admin_setting_factory do
+    %Mobilizon.Admin.Setting{
+      group: sequence("group"),
+      name: sequence("name"),
+      value: sequence("value")
+    }
+  end
 end
