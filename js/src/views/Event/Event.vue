@@ -328,21 +328,6 @@
                       >{{ $t("Show map") }}</span
                     >
                   </div>
-                  <b-modal
-                    v-if="physicalAddress && physicalAddress.geom"
-                    :active.sync="showMap"
-                    scroll="keep"
-                  >
-                    <div class="map">
-                      <map-leaflet
-                        :coords="physicalAddress.geom"
-                        :marker="{
-                          text: physicalAddress.fullName,
-                          icon: physicalAddress.poiInfos.poiIcon.icon,
-                        }"
-                      />
-                    </div>
-                  </b-modal>
                 </div>
               </event-metadata-block>
               <event-metadata-block :title="$t('Date and time')" icon="calendar">
@@ -502,6 +487,17 @@
                 </div>
               </form>
             </section>
+          </div>
+        </b-modal>
+        <b-modal v-if="physicalAddress && physicalAddress.geom" :active.sync="showMap">
+          <div class="map">
+            <map-leaflet
+              :coords="physicalAddress.geom"
+              :marker="{
+                text: physicalAddress.fullName,
+                icon: physicalAddress.poiInfos.poiIcon.icon,
+              }"
+            />
           </div>
         </b-modal>
       </div>
@@ -1174,12 +1170,6 @@ div.sidebar {
           }
         }
       }
-
-      div.map {
-        height: 900px;
-        width: 100%;
-        padding: 25px 5px 0;
-      }
     }
 
     span.online-address {
@@ -1269,5 +1259,11 @@ a.participations-link {
 
 .event-status .tag {
   font-size: 1rem;
+}
+
+div.map {
+  height: 900px;
+  width: 100%;
+  padding: 25px 5px 0;
 }
 </style>
