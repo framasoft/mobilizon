@@ -11,6 +11,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   alias Mobilizon.Config
   alias Mobilizon.Conversations.Comment
   alias Mobilizon.Events.Event
+  alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Relay
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Service.Statistics
@@ -158,21 +159,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
         context: %{current_user: %User{role: role}}
       })
       when is_admin(role) do
-    {:ok,
-     %{
-       instance_description: Config.instance_description(),
-       instance_long_description: Config.instance_long_description(),
-       instance_name: Config.instance_name(),
-       registrations_open: Config.instance_registrations_open?(),
-       contact: Config.contact(),
-       instance_terms: Config.instance_terms(),
-       instance_terms_type: Config.instance_terms_type(),
-       instance_terms_url: Config.instance_terms_url(),
-       instance_privacy_policy: Config.instance_privacy(),
-       instance_privacy_policy_type: Config.instance_privacy_type(),
-       instance_privacy_policy_url: Config.instance_privacy_url(),
-       instance_rules: Config.instance_rules()
-     }}
+    {:ok, Config.admin_settings()}
   end
 
   def get_settings(_parent, _args, _resolution) do
@@ -183,19 +170,20 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
         context: %{current_user: %User{role: role}}
       })
       when is_admin(role) do
-    with {:ok, res} <- Admin.save_settings("instance", args) do
-      res =
-        res
-        |> Enum.map(fn {key, %Setting{value: value}} ->
-          case value do
-            "true" -> {key, true}
-            "false" -> {key, false}
-            value -> {key, value}
-          end
-        end)
-        |> Enum.into(%{})
-
+    with {:ok, res} <- Admin.save_settings("instance", args),
+         res <-
+           res
+           |> Enum.map(fn {key, %Setting{value: value}} ->
+             case value do
+               "true" -> {key, true}
+               "false" -> {key, false}
+               value -> {key, value}
+             end
+           end)
+           |> Enum.into(%{}),
+         :ok <- eventually_update_instance_actor(res) do
       Config.clear_config_cache()
+      Cachex.put(:config, :admin_config, res)
 
       {:ok, res}
     end
@@ -282,6 +270,41 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
 
       {:error, {:error, err}} when is_bitstring(err) ->
         {:error, err}
+    end
+  end
+
+  @spec eventually_update_instance_actor(map()) :: :ok
+  defp eventually_update_instance_actor(admin_setting_args) do
+    args = %{}
+    new_instance_description = Map.get(admin_setting_args, :instance_description)
+    new_instance_name = Map.get(admin_setting_args, :instance_name)
+
+    %{
+      instance_description: old_instance_description,
+      instance_name: old_instance_name
+    } = Config.admin_settings()
+
+    args =
+      if not is_nil(new_instance_description) &&
+           new_instance_description != old_instance_description,
+         do: Map.put(args, :summary, new_instance_description),
+         else: args
+
+    args =
+      if not is_nil(new_instance_name) && new_instance_name != old_instance_name,
+        do: Map.put(args, :name, new_instance_name),
+        else: args
+
+    with {:changes, true} <- {:changes, args != %{}},
+         %Actor{} = instance_actor <- Relay.get_actor(),
+         {:ok, _activity, _actor} <- ActivityPub.update(:actor, instance_actor, args, true) do
+      :ok
+    else
+      {:changes, false} ->
+        :ok
+
+      err ->
+        err
     end
   end
 end

@@ -231,6 +231,7 @@ defmodule Mobilizon.Config do
 
   def anonymous_actor_id, do: get_cached_value(:anonymous_actor_id)
   def relay_actor_id, do: get_cached_value(:relay_actor_id)
+  def admin_settings, do: get_cached_value(:admin_config)
 
   @spec get(module | atom) :: any
   def get(key), do: get(key, nil)
@@ -298,6 +299,24 @@ defmodule Mobilizon.Config do
     with {:ok, %Actor{id: actor_id}} <- Actors.get_or_create_internal_actor("relay") do
       actor_id
     end
+  end
+
+  @spec create_cache(atom()) :: map()
+  defp create_cache(:admin_config) do
+    %{
+      instance_description: instance_description(),
+      instance_long_description: instance_long_description(),
+      instance_name: instance_name(),
+      registrations_open: instance_registrations_open?(),
+      contact: contact(),
+      instance_terms: instance_terms(),
+      instance_terms_type: instance_terms_type(),
+      instance_terms_url: instance_terms_url(),
+      instance_privacy_policy: instance_privacy(),
+      instance_privacy_policy_type: instance_privacy_type(),
+      instance_privacy_policy_url: instance_privacy_url(),
+      instance_rules: instance_rules()
+    }
   end
 
   def clear_config_cache do
