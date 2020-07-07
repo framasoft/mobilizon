@@ -288,8 +288,12 @@
                       <b-icon icon="calendar-plus" />
                     </span>
                   </b-dropdown-item>
-                  <b-dropdown-item aria-role="listitem" v-if="ableToReport">
-                    <span @click="isReportModalActive = true">
+                  <b-dropdown-item
+                    aria-role="listitem"
+                    v-if="ableToReport"
+                    @click="isReportModalActive = true"
+                  >
+                    <span>
                       {{ $t("Report") }}
                       <b-icon icon="flag" />
                     </span>
