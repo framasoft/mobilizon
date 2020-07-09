@@ -1,0 +1,12 @@
+{
+  "@context": "https://www.w3.org/ns/activitystreams",
+  "actor": "http://mastodon.example.org/users/admin",
+  "attachment": [],
+  "attributedTo": "http://mastodon.example.org/users/admin",
+  "content": "<p>this post was not actually written by Haelwenn</p>",
+  "id": "https://info.pleroma.site/activity.json",
+  "published": "2018-09-01T22:15:00Z",
+  "tag": [],
+  "to": ["https://www.w3.org/ns/activitystreams#Public"],
+  "type": "Note"
+}

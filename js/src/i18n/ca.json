@@ -30,7 +30,7 @@
   "Approve": "Aprova",
   "Are you really sure you want to delete your whole account? You'll lose everything. Identities, settings, events created, messages and participations will be gone forever.": "Segur que voleu suprimir tot el compte? Ho perdràs tot. Les identitats, la configuració, els esdeveniments creats, els missatges i les participacions desapareixeran per sempre.",
   "Are you sure you want to <b>delete</b> this comment? This action cannot be undone.": "Segur que vols <b>esborrar</b> aquest comentari? Aquesta acció és irreversible.",
-  "Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the conversation with the event creator or edit its event instead.": "Segur que vols <b>esborrar</b> aquesta activitat? Aquesta acció és irreversible. En comptes d'això, pots parlar amb la persona creadora de l'activitat o modificar l'activitat.",
+  "Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the discussion with the event creator or edit its event instead.": "Segur que vols <b>esborrar</b> aquesta activitat? Aquesta acció és irreversible. En comptes d'això, pots parlar amb la persona creadora de l'activitat o modificar l'activitat.",
   "Are you sure you want to cancel the event creation? You'll lose all modifications.": "Segur que vols esborrar aquesta activitat? Perdràs tots els canvis.",
   "Are you sure you want to cancel the event edition? You'll lose all modifications.": "Segur que vols canceŀlar l'edició? Perdràs tots els canvis que hagis fet.",
   "Are you sure you want to cancel your participation at event \"{title}\"?": "Segur que vols deixar de participar a l'activitat \"{title}\"?",

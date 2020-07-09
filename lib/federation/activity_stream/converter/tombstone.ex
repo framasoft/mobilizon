@@ -28,6 +28,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Tombstone do
     %{
       "type" => "Tombstone",
       "id" => tombstone.uri,
+      "actor" => tombstone.actor.url,
       "deleted" => tombstone.inserted_at
     }
   end

@@ -3,24 +3,31 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
   Module that provides functions to explore and fetch collections on a group
   """
 
-  alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityStream.Converter.Member, as: MemberConverter
-  alias Mobilizon.Federation.ActivityStream.Converter.Resource, as: ResourceConverter
-  alias Mobilizon.Federation.HTTPSignatures.Signature
-  alias Mobilizon.Resources
+  alias Mobilizon.Federation.ActivityPub.{Fetcher, Transmogrifier}
   require Logger
-
-  import Mobilizon.Federation.ActivityPub.Utils,
-    only: [maybe_date_fetch: 2, sign_fetch: 4]
 
   @spec fetch_group(String.t(), Actor.t()) :: :ok
   def fetch_group(group_url, %Actor{} = on_behalf_of) do
-    with {:ok, %Actor{resources_url: resources_url, members_url: members_url}} <-
+    with {:ok,
+          %Actor{
+            outbox_url: outbox_url,
+            resources_url: resources_url,
+            members_url: members_url,
+            posts_url: posts_url,
+            todos_url: todos_url,
+            discussions_url: discussions_url,
+            events_url: events_url
+          }} <-
            ActivityPub.get_or_fetch_actor_by_url(group_url) do
+      fetch_collection(outbox_url, on_behalf_of)
       fetch_collection(members_url, on_behalf_of)
       fetch_collection(resources_url, on_behalf_of)
+      fetch_collection(posts_url, on_behalf_of)
+      fetch_collection(todos_url, on_behalf_of)
+      fetch_collection(discussions_url, on_behalf_of)
+      fetch_collection(events_url, on_behalf_of)
     end
   end
 
@@ -30,9 +37,25 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
     Logger.debug("Fetching and preparing collection from url")
     Logger.debug(inspect(collection_url))
 
-    with {:ok, data} <- fetch(collection_url, on_behalf_of) do
+    with {:ok, data} <- Fetcher.fetch(collection_url, on_behalf_of: on_behalf_of) do
       Logger.debug("Fetch ok, passing to process_collection")
       process_collection(data, on_behalf_of)
+    end
+  end
+
+  @spec fetch_element(String.t(), Actor.t()) :: any()
+  def fetch_element(url, %Actor{} = on_behalf_of) do
+    with {:ok, data} <- Fetcher.fetch(url, on_behalf_of: on_behalf_of) do
+      case handling_element(data) do
+        {:ok, _activity, entity} ->
+          {:ok, entity}
+
+        {:ok, entity} ->
+          {:ok, entity}
+
+        err ->
+          {:error, err}
+      end
     end
   end
 
@@ -55,55 +78,26 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
        when is_bitstring(first) do
     Logger.debug("OrderedCollection has a first property pointing to an URI")
 
-    with {:ok, data} <- fetch(first, on_behalf_of) do
+    with {:ok, data} <- Fetcher.fetch(first, on_behalf_of: on_behalf_of) do
       Logger.debug("Fetched the collection for first property")
       process_collection(data, on_behalf_of)
     end
   end
 
-  defp handling_element(%{"type" => "Member"} = data) do
-    Logger.debug("Handling Member element")
+  defp handling_element(data) when is_map(data) do
+    activity = %{
+      "type" => "Create",
+      "to" => data["to"],
+      "cc" => data["cc"],
+      "actor" => data["actor"],
+      "attributedTo" => data["attributedTo"],
+      "object" => data
+    }
 
-    data
-    |> MemberConverter.as_to_model_data()
-    |> Actors.create_member()
+    Transmogrifier.handle_incoming(activity)
   end
 
-  defp handling_element(%{"type" => type} = data)
-       when type in ["Document", "ResourceCollection"] do
-    Logger.debug("Handling Resource element")
-
-    data
-    |> ResourceConverter.as_to_model_data()
-    |> Resources.create_resource()
-  end
-
-  defp fetch(url, %Actor{} = on_behalf_of) do
-    with date <- Signature.generate_date_header(),
-         headers <-
-           [{:Accept, "application/activity+json"}]
-           |> maybe_date_fetch(date)
-           |> sign_fetch(on_behalf_of, url, date),
-         %HTTPoison.Response{status_code: 200, body: body} <-
-           HTTPoison.get!(url, headers,
-             follow_redirect: true,
-             ssl: [{:versions, [:"tlsv1.2"]}]
-           ),
-         {:ok, data} <-
-           Jason.decode(body) do
-      {:ok, data}
-    else
-      # Actor is gone, probably deleted
-      {:ok, %HTTPoison.Response{status_code: 410}} ->
-        Logger.info("Response HTTP 410")
-        {:error, :actor_deleted}
-
-      {:origin_check, false} ->
-        {:error, "Origin check failed"}
-
-      e ->
-        Logger.warn("Could not decode actor at fetch #{url}, #{inspect(e)}")
-        {:error, e}
-    end
+  defp handling_element(uri) when is_binary(uri) do
+    ActivityPub.fetch_object_from_url(uri)
   end
 end

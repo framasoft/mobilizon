@@ -119,7 +119,7 @@ defmodule Mobilizon.Config do
 
   @spec instance_user_agent :: String.t()
   def instance_user_agent,
-    do: "#{instance_name()} #{instance_hostname()} - Mobilizon #{instance_version()}"
+    do: "#{instance_hostname()} - Mobilizon #{instance_version()}"
 
   @spec instance_federating :: String.t()
   def instance_federating, do: instance_config()[:federating]

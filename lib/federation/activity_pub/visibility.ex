@@ -8,7 +8,7 @@ defmodule Mobilizon.Federation.ActivityPub.Visibility do
   Utility functions related to content visibility
   """
 
-  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Discussions.Comment
 
   alias Mobilizon.Federation.ActivityPub.Activity
 

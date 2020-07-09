@@ -87,17 +87,23 @@ defmodule Mobilizon.Web.Router do
     get("/resource/:uuid", PageController, :resource, as: "resource")
     get("/todo-list/:uuid", PageController, :todo_list, as: "todo_list")
     get("/todo/:uuid", PageController, :todo, as: "todo")
+    get("/@:name/todos", PageController, :todos)
     get("/@:name/resources", PageController, :resources)
+    get("/@:name/posts", PageController, :posts)
+    get("/@:name/discussions", PageController, :discussions)
+    get("/@:name/events", PageController, :events)
+    get("/p/:slug", PageController, :post)
+    get("/@:name/c/:slug", PageController, :discussion)
   end
 
   scope "/", Mobilizon.Web do
     pipe_through(:activity_pub)
+    pipe_through(:activity_pub_signature)
 
     get("/@:name/outbox", ActivityPubController, :outbox)
     get("/@:name/following", ActivityPubController, :following)
     get("/@:name/followers", ActivityPubController, :followers)
     get("/@:name/members", ActivityPubController, :members)
-    get("/@:name/todo-lists", ActivityPubController, :todo_lists)
   end
 
   scope "/", Mobilizon.Web do

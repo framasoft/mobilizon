@@ -7,21 +7,33 @@ schema {
   subscription: RootSubscriptionType
 }
 
-"""An action log"""
+"""
+An action log
+"""
 type ActionLog {
-  """The action that was done"""
+  """
+  The action that was done
+  """
   action: ActionLogAction
 
-  """The actor that acted"""
+  """
+  The actor that acted
+  """
   actor: Actor
 
-  """Internal ID for this comment"""
+  """
+  Internal ID for this comment
+  """
   id: ID
 
-  """The time when the action was performed"""
+  """
+  The time when the action was performed
+  """
   insertedAt: DateTime
 
-  """The object that was acted upon"""
+  """
+  The object that was acted upon
+  """
   object: ActionLogObject
 }
 
@@ -36,78 +48,128 @@ enum ActionLogAction {
   REPORT_UPDATE_RESOLVED
 }
 
-"""The objects that can be in an action log"""
+"""
+The objects that can be in an action log
+"""
 interface ActionLogObject {
-  """Internal ID for this object"""
+  """
+  Internal ID for this object
+  """
   id: ID
 }
 
-"""An ActivityPub actor"""
+"""
+An ActivityPub actor
+"""
 interface Actor {
-  """The actor's avatar picture"""
+  """
+  The actor's avatar picture
+  """
   avatar: Picture
 
-  """The actor's banner picture"""
+  """
+  The actor's banner picture
+  """
   banner: Picture
 
-  """The actor's domain if (null if it's this instance)"""
+  """
+  The actor's domain if (null if it's this instance)
+  """
   domain: String
 
-  """List of followers"""
+  """
+  List of followers
+  """
   followers: [Follower]
 
-  """Number of followers for this actor"""
+  """
+  Number of followers for this actor
+  """
   followersCount: Int
 
-  """List of followings"""
+  """
+  List of followings
+  """
   following: [Follower]
 
-  """Number of actors following this actor"""
+  """
+  Number of actors following this actor
+  """
   followingCount: Int
 
-  """Internal ID for this actor"""
+  """
+  Internal ID for this actor
+  """
   id: ID
 
-  """If the actor is from this instance"""
+  """
+  If the actor is from this instance
+  """
   local: Boolean
 
-  """Whether the actors manually approves followers"""
+  """
+  Whether the actors manually approves followers
+  """
   manuallyApprovesFollowers: Boolean
 
-  """The actor's displayed name"""
+  """
+  The actor's displayed name
+  """
   name: String
 
-  """The actor's preferred username"""
+  """
+  The actor's preferred username
+  """
   preferredUsername: String
 
-  """The actor's summary"""
+  """
+  The actor's summary
+  """
   summary: String
 
-  """If the actor is suspended"""
+  """
+  If the actor is suspended
+  """
   suspended: Boolean
 
-  """The type of Actor (Person, Group,…)"""
+  """
+  The type of Actor (Person, Group,…)
+  """
   type: ActorType
 
-  """The ActivityPub actor's URL"""
+  """
+  The ActivityPub actor's URL
+  """
   url: String
 }
 
-"""The list of types an actor can be"""
+"""
+The list of types an actor can be
+"""
 enum ActorType {
-  """An ActivityPub Application"""
+  """
+  An ActivityPub Application
+  """
   APPLICATION
 
-  """An ActivityPub Group"""
+  """
+  An ActivityPub Group
+  """
   GROUP
 
-  """An ActivityPub Organization"""
+  """
+  An ActivityPub Organization
+  """
   ORGANIZATION
 
-  """An ActivityPub Person"""
+  """
+  An ActivityPub Person
+  """
   PERSON
 
-  """An ActivityPub Service"""
+  """
+  An ActivityPub Service
+  """
   SERVICE
 }
 
@@ -115,17 +177,23 @@ type Address {
   country: String
   description: String
 
-  """The geocoordinates for the point where this address is"""
+  """
+  The geocoordinates for the point where this address is
+  """
   geom: Point
   id: ID
 
-  """The address's locality"""
+  """
+  The address's locality
+  """
   locality: String
   originId: String
   postalCode: String
   region: String
 
-  """The address's street name (with number)"""
+  """
+  The address's street name (with number)
+  """
   street: String
   type: String
   url: String
@@ -135,17 +203,23 @@ input AddressInput {
   country: String
   description: String
 
-  """The geocoordinates for the point where this address is"""
+  """
+  The geocoordinates for the point where this address is
+  """
   geom: Point
   id: ID
 
-  """The address's locality"""
+  """
+  The address's locality
+  """
   locality: String
   originId: String
   postalCode: String
   region: String
 
-  """The address's street name (with number)"""
+  """
+  The address's street name (with number)
+  """
   street: String
   type: String
   url: String
@@ -206,65 +280,100 @@ type AnonymousParticipationValidationEmail {
 
 """
 Represents an application
-
 """
 type Application implements Actor {
-  """The actor's avatar picture"""
+  """
+  The actor's avatar picture
+  """
   avatar: Picture
 
-  """The actor's banner picture"""
+  """
+  The actor's banner picture
+  """
   banner: Picture
 
-  """The actor's domain if (null if it's this instance)"""
+  """
+  The actor's domain if (null if it's this instance)
+  """
   domain: String
 
-  """List of followers"""
+  """
+  List of followers
+  """
   followers: [Follower]
 
-  """Number of followers for this actor"""
+  """
+  Number of followers for this actor
+  """
   followersCount: Int
 
-  """List of followings"""
+  """
+  List of followings
+  """
   following: [Follower]
 
-  """Number of actors following this actor"""
+  """
+  Number of actors following this actor
+  """
   followingCount: Int
 
-  """Internal ID for this application"""
+  """
+  Internal ID for this application
+  """
   id: ID
 
-  """If the actor is from this instance"""
+  """
+  If the actor is from this instance
+  """
   local: Boolean
 
-  """Whether the actors manually approves followers"""
+  """
+  Whether the actors manually approves followers
+  """
   manuallyApprovesFollowers: Boolean
 
-  """The actor's displayed name"""
+  """
+  The actor's displayed name
+  """
   name: String
 
-  """The actor's preferred username"""
+  """
+  The actor's preferred username
+  """
   preferredUsername: String
 
-  """The actor's summary"""
+  """
+  The actor's summary
+  """
   summary: String
 
-  """If the actor is suspended"""
+  """
+  If the actor is suspended
+  """
   suspended: Boolean
 
-  """The type of Actor (Person, Group,…)"""
+  """
+  The type of Actor (Person, Group,…)
+  """
   type: ActorType
 
-  """The ActivityPub actor's URL"""
+  """
+  The ActivityPub actor's URL
+  """
   url: String
 }
 
-"""A comment"""
+"""
+A comment
+"""
 type Comment implements ActionLogObject {
   actor: Person
   deletedAt: DateTime
   event: Event
 
-  """Internal ID for this comment"""
+  """
+  Internal ID for this comment
+  """
   id: ID
   inReplyToComment: Comment
   insertedAt: DateTime
@@ -281,25 +390,39 @@ type Comment implements ActionLogObject {
   visibility: CommentVisibility
 }
 
-"""The list of visibility options for a comment"""
+"""
+The list of visibility options for a comment
+"""
 enum CommentVisibility {
-  """visible only to people invited"""
+  """
+  visible only to people invited
+  """
   INVITE
 
-  """Visible only after a moderator accepted"""
+  """
+  Visible only after a moderator accepted
+  """
   MODERATED
 
-  """Visible only to people members of the group or followers of the person"""
+  """
+  Visible only to people members of the group or followers of the person
+  """
   PRIVATE
 
-  """Publicly listed and federated. Can be shared."""
+  """
+  Publicly listed and federated. Can be shared.
+  """
   PUBLIC
 
-  """Visible only to people with the link - or invited"""
+  """
+  Visible only to people with the link - or invited
+  """
   UNLISTED
 }
 
-"""A config object"""
+"""
+A config object
+"""
 type Config {
   anonymous: Anonymous
   countryCode: String
@@ -313,19 +436,27 @@ type Config {
   registrationsWhitelist: Boolean
   resourceProviders: [ResourceProvider]
 
-  """The instance's terms"""
+  """
+  The instance's terms
+  """
   terms(locale: String = "en"): Terms
 }
 
-"""A conversation"""
-type Conversation {
+"""
+A discussion
+"""
+type discussion {
   actor: Actor
 
-  """The comments for the conversation"""
+  """
+  The comments for the discussion
+  """
   comments(limit: Int = 10, page: Int = 1): PaginatedCommentList
   creator: Person
 
-  """Internal ID for this conversation"""
+  """
+  Internal ID for this discussion
+  """
   id: ID
   insertedAt: DateTime
   lastComment: Comment
@@ -335,19 +466,29 @@ type Conversation {
 }
 
 type Dashboard {
-  """Last public event publish"""
+  """
+  Last public event publish
+  """
   lastPublicEventPublished: Event
 
-  """The number of local comments"""
+  """
+  The number of local comments
+  """
   numberOfComments: Int
 
-  """The number of local events"""
+  """
+  The number of local events
+  """
   numberOfEvents: Int
 
-  """The number of current opened reports"""
+  """
+  The number of current opened reports
+  """
   numberOfReports: Int
 
-  """The number of local users"""
+  """
+  The number of local users
+  """
   numberOfUsers: Int
 }
 
@@ -359,161 +500,260 @@ be converted to UTC and any UTC offset other than 0 will be rejected.
 """
 scalar DateTime
 
-"""Represents a deleted feed_token"""
+"""
+Represents a deleted feed_token
+"""
 type DeletedFeedToken {
   actor: DeletedObject
   user: DeletedObject
 }
 
-"""Represents a deleted member"""
+"""
+Represents a deleted member
+"""
 type DeletedMember {
   actor: DeletedObject
   parent: DeletedObject
 }
 
-"""A struct containing the id of the deleted object"""
+"""
+A struct containing the id of the deleted object
+"""
 type DeletedObject {
   id: ID
 }
 
-"""Represents a deleted participant"""
+"""
+Represents a deleted participant
+"""
 type DeletedParticipant {
   actor: DeletedObject
   event: DeletedObject
   id: ID
 }
 
-"""An event"""
+"""
+An event
+"""
 type Event implements ActionLogObject {
-  """Who the event is attributed to (often a group)"""
+  """
+  Who the event is attributed to (often a group)
+  """
   attributedTo: Actor
 
-  """Datetime for when the event begins"""
+  """
+  Datetime for when the event begins
+  """
   beginsOn: DateTime
 
-  """The event's category"""
+  """
+  The event's category
+  """
   category: String
 
-  """The comments in reply to the event"""
+  """
+  The comments in reply to the event
+  """
   comments: [Comment]
 
-  """When the event was created"""
+  """
+  When the event was created
+  """
   createdAt: DateTime
 
-  """The event's description"""
+  """
+  The event's description
+  """
   description: String
 
-  """Whether or not the event is a draft"""
+  """
+  Whether or not the event is a draft
+  """
   draft: Boolean
 
-  """Datetime for when the event ends"""
+  """
+  Datetime for when the event ends
+  """
   endsOn: DateTime
 
-  """Internal ID for this event"""
+  """
+  Internal ID for this event
+  """
   id: ID
 
-  """The event's visibility"""
+  """
+  The event's visibility
+  """
   joinOptions: EventJoinOptions
 
-  """Whether the event is local or not"""
+  """
+  Whether the event is local or not
+  """
   local: Boolean
 
-  """Online address of the event"""
+  """
+  Online address of the event
+  """
   onlineAddress: String
 
-  """The event options"""
+  """
+  The event options
+  """
   options: EventOptions
 
-  """The event's organizer (as a person)"""
+  """
+  The event's organizer (as a person)
+  """
   organizerActor: Actor
   participantStats: ParticipantStats
 
-  """The event's participants"""
-  participants(actorId: ID, limit: Int = 10, page: Int = 1, roles: String = ""): PaginatedParticipantList
+  """
+  The event's participants
+  """
+  participants(
+    actorId: ID
+    limit: Int = 10
+    page: Int = 1
+    roles: String = ""
+  ): PaginatedParticipantList
 
-  """Phone address for the event"""
+  """
+  Phone address for the event
+  """
   phoneAddress: String
 
-  """The type of the event's address"""
+  """
+  The type of the event's address
+  """
   physicalAddress: Address
 
-  """The event's picture"""
+  """
+  The event's picture
+  """
   picture: Picture
 
-  """When the event was published"""
+  """
+  When the event was published
+  """
   publishAt: DateTime
 
-  """Events related to this one"""
+  """
+  Events related to this one
+  """
   relatedEvents: [Event]
 
-  """The event's description's slug"""
+  """
+  The event's description's slug
+  """
   slug: String
 
-  """Status of the event"""
+  """
+  Status of the event
+  """
   status: EventStatus
 
-  """The event's tags"""
+  """
+  The event's tags
+  """
   tags: [Tag]
 
-  """The event's title"""
+  """
+  The event's title
+  """
   title: String
 
-  """When the event was last updated"""
+  """
+  When the event was last updated
+  """
   updatedAt: DateTime
 
-  """The ActivityPub Event URL"""
+  """
+  The ActivityPub Event URL
+  """
   url: String
 
-  """The Event UUID"""
+  """
+  The Event UUID
+  """
   uuid: UUID
 
-  """The event's visibility"""
+  """
+  The event's visibility
+  """
   visibility: EventVisibility
 }
 
-"""The list of possible options for the event's status"""
+"""
+The list of possible options for the event's status
+"""
 enum EventCommentModeration {
-  """Anyone can comment under the event"""
+  """
+  Anyone can comment under the event
+  """
   ALLOW_ALL
 
-  """No one can comment except for the admin"""
+  """
+  No one can comment except for the admin
+  """
   CLOSED
 
-  """Every comment has to be moderated by the admin"""
+  """
+  Every comment has to be moderated by the admin
+  """
   MODERATED
 }
 
-"""The list of join options for an event"""
+"""
+The list of join options for an event
+"""
 enum EventJoinOptions {
-  """Anyone can join and is automatically accepted"""
+  """
+  Anyone can join and is automatically accepted
+  """
   FREE
 
-  """Participants must be invited"""
+  """
+  Participants must be invited
+  """
   INVITE
 
-  """Manual acceptation"""
+  """
+  Manual acceptation
+  """
   RESTRICTED
 }
 
 type EventOffer {
-  """The price amount for this offer"""
+  """
+  The price amount for this offer
+  """
   price: Float
 
-  """The currency for this price offer"""
+  """
+  The currency for this price offer
+  """
   priceCurrency: String
 
-  """The URL to access to this offer"""
+  """
+  The URL to access to this offer
+  """
   url: String
 }
 
 input EventOfferInput {
-  """The price amount for this offer"""
+  """
+  The price amount for this offer
+  """
   price: Float
 
-  """The currency for this price offer"""
+  """
+  The currency for this price offer
+  """
   priceCurrency: String
 
-  """The URL to access to this offer"""
+  """
+  The URL to access to this offer
+  """
   url: String
 }
 
@@ -523,10 +763,14 @@ type EventOptions {
   """
   anonymousParticipation: Boolean
 
-  """The list of special attendees"""
+  """
+  The list of special attendees
+  """
   attendees: [String]
 
-  """The policy on public comment moderation under the event"""
+  """
+  The policy on public comment moderation under the event
+  """
   commentModeration: EventCommentModeration
 
   """
@@ -534,31 +778,49 @@ type EventOptions {
   """
   hideOrganizerWhenGroupEvent: Boolean
 
-  """The maximum attendee capacity for this event"""
+  """
+  The maximum attendee capacity for this event
+  """
   maximumAttendeeCapacity: Int
 
-  """The list of offers to show for this event"""
+  """
+  The list of offers to show for this event
+  """
   offers: [EventOffer]
 
-  """The list of participation conditions to accept to join this event"""
+  """
+  The list of participation conditions to accept to join this event
+  """
   participationConditions: [EventParticipationCondition]
 
-  """The list of the event"""
+  """
+  The list of the event
+  """
   program: String
 
-  """The number of remaining seats for this event"""
+  """
+  The number of remaining seats for this event
+  """
   remainingAttendeeCapacity: Int
 
-  """Show event end time"""
+  """
+  Show event end time
+  """
   showEndTime: Boolean
 
-  """Whether or not to show the participation price"""
+  """
+  Whether or not to show the participation price
+  """
   showParticipationPrice: Boolean
 
-  """Whether or not to show the number of remaining seats for this event"""
+  """
+  Whether or not to show the number of remaining seats for this event
+  """
   showRemainingAttendeeCapacity: Boolean
 
-  """Show event start time"""
+  """
+  Show event start time
+  """
   showStartTime: Boolean
 }
 
@@ -568,10 +830,14 @@ input EventOptionsInput {
   """
   anonymousParticipation: Boolean = false
 
-  """The list of special attendees"""
+  """
+  The list of special attendees
+  """
   attendees: [String]
 
-  """The policy on public comment moderation under the event"""
+  """
+  The policy on public comment moderation under the event
+  """
   commentModeration: EventCommentModeration
 
   """
@@ -579,122 +845,193 @@ input EventOptionsInput {
   """
   hideOrganizerWhenGroupEvent: Boolean
 
-  """The maximum attendee capacity for this event"""
+  """
+  The maximum attendee capacity for this event
+  """
   maximumAttendeeCapacity: Int
 
-  """The list of offers to show for this event"""
+  """
+  The list of offers to show for this event
+  """
   offers: [EventOfferInput]
 
-  """The list of participation conditions to accept to join this event"""
+  """
+  The list of participation conditions to accept to join this event
+  """
   participationConditions: [EventParticipationConditionInput]
 
-  """The list of the event"""
+  """
+  The list of the event
+  """
   program: String
 
-  """The number of remaining seats for this event"""
+  """
+  The number of remaining seats for this event
+  """
   remainingAttendeeCapacity: Int
 
-  """Show event end time"""
+  """
+  Show event end time
+  """
   showEndTime: Boolean
 
-  """Whether or not to show the participation price"""
+  """
+  Whether or not to show the participation price
+  """
   showParticipationPrice: Boolean
 
-  """Whether or not to show the number of remaining seats for this event"""
+  """
+  Whether or not to show the number of remaining seats for this event
+  """
   showRemainingAttendeeCapacity: Boolean
 
-  """Show event start time"""
+  """
+  Show event start time
+  """
   showStartTime: Boolean
 }
 
 type EventParticipationCondition {
-  """The content for this condition"""
+  """
+  The content for this condition
+  """
   content: String
 
-  """The title for this condition"""
+  """
+  The title for this condition
+  """
   title: String
 
-  """The URL to access this condition"""
+  """
+  The URL to access this condition
+  """
   url: String
 }
 
 input EventParticipationConditionInput {
-  """The content for this condition"""
+  """
+  The content for this condition
+  """
   content: String
 
-  """The title for this condition"""
+  """
+  The title for this condition
+  """
   title: String
 
-  """The URL to access this condition"""
+  """
+  The URL to access this condition
+  """
   url: String
 }
 
-"""Search events result"""
+"""
+Search events result
+"""
 type Events {
-  """Event elements"""
+  """
+  Event elements
+  """
   elements: [Event]!
 
-  """Total elements"""
+  """
+  Total elements
+  """
   total: Int!
 }
 
-"""The list of possible options for the event's status"""
+"""
+The list of possible options for the event's status
+"""
 enum EventStatus {
-  """The event is cancelled"""
+  """
+  The event is cancelled
+  """
   CANCELLED
 
-  """The event is confirmed"""
+  """
+  The event is confirmed
+  """
   CONFIRMED
 
-  """The event is tentative"""
+  """
+  The event is tentative
+  """
   TENTATIVE
 }
 
-"""The list of visibility options for an event"""
+"""
+The list of visibility options for an event
+"""
 enum EventVisibility {
-  """Visible only to people members of the group or followers of the person"""
+  """
+  Visible only to people members of the group or followers of the person
+  """
   PRIVATE
 
-  """Publicly listed and federated. Can be shared."""
+  """
+  Publicly listed and federated. Can be shared.
+  """
   PUBLIC
 
-  """Visible only after a moderator accepted"""
+  """
+  Visible only after a moderator accepted
+  """
   RESTRICTED
 
-  """Visible only to people with the link - or invited"""
+  """
+  Visible only to people with the link - or invited
+  """
   UNLISTED
 }
 
-"""Represents a participant to an event"""
+"""
+Represents a participant to an event
+"""
 type FeedToken {
-  """The event which the actor participates in"""
+  """
+  The event which the actor participates in
+  """
   actor: Actor
 
-  """The role of this actor at this event"""
+  """
+  The role of this actor at this event
+  """
   token: String
 
-  """The actor that participates to the event"""
+  """
+  The actor that participates to the event
+  """
   user: User
 }
 
 """
 Represents an actor's follower
-
 """
 type Follower {
-  """Which profile follows"""
+  """
+  Which profile follows
+  """
   actor: Actor
 
-  """Whether the follow has been approved by the target actor"""
+  """
+  Whether the follow has been approved by the target actor
+  """
   approved: Boolean
 
-  """When the follow was created"""
+  """
+  When the follow was created
+  """
   insertedAt: DateTime
 
-  """What or who the profile follows"""
+  """
+  What or who the profile follows
+  """
   targetActor: Actor
 
-  """When the follow was updated"""
+  """
+  When the follow was updated
+  """
   updatedAt: DateTime
 }
 
@@ -705,97 +1042,151 @@ type Geocoding {
 
 """
 Represents a group of actors
-
 """
 type Group implements Actor {
-  """The actor's avatar picture"""
+  """
+  The actor's avatar picture
+  """
   avatar: Picture
 
-  """The actor's banner picture"""
+  """
+  The actor's banner picture
+  """
   banner: Picture
 
-  """A list of the conversations for this group"""
-  conversations: PaginatedConversationList
+  """
+  A list of the discussions for this group
+  """
+  discussions: PaginatedDiscussionList
 
-  """The actor's domain if (null if it's this instance)"""
+  """
+  The actor's domain if (null if it's this instance)
+  """
   domain: String
 
-  """List of followers"""
+  """
+  List of followers
+  """
   followers: [Follower]
 
-  """Number of followers for this actor"""
+  """
+  Number of followers for this actor
+  """
   followersCount: Int
 
-  """List of followings"""
+  """
+  List of followings
+  """
   following: [Follower]
 
-  """Number of actors following this actor"""
+  """
+  Number of actors following this actor
+  """
   followingCount: Int
 
-  """Internal ID for this group"""
+  """
+  Internal ID for this group
+  """
   id: ID
 
-  """If the actor is from this instance"""
+  """
+  If the actor is from this instance
+  """
   local: Boolean
 
-  """Whether the actors manually approves followers"""
+  """
+  Whether the actors manually approves followers
+  """
   manuallyApprovesFollowers: Boolean
 
-  """List of group members"""
+  """
+  List of group members
+  """
   members: PaginatedMemberList
 
-  """The actor's displayed name"""
+  """
+  The actor's displayed name
+  """
   name: String
 
-  """Whether the group is opened to all or has restricted access"""
+  """
+  Whether the group is opened to all or has restricted access
+  """
   openness: Openness
 
-  """A list of the events this actor has organized"""
+  """
+  A list of the events this actor has organized
+  """
   organizedEvents: PaginatedEventList
 
-  """The actor's preferred username"""
+  """
+  The actor's preferred username
+  """
   preferredUsername: String
 
-  """A paginated list of the resources this group has"""
+  """
+  A paginated list of the resources this group has
+  """
   resources(limit: Int = 10, page: Int = 1): PaginatedResourceList
 
-  """The actor's summary"""
+  """
+  The actor's summary
+  """
   summary: String
 
-  """If the actor is suspended"""
+  """
+  If the actor is suspended
+  """
   suspended: Boolean
 
-  """A paginated list of the todo lists this group has"""
+  """
+  A paginated list of the todo lists this group has
+  """
   todoLists: PaginatedTodoListList
 
-  """The type of Actor (Person, Group,…)"""
+  """
+  The type of Actor (Person, Group,…)
+  """
   type: ActorType
 
-  """The type of group : Group, Community,…"""
+  """
+  The type of group : Group, Community,…
+  """
   types: GroupType
 
-  """The ActivityPub actor's URL"""
+  """
+  The ActivityPub actor's URL
+  """
   url: String
 }
 
-"""Search groups result"""
+"""
+Search groups result
+"""
 type Groups {
-  """Group elements"""
+  """
+  Group elements
+  """
   elements: [Group]!
 
-  """Total elements"""
+  """
+  Total elements
+  """
   total: Int!
 }
 
 """
 The types of Group that exist
-
 """
 enum GroupType {
-  """A public group of many actors"""
+  """
+  A public group of many actors
+  """
   COMMUNITY
 
-  """A private group of persons"""
+  """
+  A private group of persons
+  """
   GROUP
 }
 
@@ -805,15 +1196,23 @@ enum InstanceTermsType {
   URL
 }
 
-"""A JWT and the associated user ID"""
+"""
+A JWT and the associated user ID
+"""
 type Login {
-  """A JWT Token for this session"""
+  """
+  A JWT Token for this session
+  """
   accessToken: String!
 
-  """A JWT Token to refresh the access token"""
+  """
+  A JWT Token to refresh the access token
+  """
   refreshToken: String!
 
-  """The user associated to this session"""
+  """
+  The user associated to this session
+  """
   user: User!
 }
 
@@ -829,19 +1228,26 @@ type Maps {
 
 """
 Represents a member of a group
-
 """
 type Member {
-  """Which profile is member of"""
+  """
+  Which profile is member of
+  """
   actor: Person
 
-  """The member's ID"""
+  """
+  The member's ID
+  """
   id: ID
 
-  """Of which the profile is member"""
+  """
+  Of which the profile is member
+  """
   parent: Group
 
-  """The role of this membership"""
+  """
+  The role of this membership
+  """
   role: MemberRoleEnum
 }
 
@@ -864,125 +1270,188 @@ scalar NaiveDateTime
 
 """
 Describes how an actor is opened to follows
-
 """
 enum Openness {
-  """The actor can only be followed by invitation"""
+  """
+  The actor can only be followed by invitation
+  """
   INVITE_ONLY
 
-  """The actor needs to accept the following before it's effective"""
+  """
+  The actor needs to accept the following before it's effective
+  """
   MODERATED
 
-  """The actor is open to followings"""
+  """
+  The actor is open to followings
+  """
   OPEN
 }
 
 type PaginatedCommentList {
-  """A list of comments"""
+  """
+  A list of comments
+  """
   elements: [Comment]
 
-  """The total number of comments in the list"""
+  """
+  The total number of comments in the list
+  """
   total: Int
 }
 
-type PaginatedConversationList {
-  """A list of conversation"""
-  elements: [Conversation]
+type PaginatedDiscussionList {
+  """
+  A list of discussion
+  """
+  elements: [discussion]
 
-  """The total number of comments in the list"""
+  """
+  The total number of comments in the list
+  """
   total: Int
 }
 
 type PaginatedEventList {
-  """A list of events"""
+  """
+  A list of events
+  """
   elements: [Event]
 
-  """The total number of events in the list"""
+  """
+  The total number of events in the list
+  """
   total: Int
 }
 
 type PaginatedFollowerList {
-  """A list of followers"""
+  """
+  A list of followers
+  """
   elements: [Follower]
 
-  """The total number of elements in the list"""
+  """
+  The total number of elements in the list
+  """
   total: Int
 }
 
 type PaginatedGroupList {
-  """A list of groups"""
+  """
+  A list of groups
+  """
   elements: [Group]
 
-  """The total number of elements in the list"""
+  """
+  The total number of elements in the list
+  """
   total: Int
 }
 
 type PaginatedMemberList {
-  """A list of members"""
+  """
+  A list of members
+  """
   elements: [Member]
 
-  """The total number of elements in the list"""
+  """
+  The total number of elements in the list
+  """
   total: Int
 }
 
 type PaginatedParticipantList {
-  """A list of participants"""
+  """
+  A list of participants
+  """
   elements: [Participant]
 
-  """The total number of participants in the list"""
+  """
+  The total number of participants in the list
+  """
   total: Int
 }
 
 type PaginatedResourceList {
-  """A list of resources"""
+  """
+  A list of resources
+  """
   elements: [Resource]
 
-  """The total number of resources in the list"""
+  """
+  The total number of resources in the list
+  """
   total: Int
 }
 
 type PaginatedTodoList {
-  """A list of todos"""
+  """
+  A list of todos
+  """
   elements: [Todo]
 
-  """The total number of todos in the list"""
+  """
+  The total number of todos in the list
+  """
   total: Int
 }
 
 type PaginatedTodoListList {
-  """A list of todo lists"""
+  """
+  A list of todo lists
+  """
   elements: [TodoList]
 
-  """The total number of todo lists in the list"""
+  """
+  The total number of todo lists in the list
+  """
   total: Int
 }
 
-"""Represents a participant to an event"""
+"""
+Represents a participant to an event
+"""
 type Participant {
-  """The actor that participates to the event"""
+  """
+  The actor that participates to the event
+  """
   actor: Actor
 
-  """The event which the actor participates in"""
+  """
+  The event which the actor participates in
+  """
   event: Event
 
-  """The participation ID"""
+  """
+  The participation ID
+  """
   id: ID
 
-  """The datetime this participant was created"""
+  """
+  The datetime this participant was created
+  """
   insertedAt: DateTime
 
-  """The metadata associated to this participant"""
+  """
+  The metadata associated to this participant
+  """
   metadata: ParticipantMetadata
 
-  """The role of this actor at this event"""
+  """
+  The role of this actor at this event
+  """
   role: ParticipantRoleEnum
 }
 
 type ParticipantMetadata {
-  """The eventual token to leave an event when user is anonymous"""
+  """
+  The eventual token to leave an event when user is anonymous
+  """
   cancellationToken: String
 
-  """The eventual message the participant left"""
+  """
+  The eventual message the participant left
+  """
   message: String
 }
 
@@ -997,140 +1466,223 @@ enum ParticipantRoleEnum {
 }
 
 type ParticipantStats {
-  """The number of administrators"""
+  """
+  The number of administrators
+  """
   administrator: Int
 
-  """The number of creators"""
+  """
+  The number of creators
+  """
   creator: Int
 
-  """The number of approved participants"""
+  """
+  The number of approved participants
+  """
   going: Int
 
-  """The number of moderators"""
+  """
+  The number of moderators
+  """
   moderator: Int
 
-  """The number of not approved participants"""
+  """
+  The number of not approved participants
+  """
   notApproved: Int
 
-  """The number of not confirmed participants"""
+  """
+  The number of not confirmed participants
+  """
   notConfirmed: Int
 
-  """The number of simple participants (excluding creators)"""
+  """
+  The number of simple participants (excluding creators)
+  """
   participant: Int
 
-  """The number of rejected participants"""
+  """
+  The number of rejected participants
+  """
   rejected: Int
 }
 
 """
 Represents a person identity
-
 """
 type Person implements Actor {
-  """The actor's avatar picture"""
+  """
+  The actor's avatar picture
+  """
   avatar: Picture
 
-  """The actor's banner picture"""
+  """
+  The actor's banner picture
+  """
   banner: Picture
 
-  """The actor's domain if (null if it's this instance)"""
+  """
+  The actor's domain if (null if it's this instance)
+  """
   domain: String
 
-  """A list of the feed tokens for this person"""
+  """
+  A list of the feed tokens for this person
+  """
   feedTokens: [FeedToken]
 
-  """List of followers"""
+  """
+  List of followers
+  """
   followers: [Follower]
 
-  """Number of followers for this actor"""
+  """
+  Number of followers for this actor
+  """
   followersCount: Int
 
-  """List of followings"""
+  """
+  List of followings
+  """
   following: [Follower]
 
-  """Number of actors following this actor"""
+  """
+  Number of actors following this actor
+  """
   followingCount: Int
 
-  """Internal ID for this person"""
+  """
+  Internal ID for this person
+  """
   id: ID
 
-  """If the actor is from this instance"""
+  """
+  If the actor is from this instance
+  """
   local: Boolean
 
-  """Whether the actors manually approves followers"""
+  """
+  Whether the actors manually approves followers
+  """
   manuallyApprovesFollowers: Boolean
 
-  """The list of groups this person is member of"""
+  """
+  The list of groups this person is member of
+  """
   memberOf: [Member]
 
-  """The list of group this person is member of"""
+  """
+  The list of group this person is member of
+  """
   memberships: PaginatedMemberList
 
-  """The actor's displayed name"""
+  """
+  The actor's displayed name
+  """
   name: String
 
-  """A list of the events this actor has organized"""
+  """
+  A list of the events this actor has organized
+  """
   organizedEvents: [Event]
 
-  """The list of events this person goes to"""
+  """
+  The list of events this person goes to
+  """
   participations(eventId: ID): [Participant]
 
-  """The actor's preferred username"""
+  """
+  The actor's preferred username
+  """
   preferredUsername: String
 
-  """The actor's summary"""
+  """
+  The actor's summary
+  """
   summary: String
 
-  """If the actor is suspended"""
+  """
+  If the actor is suspended
+  """
   suspended: Boolean
 
-  """The type of Actor (Person, Group,…)"""
+  """
+  The type of Actor (Person, Group,…)
+  """
   type: ActorType
 
-  """The ActivityPub actor's URL"""
+  """
+  The ActivityPub actor's URL
+  """
   url: String
 
-  """The user this actor is associated to"""
+  """
+  The user this actor is associated to
+  """
   user: User
 }
 
-"""Search persons result"""
+"""
+Search persons result
+"""
 type Persons {
-  """Person elements"""
+  """
+  Person elements
+  """
   elements: [Person]!
 
-  """Total elements"""
+  """
+  Total elements
+  """
   total: Int!
 }
 
-"""A picture"""
+"""
+A picture
+"""
 type Picture {
-  """The picture's alternative text"""
+  """
+  The picture's alternative text
+  """
   alt: String
 
-  """The picture's detected content type"""
+  """
+  The picture's detected content type
+  """
   contentType: String
 
-  """The picture's ID"""
+  """
+  The picture's ID
+  """
   id: ID
 
-  """The picture's name"""
+  """
+  The picture's name
+  """
   name: String
 
-  """The picture's size"""
+  """
+  The picture's size
+  """
   size: Int
 
-  """The picture's full URL"""
+  """
+  The picture's full URL
+  """
   url: String
 }
 
-"""An attached picture or a link to a picture"""
+"""
+An attached picture or a link to a picture
+"""
 input PictureInput {
   picture: PictureInputObject
   pictureId: ID
 }
 
-"""An attached picture"""
+"""
+An attached picture
+"""
 input PictureInputObject {
   actorId: ID
   alt: String
@@ -1139,128 +1691,208 @@ input PictureInputObject {
 }
 
 """
-The `Point` scalar type represents Point geographic information compliant string data, 
+The `Point` scalar type represents Point geographic information compliant string data,
 represented as floats separated by a semi-colon. The geodetic system is WGS 84
 """
 scalar Point
 
-"""Token"""
+"""
+Token
+"""
 type RefreshedToken {
-  """Generated access token"""
+  """
+  Generated access token
+  """
   accessToken: String!
 
-  """Generated refreshed token"""
+  """
+  Generated refreshed token
+  """
   refreshToken: String!
 }
 
-"""A report object"""
+"""
+A report object
+"""
 type Report implements ActionLogObject {
-  """The comments that are reported"""
+  """
+  The comments that are reported
+  """
   comments: [Comment]
 
-  """The comment the reporter added about this report"""
+  """
+  The comment the reporter added about this report
+  """
   content: String
 
-  """The event that is being reported"""
+  """
+  The event that is being reported
+  """
   event: Event
 
-  """The internal ID of the report"""
+  """
+  The internal ID of the report
+  """
   id: ID
 
-  """When the report was created"""
+  """
+  When the report was created
+  """
   insertedAt: DateTime
 
-  """The notes made on the event"""
+  """
+  The notes made on the event
+  """
   notes: [ReportNote]
 
-  """The actor that is being reported"""
+  """
+  The actor that is being reported
+  """
   reported: Actor
 
-  """The actor that created the report"""
+  """
+  The actor that created the report
+  """
   reporter: Actor
 
-  """Whether the report is still active"""
+  """
+  Whether the report is still active
+  """
   status: ReportStatus
 
-  """When the report was updated"""
+  """
+  When the report was updated
+  """
   updatedAt: DateTime
 
-  """The URI of the report"""
+  """
+  The URI of the report
+  """
   uri: String
 }
 
-"""A report note object"""
+"""
+A report note object
+"""
 type ReportNote implements ActionLogObject {
-  """The content of the note"""
+  """
+  The content of the note
+  """
   content: String
 
-  """The internal ID of the report note"""
+  """
+  The internal ID of the report note
+  """
   id: ID
 
-  """When the report note was created"""
+  """
+  When the report note was created
+  """
   insertedAt: DateTime
 
-  """The moderator who added the note"""
+  """
+  The moderator who added the note
+  """
   moderator: Actor
 
-  """The report on which this note is added"""
+  """
+  The report on which this note is added
+  """
   report: Report
 }
 
-"""The list of possible statuses for a report object"""
+"""
+The list of possible statuses for a report object
+"""
 enum ReportStatus {
-  """The report has been closed"""
+  """
+  The report has been closed
+  """
   CLOSED
 
-  """The report has been opened"""
+  """
+  The report has been opened
+  """
   OPEN
 
-  """The report has been marked as resolved"""
+  """
+  The report has been marked as resolved
+  """
   RESOLVED
 }
 
-"""A resource"""
+"""
+A resource
+"""
 type Resource {
-  """The resource's owner"""
+  """
+  The resource's owner
+  """
   actor: Actor
 
-  """Children resources in folder"""
+  """
+  Children resources in folder
+  """
   children: PaginatedResourceList
 
-  """The resource's creator"""
+  """
+  The resource's creator
+  """
   creator: Actor
 
-  """The resource's ID"""
+  """
+  The resource's ID
+  """
   id: ID
 
-  """The resource's creation date"""
+  """
+  The resource's creation date
+  """
   insertedAt: NaiveDateTime
 
-  """The resource's metadata"""
+  """
+  The resource's metadata
+  """
   metadata: ResourceMetadata
 
-  """The resource's parent"""
+  """
+  The resource's parent
+  """
   parent: Resource
 
-  """The resource's path"""
+  """
+  The resource's path
+  """
   path: String
 
-  """The resource's URL"""
+  """
+  The resource's URL
+  """
   resourceUrl: String
 
-  """The resource's summary"""
+  """
+  The resource's summary
+  """
   summary: String
 
-  """The resource's title"""
+  """
+  The resource's title
+  """
   title: String
 
-  """The resource's type (if it's a folder)"""
+  """
+  The resource's type (if it's a folder)
+  """
   type: String
 
-  """The resource's last update date"""
+  """
+  The resource's last update date
+  """
   updatedAt: NaiveDateTime
 
-  """The resource's URL"""
+  """
+  The resource's URL
+  """
   url: String
 }
 
@@ -1268,21 +1900,29 @@ type ResourceMetadata {
   authorName: String
   authorUrl: String
 
-  """The resource's metadata description"""
+  """
+  The resource's metadata description
+  """
   description: String
   faviconUrl: String
   height: Int
   html: String
 
-  """The resource's metadata image"""
+  """
+  The resource's metadata image
+  """
   imageRemoteUrl: String
   providerName: String
   providerUrl: String
 
-  """The resource's metadata title"""
+  """
+  The resource's metadata title
+  """
   title: String
 
-  """The type of the resource"""
+  """
+  The type of the resource
+  """
   type: String
   width: Int
 }
@@ -1294,10 +1934,14 @@ type ResourceProvider {
 }
 
 type RootMutationType {
-  """Create an user"""
+  """
+  Create an user
+  """
   createUser(email: String!, locale: String, password: String!): User
 
-  """Register a first profile on registration"""
+  """
+  Register a first profile on registration
+  """
   registerPerson(
     """
     The avatar for the profile, either as an object or directly the ID of an existing Picture
@@ -1309,52 +1953,98 @@ type RootMutationType {
     """
     banner: PictureInput
 
-    """The email from the user previously created"""
+    """
+    The email from the user previously created
+    """
     email: String!
 
-    """The displayed name for the new profile"""
+    """
+    The displayed name for the new profile
+    """
     name: String = ""
     preferredUsername: String!
 
-    """The summary for the new profile"""
+    """
+    The summary for the new profile
+    """
     summary: String = ""
   ): Person
 
-  """Join a group"""
+  """
+  Join a group
+  """
   joinGroup(actorId: ID!, groupId: ID!): Member
 
-  """Create a Feed Token"""
+  """
+  Create a Feed Token
+  """
   createFeedToken(actorId: ID): FeedToken
 
-  """Get a preview for a resource link"""
+  """
+  Get a preview for a resource link
+  """
   previewResourceLink(resourceUrl: String!): ResourceMetadata
 
-  """Create a note on a report"""
+  """
+  Create a note on a report
+  """
   createReportNote(content: String, moderatorId: ID!, reportId: ID!): ReportNote
 
-  """Create a conversation"""
-  createConversation(actorId: ID!, creatorId: ID!, text: String!, title: String!): Conversation
+  """
+  Create a discussion
+  """
+  createDiscussion(
+    actorId: ID!
+    creatorId: ID!
+    text: String!
+    title: String!
+  ): discussion
   inviteMember(actorId: ID!, groupId: ID!, targetActorUsername: String!): Member
 
-  """Leave an event"""
+  """
+  Leave an event
+  """
   leaveEvent(actorId: ID!, eventId: ID!, token: String): DeletedParticipant
 
-  """Login an user"""
+  """
+  Login an user
+  """
   login(email: String!, password: String!): Login
 
-  """Change default actor for user"""
+  """
+  Change default actor for user
+  """
   changeDefaultActor(preferredUsername: String!): User
 
-  """Join an event"""
-  joinEvent(actorId: ID!, email: String, eventId: ID!, message: String): Participant
+  """
+  Join an event
+  """
+  joinEvent(
+    actorId: ID!
+    email: String
+    eventId: ID!
+    message: String
+  ): Participant
 
-  """Create a todo"""
-  createTodo(assignedToId: ID, dueDate: DateTime, status: Boolean, title: String!, todoListId: ID!): Todo
+  """
+  Create a todo
+  """
+  createTodo(
+    assignedToId: ID
+    dueDate: DateTime
+    status: Boolean
+    title: String!
+    todoListId: ID!
+  ): Todo
 
-  """Change an user password"""
+  """
+  Change an user password
+  """
   changePassword(newPassword: String!, oldPassword: String!): User
 
-  """Create a new person for user"""
+  """
+  Create a new person for user
+  """
   createPerson(
     """
     The avatar for the profile, either as an object or directly the ID of an existing Picture
@@ -1366,29 +2056,43 @@ type RootMutationType {
     """
     banner: PictureInput
 
-    """The displayed name for the new profile"""
+    """
+    The displayed name for the new profile
+    """
     name: String = ""
     preferredUsername: String!
 
-    """The summary for the new profile"""
+    """
+    The summary for the new profile
+    """
     summary: String = ""
   ): Person
-  replyToConversation(conversationId: ID!, text: String!): Conversation
+  replyToDiscussion(discussionId: ID!, text: String!): discussion
 
-  """Resend registration confirmation token"""
+  """
+  Resend registration confirmation token
+  """
   resendConfirmationEmail(email: String!, locale: String): String
 
-  """Create a todo list"""
+  """
+  Create a todo list
+  """
   createTodoList(groupId: ID!, title: String!): TodoList
 
-  """Delete an event"""
+  """
+  Delete an event
+  """
   deleteEvent(actorId: ID!, eventId: ID!): DeletedObject
 
-  """Change an user email"""
+  """
+  Change an user email
+  """
   changeEmail(email: String!, password: String!): User
-  updateConversation(conversationId: ID!, title: String!): Conversation
+  updateDiscussion(discussionId: ID!, title: String!): discussion
 
-  """Create an event"""
+  """
+  Create an event
+  """
   createEvent(
     attributedToId: ID
     beginsOn: DateTime!
@@ -1410,47 +2114,103 @@ type RootMutationType {
     publishAt: DateTime
     status: EventStatus
 
-    """The list of tags associated to the event"""
+    """
+    The list of tags associated to the event
+    """
     tags: [String] = [""]
     title: String!
     visibility: EventVisibility = PUBLIC
   ): Event
 
-  """Delete a feed token"""
+  """
+  Delete a feed token
+  """
   deleteFeedToken(token: String!): DeletedFeedToken
 
-  """Delete a resource"""
+  """
+  Delete a resource
+  """
   deleteResource(id: ID!): DeletedObject
 
-  """Reset user password"""
+  """
+  Reset user password
+  """
   resetPassword(locale: String = "en", password: String!, token: String!): Login
   deleteReportNote(moderatorId: ID!, noteId: ID!): DeletedObject
 
-  """Delete an identity"""
+  """
+  Delete an identity
+  """
   deletePerson(id: ID!): Person
 
-  """Upload a picture"""
-  uploadPicture(actorId: ID!, alt: String, file: Upload!, name: String!): Picture
+  """
+  Upload a picture
+  """
+  uploadPicture(
+    actorId: ID!
+    alt: String
+    file: Upload!
+    name: String!
+  ): Picture
 
-  """Refresh a token"""
+  """
+  Refresh a token
+  """
   refreshToken(refreshToken: String!): RefreshedToken
 
-  """Delete a group"""
+  """
+  Delete a group
+  """
   deleteGroup(actorId: ID!, groupId: ID!): DeletedObject
 
-  """Update a resource"""
-  updateResource(actorId: ID, id: ID!, parentId: ID, path: String, resourceUrl: String, summary: String, title: String): Resource
+  """
+  Update a resource
+  """
+  updateResource(
+    actorId: ID
+    id: ID!
+    parentId: ID
+    path: String
+    resourceUrl: String
+    summary: String
+    title: String
+  ): Resource
 
-  """Create a comment"""
-  createComment(actorId: ID!, eventId: ID, inReplyToCommentId: ID, text: String!): Comment
+  """
+  Create a comment
+  """
+  createComment(
+    actorId: ID!
+    eventId: ID
+    inReplyToCommentId: ID
+    text: String!
+  ): Comment
 
-  """Create a resource"""
-  createResource(actorId: ID!, parentId: ID, path: String! = "/", resourceUrl: String, summary: String, title: String, type: String): Resource
+  """
+  Create a resource
+  """
+  createResource(
+    actorId: ID!
+    parentId: ID
+    path: String! = "/"
+    resourceUrl: String
+    summary: String
+    title: String
+    type: String
+  ): Resource
 
-  """Update a report"""
-  updateReportStatus(moderatorId: ID!, reportId: ID!, status: ReportStatus!): Report
+  """
+  Update a report
+  """
+  updateReportStatus(
+    moderatorId: ID!
+    reportId: ID!
+    status: ReportStatus!
+  ): Report
 
-  """Update an event"""
+  """
+  Update an event
+  """
   updateEvent(
     attributedToId: ID
     beginsOn: DateTime
@@ -1472,45 +2232,80 @@ type RootMutationType {
     picture: PictureInput
     status: EventStatus
 
-    """The list of tags associated to the event"""
+    """
+    The list of tags associated to the event
+    """
     tags: [String]
     title: String
     visibility: EventVisibility = PUBLIC
   ): Event
 
-  """Confirm a participation"""
+  """
+  Confirm a participation
+  """
   confirmParticipation(confirmationToken: String!): Participant
-  deleteConversation(conversationId: ID!): Conversation
+  deleteDiscussion(discussionId: ID!): discussion
 
-  """Reject a relay subscription"""
+  """
+  Reject a relay subscription
+  """
   rejectRelay(address: String!): Follower
 
-  """Accept a participation"""
-  updateParticipation(id: ID!, moderatorActorId: ID!, role: ParticipantRoleEnum!): Participant
+  """
+  Accept a participation
+  """
+  updateParticipation(
+    id: ID!
+    moderatorActorId: ID!
+    role: ParticipantRoleEnum!
+  ): Participant
 
-  """Delete a todo"""
+  """
+  Delete a todo
+  """
   deleteTodo(id: ID!): DeletedObject
   deleteComment(actorId: ID!, commentId: ID!): Comment
 
-  """Validate an user email"""
+  """
+  Validate an user email
+  """
   validateEmail(token: String!): User
 
-  """Send a link through email to reset user password"""
+  """
+  Send a link through email to reset user password
+  """
   sendResetPassword(email: String!, locale: String): String
 
-  """Update a comment"""
+  """
+  Update a comment
+  """
   updateComment(commentId: ID!, text: String!): Comment
 
-  """Accept a relay subscription"""
+  """
+  Accept a relay subscription
+  """
   acceptRelay(address: String!): Follower
 
-  """Create a report"""
-  createReport(commentsIds: [ID] = [""], content: String, eventId: ID, forward: Boolean = false, reportedId: ID!, reporterId: ID!): Report
+  """
+  Create a report
+  """
+  createReport(
+    commentsIds: [ID] = [""]
+    content: String
+    eventId: ID
+    forward: Boolean = false
+    reportedId: ID!
+    reporterId: ID!
+  ): Report
 
-  """Delete a relay subscription"""
+  """
+  Delete a relay subscription
+  """
   removeRelay(address: String!): Follower
 
-  """Update an identity"""
+  """
+  Update an identity
+  """
   updatePerson(
     """
     The avatar for the profile, either as an object or directly the ID of an existing Picture
@@ -1523,23 +2318,35 @@ type RootMutationType {
     banner: PictureInput
     id: ID!
 
-    """The displayed name for this profile"""
+    """
+    The displayed name for this profile
+    """
     name: String
 
-    """The summary for this profile"""
+    """
+    The summary for this profile
+    """
     summary: String
   ): Person
 
-  """Validate an user after registration"""
+  """
+  Validate an user after registration
+  """
   validateUser(token: String!): Login
 
-  """Leave an event"""
+  """
+  Leave an event
+  """
   leaveGroup(actorId: ID!, groupId: ID!): DeletedMember
 
-  """Delete an account"""
+  """
+  Delete an account
+  """
   deleteAccount(password: String!): DeletedObject
 
-  """Create a group"""
+  """
+  Create a group
+  """
   createGroup(
     """
     The avatar for the group, either as an object or directly the ID of an existing Picture
@@ -1551,145 +2358,258 @@ type RootMutationType {
     """
     banner: PictureInput
 
-    """The identity that creates the group"""
+    """
+    The identity that creates the group
+    """
     creatorActorId: ID!
 
-    """The displayed name for the group"""
+    """
+    The displayed name for the group
+    """
     name: String
 
-    """The name for the group"""
+    """
+    The name for the group
+    """
     preferredUsername: String!
 
-    """The summary for the group"""
+    """
+    The summary for the group
+    """
     summary: String = ""
   ): Group
 
-  """Add a relay subscription"""
+  """
+  Add a relay subscription
+  """
   addRelay(address: String!): Follower
-  saveAdminSettings(instanceDescription: String, instanceName: String, instanceTerms: String, instanceTermsType: InstanceTermsType, instanceTermsUrl: String, registrationsOpen: Boolean): AdminSettings
+  saveAdminSettings(
+    instanceDescription: String
+    instanceName: String
+    instanceTerms: String
+    instanceTermsType: InstanceTermsType
+    instanceTermsUrl: String
+    registrationsOpen: Boolean
+  ): AdminSettings
 
-  """Update a todo"""
-  updateTodo(assignedToId: ID, dueDate: DateTime, id: ID!, status: Boolean, title: String, todoListId: ID): Todo
+  """
+  Update a todo
+  """
+  updateTodo(
+    assignedToId: ID
+    dueDate: DateTime
+    id: ID!
+    status: Boolean
+    title: String
+    todoListId: ID
+  ): Todo
 }
 
 """
 Root Query
-
 """
 type RootQueryType {
-  """Get the list of action logs"""
+  """
+  Get the list of action logs
+  """
   actionLogs(limit: Int = 10, page: Int = 1): [ActionLog]
   adminSettings: AdminSettings
 
-  """Get the instance config"""
+  """
+  Get the instance config
+  """
   config: Config
 
-  """Get a conversation"""
-  conversation(id: ID!): Conversation
+  """
+  Get a discussion
+  """
+  discussion(id: ID!): discussion
   dashboard: Dashboard
 
-  """Get an event by uuid"""
+  """
+  Get an event by uuid
+  """
   event(uuid: UUID!): Event
 
-  """Get all events"""
+  """
+  Get all events
+  """
   events(limit: Int = 10, page: Int = 1): [Event]
 
-  """Get a person by its (federated) username"""
+  """
+  Get a person by its (federated) username
+  """
   fetchPerson(preferredUsername: String!): Person
 
-  """Get a group by its preferred username"""
+  """
+  Get a group by its preferred username
+  """
   group(preferredUsername: String!): Group
 
-  """Get all groups"""
+  """
+  Get all groups
+  """
   groups(limit: Int = 10, page: Int = 1): PaginatedGroupList
 
-  """Get the persons for an user"""
+  """
+  Get the persons for an user
+  """
   identities: [Person]
 
-  """Get the current actor for the logged-in user"""
+  """
+  Get the current actor for the logged-in user
+  """
   loggedPerson: Person
 
-  """Get the current user"""
+  """
+  Get the current user
+  """
   loggedUser: User
 
-  """Get a person by its ID"""
+  """
+  Get a person by its ID
+  """
   person(id: ID!): Person
 
-  """Get a picture"""
+  """
+  Get a picture
+  """
   picture(id: String!): Picture
   relayFollowers(limit: Int = 10, page: Int = 1): PaginatedFollowerList
-  relayFollowings(direction: String = "desc", limit: Int = 10, orderBy: String = "updated_at", page: Int = 1): PaginatedFollowerList
+  relayFollowings(
+    direction: String = "desc"
+    limit: Int = 10
+    orderBy: String = "updated_at"
+    page: Int = 1
+  ): PaginatedFollowerList
 
-  """Get a report by id"""
+  """
+  Get a report by id
+  """
   report(id: ID!): Report
 
-  """Get all reports"""
+  """
+  Get all reports
+  """
   reports(limit: Int = 10, page: Int = 1, status: ReportStatus = OPEN): [Report]
 
-  """Get a resource"""
+  """
+  Get a resource
+  """
   resource(id: ID, path: String, username: String): Resource
 
-  """Reverse geocode coordinates"""
-  reverseGeocode(latitude: Float!, locale: String = "en", longitude: Float!, zoom: Int = 15): [Address]
+  """
+  Reverse geocode coordinates
+  """
+  reverseGeocode(
+    latitude: Float!
+    locale: String = "en"
+    longitude: Float!
+    zoom: Int = 15
+  ): [Address]
 
-  """Search for an address"""
-  searchAddress(limit: Int = 10, locale: String = "en", page: Int = 1, query: String!): [Address]
+  """
+  Search for an address
+  """
+  searchAddress(
+    limit: Int = 10
+    locale: String = "en"
+    page: Int = 1
+    query: String!
+  ): [Address]
 
-  """Search events"""
+  """
+  Search events
+  """
   searchEvents(limit: Int = 10, page: Int = 1, search: String!): Events
 
-  """Search groups"""
+  """
+  Search groups
+  """
   searchGroups(limit: Int = 10, page: Int = 1, search: String!): Groups
 
-  """Search persons"""
+  """
+  Search persons
+  """
   searchPersons(limit: Int = 10, page: Int = 1, search: String!): Persons
 
-  """Get the list of tags"""
+  """
+  Get the list of tags
+  """
   tags(limit: Int = 10, page: Int = 1): [Tag]!
 
-  """Get replies for thread"""
+  """
+  Get replies for thread
+  """
   thread(id: ID): [Comment]
 
-  """Get a todo"""
+  """
+  Get a todo
+  """
   todo(id: ID!): Todo
 
-  """Get a todo list"""
+  """
+  Get a todo list
+  """
   todoList(id: ID!): TodoList
 
-  """Get an user"""
+  """
+  Get an user
+  """
   user(id: ID!): User
 
-  """List instance users"""
-  users(direction: SortDirection = DESC, limit: Int = 10, page: Int = 1, sort: SortableUserField = ID): Users
+  """
+  List instance users
+  """
+  users(
+    direction: SortDirection = DESC
+    limit: Int = 10
+    page: Int = 1
+    sort: SortableUserField = ID
+  ): Users
 }
 
 type RootSubscriptionType {
   eventPersonParticipationChanged(personId: ID!): Person
 }
 
-"""The list of possible options for the event's status"""
+"""
+The list of possible options for the event's status
+"""
 enum SortableUserField {
   ID
 }
 
-"""Available sort directions"""
+"""
+Available sort directions
+"""
 enum SortDirection {
   ASC
   DESC
 }
 
-"""A tag"""
+"""
+A tag
+"""
 type Tag {
-  """The tag's ID"""
+  """
+  The tag's ID
+  """
   id: ID
 
-  """Related tags to this tag"""
+  """
+  Related tags to this tag
+  """
   related: [Tag]
 
-  """The tags's slug"""
+  """
+  The tags's slug
+  """
   slug: String
 
-  """The tag's title"""
+  """
+  The tag's title
+  """
   title: String
 }
 
@@ -1704,96 +2624,158 @@ type Tiles {
   endpoint: String
 }
 
-"""A todo"""
+"""
+A todo
+"""
 type Todo {
-  """The todos's assigned person"""
+  """
+  The todos's assigned person
+  """
   assignedTo: Actor
 
-  """The todo's creator"""
+  """
+  The todo's creator
+  """
   creator: Actor
 
-  """The todo's due date"""
+  """
+  The todo's due date
+  """
   dueDate: DateTime
 
-  """The todo's ID"""
+  """
+  The todo's ID
+  """
   id: ID
 
-  """The todo's status"""
+  """
+  The todo's status
+  """
   status: Boolean
 
-  """The todo's title"""
+  """
+  The todo's title
+  """
   title: String
 
-  """The todo list this todo is attached to"""
+  """
+  The todo list this todo is attached to
+  """
   todoList: TodoList
 }
 
-"""A todo list"""
+"""
+A todo list
+"""
 type TodoList {
-  """The actor that owns this todo list"""
+  """
+  The actor that owns this todo list
+  """
   actor: Actor
 
-  """The todo list's ID"""
+  """
+  The todo list's ID
+  """
   id: ID
 
-  """The todo list's title"""
+  """
+  The todo list's title
+  """
   title: String
 
-  """The todo-list's todos"""
+  """
+  The todo-list's todos
+  """
   todos: PaginatedTodoList
 }
 
 """
 Represents an uploaded file.
-
 """
 scalar Upload
 
-"""A local user of Mobilizon"""
+"""
+A local user of Mobilizon
+"""
 type User {
-  """The datetime the last activation/confirmation token was sent"""
+  """
+  The datetime the last activation/confirmation token was sent
+  """
   confirmationSentAt: DateTime
 
-  """The account activation/confirmation token"""
+  """
+  The account activation/confirmation token
+  """
   confirmationToken: String
 
-  """The datetime when the user was confirmed/activated"""
+  """
+  The datetime when the user was confirmed/activated
+  """
   confirmedAt: DateTime
 
-  """The user's default actor"""
+  """
+  The user's default actor
+  """
   defaultActor: Person
 
-  """The list of draft events this user has created"""
+  """
+  The list of draft events this user has created
+  """
   drafts(limit: Int = 10, page: Int = 1): [Event]
 
-  """The user's email"""
+  """
+  The user's email
+  """
   email: String!
 
-  """A list of the feed tokens for this user"""
+  """
+  A list of the feed tokens for this user
+  """
   feedTokens: [FeedToken]
 
-  """The user's ID"""
+  """
+  The user's ID
+  """
   id: ID!
 
-  """The user's locale"""
+  """
+  The user's locale
+  """
   locale: String
 
-  """The list of memberships for this user"""
+  """
+  The list of memberships for this user
+  """
   memberships(limit: Int = 10, page: Int = 1): PaginatedMemberList
 
-  """The list of participations this user has"""
-  participations(afterDatetime: DateTime, beforeDatetime: DateTime, limit: Int = 10, page: Int = 1): [Participant]
+  """
+  The list of participations this user has
+  """
+  participations(
+    afterDatetime: DateTime
+    beforeDatetime: DateTime
+    limit: Int = 10
+    page: Int = 1
+  ): [Participant]
 
-  """The user's list of profiles (identities)"""
+  """
+  The user's list of profiles (identities)
+  """
   profiles: [Person]!
 
-  """The datetime last reset password email was sent"""
+  """
+  The datetime last reset password email was sent
+  """
   resetPasswordSentAt: DateTime
 
-  """The token sent when requesting password token"""
+  """
+  The token sent when requesting password token
+  """
   resetPasswordToken: String
 
-  """The role for the user"""
+  """
+  The role for the user
+  """
   role: UserRole
 }
 
@@ -1803,12 +2785,18 @@ enum UserRole {
   USER
 }
 
-"""Users list"""
+"""
+Users list
+"""
 type Users {
-  """User elements"""
+  """
+  User elements
+  """
   elements: [User]!
 
-  """Total elements"""
+  """
+  Total elements
+  """
   total: Int!
 }
 

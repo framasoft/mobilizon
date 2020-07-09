@@ -9,6 +9,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Crypto
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Relay
   alias Mobilizon.Service.Auth.Authenticator
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.{Setting, User}
@@ -417,7 +418,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     with {:moderator_actor, %Actor{} = moderator_actor} <-
            {:moderator_actor, Users.get_actor_for_user(moderator_user)},
          %User{disabled: false} = user <- Users.get_user(user_id),
-         {:ok, %User{}} <- do_delete_account(%User{} = user) do
+         {:ok, %User{}} <-
+           do_delete_account(%User{} = user, Relay.get_actor()) do
       Admin.log_action(moderator_actor, "delete", user)
     else
       {:moderator_actor, nil} ->
@@ -432,7 +434,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     {:error, "You need to be logged-in to delete your account"}
   end
 
-  defp do_delete_account(%User{} = user) do
+  defp do_delete_account(%User{} = user, actor_performing \\ nil) do
     with actors <- Users.get_actors_for_user(user),
          activated <- not is_nil(user.confirmed_at),
          # Detach actors from user
@@ -444,7 +446,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
          # Launch a background job to delete actors
          :ok <-
            Enum.each(actors, fn actor ->
-             ActivityPub.delete(actor, true)
+             actor_performing = actor_performing || actor
+             ActivityPub.delete(actor, actor_performing, true)
            end),
          # Delete user
          {:ok, user} <- Users.delete_user(user, reserve_email: activated) do

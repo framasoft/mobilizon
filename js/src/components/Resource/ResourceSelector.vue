@@ -76,6 +76,7 @@ import { IResource } from "../../types/resource";
 })
 export default class ResourceSelector extends Vue {
   @Prop({ required: true }) initialResource!: IResource;
+
   @Prop({ required: true }) username!: string;
 
   resource: IResource | undefined = this.initialResource.parent;

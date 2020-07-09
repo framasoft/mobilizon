@@ -3,8 +3,9 @@ defprotocol Mobilizon.Federation.ActivityStream.Convertible do
   Convertible protocol.
   """
 
-  @type activity_streams :: map
+  @type t :: struct()
+  @type activity_streams :: map()
 
-  @spec model_to_as(t) :: activity_streams
+  @spec model_to_as(t()) :: activity_streams()
   def model_to_as(convertible)
 end

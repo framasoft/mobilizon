@@ -7,6 +7,15 @@ defmodule Mobilizon.Users.Setting do
   import Ecto.Changeset
   alias Mobilizon.Users.{NotificationPendingNotificationDelay, User}
 
+  @type t :: %__MODULE__{
+          timezone: String.t(),
+          notification_on_day: boolean,
+          notification_each_week: boolean,
+          notification_before_event: boolean,
+          notification_pending_participation: NotificationPendingNotificationDelay.t(),
+          user: User.t()
+        }
+
   @required_attrs [:user_id]
 
   @optional_attrs [

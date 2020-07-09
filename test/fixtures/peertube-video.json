@@ -1,0 +1,393 @@
+{
+  "type": "Video",
+  "id": "https://framatube.org/videos/watch/9c9de5e8-0a1e-484a-b099-e80766180a6d",
+  "name": "What is PeerTube?",
+  "duration": "PT113S",
+  "uuid": "9c9de5e8-0a1e-484a-b099-e80766180a6d",
+  "tag": [
+    {
+      "type": "Hashtag",
+      "name": "framasoft"
+    },
+    {
+      "type": "Hashtag",
+      "name": "peertube"
+    }
+  ],
+  "category": {
+    "identifier": "15",
+    "name": "Science & Technology"
+  },
+  "licence": {
+    "identifier": "2",
+    "name": "Attribution - Share Alike"
+  },
+  "language": {
+    "identifier": "en",
+    "name": "English"
+  },
+  "views": 53137,
+  "sensitive": false,
+  "waitTranscoding": true,
+  "state": 1,
+  "commentsEnabled": true,
+  "downloadEnabled": true,
+  "published": "2018-10-01T10:52:46.396Z",
+  "originallyPublishedAt": null,
+  "updated": "2020-07-30T08:01:00.836Z",
+  "mediaType": "text/markdown",
+  "content": "**[Want to help to translate this video?](https://weblate.framasoft.org/projects/what-is-peertube-video/)**\r\n\r\n**Take back the control of your videos! [#JoinPeertube](https://joinpeertube.org)**\r\n*A decentralized video hosting network, based on free/libre software!*\r\n\r\n**Animation Produced by:** [LILA](https://libreart.info) - [ZeMarmot Team](https://film.zemarmot.net)\r\n*Directed by* Aryeom\r\n*Assistant* Jehan\r\n**Licence**: [CC-By-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)\r\n\r\n**Sponsored by** [Framasoft](https://framasoft.org)\r\n\r\n**Music**: [Red Step Forward](http://play.dogmazic.net/song.php?song_id=52491) - CC-By Ken Bushima\r\n\r\n**Movie Clip**: [Caminades 3: Llamigos](http://www.caminandes.com/) CC-By Blender Institute\r\n\r\n**Video sources**: https://gitlab.gnome.org/Jehan/what-is-peertube/",
+  "support": null,
+  "subtitleLanguage": [
+    {
+      "identifier": "ca",
+      "name": "Catalan",
+      "url": "https://framatube.org/static/video-captions/9c9de5e8-0a1e-484a-b099-e80766180a6d-ca.vtt"
+    },
+    {
+      "identifier": "cs",
+      "name": "Czech",
+      "url": "https://framatube.org/static/video-captions/9c9de5e8-0a1e-484a-b099-e80766180a6d-cs.vtt"
+    },
+    {
+      "identifier": "de",
+      "name": "German",
+      "url": "https://framatube.org/static/video-captions/9c9de5e8-0a1e-484a-b099-e80766180a6d-de.vtt"
+    },
+    {
+      "identifier": "en",
+      "name": "English",
+      "url": "https://framatube.org/static/video-captions/9c9de5e8-0a1e-484a-b099-e80766180a6d-en.vtt"
+    },
+    {
+      "identifier": "es",
+      "name": "Spanish",
+      "url": "https://framatube.org/static/video-captions/9c9de5e8-0a1e-484a-b099-e80766180a6d-es.vtt"
+    },
+    {
+      "identifier": "eu",
+      "name": "Basque",
+      "url": "https://framatube.org/static/video-captions/9c9de5e8-0a1e-484a-b099-e80766180a6d-eu.vtt"
+    },
+    {
+      "identifier": "fr",
+      "name": "French",
+      "url": "https://framatube.org/static/video-captions/9c9de5e8-0a1e-484a-b099-e80766180a6d-fr.vtt"
+    },
+    {
+      "identifier": "gl",
+      "name": "Galician",
+      "url": "https://framatube.org/static/video-captions/9c9de5e8-0a1e-484a-b099-e80766180a6d-gl.vtt"
+    },
+    {
+      "identifier": "hu",
+      "name": "Hungarian",
+      "url": "https://framatube.org/static/video-captions/9c9de5e8-0a1e-484a-b099-e80766180a6d-hu.vtt"
+    },
+    {
+      "identifier": "it",
+      "name": "Italian",
+      "url": "https://framatube.org/static/video-captions/9c9de5e8-0a1e-484a-b099-e80766180a6d-it.vtt"
+    },
+    {
+      "identifier": "lt",
+      "name": "Lithuanian",
+      "url": "https://framatube.org/static/video-captions/9c9de5e8-0a1e-484a-b099-e80766180a6d-lt.vtt"
+    },
+    {
+      "identifier": "nl",
+      "name": "Dutch",
+      "url": "https://framatube.org/static/video-captions/9c9de5e8-0a1e-484a-b099-e80766180a6d-nl.vtt"
+    },
+    {
+      "identifier": "pl",
+      "name": "Polish",
+      "url": "https://framatube.org/static/video-captions/9c9de5e8-0a1e-484a-b099-e80766180a6d-pl.vtt"
+    },
+    {
+      "identifier": "pt",
+      "name": "Portuguese",
+      "url": "https://framatube.org/static/video-captions/9c9de5e8-0a1e-484a-b099-e80766180a6d-pt.vtt"
+    },
+    {
+      "identifier": "ru",
+      "name": "Russian",
+      "url": "https://framatube.org/static/video-captions/9c9de5e8-0a1e-484a-b099-e80766180a6d-ru.vtt"
+    },
+    {
+      "identifier": "sv",
+      "name": "Swedish",
+      "url": "https://framatube.org/static/video-captions/9c9de5e8-0a1e-484a-b099-e80766180a6d-sv.vtt"
+    },
+    {
+      "identifier": "zh",
+      "name": "Chinese",
+      "url": "https://framatube.org/static/video-captions/9c9de5e8-0a1e-484a-b099-e80766180a6d-zh.vtt"
+    }
+  ],
+  "icon": [
+    {
+      "type": "Image",
+      "url": "https://framatube.org/static/thumbnails/9c9de5e8-0a1e-484a-b099-e80766180a6d.jpg",
+      "mediaType": "image/jpeg",
+      "width": 223,
+      "height": 122
+    },
+    {
+      "type": "Image",
+      "url": "https://framatube.org/static/previews/9c9de5e8-0a1e-484a-b099-e80766180a6d.jpg",
+      "mediaType": "image/jpeg",
+      "width": 850,
+      "height": 480
+    }
+  ],
+  "url": [
+    {
+      "type": "Link",
+      "mediaType": "text/html",
+      "href": "https://framatube.org/videos/watch/9c9de5e8-0a1e-484a-b099-e80766180a6d"
+    },
+    {
+      "type": "Link",
+      "mediaType": "video/mp4",
+      "href": "https://framatube.org/static/webseed/9c9de5e8-0a1e-484a-b099-e80766180a6d-1080.mp4",
+      "height": 1080,
+      "size": 14689568,
+      "fps": 24
+    },
+    {
+      "type": "Link",
+      "rel": ["metadata", "video/mp4"],
+      "mediaType": "application/json",
+      "href": "https://framatube.org/api/v1/videos/9c9de5e8-0a1e-484a-b099-e80766180a6d/metadata/10124",
+      "height": 1080,
+      "fps": 24
+    },
+    {
+      "type": "Link",
+      "mediaType": "application/x-bittorrent",
+      "href": "https://framatube.org/static/torrents/9c9de5e8-0a1e-484a-b099-e80766180a6d-1080.torrent",
+      "height": 1080
+    },
+    {
+      "type": "Link",
+      "mediaType": "application/x-bittorrent;x-scheme-handler/magnet",
+      "href": "magnet:?xs=https%3A%2F%2Fframatube.org%2Fstatic%2Ftorrents%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-1080.torrent&xt=urn:btih:dc84b692c4002fec0cae873df0dc7f5d67fc09db&dn=What+is+PeerTube%3F&tr=wss%3A%2F%2Fframatube.org%3A443%2Ftracker%2Fsocket&tr=https%3A%2F%2Fframatube.org%2Ftracker%2Fannounce&ws=https%3A%2F%2Fframatube.org%2Fstatic%2Fwebseed%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-1080.mp4&ws=https%3A%2F%2Fvideo.antopie.org%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-1080.mp4&ws=https%3A%2F%2Fpeertube.live%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-1080.mp4&ws=https%3A%2F%2Ftube.privacytools.io%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-1080.mp4&ws=https%3A%2F%2Fpeertube.social%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-1080.mp4&ws=https%3A%2F%2Fpeertube.foxfam.club%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-1080.mp4&ws=https%3A%2F%2Fpeertube.iselfhost.com%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-1080.mp4&ws=https%3A%2F%2Fpeertube.freeforge.eu%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-1080.mp4&ws=https%3A%2F%2Fpeertube.krapace.fr%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-1080.mp4&ws=https%3A%2F%2Fpeertube2.cpy.re%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-1080.mp4&ws=https%3A%2F%2Fvideo.blueline.mg%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-1080.mp4&ws=https%3A%2F%2Fpeertube.video%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-1080.mp4&ws=https%3A%2F%2Ftube.crapaud-fou.org%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-1080.mp4&ws=https%3A%2F%2Fflim.ml%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-1080.mp4&ws=https%3A%2F%2Fpeertube.nomagic.uk%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-1080.mp4",
+      "height": 1080
+    },
+    {
+      "type": "Link",
+      "mediaType": "video/mp4",
+      "href": "https://framatube.org/static/webseed/9c9de5e8-0a1e-484a-b099-e80766180a6d-720.mp4",
+      "height": 720,
+      "size": 8365049,
+      "fps": 24
+    },
+    {
+      "type": "Link",
+      "rel": ["metadata", "video/mp4"],
+      "mediaType": "application/json",
+      "href": "https://framatube.org/api/v1/videos/9c9de5e8-0a1e-484a-b099-e80766180a6d/metadata/10127",
+      "height": 720,
+      "fps": 24
+    },
+    {
+      "type": "Link",
+      "mediaType": "application/x-bittorrent",
+      "href": "https://framatube.org/static/torrents/9c9de5e8-0a1e-484a-b099-e80766180a6d-720.torrent",
+      "height": 720
+    },
+    {
+      "type": "Link",
+      "mediaType": "application/x-bittorrent;x-scheme-handler/magnet",
+      "href": "magnet:?xs=https%3A%2F%2Fframatube.org%2Fstatic%2Ftorrents%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-720.torrent&xt=urn:btih:9fb0e35b4945565fa842b2bb0fe8b03edf223b15&dn=What+is+PeerTube%3F&tr=wss%3A%2F%2Fframatube.org%3A443%2Ftracker%2Fsocket&tr=https%3A%2F%2Fframatube.org%2Ftracker%2Fannounce&ws=https%3A%2F%2Fframatube.org%2Fstatic%2Fwebseed%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-720.mp4&ws=https%3A%2F%2Fvideo.antopie.org%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-720.mp4&ws=https%3A%2F%2Ftube.privacytools.io%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-720.mp4&ws=https%3A%2F%2Fpeertube.live%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-720.mp4&ws=https%3A%2F%2Fpeertube.social%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-720.mp4&ws=https%3A%2F%2Fpeertube.iselfhost.com%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-720.mp4&ws=https%3A%2F%2Fpeertube2.cpy.re%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-720.mp4&ws=https%3A%2F%2Fpeertube.freeforge.eu%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-720.mp4&ws=https%3A%2F%2Fpeertube.krapace.fr%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-720.mp4&ws=https%3A%2F%2Fvideo.blueline.mg%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-720.mp4&ws=https%3A%2F%2Fpeertube.video%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-720.mp4&ws=https%3A%2F%2Ftube.crapaud-fou.org%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-720.mp4&ws=https%3A%2F%2Fflim.ml%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-720.mp4&ws=https%3A%2F%2Fpeertube.foxfam.club%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-720.mp4&ws=https%3A%2F%2Fpeertube.nomagic.uk%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-720.mp4",
+      "height": 720
+    },
+    {
+      "type": "Link",
+      "mediaType": "video/mp4",
+      "href": "https://framatube.org/static/webseed/9c9de5e8-0a1e-484a-b099-e80766180a6d-480.mp4",
+      "height": 480,
+      "size": 5650553,
+      "fps": 24
+    },
+    {
+      "type": "Link",
+      "rel": ["metadata", "video/mp4"],
+      "mediaType": "application/json",
+      "href": "https://framatube.org/api/v1/videos/9c9de5e8-0a1e-484a-b099-e80766180a6d/metadata/10125",
+      "height": 480,
+      "fps": 24
+    },
+    {
+      "type": "Link",
+      "mediaType": "application/x-bittorrent",
+      "href": "https://framatube.org/static/torrents/9c9de5e8-0a1e-484a-b099-e80766180a6d-480.torrent",
+      "height": 480
+    },
+    {
+      "type": "Link",
+      "mediaType": "application/x-bittorrent;x-scheme-handler/magnet",
+      "href": "magnet:?xs=https%3A%2F%2Fframatube.org%2Fstatic%2Ftorrents%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-480.torrent&xt=urn:btih:bf02027a9aad4275d8baa25afae230b85187bcf7&dn=What+is+PeerTube%3F&tr=wss%3A%2F%2Fframatube.org%3A443%2Ftracker%2Fsocket&tr=https%3A%2F%2Fframatube.org%2Ftracker%2Fannounce&ws=https%3A%2F%2Fframatube.org%2Fstatic%2Fwebseed%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-480.mp4&ws=https%3A%2F%2Fvideo.antopie.org%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-480.mp4&ws=https%3A%2F%2Fpeertube.live%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-480.mp4&ws=https%3A%2F%2Ftube.privacytools.io%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-480.mp4&ws=https%3A%2F%2Fpeertube.social%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-480.mp4&ws=https%3A%2F%2Fpeertube2.cpy.re%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-480.mp4&ws=https%3A%2F%2Fpeertube.iselfhost.com%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-480.mp4&ws=https%3A%2F%2Fpeertube.freeforge.eu%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-480.mp4&ws=https%3A%2F%2Fpeertube.krapace.fr%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-480.mp4&ws=https%3A%2F%2Fvideo.blueline.mg%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-480.mp4&ws=https%3A%2F%2Fpeertube.video%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-480.mp4&ws=https%3A%2F%2Ftube.crapaud-fou.org%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-480.mp4&ws=https%3A%2F%2Fflim.ml%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-480.mp4&ws=https%3A%2F%2Fpeertube.foxfam.club%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-480.mp4&ws=https%3A%2F%2Fpeertube.nomagic.uk%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-480.mp4",
+      "height": 480
+    },
+    {
+      "type": "Link",
+      "mediaType": "video/mp4",
+      "href": "https://framatube.org/static/webseed/9c9de5e8-0a1e-484a-b099-e80766180a6d-360.mp4",
+      "height": 360,
+      "size": 4524751,
+      "fps": 24
+    },
+    {
+      "type": "Link",
+      "rel": ["metadata", "video/mp4"],
+      "mediaType": "application/json",
+      "href": "https://framatube.org/api/v1/videos/9c9de5e8-0a1e-484a-b099-e80766180a6d/metadata/10126",
+      "height": 360,
+      "fps": 24
+    },
+    {
+      "type": "Link",
+      "mediaType": "application/x-bittorrent",
+      "href": "https://framatube.org/static/torrents/9c9de5e8-0a1e-484a-b099-e80766180a6d-360.torrent",
+      "height": 360
+    },
+    {
+      "type": "Link",
+      "mediaType": "application/x-bittorrent;x-scheme-handler/magnet",
+      "href": "magnet:?xs=https%3A%2F%2Fframatube.org%2Fstatic%2Ftorrents%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-360.torrent&xt=urn:btih:16b3720b18752523e2848341d3207120f2de26f8&dn=What+is+PeerTube%3F&tr=wss%3A%2F%2Fframatube.org%3A443%2Ftracker%2Fsocket&tr=https%3A%2F%2Fframatube.org%2Ftracker%2Fannounce&ws=https%3A%2F%2Fframatube.org%2Fstatic%2Fwebseed%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-360.mp4&ws=https%3A%2F%2Fvideo.antopie.org%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-360.mp4&ws=https%3A%2F%2Fpeertube.live%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-360.mp4&ws=https%3A%2F%2Ftube.privacytools.io%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-360.mp4&ws=https%3A%2F%2Fpeertube.social%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-360.mp4&ws=https%3A%2F%2Fpeertube.iselfhost.com%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-360.mp4&ws=https%3A%2F%2Fpeertube.freeforge.eu%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-360.mp4&ws=https%3A%2F%2Fpeertube.krapace.fr%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-360.mp4&ws=https%3A%2F%2Fpeertube2.cpy.re%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-360.mp4&ws=https%3A%2F%2Fvideo.blueline.mg%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-360.mp4&ws=https%3A%2F%2Fpeertube.video%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-360.mp4&ws=https%3A%2F%2Ftube.crapaud-fou.org%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-360.mp4&ws=https%3A%2F%2Fflim.ml%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-360.mp4&ws=https%3A%2F%2Fpeertube.foxfam.club%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-360.mp4&ws=https%3A%2F%2Fpeertube.nomagic.uk%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-360.mp4",
+      "height": 360
+    },
+    {
+      "type": "Link",
+      "mediaType": "video/mp4",
+      "href": "https://framatube.org/static/webseed/9c9de5e8-0a1e-484a-b099-e80766180a6d-240.mp4",
+      "height": 240,
+      "size": 3452697,
+      "fps": 24
+    },
+    {
+      "type": "Link",
+      "rel": ["metadata", "video/mp4"],
+      "mediaType": "application/json",
+      "href": "https://framatube.org/api/v1/videos/9c9de5e8-0a1e-484a-b099-e80766180a6d/metadata/10128",
+      "height": 240,
+      "fps": 24
+    },
+    {
+      "type": "Link",
+      "mediaType": "application/x-bittorrent",
+      "href": "https://framatube.org/static/torrents/9c9de5e8-0a1e-484a-b099-e80766180a6d-240.torrent",
+      "height": 240
+    },
+    {
+      "type": "Link",
+      "mediaType": "application/x-bittorrent;x-scheme-handler/magnet",
+      "href": "magnet:?xs=https%3A%2F%2Fframatube.org%2Fstatic%2Ftorrents%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-240.torrent&xt=urn:btih:38b4747ff788b30bf61f59d1965cd38f9e48e01f&dn=What+is+PeerTube%3F&tr=wss%3A%2F%2Fframatube.org%3A443%2Ftracker%2Fsocket&tr=https%3A%2F%2Fframatube.org%2Ftracker%2Fannounce&ws=https%3A%2F%2Fframatube.org%2Fstatic%2Fwebseed%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-240.mp4&ws=https%3A%2F%2Fvideo.antopie.org%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-240.mp4&ws=https%3A%2F%2Fpeertube.live%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-240.mp4&ws=https%3A%2F%2Ftube.privacytools.io%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-240.mp4&ws=https%3A%2F%2Fpeertube.social%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-240.mp4&ws=https%3A%2F%2Fpeertube.foxfam.club%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-240.mp4&ws=https%3A%2F%2Fpeertube2.cpy.re%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-240.mp4&ws=https%3A%2F%2Fpeertube.iselfhost.com%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-240.mp4&ws=https%3A%2F%2Fpeertube.freeforge.eu%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-240.mp4&ws=https%3A%2F%2Fpeertube.krapace.fr%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-240.mp4&ws=https%3A%2F%2Fvideo.blueline.mg%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-240.mp4&ws=https%3A%2F%2Fpeertube.video%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-240.mp4&ws=https%3A%2F%2Ftube.crapaud-fou.org%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-240.mp4&ws=https%3A%2F%2Fflim.ml%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-240.mp4&ws=https%3A%2F%2Fpeertube.nomagic.uk%2Fstatic%2Fredundancy%2F9c9de5e8-0a1e-484a-b099-e80766180a6d-240.mp4",
+      "height": 240
+    }
+  ],
+  "likes": "https://framatube.org/videos/watch/9c9de5e8-0a1e-484a-b099-e80766180a6d/likes",
+  "dislikes": "https://framatube.org/videos/watch/9c9de5e8-0a1e-484a-b099-e80766180a6d/dislikes",
+  "shares": "https://framatube.org/videos/watch/9c9de5e8-0a1e-484a-b099-e80766180a6d/announces",
+  "comments": "https://framatube.org/videos/watch/9c9de5e8-0a1e-484a-b099-e80766180a6d/comments",
+  "attributedTo": [
+    {
+      "type": "Person",
+      "id": "https://framatube.org/accounts/framasoft"
+    },
+    {
+      "type": "Group",
+      "id": "https://framatube.org/video-channels/bf54d359-cfad-4935-9d45-9d6be93f63e8"
+    }
+  ],
+  "to": ["https://www.w3.org/ns/activitystreams#Public"],
+  "cc": ["https://framatube.org/accounts/framasoft/followers"],
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    "https://w3id.org/security/v1",
+    {
+      "RsaSignature2017": "https://w3id.org/security#RsaSignature2017"
+    },
+    {
+      "pt": "https://joinpeertube.org/ns#",
+      "sc": "http://schema.org#",
+      "Hashtag": "as:Hashtag",
+      "uuid": "sc:identifier",
+      "category": "sc:category",
+      "licence": "sc:license",
+      "subtitleLanguage": "sc:subtitleLanguage",
+      "sensitive": "as:sensitive",
+      "language": "sc:inLanguage",
+      "Infohash": "pt:Infohash",
+      "Playlist": "pt:Playlist",
+      "PlaylistElement": "pt:PlaylistElement",
+      "originallyPublishedAt": "sc:datePublished",
+      "views": {
+        "@type": "sc:Number",
+        "@id": "pt:views"
+      },
+      "state": {
+        "@type": "sc:Number",
+        "@id": "pt:state"
+      },
+      "size": {
+        "@type": "sc:Number",
+        "@id": "pt:size"
+      },
+      "fps": {
+        "@type": "sc:Number",
+        "@id": "pt:fps"
+      },
+      "startTimestamp": {
+        "@type": "sc:Number",
+        "@id": "pt:startTimestamp"
+      },
+      "stopTimestamp": {
+        "@type": "sc:Number",
+        "@id": "pt:stopTimestamp"
+      },
+      "position": {
+        "@type": "sc:Number",
+        "@id": "pt:position"
+      },
+      "commentsEnabled": {
+        "@type": "sc:Boolean",
+        "@id": "pt:commentsEnabled"
+      },
+      "downloadEnabled": {
+        "@type": "sc:Boolean",
+        "@id": "pt:downloadEnabled"
+      },
+      "waitTranscoding": {
+        "@type": "sc:Boolean",
+        "@id": "pt:waitTranscoding"
+      },
+      "support": {
+        "@type": "sc:Text",
+        "@id": "pt:support"
+      },
+      "likes": {
+        "@id": "as:likes",
+        "@type": "@id"
+      },
+      "dislikes": {
+        "@id": "as:dislikes",
+        "@type": "@id"
+      },
+      "playlists": {
+        "@id": "pt:playlists",
+        "@type": "@id"
+      },
+      "shares": {
+        "@id": "as:shares",
+        "@type": "@id"
+      },
+      "comments": {
+        "@id": "as:comments",
+        "@type": "@id"
+      }
+    }
+  ]
+}

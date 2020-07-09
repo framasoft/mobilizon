@@ -9,7 +9,7 @@ defmodule Mobilizon.Actors.Actor do
 
   alias Mobilizon.{Actors, Config, Crypto, Mention, Share}
   alias Mobilizon.Actors.{ActorOpenness, ActorType, ActorVisibility, Follower, Member}
-  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.{Event, FeedToken}
   alias Mobilizon.Media.File
   alias Mobilizon.Reports.{Note, Report}
@@ -27,6 +27,9 @@ defmodule Mobilizon.Actors.Actor do
           following_url: String.t(),
           followers_url: String.t(),
           shared_inbox_url: String.t(),
+          resources_url: String.t(),
+          posts_url: String.t(),
+          events_url: String.t(),
           type: ActorType.t(),
           name: String.t(),
           domain: String.t(),
@@ -62,6 +65,10 @@ defmodule Mobilizon.Actors.Actor do
     :shared_inbox_url,
     :following_url,
     :followers_url,
+    :posts_url,
+    :events_url,
+    :todos_url,
+    :discussions_url,
     :type,
     :name,
     :domain,
@@ -96,6 +103,10 @@ defmodule Mobilizon.Actors.Actor do
     :followers_url,
     :members_url,
     :resources_url,
+    :posts_url,
+    :todos_url,
+    :events_url,
+    :discussions_url,
     :name,
     :summary,
     :manually_approves_followers,
@@ -117,6 +128,7 @@ defmodule Mobilizon.Actors.Actor do
 
   schema "actors" do
     field(:url, :string)
+
     field(:outbox_url, :string)
     field(:inbox_url, :string)
     field(:following_url, :string)
@@ -124,7 +136,11 @@ defmodule Mobilizon.Actors.Actor do
     field(:shared_inbox_url, :string)
     field(:members_url, :string)
     field(:resources_url, :string)
+    field(:posts_url, :string)
+    field(:events_url, :string)
     field(:todos_url, :string)
+    field(:discussions_url, :string)
+
     field(:type, ActorType, default: :Person)
     field(:name, :string)
     field(:domain, :string, default: nil)
@@ -344,7 +360,8 @@ defmodule Mobilizon.Actors.Actor do
   def build_url("relay", :page, _args),
     do: Endpoint |> Routes.activity_pub_url(:relay) |> URI.decode()
 
-  def build_url(preferred_username, endpoint, args) when endpoint in [:page, :resources] do
+  def build_url(preferred_username, endpoint, args)
+      when endpoint in [:page, :resources, :posts, :discussions, :events, :todos] do
     endpoint = if endpoint == :page, do: :actor, else: endpoint
 
     Endpoint
@@ -353,7 +370,7 @@ defmodule Mobilizon.Actors.Actor do
   end
 
   def build_url(preferred_username, endpoint, args)
-      when endpoint in [:outbox, :following, :followers, :members, :todos] do
+      when endpoint in [:outbox, :following, :followers, :members] do
     Endpoint
     |> Routes.activity_pub_url(endpoint, preferred_username, args)
     |> URI.decode()

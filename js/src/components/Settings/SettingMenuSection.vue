@@ -11,11 +11,13 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import SettingMenuItem from "@/components/Settings/SettingMenuItem.vue";
 import { Route } from "vue-router";
+
 @Component({
   components: { SettingMenuItem },
 })
 export default class SettingMenuSection extends Vue {
   @Prop({ required: false, type: String }) title!: string;
+
   @Prop({ required: true, type: Object }) to!: Route;
 
   get sectionActive() {

@@ -1,6 +1,7 @@
 import gql from "graphql-tag";
-import { CONVERSATION_BASIC_FIELDS_FRAGMENT } from "@/graphql/conversation";
+import { DISCUSSION_BASIC_FIELDS_FRAGMENT } from "@/graphql/discussion";
 import { RESOURCE_METADATA_BASIC_FIELDS_FRAGMENT } from "@/graphql/resources";
+import { POST_BASIC_FIELDS } from "./post";
 
 export const FETCH_PERSON = gql`
   query($username: String!) {
@@ -479,10 +480,16 @@ export const FETCH_GROUP = gql`
         }
         total
       }
-      conversations {
+      discussions {
         total
         elements {
-          ...ConversationBasicFields
+          ...DiscussionBasicFields
+        }
+      }
+      posts {
+        total
+        elements {
+          ...PostBasicFields
         }
       }
       members {
@@ -497,6 +504,7 @@ export const FETCH_GROUP = gql`
               url
             }
           }
+          insertedAt
         }
         total
       }
@@ -537,9 +545,11 @@ export const FETCH_GROUP = gql`
       }
     }
   }
-  ${CONVERSATION_BASIC_FIELDS_FRAGMENT}
+  ${DISCUSSION_BASIC_FIELDS_FRAGMENT}
+  ${POST_BASIC_FIELDS}
   ${RESOURCE_METADATA_BASIC_FIELDS_FRAGMENT}
 `;
+
 export const CREATE_GROUP = gql`
   mutation CreateGroup(
     $creatorActorId: ID!
@@ -557,6 +567,29 @@ export const CREATE_GROUP = gql`
       banner: $banner
       avatar: $avatar
     ) {
+      id
+      preferredUsername
+      name
+      summary
+      avatar {
+        url
+      }
+      banner {
+        url
+      }
+    }
+  }
+`;
+
+export const UPDATE_GROUP = gql`
+  mutation UpdateGroup(
+    $id: ID!
+    $name: String
+    $summary: String
+    $avatar: PictureInput
+    $banner: PictureInput
+  ) {
+    createGroup(id: $id, name: $name, summary: $summary, banner: $banner, avatar: $avatar) {
       id
       preferredUsername
       name

@@ -1,0 +1,91 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    "https://w3id.org/security/v1",
+    {
+      "manuallyApprovesFollowers": "as:manuallyApprovesFollowers",
+      "toot": "http://joinmastodon.org/ns#",
+      "featured": {
+        "@id": "toot:featured",
+        "@type": "@id"
+      },
+      "alsoKnownAs": {
+        "@id": "as:alsoKnownAs",
+        "@type": "@id"
+      },
+      "movedTo": {
+        "@id": "as:movedTo",
+        "@type": "@id"
+      },
+      "schema": "http://schema.org#",
+      "PropertyValue": "schema:PropertyValue",
+      "value": "schema:value",
+      "IdentityProof": "toot:IdentityProof",
+      "discoverable": "toot:discoverable",
+      "Device": "toot:Device",
+      "Ed25519Signature": "toot:Ed25519Signature",
+      "Ed25519Key": "toot:Ed25519Key",
+      "Curve25519Key": "toot:Curve25519Key",
+      "EncryptedMessage": "toot:EncryptedMessage",
+      "publicKeyBase64": "toot:publicKeyBase64",
+      "deviceId": "toot:deviceId",
+      "claim": {
+        "@type": "@id",
+        "@id": "toot:claim"
+      },
+      "fingerprintKey": {
+        "@type": "@id",
+        "@id": "toot:fingerprintKey"
+      },
+      "identityKey": {
+        "@type": "@id",
+        "@id": "toot:identityKey"
+      },
+      "devices": {
+        "@type": "@id",
+        "@id": "toot:devices"
+      },
+      "messageFranking": "toot:messageFranking",
+      "messageType": "toot:messageType",
+      "cipherText": "toot:cipherText",
+      "focalPoint": {
+        "@container": "@list",
+        "@id": "toot:focalPoint"
+      }
+    }
+  ],
+  "id": "https://framapiaf.org/users/peertube",
+  "type": "Person",
+  "following": "https://framapiaf.org/users/peertube/following",
+  "followers": "https://framapiaf.org/users/peertube/followers",
+  "inbox": "https://framapiaf.org/users/peertube/inbox",
+  "outbox": "https://framapiaf.org/users/peertube/outbox",
+  "featured": "https://framapiaf.org/users/peertube/collections/featured",
+  "preferredUsername": "peertube",
+  "name": "PeerTube",
+  "summary": "<p>PeerTube Software Official Account - No support here // Compte officiel du logiciel PeerTube (animé par Framasoft). Nous ne faisons pas de support depuis ce compte. Merci de contacter l&apos;administrateur⋅ice de l&apos;instance concernée ou   de vous rendre sur <a href=\"https://framacolibri.org/c/peertube\" rel=\"nofollow noopener noreferrer\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">framacolibri.org/c/peertube</span><span class=\"invisible\"></span></a></p>",
+  "url": "https://framapiaf.org/@peertube",
+  "manuallyApprovesFollowers": false,
+  "discoverable": false,
+  "devices": "https://framapiaf.org/users/peertube/collections/devices",
+  "publicKey": {
+    "id": "https://framapiaf.org/users/peertube#main-key",
+    "owner": "https://framapiaf.org/users/peertube",
+    "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn1y53r+ymOmDoP8iYxa1\nb1VvXkldZVpxJg1ZVeq4SijVS3oNurrQQhpTwTmCCAue2m+UvG4eEEYAYSfb5+C3\nbqH3kLlQrptkp8y/qz3d4tk/b8RConAaws7/SwksDC5rs+cYLnnXgD7rAaT1uH/B\nVTzG79YLgnasK6IxpnBth6Vru+9g2U8PzIUOfuwPV3aZeu9q2xEdC5/GnnjsfKZv\nWEzpG3HkRAlaTRDYadl9dWOPlfhy/LMkknAP02j+Qt/s7y83YqsrUyvQcfTSy3Zf\nLNNFrpU4u1ACyZXzvaoDXQH8HetKSA06xqa4pJO4xmM2PWMoBq1KX3Us4sP291w4\nEQIDAQAB\n-----END PUBLIC KEY-----\n"
+  },
+  "tag": [],
+  "attachment": [],
+  "endpoints": {
+    "sharedInbox": "https://framapiaf.org/inbox"
+  },
+  "icon": {
+    "type": "Image",
+    "mediaType": "image/png",
+    "url": "https://framapiaf.s3.framasoft.org/framapiaf/accounts/avatars/000/223/824/original/03ed95406a9a3cd0.png"
+  },
+  "image": {
+    "type": "Image",
+    "mediaType": "image/png",
+    "url": "https://framapiaf.s3.framasoft.org/framapiaf/accounts/headers/000/223/824/original/2fbb4d6268c2fb20.png"
+  }
+}

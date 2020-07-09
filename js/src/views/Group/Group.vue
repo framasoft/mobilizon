@@ -1,60 +1,71 @@
 <template>
   <div class="container is-widescreen">
-    <div
-      v-if="group && groupMemberships && groupMemberships.includes(group.id)"
-      class="block-container"
-    >
-      <div class="block-column">
-        <nav class="breadcrumb" aria-label="breadcrumbs" v-if="group">
-          <ul>
-            <li>
-              <router-link :to="{ name: RouteName.MY_GROUPS }">{{ $t("My groups") }}</router-link>
-            </li>
-            <li class="is-active">
-              <router-link
-                :to="{
-                  name: RouteName.GROUP,
-                  params: { preferredUsername: usernameWithDomain(group.preferredUsername) },
-                }"
-                >{{ group.name }}</router-link
-              >
-            </li>
-          </ul>
-        </nav>
-        <section class="presentation">
-          <div class="media">
-            <div class="media-left">
-              <figure class="image is-128x128" v-if="group.avatar">
-                <img :src="group.avatar.url" />
-              </figure>
-              <b-icon v-else size="is-large" icon="account-group" />
-            </div>
-            <div class="media-content">
-              <h1>{{ group.name }}</h1>
-              <small class="has-text-grey">@{{ usernameWithDomain(group) }}</small>
-            </div>
-          </div>
-          <div class="members">
-            <figure
-              class="image is-48x48"
-              :title="
-                $t(`@{username} ({role})`, {
-                  username: usernameWithDomain(member.actor),
-                  role: member.role,
-                })
-              "
-              v-for="member in group.members.elements"
-              :key="member.actor.id"
+    <div class="header">
+      <nav class="breadcrumb" aria-label="breadcrumbs">
+        <ul>
+          <li>
+            <router-link :to="{ name: RouteName.MY_GROUPS }">{{ $t("My groups") }}</router-link>
+          </li>
+          <li class="is-active">
+            <router-link
+              v-if="group.preferredUsername"
+              :to="{
+                name: RouteName.GROUP,
+                params: { preferredUsername: usernameWithDomain(group) },
+              }"
+              >{{ group.name }}</router-link
             >
-              <img
-                class="is-rounded"
-                :src="member.actor.avatar.url"
-                v-if="member.actor.avatar"
-                alt
-              />
+            <b-skeleton v-else :animated="true"></b-skeleton>
+          </li>
+        </ul>
+      </nav>
+      <header class="block-container presentation">
+        <div class="block-column media">
+          <div class="media-left">
+            <figure class="image rounded is-128x128" v-if="group.avatar">
+              <img :src="group.avatar.url" />
             </figure>
+            <b-icon v-else size="is-large" icon="account-group" />
           </div>
-        </section>
+          <div class="media-content">
+            <h1 v-if="group.name">{{ group.name }}</h1>
+            <b-skeleton v-else :animated="true" />
+            <small class="has-text-grey" v-if="group.preferredUsername"
+              >@{{ usernameWithDomain(group) }}</small
+            >
+            <b-skeleton v-else :animated="true" />
+            <br />
+            <router-link
+              v-if="isCurrentActorAGroupAdmin"
+              :to="{
+                name: RouteName.GROUP_PUBLIC_SETTINGS,
+                params: { preferredUsername: usernameWithDomain(group) },
+              }"
+              class="button is-outlined"
+              >{{ $t("Group settings") }}</router-link
+            >
+          </div>
+        </div>
+        <div class="block-column members">
+          <figure
+            class="image is-48x48"
+            :title="
+              $t(`@{username} ({role})`, {
+                username: usernameWithDomain(member.actor),
+                role: member.role,
+              })
+            "
+            v-for="member in group.members.elements"
+            :key="member.actor.id"
+          >
+            <img class="is-rounded" :src="member.actor.avatar.url" v-if="member.actor.avatar" alt />
+            <b-icon v-else size="is-large" icon="account-circle" />
+          </figure>
+        </div>
+      </header>
+    </div>
+    <div v-if="isCurrentActorAGroupMember" class="block-container">
+      <div class="block-column">
         <section>
           <subtitle>{{ $t("Upcoming events") }}</subtitle>
           <div class="organized-events-wrapper" v-if="group.organizedEvents.total > 0">
@@ -92,8 +103,17 @@
         <section>
           <subtitle>{{ $t("Public page") }}</subtitle>
           <p>{{ $t("Followed by {count} persons", { count: group.members.total }) }}</p>
-          <b-button type="is-light">{{ $t("Edit biography") }}</b-button>
-          <b-button type="is-primary">{{ $t("Post a public message") }}</b-button>
+          <div v-if="group.posts.total > 0" class="posts-wrapper">
+            <post-list-item v-for="post in group.posts.elements" :key="post.id" :post="post" />
+          </div>
+          <router-link
+            :to="{
+              name: RouteName.POST_CREATE,
+              params: { preferredUsername: usernameWithDomain(group) },
+            }"
+            class="button is-primary"
+            >{{ $t("Post a public message") }}</router-link
+          >
         </section>
         <section>
           <subtitle>{{ $t("Ongoing tasks") }}</subtitle>
@@ -122,15 +142,15 @@
         </section>
         <section>
           <subtitle>{{ $t("Discussions") }}</subtitle>
-          <conversation-list-item
-            v-if="group.conversations.total > 0"
-            v-for="conversation in group.conversations.elements"
-            :key="conversation.id"
-            :conversation="conversation"
+          <discussion-list-item
+            v-if="group.discussions.total > 0"
+            v-for="discussion in group.discussions.elements"
+            :key="discussion.id"
+            :discussion="discussion"
           />
           <router-link
             :to="{
-              name: RouteName.CONVERSATION_LIST,
+              name: RouteName.DISCUSSION_LIST,
               params: { preferredUsername: usernameWithDomain(group) },
             }"
             >{{ $t("View all discussions") }}</router-link
@@ -138,24 +158,13 @@
         </section>
       </div>
     </div>
-    <div v-else-if="group">
-      <section class="presentation">
-        <div class="media">
-          <div class="media-left">
-            <figure class="image is-128x128" v-if="group.avatar">
-              <img :src="group.avatar.url" alt />
-            </figure>
-            <b-icon v-else size="is-large" icon="account-group" />
-          </div>
-          <div class="media-content">
-            <h2>{{ group.name }}</h2>
-            <small class="has-text-grey">@{{ usernameWithDomain(group) }}</small>
-          </div>
-        </div>
-      </section>
+    <b-message v-else-if="!group && $apollo.loading === false" type="is-danger">
+      {{ $t("No group found") }}
+    </b-message>
+    <div v-else class="public-container">
       <section>
         <subtitle>{{ $t("Upcoming events") }}</subtitle>
-        <div class="organized-events-wrapper" v-if="group.organizedEvents.total > 0">
+        <div class="organized-events-wrapper" v-if="group && group.organizedEvents.total > 0">
           <EventMinimalistCard
             v-for="event in group.organizedEvents.elements"
             :event="event"
@@ -164,16 +173,24 @@
           />
           <router-link :to="{}">{{ $t("View all upcoming events") }}</router-link>
         </div>
-        <span v-else>{{ $t("No public upcoming events") }}</span>
+        <span v-else-if="group">{{ $t("No public upcoming events") }}</span>
+        <b-skeleton animated v-else></b-skeleton>
       </section>
       <!--            {{ group }}-->
       <section>
         <subtitle>{{ $t("Latest posts") }}</subtitle>
+        <div v-if="group && group.posts.elements">
+          <router-link
+            v-for="post in group.posts.elements"
+            :key="post.id"
+            :to="{ name: RouteName.POST, params: { slug: post.slug } }"
+          >
+            {{ post.title }}
+          </router-link>
+        </div>
+        <b-skeleton animated v-else></b-skeleton>
       </section>
     </div>
-    <b-message v-else-if="!group && $apollo.loading === false" type="is-danger">
-      {{ $t("No group found") }}
-    </b-message>
   </div>
 </template>
 
@@ -181,11 +198,19 @@
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import EventCard from "@/components/Event/EventCard.vue";
 import { FETCH_GROUP, CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
-import { IActor, IGroup, IPerson, usernameWithDomain } from "@/types/actor";
+import {
+  IActor,
+  IGroup,
+  IPerson,
+  usernameWithDomain,
+  Group as GroupModel,
+  MemberRole,
+} from "@/types/actor";
 import Subtitle from "@/components/Utils/Subtitle.vue";
 import CompactTodo from "@/components/Todo/CompactTodo.vue";
 import EventMinimalistCard from "@/components/Event/EventMinimalistCard.vue";
-import ConversationListItem from "@/components/Conversation/ConversationListItem.vue";
+import DiscussionListItem from "@/components/Discussion/DiscussionListItem.vue";
+import PostListItem from "@/components/Post/PostListItem.vue";
 import ResourceItem from "@/components/Resource/ResourceItem.vue";
 import FolderItem from "@/components/Resource/FolderItem.vue";
 import RouteName from "../../router/name";
@@ -214,7 +239,8 @@ import RouteName from "../../router/name";
     currentActor: CURRENT_ACTOR_CLIENT,
   },
   components: {
-    ConversationListItem,
+    DiscussionListItem,
+    PostListItem,
     EventMinimalistCard,
     CompactTodo,
     Subtitle,
@@ -243,7 +269,7 @@ export default class Group extends Vue {
 
   person!: IPerson;
 
-  group!: IGroup;
+  group: IGroup = new GroupModel();
 
   loading = true;
 
@@ -272,17 +298,62 @@ export default class Group extends Vue {
     if (!this.person || !this.person.id) return undefined;
     return this.person.memberships.elements.map(({ parent: { id } }) => id);
   }
+
+  get isCurrentActorAGroupMember(): boolean {
+    return this.groupMemberships != undefined && this.groupMemberships.includes(this.group.id);
+  }
+
+  get isCurrentActorAGroupAdmin(): boolean {
+    return (
+      this.person &&
+      this.person.memberships.elements.some(
+        ({ parent: { id }, role }) => id === this.group.id && role === MemberRole.ADMINISTRATOR
+      )
+    );
+  }
 }
 </script>
 <style lang="scss" scoped>
+@import "../../variables.scss";
+
 div.container {
   background: white;
   margin-bottom: 3rem;
   padding: 2rem 0;
 
+  .header,
+  .public-container {
+    margin: auto 2rem;
+    display: flex;
+    flex-direction: column;
+  }
+
   .block-container {
     display: flex;
     flex-wrap: wrap;
+
+    &.presentation {
+      border: 2px solid $purple-2;
+      padding: 10px 0;
+
+      h1 {
+        color: $purple-1;
+        font-size: 2rem;
+        font-weight: 500;
+      }
+
+      .button.is-outlined {
+        border-color: $purple-2;
+      }
+    }
+
+    .members {
+      display: flex;
+
+      figure:not(:first-child) {
+        margin-left: -10px;
+      }
+    }
 
     .block-column {
       flex: 1;
@@ -293,10 +364,8 @@ div.container {
           display: block;
         }
 
-        &.presentation {
-          .members {
-            display: flex;
-          }
+        .posts-wrapper {
+          padding-bottom: 1rem;
         }
 
         .organized-events-wrapper {

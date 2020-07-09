@@ -3,9 +3,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
   Handles the comment-related GraphQL calls.
   """
 
-  alias Mobilizon.{Actors, Admin, Conversations}
+  alias Mobilizon.{Actors, Admin, Discussions}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Conversations.Comment, as: CommentModel
+  alias Mobilizon.Discussions.Comment, as: CommentModel
   alias Mobilizon.Users
   alias Mobilizon.Users.User
 
@@ -14,7 +14,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
   require Logger
 
   def get_thread(_parent, %{id: thread_id}, _context) do
-    {:ok, Conversations.get_thread_replies(thread_id)}
+    {:ok, Discussions.get_thread_replies(thread_id)}
   end
 
   def create_comment(
@@ -51,7 +51,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
       ) do
     with {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
          %CommentModel{actor_id: comment_actor_id} = comment <-
-           Mobilizon.Conversations.get_comment(comment_id),
+           Mobilizon.Discussions.get_comment(comment_id),
          true <- actor_id === comment_actor_id,
          {:ok, _, %CommentModel{} = comment} <- Comments.update_comment(comment, %{text: text}) do
       {:ok, comment}
@@ -72,15 +72,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
         }
       ) do
     with {actor_id, ""} <- Integer.parse(actor_id),
-         {:is_owned, %Actor{} = _organizer_actor} <- User.owns_actor(user, actor_id),
+         {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
          %CommentModel{deleted_at: nil} = comment <-
-           Conversations.get_comment_with_preload(comment_id) do
+           Discussions.get_comment_with_preload(comment_id) do
       cond do
         {:comment_can_be_managed, true} == CommentModel.can_be_managed_by(comment, actor_id) ->
-          do_delete_comment(comment)
+          do_delete_comment(comment, actor)
 
         role in [:moderator, :administrator] ->
-          with {:ok, res} <- do_delete_comment(comment),
+          with {:ok, res} <- do_delete_comment(comment, actor),
                %Actor{} = actor <- Actors.get_actor(actor_id) do
             Admin.log_action(actor, "delete", comment)
 
@@ -103,9 +103,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
     {:error, "You are not allowed to delete a comment if not connected"}
   end
 
-  defp do_delete_comment(%CommentModel{} = comment) do
+  defp do_delete_comment(%CommentModel{} = comment, %Actor{} = actor) do
     with {:ok, _, %CommentModel{} = comment} <-
-           Comments.delete_comment(comment) do
+           Comments.delete_comment(comment, actor) do
       {:ok, comment}
     end
   end

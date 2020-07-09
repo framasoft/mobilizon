@@ -53,7 +53,7 @@
   "Approve": "Approuver",
   "Are you really sure you want to delete your whole account? You'll lose everything. Identities, settings, events created, messages and participations will be gone forever.": "Êtes-vous vraiment certain⋅e de vouloir supprimer votre compte ? Vous allez tout perdre. Identités, paramètres, événements créés, messages et participations disparaîtront pour toujours.",
   "Are you sure you want to <b>delete</b> this comment? This action cannot be undone.": "Êtes-vous certain⋅e de vouloir <b>supprimer</b> ce commentaire ? Cette action ne peut pas être annulée.",
-  "Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the conversation with the event creator or edit its event instead.": "Êtes-vous certain⋅e de vouloir <b>supprimer</b> cet évènement ? Cette action n'est pas réversible. Vous voulez peut-être engager la conversation avec le créateur de l'évènement ou bien modifier son évènement à la place.",
+  "Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the discussion with the event creator or edit its event instead.": "Êtes-vous certain⋅e de vouloir <b>supprimer</b> cet évènement ? Cette action n'est pas réversible. Vous voulez peut-être engager la discussion avec le créateur de l'évènement ou bien modifier son évènement à la place.",
   "Are you sure you want to cancel the event creation? You'll lose all modifications.": "Étes-vous certain⋅e de vouloir annuler la création de l'évènement ? Vous allez perdre toutes vos modifications.",
   "Are you sure you want to cancel the event edition? You'll lose all modifications.": "Êtes-vous certain⋅e de vouloir annuler la modification de l'évènement ? Vous allez perdre toutes vos modifications.",
   "Are you sure you want to cancel your participation at event \"{title}\"?": "Êtes-vous certain⋅e de vouloir annuler votre participation à l'évènement « {title} » ?",
@@ -710,5 +710,9 @@
   "Error while login with {provider}. Retry or login another way.": "Erreur lors de la connexion avec {provider}. Réessayez ou bien connectez vous autrement.",
   "Error while login with {provider}. This login provider doesn't exist.": "Erreur lors de la connexion avec {provider}. Cette méthode de connexion n'existe pas.",
   "This user has been disabled": "Cet utilisateur·ice a été désactivé·e",
-  "You can't reset your password because you use a 3rd-party auth provider to login.": "Vous ne pouvez pas réinitialiser votre mot de passe car vous vous connectez via une méthode externe."
+  "You can't reset your password because you use a 3rd-party auth provider to login.": "Vous ne pouvez pas réinitialiser votre mot de passe car vous vous connectez via une méthode externe.",
+  "Update post {name}": "Mettre à jour le billet {name}",
+  "Create a new post": "Créer un nouveau billet",
+  "Post": "Billet",
+  "By {author}": "Par {author}"
 }

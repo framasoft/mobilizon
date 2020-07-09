@@ -13,41 +13,38 @@ defmodule Mobilizon.Federation.ActivityPub do
   alias Mobilizon.{
     Actors,
     Config,
-    Conversations,
+    Discussions,
     Events,
-    Reports,
     Resources,
     Share,
-    Todos,
     Users
   }
 
   alias Mobilizon.Actors.{Actor, Follower, Member}
-  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.{Event, Participant}
-  alias Mobilizon.Reports.Report
-  alias Mobilizon.Resources.Resource
-  alias Mobilizon.Todos.{Todo, TodoList}
   alias Mobilizon.Tombstone
 
   alias Mobilizon.Federation.ActivityPub.{
     Activity,
     Audience,
     Federator,
+    Fetcher,
+    Preloader,
     Relay,
     Transmogrifier,
+    Types,
     Visibility
   }
 
+  alias Mobilizon.Federation.ActivityPub.Types.{Managable, Ownable}
+
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
-  alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
   alias Mobilizon.Federation.HTTPSignatures.Signature
   alias Mobilizon.Federation.WebFinger
 
-  alias Mobilizon.GraphQL.API.Utils, as: APIUtils
-  alias Mobilizon.Service.Formatter.HTML
   alias Mobilizon.Service.Notifications.Scheduler
-  alias Mobilizon.Service.RichMedia.Parser
+  alias Mobilizon.Storage.Page
 
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Email.{Admin, Mailer}
@@ -74,75 +71,44 @@ defmodule Mobilizon.Federation.ActivityPub do
   Fetch an object from an URL, from our local database of events and comments, then eventually remote
   """
   # TODO: Make database calls parallel
-  @spec fetch_object_from_url(String.t()) :: {:ok, %Event{}} | {:ok, %Comment{}} | {:error, any()}
-  def fetch_object_from_url(url) do
+  @spec fetch_object_from_url(String.t(), Keyword.t()) ::
+          {:ok, struct()} | {:error, any()}
+  def fetch_object_from_url(url, options \\ []) do
     Logger.info("Fetching object from url #{url}")
+    force_fetch = Keyword.get(options, :force, false)
 
     with {:not_http, true} <- {:not_http, String.starts_with?(url, "http")},
-         {:existing_event, nil} <- {:existing_event, Events.get_event_by_url(url)},
-         {:existing_comment, nil} <- {:existing_comment, Conversations.get_comment_from_url(url)},
-         {:existing_resource, nil} <- {:existing_resource, Resources.get_resource_by_url(url)},
-         {:existing_actor, {:error, :actor_not_found}} <-
-           {:existing_actor, Actors.get_actor_by_url(url)},
-         date <- Signature.generate_date_header(),
-         headers <-
-           [{:Accept, "application/activity+json"}]
-           |> maybe_date_fetch(date)
-           |> sign_fetch_relay(url, date),
-         {:ok, %HTTPoison.Response{body: body, status_code: code}} when code in 200..299 <-
-           HTTPoison.get(
-             url,
-             headers,
-             follow_redirect: true,
-             timeout: 10_000,
-             recv_timeout: 20_000,
-             ssl: [{:versions, [:"tlsv1.2"]}]
-           ),
-         {:ok, data} <- Jason.decode(body),
-         {:origin_check, true} <- {:origin_check, origin_check?(url, data)},
-         params <- %{
-           "type" => "Create",
-           "to" => data["to"],
-           "cc" => data["cc"],
-           "actor" => data["attributedTo"],
-           "object" => data
-         },
-         {:ok, _activity, %{url: object_url} = _object} <- Transmogrifier.handle_incoming(params) do
-      case data["type"] do
-        "Event" ->
-          {:ok, Events.get_public_event_by_url_with_preload!(object_url)}
-
-        "Note" ->
-          {:ok, Conversations.get_comment_from_url_with_preload!(object_url)}
-
-        "Document" ->
-          {:ok, Resources.get_resource_by_url_with_preloads(object_url)}
-
-        "ResourceCollection" ->
-          {:ok, Resources.get_resource_by_url_with_preloads(object_url)}
-
-        "Actor" ->
-          {:ok, Actors.get_actor_by_url!(object_url, true)}
-
-        other ->
-          {:error, other}
-      end
+         {:existing, nil} <-
+           {:existing, Tombstone.find_tombstone(url)},
+         {:existing, nil} <- {:existing, Events.get_event_by_url(url)},
+         {:existing, nil} <-
+           {:existing, Discussions.get_discussion_by_url(url)},
+         {:existing, nil} <- {:existing, Discussions.get_comment_from_url(url)},
+         {:existing, nil} <- {:existing, Resources.get_resource_by_url(url)},
+         {:existing, nil} <-
+           {:existing, Actors.get_actor_by_url_2(url)},
+         :ok <- Logger.info("Data for URL not found anywhere, going to fetch it"),
+         {:ok, _activity, entity} <- Fetcher.fetch_and_create(url, options) do
+      Logger.debug("Going to preload the new entity")
+      Preloader.maybe_preload(entity)
     else
-      {:existing_event, %Event{url: event_url}} ->
-        {:ok, Events.get_public_event_by_url_with_preload!(event_url)}
+      {:existing, entity} ->
+        Logger.debug("Entity is already existing")
 
-      {:existing_comment, %Comment{url: comment_url}} ->
-        {:ok, Conversations.get_comment_from_url_with_preload!(comment_url)}
+        entity =
+          if force_fetch and not compare_origins?(url, Endpoint.url()) do
+            Logger.debug("Entity is external and we want a force fetch")
 
-      {:existing_resource, %Resource{url: resource_url}} ->
-        {:ok, Resources.get_resource_by_url_with_preloads(resource_url)}
+            with {:ok, _activity, entity} <- Fetcher.fetch_and_update(url, options) do
+              entity
+            end
+          else
+            entity
+          end
 
-      {:existing_actor, {:ok, %Actor{url: actor_url}}} ->
-        {:ok, Actors.get_actor_by_url!(actor_url, true)}
+        Logger.debug("Going to preload an existing entity")
 
-      {:origin_check, false} ->
-        Logger.warn("Object origin check failed")
-        {:error, "Object origin check failed"}
+        Preloader.maybe_preload(entity)
 
       e ->
         Logger.warn("Something failed while fetching url #{inspect(e)}")
@@ -201,15 +167,18 @@ defmodule Mobilizon.Federation.ActivityPub do
     with {:tombstone, nil} <- {:tombstone, check_for_tombstones(args)},
          {:ok, entity, create_data} <-
            (case type do
-              :event -> create_event(args, additional)
-              :comment -> create_comment(args, additional)
-              :group -> create_group(args, additional)
-              :todo_list -> create_todo_list(args, additional)
-              :todo -> create_todo(args, additional)
-              :resource -> create_resource(args, additional)
+              :event -> Types.Events.create(args, additional)
+              :comment -> Types.Comments.create(args, additional)
+              :discussion -> Types.Discussions.create(args, additional)
+              :actor -> Types.Actors.create(args, additional)
+              :todo_list -> Types.TodoLists.create(args, additional)
+              :todo -> Types.Todos.create(args, additional)
+              :resource -> Types.Resources.create(args, additional)
+              :post -> Types.Posts.create(args, additional)
             end),
          {:ok, activity} <- create_activity(create_data, local),
-         :ok <- maybe_federate(activity) do
+         :ok <- maybe_federate(activity),
+         :ok <- maybe_relay_if_group_activity(activity) do
       {:ok, activity, entity}
     else
       err ->
@@ -227,21 +196,15 @@ defmodule Mobilizon.Federation.ActivityPub do
     * Federates (asynchronously) the activity
     * Returns the activity
   """
-  @spec update(atom(), struct(), map(), boolean, map()) :: {:ok, Activity.t(), struct()} | any()
-  def update(type, old_entity, args, local \\ false, additional \\ %{}) do
+  @spec update(struct(), map(), boolean, map()) :: {:ok, Activity.t(), struct()} | any()
+  def update(old_entity, args, local \\ false, additional \\ %{}) do
     Logger.debug("updating an activity")
     Logger.debug(inspect(args))
 
-    with {:ok, entity, update_data} <-
-           (case type do
-              :event -> update_event(old_entity, args, additional)
-              :comment -> update_comment(old_entity, args, additional)
-              :actor -> update_actor(old_entity, args, additional)
-              :todo -> update_todo(old_entity, args, additional)
-              :resource -> update_resource(old_entity, args, additional)
-            end),
+    with {:ok, entity, update_data} <- Managable.update(old_entity, args, additional),
          {:ok, activity} <- create_activity(update_data, local),
-         :ok <- maybe_federate(activity) do
+         :ok <- maybe_federate(activity),
+         :ok <- maybe_relay_if_group_activity(activity) do
       {:ok, activity, entity}
     else
       err ->
@@ -366,182 +329,48 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
-  def delete(object, local \\ true)
-
-  @spec delete(Event.t(), boolean) :: {:ok, Activity.t(), Event.t()}
-  def delete(%Event{url: url, organizer_actor: actor} = event, local) do
-    data = %{
-      "type" => "Delete",
-      "actor" => actor.url,
-      "object" => url,
-      "to" => [actor.url <> "/followers", "https://www.w3.org/ns/activitystreams#Public"],
-      "id" => url <> "/delete"
-    }
-
-    with audience <-
-           Audience.calculate_to_and_cc_from_mentions(event),
-         {:ok, %Event{} = event} <- Events.delete_event(event),
-         {:ok, true} <- Cachex.del(:activity_pub, "event_#{event.uuid}"),
-         {:ok, %Tombstone{} = _tombstone} <-
-           Tombstone.create_tombstone(%{uri: event.url, actor_id: actor.id}),
-         Share.delete_all_by_uri(event.url),
+  def delete(object, actor, local \\ true) do
+    with {:ok, activity_data, actor, object} <-
+           Managable.delete(object, actor, local),
+         group <- Ownable.group_actor(object),
          :ok <- check_for_actor_key_rotation(actor),
-         {:ok, activity} <- create_activity(Map.merge(data, audience), local),
-         :ok <- maybe_federate(activity) do
-      {:ok, activity, event}
+         {:ok, activity} <- create_activity(activity_data, local),
+         :ok <- maybe_federate(activity),
+         :ok <- maybe_relay_if_group_activity(activity, group) do
+      {:ok, activity, object}
     end
   end
 
-  @spec delete(Comment.t(), boolean) :: {:ok, Activity.t(), Comment.t()}
-  def delete(%Comment{url: url, actor: actor} = comment, local) do
-    data = %{
-      "type" => "Delete",
-      "actor" => actor.url,
-      "object" => url,
-      "id" => url <> "/delete",
-      "to" => [actor.url <> "/followers", "https://www.w3.org/ns/activitystreams#Public"]
-    }
-
-    with audience <-
-           Audience.calculate_to_and_cc_from_mentions(comment),
-         {:ok, %Comment{} = comment} <- Conversations.delete_comment(comment),
-         {:ok, true} <- Cachex.del(:activity_pub, "comment_#{comment.uuid}"),
-         {:ok, %Tombstone{} = _tombstone} <-
-           Tombstone.create_tombstone(%{uri: comment.url, actor_id: actor.id}),
-         Share.delete_all_by_uri(comment.url),
-         :ok <- check_for_actor_key_rotation(actor),
-         {:ok, activity} <- create_activity(Map.merge(data, audience), local),
+  def join(%Event{} = event, %Actor{} = actor, local \\ true, additional \\ %{}) do
+    with {:ok, activity_data, participant} <- Types.Events.join(event, actor, local, additional),
+         {:ok, activity} <- create_activity(activity_data, local),
          :ok <- maybe_federate(activity) do
-      {:ok, activity, comment}
-    end
-  end
-
-  def delete(%Actor{url: url} = actor, local) do
-    data = %{
-      "type" => "Delete",
-      "actor" => url,
-      "object" => url,
-      "id" => url <> "/delete",
-      "to" => [url <> "/followers", "https://www.w3.org/ns/activitystreams#Public"]
-    }
-
-    # We completely delete the actor if activity is remote
-    with {:ok, %Oban.Job{}} <- Actors.delete_actor(actor, reserve_username: local),
-         {:ok, activity} <- create_activity(data, local),
-         :ok <- maybe_federate(activity) do
-      {:ok, activity, actor}
-    end
-  end
-
-  def delete(
-        %Resource{url: url, actor: %Actor{url: actor_url}} = resource,
-        local
-      ) do
-    Logger.debug("Building Delete Resource activity")
-
-    data = %{
-      "actor" => actor_url,
-      "type" => "Delete",
-      "object" => url,
-      "id" => url <> "/delete",
-      "to" => [actor_url]
-    }
-
-    Logger.debug(inspect(data))
-
-    with {:ok, _resource} <- Resources.delete_resource(resource),
-         {:ok, true} <- Cachex.del(:activity_pub, "resource_#{resource.id}"),
-         {:ok, activity} <- create_activity(data, local),
-         :ok <- maybe_federate(activity) do
-      {:ok, activity, resource}
-    end
-  end
-
-  def flag(args, local \\ false, _additional \\ %{}) do
-    with {:build_args, args} <- {:build_args, prepare_args_for_report(args)},
-         {:create_report, {:ok, %Report{} = report}} <-
-           {:create_report, Reports.create_report(args)},
-         report_as_data <- Convertible.model_to_as(report),
-         cc <- if(local, do: [report.reported.url], else: []),
-         report_as_data <- Map.merge(report_as_data, %{"to" => [], "cc" => cc}),
-         {:ok, activity} <- create_activity(report_as_data, local),
-         :ok <- maybe_federate(activity) do
-      Enum.each(Users.list_moderators(), fn moderator ->
-        moderator
-        |> Admin.report(report)
-        |> Mailer.deliver_later()
-      end)
-
-      {:ok, activity, report}
+      {:ok, activity, participant}
     else
-      err ->
-        Logger.error("Something went wrong while creating an activity")
-        Logger.debug(inspect(err))
-        err
+      {:maximum_attendee_capacity, err} ->
+        {:maximum_attendee_capacity, err}
+
+      {:accept, accept} ->
+        accept
     end
   end
 
-  def join(object, actor, local \\ true, additional \\ %{})
-
-  def join(%Event{} = event, %Actor{} = actor, local, additional) do
-    # TODO Refactor me for federation
-    with {:maximum_attendee_capacity, true} <-
-           {:maximum_attendee_capacity, check_attendee_capacity(event)},
-         role <-
-           additional
-           |> Map.get(:metadata, %{})
-           |> Map.get(:role, Mobilizon.Events.get_default_participant_role(event)),
-         {:ok, %Participant{} = participant} <-
-           Mobilizon.Events.create_participant(%{
-             role: role,
-             event_id: event.id,
-             actor_id: actor.id,
-             url: Map.get(additional, :url),
-             metadata:
-               additional
-               |> Map.get(:metadata, %{})
-               |> Map.update(:message, nil, &String.trim(HTML.strip_tags(&1)))
+  def join_group(
+        %{parent_id: parent_id, actor_id: actor_id, role: role},
+        local \\ true,
+        additional \\ %{}
+      ) do
+    with {:ok, %Member{} = member} <-
+           Mobilizon.Actors.create_member(%{
+             parent_id: parent_id,
+             actor_id: actor_id,
+             role: role
            }),
-         join_data <- Convertible.model_to_as(participant),
-         audience <-
-           Audience.calculate_to_and_cc_from_mentions(participant),
-         {:ok, activity} <- create_activity(Map.merge(join_data, audience), local),
+         activity_data when is_map(activity_data) <-
+           Convertible.model_to_as(member),
+         {:ok, activity} <- create_activity(Map.merge(activity_data, additional), local),
          :ok <- maybe_federate(activity) do
-      if event.local do
-        cond do
-          Mobilizon.Events.get_default_participant_role(event) === :participant &&
-              role == :participant ->
-            accept(
-              :join,
-              participant,
-              true,
-              %{"actor" => event.organizer_actor.url}
-            )
-
-          Mobilizon.Events.get_default_participant_role(event) === :not_approved &&
-              role == :not_approved ->
-            Scheduler.pending_participation_notification(event)
-            {:ok, activity, participant}
-
-          true ->
-            {:ok, activity, participant}
-        end
-      else
-        {:ok, activity, participant}
-      end
-    end
-  end
-
-  # TODO: Implement me
-  def join(%Actor{type: :Group} = _group, %Actor{} = _actor, _local, _additional) do
-    :error
-  end
-
-  defp check_attendee_capacity(%Event{options: options} = event) do
-    with maximum_attendee_capacity <-
-           Map.get(options, :maximum_attendee_capacity) || 0 do
-      maximum_attendee_capacity == 0 ||
-        Mobilizon.Events.count_participant_participants(event.id) < maximum_attendee_capacity
+      {:ok, activity, member}
     end
   end
 
@@ -640,7 +469,7 @@ defmodule Mobilizon.Federation.ActivityPub do
 
     with {:ok, entity, update_data} <-
            (case type do
-              :resource -> move_resource(old_entity, args, additional)
+              :resource -> Types.Resources.move(old_entity, args, additional)
             end),
          {:ok, activity} <- create_activity(update_data, local),
          :ok <- maybe_federate(activity) do
@@ -648,6 +477,25 @@ defmodule Mobilizon.Federation.ActivityPub do
     else
       err ->
         Logger.error("Something went wrong while creating a Move activity")
+        Logger.debug(inspect(err))
+        err
+    end
+  end
+
+  def flag(args, local \\ false, additional \\ %{}) do
+    with {report, report_as_data} <- Types.Reports.flag(args, local, additional),
+         {:ok, activity} <- create_activity(report_as_data, local),
+         :ok <- maybe_federate(activity) do
+      Enum.each(Users.list_moderators(), fn moderator ->
+        moderator
+        |> Admin.report(report)
+        |> Mailer.deliver_later()
+      end)
+
+      {:ok, activity, report}
+    else
+      err ->
+        Logger.error("Something went wrong while creating an activity")
         Logger.debug(inspect(err))
         err
     end
@@ -711,9 +559,29 @@ defmodule Mobilizon.Federation.ActivityPub do
   defp is_create_activity?(%Activity{data: %{"type" => "Create"}}), do: true
   defp is_create_activity?(_), do: false
 
-  @spec is_announce_activity?(Activity.t()) :: boolean
-  defp is_announce_activity?(%Activity{data: %{"type" => "Announce"}}), do: true
-  defp is_announce_activity?(_), do: false
+  @spec convert_members_in_recipients(list(String.t())) :: {list(String.t()), list(Actor.t())}
+  defp convert_members_in_recipients(recipients) do
+    Enum.reduce(recipients, {recipients, []}, fn recipient, {recipients, member_actors} = acc ->
+      case Actors.get_group_by_members_url(recipient) do
+        # If the group is local just add external members
+        %Actor{domain: domain} = group when is_nil(domain) ->
+          {Enum.filter(recipients, fn recipient -> recipient != group.members_url end),
+           member_actors ++ Actors.list_external_actors_members_for_group(group)}
+
+        # If it's remote add the remote group actor as well
+        %Actor{} = group ->
+          {Enum.filter(recipients, fn recipient -> recipient != group.members_url end),
+           member_actors ++ Actors.list_external_actors_members_for_group(group) ++ [group]}
+
+        _ ->
+          acc
+      end
+    end)
+  end
+
+  # @spec is_announce_activity?(Activity.t()) :: boolean
+  # defp is_announce_activity?(%Activity{data: %{"type" => "Announce"}}), do: true
+  # defp is_announce_activity?(_), do: false
 
   @doc """
   Publish an activity to all appropriated audiences inboxes
@@ -741,19 +609,11 @@ defmodule Mobilizon.Federation.ActivityPub do
         {recipients, []}
       end
 
-    # If we want to send to all members of the group, because this server is the one the group is on
-    {recipients, members} =
-      if is_announce_activity?(activity) and actor.type == :Group and
-           actor.members_url in activity.recipients and is_nil(actor.domain) do
-        {Enum.filter(recipients, fn recipient -> recipient != actor.members_url end),
-         Actors.list_external_members_for_group(actor)}
-      else
-        {recipients, []}
-      end
+    {recipients, members} = convert_members_in_recipients(recipients)
 
     remote_inboxes =
       (remote_actors(recipients) ++ followers ++ members)
-      |> Enum.map(fn follower -> follower.shared_inbox_url || follower.inbox_url end)
+      |> Enum.map(fn actor -> actor.shared_inbox_url || actor.inbox_url end)
       |> Enum.uniq()
 
     {:ok, data} = Transmogrifier.prepare_outgoing(activity.data)
@@ -791,16 +651,15 @@ defmodule Mobilizon.Federation.ActivityPub do
         date: date
       })
 
-    HTTPoison.post(
+    Tesla.post(
       inbox,
       json,
-      [
+      headers: [
         {"Content-Type", "application/activity+json"},
         {"signature", signature},
         {"digest", digest},
         {"date", date}
-      ],
-      hackney: [pool: :default]
+      ]
     )
   end
 
@@ -811,18 +670,15 @@ defmodule Mobilizon.Federation.ActivityPub do
     Logger.debug(inspect(url))
 
     res =
-      with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-             HTTPoison.get(url, [Accept: "application/activity+json"],
-               follow_redirect: true,
-               ssl: [{:versions, [:"tlsv1.2"]}]
-             ),
+      with {:ok, %{status: 200, body: body}} <-
+             Tesla.get(url, headers: [{"Accept", "application/activity+json"}]),
            :ok <- Logger.debug("response okay, now decoding json"),
            {:ok, data} <- Jason.decode(body) do
         Logger.debug("Got activity+json response at actor's endpoint, now converting data")
         {:ok, Converter.Actor.as_to_model_data(data)}
       else
         # Actor is gone, probably deleted
-        {:ok, %HTTPoison.Response{status_code: 410}} ->
+        {:ok, %{status: 410}} ->
           Logger.info("Response HTTP 410")
           {:error, :actor_deleted}
 
@@ -839,10 +695,11 @@ defmodule Mobilizon.Federation.ActivityPub do
   """
   @spec fetch_public_activities_for_actor(Actor.t(), integer(), integer()) :: map()
   def fetch_public_activities_for_actor(%Actor{} = actor, page \\ 1, limit \\ 10) do
-    {:ok, events, total_events} = Events.list_public_events_for_actor(actor, page, limit)
+    %Page{total: total_events, elements: events} =
+      Events.list_public_events_for_actor(actor, page, limit)
 
-    {:ok, comments, total_comments} =
-      Conversations.list_public_comments_for_actor(actor, page, limit)
+    %Page{total: total_comments, elements: comments} =
+      Discussions.list_public_comments_for_actor(actor, page, limit)
 
     event_activities = Enum.map(events, &event_to_activity/1)
     comment_activities = Enum.map(comments, &comment_to_activity/1)
@@ -879,251 +736,9 @@ defmodule Mobilizon.Federation.ActivityPub do
     Map.get(data, "to", []) ++ Map.get(data, "cc", [])
   end
 
-  @spec create_event(map(), map()) :: {:ok, map()}
-  defp create_event(args, additional) do
-    with args <- prepare_args_for_event(args),
-         {:ok, %Event{} = event} <- Events.create_event(args),
-         event_as_data <- Convertible.model_to_as(event),
-         audience <-
-           Audience.calculate_to_and_cc_from_mentions(event),
-         create_data <-
-           make_create_data(event_as_data, Map.merge(audience, additional)) do
-      {:ok, event, create_data}
-    end
-  end
-
-  @spec create_comment(map(), map()) :: {:ok, map()}
-  defp create_comment(args, additional) do
-    with args <- prepare_args_for_comment(args),
-         {:ok, %Comment{} = comment} <- Conversations.create_comment(args),
-         comment_as_data <- Convertible.model_to_as(comment),
-         audience <-
-           Audience.calculate_to_and_cc_from_mentions(comment),
-         create_data <-
-           make_create_data(comment_as_data, Map.merge(audience, additional)) do
-      {:ok, comment, create_data}
-    end
-  end
-
-  @spec create_group(map(), map()) :: {:ok, map()}
-  defp create_group(args, additional) do
-    with args <- prepare_args_for_group(args),
-         {:ok, %Actor{type: :Group} = group} <- Actors.create_group(args),
-         group_as_data <- Convertible.model_to_as(group),
-         audience <- %{"to" => ["https://www.w3.org/ns/activitystreams#Public"], "cc" => []},
-         create_data <-
-           make_create_data(group_as_data, Map.merge(audience, additional)) do
-      {:ok, group, create_data}
-    end
-  end
-
-  @spec create_todo_list(map(), map()) :: {:ok, map()}
-  defp create_todo_list(args, additional) do
-    with {:ok, %TodoList{actor_id: group_id} = todo_list} <- Todos.create_todo_list(args),
-         {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
-         todo_list_as_data <- Convertible.model_to_as(%{todo_list | actor: group}),
-         audience <- %{"to" => [group.url], "cc" => []},
-         create_data <-
-           make_create_data(todo_list_as_data, Map.merge(audience, additional)) do
-      {:ok, todo_list, create_data}
-    end
-  end
-
-  @spec create_todo(map(), map()) :: {:ok, map()}
-  defp create_todo(args, additional) do
-    with {:ok, %Todo{todo_list_id: todo_list_id, creator_id: creator_id} = todo} <-
-           Todos.create_todo(args),
-         %TodoList{actor_id: group_id} = todo_list <- Todos.get_todo_list(todo_list_id),
-         %Actor{} = creator <- Actors.get_actor(creator_id),
-         {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
-         todo <- %{todo | todo_list: %{todo_list | actor: group}, creator: creator},
-         todo_as_data <-
-           Convertible.model_to_as(todo),
-         audience <- %{"to" => [group.url], "cc" => []},
-         create_data <-
-           make_create_data(todo_as_data, Map.merge(audience, additional)) do
-      {:ok, todo, create_data}
-    end
-  end
-
-  defp create_resource(%{type: type} = args, additional) do
-    args =
-      case type do
-        :folder ->
-          args
-
-        _ ->
-          case Parser.parse(Map.get(args, :resource_url)) do
-            {:ok, metadata} ->
-              Map.put(args, :metadata, metadata)
-
-            _ ->
-              args
-          end
-      end
-
-    with {:ok,
-          %Resource{actor_id: group_id, creator_id: creator_id, parent_id: parent_id} = resource} <-
-           Resources.create_resource(args),
-         {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
-         %Actor{url: creator_url} = creator <- Actors.get_actor(creator_id),
-         resource_as_data <-
-           Convertible.model_to_as(%{resource | actor: group, creator: creator}),
-         audience <- %{
-           "to" => [group.url],
-           "cc" => [],
-           "actor" => creator_url,
-           "attributedTo" => [creator_url]
-         } do
-      create_data =
-        case parent_id do
-          nil ->
-            make_create_data(resource_as_data, Map.merge(audience, additional))
-
-          parent_id ->
-            # In case the resource has a parent we don't `Create` the resource but `Add` it to an existing resource
-            parent = Resources.get_resource(parent_id)
-            make_add_data(resource_as_data, parent, Map.merge(audience, additional))
-        end
-
-      {:ok, resource, create_data}
-    else
-      err ->
-        Logger.error(inspect(err))
-        err
-    end
-  end
-
   @spec check_for_tombstones(map()) :: Tombstone.t() | nil
   defp check_for_tombstones(%{url: url}), do: Tombstone.find_tombstone(url)
   defp check_for_tombstones(_), do: nil
-
-  @spec update_event(Event.t(), map(), map()) :: {:ok, Event.t(), Activity.t()} | any()
-  defp update_event(%Event{} = old_event, args, additional) do
-    with args <- prepare_args_for_event(args),
-         {:ok, %Event{} = new_event} <- Events.update_event(old_event, args),
-         {:ok, true} <- Cachex.del(:activity_pub, "event_#{new_event.uuid}"),
-         event_as_data <- Convertible.model_to_as(new_event),
-         audience <-
-           Audience.calculate_to_and_cc_from_mentions(new_event),
-         update_data <- make_update_data(event_as_data, Map.merge(audience, additional)) do
-      {:ok, new_event, update_data}
-    else
-      err ->
-        Logger.error("Something went wrong while creating an update activity")
-        Logger.debug(inspect(err))
-        err
-    end
-  end
-
-  @spec update_comment(Comment.t(), map(), map()) :: {:ok, Comment.t(), Activity.t()} | any()
-  defp update_comment(%Comment{} = old_comment, args, additional) do
-    with args <- prepare_args_for_comment(args),
-         {:ok, %Comment{} = new_comment} <- Conversations.update_comment(old_comment, args),
-         {:ok, true} <- Cachex.del(:activity_pub, "comment_#{new_comment.uuid}"),
-         comment_as_data <- Convertible.model_to_as(new_comment),
-         audience <-
-           Audience.calculate_to_and_cc_from_mentions(new_comment),
-         update_data <- make_update_data(comment_as_data, Map.merge(audience, additional)) do
-      {:ok, new_comment, update_data}
-    else
-      err ->
-        Logger.error("Something went wrong while creating an update activity")
-        Logger.debug(inspect(err))
-        err
-    end
-  end
-
-  @spec update_actor(Actor.t(), map, map) :: {:ok, Actor.t(), Activity.t()} | any
-  defp update_actor(%Actor{} = old_actor, args, additional) do
-    with {:ok, %Actor{} = new_actor} <- Actors.update_actor(old_actor, args),
-         actor_as_data <- Convertible.model_to_as(new_actor),
-         {:ok, true} <- Cachex.del(:activity_pub, "actor_#{new_actor.preferred_username}"),
-         audience <-
-           Audience.calculate_to_and_cc_from_mentions(new_actor),
-         additional <- Map.merge(additional, %{"actor" => old_actor.url}),
-         update_data <- make_update_data(actor_as_data, Map.merge(audience, additional)) do
-      {:ok, new_actor, update_data}
-    end
-  end
-
-  @spec update_todo(Todo.t(), map, map) :: {:ok, Todo.t(), Activity.t()} | any
-  defp update_todo(%Todo{} = old_todo, args, additional) do
-    with {:ok, %Todo{todo_list_id: todo_list_id} = todo} <- Todos.update_todo(old_todo, args),
-         %TodoList{actor_id: group_id} = todo_list <- Todos.get_todo_list(todo_list_id),
-         {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
-         todo_as_data <-
-           Convertible.model_to_as(%{todo | todo_list: %{todo_list | actor: group}}),
-         audience <- %{"to" => [group.url], "cc" => []},
-         update_data <-
-           make_update_data(todo_as_data, Map.merge(audience, additional)) do
-      {:ok, todo, update_data}
-    end
-  end
-
-  defp update_resource(%Resource{} = old_resource, %{parent_id: _parent_id} = args, additional) do
-    move_resource(old_resource, args, additional)
-  end
-
-  # Simple rename
-  defp update_resource(%Resource{} = old_resource, %{title: title} = _args, additional) do
-    with {:ok, %Resource{actor_id: group_id, creator_id: creator_id} = resource} <-
-           Resources.update_resource(old_resource, %{title: title}),
-         {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
-         %Actor{url: creator_url} <- Actors.get_actor(creator_id),
-         resource_as_data <-
-           Convertible.model_to_as(%{resource | actor: group}),
-         audience <- %{
-           "to" => [group.url],
-           "cc" => [],
-           "actor" => creator_url,
-           "attributedTo" => [creator_url]
-         },
-         update_data <-
-           make_update_data(resource_as_data, Map.merge(audience, additional)) do
-      {:ok, resource, update_data}
-    else
-      err ->
-        Logger.error(inspect(err))
-        err
-    end
-  end
-
-  defp move_resource(
-         %Resource{parent_id: old_parent_id} = old_resource,
-         %{parent_id: _new_parent_id} = args,
-         additional
-       ) do
-    with {:ok,
-          %Resource{actor_id: group_id, creator_id: creator_id, parent_id: new_parent_id} =
-            resource} <-
-           Resources.update_resource(old_resource, args),
-         old_parent <- Resources.get_resource(old_parent_id),
-         new_parent <- Resources.get_resource(new_parent_id),
-         {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
-         %Actor{url: creator_url} <- Actors.get_actor(creator_id),
-         resource_as_data <-
-           Convertible.model_to_as(%{resource | actor: group}),
-         audience <- %{
-           "to" => [group.url],
-           "cc" => [],
-           "actor" => creator_url,
-           "attributedTo" => [creator_url]
-         },
-         move_data <-
-           make_move_data(
-             resource_as_data,
-             old_parent,
-             new_parent,
-             Map.merge(audience, additional)
-           ) do
-      {:ok, resource, move_data}
-    else
-      err ->
-        Logger.error(inspect(err))
-        err
-    end
-  end
 
   @spec accept_follow(Follower.t(), map) :: {:ok, Follower.t(), Activity.t()} | any
   defp accept_follow(%Follower{} = follower, additional) do
@@ -1253,139 +868,5 @@ defmodule Mobilizon.Federation.ActivityPub do
         Logger.debug(inspect(err))
         err
     end
-  end
-
-  # Prepare and sanitize arguments for events
-  defp prepare_args_for_event(args) do
-    # If title is not set: we are not updating it
-    args =
-      if Map.has_key?(args, :title) && !is_nil(args.title),
-        do: Map.update(args, :title, "", &String.trim/1),
-        else: args
-
-    # If we've been given a description (we might not get one if updating)
-    # sanitize it, HTML it, and extract tags & mentions from it
-    args =
-      if Map.has_key?(args, :description) && !is_nil(args.description) do
-        {description, mentions, tags} =
-          APIUtils.make_content_html(
-            String.trim(args.description),
-            Map.get(args, :tags, []),
-            "text/html"
-          )
-
-        mentions = ConverterUtils.fetch_mentions(Map.get(args, :mentions, []) ++ mentions)
-
-        Map.merge(args, %{
-          description: description,
-          mentions: mentions,
-          tags: tags
-        })
-      else
-        args
-      end
-
-    # Check that we can only allow anonymous participation if our instance allows it
-    {_, options} =
-      Map.get_and_update(
-        Map.get(args, :options, %{anonymous_participation: false}),
-        :anonymous_participation,
-        fn value ->
-          {value, value && Mobilizon.Config.anonymous_participation?()}
-        end
-      )
-
-    args = Map.put(args, :options, options)
-
-    Map.update(args, :tags, [], &ConverterUtils.fetch_tags/1)
-  end
-
-  # Prepare and sanitize arguments for comments
-  defp prepare_args_for_comment(args) do
-    with in_reply_to_comment <-
-           args |> Map.get(:in_reply_to_comment_id) |> Conversations.get_comment_with_preload(),
-         event <- args |> Map.get(:event_id) |> handle_event_for_comment(),
-         args <- Map.update(args, :visibility, :public, & &1),
-         {text, mentions, tags} <-
-           APIUtils.make_content_html(
-             args |> Map.get(:text, "") |> String.trim(),
-             # Can't put additional tags on a comment
-             [],
-             "text/html"
-           ),
-         tags <- ConverterUtils.fetch_tags(tags),
-         mentions <- Map.get(args, :mentions, []) ++ ConverterUtils.fetch_mentions(mentions),
-         args <-
-           Map.merge(args, %{
-             actor_id: Map.get(args, :actor_id),
-             text: text,
-             mentions: mentions,
-             tags: tags,
-             event: event,
-             in_reply_to_comment: in_reply_to_comment,
-             in_reply_to_comment_id:
-               if(is_nil(in_reply_to_comment), do: nil, else: Map.get(in_reply_to_comment, :id)),
-             origin_comment_id:
-               if(is_nil(in_reply_to_comment),
-                 do: nil,
-                 else: Comment.get_thread_id(in_reply_to_comment)
-               )
-           }) do
-      args
-    end
-  end
-
-  @spec handle_event_for_comment(String.t() | integer() | nil) :: Event.t() | nil
-  defp handle_event_for_comment(event_id) when not is_nil(event_id) do
-    case Events.get_event_with_preload(event_id) do
-      {:ok, %Event{} = event} -> event
-      {:error, :event_not_found} -> nil
-    end
-  end
-
-  defp handle_event_for_comment(nil), do: nil
-
-  defp prepare_args_for_group(args) do
-    with preferred_username <-
-           args |> Map.get(:preferred_username) |> HTML.strip_tags() |> String.trim(),
-         summary <- args |> Map.get(:summary, "") |> String.trim(),
-         {summary, _mentions, _tags} <-
-           summary |> String.trim() |> APIUtils.make_content_html([], "text/html") do
-      %{args | preferred_username: preferred_username, summary: summary}
-    end
-  end
-
-  defp prepare_args_for_report(args) do
-    with {:reporter, %Actor{} = reporter_actor} <-
-           {:reporter, Actors.get_actor!(args.reporter_id)},
-         {:reported, %Actor{} = reported_actor} <-
-           {:reported, Actors.get_actor!(args.reported_id)},
-         content <- HTML.strip_tags(args.content),
-         event <- Conversations.get_comment(Map.get(args, :event_id)),
-         {:get_report_comments, comments} <-
-           {:get_report_comments,
-            Conversations.list_comments_by_actor_and_ids(
-              reported_actor.id,
-              Map.get(args, :comments_ids, [])
-            )} do
-      Map.merge(args, %{
-        reporter: reporter_actor,
-        reported: reported_actor,
-        content: content,
-        event: event,
-        comments: comments
-      })
-    end
-  end
-
-  defp check_for_actor_key_rotation(%Actor{} = actor) do
-    if Actors.should_rotate_actor_key(actor) do
-      Actors.schedule_key_rotation(
-        actor,
-        Application.get_env(:mobilizon, :activitypub)[:actor_key_rotation_delay]
-      )
-    end
-
-    :ok
   end
 end

@@ -315,7 +315,7 @@ export default class Report extends Vue {
     this.$buefy.dialog.confirm({
       title: this.$t("Deleting event") as string,
       message: this.$t(
-        "Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the conversation with the event creator or edit its event instead."
+        "Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the discussion with the event creator or edit its event instead."
       ) as string,
       confirmText: this.$t("Delete Event") as string,
       type: "is-danger",

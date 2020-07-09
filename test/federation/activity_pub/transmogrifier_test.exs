@@ -11,11 +11,12 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
   import Mobilizon.Factory
   import ExUnit.CaptureLog
   import Mock
+  import Mox
 
-  alias Mobilizon.{Actors, Conversations, Events}
-  alias Mobilizon.Actors.{Actor, Member}
-  alias Mobilizon.Conversations.Comment
-  alias Mobilizon.Events.{Event, Participant}
+  alias Mobilizon.{Actors, Discussions, Events}
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Discussions.Comment
+  alias Mobilizon.Events.Event
   alias Mobilizon.Resources.Resource
   alias Mobilizon.Todos.{Todo, TodoList}
 
@@ -25,12 +26,9 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
   alias Mobilizon.Federation.ActivityStream.Convertible
 
   alias Mobilizon.GraphQL.API
-
+  alias Mobilizon.Service.HTTP.ActivityPub.Mock
+  alias Mobilizon.Tombstone
   alias Mobilizon.Web.Endpoint
-
-  setup_all do
-    HTTPoison.start()
-  end
 
   describe "handle incoming events" do
     test "it works for incoming events" do
@@ -67,7 +65,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
         assert object["actor"] == "https://test.mobilizon.org/@Alicia"
         assert object["location"]["name"] == "Locaux de Framasoft"
-        assert object["attributedTo"] == "https://test.mobilizon.org/@Alicia"
+        # assert object["attributedTo"] == "https://test.mobilizon.org/@Alicia"
 
         assert event.physical_address.street == "10 Rue Jangot"
 
@@ -79,171 +77,46 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         {:ok, %Actor{}} = Actors.get_actor_by_url(object["actor"])
       end
     end
-  end
 
-  describe "handle incoming comments" do
-    test "it ignores an incoming comment if we already have it" do
-      comment = insert(:comment)
+    test "it works for incoming events for local groups" do
+      %Actor{url: group_url, id: group_id} = group = insert(:group)
 
-      activity = %{
-        "type" => "Create",
-        "to" => ["https://www.w3.org/ns/activitystreams#Public"],
-        "actor" => comment.actor.url,
-        "object" => Convertible.model_to_as(comment)
-      }
-
-      data =
-        File.read!("test/fixtures/mastodon-post-activity.json")
-        |> Jason.decode!()
-        |> Map.put("object", activity["object"])
-
-      assert {:ok, nil, _} = Transmogrifier.handle_incoming(data)
-    end
-
-    test "it fetches replied-to activities if we don't have them" do
-      data =
-        File.read!("test/fixtures/mastodon-post-activity.json")
-        |> Jason.decode!()
-
-      object =
-        data["object"]
-        |> Map.put("inReplyTo", "https://blob.cat/objects/02fdea3d-932c-4348-9ecb-3f9eb3fbdd94")
-
-      data =
-        data
-        |> Map.put("object", object)
-
-      {:ok, returned_activity, _} = Transmogrifier.handle_incoming(data)
-
-      %Comment{} =
-        origin_comment =
-        Conversations.get_comment_from_url(
-          "https://blob.cat/objects/02fdea3d-932c-4348-9ecb-3f9eb3fbdd94"
+      %Actor{url: actor_url, id: actor_id} =
+        actor =
+        insert(:actor,
+          domain: "test.mobilizon.org",
+          url: "https://test.mobilizon.org/@member",
+          preferred_username: "member"
         )
 
-      assert returned_activity.data["object"]["inReplyTo"] ==
-               "https://blob.cat/objects/02fdea3d-932c-4348-9ecb-3f9eb3fbdd94"
+      with_mock ActivityPub, [:passthrough],
+        get_or_fetch_actor_by_url: fn url ->
+          case url do
+            ^group_url -> {:ok, group}
+            ^actor_url -> {:ok, actor}
+          end
+        end do
+        data = File.read!("test/fixtures/mobilizon-post-activity-group.json") |> Jason.decode!()
 
-      assert returned_activity.data["object"]["inReplyTo"] == origin_comment.url
-    end
+        object =
+          data["object"] |> Map.put("actor", actor_url) |> Map.put("attributedTo", group_url)
 
-    test "it does not crash if the object in inReplyTo can't be fetched" do
-      data =
-        File.read!("test/fixtures/mastodon-post-activity.json")
-        |> Poison.decode!()
+        data =
+          data
+          |> Map.put("actor", actor_url)
+          |> Map.put("attributedTo", group_url)
+          |> Map.put("object", object)
 
-      object =
-        data["object"]
-        |> Map.put("inReplyTo", "https://404.site/whatever")
+        assert {:ok, %Activity{data: activity_data, local: false}, %Event{} = event} =
+                 Transmogrifier.handle_incoming(data)
 
-      data =
-        data
-        |> Map.put("object", object)
-
-      assert capture_log([level: :warn], fn ->
-               {:ok, _returned_activity, _entity} = Transmogrifier.handle_incoming(data)
-             end) =~ "[warn] Parent object is something we don't handle"
-    end
-
-    test "it works for incoming notices" do
-      use_cassette "activity_pub/mastodon_post_activity" do
-        data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
-
-        {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
-
-        assert data["id"] ==
-                 "https://framapiaf.org/users/admin/statuses/99512778738411822/activity"
-
-        assert data["to"] == [
-                 "https://www.w3.org/ns/activitystreams#Public",
-                 "https://framapiaf.org/users/tcit"
-               ]
-
-        #      assert data["cc"] == [
-        #               "https://framapiaf.org/users/admin/followers",
-        #               "http://mobilizon.com/@tcit"
-        #             ]
-
-        assert data["actor"] == "https://framapiaf.org/users/admin"
-
-        object = data["object"]
-        assert object["id"] == "https://framapiaf.org/users/admin/statuses/99512778738411822"
-
-        assert object["to"] == ["https://www.w3.org/ns/activitystreams#Public"]
-
-        #      assert object["cc"] == [
-        #               "https://framapiaf.org/users/admin/followers",
-        #               "http://localtesting.pleroma.lol/users/lain"
-        #             ]
-
-        assert object["actor"] == "https://framapiaf.org/users/admin"
-        assert object["attributedTo"] == "https://framapiaf.org/users/admin"
-
-        {:ok, %Actor{}} = Actors.get_actor_by_url(object["actor"])
+        assert event.organizer_actor_id == actor_id
+        assert event.attributed_to_id == group_id
+        assert activity_data["actor"] == actor_url
+        assert activity_data["attributedTo"] == group_url
+        assert activity_data["object"]["actor"] == actor_url
+        assert activity_data["object"]["attributedTo"] == group_url
       end
-    end
-
-    test "it works for incoming notices with hashtags" do
-      use_cassette "activity_pub/mastodon_activity_hashtag" do
-        data = File.read!("test/fixtures/mastodon-post-activity-hashtag.json") |> Jason.decode!()
-
-        {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
-        assert Enum.at(data["object"]["tag"], 0)["name"] == "@tcit@framapiaf.org"
-        assert Enum.at(data["object"]["tag"], 1)["name"] == "#moo"
-      end
-    end
-
-    #     test "it works for incoming notices with contentMap" do
-    #       data =
-    #         File.read!("test/fixtures/mastodon-post-activity-contentmap.json") |> Jason.decode!()
-
-    #       {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
-
-    #       assert data["object"]["content"] ==
-    #                "<p><span class=\"h-card\"><a href=\"http://localtesting.pleroma.lol/users/lain\" class=\"u-url mention\">@<span>lain</span></a></span></p>"
-    #     end
-
-    #     test "it works for incoming notices with to/cc not being an array (kroeg)" do
-    #       data = File.read!("test/fixtures/kroeg-post-activity.json") |> Jason.decode!()
-
-    #       {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
-
-    #       assert data["object"]["content"] ==
-    #                "<p>henlo from my Psion netBook</p><p>message sent from my Psion netBook</p>"
-    #     end
-
-    #     test "it works for incoming announces with actor being inlined (kroeg)" do
-    #       data = File.read!("test/fixtures/kroeg-announce-with-inline-actor.json") |> Jason.decode!()
-
-    #       {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
-
-    #       assert data["actor"] == "https://puckipedia.com/"
-    #     end
-
-    #     test "it works for incoming notices with tag not being an array (kroeg)" do
-    #       data = File.read!("test/fixtures/kroeg-array-less-emoji.json") |> Jason.decode!()
-
-    #       {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
-
-    #       assert data["object"]["emoji"] == %{
-    #                "icon_e_smile" => "https://puckipedia.com/forum/images/smilies/icon_e_smile.png"
-    #              }
-
-    #       data = File.read!("test/fixtures/kroeg-array-less-hashtag.json") |> Jason.decode!()
-
-    #       {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
-
-    #       assert "test" in data["object"]["tag"]
-    #     end
-
-    test "it works for incoming notices with url not being a string (prismo)" do
-      data = File.read!("test/fixtures/prismo-url-map.json") |> Jason.decode!()
-
-      assert {:error, :not_supported} == Transmogrifier.handle_incoming(data)
-      # Pages are not supported
-      # {:ok, %Activity{data: data, local: false}} = Transmogrifier.handle_incoming(data)
-
-      # assert data["object"]["url"] == "https://prismo.news/posts/83"
     end
   end
 
@@ -463,7 +336,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
       activity = %{
         "type" => "Add",
-        "to" => [group.url],
+        "to" => [group.members_url],
         "actor" => actor.url,
         "target" => group.resources_url,
         "object" => Convertible.model_to_as(resource)
@@ -491,7 +364,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
       activity = %{
         "type" => "Add",
-        "to" => [group.url],
+        "to" => [group.members_url],
         "actor" => creator.url,
         "target" => group.resources_url,
         "object" => %{
@@ -534,7 +407,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
       activity = %{
         "type" => "Add",
-        "to" => [group.url],
+        "to" => [group.members_url],
         "actor" => creator.url,
         "target" => group.resources_url,
         "object" => %{
@@ -586,7 +459,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
       activity = %{
         "type" => "Add",
-        "to" => [group.url],
+        "to" => [group.members_url],
         "actor" => creator.url,
         "target" => parent_resource.url,
         "object" => %{
@@ -631,7 +504,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
       activity = %{
         "type" => "Add",
-        "to" => [group.url],
+        "to" => [group.members_url],
         "actor" => creator.url,
         "target" => group.resources_url,
         "object" => %{
@@ -665,7 +538,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
       activity = %{
         "type" => "Add",
-        "to" => [group.url],
+        "to" => [group.members_url],
         "actor" => creator.url,
         "target" => group.resources_url,
         "object" => %{
@@ -787,43 +660,49 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
   describe "handle incoming follow announces" do
     test "it works for incoming announces" do
-      use_cassette "activity_pub/mastodon_announce_activity" do
-        data = File.read!("test/fixtures/mastodon-announce.json") |> Jason.decode!()
+      data = File.read!("test/fixtures/mastodon-announce.json") |> Jason.decode!()
+      status_data = File.read!("test/fixtures/mastodon-status.json") |> Jason.decode!()
 
-        {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
+      Mock
+      |> expect(:call, fn
+        %{method: :get, url: "https://framapiaf.org/users/peertube/statuses/104584600044284729"},
+        _opts ->
+          {:ok, %Tesla.Env{status: 200, body: status_data}}
+      end)
 
-        assert data["actor"] == "https://framapiaf.org/users/Framasoft"
-        assert data["type"] == "Announce"
+      {:ok, _, %Comment{actor: %Actor{url: actor_url}, url: comment_url}} =
+        Transmogrifier.handle_incoming(data)
 
-        assert data["id"] ==
-                 "https://framapiaf.org/users/Framasoft/statuses/102501959686438400/activity"
+      assert actor_url == "https://framapiaf.org/users/peertube"
 
-        assert data["object"] ==
-                 "https://framapiaf.org/users/Framasoft/statuses/102501959686438400"
-
-        assert %Comment{} = Conversations.get_comment_from_url(data["object"])
-      end
+      assert comment_url ==
+               "https://framapiaf.org/users/peertube/statuses/104584600044284729"
     end
 
     test "it works for incoming announces with an existing activity" do
-      use_cassette "activity_pub/mastodon_announce_existing_activity" do
-        comment = insert(:comment)
+      %Comment{url: comment_url, actor: %Actor{url: actor_url} = actor} = insert(:comment)
 
-        data =
-          File.read!("test/fixtures/mastodon-announce.json")
-          |> Jason.decode!()
-          |> Map.put("object", comment.url)
+      actor_data =
+        File.read!("test/fixtures/mastodon-actor.json")
+        |> Jason.decode!()
 
-        {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
+      data =
+        File.read!("test/fixtures/mastodon-announce.json")
+        |> Jason.decode!()
+        |> Map.put("object", comment_url)
 
-        assert data["actor"] == "https://framapiaf.org/users/Framasoft"
-        assert data["type"] == "Announce"
+      Mock
+      |> expect(:call, fn
+        %{method: :get, url: actor_url}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: actor_data}}
+      end)
 
-        assert data["id"] ==
-                 "https://framapiaf.org/users/Framasoft/statuses/102501959686438400/activity"
+      {:ok, _, %Comment{actor: %Actor{url: actor_url}, url: comment_url_2}} =
+        Transmogrifier.handle_incoming(data)
 
-        assert data["object"] == comment.url
-      end
+      assert actor_url == actor.url
+
+      assert comment_url == comment_url_2
     end
   end
 
@@ -926,12 +805,12 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         |> Map.put("object", object)
         |> Map.put("actor", actor_url)
 
-      assert Conversations.get_comment_from_url(comment_url)
-      assert is_nil(Conversations.get_comment_from_url(comment_url).deleted_at)
+      assert Discussions.get_comment_from_url(comment_url)
+      assert is_nil(Discussions.get_comment_from_url(comment_url).deleted_at)
 
       {:ok, %Activity{local: false}, _} = Transmogrifier.handle_incoming(data)
 
-      refute is_nil(Conversations.get_comment_from_url(comment_url).deleted_at)
+      refute is_nil(Discussions.get_comment_from_url(comment_url).deleted_at)
     end
 
     test "it fails for incoming deletes with spoofed origin" do
@@ -942,7 +821,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         |> Jason.decode!()
         |> Map.put("object", comment.url)
 
-      {:ok, %Activity{local: false}, _} = Transmogrifier.handle_incoming(announce_data)
+      {:ok, _, _} = Transmogrifier.handle_incoming(announce_data)
 
       data =
         File.read!("test/fixtures/mastodon-delete.json")
@@ -958,8 +837,10 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
       :error = Transmogrifier.handle_incoming(data)
 
-      assert Conversations.get_comment_from_url(comment.url)
+      assert Discussions.get_comment_from_url(comment.url)
     end
+
+    setup :set_mox_from_context
 
     test "it works for incoming actor deletes" do
       %Actor{url: url} = actor = insert(:actor, url: "https://framapiaf.org/users/admin")
@@ -971,7 +852,13 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
       data =
         File.read!("test/fixtures/mastodon-delete-user.json")
-        |> Poison.decode!()
+        |> Jason.decode!()
+
+      Mock
+      |> expect(:call, fn
+        %{method: :get, url: "https://framapiaf.org/users/admin"}, _opts ->
+          {:ok, %Tesla.Env{status: 410, body: "Gone"}}
+      end)
 
       {:ok, _activity, _actor} = Transmogrifier.handle_incoming(data)
       assert %{success: 1, failure: 0} == Oban.drain_queue(:background)
@@ -980,18 +867,30 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       assert {:error, :event_not_found} = Events.get_event(event1.id)
       # Tombstone are cascade deleted, seems correct for now
       # assert %Tombstone{} = Tombstone.find_tombstone(event1_url)
-      assert %Comment{deleted_at: deleted_at} = Conversations.get_comment(comment1.id)
+      assert %Comment{deleted_at: deleted_at} = Discussions.get_comment(comment1.id)
       refute is_nil(deleted_at)
       # assert %Tombstone{} = Tombstone.find_tombstone(comment1_url)
     end
 
     test "it fails for incoming actor deletes with spoofed origin" do
       %{url: url} = insert(:actor)
+      deleted_actor_url = "https://framapiaf.org/users/admin"
 
       data =
         File.read!("test/fixtures/mastodon-delete-user.json")
-        |> Poison.decode!()
+        |> Jason.decode!()
         |> Map.put("actor", url)
+
+      deleted_actor_data =
+        File.read!("test/fixtures/mastodon-actor.json")
+        |> Jason.decode!()
+        |> Map.put("id", deleted_actor_url)
+
+      Mock
+      |> expect(:call, fn
+        %{url: ^deleted_actor_url}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: deleted_actor_data}}
+      end)
 
       assert capture_log(fn ->
                assert :error == Transmogrifier.handle_incoming(data)
@@ -1001,62 +900,29 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
     end
   end
 
-  describe "handle incoming undo activities" do
-    test "it works for incoming unannounces with an existing notice" do
-      use_cassette "activity_pub/mastodon_unannounce_activity" do
-        comment = insert(:comment)
+  describe "handle tombstones" do
+    setup :verify_on_exit!
 
-        announce_data =
-          File.read!("test/fixtures/mastodon-announce.json")
-          |> Jason.decode!()
-          |> Map.put("object", comment.url)
+    # This is a hack to handle fetching tombstones
+    test "works for incoming tombstone creations" do
+      %Comment{url: comment_url} = comment = insert(:comment, local: false)
+      tombstone = build(:tombstone, uri: comment_url)
+      data = Convertible.model_to_as(tombstone)
 
-        {:ok, %Activity{data: announce_data, local: false}, _} =
-          Transmogrifier.handle_incoming(announce_data)
+      activity = %{
+        "type" => "Create",
+        "to" => data["to"],
+        "cc" => data["cc"],
+        "actor" => data["actor"],
+        "attributedTo" => data["attributedTo"],
+        "object" => data
+      }
 
-        data =
-          File.read!("test/fixtures/mastodon-undo-announce.json")
-          |> Jason.decode!()
-          |> Map.put("object", announce_data)
-          |> Map.put("actor", announce_data["actor"])
-
-        {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
-
-        assert data["type"] == "Undo"
-        assert data["object"]["type"] == "Announce"
-        assert data["object"]["object"] == comment.url
-
-        assert data["object"]["id"] ==
-                 "https://framapiaf.org/users/Framasoft/statuses/102501959686438400/activity"
-      end
-    end
-
-    test "it works for incomming unfollows with an existing follow" do
-      use_cassette "activity_pub/unfollow_existing_follow_activity" do
-        actor = insert(:actor)
-
-        follow_data =
-          File.read!("test/fixtures/mastodon-follow-activity.json")
-          |> Jason.decode!()
-          |> Map.put("object", actor.url)
-
-        {:ok, %Activity{data: _, local: false}, _} = Transmogrifier.handle_incoming(follow_data)
-
-        data =
-          File.read!("test/fixtures/mastodon-unfollow-activity.json")
-          |> Jason.decode!()
-          |> Map.put("object", follow_data)
-
-        {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
-
-        assert data["type"] == "Undo"
-        assert data["object"]["type"] == "Follow"
-        assert data["object"]["object"] == actor.url
-        assert data["actor"] == "https://social.tcit.fr/users/tcit"
-
-        {:ok, followed} = Actors.get_actor_by_url(data["actor"])
-        refute Actors.is_following(followed, actor)
-      end
+      {:ok, _activity, %Comment{url: comment_url}} = Transmogrifier.handle_incoming(activity)
+      assert comment_url == comment.url
+      assert %Comment{} = comment = Discussions.get_comment_from_url(comment_url)
+      assert %Tombstone{} = Tombstone.find_tombstone(comment_url)
+      refute is_nil(comment.deleted_at)
     end
   end
 
@@ -1136,120 +1002,6 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
   #       refute User.blocks?(blocker, user)
   #     end
 
-  describe "handle incoming follow accept activities" do
-    test "it works for incoming accepts which were pre-accepted" do
-      follower = insert(:actor)
-      followed = insert(:actor)
-
-      refute Actors.is_following(follower, followed)
-
-      {:ok, follow_activity, _} = ActivityPub.follow(follower, followed)
-      assert Actors.is_following(follower, followed)
-
-      accept_data =
-        File.read!("test/fixtures/mastodon-accept-activity.json")
-        |> Jason.decode!()
-        |> Map.put("actor", followed.url)
-
-      object =
-        accept_data["object"]
-        |> Map.put("actor", follower.url)
-        |> Map.put("id", follow_activity.data["id"])
-
-      accept_data = Map.put(accept_data, "object", object)
-
-      {:ok, activity, _} = Transmogrifier.handle_incoming(accept_data)
-      refute activity.local
-
-      assert activity.data["object"]["id"] == follow_activity.data["id"]
-
-      {:ok, follower} = Actors.get_actor_by_url(follower.url)
-
-      assert Actors.is_following(follower, followed)
-    end
-
-    test "it works for incoming accepts which are referenced by IRI only" do
-      follower = insert(:actor)
-      followed = insert(:actor)
-
-      {:ok, follow_activity, _} = ActivityPub.follow(follower, followed)
-
-      accept_data =
-        File.read!("test/fixtures/mastodon-accept-activity.json")
-        |> Jason.decode!()
-        |> Map.put("actor", followed.url)
-        |> Map.put("object", follow_activity.data["id"])
-
-      {:ok, activity, _} = Transmogrifier.handle_incoming(accept_data)
-      assert activity.data["object"]["id"] == follow_activity.data["id"]
-      assert activity.data["object"]["id"] =~ "/follow/"
-      assert activity.data["id"] =~ "/accept/follow/"
-
-      {:ok, follower} = Actors.get_actor_by_url(follower.url)
-
-      assert Actors.is_following(follower, followed)
-    end
-
-    test "it fails for incoming accepts which cannot be correlated" do
-      follower = insert(:actor)
-      followed = insert(:actor)
-
-      accept_data =
-        File.read!("test/fixtures/mastodon-accept-activity.json")
-        |> Jason.decode!()
-        |> Map.put("actor", followed.url)
-
-      accept_data =
-        Map.put(accept_data, "object", Map.put(accept_data["object"], "actor", follower.url))
-
-      :error = Transmogrifier.handle_incoming(accept_data)
-
-      {:ok, follower} = Actors.get_actor_by_url(follower.url)
-
-      refute Actors.is_following(follower, followed)
-    end
-  end
-
-  describe "handle incoming follow reject activities" do
-    test "it fails for incoming rejects which cannot be correlated" do
-      follower = insert(:actor)
-      followed = insert(:actor)
-
-      accept_data =
-        File.read!("test/fixtures/mastodon-reject-activity.json")
-        |> Jason.decode!()
-        |> Map.put("actor", followed.url)
-
-      accept_data =
-        Map.put(accept_data, "object", Map.put(accept_data["object"], "actor", follower.url))
-
-      :error = Transmogrifier.handle_incoming(accept_data)
-
-      {:ok, follower} = Actors.get_actor_by_url(follower.url)
-
-      refute Actors.is_following(follower, followed)
-    end
-
-    test "it works for incoming rejects which are referenced by IRI only" do
-      follower = insert(:actor)
-      followed = insert(:actor)
-
-      {:ok, follow_activity, _} = ActivityPub.follow(follower, followed)
-
-      assert Actors.is_following(follower, followed)
-
-      reject_data =
-        File.read!("test/fixtures/mastodon-reject-activity.json")
-        |> Jason.decode!()
-        |> Map.put("actor", followed.url)
-        |> Map.put("object", follow_activity.data["id"])
-
-      {:ok, %Activity{data: _}, _} = Transmogrifier.handle_incoming(reject_data)
-
-      refute Actors.is_following(follower, followed)
-    end
-  end
-
   describe "handle incoming flag activities" do
     test "it accepts Flag activities" do
       %Actor{url: reporter_url} = Relay.get_actor()
@@ -1273,201 +1025,6 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       assert activity.data["content"] == "blocked AND reported!!!"
       assert activity.data["actor"] == reporter_url
       assert activity.data["cc"] == []
-    end
-  end
-
-  describe "handle incoming join activities" do
-    @join_message "I want to get in!"
-    test "it accepts Join activities" do
-      %Actor{url: organizer_url} = organizer = insert(:actor)
-      %Actor{url: participant_url} = _participant = insert(:actor)
-
-      %Event{url: event_url} = _event = insert(:event, organizer_actor: organizer)
-
-      join_data =
-        File.read!("test/fixtures/mobilizon-join-activity.json")
-        |> Jason.decode!()
-        |> Map.put("actor", participant_url)
-        |> Map.put("object", event_url)
-        |> Map.put("participationMessage", @join_message)
-
-      assert {:ok, activity, %Participant{} = participant} =
-               Transmogrifier.handle_incoming(join_data)
-
-      assert participant.metadata.message == @join_message
-      assert participant.role == :participant
-
-      assert activity.data["type"] == "Accept"
-      assert activity.data["object"]["object"] == event_url
-      assert activity.data["object"]["id"] =~ "/join/event/"
-      assert activity.data["object"]["type"] =~ "Join"
-      assert activity.data["object"]["participationMessage"] == @join_message
-      assert activity.data["actor"] == organizer_url
-      assert activity.data["id"] =~ "/accept/join/"
-    end
-  end
-
-  describe "handle incoming accept join activities" do
-    test "it accepts Accept activities for Join activities" do
-      %Actor{url: organizer_url} = organizer = insert(:actor)
-      %Actor{} = participant_actor = insert(:actor)
-
-      %Event{} = event = insert(:event, organizer_actor: organizer, join_options: :restricted)
-
-      {:ok, join_activity, participation} =
-        ActivityPub.join(event, participant_actor, false, %{metadata: %{role: :not_approved}})
-
-      accept_data =
-        File.read!("test/fixtures/mastodon-accept-activity.json")
-        |> Jason.decode!()
-        |> Map.put("actor", organizer_url)
-        |> Map.put("object", participation.url)
-
-      {:ok, accept_activity, _} = Transmogrifier.handle_incoming(accept_data)
-      assert accept_activity.data["object"]["id"] == join_activity.data["id"]
-      assert accept_activity.data["object"]["id"] =~ "/join/"
-      assert accept_activity.data["id"] =~ "/accept/join/"
-
-      # We don't accept already accepted Accept activities
-      :error = Transmogrifier.handle_incoming(accept_data)
-    end
-  end
-
-  describe "handle incoming reject join activities" do
-    test "it accepts Reject activities for Join activities" do
-      %Actor{url: organizer_url} = organizer = insert(:actor)
-      %Actor{} = participant_actor = insert(:actor)
-
-      %Event{} = event = insert(:event, organizer_actor: organizer, join_options: :restricted)
-
-      {:ok, join_activity, participation} = ActivityPub.join(event, participant_actor)
-
-      reject_data =
-        File.read!("test/fixtures/mastodon-reject-activity.json")
-        |> Jason.decode!()
-        |> Map.put("actor", organizer_url)
-        |> Map.put("object", participation.url)
-
-      {:ok, reject_activity, _} = Transmogrifier.handle_incoming(reject_data)
-      assert reject_activity.data["object"]["id"] == join_activity.data["id"]
-      assert reject_activity.data["object"]["id"] =~ "/join/"
-      assert reject_activity.data["id"] =~ "/reject/join/"
-
-      # We don't accept already rejected Reject activities
-      assert capture_log([level: :warn], fn ->
-               assert :error == Transmogrifier.handle_incoming(reject_data)
-             end) =~
-               "Unable to process Reject activity \"http://mastodon.example.org/users/admin#rejects/follows/4\". Object \"#{
-                 join_activity.data["id"]
-               }\" wasn't found."
-
-      # Organiser is not present since we use factories directly
-      assert event.id
-             |> Events.list_participants_for_event()
-             |> Map.get(:elements)
-             |> Enum.map(& &1.role) == [:rejected]
-    end
-  end
-
-  describe "handle incoming leave activities on events" do
-    test "it accepts Leave activities" do
-      %Actor{url: _organizer_url} = organizer = insert(:actor)
-      %Actor{url: participant_url} = participant_actor = insert(:actor)
-
-      %Event{url: event_url} =
-        event = insert(:event, organizer_actor: organizer, join_options: :restricted)
-
-      organizer_participation =
-        %Participant{} = insert(:participant, event: event, actor: organizer, role: :creator)
-
-      {:ok, _join_activity, _participation} = ActivityPub.join(event, participant_actor)
-
-      join_data =
-        File.read!("test/fixtures/mobilizon-leave-activity.json")
-        |> Jason.decode!()
-        |> Map.put("actor", participant_url)
-        |> Map.put("object", event_url)
-
-      assert {:ok, activity, _} = Transmogrifier.handle_incoming(join_data)
-
-      assert activity.data["object"] == event_url
-      assert activity.data["actor"] == participant_url
-
-      # The only participant left is the organizer
-      assert event.id
-             |> Events.list_participants_for_event()
-             |> Map.get(:elements)
-             |> Enum.map(& &1.id) ==
-               [organizer_participation.id]
-    end
-
-    test "it refuses Leave activities when actor is the only organizer" do
-      %Actor{url: organizer_url} = organizer = insert(:actor)
-
-      %Event{url: event_url} =
-        event = insert(:event, organizer_actor: organizer, join_options: :restricted)
-
-      %Participant{} = insert(:participant, event: event, actor: organizer, role: :creator)
-
-      join_data =
-        File.read!("test/fixtures/mobilizon-leave-activity.json")
-        |> Jason.decode!()
-        |> Map.put("actor", organizer_url)
-        |> Map.put("object", event_url)
-
-      assert :error = Transmogrifier.handle_incoming(join_data)
-    end
-  end
-
-  describe "handle Invite activities on group" do
-    test "it accepts Invite activities" do
-      %Actor{url: group_url, id: group_id} = group = insert(:group)
-      %Actor{url: group_admin_url, id: group_admin_id} = group_admin = insert(:actor)
-
-      %Member{} =
-        _group_admin_member =
-        insert(:member, parent: group, actor: group_admin, role: :administrator)
-
-      %Actor{url: invitee_url, id: invitee_id} = _invitee = insert(:actor)
-
-      invite_data =
-        File.read!("test/fixtures/mobilizon-invite-activity.json")
-        |> Jason.decode!()
-        |> Map.put("actor", group_admin_url)
-        |> Map.put("object", group_url)
-        |> Map.put("target", invitee_url)
-
-      assert {:ok, activity, %Member{}} = Transmogrifier.handle_incoming(invite_data)
-      assert %Member{} = member = Actors.get_member_by_url(invite_data["id"])
-      assert member.actor.id == invitee_id
-      assert member.parent.id == group_id
-      assert member.role == :invited
-      assert member.invited_by_id == group_admin_id
-    end
-
-    test "it refuses Invite activities for " do
-      %Actor{url: group_url, id: group_id} = group = insert(:group)
-      %Actor{url: group_admin_url, id: group_admin_id} = group_admin = insert(:actor)
-
-      %Member{} =
-        _group_admin_member =
-        insert(:member, parent: group, actor: group_admin, role: :administrator)
-
-      %Actor{url: invitee_url, id: invitee_id} = _invitee = insert(:actor)
-
-      invite_data =
-        File.read!("test/fixtures/mobilizon-invite-activity.json")
-        |> Jason.decode!()
-        |> Map.put("actor", group_admin_url)
-        |> Map.put("object", group_url)
-        |> Map.put("target", invitee_url)
-
-      assert {:ok, activity, %Member{}} = Transmogrifier.handle_incoming(invite_data)
-      assert %Member{} = member = Actors.get_member_by_url(invite_data["id"])
-      assert member.actor.id == invitee_id
-      assert member.parent.id == group_id
-      assert member.role == :invited
-      assert member.invited_by_id == group_admin_id
     end
   end
 
@@ -1501,7 +1058,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       assert Enum.member?(object["tag"], expected_mention)
     end
 
-    test "it adds the json-ld context and the conversation property" do
+    test "it adds the json-ld context and the discussion property" do
       actor = insert(:actor)
 
       {:ok, activity, _} = API.Comments.create_comment(%{actor_id: actor.id, text: "hey"})
@@ -1558,24 +1115,40 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
   describe "actor origin check" do
     test "it rejects objects with a bogus origin" do
-      use_cassette "activity_pub/object_bogus_origin" do
-        {:error, _} = ActivityPub.fetch_object_from_url("https://info.pleroma.site/activity.json")
-      end
+      data =
+        File.read!("test/fixtures/https__info.pleroma.site_activity.json")
+        |> Jason.decode!()
+
+      Mock
+      |> expect(:call, fn
+        %{method: :get, url: "https://info.pleroma.site/activity.json"}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: data}}
+      end)
+
+      {:error, _} = ActivityPub.fetch_object_from_url("https://info.pleroma.site/activity.json")
     end
 
     test "it rejects activities which reference objects with bogus origins" do
-      use_cassette "activity_pub/activity_object_bogus" do
-        data = %{
-          "@context" => "https://www.w3.org/ns/activitystreams",
-          "id" => "https://framapiaf.org/users/admin/activities/1234",
-          "actor" => "https://framapiaf.org/users/admin",
-          "to" => ["https://www.w3.org/ns/activitystreams#Public"],
-          "object" => "https://info.pleroma.site/activity.json",
-          "type" => "Announce"
-        }
+      data =
+        File.read!("test/fixtures/https__info.pleroma.site_activity.json")
+        |> Jason.decode!()
 
-        :error = Transmogrifier.handle_incoming(data)
-      end
+      Mock
+      |> expect(:call, fn
+        %{method: :get, url: "https://info.pleroma.site/activity.json"}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: data}}
+      end)
+
+      data = %{
+        "@context" => "https://www.w3.org/ns/activitystreams",
+        "id" => "https://framapiaf.org/users/admin/activities/1234",
+        "actor" => "https://framapiaf.org/users/admin",
+        "to" => ["https://www.w3.org/ns/activitystreams#Public"],
+        "object" => "https://info.pleroma.site/activity.json",
+        "type" => "Announce"
+      }
+
+      :error = Transmogrifier.handle_incoming(data)
     end
   end
 end

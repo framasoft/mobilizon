@@ -5,7 +5,7 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Share
   alias Mobilizon.Storage.Repo
@@ -79,6 +79,14 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
 
   def get_addressed_actors(mentioned_users, _), do: mentioned_users
 
+  def calculate_to_and_cc_from_mentions(
+        %Comment{discussion: %Discussion{actor_id: actor_id}} = _comment
+      ) do
+    with %Actor{type: :Group, members_url: members_url} <- Actors.get_actor(actor_id) do
+      %{"to" => [members_url], "cc" => []}
+    end
+  end
+
   def calculate_to_and_cc_from_mentions(%Comment{} = comment) do
     with mentioned_actors <- Enum.map(comment.mentions, &process_mention/1),
          addressed_actors <- get_addressed_actors(mentioned_actors, nil),
@@ -93,6 +101,28 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
                 add_shares_actors_followers(comment.url)
             )} do
       %{"to" => to, "cc" => cc}
+    end
+  end
+
+  def calculate_to_and_cc_from_mentions(%Discussion{actor_id: actor_id}) do
+    with %Actor{type: :Group, members_url: members_url} <- Actors.get_actor(actor_id) do
+      %{"to" => [members_url], "cc" => []}
+    end
+  end
+
+  def calculate_to_and_cc_from_mentions(%Event{
+        attributed_to: %Actor{members_url: members_url},
+        visibility: visibility
+      }) do
+    case visibility do
+      :public ->
+        %{"to" => [members_url, @ap_public], "cc" => []}
+
+      :unlisted ->
+        %{"to" => [members_url], "cc" => [@ap_public]}
+
+      :private ->
+        %{"to" => [members_url], "cc" => []}
     end
   end
 

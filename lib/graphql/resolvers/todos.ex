@@ -211,7 +211,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
            {:todo_list, Todos.get_todo_list(todo_list_id)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          {:ok, _, %Todo{} = todo} <-
-           ActivityPub.update(:todo, todo, args, true, %{}) do
+           ActivityPub.update(todo, args, true, %{}) do
       {:ok, todo}
     else
       {:todo_list, _} ->

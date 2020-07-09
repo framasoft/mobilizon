@@ -84,7 +84,6 @@ defmodule Mobilizon.Web.ReverseProxy do
           | {:redirect_on_failure, boolean}
 
   @hackney Application.get_env(:mobilizon, :hackney, :hackney)
-  @httpoison Application.get_env(:mobilizon, :httpoison, HTTPoison)
 
   @default_hackney_options []
 
@@ -108,7 +107,6 @@ defmodule Mobilizon.Web.ReverseProxy do
     hackney_opts =
       @default_hackney_options
       |> Keyword.merge(Keyword.get(opts, :http, []))
-      |> @httpoison.process_request_options()
 
     req_headers = build_req_headers(conn.req_headers, opts)
 

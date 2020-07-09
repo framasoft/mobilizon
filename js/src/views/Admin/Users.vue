@@ -109,9 +109,11 @@ const USERS_PER_PAGE = 10;
 })
 export default class Users extends Vue {
   page = 1;
+
   email = "";
 
   USERS_PER_PAGE = USERS_PER_PAGE;
+
   RouteName = RouteName;
 
   async onPageChange(page: number) {

@@ -83,6 +83,7 @@ import { IStatistics } from "../../types/statistics.model";
 })
 export default class AboutInstance extends Vue {
   config!: IConfig;
+
   statistics!: IStatistics;
 
   get isContactEmail(): boolean {
@@ -97,7 +98,8 @@ export default class AboutInstance extends Vue {
     if (!this.config.contact) return null;
     if (this.isContactEmail) {
       return { uri: `mailto:${this.config.contact}`, text: this.config.contact };
-    } else if (this.isContactURL) {
+    }
+    if (this.isContactURL) {
       return {
         uri: this.config.contact,
         text: this.urlToHostname(this.config.contact) || (this.$t("Contact") as string),

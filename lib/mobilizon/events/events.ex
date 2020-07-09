@@ -380,24 +380,19 @@ defmodule Mobilizon.Events do
   @doc """
   Lists public events for the actor, with all associations loaded.
   """
-  @spec list_public_events_for_actor(Actor.t(), integer | nil, integer | nil) ::
-          {:ok, [Event.t()], integer}
-  def list_public_events_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
-    events =
-      actor_id
-      |> event_for_actor_query()
-      |> filter_public_visibility()
-      |> filter_draft()
-      |> preload_for_event()
-      |> Page.paginate(page, limit)
-      |> Repo.all()
+  @spec list_public_events_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  def list_public_events_for_actor(actor, page \\ nil, limit \\ nil)
 
-    events_count =
-      actor_id
-      |> count_events_for_actor_query()
-      |> Repo.one()
+  def list_public_events_for_actor(%Actor{type: :Group} = group, page, limit),
+    do: list_organized_events_for_group(group, page, limit)
 
-    {:ok, events, events_count}
+  def list_public_events_for_actor(%Actor{id: actor_id}, page, limit) do
+    actor_id
+    |> event_for_actor_query()
+    |> filter_public_visibility()
+    |> filter_draft()
+    |> preload_for_event()
+    |> Page.build_page(page, limit)
   end
 
   @spec list_organized_events_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t()
@@ -1318,15 +1313,6 @@ defmodule Mobilizon.Events do
       where: te.tag_id in ^tags_ids,
       order_by: [asc: e.begins_on],
       limit: ^limit
-    )
-  end
-
-  @spec count_events_for_actor_query(integer | String.t()) :: Ecto.Query.t()
-  defp count_events_for_actor_query(actor_id) do
-    from(
-      e in Event,
-      select: count(e.id),
-      where: e.organizer_actor_id == ^actor_id
     )
   end
 

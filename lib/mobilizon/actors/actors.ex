@@ -55,6 +55,8 @@ defmodule Mobilizon.Actors do
 
   @public_visibility [:public, :unlisted]
   @administrator_roles [:creator, :administrator]
+  @moderator_roles [:moderator] ++ @administrator_roles
+  @member_roles [:member] ++ @moderator_roles
   @actor_preloads [:user, :organized_events, :comments]
 
   @doc """
@@ -116,6 +118,17 @@ defmodule Mobilizon.Actors do
       actor ->
         {:ok, preload_followers(actor, preload)}
     end
+  end
+
+  @doc """
+  New function to replace `Mobilizon.Actors.get_actor_by_url/1` with
+  better signature
+  """
+  @spec get_actor_by_url_2(String.t(), boolean) :: Actor.t() | nil
+  def get_actor_by_url_2(url, preload \\ false) do
+    Actor
+    |> Repo.get_by(url: url)
+    |> preload_followers(preload)
   end
 
   @doc """
@@ -181,9 +194,17 @@ defmodule Mobilizon.Actors do
   """
   @spec create_actor(map) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def create_actor(attrs \\ %{}) do
-    %Actor{}
-    |> Actor.changeset(attrs)
-    |> Repo.insert()
+    type = Map.get(attrs, :type, :Person)
+
+    case type do
+      :Person ->
+        %Actor{}
+        |> Actor.changeset(attrs)
+        |> Repo.insert()
+
+      :Group ->
+        create_group(attrs)
+    end
   end
 
   @doc """
@@ -238,7 +259,8 @@ defmodule Mobilizon.Actors do
             name: name,
             summary: summary,
             avatar: transform_media_file(avatar),
-            banner: transform_media_file(banner)
+            banner: transform_media_file(banner),
+            last_refreshed_at: DateTime.utc_now()
           ]
         ],
         conflict_target: [:url]
@@ -285,6 +307,7 @@ defmodule Mobilizon.Actors do
   """
   @spec perform(atom(), Actor.t()) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def perform(:delete_actor, %Actor{} = actor, options \\ @delete_actor_default_options) do
+    Logger.info("Going to delete actor #{actor.url}")
     actor = Repo.preload(actor, @actor_preloads)
 
     delete_actor_options = Keyword.merge(@delete_actor_default_options, options)
@@ -306,10 +329,18 @@ defmodule Mobilizon.Actors do
     case Repo.transaction(multi) do
       {:ok, %{actor: %Actor{} = actor}} ->
         {:ok, true} = Cachex.del(:activity_pub, "actor_#{actor.preferred_username}")
+        Logger.info("Deleted actor #{actor.url}")
         {:ok, actor}
 
       {:error, remove, error, _} when remove in [:remove_banner, :remove_avatar] ->
+        Logger.error("Error while deleting actor's banner or avatar")
+        Logger.error(inspect(error, pretty: true))
         {:error, error}
+
+      err ->
+        Logger.error("Unknown error while deleting actor")
+        Logger.error(inspect(err, pretty: true))
+        {:error, err}
     end
   end
 
@@ -438,23 +469,47 @@ defmodule Mobilizon.Actors do
     end
   end
 
+  @spec get_local_group_by_url(String.t()) :: Actor.t()
+  def get_local_group_by_url(group_url) do
+    group_query()
+    |> where([q], q.url == ^group_url and is_nil(q.domain))
+    |> Repo.one()
+  end
+
+  @spec get_group_by_members_url(String.t()) :: Actor.t()
+  def get_group_by_members_url(members_url) do
+    group_query()
+    |> where([q], q.members_url == ^members_url)
+    |> Repo.one()
+  end
+
   @doc """
   Creates a group.
+
+  If the group is local, creates an admin actor as well from `creator_actor_id`.
   """
   @spec create_group(map) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def create_group(attrs \\ %{}) do
-    with {:ok, %{insert_group: %Actor{} = group, add_admin_member: %Member{} = _admin_member}} <-
-           Multi.new()
-           |> Multi.insert(:insert_group, Actor.group_creation_changeset(%Actor{}, attrs))
-           |> Multi.insert(:add_admin_member, fn %{insert_group: group} ->
-             Member.changeset(%Member{}, %{
-               parent_id: group.id,
-               actor_id: attrs.creator_actor_id,
-               role: :administrator
-             })
-           end)
-           |> Repo.transaction() do
-      {:ok, group}
+    local = Map.get(attrs, :local, true)
+
+    if local do
+      with {:ok, %{insert_group: %Actor{} = group, add_admin_member: %Member{} = _admin_member}} <-
+             Multi.new()
+             |> Multi.insert(:insert_group, Actor.group_creation_changeset(%Actor{}, attrs))
+             |> Multi.insert(:add_admin_member, fn %{insert_group: group} ->
+               Member.changeset(%Member{}, %{
+                 parent_id: group.id,
+                 actor_id: attrs.creator_actor_id,
+                 role: :administrator
+               })
+             end)
+             |> Repo.transaction() do
+        {:ok, group}
+      end
+    else
+      %Actor{}
+      |> Actor.group_creation_changeset(attrs)
+      |> Repo.insert()
     end
   end
 
@@ -532,12 +587,7 @@ defmodule Mobilizon.Actors do
   def is_member?(actor_id, parent_id) do
     match?(
       {:ok, %Member{}},
-      get_member(actor_id, parent_id, [
-        :member,
-        :moderator,
-        :administrator,
-        :creator
-      ])
+      get_member(actor_id, parent_id, @member_roles)
     )
   end
 
@@ -549,6 +599,20 @@ defmodule Mobilizon.Actors do
     Member
     |> where(url: ^url)
     |> preload([:actor, :parent, :invited_by])
+    |> Repo.one()
+  end
+
+  @spec get_single_group_member_actor(integer() | String.t()) :: Actor.t() | nil
+  def get_single_group_member_actor(group_id) do
+    Member
+    |> where(
+      [m],
+      m.parent_id == ^group_id and m.role in [^:member, ^:moderator, ^:administrator, ^:creator]
+    )
+    |> join(:inner, [m], a in Actor, on: m.actor_id == a.id)
+    |> where([_m, a], is_nil(a.domain))
+    |> limit(1)
+    |> select([_m, a], a)
     |> Repo.one()
   end
 
@@ -616,23 +680,24 @@ defmodule Mobilizon.Actors do
   @doc """
   Returns the list of members for a group.
   """
-  @spec list_members_for_group(Actor.t(), integer | nil, integer | nil) :: Page.t()
-  def list_members_for_group(%Actor{id: group_id, type: :Group}, page \\ nil, limit \\ nil) do
-    group_id
-    |> members_for_group_query()
-    |> Page.build_page(page, limit)
-  end
-
-  @spec list_external_members_for_group(Actor.t(), integer | nil, integer | nil) :: Page.t()
-  def list_external_members_for_group(
+  @spec list_members_for_group(Actor.t(), list(atom()), integer | nil, integer | nil) :: Page.t()
+  def list_members_for_group(
         %Actor{id: group_id, type: :Group},
+        roles \\ [],
         page \\ nil,
         limit \\ nil
       ) do
     group_id
     |> members_for_group_query()
-    |> filter_external()
+    |> filter_member_role(roles)
     |> Page.build_page(page, limit)
+  end
+
+  @spec list_external_actors_members_for_group(Actor.t()) :: list(Actor.t())
+  def list_external_actors_members_for_group(%Actor{id: group_id, type: :Group}) do
+    group_id
+    |> group_external_member_actor_query()
+    |> Repo.all()
   end
 
   @doc """
@@ -1141,6 +1206,26 @@ defmodule Mobilizon.Actors do
     )
   end
 
+  @spec group_external_member_actor_query(integer()) :: Ecto.Query.t()
+  defp group_external_member_actor_query(group_id) do
+    Member
+    |> where([m], m.parent_id == ^group_id)
+    |> join(:inner, [m], a in Actor, on: m.actor_id == a.id)
+    |> where([_m, a], not is_nil(a.domain))
+    |> select([_m, a], a)
+  end
+
+  @spec filter_member_role(Ecto.Query.t(), list(atom()) | atom()) :: Ecto.Query.t()
+  def filter_member_role(query, []), do: query
+
+  def filter_member_role(query, roles) when is_list(roles) do
+    where(query, [m], m.role in ^roles)
+  end
+
+  def filter_member_role(query, role) when is_atom(role) do
+    from(m in query, where: m.role == ^role)
+  end
+
   @spec administrator_members_for_group_query(integer | String.t()) :: Ecto.Query.t()
   defp administrator_members_for_group_query(group_id) do
     from(
@@ -1296,13 +1381,22 @@ defmodule Mobilizon.Actors do
   defp preload_followers(actor, true), do: Repo.preload(actor, [:followers])
   defp preload_followers(actor, false), do: actor
 
-  defp delete_actor_organized_events(%Actor{organized_events: organized_events}) do
+  defp delete_actor_organized_events(%Actor{organized_events: organized_events} = actor) do
     res =
       Enum.map(organized_events, fn event ->
         event =
-          Repo.preload(event, [:organizer_actor, :participants, :picture, :mentions, :comments])
+          Repo.preload(event, [
+            :organizer_actor,
+            :participants,
+            :picture,
+            :mentions,
+            :comments,
+            :attributed_to,
+            :tags,
+            :physical_address
+          ])
 
-        ActivityPub.delete(event, false)
+        ActivityPub.delete(event, actor, false)
       end)
 
     if Enum.all?(res, fn {status, _, _} -> status == :ok end) do
@@ -1312,13 +1406,21 @@ defmodule Mobilizon.Actors do
     end
   end
 
-  defp delete_actor_empty_comments(%Actor{comments: comments}) do
+  defp delete_actor_empty_comments(%Actor{comments: comments} = actor) do
     res =
       Enum.map(comments, fn comment ->
         comment =
-          Repo.preload(comment, [:actor, :mentions, :event, :in_reply_to_comment, :origin_comment])
+          Repo.preload(comment, [
+            :actor,
+            :mentions,
+            :event,
+            :in_reply_to_comment,
+            :origin_comment,
+            :attributed_to,
+            :tags
+          ])
 
-        ActivityPub.delete(comment, false)
+        ActivityPub.delete(comment, actor, false)
       end)
 
     if Enum.all?(res, fn {status, _, _} -> status == :ok end) do

@@ -118,7 +118,7 @@
           </div>
         </transition-group>
       </draggable>
-      <div class="content has-text-centered has-text-grey">
+      <div class="content has-text-centered has-text-grey" v-if="resource.children.total === 0">
         <p>{{ $t("No resources in this folder") }}</p>
       </div>
     </section>
@@ -470,12 +470,12 @@ export default class Resources extends Mixins(ResourceMixin) {
 
   handleRename(resource: IResource) {
     this.renameModal = true;
-    this.updatedResource = Object.assign({}, resource);
+    this.updatedResource = { ...resource };
   }
 
   handleMove(resource: IResource) {
     this.moveModal = true;
-    this.updatedResource = Object.assign({}, resource);
+    this.updatedResource = { ...resource };
   }
 
   async moveResource(resource: IResource, oldParent: IResource | undefined) {

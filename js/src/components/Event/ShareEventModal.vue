@@ -87,13 +87,16 @@ import DiasporaLogo from "../../assets/diaspora-icon.svg?inline";
 })
 export default class ShareEventModal extends Vue {
   @Prop({ type: Object, required: true }) event!: IEvent;
+
   @Prop({ type: Boolean, required: false, default: true }) eventCapacityOK!: boolean;
+
   @Ref("eventURLInput") readonly eventURLInput!: any;
 
   EventVisibility = EventVisibility;
+
   EventStatus = EventStatus;
 
-  showCopiedTooltip: boolean = false;
+  showCopiedTooltip = false;
 
   get twitterShareUrl(): string {
     return `https://twitter.com/intent/tweet?url=${encodeURIComponent(this.event.url)}&text=${

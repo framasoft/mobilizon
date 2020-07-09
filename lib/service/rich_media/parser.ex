@@ -12,7 +12,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
     timeout: 10_000,
     recv_timeout: 20_000,
     follow_redirect: true,
-    # TODO: Remove me once Hackney/HTTPoison fixes their shit with TLS1.3 and OTP 23
+    # TODO: Remove me once Hackney/HTTPoison fixes their issue with TLS1.3 and OTP 23
     ssl: [{:versions, [:"tlsv1.2"]}]
   ]
 
@@ -46,7 +46,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
       {:error, "Cachex error: #{inspect(e)}"}
   end
 
-  @spec parse_url(String.t(), List.t()) :: {:ok, map()} | {:error, any()}
+  @spec parse_url(String.t(), Enum.t()) :: {:ok, map()} | {:error, any()}
   defp parse_url(url, options \\ []) do
     user_agent = Keyword.get(options, :user_agent, Config.instance_user_agent())
     headers = [{"User-Agent", user_agent}]
@@ -54,12 +54,12 @@ defmodule Mobilizon.Service.RichMedia.Parser do
 
     try do
       with {:ok, _} <- prevent_local_address(url),
-           {:ok, %HTTPoison.Response{body: body, status_code: code, headers: response_headers}}
+           {:ok, %{body: body, status: code, headers: response_headers}}
            when code in 200..299 <-
-             HTTPoison.get(
+             Tesla.get(
                url,
-               headers,
-               @options
+               headers: headers,
+               opts: @options
              ),
            {:is_html, _response_headers, true} <-
              {:is_html, response_headers, is_html(response_headers)} do
@@ -87,7 +87,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
     end
   end
 
-  @spec get_data_for_media(List.t(), String.t()) :: map()
+  @spec get_data_for_media(Enum.t(), String.t()) :: map()
   defp get_data_for_media(response_headers, url) do
     data = %{title: get_filename_from_headers(response_headers) || get_filename_from_url(url)}
 
@@ -98,21 +98,21 @@ defmodule Mobilizon.Service.RichMedia.Parser do
     end
   end
 
-  @spec is_html(List.t()) :: boolean
-  defp is_html(headers) do
+  @spec is_html(Enum.t()) :: boolean
+  def is_html(headers) do
     headers
     |> get_header("Content-Type")
     |> content_type_header_matches(["text/html", "application/xhtml"])
   end
 
-  @spec is_image(List.t()) :: boolean
+  @spec is_image(Enum.t()) :: boolean
   defp is_image(headers) do
     headers
     |> get_header("Content-Type")
     |> content_type_header_matches(["image/"])
   end
 
-  @spec content_type_header_matches(String.t() | nil, List.t()) :: boolean
+  @spec content_type_header_matches(String.t() | nil, Enum.t()) :: boolean
   defp content_type_header_matches(header, content_types)
   defp content_type_header_matches(nil, _content_types), do: false
 
@@ -120,15 +120,17 @@ defmodule Mobilizon.Service.RichMedia.Parser do
     Enum.any?(content_types, fn content_type -> String.starts_with?(header, content_type) end)
   end
 
-  @spec get_header(List.t(), String.t()) :: String.t() | nil
+  @spec get_header(Enum.t(), String.t()) :: String.t() | nil
   defp get_header(headers, key) do
+    key = String.downcase(key)
+
     case List.keyfind(headers, key, 0) do
       {^key, value} -> String.downcase(value)
       nil -> nil
     end
   end
 
-  @spec get_filename_from_headers(List.t()) :: String.t() | nil
+  @spec get_filename_from_headers(Enum.t()) :: String.t() | nil
   defp get_filename_from_headers(headers) do
     case get_header(headers, "Content-Disposition") do
       nil -> nil
@@ -138,12 +140,16 @@ defmodule Mobilizon.Service.RichMedia.Parser do
 
   @spec get_filename_from_url(String.t()) :: String.t()
   defp get_filename_from_url(url) do
-    %URI{path: path} = URI.parse(url)
+    case URI.parse(url) do
+      %URI{path: nil} ->
+        nil
 
-    path
-    |> String.split("/", trim: true)
-    |> Enum.at(-1)
-    |> URI.decode()
+      %URI{path: path} ->
+        path
+        |> String.split("/", trim: true)
+        |> Enum.at(-1)
+        |> URI.decode()
+    end
   end
 
   # The following is taken from https://github.com/elixir-plug/plug/blob/65986ad32f9aaae3be50dc80cbdd19b326578da7/lib/plug/parsers/multipart.ex#L207

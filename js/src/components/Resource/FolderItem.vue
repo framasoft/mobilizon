@@ -142,7 +142,7 @@ a {
   position: relative;
 
   .preview {
-    flex: 0 0 100px;
+    flex: 0 0 50px;
     position: relative;
     display: flex;
     align-items: center;
@@ -159,7 +159,7 @@ a {
       display: block;
       font-weight: 500;
       margin-bottom: 5px;
-      color: $background-color;
+      color: $primary;
       overflow: hidden;
       text-overflow: ellipsis;
       text-decoration: none;

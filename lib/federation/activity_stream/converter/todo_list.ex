@@ -28,7 +28,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.TodoList do
       "type" => "TodoList",
       "actor" => group_url,
       "id" => todo_list.url,
-      "title" => todo_list.title
+      "name" => todo_list.title
     }
   end
 

@@ -7,7 +7,7 @@ defmodule Mobilizon.Events.EventOptions do
 
   import Ecto.Changeset
 
-  alias Mobilizon.Conversations.CommentModeration
+  alias Mobilizon.Discussions.CommentModeration
 
   alias Mobilizon.Events.{
     EventOffer,

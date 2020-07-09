@@ -82,12 +82,4 @@ defmodule Mobilizon.Web.Email.Event do
     |> Email.Event.event_updated(actor, old_event, event, diff, locale)
     |> Email.Mailer.deliver_later()
   end
-
-  defp send_notification_for_event_update_to_participant(user, old_event, new_event, diff) do
-    require Logger
-    Logger.error(inspect(user))
-    Logger.error(inspect(old_event))
-    Logger.error(inspect(new_event))
-    Logger.error(inspect(diff))
-  end
 end

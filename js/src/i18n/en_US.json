@@ -29,7 +29,7 @@
   "Approve": "Approve",
   "Are you really sure you want to delete your whole account? You'll lose everything. Identities, settings, events created, messages and participations will be gone forever.": "Are you really sure you want to delete your whole account? You'll lose everything. Identities, settings, events created, messages and participations will be gone forever.",
   "Are you sure you want to <b>delete</b> this comment? This action cannot be undone.": "Are you sure you want to <b>delete</b> this comment? This action cannot be undone.",
-  "Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the conversation with the event creator or edit its event instead.": "Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the conversation with the event creator or edit its event instead.",
+  "Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the discussion with the event creator or edit its event instead.": "Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the discussion with the event creator or edit its event instead.",
   "Are you sure you want to cancel the event creation? You'll lose all modifications.": "Are you sure you want to cancel the event creation? You'll lose all modifications.",
   "Are you sure you want to cancel the event edition? You'll lose all modifications.": "Are you sure you want to cancel the event edition? You'll lose all modifications.",
   "Are you sure you want to cancel your participation at event \"{title}\"?": "Are you sure you want to cancel your participation at event \"{title}\"?",
@@ -710,5 +710,9 @@
   "Error while login with {provider}. Retry or login another way.": "Error while login with {provider}. Retry or login another way.",
   "Error while login with {provider}. This login provider doesn't exist.": "Error while login with {provider}. This login provider doesn't exist.",
   "This user has been disabled": "This user has been disabled",
-  "You can't reset your password because you use a 3rd-party auth provider to login.": "You can't reset your password because you use a 3rd-party auth provider to login."
+  "You can't reset your password because you use a 3rd-party auth provider to login.": "You can't reset your password because you use a 3rd-party auth provider to login.",
+  "Update post {name}": "Update post {name}",
+  "Create a new post": "Create a new post",
+  "Post": "Post",
+  "By {author}": "By {author}"
 }

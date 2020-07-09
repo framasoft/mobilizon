@@ -5,7 +5,7 @@ defmodule Mobilizon.Web.Views.Utils do
 
   alias Mobilizon.Service.Metadata.Utils, as: MetadataUtils
 
-  @spec inject_tags(List.t(), String.t()) :: {:safe, String.t()}
+  @spec inject_tags(Enum.t(), String.t()) :: {:safe, String.t()}
   def inject_tags(tags, locale \\ "en") do
     with {:ok, index_content} <- File.read(index_file_path()) do
       do_replacements(index_content, MetadataUtils.stringify_tags(tags), locale)

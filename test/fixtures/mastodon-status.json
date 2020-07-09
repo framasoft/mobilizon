@@ -1,0 +1,56 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    {
+      "ostatus": "http://ostatus.org#",
+      "atomUri": "ostatus:atomUri",
+      "inReplyToAtomUri": "ostatus:inReplyToAtomUri",
+      "conversation": "ostatus:conversation",
+      "sensitive": "as:sensitive",
+      "toot": "http://joinmastodon.org/ns#",
+      "votersCount": "toot:votersCount",
+      "blurhash": "toot:blurhash",
+      "focalPoint": {
+        "@container": "@list",
+        "@id": "toot:focalPoint"
+      }
+    }
+  ],
+  "id": "https://framapiaf.org/users/peertube/statuses/104584600044284729",
+  "type": "Note",
+  "summary": null,
+  "inReplyTo": null,
+  "published": "2020-07-27T07:19:11Z",
+  "url": "https://framapiaf.org/@peertube/104584600044284729",
+  "attributedTo": "https://framapiaf.org/users/peertube",
+  "to": ["https://www.w3.org/ns/activitystreams#Public"],
+  "cc": ["https://framapiaf.org/users/peertube/followers"],
+  "sensitive": false,
+  "atomUri": "https://framapiaf.org/users/peertube/statuses/104584600044284729",
+  "inReplyToAtomUri": null,
+  "conversation": "tag:framapiaf.org,2020-07-27:objectId=39135637:objectType=Conversation",
+  "content": "<p>PeerTube 2.3 is out! Discover on <a href=\"https://joinpeertube.org/fr_FR/news#release-2-3-0\" rel=\"nofollow noopener noreferrer\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"ellipsis\">joinpeertube.org/fr_FR/news#re</span><span class=\"invisible\">lease-2-3-0</span></a> the list of new features! </p><p>Have you seen the broadcast message system ? 🤩</p>",
+  "contentMap": {
+    "en": "<p>PeerTube 2.3 is out! Discover on <a href=\"https://joinpeertube.org/fr_FR/news#release-2-3-0\" rel=\"nofollow noopener noreferrer\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"ellipsis\">joinpeertube.org/fr_FR/news#re</span><span class=\"invisible\">lease-2-3-0</span></a> the list of new features! </p><p>Have you seen the broadcast message system ? 🤩</p>"
+  },
+  "attachment": [
+    {
+      "type": "Document",
+      "mediaType": "image/png",
+      "url": "https://framapiaf.s3.framasoft.org/framapiaf/media_attachments/files/104/584/599/807/860/387/original/88c94143f78fdfa3.png",
+      "name": null,
+      "blurhash": "U5SY?Z00nOxu7ORP.8-pU^kVS#NGXyxbMxM{"
+    }
+  ],
+  "tag": [],
+  "replies": {
+    "id": "https://framapiaf.org/users/peertube/statuses/104584600044284729/replies",
+    "type": "Collection",
+    "first": {
+      "type": "CollectionPage",
+      "next": "https://framapiaf.org/users/peertube/statuses/104584600044284729/replies?only_other_accounts=true&page=true",
+      "partOf": "https://framapiaf.org/users/peertube/statuses/104584600044284729/replies",
+      "items": []
+    }
+  }
+}

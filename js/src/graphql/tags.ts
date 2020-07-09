@@ -1,6 +1,13 @@
 import gql from "graphql-tag";
 
-/* eslint-disable import/prefer-default-export */
+export const TAG_FRAGMENT = gql`
+  fragment TagFragment on Tag {
+    id
+    slug
+    title
+  }
+`;
+
 export const TAGS = gql`
   query {
     tags {

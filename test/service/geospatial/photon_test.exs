@@ -1,66 +1,41 @@
 defmodule Mobilizon.Service.Geospatial.PhotonTest do
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
-
   use Mobilizon.DataCase
 
-  import Mock
+  import Mox
 
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.Config
   alias Mobilizon.Service.Geospatial.Photon
-
-  @http_options [
-    follow_redirect: true,
-    ssl: [{:versions, [:"tlsv1.2"]}]
-  ]
-
-  setup do
-    # Config.instance_user_agent/0 makes database calls so because of ownership connection
-    # we need to define it like this instead of a constant
-    # See https://hexdocs.pm/ecto_sql/Ecto.Adapters.SQL.Sandbox.html
-    {:ok,
-     httpoison_headers: [
-       {"User-Agent", Config.instance_user_agent()}
-     ]}
-  end
+  alias Mobilizon.Service.HTTP.BaseClient.Mock
 
   describe "search address" do
-    test "produces a valid search address with options", %{httpoison_headers: httpoison_headers} do
-      with_mock HTTPoison,
-        get: fn _url, _headers, _options ->
-          {:ok, %HTTPoison.Response{status_code: 200, body: "{\"features\": []"}}
-        end do
-        Photon.search("10 Rue Jangot",
-          limit: 5,
-          lang: "fr"
-        )
-
-        assert_called(
-          HTTPoison.get(
-            "https://photon.komoot.de/api/?q=10%20Rue%20Jangot&lang=fr&limit=5",
-            httpoison_headers,
-            @http_options
-          )
-        )
-      end
-    end
-
     test "returns a valid address from search" do
-      use_cassette "geospatial/photon/search" do
-        assert %Address{
-                 locality: "Lyon",
-                 description: "10 Rue Jangot",
-                 region: "Auvergne-Rhône-Alpes",
-                 country: "France",
-                 postal_code: "69007",
-                 street: "10 Rue Jangot",
-                 geom: %Geo.Point{
-                   coordinates: {4.8425657, 45.7517141},
-                   properties: %{},
-                   srid: 4326
-                 }
-               } == Photon.search("10 rue Jangot") |> hd
-      end
+      data =
+        File.read!("test/fixtures/geospatial/photon/search.json")
+        |> Jason.decode!()
+
+      Mock
+      |> expect(:call, fn
+        %{
+          method: :get,
+          url: "https://photon.komoot.de/api/?q=10%20rue%20Jangot&lang=en&limit=10"
+        },
+        _opts ->
+          {:ok, %Tesla.Env{status: 200, body: data}}
+      end)
+
+      assert %Address{
+               locality: "Lyon",
+               description: "10 Rue Jangot",
+               region: "Auvergne-Rhône-Alpes",
+               country: "France",
+               postal_code: "69007",
+               street: "10 Rue Jangot",
+               geom: %Geo.Point{
+                 coordinates: {4.8425657, 45.7517141},
+                 properties: %{},
+                 srid: 4326
+               }
+             } == Photon.search("10 rue Jangot") |> hd
     end
 
     # Photon returns something quite wrong, so no need to test this right now.

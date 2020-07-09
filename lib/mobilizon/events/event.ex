@@ -13,7 +13,7 @@ defmodule Mobilizon.Events.Event do
   alias Mobilizon.{Addresses, Events, Media, Mention}
   alias Mobilizon.Addresses.Address
 
-  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Discussions.Comment
 
   alias Mobilizon.Events.{
     EventOptions,

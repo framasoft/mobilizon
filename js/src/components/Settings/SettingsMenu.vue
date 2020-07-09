@@ -63,6 +63,7 @@ import { CURRENT_USER_CLIENT } from "../../graphql/user";
 import { ICurrentUser, ICurrentUserRole } from "../../types/current-user.model";
 
 import RouteName from "../../router/name";
+
 @Component({
   components: { SettingMenuSection, SettingMenuItem },
   apollo: {

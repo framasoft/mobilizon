@@ -11,7 +11,7 @@ import { authGuardIfNeeded } from "./guards/auth-guard";
 import Search from "../views/Search.vue";
 import { settingsRoutes } from "./settings";
 import { groupsRoutes } from "./groups";
-import { conversationRoutes } from "./conversation";
+import { discussionRoutes } from "./discussion";
 import { userRoutes } from "./user";
 import RouteName from "./name";
 
@@ -46,7 +46,7 @@ const router = new Router({
     ...settingsRoutes,
     ...actorRoutes,
     ...groupsRoutes,
-    ...conversationRoutes,
+    ...discussionRoutes,
     ...errorRoutes,
     {
       path: "/search/:searchTerm/:searchType?",

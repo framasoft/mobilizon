@@ -255,13 +255,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
       ) do
     with {:ok, %Event{local: is_local} = event} <- Events.get_event_with_preload(event_id),
          {actor_id, ""} <- Integer.parse(actor_id),
-         {:is_owned, %Actor{}} <- User.owns_actor(user, actor_id) do
+         {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id) do
       cond do
         {:event_can_be_managed, true} == Event.can_be_managed_by(event, actor_id) ->
-          do_delete_event(event)
+          do_delete_event(event, actor)
 
         role in [:moderator, :administrator] ->
-          with {:ok, res} <- do_delete_event(event, !is_local),
+          with {:ok, res} <- do_delete_event(event, actor, !is_local),
                %Actor{} = actor <- Actors.get_actor(actor_id) do
             Admin.log_action(actor, "delete", event)
 
@@ -284,8 +284,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     {:error, "You need to be logged-in to delete an event"}
   end
 
-  defp do_delete_event(event, federate \\ true) when is_boolean(federate) do
-    with {:ok, _activity, event} <- API.Events.delete_event(event) do
+  defp do_delete_event(%Event{} = event, %Actor{} = actor, federate \\ true)
+       when is_boolean(federate) do
+    with {:ok, _activity, event} <- API.Events.delete_event(event, actor) do
       {:ok, %{id: event.id}}
     end
   end

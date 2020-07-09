@@ -1,0 +1,42 @@
+{
+  "type": "FeatureCollection",
+  "geocoding": {
+    "version": "0.1.0",
+    "attribution": "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+    "licence": "ODbL",
+    "query": "10 rue Jangot"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "geocoding": {
+          "place_id": 41453794,
+          "osm_type": "node",
+          "osm_id": 3078260611,
+          "type": "house",
+          "label": "10, Rue Jangot, La Guillotière, Lyon 7e Arrondissement, Lyon, Métropole de Lyon, Departemental constituency of Rhône, Auvergne-Rhône-Alpes, Metropolitan France, 69007, France",
+          "name": null,
+          "housenumber": "10",
+          "street": "Rue Jangot",
+          "postcode": "69007",
+          "city": "Lyon",
+          "county": "Lyon",
+          "state": "Auvergne-Rhône-Alpes",
+          "country": "France",
+          "admin": {
+            "level2": "France",
+            "level3": "Metropolitan France",
+            "level4": "Auvergne-Rhône-Alpes",
+            "level5": "Departemental constituency of Rhône",
+            "level6": "Métropole de Lyon",
+            "level7": "Lyon",
+            "level8": "Lyon",
+            "level9": "Lyon 7e Arrondissement"
+          }
+        }
+      },
+      "geometry": { "type": "Point", "coordinates": [4.8425657, 45.7517141] }
+    }
+  ]
+}

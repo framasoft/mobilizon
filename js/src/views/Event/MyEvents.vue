@@ -171,7 +171,7 @@ export default class MyEvents extends Vue {
 
   static monthlyParticipations(
     participations: IParticipant[],
-    revertSort: boolean = false
+    revertSort = false
   ): Map<string, Participant[]> {
     const res = participations.filter(
       ({ event, role }) => event.beginsOn != null && role !== ParticipantRole.REJECTED

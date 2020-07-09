@@ -23,7 +23,7 @@
                 <router-link
                   :to="{
                     name: RouteName.GROUP,
-                    params: { preferredUsername: member.parent.preferredUsername },
+                    params: { preferredUsername: usernameWithDomain(member.parent) },
                   }"
                 >
                   <h3>{{ member.parent.name }}</h3>
@@ -57,7 +57,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { IGroup, IMember } from "@/types/actor";
+import { IGroup, IMember, usernameWithDomain } from "@/types/actor";
 import RouteName from "../../router/name";
 
 @Component
@@ -65,6 +65,8 @@ export default class InvitationCard extends Vue {
   @Prop({ required: true }) member!: IMember;
 
   RouteName = RouteName;
+
+  usernameWithDomain = usernameWithDomain;
 }
 </script>
 

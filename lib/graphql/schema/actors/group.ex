@@ -5,7 +5,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
 
   use Absinthe.Schema.Notation
 
-  alias Mobilizon.GraphQL.Resolvers.{Conversation, Group, Member, Resource, Todos}
+  alias Mobilizon.GraphQL.Resolvers.{Discussion, Group, Member, Post, Resource, Todos}
   alias Mobilizon.GraphQL.Schema
 
   import_types(Schema.Actors.MemberType)
@@ -46,9 +46,9 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       description("A list of the events this actor has organized")
     end
 
-    field :conversations, :paginated_conversation_list do
-      resolve(&Conversation.find_conversations_for_actor/3)
-      description("A list of the conversations for this group")
+    field :discussions, :paginated_discussion_list do
+      resolve(&Discussion.find_discussions_for_actor/3)
+      description("A list of the discussions for this group")
     end
 
     field(:types, :group_type, description: "The type of group : Group, Community,…")
@@ -58,8 +58,11 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     )
 
     field :members, :paginated_member_list do
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
+      arg(:roles, :string, default_value: "")
       resolve(&Member.find_members_for_group/3)
-      description("List of group members")
+      description("A paginated list of group members")
     end
 
     field :resources, :paginated_resource_list do
@@ -67,6 +70,13 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       arg(:limit, :integer, default_value: 10)
       resolve(&Resource.find_resources_for_group/3)
       description("A paginated list of the resources this group has")
+    end
+
+    field :posts, :paginated_post_list do
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
+      resolve(&Post.find_posts_for_group/3)
+      description("A paginated list of the posts this group has")
     end
 
     field :todo_lists, :paginated_todo_list_list do
@@ -99,6 +109,12 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     field(:total, :integer, description: "The total number of elements in the list")
   end
 
+  @desc "The list of visibility options for a group"
+  enum :group_visibility do
+    value(:public, description: "Publicly listed and federated")
+    value(:unlisted, description: "Visible only to people with the link - or invited")
+  end
+
   object :group_queries do
     @desc "Get all groups"
     field :groups, :paginated_group_list do
@@ -124,6 +140,11 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       arg(:name, :string, description: "The displayed name for the group")
       arg(:summary, :string, description: "The summary for the group", default_value: "")
 
+      arg(:visibility, :group_visibility,
+        description: "The visibility for the group",
+        default_value: :public
+      )
+
       arg(:avatar, :picture_input,
         description:
           "The avatar for the group, either as an object or directly the ID of an existing Picture"
@@ -135,6 +156,26 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       )
 
       resolve(&Group.create_group/3)
+    end
+
+    @desc "Update a group"
+    field :update_group, :group do
+      arg(:id, non_null(:id), description: "The group ID")
+
+      arg(:name, :string, description: "The displayed name for the group")
+      arg(:summary, :string, description: "The summary for the group", default_value: "")
+
+      arg(:avatar, :picture_input,
+        description:
+          "The avatar for the group, either as an object or directly the ID of an existing Picture"
+      )
+
+      arg(:banner, :picture_input,
+        description:
+          "The banner for the group, either as an object or directly the ID of an existing Picture"
+      )
+
+      resolve(&Group.update_group/3)
     end
 
     @desc "Delete a group"

@@ -2,37 +2,35 @@ defmodule Mobilizon.Federation.ActivityPub.RefresherTest do
   use Mobilizon.DataCase
 
   alias Mobilizon.Actors.{Actor, Member}
-  alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Refresher
+  alias Mobilizon.Service.HTTP.ActivityPub.Mock
   alias Mobilizon.Web.ActivityPub.ActorView
   import Mobilizon.Factory
-  import Mock
+  import Mox
 
-  test "refreshes a members collection" do
-    %Actor{members_url: members_url, url: group_url} = group = insert(:group)
-    %Actor{url: actor_url} = actor = insert(:actor)
-    %Member{} = insert(:member, parent: group, actor: actor, role: :member)
+  describe "refreshes a" do
+    setup :verify_on_exit!
 
-    data =
-      ActorView.render("members.json", %{group: group, actor_applicant: actor}) |> Jason.encode!()
+    test "members collection" do
+      %Actor{members_url: members_url} =
+        group =
+        insert(:group,
+          url: "https://remoteinstance.tld/@group",
+          members_url: "https://remoteinstance.tld/@group/members",
+          domain: "remoteinstance.tld"
+        )
 
-    with_mocks([
-      {HTTPoison, [],
-       [
-         get!: fn ^members_url, _headers, _options ->
-           %HTTPoison.Response{status_code: 200, body: data}
-         end
-       ]},
-      {ActivityPub, [],
-       [
-         get_or_fetch_actor_by_url: fn url ->
-           case url do
-             ^actor_url -> {:ok, actor}
-             ^group_url -> {:ok, group}
-           end
-         end
-       ]}
-    ]) do
+      %Actor{} = actor = insert(:actor)
+      %Member{} = insert(:member, parent: group, actor: actor, role: :member)
+
+      data = ActorView.render("members.json", %{actor: group, actor_applicant: actor})
+
+      Mock
+      |> expect(:call, fn
+        %{method: :get, url: ^members_url}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: data}}
+      end)
+
       assert :ok == Refresher.fetch_collection(group.members_url, actor)
     end
   end

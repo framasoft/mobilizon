@@ -9,7 +9,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Admin.{ActionLog, Setting}
   alias Mobilizon.Config
-  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Relay
@@ -297,7 +297,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
 
     with {:changes, true} <- {:changes, args != %{}},
          %Actor{} = instance_actor <- Relay.get_actor(),
-         {:ok, _activity, _actor} <- ActivityPub.update(:actor, instance_actor, args, true) do
+         {:ok, _activity, _actor} <- ActivityPub.update(instance_actor, args, true) do
       :ok
     else
       {:changes, false} ->

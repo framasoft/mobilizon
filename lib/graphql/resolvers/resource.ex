@@ -141,7 +141,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
            {:resource, Resources.get_resource_with_preloads(resource_id)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          {:ok, _, %Resource{} = resource} <-
-           ActivityPub.update(:resource, resource, args, true, %{}) do
+           ActivityPub.update(resource, args, true, %{}) do
       {:ok, resource}
     else
       {:resource, _} ->
@@ -165,12 +165,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
           }
         } = _resolution
       ) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
+    with %Actor{id: actor_id} = actor <- Users.get_actor_for_user(user),
          {:resource, %Resource{parent_id: _parent_id, actor_id: group_id} = resource} <-
            {:resource, Resources.get_resource_with_preloads(resource_id)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          {:ok, _, %Resource{} = resource} <-
-           ActivityPub.delete(resource) do
+           ActivityPub.delete(resource, actor) do
       {:ok, resource}
     else
       {:resource, _} ->

@@ -91,7 +91,7 @@
                     <span v-if="props.row.actor.name">{{ props.row.actor.name }}</span
                     ><br />
                     <span class="is-size-7 has-text-grey"
-                      >@{{ props.row.actor.preferredUsername }}</span
+                      >@{{ usernameWithDomain(props.row.actor) }}</span
                     >
                   </span>
                   <span v-else>
@@ -184,6 +184,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch, Ref } from "vue-property-decorator";
+import { DataProxy } from "apollo-cache";
 import {
   IEvent,
   IEventParticipantStats,
@@ -192,13 +193,11 @@ import {
   ParticipantRole,
 } from "../../types/event.model";
 import { PARTICIPANTS, UPDATE_PARTICIPANT } from "../../graphql/event";
-import ParticipantCard from "../../components/Account/ParticipantCard.vue";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
-import { IPerson } from "../../types/actor";
+import { IPerson, usernameWithDomain } from "../../types/actor";
 import { CONFIG } from "../../graphql/config";
 import { IConfig } from "../../types/config.model";
 import { Paginate } from "../../types/paginate";
-import { DataProxy } from "apollo-cache";
 import { nl2br } from "../../utils/html";
 import { asyncForEach } from "../../utils/asyncForEach";
 import RouteName from "../../router/name";
@@ -207,9 +206,6 @@ const PARTICIPANTS_PER_PAGE = 10;
 const MESSAGE_ELLIPSIS_LENGTH = 130;
 
 @Component({
-  components: {
-    ParticipantCard,
-  },
   apollo: {
     currentActor: {
       query: CURRENT_ACTOR_CLIENT,
@@ -258,6 +254,8 @@ export default class Participants extends Vue {
   roles: ParticipantRole = ParticipantRole.PARTICIPANT;
 
   RouteName = RouteName;
+
+  usernameWithDomain = usernameWithDomain;
 
   @Ref("queueTable") readonly queueTable!: any;
 

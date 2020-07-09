@@ -1,0 +1,58 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    {
+      "ostatus": "http://ostatus.org#",
+      "atomUri": "ostatus:atomUri",
+      "inReplyToAtomUri": "ostatus:inReplyToAtomUri",
+      "conversation": "ostatus:conversation",
+      "sensitive": "as:sensitive",
+      "toot": "http://joinmastodon.org/ns#",
+      "votersCount": "toot:votersCount"
+    }
+  ],
+  "id": "https://diaspodon.fr/users/dada/statuses/100820008426311925",
+  "type": "Note",
+  "summary": null,
+  "inReplyTo": "https://framatube.org/videos/watch/9c9de5e8-0a1e-484a-b099-e80766180a6d",
+  "published": "2018-10-01T10:54:01Z",
+  "url": "https://diaspodon.fr/@dada/100820008426311925",
+  "attributedTo": "https://diaspodon.fr/users/dada",
+  "to": ["https://www.w3.org/ns/activitystreams#Public"],
+  "cc": [
+    "https://diaspodon.fr/users/dada/followers",
+    "https://framapiaf.org/users/Pouhiou",
+    "https://framatube.org/accounts/framasoft"
+  ],
+  "sensitive": false,
+  "atomUri": "https://diaspodon.fr/users/dada/statuses/100820008426311925",
+  "inReplyToAtomUri": "https://framatube.org/videos/watch/9c9de5e8-0a1e-484a-b099-e80766180a6d",
+  "conversation": "tag:diaspodon.fr,2018-10-01:objectId=1187066:objectType=Conversation",
+  "content": "<p><span class=\"h-card\"><a href=\"https://framatube.org/accounts/framasoft\" class=\"u-url mention\">@<span>framasoft</span></a></span> Ça ne serait pas la voix de <span class=\"h-card\"><a href=\"https://framapiaf.org/@Pouhiou\" class=\"u-url mention\">@<span>Pouhiou</span></a></span> ? 🤔</p>",
+  "contentMap": {
+    "fr": "<p><span class=\"h-card\"><a href=\"https://framatube.org/accounts/framasoft\" class=\"u-url mention\">@<span>framasoft</span></a></span> Ça ne serait pas la voix de <span class=\"h-card\"><a href=\"https://framapiaf.org/@Pouhiou\" class=\"u-url mention\">@<span>Pouhiou</span></a></span> ? 🤔</p>"
+  },
+  "attachment": [],
+  "tag": [
+    {
+      "type": "Mention",
+      "href": "https://framatube.org/accounts/framasoft",
+      "name": "@framasoft@framatube.org"
+    },
+    {
+      "type": "Mention",
+      "href": "https://framapiaf.org/users/Pouhiou",
+      "name": "@Pouhiou@framapiaf.org"
+    }
+  ],
+  "replies": {
+    "id": "https://diaspodon.fr/users/dada/statuses/100820008426311925/replies",
+    "type": "Collection",
+    "first": {
+      "type": "CollectionPage",
+      "next": "https://diaspodon.fr/users/dada/statuses/100820008426311925/replies?only_other_accounts=true&page=true",
+      "partOf": "https://diaspodon.fr/users/dada/statuses/100820008426311925/replies",
+      "items": []
+    }
+  }
+}

@@ -3,7 +3,7 @@ import { ActorRouteName } from "./actor";
 import { ErrorRouteName } from "./error";
 import { SettingsRouteName } from "./settings";
 import { GroupsRouteName } from "./groups";
-import { ConversationRouteName } from "./conversation";
+import { DiscussionRouteName } from "./discussion";
 import { UserRouteName } from "./user";
 
 enum GlobalRouteName {
@@ -29,6 +29,6 @@ export default {
   ...ActorRouteName,
   ...SettingsRouteName,
   ...GroupsRouteName,
-  ...ConversationRouteName,
+  ...DiscussionRouteName,
   ...ErrorRouteName,
 };

@@ -80,7 +80,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
            API.Groups.create_group(args) do
       {:ok, group}
     else
-      {:error, err} when is_bitstring(err) ->
+      {:error, err} when is_binary(err) ->
         {:error, err}
 
       {:is_owned, nil} ->
@@ -90,6 +90,36 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
 
   def create_group(_parent, _args, _resolution) do
     {:error, "You need to be logged-in to create a group"}
+  end
+
+  @doc """
+  Create a new group. The creator is automatically added as admin
+  """
+  def update_group(
+        _parent,
+        args,
+        %{
+          context: %{
+            current_user: %User{} = user
+          }
+        }
+      ) do
+    with %Actor{} = updater_actor <- Users.get_actor_for_user(user),
+         args <- Map.put(args, :updater_actor, updater_actor),
+         {:ok, _activity, %Actor{type: :Group} = group} <-
+           API.Groups.update_group(args) do
+      {:ok, group}
+    else
+      {:error, err} when is_binary(err) ->
+        {:error, err}
+
+      {:is_owned, nil} ->
+        {:error, "Creator actor id is not owned by the current user"}
+    end
+  end
+
+  def update_group(_parent, _args, _resolution) do
+    {:error, "You need to be logged-in to update a group"}
   end
 
   @doc """

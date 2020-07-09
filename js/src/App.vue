@@ -59,6 +59,7 @@ import { initializeCurrentActor } from "./utils/auth";
 import { CONFIG } from "./graphql/config";
 import { IConfig } from "./types/config.model";
 import { ICurrentUser } from "./types/current-user.model";
+
 @Component({
   apollo: {
     currentUser: CURRENT_USER_CLIENT,
@@ -72,6 +73,7 @@ import { ICurrentUser } from "./types/current-user.model";
 })
 export default class App extends Vue {
   config!: IConfig;
+
   currentUser!: ICurrentUser;
 
   async created() {

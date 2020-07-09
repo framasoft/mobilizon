@@ -12,11 +12,17 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   alias Mobilizon.Events.Event, as: EventModel
   alias Mobilizon.Media.Picture
 
-  alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
   alias Mobilizon.Federation.ActivityStream.Converter.Address, as: AddressConverter
   alias Mobilizon.Federation.ActivityStream.Converter.Picture, as: PictureConverter
-  alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
+
+  import Mobilizon.Federation.ActivityStream.Converter.Utils,
+    only: [
+      fetch_tags: 1,
+      fetch_mentions: 1,
+      build_tags: 1,
+      maybe_fetch_actor_and_attributed_to_id: 1
+    ]
 
   require Logger
 
@@ -34,16 +40,12 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   @impl Converter
   @spec as_to_model_data(map) :: {:ok, map()} | {:error, any()}
   def as_to_model_data(object) do
-    Logger.debug("event as_to_model_data")
-    Logger.debug(inspect(object))
-
-    with author_url <- Map.get(object, "actor") || Map.get(object, "attributedTo"),
-         {:actor, {:ok, %Actor{id: actor_id, domain: actor_domain, suspended: false}}} <-
-           {:actor, ActivityPub.get_or_fetch_actor_by_url(author_url)},
+    with {%Actor{id: actor_id, domain: actor_domain}, attributed_to} <-
+           maybe_fetch_actor_and_attributed_to_id(object),
          {:address, address_id} <-
            {:address, get_address(object["location"])},
-         {:tags, tags} <- {:tags, ConverterUtils.fetch_tags(object["tag"])},
-         {:mentions, mentions} <- {:mentions, ConverterUtils.fetch_mentions(object["tag"])},
+         {:tags, tags} <- {:tags, fetch_tags(object["tag"])},
+         {:mentions, mentions} <- {:mentions, fetch_mentions(object["tag"])},
          {:visibility, visibility} <- {:visibility, get_visibility(object)},
          {:options, options} <- {:options, get_options(object)} do
       attachments =
@@ -67,6 +69,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
         title: object["name"],
         description: object["content"],
         organizer_actor_id: actor_id,
+        attributed_to_id: if(is_nil(attributed_to), do: nil, else: attributed_to.id),
         picture_id: picture_id,
         begins_on: object["startTime"],
         ends_on: object["endTime"],
@@ -108,7 +111,9 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       "type" => "Event",
       "to" => to,
       "cc" => [],
-      "attributedTo" => event.organizer_actor.url,
+      "attributedTo" =>
+        if(is_nil(event.attributed_to), do: nil, else: event.attributed_to.url) ||
+          event.organizer_actor.url,
       "name" => event.title,
       "actor" => event.organizer_actor.url,
       "uuid" => event.uuid,
@@ -120,7 +125,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       "startTime" => event.begins_on |> date_to_string(),
       "joinMode" => to_string(event.join_options),
       "endTime" => event.ends_on |> date_to_string(),
-      "tag" => event.tags |> ConverterUtils.build_tags(),
+      "tag" => event.tags |> build_tags(),
       "maximumAttendeeCapacity" => event.options.maximum_attendee_capacity,
       "repliesModerationOption" => event.options.comment_moderation,
       "commentsEnabled" => event.options.comment_moderation == :allow_all,

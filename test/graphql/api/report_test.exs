@@ -4,7 +4,7 @@ defmodule Mobilizon.GraphQL.API.ReportTest do
   import Mobilizon.Factory
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Service.Formatter.HTML

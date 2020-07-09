@@ -23,6 +23,7 @@ defmodule Mobilizon.Resources do
     Resource
     |> where(actor_id: ^group_id)
     |> order_by(desc: :updated_at)
+    |> preload([r], [:actor, :creator])
     |> Page.build_page(page, limit)
   end
 
@@ -55,6 +56,7 @@ defmodule Mobilizon.Resources do
     Resource
     |> where([r], r.parent_id == ^resource_id)
     |> order_by(asc: :type)
+    |> preload([r], [:actor, :creator])
     |> Page.build_page(page, limit)
   end
 
