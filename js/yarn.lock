@@ -1144,10 +1144,10 @@
   dependencies:
     "@types/leaflet" "*"
 
-"@types/leaflet@*", "@types/leaflet@^1.5.2":
-  version "1.5.13"
-  resolved "https://registry.yarnpkg.com/@types/leaflet/-/leaflet-1.5.13.tgz#e0e41612b236a6a37877a69a6eb996d2a9ba6905"
-  integrity sha512-aCNOIeoukY8DIQUs/8bNiiKQKc75HSFwo1YqcFaLe+SkG4DL+0ygKCDfhfZ54UX8k28pn5uA3QJEAw3wa2hqHw==
+"@types/leaflet@*", "@types/leaflet@^1.5.16":
+  version "1.5.16"
+  resolved "https://registry.yarnpkg.com/@types/leaflet/-/leaflet-1.5.16.tgz#4fbbe7f55b1ea47b0a09f53d86bd6a4ce9c8240e"
+  integrity sha512-nWWixXp721LfqraX+jxf75NUVQLv/ppBmOUw2tEyblE0J77WYA0WROLdRtYKMLX1RQ5dKzbiFIs5H2GRYrk0JQ==
   dependencies:
     "@types/geojson" "*"
 
