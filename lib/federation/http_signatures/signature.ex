@@ -93,14 +93,19 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
     end
   end
 
-  def sign(%Actor{keys: keys} = actor, headers) do
-    Logger.debug("Signing on behalf of #{actor.url}")
+  def sign(%Actor{domain: domain, keys: keys} = actor, headers) when is_nil(domain) do
+    Logger.debug("Signing a payload on behalf of #{actor.url}")
     Logger.debug("headers")
     Logger.debug(inspect(headers))
 
     with {:ok, key} <- prepare_public_key(keys) do
       HTTPSignatures.sign(key, actor.url <> "#main-key", headers)
     end
+  end
+
+  def sign(%Actor{url: url}, _) do
+    Logger.error("Can't do a signature on remote actor #{url}")
+    raise ArgumentError, message: "Can't do a signature on remote actor #{url}"
   end
 
   def generate_date_header, do: generate_date_header(NaiveDateTime.utc_now())
