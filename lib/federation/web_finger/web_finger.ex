@@ -18,8 +18,10 @@ defmodule Mobilizon.Federation.WebFinger do
   require Logger
 
   @http_options [
-    follow_redirect: true,
-    ssl: [{:versions, [:"tlsv1.2"]}]
+    adapter: [
+      follow_redirect: true,
+      ssl: [{:versions, [:"tlsv1.2"]}]
+    ]
   ]
 
   def host_meta do
