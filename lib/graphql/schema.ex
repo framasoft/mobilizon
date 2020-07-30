@@ -8,7 +8,7 @@ defmodule Mobilizon.GraphQL.Schema do
   alias Mobilizon.{
     Actors,
     Addresses,
-    Conversations,
+    Discussions,
     Events,
     Media,
     Reports,
@@ -18,7 +18,7 @@ defmodule Mobilizon.GraphQL.Schema do
   }
 
   alias Mobilizon.Actors.{Actor, Follower, Member}
-  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.GraphQL.Schema
   alias Mobilizon.Storage.Repo
@@ -34,10 +34,11 @@ defmodule Mobilizon.GraphQL.Schema do
   import_types(Schema.Actors.PersonType)
   import_types(Schema.Actors.GroupType)
   import_types(Schema.Actors.ApplicationType)
-  import_types(Schema.Conversations.CommentType)
-  import_types(Schema.Conversations.ConversationType)
+  import_types(Schema.Discussions.CommentType)
+  import_types(Schema.Discussions.DiscussionType)
   import_types(Schema.SearchType)
   import_types(Schema.ResourceType)
+  import_types(Schema.PostType)
   import_types(Schema.Todos.TodoListType)
   import_types(Schema.Todos.TodoType)
   import_types(Schema.ConfigType)
@@ -116,7 +117,7 @@ defmodule Mobilizon.GraphQL.Schema do
       |> Dataloader.add_source(Actors, default_source)
       |> Dataloader.add_source(Users, default_source)
       |> Dataloader.add_source(Events, default_source)
-      |> Dataloader.add_source(Conversations, Conversations.data())
+      |> Dataloader.add_source(Discussions, Discussions.data())
       |> Dataloader.add_source(Addresses, default_source)
       |> Dataloader.add_source(Media, default_source)
       |> Dataloader.add_source(Reports, default_source)
@@ -148,8 +149,9 @@ defmodule Mobilizon.GraphQL.Schema do
     import_fields(:admin_queries)
     import_fields(:todo_list_queries)
     import_fields(:todo_queries)
-    import_fields(:conversation_queries)
+    import_fields(:discussion_queries)
     import_fields(:resource_queries)
+    import_fields(:post_queries)
     import_fields(:statistics_queries)
   end
 
@@ -170,8 +172,9 @@ defmodule Mobilizon.GraphQL.Schema do
     import_fields(:admin_mutations)
     import_fields(:todo_list_mutations)
     import_fields(:todo_mutations)
-    import_fields(:conversation_mutations)
+    import_fields(:discussion_mutations)
     import_fields(:resource_mutations)
+    import_fields(:post_mutations)
   end
 
   @desc """
@@ -179,5 +182,6 @@ defmodule Mobilizon.GraphQL.Schema do
   """
   subscription do
     import_fields(:person_subscriptions)
+    import_fields(:discussion_subscriptions)
   end
 end

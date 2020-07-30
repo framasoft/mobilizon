@@ -160,7 +160,7 @@ const EVENTS_PER_PAGE = 10;
   },
 })
 export default class AdminProfile extends Vue {
-  @Prop({ required: true }) id!: String;
+  @Prop({ required: true }) id!: string;
 
   person!: IPerson;
 
@@ -171,6 +171,7 @@ export default class AdminProfile extends Vue {
   EVENTS_PER_PAGE = EVENTS_PER_PAGE;
 
   organizedEventsPage = 1;
+
   participationsPage = 1;
 
   get metadata(): Array<object> {

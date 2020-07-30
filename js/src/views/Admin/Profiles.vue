@@ -105,13 +105,19 @@ const PROFILES_PER_PAGE = 10;
 })
 export default class Profiles extends Vue {
   page = 1;
+
   preferredUsername = "";
+
   name = "";
+
   domain = "";
+
   local = true;
+
   suspended = false;
 
   PROFILES_PER_PAGE = PROFILES_PER_PAGE;
+
   RouteName = RouteName;
 
   async onPageChange(page: number) {

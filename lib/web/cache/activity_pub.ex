@@ -3,11 +3,12 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
   ActivityPub related cache.
   """
 
-  alias Mobilizon.{Actors, Conversations, Events, Resources, Todos, Tombstone}
+  alias Mobilizon.{Actors, Discussions, Events, Posts, Resources, Todos, Tombstone}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Events.Event
   alias Mobilizon.Federation.ActivityPub.Relay
+  alias Mobilizon.Posts.Post
   alias Mobilizon.Resources.Resource
   alias Mobilizon.Todos.{Todo, TodoList}
   alias Mobilizon.Web.Endpoint
@@ -61,7 +62,7 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
           {:commit, Comment.t()} | {:ignore, nil}
   def get_comment_by_uuid_with_preload(uuid) do
     Cachex.fetch(@cache, "comment_" <> uuid, fn "comment_" <> uuid ->
-      case Conversations.get_comment_from_uuid_with_preload(uuid) do
+      case Discussions.get_comment_from_uuid_with_preload(uuid) do
         %Comment{} = comment ->
           {:commit, comment}
 
@@ -81,6 +82,40 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
       case Resources.get_resource_with_preloads(uuid) do
         %Resource{} = resource ->
           {:commit, resource}
+
+        nil ->
+          {:ignore, nil}
+      end
+    end)
+  end
+
+  @doc """
+  Gets a post by its slug, with all associations loaded.
+  """
+  @spec get_post_by_slug_with_preload(String.t()) ::
+          {:commit, Post.t()} | {:ignore, nil}
+  def get_post_by_slug_with_preload(slug) do
+    Cachex.fetch(@cache, "post_" <> slug, fn "post_" <> slug ->
+      case Posts.get_post_by_slug_with_preloads(slug) do
+        %Post{} = post ->
+          {:commit, post}
+
+        nil ->
+          {:ignore, nil}
+      end
+    end)
+  end
+
+  @doc """
+  Gets a discussion by its slug, with all associations loaded.
+  """
+  @spec get_discussion_by_slug_with_preload(String.t()) ::
+          {:commit, Discussion.t()} | {:ignore, nil}
+  def get_discussion_by_slug_with_preload(slug) do
+    Cachex.fetch(@cache, "discussion_" <> slug, fn "discussion_" <> slug ->
+      case Discussions.get_discussion_by_slug(slug) do
+        %Discussion{} = discussion ->
+          {:commit, discussion}
 
         nil ->
           {:ignore, nil}

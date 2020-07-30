@@ -270,6 +270,7 @@ export default class Settings extends Vue {
   adminSettings!: IAdminSettings;
 
   InstanceTermsType = InstanceTermsType;
+
   InstancePrivacyType = InstancePrivacyType;
 
   RouteName = RouteName;

@@ -16,24 +16,24 @@ defmodule Mobilizon.Service.RichMedia.Favicon do
     ssl: [{:versions, [:"tlsv1.2"]}]
   ]
 
-  @spec fetch(String.t(), List.t()) :: {:ok, String.t()} | {:error, any()}
+  @spec fetch(String.t(), Enum.t()) :: {:ok, String.t()} | {:error, any()}
   def fetch(url, options \\ []) do
     user_agent = Keyword.get(options, :user_agent, Config.instance_user_agent())
     headers = [{"User-Agent", user_agent}]
 
-    case HTTPoison.get(url, headers, @options) do
-      {:ok, %HTTPoison.Response{status_code: code, body: body}} when code in 200..299 ->
+    case Tesla.get(url, headers: headers, opts: @options) do
+      {:ok, %{status: code, body: body}} when code in 200..299 ->
         find_favicon_url(url, body, headers)
 
-      {:ok, %HTTPoison.Response{}} ->
+      {:ok, %{}} ->
         {:error, "Error while fetching the page"}
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        {:error, reason}
+      {:error, err} ->
+        {:error, err}
     end
   end
 
-  @spec find_favicon_url(String.t(), String.t(), List.t()) :: {:ok, String.t()} | {:error, any()}
+  @spec find_favicon_url(String.t(), String.t(), Enum.t()) :: {:ok, String.t()} | {:error, any()}
   defp find_favicon_url(url, body, headers) do
     Logger.debug("finding favicon URL for #{url}")
 
@@ -85,20 +85,20 @@ defmodule Mobilizon.Service.RichMedia.Favicon do
     end
   end
 
-  @spec find_favicon_in_root(String.t(), List.t()) :: {:ok, String.t()} | {:error, any()}
+  @spec find_favicon_in_root(String.t(), Enum.t()) :: {:ok, String.t()} | {:error, any()}
   defp find_favicon_in_root(url, headers) do
     uri = URI.parse(url)
     favicon_url = "#{uri.scheme}://#{uri.host}/favicon.ico"
 
-    case HTTPoison.head(favicon_url, headers, @options) do
-      {:ok, %HTTPoison.Response{status_code: code}} when code in 200..299 ->
+    case Tesla.head(favicon_url, headers: headers, opts: @options) do
+      {:ok, %{status: code}} when code in 200..299 ->
         {:ok, favicon_url}
 
-      {:ok, %HTTPoison.Response{}} ->
+      {:ok, %{}} ->
         {:error, "Error while doing a HEAD request on the favicon"}
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        {:error, reason}
+      {:error, err} ->
+        {:error, err}
     end
   end
 end

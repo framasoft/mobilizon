@@ -118,13 +118,15 @@ defmodule Mobilizon.Federation.WebFinger do
     Logger.debug(inspect(address))
 
     with false <- is_nil(domain),
-         {:ok, %HTTPoison.Response{} = response} <-
-           HTTPoison.get(
+         {:ok, %{} = response} <-
+           Tesla.get(
              address,
-             [Accept: "application/json, application/activity+json, application/jrd+json"],
-             @http_options
+             headers: [
+               {"accept", "application/json, application/activity+json, application/jrd+json"}
+             ],
+             opts: @http_options
            ),
-         %{status_code: status_code, body: body} when status_code in 200..299 <- response,
+         %{status: status, body: body} when status in 200..299 <- response,
          {:ok, doc} <- Jason.decode(body) do
       webfinger_from_json(doc)
     else

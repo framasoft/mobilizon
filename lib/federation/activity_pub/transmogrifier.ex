@@ -8,17 +8,19 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   A module to handle coding from internal to wire ActivityPub and back.
   """
 
-  alias Mobilizon.{Actors, Conversations, Events, Resources, Todos}
+  alias Mobilizon.{Actors, Discussions, Events, Posts, Resources, Todos}
   alias Mobilizon.Actors.{Actor, Follower, Member}
-  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.{Event, Participant}
+  alias Mobilizon.Posts.Post
   alias Mobilizon.Resources.Resource
   alias Mobilizon.Todos.{Todo, TodoList}
 
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Activity, Utils}
+  alias Mobilizon.Federation.ActivityPub.{Activity, Relay, Utils}
+  alias Mobilizon.Federation.ActivityPub.Types.Ownable
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
-
+  alias Mobilizon.Tombstone
   alias Mobilizon.Web.Email.{Group, Participation}
 
   require Logger
@@ -62,10 +64,20 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     with object_data when is_map(object_data) <-
            object |> Converter.Comment.as_to_model_data(),
          {:existing_comment, {:error, :comment_not_found}} <-
-           {:existing_comment, Conversations.get_comment_from_url_with_preload(object_data.url)},
-         {:ok, %Activity{} = activity, %Comment{} = comment} <-
-           ActivityPub.create(:comment, object_data, false) do
-      {:ok, activity, comment}
+           {:existing_comment, Discussions.get_comment_from_url_with_preload(object_data.url)},
+         object_data <- transform_object_data_for_discussion(object_data) do
+      # Check should be better
+
+      {:ok, %Activity{} = activity, entity} =
+        if is_data_for_comment_or_discussion?(object_data) do
+          Logger.debug("Chosing to create a regular comment")
+          ActivityPub.create(:comment, object_data, false)
+        else
+          Logger.debug("Chosing to initialize or add a comment to a conversation")
+          ActivityPub.create(:discussion, object_data, false)
+        end
+
+      {:ok, activity, entity}
     else
       {:existing_comment, {:ok, %Comment{} = comment}} ->
         {:ok, nil, comment}
@@ -97,6 +109,77 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       {:existing_event, %Event{} = event} -> {:ok, nil, event}
       {:error, _, _} -> :error
       {:error, _} -> :error
+    end
+  end
+
+  def handle_incoming(%{
+        "type" => "Create",
+        "object" => %{"type" => "Group", "id" => group_url} = _object
+      }) do
+    Logger.info("Handle incoming to create a group")
+
+    with {:ok, %Actor{} = group} <- ActivityPub.get_or_fetch_actor_by_url(group_url) do
+      {:ok, nil, group}
+    end
+  end
+
+  def handle_incoming(%{
+        "type" => "Create",
+        "object" => %{"type" => "Member"} = object
+      }) do
+    Logger.info("Handle incoming to create a member")
+
+    with object_data when is_map(object_data) <-
+           object |> Converter.Member.as_to_model_data(),
+         {:existing_member, nil} <-
+           {:existing_member, Actors.get_member_by_url(object_data.url)},
+         {:ok, %Activity{} = activity, %Member{} = member} <-
+           ActivityPub.join_group(object_data, false) do
+      {:ok, activity, member}
+    else
+      {:existing_member, %Member{} = member} ->
+        {:ok, nil, member}
+    end
+  end
+
+  def handle_incoming(%{
+        "type" => "Create",
+        "object" =>
+          %{"type" => "Article", "actor" => _actor, "attributedTo" => _attributed_to} = object
+      }) do
+    Logger.info("Handle incoming to create articles")
+
+    with object_data when is_map(object_data) <-
+           object |> Converter.Post.as_to_model_data(),
+         {:existing_post, nil} <-
+           {:existing_post, Posts.get_post_by_url(object_data.url)},
+         {:ok, %Activity{} = activity, %Post{} = post} <-
+           ActivityPub.create(:post, object_data, false) do
+      {:ok, activity, post}
+    else
+      {:existing_post, %Post{} = post} ->
+        {:ok, nil, post}
+    end
+  end
+
+  # This is a hack to handle Tombstones fetched by AP
+  def handle_incoming(%{
+        "type" => "Create",
+        "object" => %{"type" => "Tombstone", "id" => object_url} = _object
+      }) do
+    Logger.info("Handle incoming to create a tombstone")
+
+    case ActivityPub.fetch_object_from_url(object_url, force: true) do
+      # We already have the tombstone, object is probably already deleted
+      {:ok, %Tombstone{} = tombstone} ->
+        {:ok, nil, tombstone}
+
+      # Hack because deleted comments
+      {:ok, %Comment{deleted_at: deleted_at} = comment} when not is_nil(deleted_at) ->
+        {:ok, nil, comment}
+
+      {:ok, entity} ->
+        ActivityPub.delete(entity, Relay.get_actor(), false)
     end
   end
 
@@ -165,7 +248,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     Logger.info("Handle incoming to create a resource")
     Logger.debug(inspect(data))
 
-    group_url = hd(to)
+    group_url = if is_list(to) and not is_nil(to), do: hd(to), else: to
 
     with {:existing_resource, nil} <-
            {:existing_resource, Resources.get_resource_by_url(object_url)},
@@ -175,8 +258,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
            {:member, Actors.is_member?(object_data.creator_id, object_data.actor_id)},
          {:ok, %Activity{} = activity, %Resource{} = resource} <-
            ActivityPub.create(:resource, object_data, false),
-         {:ok, %Actor{type: :Group, id: group_id} = group} <-
-           ActivityPub.get_or_fetch_actor_by_url(group_url),
+         %Actor{type: :Group, id: group_id} = group <-
+           Actors.get_group_by_members_url(group_url),
          announce_id <- "#{object_url}/announces/#{group_id}",
          {:ok, _activity, _resource} <- ActivityPub.announce(group, object, announce_id) do
       {:ok, activity, resource}
@@ -190,7 +273,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         :error
 
       {:error, e} ->
-        Logger.error(inspect(e))
+        Logger.debug(inspect(e))
         :error
     end
   end
@@ -261,23 +344,14 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   def handle_incoming(
         %{"type" => "Announce", "object" => object, "actor" => _actor, "id" => _id} = data
       ) do
-    with actor <- Utils.get_actor(data),
-         # TODO: Is the following line useful?
-         {:ok, %Actor{id: actor_id, suspended: false} = _actor} <-
-           ActivityPub.get_or_fetch_actor_by_url(actor),
+    with actor_url <- Utils.get_actor(data),
+         {:ok, %Actor{id: actor_id, suspended: false} = actor} <-
+           ActivityPub.get_or_fetch_actor_by_url(actor_url),
          :ok <- Logger.debug("Fetching contained object"),
-         {:ok, object} <- fetch_obj_helper_as_activity_streams(object),
-         :ok <- Logger.debug("Handling contained object"),
-         create_data <- Utils.make_create_data(object),
-         :ok <- Logger.debug(inspect(object)),
-         {:ok, _activity, entity} <- handle_incoming(create_data),
-         :ok <- Logger.debug("Finished processing contained object"),
-         {:ok, activity} <- ActivityPub.create_activity(data, false),
-         {:ok, %Actor{id: object_owner_actor_id}} <-
-           ActivityPub.get_or_fetch_actor_by_url(object["actor"]),
-         {:ok, %Mobilizon.Share{} = _share} <-
-           Mobilizon.Share.create(object["id"], actor_id, object_owner_actor_id) do
-      {:ok, activity, entity}
+         {:ok, entity} <-
+           object |> Utils.get_url() |> fetch_object_optionnally_authenticated(actor),
+         :ok <- eventually_create_share(object, entity, actor_id) do
+      {:ok, nil, entity}
     else
       e ->
         Logger.debug(inspect(e))
@@ -296,7 +370,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          object_data <-
            object |> Converter.Actor.as_to_model_data(),
          {:ok, %Activity{} = activity, %Actor{} = new_actor} <-
-           ActivityPub.update(:actor, old_actor, object_data, false) do
+           ActivityPub.update(old_actor, object_data, false) do
       {:ok, activity, new_actor}
     else
       e ->
@@ -317,11 +391,47 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          object_data <- Converter.Event.as_to_model_data(object),
          {:origin_check, true} <- {:origin_check, Utils.origin_check?(actor_url, update_data)},
          {:ok, %Activity{} = activity, %Event{} = new_event} <-
-           ActivityPub.update(:event, old_event, object_data, false) do
+           ActivityPub.update(old_event, object_data, false) do
       {:ok, activity, new_event}
     else
       _e ->
         :error
+    end
+  end
+
+  def handle_incoming(
+        %{"type" => "Update", "object" => %{"type" => "Note"} = object, "actor" => _actor} =
+          update_data
+      ) do
+    with actor <- Utils.get_actor(update_data),
+         {:ok, %Actor{url: actor_url, suspended: false}} <-
+           ActivityPub.get_or_fetch_actor_by_url(actor),
+         {:origin_check, true} <- {:origin_check, Utils.origin_check?(actor_url, update_data)},
+         object_data <- Converter.Comment.as_to_model_data(object),
+         {:ok, old_entity} <- object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
+         object_data <- transform_object_data_for_discussion(object_data),
+         {:ok, %Activity{} = activity, new_entity} <-
+           ActivityPub.update(old_entity, object_data, false) do
+      {:ok, activity, new_entity}
+    else
+      _e ->
+        :error
+    end
+  end
+
+  def handle_incoming(%{
+        "type" => "Update",
+        "object" => %{"type" => "Tombstone"} = object,
+        "actor" => _actor
+      }) do
+    Logger.info("Handle incoming to update a tombstone")
+
+    with object_url <- Utils.get_url(object),
+         {:ok, entity} <- ActivityPub.fetch_object_from_url(object_url) do
+      ActivityPub.delete(entity, Relay.get_actor(), false)
+    else
+      {:ok, %Tombstone{} = tombstone} ->
+        {:ok, nil, tombstone}
     end
   end
 
@@ -367,21 +477,20 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
-  # TODO: We presently assume that any actor on the same origin domain as the object being
-  # deleted has the rights to delete that object.  A better way to validate whether or not
-  # the object should be deleted is to refetch the object URI, which should return either
-  # an error or a tombstone.  This would allow us to verify that a deletion actually took
-  # place.
+  # We assume everyone on the same instance as the object
+  # or who is member of a group has the right to delete the object
   def handle_incoming(
         %{"type" => "Delete", "object" => object, "actor" => _actor, "id" => _id} = data
       ) do
-    with actor <- Utils.get_actor(data),
-         {:ok, %Actor{url: actor_url}} <- ActivityPub.get_or_fetch_actor_by_url(actor),
+    with actor_url <- Utils.get_actor(data),
+         {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_actor_by_url(actor_url),
          object_id <- Utils.get_url(object),
-         {:origin_check, true} <-
-           {:origin_check, Utils.origin_check_from_id?(actor_url, object_id)},
          {:ok, object} <- ActivityPub.fetch_object_from_url(object_id),
-         {:ok, activity, object} <- ActivityPub.delete(object, false) do
+         {:origin_check, true} <-
+           {:origin_check,
+            Utils.origin_check_from_id?(actor_url, object_id) ||
+              Utils.activity_actor_is_group_member?(actor, object)},
+         {:ok, activity, object} <- ActivityPub.delete(object, actor, false) do
       {:ok, activity, object}
     else
       {:origin_check, false} ->
@@ -449,6 +558,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
           "target" => target
         } = data
       ) do
+    Logger.info("Handle incoming to invite someone")
+
     with {:ok, %Actor{} = actor} <-
            data |> Utils.get_actor() |> ActivityPub.get_or_fetch_actor_by_url(),
          {:ok, object} <- object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
@@ -485,7 +596,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   # end
 
   def handle_incoming(object) do
-    Logger.info("Handing something not supported")
+    Logger.info("Handing something with type #{object["type"]} not supported")
     Logger.debug(inspect(object))
     {:error, :not_supported}
   end
@@ -654,6 +765,52 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
       {:ok, %Participant{role: :participant} = _follow} ->
         {:error, "Participant"}
+    end
+  end
+
+  # If the object has been announced by a group let's use one of our members to fetch it
+  @spec fetch_object_optionnally_authenticated(String.t(), Actor.t() | any()) ::
+          {:ok, struct()} | {:error, any()}
+  defp fetch_object_optionnally_authenticated(url, %Actor{type: :Group, id: group_id}) do
+    case Actors.get_single_group_member_actor(group_id) do
+      %Actor{} = actor ->
+        ActivityPub.fetch_object_from_url(url, on_behalf_of: actor, force: true)
+
+      _err ->
+        fetch_object_optionnally_authenticated(url, nil)
+    end
+  end
+
+  defp fetch_object_optionnally_authenticated(url, _),
+    do: ActivityPub.fetch_object_from_url(url, force: true)
+
+  defp eventually_create_share(object, entity, actor_id) do
+    with object_id <- object |> Utils.get_url(),
+         %Actor{id: object_owner_actor_id} <- Ownable.actor(entity) do
+      {:ok, %Mobilizon.Share{} = _share} =
+        Mobilizon.Share.create(object_id, actor_id, object_owner_actor_id)
+    end
+
+    :ok
+  end
+
+  @spec is_data_for_comment_or_discussion?(map()) :: boolean()
+  defp is_data_for_comment_or_discussion?(object_data) do
+    (not Map.has_key?(object_data, :title) or
+       is_nil(object_data.title) or object_data.title == "") and
+      is_nil(object_data.discussion_id)
+  end
+
+  # Comment and conversations have different attributes for actor and groups
+  defp transform_object_data_for_discussion(object_data) do
+    # Basic comment
+    if is_data_for_comment_or_discussion?(object_data) do
+      object_data
+    else
+      # Conversation
+      object_data
+      |> Map.put(:creator_id, object_data.actor_id)
+      |> Map.put(:actor_id, object_data.attributed_to_id)
     end
   end
 

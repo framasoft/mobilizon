@@ -7,6 +7,7 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
 
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.Provider
+  alias Mobilizon.Service.HTTP.BaseClient
 
   require Logger
 
@@ -28,11 +29,6 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
 
   @api_key_missing_message "API Key required to use Google Maps"
 
-  @http_options [
-    follow_redirect: true,
-    ssl: [{:versions, [:"tlsv1.2"]}]
-  ]
-
   @impl Provider
   @doc """
   Google Maps implementation for `c:Mobilizon.Service.Geospatial.Provider.geocode/3`.
@@ -43,12 +39,11 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
 
     Logger.debug("Asking Google Maps for reverse geocode with #{url}")
 
-    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           HTTPoison.get(url, [], @http_options),
-         {:ok, %{"results" => results, "status" => "OK"}} <- Poison.decode(body) do
+    with {:ok, %{status: 200, body: body}} <- BaseClient.get(url),
+         %{"results" => results, "status" => "OK"} <- body do
       Enum.map(results, fn entry -> process_data(entry, options) end)
     else
-      {:ok, %{"status" => "REQUEST_DENIED", "error_message" => error_message}} ->
+      %{"status" => "REQUEST_DENIED", "error_message" => error_message} ->
         raise ArgumentError, message: to_string(error_message)
     end
   end
@@ -63,15 +58,14 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
 
     Logger.debug("Asking Google Maps for addresses with #{url}")
 
-    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           HTTPoison.get(url, [], @http_options),
-         {:ok, %{"results" => results, "status" => "OK"}} <- Poison.decode(body) do
+    with {:ok, %{status: 200, body: body}} <- BaseClient.get(url),
+         %{"results" => results, "status" => "OK"} <- body do
       results |> Enum.map(fn entry -> process_data(entry, options) end)
     else
-      {:ok, %{"status" => "REQUEST_DENIED", "error_message" => error_message}} ->
+      %{"status" => "REQUEST_DENIED", "error_message" => error_message} ->
         raise ArgumentError, message: to_string(error_message)
 
-      {:ok, %{"results" => [], "status" => "ZERO_RESULTS"}} ->
+      %{"results" => [], "status" => "ZERO_RESULTS"} ->
         []
     end
   end
@@ -165,18 +159,17 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
 
     Logger.debug("Asking Google Maps for details with #{url}")
 
-    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           HTTPoison.get(url, [], @http_options),
-         {:ok, %{"result" => %{"name" => name}, "status" => "OK"}} <- Poison.decode(body) do
+    with {:ok, %{status: 200, body: body}} <- BaseClient.get(url),
+         %{"result" => %{"name" => name}, "status" => "OK"} <- body do
       name
     else
-      {:ok, %{"status" => "REQUEST_DENIED", "error_message" => error_message}} ->
+      %{"status" => "REQUEST_DENIED", "error_message" => error_message} ->
         raise ArgumentError, message: to_string(error_message)
 
-      {:ok, %{"status" => "INVALID_REQUEST"}} ->
+      %{"status" => "INVALID_REQUEST"} ->
         raise ArgumentError, message: "Invalid Request"
 
-      {:ok, %{"results" => [], "status" => "ZERO_RESULTS"}} ->
+      %{"results" => [], "status" => "ZERO_RESULTS"} ->
         nil
     end
   end

@@ -23,12 +23,16 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
     tags |> Enum.flat_map(&fetch_tag/1) |> Enum.uniq() |> Enum.map(&existing_tag_or_data/1)
   end
 
+  def fetch_tags(_), do: []
+
   @spec fetch_mentions([map()]) :: [map()]
   def fetch_mentions(mentions) when is_list(mentions) do
     Logger.debug("fetching mentions")
 
     Enum.reduce(mentions, [], fn mention, acc -> create_mention(mention, acc) end)
   end
+
+  def fetch_mentions(_), do: []
 
   def fetch_address(%{id: id}) do
     with {id, ""} <- Integer.parse(id), do: %{id: id}
@@ -38,7 +42,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
     address
   end
 
-  @spec build_tags([Tag.t()]) :: [Map.t()]
+  @spec build_tags([Tag.t()]) :: [map()]
   def build_tags(tags) do
     Enum.map(tags, fn %Tag{} = tag ->
       %{
@@ -110,5 +114,52 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
   @spec create_mention({String.t(), map()}, list()) :: list()
   defp create_mention({_, mention}, acc) when is_map(mention) do
     create_mention(mention, acc)
+  end
+
+  @spec maybe_fetch_actor_and_attributed_to_id(map()) :: {Actor.t() | nil, Actor.t() | nil}
+  def maybe_fetch_actor_and_attributed_to_id(%{
+        "actor" => actor_url,
+        "attributedTo" => attributed_to_url
+      })
+      when is_nil(attributed_to_url) do
+    {fetch_actor(actor_url), nil}
+  end
+
+  @spec maybe_fetch_actor_and_attributed_to_id(map()) :: {Actor.t() | nil, Actor.t() | nil}
+  def maybe_fetch_actor_and_attributed_to_id(%{
+        "actor" => actor_url,
+        "attributedTo" => attributed_to_url
+      })
+      when is_nil(actor_url) do
+    {fetch_actor(attributed_to_url), nil}
+  end
+
+  # Only when both actor and attributedTo fields are both filled is when we can return both
+  def maybe_fetch_actor_and_attributed_to_id(%{
+        "actor" => actor_url,
+        "attributedTo" => attributed_to_url
+      })
+      when actor_url != attributed_to_url do
+    with actor <- fetch_actor(actor_url),
+         attributed_to <- fetch_actor(attributed_to_url) do
+      {actor, attributed_to}
+    end
+  end
+
+  # If we only have attributedTo and no actor, take attributedTo as the actor
+  def maybe_fetch_actor_and_attributed_to_id(%{
+        "attributedTo" => attributed_to_url
+      }) do
+    {fetch_actor(attributed_to_url), nil}
+  end
+
+  def maybe_fetch_actor_and_attributed_to_id(_), do: {nil, nil}
+
+  @spec fetch_actor(String.t()) :: Actor.t()
+  defp fetch_actor(actor_url) do
+    with {:ok, %Actor{suspended: false} = actor} <-
+           ActivityPub.get_or_fetch_actor_by_url(actor_url) do
+      actor
+    end
   end
 end

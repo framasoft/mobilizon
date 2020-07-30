@@ -42,7 +42,7 @@ defmodule Mobilizon.Service.RichMedia.Parsers.OEmbed do
   end
 
   defp get_oembed_data(url) do
-    with {:ok, %HTTPoison.Response{body: json}} <- HTTPoison.get(url, [], @http_options),
+    with {:ok, %{body: json}} <- Tesla.get(url, opts: @http_options),
          {:ok, data} <- Jason.decode(json),
          data <- data |> Map.new(fn {k, v} -> {String.to_atom(k), v} end) do
       {:ok, data}

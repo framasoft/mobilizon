@@ -3,8 +3,9 @@ import { Paginate } from "../paginate";
 import { IResource } from "../resource";
 import { ITodoList } from "../todos";
 import { IEvent } from "../event.model";
-import { IConversation } from "../conversations";
+import { IDiscussion } from "../discussions";
 import { IPerson } from "./person.model";
+import { IPost } from "../post.model";
 
 export enum MemberRole {
   NOT_APPROVED = "NOT_APPROVED",
@@ -20,7 +21,7 @@ export interface IGroup extends IActor {
   members: Paginate<IMember>;
   resources: Paginate<IResource>;
   todoLists: Paginate<ITodoList>;
-  conversations: Paginate<IConversation>;
+  discussions: Paginate<IDiscussion>;
   organizedEvents: Paginate<IEvent>;
 }
 
@@ -39,9 +40,11 @@ export class Group extends Actor implements IGroup {
 
   todoLists: Paginate<ITodoList> = { elements: [], total: 0 };
 
-  conversations: Paginate<IConversation> = { elements: [], total: 0 };
+  discussions: Paginate<IDiscussion> = { elements: [], total: 0 };
 
-  organizedEvents!: Paginate<IEvent>;
+  organizedEvents: Paginate<IEvent> = { elements: [], total: 0 };
+
+  posts: Paginate<IPost> = { elements: [], total: 0 };
 
   constructor(hash: IGroup | {} = {}) {
     super(hash);

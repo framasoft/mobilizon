@@ -141,7 +141,7 @@ defmodule Mobilizon.EventsTest do
     end
 
     test "list_public_events_for_actor/1", %{actor: actor, event: event} do
-      assert {:ok, [event_found], 1} = Events.list_public_events_for_actor(actor)
+      assert %Page{elements: [event_found], total: 1} = Events.list_public_events_for_actor(actor)
       assert event_found.title == event.title
     end
 
@@ -149,7 +149,7 @@ defmodule Mobilizon.EventsTest do
       event1 = insert(:event, organizer_actor: actor)
 
       case Events.list_public_events_for_actor(actor, 1, 10) do
-        {:ok, events_found, 2} ->
+        %Page{elements: events_found, total: 2} ->
           event_ids = MapSet.new(events_found |> Enum.map(& &1.id))
           assert event_ids == MapSet.new([event.id, event1.id])
 
@@ -162,7 +162,7 @@ defmodule Mobilizon.EventsTest do
       event1 = insert(:event, organizer_actor: actor)
 
       case Events.list_public_events_for_actor(actor, 1, 1) do
-        {:ok, [%Event{id: event_found_id}], 2} ->
+        %Page{elements: [%Event{id: event_found_id}], total: 2} ->
           assert event_found_id in [event.id, event1.id]
 
         err ->

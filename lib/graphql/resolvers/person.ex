@@ -129,7 +129,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
            {:find_actor, Actors.get_actor(id)},
          {:is_owned, %Actor{}} <- User.owns_actor(user, actor.id),
          args <- save_attached_pictures(args),
-         {:ok, _activity, %Actor{} = actor} <- ActivityPub.update(:actor, actor, args, true) do
+         {:ok, _activity, %Actor{} = actor} <- ActivityPub.update(actor, args, true) do
       {:ok, actor}
     else
       {:find_actor, nil} ->

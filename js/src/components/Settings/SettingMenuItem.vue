@@ -13,6 +13,7 @@ import { Route } from "vue-router";
 @Component
 export default class SettingMenuItem extends Vue {
   @Prop({ required: false, type: String }) title!: string;
+
   @Prop({ required: true, type: Object }) to!: Route;
 
   get isActive() {

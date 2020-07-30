@@ -8,7 +8,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   import Mobilizon.GraphQL.Helpers.Error
 
-  alias Mobilizon.{Actors, Addresses, Conversations}
+  alias Mobilizon.{Actors, Addresses, Discussions}
   alias Mobilizon.GraphQL.Resolvers.{Event, Picture, Tag}
   alias Mobilizon.GraphQL.Schema
 
@@ -82,7 +82,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     )
 
     field(:comments, list_of(:comment), description: "The comments in reply to the event") do
-      resolve(dataloader(Conversations))
+      resolve(dataloader(Discussions))
     end
 
     # field(:tracks, list_of(:track))

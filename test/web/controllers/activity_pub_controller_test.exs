@@ -344,11 +344,12 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
                Actors.create_group(%{
                  creator_actor_id: actor.id,
                  preferred_username: "my_group",
-                 visibility: :public
+                 local: true
                })
 
       result =
         conn
+        |> assign(:actor, actor)
         |> get(Actor.build_url(group.preferred_username, :members))
         |> json_response(200)
 
@@ -358,15 +359,21 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
       assert hd(result["first"]["orderedItems"])["type"] == "Member"
     end
 
-    test "it returns no members for a private group", %{conn: conn} do
+    test "it returns no members when not a member of the group", %{conn: conn} do
       actor = insert(:actor)
+      actor2 = insert(:actor)
 
       assert {:ok, %Actor{} = group} =
-               Actors.create_group(%{creator_actor_id: actor.id, preferred_username: "my_group"})
+               Actors.create_group(%{
+                 creator_actor_id: actor.id,
+                 preferred_username: "my_group",
+                 local: true
+               })
 
       result =
         conn
-        |> get(Actor.build_url(actor.preferred_username, :members))
+        |> assign(:actor, actor2)
+        |> get(Actor.build_url(group.preferred_username, :members))
         |> json_response(200)
 
       assert result["first"]["orderedItems"] == []
@@ -379,7 +386,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
                Actors.create_group(%{
                  creator_actor_id: actor.id,
                  preferred_username: "my_group",
-                 visibility: :public
+                 local: true
                })
 
       Enum.each(1..15, fn _ ->
@@ -389,6 +396,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
 
       result =
         conn
+        |> assign(:actor, actor)
         |> get(Actor.build_url(group.preferred_username, :members))
         |> json_response(200)
 
@@ -398,6 +406,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
 
       result =
         conn
+        |> assign(:actor, actor)
         |> get(Actor.build_url(group.preferred_username, :members, page: 2))
         |> json_response(200)
 
@@ -411,7 +420,8 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
       assert {:ok, %Actor{} = group} =
                Actors.create_group(%{
                  creator_actor_id: actor_group_admin.id,
-                 preferred_username: "my_group"
+                 preferred_username: "my_group",
+                 local: true
                })
 
       insert(:member, actor: actor_applicant, parent: group, role: :member)

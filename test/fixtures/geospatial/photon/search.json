@@ -1,0 +1,37 @@
+{
+  "features": [
+    {
+      "geometry": { "coordinates": [4.8425657, 45.7517141], "type": "Point" },
+      "type": "Feature",
+      "properties": {
+        "osm_id": 3078260611,
+        "osm_type": "N",
+        "country": "France",
+        "osm_key": "place",
+        "housenumber": "10",
+        "city": "Lyon",
+        "street": "Rue Jangot",
+        "osm_value": "house",
+        "postcode": "69007",
+        "state": "Auvergne-Rhône-Alpes"
+      }
+    },
+    {
+      "geometry": { "coordinates": [4.8424254, 45.7517056], "type": "Point" },
+      "type": "Feature",
+      "properties": {
+        "osm_id": 3078260612,
+        "osm_type": "N",
+        "country": "France",
+        "osm_key": "place",
+        "housenumber": "10bis",
+        "city": "Lyon",
+        "street": "Rue Jangot",
+        "osm_value": "house",
+        "postcode": "69007",
+        "state": "Auvergne-Rhône-Alpes"
+      }
+    }
+  ],
+  "type": "FeatureCollection"
+}

@@ -4,7 +4,7 @@ defmodule Mobilizon.Web.PageController do
   """
   use Mobilizon.Web, :controller
 
-  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Tombstone
@@ -40,14 +40,36 @@ defmodule Mobilizon.Web.PageController do
     render_or_error(conn, &checks?/3, status, :resource, resource)
   end
 
-  def resources(conn, %{"name" => _name}) do
-    case get_format(conn) do
-      "html" ->
-        render(conn, :index)
+  @spec post(Plug.Conn.t(), map()) :: Plug.Conn.t() | {:error, :not_found}
+  def post(conn, %{"slug" => slug}) do
+    {status, post} = Cache.get_post_by_slug_with_preload(slug)
+    render_or_error(conn, &checks?/3, status, :post, post)
+  end
 
-      "activity-json" ->
-        ActivityPubController.call(conn, :resources)
-    end
+  @spec discussion(Plug.Conn.t(), map()) :: Plug.Conn.t() | {:error, :not_found}
+  def discussion(conn, %{"slug" => slug}) do
+    {status, discussion} = Cache.get_discussion_by_slug_with_preload(slug)
+    render_or_error(conn, &checks?/3, status, :discussion, discussion)
+  end
+
+  def resources(conn, %{"name" => _name}) do
+    handle_collection_route(conn, :resources)
+  end
+
+  def posts(conn, %{"name" => _name}) do
+    handle_collection_route(conn, :posts)
+  end
+
+  def discussions(conn, %{"name" => _name}) do
+    handle_collection_route(conn, :discussions)
+  end
+
+  def events(conn, %{"name" => _name}) do
+    handle_collection_route(conn, :events)
+  end
+
+  def todos(conn, %{"name" => _name}) do
+    handle_collection_route(conn, :todos)
   end
 
   @spec todo_list(Plug.Conn.t(), map) :: {:error, :not_found} | Plug.Conn.t()
@@ -68,6 +90,16 @@ defmodule Mobilizon.Web.PageController do
       {:ok, %Event{uuid: uuid}} -> redirect(conn, to: "/events/#{uuid}")
       {:ok, %Comment{uuid: uuid}} -> redirect(conn, to: "/comments/#{uuid}")
       _ -> {:error, :not_found}
+    end
+  end
+
+  defp handle_collection_route(conn, collection) do
+    case get_format(conn) do
+      "html" ->
+        render(conn, :index)
+
+      "activity-json" ->
+        ActivityPubController.call(conn, collection)
     end
   end
 

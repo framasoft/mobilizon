@@ -87,7 +87,6 @@ defmodule Mobilizon.Mixfile do
       {:timex, "~> 3.0"},
       {:icalendar, github: "tcitworld/icalendar"},
       {:exgravatar, "~> 2.0.1"},
-      {:httpoison, "~> 1.0"},
       # {:json_ld, "~> 0.3"},
       {:jason, "~> 1.2"},
       {:ex_crypto, "~> 0.10.0"},
@@ -118,7 +117,7 @@ defmodule Mobilizon.Mixfile do
       {:ex_optimizer, "~> 0.1"},
       {:progress_bar, "~> 2.0"},
       {:oban, "~> 1.2.0"},
-      {:floki, "~> 0.26.0"},
+      {:floki, "~> 0.27.0"},
       {:ip_reserved, "~> 0.1.0"},
       {:fast_sanitize, "~> 0.1"},
       {:ueberauth, "~> 0.6"},
@@ -131,6 +130,8 @@ defmodule Mobilizon.Mixfile do
        git: "https://github.com/tcitworld/ueberauth_keycloak.git", branch: "upgrade-deps"},
       {:ueberauth_gitlab_strategy,
        git: "https://github.com/tcitworld/ueberauth_gitlab.git", branch: "upgrade-deps"},
+      {:ecto_shortuuid, "~> 0.1"},
+      {:tesla, "~> 1.3.0"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},
@@ -142,7 +143,8 @@ defmodule Mobilizon.Mixfile do
       {:exvcr, "~> 0.10", only: :test},
       {:credo, "~> 1.4.0", only: [:dev, :test], runtime: false},
       {:mock, "~> 0.3.4", only: :test},
-      {:elixir_feed_parser, "~> 2.1.0", only: :test}
+      {:elixir_feed_parser, "~> 2.1.0", only: :test},
+      {:mox, "~> 0.5", only: :test}
     ] ++ oauth_deps()
   end
 
@@ -335,7 +337,7 @@ defmodule Mobilizon.Mixfile do
         Mobilizon.GraphQL.Schema.Actors.PersonType,
         Mobilizon.GraphQL.Schema.AddressType,
         Mobilizon.GraphQL.Schema.AdminType,
-        Mobilizon.GraphQL.Schema.Conversations.CommentType,
+        Mobilizon.GraphQL.Schema.Discussions.CommentType,
         Mobilizon.GraphQL.Schema.ConfigType,
         Mobilizon.GraphQL.Schema.EventType,
         Mobilizon.GraphQL.Schema.Events.FeedTokenType,

@@ -777,10 +777,8 @@ export default class Event extends EventMixin {
     let reporterId = null;
     if (this.currentActor.id) {
       reporterId = this.currentActor.id;
-    } else {
-      if (this.config.anonymous.reports.allowed) {
-        reporterId = this.config.anonymous.actorId;
-      }
+    } else if (this.config.anonymous.reports.allowed) {
+      reporterId = this.config.anonymous.actorId;
     }
     if (!reporterId) return;
     try {

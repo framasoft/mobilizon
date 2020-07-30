@@ -98,7 +98,7 @@ defmodule Mobilizon.Service.Workers.Notification do
     else
       err ->
         require Logger
-        Logger.error(inspect(err))
+        Logger.debug(inspect(err))
     end
   end
 

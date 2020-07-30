@@ -27,6 +27,7 @@ defmodule Mobilizon.Todos do
     TodoList
     |> where(actor_id: ^group_id)
     |> order_by(desc: :updated_at)
+    |> preload([:actor])
     |> Page.build_page(page, limit)
   end
 

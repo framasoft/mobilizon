@@ -37,7 +37,7 @@ defmodule Mobilizon.Web.Upload.Uploader do
 
   @callback remove_file(file_spec()) :: :ok | {:ok, file_spec()} | {:error, String.t()}
 
-  @callback http_callback(Plug.Conn.t(), Map.t()) ::
+  @callback http_callback(Plug.Conn.t(), map()) ::
               {:ok, Plug.Conn.t()}
               | {:ok, Plug.Conn.t(), file_spec()}
               | {:error, Plug.Conn.t(), String.t()}

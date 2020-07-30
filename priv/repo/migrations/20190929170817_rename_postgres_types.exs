@@ -2,7 +2,7 @@ defmodule Mobilizon.Storage.Repo.Migrations.RenamePostgresTypes do
   use Ecto.Migration
   alias Mobilizon.Actors.{ActorVisibility, MemberRole}
 
-  alias Mobilizon.Conversations.CommentVisibility
+  alias Mobilizon.Discussions.CommentVisibility
 
   alias Mobilizon.Events.{
     JoinOptions,

@@ -12,9 +12,10 @@ export interface IComment {
   originComment?: IComment;
   replies: IComment[];
   event?: IEvent;
-  updatedAt?: Date;
-  deletedAt?: Date;
+  updatedAt?: Date | string;
+  deletedAt?: Date | string;
   totalReplies: number;
+  insertedAt?: Date | string;
 }
 
 export class CommentModel implements IComment {
@@ -38,9 +39,11 @@ export class CommentModel implements IComment {
 
   event?: IEvent = undefined;
 
-  updatedAt?: Date = undefined;
+  updatedAt?: Date | string = undefined;
 
-  deletedAt?: Date = undefined;
+  deletedAt?: Date | string = undefined;
+
+  insertedAt?: Date | string = undefined;
 
   totalReplies = 0;
 
@@ -58,6 +61,7 @@ export class CommentModel implements IComment {
     this.replies = hash.replies;
     this.updatedAt = hash.updatedAt;
     this.deletedAt = hash.deletedAt;
+    this.insertedAt = new Date(hash.insertedAt as string);
     this.totalReplies = hash.totalReplies;
   }
 }

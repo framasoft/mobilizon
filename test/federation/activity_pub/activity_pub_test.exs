@@ -8,9 +8,10 @@ defmodule Mobilizon.Federation.ActivityPubTest do
   use Mobilizon.DataCase
 
   import Mock
+  import Mox
   import Mobilizon.Factory
 
-  alias Mobilizon.{Actors, Conversations, Events}
+  alias Mobilizon.{Actors, Discussions, Events}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Resources.Resource
   alias Mobilizon.Todos.{Todo, TodoList}
@@ -18,12 +19,9 @@ defmodule Mobilizon.Federation.ActivityPubTest do
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Utils
   alias Mobilizon.Federation.HTTPSignatures.Signature
+  alias Mobilizon.Service.HTTP.ActivityPub.Mock
 
   @activity_pub_public_audience "https://www.w3.org/ns/activitystreams#Public"
-
-  setup_all do
-    HTTPoison.start()
-  end
 
   describe "setting HTTP signature" do
     test "set http signature header" do
@@ -140,40 +138,75 @@ defmodule Mobilizon.Federation.ActivityPubTest do
 
   describe "fetching an" do
     test "object by url" do
-      use_cassette "activity_pub/fetch_framapiaf_framasoft_status" do
-        {:ok, object} =
-          ActivityPub.fetch_object_from_url(
-            "https://framapiaf.org/users/Framasoft/statuses/102093631881522097"
-          )
+      url = "https://framapiaf.org/users/Framasoft/statuses/102093631881522097"
 
-        {:ok, object_again} =
-          ActivityPub.fetch_object_from_url(
-            "https://framapiaf.org/users/Framasoft/statuses/102093631881522097"
-          )
+      data =
+        File.read!("test/fixtures/mastodon-status-2.json")
+        |> Jason.decode!()
 
-        assert object.id == object_again.id
-      end
+      Mock
+      |> expect(:call, fn
+        %{method: :get, url: ^url}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: data}}
+      end)
+
+      {:ok, object} = ActivityPub.fetch_object_from_url(url)
+
+      {:ok, object_again} = ActivityPub.fetch_object_from_url(url)
+
+      assert object.id == object_again.id
     end
 
     test "object reply by url" do
-      use_cassette "activity_pub/fetch_framasoft_framapiaf_reply" do
-        {:ok, object} =
-          ActivityPub.fetch_object_from_url("https://mamot.fr/@imacrea/102094441327423790")
+      url = "https://zoltasila.pl/objects/1c295713-8e3c-411e-9e62-57a7b9c9e514"
+      reply_to_url = "https://framapiaf.org/users/peertube/statuses/104584600044284729"
 
-        assert object.in_reply_to_comment.url ==
-                 "https://framapiaf.org/users/Framasoft/statuses/102093632302210150"
-      end
+      data =
+        File.read!("test/fixtures/mastodon-status-3.json")
+        |> Jason.decode!()
+
+      reply_to_data =
+        File.read!("test/fixtures/mastodon-status-4.json")
+        |> Jason.decode!()
+
+      Mock
+      |> expect(:call, 2, fn
+        %{method: :get, url: ^url}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: data}}
+
+        %{method: :get, url: ^reply_to_url}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: reply_to_data}}
+      end)
+
+      {:ok, object} = ActivityPub.fetch_object_from_url(url)
+
+      assert object.in_reply_to_comment.url == reply_to_url
     end
 
     test "object reply to a video by url" do
-      use_cassette "activity_pub/fetch_reply_to_framatube" do
-        {:ok, object} =
-          ActivityPub.fetch_object_from_url(
-            "https://diaspodon.fr/users/dada/statuses/100820008426311925"
-          )
+      url = "https://diaspodon.fr/users/dada/statuses/100820008426311925"
+      origin_url = "https://framatube.org/videos/watch/9c9de5e8-0a1e-484a-b099-e80766180a6d"
 
-        assert object.in_reply_to_comment == nil
-      end
+      data =
+        File.read!("test/fixtures/mastodon-status-5.json")
+        |> Jason.decode!()
+
+      origin_data =
+        File.read!("test/fixtures/peertube-video.json")
+        |> Jason.decode!()
+
+      Mock
+      |> expect(:call, 2, fn
+        %{method: :get, url: ^url}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: data}}
+
+        %{method: :get, url: ^origin_url}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: origin_data}}
+      end)
+
+      {:ok, object} = ActivityPub.fetch_object_from_url(url)
+
+      assert object.in_reply_to_comment == nil
     end
   end
 
@@ -181,26 +214,28 @@ defmodule Mobilizon.Federation.ActivityPubTest do
     test "it creates a delete activity and deletes the original event" do
       event = insert(:event)
       event = Events.get_public_event_by_url_with_preload!(event.url)
-      {:ok, delete, _} = ActivityPub.delete(event)
+      {:ok, delete, _} = ActivityPub.delete(event, event.organizer_actor)
 
       assert delete.data["type"] == "Delete"
       assert delete.data["actor"] == event.organizer_actor.url
-      assert delete.data["object"] == event.url
+      assert delete.data["object"]["type"] == "Event"
+      assert delete.data["object"]["id"] == event.url
 
       assert Events.get_event_by_url(event.url) == nil
     end
 
     test "it deletes the original event but only locally if needed" do
-      with_mock Utils,
+      with_mock Utils, [:passthrough],
         maybe_federate: fn _ -> :ok end,
         lazy_put_activity_defaults: fn args -> args end do
         event = insert(:event)
         event = Events.get_public_event_by_url_with_preload!(event.url)
-        {:ok, delete, _} = ActivityPub.delete(event, false)
+        {:ok, delete, _} = ActivityPub.delete(event, event.organizer_actor, false)
 
         assert delete.data["type"] == "Delete"
         assert delete.data["actor"] == event.organizer_actor.url
-        assert delete.data["object"] == event.url
+        assert delete.data["object"]["type"] == "Event"
+        assert delete.data["object"]["id"] == event.url
         assert delete.local == false
 
         assert Events.get_event_by_url(event.url) == nil
@@ -211,15 +246,16 @@ defmodule Mobilizon.Federation.ActivityPubTest do
 
     test "it creates a delete activity and deletes the original comment" do
       comment = insert(:comment)
-      comment = Conversations.get_comment_from_url_with_preload!(comment.url)
-      assert is_nil(Conversations.get_comment_from_url(comment.url).deleted_at)
-      {:ok, delete, _} = ActivityPub.delete(comment)
+      comment = Discussions.get_comment_from_url_with_preload!(comment.url)
+      assert is_nil(Discussions.get_comment_from_url(comment.url).deleted_at)
+      {:ok, delete, _} = ActivityPub.delete(comment, comment.actor)
 
       assert delete.data["type"] == "Delete"
       assert delete.data["actor"] == comment.actor.url
-      assert delete.data["object"] == comment.url
+      assert delete.data["object"]["type"] == "Note"
+      assert delete.data["object"]["id"] == comment.url
 
-      refute is_nil(Conversations.get_comment_from_url(comment.url).deleted_at)
+      refute is_nil(Discussions.get_comment_from_url(comment.url).deleted_at)
     end
   end
 
@@ -230,7 +266,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
       actor = insert(:actor)
       actor_data = %{summary: @updated_actor_summary}
 
-      {:ok, update, _} = ActivityPub.update(:actor, actor, actor_data, false)
+      {:ok, update, _} = ActivityPub.update(actor, actor_data, false)
 
       assert update.data["actor"] == actor.url
       assert update.data["to"] == [@activity_pub_public_audience]
@@ -246,7 +282,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
       event = insert(:event, organizer_actor: actor)
       event_data = %{begins_on: @updated_start_time}
 
-      {:ok, update, _} = ActivityPub.update(:event, event, event_data)
+      {:ok, update, _} = ActivityPub.update(event, event_data)
 
       assert update.data["actor"] == actor.url
       assert update.data["to"] == [@activity_pub_public_audience]
@@ -272,8 +308,8 @@ defmodule Mobilizon.Federation.ActivityPubTest do
         assert create_data.local
         assert create_data.data["object"]["id"] == todo_list_url
         assert create_data.data["object"]["type"] == "TodoList"
-        assert create_data.data["object"]["title"] == @todo_list_title
-        assert create_data.data["to"] == [group.url]
+        assert create_data.data["object"]["name"] == @todo_list_title
+        assert create_data.data["to"] == [group.members_url]
         assert create_data.data["actor"] == actor.url
 
         assert_called(Utils.maybe_federate(create_data))
@@ -301,7 +337,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
         assert create_data.data["object"]["id"] == todo_url
         assert create_data.data["object"]["type"] == "Todo"
         assert create_data.data["object"]["name"] == @todo_title
-        assert create_data.data["to"] == [todo_list.actor.url]
+        assert create_data.data["to"] == [todo_list.actor.members_url]
         assert create_data.data["actor"] == actor.url
 
         assert_called(Utils.maybe_federate(create_data))
@@ -341,7 +377,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
 
         assert create_data.data["object"]["url"] == @resource_url
 
-        assert create_data.data["to"] == [group.url]
+        assert create_data.data["to"] == [group.members_url]
         assert create_data.data["actor"] == actor.url
         assert create_data.data["attributedTo"] == [actor.url]
 
@@ -372,7 +408,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
         assert create_data.data["object"]["id"] == url
         assert create_data.data["object"]["type"] == "ResourceCollection"
         assert create_data.data["object"]["name"] == @folder_title
-        assert create_data.data["to"] == [group.url]
+        assert create_data.data["to"] == [group.members_url]
         assert create_data.data["actor"] == actor.url
         assert create_data.data["attributedTo"] == [actor.url]
 
@@ -411,7 +447,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
 
         assert create_data.data["object"]["url"] == @resource_url
 
-        assert create_data.data["to"] == [group.url]
+        assert create_data.data["to"] == [group.members_url]
         assert create_data.data["actor"] == actor.url
         assert create_data.data["attributedTo"] == [actor.url]
 
@@ -437,7 +473,6 @@ defmodule Mobilizon.Federation.ActivityPubTest do
 
         {:ok, update_data, %Resource{url: url}} =
           ActivityPub.update(
-            :resource,
             resource,
             %{
               title: @updated_resource_title
@@ -453,7 +488,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
 
         assert update_data.data["object"]["url"] == @resource_url
 
-        assert update_data.data["to"] == [group.url]
+        assert update_data.data["to"] == [group.members_url]
         assert update_data.data["actor"] == actor.url
         assert update_data.data["attributedTo"] == [actor.url]
 
@@ -496,7 +531,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
 
         assert update_data.data["object"]["url"] == @resource_url
 
-        assert update_data.data["to"] == [group.url]
+        assert update_data.data["to"] == [group.members_url]
         assert update_data.data["actor"] == actor.url
         assert update_data.data["origin"] == nil
         assert update_data.data["target"] == parent_url
@@ -524,19 +559,23 @@ defmodule Mobilizon.Federation.ActivityPubTest do
         {:ok, update_data, %Resource{url: url}} =
           ActivityPub.delete(
             resource,
+            actor,
             true
           )
 
         assert update_data.local
         assert update_data.data["type"] == "Delete"
-        assert update_data.data["object"] == url
-        assert update_data.data["to"] == [group.url]
-        # TODO : Add actor parameter to ActivityPub.delete/2
-        # assert update_data.data["actor"] == actor.url
-        # assert update_data.data["attributedTo"] == [actor.url]
+        assert update_data.data["object"]["type"] == "Document"
+        assert update_data.data["object"]["id"] == url
+        assert update_data.data["to"] == [group.members_url]
+        assert update_data.data["actor"] == actor.url
+        assert update_data.data["attributedTo"] == [group.url]
 
         assert_called(Utils.maybe_federate(update_data))
       end
     end
+  end
+
+  describe "announce" do
   end
 end

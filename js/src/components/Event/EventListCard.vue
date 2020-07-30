@@ -247,6 +247,7 @@ export default class EventListCard extends mixins(ActorMixin, EventMixin) {
    * Delete the event
    */
   async openDeleteEventModalWrapper() {
+    // @ts-ignore
     await this.openDeleteEventModal(this.participation.event, this.currentActor);
   }
 

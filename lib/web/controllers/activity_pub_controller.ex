@@ -14,6 +14,7 @@ defmodule Mobilizon.Web.ActivityPubController do
 
   alias Mobilizon.Web.ActivityPub.ActorView
   alias Mobilizon.Web.Cache
+  alias Plug.Conn
 
   require Logger
 
@@ -33,96 +34,40 @@ defmodule Mobilizon.Web.ActivityPubController do
     end
   end
 
-  def following(conn, %{"name" => name, "page" => page}) do
-    with {page, ""} <- Integer.parse(page),
-         %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
-      conn
-      |> put_resp_header("content-type", "application/activity+json")
-      |> json(ActorView.render("following.json", %{actor: actor, page: page}))
-    end
+  def following(conn, args) do
+    actor_collection(conn, "following", args)
   end
 
-  def following(conn, %{"name" => name}) do
-    with %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
-      conn
-      |> put_resp_header("content-type", "application/activity+json")
-      |> json(ActorView.render("following.json", %{actor: actor}))
-    end
+  def followers(conn, args) do
+    actor_collection(conn, "followers", args)
   end
 
-  def followers(conn, %{"name" => name, "page" => page}) do
-    with {page, ""} <- Integer.parse(page),
-         %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
-      conn
-      |> put_resp_header("content-type", "application/activity+json")
-      |> json(ActorView.render("followers.json", %{actor: actor, page: page}))
-    end
+  def members(conn, args) do
+    actor_collection(conn, "members", args)
   end
 
-  def followers(conn, %{"name" => name}) do
-    with %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
-      conn
-      |> put_resp_header("content-type", "application/activity+json")
-      |> json(ActorView.render("followers.json", %{actor: actor}))
-    end
+  def resources(conn, args) do
+    actor_collection(conn, "resources", args)
   end
 
-  def members(conn, %{"name" => name, "page" => page}) do
-    with {page, ""} <- Integer.parse(page),
-         %Actor{} = group <- Actors.get_local_actor_by_name_with_preload(name) do
-      conn
-      |> put_resp_header("content-type", "application/activity+json")
-      |> json(
-        ActorView.render("members.json", %{
-          group: group,
-          page: page,
-          actor_applicant: Map.get(conn.assigns, :actor)
-        })
-      )
-    end
+  def posts(conn, args) do
+    actor_collection(conn, "posts", args)
   end
 
-  def members(conn, %{"name" => name}) do
-    with %Actor{} = group <- Actors.get_local_actor_by_name_with_preload(name) do
-      conn
-      |> put_resp_header("content-type", "application/activity+json")
-      |> json(
-        ActorView.render("members.json", %{
-          group: group,
-          actor_applicant: Map.get(conn.assigns, :actor)
-        })
-      )
-    end
+  def todos(conn, args) do
+    actor_collection(conn, "todos", args)
   end
 
-  def resources(conn, %{"name" => name}) do
-    with %Actor{} = group <- Actors.get_local_actor_by_name_with_preload(name) do
-      conn
-      |> put_resp_header("content-type", "application/activity+json")
-      |> json(
-        ActorView.render("resources.json", %{
-          group: group,
-          actor_applicant: Map.get(conn.assigns, :actor)
-        })
-      )
-    end
+  def events(conn, args) do
+    actor_collection(conn, "events", args)
   end
 
-  def outbox(conn, %{"name" => name, "page" => page}) do
-    with {page, ""} <- Integer.parse(page),
-         %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
-      conn
-      |> put_resp_header("content-type", "application/activity+json")
-      |> json(ActorView.render("outbox.json", %{actor: actor, page: page}))
-    end
+  def discussions(conn, args) do
+    actor_collection(conn, "discussions", args)
   end
 
-  def outbox(conn, %{"name" => name}) do
-    with %Actor{} = actor <- Actors.get_local_actor_by_name(name) do
-      conn
-      |> put_resp_header("content-type", "application/activity+json")
-      |> json(ActorView.render("outbox.json", %{actor: actor}))
-    end
+  def outbox(conn, args) do
+    actor_collection(conn, "outbox", args)
   end
 
   # TODO: Ensure that this inbox is a recipient of the message
@@ -177,5 +122,35 @@ defmodule Mobilizon.Web.ActivityPubController do
     conn
     |> put_status(500)
     |> json("Unknown Error")
+  end
+
+  @spec actor_collection(Conn.t(), String.t(), map()) :: Conn.t()
+
+  defp actor_collection(conn, collection, %{"name" => name, "page" => page}) do
+    with {page, ""} <- Integer.parse(page),
+         %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
+      conn
+      |> put_resp_header("content-type", "application/activity+json")
+      |> json(
+        ActorView.render("#{collection}.json", %{
+          actor: actor,
+          page: page,
+          actor_applicant: Map.get(conn.assigns, :actor)
+        })
+      )
+    end
+  end
+
+  defp actor_collection(conn, collection, %{"name" => name}) do
+    with %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
+      conn
+      |> put_resp_header("content-type", "application/activity+json")
+      |> json(
+        ActorView.render("#{collection}.json", %{
+          actor: actor,
+          actor_applicant: Map.get(conn.assigns, :actor)
+        })
+      )
+    end
   end
 end

@@ -36,7 +36,7 @@ import { ACCEPT_INVITATION } from "../../graphql/member";
     InvitationCard,
   },
   apollo: {
-    paginatedGroups: {
+    membershipsPages: {
       query: LOGGED_USER_MEMBERSHIPS,
       fetchPolicy: "network-only",
       variables: {
@@ -57,18 +57,22 @@ import { ACCEPT_INVITATION } from "../../graphql/member";
   },
 })
 export default class MyEvents extends Vue {
-  paginatedGroups!: Paginate<IMember>;
+  membershipsPages!: Paginate<IMember>;
 
   RouteName = RouteName;
 
   get invitations() {
-    if (!this.paginatedGroups) return [];
-    return this.paginatedGroups.elements.filter((member) => member.role === MemberRole.INVITED);
+    if (!this.membershipsPages) return [];
+    return this.membershipsPages.elements.filter(
+      (member: IMember) => member.role === MemberRole.INVITED
+    );
   }
 
   get memberships() {
-    if (!this.paginatedGroups) return [];
-    return this.paginatedGroups.elements.filter((member) => member.role !== MemberRole.INVITED);
+    if (!this.membershipsPages) return [];
+    return this.membershipsPages.elements.filter(
+      (member: IMember) => member.role !== MemberRole.INVITED
+    );
   }
 
   async acceptInvitation(id: string) {

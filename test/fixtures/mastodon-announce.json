@@ -1,8 +1,6 @@
 {
   "type": "Announce",
-  "to": [
-    "https://www.w3.org/ns/activitystreams#Public"
-  ],
+  "to": ["https://www.w3.org/ns/activitystreams#Public"],
   "signature": {
     "type": "RsaSignature2017",
     "signatureValue": "T95DRE0eAligvMuRMkQA01lsoz2PKi4XXF+cyZ0BqbrO12p751TEWTyyRn5a+HH0e4kc77EUhQVXwMq80WAYDzHKVUTf2XBJPBa68vl0j6RXw3+HK4ef5hR4KWFNBU34yePS7S1fEmc1mTG4Yx926wtmZwDpEMTp1CXOeVEjCYzmdyHpepPPH2ZZettiacmPRSqBLPGWZoot7kH/SioIdnrMGY0I7b+rqkIdnnEcdhu9N1BKPEO9Sr+KmxgAUiidmNZlbBXX6gCxp8BiIdH4ABsIcwoDcGNkM5EmWunGW31LVjsEQXhH5c1Wly0ugYYPCg/0eHLNBOhKkY/teSM8Lg==",
@@ -10,14 +8,14 @@
     "created": "2018-02-17T19:39:15Z"
   },
   "published": "2018-02-17T19:39:15Z",
-  "object": "https://framapiaf.org/users/Framasoft/statuses/102501959686438400",
-  "id": "https://framapiaf.org/users/Framasoft/statuses/102501959686438400/activity",
+  "object": "https://framapiaf.org/users/peertube/statuses/104584600044284729",
+  "id": "https://framapiaf.org/users/peertube/statuses/104584600044284729/activity",
   "cc": [
-    "https://framapiaf.org/users/Framasoft",
-    "https://framapiaf.org/users/Framasoft/followers"
+    "https://framapiaf.org/users/peertube",
+    "https://framapiaf.org/users/peertube/followers"
   ],
-  "atomUri": "https://framapiaf.org/users/Framasoft/statuses/102501959686438400/activity",
-  "actor": "https://framapiaf.org/users/Framasoft",
+  "atomUri": "https://framapiaf.org/users/peertube/statuses/104584600044284729/activity",
+  "actor": "https://framapiaf.org/users/peertube",
   "@context": [
     "https://www.w3.org/ns/activitystreams",
     "https://w3id.org/security/v1",

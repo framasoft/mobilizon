@@ -10,8 +10,8 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
   """
 
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.Config
   alias Mobilizon.Service.Geospatial.Provider
+  alias Mobilizon.Service.HTTP.BaseClient
 
   require Logger
 
@@ -20,11 +20,6 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
   @api_key Application.get_env(:mobilizon, __MODULE__) |> get_in([:api_key])
 
   @api_key_missing_message "API Key required to use MapQuest"
-
-  @http_options [
-    follow_redirect: true,
-    ssl: [{:versions, [:"tlsv1.2"]}]
-  ]
 
   @impl Provider
   @doc """
@@ -35,25 +30,21 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
     api_key = Keyword.get(options, :api_key, @api_key)
     limit = Keyword.get(options, :limit, 10)
     open_data = Keyword.get(options, :open_data, true)
-    user_agent = Keyword.get(options, :user_agent, Config.instance_user_agent())
-    headers = [{"User-Agent", user_agent}]
 
     prefix = if open_data, do: "open", else: "www"
 
     if is_nil(api_key), do: raise(ArgumentError, message: @api_key_missing_message)
 
-    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           HTTPoison.get(
+    with {:ok, %{status: 200, body: body}} <-
+           BaseClient.get(
              "https://#{prefix}.mapquestapi.com/geocoding/v1/reverse?key=#{api_key}&location=#{
                lat
-             },#{lon}&maxResults=#{limit}",
-             headers,
-             @http_options
+             },#{lon}&maxResults=#{limit}"
            ),
-         {:ok, %{"results" => results, "info" => %{"statuscode" => 0}}} <- Poison.decode(body) do
+         %{"results" => results, "info" => %{"statuscode" => 0}} <- body do
       results |> Enum.map(&process_data/1)
     else
-      {:ok, %HTTPoison.Response{status_code: 403, body: err}} ->
+      {:ok, %{status: 403, body: err}} ->
         raise(ArgumentError, message: err)
     end
   end
@@ -64,8 +55,6 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
   """
   @spec search(String.t(), keyword()) :: list(Address.t())
   def search(q, options \\ []) do
-    user_agent = Keyword.get(options, :user_agent, Config.instance_user_agent())
-    headers = [{"User-Agent", user_agent}]
     limit = Keyword.get(options, :limit, 10)
     api_key = Keyword.get(options, :api_key, @api_key)
 
@@ -82,12 +71,11 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
 
     Logger.debug("Asking MapQuest for addresses with #{url}")
 
-    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           HTTPoison.get(url, headers, @http_options),
-         {:ok, %{"results" => results, "info" => %{"statuscode" => 0}}} <- Poison.decode(body) do
+    with {:ok, %{status: 200, body: body}} <- BaseClient.get(url),
+         %{"results" => results, "info" => %{"statuscode" => 0}} <- body do
       results |> Enum.map(&process_data/1)
     else
-      {:ok, %HTTPoison.Response{status_code: 403, body: err}} ->
+      {:ok, %{status: 403, body: err}} ->
         raise(ArgumentError, message: err)
     end
   end

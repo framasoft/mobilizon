@@ -34,7 +34,7 @@ defmodule Mobilizon.GraphQL.API.Events do
            Map.update(args, :picture, nil, fn picture ->
              process_picture(picture, organizer_actor)
            end) do
-      ActivityPub.update(:event, event, args, Map.get(args, :draft, false) == false)
+      ActivityPub.update(event, args, Map.get(args, :draft, false) == false)
     end
   end
 
@@ -43,8 +43,8 @@ defmodule Mobilizon.GraphQL.API.Events do
 
   If the event is deleted by
   """
-  def delete_event(%Event{} = event, federate \\ true) do
-    ActivityPub.delete(event, federate)
+  def delete_event(%Event{} = event, %Actor{} = actor, federate \\ true) do
+    ActivityPub.delete(event, actor, federate)
   end
 
   defp process_picture(nil, _), do: nil

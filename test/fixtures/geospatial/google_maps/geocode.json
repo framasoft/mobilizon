@@ -1,0 +1,109 @@
+{
+  "plus_code": {
+    "compound_code": "QR2V+M2 Lyon, France",
+    "global_code": "8FQ6QR2V+M2"
+  },
+  "results": [
+    {
+      "address_components": [
+        {
+          "long_name": "10bis",
+          "short_name": "10bis",
+          "types": ["street_number"]
+        },
+        {
+          "long_name": "Rue Jangot",
+          "short_name": "Rue Jangot",
+          "types": ["route"]
+        },
+        {
+          "long_name": "Lyon",
+          "short_name": "Lyon",
+          "types": ["locality", "political"]
+        },
+        {
+          "long_name": "Rhône",
+          "short_name": "Rhône",
+          "types": ["administrative_area_level_2", "political"]
+        },
+        {
+          "long_name": "Auvergne-Rhône-Alpes",
+          "short_name": "Auvergne-Rhône-Alpes",
+          "types": ["administrative_area_level_1", "political"]
+        },
+        {
+          "long_name": "France",
+          "short_name": "FR",
+          "types": ["country", "political"]
+        },
+        {
+          "long_name": "69007",
+          "short_name": "69007",
+          "types": ["postal_code"]
+        }
+      ],
+      "formatted_address": "10bis Rue Jangot, 69007 Lyon, France",
+      "geometry": {
+        "location": { "lat": 45.751725, "lng": 4.8424966 },
+        "location_type": "ROOFTOP",
+        "viewport": {
+          "northeast": { "lat": 45.7530739802915, "lng": 4.843845580291503 },
+          "southwest": { "lat": 45.7503760197085, "lng": 4.841147619708499 }
+        }
+      },
+      "place_id": "ChIJrW0QikTq9EcR96jk2OnO75w",
+      "plus_code": {
+        "compound_code": "QR2R+MX Lyon, France",
+        "global_code": "8FQ6QR2R+MX"
+      },
+      "types": ["street_address"]
+    },
+    {
+      "address_components": [
+        { "long_name": "9", "short_name": "9", "types": ["street_number"] },
+        {
+          "long_name": "Rue Jangot",
+          "short_name": "Rue Jangot",
+          "types": ["route"]
+        },
+        {
+          "long_name": "Lyon",
+          "short_name": "Lyon",
+          "types": ["locality", "political"]
+        },
+        {
+          "long_name": "Rhône",
+          "short_name": "Rhône",
+          "types": ["administrative_area_level_2", "political"]
+        },
+        {
+          "long_name": "Auvergne-Rhône-Alpes",
+          "short_name": "Auvergne-Rhône-Alpes",
+          "types": ["administrative_area_level_1", "political"]
+        },
+        {
+          "long_name": "France",
+          "short_name": "FR",
+          "types": ["country", "political"]
+        },
+        {
+          "long_name": "69007",
+          "short_name": "69007",
+          "types": ["postal_code"]
+        }
+      ],
+      "formatted_address": "9 Rue Jangot, 69007 Lyon, France",
+      "geometry": {
+        "location": { "lat": 45.7518165, "lng": 4.8427168 },
+        "location_type": "RANGE_INTERPOLATED",
+        "viewport": {
+          "northeast": { "lat": 45.7531654802915, "lng": 4.844065780291502 },
+          "southwest": { "lat": 45.7504675197085, "lng": 4.841367819708497 }
+        }
+      },
+      "place_id": "EiA5IFJ1ZSBKYW5nb3QsIDY5MDA3IEx5b24sIEZyYW5jZSIaEhgKFAoSCR8N2ItE6vRHEW9tyPnhQsUIEAk",
+      "types": ["street_address"]
+    }
+  ],
+  "status": "OK"
+}

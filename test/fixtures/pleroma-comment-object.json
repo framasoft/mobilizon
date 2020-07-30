@@ -1,0 +1,30 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    "https://blob.cat/schemas/litepub-0.1.jsonld",
+    {
+      "@language": "und"
+    }
+  ],
+  "actor": "https://blob.cat/users/comicbot",
+  "attachment": [
+    {
+      "mediaType": "image/gif",
+      "name": "1574936800141.gif",
+      "type": "Document",
+      "url": "https://blob.cat/media/143ba9b1ed15e67d7401906f7b71a459b90680af7075af5b8ac9cb8e3b86868a.gif"
+    }
+  ],
+  "attributedTo": "https://blob.cat/users/comicbot",
+  "cc": ["https://blob.cat/users/comicbot/followers"],
+  "content": "Super Mega Comics <br> <a href=\"http://supermegacomics.com/\" rel=\"ugc\">http://supermegacomics.com/</a>",
+  "context": "https://blob.cat/contexts/26f3271a-3eb8-4f3f-8fb1-8ff96e2c4a47",
+  "conversation": "https://blob.cat/contexts/26f3271a-3eb8-4f3f-8fb1-8ff96e2c4a47",
+  "id": "https://blob.cat/objects/02fdea3d-932c-4348-9ecb-3f9eb3fbdd94",
+  "published": "2019-11-28T10:26:42.503473Z",
+  "sensitive": false,
+  "summary": "",
+  "tag": [],
+  "to": ["https://www.w3.org/ns/activitystreams#Public"],
+  "type": "Note"
+}

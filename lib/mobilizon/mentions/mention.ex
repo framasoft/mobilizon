@@ -6,7 +6,7 @@ defmodule Mobilizon.Mention do
   use Ecto.Schema
   import Ecto.Changeset
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
   alias Mobilizon.Storage.Repo
 

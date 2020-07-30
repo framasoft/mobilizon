@@ -4,7 +4,7 @@ import messages from "../i18n/index";
 
 let language = document.documentElement.getAttribute("lang") as string;
 language = language || ((window.navigator as any).userLanguage || window.navigator.language).replace(/-/, "_");
-const locale = language && messages.hasOwnProperty(language) ? language : language.split("-")[0];
+export const locale = language && messages.hasOwnProperty(language) ? language : language.split("-")[0];
 
 Vue.use(VueI18n);
 

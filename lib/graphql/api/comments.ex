@@ -3,8 +3,8 @@ defmodule Mobilizon.GraphQL.API.Comments do
   API for Comments.
   """
 
-  alias Mobilizon.Conversations.Comment
-
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Discussions.Comment
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Activity
 
@@ -19,7 +19,7 @@ defmodule Mobilizon.GraphQL.API.Comments do
   end
 
   def update_comment(%Comment{} = comment, args) do
-    ActivityPub.update(:comment, comment, args, true)
+    ActivityPub.update(comment, args, true)
   end
 
   @doc """
@@ -27,8 +27,8 @@ defmodule Mobilizon.GraphQL.API.Comments do
 
   Deletes a comment from an actor
   """
-  @spec delete_comment(Comment.t()) :: {:ok, Activity.t(), Comment.t()} | any
-  def delete_comment(%Comment{} = comment) do
-    ActivityPub.delete(comment, true)
+  @spec delete_comment(Comment.t(), Actor.t()) :: {:ok, Activity.t(), Comment.t()} | any
+  def delete_comment(%Comment{} = comment, %Actor{} = actor) do
+    ActivityPub.delete(comment, actor, true)
   end
 end

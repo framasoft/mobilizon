@@ -8,13 +8,16 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   Various ActivityPub related utils.
   """
 
+  alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Media.Picture
 
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.{Activity, Federator, Relay}
+  alias Mobilizon.Federation.ActivityPub.Types.Ownable
   alias Mobilizon.Federation.ActivityStream.Converter
   alias Mobilizon.Federation.HTTPSignatures
+  alias Mobilizon.Web.Endpoint
 
   require Logger
 
@@ -114,6 +117,53 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
 
   def maybe_federate(_), do: :ok
 
+  @doc """
+  Applies to activities sent by group members from outside this instance to a group of this instance,
+  we then need to relay (`Announce`) the object to other members on other instances.
+  """
+  def maybe_relay_if_group_activity(activity, attributed_to \\ nil)
+
+  def maybe_relay_if_group_activity(
+        %Activity{local: false, data: %{"object" => object}},
+        _attributed_to
+      )
+      when is_map(object) do
+    do_maybe_relay_if_group_activity(object, object["attributedTo"])
+  end
+
+  # When doing a delete the object is just an AP ID string, so we pass the attributed_to actor as well
+  def maybe_relay_if_group_activity(
+        %Activity{local: false, data: %{"object" => object}},
+        %Actor{url: attributed_to_url}
+      )
+      when is_binary(object) do
+    do_maybe_relay_if_group_activity(object, attributed_to_url)
+  end
+
+  def maybe_relay_if_group_activity(_, _), do: :ok
+
+  defp do_maybe_relay_if_group_activity(object, attributed_to) when not is_nil(attributed_to) do
+    id = "#{Endpoint.url()}/announces/#{Ecto.UUID.generate()}"
+
+    case Actors.get_local_group_by_url(attributed_to) do
+      %Actor{} = group ->
+        case ActivityPub.announce(group, object, id, true, false) do
+          {:ok, _activity, _object} ->
+            Logger.info("Forwarded activity to external members of the group")
+            :ok
+
+          _ ->
+            Logger.info("Failed to forward activity to external members of the group")
+            :error
+        end
+
+      _ ->
+        :ok
+    end
+  end
+
+  defp do_maybe_relay_if_group_activity(_, _), do: :ok
+
   @spec remote_actors(list(String.t())) :: list(Actor.t())
   def remote_actors(recipients) do
     recipients
@@ -135,7 +185,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   Adds an id and a published data if they aren't there,
   also adds it to an included object
   """
-  def lazy_put_activity_defaults(map) do
+  def lazy_put_activity_defaults(%{"object" => _object} = map) do
     if is_map(map["object"]) do
       object = lazy_put_object_defaults(map["object"])
       %{map | "object" => object}
@@ -147,7 +197,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   @doc """
   Adds an id and published date if they aren't there.
   """
-  def lazy_put_object_defaults(map) do
+  def lazy_put_object_defaults(map) when is_map(map) do
     Map.put_new_lazy(map, "published", &make_date/0)
   end
 
@@ -175,25 +225,49 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
 
   @doc """
   Checks that an incoming AP object's actor matches the domain it came from.
+
+  Takes the actor or attributedTo attributes (considers only the first elem if they're an array)
   """
+  def origin_check?(id, %{"actor" => actor, "attributedTo" => _attributed_to} = params)
+      when not is_nil(actor) and actor != "" do
+    params = Map.delete(params, "attributedTo")
+    origin_check?(id, params)
+  end
+
   def origin_check?(id, %{"attributedTo" => actor} = params) do
     params = params |> Map.put("actor", actor) |> Map.delete("attributedTo")
     origin_check?(id, params)
   end
 
-  def origin_check?(id, %{"actor" => actor} = params) when not is_nil(actor) do
-    id_uri = URI.parse(id)
-    actor_uri = URI.parse(get_actor(params))
-
-    compare_uris?(actor_uri, id_uri)
+  def origin_check?(id, %{"actor" => actor} = params)
+      when not is_nil(actor) and is_list(actor) and length(actor) > 0 do
+    origin_check?(id, Map.put(params, "actor", hd(actor)))
   end
 
-  def origin_check?(_id, %{"actor" => nil}), do: false
+  def origin_check?(id, %{"actor" => actor} = params)
+      when not is_nil(actor) do
+    actor = get_actor(params)
+    Logger.debug("Performing origin check on #{id} and #{actor} URIs")
+    compare_origins?(id, actor)
+  end
 
-  def origin_check?(_id, _data), do: false
+  def origin_check?(_id, %{"type" => type} = _params) when type in ["Actor", "Group"], do: true
+
+  def origin_check?(_id, %{"actor" => nil} = _args), do: false
+
+  def origin_check?(_id, _args), do: false
+
+  @spec compare_origins?(String.t(), String.t()) :: boolean()
+  def compare_origins?(url_1, url_2) when is_binary(url_1) and is_binary(url_2) do
+    uri_1 = URI.parse(url_1)
+    uri_2 = URI.parse(url_2)
+
+    compare_uris?(uri_1, uri_2)
+  end
 
   defp compare_uris?(%URI{} = id_uri, %URI{} = other_uri), do: id_uri.host == other_uri.host
 
+  @spec origin_check_from_id?(String.t(), String.t()) :: boolean()
   def origin_check_from_id?(id, other_id) when is_binary(other_id) do
     id_uri = URI.parse(id)
     other_uri = URI.parse(other_id)
@@ -201,8 +275,19 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     compare_uris?(id_uri, other_uri)
   end
 
+  @spec origin_check_from_id?(String.t(), map()) :: boolean()
   def origin_check_from_id?(id, %{"id" => other_id} = _params) when is_binary(other_id),
     do: origin_check_from_id?(id, other_id)
+
+  def activity_actor_is_group_member?(%Actor{id: actor_id}, object) do
+    case Ownable.group_actor(object) do
+      %Actor{type: :Group, id: group_id} ->
+        Actors.is_member?(actor_id, group_id)
+
+      _ ->
+        false
+    end
+  end
 
   @doc """
   Save picture data from %Plug.Upload{} and return AS Link data.
@@ -274,7 +359,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
         activity_id,
         public
       )
-      when type in ["Note", "Event", "ResourceCollection", "Document"] do
+      when type in ["Note", "Event", "ResourceCollection", "Document", "Todo"] do
     do_make_announce_data(
       actor,
       object_actor_url,
@@ -367,6 +452,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
       "type" => "Create",
       "to" => object["to"],
       "cc" => object["cc"],
+      "attributedTo" => object["attributedTo"] || object["actor"],
       "actor" => object["actor"],
       "object" => object,
       "published" => make_date(),
@@ -494,7 +580,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   @doc """
   Sign a request with the instance Relay actor.
   """
-  @spec sign_fetch_relay(List.t(), String.t(), String.t()) :: List.t()
+  @spec sign_fetch_relay(Enum.t(), String.t(), String.t()) :: Enum.t()
   def sign_fetch_relay(headers, id, date) do
     with %Actor{} = actor <- Relay.get_actor() do
       sign_fetch(headers, actor, id, date)
@@ -504,7 +590,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   @doc """
   Sign a request with an actor.
   """
-  @spec sign_fetch(List.t(), Actor.t(), String.t(), String.t()) :: List.t()
+  @spec sign_fetch(Enum.t(), Actor.t(), String.t(), String.t()) :: Enum.t()
   def sign_fetch(headers, actor, id, date) do
     if Mobilizon.Config.get([:activitypub, :sign_object_fetches]) do
       headers ++ make_signature(actor, id, date)
@@ -516,12 +602,23 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   @doc """
   Add the Date header to the request if we sign object fetches
   """
-  @spec maybe_date_fetch(List.t(), String.t()) :: List.t()
+  @spec maybe_date_fetch(Enum.t(), String.t()) :: Enum.t()
   def maybe_date_fetch(headers, date) do
     if Mobilizon.Config.get([:activitypub, :sign_object_fetches]) do
       headers ++ [{:Date, date}]
     else
       headers
     end
+  end
+
+  def check_for_actor_key_rotation(%Actor{} = actor) do
+    if Actors.should_rotate_actor_key(actor) do
+      Actors.schedule_key_rotation(
+        actor,
+        Application.get_env(:mobilizon, :activitypub)[:actor_key_rotation_delay]
+      )
+    end
+
+    :ok
   end
 end

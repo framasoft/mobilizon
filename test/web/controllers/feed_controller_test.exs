@@ -91,24 +91,26 @@ defmodule Mobilizon.Web.FeedControllerTest do
   describe "/@:preferred_username/feed/ics" do
     test "it returns an iCalendar representation of the actor's public events with an actor publicly visible",
          %{conn: conn} do
-      actor = insert(:actor, visibility: :public)
+      actor = insert(:actor)
+      group = insert(:group, visibility: :public)
       tag1 = insert(:tag, title: "iCalendar", slug: "icalendar")
       tag2 = insert(:tag, title: "Apple", slug: "apple")
-      event1 = insert(:event, organizer_actor: actor, tags: [tag1])
-      event2 = insert(:event, organizer_actor: actor, tags: [tag1, tag2])
+      event1 = insert(:event, organizer_actor: actor, attributed_to: group, tags: [tag1])
+      event2 = insert(:event, organizer_actor: actor, attributed_to: group, tags: [tag1, tag2])
 
       conn =
         conn
         |> get(
           Endpoint
-          |> Routes.feed_url(:actor, actor.preferred_username, "ics")
+          |> Routes.feed_url(:actor, group.preferred_username, "ics")
           |> URI.decode()
         )
 
-      assert response(conn, 200) =~ "BEGIN:VCALENDAR"
+      assert res = response(conn, 200)
+      assert res =~ "BEGIN:VCALENDAR"
       assert response_content_type(conn, :calendar) =~ "charset=utf-8"
 
-      [entry1, entry2] = entries = ExIcal.parse(conn.resp_body)
+      [entry1, entry2] = entries = ExIcal.parse(res)
 
       Enum.each(entries, fn entry ->
         assert entry.summary in [event1.title, event2.title]
@@ -120,7 +122,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
 
     test "it returns a 404 page for the actor's public events iCal feed with an actor not publicly visible",
          %{conn: conn} do
-      actor = insert(:actor, visibility: :private)
+      actor = insert(:group, visibility: :private)
       tag1 = insert(:tag, title: "iCalendar", slug: "icalendar")
       tag2 = insert(:tag, title: "Apple", slug: "apple")
       insert(:event, organizer_actor: actor, tags: [tag1])

@@ -1,0 +1,62 @@
+{
+  "html_attributions": [],
+  "result": {
+    "address_components": [
+      {
+        "long_name": "10bis",
+        "short_name": "10bis",
+        "types": ["street_number"]
+      },
+      {
+        "long_name": "Rue Jangot",
+        "short_name": "Rue Jangot",
+        "types": ["route"]
+      },
+      {
+        "long_name": "Lyon",
+        "short_name": "Lyon",
+        "types": ["locality", "political"]
+      },
+      {
+        "long_name": "Rhône",
+        "short_name": "Rhône",
+        "types": ["administrative_area_level_2", "political"]
+      },
+      {
+        "long_name": "Auvergne-Rhône-Alpes",
+        "short_name": "Auvergne-Rhône-Alpes",
+        "types": ["administrative_area_level_1", "political"]
+      },
+      {
+        "long_name": "France",
+        "short_name": "FR",
+        "types": ["country", "political"]
+      },
+      { "long_name": "69007", "short_name": "69007", "types": ["postal_code"] }
+    ],
+    "adr_address": "\u003cspan class=\"street-address\"\u003e10bis Rue Jangot\u003c/span\u003e, \u003cspan class=\"postal-code\"\u003e69007\u003c/span\u003e \u003cspan class=\"locality\"\u003eLyon\u003c/span\u003e, \u003cspan class=\"country-name\"\u003eFrance\u003c/span\u003e",
+    "formatted_address": "10bis Rue Jangot, 69007 Lyon, France",
+    "geometry": {
+      "location": { "lat": 45.751725, "lng": 4.8424966 },
+      "viewport": {
+        "northeast": { "lat": 45.7531097802915, "lng": 4.843951380291502 },
+        "southwest": { "lat": 45.7504118197085, "lng": 4.841253419708497 }
+      }
+    },
+    "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/geocode-71.png",
+    "id": "4a3482a7a74c6203048adf713b736186c4ace7cd",
+    "name": "10bis Rue Jangot",
+    "place_id": "ChIJrW0QikTq9EcR96jk2OnO75w",
+    "plus_code": {
+      "compound_code": "QR2R+MX Lyon, France",
+      "global_code": "8FQ6QR2R+MX"
+    },
+    "reference": "ChIJrW0QikTq9EcR96jk2OnO75w",
+    "scope": "GOOGLE",
+    "types": ["street_address"],
+    "url": "https://maps.google.com/?q=10bis+Rue+Jangot,+69007+Lyon,+France&ftid=0x47f4ea448a106dad:0x9cefcee9d8e4a8f7",
+    "utc_offset": 120,
+    "vicinity": "Lyon"
+  },
+  "status": "OK"
+}

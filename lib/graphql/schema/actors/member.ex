@@ -15,6 +15,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
     field(:actor, :person, description: "Which profile is member of")
     field(:role, :member_role_enum, description: "The role of this membership")
     field(:invited_by, :person, description: "Who invited this member")
+    field(:inserted_at, :naive_datetime, description: "When was this member created")
   end
 
   enum :member_role_enum do

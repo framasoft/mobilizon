@@ -1,4 +1,4 @@
-import { RouteConfig } from "vue-router";
+import { RouteConfig, Route } from "vue-router";
 
 export enum GroupsRouteName {
   TODO_LISTS = "TODO_LISTS",
@@ -10,6 +10,10 @@ export enum GroupsRouteName {
   RESOURCES = "RESOURCES",
   RESOURCE_FOLDER_ROOT = "RESOURCE_FOLDER_ROOT",
   RESOURCE_FOLDER = "RESOURCE_FOLDER",
+  POST_CREATE = "POST_CREATE",
+  POST_EDIT = "POST_EDIT",
+  POST = "POST",
+  POSTS = "POSTS",
 }
 
 const resourceFolder = () => import("@/views/Resources/ResourceFolder.vue");
@@ -61,6 +65,7 @@ export const groupsRoutes: RouteConfig[] = [
       {
         path: "public",
         name: GroupsRouteName.GROUP_PUBLIC_SETTINGS,
+        component: () => import("../views/Group/GroupSettings.vue"),
       },
       {
         path: "members",
@@ -69,5 +74,29 @@ export const groupsRoutes: RouteConfig[] = [
         props: true,
       },
     ],
+  },
+  {
+    path: "/@:preferredUsername/p/new",
+    component: () => import("@/views/Posts/Edit.vue"),
+    props: true,
+    name: GroupsRouteName.POST_CREATE,
+  },
+  {
+    path: "/p/:slug/edit",
+    component: () => import("@/views/Posts/Edit.vue"),
+    props: (route: Route) => ({ ...route.params, ...{ isUpdate: true } }),
+    name: GroupsRouteName.POST_EDIT,
+  },
+  {
+    path: "/p/:slug",
+    component: () => import("@/views/Posts/Post.vue"),
+    props: true,
+    name: GroupsRouteName.POST,
+  },
+  {
+    path: "/@:preferredUsername/p",
+    component: () => import("@/views/Posts/List.vue"),
+    props: true,
+    name: GroupsRouteName.POSTS,
   },
 ];

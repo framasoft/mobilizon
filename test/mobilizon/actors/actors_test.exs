@@ -5,9 +5,9 @@ defmodule Mobilizon.ActorsTest do
 
   import Mobilizon.Factory
 
-  alias Mobilizon.{Actors, Config, Conversations, Events, Tombstone, Users}
+  alias Mobilizon.{Actors, Config, Discussions, Events, Tombstone, Users}
   alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
-  alias Mobilizon.Conversations.Comment
+  alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
   alias Mobilizon.Media.File, as: FileModel
   alias Mobilizon.Service.Workers
@@ -291,6 +291,56 @@ defmodule Mobilizon.ActorsTest do
       assert actor = actor_fetched
     end
 
+    test "perform delete the actor actually deletes the actor", %{
+      actor: %Actor{avatar: %{url: avatar_url}, banner: %{url: banner_url}, id: actor_id} = actor
+    } do
+      %Event{url: event1_url} = event1 = insert(:event, organizer_actor: actor)
+      insert(:event, organizer_actor: actor)
+
+      %Comment{url: comment1_url} = comment1 = insert(:comment, actor: actor)
+      insert(:comment, actor: actor)
+
+      %URI{path: "/media/" <> avatar_path} = URI.parse(avatar_url)
+      %URI{path: "/media/" <> banner_path} = URI.parse(banner_url)
+
+      assert File.exists?(
+               Config.get!([Uploader.Local, :uploads]) <>
+                 "/" <> avatar_path
+             )
+
+      assert File.exists?(
+               Config.get!([Uploader.Local, :uploads]) <>
+                 "/" <> banner_path
+             )
+
+      assert {:ok, %Actor{}} = Actors.perform(:delete_actor, actor)
+
+      assert %Actor{
+               name: nil,
+               summary: nil,
+               suspended: true,
+               avatar: nil,
+               banner: nil,
+               user_id: nil
+             } = Actors.get_actor(actor_id)
+
+      assert {:error, :event_not_found} = Events.get_event(event1.id)
+      assert %Tombstone{} = Tombstone.find_tombstone(event1_url)
+      assert %Comment{deleted_at: deleted_at} = Discussions.get_comment(comment1.id)
+      refute is_nil(deleted_at)
+      assert %Tombstone{} = Tombstone.find_tombstone(comment1_url)
+
+      refute File.exists?(
+               Config.get!([Uploader.Local, :uploads]) <>
+                 "/" <> avatar_path
+             )
+
+      refute File.exists?(
+               Config.get!([Uploader.Local, :uploads]) <>
+                 "/" <> banner_path
+             )
+    end
+
     test "delete_actor/1 deletes the actor", %{
       actor: %Actor{avatar: %{url: avatar_url}, banner: %{url: banner_url}, id: actor_id} = actor
     } do
@@ -333,7 +383,7 @@ defmodule Mobilizon.ActorsTest do
 
       assert {:error, :event_not_found} = Events.get_event(event1.id)
       assert %Tombstone{} = Tombstone.find_tombstone(event1_url)
-      assert %Comment{deleted_at: deleted_at} = Conversations.get_comment(comment1.id)
+      assert %Comment{deleted_at: deleted_at} = Discussions.get_comment(comment1.id)
       refute is_nil(deleted_at)
       assert %Tombstone{} = Tombstone.find_tombstone(comment1_url)
 

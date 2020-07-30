@@ -81,7 +81,7 @@ import { IPerson } from "../../types/actor";
   },
 })
 export default class AdminUserProfile extends Vue {
-  @Prop({ required: true }) id!: String;
+  @Prop({ required: true }) id!: string;
 
   user!: IUser;
 

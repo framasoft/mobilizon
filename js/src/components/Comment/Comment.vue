@@ -138,7 +138,7 @@ import { IEvent, CommentModeration } from "../../types/event.model";
 import ReportModal from "../Report/ReportModal.vue";
 import { IReport } from "../../types/report.model";
 import { CREATE_REPORT } from "../../graphql/report";
-import PopoverActorCard from "../../components/Account/PopoverActorCard.vue";
+import PopoverActorCard from "../Account/PopoverActorCard.vue";
 
 @Component({
   apollo: {

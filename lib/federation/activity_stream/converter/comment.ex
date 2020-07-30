@@ -7,22 +7,30 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
   """
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Conversations.Comment, as: CommentModel
+  alias Mobilizon.Discussions
+  alias Mobilizon.Discussions.Comment, as: CommentModel
+  alias Mobilizon.Discussions.Discussion
   alias Mobilizon.Events.Event
-  alias Mobilizon.Tombstone, as: TombstoneModel
-
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Visibility
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
-  alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
+  alias Mobilizon.Federation.ActivityStream.Converter.Comment, as: CommentConverter
+  alias Mobilizon.Tombstone, as: TombstoneModel
+
+  import Mobilizon.Federation.ActivityStream.Converter.Utils,
+    only: [
+      fetch_tags: 1,
+      fetch_mentions: 1,
+      build_tags: 1,
+      build_mentions: 1,
+      maybe_fetch_actor_and_attributed_to_id: 1
+    ]
 
   require Logger
 
   @behaviour Converter
 
   defimpl Convertible, for: CommentModel do
-    alias Mobilizon.Federation.ActivityStream.Converter.Comment, as: CommentConverter
-
     defdelegate model_to_as(comment), to: CommentConverter
   end
 
@@ -35,61 +43,35 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
     Logger.debug("We're converting raw ActivityStream data to a comment entity")
     Logger.debug(inspect(object))
 
-    with author_url <- Map.get(object, "actor") || Map.get(object, "attributedTo"),
-         {:ok, %Actor{id: actor_id, domain: domain, suspended: false}} <-
-           ActivityPub.get_or_fetch_actor_by_url(author_url),
-         {:tags, tags} <- {:tags, ConverterUtils.fetch_tags(Map.get(object, "tag", []))},
+    with {%Actor{id: actor_id, domain: actor_domain}, attributed_to} <-
+           maybe_fetch_actor_and_attributed_to_id(object),
+         {:tags, tags} <- {:tags, fetch_tags(Map.get(object, "tag", []))},
          {:mentions, mentions} <-
-           {:mentions, ConverterUtils.fetch_mentions(Map.get(object, "tag", []))} do
+           {:mentions, fetch_mentions(Map.get(object, "tag", []))},
+         discussion <-
+           Discussions.get_discussion_by_url(Map.get(object, "context")) do
       Logger.debug("Inserting full comment")
       Logger.debug(inspect(object))
 
       data = %{
         text: object["content"],
         url: object["id"],
+        # Will be used in conversations, ignored in basic comments
+        title: object["name"],
+        context: object["context"],
         actor_id: actor_id,
+        attributed_to_id: if(is_nil(attributed_to), do: nil, else: attributed_to.id),
         in_reply_to_comment_id: nil,
         event_id: nil,
         uuid: object["uuid"],
+        discussion_id: if(is_nil(discussion), do: nil, else: discussion.id),
         tags: tags,
         mentions: mentions,
-        local: is_nil(domain),
+        local: is_nil(actor_domain),
         visibility: if(Visibility.is_public?(object), do: :public, else: :private)
       }
 
-      # We fetch the parent object
-      Logger.debug("We're fetching the parent object")
-
-      if Map.has_key?(object, "inReplyTo") && object["inReplyTo"] != nil &&
-           object["inReplyTo"] != "" do
-        Logger.debug(fn -> "Object has inReplyTo #{object["inReplyTo"]}" end)
-
-        case ActivityPub.fetch_object_from_url(object["inReplyTo"]) do
-          # Reply to an event (Event)
-          {:ok, %Event{id: id}} ->
-            Logger.debug("Parent object is an event")
-            data |> Map.put(:event_id, id)
-
-          # Reply to a comment (Comment)
-          {:ok, %CommentModel{id: id} = comment} ->
-            Logger.debug("Parent object is another comment")
-
-            data
-            |> Map.put(:in_reply_to_comment_id, id)
-            |> Map.put(:origin_comment_id, comment |> CommentModel.get_thread_id())
-            |> Map.put(:event_id, comment.event_id)
-
-          # Anything else is kind of a MP
-          {:error, parent} ->
-            Logger.warn("Parent object is something we don't handle")
-            Logger.debug(inspect(parent))
-            data
-        end
-      else
-        Logger.debug("No parent object for this comment")
-
-        data
-      end
+      maybe_fetch_parent_object(object, data)
     else
       {:ok, %Actor{suspended: true}} ->
         :error
@@ -102,10 +84,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
   @impl Converter
   @spec model_to_as(CommentModel.t()) :: map
   def model_to_as(%CommentModel{deleted_at: nil} = comment) do
-    to =
-      if comment.visibility == :public,
-        do: ["https://www.w3.org/ns/activitystreams#Public"],
-        else: [comment.actor.followers_url]
+    to = determine_to(comment)
 
     object = %{
       "type" => "Note",
@@ -114,12 +93,18 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
       "content" => comment.text,
       "mediaType" => "text/html",
       "actor" => comment.actor.url,
-      "attributedTo" => comment.actor.url,
+      "attributedTo" =>
+        if(is_nil(comment.attributed_to), do: nil, else: comment.attributed_to.url) ||
+          comment.actor.url,
       "uuid" => comment.uuid,
       "id" => comment.url,
-      "tag" =>
-        ConverterUtils.build_mentions(comment.mentions) ++ ConverterUtils.build_tags(comment.tags)
+      "tag" => build_mentions(comment.mentions) ++ build_tags(comment.tags)
     }
+
+    object =
+      if comment.discussion_id,
+        do: Map.put(object, "context", comment.discussion.url),
+        else: object
 
     cond do
       comment.in_reply_to_comment ->
@@ -133,15 +118,78 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
     end
   end
 
-  @impl Converter
-  @spec model_to_as(CommentModel.t()) :: map
   @doc """
   A "soft-deleted" comment is a tombstone
   """
+  @impl Converter
+  @spec model_to_as(CommentModel.t()) :: map
   def model_to_as(%CommentModel{} = comment) do
     Convertible.model_to_as(%TombstoneModel{
       uri: comment.url,
       inserted_at: comment.deleted_at
     })
+  end
+
+  @spec determine_to(CommentModel.t()) :: [String.t()]
+  defp determine_to(%CommentModel{} = comment) do
+    cond do
+      not is_nil(comment.attributed_to) ->
+        [comment.attributed_to.url]
+
+      comment.visibility == :public ->
+        ["https://www.w3.org/ns/activitystreams#Public"]
+
+      true ->
+        [comment.actor.followers_url]
+    end
+  end
+
+  defp maybe_fetch_parent_object(object, data) do
+    # We fetch the parent object
+    Logger.debug("We're fetching the parent object")
+
+    if Map.has_key?(object, "inReplyTo") && object["inReplyTo"] != nil &&
+         object["inReplyTo"] != "" do
+      Logger.debug(fn -> "Object has inReplyTo #{object["inReplyTo"]}" end)
+
+      case ActivityPub.fetch_object_from_url(object["inReplyTo"]) do
+        # Reply to an event (Event)
+        {:ok, %Event{id: id}} ->
+          Logger.debug("Parent object is an event")
+          data |> Map.put(:event_id, id)
+
+        # Reply to a comment (Comment)
+        {:ok, %CommentModel{id: id} = comment} ->
+          Logger.debug("Parent object is another comment")
+
+          data
+          |> Map.put(:in_reply_to_comment_id, id)
+          |> Map.put(:origin_comment_id, comment |> CommentModel.get_thread_id())
+          |> Map.put(:event_id, comment.event_id)
+
+        # Reply to a discucssion (Discussion)
+        {:ok,
+         %Discussion{
+           id: discussion_id,
+           last_comment: %CommentModel{id: last_comment_id, origin_comment_id: origin_comment_id}
+         } = _discussion} ->
+          Logger.debug("Parent object is a discussion")
+
+          data
+          |> Map.put(:in_reply_to_comment_id, last_comment_id)
+          |> Map.put(:origin_comment_id, origin_comment_id)
+          |> Map.put(:discussion_id, discussion_id)
+
+        # Anything else is kind of a MP
+        {:error, parent} ->
+          Logger.warn("Parent object is something we don't handle")
+          Logger.debug(inspect(parent))
+          data
+      end
+    else
+      Logger.debug("No parent object for this comment")
+
+      data
+    end
   end
 end

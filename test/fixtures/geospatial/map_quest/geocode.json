@@ -1,0 +1,43 @@
+{
+  "info": {
+    "statuscode": 0,
+    "copyright": {
+      "text": "\\u00A9 2019 MapQuest, Inc.",
+      "imageUrl": "http://api.mqcdn.com/res/mqlogo.gif",
+      "imageAltText": "\\u00A9 2019 MapQuest, Inc."
+    },
+    "messages": []
+  },
+  "options": { "maxResults": 1, "thumbMaps": true, "ignoreLatLngInput": false },
+  "results": [
+    {
+      "providedLocation": { "latLng": { "lat": 45.751718, "lng": 4.842569 } },
+      "locations": [
+        {
+          "street": "10 Rue Jangot",
+          "adminArea6": "",
+          "adminArea6Type": "Neighborhood",
+          "adminArea5": "Lyon",
+          "adminArea5Type": "City",
+          "adminArea4": "",
+          "adminArea4Type": "County",
+          "adminArea3": "Auvergne-Rhône-Alpes",
+          "adminArea3Type": "State",
+          "adminArea1": "FR",
+          "adminArea1Type": "Country",
+          "postalCode": "69007",
+          "geocodeQualityCode": "P1AAA",
+          "geocodeQuality": "POINT",
+          "dragPoint": false,
+          "sideOfStreet": "N",
+          "linkId": "0",
+          "unknownInput": "",
+          "type": "s",
+          "latLng": { "lat": 45.751714, "lng": 4.842566 },
+          "displayLatLng": { "lat": 45.751714, "lng": 4.842566 },
+          "mapUrl": "http://open.mapquestapi.com/staticmap/v5/map?key=secret_key&type=map&size=225,160&locations=45.7517141,4.8425657|marker-sm-50318A-1&scalebar=true&zoom=15&rand=-570915433"
+        }
+      ]
+    }
+  ]
+}

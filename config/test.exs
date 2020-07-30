@@ -44,6 +44,11 @@ config :mobilizon, Mobilizon.Web.Upload.Uploader.Local, uploads: "test/uploads"
 config :exvcr,
   vcr_cassette_library_dir: "test/fixtures/vcr_cassettes"
 
+config :tesla, Mobilizon.Service.HTTP.ActivityPub,
+  adapter: Mobilizon.Service.HTTP.ActivityPub.Mock
+
+config :tesla, Mobilizon.Service.HTTP.BaseClient, adapter: Mobilizon.Service.HTTP.BaseClient.Mock
+
 config :mobilizon, Mobilizon.Service.Geospatial, service: Mobilizon.Service.Geospatial.Mock
 
 config :mobilizon, Oban, queues: false, prune: :disabled, crontab: false

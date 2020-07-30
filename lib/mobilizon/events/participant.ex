@@ -19,7 +19,7 @@ defmodule Mobilizon.Events.Participant do
           url: String.t(),
           event: Event.t(),
           actor: Actor.t(),
-          metadata: Map.t()
+          metadata: map()
         }
 
   @required_attrs [:url, :role, :event_id, :actor_id]

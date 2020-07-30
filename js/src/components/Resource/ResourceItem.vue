@@ -81,7 +81,7 @@ a {
   flex: 1;
 
   .preview {
-    flex: 0 0 100px;
+    flex: 0 0 50px;
     position: relative;
     display: flex;
     align-items: center;

@@ -10,15 +10,11 @@ defmodule Mobilizon.Federation.ActivityPub.UtilsTest do
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Router.Helpers, as: Routes
 
-  setup_all do
-    HTTPoison.start()
-  end
-
   describe "make" do
     test "comment data from struct" do
       comment = insert(:comment)
       tag = insert(:tag, title: "MyTag")
-      reply = insert(:comment, in_reply_to_comment: comment, tags: [tag])
+      reply = insert(:comment, in_reply_to_comment: comment, tags: [tag], attributed_to: nil)
 
       assert %{
                "type" => "Note",
@@ -42,8 +38,8 @@ defmodule Mobilizon.Federation.ActivityPub.UtilsTest do
     end
 
     test "comment data from map" do
-      comment = insert(:comment)
-      reply = insert(:comment, in_reply_to_comment: comment)
+      comment = insert(:comment, attributed_to: nil)
+      reply = insert(:comment, in_reply_to_comment: comment, attributed_to: nil)
       to = ["https://www.w3.org/ns/activitystreams#Public"]
       comment_data = Converter.Comment.model_to_as(reply)
       assert comment_data["type"] == "Note"

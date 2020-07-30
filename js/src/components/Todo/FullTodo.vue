@@ -24,6 +24,7 @@ import RouteName from "../../router/name";
 import { UPDATE_TODO } from "../../graphql/todos";
 import ActorAutoComplete from "../Account/ActorAutoComplete.vue";
 import { IPerson } from "../../types/actor";
+
 @Component({
   components: { ActorAutoComplete },
 })

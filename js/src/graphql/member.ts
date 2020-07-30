@@ -22,3 +22,31 @@ export const ACCEPT_INVITATION = gql`
     }
   }
 `;
+
+export const GROUP_MEMBERS = gql`
+  query($name: String!, $roles: String, $page: Int, $limit: Int) {
+    group(preferredUsername: $name) {
+      id
+      url
+      name
+      domain
+      preferredUsername
+      members(page: $page, limit: $limit, roles: $roles) {
+        elements {
+          role
+          actor {
+            id
+            name
+            domain
+            preferredUsername
+            avatar {
+              url
+            }
+          }
+          insertedAt
+        }
+        total
+      }
+    }
+  }
+`;

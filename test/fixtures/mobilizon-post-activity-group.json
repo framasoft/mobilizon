@@ -1,0 +1,52 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    "https://litepub.social/litepub/context.jsonld",
+    {
+      "Hashtag": "as:Hashtag",
+      "category": "sc:category",
+      "ical": "http://www.w3.org/2002/12/cal/ical#",
+      "joinMode": {
+        "@id": "mz:joinMode",
+        "@type": "mz:joinModeType"
+      },
+      "joinModeType": {
+        "@id": "mz:joinModeType",
+        "@type": "rdfs:Class"
+      },
+      "maximumAttendeeCapacity": "sc:maximumAttendeeCapacity",
+      "mz": "https://joinmobilizon.org/ns#",
+      "repliesModerationOption": {
+        "@id": "mz:repliesModerationOption",
+        "@type": "mz:repliesModerationOptionType"
+      },
+      "repliesModerationOptionType": {
+        "@id": "mz:repliesModerationOptionType",
+        "@type": "rdfs:Class"
+      },
+      "sc": "http://schema.org#",
+      "uuid": "sc:identifier"
+    }
+  ],
+  "actor": "http://mobilizon1.com/@user",
+  "attributedTo": "http://mobilizon1.com/@group",
+  "cc": [],
+  "id": "http://mobilizon1.com/events/f270ae07-7991-453c-9bb7-3d2122ededae/activity",
+  "object": {
+    "actor": "http://mobilizon1.com/@user",
+    "attributedTo": "http://mobilizon1.com/@group",
+    "startTime": "2018-02-12T14:08:20Z",
+    "cc": [],
+    "content": "<p><span class=\"h-card\"><a href=\"https://framapiaf.org/users/tcit\" class=\"u-url mention\">@<span>tcit</span></a></span></p>",
+    "id": "http://mobilizon1.com/events/f270ae07-7991-453c-9bb7-3d2122ededae",
+    "name": "My first event",
+    "published": "2018-02-12T14:08:20Z",
+    "tag": [],
+    "to": ["http://mobilizon1.com/@group"],
+    "type": "Event",
+    "uuid": "f270ae07-7991-453c-9bb7-3d2122ededae"
+  },
+  "published": "2018-02-12T14:08:20Z",
+  "to": ["http://mobilizon1.com/@group"],
+  "type": "Create"
+}

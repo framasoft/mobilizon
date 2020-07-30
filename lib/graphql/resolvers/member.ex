@@ -16,14 +16,26 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
   """
   def find_members_for_group(
         %Actor{id: group_id} = group,
-        _args,
+        %{page: page, limit: limit, roles: roles},
         %{
           context: %{current_user: %User{} = user}
         } = _resolution
       ) do
     with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
-         %Page{} = page <- Actors.list_members_for_group(group) do
+         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)} do
+      roles =
+        case roles do
+          "" ->
+            []
+
+          roles ->
+            roles
+            |> String.split(",")
+            |> Enum.map(&String.downcase/1)
+            |> Enum.map(&String.to_existing_atom/1)
+        end
+
+      %Page{} = page = Actors.list_members_for_group(group, roles, page, limit)
       {:ok, page}
     else
       {:member, false} ->

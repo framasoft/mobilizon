@@ -1,0 +1,58 @@
+{
+  "html_attributions": [],
+  "result": {
+    "address_components": [
+      { "long_name": "10", "short_name": "10", "types": ["street_number"] },
+      {
+        "long_name": "Rue Jangot",
+        "short_name": "Rue Jangot",
+        "types": ["route"]
+      },
+      {
+        "long_name": "Lyon",
+        "short_name": "Lyon",
+        "types": ["locality", "political"]
+      },
+      {
+        "long_name": "Rhône",
+        "short_name": "Rhône",
+        "types": ["administrative_area_level_2", "political"]
+      },
+      {
+        "long_name": "Auvergne-Rhône-Alpes",
+        "short_name": "Auvergne-Rhône-Alpes",
+        "types": ["administrative_area_level_1", "political"]
+      },
+      {
+        "long_name": "France",
+        "short_name": "FR",
+        "types": ["country", "political"]
+      },
+      { "long_name": "69007", "short_name": "69007", "types": ["postal_code"] }
+    ],
+    "adr_address": "\u003cspan class=\"street-address\"\u003e10 Rue Jangot\u003c/span\u003e, \u003cspan class=\"postal-code\"\u003e69007\u003c/span\u003e \u003cspan class=\"locality\"\u003eLyon\u003c/span\u003e, \u003cspan class=\"country-name\"\u003eFrance\u003c/span\u003e",
+    "formatted_address": "10 Rue Jangot, 69007 Lyon, France",
+    "geometry": {
+      "location": { "lat": 45.75164940000001, "lng": 4.842403200000001 },
+      "viewport": {
+        "northeast": { "lat": 45.7530412802915, "lng": 4.843668630291503 },
+        "southwest": { "lat": 45.75034331970851, "lng": 4.840970669708498 }
+      }
+    },
+    "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/geocode-71.png",
+    "id": "61b9418d092d2ed05ddd65a55dddefda5b9628cc",
+    "name": "10 Rue Jangot",
+    "place_id": "ChIJtW0QikTq9EcRLI4Vy6bRx0U",
+    "plus_code": {
+      "compound_code": "QR2R+MX Lyon, France",
+      "global_code": "8FQ6QR2R+MX"
+    },
+    "reference": "ChIJtW0QikTq9EcRLI4Vy6bRx0U",
+    "scope": "GOOGLE",
+    "types": ["street_address"],
+    "url": "https://maps.google.com/?q=10+Rue+Jangot,+69007+Lyon,+France&ftid=0x47f4ea448a106db5:0x45c7d1a6cb158e2c",
+    "utc_offset": 120,
+    "vicinity": "Lyon"
+  },
+  "status": "OK"
+}

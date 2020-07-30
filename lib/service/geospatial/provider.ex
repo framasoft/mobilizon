@@ -15,7 +15,6 @@ defmodule Mobilizon.Service.Geospatial.Provider do
 
   ## Shared options
 
-    * `:user_agent` User-Agent string to send to the backend. Defaults to `"Mobilizon"` or `Mobilizon.Config.instance_user_agent/0`
     * `:lang` Lang in which to prefer results. Used as a request parameter or
       through an `Accept-Language` HTTP header. Defaults to `"en"`.
     * `:country_code` An ISO 3166 country code. String or `nil`

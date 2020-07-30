@@ -118,12 +118,15 @@ defmodule Mobilizon.Factory do
   def comment_factory do
     uuid = Ecto.UUID.generate()
 
-    %Mobilizon.Conversations.Comment{
+    %Mobilizon.Discussions.Comment{
       text: "My Comment",
       actor: build(:actor),
       event: build(:event),
       uuid: uuid,
       mentions: [],
+      attributed_to: nil,
+      local: true,
+      deleted_at: nil,
       tags: build_list(3, :tag),
       in_reply_to_comment: nil,
       url: Routes.page_url(Endpoint, :comment, uuid)
@@ -142,6 +145,7 @@ defmodule Mobilizon.Factory do
       begins_on: start,
       ends_on: Timex.shift(start, hours: 2),
       organizer_actor: actor,
+      attributed_to: nil,
       category: sequence("something"),
       physical_address: build(:address),
       visibility: :public,
@@ -322,6 +326,52 @@ defmodule Mobilizon.Factory do
       group: sequence("group"),
       name: sequence("name"),
       value: sequence("value")
+    }
+  end
+
+  def post_factory do
+    uuid = Ecto.UUID.generate()
+
+    %Mobilizon.Posts.Post{
+      body: "The <b>HTML</b>body for my Article",
+      title: "My Awesome article",
+      slug: "my-awesome-article-#{ShortUUID.encode!(uuid)}",
+      author: build(:actor),
+      attributed_to: build(:group),
+      id: uuid,
+      draft: false,
+      tags: build_list(3, :tag),
+      visibility: :public,
+      publish_at: DateTime.utc_now(),
+      url: Routes.page_url(Endpoint, :post, uuid)
+    }
+  end
+
+  def tombstone_factory do
+    uuid = Ecto.UUID.generate()
+
+    %Mobilizon.Tombstone{
+      uri: "https://mobilizon.test/comments/#{uuid}",
+      actor: build(:actor)
+    }
+  end
+
+  def discussion_factory do
+    uuid = Ecto.UUID.generate()
+    actor = build(:actor)
+    group = build(:group)
+    comment = build(:comment, actor: actor, attributed_to: group)
+    slug = "my-awesome-discussion-#{ShortUUID.encode!(uuid)}"
+
+    %Mobilizon.Discussions.Discussion{
+      title: "My Awesome discussion",
+      slug: slug,
+      creator: actor,
+      actor: group,
+      id: uuid,
+      last_comment: comment,
+      comments: [comment],
+      url: Routes.page_url(Endpoint, :discussion, group.preferred_username, slug)
     }
   end
 end

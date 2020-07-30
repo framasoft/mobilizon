@@ -1,0 +1,31 @@
+{
+  "type": "FeatureCollection",
+  "version": "draft",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [4.842569, 45.751718] },
+      "properties": {
+        "label": "10 Rue Jangot 69007 Lyon",
+        "score": 0.9999999999926557,
+        "housenumber": "10",
+        "id": "69387_3650_00010",
+        "type": "housenumber",
+        "x": 843232.29,
+        "y": 6518573.31,
+        "importance": 0.5454797306366062,
+        "name": "10 Rue Jangot",
+        "postcode": "69007",
+        "citycode": "69387",
+        "city": "Lyon",
+        "district": "Lyon 7e Arrondissement",
+        "context": "69, Rh\u00f4ne, Auvergne-Rh\u00f4ne-Alpes",
+        "street": "Rue Jangot",
+        "distance": 0
+      }
+    }
+  ],
+  "attribution": "BAN",
+  "licence": "ETALAB-2.0",
+  "limit": 1
+}

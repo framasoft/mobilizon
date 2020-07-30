@@ -23,5 +23,7 @@ defmodule Mobilizon.Web.Cache do
   defdelegate get_resource_by_uuid_with_preload(uuid), to: ActivityPub
   defdelegate get_todo_list_by_uuid_with_preload(uuid), to: ActivityPub
   defdelegate get_todo_by_uuid_with_preload(uuid), to: ActivityPub
+  defdelegate get_post_by_slug_with_preload(slug), to: ActivityPub
+  defdelegate get_discussion_by_slug_with_preload(slug), to: ActivityPub
   defdelegate get_relay, to: ActivityPub
 end

@@ -1,0 +1,68 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    {
+      "ostatus": "http://ostatus.org#",
+      "atomUri": "ostatus:atomUri",
+      "inReplyToAtomUri": "ostatus:inReplyToAtomUri",
+      "conversation": "ostatus:conversation",
+      "sensitive": "as:sensitive",
+      "toot": "http://joinmastodon.org/ns#",
+      "votersCount": "toot:votersCount",
+      "blurhash": "toot:blurhash",
+      "focalPoint": {
+        "@container": "@list",
+        "@id": "toot:focalPoint"
+      },
+      "Hashtag": "as:Hashtag"
+    }
+  ],
+  "id": "https://framapiaf.org/users/Framasoft/statuses/102093631881522097",
+  "type": "Note",
+  "summary": null,
+  "inReplyTo": null,
+  "published": "2019-05-14T09:13:13Z",
+  "url": "https://framapiaf.org/@Framasoft/102093631881522097",
+  "attributedTo": "https://framapiaf.org/users/Framasoft",
+  "to": ["https://www.w3.org/ns/activitystreams#Public"],
+  "cc": ["https://framapiaf.org/users/Framasoft/followers"],
+  "sensitive": false,
+  "atomUri": "https://framapiaf.org/users/Framasoft/statuses/102093631881522097",
+  "inReplyToAtomUri": null,
+  "conversation": "tag:framapiaf.org,2019-05-14:objectId=16200311:objectType=Conversation",
+  "content": "<p>Mobilizon : Finançons un outil pour sortir nos événements de Facebook !</p><p><a href=\"https://framablog.org/2019/05/14/mobilizon-financons-un-outil-pour-sortir-nos-evenements-de-facebook/\" rel=\"nofollow noopener noreferrer\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"ellipsis\">framablog.org/2019/05/14/mobil</span><span class=\"invisible\">izon-financons-un-outil-pour-sortir-nos-evenements-de-facebook/</span></a> <a href=\"https://framapiaf.org/tags/Framablog\" class=\"mention hashtag\" rel=\"tag\">#<span>Framablog</span></a> <a href=\"https://framapiaf.org/tags/TootOuRien\" class=\"mention hashtag\" rel=\"tag\">#<span>TootOuRien</span></a></p><p>Nous avons moins de 60 jours pour financer Mobilizon. Moins de 60 jours pour faire connaître notre projet d&apos;alternative libre et fédérée aux événements Facebook ; et pour savoir à quel point nous devons nous y investir.</p><p>Changer le logiciel de celles et ceux qui changent le …</p>",
+  "contentMap": {
+    "fr": "<p>Mobilizon : Finançons un outil pour sortir nos événements de Facebook !</p><p><a href=\"https://framablog.org/2019/05/14/mobilizon-financons-un-outil-pour-sortir-nos-evenements-de-facebook/\" rel=\"nofollow noopener noreferrer\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"ellipsis\">framablog.org/2019/05/14/mobil</span><span class=\"invisible\">izon-financons-un-outil-pour-sortir-nos-evenements-de-facebook/</span></a> <a href=\"https://framapiaf.org/tags/Framablog\" class=\"mention hashtag\" rel=\"tag\">#<span>Framablog</span></a> <a href=\"https://framapiaf.org/tags/TootOuRien\" class=\"mention hashtag\" rel=\"tag\">#<span>TootOuRien</span></a></p><p>Nous avons moins de 60 jours pour financer Mobilizon. Moins de 60 jours pour faire connaître notre projet d&apos;alternative libre et fédérée aux événements Facebook ; et pour savoir à quel point nous devons nous y investir.</p><p>Changer le logiciel de celles et ceux qui changent le …</p>"
+  },
+  "attachment": [
+    {
+      "type": "Document",
+      "mediaType": "image/jpeg",
+      "url": "https://framapiaf.s3.framasoft.org/framapiaf/media_attachments/files/003/337/144/original/39d457fd9e0f0171.jpg",
+      "name": null,
+      "blurhash": "UIF=jrpIM|~q~VT0%2t6Ne9a?G-;9ZRP%2Rk"
+    }
+  ],
+  "tag": [
+    {
+      "type": "Hashtag",
+      "href": "https://framapiaf.org/tags/framablog",
+      "name": "#framablog"
+    },
+    {
+      "type": "Hashtag",
+      "href": "https://framapiaf.org/tags/tootourien",
+      "name": "#tootourien"
+    }
+  ],
+  "replies": {
+    "id": "https://framapiaf.org/users/Framasoft/statuses/102093631881522097/replies",
+    "type": "Collection",
+    "first": {
+      "type": "CollectionPage",
+      "next": "https://framapiaf.org/users/Framasoft/statuses/102093631881522097/replies?only_other_accounts=true&page=true",
+      "partOf": "https://framapiaf.org/users/Framasoft/statuses/102093631881522097/replies",
+      "items": []
+    }
+  }
+}
