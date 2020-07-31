@@ -106,9 +106,12 @@ export class Address implements IAddress {
     return { name, alternativeName, poiIcon };
   }
 
-  get fullName() {
+  get fullName(): string {
     const { name, alternativeName } = this.poiInfos;
-    return `${name}, ${alternativeName}`;
+    if (name && alternativeName) {
+      return `${name}, ${alternativeName}`;
+    }
+    return "";
   }
 
   get iconForPOI(): IPOIIcon {

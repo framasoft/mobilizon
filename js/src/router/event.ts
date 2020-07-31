@@ -1,6 +1,7 @@
 import { RouteConfig, Route } from "vue-router";
 import EventList from "../views/Event/EventList.vue";
 import Location from "../views/Location.vue";
+import Search from "../views/Search.vue";
 
 const participations = () =>
   import(/* webpackChunkName: "participations" */ "@/views/Event/Participants.vue");
@@ -112,6 +113,8 @@ export const eventRoutes: RouteConfig[] = [
   {
     path: "/tag/:tag",
     name: EventRouteName.TAG,
-    redirect: "/search/:tag",
+    component: Search,
+    props: true,
+    meta: { requiredAuth: false },
   },
 ];

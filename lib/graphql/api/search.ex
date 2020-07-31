@@ -51,25 +51,20 @@ defmodule Mobilizon.GraphQL.API.Search do
   """
   @spec search_events(String.t(), integer | nil, integer | nil) ::
           {:ok, Page.t()} | {:error, String.t()}
-  def search_events(search, page \\ 1, limit \\ 10) do
-    search = String.trim(search)
+  def search_events(%{term: term} = args, page \\ 1, limit \\ 10) do
+    term = String.trim(term)
 
-    cond do
-      search == "" ->
-        {:error, "Search can't be empty"}
+    if is_url(term) do
+      # skip, if it's w not an actor
+      case process_from_url(term) do
+        %Page{total: _total, elements: _elements} = page ->
+          {:ok, page}
 
-      is_url(search) ->
-        # skip, if it's w not an actor
-        case process_from_url(search) do
-          %Page{total: _total, elements: _elements} = page ->
-            {:ok, page}
-
-          _ ->
-            {:ok, %{total: 0, elements: []}}
-        end
-
-      true ->
-        {:ok, Events.build_events_for_search(search, page, limit)}
+        _ ->
+          {:ok, %{total: 0, elements: []}}
+      end
+    else
+      {:ok, Events.build_events_for_search(Map.put(args, :term, term), page, limit)}
     end
   end
 

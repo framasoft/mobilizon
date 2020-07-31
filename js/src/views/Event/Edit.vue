@@ -29,7 +29,7 @@
           {{ $t("Date parameters") }}
         </b-button>
 
-        <address-auto-complete v-model="event.physicalAddress" />
+        <full-address-auto-complete v-model="event.physicalAddress" />
 
         <div class="field">
           <label class="label">{{ $t("Description") }}</label>
@@ -329,7 +329,7 @@ import PictureUpload from "@/components/PictureUpload.vue";
 import EditorComponent from "@/components/Editor.vue";
 import DateTimePicker from "@/components/Event/DateTimePicker.vue";
 import TagInput from "@/components/Event/TagInput.vue";
-import AddressAutoComplete from "@/components/Event/AddressAutoComplete.vue";
+import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
 import IdentityPickerWrapper from "@/views/Account/IdentityPickerWrapper.vue";
 import Subtitle from "@/components/Utils/Subtitle.vue";
 import GroupPickerWrapper from "@/components/Group/GroupPickerWrapper.vue";
@@ -370,7 +370,7 @@ const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
     GroupPickerWrapper,
     Subtitle,
     IdentityPickerWrapper,
-    AddressAutoComplete,
+    FullAddressAutoComplete,
     TagInput,
     DateTimePicker,
     PictureUpload,

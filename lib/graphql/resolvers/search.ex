@@ -22,7 +22,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Search do
   @doc """
   Search events
   """
-  def search_events(_parent, %{search: search, page: page, limit: limit}, _resolution) do
-    Search.search_events(search, page, limit)
+  def search_events(_parent, %{page: page, limit: limit} = args, _resolution) do
+    Search.search_events(args, page, limit)
   end
 end

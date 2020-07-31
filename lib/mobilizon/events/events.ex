@@ -8,6 +8,7 @@ defmodule Mobilizon.Events do
   import Ecto.Query
   import EctoEnum
 
+  import Mobilizon.Service.Guards
   import Mobilizon.Storage.Ecto
 
   alias Ecto.{Changeset, Multi}
@@ -457,14 +458,13 @@ defmodule Mobilizon.Events do
   @doc """
   Builds a page struct for events by their name.
   """
-  @spec build_events_for_search(String.t(), integer | nil, integer | nil) :: Page.t()
-  def build_events_for_search(name, page \\ nil, limit \\ nil)
-  def build_events_for_search("", _page, _limit), do: %Page{total: 0, elements: []}
-
-  def build_events_for_search(name, page, limit) do
-    name
+  @spec build_events_for_search(map(), integer | nil, integer | nil) :: Page.t()
+  def build_events_for_search(%{term: term} = args, page \\ nil, limit \\ nil) do
+    term
     |> normalize_search_string()
     |> events_for_search_query()
+    |> events_for_tag(args)
+    |> events_for_location(args)
     |> filter_local_or_from_followed_instances_events()
     |> Page.build_page(page, limit)
   end
@@ -1283,6 +1283,8 @@ defmodule Mobilizon.Events do
   end
 
   @spec do_event_for_search_query(Ecto.Query.t(), String.t()) :: Ecto.Query.t()
+  # defp do_event_for_search_query(query, ""), do: query
+
   defp do_event_for_search_query(query, search_string) do
     from(event in query,
       join: id_and_rank in matching_event_ids_and_ranks(search_string),
@@ -1290,6 +1292,34 @@ defmodule Mobilizon.Events do
       order_by: [desc: id_and_rank.rank]
     )
   end
+
+  @spec events_for_tag(Ecto.Query.t(), map()) :: Ecto.Query.t()
+  defp events_for_tag(query, %{tag: tag}) when not is_nil(tag) and tag != "" do
+    query
+    |> join(:inner, [q, _r], te in "events_tags", on: q.id == te.event_id)
+    |> join(:inner, [q, _r, te], t in Tag, on: te.tag_id == t.id)
+    |> where([q, _r, te, t], t.title == ^tag)
+  end
+
+  defp events_for_tag(query, _args), do: query
+
+  @spec events_for_location(Ecto.Query.t(), map()) :: Ecto.Query.t()
+  defp events_for_location(query, %{location: location, radius: radius})
+       when not is_nil_or_empty_string(location) and not is_nil(radius) do
+    with {lon, lat} <- Geohax.decode(location),
+         point <- Geo.WKT.decode!("SRID=4326;POINT(#{lon} #{lat})") do
+      query
+      |> join(:inner, [q], a in Address, on: a.id == q.physical_address_id, as: :address)
+      |> where(
+        [q],
+        st_dwithin_in_meters(^point, as(:address).geom, ^(radius * 1000))
+      )
+    else
+      _ -> query
+    end
+  end
+
+  defp events_for_location(query, _args), do: query
 
   @spec normalize_search_string(String.t()) :: String.t()
   defp normalize_search_string(search_string) do

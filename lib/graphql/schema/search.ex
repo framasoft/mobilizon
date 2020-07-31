@@ -45,7 +45,10 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
 
     @desc "Search events"
     field :search_events, :events do
-      arg(:search, non_null(:string))
+      arg(:term, :string, default_value: "")
+      arg(:tag, :string)
+      arg(:location, :string, description: "A geohash for coordinates")
+      arg(:radius, :float, default_value: 50)
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
 

@@ -1,6 +1,14 @@
 <template>
   <section class="container">
-    <h1>{{ $t('Search results: "{search}"', { search: this.searchTerm }) }}</h1>
+    <form @submit.prevent="processSearch" v-if="!actualTag">
+      <b-field :label="$t('Event')">
+        <b-input size="is-large" v-model="search" />
+      </b-field>
+      <b-field :label="$t('Location')">
+        <address-auto-complete v-model="location" />
+      </b-field>
+      <b-button native-type="submit">{{ $t("Go") }}</b-button>
+    </form>
     <b-loading :active.sync="$apollo.loading" />
     <b-tabs v-model="activeTab" type="is-boxed" class="searchTabs" @change="changeTab">
       <b-tab-item>
@@ -51,8 +59,11 @@ import { SEARCH_EVENTS, SEARCH_GROUPS } from "../graphql/search";
 import RouteName from "../router/name";
 import EventCard from "../components/Event/EventCard.vue";
 import GroupCard from "../components/Group/GroupCard.vue";
+import AddressAutoComplete from "../components/Event/AddressAutoComplete.vue";
 import { Group, IGroup } from "../types/actor";
+import { IAddress, Address } from "../types/address.model";
 import { SearchEvent, SearchGroup } from "../types/search.model";
+import ngeohash from "ngeohash";
 
 enum SearchTabs {
   EVENTS = 0,
@@ -71,32 +82,37 @@ const tabsName: { events: number; groups: number } = {
       query: SEARCH_EVENTS,
       variables() {
         return {
-          searchText: this.searchTerm,
+          term: this.search,
+          tag: this.actualTag,
+          location: this.geohash,
         };
       },
       skip() {
-        return !this.searchTerm;
+        return !this.search && !this.actualTag;
       },
     },
     searchGroups: {
       query: SEARCH_GROUPS,
       variables() {
         return {
-          searchText: this.searchTerm,
+          searchText: this.search,
         };
       },
       skip() {
-        return !this.searchTerm || this.isURL(this.searchTerm);
+        return !this.search || this.isURL(this.search);
       },
     },
   },
   components: {
     GroupCard,
     EventCard,
+    AddressAutoComplete,
   },
 })
 export default class Search extends Vue {
-  @Prop({ type: String, required: true }) searchTerm!: string;
+  @Prop({ type: String, required: false }) searchTerm!: string;
+
+  @Prop({ type: String, required: false }) tag!: string;
 
   @Prop({ type: String, required: false, default: "events" }) searchType!: "events" | "groups";
 
@@ -105,6 +121,10 @@ export default class Search extends Vue {
   searchGroups: SearchGroup = { total: 0, elements: [] };
 
   activeTab: SearchTabs = tabsName[this.searchType];
+
+  search: string = this.searchTerm;
+  actualTag: string = this.tag;
+  location: IAddress = new Address();
 
   @Watch("searchEvents")
   async redirectURLToEvent() {
@@ -158,6 +178,18 @@ export default class Search extends Vue {
     const a = document.createElement("a");
     a.href = url;
     return (a.host && a.host !== window.location.host) as boolean;
+  }
+
+  processSearch() {
+    this.$apollo.queries.searchEvents.refetch();
+  }
+
+  get geohash() {
+    if (this.location && this.location.geom) {
+      const [lon, lat] = this.location.geom.split(";");
+      return ngeohash.encode(lat, lon, 6);
+    }
+    return undefined;
   }
 }
 </script>
