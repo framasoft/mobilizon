@@ -45,7 +45,7 @@ defmodule Mobilizon.Service.Workers.BuildSearch do
       [
         event.id,
         event.title,
-        HTML.strip_tags(event.description),
+        HTML.strip_tags_and_insert_spaces(event.description),
         get_tags_string(event)
       ]
     )
