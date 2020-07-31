@@ -248,7 +248,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
       when not is_nil(actor) do
     actor = get_actor(params)
     Logger.debug("Performing origin check on #{id} and #{actor} URIs")
-    compare_origins?(id, actor)
+    are_same_origin?(id, actor)
   end
 
   def origin_check?(_id, %{"type" => type} = _params) when type in ["Actor", "Group"], do: true
@@ -257,8 +257,8 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
 
   def origin_check?(_id, _args), do: false
 
-  @spec compare_origins?(String.t(), String.t()) :: boolean()
-  def compare_origins?(url_1, url_2) when is_binary(url_1) and is_binary(url_2) do
+  @spec are_same_origin?(String.t(), String.t()) :: boolean()
+  def are_same_origin?(url_1, url_2) when is_binary(url_1) and is_binary(url_2) do
     uri_1 = URI.parse(url_1)
     uri_2 = URI.parse(url_2)
 

@@ -96,7 +96,7 @@ defmodule Mobilizon.Federation.ActivityPub do
         Logger.debug("Entity is already existing")
 
         entity =
-          if force_fetch and not compare_origins?(url, Endpoint.url()) do
+          if force_fetch and not are_same_origin?(url, Endpoint.url()) do
             Logger.debug("Entity is external and we want a force fetch")
 
             with {:ok, _activity, entity} <- Fetcher.fetch_and_update(url, options) do
@@ -506,18 +506,22 @@ defmodule Mobilizon.Federation.ActivityPub do
   """
   @spec make_actor_from_url(String.t(), boolean()) :: {:ok, %Actor{}} | {:error, any()}
   def make_actor_from_url(url, preload \\ false) do
-    case fetch_and_prepare_actor_from_url(url) do
-      {:ok, data} ->
-        Actors.upsert_actor(data, preload)
+    if are_same_origin?(url, Endpoint.url()) do
+      {:error, "Can't make a local actor from URL"}
+    else
+      case fetch_and_prepare_actor_from_url(url) do
+        {:ok, data} ->
+          Actors.upsert_actor(data, preload)
 
-      # Request returned 410
-      {:error, :actor_deleted} ->
-        Logger.info("Actor was deleted")
-        {:error, :actor_deleted}
+        # Request returned 410
+        {:error, :actor_deleted} ->
+          Logger.info("Actor was deleted")
+          {:error, :actor_deleted}
 
-      e ->
-        Logger.warn("Failed to make actor from url")
-        {:error, e}
+        e ->
+          Logger.warn("Failed to make actor from url")
+          {:error, e}
+      end
     end
   end
 
