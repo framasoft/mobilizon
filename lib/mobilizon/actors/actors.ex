@@ -966,7 +966,9 @@ defmodule Mobilizon.Actors do
          # Check if followed has blocked follower
          {:already_following, nil} <- {:already_following, is_following(follower, followed)} do
       Logger.info(
-        "Making #{follower.preferred_username} follow #{followed.preferred_username} " <>
+        "Making #{Actor.preferred_username_and_domain(follower)} follow #{
+          Actor.preferred_username_and_domain(followed)
+        } " <>
           "(approved: #{approved})"
       )
 
@@ -979,11 +981,13 @@ defmodule Mobilizon.Actors do
     else
       {:already_following, %Follower{}} ->
         {:error, :already_following,
-         "Could not follow actor: you are already following #{followed.preferred_username}"}
+         "Could not follow actor: you are already following #{
+           Actor.preferred_username_and_domain(followed)
+         }"}
 
       {:suspended, _} ->
         {:error, :suspended,
-         "Could not follow actor: #{followed.preferred_username} has been suspended"}
+         "Could not follow actor: #{Actor.preferred_username_and_domain(followed)} has been suspended"}
     end
   end
 

@@ -257,11 +257,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:member, true} <-
            {:member, Actors.is_member?(object_data.creator_id, object_data.actor_id)},
          {:ok, %Activity{} = activity, %Resource{} = resource} <-
-           ActivityPub.create(:resource, object_data, false),
-         %Actor{type: :Group, id: group_id} = group <-
-           Actors.get_group_by_members_url(group_url),
-         announce_id <- "#{object_url}/announces/#{group_id}",
-         {:ok, _activity, _resource} <- ActivityPub.announce(group, object, announce_id) do
+           ActivityPub.create(:resource, object_data, false) do
       {:ok, activity, resource}
     else
       {:existing_resource, %Resource{} = resource} ->
