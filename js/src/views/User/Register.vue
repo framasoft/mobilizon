@@ -2,7 +2,9 @@
   <div class="section container">
     <section class="hero">
       <div class="hero-body">
-        <h1 class="title">{{ $t("Register an account on Mobilizon!") }}</h1>
+        <h1 class="title">
+          {{ $t("Register an account on {instanceName}!", { instanceName: config.name }) }}
+        </h1>
         <i18n tag="p" path="{instanceName} is an instance of the {mobilizon} software.">
           <b slot="instanceName">{{ config.name }}</b>
           <a href="https://joinmobilizon.org" target="_blank" slot="mobilizon">{{
