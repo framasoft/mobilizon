@@ -248,8 +248,6 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     Logger.info("Handle incoming to create a resource")
     Logger.debug(inspect(data))
 
-    group_url = if is_list(to) and not is_nil(to), do: hd(to), else: to
-
     with {:existing_resource, nil} <-
            {:existing_resource, Resources.get_resource_by_url(object_url)},
          object_data when is_map(object_data) <-
