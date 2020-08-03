@@ -15,8 +15,8 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
 
   describe "search events/3" do
     @search_events_query """
-    query SearchEvents($location: String, $radius: Float, $tag: String, $term: String) {
-      searchEvents(location: $location, radius: $radius, tag: $tag, term: $term) {
+    query SearchEvents($location: String, $radius: Float, $tags: String, $term: String) {
+      searchEvents(location: $location, radius: $radius, tags: $tags, term: $term) {
         total,
         elements {
           id
@@ -108,12 +108,13 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
       tag = insert(:tag, title: "Café")
       tag2 = insert(:tag, title: "Thé")
       event = insert(:event, title: "Tour du monde", tags: [tag, tag2])
+      insert(:event, title: "Autre événement")
       Workers.BuildSearch.insert_search_event(event)
 
       res =
         AbsintheHelpers.graphql_query(conn,
           query: @search_events_query,
-          variables: %{tag: "Café"}
+          variables: %{tags: "Café,Sirop"}
         )
 
       assert res["errors"] == nil
@@ -160,7 +161,7 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
       res =
         AbsintheHelpers.graphql_query(conn,
           query: @search_events_query,
-          variables: %{location: geohash, radius: 10, tag: "Thé", term: "Monde"}
+          variables: %{location: geohash, radius: 10, tags: "Thé", term: "Monde"}
         )
 
       assert res["errors"] == nil

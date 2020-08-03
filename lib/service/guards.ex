@@ -3,5 +3,7 @@ defmodule Mobilizon.Service.Guards do
   Various guards
   """
 
-  defguard is_nil_or_empty_string(value) when is_nil(value) or value == ""
+  defguard is_valid_string?(value) when is_binary(value) and value != ""
+
+  defguard is_valid_list?(value) when is_list(value) and length(value) > 0
 end

@@ -463,9 +463,11 @@ defmodule Mobilizon.Events do
     term
     |> normalize_search_string()
     |> events_for_search_query()
-    |> events_for_tag(args)
+    |> events_for_tags(args)
     |> events_for_location(args)
+    |> filter_future_events(true)
     |> filter_local_or_from_followed_instances_events()
+    |> order_by([q], asc: q.id)
     |> Page.build_page(page, limit)
   end
 
@@ -1279,11 +1281,12 @@ defmodule Mobilizon.Events do
   defp events_for_search_query(search_string) do
     Event
     |> where([e], e.visibility == ^:public)
+    |> distinct([e], e.id)
     |> do_event_for_search_query(search_string)
   end
 
   @spec do_event_for_search_query(Ecto.Query.t(), String.t()) :: Ecto.Query.t()
-  # defp do_event_for_search_query(query, ""), do: query
+  defp do_event_for_search_query(query, ""), do: query
 
   defp do_event_for_search_query(query, search_string) do
     from(event in query,
@@ -1293,19 +1296,19 @@ defmodule Mobilizon.Events do
     )
   end
 
-  @spec events_for_tag(Ecto.Query.t(), map()) :: Ecto.Query.t()
-  defp events_for_tag(query, %{tag: tag}) when not is_nil(tag) and tag != "" do
+  @spec events_for_tags(Ecto.Query.t(), map()) :: Ecto.Query.t()
+  defp events_for_tags(query, %{tags: tags}) when is_valid_string?(tags) do
     query
-    |> join(:inner, [q, _r], te in "events_tags", on: q.id == te.event_id)
-    |> join(:inner, [q, _r, te], t in Tag, on: te.tag_id == t.id)
-    |> where([q, _r, te, t], t.title == ^tag)
+    |> join(:inner, [q], te in "events_tags", on: q.id == te.event_id)
+    |> join(:inner, [q, ..., te], t in Tag, on: te.tag_id == t.id)
+    |> where([q, ..., t], t.title in ^String.split(tags, ",", trim: true))
   end
 
-  defp events_for_tag(query, _args), do: query
+  defp events_for_tags(query, _args), do: query
 
   @spec events_for_location(Ecto.Query.t(), map()) :: Ecto.Query.t()
   defp events_for_location(query, %{location: location, radius: radius})
-       when not is_nil_or_empty_string(location) and not is_nil(radius) do
+       when is_valid_string?(location) and not is_nil(radius) do
     with {lon, lat} <- Geohax.decode(location),
          point <- Geo.WKT.decode!("SRID=4326;POINT(#{lon} #{lat})") do
       query
@@ -1553,6 +1556,7 @@ defmodule Mobilizon.Events do
 
   defp filter_future_events(query, false), do: query
 
+  @spec filter_local_or_from_followed_instances_events(Ecto.Query.t()) :: Ecto.Query.t()
   defp filter_local_or_from_followed_instances_events(query) do
     from(q in query,
       left_join: s in Share,

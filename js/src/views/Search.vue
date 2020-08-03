@@ -83,7 +83,7 @@ const tabsName: { events: number; groups: number } = {
       variables() {
         return {
           term: this.search,
-          tag: this.actualTag,
+          tags: this.actualTag,
           location: this.geohash,
         };
       },
