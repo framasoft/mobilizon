@@ -16,7 +16,7 @@ mix mobilizon.instance gen [<options>]
 ### Options
 * `-f`, `--force` Whether to erase existing files
 * `-o`, `--output PATH` The path to output the `prod.secret.exs` file. Defaults to `config/prod.secret.exs`.
-* `--output_psql PATH` The path to output the SQL script. Defaults to `setup_db.psql`.
+* `--output-psql PATH` The path to output the SQL script. Defaults to `setup_db.psql`.
 * `--domain DOMAIN` The instance's domain
 * `--instance_name INSTANCE_NAME` The instance's name
 * `--admin_email ADMIN_EMAIL` The administrator's email
