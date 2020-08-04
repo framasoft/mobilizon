@@ -79,7 +79,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
       name =
         Common.get_option(
           options,
-          :name,
+          :instance_name,
           "What is the name of your instance? (e.g. Mobilizon)"
         )
 
