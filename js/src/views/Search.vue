@@ -34,7 +34,7 @@
               </b-select>
             </b-field>
             <b-field :label="$t('Date')" label-for="date">
-              <b-select v-model="when" id="date">
+              <b-select v-model="when" id="date" :disabled="activeTab !== 0">
                 <option v-for="(option, index) in options" :key="index" :value="option">{{
                   option.label
                 }}</option>
@@ -78,6 +78,26 @@
           $t("No events found")
         }}</b-message>
       </b-tab-item>
+      <b-tab-item v-if="config && config.features.groups">
+        <template slot="header">
+          <b-icon icon="account-multiple"></b-icon>
+          <span>
+            {{ $t("Groups") }} <b-tag rounded>{{ searchGroups.total }}</b-tag>
+          </span>
+        </template>
+        <div v-if="searchGroups.total > 0" class="columns is-multiline">
+          <div
+            class="column is-one-quarter-desktop"
+            v-for="group in searchGroups.elements"
+            :key="group.uuid"
+          >
+            <group-card :group="group" />
+          </div>
+        </div>
+        <b-message v-else-if="$apollo.loading === false" type="is-danger">
+          {{ $t("No groups found") }}
+        </b-message>
+      </b-tab-item>
     </b-tabs>
   </div>
 </template>
@@ -107,6 +127,9 @@ import {
   startOfMonth,
   eachWeekendOfInterval,
 } from "date-fns";
+import { IGroup } from "../types/actor";
+import GroupCard from "../components/Group/GroupCard.vue";
+import { CONFIG } from "../graphql/config";
 
 interface ISearchTimeOption {
   label: string;
@@ -128,8 +151,10 @@ const tabsName: { events: number; groups: number } = {
   components: {
     EventCard,
     AddressAutoComplete,
+    GroupCard,
   },
   apollo: {
+    config: CONFIG,
     events: FETCH_EVENTS,
     searchEvents: {
       query: SEARCH_EVENTS,
@@ -148,6 +173,17 @@ const tabsName: { events: number; groups: number } = {
         return !this.search && !this.actualTag && !this.geohash && this.end === null;
       },
     },
+    searchGroups: {
+      query: SEARCH_GROUPS,
+      variables() {
+        return {
+          searchText: this.search,
+        };
+      },
+      skip() {
+        return this.search == null || this.search == "";
+      },
+    },
   },
   metaInfo() {
     return {
@@ -159,16 +195,14 @@ const tabsName: { events: number; groups: number } = {
   },
 })
 export default class Search extends Vue {
-  @Prop({ type: String, required: false, default: "" }) searchTerm!: string;
-  @Prop({ type: String, required: false, default: "events" }) searchType!: "events" | "groups";
-
   events: IEvent[] = [];
 
   searchEvents: Paginate<IEvent> & { initial: boolean } = { total: 0, elements: [], initial: true };
+  searchGroups: Paginate<IGroup> = { total: 0, elements: [] };
 
-  search = this.searchTerm;
+  search: string = (this.$route.query.term as string) || "";
 
-  activeTab: SearchTabs = tabsName[this.searchType];
+  activeTab: SearchTabs = tabsName[this.$route.query.searchType as "events" | "groups"] || 0;
 
   location: IAddress = new Address();
 
@@ -230,15 +264,27 @@ export default class Search extends Vue {
 
   radiusOptions: (number | null)[] = [1, 5, 10, 25, 50, 100, 150, null];
 
-  radius: number | undefined = undefined;
+  radius: number | null = null;
 
   submit() {
     this.$apollo.queries.searchEvents.refetch();
   }
 
-  @Watch("searchTerm")
+  @Watch("search")
   updateSearchTerm() {
-    this.search = this.searchTerm;
+    this.$router.push({
+      name: RouteName.SEARCH,
+      query: Object.assign({}, this.$route.query, { term: this.search }),
+    });
+  }
+
+  @Watch("activeTab")
+  updateActiveTab() {
+    const searchType = this.activeTab === tabsName.events ? "events" : "groups";
+    this.$router.push({
+      name: RouteName.SEARCH,
+      query: Object.assign({}, this.$route.query, { searchType }),
+    });
   }
 
   get weekend(): { start: Date; end: Date } {

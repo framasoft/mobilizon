@@ -48,7 +48,7 @@ export default class PageNotFound extends Vue {
   enter() {
     this.$router.push({
       name: RouteName.SEARCH,
-      params: { searchTerm: this.searchText },
+      query: { term: this.searchText },
     });
   }
 }

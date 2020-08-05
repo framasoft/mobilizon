@@ -137,9 +137,7 @@ import RouteName from "../router/name";
         this.handleErrors(graphQLErrors);
       },
     },
-    config: {
-      query: CONFIG,
-    },
+    config: CONFIG,
   },
   components: {
     Logo,
