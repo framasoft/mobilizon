@@ -29,6 +29,9 @@ defmodule Mobilizon.Addresses do
   @spec get_address_by_url(String.t()) :: Address.t() | nil
   def get_address_by_url(url), do: Repo.get_by(Address, url: url)
 
+  @spec get_address_by_origin_id(String.t()) :: Address.t() | nil
+  def get_address_by_origin_id(origin_id), do: Repo.get_by(Address, origin_id: origin_id)
+
   @doc """
   Creates an address.
   """

@@ -177,11 +177,13 @@ const tabsName: { events: number; groups: number } = {
       query: SEARCH_GROUPS,
       variables() {
         return {
-          searchText: this.search,
+          term: this.search,
+          location: this.geohash,
+          radius: this.radius,
         };
       },
       skip() {
-        return this.search == null || this.search == "";
+        return !this.search && !this.geohash;
       },
     },
   },
@@ -264,7 +266,7 @@ export default class Search extends Vue {
 
   radiusOptions: (number | null)[] = [1, 5, 10, 25, 50, 100, 150, null];
 
-  radius: number | null = null;
+  radius: number = 50;
 
   submit() {
     this.$apollo.queries.searchEvents.refetch();

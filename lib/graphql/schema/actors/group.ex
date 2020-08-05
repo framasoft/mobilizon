@@ -5,6 +5,9 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
 
   use Absinthe.Schema.Notation
 
+  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+
+  alias Mobilizon.Addresses
   alias Mobilizon.GraphQL.Resolvers.{Discussion, Group, Member, Post, Resource, Todos}
   alias Mobilizon.GraphQL.Schema
 
@@ -29,10 +32,19 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       description: "Whether the actors manually approves followers"
     )
 
+    field(:visibility, :group_visibility,
+      description: "Whether the group can be found and/or promoted"
+    )
+
     field(:suspended, :boolean, description: "If the actor is suspended")
 
     field(:avatar, :picture, description: "The actor's avatar picture")
     field(:banner, :picture, description: "The actor's banner picture")
+
+    field(:physical_address, :address,
+      resolve: dataloader(Addresses),
+      description: "The type of the event's address"
+    )
 
     # These one should have a privacy setting
     field(:following, list_of(:follower), description: "List of followings")
@@ -155,6 +167,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
           "The banner for the group, either as an object or directly the ID of an existing Picture"
       )
 
+      arg(:physical_address, :address_input)
+
       resolve(&Group.create_group/3)
     end
 
@@ -165,6 +179,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       arg(:name, :string, description: "The displayed name for the group")
       arg(:summary, :string, description: "The summary for the group", default_value: "")
 
+      arg(:visibility, :group_visibility, description: "The visibility for the group")
+
       arg(:avatar, :picture_input,
         description:
           "The avatar for the group, either as an object or directly the ID of an existing Picture"
@@ -174,6 +190,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
         description:
           "The banner for the group, either as an object or directly the ID of an existing Picture"
       )
+
+      arg(:physical_address, :address_input)
 
       resolve(&Group.update_group/3)
     end

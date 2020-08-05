@@ -7,8 +7,9 @@ defmodule Mobilizon.Actors.Actor do
 
   import Ecto.Changeset
 
-  alias Mobilizon.{Actors, Config, Crypto, Mention, Share}
+  alias Mobilizon.{Actors, Addresses, Config, Crypto, Mention, Share}
   alias Mobilizon.Actors.{ActorOpenness, ActorType, ActorVisibility, Follower, Member}
+  alias Mobilizon.Addresses.Address
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.{Event, FeedToken}
   alias Mobilizon.Media.File
@@ -55,7 +56,8 @@ defmodule Mobilizon.Actors.Actor do
           shares: [Share.t()],
           owner_shares: [Share.t()],
           memberships: [t],
-          last_refreshed_at: DateTime.t()
+          last_refreshed_at: DateTime.t(),
+          physical_address: Address.t()
         }
 
   @required_attrs [:preferred_username, :keys, :suspended, :url]
@@ -76,12 +78,13 @@ defmodule Mobilizon.Actors.Actor do
     :manually_approves_followers,
     :last_refreshed_at,
     :user_id,
+    :physical_address_id,
     :visibility
   ]
   @attrs @required_attrs ++ @optional_attrs
 
   @update_required_attrs @required_attrs -- [:url]
-  @update_optional_attrs [:name, :summary, :manually_approves_followers, :user_id]
+  @update_optional_attrs [:name, :summary, :manually_approves_followers, :user_id, :visibility]
   @update_attrs @update_required_attrs ++ @update_optional_attrs
 
   @registration_required_attrs [:preferred_username, :keys, :suspended, :url, :type]
@@ -156,6 +159,7 @@ defmodule Mobilizon.Actors.Actor do
     embeds_one(:avatar, File, on_replace: :update)
     embeds_one(:banner, File, on_replace: :update)
     belongs_to(:user, User)
+    belongs_to(:physical_address, Address, on_replace: :nilify)
     has_many(:followers, Follower, foreign_key: :target_actor_id)
     has_many(:followings, Follower, foreign_key: :actor_id)
     has_many(:organized_events, Event, foreign_key: :organizer_actor_id)
@@ -228,7 +232,7 @@ defmodule Mobilizon.Actors.Actor do
     actor
     |> cast(attrs, @attrs)
     |> build_urls()
-    |> common_changeset()
+    |> common_changeset(attrs)
     |> unique_username_validator()
     |> validate_required(@required_attrs)
   end
@@ -238,7 +242,7 @@ defmodule Mobilizon.Actors.Actor do
   def update_changeset(%__MODULE__{} = actor, attrs) do
     actor
     |> cast(attrs, @update_attrs)
-    |> common_changeset()
+    |> common_changeset(attrs)
     |> validate_required(@update_required_attrs)
   end
 
@@ -263,7 +267,7 @@ defmodule Mobilizon.Actors.Actor do
     actor
     |> cast(attrs, @registration_attrs)
     |> build_urls()
-    |> common_changeset()
+    |> common_changeset(attrs)
     |> unique_username_validator()
     |> validate_required(@registration_required_attrs)
   end
@@ -277,7 +281,7 @@ defmodule Mobilizon.Actors.Actor do
       %__MODULE__{}
       |> cast(attrs, @remote_actor_creation_attrs)
       |> validate_required(@remote_actor_creation_required_attrs)
-      |> common_changeset()
+      |> common_changeset(attrs)
       |> unique_username_validator()
       |> validate_length(:summary, max: 5000)
       |> validate_length(:preferred_username, max: 100)
@@ -287,11 +291,12 @@ defmodule Mobilizon.Actors.Actor do
     changeset
   end
 
-  @spec common_changeset(Ecto.Changeset.t()) :: Ecto.Changeset.t()
-  defp common_changeset(%Ecto.Changeset{} = changeset) do
+  @spec common_changeset(Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
+  defp common_changeset(%Ecto.Changeset{} = changeset, attrs) do
     changeset
     |> cast_embed(:avatar)
     |> cast_embed(:banner)
+    |> put_address(attrs)
     |> unique_constraint(:url, name: :actors_url_index)
     |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_type_index)
     |> validate_format(:preferred_username, ~r/[a-z0-9_]+/)
@@ -306,7 +311,7 @@ defmodule Mobilizon.Actors.Actor do
     actor
     |> cast(params, @group_creation_attrs)
     |> build_urls(:Group)
-    |> common_changeset()
+    |> common_changeset(params)
     |> put_change(:domain, nil)
     |> put_change(:keys, Crypto.generate_rsa_2048_private_key())
     |> put_change(:type, :Group)
@@ -411,5 +416,37 @@ defmodule Mobilizon.Actors.Actor do
     %__MODULE__{}
     |> Ecto.Changeset.cast(data, @attrs)
     |> build_urls()
+  end
+
+  # In case the provided addresses is an existing one
+  @spec put_address(Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
+  defp put_address(%Ecto.Changeset{} = changeset, %{
+         physical_address: %{id: id} = _physical_address
+       })
+       when not is_nil(id) do
+    case Addresses.get_address(id) do
+      %Address{} = address ->
+        put_assoc(changeset, :physical_address, address)
+
+      _ ->
+        cast_assoc(changeset, :physical_address)
+    end
+  end
+
+  # In case it's a new address but the origin_id is an existing one
+  defp put_address(%Ecto.Changeset{} = changeset, %{physical_address: %{origin_id: origin_id}})
+       when not is_nil(origin_id) do
+    case Addresses.get_address_by_origin_id(origin_id) do
+      %Address{} = address ->
+        put_assoc(changeset, :physical_address, address)
+
+      _ ->
+        cast_assoc(changeset, :physical_address)
+    end
+  end
+
+  # In case it's a new address without any origin_id (manual)
+  defp put_address(%Ecto.Changeset{} = changeset, _attrs) do
+    cast_assoc(changeset, :physical_address)
   end
 end

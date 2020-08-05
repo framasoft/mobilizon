@@ -8,15 +8,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Search do
   @doc """
   Search persons
   """
-  def search_persons(_parent, %{search: search, page: page, limit: limit}, _resolution) do
-    Search.search_actors(search, page, limit, :Person)
+  def search_persons(_parent, %{page: page, limit: limit} = args, _resolution) do
+    Search.search_actors(args, page, limit, :Person)
   end
 
   @doc """
   Search groups
   """
-  def search_groups(_parent, %{search: search, page: page, limit: limit}, _resolution) do
-    Search.search_actors(search, page, limit, :Group)
+  def search_groups(_parent, %{page: page, limit: limit} = args, _resolution) do
+    Search.search_actors(args, page, limit, :Group)
   end
 
   @doc """

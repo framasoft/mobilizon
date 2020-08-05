@@ -2,14 +2,14 @@
   <div class="address-autocomplete">
     <b-field expanded>
       <template slot="label">
-        {{ $t("Find an address") }}
+        {{ actualLabel }}
         <b-button
-          v-if="!gettingLocation"
+          v-if="canShowLocateMeButton && !gettingLocation"
           size="is-small"
           icon-right="map-marker"
           @click="locateMe"
         />
-        <span v-else>{{ $t("Getting location") }}</span>
+        <span v-else-if="gettingLocation">{{ $t("Getting location") }}</span>
       </template>
       <b-autocomplete
         :data="addressData"
@@ -44,7 +44,7 @@
         </template>
       </b-autocomplete>
     </b-field>
-    <div class="map" v-if="selected && selected.geom">
+    <div class="map" v-if="selected && selected.geom && selected.poiInfos">
       <map-leaflet
         :coords="selected.geom"
         :marker="{
@@ -118,6 +118,7 @@ import { IConfig } from "../../types/config.model";
 })
 export default class FullAddressAutoComplete extends Vue {
   @Prop({ required: true }) value!: IAddress;
+  @Prop({ required: false, default: "" }) label!: string;
 
   addressData: IAddress[] = [];
 
@@ -189,7 +190,9 @@ export default class FullAddressAutoComplete extends Vue {
     if (!(this.value && this.value.id)) return;
     this.selected = this.value;
     const address = new Address(this.selected);
-    this.queryText = `${address.poiInfos.name} ${address.poiInfos.alternativeName}`;
+    if (address.poiInfos) {
+      this.queryText = `${address.poiInfos.name} ${address.poiInfos.alternativeName}`;
+    }
   }
 
   updateSelected(option: IAddress) {
@@ -249,6 +252,14 @@ export default class FullAddressAutoComplete extends Vue {
       this.gettingLocation = false;
       this.gettingLocationError = e.message;
     }
+  }
+
+  get actualLabel(): string {
+    return this.label || (this.$t("Find an address") as string);
+  }
+
+  get canShowLocateMeButton(): boolean {
+    return window.isSecureContext;
   }
 
   static async getLocation(): Promise<Position> {

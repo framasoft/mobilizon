@@ -208,6 +208,24 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
   end
 
   describe "search_persons/3" do
+    @search_persons_query """
+    query SearchPersons($term: String!, $page: Int, $limit: Int) {
+      searchPersons(term: $term, page: $page, limit: $limit) {
+        total
+        elements {
+          id
+          avatar {
+            url
+          }
+          domain
+          preferredUsername
+          name
+          __typename
+        }
+      }
+    }
+    """
+
     test "finds persons with basic search", %{
       conn: conn,
       user: user
@@ -217,29 +235,17 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
       event = insert(:event, title: "test_event")
       Workers.BuildSearch.insert_search_event(event)
 
-      query = """
-      {
-          search_persons(search: "test") {
-            total,
-            elements {
-              preferredUsername,
-              __typename
-            }
-          },
-      }
-      """
-
       res =
-        conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "search"))
+        AbsintheHelpers.graphql_query(conn,
+          query: @search_persons_query,
+          variables: %{term: "test"}
+        )
 
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["search_persons"]["total"] == 1
-      assert json_response(res, 200)["data"]["search_persons"]["elements"] |> length == 1
+      assert res["errors"] == nil
+      assert res["data"]["searchPersons"]["total"] == 1
+      assert res["data"]["searchPersons"]["elements"] |> length == 1
 
-      assert hd(json_response(res, 200)["data"]["search_persons"]["elements"])[
-               "preferredUsername"
-             ] ==
+      assert hd(res["data"]["searchPersons"]["elements"])["preferredUsername"] ==
                actor.preferred_username
     end
 
@@ -256,36 +262,41 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
       Workers.BuildSearch.insert_search_event(event2)
       Workers.BuildSearch.insert_search_event(event3)
 
-      query = """
-      {
-          search_persons(search: "pineapple") {
-            total,
-            elements {
-              preferredUsername,
-              __typename
-            }
-          }
-      }
-      """
-
       res =
-        conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "search"))
+        AbsintheHelpers.graphql_query(conn,
+          query: @search_persons_query,
+          variables: %{term: "pineapple"}
+        )
 
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["search_persons"]["total"] == 1
+      assert res["errors"] == nil
+      assert res["data"]["searchPersons"]["total"] == 1
 
-      assert json_response(res, 200)["data"]["search_persons"]["elements"]
+      assert res["data"]["searchPersons"]["elements"]
              |> length == 1
 
-      assert hd(json_response(res, 200)["data"]["search_persons"]["elements"])[
-               "preferredUsername"
-             ] ==
+      assert hd(res["data"]["searchPersons"]["elements"])["preferredUsername"] ==
                actor.preferred_username
     end
   end
 
   describe "search_groups/3" do
+    @search_groups_query """
+    query SearchGroups($term: String, $location: String, $radius: Float) {
+    searchGroups(term: $term, location: $location, radius: $radius) {
+      total
+      elements {
+        avatar {
+          url
+        }
+        domain
+        preferredUsername
+        name
+        __typename
+      }
+    }
+    }
+    """
+
     test "finds persons with basic search", %{
       conn: conn,
       user: user
@@ -295,27 +306,17 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
       event = insert(:event, title: "test_event")
       Workers.BuildSearch.insert_search_event(event)
 
-      query = """
-      {
-          search_groups(search: "test") {
-            total,
-            elements {
-              preferredUsername,
-              __typename
-            }
-          },
-      }
-      """
-
       res =
-        conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "search"))
+        AbsintheHelpers.graphql_query(conn,
+          query: @search_groups_query,
+          variables: %{term: "test"}
+        )
 
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["search_groups"]["total"] == 1
-      assert json_response(res, 200)["data"]["search_groups"]["elements"] |> length == 1
+      assert res["errors"] == nil
+      assert res["data"]["searchGroups"]["total"] == 1
+      assert res["data"]["searchGroups"]["elements"] |> length == 1
 
-      assert hd(json_response(res, 200)["data"]["search_groups"]["elements"])["preferredUsername"] ==
+      assert hd(res["data"]["searchGroups"]["elements"])["preferredUsername"] ==
                group.preferred_username
     end
 
@@ -328,28 +329,54 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
       event = insert(:event, title: "Tour du monde des Kafés")
       Workers.BuildSearch.insert_search_event(event)
 
-      # Elaborate query
-      query = """
-      {
-          search_groups(search: "Kafé") {
-            total,
-            elements {
-              preferredUsername,
-              __typename
-            }
-          }
-      }
-      """
+      res =
+        AbsintheHelpers.graphql_query(conn,
+          query: @search_groups_query,
+          variables: %{term: "Kafé"}
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["searchGroups"]["total"] == 1
+
+      assert hd(res["data"]["searchGroups"]["elements"])["preferredUsername"] ==
+               group.preferred_username
+    end
+
+    test "finds groups with location", %{conn: conn} do
+      {lon, lat} = {45.75, 4.85}
+      point = %Geo.Point{coordinates: {lon, lat}, srid: 4326}
+      geohash = Geohax.encode(lon, lat, 6)
+      geohash_2 = Geohax.encode(25, -19, 6)
+      address = insert(:address, geom: point)
+
+      group =
+        insert(:actor,
+          type: :Group,
+          preferred_username: "want_coffee",
+          name: "Want coffee ?",
+          physical_address: address
+        )
 
       res =
-        conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "search"))
+        AbsintheHelpers.graphql_query(conn,
+          query: @search_groups_query,
+          variables: %{location: geohash}
+        )
 
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["search_groups"]["total"] == 1
+      assert res["errors"] == nil
+      assert res["data"]["searchGroups"]["total"] == 1
 
-      assert hd(json_response(res, 200)["data"]["search_groups"]["elements"])["preferredUsername"] ==
+      assert hd(res["data"]["searchGroups"]["elements"])["preferredUsername"] ==
                group.preferred_username
+
+      res =
+        AbsintheHelpers.graphql_query(conn,
+          query: @search_groups_query,
+          variables: %{location: geohash_2}
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["searchGroups"]["total"] == 0
     end
   end
 end

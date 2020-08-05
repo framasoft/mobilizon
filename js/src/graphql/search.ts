@@ -36,8 +36,8 @@ export const SEARCH_EVENTS = gql`
 `;
 
 export const SEARCH_GROUPS = gql`
-  query SearchGroups($searchText: String!) {
-    searchGroups(search: $searchText) {
+  query SearchGroups($term: String, $location: String, $radius: Float) {
+    searchGroups(term: $term, location: $location, radius: $radius) {
       total
       elements {
         avatar {
@@ -54,7 +54,7 @@ export const SEARCH_GROUPS = gql`
 
 export const SEARCH_PERSONS = gql`
   query SearchPersons($searchText: String!, $page: Int, $limit: Int) {
-    searchPersons(search: $searchText, page: $page, limit: $limit) {
+    searchPersons(term: $searchText, page: $page, limit: $limit) {
       total
       elements {
         id

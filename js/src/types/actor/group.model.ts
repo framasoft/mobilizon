@@ -6,6 +6,7 @@ import { IEvent } from "../event.model";
 import { IDiscussion } from "../discussions";
 import { IPerson } from "./person.model";
 import { IPost } from "../post.model";
+import { IAddress, Address } from "../address.model";
 
 export enum MemberRole {
   NOT_APPROVED = "NOT_APPROVED",
@@ -23,6 +24,7 @@ export interface IGroup extends IActor {
   todoLists: Paginate<ITodoList>;
   discussions: Paginate<IDiscussion>;
   organizedEvents: Paginate<IEvent>;
+  physicalAddress: IAddress;
 }
 
 export interface IMember {
@@ -52,6 +54,7 @@ export class Group extends Actor implements IGroup {
 
     this.patch(hash);
   }
+  physicalAddress: IAddress = new Address();
 
   patch(hash: any) {
     Object.assign(this, hash);
