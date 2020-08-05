@@ -49,7 +49,7 @@ const router = new Router({
     ...discussionRoutes,
     ...errorRoutes,
     {
-      path: "/search/:searchTerm/:searchType?",
+      path: "/search/:searchTerm?/:searchType?",
       name: RouteName.SEARCH,
       component: Search,
       props: true,

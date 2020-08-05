@@ -463,9 +463,10 @@ defmodule Mobilizon.Events do
     term
     |> normalize_search_string()
     |> events_for_search_query()
+    |> events_for_begins_on(args)
+    |> events_for_ends_on(args)
     |> events_for_tags(args)
     |> events_for_location(args)
-    |> filter_future_events(true)
     |> filter_local_or_from_followed_instances_events()
     |> order_by([q], asc: q.id)
     |> Page.build_page(page, limit)
@@ -1296,6 +1297,29 @@ defmodule Mobilizon.Events do
     )
   end
 
+  @spec events_for_begins_on(Ecto.Query.t(), map()) :: Ecto.Query.t()
+  defp events_for_begins_on(query, args) do
+    begins_on = Map.get(args, :begins_on, DateTime.utc_now())
+
+    query
+    |> where([q], q.begins_on >= ^begins_on)
+  end
+
+  @spec events_for_ends_on(Ecto.Query.t(), map()) :: Ecto.Query.t()
+  defp events_for_ends_on(query, args) do
+    ends_on = Map.get(args, :ends_on)
+
+    if is_nil(ends_on),
+      do: query,
+      else:
+        where(
+          query,
+          [q],
+          (is_nil(q.ends_on) and q.begins_on <= ^ends_on) or
+            q.ends_on <= ^ends_on
+        )
+  end
+
   @spec events_for_tags(Ecto.Query.t(), map()) :: Ecto.Query.t()
   defp events_for_tags(query, %{tags: tags}) when is_valid_string?(tags) do
     query
@@ -1307,6 +1331,9 @@ defmodule Mobilizon.Events do
   defp events_for_tags(query, _args), do: query
 
   @spec events_for_location(Ecto.Query.t(), map()) :: Ecto.Query.t()
+  defp events_for_location(query, %{radius: radius}) when is_nil(radius),
+    do: query
+
   defp events_for_location(query, %{location: location, radius: radius})
        when is_valid_string?(location) and not is_nil(radius) do
     with {lon, lat} <- Geohax.decode(location),

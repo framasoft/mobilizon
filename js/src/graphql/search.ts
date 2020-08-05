@@ -1,8 +1,22 @@
 import gql from "graphql-tag";
 
 export const SEARCH_EVENTS = gql`
-  query SearchEvents($location: String, $radius: Float, $tags: String, $term: String) {
-    searchEvents(location: $location, radius: $radius, tags: $tags, term: $term) {
+  query SearchEvents(
+    $location: String
+    $radius: Float
+    $tags: String
+    $term: String
+    $beginsOn: DateTime
+    $endsOn: DateTime
+  ) {
+    searchEvents(
+      location: $location
+      radius: $radius
+      tags: $tags
+      term: $term
+      beginsOn: $beginsOn
+      endsOn: $endsOn
+    ) {
       total
       elements {
         title

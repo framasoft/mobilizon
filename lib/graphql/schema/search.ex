@@ -51,6 +51,8 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
       arg(:radius, :float, default_value: 50)
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
+      arg(:begins_on, :datetime)
+      arg(:ends_on, :datetime)
 
       resolve(&Search.search_events/3)
     end

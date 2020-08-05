@@ -2,7 +2,7 @@
   <b-autocomplete
     :data="addressData"
     v-model="queryText"
-    :placeholder="$t('e.g. 10 Rue Jangot')"
+    :placeholder="placeholder || $t('e.g. 10 Rue Jangot')"
     field="fullName"
     :loading="isFetching"
     @typing="fetchAsyncData"
@@ -45,6 +45,7 @@ import { IConfig } from "../../types/config.model";
 })
 export default class AddressAutoComplete extends Vue {
   @Prop({ required: true }) value!: IAddress;
+  @Prop({ required: false }) placeholder!: string;
 
   addressData: IAddress[] = [];
 

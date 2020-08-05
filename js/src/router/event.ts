@@ -8,7 +8,6 @@ const participations = () =>
 const editEvent = () => import(/* webpackChunkName: "edit-event" */ "@/views/Event/Edit.vue");
 const event = () => import(/* webpackChunkName: "event" */ "@/views/Event/Event.vue");
 const myEvents = () => import(/* webpackChunkName: "my-events" */ "@/views/Event/MyEvents.vue");
-const explore = () => import(/* webpackChunkName: "explore" */ "@/views/Event/Explore.vue");
 
 export enum EventRouteName {
   EVENT_LIST = "EventList",
@@ -43,7 +42,7 @@ export const eventRoutes: RouteConfig[] = [
   {
     path: "/events/explore",
     name: EventRouteName.EXPLORE,
-    component: explore,
+    redirect: { name: "Search" },
     meta: { requiredAuth: false },
   },
   {
