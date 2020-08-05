@@ -47,13 +47,13 @@ defmodule Mobilizon.GraphQL.API.SearchTest do
 
   test "search events" do
     with_mock Events,
-      build_events_for_search: fn "toto", 1, 10 ->
+      build_events_for_search: fn %{term: "toto"}, 1, 10 ->
         %Page{total: 1, elements: [%Event{title: "super toto event"}]}
       end do
       assert {:ok, %{total: 1, elements: [%Event{title: "super toto event"}]}} =
-               Search.search_events("toto", 1, 10)
+               Search.search_events(%{term: "toto"}, 1, 10)
 
-      assert_called(Events.build_events_for_search("toto", 1, 10))
+      assert_called(Events.build_events_for_search(%{term: "toto"}, 1, 10))
     end
   end
 end
