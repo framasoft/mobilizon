@@ -22,7 +22,7 @@ sudo apt dist-upgrade
 We begin by making sure some basic tools are installed: 
 
 ```bash
-sudo apt install build-essential curl unzip vim openssl git
+sudo apt install build-essential curl unzip vim openssl git cmake
 ```
 
 ### Web server

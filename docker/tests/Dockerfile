@@ -1,8 +1,8 @@
 FROM elixir:latest
 LABEL maintainer="Thomas Citharel <tcit@tcit.fr>"
 
-ENV REFRESHED_AT=2020-06-03
-RUN apt-get update -yq && apt-get install -yq build-essential inotify-tools postgresql-client git curl gnupg xvfb libgtk-3-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 python3-pip
+ENV REFRESHED_AT=2020-08-10
+RUN apt-get update -yq && apt-get install -yq build-essential inotify-tools postgresql-client git curl gnupg xvfb libgtk-3-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 python3-pip cmake
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash && apt-get install nodejs -yq
 RUN npm install -g yarn wait-on
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
