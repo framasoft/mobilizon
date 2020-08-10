@@ -333,7 +333,6 @@
   "Save draft": "Save draft",
   "Save": "Save",
   "Search events, groups, etc.": "Search events, groups, etc.",
-  "Search results: \"{search}\"": "Search results: \"{search}\"",
   "Search": "Search",
   "Searching…": "Searching…",
   "Send email": "Send email",
@@ -743,5 +742,12 @@
   "Next month": "Next month",
   "Any day": "Any day",
   "{nb} km": "{nb} km",
-  "any distance": "any distance"
+  "any distance": "any distance",
+  "Group visibility": "Group visibility",
+  "The group will be publicly listed in search results and may be suggested in the explore section. Only public informations will be shown on it's page.": "The group will be publicly listed in search results and may be suggested in the explore section. Only public informations will be shown on it's page.",
+  "You'll need to transmit the group URL so people may access the group's profile.": "You'll need to transmit the group URL so people may access the group's profile.",
+  "Group address": "Group address",
+  "Events tagged with {tag}": "Events tagged with {tag}",
+  "Explore events": "Explore events",
+  "#{tag}": "#{tag}"
 }

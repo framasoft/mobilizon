@@ -1,7 +1,12 @@
 <template>
   <div class="section container">
     <h1 class="title">{{ $t("Explore") }}</h1>
-    <section class="hero is-light">
+    <section v-if="actualTag">
+      <i18n path="Events tagged with {tag}">
+        <b-tag slot="tag" type="is-light">{{ $t("#{tag}", { tag: actualTag }) }}</b-tag>
+      </i18n>
+    </section>
+    <section class="hero is-light" v-else>
       <div class="hero-body">
         <form @submit.prevent="submit()">
           <b-field :label="$t('Key words')" label-for="search" expanded>
@@ -44,7 +49,7 @@
         </form>
       </div>
     </section>
-    <section class="events-featured" v-if="searchEvents.initial">
+    <section class="events-featured" v-if="!actualTag && searchEvents.initial">
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <h2 class="title">{{ $t("Featured events") }}</h2>
       <div v-if="events.length > 0" class="columns is-multiline">
@@ -197,6 +202,7 @@ const tabsName: { events: number; groups: number } = {
   },
 })
 export default class Search extends Vue {
+  @Prop({ type: String, required: false }) tag!: string;
   events: IEvent[] = [];
 
   searchEvents: Paginate<IEvent> & { initial: boolean } = { total: 0, elements: [], initial: true };
@@ -207,6 +213,7 @@ export default class Search extends Vue {
   activeTab: SearchTabs = tabsName[this.$route.query.searchType as "events" | "groups"] || 0;
 
   location: IAddress = new Address();
+  actualTag: string = this.tag;
 
   options: ISearchTimeOption[] = [
     {

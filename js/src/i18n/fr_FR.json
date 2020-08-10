@@ -492,7 +492,6 @@
   "Save draft": "Enregistrer le brouillon",
   "Search": "Rechercher",
   "Search events, groups, etc.": "Rechercher des évènements, des groupes, etc.",
-  "Search results: \"{search}\"": "Résultats de recherche : « {search} »",
   "Searching…": "Recherche en cours…",
   "Select a language": "Choisissez une langue",
   "Select a timezone": "Selectionnez un fuseau horaire",
@@ -743,5 +742,12 @@
   "Next month": "Le mois-prochain",
   "Any day": "N'importe quand",
   "{nb} km": "{nb} km",
-  "any distance": "peu importe"
+  "any distance": "peu importe",
+  "Group visibility": "Visibility du groupe",
+  "The group will be publicly listed in search results and may be suggested in the explore section. Only public informations will be shown on it's page.": "Le groupe sera listé publiquement dans les résultats de recherche et pourra être suggéré sur la page « Explorer ». Seules les informations publiques seront affichées sur sa page.",
+  "You'll need to transmit the group URL so people may access the group's profile.": "Vous aurez besoin de transmettre l'URL du groupe pour que d'autres personnes accèdent au profil du groupe.",
+  "Group address": "Adresse du groupe",
+  "Events tagged with {tag}": "Événements taggés avec {tag}",
+  "Explore events": "Explorer les événements",
+  "#{tag}": "#{tag}"
 }
