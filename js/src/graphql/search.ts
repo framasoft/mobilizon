@@ -1,8 +1,22 @@
 import gql from "graphql-tag";
 
 export const SEARCH_EVENTS = gql`
-  query SearchEvents($searchText: String!) {
-    searchEvents(search: $searchText) {
+  query SearchEvents(
+    $location: String
+    $radius: Float
+    $tags: String
+    $term: String
+    $beginsOn: DateTime
+    $endsOn: DateTime
+  ) {
+    searchEvents(
+      location: $location
+      radius: $radius
+      tags: $tags
+      term: $term
+      beginsOn: $beginsOn
+      endsOn: $endsOn
+    ) {
       total
       elements {
         title
@@ -22,8 +36,8 @@ export const SEARCH_EVENTS = gql`
 `;
 
 export const SEARCH_GROUPS = gql`
-  query SearchGroups($searchText: String!) {
-    searchGroups(search: $searchText) {
+  query SearchGroups($term: String, $location: String, $radius: Float) {
+    searchGroups(term: $term, location: $location, radius: $radius) {
       total
       elements {
         avatar {
@@ -40,7 +54,7 @@ export const SEARCH_GROUPS = gql`
 
 export const SEARCH_PERSONS = gql`
   query SearchPersons($searchText: String!, $page: Int, $limit: Int) {
-    searchPersons(search: $searchText, page: $page, limit: $limit) {
+    searchPersons(term: $searchText, page: $page, limit: $limit) {
       total
       elements {
         id

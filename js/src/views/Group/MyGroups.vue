@@ -12,7 +12,7 @@
       />
     </section>
     <section v-if="memberships && memberships.length > 0">
-      <GroupCard v-for="member in memberships" :key="member.id" :member="member" />
+      <GroupMemberCard v-for="member in memberships" :key="member.id" :member="member" />
     </section>
     <b-message v-if="$apollo.loading === false && memberships.length === 0" type="is-danger">
       {{ $t("No groups found") }}
@@ -23,7 +23,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { LOGGED_USER_MEMBERSHIPS } from "@/graphql/actor";
-import GroupCard from "@/components/Group/GroupCard.vue";
+import GroupMemberCard from "@/components/Group/GroupMemberCard.vue";
 import InvitationCard from "@/components/Group/InvitationCard.vue";
 import { Paginate } from "@/types/paginate";
 import { IGroup, IMember, MemberRole } from "@/types/actor";
@@ -32,7 +32,7 @@ import { ACCEPT_INVITATION } from "../../graphql/member";
 
 @Component({
   components: {
-    GroupCard,
+    GroupMemberCard,
     InvitationCard,
   },
   apollo: {

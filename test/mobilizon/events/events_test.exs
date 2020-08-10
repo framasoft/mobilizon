@@ -60,16 +60,18 @@ defmodule Mobilizon.EventsTest do
     test "build_events_for_search/1 returns events for a given name", %{
       event: %Event{title: title} = event
     } do
-      assert title == hd(Events.build_events_for_search(event.title).elements).title
+      assert title == hd(Events.build_events_for_search(%{term: event.title}).elements).title
 
       %Event{} = event2 = insert(:event, title: "Special event")
       Workers.BuildSearch.insert_search_event(event2)
 
       assert event2.title ==
-               Events.build_events_for_search("Special").elements |> hd() |> Map.get(:title)
+               Events.build_events_for_search(%{term: "Special"}).elements
+               |> hd()
+               |> Map.get(:title)
 
       assert event2.title ==
-               Events.build_events_for_search("  Spécïal  ").elements
+               Events.build_events_for_search(%{term: "  Spécïal  "}).elements
                |> hd()
                |> Map.get(:title)
 
@@ -79,9 +81,9 @@ defmodule Mobilizon.EventsTest do
       Workers.BuildSearch.insert_search_event(event3)
 
       assert event3.title ==
-               Events.build_events_for_search("hola").elements |> hd() |> Map.get(:title)
+               Events.build_events_for_search(%{term: "hola"}).elements |> hd() |> Map.get(:title)
 
-      assert %Page{elements: [], total: 0} == Events.build_events_for_search("")
+      assert %Page{elements: _elements, total: 3} = Events.build_events_for_search(%{term: ""})
     end
 
     test "find_close_events/3 returns events in the area" do

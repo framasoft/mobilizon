@@ -3,7 +3,7 @@
     <h1>{{ $t("Group List") }} ({{ groups.total }})</h1>
     <b-loading :active.sync="$apollo.loading" />
     <div class="columns">
-      <GroupCard
+      <GroupMemberCard
         v-for="group in groups.elements"
         :key="group.uuid"
         :group="group"
@@ -20,7 +20,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import { LIST_GROUPS } from "@/graphql/actor";
 import { Group, IGroup } from "@/types/actor";
-import GroupCard from "@/components/Group/GroupCard.vue";
+import GroupMemberCard from "@/components/Group/GroupMemberCard.vue";
 import RouteName from "../../router/name";
 
 @Component({
@@ -30,7 +30,7 @@ import RouteName from "../../router/name";
     },
   },
   components: {
-    GroupCard,
+    GroupMemberCard,
   },
 })
 export default class GroupList extends Vue {

@@ -5,10 +5,13 @@ defmodule Mobilizon.Actors do
 
   import Ecto.Query
   import EctoEnum
+  import Geo.PostGIS, only: [st_dwithin_in_meters: 3]
+  import Mobilizon.Service.Guards
 
   alias Ecto.Multi
 
   alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
+  alias Mobilizon.Addresses.Address
   alias Mobilizon.{Crypto, Events}
   alias Mobilizon.Media.File
   alias Mobilizon.Service.Workers
@@ -235,6 +238,7 @@ defmodule Mobilizon.Actors do
   @spec update_actor(Actor.t(), map) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def update_actor(%Actor{} = actor, attrs) do
     actor
+    |> Repo.preload([:physical_address])
     |> Actor.update_changeset(attrs)
     |> delete_files_if_media_changed()
     |> Repo.update()
@@ -422,14 +426,20 @@ defmodule Mobilizon.Actors do
   Builds a page struct for actors by their name or displayed name.
   """
   @spec build_actors_by_username_or_name_page(
-          String.t(),
+          map(),
           [ActorType.t()],
           integer | nil,
           integer | nil
         ) :: Page.t()
-  def build_actors_by_username_or_name_page(username, types, page \\ nil, limit \\ nil) do
-    username
-    |> actor_by_username_or_name_query()
+  def build_actors_by_username_or_name_page(
+        %{term: term} = args,
+        types,
+        page \\ nil,
+        limit \\ nil
+      ) do
+    Actor
+    |> actor_by_username_or_name_query(term)
+    |> actors_for_location(args)
     |> filter_by_types(types)
     |> Page.build_page(page, limit)
   end
@@ -1129,28 +1139,53 @@ defmodule Mobilizon.Actors do
     )
   end
 
-  @spec actor_by_username_or_name_query(String.t()) :: Ecto.Query.t()
-  defp actor_by_username_or_name_query(username) do
-    from(
-      a in Actor,
-      where:
-        fragment(
-          "f_unaccent(?) %> f_unaccent(?) or f_unaccent(coalesce(?, '')) %> f_unaccent(?)",
-          a.preferred_username,
-          ^username,
-          a.name,
-          ^username
-        ),
-      order_by:
-        fragment(
-          "word_similarity(?, ?) + word_similarity(coalesce(?, ''), ?) desc",
-          a.preferred_username,
-          ^username,
-          a.name,
-          ^username
-        )
+  @spec actor_by_username_or_name_query(Ecto.Query.t(), String.t()) :: Ecto.Query.t()
+  defp actor_by_username_or_name_query(query, ""), do: query
+
+  defp actor_by_username_or_name_query(query, username) do
+    query
+    |> where(
+      [a],
+      fragment(
+        "f_unaccent(?) %> f_unaccent(?) or f_unaccent(coalesce(?, '')) %> f_unaccent(?)",
+        a.preferred_username,
+        ^username,
+        a.name,
+        ^username
+      )
+    )
+    |> order_by(
+      [a],
+      fragment(
+        "word_similarity(?, ?) + word_similarity(coalesce(?, ''), ?) desc",
+        a.preferred_username,
+        ^username,
+        a.name,
+        ^username
+      )
     )
   end
+
+  @spec actors_for_location(Ecto.Query.t(), map()) :: Ecto.Query.t()
+  defp actors_for_location(query, %{radius: radius}) when is_nil(radius),
+    do: query
+
+  defp actors_for_location(query, %{location: location, radius: radius})
+       when is_valid_string?(location) and not is_nil(radius) do
+    with {lon, lat} <- Geohax.decode(location),
+         point <- Geo.WKT.decode!("SRID=4326;POINT(#{lon} #{lat})") do
+      query
+      |> join(:inner, [q], a in Address, on: a.id == q.physical_address_id, as: :address)
+      |> where(
+        [q],
+        st_dwithin_in_meters(^point, as(:address).geom, ^(radius * 1000))
+      )
+    else
+      _ -> query
+    end
+  end
+
+  defp actors_for_location(query, _args), do: query
 
   @spec person_query :: Ecto.Query.t()
   defp person_query do

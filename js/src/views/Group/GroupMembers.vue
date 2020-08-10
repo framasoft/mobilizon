@@ -143,7 +143,6 @@
           </section>
         </template>
       </b-table>
-      <pre>{{ group.members }}</pre>
     </section>
   </div>
 </template>

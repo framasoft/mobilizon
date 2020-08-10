@@ -8,7 +8,7 @@
       type="search"
       rounded
       :placeholder="defaultPlaceHolder"
-      v-model="searchText"
+      v-model="search"
       @keyup.native.enter="enter"
     />
   </label>
@@ -21,12 +21,12 @@ import RouteName from "../router/name";
 export default class SearchField extends Vue {
   @Prop({ type: String, required: false }) placeholder!: string;
 
-  searchText = "";
+  search: string = "";
 
   enter() {
     this.$router.push({
       name: RouteName.SEARCH,
-      params: { searchTerm: this.searchText },
+      query: { term: this.search },
     });
   }
 

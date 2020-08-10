@@ -730,5 +730,18 @@
   "Delete post": "Supprimer le billet",
   "Update post": "Mettre à jour le billet",
   "Posts": "Billets",
-  "Register an account on {instanceName}!": "S'inscrire sur {instanceName} !"
+  "Register an account on {instanceName}!": "S'inscrire sur {instanceName} !",
+  "Key words": "Mots clés",
+  "For instance: London": "Par exemple : Lyon",
+  "Radius": "Rayon",
+  "Today": "Aujourd'hui",
+  "Tomorrow": "Demain",
+  "This weekend": "Ce weekend",
+  "This week": "Cette semaine",
+  "Next week": "La semaine prochaine",
+  "This month": "Ce mois-ci",
+  "Next month": "Le mois-prochain",
+  "Any day": "N'importe quand",
+  "{nb} km": "{nb} km",
+  "any distance": "peu importe"
 }

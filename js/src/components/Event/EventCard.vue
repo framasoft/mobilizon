@@ -1,31 +1,3 @@
-<docs>
-### EventCard
-
-A simple card for an event
-
-```vue
-<EventCard
-  :event="{
-    title: 'Vue Styleguidist first meetup: learn the basics!',
-    beginsOn: new Date(),
-    tags: [
-      {
-        slug: 'test', title: 'Test'
-      },
-      {
-        slug: 'mobilizon', title: 'Mobilizon'
-      },
-    ],
-    organizerActor: {
-      preferredUsername: 'tcit',
-      name: 'Some Random Dude',
-      domain: null
-    }
-  }"
-  />
-```
-</docs>
-
 <template>
   <router-link class="card" :to="{ name: 'Event', params: { uuid: event.uuid } }">
     <div class="card-image">
@@ -36,9 +8,13 @@ A simple card for an event
         }')`"
       >
         <div class="tag-container" v-if="event.tags">
-          <b-tag v-for="tag in event.tags.slice(0, 3)" :key="tag.slug" type="is-light">{{
-            tag.title
-          }}</b-tag>
+          <router-link
+            :to="{ name: RouteName.TAG, params: { tag: tag.title } }"
+            v-for="tag in event.tags.slice(0, 3)"
+            :key="tag.slug"
+          >
+            <b-tag type="is-light">{{ tag.title }}</b-tag>
+          </router-link>
         </div>
       </figure>
     </div>
@@ -101,6 +77,7 @@ import { IEvent, IEventCardOptions, ParticipantRole } from "@/types/event.model"
 import { Component, Prop, Vue } from "vue-property-decorator";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
 import { Actor, Person } from "@/types/actor";
+import RouteName from "../../router/name";
 
 @Component({
   components: {
@@ -113,6 +90,8 @@ export default class EventCard extends Vue {
   @Prop({ required: false }) options!: IEventCardOptions;
 
   ParticipantRole = ParticipantRole;
+
+  RouteName = RouteName;
 
   defaultOptions: IEventCardOptions = {
     hideDate: false,
@@ -176,15 +155,19 @@ a.card {
     z-index: 10;
     max-width: 40%;
 
-    span.tag {
-      margin: 5px auto;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      display: block;
-      font-size: 0.9em;
-      line-height: 1.75em;
-      background-color: #e6e4f4;
-      color: #3c376e;
+    a {
+      text-decoration: none;
+
+      span.tag {
+        margin: 5px auto;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: block;
+        font-size: 0.9em;
+        line-height: 1.75em;
+        background-color: #e6e4f4;
+        color: #3c376e;
+      }
     }
   }
 

@@ -239,8 +239,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   def handle_incoming(
         %{
           "type" => activity_type,
-          "object" => %{"type" => object_type, "id" => object_url} = object,
-          "to" => to
+          "object" => %{"type" => object_type, "id" => object_url} = object
         } = data
       )
       when activity_type in ["Create", "Add"] and

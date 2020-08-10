@@ -730,5 +730,18 @@
   "Delete post": "Delete post",
   "Update post": "Update post",
   "Posts": "Posts",
-  "Register an account on {instanceName}!": "Register an account on {instanceName}!"
+  "Register an account on {instanceName}!": "Register an account on {instanceName}!",
+  "Key words": "Key words",
+  "For instance: London": "For instance: London",
+  "Radius": "Radius",
+  "Today": "Today",
+  "Tomorrow": "Tomorrow",
+  "This weekend": "This weekend",
+  "This week": "This week",
+  "Next week": "Next week",
+  "This month": "This month",
+  "Next month": "Next month",
+  "Any day": "Any day",
+  "{nb} km": "{nb} km",
+  "any distance": "any distance"
 }

@@ -465,6 +465,19 @@ export const FETCH_GROUP = gql`
       summary
       preferredUsername
       suspended
+      visibility
+      physicalAddress {
+        description
+        street
+        locality
+        postalCode
+        region
+        country
+        geom
+        type
+        id
+        originId
+      }
       avatar {
         url
       }
@@ -588,8 +601,18 @@ export const UPDATE_GROUP = gql`
     $summary: String
     $avatar: PictureInput
     $banner: PictureInput
+    $visibility: GroupVisibility
+    $physicalAddress: AddressInput
   ) {
-    createGroup(id: $id, name: $name, summary: $summary, banner: $banner, avatar: $avatar) {
+    updateGroup(
+      id: $id
+      name: $name
+      summary: $summary
+      banner: $banner
+      avatar: $avatar
+      visibility: $visibility
+      physicalAddress: $physicalAddress
+    ) {
       id
       preferredUsername
       name

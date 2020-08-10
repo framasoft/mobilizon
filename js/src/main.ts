@@ -10,6 +10,7 @@ import TimeAgo from "javascript-time-ago";
 import App from "./App.vue";
 import router from "./router";
 import { NotifierPlugin } from "./plugins/notifier";
+import { DateFnsPlugin } from "./plugins/dateFns";
 import filters from "./filters";
 import { i18n } from "./utils/i18n";
 import messages from "./i18n";
@@ -31,6 +32,7 @@ import(`javascript-time-ago/locale/${locale}`).then((localeFile) => {
 
 Vue.use(Buefy);
 Vue.use(NotifierPlugin);
+Vue.use(DateFnsPlugin, { locale });
 Vue.use(filters);
 Vue.use(VueMeta);
 Vue.use(VueScrollTo);

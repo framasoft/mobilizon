@@ -27,7 +27,7 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
   object :search_queries do
     @desc "Search persons"
     field :search_persons, :persons do
-      arg(:search, non_null(:string))
+      arg(:term, :string, default_value: "")
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
 
@@ -36,7 +36,9 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
 
     @desc "Search groups"
     field :search_groups, :groups do
-      arg(:search, non_null(:string))
+      arg(:term, :string, default_value: "")
+      arg(:location, :string, description: "A geohash for coordinates")
+      arg(:radius, :float, default_value: 50)
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
 
@@ -45,9 +47,14 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
 
     @desc "Search events"
     field :search_events, :events do
-      arg(:search, non_null(:string))
+      arg(:term, :string, default_value: "")
+      arg(:tags, :string, description: "A comma-separated string listing the tags")
+      arg(:location, :string, description: "A geohash for coordinates")
+      arg(:radius, :float, default_value: 50)
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
+      arg(:begins_on, :datetime)
+      arg(:ends_on, :datetime)
 
       resolve(&Search.search_events/3)
     end

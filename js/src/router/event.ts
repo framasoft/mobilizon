@@ -1,13 +1,13 @@
 import { RouteConfig, Route } from "vue-router";
 import EventList from "../views/Event/EventList.vue";
 import Location from "../views/Location.vue";
+import Search from "../views/Search.vue";
 
 const participations = () =>
   import(/* webpackChunkName: "participations" */ "@/views/Event/Participants.vue");
 const editEvent = () => import(/* webpackChunkName: "edit-event" */ "@/views/Event/Edit.vue");
 const event = () => import(/* webpackChunkName: "event" */ "@/views/Event/Event.vue");
 const myEvents = () => import(/* webpackChunkName: "my-events" */ "@/views/Event/MyEvents.vue");
-const explore = () => import(/* webpackChunkName: "explore" */ "@/views/Event/Explore.vue");
 
 export enum EventRouteName {
   EVENT_LIST = "EventList",
@@ -42,7 +42,7 @@ export const eventRoutes: RouteConfig[] = [
   {
     path: "/events/explore",
     name: EventRouteName.EXPLORE,
-    component: explore,
+    redirect: { name: "Search" },
     meta: { requiredAuth: false },
   },
   {
@@ -112,6 +112,8 @@ export const eventRoutes: RouteConfig[] = [
   {
     path: "/tag/:tag",
     name: EventRouteName.TAG,
-    redirect: "/search/:tag",
+    component: Search,
+    props: true,
+    meta: { requiredAuth: false },
   },
 ];

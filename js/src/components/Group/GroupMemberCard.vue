@@ -11,19 +11,22 @@
           <router-link
             :to="{
               name: RouteName.GROUP,
-              params: { preferredUsername: usernameWithDomain(group) },
+              params: { preferredUsername: usernameWithDomain(member.parent) },
             }"
           >
-            <h3>{{ group.name }}</h3>
+            <h3>{{ member.parent.name }}</h3>
             <p class="is-6 has-text-grey">
-              <span v-if="group.domain">{{ `@${group.preferredUsername}@${group.domain}` }}</span>
-              <span v-else>{{ `@${group.preferredUsername}` }}</span>
+              <span v-if="member.parent.domain">{{
+                `@${member.parent.preferredUsername}@${member.parent.domain}`
+              }}</span>
+              <span v-else>{{ `@${member.parent.preferredUsername}` }}</span>
             </p>
+            <b-tag type="is-info">{{ member.role }}</b-tag>
           </router-link>
         </div>
       </div>
       <div class="content">
-        <p>{{ group.summary }}</p>
+        <p>{{ member.parent.summary }}</p>
       </div>
     </div>
   </div>
@@ -31,12 +34,12 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { IGroup, usernameWithDomain } from "@/types/actor";
+import { IMember, usernameWithDomain } from "@/types/actor";
 import RouteName from "../../router/name";
 
 @Component
-export default class GroupCard extends Vue {
-  @Prop({ required: true }) group!: IGroup;
+export default class GroupMemberCard extends Vue {
+  @Prop({ required: true }) member!: IMember;
 
   RouteName = RouteName;
 
