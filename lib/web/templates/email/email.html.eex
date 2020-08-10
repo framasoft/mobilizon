@@ -86,9 +86,9 @@
                   </h2>
                   <br>
                   <p style="margin: 0; color: #3A384C"><%= gettext "This is a demonstration site to test the beta version of Mobilizon." %></p>
-                  <p style="margin: 0; color: #3A384C;"><%= gettext("%{b_start}Please do not use it for real purposes.%{b_end}", b_start: "<b>", b_end: "</b>") |> raw() %></p>
+                  <p style="margin: 0; color: #3A384C;"><%= gettext("<b>Please do not use it for real purposes.</b>") |> raw() %></p>
                   <p style="margin: 0; color: #3A384C;">
-                    <%= gettext("Mobilizon is still under development, we will add new features along the updates, until the release of %{b_start}version 1 of the software in the fall of 2020%{b_end}.", b_start: "<b>", b_end: "</b>") |> raw() %>
+                    <%= gettext("Mobilizon is still under development, we will add new features along the updates, until the release of <b>version 1 of the software in the fall of 2020</b>.") |> raw() %>
                     <%= gettext("In the meantime, please consider this software as not (yet) fully functional. Read more %{a_start}on the Framasoft blog%{a_end}.", a_start: "<a target='_blank' style='color: #474467;' href='https://framablog.org/?p=18299'>", a_end: "</a>") |> raw() %>
                   </p>
                 </td>

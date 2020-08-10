@@ -170,17 +170,19 @@ defmodule Mobilizon.Web.Email.User do
         _locale \\ "en"
       ) do
     Gettext.put_locale(user_locale)
+    instance_name = Config.instance_name()
 
     subject =
       gettext(
         "Mobilizon on %{instance}: confirm your email address",
-        instance: Config.instance_name()
+        instance: instance_name
       )
 
     Email.base_email(to: unconfirmed_email, subject: subject)
     |> assign(:locale, user_locale)
     |> assign(:subject, subject)
     |> assign(:token, confirmation_token)
+    |> assign(:instance_name, instance_name)
     |> render(:email_changed_new)
   end
 
