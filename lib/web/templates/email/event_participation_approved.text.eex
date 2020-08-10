@@ -2,10 +2,10 @@
 
 ==
 
-<%= gettext "You requested to participate in event %{title}.", title: @event.title %>
+<%= gettext "You recently requested to attend %{title}.", title: @event.title %>
 
-<%= gettext "An organizer just approved your participation. You're now going to this event!" %>
+<%= gettext "Good news: one of the event organizers just approved your request. Update your calendar, because you're on the guest list now!" %>
 
 <%= page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) %>
 
-<%= gettext "If you need to cancel your participation, just access the previous link and click on the participation button." %>
+<%= gettext "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button." %>

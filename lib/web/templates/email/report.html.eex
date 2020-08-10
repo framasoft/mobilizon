@@ -8,7 +8,7 @@
     <![endif]-->
     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
       <tr>
-        <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
+        <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #3A384C; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
           <h1 style="font-size: 48px; font-weight: 400; margin: 0;">
             <%= gettext("New report on <b>%{instance}</b>", instance: @instance[:name]) |> raw %>
           </h1>
@@ -24,7 +24,7 @@
 </tr>
 <!-- COPY BLOCK -->
 <tr>
-  <td bgcolor="#f4f4f4" align="center" style="padding: 0px 10px 0px 10px;">
+  <td bgcolor="#E6E4F4" align="center" style="padding: 0px 10px 0px 10px;">
     <!--[if (gte mso 9)|(IE)]>
       <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
         <tr>
@@ -33,10 +33,10 @@
     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
       <!-- COPY -->
       <tr>
-        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <p style="margin: 0;">
             <%= if @report.reporter.type == :Application and @report.reporter.preferred_username == "relay" do %>
-              <%= gettext("Someone on <b>%{instance}</b> reported the following content.", instance: @report.reporter.domain) |> raw %>
+              <%= gettext("Someone on <b>%{instance}</b> reported the following content for you to analyze:", instance: @report.reporter.domain) |> raw %>
             <% else %>
               <%= gettext("<b>%{reporter_name}</b> (%{reporter_username}) reported the following content.", reporter_name: @report.reporter.name, reporter_username: Mobilizon.Actors.Actor.preferred_username_and_domain(@report.reporter)) |> raw %>
             <% end %>
@@ -45,7 +45,7 @@
       </tr>
       <%= if Map.has_key?(@report, :event) do %>
         <tr>
-          <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+          <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
             <p style="margin: 0;">
               <h3><%= gettext "Event" %></h3>
               <a href="<%= "#{Mobilizon.Web.Endpoint.url()}/events/#{@report.event.uuid}" %>" target="_blank">
@@ -62,8 +62,8 @@
       <% end %>
       <%= if Map.has_key?(@report, :comments) && length(@report.comments) > 0 do %>
         <tr>
-          <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
-            <h3><%= gettext "Comments" %></h3>
+          <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+            <h3><%= gettext "Flagged comments" %></h3>
             <%= for comment <- @report.comments do %>
               <p style="margin: 0;">
                 <%= Mobilizon.Service.Formatter.HTML.strip_tags(comment.text) %>
@@ -79,9 +79,9 @@
       <% end %>
       <%= if Map.has_key?(@report, :content) do %>
         <tr>
-          <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+          <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
             <p style="margin: 0">
-              <h3><%= gettext "Reason" %></h3>
+              <h3><%= gettext "Reasons for report" %></h3>
               <%= @report.content %>
             </p>
             <table cellspacing="0" cellpadding="0" border="0" width="100%" style="width: 100% !important;">
@@ -100,8 +100,8 @@
               <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                 <table border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td align="center" style="border-radius: 3px;" bgcolor="#474467"><a href="<%= moderation_report_url(Mobilizon.Web.Endpoint, :index, @report.id) %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #474467; display: inline-block;">
-                        <%= gettext "View the report" %>
+                    <td align="center" style="border-radius: 3px;" bgcolor="#3C376E"><a href="<%= moderation_report_url(Mobilizon.Web.Endpoint, :index, @report.id) %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;">
+                        <%= gettext "View report" %>
                       </a></td>
                   </tr>
                 </table>

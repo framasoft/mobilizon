@@ -1,4 +1,4 @@
-<%= gettext "Events today" %>
+<%= gettext "What's up today?" %>
 ==
 
 <%= ngettext "You have one event today:", "You have %{total} events today:", @total, total: @total %>
@@ -11,4 +11,4 @@
   <%= DateTime.shift_zone!(@participation.event.begins_on, @timezone) |> datetime_to_time_string(@locale) %> - <%= @participation.event.title %> <%= page_url(Mobilizon.Web.Endpoint, :event, @participation.event.uuid) %>
 <% end %>
 
-<%= ngettext "If you need to cancel your participation, just access the event page through the link above and click on the participation button.", "If you need to cancel your participation, just access the event page through the links above and click on the participation button.", @total %>
+<%= ngettext "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button.", "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button.", @total %>

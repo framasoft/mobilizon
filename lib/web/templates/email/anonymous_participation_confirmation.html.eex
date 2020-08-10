@@ -42,7 +42,7 @@
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <p style="margin: 0">
-            <%= gettext "If you wish to cancel your attendance, visit the event page through the link above and click the « I'm attending » button." %>
+            <%= ngettext "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button.", "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button.", 1 %>
           </p>
         </td>
       </tr>
@@ -54,7 +54,7 @@
               <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                 <table border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td align="center" style="border-radius: 3px;" bgcolor="#474467"><a href="<%= participation_email_confirmation_url(Mobilizon.Web.Endpoint, :index, @participant.metadata.confirmation_token) %>" target="_blank" style="font-size: 20px; font-family: 'Roboto', Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #474467; display: inline-block;">
+                    <td align="center" style="border-radius: 3px;" bgcolor="#3C376E"><a href="<%= participation_email_confirmation_url(Mobilizon.Web.Endpoint, :index, @participant.metadata.confirmation_token) %>" target="_blank" style="font-size: 20px; font-family: 'Roboto', Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;">
                         <%= gettext "Confirm my e-mail address" %>
                       </a></td>
                   </tr>
@@ -67,7 +67,7 @@
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #757199; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 20px;" >
           <p style="margin: 0">
-            <%= gettext "If you didn't trigger this alert, you may safely ignore it." %>
+            <%= gettext "If you didn't trigger this email, you may safely ignore it." %>
           </p>
         </td>
       </tr>
