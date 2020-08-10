@@ -1,29 +1,17 @@
 <%= gettext "New report from %{reporter} on %{instance}", reporter: @report.reporter.preferred_username, instance: @instance[:name] %>
-
 --
-
 <%= if Map.has_key?(@report, :event) do %>
-    <%= gettext "Event" %>
-
-    <%= @report.event.title %>
+  <%= gettext "Event" %>
+  <%= @report.event.title %>
 <% end %>
-
-
 <%= if Map.has_key?(@report, :comments) && length(@report.comments) > 0 do %>
-    <%= gettext "Comments" %>
-
-    <%= for comment <- @report.comments do %>
-        <%= comment.text %>
-    <% end %>
+  <%= gettext "Comments" %>
+  <%= for comment <- @report.comments do %>
+    <%= comment.text %>
+  <% end %>
 <% end %>
-
-
 <%= if @report.content do %>
-    <%= gettext "Reason" %>
-
-    <%= @report.content %>
+  <%= gettext "Reason" %>
+  <%= @report.content %>
 <% end %>
-
-
-View the report: <%= moderation_report_url(Mobilizon.Web.Endpoint, :index, @report.id) %>
-
+<%= gettext "View report:" %> <%= moderation_report_url(Mobilizon.Web.Endpoint, :index, @report.id) %>

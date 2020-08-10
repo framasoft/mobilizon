@@ -1,8 +1,8 @@
-<%= gettext "Pending participations to process" %>
+<%= gettext "A request is pending!" %>
 ==
 
-<%= ngettext "You have one pending participation to process:", "You have %{number_participation_requests} participation requests to process:", @total, number_participation_requests: @total %>
+<%= ngettext "You have one pending attendance request to process:", "You have %{number_participation_requests} attendance requests to process:", @total, number_participation_requests: @total %>
 
-<%= gettext "Manage pending participation requests" %> <%= page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) <> "/participations" %>
+<%= gettext "Manage pending requests" %> <%= page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) <> "/participations" %>
 
-<%= gettext "You receive this email because you chose to get notifications for pending participations to your events. You may disable or change the configuration for these notification in your Mobilizon user settings." %>
+<%= gettext "You are receiving this email because you chose to get notifications for pending attendance requests to your events. You can disable or change your notification settings in your user account settings under « Notifications »." %>s
