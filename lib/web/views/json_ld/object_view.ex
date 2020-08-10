@@ -22,7 +22,7 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
       # We assume for now performer == organizer
       "performer" => organizer,
       "organizer" => organizer,
-      "location" => render_one(event.physical_address, ObjectView, "place.json", as: :address),
+      "location" => render_location(event),
       "eventStatus" =>
         if(event.status == :cancelled,
           do: "https://schema.org/EventCancelled",
@@ -67,8 +67,6 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
     }
   end
 
-  def render("place.json", nil), do: %{}
-
   def render("post.json", %{post: %Post{} = post}) do
     %{
       "@context" => "https://schema.org",
@@ -80,6 +78,18 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
       },
       "datePublished" => post.publish_at,
       "dateModified" => post.updated_at
+    }
+  end
+
+  defp render_location(%Event{physical_address: %Address{} = address}),
+    do: render_one(address, ObjectView, "place.json", as: :address)
+
+  # For now the Virtual Location of an event is it's own URL,
+  # but in the future it will be a special field
+  defp render_location(%Event{url: event_url}) do
+    %{
+      "@type" => "VirtualLocation",
+      "url" => event_url
     }
   end
 end
