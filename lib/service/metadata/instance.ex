@@ -22,7 +22,7 @@ defmodule Mobilizon.Service.Metadata.Instance do
     "url": "#{Endpoint.url()}",
     "potentialAction": {
     "@type": "SearchAction",
-    "target": "#{Endpoint.url()}/search/{search_term}",
+    "target": "#{Endpoint.url()}/search?term={search_term}",
     "query-input": "required name=search_term"
     }
     }</script>
