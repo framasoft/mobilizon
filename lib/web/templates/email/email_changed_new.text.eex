@@ -1,5 +1,5 @@
 <%= gettext "Confirm new email" %>
 ==
-<%= gettext "Hi there! It seems like you wanted to change the email address linked to your account on <b>%{instance}</b>. If you still wish to do so, please click the button below to confirm the change. You will then be able to log in to %{instance} with this new email address." %>
+<%= gettext "Hi there! It seems like you wanted to change the email address linked to your account on <b>%{instance}</b>. If you still wish to do so, please click the button below to confirm the change. You will then be able to log in to %{instance} with this new email address.", %{instance: @instance_name} %>
 <%= user_email_validation_url(Mobilizon.Web.Endpoint, :index, @token) %>
 <%= gettext "If you didn't trigger the change yourself, please ignore this message." %>

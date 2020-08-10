@@ -342,7 +342,7 @@ msgid "What information do we collect?"
 msgstr "Quinas informacions reculem ?"
 
 #, elixir-format
-#: lib/web/email/user.ex:175
+#: lib/web/email/user.ex:176
 msgid "Mobilizon on %{instance}: confirm your email address"
 msgstr "Mobilizon sus %{instance} : confirmatz vòstra adreça electronica"
 
@@ -837,11 +837,6 @@ msgid "Your content is yours"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:89
-msgid "%{b_start}Please do not use it for real purposes.%{b_end}"
-msgstr "%{b_start}Mercés de l’utilizar pas d’un biais real%{b_end}"
-
-#, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:58
 msgid "Confirm my e-mail address"
 msgstr ""
@@ -857,14 +852,6 @@ msgstr ""
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:3
 msgid "Hi there! You just registered to join this event: « %{title} ». Please confirm the e-mail address you provided:"
 msgstr ""
-
-#, elixir-format
-#: lib/web/templates/email/email.html.eex:91
-msgid "Mobilizon is still under development, we will add new features along the updates, until the release of %{b_start}version 1 of the software in the fall of 2020%{b_end}."
-msgstr ""
-"Mobilizon es en desvolopament, ajustarem de nòvas foncionalitats a aqueste "
-"site pendent de mesas a jorn regularas, fins a la publicacion de %{b_start}"
-"la version 1 del logicial al primièr semèstre 2020%{b_end}."
 
 #, elixir-format
 #: lib/web/templates/email/email.html.eex:118
@@ -903,8 +890,8 @@ msgstr "Avètz demandat un nòu senhal per vòstre compte sus %{instance}."
 msgid "Mobilizon is still under development, we will add new features along the updates, until the release of version 1 of the software in the fall of 2020."
 msgstr ""
 "Mobilizon es en desvolopament, ajustarem de nòvas foncionalitats a aqueste "
-"site pendent de mesas a jorn regularas, fins a la publicacion de %{b_start}"
-"la version 1 del logicial al primièr semèstre 2020%{b_end}."
+"site pendent de mesas a jorn regularas, fins a la publicacion de "
+"la version 1 del logicial al primièr semèstre 2020."
 
 #, elixir-format
 #: lib/web/templates/email/email.text.eex:7
@@ -998,13 +985,13 @@ msgid "Hi there! It seems like you wanted to change the email address linked to 
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/email_changed_old.text.eex:5
+#: lib/web/templates/email/email_changed_old.text.eex:3
 msgid "Hi there! Just a quick note to confirm that the email address linked to your account on %{host} has been changed from this one to:"
 msgstr ""
 
 #, elixir-format
 #: lib/web/templates/email/email_changed_old.html.eex:41
-#: lib/web/templates/email/email_changed_old.text.eex:9
+#: lib/web/templates/email/email_changed_old.text.eex:5
 msgid "If you did not trigger this change yourself, it is likely that someone has gained access to your %{host} account. Please log in and change your password immediately. If you cannot login, contact the admin on %{host}."
 msgstr ""
 
@@ -1209,3 +1196,16 @@ msgstr ""
 #: lib/web/templates/email/email_changed_new.text.eex:5
 msgid "If you didn't trigger the change yourself, please ignore this message."
 msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/email.html.eex:89
+msgid "<b>Please do not use it for real purposes.</b>"
+msgstr "Mercés de l’utilizar pas d’un biais real"
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/email.html.eex:91
+msgid "Mobilizon is still under development, we will add new features along the updates, until the release of <b>version 1 of the software in the fall of 2020</b>."
+msgstr ""
+"Mobilizon es en desvolopament, ajustarem de nòvas foncionalitats a aqueste "
+"site pendent de mesas a jorn regularas, fins a la publicacion de <b>"
+"la version 1 del logicial al primièr semèstre 2020</b>."
