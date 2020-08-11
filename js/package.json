@@ -72,7 +72,7 @@
     "@vue/cli-plugin-eslint": "~4.5.2",
     "@vue/cli-plugin-pwa": "~4.5.2",
     "@vue/cli-plugin-router": "~4.5.2",
-    "@vue/cli-plugin-typescript": "~4.5.2",
+    "@vue/cli-plugin-typescript": "~4.5.3",
     "@vue/cli-plugin-unit-mocha": "~4.5.2",
     "@vue/cli-service": "~4.5.2",
     "@vue/eslint-config-airbnb": "^5.0.2",
