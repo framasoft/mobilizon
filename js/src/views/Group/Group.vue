@@ -96,67 +96,30 @@
       </header>
     </div>
     <div v-if="isCurrentActorAGroupMember" class="block-container">
+      <!-- Private things -->
       <div class="block-column">
-        <section>
-          <subtitle>{{ $t("Upcoming events") }}</subtitle>
-          <div class="organized-events-wrapper" v-if="group && group.organizedEvents.total > 0">
-            <EventMinimalistCard
-              v-for="event in group.organizedEvents.elements"
-              :event="event"
-              :key="event.uuid"
-              class="organized-event"
+        <!-- Group discussions -->
+        <group-section :title="$t('Discussions')" icon="chat">
+          <div v-if="group.discussions.total > 0">
+            <discussion-list-item
+              v-for="discussion in group.discussions.elements"
+              :key="discussion.id"
+              :discussion="discussion"
             />
           </div>
-          <div v-else-if="group" class="content has-text-grey has-text-centered">
-            <p>{{ $t("No public upcoming events") }}</p>
-          </div>
-          <b-skeleton animated v-else></b-skeleton>
-          <router-link :to="{}">{{ $t("View all events") }}</router-link>
-        </section>
-        <section>
-          <subtitle>{{ $t("Resources") }}</subtitle>
-          <div v-if="group.resources.elements.length > 0">
-            <div v-for="resource in group.resources.elements" :key="resource.id">
-              <resource-item
-                :resource="resource"
-                v-if="resource.type !== 'folder'"
-                :inline="true"
-              />
-              <folder-item :resource="resource" :group="group" v-else :inline="true" />
-            </div>
-          </div>
-          <div v-else-if="group" class="content has-text-grey has-text-centered">
-            <p>{{ $t("No resources yet") }}</p>
+          <div v-else class="content has-text-grey has-text-centered">
+            <p>{{ $t("No discussions yet") }}</p>
           </div>
           <router-link
             :to="{
-              name: RouteName.RESOURCE_FOLDER_ROOT,
+              name: RouteName.DISCUSSION_LIST,
               params: { preferredUsername: usernameWithDomain(group) },
             }"
-            >{{ $t("View all resources") }}</router-link
+            >{{ $t("View all discussions") }}</router-link
           >
-        </section>
-      </div>
-      <div class="block-column">
-        <section>
-          <subtitle>{{ $t("Public page") }}</subtitle>
-          <div v-if="group.posts.total > 0" class="posts-wrapper">
-            <post-list-item v-for="post in group.posts.elements" :key="post.id" :post="post" />
-          </div>
-          <div v-else-if="group" class="content has-text-grey has-text-centered">
-            <p>{{ $t("No posts yet") }}</p>
-          </div>
-          <router-link
-            :to="{
-              name: RouteName.POST_CREATE,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            class="button is-primary"
-            >{{ $t("Post a public message") }}</router-link
-          >
-        </section>
-        <section>
-          <subtitle>{{ $t("Ongoing tasks") }}</subtitle>
+        </group-section>
+        <!-- Todos -->
+        <group-section :title="$t('Ongoing tasks')" icon="checkbox-multiple-marked">
           <div v-if="group.todoLists.elements.length > 0">
             <div v-for="todoList in group.todoLists.elements" :key="todoList.id">
               <router-link :to="{ name: RouteName.TODO_LIST, params: { id: todoList.id } }">
@@ -180,27 +143,66 @@
             <p>{{ $t("No ongoing todos") }}</p>
           </div>
           <router-link :to="{ name: RouteName.TODO_LISTS }">{{ $t("View all todos") }}</router-link>
-        </section>
-        <section>
-          <subtitle>{{ $t("Discussions") }}</subtitle>
-          <div v-if="group.discussions.total > 0">
-            <discussion-list-item
-              v-for="discussion in group.discussions.elements"
-              :key="discussion.id"
-              :discussion="discussion"
-            />
+        </group-section>
+        <!-- Resources -->
+        <group-section :title="$t('Resources')" icon="link">
+          <div v-if="group.resources.elements.length > 0">
+            <div v-for="resource in group.resources.elements" :key="resource.id">
+              <resource-item
+                :resource="resource"
+                v-if="resource.type !== 'folder'"
+                :inline="true"
+              />
+              <folder-item :resource="resource" :group="group" v-else :inline="true" />
+            </div>
           </div>
-          <div v-else class="content has-text-grey has-text-centered">
-            <p>{{ $t("No discussions yet") }}</p>
+          <div v-else-if="group" class="content has-text-grey has-text-centered">
+            <p>{{ $t("No resources yet") }}</p>
           </div>
           <router-link
             :to="{
-              name: RouteName.DISCUSSION_LIST,
+              name: RouteName.RESOURCE_FOLDER_ROOT,
               params: { preferredUsername: usernameWithDomain(group) },
             }"
-            >{{ $t("View all discussions") }}</router-link
+            >{{ $t("View all resources") }}</router-link
           >
-        </section>
+        </group-section>
+      </div>
+      <!-- Public things -->
+      <div class="block-column">
+        <!-- Events -->
+        <group-section :title="$t('Upcoming events')" icon="calendar" :privateSection="false">
+          <div class="organized-events-wrapper" v-if="group && group.organizedEvents.total > 0">
+            <EventMinimalistCard
+              v-for="event in group.organizedEvents.elements"
+              :event="event"
+              :key="event.uuid"
+              class="organized-event"
+            />
+          </div>
+          <div v-else-if="group" class="content has-text-grey has-text-centered">
+            <p>{{ $t("No public upcoming events") }}</p>
+          </div>
+          <b-skeleton animated v-else></b-skeleton>
+          <router-link :to="{}">{{ $t("View all events") }}</router-link>
+        </group-section>
+        <!-- Posts -->
+        <group-section :title="$t('Public page')" icon="bullhorn" :privateSection="false">
+          <div v-if="group.posts.total > 0" class="posts-wrapper">
+            <post-list-item v-for="post in group.posts.elements" :key="post.id" :post="post" />
+          </div>
+          <div v-else-if="group" class="content has-text-grey has-text-centered">
+            <p>{{ $t("No posts yet") }}</p>
+          </div>
+          <router-link
+            :to="{
+              name: RouteName.POST_CREATE,
+              params: { preferredUsername: usernameWithDomain(group) },
+            }"
+            class="button is-primary"
+            >{{ $t("Post a public message") }}</router-link
+          >
+        </group-section>
       </div>
     </div>
     <b-message v-else-if="!group && $apollo.loading === false" type="is-danger">
@@ -221,7 +223,6 @@
         <span v-else-if="group">{{ $t("No public upcoming events") }}</span>
         <b-skeleton animated v-else></b-skeleton>
       </section>
-      <!--            {{ group }}-->
       <section>
         <subtitle>{{ $t("Latest posts") }}</subtitle>
         <div v-if="group && group.posts.total > 0">
@@ -272,6 +273,7 @@ import ResourceItem from "@/components/Resource/ResourceItem.vue";
 import FolderItem from "@/components/Resource/FolderItem.vue";
 import RouteName from "../../router/name";
 import { Address } from "@/types/address.model";
+import GroupSection from "../../components/Group/GroupSection.vue";
 
 @Component({
   apollo: {
@@ -305,6 +307,7 @@ import { Address } from "@/types/address.model";
     EventCard,
     FolderItem,
     ResourceItem,
+    GroupSection,
     "map-leaflet": () => import(/* webpackChunkName: "map" */ "../../components/Map.vue"),
   },
   metaInfo() {
@@ -459,10 +462,6 @@ div.container {
       margin: 0 2rem;
 
       section {
-        /deep/ h2 span {
-          display: block;
-        }
-
         .posts-wrapper {
           padding-bottom: 1rem;
         }
