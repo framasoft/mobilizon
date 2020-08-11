@@ -1059,10 +1059,10 @@
     request-promise "^4.1.1"
     yargs "^8.0.2"
 
-"@mdi/font@^5.0.45":
-  version "5.4.55"
-  resolved "https://registry.yarnpkg.com/@mdi/font/-/font-5.4.55.tgz#f34263882251ac23f37c1312988e1f10256dc74c"
-  integrity sha512-M+Wdcs4nZ4/Kid949fcI0DsnvHtpE6pwk6Hv8YJZDp+Zne7ZtYdIN0z73cvcANkbyNnY3ncScULGMIceNd0xxQ==
+"@mdi/font@^5.5.55":
+  version "5.5.55"
+  resolved "https://registry.yarnpkg.com/@mdi/font/-/font-5.5.55.tgz#7f83d640f0692651f5e59558da99975f42114123"
+  integrity sha512-xrVCXiRMz7ubB8mu6ehDhMADmGpLBsk3GWZccs39jWmhoTxatFnOvW8STJjqMGtePPNgGYYu/6m/AJVyMjBxnw==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
