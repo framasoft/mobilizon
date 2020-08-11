@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2020-08-11 10:00+0000\n"
+"PO-Revision-Date: 2020-08-11 12:47+0000\n"
 "Last-Translator: Berto Te <ateira@3fpj.com>\n"
 "Language-Team: Spanish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/es/>\n"
@@ -1195,13 +1195,13 @@ msgstr "<b>% {instancia} </b> es una instancia de Mobilizon."
 #: lib/web/templates/email/pending_participation_notification.text.eex:1
 #, elixir-format
 msgid "A request is pending!"
-msgstr ""
+msgstr "¡Hay una solicitud pendiente!"
 
 #: lib/web/templates/email/before_event_notification.html.eex:13
 #: lib/web/templates/email/before_event_notification.text.eex:1
 #, elixir-format
 msgid "An event is upcoming!"
-msgstr ""
+msgstr "¡Se acerca un evento!"
 
 #: lib/web/templates/email/email_changed_new.html.eex:13
 #: lib/web/templates/email/email_changed_new.text.eex:1
@@ -1212,12 +1212,12 @@ msgstr "Confirme su email"
 #: lib/web/templates/email/event_updated.html.eex:82
 #, elixir-format
 msgid "End"
-msgstr ""
+msgstr "Final"
 
 #: lib/web/templates/email/event_updated.text.eex:21
 #, elixir-format
 msgid "End %{ends_on}"
-msgstr ""
+msgstr "Final% {ends_on}"
 
 #: lib/web/templates/email/event_updated.html.eex:13
 #: lib/web/templates/email/event_updated.text.eex:1
@@ -1228,35 +1228,49 @@ msgstr "¡Evento actualizado!"
 #: lib/web/templates/email/report.html.eex:66
 #, elixir-format
 msgid "Flagged comments"
-msgstr ""
+msgstr "Comentarios marcados"
 
 #: lib/web/templates/email/event_participation_approved.html.eex:45
 #: lib/web/templates/email/event_participation_approved.text.eex:7
 #, elixir-format
 msgid "Good news: one of the event organizers just approved your request. Update your calendar, because you're on the guest list now!"
 msgstr ""
+"Buenas noticias: uno de los organizadores del evento acaba de aprobar su "
+"solicitud. Actualice su calendario, ¡porque ya está en la lista de invitados!"
 
 #: lib/web/templates/email/email_changed_new.html.eex:38
 #: lib/web/templates/email/email_changed_new.text.eex:3
 #, elixir-format
 msgid "Hi there! It seems like you wanted to change the email address linked to your account on <b>%{instance}</b>. If you still wish to do so, please click the button below to confirm the change. You will then be able to log in to %{instance} with this new email address."
 msgstr ""
+"¡Hola! Parece que desea cambiar la dirección de correo electrónico vinculada "
+"a su cuenta en <b>% {instance} </b>. Si aún desea hacerlo, haga clic en el "
+"botón de abajo para confirmar el cambio. Luego podrá iniciar sesión en% "
+"{instance} con esta nueva dirección de correo electrónico."
 
 #: lib/web/templates/email/email_changed_old.text.eex:3
 #, elixir-format
 msgid "Hi there! Just a quick note to confirm that the email address linked to your account on %{host} has been changed from this one to:"
 msgstr ""
+"¡Hola! Solo una nota rápida para confirmar que la dirección de correo "
+"electrónico vinculada a su cuenta en% {host} se ha cambiado de esta a:"
 
 #: lib/web/templates/email/email_changed_old.html.eex:41
 #: lib/web/templates/email/email_changed_old.text.eex:5
 #, elixir-format
 msgid "If you did not trigger this change yourself, it is likely that someone has gained access to your %{host} account. Please log in and change your password immediately. If you cannot login, contact the admin on %{host}."
 msgstr ""
+"Si no activó este cambio usted mismo, es probable que alguien haya obtenido "
+"acceso a su cuenta% {host}. Inicie sesión y cambie su contraseña "
+"inmediatamente. Si no puede iniciar sesión, comuníquese con el administrador "
+"en% {host}."
 
 #: lib/web/templates/email/password_reset.text.eex:12
 #, elixir-format
 msgid "If you didn't trigger the change yourself, please ignore this message. Your password won't be changed until you click the link above."
 msgstr ""
+"Si no activó el cambio usted mismo, ignore este mensaje. Su contraseña no se "
+"cambiará hasta que haga clic en el enlace de arriba."
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:70
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:4 lib/web/templates/email/registration_confirmation.html.eex:45
@@ -1295,7 +1309,7 @@ msgstr "¡Aprenda más sobre Mobilizon aquí!"
 #: lib/web/templates/email/event_updated.html.eex:92
 #, elixir-format
 msgid "Location"
-msgstr ""
+msgstr "Ubicación"
 
 #: lib/web/templates/email/event_updated.html.eex:102
 #, elixir-format
@@ -1318,12 +1332,12 @@ msgstr "¡Ya casi estas!"
 #: lib/web/templates/email/email_changed_old.text.eex:1
 #, elixir-format
 msgid "New email confirmation"
-msgstr ""
+msgstr "Nueva confirmación de correo electrónico"
 
 #: lib/web/templates/email/report.html.eex:84
 #, elixir-format
 msgid "Reasons for report"
-msgstr ""
+msgstr "Razones para informar"
 
 #: lib/web/templates/email/report.html.eex:39
 #, elixir-format
@@ -1334,29 +1348,29 @@ msgstr "Alguien en <b>% {instancia} </b> informó el siguiente contenido:"
 #: lib/web/templates/email/event_participation_rejected.text.eex:1
 #, elixir-format
 msgid "Sorry! You're not going."
-msgstr ""
+msgstr "¡Lo siento! No vas."
 
 #: lib/web/templates/email/event_updated.html.eex:72
 #, elixir-format
 msgid "Start"
-msgstr ""
+msgstr "Inicio"
 
 #: lib/web/templates/email/event_updated.text.eex:18
 #, elixir-format
 msgid "Start %{begins_on}"
-msgstr ""
+msgstr "Inicio% {starts_on}"
 
 #: lib/web/templates/email/event_updated.html.eex:38
 #: lib/web/templates/email/event_updated.text.eex:3
 #, elixir-format
 msgid "There have been changes for %{title} so we'd thought we'd let you know."
-msgstr ""
+msgstr "Ha habido cambios para% {title}, así que pensamos en avisarle."
 
 #: lib/web/templates/email/event_updated.html.eex:54
 #: lib/web/templates/email/event_updated.text.eex:11
 #, elixir-format
 msgid "This event has been cancelled by its organizers. Sorry!"
-msgstr ""
+msgstr "Este evento ha sido cancelado por sus organizadores. ¡Lo siento!"
 
 #: lib/web/templates/email/event_updated.html.eex:50
 #: lib/web/templates/email/event_updated.text.eex:7
@@ -1369,6 +1383,8 @@ msgstr "El evento ha sido confirmado"
 #, elixir-format
 msgid "This event has yet to be confirmed: organizers will let you know if they do confirm it."
 msgstr ""
+"Este evento aún no se ha confirmado: los organizadores te avisarán si lo "
+"confirman."
 
 #: lib/web/templates/email/event_participation_rejected.html.eex:45
 #: lib/web/templates/email/event_participation_rejected.text.eex:7
@@ -1395,12 +1411,12 @@ msgstr "Ver el informe:"
 #: lib/web/templates/email/event_participation_approved.html.eex:58
 #, elixir-format
 msgid "Visit event page"
-msgstr ""
+msgstr "Visita la página del evento"
 
 #: lib/web/templates/email/event_updated.html.eex:119
 #, elixir-format
 msgid "Visit the updated event page"
-msgstr ""
+msgstr "Visita la página del evento actualizada"
 
 #: lib/web/templates/email/event_updated.text.eex:23
 #, elixir-format
@@ -1411,31 +1427,37 @@ msgstr "Ver el evento actualizado en: %{link}"
 #: lib/web/templates/email/notification_each_week.text.eex:1
 #, elixir-format
 msgid "What's up this week?"
-msgstr ""
+msgstr "¿Qué pasa esta semana?"
 
 #: lib/web/templates/email/on_day_notification.html.eex:13
 #: lib/web/templates/email/on_day_notification.text.eex:1
 #, elixir-format
 msgid "What's up today?"
-msgstr ""
+msgstr "Qué pasa hoy?"
 
 #: lib/web/templates/email/event_participation_approved.html.eex:70
 #: lib/web/templates/email/event_participation_approved.text.eex:11
 #, elixir-format
 msgid "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button."
 msgstr ""
+"Si desea actualizar o cancelar su asistencia, simplemente acceda a la página "
+"del evento a través del enlace de arriba y haga clic en el botón Asistir."
 
 #: lib/web/templates/email/pending_participation_notification.html.eex:64
 #: lib/web/templates/email/pending_participation_notification.text.eex:8
 #, elixir-format
 msgid "You are receiving this email because you chose to get notifications for pending attendance requests to your events. You can disable or change your notification settings in your user account settings under « Notifications »."
 msgstr ""
+"Recibió este correo electrónico porque eligió recibir notificaciones de "
+"solicitudes de asistencia pendientes a sus eventos. Puede desactivar o "
+"cambiar la configuración de notificaciones en la configuración de su cuenta "
+"de usuario en «Notificaciones»."
 
 #: lib/web/templates/email/event_participation_rejected.html.eex:38
 #: lib/web/templates/email/event_participation_rejected.text.eex:5
 #, elixir-format
 msgid "You issued a request to attend %{title}."
-msgstr ""
+msgstr "Envió una solicitud para asistir a %{title}."
 
 #: lib/web/templates/email/event_participation_approved.html.eex:38
 #: lib/web/templates/email/event_participation_approved.text.eex:5
@@ -1446,13 +1468,13 @@ msgstr "Solicitaste participar en el evento %{title}."
 #: lib/web/templates/email/event_participation_approved.html.eex:13
 #, elixir-format
 msgid "You're going!"
-msgstr ""
+msgstr "¡Vas!"
 
 #: lib/web/templates/email/email_changed_new.html.eex:64
 #: lib/web/templates/email/email_changed_new.text.eex:5
 #, elixir-format
 msgid "If you didn't trigger the change yourself, please ignore this message."
-msgstr ""
+msgstr "Si no activó el cambio usted mismo, ignore este mensaje."
 
 #: lib/web/templates/email/email.html.eex:89
 #, elixir-format
