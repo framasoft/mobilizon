@@ -19,12 +19,4 @@ defmodule Mobilizon.Service.HTTP.BaseClient do
   plug(Tesla.Middleware.Timeout, timeout: 10_000)
 
   plug(Tesla.Middleware.Headers, [{"User-Agent", @user_agent}])
-
-  def get(url) do
-    get(url)
-  end
-
-  def post(url, data) do
-    post(url, data)
-  end
 end

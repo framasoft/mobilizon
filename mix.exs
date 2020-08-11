@@ -105,7 +105,7 @@ defmodule Mobilizon.Mixfile do
       {:atomex, "0.3.0"},
       {:cachex, "~> 3.1"},
       {:geohax, "~> 0.3.0"},
-      {:mogrify, "~> 0.7.2"},
+      {:mogrify, "~> 0.8.0"},
       {:auto_linker,
        git: "https://git.pleroma.social/pleroma/auto_linker.git",
        ref: "95e8188490e97505c56636c1379ffdf036c1fdde"},
