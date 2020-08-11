@@ -516,7 +516,6 @@
   "Resources": "Resources",
   "View all resources": "View all resources",
   "Public page": "Public page",
-  "Followed by {count} persons": "Followed by {count} persons",
   "Post a public message": "Post a public message",
   "View all todos": "View all todos",
   "Discussions": "Discussions",
@@ -749,5 +748,13 @@
   "Group address": "Group address",
   "Events tagged with {tag}": "Events tagged with {tag}",
   "Explore events": "Explore events",
-  "#{tag}": "#{tag}"
+  "#{tag}": "#{tag}",
+  "{count} team members": "{count} team members",
+  "View all events": "View all events",
+  "No resources yet": "No resources yet",
+  "No posts yet": "No posts yet",
+  "No ongoing todos": "No ongoing todos",
+  "No discussions yet": "No discussions yet",
+  "Add / Remove…": "Add / Remove…",
+  "No public posts": "No public posts"
 }
