@@ -53,7 +53,7 @@
             <span class="navbar-item">
               <b-button type="is-text" @click="$router.go(-1)">{{ $t("Cancel") }}</b-button>
             </span>
-            <span class="navbar-item">
+            <span class="navbar-item" v-if="this.isUpdate">
               <b-button type="is-danger is-outlined" @click="deletePost">{{
                 $t("Delete post")
               }}</b-button>

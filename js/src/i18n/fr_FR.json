@@ -749,5 +749,13 @@
   "Group address": "Adresse du groupe",
   "Events tagged with {tag}": "Événements taggés avec {tag}",
   "Explore events": "Explorer les événements",
-  "#{tag}": "#{tag}"
+  "#{tag}": "#{tag}",
+  "{count} team members": "{count} membres d'équipe",
+  "View all events": "Voir tous les événements",
+  "No resources yet": "Pas encore de ressources",
+  "No posts yet": "Pas encore de billets",
+  "No ongoing todos": "Pas de todos en cours",
+  "No discussions yet": "Pas encore de discussions",
+  "Add / Remove…": "Ajouter / Supprimer…",
+  "No public posts": "Pas de billets publics"
 }
