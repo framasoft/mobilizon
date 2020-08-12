@@ -64,7 +64,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
       shared_inbox_url: data["endpoints"]["sharedInbox"],
       domain: URI.parse(data["id"]).host,
       manually_approves_followers: data["manuallyApprovesFollowers"],
-      type: data["type"]
+      type: data["type"],
+      visibility: if(Map.get(data, "discoverable", false) == true, do: :public, else: :unlisted)
     }
   end
 
@@ -96,6 +97,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
       "endpoints" => %{
         "sharedInbox" => actor.shared_inbox_url
       },
+      "discoverable" => actor.visibility == :public,
       "manuallyApprovesFollowers" => actor.manually_approves_followers,
       "publicKey" => %{
         "id" => "#{actor.url}#main-key",

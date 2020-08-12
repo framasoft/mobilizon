@@ -43,8 +43,15 @@ defmodule Mobilizon.Federation.ActivityPubTest do
   describe "fetching actor from its url" do
     test "returns an actor from nickname" do
       use_cassette "activity_pub/fetch_tcit@framapiaf.org" do
-        assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"} = actor} =
-                 ActivityPub.make_actor_from_nickname("tcit@framapiaf.org")
+        assert {:ok,
+                %Actor{preferred_username: "tcit", domain: "framapiaf.org", visibility: :public} =
+                  actor} = ActivityPub.make_actor_from_nickname("tcit@framapiaf.org")
+      end
+
+      use_cassette "activity_pub/fetch_tcit@framapiaf.org_not_discoverable" do
+        assert {:ok,
+                %Actor{preferred_username: "tcit", domain: "framapiaf.org", visibility: :unlisted} =
+                  actor} = ActivityPub.make_actor_from_nickname("tcit@framapiaf.org")
       end
     end
 
@@ -52,7 +59,9 @@ defmodule Mobilizon.Federation.ActivityPubTest do
     test "returns an actor from url" do
       # Initial fetch
       use_cassette "activity_pub/fetch_framapiaf.org_users_tcit" do
-        assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"}} =
+        # Unlisted because discoverable is not present in the JSON payload
+        assert {:ok,
+                %Actor{preferred_username: "tcit", domain: "framapiaf.org", visibility: :unlisted}} =
                  ActivityPub.get_or_fetch_actor_by_url(@actor_url)
       end
 
