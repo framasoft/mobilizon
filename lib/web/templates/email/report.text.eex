@@ -14,4 +14,4 @@
   <%= gettext "Reason" %>
   <%= @report.content %>
 <% end %>
-<%= gettext "View report:" %> <%= moderation_report_url(Mobilizon.Web.Endpoint, :index, @report.id) %>
+<%= gettext "View report:" %> <%= page_url(Mobilizon.Web.Endpoint, :moderation_report, @report.id) %>

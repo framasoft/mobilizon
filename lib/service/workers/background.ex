@@ -9,7 +9,7 @@ defmodule Mobilizon.Service.Workers.Background do
   use Mobilizon.Service.Workers.Helper, queue: "background"
 
   @impl Oban.Worker
-  def perform(%{"op" => "delete_actor", "actor_id" => actor_id} = args, _job) do
+  def perform(%Job{args: %{"op" => "delete_actor", "actor_id" => actor_id} = args}) do
     with reserve_username when is_boolean(reserve_username) <-
            Map.get(args, "reserve_username", true),
          %Actor{} = actor <- Actors.get_actor(actor_id) do
@@ -17,7 +17,7 @@ defmodule Mobilizon.Service.Workers.Background do
     end
   end
 
-  def perform(%{"op" => "actor_key_rotation", "actor_id" => actor_id}, _job) do
+  def perform(%Job{args: %{"op" => "actor_key_rotation", "actor_id" => actor_id}}) do
     with %Actor{} = actor <- Actors.get_actor(actor_id) do
       Actors.actor_key_rotation(actor)
     end

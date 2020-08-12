@@ -81,12 +81,12 @@ defmodule Mobilizon.Web.Router do
     pipe_through(:activity_pub_signature)
 
     get("/@:name", PageController, :actor)
-    get("/events/me", PageController, :index)
+    get("/events/me", PageController, :my_events)
     get("/events/:uuid", PageController, :event)
     get("/comments/:uuid", PageController, :comment)
-    get("/resource/:uuid", PageController, :resource, as: "resource")
-    get("/todo-list/:uuid", PageController, :todo_list, as: "todo_list")
-    get("/todo/:uuid", PageController, :todo, as: "todo")
+    get("/resource/:uuid", PageController, :resource)
+    get("/todo-list/:uuid", PageController, :todo_list)
+    get("/todo/:uuid", PageController, :todo)
     get("/@:name/todos", PageController, :todos)
     get("/@:name/resources", PageController, :resources)
     get("/@:name/posts", PageController, :posts)
@@ -139,21 +139,20 @@ defmodule Mobilizon.Web.Router do
     pipe_through(:browser)
 
     # Because the "/events/:uuid" route caches all these, we need to force them
-    get("/events/create", PageController, :index)
-    get("/events/list", PageController, :index)
-    get("/events/me", PageController, :index)
-    get("/events/explore", PageController, :index)
-    get("/events/:uuid/edit", PageController, :index)
+    get("/events/create", PageController, :create_event)
+    get("/events/list", PageController, :list_events)
+    get("/events/me", PageController, :my_events)
+    get("/events/explore", PageController, :explore_events)
+    get("/events/:uuid/edit", PageController, :edit_event)
 
     # This is a hack to ease link generation into emails
-    get("/moderation/reports/:id", PageController, :index, as: "moderation_report")
+    get("/moderation/reports/:id", PageController, :moderation_report)
 
-    get("/participation/email/confirm/:token", PageController, :index,
-      as: "participation_email_confirmation"
-    )
+    get("/participation/email/confirm/:token", PageController, :participation_email_confirmation)
 
-    get("/validate/email/:token", PageController, :index, as: "user_email_validation")
-    get("/groups/me", PageController, :index, as: "my_groups")
+    get("/validate/email/:token", PageController, :user_email_validation)
+
+    get("/groups/me", PageController, :my_groups)
 
     get("/interact", PageController, :interact)
 

@@ -32,10 +32,9 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       %Participant{id: participant_id} =
         participant = insert(:participant, role: :participant, actor: actor)
 
-      Notification.perform(
-        %{"op" => "before_event_notification", "participant_id" => participant_id},
-        nil
-      )
+      Notification.perform(%Oban.Job{
+        args: %{"op" => "before_event_notification", "participant_id" => participant_id}
+      })
 
       assert_delivered_email(
         NotificationMailer.before_event_notification(
@@ -59,10 +58,9 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
 
       assert {:ok, %Participant{}} = Events.delete_participant(participant)
 
-      Notification.perform(
-        %{"op" => "before_event_notification", "participant_id" => participant_id},
-        nil
-      )
+      Notification.perform(%Oban.Job{
+        args: %{"op" => "before_event_notification", "participant_id" => participant_id}
+      })
 
       refute_delivered_email(
         NotificationMailer.before_event_notification(
@@ -78,10 +76,9 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       %Participant{id: participant_id} =
         participant = insert(:participant, role: :participant, event: event)
 
-      Notification.perform(
-        %{"op" => "before_event_notification", "participant_id" => participant_id},
-        nil
-      )
+      Notification.perform(%Oban.Job{
+        args: %{"op" => "before_event_notification", "participant_id" => participant_id}
+      })
 
       refute_delivered_email(
         NotificationMailer.before_event_notification(
@@ -104,10 +101,9 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
 
       %Participant{} = participant = insert(:participant, role: :participant, actor: actor)
 
-      Notification.perform(
-        %{"op" => "on_day_notification", "user_id" => user_id},
-        nil
-      )
+      Notification.perform(%Oban.Job{
+        args: %{"op" => "on_day_notification", "user_id" => user_id}
+      })
 
       assert_delivered_email(
         NotificationMailer.on_day_notification(
@@ -137,10 +133,9 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
 
       assert {:ok, %Participant{}} = Events.delete_participant(participant)
 
-      Notification.perform(
-        %{"op" => "on_day_notification", "user_id" => user_id},
-        nil
-      )
+      Notification.perform(%Oban.Job{
+        args: %{"op" => "on_day_notification", "user_id" => user_id}
+      })
 
       refute_delivered_email(
         NotificationMailer.on_day_notification(
@@ -164,10 +159,9 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       %Participant{} =
         participant = insert(:participant, role: :participant, event: event, actor: actor)
 
-      Notification.perform(
-        %{"op" => "on_day_notification", "user_id" => user_id},
-        nil
-      )
+      Notification.perform(%Oban.Job{
+        args: %{"op" => "on_day_notification", "user_id" => user_id}
+      })
 
       refute_delivered_email(
         NotificationMailer.on_day_notification(
@@ -193,10 +187,9 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
           acc ++ [participant]
         end)
 
-      Notification.perform(
-        %{"op" => "on_day_notification", "user_id" => user_id},
-        nil
-      )
+      Notification.perform(%Oban.Job{
+        args: %{"op" => "on_day_notification", "user_id" => user_id}
+      })
 
       refute_delivered_email(
         NotificationMailer.on_day_notification(
@@ -220,10 +213,9 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
 
       %Participant{} = participant = insert(:participant, role: :participant, actor: actor)
 
-      Notification.perform(
-        %{"op" => "weekly_notification", "user_id" => user_id},
-        nil
-      )
+      Notification.perform(%Oban.Job{
+        args: %{"op" => "weekly_notification", "user_id" => user_id}
+      })
 
       assert_delivered_email(
         NotificationMailer.weekly_notification(
@@ -253,10 +245,9 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
 
       assert {:ok, %Participant{}} = Events.delete_participant(participant)
 
-      Notification.perform(
-        %{"op" => "weekly_notification", "user_id" => user_id},
-        nil
-      )
+      Notification.perform(%Oban.Job{
+        args: %{"op" => "weekly_notification", "user_id" => user_id}
+      })
 
       refute_delivered_email(
         NotificationMailer.weekly_notification(
@@ -280,10 +271,9 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       %Participant{} =
         participant = insert(:participant, role: :participant, event: event, actor: actor)
 
-      Notification.perform(
-        %{"op" => "weekly_notification", "user_id" => user_id},
-        nil
-      )
+      Notification.perform(%Oban.Job{
+        args: %{"op" => "weekly_notification", "user_id" => user_id}
+      })
 
       refute_delivered_email(
         NotificationMailer.weekly_notification(
@@ -309,10 +299,9 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
           acc ++ [participant]
         end)
 
-      Notification.perform(
-        %{"op" => "weekly_notification", "user_id" => user_id},
-        nil
-      )
+      Notification.perform(%Oban.Job{
+        args: %{"op" => "weekly_notification", "user_id" => user_id}
+      })
 
       refute_delivered_email(
         NotificationMailer.weekly_notification(
@@ -333,14 +322,13 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       %Participant{} = insert(:participant, event: event, role: :not_approved)
       %Participant{} = insert(:participant, event: event, role: :not_approved)
 
-      Notification.perform(
-        %{
+      Notification.perform(%Oban.Job{
+        args: %{
           "op" => "pending_participation_notification",
           "user_id" => user_id,
           "event_id" => event_id
-        },
-        nil
-      )
+        }
+      })
 
       assert_delivered_email(
         NotificationMailer.pending_participation_notification(

@@ -235,8 +235,11 @@ config :mobilizon, :anonymous,
 
 config :mobilizon, Oban,
   repo: Mobilizon.Storage.Repo,
-  prune: {:maxlen, 10_000},
-  queues: [default: 10, search: 5, mailers: 10, background: 5]
+  log: false,
+  queues: [default: 10, search: 5, mailers: 10, background: 5],
+  crontab: [
+    {"@daily", Mobilizon.Service.Workers.BuildSiteMap, queue: :background}
+  ]
 
 config :mobilizon, :rich_media,
   parsers: [

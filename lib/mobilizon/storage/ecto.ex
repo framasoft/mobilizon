@@ -43,7 +43,7 @@ defmodule Mobilizon.Storage.Ecto do
     |> put_change(:id, uuid)
     |> put_change(
       :url,
-      apply(Routes, String.to_existing_atom("#{to_string(route)}_url"), [Endpoint, route, uuid])
+      apply(Routes, String.to_existing_atom("page_url"), [Endpoint, route, uuid])
     )
   end
 end

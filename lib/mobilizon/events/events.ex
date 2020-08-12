@@ -366,6 +366,15 @@ defmodule Mobilizon.Events do
     |> Repo.all()
   end
 
+  @spec stream_events_for_sitemap :: Enum.t()
+  def stream_events_for_sitemap do
+    Event
+    |> filter_public_visibility()
+    |> filter_draft()
+    |> filter_local()
+    |> Repo.stream()
+  end
+
   @doc """
   Returns the list of events with the same tags.
   """
@@ -1582,6 +1591,11 @@ defmodule Mobilizon.Events do
   end
 
   defp filter_future_events(query, false), do: query
+
+  @spec filter_local(Ecto.Query.t()) :: Ecto.Query.t()
+  defp filter_local(query) do
+    where(query, [q], q.local == true)
+  end
 
   @spec filter_local_or_from_followed_instances_events(Ecto.Query.t()) :: Ecto.Query.t()
   defp filter_local_or_from_followed_instances_events(query) do
