@@ -56,7 +56,6 @@ defmodule Mobilizon.Actors do
     :rejected
   ])
 
-  @public_visibility [:public, :unlisted]
   @administrator_roles [:creator, :administrator]
   @moderator_roles [:moderator] ++ @administrator_roles
   @member_roles [:member] ++ @moderator_roles
@@ -535,6 +534,15 @@ defmodule Mobilizon.Actors do
   def list_groups(page \\ nil, limit \\ nil) do
     groups_query()
     |> Page.build_page(page, limit)
+  end
+
+  @doc """
+  Lists the groups.
+  """
+  @spec list_groups_for_stream :: Enum.t()
+  def list_groups_for_stream do
+    groups_query()
+    |> Repo.stream()
   end
 
   @doc """
@@ -1212,7 +1220,7 @@ defmodule Mobilizon.Actors do
     from(
       a in Actor,
       where: a.type == ^:Group,
-      where: a.visibility in ^@public_visibility
+      where: a.visibility == ^:public
     )
   end
 

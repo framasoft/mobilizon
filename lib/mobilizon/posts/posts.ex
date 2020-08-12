@@ -21,6 +21,13 @@ defmodule Mobilizon.Posts do
     :private
   ])
 
+  @spec list_posts_for_stream :: Enum.t()
+  def list_posts_for_stream do
+    Post
+    |> filter_public()
+    |> Repo.stream()
+  end
+
   @doc """
   Returns the list of recent posts for a group
   """
@@ -35,7 +42,7 @@ defmodule Mobilizon.Posts do
   def get_public_posts_for_group(%Actor{id: group_id}, page \\ nil, limit \\ nil) do
     group_id
     |> do_get_posts_for_group()
-    |> where([p], p.visibility == ^:public and not p.draft)
+    |> filter_public()
     |> Page.build_page(page, limit)
   end
 
@@ -131,5 +138,10 @@ defmodule Mobilizon.Posts do
       on: t.id == p.tag_id,
       where: p.post_id == ^post_id
     )
+  end
+
+  @spec filter_public(Ecto.Query.t()) :: Ecto.Query.t()
+  defp filter_public(query) do
+    where(query, [p], p.visibility == ^:public and not p.draft)
   end
 end

@@ -87,8 +87,9 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
   end
 
   describe "list groups" do
-    test "list_groups/3 returns all public or unlisted groups", %{conn: conn} do
-      group = insert(:group, visibility: :unlisted)
+    test "list_groups/3 returns all public groups", %{conn: conn} do
+      group = insert(:group, visibility: :public)
+      insert(:group, visibility: :unlisted)
       insert(:group, visibility: :private)
 
       query = """

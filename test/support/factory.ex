@@ -285,7 +285,7 @@ defmodule Mobilizon.Factory do
       title: sequence("todo list"),
       actor: build(:group),
       id: uuid,
-      url: Routes.todo_list_url(Endpoint, :todo_list, uuid)
+      url: Routes.page_url(Endpoint, :todo_list, uuid)
     }
   end
 
@@ -299,7 +299,7 @@ defmodule Mobilizon.Factory do
       status: false,
       due_date: Timex.shift(DateTime.utc_now(), hours: 2),
       assigned_to: build(:actor),
-      url: Routes.todo_url(Endpoint, :todo, uuid),
+      url: Routes.page_url(Endpoint, :todo, uuid),
       creator: build(:actor)
     }
   end
@@ -316,7 +316,7 @@ defmodule Mobilizon.Factory do
       actor: build(:group),
       creator: build(:actor),
       parent: nil,
-      url: Routes.resource_url(Endpoint, :resource, uuid),
+      url: Routes.page_url(Endpoint, :resource, uuid),
       path: "/#{title}"
     }
   end

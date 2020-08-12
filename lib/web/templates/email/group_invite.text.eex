@@ -1,9 +1,5 @@
 <%= gettext "Come along!" %>
-
 ==
-
 <%= gettext "%{inviter} just invited you to join their group %{group}", group: @group.name, inviter: @inviter.name %>
-
 <%= gettext "To accept this invitation, head over to your groups." %>
-
-<%= my_groups_url(Mobilizon.Web.Endpoint, :index) %>
+<%= page_url(Mobilizon.Web.Endpoint, :my_groups) %>

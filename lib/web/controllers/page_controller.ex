@@ -8,10 +8,20 @@ defmodule Mobilizon.Web.PageController do
   alias Mobilizon.Events.Event
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Tombstone
-  alias Mobilizon.Web.{ActivityPubController, Cache}
+  alias Mobilizon.Web.{ActivityPubController, Cache, PageController}
 
   plug(:put_layout, false)
   action_fallback(Mobilizon.Web.FallbackController)
+
+  defdelegate my_events(conn, params), to: PageController, as: :index
+  defdelegate create_event(conn, params), to: PageController, as: :index
+  defdelegate list_events(conn, params), to: PageController, as: :index
+  defdelegate explore_events(conn, params), to: PageController, as: :index
+  defdelegate edit_event(conn, params), to: PageController, as: :index
+  defdelegate moderation_report(conn, params), to: PageController, as: :index
+  defdelegate participation_email_confirmation(conn, params), to: PageController, as: :index
+  defdelegate user_email_validation(conn, params), to: PageController, as: :index
+  defdelegate my_groups(conn, params), to: PageController, as: :index
 
   @spec index(Plug.Conn.t(), any) :: Plug.Conn.t()
   def index(conn, _params), do: render(conn, :index)
