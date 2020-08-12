@@ -13,13 +13,17 @@ defmodule Mobilizon.Service.Workers.BuildSearch do
   use Mobilizon.Service.Workers.Helper, queue: "search"
 
   @impl Oban.Worker
-  def perform(%{"op" => "insert_search_event", "event_id" => event_id}, _job) do
+  def perform(%Job{
+        args: %{"op" => "insert_search_event", "event_id" => event_id}
+      }) do
     with {:ok, %Event{} = event} <- Events.get_event_with_preload(event_id) do
       insert_search_event(event)
     end
   end
 
-  def perform(%{"op" => "update_search_event", "event_id" => event_id}, _job) do
+  def perform(%Job{
+        args: %{"op" => "update_search_event", "event_id" => event_id}
+      }) do
     with {:ok, %Event{} = event} <- Events.get_event_with_preload(event_id) do
       insert_search_event(event)
     end

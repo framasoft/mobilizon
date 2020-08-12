@@ -370,7 +370,7 @@ defmodule Mobilizon.ActorsTest do
         args: %{"actor_id" => actor.id, "op" => "delete_actor", "reserve_username" => true}
       )
 
-      assert %{success: 1, failure: 0} == Oban.drain_queue(:background)
+      assert %{success: 1, failure: 0} == Oban.drain_queue(queue: :background)
 
       assert %Actor{
                name: nil,

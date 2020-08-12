@@ -235,7 +235,7 @@ config :mobilizon, :anonymous,
 
 config :mobilizon, Oban,
   repo: Mobilizon.Storage.Repo,
-  prune: {:maxlen, 10_000},
+  log: false,
   queues: [default: 10, search: 5, mailers: 10, background: 5]
 
 config :mobilizon, :rich_media,
