@@ -82,6 +82,7 @@ defmodule Mobilizon.Web.Router do
 
     get("/@:name", PageController, :actor)
     get("/events/me", PageController, :my_events)
+    get("/events/create", PageController, :create_event)
     get("/events/:uuid", PageController, :event)
     get("/comments/:uuid", PageController, :comment)
     get("/resource/:uuid", PageController, :resource)
@@ -142,7 +143,6 @@ defmodule Mobilizon.Web.Router do
     get("/events/create", PageController, :create_event)
     get("/events/list", PageController, :list_events)
     get("/events/me", PageController, :my_events)
-    get("/events/explore", PageController, :explore_events)
     get("/events/:uuid/edit", PageController, :edit_event)
 
     # This is a hack to ease link generation into emails

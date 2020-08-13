@@ -16,7 +16,6 @@ defmodule Mobilizon.Web.PageController do
   defdelegate my_events(conn, params), to: PageController, as: :index
   defdelegate create_event(conn, params), to: PageController, as: :index
   defdelegate list_events(conn, params), to: PageController, as: :index
-  defdelegate explore_events(conn, params), to: PageController, as: :index
   defdelegate edit_event(conn, params), to: PageController, as: :index
   defdelegate moderation_report(conn, params), to: PageController, as: :index
   defdelegate participation_email_confirmation(conn, params), to: PageController, as: :index

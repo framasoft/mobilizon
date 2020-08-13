@@ -13,7 +13,6 @@ export enum EventRouteName {
   EVENT_LIST = "EventList",
   CREATE_EVENT = "CreateEvent",
   MY_EVENTS = "MyEvents",
-  EXPLORE = "Explore",
   EDIT_EVENT = "EditEvent",
   DUPLICATE_EVENT = "DuplicateEvent",
   PARTICIPATIONS = "Participations",
@@ -38,12 +37,6 @@ export const eventRoutes: RouteConfig[] = [
     name: EventRouteName.CREATE_EVENT,
     component: editEvent,
     meta: { requiredAuth: true },
-  },
-  {
-    path: "/events/explore",
-    name: EventRouteName.EXPLORE,
-    redirect: { name: "Search" },
-    meta: { requiredAuth: false },
   },
   {
     path: "/events/me",
