@@ -33,6 +33,8 @@ export interface IMember {
   parent: IGroup;
   actor: IActor;
   invitedBy?: IPerson;
+  insertedAt: string;
+  updatedAt: string;
 }
 
 export class Group extends Actor implements IGroup {

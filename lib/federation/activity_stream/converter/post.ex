@@ -35,7 +35,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
       "name" => post.title,
       "content" => post.body,
       "attributedTo" => creator_url,
-      "published" => post.publish_at || post.inserted_at
+      "published" => (post.publish_at || post.inserted_at) |> DateTime.to_iso8601()
     }
   end
 

@@ -80,9 +80,9 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
       resolve(&Comment.update_comment/3)
     end
 
+    @desc "Delete a single comment"
     field :delete_comment, type: :comment do
       arg(:comment_id, non_null(:id))
-      arg(:actor_id, non_null(:id))
 
       resolve(&Comment.delete_comment/3)
     end

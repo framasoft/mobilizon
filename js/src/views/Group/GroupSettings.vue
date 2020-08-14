@@ -100,7 +100,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import RouteName from "../../router/name";
-import { FETCH_GROUP, UPDATE_GROUP } from "../../graphql/actor";
+import { FETCH_GROUP, UPDATE_GROUP } from "../../graphql/group";
 import { IGroup, usernameWithDomain } from "../../types/actor";
 import { Address, IAddress } from "../../types/address.model";
 import { IMember, Group } from "../../types/actor/group.model";

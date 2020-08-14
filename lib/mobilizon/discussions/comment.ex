@@ -6,6 +6,7 @@ defmodule Mobilizon.Discussions.Comment do
   use Ecto.Schema
 
   import Ecto.Changeset
+  import Mobilizon.Storage.Ecto, only: [maybe_add_published_at: 1]
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.{Comment, CommentVisibility, Discussion}
@@ -32,7 +33,7 @@ defmodule Mobilizon.Discussions.Comment do
 
   # When deleting an event we only nihilify everything
   @required_attrs [:url]
-  @creation_required_attrs @required_attrs ++ [:text, :actor_id]
+  @creation_required_attrs @required_attrs ++ [:text, :actor_id, :published_at]
   @optional_attrs [
     :text,
     :actor_id,
@@ -54,6 +55,7 @@ defmodule Mobilizon.Discussions.Comment do
     field(:uuid, Ecto.UUID)
     field(:total_replies, :integer, virtual: true, default: 0)
     field(:deleted_at, :utc_datetime)
+    field(:published_at, :utc_datetime)
 
     belongs_to(:actor, Actor, foreign_key: :actor_id)
     belongs_to(:attributed_to, Actor, foreign_key: :attributed_to_id)
@@ -98,7 +100,6 @@ defmodule Mobilizon.Discussions.Comment do
     |> change()
     |> put_change(:text, nil)
     |> put_change(:actor_id, nil)
-    |> put_change(:discussion_id, nil)
     |> put_change(:deleted_at, DateTime.utc_now() |> DateTime.truncate(:second))
   end
 
@@ -116,6 +117,7 @@ defmodule Mobilizon.Discussions.Comment do
   defp common_changeset(%__MODULE__{} = comment, attrs) do
     comment
     |> cast(attrs, @attrs)
+    |> maybe_add_published_at()
     |> maybe_generate_uuid()
     |> maybe_generate_url()
     |> put_tags(attrs)

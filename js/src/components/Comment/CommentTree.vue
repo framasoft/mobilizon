@@ -106,6 +106,7 @@ export default class CommentTree extends Vue {
 
   async createCommentForEvent(comment: IComment) {
     try {
+      if (!comment.actor) return;
       await this.$apollo.mutate({
         mutation: CREATE_COMMENT_FROM_EVENT,
         variables: {

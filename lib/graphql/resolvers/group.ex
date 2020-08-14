@@ -213,40 +213,25 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   """
   def leave_group(
         _parent,
-        %{group_id: group_id, actor_id: actor_id},
+        %{group_id: group_id},
         %{
           context: %{
-            current_user: user
+            current_user: %User{} = user
           }
         }
       ) do
-    with {actor_id, ""} <- Integer.parse(actor_id),
-         {group_id, ""} <- Integer.parse(group_id),
-         {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
-         {:ok, %Member{} = member} <- Actors.get_member(actor.id, group_id),
-         {:only_administrator, false} <-
-           {:only_administrator, check_that_member_is_not_last_administrator(group_id, actor_id)},
-         {:ok, _} <-
-           Mobilizon.Actors.delete_member(member) do
-      {
-        :ok,
-        %{
-          parent: %{
-            id: group_id
-          },
-          actor: %{
-            id: actor_id
-          }
-        }
-      }
+    with {:actor, %Actor{} = actor} <- {:actor, Users.get_actor_for_user(user)},
+         {:group, %Actor{type: :Group} = group} <- {:group, Actors.get_actor(group_id)},
+         {:ok, _activity, %Member{} = member} <- ActivityPub.leave(group, actor, true) do
+      {:ok, member}
     else
-      {:is_owned, nil} ->
-        {:error, "Actor id is not owned by authenticated user"}
-
       {:error, :member_not_found} ->
         {:error, "Member not found"}
 
-      {:only_administrator, true} ->
+      {:group, nil} ->
+        {:error, "Group not found"}
+
+      {:is_only_admin, true} ->
         {:error, "You can't leave this group because you are the only administrator"}
     end
   end
@@ -276,32 +261,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
 
   def find_events_for_group(_parent, _args, _resolution) do
     {:ok, %Page{total: 0, elements: []}}
-  end
-
-  # We check that the actor asking to leave the group is not it's only administrator
-  # We start by fetching the list of administrator or creators and if there's only one of them
-  # and that it's the actor requesting leaving the group we return true
-  @spec check_that_member_is_not_last_administrator(integer, integer) :: boolean
-  defp check_that_member_is_not_last_administrator(group_id, actor_id) do
-    case Actors.list_administrator_members_for_group(group_id) do
-      %Page{total: total} when total > 1 ->
-        true
-
-      %Page{
-        total: 1,
-        elements: [
-          %Member{
-            actor: %Actor{
-              id: member_actor_id
-            }
-          }
-        ]
-      } ->
-        actor_id == member_actor_id
-
-      _ ->
-        false
-    end
   end
 
   defp restrict_fields_for_non_member_request(%Actor{} = group) do

@@ -8,26 +8,102 @@
     </div>
     <div class="body">
       <div class="meta">
-        <div class="name">
-          <span>@{{ comment.actor.preferredUsername }}</span>
-        </div>
+        <span class="first-line name" v-if="!comment.deletedAt">
+          <strong>{{ comment.actor.name }}</strong>
+          <small>@{{ usernameWithDomain(comment.actor) }}</small>
+        </span>
+        <a v-else class="name comment-link has-text-grey">
+          <span>{{ $t("[deleted]") }}</span>
+        </a>
+        <span class="icons" v-if="!comment.deletedAt">
+          <b-dropdown aria-role="list">
+            <b-icon slot="trigger" role="button" icon="dots-horizontal" />
+
+            <b-dropdown-item
+              v-if="comment.actor.id === currentActor.id"
+              @click="toggleEditMode"
+              aria-role="menuitem"
+            >
+              <b-icon icon="pencil"></b-icon>
+              {{ $t("Edit") }}
+            </b-dropdown-item>
+            <b-dropdown-item
+              v-if="comment.actor.id === currentActor.id"
+              @click="$emit('delete-comment', comment)"
+              aria-role="menuitem"
+            >
+              <b-icon icon="delete"></b-icon>
+              {{ $t("Delete") }}
+            </b-dropdown-item>
+            <b-dropdown-item aria-role="listitem" @click="isReportModalActive = true">
+              <b-icon icon="flag" />
+              {{ $t("Report") }}
+            </b-dropdown-item>
+          </b-dropdown>
+        </span>
         <div class="post-infos">
-          <span :title="comment.insertedAt | formatDateTimeString">
-            {{ $timeAgo.format(comment.insertedAt, "twitter") || $t("Right now") }}</span
+          <span :title="comment.updatedAt | formatDateTimeString">
+            {{ $timeAgo.format(new Date(comment.updatedAt), "twitter") || $t("Right now") }}</span
           >
         </div>
       </div>
-      <div class="description-content" v-html="comment.text"></div>
+      <div
+        class="description-content"
+        v-html="comment.text"
+        v-if="!editMode && !comment.deletedAt"
+      ></div>
+      <div v-else-if="!editMode">{{ $t("[This comment has been deleted]") }}</div>
+      <form v-else class="edition" @submit.prevent="updateComment">
+        <editor v-model="updatedComment" />
+        <div class="buttons">
+          <b-button
+            native-type="submit"
+            :disabled="['<p></p>', '', comment.text].includes(updatedComment)"
+            type="is-primary"
+            >{{ $t("Update") }}</b-button
+          >
+          <b-button native-type="button" @click="toggleEditMode">{{ $t("Cancel") }}</b-button>
+        </div>
+      </form>
     </div>
   </article>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { IComment, CommentModel } from "../../types/comment.model";
+import { usernameWithDomain, IPerson } from "../../types/actor";
+import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 
-@Component
+@Component({
+  apollo: {
+    currentActor: CURRENT_ACTOR_CLIENT,
+  },
+  components: {
+    editor: () => import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
+  },
+})
 export default class DiscussionComment extends Vue {
   @Prop({ required: true, type: Object }) comment!: IComment;
+
+  editMode: boolean = false;
+  updatedComment: string = "";
+
+  currentActor!: IPerson;
+
+  usernameWithDomain = usernameWithDomain;
+
+  isReportModalActive: boolean = false;
+
+  toggleEditMode() {
+    this.updatedComment = this.comment.text;
+    this.editMode = !this.editMode;
+  }
+
+  updateComment() {
+    this.comment.text = this.updatedComment;
+    this.$emit("update-comment", this.comment);
+    this.toggleEditMode();
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -52,9 +128,19 @@ article.comment {
         flex: 1 1 auto;
         overflow: hidden;
 
+        strong {
+          display: block;
+          line-height: 1rem;
+        }
+
         span {
           color: #3c376e;
         }
+      }
+
+      .icons {
+        display: inline;
+        cursor: pointer;
       }
     }
 
@@ -107,6 +193,12 @@ article.comment {
   div.avatar {
     padding-top: 1rem;
     flex: 0;
+  }
+
+  .edition {
+    .button {
+      margin-top: 0.75rem;
+    }
   }
 }
 </style>

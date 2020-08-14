@@ -77,6 +77,8 @@
         v-for="comment in discussion.comments.elements"
         :key="comment.id"
         :comment="comment"
+        @update-comment="updateComment"
+        @delete-comment="deleteComment"
       />
       <b-button
         v-if="discussion.comments.elements.length < discussion.comments.total"
@@ -87,7 +89,12 @@
         <b-field :label="$t('Text')">
           <editor v-model="newComment" />
         </b-field>
-        <b-button native-type="submit" type="is-primary">{{ $t("Reply") }}</b-button>
+        <b-button
+          native-type="submit"
+          :disabled="['<p></p>', ''].includes(newComment)"
+          type="is-primary"
+          >{{ $t("Reply") }}</b-button
+        >
       </form>
     </section>
   </div>
@@ -107,6 +114,7 @@ import DiscussionComment from "@/components/Discussion/DiscussionComment.vue";
 import { GraphQLError } from "graphql";
 import RouteName from "../../router/name";
 import { IComment } from "../../types/comment.model";
+import { DELETE_COMMENT, UPDATE_COMMENT } from "@/graphql/comment";
 
 @Component({
   apollo: {
@@ -191,6 +199,8 @@ export default class discussion extends Vue {
   usernameWithDomain = usernameWithDomain;
 
   async reply() {
+    if (this.newComment === "") return;
+
     await this.$apollo.mutate({
       mutation: REPLY_TO_DISCUSSION,
       variables: {
@@ -221,6 +231,80 @@ export default class discussion extends Vue {
       // We don't need to handle cache update since there's the subscription that handles this for us
     });
     this.newComment = "";
+  }
+
+  async updateComment(comment: IComment) {
+    const { data } = await this.$apollo.mutate<{ deleteComment: IComment }>({
+      mutation: UPDATE_COMMENT,
+      variables: {
+        commentId: comment.id,
+        text: comment.text,
+      },
+      update: (store, { data }) => {
+        if (!data || !data.deleteComment) return;
+        const discussionData = store.readQuery<{
+          discussion: IDiscussion;
+        }>({
+          query: GET_DISCUSSION,
+          variables: {
+            slug: this.slug,
+            page: this.page,
+          },
+        });
+        if (!discussionData) return;
+        const { discussion } = discussionData;
+        const index = discussion.comments.elements.findIndex(
+          ({ id }) => id === data.deleteComment.id
+        );
+        if (index > -1) {
+          discussion.comments.elements.splice(index, 1);
+          discussion.comments.total -= 1;
+        }
+        store.writeQuery({
+          query: GET_DISCUSSION,
+          variables: { slug: this.slug, page: this.page },
+          data: { discussion },
+        });
+      },
+    });
+  }
+
+  async deleteComment(comment: IComment) {
+    const { data } = await this.$apollo.mutate<{ deleteComment: IComment }>({
+      mutation: DELETE_COMMENT,
+      variables: {
+        commentId: comment.id,
+      },
+      update: (store, { data }) => {
+        if (!data || !data.deleteComment) return;
+        const discussionData = store.readQuery<{
+          discussion: IDiscussion;
+        }>({
+          query: GET_DISCUSSION,
+          variables: {
+            slug: this.slug,
+            page: this.page,
+          },
+        });
+        if (!discussionData) return;
+        const { discussion } = discussionData;
+        const index = discussion.comments.elements.findIndex(
+          ({ id }) => id === data.deleteComment.id
+        );
+        if (index > -1) {
+          const updatedComment = discussion.comments.elements[index];
+          updatedComment.deletedAt = new Date();
+          updatedComment.actor = null;
+          updatedComment.text = "";
+          discussion.comments.elements.splice(index, 1, updatedComment);
+        }
+        store.writeQuery({
+          query: GET_DISCUSSION,
+          variables: { slug: this.slug, page: this.page },
+          data: { discussion },
+        });
+      },
+    });
   }
 
   async loadMoreComments() {

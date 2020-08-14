@@ -31,7 +31,7 @@
               name: RouteName.RESOURCE_FOLDER,
               params: {
                 path: ResourceMixin.resourcePathArray(resource).slice(0, index + 1),
-                preferredUsername: resource.actor.preferredUsername,
+                preferredUsername: usernameWithDomain(resource.actor),
               },
             }"
             >{{ pathFragment }}</router-link

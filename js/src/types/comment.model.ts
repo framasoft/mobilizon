@@ -7,7 +7,7 @@ export interface IComment {
   url?: string;
   text: string;
   local: boolean;
-  actor: IActor;
+  actor: IActor | null;
   inReplyToComment?: IComment;
   originComment?: IComment;
   replies: IComment[];
@@ -56,7 +56,7 @@ export class CommentModel implements IComment {
     this.text = hash.text;
     this.inReplyToComment = hash.inReplyToComment;
     this.originComment = hash.originComment;
-    this.actor = new Actor(hash.actor);
+    this.actor = hash.actor ? new Actor(hash.actor) : new Actor();
     this.event = new EventModel(hash.event);
     this.replies = hash.replies;
     this.updatedAt = hash.updatedAt;

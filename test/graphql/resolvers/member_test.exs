@@ -3,6 +3,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
 
   import Mobilizon.Factory
 
+  alias Mobilizon.Actors.Member
   alias Mobilizon.GraphQL.AbsintheHelpers
 
   setup %{conn: conn} do
@@ -145,22 +146,17 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
       actor: actor
     } do
       group = insert(:group)
-      insert(:member, %{actor: actor, parent: group})
+      insert(:member, role: :administrator, parent: group)
+      %Member{id: member_id} = insert(:member, %{actor: actor, parent: group})
 
       mutation = """
           mutation {
             leaveGroup(
-              actor_id: #{actor.id},
               group_id: #{group.id}
             ) {
-                actor {
-                  id
-                },
-                parent {
-                  id
-                }
-              }
+              id
             }
+          }
       """
 
       res =
@@ -169,8 +165,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["leaveGroup"]["parent"]["id"] == to_string(group.id)
-      assert json_response(res, 200)["data"]["leaveGroup"]["actor"]["id"] == to_string(actor.id)
+      assert json_response(res, 200)["data"]["leaveGroup"]["id"] == to_string(member_id)
     end
 
     test "leave_group/3 should check if the member is the only administrator", %{
@@ -185,15 +180,9 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
       mutation = """
           mutation {
             leaveGroup(
-              actor_id: #{actor.id},
               group_id: #{group.id}
             ) {
-                actor {
-                  id
-                },
-                parent {
-                  id
-                }
+                id
               }
             }
       """
@@ -213,12 +202,9 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
       mutation = """
           mutation {
             leaveGroup(
-              actor_id: #{actor.id},
               group_id: #{group.id}
             ) {
-                actor {
-                  id
-                }
+                id
               }
             }
       """
@@ -230,7 +216,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
       assert hd(json_response(res, 200)["errors"])["message"] =~ "logged-in"
     end
 
-    test "leave_group/3 should check the actor is owned by the user", %{
+    test "leave_group/3 should check the group exists", %{
       conn: conn,
       user: user,
       actor: actor
@@ -241,41 +227,9 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
       mutation = """
           mutation {
             leaveGroup(
-              actor_id: 1042,
-              group_id: #{group.id}
-            ) {
-                actor {
-                  id
-                }
-              }
-            }
-      """
-
-      res =
-        conn
-        |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "not owned"
-    end
-
-    test "leave_group/3 should check the member exists", %{
-      conn: conn,
-      user: user,
-      actor: actor
-    } do
-      group = insert(:group)
-      insert(:member, %{actor: actor, parent: group})
-
-      mutation = """
-          mutation {
-            leaveGroup(
-              actor_id: #{actor.id},
               group_id: 1042
             ) {
-                actor {
-                  id
-                }
+                id
               }
             }
       """
@@ -285,7 +239,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
         |> auth_conn(user)
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "Member not found"
+      assert hd(json_response(res, 200)["errors"])["message"] =~ "Group not found"
     end
   end
 
@@ -366,7 +320,6 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
     test "invite_member/3 fails to invite a local actor to a group that invitor isn't in", %{
       conn: conn,
       user: user,
-      actor: actor,
       group: group,
       target_actor: target_actor
     } do
@@ -431,7 +384,6 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
     test "invite_member/3 fails to invite a actor for a non-existing group", %{
       conn: conn,
       user: user,
-      actor: actor,
       target_actor: target_actor
     } do
       res =

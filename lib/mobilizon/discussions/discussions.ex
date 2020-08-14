@@ -294,6 +294,7 @@ defmodule Mobilizon.Discussions do
     Discussion
     |> where([c], c.actor_id == ^actor_id)
     |> preload(^@discussion_preloads)
+    |> order_by(desc: :updated_at)
     |> Page.build_page(page, limit)
   end
 

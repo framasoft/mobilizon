@@ -19,6 +19,17 @@
           </li>
         </ul>
       </nav>
+      <invitations
+        v-if="isCurrentActorAnInvitedGroupMember"
+        :invitations="[groupMember]"
+        @acceptInvitation="acceptInvitation"
+      />
+      <b-message v-if="isCurrentActorARejectedGroupMember" type="is-danger">
+        {{ $t("You have been removed from this group's members.") }}
+      </b-message>
+      <b-message v-if="isCurrentActorAGroupMember && isCurrentActorARecentMember" type="is-info">
+        {{ $t("Since you are a new member, private content can take a few minutes to appear.") }}
+      </b-message>
       <header class="block-container presentation">
         <div class="block-column media">
           <div class="media-left">
@@ -35,15 +46,24 @@
             >
             <b-skeleton v-else :animated="true" />
             <br />
-            <router-link
-              v-if="isCurrentActorAGroupAdmin"
-              :to="{
-                name: RouteName.GROUP_PUBLIC_SETTINGS,
-                params: { preferredUsername: usernameWithDomain(group) },
-              }"
-              class="button is-outlined"
-              >{{ $t("Group settings") }}</router-link
-            >
+            <div class="buttons">
+              <router-link
+                v-if="isCurrentActorAGroupAdmin"
+                :to="{
+                  name: RouteName.GROUP_PUBLIC_SETTINGS,
+                  params: { preferredUsername: usernameWithDomain(group) },
+                }"
+                class="button is-outlined"
+                >{{ $t("Group settings") }}</router-link
+              >
+              <b-button
+                type="is-danger"
+                v-if="isCurrentActorAGroupMember"
+                outlined
+                @click="leaveGroup"
+                >{{ $t("Leave group") }}</b-button
+              >
+            </div>
           </div>
         </div>
         <div class="block-column members" v-if="isCurrentActorAGroupMember">
@@ -56,7 +76,7 @@
                   role: member.role,
                 })
               "
-              v-for="member in group.members.elements"
+              v-for="member in members"
               :key="member.actor.id"
             >
               <img
@@ -71,6 +91,7 @@
           <p>
             {{ $t("{count} team members", { count: group.members.total }) }}
             <router-link
+              v-if="isCurrentActorAGroupAdmin"
               :to="{
                 name: RouteName.GROUP_MEMBERS_SETTINGS,
                 params: { preferredUsername: usernameWithDomain(group) },
@@ -255,7 +276,8 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import EventCard from "@/components/Event/EventCard.vue";
-import { FETCH_GROUP, CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
+import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
+import { FETCH_GROUP, LEAVE_GROUP } from "@/graphql/group";
 import {
   IActor,
   IGroup,
@@ -263,6 +285,7 @@ import {
   usernameWithDomain,
   Group as GroupModel,
   MemberRole,
+  IMember,
 } from "@/types/actor";
 import Subtitle from "@/components/Utils/Subtitle.vue";
 import CompactTodo from "@/components/Todo/CompactTodo.vue";
@@ -274,6 +297,8 @@ import FolderItem from "@/components/Resource/FolderItem.vue";
 import RouteName from "../../router/name";
 import { Address } from "@/types/address.model";
 import GroupSection from "../../components/Group/GroupSection.vue";
+import Invitations from "@/components/Group/Invitations.vue";
+import addMinutes from "date-fns/addMinutes";
 
 @Component({
   apollo: {
@@ -308,6 +333,7 @@ import GroupSection from "../../components/Group/GroupSection.vue";
     FolderItem,
     ResourceItem,
     GroupSection,
+    Invitations,
     "map-leaflet": () => import(/* webpackChunkName: "map" */ "../../components/Map.vue"),
   },
   metaInfo() {
@@ -348,6 +374,29 @@ export default class Group extends Vue {
     }
   }
 
+  async leaveGroup() {
+    const { data } = await this.$apollo.mutate({
+      mutation: LEAVE_GROUP,
+      variables: {
+        groupId: this.group.id,
+      },
+    });
+    return this.$router.push({ name: RouteName.MY_GROUPS });
+  }
+
+  acceptInvitation() {
+    if (this.groupMember) {
+      const index = this.person.memberships.elements.findIndex(
+        // @ts-ignore
+        ({ id }: IMember) => id === this.groupMember.id
+      );
+      const member = this.groupMember;
+      member.role = MemberRole.MEMBER;
+      this.person.memberships.elements.splice(index, 1, member);
+      this.$apollo.queries.group.refetch();
+    }
+  }
+
   get groupTitle() {
     if (!this.group) return undefined;
     return this.group.preferredUsername;
@@ -358,13 +407,45 @@ export default class Group extends Vue {
     return this.group.summary;
   }
 
+  get groupMember(): IMember | undefined {
+    if (!this.person || !this.person.id) return undefined;
+    return this.person.memberships.elements.find(({ parent: { id } }) => id === this.group.id);
+  }
+
   get groupMemberships() {
     if (!this.person || !this.person.id) return undefined;
-    return this.person.memberships.elements.map(({ parent: { id } }) => id);
+    return this.person.memberships.elements
+      .filter(
+        (membership: IMember) =>
+          ![MemberRole.REJECTED, MemberRole.NOT_APPROVED, MemberRole.INVITED].includes(
+            membership.role
+          )
+      )
+      .map(({ parent: { id } }) => id);
   }
 
   get isCurrentActorAGroupMember(): boolean {
     return this.groupMemberships != undefined && this.groupMemberships.includes(this.group.id);
+  }
+
+  get isCurrentActorARejectedGroupMember(): boolean {
+    return (
+      this.person &&
+      this.person.memberships.elements
+        .filter((membership) => membership.role === MemberRole.REJECTED)
+        .map(({ parent: { id } }) => id)
+        .includes(this.group.id)
+    );
+  }
+
+  get isCurrentActorAnInvitedGroupMember(): boolean {
+    return (
+      this.person &&
+      this.person.memberships.elements
+        .filter((membership) => membership.role === MemberRole.INVITED)
+        .map(({ parent: { id } }) => id)
+        .includes(this.group.id)
+    );
   }
 
   get isCurrentActorAGroupAdmin(): boolean {
@@ -373,6 +454,24 @@ export default class Group extends Vue {
       this.person.memberships.elements.some(
         ({ parent: { id }, role }) => id === this.group.id && role === MemberRole.ADMINISTRATOR
       )
+    );
+  }
+
+  /**
+   * New members, if on a different server, can take a while to refresh the group and fetch all private data
+   */
+  get isCurrentActorARecentMember(): boolean {
+    return (
+      this.groupMember !== undefined &&
+      this.groupMember.role === MemberRole.MEMBER &&
+      addMinutes(new Date(`${this.groupMember.updatedAt}Z`), 10) > new Date()
+    );
+  }
+
+  get members(): IMember[] {
+    return this.group.members.elements.filter(
+      (member) =>
+        ![MemberRole.INVITED, MemberRole.REJECTED, MemberRole.NOT_APPROVED].includes(member.role)
     );
   }
 

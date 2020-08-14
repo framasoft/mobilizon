@@ -255,7 +255,7 @@ export default class Comment extends Vue {
   get commentFromOrganizer(): boolean {
     return (
       this.event.organizerActor !== undefined &&
-      this.comment.actor &&
+      this.comment.actor != null &&
       this.comment.actor.id === this.event.organizerActor.id
     );
   }
@@ -272,6 +272,7 @@ export default class Comment extends Vue {
   }
 
   reportModal() {
+    if (!this.comment.actor) return;
     this.$buefy.modal.open({
       parent: this,
       component: ReportModal,
@@ -286,6 +287,7 @@ export default class Comment extends Vue {
 
   async reportComment(content: string, forward: boolean) {
     try {
+      if (!this.comment.actor) return;
       await this.$apollo.mutate<IReport>({
         mutation: CREATE_REPORT,
         variables: {

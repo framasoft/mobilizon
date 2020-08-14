@@ -27,7 +27,7 @@ defmodule Mobilizon.Web.PageController do
 
   @spec actor(Plug.Conn.t(), map) :: {:error, :not_found} | Plug.Conn.t()
   def actor(conn, %{"name" => name}) do
-    {status, actor} = Cache.get_local_actor_by_name(name)
+    {status, actor} = Cache.get_actor_by_name(name)
     render_or_error(conn, &ok_status?/3, status, :actor, actor)
   end
 

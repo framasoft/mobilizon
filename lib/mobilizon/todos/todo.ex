@@ -5,7 +5,7 @@ defmodule Mobilizon.Todos.Todo do
 
   use Ecto.Schema
   import Ecto.Changeset
-  import Mobilizon.Storage.Ecto, only: [ensure_url: 2]
+  import Mobilizon.Storage.Ecto, only: [ensure_url: 2, maybe_add_published_at: 1]
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Todos.TodoList
 
@@ -16,7 +16,8 @@ defmodule Mobilizon.Todos.Todo do
           todo_list: TodoList.t(),
           creator: Actor.t(),
           assigned_to: Actor.t(),
-          local: boolean
+          local: boolean,
+          published_at: DateTime.t()
         }
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -26,6 +27,7 @@ defmodule Mobilizon.Todos.Todo do
     field(:url, :string)
     field(:due_date, :utc_datetime)
     field(:local, :boolean, default: true)
+    field(:published_at, :utc_datetime)
     belongs_to(:todo_list, TodoList, type: :binary_id)
     belongs_to(:creator, Actor)
     belongs_to(:assigned_to, Actor)
@@ -33,7 +35,7 @@ defmodule Mobilizon.Todos.Todo do
     timestamps()
   end
 
-  @required_attrs [:title, :creator_id, :url, :todo_list_id]
+  @required_attrs [:title, :creator_id, :url, :todo_list_id, :published_at]
   @optional_attrs [:status, :due_date, :assigned_to_id, :local]
   @attrs @required_attrs ++ @optional_attrs
 
@@ -42,6 +44,7 @@ defmodule Mobilizon.Todos.Todo do
     todo
     |> cast(attrs, @attrs)
     |> ensure_url(:todo)
+    |> maybe_add_published_at()
     |> validate_required(@required_attrs)
   end
 end

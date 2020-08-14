@@ -33,7 +33,8 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { Group, IPerson } from "@/types/actor";
-import { CREATE_GROUP, CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
+import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
+import { CREATE_GROUP } from "@/graphql/group";
 import PictureUpload from "@/components/PictureUpload.vue";
 import RouteName from "../../router/name";
 

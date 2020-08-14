@@ -2,13 +2,9 @@
   <div class="media">
     <div class="media-content">
       <div class="content">
-        <p>
-          {{
-            $t("You have been invited by {invitedBy} to the following group:", {
-              invitedBy: member.invitedBy.name,
-            })
-          }}
-        </p>
+        <i18n tag="p" path="You have been invited by {invitedBy} to the following group:">
+          <b slot="invitedBy">{{ member.invitedBy.name }}</b>
+        </i18n>
       </div>
       <div class="media subfield">
         <div class="media-left">
@@ -43,7 +39,7 @@
                 </b-button>
               </div>
               <div class="level-item">
-                <b-button type="is-danger" @click="$emit('decline', member.id)">
+                <b-button type="is-danger" @click="$emit('reject', member.id)">
                   {{ $t("Decline") }}
                 </b-button>
               </div>

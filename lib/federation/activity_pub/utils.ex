@@ -145,7 +145,10 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
 
   def maybe_relay_if_group_activity(_, _), do: :ok
 
-  defp do_maybe_relay_if_group_activity(object, attributed_to) when not is_nil(attributed_to) do
+  defp do_maybe_relay_if_group_activity(object, attributed_to) when is_list(attributed_to),
+    do: do_maybe_relay_if_group_activity(object, hd(attributed_to))
+
+  defp do_maybe_relay_if_group_activity(object, attributed_to) when is_binary(attributed_to) do
     id = "#{Endpoint.url()}/announces/#{Ecto.UUID.generate()}"
 
     case Actors.get_local_group_by_url(attributed_to) do
@@ -358,15 +361,14 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
 
   def make_announce_data(
         %Actor{} = actor,
-        %{"id" => url, "type" => type, "actor" => object_actor_url} = _object,
+        %{"actor" => object_actor_url} = object,
         activity_id,
         public
-      )
-      when type in ["Note", "Event", "ResourceCollection", "Document", "Todo"] do
+      ) do
     do_make_announce_data(
       actor,
       object_actor_url,
-      url,
+      object,
       activity_id,
       public
     )
@@ -375,7 +377,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   defp do_make_announce_data(
          %Actor{type: actor_type} = actor,
          object_actor_url,
-         object_url,
+         object,
          activity_id,
          public
        ) do
@@ -394,7 +396,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     data = %{
       "type" => "Announce",
       "actor" => actor.url,
-      "object" => object_url,
+      "object" => object,
       "to" => to,
       "cc" => cc
     }

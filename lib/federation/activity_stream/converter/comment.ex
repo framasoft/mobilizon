@@ -68,10 +68,18 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
         tags: tags,
         mentions: mentions,
         local: is_nil(actor_domain),
-        visibility: if(Visibility.is_public?(object), do: :public, else: :private)
+        visibility: if(Visibility.is_public?(object), do: :public, else: :private),
+        published_at: object["published"]
       }
 
-      maybe_fetch_parent_object(object, data)
+      Logger.debug("Converted object before fetching parents")
+      Logger.debug(inspect(data))
+
+      data = maybe_fetch_parent_object(object, data)
+
+      Logger.debug("Converted object after fetching parents")
+      Logger.debug(inspect(data))
+      data
     else
       {:ok, %Actor{suspended: true}} ->
         :error
@@ -98,7 +106,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
           comment.actor.url,
       "uuid" => comment.uuid,
       "id" => comment.url,
-      "tag" => build_mentions(comment.mentions) ++ build_tags(comment.tags)
+      "tag" => build_mentions(comment.mentions) ++ build_tags(comment.tags),
+      "published" => comment.published_at |> DateTime.to_iso8601()
     }
 
     object =

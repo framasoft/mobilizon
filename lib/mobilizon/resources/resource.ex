@@ -5,7 +5,7 @@ defmodule Mobilizon.Resources.Resource do
   use Ecto.Schema
   import Ecto.Changeset
   alias Ecto.Changeset
-  import Mobilizon.Storage.Ecto, only: [ensure_url: 2]
+  import Mobilizon.Storage.Ecto, only: [ensure_url: 2, maybe_add_published_at: 1]
 
   import EctoEnum
   defenum(TypeEnum, folder: 0, link: 1, picture: 20, pad: 30, calc: 40, visio: 50)
@@ -22,7 +22,8 @@ defmodule Mobilizon.Resources.Resource do
           parent: __MODULE__,
           actor: Actor.t(),
           creator: Actor.t(),
-          local: boolean
+          local: boolean,
+          published_at: DateTime.t()
         }
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -34,6 +35,7 @@ defmodule Mobilizon.Resources.Resource do
     field(:type, TypeEnum)
     field(:path, :string)
     field(:local, :boolean, default: true)
+    field(:published_at, :utc_datetime)
 
     embeds_one :metadata, Metadata, on_replace: :delete do
       field(:type, :string)
@@ -58,7 +60,7 @@ defmodule Mobilizon.Resources.Resource do
     timestamps()
   end
 
-  @required_attrs [:title, :url, :actor_id, :creator_id, :type, :path]
+  @required_attrs [:title, :url, :actor_id, :creator_id, :type, :path, :published_at]
   @optional_attrs [:summary, :parent_id, :resource_url, :local]
   @attrs @required_attrs ++ @optional_attrs
   @metadata_attrs [
@@ -82,6 +84,7 @@ defmodule Mobilizon.Resources.Resource do
     |> cast(attrs, @attrs)
     |> cast_embed(:metadata, with: &metadata_changeset/2)
     |> ensure_url(:resource)
+    |> maybe_add_published_at()
     |> validate_resource_or_folder()
     |> validate_required(@required_attrs)
     |> unique_constraint(:url, name: :resource_url_index)

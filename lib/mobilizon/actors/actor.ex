@@ -283,6 +283,7 @@ defmodule Mobilizon.Actors.Actor do
       |> validate_required(@remote_actor_creation_required_attrs)
       |> common_changeset(attrs)
       |> unique_username_validator()
+      |> validate_required(:domain)
       |> validate_length(:summary, max: 5000)
       |> validate_length(:preferred_username, max: 100)
 

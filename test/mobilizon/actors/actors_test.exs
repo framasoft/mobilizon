@@ -649,18 +649,33 @@ defmodule Mobilizon.ActorsTest do
       assert %Page{elements: [actor], total: 1} = Actors.list_members_for_group(group)
     end
 
-    test "create_member/1 with valid data but same actors fails to create a member", %{
+    test "create_member/1 with valid data but same actors just updates the member", %{
       actor: actor,
       group: group
     } do
-      create_test_member(%{actor: actor, group: group})
+      %Member{id: member_id, url: member_url} = create_test_member(%{actor: actor, group: group})
 
-      valid_attrs =
-        @valid_attrs
+      attrs =
+        %{}
         |> Map.put(:actor_id, actor.id)
         |> Map.put(:parent_id, group.id)
+        |> Map.put(:role, :member)
 
-      assert {:error, _member} = Actors.create_member(valid_attrs)
+      assert {:ok,
+              %Member{
+                id: updated_member_id,
+                role: updated_member_role,
+                actor_id: actor_id,
+                parent_id: parent_id,
+                url: url
+              }} = Actors.create_member(attrs)
+
+      assert updated_member_role == :member
+      assert actor_id == actor.id
+      assert parent_id == group.id
+
+      assert url == member_url
+      assert updated_member_id == member_id
     end
 
     test "create_member/1 with invalid data returns error changeset" do

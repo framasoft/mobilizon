@@ -1,7 +1,7 @@
 <template>
   <div>
     <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
+      <ul v-if="group">
         <li>
           <router-link
             :to="{
@@ -134,6 +134,14 @@
               }}
             </span>
           </b-table-column>
+          <b-table-column field="actions" :label="$t('Actions')">
+            <b-button
+              v-if="props.row.role === MemberRole.MEMBER"
+              @click="removeMember(props.row.id)"
+              type="is-danger"
+              >{{ $t("Remove") }}</b-button
+            >
+          </b-table-column>
         </template>
         <template slot="empty">
           <section class="section">
@@ -150,7 +158,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import RouteName from "../../router/name";
-import { INVITE_MEMBER, GROUP_MEMBERS } from "../../graphql/member";
+import { INVITE_MEMBER, GROUP_MEMBERS, REMOVE_MEMBER } from "../../graphql/member";
 import { IGroup, usernameWithDomain } from "../../types/actor";
 import { IMember, MemberRole } from "../../types/actor/group.model";
 
@@ -206,7 +214,32 @@ export default class GroupMembers extends Vue {
         groupId: this.group.id,
         targetActorUsername: this.newMemberUsername,
       },
+      update: (store, { data }) => {
+        if (data == null) return;
+        const query = {
+          query: GROUP_MEMBERS,
+          variables: {
+            name: this.$route.params.preferredUsername,
+            page: 1,
+            limit: this.MEMBERS_PER_PAGE,
+            roles: this.roles,
+          },
+        };
+        const memberData: IMember = data.inviteMember;
+        const groupData = store.readQuery<{ group: IGroup }>(query);
+        if (!groupData) return;
+        const { group } = groupData;
+        const index = group.members.elements.findIndex((m) => m.actor.id === memberData.actor.id);
+        if (index === -1) {
+          group.members.elements.push(memberData);
+          group.members.total += 1;
+        } else {
+          group.members.elements.splice(index, 1, memberData);
+        }
+        store.writeQuery({ ...query, data: { group } });
+      },
     });
+    this.newMemberUsername = "";
   }
 
   @Watch("page")
@@ -232,6 +265,37 @@ export default class GroupMembers extends Vue {
             },
           },
         };
+      },
+    });
+  }
+
+  async removeMember(memberId: string) {
+    await this.$apollo.mutate<{ removeMember: IMember }>({
+      mutation: REMOVE_MEMBER,
+      variables: {
+        groupId: this.group.id,
+        memberId,
+      },
+      update: (store, { data }) => {
+        if (data == null) return;
+        const query = {
+          query: GROUP_MEMBERS,
+          variables: {
+            name: this.$route.params.preferredUsername,
+            page: 1,
+            limit: this.MEMBERS_PER_PAGE,
+            roles: this.roles,
+          },
+        };
+        const groupData = store.readQuery<{ group: IGroup }>(query);
+        if (!groupData) return;
+        const { group } = groupData;
+        const index = group.members.elements.findIndex((m) => m.id === memberId);
+        if (index !== -1) {
+          group.members.elements.splice(index, 1);
+          group.members.total -= 1;
+          store.writeQuery({ ...query, data: { group } });
+        }
       },
     });
   }

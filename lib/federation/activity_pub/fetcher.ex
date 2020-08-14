@@ -40,7 +40,8 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
            "type" => "Create",
            "to" => data["to"],
            "cc" => data["cc"],
-           "actor" => data["attributedTo"] || data["actor"],
+           "actor" => data["actor"] || data["attributedTo"],
+           "attributedTo" => data["attributedTo"] || data["actor"],
            "object" => data
          } do
       Transmogrifier.handle_incoming(params)
@@ -61,7 +62,8 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
            "type" => "Update",
            "to" => data["to"],
            "cc" => data["cc"],
-           "actor" => data["attributedTo"] || data["actor"],
+           "actor" => data["actor"] || data["attributedTo"],
+           "attributedTo" => data["attributedTo"] || data["actor"],
            "object" => data
          } do
       Transmogrifier.handle_incoming(params)
