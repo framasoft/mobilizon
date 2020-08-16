@@ -199,7 +199,7 @@ Then symlink the file into the `/etc/nginx/sites-enabled` directory.
 sudo ln -s /etc/nginx/sites-available/mobilizon.conf /etc/nginx/sites-enabled/
 ```
 
-Edit the file `/etc/nginx/sites-available` and adapt it to your own configuration.
+Edit the file `/etc/nginx/sites-available/mobilizon.conf` and adapt it to your own configuration.
 
 Test the configuration with `sudo nginx -t` and reload nginx with `systemctl reload nginx`.
 
