@@ -166,7 +166,7 @@ sudo systemctl daemon-reload
 And enable the service
 
 ```bash
-systemctl enable --now mobilizon.service
+sudo systemctl enable --now mobilizon.service
 ```
 
 It will run Mobilizon and enable startup on boot. You can follow the logs with
