@@ -201,7 +201,7 @@ sudo ln -s /etc/nginx/sites-available/mobilizon.conf /etc/nginx/sites-enabled/
 
 Edit the file `/etc/nginx/sites-available` and adapt it to your own configuration.
 
-Test the configuration with `sudo nginx -t` and reload nginx with `systemctl reload nginx`.
+Test the configuration with `sudo nginx -t` and reload nginx with `sudo systemctl reload nginx`.
 
 ### Let's Encrypt
 
@@ -217,7 +217,7 @@ sudo certbot certonly --rsa-key-size 4096 --webroot -w /var/www/certbot/ --email
 
 Then adapt the nginx configuration `/etc/nginx/sites-available/mobilizon.conf` by uncommenting certificate paths and removing obsolete blocks.
 
-Finish by testing the configuration with `sudo nginx -t` and reloading nginx with `systemctl reload nginx`.
+Finish by testing the configuration with `sudo nginx -t` and reloading nginx with `sudo systemctl reload nginx`.
 
 You should now be able to load https://your-mobilizon-domain.com inside your browser.
 
