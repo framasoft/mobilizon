@@ -25,19 +25,19 @@
         @page-change="onPageChange"
         @filters-change="onFiltersChange"
       >
-        <template slot-scope="props">
-          <b-table-column field="id" width="40" numeric>
-            {{ props.row.id }}
-          </b-table-column>
-          <b-table-column field="email" :label="$t('Email')" searchable>
-            <template slot="searchable" slot-scope="props">
-              <b-input
-                v-model="props.filters.email"
-                placeholder="Search..."
-                icon="magnify"
-                size="is-small"
-              />
-            </template>
+        <b-table-column field="id" width="40" numeric v-slot="props">
+          {{ props.row.id }}
+        </b-table-column>
+        <b-table-column field="email" :label="$t('Email')" searchable>
+          <template slot="searchable" slot-scope="props">
+            <b-input
+              v-model="props.filters.email"
+              :placeholder="$t('Search…')"
+              icon="magnify"
+              size="is-small"
+            />
+          </template>
+          <template v-slot:default="props">
             <router-link
               class="user-profile"
               :to="{ name: RouteName.ADMIN_USER_PROFILE, params: { id: props.row.id } }"
@@ -45,19 +45,24 @@
             >
               {{ props.row.email }}
             </router-link>
-          </b-table-column>
-          <b-table-column field="confirmedAt" :label="$t('Confirmed at')" :centered="true">
-            <template v-if="props.row.confirmedAt">
-              {{ props.row.confirmedAt | formatDateTimeString }}
-            </template>
-            <template v-else>
-              {{ $t("Not confirmed") }}
-            </template>
-          </b-table-column>
-          <b-table-column field="locale" :label="$t('Language')" :centered="true">
-            {{ props.row.locale }}
-          </b-table-column>
-        </template>
+          </template>
+        </b-table-column>
+        <b-table-column
+          field="confirmedAt"
+          :label="$t('Confirmed at')"
+          :centered="true"
+          v-slot="props"
+        >
+          <template v-if="props.row.confirmedAt">
+            {{ props.row.confirmedAt | formatDateTimeString }}
+          </template>
+          <template v-else>
+            {{ $t("Not confirmed") }}
+          </template>
+        </b-table-column>
+        <b-table-column field="locale" :label="$t('Language')" :centered="true" v-slot="props">
+          {{ props.row.locale }}
+        </b-table-column>
 
         <template slot="detail" slot-scope="props">
           <router-link
@@ -68,9 +73,10 @@
           >
             <article class="media">
               <figure class="media-left">
-                <p class="image is-64x64">
+                <p class="image is-32x32" v-if="actor.avatar">
                   <img :src="actor.avatar.url" />
                 </p>
+                <b-icon v-else size="is-medium" icon="account-circle" />
               </figure>
               <div class="media-content">
                 <div class="content">

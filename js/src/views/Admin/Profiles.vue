@@ -24,16 +24,16 @@
         @page-change="onPageChange"
         @filters-change="onFiltersChange"
       >
-        <template slot-scope="props">
-          <b-table-column field="preferredUsername" :label="$t('Username')" searchable>
-            <template slot="searchable" slot-scope="props">
-              <b-input
-                v-model="props.filters.preferredUsername"
-                placeholder="Search..."
-                icon="magnify"
-                size="is-small"
-              />
-            </template>
+        <b-table-column field="preferredUsername" :label="$t('Username')" searchable>
+          <template slot="searchable" slot-scope="props">
+            <b-input
+              v-model="props.filters.preferredUsername"
+              placeholder="Search..."
+              icon="magnify"
+              size="is-small"
+            />
+          </template>
+          <template v-slot:default="props">
             <router-link
               class="profile"
               :to="{ name: RouteName.ADMIN_PROFILE, params: { id: props.row.id } }"
@@ -53,20 +53,22 @@
                 </div>
               </article>
             </router-link>
-          </b-table-column>
+          </template>
+        </b-table-column>
 
-          <b-table-column field="domain" :label="$t('Domain')" searchable>
-            <template slot="searchable" slot-scope="props">
-              <b-input
-                v-model="props.filters.domain"
-                placeholder="Search..."
-                icon="magnify"
-                size="is-small"
-              />
-            </template>
+        <b-table-column field="domain" :label="$t('Domain')" searchable>
+          <template slot="searchable" slot-scope="props">
+            <b-input
+              v-model="props.filters.domain"
+              placeholder="Search..."
+              icon="magnify"
+              size="is-small"
+            />
+          </template>
+          <template v-slot:default="props">
             {{ props.row.domain }}
-          </b-table-column>
-        </template>
+          </template>
+        </b-table-column>
         <template slot="empty">
           <section class="section">
             <div class="content has-text-grey has-text-centered">

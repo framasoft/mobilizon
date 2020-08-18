@@ -29,39 +29,44 @@
       checkable
       checkbox-position="left"
     >
-      <template slot-scope="props">
-        <b-table-column field="targetActor.id" label="ID" width="40" numeric>{{
-          props.row.targetActor.id
-        }}</b-table-column>
+      <b-table-column field="targetActor.id" label="ID" width="40" numeric v-slot="props">{{
+        props.row.targetActor.id
+      }}</b-table-column>
 
-        <b-table-column field="targetActor.type" :label="$t('Type')" width="80">
-          <b-icon icon="lan" v-if="RelayMixin.isInstance(props.row.targetActor)" />
-          <b-icon icon="account-circle" v-else />
-        </b-table-column>
+      <b-table-column field="targetActor.type" :label="$t('Type')" width="80" v-slot="props">
+        <b-icon icon="lan" v-if="RelayMixin.isInstance(props.row.targetActor)" />
+        <b-icon icon="account-circle" v-else />
+      </b-table-column>
 
-        <b-table-column field="approved" :label="$t('Status')" width="100" sortable centered>
-          <span :class="`tag ${props.row.approved ? 'is-success' : 'is-danger'}`">{{
-            props.row.approved ? $t("Accepted") : $t("Pending")
-          }}</span>
-        </b-table-column>
+      <b-table-column
+        field="approved"
+        :label="$t('Status')"
+        width="100"
+        sortable
+        centered
+        v-slot="props"
+      >
+        <span :class="`tag ${props.row.approved ? 'is-success' : 'is-danger'}`">{{
+          props.row.approved ? $t("Accepted") : $t("Pending")
+        }}</span>
+      </b-table-column>
 
-        <b-table-column field="targetActor.domain" :label="$t('Domain')" sortable>
-          <template>
-            <a @click="toggle(props.row)" v-if="RelayMixin.isInstance(props.row.targetActor)">{{
-              props.row.targetActor.domain
-            }}</a>
-            <a @click="toggle(props.row)" v-else>{{
-              `${props.row.targetActor.preferredUsername}@${props.row.targetActor.domain}`
-            }}</a>
-          </template>
-        </b-table-column>
+      <b-table-column field="targetActor.domain" :label="$t('Domain')" sortable>
+        <template v-slot:default="props">
+          <a @click="toggle(props.row)" v-if="RelayMixin.isInstance(props.row.targetActor)">{{
+            props.row.targetActor.domain
+          }}</a>
+          <a @click="toggle(props.row)" v-else>{{
+            `${props.row.targetActor.preferredUsername}@${props.row.targetActor.domain}`
+          }}</a>
+        </template>
+      </b-table-column>
 
-        <b-table-column field="targetActor.updatedAt" :label="$t('Date')" sortable>
-          <span :title="$options.filters.formatDateTimeString(props.row.updatedAt)">{{
-            timeago(props.row.updatedAt)
-          }}</span></b-table-column
-        >
-      </template>
+      <b-table-column field="targetActor.updatedAt" :label="$t('Date')" sortable v-slot="props">
+        <span :title="$options.filters.formatDateTimeString(props.row.updatedAt)">{{
+          timeago(props.row.updatedAt)
+        }}</span></b-table-column
+      >
 
       <template slot="detail" slot-scope="props">
         <article>

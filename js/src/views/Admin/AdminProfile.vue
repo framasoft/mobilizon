@@ -71,16 +71,14 @@
         :per-page="EVENTS_PER_PAGE"
         @page-change="onOrganizedEventsPageChange"
       >
-        <template slot-scope="props">
-          <b-table-column field="beginsOn" :label="$t('Begins on')">
-            {{ props.row.beginsOn | formatDateTimeString }}
-          </b-table-column>
-          <b-table-column field="title" :label="$t('Title')">
-            <router-link :to="{ name: RouteName.EVENT, params: { uuid: props.row.uuid } }">
-              {{ props.row.title }}
-            </router-link>
-          </b-table-column>
-        </template>
+        <b-table-column field="beginsOn" :label="$t('Begins on')" v-slot="props">
+          {{ props.row.beginsOn | formatDateTimeString }}
+        </b-table-column>
+        <b-table-column field="title" :label="$t('Title')" v-slot="props">
+          <router-link :to="{ name: RouteName.EVENT, params: { uuid: props.row.uuid } }">
+            {{ props.row.title }}
+          </router-link>
+        </b-table-column>
         <template slot="empty">
           <section class="section">
             <div class="content has-text-grey has-text-centered">
@@ -107,16 +105,14 @@
         :per-page="EVENTS_PER_PAGE"
         @page-change="onParticipationsPageChange"
       >
-        <template slot-scope="props">
-          <b-table-column field="beginsOn" :label="$t('Begins on')">
-            {{ props.row.beginsOn | formatDateTimeString }}
-          </b-table-column>
-          <b-table-column field="title" :label="$t('Title')">
-            <router-link :to="{ name: RouteName.EVENT, params: { uuid: props.row.uuid } }">
-              {{ props.row.title }}
-            </router-link>
-          </b-table-column>
-        </template>
+        <b-table-column field="beginsOn" :label="$t('Begins on')" v-slot="props">
+          {{ props.row.beginsOn | formatDateTimeString }}
+        </b-table-column>
+        <b-table-column field="title" :label="$t('Title')" v-slot="props">
+          <router-link :to="{ name: RouteName.EVENT, params: { uuid: props.row.uuid } }">
+            {{ props.row.title }}
+          </router-link>
+        </b-table-column>
         <template slot="empty">
           <section class="section">
             <div class="content has-text-grey has-text-centered">
