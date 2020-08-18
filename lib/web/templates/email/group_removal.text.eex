@@ -1,0 +1,5 @@
+<%= gettext "So long, and thanks for the fish!" %>
+==
+<%= gettext "You have been removed from group %{group}. You will not be able to access this group's private content anymore.", group: @group.name %>
+<%= @group.url %>
+<%= gettext "If you feel this is an error, you may contact the group's administrators so that they can add you back." %>

@@ -15,10 +15,14 @@ defmodule Mobilizon.Web.Email.Group do
   @doc """
   Send emails to local user
   """
+  @spec send_invite_to_user(Member.t(), String.t()) :: :ok
+  def send_invite_to_user(member, locale \\ "en")
+  def send_invite_to_user(%Member{actor: %Actor{user_id: nil}}, _locale), do: :ok
+
   def send_invite_to_user(
         %Member{actor: %Actor{user_id: user_id}, parent: %Actor{} = group, role: :invited} =
           member,
-        locale \\ "en"
+        locale
       ) do
     with %User{email: email} <- Users.get_user!(user_id) do
       Gettext.put_locale(locale)
@@ -37,6 +41,34 @@ defmodule Mobilizon.Web.Email.Group do
       |> assign(:group, group)
       |> assign(:subject, subject)
       |> render(:group_invite)
+      |> Email.Mailer.deliver_later()
+
+      :ok
+    end
+  end
+
+  # Only send notification to local members
+  def send_notification_to_removed_member(%Member{actor: %Actor{user_id: nil}}), do: :ok
+
+  def send_notification_to_removed_member(%Member{
+        actor: %Actor{user_id: user_id},
+        parent: %Actor{} = group,
+        role: :rejected
+      }) do
+    with %User{email: email, locale: locale} <- Users.get_user!(user_id) do
+      Gettext.put_locale(locale)
+
+      subject =
+        gettext(
+          "You have been removed from group %{group}",
+          group: group.name
+        )
+
+      Email.base_email(to: email, subject: subject)
+      |> assign(:locale, locale)
+      |> assign(:group, group)
+      |> assign(:subject, subject)
+      |> render(:group_removal)
       |> Email.Mailer.deliver_later()
 
       :ok

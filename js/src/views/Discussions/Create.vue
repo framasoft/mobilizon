@@ -19,7 +19,8 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { IGroup, IPerson } from "@/types/actor";
-import { CURRENT_ACTOR_CLIENT, FETCH_GROUP } from "@/graphql/actor";
+import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
+import { FETCH_GROUP } from "@/graphql/group";
 import { CREATE_DISCUSSION } from "@/graphql/discussion";
 import RouteName from "../../router/name";
 

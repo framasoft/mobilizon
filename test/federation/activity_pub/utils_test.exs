@@ -33,7 +33,8 @@ defmodule Mobilizon.Federation.ActivityPub.UtilsTest do
                "id" => Routes.page_url(Endpoint, :comment, reply.uuid),
                "inReplyTo" => comment.url,
                "attributedTo" => reply.actor.url,
-               "mediaType" => "text/html"
+               "mediaType" => "text/html",
+               "published" => reply.published_at |> DateTime.to_iso8601()
              } == Converter.Comment.model_to_as(reply)
     end
 

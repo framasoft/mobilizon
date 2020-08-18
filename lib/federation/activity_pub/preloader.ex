@@ -17,7 +17,8 @@ defmodule Mobilizon.Federation.ActivityPub.Preloader do
   def maybe_preload(%Comment{url: url}),
     do: {:ok, Discussions.get_comment_from_url_with_preload!(url)}
 
-  def maybe_preload(%Discussion{} = discussion), do: {:ok, discussion}
+  def maybe_preload(%Discussion{id: discussion_id}),
+    do: {:ok, Discussions.get_discussion(discussion_id)}
 
   def maybe_preload(%Resource{url: url}),
     do: {:ok, Resources.get_resource_by_url_with_preloads(url)}

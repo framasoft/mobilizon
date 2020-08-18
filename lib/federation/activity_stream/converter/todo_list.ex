@@ -28,7 +28,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.TodoList do
       "type" => "TodoList",
       "actor" => group_url,
       "id" => todo_list.url,
-      "name" => todo_list.title
+      "name" => todo_list.title,
+      "published" => todo_list.published_at |> DateTime.to_iso8601()
     }
   end
 
@@ -43,7 +44,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.TodoList do
         %{
           title: object["name"],
           url: object["id"],
-          actor_id: group_id
+          actor_id: group_id,
+          published_at: object["published"]
         }
 
       _ ->

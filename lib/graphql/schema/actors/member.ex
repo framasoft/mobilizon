@@ -16,6 +16,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
     field(:role, :member_role_enum, description: "The role of this membership")
     field(:invited_by, :person, description: "Who invited this member")
     field(:inserted_at, :naive_datetime, description: "When was this member created")
+    field(:updated_at, :naive_datetime, description: "When was this member updated")
   end
 
   enum :member_role_enum do
@@ -26,12 +27,6 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
     value(:administrator)
     value(:creator)
     value(:rejected)
-  end
-
-  @desc "Represents a deleted member"
-  object :deleted_member do
-    field(:parent, :deleted_object)
-    field(:actor, :deleted_object)
   end
 
   object :paginated_member_list do
@@ -49,9 +44,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
     end
 
     @desc "Leave a group"
-    field :leave_group, :deleted_member do
+    field :leave_group, :deleted_object do
       arg(:group_id, non_null(:id))
-      arg(:actor_id, non_null(:id))
 
       resolve(&Group.leave_group/3)
     end
@@ -69,6 +63,21 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
       arg(:id, non_null(:id))
 
       resolve(&Member.accept_invitation/3)
+    end
+
+    @desc "Reject an invitation to a group"
+    field :reject_invitation, :member do
+      arg(:id, non_null(:id))
+
+      resolve(&Member.reject_invitation/3)
+    end
+
+    @desc "Remove a member from a group"
+    field :remove_member, :member do
+      arg(:group_id, non_null(:id))
+      arg(:member_id, non_null(:id))
+
+      resolve(&Member.remove_member/3)
     end
   end
 end

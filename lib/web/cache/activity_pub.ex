@@ -17,12 +17,29 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
   @cache :activity_pub
 
   @doc """
+  Gets a actor by username and eventually domain.
+  """
+  @spec get_actor_by_name(String.t()) ::
+          {:commit, Actor.t()} | {:ignore, nil}
+  def get_actor_by_name(name) do
+    Cachex.fetch(@cache, "actor_" <> name, fn "actor_" <> name ->
+      case Actors.get_actor_by_name(name) do
+        %Actor{} = actor ->
+          {:commit, actor}
+
+        nil ->
+          {:ignore, nil}
+      end
+    end)
+  end
+
+  @doc """
   Gets a local actor by username.
   """
   @spec get_local_actor_by_name(String.t()) ::
           {:commit, Actor.t()} | {:ignore, nil}
   def get_local_actor_by_name(name) do
-    Cachex.fetch(@cache, "actor_" <> name, fn "actor_" <> name ->
+    Cachex.fetch(@cache, "local_actor_" <> name, fn "local_actor_" <> name ->
       case Actors.get_local_actor_by_name(name) do
         %Actor{} = actor ->
           {:commit, actor}

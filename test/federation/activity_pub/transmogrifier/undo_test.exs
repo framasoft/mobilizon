@@ -39,7 +39,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.UndoTest do
 
       assert data["type"] == "Undo"
       assert data["object"]["type"] == "Announce"
-      assert data["object"]["object"] == comment.url
+      assert data["object"]["object"]["id"] == comment.url
 
       assert data["object"]["id"] ==
                "https://framapiaf.org/users/peertube/statuses/104584600044284729/activity"

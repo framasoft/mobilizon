@@ -446,6 +446,7 @@ export default class EditorComponent extends Vue {
 
   /** We use this to programatically insert an actor mention when creating a reply to comment */
   replyToComment(comment: IComment) {
+    if (!comment.actor) return;
     const actorModel = new Actor(comment.actor);
     if (!this.editor) return;
     this.editor.commands.mention({

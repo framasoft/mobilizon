@@ -757,5 +757,9 @@
   "No ongoing todos": "Pas de todos en cours",
   "No discussions yet": "Pas encore de discussions",
   "Add / Remove…": "Ajouter / Supprimer…",
-  "No public posts": "Pas de billets publics"
+  "No public posts": "Pas de billets publics",
+  "You have been removed from this group's members.": "Vous avez été exclu des membres de ce groupe.",
+  "Since you are a new member, private content can take a few minutes to appear.": "Étant donné que vous êtes un·e nouveau·elle membre, le contenu privé peut mettre quelques minutes à arriver.",
+  "Leave group": "Quitter le groupe",
+  "Remove": "Exclure"
 }

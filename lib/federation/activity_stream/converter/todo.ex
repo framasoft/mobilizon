@@ -37,7 +37,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Todo do
       "id" => todo.url,
       "name" => todo.title,
       "status" => todo.status,
-      "todoList" => todo_list_url
+      "todoList" => todo_list_url,
+      "published" => todo.published_at |> DateTime.to_iso8601()
     }
   end
 
@@ -58,7 +59,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Todo do
         status: object["status"],
         url: object["id"],
         todo_list_id: todo_list_id,
-        creator_id: creator_id
+        creator_id: creator_id,
+        published_at: object["published"]
       }
     else
       {:todo_list, nil} ->

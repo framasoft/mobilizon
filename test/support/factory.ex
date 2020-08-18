@@ -129,6 +129,7 @@ defmodule Mobilizon.Factory do
       deleted_at: nil,
       tags: build_list(3, :tag),
       in_reply_to_comment: nil,
+      published_at: DateTime.utc_now(),
       url: Routes.page_url(Endpoint, :comment, uuid)
     }
   end
@@ -285,7 +286,8 @@ defmodule Mobilizon.Factory do
       title: sequence("todo list"),
       actor: build(:group),
       id: uuid,
-      url: Routes.page_url(Endpoint, :todo_list, uuid)
+      url: Routes.page_url(Endpoint, :todo_list, uuid),
+      published_at: DateTime.utc_now()
     }
   end
 
@@ -300,7 +302,8 @@ defmodule Mobilizon.Factory do
       due_date: Timex.shift(DateTime.utc_now(), hours: 2),
       assigned_to: build(:actor),
       url: Routes.page_url(Endpoint, :todo, uuid),
-      creator: build(:actor)
+      creator: build(:actor),
+      published_at: DateTime.utc_now()
     }
   end
 
@@ -317,6 +320,7 @@ defmodule Mobilizon.Factory do
       creator: build(:actor),
       parent: nil,
       url: Routes.page_url(Endpoint, :resource, uuid),
+      published_at: DateTime.utc_now(),
       path: "/#{title}"
     }
   end

@@ -86,8 +86,8 @@ export const CREATE_COMMENT_FROM_EVENT = gql`
 `;
 
 export const DELETE_COMMENT = gql`
-  mutation DeleteComment($commentId: ID!, $actorId: ID!) {
-    deleteComment(commentId: $commentId, actorId: $actorId) {
+  mutation DeleteComment($commentId: ID!) {
+    deleteComment(commentId: $commentId) {
       id
     }
   }
@@ -99,4 +99,5 @@ export const UPDATE_COMMENT = gql`
       ...CommentFields
     }
   }
+  ${COMMENT_FIELDS_FRAGMENT}
 `;

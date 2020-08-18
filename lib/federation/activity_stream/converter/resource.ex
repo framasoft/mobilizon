@@ -36,7 +36,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Resource do
       "name" => resource.title,
       "summary" => resource.summary,
       "context" => get_context(resource),
-      "attributedTo" => actor_url
+      "attributedTo" => actor_url,
+      "published" => resource.published_at |> DateTime.to_iso8601()
     }
 
     case type do
@@ -65,7 +66,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Resource do
         url: object["id"],
         actor_id: actor_id,
         creator_id: creator_id,
-        parent_id: parent_id
+        parent_id: parent_id,
+        published_at: object["published"]
       }
 
       case type do

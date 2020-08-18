@@ -3,14 +3,11 @@
     <h1 class="title">{{ $t("My groups") }}</h1>
     <router-link :to="{ name: RouteName.CREATE_GROUP }">{{ $t("Create group") }}</router-link>
     <b-loading :active.sync="$apollo.loading"></b-loading>
-    <section v-if="invitations && invitations.length > 0">
-      <InvitationCard
-        v-for="member in invitations"
-        :key="member.id"
-        :member="member"
-        @accept="acceptInvitation"
-      />
-    </section>
+    <invitations
+      :invitations="invitations"
+      @acceptInvitation="acceptInvitation"
+      @rejectInvitation="rejectInvitation"
+    />
     <section v-if="memberships && memberships.length > 0">
       <GroupMemberCard v-for="member in memberships" :key="member.id" :member="member" />
     </section>
@@ -24,16 +21,16 @@
 import { Component, Vue } from "vue-property-decorator";
 import { LOGGED_USER_MEMBERSHIPS } from "@/graphql/actor";
 import GroupMemberCard from "@/components/Group/GroupMemberCard.vue";
-import InvitationCard from "@/components/Group/InvitationCard.vue";
+import Invitations from "@/components/Group/Invitations.vue";
 import { Paginate } from "@/types/paginate";
-import { IGroup, IMember, MemberRole } from "@/types/actor";
+import { IGroup, IMember, MemberRole, usernameWithDomain } from "@/types/actor";
 import RouteName from "../../router/name";
 import { ACCEPT_INVITATION } from "../../graphql/member";
 
 @Component({
   components: {
     GroupMemberCard,
-    InvitationCard,
+    Invitations,
   },
   apollo: {
     membershipsPages: {
@@ -61,6 +58,23 @@ export default class MyEvents extends Vue {
 
   RouteName = RouteName;
 
+  acceptInvitation(member: IMember) {
+    return this.$router.push({
+      name: RouteName.GROUP,
+      params: { preferredUsername: usernameWithDomain(member.parent) },
+    });
+  }
+
+  rejectInvitation({ id: memberId }: { id: string }) {
+    const index = this.membershipsPages.elements.findIndex(
+      (membership) => membership.role === MemberRole.INVITED && membership.id === memberId
+    );
+    if (index > -1) {
+      this.membershipsPages.elements.splice(index, 1);
+      this.membershipsPages.total -= 1;
+    }
+  }
+
   get invitations() {
     if (!this.membershipsPages) return [];
     return this.membershipsPages.elements.filter(
@@ -73,15 +87,6 @@ export default class MyEvents extends Vue {
     return this.membershipsPages.elements.filter(
       (member: IMember) => member.role !== MemberRole.INVITED
     );
-  }
-
-  async acceptInvitation(id: string) {
-    await this.$apollo.mutate<{ acceptInvitation: IMember }>({
-      mutation: ACCEPT_INVITATION,
-      variables: {
-        id,
-      },
-    });
   }
 }
 </script>

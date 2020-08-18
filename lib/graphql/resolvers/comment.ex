@@ -51,7 +51,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
       ) do
     with {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
          %CommentModel{actor_id: comment_actor_id} = comment <-
-           Mobilizon.Discussions.get_comment(comment_id),
+           Mobilizon.Discussions.get_comment_with_preload(comment_id),
          true <- actor_id === comment_actor_id,
          {:ok, _, %CommentModel{} = comment} <- Comments.update_comment(comment, %{text: text}) do
       {:ok, comment}
@@ -64,15 +64,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
 
   def delete_comment(
         _parent,
-        %{actor_id: actor_id, comment_id: comment_id},
+        %{comment_id: comment_id},
         %{
           context: %{
             current_user: %User{role: role} = user
           }
         }
       ) do
-    with {actor_id, ""} <- Integer.parse(actor_id),
-         {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
+    with {:actor, %Actor{id: actor_id} = actor} <- {:actor, Users.get_actor_for_user(user)},
          %CommentModel{deleted_at: nil} = comment <-
            Discussions.get_comment_with_preload(comment_id) do
       cond do

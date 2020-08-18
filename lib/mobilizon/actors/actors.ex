@@ -558,7 +558,7 @@ defmodule Mobilizon.Actors do
   @doc """
   Gets a single member.
   """
-  @spec get_member(integer | String.t()) :: Member.t() | nil
+  @spec get_member(integer | String.t()) :: {:ok, Member.t()} | nil
   def get_member(id) do
     Member
     |> Repo.get(id)
@@ -642,7 +642,14 @@ defmodule Mobilizon.Actors do
     with {:ok, %Member{} = member} <-
            %Member{}
            |> Member.changeset(attrs)
-           |> Repo.insert() do
+           |> Repo.insert(
+             on_conflict: {:replace_all_except, [:id, :url, :actor_id, :parent_id]},
+             conflict_target: [:actor_id, :parent_id],
+             # See https://hexdocs.pm/ecto/Ecto.Repo.html#c:insert/2-upserts,
+             # when doing an upsert with on_conflict, PG doesn't return whether it's an insert or upsert
+             # so we need to refresh the fields
+             returning: true
+           ) do
       {:ok, Repo.preload(member, [:actor, :parent, :invited_by])}
     end
   end
@@ -737,6 +744,20 @@ defmodule Mobilizon.Actors do
     actor_id
     |> group_ids_where_last_administrator_query()
     |> Repo.all()
+  end
+
+  @doc """
+  Returns whether the member is the last administrator for a group
+  """
+  @spec is_only_administrator?(integer | String.t(), integer | String.t()) :: boolean()
+  def is_only_administrator?(member_id, group_id) do
+    Member
+    |> where(
+      [m],
+      m.parent_id == ^group_id and m.id != ^member_id and m.role in ^@administrator_roles
+    )
+    |> Repo.aggregate(:count)
+    |> (&(&1 == 0)).()
   end
 
   @doc """
@@ -1240,7 +1261,7 @@ defmodule Mobilizon.Actors do
     from(
       m in Member,
       where: m.actor_id == ^actor_id,
-      preload: [:parent]
+      preload: [:parent, :invited_by]
     )
   end
 

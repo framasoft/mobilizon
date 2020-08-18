@@ -21,6 +21,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   alias Mobilizon.Federation.ActivityPub.Types.Ownable
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
   alias Mobilizon.Tombstone
+  alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Email.{Group, Participation}
 
   require Logger
@@ -313,7 +314,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:object_not_found, {:ok, activity, object}} <-
            {:object_not_found,
             do_handle_incoming_reject_following(rejected_object, actor) ||
-              do_handle_incoming_reject_join(rejected_object, actor)} do
+              do_handle_incoming_reject_join(rejected_object, actor) ||
+              do_handle_incoming_reject_invite(rejected_object, actor)} do
       {:ok, activity, object}
     else
       {:object_not_found, nil} ->
@@ -341,8 +343,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:ok, %Actor{id: actor_id, suspended: false} = actor} <-
            ActivityPub.get_or_fetch_actor_by_url(actor_url),
          :ok <- Logger.debug("Fetching contained object"),
-         {:ok, entity} <-
-           object |> Utils.get_url() |> fetch_object_optionnally_authenticated(actor),
+         {:ok, entity} <- process_announce_data(object, actor),
          :ok <- eventually_create_share(object, entity, actor_id) do
       {:ok, nil, entity}
     else
@@ -396,6 +397,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         %{"type" => "Update", "object" => %{"type" => "Note"} = object, "actor" => _actor} =
           update_data
       ) do
+    Logger.info("Handle incoming to update a note")
+
     with actor <- Utils.get_actor(update_data),
          {:ok, %Actor{url: actor_url, suspended: false}} <-
            ActivityPub.get_or_fetch_actor_by_url(actor),
@@ -520,9 +523,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
-  def handle_incoming(
-        %{"type" => "Leave", "object" => object, "actor" => actor, "id" => _id} = data
-      ) do
+  def handle_incoming(%{"type" => "Leave", "object" => object, "actor" => actor} = data) do
     with actor <- Utils.get_actor(data),
          {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_actor_by_url(actor),
          object <- Utils.get_url(object),
@@ -562,6 +563,39 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
            ActivityPub.invite(object, actor, target, false, %{url: id}),
          :ok <- Group.send_invite_to_user(member) do
       {:ok, activity, member}
+    end
+  end
+
+  def handle_incoming(
+        %{"type" => "Remove", "actor" => actor, "object" => object, "origin" => origin} = data
+      ) do
+    Logger.info("Handle incoming to remove a member from a group")
+
+    with {:ok, %Actor{id: moderator_id} = moderator} <-
+           data |> Utils.get_actor() |> ActivityPub.get_or_fetch_actor_by_url(),
+         {:ok, %Actor{id: person_id}} <-
+           object |> Utils.get_url() |> ActivityPub.get_or_fetch_actor_by_url(),
+         {:ok, %Actor{type: :Group, id: group_id} = group} <-
+           origin |> Utils.get_url() |> ActivityPub.get_or_fetch_actor_by_url(),
+         {:is_admin, {:ok, %Member{role: role}}}
+         when role in [:moderator, :administrator, :creator] <-
+           {:is_admin, Actors.get_member(moderator_id, group_id)},
+         {:is_member, {:ok, %Member{role: role} = member}} when role != :rejected <-
+           {:is_member, Actors.get_member(person_id, group_id)} do
+      ActivityPub.remove(member, group, moderator, false)
+    else
+      {:is_admin, {:ok, %Member{}}} ->
+        Logger.warn(
+          "Person #{inspect(actor)} is not an admin from #{inspect(origin)} and can't remove member #{
+            inspect(object)
+          }"
+        )
+
+        {:error, "Member already removed"}
+
+      {:is_member, {:ok, %Member{role: :rejected}}} ->
+        Logger.warn("Member #{inspect(object)} already removed from #{inspect(origin)}")
+        {:error, "Member already removed"}
     end
   end
 
@@ -761,6 +795,16 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
+  defp do_handle_incoming_reject_invite(invite_object, %Actor{} = actor_rejecting) do
+    with {:invite, {:ok, %Member{role: :invited, actor_id: actor_id} = member}} <-
+           {:invite, get_member(invite_object)},
+         {:same_actor, true} <- {:same_actor, actor_rejecting.id === actor_id},
+         {:ok, activity, member} <-
+           ActivityPub.reject(:invite, member, false) do
+      {:ok, activity, member}
+    end
+  end
+
   # If the object has been announced by a group let's use one of our members to fetch it
   @spec fetch_object_optionnally_authenticated(String.t(), Actor.t() | any()) ::
           {:ok, struct()} | {:error, any()}
@@ -787,17 +831,24 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     :ok
   end
 
+  # Comment initiates a whole discussion only if it has full title
   @spec is_data_for_comment_or_discussion?(map()) :: boolean()
   defp is_data_for_comment_or_discussion?(object_data) do
-    (not Map.has_key?(object_data, :title) or
-       is_nil(object_data.title) or object_data.title == "") and
+    is_data_a_discussion_initialization?(object_data) and
       is_nil(object_data.discussion_id)
+  end
+
+  # Comment initiates a whole discussion only if it has full title
+  @spec is_data_for_comment_or_discussion?(map()) :: boolean()
+  defp is_data_a_discussion_initialization?(object_data) do
+    not Map.has_key?(object_data, :title) or
+      is_nil(object_data.title) or object_data.title == ""
   end
 
   # Comment and conversations have different attributes for actor and groups
   defp transform_object_data_for_discussion(object_data) do
     # Basic comment
-    if is_data_for_comment_or_discussion?(object_data) do
+    if is_data_a_discussion_initialization?(object_data) do
       object_data
     else
       # Conversation
@@ -878,6 +929,18 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
     with {:ok, object} <- fetch_obj_helper(object) do
       {:ok, Convertible.model_to_as(object)}
+    end
+  end
+
+  # Otherwise we need to fetch what's at the URL (this is possible only for objects, not activities)
+  defp process_announce_data(%{"id" => url}, %Actor{} = actor),
+    do: process_announce_data(url, actor)
+
+  defp process_announce_data(url, %Actor{} = actor) do
+    if Utils.are_same_origin?(url, Endpoint.url()) do
+      ActivityPub.fetch_object_from_url(url, force: false)
+    else
+      fetch_object_optionnally_authenticated(url, actor)
     end
   end
 end

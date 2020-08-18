@@ -36,7 +36,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
   @impl Entity
   @spec update(Comment.t(), map(), map()) :: {:ok, Comment.t(), Activity.t()} | any()
   def update(%Comment{} = old_comment, args, additional) do
-    with args <- prepare_args_for_comment(args),
+    with args <- prepare_args_for_comment_update(args),
          {:ok, %Comment{} = new_comment} <- Discussions.update_comment(old_comment, args),
          {:ok, true} <- Cachex.del(:activity_pub, "comment_#{new_comment.uuid}"),
          comment_as_data <- Convertible.model_to_as(new_comment),
@@ -122,6 +122,20 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
                )
            }) do
       args
+    end
+  end
+
+  defp prepare_args_for_comment_update(args) do
+    with {text, mentions, tags} <-
+           APIUtils.make_content_html(
+             args |> Map.get(:text, "") |> String.trim(),
+             # Can't put additional tags on a comment
+             [],
+             "text/html"
+           ),
+         tags <- ConverterUtils.fetch_tags(tags),
+         mentions <- Map.get(args, :mentions, []) ++ ConverterUtils.fetch_mentions(mentions) do
+      Map.merge(args, %{text: text, mentions: mentions, tags: tags})
     end
   end
 

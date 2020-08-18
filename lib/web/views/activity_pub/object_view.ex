@@ -14,7 +14,7 @@ defmodule Mobilizon.Web.ActivityPub.ObjectView do
         end,
       "actor" => activity.actor,
       # Not sure if needed since this is used into outbox
-      "published" => Timex.now(),
+      "published" => DateTime.utc_now() |> DateTime.to_iso8601(),
       "to" => activity.recipients,
       "object" =>
         case data["type"] do

@@ -44,7 +44,7 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { FETCH_GROUP } from "@/graphql/actor";
+import { FETCH_GROUP } from "@/graphql/group";
 import { IGroup } from "@/types/actor";
 import { ITodoList } from "@/types/todos";
 import { CREATE_TODO_LIST } from "@/graphql/todos";

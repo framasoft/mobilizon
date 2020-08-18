@@ -22,7 +22,7 @@ defmodule Mobilizon.Resources do
   def get_resources_for_group(%Actor{id: group_id}, page \\ nil, limit \\ nil) do
     Resource
     |> where(actor_id: ^group_id)
-    |> order_by(desc: :updated_at)
+    |> order_by(desc: :published_at)
     |> preload([r], [:actor, :creator])
     |> Page.build_page(page, limit)
   end

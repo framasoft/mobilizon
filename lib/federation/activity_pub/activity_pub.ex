@@ -47,7 +47,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   alias Mobilizon.Storage.Page
 
   alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Email.{Admin, Mailer}
+  alias Mobilizon.Web.Email.{Admin, Group, Mailer}
 
   require Logger
 
@@ -225,7 +225,8 @@ defmodule Mobilizon.Federation.ActivityPub do
       end
 
     with {:ok, activity} <- create_activity(update_data, local),
-         :ok <- maybe_federate(activity) do
+         :ok <- maybe_federate(activity),
+         :ok <- maybe_relay_if_group_activity(activity) do
       {:ok, activity, entity}
     else
       err ->
@@ -240,10 +241,12 @@ defmodule Mobilizon.Federation.ActivityPub do
       case type do
         :join -> reject_join(entity, additional)
         :follow -> reject_follow(entity, additional)
+        :invite -> reject_invite(entity, additional)
       end
 
     with {:ok, activity} <- create_activity(update_data, local),
-         :ok <- maybe_federate(activity) do
+         :ok <- maybe_federate(activity),
+         :ok <- maybe_relay_if_group_activity(activity) do
       {:ok, activity, entity}
     else
       err ->
@@ -376,8 +379,9 @@ defmodule Mobilizon.Federation.ActivityPub do
 
   def leave(object, actor, local \\ true, additional \\ %{})
 
-  # TODO: If we want to use this for exclusion we need to have an extra field
-  # for the actor that excluded the participant
+  @doc """
+  Leave an event
+  """
   def leave(
         %Event{id: event_id, url: event_url} = _event,
         %Actor{id: actor_id, url: actor_url} = _actor,
@@ -409,10 +413,63 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
+  @doc """
+  Leave a group
+  """
+  def leave(
+        %Actor{type: :Group, id: group_id, url: group_url, members_url: group_members_url},
+        %Actor{id: actor_id, url: actor_url},
+        local,
+        _additional
+      ) do
+    with {:member, {:ok, %Member{id: member_id} = member}} <-
+           {:member, Actors.get_member(actor_id, group_id)},
+         {:is_only_admin, false} <-
+           {:is_only_admin, Actors.is_only_administrator?(member_id, group_id)},
+         {:delete, {:ok, %Member{} = member}} <- {:delete, Actors.delete_member(member)},
+         leave_data <- %{
+           "to" => [group_members_url],
+           "cc" => [group_url],
+           "attributedTo" => group_url,
+           "type" => "Leave",
+           "actor" => actor_url,
+           "object" => group_url
+         },
+         {:ok, activity} <- create_activity(leave_data, local),
+         :ok <- maybe_federate(activity),
+         :ok <- maybe_relay_if_group_activity(activity) do
+      {:ok, activity, member}
+    end
+  end
+
+  def remove(
+        %Member{} = member,
+        %Actor{type: :Group, url: group_url, members_url: group_members_url},
+        %Actor{url: moderator_url},
+        local,
+        _additional \\ %{}
+      ) do
+    with {:ok, %Member{id: member_id}} <- Actors.update_member(member, %{role: :rejected}),
+         %Member{} = member <- Actors.get_member(member_id),
+         :ok <- Group.send_notification_to_removed_member(member),
+         remove_data <- %{
+           "to" => [group_members_url],
+           "type" => "Remove",
+           "actor" => moderator_url,
+           "object" => member.actor.url,
+           "origin" => group_url
+         },
+         {:ok, activity} <- create_activity(remove_data, local),
+         :ok <- maybe_federate(activity),
+         :ok <- maybe_relay_if_group_activity(activity) do
+      {:ok, activity, member}
+    end
+  end
+
   @spec invite(Actor.t(), Actor.t(), Actor.t(), boolean, map()) ::
           {:ok, map(), Member.t()} | {:error, :member_not_found}
   def invite(
-        %Actor{url: group_url, id: group_id} = group,
+        %Actor{url: group_url, id: group_id, members_url: members_url} = group,
         %Actor{url: actor_url, id: actor_id} = actor,
         %Actor{url: target_actor_url, id: target_actor_id} = _target_actor,
         local \\ true,
@@ -431,6 +488,7 @@ defmodule Mobilizon.Federation.ActivityPub do
            }),
          invite_data <- %{
            "type" => "Invite",
+           "attributedTo" => group_url,
            "actor" => actor_url,
            "object" => group_url,
            "target" => target_actor_url,
@@ -439,11 +497,12 @@ defmodule Mobilizon.Federation.ActivityPub do
          {:ok, activity} <-
            create_activity(
              invite_data
-             |> Map.merge(%{"to" => [target_actor_url], "cc" => [group_url]})
+             |> Map.merge(%{"to" => [target_actor_url, members_url], "cc" => [group_url]})
              |> Map.merge(additional),
              local
            ),
-         :ok <- maybe_federate(activity) do
+         :ok <- maybe_federate(activity),
+         :ok <- maybe_relay_if_group_activity(activity) do
       {:ok, activity, member}
     end
   end
@@ -806,9 +865,10 @@ defmodule Mobilizon.Federation.ActivityPub do
            Actors.update_member(member, %{role: :member}),
          accept_data <- %{
            "type" => "Accept",
-           "actor" => actor_url,
-           "to" => [inviter.url],
+           "attributedTo" => member.parent.url,
+           "to" => [inviter.url, member.parent.members_url],
            "cc" => [member.parent.url],
+           "actor" => actor_url,
            "object" => member_url,
            "id" => "#{Endpoint.url()}/accept/invite/member/#{member_id}"
          } do
@@ -871,6 +931,28 @@ defmodule Mobilizon.Federation.ActivityPub do
         Logger.error("Something went wrong while creating an update activity")
         Logger.debug(inspect(err))
         err
+    end
+  end
+
+  @spec reject_invite(Member.t(), map()) :: {:ok, Member.t(), Activity.t()} | any
+  defp reject_invite(
+         %Member{invited_by_id: invited_by_id, actor_id: actor_id} = member,
+         _additional
+       ) do
+    with %Actor{} = inviter <- Actors.get_actor(invited_by_id),
+         %Actor{url: actor_url} <- Actors.get_actor(actor_id),
+         {:ok, %Member{url: member_url, id: member_id} = member} <-
+           Actors.delete_member(member),
+         accept_data <- %{
+           "type" => "Reject",
+           "actor" => actor_url,
+           "attributedTo" => member.parent.url,
+           "to" => [inviter.url, member.parent.members_url],
+           "cc" => [member.parent.url],
+           "object" => member_url,
+           "id" => "#{Endpoint.url()}/reject/invite/member/#{member_id}"
+         } do
+      {:ok, member, accept_data}
     end
   end
 end

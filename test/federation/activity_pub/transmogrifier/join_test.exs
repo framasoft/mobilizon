@@ -90,9 +90,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.JoinTest do
       assert capture_log([level: :warn], fn ->
                assert :error == Transmogrifier.handle_incoming(reject_data)
              end) =~
-               "Unable to process Reject activity \"http://mastodon.example.org/users/admin#rejects/follows/4\". Object \"#{
-                 join_activity.data["id"]
-               }\" wasn't found."
+               "Tried to handle an Reject activity on a Join activity with a event object but the participant is already rejected"
 
       # Organiser is not present since we use factories directly
       assert event.id

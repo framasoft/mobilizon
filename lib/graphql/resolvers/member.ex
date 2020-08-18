@@ -6,6 +6,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
   alias Mobilizon.{Actors, Users}
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Refresher
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
 
@@ -65,7 +66,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
          {:target_actor_username, {:ok, %Actor{id: target_actor_id} = target_actor}} <-
            {:target_actor_username,
             ActivityPub.find_or_make_actor_from_nickname(target_actor_username)},
-         {:error, :member_not_found} <- Actors.get_member(target_actor_id, group.id),
+         true <- check_member_not_existant_or_rejected(target_actor_id, group.id),
          {:ok, _activity, %Member{} = member} <- ActivityPub.invite(group, actor, target_actor) do
       {:ok, member}
     else
@@ -91,7 +92,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
 
   def accept_invitation(_parent, %{id: member_id}, %{context: %{current_user: %User{} = user}}) do
     with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         %Member{actor: %Actor{id: member_actor_id}} = member <- Actors.get_member(member_id),
+         %Member{actor: %Actor{id: member_actor_id} = actor} = member <-
+           Actors.get_member(member_id),
          {:is_same_actor, true} <- {:is_same_actor, member_actor_id === actor_id},
          {:ok, _activity, %Member{} = member} <-
            ActivityPub.accept(
@@ -100,7 +102,51 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
              true
            ) do
       # Launch an async task to refresh the group profile, fetch resources, discussions, members
+      Refresher.fetch_group(member.parent.url, actor)
       {:ok, member}
+    end
+  end
+
+  def reject_invitation(_parent, %{id: member_id}, %{context: %{current_user: %User{} = user}}) do
+    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
+         %Member{actor: %Actor{id: member_actor_id}} = member <- Actors.get_member(member_id),
+         {:is_same_actor, true} <- {:is_same_actor, member_actor_id === actor_id},
+         {:ok, _activity, %Member{} = member} <-
+           ActivityPub.reject(
+             :invite,
+             member,
+             true
+           ) do
+      {:ok, member}
+    end
+  end
+
+  def remove_member(_parent, %{member_id: member_id, group_id: group_id}, %{
+        context: %{current_user: %User{} = user}
+      }) do
+    with %Actor{} = moderator <- Users.get_actor_for_user(user),
+         %Member{} = member <- Actors.get_member(member_id),
+         %Actor{type: :Group} = group <- Actors.get_actor(group_id),
+         {:ok, _activity, %Member{}} <- ActivityPub.remove(member, group, moderator, true) do
+      {:ok, member}
+    end
+  end
+
+  # Rejected members can be invited again
+  @spec check_member_not_existant_or_rejected(String.t() | integer, String.t() | integer()) ::
+          boolean()
+  defp check_member_not_existant_or_rejected(target_actor_id, group_id) do
+    case Actors.get_member(target_actor_id, group_id) do
+      {:ok, %Member{role: :rejected}} ->
+        true
+
+      {:error, :member_not_found} ->
+        true
+
+      err ->
+        require Logger
+        Logger.error(inspect(err))
+        false
     end
   end
 end

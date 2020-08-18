@@ -46,7 +46,7 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { FETCH_GROUP } from "@/graphql/actor";
+import { FETCH_GROUP } from "@/graphql/group";
 import { IGroup, usernameWithDomain } from "@/types/actor";
 import DiscussionListItem from "@/components/Discussion/DiscussionListItem.vue";
 import RouteName from "../../router/name";
@@ -56,6 +56,7 @@ import RouteName from "../../router/name";
   apollo: {
     group: {
       query: FETCH_GROUP,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           name: this.preferredUsername,

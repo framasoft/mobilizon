@@ -756,5 +756,9 @@
   "No ongoing todos": "No ongoing todos",
   "No discussions yet": "No discussions yet",
   "Add / Remove…": "Add / Remove…",
-  "No public posts": "No public posts"
+  "No public posts": "No public posts",
+  "You have been removed from this group's members.": "You have been removed from this group's members.",
+  "Since you are a new member, private content can take a few minutes to appear.": "Since you are a new member, private content can take a few minutes to appear.",
+  "Leave group": "Leave group",
+  "Remove": "Remove"
 }
