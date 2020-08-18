@@ -72,71 +72,69 @@
         @page-change="(newPage) => (page = newPage)"
         @sort="(field, order) => $emit('sort', field, order)"
       >
-        <template slot-scope="props">
-          <b-table-column field="actor.preferredUsername" :label="$t('Participant')">
-            <article class="media">
-              <figure class="media-left image is-48x48" v-if="props.row.actor.avatar">
-                <img class="is-rounded" :src="props.row.actor.avatar.url" alt="" />
-              </figure>
-              <b-icon
-                class="media-left"
-                v-else-if="props.row.actor.preferredUsername === 'anonymous'"
-                size="is-large"
-                icon="incognito"
-              />
-              <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
-              <div class="media-content">
-                <div class="content">
-                  <span v-if="props.row.actor.preferredUsername !== 'anonymous'">
-                    <span v-if="props.row.actor.name">{{ props.row.actor.name }}</span
-                    ><br />
-                    <span class="is-size-7 has-text-grey"
-                      >@{{ usernameWithDomain(props.row.actor) }}</span
-                    >
-                  </span>
-                  <span v-else>
-                    {{ $t("Anonymous participant") }}
-                  </span>
-                </div>
+        <b-table-column field="actor.preferredUsername" :label="$t('Participant')" v-slot="props">
+          <article class="media">
+            <figure class="media-left image is-48x48" v-if="props.row.actor.avatar">
+              <img class="is-rounded" :src="props.row.actor.avatar.url" alt="" />
+            </figure>
+            <b-icon
+              class="media-left"
+              v-else-if="props.row.actor.preferredUsername === 'anonymous'"
+              size="is-large"
+              icon="incognito"
+            />
+            <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+            <div class="media-content">
+              <div class="content">
+                <span v-if="props.row.actor.preferredUsername !== 'anonymous'">
+                  <span v-if="props.row.actor.name">{{ props.row.actor.name }}</span
+                  ><br />
+                  <span class="is-size-7 has-text-grey"
+                    >@{{ usernameWithDomain(props.row.actor) }}</span
+                  >
+                </span>
+                <span v-else>
+                  {{ $t("Anonymous participant") }}
+                </span>
               </div>
-            </article>
-          </b-table-column>
-          <b-table-column field="role" :label="$t('Role')">
-            <b-tag type="is-primary" v-if="props.row.role === ParticipantRole.CREATOR">
-              {{ $t("Organizer") }}
-            </b-tag>
-            <b-tag v-else-if="props.row.role === ParticipantRole.PARTICIPANT">
-              {{ $t("Participant") }}
-            </b-tag>
-            <b-tag type="is-warning" v-else-if="props.row.role === ParticipantRole.NOT_APPROVED">
-              {{ $t("Not approved") }}
-            </b-tag>
-            <b-tag type="is-danger" v-else-if="props.row.role === ParticipantRole.REJECTED">
-              {{ $t("Rejected") }}
-            </b-tag>
-          </b-table-column>
-          <b-table-column field="metadata.message" :label="$t('Message')">
-            <span
-              @click="toggleQueueDetails(props.row)"
-              :class="{
-                'ellipsed-message': props.row.metadata.message.length > MESSAGE_ELLIPSIS_LENGTH,
-              }"
-              v-if="props.row.metadata && props.row.metadata.message"
-            >
-              {{ props.row.metadata.message | ellipsize }}
-            </span>
-            <span v-else class="has-text-grey">
-              {{ $t("No message") }}
-            </span>
-          </b-table-column>
-          <b-table-column field="insertedAt" :label="$t('Date')">
-            <span class="has-text-centered">
-              {{ props.row.insertedAt | formatDateString }}<br />{{
-                props.row.insertedAt | formatTimeString
-              }}
-            </span>
-          </b-table-column>
-        </template>
+            </div>
+          </article>
+        </b-table-column>
+        <b-table-column field="role" :label="$t('Role')" v-slot="props">
+          <b-tag type="is-primary" v-if="props.row.role === ParticipantRole.CREATOR">
+            {{ $t("Organizer") }}
+          </b-tag>
+          <b-tag v-else-if="props.row.role === ParticipantRole.PARTICIPANT">
+            {{ $t("Participant") }}
+          </b-tag>
+          <b-tag type="is-warning" v-else-if="props.row.role === ParticipantRole.NOT_APPROVED">
+            {{ $t("Not approved") }}
+          </b-tag>
+          <b-tag type="is-danger" v-else-if="props.row.role === ParticipantRole.REJECTED">
+            {{ $t("Rejected") }}
+          </b-tag>
+        </b-table-column>
+        <b-table-column field="metadata.message" :label="$t('Message')" v-slot="props">
+          <span
+            @click="toggleQueueDetails(props.row)"
+            :class="{
+              'ellipsed-message': props.row.metadata.message.length > MESSAGE_ELLIPSIS_LENGTH,
+            }"
+            v-if="props.row.metadata && props.row.metadata.message"
+          >
+            {{ props.row.metadata.message | ellipsize }}
+          </span>
+          <span v-else class="has-text-grey">
+            {{ $t("No message") }}
+          </span>
+        </b-table-column>
+        <b-table-column field="insertedAt" :label="$t('Date')" v-slot="props">
+          <span class="has-text-centered">
+            {{ props.row.insertedAt | formatDateString }}<br />{{
+              props.row.insertedAt | formatTimeString
+            }}
+          </span>
+        </b-table-column>
         <template slot="detail" slot-scope="props">
           <article v-html="nl2br(props.row.metadata.message)" />
         </template>

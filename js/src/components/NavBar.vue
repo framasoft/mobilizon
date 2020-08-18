@@ -1,5 +1,5 @@
 <template>
-  <b-navbar type="is-secondary" wrapper-class="container">
+  <b-navbar type="is-secondary" wrapper-class="container" :active.sync="mobileNavbarActive">
     <template slot="brand">
       <b-navbar-item tag="router-link" :to="{ name: RouteName.HOME }" :aria-label="$t('Home')">
         <logo />
@@ -26,7 +26,7 @@
     </template>
     <template slot="end">
       <b-navbar-item tag="div">
-        <search-field />
+        <search-field @navbar-search="mobileNavbarActive = false" />
       </b-navbar-item>
 
       <b-navbar-dropdown v-if="currentActor.id && currentUser.isLoggedIn" right>
@@ -156,6 +156,8 @@ export default class NavBar extends Vue {
   identities: IPerson[] = [];
 
   RouteName = RouteName;
+
+  mobileNavbarActive: boolean = false;
 
   @Watch("currentActor")
   async initializeListOfIdentities() {

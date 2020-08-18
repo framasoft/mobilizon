@@ -89,60 +89,58 @@
         @page-change="(newPage) => (page = newPage)"
         @sort="(field, order) => $emit('sort', field, order)"
       >
-        <template slot-scope="props">
-          <b-table-column field="actor.preferredUsername" :label="$t('Member')">
-            <article class="media">
-              <figure class="media-left image is-48x48" v-if="props.row.actor.avatar">
-                <img class="is-rounded" :src="props.row.actor.avatar.url" alt="" />
-              </figure>
-              <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
-              <div class="media-content">
-                <div class="content">
-                  <span v-if="props.row.actor.name">{{ props.row.actor.name }}</span
-                  ><br />
-                  <span class="is-size-7 has-text-grey"
-                    >@{{ usernameWithDomain(props.row.actor) }}</span
-                  >
-                </div>
+        <b-table-column field="actor.preferredUsername" :label="$t('Member')" v-slot="props">
+          <article class="media">
+            <figure class="media-left image is-48x48" v-if="props.row.actor.avatar">
+              <img class="is-rounded" :src="props.row.actor.avatar.url" alt="" />
+            </figure>
+            <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+            <div class="media-content">
+              <div class="content">
+                <span v-if="props.row.actor.name">{{ props.row.actor.name }}</span
+                ><br />
+                <span class="is-size-7 has-text-grey"
+                  >@{{ usernameWithDomain(props.row.actor) }}</span
+                >
               </div>
-            </article>
-          </b-table-column>
-          <b-table-column field="role" :label="$t('Role')">
-            <b-tag type="is-primary" v-if="props.row.role === MemberRole.ADMINISTRATOR">
-              {{ $t("Administrator") }}
-            </b-tag>
-            <b-tag type="is-primary" v-else-if="props.row.role === MemberRole.MODERATOR">
-              {{ $t("Moderator") }}
-            </b-tag>
-            <b-tag v-else-if="props.row.role === MemberRole.MEMBER">
-              {{ $t("Member") }}
-            </b-tag>
-            <b-tag type="is-warning" v-else-if="props.row.role === MemberRole.NOT_APPROVED">
-              {{ $t("Not approved") }}
-            </b-tag>
-            <b-tag type="is-danger" v-else-if="props.row.role === MemberRole.REJECTED">
-              {{ $t("Rejected") }}
-            </b-tag>
-            <b-tag type="is-danger" v-else-if="props.row.role === MemberRole.INVITED">
-              {{ $t("Invited") }}
-            </b-tag>
-          </b-table-column>
-          <b-table-column field="insertedAt" :label="$t('Date')">
-            <span class="has-text-centered">
-              {{ props.row.insertedAt | formatDateString }}<br />{{
-                props.row.insertedAt | formatTimeString
-              }}
-            </span>
-          </b-table-column>
-          <b-table-column field="actions" :label="$t('Actions')">
-            <b-button
-              v-if="props.row.role === MemberRole.MEMBER"
-              @click="removeMember(props.row.id)"
-              type="is-danger"
-              >{{ $t("Remove") }}</b-button
-            >
-          </b-table-column>
-        </template>
+            </div>
+          </article>
+        </b-table-column>
+        <b-table-column field="role" :label="$t('Role')" v-slot="props">
+          <b-tag type="is-primary" v-if="props.row.role === MemberRole.ADMINISTRATOR">
+            {{ $t("Administrator") }}
+          </b-tag>
+          <b-tag type="is-primary" v-else-if="props.row.role === MemberRole.MODERATOR">
+            {{ $t("Moderator") }}
+          </b-tag>
+          <b-tag v-else-if="props.row.role === MemberRole.MEMBER">
+            {{ $t("Member") }}
+          </b-tag>
+          <b-tag type="is-warning" v-else-if="props.row.role === MemberRole.NOT_APPROVED">
+            {{ $t("Not approved") }}
+          </b-tag>
+          <b-tag type="is-danger" v-else-if="props.row.role === MemberRole.REJECTED">
+            {{ $t("Rejected") }}
+          </b-tag>
+          <b-tag type="is-danger" v-else-if="props.row.role === MemberRole.INVITED">
+            {{ $t("Invited") }}
+          </b-tag>
+        </b-table-column>
+        <b-table-column field="insertedAt" :label="$t('Date')" v-slot="props">
+          <span class="has-text-centered">
+            {{ props.row.insertedAt | formatDateString }}<br />{{
+              props.row.insertedAt | formatTimeString
+            }}
+          </span>
+        </b-table-column>
+        <b-table-column field="actions" :label="$t('Actions')" v-slot="props">
+          <b-button
+            v-if="props.row.role === MemberRole.MEMBER"
+            @click="removeMember(props.row.id)"
+            type="is-danger"
+            >{{ $t("Remove") }}</b-button
+          >
+        </b-table-column>
         <template slot="empty">
           <section class="section">
             <div class="content has-text-grey has-text-centered">
