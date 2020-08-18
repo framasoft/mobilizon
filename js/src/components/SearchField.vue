@@ -24,6 +24,7 @@ export default class SearchField extends Vue {
   search: string = "";
 
   enter() {
+    this.$emit("navbar-search");
     this.$router.push({
       name: RouteName.SEARCH,
       query: { term: this.search },
