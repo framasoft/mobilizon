@@ -10,15 +10,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-08-14 10:16+0200\n"
-"Last-Translator: Côme 744 <come.allart@netc.fr>\n"
-"Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
+"PO-Revision-Date: 2020-08-18 12:37+0000\n"
+"Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
+"Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/"
+"backend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Weblate 4.1\n"
 
 #: lib/web/templates/email/password_reset.html.eex:48
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
@@ -287,11 +288,11 @@ msgstr "Quelles informations collectons-nous ?"
 
 #: lib/web/email/user.ex:176
 msgid "Mobilizon on %{instance}: confirm your email address"
-msgstr "Mobilizon sur %{instance}: confirmez votre adresse email"
+msgstr "Mobilizon sur %{instance} : confirmez votre adresse email"
 
 #: lib/web/email/user.ex:152
 msgid "Mobilizon on %{instance}: email changed"
-msgstr "Mobilizon sur %{instance}: adresse email modifiée"
+msgstr "Mobilizon sur %{instance} : adresse email modifiée"
 
 #: lib/web/email/notification.ex:46
 msgid "One event planned today"
@@ -816,8 +817,12 @@ msgid "In the meantime, please consider this software as not (yet) fully functio
 msgstr "D'ici là, veuillez considérer que le logiciel n'est pas (encore) fini. Retrouvez plus d'informations %{a_start}sur le blog de Framasoft%{a_end}."
 
 #: lib/web/templates/email/email.text.eex:10
-msgid "In the meantime, please consider this software as not (yet) fully functional. Read more on the Framasoft blog:"
-msgstr "D'ici là, veuillez considérer que le logiciel n'est pas (encore) fini. Retrouvez plus d'informations sur le blog de Framasoft:"
+msgid ""
+"In the meantime, please consider this software as not (yet) fully "
+"functional. Read more on the Framasoft blog:"
+msgstr ""
+"D'ici là, veuillez considérer que le logiciel n'est pas (encore) fini. "
+"Retrouvez plus d'informations sur le blog de Framasoft :"
 
 #: lib/web/templates/email/email.html.eex:147 lib/web/templates/email/email.text.eex:16
 msgid "Learn more about Mobilizon here!"
