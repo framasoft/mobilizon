@@ -89,7 +89,7 @@
     "node-sass": "^4.12.0",
     "prettier": "2.0.5",
     "prettier-eslint": "^10.1.1",
-    "sass-loader": "^8.0.2",
+    "sass-loader": "^9.0.3",
     "typescript": "~3.9.3",
     "vue-cli-plugin-styleguidist": "~4.31.0",
     "vue-cli-plugin-svg": "~0.1.3",
