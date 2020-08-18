@@ -148,8 +148,8 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
     end
 
     @delete_comment """
-      mutation DeleteComment($commentId: ID!, $actorId: ID!) {
-        deleteComment(commentId: $commentId, actorId: $actorId) {
+      mutation DeleteComment($commentId: ID!) {
+        deleteComment(commentId: $commentId) {
           id,
           deletedAt
         }
@@ -163,31 +163,35 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
         conn
         |> AbsintheHelpers.graphql_query(
           query: @delete_comment,
-          variables: %{commentId: comment.id, actorId: actor.id}
+          variables: %{commentId: comment.id}
         )
 
       assert hd(res["errors"])["message"] ==
                "You are not allowed to delete a comment if not connected"
 
+      # Change the current actor for user
       actor2 = insert(:actor, user: user)
+      Mobilizon.Users.update_user_default_actor(user.id, actor2.id)
 
       res =
         conn
         |> auth_conn(user)
         |> AbsintheHelpers.graphql_query(
           query: @delete_comment,
-          variables: %{commentId: comment.id, actorId: actor2.id}
+          variables: %{commentId: comment.id}
         )
 
       assert hd(res["errors"])["message"] ==
                "You cannot delete this comment"
 
+      Mobilizon.Users.update_user_default_actor(user.id, actor.id)
+
       res =
         conn
         |> auth_conn(user)
         |> AbsintheHelpers.graphql_query(
           query: @delete_comment,
-          variables: %{commentId: comment.id, actorId: actor.id}
+          variables: %{commentId: comment.id}
         )
 
       assert res["errors"] == nil
@@ -212,7 +216,7 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
         |> auth_conn(user_moderator)
         |> AbsintheHelpers.graphql_query(
           query: @delete_comment,
-          variables: %{commentId: comment.id, actorId: actor_moderator.id}
+          variables: %{commentId: comment.id}
         )
 
       assert res["data"]["deleteComment"]["id"] == to_string(comment.id)
