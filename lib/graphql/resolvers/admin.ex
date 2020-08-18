@@ -128,8 +128,30 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   end
 
   defp convert_changes_to_struct(struct, changes) do
-    with data <- for({key, val} <- changes, into: %{}, do: {String.to_atom(key), val}) do
+    with changeset <- struct.__changeset__,
+         data <-
+           for(
+             {key, val} <- changes,
+             into: %{},
+             do: {String.to_atom(key), process_eventual_type(changeset, key, val)}
+           ) do
       struct(struct, data)
+    end
+  end
+
+  # datetimes are not unserialized as DateTime/NaiveDateTime so we do it manually with changeset data
+  defp process_eventual_type(changeset, key, val) do
+    cond do
+      changeset[String.to_atom(key)] == :utc_datetime and not is_nil(val) ->
+        {:ok, datetime, _} = DateTime.from_iso8601(val)
+        datetime
+
+      changeset[String.to_atom(key)] == :naive_datetime and not is_nil(val) ->
+        {:ok, datetime} = NaiveDateTime.from_iso8601(val)
+        datetime
+
+      true ->
+        val
     end
   end
 
