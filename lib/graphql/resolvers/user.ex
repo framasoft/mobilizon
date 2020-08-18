@@ -389,6 +389,25 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     end
   end
 
+  def delete_account(_parent, %{user_id: user_id}, %{
+        context: %{current_user: %User{role: role} = moderator_user}
+      })
+      when is_moderator(role) do
+    with {:moderator_actor, %Actor{} = moderator_actor} <-
+           {:moderator_actor, Users.get_actor_for_user(moderator_user)},
+         %User{disabled: false} = user <- Users.get_user(user_id),
+         {:ok, %User{}} <-
+           do_delete_account(%User{} = user, Relay.get_actor()) do
+      Admin.log_action(moderator_actor, "delete", user)
+    else
+      {:moderator_actor, nil} ->
+        {:error, "No actor found for the moderator user"}
+
+      %User{disabled: true} ->
+        {:error, "User already disabled"}
+    end
+  end
+
   def delete_account(_parent, args, %{
         context: %{current_user: %User{email: email} = user}
       }) do
@@ -408,25 +427,6 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
       {:current_password, _} ->
         {:error, "The password provided is invalid"}
-    end
-  end
-
-  def delete_account(_parent, %{user_id: user_id}, %{
-        context: %{current_user: %User{role: role} = moderator_user}
-      })
-      when is_moderator(role) do
-    with {:moderator_actor, %Actor{} = moderator_actor} <-
-           {:moderator_actor, Users.get_actor_for_user(moderator_user)},
-         %User{disabled: false} = user <- Users.get_user(user_id),
-         {:ok, %User{}} <-
-           do_delete_account(%User{} = user, Relay.get_actor()) do
-      Admin.log_action(moderator_actor, "delete", user)
-    else
-      {:moderator_actor, nil} ->
-        {:error, "No actor found for the moderator user"}
-
-      %User{disabled: true} ->
-        {:error, "User already disabled"}
     end
   end
 

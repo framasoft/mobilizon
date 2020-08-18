@@ -59,7 +59,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { GET_USER, DELETE_ACCOUNT } from "../../graphql/user";
+import { GET_USER, SUSPEND_USER } from "../../graphql/user";
 import { usernameWithDomain } from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
 import { IUser, ICurrentUserRole } from "../../types/current-user.model";
@@ -148,7 +148,7 @@ export default class AdminUserProfile extends Vue {
 
   async deleteAccount() {
     await this.$apollo.mutate<{ suspendProfile: { id: string } }>({
-      mutation: DELETE_ACCOUNT,
+      mutation: SUSPEND_USER,
       variables: {
         userId: this.id,
       },
