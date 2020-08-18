@@ -80,6 +80,14 @@ export const DELETE_ACCOUNT = gql`
   }
 `;
 
+export const SUSPEND_USER = gql`
+  mutation SuspendUser($userId: ID) {
+    deleteAccount(userId: $userId) {
+      id
+    }
+  }
+`;
+
 export const CURRENT_USER_CLIENT = gql`
   query {
     currentUser @client {
