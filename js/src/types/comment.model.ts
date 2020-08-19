@@ -59,7 +59,7 @@ export class CommentModel implements IComment {
     this.actor = hash.actor ? new Actor(hash.actor) : new Actor();
     this.event = new EventModel(hash.event);
     this.replies = hash.replies;
-    this.updatedAt = hash.updatedAt;
+    this.updatedAt = new Date(hash.updatedAt as string);
     this.deletedAt = hash.deletedAt;
     this.insertedAt = new Date(hash.insertedAt as string);
     this.totalReplies = hash.totalReplies;

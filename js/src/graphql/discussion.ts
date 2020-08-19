@@ -57,6 +57,7 @@ export const DISCUSSION_FIELDS_FRAGMENT = gql`
     lastComment {
       id
       text
+      insertedAt
       updatedAt
     }
     actor {
