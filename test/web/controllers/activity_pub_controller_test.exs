@@ -438,4 +438,60 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
       assert result["totalItems"] == 2
     end
   end
+
+  describe "/member/:uuid" do
+    test "it returns a json representation of the member", %{conn: conn} do
+      group = insert(:group)
+      remote_actor_2 = insert(:actor, domain: "remote3.tld")
+      insert(:member, actor: remote_actor_2, parent: group, role: :member)
+
+      member =
+        insert(:member,
+          parent: group,
+          url: "https://someremote.url/member/here"
+        )
+
+      conn =
+        conn
+        |> assign(:actor, remote_actor_2)
+        |> put_req_header("accept", "application/activity+json")
+        |> get(Routes.activity_pub_url(Endpoint, :member, member.id))
+
+      assert json_response(conn, 200) ==
+               ActorView.render("member.json", %{member: member})
+    end
+
+    test "it redirects for remote comments", %{conn: conn} do
+      group = insert(:group, domain: "remote1.tld")
+      remote_actor = insert(:actor, domain: "remote2.tld")
+      remote_actor_2 = insert(:actor, domain: "remote3.tld")
+      insert(:member, actor: remote_actor_2, parent: group, role: :member)
+
+      member =
+        insert(:member,
+          actor: remote_actor,
+          parent: group,
+          url: "https://someremote.url/member/here"
+        )
+
+      conn =
+        conn
+        |> assign(:actor, remote_actor_2)
+        |> put_req_header("accept", "application/activity+json")
+        |> get(Routes.activity_pub_url(Endpoint, :member, member.id))
+
+      assert redirected_to(conn) == "https://someremote.url/member/here"
+    end
+
+    test "it returns 404 if the fetch is not authenticated", %{conn: conn} do
+      member = insert(:member)
+
+      conn =
+        conn
+        |> put_req_header("accept", "application/activity+json")
+        |> get(Routes.activity_pub_url(Endpoint, :member, member.id))
+
+      assert json_response(conn, 404)
+    end
+  end
 end

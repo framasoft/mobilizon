@@ -29,7 +29,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Member do
       "id" => member.url,
       "actor" => member.actor.url,
       "object" => member.parent.url,
-      "role" => member.role
+      "role" => to_string(member.role)
     }
   end
 

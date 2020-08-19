@@ -105,6 +105,7 @@ defmodule Mobilizon.Web.Router do
     get("/@:name/following", ActivityPubController, :following)
     get("/@:name/followers", ActivityPubController, :followers)
     get("/@:name/members", ActivityPubController, :members)
+    get("/member/:uuid", ActivityPubController, :member)
   end
 
   scope "/", Mobilizon.Web do
