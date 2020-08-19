@@ -763,5 +763,7 @@
   "{title} ({count} todos)": "{title} ({count} todos)",
   "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap",
   "Update": "Éditer",
-  "Search…": "Rechercher…"
+  "Search…": "Rechercher…",
+  "Edited {ago}": "Édité {ago}",
+  "[This comment has been deleted by it's author]": "[Ce commentaire a été supprimé par son auteur]"
 }

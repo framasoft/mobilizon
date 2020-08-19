@@ -762,5 +762,7 @@
   "Leave group": "Leave group",
   "Remove": "Remove",
   "Update": "Update",
-  "Search…": "Search…"
+  "Search…": "Search…",
+  "Edited {ago}": "Edited {ago}",
+  "[This comment has been deleted by it's author]": "[This comment has been deleted by it's author]"
 }

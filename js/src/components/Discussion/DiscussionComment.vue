@@ -4,7 +4,7 @@
       <figure class="image is-48x48" v-if="comment.actor.avatar">
         <img class="is-rounded" :src="comment.actor.avatar.url" alt="" />
       </figure>
-      <b-icon v-else size="is-medium" icon="account-circle" />
+      <b-icon v-else size="is-large" icon="account-circle" />
     </div>
     <div class="body">
       <div class="meta">
@@ -12,10 +12,10 @@
           <strong>{{ comment.actor.name }}</strong>
           <small>@{{ usernameWithDomain(comment.actor) }}</small>
         </span>
-        <a v-else class="name comment-link has-text-grey">
-          <span>{{ $t("[deleted]") }}</span>
-        </a>
-        <span class="icons" v-if="!comment.deletedAt">
+        <span v-else class="name comment-link has-text-grey">
+          {{ $t("[deleted]") }}
+        </span>
+        <span class="icons" v-if="!comment.deletedAt && comment.actor.id === currentActor.id">
           <b-dropdown aria-role="list">
             <b-icon slot="trigger" role="button" icon="dots-horizontal" />
 
@@ -35,24 +35,30 @@
               <b-icon icon="delete"></b-icon>
               {{ $t("Delete") }}
             </b-dropdown-item>
-            <b-dropdown-item aria-role="listitem" @click="isReportModalActive = true">
+            <!-- <b-dropdown-item aria-role="listitem" @click="isReportModalActive = true">
               <b-icon icon="flag" />
               {{ $t("Report") }}
-            </b-dropdown-item>
+            </b-dropdown-item> -->
           </b-dropdown>
         </span>
         <div class="post-infos">
-          <span :title="comment.updatedAt | formatDateTimeString">
+          <span :title="comment.insertedAt | formatDateTimeString">
             {{ $timeAgo.format(new Date(comment.updatedAt), "twitter") || $t("Right now") }}</span
           >
         </div>
       </div>
-      <div
-        class="description-content"
-        v-html="comment.text"
-        v-if="!editMode && !comment.deletedAt"
-      ></div>
-      <div v-else-if="!editMode">{{ $t("[This comment has been deleted]") }}</div>
+      <div v-if="!editMode && !comment.deletedAt" class="text-wrapper">
+        <div class="description-content" v-html="comment.text"></div>
+        <p
+          v-if="comment.insertedAt.getTime() !== comment.updatedAt.getTime()"
+          :title="comment.updatedAt | formatDateTimeString"
+        >
+          {{ $t("Edited {ago}", { ago: $timeAgo.format(new Date(comment.updatedAt)) }) }}
+        </p>
+      </div>
+      <div class="comment-deleted" v-else-if="!editMode">
+        {{ $t("[This comment has been deleted by it's author]") }}
+      </div>
       <form v-else class="edition" @submit.prevent="updateComment">
         <editor v-model="updatedComment" />
         <div class="buttons">
@@ -92,7 +98,7 @@ export default class DiscussionComment extends Vue {
 
   usernameWithDomain = usernameWithDomain;
 
-  isReportModalActive: boolean = false;
+  // isReportModalActive: boolean = false;
 
   toggleEditMode() {
     this.updatedComment = this.comment.text;
@@ -133,9 +139,7 @@ article.comment {
           line-height: 1rem;
         }
 
-        span {
-          color: #3c376e;
-        }
+        color: #3c376e;
       }
 
       .icons {
@@ -144,46 +148,56 @@ article.comment {
       }
     }
 
-    div.description-content {
-      padding: 0 1rem 0.3rem;
+    .text-wrapper,
+    .comment-deleted {
+      padding: 0 1rem;
 
-      /deep/ h1 {
-        font-size: 2rem;
+      & > p {
+        font-size: 0.85rem;
+        font-style: italic;
       }
 
-      /deep/ h2 {
-        font-size: 1.5rem;
-      }
+      div.description-content {
+        padding-bottom: 0.3rem;
 
-      /deep/ h3 {
-        font-size: 1.25rem;
-      }
+        /deep/ h1 {
+          font-size: 2rem;
+        }
 
-      /deep/ ul {
-        list-style-type: disc;
-      }
+        /deep/ h2 {
+          font-size: 1.5rem;
+        }
 
-      /deep/ li {
-        margin: 10px auto 10px 2rem;
-      }
+        /deep/ h3 {
+          font-size: 1.25rem;
+        }
 
-      /deep/ blockquote {
-        border-left: 0.2em solid #333;
-        display: block;
-        padding-left: 1em;
-      }
+        /deep/ ul {
+          list-style-type: disc;
+        }
 
-      /deep/ p {
-        margin: 10px auto;
+        /deep/ li {
+          margin: 10px auto 10px 2rem;
+        }
 
-        a {
-          display: inline-block;
-          padding: 0.3rem;
-          background: $secondary;
-          color: #111;
+        /deep/ blockquote {
+          border-left: 0.2em solid #333;
+          display: block;
+          padding-left: 1em;
+        }
 
-          &:empty {
-            display: none;
+        /deep/ p {
+          margin: 10px auto;
+
+          a {
+            display: inline-block;
+            padding: 0.3rem;
+            background: $secondary;
+            color: #111;
+
+            &:empty {
+              display: none;
+            }
           }
         }
       }
