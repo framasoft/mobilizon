@@ -87,6 +87,7 @@ defmodule Mobilizon.Federation.ActivityPub do
          {:existing, nil} <- {:existing, Resources.get_resource_by_url(url)},
          {:existing, nil} <-
            {:existing, Actors.get_actor_by_url_2(url)},
+         {:existing, nil} <- {:existing, Actors.get_member_by_url(url)},
          :ok <- Logger.info("Data for URL not found anywhere, going to fetch it"),
          {:ok, _activity, entity} <- Fetcher.fetch_and_create(url, options) do
       Logger.debug("Going to preload the new entity")
@@ -359,16 +360,12 @@ defmodule Mobilizon.Federation.ActivityPub do
   end
 
   def join_group(
-        %{parent_id: parent_id, actor_id: actor_id, role: role},
+        %{parent_id: _parent_id, actor_id: _actor_id, role: _role} = args,
         local \\ true,
         additional \\ %{}
       ) do
     with {:ok, %Member{} = member} <-
-           Mobilizon.Actors.create_member(%{
-             parent_id: parent_id,
-             actor_id: actor_id,
-             role: role
-           }),
+           Mobilizon.Actors.create_member(args),
          activity_data when is_map(activity_data) <-
            Convertible.model_to_as(member),
          {:ok, activity} <- create_activity(Map.merge(activity_data, additional), local),

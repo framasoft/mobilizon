@@ -447,4 +447,153 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
       assert hd(res["errors"])["message"] == "You cannot invite to this group"
     end
   end
+
+  describe "Member resolver to update a group member" do
+    @update_member_mutation """
+      mutation UpdateMember($memberId: ID!, $role: MemberRoleEnum!) {
+        updateMember(memberId: $memberId, role: $role) {
+          id
+          role
+        }
+      }
+    """
+
+    setup %{conn: conn, actor: actor, user: user} do
+      group = insert(:group)
+      target_actor = insert(:actor, user: user)
+
+      {:ok, conn: conn, actor: actor, user: user, group: group, target_actor: target_actor}
+    end
+
+    test "update_member/3 fails when not connected", %{
+      conn: conn,
+      group: group,
+      target_actor: target_actor
+    } do
+      %Member{id: member_id} =
+        insert(:member, %{actor: target_actor, parent: group, role: :member})
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @update_member_mutation,
+          variables: %{
+            memberId: member_id,
+            role: "MODERATOR"
+          }
+        )
+
+      assert hd(res["errors"])["message"] == "You must be logged-in to update a member"
+    end
+
+    test "update_member/3 fails when not a member of the group", %{
+      conn: conn,
+      group: group,
+      target_actor: target_actor
+    } do
+      user = insert(:user)
+      actor = insert(:actor, user: user)
+      Mobilizon.Users.update_user_default_actor(user.id, actor.id)
+
+      %Member{id: member_id} =
+        insert(:member, %{actor: target_actor, parent: group, role: :member})
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_member_mutation,
+          variables: %{
+            memberId: member_id,
+            role: "MODERATOR"
+          }
+        )
+
+      assert hd(res["errors"])["message"] == "You are not a moderator or admin for this group"
+    end
+
+    test "update_member/3 updates the member role", %{
+      conn: conn,
+      user: user,
+      actor: actor,
+      group: group,
+      target_actor: target_actor
+    } do
+      Mobilizon.Users.update_user_default_actor(user.id, actor.id)
+      insert(:member, actor: actor, parent: group, role: :administrator)
+
+      %Member{id: member_id} =
+        insert(:member, %{actor: target_actor, parent: group, role: :member})
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_member_mutation,
+          variables: %{
+            memberId: member_id,
+            role: "MODERATOR"
+          }
+        )
+
+      assert is_nil(res["errors"])
+      assert res["data"]["updateMember"]["role"] == "MODERATOR"
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_member_mutation,
+          variables: %{
+            memberId: member_id,
+            role: "ADMINISTRATOR"
+          }
+        )
+
+      assert is_nil(res["errors"])
+      assert res["data"]["updateMember"]["role"] == "ADMINISTRATOR"
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_member_mutation,
+          variables: %{
+            memberId: member_id,
+            role: "MEMBER"
+          }
+        )
+
+      assert is_nil(res["errors"])
+      assert res["data"]["updateMember"]["role"] == "MEMBER"
+    end
+
+    test "update_member/3 prevents to downgrade the member role if there's no admin left", %{
+      conn: conn,
+      user: user,
+      actor: actor,
+      group: group
+    } do
+      Mobilizon.Users.update_user_default_actor(user.id, actor.id)
+      %Member{id: member_id} = insert(:member, actor: actor, parent: group, role: :administrator)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_member_mutation,
+          variables: %{
+            memberId: member_id,
+            role: "MEMBER"
+          }
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "You can't set yourself to a lower member role for this group because you are the only administrator"
+    end
+  end
+
+  describe "Member resolver to remove a member from a group" do
+    # TODO write tests for me plz
+  end
 end

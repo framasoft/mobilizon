@@ -764,5 +764,7 @@
   "Update": "Update",
   "Search…": "Search…",
   "Edited {ago}": "Edited {ago}",
-  "[This comment has been deleted by it's author]": "[This comment has been deleted by it's author]"
+  "[This comment has been deleted by it's author]": "[This comment has been deleted by it's author]",
+  "Promote": "Promote",
+  "Demote": "Demote"
 }

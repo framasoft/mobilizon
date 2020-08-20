@@ -33,8 +33,6 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
   @spec fetch_and_create(String.t(), Keyword.t()) :: {:ok, map(), struct()}
   def fetch_and_create(url, options \\ []) do
     with {:ok, data} when is_map(data) <- fetch(url, options),
-         :ok <- Logger.debug("inspect body from fetch_object_from_url #{url}"),
-         :ok <- Logger.debug(inspect(data)),
          {:origin_check, true} <- {:origin_check, origin_check?(url, data)},
          params <- %{
            "type" => "Create",
@@ -55,8 +53,6 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
   @spec fetch_and_update(String.t(), Keyword.t()) :: {:ok, map(), struct()}
   def fetch_and_update(url, options \\ []) do
     with {:ok, data} when is_map(data) <- fetch(url, options),
-         :ok <- Logger.debug("inspect body from fetch_object_from_url #{url}"),
-         :ok <- Logger.debug(inspect(data)),
          {:origin_check, true} <- {:origin_check, origin_check?(url, data)},
          params <- %{
            "type" => "Update",

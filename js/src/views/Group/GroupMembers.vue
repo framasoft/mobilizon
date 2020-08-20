@@ -134,12 +134,24 @@
           </span>
         </b-table-column>
         <b-table-column field="actions" :label="$t('Actions')" v-slot="props">
-          <b-button
-            v-if="props.row.role === MemberRole.MEMBER"
-            @click="removeMember(props.row.id)"
-            type="is-danger"
-            >{{ $t("Remove") }}</b-button
-          >
+          <div class="buttons">
+            <b-button
+              v-if="props.row.role === MemberRole.MEMBER"
+              @click="promoteMember(props.row.id)"
+              >{{ $t("Promote") }}</b-button
+            >
+            <b-button
+              v-if="props.row.role === MemberRole.ADMINISTRATOR"
+              @click="demoteMember(props.row.id)"
+              >{{ $t("Demote") }}</b-button
+            >
+            <b-button
+              v-if="props.row.role === MemberRole.MEMBER"
+              @click="removeMember(props.row.id)"
+              type="is-danger"
+              >{{ $t("Remove") }}</b-button
+            >
+          </div>
         </b-table-column>
         <template slot="empty">
           <section class="section">
@@ -156,7 +168,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import RouteName from "../../router/name";
-import { INVITE_MEMBER, GROUP_MEMBERS, REMOVE_MEMBER } from "../../graphql/member";
+import { INVITE_MEMBER, GROUP_MEMBERS, REMOVE_MEMBER, UPDATE_MEMBER } from "../../graphql/member";
 import { IGroup, usernameWithDomain } from "../../types/actor";
 import { IMember, MemberRole } from "../../types/actor/group.model";
 
@@ -294,6 +306,24 @@ export default class GroupMembers extends Vue {
           group.members.total -= 1;
           store.writeQuery({ ...query, data: { group } });
         }
+      },
+    });
+  }
+
+  promoteMember(memberId: string) {
+    return this.updateMember(memberId, MemberRole.ADMINISTRATOR);
+  }
+
+  demoteMember(memberId: string) {
+    return this.updateMember(memberId, MemberRole.MEMBER);
+  }
+
+  async updateMember(memberId: string, role: MemberRole) {
+    await this.$apollo.mutate<{ updateMember: IMember }>({
+      mutation: UPDATE_MEMBER,
+      variables: {
+        memberId,
+        role,
       },
     });
   }
