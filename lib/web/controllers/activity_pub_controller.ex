@@ -7,7 +7,7 @@ defmodule Mobilizon.Web.ActivityPubController do
   use Mobilizon.Web, :controller
 
   alias Mobilizon.{Actors, Config}
-  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Actors.{Actor, Member}
 
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Federator
@@ -64,6 +64,41 @@ defmodule Mobilizon.Web.ActivityPubController do
 
   def discussions(conn, args) do
     actor_collection(conn, "discussions", args)
+  end
+
+  @ok_statuses [:ok, :commit]
+  @spec member(Plug.Conn.t(), map) :: {:error, :not_found} | Plug.Conn.t()
+  def member(conn, %{"uuid" => uuid}) do
+    with {status, %Member{parent: %Actor{} = group, actor: %Actor{domain: nil} = _actor} = member}
+         when status in @ok_statuses <-
+           Cache.get_member_by_uuid_with_preload(uuid),
+         actor <- Map.get(conn.assigns, :actor),
+         true <- actor_applicant_group_member?(group, actor) do
+      json(
+        conn,
+        ActorView.render("member.json", %{
+          member: member,
+          actor_applicant: actor
+        })
+      )
+    else
+      {status, %Member{actor: %Actor{url: domain}, parent: %Actor{} = group, url: url}}
+      when status in @ok_statuses and not is_nil(domain) ->
+        with actor <- Map.get(conn.assigns, :actor),
+             true <- actor_applicant_group_member?(group, actor) do
+          redirect(conn, external: url)
+        else
+          _ ->
+            conn
+            |> put_status(404)
+            |> json("Not found")
+        end
+
+      _ ->
+        conn
+        |> put_status(404)
+        |> json("Not found")
+    end
   end
 
   def outbox(conn, args) do
@@ -153,4 +188,15 @@ defmodule Mobilizon.Web.ActivityPubController do
       )
     end
   end
+
+  defp actor_applicant_group_member?(%Actor{}, nil), do: false
+
+  defp actor_applicant_group_member?(%Actor{id: group_id}, %Actor{id: actor_applicant_id}),
+    do:
+      Actors.get_member(actor_applicant_id, group_id, [
+        :member,
+        :moderator,
+        :administrator,
+        :creator
+      ]) != {:error, :member_not_found}
 end

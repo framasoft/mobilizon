@@ -72,6 +72,13 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
       resolve(&Member.reject_invitation/3)
     end
 
+    field :update_member, :member do
+      arg(:member_id, non_null(:id))
+      arg(:role, non_null(:member_role_enum))
+
+      resolve(&Member.update_member/3)
+    end
+
     @desc "Remove a member from a group"
     field :remove_member, :member do
       arg(:group_id, non_null(:id))

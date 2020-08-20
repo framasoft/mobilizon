@@ -5,6 +5,7 @@ alias Mobilizon.Federation.ActivityPub.Types.{
   Entity,
   Events,
   Managable,
+  Members,
   Ownable,
   Posts,
   Resources,
@@ -13,7 +14,7 @@ alias Mobilizon.Federation.ActivityPub.Types.{
   Tombstones
 }
 
-alias Mobilizon.Actors.Actor
+alias Mobilizon.Actors.{Actor, Member}
 alias Mobilizon.Events.Event
 alias Mobilizon.Discussions.{Comment, Discussion}
 alias Mobilizon.Posts.Post
@@ -148,4 +149,9 @@ end
 defimpl Ownable, for: Tombstone do
   defdelegate group_actor(entity), to: Tombstones
   defdelegate actor(entity), to: Tombstones
+end
+
+defimpl Managable, for: Member do
+  defdelegate update(entity, attrs, additionnal), to: Members
+  defdelegate delete(entity, actor, local), to: Members
 end

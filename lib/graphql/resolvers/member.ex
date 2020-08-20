@@ -121,12 +121,36 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
     end
   end
 
-  def remove_member(_parent, %{member_id: member_id, group_id: group_id}, %{
+  def update_member(_parent, %{member_id: member_id, role: role}, %{
         context: %{current_user: %User{} = user}
       }) do
     with %Actor{} = moderator <- Users.get_actor_for_user(user),
          %Member{} = member <- Actors.get_member(member_id),
+         {:ok, _activity, %Member{} = member} <-
+           ActivityPub.update(member, %{role: role}, true, %{moderator: moderator}) do
+      {:ok, member}
+    else
+      {:has_rights_to_update_role, {:error, :member_not_found}} ->
+        {:error, "You are not a moderator or admin for this group"}
+
+      {:is_only_admin, true} ->
+        {:error,
+         "You can't set yourself to a lower member role for this group because you are the only administrator"}
+    end
+  end
+
+  def update_member(_parent, _args, _resolution),
+    do: {:error, "You must be logged-in to update a member"}
+
+  def remove_member(_parent, %{member_id: member_id, group_id: group_id}, %{
+        context: %{current_user: %User{} = user}
+      }) do
+    with %Actor{id: moderator_id} = moderator <- Users.get_actor_for_user(user),
+         %Member{} = member <- Actors.get_member(member_id),
          %Actor{type: :Group} = group <- Actors.get_actor(group_id),
+         {:has_rights_to_invite, {:ok, %Member{role: role}}}
+         when role in [:moderator, :administrator, :creator] <-
+           {:has_rights_to_invite, Actors.get_member(moderator_id, group_id)},
          {:ok, _activity, %Member{}} <- ActivityPub.remove(member, group, moderator, true) do
       {:ok, member}
     end

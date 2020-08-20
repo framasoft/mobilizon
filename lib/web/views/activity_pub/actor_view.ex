@@ -23,6 +23,12 @@ defmodule Mobilizon.Web.ActivityPub.ActorView do
     |> Map.merge(Utils.make_json_ld_header())
   end
 
+  def render("member.json", %{member: %Member{} = member}) do
+    member
+    |> Convertible.model_to_as()
+    |> Map.merge(Utils.make_json_ld_header())
+  end
+
   @doc """
   Render an actor collection
   """

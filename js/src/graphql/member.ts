@@ -81,6 +81,15 @@ export const GROUP_MEMBERS = gql`
   }
 `;
 
+export const UPDATE_MEMBER = gql`
+  mutation UpdateMember($memberId: ID!, $role: MemberRoleEnum!) {
+    updateMember(memberId: $memberId, role: $role) {
+      id
+      role
+    }
+  }
+`;
+
 export const REMOVE_MEMBER = gql`
   mutation RemoveMember($groupId: ID!, $memberId: ID!) {
     removeMember(groupId: $groupId, memberId: $memberId) {

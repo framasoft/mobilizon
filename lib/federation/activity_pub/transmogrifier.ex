@@ -415,6 +415,27 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
+  def handle_incoming(
+        %{"type" => "Update", "object" => %{"type" => "Member"} = object, "actor" => _actor} =
+          update_data
+      ) do
+    Logger.info("Handle incoming to update a member")
+
+    with actor <- Utils.get_actor(update_data),
+         {:ok, %Actor{url: actor_url, suspended: false} = actor} <-
+           ActivityPub.get_or_fetch_actor_by_url(actor),
+         {:origin_check, true} <- {:origin_check, Utils.origin_check?(actor_url, update_data)},
+         object_data <- Converter.Member.as_to_model_data(object),
+         {:ok, old_entity} <- object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
+         {:ok, %Activity{} = activity, new_entity} <-
+           ActivityPub.update(old_entity, object_data, false, %{moderator: actor}) do
+      {:ok, activity, new_entity}
+    else
+      _e ->
+        :error
+    end
+  end
+
   def handle_incoming(%{
         "type" => "Update",
         "object" => %{"type" => "Tombstone"} = object,

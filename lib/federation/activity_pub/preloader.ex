@@ -5,7 +5,7 @@ defmodule Mobilizon.Federation.ActivityPub.Preloader do
 
   # TODO: Move me in a more appropriate place
   alias Mobilizon.{Actors, Discussions, Events, Resources}
-  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Events.Event
   alias Mobilizon.Resources.Resource
@@ -24,6 +24,8 @@ defmodule Mobilizon.Federation.ActivityPub.Preloader do
     do: {:ok, Resources.get_resource_by_url_with_preloads(url)}
 
   def maybe_preload(%Actor{url: url}), do: {:ok, Actors.get_actor_by_url!(url, true)}
+
+  def maybe_preload(%Member{} = member), do: {:ok, member}
 
   def maybe_preload(%Tombstone{uri: _uri} = tombstone), do: {:ok, tombstone}
 

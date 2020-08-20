@@ -765,5 +765,7 @@
   "Update": "Éditer",
   "Search…": "Rechercher…",
   "Edited {ago}": "Édité {ago}",
-  "[This comment has been deleted by it's author]": "[Ce commentaire a été supprimé par son auteur]"
+  "[This comment has been deleted by it's author]": "[Ce commentaire a été supprimé par son auteur]",
+  "Promote": "Promouvoir",
+  "Demote": "Rétrograder"
 }
