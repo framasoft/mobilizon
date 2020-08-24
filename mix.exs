@@ -116,7 +116,7 @@ defmodule Mobilizon.Mixfile do
       {:ex_cldr_dates_times, "~> 2.2"},
       {:ex_optimizer, "~> 0.1"},
       {:progress_bar, "~> 2.0"},
-      {:oban, "~> 2.0.0"},
+      {:oban, "~> 2.1.0"},
       {:floki, "~> 0.27.0"},
       {:ip_reserved, "~> 0.1.0"},
       {:fast_sanitize, "~> 0.1"},
