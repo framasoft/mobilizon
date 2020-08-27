@@ -150,6 +150,7 @@ import identityEditionMixin from "../../../mixins/identityEdition";
     },
     identity: {
       query: FETCH_PERSON,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           username: this.identityName,

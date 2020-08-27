@@ -53,8 +53,15 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
   end
 
   @impl Entity
-  @spec delete(Comment.t(), Actor.t(), boolean) :: {:ok, Comment.t()}
-  def delete(%Comment{url: url} = comment, %Actor{} = actor, _local) do
+  @spec delete(Comment.t(), Actor.t(), boolean, map()) :: {:ok, Comment.t()}
+  def delete(
+        %Comment{url: url, id: comment_id},
+        %Actor{} = actor,
+        _local,
+        options \\ %{}
+      ) do
+    comment = Discussions.get_comment_with_preload(comment_id)
+
     activity_data = %{
       "type" => "Delete",
       "actor" => actor.url,
@@ -63,16 +70,17 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
       "to" => ["https://www.w3.org/ns/activitystreams#Public"]
     }
 
+    force_deletion = Map.get(options, :force, false)
+
     with audience <-
            Audience.calculate_to_and_cc_from_mentions(comment),
-         {:ok, %Comment{} = comment} <- Discussions.delete_comment(comment),
-         # Preload to be sure
-         %Comment{} = comment <- Discussions.get_comment_with_preload(comment.id),
+         {:ok, %Comment{} = updated_comment} <-
+           Discussions.delete_comment(comment, force: force_deletion),
          {:ok, true} <- Cachex.del(:activity_pub, "comment_#{comment.uuid}"),
          {:ok, %Tombstone{} = _tombstone} <-
            Tombstone.create_tombstone(%{uri: comment.url, actor_id: actor.id}) do
       Share.delete_all_by_uri(comment.url)
-      {:ok, Map.merge(activity_data, audience), actor, comment}
+      {:ok, Map.merge(activity_data, audience), actor, updated_comment}
     end
   end
 

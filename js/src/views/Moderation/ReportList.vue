@@ -57,7 +57,7 @@ import RouteName from "../../router/name";
   apollo: {
     reports: {
       query: REPORTS,
-      fetchPolicy: "no-cache",
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           status: this.filterReports,

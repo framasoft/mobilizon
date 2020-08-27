@@ -218,6 +218,7 @@ import ResourceSelector from "../../components/Resource/ResourceSelector.vue";
   apollo: {
     resource: {
       query: GET_RESOURCE,
+      fetchPolicy: "cache-and-network",
       variables() {
         let path = Array.isArray(this.$route.params.path)
           ? this.$route.params.path.join("/")

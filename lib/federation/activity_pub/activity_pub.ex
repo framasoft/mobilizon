@@ -96,20 +96,26 @@ defmodule Mobilizon.Federation.ActivityPub do
       {:existing, entity} ->
         Logger.debug("Entity is already existing")
 
-        entity =
+        res =
           if force_fetch and not are_same_origin?(url, Endpoint.url()) do
             Logger.debug("Entity is external and we want a force fetch")
 
-            with {:ok, _activity, entity} <- Fetcher.fetch_and_update(url, options) do
-              entity
+            case Fetcher.fetch_and_update(url, options) do
+              {:ok, _activity, entity} ->
+                {:ok, entity}
+
+              {:error, "Gone"} ->
+                {:error, "Gone", entity}
             end
           else
-            entity
+            {:ok, entity}
           end
 
-        Logger.debug("Going to preload an existing entity")
+        with {:ok, entity} <- res do
+          Logger.debug("Going to preload an existing entity")
 
-        Preloader.maybe_preload(entity)
+          Preloader.maybe_preload(entity)
+        end
 
       e ->
         Logger.warn("Something failed while fetching url #{inspect(e)}")
@@ -333,9 +339,9 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
-  def delete(object, actor, local \\ true) do
+  def delete(object, actor, local \\ true, additional \\ %{}) do
     with {:ok, activity_data, actor, object} <-
-           Managable.delete(object, actor, local),
+           Managable.delete(object, actor, local, additional),
          group <- Ownable.group_actor(object),
          :ok <- check_for_actor_key_rotation(actor),
          {:ok, activity} <- create_activity(activity_data, local),
@@ -417,12 +423,14 @@ defmodule Mobilizon.Federation.ActivityPub do
         %Actor{type: :Group, id: group_id, url: group_url, members_url: group_members_url},
         %Actor{id: actor_id, url: actor_url},
         local,
-        _additional
+        additional
       ) do
     with {:member, {:ok, %Member{id: member_id} = member}} <-
            {:member, Actors.get_member(actor_id, group_id)},
-         {:is_only_admin, false} <-
-           {:is_only_admin, Actors.is_only_administrator?(member_id, group_id)},
+         {:is_not_only_admin, true} <-
+           {:is_not_only_admin,
+            Map.get(additional, :force_member_removal, false) ||
+              !Actors.is_only_administrator?(member_id, group_id)},
          {:delete, {:ok, %Member{} = member}} <- {:delete, Actors.delete_member(member)},
          leave_data <- %{
            "to" => [group_members_url],
@@ -639,6 +647,19 @@ defmodule Mobilizon.Federation.ActivityPub do
     end)
   end
 
+  defp convert_followers_in_recipients(recipients) do
+    Enum.reduce(recipients, {recipients, []}, fn recipient, {recipients, follower_actors} = acc ->
+      case Actors.get_group_by_followers_url(recipient) do
+        %Actor{} = group ->
+          {Enum.filter(recipients, fn recipient -> recipient != group.followers_url end),
+           follower_actors ++ Actors.list_external_followers_for_actor(group)}
+
+        _ ->
+          acc
+      end
+    end)
+  end
+
   # @spec is_announce_activity?(Activity.t()) :: boolean
   # defp is_announce_activity?(%Activity{data: %{"type" => "Announce"}}), do: true
   # defp is_announce_activity?(_), do: false
@@ -661,13 +682,7 @@ defmodule Mobilizon.Federation.ActivityPub do
       Relay.publish(activity)
     end
 
-    {recipients, followers} =
-      if actor.followers_url in activity.recipients do
-        {Enum.filter(recipients, fn recipient -> recipient != actor.followers_url end),
-         Actors.list_external_followers_for_actor(actor)}
-      else
-        {recipients, []}
-      end
+    {recipients, followers} = convert_followers_in_recipients(recipients)
 
     {recipients, members} = convert_members_in_recipients(recipients)
 
@@ -858,7 +873,7 @@ defmodule Mobilizon.Federation.ActivityPub do
        ) do
     with %Actor{} = inviter <- Actors.get_actor(invited_by_id),
          %Actor{url: actor_url} <- Actors.get_actor(actor_id),
-         {:ok, %Member{url: member_url, id: member_id} = member} <-
+         {:ok, %Member{id: member_id} = member} <-
            Actors.update_member(member, %{role: :member}),
          accept_data <- %{
            "type" => "Accept",
@@ -866,7 +881,7 @@ defmodule Mobilizon.Federation.ActivityPub do
            "to" => [inviter.url, member.parent.members_url],
            "cc" => [member.parent.url],
            "actor" => actor_url,
-           "object" => member_url,
+           "object" => Convertible.model_to_as(member),
            "id" => "#{Endpoint.url()}/accept/invite/member/#{member_id}"
          } do
       {:ok, member, accept_data}

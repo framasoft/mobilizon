@@ -16,6 +16,8 @@ import Users from "../views/Admin/Users.vue";
 import Profiles from "../views/Admin/Profiles.vue";
 import AdminProfile from "../views/Admin/AdminProfile.vue";
 import AdminUserProfile from "../views/Admin/AdminUserProfile.vue";
+import GroupProfiles from "../views/Admin/GroupProfiles.vue";
+import AdminGroupProfile from "../views/Admin/AdminGroupProfile.vue";
 
 export enum SettingsRouteName {
   SETTINGS = "SETTINGS",
@@ -33,6 +35,8 @@ export enum SettingsRouteName {
   PROFILES = "PROFILES",
   ADMIN_PROFILE = "ADMIN_PROFILE",
   ADMIN_USER_PROFILE = "ADMIN_USER_PROFILE",
+  ADMIN_GROUPS = "ADMIN_GROUPS",
+  ADMIN_GROUP_PROFILE = "ADMIN_GROUP_PROFILE",
   MODERATION = "MODERATION",
   REPORTS = "Reports",
   REPORT = "Report",
@@ -120,6 +124,20 @@ export const settingsRoutes: RouteConfig[] = [
         path: "admin/profiles/:id",
         name: SettingsRouteName.ADMIN_PROFILE,
         component: AdminProfile,
+        props: true,
+        meta: { requiredAuth: true },
+      },
+      {
+        path: "admin/groups",
+        name: SettingsRouteName.ADMIN_GROUPS,
+        component: GroupProfiles,
+        props: true,
+        meta: { requiredAuth: true },
+      },
+      {
+        path: "admin/groups/:id",
+        name: SettingsRouteName.ADMIN_GROUP_PROFILE,
+        component: AdminGroupProfile,
         props: true,
         meta: { requiredAuth: true },
       },

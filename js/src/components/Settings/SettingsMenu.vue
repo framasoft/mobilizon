@@ -37,6 +37,7 @@
         <SettingMenuItem :title="$t('Moderation log')" :to="{ name: RouteName.REPORT_LOGS }" />
         <SettingMenuItem :title="$t('Users')" :to="{ name: RouteName.USERS }" />
         <SettingMenuItem :title="$t('Profiles')" :to="{ name: RouteName.PROFILES }" />
+        <SettingMenuItem :title="$t('Groups')" :to="{ name: RouteName.ADMIN_GROUPS }" />
       </SettingMenuSection>
       <SettingMenuSection
         v-if="this.currentUser.role == ICurrentUserRole.ADMINISTRATOR"

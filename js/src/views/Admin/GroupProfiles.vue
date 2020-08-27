@@ -6,20 +6,20 @@
           <router-link :to="{ name: RouteName.MODERATION }">{{ $t("Moderation") }}</router-link>
         </li>
         <li class="is-active">
-          <router-link :to="{ name: RouteName.PROFILES }">{{ $t("Profiles") }}</router-link>
+          <router-link :to="{ name: RouteName.PROFILES }">{{ $t("Groups") }}</router-link>
         </li>
       </ul>
     </nav>
-    <div v-if="persons">
+    <div v-if="groups">
       <b-switch v-model="local">{{ $t("Local") }}</b-switch>
       <b-switch v-model="suspended">{{ $t("Suspended") }}</b-switch>
       <b-table
-        :data="persons.elements"
-        :loading="$apollo.queries.persons.loading"
+        :data="groups.elements"
+        :loading="$apollo.queries.groups.loading"
         paginated
         backend-pagination
         backend-filtering
-        :total="persons.total"
+        :total="groups.total"
         :per-page="PROFILES_PER_PAGE"
         @page-change="onPageChange"
         @filters-change="onFiltersChange"
@@ -36,7 +36,7 @@
           <template v-slot:default="props">
             <router-link
               class="profile"
-              :to="{ name: RouteName.ADMIN_PROFILE, params: { id: props.row.id } }"
+              :to="{ name: RouteName.ADMIN_GROUP_PROFILE, params: { id: props.row.id } }"
             >
               <article class="media">
                 <figure class="media-left" v-if="props.row.avatar">
@@ -84,13 +84,14 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { LIST_PROFILES } from "../../graphql/actor";
 import RouteName from "../../router/name";
+import { LIST_GROUPS } from "@/graphql/group";
 
 const PROFILES_PER_PAGE = 10;
 
 @Component({
   apollo: {
-    persons: {
-      query: LIST_PROFILES,
+    groups: {
+      query: LIST_GROUPS,
       fetchPolicy: "cache-and-network",
       variables() {
         return {
@@ -106,7 +107,7 @@ const PROFILES_PER_PAGE = 10;
     },
   },
 })
-export default class Profiles extends Vue {
+export default class GroupProfiles extends Vue {
   page = 1;
 
   preferredUsername = "";
@@ -125,7 +126,7 @@ export default class Profiles extends Vue {
 
   async onPageChange(page: number) {
     this.page = page;
-    await this.$apollo.queries.persons.fetchMore({
+    await this.$apollo.queries.groups.fetchMore({
       variables: {
         preferredUsername: this.preferredUsername,
         name: this.name,
@@ -137,12 +138,12 @@ export default class Profiles extends Vue {
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         if (!fetchMoreResult) return previousResult;
-        const newProfiles = fetchMoreResult.persons.elements;
+        const newProfiles = fetchMoreResult.groups.elements;
         return {
-          persons: {
-            __typename: previousResult.persons.__typename,
-            total: previousResult.persons.total,
-            elements: [...previousResult.persons.elements, ...newProfiles],
+          groups: {
+            __typename: previousResult.groups.__typename,
+            total: previousResult.groups.total,
+            elements: [...previousResult.groups.elements, ...newProfiles],
           },
         };
       },

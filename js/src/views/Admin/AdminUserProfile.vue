@@ -69,6 +69,7 @@ import { IPerson } from "../../types/actor";
   apollo: {
     user: {
       query: GET_USER,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           id: this.id,

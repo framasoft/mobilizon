@@ -135,6 +135,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
   def model_to_as(%CommentModel{} = comment) do
     Convertible.model_to_as(%TombstoneModel{
       uri: comment.url,
+      actor: comment.actor,
       inserted_at: comment.deleted_at
     })
   end

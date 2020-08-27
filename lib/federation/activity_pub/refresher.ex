@@ -3,10 +3,32 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
   Module that provides functions to explore and fetch collections on a group
   """
 
+  alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Fetcher, Transmogrifier}
+  alias Mobilizon.Federation.ActivityPub.{Fetcher, Relay, Transmogrifier}
   require Logger
+
+  def refresh_profile(%Actor{domain: nil}), do: {:error, "Can only refresh remote actors"}
+
+  def refresh_profile(%Actor{type: :Group, url: url, id: group_id} = group) do
+    on_behalf_of =
+      case Actors.get_single_group_member_actor(group_id) do
+        %Actor{} = member_actor ->
+          member_actor
+
+        _ ->
+          Relay.get_actor()
+      end
+
+    with :ok <- fetch_group(url, on_behalf_of) do
+      {:ok, group}
+    end
+  end
+
+  def refresh_profile(%Actor{type: :Person, url: url}) do
+    ActivityPub.make_actor_from_url(url)
+  end
 
   @spec fetch_group(String.t(), Actor.t()) :: :ok
   def fetch_group(group_url, %Actor{} = on_behalf_of) do
@@ -20,14 +42,15 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
             discussions_url: discussions_url,
             events_url: events_url
           }} <-
-           ActivityPub.get_or_fetch_actor_by_url(group_url) do
-      fetch_collection(outbox_url, on_behalf_of)
-      fetch_collection(members_url, on_behalf_of)
-      fetch_collection(resources_url, on_behalf_of)
-      fetch_collection(posts_url, on_behalf_of)
-      fetch_collection(todos_url, on_behalf_of)
-      fetch_collection(discussions_url, on_behalf_of)
-      fetch_collection(events_url, on_behalf_of)
+           ActivityPub.make_actor_from_url(group_url),
+         :ok <- fetch_collection(outbox_url, on_behalf_of),
+         :ok <- fetch_collection(members_url, on_behalf_of),
+         :ok <- fetch_collection(resources_url, on_behalf_of),
+         :ok <- fetch_collection(posts_url, on_behalf_of),
+         :ok <- fetch_collection(todos_url, on_behalf_of),
+         :ok <- fetch_collection(discussions_url, on_behalf_of),
+         :ok <- fetch_collection(events_url, on_behalf_of) do
+      :ok
     end
   end
 
@@ -37,9 +60,10 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
     Logger.debug("Fetching and preparing collection from url")
     Logger.debug(inspect(collection_url))
 
-    with {:ok, data} <- Fetcher.fetch(collection_url, on_behalf_of: on_behalf_of) do
-      Logger.debug("Fetch ok, passing to process_collection")
-      process_collection(data, on_behalf_of)
+    with {:ok, data} <- Fetcher.fetch(collection_url, on_behalf_of: on_behalf_of),
+         :ok <- Logger.debug("Fetch ok, passing to process_collection"),
+         :ok <- process_collection(data, on_behalf_of) do
+      :ok
     end
   end
 
@@ -68,6 +92,7 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
     Logger.debug(inspect(items))
 
     Enum.each(items, &handling_element/1)
+    :ok
   end
 
   defp process_collection(%{"type" => "OrderedCollection", "first" => first}, on_behalf_of)
@@ -84,7 +109,15 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
     end
   end
 
+  defp process_collection(_, _), do: :error
+
   defp handling_element(data) when is_map(data) do
+    id = Map.get(data, "id")
+
+    if id do
+      Mobilizon.Tombstone.delete_uri_tombstone(id)
+    end
+
     activity = %{
       "type" => "Create",
       "to" => data["to"],

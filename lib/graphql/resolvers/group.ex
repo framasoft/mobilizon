@@ -3,6 +3,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   Handles the group-related GraphQL calls.
   """
 
+  import Mobilizon.Users.Guards
   alias Mobilizon.{Actors, Events, Users}
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Federation.ActivityPub
@@ -55,11 +56,44 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   end
 
   @doc """
+  Get a group
+  """
+  def get_group(_parent, %{id: id}, %{context: %{current_user: %User{role: role}}}) do
+    with %Actor{type: :Group, suspended: suspended} = actor <-
+           Actors.get_actor_with_preload(id, true),
+         true <- suspended == false or is_moderator(role) do
+      {:ok, actor}
+    else
+      _ ->
+        {:error, "Group with ID #{id} not found"}
+    end
+  end
+
+  @doc """
   Lists all groups
   """
-  def list_groups(_parent, %{page: page, limit: limit}, _resolution) do
-    {:ok, Actors.list_groups(page, limit)}
+  def list_groups(
+        _parent,
+        %{
+          preferred_username: preferred_username,
+          name: name,
+          domain: domain,
+          local: local,
+          suspended: suspended,
+          page: page,
+          limit: limit
+        },
+        %{
+          context: %{current_user: %User{role: role}}
+        }
+      )
+      when is_moderator(role) do
+    {:ok,
+     Actors.list_actors(:Group, preferred_username, name, domain, local, suspended, page, limit)}
   end
+
+  def list_groups(_parent, _args, _resolution),
+    do: {:error, "You may not list groups unless moderator."}
 
   @doc """
   Create a new group. The creator is automatically added as admin
@@ -127,27 +161,22 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   """
   def delete_group(
         _parent,
-        %{group_id: group_id, actor_id: actor_id},
+        %{group_id: group_id},
         %{
           context: %{
             current_user: user
           }
         }
       ) do
-    with {actor_id, ""} <- Integer.parse(actor_id),
-         {group_id, ""} <- Integer.parse(group_id),
+    with %Actor{id: actor_id} = actor <- Users.get_actor_for_user(user),
          {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
-         {:is_owned, %Actor{}} <- User.owns_actor(user, actor_id),
          {:ok, %Member{} = member} <- Actors.get_member(actor_id, group.id),
          {:is_admin, true} <- {:is_admin, Member.is_administrator(member)},
-         group <- Actors.delete_group!(group) do
+         {:ok, _activity, group} <- ActivityPub.delete(group, actor, true) do
       {:ok, %{id: group.id}}
     else
       {:error, :group_not_found} ->
         {:error, "Group not found"}
-
-      {:is_owned, nil} ->
-        {:error, "Actor id is not owned by authenticated user"}
 
       {:error, :member_not_found} ->
         {:error, "Actor id is not a member of this group"}
@@ -231,7 +260,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       {:group, nil} ->
         {:error, "Group not found"}
 
-      {:is_only_admin, true} ->
+      {:is_not_only_admin, false} ->
         {:error, "You can't leave this group because you are the only administrator"}
     end
   end
@@ -245,12 +274,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         _args,
         %{
           context: %{
-            current_user: %User{} = user
+            current_user: %User{role: user_role} = user
           }
         }
       ) do
     with {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)} do
+         {:member, true} <-
+           {:member, Actors.is_member?(actor_id, group_id) or is_moderator(user_role)} do
       # TODO : Handle public / restricted to group members events
       {:ok, Events.list_organized_events_for_group(group)}
     else

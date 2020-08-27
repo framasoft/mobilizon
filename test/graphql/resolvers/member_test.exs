@@ -140,6 +140,14 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
   end
 
   describe "Member Resolver to leave from a group" do
+    @leave_group_mutation """
+    mutation LeaveGroup($groupId: ID!) {
+      leaveGroup(groupId: $groupId) {
+        id
+      }
+    }
+    """
+
     test "leave_group/3 should delete a member from a group", %{
       conn: conn,
       user: user,
@@ -149,23 +157,16 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
       insert(:member, role: :administrator, parent: group)
       %Member{id: member_id} = insert(:member, %{actor: actor, parent: group})
 
-      mutation = """
-          mutation {
-            leaveGroup(
-              group_id: #{group.id}
-            ) {
-              id
-            }
-          }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @leave_group_mutation,
+          variables: %{groupId: group.id}
+        )
 
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["leaveGroup"]["id"] == to_string(member_id)
+      assert res["errors"] == nil
+      assert res["data"]["leaveGroup"]["id"] == to_string(member_id)
     end
 
     test "leave_group/3 should check if the member is the only administrator", %{
@@ -177,43 +178,29 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
       insert(:member, %{actor: actor, role: :creator, parent: group})
       insert(:member, %{parent: group})
 
-      mutation = """
-          mutation {
-            leaveGroup(
-              group_id: #{group.id}
-            ) {
-                id
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @leave_group_mutation,
+          variables: %{groupId: group.id}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "only administrator"
+      assert hd(res["errors"])["message"] =~ "only administrator"
     end
 
     test "leave_group/3 should check the user is logged in", %{conn: conn, actor: actor} do
       group = insert(:group)
       insert(:member, %{actor: actor, parent: group})
 
-      mutation = """
-          mutation {
-            leaveGroup(
-              group_id: #{group.id}
-            ) {
-                id
-              }
-            }
-      """
-
       res =
         conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @leave_group_mutation,
+          variables: %{groupId: group.id}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "logged-in"
+      assert hd(res["errors"])["message"] =~ "logged-in"
     end
 
     test "leave_group/3 should check the group exists", %{
@@ -224,22 +211,15 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
       group = insert(:group)
       insert(:member, %{actor: actor, parent: group})
 
-      mutation = """
-          mutation {
-            leaveGroup(
-              group_id: 1042
-            ) {
-                id
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @leave_group_mutation,
+          variables: %{groupId: 1042}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "Group not found"
+      assert hd(res["errors"])["message"] =~ "Group not found"
     end
   end
 

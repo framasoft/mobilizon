@@ -405,7 +405,7 @@ msgid "View the event on: %{link}"
 msgstr "Veire l’eveniment actualizat sus : %{link}"
 
 #, elixir-format
-#: lib/web/email/group.ex:28
+#: lib/web/email/group.ex:32
 msgid "You have been invited by %{inviter} to join group %{group}"
 msgstr "%{inviter} vos a convidat a rejónher lo grop %{group}"
 
@@ -1210,33 +1210,79 @@ msgstr ""
 "la version 1 del logicial al primièr semèstre 2020</b>."
 
 #, elixir-format
-#: lib/web/templates/email/group_removal.html.eex:45
-#: lib/web/templates/email/group_removal.text.eex:5
+#: lib/web/templates/email/group_member_removal.html.eex:45
+#: lib/web/templates/email/group_member_removal.text.eex:5
 msgid "If you feel this is an error, you may contact the group's administrators so that they can add you back."
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/group_removal.html.eex:13
-#: lib/web/templates/email/group_removal.text.eex:1
+#: lib/web/templates/email/group_member_removal.html.eex:13
+#: lib/web/templates/email/group_member_removal.text.eex:1
 msgid "So long, and thanks for the fish!"
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/group.ex:58
+#: lib/web/email/group.ex:62
 msgid "You have been removed from group %{group}"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/group_removal.text.eex:3
+#: lib/web/templates/email/group_member_removal.text.eex:3
 msgid "You have been removed from group %{group}. You will not be able to access this group's private content anymore."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/web/templates/email/group_invite.html.eex:38
 msgid "<b>%{inviter}</b> just invited you to join their group %{link_start}<b>%{group}</b>%{link_end}"
 msgstr ""
 
-#, elixir-format, fuzzy
-#: lib/web/templates/email/group_removal.html.eex:38
+#, elixir-format
+#: lib/web/templates/email/group_member_removal.html.eex:38
 msgid "You have been removed from group %{link_start}<b>%{group}</b>%{link_end}. You will not be able to access this group's private content anymore."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/group_suspension.html.eex:54
+#: lib/web/templates/email/group_suspension.text.eex:7
+msgid "As this group was located on another instance, it will continue to work for other instances than this one."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/group_suspension.html.eex:46
+#: lib/web/templates/email/group_suspension.text.eex:5
+msgid "As this group was located on this instance, all of it's data has been irretrievably deleted."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/group_deletion.html.eex:38
+#: lib/web/templates/email/group_deletion.text.eex:3
+msgid "The administrator %{author} deleted group %{group}. All of the group's events, discussions, posts and todos have been deleted."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/group_suspension.html.eex:13
+#: lib/web/templates/email/group_suspension.text.eex:1
+msgid "The group %{group} has been suspended on %{instance}!"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/group_deletion.html.eex:13
+#: lib/web/templates/email/group_deletion.text.eex:1
+msgid "The group %{group} was deleted on %{instance}!"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/group_suspension.html.eex:38
+#: lib/web/templates/email/group_suspension.text.eex:3
+msgid "Your instance's moderation team has decided to suspend %{group_name} (%{group_address}). You are no longer a member of this group."
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/email/group.ex:135
+msgid "The group %{group} has been deleted on %{instance}"
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/email/group.ex:96
+msgid "The group %{group} has been suspended on %{instance}"
 msgstr ""

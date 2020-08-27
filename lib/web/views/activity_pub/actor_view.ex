@@ -88,7 +88,7 @@ defmodule Mobilizon.Web.ActivityPub.ActorView do
   end
 
   defp fetch_collection(:discussions, actor, page) do
-    Discussions.find_discussions_for_actor(actor.id, page)
+    Discussions.find_discussions_for_actor(actor, page)
   end
 
   defp fetch_collection(:posts, actor, page) do

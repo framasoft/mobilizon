@@ -50,11 +50,11 @@
         </form>
 
         <div v-if="validationSent && !userAlreadyActivated">
-          <b-message title="Success" type="is-success" closable="false">
+          <b-message type="is-success" closable="false">
             <h2 class="title">
               {{
                 $t("Your account is nearly ready, {username}", {
-                  username: identity.preferredUsername,
+                  username: identity.name || identity.preferredUsername,
                 })
               }}
             </h2>

@@ -18,7 +18,7 @@ defmodule Mobilizon.GraphQL.API.Groups do
     with preferred_username <-
            args |> Map.get(:preferred_username) |> HTML.strip_tags() |> String.trim(),
          {:existing_group, nil} <-
-           {:existing_group, Actors.get_local_group_by_title(preferred_username)},
+           {:existing_group, Actors.get_local_actor_by_name(preferred_username)},
          args <- args |> Map.put(:type, :Group),
          {:ok, %Activity{} = activity, %Actor{} = group} <-
            ActivityPub.create(:actor, args, true, %{"actor" => args.creator_actor.url}) do

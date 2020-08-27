@@ -22,11 +22,15 @@ import { LIST_GROUPS } from "@/graphql/group";
 import { Group, IGroup } from "@/types/actor";
 import GroupMemberCard from "@/components/Group/GroupMemberCard.vue";
 import RouteName from "../../router/name";
+import { Paginate } from "@/types/paginate";
 
 @Component({
   apollo: {
     groups: {
-      query: LIST_GROUPS,
+      query: {
+        query: LIST_GROUPS,
+        fetchPolicy: "network-only",
+      },
     },
   },
   components: {
@@ -34,7 +38,7 @@ import RouteName from "../../router/name";
   },
 })
 export default class GroupList extends Vue {
-  groups: { elements: IGroup[]; total: number } = { elements: [], total: 0 };
+  groups!: Paginate<IGroup>;
 
   loading = true;
 

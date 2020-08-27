@@ -1,0 +1,8 @@
+<%= gettext "The group %{group} has been suspended on %{instance}!", group: (@group.name || @group.preferred_username), instance: @instance %>
+==
+<%= gettext "Your instance's moderation team has decided to suspend %{group_name} (%{group_address}). You are no longer a member of this group.", group_name: @group.name, group_address: if @group.domain, do: "@#{@group.preferred_username}@#{@group.domain}", else: "@#{@group.preferred_username}" %>
+<%= if is_nil(@group.domain) do %>
+  <%= gettext "As this group was located on this instance, all of it's data has been irretrievably deleted." %>
+<% else %>
+  <%= gettext "As this group was located on another instance, it will continue to work for other instances than this one." %>
+<% end %>

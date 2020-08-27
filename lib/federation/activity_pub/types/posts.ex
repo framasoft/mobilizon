@@ -69,7 +69,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
           attributed_to: %Actor{url: group_url}
         } = post,
         %Actor{url: actor_url} = actor,
-        _local
+        _local,
+        _additionnal
       ) do
     activity_data = %{
       "actor" => actor_url,

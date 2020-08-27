@@ -170,6 +170,7 @@ import { displayNameAndUsername } from "../../types/actor";
   },
   apollo: {
     actionLogs: {
+      fetchPolicy: "cache-and-network",
       query: LOGS,
     },
   },

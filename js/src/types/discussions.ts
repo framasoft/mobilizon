@@ -10,6 +10,8 @@ export interface IDiscussion {
   actor?: IActor;
   lastComment?: IComment;
   comments: Paginate<IComment>;
+  updatedAt: string;
+  insertedAt: string;
 }
 
 export class Discussion implements IDiscussion {
@@ -27,6 +29,10 @@ export class Discussion implements IDiscussion {
 
   lastComment?: IComment = undefined;
 
+  insertedAt: string = "";
+
+  updatedAt: string = "";
+
   constructor(hash?: IDiscussion) {
     if (!hash) return;
 
@@ -40,5 +46,7 @@ export class Discussion implements IDiscussion {
     this.creator = hash.creator;
     this.actor = hash.actor;
     this.lastComment = hash.lastComment;
+    this.insertedAt = hash.insertedAt;
+    this.updatedAt = hash.updatedAt;
   }
 }

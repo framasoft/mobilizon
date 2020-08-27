@@ -160,7 +160,6 @@
   "Go": "Go",
   "Going as {name}": "Going as {name}",
   "Group List": "Group List",
-  "Group full name": "Group full name",
   "Group name": "Group name",
   "Group {displayName} created": "Group {displayName} created",
   "Groups": "Groups",
@@ -766,5 +765,19 @@
   "Edited {ago}": "Edited {ago}",
   "[This comment has been deleted by it's author]": "[This comment has been deleted by it's author]",
   "Promote": "Promote",
-  "Demote": "Demote"
+  "Demote": "Demote",
+  "{number} members": "{number} members",
+  "{number} posts": "No posts|One post|{number} posts",
+  "Publication date": "Publication date",
+  "Refresh profile": "Refresh profile",
+  "Suspend group": "Suspend group",
+  "Are you sure you want to <b>suspend</b> this group? As this group originates from instance {instance}, this will only remove local members and delete the local data, as well as rejecting all the future data.": "Are you sure you want to <b>suspend</b> this group? As this group originates from instance {instance}, this will only remove local members and delete the local data, as well as rejecting all the future data.",
+  "Are you sure you want to <b>suspend</b> this group? All members - including remote ones - will be notified and removed from the group, and <b>all of the group data (events, posts, discussions, todos…) will be irretrievably destroyed</b>.": "Are you sure you want to <b>suspend</b> this group? All members - including remote ones - will be notified and removed from the group, and <b>all of the group data (events, posts, discussions, todos…) will be irretrievably destroyed</b>.",
+  "Delete group": "Delete group",
+  "Are you sure you want to <b>completely delete</b> this group? All members - including remote ones - will be notified and removed from the group, and <b>all of the group data (events, posts, discussions, todos…) will be irretrievably destroyed</b>.": "Are you sure you want to <b>completely delete</b> this group? All members - including remote ones - will be notified and removed from the group, and <b>all of the group data (events, posts, discussions, todos…) will be irretrievably destroyed</b>.",
+  "Group display name": "Group display name",
+  "Federated Group Name": "Federated Group Name",
+  "This is like your federated username (<code>{username}</code>) for groups. It will allow you to be found on the federation, and is guaranteed to be unique.": "This is like your federated username (<code>{username}</code>) for groups. It will allow you to be found on the federation, and is guaranteed to be unique.",
+  "Banner": "Banner",
+  "A group with this name already exists": "A group with this name already exists"
 }

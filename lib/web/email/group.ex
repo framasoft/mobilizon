@@ -7,7 +7,7 @@ defmodule Mobilizon.Web.Email.Group do
   import Bamboo.Phoenix
   import Mobilizon.Web.Gettext
 
-  alias Mobilizon.{Actors, Users}
+  alias Mobilizon.{Actors, Config, Users}
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Users.User
   alias Mobilizon.Web.{Email, Gettext}
@@ -68,7 +68,7 @@ defmodule Mobilizon.Web.Email.Group do
       |> assign(:locale, locale)
       |> assign(:group, group)
       |> assign(:subject, subject)
-      |> render(:group_removal)
+      |> render(:group_member_removal)
       |> Email.Mailer.deliver_later()
 
       :ok
@@ -76,4 +76,83 @@ defmodule Mobilizon.Web.Email.Group do
   end
 
   # TODO : def send_confirmation_to_inviter()
+
+  @member_roles [:administrator, :moderator, :member]
+  def send_group_suspension_notification(%Member{actor: %Actor{user_id: nil}}), do: :ok
+
+  def send_group_suspension_notification(%Member{role: role}) when role not in @member_roles,
+    do: :ok
+
+  def send_group_suspension_notification(%Member{
+        actor: %Actor{user_id: user_id},
+        parent: %Actor{domain: nil} = group,
+        role: member_role
+      }) do
+    with %User{email: email, locale: locale} <- Users.get_user!(user_id) do
+      Gettext.put_locale(locale)
+      instance = Config.instance_name()
+
+      subject =
+        gettext(
+          "The group %{group} has been suspended on %{instance}",
+          group: group.name,
+          instance: instance
+        )
+
+      Email.base_email(to: email, subject: subject)
+      |> assign(:locale, locale)
+      |> assign(:group, group)
+      |> assign(:role, member_role)
+      |> assign(:subject, subject)
+      |> assign(:instance, instance)
+      |> render(:group_suspension)
+      |> Email.Mailer.deliver_later()
+
+      :ok
+    end
+  end
+
+  def send_group_deletion_notification(%Member{actor: %Actor{user_id: nil}}, _author), do: :ok
+
+  def send_group_deletion_notification(%Member{role: role}, _author)
+      when role not in @member_roles,
+      do: :ok
+
+  def send_group_deletion_notification(
+        %Member{
+          actor: %Actor{user_id: user_id, id: actor_id},
+          parent: %Actor{domain: nil} = group,
+          role: member_role
+        },
+        %Actor{id: author_id} = author
+      ) do
+    with %User{email: email, locale: locale} <- Users.get_user!(user_id),
+         {:member_not_author, true} <- {:member_not_author, author_id !== actor_id} do
+      Gettext.put_locale(locale)
+      instance = Config.instance_name()
+
+      subject =
+        gettext(
+          "The group %{group} has been deleted on %{instance}",
+          group: group.name,
+          instance: instance
+        )
+
+      Email.base_email(to: email, subject: subject)
+      |> assign(:locale, locale)
+      |> assign(:group, group)
+      |> assign(:role, member_role)
+      |> assign(:subject, subject)
+      |> assign(:instance, instance)
+      |> assign(:author, author)
+      |> render(:group_deletion)
+      |> Email.Mailer.deliver_later()
+
+      :ok
+    else
+      # Skip if it's the author itself
+      {:member_not_author, _} ->
+        :ok
+    end
+  end
 end

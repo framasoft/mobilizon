@@ -44,11 +44,13 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Todos do
   end
 
   @impl Entity
-  @spec delete(Todo.t(), Actor.t(), boolean()) :: {:ok, ActivityStream.t(), Actor.t(), Todo.t()}
+  @spec delete(Todo.t(), Actor.t(), boolean(), map()) ::
+          {:ok, ActivityStream.t(), Actor.t(), Todo.t()}
   def delete(
         %Todo{url: url, creator: %Actor{url: group_url}} = todo,
         %Actor{url: actor_url} = actor,
-        _local
+        _local,
+        _additionnal
       ) do
     Logger.debug("Building Delete Todo activity")
 

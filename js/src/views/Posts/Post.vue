@@ -58,6 +58,7 @@ import Tag from "../../components/Tag.vue";
     currentActor: CURRENT_ACTOR_CLIENT,
     memberships: {
       query: PERSON_MEMBERSHIPS,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           id: this.currentActor.id,
@@ -70,6 +71,7 @@ import Tag from "../../components/Tag.vue";
     },
     post: {
       query: FETCH_POST,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           slug: this.slug,

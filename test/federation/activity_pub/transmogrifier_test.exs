@@ -789,8 +789,22 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
   describe "handle incoming delete activities" do
     test "it works for incoming deletes" do
-      %Actor{url: actor_url} = actor = insert(:actor)
-      %Comment{url: comment_url} = insert(:comment, actor: nil, actor_id: actor.id)
+      %Actor{url: actor_url} =
+        actor = insert(:actor, url: "http://mobilizon.tld/@remote", domain: "mobilizon.tld")
+
+      %Comment{url: comment_url} =
+        insert(:comment,
+          actor: nil,
+          actor_id: actor.id,
+          url: "http://mobilizon.tld/comments/9f3794b8-11a0-4a98-8cb7-475ab332c701"
+        )
+
+      Mock
+      |> expect(:call, fn
+        %{method: :get, url: "http://mobilizon.tld/comments/9f3794b8-11a0-4a98-8cb7-475ab332c701"},
+        _opts ->
+          {:ok, %Tesla.Env{status: 410, body: "Gone"}}
+      end)
 
       data =
         File.read!("test/fixtures/mastodon-delete.json")
@@ -843,7 +857,9 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
     setup :set_mox_from_context
 
     test "it works for incoming actor deletes" do
-      %Actor{url: url} = actor = insert(:actor, url: "https://framapiaf.org/users/admin")
+      %Actor{url: url} =
+        actor = insert(:actor, url: "https://framapiaf.org/users/admin", domain: "framapiaf.org")
+
       %Event{url: event1_url} = event1 = insert(:event, organizer_actor: actor)
       insert(:event, organizer_actor: actor)
 

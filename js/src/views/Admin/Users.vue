@@ -103,6 +103,7 @@ const USERS_PER_PAGE = 10;
   apollo: {
     users: {
       query: LIST_USERS,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           email: this.email,

@@ -578,6 +578,7 @@ import PopoverActorCard from "../../components/Account/PopoverActorCard.vue";
   apollo: {
     event: {
       query: FETCH_EVENT,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           uuid: this.uuid,
@@ -592,6 +593,7 @@ import PopoverActorCard from "../../components/Account/PopoverActorCard.vue";
     },
     participations: {
       query: EVENT_PERSON_PARTICIPATION,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           eventId: this.event.id,

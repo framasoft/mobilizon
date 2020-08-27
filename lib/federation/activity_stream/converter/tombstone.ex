@@ -28,7 +28,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Tombstone do
     %{
       "type" => "Tombstone",
       "id" => tombstone.uri,
-      "actor" => tombstone.actor.url,
+      "actor" => if(tombstone.actor, do: tombstone.actor.url, else: nil),
       "deleted" => tombstone.inserted_at
     }
   end

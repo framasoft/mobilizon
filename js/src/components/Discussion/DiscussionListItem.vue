@@ -15,8 +15,8 @@
     <div class="title-info-wrapper">
       <div class="title-and-date">
         <p class="discussion-minimalist-title">{{ discussion.title }}</p>
-        <span :title="discussion.updatedAt | formatDateTimeString">
-          {{ $timeAgo.format(new Date(discussion.updatedAt), "twitter") || $t("Right now") }}</span
+        <span :title="actualDate | formatDateTimeString">
+          {{ $timeAgo.format(new Date(actualDate), "twitter") || $t("Right now") }}</span
         >
       </div>
       <div class="has-text-grey" v-if="!discussion.lastComment.deletedAt">
@@ -45,6 +45,13 @@ export default class DiscussionListItem extends Vue {
         .replace(/<p>/gi, " ");
     }
     return element.innerText;
+  }
+
+  get actualDate() {
+    if (this.discussion.updatedAt === this.discussion.insertedAt && this.discussion.lastComment) {
+      return this.discussion.lastComment.publishedAt;
+    }
+    return this.discussion.updatedAt;
   }
 }
 </script>

@@ -5,6 +5,7 @@ export const DISCUSSION_BASIC_FIELDS_FRAGMENT = gql`
     id
     title
     slug
+    insertedAt
     updatedAt
     lastComment {
       id
@@ -16,6 +17,7 @@ export const DISCUSSION_BASIC_FIELDS_FRAGMENT = gql`
           url
         }
       }
+      publishedAt
       deletedAt
     }
   }
@@ -114,6 +116,7 @@ export const GET_DISCUSSION = gql`
           insertedAt
           updatedAt
           deletedAt
+          publishedAt
         }
       }
       ...DiscussionFields

@@ -131,7 +131,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
   def delete(
         %Resource{url: url, actor: %Actor{url: group_url, members_url: members_url}} = resource,
         %Actor{url: actor_url} = actor,
-        _local
+        _local,
+        _additionnal
       ) do
     Logger.debug("Building Delete Resource activity")
 

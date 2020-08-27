@@ -53,8 +53,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   end
 
   @impl Entity
-  @spec delete(Event.t(), Actor.t(), boolean) :: {:ok, Event.t()}
-  def delete(%Event{url: url} = event, %Actor{} = actor, _local) do
+  @spec delete(Event.t(), Actor.t(), boolean, map()) :: {:ok, Event.t()}
+  def delete(%Event{url: url} = event, %Actor{} = actor, _local, _additionnal) do
     activity_data = %{
       "type" => "Delete",
       "actor" => actor.url,

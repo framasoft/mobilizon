@@ -98,6 +98,7 @@ import RouteName from "../../router/name";
     config: CONFIG,
     post: {
       query: FETCH_POST,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           slug: this.slug,

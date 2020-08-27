@@ -33,6 +33,7 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
     field(:inserted_at, :datetime)
     field(:updated_at, :datetime)
     field(:deleted_at, :datetime)
+    field(:published_at, :datetime)
   end
 
   @desc "The list of visibility options for a comment"

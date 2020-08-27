@@ -304,6 +304,7 @@ import addMinutes from "date-fns/addMinutes";
   apollo: {
     group: {
       query: FETCH_GROUP,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           name: this.preferredUsername,
@@ -312,6 +313,7 @@ import addMinutes from "date-fns/addMinutes";
     },
     person: {
       query: PERSON_MEMBERSHIPS,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           id: this.currentActor.id,

@@ -2,41 +2,64 @@
   <section class="section container">
     <h1>{{ $t("Create a new group") }}</h1>
 
-    <div>
-      <b-field :label="$t('Group name')">
-        <b-input aria-required="true" required v-model="group.preferredUsername" />
-      </b-field>
+    <b-message type="is-danger" v-for="(value, index) in errors" :key="index">
+      {{ value }}
+    </b-message>
 
-      <b-field :label="$t('Group full name')">
+    <form @submit.prevent="createGroup">
+      <b-field :label="$t('Group display name')">
         <b-input aria-required="true" required v-model="group.name" />
       </b-field>
 
+      <div class="field">
+        <label class="label">{{ $t("Federated Group Name") }}</label>
+        <div class="field-body">
+          <b-field>
+            <b-input aria-required="true" required expanded v-model="group.preferredUsername" />
+            <p class="control">
+              <span class="button is-static">@{{ host }}</span>
+            </p>
+          </b-field>
+        </div>
+        <p
+          v-html="
+            $t(
+              'This is like your federated username (<code>{username}</code>) for groups. It will allow you to be found on the federation, and is guaranteed to be unique.',
+              { username: usernameWithDomain(currentActor, true) }
+            )
+          "
+        />
+      </div>
+
       <b-field :label="$t('Description')">
-        <b-input aria-required="true" required v-model="group.summary" type="textarea" />
+        <b-input v-model="group.summary" type="textarea" />
       </b-field>
 
       <div>
-        Avatar
-        <picture-upload v-model="avatarFile" />
+        {{ $t("Avatar") }}
+        <picture-upload :textFallback="$t('Avatar')" v-model="avatarFile" />
       </div>
 
       <div>
-        Banner
-        <picture-upload v-model="avatarFile" />
+        {{ $t("Banner") }}
+        <picture-upload :textFallback="$t('Banner')" v-model="bannerFile" />
       </div>
 
-      <button class="button is-primary" @click="createGroup()">{{ $t("Create my group") }}</button>
-    </div>
+      <button class="button is-primary" native-type="submit">{{ $t("Create my group") }}</button>
+    </form>
   </section>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { Group, IPerson } from "@/types/actor";
-import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
+import { Component, Vue, Watch } from "vue-property-decorator";
+import { Group, IPerson, usernameWithDomain, MemberRole } from "@/types/actor";
+import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import { CREATE_GROUP } from "@/graphql/group";
 import PictureUpload from "@/components/PictureUpload.vue";
 import RouteName from "../../router/name";
+import { mixins } from "vue-class-component";
+import IdentityEditionMixin from "@/mixins/identityEdition";
+import { convertToUsername } from "../../utils/username";
 
 @Component({
   components: {
@@ -48,7 +71,7 @@ import RouteName from "../../router/name";
     },
   },
 })
-export default class CreateGroup extends Vue {
+export default class CreateGroup extends mixins(IdentityEditionMixin) {
   currentActor!: IPerson;
 
   group = new Group();
@@ -57,19 +80,39 @@ export default class CreateGroup extends Vue {
 
   bannerFile: File | null = null;
 
+  errors: string[] = [];
+
+  usernameWithDomain = usernameWithDomain;
+
   async createGroup() {
     try {
       await this.$apollo.mutate({
         mutation: CREATE_GROUP,
         variables: this.buildVariables(),
         update: (store, { data: { createGroup } }) => {
-          // TODO: update group list cache
+          const query = {
+            query: PERSON_MEMBERSHIPS,
+            variables: {
+              id: this.currentActor.id,
+            },
+          };
+          const membershipData = store.readQuery<{ person: IPerson }>(query);
+          if (!membershipData) return;
+          const person: IPerson = membershipData.person;
+          person.memberships.elements.push({
+            parent: createGroup,
+            role: MemberRole.ADMINISTRATOR,
+            actor: this.currentActor,
+            insertedAt: new Date().toString(),
+            updatedAt: new Date().toString(),
+          });
+          store.writeQuery({ ...query, data: { person } });
         },
       });
 
       await this.$router.push({
         name: RouteName.GROUP,
-        params: { identityName: this.group.preferredUsername },
+        params: { preferredUsername: usernameWithDomain(this.group) },
       });
 
       this.$notifier.success(
@@ -80,6 +123,15 @@ export default class CreateGroup extends Vue {
     } catch (err) {
       this.handleError(err);
     }
+  }
+
+  get host(): string {
+    return window.location.hostname;
+  }
+
+  @Watch("group.name")
+  updateUsername(groupName: string): void {
+    this.group.preferredUsername = convertToUsername(groupName);
   }
 
   private buildVariables() {
@@ -121,7 +173,18 @@ export default class CreateGroup extends Vue {
   }
 
   private handleError(err: any) {
-    console.error(err);
+    this.errors.push(
+      ...err.graphQLErrors.map(({ message }: { message: string }) => this.convertMessage(message))
+    );
+  }
+
+  private convertMessage(message: string): string {
+    switch (message) {
+      case "A group with this name already exists":
+        return this.$t("A group with this name already exists") as string;
+      default:
+        return message;
+    }
   }
 }
 </script>

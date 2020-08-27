@@ -85,7 +85,7 @@ export default class MyEvents extends Vue {
   get memberships() {
     if (!this.membershipsPages) return [];
     return this.membershipsPages.elements.filter(
-      (member: IMember) => member.role !== MemberRole.INVITED
+      (member: IMember) => ![MemberRole.INVITED, MemberRole.REJECTED].includes(member.role)
     );
   }
 }
