@@ -71,6 +71,7 @@ import RouteName from "../../router/name";
   apollo: {
     dashboard: {
       query: DASHBOARD,
+      fetchPolicy: "cache-and-network",
     },
   },
   metaInfo() {

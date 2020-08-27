@@ -16,6 +16,7 @@ export interface IComment {
   deletedAt?: Date | string;
   totalReplies: number;
   insertedAt?: Date | string;
+  publishedAt?: Date | string;
 }
 
 export class CommentModel implements IComment {

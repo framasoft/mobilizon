@@ -57,6 +57,7 @@ import RouteName from "../../router/name";
   apollo: {
     group: {
       query: FETCH_GROUP_POSTS,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           preferredUsername: this.preferredUsername,

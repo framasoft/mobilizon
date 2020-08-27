@@ -35,7 +35,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Entity do
   @callback update(struct :: t(), attrs :: map(), additionnal :: map()) ::
               {:ok, t(), ActivityStream.t()}
 
-  @callback delete(struct :: t(), Actor.t(), local :: boolean()) ::
+  @callback delete(struct :: t(), Actor.t(), local :: boolean(), map()) ::
               {:ok, ActivityStream.t(), Actor.t(), t()}
 end
 
@@ -50,10 +50,10 @@ defprotocol Mobilizon.Federation.ActivityPub.Types.Managable do
   """
   def update(entity, attrs, additionnal)
 
-  @spec delete(Entity.t(), Actor.t(), boolean()) ::
+  @spec delete(Entity.t(), Actor.t(), boolean(), map()) ::
           {:ok, ActivityStream.t(), Actor.t(), Entity.t()}
   @doc "Deletes an entity and returns the activitystream representation for it"
-  def delete(entity, actor, local)
+  def delete(entity, actor, local, additionnal)
 end
 
 defprotocol Mobilizon.Federation.ActivityPub.Types.Ownable do
@@ -68,7 +68,7 @@ end
 
 defimpl Managable, for: Event do
   defdelegate update(entity, attrs, additionnal), to: Events
-  defdelegate delete(entity, actor, local), to: Events
+  defdelegate delete(entity, actor, local, additionnal), to: Events
 end
 
 defimpl Ownable, for: Event do
@@ -78,7 +78,7 @@ end
 
 defimpl Managable, for: Comment do
   defdelegate update(entity, attrs, additionnal), to: Comments
-  defdelegate delete(entity, actor, local), to: Comments
+  defdelegate delete(entity, actor, local, additionnal), to: Comments
 end
 
 defimpl Ownable, for: Comment do
@@ -88,7 +88,7 @@ end
 
 defimpl Managable, for: Post do
   defdelegate update(entity, attrs, additionnal), to: Posts
-  defdelegate delete(entity, actor, local), to: Posts
+  defdelegate delete(entity, actor, local, additionnal), to: Posts
 end
 
 defimpl Ownable, for: Post do
@@ -98,7 +98,7 @@ end
 
 defimpl Managable, for: Actor do
   defdelegate update(entity, attrs, additionnal), to: Actors
-  defdelegate delete(entity, actor, local), to: Actors
+  defdelegate delete(entity, actor, local, additionnal), to: Actors
 end
 
 defimpl Ownable, for: Actor do
@@ -108,7 +108,7 @@ end
 
 defimpl Managable, for: TodoList do
   defdelegate update(entity, attrs, additionnal), to: TodoLists
-  defdelegate delete(entity, actor, local), to: TodoLists
+  defdelegate delete(entity, actor, local, additionnal), to: TodoLists
 end
 
 defimpl Ownable, for: TodoList do
@@ -118,7 +118,7 @@ end
 
 defimpl Managable, for: Todo do
   defdelegate update(entity, attrs, additionnal), to: Todos
-  defdelegate delete(entity, actor, local), to: Todos
+  defdelegate delete(entity, actor, local, additionnal), to: Todos
 end
 
 defimpl Ownable, for: Todo do
@@ -128,7 +128,7 @@ end
 
 defimpl Managable, for: Resource do
   defdelegate update(entity, attrs, additionnal), to: Resources
-  defdelegate delete(entity, actor, local), to: Resources
+  defdelegate delete(entity, actor, local, additionnal), to: Resources
 end
 
 defimpl Ownable, for: Resource do
@@ -138,7 +138,7 @@ end
 
 defimpl Managable, for: Discussion do
   defdelegate update(entity, attrs, additionnal), to: Discussions
-  defdelegate delete(entity, actor, local), to: Discussions
+  defdelegate delete(entity, actor, local, additionnal), to: Discussions
 end
 
 defimpl Ownable, for: Discussion do
@@ -153,5 +153,5 @@ end
 
 defimpl Managable, for: Member do
   defdelegate update(entity, attrs, additionnal), to: Members
-  defdelegate delete(entity, actor, local), to: Members
+  defdelegate delete(entity, actor, local, additionnal), to: Members
 end

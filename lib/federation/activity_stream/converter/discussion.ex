@@ -39,6 +39,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Discussion do
       "actor" => discussion.creator.url,
       "attributedTo" => discussion.actor.url,
       "id" => discussion.url,
+      "publishedAt" => discussion.inserted_at,
       "context" => discussion.url
     }
   end

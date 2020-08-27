@@ -3,6 +3,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
   Handles the member-related GraphQL calls
   """
 
+  import Mobilizon.Users.Guards
   alias Mobilizon.{Actors, Users}
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Federation.ActivityPub
@@ -19,11 +20,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
         %Actor{id: group_id} = group,
         %{page: page, limit: limit, roles: roles},
         %{
-          context: %{current_user: %User{} = user}
+          context: %{current_user: %User{role: user_role} = user}
         } = _resolution
       ) do
     with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)} do
+         {:member, true} <-
+           {:member, Actors.is_member?(actor_id, group_id) or is_moderator(user_role)} do
       roles =
         case roles do
           "" ->
@@ -167,9 +169,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
       {:error, :member_not_found} ->
         true
 
-      err ->
-        require Logger
-        Logger.error(inspect(err))
+      _err ->
         false
     end
   end

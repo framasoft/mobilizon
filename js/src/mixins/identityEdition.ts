@@ -1,7 +1,8 @@
 import { Component, Mixins, Vue } from "vue-property-decorator";
 import { Person } from "@/types/actor";
 
-@Component({})
+// TODO: Refactor into js/src/utils/username.ts
+@Component
 export default class IdentityEditionMixin extends Mixins(Vue) {
   identity: Person = new Person();
 

@@ -94,6 +94,7 @@ defmodule Mobilizon.Discussions do
   @spec get_comment!(integer | String.t()) :: Comment.t()
   def get_comment!(id), do: Repo.get!(Comment, id)
 
+  @spec get_comment_with_preload(String.t() | integer() | nil) :: Comment.t() | nil
   def get_comment_with_preload(nil), do: nil
 
   def get_comment_with_preload(id) do
@@ -214,11 +215,20 @@ defmodule Mobilizon.Discussions do
 
   But actually just empty the fields so that threads are not broken.
   """
-  @spec delete_comment(Comment.t()) :: {:ok, Comment.t()} | {:error, Changeset.t()}
-  def delete_comment(%Comment{} = comment) do
-    comment
-    |> Comment.delete_changeset()
-    |> Repo.update()
+  @spec delete_comment(Comment.t(), Keyword.t()) :: {:ok, Comment.t()} | {:error, Changeset.t()}
+  def delete_comment(%Comment{} = comment, options \\ []) do
+    if Keyword.get(options, :force, false) == false do
+      with {:ok, %Comment{} = comment} <-
+             comment
+             |> Comment.delete_changeset()
+             |> Repo.update(),
+           %Comment{} = comment <- get_comment_with_preload(comment.id) do
+        {:ok, comment}
+      end
+    else
+      comment
+      |> Repo.delete()
+    end
   end
 
   @doc """
@@ -289,8 +299,8 @@ defmodule Mobilizon.Discussions do
     |> Repo.preload(@discussion_preloads)
   end
 
-  @spec find_discussions_for_actor(integer, integer | nil, integer | nil) :: Page.t()
-  def find_discussions_for_actor(actor_id, page \\ nil, limit \\ nil) do
+  @spec find_discussions_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  def find_discussions_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     Discussion
     |> where([c], c.actor_id == ^actor_id)
     |> preload(^@discussion_preloads)
@@ -372,9 +382,13 @@ defmodule Mobilizon.Discussions do
   Delete a discussion.
   """
   @spec delete_discussion(Discussion.t()) :: {:ok, Discussion.t()} | {:error, Changeset.t()}
-  def delete_discussion(%Discussion{} = discussion) do
-    discussion
-    |> Repo.delete()
+  def delete_discussion(%Discussion{id: discussion_id}) do
+    Multi.new()
+    |> Multi.delete_all(:comments, fn _ ->
+      where(Comment, [c], c.discussion_id == ^discussion_id)
+    end)
+    # |> Multi.delete(:discussion, discussion)
+    |> Repo.transaction()
   end
 
   defp public_comments_for_actor_query(actor_id) do
@@ -402,7 +416,4 @@ defmodule Mobilizon.Discussions do
 
   @spec preload_for_comment(Ecto.Query.t()) :: Ecto.Query.t()
   defp preload_for_comment(query), do: preload(query, ^@comment_preloads)
-
-  #  @spec preload_for_discussion(Ecto.Query.t()) :: Ecto.Query.t()
-  #  defp preload_for_discussion(query), do: preload(query, ^@discussion_preloads)
 end

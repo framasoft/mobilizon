@@ -120,6 +120,7 @@ import { DELETE_COMMENT, UPDATE_COMMENT } from "@/graphql/comment";
   apollo: {
     discussion: {
       query: GET_DISCUSSION,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           slug: this.slug,

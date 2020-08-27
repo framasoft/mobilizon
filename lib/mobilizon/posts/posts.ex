@@ -46,13 +46,6 @@ defmodule Mobilizon.Posts do
     |> Page.build_page(page, limit)
   end
 
-  def do_get_posts_for_group(group_id) do
-    Post
-    |> where(attributed_to_id: ^group_id)
-    |> order_by(desc: :inserted_at)
-    |> preload([p], [:author, :attributed_to, :picture])
-  end
-
   @doc """
   Get a post by it's ID
   """
@@ -143,5 +136,12 @@ defmodule Mobilizon.Posts do
   @spec filter_public(Ecto.Query.t()) :: Ecto.Query.t()
   defp filter_public(query) do
     where(query, [p], p.visibility == ^:public and not p.draft)
+  end
+
+  defp do_get_posts_for_group(group_id) do
+    Post
+    |> where(attributed_to_id: ^group_id)
+    |> order_by(desc: :inserted_at)
+    |> preload([p], [:author, :attributed_to, :picture])
   end
 end

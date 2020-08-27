@@ -131,15 +131,18 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     Logger.info("Handle incoming to create a member")
 
     with object_data when is_map(object_data) <-
-           object |> Converter.Member.as_to_model_data(),
-         {:existing_member, nil} <-
-           {:existing_member, Actors.get_member_by_url(object_data.url)},
-         {:ok, %Activity{} = activity, %Member{} = member} <-
-           ActivityPub.join_group(object_data, false) do
-      {:ok, activity, member}
-    else
-      {:existing_member, %Member{} = member} ->
-        {:ok, nil, member}
+           object |> Converter.Member.as_to_model_data() do
+      with {:existing_member, nil} <-
+             {:existing_member, Actors.get_member_by_url(object_data.url)},
+           {:ok, %Activity{} = activity, %Member{} = member} <-
+             ActivityPub.join_group(object_data, false) do
+        {:ok, activity, member}
+      else
+        {:existing_member, %Member{} = member} ->
+          {:ok, %Member{} = member} = Actors.update_member(member, object_data)
+
+          {:ok, nil, member}
+      end
     end
   end
 
@@ -502,7 +505,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     with actor_url <- Utils.get_actor(data),
          {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_actor_by_url(actor_url),
          object_id <- Utils.get_url(object),
-         {:ok, object} <- ActivityPub.fetch_object_from_url(object_id),
+         {:error, "Gone", object} <- ActivityPub.fetch_object_from_url(object_id, force: true),
          {:origin_check, true} <-
            {:origin_check,
             Utils.origin_check_from_id?(actor_url, object_id) ||
@@ -515,7 +518,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         :error
 
       e ->
-        Logger.debug(inspect(e))
+        Logger.error(inspect(e))
         :error
     end
   end

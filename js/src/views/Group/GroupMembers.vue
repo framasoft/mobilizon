@@ -176,7 +176,7 @@ import { IMember, MemberRole } from "../../types/actor/group.model";
   apollo: {
     group: {
       query: GROUP_MEMBERS,
-      // fetchPolicy: "network-only",
+      fetchPolicy: "network-only",
       variables() {
         return {
           name: this.$route.params.preferredUsername,

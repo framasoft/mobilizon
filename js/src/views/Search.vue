@@ -1,9 +1,9 @@
 <template>
   <div class="section container">
     <h1 class="title">{{ $t("Explore") }}</h1>
-    <section v-if="actualTag">
+    <section v-if="tag">
       <i18n path="Events tagged with {tag}">
-        <b-tag slot="tag" type="is-light">{{ $t("#{tag}", { tag: actualTag }) }}</b-tag>
+        <b-tag slot="tag" type="is-light">{{ $t("#{tag}", { tag }) }}</b-tag>
       </i18n>
     </section>
     <section class="hero is-light" v-else>
@@ -49,7 +49,7 @@
         </form>
       </div>
     </section>
-    <section class="events-featured" v-if="!actualTag && searchEvents.initial">
+    <section class="events-featured" v-if="!tag && searchEvents.initial">
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <h2 class="title">{{ $t("Featured events") }}</h2>
       <div v-if="events.length > 0" class="columns is-multiline">
@@ -163,10 +163,11 @@ const tabsName: { events: number; groups: number } = {
     events: FETCH_EVENTS,
     searchEvents: {
       query: SEARCH_EVENTS,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           term: this.search,
-          tags: this.actualTag,
+          tags: this.tag,
           location: this.geohash,
           beginsOn: this.start,
           endsOn: this.end,
@@ -175,11 +176,12 @@ const tabsName: { events: number; groups: number } = {
       },
       debounce: 300,
       skip() {
-        return !this.search && !this.actualTag && !this.geohash && this.end === null;
+        return !this.search && !this.tag && !this.geohash && this.end === null;
       },
     },
     searchGroups: {
       query: SEARCH_GROUPS,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           term: this.search,
@@ -213,7 +215,6 @@ export default class Search extends Vue {
   activeTab: SearchTabs = tabsName[this.$route.query.searchType as "events" | "groups"] || 0;
 
   location: IAddress = new Address();
-  actualTag: string = this.tag;
 
   options: ISearchTimeOption[] = [
     {

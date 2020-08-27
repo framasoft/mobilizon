@@ -40,19 +40,20 @@ defmodule Mobilizon.Federation.ActivityPub.Types.TodoLists do
   end
 
   @impl Entity
-  @spec delete(TodoList.t(), Actor.t(), boolean()) ::
+  @spec delete(TodoList.t(), Actor.t(), boolean(), map()) ::
           {:ok, ActivityStream.t(), Actor.t(), TodoList.t()}
   def delete(
         %TodoList{url: url, actor: %Actor{url: group_url}} = todo_list,
         %Actor{url: actor_url} = actor,
-        _local
+        _local,
+        _additionnal
       ) do
     Logger.debug("Building Delete TodoList activity")
 
     activity_data = %{
       "actor" => actor_url,
       "type" => "Delete",
-      "object" => Convertible.model_to_as(url),
+      "object" => Convertible.model_to_as(todo_list),
       "id" => url <> "/delete",
       "to" => [group_url]
     }

@@ -13,13 +13,12 @@ defmodule Mobilizon.Actors do
   alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
   alias Mobilizon.Addresses.Address
   alias Mobilizon.{Crypto, Events}
+  alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Media.File
   alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users
-
-  alias Mobilizon.Federation.ActivityPub
-
+  alias Mobilizon.Web.Email.Group
   alias Mobilizon.Web.Upload
 
   require Logger
@@ -249,23 +248,19 @@ defmodule Mobilizon.Actors do
   """
   @spec upsert_actor(map, boolean) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def upsert_actor(
-        %{keys: keys, name: name, summary: summary, avatar: avatar, banner: banner} = data,
+        data,
         preload \\ false
       ) do
+    # data =
+    #   data
+    #   |> Map.put(:avatar, transform_media_file(data.avatar))
+    #   |> Map.put(:banner, transform_media_file(data.banner))
+
     insert =
       data
       |> Actor.remote_actor_creation_changeset()
       |> Repo.insert(
-        on_conflict: [
-          set: [
-            keys: keys,
-            name: name,
-            summary: summary,
-            avatar: transform_media_file(avatar),
-            banner: transform_media_file(banner),
-            last_refreshed_at: DateTime.utc_now()
-          ]
-        ],
+        on_conflict: {:replace_all_except, [:id, :url, :preferred_username, :domain]},
         conflict_target: [:url]
       )
 
@@ -282,26 +277,28 @@ defmodule Mobilizon.Actors do
     end
   end
 
-  defp transform_media_file(nil), do: nil
+  # defp transform_media_file(nil), do: nil
 
-  defp transform_media_file(file) do
-    file = for({key, val} <- file, into: %{}, do: {String.to_atom(key), val})
+  # defp transform_media_file(file) do
+  #   file = for({key, val} <- file, into: %{}, do: {String.to_atom(key), val})
 
-    if is_nil(file) do
-      nil
-    else
-      struct(Mobilizon.Media.File, file)
-    end
-  end
+  #   if is_nil(file) do
+  #     nil
+  #   else
+  #     struct(Mobilizon.Media.File, file)
+  #   end
+  # end
 
-  @delete_actor_default_options [reserve_username: true]
+  @delete_actor_default_options [reserve_username: true, suspension: false]
 
   def delete_actor(%Actor{} = actor, options \\ @delete_actor_default_options) do
     delete_actor_options = Keyword.merge(@delete_actor_default_options, options)
 
     Workers.Background.enqueue("delete_actor", %{
       "actor_id" => actor.id,
-      "reserve_username" => Keyword.get(delete_actor_options, :reserve_username, true)
+      "author_id" => Keyword.get(delete_actor_options, :author_id),
+      "reserve_username" => Keyword.get(delete_actor_options, :reserve_username, true),
+      "suspension" => Keyword.get(delete_actor_options, :suspension, false)
     })
   end
 
@@ -309,11 +306,16 @@ defmodule Mobilizon.Actors do
   Deletes an actor.
   """
   @spec perform(atom(), Actor.t()) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
-  def perform(:delete_actor, %Actor{} = actor, options \\ @delete_actor_default_options) do
+  def perform(:delete_actor, %Actor{type: type} = actor, options \\ @delete_actor_default_options) do
     Logger.info("Going to delete actor #{actor.url}")
     actor = Repo.preload(actor, @actor_preloads)
 
     delete_actor_options = Keyword.merge(@delete_actor_default_options, options)
+    Logger.debug(inspect(delete_actor_options))
+
+    if type == :Group do
+      delete_eventual_local_members(actor, delete_actor_options)
+    end
 
     multi =
       Multi.new()
@@ -323,11 +325,38 @@ defmodule Mobilizon.Actors do
       |> Multi.run(:remove_avatar, fn _, _ -> remove_avatar(actor) end)
 
     multi =
+      if type == :Group do
+        multi
+        |> Multi.run(:delete_remote_members, fn _, _ ->
+          delete_group_elements(actor, :remote_members)
+        end)
+        |> Multi.run(:delete_group_organized_events, fn _, _ ->
+          delete_group_elements(actor, :events)
+        end)
+        |> Multi.run(:delete_group_posts, fn _, _ ->
+          delete_group_elements(actor, :posts)
+        end)
+        |> Multi.run(:delete_group_resources, fn _, _ ->
+          delete_group_elements(actor, :resources)
+        end)
+        |> Multi.run(:delete_group_todo_lists, fn _, _ ->
+          delete_group_elements(actor, :todo_lists)
+        end)
+        |> Multi.run(:delete_group_discussions, fn _, _ ->
+          delete_group_elements(actor, :discussions)
+        end)
+      else
+        multi
+      end
+
+    multi =
       if Keyword.get(delete_actor_options, :reserve_username, true) do
         Multi.update(multi, :actor, Actor.delete_changeset(actor))
       else
         Multi.delete(multi, :actor, actor)
       end
+
+    Logger.debug("Going to run the transaction")
 
     case Repo.transaction(multi) do
       {:ok, %{actor: %Actor{} = actor}} ->
@@ -357,7 +386,16 @@ defmodule Mobilizon.Actors do
   @doc """
   Returns the list of actors.
   """
-  @spec list_actors(String.t(), String.t(), boolean, boolean, integer, integer) :: Page.t()
+  @spec list_actors(
+          atom(),
+          String.t(),
+          String.t(),
+          String.t(),
+          boolean,
+          boolean,
+          integer,
+          integer
+        ) :: Page.t()
   def list_actors(
         type \\ :Person,
         preferred_username \\ "",
@@ -380,12 +418,41 @@ defmodule Mobilizon.Actors do
         limit
       ) do
     person_query()
+    |> filter_actors(preferred_username, name, domain, local, suspended)
+    |> Page.build_page(page, limit)
+  end
+
+  def list_actors(
+        :Group,
+        preferred_username,
+        name,
+        domain,
+        local,
+        suspended,
+        page,
+        limit
+      ) do
+    group_query()
+    |> filter_actors(preferred_username, name, domain, local, suspended)
+    |> Page.build_page(page, limit)
+  end
+
+  @spec filter_actors(Ecto.Query.t(), String.t(), String.t(), String.t(), boolean(), boolean()) ::
+          Ecto.Query.t()
+  defp filter_actors(
+         query,
+         preferred_username,
+         name,
+         domain,
+         local,
+         suspended
+       ) do
+    query
     |> filter_suspended(suspended)
     |> filter_preferred_username(preferred_username)
     |> filter_name(name)
     |> filter_domain(domain)
     |> filter_remote(local)
-    |> Page.build_page(page, limit)
   end
 
   defp filter_preferred_username(query, ""), do: query
@@ -406,6 +473,7 @@ defmodule Mobilizon.Actors do
   defp filter_remote(query, true), do: filter_local(query)
   defp filter_remote(query, false), do: filter_external(query)
 
+  @spec filter_suspended(Ecto.Query.t(), boolean()) :: Ecto.Query.t()
   defp filter_suspended(query, true), do: where(query, [a], a.suspended)
   defp filter_suspended(query, false), do: where(query, [a], not a.suspended)
 
@@ -440,6 +508,7 @@ defmodule Mobilizon.Actors do
     |> actor_by_username_or_name_query(term)
     |> actors_for_location(args)
     |> filter_by_types(types)
+    |> filter_suspended(false)
     |> Page.build_page(page, limit)
   end
 
@@ -489,6 +558,13 @@ defmodule Mobilizon.Actors do
   def get_group_by_members_url(members_url) do
     group_query()
     |> where([q], q.members_url == ^members_url)
+    |> Repo.one()
+  end
+
+  @spec get_group_by_followers_url(String.t()) :: Actor.t()
+  def get_group_by_followers_url(followers_url) do
+    group_query()
+    |> where([q], q.followers_url == ^followers_url)
     |> Repo.one()
   end
 
@@ -699,6 +775,28 @@ defmodule Mobilizon.Actors do
   def list_members_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     actor_id
     |> members_for_actor_query()
+    |> Page.build_page(page, limit)
+  end
+
+  @spec list_local_members_for_group(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  def list_local_members_for_group(
+        %Actor{id: group_id, type: :Group} = _group,
+        page \\ nil,
+        limit \\ nil
+      ) do
+    group_id
+    |> group_internal_member_query()
+    |> Page.build_page(page, limit)
+  end
+
+  @spec list_remote_members_for_group(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  def list_remote_members_for_group(
+        %Actor{id: group_id, type: :Group} = _group,
+        page \\ nil,
+        limit \\ nil
+      ) do
+    group_id
+    |> group_external_member_query()
     |> Page.build_page(page, limit)
   end
 
@@ -1283,6 +1381,26 @@ defmodule Mobilizon.Actors do
     |> select([_m, a], a)
   end
 
+  @spec group_external_member_query(integer()) :: Ecto.Query.t()
+  defp group_external_member_query(group_id) do
+    Member
+    |> where([m], m.parent_id == ^group_id)
+    |> join(:inner, [m], a in Actor, on: m.actor_id == a.id)
+    |> where([_m, a], not is_nil(a.domain))
+    |> preload([m], [:parent, :actor])
+    |> select([m, _a], m)
+  end
+
+  @spec group_internal_member_query(integer()) :: Ecto.Query.t()
+  defp group_internal_member_query(group_id) do
+    Member
+    |> where([m], m.parent_id == ^group_id)
+    |> join(:inner, [m], a in Actor, on: m.actor_id == a.id)
+    |> where([_m, a], is_nil(a.domain))
+    |> preload([m], [:parent, :actor])
+    |> select([m, _a], m)
+  end
+
   @spec filter_member_role(Ecto.Query.t(), list(atom()) | atom()) :: Ecto.Query.t()
   def filter_member_role(query, []), do: query
 
@@ -1496,5 +1614,73 @@ defmodule Mobilizon.Actors do
     else
       {:error, res}
     end
+  end
+
+  defp delete_group_elements(%Actor{type: :Group} = actor, type) do
+    Logger.debug("delete_group_elements #{inspect(type)}")
+
+    method =
+      case type do
+        :remote_members -> &list_remote_members_for_group/3
+        :events -> &Events.list_organized_events_for_group/3
+        :posts -> &Mobilizon.Posts.get_posts_for_group/3
+        :resources -> &Mobilizon.Resources.get_resources_for_group/3
+        :todo_lists -> &Mobilizon.Todos.get_todo_lists_for_group/3
+        :discussions -> &Mobilizon.Discussions.find_discussions_for_actor/3
+      end
+
+    res =
+      actor
+      |> accumulate_paginated_elements(method)
+      |> Enum.map(fn element -> ActivityPub.delete(element, actor, false) end)
+
+    if Enum.all?(res, fn {status, _, _} -> status == :ok end) do
+      Logger.debug("Return OK for all #{to_string(type)}")
+      {:ok, res}
+    else
+      Logger.debug("Something failed #{inspect(res)}")
+      {:error, res}
+    end
+  end
+
+  defp accumulate_paginated_elements(
+         %Actor{} = actor,
+         method,
+         elements \\ [],
+         page \\ 1,
+         limit \\ 10
+       ) do
+    Logger.debug("accumulate_paginated_elements")
+    %Page{total: total, elements: new_elements} = page = method.(actor, page, limit)
+    elements = elements ++ new_elements
+    count = length(elements)
+
+    if count < total do
+      accumulate_paginated_elements(actor, method, elements, page + 1, limit)
+    else
+      Logger.debug("Found #{count} group elements to delete")
+      elements
+    end
+  end
+
+  # This one is not in the Multi transaction because it sends activities
+  defp delete_eventual_local_members(%Actor{} = group, options) do
+    suspended? = Keyword.get(options, :suspension, false)
+
+    group
+    |> accumulate_paginated_elements(&list_local_members_for_group/3)
+    |> Enum.map(fn member ->
+      if suspended? do
+        Group.send_group_suspension_notification(member)
+      else
+        with author_id when not is_nil(author_id) <- Keyword.get(options, :author_id),
+             %Actor{} = author <- get_actor(author_id) do
+          Group.send_group_deletion_notification(member, author)
+        end
+      end
+
+      member
+    end)
+    |> Enum.map(fn member -> ActivityPub.delete(member, group, false) end)
   end
 end

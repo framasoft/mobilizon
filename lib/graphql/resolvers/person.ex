@@ -7,7 +7,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Admin
   alias Mobilizon.Events
   alias Mobilizon.Events.Participant
   alias Mobilizon.Storage.Page
@@ -319,64 +318,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
          %Page{} = page <- Events.list_organized_events_for_actor(actor, page, limit) do
       {:ok, page}
     end
-  end
-
-  def suspend_profile(_parent, %{id: id}, %{
-        context: %{current_user: %User{role: role} = user}
-      })
-      when is_moderator(role) do
-    with {:moderator_actor, %Actor{} = moderator_actor} <-
-           {:moderator_actor, Users.get_actor_for_user(user)},
-         %Actor{suspended: false} = actor <- Actors.get_remote_actor_with_preload(id),
-         {:ok, _} <- Actors.delete_actor(actor),
-         {:ok, _} <- Admin.log_action(moderator_actor, "suspend", actor) do
-      {:ok, actor}
-    else
-      {:moderator_actor, nil} ->
-        {:error, "No actor found for the moderator user"}
-
-      %Actor{suspended: true} ->
-        {:error, "Actor already suspended"}
-
-      nil ->
-        {:error, "No remote profile found with this ID"}
-
-      {:error, _} ->
-        {:error, "Error while performing background task"}
-    end
-  end
-
-  def suspend_profile(_parent, _args, _resolution) do
-    {:error, "Only moderators and administrators can suspend a profile"}
-  end
-
-  def unsuspend_profile(_parent, %{id: id}, %{
-        context: %{current_user: %User{role: role} = user}
-      })
-      when is_moderator(role) do
-    with {:moderator_actor, %Actor{} = moderator_actor} <-
-           {:moderator_actor, Users.get_actor_for_user(user)},
-         %Actor{preferred_username: preferred_username, domain: domain} = actor <-
-           Actors.get_remote_actor_with_preload(id, true),
-         {:ok, _} <- Actors.update_actor(actor, %{suspended: false}),
-         {:ok, %Actor{} = actor} <-
-           ActivityPub.make_actor_from_nickname("#{preferred_username}@#{domain}"),
-         {:ok, _} <- Admin.log_action(moderator_actor, "unsuspend", actor) do
-      {:ok, actor}
-    else
-      {:moderator_actor, nil} ->
-        {:error, "No actor found for the moderator user"}
-
-      nil ->
-        {:error, "No remote profile found with this ID"}
-
-      {:error, _} ->
-        {:error, "Error while performing background task"}
-    end
-  end
-
-  def unsuspend_profile(_parent, _args, _resolution) do
-    {:error, "Only moderators and administrators can unsuspend a profile"}
   end
 
   # We check that the actor is not the last administrator/creator of a group

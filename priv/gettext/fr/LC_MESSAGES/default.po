@@ -10,16 +10,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-08-18 12:37+0000\n"
+"PO-Revision-Date: 2020-08-27 12:12+0200\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
-"Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/"
-"backend/fr/>\n"
+"Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.1\n"
+"X-Generator: Poedit 2.3\n"
 
 #: lib/web/templates/email/password_reset.html.eex:48
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
@@ -334,7 +333,7 @@ msgstr "Pour accepter cette invitation, rendez-vous dans vos groupes."
 msgid "View the event on: %{link}"
 msgstr "Voir l'événement mis à jour sur : %{link}"
 
-#: lib/web/email/group.ex:28
+#: lib/web/email/group.ex:32
 msgid "You have been invited by %{inviter} to join group %{group}"
 msgstr "Vous avez été invité par %{inviter} à rejoindre le groupe %{group}"
 
@@ -817,12 +816,8 @@ msgid "In the meantime, please consider this software as not (yet) fully functio
 msgstr "D'ici là, veuillez considérer que le logiciel n'est pas (encore) fini. Retrouvez plus d'informations %{a_start}sur le blog de Framasoft%{a_end}."
 
 #: lib/web/templates/email/email.text.eex:10
-msgid ""
-"In the meantime, please consider this software as not (yet) fully "
-"functional. Read more on the Framasoft blog:"
-msgstr ""
-"D'ici là, veuillez considérer que le logiciel n'est pas (encore) fini. "
-"Retrouvez plus d'informations sur le blog de Framasoft :"
+msgid "In the meantime, please consider this software as not (yet) fully functional. Read more on the Framasoft blog:"
+msgstr "D'ici là, veuillez considérer que le logiciel n'est pas (encore) fini. Retrouvez plus d'informations sur le blog de Framasoft :"
 
 #: lib/web/templates/email/email.html.eex:147 lib/web/templates/email/email.text.eex:16
 msgid "Learn more about Mobilizon here!"
@@ -952,19 +947,19 @@ msgstr "<b>Veuillez ne pas l'utiliser pour un cas réel.</b>"
 msgid "Mobilizon is still under development, we will add new features along the updates, until the release of <b>version 1 of the software in the fall of 2020</b>."
 msgstr "Mobilizon est en cours de développement, nous y ajouterons de nouvelles fonctionnalités lors de mises à jour régulières, jusqu'à la publication de <b>la version 1 du logiciel à l'automne 2020</b>."
 
-#: lib/web/templates/email/group_removal.html.eex:45 lib/web/templates/email/group_removal.text.eex:5
+#: lib/web/templates/email/group_member_removal.html.eex:45 lib/web/templates/email/group_member_removal.text.eex:5
 msgid "If you feel this is an error, you may contact the group's administrators so that they can add you back."
 msgstr "Si vous pensez qu'il s'agit d'une erreur, vous pouvez contacter les administrateurs du groupe afin qu'ils vous réintègrent."
 
-#: lib/web/templates/email/group_removal.html.eex:13 lib/web/templates/email/group_removal.text.eex:1
+#: lib/web/templates/email/group_member_removal.html.eex:13 lib/web/templates/email/group_member_removal.text.eex:1
 msgid "So long, and thanks for the fish!"
 msgstr "Salut, et encore merci pour le poisson !"
 
-#: lib/web/email/group.ex:58
+#: lib/web/email/group.ex:62
 msgid "You have been removed from group %{group}"
 msgstr "Vous avez été enlevé du groupe %{group}"
 
-#: lib/web/templates/email/group_removal.text.eex:3
+#: lib/web/templates/email/group_member_removal.text.eex:3
 msgid "You have been removed from group %{group}. You will not be able to access this group's private content anymore."
 msgstr "Vous avez été enlevé du groupe %{group}. Vous ne serez plus en mesure d'accéder au contenu privé du groupe."
 
@@ -972,6 +967,38 @@ msgstr "Vous avez été enlevé du groupe %{group}. Vous ne serez plus en mesure
 msgid "<b>%{inviter}</b> just invited you to join their group %{link_start}<b>%{group}</b>%{link_end}"
 msgstr "<b>%{inviter}</b> vient de vous inviter à rejoindre son groupe %{link_start}<b>%{group}</b>%{link_end}"
 
-#: lib/web/templates/email/group_removal.html.eex:38
+#: lib/web/templates/email/group_member_removal.html.eex:38
 msgid "You have been removed from group %{link_start}<b>%{group}</b>%{link_end}. You will not be able to access this group's private content anymore."
 msgstr "Vous avez été enlevé du groupe %{link_start}<b>%{group}</b>%{link_end}. Vous ne serez plus en mesure d'accéder au contenu privé du groupe."
+
+#: lib/web/templates/email/group_suspension.html.eex:54 lib/web/templates/email/group_suspension.text.eex:7
+msgid "As this group was located on another instance, it will continue to work for other instances than this one."
+msgstr "Comme ce groupe était originaire d'une autre instance, il continuera à fonctionner pour d'autres instances que celle-ci."
+
+#: lib/web/templates/email/group_suspension.html.eex:46 lib/web/templates/email/group_suspension.text.eex:5
+msgid "As this group was located on this instance, all of it's data has been irretrievably deleted."
+msgstr "Comme ce groupe était originaire de cette instance, toutes ses données ont été irrémédiablement détruites."
+
+#: lib/web/templates/email/group_deletion.html.eex:38 lib/web/templates/email/group_deletion.text.eex:3
+msgid "The administrator %{author} deleted group %{group}. All of the group's events, discussions, posts and todos have been deleted."
+msgstr "L'administrateur·ice %{author} a supprimé le groupe %{group}. Tous les événements, discussions, billets et todos du groupe ont été supprimés."
+
+#: lib/web/templates/email/group_suspension.html.eex:13 lib/web/templates/email/group_suspension.text.eex:1
+msgid "The group %{group} has been suspended on %{instance}!"
+msgstr "Le groupe %{group} a été suspendu sur %{instance} !"
+
+#: lib/web/templates/email/group_deletion.html.eex:13 lib/web/templates/email/group_deletion.text.eex:1
+msgid "The group %{group} was deleted on %{instance}!"
+msgstr "Le groupe %{group} a été supprimé sur %{instance} !"
+
+#: lib/web/templates/email/group_suspension.html.eex:38 lib/web/templates/email/group_suspension.text.eex:3
+msgid "Your instance's moderation team has decided to suspend %{group_name} (%{group_address}). You are no longer a member of this group."
+msgstr "L'équipe de modération de votre instance a décidé de suspendre %{group_name} (%{group_address}). Vous n'êtes désormais plus membre de ce groupe."
+
+#: lib/web/email/group.ex:135
+msgid "The group %{group} has been deleted on %{instance}"
+msgstr "Le groupe %{group} a été supprimé sur %{instance}"
+
+#: lib/web/email/group.ex:96
+msgid "The group %{group} has been suspended on %{instance}"
+msgstr "Le groupe %{group} a été suspendu sur %{instance}"

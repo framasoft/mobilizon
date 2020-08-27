@@ -3,6 +3,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
   Handles the posts-related GraphQL calls
   """
 
+  import Mobilizon.Users.Guards
   alias Mobilizon.{Actors, Posts, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
@@ -24,12 +25,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
         %{page: page, limit: limit} = args,
         %{
           context: %{
-            current_user: %User{} = user
+            current_user: %User{role: user_role} = user
           }
         } = _resolution
       ) do
     with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+         {:member, true} <-
+           {:member, Actors.is_member?(actor_id, group_id) or is_moderator(user_role)},
          %Page{} = page <- Posts.get_posts_for_group(group, page, limit) do
       {:ok, page}
     else

@@ -143,7 +143,9 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     do_maybe_relay_if_group_activity(object, attributed_to_url)
   end
 
-  def maybe_relay_if_group_activity(_, _), do: :ok
+  def maybe_relay_if_group_activity(_activity, _attributedTo) do
+    :ok
+  end
 
   defp do_maybe_relay_if_group_activity(object, attributed_to) when is_list(attributed_to),
     do: do_maybe_relay_if_group_activity(object, hd(attributed_to))

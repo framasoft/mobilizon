@@ -130,9 +130,20 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
   object :group_queries do
     @desc "Get all groups"
     field :groups, :paginated_group_list do
+      arg(:preferred_username, :string, default_value: "")
+      arg(:name, :string, default_value: "")
+      arg(:domain, :string, default_value: "")
+      arg(:local, :boolean, default_value: true)
+      arg(:suspended, :boolean, default_value: false)
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
       resolve(&Group.list_groups/3)
+    end
+
+    @desc "Get a group by its ID"
+    field :get_group, :group do
+      arg(:id, non_null(:id))
+      resolve(&Group.get_group/3)
     end
 
     @desc "Get a group by its preferred username"
@@ -199,7 +210,6 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     @desc "Delete a group"
     field :delete_group, :deleted_object do
       arg(:group_id, non_null(:id))
-      arg(:actor_id, non_null(:id))
 
       resolve(&Group.delete_group/3)
     end

@@ -5,6 +5,7 @@ defmodule Mobilizon.GraphQL.Schema.ActorInterface do
   use Absinthe.Schema.Notation
 
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.GraphQL.Resolvers.Actor, as: ActorResolver
   alias Mobilizon.GraphQL.Schema
 
   import_types(Schema.Actors.FollowerType)
@@ -58,5 +59,22 @@ defmodule Mobilizon.GraphQL.Schema.ActorInterface do
     value(:Group, description: "An ActivityPub Group")
     value(:Organization, description: "An ActivityPub Organization")
     value(:Service, description: "An ActivityPub Service")
+  end
+
+  object :actor_mutations do
+    field :suspend_profile, :deleted_object do
+      arg(:id, non_null(:id), description: "The profile ID to suspend")
+      resolve(&ActorResolver.suspend_profile/3)
+    end
+
+    field :unsuspend_profile, :actor do
+      arg(:id, non_null(:id), description: "The profile ID to unsuspend")
+      resolve(&ActorResolver.unsuspend_profile/3)
+    end
+
+    field :refresh_profile, :actor do
+      arg(:id, non_null(:id))
+      resolve(&ActorResolver.refresh_profile/3)
+    end
   end
 end

@@ -20,8 +20,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
         }
       ) do
     with {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)} do
-      {:ok, Discussions.find_discussions_for_actor(group_id)}
+         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+         {:ok, %Actor{type: :Group} = group} <- Actors.get_group_by_actor_id(group_id) do
+      {:ok, Discussions.find_discussions_for_actor(group)}
     else
       {:member, false} ->
         {:ok, %Page{total: 0, elements: []}}
@@ -174,6 +175,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
          {:ok, _activity, %Discussion{} = discussion} <-
            ActivityPub.delete(discussion, actor) do
       {:ok, discussion}
+    else
+      {:no_discussion, _} ->
+        {:error, "No discussion with ID #{discussion_id}"}
+
+      {:member, _} ->
+        {:error, "You are not a member of the group the discussion belongs to"}
     end
   end
 end

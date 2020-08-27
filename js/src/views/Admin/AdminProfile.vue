@@ -139,6 +139,7 @@ const EVENTS_PER_PAGE = 10;
   apollo: {
     person: {
       query: GET_PERSON,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           actorId: this.id,

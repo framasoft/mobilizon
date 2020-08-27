@@ -27,6 +27,12 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
          {:ok, %Tesla.Env{body: data, status: code}} when code in 200..299 <-
            ActivityPubClient.get(client, url) do
       {:ok, data}
+    else
+      {:ok, %Tesla.Env{status: 410}} ->
+        {:error, "Gone"}
+
+      {:ok, %Tesla.Env{} = res} ->
+        {:error, res}
     end
   end
 
@@ -47,6 +53,9 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
       {:origin_check, false} ->
         Logger.warn("Object origin check failed")
         {:error, "Object origin check failed"}
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 
@@ -67,6 +76,9 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
       {:origin_check, false} ->
         Logger.warn("Object origin check failed")
         {:error, "Object origin check failed"}
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 end

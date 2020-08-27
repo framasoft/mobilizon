@@ -91,7 +91,10 @@
           :value="currentAddress"
         />
 
-        <b-button native-type="submit" type="is-primary">{{ $t("Update group") }}</b-button>
+        <div class="buttons">
+          <b-button native-type="submit" type="is-primary">{{ $t("Update group") }}</b-button>
+          <b-button @click="confirmDeleteGroup" type="is-danger">{{ $t("Delete group") }}</b-button>
+        </div>
       </form>
     </section>
   </div>
@@ -100,7 +103,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import RouteName from "../../router/name";
-import { FETCH_GROUP, UPDATE_GROUP } from "../../graphql/group";
+import { FETCH_GROUP, UPDATE_GROUP, DELETE_GROUP } from "../../graphql/group";
 import { IGroup, usernameWithDomain } from "../../types/actor";
 import { Address, IAddress } from "../../types/address.model";
 import { IMember, Group } from "../../types/actor/group.model";
@@ -111,6 +114,7 @@ import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.
   apollo: {
     group: {
       query: FETCH_GROUP,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           name: this.$route.params.preferredUsername,
@@ -148,13 +152,39 @@ export default class GroupSettings extends Vue {
     // eslint-disable-next-line
     // @ts-ignore
     delete variables.__typename;
-    // eslint-disable-next-line
-    // @ts-ignore
-    delete variables.physicalAddress.__typename;
+    if (variables.physicalAddress) {
+      // eslint-disable-next-line
+      // @ts-ignore
+      delete variables.physicalAddress.__typename;
+    }
     await this.$apollo.mutate<{ updateGroup: IGroup }>({
       mutation: UPDATE_GROUP,
       variables,
     });
+  }
+
+  confirmDeleteGroup() {
+    this.$buefy.dialog.confirm({
+      title: this.$t("Delete group") as string,
+      message: this.$t(
+        "Are you sure you want to <b>completely delete</b> this group? All members - including remote ones - will be notified and removed from the group, and <b>all of the group data (events, posts, discussions, todos…) will be irretrievably destroyed</b>."
+      ) as string,
+      confirmText: this.$t("Delete group") as string,
+      cancelText: this.$t("Cancel") as string,
+      type: "is-danger",
+      hasIcon: true,
+      onConfirm: () => this.deleteGroup(),
+    });
+  }
+
+  async deleteGroup() {
+    await this.$apollo.mutate<{ deleteGroup: IGroup }>({
+      mutation: DELETE_GROUP,
+      variables: {
+        groupId: this.group.id,
+      },
+    });
+    return this.$router.push({ name: RouteName.MY_GROUPS });
   }
 
   async copyURL() {

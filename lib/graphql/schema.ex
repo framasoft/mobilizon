@@ -175,6 +175,7 @@ defmodule Mobilizon.GraphQL.Schema do
     import_fields(:discussion_mutations)
     import_fields(:resource_mutations)
     import_fields(:post_mutations)
+    import_fields(:actor_mutations)
   end
 
   @desc """

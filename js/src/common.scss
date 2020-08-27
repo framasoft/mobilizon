@@ -1,24 +1,14 @@
+@import "variables.scss";
+
 a {
+  color: $violet-2;
+}
+
+a.out,
+.content a {
   text-decoration: underline;
   text-decoration-color: #ed8d07;
   text-decoration-thickness: 2px;
-
-  &.navbar-item,
-  &.dropdown-item,
-  &.card,
-  &.button,
-  &[href="#comments"],
-  &.router-link-active,
-  &.comment-link,
-  &.pagination-link,
-  &.datepicker-cell,
-  &.list-item {
-    text-decoration: none;
-  }
-}
-
-nav.breadcrumb ul li a {
-  text-decoration: none;
 }
 
 input.input {

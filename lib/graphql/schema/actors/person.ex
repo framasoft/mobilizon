@@ -188,16 +188,6 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
 
       resolve(handle_errors(&Person.register_person/3))
     end
-
-    field :suspend_profile, :deleted_object do
-      arg(:id, :id, description: "The profile ID to suspend")
-      resolve(&Person.suspend_profile/3)
-    end
-
-    field :unsuspend_profile, :person do
-      arg(:id, :id, description: "The profile ID to unsuspend")
-      resolve(&Person.unsuspend_profile/3)
-    end
   end
 
   object :person_subscriptions do

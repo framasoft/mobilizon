@@ -40,6 +40,7 @@ import RouteName from "../../router/name";
   apollo: {
     todo: {
       query: GET_TODO,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           id: this.$route.params.todoId,

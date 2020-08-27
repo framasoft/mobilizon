@@ -232,6 +232,7 @@ import RouteName from "../../router/name";
   apollo: {
     report: {
       query: REPORT,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           id: this.reportId,

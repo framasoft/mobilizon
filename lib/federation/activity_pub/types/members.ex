@@ -2,6 +2,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Members do
   @moduledoc false
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Member}
+  alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityStream.Convertible
   require Logger
   import Mobilizon.Federation.ActivityPub.Utils, only: [make_update_data: 2]
@@ -38,8 +39,16 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Members do
     end
   end
 
-  # Delete member is not used, see ActivityPub.leave/4 and ActivityPub.remove/5 instead
-  def delete(_, _, _), do: :error
+  # Used only when a group is suspended
+  def delete(
+        %Member{parent: %Actor{} = group, actor: %Actor{} = actor} = _member,
+        %Actor{},
+        local,
+        _additionnal
+      ) do
+    Logger.debug("Deleting a member")
+    ActivityPub.leave(group, actor, local, %{force_member_removal: true})
+  end
 
   def actor(%Member{actor_id: actor_id}),
     do: Actors.get_actor(actor_id)

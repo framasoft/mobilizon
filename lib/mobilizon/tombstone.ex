@@ -7,6 +7,7 @@ defmodule Mobilizon.Tombstone do
   import Ecto.Changeset
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Storage.Repo
+  require Ecto.Query
 
   @type t :: %__MODULE__{
           uri: String.t(),
@@ -41,5 +42,18 @@ defmodule Mobilizon.Tombstone do
   @spec find_tombstone(String.t()) :: Ecto.Schema.t() | nil
   def find_tombstone(uri) do
     Repo.get_by(__MODULE__, uri: uri)
+  end
+
+  @spec delete_actor_tombstones(String.t() | integer()) :: {integer(), nil}
+  def delete_actor_tombstones(actorId) do
+    __MODULE__
+    |> Ecto.Query.where(actor_id: ^actorId)
+    |> Repo.delete_all()
+  end
+
+  def delete_uri_tombstone(uri) do
+    __MODULE__
+    |> Ecto.Query.where(uri: ^uri)
+    |> Repo.delete_all()
   end
 end

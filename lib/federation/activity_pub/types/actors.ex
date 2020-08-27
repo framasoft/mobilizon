@@ -38,29 +38,55 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
     end
   end
 
+  @public_ap "https://www.w3.org/ns/activitystreams#Public"
+
   @impl Entity
   def delete(
-        %Actor{followers_url: followers_url, url: target_actor_url} = target_actor,
-        %Actor{url: actor_url} = actor,
-        local
+        %Actor{
+          followers_url: followers_url,
+          members_url: members_url,
+          url: target_actor_url,
+          type: type,
+          domain: domain
+        } = target_actor,
+        %Actor{url: actor_url, id: author_id} = actor,
+        _local,
+        additionnal
       ) do
+    to = [@public_ap, followers_url]
+
+    {to, cc} =
+      if type == :Group do
+        {to ++ [members_url], [target_actor_url]}
+      else
+        {to, []}
+      end
+
     activity_data = %{
       "type" => "Delete",
       "actor" => actor_url,
       "object" => Convertible.model_to_as(target_actor),
       "id" => target_actor_url <> "/delete",
-      "to" => [followers_url, "https://www.w3.org/ns/activitystreams#Public"]
+      "to" => to,
+      "cc" => cc
     }
 
-    # We completely delete the actor if activity is remote
-    with {:ok, %Oban.Job{}} <- Actors.delete_actor(target_actor, reserve_username: local) do
+    suspension = Map.get(additionnal, :suspension, false)
+
+    with {:ok, %Oban.Job{}} <-
+           Actors.delete_actor(target_actor,
+             # We completely delete the actor if the actor is remote
+             reserve_username: is_nil(domain),
+             suspension: suspension,
+             author_id: author_id
+           ) do
       {:ok, activity_data, actor, target_actor}
     end
   end
 
   def actor(%Actor{} = actor), do: actor
 
-  def group_actor(%Actor{} = _actor), do: nil
+  def group_actor(%Actor{} = actor), do: actor
 
   defp prepare_args_for_actor(args) do
     with preferred_username <-

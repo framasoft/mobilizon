@@ -367,7 +367,13 @@ defmodule Mobilizon.ActorsTest do
 
       assert_enqueued(
         worker: Workers.Background,
-        args: %{"actor_id" => actor.id, "op" => "delete_actor", "reserve_username" => true}
+        args: %{
+          "actor_id" => actor.id,
+          "op" => "delete_actor",
+          "author_id" => nil,
+          "suspension" => false,
+          "reserve_username" => true
+        }
       )
 
       assert %{success: 1, failure: 0} == Oban.drain_queue(queue: :background)

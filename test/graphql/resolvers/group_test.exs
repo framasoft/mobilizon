@@ -1,5 +1,6 @@
 defmodule Mobilizon.Web.Resolvers.GroupTest do
   use Mobilizon.Web.ConnCase
+  use Oban.Testing, repo: Mobilizon.Storage.Repo
 
   import Mobilizon.Factory
 
@@ -87,13 +88,8 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
   end
 
   describe "list groups" do
-    test "list_groups/3 returns all public groups", %{conn: conn} do
-      group = insert(:group, visibility: :public)
-      insert(:group, visibility: :unlisted)
-      insert(:group, visibility: :private)
-
-      query = """
-      {
+    @list_groups_query """
+    {
         groups {
             elements {
               preferredUsername,
@@ -101,14 +97,49 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
             total
         }
       }
-      """
+    """
 
-      res = AbsintheHelpers.graphql_query(conn, query: query)
+    test "list_groups/3 doesn't returns all groups if not authenticated", %{conn: conn} do
+      insert(:group, visibility: :public)
+      insert(:group, visibility: :unlisted)
+      insert(:group, visibility: :private)
 
-      assert res["data"]["groups"]["total"] == 1
+      res = AbsintheHelpers.graphql_query(conn, query: @list_groups_query)
 
-      assert hd(res["data"]["groups"]["elements"])["preferredUsername"] ==
-               group.preferred_username
+      assert hd(res["errors"])["message"] == "You may not list groups unless moderator."
+    end
+
+    test "list_groups/3 doesn't return all groups if not a moderator", %{conn: conn} do
+      insert(:group, visibility: :public)
+      insert(:group, visibility: :unlisted)
+      insert(:group, visibility: :private)
+      user = insert(:user)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(query: @list_groups_query)
+
+      assert hd(res["errors"])["message"] == "You may not list groups unless moderator."
+    end
+
+    test "list_groups/3 returns all groups if a moderator", %{conn: conn} do
+      group_1 = insert(:group, visibility: :public)
+      group_2 = insert(:group, visibility: :unlisted)
+      group_3 = insert(:group, visibility: :private)
+      user = insert(:user, role: :moderator)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(query: @list_groups_query)
+
+      assert res["data"]["groups"]["total"] == 3
+
+      assert res["data"]["groups"]["elements"]
+             |> Enum.map(& &1["preferredUsername"])
+             |> MapSet.new() ==
+               [group_1, group_2, group_3] |> Enum.map(& &1.preferred_username) |> MapSet.new()
     end
   end
 
@@ -209,57 +240,70 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
   end
 
   describe "delete a group" do
+    @delete_group_mutation """
+    mutation DeleteGroup($groupId: ID!) {
+      deleteGroup(
+        groupId: $groupId
+      ) {
+          id
+        }
+      }
+    """
+
     test "delete_group/3 deletes a group", %{conn: conn, user: user, actor: actor} do
       group = insert(:group)
       insert(:member, parent: group, actor: actor, role: :administrator)
 
-      mutation = """
-          mutation {
-            deleteGroup(
-              actor_id: #{actor.id},
-              group_id: #{group.id}
-            ) {
-                id
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @delete_group_mutation,
+          variables: %{groupId: group.id}
+        )
 
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["deleteGroup"]["id"] == to_string(group.id)
+      assert res["errors"] == nil
+      assert res["data"]["deleteGroup"]["id"] == to_string(group.id)
 
-      res =
-        conn
-        |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+      assert_enqueued(
+        worker: Mobilizon.Service.Workers.Background,
+        args: %{
+          "actor_id" => group.id,
+          "author_id" => actor.id,
+          "op" => "delete_actor",
+          "reserve_username" => true,
+          "suspension" => false
+        }
+      )
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "not found"
+      # Can't be used right now, probably because we try to run a transaction in a Oban Job while using Ecto Sandbox
+
+      # assert %{success: 1, failure: 0} == Oban.drain_queue(queue: :background)
+
+      # res =
+      #   conn
+      #   |> auth_conn(user)
+      #   |> AbsintheHelpers.graphql_query(
+      #     query: @delete_group_mutation,
+      #     variables: %{groupId: group.id}
+      #   )
+
+      # assert res["data"] == "tt"
+      # assert hd(json_response(res, 200)["errors"])["message"] =~ "not found"
     end
 
     test "delete_group/3 should check user authentication", %{conn: conn, actor: actor} do
       group = insert(:group)
       insert(:member, parent: group, actor: actor, role: :member)
 
-      mutation = """
-          mutation {
-            deleteGroup(
-              actor_id: #{actor.id},
-              group_id: #{group.id}
-            ) {
-                id
-              }
-            }
-      """
-
       res =
         conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @delete_group_mutation,
+          variables: %{groupId: group.id}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "logged-in"
+      assert hd(res["errors"])["message"] =~ "logged-in"
     end
 
     test "delete_group/3 should check the actor is owned by the user", %{
@@ -270,49 +314,33 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
       group = insert(:group)
       insert(:member, parent: group, actor: actor, role: :member)
 
-      mutation = """
-          mutation {
-            deleteGroup(
-              actor_id: 159,
-              group_id: #{group.id}
-            ) {
-                id
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @delete_group_mutation,
+          variables: %{groupId: group.id}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "not owned"
+      assert hd(res["errors"])["message"] ==
+               "Actor id is not an administrator of the selected group"
     end
 
     test "delete_group/3 should check the actor is a member of this group", %{
       conn: conn,
-      user: user,
-      actor: actor
+      user: user
     } do
       group = insert(:group)
-
-      mutation = """
-          mutation {
-            deleteGroup(
-              actor_id: #{actor.id},
-              group_id: #{group.id}
-            ) {
-                id
-              }
-            }
-      """
 
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @delete_group_mutation,
+          variables: %{groupId: group.id}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "not a member"
+      assert hd(res["errors"])["message"] =~ "not a member"
     end
 
     test "delete_group/3 should check the actor is an administrator of this group", %{
@@ -323,23 +351,15 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
       group = insert(:group)
       insert(:member, parent: group, actor: actor, role: :member)
 
-      mutation = """
-          mutation {
-            deleteGroup(
-              actor_id: #{actor.id},
-              group_id: #{group.id}
-            ) {
-                id
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @delete_group_mutation,
+          variables: %{groupId: group.id}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "not an administrator"
+      assert hd(res["errors"])["message"] =~ "not an administrator"
     end
   end
 end

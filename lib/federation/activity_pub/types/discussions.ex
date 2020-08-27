@@ -5,9 +5,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Federation.ActivityPub.Audience
-  alias Mobilizon.Federation.ActivityPub.Types.{Comments, Entity}
+  alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Convertible
-  alias Mobilizon.Storage.Repo
   alias Mobilizon.Web.Endpoint
   import Mobilizon.Federation.ActivityPub.Utils, only: [make_create_data: 2, make_update_data: 2]
   require Logger
@@ -65,28 +64,14 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
   end
 
   @impl Entity
-  @spec delete(Discussion.t(), Actor.t(), boolean) :: {:ok, Discussion.t()}
-  def delete(%Discussion{actor: group, url: url} = discussion, %Actor{} = actor, _local) do
-    stream =
-      discussion.comments
-      |> Enum.map(
-        &Repo.preload(&1, [
-          :actor,
-          :attributed_to,
-          :in_reply_to_comment,
-          :mentions,
-          :origin_comment,
-          :discussion,
-          :tags,
-          :replies
-        ])
-      )
-      |> Enum.map(&Map.put(&1, :event, nil))
-      |> Task.async_stream(fn comment -> Comments.delete(comment, actor, nil) end)
-
-    Stream.run(stream)
-
-    with {:ok, %Discussion{}} <- Discussions.delete_discussion(discussion) do
+  @spec delete(Discussion.t(), Actor.t(), boolean, map()) :: {:ok, Discussion.t()}
+  def delete(
+        %Discussion{actor: group, url: url} = discussion,
+        %Actor{} = actor,
+        _local,
+        _additionnal
+      ) do
+    with {:ok, _} <- Discussions.delete_discussion(discussion) do
       # This is just fake
       activity_data = %{
         "type" => "Delete",
