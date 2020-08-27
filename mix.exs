@@ -134,6 +134,7 @@ defmodule Mobilizon.Mixfile do
       {:tesla, "~> 1.3.0"},
       {:sitemapper, "~> 0.4.0"},
       {:xml_builder, "~> 2.1.1", override: true},
+      {:remote_ip, "~> 0.2.0"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},

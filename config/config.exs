@@ -48,7 +48,8 @@ config :mobilizon, Mobilizon.Web.Endpoint,
   secret_key_base: "1yOazsoE0Wqu4kXk3uC5gu3jDbShOimTCzyFL3OjCdBmOXMyHX87Qmf3+Tu9s0iM",
   render_errors: [view: Mobilizon.Web.ErrorView, accepts: ~w(html json)],
   pubsub_server: Mobilizon.PubSub,
-  cache_static_manifest: "priv/static/manifest.json"
+  cache_static_manifest: "priv/static/manifest.json",
+  has_reverse_proxy: true
 
 # Upload configuration
 config :mobilizon, Mobilizon.Web.Upload,

@@ -12,8 +12,14 @@ defmodule Mobilizon.Web.Auth.Context do
     opts
   end
 
-  def call(conn, _) do
-    context = %{ip: to_string(:inet_parse.ntoa(conn.remote_ip))}
+  def call(%{assigns: %{ip: _}} = conn, _opts), do: conn
+
+  def call(conn, _opts) do
+    set_user_and_ip_in_context(conn)
+  end
+
+  def set_user_and_ip_in_context(conn) do
+    context = %{ip: conn.remote_ip |> :inet.ntoa() |> to_string()}
 
     context =
       case Guardian.Plug.current_resource(conn) do
