@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Node } from "tiptap";
 import { UPLOAD_PICTURE } from "@/graphql/upload";
 import apolloProvider from "@/vue-apollo";
