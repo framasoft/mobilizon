@@ -66,11 +66,7 @@
           "
         >
           <div class="level-left">
-            <span
-              style="cursor: pointer;"
-              class="level-item"
-              @click="createReplyToComment(comment)"
-            >
+            <span style="cursor: pointer" class="level-item" @click="createReplyToComment(comment)">
               <span class="icon is-small">
                 <b-icon icon="reply" />
               </span>

@@ -19,6 +19,12 @@ defmodule Mobilizon.Web.Endpoint do
     longpoll: false
   )
 
+  endpoint_config = Application.get_env(:mobilizon, Mobilizon.Web.Endpoint)
+
+  if Keyword.get(endpoint_config, :has_reverse_proxy, false) == true do
+    plug(RemoteIp)
+  end
+
   plug(Mobilizon.Web.Plugs.UploadedMedia)
 
   # Serve at "/" the static files from "priv/static" directory.

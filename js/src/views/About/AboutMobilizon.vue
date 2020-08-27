@@ -127,7 +127,7 @@
             <img
               src="/img/about/software-to-the-people-mobilizon.png"
               width="300"
-              :alt="('Software to the people')"
+              :alt="'Software to the people'"
             />
           </div>
         </div>

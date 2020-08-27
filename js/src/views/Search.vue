@@ -34,15 +34,16 @@
                   v-for="(radiusOption, index) in radiusOptions"
                   :key="index"
                   :value="radiusOption"
-                  >{{ radiusString(radiusOption) }}</option
                 >
+                  {{ radiusString(radiusOption) }}
+                </option>
               </b-select>
             </b-field>
             <b-field :label="$t('Date')" label-for="date">
               <b-select v-model="when" id="date" :disabled="activeTab !== 0">
-                <option v-for="(option, index) in options" :key="index" :value="option">{{
-                  option.label
-                }}</option>
+                <option v-for="(option, index) in options" :key="index" :value="option">
+                  {{ option.label }}
+                </option>
               </b-select>
             </b-field>
           </b-field>

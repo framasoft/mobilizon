@@ -116,8 +116,8 @@ defmodule Mobilizon.Mixfile do
       {:ex_cldr_dates_times, "~> 2.2"},
       {:ex_optimizer, "~> 0.1"},
       {:progress_bar, "~> 2.0"},
-      {:oban, "~> 2.0.0"},
-      {:floki, "~> 0.27.0"},
+      {:oban, "~> 2.1.0"},
+      {:floki, "~> 0.28.0"},
       {:ip_reserved, "~> 0.1.0"},
       {:fast_sanitize, "~> 0.1"},
       {:ueberauth, "~> 0.6"},
@@ -134,6 +134,7 @@ defmodule Mobilizon.Mixfile do
       {:tesla, "~> 1.3.0"},
       {:sitemapper, "~> 0.4.0"},
       {:xml_builder, "~> 2.1.1", override: true},
+      {:remote_ip, "~> 0.2.0"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},
