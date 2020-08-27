@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="media" style="align-items: top;">
+    <div class="media" style="align-items: top">
       <div class="media-left">
         <figure class="image is-32x32" v-if="actor.avatar">
           <img class="is-rounded" :src="actor.avatar.url" alt="" />

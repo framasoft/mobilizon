@@ -215,7 +215,7 @@
     </div>
     <b-modal :active.sync="dateSettingsIsOpen" has-modal-card trap-focus>
       <form action>
-        <div class="modal-card" style="width: auto;">
+        <div class="modal-card" style="width: auto">
           <header class="modal-card-head">
             <p class="modal-card-title">{{ $t("Date and time settings") }}</p>
           </header>

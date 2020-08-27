@@ -15,7 +15,7 @@
               <date-calendar-icon :date="event.beginsOn" />
             </div>
             <div class="column">
-              <h1 class="title" style="margin: 0;">{{ event.title }}</h1>
+              <h1 class="title" style="margin: 0">{{ event.title }}</h1>
               <div class="organizer">
                 <span v-if="event.organizerActor && !event.attributedTo">
                   <popover-actor-card :actor="event.organizerActor" :inline="true">

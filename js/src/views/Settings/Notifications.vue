@@ -85,8 +85,9 @@
             v-for="(value, key) in notificationPendingParticipationValues"
             :value="key"
             :key="key"
-            >{{ value }}</option
           >
+            {{ value }}
+          </option>
         </b-select>
       </div>
     </section>

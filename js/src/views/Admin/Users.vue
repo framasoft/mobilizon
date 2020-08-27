@@ -21,7 +21,7 @@
         :show-detail-icon="true"
         :total="users.total"
         :per-page="USERS_PER_PAGE"
-        :has-detailed-visible="(row => row.actors.length > 0)"
+        :has-detailed-visible="(row) => row.actors.length > 0"
         @page-change="onPageChange"
         @filters-change="onFiltersChange"
       >

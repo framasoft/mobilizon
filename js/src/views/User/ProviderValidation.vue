@@ -1,4 +1,4 @@
-<template> </template>
+<template></template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { VALIDATE_USER, UPDATE_CURRENT_USER_CLIENT, LOGGED_USER } from "../../graphql/user";
