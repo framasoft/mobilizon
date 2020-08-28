@@ -15,10 +15,10 @@ defmodule Mobilizon.Web.Auth.Context do
   def call(%{assigns: %{ip: _}} = conn, _opts), do: conn
 
   def call(conn, _opts) do
-    set_user_and_ip_in_context(conn)
+    set_user_information_in_context(conn)
   end
 
-  def set_user_and_ip_in_context(conn) do
+  def set_user_information_in_context(conn) do
     context = %{ip: conn.remote_ip |> :inet.ntoa() |> to_string()}
 
     context =
@@ -27,6 +27,15 @@ defmodule Mobilizon.Web.Auth.Context do
           Map.put(context, :current_user, user)
 
         nil ->
+          context
+      end
+
+    context =
+      case get_req_header(conn, "user-agent") do
+        [user_agent | _] ->
+          Map.put(context, :user_agent, user_agent)
+
+        _ ->
           context
       end
 
