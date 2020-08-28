@@ -60,13 +60,17 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   Login an user. Returns a token and the user
   """
-  def login_user(_parent, %{email: email, password: password}, _resolution) do
-    case Authenticator.authenticate(email, password) do
-      {:ok,
-       %{access_token: _access_token, refresh_token: _refresh_token, user: _user} =
-           user_and_tokens} ->
-        {:ok, user_and_tokens}
-
+  def login_user(_parent, %{email: email, password: password}, %{context: context}) do
+    with {:ok,
+          %{
+            access_token: _access_token,
+            refresh_token: _refresh_token,
+            user: %User{} = user
+          } = user_and_tokens} <- Authenticator.authenticate(email, password),
+         {:ok, %User{} = user} <- update_user_login_information(user, context),
+         user_and_tokens <- Map.put(user_and_tokens, :user, user) do
+      {:ok, user_and_tokens}
+    else
       {:error, :user_not_found} ->
         {:error, "No user with this email was found"}
 
@@ -81,11 +85,12 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   Refresh a token
   """
-  def refresh_token(_parent, %{refresh_token: refresh_token}, _context) do
+  def refresh_token(_parent, %{refresh_token: refresh_token}, context) do
     with {:ok, user, _claims} <- Auth.Guardian.resource_from_token(refresh_token),
          {:ok, _old, {exchanged_token, _claims}} <-
            Auth.Guardian.exchange(refresh_token, ["access", "refresh"], "access"),
-         {:ok, refresh_token} <- Authenticator.generate_refresh_token(user) do
+         {:ok, refresh_token} <- Authenticator.generate_refresh_token(user),
+         {:ok, %User{}} <- update_user_login_information(user, context) do
       {:ok, %{access_token: exchanged_token, refresh_token: refresh_token}}
     else
       {:error, message} ->
@@ -511,6 +516,24 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     else
       false ->
         {:ok, user}
+    end
+  end
+
+  @spec update_user_login_information(User.t(), map()) ::
+          {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  defp update_user_login_information(
+         %User{current_sign_in_at: current_sign_in_at, current_sign_in_ip: current_sign_in_ip} =
+           user,
+         context
+       ) do
+    with current_ip <- Map.get(context, :ip),
+         now <- DateTime.utc_now() do
+      Users.update_user(user, %{
+        last_sign_in_at: current_sign_in_at || now,
+        last_sign_in_ip: current_sign_in_ip || current_ip,
+        current_sign_in_ip: current_ip,
+        current_sign_in_at: now
+      })
     end
   end
 end

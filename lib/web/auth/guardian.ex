@@ -44,8 +44,6 @@ defmodule Mobilizon.Web.Auth.Guardian do
   end
 
   def after_encode_and_sign(resource, claims, token, _options) do
-    Logger.debug(fn -> "after_encode_and_sign #{inspect(claims)}" end)
-
     with {:ok, _} <- Guardian.DB.after_encode_and_sign(resource, claims["typ"], claims, token) do
       {:ok, token}
     end

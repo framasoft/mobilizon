@@ -27,7 +27,11 @@ defmodule Mobilizon.Users.User do
           default_actor: Actor.t(),
           disabled: boolean(),
           actors: [Actor.t()],
-          feed_tokens: [FeedToken.t()]
+          feed_tokens: [FeedToken.t()],
+          last_sign_in_at: DateTime.t(),
+          last_sign_in_ip: String.t(),
+          current_sign_in_ip: String.t(),
+          current_sign_in_at: DateTime.t()
         }
 
   @required_attrs [:email]
@@ -44,7 +48,11 @@ defmodule Mobilizon.Users.User do
     :locale,
     :unconfirmed_email,
     :disabled,
-    :provider
+    :provider,
+    :last_sign_in_at,
+    :last_sign_in_ip,
+    :current_sign_in_ip,
+    :current_sign_in_at
   ]
   @attrs @required_attrs ++ @optional_attrs
 
@@ -72,6 +80,10 @@ defmodule Mobilizon.Users.User do
     field(:locale, :string, default: "en")
     field(:disabled, :boolean, default: false)
     field(:provider, :string)
+    field(:last_sign_in_at, :utc_datetime)
+    field(:last_sign_in_ip, :string)
+    field(:current_sign_in_ip, :string)
+    field(:current_sign_in_at, :utc_datetime)
 
     belongs_to(:default_actor, Actor)
     has_many(:actors, Actor)
