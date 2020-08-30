@@ -5,7 +5,7 @@ defmodule Mobilizon.Service.Geospatial.Addok do
 
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.Provider
-  alias Mobilizon.Service.HTTP.BaseClient
+  alias Mobilizon.Service.HTTP.GeospatialClient
 
   require Logger
 
@@ -21,16 +21,9 @@ defmodule Mobilizon.Service.Geospatial.Addok do
   """
   @spec geocode(String.t(), keyword()) :: list(Address.t())
   def geocode(lon, lat, options \\ []) do
-    url = build_url(:geocode, %{lon: lon, lat: lat}, options)
-
-    Logger.debug("Asking addok for addresses with #{url}")
-
-    with {:ok, %{status: 200, body: body}} <- BaseClient.get(url),
-         %{"features" => features} <- body do
-      process_data(features)
-    else
-      _ -> []
-    end
+    :geocode
+    |> build_url(%{lon: lon, lat: lat}, options)
+    |> fetch_features
   end
 
   @impl Provider
@@ -39,15 +32,9 @@ defmodule Mobilizon.Service.Geospatial.Addok do
   """
   @spec search(String.t(), keyword()) :: list(Address.t())
   def search(q, options \\ []) do
-    url = build_url(:search, %{q: q}, options)
-    Logger.debug("Asking addok for addresses with #{url}")
-
-    with {:ok, %{status: 200, body: body}} <- BaseClient.get(url),
-         %{"features" => features} <- body do
-      process_data(features)
-    else
-      _ -> []
-    end
+    :search
+    |> build_url(%{q: q}, options)
+    |> fetch_features
   end
 
   @spec build_url(atom(), map(), list()) :: String.t()
@@ -63,6 +50,20 @@ defmodule Mobilizon.Service.Geospatial.Addok do
       :search ->
         url = "#{endpoint}/search/?q=#{URI.encode(args.q)}&limit=#{limit}"
         if is_nil(coords), do: url, else: url <> "&lat=#{coords.lat}&lon=#{coords.lon}"
+    end
+  end
+
+  @spec fetch_features(String.t()) :: list(Address.t())
+  defp fetch_features(url) do
+    Logger.debug("Asking addok with #{url}")
+
+    with {:ok, %{status: 200, body: body}} <- GeospatialClient.get(url),
+         %{"features" => features} <- body do
+      process_data(features)
+    else
+      _ ->
+        Logger.error("Asking addok with #{url}")
+        []
     end
   end
 

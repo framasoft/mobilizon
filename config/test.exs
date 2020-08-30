@@ -47,7 +47,8 @@ config :exvcr,
 config :tesla, Mobilizon.Service.HTTP.ActivityPub,
   adapter: Mobilizon.Service.HTTP.ActivityPub.Mock
 
-config :tesla, Mobilizon.Service.HTTP.BaseClient, adapter: Mobilizon.Service.HTTP.BaseClient.Mock
+config :tesla, Mobilizon.Service.HTTP.GeospatialClient,
+  adapter: Mobilizon.Service.HTTP.GeospatialClient.Mock
 
 config :mobilizon, Mobilizon.Service.Geospatial, service: Mobilizon.Service.Geospatial.Mock
 

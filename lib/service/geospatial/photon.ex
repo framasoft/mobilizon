@@ -5,7 +5,7 @@ defmodule Mobilizon.Service.Geospatial.Photon do
 
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.Provider
-  alias Mobilizon.Service.HTTP.BaseClient
+  alias Mobilizon.Service.HTTP.GeospatialClient
 
   require Logger
 
@@ -21,15 +21,9 @@ defmodule Mobilizon.Service.Geospatial.Photon do
   """
   @spec geocode(number(), number(), keyword()) :: list(Address.t())
   def geocode(lon, lat, options \\ []) do
-    url = build_url(:geocode, %{lon: lon, lat: lat}, options)
-    Logger.debug("Asking photon for reverse geocoding with #{url}")
-
-    with {:ok, %{status: 200, body: body}} <- BaseClient.get(url),
-         %{"features" => features} <- body do
-      process_data(features)
-    else
-      _ -> []
-    end
+    :geocode
+    |> build_url(%{lon: lon, lat: lat}, options)
+    |> fetch_features
   end
 
   @impl Provider
@@ -38,15 +32,9 @@ defmodule Mobilizon.Service.Geospatial.Photon do
   """
   @spec search(String.t(), keyword()) :: list(Address.t())
   def search(q, options \\ []) do
-    url = build_url(:search, %{q: q}, options)
-    Logger.debug("Asking photon for addresses with #{url}")
-
-    with {:ok, %{status: 200, body: body}} <- BaseClient.get(url),
-         %{"features" => features} <- body do
-      process_data(features)
-    else
-      _ -> []
-    end
+    :search
+    |> build_url(%{q: q}, options)
+    |> fetch_features
   end
 
   @spec build_url(atom(), map(), list()) :: String.t()
@@ -63,6 +51,20 @@ defmodule Mobilizon.Service.Geospatial.Photon do
 
       :geocode ->
         "#{endpoint}/reverse?lon=#{args.lon}&lat=#{args.lat}&lang=#{lang}&limit=#{limit}"
+    end
+  end
+
+  @spec fetch_features(String.t()) :: list(Address.t())
+  defp fetch_features(url) do
+    Logger.debug("Asking photon with #{url}")
+
+    with {:ok, %{status: 200, body: body}} <- GeospatialClient.get(url),
+         %{"features" => features} <- body do
+      process_data(features)
+    else
+      _ ->
+        Logger.error("Asking photon with #{url}")
+        []
     end
   end
 

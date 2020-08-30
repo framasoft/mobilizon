@@ -5,7 +5,7 @@ defmodule Mobilizon.Service.Geospatial.MapQuestTest do
 
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.MapQuest
-  alias Mobilizon.Service.HTTP.BaseClient.Mock
+  alias Mobilizon.Service.HTTP.GeospatialClient.Mock
 
   describe "search address" do
     test "without API Key triggers an error" do
