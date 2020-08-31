@@ -26,6 +26,10 @@ export interface IUser extends ICurrentUser {
   settings: IUserSettings;
   locale: string;
   provider?: string;
+  lastSignInAt: string;
+  lastSignInIp: string;
+  currentSignInIp: string;
+  currentSignInAt: string;
 }
 
 export enum IAuthProvider {

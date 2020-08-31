@@ -188,6 +188,10 @@ export const GET_USER = gql`
       email
       confirmedAt
       confirmationSentAt
+      lastSignInAt
+      lastSignInIp
+      currentSignInIp
+      currentSignInAt
       locale
       disabled
       defaultActor {

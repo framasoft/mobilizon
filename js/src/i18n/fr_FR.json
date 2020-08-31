@@ -796,5 +796,7 @@
   "+ Create an event": "+ Créer un événement",
   "+ Post a public message": "+ Poster un message public",
   "A place to publish something to the whole world, your community or just your group members.": "Un endroit pour publier quelque chose à l'intention du monde entier, de votre communauté ou simplement des membres de votre groupe.",
-  "No posts found": "Aucun billet trouvé"
+  "No posts found": "Aucun billet trouvé",
+  "Last sign-in": "Dernière connexion",
+  "Last IP adress": "Dernière addresse IP"
 }

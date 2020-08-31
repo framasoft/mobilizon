@@ -83,6 +83,16 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
     field(:settings, :user_settings, description: "The list of settings for this user") do
       resolve(&User.user_settings/3)
     end
+
+    field(:last_sign_in_at, :datetime, description: "When the user previously signed-in")
+
+    field(:last_sign_in_ip, :string, description: "The IP adress the user previously sign-in with")
+
+    field(:current_sign_in_at, :datetime, description: "When the user currenlty signed-in")
+
+    field(:current_sign_in_ip, :string,
+      description: "The IP adress the user's currently signed-in with"
+    )
   end
 
   enum :user_role do
