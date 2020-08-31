@@ -59,6 +59,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
+import { Route } from "vue-router";
 import { GET_USER, SUSPEND_USER } from "../../graphql/user";
 import { usernameWithDomain } from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
@@ -90,7 +91,7 @@ export default class AdminUserProfile extends Vue {
 
   RouteName = RouteName;
 
-  get metadata(): Array<object> {
+  get metadata(): Array<Record<string, unknown>> {
     if (!this.user) return [];
     return [
       {
@@ -129,6 +130,17 @@ export default class AdminUserProfile extends Vue {
             : this.$i18n.t("Not confirmed"),
       },
       {
+        key: this.$i18n.t("Last sign-in"),
+        value:
+          this.$options.filters && this.user.currentSignInAt
+            ? this.$options.filters.formatDateTimeString(this.user.currentSignInAt)
+            : this.$t("Unknown"),
+      },
+      {
+        key: this.$i18n.t("Last IP adress"),
+        value: this.user.currentSignInIp || this.$t("Unknown"),
+      },
+      {
         key: this.$i18n.t("Participations"),
         value: this.user.participations.total,
       },
@@ -147,7 +159,7 @@ export default class AdminUserProfile extends Vue {
     }
   }
 
-  async deleteAccount() {
+  async deleteAccount(): Promise<Route> {
     await this.$apollo.mutate<{ suspendProfile: { id: string } }>({
       mutation: SUSPEND_USER,
       variables: {
