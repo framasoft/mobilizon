@@ -375,6 +375,16 @@ defmodule Mobilizon.Events do
     |> Repo.stream()
   end
 
+  @spec list_public_local_events(integer | nil, integer | nil) :: Page.t()
+  def list_public_local_events(page \\ nil, limit \\ nil) do
+    Event
+    |> filter_public_visibility()
+    |> filter_draft()
+    |> filter_local()
+    |> preload_for_event()
+    |> Page.build_page(page, limit)
+  end
+
   @doc """
   Returns the list of events with the same tags.
   """

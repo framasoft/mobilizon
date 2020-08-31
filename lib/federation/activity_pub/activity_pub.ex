@@ -769,12 +769,22 @@ defmodule Mobilizon.Federation.ActivityPub do
   Return all public activities (events & comments) for an actor
   """
   @spec fetch_public_activities_for_actor(Actor.t(), integer(), integer()) :: map()
-  def fetch_public_activities_for_actor(%Actor{} = actor, page \\ 1, limit \\ 10) do
+  def fetch_public_activities_for_actor(%Actor{id: actor_id} = actor, page \\ 1, limit \\ 10) do
+    %Actor{id: relay_actor_id} = Relay.get_actor()
+
     %Page{total: total_events, elements: events} =
-      Events.list_public_events_for_actor(actor, page, limit)
+      if actor_id == relay_actor_id do
+        Events.list_public_local_events(page, limit)
+      else
+        Events.list_public_events_for_actor(actor, page, limit)
+      end
 
     %Page{total: total_comments, elements: comments} =
-      Discussions.list_public_comments_for_actor(actor, page, limit)
+      if actor_id == relay_actor_id do
+        Discussions.list_local_comments(page, limit)
+      else
+        Discussions.list_public_comments_for_actor(actor, page, limit)
+      end
 
     event_activities = Enum.map(events, &event_to_activity/1)
     comment_activities = Enum.map(comments, &comment_to_activity/1)
