@@ -1415,10 +1415,10 @@
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
 
-"@types/prosemirror-inputrules@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@types/prosemirror-inputrules/-/prosemirror-inputrules-1.0.2.tgz#60b946ca2782f0f453b65105e2ebfd1730324caa"
-  integrity sha512-bKFneQUPnkZmzCJ1uoitpKH6PFW0hc4q55NsC7mFUCvX0eZl0GRKxyfV47jkJbsbyUQoO/QFv0WwLDz2bo15sA==
+"@types/prosemirror-inputrules@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@types/prosemirror-inputrules/-/prosemirror-inputrules-1.0.3.tgz#3f8f07921f692b6c7e4781fa426aee3e76b9018c"
+  integrity sha512-cxMkCcu/di8//68jWc/NrRpvpCbizgq9vqv4rCRsAiuSiJ8L5hf4aFlCBUYCffuQnrY98uOfJ8YAUY3dbtaF9A==
   dependencies:
     "@types/prosemirror-model" "*"
     "@types/prosemirror-state" "*"
