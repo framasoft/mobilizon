@@ -55,7 +55,7 @@
         <dd>
           {{
             $t(
-              "A cookie is a small file containing informations that is sent to your computer when you visit a website. When you visit the site again, the cookie allows that site to recognize your browser. Cookies may store user preferences and other information. You can configure your browser to refuse all cookies. However, this may result in some website features or services partially working. Local storage works the same way but allows to store more data."
+              "A cookie is a small file containing information that is sent to your computer when you visit a website. When you visit the site again, the cookie allows that site to recognize your browser. Cookies may store user preferences and other information. You can configure your browser to refuse all cookies. However, this may result in some website features or services partially working. Local storage works the same way but allows you to store more data."
             )
           }}
         </dd>

@@ -29,9 +29,9 @@ export class Discussion implements IDiscussion {
 
   lastComment?: IComment = undefined;
 
-  insertedAt: string = "";
+  insertedAt = "";
 
-  updatedAt: string = "";
+  updatedAt = "";
 
   constructor(hash?: IDiscussion) {
     if (!hash) return;

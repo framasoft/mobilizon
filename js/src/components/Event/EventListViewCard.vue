@@ -50,12 +50,7 @@
 </template>
 
 <script lang="ts">
-import {
-  IParticipant,
-  ParticipantRole,
-  EventVisibility,
-  IEventCardOptions,
-} from "@/types/event.model";
+import { ParticipantRole, EventVisibility, IEventCardOptions, IEvent } from "@/types/event.model";
 import { Component, Prop } from "vue-property-decorator";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
 import { IPerson } from "@/types/actor";
@@ -63,8 +58,6 @@ import { mixins } from "vue-class-component";
 import ActorMixin from "@/mixins/actor";
 import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
 import EventMixin from "@/mixins/event";
-import { changeIdentity } from "@/utils/auth";
-import { Route } from "vue-router";
 import RouteName from "../../router/name";
 
 const defaultOptions: IEventCardOptions = {
@@ -88,7 +81,7 @@ export default class EventListViewCard extends mixins(ActorMixin, EventMixin) {
   /**
    * The participation associated
    */
-  @Prop({ required: true }) event!: IParticipant;
+  @Prop({ required: true }) event!: IEvent;
 
   /**
    * Options are merged with default options

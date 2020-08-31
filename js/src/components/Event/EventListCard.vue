@@ -186,7 +186,7 @@
 import { Component, Prop } from "vue-property-decorator";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
 import { mixins } from "vue-class-component";
-import { RawLocation } from "vue-router";
+import { RawLocation, Route } from "vue-router";
 import {
   IParticipant,
   ParticipantRole,
@@ -246,12 +246,13 @@ export default class EventListCard extends mixins(ActorMixin, EventMixin) {
   /**
    * Delete the event
    */
-  async openDeleteEventModalWrapper() {
+  async openDeleteEventModalWrapper(): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     await this.openDeleteEventModal(this.participation.event, this.currentActor);
   }
 
-  async gotToWithCheck(participation: IParticipant, route: RawLocation) {
+  async gotToWithCheck(participation: IParticipant, route: RawLocation): Promise<Route> {
     if (participation.actor.id !== this.currentActor.id && participation.event.organizerActor) {
       const organizer = participation.event.organizerActor as IPerson;
       await changeIdentity(this.$apollo.provider.defaultClient, organizer);

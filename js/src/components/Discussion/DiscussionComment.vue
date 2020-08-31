@@ -91,8 +91,9 @@ import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 export default class DiscussionComment extends Vue {
   @Prop({ required: true, type: Object }) comment!: IComment;
 
-  editMode: boolean = false;
-  updatedComment: string = "";
+  editMode = false;
+
+  updatedComment = "";
 
   currentActor!: IPerson;
 

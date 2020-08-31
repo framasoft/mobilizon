@@ -5,12 +5,12 @@ module.exports = {
   lintOnSave: true,
   filenameHashing: true,
   outputDir: path.resolve(__dirname, "../priv/static"),
-  configureWebpack: {
-    optimization: {
-      splitChunks: {
-        minSize: 10000,
-        maxSize: 250000,
-      },
-    },
-  },
+  // configureWebpack: {
+  //   optimization: {
+  //     splitChunks: {
+  //       minSize: 10000,
+  //       maxSize: 250000,
+  //     },
+  //   },
+  // },
 };

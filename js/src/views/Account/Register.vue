@@ -33,9 +33,16 @@
               </p>
             </b-field>
           </b-field>
+          <p class="description">
+            {{
+              $t(
+                "The username is a unique identifier of your account on this and all the other instances. It's as unique as an email address, which makes it easy for other people to interact with it."
+              )
+            }}
+          </p>
 
-          <b-field :label="$t('Description')">
-            <b-input type="textarea" v-model="identity.summary" />
+          <b-field :label="$t('Bio')">
+            <b-input type="textarea" maxlength="100" rows="2" v-model="identity.summary" />
           </b-field>
 
           <p class="control has-text-centered">
@@ -94,20 +101,20 @@ export default class Register extends mixins(identityEditionMixin) {
 
   host?: string = MOBILIZON_INSTANCE_HOST;
 
-  errors: object = {};
+  errors: Record<string, unknown> = {};
 
   validationSent = false;
 
   sendingValidation = false;
 
-  async created() {
+  async created(): Promise<void> {
     // Make sure no one goes to this page if we don't want to
     if (!this.email) {
       await this.$router.replace({ name: RouteName.PAGE_NOT_FOUND });
     }
   }
 
-  async submit() {
+  async submit(): Promise<void> {
     try {
       this.sendingValidation = true;
       this.errors = {};
@@ -169,5 +176,10 @@ export default class Register extends mixins(identityEditionMixin) {
 
 .container .columns {
   margin: 1rem auto 3rem;
+}
+
+p.description {
+  font-size: 0.9rem;
+  margin-bottom: 10px;
 }
 </style>

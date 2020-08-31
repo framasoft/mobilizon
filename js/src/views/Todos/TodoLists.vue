@@ -4,7 +4,10 @@
       <ul>
         <li>
           <router-link
-            :to="{ name: RouteName.GROUP, params: { preferredUsername: group.preferredUsername } }"
+            :to="{
+              name: RouteName.GROUP,
+              params: { preferredUsername: usernameWithDomain(group) },
+            }"
             >{{ group.preferredUsername }}</router-link
           >
         </li>
@@ -12,7 +15,7 @@
           <router-link
             :to="{
               name: RouteName.TODO_LISTS,
-              params: { preferredUsername: group.preferredUsername },
+              params: { preferredUsername: usernameWithDomain(group) },
             }"
             >{{ $t("Task lists") }}</router-link
           >
@@ -20,6 +23,11 @@
       </ul>
     </nav>
     <section>
+      <p>
+        {{
+          $t("Create to-do lists for all the tasks you need to do, assign them and set due dates.")
+        }}
+      </p>
       <form class="form" @submit.prevent="createNewTodoList">
         <b-field :label="$t('List title')">
           <b-input v-model="newTodoList.title" />
@@ -45,7 +53,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { FETCH_GROUP } from "@/graphql/group";
-import { IGroup } from "@/types/actor";
+import { IGroup, usernameWithDomain } from "@/types/actor";
 import { ITodoList } from "@/types/todos";
 import { CREATE_TODO_LIST } from "@/graphql/todos";
 import CompactTodo from "@/components/Todo/CompactTodo.vue";
@@ -80,15 +88,17 @@ export default class TodoLists extends Vue {
 
   RouteName = RouteName;
 
-  get todoLists() {
+  usernameWithDomain = usernameWithDomain;
+
+  get todoLists(): ITodoList[] {
     return this.group.todoLists.elements;
   }
 
-  get todoListsCount() {
+  get todoListsCount(): number {
     return this.group.todoLists.total;
   }
 
-  async createNewTodoList() {
+  async createNewTodoList(): Promise<void> {
     await this.$apollo.mutate({
       mutation: CREATE_TODO_LIST,
       variables: {

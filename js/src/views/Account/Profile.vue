@@ -91,7 +91,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 import EventCard from "@/components/Event/EventCard.vue";
 import { FETCH_PERSON, CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { MOBILIZON_INSTANCE_HOST } from "../../api/_entrypoint";
@@ -123,12 +123,6 @@ export default class Profile extends Vue {
 
   currentActor!: IPerson;
 
-  // // call again the method if the route changes
-  // @Watch('$route')
-  // onRouteChange() {
-  //   // this.fetchData()
-  // }
-
   feedUrls(format: "ics" | "webcal:" | "atom", isPublic = true): string {
     let url = format === "ics" ? "webcal:" : "";
     url += `//${MOBILIZON_INSTANCE_HOST}/`;
@@ -140,7 +134,7 @@ export default class Profile extends Vue {
     return url + (format === "ics" ? "ics" : "atom");
   }
 
-  async createToken() {
+  async createToken(): Promise<void> {
     const { data } = await this.$apollo.mutate({
       mutation: CREATE_FEED_TOKEN_ACTOR,
       variables: { actor_id: this.person.id },

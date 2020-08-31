@@ -56,9 +56,9 @@ import { Group, IPerson, usernameWithDomain, MemberRole } from "@/types/actor";
 import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import { CREATE_GROUP } from "@/graphql/group";
 import PictureUpload from "@/components/PictureUpload.vue";
-import RouteName from "../../router/name";
 import { mixins } from "vue-class-component";
 import IdentityEditionMixin from "@/mixins/identityEdition";
+import RouteName from "../../router/name";
 import { convertToUsername } from "../../utils/username";
 
 @Component({
@@ -98,7 +98,7 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
           };
           const membershipData = store.readQuery<{ person: IPerson }>(query);
           if (!membershipData) return;
-          const person: IPerson = membershipData.person;
+          const { person } = membershipData;
           person.memberships.elements.push({
             parent: createGroup,
             role: MemberRole.ADMINISTRATOR,

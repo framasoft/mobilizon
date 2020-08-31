@@ -42,8 +42,8 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import Editor from "@/components/Editor.vue";
 import { GraphQLError } from "graphql";
-import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "../../graphql/actor";
 import { FETCH_GROUP } from "@/graphql/group";
+import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "../../graphql/actor";
 import { TAGS } from "../../graphql/tags";
 import { CONFIG } from "../../graphql/config";
 import { FETCH_POST, CREATE_POST } from "../../graphql/post";

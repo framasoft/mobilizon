@@ -79,8 +79,8 @@
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { FETCH_GROUP } from "@/graphql/group";
+import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { TAGS } from "../../graphql/tags";
 import { CONFIG } from "../../graphql/config";
 import { FETCH_POST, CREATE_POST, UPDATE_POST, DELETE_POST } from "../../graphql/post";

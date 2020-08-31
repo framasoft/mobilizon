@@ -110,16 +110,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import EventCard from "../components/Event/EventCard.vue";
-import { FETCH_EVENTS } from "../graphql/event";
-import { IEvent } from "../types/event.model";
-import RouteName from "../router/name";
-import { IAddress, Address } from "../types/address.model";
-import { SearchEvent, SearchGroup } from "../types/search.model";
-import AddressAutoComplete from "../components/Event/AddressAutoComplete.vue";
 import ngeohash from "ngeohash";
-import { SEARCH_EVENTS, SEARCH_GROUPS } from "../graphql/search";
-import { Paginate } from "../types/paginate";
 import {
   endOfToday,
   addDays,
@@ -133,6 +124,15 @@ import {
   startOfMonth,
   eachWeekendOfInterval,
 } from "date-fns";
+import EventCard from "../components/Event/EventCard.vue";
+import { FETCH_EVENTS } from "../graphql/event";
+import { IEvent } from "../types/event.model";
+import RouteName from "../router/name";
+import { IAddress, Address } from "../types/address.model";
+import { SearchEvent, SearchGroup } from "../types/search.model";
+import AddressAutoComplete from "../components/Event/AddressAutoComplete.vue";
+import { SEARCH_EVENTS, SEARCH_GROUPS } from "../graphql/search";
+import { Paginate } from "../types/paginate";
 import { IGroup } from "../types/actor";
 import GroupCard from "../components/Group/GroupCard.vue";
 import { CONFIG } from "../graphql/config";
@@ -206,9 +206,11 @@ const tabsName: { events: number; groups: number } = {
 })
 export default class Search extends Vue {
   @Prop({ type: String, required: false }) tag!: string;
+
   events: IEvent[] = [];
 
   searchEvents: Paginate<IEvent> & { initial: boolean } = { total: 0, elements: [], initial: true };
+
   searchGroups: Paginate<IGroup> = { total: 0, elements: [] };
 
   search: string = (this.$route.query.term as string) || "";
@@ -275,7 +277,7 @@ export default class Search extends Vue {
 
   radiusOptions: (number | null)[] = [1, 5, 10, 25, 50, 100, 150, null];
 
-  radius: number = 50;
+  radius = 50;
 
   submit() {
     this.$apollo.queries.searchEvents.refetch();
@@ -285,7 +287,7 @@ export default class Search extends Vue {
   updateSearchTerm() {
     this.$router.push({
       name: RouteName.SEARCH,
-      query: Object.assign({}, this.$route.query, { term: this.search }),
+      query: { ...this.$route.query, term: this.search },
     });
   }
 
@@ -294,7 +296,7 @@ export default class Search extends Vue {
     const searchType = this.activeTab === tabsName.events ? "events" : "groups";
     this.$router.push({
       name: RouteName.SEARCH,
-      query: Object.assign({}, this.$route.query, { searchType }),
+      query: { ...this.$route.query, searchType },
     });
   }
 

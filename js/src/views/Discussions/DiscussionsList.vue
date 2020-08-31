@@ -26,13 +26,9 @@
       </ul>
     </nav>
     <section>
-      <div v-if="group.discussions.elements.length > 0">
-        <discussion-list-item
-          :discussion="discussion"
-          v-for="discussion in group.discussions.elements"
-          :key="discussion.id"
-        />
-      </div>
+      <p>
+        {{ $t("Keep the entire conversation about a specific topic together on a single page.") }}
+      </p>
       <b-button
         tag="router-link"
         :to="{
@@ -41,6 +37,13 @@
         }"
         >{{ $t("New discussion") }}</b-button
       >
+      <div v-if="group.discussions.elements.length > 0">
+        <discussion-list-item
+          :discussion="discussion"
+          v-for="discussion in group.discussions.elements"
+          :key="discussion.id"
+        />
+      </div>
     </section>
   </div>
 </template>
@@ -69,7 +72,7 @@ import RouteName from "../../router/name";
   },
   metaInfo() {
     return {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title: this.$t("Discussions") as string,
       // all titles will be injected into this template

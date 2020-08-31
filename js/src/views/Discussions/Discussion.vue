@@ -112,9 +112,9 @@ import { IDiscussion, Discussion } from "@/types/discussions";
 import { usernameWithDomain } from "@/types/actor";
 import DiscussionComment from "@/components/Discussion/DiscussionComment.vue";
 import { GraphQLError } from "graphql";
+import { DELETE_COMMENT, UPDATE_COMMENT } from "@/graphql/comment";
 import RouteName from "../../router/name";
 import { IComment } from "../../types/comment.model";
-import { DELETE_COMMENT, UPDATE_COMMENT } from "@/graphql/comment";
 
 @Component({
   apollo: {

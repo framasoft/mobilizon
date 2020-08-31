@@ -1,6 +1,13 @@
 <template>
   <section class="section container">
     <h1 class="title">{{ $t("My groups") }}</h1>
+    <p>
+      {{
+        $t(
+          "Groups are spaces for coordination and preparation to better organize events and manage your community."
+        )
+      }}
+    </p>
     <router-link :to="{ name: RouteName.CREATE_GROUP }">{{ $t("Create group") }}</router-link>
     <b-loading :active.sync="$apollo.loading"></b-loading>
     <invitations
@@ -23,9 +30,8 @@ import { LOGGED_USER_MEMBERSHIPS } from "@/graphql/actor";
 import GroupMemberCard from "@/components/Group/GroupMemberCard.vue";
 import Invitations from "@/components/Group/Invitations.vue";
 import { Paginate } from "@/types/paginate";
-import { IGroup, IMember, MemberRole, usernameWithDomain } from "@/types/actor";
+import { IMember, MemberRole, usernameWithDomain } from "@/types/actor";
 import RouteName from "../../router/name";
-import { ACCEPT_INVITATION } from "../../graphql/member";
 
 @Component({
   components: {

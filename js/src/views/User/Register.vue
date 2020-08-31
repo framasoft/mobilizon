@@ -7,7 +7,7 @@
         </h1>
         <i18n tag="p" path="{instanceName} is an instance of the {mobilizon} software.">
           <b slot="instanceName">{{ config.name }}</b>
-          <a href="https://joinmobilizon.org" target="_blank" slot="mobilizon">{{
+          <a href="https://joinmobilizon.org" target="_blank" class="out" slot="mobilizon">{{
             $t("Mobilizon")
           }}</a>
         </i18n>
@@ -23,10 +23,15 @@
                 <li>{{ $t("Create and manage several identities from the same account") }}</li>
                 <li>{{ $t("Create, edit or delete events") }}</li>
                 <li>{{ $t("Register for an event by choosing one of your identities") }}</li>
+                <li v-if="config.features.groups">
+                  {{ $t("Create or join an group and start organizing with other people") }}
+                </li>
               </ul>
             </div>
           </div>
-          <router-link :to="{ name: RouteName.ABOUT }">{{ $t("Learn more") }}</router-link>
+          <router-link class="out" :to="{ name: RouteName.ABOUT }">{{
+            $t("Learn more")
+          }}</router-link>
           <hr />
           <div class="content">
             <subtitle>{{ $t("About this instance") }}</subtitle>
@@ -79,10 +84,10 @@
 
             <b-checkbox required>
               <i18n tag="span" path="I agree to the {instanceRules} and {termsOfService}">
-                <router-link slot="instanceRules" :to="{ name: RouteName.RULES }">{{
+                <router-link class="out" slot="instanceRules" :to="{ name: RouteName.RULES }">{{
                   $t("instance rules")
                 }}</router-link>
-                <router-link slot="termsOfService" :to="{ name: RouteName.TERMS }">{{
+                <router-link class="out" slot="termsOfService" :to="{ name: RouteName.TERMS }">{{
                   $t("terms of service")
                 }}</router-link>
               </i18n>

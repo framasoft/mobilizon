@@ -131,7 +131,11 @@ $subtitle-sup-size: 15px;
   margin: 15px auto 30px;
 }
 
-$input-border-color: #dbdbdb;
+//$input-border-color: #dbdbdb;
 $breadcrumb-item-color: $primary;
 $checkbox-background-color: #fff;
 $title-color: $violet-3;
+
+@import "~bulma";
+@import "~bulma-divider";
+@import "~buefy/src/scss/buefy";

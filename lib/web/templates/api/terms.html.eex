@@ -12,42 +12,42 @@
 </article>
 <article class="message">
   <p class="message-body">
-    <%= pgettext("terms", "Some terms, technical or otherwise, used in the text below may cover concepts that are difficult to grasp. We provide <a href=\"/glossary\">a glossary</a> to help you understand them better.") |> raw %>
+    <%= pgettext("terms", "Some terms, technical or otherwise, used in the text below may cover concepts that are difficult to grasp. We have provided <a href=\"/glossary\">a glossary</a> to help you understand them better.") |> raw %>
   </p>
 </article>
 <p><%= pgettext("terms", "Here are the important things you need to know about accessing and using the <b>%{instance_name}</b> (<a href=\"https://%{instance_url}\">%{instance_url}</a>) website and service (collectively, \"Service\"). These are our terms of service (\"Terms\"). Please read them carefully.", %{instance_name: @instance_name, instance_url: @instance_url}) |> raw %></p>
 <p>
-  <%= pgettext("terms", "When we say “we”, “our”, or “us” in this document, we are referring to the owners, operators and administrators of this Mobilizon instance. The Mobilizon software is provided by the team of Mobilizon contributors, supported by <a href=\"https://framasoft.org\">Framasoft</a>, a french not-for-profit popular educational organization advocating for Free/Libre Software. Unless explicity stated, this Mobilizon instance is an independant service using Mobilizon's source code. You may find more informations about this instance on the <a href=\"/about/instance\">\"About this instance\" page</a>.") |> raw %>
+  <%= pgettext("terms", "When we say “we”, “our”, or “us” in this document, we are referring to the owners, operators and administrators of this Mobilizon instance. The Mobilizon software is provided by the team of Mobilizon contributors, supported by <a href=\"https://framasoft.org\">Framasoft</a>, a French not-for-profit organization advocating for Free/Libre Software. Unless explicitly stated, this Mobilizon instance is an independent service using Mobilizon's source code. You may find more information about this instance on the <a href=\"/about/instance\">\"About this instance\"</a> page.") |> raw %>
 </p>
 <!-- Accept -->
 <h3><%= pgettext("terms", "Accepting these Terms") %></h3>
-<p><%= pgettext("terms", "If you access or use the Service, it means you agree to be bound by all of the terms below. So, before you use the Service, please read all of the terms. If you don't agree to all of the terms below, please do not use the Service. Also, if a term does not make sense to you, please let us know by contacting %{contact}.", %{contact: @instance_contact}) |> raw %></p>
+<p><%= pgettext("terms", "By accessing or using the Service, this means you agree to be bound by all the terms below. If these terms are in any way unclear, please let us know by contacting %{contact}.", %{contact: @instance_contact}) |> raw %></p>
 <!-- Changes -->
 <h3>
   <%= pgettext("terms", "Changes to these Terms") %>
 </h3>
 <p>
-  <%= pgettext("terms", "We reserve the right to modify these Terms at any time. For instance, we may need to change these Terms if we come out with a new feature or for some other reason.") %>
+  <%= pgettext("terms", "We reserve the right to modify these Terms at any time. For instance, we may need to change these Terms if we come out with a new feature.") %>
 </p>
 <p>
   <%= pgettext("terms", "If we make major changes, we will notify our users in a clear and prominent manner. Minor changes may only be highlighted in the footer of our website. It is your responsibility to check the website regularly for changes to these Terms.") %>
 </p>
 <p>
-  <%= pgettext("terms", "If you continue to use the Service after the revised Terms go into effect, then you have accepted the revised Terms.") %>
+  <%= pgettext("terms", "If you continue to use the Service after the revised Terms go into effect, you accept the revised Terms.") %>
 </p>
 <!-- Privacy policy -->
 <h3><%= pgettext("terms", "Privacy Policy") %></h3>
-<p><%= pgettext("terms", "For information about how we collect and use information about users of the Service, please check out our <a href=\"/privacy\">privacy policy</a>.") |> raw %></p>
+<p><%= pgettext("terms", "For information about how we collect and use information about users of the Service, please check our <a href=\"/privacy\">privacy policy</a>.") |> raw %></p>
 <!-- Account security -->
 <h3><%= pgettext("terms", "Creating Accounts") %></h3>
-<p><%= pgettext("terms", "When you create an account you also agree to maintain the security and confidentiality of your password and accept all risks of unauthorized access to your account data and any other information you provide to <b>%{instance_name}</b>.", %{instance_name: @instance_name}) |> raw %></p>
+<p><%= pgettext("terms", "When you create an account you agree to maintain the security and confidentiality of your password and accept all risks of unauthorized access to your account data and any other information you provide to <b>%{instance_name}</b>.", %{instance_name: @instance_name}) |> raw %></p>
 <p><%= pgettext("terms", "If you discover or suspect any Service security breaches, please let us know as soon as possible. For security holes in the Mobilizon software itself, please contact <a href=\"https://framagit.org/framasoft/mobilizon/\">its contributors</a> directly.") |> raw %></p>
-<p><%= pgettext("terms", "We will not be liable for any loss that you may incur as a result of someone else using your email or password, either with or without your knowledge.") %></p>
+<p><%= pgettext("terms", "We are not liable for any loss you may incur as a result of someone else using your email or password, either with or without your knowledge.") %></p>
 <!-- Your content -->
 <h3><%= pgettext("terms", "Your Content & Conduct") %></h3>
 <p><%= pgettext("terms", "Our Service allows you and other users to post, link and otherwise make available content. You are responsible for the content that you make available to the Service, including its legality, reliability, and appropriateness.") %></p>
-<p><%= pgettext("terms", "When you post, link or otherwise make available content to the Service, you grant us the right and license to display and distribute your content on or through the Service (including via applications). We may format your content for display throughout the Service, but we will not edit or revise the substance of your content itself. The displaying and distribution of your content happens strictly only according to the visibility rules you have set for the content. We will not modify the visibility of the content you have set.") %></p>
-<p><%= pgettext("terms", "We cannot be held responsible should a programming or administrative error make your content visible to a larger audience than you had intended. Aside from our limited right to your content, you retain all of your rights to the content you post, link and otherwise make available on or through the Service.") %></p>
+<p><%= pgettext("terms", "When you post, link or otherwise make available content to the Service, you grant us the right and license to display and distribute your content on or through the Service (including via applications). We may format your content for display throughout the Service, but we will not edit or revise the substance of your content itself. The displaying and distribution of your content happens only according to the visibility rules you have set for the content. We will not modify the visibility of the content you have set.") %></p>
+<p><%= pgettext("terms", "We cannot be held responsible should a programming or administrative error make your content visible to a larger audience than intended. Aside from our limited right to your content, you retain all of your rights to the content you post, link and otherwise make available on or through the Service.") %></p>
 <p><%= pgettext("terms", "You can remove the content that you posted by deleting it. Once you delete your content, it will not appear on the Service, but copies of your deleted content may remain in our system or backups for some period of time. Web server access logs might also be stored for some time in the system.") %></p>
 <p><%= pgettext("terms", "Since Mobilizon is a distributed network, it is possible, depending on the visibility rules set to your content, that your content has been distributed to other Mobilizon instances. When you delete your content, we will request those other instances to also delete the content. Our responsibility on the content being deleted from those other instances ends here. If for some reason, some other instance does not delete the content, we cannot be held responsible.") %></p>
 <p><%= pgettext("terms", "In order to make <b>%{instance_name}</b> a great place for all of us, please do not post, link and otherwise make available on or through the Service any of the following:", %{instance_name: @instance_name}) |> raw %></p>
@@ -68,7 +68,7 @@
   <%= pgettext("terms", "Finally, your use of the Service is also subject to acceptance of <a href=\"/rules\">the instance's own specific rules</a> regarding the code of conduct and moderation rules. Breaking those rules may also result in your account being disabled or suspended.") |> raw %>
 </p>
 <h3>
-  <%= pgettext("terms", "Our responsability") %>
+  <%= pgettext("terms", "Our responsibility") %>
 </h3>
 <p>
   <%= pgettext("terms", "Instance administrators (and community moderators, given the relevant access) are responsible for monitoring and acting on flagged content and other user reports, and have the right and responsibility to remove or edit content that is not aligned to this Instance set of rules, or to suspend, block or ban (temporarily or permanently) any account, community, or instance for breaking these terms, or for other behaviours that they deem inappropriate, threatening, offensive, or harmful.") %>

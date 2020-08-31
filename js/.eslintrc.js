@@ -46,6 +46,8 @@ module.exports = {
     "@typescript-eslint/interface-name-prefix": "off",
     "@typescript-eslint/no-use-before-define": "off",
     "import/prefer-default-export": "off",
+    "import/extensions": "off",
+    "import/no-unresolved": "off",
   },
 
   ignorePatterns: ["src/typings/*.d.ts", "vue.config.js"],

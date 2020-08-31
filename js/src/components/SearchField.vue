@@ -21,7 +21,7 @@ import RouteName from "../router/name";
 export default class SearchField extends Vue {
   @Prop({ type: String, required: false }) placeholder!: string;
 
-  search: string = "";
+  search = "";
 
   enter() {
     this.$emit("navbar-search");

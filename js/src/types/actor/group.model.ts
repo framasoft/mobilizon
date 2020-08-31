@@ -56,6 +56,7 @@ export class Group extends Actor implements IGroup {
 
     this.patch(hash);
   }
+
   physicalAddress: IAddress = new Address();
 
   patch(hash: any) {

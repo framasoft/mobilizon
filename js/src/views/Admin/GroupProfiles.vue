@@ -82,9 +82,9 @@
 </template>
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
+import { LIST_GROUPS } from "@/graphql/group";
 import { LIST_PROFILES } from "../../graphql/actor";
 import RouteName from "../../router/name";
-import { LIST_GROUPS } from "@/graphql/group";
 
 const PROFILES_PER_PAGE = 10;
 
