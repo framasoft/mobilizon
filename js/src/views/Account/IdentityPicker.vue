@@ -8,6 +8,7 @@
         <a
           class="list-item"
           v-for="identity in identities"
+          :key="identity.id"
           :class="{ 'is-active': identity.id === currentIdentity.id }"
           @click="changeCurrentIdentity(identity)"
         >
@@ -49,7 +50,7 @@ export default class IdentityPicker extends Vue {
 
   currentIdentity: IActor = this.value;
 
-  changeCurrentIdentity(identity: IActor) {
+  changeCurrentIdentity(identity: IActor): void {
     this.currentIdentity = identity;
     this.$emit("input", identity);
   }

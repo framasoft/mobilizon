@@ -197,13 +197,13 @@
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
+import { GET_GROUP, REFRESH_PROFILE } from "@/graphql/group";
 import { SUSPEND_PROFILE, UNSUSPEND_PROFILE } from "../../graphql/actor";
 import { IGroup, MemberRole } from "../../types/actor";
 import { usernameWithDomain, IActor } from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
 import { IEvent } from "../../types/event.model";
 import ActorCard from "../../components/Account/ActorCard.vue";
-import { GET_GROUP, REFRESH_PROFILE } from "@/graphql/group";
 
 const EVENTS_PER_PAGE = 10;
 

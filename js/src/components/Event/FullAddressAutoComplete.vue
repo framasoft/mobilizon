@@ -118,6 +118,7 @@ import { IConfig } from "../../types/config.model";
 })
 export default class FullAddressAutoComplete extends Vue {
   @Prop({ required: true }) value!: IAddress;
+
   @Prop({ required: false, default: "" }) label!: string;
 
   addressData: IAddress[] = [];

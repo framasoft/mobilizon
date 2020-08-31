@@ -64,6 +64,9 @@
       </ul>
     </nav>
     <section>
+      <p v-if="resource.path === '/'" class="module-description">
+        {{ $t("A place to store links to documents or resources of any type.") }}
+      </p>
       <div class="list-header">
         <div class="list-header-right">
           <b-checkbox v-model="checkedAll" v-if="resource.children.total > 0" />
@@ -280,7 +283,7 @@ export default class Resources extends Mixins(ResourceMixin) {
 
   renameModal = false;
 
-  groupObject: object = {
+  groupObject: Record<string, unknown> = {
     name: "resources",
     pull: "clone",
     put: true,
@@ -288,10 +291,10 @@ export default class Resources extends Mixins(ResourceMixin) {
 
   mapServiceTypeToIcon = mapServiceTypeToIcon;
 
-  async createResource() {
+  async createResource(): Promise<void> {
     if (!this.resource.actor) return;
     try {
-      const { data } = await this.$apollo.mutate({
+      await this.$apollo.mutate({
         mutation: CREATE_RESOURCE,
         variables: {
           title: this.newResource.title,
@@ -341,7 +344,7 @@ export default class Resources extends Mixins(ResourceMixin) {
     }
   }
 
-  async previewResource() {
+  async previewResource(): Promise<void> {
     if (this.newResource.resourceUrl === "") return;
     const { data } = await this.$apollo.mutate({
       mutation: PREVIEW_RESOURCE_LINK,
@@ -355,31 +358,33 @@ export default class Resources extends Mixins(ResourceMixin) {
     this.newResource.type = "link";
   }
 
-  createSentenceForType(type: string) {
+  createSentenceForType(type: string): string {
     switch (type) {
       case "folder":
-        return this.$t("Create a folder");
+        return this.$t("Create a folder") as string;
       case "pad":
-        return this.$t("Create a pad");
+        return this.$t("Create a pad") as string;
       case "calc":
-        return this.$t("Create a calc");
+        return this.$t("Create a calc") as string;
       case "visio":
-        return this.$t("Create a visioconference");
+        return this.$t("Create a visioconference") as string;
+      default:
+        return "";
     }
   }
 
-  createFolderModal() {
+  createFolderModal(): void {
     this.newResource.type = "folder";
     this.createResourceModal = true;
   }
 
-  createResourceFromProvider(provider: IProvider) {
-    this.newResource.resourceUrl = this.generateFullResourceUrl(provider);
+  createResourceFromProvider(provider: IProvider): void {
+    this.newResource.resourceUrl = Resources.generateFullResourceUrl(provider);
     this.newResource.type = provider.software;
     this.createResourceModal = true;
   }
 
-  generateFullResourceUrl(provider: IProvider): string {
+  static generateFullResourceUrl(provider: IProvider): string {
     const randomString = [...Array(10)]
       .map(() => Math.random().toString(36)[3])
       .join("")
@@ -393,13 +398,13 @@ export default class Resources extends Mixins(ResourceMixin) {
     }
   }
 
-  get createResourceButtonLabel() {
-    if (!this.newResource.type) return;
+  get createResourceButtonLabel(): string {
+    if (!this.newResource.type) return "";
     return this.createSentenceForType(this.newResource.type);
   }
 
   @Watch("checkedAll")
-  watchCheckedAll() {
+  watchCheckedAll(): void {
     this.resource.children.elements.forEach(({ id }) => {
       if (!id) return;
       this.checkedResources[id] = this.checkedAll;
@@ -409,21 +414,22 @@ export default class Resources extends Mixins(ResourceMixin) {
   @Watch("checkedResources", { deep: true })
   watchValidCheckedResources(): string[] {
     const validCheckedResources: string[] = [];
-    for (const [key, value] of Object.entries(this.checkedResources)) {
+    Object.entries(this.checkedResources).forEach(([key, value]) => {
       if (value) {
         validCheckedResources.push(key);
       }
-    }
-    return (this.validCheckedResources = validCheckedResources);
+    });
+    this.validCheckedResources = validCheckedResources;
+    return this.validCheckedResources;
   }
 
-  async deleteMultipleResources() {
-    for (const resourceID of this.validCheckedResources) {
+  async deleteMultipleResources(): Promise<void> {
+    this.validCheckedResources.forEach(async (resourceID) => {
       await this.deleteResource(resourceID);
-    }
+    });
   }
 
-  async deleteResource(resourceID: string) {
+  async deleteResource(resourceID: string): Promise<void> {
     try {
       await this.$apollo.mutate({
         mutation: DELETE_RESOURCE,
@@ -449,7 +455,7 @@ export default class Resources extends Mixins(ResourceMixin) {
           const oldResource: IResource = deleteResource;
 
           resource.children.elements = resource.children.elements.filter(
-            (resource) => resource.id !== oldResource.id
+            (resourceElement) => resourceElement.id !== oldResource.id
           );
 
           store.writeQuery({
@@ -469,28 +475,28 @@ export default class Resources extends Mixins(ResourceMixin) {
     }
   }
 
-  handleRename(resource: IResource) {
+  handleRename(resource: IResource): void {
     this.renameModal = true;
     this.updatedResource = { ...resource };
   }
 
-  handleMove(resource: IResource) {
+  handleMove(resource: IResource): void {
     this.moveModal = true;
     this.updatedResource = { ...resource };
   }
 
-  async moveResource(resource: IResource, oldParent: IResource | undefined) {
+  async moveResource(resource: IResource, oldParent: IResource | undefined): Promise<void> {
     const parentPath = oldParent && oldParent.path ? oldParent.path || "/" : "/";
     await this.updateResource(resource, parentPath);
     this.moveModal = false;
   }
 
-  async renameResource() {
+  async renameResource(): Promise<void> {
     await this.updateResource(this.updatedResource);
     this.renameModal = false;
   }
 
-  async updateResource(resource: IResource, parentPath: string | null = null) {
+  async updateResource(resource: IResource, parentPath: string | null = null): Promise<void> {
     try {
       await this.$apollo.mutate<{ updateResource: IResource }>({
         mutation: UPDATE_RESOURCE,
@@ -518,10 +524,11 @@ export default class Resources extends Mixins(ResourceMixin) {
             console.error("Cannot update resource cache, because of null value.");
             return;
           }
-          const resource: IResource = data.updateResource;
+          const updatedResource: IResource = data.updateResource;
 
+          // eslint-disable-next-line vue/max-len
           oldParentCachedResource.children.elements = oldParentCachedResource.children.elements.filter(
-            (cachedResource) => cachedResource.id !== resource.id
+            (cachedResource) => cachedResource.id !== updatedResource.id
           );
 
           store.writeQuery({
@@ -535,14 +542,14 @@ export default class Resources extends Mixins(ResourceMixin) {
           console.log("Finished removing ressource from old parent");
 
           console.log("Adding resource to new parent");
-          if (!resource.parent || !resource.parent.path) {
+          if (!updatedResource.parent || !updatedResource.parent.path) {
             console.log("No cache found for new parent");
             return;
           }
           const newParentCachedData = store.readQuery<{ resource: IResource }>({
             query: GET_RESOURCE,
             variables: {
-              path: resource.parent.path,
+              path: updatedResource.parent.path,
               username: this.resource.actor.preferredUsername,
             },
           });
@@ -558,7 +565,7 @@ export default class Resources extends Mixins(ResourceMixin) {
           store.writeQuery({
             query: GET_RESOURCE,
             variables: {
-              path: resource.parent.path,
+              path: updatedResource.parent.path,
               username: this.resource.actor.preferredUsername,
             },
             data: { newParentCachedResource },

@@ -157,7 +157,7 @@ export default class NavBar extends Vue {
 
   RouteName = RouteName;
 
-  mobileNavbarActive: boolean = false;
+  mobileNavbarActive = false;
 
   @Watch("currentActor")
   async initializeListOfIdentities() {

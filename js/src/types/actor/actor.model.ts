@@ -63,7 +63,8 @@ export class Actor implements IActor {
 export function usernameWithDomain(actor: IActor, force = false): string {
   if (actor.domain) {
     return `${actor.preferredUsername}@${actor.domain}`;
-  } else if (force) {
+  }
+  if (force) {
     return `${actor.preferredUsername}@${window.location.hostname}`;
   }
   return actor.preferredUsername;

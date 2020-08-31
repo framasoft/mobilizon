@@ -73,7 +73,6 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { FETCH_EVENT } from "@/graphql/event";
-import EventListCard from "@/components/Event/EventListCard.vue";
 import EventListViewCard from "@/components/Event/EventListViewCard.vue";
 import { EventModel, IEvent } from "@/types/event.model";
 import VerticalDivider from "@/components/Utils/VerticalDivider.vue";
@@ -86,7 +85,6 @@ import RouteName from "../../router/name";
   components: {
     VerticalDivider,
     EventListViewCard,
-    EventListCard,
     Subtitle,
   },
   apollo: {
@@ -114,7 +112,8 @@ export default class UnloggedParticipation extends Vue {
 
   config!: IConfig;
 
-  get host() {
+  // eslint-disable-next-line class-methods-use-this
+  get host(): string {
     return window.location.hostname;
   }
 

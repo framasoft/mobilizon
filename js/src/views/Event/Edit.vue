@@ -213,7 +213,7 @@
         </b-field>
       </form>
     </div>
-    <b-modal :active.sync="dateSettingsIsOpen" has-modal-card trap-focus>
+    <b-modal v-model="dateSettingsIsOpen" has-modal-card trap-focus>
       <form action>
         <div class="modal-card" style="width: auto">
           <header class="modal-card-head">

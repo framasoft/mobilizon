@@ -21,8 +21,8 @@ import { Component, Vue } from "vue-property-decorator";
 import { LIST_GROUPS } from "@/graphql/group";
 import { Group, IGroup } from "@/types/actor";
 import GroupMemberCard from "@/components/Group/GroupMemberCard.vue";
-import RouteName from "../../router/name";
 import { Paginate } from "@/types/paginate";
+import RouteName from "../../router/name";
 
 @Component({
   apollo: {

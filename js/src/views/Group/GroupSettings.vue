@@ -102,13 +102,13 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
 import RouteName from "../../router/name";
 import { FETCH_GROUP, UPDATE_GROUP, DELETE_GROUP } from "../../graphql/group";
 import { IGroup, usernameWithDomain } from "../../types/actor";
 import { Address, IAddress } from "../../types/address.model";
 import { IMember, Group } from "../../types/actor/group.model";
 import { Paginate } from "../../types/paginate";
-import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
 
 @Component({
   apollo: {

@@ -9,7 +9,7 @@
               class="content"
               v-html="
                 $t(
-                  'From a birthday party with friends and family to a march for climate change, right now, our gatherings are <b>trapped inside the tech giants’ platforms</b>. How can we organize, how can we click “Attend,” without <b>providing private data</b> to Facebook or <b>locking ourselves up</b> inside MeetUp?'
+                  'From a birthday party with friends and family to a march for climate change, right now, our gatherings are <b>trapped inside the tech giants’ platforms</b>. How can we organize, how can we click “Attend,” without <b>providing private data</b> to Facebook or <b>locking ourselves</b> inside MeetUp?'
                 )
               "
             />
@@ -37,7 +37,7 @@
             <p
               v-html="
                 $t(
-                  'We want to develop a <b>digital common</b>, that everyone can make their own, which respects <b>privacy and activism by design</b>.'
+                  'We want to develop a <b>digital common</b> that everyone can make their own, one which respects <b>privacy and activism by design</b>.'
                 )
               "
             />
@@ -49,9 +49,10 @@
                   )
                 "
               />
+              <span> </span>
               <i18n
                 tag="span"
-                path="This installation (called “instance“) can easily {interconnect}, thanks to {protocol}."
+                path="This installation (called “an instance“) can easily {interconnect}, thanks to {protocol}."
               >
                 <b slot="interconnect">{{ $t("interconnect with others like it") }}</b>
                 <a slot="protocol" href="https://en.wikipedia.org/wiki/ActivityPub">{{
@@ -77,7 +78,7 @@
           <blockquote>
             {{
               $t(
-                "We won’t change the world from Facebook. The tool we dream of, surveillance capitalism corporations won’t develop it, as they couldn’t profit from it. This is an opportunity to build something better, by taking another approach."
+                "We can’t change the world from within Facebook. The tool we dream of, surveillance capitalism corporations won’t develop, as they cannot profit from it. This is an opportunity to build something better, by taking another approach."
               )
             }}
           </blockquote>
@@ -97,7 +98,7 @@
             <h2 class="title">{{ $t("Software to the people") }}</h2>
             <i18n
               tag="p"
-              path="{license} guarantees {respect} of the people who will use it. Since {source}, anyone can audit it, which guarantees its transparency."
+              path="{license} guarantees {respect} of the people who use it. Since {source}, anyone can audit it, which guarantees its transparency."
             >
               <a slot="license" href="https://choosealicense.com/licenses/agpl-3.0/">{{
                 $t("Mobilizon’s licence")
@@ -135,17 +136,12 @@
       <section>
         <div class="columns">
           <div class="column has-text-right-desktop">
-            <h2 class="title">{{ $t("Concieved with care for humans") }}</h2>
+            <h2 class="title">{{ $t("Conceived with care for humans") }}</h2>
             <i18n
               tag="p"
-              path="We asked professional designers to help us develop our vision for Mobilizon. We took time to study the {digital_habits} in order to understand the features they need to gather, organize, and mobilize."
+              path="We asked professional designers to help us develop our vision for Mobilizon. We took time to study the {digital_habits} in order to understand the features they need to gather, organize, and mobilize so that right from its conception, Mobilizon would {fit_needs_uses_people} who are going to use it."
             >
               <b slot="digital_habits">{{ $t("digital habits of activists") }}</b>
-            </i18n>
-            <i18n
-              tag="p"
-              path="So that, right from its conception, Mobilizon would {fit_needs_uses_people} who are going to use it."
-            >
               <b slot="fit_needs_uses_people">{{ $t("fit the needs and uses of the people") }}</b>
             </i18n>
           </div>

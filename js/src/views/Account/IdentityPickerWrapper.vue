@@ -3,8 +3,8 @@
     <div
       v-if="inline"
       class="inline box"
-      :class="{ 'has-background-grey-lighter': masked }"
-      @click="isComponentModalActive = true"
+      :class="{ 'has-background-grey-lighter': masked, 'no-other-identity': !hasOtherIdentities }"
+      @click="activateModal"
     >
       <div class="media">
         <div class="media-left">
@@ -23,29 +23,35 @@
         <div class="media-content" v-else>
           {{ `@${currentIdentity.preferredUsername}` }}
         </div>
-        <b-button type="is-text" @click="isComponentModalActive = true">
+        <b-button type="is-text" v-if="identities.length > 1" @click="activateModal">
           {{ $t("Change") }}
         </b-button>
       </div>
     </div>
-    <span v-else class="block" @click="isComponentModalActive = true">
+    <span v-else class="block" @click="activateModal">
       <figure class="image is-48x48" v-if="currentIdentity.avatar">
         <img class="is-rounded" :src="currentIdentity.avatar.url" alt="" />
       </figure>
       <b-icon v-else size="is-large" icon="account-circle" />
     </span>
-    <b-modal :active.sync="isComponentModalActive" has-modal-card>
+    <b-modal v-model="isComponentModalActive" has-modal-card>
       <identity-picker v-model="currentIdentity" @input="relay" />
     </b-modal>
   </div>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { IDENTITIES } from "@/graphql/actor";
 import { IActor } from "../../types/actor";
 import IdentityPicker from "./IdentityPicker.vue";
 
 @Component({
   components: { IdentityPicker },
+  apollo: {
+    identities: {
+      query: IDENTITIES,
+    },
+  },
 })
 export default class IdentityPickerWrapper extends Vue {
   @Prop() value!: IActor;
@@ -56,17 +62,29 @@ export default class IdentityPickerWrapper extends Vue {
 
   isComponentModalActive = false;
 
+  identities: IActor[] = [];
+
   currentIdentity: IActor = this.value;
 
   @Watch("value")
-  updateCurrentActor(value: IActor) {
+  updateCurrentActor(value: IActor): void {
     this.currentIdentity = value;
   }
 
-  relay(identity: IActor) {
+  relay(identity: IActor): void {
     this.currentIdentity = identity;
     this.$emit("input", identity);
     this.isComponentModalActive = false;
+  }
+
+  get hasOtherIdentities(): boolean {
+    return this.identities.length > 1;
+  }
+
+  activateModal(): void {
+    if (this.hasOtherIdentities) {
+      this.isComponentModalActive = true;
+    }
   }
 }
 </script>
@@ -76,7 +94,7 @@ export default class IdentityPickerWrapper extends Vue {
     cursor: pointer;
   }
 
-  .inline {
+  .inline:not(.no-other-identity) {
     cursor: pointer;
   }
 

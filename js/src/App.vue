@@ -107,45 +107,9 @@ export default class App extends Vue {
 <style lang="scss">
 @import "variables";
 
-/* Bulma imports */
-@import "~bulma/bulma";
-@import "~bulma-divider";
-
-/* Buefy imports */
-@import "~buefy/src/scss/buefy";
-
 /* Icons */
 $mdi-font-path: "~@mdi/font/fonts";
 @import "~@mdi/font/scss/materialdesignicons";
 
 @import "common";
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-body {
-  // background: #f7f8fa;
-  background: $body-background-color;
-  font-family: BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, "Segoe UI", "Fira Sans",
-    "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-
-  /*main {*/
-  /*  margin: 1rem auto 0;*/
-  /*}*/
-}
-
-#mobilizon > .container > .message {
-  margin: 1rem auto auto;
-  .message-header {
-    button.delete {
-      background: #4a4a4a;
-    }
-  }
-}
 </style>

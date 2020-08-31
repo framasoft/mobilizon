@@ -120,109 +120,181 @@
       <!-- Private things -->
       <div class="block-column">
         <!-- Group discussions -->
-        <group-section :title="$t('Discussions')" icon="chat">
-          <div v-if="group.discussions.total > 0">
-            <discussion-list-item
-              v-for="discussion in group.discussions.elements"
-              :key="discussion.id"
-              :discussion="discussion"
-            />
-          </div>
-          <div v-else class="content has-text-grey has-text-centered">
-            <p>{{ $t("No discussions yet") }}</p>
-          </div>
-          <router-link
-            :to="{
-              name: RouteName.DISCUSSION_LIST,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ $t("View all discussions") }}</router-link
-          >
-        </group-section>
-        <!-- Todos -->
-        <group-section :title="$t('Ongoing tasks')" icon="checkbox-multiple-marked">
-          <div v-if="group.todoLists.elements.length > 0">
-            <div v-for="todoList in group.todoLists.elements" :key="todoList.id">
-              <router-link :to="{ name: RouteName.TODO_LIST, params: { id: todoList.id } }">
-                <h2 class="is-size-3">
-                  {{
-                    $tc("{title} ({count} todos)", todoList.todos.total, {
-                      count: todoList.todos.total,
-                      title: todoList.title,
-                    })
-                  }}
-                </h2>
-              </router-link>
-              <compact-todo
-                :todo="todo"
-                v-for="todo in todoList.todos.elements.slice(0, 3)"
-                :key="todo.id"
+        <group-section
+          :title="$t('Discussions')"
+          icon="chat"
+          :route="{
+            name: RouteName.DISCUSSION_LIST,
+            params: { preferredUsername: usernameWithDomain(group) },
+          }"
+        >
+          <template v-slot:default>
+            <div v-if="group.discussions.total > 0">
+              <discussion-list-item
+                v-for="discussion in group.discussions.elements"
+                :key="discussion.id"
+                :discussion="discussion"
               />
             </div>
-          </div>
-          <div v-else class="content has-text-grey has-text-centered">
-            <p>{{ $t("No ongoing todos") }}</p>
-          </div>
-          <router-link :to="{ name: RouteName.TODO_LISTS }">{{ $t("View all todos") }}</router-link>
+            <div v-else class="content has-text-grey has-text-centered">
+              <p>{{ $t("No discussions yet") }}</p>
+            </div>
+          </template>
+          <template v-slot:create>
+            <router-link
+              :to="{
+                name: RouteName.CREATE_DISCUSSION,
+                params: { preferredUsername: usernameWithDomain(group) },
+              }"
+              class="button is-primary"
+              >{{ $t("+ Start a discussion") }}</router-link
+            >
+          </template>
         </group-section>
         <!-- Resources -->
-        <group-section :title="$t('Resources')" icon="link">
-          <div v-if="group.resources.elements.length > 0">
-            <div v-for="resource in group.resources.elements" :key="resource.id">
-              <resource-item
-                :resource="resource"
-                v-if="resource.type !== 'folder'"
-                :inline="true"
-              />
-              <folder-item :resource="resource" :group="group" v-else :inline="true" />
+        <group-section
+          :title="$t('Resources')"
+          icon="link"
+          :route="{
+            name: RouteName.RESOURCE_FOLDER_ROOT,
+            params: { preferredUsername: usernameWithDomain(group) },
+          }"
+        >
+          <template v-slot:default>
+            <div v-if="group.resources.elements.length > 0">
+              <div v-for="resource in group.resources.elements" :key="resource.id">
+                <resource-item
+                  :resource="resource"
+                  v-if="resource.type !== 'folder'"
+                  :inline="true"
+                />
+                <folder-item :resource="resource" :group="group" v-else :inline="true" />
+              </div>
             </div>
-          </div>
-          <div v-else-if="group" class="content has-text-grey has-text-centered">
-            <p>{{ $t("No resources yet") }}</p>
-          </div>
-          <router-link
-            :to="{
-              name: RouteName.RESOURCE_FOLDER_ROOT,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ $t("View all resources") }}</router-link
-          >
+            <div v-else-if="group" class="content has-text-grey has-text-centered">
+              <p>{{ $t("No resources yet") }}</p>
+            </div>
+          </template>
+          <template v-slot:create>
+            <router-link
+              :to="{
+                name: RouteName.RESOURCE_FOLDER_ROOT,
+                params: { preferredUsername: usernameWithDomain(group) },
+              }"
+              class="button is-primary"
+              >{{ $t("+ Add a resource") }}</router-link
+            >
+          </template>
+        </group-section>
+        <!-- Todos -->
+        <group-section
+          :title="$t('Ongoing tasks')"
+          icon="checkbox-multiple-marked"
+          :route="{
+            name: RouteName.TODO_LISTS,
+            params: { preferredUsername: usernameWithDomain(group) },
+          }"
+        >
+          <template v-slot:default>
+            <div v-if="group.todoLists.elements.length > 0">
+              <div v-for="todoList in group.todoLists.elements" :key="todoList.id">
+                <router-link :to="{ name: RouteName.TODO_LIST, params: { id: todoList.id } }">
+                  <h2 class="is-size-3">
+                    {{
+                      $tc("{title} ({count} todos)", todoList.todos.total, {
+                        count: todoList.todos.total,
+                        title: todoList.title,
+                      })
+                    }}
+                  </h2>
+                </router-link>
+                <compact-todo
+                  :todo="todo"
+                  v-for="todo in todoList.todos.elements.slice(0, 3)"
+                  :key="todo.id"
+                />
+              </div>
+            </div>
+            <div v-else class="content has-text-grey has-text-centered">
+              <p>{{ $t("No ongoing todos") }}</p>
+            </div>
+          </template>
+          <template v-slot:create>
+            <router-link
+              :to="{
+                name: RouteName.TODO_LISTS,
+                params: { preferredUsername: usernameWithDomain(group) },
+              }"
+              class="button is-primary"
+              >{{ $t("+ Add a todo") }}</router-link
+            >
+          </template>
         </group-section>
       </div>
       <!-- Public things -->
       <div class="block-column">
         <!-- Events -->
-        <group-section :title="$t('Upcoming events')" icon="calendar" :privateSection="false">
-          <div class="organized-events-wrapper" v-if="group && group.organizedEvents.total > 0">
-            <EventMinimalistCard
-              v-for="event in group.organizedEvents.elements"
-              :event="event"
-              :key="event.uuid"
-              class="organized-event"
-            />
-          </div>
-          <div v-else-if="group" class="content has-text-grey has-text-centered">
-            <p>{{ $t("No public upcoming events") }}</p>
-          </div>
-          <b-skeleton animated v-else></b-skeleton>
-          <router-link :to="{}">{{ $t("View all events") }}</router-link>
+        <group-section
+          :title="$t('Upcoming events')"
+          icon="calendar"
+          :privateSection="false"
+          :route="{
+            name: RouteName.GROUP_EVENTS,
+            params: { preferredUsername: usernameWithDomain(group) },
+          }"
+        >
+          <template v-slot:default>
+            <div class="organized-events-wrapper" v-if="group && group.organizedEvents.total > 0">
+              <EventMinimalistCard
+                v-for="event in group.organizedEvents.elements"
+                :event="event"
+                :key="event.uuid"
+                class="organized-event"
+              />
+            </div>
+            <div v-else-if="group" class="content has-text-grey has-text-centered">
+              <p>{{ $t("No public upcoming events") }}</p>
+            </div>
+            <b-skeleton animated v-else></b-skeleton>
+          </template>
+          <template v-slot:create>
+            <router-link
+              :to="{
+                name: RouteName.CREATE_EVENT,
+              }"
+              class="button is-primary"
+              >{{ $t("+ Create an event") }}</router-link
+            >
+          </template>
         </group-section>
         <!-- Posts -->
-        <group-section :title="$t('Public page')" icon="bullhorn" :privateSection="false">
-          <div v-if="group.posts.total > 0" class="posts-wrapper">
-            <post-list-item v-for="post in group.posts.elements" :key="post.id" :post="post" />
-          </div>
-          <div v-else-if="group" class="content has-text-grey has-text-centered">
-            <p>{{ $t("No posts yet") }}</p>
-          </div>
-          <router-link
-            :to="{
-              name: RouteName.POST_CREATE,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            class="button is-primary"
-            >{{ $t("Post a public message") }}</router-link
-          >
+        <group-section
+          :title="$t('Public page')"
+          icon="bullhorn"
+          :privateSection="false"
+          :route="{
+            name: RouteName.POSTS,
+            params: { preferredUsername: usernameWithDomain(group) },
+          }"
+        >
+          <template v-slot:default>
+            <div v-if="group.posts.total > 0" class="posts-wrapper">
+              <post-list-item v-for="post in group.posts.elements" :key="post.id" :post="post" />
+            </div>
+            <div v-else-if="group" class="content has-text-grey has-text-centered">
+              <p>{{ $t("No posts yet") }}</p>
+            </div>
+          </template>
+          <template v-slot:create>
+            <router-link
+              :to="{
+                name: RouteName.POST_CREATE,
+                params: { preferredUsername: usernameWithDomain(group) },
+              }"
+              class="button is-primary"
+              >{{ $t("+ Post a public message") }}</router-link
+            >
+          </template>
         </group-section>
       </div>
     </div>
@@ -294,11 +366,11 @@ import DiscussionListItem from "@/components/Discussion/DiscussionListItem.vue";
 import PostListItem from "@/components/Post/PostListItem.vue";
 import ResourceItem from "@/components/Resource/ResourceItem.vue";
 import FolderItem from "@/components/Resource/FolderItem.vue";
-import RouteName from "../../router/name";
 import { Address } from "@/types/address.model";
-import GroupSection from "../../components/Group/GroupSection.vue";
 import Invitations from "@/components/Group/Invitations.vue";
 import addMinutes from "date-fns/addMinutes";
+import GroupSection from "../../components/Group/GroupSection.vue";
+import RouteName from "../../router/name";
 
 @Component({
   apollo: {
@@ -493,7 +565,7 @@ div.container {
 
   .header,
   .public-container {
-    margin: auto 2rem;
+    margin: auto 1rem;
     display: flex;
     flex-direction: column;
   }
@@ -501,6 +573,7 @@ div.container {
   .block-container {
     display: flex;
     flex-wrap: wrap;
+    margin-top: 15px;
 
     &.presentation {
       border: 2px solid $purple-2;
@@ -560,7 +633,7 @@ div.container {
 
     .block-column {
       flex: 1;
-      margin: 0 2rem;
+      margin: 0 1rem;
 
       section {
         .posts-wrapper {

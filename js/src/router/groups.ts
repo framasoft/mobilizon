@@ -14,9 +14,12 @@ export enum GroupsRouteName {
   POST_EDIT = "POST_EDIT",
   POST = "POST",
   POSTS = "POSTS",
+  GROUP_EVENTS = "GROUP_EVENTS",
 }
 
 const resourceFolder = () => import("@/views/Resources/ResourceFolder.vue");
+const groupEvents = () =>
+  import(/* webpackChunkName: "groupEvents" */ "@/views/Event/GroupEvents.vue");
 
 export const groupsRoutes: RouteConfig[] = [
   {
@@ -98,5 +101,11 @@ export const groupsRoutes: RouteConfig[] = [
     component: () => import("@/views/Posts/List.vue"),
     props: true,
     name: GroupsRouteName.POSTS,
+  },
+  {
+    path: "/@:preferredUsername/events",
+    component: groupEvents,
+    props: true,
+    name: GroupsRouteName.GROUP_EVENTS,
   },
 ];
