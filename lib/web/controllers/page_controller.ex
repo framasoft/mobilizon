@@ -157,12 +157,7 @@ defmodule Mobilizon.Web.PageController do
   defp is_local?(%{local: local}), do: if(local, do: true, else: :remote)
   defp is_local?(_), do: false
 
-  defp maybe_add_noindex_header(conn, %Event{visibility: visibility})
-       when visibility != :public do
-    put_resp_header(conn, "x-robots-tag", "noindex")
-  end
-
-  defp maybe_add_noindex_header(conn, %Post{visibility: visibility})
+  defp maybe_add_noindex_header(conn, %{visibility: visibility})
        when visibility != :public do
     put_resp_header(conn, "x-robots-tag", "noindex")
   end

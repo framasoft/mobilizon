@@ -187,7 +187,7 @@ defmodule Mobilizon.Actors do
   def get_actor_by_name_with_preload(name, type \\ nil) do
     name
     |> get_actor_by_name(type)
-    |> Repo.preload([:organized_events, :user])
+    |> Repo.preload([:organized_events, :user, :physical_address])
   end
 
   @doc """

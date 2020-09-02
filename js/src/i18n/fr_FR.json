@@ -456,7 +456,6 @@
   "Please refresh the page and retry.": "Merci de rafraîchir la page puis réessayer.",
   "Post": "Billet",
   "Post a comment": "Ajouter un commentaire",
-  "Post a public message": "Poster un message public",
   "Post a reply": "Envoyer une réponse",
   "Postal Code": "Code postal",
   "Posts": "Billets",
@@ -634,10 +633,6 @@
   "Username": "Pseudo",
   "Users": "Utilisateur⋅ice⋅s",
   "View a reply": "Aucune réponse | Voir une réponse | Voir {totalReplies} réponses",
-  "View all discussions": "Voir toutes les discussions",
-  "View all events": "Voir tous les événements",
-  "View all resources": "Voir toutes les resources",
-  "View all todos": "Voir tous les todos",
   "View all upcoming events": "Voir tous les événements à venir",
   "View event page": "Voir la page de l'évènement",
   "View everything": "Voir tout",
@@ -684,7 +679,6 @@
   "You will be redirected to the original instance": "Vous allez être redirigé⋅e vers l'instance d'origine",
   "You wish to participate to the following event": "Vous souhaitez participer à l'événement suivant",
   "You'll get a weekly recap every Monday for upcoming events, if you have any.": "Vous recevrez un récapitulatif hebdomadaire chaque lundi pour les événements de la semaine, si vous en avez.",
-  "You'll need to transmit the group URL so people may access the group's profile.": "Vous aurez besoin de transmettre l'URL du groupe pour que d'autres personnes accèdent au profil du groupe.",
   "You'll receive a confirmation email.": "Vous recevrez un email de confirmation.",
   "Your account has been successfully deleted": "Votre compte a été supprimé avec succès",
   "Your account has been validated": "Votre compte a été validé",
@@ -798,5 +792,6 @@
   "A place to publish something to the whole world, your community or just your group members.": "Un endroit pour publier quelque chose à l'intention du monde entier, de votre communauté ou simplement des membres de votre groupe.",
   "No posts found": "Aucun billet trouvé",
   "Last sign-in": "Dernière connexion",
-  "Last IP adress": "Dernière addresse IP"
+  "Last IP adress": "Dernière addresse IP",
+  "You'll need to transmit the group URL so people may access the group's profile. The group won't be findable in Mobilizon's search or regular search engines.": "Vous aurez besoin de transmettre l'URL du groupe pour que d'autres personnes accèdent au profil du groupe. Le groupe ne sera pas trouvable dans la recherche de Mobilizon ni dans les moteurs de recherche habituels."
 }

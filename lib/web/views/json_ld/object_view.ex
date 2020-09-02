@@ -8,6 +8,16 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
   alias Mobilizon.Web.JsonLD.ObjectView
   alias Mobilizon.Web.MediaProxy
 
+  def render("group.json", %{group: %Actor{} = group}) do
+    %{
+      "@context" => "http://schema.org",
+      "@type" => "Organization",
+      "url" => group.url,
+      "name" => group.name || group.preferred_username,
+      "address" => render_address(group)
+    }
+  end
+
   def render("event.json", %{event: %Event{} = event}) do
     organizer = %{
       "@type" => if(event.organizer_actor.type == :Group, do: "Organization", else: "Person"),
@@ -56,14 +66,18 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
     %{
       "@type" => "Place",
       "name" => address.description,
-      "address" => %{
-        "@type" => "PostalAddress",
-        "streetAddress" => address.street,
-        "addressLocality" => address.locality,
-        "postalCode" => address.postal_code,
-        "addressRegion" => address.region,
-        "addressCountry" => address.country
-      }
+      "address" => render_one(address, ObjectView, "address.json", as: :address)
+    }
+  end
+
+  def render("address.json", %{address: %Address{} = address}) do
+    %{
+      "@type" => "PostalAddress",
+      "streetAddress" => address.street,
+      "addressLocality" => address.locality,
+      "postalCode" => address.postal_code,
+      "addressRegion" => address.region,
+      "addressCountry" => address.country
     }
   end
 
@@ -81,7 +95,7 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
     }
   end
 
-  defp render_location(%Event{physical_address: %Address{} = address}),
+  defp render_location(%{physical_address: %Address{} = address}),
     do: render_one(address, ObjectView, "place.json", as: :address)
 
   # For now the Virtual Location of an event is it's own URL,
@@ -92,4 +106,11 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
       "url" => event_url
     }
   end
+
+  defp render_location(_), do: nil
+
+  defp render_address(%{physical_address: %Address{} = address}),
+    do: render_one(address, ObjectView, "address.json", as: :address)
+
+  defp render_address(_), do: nil
 end
