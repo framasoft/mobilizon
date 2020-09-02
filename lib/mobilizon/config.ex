@@ -227,7 +227,11 @@ defmodule Mobilizon.Config do
     end
   end
 
-  def instance_group_feature_enabled?, do: Application.get_env(:mobilizon, :instance)[:groups]
+  def instance_group_feature_enabled?,
+    do: :mobilizon |> Application.get_env(:groups) |> Keyword.get(:enabled)
+
+  def instance_event_creation_enabled?,
+    do: :mobilizon |> Application.get_env(:events) |> Keyword.get(:creation)
 
   def anonymous_actor_id, do: get_cached_value(:anonymous_actor_id)
   def relay_actor_id, do: get_cached_value(:relay_actor_id)

@@ -18,7 +18,7 @@
         v-if="config && config.features.groups"
         >{{ $t("My groups") }}</b-navbar-item
       >
-      <b-navbar-item tag="span">
+      <b-navbar-item tag="span" v-if="config && config.features.eventCreation">
         <b-button tag="router-link" :to="{ name: RouteName.CREATE_EVENT }" type="is-primary">{{
           $t("Create")
         }}</b-button>
