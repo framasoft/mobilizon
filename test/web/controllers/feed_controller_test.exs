@@ -44,7 +44,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
 
     test "it returns a 404 for the actor's public events Atom feed if the actor is not publicly visible",
          %{conn: conn} do
-      actor = insert(:actor)
+      actor = insert(:actor, visibility: :private)
       tag1 = insert(:tag, title: "RSS", slug: "rss")
       tag2 = insert(:tag, title: "ATOM", slug: "atom")
       insert(:event, organizer_actor: actor, tags: [tag1])

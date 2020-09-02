@@ -78,12 +78,30 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
     banner {
       url
     }
-    organizedEvents {
+    organizedEvents(
+      afterDatetime: $afterDateTime
+      beforeDatetime: $beforeDateTime
+      page: $organisedEventsPage
+      limit: $organisedEventslimit
+    ) {
       elements {
         id
         uuid
         title
         beginsOn
+        options {
+          maximumAttendeeCapacity
+        }
+        participantStats {
+          participant
+          notApproved
+        }
+        organizerActor {
+          id
+          preferredUsername
+          name
+          domain
+        }
       }
       total
     }
@@ -154,7 +172,13 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
 `;
 
 export const FETCH_GROUP = gql`
-  query($name: String!) {
+  query(
+    $name: String!
+    $afterDateTime: DateTime
+    $beforeDateTime: DateTime
+    $organisedEventsPage: Int
+    $organisedEventslimit: Int
+  ) {
     group(preferredUsername: $name) {
       ...GroupFullFields
     }
@@ -166,7 +190,13 @@ export const FETCH_GROUP = gql`
 `;
 
 export const GET_GROUP = gql`
-  query($id: ID!) {
+  query(
+    $id: ID!
+    $afterDateTime: DateTime
+    $beforeDateTime: DateTime
+    $organisedEventsPage: Int
+    $organisedEventslimit: Int
+  ) {
     getGroup(id: $id) {
       ...GroupFullFields
     }

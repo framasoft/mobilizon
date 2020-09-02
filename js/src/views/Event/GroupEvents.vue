@@ -34,20 +34,25 @@
         }}
       </p>
       <b-loading :active.sync="$apollo.loading"></b-loading>
-      <section v-if="group && group.organizedEvents.total > 0">
+      <section v-if="group">
         <subtitle>
-          {{ $t("Past events") }}
+          {{ showPassedEvents ? $t("Past events") : $t("Upcoming events") }}
         </subtitle>
+        <b-switch v-model="showPassedEvents">{{ $t("Past events") }}</b-switch>
         <transition-group name="list" tag="p">
-          <EventListViewCard v-for="event in group.organizedEvents.elements" :key="event.id" />
+          <EventListViewCard
+            v-for="event in group.organizedEvents.elements"
+            :key="event.id"
+            :event="event"
+          />
         </transition-group>
+        <b-message
+          v-if="group.organizedEvents.elements.length === 0 && $apollo.loading === false"
+          type="is-danger"
+        >
+          {{ $t("No events found") }}
+        </b-message>
       </section>
-      <b-message
-        v-if="group.organizedEvents.elements.length === 0 && $apollo.loading === false"
-        type="is-danger"
-      >
-        {{ $t("No events found") }}
-      </b-message>
     </section>
   </div>
 </template>
@@ -55,6 +60,8 @@
 import { Component, Vue } from "vue-property-decorator";
 import { FETCH_GROUP } from "@/graphql/group";
 import RouteName from "@/router/name";
+import Subtitle from "@/components/Utils/Subtitle.vue";
+import EventListViewCard from "@/components/Event/EventListViewCard.vue";
 import { IGroup, usernameWithDomain } from "../../types/actor";
 
 @Component({
@@ -64,9 +71,15 @@ import { IGroup, usernameWithDomain } from "../../types/actor";
       variables() {
         return {
           name: this.$route.params.preferredUsername,
+          beforeDateTime: this.showPassedEvents ? new Date() : null,
+          afterDateTime: this.showPassedEvents ? null : new Date(),
         };
       },
     },
+  },
+  components: {
+    Subtitle,
+    EventListViewCard,
   },
 })
 export default class GroupEvents extends Vue {
@@ -75,5 +88,7 @@ export default class GroupEvents extends Vue {
   usernameWithDomain = usernameWithDomain;
 
   RouteName = RouteName;
+
+  showPassedEvents = false;
 }
 </script>

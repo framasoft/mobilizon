@@ -53,7 +53,8 @@ defmodule Mobilizon.Factory do
       outbox_url: Actor.build_url(preferred_username, :outbox),
       shared_inbox_url: "#{Endpoint.url()}/inbox",
       last_refreshed_at: DateTime.utc_now(),
-      user: build(:user)
+      user: build(:user),
+      visibility: :public
     }
   end
 

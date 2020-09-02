@@ -37,7 +37,7 @@
           <b-input v-model="group.name" />
         </b-field>
         <b-field :label="$t('Group short description')">
-          <b-input type="textarea" v-model="group.summary"
+          <editor mode="basic" v-model="group.summary"
         /></b-field>
         <p class="label">{{ $t("Group visibility") }}</p>
         <div class="field">
@@ -105,12 +105,12 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
+import { Route } from "vue-router";
 import RouteName from "../../router/name";
 import { FETCH_GROUP, UPDATE_GROUP, DELETE_GROUP } from "../../graphql/group";
 import { IGroup, usernameWithDomain } from "../../types/actor";
 import { Address, IAddress } from "../../types/address.model";
-import { IMember, Group } from "../../types/actor/group.model";
-import { Paginate } from "../../types/paginate";
+import { Group } from "../../types/actor/group.model";
 
 @Component({
   apollo: {
@@ -129,6 +129,7 @@ import { Paginate } from "../../types/paginate";
   },
   components: {
     FullAddressAutoComplete,
+    editor: () => import("../../components/Editor.vue"),
   },
 })
 export default class GroupSettings extends Vue {
@@ -149,7 +150,7 @@ export default class GroupSettings extends Vue {
 
   showCopiedTooltip = false;
 
-  async updateGroup() {
+  async updateGroup(): Promise<void> {
     const variables = { ...this.group };
     // eslint-disable-next-line
     // @ts-ignore
@@ -165,7 +166,7 @@ export default class GroupSettings extends Vue {
     });
   }
 
-  confirmDeleteGroup() {
+  confirmDeleteGroup(): void {
     this.$buefy.dialog.confirm({
       title: this.$t("Delete group") as string,
       message: this.$t(
@@ -179,7 +180,7 @@ export default class GroupSettings extends Vue {
     });
   }
 
-  async deleteGroup() {
+  async deleteGroup(): Promise<Route> {
     await this.$apollo.mutate<{ deleteGroup: IGroup }>({
       mutation: DELETE_GROUP,
       variables: {
@@ -189,7 +190,7 @@ export default class GroupSettings extends Vue {
     return this.$router.push({ name: RouteName.MY_GROUPS });
   }
 
-  async copyURL() {
+  async copyURL(): Promise<void> {
     await window.navigator.clipboard.writeText(this.group.url);
     this.showCopiedTooltip = true;
     setTimeout(() => {
@@ -197,6 +198,7 @@ export default class GroupSettings extends Vue {
     }, 2000);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   get canShowCopyButton(): boolean {
     return window.isSecureContext;
   }

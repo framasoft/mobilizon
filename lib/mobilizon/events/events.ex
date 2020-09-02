@@ -405,7 +405,7 @@ defmodule Mobilizon.Events do
   def list_public_events_for_actor(actor, page \\ nil, limit \\ nil)
 
   def list_public_events_for_actor(%Actor{type: :Group} = group, page, limit),
-    do: list_organized_events_for_group(group, page, limit)
+    do: list_organized_events_for_group(group, :public, nil, page, limit)
 
   def list_public_events_for_actor(%Actor{id: actor_id}, page, limit) do
     actor_id
@@ -424,10 +424,25 @@ defmodule Mobilizon.Events do
     |> Page.build_page(page, limit)
   end
 
-  @spec list_organized_events_for_group(Actor.t(), integer | nil, integer | nil) :: Page.t()
-  def list_organized_events_for_group(%Actor{id: group_id}, page \\ nil, limit \\ nil) do
+  @spec list_organized_events_for_group(
+          Actor.t(),
+          DateTime.t() | nil,
+          DateTime.t() | nil,
+          integer | nil,
+          integer | nil
+        ) :: Page.t()
+  def list_organized_events_for_group(
+        %Actor{id: group_id},
+        visibility \\ :public,
+        after_datetime \\ nil,
+        before_datetime \\ nil,
+        page \\ nil,
+        limit \\ nil
+      ) do
     group_id
     |> event_for_group_query()
+    |> event_filter_visibility(visibility)
+    |> event_filter_begins_on(after_datetime, before_datetime)
     |> preload_for_event()
     |> Page.build_page(page, limit)
   end
@@ -1642,6 +1657,45 @@ defmodule Mobilizon.Events do
   def filter_role(query, role) when is_atom(role) do
     from(p in query, where: p.role == ^role)
   end
+
+  defp event_filter_visibility(query, :all), do: query
+
+  defp event_filter_visibility(query, :public) do
+    query
+    |> where(visibility: ^:public)
+  end
+
+  defp event_filter_begins_on(query, nil, nil),
+    do: event_order_begins_on_desc(query)
+
+  defp event_filter_begins_on(query, %DateTime{} = after_datetime, nil) do
+    query
+    |> where([e], e.begins_on > ^after_datetime)
+    |> event_order_begins_on_asc()
+  end
+
+  defp event_filter_begins_on(query, nil, %DateTime{} = before_datetime) do
+    query
+    |> where([e], e.begins_on < ^before_datetime)
+    |> event_order_begins_on_desc()
+  end
+
+  defp event_filter_begins_on(
+         query,
+         %DateTime{} = after_datetime,
+         %DateTime{} = before_datetime
+       ) do
+    query
+    |> where([e], e.begins_on < ^before_datetime)
+    |> where([e], e.begins_on > ^after_datetime)
+    |> event_order_begins_on_asc()
+  end
+
+  defp event_order_begins_on_asc(query),
+    do: order_by(query, [e], asc: e.begins_on)
+
+  defp event_order_begins_on_desc(query),
+    do: order_by(query, [e], desc: e.begins_on)
 
   defp participation_filter_begins_on(query, nil, nil),
     do: participation_order_begins_on_desc(query)

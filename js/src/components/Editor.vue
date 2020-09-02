@@ -40,6 +40,7 @@
           </button>
 
           <button
+            v-if="!isBasicMode"
             class="menubar__button"
             :class="{ 'is-active': isActive.heading({ level: 1 }) }"
             @click="commands.heading({ level: 1 })"
@@ -49,6 +50,7 @@
           </button>
 
           <button
+            v-if="!isBasicMode"
             class="menubar__button"
             :class="{ 'is-active': isActive.heading({ level: 2 }) }"
             @click="commands.heading({ level: 2 })"
@@ -58,6 +60,7 @@
           </button>
 
           <button
+            v-if="!isBasicMode"
             class="menubar__button"
             :class="{ 'is-active': isActive.heading({ level: 3 }) }"
             @click="commands.heading({ level: 3 })"
@@ -75,12 +78,18 @@
             <b-icon icon="link" />
           </button>
 
-          <button class="menubar__button" @click="showImagePrompt(commands.image)" type="button">
+          <button
+            class="menubar__button"
+            v-if="!isBasicMode"
+            @click="showImagePrompt(commands.image)"
+            type="button"
+          >
             <b-icon icon="image" />
           </button>
 
           <button
             class="menubar__button"
+            v-if="!isBasicMode"
             :class="{ 'is-active': isActive.bullet_list() }"
             @click="commands.bullet_list"
             type="button"
@@ -89,6 +98,7 @@
           </button>
 
           <button
+            v-if="!isBasicMode"
             class="menubar__button"
             :class="{ 'is-active': isActive.ordered_list() }"
             @click="commands.ordered_list"
@@ -98,6 +108,7 @@
           </button>
 
           <button
+            v-if="!isBasicMode"
             class="menubar__button"
             :class="{ 'is-active': isActive.blockquote() }"
             @click="commands.blockquote"
@@ -106,11 +117,11 @@
             <b-icon icon="format-quote-close" />
           </button>
 
-          <button class="menubar__button" @click="commands.undo" type="button">
+          <button v-if="!isBasicMode" class="menubar__button" @click="commands.undo" type="button">
             <b-icon icon="undo" />
           </button>
 
-          <button class="menubar__button" @click="commands.redo" type="button">
+          <button v-if="!isBasicMode" class="menubar__button" @click="commands.redo" type="button">
             <b-icon icon="redo" />
           </button>
         </div>
@@ -229,26 +240,30 @@ export default class EditorComponent extends Vue {
 
   filteredActors: IActor[] = [];
 
-  suggestionRange!: object | null;
+  suggestionRange!: Record<string, unknown> | null;
 
   navigatedActorIndex = 0;
 
   popup!: Instance[] | null;
 
-  get isDescriptionMode() {
-    return this.mode === "description";
+  get isDescriptionMode(): boolean {
+    return this.mode === "description" || this.isBasicMode;
   }
 
-  get isCommentMode() {
+  get isCommentMode(): boolean {
     return this.mode === "comment";
   }
 
-  get hasResults() {
-    return this.filteredActors.length;
+  get hasResults(): boolean {
+    return this.filteredActors.length > 0;
   }
 
-  get showSuggestions() {
-    return this.query || this.hasResults;
+  get showSuggestions(): boolean {
+    return (this.query || this.hasResults) as boolean;
+  }
+
+  get isBasicMode(): boolean {
+    return this.mode === "basic";
   }
 
   // eslint-disable-next-line
@@ -258,7 +273,7 @@ export default class EditorComponent extends Vue {
 
   observer!: MutationObserver | null;
 
-  mounted() {
+  mounted(): void {
     this.editor = new Editor({
       extensions: [
         new Blockquote(),

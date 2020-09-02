@@ -89,12 +89,27 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   def group_actor(%Actor{} = actor), do: actor
 
   defp prepare_args_for_actor(args) do
-    with preferred_username <-
-           args |> Map.get(:preferred_username) |> HTML.strip_tags() |> String.trim(),
-         summary <- args |> Map.get(:summary, "") |> String.trim(),
-         {summary, _mentions, _tags} <-
-           summary |> String.trim() |> APIUtils.make_content_html([], "text/html") do
-      %{args | preferred_username: preferred_username, summary: summary}
-    end
+    args
+    |> maybe_sanitize_username()
+    |> maybe_sanitize_summary()
   end
+
+  @spec maybe_sanitize_username(map()) :: map()
+  defp maybe_sanitize_username(%{preferred_username: preferred_username} = args) do
+    Map.put(args, :preferred_username, preferred_username |> HTML.strip_tags() |> String.trim())
+  end
+
+  defp maybe_sanitize_username(args), do: args
+
+  @spec maybe_sanitize_summary(map()) :: map()
+  defp maybe_sanitize_summary(%{summary: summary} = args) do
+    {summary, _mentions, _tags} =
+      summary
+      |> String.trim()
+      |> APIUtils.make_content_html([], "text/html")
+
+    Map.put(args, :summary, summary)
+  end
+
+  defp maybe_sanitize_summary(args), do: args
 end

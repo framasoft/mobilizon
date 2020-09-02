@@ -13,7 +13,7 @@
           {{ actor.name || `@${usernameWithDomain(actor)}` }}
         </p>
         <p class="has-text-grey" v-if="actor.name">@{{ usernameWithDomain(actor) }}</p>
-        <p v-if="full" class="summary" :class="{ limit: limit }">{{ actor.summary }}</p>
+        <div v-if="full" class="summary" :class="{ limit: limit }" v-html="actor.summary" />
       </div>
     </div>
   </div>

@@ -303,6 +303,10 @@
     </b-message>
     <div v-else class="public-container">
       <section>
+        <subtitle>{{ $t("About") }}</subtitle>
+        <div v-html="group.summary" />
+      </section>
+      <section>
         <subtitle>{{ $t("Upcoming events") }}</subtitle>
         <div class="organized-events-wrapper" v-if="group && group.organizedEvents.total > 0">
           <EventMinimalistCard
@@ -318,16 +322,12 @@
       </section>
       <section>
         <subtitle>{{ $t("Latest posts") }}</subtitle>
-        <div v-if="group && group.posts.total > 0">
-          <router-link
-            v-for="post in group.posts.elements"
-            :key="post.id"
-            :to="{ name: RouteName.POST, params: { slug: post.slug } }"
-          >
-            {{ post.title }}
-          </router-link>
+        <div v-if="group.posts.total > 0" class="posts-wrapper">
+          <post-list-item v-for="post in group.posts.elements" :key="post.id" :post="post" />
         </div>
-        <span v-else-if="group">{{ $t("No public posts") }}</span>
+        <div v-else-if="group" class="content has-text-grey has-text-centered">
+          <p>{{ $t("No posts yet") }}</p>
+        </div>
         <b-skeleton animated v-else></b-skeleton>
       </section>
       <b-modal v-if="physicalAddress && physicalAddress.geom" :active.sync="showMap">
@@ -369,6 +369,7 @@ import FolderItem from "@/components/Resource/FolderItem.vue";
 import { Address } from "@/types/address.model";
 import Invitations from "@/components/Group/Invitations.vue";
 import addMinutes from "date-fns/addMinutes";
+import { Route } from "vue-router";
 import GroupSection from "../../components/Group/GroupSection.vue";
 import RouteName from "../../router/name";
 
@@ -413,11 +414,13 @@ import RouteName from "../../router/name";
   metaInfo() {
     return {
       // if no subcomponents specify a metaInfo.title, this title will be used
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title: this.groupTitle,
       // all titles will be injected into this template
       titleTemplate: "%s | Mobilizon",
       meta: [
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         { name: "description", content: this.groupSummary },
       ],
@@ -442,14 +445,14 @@ export default class Group extends Vue {
   showMap = false;
 
   @Watch("currentActor")
-  watchCurrentActor(currentActor: IActor, oldActor: IActor) {
+  watchCurrentActor(currentActor: IActor, oldActor: IActor): void {
     if (currentActor.id && oldActor && currentActor.id !== oldActor.id) {
       this.$apollo.queries.group.refetch();
     }
   }
 
-  async leaveGroup() {
-    const { data } = await this.$apollo.mutate({
+  async leaveGroup(): Promise<Route> {
+    await this.$apollo.mutate({
       mutation: LEAVE_GROUP,
       variables: {
         groupId: this.group.id,
@@ -458,9 +461,10 @@ export default class Group extends Vue {
     return this.$router.push({ name: RouteName.MY_GROUPS });
   }
 
-  acceptInvitation() {
+  acceptInvitation(): void {
     if (this.groupMember) {
       const index = this.person.memberships.elements.findIndex(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         ({ id }: IMember) => id === this.groupMember.id
       );
@@ -471,12 +475,12 @@ export default class Group extends Vue {
     }
   }
 
-  get groupTitle() {
+  get groupTitle(): undefined | string {
     if (!this.group) return undefined;
     return this.group.preferredUsername;
   }
 
-  get groupSummary() {
+  get groupSummary(): undefined | string {
     if (!this.group) return undefined;
     return this.group.summary;
   }
@@ -486,8 +490,8 @@ export default class Group extends Vue {
     return this.person.memberships.elements.find(({ parent: { id } }) => id === this.group.id);
   }
 
-  get groupMemberships() {
-    if (!this.person || !this.person.id) return undefined;
+  get groupMemberships(): (string | undefined)[] {
+    if (!this.person || !this.person.id) return [];
     return this.person.memberships.elements
       .filter(
         (membership: IMember) =>
@@ -499,7 +503,7 @@ export default class Group extends Vue {
   }
 
   get isCurrentActorAGroupMember(): boolean {
-    return this.groupMemberships != undefined && this.groupMemberships.includes(this.group.id);
+    return this.groupMemberships !== undefined && this.groupMemberships.includes(this.group.id);
   }
 
   get isCurrentActorARejectedGroupMember(): boolean {
@@ -532,7 +536,8 @@ export default class Group extends Vue {
   }
 
   /**
-   * New members, if on a different server, can take a while to refresh the group and fetch all private data
+   * New members, if on a different server,
+   * can take a while to refresh the group and fetch all private data
    */
   get isCurrentActorARecentMember(): boolean {
     return (
@@ -671,6 +676,12 @@ div.container {
           }
         }
       }
+    }
+  }
+
+  .public-container {
+    section {
+      margin-top: 2rem;
     }
   }
 }
