@@ -29,6 +29,7 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
       {:ok, data}
     else
       {:ok, %Tesla.Env{status: 410}} ->
+        Logger.warn("Resource at #{url} is 410 Gone")
         {:error, "Gone"}
 
       {:ok, %Tesla.Env{} = res} ->

@@ -17,7 +17,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   alias Mobilizon.Todos.{Todo, TodoList}
 
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Activity, Relay, Utils}
+  alias Mobilizon.Federation.ActivityPub.{Activity, Refresher, Relay, Utils}
   alias Mobilizon.Federation.ActivityPub.Types.Ownable
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
   alias Mobilizon.Tombstone
@@ -656,7 +656,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   Handle incoming `Accept` activities wrapping a `Follow` activity
   """
   def do_handle_incoming_accept_following(follow_object, %Actor{} = actor) do
-    with {:follow, {:ok, %Follower{approved: false, target_actor: followed} = follow}} <-
+    with {:follow,
+          {:ok, %Follower{approved: false, target_actor: followed, actor: follower} = follow}} <-
            {:follow, get_follow(follow_object)},
          {:same_actor, true} <- {:same_actor, actor.id == followed.id},
          {:ok, %Activity{} = activity, %Follower{approved: true} = follow} <-
@@ -665,6 +666,13 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
              follow,
              false
            ) do
+      relay_actor = Relay.get_actor()
+
+      # If this is an instance follow, refresh the followed profile (especially their outbox)
+      if follower.id == relay_actor.id do
+        Refresher.refresh_profile(followed)
+      end
+
       {:ok, activity, follow}
     else
       {:follow, _} ->

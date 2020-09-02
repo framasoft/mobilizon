@@ -251,8 +251,9 @@ defmodule Mobilizon.Events do
   def create_event(attrs \\ %{}) do
     with {:ok, %{insert: %Event{} = event}} <- do_create_event(attrs),
          %Event{} = event <- Repo.preload(event, @event_preloads) do
-      unless event.draft,
-        do: Workers.BuildSearch.enqueue(:insert_search_event, %{"event_id" => event.id})
+      unless event.draft do
+        Workers.BuildSearch.enqueue(:insert_search_event, %{"event_id" => event.id})
+      end
 
       {:ok, event}
     else

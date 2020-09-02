@@ -30,11 +30,13 @@ defmodule Mobilizon.Service.Formatter.HTML do
   `<h1>test</h1>next` thing becomes `test next` instead of `testnext`
   """
   @spec strip_tags_and_insert_spaces(String.t()) :: String.t()
-  def strip_tags_and_insert_spaces(html) do
+  def strip_tags_and_insert_spaces(html) when is_binary(html) do
     html
     |> String.replace("</", " </")
     |> strip_tags()
   end
+
+  def strip_tags_and_insert_spaces(html), do: html
 
   def filter_tags_for_oembed(html), do: Sanitizer.scrub(html, OEmbed)
 end

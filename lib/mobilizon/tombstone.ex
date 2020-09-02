@@ -41,7 +41,10 @@ defmodule Mobilizon.Tombstone do
 
   @spec find_tombstone(String.t()) :: Ecto.Schema.t() | nil
   def find_tombstone(uri) do
-    Repo.get_by(__MODULE__, uri: uri)
+    __MODULE__
+    |> Ecto.Query.where([t], t.uri == ^uri)
+    |> Ecto.Query.preload([t], [:actor])
+    |> Repo.one()
   end
 
   @spec delete_actor_tombstones(String.t() | integer()) :: {integer(), nil}
