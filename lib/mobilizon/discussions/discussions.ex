@@ -239,6 +239,16 @@ defmodule Mobilizon.Discussions do
     Repo.all(from(c in Comment, where: c.visibility == ^:public))
   end
 
+  @spec list_local_comments(integer | nil, integer | nil) :: Page.t()
+  def list_local_comments(page \\ nil, limit \\ nil) do
+    Comment
+    |> where([c], c.visibility == ^:public)
+    |> where([c], is_nil(c.deleted_at))
+    |> where([c], is_nil(c.discussion_id))
+    |> preload_for_comment()
+    |> Page.build_page(page, limit)
+  end
+
   @doc """
   Returns the list of public comments for the actor.
   """

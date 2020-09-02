@@ -42,6 +42,10 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
       Logger.info("Relay: followed instance #{target_instance}; id=#{activity.data["id"]}")
       {:ok, activity, follow}
     else
+      {:error, e} ->
+        Logger.warn("Error while following remote instance: #{inspect(e)}")
+        {:error, e}
+
       e ->
         Logger.warn("Error while following remote instance: #{inspect(e)}")
         {:error, e}

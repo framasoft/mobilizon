@@ -251,8 +251,9 @@ defmodule Mobilizon.Events do
   def create_event(attrs \\ %{}) do
     with {:ok, %{insert: %Event{} = event}} <- do_create_event(attrs),
          %Event{} = event <- Repo.preload(event, @event_preloads) do
-      unless event.draft,
-        do: Workers.BuildSearch.enqueue(:insert_search_event, %{"event_id" => event.id})
+      unless event.draft do
+        Workers.BuildSearch.enqueue(:insert_search_event, %{"event_id" => event.id})
+      end
 
       {:ok, event}
     else
@@ -373,6 +374,16 @@ defmodule Mobilizon.Events do
     |> filter_draft()
     |> filter_local()
     |> Repo.stream()
+  end
+
+  @spec list_public_local_events(integer | nil, integer | nil) :: Page.t()
+  def list_public_local_events(page \\ nil, limit \\ nil) do
+    Event
+    |> filter_public_visibility()
+    |> filter_draft()
+    |> filter_local()
+    |> preload_for_event()
+    |> Page.build_page(page, limit)
   end
 
   @doc """

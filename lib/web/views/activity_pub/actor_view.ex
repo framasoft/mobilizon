@@ -160,7 +160,7 @@ defmodule Mobilizon.Web.ActivityPub.ActorView do
     map
   end
 
-  def item(%Activity{data: %{"id" => id}}), do: id
+  def item(%Activity{data: data}), do: data
   def item(%Actor{url: url}), do: url
   def item(%Member{} = member), do: Convertible.model_to_as(member)
   def item(%Resource{} = resource), do: Convertible.model_to_as(resource)

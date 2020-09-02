@@ -143,8 +143,10 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
         conn
         |> get(Actor.build_url(actor.preferred_username, :outbox))
 
-      assert json_response(conn, 200)["totalItems"] == 1
-      assert json_response(conn, 200)["first"]["orderedItems"] == [comment.url]
+      assert res = json_response(conn, 200)
+
+      assert res["totalItems"] == 1
+      assert res["first"]["orderedItems"] |> Enum.map(& &1["object"]["id"]) == [comment.url]
     end
 
     test "it returns an event activity in a collection", %{conn: conn} do
@@ -155,8 +157,10 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
         conn
         |> get(Actor.build_url(actor.preferred_username, :outbox))
 
-      assert json_response(conn, 200)["totalItems"] == 1
-      assert json_response(conn, 200)["first"]["orderedItems"] == [event.url]
+      assert res = json_response(conn, 200)
+
+      assert res["totalItems"] == 1
+      assert res["first"]["orderedItems"] |> Enum.map(& &1["object"]["id"]) == [event.url]
     end
 
     test "it works for more than 10 events", %{conn: conn} do

@@ -23,7 +23,7 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
           {:commit, Actor.t()} | {:ignore, nil}
   def get_actor_by_name(name) do
     Cachex.fetch(@cache, "actor_" <> name, fn "actor_" <> name ->
-      case Actors.get_actor_by_name(name) do
+      case Actors.get_actor_by_name_with_preload(name) do
         %Actor{} = actor ->
           {:commit, actor}
 

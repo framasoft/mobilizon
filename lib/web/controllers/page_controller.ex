@@ -7,6 +7,7 @@ defmodule Mobilizon.Web.PageController do
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Posts.Post
   alias Mobilizon.Tombstone
   alias Mobilizon.Web.{ActivityPubController, Cache, PageController}
 
@@ -122,7 +123,9 @@ defmodule Mobilizon.Web.PageController do
             |> render(object_type, object: object)
 
           _ ->
-            render(conn, object_type, object: object)
+            conn
+            |> maybe_add_noindex_header(object)
+            |> render(object_type, object: object)
         end
 
       :remote ->
@@ -153,4 +156,11 @@ defmodule Mobilizon.Web.PageController do
 
   defp is_local?(%{local: local}), do: if(local, do: true, else: :remote)
   defp is_local?(_), do: false
+
+  defp maybe_add_noindex_header(conn, %{visibility: visibility})
+       when visibility != :public do
+    put_resp_header(conn, "x-robots-tag", "noindex")
+  end
+
+  defp maybe_add_noindex_header(conn, _), do: conn
 end

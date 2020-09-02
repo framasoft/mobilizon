@@ -51,6 +51,8 @@ defmodule Mobilizon.Federation.ActivityPub do
 
   require Logger
 
+  @public_ap_adress "https://www.w3.org/ns/activitystreams#Public"
+
   @doc """
   Wraps an object into an activity
   """
@@ -111,10 +113,18 @@ defmodule Mobilizon.Federation.ActivityPub do
             {:ok, entity}
           end
 
-        with {:ok, entity} <- res do
-          Logger.debug("Going to preload an existing entity")
+        Logger.debug("Going to preload an existing entity")
 
-          Preloader.maybe_preload(entity)
+        case res do
+          {:ok, entity} ->
+            Preloader.maybe_preload(entity)
+
+          {:error, status, entity} ->
+            {:ok, entity} = Preloader.maybe_preload(entity)
+            {:error, status, entity}
+
+          err ->
+            err
         end
 
       e ->
@@ -303,7 +313,8 @@ defmodule Mobilizon.Federation.ActivityPub do
   Make an actor follow another
   """
   def follow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
-    with {:ok, %Follower{} = follower} <-
+    with {:different_actors, true} <- {:different_actors, followed.id != follower.id},
+         {:ok, %Follower{} = follower} <-
            Actors.follow(followed, follower, activity_id, false),
          follower_as_data <- Convertible.model_to_as(follower),
          {:ok, activity} <- create_activity(follower_as_data, local),
@@ -312,6 +323,9 @@ defmodule Mobilizon.Federation.ActivityPub do
     else
       {:error, err, msg} when err in [:already_following, :suspended] ->
         {:error, msg}
+
+      {:different_actors, _} ->
+        {:error, "Can't follow yourself"}
     end
   end
 
@@ -649,7 +663,7 @@ defmodule Mobilizon.Federation.ActivityPub do
 
   defp convert_followers_in_recipients(recipients) do
     Enum.reduce(recipients, {recipients, []}, fn recipient, {recipients, follower_actors} = acc ->
-      case Actors.get_group_by_followers_url(recipient) do
+      case Actors.get_actor_by_followers_url(recipient) do
         %Actor{} = group ->
           {Enum.filter(recipients, fn recipient -> recipient != group.followers_url end),
            follower_actors ++ Actors.list_external_followers_for_actor(group)}
@@ -769,12 +783,22 @@ defmodule Mobilizon.Federation.ActivityPub do
   Return all public activities (events & comments) for an actor
   """
   @spec fetch_public_activities_for_actor(Actor.t(), integer(), integer()) :: map()
-  def fetch_public_activities_for_actor(%Actor{} = actor, page \\ 1, limit \\ 10) do
+  def fetch_public_activities_for_actor(%Actor{id: actor_id} = actor, page \\ 1, limit \\ 10) do
+    %Actor{id: relay_actor_id} = Relay.get_actor()
+
     %Page{total: total_events, elements: events} =
-      Events.list_public_events_for_actor(actor, page, limit)
+      if actor_id == relay_actor_id do
+        Events.list_public_local_events(page, limit)
+      else
+        Events.list_public_events_for_actor(actor, page, limit)
+      end
 
     %Page{total: total_comments, elements: comments} =
-      Discussions.list_public_comments_for_actor(actor, page, limit)
+      if actor_id == relay_actor_id do
+        Discussions.list_local_comments(page, limit)
+      else
+        Discussions.list_public_comments_for_actor(actor, page, limit)
+      end
 
     event_activities = Enum.map(events, &event_to_activity/1)
     comment_activities = Enum.map(comments, &comment_to_activity/1)
@@ -787,9 +811,9 @@ defmodule Mobilizon.Federation.ActivityPub do
   @spec event_to_activity(%Event{}, boolean()) :: Activity.t()
   defp event_to_activity(%Event{} = event, local \\ true) do
     %Activity{
-      recipients: ["https://www.w3.org/ns/activitystreams#Public"],
+      recipients: [@public_ap_adress],
       actor: event.organizer_actor.url,
-      data: Converter.Event.model_to_as(event),
+      data: event |> Convertible.model_to_as() |> make_create_data(%{"to" => @public_ap_adress}),
       local: local
     }
   end
@@ -798,9 +822,10 @@ defmodule Mobilizon.Federation.ActivityPub do
   @spec comment_to_activity(%Comment{}, boolean()) :: Activity.t()
   defp comment_to_activity(%Comment{} = comment, local \\ true) do
     %Activity{
-      recipients: ["https://www.w3.org/ns/activitystreams#Public"],
+      recipients: [@public_ap_adress],
       actor: comment.actor.url,
-      data: Converter.Comment.model_to_as(comment),
+      data:
+        comment |> Convertible.model_to_as() |> make_create_data(%{"to" => @public_ap_adress}),
       local: local
     }
   end

@@ -107,15 +107,19 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
         do: ["https://www.w3.org/ns/activitystreams#Public"],
         else: [event.organizer_actor.followers_url]
 
-    res = %{
+    %{
       "type" => "Event",
       "to" => to,
       "cc" => [],
       "attributedTo" =>
-        if(is_nil(event.attributed_to), do: nil, else: event.attributed_to.url) ||
+        if(is_nil(event.attributed_to) or not Ecto.assoc_loaded?(event.attributed_to),
+          do: nil,
+          else: event.attributed_to.url
+        ) ||
           event.organizer_actor.url,
       "name" => event.title,
-      "actor" => event.organizer_actor.url,
+      "actor" =>
+        if(Ecto.assoc_loaded?(event.organizer_actor), do: event.organizer_actor.url, else: nil),
       "uuid" => event.uuid,
       "category" => event.category,
       "content" => event.description,
@@ -136,40 +140,9 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       "id" => event.url,
       "url" => event.url
     }
-
-    res =
-      if is_nil(event.physical_address),
-        do: res,
-        else: Map.put(res, "location", AddressConverter.model_to_as(event.physical_address))
-
-    res =
-      if is_nil(event.picture),
-        do: res,
-        else:
-          Map.update(
-            res,
-            "attachment",
-            [],
-            &(&1 ++ [PictureConverter.model_to_as(event.picture)])
-          )
-
-    if is_nil(event.online_address),
-      do: res,
-      else:
-        Map.update(
-          res,
-          "attachment",
-          [],
-          &(&1 ++
-              [
-                %{
-                  "type" => "Link",
-                  "href" => event.online_address,
-                  "mediaType" => "text/html",
-                  "name" => "Website"
-                }
-              ])
-        )
+    |> maybe_add_physical_address(event)
+    |> maybe_add_event_picture(event)
+    |> maybe_add_online_address(event)
   end
 
   # Get only elements that we have in EventOptions
@@ -248,5 +221,46 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
           nil
       end
     end)
+  end
+
+  @spec maybe_add_physical_address(map(), Event.t()) :: map()
+  defp maybe_add_physical_address(res, event) do
+    if is_nil(event.physical_address),
+      do: res,
+      else: Map.put(res, "location", AddressConverter.model_to_as(event.physical_address))
+  end
+
+  @spec maybe_add_event_picture(map(), Event.t()) :: map()
+  defp maybe_add_event_picture(res, event) do
+    if is_nil(event.picture),
+      do: res,
+      else:
+        Map.update(
+          res,
+          "attachment",
+          [],
+          &(&1 ++ [PictureConverter.model_to_as(event.picture)])
+        )
+  end
+
+  @spec maybe_add_online_address(map(), Event.t()) :: map()
+  defp maybe_add_online_address(res, event) do
+    if is_nil(event.online_address),
+      do: res,
+      else:
+        Map.update(
+          res,
+          "attachment",
+          [],
+          &(&1 ++
+              [
+                %{
+                  "type" => "Link",
+                  "href" => event.online_address,
+                  "mediaType" => "text/html",
+                  "name" => "Website"
+                }
+              ])
+        )
   end
 end

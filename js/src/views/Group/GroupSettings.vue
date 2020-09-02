@@ -61,7 +61,9 @@
             :native-value="GroupVisibility.UNLISTED"
             >{{ $t("Only accessible through link") }}<br />
             <small>{{
-              $t("You'll need to transmit the group URL so people may access the group's profile.")
+              $t(
+                "You'll need to transmit the group URL so people may access the group's profile. The group won't be findable in Mobilizon's search or regular search engines."
+              )
             }}</small>
           </b-radio>
           <p class="control">

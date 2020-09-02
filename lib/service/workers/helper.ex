@@ -37,6 +37,8 @@ defmodule Mobilizon.Service.Workers.Helper do
         queue: unquote(queue),
         max_attempts: 1
 
+      alias Oban.Job
+
       def enqueue(operation, params, worker_args \\ []) do
         params = Map.merge(%{"op" => operation}, params)
         queue_atom = String.to_existing_atom(unquote(queue))

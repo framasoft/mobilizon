@@ -731,7 +731,6 @@
   "any distance": "any distance",
   "Group visibility": "Group visibility",
   "The group will be publicly listed in search results and may be suggested in the explore section. Only public informations will be shown on it's page.": "The group will be publicly listed in search results and may be suggested in the explore section. Only public informations will be shown on it's page.",
-  "You'll need to transmit the group URL so people may access the group's profile.": "You'll need to transmit the group URL so people may access the group's profile.",
   "Group address": "Group address",
   "Events tagged with {tag}": "Events tagged with {tag}",
   "Explore events": "Explore events",
@@ -793,5 +792,6 @@
   "A place to publish something to the whole world, your community or just your group members.": "A place to publish something to the whole world, your community or just your group members.",
   "No posts found": "No posts found",
   "Last sign-in": "Last sign-in",
-  "Last IP adress": "Last IP adress"
+  "Last IP adress": "Last IP adress",
+  "You'll need to transmit the group URL so people may access the group's profile. The group won't be findable in Mobilizon's search or regular search engines.": "You'll need to transmit the group URL so people may access the group's profile. The group won't be findable in Mobilizon's search or regular search engines."
 }

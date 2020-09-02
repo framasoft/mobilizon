@@ -30,9 +30,16 @@ defmodule Mobilizon.Web.PageControllerTest do
   end
 
   test "GET /events/:uuid", %{conn: conn} do
-    event = insert(:event)
+    event = insert(:event, visibility: :public)
     conn = get(conn, Routes.page_url(Endpoint, :event, event.uuid))
     assert html_response(conn, 200) =~ event.title
+  end
+
+  test "GET /events/:uuid with unlisted event", %{conn: conn} do
+    event = insert(:event, visibility: :unlisted)
+    conn = get(conn, Routes.page_url(Endpoint, :event, event.uuid))
+    assert html_response(conn, 200) =~ event.title
+    assert ["noindex"] == get_resp_header(conn, "x-robots-tag")
   end
 
   test "GET /events/:uuid with not existing event", %{conn: conn} do

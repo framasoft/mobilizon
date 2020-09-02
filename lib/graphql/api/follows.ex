@@ -16,6 +16,10 @@ defmodule Mobilizon.GraphQL.API.Follows do
       {:ok, activity, follow} ->
         {:ok, activity, follow}
 
+      {:error, e} ->
+        Logger.warn("Error while following actor: #{inspect(e)}")
+        {:error, e}
+
       e ->
         Logger.warn("Error while following actor: #{inspect(e)}")
         {:error, e}

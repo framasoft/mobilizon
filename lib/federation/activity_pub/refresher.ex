@@ -6,9 +6,13 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Fetcher, Relay, Transmogrifier}
+  alias Mobilizon.Federation.ActivityPub.{Fetcher, Relay, Transmogrifier, Utils}
   require Logger
 
+  @doc """
+  Refresh a remote profile
+  """
+  @spec refresh_profile(Actor.t()) :: {:ok, Actor.t()}
   def refresh_profile(%Actor{domain: nil}), do: {:error, "Can only refresh remote actors"}
 
   def refresh_profile(%Actor{type: :Group, url: url, id: group_id} = group) do
@@ -26,8 +30,11 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
     end
   end
 
-  def refresh_profile(%Actor{type: :Person, url: url}) do
-    ActivityPub.make_actor_from_url(url)
+  def refresh_profile(%Actor{type: type, url: url}) when type in [:Person, :Application] do
+    with {:ok, %Actor{outbox_url: outbox_url}} <- ActivityPub.make_actor_from_url(url),
+         :ok <- fetch_collection(outbox_url, Relay.get_actor()) do
+      :ok
+    end
   end
 
   @spec fetch_group(String.t(), Actor.t()) :: :ok
@@ -112,22 +119,13 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
   defp process_collection(_, _), do: :error
 
   defp handling_element(data) when is_map(data) do
-    id = Map.get(data, "id")
+    object = get_in(data, ["object"])
 
-    if id do
-      Mobilizon.Tombstone.delete_uri_tombstone(id)
+    if object do
+      object |> Utils.get_url() |> Mobilizon.Tombstone.delete_uri_tombstone()
     end
 
-    activity = %{
-      "type" => "Create",
-      "to" => data["to"],
-      "cc" => data["cc"],
-      "actor" => data["actor"],
-      "attributedTo" => data["attributedTo"],
-      "object" => data
-    }
-
-    Transmogrifier.handle_incoming(activity)
+    Transmogrifier.handle_incoming(data)
   end
 
   defp handling_element(uri) when is_binary(uri) do

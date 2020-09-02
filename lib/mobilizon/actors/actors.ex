@@ -187,7 +187,7 @@ defmodule Mobilizon.Actors do
   def get_actor_by_name_with_preload(name, type \\ nil) do
     name
     |> get_actor_by_name(type)
-    |> Repo.preload([:organized_events, :user])
+    |> Repo.preload([:organized_events, :user, :physical_address])
   end
 
   @doc """
@@ -561,9 +561,9 @@ defmodule Mobilizon.Actors do
     |> Repo.one()
   end
 
-  @spec get_group_by_followers_url(String.t()) :: Actor.t()
-  def get_group_by_followers_url(followers_url) do
-    group_query()
+  @spec get_actor_by_followers_url(String.t()) :: Actor.t()
+  def get_actor_by_followers_url(followers_url) do
+    Actor
     |> where([q], q.followers_url == ^followers_url)
     |> Repo.one()
   end

@@ -394,6 +394,7 @@ defmodule Mobilizon.Actors.Actor do
       "keys" => Crypto.generate_rsa_2048_private_key(),
       "preferred_username" => "relay",
       "domain" => nil,
+      "visibility" => :public,
       "type" => :Application
     }
 
