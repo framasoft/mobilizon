@@ -22,8 +22,6 @@ config :mobilizon, :instance,
   repository: Mix.Project.config()[:source_url],
   allow_relay: true,
   federating: true,
-  # Groups are to be activated with Mobilizon 1.0.0
-  groups: false,
   remote_limit: 100_000,
   upload_limit: 10_000_000,
   avatar_upload_limit: 2_000_000,
@@ -31,10 +29,10 @@ config :mobilizon, :instance,
   email_from: "noreply@localhost",
   email_reply_to: "noreply@localhost"
 
-config :mime, :types, %{
-  "application/activity+json" => ["activity-json"],
-  "application/jrd+json" => ["jrd-json"]
-}
+# Groups are to be activated with Mobilizon 1.0.0
+config :mobilizon, :groups, enabled: false
+
+config :mobilizon, :events, creation: true
 
 # Configures the endpoint
 config :mobilizon, Mobilizon.Web.Endpoint,
@@ -50,6 +48,11 @@ config :mobilizon, Mobilizon.Web.Endpoint,
   pubsub_server: Mobilizon.PubSub,
   cache_static_manifest: "priv/static/manifest.json",
   has_reverse_proxy: true
+
+config :mime, :types, %{
+  "application/activity+json" => ["activity-json"],
+  "application/jrd+json" => ["jrd-json"]
+}
 
 # Upload configuration
 config :mobilizon, Mobilizon.Web.Upload,

@@ -131,6 +131,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
 
   object :features do
     field(:groups, :boolean)
+    field(:event_creation, :boolean)
   end
 
   object :auth do

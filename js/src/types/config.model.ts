@@ -70,6 +70,7 @@ export interface IConfig {
   resourceProviders: IProvider[];
   timezones: string[];
   features: {
+    eventCreation: boolean;
     groups: boolean;
   };
   federating: boolean;

@@ -61,6 +61,7 @@ export const CONFIG = gql`
       }
       features {
         groups
+        eventCreation
       }
       auth {
         ldap

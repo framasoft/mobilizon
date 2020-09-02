@@ -7,7 +7,6 @@ defmodule Mobilizon.Web.PageController do
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Posts.Post
   alias Mobilizon.Tombstone
   alias Mobilizon.Web.{ActivityPubController, Cache, PageController}
 

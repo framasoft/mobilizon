@@ -120,7 +120,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
       resource_providers: Config.instance_resource_providers(),
       timezones: Tzdata.zone_list(),
       features: %{
-        groups: Config.instance_group_feature_enabled?()
+        groups: Config.instance_group_feature_enabled?(),
+        event_creation: Config.instance_event_creation_enabled?()
       },
       rules: Config.instance_rules(),
       version: Config.instance_version(),
