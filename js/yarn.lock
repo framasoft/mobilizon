@@ -2454,10 +2454,10 @@ anymatch@~3.1.1:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
-apollo-absinthe-upload-link@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/apollo-absinthe-upload-link/-/apollo-absinthe-upload-link-1.5.0.tgz#67856e58ef563889ff112db0b5e837b455ddb459"
-  integrity sha512-CizIec/G8dA0f15EUI5PKiSq2rtnq1gAl1ACmxcOtfW8+E5Kajj3nUjMtM6aBMoFcXupy7v6X+xpFRPNIrQY8w==
+apollo-absinthe-upload-link@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/apollo-absinthe-upload-link/-/apollo-absinthe-upload-link-1.6.0.tgz#f5ef9f4959947abdc1b1f76c5e4a4fae2fdd2866"
+  integrity sha512-nzxgVbP72btvC1bFpVDuYXPkLNsZa6z3GJvwOLzvBNm42AWhE9usupbdw99yGC37FIDOPza6mAFBg0qiDaEFQA==
   dependencies:
     apollo-client "^2.0.4"
     apollo-link "^1.0.7"
