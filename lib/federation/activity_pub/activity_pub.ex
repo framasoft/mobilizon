@@ -200,6 +200,7 @@ defmodule Mobilizon.Federation.ActivityPub do
     else
       err ->
         Logger.error("Something went wrong while creating an activity")
+        Logger.debug(inspect(err))
         err
     end
   end
