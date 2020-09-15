@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2020-09-14 01:38+0000\n"
+"PO-Revision-Date: 2020-09-15 17:49+0000\n"
 "Last-Translator: frama late <loss@e.email>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/it/>\n"
@@ -51,7 +51,7 @@ msgstr "Commenti"
 #: lib/web/templates/email/report.html.eex:50 lib/web/templates/email/report.text.eex:4
 #, elixir-format
 msgid "Event"
-msgstr ""
+msgstr "Evento"
 
 #: lib/web/email/user.ex:48
 #, elixir-format
@@ -59,14 +59,14 @@ msgid "Instructions to reset your password on %{instance}"
 msgstr ""
 
 #: lib/web/templates/email/report.text.eex:14
-#, elixir-format
+#, elixir-format, fuzzy
 msgid "Reason"
-msgstr ""
+msgstr "Spiegazione"
 
 #: lib/web/templates/email/password_reset.html.eex:61
-#, elixir-format
+#, elixir-format, fuzzy
 msgid "Reset Password"
-msgstr ""
+msgstr "Resetta la password"
 
 #: lib/web/templates/email/password_reset.html.eex:41
 #, elixir-format
@@ -356,9 +356,9 @@ msgstr ""
 
 #: lib/web/templates/email/group_invite.html.eex:13
 #: lib/web/templates/email/group_invite.text.eex:1
-#, elixir-format
+#, elixir-format, fuzzy
 msgid "Come along!"
-msgstr ""
+msgstr "Sbrigati!"
 
 #: lib/web/email/notification.ex:24
 #, elixir-format
@@ -480,10 +480,10 @@ msgid "Content that may infringe or violate any patent, trademark, trade secret,
 msgstr ""
 
 #: lib/web/templates/api/terms.html.eex:42
-#, elixir-format
+#, elixir-format, fuzzy
 msgctxt "terms"
 msgid "Creating Accounts"
-msgstr ""
+msgstr "Creazione degli Accounts"
 
 #: lib/web/templates/api/terms.html.eex:89
 #, elixir-format
@@ -522,10 +522,10 @@ msgid "Our Service allows you and other users to post, link and otherwise make a
 msgstr ""
 
 #: lib/web/templates/api/terms.html.eex:39
-#, elixir-format
+#, elixir-format, fuzzy
 msgctxt "terms"
 msgid "Privacy Policy"
-msgstr ""
+msgstr "Politica sulla Privacy (Privacy Policy)"
 
 #: lib/web/templates/api/terms.html.eex:95
 #, elixir-format
@@ -534,10 +534,10 @@ msgid "Questions & Contact Information"
 msgstr ""
 
 #: lib/web/templates/api/terms.html.eex:87
-#, elixir-format
+#, elixir-format, fuzzy
 msgctxt "terms"
 msgid "Termination"
-msgstr ""
+msgstr "Termine"
 
 #: lib/web/templates/api/terms.html.eex:62
 #, elixir-format
@@ -633,7 +633,7 @@ msgstr ""
 #, elixir-format
 msgctxt "terms"
 msgid "Source code"
-msgstr ""
+msgstr "Codice sorgente"
 
 #: lib/web/templates/api/terms.html.eex:93
 #, elixir-format
@@ -678,10 +678,10 @@ msgid "Originally adapted from the <a href=\"https://mastodon.social/terms\">Mas
 msgstr ""
 
 #: lib/web/templates/api/terms.html.eex:3
-#, elixir-format
+#, elixir-format, fuzzy
 msgctxt "terms"
 msgid "Short version"
-msgstr ""
+msgstr "Versione breve"
 
 #: lib/web/templates/api/terms.html.eex:9
 #, elixir-format
@@ -825,9 +825,9 @@ msgid "Confirm new email"
 msgstr ""
 
 #: lib/web/templates/email/event_updated.html.eex:82
-#, elixir-format
+#, elixir-format, fuzzy
 msgid "End"
-msgstr ""
+msgstr "Fine"
 
 #: lib/web/templates/email/event_updated.text.eex:21
 #, elixir-format
@@ -902,9 +902,9 @@ msgid "Learn more about Mobilizon here!"
 msgstr ""
 
 #: lib/web/templates/email/event_updated.html.eex:92
-#, elixir-format
+#, elixir-format, fuzzy
 msgid "Location"
-msgstr ""
+msgstr "Luogo"
 
 #: lib/web/templates/email/event_updated.html.eex:102
 #, elixir-format
@@ -946,9 +946,9 @@ msgid "Sorry! You're not going."
 msgstr ""
 
 #: lib/web/templates/email/event_updated.html.eex:72
-#, elixir-format
+#, elixir-format, fuzzy
 msgid "Start"
-msgstr ""
+msgstr "Inizio"
 
 #: lib/web/templates/email/event_updated.text.eex:18
 #, elixir-format
