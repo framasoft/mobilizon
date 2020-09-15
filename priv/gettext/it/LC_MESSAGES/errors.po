@@ -8,29 +8,36 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2020-09-15 17:04+0000\n"
+"Last-Translator: frama late <loss@e.email>\n"
+"Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
+"backend-errors/it/>\n"
 "Language: it\n"
-"Plural-Forms: nplurals=2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.1\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 msgid "can't be blank"
-msgstr ""
+msgstr "non può essere bianco"
 
 msgid "has already been taken"
-msgstr ""
+msgstr "e' già stato usato"
 
 msgid "is invalid"
-msgstr ""
+msgstr "è invalido"
 
 msgid "must be accepted"
-msgstr ""
+msgstr "deve esssere accettato"
 
 msgid "has invalid format"
-msgstr ""
+msgstr "ha un formato non valido"
 
 msgid "has an invalid entry"
-msgstr ""
+msgstr "ha un occorrenza non valida"
 
 msgid "is reserved"
-msgstr ""
+msgstr "è riservato"
 
 msgid "does not match confirmation"
 msgstr ""
@@ -39,17 +46,17 @@ msgid "is still associated with this entry"
 msgstr ""
 
 msgid "are still associated with this entry"
-msgstr ""
+msgstr "è ancora associato a questa voce"
 
 msgid "should be %{count} character(s)"
 msgid_plural "should be %{count} character(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "dovrebbe avere %{count} character(s)"
+msgstr[1] "dovrebbe avere %{count} character(s)"
 
 msgid "should have %{count} item(s)"
 msgid_plural "should have %{count} item(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "dovrebbe avere %{count} character(s)"
+msgstr[1] "dovrebbe avere %{count} character(s)"
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
@@ -72,16 +79,16 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "must be less than %{number}"
-msgstr ""
+msgstr "deve essere minore di %{number}"
 
 msgid "must be greater than %{number}"
-msgstr ""
+msgstr "deve essere maggiore di %{number}"
 
 msgid "must be less than or equal to %{number}"
-msgstr ""
+msgstr "dev'essere minore o uguale di %{number}"
 
 msgid "must be greater than or equal to %{number}"
-msgstr ""
+msgstr "dev'essere maggiore o uguale di %{number}"
 
 msgid "must be equal to %{number}"
-msgstr ""
+msgstr "dev'essere uguale a %{number}"
