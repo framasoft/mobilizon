@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2020-09-15 17:49+0000\n"
+"PO-Revision-Date: 2020-09-17 17:51+0000\n"
 "Last-Translator: frama late <loss@e.email>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/it/>\n"
@@ -27,9 +27,9 @@ msgid "Feed for %{email} on Mobilizon"
 msgstr ""
 
 #: lib/web/templates/email/report.html.eex:52
-#, elixir-format
+#, elixir-format, fuzzy
 msgid "%{title} by %{creator}"
-msgstr ""
+msgstr "%{title} di %{creator}"
 
 #: lib/web/templates/email/registration_confirmation.html.eex:58
 #, elixir-format
@@ -128,12 +128,12 @@ msgstr ""
 #: lib/web/email/event.ex:35
 #, elixir-format
 msgid "Event %{title} has been updated"
-msgstr ""
+msgstr "L'evento %{title} è stato aggiornato"
 
 #: lib/web/templates/email/event_updated.text.eex:15
 #, elixir-format
 msgid "New title: %{title}"
-msgstr ""
+msgstr "Nuovo titolo: %{title}"
 
 #: lib/web/templates/email/password_reset.text.eex:5
 #, elixir-format
@@ -335,11 +335,11 @@ msgid "Mobilizon on %{instance}: email changed"
 msgstr ""
 
 #: lib/web/email/notification.ex:46
-#, elixir-format
+#, elixir-format, fuzzy
 msgid "One event planned today"
 msgid_plural "%{nb_events} events planned today"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "un evento programmato oggi"
+msgstr[1] "%{nb_events} eventi programmati oggi"
 
 #: lib/web/templates/email/on_day_notification.html.eex:38
 #: lib/web/templates/email/on_day_notification.text.eex:4
@@ -367,14 +367,14 @@ msgstr ""
 
 #: lib/web/templates/email/before_event_notification.html.eex:38
 #: lib/web/templates/email/before_event_notification.text.eex:3
-#, elixir-format
+#, elixir-format, fuzzy
 msgid "Get ready for %{title}"
-msgstr ""
+msgstr "Tenersi pronti per %{title}"
 
 #: lib/web/templates/email/group_invite.html.eex:59
-#, elixir-format
+#, elixir-format, fuzzy
 msgid "See my groups"
-msgstr ""
+msgstr "Visualizza i miei gruppi"
 
 #: lib/web/templates/email/group_invite.html.eex:45
 #: lib/web/templates/email/group_invite.text.eex:5
@@ -435,13 +435,13 @@ msgstr ""
 #, elixir-format
 msgctxt "terms"
 msgid "Accepting these Terms"
-msgstr ""
+msgstr "Accettazione di queste Condizioni"
 
 #: lib/web/templates/api/terms.html.eex:27
-#, elixir-format
+#, elixir-format, fuzzy
 msgctxt "terms"
 msgid "Changes to these Terms"
-msgstr ""
+msgstr "Modifiche a queste Condizioni d'Utilizzo"
 
 #: lib/web/templates/api/terms.html.eex:85
 #, elixir-format
@@ -486,16 +486,16 @@ msgid "Creating Accounts"
 msgstr "Creazione degli Accounts"
 
 #: lib/web/templates/api/terms.html.eex:89
-#, elixir-format
+#, elixir-format, fuzzy
 msgctxt "terms"
 msgid "Entire Agreement"
-msgstr ""
+msgstr "Accordo completo"
 
 #: lib/web/templates/api/terms.html.eex:92
-#, elixir-format
+#, elixir-format, fuzzy
 msgctxt "terms"
 msgid "Feedback"
-msgstr ""
+msgstr "Commenti"
 
 #: lib/web/templates/api/terms.html.eex:83
 #, elixir-format
@@ -528,10 +528,10 @@ msgid "Privacy Policy"
 msgstr "Politica sulla Privacy (Privacy Policy)"
 
 #: lib/web/templates/api/terms.html.eex:95
-#, elixir-format
+#, elixir-format, fuzzy
 msgctxt "terms"
 msgid "Questions & Contact Information"
-msgstr ""
+msgstr "Domande e Informazioni di Contatto"
 
 #: lib/web/templates/api/terms.html.eex:87
 #, elixir-format, fuzzy
@@ -549,7 +549,7 @@ msgstr ""
 #, elixir-format
 msgctxt "terms"
 msgid "Your Content & Conduct"
-msgstr ""
+msgstr "I tuoi Contenuti e la tua Condotta"
 
 #: lib/web/templates/api/terms.html.eex:84
 #, elixir-format
@@ -714,21 +714,21 @@ msgid "You must respect the law when using <b>%{instance_name}</b>"
 msgstr ""
 
 #: lib/web/templates/api/terms.html.eex:5
-#, elixir-format
+#, elixir-format, fuzzy
 msgctxt "terms"
 msgid "Your content is yours"
-msgstr ""
+msgstr "I tuoi dati ti appartengono"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:58
 #, elixir-format
 msgid "Confirm my e-mail address"
-msgstr ""
+msgstr "Conferma il mio indirizzo e-mail"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:13
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:1
 #, elixir-format
 msgid "Confirm your e-mail"
-msgstr ""
+msgstr "Conferma il tuo indirizzo e-mail"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:38
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:3
@@ -755,7 +755,7 @@ msgstr ""
 #: lib/web/templates/email/report.html.eex:13
 #, elixir-format
 msgid "New report on <b>%{instance}</b>"
-msgstr ""
+msgstr "Nuova segnalazione sull'istanza <b>%{instance}</b>"
 
 #: lib/web/templates/email/email_changed_old.html.eex:38
 #, elixir-format
@@ -810,19 +810,19 @@ msgstr ""
 #: lib/web/templates/email/pending_participation_notification.text.eex:1
 #, elixir-format
 msgid "A request is pending!"
-msgstr ""
+msgstr "Una richiesta in sospeso!"
 
 #: lib/web/templates/email/before_event_notification.html.eex:13
 #: lib/web/templates/email/before_event_notification.text.eex:1
-#, elixir-format
+#, elixir-format, fuzzy
 msgid "An event is upcoming!"
-msgstr ""
+msgstr "Un evento è in arrivo!"
 
 #: lib/web/templates/email/email_changed_new.html.eex:13
 #: lib/web/templates/email/email_changed_new.text.eex:1
 #, elixir-format
 msgid "Confirm new email"
-msgstr ""
+msgstr "Conferma il nuovo indirizzo e-mail"
 
 #: lib/web/templates/email/event_updated.html.eex:82
 #, elixir-format, fuzzy
@@ -830,20 +830,20 @@ msgid "End"
 msgstr "Fine"
 
 #: lib/web/templates/email/event_updated.text.eex:21
-#, elixir-format
+#, elixir-format, fuzzy
 msgid "End %{ends_on}"
-msgstr ""
+msgstr "Fine %{ends_on}"
 
 #: lib/web/templates/email/event_updated.html.eex:13
 #: lib/web/templates/email/event_updated.text.eex:1
 #, elixir-format
 msgid "Event update!"
-msgstr ""
+msgstr "Evento aggiornato!"
 
 #: lib/web/templates/email/report.html.eex:66
-#, elixir-format
+#, elixir-format, fuzzy
 msgid "Flagged comments"
-msgstr ""
+msgstr "Commenti contrassegnati"
 
 #: lib/web/templates/email/event_participation_approved.html.eex:45
 #: lib/web/templates/email/event_participation_approved.text.eex:7
@@ -907,32 +907,32 @@ msgid "Location"
 msgstr "Luogo"
 
 #: lib/web/templates/email/event_updated.html.eex:102
-#, elixir-format
+#, elixir-format, fuzzy
 msgid "Location address was removed"
-msgstr ""
+msgstr "L'indirizzo del luogo è stato rimosso"
 
 #: lib/web/templates/email/pending_participation_notification.html.eex:51
 #: lib/web/templates/email/pending_participation_notification.text.eex:6
 #, elixir-format
 msgid "Manage pending requests"
-msgstr ""
+msgstr "Gestisci le richieste in sospeso"
 
 #: lib/web/templates/email/registration_confirmation.html.eex:13
 #: lib/web/templates/email/registration_confirmation.text.eex:1
 #, elixir-format
 msgid "Nearly there!"
-msgstr ""
+msgstr "Ci sei quasi!"
 
 #: lib/web/templates/email/email_changed_old.html.eex:13
 #: lib/web/templates/email/email_changed_old.text.eex:1
 #, elixir-format
 msgid "New email confirmation"
-msgstr ""
+msgstr "Conferma del nuovo indirizzo e-mail"
 
 #: lib/web/templates/email/report.html.eex:84
 #, elixir-format
 msgid "Reasons for report"
-msgstr ""
+msgstr "Ragioni della segnalazione"
 
 #: lib/web/templates/email/report.html.eex:39
 #, elixir-format
@@ -943,7 +943,7 @@ msgstr ""
 #: lib/web/templates/email/event_participation_rejected.text.eex:1
 #, elixir-format
 msgid "Sorry! You're not going."
-msgstr ""
+msgstr "Peccato! Non ci sei andato."
 
 #: lib/web/templates/email/event_updated.html.eex:72
 #, elixir-format, fuzzy
@@ -953,7 +953,7 @@ msgstr "Inizio"
 #: lib/web/templates/email/event_updated.text.eex:18
 #, elixir-format
 msgid "Start %{begins_on}"
-msgstr ""
+msgstr "Inizio %{begins_on}"
 
 #: lib/web/templates/email/event_updated.html.eex:38
 #: lib/web/templates/email/event_updated.text.eex:3
@@ -989,22 +989,22 @@ msgstr ""
 #: lib/web/templates/email/email_changed_new.html.eex:51
 #, elixir-format
 msgid "Verify your email address"
-msgstr ""
+msgstr "Verifica il tuo indirizzo e-mail"
 
 #: lib/web/templates/email/report.html.eex:104
 #, elixir-format
 msgid "View report"
-msgstr ""
+msgstr "Visualizza la segnalazione"
 
 #: lib/web/templates/email/report.text.eex:17
 #, elixir-format
 msgid "View report:"
-msgstr ""
+msgstr "Visualizza la segnalazione:"
 
 #: lib/web/templates/email/event_participation_approved.html.eex:58
 #, elixir-format
 msgid "Visit event page"
-msgstr ""
+msgstr "Visualizza la pagina dell'evento"
 
 #: lib/web/templates/email/event_updated.html.eex:119
 #, elixir-format
@@ -1018,9 +1018,9 @@ msgstr ""
 
 #: lib/web/templates/email/notification_each_week.html.eex:13
 #: lib/web/templates/email/notification_each_week.text.eex:1
-#, elixir-format
+#, elixir-format, fuzzy
 msgid "What's up this week?"
-msgstr ""
+msgstr "Cosa c'è di nuovo questa settimana?"
 
 #: lib/web/templates/email/on_day_notification.html.eex:13
 #: lib/web/templates/email/on_day_notification.text.eex:1
