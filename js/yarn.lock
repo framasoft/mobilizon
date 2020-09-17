@@ -11060,7 +11060,7 @@ prosemirror-keymap@1.1.4, prosemirror-keymap@^1.0.0, prosemirror-keymap@^1.1.2:
     prosemirror-state "^1.0.0"
     w3c-keyname "^2.2.0"
 
-prosemirror-model@1.11.0, prosemirror-model@1.9.1, prosemirror-model@^1.0.0, prosemirror-model@^1.1.0, prosemirror-model@^1.11.0, prosemirror-model@^1.8.1:
+prosemirror-model@1.11.2, prosemirror-model@1.9.1, prosemirror-model@^1.0.0, prosemirror-model@^1.1.0, prosemirror-model@^1.11.2, prosemirror-model@^1.8.1:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/prosemirror-model/-/prosemirror-model-1.9.1.tgz#8c08cf556f593c5f015548d2c1a6825661df087f"
   integrity sha512-Qblh8pm1c7Ll64sYLauwwzjimo/tFg1zW3Q3IWhKRhvfOEgRKqa6dC5pRrAa+XHOIjBFEYrqbi52J5bqA2dV8Q==
@@ -11106,19 +11106,10 @@ prosemirror-utils@^0.9.6:
   resolved "https://registry.yarnpkg.com/prosemirror-utils/-/prosemirror-utils-0.9.6.tgz#3d97bd85897e3b535555867dc95a51399116a973"
   integrity sha512-UC+j9hQQ1POYfMc5p7UFxBTptRiGPR7Kkmbl3jVvU8VgQbkI89tR/GK+3QYC8n+VvBZrtAoCrJItNhWSxX3slA==
 
-prosemirror-view@1.15.4:
-  version "1.15.4"
-  resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.15.4.tgz#69a6217e3557dd1eb34a6d45caed1c3ee8e05b12"
-  integrity sha512-SzcszIrDJnQIS+f7WiS5KmQBfdYEhPqp/Hx9bKmXH7ZxrxRiBKPy1/9MoZzxjXUkm+5WHjX+N1fjAMXKoz/OQw==
-  dependencies:
-    prosemirror-model "^1.1.0"
-    prosemirror-state "^1.0.0"
-    prosemirror-transform "^1.1.0"
-
-prosemirror-view@^1.0.0, prosemirror-view@^1.1.0, prosemirror-view@^1.13.3, prosemirror-view@^1.15.4:
-  version "1.15.5"
-  resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.15.5.tgz#02f447bfb938995b6e26c9376c36d03e8714fcb4"
-  integrity sha512-VpAP/Rh7a4l1udpR3lEym2FlTD93JZjWChHYgzLgiBI6alOapG4GEsyAEq0l8eUJd9Ujf55+5dlEuItxI3a9Mw==
+prosemirror-view@1.15.7, prosemirror-view@^1.0.0, prosemirror-view@^1.1.0, prosemirror-view@^1.13.3, prosemirror-view@^1.15.7:
+  version "1.15.7"
+  resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.15.7.tgz#b6ce82a08b7ffa8ff06b64ab36ec357229c66aa6"
+  integrity sha512-fSSXphXg+82qb4xNsHT0mX6ro0Wu1/l+WIFO5jYfyjd42r6ZWSg0gFItLgqOVPxoKQOlrPJUhrozTxiqx0EXOg==
   dependencies:
     prosemirror-model "^1.1.0"
     prosemirror-state "^1.0.0"
@@ -13438,63 +13429,63 @@ tippy.js@^6.2.3:
   dependencies:
     "@popperjs/core" "^2.4.4"
 
-tiptap-commands@^1.14.6:
-  version "1.14.6"
-  resolved "https://registry.yarnpkg.com/tiptap-commands/-/tiptap-commands-1.14.6.tgz#e7f0b91fd0ea99b2bac937862d91907dd722fe0c"
-  integrity sha512-SNUNcKFGB6MogujBPlbPzRGweLpST1n9k/50+xSN27qFX6MgU9APz8WDf8HviUc5RlOBeQyo4Z9Rrp0eR+t3Qg==
+tiptap-commands@^1.15.0:
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/tiptap-commands/-/tiptap-commands-1.15.0.tgz#a2c7623bf7cfd6008a443c1003079a1f6ea8b894"
+  integrity sha512-/o4R/99G4oOSnFXmS90hVpUuLx03HFM/NY7uBEYzhlJmW+3A+1wXVu77zP/I+Ohx0kfBi8yyAxYCa9YX9ahnjg==
   dependencies:
     prosemirror-commands "^1.1.4"
     prosemirror-inputrules "^1.1.2"
-    prosemirror-model "^1.11.0"
+    prosemirror-model "^1.11.2"
     prosemirror-schema-list "^1.1.4"
     prosemirror-state "^1.3.3"
     prosemirror-tables "^1.1.1"
     prosemirror-utils "^0.9.6"
-    tiptap-utils "^1.10.4"
+    tiptap-utils "^1.11.0"
 
-tiptap-extensions@^1.29.1:
-  version "1.32.6"
-  resolved "https://registry.yarnpkg.com/tiptap-extensions/-/tiptap-extensions-1.32.6.tgz#360de3d1ccc5c80be21cf207e60e5cfd82234622"
-  integrity sha512-6gN4QzrdYXqrfHi9581nxMWPo7rsvLIqF5z+lwqPg31sGuw27cffISf6akHP11OY7Ot9vOasgOxsHYlaxtZ4Zg==
+tiptap-extensions@^1.33.0:
+  version "1.33.0"
+  resolved "https://registry.yarnpkg.com/tiptap-extensions/-/tiptap-extensions-1.33.0.tgz#2f7f9fb09a3a7881565ad8a347acb132171d8d8d"
+  integrity sha512-ukHT/w49+P1LacOULWFNy1C8YLboHFfONLhyVglNkxhJeE4PADwaXRyZoh8m2x4nA/BImXvBYm2jfsBQ2saGHA==
   dependencies:
     lowlight "^1.14.0"
     prosemirror-collab "^1.2.2"
     prosemirror-history "^1.1.3"
-    prosemirror-model "^1.11.0"
+    prosemirror-model "^1.11.2"
     prosemirror-state "^1.3.3"
     prosemirror-tables "^1.1.1"
     prosemirror-transform "^1.2.8"
     prosemirror-utils "^0.9.6"
-    prosemirror-view "^1.15.4"
-    tiptap "^1.29.6"
-    tiptap-commands "^1.14.6"
-    tiptap-utils "^1.10.4"
+    prosemirror-view "^1.15.7"
+    tiptap "^1.30.0"
+    tiptap-commands "^1.15.0"
+    tiptap-utils "^1.11.0"
 
-tiptap-utils@^1.10.4:
-  version "1.10.4"
-  resolved "https://registry.yarnpkg.com/tiptap-utils/-/tiptap-utils-1.10.4.tgz#a2c39bcb13cc640c3e08f2ec648288ff214b22eb"
-  integrity sha512-0U6rrDODlL1YH/JgX2zR0aFrmmoV2Fex8MwpkcKwQ2Ks7zcY2fPjUyoKnq0Ue05vs1PH692OiDAAFammZWfzjw==
+tiptap-utils@^1.11.0:
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/tiptap-utils/-/tiptap-utils-1.11.0.tgz#2da8f5a2e5cde2d3c53cdf42ab335f947e18dfe6"
+  integrity sha512-lv/Fj8vZxPLSxHoDQVG2XVJC5h/Txtcrg+uArtvsZbVDFYyT1Boa/pal7YPQD7572uBlzlh3YtBPcFwcRBCGJA==
   dependencies:
-    prosemirror-model "^1.11.0"
+    prosemirror-model "^1.11.2"
     prosemirror-state "^1.3.3"
     prosemirror-tables "^1.1.1"
     prosemirror-utils "^0.9.6"
 
-tiptap@^1.26.0, tiptap@^1.29.6:
-  version "1.29.6"
-  resolved "https://registry.yarnpkg.com/tiptap/-/tiptap-1.29.6.tgz#a2fceb0b0790fd790da828cd28bd8de8e9ac9c90"
-  integrity sha512-6GkWbwsnDlM92Fq/a3Jl5nXjpFRwCr5S+zuRbBPfOSLA1RmD29uUSBgquZEhdiBCG+0SsvX2ixkQ5poSGCrnEQ==
+tiptap@^1.26.0, tiptap@^1.30.0:
+  version "1.30.0"
+  resolved "https://registry.yarnpkg.com/tiptap/-/tiptap-1.30.0.tgz#5fa6649a26e79a34aba494282e37d11c8a7419be"
+  integrity sha512-zvSwxvBjp2ZchtX1+ZwCI7bx8n5FZrKW5aPTsQWt7WaWOkYZ23lYoT2dvk2b8JJhWnLWAOeTTnGTPpA6AxhOsw==
   dependencies:
     prosemirror-commands "1.1.4"
     prosemirror-dropcursor "1.3.2"
     prosemirror-gapcursor "1.1.5"
     prosemirror-inputrules "1.1.2"
     prosemirror-keymap "1.1.4"
-    prosemirror-model "1.11.0"
+    prosemirror-model "1.11.2"
     prosemirror-state "1.3.3"
-    prosemirror-view "1.15.4"
-    tiptap-commands "^1.14.6"
-    tiptap-utils "^1.10.4"
+    prosemirror-view "1.15.7"
+    tiptap-commands "^1.15.0"
+    tiptap-utils "^1.11.0"
 
 tmp@0.1.0:
   version "0.1.0"
