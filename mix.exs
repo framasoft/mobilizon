@@ -94,7 +94,7 @@ defmodule Mobilizon.Mixfile do
       {:ecto_enum, "~> 1.4"},
       {:ex_ical, "~> 0.2"},
       {:bamboo, "~> 1.5"},
-      {:bamboo_smtp, "~> 2.0"},
+      {:bamboo_smtp, "~> 3.0"},
       {:geolix, "~> 1.0"},
       {:geolix_adapter_mmdb2, "~> 0.5.0"},
       {:absinthe, "~> 1.5.2"},
