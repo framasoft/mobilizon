@@ -163,8 +163,12 @@ export const UPDATE_CURRENT_ACTOR_CLIENT = gql`
     $preferredUsername: String!
     $name: String!
   ) {
-    updateCurrentActor(id: $id, avatar: $avatar, preferredUsername: $preferredUsername, name: $name)
-    @client
+    updateCurrentActor(
+      id: $id
+      avatar: $avatar
+      preferredUsername: $preferredUsername
+      name: $name
+    ) @client
   }
 `;
 

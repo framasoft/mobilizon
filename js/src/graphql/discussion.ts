@@ -99,7 +99,7 @@ export const GET_DISCUSSION = gql`
   query getDiscussion($slug: String!, $page: Int, $limit: Int) {
     discussion(slug: $slug) {
       comments(page: $page, limit: $limit)
-      @connection(key: "discussion-comments", filter: ["slug"]) {
+        @connection(key: "discussion-comments", filter: ["slug"]) {
         total
         elements {
           id
