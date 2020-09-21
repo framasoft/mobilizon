@@ -54,6 +54,10 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
 
     # This one should have a privacy setting
     field :organized_events, :paginated_event_list do
+      arg(:after_datetime, :datetime, default_value: nil)
+      arg(:before_datetime, :datetime, default_value: nil)
+      arg(:page, :integer, default_value: 1)
+      arg(:limit, :integer, default_value: 10)
       resolve(&Group.find_events_for_group/3)
       description("A list of the events this actor has organized")
     end

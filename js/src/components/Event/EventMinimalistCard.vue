@@ -9,7 +9,46 @@
       <p v-if="event.physicalAddress" class="has-text-grey">
         {{ event.physicalAddress.description }}
       </p>
-      <p v-else>3 demandes de participation à traiter</p>
+      <p v-else>
+        <span v-if="event.options.maximumAttendeeCapacity !== 0">
+          {{
+            $tc(
+              "{available}/{capacity} available places",
+              event.options.maximumAttendeeCapacity - event.participantStats.participant,
+              {
+                available:
+                  event.options.maximumAttendeeCapacity - event.participantStats.participant,
+                capacity: event.options.maximumAttendeeCapacity,
+              }
+            )
+          }}
+        </span>
+        <span v-else>
+          {{
+            $tc("{count} participants", event.participantStats.participant, {
+              count: event.participantStats.participant,
+            })
+          }}
+        </span>
+        <span v-if="event.participantStats.notApproved > 0">
+          <b-button
+            type="is-text"
+            @click="
+              gotToWithCheck(participation, {
+                name: RouteName.PARTICIPATIONS,
+                query: { role: ParticipantRole.NOT_APPROVED },
+                params: { eventId: event.uuid },
+              })
+            "
+          >
+            {{
+              $tc("{count} requests waiting", event.participantStats.notApproved, {
+                count: event.participantStats.notApproved,
+              })
+            }}
+          </b-button>
+        </span>
+      </p>
     </div>
   </router-link>
 </template>

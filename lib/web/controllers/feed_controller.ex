@@ -25,7 +25,7 @@ defmodule Mobilizon.Web.FeedController do
         |> put_resp_content_type("text/calendar")
         |> send_resp(200, data)
 
-      _ ->
+      _err ->
         {:error, :not_found}
     end
   end

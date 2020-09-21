@@ -5,8 +5,8 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.Event
   alias Mobilizon.Posts.Post
+  alias Mobilizon.Web.{Endpoint, MediaProxy}
   alias Mobilizon.Web.JsonLD.ObjectView
-  alias Mobilizon.Web.MediaProxy
 
   def render("group.json", %{group: %Actor{} = group}) do
     %{
@@ -37,17 +37,15 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
         if(event.status == :cancelled,
           do: "https://schema.org/EventCancelled",
           else: "https://schema.org/EventScheduled"
+        ),
+      "image" =>
+        if(event.picture,
+          do: [
+            event.picture.file.url |> MediaProxy.url()
+          ],
+          else: ["#{Endpoint.url()}/img/mobilizon_default_card.png"]
         )
     }
-
-    json_ld =
-      if event.picture do
-        Map.put(json_ld, "image", [
-          event.picture.file.url |> MediaProxy.url()
-        ])
-      else
-        json_ld
-      end
 
     json_ld =
       if event.begins_on,

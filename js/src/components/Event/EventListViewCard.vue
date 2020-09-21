@@ -16,7 +16,7 @@
           </span>
           <span>
             <span>
-              {{ $t("Organized by {name}", { name: event.organizerActor.displayName() }) }}
+              {{ $t("Organized by {name}", { name: usernameWithDomain(event.organizerActor) }) }}
             </span>
           </span>
         </div>
@@ -53,7 +53,7 @@
 import { ParticipantRole, EventVisibility, IEventCardOptions, IEvent } from "@/types/event.model";
 import { Component, Prop } from "vue-property-decorator";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
-import { IPerson } from "@/types/actor";
+import { IPerson, usernameWithDomain } from "@/types/actor";
 import { mixins } from "vue-class-component";
 import ActorMixin from "@/mixins/actor";
 import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
@@ -96,6 +96,8 @@ export default class EventListViewCard extends mixins(ActorMixin, EventMixin) {
   EventVisibility = EventVisibility;
 
   RouteName = RouteName;
+
+  usernameWithDomain = usernameWithDomain;
 }
 </script>
 

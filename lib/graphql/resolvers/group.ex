@@ -9,7 +9,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.GraphQL.API
   alias Mobilizon.GraphQL.Resolvers.Person
-  alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
 
   require Logger
@@ -271,7 +270,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
 
   def find_events_for_group(
         %Actor{id: group_id} = group,
-        _args,
+        %{
+          page: page,
+          limit: limit
+        } = args,
         %{
           context: %{
             current_user: %User{role: user_role} = user
@@ -282,15 +284,38 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
          {:member, true} <-
            {:member, Actors.is_member?(actor_id, group_id) or is_moderator(user_role)} do
       # TODO : Handle public / restricted to group members events
-      {:ok, Events.list_organized_events_for_group(group)}
+      {:ok,
+       Events.list_organized_events_for_group(
+         group,
+         :all,
+         Map.get(args, :after_datetime),
+         Map.get(args, :before_datetime),
+         page,
+         limit
+       )}
     else
       {:member, false} ->
-        {:ok, %Page{total: 0, elements: []}}
+        find_events_for_group(group, args, nil)
     end
   end
 
-  def find_events_for_group(_parent, _args, _resolution) do
-    {:ok, %Page{total: 0, elements: []}}
+  def find_events_for_group(
+        %Actor{} = group,
+        %{
+          page: page,
+          limit: limit
+        } = args,
+        _resolution
+      ) do
+    {:ok,
+     Events.list_organized_events_for_group(
+       group,
+       :public,
+       Map.get(args, :after_datetime),
+       Map.get(args, :before_datetime),
+       page,
+       limit
+     )}
   end
 
   defp restrict_fields_for_non_member_request(%Actor{} = group) do
