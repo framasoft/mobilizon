@@ -1,6 +1,7 @@
-defmodule Mobilizon.Service.HTTP.BaseClient do
+defmodule Mobilizon.Service.HTTP.GeospatialClient do
   @moduledoc """
   Tesla HTTP Basic Client
+  with JSON middleware
   """
 
   use Tesla
@@ -19,4 +20,6 @@ defmodule Mobilizon.Service.HTTP.BaseClient do
   plug(Tesla.Middleware.Timeout, timeout: 10_000)
 
   plug(Tesla.Middleware.Headers, [{"User-Agent", @user_agent}])
+
+  plug(Tesla.Middleware.JSON)
 end

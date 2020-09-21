@@ -7,7 +7,7 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
 
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.Provider
-  alias Mobilizon.Service.HTTP.BaseClient
+  alias Mobilizon.Service.HTTP.GeospatialClient
 
   require Logger
 
@@ -39,7 +39,7 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
 
     Logger.debug("Asking Google Maps for reverse geocode with #{url}")
 
-    with {:ok, %{status: 200, body: body}} <- BaseClient.get(url),
+    with {:ok, %{status: 200, body: body}} <- GeospatialClient.get(url),
          %{"results" => results, "status" => "OK"} <- body do
       Enum.map(results, fn entry -> process_data(entry, options) end)
     else
@@ -58,7 +58,7 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
 
     Logger.debug("Asking Google Maps for addresses with #{url}")
 
-    with {:ok, %{status: 200, body: body}} <- BaseClient.get(url),
+    with {:ok, %{status: 200, body: body}} <- GeospatialClient.get(url),
          %{"results" => results, "status" => "OK"} <- body do
       results |> Enum.map(fn entry -> process_data(entry, options) end)
     else
@@ -159,7 +159,7 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
 
     Logger.debug("Asking Google Maps for details with #{url}")
 
-    with {:ok, %{status: 200, body: body}} <- BaseClient.get(url),
+    with {:ok, %{status: 200, body: body}} <- GeospatialClient.get(url),
          %{"result" => %{"name" => name}, "status" => "OK"} <- body do
       name
     else

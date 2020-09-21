@@ -5,7 +5,7 @@ defmodule Mobilizon.Service.Geospatial.PhotonTest do
 
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.Photon
-  alias Mobilizon.Service.HTTP.BaseClient.Mock
+  alias Mobilizon.Service.HTTP.GeospatialClient.Mock
 
   describe "search address" do
     test "returns a valid address from search" do

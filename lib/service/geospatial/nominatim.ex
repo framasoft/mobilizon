@@ -5,7 +5,7 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
 
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.Provider
-  alias Mobilizon.Service.HTTP.BaseClient
+  alias Mobilizon.Service.HTTP.GeospatialClient
 
   require Logger
 
@@ -20,15 +20,9 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
   """
   @spec geocode(String.t(), keyword()) :: list(Address.t())
   def geocode(lon, lat, options \\ []) do
-    url = build_url(:geocode, %{lon: lon, lat: lat}, options)
-    Logger.debug("Asking Nominatim for geocode with #{url}")
-
-    with {:ok, %{status: 200, body: body}} <- BaseClient.get(url),
-         %{"features" => features} <- body do
-      features |> process_data() |> Enum.filter(& &1)
-    else
-      _ -> []
-    end
+    :geocode
+    |> build_url(%{lon: lon, lat: lat}, options)
+    |> fetch_features
   end
 
   @impl Provider
@@ -37,15 +31,9 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
   """
   @spec search(String.t(), keyword()) :: list(Address.t())
   def search(q, options \\ []) do
-    url = build_url(:search, %{q: q}, options)
-    Logger.debug("Asking Nominatim for addresses with #{url}")
-
-    with {:ok, %{status: 200, body: body}} <- BaseClient.get(url),
-         %{"features" => features} <- body do
-      features |> process_data() |> Enum.filter(& &1)
-    else
-      _ -> []
-    end
+    :search
+    |> build_url(%{q: q}, options)
+    |> fetch_features
   end
 
   @spec build_url(atom(), map(), list()) :: String.t()
@@ -75,6 +63,20 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
 
     url = if is_nil(country_code), do: url, else: "#{url}&countrycodes=#{country_code}"
     if is_nil(api_key), do: url, else: url <> "&key=#{api_key}"
+  end
+
+  @spec fetch_features(String.t()) :: list(Address.t())
+  defp fetch_features(url) do
+    Logger.debug("Asking Nominatim with #{url}")
+
+    with {:ok, %{status: 200, body: body}} <- GeospatialClient.get(url),
+         %{"features" => features} <- body do
+      features |> process_data |> Enum.filter(& &1)
+    else
+      _ ->
+        Logger.error("Asking Nominatim with #{url}")
+        []
+    end
   end
 
   defp process_data(features) do
