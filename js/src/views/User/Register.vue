@@ -139,6 +139,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { Route } from "vue-router";
 import { CREATE_USER } from "../../graphql/user";
 import RouteName from "../../router/name";
 import { IConfig } from "../../types/config.model";
@@ -171,7 +172,7 @@ export default class Register extends Vue {
     locale: "en",
   };
 
-  errors: object = {};
+  errors: Record<string, unknown> = {};
 
   sendingForm = false;
 
@@ -179,7 +180,7 @@ export default class Register extends Vue {
 
   config!: IConfig;
 
-  async submit() {
+  async submit(): Promise<Route | void> {
     this.sendingForm = true;
     this.credentials.locale = this.$i18n.locale;
     try {
@@ -208,6 +209,7 @@ export default class Register extends Vue {
 
 <style lang="scss" scoped>
 @import "../../variables";
+@import "../../common.scss";
 
 .avatar-enter-active {
   transition: opacity 1s ease;

@@ -74,7 +74,7 @@
         <div v-if="searchEvents.total > 0">
           <div class="columns is-multiline">
             <div
-              class="column is-one-quarter-desktop"
+              class="column is-one-third-desktop"
               v-for="event in searchEvents.elements"
               :key="event.uuid"
             >
@@ -108,7 +108,7 @@
         <div v-if="searchGroups.total > 0">
           <div class="columns is-multiline">
             <div
-              class="column is-one-quarter-desktop"
+              class="column is-one-third-desktop"
               v-for="group in searchGroups.elements"
               :key="group.uuid"
             >
