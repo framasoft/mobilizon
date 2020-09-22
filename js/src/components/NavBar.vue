@@ -160,7 +160,7 @@ export default class NavBar extends Vue {
   mobileNavbarActive = false;
 
   @Watch("currentActor")
-  async initializeListOfIdentities() {
+  async initializeListOfIdentities(): Promise<void> {
     if (!this.currentUser.isLoggedIn) return;
     const { data } = await this.$apollo.query<{ identities: IPerson[] }>({
       query: IDENTITIES,
@@ -182,7 +182,7 @@ export default class NavBar extends Vue {
     }
   }
 
-  async handleErrors(errors: GraphQLError[]) {
+  async handleErrors(errors: GraphQLError[]): Promise<void> {
     if (
       errors.length > 0 &&
       errors[0].message === "You need to be logged-in to view your list of identities"
@@ -191,7 +191,7 @@ export default class NavBar extends Vue {
     }
   }
 
-  async logout() {
+  async logout(): Promise<void> {
     await logout(this.$apollo.provider.defaultClient);
     this.$buefy.notification.open({
       message: this.$t("You have been disconnected") as string,
@@ -204,7 +204,7 @@ export default class NavBar extends Vue {
     await this.$router.push({ name: RouteName.HOME });
   }
 
-  async setIdentity(identity: IPerson) {
+  async setIdentity(identity: IPerson): Promise<void> {
     await this.$apollo.mutate({
       mutation: UPDATE_DEFAULT_ACTOR,
       variables: {
