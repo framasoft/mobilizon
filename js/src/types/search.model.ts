@@ -15,3 +15,8 @@ export interface SearchPerson {
   total: number;
   elements: IPerson[];
 }
+
+export enum SearchTabs {
+  EVENTS = 0,
+  GROUPS = 1,
+}

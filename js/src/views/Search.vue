@@ -71,13 +71,27 @@
             <b-tag rounded>{{ searchEvents.total }}</b-tag>
           </span>
         </template>
-        <div v-if="searchEvents.total > 0" class="columns is-multiline">
-          <div
-            class="column is-one-quarter-desktop"
-            v-for="event in searchEvents.elements"
-            :key="event.uuid"
-          >
-            <EventCard :event="event" />
+        <div v-if="searchEvents.total > 0">
+          <div class="columns is-multiline">
+            <div
+              class="column is-one-quarter-desktop"
+              v-for="event in searchEvents.elements"
+              :key="event.uuid"
+            >
+              <EventCard :event="event" />
+            </div>
+          </div>
+          <div class="pagination">
+            <b-pagination
+              :total="searchEvents.total"
+              v-model="eventPage"
+              :per-page="EVENT_PAGE_LIMIT"
+              :aria-next-label="$t('Next page')"
+              :aria-previous-label="$t('Previous page')"
+              :aria-page-label="$t('Page')"
+              :aria-current-label="$t('Current page')"
+            >
+            </b-pagination>
           </div>
         </div>
         <b-message v-else-if="$apollo.loading === false" type="is-danger">{{
@@ -91,13 +105,27 @@
             {{ $t("Groups") }} <b-tag rounded>{{ searchGroups.total }}</b-tag>
           </span>
         </template>
-        <div v-if="searchGroups.total > 0" class="columns is-multiline">
-          <div
-            class="column is-one-quarter-desktop"
-            v-for="group in searchGroups.elements"
-            :key="group.uuid"
-          >
-            <group-card :group="group" />
+        <div v-if="searchGroups.total > 0">
+          <div class="columns is-multiline">
+            <div
+              class="column is-one-quarter-desktop"
+              v-for="group in searchGroups.elements"
+              :key="group.uuid"
+            >
+              <group-card :group="group" />
+            </div>
+          </div>
+          <div class="pagination">
+            <b-pagination
+              :total="searchGroups.total"
+              v-model="groupPage"
+              :per-page="GROUP_PAGE_LIMIT"
+              :aria-next-label="$t('Next page')"
+              :aria-previous-label="$t('Previous page')"
+              :aria-page-label="$t('Page')"
+              :aria-current-label="$t('Current page')"
+            >
+            </b-pagination>
           </div>
         </div>
         <b-message v-else-if="$apollo.loading === false" type="is-danger">
@@ -129,10 +157,10 @@ import { FETCH_EVENTS } from "../graphql/event";
 import { IEvent } from "../types/event.model";
 import RouteName from "../router/name";
 import { IAddress, Address } from "../types/address.model";
-import { SearchEvent, SearchGroup } from "../types/search.model";
 import AddressAutoComplete from "../components/Event/AddressAutoComplete.vue";
 import { SEARCH_EVENTS, SEARCH_GROUPS } from "../graphql/search";
 import { Paginate } from "../types/paginate";
+import { SearchTabs } from "../types/search.model";
 import { IGroup } from "../types/actor";
 import GroupCard from "../components/Group/GroupCard.vue";
 import { CONFIG } from "../graphql/config";
@@ -143,15 +171,14 @@ interface ISearchTimeOption {
   end?: Date | null;
 }
 
-enum SearchTabs {
-  EVENTS = 0,
-  GROUPS = 1,
-}
-
 const tabsName: { events: number; groups: number } = {
   events: SearchTabs.EVENTS,
   groups: SearchTabs.GROUPS,
 };
+
+const EVENT_PAGE_LIMIT = 1;
+
+const GROUP_PAGE_LIMIT = 10;
 
 @Component({
   components: {
@@ -173,6 +200,8 @@ const tabsName: { events: number; groups: number } = {
           beginsOn: this.start,
           endsOn: this.end,
           radius: this.radius,
+          page: this.eventPage,
+          limit: EVENT_PAGE_LIMIT,
         };
       },
       debounce: 300,
@@ -188,6 +217,8 @@ const tabsName: { events: number; groups: number } = {
           term: this.search,
           location: this.geohash,
           radius: this.radius,
+          page: this.groupPage,
+          limit: GROUP_PAGE_LIMIT,
         };
       },
       skip() {
@@ -212,6 +243,10 @@ export default class Search extends Vue {
   searchEvents: Paginate<IEvent> & { initial: boolean } = { total: 0, elements: [], initial: true };
 
   searchGroups: Paginate<IGroup> = { total: 0, elements: [] };
+
+  eventPage = 1;
+
+  groupPage = 1;
 
   search: string = (this.$route.query.term as string) || "";
 
@@ -268,23 +303,27 @@ export default class Search extends Vue {
     end: null,
   };
 
-  radiusString = (radius: number | null) => {
+  EVENT_PAGE_LIMIT = EVENT_PAGE_LIMIT;
+
+  GROUP_PAGE_LIMIT = GROUP_PAGE_LIMIT;
+
+  radiusString = (radius: number | null): string => {
     if (radius) {
-      return this.$tc("{nb} km", radius, { nb: radius });
+      return this.$tc("{nb} km", radius, { nb: radius }) as string;
     }
-    return this.$t("any distance");
+    return this.$t("any distance") as string;
   };
 
   radiusOptions: (number | null)[] = [1, 5, 10, 25, 50, 100, 150, null];
 
   radius = 50;
 
-  submit() {
+  submit(): void {
     this.$apollo.queries.searchEvents.refetch();
   }
 
   @Watch("search")
-  updateSearchTerm() {
+  updateSearchTerm(): void {
     this.$router.push({
       name: RouteName.SEARCH,
       query: { ...this.$route.query, term: this.search },
@@ -292,7 +331,7 @@ export default class Search extends Vue {
   }
 
   @Watch("activeTab")
-  updateActiveTab() {
+  updateActiveTab(): void {
     const searchType = this.activeTab === tabsName.events ? "events" : "groups";
     this.$router.push({
       name: RouteName.SEARCH,
@@ -308,7 +347,7 @@ export default class Search extends Vue {
     return { start: startOfDay(start), end: endOfDay(end) };
   }
 
-  get geohash() {
+  get geohash(): string | undefined {
     if (this.location && this.location.geom) {
       const [lon, lat] = this.location.geom.split(";");
       return ngeohash.encode(lat, lon, 6);

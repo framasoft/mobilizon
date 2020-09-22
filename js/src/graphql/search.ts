@@ -8,6 +8,8 @@ export const SEARCH_EVENTS = gql`
     $term: String
     $beginsOn: DateTime
     $endsOn: DateTime
+    $page: Int
+    $limit: Int
   ) {
     searchEvents(
       location: $location
@@ -16,6 +18,8 @@ export const SEARCH_EVENTS = gql`
       term: $term
       beginsOn: $beginsOn
       endsOn: $endsOn
+      page: $page
+      limit: $limit
     ) {
       total
       elements {
@@ -36,8 +40,8 @@ export const SEARCH_EVENTS = gql`
 `;
 
 export const SEARCH_GROUPS = gql`
-  query SearchGroups($term: String, $location: String, $radius: Float) {
-    searchGroups(term: $term, location: $location, radius: $radius) {
+  query SearchGroups($term: String, $location: String, $radius: Float, $page: Int, $limit: Int) {
+    searchGroups(term: $term, location: $location, radius: $radius, page: $page, limit: $limit) {
       total
       elements {
         avatar {
