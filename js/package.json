@@ -35,7 +35,7 @@
     "leaflet.locatecontrol": "^0.72.0",
     "lodash": "^4.17.11",
     "ngeohash": "^0.6.3",
-    "phoenix": "^1.4.11",
+    "phoenix": "^1.5.5",
     "register-service-worker": "^1.7.1",
     "tippy.js": "^6.2.3",
     "tiptap": "^1.26.0",
