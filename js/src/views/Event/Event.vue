@@ -104,11 +104,11 @@
                   />
                   <b-button
                     type="is-text"
-                    v-if="anonymousParticipation !== null"
+                    v-if="!actorIsParticipant && anonymousParticipation !== null"
                     @click="cancelAnonymousParticipation"
                     >{{ $t("Cancel anonymous participation") }}</b-button
                   >
-                  <small v-if="anonymousParticipation">
+                  <small v-if="!actorIsParticipant && anonymousParticipation">
                     {{ $t("You are participating in this event anonymously") }}
                     <b-tooltip
                       :label="
@@ -120,7 +120,7 @@
                       </router-link>
                     </b-tooltip>
                   </small>
-                  <small v-else-if="anonymousParticipation === false">
+                  <small v-else-if="!actorIsParticipant && anonymousParticipation === false">
                     {{
                       $t(
                         "You are participating in this event anonymously but didn't confirm participation"
@@ -622,13 +622,13 @@ import PopoverActorCard from "../../components/Account/PopoverActorCard.vue";
   metaInfo() {
     return {
       // if no subcomponents specify a metaInfo.title, this title will be used
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title: this.eventTitle,
       // all titles will be injected into this template
       titleTemplate: "%s | Mobilizon",
       meta: [
-        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         { name: "description", content: this.eventDescription },
       ],
@@ -680,17 +680,17 @@ export default class Event extends EventMixin {
 
   messageForConfirmation = "";
 
-  get eventTitle() {
+  get eventTitle(): undefined | string {
     if (!this.event) return undefined;
     return this.event.title;
   }
 
-  get eventDescription() {
+  get eventDescription(): undefined | string {
     if (!this.event) return undefined;
     return this.event.description;
   }
 
-  async mounted() {
+  async mounted(): Promise<void> {
     this.identity = this.currentActor;
     if (this.$route.hash.includes("#comment-")) {
       this.loadComments = true;
@@ -766,12 +766,13 @@ export default class Event extends EventMixin {
   /**
    * Delete the event, then redirect to home.
    */
-  async openDeleteEventModalWrapper() {
+  async openDeleteEventModalWrapper(): Promise<void> {
     await this.openDeleteEventModal(this.event, this.currentActor);
   }
 
-  async reportEvent(content: string, forward: boolean) {
+  async reportEvent(content: string, forward: boolean): Promise<void> {
     this.isReportModalActive = false;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     this.$refs.reportModal.close();
     if (!this.event.organizerActor) return;
@@ -800,12 +801,12 @@ export default class Event extends EventMixin {
     }
   }
 
-  joinEventWithConfirmation(actor: IPerson) {
+  joinEventWithConfirmation(actor: IPerson): void {
     this.isJoinConfirmationModalActive = true;
     this.actorForConfirmation = actor;
   }
 
-  async joinEvent(identity: IPerson, message: string | null = null) {
+  async joinEvent(identity: IPerson, message: string | null = null): Promise<void> {
     this.isJoinConfirmationModalActive = false;
     this.isJoinModalActive = false;
     try {
@@ -874,7 +875,7 @@ export default class Event extends EventMixin {
     }
   }
 
-  confirmLeave() {
+  confirmLeave(): void {
     this.$buefy.dialog.confirm({
       title: this.$t('Leaving event "{title}"', {
         title: this.event.title,
@@ -895,7 +896,7 @@ export default class Event extends EventMixin {
   }
 
   @Watch("participations")
-  watchParticipations() {
+  watchParticipations(): void {
     if (this.participations.length > 0) {
       if (
         this.oldParticipationRole &&
@@ -934,7 +935,7 @@ export default class Event extends EventMixin {
     this.$notifier.info(this.$t("Your participation status has been changed") as string);
   }
 
-  async downloadIcsEvent() {
+  async downloadIcsEvent(): Promise<void> {
     const data = await (
       await fetch(`${GRAPHQL_API_ENDPOINT}/events/${this.uuid}/export/ics`)
     ).text();
@@ -947,10 +948,12 @@ export default class Event extends EventMixin {
     document.body.removeChild(link);
   }
 
-  triggerShare() {
+  triggerShare(): void {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore-start
     if (navigator.share) {
       navigator
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         .share({
           title: this.event.title,
@@ -962,10 +965,11 @@ export default class Event extends EventMixin {
       this.isShareModalActive = true;
       // send popup
     }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore-end
   }
 
-  async handleErrors(errors: GraphQLError[]) {
+  async handleErrors(errors: GraphQLError[]): Promise<void> {
     if (
       errors[0].message.includes("not found") ||
       errors[0].message.includes("has invalid value $uuid")
@@ -974,7 +978,7 @@ export default class Event extends EventMixin {
     }
   }
 
-  get actorIsParticipant() {
+  get actorIsParticipant(): boolean {
     if (this.actorIsOrganizer) return true;
 
     return (
@@ -982,13 +986,13 @@ export default class Event extends EventMixin {
     );
   }
 
-  get actorIsOrganizer() {
+  get actorIsOrganizer(): boolean {
     return (
       this.participations.length > 0 && this.participations[0].role === ParticipantRole.CREATOR
     );
   }
 
-  get endDate() {
+  get endDate(): Date {
     return this.event.endsOn !== null && this.event.endsOn > this.event.beginsOn
       ? this.event.endsOn
       : this.event.beginsOn;
@@ -1014,7 +1018,7 @@ export default class Event extends EventMixin {
     return isParticipatingInThisEvent(this.uuid);
   }
 
-  async cancelAnonymousParticipation() {
+  async cancelAnonymousParticipation(): Promise<void> {
     const token = (await getLeaveTokenForParticipation(this.uuid)) as string;
     await this.leaveEvent(this.event, this.config.anonymous.actorId, token);
     await removeAnonymousParticipation(this.uuid);
@@ -1023,7 +1027,7 @@ export default class Event extends EventMixin {
 
   get ableToReport(): boolean {
     return (
-      this.config && (this.currentActor.id != undefined || this.config.anonymous.reports.allowed)
+      this.config && (this.currentActor.id !== undefined || this.config.anonymous.reports.allowed)
     );
   }
 }
