@@ -176,7 +176,7 @@ const tabsName: { events: number; groups: number } = {
   groups: SearchTabs.GROUPS,
 };
 
-const EVENT_PAGE_LIMIT = 1;
+const EVENT_PAGE_LIMIT = 10;
 
 const GROUP_PAGE_LIMIT = 10;
 
