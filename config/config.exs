@@ -51,6 +51,7 @@ config :mobilizon, Mobilizon.Web.Endpoint,
 
 config :mime, :types, %{
   "application/activity+json" => ["activity-json"],
+  "application/ld+json" => ["activity-json"],
   "application/jrd+json" => ["jrd-json"]
 }
 
