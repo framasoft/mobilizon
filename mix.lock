@@ -95,7 +95,7 @@
   "mochiweb": {:hex, :mochiweb, "2.20.1", "e4dbd0ed716f076366ecf62ada5755a844e1d95c781e8c77df1d4114be868cdf", [:rebar3], [], "hexpm", "d1aeee7870470d2fa9eae0b3d5ab6c33801aa2d82b10e9dade885c5c921b36aa"},
   "mock": {:hex, :mock, "0.3.5", "feb81f52b8dcf0a0d65001d2fec459f6b6a8c22562d94a965862f6cc066b5431", [:mix], [{:meck, "~> 0.8.13", [hex: :meck, repo: "hexpm", optional: false]}], "hexpm", "6fae404799408300f863550392635d8f7e3da6b71abdd5c393faf41b131c8728"},
   "mogrify": {:hex, :mogrify, "0.8.0", "3506f3ca3f7b95a155f3b4ef803b5db176f5a0633723e3fe85e0d6399e3b11c8", [:mix], [], "hexpm", "2278d245f07056ea3b586e98801e933695147066fa4cf563f552c1b4f0ff8ad9"},
-  "mox": {:hex, :mox, "0.5.2", "55a0a5ba9ccc671518d068c8dddd20eeb436909ea79d1799e2209df7eaa98b6c", [:mix], [], "hexpm", "df4310628cd628ee181df93f50ddfd07be3e5ecc30232d3b6aadf30bdfe6092b"},
+  "mox": {:hex, :mox, "1.0.0", "4b3c7005173f47ff30641ba044eb0fe67287743eec9bd9545e37f3002b0a9f8b", [:mix], [], "hexpm", "201b0a20b7abdaaab083e9cf97884950f8a30a1350a1da403b3145e213c6f4df"},
   "nimble_parsec": {:hex, :nimble_parsec, "0.6.0", "32111b3bf39137144abd7ba1cce0914533b2d16ef35e8abc5ec8be6122944263", [:mix], [], "hexpm", "27eac315a94909d4dc68bc07a4a83e06c8379237c5ea528a9acff4ca1c873c52"},
   "nimble_pool": {:hex, :nimble_pool, "0.1.0", "ffa9d5be27eee2b00b0c634eb649aa27f97b39186fec3c493716c2a33e784ec6", [:mix], [], "hexpm", "343a1eaa620ddcf3430a83f39f2af499fe2370390d4f785cd475b4df5acaf3f9"},
   "oauth2": {:hex, :oauth2, "2.0.0", "338382079fe16c514420fa218b0903f8ad2d4bfc0ad0c9f988867dfa246731b0", [:mix], [{:hackney, "~> 1.13", [hex: :hackney, repo: "hexpm", optional: false]}], "hexpm", "881b8364ac7385f9fddc7949379cbe3f7081da37233a1aa7aab844670a91e7e7"},
