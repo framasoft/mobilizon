@@ -1,5 +1,23 @@
 {
   "About Mobilizon": "Mobilizon について",
+  "About this event": "このイベントについて",
   "Cancel": "キャンセル",
-  "Category": "カテゴリ"
+  "Category": "カテゴリ",
+  "Change my email": "メールアドレスを変更",
+  "Change my password": "パスワードを変更",
+  "Comments": "コメント",
+  "Country": "国",
+  "Date": "日付",
+  "Email": "メール",
+  "Email address": "メールアドレス",
+  "Log in": "ログイン",
+  "Log out": "ログアウト",
+  "Login": "ログイン",
+  "New password": "新しいパスワード",
+  "Password": "パスワード",
+  "Search": "探索",
+  "Settings": "設定",
+  "Today": "今日",
+  "Tomorrow": "明日",
+  "Username": "ユーザ名"
 }
