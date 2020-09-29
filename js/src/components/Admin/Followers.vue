@@ -101,6 +101,7 @@
 </template>
 <script lang="ts">
 import { Component, Mixins } from "vue-property-decorator";
+import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { ACCEPT_RELAY, REJECT_RELAY, RELAY_FOLLOWERS } from "../../graphql/admin";
 import { Paginate } from "../../types/paginate";
 import { IFollower } from "../../types/actor/follower.model";
@@ -125,38 +126,46 @@ export default class Followers extends Mixins(RelayMixin) {
 
   RelayMixin = RelayMixin;
 
-  async acceptRelays() {
+  async acceptRelays(): Promise<void> {
     await this.checkedRows.forEach((row: IFollower) => {
       this.acceptRelay(`${row.actor.preferredUsername}@${row.actor.domain}`);
     });
   }
 
-  async rejectRelays() {
+  async rejectRelays(): Promise<void> {
     await this.checkedRows.forEach((row: IFollower) => {
       this.rejectRelay(`${row.actor.preferredUsername}@${row.actor.domain}`);
     });
   }
 
-  async acceptRelay(address: string) {
-    await this.$apollo.mutate({
-      mutation: ACCEPT_RELAY,
-      variables: {
-        address,
-      },
-    });
-    await this.$apollo.queries.relayFollowers.refetch();
-    this.checkedRows = [];
+  async acceptRelay(address: string): Promise<void> {
+    try {
+      await this.$apollo.mutate({
+        mutation: ACCEPT_RELAY,
+        variables: {
+          address,
+        },
+      });
+      await this.$apollo.queries.relayFollowers.refetch();
+      this.checkedRows = [];
+    } catch (e) {
+      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+    }
   }
 
-  async rejectRelay(address: string) {
-    await this.$apollo.mutate({
-      mutation: REJECT_RELAY,
-      variables: {
-        address,
-      },
-    });
-    await this.$apollo.queries.relayFollowers.refetch();
-    this.checkedRows = [];
+  async rejectRelay(address: string): Promise<void> {
+    try {
+      await this.$apollo.mutate({
+        mutation: REJECT_RELAY,
+        variables: {
+          address,
+        },
+      });
+      await this.$apollo.queries.relayFollowers.refetch();
+      this.checkedRows = [];
+    } catch (e) {
+      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+    }
   }
 
   get checkedRowsHaveAtLeastOneToApprove(): boolean {

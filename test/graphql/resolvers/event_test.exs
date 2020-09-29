@@ -141,7 +141,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       assert res["data"]["createEvent"] == nil
 
       assert hd(res["errors"])["message"] ==
-               "Organizer actor id is not owned by the user"
+               "Organizer profile is not owned by the user"
     end
 
     test "create_event/3 should check that end time is after start time", %{
@@ -693,7 +693,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         |> auth_conn(user)
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "User doesn't own actor"
+      assert hd(json_response(res, 200)["errors"])["message"] == "User doesn't own profile"
     end
 
     test "update_event/3 should check end time is after the beginning time", %{

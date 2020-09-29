@@ -7,7 +7,7 @@ import {
   FETCH_EVENT,
   LEAVE_EVENT,
 } from "../graphql/event";
-import RouteName from "../router/name";
+import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { IPerson } from "../types/actor";
 
 @Component
@@ -80,6 +80,7 @@ export default class EventMixin extends mixins(Vue) {
         this.participationCancelledMessage();
       }
     } catch (error) {
+      Snackbar.open({ message: error.message, type: "is-danger", position: "is-bottom" });
       console.error(error);
     }
   }
@@ -143,6 +144,8 @@ export default class EventMixin extends mixins(Vue) {
         duration: 5000,
       });
     } catch (error) {
+      Snackbar.open({ message: error.message, type: "is-danger", position: "is-bottom" });
+
       console.error(error);
     }
   }

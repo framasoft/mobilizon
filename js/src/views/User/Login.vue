@@ -30,33 +30,8 @@
             })
           }}</b-message
         >
-        <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">
-          <span v-if="error === LoginError.USER_NOT_CONFIRMED">
-            <span>
-              {{
-                $t(
-                  "The user account you're trying to login as has not been confirmed yet. Check your email inbox and eventually your spam folder."
-                )
-              }}
-            </span>
-            <i18n path="You may also ask to {resend_confirmation_email}.">
-              <router-link
-                slot="resend_confirmation_email"
-                :to="{ name: RouteName.RESEND_CONFIRMATION }"
-                >{{ $t("resend confirmation email") }}</router-link
-              >
-            </i18n>
-          </span>
-          <span v-if="error === LoginError.USER_EMAIL_PASSWORD_INVALID">{{
-            $t("Impossible to login, your email or password seems incorrect.")
-          }}</span>
-          <!-- TODO: Shouldn't we hide this information? -->
-          <span v-if="error === LoginError.USER_DOES_NOT_EXIST">{{
-            $t("No user account with this email was found. Maybe you made a typo?")
-          }}</span>
-          <span v-if="error === LoginError.USER_DISABLED">
-            {{ $t("This user has been disabled") }}
-          </span>
+        <b-message :title="$t('Error')" type="is-danger" v-for="error in errors" :key="error">
+          {{ error }}
         </b-message>
         <form @submit="loginAction">
           <b-field :label="$t('Email')" label-for="email">
@@ -80,9 +55,10 @@
             />
           </b-field>
 
-          <p class="control has-text-centered">
+          <p class="control has-text-centered" v-if="!submitted">
             <button class="button is-primary is-large">{{ $t("Login") }}</button>
           </p>
+          <b-loading :is-full-page="false" v-model="submitted" />
 
           <div class="control" v-if="config && config.auth.oauthProviders.length > 0">
             <auth-providers :oauthProviders="config.auth.oauthProviders" />
@@ -121,6 +97,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { Route } from "vue-router";
 import { LOGIN } from "../../graphql/auth";
 import { validateEmailField, validateRequiredField } from "../../utils/validators";
 import { initializeCurrentActor, NoIdentitiesException, saveUserData } from "../../utils/auth";
@@ -185,7 +162,9 @@ export default class Login extends Vue {
 
   private redirect: string | null = null;
 
-  mounted() {
+  submitted = false;
+
+  mounted(): void {
     this.credentials.email = this.email;
     this.credentials.password = this.password;
 
@@ -194,12 +173,16 @@ export default class Login extends Vue {
     this.redirect = query.redirect as string;
   }
 
-  async loginAction(e: Event) {
+  async loginAction(e: Event): Promise<Route | void> {
     e.preventDefault();
+    if (this.submitted) {
+      return;
+    }
 
     this.errors = [];
 
     try {
+      this.submitted = true;
       const { data } = await this.$apollo.mutate<{ login: ILogin }>({
         mutation: LOGIN,
         variables: {
@@ -242,6 +225,7 @@ export default class Login extends Vue {
       window.localStorage.setItem("welcome-back", "yes");
       return this.$router.push({ name: RouteName.HOME });
     } catch (err) {
+      this.submitted = false;
       console.error(err);
       err.graphQLErrors.forEach(({ message }: { message: string }) => {
         this.errors.push(message);

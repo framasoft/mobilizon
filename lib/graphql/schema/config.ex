@@ -15,7 +15,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     field(:contact, :string)
 
     field(:registrations_open, :boolean)
-    field(:registrations_whitelist, :boolean)
+    field(:registrations_allowlist, :boolean)
     field(:demo_mode, :boolean)
     field(:country_code, :string)
     field(:location, :lonlat)

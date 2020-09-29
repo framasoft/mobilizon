@@ -9,6 +9,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
   alias Mobilizon.Storage.Page
   alias Mobilizon.Todos.{Todo, TodoList}
   alias Mobilizon.Users.User
+  import Mobilizon.Web.Gettext
 
   require Logger
 
@@ -53,10 +54,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
       {:ok, page}
     else
       {:is_owned, nil} ->
-        {:error, "Actor id is not owned by authenticated user"}
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
 
       {:member, _} ->
-        {:error, "Actor id is not member of group"}
+        {:error, dgettext("errors", "Profile is not member of group")}
     end
   end
 
@@ -74,13 +75,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
       {:ok, todo}
     else
       {:todo, nil} ->
-        {:error, "Todo list doesn't exist"}
+        {:error, dgettext("errors", "Todo list doesn't exist")}
 
       {:actor, nil} ->
-        {:error, "No actor found for user"}
+        {:error, dgettext("errors", "No profile found for user")}
 
       {:member, _} ->
-        {:error, "Actor id is not member of group"}
+        {:error, dgettext("errors", "Profile is not member of group")}
     end
   end
 
@@ -98,7 +99,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
       {:ok, todo_list}
     else
       {:member, _} ->
-        {:error, "Actor id is not member of group"}
+        {:error, dgettext("errors", "Profile is not member of group")}
     end
   end
 
@@ -118,10 +119,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
   #     {:ok, todo}
   #   else
   #     {:todo_list, _} ->
-  #       {:error, "TodoList doesn't exist"}
+  #       {:error, "Todo list doesn't exist"}
 
   #     {:member, _} ->
-  #       {:error, "Actor id is not member of group"}
+  #       {:error, "Profile is not member of group"}
   #   end
   # end
 
@@ -141,10 +142,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
   #     {:ok, todo}
   #   else
   #     {:todo_list, _} ->
-  #       {:error, "TodoList doesn't exist"}
+  #       {:error, "Todo list doesn't exist"}
 
   #     {:member, _} ->
-  #       {:error, "Actor id is not member of group"}
+  #       {:error, "Profile is not member of group"}
   #   end
   # end
 
@@ -164,13 +165,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
       {:ok, todo}
     else
       {:todo, nil} ->
-        {:error, "Todo doesn't exist"}
+        {:error, dgettext("errors", "Todo doesn't exist")}
 
       {:actor, nil} ->
-        {:error, "No actor found for user"}
+        {:error, dgettext("errors", "No profile found for user")}
 
       {:member, _} ->
-        {:error, "Actor id is not member of group"}
+        {:error, dgettext("errors", "Profile is not member of group")}
     end
   end
 
@@ -190,10 +191,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
       {:ok, todo}
     else
       {:todo_list, _} ->
-        {:error, "TodoList doesn't exist"}
+        {:error, dgettext("errors", "Todo list doesn't exist")}
 
       {:member, _} ->
-        {:error, "Actor id is not member of group"}
+        {:error, dgettext("errors", "Profile is not member of group")}
     end
   end
 
@@ -215,13 +216,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
       {:ok, todo}
     else
       {:todo_list, _} ->
-        {:error, "TodoList doesn't exist"}
+        {:error, dgettext("errors", "Todo list doesn't exist")}
 
       {:todo, _} ->
-        {:error, "Todo doesn't exist"}
+        {:error, dgettext("errors", "Todo doesn't exist")}
 
       {:member, _} ->
-        {:error, "Actor id is not member of group"}
+        {:error, dgettext("errors", "Profile is not member of group")}
     end
   end
 
@@ -243,13 +244,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
   #     {:ok, todo}
   #   else
   #     {:todo_list, _} ->
-  #       {:error, "TodoList doesn't exist"}
+  #       {:error, "Todo list doesn't exist"}
 
   #     {:todo, _} ->
   #       {:error, "Todo doesn't exist"}
 
   #     {:member, _} ->
-  #       {:error, "Actor id is not member of group"}
+  #       {:error, "Profile is not member of group"}
   #   end
   # end
 end

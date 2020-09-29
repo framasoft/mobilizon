@@ -18,6 +18,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { SnackbarProgrammatic as Snackbar } from "buefy";
 import RouteName from "../../router/name";
 import { IParticipant } from "../../types/event.model";
 import { CONFIRM_PARTICIPATION } from "../../graphql/event";
@@ -31,11 +32,11 @@ export default class ConfirmParticipation extends Vue {
 
   failed = false;
 
-  async created() {
+  async created(): Promise<void> {
     await this.validateAction();
   }
 
-  async validateAction() {
+  async validateAction(): Promise<void> {
     try {
       const { data } = await this.$apollo.mutate<{
         confirmParticipation: IParticipant;
@@ -56,6 +57,8 @@ export default class ConfirmParticipation extends Vue {
       }
     } catch (err) {
       console.error(err);
+
+      Snackbar.open({ message: err.message, type: "is-danger", position: "is-bottom" });
       this.failed = true;
     } finally {
       this.loading = false;

@@ -10,6 +10,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
   alias Mobilizon.Posts.Post
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
+  import Mobilizon.Web.Gettext
 
   require Logger
 
@@ -75,7 +76,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
       {:ok, post}
     else
       {:member, false} -> get_post(parent, %{slug: slug}, nil)
-      {:post, _} -> {:error, "No such post"}
+      {:post, _} -> {:error, dgettext("errors", "No such post")}
     end
   end
 
@@ -90,12 +91,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
         {:ok, post}
 
       {:post, _} ->
-        {:error, "No such post"}
+        {:error, dgettext("errors", "No such post")}
     end
   end
 
   def get_post(_parent, _args, _resolution) do
-    {:error, "No such post"}
+    {:error, dgettext("errors", "No such post")}
   end
 
   def create_post(
@@ -120,16 +121,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
            ) do
       {:ok, post}
     else
-      {:own_check, _} ->
-        {:error, "Parent post doesn't match this group"}
-
       {:member, _} ->
-        {:error, "Actor id is not member of group"}
+        {:error, dgettext("errors", "Profile is not member of group")}
     end
   end
 
   def create_post(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to create posts"}
+    {:error, dgettext("errors", "You need to be logged-in to create posts")}
   end
 
   def update_post(
@@ -151,18 +149,18 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
       {:ok, post}
     else
       {:uuid, :error} ->
-        {:error, "Post ID is not a valid ID"}
+        {:error, dgettext("errors", "Post ID is not a valid ID")}
 
       {:post, _} ->
-        {:error, "Post doesn't exist"}
+        {:error, dgettext("errors", "Post doesn't exist")}
 
       {:member, _} ->
-        {:error, "Actor id is not member of group"}
+        {:error, dgettext("errors", "Profile is not member of group")}
     end
   end
 
   def update_post(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to update posts"}
+    {:error, dgettext("errors", "You need to be logged-in to update posts")}
   end
 
   def delete_post(
@@ -184,17 +182,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
       {:ok, post}
     else
       {:uuid, :error} ->
-        {:error, "Post ID is not a valid ID"}
+        {:error, dgettext("errors", "Post ID is not a valid ID")}
 
       {:post, _} ->
-        {:error, "Post doesn't exist"}
+        {:error, dgettext("errors", "Post doesn't exist")}
 
       {:member, _} ->
-        {:error, "Actor id is not member of group"}
+        {:error, dgettext("errors", "Profile is not member of group")}
     end
   end
 
   def delete_post(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to delete posts"}
+    {:error, dgettext("errors", "You need to be logged-in to delete posts")}
   end
 end

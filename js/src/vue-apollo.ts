@@ -19,7 +19,7 @@ import * as AbsintheSocket from "@absinthe/socket";
 import { createAbsintheSocketLink } from "@absinthe/socket-apollo-link";
 import { getMainDefinition } from "apollo-utilities";
 import { GRAPHQL_API_ENDPOINT, GRAPHQL_API_FULL_PATH } from "./api/_entrypoint";
-import { computeErrorMessage, fragmentMatcher, refreshAccessToken } from "./apollo/utils";
+import { fragmentMatcher, refreshAccessToken } from "./apollo/utils";
 
 // Install the vue plugin
 Vue.use(VueApollo);
@@ -104,24 +104,18 @@ const errorLink = onError(({ graphQLErrors, networkError, forward, operation }) 
   }
 
   if (graphQLErrors) {
-    const messages: Set<string> = new Set();
-
-    graphQLErrors.forEach(({ message, locations, path }) => {
-      const computedMessage = computeErrorMessage(message);
-      if (computedMessage) {
-        console.log("computed message", computedMessage);
-        messages.add(computedMessage);
-      }
-      console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
-    });
+    graphQLErrors.map(({ message, locations, path }) =>
+      console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
+    );
   }
 
   if (networkError) {
     console.log(`[Network error]: ${networkError}`);
-    const computedMessage = computeErrorMessage(networkError);
-    if (computedMessage) {
-      Snackbar.open({ message: computedMessage, type: "is-danger", position: "is-bottom" });
-    }
+    Snackbar.open({
+      message: "Please refresh the page and retry.",
+      type: "is-danger",
+      position: "is-bottom",
+    });
   }
 });
 

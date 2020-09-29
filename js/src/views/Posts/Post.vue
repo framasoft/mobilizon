@@ -42,14 +42,11 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import Editor from "@/components/Editor.vue";
 import { GraphQLError } from "graphql";
-import { FETCH_GROUP } from "@/graphql/group";
 import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "../../graphql/actor";
-import { TAGS } from "../../graphql/tags";
-import { CONFIG } from "../../graphql/config";
-import { FETCH_POST, CREATE_POST } from "../../graphql/post";
+import { FETCH_POST } from "../../graphql/post";
 
-import { IPost, PostVisibility } from "../../types/post.model";
-import { IGroup, IMember, usernameWithDomain } from "../../types/actor";
+import { IPost } from "../../types/post.model";
+import { IMember, usernameWithDomain } from "../../types/actor";
 import RouteName from "../../router/name";
 import Tag from "../../components/Tag.vue";
 
@@ -90,11 +87,11 @@ import Tag from "../../components/Tag.vue";
   },
   metaInfo() {
     return {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title: this.post ? this.post.title : "",
       // all titles will be injected into this template
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       titleTemplate: this.post ? "%s | Mobilizon" : "Mobilizon",
     };
@@ -116,7 +113,7 @@ export default class Post extends Vue {
     return this.memberships.map(({ parent: { id } }) => id).includes(this.post.attributedTo.id);
   }
 
-  async handleErrors(errors: GraphQLError[]) {
+  async handleErrors(errors: GraphQLError[]): Promise<void> {
     if (errors[0].message.includes("No such post")) {
       await this.$router.push({ name: RouteName.PAGE_NOT_FOUND });
     }

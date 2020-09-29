@@ -36,16 +36,7 @@
                   </popover-actor-card>
                 </span>
                 <span v-else-if="event.organizerActor && event.attributedTo">
-                  <i18n path="By {username} and {group}">
-                    <popover-actor-card
-                      :actor="event.organizerActor"
-                      slot="username"
-                      :inline="true"
-                    >
-                      {{
-                        $t("@{username}", { username: usernameWithDomain(event.organizerActor) })
-                      }}
-                    </popover-actor-card>
+                  <i18n path="By {group}">
                     <popover-actor-card :actor="event.attributedTo" slot="group" :inline="true">
                       <router-link
                         :to="{
@@ -338,11 +329,8 @@
                   :endsOn="event.endsOn"
                 />
               </event-metadata-block>
-              <event-metadata-block :title="$t('Contact')">
-                <popover-actor-card
-                  :actor="event.organizerActor"
-                  v-if="!event.attributedTo || !event.options.hideOrganizerWhenGroupEvent"
-                >
+              <event-metadata-block :title="$tc('Contact', event.contacts.length)">
+                <popover-actor-card :actor="event.organizerActor" v-if="!event.attributedTo">
                   <actor-card :actor="event.organizerActor" />
                 </popover-actor-card>
                 <router-link
@@ -359,6 +347,14 @@
                     <actor-card :actor="event.attributedTo" />
                   </popover-actor-card>
                 </router-link>
+
+                <popover-actor-card
+                  :actor="contact"
+                  v-for="contact in event.contacts"
+                  :key="contact.id"
+                >
+                  <actor-card :actor="contact" />
+                </popover-actor-card>
               </event-metadata-block>
               <event-metadata-block
                 v-if="event.onlineAddress && urlToHostname(event.onlineAddress)"

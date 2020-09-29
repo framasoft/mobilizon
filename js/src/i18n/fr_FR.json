@@ -101,7 +101,7 @@
   "Confirmed": "Confirmé·e",
   "Confirmed at": "Confirmé·e à",
   "Confirmed: Will happen": "Confirmé : aura lieu",
-  "Contact": "Contact",
+  "Contact": "Contact|Contacts",
   "Continue editing": "Continuer la modification",
   "Cookies and Local storage": "Cookies et stockage local",
   "Country": "Pays",
@@ -793,5 +793,17 @@
   "No posts found": "Aucun billet trouvé",
   "Last sign-in": "Dernière connexion",
   "Last IP adress": "Dernière addresse IP",
-  "You'll need to transmit the group URL so people may access the group's profile. The group won't be findable in Mobilizon's search or regular search engines.": "Vous aurez besoin de transmettre l'URL du groupe pour que d'autres personnes accèdent au profil du groupe. Le groupe ne sera pas trouvable dans la recherche de Mobilizon ni dans les moteurs de recherche habituels."
+  "You'll need to transmit the group URL so people may access the group's profile. The group won't be findable in Mobilizon's search or regular search engines.": "Vous aurez besoin de transmettre l'URL du groupe pour que d'autres personnes accèdent au profil du groupe. Le groupe ne sera pas trouvable dans la recherche de Mobilizon ni dans les moteurs de recherche habituels.",
+  "Pick a profile or a group": "Choisir un profil ou groupe",
+  "Add a contact": "Ajouter un contact",
+  "Your profile will be shown as contact.": "Votre profil sera affiché en tant que contact.",
+  "Pick": "Choisir",
+  "Leave": "Quitter",
+  "The event will show as attributed to your personal profile.": "L'événement sera affiché comme étant attribué à votre profil.",
+  "The event will show as attributed to this group.": "L'événement sera affiché comme étant attribué à ce groupe.",
+  "By {group}": "Par {group}",
+  "Group settings saved": "Paramètres du groupe sauvegardés",
+  "Error": "Erreur",
+  "Registrations are restricted by allowlisting.": "Les inscriptions sont restreintes par liste d'accès.",
+  "<b>{contact}</b> will be displayed as contact.": "<b>{contact}</b> sera affiché·e comme contact.|<b>{contact}</b> seront affiché·es comme contacts."
 }

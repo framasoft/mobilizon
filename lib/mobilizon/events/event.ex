@@ -59,7 +59,8 @@ defmodule Mobilizon.Events.Event do
           sessions: [Session.t()],
           mentions: [Mention.t()],
           tags: [Tag.t()],
-          participants: [Actor.t()]
+          participants: [Actor.t()],
+          contacts: [Actor.t()]
         }
 
   @update_required_attrs [:title, :begins_on, :organizer_actor_id]
@@ -114,6 +115,7 @@ defmodule Mobilizon.Events.Event do
     has_many(:sessions, Session)
     has_many(:mentions, Mention)
     has_many(:comments, Comment)
+    many_to_many(:contacts, Actor, join_through: "event_contacts", on_replace: :delete)
     many_to_many(:tags, Tag, join_through: "events_tags", on_replace: :delete)
     many_to_many(:participants, Actor, join_through: Participant)
 
@@ -147,6 +149,7 @@ defmodule Mobilizon.Events.Event do
   defp common_changeset(%Changeset{} = changeset, attrs) do
     changeset
     |> cast_embed(:options)
+    |> put_assoc(:contacts, Map.get(attrs, :contacts, []))
     |> put_tags(attrs)
     |> put_address(attrs)
     |> put_picture(attrs)

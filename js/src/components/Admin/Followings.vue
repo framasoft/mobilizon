@@ -99,6 +99,7 @@
 </template>
 <script lang="ts">
 import { Component, Mixins } from "vue-property-decorator";
+import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { ADD_RELAY, RELAY_FOLLOWINGS, REMOVE_RELAY } from "../../graphql/admin";
 import { IFollower } from "../../types/actor/follower.model";
 import { Paginate } from "../../types/paginate";
@@ -125,34 +126,42 @@ export default class Followings extends Mixins(RelayMixin) {
 
   RelayMixin = RelayMixin;
 
-  async followRelay(e: Event) {
+  async followRelay(e: Event): Promise<void> {
     e.preventDefault();
-    await this.$apollo.mutate({
-      mutation: ADD_RELAY,
-      variables: {
-        address: this.newRelayAddress,
-      },
-      // TODO: Handle cache update properly without refreshing
-    });
-    await this.$apollo.queries.relayFollowings.refetch();
-    this.newRelayAddress = "";
+    try {
+      await this.$apollo.mutate({
+        mutation: ADD_RELAY,
+        variables: {
+          address: this.newRelayAddress,
+        },
+        // TODO: Handle cache update properly without refreshing
+      });
+      await this.$apollo.queries.relayFollowings.refetch();
+      this.newRelayAddress = "";
+    } catch (e) {
+      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+    }
   }
 
-  async removeRelays() {
+  async removeRelays(): Promise<void> {
     await this.checkedRows.forEach((row: IFollower) => {
       this.removeRelay(`${row.targetActor.preferredUsername}@${row.targetActor.domain}`);
     });
   }
 
-  async removeRelay(address: string) {
-    await this.$apollo.mutate({
-      mutation: REMOVE_RELAY,
-      variables: {
-        address,
-      },
-    });
-    await this.$apollo.queries.relayFollowings.refetch();
-    this.checkedRows = [];
+  async removeRelay(address: string): Promise<void> {
+    try {
+      await this.$apollo.mutate({
+        mutation: REMOVE_RELAY,
+        variables: {
+          address,
+        },
+      });
+      await this.$apollo.queries.relayFollowings.refetch();
+      this.checkedRows = [];
+    } catch (e) {
+      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+    }
   }
 }
 </script>

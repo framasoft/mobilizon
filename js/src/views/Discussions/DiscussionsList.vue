@@ -11,7 +11,7 @@
               name: RouteName.GROUP,
               params: { preferredUsername: usernameWithDomain(group) },
             }"
-            >{{ `@${group.preferredUsername}` }}</router-link
+            >{{ group.name }}</router-link
           >
         </li>
         <li class="is-active">

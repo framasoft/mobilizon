@@ -202,7 +202,6 @@ import { SUSPEND_PROFILE, UNSUSPEND_PROFILE } from "../../graphql/actor";
 import { IGroup, MemberRole } from "../../types/actor";
 import { usernameWithDomain, IActor } from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
-import { IEvent } from "../../types/event.model";
 import ActorCard from "../../components/Account/ActorCard.vue";
 
 const EVENTS_PER_PAGE = 10;
@@ -248,22 +247,22 @@ export default class AdminGroupProfile extends Vue {
 
   MemberRole = MemberRole;
 
-  get metadata(): Array<object> {
+  get metadata(): Array<Record<string, string>> {
     if (!this.group) return [];
-    const res: object[] = [
+    const res: Record<string, string>[] = [
       {
         key: this.$t("Status") as string,
-        value: this.group.suspended ? this.$t("Suspended") : this.$t("Active"),
+        value: (this.group.suspended ? this.$t("Suspended") : this.$t("Active")) as string,
       },
       {
         key: this.$t("Domain") as string,
-        value: this.group.domain ? this.group.domain : this.$t("Local"),
+        value: (this.group.domain ? this.group.domain : this.$t("Local")) as string,
       },
     ];
     return res;
   }
 
-  confirmSuspendProfile() {
+  confirmSuspendProfile(): void {
     const message = (this.group.domain
       ? this.$t(
           "Are you sure you want to <b>suspend</b> this group? As this group originates from instance {instance}, this will only remove local members and delete the local data, as well as rejecting all the future data.",
@@ -284,7 +283,7 @@ export default class AdminGroupProfile extends Vue {
     });
   }
 
-  async suspendProfile() {
+  async suspendProfile(): Promise<void> {
     this.$apollo.mutate<{ suspendProfile: { id: string } }>({
       mutation: SUSPEND_PROFILE,
       variables: {
@@ -318,9 +317,9 @@ export default class AdminGroupProfile extends Vue {
     });
   }
 
-  async unsuspendProfile() {
+  async unsuspendProfile(): Promise<void> {
     const profileID = this.id;
-    this.$apollo.mutate<{ unsuspendProfile: { id: string } }>({
+    await this.$apollo.mutate<{ unsuspendProfile: { id: string } }>({
       mutation: UNSUSPEND_PROFILE,
       variables: {
         id: this.id,
@@ -336,7 +335,7 @@ export default class AdminGroupProfile extends Vue {
     });
   }
 
-  async refreshProfile() {
+  async refreshProfile(): Promise<void> {
     this.$apollo.mutate<{ refreshProfile: IActor }>({
       mutation: REFRESH_PROFILE,
       variables: {
@@ -345,7 +344,7 @@ export default class AdminGroupProfile extends Vue {
     });
   }
 
-  async onOrganizedEventsPageChange(page: number) {
+  async onOrganizedEventsPageChange(page: number): Promise<void> {
     this.organizedEventsPage = page;
     await this.$apollo.queries.group.fetchMore({
       variables: {
@@ -370,7 +369,7 @@ export default class AdminGroupProfile extends Vue {
     });
   }
 
-  async onMembersPageChange(page: number) {
+  async onMembersPageChange(page: number): Promise<void> {
     this.membersPage = page;
     await this.$apollo.queries.group.fetchMore({
       variables: {
@@ -395,7 +394,7 @@ export default class AdminGroupProfile extends Vue {
     });
   }
 
-  async onPostsPageChange(page: number) {
+  async onPostsPageChange(page: number): Promise<void> {
     this.postsPage = page;
     await this.$apollo.queries.group.fetchMore({
       variables: {

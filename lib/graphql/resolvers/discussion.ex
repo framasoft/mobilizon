@@ -9,6 +9,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
+  import Mobilizon.Web.Gettext
 
   def find_discussions_for_actor(
         %Actor{id: group_id},
@@ -57,12 +58,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
          {:member, true} <- {:member, Actors.is_member?(creator_id, actor_id)} do
       {:ok, discussion}
     else
-      nil -> {:error, "No such discussion"}
+      nil -> {:error, dgettext("errors", "Discussion not found")}
     end
   end
 
   def get_discussion(_parent, _args, _resolution),
-    do: {:error, "You need to be logged-in to access discussions"}
+    do: {:error, dgettext("errors", "You need to be logged-in to access discussions")}
 
   def get_comments_for_discussion(
         %Discussion{id: discussion_id},
@@ -177,10 +178,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
       {:ok, discussion}
     else
       {:no_discussion, _} ->
-        {:error, "No discussion with ID #{discussion_id}"}
+        {:error, dgettext("errors", "No discussion with ID %{id}", id: discussion_id)}
 
       {:member, _} ->
-        {:error, "You are not a member of the group the discussion belongs to"}
+        {:error,
+         dgettext("errors", "You are not a member of the group the discussion belongs to")}
     end
   end
 end

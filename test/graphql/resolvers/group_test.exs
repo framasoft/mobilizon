@@ -38,7 +38,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "Creator actor id is not owned by the current user"
+               "Creator profile is not owned by the current user"
     end
 
     test "create_group/3 creates a group and check a group with this name does not already exist",
@@ -323,7 +323,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
         )
 
       assert hd(res["errors"])["message"] ==
-               "Actor id is not an administrator of the selected group"
+               "Current profile is not an administrator of the selected group"
     end
 
     test "delete_group/3 should check the actor is a member of this group", %{

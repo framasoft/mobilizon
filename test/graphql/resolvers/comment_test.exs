@@ -64,7 +64,7 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
         |> AbsintheHelpers.graphql_query(query: mutation, variables: %{})
 
       assert hd(res["errors"])["message"] ==
-               "Actor id is not owned by authenticated user"
+               "Profile is not owned by authenticated user"
     end
 
     test "create_comment/3 requires that the user needs to be authenticated", %{conn: conn} do

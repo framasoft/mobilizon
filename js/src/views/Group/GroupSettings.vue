@@ -37,8 +37,23 @@
           <b-input v-model="group.name" />
         </b-field>
         <b-field :label="$t('Group short description')">
-          <editor mode="basic" v-model="group.summary"
+          <editor mode="basic" v-model="group.summary" :maxSize="500"
         /></b-field>
+        <b-field :label="$t('Avatar')">
+          <picture-upload
+            :textFallback="$t('Avatar')"
+            v-model="avatarFile"
+            :defaultImageSrc="group.avatar ? group.avatar.url : null"
+          />
+        </b-field>
+
+        <b-field :label="$t('Banner')">
+          <picture-upload
+            :textFallback="$t('Banner')"
+            v-model="bannerFile"
+            :defaultImageSrc="group.banner ? group.banner.url : null"
+          />
+        </b-field>
         <p class="label">{{ $t("Group visibility") }}</p>
         <div class="field">
           <b-radio
@@ -106,6 +121,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
 import { Route } from "vue-router";
+import PictureUpload from "@/components/PictureUpload.vue";
 import RouteName from "../../router/name";
 import { FETCH_GROUP, UPDATE_GROUP, DELETE_GROUP } from "../../graphql/group";
 import { IGroup, usernameWithDomain } from "../../types/actor";
@@ -129,6 +145,7 @@ import { Group } from "../../types/actor/group.model";
   },
   components: {
     FullAddressAutoComplete,
+    PictureUpload,
     editor: () => import("../../components/Editor.vue"),
   },
 })
@@ -141,6 +158,10 @@ export default class GroupSettings extends Vue {
 
   newMemberUsername = "";
 
+  avatarFile: File | null = null;
+
+  bannerFile: File | null = null;
+
   usernameWithDomain = usernameWithDomain;
 
   GroupVisibility = {
@@ -151,19 +172,12 @@ export default class GroupSettings extends Vue {
   showCopiedTooltip = false;
 
   async updateGroup(): Promise<void> {
-    const variables = { ...this.group };
-    // eslint-disable-next-line
-    // @ts-ignore
-    delete variables.__typename;
-    if (variables.physicalAddress) {
-      // eslint-disable-next-line
-      // @ts-ignore
-      delete variables.physicalAddress.__typename;
-    }
+    const variables = this.buildVariables();
     await this.$apollo.mutate<{ updateGroup: IGroup }>({
       mutation: UPDATE_GROUP,
       variables,
     });
+    this.$notifier.success(this.$t("Group settings saved") as string);
   }
 
   confirmDeleteGroup(): void {
@@ -196,6 +210,52 @@ export default class GroupSettings extends Vue {
     setTimeout(() => {
       this.showCopiedTooltip = false;
     }, 2000);
+  }
+
+  private buildVariables() {
+    let avatarObj = {};
+    let bannerObj = {};
+    const variables = { ...this.group };
+
+    // eslint-disable-next-line
+    // @ts-ignore
+    delete variables.__typename;
+    if (variables.physicalAddress) {
+      // eslint-disable-next-line
+      // @ts-ignore
+      delete variables.physicalAddress.__typename;
+    }
+    delete variables.avatar;
+    delete variables.banner;
+
+    if (this.avatarFile) {
+      avatarObj = {
+        avatar: {
+          picture: {
+            name: this.avatarFile.name,
+            alt: `${this.group.preferredUsername}'s avatar`,
+            file: this.avatarFile,
+          },
+        },
+      };
+    }
+
+    if (this.bannerFile) {
+      bannerObj = {
+        banner: {
+          picture: {
+            name: this.bannerFile.name,
+            alt: `${this.group.preferredUsername}'s banner`,
+            file: this.bannerFile,
+          },
+        },
+      };
+    }
+    return {
+      ...variables,
+      ...avatarObj,
+      ...bannerObj,
+    };
   }
 
   // eslint-disable-next-line class-methods-use-this

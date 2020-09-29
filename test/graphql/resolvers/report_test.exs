@@ -130,7 +130,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
         )
 
       assert res["errors"] |> hd |> Map.get("message") ==
-               "Reporter ID is not the anonymous actor id"
+               "Reporter ID does not match the anonymous profile id"
     end
   end
 

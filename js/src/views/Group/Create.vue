@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Watch } from "vue-property-decorator";
 import { Group, IPerson, usernameWithDomain, MemberRole } from "@/types/actor";
 import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import { CREATE_GROUP } from "@/graphql/group";
@@ -84,7 +84,7 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
 
   usernameWithDomain = usernameWithDomain;
 
-  async createGroup() {
+  async createGroup(): Promise<void> {
     try {
       await this.$apollo.mutate({
         mutation: CREATE_GROUP,
@@ -125,6 +125,7 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   get host(): string {
     return window.location.hostname;
   }
@@ -152,10 +153,12 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
 
     if (this.bannerFile) {
       bannerObj = {
-        picture: {
-          name: this.bannerFile.name,
-          alt: `${this.group.preferredUsername}'s banner`,
-          file: this.bannerFile,
+        banner: {
+          picture: {
+            name: this.bannerFile.name,
+            alt: `${this.group.preferredUsername}'s banner`,
+            file: this.bannerFile,
+          },
         },
       };
     }
@@ -173,18 +176,7 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
   }
 
   private handleError(err: any) {
-    this.errors.push(
-      ...err.graphQLErrors.map(({ message }: { message: string }) => this.convertMessage(message))
-    );
-  }
-
-  private convertMessage(message: string): string {
-    switch (message) {
-      case "A group with this name already exists":
-        return this.$t("A group with this name already exists") as string;
-      default:
-        return message;
-    }
+    this.errors.push(...err.graphQLErrors.map(({ message }: { message: string }) => message));
   }
 }
 </script>

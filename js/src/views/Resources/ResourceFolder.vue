@@ -8,7 +8,7 @@
               name: RouteName.GROUP,
               params: { preferredUsername: usernameWithDomain(resource.actor) },
             }"
-            >{{ resource.actor.preferredUsername }}</router-link
+            >{{ resource.actor.name }}</router-link
           >
         </li>
         <li>

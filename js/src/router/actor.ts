@@ -1,11 +1,9 @@
 import { RouteConfig } from "vue-router";
-import GroupList from "@/views/Group/GroupList.vue";
 import CreateGroup from "@/views/Group/Create.vue";
 import Group from "@/views/Group/Group.vue";
 import MyGroups from "@/views/Group/MyGroups.vue";
 
 export enum ActorRouteName {
-  GROUP_LIST = "GroupList",
   GROUP = "Group",
   CREATE_GROUP = "CreateGroup",
   PROFILE = "Profile",
@@ -13,12 +11,6 @@ export enum ActorRouteName {
 }
 
 export const actorRoutes: RouteConfig[] = [
-  {
-    path: "/groups",
-    name: ActorRouteName.GROUP_LIST,
-    component: GroupList,
-    meta: { requiredAuth: false },
-  },
   {
     path: "/groups/create",
     name: ActorRouteName.CREATE_GROUP,

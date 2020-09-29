@@ -161,7 +161,8 @@ defmodule Mobilizon.Factory do
       join_options: :free,
       options: %{},
       participant_stats: %{},
-      status: :confirmed
+      status: :confirmed,
+      contacts: []
     }
   end
 

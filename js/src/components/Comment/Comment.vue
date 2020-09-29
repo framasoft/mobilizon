@@ -126,6 +126,7 @@
 import { Component, Prop, Vue, Ref } from "vue-property-decorator";
 import EditorComponent from "@/components/Editor.vue";
 import TimeAgo from "javascript-time-ago";
+import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { CommentModel, IComment } from "../../types/comment.model";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { IPerson, usernameWithDomain } from "../../types/actor";
@@ -171,7 +172,7 @@ export default class Comment extends Vue {
 
   usernameWithDomain = usernameWithDomain;
 
-  async mounted() {
+  async mounted(): Promise<void> {
     const localeName = this.$i18n.locale;
     const locale = await import(`javascript-time-ago/locale/${localeName}`);
     TimeAgo.addLocale(locale);
@@ -183,7 +184,7 @@ export default class Comment extends Vue {
     }
   }
 
-  async createReplyToComment(comment: IComment) {
+  async createReplyToComment(comment: IComment): Promise<void> {
     if (this.replyTo) {
       this.replyTo = false;
       this.newComment = new CommentModel();
@@ -196,7 +197,7 @@ export default class Comment extends Vue {
     this.commentEditor.replyToComment(comment);
   }
 
-  replyToComment() {
+  replyToComment(): void {
     this.newComment.inReplyToComment = this.comment;
     this.newComment.originComment = this.comment.originComment || this.comment;
     this.newComment.actor = this.currentActor;
@@ -205,7 +206,7 @@ export default class Comment extends Vue {
     this.replyTo = false;
   }
 
-  async fetchReplies() {
+  async fetchReplies(): Promise<void> {
     const parentId = this.comment.id;
     const { data } = await this.$apollo.query<{ thread: IComment[] }>({
       query: FETCH_THREAD_REPLIES,
@@ -267,7 +268,7 @@ export default class Comment extends Vue {
     return this.commentId;
   }
 
-  reportModal() {
+  reportModal(): void {
     if (!this.comment.actor) return;
     this.$buefy.modal.open({
       parent: this,
@@ -281,7 +282,7 @@ export default class Comment extends Vue {
     });
   }
 
-  async reportComment(content: string, forward: boolean) {
+  async reportComment(content: string, forward: boolean): Promise<void> {
     try {
       if (!this.comment.actor) return;
       await this.$apollo.mutate<IReport>({
@@ -303,8 +304,8 @@ export default class Comment extends Vue {
         position: "is-bottom-right",
         duration: 5000,
       });
-    } catch (error) {
-      console.error(error);
+    } catch (e) {
+      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
     }
   }
 }

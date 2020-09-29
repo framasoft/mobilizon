@@ -177,6 +177,7 @@
 
 <script lang="ts">
 import { Component, Vue, Ref } from "vue-property-decorator";
+import { Route } from "vue-router";
 import { CHANGE_EMAIL, CHANGE_PASSWORD, DELETE_ACCOUNT, LOGGED_USER } from "../../graphql/user";
 import RouteName from "../../router/name";
 import { IUser, IAuthProvider } from "../../types/current-user.model";
@@ -210,7 +211,7 @@ export default class AccountSettings extends Vue {
 
   RouteName = RouteName;
 
-  async resetEmailAction() {
+  async resetEmailAction(): Promise<void> {
     this.changeEmailErrors = [];
 
     try {
@@ -234,7 +235,7 @@ export default class AccountSettings extends Vue {
     }
   }
 
-  async resetPasswordAction() {
+  async resetPasswordAction(): Promise<void> {
     this.changePasswordErrors = [];
 
     try {
@@ -252,12 +253,12 @@ export default class AccountSettings extends Vue {
     }
   }
 
-  protected async openDeleteAccountModal() {
+  protected openDeleteAccountModal(): void {
     this.passwordForAccountDeletion = "";
     this.isDeleteAccountModalActive = true;
   }
 
-  async deleteAccount() {
+  async deleteAccount(): Promise<Route | void> {
     try {
       await this.$apollo.mutate({
         mutation: DELETE_ACCOUNT,
@@ -275,19 +276,19 @@ export default class AccountSettings extends Vue {
 
       return await this.$router.push({ name: RouteName.HOME });
     } catch (err) {
-      this.handleErrors("delete", err);
+      return this.handleErrors("delete", err);
     }
   }
 
-  get canChangePassword() {
+  get canChangePassword(): boolean {
     return !this.loggedUser.provider;
   }
 
-  get canChangeEmail() {
+  get canChangeEmail(): boolean {
     return !this.loggedUser.provider;
   }
 
-  providerName(id: string) {
+  static providerName(id: string): string {
     if (SELECTED_PROVIDERS[id]) {
       return SELECTED_PROVIDERS[id];
     }
@@ -307,29 +308,15 @@ export default class AccountSettings extends Vue {
     if (err.graphQLErrors !== undefined) {
       err.graphQLErrors.forEach(({ message }: { message: string }) => {
         switch (type) {
-          case "email":
-            this.changeEmailErrors.push(this.convertMessage(message) as string);
-            break;
           case "password":
-            this.changePasswordErrors.push(this.convertMessage(message) as string);
+            this.changePasswordErrors.push(message);
+            break;
+          case "email":
+          default:
+            this.changeEmailErrors.push(message);
             break;
         }
       });
-    }
-  }
-
-  private convertMessage(message: string) {
-    switch (message) {
-      case "The password provided is invalid":
-        return this.$t("The password provided is invalid");
-      case "The new email must be different":
-        return this.$t("The new email must be different");
-      case "The new email doesn't seem to be valid":
-        return this.$t("The new email doesn't seem to be valid");
-      case "The current password is invalid":
-        return this.$t("The current password is invalid");
-      case "The new password must be different":
-        return this.$t("The new password must be different");
     }
   }
 }

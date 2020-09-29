@@ -35,6 +35,7 @@ export const GET_RESOURCE = gql`
       actor {
         id
         preferredUsername
+        name
         domain
       }
       children {

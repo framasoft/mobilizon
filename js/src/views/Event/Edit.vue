@@ -41,21 +41,31 @@
         </b-field>
 
         <subtitle>{{ $t("Organizers") }}</subtitle>
-        <div class="columns">
-          <div class="column">
-            <b-field :label="$t('Organizer')">
-              <identity-picker-wrapper
-                v-model="event.organizerActor"
-                :masked="event.options.hideOrganizerWhenGroupEvent"
-                @input="resetAttributedToOnOrganizerChange"
-              />
-            </b-field>
-          </div>
-          <div class="column" v-if="config && config.features.groups">
-            <b-field :label="$t('Group')" v-if="event.organizerActor">
-              <group-picker-wrapper v-model="event.attributedTo" :identity="event.organizerActor" />
-            </b-field>
-          </div>
+
+        <div v-if="config && config.features.groups">
+          <b-field>
+            <organizer-picker-wrapper
+              v-model="event.attributedTo"
+              :contacts.sync="event.contacts"
+              :identity="event.organizerActor"
+            />
+          </b-field>
+          <p v-if="!event.attributedTo.id || attributedToEqualToOrganizerActor">
+            {{ $t("The event will show as attributed to your personal profile.") }}
+          </p>
+          <p v-else>
+            <span>{{ $t("The event will show as attributed to this group.") }}</span>
+            <span
+              v-if="event.contacts && event.contacts.length"
+              v-html="
+                $tc('<b>{contact}</b> will be displayed as contact.', event.contacts.length, {
+                  contact: formatList(
+                    event.contacts.map((contact) => displayNameAndUsername(contact))
+                  ),
+                })
+              "
+            />
+          </p>
         </div>
         <!--        <div class="field" v-if="event.attributedTo.id">-->
         <!--          <label class="label">{{ $t('Hide the organizer') }}</label>-->
@@ -332,8 +342,9 @@ import TagInput from "@/components/Event/TagInput.vue";
 import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
 import IdentityPickerWrapper from "@/views/Account/IdentityPickerWrapper.vue";
 import Subtitle from "@/components/Utils/Subtitle.vue";
-import GroupPickerWrapper from "@/components/Group/GroupPickerWrapper.vue";
 import { Route } from "vue-router";
+import { formatList } from "@/utils/i18n";
+import OrganizerPickerWrapper from "../../components/Event/OrganizerPickerWrapper.vue";
 import {
   CREATE_EVENT,
   EDIT_EVENT,
@@ -354,7 +365,7 @@ import {
   LOGGED_USER_DRAFTS,
   LOGGED_USER_PARTICIPATIONS,
 } from "../../graphql/actor";
-import { Group, IPerson, Person } from "../../types/actor";
+import { IPerson, Person, displayNameAndUsername } from "../../types/actor";
 import { TAGS } from "../../graphql/tags";
 import { ITag } from "../../types/tag.model";
 import { buildFileFromIPicture, buildFileVariable, readFileAsync } from "../../utils/image";
@@ -362,12 +373,13 @@ import RouteName from "../../router/name";
 import "intersection-observer";
 import { CONFIG } from "../../graphql/config";
 import { IConfig } from "../../types/config.model";
+import { RefetchQueryDescription } from "apollo-client/core/watchQueryOptions";
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 
 @Component({
   components: {
-    GroupPickerWrapper,
+    OrganizerPickerWrapper,
     Subtitle,
     IdentityPickerWrapper,
     FullAddressAutoComplete,
@@ -398,6 +410,7 @@ const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
   metaInfo() {
     return {
       // if no subcomponents specify a metaInfo.title, this title will be used
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title: (this.isUpdate ? this.$t("Event edition") : this.$t("Event creation")) as string,
       // all titles will be injected into this template
@@ -444,8 +457,12 @@ export default class EditEvent extends Vue {
 
   endsOnNull = false;
 
+  displayNameAndUsername = displayNameAndUsername;
+
+  formatList = formatList;
+
   @Watch("eventId", { immediate: true })
-  resetFormForCreation(eventId: string) {
+  resetFormForCreation(eventId: string): void {
     if (eventId === undefined) {
       this.event = new EventModel();
     }
@@ -467,9 +484,10 @@ export default class EditEvent extends Vue {
     this.event.organizerActor = this.event.organizerActor || this.currentActor;
   }
 
-  async mounted() {
+  async mounted(): Promise<void> {
     this.observer = new IntersectionObserver(
       (entries) => {
+        // eslint-disable-next-line no-restricted-syntax
         for (const entry of entries) {
           if (entry) {
             this.showFixedNavbar = !entry.isIntersecting;
@@ -489,16 +507,16 @@ export default class EditEvent extends Vue {
     }
   }
 
-  createOrUpdateDraft(e: Event) {
+  createOrUpdateDraft(e: Event): void {
     e.preventDefault();
     if (this.validateForm()) {
-      if (this.eventId && !this.isDuplicate) return this.updateEvent();
+      if (this.eventId && !this.isDuplicate) this.updateEvent();
 
-      return this.createEvent();
+      this.createEvent();
     }
   }
 
-  createOrUpdatePublish(e: Event) {
+  createOrUpdatePublish(e: Event): void {
     if (this.validateForm()) {
       this.event.draft = false;
       this.createOrUpdateDraft(e);
@@ -506,19 +524,15 @@ export default class EditEvent extends Vue {
   }
 
   @Watch("currentActor")
-  setCurrentActor() {
+  setCurrentActor(): void {
     this.event.organizerActor = this.currentActor;
   }
 
   @Watch("event")
-  setInitialData() {
+  setInitialData(): void {
     if (this.isUpdate && this.unmodifiedEvent === undefined && this.event && this.event.uuid) {
       this.unmodifiedEvent = JSON.parse(JSON.stringify(this.event.toEditJSON()));
     }
-  }
-
-  resetAttributedToOnOrganizerChange() {
-    this.event.attributedTo = new Group();
   }
 
   // @Watch('event.attributedTo', { deep: true })
@@ -537,7 +551,7 @@ export default class EditEvent extends Vue {
     return false;
   }
 
-  async createEvent() {
+  async createEvent(): Promise<void> {
     const variables = await this.buildVariables();
 
     try {
@@ -565,7 +579,7 @@ export default class EditEvent extends Vue {
     }
   }
 
-  async updateEvent() {
+  async updateEvent(): Promise<void> {
     const variables = await this.buildVariables();
 
     try {
@@ -652,7 +666,8 @@ export default class EditEvent extends Vue {
   /**
    * Refresh drafts or participation cache depending if the event is still draft or not
    */
-  private postRefetchQueries(updateEvent: IEvent) {
+  // eslint-disable-next-line class-methods-use-this
+  private postRefetchQueries(updateEvent: IEvent): RefetchQueryDescription {
     if (updateEvent.draft) {
       return [
         {
@@ -670,6 +685,12 @@ export default class EditEvent extends Vue {
     ];
   }
 
+  get attributedToEqualToOrganizerActor(): boolean {
+    return (this.event.organizerActor &&
+      this.event.attributedTo &&
+      this.event.attributedTo.id === this.event.organizerActor.id) as boolean;
+  }
+
   /**
    * Build variables for Event GraphQL creation query
    */
@@ -680,9 +701,13 @@ export default class EditEvent extends Vue {
         organizerActorId: this.event.organizerActor.id,
       });
     }
-    if (this.event.attributedTo) {
-      res = Object.assign(res, { attributedToId: this.event.attributedTo.id });
-    }
+    const attributedToId =
+      this.event.attributedTo &&
+      !this.attributedToEqualToOrganizerActor &&
+      this.event.attributedTo.id
+        ? this.event.attributedTo.id
+        : null;
+    res = Object.assign(res, { attributedToId });
 
     // eslint-disable-next-line
     // @ts-ignore
@@ -736,7 +761,7 @@ export default class EditEvent extends Vue {
   }
 
   @Watch("limitedPlaces")
-  updatedEventCapacityOptions(limitedPlaces: boolean) {
+  updatedEventCapacityOptions(limitedPlaces: boolean): void {
     if (!limitedPlaces) {
       this.event.options.maximumAttendeeCapacity = 0;
       this.event.options.remainingAttendeeCapacity = 0;
@@ -748,7 +773,7 @@ export default class EditEvent extends Vue {
   }
 
   @Watch("needsApproval")
-  updateEventJoinOptions(needsApproval: boolean) {
+  updateEventJoinOptions(needsApproval: boolean): void {
     if (needsApproval === true) {
       this.event.joinOptions = EventJoinOptions.RESTRICTED;
     } else {
@@ -756,16 +781,16 @@ export default class EditEvent extends Vue {
     }
   }
 
-  get checkTitleLength() {
+  get checkTitleLength(): Array<string | undefined> {
     return this.event.title.length > 80
-      ? ["is-info", this.$t("The event title will be ellipsed.")]
+      ? ["is-info", this.$t("The event title will be ellipsed.") as string]
       : [undefined, undefined];
   }
 
   /**
    * Confirm cancel
    */
-  confirmGoElsewhere(callback: (value?: string) => any) {
+  confirmGoElsewhere(callback: (value?: string) => any): void | Function {
     if (!this.isEventModified) {
       return callback();
     }
@@ -796,11 +821,11 @@ export default class EditEvent extends Vue {
   /**
    * Confirm cancel
    */
-  confirmGoBack() {
+  confirmGoBack(): void {
     this.confirmGoElsewhere(() => this.$router.go(-1));
   }
 
-  beforeRouteLeave(to: Route, from: Route, next: Function) {
+  beforeRouteLeave(to: Route, from: Route, next: Function): void {
     if (to.name === RouteName.EVENT) return next();
     this.confirmGoElsewhere(() => next());
   }
@@ -814,7 +839,7 @@ export default class EditEvent extends Vue {
   }
 
   @Watch("beginsOn", { deep: true })
-  onBeginsOnChanged(beginsOn: string) {
+  onBeginsOnChanged(beginsOn: string): void {
     if (!this.event.endsOn) return;
     const dateBeginsOn = new Date(beginsOn);
     const dateEndsOn = new Date(this.event.endsOn);

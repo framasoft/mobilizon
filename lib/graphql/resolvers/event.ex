@@ -13,6 +13,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   alias Mobilizon.GraphQL.Resolvers.Person
 
   alias Mobilizon.Federation.ActivityPub.Activity
+  import Mobilizon.Web.Gettext
 
   # We limit the max number of events that can be retrieved
   @event_max_limit 100
@@ -37,12 +38,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
         {:ok, Map.put(event, :organizer_actor, Person.proxify_pictures(event.organizer_actor))}
 
       {:has_event, _} ->
-        {:error, "Event with UUID #{uuid} not found"}
+        {:error, dgettext("errors", "Event with UUID %{uuid} not found", uuid: uuid)}
     end
   end
 
   defp find_private_event(_parent, %{uuid: uuid}, _resolution) do
-    {:error, "Event with UUID #{uuid} not found"}
+    {:error, dgettext("errors", "Event with UUID %{uuid} not found", uuid: uuid)}
   end
 
   def find_event(parent, %{uuid: uuid} = args, %{context: context} = resolution) do
@@ -56,7 +57,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
         find_private_event(parent, args, resolution)
 
       {:access_valid, _} ->
-        {:error, "Event with UUID #{uuid} not found"}
+        {:error, dgettext("errors", "Event with UUID %{uuid} not found", uuid)}
     end
   end
 
@@ -96,10 +97,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
       {:ok, participants}
     else
       {:is_owned, nil} ->
-        {:error, "Moderator Actor ID is not owned by authenticated user"}
+        {:error, dgettext("errors", "Moderator profile is not owned by authenticated user")}
 
       {:actor_approve_permission, _} ->
-        {:error, "Provided moderator actor ID doesn't have permission on this event"}
+        {:error,
+         dgettext("errors", "Provided moderator profile doesn't have permission on this event")}
     end
   end
 
@@ -197,7 +199,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
       {:ok, event}
     else
       {:is_owned, nil} ->
-        {:error, "Organizer actor id is not owned by the user"}
+        {:error, dgettext("errors", "Organizer profile is not owned by the user")}
 
       {:error, _, %Ecto.Changeset{} = error, _} ->
         {:error, error}
@@ -208,7 +210,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   end
 
   def create_event(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to create events"}
+    {:error, dgettext("errors", "You need to be logged-in to create events")}
   end
 
   @doc """
@@ -231,10 +233,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
       {:ok, event}
     else
       {:error, :event_not_found} ->
-        {:error, "Event not found"}
+        {:error, dgettext("errors", "Event not found")}
 
       {:is_owned, nil} ->
-        {:error, "User doesn't own actor"}
+        {:error, dgettext("errors", "User doesn't own profile")}
 
       {:error, _, %Ecto.Changeset{} = error, _} ->
         {:error, error}
@@ -242,7 +244,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   end
 
   def update_event(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to update an event"}
+    {:error, dgettext("errors", "You need to be logged-in to update an event")}
   end
 
   @doc """
@@ -269,19 +271,19 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
           end
 
         true ->
-          {:error, "You cannot delete this event"}
+          {:error, dgettext("errors", "You cannot delete this event")}
       end
     else
       {:error, :event_not_found} ->
-        {:error, "Event not found"}
+        {:error, dgettext("errors", "Event not found")}
 
       {:is_owned, nil} ->
-        {:error, "Actor id is not owned by authenticated user"}
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
     end
   end
 
   def delete_event(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to delete an event"}
+    {:error, dgettext("errors", "You need to be logged-in to delete an event")}
   end
 
   defp do_delete_event(%Event{} = event, %Actor{} = actor, federate \\ true)

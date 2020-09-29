@@ -19,14 +19,7 @@
           :key="error"
           @close="removeError(error)"
         >
-          <span v-if="error == ResetError.USER_IMPOSSIBLE_TO_RESET">
-            {{
-              $t(
-                "You can't reset your password because you use a 3rd-party auth provider to login."
-              )
-            }}
-          </span>
-          <span v-else>{{ error }}</span>
+          {{ error }}
         </b-message>
         <form @submit="sendResetPasswordTokenAction" v-if="!validationSent">
           <b-field :label="$t('Email address')">
@@ -59,7 +52,6 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import { validateEmailField, validateRequiredField } from "../../utils/validators";
 import { SEND_RESET_PASSWORD } from "../../graphql/auth";
 import RouteName from "../../router/name";
-import { ResetError } from "../../types/login-error-code.model";
 
 @Component
 export default class SendPasswordReset extends Vue {
@@ -75,8 +67,6 @@ export default class SendPasswordReset extends Vue {
 
   errors: string[] = [];
 
-  ResetError = ResetError;
-
   state = {
     email: {
       status: null,
@@ -89,15 +79,15 @@ export default class SendPasswordReset extends Vue {
     email: validateEmailField,
   };
 
-  mounted() {
+  mounted(): void {
     this.credentials.email = this.email;
   }
 
-  removeError(message: string) {
+  removeError(message: string): void {
     this.errors.splice(this.errors.indexOf(message));
   }
 
-  async sendResetPasswordTokenAction(e: Event) {
+  async sendResetPasswordTokenAction(e: Event): Promise<void> {
     e.preventDefault();
 
     try {
@@ -119,7 +109,7 @@ export default class SendPasswordReset extends Vue {
     }
   }
 
-  resetState() {
+  resetState(): void {
     this.state = {
       email: {
         status: null,

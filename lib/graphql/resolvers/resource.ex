@@ -11,6 +11,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
   alias Mobilizon.Service.RichMedia.Parser
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
+  import Mobilizon.Web.Gettext
 
   require Logger
 
@@ -82,13 +83,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
            {:resource, Resources.get_resource_by_group_and_path_with_preloads(group_id, path)} do
       {:ok, resource}
     else
-      {:member, false} -> {:error, "Actor is not member of group"}
-      {:resource, _} -> {:error, "No such resource"}
+      {:member, false} -> {:error, dgettext("errors", "Profile is not member of group")}
+      {:resource, _} -> {:error, dgettext("errors", "No such resource")}
     end
   end
 
   def get_resource(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to access resources"}
+    {:error, dgettext("errors", "You need to be logged-in to access resources")}
   end
 
   def create_resource(
@@ -116,15 +117,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
       {:ok, resource}
     else
       {:own_check, _} ->
-        {:error, "Parent resource doesn't match this group"}
+        {:error, dgettext("errors", "Parent resource doesn't belong to this group")}
 
       {:member, _} ->
-        {:error, "Actor id is not member of group"}
+        {:error, dgettext("errors", "Profile is not member of group")}
     end
   end
 
   def create_resource(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to create resources"}
+    {:error, dgettext("errors", "You need to be logged-in to create resources")}
   end
 
   def update_resource(
@@ -145,15 +146,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
       {:ok, resource}
     else
       {:resource, _} ->
-        {:error, "Resource doesn't exist"}
+        {:error, dgettext("errors", "Resource doesn't exist")}
 
       {:member, _} ->
-        {:error, "Actor id is not member of group"}
+        {:error, dgettext("errors", "Profile is not member of group")}
     end
   end
 
   def update_resource(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to update resources"}
+    {:error, dgettext("errors", "You need to be logged-in to update resources")}
   end
 
   def delete_resource(
@@ -174,15 +175,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
       {:ok, resource}
     else
       {:resource, _} ->
-        {:error, "Resource doesn't exist"}
+        {:error, dgettext("errors", "Resource doesn't exist")}
 
       {:member, _} ->
-        {:error, "Actor id is not member of group"}
+        {:error, dgettext("errors", "Profile is not member of group")}
     end
   end
 
   def delete_resource(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to delete resources"}
+    {:error, dgettext("errors", "You need to be logged-in to delete resources")}
   end
 
   def preview_resource_link(
@@ -200,7 +201,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
   end
 
   def preview_resource_link(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to view a resource preview"}
+    {:error, dgettext("errors", "You need to be logged-in to view a resource preview")}
   end
 
   @spec get_eventual_parent(map()) :: Resource.t() | nil

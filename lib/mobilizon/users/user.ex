@@ -12,6 +12,7 @@ defmodule Mobilizon.Users.User do
   alias Mobilizon.Events.FeedToken
   alias Mobilizon.Users.{Setting, UserRole}
   alias Mobilizon.Web.Email.Checker
+  import Mobilizon.Web.Gettext
 
   @type t :: %__MODULE__{
           email: String.t(),
@@ -100,9 +101,13 @@ defmodule Mobilizon.Users.User do
       user
       |> cast(attrs, @attrs)
       |> validate_required(@required_attrs)
-      |> unique_constraint(:email, message: "This email is already used.")
+      |> unique_constraint(:email, message: dgettext("errors", "This email is already used."))
       |> Checker.validate_changeset()
-      |> validate_length(:password, min: 6, max: 200, message: "The chosen password is too short.")
+      |> validate_length(:password,
+        min: 6,
+        max: 200,
+        message: dgettext("errors", "The chosen password is too short.")
+      )
 
     if Map.has_key?(attrs, :default_actor) do
       put_assoc(changeset, :default_actor, attrs.default_actor)
@@ -129,7 +134,11 @@ defmodule Mobilizon.Users.User do
     |> save_confirmation_token()
     |> unique_constraint(
       :confirmation_token,
-      message: "The registration token is already in use, this looks like an issue on our side."
+      message:
+        dgettext(
+          "errors",
+          "The registration token is already in use, this looks like an issue on our side."
+        )
     )
   end
 

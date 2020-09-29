@@ -8,7 +8,7 @@
               name: RouteName.GROUP,
               params: { preferredUsername: todoList.actor.preferredUsername },
             }"
-            >{{ todoList.actor.preferredUsername }}</router-link
+            >{{ todoList.actor.name }}</router-link
           >
         </li>
         <li>

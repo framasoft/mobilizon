@@ -2,7 +2,7 @@
   <div v-if="editor">
     <div
       class="editor"
-      :class="{ mode_description: isDescriptionMode }"
+      :class="{ short_mode: isShortMode, comment_mode: isCommentMode }"
       id="tiptab-editor"
       :data-actor-id="currentActor && currentActor.id"
     >
@@ -211,6 +211,7 @@ import tippy, { Instance, sticky } from "tippy.js";
 import { SEARCH_PERSONS } from "../graphql/search";
 import { Actor, IActor, IPerson } from "../types/actor";
 import Image from "./Editor/Image";
+import MaxSize from "./Editor/MaxSize";
 import { UPLOAD_PICTURE } from "../graphql/upload";
 import { listenFileUpload } from "../utils/upload";
 import { CURRENT_ACTOR_CLIENT } from "../graphql/actor";
@@ -228,6 +229,8 @@ export default class EditorComponent extends Vue {
   @Prop({ required: true }) value!: string;
 
   @Prop({ required: false, default: "description" }) mode!: string;
+
+  @Prop({ required: false, default: 100_000_000 }) maxSize!: number;
 
   currentActor!: IPerson;
 
@@ -252,6 +255,10 @@ export default class EditorComponent extends Vue {
 
   get isCommentMode(): boolean {
     return this.mode === "comment";
+  }
+
+  get isShortMode(): boolean {
+    return this.isBasicMode;
   }
 
   get hasResults(): boolean {
@@ -386,6 +393,7 @@ export default class EditorComponent extends Vue {
           showOnlyWhenEditable: false,
         }),
         new Image(),
+        new MaxSize({ maxSize: this.maxSize }),
       ],
       onUpdate: ({ getHTML }: { getHTML: Function }) => {
         this.$emit("input", getHTML());
@@ -395,7 +403,7 @@ export default class EditorComponent extends Vue {
   }
 
   @Watch("value")
-  onValueChanged(val: string) {
+  onValueChanged(val: string): void {
     if (!this.editor) return;
     if (val !== this.editor.getHTML()) {
       this.editor.setContent(val);
@@ -420,7 +428,7 @@ export default class EditorComponent extends Vue {
     return undefined;
   }
 
-  upHandler() {
+  upHandler(): void {
     this.navigatedActorIndex =
       (this.navigatedActorIndex + this.filteredActors.length - 1) % this.filteredActors.length;
   }
@@ -429,11 +437,11 @@ export default class EditorComponent extends Vue {
    * navigate to the next item
    * if it's the last item, navigate to the first one
    */
-  downHandler() {
+  downHandler(): void {
     this.navigatedActorIndex = (this.navigatedActorIndex + 1) % this.filteredActors.length;
   }
 
-  enterHandler() {
+  enterHandler(): void {
     const actor = this.filteredActors[this.navigatedActorIndex];
     if (actor) {
       this.selectActor(actor);
@@ -445,7 +453,7 @@ export default class EditorComponent extends Vue {
    * so it's important to pass also the position of your suggestion text
    * @param actor IActor
    */
-  selectActor(actor: IActor) {
+  selectActor(actor: IActor): void {
     const actorModel = new Actor(actor);
     this.insertMention({
       range: this.suggestionRange,
@@ -460,7 +468,7 @@ export default class EditorComponent extends Vue {
   }
 
   /** We use this to programatically insert an actor mention when creating a reply to comment */
-  replyToComment(comment: IComment) {
+  replyToComment(comment: IComment): void {
     if (!comment.actor) return;
     const actorModel = new Actor(comment.actor);
     if (!this.editor) return;
@@ -476,11 +484,12 @@ export default class EditorComponent extends Vue {
    * tiptap provides a virtualNode object for using popper.js (or tippy.js) for popups
    * @param node
    */
-  renderPopup(node: Element) {
+  renderPopup(node: Element): void {
     if (this.popup) {
       return;
     }
     this.popup = tippy("#mobilizon", {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       getReferenceClientRect: node.getBoundingClientRect,
       appendTo: () => document.body,
@@ -497,8 +506,9 @@ export default class EditorComponent extends Vue {
     }) as Instance[];
   }
 
-  destroyPopup() {
+  destroyPopup(): void {
     if (this.popup) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       this.popup[0].destroy();
       this.popup = null;
@@ -512,7 +522,7 @@ export default class EditorComponent extends Vue {
    * Show a file prompt, upload picture and insert it into editor
    * @param command
    */
-  async showImagePrompt(command: Function) {
+  async showImagePrompt(command: Function): Promise<void> {
     const image = await listenFileUpload();
     const { data } = await this.$apollo.mutate({
       mutation: UPLOAD_PICTURE,
@@ -527,7 +537,7 @@ export default class EditorComponent extends Vue {
     }
   }
 
-  beforeDestroy() {
+  beforeDestroy(): void {
     if (!this.editor) return;
     this.destroyPopup();
     this.editor.destroy();
@@ -577,9 +587,19 @@ $color-white: #eee;
     font-style: italic;
   }
 
-  &.mode_description {
+  .editor__content div.ProseMirror {
+    min-height: 10rem;
+  }
+
+  &.short_mode {
     div.ProseMirror {
-      min-height: 10rem;
+      min-height: 5rem;
+    }
+  }
+
+  &.comment_mode {
+    div.ProseMirror {
+      min-height: 2rem;
     }
   }
 

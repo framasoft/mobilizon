@@ -196,8 +196,9 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
         end
       )
 
-    args = Map.put(args, :options, options)
-
-    Map.update(args, :tags, [], &ConverterUtils.fetch_tags/1)
+    args
+    |> Map.put(:options, options)
+    |> Map.update(:tags, [], &ConverterUtils.fetch_tags/1)
+    |> Map.update(:contacts, [], &ConverterUtils.fetch_actors/1)
   end
 end

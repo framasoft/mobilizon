@@ -1,5 +1,4 @@
 import { IntrospectionFragmentMatcher, NormalizedCacheObject } from "apollo-cache-inmemory";
-import { IError, errors, defaultError, refreshSuggestion } from "@/utils/errors";
 import { AUTH_ACCESS_TOKEN, AUTH_REFRESH_TOKEN } from "@/constants";
 import { REFRESH_TOKEN } from "@/graphql/auth";
 import { saveTokenData } from "@/utils/auth";
@@ -23,18 +22,6 @@ export const fragmentMatcher = new IntrospectionFragmentMatcher({
     },
   },
 });
-
-export const computeErrorMessage = (message: any) => {
-  const error: IError = errors.reduce((acc, errorLocal) => {
-    if (RegExp(errorLocal.match).test(message)) {
-      return errorLocal;
-    }
-    return acc;
-  }, defaultError);
-
-  if (error.value === null) return null;
-  return error.suggestRefresh === false ? error.value : `${error.value}<br>${refreshSuggestion}`;
-};
 
 export async function refreshAccessToken(
   apolloClient: ApolloClient<NormalizedCacheObject>

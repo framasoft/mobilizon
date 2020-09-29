@@ -8,7 +8,7 @@ export interface IConfig {
   contact: string;
 
   registrationsOpen: boolean;
-  registrationsWhitelist: boolean;
+  registrationsAllowlist: boolean;
   demoMode: boolean;
   countryCode: string;
   location: {

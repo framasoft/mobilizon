@@ -528,7 +528,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PostTest do
         )
 
       assert Enum.map(res["errors"], & &1["message"]) == [
-               "Actor id is not member of group"
+               "Profile is not member of group"
              ]
     end
   end

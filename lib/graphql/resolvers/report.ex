@@ -11,6 +11,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
   alias Mobilizon.Reports
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Users.User
+  import Mobilizon.Web.Gettext
 
   alias Mobilizon.GraphQL.API
 
@@ -24,7 +25,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
   end
 
   def list_reports(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in and a moderator to list reports"}
+    {:error, dgettext("errors", "You need to be logged-in and a moderator to list reports")}
   end
 
   def get_report(_parent, %{id: id}, %{context: %{current_user: %User{role: role}}})
@@ -34,12 +35,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
         {:ok, report}
 
       nil ->
-        {:error, "Report not found"}
+        {:error, dgettext("errors", "Report not found")}
     end
   end
 
   def get_report(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in and a moderator to view a report"}
+    {:error, dgettext("errors", "You need to be logged-in and a moderator to view a report")}
   end
 
   @doc """
@@ -55,10 +56,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
       {:ok, report}
     else
       {:is_owned, nil} ->
-        {:error, "Reporter actor id is not owned by authenticated user"}
+        {:error, dgettext("errors", "Reporter profile is not owned by authenticated user")}
 
       _error ->
-        {:error, "Error while saving report"}
+        {:error, dgettext("errors", "Error while saving report")}
     end
   end
 
@@ -77,18 +78,18 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
       {:ok, report}
     else
       {:anonymous_reporting_allowed, _} ->
-        {:error, "You need to be logged-in to create reports"}
+        {:error, dgettext("errors", "You need to be logged-in to create reports")}
 
       {:wrong_id, _} ->
-        {:error, "Reporter ID is not the anonymous actor id"}
+        {:error, dgettext("errors", "Reporter ID does not match the anonymous profile id")}
 
       _error ->
-        {:error, "Error while saving report"}
+        {:error, dgettext("errors", "Error while saving report")}
     end
   end
 
   def create_report(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to create reports"}
+    {:error, dgettext("errors", "You need to be logged-in to create reports")}
   end
 
   @doc """
@@ -106,15 +107,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
       {:ok, report}
     else
       {:is_owned, nil} ->
-        {:error, "Actor id is not owned by authenticated user"}
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
 
       _error ->
-        {:error, "Error while updating report"}
+        {:error, dgettext("errors", "Error while updating report")}
     end
   end
 
   def update_report(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in and a moderator to update a report"}
+    {:error, dgettext("errors", "You need to be logged-in and a moderator to update a report")}
   end
 
   def create_report_note(

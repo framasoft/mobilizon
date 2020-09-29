@@ -10,7 +10,7 @@
         <router-link :to="{ name: RouteName.TERMS }">{{ $t("Terms") }}</router-link>
       </li>
       <li>
-        <a href="https://framagit.org/framasoft/mobilizon/blob/master/LICENSE">
+        <a hreflang="en" href="https://framagit.org/framasoft/mobilizon/blob/master/LICENSE">
           {{ $t("License") }}
         </a>
       </li>

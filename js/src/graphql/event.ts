@@ -111,6 +111,17 @@ export const FETCH_EVENT = gql`
         id,
         summary
       },
+      contacts {
+        avatar {
+          url,
+        }
+        preferredUsername,
+        name,
+        summary,
+        domain,
+        url,
+        id
+      },
       attributedTo {
         avatar {
           url,
@@ -229,6 +240,7 @@ export const CREATE_EVENT = gql`
     $category: String,
     $physicalAddress: AddressInput,
     $options: EventOptionsInput,
+    $contacts: [Contact]
   ) {
     createEvent(
       organizerActorId: $organizerActorId,
@@ -248,6 +260,7 @@ export const CREATE_EVENT = gql`
       category: $category,
       physicalAddress: $physicalAddress
       options: $options,
+      contacts: $contacts
     ) {
       id,
       uuid,
@@ -292,6 +305,16 @@ export const CREATE_EVENT = gql`
         url,
         id,
       },
+      contacts {
+        avatar {
+          url
+        },
+        preferredUsername,
+        domain,
+        name,
+        url,
+        id,
+      },
       participantStats {
         going,
         notApproved,
@@ -327,6 +350,7 @@ export const EDIT_EVENT = gql`
     $category: String,
     $physicalAddress: AddressInput,
     $options: EventOptionsInput,
+    $contacts: [Contact]
   ) {
     updateEvent(
       eventId: $id,
@@ -347,6 +371,7 @@ export const EDIT_EVENT = gql`
       category: $category,
       physicalAddress: $physicalAddress
       options: $options,
+      contacts: $contacts
     ) {
       id,
       uuid,
@@ -380,6 +405,16 @@ export const EDIT_EVENT = gql`
         avatar {
           url
         }
+      },
+      contacts {
+        avatar {
+          url
+        },
+        preferredUsername,
+        domain,
+        name,
+        url,
+        id,
       },
       organizerActor {
         avatar {

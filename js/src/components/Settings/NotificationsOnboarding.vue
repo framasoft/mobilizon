@@ -36,12 +36,10 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
+import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { USER_SETTINGS, SET_USER_SETTINGS } from "../../graphql/user";
-import {
-  ICurrentUser,
-  INotificationPendingParticipationEnum,
-} from "../../types/current-user.model";
+import { ICurrentUser } from "../../types/current-user.model";
 import RouteName from "../../router/name";
 
 @Component({
@@ -56,11 +54,15 @@ export default class NotificationsOnboarding extends Vue {
 
   RouteName = RouteName;
 
-  async updateSetting(variables: object) {
-    await this.$apollo.mutate<{ setUserSettings: string }>({
-      mutation: SET_USER_SETTINGS,
-      variables,
-    });
+  async updateSetting(variables: Record<string, unknown>): Promise<void> {
+    try {
+      await this.$apollo.mutate<{ setUserSettings: string }>({
+        mutation: SET_USER_SETTINGS,
+        variables,
+      });
+    } catch (e) {
+      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+    }
   }
 }
 </script>

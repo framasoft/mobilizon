@@ -13,3 +13,11 @@ export const i18n = new VueI18n({
   messages, // set locale messages
   fallbackLocale: "en_US",
 });
+
+export function formatList(list: string[]): string {
+  if (window.Intl && Intl.ListFormat) {
+    const formatter = new Intl.ListFormat(undefined, { style: "long", type: "conjunction" });
+    return formatter.format(list);
+  }
+  return list.join(",");
+}

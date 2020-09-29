@@ -11,6 +11,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   alias Mobilizon.Web.Email
   alias Mobilizon.Web.Email.Checker
   require Logger
+  import Mobilizon.Web.Gettext
 
   @doc """
   Join an event for an regular actor
@@ -25,7 +26,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
         do_actor_join_event(actor, event_id, args)
 
       _ ->
-        {:error, "Actor id is not owned by authenticated user"}
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
     end
   end
 
@@ -82,28 +83,29 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
         {:error, err}
 
       {:has_event, _} ->
-        {:error, "Event with this ID #{inspect(event_id)} doesn't exist"}
+        {:error,
+         dgettext("errors", "Event with this ID %{id} doesn't exist", id: inspect(event_id))}
 
       {:anonymous_participation_enabled, false} ->
-        {:error, "Anonymous participation is not enabled"}
+        {:error, dgettext("errors", "Anonymous participation is not enabled")}
 
       {:anonymous_actor_id, false} ->
-        {:error, "Actor ID provided is not the anonymous actor one"}
+        {:error, dgettext("errors", "Profile ID provided is not the anonymous profile one")}
 
       {:email_required, _} ->
-        {:error, "A valid email is required by your instance"}
+        {:error, dgettext("errors", "A valid email is required by your instance")}
 
       {:actor_not_found, _} ->
         Logger.error(
           "The actor ID \"#{actor_id}\" provided by configuration doesn't match any actor in database"
         )
 
-        {:error, "Internal Error"}
+        {:error, dgettext("errors", "Internal Error")}
     end
   end
 
   def actor_join_event(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to join an event"}
+    {:error, dgettext("errors", "You need to be logged-in to join an event")}
   end
 
   @spec do_actor_join_event(Actor.t(), integer | String.t(), map()) ::
@@ -119,16 +121,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
       {:ok, participant}
     else
       {:maximum_attendee_capacity, _} ->
-        {:error, "The event has already reached its maximum capacity"}
+        {:error, dgettext("errors", "The event has already reached its maximum capacity")}
 
       {:has_event, _} ->
-        {:error, "Event with this ID #{inspect(event_id)} doesn't exist"}
+        {:error,
+         dgettext("errors", "Event with this ID %{id} doesn't exist", id: inspect(event_id))}
 
       {:error, :event_not_found} ->
-        {:error, "Event id not found"}
+        {:error, dgettext("errors", "Event id not found")}
 
       {:ok, %Participant{}} ->
-        {:error, "You are already a participant of this event"}
+        {:error, dgettext("errors", "You are already a participant of this event")}
     end
   end
 
@@ -153,16 +156,21 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
       {:ok, %{event: %{id: event_id}, actor: %{id: actor_id}, id: participant_id}}
     else
       {:has_event, _} ->
-        {:error, "Event with this ID #{inspect(event_id)} doesn't exist"}
+        {:error,
+         dgettext("errors", "Event with this ID %{id} doesn't exist", id: inspect(event_id))}
 
       {:is_owned, nil} ->
-        {:error, "Actor id is not owned by authenticated user"}
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
 
       {:only_organizer, true} ->
-        {:error, "You can't leave event because you're the only event creator participant"}
+        {:error,
+         dgettext(
+           "errors",
+           "You can't leave event because you're the only event creator participant"
+         )}
 
       {:error, :participant_not_found} ->
-        {:error, "Participant not found"}
+        {:error, dgettext("errors", "Participant not found")}
     end
   end
 
@@ -181,18 +189,22 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
         {:error, "Event with this ID #{inspect(event_id)} doesn't exist"}
 
       {:is_owned, nil} ->
-        {:error, "Actor id is not owned by authenticated user"}
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
 
       {:only_organizer, true} ->
-        {:error, "You can't leave event because you're the only event creator participant"}
+        {:error,
+         dgettext(
+           "errors",
+           "You can't leave event because you're the only event creator participant"
+         )}
 
       {:error, :participant_not_found} ->
-        {:error, "Participant not found"}
+        {:error, dgettext("errors", "Participant not found")}
     end
   end
 
   def actor_leave_event(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to leave an event"}
+    {:error, dgettext("errors", "You need to be logged-in to leave an event")}
   end
 
   def update_participation(
@@ -219,19 +231,20 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
       {:ok, participation}
     else
       {:is_owned, nil} ->
-        {:error, "Moderator Actor ID is not owned by authenticated user"}
+        {:error, dgettext("errors", "Moderator profile is not owned by authenticated user")}
 
       {:has_participation, nil} ->
-        {:error, "Participant not found"}
+        {:error, dgettext("errors", "Participant not found")}
 
       {:actor_approve_permission, _} ->
-        {:error, "Provided moderator actor ID doesn't have permission on this event"}
+        {:error,
+         dgettext("errors", "Provided moderator profile doesn't have permission on this event")}
 
       {:same_role, true} ->
-        {:error, "Participant already has role #{new_role}"}
+        {:error, dgettext("errors", "Participant already has role %{role}", role: new_role)}
 
       {:error, :participant_not_found} ->
-        {:error, "Participant not found"}
+        {:error, dgettext("errors", "Participant not found")}
     end
   end
 
@@ -251,7 +264,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
       {:ok, participant}
     else
       {:has_participant, _} ->
-        {:error, "This token is invalid"}
+        {:error, dgettext("errors", "This token is invalid")}
     end
   end
 

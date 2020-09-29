@@ -45,10 +45,10 @@
         </tr>
         <tr>
           <td>{{ $t("Registrations") }}</td>
-          <td v-if="config.registrationsOpen && config.registrationsWhitelist">
+          <td v-if="config.registrationsOpen && config.registrationsAllowlist">
             {{ $t("Restricted") }}
           </td>
-          <td v-if="config.registrationsOpen && !config.registrationsWhitelist">
+          <td v-if="config.registrationsOpen && !config.registrationsAllowlist">
             {{ $t("Open") }}
           </td>
           <td v-else>{{ $t("Closed") }}</td>

@@ -151,6 +151,7 @@ export interface IEvent {
 
   tags: ITag[];
   options: IEventOptions;
+  contacts: IActor[];
 
   toEditJSON(): IEventEditJSON;
 }
@@ -259,6 +260,8 @@ export class EventModel implements IEvent {
 
   tags: ITag[] = [];
 
+  contacts: IActor[] = [];
+
   options: IEventOptions = new EventOptions();
 
   constructor(hash?: IEvent) {
@@ -296,6 +299,8 @@ export class EventModel implements IEvent {
     this.physicalAddress = hash.physicalAddress ? new Address(hash.physicalAddress) : undefined;
     this.participantStats = hash.participantStats;
 
+    this.contacts = hash.contacts;
+
     this.tags = hash.tags;
     if (hash.options) this.options = hash.options;
   }
@@ -319,6 +324,9 @@ export class EventModel implements IEvent {
       options: this.options,
       //      organizerActorId: this.organizerActor && this.organizerActor.id ? this.organizerActor.id : null,
       attributedToId: this.attributedTo && this.attributedTo.id ? this.attributedTo.id : null,
+      contacts: this.contacts.map(({ id }) => ({
+        id,
+      })),
     };
   }
 }
@@ -340,4 +348,5 @@ interface IEventEditJSON {
   physicalAddress?: IAddress;
   tags: string[];
   options: IEventOptions;
+  contacts: { id?: string }[];
 }

@@ -11,6 +11,7 @@ export const GET_TODO = gql`
         actor {
           id
           preferredUsername
+          name
         }
         title
         id
@@ -51,6 +52,7 @@ export const FETCH_TODO_LIST = gql`
         id
         preferredUsername
         domain
+        name
       }
     }
   }

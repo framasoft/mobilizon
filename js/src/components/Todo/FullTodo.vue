@@ -19,6 +19,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { debounce } from "lodash";
+import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { ITodo } from "../../types/todos";
 import RouteName from "../../router/name";
 import { UPDATE_TODO } from "../../graphql/todos";
@@ -39,7 +40,7 @@ export default class Todo extends Vue {
 
   // We put this in data because of issues like
   // https://github.com/vuejs/vue-class-component/issues/263
-  data() {
+  data(): Record<string, unknown> {
     return {
       debounceUpdateTodo: debounce(this.updateTodo, 1000),
     };
@@ -77,15 +78,19 @@ export default class Todo extends Vue {
     this.debounceUpdateTodo({ dueDate });
   }
 
-  updateTodo(params: object) {
-    this.$apollo.mutate({
-      mutation: UPDATE_TODO,
-      variables: {
-        id: this.todo.id,
-        ...params,
-      },
-    });
-    this.editMode = false;
+  async updateTodo(params: Record<string, unknown>): Promise<void> {
+    try {
+      await this.$apollo.mutate({
+        mutation: UPDATE_TODO,
+        variables: {
+          id: this.todo.id,
+          ...params,
+        },
+      });
+      this.editMode = false;
+    } catch (e) {
+      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+    }
   }
 }
 </script>

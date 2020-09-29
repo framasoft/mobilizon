@@ -7,7 +7,7 @@
       <div class="list is-hoverable">
         <a
           class="list-item"
-          v-for="groupMembership in groupMemberships.elements"
+          v-for="groupMembership in actualMemberships"
           :class="{ 'is-active': groupMembership.parent.id === currentGroup.id }"
           @click="changeCurrentGroup(groupMembership.parent)"
           :key="groupMembership.id"
@@ -36,7 +36,7 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { IGroup, IMember, IPerson, Group } from "@/types/actor";
+import { IGroup, IMember, IPerson, Group, MemberRole } from "@/types/actor";
 import { PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import { Paginate } from "@/types/paginate";
 
@@ -61,15 +61,28 @@ export default class GroupPicker extends Vue {
 
   @Prop() identity!: IPerson;
 
+  @Prop({ required: false, default: false }) restrictModeratorLevel!: boolean;
+
   groupMemberships: Paginate<IMember> = { elements: [], total: 0 };
 
   currentGroup: IGroup = this.value;
 
   Group = Group;
 
-  changeCurrentGroup(group: IGroup) {
+  changeCurrentGroup(group: IGroup): void {
     this.currentGroup = group;
     this.$emit("input", group);
+  }
+
+  get actualMemberships(): IMember[] {
+    if (this.restrictModeratorLevel) {
+      return this.groupMemberships.elements.filter((membership: IMember) =>
+        [MemberRole.ADMINISTRATOR, MemberRole.MODERATOR, MemberRole.CREATOR].includes(
+          membership.role
+        )
+      );
+    }
+    return this.groupMemberships.elements;
   }
 }
 </script>

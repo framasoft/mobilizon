@@ -38,6 +38,7 @@
 import { Component, Mixins, Prop } from "vue-property-decorator";
 import { Route } from "vue-router";
 import Draggable, { ChangeEvent } from "vuedraggable";
+import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { IResource } from "../../types/resource";
 import RouteName from "../../router/name";
 import ResourceMixin from "../../mixins/resource";
@@ -57,7 +58,7 @@ export default class FolderItem extends Mixins(ResourceMixin) {
 
   list = [];
 
-  groupObject: object = {
+  groupObject: Record<string, unknown> = {
     name: `folder-${this.resource.title}`,
     pull: false,
     put: ["resources"],
@@ -91,19 +92,24 @@ export default class FolderItem extends Mixins(ResourceMixin) {
   }
 
   async moveResource(resource: IResource): Promise<IResource | undefined> {
-    const { data } = await this.$apollo.mutate<{ updateResource: IResource }>({
-      mutation: UPDATE_RESOURCE,
-      variables: {
-        id: resource.id,
-        path: `${this.resource.path}/${resource.title}`,
-        parentId: this.resource.id,
-      },
-    });
-    if (!data) {
-      console.error("Error while updating resource");
+    try {
+      const { data } = await this.$apollo.mutate<{ updateResource: IResource }>({
+        mutation: UPDATE_RESOURCE,
+        variables: {
+          id: resource.id,
+          path: `${this.resource.path}/${resource.title}`,
+          parentId: this.resource.id,
+        },
+      });
+      if (!data) {
+        console.error("Error while updating resource");
+        return undefined;
+      }
+      return data.updateResource;
+    } catch (e) {
+      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
       return undefined;
     }
-    return data.updateResource;
   }
 }
 </script>

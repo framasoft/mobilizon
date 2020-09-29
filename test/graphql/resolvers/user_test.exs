@@ -372,7 +372,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
     test "create_user/3 doesn't allow registration when registration is closed", %{conn: conn} do
       Config.put([:instance, :registrations_open], false)
-      Config.put([:instance, :registration_email_whitelist], [])
+      Config.put([:instance, :registration_email_allowlist], [])
 
       mutation = """
           mutation createUser($email: String!, $password: String!) {
@@ -393,15 +393,15 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
           variables: %{email: @user_creation.email, password: @user_creation.password}
         )
 
-      assert hd(res["errors"])["message"] == "Registrations are not enabled"
+      assert hd(res["errors"])["message"] == "Registrations are not open"
       Config.put([:instance, :registrations_open], true)
     end
 
-    test "create_user/3 doesn't allow registration when user email is not on the whitelist", %{
+    test "create_user/3 doesn't allow registration when user email is not on the allowlist", %{
       conn: conn
     } do
       Config.put([:instance, :registrations_open], false)
-      Config.put([:instance, :registration_email_whitelist], ["random.org"])
+      Config.put([:instance, :registration_email_allowlist], ["random.org"])
 
       mutation = """
           mutation createUser($email: String!, $password: String!) {
@@ -422,16 +422,16 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
           variables: %{email: @user_creation.email, password: @user_creation.password}
         )
 
-      assert hd(res["errors"])["message"] == "Your email is not on the whitelist"
+      assert hd(res["errors"])["message"] == "Your email is not on the allowlist"
       Config.put([:instance, :registrations_open], true)
-      Config.put([:instance, :registration_email_whitelist], [])
+      Config.put([:instance, :registration_email_allowlist], [])
     end
 
-    test "create_user/3 allows registration when user email domain is on the whitelist", %{
+    test "create_user/3 allows registration when user email domain is on the allowlist", %{
       conn: conn
     } do
       Config.put([:instance, :registrations_open], false)
-      Config.put([:instance, :registration_email_whitelist], ["demo.tld"])
+      Config.put([:instance, :registration_email_allowlist], ["demo.tld"])
 
       mutation = """
           mutation createUser($email: String!, $password: String!) {
@@ -455,12 +455,12 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       refute res["errors"]
       assert res["data"]["createUser"]["email"] == @user_creation.email
       Config.put([:instance, :registrations_open], true)
-      Config.put([:instance, :registration_email_whitelist], [])
+      Config.put([:instance, :registration_email_allowlist], [])
     end
 
-    test "create_user/3 allows registration when user email is on the whitelist", %{conn: conn} do
+    test "create_user/3 allows registration when user email is on the allowlist", %{conn: conn} do
       Config.put([:instance, :registrations_open], false)
-      Config.put([:instance, :registration_email_whitelist], [@user_creation.email])
+      Config.put([:instance, :registration_email_allowlist], [@user_creation.email])
 
       mutation = """
           mutation createUser($email: String!, $password: String!) {
@@ -484,7 +484,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       refute res["errors"]
       assert res["data"]["createUser"]["email"] == @user_creation.email
       Config.put([:instance, :registrations_open], true)
-      Config.put([:instance, :registration_email_whitelist], [])
+      Config.put([:instance, :registration_email_allowlist], [])
     end
 
     test "register_person/3 doesn't register a profile from an unknown email", context do

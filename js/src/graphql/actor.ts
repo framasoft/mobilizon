@@ -359,6 +359,53 @@ export const PERSON_MEMBERSHIPS = gql`
   }
 `;
 
+export const PERSON_MEMBERSHIPS_WITH_MEMBERS = gql`
+  query PersonMembershipsWithMembers($id: ID!) {
+    person(id: $id) {
+      id
+      memberships {
+        total
+        elements {
+          id
+          role
+          parent {
+            id
+            preferredUsername
+            name
+            domain
+            avatar {
+              url
+            }
+            members {
+              total
+              elements {
+                id
+                role
+                actor {
+                  id
+                  preferredUsername
+                  name
+                  domain
+                  avatar {
+                    url
+                  }
+                }
+              }
+            }
+          }
+          invitedBy {
+            id
+            preferredUsername
+            name
+          }
+          insertedAt
+          updatedAt
+        }
+      }
+    }
+  }
+`;
+
 export const CREATE_PERSON = gql`
   mutation CreatePerson(
     $preferredUsername: String!

@@ -11,7 +11,7 @@ export const beforeRegisterGuard: NavigationGuard = async (to, from, next) => {
 
   const { config } = data;
 
-  if (!config.registrationsOpen && !config.registrationsWhitelist) {
+  if (!config.registrationsOpen && !config.registrationsAllowlist) {
     return next({
       name: "Error",
       query: { code: ErrorCode.REGISTRATION_CLOSED },
