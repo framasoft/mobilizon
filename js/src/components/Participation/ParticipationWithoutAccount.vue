@@ -66,6 +66,7 @@ import { FETCH_EVENT, JOIN_EVENT } from "@/graphql/event";
 import { IConfig } from "@/types/config.model";
 import { CONFIG } from "@/graphql/config";
 import { addLocalUnconfirmedAnonymousParticipation } from "@/services/AnonymousParticipationStorage";
+import { Route } from "vue-router";
 import RouteName from "../../router/name";
 
 @Component({
@@ -101,7 +102,7 @@ export default class ParticipationWithoutAccount extends Vue {
 
   EventJoinOptions = EventJoinOptions;
 
-  async joinEvent() {
+  async joinEvent(): Promise<Route> {
     this.error = false;
     try {
       const { data } = await this.$apollo.mutate<{ joinEvent: IParticipant }>({
@@ -134,10 +135,10 @@ export default class ParticipationWithoutAccount extends Vue {
           }
 
           if (data.joinEvent.role === ParticipantRole.NOT_CONFIRMED) {
-            event.participantStats.notConfirmed = event.participantStats.notConfirmed + 1;
+            event.participantStats.notConfirmed += 1;
           } else {
-            event.participantStats.going = event.participantStats.going + 1;
-            event.participantStats.participant = event.participantStats.participant + 1;
+            event.participantStats.going += 1;
+            event.participantStats.participant += 1;
           }
           console.log("just before writequery");
 
@@ -157,18 +158,12 @@ export default class ParticipationWithoutAccount extends Vue {
         console.log("done with crypto stuff");
       }
     } catch (e) {
-      console.error(e);
-      if (e.message === "GraphQL error: You are already a participant of this event") {
-        this.error = this.$t(
-          "This email is already registered as participant for this event"
-        ) as string;
-      }
-    } finally {
-      return this.$router.push({
-        name: RouteName.EVENT,
-        params: { uuid: this.event.uuid },
-      });
+      this.error = e.message;
     }
+    return this.$router.push({
+      name: RouteName.EVENT,
+      params: { uuid: this.event.uuid },
+    });
   }
 }
 </script>

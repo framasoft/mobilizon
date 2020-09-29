@@ -5,6 +5,8 @@ defmodule Mobilizon.Web.Endpoint do
   use Phoenix.Endpoint, otp_app: :mobilizon
   use Absinthe.Phoenix.Endpoint
 
+  plug(Mobilizon.Web.Plugs.SetLocalePlug)
+
   # For e2e tests
   if Application.get_env(:mobilizon, :sql_sandbox) do
     plug(Phoenix.Ecto.SQL.Sandbox,

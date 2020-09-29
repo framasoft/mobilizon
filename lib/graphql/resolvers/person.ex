@@ -12,6 +12,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users
   alias Mobilizon.Users.User
+  import Mobilizon.Web.Gettext
 
   alias Mobilizon.Federation.ActivityPub
 
@@ -27,7 +28,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
       {:ok, actor}
     else
       _ ->
-        {:error, "Person with ID #{id} not found"}
+        {:error, dgettext("errors", "Person with ID %{id} not found", id: id)}
     end
   end
 
@@ -41,7 +42,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
       {:ok, actor}
     else
       _ ->
-        {:error, "Person with username #{preferred_username} not found"}
+        {:error,
+         dgettext("errors", "Person with username %{username} not found",
+           username: preferred_username
+         )}
     end
   end
 
@@ -66,7 +70,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   end
 
   def list_persons(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in and a moderator to list persons"}
+    {:error, dgettext("errors", "You need to be logged-in and a moderator to list persons")}
   end
 
   @doc """
@@ -77,7 +81,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   end
 
   def get_current_person(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to view current person"}
+    {:error, dgettext("errors", "You need to be logged-in to view current person")}
   end
 
   @doc """
@@ -88,7 +92,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   end
 
   def identities(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to view your list of identities"}
+    {:error, dgettext("errors", "You need to be logged-in to view your list of identities")}
   end
 
   @doc """
@@ -111,7 +115,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   This function is used to create more identities from an existing user
   """
   def create_person(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to create a new identity"}
+    {:error, dgettext("errors", "You need to be logged-in to create a new identity")}
   end
 
   @doc """
@@ -132,15 +136,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
       {:ok, actor}
     else
       {:find_actor, nil} ->
-        {:error, "Actor not found"}
+        {:error, dgettext("errors", "Profile not found")}
 
       {:is_owned, nil} ->
-        {:error, "Actor is not owned by authenticated user"}
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
     end
   end
 
   def update_person(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to update an identity"}
+    {:error, dgettext("errors", "You need to be logged-in to update an identity")}
   end
 
   @doc """
@@ -160,21 +164,21 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
       {:ok, actor}
     else
       {:find_actor, nil} ->
-        {:error, "Actor not found"}
+        {:error, dgettext("errors", "Profile not found")}
 
       {:last_identity, true} ->
-        {:error, "Cannot remove the last identity of a user"}
+        {:error, dgettext("errors", "Cannot remove the last identity of a user")}
 
       {:last_admin, true} ->
-        {:error, "Cannot remove the last administrator of a group"}
+        {:error, dgettext("errors", "Cannot remove the last administrator of a group")}
 
       {:is_owned, nil} ->
-        {:error, "Actor is not owned by authenticated user"}
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
     end
   end
 
   def delete_person(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to delete an identity"}
+    {:error, dgettext("errors", "You need to be logged-in to delete an identity")}
   end
 
   defp last_identity?(user) do
@@ -210,10 +214,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
       {:ok, new_person}
     else
       {:error, :user_not_found} ->
-        {:error, "No user with this email was found"}
+        {:error, dgettext("errors", "No user with this email was found")}
 
       {:no_actor, _} ->
-        {:error, "You already have a profile for this user"}
+        {:error, dgettext("errors", "You already have a profile for this user")}
 
       {:error, %Ecto.Changeset{} = e} ->
         {:error, e}
@@ -234,7 +238,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
       {:ok, %Page{elements: [participant], total: 1}}
     else
       {:is_owned, nil} ->
-        {:error, "Actor id is not owned by authenticated user"}
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
 
       {:no_participant, _} ->
         {:ok, %Page{elements: [], total: 0}}
@@ -266,7 +270,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
       {:ok, page}
     else
       {:is_owned, false} ->
-        {:error, "Actor id is not owned by authenticated user"}
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
     end
   end
 
@@ -279,7 +283,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
       {:ok, participations}
     else
       {:is_owned, nil} ->
-        {:error, "Actor id is not owned by authenticated user"}
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
     end
   end
 
@@ -301,7 +305,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
         {:ok, nil}
 
       _ ->
-        {:error, "User not found"}
+        {:error, dgettext("errors", "User not found")}
     end
   end
 

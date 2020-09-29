@@ -10,6 +10,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   alias Mobilizon.GraphQL.API
   alias Mobilizon.GraphQL.Resolvers.Person
   alias Mobilizon.Users.User
+  alias Mobilizon.Web.Upload
+  import Mobilizon.Web.Gettext
 
   require Logger
 
@@ -36,7 +38,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         find_group(parent, args, nil)
 
       _ ->
-        {:error, "Group with name #{name} not found"}
+        {:error, dgettext("errors", "Group with name %{name} not found", name: name)}
     end
   end
 
@@ -50,7 +52,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       {:ok, actor}
     else
       _ ->
-        {:error, "Group with name #{name} not found"}
+        {:error, dgettext("errors", "Group with name %{name} not found", name: name)}
     end
   end
 
@@ -64,7 +66,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       {:ok, actor}
     else
       _ ->
-        {:error, "Group with ID #{id} not found"}
+        {:error, dgettext("errors", "Group with ID %{id} not found", id: id)}
     end
   end
 
@@ -92,7 +94,23 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   end
 
   def list_groups(_parent, _args, _resolution),
-    do: {:error, "You may not list groups unless moderator."}
+    do: {:error, dgettext("errors", "You may not list groups unless moderator.")}
+
+  # TODO Move me to somewhere cleaner
+  defp save_attached_pictures(args) do
+    Enum.reduce([:avatar, :banner], args, fn key, args ->
+      if Map.has_key?(args, key) && !is_nil(args[key][:picture]) do
+        pic = args[key][:picture]
+
+        with {:ok, %{name: name, url: url, content_type: content_type, size: _size}} <-
+               Upload.store(pic.file, type: key, description: pic.alt) do
+          Map.put(args, key, %{"name" => name, "url" => url, "mediaType" => content_type})
+        end
+      else
+        args
+      end
+    end)
+  end
 
   @doc """
   Create a new group. The creator is automatically added as admin
@@ -109,6 +127,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
     with creator_actor_id <- Map.get(args, :creator_actor_id),
          {:is_owned, %Actor{} = creator_actor} <- User.owns_actor(user, creator_actor_id),
          args <- Map.put(args, :creator_actor, creator_actor),
+         args <- save_attached_pictures(args),
          {:ok, _activity, %Actor{type: :Group} = group} <-
            API.Groups.create_group(args) do
       {:ok, group}
@@ -117,7 +136,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         {:error, err}
 
       {:is_owned, nil} ->
-        {:error, "Creator actor id is not owned by the current user"}
+        {:error, dgettext("errors", "Creator profile is not owned by the current user")}
     end
   end
 
@@ -139,6 +158,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       ) do
     with %Actor{} = updater_actor <- Users.get_actor_for_user(user),
          args <- Map.put(args, :updater_actor, updater_actor),
+         args <- save_attached_pictures(args),
          {:ok, _activity, %Actor{type: :Group} = group} <-
            API.Groups.update_group(args) do
       {:ok, group}
@@ -147,12 +167,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         {:error, err}
 
       {:is_owned, nil} ->
-        {:error, "Creator actor id is not owned by the current user"}
+        {:error, dgettext("errors", "Creator profile is not owned by the current user")}
     end
   end
 
   def update_group(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to update a group"}
+    {:error, dgettext("errors", "You need to be logged-in to update a group")}
   end
 
   @doc """
@@ -175,18 +195,19 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       {:ok, %{id: group.id}}
     else
       {:error, :group_not_found} ->
-        {:error, "Group not found"}
+        {:error, dgettext("errors", "Group not found")}
 
       {:error, :member_not_found} ->
-        {:error, "Actor id is not a member of this group"}
+        {:error, dgettext("errors", "Current profile is not a member of this group")}
 
       {:is_admin, false} ->
-        {:error, "Actor id is not an administrator of the selected group"}
+        {:error,
+         dgettext("errors", "Current profile is not an administrator of the selected group")}
     end
   end
 
   def delete_group(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to delete a group"}
+    {:error, dgettext("errors", "You need to be logged-in to delete a group")}
   end
 
   @doc """
@@ -219,21 +240,21 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       }
     else
       {:is_owned, nil} ->
-        {:error, "Actor id is not owned by authenticated user"}
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
 
       {:error, :group_not_found} ->
-        {:error, "Group id not found"}
+        {:error, dgettext("errors", "Group not found")}
 
       {:is_able_to_join, false} ->
-        {:error, "You cannot join this group"}
+        {:error, dgettext("errors", "You cannot join this group")}
 
       {:ok, %Member{}} ->
-        {:error, "You are already a member of this group"}
+        {:error, dgettext("errors", "You are already a member of this group")}
     end
   end
 
   def join_group(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to join a group"}
+    {:error, dgettext("errors", "You need to be logged-in to join a group")}
   end
 
   @doc """
@@ -254,18 +275,19 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       {:ok, member}
     else
       {:error, :member_not_found} ->
-        {:error, "Member not found"}
+        {:error, dgettext("errors", "Member not found")}
 
       {:group, nil} ->
-        {:error, "Group not found"}
+        {:error, dgettext("errors", "Group not found")}
 
       {:is_not_only_admin, false} ->
-        {:error, "You can't leave this group because you are the only administrator"}
+        {:error,
+         dgettext("errors", "You can't leave this group because you are the only administrator")}
     end
   end
 
   def leave_group(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to leave a group"}
+    {:error, dgettext("errors", "You need to be logged-in to leave a group")}
   end
 
   def find_events_for_group(

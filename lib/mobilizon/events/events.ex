@@ -83,7 +83,8 @@ defmodule Mobilizon.Events do
     :comments,
     :participants,
     :physical_address,
-    :picture
+    :picture,
+    :contacts
   ]
 
   @doc """
@@ -1019,7 +1020,7 @@ defmodule Mobilizon.Events do
        ) do
     with {:update_event_participation_stats, true} <-
            {:update_event_participation_stats, update_event_participation_stats},
-         {:ok, %Event{} = event} <- get_event(event_id),
+         {:ok, %Event{} = event} <- get_event_with_preload(event_id),
          %EventParticipantStats{} = participant_stats <-
            Map.get(event, :participant_stats),
          %EventParticipantStats{} = participant_stats <-

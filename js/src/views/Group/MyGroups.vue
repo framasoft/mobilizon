@@ -8,7 +8,11 @@
         )
       }}
     </p>
-    <router-link :to="{ name: RouteName.CREATE_GROUP }">{{ $t("Create group") }}</router-link>
+    <div class="buttons">
+      <router-link class="button is-primary" :to="{ name: RouteName.CREATE_GROUP }">{{
+        $t("Create group")
+      }}</router-link>
+    </div>
     <b-loading :active.sync="$apollo.loading"></b-loading>
     <invitations
       :invitations="invitations"
@@ -16,7 +20,13 @@
       @rejectInvitation="rejectInvitation"
     />
     <section v-if="memberships && memberships.length > 0">
-      <GroupMemberCard v-for="member in memberships" :key="member.id" :member="member" />
+      <GroupMemberCard
+        class="group-member-card"
+        v-for="member in memberships"
+        :key="member.id"
+        :member="member"
+        @leave="leaveGroup(member.parent)"
+      />
     </section>
     <b-message v-if="$apollo.loading === false && memberships.length === 0" type="is-danger">
       {{ $t("No groups found") }}
@@ -27,10 +37,13 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { LOGGED_USER_MEMBERSHIPS } from "@/graphql/actor";
+import { LEAVE_GROUP } from "@/graphql/group";
 import GroupMemberCard from "@/components/Group/GroupMemberCard.vue";
 import Invitations from "@/components/Group/Invitations.vue";
 import { Paginate } from "@/types/paginate";
-import { IMember, MemberRole, usernameWithDomain } from "@/types/actor";
+import { IGroup, IMember, MemberRole, usernameWithDomain } from "@/types/actor";
+import { Route } from "vue-router";
+import { ApolloError } from "apollo-client";
 import RouteName from "../../router/name";
 
 @Component({
@@ -64,14 +77,14 @@ export default class MyEvents extends Vue {
 
   RouteName = RouteName;
 
-  acceptInvitation(member: IMember) {
+  acceptInvitation(member: IMember): Promise<Route> {
     return this.$router.push({
       name: RouteName.GROUP,
       params: { preferredUsername: usernameWithDomain(member.parent) },
     });
   }
 
-  rejectInvitation({ id: memberId }: { id: string }) {
+  rejectInvitation({ id: memberId }: { id: string }): void {
     const index = this.membershipsPages.elements.findIndex(
       (membership) => membership.role === MemberRole.INVITED && membership.id === memberId
     );
@@ -81,14 +94,23 @@ export default class MyEvents extends Vue {
     }
   }
 
-  get invitations() {
+  async leaveGroup(group: IGroup): Promise<void> {
+    await this.$apollo.mutate({
+      mutation: LEAVE_GROUP,
+      variables: {
+        groupId: group.id,
+      },
+    });
+  }
+
+  get invitations(): IMember[] {
     if (!this.membershipsPages) return [];
     return this.membershipsPages.elements.filter(
       (member: IMember) => member.role === MemberRole.INVITED
     );
   }
 
-  get memberships() {
+  get memberships(): IMember[] {
     if (!this.membershipsPages) return [];
     return this.membershipsPages.elements.filter(
       (member: IMember) => ![MemberRole.INVITED, MemberRole.REJECTED].includes(member.role)
@@ -113,5 +135,9 @@ section {
   .upcoming-month {
     text-transform: capitalize;
   }
+}
+
+.group-member-card {
+  margin-bottom: 1rem;
 }
 </style>

@@ -361,7 +361,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
           }
         )
 
-      assert hd(res["errors"])["message"] == "Actor is not member of group"
+      assert hd(res["errors"])["message"] == "Profile is not member of group"
     end
 
     test "get_resource/3 when not connected", %{
@@ -516,7 +516,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
         )
 
       assert Enum.map(res["errors"], & &1["message"]) == [
-               "Actor id is not member of group"
+               "Profile is not member of group"
              ]
     end
 
@@ -545,7 +545,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
         )
 
       assert Enum.map(res["errors"], & &1["message"]) == [
-               "Parent resource doesn't match this group"
+               "Parent resource doesn't belong to this group"
              ]
     end
   end

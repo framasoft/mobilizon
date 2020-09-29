@@ -135,7 +135,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
         |> auth_conn(user)
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "Group id not found"
+      assert hd(json_response(res, 200)["errors"])["message"] =~ "Group not found"
     end
   end
 
@@ -336,7 +336,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
           }
         )
 
-      assert hd(res["errors"])["message"] == "Actor invited doesn't exist"
+      assert hd(res["errors"])["message"] == "Profile invited doesn't exist"
     end
 
     test "invite_member/3 fails to invite a non existing remote actor", %{
@@ -358,7 +358,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
           }
         )
 
-      assert hd(res["errors"])["message"] == "Actor invited doesn't exist"
+      assert hd(res["errors"])["message"] == "Profile invited doesn't exist"
     end
 
     test "invite_member/3 fails to invite a actor for a non-existing group", %{
@@ -377,7 +377,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
           }
         )
 
-      assert hd(res["errors"])["message"] == "Group id not found"
+      assert hd(res["errors"])["message"] == "Group not found"
     end
 
     test "invite_member/3 fails to invite a actor if we are not an admin for the group", %{

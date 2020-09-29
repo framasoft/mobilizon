@@ -76,7 +76,7 @@ export default class App extends Vue {
 
   currentUser!: ICurrentUser;
 
-  async created() {
+  async created(): Promise<void> {
     if (await this.initializeCurrentUser()) {
       await initializeCurrentActor(this.$apollo.provider.defaultClient);
     }

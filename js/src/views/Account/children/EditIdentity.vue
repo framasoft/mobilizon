@@ -124,6 +124,7 @@ h1 {
 <script lang="ts">
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { mixins } from "vue-class-component";
+import { Route } from "vue-router";
 import {
   CREATE_PERSON,
   CURRENT_ACTOR_CLIENT,
@@ -176,25 +177,25 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
 
   RouteName = RouteName;
 
-  get message() {
+  get message(): string | null {
     if (this.isUpdate) return null;
-    return this.$t("Only alphanumeric characters and underscores are supported.");
+    return this.$t("Only alphanumeric characters and underscores are supported.") as string;
   }
 
   @Watch("isUpdate")
-  async isUpdateChanged() {
+  async isUpdateChanged(): Promise<void> {
     this.resetFields();
   }
 
   @Watch("identityName", { immediate: true })
-  async onIdentityParamChanged(val: string) {
+  async onIdentityParamChanged(val: string): Promise<Route | undefined> {
     // Only used when we update the identity
     if (!this.isUpdate) return;
 
     await this.redirectIfNoIdentitySelected(val);
 
     if (!this.identityName) {
-      return await this.$router.push({ name: "CreateIdentity" });
+      return this.$router.push({ name: "CreateIdentity" });
     }
 
     if (this.identityName && this.identity) {
@@ -202,7 +203,7 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
     }
   }
 
-  submit() {
+  submit(): Promise<void> {
     if (this.isUpdate) return this.updateIdentity();
 
     return this.createIdentity();
@@ -211,7 +212,7 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
   /**
    * Delete an identity
    */
-  async deleteIdentity() {
+  async deleteIdentity(): Promise<void> {
     try {
       await this.$apollo.mutate({
         mutation: DELETE_PERSON,
@@ -252,7 +253,7 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
     }
   }
 
-  async updateIdentity() {
+  async updateIdentity(): Promise<void> {
     try {
       const variables = await this.buildVariables();
 
@@ -285,7 +286,7 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
     }
   }
 
-  async createIdentity() {
+  async createIdentity(): Promise<void> {
     try {
       const variables = await this.buildVariables();
 
@@ -320,11 +321,12 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
     }
   }
 
-  get getInstanceHost() {
+  // eslint-disable-next-line class-methods-use-this
+  get getInstanceHost(): string {
     return MOBILIZON_INSTANCE_HOST;
   }
 
-  openDeleteIdentityConfirmation() {
+  openDeleteIdentityConfirmation(): void {
     this.$buefy.dialog.prompt({
       type: "is-danger",
       title: this.$t("Delete your identity") as string,

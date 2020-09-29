@@ -51,6 +51,7 @@
 import { Prop, Vue, Component, Watch } from "vue-property-decorator";
 import Comment from "@/components/Comment/Comment.vue";
 import IdentityPickerWrapper from "@/views/Account/IdentityPickerWrapper.vue";
+import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { CommentModel, IComment } from "../../types/comment.model";
 import {
   CREATE_COMMENT_FROM_EVENT,
@@ -100,11 +101,11 @@ export default class CommentTree extends Vue {
   CommentModeration = CommentModeration;
 
   @Watch("currentActor")
-  watchCurrentActor(currentActor: IPerson) {
+  watchCurrentActor(currentActor: IPerson): void {
     this.newComment.actor = currentActor;
   }
 
-  async createCommentForEvent(comment: IComment) {
+  async createCommentForEvent(comment: IComment): Promise<void> {
     try {
       if (!comment.actor) return;
       await this.$apollo.mutate({
@@ -190,74 +191,78 @@ export default class CommentTree extends Vue {
       // and reset the new comment field
       this.newComment = new CommentModel();
     } catch (e) {
-      console.error(e);
+      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
     }
   }
 
-  async deleteComment(comment: IComment) {
-    await this.$apollo.mutate({
-      mutation: DELETE_COMMENT,
-      variables: {
-        commentId: comment.id,
-        actorId: this.currentActor.id,
-      },
-      update: (store, { data }) => {
-        if (data == null) return;
-        const deletedCommentId = data.deleteComment.id;
+  async deleteComment(comment: IComment): Promise<void> {
+    try {
+      await this.$apollo.mutate({
+        mutation: DELETE_COMMENT,
+        variables: {
+          commentId: comment.id,
+          actorId: this.currentActor.id,
+        },
+        update: (store, { data }) => {
+          if (data == null) return;
+          const deletedCommentId = data.deleteComment.id;
 
-        const commentsData = store.readQuery<{ event: IEvent }>({
-          query: COMMENTS_THREADS,
-          variables: {
-            eventUUID: this.event.uuid,
-          },
-        });
-        if (!commentsData) return;
-        const { event } = commentsData;
-        const { comments: oldComments } = event;
-
-        if (comment.originComment) {
-          // we have deleted a reply to a thread
-          const localData = store.readQuery<{ thread: IComment[] }>({
-            query: FETCH_THREAD_REPLIES,
+          const commentsData = store.readQuery<{ event: IEvent }>({
+            query: COMMENTS_THREADS,
             variables: {
-              threadId: comment.originComment.id,
+              eventUUID: this.event.uuid,
             },
           });
-          if (!localData) return;
-          const { thread: oldReplyList } = localData;
-          const replies = oldReplyList.filter((reply) => reply.id !== deletedCommentId);
+          if (!commentsData) return;
+          const { event } = commentsData;
+          const { comments: oldComments } = event;
+
+          if (comment.originComment) {
+            // we have deleted a reply to a thread
+            const localData = store.readQuery<{ thread: IComment[] }>({
+              query: FETCH_THREAD_REPLIES,
+              variables: {
+                threadId: comment.originComment.id,
+              },
+            });
+            if (!localData) return;
+            const { thread: oldReplyList } = localData;
+            const replies = oldReplyList.filter((reply) => reply.id !== deletedCommentId);
+            store.writeQuery({
+              query: FETCH_THREAD_REPLIES,
+              variables: {
+                threadId: comment.originComment.id,
+              },
+              data: { thread: replies },
+            });
+
+            const { originComment } = comment;
+
+            const parentCommentIndex = oldComments.findIndex(
+              (oldComment) => oldComment.id === originComment.id
+            );
+            const parentComment = oldComments[parentCommentIndex];
+            parentComment.replies = replies;
+            parentComment.totalReplies -= 1;
+            oldComments.splice(parentCommentIndex, 1, parentComment);
+            event.comments = oldComments;
+          } else {
+            // we have deleted a thread itself
+            event.comments = oldComments.filter((reply) => reply.id !== deletedCommentId);
+          }
           store.writeQuery({
-            query: FETCH_THREAD_REPLIES,
+            query: COMMENTS_THREADS,
             variables: {
-              threadId: comment.originComment.id,
+              eventUUID: this.event.uuid,
             },
-            data: { thread: replies },
+            data: { event },
           });
-
-          const { originComment } = comment;
-
-          const parentCommentIndex = oldComments.findIndex(
-            (oldComment) => oldComment.id === originComment.id
-          );
-          const parentComment = oldComments[parentCommentIndex];
-          parentComment.replies = replies;
-          parentComment.totalReplies -= 1;
-          oldComments.splice(parentCommentIndex, 1, parentComment);
-          event.comments = oldComments;
-        } else {
-          // we have deleted a thread itself
-          event.comments = oldComments.filter((reply) => reply.id !== deletedCommentId);
-        }
-        store.writeQuery({
-          query: COMMENTS_THREADS,
-          variables: {
-            eventUUID: this.event.uuid,
-          },
-          data: { event },
-        });
-      },
-    });
-    // this.comments = this.comments.filter(commentItem => commentItem.id !== comment.id);
+        },
+      });
+      // this.comments = this.comments.filter(commentItem => commentItem.id !== comment.id);
+    } catch (e) {
+      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+    }
   }
 
   get orderedComments(): IComment[] {

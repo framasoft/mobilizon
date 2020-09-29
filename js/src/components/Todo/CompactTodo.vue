@@ -21,6 +21,7 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { ITodo } from "../../types/todos";
 import RouteName from "../../router/name";
 import { UPDATE_TODO } from "../../graphql/todos";
@@ -41,15 +42,19 @@ export default class Todo extends Vue {
     this.updateTodo({ status });
   }
 
-  updateTodo(params: object) {
-    this.$apollo.mutate({
-      mutation: UPDATE_TODO,
-      variables: {
-        id: this.todo.id,
-        ...params,
-      },
-    });
-    this.editMode = false;
+  async updateTodo(params: Record<string, unknown>): Promise<void> {
+    try {
+      await this.$apollo.mutate({
+        mutation: UPDATE_TODO,
+        variables: {
+          id: this.todo.id,
+          ...params,
+        },
+      });
+      this.editMode = false;
+    } catch (e) {
+      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+    }
   }
 }
 </script>

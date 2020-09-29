@@ -7,6 +7,7 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedToken do
   alias Mobilizon.Events
   alias Mobilizon.Events.FeedToken
   alias Mobilizon.Users.User
+  import Mobilizon.Web.Gettext
 
   require Logger
 
@@ -24,7 +25,7 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedToken do
       {:ok, feed_token}
     else
       {:is_owned, nil} ->
-        {:error, "Actor id is not owned by authenticated user"}
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
     end
   end
 
@@ -40,7 +41,7 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedToken do
 
   @spec create_feed_token(any, map, map) :: {:error, String.t()}
   def create_feed_token(_parent, _args, %{}) do
-    {:error, "You are not allowed to create a feed token if not connected"}
+    {:error, dgettext("errors", "You are not allowed to create a feed token if not connected")}
   end
 
   @doc """
@@ -62,21 +63,21 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedToken do
       {:ok, res}
     else
       {:error, nil} ->
-        {:error, "No such feed token"}
+        {:error, dgettext("errors", "No such feed token")}
 
       :error ->
-        {:error, "Token is not a valid UUID"}
+        {:error, dgettext("errors", "Token is not a valid UUID")}
 
       {:no_token, _} ->
-        {:error, "Token does not exist"}
+        {:error, dgettext("errors", "Token does not exist")}
 
       {:token_from_user, false} ->
-        {:error, "You don't have permission to delete this token"}
+        {:error, dgettext("errors", "You don't have permission to delete this token")}
     end
   end
 
   @spec delete_feed_token(any, map, map) :: {:error, String.t()}
   def delete_feed_token(_parent, _args, %{}) do
-    {:error, "You are not allowed to delete a feed token if not connected"}
+    {:error, dgettext("errors", "You are not allowed to delete a feed token if not connected")}
   end
 end

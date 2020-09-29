@@ -17,6 +17,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   alias Mobilizon.Service.Statistics
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
+  import Mobilizon.Web.Gettext
   require Logger
 
   def list_action_logs(
@@ -47,7 +48,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   end
 
   def list_action_logs(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in and a moderator to list action logs"}
+    {:error, dgettext("errors", "You need to be logged-in and a moderator to list action logs")}
   end
 
   defp transform_action_log(
@@ -174,7 +175,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   end
 
   def get_dashboard(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in and an administrator to access dashboard statistics"}
+    {:error,
+     dgettext(
+       "errors",
+       "You need to be logged-in and an administrator to access dashboard statistics"
+     )}
   end
 
   def get_settings(_parent, _args, %{
@@ -185,7 +190,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   end
 
   def get_settings(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in and an administrator to access admin settings"}
+    {:error,
+     dgettext("errors", "You need to be logged-in and an administrator to access admin settings")}
   end
 
   def save_settings(_parent, args, %{
@@ -212,7 +218,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   end
 
   def save_settings(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in and an administrator to save admin settings"}
+    {:error,
+     dgettext("errors", "You need to be logged-in and an administrator to save admin settings")}
   end
 
   def list_relay_followers(

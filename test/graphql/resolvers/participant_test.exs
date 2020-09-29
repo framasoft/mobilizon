@@ -797,7 +797,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "Provided moderator actor ID doesn't have permission on this event"
+               "Provided moderator profile doesn't have permission on this event"
     end
   end
 
@@ -941,7 +941,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "Provided moderator actor ID doesn't have permission on this event"
+               "Provided moderator profile doesn't have permission on this event"
     end
   end
 

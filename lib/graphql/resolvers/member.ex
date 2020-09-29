@@ -10,6 +10,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
   alias Mobilizon.Federation.ActivityPub.Refresher
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
+  import Mobilizon.Web.Gettext
 
   @doc """
   Find members for group.
@@ -73,22 +74,22 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
       {:ok, member}
     else
       {:is_owned, nil} ->
-        {:error, "Actor id is not owned by authenticated user"}
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
 
       {:error, :group_not_found} ->
-        {:error, "Group id not found"}
+        {:error, dgettext("errors", "Group not found")}
 
       {:target_actor_username, _} ->
-        {:error, "Actor invited doesn't exist"}
+        {:error, dgettext("errors", "Profile invited doesn't exist")}
 
       {:has_rights_to_invite, {:error, :member_not_found}} ->
-        {:error, "You are not a member of this group"}
+        {:error, dgettext("errors", "You are not a member of this group")}
 
       {:has_rights_to_invite, _} ->
-        {:error, "You cannot invite to this group"}
+        {:error, dgettext("errors", "You cannot invite to this group")}
 
       {:ok, %Member{}} ->
-        {:error, "Actor is already a member of this group"}
+        {:error, dgettext("errors", "Profile is already a member of this group")}
     end
   end
 
@@ -133,11 +134,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
       {:ok, member}
     else
       {:has_rights_to_update_role, {:error, :member_not_found}} ->
-        {:error, "You are not a moderator or admin for this group"}
+        {:error, dgettext("errors", "You are not a moderator or admin for this group")}
 
       {:is_only_admin, true} ->
         {:error,
-         "You can't set yourself to a lower member role for this group because you are the only administrator"}
+         dgettext(
+           "errors",
+           "You can't set yourself to a lower member role for this group because you are the only administrator"
+         )}
     end
   end
 

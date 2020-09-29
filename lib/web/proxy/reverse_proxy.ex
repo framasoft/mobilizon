@@ -53,7 +53,7 @@ defmodule Mobilizon.Web.ReverseProxy do
     * `inline_content_types`:
       * `true` will not alter `content-disposition` (up to the upstream),
       * `false` will add `content-disposition: attachment` to any request,
-      * a list of whitelisted content types
+      * a list of allowlisted content types
 
       * `keep_user_agent` will forward the client's user-agent to the upstream.
       This may be useful if the upstream is doing content transformation

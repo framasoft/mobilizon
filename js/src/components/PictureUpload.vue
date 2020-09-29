@@ -1,7 +1,7 @@
 <template>
   <div class="root">
-    <figure class="image" v-if="imageSrc">
-      <img :src="imageSrc" />
+    <figure class="image" v-if="actualImageSrc">
+      <img :src="actualImageSrc" />
     </figure>
     <figure class="image is-128x128" v-else>
       <div class="image-placeholder">
@@ -54,6 +54,8 @@ import { Component, Model, Prop, Vue, Watch } from "vue-property-decorator";
 export default class PictureUpload extends Vue {
   @Model("change", { type: File }) readonly pictureFile!: File;
 
+  @Prop({ type: String, required: false }) defaultImageSrc!: string;
+
   @Prop({ type: String, required: false, default: "image/gif,image/png,image/jpeg,image/webp" })
   accept!: string;
 
@@ -61,7 +63,7 @@ export default class PictureUpload extends Vue {
     type: String,
     required: false,
     default() {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       return this.$t("Avatar");
     },
@@ -70,16 +72,16 @@ export default class PictureUpload extends Vue {
 
   imageSrc: string | null = null;
 
-  mounted() {
+  mounted(): void {
     this.updatePreview(this.pictureFile);
   }
 
   @Watch("pictureFile")
-  onPictureFileChanged(val: File) {
+  onPictureFileChanged(val: File): void {
     this.updatePreview(val);
   }
 
-  onFileChanged(file: File) {
+  onFileChanged(file: File): void {
     this.$emit("change", file);
 
     this.updatePreview(file);
@@ -92,6 +94,10 @@ export default class PictureUpload extends Vue {
     }
 
     this.imageSrc = null;
+  }
+
+  get actualImageSrc(): string | null {
+    return this.imageSrc || this.defaultImageSrc;
   }
 }
 </script>

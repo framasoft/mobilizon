@@ -7,6 +7,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Picture do
   alias Mobilizon.Media
   alias Mobilizon.Media.Picture
   alias Mobilizon.Users.User
+  import Mobilizon.Web.Gettext
 
   @doc """
   Get picture for an event's pic
@@ -41,7 +42,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Picture do
          }}
 
       _error ->
-        {:error, "Picture with ID #{picture_id} was not found"}
+        {:error, dgettext("errors", "Picture with ID %{id} was not found", id: picture_id)}
     end
   end
 
@@ -71,7 +72,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Picture do
        }}
     else
       {:is_owned, nil} ->
-        {:error, "Actor id is not owned by authenticated user"}
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
 
       error ->
         {:error, error}
@@ -79,6 +80,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Picture do
   end
 
   def upload_picture(_parent, _args, _resolution) do
-    {:error, "You need to login to upload a picture"}
+    {:error, dgettext("errors", "You need to login to upload a picture")}
   end
 end

@@ -1579,7 +1579,8 @@ defmodule Mobilizon.Actors do
             :comments,
             :attributed_to,
             :tags,
-            :physical_address
+            :physical_address,
+            :contacts
           ])
 
         ActivityPub.delete(event, actor, false)

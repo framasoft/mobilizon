@@ -17,7 +17,7 @@ config :mobilizon, :instance,
   description: "Change this to a proper description of your instance",
   hostname: "localhost",
   registrations_open: false,
-  registration_email_whitelist: [],
+  registration_email_allowlist: [],
   demo: false,
   repository: Mix.Project.config()[:source_url],
   allow_relay: true,
@@ -29,8 +29,7 @@ config :mobilizon, :instance,
   email_from: "noreply@localhost",
   email_reply_to: "noreply@localhost"
 
-# Groups are to be activated with Mobilizon 1.0.0
-config :mobilizon, :groups, enabled: false
+config :mobilizon, :groups, enabled: true
 
 config :mobilizon, :events, creation: true
 

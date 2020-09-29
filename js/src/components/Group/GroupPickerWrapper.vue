@@ -14,7 +14,11 @@
       <div class="media">
         <div class="media-left">
           <figure class="image is-48x48" v-if="currentGroup.avatar">
-            <img class="image" :src="currentGroup.avatar.url" :alt="currentGroup.avatar.alt" />
+            <img
+              class="image is-rounded"
+              :src="currentGroup.avatar.url"
+              :alt="currentGroup.avatar.alt"
+            />
           </figure>
           <b-icon v-else size="is-large" icon="account-circle" />
         </div>
@@ -46,7 +50,12 @@
       </p>
     </div>
     <b-modal :active.sync="isComponentModalActive" has-modal-card>
-      <group-picker v-model="currentGroup" :identity.sync="identity" @input="relay" />
+      <group-picker
+        v-model="currentGroup"
+        :identity.sync="identity"
+        @input="relay"
+        :restrict-moderator-level="true"
+      />
     </b-modal>
   </div>
 </template>
@@ -88,11 +97,11 @@ export default class GroupPickerWrapper extends Vue {
   groupMemberships: Paginate<IMember> = { elements: [], total: 0 };
 
   @Watch("value")
-  updateCurrentGroup(value: IGroup) {
+  updateCurrentGroup(value: IGroup): void {
     this.currentGroup = value;
   }
 
-  relay(group: IGroup) {
+  relay(group: IGroup): void {
     this.currentGroup = group;
     this.$emit("input", group);
     this.isComponentModalActive = false;

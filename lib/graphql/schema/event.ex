@@ -76,6 +76,8 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       resolve(&Event.list_participants_for_event/3)
     end
 
+    field(:contacts, list_of(:actor), description: "The events contacts")
+
     field(:related_events, list_of(:event),
       resolve: &Event.list_related_events/3,
       description: "Events related to this one"
@@ -258,6 +260,10 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     )
   end
 
+  input_object :contact do
+    field(:id, :string, description: "The Contact Actor ID")
+  end
+
   object :event_queries do
     @desc "Get all events"
     field :events, list_of(:event) do
@@ -303,6 +309,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       arg(:physical_address, :address_input)
       arg(:options, :event_options_input)
       arg(:draft, :boolean, default_value: false)
+      arg(:contacts, list_of(:contact), default_value: [])
 
       resolve(handle_errors(&Event.create_event/3))
     end
@@ -334,6 +341,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       arg(:physical_address, :address_input)
       arg(:options, :event_options_input)
       arg(:draft, :boolean)
+      arg(:contacts, list_of(:contact), default_value: [])
 
       resolve(handle_errors(&Event.update_event/3))
     end

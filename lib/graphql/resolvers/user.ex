@@ -15,6 +15,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   alias Mobilizon.Users.{Setting, User}
 
   alias Mobilizon.Web.{Auth, Email}
+  import Mobilizon.Web.Gettext
 
   require Logger
 
@@ -54,7 +55,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   end
 
   def list_users(_parent, _args, _resolution) do
-    {:error, "You need to have admin access to list users"}
+    {:error, dgettext("errors", "You need to have admin access to list users")}
   end
 
   @doc """
@@ -72,13 +73,17 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
       {:ok, user_and_tokens}
     else
       {:error, :user_not_found} ->
-        {:error, "No user with this email was found"}
+        {:error, dgettext("errors", "No user with this email was found")}
 
       {:error, :disabled_user} ->
-        {:error, "This user has been disabled"}
+        {:error, dgettext("errors", "This user has been disabled")}
 
       {:error, _error} ->
-        {:error, "Impossible to authenticate, either your email or password are invalid."}
+        {:error,
+         dgettext(
+           "errors",
+           "Impossible to authenticate, either your email or password are invalid."
+         )}
     end
   end
 
@@ -95,12 +100,12 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     else
       {:error, message} ->
         Logger.debug("Cannot refresh user token: #{inspect(message)}")
-        {:error, "Cannot refresh the token"}
+        {:error, dgettext("errors", "Cannot refresh the token")}
     end
   end
 
   def refresh_token(_parent, _params, _context) do
-    {:error, "You need to have an existing token to get a refresh token"}
+    {:error, dgettext("errors", "You need to have an existing token to get a refresh token")}
   end
 
   @doc """
@@ -117,10 +122,10 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
       {:ok, user}
     else
       :registration_closed ->
-        {:error, "Registrations are not enabled"}
+        {:error, dgettext("errors", "Registrations are not open")}
 
-      :not_whitelisted ->
-        {:error, "Your email is not on the whitelist"}
+      :not_allowlisted ->
+        {:error, dgettext("errors", "Your email is not on the allowlist")}
 
       error ->
         error
@@ -133,22 +138,22 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
       Config.instance_registrations_open?() ->
         :registration_ok
 
-      Config.instance_registrations_whitelist?() ->
-        check_white_listed_email?(email)
+      Config.instance_registrations_allowlist?() ->
+        check_allow_listed_email?(email)
 
       true ->
         :registration_closed
     end
   end
 
-  @spec check_white_listed_email?(String.t()) :: :registration_ok | :not_whitelisted
-  defp check_white_listed_email?(email) do
+  @spec check_allow_listed_email?(String.t()) :: :registration_ok | :not_allowlisted
+  defp check_allow_listed_email?(email) do
     [_, domain] = String.split(email, "@", parts: 2, trim: true)
 
-    if domain in Config.instance_registrations_whitelist() or
-         email in Config.instance_registrations_whitelist(),
+    if domain in Config.instance_registrations_allowlist() or
+         email in Config.instance_registrations_allowlist(),
        do: :registration_ok,
-       else: :not_whitelisted
+       else: :not_allowlisted
   end
 
   @doc """
@@ -171,7 +176,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
         Logger.info("Unable to validate user with token #{token}")
         Logger.debug(inspect(error))
 
-        {:error, "Unable to validate user"}
+        {:error, dgettext("errors", "Unable to validate user")}
     end
   end
 
@@ -187,10 +192,10 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
       {:ok, email}
     else
       {:error, :user_not_found} ->
-        {:error, "No user to validate with this email was found"}
+        {:error, dgettext("errors", "No user to validate with this email was found")}
 
       {:error, :email_too_soon} ->
-        {:error, "You requested again a confirmation email too soon"}
+        {:error, dgettext("errors", "You requested again a confirmation email too soon")}
     end
   end
 
@@ -207,14 +212,14 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
       {:ok, email}
     else
       {:can_reset_password, false} ->
-        {:error, "This user can't reset their password"}
+        {:error, dgettext("errors", "This user can't reset their password")}
 
       {:error, :user_not_found} ->
         # TODO : implement rate limits for this endpoint
-        {:error, "No user with this email was found"}
+        {:error, dgettext("errors", "No user with this email was found")}
 
       {:error, :email_too_soon} ->
-        {:error, "You requested again a confirmation email too soon"}
+        {:error, dgettext("errors", "You requested again a confirmation email too soon")}
     end
   end
 
@@ -322,19 +327,22 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
       {:ok, user}
     else
       {:current_password, _} ->
-        {:error, "The current password is invalid"}
+        {:error, dgettext("errors", "The current password is invalid")}
 
       {:same_password, true} ->
-        {:error, "The new password must be different"}
+        {:error, dgettext("errors", "The new password must be different")}
 
       {:error, %Ecto.Changeset{errors: [password: {"registration.error.password_too_short", _}]}} ->
         {:error,
-         "The password you have chosen is too short. Please make sure your password contains at least 6 characters."}
+         dgettext(
+           "errors",
+           "The password you have chosen is too short. Please make sure your password contains at least 6 characters."
+         )}
     end
   end
 
   def change_password(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to change your password"}
+    {:error, dgettext("errors", "You need to be logged-in to change your password")}
   end
 
   def change_email(_parent, %{email: new_email, password: password}, %{
@@ -365,18 +373,18 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
       {:ok, user}
     else
       {:current_password, _} ->
-        {:error, "The password provided is invalid"}
+        {:error, dgettext("errors", "The password provided is invalid")}
 
       {:same_email, true} ->
-        {:error, "The new email must be different"}
+        {:error, dgettext("errors", "The new email must be different")}
 
       {:email_valid, _} ->
-        {:error, "The new email doesn't seem to be valid"}
+        {:error, dgettext("errors", "The new email doesn't seem to be valid")}
     end
   end
 
   def change_email(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to change your email"}
+    {:error, dgettext("errors", "You need to be logged-in to change your email")}
   end
 
   def validate_email(_parent, %{token: token}, _resolution) do
@@ -406,10 +414,10 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
       Admin.log_action(moderator_actor, "delete", user)
     else
       {:moderator_actor, nil} ->
-        {:error, "No actor found for the moderator user"}
+        {:error, dgettext("errors", "No profile found for the moderator user")}
 
       %User{disabled: true} ->
-        {:error, "User already disabled"}
+        {:error, dgettext("errors", "User already disabled")}
     end
   end
 
@@ -428,15 +436,15 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
         do_delete_account(user)
 
       {:confirmation_password, nil} ->
-        {:error, "The password provided is invalid"}
+        {:error, dgettext("errors", "The password provided is invalid")}
 
       {:current_password, _} ->
-        {:error, "The password provided is invalid"}
+        {:error, dgettext("errors", "The password provided is invalid")}
     end
   end
 
   def delete_account(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to delete your account"}
+    {:error, dgettext("errors", "You need to be logged-in to delete your account")}
   end
 
   defp do_delete_account(%User{} = user, actor_performing \\ nil) do
@@ -478,7 +486,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
       {:ok, settings}
     else
       {:same_user, _} ->
-        {:error, "User requested is not logged-in"}
+        {:error, dgettext("errors", "User requested is not logged-in")}
     end
   end
 
@@ -503,7 +511,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
       {:error, changeset} ->
         Logger.debug(inspect(changeset))
-        {:error, "Error while saving user setting"}
+        {:error, dgettext("errors", "Error while saving user settings")}
     end
   end
 

@@ -44,8 +44,8 @@
           </div>
         </div>
         <div class="column">
-          <b-message type="is-warning" v-if="config.registrationsWhitelist">
-            {{ $t("Registrations are restricted by whitelisting.") }}
+          <b-message type="is-warning" v-if="config.registrationsAllowlist">
+            {{ $t("Registrations are restricted by allowlisting.") }}
           </b-message>
           <form v-on:submit.prevent="submit()">
             <b-field

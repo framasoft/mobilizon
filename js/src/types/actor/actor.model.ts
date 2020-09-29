@@ -16,8 +16,8 @@ export interface IActor {
   summary: string;
   preferredUsername: string;
   suspended: boolean;
-  avatar: IPicture | null;
-  banner: IPicture | null;
+  avatar?: IPicture | null;
+  banner?: IPicture | null;
   type: ActorType;
 }
 

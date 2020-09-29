@@ -9,6 +9,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Actor do
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Refresher
   alias Mobilizon.Users.User
+  import Mobilizon.Web.Gettext
 
   require Logger
 
@@ -20,10 +21,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Actor do
         {:ok, actor}
 
       %Actor{} ->
-        {:error, "Only remote actors may be refreshed"}
+        {:error, dgettext("errors", "Only remote profiles may be refreshed")}
 
       _ ->
-        {:error, "No actor found with this ID"}
+        {:error, dgettext("errors", "No profile found with this ID")}
     end
   end
 
@@ -50,22 +51,22 @@ defmodule Mobilizon.GraphQL.Resolvers.Actor do
           {:ok, actor}
 
         %Actor{domain: nil} ->
-          {:error, "No remote profile found with this ID"}
+          {:error, dgettext("errors", "No remote profile found with this ID")}
       end
     else
       {:moderator_actor, nil} ->
-        {:error, "No actor found for the moderator user"}
+        {:error, dgettext("errors", "No profile found for the moderator user")}
 
       %Actor{suspended: true} ->
-        {:error, "Actor already suspended"}
+        {:error, dgettext("errors", "Profile already suspended")}
 
       {:error, _} ->
-        {:error, "Error while performing background task"}
+        {:error, dgettext("errors", "Error while performing background task")}
     end
   end
 
   def suspend_profile(_parent, _args, _resolution) do
-    {:error, "Only moderators and administrators can suspend a profile"}
+    {:error, dgettext("errors", "Only moderators and administrators can suspend a profile")}
   end
 
   def unsuspend_profile(_parent, %{id: id}, %{
@@ -84,18 +85,18 @@ defmodule Mobilizon.GraphQL.Resolvers.Actor do
       {:ok, actor}
     else
       {:moderator_actor, nil} ->
-        {:error, "No actor found for the moderator user"}
+        {:error, dgettext("errors", "No profile found for the moderator user")}
 
       nil ->
-        {:error, "No remote profile found with this ID"}
+        {:error, dgettext("errors", "No remote profile found with this ID")}
 
       {:error, _} ->
-        {:error, "Error while performing background task"}
+        {:error, dgettext("errors", "Error while performing background task")}
     end
   end
 
   def unsuspend_profile(_parent, _args, _resolution) do
-    {:error, "Only moderators and administrators can unsuspend a profile"}
+    {:error, dgettext("errors", "Only moderators and administrators can unsuspend a profile")}
   end
 
   @spec refresh_if_remote(Actor.t()) :: {:ok, Actor.t()}

@@ -210,14 +210,14 @@ export default class GroupMembers extends Vue {
 
   usernameWithDomain = usernameWithDomain;
 
-  mounted() {
+  mounted(): void {
     const roleQuery = this.$route.query.role as string;
     if (Object.values(MemberRole).includes(roleQuery as MemberRole)) {
       this.roles = roleQuery as MemberRole;
     }
   }
 
-  async inviteMember() {
+  async inviteMember(): Promise<void> {
     await this.$apollo.mutate<{ inviteMember: IMember }>({
       mutation: INVITE_MEMBER,
       variables: {
@@ -253,7 +253,7 @@ export default class GroupMembers extends Vue {
   }
 
   @Watch("page")
-  loadMoreMembers() {
+  loadMoreMembers(): void {
     this.$apollo.queries.event.fetchMore({
       // New variables
       variables: {
@@ -279,7 +279,7 @@ export default class GroupMembers extends Vue {
     });
   }
 
-  async removeMember(memberId: string) {
+  async removeMember(memberId: string): Promise<void> {
     await this.$apollo.mutate<{ removeMember: IMember }>({
       mutation: REMOVE_MEMBER,
       variables: {
@@ -310,15 +310,15 @@ export default class GroupMembers extends Vue {
     });
   }
 
-  promoteMember(memberId: string) {
+  promoteMember(memberId: string): Promise<void> {
     return this.updateMember(memberId, MemberRole.ADMINISTRATOR);
   }
 
-  demoteMember(memberId: string) {
+  demoteMember(memberId: string): Promise<void> {
     return this.updateMember(memberId, MemberRole.MEMBER);
   }
 
-  async updateMember(memberId: string, role: MemberRole) {
+  async updateMember(memberId: string, role: MemberRole): Promise<void> {
     await this.$apollo.mutate<{ updateMember: IMember }>({
       mutation: UPDATE_MEMBER,
       variables: {

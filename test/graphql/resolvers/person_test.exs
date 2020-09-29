@@ -355,7 +355,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       assert json_response(res, 200)["data"]["updatePerson"] == nil
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "Actor is not owned by authenticated user"
+               "Profile is not owned by authenticated user"
     end
 
     test "update_person/3 should fail to update a not existing identity", context do
@@ -381,7 +381,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       assert json_response(res, 200)["data"]["updatePerson"] == nil
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "Actor not found"
+               "Profile not found"
     end
 
     test "delete_person/3 should fail to update a not owned identity", context do
@@ -405,7 +405,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       assert json_response(res, 200)["data"]["deletePerson"] == nil
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "Actor is not owned by authenticated user"
+               "Profile is not owned by authenticated user"
     end
 
     test "delete_person/3 should fail to delete a not existing identity", context do
@@ -428,7 +428,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       assert json_response(res, 200)["data"]["deletePerson"] == nil
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "Actor not found"
+               "Profile not found"
     end
 
     test "delete_person/3 should fail to delete the last user identity", context do
@@ -621,7 +621,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       assert res["data"]["person"]["participations"]["elements"] == nil
 
       assert hd(res["errors"])["message"] ==
-               "Actor id is not owned by authenticated user"
+               "Profile is not owned by authenticated user"
     end
 
     test "find_person/3 can return the participation for an identity on a specific event",

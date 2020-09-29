@@ -33,8 +33,8 @@
       <header class="block-container presentation">
         <div class="block-column media">
           <div class="media-left">
-            <figure class="image rounded is-128x128" v-if="group.avatar">
-              <img :src="group.avatar.url" />
+            <figure class="image is-128x128" v-if="group.avatar">
+              <img class="is-rounded" :src="group.avatar.url" alt="" />
             </figure>
             <b-icon v-else size="is-large" icon="account-group" />
           </div>
@@ -55,13 +55,6 @@
                 }"
                 class="button is-outlined"
                 >{{ $t("Group settings") }}</router-link
-              >
-              <b-button
-                type="is-danger"
-                v-if="isCurrentActorAGroupMember"
-                outlined
-                @click="leaveGroup"
-                >{{ $t("Leave group") }}</b-button
               >
             </div>
           </div>
@@ -114,6 +107,7 @@
             >{{ $t("Show map") }}</span
           >
         </div>
+        <img v-if="group.banner && group.banner.url" :src="group.banner.url" alt="" />
       </header>
     </div>
     <div v-if="isCurrentActorAGroupMember" class="block-container">
@@ -183,50 +177,6 @@
               }"
               class="button is-primary"
               >{{ $t("+ Add a resource") }}</router-link
-            >
-          </template>
-        </group-section>
-        <!-- Todos -->
-        <group-section
-          :title="$t('Ongoing tasks')"
-          icon="checkbox-multiple-marked"
-          :route="{
-            name: RouteName.TODO_LISTS,
-            params: { preferredUsername: usernameWithDomain(group) },
-          }"
-        >
-          <template v-slot:default>
-            <div v-if="group.todoLists.elements.length > 0">
-              <div v-for="todoList in group.todoLists.elements" :key="todoList.id">
-                <router-link :to="{ name: RouteName.TODO_LIST, params: { id: todoList.id } }">
-                  <h2 class="is-size-3">
-                    {{
-                      $tc("{title} ({count} todos)", todoList.todos.total, {
-                        count: todoList.todos.total,
-                        title: todoList.title,
-                      })
-                    }}
-                  </h2>
-                </router-link>
-                <compact-todo
-                  :todo="todo"
-                  v-for="todo in todoList.todos.elements.slice(0, 3)"
-                  :key="todo.id"
-                />
-              </div>
-            </div>
-            <div v-else class="content has-text-grey has-text-centered">
-              <p>{{ $t("No ongoing todos") }}</p>
-            </div>
-          </template>
-          <template v-slot:create>
-            <router-link
-              :to="{
-                name: RouteName.TODO_LISTS,
-                params: { preferredUsername: usernameWithDomain(group) },
-              }"
-              class="button is-primary"
-              >{{ $t("+ Add a todo") }}</router-link
             >
           </template>
         </group-section>
@@ -349,7 +299,7 @@
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import EventCard from "@/components/Event/EventCard.vue";
 import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
-import { FETCH_GROUP, LEAVE_GROUP } from "@/graphql/group";
+import { FETCH_GROUP } from "@/graphql/group";
 import {
   IActor,
   IGroup,
@@ -369,7 +319,6 @@ import FolderItem from "@/components/Resource/FolderItem.vue";
 import { Address } from "@/types/address.model";
 import Invitations from "@/components/Group/Invitations.vue";
 import addMinutes from "date-fns/addMinutes";
-import { Route } from "vue-router";
 import GroupSection from "../../components/Group/GroupSection.vue";
 import RouteName from "../../router/name";
 
@@ -451,16 +400,6 @@ export default class Group extends Vue {
     }
   }
 
-  async leaveGroup(): Promise<Route> {
-    await this.$apollo.mutate({
-      mutation: LEAVE_GROUP,
-      variables: {
-        groupId: this.group.id,
-      },
-    });
-    return this.$router.push({ name: RouteName.MY_GROUPS });
-  }
-
   acceptInvitation(): void {
     if (this.groupMember) {
       const index = this.person.memberships.elements.findIndex(
@@ -477,7 +416,7 @@ export default class Group extends Vue {
 
   get groupTitle(): undefined | string {
     if (!this.group) return undefined;
-    return this.group.preferredUsername;
+    return this.group.name || this.group.preferredUsername;
   }
 
   get groupSummary(): undefined | string {
@@ -583,6 +522,8 @@ div.container {
     &.presentation {
       border: 2px solid $purple-2;
       padding: 10px 0;
+      position: relative;
+      overflow: hidden;
 
       h1 {
         color: $purple-1;
@@ -592,6 +533,20 @@ div.container {
 
       .button.is-outlined {
         border-color: $purple-2;
+      }
+
+      & > *:not(img) {
+        position: relative;
+        z-index: 2;
+      }
+
+      & > img {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: auto;
+        opacity: 0.3;
       }
     }
 

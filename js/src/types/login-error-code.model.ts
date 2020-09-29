@@ -1,5 +1,5 @@
 export enum LoginErrorCode {
-  NEED_TO_LOGIN = "rouge",
+  NEED_TO_LOGIN = "need_to_login",
 }
 
 export enum LoginError {

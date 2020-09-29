@@ -23,10 +23,8 @@
   </aside>
 </template>
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
-import { Route } from "vue-router";
-import { IGroup, IPerson } from "@/types/actor";
-import { FETCH_GROUP } from "@/graphql/group";
+import { Component, Vue } from "vue-property-decorator";
+import { IGroup } from "@/types/actor";
 import RouteName from "../../router/name";
 import SettingMenuSection from "../../components/Settings/SettingMenuSection.vue";
 import SettingMenuItem from "../../components/Settings/SettingMenuItem.vue";

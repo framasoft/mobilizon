@@ -8,6 +8,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
   alias Mobilizon.Discussions.Comment, as: CommentModel
   alias Mobilizon.Users
   alias Mobilizon.Users.User
+  import Mobilizon.Web.Gettext
 
   alias Mobilizon.GraphQL.API.Comments
 
@@ -32,12 +33,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
       {:ok, comment}
     else
       {:is_owned, nil} ->
-        {:error, "Actor id is not owned by authenticated user"}
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
     end
   end
 
   def create_comment(_parent, _args, _context) do
-    {:error, "You are not allowed to create a comment if not connected"}
+    {:error, dgettext("errors", "You are not allowed to create a comment if not connected")}
   end
 
   def update_comment(
@@ -59,7 +60,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
   end
 
   def edit_comment(_parent, _args, _context) do
-    {:error, "You are not allowed to update a comment if not connected"}
+    {:error, dgettext("errors", "You are not allowed to update a comment if not connected")}
   end
 
   def delete_comment(
@@ -87,19 +88,19 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
           end
 
         true ->
-          {:error, "You cannot delete this comment"}
+          {:error, dgettext("errors", "You cannot delete this comment")}
       end
     else
       %CommentModel{deleted_at: deleted_at} when not is_nil(deleted_at) ->
-        {:error, "Comment is already deleted"}
+        {:error, dgettext("errors", "Comment is already deleted")}
 
       {:is_owned, nil} ->
-        {:error, "Actor id is not owned by authenticated user"}
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
     end
   end
 
   def delete_comment(_parent, _args, %{}) do
-    {:error, "You are not allowed to delete a comment if not connected"}
+    {:error, dgettext("errors", "You are not allowed to delete a comment if not connected")}
   end
 
   defp do_delete_comment(%CommentModel{} = comment, %Actor{} = actor) do
