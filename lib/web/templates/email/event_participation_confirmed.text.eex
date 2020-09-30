@@ -1,0 +1,6 @@
+<%= gettext "You're going!" %>
+==
+<%= gettext "You recently requested to attend %{title}.", title: @event.title %>
+<%= gettext "You have confirmed your participation. Update your calendar, because you're on the guest list now!" %>
+<%= page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) %>
+<%= gettext "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button." %>

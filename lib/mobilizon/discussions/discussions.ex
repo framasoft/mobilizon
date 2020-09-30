@@ -288,6 +288,12 @@ defmodule Mobilizon.Discussions do
   @spec count_local_comments :: integer
   def count_local_comments, do: Repo.one(count_local_comments_query())
 
+  @doc """
+  Counts all comments.
+  """
+  @spec count_comments :: integer
+  def count_comments, do: Repo.one(count_comments_query())
+
   def get_discussion(discussion_id) do
     Discussion
     |> Repo.get(discussion_id)
@@ -421,6 +427,15 @@ defmodule Mobilizon.Discussions do
       c in Comment,
       select: count(c.id),
       where: c.local == ^true and c.visibility in ^@public_visibility
+    )
+  end
+
+  @spec count_comments_query :: Ecto.Query.t()
+  defp count_comments_query do
+    from(
+      c in Comment,
+      select: count(c.id),
+      where: c.visibility in ^@public_visibility
     )
   end
 

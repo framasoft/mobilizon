@@ -13,7 +13,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Statistics do
      %{
        number_of_users: StatisticsModule.get_cached_value(:local_users),
        number_of_events: StatisticsModule.get_cached_value(:local_events),
-       number_of_comments: StatisticsModule.get_cached_value(:local_comments)
+       number_of_comments: StatisticsModule.get_cached_value(:local_comments),
+       number_of_groups: StatisticsModule.get_cached_value(:local_groups)
      }}
   end
 end

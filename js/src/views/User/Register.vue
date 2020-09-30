@@ -180,7 +180,7 @@ export default class Register extends Vue {
 
   config!: IConfig;
 
-  async submit(): Promise<Route | void> {
+  async submit(): Promise<void> {
     this.sendingForm = true;
     this.credentials.locale = this.$i18n.locale;
     try {
@@ -191,7 +191,7 @@ export default class Register extends Vue {
         variables: this.credentials,
       });
 
-      return this.$router.push({
+      this.$router.push({
         name: RouteName.REGISTER_PROFILE,
         params: { email: this.credentials.email },
       });

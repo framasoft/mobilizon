@@ -63,8 +63,7 @@ function insertLocalAnonymousParticipation(
 
 function buildExpiration(event: IEvent): Date {
   const expiration = event.endsOn || event.beginsOn;
-  expiration.setMonth(expiration.getMonth() + 3);
-  expiration.setDate(1);
+  expiration.setMonth(expiration.getMonth() + 1);
   return expiration;
 }
 

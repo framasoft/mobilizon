@@ -329,7 +329,7 @@
                   :endsOn="event.endsOn"
                 />
               </event-metadata-block>
-              <event-metadata-block :title="$tc('Contact', event.contacts.length)">
+              <event-metadata-block :title="$t('Organized by')">
                 <popover-actor-card :actor="event.organizerActor" v-if="!event.attributedTo">
                   <actor-card :actor="event.organizerActor" />
                 </popover-actor-card>

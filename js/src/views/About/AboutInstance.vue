@@ -13,6 +13,9 @@
         <i18n tag="p" path="Home to {number} users">
           <strong slot="number">{{ statistics.numberOfUsers }}</strong>
         </i18n>
+        <i18n tag="p" path="and {number} groups">
+          <strong slot="number">{{ statistics.numberOfGroups }}</strong>
+        </i18n>
         <i18n tag="p" path="Who published {number} events">
           <strong slot="number">{{ statistics.numberOfEvents }}</strong>
         </i18n>
@@ -102,13 +105,13 @@ export default class AboutInstance extends Vue {
     if (this.isContactURL) {
       return {
         uri: this.config.contact,
-        text: this.urlToHostname(this.config.contact) || (this.$t("Contact") as string),
+        text: AboutInstance.urlToHostname(this.config.contact) || (this.$t("Contact") as string),
       };
     }
     return null;
   }
 
-  urlToHostname(url: string): string | null {
+  static urlToHostname(url: string): string | null {
     try {
       return new URL(url).hostname;
     } catch (e) {
@@ -135,10 +138,11 @@ section {
   &.contact-statistics {
     margin: 2px auto;
     .statistics {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, 150px);
+      grid-template-rows: repeat(2, 1fr);
       p {
         text-align: right;
-        flex: 1;
         padding: 0 15px;
 
         & > * {

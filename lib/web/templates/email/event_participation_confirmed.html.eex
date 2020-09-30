@@ -10,7 +10,7 @@
       <tr>
         <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #3A384C; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
           <h1 style="font-size: 48px; font-weight: 400; margin: 0;">
-            <%= gettext "Confirm your e-mail" %>
+            <%= gettext "You're going!" %>
           </h1>
         </td>
       </tr>
@@ -35,7 +35,14 @@
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <p style="margin: 0;">
-            <%= gettext "Hi there! You just registered to join this event: « %{title} ». Please confirm the e-mail address you provided:", title: @participant.event.title %>
+            <%= gettext("You recently requested to attend <b>%{title}</b>.", title: @event.title) |> raw %>
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+          <p style="margin: 0">
+            <%= gettext "You have now confirmed your participation. Update your calendar, because you're on the guest list now!" %>
           </p>
         </td>
       </tr>
@@ -47,8 +54,8 @@
               <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                 <table border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td align="center" style="border-radius: 3px;" bgcolor="#3C376E"><a href="<%= page_url(Mobilizon.Web.Endpoint, :participation_email_confirmation, @participant.metadata.confirmation_token) %>" target="_blank" style="font-size: 20px; font-family: 'Roboto', Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;">
-                        <%= gettext "Confirm my e-mail address" %>
+                    <td align="center" style="border-radius: 3px;" bgcolor="#3C376E"><a href="<%= page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;">
+                        <%= gettext "Visit event page" %>
                       </a></td>
                   </tr>
                 </table>
@@ -60,14 +67,7 @@
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <p style="margin: 0">
-            <%= ngettext "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button.", "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button.", 1 %>
-          </p>
-        </td>
-      </tr>
-      <tr>
-        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #757199; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 20px;" >
-          <p style="margin: 0">
-            <%= gettext "If you didn't trigger this email, you may safely ignore it." %>
+            <%= gettext "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button." %>
           </p>
         </td>
       </tr>

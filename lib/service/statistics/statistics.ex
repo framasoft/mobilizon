@@ -3,7 +3,7 @@ defmodule Mobilizon.Service.Statistics do
   A module that provides cached statistics
   """
 
-  alias Mobilizon.{Discussions, Events, Users}
+  alias Mobilizon.{Actors, Discussions, Events, Users}
 
   def get_cached_value(key) do
     case Cachex.fetch(:statistics, key, fn key ->
@@ -27,5 +27,21 @@ defmodule Mobilizon.Service.Statistics do
 
   defp create_cache(:local_comments) do
     Discussions.count_local_comments()
+  end
+
+  defp create_cache(:local_groups) do
+    Actors.count_local_groups()
+  end
+
+  defp create_cache(:federation_events) do
+    Events.count_events()
+  end
+
+  defp create_cache(:federation_comments) do
+    Discussions.count_comments()
+  end
+
+  defp create_cache(:federation_groups) do
+    Actors.count_groups()
   end
 end

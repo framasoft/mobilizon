@@ -1139,14 +1139,20 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
         Email.Participation.anonymous_participation_confirmation(@email, participant)
       )
 
-      conn
-      |> AbsintheHelpers.graphql_query(
-        query: @confirmation_mutation,
-        variables: %{confirmationToken: confirmation_token}
-      )
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @confirmation_mutation,
+          variables: %{confirmationToken: confirmation_token}
+        )
+
+      assert is_nil(res["errors"])
 
       assert %Participant{role: :participant} =
+               participant =
                event.id |> Events.list_participants_for_event() |> Map.get(:elements) |> hd()
+
+      assert_delivered_email(Email.Participation.participation_updated(@email, participant))
     end
 
     test "I can participate anonymously and and confirm my participation with bad token",

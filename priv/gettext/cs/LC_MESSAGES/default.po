@@ -112,7 +112,7 @@ msgid "You created an account on %{host} with this email address. You are one cl
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/participation.ex:92
+#: lib/web/email/participation.ex:113
 msgid "Your participation to event %{title} has been approved"
 msgstr ""
 
@@ -148,7 +148,7 @@ msgid "Warning"
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/participation.ex:114
+#: lib/web/email/participation.ex:135
 msgid "Confirm your participation to event %{title}"
 msgstr ""
 
@@ -1005,6 +1005,7 @@ msgstr ""
 
 #, elixir-format
 #: lib/web/templates/email/event_participation_approved.html.eex:58
+#: lib/web/templates/email/event_participation_confirmed.html.eex:58
 msgid "Visit event page"
 msgstr ""
 
@@ -1032,7 +1033,8 @@ msgstr ""
 
 #, elixir-format
 #: lib/web/templates/email/event_participation_approved.html.eex:70
-#: lib/web/templates/email/event_participation_approved.text.eex:11
+#: lib/web/templates/email/event_participation_approved.text.eex:11 lib/web/templates/email/event_participation_confirmed.html.eex:70
+#: lib/web/templates/email/event_participation_confirmed.text.eex:6
 msgid "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button."
 msgstr ""
 
@@ -1049,13 +1051,14 @@ msgid "You issued a request to attend %{title}."
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_participation_approved.html.eex:38
 #: lib/web/templates/email/event_participation_approved.text.eex:5
+#: lib/web/templates/email/event_participation_confirmed.text.eex:3
 msgid "You recently requested to attend %{title}."
 msgstr ""
 
 #, elixir-format
 #: lib/web/templates/email/event_participation_approved.html.eex:13
+#: lib/web/templates/email/event_participation_confirmed.html.eex:13 lib/web/templates/email/event_participation_confirmed.text.eex:1
 msgid "You're going!"
 msgstr ""
 
@@ -1260,4 +1263,21 @@ msgstr ""
 #: lib/web/templates/api/privacy.html.eex:99
 msgctxt "terms"
 msgid "Your content may be downloaded by other instances in the network. Your public events and comments are delivered to the instances following your own instance. Content created through a group is forwarded to all the instances of all the members of the group, insofar as these members reside on a different instance than this one."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/event_participation_confirmed.html.eex:45
+#: lib/web/templates/email/event_participation_confirmed.text.eex:4
+msgid "You have confirmed your participation. Update your calendar, because you're on the guest list now!"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/event_participation_approved.html.eex:38
+#: lib/web/templates/email/event_participation_confirmed.html.eex:38
+msgid "You recently requested to attend <b>%{title}</b>."
+msgstr ""
+
+#, elixir-format
+#: lib/web/email/participation.ex:92
+msgid "Your participation to event %{title} has been confirmed"
 msgstr ""

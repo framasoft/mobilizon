@@ -136,7 +136,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   end
 
   @doc """
-  Leave an event for an actor
+  Leave an event for an anonymous actor
   """
   def actor_leave_event(
         _parent,

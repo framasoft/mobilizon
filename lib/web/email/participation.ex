@@ -9,7 +9,7 @@ defmodule Mobilizon.Web.Email.Participation do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Config
-  alias Mobilizon.Events.Participant
+  alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Users
   alias Mobilizon.Users.User
   alias Mobilizon.Web.{Email, Gettext}
@@ -78,6 +78,27 @@ defmodule Mobilizon.Web.Email.Participation do
     |> assign(:event, event)
     |> assign(:subject, subject)
     |> render(:event_participation_rejected)
+  end
+
+  @spec participation_updated(String.t(), Participant.t(), String.t()) :: Bamboo.Email.t()
+  def participation_updated(
+        email,
+        %Participant{event: %Event{join_options: :free} = event, role: :participant},
+        locale
+      ) do
+    Gettext.put_locale(locale)
+
+    subject =
+      gettext(
+        "Your participation to event %{title} has been confirmed",
+        title: event.title
+      )
+
+    Email.base_email(to: email, subject: subject)
+    |> assign(:locale, locale)
+    |> assign(:event, event)
+    |> assign(:subject, subject)
+    |> render(:event_participation_confirmed)
   end
 
   @spec participation_updated(String.t(), Participant.t(), String.t()) :: Bamboo.Email.t()

@@ -10,6 +10,14 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
   alias Mobilizon.Users.{Setting, User}
   require Logger
 
+  @spec trigger_notifications_for_participant(Participant.t()) :: {:ok, nil}
+  def trigger_notifications_for_participant(%Participant{} = participant) do
+    before_event_notification(participant)
+    on_day_notification(participant)
+    weekly_notification(participant)
+    {:ok, nil}
+  end
+
   def before_event_notification(%Participant{
         id: participant_id,
         event: %Event{begins_on: begins_on},
