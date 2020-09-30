@@ -123,7 +123,7 @@ msgstr ""
 "Estás a un clic de activarlo. Si no eras tú, ignora este correo electrónico."
 
 #, elixir-format
-#: lib/web/email/participation.ex:92
+#: lib/web/email/participation.ex:113
 msgid "Your participation to event %{title} has been approved"
 msgstr "Su participación en el evento %{title} ha sido aprobada"
 
@@ -160,7 +160,7 @@ msgid "Warning"
 msgstr "Advertencia"
 
 #, elixir-format
-#: lib/web/email/participation.ex:114
+#: lib/web/email/participation.ex:135
 msgid "Confirm your participation to event %{title}"
 msgstr "Confirme su participación en el evento %{title}"
 
@@ -1218,6 +1218,7 @@ msgstr "Ver el informe:"
 
 #, elixir-format
 #: lib/web/templates/email/event_participation_approved.html.eex:58
+#: lib/web/templates/email/event_participation_confirmed.html.eex:58
 msgid "Visit event page"
 msgstr "Visita la página del evento"
 
@@ -1245,7 +1246,8 @@ msgstr "Qué pasa hoy?"
 
 #, elixir-format
 #: lib/web/templates/email/event_participation_approved.html.eex:70
-#: lib/web/templates/email/event_participation_approved.text.eex:11
+#: lib/web/templates/email/event_participation_approved.text.eex:11 lib/web/templates/email/event_participation_confirmed.html.eex:70
+#: lib/web/templates/email/event_participation_confirmed.text.eex:6
 msgid "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button."
 msgstr ""
 "Si desea actualizar o cancelar su asistencia, simplemente acceda a la página "
@@ -1268,13 +1270,14 @@ msgid "You issued a request to attend %{title}."
 msgstr "Envió una solicitud para asistir a %{title}."
 
 #, elixir-format
-#: lib/web/templates/email/event_participation_approved.html.eex:38
 #: lib/web/templates/email/event_participation_approved.text.eex:5
+#: lib/web/templates/email/event_participation_confirmed.text.eex:3
 msgid "You recently requested to attend %{title}."
 msgstr "Solicitaste participar en el evento %{title}."
 
 #, elixir-format
 #: lib/web/templates/email/event_participation_approved.html.eex:13
+#: lib/web/templates/email/event_participation_confirmed.html.eex:13 lib/web/templates/email/event_participation_confirmed.text.eex:1
 msgid "You're going!"
 msgstr "¡Vas!"
 
@@ -1579,3 +1582,20 @@ msgstr ""
 "contenidos se entregan a los servidores. siguiendo tu instancia, y los "
 "mensajes directos se entregan a los servidores de los destinatarios, en la "
 "medida en que estos destinatarios residen en un servidor diferente a este."
+
+#, elixir-format
+#: lib/web/templates/email/event_participation_confirmed.html.eex:45
+#: lib/web/templates/email/event_participation_confirmed.text.eex:4
+msgid "You have confirmed your participation. Update your calendar, because you're on the guest list now!"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/event_participation_approved.html.eex:38
+#: lib/web/templates/email/event_participation_confirmed.html.eex:38
+msgid "You recently requested to attend <b>%{title}</b>."
+msgstr "Solicitaste participar en el evento %{title}."
+
+#, elixir-format
+#: lib/web/email/participation.ex:92
+msgid "Your participation to event %{title} has been confirmed"
+msgstr "Su participación en el evento %{title} ha sido aprobada"
