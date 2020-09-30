@@ -100,15 +100,15 @@ export default class ReportModal extends Vue {
 
   forward = false;
 
-  get translatedCancelText() {
-    return this.cancelText || this.$t("Cancel");
+  get translatedCancelText(): string {
+    return this.cancelText || (this.$t("Cancel") as string);
   }
 
-  get translatedConfirmText() {
-    return this.confirmText || this.$t("Send the report");
+  get translatedConfirmText(): string {
+    return this.confirmText || (this.$t("Send the report") as string);
   }
 
-  confirm() {
+  confirm(): void {
     this.onConfirm(this.content, this.forward);
     this.close();
   }
@@ -116,7 +116,7 @@ export default class ReportModal extends Vue {
   /**
    * Close the Dialog.
    */
-  close() {
+  close(): void {
     this.isActive = false;
     this.$emit("close");
   }

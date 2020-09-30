@@ -114,7 +114,7 @@ export const REPORT = gql`
 
 export const CREATE_REPORT = gql`
   mutation CreateReport(
-    $eventId: ID!
+    $eventId: ID
     $reporterId: ID!
     $reportedId: ID!
     $content: String

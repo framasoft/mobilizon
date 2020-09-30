@@ -28,7 +28,7 @@
             {{ $t("Reported by {reporter}", { reporter: report.reporter.preferredUsername }) }}
           </span>
         </div>
-        <div class="column" v-if="report.content">{{ report.content }}</div>
+        <div class="column" v-if="report.content" v-html="report.content" />
       </div>
     </div>
   </div>

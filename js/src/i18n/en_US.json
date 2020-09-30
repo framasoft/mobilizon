@@ -773,5 +773,11 @@
   "Will allow to display and manage your participation status on the event page when using this device. Uncheck if you're using a public device.": "Will allow to display and manage your participation status on the event page when using this device. Uncheck if you're using a public device.",
   "Visit event page": "Visit event page",
   "Remember my participation in this browser": "Remember my participation in this browser",
-  "Organized by": "Organized by"
+  "Organized by": "Organized by",
+  "Report this group": "Report this group",
+  "Group {groupTitle} reported": "Group {groupTitle} reported",
+  "Error while reporting group {groupTitle}": "Error while reporting group {groupTitle}",
+  "Reported group": "Reported group",
+  "You can only get invited to groups right now.": "You can only get invited to groups right now.",
+  "Join group": "Join group"
 }

@@ -147,7 +147,7 @@ defmodule Mobilizon.Web.Router do
     get("/events/:uuid/edit", PageController, :edit_event)
 
     # This is a hack to ease link generation into emails
-    get("/moderation/reports/:id", PageController, :moderation_report)
+    get("/moderation/report/:id", PageController, :moderation_report)
 
     get("/participation/email/confirm/:token", PageController, :participation_email_confirmation)
 

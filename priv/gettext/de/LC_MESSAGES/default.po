@@ -28,7 +28,7 @@ msgid "Feed for %{email} on Mobilizon"
 msgstr "Feed für %{email} auf Mobilizon"
 
 #, elixir-format
-#: lib/web/templates/email/report.html.eex:52
+#: lib/web/templates/email/report.html.eex:74
 msgid "%{title} by %{creator}"
 msgstr "%{title} von %{creator}"
 
@@ -44,13 +44,13 @@ msgid "Ask the community on Framacolibri"
 msgstr "Frag die Gemeinschaft auf Framacolibri"
 
 #, elixir-format
-#: lib/web/templates/email/report.text.eex:8
+#: lib/web/templates/email/report.text.eex:15
 msgid "Comments"
 msgstr "Kommentare"
 
 #, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:62
-#: lib/web/templates/email/report.html.eex:50 lib/web/templates/email/report.text.eex:4
+#: lib/web/templates/email/report.html.eex:72 lib/web/templates/email/report.text.eex:11
 msgid "Event"
 msgstr "Veranstaltung"
 
@@ -60,7 +60,7 @@ msgid "Instructions to reset your password on %{instance}"
 msgstr "Anweisungen um dein Passwort auf %{instance} zurückzusetzen"
 
 #, elixir-format
-#: lib/web/templates/email/report.text.eex:14
+#: lib/web/templates/email/report.text.eex:21
 msgid "Reason"
 msgstr "Begründung"
 
@@ -82,7 +82,7 @@ msgid "Instructions to confirm your Mobilizon account on %{instance}"
 msgstr "Anweisungen um deinen Mobilizon-Account auf %{instance} zu bestätigen"
 
 #, elixir-format
-#: lib/web/email/admin.ex:23
+#: lib/web/email/admin.ex:24
 msgid "New report on Mobilizon instance %{instance}"
 msgstr "Neue Meldung auf der Mobilizon-Instanz %{instance}"
 
@@ -731,7 +731,7 @@ msgid "Your content is yours"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/anonymous_participation_confirmation.html.eex:58
+#: lib/web/templates/email/anonymous_participation_confirmation.html.eex:51
 msgid "Confirm my e-mail address"
 msgstr ""
 
@@ -759,12 +759,6 @@ msgid "You created an account on <b>%{host}</b> with this email address. You are
 msgstr ""
 "Du hast einen Account auf %{host} mit dieser E-Mail-Adresse. Du bist nur ein "
 "Klick von der Aktivierung entfernt."
-
-#, elixir-format
-#: lib/web/templates/email/report.html.eex:41
-msgid "<b>%{reporter_name}</b> (%{reporter_username}) reported the following content."
-msgstr ""
-"%{reporter_name} (%{reporter_username}) hat den folgenden Inhalt gemeldet."
 
 #, elixir-format
 #: lib/web/templates/email/report.html.eex:13
@@ -796,7 +790,7 @@ msgid "Please do not use it for real purposes."
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/anonymous_participation_confirmation.html.eex:45
+#: lib/web/templates/email/anonymous_participation_confirmation.html.eex:63
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.eex:131
 #: lib/web/templates/email/event_updated.text.eex:24 lib/web/templates/email/notification_each_week.html.eex:70
 #: lib/web/templates/email/notification_each_week.text.eex:14 lib/web/templates/email/on_day_notification.html.eex:70
@@ -863,7 +857,7 @@ msgid "Event update!"
 msgstr "Veranstaltung aktualisiert!"
 
 #, elixir-format
-#: lib/web/templates/email/report.html.eex:66
+#: lib/web/templates/email/report.html.eex:88
 msgid "Flagged comments"
 msgstr ""
 
@@ -958,7 +952,7 @@ msgid "New email confirmation"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/report.html.eex:84
+#: lib/web/templates/email/report.html.eex:106
 msgid "Reasons for report"
 msgstr ""
 
@@ -1019,12 +1013,12 @@ msgid "Verify your email address"
 msgstr "Bestätig E-Mail Adresse"
 
 #, elixir-format
-#: lib/web/templates/email/report.html.eex:104
+#: lib/web/templates/email/report.html.eex:126
 msgid "View report"
 msgstr "Meldung ansehen"
 
 #, elixir-format
-#: lib/web/templates/email/report.text.eex:17
+#: lib/web/templates/email/report.text.eex:24
 msgid "View report:"
 msgstr "Meldung ansehen"
 
@@ -1294,7 +1288,6 @@ msgid "Your content may be downloaded by other instances in the network. Your pu
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_participation_confirmed.html.eex:45
 #: lib/web/templates/email/event_participation_confirmed.text.eex:4
 msgid "You have confirmed your participation. Update your calendar, because you're on the guest list now!"
 msgstr ""
@@ -1309,3 +1302,34 @@ msgstr "Du hast angefragt, an der Veranstaltung %{title} teilzunehmen."
 #: lib/web/email/participation.ex:92
 msgid "Your participation to event %{title} has been confirmed"
 msgstr "Deine Teilnahme an der Veranstaltung %{title}wurde akzeptiert"
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/report.html.eex:41
+msgid "<b>%{reporter}</b> reported the following content."
+msgstr ""
+"%{reporter_name} (%{reporter_username}) hat den folgenden Inhalt gemeldet."
+
+#, elixir-format
+#: lib/web/templates/email/report.text.eex:5
+msgid "Group %{group} was reported"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/report.html.eex:51
+msgid "Group reported"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/report.text.eex:7
+msgid "Profile %{profile} was reported"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/report.html.eex:56
+msgid "Profile reported"
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/event_participation_confirmed.html.eex:45
+msgid "You have now confirmed your participation. Update your calendar, because you're on the guest list now!"
+msgstr ""
