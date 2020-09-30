@@ -872,7 +872,7 @@ defmodule Mobilizon.Federation.ActivityPub do
            event_person_participation_changed: participant.actor.id
          ),
          {:ok, _} <-
-           Scheduler.before_event_notification(participant),
+           Scheduler.trigger_notifications_for_participant(participant),
          participant_as_data <- Convertible.model_to_as(participant),
          audience <-
            Audience.calculate_to_and_cc_from_mentions(participant),
