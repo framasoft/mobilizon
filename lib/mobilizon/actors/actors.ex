@@ -604,6 +604,25 @@ defmodule Mobilizon.Actors do
   def delete_group!(%Actor{type: :Group} = group), do: Repo.delete!(group)
 
   @doc """
+  Counts the local groups
+  """
+  @spec count_local_groups :: integer()
+  def count_local_groups do
+    groups_query()
+    |> filter_local()
+    |> Repo.aggregate(:count)
+  end
+
+  @doc """
+  Counts all the groups
+  """
+  @spec count_groups :: integer()
+  def count_groups do
+    groups_query()
+    |> Repo.aggregate(:count)
+  end
+
+  @doc """
   Lists the groups.
   """
   @spec list_groups(integer | nil, integer | nil) :: Page.t()

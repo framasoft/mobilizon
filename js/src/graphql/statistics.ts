@@ -6,6 +6,7 @@ export const STATISTICS = gql`
       numberOfUsers
       numberOfEvents
       numberOfComments
+      numberOfGroups
     }
   }
 `;

@@ -492,6 +492,17 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
+  Counts all events.
+  """
+  @spec count_events :: integer
+  def count_events do
+    count_events_query()
+    |> filter_unlisted_and_public_visibility()
+    |> filter_draft()
+    |> Repo.one()
+  end
+
+  @doc """
   Builds a page struct for events by their name.
   """
   @spec build_events_for_search(map(), integer | nil, integer | nil) :: Page.t()
@@ -1417,6 +1428,11 @@ defmodule Mobilizon.Events do
     from(e in Event, select: count(e.id), where: e.local == ^true)
   end
 
+  @spec count_events_query :: Ecto.Query.t()
+  defp count_events_query do
+    from(e in Event, select: count(e.id))
+  end
+
   @spec tag_by_slug_query(String.t()) :: Ecto.Query.t()
   defp tag_by_slug_query(slug) do
     from(t in Tag, where: t.slug == ^slug)
@@ -1537,7 +1553,7 @@ defmodule Mobilizon.Events do
     from(
       p in Participant,
       where: p.event_id == ^event_id,
-      preload: [:actor]
+      preload: [:actor, :event]
     )
   end
 

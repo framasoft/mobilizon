@@ -12,6 +12,7 @@ defmodule Mobilizon.GraphQL.Schema.StatisticsType do
     field(:number_of_users, :integer, description: "The number of local users")
     field(:number_of_events, :integer, description: "The number of local events")
     field(:number_of_comments, :integer, description: "The number of local comments")
+    field(:number_of_groups, :integer, description: "The number of local groups")
   end
 
   object :statistics_queries do
