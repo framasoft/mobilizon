@@ -101,7 +101,7 @@
   "Confirmed": "Confirmé·e",
   "Confirmed at": "Confirmé·e à",
   "Confirmed: Will happen": "Confirmé : aura lieu",
-  "Contact": "Contact|Contacts",
+  "Contact": "Contact",
   "Continue editing": "Continuer la modification",
   "Cookies and Local storage": "Cookies et stockage local",
   "Country": "Pays",
@@ -805,5 +805,10 @@
   "Group settings saved": "Paramètres du groupe sauvegardés",
   "Error": "Erreur",
   "Registrations are restricted by allowlisting.": "Les inscriptions sont restreintes par liste d'accès.",
-  "<b>{contact}</b> will be displayed as contact.": "<b>{contact}</b> sera affiché·e comme contact.|<b>{contact}</b> seront affiché·es comme contacts."
+  "<b>{contact}</b> will be displayed as contact.": "<b>{contact}</b> sera affiché·e comme contact.|<b>{contact}</b> seront affiché·es comme contacts.",
+  "and {number} groups": "et {number} groupes",
+  "Will allow to display and manage your participation status on the event page when using this device. Uncheck if you're using a public device.": "Permet d'afficher et de gérer le statut de votre participation sur la page de l'événement lorsque vous utilisez cet appareil. Décochez si vous utilisez un appareil public.",
+  "Visit event page": "Voir la page de l'événement",
+  "Remember my participation in this browser": "Se souvenir de ma participation dans ce navigateur",
+  "Organized by": "Organisé par"
 }

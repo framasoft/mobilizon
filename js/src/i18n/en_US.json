@@ -469,7 +469,7 @@
   "Decline": "Decline",
   "Rename": "Rename",
   "Move": "Move",
-  "Contact": "Contact|Contacts",
+  "Contact": "Contact",
   "Website": "Website",
   "Actor": "Actor",
   "Statut": "Statut",
@@ -768,5 +768,10 @@
   "Pick": "Pick",
   "The event will show as attributed to your personal profile.": "The event will show as attributed to your personal profile.",
   "The event will show as attributed to this group.": "The event will show as attributed to this group.",
-  "<b>{contact}</b> will be displayed as contact.": "<b>{contact}</b> will be displayed as contact.|<b>{contact}</b> will be displayed as contacts."
+  "<b>{contact}</b> will be displayed as contact.": "<b>{contact}</b> will be displayed as contact.|<b>{contact}</b> will be displayed as contacts.",
+  "and {number} groups": "and {number} groups",
+  "Will allow to display and manage your participation status on the event page when using this device. Uncheck if you're using a public device.": "Will allow to display and manage your participation status on the event page when using this device. Uncheck if you're using a public device.",
+  "Visit event page": "Visit event page",
+  "Remember my participation in this browser": "Remember my participation in this browser",
+  "Organized by": "Organized by"
 }

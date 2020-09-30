@@ -105,13 +105,13 @@ export default class AboutInstance extends Vue {
     if (this.isContactURL) {
       return {
         uri: this.config.contact,
-        text: this.urlToHostname(this.config.contact) || (this.$t("Contact") as string),
+        text: AboutInstance.urlToHostname(this.config.contact) || (this.$t("Contact") as string),
       };
     }
     return null;
   }
 
-  urlToHostname(url: string): string | null {
+  static urlToHostname(url: string): string | null {
     try {
       return new URL(url).hostname;
     } catch (e) {
