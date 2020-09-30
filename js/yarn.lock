@@ -13653,10 +13653,10 @@ tiptap-commands@^1.15.0:
     prosemirror-utils "^0.9.6"
     tiptap-utils "^1.11.0"
 
-tiptap-extensions@^1.29.1:
-  version "1.33.0"
-  resolved "https://registry.yarnpkg.com/tiptap-extensions/-/tiptap-extensions-1.33.0.tgz#2f7f9fb09a3a7881565ad8a347acb132171d8d8d"
-  integrity sha512-ukHT/w49+P1LacOULWFNy1C8YLboHFfONLhyVglNkxhJeE4PADwaXRyZoh8m2x4nA/BImXvBYm2jfsBQ2saGHA==
+tiptap-extensions@^1.33.1:
+  version "1.33.1"
+  resolved "https://registry.yarnpkg.com/tiptap-extensions/-/tiptap-extensions-1.33.1.tgz#4b79e59dcd2e876aee7cee12e7cc72d78b4531d9"
+  integrity sha512-gRzvhLH88jyQwQQCBEX+9rs62hRUw43G8iFq0gHj62+cNw6aKsZ0CQ5Auyt5F97HAj0EUuU2IWu1nRPsEALuDw==
   dependencies:
     lowlight "^1.14.0"
     prosemirror-collab "^1.2.2"
