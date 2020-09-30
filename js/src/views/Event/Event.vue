@@ -413,7 +413,7 @@
           <report-modal
             :on-confirm="reportEvent"
             :title="$t('Report this event')"
-            :outside-domain="event.organizerActor.domain"
+            :outside-domain="domainForReport"
             @close="$refs.reportModal.close()"
           />
         </b-modal>
@@ -521,7 +521,7 @@ import {
   ParticipantRole,
   EventJoinOptions,
 } from "../../types/event.model";
-import { IPerson, Person, usernameWithDomain } from "../../types/actor";
+import { IActor, IPerson, Person, usernameWithDomain } from "../../types/actor";
 import { GRAPHQL_API_ENDPOINT } from "../../api/_entrypoint";
 import DateCalendarIcon from "../../components/Event/DateCalendarIcon.vue";
 import EventCard from "../../components/Event/EventCard.vue";
@@ -786,7 +786,7 @@ export default class Event extends EventMixin {
         variables: {
           eventId: this.event.id,
           reporterId,
-          reportedId: this.event.organizerActor.id,
+          reportedId: this.actorForReport ? this.actorForReport.id : null,
           content,
           forward,
         },
@@ -1025,6 +1025,23 @@ export default class Event extends EventMixin {
     return (
       this.config && (this.currentActor.id !== undefined || this.config.anonymous.reports.allowed)
     );
+  }
+
+  get actorForReport(): IActor | null {
+    if (this.event.attributedTo && this.event.attributedTo.id) {
+      return this.event.attributedTo;
+    }
+    if (this.event.organizerActor) {
+      return this.event.organizerActor;
+    }
+    return null;
+  }
+
+  get domainForReport(): string | null {
+    if (this.actorForReport) {
+      return this.actorForReport.domain;
+    }
+    return null;
   }
 }
 </script>

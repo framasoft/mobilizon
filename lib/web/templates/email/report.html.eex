@@ -38,12 +38,34 @@
             <%= if @report.reporter.type == :Application and @report.reporter.preferred_username == "relay" do %>
               <%= gettext("Someone on <b>%{instance}</b> reported the following content for you to analyze:", instance: @report.reporter.domain) |> raw %>
             <% else %>
-              <%= gettext("<b>%{reporter_name}</b> (%{reporter_username}) reported the following content.", reporter_name: @report.reporter.name, reporter_username: Mobilizon.Actors.Actor.preferred_username_and_domain(@report.reporter)) |> raw %>
+              <%= gettext("<b>%{reporter}</b> reported the following content.", reporter: Mobilizon.Actors.Actor.display_name_and_username(@report.reporter)) |> raw %>
             <% end %>
           </p>
         </td>
       </tr>
-      <%= if Map.has_key?(@report, :event) do %>
+      <%= if @report.reported do %>
+        <tr>
+          <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+            <p style="margin: 0;">
+              <%= if @report.reported.type == :Group do %>
+                <h3><%= gettext "Group reported" %></h3>
+                <a href="<%= "#{Mobilizon.Web.Endpoint.url()}/@#{Mobilizon.Actors.Actor.preferred_username_and_domain(@report.reported)}" %>" target="_blank">
+                  <b><%= Mobilizon.Actors.Actor.display_name_and_username(@report.reported) %></b>
+                </a>
+              <% else %>
+                <h3><%= gettext "Profile reported" %></h3>
+                <b><%= Mobilizon.Actors.Actor.display_name_and_username(@report.reported) %></b>
+              <% end %>
+            </p>
+            <table cellspacing="0" cellpadding="0" border="0" width="100%" style="width: 100% !important;">
+              <tr>
+                <td align="left" valign="top" width="600px" height="1" style="background-color: #f0f0f0; border-collapse:collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; mso-line-height-rule: exactly; line-height: 1px;"><!--[if gte mso 15]>&nbsp;<![endif]--></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      <% end %>
+      <%= if Map.has_key?(@report, :event) and @report.event do %>
         <tr>
           <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
             <p style="margin: 0;">
@@ -82,7 +104,7 @@
           <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
             <p style="margin: 0">
               <h3><%= gettext "Reasons for report" %></h3>
-              <%= @report.content %>
+              <%= @report.content |> raw %>
             </p>
             <table cellspacing="0" cellpadding="0" border="0" width="100%" style="width: 100% !important;">
               <tr>

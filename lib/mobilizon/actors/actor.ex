@@ -204,7 +204,7 @@ defmodule Mobilizon.Actors.Actor do
   end
 
   def display_name_and_username(%__MODULE__{name: name} = actor) do
-    "#{name} (#{preferred_username_and_domain(actor)})"
+    "#{name} (@#{preferred_username_and_domain(actor)})"
   end
 
   @doc """

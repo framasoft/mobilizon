@@ -44,7 +44,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import { IReport, ReportStatusEnum } from "@/types/report.model";
 import { REPORTS } from "@/graphql/report";
 import ReportCard from "@/components/Report/ReportCard.vue";
@@ -77,7 +77,7 @@ export default class ReportList extends Vue {
   filterReports: ReportStatusEnum = ReportStatusEnum.OPEN;
 
   @Watch("$route.params.filter", { immediate: true })
-  onRouteFilterChanged(val: string) {
+  onRouteFilterChanged(val: string): void {
     if (!val) return;
     const filter = val.toUpperCase();
     if (filter in ReportStatusEnum) {
@@ -86,7 +86,7 @@ export default class ReportList extends Vue {
   }
 
   @Watch("filterReports", { immediate: true })
-  async onFilterChanged(val: string) {
+  async onFilterChanged(val: string): Promise<void> {
     await this.$router.push({
       name: RouteName.REPORTS,
       params: { filter: val.toLowerCase() },

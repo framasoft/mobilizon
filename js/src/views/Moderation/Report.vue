@@ -43,8 +43,29 @@
         <div class="table-container">
           <table class="table is-striped is-fullwidth">
             <tbody>
-              <tr>
-                <td>{{ $t("Reported identity") }}</td>
+              <tr v-if="report.reported.__typename === 'Group'">
+                <td>{{ $t("Reported group") }}</td>
+                <td>
+                  <router-link
+                    :to="{
+                      name: RouteName.ADMIN_GROUP_PROFILE,
+                      params: { id: report.reported.id },
+                    }"
+                  >
+                    <img
+                      v-if="report.reported.avatar"
+                      class="image"
+                      :src="report.reported.avatar.url"
+                      alt=""
+                    />
+                    {{ displayNameAndUsername(report.reported) }}
+                  </router-link>
+                </td>
+              </tr>
+              <tr v-else>
+                <td>
+                  {{ $t("Reported identity") }}
+                </td>
                 <td>
                   <router-link
                     :to="{
@@ -58,7 +79,7 @@
                       :src="report.reported.avatar.url"
                       alt=""
                     />
-                    @{{ report.reported.preferredUsername }}
+                    {{ displayNameAndUsername(report.reported) }}
                   </router-link>
                 </td>
               </tr>
@@ -80,7 +101,7 @@
                       :src="report.reporter.avatar.url"
                       alt=""
                     />
-                    @{{ report.reporter.preferredUsername }}
+                    {{ displayNameAndUsername(report.reporter) }}
                   </router-link>
                 </td>
               </tr>
@@ -157,38 +178,40 @@
           >
         </div>
 
-        <ul v-for="comment in report.comments" v-if="report.comments.length > 0" :key="comment.id">
-          <li>
-            <div class="box" v-if="comment">
-              <article class="media">
-                <div class="media-left">
-                  <figure class="image is-48x48" v-if="comment.actor && comment.actor.avatar">
-                    <img :src="comment.actor.avatar.url" alt="Image" />
-                  </figure>
-                  <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
-                </div>
-                <div class="media-content">
-                  <div class="content">
-                    <span v-if="comment.actor">
-                      <strong>{{ comment.actor.name }}</strong>
-                      <small>@{{ comment.actor.preferredUsername }}</small>
-                    </span>
-                    <span v-else>{{ $t("Unknown actor") }}</span>
-                    <br />
-                    <p v-html="comment.text" />
+        <div v-if="report.comments.length > 0">
+          <ul v-for="comment in report.comments" :key="comment.id">
+            <li>
+              <div class="box" v-if="comment">
+                <article class="media">
+                  <div class="media-left">
+                    <figure class="image is-48x48" v-if="comment.actor && comment.actor.avatar">
+                      <img :src="comment.actor.avatar.url" alt="Image" />
+                    </figure>
+                    <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
                   </div>
-                  <b-button
-                    type="is-danger"
-                    @click="confirmCommentDelete(comment)"
-                    icon-left="delete"
-                    size="is-small"
-                    >{{ $t("Delete") }}</b-button
-                  >
-                </div>
-              </article>
-            </div>
-          </li>
-        </ul>
+                  <div class="media-content">
+                    <div class="content">
+                      <span v-if="comment.actor">
+                        <strong>{{ comment.actor.name }}</strong>
+                        <small>@{{ comment.actor.preferredUsername }}</small>
+                      </span>
+                      <span v-else>{{ $t("Unknown actor") }}</span>
+                      <br />
+                      <p v-html="comment.text" />
+                    </div>
+                    <b-button
+                      type="is-danger"
+                      @click="confirmCommentDelete(comment)"
+                      icon-left="delete"
+                      size="is-small"
+                      >{{ $t("Delete") }}</b-button
+                    >
+                  </div>
+                </article>
+              </div>
+            </li>
+          </ul>
+        </div>
 
         <h2 class="title" v-if="report.notes.length > 0">{{ $t("Notes") }}</h2>
         <div class="box note" v-for="note in report.notes" :id="`note-${note.id}`" :key="note.id">
@@ -220,7 +243,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import { CREATE_REPORT_NOTE, REPORT, UPDATE_REPORT } from "@/graphql/report";
 import { IReport, IReportNote, ReportStatusEnum } from "@/types/report.model";
 import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
-import { IPerson, ActorType } from "@/types/actor";
+import { IPerson, ActorType, displayNameAndUsername } from "@/types/actor";
 import { DELETE_EVENT } from "@/graphql/event";
 import { uniq } from "lodash";
 import { nl2br } from "@/utils/html";
@@ -272,7 +295,9 @@ export default class Report extends Vue {
 
   noteContent = "";
 
-  addNote() {
+  displayNameAndUsername = displayNameAndUsername;
+
+  addNote(): void {
     try {
       this.$apollo.mutate<{ createReportNote: IReportNote }>({
         mutation: CREATE_REPORT_NOTE,
@@ -312,7 +337,7 @@ export default class Report extends Vue {
     }
   }
 
-  confirmEventDelete() {
+  confirmEventDelete(): void {
     this.$buefy.dialog.confirm({
       title: this.$t("Deleting event") as string,
       message: this.$t(
@@ -325,7 +350,7 @@ export default class Report extends Vue {
     });
   }
 
-  confirmCommentDelete(comment: IComment) {
+  confirmCommentDelete(comment: IComment): void {
     this.$buefy.dialog.confirm({
       title: this.$t("Deleting comment") as string,
       message: this.$t(
@@ -338,7 +363,7 @@ export default class Report extends Vue {
     });
   }
 
-  async deleteEvent() {
+  async deleteEvent(): Promise<void> {
     if (!this.report.event || !this.report.event.id) return;
     const eventTitle = this.report.event.title;
 
@@ -364,7 +389,7 @@ export default class Report extends Vue {
     }
   }
 
-  async deleteComment(comment: IComment) {
+  async deleteComment(comment: IComment): Promise<void> {
     try {
       await this.$apollo.mutate({
         mutation: DELETE_COMMENT,
@@ -379,7 +404,7 @@ export default class Report extends Vue {
     }
   }
 
-  async updateReport(status: ReportStatusEnum) {
+  async updateReport(status: ReportStatusEnum): Promise<void> {
     try {
       await this.$apollo.mutate({
         mutation: UPDATE_REPORT,
@@ -414,27 +439,6 @@ export default class Report extends Vue {
     } catch (error) {
       console.error(error);
     }
-  }
-
-  // TODO make me a global function
-  formatDate(value: string) {
-    return value
-      ? new Date(value).toLocaleString(undefined, {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
-      : null;
-  }
-
-  formatTime(value: string) {
-    return value
-      ? new Date(value).toLocaleTimeString(undefined, {
-          hour: "numeric",
-          minute: "numeric",
-        })
-      : null;
   }
 }
 </script>

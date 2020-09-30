@@ -93,8 +93,8 @@
             >
           </p>
         </div>
-        <div class="block-column address" v-else-if="physicalAddress">
-          <address>
+        <div class="block-column address" v-else>
+          <address v-if="physicalAddress">
             <p class="addressDescription" :title="physicalAddress.poiInfos.name">
               {{ physicalAddress.poiInfos.name }}
             </p>
@@ -106,6 +106,27 @@
             v-if="physicalAddress && physicalAddress.geom"
             >{{ $t("Show map") }}</span
           >
+          <p class="buttons">
+            <b-tooltip
+              :label="$t('You can only get invited to groups right now.')"
+              position="is-bottom"
+            >
+              <b-button disabled type="is-primary">{{ $t("Join group") }}</b-button>
+            </b-tooltip>
+            <b-dropdown aria-role="list" position="is-bottom-left">
+              <b-button slot="trigger" role="button" icon-right="dots-horizontal"> </b-button>
+              <b-dropdown-item
+                aria-role="listitem"
+                v-if="ableToReport"
+                @click="isReportModalActive = true"
+              >
+                <span>
+                  {{ $t("Report") }}
+                  <b-icon icon="flag" />
+                </span>
+              </b-dropdown-item>
+            </b-dropdown>
+          </p>
         </div>
         <img v-if="group.banner && group.banner.url" :src="group.banner.url" alt="" />
       </header>
@@ -291,6 +312,14 @@
           />
         </div>
       </b-modal>
+      <b-modal :active.sync="isReportModalActive" has-modal-card ref="reportModal">
+        <report-modal
+          :on-confirm="reportGroup"
+          :title="$t('Report this group')"
+          :outside-domain="group.domain"
+          @close="$refs.reportModal.close()"
+        />
+      </b-modal>
     </div>
   </div>
 </template>
@@ -319,8 +348,13 @@ import FolderItem from "@/components/Resource/FolderItem.vue";
 import { Address } from "@/types/address.model";
 import Invitations from "@/components/Group/Invitations.vue";
 import addMinutes from "date-fns/addMinutes";
-import GroupSection from "../../components/Group/GroupSection.vue";
+import { CONFIG } from "@/graphql/config";
+import { CREATE_REPORT } from "@/graphql/report";
+import { IReport } from "@/types/report.model";
+import { IConfig } from "@/types/config.model";
 import RouteName from "../../router/name";
+import GroupSection from "../../components/Group/GroupSection.vue";
+import ReportModal from "../../components/Report/ReportModal.vue";
 
 @Component({
   apollo: {
@@ -346,6 +380,7 @@ import RouteName from "../../router/name";
       },
     },
     currentActor: CURRENT_ACTOR_CLIENT,
+    config: CONFIG,
   },
   components: {
     DiscussionListItem,
@@ -358,6 +393,7 @@ import RouteName from "../../router/name";
     ResourceItem,
     GroupSection,
     Invitations,
+    ReportModal,
     "map-leaflet": () => import(/* webpackChunkName: "map" */ "../../components/Map.vue"),
   },
   metaInfo() {
@@ -385,6 +421,8 @@ export default class Group extends Vue {
 
   group: IGroup = new GroupModel();
 
+  config!: IConfig;
+
   loading = true;
 
   RouteName = RouteName;
@@ -392,6 +430,8 @@ export default class Group extends Vue {
   usernameWithDomain = usernameWithDomain;
 
   showMap = false;
+
+  isReportModalActive = false;
 
   @Watch("currentActor")
   watchCurrentActor(currentActor: IActor, oldActor: IActor): void {
@@ -411,6 +451,38 @@ export default class Group extends Vue {
       member.role = MemberRole.MEMBER;
       this.person.memberships.elements.splice(index, 1, member);
       this.$apollo.queries.group.refetch();
+    }
+  }
+
+  async reportGroup(content: string, forward: boolean): Promise<void> {
+    this.isReportModalActive = false;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this.$refs.reportModal.close();
+    const groupTitle = this.group.name || usernameWithDomain(this.group);
+    let reporterId = null;
+    if (this.currentActor.id) {
+      reporterId = this.currentActor.id;
+    } else if (this.config.anonymous.reports.allowed) {
+      reporterId = this.config.anonymous.actorId;
+    }
+    if (!reporterId) return;
+    try {
+      await this.$apollo.mutate<IReport>({
+        mutation: CREATE_REPORT,
+        variables: {
+          reporterId,
+          reportedId: this.group.id,
+          content,
+          forward,
+        },
+      });
+      this.$notifier.success(this.$t("Group {groupTitle} reported", { groupTitle }) as string);
+    } catch (error) {
+      console.error(error);
+      this.$notifier.error(
+        this.$t("Error while reporting group {groupTitle}", { groupTitle }) as string
+      );
     }
   }
 
@@ -497,6 +569,12 @@ export default class Group extends Vue {
     if (!this.group.physicalAddress) return null;
     return new Address(this.group.physicalAddress);
   }
+
+  get ableToReport(): boolean {
+    return (
+      this.config && (this.currentActor.id !== undefined || this.config.anonymous.reports.allowed)
+    );
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -523,7 +601,6 @@ div.container {
       border: 2px solid $purple-2;
       padding: 10px 0;
       position: relative;
-      overflow: hidden;
 
       h1 {
         color: $purple-1;
@@ -545,8 +622,10 @@ div.container {
         left: 0;
         top: 0;
         width: 100%;
-        height: auto;
+        height: 100%;
         opacity: 0.3;
+        object-fit: cover;
+        object-position: 50% 50%;
       }
     }
 
@@ -569,6 +648,16 @@ div.container {
 
       .map-show-button {
         cursor: pointer;
+      }
+
+      p.buttons {
+        margin-top: 1rem;
+        justify-content: end;
+        align-content: space-between;
+
+        & > span {
+          margin-right: 0.5rem;
+        }
       }
 
       address {

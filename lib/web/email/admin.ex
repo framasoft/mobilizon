@@ -16,7 +16,8 @@ defmodule Mobilizon.Web.Email.Admin do
   alias Mobilizon.Web.{Email, Gettext}
 
   @spec report(User.t(), Report.t(), String.t()) :: Bamboo.Email.t()
-  def report(%User{email: email}, %Report{} = report, locale \\ "en") do
+  def report(%User{email: email} = user, %Report{} = report, default_locale \\ "en") do
+    locale = Map.get(user, :locale, default_locale)
     Gettext.put_locale(locale)
 
     subject =

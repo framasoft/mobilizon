@@ -1,6 +1,13 @@
-<%= gettext "New report from %{reporter} on %{instance}", reporter: @report.reporter.preferred_username, instance: @instance[:name] %>
+<%= gettext "New report from %{reporter} on %{instance}", reporter: Mobilizon.Actors.Actor.display_name_and_username(@report.reporter), instance: @instance[:name] %>
 --
-<%= if Map.has_key?(@report, :event) do %>
+<%= if @report.reported do %>
+  <%= if @report.reported.type == :Group do %>
+    <%= gettext "Group %{group} was reported", group: Mobilizon.Actors.Actor.display_name_and_username(@report.reported) %>
+  <% else %>
+    <%= gettext "Profile %{profile} was reported", group: Mobilizon.Actors.Actor.display_name_and_username(@report.reported) %>
+  <% end %>
+<% end %>
+<%= if Map.has_key?(@report, :event) and @report.event do %>
   <%= gettext "Event" %>
   <%= @report.event.title %>
 <% end %>

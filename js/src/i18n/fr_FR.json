@@ -810,5 +810,11 @@
   "Will allow to display and manage your participation status on the event page when using this device. Uncheck if you're using a public device.": "Permet d'afficher et de gérer le statut de votre participation sur la page de l'événement lorsque vous utilisez cet appareil. Décochez si vous utilisez un appareil public.",
   "Visit event page": "Voir la page de l'événement",
   "Remember my participation in this browser": "Se souvenir de ma participation dans ce navigateur",
-  "Organized by": "Organisé par"
+  "Organized by": "Organisé par",
+  "Report this group": "Signaler ce groupe",
+  "Group {groupTitle} reported": "Groupe {groupTitle} signalé",
+  "Error while reporting group {groupTitle}": "Erreur lors du signalement du groupe {groupTitle}",
+  "Reported group": "Groupe signalé",
+  "You can only get invited to groups right now.": "Vous pouvez uniquement être invité aux groupes pour le moment.",
+  "Join group": "Rejoindre le groupe"
 }
