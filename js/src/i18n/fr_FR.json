@@ -819,5 +819,7 @@
   "Join group": "Rejoindre le groupe",
   "Created by {username}": "Créé par {username}",
   "Accessible through link": "Accessible uniquement par lien",
-  "Accessible only to members": "Accessible uniquement aux membres"
+  "Accessible only to members": "Accessible uniquement aux membres",
+  "Created by {name}": "Créé par {name}",
+  "View all posts": "Voir tous les billets"
 }

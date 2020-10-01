@@ -28,7 +28,7 @@
     </nav>
     <section>
       <div class="intro">
-        <p>
+        <p v-if="isCurrentActorMember">
           {{
             $t(
               "A place to publish something to the whole world, your community or just your group members."
@@ -36,6 +36,7 @@
           }}
         </p>
         <router-link
+          v-if="isCurrentActorMember"
           :to="{
             name: RouteName.POST_CREATE,
             params: { preferredUsername: usernameWithDomain(group) },

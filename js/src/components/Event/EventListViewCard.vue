@@ -14,10 +14,11 @@
           <span v-if="event.physicalAddress && event.physicalAddress.locality">
             {{ event.physicalAddress.locality }}
           </span>
-          <span>
-            <span>
-              {{ $t("Organized by {name}", { name: usernameWithDomain(event.organizerActor) }) }}
-            </span>
+          <span v-if="event.attributedTo && options.memberofGroup">
+            {{ $t("Created by {name}", { name: usernameWithDomain(event.organizerActor) }) }}
+          </span>
+          <span v-else-if="options.memberofGroup">
+            {{ $t("Organized by {name}", { name: usernameWithDomain(event.organizerActor) }) }}
           </span>
         </div>
         <div class="columns">
@@ -65,6 +66,7 @@ const defaultOptions: IEventCardOptions = {
   loggedPerson: false,
   hideDetails: false,
   organizerActor: null,
+  memberofGroup: false,
 };
 
 @Component({

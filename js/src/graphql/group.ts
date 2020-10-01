@@ -96,6 +96,12 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
           participant
           notApproved
         }
+        attributedTo {
+          id
+          preferredUsername
+          name
+          domain
+        }
         organizerActor {
           id
           preferredUsername

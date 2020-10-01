@@ -15,7 +15,10 @@
           <p class="post-minimalist-title">{{ post.title }}</p>
           <div class="metadata">
             <b-tag type="is-warning" size="is-small" v-if="post.draft">{{ $t("Draft") }}</b-tag>
-            <small v-if="post.visibility === PostVisibility.PUBLIC" class="has-text-grey">
+            <small
+              v-if="post.visibility === PostVisibility.PUBLIC && isCurrentActorMember"
+              class="has-text-grey"
+            >
               <b-icon icon="earth" size="is-small" />{{ $t("Public") }}</small
             >
             <small v-else-if="post.visibility === PostVisibility.UNLISTED" class="has-text-grey">
