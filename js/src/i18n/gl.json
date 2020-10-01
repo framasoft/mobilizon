@@ -161,5 +161,16 @@
   "Group List": "Lista do grupo",
   "Group name": "Nome do grupo",
   "Group {displayName} created": "Creado o grupo {displayName}",
-  "Groups": "Grupos"
+  "Groups": "Grupos",
+  "Headline picture": "Imaxe de cabeceira",
+  "Hide replies": "Agochar respostas",
+  "I create an identity": "Creei unha identidade",
+  "I don't have a Mobilizon account": "Non teño unha conta Mobilizon",
+  "I have a Mobilizon account": "Teño unha conta Mobilizon",
+  "I have an account on another Mobilizon instance.": "Teño unha conta noutra instancia Mobilizon.",
+  "I participate": "Eu participo",
+  "I want to allow people to participate without an account.": "Quero que a xente poida participar sen ter unha conta.",
+  "I want to approve every participation request": "Quero aprobar cada solicitude de participación",
+  "Identity {displayName} created": "Creouse a identidade {displayName}",
+  "Identity {displayName} deleted": "Eliminada a identidade {displayName}"
 }
