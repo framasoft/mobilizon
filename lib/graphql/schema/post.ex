@@ -3,7 +3,7 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
   Schema representation for Posts
   """
   use Absinthe.Schema.Notation
-  alias Mobilizon.GraphQL.Resolvers.{Post, Tag}
+  alias Mobilizon.GraphQL.Resolvers.{Picture, Post, Tag}
 
   @desc "A post"
   object :post do
@@ -23,6 +23,11 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
     field(:tags, list_of(:tag),
       resolve: &Tag.list_tags_for_post/3,
       description: "The post's tags"
+    )
+
+    field(:picture, :picture,
+      description: "The event's picture",
+      resolve: &Picture.picture/3
     )
   end
 
@@ -55,7 +60,7 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
     field :create_post, :post do
       arg(:attributed_to_id, non_null(:id))
       arg(:title, non_null(:string))
-      arg(:body, :string)
+      arg(:body, non_null(:string))
       arg(:draft, :boolean, default_value: false)
       arg(:visibility, :post_visibility)
       arg(:publish_at, :datetime)
@@ -63,6 +68,11 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
       arg(:tags, list_of(:string),
         default_value: [],
         description: "The list of tags associated to the post"
+      )
+
+      arg(:picture, :picture_input,
+        description:
+          "The banner for the post, either as an object or directly the ID of an existing Picture"
       )
 
       resolve(&Post.create_post/3)
@@ -78,6 +88,11 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
       arg(:visibility, :post_visibility)
       arg(:publish_at, :datetime)
       arg(:tags, list_of(:string), description: "The list of tags associated to the post")
+
+      arg(:picture, :picture_input,
+        description:
+          "The banner for the post, either as an object or directly the ID of an existing Picture"
+      )
 
       resolve(&Post.update_post/3)
     end

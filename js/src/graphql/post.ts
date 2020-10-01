@@ -34,6 +34,11 @@ export const POST_FRAGMENT = gql`
     tags {
       ...TagFragment
     }
+    picture {
+      id
+      url
+      name
+    }
   }
   ${TAG_FRAGMENT}
 `;
@@ -48,6 +53,7 @@ export const POST_BASIC_FIELDS = gql`
       id
       preferredUsername
       name
+      domain
       avatar {
         url
       }
@@ -56,6 +62,7 @@ export const POST_BASIC_FIELDS = gql`
       id
       preferredUsername
       name
+      domain
       avatar {
         url
       }
@@ -64,6 +71,12 @@ export const POST_BASIC_FIELDS = gql`
     updatedAt
     publishAt
     draft
+    visibility
+    picture {
+      id
+      url
+      name
+    }
   }
 `;
 
@@ -102,6 +115,7 @@ export const CREATE_POST = gql`
     $visibility: PostVisibility
     $draft: Boolean
     $tags: [String]
+    $picture: PictureInput
   ) {
     createPost(
       title: $title
@@ -110,6 +124,7 @@ export const CREATE_POST = gql`
       visibility: $visibility
       draft: $draft
       tags: $tags
+      picture: $picture
     ) {
       ...PostFragment
     }
@@ -126,6 +141,7 @@ export const UPDATE_POST = gql`
     $visibility: PostVisibility
     $draft: Boolean
     $tags: [String]
+    $picture: PictureInput
   ) {
     updatePost(
       id: $id
@@ -135,6 +151,7 @@ export const UPDATE_POST = gql`
       visibility: $visibility
       draft: $draft
       tags: $tags
+      picture: $picture
     ) {
       ...PostFragment
     }

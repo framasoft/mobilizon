@@ -20,6 +20,7 @@ defmodule Mobilizon.GraphQL.Schema do
   alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.{Event, Participant}
+  alias Mobilizon.GraphQL.Middleware.ErrorHandler
   alias Mobilizon.GraphQL.Schema
   alias Mobilizon.Storage.Repo
 
@@ -184,5 +185,13 @@ defmodule Mobilizon.GraphQL.Schema do
   subscription do
     import_fields(:person_subscriptions)
     import_fields(:discussion_subscriptions)
+  end
+
+  def middleware(middleware, _field, %{identifier: type}) when type in [:query, :mutation] do
+    middleware ++ [ErrorHandler]
+  end
+
+  def middleware(middleware, _field, _object) do
+    middleware
   end
 end

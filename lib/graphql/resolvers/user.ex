@@ -127,8 +127,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
       :not_allowlisted ->
         {:error, dgettext("errors", "Your email is not on the allowlist")}
 
-      error ->
-        error
+      {:error, error} ->
+        {:error, error}
     end
   end
 

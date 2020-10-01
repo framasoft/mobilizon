@@ -4,13 +4,13 @@ defmodule Mobilizon.Posts.Post.TitleSlug do
   """
   use EctoAutoslugField.Slug, from: [:title, :id], to: :slug
 
-  def build_slug([title, id], %Ecto.Changeset{valid?: true}) do
+  def build_slug([title, id], _changeset) do
     [title, ShortUUID.encode!(id)]
     |> Enum.join("-")
     |> Slugger.slugify()
   end
 
-  def build_slug(_sources, %Ecto.Changeset{valid?: false}), do: ""
+  def build_slug(_, _), do: nil
 end
 
 defmodule Mobilizon.Posts.Post do
@@ -22,11 +22,13 @@ defmodule Mobilizon.Posts.Post do
   alias Ecto.Changeset
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Tag
+  alias Mobilizon.Media
   alias Mobilizon.Media.Picture
   alias Mobilizon.Posts.Post.TitleSlug
   alias Mobilizon.Posts.PostVisibility
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Router.Helpers, as: Routes
+  import Mobilizon.Web.Gettext
 
   @type t :: %__MODULE__{
           url: String.t(),
@@ -82,12 +84,15 @@ defmodule Mobilizon.Posts.Post do
     |> maybe_generate_id()
     |> put_tags(attrs)
     |> maybe_put_publish_date()
+    |> put_picture(attrs)
     # Validate ID and title here because they're needed for slug
-    |> validate_required([:id, :title])
+    |> validate_required(:id)
+    |> validate_required(:title, message: gettext("A title is required for the post"))
+    |> validate_required(:body, message: gettext("A text is required for the post"))
     |> TitleSlug.maybe_generate_slug()
     |> TitleSlug.unique_constraint()
     |> maybe_generate_url()
-    |> validate_required(@required_attrs)
+    |> validate_required(@required_attrs -- [:slug, :url])
   end
 
   defp maybe_generate_id(%Ecto.Changeset{} = changeset) do
@@ -105,7 +110,7 @@ defmodule Mobilizon.Posts.Post do
     with res when res in [:error, {:data, nil}] <- fetch_field(changeset, :url),
          {changes, id_and_slug} when changes in [:changes, :data] <-
            fetch_field(changeset, :slug),
-         url <- generate_url(id_and_slug) do
+         url when is_binary(url) <- generate_url(id_and_slug) do
       put_change(changeset, :url, url)
     else
       _ -> changeset
@@ -113,7 +118,10 @@ defmodule Mobilizon.Posts.Post do
   end
 
   @spec generate_url(String.t()) :: String.t()
-  defp generate_url(id_and_slug), do: Routes.page_url(Endpoint, :post, id_and_slug)
+  defp generate_url(id_and_slug) when is_binary(id_and_slug),
+    do: Routes.page_url(Endpoint, :post, id_and_slug)
+
+  defp generate_url(_), do: nil
 
   @spec put_tags(Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
   defp put_tags(changeset, %{"tags" => tags}),
@@ -133,5 +141,22 @@ defmodule Mobilizon.Posts.Post do
         else: nil
 
     put_change(changeset, :publish_at, publish_at)
+  end
+
+  # In case the provided picture is an existing one
+  @spec put_picture(Changeset.t(), map) :: Changeset.t()
+  defp put_picture(%Changeset{} = changeset, %{picture: %{picture_id: id} = _picture}) do
+    case Media.get_picture!(id) do
+      %Picture{} = picture ->
+        put_assoc(changeset, :picture, picture)
+
+      _ ->
+        changeset
+    end
+  end
+
+  # In case it's a new picture
+  defp put_picture(%Changeset{} = changeset, _attrs) do
+    cast_assoc(changeset, :picture)
   end
 end

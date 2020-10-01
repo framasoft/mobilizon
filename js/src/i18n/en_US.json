@@ -779,5 +779,8 @@
   "Error while reporting group {groupTitle}": "Error while reporting group {groupTitle}",
   "Reported group": "Reported group",
   "You can only get invited to groups right now.": "You can only get invited to groups right now.",
-  "Join group": "Join group"
+  "Join group": "Join group",
+  "Created by {username}": "Created by {username}",
+  "Accessible through link": "Accessible through link",
+  "Accessible only to members": "Accessible only to members"
 }

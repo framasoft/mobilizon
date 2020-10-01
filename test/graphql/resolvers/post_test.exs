@@ -231,7 +231,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PostTest do
           }
         )
 
-      assert hd(res["errors"])["message"] == "No such post"
+      assert hd(res["errors"])["message"] == "Post not found"
     end
 
     test "get_post/3 for an unlisted post", %{
@@ -383,7 +383,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PostTest do
           }
         )
 
-      assert hd(res["errors"])["message"] == "No such post"
+      assert hd(res["errors"])["message"] == "Post not found"
     end
 
     test "get_post/3 without being connected for an unlisted post still gives the post", %{
@@ -420,7 +420,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PostTest do
           }
         )
 
-      assert hd(res["errors"])["message"] == "No such post"
+      assert hd(res["errors"])["message"] == "Post not found"
     end
 
     test "get_post/3 without being a member for a draft post", %{
@@ -440,7 +440,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PostTest do
           }
         )
 
-      assert hd(res["errors"])["message"] == "No such post"
+      assert hd(res["errors"])["message"] == "Post not found"
     end
 
     test "get_post/3 without being connected for a draft post", %{
@@ -456,7 +456,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PostTest do
           }
         )
 
-      assert hd(res["errors"])["message"] == "No such post"
+      assert hd(res["errors"])["message"] == "Post not found"
     end
   end
 
@@ -592,7 +592,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PostTest do
           }
         )
 
-      assert hd(res["errors"])["message"] == "No such post"
+      assert hd(res["errors"])["message"] == "Post not found"
     end
 
     test "delete_post/3 deletes a post not found", %{

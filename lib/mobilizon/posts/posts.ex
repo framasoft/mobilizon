@@ -89,9 +89,12 @@ defmodule Mobilizon.Posts do
   """
   @spec create_post(map) :: {:ok, Post.t()} | {:error, Ecto.Changeset.t()}
   def create_post(attrs \\ %{}) do
-    %Post{}
-    |> Post.changeset(attrs)
-    |> Repo.insert()
+    with {:ok, %Post{} = post} <-
+           %Post{}
+           |> Post.changeset(attrs)
+           |> Repo.insert() do
+      {:ok, Repo.preload(post, @post_preloads)}
+    end
   end
 
   @doc """

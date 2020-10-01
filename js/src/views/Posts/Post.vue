@@ -14,6 +14,10 @@
           >
         </i18n>
         <p class="published" v-if="!post.draft">{{ post.publishAt | formatDateTimeString }}</p>
+        <small v-if="post.visibility === PostVisibility.PRIVATE" class="has-text-grey">
+          <b-icon icon="lock" size="is-small" />
+          {{ $t("Accessible only to members", { group: post.attributedTo.name }) }}
+        </small>
         <p class="buttons" v-if="isCurrentActorMember">
           <b-tag type="is-warning" size="is-medium" v-if="post.draft">{{ $t("Draft") }}</b-tag>
           <router-link
@@ -23,6 +27,7 @@
             >{{ $t("Edit") }}</router-link
           >
         </p>
+        <img v-if="post.picture" :src="post.picture.url" alt="" />
       </section>
       <section v-html="post.body" class="content" />
       <section class="tags">
@@ -41,12 +46,11 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import Editor from "@/components/Editor.vue";
-import { GraphQLError } from "graphql";
 import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "../../graphql/actor";
 import { FETCH_POST } from "../../graphql/post";
 
-import { IPost } from "../../types/post.model";
-import { IMember, usernameWithDomain } from "../../types/actor";
+import { IPost, PostVisibility } from "../../types/post.model";
+import { IMember, IPerson, usernameWithDomain } from "../../types/actor";
 import RouteName from "../../router/name";
 import Tag from "../../components/Tag.vue";
 
@@ -104,19 +108,23 @@ export default class Post extends Vue {
 
   memberships!: IMember[];
 
+  currentActor!: IPerson;
+
   RouteName = RouteName;
 
   usernameWithDomain = usernameWithDomain;
 
+  PostVisibility = PostVisibility;
+
+  handleErrors(errors: any[]): void {
+    if (errors.some((error) => error.status_code === 404)) {
+      this.$router.replace({ name: RouteName.PAGE_NOT_FOUND });
+    }
+  }
+
   get isCurrentActorMember(): boolean {
     if (!this.post.attributedTo || !this.memberships) return false;
     return this.memberships.map(({ parent: { id } }) => id).includes(this.post.attributedTo.id);
-  }
-
-  async handleErrors(errors: GraphQLError[]): Promise<void> {
-    if (errors[0].message.includes("No such post")) {
-      await this.$router.push({ name: RouteName.PAGE_NOT_FOUND });
-    }
   }
 }
 </script>
@@ -126,6 +134,10 @@ export default class Post extends Vue {
 article {
   section.heading-section {
     text-align: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin: auto -3rem 2rem;
 
     h1.title {
       margin: 0 auto;
@@ -145,8 +157,7 @@ article {
     }
 
     &::after {
-      height: 0.4rem;
-      margin-bottom: 2rem;
+      height: 0.2rem;
       content: " ";
       display: block;
       width: 100%;
@@ -156,6 +167,21 @@ article {
 
     .buttons {
       justify-content: center;
+    }
+    & > * {
+      z-index: 10;
+    }
+
+    & > img {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.3;
+      object-fit: cover;
+      object-position: 50% 50%;
+      z-index: 0;
     }
   }
 

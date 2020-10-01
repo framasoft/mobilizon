@@ -1,6 +1,6 @@
 import { IPicture } from "@/types/picture.model";
 
-export async function buildFileFromIPicture(obj: IPicture | null) {
+export async function buildFileFromIPicture(obj: IPicture | null | undefined) {
   if (!obj) return null;
 
   const response = await fetch(obj.url);

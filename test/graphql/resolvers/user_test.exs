@@ -367,7 +367,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
         conn
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "This email is already used."
+      assert hd(json_response(res, 200)["errors"])["message"] == ["This email is already used."]
     end
 
     test "create_user/3 doesn't allow registration when registration is closed", %{conn: conn} do
@@ -614,7 +614,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "Email doesn't fit required format"
+               ["Email doesn't fit required format"]
     end
   end
 

@@ -335,6 +335,7 @@ section {
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { RefetchQueryDescription } from "apollo-client/core/watchQueryOptions";
 import PictureUpload from "@/components/PictureUpload.vue";
 import EditorComponent from "@/components/Editor.vue";
 import DateTimePicker from "@/components/Event/DateTimePicker.vue";
@@ -373,7 +374,6 @@ import RouteName from "../../router/name";
 import "intersection-observer";
 import { CONFIG } from "../../graphql/config";
 import { IConfig } from "../../types/config.model";
-import { RefetchQueryDescription } from "apollo-client/core/watchQueryOptions";
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 

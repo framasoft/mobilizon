@@ -816,5 +816,8 @@
   "Error while reporting group {groupTitle}": "Erreur lors du signalement du groupe {groupTitle}",
   "Reported group": "Groupe signalé",
   "You can only get invited to groups right now.": "Vous pouvez uniquement être invité aux groupes pour le moment.",
-  "Join group": "Rejoindre le groupe"
+  "Join group": "Rejoindre le groupe",
+  "Created by {username}": "Créé par {username}",
+  "Accessible through link": "Accessible uniquement par lien",
+  "Accessible only to members": "Accessible uniquement aux membres"
 }

@@ -5,7 +5,6 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
   use Absinthe.Schema.Notation
 
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
-  import Mobilizon.GraphQL.Helpers.Error
 
   alias Mobilizon.Events
   alias Mobilizon.GraphQL.Resolvers.Person
@@ -136,7 +135,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
           "The banner for the profile, either as an object or directly the ID of an existing Picture"
       )
 
-      resolve(handle_errors(&Person.create_person/3))
+      resolve(&Person.create_person/3)
     end
 
     @desc "Update an identity"
@@ -157,14 +156,14 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
           "The banner for the profile, either as an object or directly the ID of an existing Picture"
       )
 
-      resolve(handle_errors(&Person.update_person/3))
+      resolve(&Person.update_person/3)
     end
 
     @desc "Delete an identity"
     field :delete_person, :person do
       arg(:id, non_null(:id))
 
-      resolve(handle_errors(&Person.delete_person/3))
+      resolve(&Person.delete_person/3)
     end
 
     @desc "Register a first profile on registration"
@@ -186,7 +185,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
           "The banner for the profile, either as an object or directly the ID of an existing Picture"
       )
 
-      resolve(handle_errors(&Person.register_person/3))
+      resolve(&Person.register_person/3)
     end
   end
 
