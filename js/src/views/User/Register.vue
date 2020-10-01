@@ -108,7 +108,7 @@
               <router-link
                 class="button is-text"
                 :to="{ name: RouteName.RESEND_CONFIRMATION, params: { email: credentials.email } }"
-                >{{ $t("Didn't receive the instructions ?") }}</router-link
+                >{{ $t("Didn't receive the instructions?") }}</router-link
               >
             </p>
             <p class="control">
