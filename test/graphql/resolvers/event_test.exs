@@ -64,8 +64,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
           variables: %{uuid: "b5126423-f1af-43e4-a923-002a03003ba5"}
         )
 
-      assert [%{"message" => "Event with UUID b5126423-f1af-43e4-a923-002a03003ba5 not found"}] =
-               res["errors"]
+      assert [%{"message" => "Event not found"}] = res["errors"]
     end
 
     @create_event_mutation """
@@ -167,7 +166,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         )
 
       assert hd(res["errors"])["message"] ==
-               "ends_on cannot be set before begins_on"
+               ["ends_on cannot be set before begins_on"]
     end
 
     test "create_event/3 creates an event", %{conn: conn, actor: actor, user: user} do
@@ -374,7 +373,9 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
           }
         )
 
-      assert hd(res["errors"])["message"] == "must be greater than or equal to %{number}"
+      assert hd(res["errors"])["message"] == %{
+               "maximum_attendee_capacity" => ["must be greater than or equal to %{number}"]
+             }
     end
 
     test "create_event/3 creates an event with tags", %{conn: conn, actor: actor, user: user} do
@@ -726,7 +727,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "ends_on cannot be set before begins_on"
+               ["ends_on cannot be set before begins_on"]
     end
 
     test "update_event/3 updates an event", %{conn: conn, actor: actor, user: user} do

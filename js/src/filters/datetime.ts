@@ -1,3 +1,5 @@
+import { DateTimeFormatOptions } from "vue-i18n";
+
 function parseDateTime(value: string): Date {
   return new Date(value);
 }
@@ -16,19 +18,21 @@ function formatTimeString(value: string): string {
 }
 
 function formatDateTimeString(value: string, showTime = true): string {
-  const options = {
-    weekday: "long",
+  const options: DateTimeFormatOptions = {
+    weekday: undefined,
     year: "numeric",
     month: "long",
     day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
+    hour: undefined,
+    minute: undefined,
   };
   if (showTime) {
+    options.weekday = "long";
     options.hour = "numeric";
     options.minute = "numeric";
   }
-  return parseDateTime(value).toLocaleTimeString(undefined, options);
+  const format = new Intl.DateTimeFormat(undefined, options);
+  return format.format(parseDateTime(value));
 }
 
 export { formatDateString, formatTimeString, formatDateTimeString };

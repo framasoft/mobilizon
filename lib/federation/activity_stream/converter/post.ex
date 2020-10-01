@@ -35,7 +35,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
       "name" => post.title,
       "content" => post.body,
       "attributedTo" => creator_url,
-      "published" => (post.publish_at || post.inserted_at) |> DateTime.to_iso8601()
+      "published" => (post.publish_at || post.inserted_at) |> to_date()
     }
   end
 
@@ -67,4 +67,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
   @spec get_actor(String.t() | map() | nil) :: {:ok, Actor.t()} | {:error, String.t()}
   defp get_actor(nil), do: {:error, "nil property found for actor data"}
   defp get_actor(actor), do: actor |> Utils.get_url() |> ActivityPub.get_or_fetch_actor_by_url()
+
+  defp to_date(%DateTime{} = date), do: DateTime.to_iso8601(date)
+  defp to_date(%NaiveDateTime{} = date), do: NaiveDateTime.to_iso8601(date)
 end

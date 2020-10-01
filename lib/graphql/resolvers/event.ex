@@ -38,12 +38,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
         {:ok, Map.put(event, :organizer_actor, Person.proxify_pictures(event.organizer_actor))}
 
       {:has_event, _} ->
-        {:error, dgettext("errors", "Event with UUID %{uuid} not found", uuid: uuid)}
+        {:error, :event_not_found}
     end
   end
 
-  defp find_private_event(_parent, %{uuid: uuid}, _resolution) do
-    {:error, dgettext("errors", "Event with UUID %{uuid} not found", uuid: uuid)}
+  defp find_private_event(_parent, _args, _resolution) do
+    {:error, :event_not_found}
   end
 
   def find_event(parent, %{uuid: uuid} = args, %{context: context} = resolution) do
@@ -57,7 +57,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
         find_private_event(parent, args, resolution)
 
       {:access_valid, _} ->
-        {:error, dgettext("errors", "Event with UUID %{uuid} not found", uuid)}
+        {:error, :event_not_found}
     end
   end
 

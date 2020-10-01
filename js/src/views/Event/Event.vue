@@ -965,12 +965,12 @@ export default class Event extends EventMixin {
     // @ts-ignore-end
   }
 
-  async handleErrors(errors: GraphQLError[]): Promise<void> {
+  handleErrors(errors: any[]): void {
     if (
-      errors[0].message.includes("not found") ||
-      errors[0].message.includes("has invalid value $uuid")
+      errors.some((error) => error.status_code === 404) ||
+      errors.some(({ message }) => message.includes("has invalid value $uuid"))
     ) {
-      await this.$router.push({ name: RouteName.PAGE_NOT_FOUND });
+      this.$router.replace({ name: RouteName.PAGE_NOT_FOUND });
     }
   }
 

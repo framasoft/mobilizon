@@ -83,16 +83,16 @@ export default class DateTimePicker extends Vue {
   localeMonthNamesProxy = localeMonthNames();
 
   @Watch("value")
-  updateValue() {
+  updateValue(): void {
     this.dateWithTime = this.value;
   }
 
   @Watch("dateWithTime")
-  updateDateWithTimeWatcher() {
+  updateDateWithTimeWatcher(): void {
     this.updateDateTime();
   }
 
-  updateDateTime() {
+  updateDateTime(): void {
     /**
      * Returns the updated date
      *
@@ -115,6 +115,7 @@ export default class DateTimePicker extends Vue {
     return null;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private datesAreOnSameDay(first: Date, second: Date): boolean {
     return (
       first.getFullYear() === second.getFullYear() &&

@@ -198,7 +198,7 @@ export default class Register extends Vue {
     } catch (error) {
       console.error(error);
       this.errors = error.graphQLErrors.reduce((acc: { [key: string]: any }, localError: any) => {
-        acc[localError.details] = localError.message;
+        acc[localError.field] = localError.message;
         return acc;
       }, {});
       this.sendingForm = false;

@@ -8,9 +8,17 @@
         {{ $t("Add a new post") }}
       </h1>
       <subtitle>{{ $t("General information") }}</subtitle>
-      <picture-upload v-model="pictureFile" :textFallback="$t('Headline picture')" />
+      <picture-upload
+        v-model="pictureFile"
+        :textFallback="$t('Headline picture')"
+        :defaultImageSrc="post.picture ? post.picture.url : null"
+      />
 
-      <b-field :label="$t('Title')">
+      <b-field
+        :label="$t('Title')"
+        :type="errors.title ? 'is-danger' : null"
+        :message="errors.title"
+      >
         <b-input size="is-large" aria-required="true" required v-model="post.title" />
       </b-field>
 
@@ -18,6 +26,7 @@
 
       <div class="field">
         <label class="label">{{ $t("Post") }}</label>
+        <p v-if="errors.body" class="help is-danger">{{ errors.body }}</p>
         <editor v-model="post.body" />
       </div>
       <subtitle>{{ $t("Who can view this post") }}</subtitle>
@@ -80,6 +89,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { FETCH_GROUP } from "@/graphql/group";
+import { buildFileFromIPicture, readFileAsync } from "@/utils/image";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { TAGS } from "../../graphql/tags";
 import { CONFIG } from "../../graphql/config";
@@ -87,9 +97,11 @@ import { FETCH_POST, CREATE_POST, UPDATE_POST, DELETE_POST } from "../../graphql
 
 import { IPost, PostVisibility } from "../../types/post.model";
 import Editor from "../../components/Editor.vue";
-import { IGroup } from "../../types/actor";
+import { IActor, IGroup } from "../../types/actor";
 import TagInput from "../../components/Event/TagInput.vue";
 import RouteName from "../../router/name";
+import Subtitle from "../../components/Utils/Subtitle.vue";
+import PictureUpload from "../../components/PictureUpload.vue";
 
 @Component({
   apollo: {
@@ -123,10 +135,12 @@ import RouteName from "../../router/name";
   components: {
     Editor,
     TagInput,
+    Subtitle,
+    PictureUpload,
   },
   metaInfo() {
     return {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title: this.isUpdate
         ? (this.$t("Edit post") as string)
@@ -156,7 +170,18 @@ export default class EditPost extends Vue {
 
   PostVisibility = PostVisibility;
 
-  async publish(draft: boolean) {
+  pictureFile: File | null = null;
+
+  errors: Record<string, unknown> = {};
+
+  async mounted(): Promise<void> {
+    this.pictureFile = await buildFileFromIPicture(this.post.picture);
+  }
+
+  // eslint-disable-next-line consistent-return
+  async publish(draft: boolean): Promise<void> {
+    this.errors = {};
+
     if (this.isUpdate) {
       const { data } = await this.$apollo.mutate({
         mutation: UPDATE_POST,
@@ -167,28 +192,38 @@ export default class EditPost extends Vue {
           tags: (this.post.tags || []).map(({ title }) => title),
           visibility: this.post.visibility,
           draft,
+          ...(await this.buildPicture()),
         },
       });
       if (data && data.updatePost) {
-        return this.$router.push({ name: RouteName.POST, params: { slug: data.updatePost.slug } });
+        this.$router.push({ name: RouteName.POST, params: { slug: data.updatePost.slug } });
       }
     } else {
-      const { data } = await this.$apollo.mutate({
-        mutation: CREATE_POST,
-        variables: {
-          ...this.post,
-          tags: (this.post.tags || []).map(({ title }) => title),
-          attributedToId: this.group.id,
-          draft,
-        },
-      });
-      if (data && data.createPost) {
-        return this.$router.push({ name: RouteName.POST, params: { slug: data.createPost.slug } });
+      try {
+        const { data } = await this.$apollo.mutate({
+          mutation: CREATE_POST,
+          variables: {
+            ...this.post,
+            ...(await this.buildPicture()),
+            tags: (this.post.tags || []).map(({ title }) => title),
+            attributedToId: this.actualGroup.id,
+            draft,
+          },
+        });
+        if (data && data.createPost) {
+          this.$router.push({ name: RouteName.POST, params: { slug: data.createPost.slug } });
+        }
+      } catch (error) {
+        console.error(error);
+        this.errors = error.graphQLErrors.reduce((acc: { [key: string]: any }, localError: any) => {
+          acc[localError.field] = EditPost.transformMessage(localError.message);
+          return acc;
+        }, {});
       }
     }
   }
 
-  async deletePost() {
+  async deletePost(): Promise<void> {
     const { data } = await this.$apollo.mutate({
       mutation: DELETE_POST,
       variables: {
@@ -196,11 +231,57 @@ export default class EditPost extends Vue {
       },
     });
     if (data && this.post.attributedTo) {
-      return this.$router.push({
+      this.$router.push({
         name: RouteName.POSTS,
         params: { preferredUsername: this.post.attributedTo.preferredUsername },
       });
     }
+  }
+
+  static transformMessage(message: string[] | string): string | undefined {
+    if (Array.isArray(message) && message.length > 0) {
+      return message[0];
+    }
+    if (typeof message === "string") {
+      return message;
+    }
+    return undefined;
+  }
+
+  async buildPicture(): Promise<Record<string, unknown>> {
+    let obj: { picture?: any } = {};
+    if (this.pictureFile) {
+      const pictureObj = {
+        picture: {
+          picture: {
+            name: this.pictureFile.name,
+            alt: `${this.actualGroup.preferredUsername}'s avatar`,
+            file: this.pictureFile,
+          },
+        },
+      };
+      obj = { ...pictureObj };
+    }
+    try {
+      if (this.post.picture) {
+        const oldPictureFile = (await buildFileFromIPicture(this.post.picture)) as File;
+        const oldPictureFileContent = await readFileAsync(oldPictureFile);
+        const newPictureFileContent = await readFileAsync(this.pictureFile as File);
+        if (oldPictureFileContent === newPictureFileContent) {
+          obj.picture = { pictureId: this.post.picture.id };
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return obj;
+  }
+
+  get actualGroup(): IActor {
+    if (!this.group) {
+      return this.post.attributedTo as IActor;
+    }
+    return this.group;
   }
 }
 </script>

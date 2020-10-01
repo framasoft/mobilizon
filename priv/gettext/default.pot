@@ -1284,3 +1284,13 @@ msgstr ""
 #: lib/web/templates/email/event_participation_confirmed.html.eex:45
 msgid "You have now confirmed your participation. Update your calendar, because you're on the guest list now!"
 msgstr ""
+
+#, elixir-format
+#: lib/mobilizon/posts/post.ex:91
+msgid "A text is required for the post"
+msgstr ""
+
+#, elixir-format
+#: lib/mobilizon/posts/post.ex:90
+msgid "A title is required for the post"
+msgstr ""

@@ -6,7 +6,6 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
   use Absinthe.Schema.Notation
 
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
-  import Mobilizon.GraphQL.Helpers.Error
 
   alias Mobilizon.{Actors, Addresses, Discussions}
   alias Mobilizon.GraphQL.Resolvers.{Event, Picture, Tag}
@@ -311,7 +310,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       arg(:draft, :boolean, default_value: false)
       arg(:contacts, list_of(:contact), default_value: [])
 
-      resolve(handle_errors(&Event.create_event/3))
+      resolve(&Event.create_event/3)
     end
 
     @desc "Update an event"
@@ -343,7 +342,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       arg(:draft, :boolean)
       arg(:contacts, list_of(:contact), default_value: [])
 
-      resolve(handle_errors(&Event.update_event/3))
+      resolve(&Event.update_event/3)
     end
 
     @desc "Delete an event"

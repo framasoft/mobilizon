@@ -7,6 +7,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
   alias Mobilizon.{Actors, Posts, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Utils
   alias Mobilizon.Posts.Post
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
@@ -76,7 +77,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
       {:ok, post}
     else
       {:member, false} -> get_post(parent, %{slug: slug}, nil)
-      {:post, _} -> {:error, dgettext("errors", "No such post")}
+      {:post, _} -> {:error, :post_not_found}
     end
   end
 
@@ -91,12 +92,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
         {:ok, post}
 
       {:post, _} ->
-        {:error, dgettext("errors", "No such post")}
+        {:error, :post_not_found}
     end
   end
 
   def get_post(_parent, _args, _resolution) do
-    {:error, dgettext("errors", "No such post")}
+    {:error, :post_not_found}
   end
 
   def create_post(
@@ -110,6 +111,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
       ) do
     with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+         %Actor{} = group <- Actors.get_actor(group_id),
+         args <-
+           Map.update(args, :picture, nil, fn picture ->
+             process_picture(picture, group)
+           end),
          {:ok, _, %Post{} = post} <-
            ActivityPub.create(
              :post,
@@ -123,6 +129,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
     else
       {:member, _} ->
         {:error, dgettext("errors", "Profile is not member of group")}
+
+      {:error, error} ->
+        {:error, error}
     end
   end
 
@@ -141,8 +150,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
       ) do
     with {:uuid, {:ok, _uuid}} <- {:uuid, Ecto.UUID.cast(id)},
          %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:post, %Post{attributed_to: %Actor{id: group_id}} = post} <-
+         {:post, %Post{attributed_to: %Actor{id: group_id} = group} = post} <-
            {:post, Posts.get_post_with_preloads(id)},
+         args <-
+           Map.update(args, :picture, nil, fn picture ->
+             process_picture(picture, group)
+           end),
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          {:ok, _, %Post{} = post} <-
            ActivityPub.update(post, args, true, %{}) do
@@ -194,5 +207,18 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
 
   def delete_post(_parent, _args, _resolution) do
     {:error, dgettext("errors", "You need to be logged-in to delete posts")}
+  end
+
+  defp process_picture(nil, _), do: nil
+  defp process_picture(%{picture_id: _picture_id} = args, _), do: args
+
+  defp process_picture(%{picture: picture}, %Actor{id: actor_id}) do
+    %{
+      file:
+        picture
+        |> Map.get(:file)
+        |> Utils.make_picture_data(description: Map.get(picture, :name)),
+      actor_id: actor_id
+    }
   end
 end

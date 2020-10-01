@@ -5,7 +5,6 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
   use Absinthe.Schema.Notation
 
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
-  import Mobilizon.GraphQL.Helpers.Error
 
   alias Mobilizon.Events
   alias Mobilizon.GraphQL.Resolvers.User
@@ -177,7 +176,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       arg(:password, non_null(:string))
       arg(:locale, :string)
 
-      resolve(handle_errors(&User.create_user/3))
+      resolve(&User.create_user/3)
     end
 
     @desc "Validate an user after registration"
