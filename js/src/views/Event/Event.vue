@@ -1022,9 +1022,7 @@ export default class Event extends EventMixin {
   }
 
   get ableToReport(): boolean {
-    return (
-      this.config && (this.currentActor.id !== undefined || this.config.anonymous.reports.allowed)
-    );
+    return this.config && (this.currentActor.id != null || this.config.anonymous.reports.allowed);
   }
 
   get actorForReport(): IActor | null {
