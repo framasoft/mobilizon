@@ -26,7 +26,7 @@
       <h1 class="title" v-if="group">
         {{ $t("{group}'s events", { group: group.name || group.preferredUsername }) }}
       </h1>
-      <p>
+      <p v-if="isCurrentActorMember">
         {{
           $t(
             "When someone from the group creates an event and attributes it to the group, it will show up here."
@@ -44,6 +44,7 @@
             v-for="event in group.organizedEvents.elements"
             :key="event.id"
             :event="event"
+            :options="{ memberofGroup: isCurrentActorMember }"
           />
         </transition-group>
         <b-message
@@ -62,10 +63,25 @@ import { FETCH_GROUP } from "@/graphql/group";
 import RouteName from "@/router/name";
 import Subtitle from "@/components/Utils/Subtitle.vue";
 import EventListViewCard from "@/components/Event/EventListViewCard.vue";
-import { IGroup, usernameWithDomain } from "../../types/actor";
+import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
+import { IGroup, IMember, IPerson, usernameWithDomain } from "../../types/actor";
 
 @Component({
   apollo: {
+    currentActor: CURRENT_ACTOR_CLIENT,
+    memberships: {
+      query: PERSON_MEMBERSHIPS,
+      fetchPolicy: "cache-and-network",
+      variables() {
+        return {
+          id: this.currentActor.id,
+        };
+      },
+      update: (data) => data.person.memberships.elements,
+      skip() {
+        return !this.currentActor || !this.currentActor.id;
+      },
+    },
     group: {
       query: FETCH_GROUP,
       variables() {
@@ -85,10 +101,19 @@ import { IGroup, usernameWithDomain } from "../../types/actor";
 export default class GroupEvents extends Vue {
   group!: IGroup;
 
+  memberships!: IMember[];
+
+  currentActor!: IPerson;
+
   usernameWithDomain = usernameWithDomain;
 
   RouteName = RouteName;
 
   showPassedEvents = false;
+
+  get isCurrentActorMember(): boolean {
+    if (!this.group || !this.memberships) return false;
+    return this.memberships.map(({ parent: { id } }) => id).includes(this.group.id);
+  }
 }
 </script>

@@ -286,7 +286,13 @@
             :key="event.uuid"
             class="organized-event"
           />
-          <router-link :to="{}">{{ $t("View all upcoming events") }}</router-link>
+          <router-link
+            :to="{
+              name: RouteName.GROUP_EVENTS,
+              params: { preferredUsername: usernameWithDomain(group) },
+            }"
+            >{{ $t("View all upcoming events") }}</router-link
+          >
         </div>
         <span v-else-if="group">{{ $t("No public upcoming events") }}</span>
         <b-skeleton animated v-else></b-skeleton>
@@ -295,6 +301,13 @@
         <subtitle>{{ $t("Latest posts") }}</subtitle>
         <div v-if="group.posts.total > 0" class="posts-wrapper">
           <post-list-item v-for="post in group.posts.elements" :key="post.id" :post="post" />
+          <router-link
+            :to="{
+              name: RouteName.POSTS,
+              params: { preferredUsername: usernameWithDomain(group) },
+            }"
+            >{{ $t("View all posts") }}</router-link
+          >
         </div>
         <div v-else-if="group" class="content has-text-grey has-text-centered">
           <p>{{ $t("No posts yet") }}</p>

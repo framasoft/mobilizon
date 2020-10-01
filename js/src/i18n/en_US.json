@@ -782,5 +782,7 @@
   "Join group": "Join group",
   "Created by {username}": "Created by {username}",
   "Accessible through link": "Accessible through link",
-  "Accessible only to members": "Accessible only to members"
+  "Accessible only to members": "Accessible only to members",
+  "Created by {name}": "Created by {name}",
+  "View all posts": "View all posts"
 }

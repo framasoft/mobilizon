@@ -53,6 +53,7 @@ export interface IEventCardOptions {
   loggedPerson: IPerson | boolean;
   hideDetails: boolean;
   organizerActor: IActor | null;
+  memberofGroup: boolean;
 }
 
 export interface IParticipant {
