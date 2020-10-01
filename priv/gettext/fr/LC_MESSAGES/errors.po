@@ -682,7 +682,7 @@ msgstr "Vous devez être connecté·e et un·e administrateur·ice pour sauvegar
 #, elixir-format
 #: lib/graphql/resolvers/discussion.ex:66
 msgid "You need to be logged-in to access discussions"
-msgstr "Vous devez être connecté·e pour supprimer votre compte"
+msgstr "Vous devez être connecté·e pour accéder aux discussions"
 
 #, elixir-format
 #: lib/graphql/resolvers/resource.ex:92
@@ -697,7 +697,7 @@ msgstr "Vous devez être connecté·e pour changer votre adresse e-mail"
 #, elixir-format
 #: lib/graphql/resolvers/event.ex:213
 msgid "You need to be logged-in to create events"
-msgstr "Vous devez être connecté·e pour supprimer votre compte"
+msgstr "Vous devez être connecté·e pour créer des événements"
 
 #, elixir-format
 #: lib/graphql/resolvers/post.ex:139
@@ -777,7 +777,7 @@ msgstr "Vous devez être connecté·e pour supprimer un groupe"
 #, elixir-format
 #: lib/graphql/resolvers/person.ex:95
 msgid "You need to be logged-in to view your list of identities"
-msgstr "Vous devez être connecté·e pour supprimer votre compte"
+msgstr "Vous devez être connecté·e pour visionner votre liste d'identités"
 
 #, elixir-format
 #: lib/graphql/resolvers/picture.ex:83

@@ -324,6 +324,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
     end
   end
 
+  def organized_events_for_person(_parent, _args, _resolution),
+    do: {:ok, %Page{elements: [], total: 0}}
+
   # We check that the actor is not the last administrator/creator of a group
   @spec last_admin_of_a_group?(integer()) :: boolean()
   defp last_admin_of_a_group?(actor_id) do
