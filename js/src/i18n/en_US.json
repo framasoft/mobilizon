@@ -102,7 +102,6 @@
   "Deleting my account will delete all of my identities.": "Deleting my account will delete all of my identities.",
   "Deleting your Mobilizon account": "Deleting your Mobilizon account",
   "Description": "Description",
-  "Didn't receive the instructions ?": "Didn't receive the instructions ?",
   "Display name": "Display name",
   "Display participation price": "Display participation price",
   "Domain": "Domain",
@@ -784,5 +783,6 @@
   "Accessible through link": "Accessible through link",
   "Accessible only to members": "Accessible only to members",
   "Created by {name}": "Created by {name}",
-  "View all posts": "View all posts"
+  "View all posts": "View all posts",
+  "Didn't receive the instructions?": "Didn't receive the instructions?"
 }
