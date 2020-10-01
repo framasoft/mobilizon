@@ -267,13 +267,18 @@
             </span>
             <!-- If an event has been published we can't make it draft anymore -->
             <span class="navbar-item" v-if="event.draft === true">
-              <b-button type="is-primary" outlined @click="createOrUpdateDraft">{{
-                $t("Save draft")
-              }}</b-button>
+              <b-button
+                type="is-primary"
+                outlined
+                @click="createOrUpdateDraft"
+                :disabled="saving"
+                >{{ $t("Save draft") }}</b-button
+              >
             </span>
             <span class="navbar-item">
               <b-button
                 type="is-primary"
+                :disabled="saving"
                 @click="createOrUpdatePublish"
                 @keyup.enter="createOrUpdatePublish"
               >
@@ -457,6 +462,8 @@ export default class EditEvent extends Vue {
 
   endsOnNull = false;
 
+  saving = false;
+
   displayNameAndUsername = displayNameAndUsername;
 
   formatList = formatList;
@@ -517,6 +524,7 @@ export default class EditEvent extends Vue {
   }
 
   createOrUpdatePublish(e: Event): void {
+    e.preventDefault();
     if (this.validateForm()) {
       this.event.draft = false;
       this.createOrUpdateDraft(e);
@@ -552,6 +560,7 @@ export default class EditEvent extends Vue {
   }
 
   async createEvent(): Promise<void> {
+    this.saving = true;
     const variables = await this.buildVariables();
 
     try {
@@ -575,11 +584,13 @@ export default class EditEvent extends Vue {
         params: { uuid: data.createEvent.uuid },
       });
     } catch (err) {
+      this.saving = false;
       console.error(err);
     }
   }
 
   async updateEvent(): Promise<void> {
+    this.saving = true;
     const variables = await this.buildVariables();
 
     try {
@@ -601,6 +612,7 @@ export default class EditEvent extends Vue {
         params: { uuid: this.eventId as string },
       });
     } catch (err) {
+      this.saving = false;
       console.error(err);
     }
   }
