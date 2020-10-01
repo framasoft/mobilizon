@@ -98,6 +98,7 @@ export default class EventCard extends Vue {
     loggedPerson: false,
     hideDetails: false,
     organizerActor: null,
+    memberofGroup: false,
   };
 
   get mergedOptions(): IEventCardOptions {

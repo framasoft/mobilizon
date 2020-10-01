@@ -113,7 +113,7 @@ msgid "Current profile is not an administrator of the selected group"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:516
+#: lib/graphql/resolvers/user.ex:514
 msgid "Error while saving user settings"
 msgstr ""
 
@@ -145,18 +145,18 @@ msgstr ""
 
 #, elixir-format
 #: lib/graphql/resolvers/actor.ex:58 lib/graphql/resolvers/actor.ex:88
-#: lib/graphql/resolvers/user.ex:419
+#: lib/graphql/resolvers/user.ex:417
 msgid "No profile found for the moderator user"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:197
+#: lib/graphql/resolvers/user.ex:195
 msgid "No user to validate with this email was found"
 msgstr ""
 
 #, elixir-format
 #: lib/graphql/resolvers/person.ex:217 lib/graphql/resolvers/user.ex:76
-#: lib/graphql/resolvers/user.ex:221
+#: lib/graphql/resolvers/user.ex:219
 msgid "No user with this email was found"
 msgstr ""
 
@@ -177,38 +177,38 @@ msgid "Registrations are not open"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:332
+#: lib/graphql/resolvers/user.ex:330
 msgid "The current password is invalid"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:384
+#: lib/graphql/resolvers/user.ex:382
 msgid "The new email doesn't seem to be valid"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:381
+#: lib/graphql/resolvers/user.ex:379
 msgid "The new email must be different"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:335
+#: lib/graphql/resolvers/user.ex:333
 msgid "The new password must be different"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:378 lib/graphql/resolvers/user.ex:441
-#: lib/graphql/resolvers/user.ex:444
+#: lib/graphql/resolvers/user.ex:376 lib/graphql/resolvers/user.ex:439
+#: lib/graphql/resolvers/user.ex:442
 msgid "The password provided is invalid"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:339
+#: lib/graphql/resolvers/user.ex:337
 msgid "The password you have chosen is too short. Please make sure your password contains at least 6 characters."
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:217
+#: lib/graphql/resolvers/user.ex:215
 msgid "This user can't reset their password"
 msgstr ""
 
@@ -218,17 +218,17 @@ msgid "This user has been disabled"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:181
+#: lib/graphql/resolvers/user.ex:179
 msgid "Unable to validate user"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:422
+#: lib/graphql/resolvers/user.ex:420
 msgid "User already disabled"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:491
+#: lib/graphql/resolvers/user.ex:489
 msgid "User requested is not logged-in"
 msgstr ""
 
@@ -253,12 +253,12 @@ msgid "You may not list groups unless moderator."
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:389
+#: lib/graphql/resolvers/user.ex:387
 msgid "You need to be logged-in to change your email"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:347
+#: lib/graphql/resolvers/user.ex:345
 msgid "You need to be logged-in to change your password"
 msgstr ""
 
@@ -268,7 +268,7 @@ msgid "You need to be logged-in to delete a group"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:449
+#: lib/graphql/resolvers/user.ex:447
 msgid "You need to be logged-in to delete your account"
 msgstr ""
 
@@ -298,7 +298,7 @@ msgid "You need to have an existing token to get a refresh token"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:200 lib/graphql/resolvers/user.ex:224
+#: lib/graphql/resolvers/user.ex:198 lib/graphql/resolvers/user.ex:222
 msgid "You requested again a confirmation email too soon"
 msgstr ""
 
@@ -388,7 +388,7 @@ msgid "Event id not found"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/error.ex:85 lib/graphql/resolvers/event.ex:236
+#: lib/graphql/error.ex:83 lib/graphql/resolvers/event.ex:236
 #: lib/graphql/resolvers/event.ex:278
 msgid "Event not found"
 msgstr ""
@@ -813,6 +813,6 @@ msgid "This email is already used."
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/error.ex:84
+#: lib/graphql/error.ex:82
 msgid "Post not found"
 msgstr ""

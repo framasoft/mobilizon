@@ -206,6 +206,7 @@ const defaultOptions: IEventCardOptions = {
   loggedPerson: false,
   hideDetails: false,
   organizerActor: null,
+  memberofGroup: false,
 };
 
 @Component({
