@@ -356,7 +356,7 @@ defmodule Mobilizon.Events do
         direction \\ :asc,
         is_future \\ true
       ) do
-    query = from(e in Event, preload: [:organizer_actor, :participants])
+    query = from(e in Event, distinct: true, preload: [:organizer_actor, :participants])
 
     query
     |> sort(sort, direction)
