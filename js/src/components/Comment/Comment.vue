@@ -46,16 +46,17 @@
           <br />
           <div v-if="!comment.deletedAt" v-html="comment.text" />
           <div v-else>{{ $t("[This comment has been deleted]") }}</div>
-          <span class="load-replies" v-if="comment.totalReplies">
-            <span v-if="!showReplies" @click="fetchReplies">
-              {{
+          <div class="load-replies" v-if="comment.totalReplies">
+            <p v-if="!showReplies" @click="fetchReplies">
+              <b-icon icon="chevron-down" /><span>{{
                 $tc("View a reply", comment.totalReplies, { totalReplies: comment.totalReplies })
-              }}
-            </span>
-            <span v-else-if="comment.totalReplies && showReplies" @click="showReplies = false">
-              {{ $t("Hide replies") }}
-            </span>
-          </span>
+              }}</span>
+            </p>
+            <p v-else-if="comment.totalReplies && showReplies" @click="showReplies = false">
+              <b-icon icon="chevron-up" />
+              <span>{{ $t("Hide replies") }}</span>
+            </p>
+          </div>
         </div>
         <nav
           class="reply-action level is-mobile"
@@ -66,11 +67,15 @@
           "
         >
           <div class="level-left">
-            <span style="cursor: pointer" class="level-item" @click="createReplyToComment(comment)">
+            <span
+              style="cursor: pointer"
+              class="level-item reply-btn"
+              @click="createReplyToComment(comment)"
+            >
               <span class="icon is-small">
                 <b-icon icon="reply" />
               </span>
-              {{ $t("Reply") }}
+              <span>{{ $t("Reply") }}</span>
             </span>
           </div>
         </nav>
@@ -397,6 +402,16 @@ form.reply {
 
 .load-replies {
   cursor: pointer;
+
+  & > p > span {
+    font-weight: bold;
+    color: $primary;
+  }
+}
+
+.level-item.reply-btn {
+  font-weight: bold;
+  color: $primary;
 }
 
 article {
