@@ -35,12 +35,18 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   @doc """
   Find a person
   """
-  def fetch_person(_parent, %{preferred_username: preferred_username}, _resolution) do
-    with {:ok, %Actor{} = actor} <-
+  def fetch_person(_parent, %{preferred_username: preferred_username}, %{
+        context: %{current_user: %User{} = user}
+      }) do
+    with {:ok, %Actor{id: actor_id} = actor} <-
            ActivityPub.find_or_make_actor_from_nickname(preferred_username),
+         {:own, {:is_owned, _}} <- {:own, User.owns_actor(user, actor_id)},
          actor <- proxify_pictures(actor) do
       {:ok, actor}
     else
+      {:own, nil} ->
+        {:error, :unauthorized}
+
       _ ->
         {:error,
          dgettext("errors", "Person with username %{username} not found",
@@ -48,6 +54,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
          )}
     end
   end
+
+  def fetch_person(_parent, _args, _resolution), do: {:error, :unauthenticated}
 
   def list_persons(
         _parent,
@@ -69,8 +77,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
      Actors.list_actors(:Person, preferred_username, name, domain, local, suspended, page, limit)}
   end
 
+  def list_persons(_parent, _args, %{
+        context: %{current_user: %User{role: role}}
+      })
+      when not is_moderator(role) do
+    {:error, :unauthorized}
+  end
+
   def list_persons(_parent, _args, _resolution) do
-    {:error, dgettext("errors", "You need to be logged-in and a moderator to list persons")}
+    {:error, :unauthenticated}
   end
 
   @doc """
@@ -81,7 +96,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   end
 
   def get_current_person(_parent, _args, _resolution) do
-    {:error, dgettext("errors", "You need to be logged-in to view current person")}
+    {:error, :unauthenticated}
   end
 
   @doc """
@@ -92,7 +107,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   end
 
   def identities(_parent, _args, _resolution) do
-    {:error, dgettext("errors", "You need to be logged-in to view your list of identities")}
+    {:error, :unauthenticated}
   end
 
   @doc """
@@ -115,7 +130,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   This function is used to create more identities from an existing user
   """
   def create_person(_parent, _args, _resolution) do
-    {:error, dgettext("errors", "You need to be logged-in to create a new identity")}
+    {:error, :unauthenticated}
   end
 
   @doc """
@@ -144,7 +159,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   end
 
   def update_person(_parent, _args, _resolution) do
-    {:error, dgettext("errors", "You need to be logged-in to update an identity")}
+    {:error, :unauthenticated}
   end
 
   @doc """
@@ -178,7 +193,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   end
 
   def delete_person(_parent, _args, _resolution) do
-    {:error, dgettext("errors", "You need to be logged-in to delete an identity")}
+    {:error, :unauthenticated}
   end
 
   defp last_identity?(user) do

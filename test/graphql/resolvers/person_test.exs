@@ -14,42 +14,44 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
   @non_existent_username "nonexistent"
 
   describe "Person Resolver" do
+    @get_person_query """
+    query Person($id: ID!) {
+        person(id: $id) {
+            preferredUsername,
+        }
+      }
+    """
+
+    @fetch_person_query """
+    query FetchPerson($preferredUsername: String!) {
+        fetchPerson(preferredUsername: $preferredUsername) {
+            preferredUsername,
+        }
+      }
+    """
+
     test "get_person/3 returns a person by its username", %{conn: conn} do
       user = insert(:user)
       actor = insert(:actor, user: user)
 
-      query = """
-      {
-        person(id: "#{actor.id}") {
-            preferredUsername,
-        }
-      }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+        |> AbsintheHelpers.graphql_query(query: @get_person_query, variables: %{id: actor.id})
 
-      assert json_response(res, 200)["data"]["person"]["preferredUsername"] ==
+      assert is_nil(res["errors"])
+
+      assert res["data"]["person"]["preferredUsername"] ==
                actor.preferred_username
 
-      query = """
-      {
-        person(id: "6895567") {
-            preferredUsername,
-        }
-      }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+        |> AbsintheHelpers.graphql_query(query: @get_person_query, variables: %{id: "6895567"})
 
-      assert json_response(res, 200)["data"]["person"] == nil
+      assert res["data"]["person"] == nil
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert hd(res["errors"])["message"] ==
                "Person with ID 6895567 not found"
     end
 
@@ -57,38 +59,38 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       user = insert(:user)
       actor = insert(:actor, user: user)
 
-      query = """
-      {
-        fetchPerson(preferredUsername: "#{actor.preferred_username}") {
-            preferredUsername,
-        }
-      }
-      """
+      res =
+        context.conn
+        |> AbsintheHelpers.graphql_query(
+          query: @fetch_person_query,
+          variables: %{preferredUsername: actor.preferred_username}
+        )
+
+      assert hd(res["errors"])["message"] == "You need to be logged in"
+      assert hd(res["errors"])["status_code"] == 401
 
       res =
         context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @fetch_person_query,
+          variables: %{preferredUsername: actor.preferred_username}
+        )
 
-      assert json_response(res, 200)["errors"] == nil
-
-      assert json_response(res, 200)["data"]["fetchPerson"]["preferredUsername"] ==
+      assert res["data"]["fetchPerson"]["preferredUsername"] ==
                actor.preferred_username
 
-      query = """
-      {
-        fetchPerson(preferredUsername: "#{@non_existent_username}") {
-            preferredUsername,
-        }
-      }
-      """
-
       res =
         context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @fetch_person_query,
+          variables: %{preferredUsername: @non_existent_username}
+        )
 
-      assert json_response(res, 200)["data"]["fetchPerson"] == nil
+      assert res["data"]["fetchPerson"] == nil
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert hd(res["errors"])["message"] ==
                "Person with username #{@non_existent_username} not found"
     end
 
@@ -114,7 +116,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       assert json_response(res, 200)["data"]["loggedPerson"] == nil
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "You need to be logged-in to view current person"
+               "You need to be logged in"
 
       res =
         context.conn
@@ -151,7 +153,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       assert json_response(res, 200)["data"]["createPerson"] == nil
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "You need to be logged-in to create a new identity"
+               "You need to be logged in"
 
       res =
         context.conn
@@ -179,7 +181,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       assert json_response(res, 200)["data"]["identities"] == nil
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "You need to be logged-in to view your list of identities"
+               "You need to be logged in"
 
       res =
         context.conn
@@ -241,7 +243,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       assert json_response(res, 200)["data"]["createPerson"] == nil
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "You need to be logged-in to create a new identity"
+               "You need to be logged in"
 
       res =
         context.conn
@@ -312,7 +314,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       assert json_response(res, 200)["data"]["updatePerson"] == nil
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "You need to be logged-in to update an identity"
+               "You need to be logged in"
 
       res =
         context.conn

@@ -161,6 +161,9 @@ import identityEditionMixin from "../../../mixins/identityEdition";
         return !this.identityName;
       },
       update: (data) => new Person(data.fetchPerson),
+      error({ graphQLErrors }) {
+        this.handleErrors(graphQLErrors);
+      },
     },
   },
 })
@@ -318,6 +321,12 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
       });
     } catch (err) {
       this.handleError(err);
+    }
+  }
+
+  handleErrors(errors: any[]): void {
+    if (errors.some((error) => error.status_code === 401)) {
+      this.$router.push({ name: RouteName.LOGIN });
     }
   }
 

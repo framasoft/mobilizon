@@ -71,17 +71,23 @@ defmodule Mobilizon.GraphQL.Error do
 
   # Build Error Metadata
   # --------------------
-  defp metadata(:unknown_resource), do: {400, "Unknown Resource"}
-  defp metadata(:invalid_argument), do: {400, "Invalid arguments passed"}
-  defp metadata(:unauthenticated), do: {401, "You need to be logged in"}
-  defp metadata(:password_hash_missing), do: {401, "Reset your password to login"}
-  defp metadata(:incorrect_password), do: {401, "Invalid credentials"}
-  defp metadata(:unauthorized), do: {403, "You don't have permission to do this"}
-  defp metadata(:not_found), do: {404, "Resource not found"}
-  defp metadata(:user_not_found), do: {404, "User not found"}
+  defp metadata(:unknown_resource), do: {400, dgettext("errors", "Unknown Resource")}
+  defp metadata(:invalid_argument), do: {400, dgettext("errors", "Invalid arguments passed")}
+  defp metadata(:unauthenticated), do: {401, dgettext("errors", "You need to be logged in")}
+
+  defp metadata(:password_hash_missing),
+    do: {401, dgettext("errors", "Reset your password to login")}
+
+  defp metadata(:incorrect_password), do: {401, dgettext("errors", "Invalid credentials")}
+
+  defp metadata(:unauthorized),
+    do: {403, dgettext("errors", "You don't have permission to do this")}
+
+  defp metadata(:not_found), do: {404, dgettext("errors", "Resource not found")}
+  defp metadata(:user_not_found), do: {404, dgettext("errors", "User not found")}
   defp metadata(:post_not_found), do: {404, dgettext("errors", "Post not found")}
   defp metadata(:event_not_found), do: {404, dgettext("errors", "Event not found")}
-  defp metadata(:unknown), do: {500, "Something went wrong"}
+  defp metadata(:unknown), do: {500, dgettext("errors", "Something went wrong")}
 
   defp metadata(code) do
     Logger.warn("Unhandled error code: #{inspect(code)}")
