@@ -59,29 +59,29 @@ export default class ActorAutoComplete extends Vue {
 
   totalPages = 1;
 
-  mounted() {
+  mounted(): void {
     this.selected = this.defaultSelected;
   }
 
-  data() {
+  data(): Record<string, unknown> {
     return {
       getAsyncData: debounce(this.doGetAsyncData, 500),
     };
   }
 
   @Watch("defaultSelected")
-  updateDefaultSelected(defaultSelected: IPerson) {
+  updateDefaultSelected(defaultSelected: IPerson): void {
     console.log("update defaultSelected", defaultSelected);
     this.selected = defaultSelected;
     this.name = defaultSelected.preferredUsername;
   }
 
-  handleSelect(selected: IPerson) {
+  handleSelect(selected: IPerson): void {
     this.selected = selected;
     this.$emit("change", selected);
   }
 
-  async doGetAsyncData(name: string) {
+  async doGetAsyncData(name: string): Promise<void> {
     this.baseData = [];
     if (this.name !== name) {
       this.name = name;
