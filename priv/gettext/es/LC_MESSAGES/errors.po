@@ -579,7 +579,7 @@ msgid "You are not a member of this group"
 msgstr "no eres un miembro de este grupo"
 
 #, elixir-format
-#: lib/graphql/resolvers/member.ex:137
+#: lib/graphql/resolvers/member.ex:143
 msgid "You are not a moderator or admin for this group"
 msgstr "No eres moderador ni administrador de este grupo"
 
@@ -617,7 +617,7 @@ msgstr ""
 "evento"
 
 #, elixir-format
-#: lib/graphql/resolvers/member.ex:141
+#: lib/graphql/resolvers/member.ex:147
 msgid "You can't set yourself to a lower member role for this group because you are the only administrator"
 msgstr ""
 "No puede establecerse en un rol de miembro inferior para este grupo porque "
@@ -824,7 +824,7 @@ msgstr ""
 msgid "Reset your password to login"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/graphql/error.ex:86
 msgid "Resource not found"
 msgstr "Informe no encontrado"
@@ -839,12 +839,22 @@ msgstr ""
 msgid "Unknown Resource"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/graphql/error.ex:84
 msgid "You don't have permission to do this"
 msgstr "No tienes permiso para eliminar este token"
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/graphql/error.ex:76
 msgid "You need to be logged in"
 msgstr "Debes iniciar sesión para eliminar su cuenta"
+
+#, elixir-format
+#: lib/graphql/resolvers/member.ex:112
+msgid "You can't accept this invitation with this profile."
+msgstr ""
+
+#, elixir-format
+#: lib/graphql/resolvers/member.ex:129
+msgid "You can't reject this invitation with this profile."
+msgstr ""

@@ -107,6 +107,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
       # Launch an async task to refresh the group profile, fetch resources, discussions, members
       Refresher.fetch_group(member.parent.url, actor)
       {:ok, member}
+    else
+      {:is_same_actor, false} ->
+        {:error, dgettext("errors", "You can't accept this invitation with this profile.")}
     end
   end
 
@@ -121,6 +124,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
              true
            ) do
       {:ok, member}
+    else
+      {:is_same_actor, false} ->
+        {:error, dgettext("errors", "You can't reject this invitation with this profile.")}
     end
   end
 

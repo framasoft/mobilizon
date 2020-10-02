@@ -8,7 +8,7 @@
 # # to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-10-02 09:46+0200\n"
+"PO-Revision-Date: 2020-10-02 11:16+0200\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend-errors/fr/>\n"
 "Language: fr\n"
@@ -477,7 +477,7 @@ msgstr "Vous n'êtes pas un membre du groupe dans lequel se fait la discussion"
 msgid "You are not a member of this group"
 msgstr "Vous êtes déjà membre de ce groupe"
 
-#: lib/graphql/resolvers/member.ex:137
+#: lib/graphql/resolvers/member.ex:143
 msgid "You are not a moderator or admin for this group"
 msgstr "Vous n'êtes pas administrateur·ice ou modérateur·ice de ce groupe"
 
@@ -505,7 +505,7 @@ msgstr "Vous n'êtes pas autorisé·e à mettre à jour un commentaire si non co
 msgid "You can't leave event because you're the only event creator participant"
 msgstr "Vous ne pouvez pas quitter cet événement car vous en êtes le ou la seule créateur·ice participant"
 
-#: lib/graphql/resolvers/member.ex:141
+#: lib/graphql/resolvers/member.ex:147
 msgid "You can't set yourself to a lower member role for this group because you are the only administrator"
 msgstr ""
 "Vous ne pouvez pas vous définir avec un rôle de membre inférieur pour ce groupe car vous en êtes le ou la seul·e "
@@ -682,3 +682,11 @@ msgstr "Vous n'avez pas la permission de faire ceci"
 #: lib/graphql/error.ex:76
 msgid "You need to be logged in"
 msgstr "Vous devez être connecté·e"
+
+#: lib/graphql/resolvers/member.ex:112
+msgid "You can't accept this invitation with this profile."
+msgstr "Vous ne pouvez pas accepter cette invitation avec ce profil."
+
+#: lib/graphql/resolvers/member.ex:129
+msgid "You can't reject this invitation with this profile."
+msgstr "Vous ne pouvez pas rejeter cette invitation avec ce profil."

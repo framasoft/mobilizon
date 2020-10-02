@@ -16,8 +16,8 @@
     <b-loading :active.sync="$apollo.loading"></b-loading>
     <invitations
       :invitations="invitations"
-      @acceptInvitation="acceptInvitation"
-      @rejectInvitation="rejectInvitation"
+      @accept-invitation="acceptInvitation"
+      @reject-invitation="rejectInvitation"
     />
     <section v-if="memberships && memberships.length > 0">
       <GroupMemberCard
@@ -43,7 +43,6 @@ import Invitations from "@/components/Group/Invitations.vue";
 import { Paginate } from "@/types/paginate";
 import { IGroup, IMember, MemberRole, usernameWithDomain } from "@/types/actor";
 import { Route } from "vue-router";
-import { ApolloError } from "apollo-client";
 import RouteName from "../../router/name";
 
 @Component({

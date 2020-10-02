@@ -598,7 +598,7 @@ msgid "You are not a member of this group"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/member.ex:137
+#: lib/graphql/resolvers/member.ex:143
 msgid "You are not a moderator or admin for this group"
 msgstr ""
 
@@ -634,7 +634,7 @@ msgid "You can't leave event because you're the only event creator participant"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/member.ex:141
+#: lib/graphql/resolvers/member.ex:147
 msgid "You can't set yourself to a lower member role for this group because you are the only administrator"
 msgstr ""
 
@@ -828,7 +828,7 @@ msgstr ""
 msgid "Reset your password to login"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/graphql/error.ex:86
 msgid "Resource not found"
 msgstr ""
@@ -843,12 +843,22 @@ msgstr ""
 msgid "Unknown Resource"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/graphql/error.ex:84
 msgid "You don't have permission to do this"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/graphql/error.ex:76
 msgid "You need to be logged in"
+msgstr ""
+
+#, elixir-format
+#: lib/graphql/resolvers/member.ex:112
+msgid "You can't accept this invitation with this profile."
+msgstr ""
+
+#, elixir-format
+#: lib/graphql/resolvers/member.ex:129
+msgid "You can't reject this invitation with this profile."
 msgstr ""

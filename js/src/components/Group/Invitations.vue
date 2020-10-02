@@ -14,7 +14,6 @@ import { ACCEPT_INVITATION, REJECT_INVITATION } from "@/graphql/member";
 import { IMember } from "@/types/actor";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import InvitationCard from "@/components/Group/InvitationCard.vue";
-import { SnackbarProgrammatic as Snackbar } from "buefy";
 
 @Component({
   components: {
@@ -33,10 +32,13 @@ export default class Invitations extends Vue {
         },
       });
       if (data) {
-        this.$emit("acceptInvitation", data.acceptInvitation);
+        this.$emit("accept-invitation", data.acceptInvitation);
       }
-    } catch (e) {
-      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+    } catch (error) {
+      console.error(error);
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
+      }
     }
   }
 
@@ -49,10 +51,13 @@ export default class Invitations extends Vue {
         },
       });
       if (data) {
-        this.$emit("rejectInvitation", data.rejectInvitation);
+        this.$emit("reject-invitation", data.rejectInvitation);
       }
-    } catch (e) {
-      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+    } catch (error) {
+      console.error(error);
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
+      }
     }
   }
 }
