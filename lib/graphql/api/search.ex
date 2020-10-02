@@ -4,8 +4,9 @@ defmodule Mobilizon.GraphQL.API.Search do
   """
 
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.ActorType
+  alias Mobilizon.Actors.{Actor, ActorType}
   alias Mobilizon.Events
+  alias Mobilizon.Events.Event
   alias Mobilizon.Storage.Page
 
   alias Mobilizon.Federation.ActivityPub
@@ -26,7 +27,7 @@ defmodule Mobilizon.GraphQL.API.Search do
       is_url(term) ->
         # skip, if it's not an actor
         case process_from_url(term) do
-          %Page{total: _total, elements: _elements} = page ->
+          %Page{total: _total, elements: [%Actor{} = _actor]} = page ->
             {:ok, page}
 
           _ ->
@@ -60,7 +61,7 @@ defmodule Mobilizon.GraphQL.API.Search do
     if is_url(term) do
       # skip, if it's w not an actor
       case process_from_url(term) do
-        %Page{total: _total, elements: _elements} = page ->
+        %Page{total: _total, elements: [%Event{} = _event]} = page ->
           {:ok, page}
 
         _ ->
