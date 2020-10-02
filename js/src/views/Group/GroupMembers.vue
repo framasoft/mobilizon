@@ -34,7 +34,13 @@
     <section class="container section" v-if="group">
       <form @submit.prevent="inviteMember">
         <b-field :label="$t('Invite a new member')" custom-class="add-relay" horizontal>
-          <b-field grouped expanded size="is-large">
+          <b-field
+            grouped
+            expanded
+            size="is-large"
+            :type="inviteError ? 'is-danger' : null"
+            :message="inviteError"
+          >
             <p class="control">
               <b-input v-model="newMemberUsername" :placeholder="$t('Ex: someone@mobilizon.org')" />
             </p>
@@ -122,7 +128,7 @@
           <b-tag type="is-danger" v-else-if="props.row.role === MemberRole.REJECTED">
             {{ $t("Rejected") }}
           </b-tag>
-          <b-tag type="is-danger" v-else-if="props.row.role === MemberRole.INVITED">
+          <b-tag type="is-warning" v-else-if="props.row.role === MemberRole.INVITED">
             {{ $t("Invited") }}
           </b-tag>
         </b-table-column>
@@ -134,7 +140,7 @@
           </span>
         </b-table-column>
         <b-table-column field="actions" :label="$t('Actions')" v-slot="props">
-          <div class="buttons">
+          <div class="buttons" v-if="props.row.actor.id !== currentActor.id">
             <b-button
               v-if="props.row.role === MemberRole.MEMBER"
               @click="promoteMember(props.row.id)"
@@ -167,13 +173,15 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
+import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
 import RouteName from "../../router/name";
 import { INVITE_MEMBER, GROUP_MEMBERS, REMOVE_MEMBER, UPDATE_MEMBER } from "../../graphql/member";
-import { IGroup, usernameWithDomain } from "../../types/actor";
+import { IGroup, IPerson, usernameWithDomain } from "../../types/actor";
 import { IMember, MemberRole } from "../../types/actor/group.model";
 
 @Component({
   apollo: {
+    currentActor: CURRENT_ACTOR_CLIENT,
     group: {
       query: GROUP_MEMBERS,
       fetchPolicy: "network-only",
@@ -194,15 +202,19 @@ import { IMember, MemberRole } from "../../types/actor/group.model";
 export default class GroupMembers extends Vue {
   group!: IGroup;
 
+  currentActor!: IPerson;
+
   loading = true;
 
-  RouteName = RouteName;
-
   newMemberUsername = "";
+
+  inviteError = "";
 
   MemberRole = MemberRole;
 
   roles: MemberRole | "" = "";
+
+  RouteName = RouteName;
 
   page = 1;
 
@@ -218,38 +230,45 @@ export default class GroupMembers extends Vue {
   }
 
   async inviteMember(): Promise<void> {
-    await this.$apollo.mutate<{ inviteMember: IMember }>({
-      mutation: INVITE_MEMBER,
-      variables: {
-        groupId: this.group.id,
-        targetActorUsername: this.newMemberUsername,
-      },
-      update: (store, { data }) => {
-        if (data == null) return;
-        const query = {
-          query: GROUP_MEMBERS,
-          variables: {
-            name: this.$route.params.preferredUsername,
-            page: 1,
-            limit: this.MEMBERS_PER_PAGE,
-            roles: this.roles,
-          },
-        };
-        const memberData: IMember = data.inviteMember;
-        const groupData = store.readQuery<{ group: IGroup }>(query);
-        if (!groupData) return;
-        const { group } = groupData;
-        const index = group.members.elements.findIndex((m) => m.actor.id === memberData.actor.id);
-        if (index === -1) {
-          group.members.elements.push(memberData);
-          group.members.total += 1;
-        } else {
-          group.members.elements.splice(index, 1, memberData);
-        }
-        store.writeQuery({ ...query, data: { group } });
-      },
-    });
-    this.newMemberUsername = "";
+    try {
+      await this.$apollo.mutate<{ inviteMember: IMember }>({
+        mutation: INVITE_MEMBER,
+        variables: {
+          groupId: this.group.id,
+          targetActorUsername: this.newMemberUsername,
+        },
+        update: (store, { data }) => {
+          if (data == null) return;
+          const query = {
+            query: GROUP_MEMBERS,
+            variables: {
+              name: this.$route.params.preferredUsername,
+              page: 1,
+              limit: this.MEMBERS_PER_PAGE,
+              roles: this.roles,
+            },
+          };
+          const memberData: IMember = data.inviteMember;
+          const groupData = store.readQuery<{ group: IGroup }>(query);
+          if (!groupData) return;
+          const { group } = groupData;
+          const index = group.members.elements.findIndex((m) => m.actor.id === memberData.actor.id);
+          if (index === -1) {
+            group.members.elements.push(memberData);
+            group.members.total += 1;
+          } else {
+            group.members.elements.splice(index, 1, memberData);
+          }
+          store.writeQuery({ ...query, data: { group } });
+        },
+      });
+      this.newMemberUsername = "";
+    } catch (error) {
+      console.error(error);
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.inviteError = error.graphQLErrors[0].message;
+      }
+    }
   }
 
   @Watch("page")
@@ -319,13 +338,20 @@ export default class GroupMembers extends Vue {
   }
 
   async updateMember(memberId: string, role: MemberRole): Promise<void> {
-    await this.$apollo.mutate<{ updateMember: IMember }>({
-      mutation: UPDATE_MEMBER,
-      variables: {
-        memberId,
-        role,
-      },
-    });
+    try {
+      await this.$apollo.mutate<{ updateMember: IMember }>({
+        mutation: UPDATE_MEMBER,
+        variables: {
+          memberId,
+          role,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
+      }
+    }
   }
 }
 </script>
