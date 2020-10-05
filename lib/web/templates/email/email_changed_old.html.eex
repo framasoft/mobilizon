@@ -59,6 +59,13 @@
           </table>
         </td>
       </tr>
+      <tr>
+        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+          <p>
+            <%= gettext("If you did not trigger this change yourself, it is likely that someone has gained access to your %{host} account. Please log in and change your password immediately. If you cannot login, contact the admin on %{host}.", host: @instance[:name]) %>
+          </p>
+        </td>
+      </tr>
     </table>
     <!--[if (gte mso 9)|(IE)]>
     </td>
