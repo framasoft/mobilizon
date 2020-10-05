@@ -78,7 +78,7 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticator do
             end
           else
             {:error, err}
-            when err in [:ldap_search_email_not_found, :ldap_search_email_not_found] ->
+            when err in [:ldap_search_email_not_found, :ldap_search_missing_attributes] ->
               {:ldap, err}
 
             {:error, error} ->
@@ -146,7 +146,7 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticator do
 
       {:cn, err} ->
         Logger.error("Could not find LDAP attribute CN: #{inspect(err)}")
-        {:error, :ldap_searcy_missing_attributes}
+        {:error, :ldap_search_missing_attributes}
 
       error ->
         error
