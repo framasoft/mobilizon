@@ -823,5 +823,6 @@
   "{number} posts": "Aucun billet|Un billet|{number} billets",
   "{profile} (by default)": "{profile} (par défault)",
   "{title} ({count} todos)": "{title} ({count} todos)",
-  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap"
+  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap",
+  "Allow all comments from users with accounts": "Autoriser tous les commentaires d'utilisateur·ices avec des comptes"
 }
