@@ -9,6 +9,7 @@
   "About this instance": "Informazioni su questa istanza",
   "Accepted": "Accettato",
   "Account": "Account",
+  "Actor": "Partecipante",
   "Add": "Aggiungi",
   "Add a note": "Aggiungi nota",
   "Add an address": "Aggiungi un indirizzo",
@@ -18,7 +19,7 @@
   "Admin settings successfully saved.": "Preferenze dell'amministratore salvate con successo.",
   "Administration": "Amministrazione",
   "All the places have already been taken": "Sono stati prenotati tutti i posti|1 posto ancora disponibile|{places} posti ancora disponibili",
-  "Allow all comments": "Permetti tutti i commenti",
+  "Allow all comments": "Permetti a tutti di commentare",
   "An error has occurred.": "C'è stato un errore.",
   "Approve": "Approva",
   "Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the discussion with the event creator or edit its event instead.": "Sei sicuro di voler <b>cancellare</b> questo evento? L'azione non può essere annulalta. Potresti parlarne con il creatore dell'evento o piuttosto modificare il suo evento.",
@@ -96,6 +97,7 @@
   "Participate": "Partecipa",
   "Password": "Password",
   "Pending": "In sospeso",
+  "Pick a group": "Scegli un gruppo",
   "Publish": "Pubblica",
   "Region": "Regione",
   "Register": "Registra",
@@ -115,7 +117,9 @@
   "Starts on…": "Inizio…",
   "Status": "Stato",
   "Street": "Via",
+  "The event title will be ellipsed.": "Il titolo dell'evento sarà eclissato.",
   "Title": "Titolo",
+  "To achieve your registration, please create a first identity profile.": "Per registrarti con successo crea un primo profilo d'identità.",
   "Unset group": "Togli gruppo",
   "Upcoming": "Prossimamente",
   "Updated": "Aggiornato",
@@ -123,5 +127,6 @@
   "Users": "Utenti",
   "Warning": "Avviso",
   "[deleted]": "[cancellato]",
-  "firstDayOfWeek": "0"
+  "firstDayOfWeek": "0",
+  "{approved} / {total} seats": "{approved} / {total} posti"
 }
