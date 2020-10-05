@@ -66,7 +66,7 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
     @desc "Create a comment"
     field :create_comment, type: :comment do
       arg(:text, non_null(:string))
-      arg(:event_id, :id)
+      arg(:event_id, non_null(:id))
       arg(:in_reply_to_comment_id, :id)
       arg(:actor_id, non_null(:id))
 
