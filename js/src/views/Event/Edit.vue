@@ -169,7 +169,7 @@
             v-model="event.options.commentModeration"
             name="commentModeration"
             :native-value="CommentModeration.ALLOW_ALL"
-            >{{ $t("Allow all comments") }}</b-radio
+            >{{ $t("Allow all comments from users with accounts") }}</b-radio
           >
         </div>
 

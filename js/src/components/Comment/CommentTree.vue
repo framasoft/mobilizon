@@ -2,7 +2,7 @@
   <div>
     <form
       class="new-comment"
-      v-if="currentActor.id && event.options.commentModeration !== CommentModeration.CLOSED"
+      v-if="isAbleToComment"
       @submit.prevent="createCommentForEvent(newComment)"
       @keyup.ctrl.enter="createCommentForEvent(newComment)"
     >
@@ -22,11 +22,7 @@
         </div>
       </article>
     </form>
-    <b-notification
-      v-else-if="event.options.commentModeration === CommentModeration.CLOSED"
-      :closable="false"
-      >{{ $t("Comments have been closed.") }}</b-notification
-    >
+    <b-notification v-else :closable="false">{{ $t("Comments have been closed.") }}</b-notification>
     <transition name="comment-empty-list" mode="out-in">
       <transition-group name="comment-list" v-if="comments.length" class="comment-list" tag="ul">
         <comment
@@ -51,7 +47,6 @@
 import { Prop, Vue, Component, Watch } from "vue-property-decorator";
 import Comment from "@/components/Comment/Comment.vue";
 import IdentityPickerWrapper from "@/views/Account/IdentityPickerWrapper.vue";
-import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { CommentModel, IComment } from "../../types/comment.model";
 import {
   CREATE_COMMENT_FROM_EVENT,
@@ -190,8 +185,11 @@ export default class CommentTree extends Vue {
 
       // and reset the new comment field
       this.newComment = new CommentModel();
-    } catch (e) {
-      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+    } catch (error) {
+      console.error(error);
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
+      }
     }
   }
 
@@ -260,8 +258,11 @@ export default class CommentTree extends Vue {
         },
       });
       // this.comments = this.comments.filter(commentItem => commentItem.id !== comment.id);
-    } catch (e) {
-      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+    } catch (error) {
+      console.error(error);
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
+      }
     }
   }
 
@@ -278,6 +279,18 @@ export default class CommentTree extends Vue {
 
   get filteredOrderedComments(): IComment[] {
     return this.orderedComments.filter((comment) => !comment.deletedAt || comment.totalReplies > 0);
+  }
+
+  get isAbleToComment(): boolean {
+    if (this.currentActor.id) {
+      if (
+        this.event.options.commentModeration !== CommentModeration.CLOSED ||
+        (this.event.organizerActor && this.currentActor.id === this.event.organizerActor.id)
+      ) {
+        return true;
+      }
+    }
+    return false;
   }
 }
 </script>

@@ -20,7 +20,6 @@
   "Admin": "Admin",
   "Administration": "Administration",
   "All the places have already been taken": "All the places have been taken|One place is still available|{places} places are still available",
-  "Allow all comments": "Allow all comments",
   "Allow registrations": "Allow registrations",
   "Anonymous participant": "Anonymous participant",
   "Anonymous participants will be asked to confirm their participation through e-mail.": "Anonymous participants will be asked to confirm their participation through e-mail.",
@@ -785,5 +784,6 @@
   "Accessible only to members": "Accessible only to members",
   "Created by {name}": "Created by {name}",
   "View all posts": "View all posts",
-  "Didn't receive the instructions?": "Didn't receive the instructions?"
+  "Didn't receive the instructions?": "Didn't receive the instructions?",
+  "Allow all comments from users with accounts": "Allow all comments from logged-in users"
 }

@@ -3,9 +3,11 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
 
   import Mobilizon.Factory
 
+  alias Mobilizon.Events
+  alias Mobilizon.Events.{Event, EventOptions}
   alias Mobilizon.GraphQL.AbsintheHelpers
 
-  @comment %{text: "I love this event"}
+  @comment_text "I love this event"
 
   setup %{conn: conn} do
     user = insert(:user)
@@ -16,75 +18,104 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
   end
 
   describe "Comment Resolver" do
+    @create_comment_mutation """
+    mutation CreateComment($text: String!, $actorId: ID, $eventId: ID, $inReplyToCommentId: ID) {
+      createComment(text: $text, actorId: $actorId, eventId: $eventId, inReplyToCommentId: $inReplyToCommentId) {
+        id,
+        text,
+        uuid,
+        inReplyToComment {
+          id,
+          text
+        }
+      }
+    }
+    """
+
     test "create_comment/3 creates a comment", %{
       conn: conn,
       actor: actor,
       user: user,
       event: event
     } do
-      mutation = """
-          mutation {
-              createComment(
-                  text: "#{@comment.text}",
-                  actor_id: "#{actor.id}",
-                  event_id: "#{event.id}"
-              ) {
-                text,
-                uuid
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> AbsintheHelpers.graphql_query(query: mutation, variables: %{})
+        |> AbsintheHelpers.graphql_query(
+          query: @create_comment_mutation,
+          variables: %{text: @comment_text, actorId: actor.id, eventId: event.id}
+        )
 
-      assert res["data"]["createComment"]["text"] == @comment.text
+      assert res["data"]["createComment"]["text"] == @comment_text
     end
 
-    test "create_comment/3 checks that user owns actor", %{conn: conn, user: user} do
+    test "create_comment/3 checks that user owns actor", %{conn: conn, user: user, event: event} do
       actor = insert(:actor)
-
-      mutation = """
-          mutation {
-              createComment(
-                  text: "#{@comment.text}",
-                  actor_id: "#{actor.id}"
-              ) {
-                text,
-                uuid
-              }
-            }
-      """
 
       res =
         conn
         |> auth_conn(user)
-        |> AbsintheHelpers.graphql_query(query: mutation, variables: %{})
+        |> AbsintheHelpers.graphql_query(
+          query: @create_comment_mutation,
+          variables: %{text: @comment_text, actorId: actor.id, eventId: event.id}
+        )
 
       assert hd(res["errors"])["message"] ==
                "Profile is not owned by authenticated user"
     end
 
-    test "create_comment/3 requires that the user needs to be authenticated", %{conn: conn} do
-      actor = insert(:actor)
-
-      mutation = """
-          mutation {
-              createComment(
-                  text: "#{@comment.text}",
-                  actor_id: "#{actor.id}"
-              ) {
-                text,
-                uuid
-              }
-            }
-      """
+    test "create_comment/3 doesn't allow creating events if it's disabled", %{
+      conn: conn,
+      actor: actor,
+      user: user,
+      event: event
+    } do
+      {:ok, %Event{options: %EventOptions{comment_moderation: :closed}}} =
+        Events.update_event(event, %{options: %{comment_moderation: :closed}})
 
       res =
         conn
-        |> AbsintheHelpers.graphql_query(query: mutation, variables: %{})
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @create_comment_mutation,
+          variables: %{text: @comment_text, actorId: actor.id, eventId: event.id}
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "You don't have permission to do this"
+    end
+
+    test "create_comment/3 allows creating events if it's disabled but we're the organizer", %{
+      conn: conn,
+      actor: actor,
+      user: user
+    } do
+      event = insert(:event, organizer_actor: actor, options: %{comment_moderation: :closed})
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @create_comment_mutation,
+          variables: %{text: @comment_text, actorId: actor.id, eventId: event.id}
+        )
+
+      assert is_nil(res["errors"])
+      assert res["data"]["createComment"]["text"] == @comment_text
+    end
+
+    test "create_comment/3 requires that the user needs to be authenticated", %{
+      conn: conn,
+      event: event
+    } do
+      actor = insert(:actor)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @create_comment_mutation,
+          variables: %{text: @comment_text, actorId: actor.id, eventId: event.id}
+        )
 
       assert hd(res["errors"])["message"] ==
                "You are not allowed to create a comment if not connected"
@@ -98,35 +129,24 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
     } do
       comment = insert(:comment)
 
-      mutation = """
-          mutation {
-              createComment(
-                  text: "#{@comment.text}",
-                  actor_id: "#{actor.id}",
-                  event_id: "#{event.id}",
-                  in_reply_to_comment_id: "#{comment.id}"
-              ) {
-                id,
-                text,
-                uuid,
-                in_reply_to_comment {
-                  id,
-                  text
-                }
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> AbsintheHelpers.graphql_query(query: mutation, variables: %{})
+        |> AbsintheHelpers.graphql_query(
+          query: @create_comment_mutation,
+          variables: %{
+            text: @comment_text,
+            actorId: actor.id,
+            eventId: event.id,
+            inReplyToCommentId: comment.id
+          }
+        )
 
-      assert res["errors"] == nil
-      assert res["data"]["createComment"]["text"] == @comment.text
+      assert is_nil(res["errors"])
+      assert res["data"]["createComment"]["text"] == @comment_text
       uuid = res["data"]["createComment"]["uuid"]
 
-      assert res["data"]["createComment"]["in_reply_to_comment"]["id"] ==
+      assert res["data"]["createComment"]["inReplyToComment"]["id"] ==
                to_string(comment.id)
 
       query = """
@@ -144,7 +164,7 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
         |> AbsintheHelpers.graphql_query(query: query, variables: %{})
 
       assert res["errors"] == nil
-      assert res["data"]["thread"] == [%{"uuid" => uuid, "text" => @comment.text}]
+      assert res["data"]["thread"] == [%{"uuid" => uuid, "text" => @comment_text}]
     end
 
     @delete_comment """
