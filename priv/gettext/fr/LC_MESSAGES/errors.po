@@ -164,7 +164,7 @@ msgid "No user with this email was found"
 msgstr "Aucun·e utilisateur·ice avec cette adresse e-mail n'a été trouvé·e"
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:36 lib/graphql/resolvers/comment.ex:98
+#: lib/graphql/resolvers/comment.ex:50 lib/graphql/resolvers/comment.ex:112
 #: lib/graphql/resolvers/event.ex:281 lib/graphql/resolvers/feed_token.ex:28 lib/graphql/resolvers/group.ex:243
 #: lib/graphql/resolvers/member.ex:77 lib/graphql/resolvers/participant.ex:29
 #: lib/graphql/resolvers/participant.ex:163 lib/graphql/resolvers/participant.ex:192 lib/graphql/resolvers/person.ex:157
@@ -368,7 +368,7 @@ msgid "Cannot remove the last identity of a user"
 msgstr "Impossible de supprimer le dernier profil d'un·e utilisateur·ice"
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:95
+#: lib/graphql/resolvers/comment.ex:109
 msgid "Comment is already deleted"
 msgstr "Le commentaire est déjà supprimé"
 
@@ -582,7 +582,7 @@ msgid "You are not a moderator or admin for this group"
 msgstr "Vous n'êtes pas administrateur·ice ou modérateur·ice de ce groupe"
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:41
+#: lib/graphql/resolvers/comment.ex:55
 msgid "You are not allowed to create a comment if not connected"
 msgstr "Vous n'êtes pas autorisé·e à créer un commentaire si non connecté·e"
 
@@ -592,7 +592,7 @@ msgid "You are not allowed to create a feed token if not connected"
 msgstr "Vous n'êtes pas autorisé·e à créer un jeton de flux si non connecté·e"
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:103
+#: lib/graphql/resolvers/comment.ex:117
 msgid "You are not allowed to delete a comment if not connected"
 msgstr "Vous n'êtes pas autorisé·e à supprimer un commentaire si non connecté·e"
 
@@ -602,7 +602,7 @@ msgid "You are not allowed to delete a feed token if not connected"
 msgstr "Vous n'êtes pas autorisé·e à supprimer un jeton de flux si non connecté·e"
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:63
+#: lib/graphql/resolvers/comment.ex:77
 msgid "You are not allowed to update a comment if not connected"
 msgstr "Vous n'êtes pas autorisé·e à mettre à jour un commentaire si non connecté·e"
 
@@ -620,7 +620,7 @@ msgstr ""
 "administrateur·ice"
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:91
+#: lib/graphql/resolvers/comment.ex:105
 msgid "You cannot delete this comment"
 msgstr "Vous ne pouvez pas supprimer ce commentaire"
 

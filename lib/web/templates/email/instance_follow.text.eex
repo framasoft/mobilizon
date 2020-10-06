@@ -1,0 +1,7 @@
+<%= gettext "Want to connect?" %>
+==
+<%= gettext "%{name} (%{domain}) just requested to follow your instance.", name: @follower.name, domain: @follower.domain %>
+<%= gettext "If you accept, this instance will receive all of your public events." %>
+<%= gettext "Note: %{name} (%{domain}) following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too." %>
+<%= gettext "To accept this invitation, head over to the instance's admin settings." %>
+<%= "#{Mobilizon.Web.Endpoint.url()}/settings/admin/relays/followers" %>
