@@ -142,19 +142,22 @@
         <b-table-column field="actions" :label="$t('Actions')" v-slot="props">
           <div class="buttons" v-if="props.row.actor.id !== currentActor.id">
             <b-button
-              v-if="props.row.role === MemberRole.MEMBER"
-              @click="promoteMember(props.row.id)"
+              v-if="[MemberRole.MEMBER, MemberRole.MODERATOR].includes(props.row.role)"
+              @click="promoteMember(props.row)"
+              icon-left="chevron-double-up"
               >{{ $t("Promote") }}</b-button
             >
             <b-button
-              v-if="props.row.role === MemberRole.ADMINISTRATOR"
-              @click="demoteMember(props.row.id)"
+              v-if="[MemberRole.ADMINISTRATOR, MemberRole.MODERATOR].includes(props.row.role)"
+              @click="demoteMember(props.row)"
+              icon-left="chevron-double-down"
               >{{ $t("Demote") }}</b-button
             >
             <b-button
               v-if="props.row.role === MemberRole.MEMBER"
               @click="removeMember(props.row.id)"
               type="is-danger"
+              icon-left="exit-to-app"
               >{{ $t("Remove") }}</b-button
             >
           </div>
@@ -329,12 +332,24 @@ export default class GroupMembers extends Vue {
     });
   }
 
-  promoteMember(memberId: string): Promise<void> {
-    return this.updateMember(memberId, MemberRole.ADMINISTRATOR);
+  promoteMember(member: IMember): void {
+    if (!member.id) return;
+    if (member.role === MemberRole.MODERATOR) {
+      this.updateMember(member.id, MemberRole.ADMINISTRATOR);
+    }
+    if (member.role === MemberRole.MEMBER) {
+      this.updateMember(member.id, MemberRole.MODERATOR);
+    }
   }
 
-  demoteMember(memberId: string): Promise<void> {
-    return this.updateMember(memberId, MemberRole.MEMBER);
+  demoteMember(member: IMember): void {
+    if (!member.id) return;
+    if (member.role === MemberRole.MODERATOR) {
+      this.updateMember(member.id, MemberRole.MEMBER);
+    }
+    if (member.role === MemberRole.ADMINISTRATOR) {
+      this.updateMember(member.id, MemberRole.MODERATOR);
+    }
   }
 
   async updateMember(memberId: string, role: MemberRole): Promise<void> {
