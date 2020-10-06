@@ -2,12 +2,15 @@
   <section class="section container">
     <div class="columns is-mobile is-centered">
       <div class="column is-half-desktop">
-        <h1 class="title">{{ $t("Register an account on Mobilizon!") }}</h1>
-        <b-message v-if="userAlreadyActivated">{{
-          $t("To achieve your registration, please create a first identity profile.")
-        }}</b-message>
+        <h1 class="title" v-if="userAlreadyActivated">
+          {{ $t("Congratulations, your account is now created!") }}
+        </h1>
+        <h1 class="title" v-else>{{ $t("Register an account on Mobilizon!") }}</h1>
+        <p class="content" v-if="userAlreadyActivated">
+          {{ $t("Now, create your first profile:") }}
+        </p>
         <form v-if="!validationSent" @submit.prevent="submit">
-          <b-field :label="$t('Display name')">
+          <b-field :label="$t('Displayed nickname')">
             <b-input
               aria-required="true"
               required
@@ -34,14 +37,10 @@
             </b-field>
           </b-field>
           <p class="description">
-            {{
-              $t(
-                "The username is a unique identifier of your account on this and all the other instances. It's as unique as an email address, which makes it easy for other people to interact with it."
-              )
-            }}
+            {{ $t("This identifier is unique to your profile. It allows others to find you.") }}
           </p>
 
-          <b-field :label="$t('Bio')">
+          <b-field :label="$t('Short bio')">
             <b-input type="textarea" maxlength="100" rows="2" v-model="identity.summary" />
           </b-field>
 
@@ -161,6 +160,7 @@ export default class Register extends mixins(identityEditionMixin) {
 </script>
 
 <style lang="scss" scoped>
+@import "../../variables.scss";
 .avatar-enter-active {
   transition: opacity 1s ease;
 }
@@ -180,6 +180,11 @@ export default class Register extends mixins(identityEditionMixin) {
 
 p.description {
   font-size: 0.9rem;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  margin-top: -10px;
+}
+
+section.section {
+  background: $white;
 }
 </style>

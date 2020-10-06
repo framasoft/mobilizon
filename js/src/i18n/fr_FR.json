@@ -691,7 +691,7 @@
   "Updated": "Mis à jour",
   "Use my location": "Utiliser ma position",
   "User": "Utilisateur·ice",
-  "Username": "Pseudo",
+  "Username": "Identifiant",
   "Users": "Utilisateur⋅ice⋅s",
   "View a reply": "Aucune réponse | Voir une réponse | Voir {totalReplies} réponses",
   "View all": "Voir tous",
@@ -824,5 +824,10 @@
   "{profile} (by default)": "{profile} (par défault)",
   "{title} ({count} todos)": "{title} ({count} todos)",
   "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap",
-  "Allow all comments from users with accounts": "Autoriser tous les commentaires d'utilisateur·ices avec des comptes"
+  "Allow all comments from users with accounts": "Autoriser tous les commentaires d'utilisateur·ices avec des comptes",
+  "This identifier is unique to your profile. It allows others to find you.": "Cet identifiant est unique à votre profil. Il permet à d'autres personnes de vous trouver.",
+  "Displayed nickname": "Pseudonyme affiché",
+  "Short bio": "Courte biographie",
+  "Congratulations, your account is now created!": "Bravo, votre compte est dorénavant créé !",
+  "Now, create your first profile:": "Maintenant, créez votre premier profil :"
 }
