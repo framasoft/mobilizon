@@ -169,7 +169,7 @@ msgid "No user with this email was found"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:36 lib/graphql/resolvers/comment.ex:98
+#: lib/graphql/resolvers/comment.ex:50 lib/graphql/resolvers/comment.ex:112
 #: lib/graphql/resolvers/event.ex:281 lib/graphql/resolvers/feed_token.ex:28 lib/graphql/resolvers/group.ex:243
 #: lib/graphql/resolvers/member.ex:77 lib/graphql/resolvers/participant.ex:29
 #: lib/graphql/resolvers/participant.ex:163 lib/graphql/resolvers/participant.ex:192 lib/graphql/resolvers/person.ex:157
@@ -371,7 +371,7 @@ msgid "Cannot remove the last identity of a user"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:95
+#: lib/graphql/resolvers/comment.ex:109
 msgid "Comment is already deleted"
 msgstr ""
 
@@ -585,7 +585,7 @@ msgid "You are not a moderator or admin for this group"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:41
+#: lib/graphql/resolvers/comment.ex:55
 msgid "You are not allowed to create a comment if not connected"
 msgstr ""
 
@@ -595,7 +595,7 @@ msgid "You are not allowed to create a feed token if not connected"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:103
+#: lib/graphql/resolvers/comment.ex:117
 msgid "You are not allowed to delete a comment if not connected"
 msgstr ""
 
@@ -605,7 +605,7 @@ msgid "You are not allowed to delete a feed token if not connected"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:63
+#: lib/graphql/resolvers/comment.ex:77
 msgid "You are not allowed to update a comment if not connected"
 msgstr ""
 
@@ -621,7 +621,7 @@ msgid "You can't set yourself to a lower member role for this group because you 
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:91
+#: lib/graphql/resolvers/comment.ex:105
 msgid "You cannot delete this comment"
 msgstr ""
 

@@ -150,12 +150,12 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
                to_string(comment.id)
 
       query = """
-        query {
-          thread(id: #{comment.id}) {
-            text,
-            uuid
-          }
+      query {
+        thread(id: #{comment.id}) {
+          text,
+          uuid
         }
+      }
       """
 
       res =
