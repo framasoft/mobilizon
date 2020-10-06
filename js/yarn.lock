@@ -8057,10 +8057,10 @@ javascript-stringify@^2.0.0, javascript-stringify@^2.0.1:
   resolved "https://registry.yarnpkg.com/javascript-stringify/-/javascript-stringify-2.0.1.tgz#6ef358035310e35d667c675ed63d3eb7c1aa19e5"
   integrity sha512-yV+gqbd5vaOYjqlbk16EG89xB5udgjqQF3C5FAORDg4f/IS1Yc5ERCv5e/57yBcfJYw05V5JyIXabhwb75Xxow==
 
-javascript-time-ago@^2.0.4:
-  version "2.0.13"
-  resolved "https://registry.yarnpkg.com/javascript-time-ago/-/javascript-time-ago-2.0.13.tgz#aa11f80887ce044f851a78c8761861e436ed0954"
-  integrity sha512-zH+obXUQ4vlc9UlERFe637rNJQaVYLizwODUfGzYN/cNW/owkk5wzb327gAfEXFpI4yhFcStEaoqoJtMGAmrAg==
+javascript-time-ago@^2.1.4:
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/javascript-time-ago/-/javascript-time-ago-2.1.4.tgz#ccc66fed6b21c1a96472fd91f4da6ec2c5887085"
+  integrity sha512-GSgT+nFPDAsTFvPUIeZChJqczg4FWMHdu4yAyTQ7hEVlIRM5VI3SpAopgLh45/Cf69cX+N+9ZUAIXs03/CHfgw==
   dependencies:
     relative-time-format "^0.1.3"
 
