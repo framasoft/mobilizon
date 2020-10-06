@@ -358,7 +358,6 @@
   "This is a demonstration site to test the beta version of Mobilizon.": "This is a demonstration site to test the beta version of Mobilizon.",
   "This will delete / anonymize all content (events, comments, messages, participations…) created from this identity.": "This will delete / anonymize all content (events, comments, messages, participations…) created from this identity.",
   "Title": "Title",
-  "To achieve your registration, please create a first identity profile.": "To achieve your registration, please create a first identity profile.",
   "To change the world, change the software": "To change the world, change the software",
   "To confirm, type your event title \"{eventTitle}\"": "To confirm, type your event title \"{eventTitle}\"",
   "To confirm, type your identity username \"{preferredUsername}\"": "To confirm, type your identity username \"{preferredUsername}\"",
@@ -743,8 +742,6 @@
   "{group}'s events": "{group}'s events",
   "When someone from the group creates an event and attributes it to the group, it will show up here.": "When someone from the group creates an event and attributes it to the group, it will show up here.",
   "View all": "View all",
-  "The username is a unique identifier of your account on this and all the other instances. It's as unique as an email address, which makes it easy for other people to interact with it.": "The username is a unique identifier of your account on this and all the other instances. It's as unique as an email address, which makes it easy for other people to interact with it.",
-  "Bio": "Bio",
   "+ Start a discussion": "+ Start a discussion",
   "+ Add a resource": "+ Add a resource",
   "+ Create an event": "+ Create an event",
@@ -785,5 +782,10 @@
   "Created by {name}": "Created by {name}",
   "View all posts": "View all posts",
   "Didn't receive the instructions?": "Didn't receive the instructions?",
-  "Allow all comments from users with accounts": "Allow all comments from logged-in users"
+  "Allow all comments from users with accounts": "Allow all comments from logged-in users",
+  "This identifier is unique to your profile. It allows others to find you.": "This identifier is unique to your profile. It allows others to find you.",
+  "Displayed nickname": "Displayed nickname",
+  "Short bio": "Short bio",
+  "Congratulations, your account is now created!": "Congratulations, your account is now created!",
+  "Now, create your first profile:": "Now, create your first profile:"
 }
