@@ -36,7 +36,7 @@ defmodule Mobilizon.Users.Setting do
     field(:notification_before_event, :boolean)
 
     field(:notification_pending_participation, NotificationPendingNotificationDelay,
-      default: :none
+      default: :one_day
     )
 
     belongs_to(:user, User, primary_key: true, type: :id, foreign_key: :id, define_field: false)
