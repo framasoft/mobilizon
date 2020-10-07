@@ -346,5 +346,8 @@
   "The content came from another server. Transfer an anonymous copy of the report?": "O contido procede doutro servidor. Desexas transferir unha copia anónima da denuncia?",
   "The draft event has been updated": "Actualizouse o borrador do evento",
   "The event has been created as a draft": "O evento foi creado como un borrador",
-  "The event has been published": "O evento foi publicado"
+  "The event has been published": "O evento foi publicado",
+  "The event has been updated": "O evento foi actualizado",
+  "The event has been updated and published": "O evento foi actualizado e publicado",
+  "The event organiser has chosen to validate manually participations. Do you want to add a little note to explain why you want to participate to this event?": "O organizador do evento escolleu validar manualmente as participacións. Desexas engadir unha nota explicando a razón pola que queres participar no evento?"
 }
