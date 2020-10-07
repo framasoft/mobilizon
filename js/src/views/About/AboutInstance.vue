@@ -14,13 +14,13 @@
           <strong slot="number">{{ statistics.numberOfUsers }}</strong>
         </i18n>
         <i18n tag="p" path="and {number} groups">
-          <strong slot="number">{{ statistics.numberOfGroups }}</strong>
+          <strong slot="number">{{ statistics.numberOfLocalGroups }}</strong>
         </i18n>
         <i18n tag="p" path="Who published {number} events">
-          <strong slot="number">{{ statistics.numberOfEvents }}</strong>
+          <strong slot="number">{{ statistics.numberOfLocalEvents }}</strong>
         </i18n>
         <i18n tag="p" path="And {number} comments">
-          <strong slot="number">{{ statistics.numberOfComments }}</strong>
+          <strong slot="number">{{ statistics.numberOfLocalComments }}</strong>
         </i18n>
       </div>
       <div class="column contact">
@@ -140,7 +140,7 @@ section {
     .statistics {
       display: grid;
       grid-template-columns: repeat(auto-fit, 150px);
-      grid-template-rows: repeat(2, 1fr);
+      gap: 2rem 0;
       p {
         text-align: right;
         padding: 0 15px;
@@ -157,6 +157,9 @@ section {
       }
     }
     .contact {
+      h4 {
+        font-weight: bold;
+      }
       p {
         width: 200px;
         white-space: nowrap;
