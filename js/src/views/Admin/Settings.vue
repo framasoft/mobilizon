@@ -44,6 +44,24 @@
           </b-switch>
         </b-field>
         <div class="field">
+          <label class="label has-help">{{ $t("Instance languages") }}</label>
+          <small>
+            {{ $t("Main languages you/your moderators speak") }}
+          </small>
+          <b-taginput
+            v-model="adminSettings.instanceLanguages"
+            :data="filteredLanguages"
+            autocomplete
+            :open-on-focus="true"
+            field="name"
+            icon="label"
+            :placeholder="$t('Select languages')"
+            @typing="getFilteredLanguages"
+          >
+            <template slot="empty">{{ $t("No languages found") }}</template>
+          </b-taginput>
+        </div>
+        <div class="field">
           <label class="label has-help">{{ $t("Instance Long Description") }}</label>
           <small>
             {{
@@ -256,18 +274,28 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { ADMIN_SETTINGS, SAVE_ADMIN_SETTINGS } from "@/graphql/admin";
-import { IAdminSettings, InstanceTermsType, InstancePrivacyType } from "../../types/admin.model";
+import { Component, Vue, Watch } from "vue-property-decorator";
+import { ADMIN_SETTINGS, SAVE_ADMIN_SETTINGS, LANGUAGES } from "@/graphql/admin";
+import {
+  IAdminSettings,
+  InstanceTermsType,
+  InstancePrivacyType,
+  ILanguage,
+} from "../../types/admin.model";
 import RouteName from "../../router/name";
 
 @Component({
   apollo: {
     adminSettings: ADMIN_SETTINGS,
+    languages: LANGUAGES,
   },
 })
 export default class Settings extends Vue {
   adminSettings!: IAdminSettings;
+
+  languages!: ILanguage[];
+
+  filteredLanguages: string[] = [];
 
   InstanceTermsType = InstanceTermsType;
 
@@ -275,19 +303,58 @@ export default class Settings extends Vue {
 
   RouteName = RouteName;
 
-  async updateSettings() {
+  @Watch("languages")
+  setCorrectLanguagesNames(): void {
+    if (this.languages && this.adminSettings) {
+      this.adminSettings.instanceLanguages = this.adminSettings.instanceLanguages
+        .map((code) => this.languageForCode(code))
+        .filter((language) => language) as string[];
+    }
+  }
+
+  async updateSettings(): Promise<void> {
+    const variables = { ...this.adminSettings };
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    variables.instanceLanguages = variables.instanceLanguages.map((language) => {
+      return this.codeForLanguage(language);
+    });
     try {
       await this.$apollo.mutate({
         mutation: SAVE_ADMIN_SETTINGS,
-        variables: {
-          ...this.adminSettings,
-        },
+        variables,
       });
       this.$notifier.success(this.$t("Admin settings successfully saved.") as string);
     } catch (e) {
       console.error(e);
       this.$notifier.error(this.$t("Failed to save admin settings") as string);
     }
+  }
+
+  getFilteredLanguages(text: string): void {
+    this.filteredLanguages = this.languages
+      ? this.languages
+          .filter((language: ILanguage) => {
+            return language.name.toString().toLowerCase().indexOf(text.toLowerCase()) >= 0;
+          })
+          .map(({ name }) => name)
+      : [];
+  }
+
+  codeForLanguage(language: string): string | undefined {
+    if (this.languages) {
+      const lang = this.languages.find(({ name }) => name === language);
+      if (lang) return lang.code;
+    }
+    return undefined;
+  }
+
+  languageForCode(codeGiven: string): string | undefined {
+    if (this.languages) {
+      const lang = this.languages.find(({ code }) => code === codeGiven);
+      if (lang) return lang.name;
+    }
+    return undefined;
   }
 }
 </script>

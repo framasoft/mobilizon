@@ -14,6 +14,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     field(:long_description, :string)
     field(:contact, :string)
 
+    field(:languages, list_of(:string))
     field(:registrations_open, :boolean)
     field(:registrations_allowlist, :boolean)
     field(:demo_mode, :boolean)

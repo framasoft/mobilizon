@@ -388,7 +388,7 @@
   "My events": "Mes évènements",
   "My groups": "Mes groupes",
   "My identities": "Mes identités",
-  "NOTE! The default terms have not been checked over by a lawyer and thus are unlikely to provide full legal protection for all situations for an instance admin using them. They are also not specific to all countries and jurisdictions. If you are unsure, please check with a lawyer.": "REMARQUE : les conditions par défaut n'ont pas été vérifiées par un juriste et ne sont donc susceptibles de ne pas offrir une protection juridique complète dans toutes les situations pour un·e administrateur·ice d'instance qui les utilise. Elles ne sont pas non plus spécifiques à tous les pays et juridictions. Si vous n'êtes pas sûr, veuillez consulter un juriste.",
+  "NOTE! The default terms have not been checked over by a lawyer and thus are unlikely to provide full legal protection for all situations for an instance admin using them. They are also not specific to all countries and jurisdictions. If you are unsure, please check with a lawyer.": "REMARQUE : les conditions par défaut n'ont pas été vérifiées par un·e juriste et ne sont donc susceptibles de ne pas offrir une protection juridique complète dans toutes les situations pour un·e administrateur·ice d'instance qui les utilise. Elles ne sont pas non plus spécifiques à tous les pays et juridictions. Si vous n'êtes pas sûr, veuillez consulter un·e juriste.",
   "Name": "Nom",
   "New discussion": "Nouvelle discussion",
   "New email": "Nouvelle adresse e-mail",
@@ -831,5 +831,9 @@
   "Congratulations, your account is now created!": "Bravo, votre compte est dorénavant créé !",
   "Now, create your first profile:": "Maintenant, créez votre premier profil :",
   "If you have opted for manual validation of participants, Mobilizon will send you an email to inform you of new participations to be processed. You can choose the frequency of these notifications below.": "Si vous avez opté pour la validation manuelle des participantes, Mobilizon vous enverra un email pour vous informer des nouvelles participations à traiter. Vous pouvez choisir la fréquence de ces notifications ci-dessous.",
-  "You will be able to add an avatar and set other options in your account settings.": "Vous pourrez ajouter un avatar et définir d'autres options dans les paramètres de votre compte."
+  "You will be able to add an avatar and set other options in your account settings.": "Vous pourrez ajouter un avatar et définir d'autres options dans les paramètres de votre compte.",
+  "Instance languages": "Langues de l'instance",
+  "Main languages you/your moderators speak": "Principales langues parlées par vous / vos modérateurs",
+  "Select languages": "Choisissez une langue",
+  "No languages found": "Aucune langue trouvée"
 }

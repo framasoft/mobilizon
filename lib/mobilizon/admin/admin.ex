@@ -80,10 +80,31 @@ defmodule Mobilizon.Admin do
   def get_admin_setting_value(group, name, fallback \\ nil)
       when is_bitstring(group) and is_bitstring(name) do
     case Repo.get_by(Setting, group: group, name: name) do
-      nil -> fallback
-      %Setting{value: ""} -> fallback
-      %Setting{value: nil} -> fallback
-      %Setting{value: value} -> value
+      nil ->
+        fallback
+
+      %Setting{value: ""} ->
+        fallback
+
+      %Setting{value: nil} ->
+        fallback
+
+      %Setting{value: value} ->
+        get_setting_value(value)
+    end
+  end
+
+  def get_setting_value(value) do
+    case Jason.decode(value) do
+      {:ok, val} ->
+        val
+
+      {:error, _} ->
+        case value do
+          "true" -> true
+          "false" -> false
+          value -> value
+        end
     end
   end
 
@@ -116,12 +137,19 @@ defmodule Mobilizon.Admin do
         Setting.changeset(%Setting{}, %{
           group: group,
           name: Atom.to_string(key),
-          value: to_string(val)
+          value: convert_to_string(val)
         }),
         on_conflict: :replace_all,
         conflict_target: [:group, :name]
       )
 
     do_save_setting(transaction, group, rest)
+  end
+
+  defp convert_to_string(val) do
+    case val do
+      val when is_list(val) -> Jason.encode!(val)
+      val -> to_string(val)
+    end
   end
 end

@@ -789,5 +789,9 @@
   "Congratulations, your account is now created!": "Congratulations, your account is now created!",
   "Now, create your first profile:": "Now, create your first profile:",
   "If you have opted for manual validation of participants, Mobilizon will send you an email to inform you of new participations to be processed. You can choose the frequency of these notifications below.": "If you have opted for manual validation of participants, Mobilizon will send you an email to inform you of new participations to be processed. You can choose the frequency of these notifications below.",
-  "You will be able to add an avatar and set other options in your account settings.": "You will be able to add an avatar and set other options in your account settings."
+  "You will be able to add an avatar and set other options in your account settings.": "You will be able to add an avatar and set other options in your account settings.",
+  "Instance languages": "Instance languages",
+  "Main languages you/your moderators speak": "Main languages you/your moderators speak",
+  "Select languages": "Select languages",
+  "No languages found": "No languages found"
 }
