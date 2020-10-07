@@ -42,7 +42,7 @@ git checkout v1.1
 ### Fetch new dependencies
 Fetch new and/or updated Elixir and NodeJS dependencies
 ```bash
-mix deps.get
+MIX_ENV=prod mix deps.get
 ```
 ```bash
 cd js
