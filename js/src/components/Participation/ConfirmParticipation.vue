@@ -1,33 +1,35 @@
 <template>
   <section class="section container">
-    <h1 class="title" v-if="loading">{{ $t("Your participation is being validated") }}</h1>
+    <h1 class="title" v-if="loading">{{ $t("Your participation request is being validated") }}</h1>
     <div v-else>
       <div v-if="failed">
-        <b-message :title="$t('Error while validating participation')" type="is-danger">
+        <b-message :title="$t('Error while validating participation request')" type="is-danger">
           {{
             $t(
-              "Either the participation has already been validated, either the validation token is incorrect."
+              "Either the participation request has already been validated, either the validation token is incorrect."
             )
           }}
         </b-message>
       </div>
       <div v-else>
-        <h1 class="title">{{ $t("Your participation has been validated") }}</h1>
-        <form @submit.prevent="askToSaveParticipation">
-          <b-field>
-            <b-checkbox v-model="saveParticipation">
-              <b>{{ $t("Remember my participation in this browser") }}</b>
-              <p>
-                {{
-                  $t(
-                    "Will allow to display and manage your participation status on the event page when using this device. Uncheck if you're using a public device."
-                  )
-                }}
-              </p>
-            </b-checkbox>
-          </b-field>
-          <b-button native-type="submit" type="is-primary">{{ $t("Visit event page") }}</b-button>
-        </form>
+        <h1 class="title">{{ $t("Your participation request has been validated") }}</h1>
+        <p class="content" v-if="participation.event.joinOptions == EventJoinOptions.RESTRICTED">
+          {{ $t("Your participation still has to be approved by the organisers.") }}
+        </p>
+        <div class="columns has-text-centered">
+          <div class="column">
+            <router-link
+              native-type="button"
+              tag="a"
+              class="button is-primary is-large"
+              :to="{
+                name: RouteName.EVENT,
+                params: { uuid: this.participation.event.uuid },
+              }"
+              >{{ $t("Go to the event page") }}</router-link
+            >
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -35,11 +37,9 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { SnackbarProgrammatic as Snackbar } from "buefy";
 import RouteName from "../../router/name";
-import { IParticipant } from "../../types/event.model";
+import { EventJoinOptions, IParticipant } from "../../types/event.model";
 import { CONFIRM_PARTICIPATION } from "../../graphql/event";
-import { confirmLocalAnonymousParticipation } from "../../services/AnonymousParticipationStorage";
 
 @Component
 export default class ConfirmParticipation extends Vue {
@@ -51,7 +51,9 @@ export default class ConfirmParticipation extends Vue {
 
   participation!: IParticipant;
 
-  saveParticipation = true;
+  EventJoinOptions = EventJoinOptions;
+
+  RouteName = RouteName;
 
   async created(): Promise<void> {
     await this.validateAction();
@@ -74,30 +76,10 @@ export default class ConfirmParticipation extends Vue {
       }
     } catch (err) {
       console.error(err);
-
-      Snackbar.open({ message: err.message, type: "is-danger", position: "is-bottom" });
       this.failed = true;
     } finally {
       this.loading = false;
     }
-  }
-
-  askToSaveParticipation(): void {
-    if (this.saveParticipation) {
-      this.saveParticipationInBrowser();
-    }
-    this.forwardToEventPage();
-  }
-
-  async saveParticipationInBrowser(): Promise<void> {
-    await confirmLocalAnonymousParticipation(this.participation.event.uuid);
-  }
-
-  async forwardToEventPage(): Promise<void> {
-    await this.$router.replace({
-      name: RouteName.EVENT,
-      params: { uuid: this.participation.event.uuid },
-    });
   }
 }
 </script>

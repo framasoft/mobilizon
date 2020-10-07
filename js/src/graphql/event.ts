@@ -472,7 +472,9 @@ export const CONFIRM_PARTICIPATION = gql`
         id
       }
       event {
+        id
         uuid
+        joinOptions
       }
       role
     }
