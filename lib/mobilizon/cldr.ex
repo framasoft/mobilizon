@@ -5,5 +5,5 @@ defmodule Mobilizon.Cldr do
 
   use Cldr,
     locales: ["cs", "de", "en", "es", "fr", "it", "ja", "nl", "pl", "pt", "ru"],
-    providers: [Cldr.Number, Cldr.Calendar, Cldr.DateTime]
+    providers: [Cldr.Number, Cldr.Calendar, Cldr.DateTime, Cldr.Language]
 end

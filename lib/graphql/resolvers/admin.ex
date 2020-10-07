@@ -8,6 +8,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   alias Mobilizon.{Actors, Admin, Config, Events}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Admin.{ActionLog, Setting}
+  alias Mobilizon.Cldr.Language
   alias Mobilizon.Config
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
@@ -156,6 +157,19 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     end
   end
 
+  def get_list_of_languages(_parent, _args, _resolution) do
+    locale = Gettext.get_locale()
+
+    case Language.known_languages(locale) do
+      data when is_map(data) ->
+        data = Enum.map(data, fn {code, elem} -> %{code: code, name: elem.standard} end)
+        {:ok, data}
+
+      {:error, err} ->
+        {:error, err}
+    end
+  end
+
   def get_dashboard(_parent, _args, %{context: %{current_user: %User{role: role}}})
       when is_admin(role) do
     last_public_event_published =
@@ -202,11 +216,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
          res <-
            res
            |> Enum.map(fn {key, %Setting{value: value}} ->
-             case value do
-               "true" -> {key, true}
-               "false" -> {key, false}
-               value -> {key, value}
-             end
+             {key, Admin.get_setting_value(value)}
            end)
            |> Enum.into(%{}),
          :ok <- eventually_update_instance_actor(res) do

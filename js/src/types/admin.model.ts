@@ -20,6 +20,11 @@ export enum InstancePrivacyType {
   CUSTOM = "CUSTOM",
 }
 
+export interface ILanguage {
+  code: string;
+  name: string;
+}
+
 export interface IAdminSettings {
   instanceName: string;
   instanceDescription: string;
@@ -33,4 +38,5 @@ export interface IAdminSettings {
   instancePrivacyPolicyUrl: string | null;
   instanceRules: string;
   registrationsOpen: boolean;
+  instanceLanguages: string[];
 }

@@ -99,6 +99,15 @@ defmodule Mobilizon.Config do
         )
       )
 
+  @spec instance_languages :: list(String.t())
+  def instance_languages,
+    do:
+      Mobilizon.Admin.get_admin_setting_value(
+        "instance",
+        "instance_languages",
+        instance_config()[:languages]
+      )
+
   @spec instance_registrations_allowlist :: list(String.t())
   def instance_registrations_allowlist, do: instance_config()[:registration_email_allowlist]
 
@@ -319,7 +328,8 @@ defmodule Mobilizon.Config do
       instance_privacy_policy: instance_privacy(),
       instance_privacy_policy_type: instance_privacy_type(),
       instance_privacy_policy_url: instance_privacy_url(),
-      instance_rules: instance_rules()
+      instance_rules: instance_rules(),
+      instance_languages: instance_languages()
     }
   end
 

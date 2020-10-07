@@ -75,6 +75,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
       demo_mode: Config.instance_demo_mode?(),
       description: Config.instance_description(),
       long_description: Config.instance_long_description(),
+      languages: Config.instance_languages(),
       anonymous: %{
         participation: %{
           allowed: Config.anonymous_participation?(),

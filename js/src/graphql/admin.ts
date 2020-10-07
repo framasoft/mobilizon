@@ -104,6 +104,15 @@ export const REJECT_RELAY = gql`
   ${RELAY_FRAGMENT}
 `;
 
+export const LANGUAGES = gql`
+  query {
+    languages {
+      code
+      name
+    }
+  }
+`;
+
 export const ADMIN_SETTINGS_FRAGMENT = gql`
   fragment adminSettingsFragment on AdminSettings {
     instanceName
@@ -118,6 +127,7 @@ export const ADMIN_SETTINGS_FRAGMENT = gql`
     instancePrivacyPolicyUrl
     instanceRules
     registrationsOpen
+    instanceLanguages
   }
 `;
 
@@ -144,6 +154,7 @@ export const SAVE_ADMIN_SETTINGS = gql`
     $instancePrivacyPolicyUrl: String
     $instanceRules: String
     $registrationsOpen: Boolean
+    $instanceLanguages: [String]
   ) {
     saveAdminSettings(
       instanceName: $instanceName
@@ -158,6 +169,7 @@ export const SAVE_ADMIN_SETTINGS = gql`
       instancePrivacyPolicyUrl: $instancePrivacyPolicyUrl
       instanceRules: $instanceRules
       registrationsOpen: $registrationsOpen
+      instanceLanguages: $instanceLanguages
     ) {
       ...adminSettingsFragment
     }

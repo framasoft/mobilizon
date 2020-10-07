@@ -64,6 +64,11 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
     end)
   end
 
+  object :language do
+    field(:code, :string, description: "The iso-639-3 language code")
+    field(:name, :string, description: "The language name")
+  end
+
   object :dashboard do
     field(:last_public_event_published, :event, description: "Last public event publish")
     field(:number_of_users, :integer, description: "The number of local users")
@@ -85,6 +90,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
     field(:instance_privacy_policy_url, :string)
     field(:instance_rules, :string)
     field(:registrations_open, :boolean)
+    field(:instance_languages, list_of(:string))
   end
 
   enum :instance_terms_type do
@@ -105,6 +111,10 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
       resolve(&Admin.list_action_logs/3)
+    end
+
+    field :languages, type: list_of(:language) do
+      resolve(&Admin.get_list_of_languages/3)
     end
 
     field :dashboard, type: :dashboard do
@@ -172,6 +182,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
       arg(:instance_privacy_policy_url, :string)
       arg(:instance_rules, :string)
       arg(:registrations_open, :boolean)
+      arg(:instance_languages, list_of(:string))
 
       resolve(&Admin.save_settings/3)
     end
