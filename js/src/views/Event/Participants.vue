@@ -107,6 +107,9 @@
           <b-tag v-else-if="props.row.role === ParticipantRole.PARTICIPANT">
             {{ $t("Participant") }}
           </b-tag>
+          <b-tag v-else-if="props.row.role === ParticipantRole.NOT_CONFIRMED">
+            {{ $t("Not confirmed") }}
+          </b-tag>
           <b-tag type="is-warning" v-else-if="props.row.role === ParticipantRole.NOT_APPROVED">
             {{ $t("Not approved") }}
           </b-tag>

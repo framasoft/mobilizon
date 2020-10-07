@@ -640,7 +640,7 @@ msgid "You don't have permission to delete this token"
 msgstr "Vous n'avez pas la permission de supprimer ce jeton"
 
 #, elixir-format
-#: lib/graphql/resolvers/admin.ex:51
+#: lib/graphql/resolvers/admin.ex:52
 msgid "You need to be logged-in and a moderator to list action logs"
 msgstr "Vous devez être connecté·e pour rejoindre un groupe"
 
@@ -660,17 +660,17 @@ msgid "You need to be logged-in and a moderator to view a report"
 msgstr "Vous devez être connecté·e pour rejoindre un groupe"
 
 #, elixir-format
-#: lib/graphql/resolvers/admin.ex:194
+#: lib/graphql/resolvers/admin.ex:208
 msgid "You need to be logged-in and an administrator to access admin settings"
 msgstr "Vous devez être connecté·e et un·e administrateur·ice pour accéder aux paramètres administrateur"
 
 #, elixir-format
-#: lib/graphql/resolvers/admin.ex:179
+#: lib/graphql/resolvers/admin.ex:193
 msgid "You need to be logged-in and an administrator to access dashboard statistics"
 msgstr "Vous devez être connecté·e et un·e administrateur·ice pour accéder aux panneau de statistiques"
 
 #, elixir-format
-#: lib/graphql/resolvers/admin.ex:222
+#: lib/graphql/resolvers/admin.ex:242
 msgid "You need to be logged-in and an administrator to save admin settings"
 msgstr "Vous devez être connecté·e et un·e administrateur·ice pour sauvegarder les paramètres administrateur"
 

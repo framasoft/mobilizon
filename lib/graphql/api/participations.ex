@@ -8,6 +8,7 @@ defmodule Mobilizon.GraphQL.API.Participations do
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Activity
+  alias Mobilizon.Service.Notifications.Scheduler
   alias Mobilizon.Web.Email.Participation
 
   @spec join(Event.t(), Actor.t(), map()) :: {:ok, Activity.t(), Participant.t()}
@@ -39,6 +40,7 @@ defmodule Mobilizon.GraphQL.API.Participations do
   def update(%Participant{} = participation, %Actor{} = _moderator, :not_approved) do
     with {:ok, %Participant{} = participant} <-
            Events.update_participant(participation, %{role: :not_approved}) do
+      Scheduler.pending_participation_notification(participation.event)
       {:ok, nil, participant}
     end
   end

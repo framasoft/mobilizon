@@ -2,7 +2,7 @@
   <section class="container section hero is-fullheight">
     <div class="hero-body" v-if="event">
       <div class="container">
-        <form @submit.prevent="joinEvent">
+        <form @submit.prevent="joinEvent" v-if="!formSent">
           <p>
             {{
               $t(
@@ -18,11 +18,11 @@
             }}
           </b-message>
           <b-message type="is-danger" v-if="error">{{ error }}</b-message>
-          <b-field :label="$t('Email')">
+          <b-field :label="$t('Email address')">
             <b-input
               type="email"
               v-model="anonymousParticipation.email"
-              placeholder="Your email"
+              :placeholder="$t('Your email')"
               required
             ></b-input>
           </b-field>
@@ -42,13 +42,32 @@
               :required="event.joinOptions === EventJoinOptions.RESTRICTED"
             ></b-input>
           </b-field>
-          <b-button type="is-primary" native-type="submit">{{ $t("Send email") }}</b-button>
+          <b-field>
+            <b-checkbox v-model="anonymousParticipation.saveParticipation">
+              <b>{{ $t("Remember my participation in this browser") }}</b>
+              <p>
+                {{
+                  $t(
+                    "Will allow to display and manage your participation status on the event page when using this device. Uncheck if you're using a public device."
+                  )
+                }}
+              </p>
+            </b-checkbox>
+          </b-field>
+          <b-button :disabled="sendingForm" type="is-primary" native-type="submit">{{
+            $t("Send email")
+          }}</b-button>
           <div class="has-text-centered">
             <b-button native-type="button" tag="a" type="is-text" @click="$router.go(-1)">{{
               $t("Back to previous page")
             }}</b-button>
           </div>
         </form>
+        <div v-else>
+          <h1 class="title">{{ $t("Request for participation confirmation sent") }}</h1>
+          <p class="content">{{ $t("Check your inbox (and your junk mail folder).") }}</p>
+          <p class="content">{{ $t("You may now close this window.") }}</p>
+        </div>
       </div>
     </div>
   </section>
@@ -89,9 +108,10 @@ import RouteName from "../../router/name";
 export default class ParticipationWithoutAccount extends Vue {
   @Prop({ type: String, required: true }) uuid!: string;
 
-  anonymousParticipation: { email: string; message: string } = {
+  anonymousParticipation: { email: string; message: string; saveParticipation: boolean } = {
     email: "",
     message: "",
+    saveParticipation: true,
   };
 
   event!: IEvent;
@@ -100,10 +120,15 @@ export default class ParticipationWithoutAccount extends Vue {
 
   error: string | boolean = false;
 
+  formSent = false;
+
+  sendingForm = false;
+
   EventJoinOptions = EventJoinOptions;
 
-  async joinEvent(): Promise<Route> {
+  async joinEvent(): Promise<void> {
     this.error = false;
+    this.sendingForm = true;
     try {
       const { data } = await this.$apollo.mutate<{ joinEvent: IParticipant }>({
         mutation: JOIN_EVENT,
@@ -150,7 +175,11 @@ export default class ParticipationWithoutAccount extends Vue {
         },
       });
       console.log("finished with store", data);
-      if (data && data.joinEvent.metadata.cancellationToken) {
+      if (
+        data &&
+        data.joinEvent.metadata.cancellationToken &&
+        this.anonymousParticipation.saveParticipation
+      ) {
         await addLocalUnconfirmedAnonymousParticipation(
           this.event,
           data.joinEvent.metadata.cancellationToken
@@ -160,10 +189,8 @@ export default class ParticipationWithoutAccount extends Vue {
     } catch (e) {
       this.error = e.message;
     }
-    return this.$router.push({
-      name: RouteName.EVENT,
-      params: { uuid: this.event.uuid },
-    });
+    this.sendingForm = false;
+    this.formSent = true;
   }
 }
 </script>
