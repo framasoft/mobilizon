@@ -35,7 +35,7 @@
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <p style="margin: 0;">
-            <%= gettext "Hi there! You just registered to join this event: « %{title} ». Please confirm the e-mail address you provided:", title: @participant.event.title %>
+            <%= gettext("Hi there! You just registered to join this event: « <b>%{title}</b> ». Please confirm the e-mail address you provided:", title: @participant.event.title) |> raw %>
           </p>
         </td>
       </tr>

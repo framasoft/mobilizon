@@ -633,7 +633,7 @@ msgid "You don't have permission to delete this token"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/admin.ex:51
+#: lib/graphql/resolvers/admin.ex:52
 msgid "You need to be logged-in and a moderator to list action logs"
 msgstr ""
 
@@ -653,17 +653,17 @@ msgid "You need to be logged-in and a moderator to view a report"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/admin.ex:194
+#: lib/graphql/resolvers/admin.ex:208
 msgid "You need to be logged-in and an administrator to access admin settings"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/admin.ex:179
+#: lib/graphql/resolvers/admin.ex:193
 msgid "You need to be logged-in and an administrator to access dashboard statistics"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/admin.ex:222
+#: lib/graphql/resolvers/admin.ex:242
 msgid "You need to be logged-in and an administrator to save admin settings"
 msgstr ""
 

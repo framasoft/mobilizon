@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-10-06 12:28+0200\n"
+"PO-Revision-Date: 2020-10-07 15:47+0200\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
 "Language: fr\n"
@@ -607,7 +607,7 @@ msgstr "Confirmer mon adresse email"
 msgid "Confirm your e-mail"
 msgstr "Confirmez votre adresse email"
 
-#: lib/web/templates/email/anonymous_participation_confirmation.html.eex:38 lib/web/templates/email/anonymous_participation_confirmation.text.eex:3
+#: lib/web/templates/email/anonymous_participation_confirmation.text.eex:3
 msgid "Hi there! You just registered to join this event: « %{title} ». Please confirm the e-mail address you provided:"
 msgstr "Salut ! Vous venez de vous enregistrer pour rejoindre cet événement : « %{title} ». Merci de confirmer l'adresse email que vous avez fourni :"
 
@@ -1078,3 +1078,7 @@ msgstr "Voulez-vous vous connecter ?"
 #: lib/web/templates/email/instance_follow.html.eex:45 lib/web/templates/email/instance_follow.text.eex:5
 msgid "Note: %{name} (%{domain}) following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too."
 msgstr "Note : le fait que %{name} (%{domain}) vous suive n'implique pas nécessairement que vous suivez cette instance, mais vous pouvez demander à les suivre également."
+
+#: lib/web/templates/email/anonymous_participation_confirmation.html.eex:38
+msgid "Hi there! You just registered to join this event: « <b>%{title}</b> ». Please confirm the e-mail address you provided:"
+msgstr "Salut ! Vous venez de vous enregistrer pour rejoindre cet événement : « <b>%{title}</b> ». Merci de confirmer l'adresse email que vous avez fourni :"
