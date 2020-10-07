@@ -1235,7 +1235,6 @@ msgstr ""
 "”Ilmoitukset”."
 
 #, elixir-format
-#: lib/web/templates/email/event_participation_rejected.html.eex:38
 #: lib/web/templates/email/event_participation_rejected.text.eex:5
 msgid "You issued a request to attend %{title}."
 msgstr "Lähetit pyynnön osallistua tapahtumaan %{title}."
@@ -1639,9 +1638,14 @@ msgstr ""
 msgid "Note: %{name} (%{domain}) following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:38
 msgid "Hi there! You just registered to join this event: « <b>%{title}</b> ». Please confirm the e-mail address you provided:"
 msgstr ""
 "Hei! Rekisteröidyit juuri tapahtumaan ”%{title}”. Vahvista ilmoittamasi "
 "sähköpostiosoite:"
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/event_participation_rejected.html.eex:38
+msgid "You issued a request to attend <b>%{title}</b>."
+msgstr "Lähetit pyynnön osallistua tapahtumaan %{title}."
