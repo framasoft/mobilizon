@@ -77,6 +77,13 @@
       </div>
       <div class="field is-primary">
         <strong>{{ $t("Notifications for manually approved participations to an event") }}</strong>
+        <p>
+          {{
+            $t(
+              "If you have opted for manual validation of participants, Mobilizon will send you an email to inform you of new participations to be processed. You can choose the frequency of these notifications below."
+            )
+          }}
+        </p>
         <b-select
           v-model="notificationPendingParticipation"
           @input="updateSetting({ notificationPendingParticipation })"
@@ -115,11 +122,11 @@ export default class Notifications extends Vue {
 
   notificationPendingParticipation = INotificationPendingParticipationEnum.NONE;
 
-  notificationPendingParticipationValues: object = {};
+  notificationPendingParticipationValues: Record<string, unknown> = {};
 
   RouteName = RouteName;
 
-  mounted() {
+  mounted(): void {
     this.notificationPendingParticipationValues = {
       [INotificationPendingParticipationEnum.NONE]: this.$t("Do not receive any mail"),
       [INotificationPendingParticipationEnum.DIRECT]: this.$t("Receive one email per request"),
@@ -129,7 +136,7 @@ export default class Notifications extends Vue {
   }
 
   @Watch("loggedUser")
-  setSettings() {
+  setSettings(): void {
     if (this.loggedUser && this.loggedUser.settings) {
       this.notificationOnDay = this.loggedUser.settings.notificationOnDay;
       this.notificationEachWeek = this.loggedUser.settings.notificationEachWeek;
@@ -138,7 +145,7 @@ export default class Notifications extends Vue {
     }
   }
 
-  async updateSetting(variables: object) {
+  async updateSetting(variables: Record<string, unknown>): Promise<void> {
     await this.$apollo.mutate<{ setUserSettings: string }>({
       mutation: SET_USER_SETTINGS,
       variables,

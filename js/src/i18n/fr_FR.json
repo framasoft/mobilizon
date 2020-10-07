@@ -829,5 +829,7 @@
   "Displayed nickname": "Pseudonyme affiché",
   "Short bio": "Courte biographie",
   "Congratulations, your account is now created!": "Bravo, votre compte est dorénavant créé !",
-  "Now, create your first profile:": "Maintenant, créez votre premier profil :"
+  "Now, create your first profile:": "Maintenant, créez votre premier profil :",
+  "If you have opted for manual validation of participants, Mobilizon will send you an email to inform you of new participations to be processed. You can choose the frequency of these notifications below.": "Si vous avez opté pour la validation manuelle des participantes, Mobilizon vous enverra un email pour vous informer des nouvelles participations à traiter. Vous pouvez choisir la fréquence de ces notifications ci-dessous.",
+  "You will be able to add an avatar and set other options in your account settings.": "Vous pourrez ajouter un avatar et définir d'autres options dans les paramètres de votre compte."
 }

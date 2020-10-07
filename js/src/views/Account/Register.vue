@@ -44,6 +44,14 @@
             <b-input type="textarea" maxlength="100" rows="2" v-model="identity.summary" />
           </b-field>
 
+          <p class="content">
+            {{
+              $t(
+                "You will be able to add an avatar and set other options in your account settings."
+              )
+            }}
+          </p>
+
           <p class="control has-text-centered">
             <b-button
               type="is-primary"
