@@ -4,6 +4,7 @@ defmodule Mobilizon.Service.Statistics do
   """
 
   alias Mobilizon.{Actors, Discussions, Events, Users}
+  alias Mobilizon.Federation.ActivityPub.Relay
 
   def get_cached_value(key) do
     case Cachex.fetch(:statistics, key, fn key ->
@@ -43,5 +44,15 @@ defmodule Mobilizon.Service.Statistics do
 
   defp create_cache(:federation_groups) do
     Actors.count_groups()
+  end
+
+  defp create_cache(:instance_followers) do
+    relay_actor = Relay.get_actor()
+    Actors.count_followers_for_actor(relay_actor)
+  end
+
+  defp create_cache(:instance_followings) do
+    relay_actor = Relay.get_actor()
+    Actors.count_followings_for_actor(relay_actor)
   end
 end

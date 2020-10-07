@@ -1077,6 +1077,17 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
+  Returns the number of followers for an actor
+  """
+  @spec count_followers_for_actor(Actor.t()) :: integer()
+  def count_followers_for_actor(%Actor{id: actor_id}) do
+    actor_id
+    |> follower_for_actor_query()
+    |> where(approved: true)
+    |> Repo.aggregate(:count)
+  end
+
+  @doc """
   Returns the list of followings for an actor.
   If actor A follows actor B and C, actor A's followings are B and C.
   """
@@ -1085,6 +1096,17 @@ defmodule Mobilizon.Actors do
     actor_id
     |> followings_actors_for_actor_query()
     |> Repo.all()
+  end
+
+  @doc """
+  Returns the number of followings for an actor
+  """
+  @spec count_followings_for_actor(Actor.t()) :: integer()
+  def count_followings_for_actor(%Actor{id: actor_id}) do
+    actor_id
+    |> followings_for_actor_query()
+    |> where(approved: true)
+    |> Repo.aggregate(:count)
   end
 
   @doc """

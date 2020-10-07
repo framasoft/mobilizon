@@ -5,8 +5,13 @@ export const STATISTICS = gql`
     statistics {
       numberOfUsers
       numberOfEvents
+      numberOfLocalEvents
       numberOfComments
+      numberOfLocalComments
       numberOfGroups
+      numberOfLocalGroups
+      numberOfInstanceFollowings
+      numberOfInstanceFollowers
     }
   }
 `;
