@@ -50,6 +50,11 @@ yarn install
 ```
 
 ### Rebuild Mobilizon's front-end
+!!! warning
+    Building front-end can consume up to 2048MB of RAM by default. If it's too much or not sufficient for your setup, you can adjust the maximum memory used by prefixing the command with the following option:
+    ```
+    NODE_BUILD_MEMORY=1024
+    ```
 ```bash
 yarn run build
 cd ../
