@@ -689,7 +689,7 @@ msgid "You need to be logged-in and an administrator to access dashboard statist
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/admin.ex:242
+#: lib/graphql/resolvers/admin.ex:232
 msgid "You need to be logged-in and an administrator to save admin settings"
 msgstr ""
 
