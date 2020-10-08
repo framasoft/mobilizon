@@ -79,6 +79,7 @@ defmodule Mobilizon.UploadTest do
       assert data.name == "an [image.jpg"
     end
 
+    @tag :skip
     test "fixes incorrect content type" do
       File.cp!("test/fixtures/image.jpg", "test/fixtures/image_tmp.jpg")
 
