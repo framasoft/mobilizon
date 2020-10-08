@@ -517,9 +517,11 @@ export default class EditEvent extends Vue {
   createOrUpdateDraft(e: Event): void {
     e.preventDefault();
     if (this.validateForm()) {
-      if (this.eventId && !this.isDuplicate) this.updateEvent();
-
-      this.createEvent();
+      if (this.eventId && !this.isDuplicate) {
+        this.updateEvent();
+      } else {
+        this.createEvent();
+      }
     }
   }
 
