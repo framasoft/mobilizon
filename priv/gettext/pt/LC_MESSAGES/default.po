@@ -44,8 +44,8 @@ msgid "Comments"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.html.eex:62
-#: lib/web/templates/email/report.html.eex:72 lib/web/templates/email/report.text.eex:11
+#: lib/web/templates/email/report.html.eex:72
+#: lib/web/templates/email/report.text.eex:11
 msgid "Event"
 msgstr ""
 
@@ -122,7 +122,7 @@ msgid "Your participation to event %{title} has been rejected"
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/event.ex:35
+#: lib/web/email/event.ex:36
 msgid "Event %{title} has been updated"
 msgstr ""
 
@@ -769,7 +769,7 @@ msgstr ""
 
 #, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:63
-#: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.eex:131
+#: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.eex:133
 #: lib/web/templates/email/event_updated.text.eex:24 lib/web/templates/email/notification_each_week.html.eex:70
 #: lib/web/templates/email/notification_each_week.text.eex:14 lib/web/templates/email/on_day_notification.html.eex:70
 #: lib/web/templates/email/on_day_notification.text.eex:14
@@ -815,7 +815,7 @@ msgid "Confirm new email"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.html.eex:82
+#: lib/web/templates/email/event_updated.html.eex:84
 msgid "End"
 msgstr ""
 
@@ -892,12 +892,12 @@ msgid "Learn more about Mobilizon here!"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.html.eex:92
+#: lib/web/templates/email/event_updated.html.eex:94
 msgid "Location"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.html.eex:102
+#: lib/web/templates/email/event_updated.html.eex:104
 msgid "Location address was removed"
 msgstr ""
 
@@ -936,7 +936,7 @@ msgid "Sorry! You're not going."
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.html.eex:72
+#: lib/web/templates/email/event_updated.html.eex:74
 msgid "Start"
 msgstr ""
 
@@ -946,25 +946,24 @@ msgid "Start %{begins_on}"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.html.eex:38
 #: lib/web/templates/email/event_updated.text.eex:3
 msgid "There have been changes for %{title} so we'd thought we'd let you know."
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.html.eex:54
+#: lib/web/templates/email/event_updated.html.eex:55
 #: lib/web/templates/email/event_updated.text.eex:11
 msgid "This event has been cancelled by its organizers. Sorry!"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.html.eex:50
+#: lib/web/templates/email/event_updated.html.eex:51
 #: lib/web/templates/email/event_updated.text.eex:7
 msgid "This event has been confirmed"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.html.eex:52
+#: lib/web/templates/email/event_updated.html.eex:53
 #: lib/web/templates/email/event_updated.text.eex:9
 msgid "This event has yet to be confirmed: organizers will let you know if they do confirm it."
 msgstr ""
@@ -997,7 +996,7 @@ msgid "Visit event page"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.html.eex:119
+#: lib/web/templates/email/event_updated.html.eex:121
 msgid "Visit the updated event page"
 msgstr ""
 
@@ -1360,7 +1359,17 @@ msgstr ""
 msgid "Hi there! You just registered to join this event: « <b>%{title}</b> ». Please confirm the e-mail address you provided:"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/web/templates/email/event_participation_rejected.html.eex:38
 msgid "You issued a request to attend <b>%{title}</b>."
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/event_updated.html.eex:64
+msgid "Event title"
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/event_updated.html.eex:38
+msgid "There have been changes for <b>%{title}</b> so we'd thought we'd let you know."
 msgstr ""

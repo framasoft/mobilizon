@@ -679,7 +679,7 @@ msgstr ""
 "panel"
 
 #, elixir-format
-#: lib/graphql/resolvers/admin.ex:242
+#: lib/graphql/resolvers/admin.ex:232
 msgid "You need to be logged-in and an administrator to save admin settings"
 msgstr ""
 "Debe iniciar sesión y ser administrador para acceder a las estadísticas del "

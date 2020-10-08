@@ -11,25 +11,26 @@ defmodule Mobilizon.Web.Email.Event do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
-  alias Mobilizon.Events.Event
+  alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Users.User
 
-  alias Mobilizon.Web.{Email, Gettext}
+  alias Mobilizon.Web.Email
+  alias Mobilizon.Web.Gettext, as: GettextBackend
 
   @important_changes [:title, :begins_on, :ends_on, :status, :physical_address]
 
-  @spec event_updated(User.t(), Actor.t(), Event.t(), Event.t(), MapSet.t(), String.t()) ::
+  @spec event_updated(String.t(), Actor.t(), Event.t(), Event.t(), MapSet.t(), String.t()) ::
           Bamboo.Email.t()
   def event_updated(
-        %User{} = user,
+        email,
         %Actor{} = actor,
         %Event{} = old_event,
         %Event{} = event,
         changes,
         locale \\ "en"
       ) do
-    Gettext.put_locale(locale)
+    GettextBackend.put_locale(locale)
 
     subject =
       gettext(
@@ -37,7 +38,7 @@ defmodule Mobilizon.Web.Email.Event do
         title: old_event.title
       )
 
-    Email.base_email(to: {Actor.display_name(actor), user.email}, subject: subject)
+    Email.base_email(to: {Actor.display_name(actor), email}, subject: subject)
     |> assign(:locale, locale)
     |> assign(:event, event)
     |> assign(:old_event, old_event)
@@ -73,12 +74,27 @@ defmodule Mobilizon.Web.Email.Event do
   end
 
   defp send_notification_for_event_update_to_participant(
-         {%Actor{} = actor, %User{locale: locale} = user},
+         {%Participant{} = _participant, %Actor{} = actor,
+          %User{locale: locale, email: email} = _user},
          %Event{} = old_event,
          %Event{} = event,
          diff
        ) do
-    user
+    email
+    |> Email.Event.event_updated(actor, old_event, event, diff, locale)
+    |> Email.Mailer.deliver_later()
+  end
+
+  defp send_notification_for_event_update_to_participant(
+         {%Participant{metadata: %{email: email}} = _participant, %Actor{} = actor, nil},
+         %Event{} = old_event,
+         %Event{} = event,
+         diff
+       )
+       when not is_nil(email) do
+    locale = Gettext.get_locale()
+
+    email
     |> Email.Event.event_updated(actor, old_event, event, diff, locale)
     |> Email.Mailer.deliver_later()
   end

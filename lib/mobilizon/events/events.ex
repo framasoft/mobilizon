@@ -1572,8 +1572,11 @@ defmodule Mobilizon.Events do
     Participant
     |> join(:inner, [p], a in Actor, on: p.actor_id == a.id and is_nil(a.domain))
     |> join(:left, [_p, a], u in User, on: a.user_id == u.id)
-    |> where([p], p.event_id == ^event_id)
-    |> select([_p, a, u], {a, u})
+    |> where(
+      [p],
+      p.event_id == ^event_id and p.role not in [^:not_approved, ^:not_confirmed, ^:rejected]
+    )
+    |> select([p, a, u], {p, a, u})
   end
 
   @spec list_participations_for_user_query(integer()) :: Ecto.Query.t()

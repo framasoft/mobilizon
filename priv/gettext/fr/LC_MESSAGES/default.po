@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-10-07 16:29+0200\n"
+"PO-Revision-Date: 2020-10-08 08:52+0200\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
 "Language: fr\n"
@@ -44,7 +44,7 @@ msgstr "Demander à la communauté sur Framacolibri"
 msgid "Comments"
 msgstr "Commentaires"
 
-#: lib/web/templates/email/event_updated.html.eex:62 lib/web/templates/email/report.html.eex:72 lib/web/templates/email/report.text.eex:11
+#: lib/web/templates/email/report.html.eex:72 lib/web/templates/email/report.text.eex:11
 msgid "Event"
 msgstr "Événement"
 
@@ -104,7 +104,7 @@ msgstr "Votre participation à l'événement %{title} a été approuvée"
 msgid "Your participation to event %{title} has been rejected"
 msgstr "Votre participation à l'événement %{title} a été rejetée"
 
-#: lib/web/email/event.ex:35
+#: lib/web/email/event.ex:36
 msgid "Event %{title} has been updated"
 msgstr "L'événement %{title} a été mis à jour"
 
@@ -639,7 +639,7 @@ msgstr "Mobilizon est en cours de développement, nous y ajouterons de nouvelles
 msgid "Please do not use it for real purposes."
 msgstr "Veuillez ne pas l'utiliser pour un cas réel."
 
-#: lib/web/templates/email/anonymous_participation_confirmation.html.eex:63 lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.eex:131 lib/web/templates/email/event_updated.text.eex:24 lib/web/templates/email/notification_each_week.html.eex:70 lib/web/templates/email/notification_each_week.text.eex:14 lib/web/templates/email/on_day_notification.html.eex:70 lib/web/templates/email/on_day_notification.text.eex:14
+#: lib/web/templates/email/anonymous_participation_confirmation.html.eex:63 lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.eex:133 lib/web/templates/email/event_updated.text.eex:24 lib/web/templates/email/notification_each_week.html.eex:70 lib/web/templates/email/notification_each_week.text.eex:14 lib/web/templates/email/on_day_notification.html.eex:70 lib/web/templates/email/on_day_notification.text.eex:14
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgid_plural "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button."
 msgstr[0] "Si vous avez besoin d'annuler votre participation, il suffit d'accéder à la page de l'événement à partir du lien ci-dessus et de cliquer sur le bouton « Je participe »."
@@ -671,7 +671,7 @@ msgstr "Un événement est à venir !"
 msgid "Confirm new email"
 msgstr "Confirmez votre adresse email"
 
-#: lib/web/templates/email/event_updated.html.eex:82
+#: lib/web/templates/email/event_updated.html.eex:84
 msgid "End"
 msgstr "Fin"
 
@@ -727,11 +727,11 @@ msgstr "D'ici là, veuillez considérer que le logiciel n'est pas (encore) fini.
 msgid "Learn more about Mobilizon here!"
 msgstr "En apprendre plus à propos de Mobilizon ici !"
 
-#: lib/web/templates/email/event_updated.html.eex:92
+#: lib/web/templates/email/event_updated.html.eex:94
 msgid "Location"
 msgstr "Localisation"
 
-#: lib/web/templates/email/event_updated.html.eex:102
+#: lib/web/templates/email/event_updated.html.eex:104
 msgid "Location address was removed"
 msgstr "L'adresse physique a été enlevée"
 
@@ -759,7 +759,7 @@ msgstr "Une personne de <b>%{instance}</b> a signalé le contenu suivant :"
 msgid "Sorry! You're not going."
 msgstr "Désolé ! Vous n'y allez pas."
 
-#: lib/web/templates/email/event_updated.html.eex:72
+#: lib/web/templates/email/event_updated.html.eex:74
 msgid "Start"
 msgstr "Début"
 
@@ -767,19 +767,19 @@ msgstr "Début"
 msgid "Start %{begins_on}"
 msgstr "Début %{begins_on}"
 
-#: lib/web/templates/email/event_updated.html.eex:38 lib/web/templates/email/event_updated.text.eex:3
+#: lib/web/templates/email/event_updated.text.eex:3
 msgid "There have been changes for %{title} so we'd thought we'd let you know."
 msgstr "Il y a eu des changements pour %{title} donc nous avons pensé que nous vous le ferions savoir."
 
-#: lib/web/templates/email/event_updated.html.eex:54 lib/web/templates/email/event_updated.text.eex:11
+#: lib/web/templates/email/event_updated.html.eex:55 lib/web/templates/email/event_updated.text.eex:11
 msgid "This event has been cancelled by its organizers. Sorry!"
 msgstr "Cet événement a été annulé par ses organisateur·ices. Désolé !"
 
-#: lib/web/templates/email/event_updated.html.eex:50 lib/web/templates/email/event_updated.text.eex:7
+#: lib/web/templates/email/event_updated.html.eex:51 lib/web/templates/email/event_updated.text.eex:7
 msgid "This event has been confirmed"
 msgstr "L'événement a été confirmé"
 
-#: lib/web/templates/email/event_updated.html.eex:52 lib/web/templates/email/event_updated.text.eex:9
+#: lib/web/templates/email/event_updated.html.eex:53 lib/web/templates/email/event_updated.text.eex:9
 msgid "This event has yet to be confirmed: organizers will let you know if they do confirm it."
 msgstr "Cet événement doit encore être confirmé : les organisateur·ices vous feront savoir si l'événement est confirmé."
 
@@ -803,7 +803,7 @@ msgstr "Voir le signalement :"
 msgid "Visit event page"
 msgstr "Voir la page de l'événement"
 
-#: lib/web/templates/email/event_updated.html.eex:119
+#: lib/web/templates/email/event_updated.html.eex:121
 msgid "Visit the updated event page"
 msgstr "Voir la page de l'événement mis à jour"
 
@@ -1086,3 +1086,11 @@ msgstr "Salut ! Vous venez de vous enregistrer pour rejoindre cet événement 
 #: lib/web/templates/email/event_participation_rejected.html.eex:38
 msgid "You issued a request to attend <b>%{title}</b>."
 msgstr "Vous avez effectué une demande de participation à <b>%{title}</b>."
+
+#: lib/web/templates/email/event_updated.html.eex:64
+msgid "Event title"
+msgstr "Titre de l'événement"
+
+#: lib/web/templates/email/event_updated.html.eex:38
+msgid "There have been changes for <b>%{title}</b> so we'd thought we'd let you know."
+msgstr "Il y a eu des changements pour <b>%{title}</b> donc nous avons pensé que nous vous le ferions savoir."

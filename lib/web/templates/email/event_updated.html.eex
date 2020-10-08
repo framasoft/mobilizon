@@ -35,7 +35,7 @@
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <p style="margin: 0;">
-            <%= gettext "There have been changes for %{title} so we'd thought we'd let you know.", title: @old_event.title %>
+            <%= gettext("There have been changes for <b>%{title}</b> so we'd thought we'd let you know.", title: @old_event.title) |> raw %>
           </p>
         </td>
       </tr>
@@ -45,24 +45,26 @@
             <%= if MapSet.member?(@changes, :status) do %>
               <tr>
                 <td bgcolor="#ffffff" align="center">
-                  <%= case @event.status do  %>
-                    <% :confirmed -> %>
-                    <%= gettext "This event has been confirmed" %>
-                    <% :tentative -> %>
-                    <%= gettext "This event has yet to be confirmed: organizers will let you know if they do confirm it." %>
-                    <% :cancelled -> %>
-                    <%= gettext "This event has been cancelled by its organizers. Sorry!" %>
-                  <% end %>
+                  <b>
+                    <%= case @event.status do  %>
+                      <% :confirmed -> %>
+                      <%= gettext "This event has been confirmed" %>
+                      <% :tentative -> %>
+                      <%= gettext "This event has yet to be confirmed: organizers will let you know if they do confirm it." %>
+                      <% :cancelled -> %>
+                      <%= gettext "This event has been cancelled by its organizers. Sorry!" %>
+                    <% end %>
+                  </b>
                 </td>
               </tr>
             <% end %>
             <%= if MapSet.member?(@changes, :title) do %>
               <tr>
                 <td bgcolor="#ffffff" align="left">
-                  <%= gettext "Event" %>
+                  <%= gettext "Event title" %>
                 </td>
                 <td bgcolor="#ffffff" align="left">
-                  <%= @event.title %>
+                  <b><%= @event.title %></b>
                 </td>
               </tr>
             <% end %>
@@ -72,7 +74,7 @@
                   <%= gettext "Start" %>
                 </td>
                 <td bgcolor="#ffffff" align="left">
-                  <%= datetime_to_string(@event.begins_on, @locale) %>
+                  <b><%= datetime_to_string(@event.begins_on, @locale) %></b>
                 </td>
               </tr>
             <% end %>
@@ -82,7 +84,7 @@
                   <%= gettext "End" %>
                 </td>
                 <td bgcolor="#ffffff" align="left">
-                  <%= datetime_to_string(@event.ends_on, @locale) %>
+                  <b><%= datetime_to_string(@event.ends_on, @locale) %></b>
                 </td>
               </tr>
             <% end %>
