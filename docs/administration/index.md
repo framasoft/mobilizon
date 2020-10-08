@@ -77,9 +77,9 @@ yarn install
 Finally, we can build the front-end (this can take a few seconds).
 
 !!! warning
-    Building front-end can consume up to 512MB of RAM by default. If it's too much or not sufficient for your setup, you can adjust the maximum memory used by prefixing the command with the following option:
+    Building front-end can consume up to 2048MB of RAM by default. If it's too much or not sufficient for your setup, you can adjust the maximum memory used by prefixing the command with the following option:
     ```
-    NODE_OPTIONS=--max_old_space_size=4096
+    NODE_BUILD_MEMORY=1024
     ```
 ```bash
 yarn run build

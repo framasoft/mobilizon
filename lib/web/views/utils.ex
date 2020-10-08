@@ -18,11 +18,8 @@ defmodule Mobilizon.Web.Views.Utils do
   end
 
   @spec replace_meta(String.t(), String.t()) :: String.t()
-  # TODO: Find why it's different in dev/prod and during tests
   defp replace_meta(index_content, tags) do
-    index_content
-    |> String.replace("<meta name=\"server-injected-data\" />", tags)
-    |> String.replace("<meta name=server-injected-data>", tags)
+    String.replace(index_content, "<meta name=\"server-injected-data\">", tags)
   end
 
   @spec do_replacements(String.t(), String.t(), String.t()) :: {:safe, String.t()}
@@ -30,7 +27,6 @@ defmodule Mobilizon.Web.Views.Utils do
     index_content
     |> replace_meta(tags)
     |> String.replace("<html lang=\"en\">", "<html lang=\"#{locale}\">")
-    |> String.replace("<html lang=en>", "<html lang=\"#{locale}\">")
     |> (&{:safe, &1}).()
   end
 
