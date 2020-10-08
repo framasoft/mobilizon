@@ -8,7 +8,10 @@ This is needed to set correct address for events, and more easily find events wi
 However, providing a geocoding service is quite expensive, especially if you want to cover the whole Earth.
 
 !!! note "Hardware setup"
-    To give an idea of what hardware is required to self-host a geocoding service, we successfully installed and used [Addok](#addok), [Pelias](#pelias) and [Mimirsbrunn](#mimirsbrunn) on a 8 cores/16GB RAM machine without any issues **importing only French addresses and data**.
+    To give an idea of what hardware is required to self-host a geocoding service, we successfully installed and used [Addok](#addok), [Pelias](#pelias) and [Mimirsbrunn](#mimirsbrunn) on a 8 cores/16GB RAM machine without any issues **importing only European addresses and data**.
+
+!!! tip "Advised provider"
+    We had best results using the [Pelias](#pelias) geocoding provider.
 
 ## Change geocoder
 
