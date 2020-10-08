@@ -144,7 +144,7 @@ defmodule Mobilizon.Mixfile do
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:ex_unit_notifier, "~> 0.1", only: :test},
       {:dialyxir, "~> 1.0.0", only: [:dev], runtime: false},
-      {:exvcr, "~> 0.10", only: :test},
+      {:exvcr, "0.11.2", only: :test},
       {:credo, "~> 1.4.0", only: [:dev, :test], runtime: false},
       {:mock, "~> 0.3.4", only: :test},
       {:elixir_feed_parser, "~> 2.1.0", only: :test},
