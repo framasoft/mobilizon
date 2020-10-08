@@ -837,7 +837,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
 
       assert_delivered_email(
         Email.Event.event_updated(
-          user,
+          user.email,
           actor,
           event,
           new_event,
@@ -847,7 +847,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
 
       assert_delivered_email(
         Email.Event.event_updated(
-          participant_user,
+          participant_user.email,
           participant_actor,
           event,
           new_event,
