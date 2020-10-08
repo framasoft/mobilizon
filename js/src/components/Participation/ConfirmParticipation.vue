@@ -37,6 +37,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { confirmLocalAnonymousParticipation } from "@/services/AnonymousParticipationStorage";
 import RouteName from "../../router/name";
 import { EventJoinOptions, IParticipant } from "../../types/event.model";
 import { CONFIRM_PARTICIPATION } from "../../graphql/event";
@@ -73,6 +74,7 @@ export default class ConfirmParticipation extends Vue {
       if (data) {
         const { confirmParticipation: participation } = data;
         this.participation = participation;
+        await confirmLocalAnonymousParticipation(this.participation.event.uuid);
       }
     } catch (err) {
       console.error(err);
