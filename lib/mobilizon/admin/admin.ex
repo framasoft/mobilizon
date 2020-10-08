@@ -94,6 +94,8 @@ defmodule Mobilizon.Admin do
     end
   end
 
+  def get_setting_value(nil), do: nil
+
   def get_setting_value(value) do
     case Jason.decode(value) do
       {:ok, val} ->
