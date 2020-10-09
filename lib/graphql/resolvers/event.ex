@@ -241,7 +241,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
         {:error, dgettext("errors", "You can't edit this event.")}
 
       {:new_actor, _} ->
-        {:error, dgettext("errors", "You can't attribute this new event to this profile.")}
+        {:error, dgettext("errors", "You can't attribute this event to this profile.")}
 
       {:error, _, %Ecto.Changeset{} = error, _} ->
         {:error, error}

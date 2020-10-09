@@ -697,7 +697,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "You can't attribute this new event to this profile."
+               "You can't attribute this event to this profile."
     end
 
     test "update_event/3 should check the user is the organizer", %{

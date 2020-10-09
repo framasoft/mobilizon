@@ -99,17 +99,17 @@ msgid "Cannot refresh the token"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/group.ex:139 lib/graphql/resolvers/group.ex:170
+#: lib/graphql/resolvers/group.ex:139
 msgid "Creator profile is not owned by the current user"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/group.ex:201
+#: lib/graphql/resolvers/group.ex:203
 msgid "Current profile is not a member of this group"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/group.ex:205
+#: lib/graphql/resolvers/group.ex:207
 msgid "Current profile is not an administrator of the selected group"
 msgstr ""
 
@@ -119,8 +119,8 @@ msgid "Error while saving user settings"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/group.ex:198 lib/graphql/resolvers/group.ex:246
-#: lib/graphql/resolvers/group.ex:281 lib/graphql/resolvers/member.ex:80
+#: lib/graphql/resolvers/group.ex:200 lib/graphql/resolvers/group.ex:248
+#: lib/graphql/resolvers/group.ex:283 lib/graphql/resolvers/member.ex:80
 msgid "Group not found"
 msgstr ""
 
@@ -140,7 +140,7 @@ msgid "Impossible to authenticate, either your email or password are invalid."
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/group.ex:278
+#: lib/graphql/resolvers/group.ex:280
 msgid "Member not found"
 msgstr ""
 
@@ -163,7 +163,7 @@ msgstr ""
 
 #, elixir-format
 #: lib/graphql/resolvers/comment.ex:50 lib/graphql/resolvers/comment.ex:112
-#: lib/graphql/resolvers/event.ex:281 lib/graphql/resolvers/feed_token.ex:28 lib/graphql/resolvers/group.ex:243
+#: lib/graphql/resolvers/event.ex:286 lib/graphql/resolvers/feed_token.ex:28 lib/graphql/resolvers/group.ex:245
 #: lib/graphql/resolvers/member.ex:77 lib/graphql/resolvers/participant.ex:29
 #: lib/graphql/resolvers/participant.ex:163 lib/graphql/resolvers/participant.ex:192 lib/graphql/resolvers/person.ex:157
 #: lib/graphql/resolvers/person.ex:191 lib/graphql/resolvers/person.ex:256 lib/graphql/resolvers/person.ex:288
@@ -234,17 +234,17 @@ msgid "User requested is not logged-in"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/group.ex:252
+#: lib/graphql/resolvers/group.ex:254
 msgid "You are already a member of this group"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/group.ex:285
+#: lib/graphql/resolvers/group.ex:287
 msgid "You can't leave this group because you are the only administrator"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/group.ex:249
+#: lib/graphql/resolvers/group.ex:251
 msgid "You cannot join this group"
 msgstr ""
 
@@ -264,7 +264,7 @@ msgid "You need to be logged-in to change your password"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/group.ex:210
+#: lib/graphql/resolvers/group.ex:212
 msgid "You need to be logged-in to delete a group"
 msgstr ""
 
@@ -274,17 +274,17 @@ msgid "You need to be logged-in to delete your account"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/group.ex:257
+#: lib/graphql/resolvers/group.ex:259
 msgid "You need to be logged-in to join a group"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/group.ex:290
+#: lib/graphql/resolvers/group.ex:292
 msgid "You need to be logged-in to leave a group"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/group.ex:175
+#: lib/graphql/resolvers/group.ex:177
 msgid "You need to be logged-in to update a group"
 msgstr ""
 
@@ -389,8 +389,8 @@ msgid "Event id not found"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/error.ex:89 lib/graphql/resolvers/event.ex:236
-#: lib/graphql/resolvers/event.ex:278
+#: lib/graphql/error.ex:89 lib/graphql/resolvers/event.ex:238
+#: lib/graphql/resolvers/event.ex:283
 msgid "Event not found"
 msgstr ""
 
@@ -543,11 +543,6 @@ msgid "Token is not a valid UUID"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:239
-msgid "User doesn't own profile"
-msgstr ""
-
-#, elixir-format
 #: lib/graphql/error.ex:87 lib/graphql/resolvers/person.ex:323
 msgid "User not found"
 msgstr ""
@@ -619,7 +614,7 @@ msgid "You cannot delete this comment"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:274
+#: lib/graphql/resolvers/event.ex:279
 msgid "You cannot delete this event"
 msgstr ""
 
@@ -699,7 +694,7 @@ msgid "You need to be logged-in to create resources"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:286
+#: lib/graphql/resolvers/event.ex:291
 msgid "You need to be logged-in to delete an event"
 msgstr ""
 
@@ -724,7 +719,7 @@ msgid "You need to be logged-in to leave an event"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:247
+#: lib/graphql/resolvers/event.ex:252
 msgid "You need to be logged-in to update an event"
 msgstr ""
 
@@ -744,7 +739,7 @@ msgid "You need to be logged-in to view a resource preview"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/picture.ex:83
+#: lib/graphql/resolvers/picture.ex:86
 msgid "You need to login to upload a picture"
 msgstr ""
 
@@ -836,4 +831,24 @@ msgstr ""
 #, elixir-format
 #: lib/graphql/resolvers/member.ex:129
 msgid "You can't reject this invitation with this profile."
+msgstr ""
+
+#, elixir-format
+#: lib/graphql/resolvers/picture.ex:78
+msgid "File doesn't have an allowed MIME type."
+msgstr ""
+
+#, elixir-format
+#: lib/graphql/resolvers/group.ex:172
+msgid "Profile is not administrator for the group"
+msgstr ""
+
+#, elixir-format
+#: lib/graphql/resolvers/event.ex:241
+msgid "You can't edit this event."
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/graphql/resolvers/event.ex:244
+msgid "You can't attribute this event to this profile."
 msgstr ""

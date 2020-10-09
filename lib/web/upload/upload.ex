@@ -126,6 +126,12 @@ defmodule Mobilizon.Web.Upload do
       uploader: Keyword.get(opts, :uploader, Config.get([__MODULE__, :uploader])),
       filters: Keyword.get(opts, :filters, Config.get([__MODULE__, :filters])),
       description: Keyword.get(opts, :description),
+      allow_list_mime_types:
+        Keyword.get(
+          opts,
+          :allow_list_mime_types,
+          Config.get([__MODULE__, :allow_list_mime_types])
+        ),
       base_url:
         Keyword.get(
           opts,
@@ -137,7 +143,8 @@ defmodule Mobilizon.Web.Upload do
 
   defp prepare_upload(%Plug.Upload{} = file, opts) do
     with {:ok, size} <- check_file_size(file.path, opts.size_limit),
-         {:ok, content_type, name} <- MIME.file_mime_type(file.path, file.filename) do
+         {:ok, content_type, name} <- MIME.file_mime_type(file.path, file.filename),
+         :ok <- check_allowed_mime_type(content_type, opts.allow_list_mime_types) do
       {:ok,
        %__MODULE__{
          id: UUID.generate(),
@@ -152,7 +159,8 @@ defmodule Mobilizon.Web.Upload do
   defp prepare_upload(%{body: body, name: name} = _file, opts) do
     with :ok <- check_binary_size(body, opts.size_limit),
          tmp_path <- tempfile_for_image(body),
-         {:ok, content_type, name} <- MIME.file_mime_type(tmp_path, name) do
+         {:ok, content_type, name} <- MIME.file_mime_type(tmp_path, name),
+         :ok <- check_allowed_mime_type(content_type, opts.allow_list_mime_types) do
       {:ok,
        %__MODULE__{
          id: UUID.generate(),
@@ -207,4 +215,11 @@ defmodule Mobilizon.Web.Upload do
   end
 
   defp url_from_spec(_upload, _base_url, {:url, url}), do: url
+
+  @spec check_allowed_mime_type(String.t(), List.t()) :: :ok | {:error, :atom}
+  defp check_allowed_mime_type(content_type, allow_list_mime_types) do
+    if Enum.any?(allow_list_mime_types, &(&1 == content_type)),
+      do: :ok,
+      else: {:error, :mime_type_not_allowed}
+  end
 end

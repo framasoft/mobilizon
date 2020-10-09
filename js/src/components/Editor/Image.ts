@@ -71,8 +71,8 @@ export default class Image extends Node {
                 return false;
               }
 
-              const images = Array.from(realEvent.dataTransfer.files).filter((file: any) =>
-                /image/i.test(file.type)
+              const images = Array.from(realEvent.dataTransfer.files).filter(
+                (file: any) => /image/i.test(file.type) && !/svg/i.test(file.type)
               );
 
               if (images.length === 0) {
@@ -91,20 +91,25 @@ export default class Image extends Node {
               const editorElem = document.getElementById("tiptab-editor");
               const actorId = editorElem && editorElem.dataset.actorId;
 
-              images.forEach(async (image) => {
-                const { data } = await client.mutate({
-                  mutation: UPLOAD_PICTURE,
-                  variables: {
-                    actorId,
-                    file: image,
-                    name: image.name,
-                  },
+              try {
+                images.forEach(async (image) => {
+                  const { data } = await client.mutate({
+                    mutation: UPLOAD_PICTURE,
+                    variables: {
+                      actorId,
+                      file: image,
+                      name: image.name,
+                    },
+                  });
+                  const node = schema.nodes.image.create({ src: data.uploadPicture.url });
+                  const transaction = view.state.tr.insert(coordinates.pos, node);
+                  view.dispatch(transaction);
                 });
-                const node = schema.nodes.image.create({ src: data.uploadPicture.url });
-                const transaction = view.state.tr.insert(coordinates.pos, node);
-                view.dispatch(transaction);
-              });
-              return true;
+                return true;
+              } catch (error) {
+                console.error(error);
+                return false;
+              }
             },
           },
         },
