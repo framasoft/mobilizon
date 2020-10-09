@@ -1,8 +1,9 @@
 <template>
   <div id="mobilizon">
     <NavBar />
-    <div class="container" v-if="config && config.demoMode">
+    <div v-if="config && config.demoMode">
       <b-message
+        class="container"
         type="is-danger"
         :title="$t('Warning').toLocaleUpperCase()"
         closable
@@ -112,4 +113,14 @@ $mdi-font-path: "~@mdi/font/fonts";
 @import "~@mdi/font/scss/materialdesignicons";
 
 @import "common";
+
+#mobilizon {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  main {
+    flex-grow: 1;
+  }
+}
 </style>
