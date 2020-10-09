@@ -23,8 +23,9 @@
   </aside>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { IGroup } from "@/types/actor";
+import { Component } from "vue-property-decorator";
+import { mixins } from "vue-class-component";
+import GroupMixin from "@/mixins/group";
 import RouteName from "../../router/name";
 import SettingMenuSection from "../../components/Settings/SettingMenuSection.vue";
 import SettingMenuItem from "../../components/Settings/SettingMenuItem.vue";
@@ -32,10 +33,8 @@ import SettingMenuItem from "../../components/Settings/SettingMenuItem.vue";
 @Component({
   components: { SettingMenuSection, SettingMenuItem },
 })
-export default class Settings extends Vue {
+export default class Settings extends mixins(GroupMixin) {
   RouteName = RouteName;
-
-  group!: IGroup[];
 }
 </script>
 

@@ -31,7 +31,7 @@
         </li>
       </ul>
     </nav>
-    <section class="container section">
+    <section class="container section" v-if="isCurrentActorAGroupAdmin">
       <form @submit.prevent="updateGroup">
         <b-field :label="$t('Group name')">
           <b-input v-model="group.name" />
@@ -114,44 +114,32 @@
         </div>
       </form>
     </section>
+    <b-message>
+      {{ $t("You are not an administrator for this group.") }}
+    </b-message>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component } from "vue-property-decorator";
 import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
 import { Route } from "vue-router";
 import PictureUpload from "@/components/PictureUpload.vue";
+import { mixins } from "vue-class-component";
+import GroupMixin from "@/mixins/group";
 import RouteName from "../../router/name";
-import { FETCH_GROUP, UPDATE_GROUP, DELETE_GROUP } from "../../graphql/group";
+import { UPDATE_GROUP, DELETE_GROUP } from "../../graphql/group";
 import { IGroup, usernameWithDomain } from "../../types/actor";
 import { Address, IAddress } from "../../types/address.model";
-import { Group } from "../../types/actor/group.model";
 
 @Component({
-  apollo: {
-    group: {
-      query: FETCH_GROUP,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          name: this.$route.params.preferredUsername,
-        };
-      },
-      skip() {
-        return !this.$route.params.preferredUsername;
-      },
-    },
-  },
   components: {
     FullAddressAutoComplete,
     PictureUpload,
     editor: () => import("../../components/Editor.vue"),
   },
 })
-export default class GroupSettings extends Vue {
-  group: IGroup = new Group();
-
+export default class GroupSettings extends mixins(GroupMixin) {
   loading = true;
 
   RouteName = RouteName;

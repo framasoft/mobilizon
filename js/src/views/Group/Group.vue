@@ -338,19 +338,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Prop, Watch } from "vue-property-decorator";
 import EventCard from "@/components/Event/EventCard.vue";
-import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
-import { FETCH_GROUP } from "@/graphql/group";
-import {
-  IActor,
-  IGroup,
-  IPerson,
-  usernameWithDomain,
-  Group as GroupModel,
-  MemberRole,
-  IMember,
-} from "@/types/actor";
+import { IActor, usernameWithDomain, MemberRole, IMember } from "@/types/actor";
 import Subtitle from "@/components/Utils/Subtitle.vue";
 import CompactTodo from "@/components/Todo/CompactTodo.vue";
 import EventMinimalistCard from "@/components/Event/EventMinimalistCard.vue";
@@ -365,34 +355,14 @@ import { CONFIG } from "@/graphql/config";
 import { CREATE_REPORT } from "@/graphql/report";
 import { IReport } from "@/types/report.model";
 import { IConfig } from "@/types/config.model";
+import GroupMixin from "@/mixins/group";
+import { mixins } from "vue-class-component";
 import RouteName from "../../router/name";
 import GroupSection from "../../components/Group/GroupSection.vue";
 import ReportModal from "../../components/Report/ReportModal.vue";
 
 @Component({
   apollo: {
-    group: {
-      query: FETCH_GROUP,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          name: this.preferredUsername,
-        };
-      },
-    },
-    person: {
-      query: PERSON_MEMBERSHIPS,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          id: this.currentActor.id,
-        };
-      },
-      skip() {
-        return !this.currentActor || !this.currentActor.id;
-      },
-    },
-    currentActor: CURRENT_ACTOR_CLIENT,
     config: CONFIG,
   },
   components: {
@@ -425,14 +395,8 @@ import ReportModal from "../../components/Report/ReportModal.vue";
     };
   },
 })
-export default class Group extends Vue {
+export default class Group extends mixins(GroupMixin) {
   @Prop({ type: String, required: true }) preferredUsername!: string;
-
-  currentActor!: IActor;
-
-  person!: IPerson;
-
-  group: IGroup = new GroupModel();
 
   config!: IConfig;
 
@@ -547,15 +511,6 @@ export default class Group extends Vue {
         .filter((membership) => membership.role === MemberRole.INVITED)
         .map(({ parent: { id } }) => id)
         .includes(this.group.id)
-    );
-  }
-
-  get isCurrentActorAGroupAdmin(): boolean {
-    return (
-      this.person &&
-      this.person.memberships.elements.some(
-        ({ parent: { id }, role }) => id === this.group.id && role === MemberRole.ADMINISTRATOR
-      )
     );
   }
 

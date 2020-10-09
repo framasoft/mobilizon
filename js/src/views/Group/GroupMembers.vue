@@ -31,7 +31,7 @@
         </li>
       </ul>
     </nav>
-    <section class="container section" v-if="group">
+    <section class="container section" v-if="group && isCurrentActorAGroupAdmin">
       <form @submit.prevent="inviteMember">
         <b-field :label="$t('Invite a new member')" custom-class="add-relay" horizontal>
           <b-field
@@ -171,42 +171,23 @@
         </template>
       </b-table>
     </section>
+    <b-message v-else-if="group">
+      {{ $t("You are not an administrator for this group.") }}
+    </b-message>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
-import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
+import { Component, Watch } from "vue-property-decorator";
+import GroupMixin from "@/mixins/group";
+import { mixins } from "vue-class-component";
 import RouteName from "../../router/name";
 import { INVITE_MEMBER, GROUP_MEMBERS, REMOVE_MEMBER, UPDATE_MEMBER } from "../../graphql/member";
-import { IGroup, IPerson, usernameWithDomain } from "../../types/actor";
+import { IGroup, usernameWithDomain } from "../../types/actor";
 import { IMember, MemberRole } from "../../types/actor/group.model";
 
-@Component({
-  apollo: {
-    currentActor: CURRENT_ACTOR_CLIENT,
-    group: {
-      query: GROUP_MEMBERS,
-      fetchPolicy: "network-only",
-      variables() {
-        return {
-          name: this.$route.params.preferredUsername,
-          page: 1,
-          limit: this.MEMBERS_PER_PAGE,
-          roles: this.roles,
-        };
-      },
-      skip() {
-        return !this.$route.params.preferredUsername;
-      },
-    },
-  },
-})
-export default class GroupMembers extends Vue {
-  group!: IGroup;
-
-  currentActor!: IPerson;
-
+@Component
+export default class GroupMembers extends mixins(GroupMixin) {
   loading = true;
 
   newMemberUsername = "";
