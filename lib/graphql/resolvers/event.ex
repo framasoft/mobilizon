@@ -219,14 +219,16 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   def update_event(
         _parent,
         %{event_id: event_id} = args,
-        %{context: %{current_user: user}} = _resolution
+        %{context: %{current_user: %User{} = user}} = _resolution
       ) do
     # See https://github.com/absinthe-graphql/absinthe/issues/490
     with args <- Map.put(args, :options, args[:options] || %{}),
          {:ok, %Event{} = event} <- Events.get_event_with_preload(event_id),
-         organizer_actor_id <- args |> Map.get(:organizer_actor_id, event.organizer_actor_id),
-         {:is_owned, %Actor{} = organizer_actor} <-
-           User.owns_actor(user, organizer_actor_id),
+         {:old_actor, {:is_owned, %Actor{}}} <-
+           {:old_actor, User.owns_actor(user, event.organizer_actor_id)},
+         new_organizer_actor_id <- args |> Map.get(:organizer_actor_id, event.organizer_actor_id),
+         {:new_actor, {:is_owned, %Actor{} = organizer_actor}} <-
+           {:new_actor, User.owns_actor(user, new_organizer_actor_id)},
          args <- Map.put(args, :organizer_actor, organizer_actor),
          {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} <-
            API.Events.update_event(args, event) do
@@ -235,8 +237,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
       {:error, :event_not_found} ->
         {:error, dgettext("errors", "Event not found")}
 
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "User doesn't own profile")}
+      {:old_actor, _} ->
+        {:error, dgettext("errors", "You can't edit this event.")}
+
+      {:new_actor, _} ->
+        {:error, dgettext("errors", "You can't attribute this event to this profile.")}
 
       {:error, _, %Ecto.Changeset{} = error, _} ->
         {:error, error}

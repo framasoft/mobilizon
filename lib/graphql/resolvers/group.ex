@@ -145,11 +145,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   end
 
   @doc """
-  Create a new group. The creator is automatically added as admin
+  Update a group. The creator is automatically added as admin
   """
   def update_group(
         _parent,
-        args,
+        %{id: group_id} = args,
         %{
           context: %{
             current_user: %User{} = user
@@ -157,6 +157,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         }
       ) do
     with %Actor{} = updater_actor <- Users.get_actor_for_user(user),
+         {:administrator, true} <-
+           {:administrator, Actors.is_administrator?(updater_actor.id, group_id)},
          args <- Map.put(args, :updater_actor, updater_actor),
          args <- save_attached_pictures(args),
          {:ok, _activity, %Actor{type: :Group} = group} <-
@@ -166,8 +168,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       {:error, err} when is_binary(err) ->
         {:error, err}
 
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "Creator profile is not owned by the current user")}
+      {:administrator, false} ->
+        {:error, dgettext("errors", "Profile is not administrator for the group")}
     end
   end
 

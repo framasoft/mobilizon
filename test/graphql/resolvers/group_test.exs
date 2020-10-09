@@ -239,6 +239,111 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
     end
   end
 
+  describe "update a group" do
+    @update_group_mutation """
+      mutation UpdateGroup(
+      $id: ID!
+      $name: String
+      $summary: String
+      $avatar: PictureInput
+      $banner: PictureInput
+      $visibility: GroupVisibility
+      $physicalAddress: AddressInput
+      ) {
+        updateGroup(
+          id: $id
+          name: $name
+          summary: $summary
+          banner: $banner
+          avatar: $avatar
+          visibility: $visibility
+          physicalAddress: $physicalAddress
+        ) {
+          id
+          preferredUsername
+          name
+          summary
+          visibility
+          avatar {
+            url
+          }
+          banner {
+            url
+          }
+        }
+      }
+    """
+    @new_group_name "new name for group"
+
+    test "update_group/3 updates a group", %{conn: conn, user: user, actor: actor} do
+      group = insert(:group)
+      insert(:member, parent: group, actor: actor, role: :administrator)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_group_mutation,
+          variables: %{
+            id: group.id,
+            name: @new_group_name,
+            visibility: "UNLISTED"
+          }
+        )
+
+      assert is_nil(res["errors"])
+      assert res["data"]["updateGroup"]["name"] == @new_group_name
+      assert res["data"]["updateGroup"]["visibility"] == "UNLISTED"
+    end
+
+    test "update_group/3 requires to be logged-in to update a group", %{conn: conn} do
+      group = insert(:group)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @update_group_mutation,
+          variables: %{id: group.id, name: @new_group_name}
+        )
+
+      assert hd(res["errors"])["message"] == "You need to be logged-in to update a group"
+    end
+
+    test "update_group/3 requires to be an admin of the group to update a group", %{
+      conn: conn,
+      actor: actor
+    } do
+      group = insert(:group)
+      insert(:member, parent: group, actor: actor, role: :administrator)
+      user = insert(:user)
+      actor2 = insert(:actor, user: user)
+
+      # Actor not member
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_group_mutation,
+          variables: %{id: group.id, name: @new_group_name}
+        )
+
+      assert hd(res["errors"])["message"] == "Profile is not administrator for the group"
+
+      # Actor member but not admin
+      insert(:member, parent: group, actor: actor2, role: :moderator)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_group_mutation,
+          variables: %{id: group.id, name: @new_group_name}
+        )
+
+      assert hd(res["errors"])["message"] == "Profile is not administrator for the group"
+    end
+  end
+
   describe "delete a group" do
     @delete_group_mutation """
     mutation DeleteGroup($groupId: ID!) {

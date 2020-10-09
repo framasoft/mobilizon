@@ -38,8 +38,8 @@
   <body class="error">
     <main role="main" class="dialog">
       <div class="error_illustration">
-        <img src="/static/img/mobilizon_logo.png" />
-        <!-- <img src="/static/img/error.png" alt="" width="500" /> -->
+        <img src="/img/mobilizon_logo.png" />
+        <!-- <img src="/img/error.png" alt="" width="500" /> -->
       </div>
       <div class="error__message">
         <h1><%= gettext "We're sorry, but something went wrong on our end." %></h1>

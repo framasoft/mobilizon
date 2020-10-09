@@ -74,6 +74,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Picture do
       {:is_owned, nil} ->
         {:error, dgettext("errors", "Profile is not owned by authenticated user")}
 
+      {:error, :mime_type_not_allowed} ->
+        {:error, dgettext("errors", "File doesn't have an allowed MIME type.")}
+
       error ->
         {:error, error}
     end

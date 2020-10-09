@@ -524,16 +524,23 @@ export default class EditorComponent extends Vue {
    */
   async showImagePrompt(command: Function): Promise<void> {
     const image = await listenFileUpload();
-    const { data } = await this.$apollo.mutate({
-      mutation: UPLOAD_PICTURE,
-      variables: {
-        file: image,
-        name: image.name,
-        actorId: this.currentActor.id,
-      },
-    });
-    if (data.uploadPicture && data.uploadPicture.url) {
-      command({ src: data.uploadPicture.url });
+    try {
+      const { data } = await this.$apollo.mutate({
+        mutation: UPLOAD_PICTURE,
+        variables: {
+          file: image,
+          name: image.name,
+          actorId: this.currentActor.id,
+        },
+      });
+      if (data.uploadPicture && data.uploadPicture.url) {
+        command({ src: data.uploadPicture.url });
+      }
+    } catch (error) {
+      console.error(error);
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
+      }
     }
   }
 
