@@ -219,7 +219,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   def update_event(
         _parent,
         %{event_id: event_id} = args,
-        %{context: %{current_user: user}} = _resolution
+        %{context: %{current_user: %User{} = user}} = _resolution
       ) do
     # See https://github.com/absinthe-graphql/absinthe/issues/490
     with args <- Map.put(args, :options, args[:options] || %{}),

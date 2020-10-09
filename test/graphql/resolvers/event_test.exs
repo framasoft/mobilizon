@@ -666,7 +666,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       assert hd(json_response(res, 200)["errors"])["message"] == "Event not found"
     end
 
-    test "update_event/3 should check the user is an administrator", %{
+    test "update_event/3 should check the user is the organizer", %{
       conn: conn,
       actor: _actor,
       user: user

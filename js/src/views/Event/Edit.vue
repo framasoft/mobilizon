@@ -588,6 +588,7 @@ export default class EditEvent extends Vue {
     } catch (err) {
       this.saving = false;
       console.error(err);
+      this.handleError(err);
     }
   }
 
@@ -615,7 +616,7 @@ export default class EditEvent extends Vue {
       });
     } catch (err) {
       this.saving = false;
-      console.error(err);
+      this.handleError(err);
     }
   }
 
@@ -625,6 +626,16 @@ export default class EditEvent extends Vue {
     return (this.event.draft
       ? this.$i18n.t("The draft event has been updated")
       : this.$i18n.t("The event has been updated")) as string;
+  }
+
+  private handleError(err: any) {
+    console.error(err);
+
+    if (err.graphQLErrors !== undefined) {
+      err.graphQLErrors.forEach(({ message }: { message: string }) => {
+        this.$notifier.error(message);
+      });
+    }
   }
 
   /**
