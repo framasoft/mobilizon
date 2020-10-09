@@ -16,6 +16,7 @@ defmodule Mobilizon do
 
   alias Mobilizon.{Config, Storage, Web}
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Service.ErrorPage
   alias Mobilizon.Service.Export.{Feed, ICalendar}
 
   @name Mix.Project.config()[:name]
@@ -104,7 +105,7 @@ defmodule Mobilizon do
   defp fallback_options(fallback), do: [fallback: fallback(default: fallback)]
 
   defp task_children(:test), do: []
-  defp task_children(_), do: [relay_actor(), anonymous_actor()]
+  defp task_children(_), do: [relay_actor(), anonymous_actor(), render_error_page()]
 
   defp relay_actor do
     %{
@@ -118,6 +119,14 @@ defmodule Mobilizon do
     %{
       id: :anonymous_actor_init,
       start: {Task, :start_link, [&Mobilizon.Config.anonymous_actor_id/0]},
+      restart: :temporary
+    }
+  end
+
+  defp render_error_page do
+    %{
+      id: :render_error_page_init,
+      start: {Task, :start_link, [&ErrorPage.init/0]},
       restart: :temporary
     }
   end

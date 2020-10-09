@@ -37,8 +37,8 @@ defmodule Mobilizon.Web.Gettext do
       locale in locales -> locale
       # Either the first part matches, "fr_CA" => "fr"
       split_locale(locale) in locales -> split_locale(locale)
-      # Otherwise default to english
-      true -> "en"
+      # Otherwise set to default
+      true -> Keyword.get(Mobilizon.Config.instance_config(), :default_language, "en") || "en"
     end
   end
 

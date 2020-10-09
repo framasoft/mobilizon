@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="<%= Gettext.get_locale() %>">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= gettext "This page is not correct" %></title>
+    <style>
+      body.error {
+        font-family: BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, Segoe UI, Fira Sans, Droid Sans, Helvetica Neue, Helvetica, Arial, sans-serif;
+        background: #efeef4;
+        position: absolute;
+        text-align: center;
+        color: #3c376e;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      body.error .dialog h1 {
+        font-size: 20px;
+        line-height: 28px;
+        font-weight: 400;
+      }
+      
+      body.error .dialog img {
+        display: block;
+        max-width: 470px;
+        width: 100%;
+        height: auto;
+        margin: -120px auto auto;
+      }
+    </style>
+  </head>
+  <body class="error">
+    <main role="main" class="dialog">
+      <div class="error_illustration">
+        <img src="/static/img/mobilizon_logo.png" />
+        <!-- <img src="/static/img/error.png" alt="" width="500" /> -->
+      </div>
+      <div class="error__message">
+        <h1><%= gettext "We're sorry, but something went wrong on our end." %></h1>
+        <p><%= gettext "The Mobilizon server seems to be temporarily down." %></p>
+      </div>
+    </main>
+  </body>
+</html>
