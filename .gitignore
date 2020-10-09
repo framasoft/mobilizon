@@ -23,6 +23,8 @@ priv/static/*
 !priv/static/.gitkeep
 priv/data/*
 !priv/data/.gitkeep
+priv/errors/*
+!priv/errors/.gitkeep
 .vscode/
 cover/
 site/

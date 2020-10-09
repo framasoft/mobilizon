@@ -39,7 +39,11 @@ defmodule Mobilizon.Web.ErrorView do
   end
 
   def render("500.html", _assigns) do
-    "Internal server error"
+    Mobilizon.Config.instance_config()
+    |> Keyword.get(:default_language, "en")
+    |> Gettext.put_locale()
+
+    render("500_page.html", %{})
   end
 
   # In case no render clause matches or no

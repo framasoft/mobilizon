@@ -1359,3 +1359,18 @@ msgstr ""
 #: lib/web/templates/email/event_updated.html.eex:38
 msgid "There have been changes for <b>%{title}</b> so we'd thought we'd let you know."
 msgstr ""
+
+#, elixir-format
+#: lib/web/templates/error/500_page.html.eex:46
+msgid "The Mobilizon server seems to be temporarily down."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/error/500_page.html.eex:7
+msgid "This page is not correct"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/error/500_page.html.eex:45
+msgid "We're sorry, but something went wrong on our end."
+msgstr ""

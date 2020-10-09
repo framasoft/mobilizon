@@ -17,10 +17,14 @@ defmodule Mobilizon.Web.ErrorViewTest do
   end
 
   test "render 500.html" do
-    assert render_to_string(ErrorView, "500.html", []) == "Internal server error"
+    assert render_to_string(ErrorView, "500.html", []) =~
+             Phoenix.HTML.html_escape("We're sorry, but something went wrong on our end.")
+             |> Phoenix.HTML.safe_to_string()
   end
 
   test "render any other" do
-    assert render_to_string(ErrorView, "505.html", []) == "Internal server error"
+    assert render_to_string(ErrorView, "505.html", []) =~
+             Phoenix.HTML.html_escape("We're sorry, but something went wrong on our end.")
+             |> Phoenix.HTML.safe_to_string()
   end
 end

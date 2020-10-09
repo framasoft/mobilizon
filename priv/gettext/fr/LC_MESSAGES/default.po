@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-10-08 08:52+0200\n"
+"PO-Revision-Date: 2020-10-09 09:46+0200\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
 "Language: fr\n"
@@ -1094,3 +1094,15 @@ msgstr "Titre de l'événement"
 #: lib/web/templates/email/event_updated.html.eex:38
 msgid "There have been changes for <b>%{title}</b> so we'd thought we'd let you know."
 msgstr "Il y a eu des changements pour <b>%{title}</b> donc nous avons pensé que nous vous le ferions savoir."
+
+#: lib/web/templates/error/500_page.html.eex:46
+msgid "The Mobilizon server seems to be temporarily down."
+msgstr "Le serveur Mobilizon semble être temporairement hors-service."
+
+#: lib/web/templates/error/500_page.html.eex:7
+msgid "This page is not correct"
+msgstr "Cette page n’est pas correcte"
+
+#: lib/web/templates/error/500_page.html.eex:45
+msgid "We're sorry, but something went wrong on our end."
+msgstr "Nous sommes désolé·e·s, mais quelque chose s’est mal passé de notre côté."
