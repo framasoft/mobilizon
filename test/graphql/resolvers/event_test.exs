@@ -666,6 +666,40 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       assert hd(json_response(res, 200)["errors"])["message"] == "Event not found"
     end
 
+    test "update_event/3 should check the user can change the organizer", %{
+      conn: conn,
+      actor: actor,
+      user: user
+    } do
+      event = insert(:event, organizer_actor: actor)
+      actor2 = insert(:actor)
+
+      mutation = """
+          mutation {
+              updateEvent(
+                  title: "my event updated",
+                  event_id: #{event.id}
+                  organizer_actor_id: #{actor2.id}
+              ) {
+                title,
+                uuid,
+                tags {
+                  title,
+                  slug
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] ==
+               "You can't attribute this new event to this profile."
+    end
+
     test "update_event/3 should check the user is the organizer", %{
       conn: conn,
       actor: _actor,
@@ -694,7 +728,39 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         |> auth_conn(user)
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "User doesn't own profile"
+      assert hd(json_response(res, 200)["errors"])["message"] == "You can't edit this event."
+    end
+
+    test "update_event/3 should check the user is the organizer also when it's changed", %{
+      conn: conn,
+      actor: actor,
+      user: user
+    } do
+      event = insert(:event)
+
+      mutation = """
+          mutation {
+              updateEvent(
+                  title: "my event updated",
+                  event_id: #{event.id},
+                  organizer_actor_id: #{actor.id}
+              ) {
+                title,
+                uuid,
+                tags {
+                  title,
+                  slug
+                }
+              }
+            }
+      """
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+
+      assert hd(json_response(res, 200)["errors"])["message"] == "You can't edit this event."
     end
 
     test "update_event/3 should check end time is after the beginning time", %{

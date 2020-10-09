@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="container">
+    <div class="container" v-if="isCurrentActorOrganizer">
       <h1 class="title" v-if="isUpdate === true">
         {{ $t("Update event {name}", { name: event.title }) }}
       </h1>
@@ -255,6 +255,7 @@
       aria-label="main navigation"
       class="navbar"
       :class="{ 'is-fixed-bottom': showFixedNavbar }"
+      v-if="isCurrentActorOrganizer"
     >
       <div class="container">
         <div class="navbar-menu">
@@ -511,6 +512,8 @@ export default class EditEvent extends Vue {
     this.limitedPlaces = this.event.options.maximumAttendeeCapacity > 0;
     if (!(this.isUpdate || this.isDuplicate)) {
       this.initializeEvent();
+    } else {
+      this.event.description = this.event.description || "";
     }
   }
 
@@ -531,11 +534,6 @@ export default class EditEvent extends Vue {
       this.event.draft = false;
       this.createOrUpdateDraft(e);
     }
-  }
-
-  @Watch("currentActor")
-  setCurrentActor(): void {
-    this.event.organizerActor = this.currentActor;
   }
 
   @Watch("event")
@@ -618,6 +616,14 @@ export default class EditEvent extends Vue {
       this.saving = false;
       this.handleError(err);
     }
+  }
+
+  get isCurrentActorOrganizer(): boolean {
+    return !(
+      this.eventId &&
+      this.event.organizerActor &&
+      this.currentActor.id !== this.event.organizerActor.id
+    ) as boolean;
   }
 
   get updateEventMessage(): string {
@@ -720,6 +726,10 @@ export default class EditEvent extends Vue {
    * Build variables for Event GraphQL creation query
    */
   private async buildVariables() {
+    this.event.organizerActor =
+      this.event.organizerActor && this.event.organizerActor.id
+        ? this.event.organizerActor
+        : this.currentActor;
     let res = this.event.toEditJSON();
     if (this.event.organizerActor) {
       res = Object.assign(res, {

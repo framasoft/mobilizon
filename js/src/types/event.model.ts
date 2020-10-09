@@ -275,7 +275,7 @@ export class EventModel implements IEvent {
 
     this.title = hash.title;
     this.slug = hash.slug;
-    this.description = hash.description;
+    this.description = hash.description || "";
 
     this.beginsOn = new Date(hash.beginsOn);
     if (hash.endsOn) this.endsOn = new Date(hash.endsOn);
