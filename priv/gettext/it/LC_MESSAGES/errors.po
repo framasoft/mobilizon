@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-09-30 09:08+0000\n"
+"PO-Revision-Date: 2020-10-09 09:05+0000\n"
 "Last-Translator: frama late <loss@e.email>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/it/>\n"
@@ -560,7 +560,7 @@ msgstr ""
 #, elixir-format
 #: lib/graphql/resolvers/discussion.ex:185
 msgid "You are not a member of the group the discussion belongs to"
-msgstr ""
+msgstr "Non sei membro del gruppo a cui la discussione appartiene"
 
 #, elixir-format
 #: lib/graphql/resolvers/member.ex:86
@@ -848,7 +848,7 @@ msgstr ""
 msgid "You can't edit this event."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/graphql/resolvers/event.ex:244
 msgid "You can't attribute this event to this profile."
 msgstr ""

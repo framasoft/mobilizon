@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-12-17 12:51+0000\n"
-"PO-Revision-Date: 2020-08-22 19:51+0000\n"
+"PO-Revision-Date: 2020-10-09 17:51+0000\n"
 "Last-Translator: Taru Luojola <taru.luojola@posteo.net>\n"
 "Language-Team: Finnish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/fi/>\n"
@@ -1314,52 +1314,62 @@ msgstr ""
 #: lib/web/templates/email/group_suspension.text.eex:7
 msgid "As this group was located on another instance, it will continue to work for other instances than this one."
 msgstr ""
+"Koska tämä ryhmä sijaitsi toisella palvelimella, sen toiminta jatkuu muilla "
+"kuin tällä palvelimella."
 
 #, elixir-format
 #: lib/web/templates/email/group_suspension.html.eex:46
 #: lib/web/templates/email/group_suspension.text.eex:5
 msgid "As this group was located on this instance, all of it's data has been irretrievably deleted."
 msgstr ""
+"Koska tämä ryhmä sijaitsi tällä palvelimella, kaikki siihen kuuluvat tiedot "
+"on poistettu pysyvästi."
 
 #, elixir-format
 #: lib/web/templates/email/group_deletion.html.eex:38
 #: lib/web/templates/email/group_deletion.text.eex:3
 msgid "The administrator %{author} deleted group %{group}. All of the group's events, discussions, posts and todos have been deleted."
 msgstr ""
+"Ylläpitäjä %{author} poisti ryhmän %{group}. Kaikki ryhmän tapahtumat, "
+"keskustelut, julkaisut ja tehtävät on poistettu."
 
 #, elixir-format
 #: lib/web/templates/email/group_suspension.html.eex:13
 #: lib/web/templates/email/group_suspension.text.eex:1
 msgid "The group %{group} has been suspended on %{instance}!"
-msgstr ""
+msgstr "Ryhmä %{group} on estetty palvelimella %{instance}!"
 
 #, elixir-format
 #: lib/web/templates/email/group_deletion.html.eex:13
 #: lib/web/templates/email/group_deletion.text.eex:1
 msgid "The group %{group} was deleted on %{instance}!"
-msgstr ""
+msgstr "Ryhmä %{group} on poistettu palvelimelta %{instance}!"
 
 #, elixir-format
 #: lib/web/templates/email/group_suspension.html.eex:38
 #: lib/web/templates/email/group_suspension.text.eex:3
 msgid "Your instance's moderation team has decided to suspend %{group_name} (%{group_address}). You are no longer a member of this group."
 msgstr ""
+"Palvelimesi moderointitiimi on päättänyt estää ryhmän %{group_name} "
+"(%{group_address}). Et ole enää tämän ryhmän jäsen."
 
 #, elixir-format
 #: lib/web/email/group.ex:135
 msgid "The group %{group} has been deleted on %{instance}"
-msgstr ""
+msgstr "Ryhmä %{group} on poistettu palvelimelta %{instance}"
 
 #, elixir-format
 #: lib/web/email/group.ex:96
 msgid "The group %{group} has been suspended on %{instance}"
-msgstr ""
+msgstr "Ryhmä %{group} on estetty palvelimella %{instance}"
 
 #, elixir-format
 #: lib/web/templates/api/terms.html.eex:24
 msgctxt "terms"
 msgid "By accessing or using the Service, this means you agree to be bound by all the terms below. If these terms are in any way unclear, please let us know by contacting %{contact}."
 msgstr ""
+"Jos käytät palvelua, sinun katsotaan hyväksyvän kaikki alla olevat ehdot. "
+"Jos et ymmärrä jotain kohtaa ehdoista, ota yhteyttä: %{contact}."
 
 #, elixir-format
 #: lib/web/templates/api/terms.html.eex:40
@@ -1536,12 +1546,14 @@ msgstr ""
 #: lib/web/templates/email/event_participation_confirmed.text.eex:4
 msgid "You have confirmed your participation. Update your calendar, because you're on the guest list now!"
 msgstr ""
+"Olet vahvistanut osallistumisesi. Päivitä kalenterisi, sillä olet "
+"osallistujaluettelossa!"
 
 #, elixir-format
 #: lib/web/templates/email/event_participation_approved.html.eex:38
 #: lib/web/templates/email/event_participation_confirmed.html.eex:38
 msgid "You recently requested to attend <b>%{title}</b>."
-msgstr "Lähetit pyynnön osallistua tapahtumaan %{title}."
+msgstr "Lähetit pyynnön osallistua tapahtumaan <b>%{title}</b>."
 
 #, elixir-format
 #: lib/web/email/participation.ex:92
@@ -1557,67 +1569,73 @@ msgstr ""
 #, elixir-format
 #: lib/web/templates/email/report.text.eex:5
 msgid "Group %{group} was reported"
-msgstr ""
+msgstr "Ryhmästä %{group} tehtiin ilmoitus"
 
 #, elixir-format
 #: lib/web/templates/email/report.html.eex:51
 msgid "Group reported"
-msgstr ""
+msgstr "Ryhmästä ilmoitettu"
 
 #, elixir-format
 #: lib/web/templates/email/report.text.eex:7
 msgid "Profile %{profile} was reported"
-msgstr ""
+msgstr "Profiilista %{profile} tehtiin ilmoitus"
 
 #, elixir-format
 #: lib/web/templates/email/report.html.eex:56
 msgid "Profile reported"
-msgstr ""
+msgstr "Profiili ilmoitettu"
 
 #, elixir-format
 #: lib/web/templates/email/event_participation_confirmed.html.eex:45
 msgid "You have now confirmed your participation. Update your calendar, because you're on the guest list now!"
 msgstr ""
+"Olet vahvistanut osallistumisesi. Päivitä kalenterisi, sillä olet "
+"osallistujaluettelossa!"
 
 #, elixir-format
 #: lib/mobilizon/posts/post.ex:91
 msgid "A text is required for the post"
-msgstr ""
+msgstr "Julkaisuun vaaditaan tekstiä"
 
 #, elixir-format
 #: lib/mobilizon/posts/post.ex:90
 msgid "A title is required for the post"
-msgstr ""
+msgstr "Julkaisulle vaaditaan otsikko"
 
 #, elixir-format
 #: lib/web/templates/email/instance_follow.text.eex:3
 msgid "%{name} (%{domain}) just requested to follow your instance."
-msgstr ""
+msgstr "%{name} (%{domain}) pyysi saada seurata palvelintasi."
 
 #, elixir-format
 #: lib/web/email/follow.ex:54
 msgid "%{name} requests to follow your instance"
-msgstr ""
+msgstr "%{name} pyytää saada seurata palvelintasi"
 
 #, elixir-format
 #: lib/web/templates/email/instance_follow.html.eex:38
 msgid "<b>%{name} (%{domain})</b> just requested to follow your instance. If you accept, this instance will receive all of your instance's public events."
 msgstr ""
+"<b>%{name} (%{domain})</b> pyysi saada seurata palvelintasi. Jos hyväksyt "
+"pyynnön, kyseiselle palvelimelle lähetetään kaikki julkiset tapahtumat tällä "
+"palvelimella."
 
 #, elixir-format
 #: lib/web/templates/email/instance_follow.text.eex:4
 msgid "If you accept, this instance will receive all of your public events."
 msgstr ""
+"Jos hyväksyt, kyseiselle palvelimelle lähetetään kaikki julkiset tapahtumasi."
 
 #, elixir-format
 #: lib/web/email/follow.ex:48
 msgid "Instance %{name} (%{domain}) requests to follow your instance"
-msgstr ""
+msgstr "Palvelin %{name} (%{domain}) haluaa seurata palvelintasi"
 
 #, elixir-format
 #: lib/web/templates/email/instance_follow.html.eex:66
 msgid "See the federation settings"
-msgstr ""
+msgstr "Katso federaatioasetukset"
 
 #, elixir-format
 #: lib/web/templates/email/instance_follow.html.eex:52
@@ -1629,35 +1647,39 @@ msgstr "Hyväksy kutsu siirtymällä omiin ryhmiisi."
 #: lib/web/templates/email/instance_follow.html.eex:13
 #: lib/web/templates/email/instance_follow.text.eex:1
 msgid "Want to connect?"
-msgstr ""
+msgstr "Haluatko yhdistää?"
 
 #, elixir-format
 #: lib/web/templates/email/instance_follow.html.eex:45
 #: lib/web/templates/email/instance_follow.text.eex:5
 msgid "Note: %{name} (%{domain}) following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too."
 msgstr ""
+"Huom: vaikka %{name} (%{domain}) seuraa sinua, se ei tarkoita, että sinä "
+"seuraisit kyseistä palvelinta, mutta voit tietenkin lähettää sinne "
+"seuraamispyynnön."
 
 #, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:38
 msgid "Hi there! You just registered to join this event: « <b>%{title}</b> ». Please confirm the e-mail address you provided:"
 msgstr ""
-"Hei! Rekisteröidyit juuri tapahtumaan ”%{title}”. Vahvista ilmoittamasi "
-"sähköpostiosoite:"
+"Hei! Rekisteröidyit juuri tapahtumaan ”<b>%{title}</b>”. Vahvista "
+"ilmoittamasi sähköpostiosoite:"
 
 #, elixir-format
 #: lib/web/templates/email/event_participation_rejected.html.eex:38
 msgid "You issued a request to attend <b>%{title}</b>."
-msgstr "Lähetit pyynnön osallistua tapahtumaan %{title}."
+msgstr "Lähetit pyynnön osallistua tapahtumaan <b>%{title}</b>."
 
 #, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:64
 msgid "Event title"
-msgstr "Tapahtuma"
+msgstr "Tapahtuman otsikko"
 
 #, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:38
 msgid "There have been changes for <b>%{title}</b> so we'd thought we'd let you know."
-msgstr "%{title} on joiltain osin muuttunut, ja ajattelimme ilmoittaa asiasta."
+msgstr ""
+"<b>%{title}</b> on joiltain osin muuttunut, ja ajattelimme ilmoittaa asiasta."
 
 #, elixir-format
 #: lib/web/templates/error/500_page.html.eex:46

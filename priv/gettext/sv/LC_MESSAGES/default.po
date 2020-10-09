@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-16 05:18+0000\n"
-"PO-Revision-Date: 2020-10-01 13:30+0000\n"
+"PO-Revision-Date: 2020-10-09 08:01+0000\n"
 "Last-Translator: Filip Bengtsson <filip@libreradio.org>\n"
 "Language-Team: Swedish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/sv/>\n"
@@ -1390,12 +1390,13 @@ msgstr ""
 #, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:64
 msgid "Event title"
-msgstr "Evenemang"
+msgstr "Evenemangets titel"
 
 #, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:38
 msgid "There have been changes for <b>%{title}</b> so we'd thought we'd let you know."
-msgstr ""
+msgstr "Det har skett ändringar kring <b>%{title}</b> som vi misstänker att du vill "
+"känna till."
 
 #, elixir-format
 #: lib/web/templates/error/500_page.html.eex:46

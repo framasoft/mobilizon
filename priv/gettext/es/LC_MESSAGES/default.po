@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2020-10-07 06:28+0000\n"
+"PO-Revision-Date: 2020-10-09 13:06+0000\n"
 "Last-Translator: Berto Te <ateira@3fpj.com>\n"
 "Language-Team: Spanish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/es/>\n"
@@ -1691,23 +1691,23 @@ msgstr ""
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:38
 msgid "Hi there! You just registered to join this event: « <b>%{title}</b> ». Please confirm the e-mail address you provided:"
 msgstr ""
-"¡Hola! Te acabas de registrar para unirte a este evento: «% {title}». "
+"¡Hola! Te acabas de registrar para unirte a este evento: «<b>% {title}</b>». "
 "Confirme la dirección de correo electrónico que proporcionó:"
 
 #, elixir-format
 #: lib/web/templates/email/event_participation_rejected.html.eex:38
 msgid "You issued a request to attend <b>%{title}</b>."
-msgstr "Envió una solicitud para asistir a %{title}."
+msgstr "Envió una solicitud para asistir a <b>%{title}</b>."
 
 #, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:64
 msgid "Event title"
-msgstr "Evento"
+msgstr "Título del evento"
 
 #, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:38
 msgid "There have been changes for <b>%{title}</b> so we'd thought we'd let you know."
-msgstr "Ha habido cambios para% {title}, así que pensamos en avisarle."
+msgstr "Ha habido cambios para<b>% {title}</b>, así que pensamos en avisarle."
 
 #, elixir-format
 #: lib/web/templates/error/500_page.html.eex:46

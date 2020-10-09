@@ -835,7 +835,7 @@ msgstr ""
 msgid "You can't edit this event."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/graphql/resolvers/event.ex:244
 msgid "You can't attribute this event to this profile."
 msgstr ""
