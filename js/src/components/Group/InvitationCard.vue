@@ -8,9 +8,10 @@
       </div>
       <div class="media subfield">
         <div class="media-left">
-          <figure class="image is-48x48">
-            <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image" />
+          <figure class="image is-48x48" v-if="member.parent.avatar">
+            <img class="is-rounded" :src="member.parent.avatar.url" alt="" />
           </figure>
+          <b-icon v-else size="is-large" icon="account-group" />
         </div>
         <div class="media-content">
           <div class="level">
