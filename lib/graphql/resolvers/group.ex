@@ -38,7 +38,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         find_group(parent, args, nil)
 
       _ ->
-        {:error, dgettext("errors", "Group with name %{name} not found", name: name)}
+        {:error, :group_not_found}
     end
   end
 
@@ -52,7 +52,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       {:ok, actor}
     else
       _ ->
-        {:error, dgettext("errors", "Group with name %{name} not found", name: name)}
+        {:error, :group_not_found}
     end
   end
 

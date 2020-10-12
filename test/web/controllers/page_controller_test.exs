@@ -13,20 +13,30 @@ defmodule Mobilizon.Web.PageControllerTest do
     {:ok, conn: conn}
   end
 
-  test "GET /", %{conn: conn} do
-    conn = get(conn, "/")
-    assert html_response(conn, 200)
+  describe "GET /" do
+    test "GET /", %{conn: conn} do
+      conn = get(conn, "/")
+      assert html_response(conn, 200)
+    end
   end
 
-  test "GET /@actor with existing actor", %{conn: conn} do
-    actor = insert(:actor)
-    conn = get(conn, Actor.build_url(actor.preferred_username, :page))
-    assert html_response(conn, 200) =~ actor.preferred_username
-  end
+  describe "GET /@actor" do
+    test "GET /@actor with existing group", %{conn: conn} do
+      actor = insert(:group)
+      conn = get(conn, Actor.build_url(actor.preferred_username, :page))
+      assert html_response(conn, 200) =~ actor.preferred_username
+    end
 
-  test "GET /@actor with not existing actor", %{conn: conn} do
-    conn = get(conn, Actor.build_url("not_existing", :page))
-    assert html_response(conn, 404)
+    test "GET /@actor with existing person", %{conn: conn} do
+      actor = insert(:actor, visibility: :private)
+      conn = get(conn, Actor.build_url(actor.preferred_username, :page))
+      assert html_response(conn, 404)
+    end
+
+    test "GET /@actor with not existing group", %{conn: conn} do
+      conn = get(conn, Actor.build_url("not_existing", :page))
+      assert html_response(conn, 404)
+    end
   end
 
   test "GET /events/:uuid", %{conn: conn} do

@@ -454,12 +454,12 @@ msgstr "Participant·e non trouvé·e"
 #, elixir-format
 #: lib/graphql/resolvers/person.ex:31
 msgid "Person with ID %{id} not found"
-msgstr "Groupe avec l'ID %{id} non trouvé"
+msgstr "Personne avec l'ID %{id} non trouvé"
 
 #, elixir-format
 #: lib/graphql/resolvers/person.ex:52
 msgid "Person with username %{username} not found"
-msgstr "Groupe avec le nom %{name} non trouvé"
+msgstr "Personne avec le nom %{name} non trouvé"
 
 #, elixir-format
 #: lib/graphql/resolvers/picture.ex:45
