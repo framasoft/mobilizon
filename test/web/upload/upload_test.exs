@@ -119,7 +119,7 @@ defmodule Mobilizon.UploadTest do
       assert data.name == "an [image.jpg"
     end
 
-    test "don't modify filename of an unknown type" do
+    test "doesn't allow uploading with unknown type" do
       File.cp("test/fixtures/test.txt", "test/fixtures/test_tmp.txt")
 
       file = %Plug.Upload{
@@ -128,8 +128,7 @@ defmodule Mobilizon.UploadTest do
         filename: "test.txt"
       }
 
-      {:ok, data} = Upload.store(file)
-      assert data.name == "test.txt"
+      assert {:error, :mime_type_not_allowed} == Upload.store(file)
     end
 
     test "copies the file to the configured folder with anonymizing filename" do
