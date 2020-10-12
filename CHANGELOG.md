@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+
+
+## 1.0.0-rc.1 - 2020-10-12
+
 ### Special operations
 
 * We added `application/ld+json` as acceptable MIME type for ActivityPub requests, so you'll need to recompile the `mime` library we use before recompiling Mobilizon:
@@ -19,6 +23,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Possibility to login using LDAP
 - Possibility to login using OAuth providers
+- Enabled group features in production mode 
+  - including posts (that can be public, unlisted, or restricted to your group members)
+  - resources (collections of links, with folders, accessible to your group members)
+  - discussions (group private and organized chats)
+  - group events (events can be published by groups - and show some event members as contacts)
+  - roles for members (member, moderator, administrator)
+  - admin section to manage (suspend) groups
+- Sitemap support (for public content) at `sitemap.xml`
+- Searching events and groups with location
+- More statistics are exposed through the `statistics` GraphQL query
 
 ### Changed
 
@@ -28,6 +42,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed notification scheduler [!486](https://framagit.org/framasoft/mobilizon/-/merge_requests/486)
 - Fixed event title escaping [!490](https://framagit.org/framasoft/mobilizon/-/merge_requests/490)
+- Various implements in interface thanks to feedback
+
+### Security
+
+- Fix group settings being accessible and editable by non-group-admins (thx @pigpig for reporting this responsibly)
+- Fix events being editable by profiles without permissions (thx @pigpig for reporting this responsibly) 
 
 ## [1.0.0-beta.3] - 2020-06-24
 
