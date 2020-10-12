@@ -86,7 +86,7 @@
                   default_password: credentials.password,
                 },
               }"
-              >{{ $t("Register") }}</router-link
+              >{{ $t("Create an account") }}</router-link
             >
           </p>
         </form>

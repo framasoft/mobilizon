@@ -346,7 +346,7 @@
   "Last week": "La semaine dernière",
   "Latest posts": "Derniers billets",
   "Learn more": "En apprendre plus",
-  "Learn more about Mobilizon": "En apprendre plus à propos de Mobilizon",
+  "Learn more about Mobilizon": "En savoir plus sur Mobilizon",
   "Leave": "Quitter",
   "Leave event": "Annuler ma participation à l'évènement",
   "Leave group": "Quitter le groupe",
@@ -841,5 +841,14 @@
   "{number} posts": "Aucun billet|Un billet|{number} billets",
   "{profile} (by default)": "{profile} (par défault)",
   "{title} ({count} todos)": "{title} ({count} todos)",
-  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap"
+  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap",
+  "Create an account": "Créer un compte",
+  "You are not an administrator for this group.": "Vous n'êtes pas une administrateur·ice de ce groupe.",
+  "Why create an account?": "Pourquoi se créer un compte ?",
+  "To create and manage your events": "Pour créer et gérer vos évènements",
+  "To create and manage multiples identities from a same account": "Pour pouvoir créer et gérer plusieurs identités avec un même compte",
+  "To register for an event by choosing one of your identities": "Pour s'inscrire à un évènement en choisissant une de vos identités",
+  "To create or join an group and start organizing with other people": "Pour créer ou rejoindre un groupe et commencer à vous organiser avec d'autres personnes",
+  "About {instance}": "À propos de {instance}",
+  "Please read the {fullRules} published by {instance}'s administrators.": "Merci de lire les {fullRules} publiées par les administrateur·ices de {instance}."
 }

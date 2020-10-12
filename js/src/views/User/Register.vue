@@ -17,14 +17,14 @@
       <div class="columns">
         <div class="column">
           <div>
-            <subtitle>{{ $t("Features") }}</subtitle>
+            <subtitle>{{ $t("Why create an account?") }}</subtitle>
             <div class="content">
               <ul>
-                <li>{{ $t("Create and manage several identities from the same account") }}</li>
-                <li>{{ $t("Create, edit or delete events") }}</li>
-                <li>{{ $t("Register for an event by choosing one of your identities") }}</li>
+                <li>{{ $t("To create and manage your events") }}</li>
+                <li>{{ $t("To create and manage multiples identities from a same account") }}</li>
+                <li>{{ $t("To register for an event by choosing one of your identities") }}</li>
                 <li v-if="config.features.groups">
-                  {{ $t("Create or join an group and start organizing with other people") }}
+                  {{ $t("To create or join an group and start organizing with other people") }}
                 </li>
               </ul>
             </div>
@@ -34,12 +34,16 @@
           }}</router-link>
           <hr />
           <div class="content">
-            <subtitle>{{ $t("About this instance") }}</subtitle>
+            <subtitle>{{ $t("About {instance}", { instance: config.name }) }}</subtitle>
             <div class="content" v-html="config.description"></div>
-            <i18n path="Please read the instance's {fullRules}" tag="p">
+            <i18n
+              path="Please read the {fullRules} published by {instance}'s administrators."
+              tag="p"
+            >
               <router-link slot="fullRules" :to="{ name: RouteName.RULES }">{{
                 $t("full rules")
               }}</router-link>
+              <b slot="instance">{{ config.name }}</b>
             </i18n>
           </div>
         </div>
@@ -93,25 +97,25 @@
               </i18n>
             </b-checkbox>
 
-            <p class="control has-text-centered">
+            <p class="create-account control has-text-centered">
               <b-button
                 type="is-primary"
                 size="is-large"
                 :disabled="sendingForm"
                 native-type="submit"
               >
-                {{ $t("Register") }}
+                {{ $t("Create an account") }}
               </b-button>
             </p>
 
-            <p class="control">
+            <p class="control has-text-centered">
               <router-link
                 class="button is-text"
                 :to="{ name: RouteName.RESEND_CONFIRMATION, params: { email: credentials.email } }"
                 >{{ $t("Didn't receive the instructions?") }}</router-link
               >
             </p>
-            <p class="control">
+            <p class="control has-text-centered">
               <router-link
                 class="button is-text"
                 :to="{
@@ -234,5 +238,11 @@ h2.title {
   text-decoration: underline;
   text-decoration-color: $secondary;
   display: inline;
+}
+
+p.create-account {
+  /deep/ button {
+    margin: 1rem auto 2rem;
+  }
 }
 </style>

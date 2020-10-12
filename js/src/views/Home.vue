@@ -19,7 +19,7 @@
               tag="router-link"
               :to="{ name: RouteName.REGISTER }"
               v-if="config.registrationsOpen"
-              >{{ $t("Sign up") }}</b-button
+              >{{ $t("Create an account") }}</b-button
             >
             <!-- We don't invite to find other instances yet -->
             <!-- <b-button v-else type="is-link" tag="a" href="https://joinmastodon.org">{{ $t('Find an instance') }}</b-button> -->
@@ -125,7 +125,6 @@
 </template>
 
 <script lang="ts">
-import ngeohash from "ngeohash";
 import { Component, Vue } from "vue-property-decorator";
 import { FETCH_EVENTS } from "../graphql/event";
 import EventListCard from "../components/Event/EventListCard.vue";
@@ -135,13 +134,7 @@ import { IPerson, Person } from "../types/actor";
 import { ICurrentUser } from "../types/current-user.model";
 import { CURRENT_USER_CLIENT, USER_SETTINGS } from "../graphql/user";
 import RouteName from "../router/name";
-import {
-  EventModel,
-  IEvent,
-  IParticipant,
-  Participant,
-  ParticipantRole,
-} from "../types/event.model";
+import { IEvent, IParticipant, Participant, ParticipantRole } from "../types/event.model";
 import DateComponent from "../components/Event/DateCalendarIcon.vue";
 import { CONFIG } from "../graphql/config";
 import { IConfig } from "../types/config.model";
@@ -192,6 +185,7 @@ import Subtitle from "../components/Utils/Subtitle.vue";
   metaInfo() {
     return {
       // if no subcomponents specify a metaInfo.title, this title will be used
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title: this.instanceName,
       // all titles will be injected into this template
@@ -226,20 +220,23 @@ export default class Home extends Vue {
   //     : this.loggedPerson.name;
   // }
 
-  get instanceName() {
+  get instanceName(): string | undefined {
     if (!this.config) return undefined;
     return this.config.name;
   }
 
-  get welcomeBack() {
+  // eslint-disable-next-line class-methods-use-this
+  get welcomeBack(): boolean {
     return window.localStorage.getItem("welcome-back") === "yes";
   }
 
-  get newRegisteredUser() {
+  // eslint-disable-next-line class-methods-use-this
+  get newRegisteredUser(): boolean {
     return window.localStorage.getItem("new-registered-user") === "yes";
   }
 
-  mounted() {
+  // eslint-disable-next-line class-methods-use-this
+  mounted(): void {
     if (window.localStorage.getItem("welcome-back")) {
       window.localStorage.removeItem("welcome-back");
     }
@@ -248,7 +245,8 @@ export default class Home extends Vue {
     }
   }
 
-  isToday(date: Date) {
+  // eslint-disable-next-line class-methods-use-this
+  isToday(date: Date): boolean {
     return new Date(date).toDateString() === new Date().toDateString();
   }
 
@@ -272,6 +270,7 @@ export default class Home extends Vue {
     return this.isBefore(date, 7);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   calculateDiffDays(date: string): number {
     return Math.ceil((new Date(date).getTime() - new Date().getTime()) / 1000 / 60 / 60 / 24);
   }
@@ -300,7 +299,7 @@ export default class Home extends Vue {
     );
   }
 
-  get lastWeekEvents() {
+  get lastWeekEvents(): IParticipant[] {
     const res = this.currentUserParticipations.filter(
       ({ event, role }) =>
         event.beginsOn != null &&
@@ -316,73 +315,25 @@ export default class Home extends Vue {
   /**
    * Return all events from server excluding the ones shown as participating
    */
-  get filteredFeaturedEvents() {
+  get filteredFeaturedEvents(): IEvent[] {
     return this.events.filter(
       ({ id }) =>
         !this.currentUserParticipations
           .filter((participation) => participation.role === ParticipantRole.CREATOR)
-          .map(({ event: { id } }) => id)
+          .map(({ event: { id: eventId } }) => eventId)
           .includes(id)
     );
   }
 
-  geoLocalize() {
-    const router = this.$router;
-    const sessionCity = sessionStorage.getItem("City");
-
-    if (sessionCity) {
-      return router.push({
-        name: "EventList",
-        params: { location: sessionCity },
-      });
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const crd = pos.coords;
-
-        const geoHash = ngeohash.encode(crd.latitude, crd.longitude, 11);
-        sessionStorage.setItem("City", geoHash);
-        router.push({
-          name: RouteName.EVENT_LIST,
-          params: { location: geoHash },
-        });
-      },
-
-      (err) => console.warn(`ERROR(${err.code}): ${err.message}`),
-
-      {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0,
-      }
-    );
-  }
-
-  eventDeleted(eventid: string) {
+  eventDeleted(eventid: string): void {
     this.currentUserParticipations = this.currentUserParticipations.filter(
       (participation) => participation.event.id !== eventid
     );
   }
 
-  // getAddressData(addressData) {
-  //   const geoHash = ngeohash.encode(
-  //     addressData.latitude,
-  //     addressData.longitude,
-  //     11,
-  //   );
-  //   sessionStorage.setItem('City', geoHash);
-
-  //   this.$router.push({ name: RouteName.EVENT_LIST, params: { location: geoHash } });
-  // }
-
-  viewEvent(event: IEvent) {
+  viewEvent(event: IEvent): void {
     this.$router.push({ name: RouteName.EVENT, params: { uuid: event.uuid } });
   }
-
-  // ipLocation() {
-  //   return this.city.name ? this.city.name : this.country.name;
-  // }
 }
 </script>
 
@@ -399,6 +350,10 @@ main > div > .container {
 }
 
 .events-featured {
+  & > h3 {
+    padding-left: 0.75rem;
+  }
+
   .columns {
     margin: 1rem auto 3rem;
   }
