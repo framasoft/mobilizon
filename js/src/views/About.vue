@@ -84,7 +84,7 @@
                 size="is-large"
                 tag="router-link"
                 :to="{ name: RouteName.REGISTER }"
-                >{{ $t("Register") }}</b-button
+                >{{ $t("Create an account") }}</b-button
               >
             </div>
             <!-- <div class="column">
