@@ -210,8 +210,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
 
       assert res["data"]["group"] == nil
 
-      assert hd(res["errors"])["message"] ==
-               "Group with name #{@non_existent_username} not found"
+      assert hd(res["errors"])["message"] == "Group not found"
     end
 
     test "find_group doesn't list group members access if group is private", %{

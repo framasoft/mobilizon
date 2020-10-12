@@ -1,5 +1,6 @@
 import { PERSON_MEMBERSHIPS, CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
 import { FETCH_GROUP } from "@/graphql/group";
+import RouteName from "@/router/name";
 import { Group, IActor, IGroup, IPerson, MemberRole } from "@/types/actor";
 import { Component, Vue } from "vue-property-decorator";
 
@@ -15,6 +16,9 @@ import { Component, Vue } from "vue-property-decorator";
       },
       skip() {
         return !this.$route.params.preferredUsername;
+      },
+      error({ graphQLErrors }) {
+        this.handleErrors(graphQLErrors);
       },
     },
     person: {
@@ -45,5 +49,14 @@ export default class GroupMixin extends Vue {
         ({ parent: { id }, role }) => id === this.group.id && role === MemberRole.ADMINISTRATOR
       )
     );
+  }
+
+  handleErrors(errors: any[]) {
+    if (
+      errors.some((error) => error.status_code === 404) ||
+      errors.some(({ message }) => message.includes("has invalid value $uuid"))
+    ) {
+      this.$router.replace({ name: RouteName.PAGE_NOT_FOUND });
+    }
   }
 }

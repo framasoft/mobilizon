@@ -4,6 +4,7 @@ defmodule Mobilizon.Web.PageController do
   """
   use Mobilizon.Web, :controller
 
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
   alias Mobilizon.Federation.ActivityPub
@@ -28,7 +29,7 @@ defmodule Mobilizon.Web.PageController do
   @spec actor(Plug.Conn.t(), map) :: {:error, :not_found} | Plug.Conn.t()
   def actor(conn, %{"name" => name}) do
     {status, actor} = Cache.get_actor_by_name(name)
-    render_or_error(conn, &ok_status?/3, status, :actor, actor)
+    render_or_error(conn, &checks?/3, status, :actor, actor)
   end
 
   @spec event(Plug.Conn.t(), map) :: {:error, :not_found} | Plug.Conn.t()
@@ -140,16 +141,20 @@ defmodule Mobilizon.Web.PageController do
   defp is_visible?(_), do: true
 
   defp ok_status?(status), do: status in [:ok, :commit]
-  defp ok_status?(_conn, status, _), do: ok_status?(status)
 
   defp ok_status_and_is_visible?(_conn, status, o),
     do: ok_status?(status) and is_visible?(o)
 
   defp checks?(conn, status, o) do
-    if ok_status_and_is_visible?(conn, status, o) do
-      if is_local?(o) == :remote && get_format(conn) == "activity-json", do: :remote, else: true
-    else
-      false
+    cond do
+      ok_status_and_is_visible?(conn, status, o) ->
+        if is_local?(o) == :remote && get_format(conn) == "activity-json", do: :remote, else: true
+
+      is_person?(o) && get_format(conn) == "activity-json" ->
+        true
+
+      true ->
+        false
     end
   end
 
@@ -162,4 +167,7 @@ defmodule Mobilizon.Web.PageController do
   end
 
   defp maybe_add_noindex_header(conn, _), do: conn
+
+  defp is_person?(%Actor{type: :Person}), do: true
+  defp is_person?(_), do: false
 end
