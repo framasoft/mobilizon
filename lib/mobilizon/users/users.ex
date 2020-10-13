@@ -383,7 +383,7 @@ defmodule Mobilizon.Users do
   defp user_by_email_query(email, true) do
     from(
       u in User,
-      where: u.email == ^email and not is_nil(u.confirmed_at),
+      where: u.email == ^email and not is_nil(u.confirmed_at) and not u.disabled,
       preload: :default_actor
     )
   end
