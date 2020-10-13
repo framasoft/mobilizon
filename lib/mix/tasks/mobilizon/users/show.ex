@@ -20,6 +20,7 @@ defmodule Mix.Tasks.Mobilizon.Users.Show do
       Mix.shell().info("""
       Informations for the user #{user.email}:
         - Activated: #{user.confirmed_at}
+        - Disabled: #{user.disabled}
         - Role: #{user.role}
         #{display_actors(actors)}
       """)

@@ -280,7 +280,7 @@ defmodule Mobilizon.Users do
   Counts users.
   """
   @spec count_users :: integer
-  def count_users, do: Repo.one(from(u in User, select: count(u.id)))
+  def count_users, do: Repo.one(from(u in User, select: count(u.id), where: u.disabled == false))
 
   @doc """
   Gets a settings for an user.
@@ -383,7 +383,7 @@ defmodule Mobilizon.Users do
   defp user_by_email_query(email, true) do
     from(
       u in User,
-      where: u.email == ^email and not is_nil(u.confirmed_at),
+      where: u.email == ^email and not is_nil(u.confirmed_at) and not u.disabled,
       preload: :default_actor
     )
   end

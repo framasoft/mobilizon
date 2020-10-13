@@ -11,7 +11,7 @@ defmodule Mix.Tasks.Mobilizon.CreateBot do
 
   require Logger
 
-  @shortdoc "Register user"
+  @shortdoc "Create bot"
   def run([email, name, summary, type, url]) do
     Mix.Task.run("app.start")
 

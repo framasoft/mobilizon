@@ -757,6 +757,23 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       assert hd(res["errors"])["message"] ==
                "This user can't reset their password"
     end
+
+    test "test send_reset_password/3 for a deactivated user doesn't send email", %{conn: conn} do
+      {:ok, %User{email: email} = user} =
+        Users.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
+
+      Users.update_user(user, %{confirmed_at: DateTime.utc_now(), disabled: true})
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @send_reset_password_mutation,
+          variables: %{email: email}
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "No user with this email was found"
+    end
   end
 
   describe "Resolver: Reset user's password" do
@@ -1379,7 +1396,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
       assert MapSet.new([actor1.id, actor2.id]) == MapSet.new([actor1_id, actor2_id])
 
-      assert Users.get_user(user.id).disabled == true
+      assert is_nil(Users.get_user(user.id))
 
       assert %{success: 2, failure: 0} == Oban.drain_queue(queue: :background)
 

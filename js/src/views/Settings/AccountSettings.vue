@@ -288,7 +288,8 @@ export default class AccountSettings extends Vue {
     return !this.loggedUser.provider;
   }
 
-  static providerName(id: string): string {
+  // eslint-disable-next-line class-methods-use-this
+  providerName(id: string): string {
     if (SELECTED_PROVIDERS[id]) {
       return SELECTED_PROVIDERS[id];
     }

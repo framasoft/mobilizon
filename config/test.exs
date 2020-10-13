@@ -14,6 +14,7 @@ config :mobilizon, Mobilizon.Web.Endpoint,
     host: "mobilizon.test",
     scheme: "http"
   ],
+  debug_errors: true,
   secret_key_base: "some secret",
   server: false
 

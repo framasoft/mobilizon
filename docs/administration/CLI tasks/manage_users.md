@@ -54,3 +54,4 @@ mix mobilizon.users.delete <email>
 ### Options
 
 * `--assume_yes`/`-y` Don't ask for confirmation
+* `--keep_email`/`-k` Keep user entry with just email information (to prevent future registrations with same email)
