@@ -54,7 +54,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { IGroup, IMember, usernameWithDomain } from "@/types/actor";
+import { IMember, usernameWithDomain } from "@/types/actor";
 import RouteName from "../../router/name";
 
 @Component
@@ -68,8 +68,6 @@ export default class InvitationCard extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/variables.scss";
-
 .media:not(.subfield) {
   background: lighten($primary, 40%);
   padding: 10px;

@@ -57,8 +57,6 @@ export default class ResourceItem extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-@import "@/variables.scss";
-
 .resource-wrapper {
   display: flex;
   flex: 1;

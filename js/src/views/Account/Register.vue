@@ -168,7 +168,6 @@ export default class Register extends mixins(identityEditionMixin) {
 </script>
 
 <style lang="scss" scoped>
-@import "../../variables.scss";
 .avatar-enter-active {
   transition: opacity 1s ease;
 }

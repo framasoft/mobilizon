@@ -30,7 +30,6 @@
     "graphql": "^15.0.0",
     "graphql-tag": "^2.10.3",
     "intersection-observer": "^0.11.0",
-    "javascript-time-ago": "^2.0.4",
     "leaflet": "^1.4.0",
     "leaflet.locatecontrol": "^0.72.0",
     "lodash": "^4.17.11",
@@ -54,7 +53,6 @@
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
-    "@types/javascript-time-ago": "^2.0.1",
     "@types/leaflet": "^1.5.2",
     "@types/leaflet.locatecontrol": "^0.60.7",
     "@types/lodash": "^4.14.141",

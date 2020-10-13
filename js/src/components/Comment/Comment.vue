@@ -24,7 +24,12 @@
             <strong :class="{ organizer: commentFromOrganizer }">{{ comment.actor.name }}</strong>
             <small>@{{ usernameWithDomain(comment.actor) }}</small>
             <a class="comment-link has-text-grey" :href="commentURL">
-              <small>{{ timeago(new Date(comment.updatedAt)) }}</small>
+              <small>{{
+                formatDistanceToNow(new Date(comment.updatedAt), {
+                  locale: $dateFnsLocale,
+                  addSuffix: true,
+                })
+              }}</small>
             </a>
           </span>
           <a v-else class="comment-link has-text-grey" :href="commentURL">
@@ -130,8 +135,8 @@
 <script lang="ts">
 import { Component, Prop, Vue, Ref } from "vue-property-decorator";
 import EditorComponent from "@/components/Editor.vue";
-import TimeAgo from "javascript-time-ago";
 import { SnackbarProgrammatic as Snackbar } from "buefy";
+import { formatDistanceToNow } from "date-fns";
 import { CommentModel, IComment } from "../../types/comment.model";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { IPerson, usernameWithDomain } from "../../types/actor";
@@ -171,18 +176,13 @@ export default class Comment extends Vue {
 
   showReplies = false;
 
-  timeAgoInstance: TimeAgo | null = null;
-
   CommentModeration = CommentModeration;
 
   usernameWithDomain = usernameWithDomain;
 
-  async mounted(): Promise<void> {
-    const localeName = this.$i18n.locale;
-    const locale = await import(`javascript-time-ago/locale/${localeName}`);
-    TimeAgo.addLocale(locale);
-    this.timeAgoInstance = new TimeAgo(localeName);
+  formatDistanceToNow = formatDistanceToNow;
 
+  async mounted(): Promise<void> {
     const { hash } = this.$route;
     if (hash.includes(`#comment-${this.comment.uuid}`)) {
       this.fetchReplies();
@@ -241,13 +241,6 @@ export default class Comment extends Vue {
       data: { event },
     });
     this.showReplies = true;
-  }
-
-  timeago(dateTime: Date): string {
-    if (this.timeAgoInstance != null) {
-      return this.timeAgoInstance.format(dateTime);
-    }
-    return "";
   }
 
   get commentSelected(): boolean {
@@ -316,8 +309,6 @@ export default class Comment extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-@import "@/variables.scss";
-
 form.reply {
   padding-bottom: 1rem;
 }

@@ -30,8 +30,6 @@ export default class SettingMenuItem extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/variables.scss";
-
 li.setting-menu-item {
   font-size: 1.05rem;
   background-color: #fff1de;

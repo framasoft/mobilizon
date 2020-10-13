@@ -51,8 +51,6 @@ export default class Privacy extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-@import "@/variables.scss";
-
 main > .container {
   background: $white;
 

@@ -12,8 +12,6 @@ import { Component, Vue } from "vue-property-decorator";
 export default class Subtitle extends Vue {}
 </script>
 <style lang="scss" scoped>
-@import "@/variables.scss";
-
 h2 {
   display: block;
   margin: 15px 0 30px;

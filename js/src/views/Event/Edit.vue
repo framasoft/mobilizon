@@ -296,8 +296,6 @@
 </template>
 
 <style lang="scss" scoped>
-@import "@/variables.scss";
-
 main section > .container {
   background: $white;
 }

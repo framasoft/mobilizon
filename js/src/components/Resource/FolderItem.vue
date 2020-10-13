@@ -114,8 +114,6 @@ export default class FolderItem extends Mixins(ResourceMixin) {
 }
 </script>
 <style lang="scss" scoped>
-@import "@/variables.scss";
-
 .resource-wrapper {
   display: flex;
   flex: 1;

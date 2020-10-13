@@ -212,9 +212,6 @@ export default class Register extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "../../variables";
-@import "../../common.scss";
-
 .avatar-enter-active {
   transition: opacity 1s ease;
 }

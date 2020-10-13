@@ -366,8 +366,6 @@ export default class Search extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import "@/variables.scss";
-
 main > .container {
   background: $white;
 

@@ -144,8 +144,3 @@ export default class Profile extends Vue {
   }
 }
 </script>
-<style lang="scss">
-@import "../../variables";
-@import "~bulma/sass/utilities/_all";
-@import "~bulma/sass/components/dropdown.sass";
-</style>

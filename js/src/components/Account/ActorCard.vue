@@ -46,8 +46,6 @@ export default class ActorCard extends Vue {
 </style>
 
 <style lang="scss">
-@import "../../variables.scss";
-
 .tooltip {
   display: block !important;
   z-index: 10000;

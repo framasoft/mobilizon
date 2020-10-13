@@ -20,8 +20,6 @@ export default class EventMetadataBlock extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-@import "../../variables.scss";
-
 h2 {
   font-size: 1.8rem;
   font-weight: 500;

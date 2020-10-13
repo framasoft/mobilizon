@@ -44,8 +44,6 @@ export default class Footer extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-@import "../variables.scss";
-
 footer.footer {
   color: $secondary;
   display: flex;

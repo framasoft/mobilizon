@@ -338,8 +338,6 @@ export default class Home extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/variables.scss";
-
 main > div > .container {
   background: $white;
 }

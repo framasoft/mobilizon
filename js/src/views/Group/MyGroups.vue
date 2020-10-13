@@ -120,8 +120,6 @@ export default class MyEvents extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-@import "../../variables";
-
 main > .container {
   background: $white;
 }

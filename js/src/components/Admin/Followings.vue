@@ -64,7 +64,7 @@
 
       <b-table-column field="targetActor.updatedAt" :label="$t('Date')" sortable v-slot="props">
         <span :title="$options.filters.formatDateTimeString(props.row.updatedAt)">{{
-          timeago(props.row.updatedAt)
+          formatDistanceToNow(new Date(props.row.updatedAt), { locale: $dateFnsLocale })
         }}</span></b-table-column
       >
 
@@ -100,6 +100,7 @@
 <script lang="ts">
 import { Component, Mixins } from "vue-property-decorator";
 import { SnackbarProgrammatic as Snackbar } from "buefy";
+import { formatDistanceToNow } from "date-fns";
 import { ADD_RELAY, RELAY_FOLLOWINGS, REMOVE_RELAY } from "../../graphql/admin";
 import { IFollower } from "../../types/actor/follower.model";
 import { Paginate } from "../../types/paginate";
@@ -125,6 +126,8 @@ export default class Followings extends Mixins(RelayMixin) {
   newRelayAddress = "";
 
   RelayMixin = RelayMixin;
+
+  formatDistanceToNow = formatDistanceToNow;
 
   async followRelay(e: Event): Promise<void> {
     e.preventDefault();

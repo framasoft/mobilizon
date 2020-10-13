@@ -27,8 +27,6 @@ export default class Rules extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-@import "@/variables.scss";
-
 main > .container {
   background: $white;
 }

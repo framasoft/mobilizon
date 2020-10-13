@@ -88,7 +88,6 @@ export default class ParticipantCard extends Vue {
 </script>
 
 <style lang="scss">
-@import "../../variables.scss";
 .card-footer-item {
   height: $control-height;
 }

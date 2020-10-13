@@ -37,8 +37,6 @@ export default class SettingMenuSection extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/variables.scss";
-
 li {
   font-size: 1.3rem;
   background-color: $secondary;

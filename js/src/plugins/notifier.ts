@@ -1,4 +1,5 @@
-import Vue from "vue";
+/* eslint-disable no-shadow */
+import VueInstance from "vue";
 import { ColorModifiers } from "buefy/types/helpers.d";
 import { Route, RawLocation } from "vue-router";
 
@@ -12,39 +13,39 @@ declare module "vue/types/vue" {
     beforeRouteEnter?(
       to: Route,
       from: Route,
-      next: (to?: RawLocation | false | ((vm: Vue) => void)) => void
+      next: (to?: RawLocation | false | ((vm: VueInstance) => void)) => void
     ): void;
 
     beforeRouteLeave?(
       to: Route,
       from: Route,
-      next: (to?: RawLocation | false | ((vm: Vue) => void)) => void
+      next: (to?: RawLocation | false | ((vm: VueInstance) => void)) => void
     ): void;
 
     beforeRouteUpdate?(
       to: Route,
       from: Route,
-      next: (to?: RawLocation | false | ((vm: Vue) => void)) => void
+      next: (to?: RawLocation | false | ((vm: VueInstance) => void)) => void
     ): void;
   }
 }
 
 export class Notifier {
-  private readonly vue: typeof Vue;
+  private readonly vue: typeof VueInstance;
 
-  constructor(vue: typeof Vue) {
+  constructor(vue: typeof VueInstance) {
     this.vue = vue;
   }
 
-  success(message: string) {
+  success(message: string): void {
     this.notification(message, "is-success");
   }
 
-  error(message: string) {
+  error(message: string): void {
     this.notification(message, "is-danger");
   }
 
-  info(message: string) {
+  info(message: string): void {
     this.notification(message, "is-info");
   }
 
@@ -60,6 +61,6 @@ export class Notifier {
 }
 
 /* eslint-disable */
-export function NotifierPlugin(vue: typeof Vue): void {
+export function NotifierPlugin(vue: typeof VueInstance): void {
   vue.prototype.$notifier = new Notifier(vue);
 }

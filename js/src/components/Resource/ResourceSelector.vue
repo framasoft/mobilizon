@@ -111,8 +111,6 @@ export default class ResourceSelector extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-@import "../../variables.scss";
-
 .panel {
   a.panel-block {
     cursor: default;
