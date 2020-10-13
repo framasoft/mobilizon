@@ -280,7 +280,7 @@ defmodule Mobilizon.Users do
   Counts users.
   """
   @spec count_users :: integer
-  def count_users, do: Repo.one(from(u in User, select: count(u.id)))
+  def count_users, do: Repo.one(from(u in User, select: count(u.id), where: u.disabled == false))
 
   @doc """
   Gets a settings for an user.
