@@ -15,23 +15,23 @@ defmodule Mix.Tasks.Mobilizon.Users.Delete do
         rest,
         strict: [
           assume_yes: :boolean,
-          force: :boolean
+          keep_email: :boolean
         ],
         aliases: [
           y: :assume_yes,
-          f: :force
+          f: :keep_email
         ]
       )
 
     assume_yes? = Keyword.get(options, :assume_yes, false)
-    force? = Keyword.get(options, :force, false)
+    keep_email? = Keyword.get(options, :keep_email, false)
 
     Mix.Task.run("app.start")
 
     with {:ok, %User{} = user} <- Users.get_user_by_email(email),
          true <- assume_yes? or Mix.shell().yes?("Continue with deleting user #{user.email}?"),
          {:ok, %User{} = user} <-
-           Users.delete_user(user, reserve_email: !force?) do
+           Users.delete_user(user, reserve_email: keep_email?) do
       Mix.shell().info("""
       The user #{user.email} has been deleted
       """)
