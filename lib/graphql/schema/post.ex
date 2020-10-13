@@ -17,8 +17,8 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
     field(:attributed_to, :actor, description: "The post's group")
     field(:visibility, :post_visibility, description: "The post's visibility")
     field(:publish_at, :datetime, description: "When the post was published")
-    field(:inserted_at, :naive_datetime, description: "The post's creation date")
-    field(:updated_at, :naive_datetime, description: "The post's last update date")
+    field(:inserted_at, :datetime, description: "The post's creation date")
+    field(:updated_at, :datetime, description: "The post's last update date")
 
     field(:tags, list_of(:tag),
       resolve: &Tag.list_tags_for_post/3,

@@ -61,7 +61,7 @@ defmodule Mobilizon.Posts.Post do
     belongs_to(:picture, Picture, on_replace: :update)
     many_to_many(:tags, Tag, join_through: "posts_tags", on_replace: :delete)
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @required_attrs [
