@@ -52,13 +52,13 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
     test "delete existing user" do
       insert(:user, email: @email)
       Delete.run([@email, "-y"])
-      assert {:ok, %User{disabled: true}} = Users.get_user_by_email(@email)
+      assert {:error, :user_not_found} = Users.get_user_by_email(@email)
     end
 
     test "full delete existing user" do
       insert(:user, email: @email)
-      Delete.run([@email, "-y", "-f"])
-      assert {:error, :user_not_found} == Users.get_user_by_email(@email)
+      Delete.run([@email, "-y", "-k"])
+      assert {:ok, %User{disabled: true}} = Users.get_user_by_email(@email)
     end
 
     test "delete non-existing user" do
@@ -68,14 +68,18 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
 
   describe "show user" do
     test "show existing user" do
-      %User{confirmed_at: confirmed_at, role: role} = user = insert(:user, email: @email)
+      %User{confirmed_at: confirmed_at, role: role, disabled: disabled} =
+        user = insert(:user, email: @email)
+
       actor1 = insert(:actor, user: user)
       actor2 = insert(:actor, user: user)
 
       output =
-        "Informations for the user #{@email}:\n  - Activated: #{confirmed_at}\n  - Role: #{role}\n  Identities (2):\n    - @#{
-          actor1.preferred_username
-        } / \n    - @#{actor2.preferred_username} / \n\n\n"
+        "Informations for the user #{@email}:\n  - Activated: #{confirmed_at}\n  - Disabled: #{
+          disabled
+        }\n  - Role: #{role}\n  Identities (2):\n    - @#{actor1.preferred_username} / \n    - @#{
+          actor2.preferred_username
+        } / \n\n\n"
 
       Show.run([@email])
       assert_received {:mix_shell, :info, [output_received]}

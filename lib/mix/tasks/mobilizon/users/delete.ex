@@ -19,7 +19,7 @@ defmodule Mix.Tasks.Mobilizon.Users.Delete do
         ],
         aliases: [
           y: :assume_yes,
-          f: :keep_email
+          k: :keep_email
         ]
       )
 
