@@ -192,7 +192,7 @@
 
         <subtitle>{{ $t("Status") }}</subtitle>
 
-        <b-field>
+        <b-field class="event__status__field">
           <b-radio-button
             v-model="event.status"
             name="status"
@@ -253,7 +253,7 @@
     <nav
       role="navigation"
       aria-label="main navigation"
-      class="navbar"
+      class="navbar save__navbar"
       :class="{ 'is-fixed-bottom': showFixedNavbar }"
       v-if="isCurrentActorOrganizer"
     >
@@ -302,6 +302,19 @@ main section > .container {
   background: $white;
 }
 
+.save__navbar {
+  /deep/ .navbar-menu,
+  .navbar-end {
+    flex-wrap: wrap;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .navbar.is-fixed-bottom {
+    position: initial;
+  }
+}
+
 h2.subtitle {
   margin: 10px 0;
 
@@ -309,6 +322,14 @@ h2.subtitle {
     padding: 5px 7px;
     display: inline;
     background: $secondary;
+  }
+}
+
+.event__status__field {
+  /deep/ .field.has-addons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
 }
 
@@ -489,7 +510,14 @@ export default class EditEvent extends Vue {
 
     this.event.beginsOn = now;
     this.event.endsOn = end;
-    this.event.organizerActor = this.event.organizerActor || this.currentActor;
+    this.event.organizerActor = this.getDefaultActor();
+  }
+
+  private getDefaultActor() {
+    if (this.event.organizerActor && this.event.organizerActor.id) {
+      return this.event.organizerActor;
+    }
+    return this.currentActor;
   }
 
   async mounted(): Promise<void> {
