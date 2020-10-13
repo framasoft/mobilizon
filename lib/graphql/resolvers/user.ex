@@ -410,7 +410,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
            {:moderator_actor, Users.get_actor_for_user(moderator_user)},
          %User{disabled: false} = user <- Users.get_user(user_id),
          {:ok, %User{}} <-
-           do_delete_account(%User{} = user, Relay.get_actor()) do
+           do_delete_account(%User{} = user, actor_performing: Relay.get_actor()) do
       Admin.log_action(moderator_actor, "delete", user)
     else
       {:moderator_actor, nil} ->
@@ -429,11 +429,11 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
            {:confirmation_password, Map.get(args, :password)},
          {:current_password, {:ok, _}} <-
            {:current_password, Authenticator.authenticate(email, password)} do
-      do_delete_account(user)
+      do_delete_account(user, reserve_email: false)
     else
       # If the user hasn't got any password (3rd-party auth)
       {:user_has_password, false} ->
-        do_delete_account(user)
+        do_delete_account(user, reserve_email: false)
 
       {:confirmation_password, nil} ->
         {:error, dgettext("errors", "The password provided is invalid")}
@@ -447,23 +447,21 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     {:error, dgettext("errors", "You need to be logged-in to delete your account")}
   end
 
-  defp do_delete_account(%User{} = user, actor_performing \\ nil) do
+  @spec do_delete_account(User.t(), Keyword.t()) :: {:ok, User.t()}
+  defp do_delete_account(%User{} = user, options) do
     with actors <- Users.get_actors_for_user(user),
          activated <- not is_nil(user.confirmed_at),
          # Detach actors from user
-         :ok <-
-           if(activated,
-             do: :ok,
-             else: Enum.each(actors, fn actor -> Actors.update_actor(actor, %{user_id: nil}) end)
-           ),
+         :ok <- Enum.each(actors, fn actor -> Actors.update_actor(actor, %{user_id: nil}) end),
          # Launch a background job to delete actors
          :ok <-
            Enum.each(actors, fn actor ->
-             actor_performing = actor_performing || actor
+             actor_performing = Keyword.get(options, :actor_performing, actor)
              ActivityPub.delete(actor, actor_performing, true)
            end),
          # Delete user
-         {:ok, user} <- Users.delete_user(user, reserve_email: activated) do
+         {:ok, user} <-
+           Users.delete_user(user, reserve_email: Keyword.get(options, :reserve_email, activated)) do
       {:ok, user}
     end
   end

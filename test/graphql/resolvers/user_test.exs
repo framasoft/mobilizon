@@ -1379,7 +1379,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
       assert MapSet.new([actor1.id, actor2.id]) == MapSet.new([actor1_id, actor2_id])
 
-      assert Users.get_user(user.id).disabled == true
+      assert is_nil(Users.get_user(user.id))
 
       assert %{success: 2, failure: 0} == Oban.drain_queue(queue: :background)
 
