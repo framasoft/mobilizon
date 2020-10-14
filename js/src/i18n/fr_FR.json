@@ -336,7 +336,7 @@
   "Invited": "Invité·e",
   "Italic": "Italique",
   "Join group": "Rejoindre le groupe",
-  "Join {instance}, a Mobilizon instance": "Rejoignez {instance}, une instance Mobilizon",
+  "Join <b>{instance}</b>, a Mobilizon instance": "Rejoignez <b>{instance}</b>, une instance Mobilizon",
   "Keep the entire conversation about a specific topic together on a single page.": "Rassemblez sur une seule page toute la conversation à propos d'un sujet spécifique.",
   "Key words": "Mots clés",
   "Language": "Langue",
