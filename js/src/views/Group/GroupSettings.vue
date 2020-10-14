@@ -114,7 +114,7 @@
         </div>
       </form>
     </section>
-    <b-message>
+    <b-message v-else>
       {{ $t("You are not an administrator for this group.") }}
     </b-message>
   </div>
