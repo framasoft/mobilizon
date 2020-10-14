@@ -1,23 +1,4 @@
 import { RouteConfig } from "vue-router";
-import Settings from "@/views/Settings.vue";
-import AccountSettings from "@/views/Settings/AccountSettings.vue";
-import Preferences from "@/views/Settings/Preferences.vue";
-import Notifications from "@/views/Settings/Notifications.vue";
-import Dashboard from "@/views/Admin/Dashboard.vue";
-import AdminSettings from "@/views/Admin/Settings.vue";
-import Follows from "@/views/Admin/Follows.vue";
-import Followings from "@/components/Admin/Followings.vue";
-import Followers from "@/components/Admin/Followers.vue";
-import ReportList from "@/views/Moderation/ReportList.vue";
-import Report from "@/views/Moderation/Report.vue";
-import Logs from "@/views/Moderation/Logs.vue";
-import EditIdentity from "@/views/Account/children/EditIdentity.vue";
-import Users from "../views/Admin/Users.vue";
-import Profiles from "../views/Admin/Profiles.vue";
-import AdminProfile from "../views/Admin/AdminProfile.vue";
-import AdminUserProfile from "../views/Admin/AdminUserProfile.vue";
-import GroupProfiles from "../views/Admin/GroupProfiles.vue";
-import AdminGroupProfile from "../views/Admin/AdminGroupProfile.vue";
 
 export enum SettingsRouteName {
   SETTINGS = "SETTINGS",
@@ -49,7 +30,7 @@ export enum SettingsRouteName {
 export const settingsRoutes: RouteConfig[] = [
   {
     path: "/settings",
-    component: Settings,
+    component: () => import(/* webpackChunkName: "Settings" */ "@/views/Settings.vue"),
     props: true,
     meta: { requiredAuth: true },
     redirect: { name: SettingsRouteName.ACCOUNT_SETTINGS },
@@ -63,21 +44,24 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "account/general",
         name: SettingsRouteName.ACCOUNT_SETTINGS_GENERAL,
-        component: AccountSettings,
+        component: () =>
+          import(/* webpackChunkName: "AccountSettings" */ "@/views/Settings/AccountSettings.vue"),
         props: true,
         meta: { requiredAuth: true },
       },
       {
         path: "preferences",
         name: SettingsRouteName.PREFERENCES,
-        component: Preferences,
+        component: () =>
+          import(/* webpackChunkName: "Preferences" */ "@/views/Settings/Preferences.vue"),
         props: true,
         meta: { requiredAuth: true },
       },
       {
         path: "notifications",
         name: SettingsRouteName.NOTIFICATIONS,
-        component: Notifications,
+        component: () =>
+          import(/* webpackChunkName: "Notifications" */ "@/views/Settings/Notifications.vue"),
         props: true,
         meta: { requiredAuth: true },
       },
@@ -89,55 +73,61 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "admin/dashboard",
         name: SettingsRouteName.ADMIN_DASHBOARD,
-        component: Dashboard,
+        component: () => import(/* webpackChunkName: "Dashboard" */ "@/views/Admin/Dashboard.vue"),
         meta: { requiredAuth: true },
       },
       {
         path: "admin/settings",
         name: SettingsRouteName.ADMIN_SETTINGS,
-        component: AdminSettings,
+        component: () =>
+          import(/* webpackChunkName: "AdminSettings" */ "@/views/Admin/Settings.vue"),
         props: true,
         meta: { requiredAuth: true },
       },
       {
         path: "admin/users",
         name: SettingsRouteName.USERS,
-        component: Users,
+        component: () => import(/* webpackChunkName: "Users" */ "@/views/Admin/Users.vue"),
         props: true,
         meta: { requiredAuth: true },
       },
       {
         path: "admin/users/:id",
         name: SettingsRouteName.ADMIN_USER_PROFILE,
-        component: AdminUserProfile,
+        component: () =>
+          import(/* webpackChunkName: "AdminUserProfile" */ "@/views/Admin/AdminUserProfile.vue"),
         props: true,
         meta: { requiredAuth: true },
       },
       {
         path: "admin/profiles",
         name: SettingsRouteName.PROFILES,
-        component: Profiles,
+        component: () =>
+          import(/* webpackChunkName: "AdminProfiles" */ "@/views/Admin/Profiles.vue"),
         props: true,
         meta: { requiredAuth: true },
       },
       {
         path: "admin/profiles/:id",
         name: SettingsRouteName.ADMIN_PROFILE,
-        component: AdminProfile,
+        component: () =>
+          import(/* webpackChunkName: "AdminProfile" */ "@/views/Admin/AdminProfile.vue"),
         props: true,
         meta: { requiredAuth: true },
       },
       {
         path: "admin/groups",
         name: SettingsRouteName.ADMIN_GROUPS,
-        component: GroupProfiles,
+        component: () =>
+          import(/* webpackChunkName: "GroupProfiles" */ "@/views/Admin/GroupProfiles.vue"),
         props: true,
         meta: { requiredAuth: true },
       },
       {
         path: "admin/groups/:id",
         name: SettingsRouteName.ADMIN_GROUP_PROFILE,
-        component: AdminGroupProfile,
+        component: () =>
+          import(/* webpackChunkName: "AdminGroupProfile" */ "@/views/Admin/AdminGroupProfile.vue"),
         props: true,
         meta: { requiredAuth: true },
       },
@@ -145,17 +135,19 @@ export const settingsRoutes: RouteConfig[] = [
         path: "admin/relays",
         name: SettingsRouteName.RELAYS,
         redirect: { name: SettingsRouteName.RELAY_FOLLOWINGS },
-        component: Follows,
+        component: () => import(/* webpackChunkName: "Follows" */ "@/views/Admin/Follows.vue"),
         children: [
           {
             path: "followings",
             name: SettingsRouteName.RELAY_FOLLOWINGS,
-            component: Followings,
+            component: () =>
+              import(/* webpackChunkName: "Followings" */ "@/components/Admin/Followings.vue"),
           },
           {
             path: "followers",
             name: SettingsRouteName.RELAY_FOLLOWERS,
-            component: Followers,
+            component: () =>
+              import(/* webpackChunkName: "Followers" */ "@/components/Admin/Followers.vue"),
           },
         ],
         props: true,
@@ -169,21 +161,23 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "/moderation/reports/:filter?",
         name: SettingsRouteName.REPORTS,
-        component: ReportList,
+        component: () =>
+          import(/* webpackChunkName: "ReportList" */ "@/views/Moderation/ReportList.vue"),
         props: true,
         meta: { requiredAuth: true },
       },
       {
         path: "/moderation/report/:reportId",
         name: SettingsRouteName.REPORT,
-        component: Report,
+        component: () => import(/* webpackChunkName: "Report" */ "@/views/Moderation/Report.vue"),
         props: true,
         meta: { requiredAuth: true },
       },
       {
         path: "/moderation/logs",
         name: SettingsRouteName.REPORT_LOGS,
-        component: Logs,
+        component: () =>
+          import(/* webpackChunkName: "ModerationLogs" */ "@/views/Moderation/Logs.vue"),
         props: true,
         meta: { requiredAuth: true },
       },
@@ -195,13 +189,19 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "/identity/create",
         name: SettingsRouteName.CREATE_IDENTITY,
-        component: EditIdentity,
+        component: () =>
+          import(
+            /* webpackChunkName: "EditIdentity" */ "@/views/Account/children/EditIdentity.vue"
+          ),
         props: (route) => ({ identityName: route.params.identityName, isUpdate: false }),
       },
       {
         path: "/identity/update/:identityName?",
         name: SettingsRouteName.UPDATE_IDENTITY,
-        component: EditIdentity,
+        component: () =>
+          import(
+            /* webpackChunkName: "EditIdentity" */ "@/views/Account/children/EditIdentity.vue"
+          ),
         props: (route) => ({ identityName: route.params.identityName, isUpdate: true }),
       },
     ],

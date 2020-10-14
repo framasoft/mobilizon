@@ -2,13 +2,11 @@ import Vue from "vue";
 import Router, { Route } from "vue-router";
 import VueScrollTo from "vue-scrollto";
 import { PositionResult } from "vue-router/types/router.d";
-import PageNotFound from "../views/PageNotFound.vue";
 import Home from "../views/Home.vue";
 import { eventRoutes } from "./event";
 import { actorRoutes } from "./actor";
 import { errorRoutes } from "./error";
 import { authGuardIfNeeded } from "./guards/auth-guard";
-import Search from "../views/Search.vue";
 import { settingsRoutes } from "./settings";
 import { groupsRoutes } from "./groups";
 import { discussionRoutes } from "./discussion";
@@ -51,7 +49,7 @@ const router = new Router({
     {
       path: "/search",
       name: RouteName.SEARCH,
-      component: Search,
+      component: () => import(/* webpackChunkName: "search" */ "../views/Search.vue"),
       props: true,
       meta: { requiredAuth: false },
     },
@@ -115,12 +113,13 @@ const router = new Router({
     {
       path: "/auth/:provider/callback",
       name: "auth-callback",
-      component: () => import("@/views/User/ProviderValidation.vue"),
+      component: () =>
+        import(/* webpackChunkName: "ProviderValidation" */ "@/views/User/ProviderValidation.vue"),
     },
     {
       path: "/404",
       name: RouteName.PAGE_NOT_FOUND,
-      component: PageNotFound,
+      component: () => import(/* webpackChunkName: "search" */ "../views/PageNotFound.vue"),
       meta: { requiredAuth: false },
     },
     {
