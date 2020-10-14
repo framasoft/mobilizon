@@ -113,24 +113,19 @@ msgid "Current profile is not an administrator of the selected group"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:514
+#: lib/graphql/resolvers/user.ex:512
 msgid "Error while saving user settings"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/group.ex:200 lib/graphql/resolvers/group.ex:248
-#: lib/graphql/resolvers/group.ex:283 lib/graphql/resolvers/member.ex:80
+#: lib/graphql/error.ex:90 lib/graphql/resolvers/group.ex:200
+#: lib/graphql/resolvers/group.ex:248 lib/graphql/resolvers/group.ex:283 lib/graphql/resolvers/member.ex:80
 msgid "Group not found"
 msgstr ""
 
 #, elixir-format
 #: lib/graphql/resolvers/group.ex:69
 msgid "Group with ID %{id} not found"
-msgstr ""
-
-#, elixir-format
-#: lib/graphql/resolvers/group.ex:41 lib/graphql/resolvers/group.ex:55
-msgid "Group with name %{name} not found"
 msgstr ""
 
 #, elixir-format
@@ -228,7 +223,7 @@ msgid "User already disabled"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:489
+#: lib/graphql/resolvers/user.ex:487
 msgid "User requested is not logged-in"
 msgstr ""
 
@@ -803,7 +798,7 @@ msgid "Resource not found"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/error.ex:90
+#: lib/graphql/error.ex:91
 msgid "Something went wrong"
 msgstr ""
 
