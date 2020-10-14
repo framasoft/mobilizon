@@ -160,9 +160,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
           database_password: dbpass
         )
 
-      Mix.shell().info(
-        "Writing config to #{config_path}. You should rename it to .env.production, .env.dev or .env.test"
-      )
+      Mix.shell().info("Writing config to #{config_path}.")
 
       File.write(config_path, result_config)
       Mix.shell().info("Writing #{psql_path}.")
