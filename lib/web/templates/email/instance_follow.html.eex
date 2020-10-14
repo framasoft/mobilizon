@@ -42,7 +42,7 @@
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <p style="margin: 0;">
-            <%= gettext("Note: %{name} (%{domain}) following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too.") %>
+            <%= gettext("Note: %{name} (%{domain}) following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too.", name: @follower.name, domain: @follower.domain) %>
           </p>
         </td>
       </tr>
