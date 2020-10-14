@@ -4,7 +4,9 @@
       <div class="hero-body">
         <div class="container">
           <h1 class="title">{{ $t("Gather ⋅ Organize ⋅ Mobilize") }}</h1>
-          <p>{{ $t("Join {instance}, a Mobilizon instance", { instance: config.name }) }}</p>
+          <p
+            v-html="$t('Join <b>{instance}</b>, a Mobilizon instance', { instance: config.name })"
+          />
           <p class="instance-description">{{ config.description }}</p>
           <!-- We don't invite to find other instances yet -->
           <!-- <p v-if="!config.registrationsOpen">
@@ -154,6 +156,9 @@ import Subtitle from "../components/Utils/Subtitle.vue";
     loggedUser: {
       query: USER_SETTINGS,
       fetchPolicy: "no-cache",
+      error() {
+        return null;
+      },
     },
     config: CONFIG,
     currentUserParticipations: {
@@ -340,6 +345,7 @@ export default class Home extends Vue {
 <style lang="scss" scoped>
 main > div > .container {
   background: $white;
+  padding: 1rem 1.5rem 3rem;
 }
 
 .search-autocomplete {
@@ -382,8 +388,11 @@ span.view-all {
 }
 
 section.hero {
-  margin-top: -3px;
   background: lighten($secondary, 20%);
+
+  & > .hero-body {
+    padding: 1rem 1.5rem 3rem;
+  }
 
   .title {
     color: $background-color;
