@@ -6,6 +6,7 @@ defmodule Mobilizon.EventsTest do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Participant, Session, Tag, TagRelation, Track}
+  alias Mobilizon.Federation.ActivityPub.Relay
   alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.Page
 
@@ -19,10 +20,54 @@ defmodule Mobilizon.EventsTest do
     category: "meeting"
   }
 
+  describe "list_events/5" do
+    setup do
+      actor = insert(:actor)
+      event = insert(:event, organizer_actor: actor, visibility: :public, local: true)
+      Mobilizon.Config.clear_config_cache()
+      {:ok, actor: actor, event: event}
+    end
+
+    test "list_events/0 returns all events", %{event: event} do
+      assert event.title == hd(Events.list_events()).title
+    end
+
+    test "list_events/5 returns events from other instances if we follow them",
+         %{event: _event} do
+      events = Events.list_events()
+      assert length(events) == 1
+
+      %Actor{id: remote_instance_actor_id} = remote_instance_actor = insert(:instance_actor)
+      %Actor{id: remote_actor_id} = insert(:actor, domain: "somedomain.tld", user: nil)
+      %Event{url: remote_event_url} = insert(:event, local: false, title: "My Remote event")
+      Mobilizon.Share.create(remote_event_url, remote_instance_actor_id, remote_actor_id)
+
+      %Actor{} = own_instance_actor = Relay.get_actor()
+
+      insert(:follower, target_actor: remote_instance_actor, actor: own_instance_actor)
+
+      events = Events.list_events()
+      assert length(events) == 2
+      assert events |> Enum.any?(fn event -> event.title == "My Remote event" end)
+    end
+
+    test "list_events/5 doesn't return events from other instances if we don't follow them anymore",
+         %{event: _event} do
+      %Actor{id: remote_instance_actor_id} = insert(:instance_actor)
+      %Actor{id: remote_actor_id} = insert(:actor, domain: "somedomain.tld", user: nil)
+      %Event{url: remote_event_url} = insert(:event, local: false, title: "My Remote event")
+      Mobilizon.Share.create(remote_event_url, remote_instance_actor_id, remote_actor_id)
+
+      events = Events.list_events()
+      assert length(events) == 1
+      assert events |> Enum.all?(fn event -> event.title != "My Remote event" end)
+    end
+  end
+
   describe "events" do
     setup do
       actor = insert(:actor)
-      event = insert(:event, organizer_actor: actor, visibility: :public)
+      event = insert(:event, organizer_actor: actor, visibility: :public, local: true)
       Workers.BuildSearch.insert_search_event(event)
       {:ok, actor: actor, event: event}
     end
@@ -40,10 +85,6 @@ defmodule Mobilizon.EventsTest do
       title: "some updated title"
     }
     @invalid_attrs %{begins_on: nil, description: nil, ends_on: nil, title: nil}
-
-    test "list_events/0 returns all events", %{event: event} do
-      assert event.title == hd(Events.list_events()).title
-    end
 
     test "get_event!/1 returns the event with given id", %{event: event} do
       assert Events.get_event!(event.id).title == event.title
