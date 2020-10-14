@@ -552,8 +552,6 @@ export default class EditorComponent extends Vue {
 }
 </script>
 <style lang="scss">
-@import "@/variables.scss";
-
 $color-black: #000;
 $color-white: #eee;
 

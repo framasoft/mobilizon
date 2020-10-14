@@ -365,7 +365,7 @@ export default class Participants extends Vue {
 
   nl2br = nl2br;
 
-  toggleQueueDetails(row: IParticipant) {
+  toggleQueueDetails(row: IParticipant): void {
     if (row.metadata.message && row.metadata.message.length < MESSAGE_ELLIPSIS_LENGTH) return;
     this.queueTable.toggleDetails(row);
   }
@@ -374,8 +374,6 @@ export default class Participants extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-@import "../../variables.scss";
-
 section {
   padding: 1rem 0;
 }

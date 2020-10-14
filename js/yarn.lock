@@ -1352,11 +1352,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/javascript-time-ago@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@types/javascript-time-ago/-/javascript-time-ago-2.0.1.tgz#819ec39b467409e2fd6acb42bc53ae7d631bbdb0"
-  integrity sha512-6QWXsuqzfUMfsg1DTJan/MfUi80LGS1TOohSqxlgpBZEHH344xpl3LzgANTp7PPWf7Z/9S0l14RMQPF0vH7MIg==
-
 "@types/json-schema@^7.0.3", "@types/json-schema@^7.0.4", "@types/json-schema@^7.0.5", "@types/json-schema@^7.0.6":
   version "7.0.6"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.6.tgz#f4c7ec43e81b319a9815115031709f26987891f0"
@@ -7988,13 +7983,6 @@ javascript-stringify@^2.0.0, javascript-stringify@^2.0.1:
   resolved "https://registry.yarnpkg.com/javascript-stringify/-/javascript-stringify-2.0.1.tgz#6ef358035310e35d667c675ed63d3eb7c1aa19e5"
   integrity sha512-yV+gqbd5vaOYjqlbk16EG89xB5udgjqQF3C5FAORDg4f/IS1Yc5ERCv5e/57yBcfJYw05V5JyIXabhwb75Xxow==
 
-javascript-time-ago@^2.0.4:
-  version "2.2.8"
-  resolved "https://registry.yarnpkg.com/javascript-time-ago/-/javascript-time-ago-2.2.8.tgz#d2821816a648f4659f605e030418af7949f0564e"
-  integrity sha512-VU2GZ88QYl7zEfnKe2VecnPlXunr1awIAf21S13CRUUYlk6cVbmA81GApMXHIbDUfYfsJVcPjjB76KLEPO4fGA==
-  dependencies:
-    relative-time-format "^1.0.5"
-
 jest-worker@^25.4.0:
   version "25.5.0"
   resolved "https://registry.yarnpkg.com/jest-worker/-/jest-worker-25.5.0.tgz#2611d071b79cea0f43ee57a3d118593ac1547db1"
@@ -11940,11 +11928,6 @@ relateurl@0.2.x:
   version "0.2.7"
   resolved "https://registry.yarnpkg.com/relateurl/-/relateurl-0.2.7.tgz#54dbf377e51440aca90a4cd274600d3ff2d888a9"
   integrity sha1-VNvzd+UUQKypCkzSdGANP/LYiKk=
-
-relative-time-format@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/relative-time-format/-/relative-time-format-1.0.5.tgz#3fb7c76ae39156afe0a3a7ff0cb7bf30aa0f0fb6"
-  integrity sha512-MAgx/YKcUQYJpIaWcfetPstElnWf26JxVis4PirdwVrrymFdbxyCSm6yENpfB1YuwFbtHSHksN3aBajVNxk10Q==
 
 remark-parse@^7.0.0:
   version "7.0.2"

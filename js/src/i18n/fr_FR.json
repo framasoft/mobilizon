@@ -204,7 +204,7 @@
   "Duplicate": "Dupliquer",
   "Edit": "Modifier",
   "Edit post": "Éditer le billet",
-  "Edited {ago}": "Édité {ago}",
+  "Edited {ago}": "Édité il y a {ago}",
   "Eg: Stockholm, Dance, Chess…": "Par exemple : Lyon, Danse, Bridge…",
   "Either on the {instance} instance or on another instance.": "Sur l'instance {instance} ou bien sur une autre instance.",
   "Either the account is already validated, either the validation token is incorrect.": "Soit le compte est déjà validé, soit le jeton de validation est incorrect.",

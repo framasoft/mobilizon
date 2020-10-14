@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import MobilizonLogo from "../assets/mobilizon_logo.svg?inline";
 
@@ -18,8 +18,6 @@ export default class Logo extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-@import "../variables.scss";
-
 svg {
   fill: $background-color;
 

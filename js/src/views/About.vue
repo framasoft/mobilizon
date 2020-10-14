@@ -119,8 +119,6 @@ export default class About extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "../variables.scss";
-
 .hero.is-primary {
   background: $background-color;
 

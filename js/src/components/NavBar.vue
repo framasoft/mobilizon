@@ -216,8 +216,6 @@ export default class NavBar extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-@import "../variables.scss";
-
 nav {
   .navbar-item {
     a.button {

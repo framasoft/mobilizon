@@ -13,8 +13,6 @@ export default class Tag extends Vue {}
 </script>
 
 <style lang="scss" scoped>
-@import "../variables.scss";
-
 span.tag {
   background: $purple-3;
   color: $violet-2;

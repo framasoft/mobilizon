@@ -27,23 +27,21 @@ export default class DateCalendarIcon extends Vue {
    */
   @Prop({ required: true }) date!: string;
 
-  get dateObj() {
+  get dateObj(): Date {
     return new Date(this.$props.date);
   }
 
-  get month() {
+  get month(): string {
     return this.dateObj.toLocaleString(undefined, { month: "short" });
   }
 
-  get day() {
+  get day(): string {
     return this.dateObj.toLocaleString(undefined, { day: "numeric" });
   }
 }
 </script>
 
 <style lang="scss" scoped>
-@import "../../variables.scss";
-
 time.datetime-container {
   background: $backgrounds;
   border: 1px solid $borders;

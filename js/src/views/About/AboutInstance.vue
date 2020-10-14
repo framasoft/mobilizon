@@ -122,8 +122,6 @@ export default class AboutInstance extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "../../variables.scss";
-
 section {
   &:not(:first-child) {
     margin: 2rem auto;

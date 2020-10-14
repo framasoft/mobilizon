@@ -323,8 +323,6 @@ export default class AccountSettings extends Vue {
 }
 </script>
 <style lang="scss">
-@import "@/variables.scss";
-
 .setting-title {
   margin-top: 2rem;
   margin-bottom: 1rem;

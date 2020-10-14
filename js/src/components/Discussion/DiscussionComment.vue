@@ -43,7 +43,10 @@
         </span>
         <div class="post-infos">
           <span :title="comment.insertedAt | formatDateTimeString">
-            {{ $timeAgo.format(new Date(comment.updatedAt), "twitter") || $t("Right now") }}</span
+            {{
+              formatDistanceToNow(new Date(comment.updatedAt), { locale: $dateFnsLocale }) ||
+              $t("Right now")
+            }}</span
           >
         </div>
       </div>
@@ -53,7 +56,13 @@
           v-if="comment.insertedAt.getTime() !== comment.updatedAt.getTime()"
           :title="comment.updatedAt | formatDateTimeString"
         >
-          {{ $t("Edited {ago}", { ago: $timeAgo.format(new Date(comment.updatedAt)) }) }}
+          {{
+            $t("Edited {ago}", {
+              ago: formatDistanceToNow(new Date(comment.updatedAt), {
+                locale: $dateFnsLocale,
+              }),
+            })
+          }}
         </p>
       </div>
       <div class="comment-deleted" v-else-if="!editMode">
@@ -76,7 +85,8 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { IComment, CommentModel } from "../../types/comment.model";
+import { formatDistanceToNow } from "date-fns";
+import { IComment } from "../../types/comment.model";
 import { usernameWithDomain, IPerson } from "../../types/actor";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 
@@ -99,14 +109,16 @@ export default class DiscussionComment extends Vue {
 
   usernameWithDomain = usernameWithDomain;
 
+  formatDistanceToNow = formatDistanceToNow;
+
   // isReportModalActive: boolean = false;
 
-  toggleEditMode() {
+  toggleEditMode(): void {
     this.updatedComment = this.comment.text;
     this.editMode = !this.editMode;
   }
 
-  updateComment() {
+  updateComment(): void {
     this.comment.text = this.updatedComment;
     this.$emit("update-comment", this.comment);
     this.toggleEditMode();
@@ -114,8 +126,6 @@ export default class DiscussionComment extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-@import "@/variables.scss";
-
 article.comment {
   display: flex;
   border-top: 1px solid #e9e9e9;

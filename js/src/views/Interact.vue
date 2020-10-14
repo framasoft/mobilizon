@@ -58,8 +58,6 @@ export default class Interact extends Vue {
 }
 </script>
 <style lang="scss">
-@import "@/variables.scss";
-
 main > .container {
   background: $white;
 }

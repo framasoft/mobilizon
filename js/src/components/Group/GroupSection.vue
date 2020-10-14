@@ -32,8 +32,6 @@ export default class GroupSection extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-@import "@/variables.scss";
-
 section {
   display: flex;
   flex-direction: column;

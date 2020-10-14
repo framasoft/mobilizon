@@ -78,6 +78,28 @@ defmodule Mobilizon.Factory do
     )
   end
 
+  def instance_actor_factory do
+    preferred_username = "relay"
+    domain = "#{sequence("mydomain")}.com"
+
+    struct!(
+      actor_factory(),
+      %{
+        preferred_username: preferred_username,
+        type: :Application,
+        url: "http://#{domain}/#{preferred_username}",
+        followers_url: Actor.build_url(preferred_username, :followers),
+        following_url: Actor.build_url(preferred_username, :following),
+        members_url: Actor.build_url(preferred_username, :members),
+        resources_url: Actor.build_url(preferred_username, :resources),
+        inbox_url: Actor.build_url(preferred_username, :inbox),
+        outbox_url: Actor.build_url(preferred_username, :outbox),
+        user: nil,
+        domain: domain
+      }
+    )
+  end
+
   def follower_factory do
     uuid = Ecto.UUID.generate()
 

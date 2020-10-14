@@ -1,7 +1,7 @@
 <template>
   <div class="card" v-if="todo">
     <div class="card-content">
-      <b-field :label="$t('Statut')">
+      <b-field :label="$t('Status')">
         <b-checkbox size="is-large" v-model="status" />
       </b-field>
       <b-field :label="$t('Title')">

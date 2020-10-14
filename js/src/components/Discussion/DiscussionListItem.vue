@@ -16,7 +16,10 @@
       <div class="title-and-date">
         <p class="discussion-minimalist-title">{{ discussion.title }}</p>
         <span :title="actualDate | formatDateTimeString">
-          {{ $timeAgo.format(new Date(actualDate), "twitter") || $t("Right now") }}</span
+          {{
+            formatDistanceToNowStrict(new Date(actualDate), { locale: $dateFnsLocale }) ||
+            $t("Right now")
+          }}</span
         >
       </div>
       <div class="has-text-grey" v-if="!discussion.lastComment.deletedAt">
@@ -28,6 +31,7 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { formatDistanceToNowStrict } from "date-fns";
 import { IDiscussion } from "../../types/discussions";
 import RouteName from "../../router/name";
 
@@ -37,7 +41,9 @@ export default class DiscussionListItem extends Vue {
 
   RouteName = RouteName;
 
-  get htmlTextEllipsis() {
+  formatDistanceToNowStrict = formatDistanceToNowStrict;
+
+  get htmlTextEllipsis(): string {
     const element = document.createElement("div");
     if (this.discussion.lastComment && this.discussion.lastComment.text) {
       element.innerHTML = this.discussion.lastComment.text
@@ -47,7 +53,7 @@ export default class DiscussionListItem extends Vue {
     return element.innerText;
   }
 
-  get actualDate() {
+  get actualDate(): string | Date | undefined {
     if (this.discussion.updatedAt === this.discussion.insertedAt && this.discussion.lastComment) {
       return this.discussion.lastComment.publishedAt;
     }

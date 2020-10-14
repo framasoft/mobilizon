@@ -115,8 +115,6 @@ export default class EventCard extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "../../variables";
-
 a.card {
   display: block;
   background: $secondary;

@@ -17,7 +17,7 @@
           v-model="$i18n.locale"
           :placeholder="$t('Select a language')"
         >
-          <option v-for="(language, lang) in languages" :value="lang" :key="lang">
+          <option v-for="(language, lang) in langs" :value="lang" :key="lang">
             {{ language }}
           </option>
         </b-select>
@@ -73,8 +73,10 @@ export default class Preferences extends Vue {
 
   RouteName = RouteName;
 
+  langs: Record<string, string> = langs;
+
   @Watch("loggedUser")
-  setSavedTimezone(loggedUser: IUser) {
+  setSavedTimezone(loggedUser: IUser): void {
     if (loggedUser && loggedUser.settings.timezone) {
       this.selectedTimezone = loggedUser.settings.timezone;
     } else {
@@ -87,22 +89,24 @@ export default class Preferences extends Vue {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   sanitize(timezone: string): string {
     return timezone.split("_").join(" ").replace("St ", "St. ").split("/").join(" - ");
   }
 
-  get timezones() {
+  get timezones(): Record<string, string[]> {
     if (!this.config || !this.config.timezones) return {};
     return this.config.timezones.reduce((acc: { [key: string]: Array<string> }, val: string) => {
       const components = val.split("/");
       const [prefix, suffix] = [components.shift() as string, components.join("/")];
       const pushOrCreate = (
-        acc: { [key: string]: Array<string> },
-        prefix: string,
-        suffix: string
+        acc2: { [key: string]: Array<string> },
+        prefix2: string,
+        suffix2: string
       ) => {
-        (acc[prefix] = acc[prefix] || []).push(suffix);
-        return acc;
+        // eslint-disable-next-line no-param-reassign
+        (acc2[prefix2] = acc2[prefix2] || []).push(suffix2);
+        return acc2;
       };
       if (suffix) {
         return pushOrCreate(acc, prefix, suffix);
@@ -111,22 +115,8 @@ export default class Preferences extends Vue {
     }, {});
   }
 
-  get languages(): object {
-    return this.$i18n.availableLocales.reduce((acc: object, lang: string) => {
-      // @ts-ignore
-      if (langs[lang]) {
-        return {
-          ...acc,
-          // @ts-ignore
-          [lang]: langs[lang],
-        };
-      }
-      return acc;
-    }, {} as object);
-  }
-
   @Watch("selectedTimezone")
-  async updateTimezone() {
+  async updateTimezone(): Promise<void> {
     if (this.selectedTimezone !== this.loggedUser.settings.timezone) {
       await this.$apollo.mutate<{ setUserSetting: string }>({
         mutation: SET_USER_SETTINGS,
@@ -138,7 +128,7 @@ export default class Preferences extends Vue {
   }
 
   @Watch("$i18n.locale")
-  async updateLocale() {
+  async updateLocale(): Promise<void> {
     await this.$apollo.mutate({
       mutation: UPDATE_USER_LOCALE,
       variables: {

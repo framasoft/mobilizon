@@ -166,8 +166,6 @@ export default class AboutMobilizon extends Vue {}
 </script>
 
 <style lang="scss" scoped>
-@import "../../variables.scss";
-
 .hero.is-primary {
   background: $background-color;
   .subtitle {

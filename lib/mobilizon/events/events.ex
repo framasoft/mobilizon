@@ -1643,12 +1643,17 @@ defmodule Mobilizon.Events do
     where(query, [q], q.local == true)
   end
 
-  @spec filter_local_or_from_followed_instances_events(Ecto.Query.t()) :: Ecto.Query.t()
+  @spec filter_local_or_from_followed_instances_events(Ecto.Query.t()) ::
+          Ecto.Query.t()
   defp filter_local_or_from_followed_instances_events(query) do
-    from(q in query,
-      left_join: s in Share,
-      on: s.uri == q.url,
-      where: q.local == true or not is_nil(s.uri)
+    follower_actor_id = Mobilizon.Config.relay_actor_id()
+
+    query
+    |> join(:left, [q], s in Share, on: s.uri == q.url)
+    |> join(:left, [_q, ..., s], f in Follower, on: f.target_actor_id == s.actor_id)
+    |> where(
+      [q, ..., s, f],
+      q.local == true or (f.actor_id == ^follower_actor_id and not is_nil(s.uri))
     )
   end
 

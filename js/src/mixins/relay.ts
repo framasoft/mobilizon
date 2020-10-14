@@ -1,7 +1,6 @@
 import { Component, Vue, Ref } from "vue-property-decorator";
 import { ActorType, IActor } from "@/types/actor";
 import { IFollower } from "@/types/actor/follower.model";
-import TimeAgo from "javascript-time-ago";
 
 @Component
 export default class RelayMixin extends Vue {
@@ -13,20 +12,11 @@ export default class RelayMixin extends Vue {
 
   perPage = 10;
 
-  timeAgoInstance: TimeAgo | null = null;
-
-  async mounted() {
-    const localeName = this.$i18n.locale;
-    const locale = await import(`javascript-time-ago/locale/${localeName}`);
-    TimeAgo.addLocale(locale);
-    this.timeAgoInstance = new TimeAgo(localeName);
-  }
-
-  toggle(row: object) {
+  toggle(row: Record<string, unknown>): void {
     this.table.toggleDetails(row);
   }
 
-  async onPageChange(page: number) {
+  async onPageChange(page: number): Promise<void> {
     this.page = page;
     await this.$apollo.queries.relayFollowings.fetchMore({
       variables: {
@@ -52,12 +42,5 @@ export default class RelayMixin extends Vue {
       actor.type === ActorType.APPLICATION &&
       (actor.preferredUsername === "relay" || actor.preferredUsername === actor.domain)
     );
-  }
-
-  timeago(dateTime: string): string {
-    if (this.timeAgoInstance != null) {
-      return this.timeAgoInstance.format(new Date(dateTime));
-    }
-    return "";
   }
 }

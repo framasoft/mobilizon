@@ -5,6 +5,7 @@ module.exports = {
   runtimeCompiler: true,
   lintOnSave: true,
   filenameHashing: true,
+  productionSourceMap: false,
   outputDir: path.resolve(__dirname, "../priv/static"),
   configureWebpack: (config) => {
     // Limit the used memory when building
@@ -24,6 +25,17 @@ module.exports = {
     forkTsCheckerOptions.memoryLimit = process.env.NODE_BUILD_MEMORY || 2048;
 
     config.plugins.push(new ForkTsCheckerWebpackPlugin(forkTsCheckerOptions));
+  },
+  chainWebpack: (config) => {
+    // remove the prefetch plugin
+    config.plugins.delete("prefetch");
+  },
+  css: {
+    loaderOptions: {
+      scss: {
+        additionalData: `@import "@/variables.scss";`,
+      },
+    },
   },
   // configureWebpack: {
   //   optimization: {

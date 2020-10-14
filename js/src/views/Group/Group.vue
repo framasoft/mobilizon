@@ -546,8 +546,6 @@ export default class Group extends mixins(GroupMixin) {
 }
 </script>
 <style lang="scss" scoped>
-@import "../../variables.scss";
-
 div.container {
   background: white;
   margin-bottom: 3rem;

@@ -1,5 +1,5 @@
-import Vue from "vue";
 import Locale from "date-fns";
+import VueInstance from "vue";
 
 declare module "vue/types/vue" {
   interface Vue {
@@ -7,8 +7,8 @@ declare module "vue/types/vue" {
   }
 }
 
-export function DateFnsPlugin(vue: typeof Vue, { locale }: { locale: string }): void {
+export function DateFnsPlugin(vue: typeof VueInstance, { locale }: { locale: string }): void {
   import(`date-fns/locale/${locale}/index.js`).then((localeEntity) => {
-    Vue.prototype.$dateFnsLocale = localeEntity;
+    VueInstance.prototype.$dateFnsLocale = localeEntity;
   });
 }

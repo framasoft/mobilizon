@@ -129,8 +129,6 @@ export default class Post extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-@import "../../variables.scss";
-
 article {
   section.heading-section {
     text-align: center;

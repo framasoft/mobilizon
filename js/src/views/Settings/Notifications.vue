@@ -155,8 +155,6 @@ export default class Notifications extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "../../variables.scss";
-
 .field {
   &:not(:last-child) {
     margin-bottom: 1.5rem;

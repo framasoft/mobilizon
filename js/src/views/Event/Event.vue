@@ -1044,8 +1044,6 @@ export default class Event extends EventMixin {
 }
 </script>
 <style lang="scss" scoped>
-@import "../../variables";
-
 .section {
   padding: 1rem 2rem 4rem;
 }

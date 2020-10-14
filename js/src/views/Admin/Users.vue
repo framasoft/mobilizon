@@ -145,14 +145,13 @@ export default class Users extends Vue {
     });
   }
 
-  onFiltersChange({ email }: { email: string }) {
+  onFiltersChange({ email }: { email: string }): void {
     this.email = email;
   }
 }
 </script>
 
 <style lang="scss" scoped>
-@import "../../variables.scss";
 a.profile,
 a.user-profile {
   text-decoration: none;

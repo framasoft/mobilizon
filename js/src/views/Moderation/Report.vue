@@ -443,8 +443,6 @@ export default class Report extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-@import "@/variables.scss";
-
 tbody td img.image,
 .note img.image {
   display: inline;

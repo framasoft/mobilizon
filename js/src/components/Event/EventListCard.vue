@@ -275,8 +275,6 @@ export default class EventListCard extends mixins(ActorMixin, EventMixin) {
 </script>
 
 <style lang="scss" scoped>
-@import "../../variables";
-
 article.box {
   div.tag-container {
     position: absolute;

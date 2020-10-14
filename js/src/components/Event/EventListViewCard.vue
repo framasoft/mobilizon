@@ -104,8 +104,6 @@ export default class EventListViewCard extends mixins(ActorMixin, EventMixin) {
 </script>
 
 <style lang="scss" scoped>
-@import "../../variables";
-
 article.box {
   div.content {
     padding: 5px;
