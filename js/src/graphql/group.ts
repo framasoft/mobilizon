@@ -125,6 +125,7 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
     }
     members {
       elements {
+        id
         role
         actor {
           id

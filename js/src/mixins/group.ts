@@ -38,6 +38,7 @@ import { Component, Vue } from "vue-property-decorator";
 })
 export default class GroupMixin extends Vue {
   group: IGroup = new Group();
+
   currentActor!: IActor;
 
   person!: IPerson;
@@ -51,7 +52,7 @@ export default class GroupMixin extends Vue {
     );
   }
 
-  handleErrors(errors: any[]) {
+  handleErrors(errors: any[]): void {
     if (
       errors.some((error) => error.status_code === 404) ||
       errors.some(({ message }) => message.includes("has invalid value $uuid"))

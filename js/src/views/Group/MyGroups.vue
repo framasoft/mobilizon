@@ -71,7 +71,7 @@ import RouteName from "../../router/name";
     };
   },
 })
-export default class MyEvents extends Vue {
+export default class MyGroups extends Vue {
   membershipsPages!: Paginate<IMember>;
 
   RouteName = RouteName;

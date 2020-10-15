@@ -23,6 +23,7 @@
         v-if="isCurrentActorAnInvitedGroupMember"
         :invitations="[groupMember]"
         @acceptInvitation="acceptInvitation"
+        @reject-invitation="rejectInvitation"
       />
       <b-message v-if="isCurrentActorARejectedGroupMember" type="is-danger">
         {{ $t("You have been removed from this group's members.") }}
@@ -431,6 +432,16 @@ export default class Group extends mixins(GroupMixin) {
     }
   }
 
+  rejectInvitation({ id: memberId }: { id: string }): void {
+    const index = this.person.memberships.elements.findIndex(
+      (membership) => membership.role === MemberRole.INVITED && membership.id === memberId
+    );
+    if (index > -1) {
+      this.person.memberships.elements.splice(index, 1);
+      this.person.memberships.total -= 1;
+    }
+  }
+
   async reportGroup(content: string, forward: boolean): Promise<void> {
     this.isReportModalActive = false;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -611,6 +622,8 @@ div.container {
     div.address {
       flex: 1;
       text-align: right;
+      justify-content: flex-end;
+      display: flex;
 
       .map-show-button {
         cursor: pointer;

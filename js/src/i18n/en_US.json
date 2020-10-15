@@ -803,5 +803,7 @@
   "Please read the {fullRules} published by {instance}'s administrators.": "Please read the {fullRules} published by {instance}'s administrators.",
   "Instances following you": "Instances following you",
   "Instances you follow": "Instances you follow",
-  "Last group created": "Last group created"
+  "Last group created": "Last group created",
+  "{username} was invited to {group}": "{username} was invited to {group}",
+  "The member was removed from the group {group}": "The member was removed from the group {group}"
 }

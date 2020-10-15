@@ -479,7 +479,7 @@ msgstr "Le profil invité n'existe pas"
 #, elixir-format
 #: lib/graphql/resolvers/member.ex:92
 msgid "Profile is already a member of this group"
-msgstr "Vous êtes déjà membre de ce groupe"
+msgstr "Ce profil est déjà membre de ce groupe"
 
 #, elixir-format
 #: lib/graphql/resolvers/post.ex:131 lib/graphql/resolvers/post.ex:171
@@ -549,12 +549,12 @@ msgstr "Membre non trouvé"
 #, elixir-format
 #: lib/graphql/resolvers/person.ex:235
 msgid "You already have a profile for this user"
-msgstr "Vous êtes déjà membre de ce groupe"
+msgstr "Vous avez déjà un profil pour cet utilisateur"
 
 #, elixir-format
 #: lib/graphql/resolvers/participant.ex:134
 msgid "You are already a participant of this event"
-msgstr "Vous êtes déjà membre de ce groupe"
+msgstr "Vous êtes déjà un·e participant·e à cet événement"
 
 #, elixir-format
 #: lib/graphql/resolvers/discussion.ex:185
@@ -564,7 +564,7 @@ msgstr "Vous n'êtes pas un membre du groupe dans lequel se fait la discussion"
 #, elixir-format
 #: lib/graphql/resolvers/member.ex:86
 msgid "You are not a member of this group"
-msgstr "Vous êtes déjà membre de ce groupe"
+msgstr "Vous n'êtes pas membre de ce groupe"
 
 #, elixir-format
 #: lib/graphql/resolvers/member.ex:143
