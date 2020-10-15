@@ -14,6 +14,7 @@ import { ACCEPT_INVITATION, REJECT_INVITATION } from "@/graphql/member";
 import { IMember } from "@/types/actor";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import InvitationCard from "@/components/Group/InvitationCard.vue";
+import { LOGGED_USER_MEMBERSHIPS } from "@/graphql/actor";
 
 @Component({
   components: {
@@ -30,6 +31,7 @@ export default class Invitations extends Vue {
         variables: {
           id,
         },
+        refetchQueries: [{ query: LOGGED_USER_MEMBERSHIPS }],
       });
       if (data) {
         this.$emit("accept-invitation", data.acceptInvitation);
@@ -49,6 +51,7 @@ export default class Invitations extends Vue {
         variables: {
           id,
         },
+        refetchQueries: [{ query: LOGGED_USER_MEMBERSHIPS }],
       });
       if (data) {
         this.$emit("reject-invitation", data.rejectInvitation);

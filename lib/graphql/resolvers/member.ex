@@ -66,10 +66,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
          {:has_rights_to_invite, {:ok, %Member{role: role}}}
          when role in [:moderator, :administrator, :creator] <-
            {:has_rights_to_invite, Actors.get_member(actor_id, group_id)},
+         target_actor_username <-
+           target_actor_username |> String.trim() |> String.trim_leading("@"),
          {:target_actor_username, {:ok, %Actor{id: target_actor_id} = target_actor}} <-
            {:target_actor_username,
             ActivityPub.find_or_make_actor_from_nickname(target_actor_username)},
-         true <- check_member_not_existant_or_rejected(target_actor_id, group.id),
+         {:existant, true} <-
+           {:existant, check_member_not_existant_or_rejected(target_actor_id, group.id)},
          {:ok, _activity, %Member{} = member} <- ActivityPub.invite(group, actor, target_actor) do
       {:ok, member}
     else
@@ -88,6 +91,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
       {:has_rights_to_invite, _} ->
         {:error, dgettext("errors", "You cannot invite to this group")}
 
+      {:existant, _} ->
+        {:error, dgettext("errors", "Profile is already a member of this group")}
+
+      # Remove me ?
       {:ok, %Member{}} ->
         {:error, dgettext("errors", "Profile is already a member of this group")}
     end
@@ -115,7 +122,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
 
   def reject_invitation(_parent, %{id: member_id}, %{context: %{current_user: %User{} = user}}) do
     with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         %Member{actor: %Actor{id: member_actor_id}} = member <- Actors.get_member(member_id),
+         {:invitation_exists, %Member{actor: %Actor{id: member_actor_id}} = member} <-
+           {:invitation_exists, Actors.get_member(member_id)},
          {:is_same_actor, true} <- {:is_same_actor, member_actor_id === actor_id},
          {:ok, _activity, %Member{} = member} <-
            ActivityPub.reject(
@@ -127,6 +135,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
     else
       {:is_same_actor, false} ->
         {:error, dgettext("errors", "You can't reject this invitation with this profile.")}
+
+      {:invitation_exists, _} ->
+        {:error, dgettext("errors", "This invitation doesn't exist.")}
     end
   end
 
@@ -158,13 +169,27 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
         context: %{current_user: %User{} = user}
       }) do
     with %Actor{id: moderator_id} = moderator <- Users.get_actor_for_user(user),
-         %Member{} = member <- Actors.get_member(member_id),
+         %Member{role: role} = member when role != :rejected <- Actors.get_member(member_id),
          %Actor{type: :Group} = group <- Actors.get_actor(group_id),
-         {:has_rights_to_invite, {:ok, %Member{role: role}}}
+         {:has_rights_to_remove, {:ok, %Member{role: role}}}
          when role in [:moderator, :administrator, :creator] <-
-           {:has_rights_to_invite, Actors.get_member(moderator_id, group_id)},
+           {:has_rights_to_remove, Actors.get_member(moderator_id, group_id)},
          {:ok, _activity, %Member{}} <- ActivityPub.remove(member, group, moderator, true) do
       {:ok, member}
+    else
+      %Member{role: :rejected} ->
+        {:error,
+         dgettext(
+           "errors",
+           "This member already has been rejected."
+         )}
+
+      {:has_rights_to_remove, _} ->
+        {:error,
+         dgettext(
+           "errors",
+           "You don't have the right to remove this member."
+         )}
     end
   end
 

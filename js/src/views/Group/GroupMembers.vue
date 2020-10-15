@@ -181,12 +181,28 @@
 import { Component, Watch } from "vue-property-decorator";
 import GroupMixin from "@/mixins/group";
 import { mixins } from "vue-class-component";
+import { FETCH_GROUP } from "@/graphql/group";
 import RouteName from "../../router/name";
 import { INVITE_MEMBER, GROUP_MEMBERS, REMOVE_MEMBER, UPDATE_MEMBER } from "../../graphql/member";
 import { IGroup, usernameWithDomain } from "../../types/actor";
 import { IMember, MemberRole } from "../../types/actor/group.model";
 
-@Component
+@Component({
+  apollo: {
+    members: {
+      query: GROUP_MEMBERS,
+      variables() {
+        return {
+          name: this.$route.params.preferredUsername,
+          page: 1,
+          limit: this.MEMBERS_PER_PAGE,
+          roles: this.roles,
+        };
+      },
+      update: (data) => data.group.members,
+    },
+  },
+})
 export default class GroupMembers extends mixins(GroupMixin) {
   loading = true;
 
@@ -221,31 +237,16 @@ export default class GroupMembers extends mixins(GroupMixin) {
           groupId: this.group.id,
           targetActorUsername: this.newMemberUsername,
         },
-        update: (store, { data }) => {
-          if (data == null) return;
-          const query = {
-            query: GROUP_MEMBERS,
-            variables: {
-              name: this.$route.params.preferredUsername,
-              page: 1,
-              limit: this.MEMBERS_PER_PAGE,
-              roles: this.roles,
-            },
-          };
-          const memberData: IMember = data.inviteMember;
-          const groupData = store.readQuery<{ group: IGroup }>(query);
-          if (!groupData) return;
-          const { group } = groupData;
-          const index = group.members.elements.findIndex((m) => m.actor.id === memberData.actor.id);
-          if (index === -1) {
-            group.members.elements.push(memberData);
-            group.members.total += 1;
-          } else {
-            group.members.elements.splice(index, 1, memberData);
-          }
-          store.writeQuery({ ...query, data: { group } });
-        },
+        refetchQueries: [
+          { query: FETCH_GROUP, variables: { name: this.$route.params.preferredUsername } },
+        ],
       });
+      this.$notifier.success(
+        this.$t("{username} was invited to {group}", {
+          username: this.newMemberUsername,
+          group: this.group.name || usernameWithDomain(this.group),
+        }) as string
+      );
       this.newMemberUsername = "";
     } catch (error) {
       console.error(error);
@@ -283,34 +284,30 @@ export default class GroupMembers extends mixins(GroupMixin) {
   }
 
   async removeMember(memberId: string): Promise<void> {
-    await this.$apollo.mutate<{ removeMember: IMember }>({
-      mutation: REMOVE_MEMBER,
-      variables: {
-        groupId: this.group.id,
-        memberId,
-      },
-      update: (store, { data }) => {
-        if (data == null) return;
-        const query = {
-          query: GROUP_MEMBERS,
-          variables: {
-            name: this.$route.params.preferredUsername,
-            page: 1,
-            limit: this.MEMBERS_PER_PAGE,
-            roles: this.roles,
-          },
-        };
-        const groupData = store.readQuery<{ group: IGroup }>(query);
-        if (!groupData) return;
-        const { group } = groupData;
-        const index = group.members.elements.findIndex((m) => m.id === memberId);
-        if (index !== -1) {
-          group.members.elements.splice(index, 1);
-          group.members.total -= 1;
-          store.writeQuery({ ...query, data: { group } });
-        }
-      },
-    });
+    console.log("removeMember", memberId);
+    try {
+      await this.$apollo.mutate<{ removeMember: IMember }>({
+        mutation: REMOVE_MEMBER,
+        variables: {
+          groupId: this.group.id,
+          memberId,
+        },
+        refetchQueries: [
+          { query: FETCH_GROUP, variables: { name: this.$route.params.preferredUsername } },
+        ],
+      });
+      this.$notifier.success(
+        this.$t("The member was removed from the group {group}", {
+          username: this.newMemberUsername,
+          group: this.group.name || usernameWithDomain(this.group),
+        }) as string
+      );
+    } catch (error) {
+      console.error(error);
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
+      }
+    }
   }
 
   promoteMember(member: IMember): void {
@@ -341,7 +338,23 @@ export default class GroupMembers extends mixins(GroupMixin) {
           memberId,
           role,
         },
+        refetchQueries: [
+          { query: FETCH_GROUP, variables: { name: this.$route.params.preferredUsername } },
+        ],
       });
+      let successMessage;
+      switch (role) {
+        case MemberRole.MODERATOR:
+          successMessage = "The member role was updated to moderator";
+          break;
+        case MemberRole.ADMINISTRATOR:
+          successMessage = "The member role was updated to administrator";
+          break;
+        case MemberRole.MEMBER:
+        default:
+          successMessage = "The member role was updated to simple member";
+      }
+      this.$notifier.success(this.$t(successMessage) as string);
     } catch (error) {
       console.error(error);
       if (error.graphQLErrors && error.graphQLErrors.length > 0) {
