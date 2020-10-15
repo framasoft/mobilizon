@@ -70,11 +70,19 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
   end
 
   object :dashboard do
-    field(:last_public_event_published, :event, description: "Last public event publish")
+    field(:last_public_event_published, :event, description: "Last public event published")
+    field(:last_group_created, :group, description: "Last public group created")
     field(:number_of_users, :integer, description: "The number of local users")
     field(:number_of_events, :integer, description: "The number of local events")
     field(:number_of_comments, :integer, description: "The number of local comments")
+    field(:number_of_groups, :integer, description: "The number of local groups")
     field(:number_of_reports, :integer, description: "The number of current opened reports")
+    field(:number_of_followers, :integer, description: "The number of instance followers")
+    field(:number_of_followings, :integer, description: "The number of instance followings")
+
+    field(:number_of_confirmed_participations_to_local_events, :integer,
+      description: "The number of total confirmed participations to local events"
+    )
   end
 
   object :admin_settings do

@@ -1,11 +1,17 @@
 import { IEvent } from "@/types/event.model";
+import { IGroup } from "./actor";
 
 export interface IDashboard {
   lastPublicEventPublished: IEvent;
+  lastGroupCreated: IGroup;
   numberOfUsers: number;
   numberOfEvents: number;
   numberOfComments: number;
   numberOfReports: number;
+  numberOfGroups: number;
+  numberOfFollowers: number;
+  numberOfFollowings: number;
+  numberOfConfirmedParticipationsToLocalEvents: number;
 }
 
 export enum InstanceTermsType {

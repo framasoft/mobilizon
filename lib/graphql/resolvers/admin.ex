@@ -178,13 +178,25 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
         _ -> nil
       end
 
+    last_group_created =
+      case Actors.list_actors(:Group) do
+        %Page{elements: [group | _]} -> group
+        _ -> nil
+      end
+
     {:ok,
      %{
        number_of_users: Statistics.get_cached_value(:local_users),
        number_of_events: Statistics.get_cached_value(:local_events),
+       number_of_groups: Statistics.get_cached_value(:local_groups),
        number_of_comments: Statistics.get_cached_value(:local_comments),
+       number_of_confirmed_participations_to_local_events:
+         Statistics.get_cached_value(:confirmed_participations_to_local_events),
        number_of_reports: Mobilizon.Reports.count_opened_reports(),
-       last_public_event_published: last_public_event_published
+       number_of_followers: Statistics.get_cached_value(:instance_followers),
+       number_of_followings: Statistics.get_cached_value(:instance_followings),
+       last_public_event_published: last_public_event_published,
+       last_group_created: last_group_created
      }}
   end
 

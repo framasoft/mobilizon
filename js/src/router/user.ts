@@ -16,7 +16,7 @@ export const userRoutes: RouteConfig[] = [
   {
     path: "/register/user",
     name: UserRouteName.REGISTER,
-    component: () => import("@/views/User/Register.vue"),
+    component: () => import(/* webpackChunkName: "RegisterUser" */ "@/views/User/Register.vue"),
     props: true,
     meta: { requiredAuth: false },
     beforeEnter: beforeRegisterGuard,
@@ -24,7 +24,8 @@ export const userRoutes: RouteConfig[] = [
   {
     path: "/register/profile",
     name: UserRouteName.REGISTER_PROFILE,
-    component: () => import("@/views/Account/Register.vue"),
+    component: () =>
+      import(/* webpackChunkName: "RegisterProfile" */ "@/views/Account/Register.vue"),
     // We can only pass string values through params, therefore
     props: (route) => ({
       email: route.params.email,
@@ -35,42 +36,46 @@ export const userRoutes: RouteConfig[] = [
   {
     path: "/resend-instructions",
     name: UserRouteName.RESEND_CONFIRMATION,
-    component: () => import("@/views/User/ResendConfirmation.vue"),
+    component: () =>
+      import(/* webpackChunkName: "ResendConfirmation" */ "@/views/User/ResendConfirmation.vue"),
     props: true,
     meta: { requiresAuth: false },
   },
   {
     path: "/password-reset/send",
     name: UserRouteName.SEND_PASSWORD_RESET,
-    component: () => import("@/views/User/SendPasswordReset.vue"),
+    component: () =>
+      import(/* webpackChunkName: "SendPasswordReset" */ "@/views/User/SendPasswordReset.vue"),
     props: true,
     meta: { requiresAuth: false },
   },
   {
     path: "/password-reset/:token",
     name: UserRouteName.PASSWORD_RESET,
-    component: () => import("@/views/User/PasswordReset.vue"),
+    component: () =>
+      import(/* webpackChunkName: "PasswordReset" */ "@/views/User/PasswordReset.vue"),
     meta: { requiresAuth: false },
     props: true,
   },
   {
     path: "/validate/email/:token",
     name: UserRouteName.EMAIL_VALIDATE,
-    component: () => import("@/views/User/EmailValidate.vue"),
+    component: () =>
+      import(/* webpackChunkName: "EmailValidate" */ "@/views/User/EmailValidate.vue"),
     props: true,
     meta: { requiresAuth: false },
   },
   {
     path: "/validate/:token",
     name: UserRouteName.VALIDATE,
-    component: () => import("@/views/User/Validate.vue"),
+    component: () => import(/* webpackChunkName: "Validate" */ "@/views/User/Validate.vue"),
     props: true,
     meta: { requiresAuth: false },
   },
   {
     path: "/login",
     name: UserRouteName.LOGIN,
-    component: () => import("@/views/User/Login.vue"),
+    component: () => import(/* webpackChunkName: "Login" */ "@/views/User/Login.vue"),
     props: true,
     meta: { requiredAuth: false },
   },

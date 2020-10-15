@@ -34,7 +34,7 @@
     </section>
     <div class="container section" v-if="config && (!currentUser.id || !currentActor.id)">
       <section class="events-featured">
-        <h3 class="title">{{ $t("Featured events") }}</h3>
+        <h2 class="title">{{ $t("Featured events") }}</h2>
         <b-loading :active.sync="$apollo.loading" />
         <div v-if="filteredFeaturedEvents.length > 0" class="columns is-multiline">
           <div
@@ -108,7 +108,7 @@
         </div>
       </section>
       <section class="events-featured">
-        <h3 class="title">{{ $t("Featured events") }}</h3>
+        <h2 class="title">{{ $t("Featured events") }}</h2>
         <b-loading :active.sync="$apollo.loading" />
         <div v-if="filteredFeaturedEvents.length > 0" class="columns is-multiline">
           <div
