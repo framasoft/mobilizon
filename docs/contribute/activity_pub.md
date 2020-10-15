@@ -14,19 +14,71 @@ Instances subscribe to each other through an internal actor named `relay@instanc
 
 ## Activities
 
-Supported Activity | Supported Object
+Supported Activity | Supported Object or Activity
 ------------ | -------------
-`Accept` | `Follow`, `Join`  
-`Announce` | `Object`
-`Create` | `Note`, `Event`
-`Delete` | `Object`
-`Flag` | `Object`
-`Follow` | `Object`
+`Accept` | `Follow`, `Join` 
+`Add` | `Document`, `ResourceCollection`
+`Announce` | any `Object`
+`Create` | any `Object`
+`Delete` | any `Object`
+`Flag` | any `Object`
+`Follow` | any `Object`
+`Invite` | `Group`
 `Join` | `Event`
+`Leave` | `Event`, `Group`
 `Reject` | `Follow`, `Join`
-`Remove` | `Note`, `Event`
+`Remove` | `Note`, `Event`, `Member`
 `Undo` | `Announce`, `Follow`
-`Update` | `Object`  
+`Update` | `Object`
+
+## Objects
+
+### Person
+
+Every Mobilizon profile is a [`Person`](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-person).
+
+### Event
+
+Every Mobilizon event is an [`Event`](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-event) with [a few extensions](#event_1), especially for location information since [`Place`](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-place) is limited.
+
+### Note
+
+Every Mobilizon comment showing under an event is a [`Note`](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-note), as well as every element from group discussions, where the [`context` property](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-context) is used to group messages in discussions.
+
+### Group
+
+Every Mobilizon group is a [`Group`](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-group).
+
+### Member
+
+Every Mobilizon group member is a `Member`, that conveys the role information that the `Person` has in the `Group`.
+
+```json
+%{
+  "type" => "Member",
+  "id" => "https://somemobilizon.instance/member/some-uuid",
+  "actor" => "https://somemobilizon.instance/@some-person",
+  "object" => "https://somemobilizon.instance/@some-group",
+  "role" => "MODERATOR"
+    }
+```
+
+The allowed values for `role` are: `invited`, `not_approved`, `member`, `moderator`, `administrator`, `rejected`.
+
+### Document
+
+Attached pictures and other files are represented with [`Document`](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-document).
+
+Group resources are also represented with `Document`.
+
+### Article
+
+Every Mobilizon group post is an [Article](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-article).
+
+### ResourceCollection
+
+Mobilizon's group resources (see [Document](#Document)) can be collected into folders named `ResourceCollection`, which have the same set of properties as a `Document`, without the `url`.
+
 
 ## Extensions
 
@@ -157,6 +209,21 @@ We add [an `address` property](https://schema.org/address), which we assume to b
   "type": "Event"
 }
 ```
+
+
+
+
+
+#### maximumAttendeeCapacity
+
+We use Schema.org's [`maximumAttendeeCapacity`](https://schema.org/maximumAttendeeCapacity) to know how many places there can be for an event.
+
+#### anonymousParticipationEnabled
+
+We add this boolean field to know whether or not anonymous participants can participate to an event.
+
+!!! note
+    Even though this information is federated, we redirect anonymous participants to the original instance so they can participate.
 
 ### Join
 
