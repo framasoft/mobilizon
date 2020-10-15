@@ -151,7 +151,7 @@ export default class FullAddressAutoComplete extends Vue {
     };
   }
 
-  async asyncData(query: string) {
+  async asyncData(query: string): Promise<void> {
     if (!query.length) {
       this.addressData = [];
       this.selected = new Address();
@@ -178,7 +178,7 @@ export default class FullAddressAutoComplete extends Vue {
   }
 
   @Watch("config")
-  watchConfig(config: IConfig) {
+  watchConfig(config: IConfig): void {
     if (!config.geocoding.autocomplete) {
       // If autocomplete is disabled, we put a larger debounce value
       // so that we don't request with incomplete address
@@ -187,7 +187,7 @@ export default class FullAddressAutoComplete extends Vue {
   }
 
   @Watch("value")
-  updateEditing() {
+  updateEditing(): void {
     if (!(this.value && this.value.id)) return;
     this.selected = this.value;
     const address = new Address(this.selected);
@@ -196,22 +196,22 @@ export default class FullAddressAutoComplete extends Vue {
     }
   }
 
-  updateSelected(option: IAddress) {
+  updateSelected(option: IAddress): void {
     if (option == null) return;
     this.selected = option;
     this.$emit("input", this.selected);
   }
 
-  resetPopup() {
+  resetPopup(): void {
     this.selected = new Address();
   }
 
-  openNewAddressModal() {
+  openNewAddressModal(): void {
     this.resetPopup();
     this.addressModalActive = true;
   }
 
-  async reverseGeoCode(e: LatLng, zoom: number) {
+  async reverseGeoCode(e: LatLng, zoom: number): Promise<void> {
     // If the position has been updated through autocomplete selection, no need to geocode it!
     if (this.checkCurrentPosition(e)) return;
     const result = await this.$apollo.query({
@@ -225,13 +225,15 @@ export default class FullAddressAutoComplete extends Vue {
     });
 
     this.addressData = result.data.reverseGeocode.map((address: IAddress) => new Address(address));
-    const defaultAddress = new Address(this.addressData[0]);
-    this.selected = defaultAddress;
-    this.$emit("input", this.selected);
-    this.queryText = `${defaultAddress.poiInfos.name} ${defaultAddress.poiInfos.alternativeName}`;
+    if (this.addressData.length > 0) {
+      const defaultAddress = new Address(this.addressData[0]);
+      this.selected = defaultAddress;
+      this.$emit("input", this.selected);
+      this.queryText = `${defaultAddress.poiInfos.name} ${defaultAddress.poiInfos.alternativeName}`;
+    }
   }
 
-  checkCurrentPosition(e: LatLng) {
+  checkCurrentPosition(e: LatLng): boolean {
     if (!this.selected || !this.selected.geom) return false;
     const lat = parseFloat(this.selected.geom.split(";")[1]);
     const lon = parseFloat(this.selected.geom.split(";")[0]);
@@ -259,6 +261,7 @@ export default class FullAddressAutoComplete extends Vue {
     return this.label || (this.$t("Find an address") as string);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   get canShowLocateMeButton(): boolean {
     return window.isSecureContext;
   }

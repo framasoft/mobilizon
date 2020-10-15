@@ -175,10 +175,12 @@ export default class AddressAutoComplete extends Vue {
     });
 
     this.addressData = result.data.reverseGeocode.map((address: IAddress) => new Address(address));
-    const defaultAddress = new Address(this.addressData[0]);
-    this.selected = defaultAddress;
-    this.$emit("input", this.selected);
-    this.queryText = `${defaultAddress.poiInfos.name} ${defaultAddress.poiInfos.alternativeName}`;
+    if (this.addressData.length > 0) {
+      const defaultAddress = new Address(this.addressData[0]);
+      this.selected = defaultAddress;
+      this.$emit("input", this.selected);
+      this.queryText = `${defaultAddress.poiInfos.name} ${defaultAddress.poiInfos.alternativeName}`;
+    }
   }
 
   checkCurrentPosition(e: LatLng): boolean {
