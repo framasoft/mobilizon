@@ -1616,6 +1616,12 @@ defmodule Mobilizon.Actors do
     from(a in query, where: a.preferred_username == ^name and is_nil(a.domain))
   end
 
+  @own_domain Mobilizon.Config.instance_hostname()
+
+  defp filter_by_name(query, [name, @own_domain]) do
+    filter_by_name(query, [name])
+  end
+
   defp filter_by_name(query, [name, domain]) do
     from(a in query, where: a.preferred_username == ^name and a.domain == ^domain)
   end
