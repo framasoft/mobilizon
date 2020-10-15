@@ -281,7 +281,7 @@
   "Public feeds": "Public feeds",
   "Public iCal Feed": "Public iCal Feed",
   "Publish": "Publish",
-  "Published events": "Published events",
+  "Published events with <b>{comments}</b> comments and <b>{participations}</b> confirmed participations": "Published events with <b>{comments}</b> comments and <b>{participations}</b> confirmed participations",
   "RSS/Atom Feed": "RSS/Atom Feed",
   "Read Framasoft’s statement of intent on the Framablog": "Read Framasoft’s statement of intent on the Framablog",
   "Redirecting to event…": "Redirecting to event…",
@@ -800,5 +800,8 @@
   "To register for an event by choosing one of your identities": "To register for an event by choosing one of your identities",
   "To create or join an group and start organizing with other people": "To create or join an group and start organizing with other people",
   "About {instance}": "About {instance}",
-  "Please read the {fullRules} published by {instance}'s administrators.": "Please read the {fullRules} published by {instance}'s administrators."
+  "Please read the {fullRules} published by {instance}'s administrators.": "Please read the {fullRules} published by {instance}'s administrators.",
+  "Instances following you": "Instances following you",
+  "Instances you follow": "Instances you follow",
+  "Last group created": "Last group created"
 }

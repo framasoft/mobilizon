@@ -799,6 +799,15 @@ defmodule Mobilizon.Events do
   @moderator_roles [:moderator, :administrator, :creator]
 
   @doc """
+  Returns the number of participations for all local events
+  """
+  @spec count_confirmed_participants_for_local_events :: integer()
+  def count_confirmed_participants_for_local_events do
+    count_confirmed_participants_for_local_events_query()
+    |> Repo.one()
+  end
+
+  @doc """
   Returns the list of participants for an event.
   Default behaviour is to not return :not_approved or :not_confirmed participants
   """
@@ -1546,6 +1555,14 @@ defmodule Mobilizon.Events do
   @spec sessions_for_track_query(integer) :: Ecto.Query.t()
   defp sessions_for_track_query(track_id) do
     from(s in Session, where: s.track_id == ^track_id)
+  end
+
+  @spec count_confirmed_participants_for_local_events_query :: Ecto.Query.t()
+  defp count_confirmed_participants_for_local_events_query do
+    Participant
+    |> join(:inner, [p], e in Event, on: p.event_id == e.id)
+    |> where([p, e], e.local and p.role not in [^:not_approved, ^:not_confirmed, ^:rejected])
+    |> select([p], count(p.id))
   end
 
   @spec list_participants_for_event_query(String.t()) :: Ecto.Query.t()

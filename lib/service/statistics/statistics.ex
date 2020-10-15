@@ -26,8 +26,12 @@ defmodule Mobilizon.Service.Statistics do
     Events.count_local_events()
   end
 
+  defp create_cache(:confirmed_participations_to_local_events) do
+    Events.count_confirmed_participants_for_local_events()
+  end
+
   defp create_cache(:local_comments) do
-    Discussions.count_local_comments()
+    Discussions.count_local_comments_under_events()
   end
 
   defp create_cache(:local_groups) do
@@ -39,7 +43,7 @@ defmodule Mobilizon.Service.Statistics do
   end
 
   defp create_cache(:federation_comments) do
-    Discussions.count_comments()
+    Discussions.count_comments_under_events()
   end
 
   defp create_cache(:federation_groups) do

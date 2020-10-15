@@ -4,6 +4,7 @@ export const DASHBOARD = gql`
   query {
     dashboard {
       lastPublicEventPublished {
+        id
         uuid
         title
         picture {
@@ -12,10 +13,24 @@ export const DASHBOARD = gql`
           url
         }
       }
+      lastGroupCreated {
+        id
+        preferredUsername
+        domain
+        name
+        avatar {
+          id
+          url
+        }
+      }
       numberOfUsers
       numberOfEvents
       numberOfComments
       numberOfReports
+      numberOfGroups
+      numberOfFollowers
+      numberOfFollowings
+      numberOfConfirmedParticipationsToLocalEvents
     }
   }
 `;

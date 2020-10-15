@@ -532,7 +532,7 @@
   "Public page": "Page publique",
   "Publication date": "Date de publication",
   "Publish": "Publier",
-  "Published events": "Événements publiés",
+  "Published events with <b>{comments}</b> comments and <b>{participations}</b> confirmed participations": "Événements publiés avec <b>{comments}</b> commentaires et <b>{participations}</b> participations confirmées",
   "RSS/Atom Feed": "Flux RSS/Atom",
   "Radius": "Rayon",
   "Read Framasoft’s statement of intent on the Framablog": "Lire la note d’intention de Framasoft sur le Framablog",
@@ -850,5 +850,8 @@
   "To register for an event by choosing one of your identities": "Pour s'inscrire à un évènement en choisissant une de vos identités",
   "To create or join an group and start organizing with other people": "Pour créer ou rejoindre un groupe et commencer à vous organiser avec d'autres personnes",
   "About {instance}": "À propos de {instance}",
-  "Please read the {fullRules} published by {instance}'s administrators.": "Merci de lire les {fullRules} publiées par les administrateur·ices de {instance}."
+  "Please read the {fullRules} published by {instance}'s administrators.": "Merci de lire les {fullRules} publiées par les administrateur·ices de {instance}.",
+  "Instances following you": "Instances vous suivant",
+  "Instances you follow": "Instances que vous suivez",
+  "Last group created": "Dernier groupe créé"
 }

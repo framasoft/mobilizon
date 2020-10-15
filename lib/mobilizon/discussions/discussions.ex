@@ -283,16 +283,24 @@ defmodule Mobilizon.Discussions do
   end
 
   @doc """
-  Counts local comments.
+  Counts local comments under events
   """
-  @spec count_local_comments :: integer
-  def count_local_comments, do: Repo.one(count_local_comments_query())
+  @spec count_local_comments_under_events :: integer
+  def count_local_comments_under_events do
+    count_local_comments_query()
+    |> filter_comments_under_events()
+    |> Repo.one()
+  end
 
   @doc """
   Counts all comments.
   """
-  @spec count_comments :: integer
-  def count_comments, do: Repo.one(count_comments_query())
+  @spec count_comments_under_events :: integer
+  def count_comments_under_events do
+    count_comments_query()
+    |> filter_comments_under_events()
+    |> Repo.one()
+  end
 
   def get_discussion(discussion_id) do
     Discussion
@@ -423,11 +431,8 @@ defmodule Mobilizon.Discussions do
 
   @spec count_local_comments_query :: Ecto.Query.t()
   defp count_local_comments_query do
-    from(
-      c in Comment,
-      select: count(c.id),
-      where: c.local == ^true and c.visibility in ^@public_visibility
-    )
+    count_comments_query()
+    |> where([c], local: true)
   end
 
   @spec count_comments_query :: Ecto.Query.t()
@@ -437,6 +442,10 @@ defmodule Mobilizon.Discussions do
       select: count(c.id),
       where: c.visibility in ^@public_visibility
     )
+  end
+
+  defp filter_comments_under_events(query) do
+    where(query, [c], is_nil(c.discussion_id) and not is_nil(c.event_id))
   end
 
   @spec preload_for_comment(Ecto.Query.t()) :: Ecto.Query.t()
