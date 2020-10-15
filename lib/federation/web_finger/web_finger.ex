@@ -93,7 +93,7 @@ defmodule Mobilizon.Federation.WebFinger do
 
           _ ->
             Logger.debug(fn ->
-              "Unhandled type: #{inspect(link["type"])}"
+              "Unhandled type to finger: #{inspect(link["type"])}"
             end)
 
             data
