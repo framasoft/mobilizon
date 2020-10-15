@@ -14356,12 +14356,12 @@ vue-class-component@^7.2.3:
   resolved "https://registry.yarnpkg.com/vue-class-component/-/vue-class-component-7.2.6.tgz#8471e037b8e4762f5a464686e19e5afc708502e4"
   integrity sha512-+eaQXVrAm/LldalI272PpDe3+i4mPis0ORiMYxF6Ae4hyuCh15W8Idet7wPUEs4N4YptgFHGys4UrgNQOMyO6w==
 
-vue-cli-plugin-styleguidist@~4.33.0:
-  version "4.33.0"
-  resolved "https://registry.yarnpkg.com/vue-cli-plugin-styleguidist/-/vue-cli-plugin-styleguidist-4.33.0.tgz#7edc31af1184d9a631ba5f61120d3eb43ec01b85"
-  integrity sha512-uq+KeFbklYao2A7WpN+tvnLTwSoqtxqgqJlvzNbzMm0m19CoN7KAPoSv2TSvq+DsIBFwFfzpuddveK+ijm7dqw==
+vue-cli-plugin-styleguidist@~4.33.1:
+  version "4.33.1"
+  resolved "https://registry.yarnpkg.com/vue-cli-plugin-styleguidist/-/vue-cli-plugin-styleguidist-4.33.1.tgz#9d830b211002e184781fca2eeaff34cac57adeae"
+  integrity sha512-zKV/95igxwwR2Ft6Gmb6JXwy19gsneFsfL4KuCApmPIghqRcpRyqc5NG+aamk3pbFRIiWgd5S08+wjAysKawRA==
   dependencies:
-    vue-styleguidist "^4.33.0"
+    vue-styleguidist "^4.33.1"
     webpack-merge "^4.2.1"
 
 vue-cli-plugin-svg@~0.1.3:
@@ -14375,10 +14375,10 @@ vue-cli-plugin-svg@~0.1.3:
     url-loader "^2.0.0"
     vue-svg-loader "^0.12.0"
 
-vue-docgen-api@^4.33.0:
-  version "4.33.0"
-  resolved "https://registry.yarnpkg.com/vue-docgen-api/-/vue-docgen-api-4.33.0.tgz#59630636373ee3f06b0a36820d6235fdb9adfbae"
-  integrity sha512-kNIAE8kKsZtOqROqDyMGa30AVGcwo2D2g+Z2thuVbEcOAqRc4eM72PoFwqX9ZRqQSdj4TnqIGI3EfF4KHTZ/EQ==
+vue-docgen-api@^4.33.1:
+  version "4.33.1"
+  resolved "https://registry.yarnpkg.com/vue-docgen-api/-/vue-docgen-api-4.33.1.tgz#ea6bcf8c30242677b249e0423030a3132268b744"
+  integrity sha512-q+htx4h/Qd+qwCBE7T7OR79CHgFWzyIraLdhi+/stTO+owSvKh2rQsVMN8zGUn5VaSkXWb5ku8lWIHD71AUNfg==
   dependencies:
     "@babel/parser" "^7.6.0"
     "@babel/types" "^7.6.0"
@@ -14501,10 +14501,10 @@ vue-style-loader@^4.1.0, vue-style-loader@^4.1.2:
     hash-sum "^1.0.2"
     loader-utils "^1.0.2"
 
-vue-styleguidist@^4.33.0:
-  version "4.33.0"
-  resolved "https://registry.yarnpkg.com/vue-styleguidist/-/vue-styleguidist-4.33.0.tgz#646ff0a1af3fd1f7d82361d0463ff7350b8aa083"
-  integrity sha512-G9p6IhGZFItTh7iOtd3fE5VmV9g9QE8E+FgcQA4K9irRXbioS7DNwDH3ZAzC7exWWNeB7shITks/1YArd0sUrA==
+vue-styleguidist@^4.33.1:
+  version "4.33.1"
+  resolved "https://registry.yarnpkg.com/vue-styleguidist/-/vue-styleguidist-4.33.1.tgz#4ee257e86ea080df07bc4bbd64e531c0ef799553"
+  integrity sha512-QebCSt0HTSIZNX6LCCvLPKmV9gp51PrdmhwsF/tSPvrjFDbPx5qhs+1+OET52kSh3FQcOt1Oup1pQxuQyh5PVQ==
   dependencies:
     "@vxna/mini-html-webpack-template" "^1.0.0"
     ast-types "^0.13.3"
@@ -14554,7 +14554,7 @@ vue-styleguidist@^4.33.0:
     style-loader "^1.0.0"
     terser-webpack-plugin "^2.2.2"
     to-ast "^1.0.0"
-    vue-docgen-api "^4.33.0"
+    vue-docgen-api "^4.33.1"
     vue-inbrowser-compiler "^4.33.0"
     vue-inbrowser-compiler-utils "^4.33.0"
     webpack-dev-server "^3.11.0"
