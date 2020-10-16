@@ -1457,10 +1457,10 @@
   dependencies:
     "@types/prosemirror-model" "*"
 
-"@types/prosemirror-view@*", "@types/prosemirror-view@^1.11.4":
-  version "1.16.0"
-  resolved "https://registry.yarnpkg.com/@types/prosemirror-view/-/prosemirror-view-1.16.0.tgz#46df9e8f259f4ec1bd4ab7932d2b626c7b9d6c80"
-  integrity sha512-egACYfElDnzVIJNDenitpLEyjxqlh9T2zhPH1xe88oVUlwJCb64SbBSn/JSUkqTpb0hRH8JKl74OHLm6QER+Kw==
+"@types/prosemirror-view@*", "@types/prosemirror-view@^1.16.1":
+  version "1.16.1"
+  resolved "https://registry.yarnpkg.com/@types/prosemirror-view/-/prosemirror-view-1.16.1.tgz#09d66e2518366fd8d6c316c35c621bc374a0414c"
+  integrity sha512-vsL7QB9Qmg9HcBTWsOkmBEGMF0CfA/SZgtqlUArQglnDWV40ZJYonkjBzyP+YhurMC/s4JT4T2vzfnv7rFF/cg==
   dependencies:
     "@types/prosemirror-model" "*"
     "@types/prosemirror-state" "*"

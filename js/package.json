@@ -61,7 +61,7 @@
     "@types/prosemirror-inputrules": "^1.0.2",
     "@types/prosemirror-model": "^1.7.2",
     "@types/prosemirror-state": "^1.2.4",
-    "@types/prosemirror-view": "^1.11.4",
+    "@types/prosemirror-view": "^1.16.1",
     "@types/vuedraggable": "^2.23.0",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
     "@typescript-eslint/parser": "^4.0.1",
