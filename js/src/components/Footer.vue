@@ -1,7 +1,6 @@
 <template>
   <footer class="footer" ref="footer">
-    <mobilizon-logo :invert="true" class="logo" />
-    <!-- <img src="../assets/footer.png" :alt="$t('World map')" /> -->
+    <img :src="`/img/pics/footer_${random}.jpg`" alt="" />
     <ul>
       <li>
         <router-link :to="{ name: RouteName.ABOUT }">{{ $t("About") }}</router-link>
@@ -32,41 +31,50 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import RouteName from "../router/name";
-import Logo from "./Logo.vue";
 
-@Component({
-  components: {
-    "mobilizon-logo": Logo,
-  },
-})
+@Component
 export default class Footer extends Vue {
   RouteName = RouteName;
+
+  // eslint-disable-next-line class-methods-use-this
+  get random(): number {
+    return Math.floor(Math.random() * 4) + 1;
+  }
 }
 </script>
 <style lang="scss" scoped>
+@import "~bulma/sass/utilities/mixins.sass";
 footer.footer {
   color: $secondary;
   display: flex;
   flex-direction: column;
   align-items: center;
   font-size: 14px;
+  padding: 1rem 1.5rem;
 
-  .logo {
-    fill: $secondary;
+  img {
     flex: 1;
-    max-width: 300px;
-    margin-bottom: 2rem;
+    max-width: 40rem;
+    @include mobile {
+      max-width: 400px;
+    }
   }
 
   div.content {
     flex: 1;
   }
 
-  ul li {
+  ul {
     display: inline-flex;
-    margin: auto 5px;
-    a {
-      font-size: 1.1rem;
+    flex-wrap: wrap;
+    justify-content: space-around;
+
+    li {
+      display: inline-flex;
+      margin: auto 5px;
+      a {
+        font-size: 1.1rem;
+      }
     }
   }
 
