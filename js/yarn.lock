@@ -14342,10 +14342,10 @@ void-elements@^3.1.0:
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-3.1.0.tgz#614f7fbf8d801f0bb5f0661f5b2f5785750e4f09"
   integrity sha1-YU9/v42AHwu18GYfWy9XhXUOTwk=
 
-vue-apollo@^3.0.3:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/vue-apollo/-/vue-apollo-3.0.4.tgz#d48a990d02c1febb5248d097f921c74c50a22e8a"
-  integrity sha512-sthSS9E6FB7OMmSJmIG7e89QZvzwK/1PCD8A/IfGBST48pxY7sdSxRp22Gu2/s/gxQBnQPI1H1ZPZE97IG+zXA==
+vue-apollo@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/vue-apollo/-/vue-apollo-3.0.5.tgz#d4c7e8c7f36d76a7eed005fe565621eb0fb20522"
+  integrity sha512-Y9EMf47rEXLUpn8hPVZt4Iu9/KoI+OFmAznAYjL7oVoYvVGbt71jWhZWHQiN9YBriI1SscF5Exy0a2bV7XVA3A==
   dependencies:
     chalk "^2.4.2"
     serialize-javascript "^4.0.0"

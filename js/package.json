@@ -41,7 +41,7 @@
     "tiptap-extensions": "^1.29.1",
     "v-tooltip": "2.0.2",
     "vue": "^2.6.11",
-    "vue-apollo": "^3.0.3",
+    "vue-apollo": "^3.0.5",
     "vue-class-component": "^7.2.3",
     "vue-i18n": "^8.14.0",
     "vue-meta": "^2.3.1",
