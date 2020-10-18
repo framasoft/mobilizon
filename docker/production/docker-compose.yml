@@ -1,0 +1,44 @@
+version: "2.1"
+
+services:
+  mobilizon:
+    image: mobilizon
+    environment:
+      - MOBILIZON_INSTANCE_NAME="My Mobilizon Instance"
+      - MOBILIZON_INSTANCE_HOST=mobilizon.lan
+      - MOBILIZON_INSTANCE_EMAIL=noreply@mobilizon.lan
+      - MOBILIZON_INSTANCE_REGISTRATIONS_OPEN=true
+      - MOBILIZON_DATABASE_USERNAME
+      - MOBILIZON_DATABASE_PASSWORD
+      - MOBILIZON_DATABASE_DBNAME=mobilizon_prod
+      - MOBILIZON_DATABASE_HOST=postgres
+      - MOBILIZON_INSTANCE_SECRET_KEY_BASE
+      - MOBILIZON_INSTANCE_SECRET_KEY
+      - MOBILIZON_ADMIN_EMAIL=your@email.com
+      - MOBILIZON_SMPT_SERVER=yoursmtpserver
+      - MOBILIZON_SMPT_MOBILIZON_SMPT_HOSTNAME=your.smtp.domain
+      - MOBILIZON_SMPT_PORT=25
+      - MOBILIZON_SMPT_USERNAME
+      - MOBILIZON_SMPT_PASSWORD
+      - MOBILIZON_SMPT_SSL=false
+    volumes:
+      - ./public/upload:/app/upload
+    ports:
+     - "4000:4000"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgis/postgis
+    volumes:
+      - ./db:/var/lib/postgresql/data
+      - ./wal:/wal
+      - ./postgresql.conf:/var/lib/postgresql/data/postgresql.conf
+    environment:
+      - POSTGRES_PASSWORD
+      - PGDATA=/var/lib/postgresql/data/pgdata
+
+networks:
+  default:
+    ipam:
+      driver: default
