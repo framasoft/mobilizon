@@ -406,7 +406,7 @@ defmodule Mobilizon.Events do
   def list_public_events_for_actor(actor, page \\ nil, limit \\ nil)
 
   def list_public_events_for_actor(%Actor{type: :Group} = group, page, limit),
-    do: list_organized_events_for_group(group, :public, nil, page, limit)
+    do: list_organized_events_for_group(group, :public, nil, nil, page, limit)
 
   def list_public_events_for_actor(%Actor{id: actor_id}, page, limit) do
     actor_id
