@@ -88,6 +88,9 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
 
   def group_actor(%Actor{} = actor), do: actor
 
+  def role_needed_to_update(%Actor{} = _group), do: :administrator
+  def role_needed_to_delete(%Actor{} = _group), do: :administrator
+
   defp prepare_args_for_actor(args) do
     args
     |> maybe_sanitize_username()

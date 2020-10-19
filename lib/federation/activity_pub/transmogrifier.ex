@@ -381,12 +381,15 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
           update_data
       ) do
     with actor <- Utils.get_actor(update_data),
-         {:ok, %Actor{url: actor_url, suspended: false}} <-
+         {:ok, %Actor{url: actor_url, suspended: false} = actor} <-
            ActivityPub.get_or_fetch_actor_by_url(actor),
          {:ok, %Event{} = old_event} <-
            object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
          object_data <- Converter.Event.as_to_model_data(object),
-         {:origin_check, true} <- {:origin_check, Utils.origin_check?(actor_url, update_data)},
+         {:origin_check, true} <-
+           {:origin_check,
+            Utils.origin_check?(actor_url, update_data) ||
+              Utils.can_update_group_object?(actor, old_event)},
          {:ok, %Activity{} = activity, %Event{} = new_event} <-
            ActivityPub.update(old_event, object_data, false) do
       {:ok, activity, new_event}
@@ -431,11 +434,15 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:origin_check, true} <-
            {:origin_check,
             Utils.origin_check?(actor_url, update_data["object"]) ||
-              Utils.activity_actor_is_group_member?(actor, old_post)},
+              Utils.can_update_group_object?(actor, old_post)},
          {:ok, %Activity{} = activity, %Post{} = new_post} <-
            ActivityPub.update(old_post, object_data, false) do
       {:ok, activity, new_post}
     else
+      {:origin_check, _} ->
+        Logger.warn("Actor tried to update a post but doesn't has the required role")
+        :error
+
       _e ->
         :error
     end
@@ -452,7 +459,10 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:ok, %Resource{} = old_resource} <-
            object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
          object_data <- Converter.Resource.as_to_model_data(object),
-         {:origin_check, true} <- {:origin_check, Utils.origin_check?(actor_url, update_data)},
+         {:origin_check, true} <-
+           {:origin_check,
+            Utils.origin_check?(actor_url, update_data) ||
+              Utils.can_update_group_object?(actor, old_resource)},
          {:ok, %Activity{} = activity, %Resource{} = new_resource} <-
            ActivityPub.update(old_resource, object_data, false) do
       {:ok, activity, new_resource}
@@ -549,11 +559,11 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     with actor_url <- Utils.get_actor(data),
          {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_actor_by_url(actor_url),
          object_id <- Utils.get_url(object),
-         {:ok, object} <- can_delete_group_object(object_id),
+         {:ok, object} <- is_group_object_gone(object_id),
          {:origin_check, true} <-
            {:origin_check,
             Utils.origin_check_from_id?(actor_url, object_id) ||
-              Utils.activity_actor_is_group_member?(actor, object)},
+              Utils.can_delete_group_object?(actor, object)},
          {:ok, activity, object} <- ActivityPub.delete(object, actor, false) do
       {:ok, activity, object}
     else
@@ -561,6 +571,29 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         Logger.warn("Object origin check failed")
         :error
 
+      e ->
+        Logger.error(inspect(e))
+        :error
+    end
+  end
+
+  def handle_incoming(
+        %{"type" => "Move", "object" => %{"type" => type} = object, "actor" => _actor} = data
+      )
+      when type in ["ResourceCollection", "Document"] do
+    with actor <- Utils.get_actor(data),
+         {:ok, %Actor{url: actor_url, suspended: false} = actor} <-
+           ActivityPub.get_or_fetch_actor_by_url(actor),
+         {:ok, %Resource{} = old_resource} <-
+           object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
+         object_data <- Converter.Resource.as_to_model_data(object),
+         {:origin_check, true} <-
+           {:origin_check,
+            Utils.origin_check?(actor_url, data) ||
+              Utils.can_update_group_object?(actor, old_resource)},
+         {:ok, activity, new_resource} <- ActivityPub.move(:resource, old_resource, object_data) do
+      {:ok, activity, new_resource}
+    else
       e ->
         Logger.error(inspect(e))
         :error
@@ -1020,7 +1053,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
-  defp can_delete_group_object(object_id) do
+  defp is_group_object_gone(object_id) do
     case ActivityPub.fetch_object_from_url(object_id, force: true) do
       {:error, error_message, object} when error_message in ["Gone", "Not found"] ->
         {:ok, object}

@@ -67,4 +67,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.TodoLists do
   def actor(%TodoList{}), do: nil
 
   def group_actor(%TodoList{actor_id: actor_id}), do: Actors.get_actor(actor_id)
+
+  def role_needed_to_update(%TodoList{}), do: :member
+  def role_needed_to_delete(%TodoList{}), do: :member
 end

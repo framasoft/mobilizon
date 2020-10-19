@@ -6,11 +6,12 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.DeleteTest do
   import ExUnit.CaptureLog
   import Mox
 
-  alias Mobilizon.{Actors, Discussions, Events, Posts}
+  alias Mobilizon.{Actors, Discussions, Events, Posts, Resources}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
   alias Mobilizon.Posts.Post
+  alias Mobilizon.Resources.Resource
   alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier}
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Service.HTTP.ActivityPub.Mock
@@ -145,7 +146,75 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.DeleteTest do
   end
 
   describe "handle incoming delete activities for group posts" do
-    test "works for remote deletions" do
+    test "works for remote deletions by moderators" do
+      %Actor{url: remote_actor_url} =
+        remote_actor =
+        insert(:actor,
+          domain: "remote.domain",
+          url: "https://remote.domain/@remote",
+          preferred_username: "remote"
+        )
+
+      group = insert(:group)
+      insert(:member, actor: remote_actor, parent: group, role: :moderator)
+      %Post{} = post = insert(:post, attributed_to: group)
+
+      data = Convertible.model_to_as(post)
+      refute is_nil(Posts.get_post_by_url(data["id"]))
+
+      delete_data =
+        File.read!("test/fixtures/mastodon-delete.json")
+        |> Jason.decode!()
+
+      object =
+        data
+        |> Map.put("type", "Article")
+
+      delete_data =
+        delete_data
+        |> Map.put("actor", remote_actor_url)
+        |> Map.put("object", object)
+
+      {:ok, _activity, _actor} = Transmogrifier.handle_incoming(delete_data)
+
+      assert is_nil(Posts.get_post_by_url(data["id"]))
+    end
+
+    test "doesn't work for remote deletions if the actor is just a group member" do
+      %Actor{url: remote_actor_url} =
+        remote_actor =
+        insert(:actor,
+          domain: "remote.domain",
+          url: "https://remote.domain/@remote",
+          preferred_username: "remote"
+        )
+
+      group = insert(:group)
+      insert(:member, actor: remote_actor, parent: group, role: :member)
+      %Post{} = post = insert(:post, attributed_to: group)
+
+      data = Convertible.model_to_as(post)
+      refute is_nil(Posts.get_post_by_url(data["id"]))
+
+      delete_data =
+        File.read!("test/fixtures/mastodon-delete.json")
+        |> Jason.decode!()
+
+      object =
+        data
+        |> Map.put("type", "Article")
+
+      delete_data =
+        delete_data
+        |> Map.put("actor", remote_actor_url)
+        |> Map.put("object", object)
+
+      :error = Transmogrifier.handle_incoming(delete_data)
+
+      refute is_nil(Posts.get_post_by_url(data["id"]))
+    end
+
+    test "doesn't work for remote deletions if the actor is not a group member" do
       %Actor{url: remote_actor_url} =
         insert(:actor,
           domain: "remote.domain",
@@ -176,12 +245,48 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.DeleteTest do
 
       refute is_nil(Posts.get_post_by_url(data["id"]))
     end
+  end
+
+  describe "handle incoming delete activities for resources" do
+    test "works for remote deletions" do
+      %Actor{url: remote_actor_url} =
+        remote_actor =
+        insert(:actor,
+          domain: "remote.domain",
+          url: "http://remote.domain/@remote",
+          preferred_username: "remote"
+        )
+
+      group = insert(:group)
+      insert(:member, actor: remote_actor, parent: group, role: :member)
+      %Resource{} = resource = insert(:resource, actor: group)
+
+      data = Convertible.model_to_as(resource)
+      refute is_nil(Resources.get_resource_by_url(data["id"]))
+
+      delete_data =
+        File.read!("test/fixtures/mastodon-delete.json")
+        |> Jason.decode!()
+
+      object =
+        data
+        |> Map.put("type", "Document")
+
+      delete_data =
+        delete_data
+        |> Map.put("actor", remote_actor_url)
+        |> Map.put("object", object)
+
+      {:ok, _activity, _actor} = Transmogrifier.handle_incoming(delete_data)
+
+      assert is_nil(Resources.get_resource_by_url(data["id"]))
+    end
 
     test "doesn't work for remote deletions if the actor is not a group member" do
       %Actor{url: remote_actor_url} =
         insert(:actor,
           domain: "remote.domain",
-          url: "https://remote.domain/@remote",
+          url: "http://remote.domain/@remote",
           preferred_username: "remote"
         )
 

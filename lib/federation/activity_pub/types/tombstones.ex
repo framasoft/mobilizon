@@ -11,4 +11,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Tombstones do
   def actor(_), do: nil
 
   def group_actor(_), do: nil
+
+  def role_needed_to_update(%Actor{}), do: nil
+  def role_needed_to_delete(%Actor{}), do: nil
 end

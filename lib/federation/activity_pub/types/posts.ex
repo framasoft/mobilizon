@@ -44,7 +44,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
          {:ok, %Post{attributed_to_id: group_id, author_id: creator_id} = post} <-
            Posts.update_post(post, args),
          {:ok, true} <- Cachex.del(:activity_pub, "post_#{post.slug}"),
-         {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
+         {:ok, %Actor{url: group_url} = group} <- Actors.get_group_by_actor_id(group_id),
          %Actor{url: creator_url} = creator <- Actors.get_actor(creator_id),
          post_as_data <-
            Convertible.model_to_as(%{post | attributed_to: group, author: creator}),
@@ -52,7 +52,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
            "to" => [group.members_url],
            "cc" => [],
            "actor" => creator_url,
-           "attributedTo" => [creator_url]
+           "attributedTo" => [group_url]
          } do
       update_data = make_update_data(post_as_data, Map.merge(audience, additional))
 
@@ -95,4 +95,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
 
   def group_actor(%Post{attributed_to_id: attributed_to_id}),
     do: Actors.get_actor(attributed_to_id)
+
+  def role_needed_to_update(%Post{}), do: :moderator
+  def role_needed_to_delete(%Post{}), do: :moderator
 end
