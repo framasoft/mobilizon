@@ -97,7 +97,7 @@ import { FETCH_POST, CREATE_POST, UPDATE_POST, DELETE_POST } from "../../graphql
 
 import { IPost, PostVisibility } from "../../types/post.model";
 import Editor from "../../components/Editor.vue";
-import { IActor, IGroup } from "../../types/actor";
+import { IActor, IGroup, usernameWithDomain } from "../../types/actor";
 import TagInput from "../../components/Event/TagInput.vue";
 import RouteName from "../../router/name";
 import Subtitle from "../../components/Utils/Subtitle.vue";
@@ -233,7 +233,7 @@ export default class EditPost extends Vue {
     if (data && this.post.attributedTo) {
       this.$router.push({
         name: RouteName.POSTS,
-        params: { preferredUsername: this.post.attributedTo.preferredUsername },
+        params: { preferredUsername: usernameWithDomain(this.post.attributedTo) },
       });
     }
   }
