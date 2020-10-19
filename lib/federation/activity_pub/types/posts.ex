@@ -1,6 +1,6 @@
 defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
   @moduledoc false
-  alias Mobilizon.{Actors, Posts}
+  alias Mobilizon.{Actors, Posts, Tombstone}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
@@ -10,6 +10,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
   import Mobilizon.Federation.ActivityPub.Utils, only: [make_create_data: 2, make_update_data: 2]
 
   @behaviour Entity
+
+  @public_ap "https://www.w3.org/ns/activitystreams#Public"
 
   @impl Entity
   def create(args, additional) do
@@ -66,7 +68,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
   def delete(
         %Post{
           url: url,
-          attributed_to: %Actor{url: group_url}
+          attributed_to: %Actor{url: group_url, members_url: members_url}
         } = post,
         %Actor{url: actor_url} = actor,
         _local,
@@ -77,11 +79,13 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
       "type" => "Delete",
       "object" => Convertible.model_to_as(post),
       "id" => url <> "/delete",
-      "to" => [group_url]
+      "to" => [group_url, @public_ap, members_url]
     }
 
-    with {:ok, _post} <- Posts.delete_post(post),
-         {:ok, true} <- Cachex.del(:activity_pub, "post_#{post.slug}") do
+    with {:ok, %Post{} = post} <- Posts.delete_post(post),
+         {:ok, true} <- Cachex.del(:activity_pub, "post_#{post.slug}"),
+         {:ok, %Tombstone{} = _tombstone} <-
+           Tombstone.create_tombstone(%{uri: post.url, actor_id: actor.id}) do
       {:ok, activity_data, actor, post}
     end
   end

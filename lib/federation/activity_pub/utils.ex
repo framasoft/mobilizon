@@ -287,9 +287,14 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   def origin_check_from_id?(id, %{"id" => other_id} = _params) when is_binary(other_id),
     do: origin_check_from_id?(id, other_id)
 
-  def activity_actor_is_group_member?(%Actor{id: actor_id}, object) do
+  def activity_actor_is_group_member?(%Actor{id: actor_id, url: actor_url}, object) do
+    Logger.debug(
+      "Checking if activity actor #{actor_url} is a member from group from #{object.url}"
+    )
+
     case Ownable.group_actor(object) do
       %Actor{type: :Group, id: group_id} ->
+        Logger.debug("Group object ID is #{group_id}")
         Actors.is_member?(actor_id, group_id)
 
       _ ->

@@ -419,6 +419,50 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   end
 
   def handle_incoming(
+        %{"type" => "Update", "object" => %{"type" => "Article"} = object, "actor" => _actor} =
+          update_data
+      ) do
+    with actor <- Utils.get_actor(update_data),
+         {:ok, %Actor{url: actor_url, suspended: false} = actor} <-
+           ActivityPub.get_or_fetch_actor_by_url(actor),
+         {:ok, %Post{} = old_post} <-
+           object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
+         object_data <- Converter.Post.as_to_model_data(object),
+         {:origin_check, true} <-
+           {:origin_check,
+            Utils.origin_check?(actor_url, update_data["object"]) ||
+              Utils.activity_actor_is_group_member?(actor, old_post)},
+         {:ok, %Activity{} = activity, %Post{} = new_post} <-
+           ActivityPub.update(old_post, object_data, false) do
+      {:ok, activity, new_post}
+    else
+      _e ->
+        :error
+    end
+  end
+
+  def handle_incoming(
+        %{"type" => "Update", "object" => %{"type" => type} = object, "actor" => _actor} =
+          update_data
+      )
+      when type in ["ResourceCollection", "Document"] do
+    with actor <- Utils.get_actor(update_data),
+         {:ok, %Actor{url: actor_url, suspended: false}} <-
+           ActivityPub.get_or_fetch_actor_by_url(actor),
+         {:ok, %Resource{} = old_resource} <-
+           object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
+         object_data <- Converter.Resource.as_to_model_data(object),
+         {:origin_check, true} <- {:origin_check, Utils.origin_check?(actor_url, update_data)},
+         {:ok, %Activity{} = activity, %Resource{} = new_resource} <-
+           ActivityPub.update(old_resource, object_data, false) do
+      {:ok, activity, new_resource}
+    else
+      _e ->
+        :error
+    end
+  end
+
+  def handle_incoming(
         %{"type" => "Update", "object" => %{"type" => "Member"} = object, "actor" => _actor} =
           update_data
       ) do
@@ -505,7 +549,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     with actor_url <- Utils.get_actor(data),
          {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_actor_by_url(actor_url),
          object_id <- Utils.get_url(object),
-         {:error, "Gone", object} <- ActivityPub.fetch_object_from_url(object_id, force: true),
+         {:ok, object} <- can_delete_group_object(object_id),
          {:origin_check, true} <-
            {:origin_check,
             Utils.origin_check_from_id?(actor_url, object_id) ||
@@ -973,6 +1017,27 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       ActivityPub.fetch_object_from_url(url, force: false)
     else
       fetch_object_optionnally_authenticated(url, actor)
+    end
+  end
+
+  defp can_delete_group_object(object_id) do
+    case ActivityPub.fetch_object_from_url(object_id, force: true) do
+      {:error, error_message, object} when error_message in ["Gone", "Not found"] ->
+        {:ok, object}
+
+      {:ok, %{url: url} = object} ->
+        if Utils.are_same_origin?(url, Endpoint.url()),
+          do: {:ok, object},
+          else: {:error, "Group object URL remote"}
+
+      {:error, {:error, err}} ->
+        {:error, err}
+
+      {:error, err} ->
+        {:error, err}
+
+      err ->
+        err
     end
   end
 end
