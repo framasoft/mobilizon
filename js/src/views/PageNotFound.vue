@@ -1,7 +1,8 @@
 <template>
   <section class="section container has-text-centered not-found">
-    <div class="columns is-vertical">
-      <div class="column is-centered">
+    <div class="columns is-vertical is-centered">
+      <div class="column is-half">
+        <img src="/img/pics/2020-10-06-mobilizon-illustration-E_realisation.jpg" alt="" />
         <h1 class="title">{{ $t("The page you're looking for doesn't exist.") }}</h1>
         <p>
           {{ $t("Please make sure the address is correct and that the page hasn't been moved.") }}
@@ -56,7 +57,7 @@ export default class PageNotFound extends Vue {
 <style lang="scss">
 .container.not-found {
   margin: auto;
-  max-width: 600px;
+  background: $white;
 
   img {
     margin-top: 3rem;
