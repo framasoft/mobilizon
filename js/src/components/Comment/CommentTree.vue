@@ -6,6 +6,9 @@
       @submit.prevent="createCommentForEvent(newComment)"
       @keyup.ctrl.enter="createCommentForEvent(newComment)"
     >
+      <b-notification v-if="isEventOrganiser && !areCommentsClosed" :closable="false">{{
+        $t("Comments are closed for everybody else.")
+      }}</b-notification>
       <article class="media">
         <figure class="media-left">
           <identity-picker-wrapper :inline="false" v-model="newComment.actor" />
@@ -22,7 +25,9 @@
         </div>
       </article>
     </form>
-    <b-notification v-else :closable="false">{{ $t("Comments have been closed.") }}</b-notification>
+    <b-notification v-else :closable="false">{{
+      $t("The organiser has chosen to close comments.")
+    }}</b-notification>
     <transition name="comment-empty-list" mode="out-in">
       <transition-group name="comment-list" v-if="comments.length" class="comment-list" tag="ul">
         <comment
@@ -35,9 +40,8 @@
           @delete-comment="deleteComment"
         />
       </transition-group>
-      <div v-else class="no-comments">
+      <div v-else-if="isAbleToComment" class="no-comments">
         <span>{{ $t("No comments yet") }}</span>
-        <img src="../../assets/undraw_just_saying.svg" alt />
       </div>
     </transition>
   </div>
@@ -281,14 +285,24 @@ export default class CommentTree extends Vue {
     return this.orderedComments.filter((comment) => !comment.deletedAt || comment.totalReplies > 0);
   }
 
+  get isEventOrganiser(): boolean {
+    return (
+      this.currentActor.id !== undefined &&
+      this.event.organizerActor !== undefined &&
+      this.currentActor.id === this.event.organizerActor.id
+    );
+  }
+
+  get areCommentsClosed(): boolean {
+    return (
+      this.currentActor.id !== undefined &&
+      this.event.options.commentModeration !== CommentModeration.CLOSED
+    );
+  }
+
   get isAbleToComment(): boolean {
     if (this.currentActor.id) {
-      if (
-        this.event.options.commentModeration !== CommentModeration.CLOSED ||
-        (this.event.organizerActor && this.currentActor.id === this.event.organizerActor.id)
-      ) {
-        return true;
-      }
+      return this.areCommentsClosed || this.isEventOrganiser;
     }
     return false;
   }

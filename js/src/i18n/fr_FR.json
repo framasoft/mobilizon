@@ -855,5 +855,7 @@
   "Instances you follow": "Instances que vous suivez",
   "Last group created": "Dernier groupe créé",
   "{username} was invited to {group}": "{username} a été invité à {group}",
-  "The member was removed from the group {group}": "Le ou la membre a été supprimé·e du groupe {group}"
+  "The member was removed from the group {group}": "Le ou la membre a été supprimé·e du groupe {group}",
+  "The organiser has chosen to close comments.": "L'organisateur·ice a choisi de fermer les commentaires.",
+  "Comments are closed for everybody else.": "Les commentaires sont fermés pour tous·tes les autres."
 }
