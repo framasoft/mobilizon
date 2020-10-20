@@ -6,7 +6,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 1.0.0-rc.2 - 2020-10-20
 
+### Added
+
+- Show if user is disabled in [`mix mobilizon.users.show` task](https://docs.joinmobilizon.org/administration/CLI%20tasks/manage_users/#show-an-users-details)
+- Improved [ActivityPub documentation](https://docs.joinmobilizon.org/contribute/activity_pub/), especially for group federation.
+- Show instance languages on instance about page
+- Add fancy pictures on footer and 404 page
+
+### Changed
+
+- The [`mix mobilizon.users.delete` task](https://docs.joinmobilizon.org/administration/CLI%20tasks/manage_users/#delete-an-user) behaviour completely deletes the user, unless the `--keep_email` option is given (can be used to prevent someone registering again with the same email).
+- Deleting your own account completely deletes user information (it previously kept the email information).
+- The administration dashboard now shows more information on local events, groups and followed/following instances
+
+### Fixed
+
+- Significantly improve front-end build times and build in modern mode (with ES modules). The front-end payload is also quite lighter (loads each view asynchronously)
+- Don't count deactivated/suspended users in public statistics
+- Fix account settings for 3rd-party auth users
+- Disable sending reset password emails to disabled users
+- Fix display of event edit page on mobile
+- Fix events from former followed instances showing up on explore page or in search
+- The member management has received a couple fixes
+- Handle issue when nothing was found when doing a reverse geocode (when drag&dropping the marker on map)
+- Fix issue when searching by username with our own domain
+- Fix issue with wrong redirection for remote groups when deleting a post
+- Make sure only group moderators (and higher) can update/delete group events and group posts.
+- Fix OEmbed preview generator parser
+- Fix an issue with hostname validator in preview generator
+
+### Translations
+
+- Spanish
+- Galician
 
 ## 1.0.0-rc.1 - 2020-10-12
 
