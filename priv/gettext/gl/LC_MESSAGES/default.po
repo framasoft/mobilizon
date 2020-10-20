@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-10-18 04:49+0000\n"
-"PO-Revision-Date: 2020-10-19 04:51+0000\n"
+"PO-Revision-Date: 2020-10-20 09:01+0000\n"
 "Last-Translator: josé m. <correo@xmgz.eu>\n"
 "Language-Team: Galician <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/gl/>\n"
@@ -464,96 +464,128 @@ msgstr "A organización do evento non proporcionou unha descrición."
 msgctxt "terms"
 msgid "We implement a variety of security measures to maintain the safety of your personal information when you enter, submit, or access your personal information. Among other things, your browser session, as well as the traffic between your applications and the API, are secured with SSL/TLS, and your password is hashed using a strong one-way algorithm."
 msgstr ""
+"Implementamos unha serie de medidas de seguridade para protexer os teus "
+"datos personais cando introduces, envías ou accedes a eles. Entre outras "
+"cousas, a sesión do navegador, así como o tráfico entre as túas aplicacións "
+"e a API, están protexidas con SSL/TLS, e o contrasinal protexido cun "
+"algoritmo forte."
 
 #: lib/web/templates/api/privacy.html.eex:94
 #, elixir-format
 msgctxt "terms"
 msgid "No. We do not sell, trade, or otherwise transfer to outside parties your personally identifiable information. This does not include trusted third parties who assist us in operating our site, conducting our business, or servicing you, so long as those parties agree to keep this information confidential. We may also release your information when we believe release is appropriate to comply with the law, enforce our site policies, or protect ours or others rights, property, or safety."
 msgstr ""
+"Non. Non vendemos, comerciamos ou transferimos a terceiros a túa información "
+"personal identificable. Esto non inclúe a terceiras partes de confianza que "
+"nos axudan a operar a nosa web, sacar adiante a nosa empresa, a darche "
+"servizo, en tanto estos terceiro aceptan manter esta información de xeito "
+"confidencial. Tamén poderiamos entregar a túa información se cremos que "
+"facelo é apropiado para cumprir coa lei, facer cumprir as políticas desta "
+"web, ou protexer os dereitos ou a seguridade doutras persoas ou os nosos."
 
 #: lib/web/templates/api/terms.html.eex:23
 #, elixir-format
 msgctxt "terms"
 msgid "Accepting these Terms"
-msgstr ""
+msgstr "Aceptando estos Termos"
 
 #: lib/web/templates/api/terms.html.eex:27
 #, elixir-format
 msgctxt "terms"
 msgid "Changes to these Terms"
-msgstr ""
+msgstr "Cambios nos Termos"
 
 #: lib/web/templates/api/terms.html.eex:85
 #, elixir-format
 msgctxt "terms"
 msgid "A lot of the content on the Service is from you and others, and we don't review, verify or authenticate it, and it may include inaccuracies or false information. We make no representations, warranties, or guarantees relating to the quality, suitability, truth, accuracy or completeness of any content contained in the Service. You acknowledge sole responsibility for and assume all risk arising from your use of or reliance on any content."
 msgstr ""
+"Moito do contido no Servizo procede de ti e outras persoas, e non o "
+"revisamos, verificamos ou autenticamos, e podería incluír inexactitudes ou "
+"información falsa. Non respondemos, garantimos ou aseguramos a calidade, "
+"verosimilitude, certeza, exactitude ou integridade de calquera contido "
+"presente no Servizo. É responsabilidade túa asumir o risco procedente de "
+"utilizar ou confiar en calquera contido."
 
 #: lib/web/templates/api/terms.html.eex:60
 #, elixir-format
 msgctxt "terms"
 msgid "Also, you agree that you will not do any of the following in connection with the Service or other users:"
 msgstr ""
+"Tamén, aceptas que non vas facer nada do seguinte en conexión co Servizo ou "
+"outras usuarias:"
 
 #: lib/web/templates/api/terms.html.eex:65
 #, elixir-format
 msgctxt "terms"
 msgid "Circumvent or attempt to circumvent any filtering, security measures, rate limits or other features designed to protect the Service, users of the Service, or third parties."
 msgstr ""
+"Esquivar ou intentar evitar o filtrado, medidas de seguridade, límites de "
+"uso ou outras características deseñadas para protexer o Servizo, usuarias do "
+"Servizo, ou terceiras partes."
 
 #: lib/web/templates/api/terms.html.eex:64
 #, elixir-format
 msgctxt "terms"
 msgid "Collect any personal information about other users, or intimidate, threaten, stalk or otherwise harass other users of the Service;"
 msgstr ""
+"Recoller información personal acerca doutras usuarias, ou intimidar, "
+"ameazar, presionar ou molestar doutros xeitos ás usuarias do Servizo;"
 
 #: lib/web/templates/api/terms.html.eex:55
 #, elixir-format
 msgctxt "terms"
 msgid "Content that is illegal or unlawful, that would otherwise create liability;"
-msgstr ""
+msgstr "Contido que é ilegal ou alegal, que podería ser comprometido;"
 
 #: lib/web/templates/api/terms.html.eex:56
 #, elixir-format
 msgctxt "terms"
 msgid "Content that may infringe or violate any patent, trademark, trade secret, copyright, right of privacy, right of publicity or other intellectual or other right of any party;"
 msgstr ""
+"Contido que podería infrinxir ou violar patentes, marcas, segredos "
+"comerciais, copyright, dereitos de privacidade, dereitos de publicidade ou "
+"outros dereitos intelectuais de calquera tipo;"
 
 #: lib/web/templates/api/terms.html.eex:42
 #, elixir-format
 msgctxt "terms"
 msgid "Creating Accounts"
-msgstr ""
+msgstr "Creando Contas"
 
 #: lib/web/templates/api/terms.html.eex:89
 #, elixir-format
 msgctxt "terms"
 msgid "Entire Agreement"
-msgstr ""
+msgstr "Acordo completo"
 
 #: lib/web/templates/api/terms.html.eex:92
 #, elixir-format
 msgctxt "terms"
 msgid "Feedback"
-msgstr ""
+msgstr "Opinión"
 
 #: lib/web/templates/api/terms.html.eex:83
 #, elixir-format
 msgctxt "terms"
 msgid "Hyperlinks and Third Party Content"
-msgstr ""
+msgstr "Ligazóns e Contido de Terceiras Partes"
 
 #: lib/web/templates/api/terms.html.eex:88
 #, elixir-format
 msgctxt "terms"
 msgid "If you breach any of these Terms, we have the right to suspend or disable your access to or use of the Service."
 msgstr ""
+"Se vulneras algún destos Termos, temos dereito a suspender ou desactivar o "
+"acceso á conta ou a usar o Servizo."
 
 #: lib/web/templates/api/terms.html.eex:63
 #, elixir-format
 msgctxt "terms"
 msgid "Impersonate or post on behalf of any person or entity or otherwise misrepresent your affiliation with a person or entity;"
 msgstr ""
+"Suplantar ou publicar en nome doutra persoa ou entidade oy confundir doutro "
+"xeito sobre a túa relación con esa persoa ou entidade;"
 
 #: lib/web/templates/api/terms.html.eex:48
 #, elixir-format
