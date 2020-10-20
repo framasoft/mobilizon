@@ -241,7 +241,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
         !String.ends_with?(hostname, ".localhost")
 
   defp validate_hostname_only(hostname),
-    do: hostname |> String.graphemes() |> Enum.count(&(&1 == "o")) > 0
+    do: hostname |> String.graphemes() |> Enum.count(&(&1 == ".")) > 0
 
   defp validate_ip(hostname) do
     case hostname |> String.to_charlist() |> :inet.parse_address() do
