@@ -114,6 +114,7 @@
                 :resource="localResource"
                 :group="resource.actor"
                 @delete="deleteResource"
+                @rename="handleRename"
                 @move="handleMove"
                 v-else
               />
@@ -143,7 +144,7 @@
         <section class="modal-card-body">
           <resource-selector
             :initialResource="updatedResource"
-            :username="resource.actor.preferredUsername"
+            :username="usernameWithDomain(resource.actor)"
             @updateResource="moveResource"
             @closeMoveModal="moveModal = false"
           />
@@ -200,6 +201,7 @@ import { Component, Mixins, Prop, Watch } from "vue-property-decorator";
 import ResourceItem from "@/components/Resource/ResourceItem.vue";
 import FolderItem from "@/components/Resource/FolderItem.vue";
 import Draggable from "vuedraggable";
+import { RefetchQueryDescription } from "apollo-client/core/watchQueryOptions";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { IActor, usernameWithDomain } from "../../types/actor";
 import RouteName from "../../router/name";
@@ -231,6 +233,9 @@ import ResourceSelector from "../../components/Resource/ResourceSelector.vue";
           path,
           username: this.$route.params.preferredUsername,
         };
+      },
+      error({ graphQLErrors }) {
+        this.handleErrors(graphQLErrors);
       },
     },
     config: CONFIG,
@@ -291,6 +296,13 @@ export default class Resources extends Mixins(ResourceMixin) {
 
   mapServiceTypeToIcon = mapServiceTypeToIcon;
 
+  get actualPath(): string {
+    const path = Array.isArray(this.$route.params.path)
+      ? this.$route.params.path.join("/")
+      : this.$route.params.path || this.path;
+    return path[0] !== "/" ? `/${path}` : path;
+  }
+
   async createResource(): Promise<void> {
     if (!this.resource.actor) return;
     try {
@@ -305,34 +317,7 @@ export default class Resources extends Mixins(ResourceMixin) {
             this.resource.id && this.resource.id.startsWith("root_") ? null : this.resource.id,
           type: this.newResource.type,
         },
-        update: (store, { data: { createResource } }) => {
-          if (createResource == null) return;
-          if (!this.resource.actor) return;
-          const cachedData = store.readQuery<{ resource: IResource }>({
-            query: GET_RESOURCE,
-            variables: {
-              path: this.resource.path,
-              username: this.resource.actor.preferredUsername,
-            },
-          });
-          if (cachedData == null) return;
-          const { resource } = cachedData;
-          if (resource == null) {
-            console.error("Cannot update resource cache, because of null value.");
-            return;
-          }
-          const newResource: IResource = createResource;
-          resource.children.elements = resource.children.elements.concat([newResource]);
-
-          store.writeQuery({
-            query: GET_RESOURCE,
-            variables: {
-              path: this.resource.path,
-              username: this.resource.actor.preferredUsername,
-            },
-            data: { resource },
-          });
-        },
+        refetchQueries: () => this.postRefreshQueries(),
       });
       this.createLinkResourceModal = false;
       this.createResourceModal = false;
@@ -429,6 +414,19 @@ export default class Resources extends Mixins(ResourceMixin) {
     });
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  private postRefreshQueries(): RefetchQueryDescription {
+    return [
+      {
+        query: GET_RESOURCE,
+        variables: {
+          path: this.actualPath,
+          username: this.$route.params.preferredUsername,
+        },
+      },
+    ];
+  }
+
   async deleteResource(resourceID: string): Promise<void> {
     try {
       await this.$apollo.mutate({
@@ -436,37 +434,7 @@ export default class Resources extends Mixins(ResourceMixin) {
         variables: {
           id: resourceID,
         },
-        update: (store, { data: { deleteResource } }) => {
-          if (deleteResource == null) return;
-          if (!this.resource.actor) return;
-          const cachedData = store.readQuery<{ resource: IResource }>({
-            query: GET_RESOURCE,
-            variables: {
-              path: this.resource.path,
-              username: this.resource.actor.preferredUsername,
-            },
-          });
-          if (cachedData == null) return;
-          const { resource } = cachedData;
-          if (resource == null) {
-            console.error("Cannot update resource cache, because of null value.");
-            return;
-          }
-          const oldResource: IResource = deleteResource;
-
-          resource.children.elements = resource.children.elements.filter(
-            (resourceElement) => resourceElement.id !== oldResource.id
-          );
-
-          store.writeQuery({
-            query: GET_RESOURCE,
-            variables: {
-              path: this.resource.path,
-              username: this.resource.actor.preferredUsername,
-            },
-            data: { resource },
-          });
-        },
+        refetchQueries: () => this.postRefreshQueries(),
       });
       this.validCheckedResources = this.validCheckedResources.filter((id) => id !== resourceID);
       delete this.checkedResources[resourceID];
@@ -476,6 +444,7 @@ export default class Resources extends Mixins(ResourceMixin) {
   }
 
   handleRename(resource: IResource): void {
+    console.log("handleRename");
     this.renameModal = true;
     this.updatedResource = { ...resource };
   }
@@ -506,6 +475,7 @@ export default class Resources extends Mixins(ResourceMixin) {
           parentId: resource.parent ? resource.parent.id : null,
           path: resource.path,
         },
+        refetchQueries: () => this.postRefreshQueries(),
         update: (store, { data }) => {
           if (!data || data.updateResource == null || parentPath == null) return;
           if (!this.resource.actor) return;
@@ -577,9 +547,19 @@ export default class Resources extends Mixins(ResourceMixin) {
       console.error(e);
     }
   }
+
+  handleErrors(errors: any[]): void {
+    if (errors.some((error) => error.status_code === 404)) {
+      this.$router.replace({ name: RouteName.PAGE_NOT_FOUND });
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
+.container.section {
+  background: $white;
+}
+
 nav.breadcrumb ul {
   align-items: center;
 

@@ -118,7 +118,9 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
 
   defp process_collection(_, _), do: :error
 
-  defp handling_element(data) when is_map(data) do
+  # If we're handling an activity
+  defp handling_element(%{"type" => activity_type} = data)
+       when activity_type in ["Create", "Update", "Delete"] do
     object = get_in(data, ["object"])
 
     if object do
@@ -126,6 +128,26 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
     end
 
     Transmogrifier.handle_incoming(data)
+  end
+
+  # If we're handling directly an object
+  defp handling_element(data) when is_map(data) do
+    object = get_in(data, ["object"])
+
+    if object do
+      object |> Utils.get_url() |> Mobilizon.Tombstone.delete_uri_tombstone()
+    end
+
+    activity = %{
+      "type" => "Create",
+      "to" => data["to"],
+      "cc" => data["cc"],
+      "actor" => data["actor"] || data["attributedTo"],
+      "attributedTo" => data["attributedTo"] || data["actor"],
+      "object" => data
+    }
+
+    Transmogrifier.handle_incoming(activity)
   end
 
   defp handling_element(uri) when is_binary(uri) do

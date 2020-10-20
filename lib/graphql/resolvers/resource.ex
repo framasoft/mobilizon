@@ -83,8 +83,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
            {:resource, Resources.get_resource_by_group_and_path_with_preloads(group_id, path)} do
       {:ok, resource}
     else
+      {:group, _} -> {:error, :group_not_found}
       {:member, false} -> {:error, dgettext("errors", "Profile is not member of group")}
-      {:resource, _} -> {:error, dgettext("errors", "No such resource")}
+      {:resource, _} -> {:error, :resource_not_found}
     end
   end
 
@@ -137,12 +138,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
           }
         } = _resolution
       ) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
+    with %Actor{id: actor_id, url: actor_url} <- Users.get_actor_for_user(user),
          {:resource, %Resource{actor_id: group_id} = resource} <-
            {:resource, Resources.get_resource_with_preloads(resource_id)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          {:ok, _, %Resource{} = resource} <-
-           ActivityPub.update(resource, args, true, %{}) do
+           ActivityPub.update(resource, args, true, %{"actor" => actor_url}) do
       {:ok, resource}
     else
       {:resource, _} ->
@@ -195,8 +196,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
           }
         } = _resolution
       ) do
-    with {:ok, data} when is_map(data) <- Parser.parse(resource_url) do
-      {:ok, struct(Metadata, data)}
+    case Parser.parse(resource_url) do
+      {:ok, data} when is_map(data) ->
+        {:ok, struct(Metadata, data)}
+
+      {:error, _err} ->
+        Logger.warn("Error while fetching preview from #{inspect(resource_url)}")
+        {:error, :unknown_resource}
     end
   end
 

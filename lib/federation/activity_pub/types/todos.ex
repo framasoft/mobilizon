@@ -79,4 +79,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Todos do
         nil
     end
   end
+
+  def role_needed_to_update(%Todo{}), do: :member
+  def role_needed_to_delete(%Todo{}), do: :member
 end

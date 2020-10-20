@@ -15,6 +15,7 @@ defmodule Mobilizon.Federation.ActivityPub do
     Config,
     Discussions,
     Events,
+    Posts,
     Resources,
     Share,
     Users
@@ -88,6 +89,7 @@ defmodule Mobilizon.Federation.ActivityPub do
            {:existing, Discussions.get_discussion_by_url(url)},
          {:existing, nil} <- {:existing, Discussions.get_comment_from_url(url)},
          {:existing, nil} <- {:existing, Resources.get_resource_by_url(url)},
+         {:existing, nil} <- {:existing, Posts.get_post_by_url(url)},
          {:existing, nil} <-
            {:existing, Actors.get_actor_by_url_2(url)},
          {:existing, nil} <- {:existing, Actors.get_member_by_url(url)},
@@ -109,6 +111,9 @@ defmodule Mobilizon.Federation.ActivityPub do
 
               {:error, "Gone"} ->
                 {:error, "Gone", entity}
+
+              {:error, "Not found"} ->
+                {:error, "Not found", entity}
             end
           else
             {:ok, entity}

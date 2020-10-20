@@ -120,6 +120,16 @@ const POSTS_PAGE_LIMIT = 10;
   components: {
     PostElementItem,
   },
+  metaInfo() {
+    return {
+      // if no subcomponents specify a metaInfo.title, this title will be used
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      title: this.$t("My groups") as string,
+      // all titles will be injected into this template
+      titleTemplate: "%s | Mobilizon",
+    };
+  },
 })
 export default class PostList extends Vue {
   @Prop({ required: true, type: String }) preferredUsername!: string;

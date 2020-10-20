@@ -50,7 +50,7 @@ defmodule Mobilizon.Federation.ActivityPub.Federator do
 
   def handle(:incoming_ap_doc, params) do
     Logger.info("Handling incoming AP activity")
-    Logger.debug(inspect(params))
+    Logger.debug(inspect(Map.drop(params, ["@context"])))
 
     case Transmogrifier.handle_incoming(params) do
       {:ok, activity, _data} ->

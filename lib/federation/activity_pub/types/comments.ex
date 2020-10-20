@@ -98,6 +98,9 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
 
   def group_actor(_), do: nil
 
+  def role_needed_to_update(%Comment{attributed_to: %Actor{} = _group}), do: :administrator
+  def role_needed_to_delete(%Comment{attributed_to_id: _attributed_to_id}), do: :administrator
+
   # Prepare and sanitize arguments for comments
   defp prepare_args_for_comment(args) do
     with in_reply_to_comment <-

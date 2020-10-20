@@ -89,6 +89,9 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
 
   def group_actor(%Discussion{actor_id: actor_id}), do: Actors.get_actor(actor_id)
 
+  def role_needed_to_update(%Discussion{}), do: :moderator
+  def role_needed_to_delete(%Discussion{}), do: :moderator
+
   @spec maybe_publish_graphql_subscription(Discussion.t()) :: :ok
   defp maybe_publish_graphql_subscription(%Discussion{} = discussion) do
     Absinthe.Subscription.publish(Endpoint, discussion,

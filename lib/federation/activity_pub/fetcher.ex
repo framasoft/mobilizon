@@ -32,6 +32,10 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
         Logger.warn("Resource at #{url} is 410 Gone")
         {:error, "Gone"}
 
+      {:ok, %Tesla.Env{status: 404}} ->
+        Logger.warn("Resource at #{url} is 404 Gone")
+        {:error, "Not found"}
+
       {:ok, %Tesla.Env{} = res} ->
         {:error, res}
     end

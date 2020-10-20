@@ -88,6 +88,10 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
 
   def group_actor(_), do: nil
 
+  def role_needed_to_update(%Event{attributed_to: %Actor{} = _group}), do: :moderator
+  def role_needed_to_delete(%Event{attributed_to_id: _attributed_to_id}), do: :moderator
+  def role_needed_to_delete(_), do: nil
+
   def join(%Event{} = event, %Actor{} = actor, _local, additional) do
     with {:maximum_attendee_capacity, true} <-
            {:maximum_attendee_capacity, check_attendee_capacity(event)},

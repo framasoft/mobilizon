@@ -149,7 +149,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
         } = _resolution
       ) do
     with {:uuid, {:ok, _uuid}} <- {:uuid, Ecto.UUID.cast(id)},
-         %Actor{id: actor_id} <- Users.get_actor_for_user(user),
+         %Actor{id: actor_id, url: actor_url} <- Users.get_actor_for_user(user),
          {:post, %Post{attributed_to: %Actor{id: group_id} = group} = post} <-
            {:post, Posts.get_post_with_preloads(id)},
          args <-
@@ -158,7 +158,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
            end),
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          {:ok, _, %Post{} = post} <-
-           ActivityPub.update(post, args, true, %{}) do
+           ActivityPub.update(post, args, true, %{"actor" => actor_url}) do
       {:ok, post}
     else
       {:uuid, :error} ->

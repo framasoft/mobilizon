@@ -341,7 +341,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
           }
         )
 
-      assert hd(res["errors"])["message"] == "No such resource"
+      assert hd(res["errors"])["message"] == "Resource not found"
     end
 
     test "get_resource/3 for a non-existing group", %{
@@ -778,7 +778,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
           }
         )
 
-      assert hd(res["errors"])["message"] == "No such resource"
+      assert hd(res["errors"])["message"] == "Resource not found"
     end
 
     test "delete_resource/3 deletes a folder and children", %{
@@ -828,7 +828,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
           }
         )
 
-      assert hd(res["errors"])["message"] == "No such resource"
+      assert hd(res["errors"])["message"] == "Resource not found"
 
       res =
         conn
@@ -841,7 +841,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
           }
         )
 
-      assert hd(res["errors"])["message"] == "No such resource"
+      assert hd(res["errors"])["message"] == "Resource not found"
     end
 
     test "delete_resource/3 deletes a resource not found", %{

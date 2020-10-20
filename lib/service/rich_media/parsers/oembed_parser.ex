@@ -21,7 +21,7 @@ defmodule Mobilizon.Service.RichMedia.Parsers.OEmbed do
     with elements = [_ | _] <- get_discovery_data(html),
          {:ok, oembed_url} <- get_oembed_url(elements),
          {:ok, oembed_data} <- get_oembed_data(oembed_url),
-         oembed_data <- filter_oembed_data(oembed_data) do
+         {:ok, oembed_data} <- filter_oembed_data(oembed_data) do
       Logger.debug("Data found with OEmbed parser")
       Logger.debug(inspect(oembed_data))
       {:ok, oembed_data}
@@ -55,7 +55,9 @@ defmodule Mobilizon.Service.RichMedia.Parsers.OEmbed do
         {:error, "No type declared for OEmbed data"}
 
       "link" ->
-        Map.put(data, :image_remote_url, Map.get(data, :thumbnail_url))
+        data
+        |> Map.put(:image_remote_url, Map.get(data, :thumbnail_url))
+        |> (&{:ok, &1}).()
 
       "photo" ->
         if Map.get(data, :url, "") == "" do
@@ -65,6 +67,7 @@ defmodule Mobilizon.Service.RichMedia.Parsers.OEmbed do
           |> Map.put(:image_remote_url, Map.get(data, :url))
           |> Map.put(:width, Map.get(data, :width, 0))
           |> Map.put(:height, Map.get(data, :height, 0))
+          |> (&{:ok, &1}).()
         end
 
       "video" ->
@@ -75,6 +78,7 @@ defmodule Mobilizon.Service.RichMedia.Parsers.OEmbed do
         |> Map.put(:width, Map.get(data, :width, 0))
         |> Map.put(:height, Map.get(data, :height, 0))
         |> Map.put(:image_remote_url, Map.get(data, :thumbnail_url))
+        |> (&{:ok, &1}).()
 
       "rich" ->
         {:error, "OEmbed data has rich type, which we don't support"}
