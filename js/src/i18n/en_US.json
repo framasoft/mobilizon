@@ -56,7 +56,6 @@
   "Closed": "Closed",
   "Comment deleted": "Comment deleted",
   "Comment from @{username} reported": "Comment from @{username} reported",
-  "Comments have been closed.": "Comments have been closed.",
   "Comments": "Comments",
   "Confirm my participation": "Confirm my participation",
   "Confirm my particpation": "Confirm my particpation",
@@ -805,5 +804,7 @@
   "Instances you follow": "Instances you follow",
   "Last group created": "Last group created",
   "{username} was invited to {group}": "{username} was invited to {group}",
-  "The member was removed from the group {group}": "The member was removed from the group {group}"
+  "The member was removed from the group {group}": "The member was removed from the group {group}",
+  "The organiser has chosen to close comments.": "The organiser has chosen to close comments.",
+  "Comments are closed for everybody else.": "Comments are closed for everybody else."
 }
