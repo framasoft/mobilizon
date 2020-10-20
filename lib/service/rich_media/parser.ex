@@ -189,8 +189,11 @@ defmodule Mobilizon.Service.RichMedia.Parser do
   defp maybe_parse(html) do
     Enum.reduce_while(parsers(), %{}, fn parser, acc ->
       case parser.parse(html, acc) do
-        {:ok, data} -> {:halt, data}
-        {:error, _msg} -> {:cont, acc}
+        {:ok, data} ->
+          {:halt, data}
+
+        {:error, _msg} ->
+          {:cont, acc}
       end
     end)
   end

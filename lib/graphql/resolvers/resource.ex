@@ -196,10 +196,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
           }
         } = _resolution
       ) do
-    case Parser.parse(resource_url) do
-      {:ok, data} when is_map(data) ->
-        {:ok, struct(Metadata, data)}
-
+    with {:ok, data} when is_map(data) <- Parser.parse(resource_url) do
+      {:ok, struct(Metadata, data)}
+    else
       {:error, _err} ->
         Logger.warn("Error while fetching preview from #{inspect(resource_url)}")
         {:error, :unknown_resource}
