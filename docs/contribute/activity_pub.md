@@ -26,6 +26,7 @@ Supported Activity | Supported Object or Activity
 `Invite` | `Group`
 `Join` | `Event`
 `Leave` | `Event`, `Group`
+`Move` | `Document`, `ResourceCollection`
 `Reject` | `Follow`, `Join`
 `Remove` | `Note`, `Event`, `Member`
 `Undo` | `Announce`, `Follow`
