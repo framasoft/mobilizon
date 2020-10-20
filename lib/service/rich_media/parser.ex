@@ -17,6 +17,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
   ]
 
   alias Mobilizon.Config
+  alias Mobilizon.Service.HTTP.RichMediaPreviewClient
   alias Mobilizon.Service.RichMedia.Favicon
   alias Plug.Conn.Utils
   require Logger
@@ -56,7 +57,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
       with {:ok, _} <- prevent_local_address(url),
            {:ok, %{body: body, status: code, headers: response_headers}}
            when code in 200..299 <-
-             Tesla.get(
+             RichMediaPreviewClient.get(
                url,
                headers: headers,
                opts: @options
