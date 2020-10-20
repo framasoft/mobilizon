@@ -53,6 +53,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * The [nginx configuration](https://framagit.org/framasoft/mobilizon/-/blob/master/support/nginx/mobilizon.conf) has been changed with improvements and support for custom error pages.
 
+* The cmake dependency has been added (see [our documentation](https://docs.joinmobilizon.org/administration/dependencies/#basic-tools))
+
 ### Added
 
 - Possibility to login using LDAP
