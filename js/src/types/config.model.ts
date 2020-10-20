@@ -11,6 +11,7 @@ export interface IConfig {
   registrationsAllowlist: boolean;
   demoMode: boolean;
   countryCode: string;
+  languages: string[];
   location: {
     latitude: number;
     longitude: number;

@@ -43,6 +43,10 @@
       <h3 class="subtitle">{{ $t("Instance configuration") }}</h3>
       <table class="table is-fullwidth">
         <tr>
+          <td>{{ $t("Instance languages") }}</td>
+          <td>{{ formatList(config.languages.map((lang) => getLanguageNameForCode(lang))) }}</td>
+        </tr>
+        <tr>
           <td>{{ $t("Mobilizon version") }}</td>
           <td>{{ config.version }}</td>
         </tr>
@@ -73,10 +77,12 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { formatList } from "@/utils/i18n";
 import { ABOUT } from "../../graphql/config";
 import { STATISTICS } from "../../graphql/statistics";
 import { IConfig } from "../../types/config.model";
 import { IStatistics } from "../../types/statistics.model";
+import langs from "../../i18n/langs.json";
 
 @Component({
   apollo: {
@@ -89,12 +95,20 @@ export default class AboutInstance extends Vue {
 
   statistics!: IStatistics;
 
+  formatList = formatList;
+
   get isContactEmail(): boolean {
     return this.config && this.config.contact.includes("@");
   }
 
   get isContactURL(): boolean {
     return this.config && this.config.contact.match(/^https?:\/\//g) !== null;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  getLanguageNameForCode(code: string): string {
+    const languageMaps = langs as Record<string, any>;
+    return languageMaps[code];
   }
 
   generateConfigLink(): { uri: string; text: string } | null {

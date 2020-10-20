@@ -9,6 +9,7 @@ export const CONFIG = gql`
       registrationsAllowlist
       demoMode
       countryCode
+      languages
       anonymous {
         participation {
           allowed
@@ -93,6 +94,7 @@ export const ABOUT = gql`
       description
       longDescription
       contact
+      languages
       registrationsOpen
       registrationsAllowlist
       anonymous {
