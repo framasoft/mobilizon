@@ -1,7 +1,7 @@
 site_name: Mobilizon
-site_url: "https://docs.joinmobilizon.org/"
 repo_name: "framasoft/mobilizon"
 repo_url: "https://framagit.org/framasoft/mobilizon"
+site_dir: "../../site/fr"
 extra:
   social:
     - icon: "fontawesome/brands/twitter"
@@ -20,19 +20,18 @@ markdown_extensions:
   - pymdownx.tilde
   - pymdownx.mark
 plugins:
-  - search
+  - search:
+      lang: ["fr"]
   - git-revision-date-localized
   - minify:
       minify_html: true
-  - exclude:
-      glob:
-        - fr/*
 theme:
   name: "material"
+  language: "fr"
   features:
     - instant
     - tabs
-  custom_dir: "docs/theme/"
+  custom_dir: "../theme/"
   palette:
     primary: "amber"
     accent: "deep purple"
@@ -41,5 +40,3 @@ theme:
   icon:
     logo: material/calendar
     repo: fontawesome/brands/gitlab
-extra_javascript:
-  - javascripts/redirect.js

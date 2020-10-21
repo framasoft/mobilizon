@@ -12,9 +12,16 @@
 
 ## Dependencies
 
-Mobilizon requires Elixir, NodeJS and PostgreSQL among other things.  
+Mobilizon requires Elixir, NodeJS and PostgreSQL among other things. Prefer to install Elixir and NodeJS from their official repositories instead of your distribution's packages.
 
-Installing dependencies depends on the system you're using. Follow the steps of the [dependencies guide](dependencies.md).
+Recommended versions:
+
+* Elixir 1.8+
+* NodeJS 12+
+* PostgreSQL 11+
+
+!!! important
+    Installing dependencies depends on the system you're using. Follow the steps of the [dependencies guide](dependencies.md) and come back to this page when done.
 
 ## Setup
 

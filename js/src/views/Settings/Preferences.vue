@@ -39,11 +39,12 @@
           </optgroup>
         </b-select>
       </b-field>
-      <em>{{
+      <em v-if="Intl.DateTimeFormat().resolvedOptions().timeZone">{{
         $t("Timezone detected as {timezone}.", {
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         })
       }}</em>
+      <b-message v-else type="is-danger">{{ $t("Unable to detect timezone.") }}</b-message>
     </div>
   </div>
 </template>
