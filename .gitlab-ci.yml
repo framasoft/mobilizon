@@ -108,7 +108,7 @@ pages:
   script:
     - mkdir public
     - mkdocs build
-    - cd docs/fr && mkdocs build
+    - cd docs/fr && mkdocs build && cd ../../
     - mv site/* public/
     # Mix docs disabled because of https://github.com/elixir-lang/ex_doc/issues/1172
     # - mix deps.get
