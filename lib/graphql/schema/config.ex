@@ -12,6 +12,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     field(:name, :string)
     field(:description, :string)
     field(:long_description, :string)
+    field(:slogan, :string)
     field(:contact, :string)
 
     field(:languages, list_of(:string))

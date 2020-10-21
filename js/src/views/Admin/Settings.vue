@@ -29,6 +29,20 @@
           <b-input type="textarea" v-model="adminSettings.instanceDescription" rows="2" />
         </div>
         <div class="field">
+          <label class="label has-help">{{ $t("Instance Slogan") }}</label>
+          <small>
+            {{
+              $t(
+                'A short tagline for your instance homepage. Defaults to "Gather ⋅ Organize ⋅ Mobilize"'
+              )
+            }}
+          </small>
+          <b-input
+            v-model="adminSettings.instanceSlogan"
+            :placeholder="$t('Gather ⋅ Organize ⋅ Mobilize')"
+          />
+        </div>
+        <div class="field">
           <label class="label has-help">{{ $t("Contact") }}</label>
           <small>
             {{ $t("Can be an email or a link, or just plain text.") }}

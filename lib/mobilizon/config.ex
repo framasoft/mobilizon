@@ -36,6 +36,9 @@ defmodule Mobilizon.Config do
         "instance_long_description"
       )
 
+  @spec instance_slogan :: String.t()
+  def instance_slogan, do: Mobilizon.Admin.get_admin_setting_value("instance", "instance_slogan")
+
   @spec contact :: String.t()
   def contact do
     Mobilizon.Admin.get_admin_setting_value("instance", "contact")
@@ -320,6 +323,7 @@ defmodule Mobilizon.Config do
       instance_description: instance_description(),
       instance_long_description: instance_long_description(),
       instance_name: instance_name(),
+      instance_slogan: instance_slogan(),
       registrations_open: instance_registrations_open?(),
       contact: contact(),
       instance_terms: instance_terms(),

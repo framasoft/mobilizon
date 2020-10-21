@@ -133,6 +133,7 @@ export const ADMIN_SETTINGS_FRAGMENT = gql`
     instanceName
     instanceDescription
     instanceLongDescription
+    instanceSlogan
     contact
     instanceTerms
     instanceTermsType
@@ -160,6 +161,7 @@ export const SAVE_ADMIN_SETTINGS = gql`
     $instanceName: String
     $instanceDescription: String
     $instanceLongDescription: String
+    $instanceSlogan: String
     $contact: String
     $instanceTerms: String
     $instanceTermsType: InstanceTermsType
@@ -175,6 +177,7 @@ export const SAVE_ADMIN_SETTINGS = gql`
       instanceName: $instanceName
       instanceDescription: $instanceDescription
       instanceLongDescription: $instanceLongDescription
+      instanceSlogan: $instanceSlogan
       contact: $contact
       instanceTerms: $instanceTerms
       instanceTermsType: $instanceTermsType
