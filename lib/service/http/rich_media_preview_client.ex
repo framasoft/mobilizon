@@ -1,7 +1,6 @@
 defmodule Mobilizon.Service.HTTP.RichMediaPreviewClient do
   @moduledoc """
-  Tesla HTTP Basic Client
-  with JSON middleware
+  Tesla HTTP Basic Client that fetches HTML to extract metadata preview
   """
 
   use Tesla

@@ -3,20 +3,50 @@
     "request": {
       "body": "",
       "headers": {
+        "User-Agent": "localhost - Mobilizon 1.0.0-rc.2-5-g6701e6a4",
         "Accept": "application/json, application/activity+json, application/jrd+json"
       },
       "method": "get",
       "options": {
-        "follow_redirect": "true"
+        "recv_timeout": 20000
       },
       "request_body": "",
       "url": "http://social.tcit.fr/.well-known/webfinger?resource=acct:tcit@social.tcit.fr"
     },
     "response": {
       "binary": false,
-      "body": "{\"subject\":\"acct:tcit@social.tcit.fr\",\"aliases\":[\"https://social.tcit.fr/@tcit\",\"https://social.tcit.fr/users/tcit\"],\"links\":[{\"rel\":\"http://webfinger.net/rel/profile-page\",\"type\":\"text/html\",\"href\":\"https://social.tcit.fr/@tcit\"},{\"rel\":\"http://schemas.google.com/g/2010#updates-from\",\"type\":\"application/atom+xml\",\"href\":\"https://social.tcit.fr/users/tcit.atom\"},{\"rel\":\"self\",\"type\":\"application/activity+json\",\"href\":\"https://social.tcit.fr/users/tcit\"},{\"rel\":\"salmon\",\"href\":\"https://social.tcit.fr/api/salmon/1\"},{\"rel\":\"magic-public-key\",\"href\":\"data:application/magic-public-key,RSA.pXwYMUdFg3XUd-bGsh8CyiMRGpRGAWuCdM5pDWx5uM4pW2pM3xbHbcI21j9h8BmlAiPg6hbZD73KGly2N8Rt5iIS0I-l6i8kA1JCCdlAaDTRd41RKMggZDoQvjVZQtsyE1VzMeU2kbqqTFN6ew7Hvbd6O0NhixoKoZ5f3jwuBDZoT0p1TAcaMdmG8oqHD97isizkDnRn8cOBA6wtI-xb5xP2zxZMsLpTDZLiKU8XcPKZCw4OfQfmDmKkHtrFb77jCAQj_s_FxjVnvxRwmfhNnWy0D-LUV_g63nHh_b5zXIeV92QZLvDYbgbezmzUzv9UeA1s70GGbaDqCIy85gw9-w==.AQAB\"},{\"rel\":\"http://ostatus.org/schema/1.0/subscribe\",\"template\":\"https://social.tcit.fr/authorize_interaction?uri={uri}\"}]}",
+      "body": "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body>\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.19.3</center>\r\n</body>\r\n</html>\r\n",
       "headers": {
-        "Date": "Tue, 13 Nov 2018 11:11:10 GMT",
+        "Server": "nginx/1.19.3",
+        "Date": "Wed, 21 Oct 2020 09:07:41 GMT",
+        "Content-Type": "text/html",
+        "Content-Length": "169",
+        "Connection": "keep-alive",
+        "Location": "https://social.tcit.fr/.well-known/webfinger?resource=acct:tcit@social.tcit.fr"
+      },
+      "status_code": 301,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "User-Agent": "localhost - Mobilizon 1.0.0-rc.2-5-g6701e6a4",
+        "Accept": "application/json, application/activity+json, application/jrd+json"
+      },
+      "method": "get",
+      "options": {
+        "recv_timeout": 20000
+      },
+      "request_body": "",
+      "url": "https://social.tcit.fr/.well-known/webfinger?resource=acct:tcit@social.tcit.fr"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"subject\":\"acct:tcit@social.tcit.fr\",\"aliases\":[\"https://social.tcit.fr/@tcit\",\"https://social.tcit.fr/users/tcit\"],\"links\":[{\"rel\":\"http://webfinger.net/rel/profile-page\",\"type\":\"text/html\",\"href\":\"https://social.tcit.fr/@tcit\"},{\"rel\":\"self\",\"type\":\"application/activity+json\",\"href\":\"https://social.tcit.fr/users/tcit\"},{\"rel\":\"http://ostatus.org/schema/1.0/subscribe\",\"template\":\"https://social.tcit.fr/authorize_interaction?uri={uri}\"}]}",
+      "headers": {
+        "Date": "Wed, 21 Oct 2020 09:07:41 GMT",
         "Content-Type": "application/jrd+json; charset=utf-8",
         "Transfer-Encoding": "chunked",
         "Connection": "keep-alive",
@@ -24,11 +54,14 @@
         "X-Frame-Options": "DENY",
         "X-Content-Type-Options": "nosniff",
         "X-XSS-Protection": "1; mode=block",
+        "Referrer-Policy": "same-origin",
+        "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+        "X-Clacks-Overhead": "GNU Natalie Nguyen",
         "Vary": "Accept, Accept-Encoding, Origin",
         "Cache-Control": "max-age=259200, public",
-        "ETag": "W/\"33f6cc86f8f97d0ca930761c04e0db58\"",
-        "X-Request-Id": "b7f5ad84-5120-4275-aacf-dbb9654be181",
-        "X-Runtime": "0.015609",
+        "ETag": "W/\"37760e35c1537b8e02b6d4b4f9ebfe82\"",
+        "X-Request-Id": "429bb891-1033-498b-91bb-12835984223f",
+        "X-Runtime": "0.072046",
         "X-Cached": "MISS"
       },
       "status_code": 200,

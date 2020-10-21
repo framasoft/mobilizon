@@ -12,17 +12,11 @@ defmodule Mobilizon.Federation.WebFinger do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.WebFinger.XmlBuilder
+  alias Mobilizon.Service.HTTP.WebfingerClient
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Router.Helpers, as: Routes
   require Jason
   require Logger
-
-  @http_options [
-    adapter: [
-      follow_redirect: true,
-      ssl: [{:versions, [:"tlsv1.2"]}]
-    ]
-  ]
 
   def host_meta do
     base_url = Endpoint.url()
@@ -120,17 +114,9 @@ defmodule Mobilizon.Federation.WebFinger do
     Logger.debug(inspect(address))
 
     with false <- is_nil(domain),
-         {:ok, %{} = response} <-
-           Tesla.get(
-             address,
-             headers: [
-               {"accept", "application/json, application/activity+json, application/jrd+json"}
-             ],
-             opts: @http_options
-           ),
-         %{status: status, body: body} when status in 200..299 <- response,
-         {:ok, doc} <- Jason.decode(body) do
-      webfinger_from_json(doc)
+         {:ok, %{body: body, status: code}} when code in 200..299 <-
+           WebfingerClient.get(address) do
+      webfinger_from_json(body)
     else
       e ->
         Logger.debug(fn -> "Couldn't finger #{actor}" end)
