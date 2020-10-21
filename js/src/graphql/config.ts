@@ -5,6 +5,7 @@ export const CONFIG = gql`
     config {
       name
       description
+      slogan
       registrationsOpen
       registrationsAllowlist
       demoMode

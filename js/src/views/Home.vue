@@ -1,9 +1,9 @@
 <template>
-  <div>
-    <section class="hero is-light is-bold" v-if="config && (!currentUser.id || !currentActor.id)">
+  <div id="homepage">
+    <section class="hero" v-if="config && (!currentUser.id || !currentActor.id)">
       <div class="hero-body">
         <div class="container">
-          <h1 class="title">{{ $t("Gather ⋅ Organize ⋅ Mobilize") }}</h1>
+          <h1 class="title">{{ config.slogan || $t("Gather ⋅ Organize ⋅ Mobilize") }}</h1>
           <p
             v-html="$t('Join <b>{instance}</b>, a Mobilizon instance', { instance: config.name })"
           />
@@ -26,13 +26,17 @@
             <!-- We don't invite to find other instances yet -->
             <!-- <b-button v-else type="is-link" tag="a" href="https://joinmastodon.org">{{ $t('Find an instance') }}</b-button> -->
             <b-button type="is-text" tag="router-link" :to="{ name: RouteName.ABOUT }">
-              {{ $t("Learn more about Mobilizon") }}
+              {{ $t("Learn more about {instance}", { instance: config.name }) }}
             </b-button>
           </div>
         </div>
       </div>
     </section>
-    <div class="container section" v-if="config && (!currentUser.id || !currentActor.id)">
+    <div
+      id="featured_events"
+      class="container section"
+      v-if="config && (!currentUser.id || !currentActor.id)"
+    >
       <section class="events-featured">
         <h2 class="title">{{ $t("Featured events") }}</h2>
         <b-loading :active.sync="$apollo.loading" />
@@ -47,6 +51,48 @@
         </div>
         <b-message v-else type="is-danger">{{ $t("No events found") }}</b-message>
       </section>
+    </div>
+    <div id="picture" v-if="config && (!currentUser.id || !currentActor.id)">
+      <div class="picture-container">
+        <img src="/img/pics/2020-10-06-mobilizon-illustration-A_homepage.jpg" alt="" />
+      </div>
+      <div class="container section">
+        <div class="columns">
+          <div class="column">
+            <h3 class="title">{{ $t("A practical tool") }}</h3>
+            <p
+              v-html="
+                $t('Mobilizon is a tool that helps you <b>find, create and organise events</b>.')
+              "
+            />
+          </div>
+          <div class="column">
+            <h3 class="title">{{ $t("An ethical alternative") }}</h3>
+            <p
+              v-html="
+                $t(
+                  'Ethical alternative to Facebook events, groups and pages, Mobilizon is a <b>tool designed to serve you</b>. Period.'
+                )
+              "
+            />
+          </div>
+          <div class="column">
+            <h3 class="title">{{ $t("A federated software") }}</h3>
+            <p
+              v-html="
+                $t(
+                  'Mobilizon is not a giant platform, but a <b>multitude of interconnected Mobilizon websites</b>.'
+                )
+              "
+            />
+          </div>
+        </div>
+        <div class="buttons">
+          <a class="button is-primary is-large" href="https://joinmobilizon.org">{{
+            $t("Learn more about Mobilizon")
+          }}</a>
+        </div>
+      </div>
     </div>
     <div class="container section" v-if="config && loggedUser && loggedUser.settings">
       <section v-if="currentActor.id">
@@ -343,6 +389,8 @@ export default class Home extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import "~bulma/sass/utilities/mixins.sass";
+
 main > div > .container {
   background: $white;
   padding: 1rem 1.5rem 3rem;
@@ -388,7 +436,20 @@ span.view-all {
 }
 
 section.hero {
-  background: lighten($secondary, 20%);
+  position: relative;
+  z-index: 1;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.3;
+    z-index: -1;
+    background: url("/img/pics/homepage_background.png");
+  }
 
   & > .hero-body {
     padding: 1rem 1.5rem 3rem;
@@ -405,5 +466,72 @@ section.hero {
   .instance-description {
     margin-bottom: 1rem;
   }
+}
+
+#featured_events {
+  padding: 1rem 0;
+  min-height: calc(100vh - 400px);
+  z-index: 10;
+
+  .title {
+    margin: 20px auto 0;
+  }
+
+  .columns {
+    margin: 0rem auto 3rem;
+  }
+}
+
+#picture {
+  .picture-container {
+    position: relative;
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        0deg,
+        $white 0,
+        rgba(0, 0, 0, 0) 5%,
+        rgba(0, 0, 0, 0) 90%,
+        $white 100%
+      );
+      z-index: 1;
+    }
+
+    & > img {
+      object-fit: cover;
+      max-height: 80vh;
+      display: block;
+      margin: auto;
+      width: 100%;
+    }
+  }
+
+  .container.section {
+    background: $white;
+
+    @include tablet {
+      margin-top: -4rem;
+    }
+    z-index: 10;
+
+    .title {
+      margin: 0 0 10px;
+      font-size: 30px;
+    }
+
+    .buttons {
+      justify-content: center;
+      margin-top: 2rem;
+    }
+  }
+}
+
+#homepage {
+  background: $white;
 }
 </style>

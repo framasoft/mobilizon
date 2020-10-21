@@ -6,6 +6,7 @@ export interface IConfig {
   description: string;
   longDescription: string;
   contact: string;
+  slogan: string;
 
   registrationsOpen: boolean;
   registrationsAllowlist: boolean;

@@ -11,6 +11,7 @@ export const GET_TODO = gql`
         actor {
           id
           preferredUsername
+          domain
           name
         }
         title

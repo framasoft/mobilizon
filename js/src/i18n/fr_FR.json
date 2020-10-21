@@ -857,5 +857,15 @@
   "{username} was invited to {group}": "{username} a été invité à {group}",
   "The member was removed from the group {group}": "Le ou la membre a été supprimé·e du groupe {group}",
   "The organiser has chosen to close comments.": "L'organisateur·ice a choisi de fermer les commentaires.",
-  "Comments are closed for everybody else.": "Les commentaires sont fermés pour tous·tes les autres."
+  "Comments are closed for everybody else.": "Les commentaires sont fermés pour tous·tes les autres.",
+  "Instance Slogan": "Slogan de l'instance",
+  "A short tagline for your instance homepage. Defaults to \"Gather ⋅ Organize ⋅ Mobilize\"": "Un court slogan pour la page d'accueil de votre instance. La valeur par défaut est « Rassembler ⋅ Organiser ⋅ Mobiliser »",
+  "Learn more about {instance}": "En savoir plus sur {instance}",
+  "Unable to detect timezone.": "Impossible de détecter le fuseau horaire.",
+  "A practical tool": "Un outil pratique",
+  "Mobilizon is a tool that helps you <b>find, create and organise events</b>.": "Mobilizon est un outil qui vous permet de <b>trouver, créer et organiser des événements</b>.",
+  "An ethical alternative": "Une alternative éthique",
+  "Ethical alternative to Facebook events, groups and pages, Mobilizon is a <b>tool designed to serve you</b>. Period.": "Alternative éthique aux événements, groupes et pages Facebook, Mobilizon est <b>un outil conçu pour vous servir</b>. Point.",
+  "A federated software": "Un logiciel fédéré",
+  "Mobilizon is not a giant platform, but a <b>multitude of interconnected Mobilizon websites</b>.": "Mobilizon n’est pas une plateforme géante, mais une <b>multitude de sites web Mobilizon interconnectés</b>."
 }

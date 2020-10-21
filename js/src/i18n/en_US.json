@@ -386,7 +386,6 @@
   "Welcome back!": "Welcome back!",
   "Welcome to Mobilizon, {username}!": "Welcome to Mobilizon, {username}!",
   "Who can view this event and participate": "Who can view this event and participate",
-  "World map": "World map",
   "Write something…": "Write something…",
   "You are participating in this event anonymously but didn't confirm participation": "You are participating in this event anonymously but didn't confirm participation",
   "You are participating in this event anonymously": "You are participating in this event anonymously",
@@ -806,5 +805,15 @@
   "{username} was invited to {group}": "{username} was invited to {group}",
   "The member was removed from the group {group}": "The member was removed from the group {group}",
   "The organiser has chosen to close comments.": "The organiser has chosen to close comments.",
-  "Comments are closed for everybody else.": "Comments are closed for everybody else."
+  "Comments are closed for everybody else.": "Comments are closed for everybody else.",
+  "Instance Slogan": "Instance Slogan",
+  "A short tagline for your instance homepage. Defaults to \"Gather ⋅ Organize ⋅ Mobilize\"": "A short tagline for your instance homepage. Defaults to \"Gather ⋅ Organize ⋅ Mobilize\"",
+  "Learn more about {instance}": "Learn more about {instance}",
+  "Unable to detect timezone.": "Unable to detect timezone.",
+  "A practical tool": "A practical tool",
+  "Mobilizon is a tool that helps you <b>find, create and organise events</b>.": "Mobilizon is a tool that helps you <b>find, create and organise events</b>.",
+  "An ethical alternative": "An ethical alternative",
+  "Ethical alternative to Facebook events, groups and pages, Mobilizon is a <b>tool designed to serve you</b>. Period.": "Ethical alternative to Facebook events, groups and pages, Mobilizon is a <b>tool designed to serve you</b>. Period.",
+  "A federated software": "A federated software",
+  "Mobilizon is not a giant platform, but a <b>multitude of interconnected Mobilizon websites</b>.": "Mobilizon is not a giant platform, but a <b>multitude of interconnected Mobilizon websites</b>."
 }

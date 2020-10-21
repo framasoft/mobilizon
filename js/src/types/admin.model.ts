@@ -34,6 +34,7 @@ export interface ILanguage {
 export interface IAdminSettings {
   instanceName: string;
   instanceDescription: string;
+  instanceSlogan: string;
   instanceLongDescription: string;
   contact: string;
   instanceTerms: string;
