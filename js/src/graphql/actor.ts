@@ -23,6 +23,7 @@ export const FETCH_PERSON = gql`
       organizedEvents {
         total
         elements {
+          id
           uuid
           title
           beginsOn
@@ -120,18 +121,6 @@ export const LIST_PROFILES = gql`
   }
 `;
 
-export const LOGGED_PERSON = gql`
-  query {
-    loggedPerson {
-      id
-      avatar {
-        url
-      }
-      preferredUsername
-    }
-  }
-`;
-
 export const UPDATE_DEFAULT_ACTOR = gql`
   mutation ChangeDefaultActor($preferredUsername: String!) {
     changeDefaultActor(preferredUsername: $preferredUsername) {
@@ -180,6 +169,7 @@ export const LOGGED_USER_PARTICIPATIONS = gql`
     $limit: Int
   ) {
     loggedUser {
+      id
       participations(
         afterDatetime: $afterDateTime
         beforeDatetime: $beforeDateTime
@@ -240,6 +230,7 @@ export const LOGGED_USER_PARTICIPATIONS = gql`
 export const LOGGED_USER_DRAFTS = gql`
   query LoggedUserDrafts($page: Int, $limit: Int) {
     loggedUser {
+      id
       drafts(page: $page, limit: $limit) {
         id
         uuid
@@ -276,6 +267,7 @@ export const LOGGED_USER_DRAFTS = gql`
 export const LOGGED_USER_MEMBERSHIPS = gql`
   query LoggedUserMemberships($page: Int, $limit: Int) {
     loggedUser {
+      id
       memberships(page: $page, limit: $limit) {
         total
         elements {

@@ -23,6 +23,7 @@ export const SEARCH_EVENTS = gql`
     ) {
       total
       elements {
+        id
         title
         uuid
         beginsOn
@@ -44,6 +45,7 @@ export const SEARCH_GROUPS = gql`
     searchGroups(term: $term, location: $location, radius: $radius, page: $page, limit: $limit) {
       total
       elements {
+        id
         avatar {
           url
         }

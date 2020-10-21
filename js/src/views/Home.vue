@@ -163,7 +163,7 @@ import Subtitle from "../components/Utils/Subtitle.vue";
     config: CONFIG,
     currentUserParticipations: {
       query: LOGGED_USER_PARTICIPATIONS,
-      fetchPolicy: "network-only",
+      fetchPolicy: "cache-and-network",
       variables() {
         const lastWeek = new Date();
         lastWeek.setDate(new Date().getDate() - 7);

@@ -142,6 +142,7 @@ export const FETCH_EVENT = gql`
         ${tagsQuery}
       },
       relatedEvents {
+        id
         uuid,
         title,
         beginsOn,
@@ -150,9 +151,11 @@ export const FETCH_EVENT = gql`
           url
         }
         physicalAddress {
+          id
           description
         },
         organizerActor {
+          id
           avatar {
             url,
           },
