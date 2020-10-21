@@ -5,19 +5,19 @@ Mobilizon requires a SMTP server to deliver emails. Using 3rd-party mail provide
 ## SMTP configuration
 
 Mobilizon default settings assumes a SMTP server listens on `localhost`, port `25`. To specify a specific server and credentials, you can add the following section in your `prod.secret.exs` file and modify credentials to your needs.
+
 ```elixir
 config :mobilizon, Mobilizon.Web.Email.Mailer,
   adapter: Bamboo.SMTPAdapter,
   server: "localhost",
   hostname: "localhost",
+  # usually 25, 465 or 587
   port: 25,
   username: nil,
   password: nil,
   # can be `:always` or `:never`
   tls: :if_available,
   allowed_tls_versions: [:tlsv1, :"tlsv1.1", :"tlsv1.2"],
-  # can be `true`
-  ssl: false,
   retries: 1,
   # can be `true`
   no_mx_lookups: false,

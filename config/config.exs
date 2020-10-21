@@ -92,6 +92,7 @@ config :mobilizon, Mobilizon.Web.Email.Mailer,
   adapter: Bamboo.SMTPAdapter,
   server: "localhost",
   hostname: "localhost",
+  # usually 25, 465 or 587
   port: 25,
   # or {:system, "SMTP_USERNAME"}
   username: nil,
@@ -102,7 +103,6 @@ config :mobilizon, Mobilizon.Web.Email.Mailer,
   # or {":system", ALLOWED_TLS_VERSIONS"} w/ comma seprated values (e.g. "tlsv1.1,tlsv1.2")
   allowed_tls_versions: [:tlsv1, :"tlsv1.1", :"tlsv1.2"],
   # can be `true`
-  ssl: false,
   retries: 1,
   # can be `true`
   no_mx_lookups: false

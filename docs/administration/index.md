@@ -252,7 +252,23 @@ See the [full documentation](./CLI tasks/manage_users.md#create-a-new-user) for 
 
 You may now login with your credentials and discover Mobilizon. Feel free to explore [configuration documentation](./configure) as well.
 
-## Optional tasks
+## Suggested tasks
+
+### Configure emails
+
+The default Mobilizon configuration assumes a local SMTP server is available on the same server. To tweak this for your own setup, [see this page](configure/email.md).
+
+### Configure 3rd-party auth
+
+Mobilizon can use LDAP or OAuth-based login providers (Facebook, Google, etc.) to help register or login users. Configuration [can be found here](configure/auth.md).
+
+### Configure geocoders
+
+This will allow the address autocomplete field to provide addresses when editing an event. The default value uses OpenStreetMap's Nominatim provider but you can [change it to the provider of your choice](configure/geocoders.md).
+
+!!! note
+    When using the default OpenStreetMap's Nominatim provider, autocomplete is disabled and using the service implies that you accept [their Usage Policy](https://operations.osmfoundation.org/policies/nominatim/).
+
 
 ### Geolocation databases
 
