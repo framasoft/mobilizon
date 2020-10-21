@@ -38,6 +38,7 @@ export const LIST_GROUPS = gql`
         }
         organizedEvents {
           elements {
+            id
             uuid
             title
             beginsOn

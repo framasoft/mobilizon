@@ -109,7 +109,7 @@ import Subtitle from "../../components/Utils/Subtitle.vue";
   apollo: {
     futureParticipations: {
       query: LOGGED_USER_PARTICIPATIONS,
-      fetchPolicy: "network-only",
+      fetchPolicy: "cache-and-network",
       variables: {
         page: 1,
         limit: 10,
@@ -122,7 +122,7 @@ import Subtitle from "../../components/Utils/Subtitle.vue";
     },
     drafts: {
       query: LOGGED_USER_DRAFTS,
-      fetchPolicy: "network-only",
+      fetchPolicy: "cache-and-network",
       variables: {
         page: 1,
         limit: 10,
@@ -131,7 +131,7 @@ import Subtitle from "../../components/Utils/Subtitle.vue";
     },
     pastParticipations: {
       query: LOGGED_USER_PARTICIPATIONS,
-      fetchPolicy: "network-only",
+      fetchPolicy: "cache-and-network",
       variables: {
         page: 1,
         limit: 10,

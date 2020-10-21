@@ -161,6 +161,7 @@ export const LOGS = gql`
       actor {
         id
         preferredUsername
+        domain
         avatar {
           url
         }

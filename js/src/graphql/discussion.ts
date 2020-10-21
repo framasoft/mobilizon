@@ -13,6 +13,7 @@ export const DISCUSSION_BASIC_FIELDS_FRAGMENT = gql`
       actor {
         id
         preferredUsername
+        domain
         avatar {
           url
         }
@@ -35,6 +36,7 @@ export const DISCUSSION_FIELDS_FOR_REPLY_FRAGMENT = gql`
       actor {
         id
         preferredUsername
+        domain
         avatar {
           url
         }
@@ -43,10 +45,12 @@ export const DISCUSSION_FIELDS_FOR_REPLY_FRAGMENT = gql`
     actor {
       id
       preferredUsername
+      domain
     }
     creator {
       id
       preferredUsername
+      domain
     }
   }
 `;

@@ -53,7 +53,7 @@ import RouteName from "../../router/name";
   apollo: {
     membershipsPages: {
       query: LOGGED_USER_MEMBERSHIPS,
-      fetchPolicy: "network-only",
+      fetchPolicy: "cache-and-network",
       variables: {
         page: 1,
         limit: 10,

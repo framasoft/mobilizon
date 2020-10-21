@@ -185,12 +185,10 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch, Ref } from "vue-property-decorator";
-import { DataProxy } from "apollo-cache";
 import {
   IEvent,
   IEventParticipantStats,
   IParticipant,
-  Participant,
   ParticipantRole,
 } from "../../types/event.model";
 import { PARTICIPANTS, UPDATE_PARTICIPANT } from "../../graphql/event";
@@ -198,7 +196,6 @@ import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { IPerson, usernameWithDomain } from "../../types/actor";
 import { CONFIG } from "../../graphql/config";
 import { IConfig } from "../../types/config.model";
-import { Paginate } from "../../types/paginate";
 import { nl2br } from "../../utils/html";
 import { asyncForEach } from "../../utils/asyncForEach";
 import RouteName from "../../router/name";
@@ -214,7 +211,7 @@ const MESSAGE_ELLIPSIS_LENGTH = 130;
     config: CONFIG,
     event: {
       query: PARTICIPANTS,
-      fetchPolicy: "network-only",
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           uuid: this.eventId,
@@ -260,7 +257,7 @@ export default class Participants extends Vue {
 
   @Ref("queueTable") readonly queueTable!: any;
 
-  mounted() {
+  mounted(): void {
     const roleQuery = this.$route.query.role as string;
     if (Object.values(ParticipantRole).includes(roleQuery as ParticipantRole)) {
       this.roles = roleQuery as ParticipantRole;
@@ -273,7 +270,7 @@ export default class Participants extends Vue {
   }
 
   @Watch("page")
-  loadMoreParticipants() {
+  loadMoreParticipants(): void {
     this.$apollo.queries.event.fetchMore({
       // New variables
       variables: {
@@ -299,9 +296,9 @@ export default class Participants extends Vue {
     });
   }
 
-  async acceptParticipant(participant: IParticipant) {
+  async acceptParticipant(participant: IParticipant): Promise<void> {
     try {
-      const { data } = await this.$apollo.mutate({
+      await this.$apollo.mutate({
         mutation: UPDATE_PARTICIPANT,
         variables: {
           id: participant.id,
@@ -314,9 +311,9 @@ export default class Participants extends Vue {
     }
   }
 
-  async refuseParticipant(participant: IParticipant) {
+  async refuseParticipant(participant: IParticipant): Promise<void> {
     try {
-      const { data } = await this.$apollo.mutate({
+      await this.$apollo.mutate({
         mutation: UPDATE_PARTICIPANT,
         variables: {
           id: participant.id,
@@ -329,14 +326,14 @@ export default class Participants extends Vue {
     }
   }
 
-  async acceptParticipants(participants: IParticipant[]) {
+  async acceptParticipants(participants: IParticipant[]): Promise<void> {
     await asyncForEach(participants, async (participant: IParticipant) => {
       await this.acceptParticipant(participant);
     });
     this.checkedRows = [];
   }
 
-  async refuseParticipants(participants: IParticipant[]) {
+  async refuseParticipants(participants: IParticipant[]): Promise<void> {
     await asyncForEach(participants, async (participant: IParticipant) => {
       await this.refuseParticipant(participant);
     });
