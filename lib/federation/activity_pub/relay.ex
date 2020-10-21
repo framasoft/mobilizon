@@ -12,7 +12,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
   alias Mobilizon.Actors.{Actor, Follower}
 
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier}
+  alias Mobilizon.Federation.ActivityPub.{Activity, Refresher, Transmogrifier}
   alias Mobilizon.Federation.WebFinger
 
   alias Mobilizon.GraphQL.API.Follows
@@ -87,6 +87,15 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
          {:ok, %Actor{} = target_actor} <- ActivityPub.get_or_fetch_actor_by_url(target_instance),
          {:ok, activity, follow} <- Follows.reject(target_actor, local_actor) do
       {:ok, activity, follow}
+    end
+  end
+
+  def refresh(address) do
+    Logger.debug("We're trying to refresh a remote instance")
+
+    with {:ok, target_instance} <- fetch_actor(address),
+         {:ok, %Actor{} = target_actor} <- ActivityPub.get_or_fetch_actor_by_url(target_instance) do
+      Refresher.refresh_profile(target_actor)
     end
   end
 

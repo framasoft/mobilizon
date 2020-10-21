@@ -65,4 +65,17 @@ defmodule Mix.Tasks.Mobilizon.Relay do
         IO.puts(:stderr, "Error while accept #{target} follow: #{inspect(e)}")
     end
   end
+
+  def run(["refresh", target]) do
+    Common.start_mobilizon()
+    IO.puts("Refreshing #{target}, this can take a while.")
+
+    case Relay.refresh(target) do
+      :ok ->
+        IO.puts("Refreshed #{target}")
+
+      err ->
+        IO.puts(:stderr, "Error while refreshing #{target}: #{inspect(err)}")
+    end
+  end
 end
