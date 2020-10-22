@@ -10,6 +10,7 @@ export const REPORTS = gql`
         domain
         name
         avatar {
+          id
           url
         }
       }
@@ -18,6 +19,7 @@ export const REPORTS = gql`
         preferredUsername
         name
         avatar {
+          id
           url
         }
         domain
@@ -46,6 +48,7 @@ const REPORT_FRAGMENT = gql`
       preferredUsername
       name
       avatar {
+        id
         url
       }
       domain
@@ -55,6 +58,7 @@ const REPORT_FRAGMENT = gql`
       preferredUsername
       name
       avatar {
+        id
         url
       }
       domain
@@ -79,6 +83,7 @@ const REPORT_FRAGMENT = gql`
         domain
         name
         avatar {
+          id
           url
         }
       }
@@ -91,6 +96,7 @@ const REPORT_FRAGMENT = gql`
         preferredUsername
         name
         avatar {
+          id
           url
         }
       }
@@ -163,6 +169,7 @@ export const LOGS = gql`
         preferredUsername
         domain
         avatar {
+          id
           url
         }
       }

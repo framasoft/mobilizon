@@ -11,6 +11,7 @@ export const COMMENT_FIELDS_FRAGMENT = gql`
     local
     actor {
       avatar {
+        id
         url
       }
       id

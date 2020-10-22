@@ -31,9 +31,11 @@ export const LIST_GROUPS = gql`
         preferredUsername
         suspended
         avatar {
+          id
           url
         }
         banner {
+          id
           url
         }
         organizedEvents {
@@ -74,9 +76,11 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
       originId
     }
     avatar {
+      id
       url
     }
     banner {
+      id
       url
     }
     organizedEvents(
@@ -134,6 +138,7 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
           domain
           preferredUsername
           avatar {
+            id
             url
           }
         }
@@ -238,9 +243,11 @@ export const CREATE_GROUP = gql`
       domain
       summary
       avatar {
+        id
         url
       }
       banner {
+        id
         url
       }
     }
@@ -271,9 +278,11 @@ export const UPDATE_GROUP = gql`
       name
       summary
       avatar {
+        id
         url
       }
       banner {
+        id
         url
       }
     }

@@ -28,6 +28,7 @@ export const SEARCH_EVENTS = gql`
         uuid
         beginsOn
         picture {
+          id
           url
         }
         tags {
@@ -47,6 +48,7 @@ export const SEARCH_GROUPS = gql`
       elements {
         id
         avatar {
+          id
           url
         }
         domain
@@ -65,6 +67,7 @@ export const SEARCH_PERSONS = gql`
       elements {
         id
         avatar {
+          id
           url
         }
         domain

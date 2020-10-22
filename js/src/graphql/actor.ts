@@ -11,10 +11,12 @@ export const FETCH_PERSON = gql`
       preferredUsername
       suspended
       avatar {
+        id
         name
         url
       }
       banner {
+        id
         url
       }
       feedTokens {
@@ -50,10 +52,12 @@ export const GET_PERSON = gql`
       preferredUsername
       suspended
       avatar {
+        id
         name
         url
       }
       banner {
+        id
         url
       }
       feedTokens {
@@ -114,6 +118,7 @@ export const LIST_PROFILES = gql`
         domain
         name
         avatar {
+          id
           url
         }
       }
@@ -137,6 +142,7 @@ export const CURRENT_ACTOR_CLIENT = gql`
     currentActor @client {
       id
       avatar {
+        id
         url
       }
       preferredUsername
@@ -196,6 +202,7 @@ export const LOGGED_USER_PARTICIPATIONS = gql`
               domain
               summary
               avatar {
+                id
                 url
               }
             }
@@ -218,6 +225,7 @@ export const LOGGED_USER_PARTICIPATIONS = gql`
             domain
             summary
             avatar {
+              id
               url
             }
           }
@@ -248,6 +256,7 @@ export const LOGGED_USER_DRAFTS = gql`
           name
           domain
           avatar {
+            id
             url
           }
         }
@@ -279,6 +288,7 @@ export const LOGGED_USER_MEMBERSHIPS = gql`
             domain
             name
             avatar {
+              id
               url
             }
             organizedEvents {
@@ -286,6 +296,7 @@ export const LOGGED_USER_MEMBERSHIPS = gql`
                 id
                 title
                 picture {
+                  id
                   url
                 }
               }
@@ -298,6 +309,7 @@ export const LOGGED_USER_MEMBERSHIPS = gql`
             domain
             name
             avatar {
+              id
               url
             }
           }
@@ -312,6 +324,7 @@ export const IDENTITIES = gql`
     identities {
       id
       avatar {
+        id
         url
       }
       preferredUsername
@@ -335,6 +348,7 @@ export const PERSON_MEMBERSHIPS = gql`
             name
             domain
             avatar {
+              id
               url
             }
           }
@@ -366,6 +380,7 @@ export const PERSON_MEMBERSHIPS_WITH_MEMBERS = gql`
             name
             domain
             avatar {
+              id
               url
             }
             members {
@@ -379,6 +394,7 @@ export const PERSON_MEMBERSHIPS_WITH_MEMBERS = gql`
                   name
                   domain
                   avatar {
+                    id
                     url
                   }
                 }
@@ -416,6 +432,7 @@ export const CREATE_PERSON = gql`
       name
       summary
       avatar {
+        id
         url
       }
     }
@@ -430,6 +447,7 @@ export const UPDATE_PERSON = gql`
       name
       summary
       avatar {
+        id
         url
       }
     }
@@ -461,6 +479,7 @@ export const REGISTER_PERSON = gql`
       name
       summary
       avatar {
+        id
         url
       }
     }

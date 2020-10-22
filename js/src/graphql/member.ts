@@ -10,6 +10,7 @@ export const MEMBER_FRAGMENT = gql`
       domain
       name
       avatar {
+        id
         url
       }
     }
@@ -19,6 +20,7 @@ export const MEMBER_FRAGMENT = gql`
       domain
       name
       avatar {
+        id
         url
       }
     }
@@ -70,6 +72,7 @@ export const GROUP_MEMBERS = gql`
             domain
             preferredUsername
             avatar {
+              id
               url
             }
           }

@@ -1686,7 +1686,7 @@ defmodule Mobilizon.Actors do
     method =
       case type do
         :remote_members -> &list_remote_members_for_group/3
-        :events -> &Events.list_organized_events_for_group/3
+        :events -> &Events.list_simple_organized_events_for_group/3
         :posts -> &Mobilizon.Posts.get_posts_for_group/3
         :resources -> &Mobilizon.Resources.get_resources_for_group/3
         :todo_lists -> &Mobilizon.Todos.get_todo_lists_for_group/3

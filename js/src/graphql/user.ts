@@ -22,6 +22,7 @@ export const VALIDATE_USER = gql`
           preferredUsername
           name
           avatar {
+            id
             url
           }
         }
@@ -40,6 +41,7 @@ export const LOGGED_USER = gql`
         preferredUsername
         name
         avatar {
+          id
           url
         }
       }
@@ -168,6 +170,7 @@ export const LIST_USERS = gql`
           id
           preferredUsername
           avatar {
+            id
             url
           }
           name
@@ -202,6 +205,7 @@ export const GET_USER = gql`
         preferredUsername
         name
         avatar {
+          id
           url
         }
       }

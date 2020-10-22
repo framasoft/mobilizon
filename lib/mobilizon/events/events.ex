@@ -425,6 +425,10 @@ defmodule Mobilizon.Events do
     |> Page.build_page(page, limit)
   end
 
+  def list_simple_organized_events_for_group(%Actor{} = actor, page, limit) do
+    list_organized_events_for_group(actor, :all, nil, nil, page, limit)
+  end
+
   @spec list_organized_events_for_group(
           Actor.t(),
           DateTime.t() | nil,
@@ -1704,7 +1708,7 @@ defmodule Mobilizon.Events do
 
   defp event_filter_visibility(query, :public) do
     query
-    |> where(visibility: ^:public)
+    |> where(visibility: ^:public, draft: false)
   end
 
   defp event_filter_begins_on(query, nil, nil),
