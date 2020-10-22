@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 1.0.0-rc.4 - 2020-10-22
+
+### Fixed
+
+- Fix an issue with group event listing
+
 ## 1.0.0-rc.3 - 2020-10-22
 
 ### Added
