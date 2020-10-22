@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 1.0.0-rc.3 - 2020-10-22
+
+### Added
+
+- Task to refresh a remote instance (crawling their outbox, fetching their latest public events just in case of federation issues)
+- New homepage with illustration
+
+### Fixed
+
+- Handle timezone not detected inside browser
+- Fix webfinger not following redirections
+- Fix some Apollo GraphQL errors
+- Disable updating/deleting group posts and discussions for non-moderators
+- Fix group drafts events showing up on group public page
+
 ## 1.0.0-rc.2 - 2020-10-20
 
 ### Added
