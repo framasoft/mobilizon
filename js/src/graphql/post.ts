@@ -14,6 +14,7 @@ export const POST_FRAGMENT = gql`
       name
       domain
       avatar {
+        id
         url
       }
     }
@@ -23,6 +24,7 @@ export const POST_FRAGMENT = gql`
       name
       domain
       avatar {
+        id
         url
       }
     }
@@ -55,6 +57,7 @@ export const POST_BASIC_FIELDS = gql`
       name
       domain
       avatar {
+        id
         url
       }
     }
@@ -64,6 +67,7 @@ export const POST_BASIC_FIELDS = gql`
       name
       domain
       avatar {
+        id
         url
       }
     }

@@ -15,6 +15,7 @@ export const DISCUSSION_BASIC_FIELDS_FRAGMENT = gql`
         preferredUsername
         domain
         avatar {
+          id
           url
         }
       }
@@ -38,6 +39,7 @@ export const DISCUSSION_FIELDS_FOR_REPLY_FRAGMENT = gql`
         preferredUsername
         domain
         avatar {
+          id
           url
         }
       }
@@ -111,6 +113,7 @@ export const GET_DISCUSSION = gql`
           actor {
             id
             avatar {
+              id
               url
             }
             name
@@ -161,6 +164,7 @@ export const DISCUSSION_COMMENT_CHANGED = gql`
           name
           domain
           avatar {
+            id
             url
           }
         }

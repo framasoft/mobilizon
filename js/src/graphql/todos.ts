@@ -23,6 +23,7 @@ export const GET_TODO = gql`
         domain
         name
         avatar {
+          id
           url
         }
       }

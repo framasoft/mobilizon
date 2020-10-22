@@ -6,6 +6,7 @@ const participantQuery = `
   actor {
     preferredUsername,
     avatar {
+      id
       url
     },
     name,
@@ -102,6 +103,7 @@ export const FETCH_EVENT = gql`
       }
       organizerActor {
         avatar {
+          id
           url
         },
         preferredUsername,
@@ -113,6 +115,7 @@ export const FETCH_EVENT = gql`
       },
       contacts {
         avatar {
+          id
           url,
         }
         preferredUsername,
@@ -124,6 +127,7 @@ export const FETCH_EVENT = gql`
       },
       attributedTo {
         avatar {
+          id
           url,
         }
         preferredUsername,
@@ -157,6 +161,7 @@ export const FETCH_EVENT = gql`
         organizerActor {
           id
           avatar {
+            id
             url,
           },
           preferredUsername,
@@ -199,6 +204,7 @@ export const FETCH_EVENTS = gql`
       organizerActor {
         id,
         avatar {
+          id
           url
         },
         preferredUsername,
@@ -207,6 +213,7 @@ export const FETCH_EVENTS = gql`
       },
 #      attributedTo {
 #        avatar {
+#          id
 #          url
 #        },
 #        preferredUsername,
@@ -295,11 +302,13 @@ export const CREATE_EVENT = gql`
         url,
         preferredUsername,
         avatar {
+          id
           url
         }
       },
       organizerActor {
         avatar {
+          id
           url
         },
         preferredUsername,
@@ -310,6 +319,7 @@ export const CREATE_EVENT = gql`
       },
       contacts {
         avatar {
+          id
           url
         },
         preferredUsername,
@@ -406,11 +416,13 @@ export const EDIT_EVENT = gql`
         url,
         preferredUsername,
         avatar {
+          id
           url
         }
       },
       contacts {
         avatar {
+          id
           url
         },
         preferredUsername,
@@ -421,6 +433,7 @@ export const EDIT_EVENT = gql`
       },
       organizerActor {
         avatar {
+          id
           url
         },
         preferredUsername,
