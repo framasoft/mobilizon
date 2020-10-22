@@ -1,45 +1,39 @@
-version: '3'
+version: "3"
 
 services:
-  postgres:
-    container_name: mobilizon_db
-    restart: unless-stopped
-    image: mdillon/postgis:11
+  mobilizon:
+    image: mobilizon
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: mobilizon_dev
+      - MOBILIZON_INSTANCE_NAME
+      - MOBILIZON_INSTANCE_HOST
+      - MOBILIZON_INSTANCE_EMAIL
+      - MOBILIZON_REPLY_EMAIL
+      - MOBILIZON_INSTANCE_REGISTRATIONS_OPEN=true
+      - MOBILIZON_DATABASE_USERNAME=${POSTGRES_USER}
+      - MOBILIZON_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
+      - MOBILIZON_DATABASE_DBNAME=${POSTGRES_DB}
+      - MOBILIZON_DATABASE_HOST=db
+      - MOBILIZON_INSTANCE_SECRET_KEY_BASE
+      - MOBILIZON_INSTANCE_SECRET_KEY
+      - MOBILIZON_SMTP_SERVER=yoursmtpserver
+      - MOBILIZON_SMTP_HOSTNAME=your.smtp.domain
+      - MOBILIZON_SMTP_USERNAME
+      - MOBILIZON_SMTP_PASSWORD
     volumes:
-      - pgdata:/var/lib/postgresql/data
-  api:
-    container_name: mobilizon_api
-    restart: unless-stopped
-    build: .
-    volumes:
-      - '.:/app'
+      - /tmp/public/upload:/app/upload
     ports:
-      - "4000:4000"
-    depends_on:
-      - postgres
+     - "4000:4000"
+
+  db:
+    image: postgis/postgis
+    volumes:
+      - /tmp/db:/var/lib/postgresql/data
     environment:
-      MIX_ENV: "dev"
-      DOCKER: "true"
-      MOBILIZON_INSTANCE_NAME: My Mobilizon Instance
-      MOBILIZON_INSTANCE_HOST: mobilizon.me
-      MOBILIZON_INSTANCE_EMAIL: noreply@mobilizon.me
-      MOBILIZON_INSTANCE_REGISTRATIONS_OPEN: "true"
-      MOBILIZON_DATABASE_PASSWORD: postgres
-      MOBILIZON_DATABASE_USERNAME: postgres
-      MOBILIZON_DATABASE_DBNAME: mobilizon_dev
-      MOBILIZON_DATABASE_HOST: postgres
-    command: >
-      sh -c "cd js &&
-      yarn install &&
-      cd ../ &&
-      mix deps.get &&
-      mix compile &&
-      mix ecto.create &&
-      mix ecto.migrate &&
-      mix phx.server"
-volumes:
-  pgdata:
-  .:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+
+networks:
+  default:
+    ipam:
+      driver: default
