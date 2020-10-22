@@ -21,6 +21,7 @@
         <p class="buttons" v-if="isCurrentActorMember">
           <b-tag type="is-warning" size="is-medium" v-if="post.draft">{{ $t("Draft") }}</b-tag>
           <router-link
+            v-if="currentActor.id === post.author.id || isCurrentActorAGroupModerator"
             :to="{ name: RouteName.POST_EDIT, params: { slug: post.slug } }"
             tag="button"
             class="button is-text"
@@ -44,8 +45,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
+import { mixins } from "vue-class-component";
 import Editor from "@/components/Editor.vue";
+import GroupMixin from "@/mixins/group";
 import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "../../graphql/actor";
 import { FETCH_POST } from "../../graphql/post";
 
@@ -101,7 +104,7 @@ import Tag from "../../components/Tag.vue";
     };
   },
 })
-export default class Post extends Vue {
+export default class Post extends mixins(GroupMixin) {
   @Prop({ required: true, type: String }) slug!: string;
 
   post!: IPost;

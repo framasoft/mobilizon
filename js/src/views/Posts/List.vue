@@ -157,6 +157,10 @@ export default class PostList extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+.container.section {
+  background: $white;
+}
+
 section {
   div.intro,
   .post-list {

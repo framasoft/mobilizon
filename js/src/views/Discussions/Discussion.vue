@@ -39,6 +39,7 @@
         <h2 class="title" v-if="discussion.title && !editTitleMode">
           {{ discussion.title }}
           <span
+            v-if="currentActor.id === discussion.creator.id || isCurrentActorAGroupModerator"
             @click="
               () => {
                 newTitle = discussion.title;
@@ -100,7 +101,8 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
+import { mixins } from "vue-class-component";
 import {
   GET_DISCUSSION,
   REPLY_TO_DISCUSSION,
@@ -113,6 +115,7 @@ import { usernameWithDomain } from "@/types/actor";
 import DiscussionComment from "@/components/Discussion/DiscussionComment.vue";
 import { GraphQLError } from "graphql";
 import { DELETE_COMMENT, UPDATE_COMMENT } from "@/graphql/comment";
+import GroupMixin from "@/mixins/group";
 import RouteName from "../../router/name";
 import { IComment } from "../../types/comment.model";
 
@@ -170,7 +173,7 @@ import { IComment } from "../../types/comment.model";
   },
   metaInfo() {
     return {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title: this.discussion.title,
       // all titles will be injected into this template
@@ -178,7 +181,7 @@ import { IComment } from "../../types/comment.model";
     };
   },
 })
-export default class discussion extends Vue {
+export default class discussion extends mixins(GroupMixin) {
   @Prop({ type: String, required: true }) slug!: string;
 
   discussion: IDiscussion = new Discussion();
@@ -199,7 +202,7 @@ export default class discussion extends Vue {
 
   usernameWithDomain = usernameWithDomain;
 
-  async reply() {
+  async reply(): Promise<void> {
     if (this.newComment === "") return;
 
     await this.$apollo.mutate({
@@ -234,7 +237,7 @@ export default class discussion extends Vue {
     this.newComment = "";
   }
 
-  async updateComment(comment: IComment) {
+  async updateComment(comment: IComment): Promise<void> {
     const { data } = await this.$apollo.mutate<{ deleteComment: IComment }>({
       mutation: UPDATE_COMMENT,
       variables: {
@@ -270,7 +273,7 @@ export default class discussion extends Vue {
     });
   }
 
-  async deleteComment(comment: IComment) {
+  async deleteComment(comment: IComment): Promise<void> {
     const { data } = await this.$apollo.mutate<{ deleteComment: IComment }>({
       mutation: DELETE_COMMENT,
       variables: {
@@ -308,7 +311,7 @@ export default class discussion extends Vue {
     });
   }
 
-  async loadMoreComments() {
+  async loadMoreComments(): Promise<void> {
     if (!this.hasMoreComments) return;
     this.page += 1;
     try {
@@ -338,7 +341,7 @@ export default class discussion extends Vue {
     }
   }
 
-  async updateDiscussion() {
+  async updateDiscussion(): Promise<void> {
     await this.$apollo.mutate({
       mutation: UPDATE_DISCUSSION,
       variables: {
@@ -368,7 +371,7 @@ export default class discussion extends Vue {
     this.editTitleMode = false;
   }
 
-  async deleteConversation() {
+  async deleteConversation(): Promise<void> {
     await this.$apollo.mutate({
       mutation: DELETE_DISCUSSION,
       variables: {
@@ -376,28 +379,28 @@ export default class discussion extends Vue {
       },
     });
     if (this.discussion.actor) {
-      return this.$router.push({
+      this.$router.push({
         name: RouteName.DISCUSSION_LIST,
         params: { preferredUsername: usernameWithDomain(this.discussion.actor) },
       });
     }
   }
 
-  async handleErrors(errors: GraphQLError[]) {
+  async handleErrors(errors: GraphQLError[]): Promise<void> {
     if (errors[0].message.includes("No such discussion")) {
       await this.$router.push({ name: RouteName.PAGE_NOT_FOUND });
     }
   }
 
-  mounted() {
+  mounted(): void {
     window.addEventListener("scroll", this.handleScroll);
   }
 
-  destroyed() {
+  destroyed(): void {
     window.removeEventListener("scroll", this.handleScroll);
   }
 
-  handleScroll() {
+  handleScroll(): void {
     const scrollTop =
       (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
     const scrollHeight =

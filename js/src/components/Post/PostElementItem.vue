@@ -33,7 +33,7 @@
               $options.filters.formatDateTimeString(new Date(post.insertedAt), false)
             }}</small>
             <small class="has-text-grey" v-if="isCurrentActorMember">{{
-              $t("Created by {username}", { username: usernameWithDomain(post.author) })
+              $t("Created by {username}", { username: `@${usernameWithDomain(post.author)}` })
             }}</small>
           </div>
         </div>
