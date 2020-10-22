@@ -1704,7 +1704,7 @@ defmodule Mobilizon.Events do
 
   defp event_filter_visibility(query, :public) do
     query
-    |> where(visibility: ^:public)
+    |> where(visibility: ^:public, draft: false)
   end
 
   defp event_filter_begins_on(query, nil, nil),
