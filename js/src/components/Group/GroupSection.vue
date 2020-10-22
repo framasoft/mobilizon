@@ -37,6 +37,7 @@ section {
   flex-direction: column;
   margin-bottom: 2rem;
   border: 2px solid $violet;
+  min-height: 30vh;
 
   .create-slot {
     display: flex;
@@ -48,6 +49,7 @@ section {
   .main-slot {
     min-height: 5rem;
     padding: 5px;
+    flex: 1;
   }
 }
 

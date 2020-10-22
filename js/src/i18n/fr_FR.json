@@ -867,5 +867,7 @@
   "An ethical alternative": "Une alternative éthique",
   "Ethical alternative to Facebook events, groups and pages, Mobilizon is a <b>tool designed to serve you</b>. Period.": "Alternative éthique aux événements, groupes et pages Facebook, Mobilizon est <b>un outil conçu pour vous servir</b>. Point.",
   "A federated software": "Un logiciel fédéré",
-  "Mobilizon is not a giant platform, but a <b>multitude of interconnected Mobilizon websites</b>.": "Mobilizon n’est pas une plateforme géante, mais une <b>multitude de sites web Mobilizon interconnectés</b>."
+  "Mobilizon is not a giant platform, but a <b>multitude of interconnected Mobilizon websites</b>.": "Mobilizon n’est pas une plateforme géante, mais une <b>multitude de sites web Mobilizon interconnectés</b>.",
+  "When a moderator from the group creates an event and attributes it to the group, it will show up here.": "Lorsqu'un·e modérateur·ice du groupe crée un événement et l'attribue au groupe, il s'affichera ici.",
+  "Only group moderators can create, edit and delete posts.": "Seul·es les modérateur·ices du groupe peuvent créer, éditer et supprimer des billets."
 }

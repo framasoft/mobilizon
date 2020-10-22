@@ -35,8 +35,11 @@
             )
           }}
         </p>
+        <p v-if="isCurrentActorMember">
+          {{ $t("Only group moderators can create, edit and delete posts.") }}
+        </p>
         <router-link
-          v-if="isCurrentActorMember"
+          v-if="isCurrentActorAGroupModerator"
           :to="{
             name: RouteName.POST_CREATE,
             params: { preferredUsername: usernameWithDomain(group) },
@@ -75,8 +78,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
+import { mixins } from "vue-class-component";
+import GroupMixin from "@/mixins/group";
 import { FETCH_GROUP_POSTS } from "../../graphql/post";
 import { Paginate } from "../../types/paginate";
 import { IPost } from "../../types/post.model";
@@ -131,7 +136,7 @@ const POSTS_PAGE_LIMIT = 10;
     };
   },
 })
-export default class PostList extends Vue {
+export default class PostList extends mixins(GroupMixin) {
   @Prop({ required: true, type: String }) preferredUsername!: string;
 
   group!: IGroup;

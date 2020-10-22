@@ -29,10 +29,18 @@
       <p v-if="isCurrentActorMember">
         {{
           $t(
-            "When someone from the group creates an event and attributes it to the group, it will show up here."
+            "When a moderator from the group creates an event and attributes it to the group, it will show up here."
           )
         }}
       </p>
+      <router-link
+        v-if="isCurrentActorAGroupModerator"
+        :to="{
+          name: RouteName.CREATE_EVENT,
+        }"
+        class="button is-primary"
+        >{{ $t("+ Create an event") }}</router-link
+      >
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <section v-if="group">
         <subtitle>
@@ -58,12 +66,14 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component } from "vue-property-decorator";
+import { mixins } from "vue-class-component";
 import { FETCH_GROUP } from "@/graphql/group";
 import RouteName from "@/router/name";
 import Subtitle from "@/components/Utils/Subtitle.vue";
 import EventListViewCard from "@/components/Event/EventListViewCard.vue";
 import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
+import GroupMixin from "@/mixins/group";
 import { IGroup, IMember, IPerson, usernameWithDomain } from "../../types/actor";
 
 @Component({
@@ -98,7 +108,7 @@ import { IGroup, IMember, IPerson, usernameWithDomain } from "../../types/actor"
     EventListViewCard,
   },
 })
-export default class GroupEvents extends Vue {
+export default class GroupEvents extends mixins(GroupMixin) {
   group!: IGroup;
 
   memberships!: IMember[];
@@ -117,3 +127,8 @@ export default class GroupEvents extends Vue {
   }
 }
 </script>
+<style lang="scss" scoped>
+.container.section {
+  background: $white;
+}
+</style>

@@ -731,7 +731,6 @@
   "Create to-do lists for all the tasks you need to do, assign them and set due dates.": "Create to-do lists for all the tasks you need to do, assign them and set due dates.",
   "A place to store links to documents or resources of any type.": "A place to store links to documents or resources of any type.",
   "{group}'s events": "{group}'s events",
-  "When someone from the group creates an event and attributes it to the group, it will show up here.": "When someone from the group creates an event and attributes it to the group, it will show up here.",
   "View all": "View all",
   "+ Start a discussion": "+ Start a discussion",
   "+ Add a resource": "+ Add a resource",
@@ -815,5 +814,7 @@
   "An ethical alternative": "An ethical alternative",
   "Ethical alternative to Facebook events, groups and pages, Mobilizon is a <b>tool designed to serve you</b>. Period.": "Ethical alternative to Facebook events, groups and pages, Mobilizon is a <b>tool designed to serve you</b>. Period.",
   "A federated software": "A federated software",
-  "Mobilizon is not a giant platform, but a <b>multitude of interconnected Mobilizon websites</b>.": "Mobilizon is not a giant platform, but a <b>multitude of interconnected Mobilizon websites</b>."
+  "Mobilizon is not a giant platform, but a <b>multitude of interconnected Mobilizon websites</b>.": "Mobilizon is not a giant platform, but a <b>multitude of interconnected Mobilizon websites</b>.",
+  "When a moderator from the group creates an event and attributes it to the group, it will show up here.": "When a moderator from the group creates an event and attributes it to the group, it will show up here.",
+  "Only group moderators can create, edit and delete posts.": "Only group moderators can create, edit and delete posts."
 }
