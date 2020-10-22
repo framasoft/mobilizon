@@ -44,7 +44,7 @@ import RouteName from "../../router/name";
   },
   metaInfo() {
     return {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title: this.$t("Create a discussion") as string,
       // all titles will be injected into this template
@@ -61,7 +61,7 @@ export default class CreateDiscussion extends Vue {
 
   discussion = { title: "", text: "" };
 
-  async createDiscussion() {
+  async createDiscussion(): Promise<void> {
     try {
       const { data } = await this.$apollo.mutate({
         mutation: CREATE_DISCUSSION,
@@ -71,9 +71,6 @@ export default class CreateDiscussion extends Vue {
           actorId: this.group.id,
           creatorId: this.currentActor.id,
         },
-        // update: (store, { data: { createDiscussion } }) => {
-        //   // TODO: update group list cache
-        // },
       });
 
       await this.$router.push({
@@ -83,8 +80,11 @@ export default class CreateDiscussion extends Vue {
           slug: data.createDiscussion.slug,
         },
       });
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
+      }
     }
   }
 }
