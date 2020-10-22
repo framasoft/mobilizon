@@ -158,6 +158,7 @@ export const DISCUSSION_COMMENT_CHANGED = gql`
         actor {
           id
           preferredUsername
+          name
           domain
           avatar {
             url
