@@ -77,7 +77,6 @@ exunit:
     - lint
   script:
     - mix coveralls
-
 # cypress:
 #   stage: test
 #   services:
@@ -103,24 +102,22 @@ exunit:
 #       - js/tests/e2e/screenshots/**/*.png
 #       - js/tests/e2e/videos/**/*.mp4
 
-pages:
-  stage: deploy
-  script:
-    - mkdir public
-    - mkdocs build
-    - cd docs/fr && mkdocs build && cd ../../
-    - mv site/* public/
-    # Mix docs disabled because of https://github.com/elixir-lang/ex_doc/issues/1172
-    # - mix deps.get
-    # - mix docs
-    # - mv doc public/backend
-    #- cd js
-    #- yarn install
-    #- yarn run styleguide:build
-    #- mv styleguide ../public/frontend
-  only:
-    - master
-  artifacts:
-    expire_in: 1 hour
-    paths:
-      - public
+# pages:
+#   stage: deploy
+#   script:
+#     # - mkdir public
+#     # Mobilizon documentation is now on https://framagit.org/framasoft/joinmobilizon/documentation
+#     # Mix docs disabled because of https://github.com/elixir-lang/ex_doc/issues/1172
+#     # - mix deps.get
+#     # - mix docs
+#     # - mv doc public/backend
+#     #- cd js
+#     #- yarn install
+#     #- yarn run styleguide:build
+#     #- mv styleguide ../public/frontend
+#   only:
+#     - master
+#   artifacts:
+#     expire_in: 1 hour
+#     paths:
+#       - public
