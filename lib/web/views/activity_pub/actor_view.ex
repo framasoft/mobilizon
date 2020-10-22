@@ -96,7 +96,7 @@ defmodule Mobilizon.Web.ActivityPub.ActorView do
   end
 
   defp fetch_collection(:events, actor, page) do
-    Events.list_organized_events_for_group(actor, page)
+    Events.list_simple_organized_events_for_group(actor, page)
   end
 
   defp fetch_collection(:todos, actor, page) do
