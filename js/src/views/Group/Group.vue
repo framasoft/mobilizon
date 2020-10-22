@@ -231,6 +231,7 @@
           </template>
           <template v-slot:create>
             <router-link
+              v-if="isCurrentActorAGroupModerator"
               :to="{
                 name: RouteName.CREATE_EVENT,
               }"
@@ -259,6 +260,7 @@
           </template>
           <template v-slot:create>
             <router-link
+              v-if="isCurrentActorAGroupModerator"
               :to="{
                 name: RouteName.POST_CREATE,
                 params: { preferredUsername: usernameWithDomain(group) },
