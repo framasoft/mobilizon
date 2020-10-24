@@ -83,12 +83,14 @@ export const groupsRoutes: RouteConfig[] = [
     component: () => import("@/views/Posts/Edit.vue"),
     props: true,
     name: GroupsRouteName.POST_CREATE,
+    meta: { requiredAuth: true },
   },
   {
     path: "/p/:slug/edit",
     component: () => import("@/views/Posts/Edit.vue"),
     props: (route: Route) => ({ ...route.params, ...{ isUpdate: true } }),
     name: GroupsRouteName.POST_EDIT,
+    meta: { requiredAuth: true },
   },
   {
     path: "/p/:slug",

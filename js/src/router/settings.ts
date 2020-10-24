@@ -40,6 +40,7 @@ export const settingsRoutes: RouteConfig[] = [
         path: "account",
         name: SettingsRouteName.ACCOUNT_SETTINGS,
         redirect: { name: SettingsRouteName.ACCOUNT_SETTINGS_GENERAL },
+        meta: { requiredAuth: true },
       },
       {
         path: "account/general",
@@ -69,6 +70,7 @@ export const settingsRoutes: RouteConfig[] = [
         path: "admin",
         name: SettingsRouteName.ADMIN,
         redirect: { name: SettingsRouteName.ADMIN_DASHBOARD },
+        meta: { requiredAuth: true },
       },
       {
         path: "admin/dashboard",
@@ -136,27 +138,30 @@ export const settingsRoutes: RouteConfig[] = [
         name: SettingsRouteName.RELAYS,
         redirect: { name: SettingsRouteName.RELAY_FOLLOWINGS },
         component: () => import(/* webpackChunkName: "Follows" */ "@/views/Admin/Follows.vue"),
+        meta: { requiredAuth: true },
         children: [
           {
             path: "followings",
             name: SettingsRouteName.RELAY_FOLLOWINGS,
             component: () =>
               import(/* webpackChunkName: "Followings" */ "@/components/Admin/Followings.vue"),
+            meta: { requiredAuth: true },
           },
           {
             path: "followers",
             name: SettingsRouteName.RELAY_FOLLOWERS,
             component: () =>
               import(/* webpackChunkName: "Followers" */ "@/components/Admin/Followers.vue"),
+            meta: { requiredAuth: true },
           },
         ],
         props: true,
-        meta: { requiredAuth: true },
       },
       {
         path: "/moderation",
         name: SettingsRouteName.MODERATION,
         redirect: { name: SettingsRouteName.REPORTS },
+        meta: { requiredAuth: true },
       },
       {
         path: "/moderation/reports/:filter?",
@@ -185,6 +190,7 @@ export const settingsRoutes: RouteConfig[] = [
         path: "/identity",
         name: SettingsRouteName.IDENTITIES,
         redirect: { name: SettingsRouteName.UPDATE_IDENTITY },
+        meta: { requiredAuth: true },
       },
       {
         path: "/identity/create",
@@ -194,6 +200,7 @@ export const settingsRoutes: RouteConfig[] = [
             /* webpackChunkName: "EditIdentity" */ "@/views/Account/children/EditIdentity.vue"
           ),
         props: (route) => ({ identityName: route.params.identityName, isUpdate: false }),
+        meta: { requiredAuth: true },
       },
       {
         path: "/identity/update/:identityName?",
@@ -203,6 +210,7 @@ export const settingsRoutes: RouteConfig[] = [
             /* webpackChunkName: "EditIdentity" */ "@/views/Account/children/EditIdentity.vue"
           ),
         props: (route) => ({ identityName: route.params.identityName, isUpdate: true }),
+        meta: { requiredAuth: true },
       },
     ],
   },

@@ -13,7 +13,7 @@ export const discussionRoutes: RouteConfig[] = [
     component: () =>
       import(/* webpackChunkName: "DiscussionsList" */ "@/views/Discussions/DiscussionsList.vue"),
     props: true,
-    meta: { requiredAuth: false },
+    meta: { requiredAuth: true },
   },
   {
     path: "/@:preferredUsername/discussions/new",
@@ -29,6 +29,6 @@ export const discussionRoutes: RouteConfig[] = [
     component: () =>
       import(/* webpackChunkName: "Discussion" */ "@/views/Discussions/Discussion.vue"),
     props: true,
-    meta: { requiredAuth: false },
+    meta: { requiredAuth: true },
   },
 ];
