@@ -9,8 +9,9 @@ defmodule Mobilizon.Service.GitStatus do
                String.trim(hash)
 
              _ ->
-               Logger.warn("Could not read git commit hash")
-               "UNKNOWN"
+               # Fallback on Mix version
+               Logger.warn("Could not read git commit hash, using Mix version code instead.")
+               Mix.Project.config()[:version]
            end)
 
   @doc """
