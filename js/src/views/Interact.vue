@@ -27,12 +27,10 @@ import RouteName from "../router/name";
       skip() {
         try {
           const url = this.$route.query.url as string;
-          new URL(url);
-          return false;
+          const uri = new URL(url);
+          return !(uri instanceof URL);
         } catch (e) {
-          if (e instanceof TypeError) {
-            return true;
-          }
+          return true;
         }
       },
       async result({ data }) {
@@ -42,7 +40,7 @@ import RouteName from "../router/name";
           data.searchEvents.elements.length > 0
         ) {
           const event = data.searchEvents.elements[0];
-          return await this.$router.replace({
+          await this.$router.replace({
             name: RouteName.EVENT,
             params: { uuid: event.uuid },
           });
