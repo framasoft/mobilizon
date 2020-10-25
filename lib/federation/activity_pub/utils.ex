@@ -273,7 +273,8 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     compare_uris?(uri_1, uri_2)
   end
 
-  defp compare_uris?(%URI{} = id_uri, %URI{} = other_uri), do: id_uri.host == other_uri.host
+  defp compare_uris?(%URI{} = id_uri, %URI{} = other_uri),
+    do: id_uri.host == other_uri.host && id_uri.port == other_uri.port
 
   @spec origin_check_from_id?(String.t(), String.t()) :: boolean()
   def origin_check_from_id?(id, other_id) when is_binary(other_id) do
