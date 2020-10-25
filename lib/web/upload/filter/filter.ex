@@ -17,7 +17,10 @@ defmodule Mobilizon.Web.Upload.Filter do
   require Logger
 
   @callback filter(Mobilizon.Web.Upload.t()) ::
-              :ok | {:ok, Mobilizon.Web.Upload.t()} | {:error, any()}
+              {:ok, :filtered}
+              | {:ok, :noop}
+              | {:ok, :filtered, Mobilizon.Web.Upload.t()}
+              | {:error, any()}
 
   @spec filter([module()], Mobilizon.Web.Upload.t()) ::
           {:ok, Mobilizon.Web.Upload.t()} | {:error, any()}
@@ -28,10 +31,13 @@ defmodule Mobilizon.Web.Upload.Filter do
 
   def filter([filter | rest], upload) do
     case filter.filter(upload) do
-      :ok ->
+      {:ok, :filtered} ->
         filter(rest, upload)
 
-      {:ok, upload} ->
+      {:ok, :filtered, upload} ->
+        filter(rest, upload)
+
+      {:ok, :noop} ->
         filter(rest, upload)
 
       error ->

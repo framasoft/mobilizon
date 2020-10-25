@@ -29,6 +29,7 @@ priv/errors/*
 cover/
 site/
 test/fixtures/image_tmp.jpg
+test/fixtures/DSCN0010_tmp.jpg
 test/uploads/
 uploads/*
 release/
