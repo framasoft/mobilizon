@@ -1,7 +1,7 @@
 import { IPicture } from "@/types/picture.model";
 
-export async function buildFileFromIPicture(obj: IPicture | null | undefined) {
-  if (!obj) return null;
+export async function buildFileFromIPicture(obj: IPicture | null | undefined): Promise<File | null> {
+  if (!obj) return Promise.resolve(null);
 
   const response = await fetch(obj.url);
   const blob = await response.blob();
@@ -9,7 +9,7 @@ export async function buildFileFromIPicture(obj: IPicture | null | undefined) {
   return new File([blob], obj.name);
 }
 
-export function buildFileVariable<T>(file: File | null, name: string, alt?: string) {
+export function buildFileVariable<T>(file: File | null, name: string, alt?: string): Record<string, unknown> {
   if (!file) return {};
 
   return {

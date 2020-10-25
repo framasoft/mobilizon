@@ -27,7 +27,7 @@
         <span v-else>{{ $t("I create an identity") }}</span>
       </h1>
 
-      <picture-upload v-model="avatarFile" class="picture-upload" />
+      <picture-upload v-model="avatarFile" :defaultImageSrc="avatarUrl" class="picture-upload" />
 
       <b-field horizontal :label="$t('Display name')">
         <b-input
@@ -124,7 +124,6 @@ h1 {
 <script lang="ts">
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { mixins } from "vue-class-component";
-import { Route } from "vue-router";
 import {
   CREATE_PERSON,
   CURRENT_ACTOR_CLIENT,
@@ -137,7 +136,7 @@ import { IPerson, Person } from "../../../types/actor";
 import PictureUpload from "../../../components/PictureUpload.vue";
 import { MOBILIZON_INSTANCE_HOST } from "../../../api/_entrypoint";
 import RouteName from "../../../router/name";
-import { buildFileFromIPicture, buildFileVariable, readFileAsync } from "../../../utils/image";
+import { buildFileVariable } from "../../../utils/image";
 import { changeIdentity } from "../../../utils/auth";
 import identityEditionMixin from "../../../mixins/identityEdition";
 
@@ -185,24 +184,31 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
     return this.$t("Only alphanumeric characters and underscores are supported.") as string;
   }
 
+  get avatarUrl(): string | null {
+    if (this.identity && this.identity.avatar && this.identity.avatar.url) {
+      return this.identity.avatar.url;
+    }
+    return null;
+  }
+
   @Watch("isUpdate")
   async isUpdateChanged(): Promise<void> {
     this.resetFields();
   }
 
   @Watch("identityName", { immediate: true })
-  async onIdentityParamChanged(val: string): Promise<Route | undefined> {
+  async onIdentityParamChanged(val: string): Promise<void> {
     // Only used when we update the identity
     if (!this.isUpdate) return;
 
     await this.redirectIfNoIdentitySelected(val);
 
     if (!this.identityName) {
-      return this.$router.push({ name: "CreateIdentity" });
+      this.$router.push({ name: "CreateIdentity" });
     }
 
     if (this.identityName && this.identity) {
-      this.avatarFile = await buildFileFromIPicture(this.identity.avatar);
+      this.avatarFile = null;
     }
   }
 
@@ -278,6 +284,7 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
           }
         },
       });
+      this.avatarFile = null;
 
       this.$notifier.success(
         this.$t("Identity {displayName} updated", {
@@ -376,23 +383,18 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
   }
 
   private async buildVariables() {
-    const avatarObj = buildFileVariable(
-      this.avatarFile,
-      "avatar",
-      `${this.identity.preferredUsername}'s avatar`
-    );
-    const res = { ...this.identity, ...avatarObj };
     /**
-     * If the avatar didn't change, no need to try reuploading it
+     * We set the avatar only if user has selected one
      */
-    if (this.identity.avatar) {
-      const oldAvatarFile = (await buildFileFromIPicture(this.identity.avatar)) as File;
-      const oldAvatarFileContent = await readFileAsync(oldAvatarFile);
-      const newAvatarFileContent = await readFileAsync(this.avatarFile as File);
-      if (oldAvatarFileContent === newAvatarFileContent) {
-        res.avatar = null;
-      }
+    let avatarObj: Record<string, unknown> = { avatar: null };
+    if (this.avatarFile) {
+      avatarObj = buildFileVariable(
+        this.avatarFile,
+        "avatar",
+        `${this.identity.preferredUsername}'s avatar`
+      );
     }
+    const res = { ...this.identity, ...avatarObj };
     return res;
   }
 
