@@ -278,7 +278,10 @@
     <div v-else class="public-container">
       <section>
         <subtitle>{{ $t("About") }}</subtitle>
-        <div v-html="group.summary" />
+        <div v-html="group.summary" v-if="group.summary && group.summary !== '<p></p>'" />
+        <div v-else-if="group" class="content has-text-grey has-text-centered">
+          <p>{{ $t("This group doesn't have a description yet.") }}</p>
+        </div>
       </section>
       <section>
         <subtitle>{{ $t("Upcoming events") }}</subtitle>
@@ -297,7 +300,9 @@
             >{{ $t("View all upcoming events") }}</router-link
           >
         </div>
-        <span v-else-if="group">{{ $t("No public upcoming events") }}</span>
+        <div v-else-if="group" class="content has-text-grey has-text-centered">
+          <p>{{ $t("No public upcoming events") }}</p>
+        </div>
         <b-skeleton animated v-else></b-skeleton>
       </section>
       <section>
