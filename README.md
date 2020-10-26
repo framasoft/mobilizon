@@ -12,7 +12,7 @@ Mobilizon is your federated organization and mobilization platform. Gather peopl
 
 <p align="center">
   <a href="https://framasoft.org">
-    <img width="150px" src="https://lutim.cpy.re/FeRgHH8r.png" alt="Framasoft logo"/>
+    <img width="150px" src="https://framasoft.org/nav/img/logo.svg" alt="Framasoft logo"/>
   </a>
 </p>
 
@@ -57,4 +57,10 @@ We appreciate any contribution to Mobilizon. Check our [CONTRIBUTING](CONTRIBUTI
   * 🐘 Mastodon: [https://framapiaf.org/@mobilizon](https://framapiaf.org/@mobilizon)
   * 🐦 Twitter [https://twitter.com/@joinmobilizon](https://twitter.com/@joinmobilizon)
   
-Note: Most federation code comes from [Pleroma](https://pleroma.social), which is `Copyright © 2017-2018 Pleroma Authors - AGPL-3.0`
+Note: Most federation code comes from [Pleroma](https://pleroma.social), which is `Copyright © 2017-2018 Pleroma Authors - AGPL-3.0`.
+
+
+## ❤️ Supports of our crowdfunding
+---
+
+We have run [a crowdfunding campaign](https://framablog.org/2019/05/14/mobilizon-lets-finance-a-software-to-free-our-events-from-facebook/) to pave the road to the version 1.0.0 of Mobilizon. Thanks to everyone who pitched in and shared the news around! The list of [everyone who donated is available here](https://joinmobilizon.org/hall-of-fame).
