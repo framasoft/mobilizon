@@ -6,6 +6,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 1.0.0 - 2020-10-26
+
+### Changed
+
+- Strengthen upload picture and filter code and tests
+- Add link to mobilizon.org on the bottom of the about page to register
+
+### Fixed
+
+- Fix several front-end routes being accessible without authentification and make them redirect to login page (no information was given, the pages were just empty)
+- Fallback version code to Mix project version value if there's no Git information
+- Fix identity avatar change flicking or showing wrong avatar for identity
+- Fix public group page when description/list of events/list of posts are empty
+- Make sure `"to"` and `"cc"` in ActivityStreams are always lists (@vpzomtrrfrt)
+- Check port when comparing URLs (@vpzomtrrfrt)
+
+### Translations
+
+- Galician
+- German
+- Occitan
+- Spanish
+
 ## 1.0.0-rc.4 - 2020-10-22
 
 ### Fixed
