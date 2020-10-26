@@ -11,6 +11,7 @@ defmodule Mobilizon.Web.Upload.Uploader.Local do
   @behaviour Mobilizon.Web.Upload.Uploader
 
   alias Mobilizon.Config
+  alias Mobilizon.Web.Upload
 
   @impl true
   def get_file(_) do
@@ -18,15 +19,21 @@ defmodule Mobilizon.Web.Upload.Uploader.Local do
   end
 
   @impl true
-  def put_file(upload) do
-    {path, file} = local_path(upload.path)
+  def put_file(%Upload{path: path, tempfile: tempfile}) do
+    {path, file} = local_path(path)
     result_file = Path.join(path, file)
 
-    unless File.exists?(result_file) do
-      File.cp!(upload.tempfile, result_file)
-    end
+    with {:result_exists, false} <- {:result_exists, File.exists?(result_file)},
+         {:temp_file_exists, true} <- {:temp_file_exists, File.exists?(tempfile)} do
+      File.cp!(tempfile, result_file)
+    else
+      {:result_exists, _} ->
+        # If the resulting file already exists, it's because of the Dedupe filter
+        :ok
 
-    :ok
+      {:temp_file_exists, _} ->
+        {:error, "Temporary file no longer exists"}
+    end
   end
 
   @impl true
