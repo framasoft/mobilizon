@@ -231,7 +231,7 @@
                 >
                   <a
                     slot="default_privacy_policy"
-                    href="https://mobilizon.org/terms"
+                    href="https://mobilizon.fr/terms"
                     target="_blank"
                     rel="noopener"
                     >{{ $t("default Mobilizon privacy policy") }}</a
@@ -259,7 +259,7 @@
                 >
                   <a
                     slot="mobilizon_privacy_policy"
-                    href="https://mobilizon.org/privacy"
+                    href="https://mobilizon.fr/privacy"
                     target="_blank"
                     rel="noopener"
                   >

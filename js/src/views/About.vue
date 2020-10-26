@@ -26,21 +26,11 @@
       <div class="columns">
         <div class="column is-one-quarter-desktop">
           <aside class="menu">
-            <p class="menu-label">
-              {{ $t("About") }}
+            <p class="menu-list">
+              <router-link :to="{ name: RouteName.ABOUT_INSTANCE }">{{
+                $t("About this instance")
+              }}</router-link>
             </p>
-            <ul class="menu-list">
-              <li>
-                <router-link :to="{ name: RouteName.ABOUT_INSTANCE }">{{
-                  $t("About this instance")
-                }}</router-link>
-              </li>
-              <li>
-                <router-link :to="{ name: RouteName.ABOUT_MOBILIZON }">{{
-                  $t("About Mobilizon")
-                }}</router-link>
-              </li>
-            </ul>
             <p class="menu-label">
               {{ $t("Legal") }}
             </p>
@@ -73,11 +63,11 @@
     </main>
 
     <!-- We hide the "Find an instance button until https://joinmobilizon.org gets a instance picker -->
-    <div class="hero register is-primary is-medium" v-if="config && config.registrationsOpen">
+    <div class="hero register is-primary is-medium">
       <div class="hero-body">
         <div class="container has-text-centered">
           <div class="columns">
-            <div class="column">
+            <div class="column" v-if="config && config.registrationsOpen">
               <h2 class="title">{{ $t("Register on this instance") }}</h2>
               <b-button
                 type="is-secondary"
@@ -87,10 +77,12 @@
                 >{{ $t("Create an account") }}</b-button
               >
             </div>
-            <!-- <div class="column">
-                            <h2 class="title">Find an instance</h2>
-                            <b-button type="is-secondary" size="is-large" tag="a" href="https://joinmobilizon.org">{{ $t('Register') }}</b-button>
-            </div>-->
+            <div class="column">
+              <h2 class="title">{{ $t("Find another instance") }}</h2>
+              <b-button type="is-secondary" size="is-large" tag="a" href="https://mobilizon.org">{{
+                $t("Pick an instance")
+              }}</b-button>
+            </div>
           </div>
         </div>
       </div>
