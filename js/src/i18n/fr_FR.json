@@ -243,7 +243,7 @@
   "Events tagged with {tag}": "Événements taggés avec {tag}",
   "Everything": "Tous",
   "Ex: someone@mobilizon.org": "Ex : une_personne@mobilizon.org",
-  "Ex: test.mobilizon.org": "Ex : test.mobilizon.org",
+  "Ex: mobilizon.fr": "Ex : mobilizon.fr",
   "Exclude": "Exclure",
   "Explore": "Explorer",
   "Explore events": "Explorer les événements",
@@ -800,7 +800,7 @@
   "change the world, one byte at a time": "changer le monde, un octet à la fois",
   "contact uninformed": "contact non renseigné",
   "default Mobilizon privacy policy": "politique de confidentialité par défaut de Mobilizon",
-  "default Mobilizon terms": "conditions d'utilisation par défaut de Mobilizon.org",
+  "default Mobilizon terms": "conditions d'utilisation par défaut de Mobilizon",
   "digital habits of activists": "les usages numériques de militant·es",
   "e.g. 10 Rue Jangot": "par exemple : 10 Rue Jangot",
   "firstDayOfWeek": "1",
@@ -870,5 +870,7 @@
   "Mobilizon is not a giant platform, but a <b>multitude of interconnected Mobilizon websites</b>.": "Mobilizon n’est pas une plateforme géante, mais une <b>multitude de sites web Mobilizon interconnectés</b>.",
   "When a moderator from the group creates an event and attributes it to the group, it will show up here.": "Lorsqu'un·e modérateur·ice du groupe crée un événement et l'attribue au groupe, il s'affichera ici.",
   "Only group moderators can create, edit and delete posts.": "Seul·es les modérateur·ices du groupe peuvent créer, éditer et supprimer des billets.",
-  "This group doesn't have a description yet.": "Ce groupe n'a pas encore de description."
+  "This group doesn't have a description yet.": "Ce groupe n'a pas encore de description.",
+  "Find another instance": "Trouver une autre instance",
+  "Pick an instance": "Choisir une instance"
 }

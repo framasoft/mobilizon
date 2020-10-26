@@ -4,7 +4,7 @@
       <b-field :label="$t('Add an instance')" custom-class="add-relay" horizontal>
         <b-field grouped expanded size="is-large">
           <p class="control">
-            <b-input v-model="newRelayAddress" :placeholder="$t('Ex: test.mobilizon.org')" />
+            <b-input v-model="newRelayAddress" :placeholder="$t('Ex: mobilizon.fr')" />
           </p>
           <p class="control">
             <b-button type="is-primary" native-type="submit">{{ $t("Add an instance") }}</b-button>

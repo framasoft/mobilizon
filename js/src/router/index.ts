@@ -67,12 +67,6 @@ const router = new Router({
       redirect: { name: RouteName.ABOUT_INSTANCE },
       children: [
         {
-          path: "mobilizon",
-          name: RouteName.ABOUT_MOBILIZON,
-          component: () =>
-            import(/* webpackChunkName: "about" */ "@/views/About/AboutMobilizon.vue"),
-        },
-        {
           path: "instance",
           name: RouteName.ABOUT_INSTANCE,
           component: () =>
