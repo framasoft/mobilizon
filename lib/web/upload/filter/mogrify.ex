@@ -15,18 +15,23 @@ defmodule Mobilizon.Web.Upload.Filter.Mogrify do
   @type conversion :: action :: String.t() | {action :: String.t(), opts :: String.t()}
   @type conversions :: conversion() | [conversion()]
 
+  @spec filter(Mobilizon.Web.Upload.t()) :: {:ok, :atom} | {:error, String.t()}
   def filter(%Mobilizon.Web.Upload{tempfile: file, content_type: "image" <> _}) do
-    filters = Config.get!([__MODULE__, :args])
+    do_filter(file, Config.get!([__MODULE__, :args]))
+    {:ok, :filtered}
+  rescue
+    _e in ErlangError ->
+      {:error, "mogrify command not found"}
+  end
 
+  def filter(_), do: {:ok, :noop}
+
+  def do_filter(file, filters) do
     file
     |> Mogrify.open()
     |> mogrify_filter(filters)
     |> Mogrify.save(in_place: true)
-
-    :ok
   end
-
-  def filter(_), do: :ok
 
   defp mogrify_filter(mogrify, nil), do: mogrify
 

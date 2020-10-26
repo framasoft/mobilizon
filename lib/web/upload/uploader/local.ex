@@ -12,10 +12,12 @@ defmodule Mobilizon.Web.Upload.Uploader.Local do
 
   alias Mobilizon.Config
 
+  @impl true
   def get_file(_) do
     {:ok, {:static_dir, upload_path()}}
   end
 
+  @impl true
   def put_file(upload) do
     {path, file} = local_path(upload.path)
     result_file = Path.join(path, file)
@@ -27,6 +29,7 @@ defmodule Mobilizon.Web.Upload.Uploader.Local do
     :ok
   end
 
+  @impl true
   def remove_file(path) do
     with {path, file} <- local_path(path),
          full_path <- Path.join(path, file),

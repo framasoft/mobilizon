@@ -21,7 +21,7 @@ defmodule Mobilizon.Web.Upload.Filter.Optimize do
 
     case ExOptimizer.optimize(file, deps: optimizers) do
       {:ok, _res} ->
-        :ok
+        {:ok, :filtered}
 
       {:error, err} ->
         require Logger
@@ -30,12 +30,12 @@ defmodule Mobilizon.Web.Upload.Filter.Optimize do
           "Unable to optimize file #{file}. The return from the process was #{inspect(err)}"
         )
 
-        :ok
+        {:ok, :noop}
 
       err ->
-        err
+        {:error, err}
     end
   end
 
-  def filter(_), do: :ok
+  def filter(_), do: {:ok, :noop}
 end

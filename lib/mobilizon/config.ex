@@ -276,17 +276,19 @@ defmodule Mobilizon.Config do
     end
   end
 
-  @spec put([module | atom], any) :: any
   def put([key], value), do: put(key, value)
 
   def put([parent_key | keys], value) do
-    parent = put_in(Application.get_env(:mobilizon, parent_key), keys, value)
+    parent =
+      Application.get_env(:mobilizon, parent_key, [])
+      |> put_in(keys, value)
 
     Application.put_env(:mobilizon, parent_key, parent)
   end
 
-  @spec put(module | atom, any) :: any
-  def put(key, value), do: Application.put_env(:mobilizon, key, value)
+  def put(key, value) do
+    Application.put_env(:mobilizon, key, value)
+  end
 
   @spec to_boolean(boolean | String.t()) :: boolean
   defp to_boolean(boolean), do: "true" == String.downcase("#{boolean}")
