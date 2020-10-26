@@ -47,7 +47,9 @@ We appreciate any contribution to Mobilizon. Check our [CONTRIBUTING](CONTRIBUTI
 
 ### Learn more
   * 🌐 Official website: [https://joinmobilizon.org](https://joinmobilizon.org)
+  * 🔢 Pick an instance [https://mobilizon.org](https://mobilizon.org)
   * 💻 Source: [https://framagit.org/framasoft/mobilizon](https://framagit.org/framasoft/mobilizon)
+  * 📜 Documentation [https://docs.joinmobilizon.org](https://docs.joinmobilizon.org)
   
 ### Discuss
   * 💬 Riot/Matrix: [https://riot.im/app/#/room/#Mobilizon:matrix.org](https://riot.im/app/#/room/#Mobilizon:matrix.org)
