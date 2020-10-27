@@ -69,10 +69,18 @@ import RouteName from "../../router/name";
     relayFollowings: {
       query: RELAY_FOLLOWINGS,
       fetchPolicy: "cache-and-network",
+      variables: {
+        page: 1,
+        limit: 10,
+      },
     },
     relayFollowers: {
       query: RELAY_FOLLOWERS,
       fetchPolicy: "cache-and-network",
+      variables: {
+        page: 1,
+        limit: 10,
+      },
     },
   },
 })
