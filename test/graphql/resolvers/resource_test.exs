@@ -405,7 +405,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
       assert is_nil(res["errors"])
 
       assert res["data"]["createResource"]["metadata"]["faviconUrl"] ==
-               "https://joinmobilizon.org/icons/favicon.png"
+               "https://joinmobilizon.org/img/icons/favicon.png"
 
       assert res["data"]["createResource"]["metadata"]["imageRemoteUrl"] ==
                "https://joinmobilizon.org/img/opengraph/home.jpg"
@@ -461,7 +461,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
       assert is_nil(res["errors"])
 
       assert res["data"]["createResource"]["metadata"]["faviconUrl"] ==
-               "https://joinmobilizon.org/icons/favicon.png"
+               "https://joinmobilizon.org/img/icons/favicon.png"
 
       assert res["data"]["createResource"]["metadata"]["imageRemoteUrl"] ==
                "https://joinmobilizon.org/img/opengraph/home.jpg"
