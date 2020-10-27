@@ -28,7 +28,7 @@ config :mobilizon, Mobilizon.Storage.Repo,
   password: System.get_env("MOBILIZON_DATABASE_PASSWORD", "password"),
   database: System.get_env("MOBILIZON_DATABASE_DBNAME", "mobilizon"),
   hostname: System.get_env("MOBILIZON_DATABASE_HOST", "postgres"),
-  port: "5432",
+  port: 5432,
   pool_size: 10
 
 config :mobilizon, Mobilizon.Web.Email.Mailer,

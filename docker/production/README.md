@@ -14,7 +14,7 @@ You will need to :
 ## Update the env file
 
     cd docker/production/
-    cp env.example .env
+    cp env.template .env
 
 Edit the `.env` content with your own settings.
 More settings can be added in .env, see all in docker-compose.yml file.
