@@ -1,4 +1,4 @@
-defmodule Mobilizon.Cli do
+defmodule Mobilizon.CLI do
   @app :mobilizon
 
   def migrate do

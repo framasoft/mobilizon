@@ -17,6 +17,7 @@ You will need to :
     cp env.example .env
 
 Edit the `.env` content with your own settings.
+More settings can be added in .env, see all in docker-compose.yml file.
 
 You can generate `MOBILIZON_INSTANCE_SECRET_KEY_BASE` and `MOBILIZON_INSTANCE_SECRET_KEY` with:
 
@@ -37,7 +38,7 @@ Instanciate required Postgres extensions:
 
 Then run migrations:
 
-    docker-compose run --rm mobilizon eval Mobilizon.Cli.migrate
+    docker-compose run --rm mobilizon eval Mobilizon.CLI.migrate
 
 Finally, run the application:
 
@@ -48,7 +49,7 @@ Finally, run the application:
 Pull the latest image, then run the migrations:
 
     docker-compose pull mobilizon
-    docker-compose run --rm mobilizon eval Mobilizon.Cli.migrate
+    docker-compose run --rm mobilizon eval Mobilizon.CLI.migrate
 
 Finally, update the service:
 

@@ -1,27 +1,21 @@
-# Copy this file to env, then update it with your own settings
+# Copy this file to .env, then update it with your own settings
+
+hostname=mobilizon.lan
 
 # Database settings
 POSTGRES_USER=mobilizon
 POSTGRES_PASSWORD=changethis
 POSTGRES_DB=mobilizon
 
-# Application config
-MOBILIZON_INSTANCE_SECRET_KEY_BASE=changethis
-MOBILIZON_INSTANCE_SECRET_KEY=changethis
-MOBILIZON_SMTP_USERNAME=username
-MOBILIZON_SMPT_PASSWORD=password
-POSTGRES_PASSWORD=postgres
-
 # Instance configuration
 MOBILIZON_INSTANCE_NAME=My Mobilizon Instance
-MOBILIZON_INSTANCE_HOST=mobilizon.lan
 MOBILIZON_INSTANCE_SECRET_KEY_BASE=changethis
 MOBILIZON_INSTANCE_SECRET_KEY=changethis
 MOBILIZON_INSTANCE_EMAIL=noreply@mobilizon.lan
 MOBILIZON_REPLY_EMAIL=contact@mobilizon.lan
 
 # Email settings
-MOBILIZON_SMPT_SERVER=localhost
-MOBILIZON_SMPT_HOSTNAME=localhost
-MOBILIZON_SMPT_USERNAME=noreply@mobilizon.lan
-MOBILIZON_SMPT_PASSWORD=password
+MOBILIZON_SMTP_SERVER=localhost
+MOBILIZON_SMTP_HOSTNAME=localhost
+MOBILIZON_SMTP_USERNAME=noreply@mobilizon.lan
+MOBILIZON_SMTP_PASSWORD=password
