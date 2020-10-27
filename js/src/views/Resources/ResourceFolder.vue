@@ -352,7 +352,7 @@ export default class Resources extends Mixins(ResourceMixin) {
       case "calc":
         return this.$t("Create a calc") as string;
       case "visio":
-        return this.$t("Create a visioconference") as string;
+        return this.$t("Create a videoconference") as string;
       default:
         return "";
     }
