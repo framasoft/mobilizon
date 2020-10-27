@@ -14,7 +14,7 @@ defmodule Mobilizon.Web.Upload.MIME do
           {:ok, content_type :: String.t(), filename :: String.t()} | {:error, any()} | :error
   def file_mime_type(path, filename) do
     with {:ok, content_type} <- file_mime_type(path),
-         filename <- fix_extension(filename, content_type) do
+         filename when is_binary(filename) <- fix_extension(filename, content_type) do
       {:ok, content_type, filename}
     end
   end
@@ -42,7 +42,8 @@ defmodule Mobilizon.Web.Upload.MIME do
 
   def mime_type(<<_::binary>>), do: {:ok, @default}
 
-  defp fix_extension(filename, content_type) do
+  defp fix_extension(filename, content_type)
+       when is_binary(filename) and is_binary(content_type) do
     parts = String.split(filename, ".")
 
     new_filename =
@@ -65,6 +66,8 @@ defmodule Mobilizon.Web.Upload.MIME do
         Enum.join([new_filename, extension], ".")
     end
   end
+
+  defp fix_extension(_, _), do: :error
 
   defp check_mime_type(<<0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, _::binary>>) do
     "image/png"
