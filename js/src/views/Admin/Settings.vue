@@ -136,7 +136,7 @@
                 >
                   <a
                     slot="default_terms"
-                    href="https://mobilizon.org/terms"
+                    href="https://demo.mobilizon.org/terms"
                     target="_blank"
                     rel="noopener"
                     >{{ $t("default Mobilizon terms") }}</a
@@ -167,7 +167,7 @@
                 >
                   <a
                     slot="mobilizon_terms"
-                    href="https://mobilizon.org/terms"
+                    href="https://demo.mobilizon.org/terms"
                     target="_blank"
                     rel="noopener"
                   >
@@ -188,7 +188,7 @@
           :label="$t('Instance Terms')"
           v-if="adminSettings.instanceTermsType === InstanceTermsType.CUSTOM"
         >
-          <b-input type="textarea" v-model="adminSettings.instancePrivacyPolicy" />
+          <b-input type="textarea" v-model="adminSettings.instanceTerms" />
         </b-field>
         <b-field :label="$t('Instance Privacy Policy Source')">
           <div class="columns">
@@ -231,7 +231,7 @@
                 >
                   <a
                     slot="default_privacy_policy"
-                    href="https://mobilizon.fr/terms"
+                    href="https://demo.mobilizon.org/privacy"
                     target="_blank"
                     rel="noopener"
                     >{{ $t("default Mobilizon privacy policy") }}</a
@@ -259,7 +259,7 @@
                 >
                   <a
                     slot="mobilizon_privacy_policy"
-                    href="https://mobilizon.fr/privacy"
+                    href="https://demo.mobilizon.org/privacy"
                     target="_blank"
                     rel="noopener"
                   >
