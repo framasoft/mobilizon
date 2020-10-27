@@ -25,7 +25,7 @@
       backend-pagination
       :total="relayFollowings.total"
       :per-page="perPage"
-      @page-change="onPageChange"
+      @page-change="onFollowingsPageChange"
       checkable
       checkbox-position="left"
     >
@@ -101,18 +101,12 @@
 import { Component, Mixins } from "vue-property-decorator";
 import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { formatDistanceToNow } from "date-fns";
-import { ADD_RELAY, RELAY_FOLLOWINGS, REMOVE_RELAY } from "../../graphql/admin";
+import { ADD_RELAY, REMOVE_RELAY } from "../../graphql/admin";
 import { IFollower } from "../../types/actor/follower.model";
 import { Paginate } from "../../types/paginate";
 import RelayMixin from "../../mixins/relay";
 
 @Component({
-  apollo: {
-    relayFollowings: {
-      query: RELAY_FOLLOWINGS,
-      fetchPolicy: "cache-and-network",
-    },
-  },
   metaInfo() {
     return {
       title: this.$t("Followings") as string,
@@ -121,8 +115,6 @@ import RelayMixin from "../../mixins/relay";
   },
 })
 export default class Followings extends Mixins(RelayMixin) {
-  relayFollowings: Paginate<IFollower> = { elements: [], total: 0 };
-
   newRelayAddress = "";
 
   RelayMixin = RelayMixin;
@@ -137,12 +129,11 @@ export default class Followings extends Mixins(RelayMixin) {
         variables: {
           address: this.newRelayAddress,
         },
-        // TODO: Handle cache update properly without refreshing
       });
       await this.$apollo.queries.relayFollowings.refetch();
       this.newRelayAddress = "";
-    } catch (e) {
-      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+    } catch (err) {
+      Snackbar.open({ message: err.message, type: "is-danger", position: "is-bottom" });
     }
   }
 

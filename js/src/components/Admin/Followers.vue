@@ -12,7 +12,7 @@
       backend-pagination
       :total="relayFollowers.total"
       :per-page="perPage"
-      @page-change="onPageChange"
+      @page-change="onFollowersPageChange"
       checkable
       checkbox-position="left"
     >
@@ -103,18 +103,11 @@
 import { Component, Mixins } from "vue-property-decorator";
 import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { formatDistanceToNow } from "date-fns";
-import { ACCEPT_RELAY, REJECT_RELAY, RELAY_FOLLOWERS } from "../../graphql/admin";
-import { Paginate } from "../../types/paginate";
+import { ACCEPT_RELAY, REJECT_RELAY } from "../../graphql/admin";
 import { IFollower } from "../../types/actor/follower.model";
 import RelayMixin from "../../mixins/relay";
 
 @Component({
-  apollo: {
-    relayFollowers: {
-      query: RELAY_FOLLOWERS,
-      fetchPolicy: "cache-and-network",
-    },
-  },
   metaInfo() {
     return {
       title: this.$t("Followers") as string,
@@ -123,8 +116,6 @@ import RelayMixin from "../../mixins/relay";
   },
 })
 export default class Followers extends Mixins(RelayMixin) {
-  relayFollowers: Paginate<IFollower> = { elements: [], total: 0 };
-
   RelayMixin = RelayMixin;
 
   formatDistanceToNow = formatDistanceToNow;
