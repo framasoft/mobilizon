@@ -24,7 +24,7 @@
         <p
           v-html="
             $t(
-              'This is like your federated username (<code>{username}</code>) for groups. It will allow you to be found on the federation, and is guaranteed to be unique.',
+              'This is like your federated username (<code>{username}</code>) for groups. It will allow the group to be found on the federation, and is guaranteed to be unique.',
               { username: usernameWithDomain(currentActor, true) }
             )
           "
