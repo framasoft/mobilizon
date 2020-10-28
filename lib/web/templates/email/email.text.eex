@@ -1,10 +1,11 @@
 <%= @inner_content %>
-
-
 --
+<%= if Mobilizon.Config.instance_demo_mode?() do %>
+    <%= gettext "This is a demonstration site to test Mobilizon." %>
+    <%= gettext "Please do not use it for real purposes." %>
+<% end %>
 
 <%= gettext "Need help? Is something not working as expected?" %>
-
 <%= gettext "Ask the community on Framacolibri" %> https://framacolibri.org/c/mobilizon/test-mobilizon
 
 <%= gettext "%{instance} is powered by Mobilizon.", instance: @instance[:name] %> <%= gettext "Learn more about Mobilizon here!" %> https://joinmobilizon.org
