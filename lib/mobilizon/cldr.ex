@@ -4,6 +4,26 @@ defmodule Mobilizon.Cldr do
   """
 
   use Cldr,
-    locales: ["cs", "de", "en", "es", "fr", "it", "ja", "nl", "pl", "pt", "ru"],
+    locales: [
+      "ar",
+      "be",
+      "ca",
+      "cs",
+      "de",
+      "en",
+      "es",
+      "fi",
+      "fr",
+      "gl",
+      "it",
+      "ja",
+      "nl",
+      "oc",
+      "pl",
+      "pt",
+      "ru",
+      "sv"
+    ],
+    gettext: Mobilizon.Web.Gettext,
     providers: [Cldr.Number, Cldr.Calendar, Cldr.DateTime, Cldr.Language]
 end

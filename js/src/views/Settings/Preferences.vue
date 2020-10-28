@@ -14,7 +14,7 @@
       <b-field :label="$t('Language')">
         <b-select
           :loading="!config || !loggedUser"
-          v-model="$i18n.locale"
+          v-model="locale"
           :placeholder="$t('Select a language')"
         >
           <option v-for="(language, lang) in langs" :value="lang" :key="lang">
@@ -50,6 +50,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
+import { saveLocaleData } from "@/utils/auth";
 import { TIMEZONES } from "../../graphql/config";
 import { USER_SETTINGS, SET_USER_SETTINGS, UPDATE_USER_LOCALE } from "../../graphql/user";
 import { IConfig } from "../../types/config.model";
@@ -128,14 +129,17 @@ export default class Preferences extends Vue {
     }
   }
 
-  @Watch("$i18n.locale")
+  @Watch("locale")
   async updateLocale(): Promise<void> {
-    await this.$apollo.mutate({
-      mutation: UPDATE_USER_LOCALE,
-      variables: {
-        locale: this.$i18n.locale,
-      },
-    });
+    if (this.locale) {
+      await this.$apollo.mutate({
+        mutation: UPDATE_USER_LOCALE,
+        variables: {
+          locale: this.locale,
+        },
+      });
+      saveLocaleData(this.locale);
+    }
   }
 }
 </script>

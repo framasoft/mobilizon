@@ -1,12 +1,13 @@
 import Vue from "vue";
 import VueI18n from "vue-i18n";
 import { DateFnsPlugin } from "@/plugins/dateFns";
+import { USER_LOCALE } from "@/constants";
 import en from "../i18n/en_US.json";
 import langs from "../i18n/langs.json";
 
 const DEFAULT_LOCALE = "en_US";
 
-let language = document.documentElement.getAttribute("lang") as string;
+let language = localStorage.getItem(USER_LOCALE) || (document.documentElement.getAttribute("lang") as string);
 language = language || ((window.navigator as any).userLanguage || window.navigator.language).replace(/-/, "_");
 export const locale =
   language && Object.prototype.hasOwnProperty.call(langs, language) ? language : language.split("-")[0];
@@ -53,7 +54,7 @@ function dateFnsfileForLanguage(lang: string) {
 
 Vue.use(DateFnsPlugin, { locale: dateFnsfileForLanguage(locale) });
 
-async function loadLanguageAsync(lang: string): Promise<string> {
+export async function loadLanguageAsync(lang: string): Promise<string> {
   // If the same language
   if (i18n.locale === lang) {
     return Promise.resolve(setI18nLanguage(lang));
@@ -63,7 +64,6 @@ async function loadLanguageAsync(lang: string): Promise<string> {
   if (loadedLanguages.includes(lang)) {
     return Promise.resolve(setI18nLanguage(lang));
   }
-
   // If the language hasn't been loaded yet
   const newMessages = await import(
     /* webpackChunkName: "lang-[request]" */ `@/i18n/${vueI18NfileForLanguage(lang)}.json`
