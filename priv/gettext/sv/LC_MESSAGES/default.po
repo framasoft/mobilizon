@@ -38,8 +38,8 @@ msgid "Activate my account"
 msgstr "Aktivera mitt konto"
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:121
-#: lib/web/templates/email/email.text.eex:14
+#: lib/web/templates/email/email.html.eex:117
+#: lib/web/templates/email/email.text.eex:9
 msgid "Ask the community on Framacolibri"
 msgstr "Fråga människorna på Framacolibri"
 
@@ -147,13 +147,6 @@ msgstr "Ny titel: %{title}"
 #: lib/web/templates/email/password_reset.text.eex:5
 msgid "You requested a new password for your account on %{instance}."
 msgstr "Du har bett om ett nytt lösenord för ditt konto på %{instance}."
-
-#, elixir-format
-#: lib/web/templates/email/email.html.eex:88
-#: lib/web/templates/email/email.text.eex:6
-msgid "This is a demonstration site to test the beta version of Mobilizon."
-msgstr ""
-"Detta är en webbplats för att visa upp och testa beta-versionen av Mobilizon."
 
 #, elixir-format
 #: lib/web/templates/email/email.html.eex:85
@@ -745,8 +738,8 @@ msgid "Hi there! You just registered to join this event: « %{title} ». Please 
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:118
-#: lib/web/templates/email/email.text.eex:12
+#: lib/web/templates/email/email.html.eex:114
+#: lib/web/templates/email/email.text.eex:8
 msgid "Need help? Is something not working as expected?"
 msgstr "Behöver du hjälp? Är det något som krånglar?"
 
@@ -773,12 +766,7 @@ msgid "You requested a new password for your account on <b>%{instance}</b>."
 msgstr "Du har bett om ett nytt lösenord för ditt konto på <b>%{instance}</b>."
 
 #, elixir-format
-#: lib/web/templates/email/email.text.eex:9
-msgid "Mobilizon is still under development, we will add new features along the updates, until the release of version 1 of the software in the fall of 2020."
-msgstr ""
-
-#, elixir-format
-#: lib/web/templates/email/email.text.eex:7
+#: lib/web/templates/email/email.text.eex:5
 msgid "Please do not use it for real purposes."
 msgstr ""
 
@@ -806,12 +794,12 @@ msgstr[0] ""
 msgstr[1] ""
 
 #, elixir-format
-#: lib/web/templates/email/email.text.eex:16
+#: lib/web/templates/email/email.text.eex:11
 msgid "%{instance} is powered by Mobilizon."
 msgstr "%{instance} är en Mobilizon-server."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:146
+#: lib/web/templates/email/email.html.eex:142
 msgid "<b>%{instance}</b> is powered by Mobilizon."
 msgstr "<b>%{instance}</b> är en Mobilizon-server."
 
@@ -898,18 +886,8 @@ msgstr ""
 "länken ovan, och klicka på deltagande-knappen."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:92
-msgid "In the meantime, please consider this software as not (yet) fully functional. Read more %{a_start}on the Framasoft blog%{a_end}."
-msgstr ""
-
-#, elixir-format
-#: lib/web/templates/email/email.text.eex:10
-msgid "In the meantime, please consider this software as not (yet) fully functional. Read more on the Framasoft blog:"
-msgstr ""
-
-#, elixir-format
-#: lib/web/templates/email/email.html.eex:147
-#: lib/web/templates/email/email.text.eex:16
+#: lib/web/templates/email/email.html.eex:143
+#: lib/web/templates/email/email.text.eex:11
 msgid "Learn more about Mobilizon here!"
 msgstr "Läs mer om Mobilizon här!"
 
@@ -1078,11 +1056,6 @@ msgstr ""
 #, elixir-format
 #: lib/web/templates/email/email.html.eex:89
 msgid "<b>Please do not use it for real purposes.</b>"
-msgstr ""
-
-#, elixir-format
-#: lib/web/templates/email/email.html.eex:91
-msgid "Mobilizon is still under development, we will add new features along the updates, until the release of <b>version 1 of the software in the fall of 2020</b>."
 msgstr ""
 
 #, elixir-format
@@ -1412,3 +1385,10 @@ msgstr ""
 #: lib/web/templates/error/500_page.html.eex:45
 msgid "We're sorry, but something went wrong on our end."
 msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/email.html.eex:88
+#: lib/web/templates/email/email.text.eex:4
+msgid "This is a demonstration site to test Mobilizon."
+msgstr ""
+"Detta är en webbplats för att visa upp och testa beta-versionen av Mobilizon."

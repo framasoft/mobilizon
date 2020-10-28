@@ -1,5 +1,5 @@
 {
-  "<b>Please do not use it in any real way.</b>": "<b>Please do not use it in any real way.</b>",
+  "Please do not use it in any real way.": "Please do not use it in any real way.",
   "A user-friendly, emancipatory and ethical tool for gathering, organising, and mobilising.": "A user-friendly, emancipatory and ethical tool for gathering, organising, and mobilising.",
   "A validation email was sent to {email}": "A validation email was sent to {email}",
   "Abandon edition": "Abandon edition",
@@ -165,7 +165,6 @@
   "If an account with this email exists, we just sent another confirmation email to {email}": "If an account with this email exists, we just sent another confirmation email to {email}",
   "If this identity is the only administrator of some groups, you need to delete them before being able to delete this identity.": "If this identity is the only administrator of some groups, you need to delete them before being able to delete this identity.",
   "If you want, you may send a message to the event organizer here.": "If you want, you may send a message to the event organizer here.",
-  "In the meantime, please consider that the software is not (yet) finished. More information {onBlog}.": "In the meantime, please consider that the software is not (yet) finished. More information {onBlog}.",
   "Instance Name": "Instance Name",
   "Instance Terms Source": "Instance Terms Source",
   "Instance Terms URL": "Instance Terms URL",
@@ -343,7 +342,7 @@
   "This Mobilizon instance and this event organizer allows anonymous participations, but requires validation through email confirmation.": "This Mobilizon instance and this event organizer allows anonymous participations, but requires validation through email confirmation.",
   "This information is saved only on your computer. Click for details": "This information is saved only on your computer. Click for details",
   "This instance isn't opened to registrations, but you can register on other instances.": "This instance isn't opened to registrations, but you can register on other instances.",
-  "This is a demonstration site to test the beta version of Mobilizon.": "This is a demonstration site to test the beta version of Mobilizon.",
+  "This is a demonstration site to test Mobilizon.": "This is a demonstration site to test Mobilizon.",
   "This will delete / anonymize all content (events, comments, messages, participations…) created from this identity.": "This will delete / anonymize all content (events, comments, messages, participations…) created from this identity.",
   "Title": "Title",
   "To confirm, type your event title \"{eventTitle}\"": "To confirm, type your event title \"{eventTitle}\"",
@@ -415,7 +414,6 @@
   "e.g. 10 Rue Jangot": "e.g. 10 Rue Jangot",
   "firstDayOfWeek": "0",
   "iCal Feed": "iCal Feed",
-  "on our blog": "on our blog",
   "profile@instance": "profile@instance",
   "with another identity…": "with another identity…",
   "{approved} / {total} seats": "{approved} / {total} seats",
@@ -511,7 +509,6 @@
   "{moderator} added a note on {report}": "{moderator} added a note on {report}",
   "{moderator} deleted an event named \"{title}\"": "{moderator} deleted an event named \"{title}\"",
   "Register on this instance": "Register on this instance",
-  "Mobilizon is under development, we will add new features to this site during regular updates, until the release of <b>version 1 of the software in the fall of 2020</b>.": "Mobilizon is under development, we will add new features to this site during regular updates, until the release of <b>version 1 of the software in the fall of 2020</b>.",
   "To activate more notifications, head over to the notification settings.": "To activate more notifications, head over to the notification settings.",
   "Manage my notifications": "Manage my notifications",
   "We use your timezone to make sure you get notifications for an event at the correct time.": "We use your timezone to make sure you get notifications for an event at the correct time.",
@@ -792,5 +789,6 @@
   "Only group moderators can create, edit and delete posts.": "Only group moderators can create, edit and delete posts.",
   "This group doesn't have a description yet.": "This group doesn't have a description yet.",
   "Find another instance": "Find another instance",
-  "Pick an instance": "Pick an instance"
+  "Pick an instance": "Pick an instance",
+  "This website isn't moderated and the data that you enter will be automatically destroyed every day at 00:01 (Paris timezone).": "This website isn't moderated and the data that you enter will be automatically destroyed every day at 00:01 (Paris timezone)."
 }
