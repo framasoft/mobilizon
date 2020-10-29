@@ -41,7 +41,7 @@ export default class RelayMixin extends Vue {
 
   followersPage = 1;
 
-  perPage = 1;
+  perPage = 10;
 
   toggle(row: Record<string, unknown>): void {
     this.table.toggleDetails(row);
