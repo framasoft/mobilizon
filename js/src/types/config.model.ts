@@ -1,6 +1,11 @@
 import { InstanceTermsType, InstancePrivacyType } from "./admin.model";
 import { IProvider } from "./resource";
 
+export interface IOAuthProvider {
+  id: string;
+  label: string;
+}
+
 export interface IConfig {
   name: string;
   description: string;
@@ -81,9 +86,4 @@ export interface IConfig {
     ldap: boolean;
     oauthProviders: IOAuthProvider[];
   };
-}
-
-export interface IOAuthProvider {
-  id: string;
-  label: string;
 }

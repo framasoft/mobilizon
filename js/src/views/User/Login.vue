@@ -209,7 +209,7 @@ export default class Login extends Vue {
         await initializeCurrentActor(this.$apollo.provider.defaultClient);
       } catch (err) {
         if (err instanceof NoIdentitiesException) {
-          return this.$router.push({
+          this.$router.push({
             name: RouteName.REGISTER_PROFILE,
             params: {
               email: this.currentUser.email,
@@ -220,17 +220,16 @@ export default class Login extends Vue {
       }
 
       if (this.redirect) {
-        return this.$router.push(this.redirect);
+        this.$router.push(this.redirect);
       }
       window.localStorage.setItem("welcome-back", "yes");
-      return this.$router.push({ name: RouteName.HOME });
+      this.$router.push({ name: RouteName.HOME });
     } catch (err) {
       this.submitted = false;
       console.error(err);
       err.graphQLErrors.forEach(({ message }: { message: string }) => {
         this.errors.push(message);
       });
-      return undefined;
     }
   }
 }
