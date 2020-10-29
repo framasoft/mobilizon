@@ -108,13 +108,14 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import Logo from "@/components/Logo.vue";
 import { GraphQLError } from "graphql";
-import { CURRENT_USER_CLIENT } from "../graphql/user";
+import { loadLanguageAsync } from "@/utils/i18n";
+import { CURRENT_USER_CLIENT, USER_SETTINGS } from "../graphql/user";
 import { changeIdentity, logout } from "../utils/auth";
 import { CURRENT_ACTOR_CLIENT, IDENTITIES, UPDATE_DEFAULT_ACTOR } from "../graphql/actor";
 import { IPerson, Person } from "../types/actor";
 import { CONFIG } from "../graphql/config";
 import { IConfig } from "../types/config.model";
-import { ICurrentUser, ICurrentUserRole } from "../types/current-user.model";
+import { ICurrentUser, ICurrentUserRole, IUser } from "../types/current-user.model";
 import SearchField from "./SearchField.vue";
 import RouteName from "../router/name";
 
@@ -138,6 +139,12 @@ import RouteName from "../router/name";
       },
     },
     config: CONFIG,
+    loggedUser: {
+      query: USER_SETTINGS,
+      skip() {
+        return this.currentUser.isLoggedIn === false;
+      },
+    },
   },
   components: {
     Logo,
@@ -150,6 +157,8 @@ export default class NavBar extends Vue {
   config!: IConfig;
 
   currentUser!: ICurrentUser;
+
+  loggedUser!: IUser;
 
   ICurrentUserRole = ICurrentUserRole;
 
@@ -179,6 +188,13 @@ export default class NavBar extends Vue {
           },
         });
       }
+    }
+  }
+
+  @Watch("loggedUser")
+  setSavedLanguage(): void {
+    if (this.loggedUser?.locale) {
+      loadLanguageAsync(this.loggedUser.locale);
     }
   }
 

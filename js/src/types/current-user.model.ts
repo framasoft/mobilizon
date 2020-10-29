@@ -16,6 +16,21 @@ export interface ICurrentUser {
   defaultActor?: IPerson;
 }
 
+export enum INotificationPendingParticipationEnum {
+  NONE = "NONE",
+  DIRECT = "DIRECT",
+  ONE_DAY = "ONE_DAY",
+  ONE_HOUR = "ONE_HOUR",
+}
+
+export interface IUserSettings {
+  timezone: string;
+  notificationOnDay: boolean;
+  notificationEachWeek: boolean;
+  notificationBeforeEvent: boolean;
+  notificationPendingParticipation: INotificationPendingParticipationEnum;
+}
+
 export interface IUser extends ICurrentUser {
   confirmedAt: Date;
   confirmationSendAt: Date;
@@ -41,19 +56,4 @@ export enum IAuthProvider {
   FACEBOOK = "facebook",
   GITLAB = "gitlab",
   TWITTER = "twitter",
-}
-
-export enum INotificationPendingParticipationEnum {
-  NONE = "NONE",
-  DIRECT = "DIRECT",
-  ONE_DAY = "ONE_DAY",
-  ONE_HOUR = "ONE_HOUR",
-}
-
-export interface IUserSettings {
-  timezone: string;
-  notificationOnDay: boolean;
-  notificationEachWeek: boolean;
-  notificationBeforeEvent: boolean;
-  notificationPendingParticipation: INotificationPendingParticipationEnum;
 }

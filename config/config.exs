@@ -94,15 +94,11 @@ config :mobilizon, Mobilizon.Web.Email.Mailer,
   hostname: "localhost",
   # usually 25, 465 or 587
   port: 25,
-  # or {:system, "SMTP_USERNAME"}
   username: nil,
-  # or {:system, "SMTP_PASSWORD"}
   password: nil,
   # can be `:always` or `:never`
   tls: :if_available,
-  # or {":system", ALLOWED_TLS_VERSIONS"} w/ comma seprated values (e.g. "tlsv1.1,tlsv1.2")
   allowed_tls_versions: [:tlsv1, :"tlsv1.1", :"tlsv1.2"],
-  # can be `true`
   retries: 1,
   # can be `true`
   no_mx_lookups: false
