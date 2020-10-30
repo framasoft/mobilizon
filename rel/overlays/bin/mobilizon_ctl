@@ -1,0 +1,41 @@
+#!/bin/sh
+# Portions of this file are derived from Pleroma:
+# Pleroma: A lightweight social networking server
+# Copyright © 2017-2020 Pleroma Authors <https://pleroma.social/>
+# SPDX-License-Identifier: AGPL-3.0-only
+
+if [ -z "$1" ] || [ "$1" = "help" ]; then
+	echo "Usage: $(basename "$0") COMMAND [ARGS]
+
+    The known commands are:
+
+        migrate
+	  Execute database migrations (needs to be done after updates)
+
+        rollback [VERSION]
+	  Rollback database migrations (needs to be done before downgrading)
+
+    and any mix tasks under Mobilizon namespace, for example \`mix mobilizon.user.show COMMAND\` is
+    equivalent to \`$(basename "$0") user.show COMMAND\`
+
+    By default mobilizon_ctl will try calling into a running instance to execute non migration-related commands,
+    if for some reason this is undesired, set MOBILIZON_CTL_RPC_DISABLED environment variable.
+
+"
+else
+	SCRIPT=$(readlink -f "$0")
+	SCRIPTPATH=$(dirname "$SCRIPT")
+
+	FULL_ARGS="$*"
+
+	ACTION="$1"
+	if [ $# -gt 0 ]; then
+		shift
+	fi
+
+	if [ "$ACTION" = "migrate" ] || [ "$ACTION" = "rollback" ] || [ "$ACTION" = "create" ] || [ "$MOBILIZON_CTL_RPC_DISABLED" = true ]; then
+		"$SCRIPTPATH"/mobilizon eval 'Mobilizon.CLI.run("'"$FULL_ARGS"'")'
+	else
+		"$SCRIPTPATH"/mobilizon rpc 'Mobilizon.CLI.run("'"$FULL_ARGS"'")'
+	fi
+fi

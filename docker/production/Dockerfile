@@ -5,7 +5,7 @@ RUN apk add --no-cache python build-base
 
 COPY js .
 RUN yarn install \
- && yarn run build
+    && yarn run build
 
 # Then, build the application binary
 FROM elixir:alpine AS builder
@@ -15,8 +15,8 @@ RUN apk add --no-cache build-base git cmake
 COPY mix.exs mix.lock ./
 ENV MIX_ENV=prod
 RUN mix local.hex --force \
- && mix local.rebar --force \
- && mix deps.get
+    && mix local.rebar --force \
+    && mix deps.get
 
 COPY lib ./lib
 COPY priv ./priv
@@ -25,7 +25,7 @@ COPY docker/production/releases.exs ./config/
 COPY --from=assets ./priv/static ./priv/static
 
 RUN mix phx.digest \
- && mix release
+    && mix release
 
 # Finally setup the app
 FROM alpine
@@ -36,6 +36,6 @@ USER nobody
 EXPOSE 4000
 
 COPY --from=builder --chown=nobody:nobody _build/prod/rel/mobilizon ./
+COPY docker/production/docker-entrypoint.sh ./
 
-ENTRYPOINT ["/bin/mobilizon"]
-CMD ["start"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
