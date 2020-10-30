@@ -6,12 +6,13 @@ defmodule Mix.Tasks.Mobilizon.Groups.Refresh do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub.Refresher
+  import Mix.Tasks.Mobilizon.Common
 
   @shortdoc "Refresh a group private informations from an account member"
 
   @impl Mix.Task
   def run([group_url, on_behalf_of]) do
-    Mix.Task.run("app.start")
+    start_mobilizon()
 
     with %Actor{} = actor <- Actors.get_local_actor_by_name(on_behalf_of) do
       res = Refresher.fetch_group(group_url, actor)
@@ -20,7 +21,7 @@ defmodule Mix.Tasks.Mobilizon.Groups.Refresh do
   end
 
   def run(_) do
-    Mix.raise(
+    shell_error(
       "mobilizon.groups.refresh requires a group URL and an actor username which is member of the group as arguments"
     )
   end

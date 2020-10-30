@@ -3,6 +3,7 @@ defmodule Mix.Tasks.Mobilizon.Users.New do
   Task to create a new user
   """
   use Mix.Task
+  import Mix.Tasks.Mobilizon.Common
   alias Mobilizon.Users
   alias Mobilizon.Users.User
 
@@ -40,7 +41,7 @@ defmodule Mix.Tasks.Mobilizon.Users.New do
         :crypto.strong_rand_bytes(16) |> Base.encode64() |> binary_part(0, 16)
       )
 
-    Mix.Task.run("app.start")
+    start_mobilizon()
 
     case Users.register(%{
            email: email,
@@ -51,7 +52,7 @@ defmodule Mix.Tasks.Mobilizon.Users.New do
            confirmation_token: nil
          }) do
       {:ok, %User{} = user} ->
-        Mix.shell().info("""
+        shell_info("""
         An user has been created with the following information:
           - email: #{user.email}
           - password: #{password}
@@ -60,16 +61,16 @@ defmodule Mix.Tasks.Mobilizon.Users.New do
         """)
 
       {:error, %Ecto.Changeset{errors: errors}} ->
-        Mix.shell().error(inspect(errors))
-        Mix.raise("User has not been created because of the above reason.")
+        shell_error(inspect(errors))
+        shell_error("User has not been created because of the above reason.")
 
       err ->
-        Mix.shell().error(inspect(err))
-        Mix.raise("User has not been created because of an unknown reason.")
+        shell_error(inspect(err))
+        shell_error("User has not been created because of an unknown reason.")
     end
   end
 
   def run(_) do
-    Mix.raise("mobilizon.users.new requires an email as argument")
+    shell_error("mobilizon.users.new requires an email as argument")
   end
 end

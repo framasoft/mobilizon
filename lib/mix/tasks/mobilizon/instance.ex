@@ -29,7 +29,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
 
   use Mix.Task
 
-  alias Mix.Tasks.Mobilizon.Common
+  import Mix.Tasks.Mobilizon.Common
 
   @preferred_cli_env "prod"
 
@@ -70,7 +70,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
     if proceed? do
       [domain, port | _] =
         String.split(
-          Common.get_option(
+          get_option(
             options,
             :domain,
             "What domain will your instance use? (e.g mobilizon.org)"
@@ -79,25 +79,24 @@ defmodule Mix.Tasks.Mobilizon.Instance do
         ) ++ [443]
 
       name =
-        Common.get_option(
+        get_option(
           options,
           :instance_name,
           "What is the name of your instance? (e.g. Mobilizon)"
         )
 
       email =
-        Common.get_option(
+        get_option(
           options,
           :admin_email,
           "What's the address email will be send with?",
           "noreply@#{domain}"
         )
 
-      dbhost =
-        Common.get_option(options, :dbhost, "What is the hostname of your database?", "localhost")
+      dbhost = get_option(options, :dbhost, "What is the hostname of your database?", "localhost")
 
       dbname =
-        Common.get_option(
+        get_option(
           options,
           :dbname,
           "What is the name of your database?",
@@ -105,7 +104,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
         )
 
       dbuser =
-        Common.get_option(
+        get_option(
           options,
           :dbuser,
           "What is the user used to connect to your database?",
@@ -113,7 +112,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
         )
 
       dbpass =
-        Common.get_option(
+        get_option(
           options,
           :dbpass,
           "What is the password used to connect to your database?",
@@ -122,7 +121,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
         )
 
       listen_port =
-        Common.get_option(
+        get_option(
           options,
           :listen_port,
           "What port will the app listen to (leave it if you are using the default setup with nginx)?",
@@ -160,24 +159,24 @@ defmodule Mix.Tasks.Mobilizon.Instance do
           database_password: dbpass
         )
 
-      Mix.shell().info("Writing config to #{config_path}.")
+      shell_info("Writing config to #{config_path}.")
 
       File.write(config_path, result_config)
-      Mix.shell().info("Writing #{psql_path}.")
+      shell_info("Writing #{psql_path}.")
       File.write(psql_path, result_psql)
 
-      Mix.shell().info(
+      shell_info(
         "\n" <>
           """
           To get started:
           1. Check the contents of the generated files.
-          2. Run `sudo -u postgres psql -f #{Common.escape_sh_path(psql_path)} && rm #{
-            Common.escape_sh_path(psql_path)
+          2. Run `sudo -u postgres psql -f #{escape_sh_path(psql_path)} && rm #{
+            escape_sh_path(psql_path)
           }`.
           """
       )
     else
-      Mix.shell().error(
+      shell_error(
         "The task would have overwritten the following files:\n" <>
           (will_overwrite |> Enum.map(&"- #{&1}\n") |> Enum.join("")) <>
           "Rerun with `-f/--force` to overwrite them."

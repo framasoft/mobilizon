@@ -5,6 +5,7 @@ defmodule Mix.Tasks.Mobilizon.Users.Delete do
   use Mix.Task
   alias Mobilizon.Users
   alias Mobilizon.Users.User
+  import Mix.Tasks.Mobilizon.Common
 
   @shortdoc "Deletes a Mobilizon user"
 
@@ -26,25 +27,25 @@ defmodule Mix.Tasks.Mobilizon.Users.Delete do
     assume_yes? = Keyword.get(options, :assume_yes, false)
     keep_email? = Keyword.get(options, :keep_email, false)
 
-    Mix.Task.run("app.start")
+    start_mobilizon()
 
     with {:ok, %User{} = user} <- Users.get_user_by_email(email),
-         true <- assume_yes? or Mix.shell().yes?("Continue with deleting user #{user.email}?"),
+         true <- assume_yes? or shell_yes?("Continue with deleting user #{user.email}?"),
          {:ok, %User{} = user} <-
            Users.delete_user(user, reserve_email: keep_email?) do
-      Mix.shell().info("""
+      shell_info("""
       The user #{user.email} has been deleted
       """)
     else
       {:error, :user_not_found} ->
-        Mix.raise("Error: No such user")
+        shell_error("Error: No such user")
 
       _ ->
-        Mix.raise("User has not been deleted.")
+        shell_error("User has not been deleted.")
     end
   end
 
   def run(_) do
-    Mix.raise("mobilizon.users.delete requires an email as argument")
+    shell_error("mobilizon.users.delete requires an email as argument")
   end
 end

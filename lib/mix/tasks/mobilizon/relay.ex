@@ -22,60 +22,19 @@ defmodule Mix.Tasks.Mobilizon.Relay do
 
   use Mix.Task
 
-  alias Mix.Tasks.Mobilizon.Common
-
-  alias Mobilizon.Federation.ActivityPub.Relay
+  alias Mix.Tasks
+  import Mix.Tasks.Mobilizon.Common
 
   @shortdoc "Manages remote relays"
-  def run(["follow", target]) do
-    Common.start_mobilizon()
 
-    case Relay.follow(target) do
-      {:ok, _activity, _follow} ->
-        # put this task to sleep to allow the genserver to push out the messages
-        :timer.sleep(500)
+  @impl Mix.Task
+  def run(_) do
+    shell_info("\nAvailable tasks:")
 
-      {:error, e} ->
-        IO.puts(:stderr, "Error while following #{target}: #{inspect(e)}")
-    end
-  end
-
-  def run(["unfollow", target]) do
-    Common.start_mobilizon()
-
-    case Relay.unfollow(target) do
-      {:ok, _activity, _follow} ->
-        # put this task to sleep to allow the genserver to push out the messages
-        :timer.sleep(500)
-
-      {:error, e} ->
-        IO.puts(:stderr, "Error while unfollowing #{target}: #{inspect(e)}")
-    end
-  end
-
-  def run(["accept", target]) do
-    Common.start_mobilizon()
-
-    case Relay.accept(target) do
-      {:ok, _activity} ->
-        # put this task to sleep to allow the genserver to push out the messages
-        :timer.sleep(500)
-
-      {:error, e} ->
-        IO.puts(:stderr, "Error while accept #{target} follow: #{inspect(e)}")
-    end
-  end
-
-  def run(["refresh", target]) do
-    Common.start_mobilizon()
-    IO.puts("Refreshing #{target}, this can take a while.")
-
-    case Relay.refresh(target) do
-      :ok ->
-        IO.puts("Refreshed #{target}")
-
-      err ->
-        IO.puts(:stderr, "Error while refreshing #{target}: #{inspect(err)}")
+    if mix_shell?() do
+      Tasks.Help.run(["--search", "mobilizon.relay."])
+    else
+      show_subtasks_for_module(__MODULE__)
     end
   end
 end
