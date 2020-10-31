@@ -3,6 +3,7 @@ defmodule Mix.Tasks.Mobilizon.Users.Modify do
   Task to modify an existing Mobilizon user
   """
   use Mix.Task
+  import Mix.Tasks.Mobilizon.Common
   alias Mobilizon.Users
   alias Mobilizon.Users.User
 
@@ -31,10 +32,10 @@ defmodule Mix.Tasks.Mobilizon.Users.Modify do
     new_email = Keyword.get(options, :email)
 
     if disable? && enable? do
-      Mix.raise("Can't use both --enabled and --disable options at the same time.")
+      shell_error("Can't use both --enabled and --disable options at the same time.")
     end
 
-    Mix.Task.run("app.start")
+    start_mobilizon()
 
     with {:ok, %User{} = user} <- Users.get_user_by_email(email),
          attrs <- %{},
@@ -53,7 +54,7 @@ defmodule Mix.Tasks.Mobilizon.Users.Modify do
            ),
          {:makes_changes, true} <- {:makes_changes, attrs != %{}},
          {:ok, %User{} = user} <- Users.update_user(user, attrs) do
-      Mix.shell().info("""
+      shell_info("""
       An user has been modified with the following information:
         - email: #{user.email}
         - Role: #{user.role}
@@ -61,23 +62,23 @@ defmodule Mix.Tasks.Mobilizon.Users.Modify do
       """)
     else
       {:makes_changes, false} ->
-        Mix.shell().info("No change has been made")
+        shell_info("No change has been made")
 
       {:error, :user_not_found} ->
-        Mix.raise("Error: No such user")
+        shell_error("Error: No such user")
 
       {:error, %Ecto.Changeset{errors: errors}} ->
-        Mix.shell().error(inspect(errors))
-        Mix.raise("User has not been modified because of the above reason.")
+        shell_error(inspect(errors))
+        shell_error("User has not been modified because of the above reason.")
 
       err ->
-        Mix.shell().error(inspect(err))
-        Mix.raise("User has not been modified because of an unknown reason.")
+        shell_error(inspect(err))
+        shell_error("User has not been modified because of an unknown reason.")
     end
   end
 
   def run(_) do
-    Mix.raise("mobilizon.users.new requires an email as argument")
+    shell_error("mobilizon.users.new requires an email as argument")
   end
 
   @spec process_new_value(map(), atom(), any(), any()) :: map()

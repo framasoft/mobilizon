@@ -9,6 +9,7 @@ defmodule Mix.Tasks.Mobilizon.RelayTest do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Follower}
+  alias Mix.Tasks.Mobilizon.Relay.{Follow, Unfollow}
 
   alias Mobilizon.Federation.ActivityPub.Relay
 
@@ -17,7 +18,7 @@ defmodule Mix.Tasks.Mobilizon.RelayTest do
       use_cassette "relay/fetch_relay_follow" do
         target_instance = "mobilizon1.com"
 
-        Mix.Tasks.Mobilizon.Relay.run(["follow", target_instance])
+        Follow.run([target_instance])
 
         local_actor = Relay.get_actor()
         assert local_actor.url =~ "/relay"
@@ -35,7 +36,7 @@ defmodule Mix.Tasks.Mobilizon.RelayTest do
       use_cassette "relay/fetch_relay_unfollow" do
         target_instance = "mobilizon1.com"
 
-        Mix.Tasks.Mobilizon.Relay.run(["follow", target_instance])
+        Follow.run([target_instance])
 
         %Actor{} = local_actor = Relay.get_actor()
 
@@ -44,7 +45,7 @@ defmodule Mix.Tasks.Mobilizon.RelayTest do
 
         assert %Follower{} = Actors.is_following(local_actor, target_actor)
 
-        Mix.Tasks.Mobilizon.Relay.run(["unfollow", target_instance])
+        Unfollow.run([target_instance])
 
         refute Actors.is_following(local_actor, target_actor)
       end

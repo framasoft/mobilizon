@@ -6,12 +6,18 @@ defmodule Mix.Tasks.Mobilizon.Actors do
   use Mix.Task
 
   alias Mix.Tasks
+  import Mix.Tasks.Mobilizon.Common
 
   @shortdoc "Manages Mobilizon actors"
 
   @impl Mix.Task
   def run(_) do
-    Mix.shell().info("\nAvailable tasks:")
-    Tasks.Help.run(["--search", "mobilizon.actors."])
+    shell_info("\nAvailable tasks:")
+
+    if mix_shell?() do
+      Tasks.Help.run(["--search", "mobilizon.actors."])
+    else
+      show_subtasks_for_module(__MODULE__)
+    end
   end
 end

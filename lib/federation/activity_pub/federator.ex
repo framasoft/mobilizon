@@ -79,7 +79,7 @@ defmodule Mobilizon.Federation.ActivityPub.Federator do
   def enqueue(type, payload, priority \\ 1) do
     Logger.debug("enqueue something with type #{inspect(type)}")
 
-    if Mix.env() == :test do
+    if Application.fetch_env!(:mobilizon, :env) == :test do
       handle(type, payload)
     else
       GenServer.cast(__MODULE__, {:enqueue, type, payload, priority})

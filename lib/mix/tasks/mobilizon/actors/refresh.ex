@@ -7,6 +7,7 @@ defmodule Mix.Tasks.Mobilizon.Actors.Refresh do
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Storage.Repo
   import Ecto.Query
+  import Mix.Tasks.Mobilizon.Common
   require Logger
 
   @shortdoc "Refresh an actor or all actors"
@@ -26,11 +27,11 @@ defmodule Mix.Tasks.Mobilizon.Actors.Refresh do
 
     verbose = Keyword.get(options, :verbose, false)
 
-    Mix.Task.run("app.start")
+    start_mobilizon()
 
     total = count_actors()
 
-    Mix.shell().info("""
+    shell_info("""
     #{total} actors to process
     """)
 
@@ -62,22 +63,22 @@ defmodule Mix.Tasks.Mobilizon.Actors.Refresh do
 
   @impl Mix.Task
   def run([preferred_username]) do
-    Mix.Task.run("app.start")
+    start_mobilizon()
 
     case ActivityPub.make_actor_from_nickname(preferred_username) do
       {:ok, %Actor{}} ->
-        Mix.shell().info("""
+        shell_info("""
         Actor #{preferred_username} refreshed
         """)
 
       {:actor, nil} ->
-        Mix.raise("Error: No such actor")
+        shell_error("Error: No such actor")
     end
   end
 
   @impl Mix.Task
   def run(_) do
-    Mix.raise("mobilizon.actors.refresh requires an username as argument or --all as an option")
+    shell_error("mobilizon.actors.refresh requires an username as argument or --all as an option")
   end
 
   @spec make_actor(String.t(), boolean()) :: any()

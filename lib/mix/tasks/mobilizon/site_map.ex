@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Mobilizon.SiteMap do
   """
   use Mix.Task
 
-  alias Mix.Tasks.Mobilizon.Common
+  import Mix.Tasks.Mobilizon.Common
   alias Mobilizon.Service.SiteMap
   alias Mobilizon.Web.Endpoint
 
@@ -12,10 +12,10 @@ defmodule Mix.Tasks.Mobilizon.SiteMap do
 
   @shortdoc "Generates a new Sitemap"
   def run(["generate"]) do
-    Common.start_mobilizon()
+    start_mobilizon()
 
     with {:ok, :ok} <- SiteMap.generate_sitemap() do
-      Mix.shell().info("Sitemap saved to #{Endpoint.url()}/sitemap.xml")
+      shell_info("Sitemap saved to #{Endpoint.url()}/sitemap.xml")
     end
   end
 end

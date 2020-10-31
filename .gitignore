@@ -38,3 +38,4 @@ release/
 *.mo
 *.po~
 .weblate
+docker/production/.env

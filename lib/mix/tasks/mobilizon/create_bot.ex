@@ -8,12 +8,13 @@ defmodule Mix.Tasks.Mobilizon.CreateBot do
   alias Mobilizon.{Actors, Users}
   alias Mobilizon.Actors.Bot
   alias Mobilizon.Users.User
+  import Mix.Tasks.Mobilizon.Common
 
   require Logger
 
   @shortdoc "Create bot"
   def run([email, name, summary, type, url]) do
-    Mix.Task.run("app.start")
+    start_mobilizon()
 
     with {:ok, %User{} = user} <- Users.get_user_by_email(email, true),
          actor <- Actors.register_bot(%{name: name, summary: summary}),

@@ -5,16 +5,17 @@ defmodule Mix.Tasks.Mobilizon.Actors.Show do
   use Mix.Task
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
+  import Mix.Tasks.Mobilizon.Common
 
   @shortdoc "Show a Mobilizon user details"
 
   @impl Mix.Task
   def run([preferred_username]) do
-    Mix.Task.run("app.start")
+    start_mobilizon()
 
     case {:actor, Actors.get_actor_by_name_with_preload(preferred_username)} do
       {:actor, %Actor{} = actor} ->
-        Mix.shell().info("""
+        shell_info("""
         Informations for the actor #{actor.preferred_username}:
           - Type: #{actor.type}
           - Domain: #{if is_nil(actor.domain), do: "Local", else: actor.domain}
@@ -24,11 +25,11 @@ defmodule Mix.Tasks.Mobilizon.Actors.Show do
         """)
 
       {:actor, nil} ->
-        Mix.raise("Error: No such actor")
+        shell_error("Error: No such actor")
     end
   end
 
   def run(_) do
-    Mix.raise("mobilizon.actors.show requires an username as argument")
+    shell_error("mobilizon.actors.show requires an username as argument")
   end
 end

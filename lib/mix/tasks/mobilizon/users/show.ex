@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Mobilizon.Users.Show do
   """
 
   use Mix.Task
-
+  import Mix.Tasks.Mobilizon.Common
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Users
   alias Mobilizon.Users.User
@@ -13,11 +13,11 @@ defmodule Mix.Tasks.Mobilizon.Users.Show do
 
   @impl Mix.Task
   def run([email]) do
-    Mix.Task.run("app.start")
+    start_mobilizon()
 
     with {:ok, %User{} = user} <- Users.get_user_by_email(email),
          actors <- Users.get_actors_for_user(user) do
-      Mix.shell().info("""
+      shell_info("""
       Informations for the user #{user.email}:
         - Activated: #{user.confirmed_at}
         - Disabled: #{user.disabled}
@@ -26,12 +26,12 @@ defmodule Mix.Tasks.Mobilizon.Users.Show do
       """)
     else
       {:error, :user_not_found} ->
-        Mix.raise("Error: No such user")
+        shell_error("Error: No such user")
     end
   end
 
   def run(_) do
-    Mix.raise("mobilizon.users.show requires an email as argument")
+    shell_error("mobilizon.users.show requires an email as argument")
   end
 
   defp display_actors([]), do: ""

@@ -42,9 +42,15 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
     test "create with already used email" do
       insert(:user, email: @email)
 
-      assert_raise Mix.Error, "User has not been created because of the above reason.", fn ->
-        New.run([@email])
-      end
+      New.run([@email])
+      # Debug message
+      assert_received {:mix_shell, :error, [message]}
+
+      assert message =~
+               "[email: {\"This email is already used.\", [constraint: :unique, constraint_name: \"users_email_index\"]}]"
+
+      assert_received {:mix_shell, :error, [message]}
+      assert message =~ "User has not been created because of the above reason."
     end
   end
 
@@ -62,7 +68,9 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
     end
 
     test "delete non-existing user" do
-      assert_raise Mix.Error, "Error: No such user", fn -> Delete.run([@email, "-y"]) end
+      Delete.run([@email, "-y"])
+      assert_received {:mix_shell, :error, [message]}
+      assert message =~ "Error: No such user"
     end
   end
 
@@ -87,7 +95,9 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
     end
 
     test "show non-existing user" do
-      assert_raise Mix.Error, "Error: No such user", fn -> Show.run([@email]) end
+      Show.run([@email])
+      assert_received {:mix_shell, :error, [message]}
+      assert message =~ "Error: No such user"
     end
   end
 
@@ -160,11 +170,9 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
     end
 
     test "enable and disable at the same time" do
-      assert_raise Mix.Error,
-                   "Can't use both --enabled and --disable options at the same time.",
-                   fn ->
-                     Modify.run([@email, "--disable", "--enable"])
-                   end
+      Modify.run([@email, "--disable", "--enable"])
+      assert_received {:mix_shell, :error, [message]}
+      assert message =~ "Can't use both --enabled and --disable options at the same time."
     end
   end
 end
