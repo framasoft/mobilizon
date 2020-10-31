@@ -8,6 +8,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.CommentsTest do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions
   alias Mobilizon.Discussions.Comment
+  alias Mobilizon.Events.Event
   alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier}
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Service.HTTP.ActivityPub.Mock
@@ -71,6 +72,24 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.CommentsTest do
                "https://blob.cat/objects/02fdea3d-932c-4348-9ecb-3f9eb3fbdd94"
 
       assert returned_activity.data["object"]["inReplyTo"] == origin_comment.url
+    end
+
+    test "it doesn't saves replies to an event if the event doesn't accept comments" do
+      data =
+        File.read!("test/fixtures/mastodon-post-activity.json")
+        |> Jason.decode!()
+
+      %Event{url: reply_to_url} = insert(:event, options: %{comment_moderation: :closed})
+
+      object =
+        data["object"]
+        |> Map.put("inReplyTo", reply_to_url)
+
+      data =
+        data
+        |> Map.put("object", object)
+
+      :error = Transmogrifier.handle_incoming(data)
     end
 
     @url_404 "https://404.site/whatever"

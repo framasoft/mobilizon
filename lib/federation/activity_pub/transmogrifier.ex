@@ -66,22 +66,25 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
            object |> Converter.Comment.as_to_model_data(),
          {:existing_comment, {:error, :comment_not_found}} <-
            {:existing_comment, Discussions.get_comment_from_url_with_preload(object_data.url)},
-         object_data <- transform_object_data_for_discussion(object_data) do
-      # Check should be better
+         object_data <- transform_object_data_for_discussion(object_data),
+         # Check should be better
 
-      {:ok, %Activity{} = activity, entity} =
-        if is_data_for_comment_or_discussion?(object_data) do
-          Logger.debug("Chosing to create a regular comment")
-          ActivityPub.create(:comment, object_data, false)
-        else
-          Logger.debug("Chosing to initialize or add a comment to a conversation")
-          ActivityPub.create(:discussion, object_data, false)
-        end
-
+         {:ok, %Activity{} = activity, entity} <-
+           (if is_data_for_comment_or_discussion?(object_data) do
+              Logger.debug("Chosing to create a regular comment")
+              ActivityPub.create(:comment, object_data, false)
+            else
+              Logger.debug("Chosing to initialize or add a comment to a conversation")
+              ActivityPub.create(:discussion, object_data, false)
+            end) do
       {:ok, activity, entity}
     else
       {:existing_comment, {:ok, %Comment{} = comment}} ->
         {:ok, nil, comment}
+
+      {:error, :event_comments_are_closed} ->
+        Logger.debug("Tried to reply to an event for which comments are closed")
+        :error
     end
   end
 

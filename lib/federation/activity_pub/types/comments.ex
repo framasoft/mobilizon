@@ -3,7 +3,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
   alias Mobilizon.{Actors, Discussions, Events}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.{Comment, Discussion}
-  alias Mobilizon.Events.Event
+  alias Mobilizon.Events.{Event, EventOptions}
   alias Mobilizon.Federation.ActivityPub.Audience
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
@@ -21,6 +21,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
   @spec create(map(), map()) :: {:ok, map()}
   def create(args, additional) do
     with args <- prepare_args_for_comment(args),
+         :ok <- make_sure_event_allows_commenting(args),
          {:ok, %Comment{discussion_id: discussion_id} = comment} <-
            Discussions.create_comment(args),
          :ok <- maybe_publish_graphql_subscription(discussion_id),
@@ -171,4 +172,21 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
       :ok
     end
   end
+
+  defp make_sure_event_allows_commenting(%{
+         actor_id: actor_id,
+         event: %Event{
+           options: %EventOptions{comment_moderation: comment_moderation},
+           organizer_actor_id: organizer_actor_id
+         }
+       }) do
+    if comment_moderation != :closed ||
+         to_string(actor_id) == to_string(organizer_actor_id) do
+      :ok
+    else
+      {:error, :event_comments_are_closed}
+    end
+  end
+
+  defp make_sure_event_allows_commenting(_), do: :ok
 end
