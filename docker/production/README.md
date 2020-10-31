@@ -35,22 +35,22 @@ Instanciate required Postgres extensions:
     # CREATE EXTENSION pg_trgm;
     # CREATE EXTENSION unaccent;
 
-
-Then run migrations:
-
-    docker-compose run --rm mobilizon eval Mobilizon.CLI.migrate
-
 Finally, run the application:
 
     docker-compose up -d mobilizon
 
+A migration will be automatically run before starting Mobilizon (can be run even if no migration is needed without incidence).
+
+## Run a mobilizon_ctl command
+
+    docker-compose exec mobilizon mobilizon_ctl [options]
+
 ## Update the service
 
-Pull the latest image, then run the migrations:
+Pull the latest image, then update the service:
 
     docker-compose pull mobilizon
-    docker-compose run --rm mobilizon eval Mobilizon.CLI.migrate
-
-Finally, update the service:
-
     docker-compose up -d mobilizon
+
+Migration is automatic.
+

@@ -22,6 +22,11 @@ config :mobilizon, :instance,
   email_from: System.get_env("MOBILIZON_INSTANCE_EMAIL", "noreply@mobilizon.lan"),
   email_reply_to: System.get_env("MOBILIZON_REPLY_EMAIL", "noreply@mobilizon.lan")
 
+
+config :mobilizon, Mobilizon.Web.Upload.Uploader.Local,
+  uploads: System.get_env("MOBILIZON_UPLOADS", "/app/uploads")
+
+
 config :mobilizon, Mobilizon.Storage.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: System.get_env("MOBILIZON_DATABASE_USERNAME", "username"),

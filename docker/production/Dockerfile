@@ -21,6 +21,7 @@ RUN mix local.hex --force \
 COPY lib ./lib
 COPY priv ./priv
 COPY config ./config
+COPY rel ./rel
 COPY docker/production/releases.exs ./config/
 COPY --from=assets ./priv/static ./priv/static
 
@@ -30,7 +31,7 @@ RUN mix phx.digest \
 # Finally setup the app
 FROM alpine
 
-RUN apk add --no-cache openssl ncurses-libs
+RUN apk add --no-cache openssl ncurses-libs file
 
 USER nobody
 EXPOSE 4000
