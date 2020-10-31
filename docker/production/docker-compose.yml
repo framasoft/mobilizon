@@ -2,7 +2,7 @@ version: "3"
 
 services:
   mobilizon:
-    image: mobilizon
+    image: framasoft/mobilizon
     environment:
       - MOBILIZON_INSTANCE_NAME
       - MOBILIZON_INSTANCE_HOST
