@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-10-29 08:17+0000\n"
+"PO-Revision-Date: 2020-11-02 08:06+0000\n"
 "Last-Translator: Marcin Mikołajczak <me@mkljczk.pl>\n"
 "Language-Team: Polish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/pl/>\n"
@@ -258,7 +258,7 @@ msgstr "Nie możesz dołączyć do tej grupy"
 #: lib/graphql/resolvers/group.ex:97
 #, elixir-format
 msgid "You may not list groups unless moderator."
-msgstr ""
+msgstr "Nie masz dostępu do listy grup, jeżeli nie jesteś moderatorem."
 
 #: lib/graphql/resolvers/user.ex:387
 #, elixir-format
@@ -559,22 +559,22 @@ msgstr "Już masz profil dla tego użytkownika"
 #: lib/graphql/resolvers/participant.ex:134
 #, elixir-format
 msgid "You are already a participant of this event"
-msgstr ""
+msgstr "Już jesteś uczestnikiem tego wydarzenia"
 
 #: lib/graphql/resolvers/discussion.ex:185
 #, elixir-format
 msgid "You are not a member of the group the discussion belongs to"
-msgstr ""
+msgstr "Nie jesteś członkiem grupy do której należy ta dyskusja"
 
 #: lib/graphql/resolvers/member.ex:89
 #, elixir-format
 msgid "You are not a member of this group"
-msgstr ""
+msgstr "Nie jesteś członkiem tej grupy"
 
 #: lib/graphql/resolvers/member.ex:154
 #, elixir-format
 msgid "You are not a moderator or admin for this group"
-msgstr ""
+msgstr "Nie jesteś moderatorem ani administratorem tej grupy"
 
 #: lib/graphql/resolvers/comment.ex:55
 #, elixir-format
@@ -611,26 +611,28 @@ msgstr ""
 #, elixir-format
 msgid "You can't set yourself to a lower member role for this group because you are the only administrator"
 msgstr ""
+"Nie możesz przydzielić sobie niższej rangi grupy, ponieważ jesteś jedynym "
+"administratorem"
 
 #: lib/graphql/resolvers/comment.ex:105
 #, elixir-format
 msgid "You cannot delete this comment"
-msgstr ""
+msgstr "Nie możesz usunąć tego komentarza"
 
 #: lib/graphql/resolvers/event.ex:279
 #, elixir-format
 msgid "You cannot delete this event"
-msgstr ""
+msgstr "Nie możesz usunąć tego wydarzenia"
 
 #: lib/graphql/resolvers/member.ex:92
 #, elixir-format
 msgid "You cannot invite to this group"
-msgstr ""
+msgstr "Nie możesz zaprosić do tej grupy"
 
 #: lib/graphql/resolvers/feed_token.ex:75
 #, elixir-format
 msgid "You don't have permission to delete this token"
-msgstr ""
+msgstr "Nie masz uprawnień do usunięcia tego tokenu"
 
 #: lib/graphql/resolvers/admin.ex:52
 #, elixir-format
@@ -815,59 +817,59 @@ msgstr ""
 #: lib/graphql/error.ex:74
 #, elixir-format
 msgid "Unknown Resource"
-msgstr ""
+msgstr "Nieznany zasób"
 
 #: lib/graphql/error.ex:84
 #, elixir-format
 msgid "You don't have permission to do this"
-msgstr ""
+msgstr "Nie masz uprawnień aby to zrobić"
 
 #: lib/graphql/error.ex:76
 #, elixir-format
 msgid "You need to be logged in"
-msgstr ""
+msgstr "Musisz być zalogowany(-a)"
 
 #: lib/graphql/resolvers/member.ex:119
 #, elixir-format
 msgid "You can't accept this invitation with this profile."
-msgstr ""
+msgstr "Nie możesz zaakceptować tego zaproszenia z tego profilu."
 
 #: lib/graphql/resolvers/member.ex:137
 #, elixir-format
 msgid "You can't reject this invitation with this profile."
-msgstr ""
+msgstr "Nie możesz odrzucić tego zaproszenia z tego profilu."
 
 #: lib/graphql/resolvers/picture.ex:78
 #, elixir-format
 msgid "File doesn't have an allowed MIME type."
-msgstr ""
+msgstr "Plik nie ma dozwolonego typu MIME."
 
 #: lib/graphql/resolvers/group.ex:172
 #, elixir-format
 msgid "Profile is not administrator for the group"
-msgstr ""
+msgstr "Profil nie jest administratorem grupy"
 
 #: lib/graphql/resolvers/event.ex:241
 #, elixir-format
 msgid "You can't edit this event."
-msgstr ""
+msgstr "Nie możesz edytować tego wydarzenia."
 
 #: lib/graphql/resolvers/event.ex:244
 #, elixir-format
 msgid "You can't attribute this event to this profile."
-msgstr ""
+msgstr "Nie możesz przypisać tego wydarzenia do tego profilu."
 
 #: lib/graphql/resolvers/member.ex:140
 #, elixir-format
 msgid "This invitation doesn't exist."
-msgstr ""
+msgstr "To zaproszenie nie istnieje."
 
 #: lib/graphql/resolvers/member.ex:182
 #, elixir-format
 msgid "This member already has been rejected."
-msgstr ""
+msgstr "Ten członek już został odrzucony."
 
 #: lib/graphql/resolvers/member.ex:189
 #, elixir-format
 msgid "You don't have the right to remove this member."
-msgstr ""
+msgstr "Nie masz uprawnień do usunięcia tego członka."
