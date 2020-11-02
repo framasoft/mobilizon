@@ -128,6 +128,15 @@ export const LANGUAGES = gql`
   }
 `;
 
+export const LANGUAGES_CODES = gql`
+  query LanguagesCodes($codes: [String!]) {
+    languages(codes: $codes) {
+      code
+      name
+    }
+  }
+`;
+
 export const ADMIN_SETTINGS_FRAGMENT = gql`
   fragment adminSettingsFragment on AdminSettings {
     instanceName

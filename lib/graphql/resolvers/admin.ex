@@ -157,6 +157,22 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     end
   end
 
+  def get_list_of_languages(_parent, %{codes: codes}, _resolution) when is_list(codes) do
+    locale = Gettext.get_locale()
+    locale = if Cldr.known_locale_name?(locale), do: locale, else: "en"
+
+    case Language.known_languages(locale) do
+      data when is_map(data) ->
+        data
+        |> Enum.map(fn {code, elem} -> %{code: code, name: elem.standard} end)
+        |> Enum.filter(fn %{code: code, name: _name} -> code in codes end)
+        |> (&{:ok, &1}).()
+
+      {:error, err} ->
+        {:error, err}
+    end
+  end
+
   def get_list_of_languages(_parent, _args, _resolution) do
     locale = Gettext.get_locale()
 
