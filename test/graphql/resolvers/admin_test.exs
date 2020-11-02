@@ -124,6 +124,90 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
   end
 
   describe "Resolver: Get the list of relay followers" do
+    @relay_followers_query """
+    {
+      relayFollowers {
+        elements {
+          actor {
+            preferredUsername,
+            domain,
+          },
+          approved
+        },
+        total
+      }
+    }
+    """
+
+    @relay_followings_query """
+    {
+        relayFollowings {
+          elements {
+            targetActor {
+              preferredUsername,
+              domain,
+            },
+            approved
+          },
+          total
+        }
+      }
+    """
+
+    test "test list_relay_followers/3 returns nothing when not logged-in", %{conn: conn} do
+      follower_actor =
+        insert(:actor,
+          domain: "localhost",
+          user: nil,
+          url: "http://localhost:8080/actor",
+          preferred_username: "instance_actor",
+          name: "I am an instance actor"
+        )
+
+      %Actor{} = relay_actor = Relay.get_actor()
+      insert(:follower, actor: follower_actor, target_actor: relay_actor)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(query: @relay_followers_query)
+
+      assert hd(res["errors"])["message"] == "You need to be logged in"
+      assert hd(res["errors"])["status_code"] == 401
+    end
+
+    test "test list_relay_followers/3 returns nothing when not an admin", %{conn: conn} do
+      %User{} = user_moderator = insert(:user, role: :moderator)
+      %User{} = user = insert(:user)
+
+      follower_actor =
+        insert(:actor,
+          domain: "localhost",
+          user: nil,
+          url: "http://localhost:8080/actor",
+          preferred_username: "instance_actor",
+          name: "I am an instance actor"
+        )
+
+      %Actor{} = relay_actor = Relay.get_actor()
+      insert(:follower, actor: follower_actor, target_actor: relay_actor)
+
+      res =
+        conn
+        |> auth_conn(user_moderator)
+        |> AbsintheHelpers.graphql_query(query: @relay_followers_query)
+
+      assert hd(res["errors"])["message"] == "You don't have permission to do this"
+      assert hd(res["errors"])["status_code"] == 403
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(query: @relay_followers_query)
+
+      assert hd(res["errors"])["message"] == "You don't have permission to do this"
+      assert hd(res["errors"])["status_code"] == 403
+    end
+
     test "test list_relay_followers/3 returns relay followers", %{conn: conn} do
       %User{} = user_admin = insert(:user, role: :administrator)
 
@@ -139,25 +223,10 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
       %Actor{} = relay_actor = Relay.get_actor()
       insert(:follower, actor: follower_actor, target_actor: relay_actor)
 
-      query = """
-      {
-        relayFollowers {
-          elements {
-            actor {
-              preferredUsername,
-              domain,
-            },
-            approved
-          },
-          total
-        }
-      }
-      """
-
       res =
         conn
         |> auth_conn(user_admin)
-        |> AbsintheHelpers.graphql_query(query: query)
+        |> AbsintheHelpers.graphql_query(query: @relay_followers_query)
 
       assert is_nil(res["errors"])
 
@@ -167,7 +236,63 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
              }
     end
 
-    test "test list_relay_followers/3 returns relay followings", %{conn: conn} do
+    test "test list_relay_followings/3 returns nothing when not logged-in", %{conn: conn} do
+      %Actor{} =
+        following_actor =
+        insert(:actor,
+          domain: "localhost",
+          user: nil,
+          url: "http://localhost:8080/actor",
+          preferred_username: "instance_actor",
+          name: "I am an instance actor"
+        )
+
+      %Actor{} = relay_actor = Relay.get_actor()
+      insert(:follower, actor: relay_actor, target_actor: following_actor)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(query: @relay_followings_query)
+
+      assert hd(res["errors"])["message"] == "You need to be logged in"
+      assert hd(res["errors"])["status_code"] == 401
+    end
+
+    test "test list_relay_followings/3 returns nothing when not an admin", %{conn: conn} do
+      %User{} = user_moderator = insert(:user, role: :moderator)
+      %User{} = user = insert(:user)
+
+      %Actor{} =
+        following_actor =
+        insert(:actor,
+          domain: "localhost",
+          user: nil,
+          url: "http://localhost:8080/actor",
+          preferred_username: "instance_actor",
+          name: "I am an instance actor"
+        )
+
+      %Actor{} = relay_actor = Relay.get_actor()
+      insert(:follower, actor: relay_actor, target_actor: following_actor)
+
+      res =
+        conn
+        |> auth_conn(user_moderator)
+        |> AbsintheHelpers.graphql_query(query: @relay_followings_query)
+
+      assert hd(res["errors"])["message"] == "You don't have permission to do this"
+      assert hd(res["errors"])["status_code"] == 403
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(query: @relay_followings_query)
+
+      assert hd(res["errors"])["message"] == "You don't have permission to do this"
+      assert hd(res["errors"])["status_code"] == 403
+    end
+
+    test "test list_relay_followings/3 returns relay followings", %{conn: conn} do
       %User{} = user_admin = insert(:user, role: :administrator)
 
       %Actor{
@@ -186,25 +311,10 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
       %Actor{} = relay_actor = Relay.get_actor()
       insert(:follower, actor: relay_actor, target_actor: following_actor)
 
-      query = """
-      {
-        relayFollowings {
-          elements {
-            targetActor {
-              preferredUsername,
-              domain,
-            },
-            approved
-          },
-          total
-        }
-      }
-      """
-
       res =
         conn
         |> auth_conn(user_admin)
-        |> AbsintheHelpers.graphql_query(query: query)
+        |> AbsintheHelpers.graphql_query(query: @relay_followings_query)
 
       assert is_nil(res["errors"])
 

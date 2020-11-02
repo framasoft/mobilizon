@@ -274,6 +274,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     end
   end
 
+  def list_relay_followers(_parent, _args, %{context: %{current_user: %User{}}}) do
+    {:error, :unauthorized}
+  end
+
+  def list_relay_followers(_parent, _args, _resolution) do
+    {:error, :unauthenticated}
+  end
+
   def list_relay_followings(
         _parent,
         %{page: page, limit: limit},
@@ -286,6 +294,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
 
       {:ok, page}
     end
+  end
+
+  def list_relay_followings(_parent, _args, %{context: %{current_user: %User{}}}) do
+    {:error, :unauthorized}
+  end
+
+  def list_relay_followings(_parent, _args, _resolution) do
+    {:error, :unauthenticated}
   end
 
   def create_relay(_parent, %{address: address}, %{context: %{current_user: %User{role: role}}})
