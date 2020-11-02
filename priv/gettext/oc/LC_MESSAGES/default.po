@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2020-10-29 08:17+0000\n"
+"PO-Revision-Date: 2020-11-02 08:06+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/oc/>\n"
@@ -1050,7 +1050,7 @@ msgstr "Veire lo senhalament"
 #: lib/web/templates/email/report.text.eex:24
 #, elixir-format
 msgid "View report:"
-msgstr "Veire lo senhalament"
+msgstr "Veire lo senhalament :"
 
 #: lib/web/templates/email/event_participation_approved.html.eex:58
 #: lib/web/templates/email/event_participation_confirmed.html.eex:58
@@ -1181,13 +1181,13 @@ msgstr ""
 #: lib/web/templates/email/group_suspension.text.eex:1
 #, elixir-format
 msgid "The group %{group} has been suspended on %{instance}!"
-msgstr ""
+msgstr "Lo grop %{group} foguèt suspendut sus %{instance} !"
 
 #: lib/web/templates/email/group_deletion.html.eex:13
 #: lib/web/templates/email/group_deletion.text.eex:1
 #, elixir-format
 msgid "The group %{group} was deleted on %{instance}!"
-msgstr ""
+msgstr "Lo grop %{group} foguèt suprimit sus %{instance} !"
 
 #: lib/web/templates/email/group_suspension.html.eex:38
 #: lib/web/templates/email/group_suspension.text.eex:3
@@ -1198,12 +1198,12 @@ msgstr ""
 #: lib/web/email/group.ex:135
 #, elixir-format
 msgid "The group %{group} has been deleted on %{instance}"
-msgstr ""
+msgstr "Lo grop %{group} foguèt suprimit sus %{instance}"
 
 #: lib/web/email/group.ex:96
 #, elixir-format
 msgid "The group %{group} has been suspended on %{instance}"
-msgstr ""
+msgstr "Lo grop %{group} foguèt suspendut sus %{instance}"
 
 #: lib/web/templates/api/terms.html.eex:24
 #, elixir-format
@@ -1247,7 +1247,7 @@ msgstr ""
 #, elixir-format
 msgctxt "terms"
 msgid "Our responsibility"
-msgstr ""
+msgstr "Nòstra responsabilitat"
 
 #: lib/web/templates/api/privacy.html.eex:61
 #, elixir-format
