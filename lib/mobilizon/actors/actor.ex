@@ -401,7 +401,9 @@ defmodule Mobilizon.Actors.Actor do
     %__MODULE__{}
     |> Ecto.Changeset.cast(data, @attrs)
     |> build_urls()
+    # Can use sharedinbox directly
     |> put_change(:inbox_url, "#{Endpoint.url()}/inbox")
+    |> unique_username_validator()
   end
 
   @spec build_anonymous_actor_creation_attrs :: Ecto.Changeset.t()
