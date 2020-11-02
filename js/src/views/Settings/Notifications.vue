@@ -22,10 +22,10 @@
             "Mobilizon will send you an email when the events you are attending have important changes: date and time, address, confirmation or cancellation, etc."
           )
         }}</strong>
-        <p>
-          {{ $t("Other notification options:") }}
-        </p>
       </div>
+      <p>
+        {{ $t("Other notification options:") }}
+      </p>
       <div class="field">
         <b-checkbox v-model="notificationOnDay" @input="updateSetting({ notificationOnDay })">
           <strong>{{ $t("Notification on the day of the event") }}</strong>
@@ -149,6 +149,7 @@ export default class Notifications extends Vue {
     await this.$apollo.mutate<{ setUserSettings: string }>({
       mutation: SET_USER_SETTINGS,
       variables,
+      refetchQueries: [{ query: USER_SETTINGS }],
     });
   }
 }
