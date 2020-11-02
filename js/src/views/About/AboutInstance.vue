@@ -44,7 +44,7 @@
       <table class="table is-fullwidth">
         <tr>
           <td>{{ $t("Instance languages") }}</td>
-          <td>{{ formatList(config.languages.map((lang) => getLanguageNameForCode(lang))) }}</td>
+          <td :title="this.config.languages.join(', ')">{{ formattedLanguageList }}</td>
         </tr>
         <tr>
           <td>{{ $t("Mobilizon version") }}</td>
@@ -78,6 +78,8 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { formatList } from "@/utils/i18n";
+import { LANGUAGES_CODES } from "@/graphql/admin";
+import { ILanguage } from "@/types/admin.model";
 import { ABOUT } from "../../graphql/config";
 import { STATISTICS } from "../../graphql/statistics";
 import { IConfig } from "../../types/config.model";
@@ -88,6 +90,17 @@ import langs from "../../i18n/langs.json";
   apollo: {
     config: ABOUT,
     statistics: STATISTICS,
+    languages: {
+      query: LANGUAGES_CODES,
+      variables() {
+        return {
+          codes: this.config.languages,
+        };
+      },
+      skip() {
+        return !this.config.languages;
+      },
+    },
   },
 })
 export default class AboutInstance extends Vue {
@@ -95,7 +108,7 @@ export default class AboutInstance extends Vue {
 
   statistics!: IStatistics;
 
-  formatList = formatList;
+  languages!: ILanguage[];
 
   get isContactEmail(): boolean {
     return this.config && this.config.contact.includes("@");
@@ -103,6 +116,11 @@ export default class AboutInstance extends Vue {
 
   get isContactURL(): boolean {
     return this.config && this.config.contact.match(/^https?:\/\//g) !== null;
+  }
+
+  get formattedLanguageList(): string {
+    const list = this.languages.map(({ name }) => name);
+    return formatList(list);
   }
 
   // eslint-disable-next-line class-methods-use-this

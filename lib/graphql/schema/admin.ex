@@ -123,6 +123,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
     end
 
     field :languages, type: list_of(:language) do
+      arg(:codes, list_of(:string))
       resolve(&Admin.get_list_of_languages/3)
     end
 
