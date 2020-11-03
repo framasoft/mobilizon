@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-11-03 22:12+0000\n"
+"PO-Revision-Date: 2020-11-03 22:17+0000\n"
 "Last-Translator: diorama <diorama@riseup.net>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/it/>\n"
@@ -43,20 +43,20 @@ msgid "does not match confirmation"
 msgstr "non corrisponde alla conferma"
 
 msgid "is still associated with this entry"
-msgstr "e' ancora associato/o a questa voce"
+msgstr "è già associato a questa voce"
 
 msgid "are still associated with this entry"
 msgstr "sono ancora associati/e a questa voce"
 
 msgid "should be %{count} character(s)"
 msgid_plural "should be %{count} character(s)"
-msgstr[0] "dovrebbe avere %{count} carattere(i)"
-msgstr[1] "dovrebbe avere %{count} carattere(i)"
+msgstr[0] "dovrebbe avere un carattere"
+msgstr[1] "dovrebbe avere %{count} caratteri"
 
 msgid "should have %{count} item(s)"
 msgid_plural "should have %{count} item(s)"
-msgstr[0] "dovrebbe avere %{count} elemento(i)"
-msgstr[1] "dovrebbero avere %{count} elemento(i)"
+msgstr[0] "dovrebbe avere un elemento"
+msgstr[1] "dovrebbero avere %{count} elementi"
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
@@ -132,7 +132,7 @@ msgstr "Gruppo con ID %{id} non trovato"
 #: lib/graphql/resolvers/user.ex:83
 #, elixir-format
 msgid "Impossible to authenticate, either your email or password are invalid."
-msgstr "Impossibile autenticarsi: email e/o password non validi"
+msgstr "Impossibile autenticarsi: email e/o password non validi."
 
 #: lib/graphql/resolvers/group.ex:280
 #, elixir-format
@@ -459,7 +459,7 @@ msgstr "L'immagine con l'ID %{id} non è stata trovata"
 #: lib/graphql/resolvers/post.ex:165 lib/graphql/resolvers/post.ex:198
 #, elixir-format
 msgid "Post ID is not a valid ID"
-msgstr ""
+msgstr "L'ID del post non è un ID valido"
 
 #: lib/graphql/resolvers/post.ex:168 lib/graphql/resolvers/post.ex:201
 #, elixir-format
@@ -686,7 +686,7 @@ msgstr "Devi essere connesso per creare eventi"
 #: lib/graphql/resolvers/post.ex:139
 #, elixir-format
 msgid "You need to be logged-in to create posts"
-msgstr "Devi essere connesso per creare dei posts"
+msgstr "Devi essere connesso per creare dei post"
 
 #: lib/graphql/resolvers/report.ex:81 lib/graphql/resolvers/report.ex:92
 #, elixir-format
@@ -706,7 +706,7 @@ msgstr "Devi essere connesso per eliminare un evento"
 #: lib/graphql/resolvers/post.ex:209
 #, elixir-format
 msgid "You need to be logged-in to delete posts"
-msgstr "Devi essere connesso per eliminare i posts"
+msgstr "Devi essere connesso per eliminare dei post"
 
 #: lib/graphql/resolvers/resource.ex:187
 #, elixir-format
@@ -731,7 +731,7 @@ msgstr "Devi essere connesso per aggiornare un evento"
 #: lib/graphql/resolvers/post.ex:176
 #, elixir-format
 msgid "You need to be logged-in to update posts"
-msgstr "Devi essere connesso per aggiornare i posts"
+msgstr "Devi essere connesso per aggiornare dei post"
 
 #: lib/graphql/resolvers/resource.ex:158
 #, elixir-format
