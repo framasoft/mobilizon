@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-11-02 08:06+0000\n"
+"PO-Revision-Date: 2020-11-04 12:52+0000\n"
 "Last-Translator: Marcin Mikołajczak <me@mkljczk.pl>\n"
 "Language-Team: Polish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/pl/>\n"
@@ -637,182 +637,190 @@ msgstr "Nie masz uprawnień do usunięcia tego tokenu"
 #: lib/graphql/resolvers/admin.ex:52
 #, elixir-format
 msgid "You need to be logged-in and a moderator to list action logs"
-msgstr ""
+msgstr "Musisz być zalogowanym moderatorem, aby mieć dostęp do dzennika działań"
 
 #: lib/graphql/resolvers/report.ex:28
 #, elixir-format
 msgid "You need to be logged-in and a moderator to list reports"
-msgstr ""
+msgstr "Musisz być zalogowanym moderatorem, aby mieć dostęp do listy zgłoszeń"
 
 #: lib/graphql/resolvers/report.ex:118
 #, elixir-format
 msgid "You need to be logged-in and a moderator to update a report"
-msgstr ""
+msgstr "Musisz być zalogowanym moderatorem, aby móc zaktualizować zgłoszenie"
 
 #: lib/graphql/resolvers/report.ex:43
 #, elixir-format
 msgid "You need to be logged-in and a moderator to view a report"
-msgstr ""
+msgstr "Musisz być zalogowanym moderatorem, aby wyświetlić zgłoszenie"
 
 #: lib/graphql/resolvers/admin.ex:220
 #, elixir-format
 msgid "You need to be logged-in and an administrator to access admin settings"
 msgstr ""
+"Musisz być zalogowanym moderatorem, aby uzyskać dostęp do ustawień "
+"administratora"
 
 #: lib/graphql/resolvers/admin.ex:205
 #, elixir-format
 msgid "You need to be logged-in and an administrator to access dashboard statistics"
 msgstr ""
+"Musisz być zalogowanym administratorem, aby uzyskać dostęp do statystyk w "
+"panelu"
 
 #: lib/graphql/resolvers/admin.ex:244
 #, elixir-format
 msgid "You need to be logged-in and an administrator to save admin settings"
 msgstr ""
+"Musisz być zalogowanym administratorem, aby zapisywać ustawienia "
+"administratora"
 
 #: lib/graphql/resolvers/discussion.ex:66
 #, elixir-format
 msgid "You need to be logged-in to access discussions"
-msgstr ""
+msgstr "Musisz być zalogowany(-a), aby uzyskać dostęp do dyskusji"
 
 #: lib/graphql/resolvers/resource.ex:93
 #, elixir-format
 msgid "You need to be logged-in to access resources"
-msgstr ""
+msgstr "Musisz być zalogowany(-a), aby uzyskać dostęp do zasobów"
 
 #: lib/graphql/resolvers/event.ex:213
 #, elixir-format
 msgid "You need to be logged-in to create events"
-msgstr ""
+msgstr "Musisz być zalogowany(-a), aby móc utworzyć wydarzenia"
 
 #: lib/graphql/resolvers/post.ex:139
 #, elixir-format
 msgid "You need to be logged-in to create posts"
-msgstr ""
+msgstr "Musisz być zalogowany(-a), aby utworzyć wpis"
 
 #: lib/graphql/resolvers/report.ex:81 lib/graphql/resolvers/report.ex:92
 #, elixir-format
 msgid "You need to be logged-in to create reports"
-msgstr ""
+msgstr "Musisz być zalogowany(-a), aby utworzyć zgłoszenie"
 
 #: lib/graphql/resolvers/resource.ex:129
 #, elixir-format
 msgid "You need to be logged-in to create resources"
-msgstr ""
+msgstr "Musisz być zalogowany(-a), aby utworzyć zasób"
 
 #: lib/graphql/resolvers/event.ex:291
 #, elixir-format
 msgid "You need to be logged-in to delete an event"
-msgstr ""
+msgstr "Musisz być zalogowany(-a), aby usunąć wydarzenie"
 
 #: lib/graphql/resolvers/post.ex:209
 #, elixir-format
 msgid "You need to be logged-in to delete posts"
-msgstr ""
+msgstr "Musisz być zalogowany(-a), aby usunąć wpis"
 
 #: lib/graphql/resolvers/resource.ex:187
 #, elixir-format
 msgid "You need to be logged-in to delete resources"
-msgstr ""
+msgstr "Musisz być zalogowany(-a), aby usunąć zasób"
 
 #: lib/graphql/resolvers/participant.ex:108
 #, elixir-format
 msgid "You need to be logged-in to join an event"
-msgstr ""
+msgstr "Musisz być zalogowany(-a), aby dołączyć do wydarzenia"
 
 #: lib/graphql/resolvers/participant.ex:207
 #, elixir-format
 msgid "You need to be logged-in to leave an event"
-msgstr ""
+msgstr "Musisz być zalogowany(-a), aby opuścić wydarzenie"
 
 #: lib/graphql/resolvers/event.ex:252
 #, elixir-format
 msgid "You need to be logged-in to update an event"
-msgstr ""
+msgstr "Musisz być zalogowany(-a), aby zaktualizować wydarzenie"
 
 #: lib/graphql/resolvers/post.ex:176
 #, elixir-format
 msgid "You need to be logged-in to update posts"
-msgstr ""
+msgstr "Musisz być zalogowany(-a), aby zaktualizować wpis"
 
 #: lib/graphql/resolvers/resource.ex:158
 #, elixir-format
 msgid "You need to be logged-in to update resources"
-msgstr ""
+msgstr "Musisz być zalogowany(-a), aby zaktualizować zasób"
 
 #: lib/graphql/resolvers/resource.ex:210
 #, elixir-format
 msgid "You need to be logged-in to view a resource preview"
-msgstr ""
+msgstr "Musisz być zalogowany(-a), aby zobaczyć podgląd zasobu"
 
 #: lib/graphql/resolvers/picture.ex:86
 #, elixir-format
 msgid "You need to login to upload a picture"
-msgstr ""
+msgstr "Musisz się zalogować, aby dodać obraz"
 
 #: lib/graphql/resolvers/report.ex:84
 #, elixir-format
 msgid "Reporter ID does not match the anonymous profile id"
-msgstr ""
+msgstr "ID zgłaszającego nie zgadza się z ID anonimowego profilu"
 
 #: lib/graphql/resolvers/report.ex:59
 #, elixir-format
 msgid "Reporter profile is not owned by authenticated user"
-msgstr ""
+msgstr "Profil zgłaszającego nie należy od uwierzytelnionego użytkownika"
 
 #: lib/graphql/resolvers/resource.ex:121
 #, elixir-format
 msgid "Parent resource doesn't belong to this group"
-msgstr ""
+msgstr "Nadrzędny zasób nie należy do tej grupy"
 
 #: lib/graphql/resolvers/participant.ex:93
 #, elixir-format
 msgid "Profile ID provided is not the anonymous profile one"
-msgstr ""
+msgstr "Podane ID profilu nie jest anonimowym profilem"
 
 #: lib/mobilizon/users/user.ex:109
 #, elixir-format
 msgid "The chosen password is too short."
-msgstr ""
+msgstr "Wybrane hasło jest zbyt krótkie"
 
 #: lib/mobilizon/users/user.ex:138
 #, elixir-format
 msgid "The registration token is already in use, this looks like an issue on our side."
 msgstr ""
+"Token rejestracyjny jest już w użyciu, to wygląda na problem po naszej "
+"stronie."
 
 #: lib/mobilizon/users/user.ex:104
 #, elixir-format
 msgid "This email is already used."
-msgstr ""
+msgstr "Ten adres e-mail jest już w użyciu."
 
 #: lib/graphql/error.ex:88
 #, elixir-format
 msgid "Post not found"
-msgstr ""
+msgstr "Nie znaleziono wpisu"
 
 #: lib/graphql/error.ex:75
 #, elixir-format
 msgid "Invalid arguments passed"
-msgstr ""
+msgstr "Podano nieprawidłowe argumenty"
 
 #: lib/graphql/error.ex:81
 #, elixir-format
 msgid "Invalid credentials"
-msgstr ""
+msgstr "Nieprawidłowe dane uwierzytelniające"
 
 #: lib/graphql/error.ex:79
 #, elixir-format
 msgid "Reset your password to login"
-msgstr ""
+msgstr "Resetuj swoje hasło, aby zalogować się"
 
 #: lib/graphql/error.ex:86 lib/graphql/error.ex:91
 #, elixir-format
 msgid "Resource not found"
-msgstr ""
+msgstr "Nie znaleziono zasobu"
 
 #: lib/graphql/error.ex:92
 #, elixir-format
 msgid "Something went wrong"
-msgstr ""
+msgstr "Coś poszło nie tak"
 
 #: lib/graphql/error.ex:74
 #, elixir-format
