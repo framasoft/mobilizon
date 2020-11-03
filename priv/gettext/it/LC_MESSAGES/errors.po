@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "PO-Revision-Date: 2020-11-03 22:17+0000\n"
-"Last-Translator: diorama <diorama@riseup.net>\n"
+"Last-Translator: frama late <loss@e.email>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/it/>\n"
 "Language: it\n"
@@ -43,7 +43,7 @@ msgid "does not match confirmation"
 msgstr "non corrisponde alla conferma"
 
 msgid "is still associated with this entry"
-msgstr "è già associato a questa voce"
+msgstr "è già associato con questa occorrenza"
 
 msgid "are still associated with this entry"
 msgstr "sono ancora associati/e a questa voce"
