@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "PO-Revision-Date: 2020-11-03 22:12+0000\n"
-"Last-Translator: x <hardwired1.0@protonmail.com>\n"
+"Last-Translator: diorama <diorama@riseup.net>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/it/>\n"
 "Language: it\n"
@@ -305,7 +305,7 @@ msgstr "Hai richiesto di nuovo un'e-mail di conferma troppo presto"
 #: lib/graphql/resolvers/user.ex:128
 #, elixir-format
 msgid "Your email is not on the allowlist"
-msgstr ""
+msgstr "La tua mail non è nella lista delle autorizzazioni"
 
 #: lib/graphql/resolvers/actor.ex:64 lib/graphql/resolvers/actor.ex:94
 #, elixir-format
@@ -422,7 +422,7 @@ msgstr "Nessuno profilo trovato per l'utente"
 #: lib/graphql/resolvers/feed_token.ex:66
 #, elixir-format
 msgid "No such feed token"
-msgstr ""
+msgstr "Nessun token di rifornimento corrispondente"
 
 #: lib/graphql/resolvers/event.ex:202
 #, elixir-format
@@ -576,7 +576,7 @@ msgstr "Non è consentito creare un commento se non si è collegati"
 #: lib/graphql/resolvers/feed_token.ex:44
 #, elixir-format
 msgid "You are not allowed to create a feed token if not connected"
-msgstr ""
+msgstr "Non puoi creare un token di rifornimento senza connessione"
 
 #: lib/graphql/resolvers/comment.ex:117
 #, elixir-format
@@ -586,7 +586,7 @@ msgstr "Non è consentito eliminare un commento se non si è collegati"
 #: lib/graphql/resolvers/feed_token.ex:81
 #, elixir-format
 msgid "You are not allowed to delete a feed token if not connected"
-msgstr ""
+msgstr "Non puoi eliminare un token di rifornimento senza connettersi"
 
 #: lib/graphql/resolvers/comment.ex:77
 #, elixir-format
