@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
 "PO-Revision-Date: 2020-11-04 12:52+0000\n"
-"Last-Translator: x <hardwired1.0@protonmail.com>\n"
+"Last-Translator: diorama <diorama@riseup.net>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/it/>\n"
 "Language: it\n"
@@ -1278,28 +1278,36 @@ msgstr "Addio, e grazie per il pesce!"
 #: lib/web/email/group.ex:62
 #, elixir-format
 msgid "You have been removed from group %{group}"
-msgstr ""
+msgstr "Sei stato rimosso dal gruppo %{group}"
 
 #: lib/web/templates/email/group_member_removal.text.eex:3
 #, elixir-format
 msgid "You have been removed from group %{group}. You will not be able to access this group's private content anymore."
 msgstr ""
+"Sei stato rimosso dal gruppo %{group}. Non potrai più accedere al contenuto "
+"privato di questo gruppo."
 
 #: lib/web/templates/email/group_invite.html.eex:38
 #, elixir-format
 msgid "<b>%{inviter}</b> just invited you to join their group %{link_start}<b>%{group}</b>%{link_end}"
 msgstr ""
+"<b>%{inviter}</b> ti ha appena invitato a partecipare al suo gruppo "
+"%{link_start}<b>%{group}</b>%{link_end}"
 
 #: lib/web/templates/email/group_member_removal.html.eex:38
 #, elixir-format
 msgid "You have been removed from group %{link_start}<b>%{group}</b>%{link_end}. You will not be able to access this group's private content anymore."
 msgstr ""
+"Sei stato rimosso dal gruppo %{link_start}<b>%{group}</b>%{link_end}. Non "
+"potrai più accedere al contenuto privato di questo gruppo."
 
 #: lib/web/templates/email/group_suspension.html.eex:54
 #: lib/web/templates/email/group_suspension.text.eex:7
 #, elixir-format
 msgid "As this group was located on another instance, it will continue to work for other instances than this one."
 msgstr ""
+"Poiché questo gruppo era posizionato su un'altra istanza, continuerà a "
+"funzionare per altre istanze tranne questa."
 
 #: lib/web/templates/email/group_suspension.html.eex:46
 #: lib/web/templates/email/group_suspension.text.eex:5
