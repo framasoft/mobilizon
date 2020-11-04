@@ -8,8 +8,8 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-11-04 12:52+0000\n"
-"Last-Translator: diorama <diorama@riseup.net>\n"
+"PO-Revision-Date: 2020-11-04 14:52+0000\n"
+"Last-Translator: frama late <loss@e.email>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/it/>\n"
 "Language: it\n"
@@ -50,13 +50,13 @@ msgstr "sono ancora associati/e a questa voce"
 
 msgid "should be %{count} character(s)"
 msgid_plural "should be %{count} character(s)"
-msgstr[0] "dovrebbe avere un carattere"
-msgstr[1] "dovrebbe avere %{count} caratteri"
+msgstr[0] "dovrebbe avere %{count} carattere(i)"
+msgstr[1] "dovrebbe avere %{count} carattere(i)"
 
 msgid "should have %{count} item(s)"
 msgid_plural "should have %{count} item(s)"
-msgstr[0] "dovrebbe avere un elemento"
-msgstr[1] "dovrebbe avere %{count} elementi"
+msgstr[0] "dovrebbe avere %{count} voci"
+msgstr[1] "dovrebbe avere %{count} voci"
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
