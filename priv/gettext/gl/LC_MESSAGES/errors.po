@@ -8,15 +8,15 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-11-02 08:06+0000\n"
+"PO-Revision-Date: 2020-11-04 12:52+0000\n"
 "Last-Translator: josé m. <correo@xmgz.eu>\n"
 "Language-Team: Galician <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/gl/>\n"
 "Language: gl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.1\n"
-"Content-Transfer-Encoding: 8bit\n"
 
 msgid "can't be blank"
 msgstr "non pode estar baleiro"
@@ -55,106 +55,107 @@ msgstr[1] "deberían ter %{count} caracter(es)"
 
 msgid "should have %{count} item(s)"
 msgid_plural "should have %{count} item(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "debería ter %{count} elemento"
+msgstr[1] "debería ter %{count} elementos"
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "debería ter ao menos %{count} caracter"
+msgstr[1] "debería ter ao menos %{count} caracteres"
 
 msgid "should have at least %{count} item(s)"
 msgid_plural "should have at least %{count} item(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "debería ter ó menos %{count} elemento"
+msgstr[1] "debería ter ó menos %{count} elementos"
 
 msgid "should be at most %{count} character(s)"
 msgid_plural "should be at most %{count} character(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "debería ser como moito %{count} caracter"
+msgstr[1] "debería ser como moito de %{count} caracteres"
 
 msgid "should have at most %{count} item(s)"
 msgid_plural "should have at most %{count} item(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "debería ter como moito %{count} elemento"
+msgstr[1] "debería ter como moito %{count} elementos"
 
 msgid "must be less than %{number}"
-msgstr ""
+msgstr "ten que ser menor que %{number}"
 
 msgid "must be greater than %{number}"
-msgstr ""
+msgstr "ten que ser maior de %{number}"
 
 msgid "must be less than or equal to %{number}"
-msgstr ""
+msgstr "ten que ser menos ou igual a %{number}"
 
 msgid "must be greater than or equal to %{number}"
-msgstr ""
+msgstr "ten que ser maior ou igual a %{number}"
 
 msgid "must be equal to %{number}"
-msgstr ""
+msgstr "ten que ser igual a %{number}"
 
 #: lib/graphql/resolvers/user.ex:103
 #, elixir-format
 msgid "Cannot refresh the token"
-msgstr ""
+msgstr "Non puido actualizar o token"
 
 #: lib/graphql/resolvers/group.ex:139
 #, elixir-format
 msgid "Creator profile is not owned by the current user"
-msgstr ""
+msgstr "A usuaria actual non é dona da creadora do perfil"
 
 #: lib/graphql/resolvers/group.ex:203
 #, elixir-format
 msgid "Current profile is not a member of this group"
-msgstr ""
+msgstr "O perfil actual non é membro deste grupo"
 
 #: lib/graphql/resolvers/group.ex:207
 #, elixir-format
 msgid "Current profile is not an administrator of the selected group"
-msgstr ""
+msgstr "O perfil actual non é administrador do grupo seleccionado"
 
 #: lib/graphql/resolvers/user.ex:512
 #, elixir-format
 msgid "Error while saving user settings"
-msgstr ""
+msgstr "Erro ó gardar os axustes de usuaria"
 
 #: lib/graphql/error.ex:90 lib/graphql/resolvers/group.ex:200
 #: lib/graphql/resolvers/group.ex:248 lib/graphql/resolvers/group.ex:283 lib/graphql/resolvers/member.ex:83
 #, elixir-format
 msgid "Group not found"
-msgstr ""
+msgstr "Grupo non atopado"
 
 #: lib/graphql/resolvers/group.ex:69
 #, elixir-format
 msgid "Group with ID %{id} not found"
-msgstr ""
+msgstr "Grupo con ID %{id} non atopado"
 
 #: lib/graphql/resolvers/user.ex:83
 #, elixir-format
 msgid "Impossible to authenticate, either your email or password are invalid."
 msgstr ""
+"A autenticación non foi posible, o contrasinal ou o email non son correctos."
 
 #: lib/graphql/resolvers/group.ex:280
 #, elixir-format
 msgid "Member not found"
-msgstr ""
+msgstr "Membro non atopado"
 
 #: lib/graphql/resolvers/actor.ex:58 lib/graphql/resolvers/actor.ex:88
 #: lib/graphql/resolvers/user.ex:417
 #, elixir-format
 msgid "No profile found for the moderator user"
-msgstr ""
+msgstr "Non se atopou o perfil para a usuaria moderadora"
 
 #: lib/graphql/resolvers/user.ex:195
 #, elixir-format
 msgid "No user to validate with this email was found"
-msgstr ""
+msgstr "Non se atopou unha usuaria con este email para validar"
 
 #: lib/graphql/resolvers/person.ex:232 lib/graphql/resolvers/user.ex:76
 #: lib/graphql/resolvers/user.ex:219
 #, elixir-format
 msgid "No user with this email was found"
-msgstr ""
+msgstr "Non se atopa ningunha usuaria con este email"
 
 #: lib/graphql/resolvers/comment.ex:50 lib/graphql/resolvers/comment.ex:112
 #: lib/graphql/resolvers/event.ex:286 lib/graphql/resolvers/feed_token.ex:28 lib/graphql/resolvers/group.ex:245
@@ -165,188 +166,190 @@ msgstr ""
 #: lib/graphql/resolvers/todos.ex:57
 #, elixir-format
 msgid "Profile is not owned by authenticated user"
-msgstr ""
+msgstr "O perfil non pertence a unha usuaria autenticada"
 
 #: lib/graphql/resolvers/user.ex:125
 #, elixir-format
 msgid "Registrations are not open"
-msgstr ""
+msgstr "O rexistro está pechado"
 
 #: lib/graphql/resolvers/user.ex:330
 #, elixir-format
 msgid "The current password is invalid"
-msgstr ""
+msgstr "O contrasinal actual non é válido"
 
 #: lib/graphql/resolvers/user.ex:382
 #, elixir-format
 msgid "The new email doesn't seem to be valid"
-msgstr ""
+msgstr "O novo email non semella ser válido"
 
 #: lib/graphql/resolvers/user.ex:379
 #, elixir-format
 msgid "The new email must be different"
-msgstr ""
+msgstr "O novo email ten que ser diferente"
 
 #: lib/graphql/resolvers/user.ex:333
 #, elixir-format
 msgid "The new password must be different"
-msgstr ""
+msgstr "O novo contrasinal ten que ser diferente"
 
 #: lib/graphql/resolvers/user.ex:376 lib/graphql/resolvers/user.ex:439
 #: lib/graphql/resolvers/user.ex:442
 #, elixir-format
 msgid "The password provided is invalid"
-msgstr ""
+msgstr "O contrasinal escrito non é válido"
 
 #: lib/graphql/resolvers/user.ex:337
 #, elixir-format
 msgid "The password you have chosen is too short. Please make sure your password contains at least 6 characters."
 msgstr ""
+"O contrasinal escollido é demasiado curto, ten que ter 6 caracteres polo "
+"menos."
 
 #: lib/graphql/resolvers/user.ex:215
 #, elixir-format
 msgid "This user can't reset their password"
-msgstr ""
+msgstr "Esta usuaria non pode restablecer o seu contrasinal"
 
 #: lib/graphql/resolvers/user.ex:79
 #, elixir-format
 msgid "This user has been disabled"
-msgstr ""
+msgstr "Estab usuaria foi desactivada"
 
 #: lib/graphql/resolvers/user.ex:179
 #, elixir-format
 msgid "Unable to validate user"
-msgstr ""
+msgstr "Non se puido validar a usuaria"
 
 #: lib/graphql/resolvers/user.ex:420
 #, elixir-format
 msgid "User already disabled"
-msgstr ""
+msgstr "A usuaria xa está desactivada"
 
 #: lib/graphql/resolvers/user.ex:487
 #, elixir-format
 msgid "User requested is not logged-in"
-msgstr ""
+msgstr "A usuaria solicitada non está conectada"
 
 #: lib/graphql/resolvers/group.ex:254
 #, elixir-format
 msgid "You are already a member of this group"
-msgstr ""
+msgstr "Xa es membro deste grupo"
 
 #: lib/graphql/resolvers/group.ex:287
 #, elixir-format
 msgid "You can't leave this group because you are the only administrator"
-msgstr ""
+msgstr "Non podes deixar este grupo porque es a única administradora"
 
 #: lib/graphql/resolvers/group.ex:251
 #, elixir-format
 msgid "You cannot join this group"
-msgstr ""
+msgstr "Non podes unirte a este grupo"
 
 #: lib/graphql/resolvers/group.ex:97
 #, elixir-format
 msgid "You may not list groups unless moderator."
-msgstr ""
+msgstr "Non podes facer listas de grupos porque non es moderadora."
 
 #: lib/graphql/resolvers/user.ex:387
 #, elixir-format
 msgid "You need to be logged-in to change your email"
-msgstr ""
+msgstr "Tes que estar conectada para poder cambiar o email"
 
 #: lib/graphql/resolvers/user.ex:345
 #, elixir-format
 msgid "You need to be logged-in to change your password"
-msgstr ""
+msgstr "Tes que estar conectada para poder cambiar o contrasinal"
 
 #: lib/graphql/resolvers/group.ex:212
 #, elixir-format
 msgid "You need to be logged-in to delete a group"
-msgstr ""
+msgstr "Tes que estar conectada para poder eleminar un grupo"
 
 #: lib/graphql/resolvers/user.ex:447
 #, elixir-format
 msgid "You need to be logged-in to delete your account"
-msgstr ""
+msgstr "Tes que estar conectada para poder eliminar a conta"
 
 #: lib/graphql/resolvers/group.ex:259
 #, elixir-format
 msgid "You need to be logged-in to join a group"
-msgstr ""
+msgstr "Tes que estar conectada para poder unirte a un grupo"
 
 #: lib/graphql/resolvers/group.ex:292
 #, elixir-format
 msgid "You need to be logged-in to leave a group"
-msgstr ""
+msgstr "Tes que estar conectada para poder deixar un grupo"
 
 #: lib/graphql/resolvers/group.ex:177
 #, elixir-format
 msgid "You need to be logged-in to update a group"
-msgstr ""
+msgstr "Tes que estar conectada para poder actualizar un grupo"
 
 #: lib/graphql/resolvers/user.ex:58
 #, elixir-format
 msgid "You need to have admin access to list users"
-msgstr ""
+msgstr "Tes que ter acceso de administración para ver lista de usuarias"
 
 #: lib/graphql/resolvers/user.ex:108
 #, elixir-format
 msgid "You need to have an existing token to get a refresh token"
-msgstr ""
+msgstr "Tes que ter un token existente para obter un token actualizado"
 
 #: lib/graphql/resolvers/user.ex:198 lib/graphql/resolvers/user.ex:222
 #, elixir-format
 msgid "You requested again a confirmation email too soon"
-msgstr ""
+msgstr "Solicitaches demasiado pronto un email de confirmación"
 
 #: lib/graphql/resolvers/user.ex:128
 #, elixir-format
 msgid "Your email is not on the allowlist"
-msgstr ""
+msgstr "O teu email non está na lista dos permitidos"
 
 #: lib/graphql/resolvers/actor.ex:64 lib/graphql/resolvers/actor.ex:94
 #, elixir-format
 msgid "Error while performing background task"
-msgstr ""
+msgstr "Erro ó executar a tarefa en segundo plano"
 
 #: lib/graphql/resolvers/actor.ex:27
 #, elixir-format
 msgid "No profile found with this ID"
-msgstr ""
+msgstr "Non se atopa o perfil con este ID"
 
 #: lib/graphql/resolvers/actor.ex:54 lib/graphql/resolvers/actor.ex:91
 #, elixir-format
 msgid "No remote profile found with this ID"
-msgstr ""
+msgstr "Non se atopa o perfil remoto con este ID"
 
 #: lib/graphql/resolvers/actor.ex:69
 #, elixir-format
 msgid "Only moderators and administrators can suspend a profile"
-msgstr ""
+msgstr "Só moderadoras e administradoras poden suspender un perfil"
 
 #: lib/graphql/resolvers/actor.ex:99
 #, elixir-format
 msgid "Only moderators and administrators can unsuspend a profile"
-msgstr ""
+msgstr "Só moderadoras e administradoras pode restablecer un perfil"
 
 #: lib/graphql/resolvers/actor.ex:24
 #, elixir-format
 msgid "Only remote profiles may be refreshed"
-msgstr ""
+msgstr "Só os perfís remotos poderían ser actualizdos"
 
 #: lib/graphql/resolvers/actor.ex:61
 #, elixir-format
 msgid "Profile already suspended"
-msgstr ""
+msgstr "O perfil xa está suspendido"
 
 #: lib/graphql/resolvers/participant.ex:96
 #, elixir-format
 msgid "A valid email is required by your instance"
-msgstr ""
+msgstr "A túa instancia require un email válido"
 
 #: lib/graphql/resolvers/participant.ex:90
 #, elixir-format
 msgid "Anonymous participation is not enabled"
-msgstr ""
+msgstr "Non está permitida a participación ánonima"
 
 #: lib/graphql/resolvers/person.ex:188
 #, elixir-format
