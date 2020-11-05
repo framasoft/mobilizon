@@ -612,7 +612,7 @@
   "{moderator} suspended profile {profile}": "{moderator} ha sospeso il profilo {profile}",
   "{number} organized events": "Nessun evento organizzato|Un evento organizzato|{number} eventi organizzati",
   "{number} participations": "Nessuna partecipazione|Una partecipazione|{number} partecipazioni",
-  "{profile} (by default)": "{profile} (by default)",
+  "{profile} (by default)": "{profile} (per impostazione predefinita)",
   "{title} ({count} todos)": "{title} ({count} tutti)",
   "© The OpenStreetMap Contributors": "© The OpenStreetMap Contributors"
 }
