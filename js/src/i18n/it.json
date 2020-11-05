@@ -601,6 +601,8 @@
   "{moderator} reopened {report}": "{moderator} ha riaperto {report}",
   "{moderator} suspended profile {profile}": "{moderator} ha sospeso il profilo {profile}",
   "{number} organized events": "Nessun evento organizzato|Un evento organizzato|{number} eventi organizzati",
+  "{number} participations": "Nessuna partecipazione|Una partecipazione|{number} partecipazioni",
+  "{profile} (by default)": "{profile} (by default)",
   "{title} ({count} todos)": "{title} ({count} tutti)",
   "© The OpenStreetMap Contributors": "© The OpenStreetMap Contributors"
 }
