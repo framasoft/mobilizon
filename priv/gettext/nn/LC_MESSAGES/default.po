@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-02 22:03+0000\n"
-"PO-Revision-Date: 2020-11-04 12:52+0000\n"
+"PO-Revision-Date: 2020-11-06 07:28+0000\n"
 "Last-Translator: Eivind Ødegård <eivind.odegard@sogn.no>\n"
 "Language-Team: Norwegian Nynorsk <https://weblate.framasoft.org/projects/"
 "mobilizon/backend/nn/>\n"
@@ -622,42 +622,65 @@ msgstr "Innhaldet og åtferda di"
 msgctxt "terms"
 msgid "<b>%{instance_name}</b> makes no claim or representation regarding, and accepts no responsibility for third party websites accessible by hyperlink from the Service or websites linking to the Service. When you leave the Service, you should be aware that these Terms and our policies no longer govern. The inclusion of any link does not imply endorsement by <b>%{instance_name}</b> of the site. Use of any such linked website is at the user's own risk."
 msgstr ""
+"<b>%{instance_name}</b> korkje representerer eller har ansvar for "
+"tredjepartar og lenkene til og frå dei. Når du går til ein nettstad utanfor "
+"denne, bør du vera klar over at villkåra og retningslinene våre ikkje gjeld "
+"lenger. Sjølv om <b>%{instance_name}</b> har lenker til andre nettstader, "
+"tyder ikkje det at me går gode for innhaldet der. Du bruker alle lenker på "
+"eigen risiko."
 
 #: lib/web/templates/api/terms.html.eex:68
 #, elixir-format
 msgctxt "terms"
 msgid "Finally, your use of the Service is also subject to acceptance of <a href=\"/rules\">the instance's own specific rules</a> regarding the code of conduct and moderation rules. Breaking those rules may also result in your account being disabled or suspended."
 msgstr ""
+"Til sist nemner me at du godkjenner <a href=\"/rules\">våre eigne reglar</a> "
+"om åtferd og styring når du bruker nettstaden vår. Dersom du bryt reglane, "
+"kan det føra til at du blir utestengt eller at brukarkontoen din blir sperra."
 
 #: lib/web/templates/api/terms.html.eex:81
 #, elixir-format
 msgctxt "terms"
 msgid "For full details about the Mobilizon software <a href=\"https://joinmobilizon.org\">see here</a>."
 msgstr ""
+"Les meir om Mobilizon-programvara <a href=\"https://joinmobilizon.org\""
+">her</a>."
 
 #: lib/web/templates/api/terms.html.eex:18
 #, elixir-format
 msgctxt "terms"
 msgid "Here are the important things you need to know about accessing and using the <b>%{instance_name}</b> (<a href=\"https://%{instance_url}\">%{instance_url}</a>) website and service (collectively, \"Service\"). These are our terms of service (\"Terms\"). Please read them carefully."
 msgstr ""
+"Her er det viktigaste du treng å vita om å bruka <b>%{instance_name}</b> (<a "
+"href=\"https://%{instance_url}\">%{instance_url}</a>)-nettstaden og "
+"tenestene der (framover \"tenesta\"). her er vikåra, som me bed deg lesa."
 
 #: lib/web/templates/api/terms.html.eex:33
 #, elixir-format
 msgctxt "terms"
 msgid "If we make major changes, we will notify our users in a clear and prominent manner. Minor changes may only be highlighted in the footer of our website. It is your responsibility to check the website regularly for changes to these Terms."
 msgstr ""
+"Viss me gjer større endringar, seier me ifrå til brukarane våre på ein "
+"tydeleg og klår måte. Småendringar blir truleg berre framheva i botnfeltet "
+"på nettsida vår. Viss du er interessert i endringane i vilkåra, må du fylgja "
+"med på nettsida."
 
 #: lib/web/templates/api/terms.html.eex:53
 #, elixir-format
 msgctxt "terms"
 msgid "In order to make <b>%{instance_name}</b> a great place for all of us, please do not post, link and otherwise make available on or through the Service any of the following:"
 msgstr ""
+"Du hjelper oss å gjera <b>%{instance_name}</b> til ein god plass for alle "
+"ved å ikkje leggja ut, lenka eller visa til noko av det fylgjande når du "
+"bruker nettstaden:"
 
 #: lib/web/templates/api/terms.html.eex:57
 #, elixir-format
 msgctxt "terms"
 msgid "Private information of any third party (e.g., addresses, phone numbers, email addresses, Social Security numbers and credit card numbers); and"
 msgstr ""
+"Privatopplysingar til tredjepartar (td. adresser, telefonnummer, "
+"epostadresser, personnummer og kredittkortnummer); og"
 
 #: lib/web/templates/api/terms.html.eex:52
 #, elixir-format
