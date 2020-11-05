@@ -623,7 +623,7 @@
   "{moderator} closed {report}": "{moderator} ha chiuso {report}",
   "{moderator} deleted an event named \"{title}\"": "{moderator} ha cancellato un evento denominato \"{title}\"",
   "{moderator} has deleted user {user}": "{moderator} ha cancellato l'utente {user}",
-  "{moderator} has unsuspended profile {profile}": "{moderatore} ha annullato la sospensione del profilo {profile}",
+  "{moderator} has unsuspended profile {profile}": "{moderator} ha annullato la sospensione del profilo {profile}",
   "{moderator} marked {report} as resolved": "contrassegnato come risolto",
   "{moderator} reopened {report}": "{moderator} ha riaperto {report}",
   "{moderator} suspended profile {profile}": "{moderator} ha sospeso il profilo {profile}",
