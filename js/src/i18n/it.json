@@ -698,7 +698,7 @@
   "Waiting for organization team approval.": "In attesa dell'approvazione dal gruppo di organizzazione.",
   "Warning": "Avviso",
   "We just sent an email to {email}": "Abbiamo appena mandato una mail a {email}",
-  "We use your timezone to make sure you get notifications for an event at the correct time.": "Usiamo il tuo fuso orario per assicurarci che tu riceva le notifiche per un evento all'ora corretta.",
+  "We use your timezone to make sure you get notifications for an event at the correct time.": "Usiamo il tuo fuso orario per fare in modo che le notifiche per un evento ti arrivino al momento giusto.",
   "We will redirect you to your instance in order to interact with this event": "Ti reindirizzeremo alla tua istanza in modo da interagire con questo evento",
   "We'll send you an email one hour before the event begins, to be sure you won't forget about it.": "Ti invieremo un'e-mail un'ora prima dell'inizio dell'evento, per essere sicuri che non te ne dimentichi.",
   "We'll use your timezone settings to send a recap of the morning of the event.": "Useremo il tuo fuso orario per spedirti un riassunto la mattina dell'evento.",
