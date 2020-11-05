@@ -759,7 +759,7 @@
   "Your participation still has to be approved by the organisers.": "La tua partecipazione deve ancora essere approvata dagli organizzatori.",
   "Your profile will be shown as contact.": "Il tuo profilo sarà mostrato come contatto.",
   "Your timezone is currently set to {timezone}.": "Il fuso orario è attualmente impostato su {timezone}.",
-  "Your timezone was detected as {timezone}.": "Il tuo fuso orario sembra essere {timezone}.",
+  "Your timezone was detected as {timezone}.": "Il tuo fuso orario è stato rilevato come {timezone}.",
   "[This comment has been deleted by it's author]": "[Questo commento è stato eliminato dal suo autore]",
   "[This comment has been deleted]": "[Questo commento è stato eliminato]",
   "[deleted]": "[cancellato]",
