@@ -4,26 +4,7 @@ defmodule Mobilizon.Cldr do
   """
 
   use Cldr,
-    locales: [
-      "ar",
-      "be",
-      "ca",
-      "cs",
-      "de",
-      "en",
-      "es",
-      "fi",
-      "fr",
-      "gl",
-      "it",
-      "ja",
-      "nl",
-      "oc",
-      "pl",
-      "pt",
-      "ru",
-      "sv"
-    ],
+    locales: Application.get_env(:mobilizon, :cldr)[:locales],
     gettext: Mobilizon.Web.Gettext,
     providers: [Cldr.Number, Cldr.Calendar, Cldr.DateTime, Cldr.Language]
 end

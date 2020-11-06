@@ -92,6 +92,13 @@ config :mobilizon, :instance,
 
 # config :mobilizon, :activitypub, sign_object_fetches: false
 
+# No need to compile every locale in development environment
+config :mobilizon, :cldr,
+  locales: [
+    "fr",
+    "en"
+  ]
+
 config :mobilizon, :anonymous,
   reports: [
     allowed: true

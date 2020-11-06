@@ -178,6 +178,28 @@ config :ex_cldr,
 config :http_signatures,
   adapter: Mobilizon.Federation.HTTPSignatures.Signature
 
+config :mobilizon, :cldr,
+  locales: [
+    "ar",
+    "be",
+    "ca",
+    "cs",
+    "de",
+    "en",
+    "es",
+    "fi",
+    "fr",
+    "gl",
+    "it",
+    "ja",
+    "nl",
+    "oc",
+    "pl",
+    "pt",
+    "ru",
+    "sv"
+  ]
+
 config :mobilizon, :activitypub,
   # One day
   actor_stale_period: 3_600 * 48,
