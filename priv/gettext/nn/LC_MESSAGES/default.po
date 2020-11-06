@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-02 22:03+0000\n"
-"PO-Revision-Date: 2020-11-06 07:28+0000\n"
+"PO-Revision-Date: 2020-11-06 15:02+0000\n"
 "Last-Translator: Eivind Ødegård <eivind.odegard@sogn.no>\n"
 "Language-Team: Norwegian Nynorsk <https://weblate.framasoft.org/projects/"
 "mobilizon/backend/nn/>\n"
@@ -687,54 +687,83 @@ msgstr ""
 msgctxt "terms"
 msgid "Since Mobilizon is a distributed network, it is possible, depending on the visibility rules set to your content, that your content has been distributed to other Mobilizon instances. When you delete your content, we will request those other instances to also delete the content. Our responsibility on the content being deleted from those other instances ends here. If for some reason, some other instance does not delete the content, we cannot be held responsible."
 msgstr ""
+"Sidan Mobilizon er eit spreidd nettverk, er det mogleg at innhaldet ditt har "
+"vorte spreidd til andre Mobilizon-nettstader. Dette kjem an på kor synleg du "
+"har gjort innhaldet ditt. Når du slettar innhald, vil me be andre nettstader "
+"omå sletta det òg. Det er så langt ansvaret vårt rekk når det gjeld "
+"innhaldet ditt på andre nettstader. Me er ikkje ansvarlege viss andre "
+"nettstader av ein eller annan grunn ikkje slettar innhaldet ditt."
 
 #: lib/web/templates/api/terms.html.eex:90
 #, elixir-format
 msgctxt "terms"
 msgid "These Terms constitute the entire agreement between you and <b>%{instance_name}</b> regarding the use of the Service, superseding any prior agreements between you and <b>%{instance_name}</b> relating to your use of the Service."
 msgstr ""
+"Desse vilkåra utgjer heile avtala mellom deg og <b>%{instance_name}</b> for "
+"å bruka tenesta, og avløyser alle tidlegare avtaler mellom deg og "
+"<b>%{instance_name}</b> om det same."
 
 #: lib/web/templates/api/terms.html.eex:80
 #, elixir-format
 msgctxt "terms"
 msgid "This Service runs on a Mobilizon instance. This source code is licensed under an <a href=\"https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)\">AGPLv3 license</a> which means you are allowed to and even encouraged to take the source code, modify it and use it."
 msgstr ""
+"Denne tenesta bruker ein Mobilizon-nettstad. Kjeldekoden er gjeven ut under "
+"<a href=\"https://tldrlegal.com/license/gnu-affero-general-public-"
+"license-v3-(agpl-3.0)\">AGPLv3-lisensen</a>, som både gjev deg høve til, og "
+"faktisk oppmodar deg til, å sjå på, bruka og endra kjeldekoden."
 
 #: lib/web/templates/api/terms.html.eex:58
 #, elixir-format
 msgctxt "terms"
 msgid "Viruses, corrupted data or other harmful, disruptive or destructive files or code."
 msgstr ""
+"Virus, øydelagde data eller andre skadelege, forstyrrande og øydeleggjande "
+"filer eller kode."
 
 #: lib/web/templates/api/terms.html.eex:51
 #, elixir-format
 msgctxt "terms"
 msgid "You can remove the content that you posted by deleting it. Once you delete your content, it will not appear on the Service, but copies of your deleted content may remain in our system or backups for some period of time. Web server access logs might also be stored for some time in the system."
 msgstr ""
+"Du kan ta bort innhaldet du har laga ved å sletta det. Når du har sletta "
+"det, blir det borte frå denne tenesta, men det kan henda det finst kopiar av "
+"det i systemet eller tryggingskopiane våre i noko tid. Tilgangsloggar frå "
+"vevtenaren kan òg bli lagra i noko tid."
 
 #: lib/web/templates/api/terms.html.eex:96
 #, elixir-format
 msgctxt "terms"
 msgid "Questions or comments about the Service may be directed to us at %{contact}"
 msgstr ""
+"Du kan senda spørsmål eller kommentarar om tenesta til oss på %{contact}"
 
 #: lib/web/templates/api/terms.html.eex:79
 #, elixir-format
 msgctxt "terms"
 msgid "Source code"
-msgstr ""
+msgstr "Kjeldekode"
 
 #: lib/web/templates/api/terms.html.eex:93
 #, elixir-format
 msgctxt "terms"
 msgid "We love feedback. Please let us know what you think of the Service, these Terms and, in general, <b>%{instance_name}</b>."
 msgstr ""
+"Me likar tilbakemeldingar! Sei gjerne kva du synest om tenesta, vilkåra og "
+"kva som helst om <b>%{instance_name}</b>."
 
 #: lib/web/templates/api/terms.html.eex:74
 #, elixir-format
 msgctxt "terms"
 msgid "Instance administrators (and community moderators, given the relevant access) are responsible for monitoring and acting on flagged content and other user reports, and have the right and responsibility to remove or edit content that is not aligned to this Instance set of rules, or to suspend, block or ban (temporarily or permanently) any account, community, or instance for breaking these terms, or for other behaviours that they deem inappropriate, threatening, offensive, or harmful."
 msgstr ""
+"Dei som styrer nettstaden (og medlemmer som styrer deler av han) er "
+"ansvarlege for å fylgja med på og gjera noko med innhald som andre brukarar "
+"har rapportert eller merka. Dei har rett til og ansvar for å fjerna eller "
+"redigera innhald som ikkje fylgjer reglane på nettstaden. Dei kan sperra, "
+"stenga ute eller avslutta brukarkontoar, mellombels eller permanent. Det "
+"same gjeld andre nettstader og brukarsamfunn, og åtferd som dei meiner er "
+"upassande, trugande, krenkjande eller skadeleg."
 
 #: lib/web/templates/api/terms.html.eex:6
 #, elixir-format
