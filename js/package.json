@@ -55,7 +55,7 @@
     "@types/chai": "^4.2.11",
     "@types/leaflet": "^1.5.2",
     "@types/leaflet.locatecontrol": "^0.60.7",
-    "@types/lodash": "^4.14.141",
+    "@types/lodash": "^4.14.165",
     "@types/mocha": "^8.0.3",
     "@types/ngeohash": "^0.6.2",
     "@types/prosemirror-inputrules": "^1.0.2",
