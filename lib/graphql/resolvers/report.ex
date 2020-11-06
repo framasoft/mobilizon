@@ -44,7 +44,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
   end
 
   @doc """
-  Create a report
+  Create a report, either logged-in or anonymously
   """
   def create_report(
         _parent,
@@ -63,9 +63,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
     end
   end
 
-  @doc """
-  Create a report anonymously if allowed
-  """
   def create_report(
         _parent,
         %{reporter_id: reporter_id} = args,

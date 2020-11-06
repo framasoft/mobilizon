@@ -10,17 +10,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Picture do
   import Mobilizon.Web.Gettext
 
   @doc """
-  Get picture for an event's pic
+  Get picture for an event
+
+  See Mobilizon.Web.Resolvers.Event.create_event/3
   """
   def picture(%{picture_id: picture_id} = _parent, _args, _resolution) do
     with {:ok, picture} <- do_fetch_picture(picture_id), do: {:ok, picture}
   end
 
-  @doc """
-  Get picture for an event that has an attached
-
-  See Mobilizon.Web.Resolvers.Event.create_event/3
-  """
   def picture(%{picture: picture} = _parent, _args, _resolution), do: {:ok, picture}
   def picture(_parent, %{id: picture_id}, _resolution), do: do_fetch_picture(picture_id)
   def picture(_parent, _args, _resolution), do: {:ok, nil}

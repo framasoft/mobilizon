@@ -405,7 +405,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   def leave(object, actor, local \\ true, additional \\ %{})
 
   @doc """
-  Leave an event
+  Leave an event or a group
   """
   def leave(
         %Event{id: event_id, url: event_url} = _event,
@@ -438,9 +438,6 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
-  @doc """
-  Leave a group
-  """
   def leave(
         %Actor{type: :Group, id: group_id, url: group_url, members_url: group_members_url},
         %Actor{id: actor_id, url: actor_url},

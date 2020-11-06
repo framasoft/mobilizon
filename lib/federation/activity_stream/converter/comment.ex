@@ -88,6 +88,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
 
   @doc """
   Make an AS comment object from an existing `Comment` structure.
+
+  A "soft-deleted" comment is a tombstone
   """
   @impl Converter
   @spec model_to_as(CommentModel.t()) :: map
@@ -127,9 +129,6 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
     end
   end
 
-  @doc """
-  A "soft-deleted" comment is a tombstone
-  """
   @impl Converter
   @spec model_to_as(CommentModel.t()) :: map
   def model_to_as(%CommentModel{} = comment) do

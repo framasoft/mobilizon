@@ -330,6 +330,12 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   end
 
   @doc """
+  Return AS Link data from
+
+  * a `Plug.Upload` struct, stored an returned
+  * a `Picture`, directly returned
+  * a map containing picture information, stored, saved and returned
+
   Save picture data from %Plug.Upload{} and return AS Link data.
   """
   def make_picture_data(%Plug.Upload{} = picture, opts) do
@@ -342,16 +348,10 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     end
   end
 
-  @doc """
-  Convert a picture model into an AS Link representation.
-  """
   def make_picture_data(%Picture{} = picture) do
     Converter.Picture.model_to_as(picture)
   end
 
-  @doc """
-  Save picture data from raw data and return AS Link data.
-  """
   def make_picture_data(picture) when is_map(picture) do
     with {:ok, %{"url" => [%{"href" => url, "mediaType" => content_type}], "size" => size}} <-
            Mobilizon.Web.Upload.store(picture.file),

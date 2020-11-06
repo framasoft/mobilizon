@@ -14,7 +14,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   import Mobilizon.Web.Gettext
 
   @doc """
-  Join an event for an regular actor
+  Join an event for an regular or anonymous actor
   """
   def actor_join_event(
         _parent,
@@ -30,9 +30,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
     end
   end
 
-  @doc """
-  Join an event for an anonymous actor
-  """
   def actor_join_event(
         _parent,
         %{actor_id: actor_id, event_id: event_id} = args,

@@ -15,7 +15,9 @@ defmodule Mobilizon.Web.Email.Participation do
   alias Mobilizon.Web.{Email, Gettext}
 
   @doc """
-  Send emails to local user
+  Send participation emails to local user
+
+  If the actor is anonymous, use information in metadata
   """
   def send_emails_to_local_user(
         %Participant{actor: %Actor{user_id: nil, id: actor_id} = _actor} = participation
@@ -32,9 +34,6 @@ defmodule Mobilizon.Web.Email.Participation do
     :ok
   end
 
-  @doc """
-  Send emails to local user
-  """
   def send_emails_to_local_user(
         %Participant{actor: %Actor{user_id: user_id} = _actor} = participation
       ) do

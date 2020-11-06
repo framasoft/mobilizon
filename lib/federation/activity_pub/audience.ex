@@ -15,11 +15,23 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
   @ap_public "https://www.w3.org/ns/activitystreams#Public"
 
   @doc """
-  Determines the full audience based on mentions for a public audience
+  Determines the full audience based on mentions for an audience
 
-  Audience is:
+  For a public audience:
     * `to` : the mentioned actors, the eventual actor we're replying to and the public
     * `cc` : the actor's followers
+
+  For an unlisted audience:
+    * `to` : the mentioned actors, actor's followers and the eventual actor we're replying to
+    * `cc` : public
+
+  For a private audience:
+    * `to` : the mentioned actors, actor's followers and the eventual actor we're replying to
+    * `cc` : none
+
+  For a direct audience:
+    * `to` : the mentioned actors and the eventual actor we're replying to
+    * `cc` : none
   """
   @spec get_to_and_cc(Actor.t(), list(), String.t()) :: {list(), list()}
   def get_to_and_cc(%Actor{} = actor, mentions, :public) do
@@ -29,13 +41,6 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
     {to, cc}
   end
 
-  @doc """
-  Determines the full audience based on mentions based on a unlisted audience
-
-  Audience is:
-    * `to` : the mentioned actors, actor's followers and the eventual actor we're replying to
-    * `cc` : public
-  """
   @spec get_to_and_cc(Actor.t(), list(), String.t()) :: {list(), list()}
   def get_to_and_cc(%Actor{} = actor, mentions, :unlisted) do
     to = [actor.followers_url | mentions]
@@ -44,26 +49,12 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
     {to, cc}
   end
 
-  @doc """
-  Determines the full audience based on mentions based on a private audience
-
-  Audience is:
-    * `to` : the mentioned actors, actor's followers and the eventual actor we're replying to
-    * `cc` : none
-  """
   @spec get_to_and_cc(Actor.t(), list(), String.t()) :: {list(), list()}
   def get_to_and_cc(%Actor{} = actor, mentions, :private) do
     {to, cc} = get_to_and_cc(actor, mentions, :direct)
     {[actor.followers_url | to], cc}
   end
 
-  @doc """
-  Determines the full audience based on mentions based on a direct audience
-
-  Audience is:
-    * `to` : the mentioned actors and the eventual actor we're replying to
-    * `cc` : none
-  """
   @spec get_to_and_cc(Actor.t(), list(), String.t()) :: {list(), list()}
   def get_to_and_cc(_actor, mentions, :direct) do
     {mentions, []}

@@ -12,7 +12,7 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedToken do
   require Logger
 
   @doc """
-  Create an feed token for an user and a defined actor
+  Create an feed token for an user and optionally a defined actor
   """
   @spec create_feed_token(any, map, map) :: {:ok, FeedToken.t()} | {:error, String.t()}
   def create_feed_token(
@@ -29,9 +29,6 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedToken do
     end
   end
 
-  @doc """
-  Create an feed token for an user
-  """
   @spec create_feed_token(any, map, map) :: {:ok, FeedToken.t()}
   def create_feed_token(_parent, %{}, %{context: %{current_user: %User{id: id}}}) do
     with {:ok, feed_token} <- Events.create_feed_token(%{user_id: id}) do

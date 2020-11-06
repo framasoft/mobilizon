@@ -26,6 +26,9 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
   require Logger
 
+  @doc """
+  Handle incoming activities
+  """
   def handle_incoming(%{"id" => nil}), do: :error
   def handle_incoming(%{"id" => ""}), do: :error
 
@@ -47,18 +50,16 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
-  @doc """
-  Handles a `Create` activity for `Note` (comments) objects
-
-  The following actions are performed
-    * Fetch the author of the activity
-    * Convert the ActivityStream data to the comment model format (it also finds and inserts tags)
-    * Get (by it's URL) or create the comment with this data
-    * Insert eventual mentions in the database
-    * Convert the comment back in ActivityStreams data
-    * Wrap this data back into a `Create` activity
-    * Return the activity and the comment object
-  """
+  # Handles a `Create` activity for `Note` (comments) objects
+  #
+  # The following actions are performed
+  #  * Fetch the author of the activity
+  #  * Convert the ActivityStream data to the comment model format (it also finds and inserts tags)
+  #  * Get (by it's URL) or create the comment with this data
+  #  * Insert eventual mentions in the database
+  #  * Convert the comment back in ActivityStreams data
+  #  * Wrap this data back into a `Create` activity
+  #  * Return the activity and the comment object
   def handle_incoming(%{"type" => "Create", "object" => %{"type" => "Note"} = object}) do
     Logger.info("Handle incoming to create notes")
 
@@ -88,18 +89,16 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
-  @doc """
-  Handles a `Create` activity for `Event` objects
-
-  The following actions are performed
-    * Fetch the author of the activity
-    * Convert the ActivityStream data to the event model format (it also finds and inserts tags)
-    * Get (by it's URL) or create the event with this data
-    * Insert eventual mentions in the database
-    * Convert the event back in ActivityStreams data
-    * Wrap this data back into a `Create` activity
-    * Return the activity and the event object
-  """
+  # Handles a `Create` activity for `Event` objects
+  #
+  # The following actions are performed
+  #  * Fetch the author of the activity
+  #  * Convert the ActivityStream data to the event model format (it also finds and inserts tags)
+  #  * Get (by it's URL) or create the event with this data
+  #  * Insert eventual mentions in the database
+  #  * Convert the event back in ActivityStreams data
+  #  * Wrap this data back into a `Create` activity
+  #  * Return the activity and the event object
   def handle_incoming(%{"type" => "Create", "object" => %{"type" => "Event"} = object}) do
     Logger.info("Handle incoming to create event")
 
@@ -743,10 +742,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     {:error, :not_supported}
   end
 
-  @doc """
-  Handle incoming `Accept` activities wrapping a `Follow` activity
-  """
-  def do_handle_incoming_accept_following(follow_object, %Actor{} = actor) do
+  # Handle incoming `Accept` activities wrapping a `Follow` activity
+  defp do_handle_incoming_accept_following(follow_object, %Actor{} = actor) do
     with {:follow,
           {:ok, %Follower{approved: false, target_actor: followed, actor: follower} = follow}} <-
            {:follow, get_follow(follow_object)},
@@ -781,10 +778,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
-  @doc """
-  Handle incoming `Reject` activities wrapping a `Follow` activity
-  """
-  def do_handle_incoming_reject_following(follow_object, %Actor{} = actor) do
+  # Handle incoming `Reject` activities wrapping a `Follow` activity
+  defp do_handle_incoming_reject_following(follow_object, %Actor{} = actor) do
     with {:follow, {:ok, %Follower{target_actor: followed} = follow}} <-
            {:follow, get_follow(follow_object)},
          {:same_actor, true} <- {:same_actor, actor.id == followed.id},

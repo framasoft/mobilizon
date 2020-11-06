@@ -42,9 +42,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
     end
   end
 
-  @doc """
-  Find a group
-  """
   def find_group(_parent, %{preferred_username: name}, _resolution) do
     with {:ok, actor} <- ActivityPub.find_or_make_group_from_nickname(name),
          %Actor{} = actor <- Person.proxify_pictures(actor),
