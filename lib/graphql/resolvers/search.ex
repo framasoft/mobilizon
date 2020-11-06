@@ -25,4 +25,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Search do
   def search_events(_parent, %{page: page, limit: limit} = args, _resolution) do
     Search.search_events(args, page, limit)
   end
+
+  def interact(_parent, %{uri: uri}, _resolution) do
+    Search.interact(uri)
+  end
 end

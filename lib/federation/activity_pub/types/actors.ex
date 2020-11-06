@@ -1,12 +1,15 @@
 defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   @moduledoc false
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Actors.{Actor, Member}
+  alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Audience
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
   alias Mobilizon.Service.Formatter.HTML
+  alias Mobilizon.Service.Notifications.Scheduler
+  alias Mobilizon.Web.Endpoint
   import Mobilizon.Federation.ActivityPub.Utils, only: [make_create_data: 2, make_update_data: 2]
 
   @behaviour Entity
@@ -91,6 +94,42 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   def role_needed_to_update(%Actor{} = _group), do: :administrator
   def role_needed_to_delete(%Actor{} = _group), do: :administrator
 
+  @spec join(Actor.t(), Actor.t(), boolean(), map()) :: {:ok, map(), Member.t()}
+  def join(%Actor{type: :Group} = group, %Actor{} = actor, _local, additional) do
+    with role <-
+           additional
+           |> Map.get(:metadata, %{})
+           |> Map.get(:role, Mobilizon.Actors.get_default_member_role(group)),
+         {:ok, %Member{} = member} <-
+           Mobilizon.Actors.create_member(%{
+             role: role,
+             parent_id: group.id,
+             actor_id: actor.id,
+             url: Map.get(additional, :url),
+             metadata:
+               additional
+               |> Map.get(:metadata, %{})
+               |> Map.update(:message, nil, &String.trim(HTML.strip_tags(&1)))
+           }),
+         Absinthe.Subscription.publish(Endpoint, actor, group_membership_changed: actor.id),
+         join_data <- %{
+           "type" => "Join",
+           "id" => member.url,
+           "actor" => actor.url,
+           "object" => group.url
+         },
+         audience <-
+           Audience.calculate_to_and_cc_from_mentions(member) do
+      approve_if_default_role_is_member(
+        group,
+        actor,
+        Map.merge(join_data, audience),
+        member,
+        role
+      )
+    end
+  end
+
   defp prepare_args_for_actor(args) do
     args
     |> maybe_sanitize_username()
@@ -115,4 +154,39 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   end
 
   defp maybe_sanitize_summary(args), do: args
+
+  # Set the participant to approved if the default role for new participants is :participant
+  @spec approve_if_default_role_is_member(Actor.t(), Actor.t(), map(), Member.t(), atom()) ::
+          {:ok, map(), Member.t()}
+  defp approve_if_default_role_is_member(
+         %Actor{type: :Group} = group,
+         %Actor{} = actor,
+         activity_data,
+         %Member{} = member,
+         role
+       ) do
+    if is_nil(group.domain) && !is_nil(actor.domain) do
+      cond do
+        Mobilizon.Actors.get_default_member_role(group) === :member &&
+            role == :member ->
+          {:accept,
+           ActivityPub.accept(
+             :join,
+             member,
+             true,
+             %{"actor" => group.url}
+           )}
+
+        Mobilizon.Actors.get_default_member_role(group) === :not_approved &&
+            role == :not_approved ->
+          Scheduler.pending_membership_notification(group)
+          {:ok, activity_data, member}
+
+        true ->
+          {:ok, activity_data, member}
+      end
+    else
+      {:ok, activity_data, member}
+    end
+  end
 end

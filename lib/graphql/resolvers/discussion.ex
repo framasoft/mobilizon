@@ -75,7 +75,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
 
   def create_discussion(
         _parent,
-        %{title: title, text: text, actor_id: actor_id},
+        %{title: title, text: text, actor_id: group_id},
         %{
           context: %{
             current_user: %User{} = user
@@ -83,20 +83,23 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
         }
       ) do
     with {:actor, %Actor{id: creator_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
-         {:member, true} <- {:member, Actors.is_member?(creator_id, actor_id)},
+         {:member, true} <- {:member, Actors.is_member?(creator_id, group_id)},
          {:ok, _activity, %Discussion{} = discussion} <-
            ActivityPub.create(
              :discussion,
              %{
                title: title,
                text: text,
-               actor_id: actor_id,
+               actor_id: group_id,
                creator_id: creator_id,
-               attributed_to_id: actor_id
+               attributed_to_id: group_id
              },
              true
            ) do
       {:ok, discussion}
+    else
+      {:member, false} ->
+        {:error, :unauthorized}
     end
   end
 

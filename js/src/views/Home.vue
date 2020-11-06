@@ -128,7 +128,7 @@
             <EventListCard
               v-for="participation in row[1]"
               v-if="isInLessThanSevenDays(row[0])"
-              @eventDeleted="eventDeleted"
+              @event-deleted="eventDeleted"
               :key="participation[1].id"
               :participation="participation[1]"
             />
@@ -148,7 +148,7 @@
             v-for="participation in lastWeekEvents"
             :key="participation.id"
             :participation="participation"
-            @eventDeleted="eventDeleted"
+            @event-deleted="eventDeleted"
             :options="{ hideDate: false }"
           />
         </div>
@@ -174,6 +174,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { IParticipant, Participant, ParticipantRole } from "../types/participant.model";
 import { FETCH_EVENTS } from "../graphql/event";
 import EventListCard from "../components/Event/EventListCard.vue";
 import EventCard from "../components/Event/EventCard.vue";
@@ -182,7 +183,7 @@ import { IPerson, Person } from "../types/actor";
 import { ICurrentUser } from "../types/current-user.model";
 import { CURRENT_USER_CLIENT, USER_SETTINGS } from "../graphql/user";
 import RouteName from "../router/name";
-import { IEvent, IParticipant, Participant, ParticipantRole } from "../types/event.model";
+import { IEvent } from "../types/event.model";
 import DateComponent from "../components/Event/DateCalendarIcon.vue";
 import { CONFIG } from "../graphql/config";
 import { IConfig } from "../types/config.model";

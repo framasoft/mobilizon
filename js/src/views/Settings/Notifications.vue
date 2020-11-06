@@ -103,7 +103,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { USER_SETTINGS, SET_USER_SETTINGS } from "../../graphql/user";
-import { IUser, INotificationPendingParticipationEnum } from "../../types/current-user.model";
+import { IUser, INotificationPendingEnum } from "../../types/current-user.model";
 import RouteName from "../../router/name";
 
 @Component({
@@ -120,7 +120,7 @@ export default class Notifications extends Vue {
 
   notificationBeforeEvent = false;
 
-  notificationPendingParticipation = INotificationPendingParticipationEnum.NONE;
+  notificationPendingParticipation = INotificationPendingEnum.NONE;
 
   notificationPendingParticipationValues: Record<string, unknown> = {};
 
@@ -128,10 +128,10 @@ export default class Notifications extends Vue {
 
   mounted(): void {
     this.notificationPendingParticipationValues = {
-      [INotificationPendingParticipationEnum.NONE]: this.$t("Do not receive any mail"),
-      [INotificationPendingParticipationEnum.DIRECT]: this.$t("Receive one email per request"),
-      [INotificationPendingParticipationEnum.ONE_HOUR]: this.$t("Hourly email summary"),
-      [INotificationPendingParticipationEnum.ONE_DAY]: this.$t("Daily email summary"),
+      [INotificationPendingEnum.NONE]: this.$t("Do not receive any mail"),
+      [INotificationPendingEnum.DIRECT]: this.$t("Receive one email per request"),
+      [INotificationPendingEnum.ONE_HOUR]: this.$t("Hourly email summary"),
+      [INotificationPendingEnum.ONE_DAY]: this.$t("Daily email summary"),
     };
   }
 

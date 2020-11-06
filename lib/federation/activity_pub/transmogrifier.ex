@@ -135,13 +135,22 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
     with object_data when is_map(object_data) <-
            object |> Converter.Member.as_to_model_data() do
+      Logger.debug("Produced the following model data for member")
+      Logger.debug(inspect(object_data))
+
       with {:existing_member, nil} <-
              {:existing_member, Actors.get_member_by_url(object_data.url)},
+           %Actor{type: :Group} = group <- Actors.get_actor(object_data.parent_id),
+           %Actor{} = actor <- Actors.get_actor(object_data.actor_id),
            {:ok, %Activity{} = activity, %Member{} = member} <-
-             ActivityPub.join_group(object_data, false) do
+             ActivityPub.join(group, actor, false, %{
+               url: object_data.url,
+               metadata: %{role: object_data.role}
+             }) do
         {:ok, activity, member}
       else
         {:existing_member, %Member{} = member} ->
+          Logger.debug("Member already exists, updating member")
           {:ok, %Member{} = member} = Actors.update_member(member, object_data)
 
           {:ok, nil, member}
@@ -608,8 +617,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
           "type" => "Join",
           "object" => object,
           "actor" => _actor,
-          "id" => id,
-          "participationMessage" => note
+          "id" => id
         } = data
       ) do
     with actor <- Utils.get_actor(data),
@@ -618,7 +626,10 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          object <- Utils.get_url(object),
          {:ok, object} <- ActivityPub.fetch_object_from_url(object),
          {:ok, activity, object} <-
-           ActivityPub.join(object, actor, false, %{url: id, metadata: %{message: note}}) do
+           ActivityPub.join(object, actor, false, %{
+             url: id,
+             metadata: %{message: Map.get(data, "participationMessage")}
+           }) do
       {:ok, activity, object}
     else
       e ->
@@ -804,8 +815,11 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
       {:error, _err} ->
         case get_member(join_object) do
-          {:ok, member} ->
-            do_handle_incoming_accept_join_group(member, actor_accepting)
+          {:ok, %Member{invited_by: nil} = member} ->
+            do_handle_incoming_accept_join_group(member, :join)
+
+          {:ok, %Member{} = member} ->
+            do_handle_incoming_accept_join_group(member, :invite)
 
           {:error, _err} ->
             nil
@@ -847,7 +861,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
-  defp do_handle_incoming_accept_join_group(%Member{role: :member}, _actor) do
+  defp do_handle_incoming_accept_join_group(%Member{role: :member}, _type) do
     Logger.debug(
       "Tried to handle an Accept activity on a Join activity with a group object but the member is already validated"
     )
@@ -857,14 +871,14 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
   defp do_handle_incoming_accept_join_group(
          %Member{role: role, parent: _group} = member,
-         %Actor{} = _actor_accepting
+         type
        )
-       when role in [:not_approved, :rejected, :invited] do
+       when role in [:not_approved, :rejected, :invited] and type in [:join, :invite] do
     # TODO: The actor that accepts the Join activity may another one that the event organizer ?
     # Or maybe for groups it's the group that sends the Accept activity
     with {:ok, %Activity{} = activity, %Member{role: :member} = member} <-
            ActivityPub.accept(
-             :invite,
+             type,
              member,
              false
            ) do

@@ -77,22 +77,24 @@
         </b-select>
       </b-field>
       <b-table
-        :data="group.members.elements"
+        v-if="members"
+        :data="members.elements"
         ref="queueTable"
         :loading="this.$apollo.loading"
         paginated
         backend-pagination
+        :current-page.sync="page"
         :pagination-simple="true"
         :aria-next-label="$t('Next page')"
         :aria-previous-label="$t('Previous page')"
         :aria-page-label="$t('Page')"
         :aria-current-label="$t('Current page')"
-        :total="group.members.total"
+        :total="members.total"
         :per-page="MEMBERS_PER_PAGE"
         backend-sorting
         :default-sort-direction="'desc'"
         :default-sort="['insertedAt', 'desc']"
-        @page-change="(newPage) => (page = newPage)"
+        @page-change="triggerLoadMoreMemberPageChange"
         @sort="(field, order) => $emit('sort', field, order)"
       >
         <b-table-column field="actor.preferredUsername" :label="$t('Member')" v-slot="props">
@@ -184,7 +186,7 @@ import { mixins } from "vue-class-component";
 import { FETCH_GROUP } from "@/graphql/group";
 import RouteName from "../../router/name";
 import { INVITE_MEMBER, GROUP_MEMBERS, REMOVE_MEMBER, UPDATE_MEMBER } from "../../graphql/member";
-import { IGroup, usernameWithDomain } from "../../types/actor";
+import { usernameWithDomain } from "../../types/actor";
 import { IMember, MemberRole } from "../../types/actor/group.model";
 
 @Component({
@@ -194,7 +196,7 @@ import { IMember, MemberRole } from "../../types/actor/group.model";
       variables() {
         return {
           name: this.$route.params.preferredUsername,
-          page: 1,
+          page: this.page,
           limit: this.MEMBERS_PER_PAGE,
           roles: this.roles,
         };
@@ -216,7 +218,7 @@ export default class GroupMembers extends mixins(GroupMixin) {
 
   RouteName = RouteName;
 
-  page = 1;
+  page = parseInt((this.$route.query.page as string) || "1", 10);
 
   MEMBERS_PER_PAGE = 10;
 
@@ -227,10 +229,20 @@ export default class GroupMembers extends mixins(GroupMixin) {
     if (Object.values(MemberRole).includes(roleQuery as MemberRole)) {
       this.roles = roleQuery as MemberRole;
     }
+    this.page = parseInt((this.$route.query.page as string) || "1", 10);
   }
 
   async inviteMember(): Promise<void> {
     try {
+      this.inviteError = "";
+      const { roles, MEMBERS_PER_PAGE, group, page } = this;
+      const variables = {
+        name: usernameWithDomain(group),
+        page,
+        limit: MEMBERS_PER_PAGE,
+        roles,
+      };
+      console.log("variables", variables);
       await this.$apollo.mutate<{ inviteMember: IMember }>({
         mutation: INVITE_MEMBER,
         variables: {
@@ -238,7 +250,10 @@ export default class GroupMembers extends mixins(GroupMixin) {
           targetActorUsername: this.newMemberUsername,
         },
         refetchQueries: [
-          { query: FETCH_GROUP, variables: { name: this.$route.params.preferredUsername } },
+          {
+            query: GROUP_MEMBERS,
+            variables,
+          },
         ],
       });
       this.$notifier.success(
@@ -257,34 +272,49 @@ export default class GroupMembers extends mixins(GroupMixin) {
   }
 
   @Watch("page")
-  loadMoreMembers(): void {
-    this.$apollo.queries.event.fetchMore({
+  triggerLoadMoreMemberPageChange(page: string): void {
+    this.$router.replace({
+      name: RouteName.GROUP_MEMBERS_SETTINGS,
+      query: { ...this.$route.query, page },
+    });
+  }
+
+  @Watch("roles")
+  triggerLoadMoreMemberRoleChange(roles: string): void {
+    this.$router.replace({
+      name: RouteName.GROUP_MEMBERS_SETTINGS,
+      query: { ...this.$route.query, roles },
+    });
+  }
+
+  async loadMoreMembers(): Promise<void> {
+    const { roles, MEMBERS_PER_PAGE, group, page } = this;
+    await this.$apollo.queries.members.fetchMore({
       // New variables
-      variables: {
-        page: this.page,
-        limit: this.MEMBERS_PER_PAGE,
+      variables() {
+        return {
+          name: usernameWithDomain(group),
+          page,
+          limit: MEMBERS_PER_PAGE,
+          roles,
+        };
       },
       // Transform the previous result with new data
       updateQuery: (previousResult, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return previousResult;
         const oldMembers = previousResult.group.members;
         const newMembers = fetchMoreResult.group.members;
-
         return {
-          group: {
-            ...previousResult.event,
-            members: {
-              elements: [...oldMembers.elements, ...newMembers.elements],
-              total: newMembers.total,
-              __typename: oldMembers.__typename,
-            },
-          },
+          elements: [...oldMembers.elements, ...newMembers.elements],
+          total: newMembers.total,
+          __typename: oldMembers.__typename,
         };
       },
     });
   }
 
   async removeMember(memberId: string): Promise<void> {
-    console.log("removeMember", memberId);
+    const { roles, MEMBERS_PER_PAGE, group, page } = this;
     try {
       await this.$apollo.mutate<{ removeMember: IMember }>({
         mutation: REMOVE_MEMBER,
@@ -293,7 +323,17 @@ export default class GroupMembers extends mixins(GroupMixin) {
           memberId,
         },
         refetchQueries: [
-          { query: FETCH_GROUP, variables: { name: this.$route.params.preferredUsername } },
+          {
+            query: GROUP_MEMBERS,
+            variables() {
+              return {
+                name: usernameWithDomain(group),
+                page,
+                limit: MEMBERS_PER_PAGE,
+                roles,
+              };
+            },
+          },
         ],
       });
       this.$notifier.success(

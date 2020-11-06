@@ -263,7 +263,8 @@ config :mobilizon, Oban,
   log: false,
   queues: [default: 10, search: 5, mailers: 10, background: 5],
   crontab: [
-    {"@hourly", Mobilizon.Service.Workers.BuildSiteMap, queue: :background}
+    {"@hourly", Mobilizon.Service.Workers.BuildSiteMap, queue: :background},
+    {"17 * * * *", Mobilizon.Service.Workers.RefreshGroups, queue: :background}
   ]
 
 config :mobilizon, :rich_media,

@@ -109,11 +109,25 @@
           >
           <p class="buttons">
             <b-tooltip
-              :label="$t('You can only get invited to groups right now.')"
+              v-if="group.openness !== Openness.OPEN"
+              :label="$t('This group is invite-only')"
               position="is-bottom"
             >
-              <b-button disabled type="is-primary">{{ $t("Join group") }}</b-button>
-            </b-tooltip>
+              <b-button disabled type="is-primary">{{ $t("Join group") }}</b-button></b-tooltip
+            >
+            <b-button v-else-if="currentActor.id" @click="joinGroup" type="is-primary">{{
+              $t("Join group")
+            }}</b-button>
+            <b-button
+              tag="router-link"
+              :to="{
+                name: RouteName.GROUP_JOIN,
+                params: { preferredUsername: usernameWithDomain(group) },
+              }"
+              v-else
+              type="is-primary"
+              >{{ $t("Join group") }}</b-button
+            >
             <b-dropdown aria-role="list" position="is-bottom-left">
               <b-button slot="trigger" role="button" icon-right="dots-horizontal"> </b-button>
               <b-dropdown-item
@@ -348,7 +362,7 @@
 <script lang="ts">
 import { Component, Prop, Watch } from "vue-property-decorator";
 import EventCard from "@/components/Event/EventCard.vue";
-import { IActor, usernameWithDomain, MemberRole, IMember } from "@/types/actor";
+import { IActor, usernameWithDomain, MemberRole, IMember, Openness } from "@/types/actor";
 import Subtitle from "@/components/Utils/Subtitle.vue";
 import CompactTodo from "@/components/Todo/CompactTodo.vue";
 import EventMinimalistCard from "@/components/Event/EventMinimalistCard.vue";
@@ -365,6 +379,7 @@ import { IReport } from "@/types/report.model";
 import { IConfig } from "@/types/config.model";
 import GroupMixin from "@/mixins/group";
 import { mixins } from "vue-class-component";
+import { JOIN_GROUP } from "@/graphql/member";
 import RouteName from "../../router/name";
 import GroupSection from "../../components/Group/GroupSection.vue";
 import ReportModal from "../../components/Report/ReportModal.vue";
@@ -414,6 +429,8 @@ export default class Group extends mixins(GroupMixin) {
 
   usernameWithDomain = usernameWithDomain;
 
+  Openness = Openness;
+
   showMap = false;
 
   isReportModalActive = false;
@@ -423,6 +440,15 @@ export default class Group extends mixins(GroupMixin) {
     if (currentActor.id && oldActor && currentActor.id !== oldActor.id) {
       this.$apollo.queries.group.refetch();
     }
+  }
+
+  async joinGroup(): Promise<void> {
+    this.$apollo.mutate({
+      mutation: JOIN_GROUP,
+      variables: {
+        groupId: this.group.id,
+      },
+    });
   }
 
   acceptInvitation(): void {
@@ -506,6 +532,12 @@ export default class Group extends mixins(GroupMixin) {
           )
       )
       .map(({ parent: { id } }) => id);
+  }
+
+  @Watch("isCurrentActorAGroupMember")
+  refetchGroupData(): void {
+    console.log("refetchGroupData");
+    this.$apollo.queries.group.refetch();
   }
 
   get isCurrentActorAGroupMember(): boolean {

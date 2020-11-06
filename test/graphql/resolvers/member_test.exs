@@ -14,128 +14,78 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
   end
 
   describe "Member Resolver to join a group" do
+    @join_group_mutation """
+    mutation JoinGroup($groupId: ID!) {
+      joinGroup(groupId: $groupId) {
+        id
+        role,
+        actor {
+          id
+        },
+        parent {
+          id
+        }
+      }
+    }
+    """
+
     test "join_group/3 should create a member", %{conn: conn, user: user, actor: actor} do
       group = insert(:group)
 
-      mutation = """
-          mutation {
-            joinGroup(
-              actor_id: #{actor.id},
-              group_id: #{group.id}
-            ) {
-                role,
-                actor {
-                  id
-                },
-                parent {
-                  id
-                }
-              }
-            }
-      """
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @join_group_mutation,
+          variables: %{groupId: group.id}
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["joinGroup"]["role"] == "NOT_APPROVED"
+      assert res["data"]["joinGroup"]["parent"]["id"] == to_string(group.id)
+      assert res["data"]["joinGroup"]["actor"]["id"] == to_string(actor.id)
 
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @join_group_mutation,
+          variables: %{groupId: group.id}
+        )
 
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["joinGroup"]["role"] == "NOT_APPROVED"
-      assert json_response(res, 200)["data"]["joinGroup"]["parent"]["id"] == to_string(group.id)
-      assert json_response(res, 200)["data"]["joinGroup"]["actor"]["id"] == to_string(actor.id)
-
-      mutation = """
-         mutation {
-            joinGroup(
-              actor_id: #{actor.id},
-              group_id: #{group.id}
-            ) {
-                role
-              }
-            }
-      """
-
-      res =
-        conn
-        |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "already a member"
-    end
-
-    test "join_group/3 should check the actor is owned by the user", %{
-      conn: conn,
-      user: user
-    } do
-      group = insert(:group)
-
-      mutation = """
-          mutation {
-            joinGroup(
-              actor_id: 1042,
-              group_id: #{group.id}
-            ) {
-                role
-              }
-            }
-      """
-
-      res =
-        conn
-        |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "not owned"
+      assert hd(res["errors"])["message"] =~ "already a member"
     end
 
     test "join_group/3 should check the group is not invite only", %{
       conn: conn,
-      actor: actor,
       user: user
     } do
       group = insert(:group, %{openness: :invite_only})
 
-      mutation = """
-          mutation {
-            joinGroup(
-              actor_id: #{actor.id},
-              group_id: #{group.id}
-            ) {
-                role
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @join_group_mutation,
+          variables: %{groupId: group.id}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "cannot join this group"
+      assert hd(res["errors"])["message"] =~ "cannot join this group"
     end
 
     test "join_group/3 should check the group exists", %{
       conn: conn,
-      user: user,
-      actor: actor
+      user: user
     } do
-      mutation = """
-          mutation {
-            joinGroup(
-              actor_id: #{actor.id},
-              group_id: 1042
-            ) {
-                role
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @join_group_mutation,
+          variables: %{groupId: 1042}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "Group not found"
+      assert hd(res["errors"])["message"] =~ "Group not found"
     end
   end
 

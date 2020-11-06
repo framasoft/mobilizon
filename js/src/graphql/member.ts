@@ -100,3 +100,12 @@ export const REMOVE_MEMBER = gql`
     }
   }
 `;
+
+export const JOIN_GROUP = gql`
+  mutation JoinGroup($groupId: ID!) {
+    joinGroup(groupId: $groupId) {
+      ...MemberFragment
+    }
+  }
+  ${MEMBER_FRAGMENT}
+`;

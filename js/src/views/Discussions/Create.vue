@@ -63,13 +63,14 @@ export default class CreateDiscussion extends Vue {
 
   async createDiscussion(): Promise<void> {
     try {
+      if (!this.group.id || !this.currentActor.id) return;
       const { data } = await this.$apollo.mutate({
         mutation: CREATE_DISCUSSION,
         variables: {
           title: this.discussion.title,
           text: this.discussion.text,
-          actorId: this.group.id,
-          creatorId: this.currentActor.id,
+          actorId: parseInt(this.group.id, 10),
+          creatorId: parseInt(this.currentActor.id, 10),
         },
       });
 

@@ -41,7 +41,7 @@ section {
 
   .create-slot {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     padding-bottom: 0.5rem;
     padding-right: 0.5rem;
   }

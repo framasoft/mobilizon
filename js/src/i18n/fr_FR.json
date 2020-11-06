@@ -870,5 +870,14 @@
   "{profile} (by default)": "{profile} (par défault)",
   "{title} ({count} todos)": "{title} ({count} todos)",
   "{username} was invited to {group}": "{username} a été invité à {group}",
-  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap"
+  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap",
+  "We will redirect you to your instance in order to interact with this group": "",
+  "New members": "Nouveaux·elles membres",
+  "Anyone can join freely": "N'importe qui peut rejoindre",
+  "Anyone wanting to be a member from your group will be able to from your group page.": "N'importe qui voulant devenir membre pourra le faire depuis votre page de groupe.",
+  "Manually invite new members": "Inviter des nouveaux·elles membres manuellement",
+  "The only way for your group to get new members is if an admininistrator invites them.": "La seule manière pour votre groupe d'obtenir de nouveaux·elles membres sera si un·e administrateur·ice les invite.",
+  "Redirecting to content…": "Redirection vers le contenu…",
+  "This URL is not supported": "Cette URL n'est pas supportée",
+  "This group is invite-only": "Ce groupe est accessible uniquement sur invitation"
 }

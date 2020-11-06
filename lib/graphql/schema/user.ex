@@ -132,12 +132,17 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       description: "Whether this user will receive a notification right before event"
     )
 
-    field(:notification_pending_participation, :notification_pending_participation_enum,
+    field(:notification_pending_participation, :notification_pending_enum,
       description: "When does the user receives a notification about new pending participations"
+    )
+
+    field(:notification_pending_membership, :notification_pending_enum,
+      description:
+        "When does the user receives a notification about a new pending membership in one of the group they're admin for"
     )
   end
 
-  enum :notification_pending_participation_enum do
+  enum :notification_pending_enum do
     value(:none, as: :none)
     value(:direct, as: :direct)
     value(:one_hour, as: :one_hour)
@@ -258,7 +263,8 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       arg(:notification_on_day, :boolean)
       arg(:notification_each_week, :boolean)
       arg(:notification_before_event, :boolean)
-      arg(:notification_pending_participation, :notification_pending_participation_enum)
+      arg(:notification_pending_participation, :notification_pending_enum)
+      arg(:notification_pending_membership, :notification_pending_enum)
       resolve(&User.set_user_setting/3)
     end
 

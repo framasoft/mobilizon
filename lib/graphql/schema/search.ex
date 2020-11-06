@@ -4,6 +4,8 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
   """
   use Absinthe.Schema.Notation
 
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Events.Event
   alias Mobilizon.GraphQL.Resolvers.Search
 
   @desc "Search persons result"
@@ -22,6 +24,21 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
   object :events do
     field(:total, non_null(:integer), description: "Total elements")
     field(:elements, non_null(list_of(:event)), description: "Event elements")
+  end
+
+  interface :interactable do
+    field(:url, :string, description: "A public URL for the entity")
+
+    resolve_type(fn
+      %Actor{type: :Group}, _ ->
+        :group
+
+      %Event{}, _ ->
+        :event
+
+      _, _ ->
+        nil
+    end)
   end
 
   object :search_queries do
@@ -57,6 +74,13 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
       arg(:ends_on, :datetime)
 
       resolve(&Search.search_events/3)
+    end
+
+    @desc "Interact with an URI"
+    field :interact, :interactable do
+      arg(:uri, non_null(:string), description: "The URI for to interact with")
+
+      resolve(&Search.interact/3)
     end
   end
 end

@@ -38,71 +38,9 @@ export default class EventList extends Vue {
 
   locationText = "";
 
-  // created() {
-  //   this.fetchData(this.$router.currentRoute.params.location);
-  // }
-
-  // beforeRouteUpdate(to, from, next) {
-  //   this.fetchData(to.params.location);
-  //   next();
-  // }
-
-  // @Watch('locationChip')
-  // onLocationChipChange(val) {
-  //   if (val === false) {
-  //     this.$router.push({ name: RouteName.EVENT_LIST });
-  //   }
-  // }
-
-  // geocode(lat, lon) {
-  //   console.log({ lat, lon });
-  //   console.log(ngeohash.encode(lat, lon, 10));
-  //   return ngeohash.encode(lat, lon, 10);
-  // }
-
-  // fetchData(location: string) {
-  //   let queryString = '/events';
-  //   if (location) {
-  //     queryString += `?geohash=${location}`;
-  //     const { latitude, longitude } = ngeohash.decode(location);
-  //     this.locationText = `${latitude.toString()} : ${longitude.toString()}`;
-  //   }
-  //   this.locationChip = true;
-  //   // FIXME: remove eventFetch
-  //   // eventFetch(queryString, this.$store)
-  //   //   .then(response => response.json())
-  //   //   .then((response) => {
-  //   //     this.loading = false;
-  //   //     this.events = response.data;
-  //   //     console.log(this.events);
-  //   //   });
-  // }
-
-  // deleteEvent(event: IEvent) {
-  //   const router = this.$router;
-  //   // FIXME: remove eventFetch
-  //   // eventFetch(`/events/${event.uuid}`, this.$store, { method: 'DELETE' })
-  //   //   .then(() => router.push('/events'));
-  // }
-
-  viewEvent(event: IEvent) {
+  viewEvent(event: IEvent): void {
     this.$router.push({ name: RouteName.EVENT, params: { uuid: event.uuid } });
   }
-
-  // downloadIcsEvent(event: IEvent) {
-  //   // FIXME: remove eventFetch
-  //   // eventFetch(`/events/${event.uuid}/ics`, this.$store, { responseType: 'arraybuffer' })
-  //   //   .then(response => response.text())
-  //   //   .then((response) => {
-  //   //     const blob = new Blob([ response ], { type: 'text/calendar' });
-  //   //     const link = document.createElement('a');
-  //   //     link.href = window.URL.createObjectURL(blob);
-  //   //     link.download = `${event.title}.ics`;
-  //   //     document.body.appendChild(link);
-  //   //     link.click();
-  //   //     document.body.removeChild(link);
-  //   //   });
-  // }
 }
 </script>
 

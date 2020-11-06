@@ -20,7 +20,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Member do
   end
 
   @doc """
-  Convert an event struct to an ActivityStream representation.
+  Convert an member struct to an ActivityStream representation.
   """
   @spec model_to_as(MemberModel.t()) :: map
   def model_to_as(%MemberModel{} = member) do

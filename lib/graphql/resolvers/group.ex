@@ -215,35 +215,18 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   @doc """
   Join an existing group
   """
-  def join_group(
-        _parent,
-        %{group_id: group_id, actor_id: actor_id},
-        %{
-          context: %{
-            current_user: user
-          }
-        }
-      ) do
-    with {actor_id, ""} <- Integer.parse(actor_id),
-         {group_id, ""} <- Integer.parse(group_id),
-         {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
-         {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
+  def join_group(_parent, %{group_id: group_id} = args, %{
+        context: %{current_user: %User{} = user}
+      }) do
+    with %Actor{} = actor <- Users.get_actor_for_user(user),
+         {:ok, %Actor{type: :Group} = group} <-
+           Actors.get_group_by_actor_id(group_id),
          {:error, :member_not_found} <- Actors.get_member(actor.id, group.id),
          {:is_able_to_join, true} <- {:is_able_to_join, Member.can_be_joined(group)},
-         role <- Member.get_default_member_role(group),
-         {:ok, _} <- Actors.create_member(%{parent_id: group.id, actor_id: actor.id, role: role}) do
-      {
-        :ok,
-        %{
-          parent: Person.proxify_pictures(group),
-          actor: Person.proxify_pictures(actor),
-          role: role
-        }
-      }
+         {:ok, _activity, %Member{} = member} <-
+           ActivityPub.join(group, actor, true, args) do
+      {:ok, member}
     else
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
-
       {:error, :group_not_found} ->
         {:error, dgettext("errors", "Group not found")}
 

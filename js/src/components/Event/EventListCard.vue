@@ -187,12 +187,8 @@ import { Component, Prop } from "vue-property-decorator";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
 import { mixins } from "vue-class-component";
 import { RawLocation, Route } from "vue-router";
-import {
-  IParticipant,
-  ParticipantRole,
-  EventVisibility,
-  IEventCardOptions,
-} from "../../types/event.model";
+import { IParticipant, ParticipantRole } from "../../types/participant.model";
+import { EventVisibility, IEventCardOptions } from "../../types/event.model";
 import { IPerson } from "../../types/actor";
 import ActorMixin from "../../mixins/actor";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";

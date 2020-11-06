@@ -67,27 +67,6 @@
             />
           </p>
         </div>
-        <!--        <div class="field" v-if="event.attributedTo.id">-->
-        <!--          <label class="label">{{ $t('Hide the organizer') }}</label>-->
-        <!--          <b-switch v-model="event.options.hideOrganizerWhenGroupEvent">-->
-        <!--            {{ $t("Don't show @{organizer} as event host alongside @{group}", {organizer: event.organizerActor.preferredUsername, group: event.attributedTo.preferredUsername}) }}-->
-        <!--            <small>-->
-        <!--              <br>-->
-        <!--              {{ $t('All group members and other eventual server admins will still be able to view this information.') }}-->
-        <!--            </small>-->
-        <!--          </b-switch>-->
-        <!--        </div>-->
-
-        <!--<b-field :label="$t('Category')">
-          <b-select placeholder="Select a category" v-model="event.category">
-            <option
-              v-for="category in categories"
-              :value="category"
-              :key="category"
-            >{{ $t(category) }}</option>
-          </b-select>
-        </b-field>-->
-
         <subtitle>{{ $t("Who can view this event and participate") }}</subtitle>
         <div class="field">
           <b-radio
@@ -370,6 +349,8 @@ import IdentityPickerWrapper from "@/views/Account/IdentityPickerWrapper.vue";
 import Subtitle from "@/components/Utils/Subtitle.vue";
 import { Route } from "vue-router";
 import { formatList } from "@/utils/i18n";
+import { CommentModeration } from "../../types/event-options.model";
+import { ParticipantRole } from "../../types/participant.model";
 import OrganizerPickerWrapper from "../../components/Event/OrganizerPickerWrapper.vue";
 import {
   CREATE_EVENT,
@@ -378,13 +359,11 @@ import {
   FETCH_EVENT,
 } from "../../graphql/event";
 import {
-  CommentModeration,
   EventJoinOptions,
   EventModel,
   EventStatus,
   EventVisibility,
   IEvent,
-  ParticipantRole,
 } from "../../types/event.model";
 import {
   CURRENT_ACTOR_CLIENT,

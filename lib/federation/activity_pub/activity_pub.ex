@@ -32,6 +32,7 @@ defmodule Mobilizon.Federation.ActivityPub do
     Federator,
     Fetcher,
     Preloader,
+    Refresher,
     Relay,
     Transmogrifier,
     Types,
@@ -373,7 +374,9 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
-  def join(%Event{} = event, %Actor{} = actor, local \\ true, additional \\ %{}) do
+  def join(entity_to_join, actor_joining, local \\ true, additional \\ %{})
+
+  def join(%Event{} = event, %Actor{} = actor, local, additional) do
     with {:ok, activity_data, participant} <- Types.Events.join(event, actor, local, additional),
          {:ok, activity} <- create_activity(activity_data, local),
          :ok <- maybe_federate(activity) do
@@ -387,18 +390,15 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
-  def join_group(
-        %{parent_id: _parent_id, actor_id: _actor_id, role: _role} = args,
-        local \\ true,
-        additional \\ %{}
-      ) do
-    with {:ok, %Member{} = member} <-
-           Mobilizon.Actors.create_member(args),
-         activity_data when is_map(activity_data) <-
-           Convertible.model_to_as(member),
-         {:ok, activity} <- create_activity(Map.merge(activity_data, additional), local),
+  def join(%Actor{type: :Group} = group, %Actor{} = actor, local, additional) do
+    with {:ok, activity_data, %Member{} = member} <-
+           Types.Actors.join(group, actor, local, additional),
+         {:ok, activity} <- create_activity(activity_data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity, member}
+    else
+      {:accept, accept} ->
+        accept
     end
   end
 
@@ -891,6 +891,36 @@ defmodule Mobilizon.Federation.ActivityPub do
              })
            ) do
       {:ok, participant, update_data}
+    else
+      err ->
+        Logger.error("Something went wrong while creating an update activity")
+        Logger.debug(inspect(err))
+        err
+    end
+  end
+
+  @spec accept_join(Member.t(), map) :: {:ok, Member.t(), Activity.t()} | any
+  defp accept_join(%Member{} = member, additional) do
+    with {:ok, %Member{} = member} <-
+           Actors.update_member(member, %{role: :member}),
+         _ <-
+           unless(is_nil(member.parent.domain),
+             do: Refresher.fetch_group(member.parent.url, member.actor)
+           ),
+         Absinthe.Subscription.publish(Endpoint, member.actor,
+           group_membership_changed: member.actor.id
+         ),
+         member_as_data <- Convertible.model_to_as(member),
+         audience <-
+           Audience.calculate_to_and_cc_from_mentions(member),
+         update_data <-
+           make_accept_join_data(
+             member_as_data,
+             Map.merge(Map.merge(audience, additional), %{
+               "id" => "#{Endpoint.url()}/accept/join/#{member.id}"
+             })
+           ) do
+      {:ok, member, update_data}
     else
       err ->
         Logger.error("Something went wrong while creating an update activity")

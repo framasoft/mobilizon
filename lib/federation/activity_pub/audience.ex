@@ -4,7 +4,7 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
   """
 
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Share
@@ -148,6 +148,12 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
       |> Enum.map(& &1.url)
 
     %{"to" => [participant.actor.url], "cc" => actor_participants_urls}
+  end
+
+  def calculate_to_and_cc_from_mentions(%Member{} = member) do
+    member = Repo.preload(member, [:parent])
+
+    %{"to" => [member.parent.members_url], "cc" => []}
   end
 
   def calculate_to_and_cc_from_mentions(%Actor{} = actor) do

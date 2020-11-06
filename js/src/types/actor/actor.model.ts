@@ -42,7 +42,7 @@ export class Actor implements IActor {
 
   type: ActorType = ActorType.PERSON;
 
-  constructor(hash: IActor | {} = {}) {
+  constructor(hash: IActor | Record<any, unknown> = {}) {
     Object.assign(this, hash);
   }
 

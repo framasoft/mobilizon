@@ -51,6 +51,7 @@
 import { Prop, Vue, Component, Watch } from "vue-property-decorator";
 import Comment from "@/components/Comment/Comment.vue";
 import IdentityPickerWrapper from "@/views/Account/IdentityPickerWrapper.vue";
+import { CommentModeration } from "../../types/event-options.model";
 import { CommentModel, IComment } from "../../types/comment.model";
 import {
   CREATE_COMMENT_FROM_EVENT,
@@ -60,7 +61,7 @@ import {
 } from "../../graphql/comment";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { IPerson } from "../../types/actor";
-import { IEvent, CommentModeration } from "../../types/event.model";
+import { IEvent } from "../../types/event.model";
 
 @Component({
   apollo: {

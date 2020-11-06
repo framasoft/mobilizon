@@ -197,5 +197,13 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
         {:ok, topic: args.person_id}
       end)
     end
+
+    field :group_membership_changed, :person do
+      arg(:person_id, non_null(:id))
+
+      config(fn args, _ ->
+        {:ok, topic: args.person_id}
+      end)
+    end
   end
 end

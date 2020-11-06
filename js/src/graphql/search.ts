@@ -78,3 +78,36 @@ export const SEARCH_PERSONS = gql`
     }
   }
 `;
+
+export const INTERACT = gql`
+  query Interact($uri: String!) {
+    interact(uri: $uri) {
+      ... on Event {
+        id
+        title
+        uuid
+        beginsOn
+        picture {
+          id
+          url
+        }
+        tags {
+          slug
+          title
+        }
+        __typename
+      }
+      ... on Group {
+        id
+        avatar {
+          id
+          url
+        }
+        domain
+        preferredUsername
+        name
+        __typename
+      }
+    }
+  }
+`;
