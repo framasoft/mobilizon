@@ -142,7 +142,8 @@ A button to set your participation
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { EventJoinOptions, IEvent, IParticipant, ParticipantRole } from "../../types/event.model";
+import { IParticipant, ParticipantRole } from "../../types/participant.model";
+import { EventJoinOptions, IEvent } from "../../types/event.model";
 import { IPerson, Person } from "../../types/actor";
 import { CURRENT_ACTOR_CLIENT, IDENTITIES } from "../../graphql/actor";
 import { CURRENT_USER_CLIENT } from "../../graphql/user";
@@ -182,20 +183,20 @@ export default class ParticipationButton extends Vue {
 
   RouteName = RouteName;
 
-  joinEvent(actor: IPerson) {
+  joinEvent(actor: IPerson): void {
     if (this.event.joinOptions === EventJoinOptions.RESTRICTED) {
-      this.$emit("joinEventWithConfirmation", actor);
+      this.$emit("join-event-with-confirmation", actor);
     } else {
-      this.$emit("joinEvent", actor);
+      this.$emit("join-event", actor);
     }
   }
 
-  joinModal() {
-    this.$emit("joinModal");
+  joinModal(): void {
+    this.$emit("join-modal");
   }
 
-  confirmLeave() {
-    this.$emit("confirmLeave");
+  confirmLeave(): void {
+    this.$emit("confirm-leave");
   }
 
   get hasAnonymousParticipationMethods(): boolean {

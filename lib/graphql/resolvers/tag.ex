@@ -15,14 +15,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Tag do
 
   @doc """
   Retrieve the list of tags for an event
+
+  From an event or a struct with an url
   """
   def list_tags_for_event(%Event{id: id}, _args, _resolution) do
     {:ok, Events.list_tags_for_event(id)}
   end
 
-  @doc """
-  Retrieve the list of tags for an event
-  """
+  # TODO: Check that I'm actually used
   def list_tags_for_event(%{url: url}, _args, _resolution) do
     with %Event{id: event_id} <- Events.get_event_by_url(url) do
       {:ok, Events.list_tags_for_event(event_id)}

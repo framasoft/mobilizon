@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { ParticipantRole, EventVisibility, IEventCardOptions, IEvent } from "@/types/event.model";
+import { EventVisibility, IEventCardOptions, IEvent } from "@/types/event.model";
 import { Component, Prop } from "vue-property-decorator";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
 import { IPerson, usernameWithDomain } from "@/types/actor";
@@ -59,6 +59,7 @@ import { mixins } from "vue-class-component";
 import ActorMixin from "@/mixins/actor";
 import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
 import EventMixin from "@/mixins/event";
+import { ParticipantRole } from "../../types/participant.model";
 import RouteName from "../../router/name";
 
 const defaultOptions: IEventCardOptions = {

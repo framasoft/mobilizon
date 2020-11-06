@@ -72,6 +72,18 @@ defmodule Mobilizon.GraphQL.API.Search do
     end
   end
 
+  def interact(uri) do
+    case ActivityPub.fetch_object_from_url(uri) do
+      {:ok, object} ->
+        {:ok, object}
+
+      {:error, _err} ->
+        Logger.debug(fn -> "Unable to find or make object from URI '#{uri}'" end)
+
+        {:error, :not_found}
+    end
+  end
+
   # If the search string is an username
   @spec process_from_username(String.t()) :: Page.t()
   defp process_from_username(search) do

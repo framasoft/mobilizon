@@ -10,6 +10,7 @@ defmodule Mobilizon.Mixfile do
       elixir: "~> 1.8",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      xref: [exclude: [:eldap]],
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),

@@ -74,19 +74,12 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import {
-  EventModel,
-  IEvent,
-  IParticipant,
-  ParticipantRole,
-  EventJoinOptions,
-} from "@/types/event.model";
+import { EventModel, IEvent, EventJoinOptions } from "@/types/event.model";
 import { FETCH_EVENT, JOIN_EVENT } from "@/graphql/event";
 import { IConfig } from "@/types/config.model";
 import { CONFIG } from "@/graphql/config";
 import { addLocalUnconfirmedAnonymousParticipation } from "@/services/AnonymousParticipationStorage";
-import { Route } from "vue-router";
-import RouteName from "../../router/name";
+import { IParticipant, ParticipantRole } from "../../types/participant.model";
 
 @Component({
   apollo: {
@@ -139,8 +132,8 @@ export default class ParticipationWithoutAccount extends Vue {
           message: this.anonymousParticipation.message,
           locale: this.$i18n.locale,
         },
-        update: (store, { data }) => {
-          if (data == null) {
+        update: (store, { data: updateData }) => {
+          if (updateData == null) {
             console.error("Cannot update event participant cache, because of data null value.");
             return;
           }
@@ -159,7 +152,7 @@ export default class ParticipationWithoutAccount extends Vue {
             return;
           }
 
-          if (data.joinEvent.role === ParticipantRole.NOT_CONFIRMED) {
+          if (updateData.joinEvent.role === ParticipantRole.NOT_CONFIRMED) {
             event.participantStats.notConfirmed += 1;
           } else {
             event.participantStats.going += 1;

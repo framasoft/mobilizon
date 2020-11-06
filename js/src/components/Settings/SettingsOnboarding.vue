@@ -26,12 +26,9 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import { USER_SETTINGS, SET_USER_SETTINGS } from "../../graphql/user";
-import {
-  ICurrentUser,
-  INotificationPendingParticipationEnum,
-} from "../../types/current-user.model";
+import { ICurrentUser } from "../../types/current-user.model";
 import RouteName from "../../router/name";
 
 @Component({
@@ -46,7 +43,7 @@ export default class SettingsOnboarding extends Vue {
 
   RouteName = RouteName;
 
-  async updateSetting(variables: object) {
+  async updateSetting(variables: Record<string, unknown>): Promise<void> {
     await this.$apollo.mutate<{ setUserSettings: string }>({
       mutation: SET_USER_SETTINGS,
       variables,

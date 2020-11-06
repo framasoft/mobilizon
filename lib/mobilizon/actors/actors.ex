@@ -641,6 +641,15 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
+  Lists the groups.
+  """
+  @spec list_groups_for_stream :: Enum.t()
+  def list_external_groups_for_stream do
+    external_groups_query()
+    |> Repo.stream()
+  end
+
+  @doc """
   Returns the list of groups an actor is member of.
   """
   @spec list_groups_member_of(Actor.t()) :: [Actor.t()]
@@ -719,6 +728,13 @@ defmodule Mobilizon.Actors do
       get_member(actor_id, parent_id, @administrator_roles)
     )
   end
+
+  @doc """
+  Gets the default member role depending on the event join options.
+  """
+  @spec get_default_member_role(Actor.t()) :: :member | :not_approved
+  def get_default_member_role(%Actor{openness: :open}), do: :member
+  def get_default_member_role(%Actor{openness: _}), do: :not_approved
 
   @doc """
   Gets a single member of an actor (for example a group).
@@ -859,7 +875,7 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
-  Returns the list of administrator members for a group.
+  Returns a paginated list of administrator members for a group.
   """
   @spec list_administrator_members_for_group(integer | String.t(), integer | nil, integer | nil) ::
           Page.t()
@@ -867,6 +883,16 @@ defmodule Mobilizon.Actors do
     id
     |> administrator_members_for_group_query()
     |> Page.build_page(page, limit)
+  end
+
+  @doc """
+  Returns the complete list of administrator members for a group.
+  """
+  @spec list_all_administrator_members_for_group(integer | String.t()) :: [Member.t()]
+  def list_all_administrator_members_for_group(id) do
+    id
+    |> administrator_members_for_group_query()
+    |> Repo.all()
   end
 
   @doc """
@@ -1400,6 +1426,11 @@ defmodule Mobilizon.Actors do
     )
   end
 
+  @spec external_groups_query :: Ecto.Query.t()
+  defp external_groups_query do
+    where(Actor, [a], a.type == ^:Group and not is_nil(a.domain))
+  end
+
   @spec list_members_for_user_query(integer()) :: Ecto.Query.t()
   defp list_members_for_user_query(user_id) do
     from(
@@ -1422,11 +1453,10 @@ defmodule Mobilizon.Actors do
 
   @spec members_for_group_query(integer | String.t()) :: Ecto.Query.t()
   defp members_for_group_query(group_id) do
-    from(
-      m in Member,
-      where: m.parent_id == ^group_id,
-      preload: [:parent, :actor]
-    )
+    Member
+    |> where(parent_id: ^group_id)
+    |> order_by(desc: :updated_at)
+    |> preload([:parent, :actor])
   end
 
   @spec group_external_member_actor_query(integer()) :: Ecto.Query.t()

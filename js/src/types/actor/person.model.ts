@@ -1,8 +1,9 @@
 import { ICurrentUser } from "../current-user.model";
-import { IEvent, IParticipant } from "../event.model";
+import { IEvent } from "../event.model";
 import { Actor, IActor } from "./actor.model";
 import { Paginate } from "../paginate";
 import { IMember } from "./group.model";
+import { IParticipant } from "../participant.model";
 
 export interface IFeedToken {
   token: string;
@@ -29,13 +30,13 @@ export class Person extends Actor implements IPerson {
 
   user!: ICurrentUser;
 
-  constructor(hash: IPerson | {} = {}) {
+  constructor(hash: IPerson | Record<string, unknown> = {}) {
     super(hash);
 
     this.patch(hash);
   }
 
-  patch(hash: any) {
+  patch(hash: IPerson | Record<string, unknown>): void {
     Object.assign(this, hash);
   }
 }

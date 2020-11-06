@@ -1,6 +1,7 @@
-import { IEvent, IParticipant } from "@/types/event.model";
+import { IEvent } from "@/types/event.model";
 import { IPerson } from "@/types/actor/person.model";
 import { Paginate } from "./paginate";
+import { IParticipant } from "./participant.model";
 
 export enum ICurrentUserRole {
   USER = "USER",
@@ -16,7 +17,7 @@ export interface ICurrentUser {
   defaultActor?: IPerson;
 }
 
-export enum INotificationPendingParticipationEnum {
+export enum INotificationPendingEnum {
   NONE = "NONE",
   DIRECT = "DIRECT",
   ONE_DAY = "ONE_DAY",
@@ -28,7 +29,8 @@ export interface IUserSettings {
   notificationOnDay: boolean;
   notificationEachWeek: boolean;
   notificationBeforeEvent: boolean;
-  notificationPendingParticipation: INotificationPendingParticipationEnum;
+  notificationPendingParticipation: INotificationPendingEnum;
+  notificationPendingMembership: INotificationPendingEnum;
 }
 
 export interface IUser extends ICurrentUser {

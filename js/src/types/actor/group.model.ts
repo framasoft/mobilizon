@@ -18,13 +18,10 @@ export enum MemberRole {
   REJECTED = "REJECTED",
 }
 
-export interface IGroup extends IActor {
-  members: Paginate<IMember>;
-  resources: Paginate<IResource>;
-  todoLists: Paginate<ITodoList>;
-  discussions: Paginate<IDiscussion>;
-  organizedEvents: Paginate<IEvent>;
-  physicalAddress: IAddress;
+export enum Openness {
+  INVITE_ONLY = "INVITE_ONLY",
+  MODERATED = "MODERATED",
+  OPEN = "OPEN",
 }
 
 export interface IMember {
@@ -35,6 +32,16 @@ export interface IMember {
   invitedBy?: IPerson;
   insertedAt: string;
   updatedAt: string;
+}
+
+export interface IGroup extends IActor {
+  members: Paginate<IMember>;
+  resources: Paginate<IResource>;
+  todoLists: Paginate<ITodoList>;
+  discussions: Paginate<IDiscussion>;
+  organizedEvents: Paginate<IEvent>;
+  physicalAddress: IAddress;
+  openness: Openness;
 }
 
 export class Group extends Actor implements IGroup {
@@ -50,16 +57,18 @@ export class Group extends Actor implements IGroup {
 
   posts: Paginate<IPost> = { elements: [], total: 0 };
 
-  constructor(hash: IGroup | {} = {}) {
+  constructor(hash: IGroup | Record<string, unknown> = {}) {
     super(hash);
     this.type = ActorType.GROUP;
 
     this.patch(hash);
   }
 
+  openness: Openness = Openness.INVITE_ONLY;
+
   physicalAddress: IAddress = new Address();
 
-  patch(hash: any) {
+  patch(hash: IGroup | Record<string, unknown>): void {
     Object.assign(this, hash);
   }
 }

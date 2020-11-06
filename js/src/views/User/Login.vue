@@ -160,8 +160,6 @@ export default class Login extends Vue {
     email: validateEmailField,
   };
 
-  private redirect: string | null = null;
-
   submitted = false;
 
   mounted(): void {
@@ -170,7 +168,6 @@ export default class Login extends Vue {
 
     const { query } = this.$route;
     this.errorCode = query.code as LoginErrorCode;
-    this.redirect = query.redirect as string;
   }
 
   async loginAction(e: Event): Promise<Route | void> {
@@ -219,11 +216,14 @@ export default class Login extends Vue {
         }
       }
 
-      if (this.redirect) {
-        this.$router.push(this.redirect);
+      if (this.$route.query.redirect) {
+        console.log("redirect", this.$route.query.redirect);
+        this.$router.push(this.$route.query.redirect as string);
+        return;
       }
       window.localStorage.setItem("welcome-back", "yes");
       this.$router.push({ name: RouteName.HOME });
+      return;
     } catch (err) {
       this.submitted = false;
       console.error(err);

@@ -84,7 +84,14 @@ defmodule Mobilizon.Actors.Actor do
   @attrs @required_attrs ++ @optional_attrs
 
   @update_required_attrs @required_attrs -- [:url]
-  @update_optional_attrs [:name, :summary, :manually_approves_followers, :user_id, :visibility]
+  @update_optional_attrs [
+    :name,
+    :summary,
+    :manually_approves_followers,
+    :user_id,
+    :visibility,
+    :openness
+  ]
   @update_attrs @update_required_attrs ++ @update_optional_attrs
 
   @registration_required_attrs [:preferred_username, :keys, :suspended, :url, :type]
@@ -113,7 +120,8 @@ defmodule Mobilizon.Actors.Actor do
     :name,
     :summary,
     :manually_approves_followers,
-    :visibility
+    :visibility,
+    :openness
   ]
   @remote_actor_creation_attrs @remote_actor_creation_required_attrs ++
                                  @remote_actor_creation_optional_attrs
@@ -349,6 +357,17 @@ defmodule Mobilizon.Actors.Actor do
     |> put_change(:inbox_url, build_url(username, :inbox))
     |> put_change(:shared_inbox_url, "#{Endpoint.url()}/inbox")
     |> put_change(:members_url, if(type == :Group, do: build_url(username, :members), else: nil))
+    |> put_change(
+      :resources_url,
+      if(type == :Group, do: build_url(username, :resources), else: nil)
+    )
+    |> put_change(:todos_url, if(type == :Group, do: build_url(username, :todos), else: nil))
+    |> put_change(:posts_url, if(type == :Group, do: build_url(username, :posts), else: nil))
+    |> put_change(:events_url, if(type == :Group, do: build_url(username, :events), else: nil))
+    |> put_change(
+      :discussions_url,
+      if(type == :Group, do: build_url(username, :discussions), else: nil)
+    )
     |> put_change(:url, build_url(username, :page))
   end
 

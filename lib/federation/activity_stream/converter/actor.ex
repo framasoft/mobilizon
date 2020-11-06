@@ -65,7 +65,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
       domain: URI.parse(data["id"]).host,
       manually_approves_followers: data["manuallyApprovesFollowers"],
       type: data["type"],
-      visibility: if(Map.get(data, "discoverable", false) == true, do: :public, else: :unlisted)
+      visibility: if(Map.get(data, "discoverable", false) == true, do: :public, else: :unlisted),
+      openness: data["openness"]
     }
   end
 
@@ -98,6 +99,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
         "sharedInbox" => actor.shared_inbox_url
       },
       "discoverable" => actor.visibility == :public,
+      "openness" => actor.openness,
       "manuallyApprovesFollowers" => actor.manually_approves_followers,
       "publicKey" => %{
         "id" => "#{actor.url}#main-key",

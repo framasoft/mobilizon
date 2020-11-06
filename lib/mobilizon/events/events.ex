@@ -558,6 +558,8 @@ defmodule Mobilizon.Events do
 
   @doc """
   Gets an existing tag or creates the new one.
+
+  From a map containing a %{"name" => "#mytag"} or a direct binary
   """
   @spec get_or_create_tag(map) :: {:ok, Tag.t()} | {:error, Changeset.t()}
   def get_or_create_tag(%{"name" => "#" <> title}) do
@@ -570,9 +572,6 @@ defmodule Mobilizon.Events do
     end
   end
 
-  @doc """
-  Gets an existing tag or creates the new one.
-  """
   @spec get_or_create_tag(String.t()) :: {:ok, Tag.t()} | {:error, Changeset.t()}
   def get_or_create_tag(title) do
     case Repo.get_by(Tag, title: title) do

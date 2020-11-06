@@ -1,4 +1,5 @@
 import { PERSON_MEMBERSHIPS, CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
+import { GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED } from "@/graphql/event";
 import { FETCH_GROUP } from "@/graphql/group";
 import RouteName from "@/router/name";
 import { Group, IActor, IGroup, IPerson, MemberRole } from "@/types/actor";
@@ -28,6 +29,17 @@ import { Component, Vue } from "vue-property-decorator";
         return {
           id: this.currentActor.id,
         };
+      },
+      subscribeToMore: {
+        document: GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED,
+        variables() {
+          return {
+            actorId: this.currentActor.id,
+          };
+        },
+        skip() {
+          return !this.currentActor || !this.currentActor.id;
+        },
       },
       skip() {
         return !this.currentActor || !this.currentActor.id;

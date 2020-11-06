@@ -88,10 +88,10 @@
                     :participation="participations[0]"
                     :event="event"
                     :current-actor="currentActor"
-                    @joinEvent="joinEvent"
-                    @joinModal="isJoinModalActive = true"
-                    @joinEventWithConfirmation="joinEventWithConfirmation"
-                    @confirmLeave="confirmLeave"
+                    @join-event="joinEvent"
+                    @join-modal="isJoinModalActive = true"
+                    @join-event-with-confirmation="joinEventWithConfirmation"
+                    @confirm-leave="confirmLeave"
                   />
                   <b-button
                     type="is-text"
@@ -504,7 +504,6 @@
 <script lang="ts">
 import { Component, Prop, Watch } from "vue-property-decorator";
 import BIcon from "buefy/src/components/icon/Icon.vue";
-import { GraphQLError } from "graphql";
 import {
   EVENT_PERSON_PARTICIPATION,
   EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED,
@@ -517,8 +516,6 @@ import {
   EventStatus,
   EventVisibility,
   IEvent,
-  IParticipant,
-  ParticipantRole,
   EventJoinOptions,
 } from "../../types/event.model";
 import { IActor, IPerson, Person, usernameWithDomain } from "../../types/actor";
@@ -549,6 +546,7 @@ import Tag from "../../components/Tag.vue";
 import EventMetadataBlock from "../../components/Event/EventMetadataBlock.vue";
 import ActorCard from "../../components/Account/ActorCard.vue";
 import PopoverActorCard from "../../components/Account/PopoverActorCard.vue";
+import { IParticipant, ParticipantRole } from "../../types/participant.model";
 
 @Component({
   components: {

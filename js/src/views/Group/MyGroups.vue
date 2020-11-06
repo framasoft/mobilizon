@@ -27,6 +27,16 @@
         :member="member"
         @leave="leaveGroup(member.parent)"
       />
+      <b-pagination
+        :total="membershipsPages.total"
+        v-model="page"
+        :per-page="limit"
+        :aria-next-label="$t('Next page')"
+        :aria-previous-label="$t('Previous page')"
+        :aria-page-label="$t('Page')"
+        :aria-current-label="$t('Current page')"
+      >
+      </b-pagination>
     </section>
     <b-message v-if="$apollo.loading === false && memberships.length === 0" type="is-danger">
       {{ $t("No groups found") }}
@@ -54,10 +64,11 @@ import RouteName from "../../router/name";
     membershipsPages: {
       query: LOGGED_USER_MEMBERSHIPS,
       fetchPolicy: "cache-and-network",
-      variables: {
-        page: 1,
-        limit: 10,
-        beforeDateTime: new Date().toISOString(),
+      variables() {
+        return {
+          page: this.page,
+          limit: this.limit,
+        };
       },
       update: (data) => data.loggedUser.memberships,
     },
@@ -75,6 +86,10 @@ export default class MyGroups extends Vue {
   membershipsPages!: Paginate<IMember>;
 
   RouteName = RouteName;
+
+  page = 1;
+
+  limit = 10;
 
   acceptInvitation(member: IMember): Promise<Route> {
     return this.$router.push({
@@ -94,11 +109,21 @@ export default class MyGroups extends Vue {
   }
 
   async leaveGroup(group: IGroup): Promise<void> {
+    const { page, limit } = this;
     await this.$apollo.mutate({
       mutation: LEAVE_GROUP,
       variables: {
         groupId: group.id,
       },
+      refetchQueries: [
+        {
+          query: LOGGED_USER_MEMBERSHIPS,
+          variables: {
+            page,
+            limit,
+          },
+        },
+      ],
     });
   }
 

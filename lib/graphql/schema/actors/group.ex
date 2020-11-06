@@ -17,7 +17,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
   Represents a group of actors
   """
   object :group do
-    interfaces([:actor])
+    interfaces([:actor, :interactable])
 
     field(:id, :id, description: "Internal ID for this group")
     field(:url, :string, description: "The ActivityPub actor's URL")
@@ -195,6 +195,10 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       arg(:summary, :string, description: "The summary for the group", default_value: "")
 
       arg(:visibility, :group_visibility, description: "The visibility for the group")
+
+      arg(:openness, :openness,
+        description: "Whether the group can be join freely, with approval or is invite-only."
+      )
 
       arg(:avatar, :picture_input,
         description:

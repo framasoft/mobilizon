@@ -7,6 +7,7 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.{Fetcher, Relay, Transmogrifier, Utils}
+  alias Mobilizon.Storage.Repo
   require Logger
 
   @doc """
@@ -58,6 +59,10 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
          :ok <- fetch_collection(discussions_url, on_behalf_of),
          :ok <- fetch_collection(events_url, on_behalf_of) do
       :ok
+    else
+      err ->
+        Logger.error("Error while refreshing a group")
+        Logger.error(inspect(err))
     end
   end
 
@@ -70,6 +75,7 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
     with {:ok, data} <- Fetcher.fetch(collection_url, on_behalf_of: on_behalf_of),
          :ok <- Logger.debug("Fetch ok, passing to process_collection"),
          :ok <- process_collection(data, on_behalf_of) do
+      Logger.debug("Finished processing a collection")
       :ok
     end
   end
@@ -90,6 +96,19 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
     end
   end
 
+  @spec refresh_all_external_groups :: any()
+  def refresh_all_external_groups do
+    Repo.transaction(fn ->
+      Actors.list_external_groups_for_stream()
+      |> Stream.map(fn %Actor{id: group_id, url: group_url} ->
+        {group_url, Actors.get_single_group_member_actor(group_id)}
+      end)
+      |> Stream.filter(fn {_group_url, member_actor} -> not is_nil(member_actor) end)
+      |> Stream.map(fn {group_url, member_actor} -> fetch_group(group_url, member_actor) end)
+      |> Stream.run()
+    end)
+  end
+
   defp process_collection(%{"type" => type, "orderedItems" => items}, _on_behalf_of)
        when type in ["OrderedCollection", "OrderedCollectionPage"] do
     Logger.debug(
@@ -99,6 +118,7 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
     Logger.debug(inspect(items))
 
     Enum.each(items, &handling_element/1)
+    Logger.debug("Finished processing a collection")
     :ok
   end
 

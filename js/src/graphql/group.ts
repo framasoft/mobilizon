@@ -63,6 +63,7 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
     preferredUsername
     suspended
     visibility
+    openness
     physicalAddress {
       description
       street
@@ -262,6 +263,7 @@ export const UPDATE_GROUP = gql`
     $avatar: PictureInput
     $banner: PictureInput
     $visibility: GroupVisibility
+    $openness: Openness
     $physicalAddress: AddressInput
   ) {
     updateGroup(
@@ -271,12 +273,15 @@ export const UPDATE_GROUP = gql`
       banner: $banner
       avatar: $avatar
       visibility: $visibility
+      openness: $openness
       physicalAddress: $physicalAddress
     ) {
       id
       preferredUsername
       name
       summary
+      visibility
+      openness
       avatar {
         id
         url

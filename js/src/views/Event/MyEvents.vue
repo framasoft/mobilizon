@@ -16,7 +16,7 @@
             :key="participation.id"
             :participation="participation"
             :options="{ hideDate: false }"
-            @eventDeleted="eventDeleted"
+            @event-deleted="eventDeleted"
             class="participation"
           />
         </div>
@@ -57,7 +57,7 @@
             :key="participation.id"
             :participation="participation"
             :options="{ hideDate: false }"
-            @eventDeleted="eventDeleted"
+            @event-deleted="eventDeleted"
             class="participation"
           />
         </div>
@@ -88,14 +88,9 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { IParticipant, Participant, ParticipantRole } from "../../types/participant.model";
 import { LOGGED_USER_PARTICIPATIONS, LOGGED_USER_DRAFTS } from "../../graphql/actor";
-import {
-  EventModel,
-  IEvent,
-  IParticipant,
-  Participant,
-  ParticipantRole,
-} from "../../types/event.model";
+import { EventModel, IEvent } from "../../types/event.model";
 import EventListCard from "../../components/Event/EventListCard.vue";
 import EventCard from "../../components/Event/EventCard.vue";
 import Subtitle from "../../components/Utils/Subtitle.vue";
@@ -207,7 +202,7 @@ export default class MyEvents extends Vue {
     return MyEvents.monthlyParticipations(this.pastParticipations, true);
   }
 
-  loadMoreFutureParticipations() {
+  loadMoreFutureParticipations(): void {
     this.futurePage += 1;
     this.$apollo.queries.futureParticipations.fetchMore({
       // New variables
@@ -236,7 +231,7 @@ export default class MyEvents extends Vue {
     });
   }
 
-  loadMorePastParticipations() {
+  loadMorePastParticipations(): void {
     this.pastPage += 1;
     this.$apollo.queries.pastParticipations.fetchMore({
       // New variables
@@ -265,7 +260,7 @@ export default class MyEvents extends Vue {
     });
   }
 
-  eventDeleted(eventid: string) {
+  eventDeleted(eventid: string): void {
     this.futureParticipations = this.futureParticipations.filter(
       (participation) => participation.event.id !== eventid
     );

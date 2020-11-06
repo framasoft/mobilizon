@@ -65,8 +65,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { Person } from "../../types/actor";
-import { IParticipant, ParticipantRole } from "../../types/event.model";
+import { IParticipant, ParticipantRole } from "../../types/participant.model";
+import { IPerson, Person } from "../../types/actor";
 
 @Component
 export default class ParticipantCard extends Vue {
@@ -81,7 +81,7 @@ export default class ParticipantCard extends Vue {
   ParticipantRole = ParticipantRole;
 
   get actorDisplayName(): string {
-    const actor = new Person(this.participant.actor);
+    const actor = new Person(this.participant.actor as IPerson);
     return actor.displayName();
   }
 }

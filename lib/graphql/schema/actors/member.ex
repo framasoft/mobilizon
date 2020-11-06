@@ -38,7 +38,6 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
     @desc "Join a group"
     field :join_group, :member do
       arg(:group_id, non_null(:id))
-      arg(:actor_id, non_null(:id))
 
       resolve(&Group.join_group/3)
     end

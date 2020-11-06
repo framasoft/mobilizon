@@ -102,6 +102,31 @@
           </p>
         </div>
 
+        <p class="label">{{ $t("New members") }}</p>
+        <div class="field">
+          <b-radio v-model="group.openness" name="groupOpenness" :native-value="Openness.OPEN">
+            {{ $t("Anyone can join freely") }}<br />
+            <small>{{
+              $t(
+                "Anyone wanting to be a member from your group will be able to from your group page."
+              )
+            }}</small>
+          </b-radio>
+        </div>
+        <div class="field">
+          <b-radio
+            v-model="group.openness"
+            name="groupOpenness"
+            :native-value="Openness.INVITE_ONLY"
+            >{{ $t("Manually invite new members") }}<br />
+            <small>{{
+              $t(
+                "The only way for your group to get new members is if an admininistrator invites them."
+              )
+            }}</small>
+          </b-radio>
+        </div>
+
         <full-address-auto-complete
           :label="$t('Group address')"
           v-model="group.physicalAddress"
@@ -129,7 +154,7 @@ import { mixins } from "vue-class-component";
 import GroupMixin from "@/mixins/group";
 import RouteName from "../../router/name";
 import { UPDATE_GROUP, DELETE_GROUP } from "../../graphql/group";
-import { IGroup, usernameWithDomain } from "../../types/actor";
+import { IGroup, usernameWithDomain, Openness } from "../../types/actor";
 import { Address, IAddress } from "../../types/address.model";
 
 @Component({
@@ -156,6 +181,8 @@ export default class GroupSettings extends mixins(GroupMixin) {
     PUBLIC: "PUBLIC",
     UNLISTED: "UNLISTED",
   };
+
+  Openness = Openness;
 
   showCopiedTooltip = false;
 

@@ -126,9 +126,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
     end
   end
 
-  @doc """
-  This function is used to create more identities from an existing user
-  """
   def create_person(_parent, _args, _resolution) do
     {:error, :unauthenticated}
   end
@@ -240,7 +237,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   end
 
   @doc """
-  Returns the participation for a specific event
+  Returns the participations, optionally restricted to an event
   """
   def person_participations(
         %Actor{id: actor_id},
@@ -260,9 +257,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
     end
   end
 
-  @doc """
-  Returns the list of events this person is going to
-  """
   def person_participations(%Actor{id: actor_id} = actor, %{page: page, limit: limit}, %{
         context: %{current_user: %User{role: role} = user}
       }) do

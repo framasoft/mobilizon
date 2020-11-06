@@ -1,13 +1,14 @@
 import { mixins } from "vue-class-component";
 import { Component, Vue } from "vue-property-decorator";
-import { IEvent, IParticipant, ParticipantRole } from "../types/event.model";
+import { SnackbarProgrammatic as Snackbar } from "buefy";
+import { IParticipant, ParticipantRole } from "../types/participant.model";
+import { IEvent } from "../types/event.model";
 import {
   DELETE_EVENT,
   EVENT_PERSON_PARTICIPATION,
   FETCH_EVENT,
   LEAVE_EVENT,
 } from "../graphql/event";
-import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { IPerson } from "../types/actor";
 
 @Component
@@ -17,7 +18,7 @@ export default class EventMixin extends mixins(Vue) {
     actorId: string,
     token: string | null = null,
     anonymousParticipationConfirmed: boolean | null = null
-  ) {
+  ): Promise<void> {
     try {
       const { data: resultData } = await this.$apollo.mutate<{ leaveEvent: IParticipant }>({
         mutation: LEAVE_EVENT,
@@ -89,7 +90,7 @@ export default class EventMixin extends mixins(Vue) {
     this.$notifier.success(this.$t("You have cancelled your participation") as string);
   }
 
-  protected async openDeleteEventModal(event: IEvent, currentActor: IPerson) {
+  protected async openDeleteEventModal(event: IEvent, currentActor: IPerson): Promise<void> {
     function escapeRegExp(string: string) {
       return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
     }
@@ -135,7 +136,7 @@ export default class EventMixin extends mixins(Vue) {
        *
        * @type {string}
        */
-      this.$emit("eventDeleted", event.id);
+      this.$emit("event-deleted", event.id);
 
       this.$buefy.notification.open({
         message: this.$t("Event {eventTitle} deleted", { eventTitle }) as string,
@@ -150,6 +151,7 @@ export default class EventMixin extends mixins(Vue) {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   urlToHostname(url: string): string | null {
     try {
       return new URL(url).hostname;

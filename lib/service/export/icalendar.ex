@@ -64,7 +64,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
   end
 
   @doc """
-  Create cache for an actor
+  Create cache for an actor, an event or an user token
   """
   def create_cache("actor_" <> name) do
     with %Actor{} = actor <- Actors.get_local_actor_by_name(name),
@@ -76,9 +76,6 @@ defmodule Mobilizon.Service.Export.ICalendar do
     end
   end
 
-  @doc """
-  Create cache for an actor
-  """
   def create_cache("event_" <> uuid) do
     with %Event{} = event <- Events.get_public_event_by_uuid_with_preload(uuid),
          {:ok, res} <- export_public_event(event) do
@@ -89,9 +86,6 @@ defmodule Mobilizon.Service.Export.ICalendar do
     end
   end
 
-  @doc """
-  Create cache for an actor
-  """
   def create_cache("token_" <> token) do
     case fetch_events_from_token(token) do
       {:ok, res} ->

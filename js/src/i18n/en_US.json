@@ -277,7 +277,6 @@
   "Publish": "Publish",
   "Published events with <b>{comments}</b> comments and <b>{participations}</b> confirmed participations": "Published events with <b>{comments}</b> comments and <b>{participations}</b> confirmed participations",
   "RSS/Atom Feed": "RSS/Atom Feed",
-  "Redirecting to event…": "Redirecting to event…",
   "Region": "Region",
   "Register an account on Mobilizon!": "Register an account on Mobilizon!",
   "Registration is allowed, anyone can register.": "Registration is allowed, anyone can register.",
@@ -733,7 +732,6 @@
   "Group {groupTitle} reported": "Group {groupTitle} reported",
   "Error while reporting group {groupTitle}": "Error while reporting group {groupTitle}",
   "Reported group": "Reported group",
-  "You can only get invited to groups right now.": "You can only get invited to groups right now.",
   "Join group": "Join group",
   "Created by {username}": "Created by {username}",
   "Accessible through link": "Accessible through link",
@@ -790,5 +788,14 @@
   "This group doesn't have a description yet.": "This group doesn't have a description yet.",
   "Find another instance": "Find another instance",
   "Pick an instance": "Pick an instance",
-  "This website isn't moderated and the data that you enter will be automatically destroyed every day at 00:01 (Paris timezone).": "This website isn't moderated and the data that you enter will be automatically destroyed every day at 00:01 (Paris timezone)."
+  "This website isn't moderated and the data that you enter will be automatically destroyed every day at 00:01 (Paris timezone).": "This website isn't moderated and the data that you enter will be automatically destroyed every day at 00:01 (Paris timezone).",
+  "We will redirect you to your instance in order to interact with this group": "",
+  "New members": "New members",
+  "Anyone can join freely": "Anyone can join freely",
+  "Anyone wanting to be a member from your group will be able to from your group page.": "Anyone wanting to be a member from your group will be able to from your group page.",
+  "Manually invite new members": "Manually invite new members",
+  "The only way for your group to get new members is if an admininistrator invites them.": "The only way for your group to get new members is if an admininistrator invites them.",
+  "Redirecting to content…": "Redirecting to content…",
+  "This URL is not supported": "This URL is not supported",
+  "This group is invite-only": "This group is invite-only"
 }

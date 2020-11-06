@@ -15,6 +15,7 @@ export enum GroupsRouteName {
   POST = "POST",
   POSTS = "POSTS",
   GROUP_EVENTS = "GROUP_EVENTS",
+  GROUP_JOIN = "GROUP_JOIN",
 }
 
 const resourceFolder = () => import("@/views/Resources/ResourceFolder.vue");
@@ -97,17 +98,27 @@ export const groupsRoutes: RouteConfig[] = [
     component: () => import("@/views/Posts/Post.vue"),
     props: true,
     name: GroupsRouteName.POST,
+    meta: { requiredAuth: false },
   },
   {
     path: "/@:preferredUsername/p",
     component: () => import("@/views/Posts/List.vue"),
     props: true,
     name: GroupsRouteName.POSTS,
+    meta: { requiredAuth: false },
   },
   {
     path: "/@:preferredUsername/events",
     component: groupEvents,
     props: true,
     name: GroupsRouteName.GROUP_EVENTS,
+    meta: { requiredAuth: false },
+  },
+  {
+    path: "/@:preferredUsername/join",
+    component: () => import("@/components/Group/JoinGroupWithAccount.vue"),
+    props: true,
+    name: GroupsRouteName.GROUP_JOIN,
+    meta: { requiredAuth: false },
   },
 ];

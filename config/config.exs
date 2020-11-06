@@ -178,6 +178,28 @@ config :ex_cldr,
 config :http_signatures,
   adapter: Mobilizon.Federation.HTTPSignatures.Signature
 
+config :mobilizon, :cldr,
+  locales: [
+    "ar",
+    "be",
+    "ca",
+    "cs",
+    "de",
+    "en",
+    "es",
+    "fi",
+    "fr",
+    "gl",
+    "it",
+    "ja",
+    "nl",
+    "oc",
+    "pl",
+    "pt",
+    "ru",
+    "sv"
+  ]
+
 config :mobilizon, :activitypub,
   # One day
   actor_stale_period: 3_600 * 48,
@@ -241,7 +263,8 @@ config :mobilizon, Oban,
   log: false,
   queues: [default: 10, search: 5, mailers: 10, background: 5],
   crontab: [
-    {"@hourly", Mobilizon.Service.Workers.BuildSiteMap, queue: :background}
+    {"@hourly", Mobilizon.Service.Workers.BuildSiteMap, queue: :background},
+    {"17 * * * *", Mobilizon.Service.Workers.RefreshGroups, queue: :background}
   ]
 
 config :mobilizon, :rich_media,

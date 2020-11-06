@@ -119,6 +119,7 @@ export const USER_SETTINGS_FRAGMENT = gql`
     notificationEachWeek
     notificationBeforeEvent
     notificationPendingParticipation
+    notificationPendingMembership
   }
 `;
 
@@ -141,7 +142,8 @@ export const SET_USER_SETTINGS = gql`
     $notificationOnDay: Boolean
     $notificationEachWeek: Boolean
     $notificationBeforeEvent: Boolean
-    $notificationPendingParticipation: NotificationPendingParticipationEnum
+    $notificationPendingParticipation: NotificationPendingEnum
+    $notificationPendingMembership: NotificationPendingEnum
   ) {
     setUserSettings(
       timezone: $timezone
@@ -149,6 +151,7 @@ export const SET_USER_SETTINGS = gql`
       notificationEachWeek: $notificationEachWeek
       notificationBeforeEvent: $notificationBeforeEvent
       notificationPendingParticipation: $notificationPendingParticipation
+      notificationPendingMembership: $notificationPendingMembership
     ) {
       ...UserSettingFragment
     }
