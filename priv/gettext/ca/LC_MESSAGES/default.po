@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-12-17 11:48+0000\n"
-"PO-Revision-Date: 2020-11-02 08:06+0000\n"
+"PO-Revision-Date: 2020-11-09 09:12+0000\n"
 "Last-Translator: fadelkon <fadelkon@posteo.net>\n"
 "Language-Team: Catalan <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/ca/>\n"
@@ -327,18 +327,30 @@ msgstr "Ús del lloc per part d'infants"
 msgctxt "terms"
 msgid "The email address you provide may be used to send you information, updates and notifications about other people\n    interacting with your content or sending you messages and to respond to inquiries, and/or other requests or\n    questions."
 msgstr ""
+"L'adreça de correu que proporcionis la podrem fer servir per enviar-te "
+"informació, actualitzacions i notificacions sobre\n"
+"    altres persones que interaccionin amb tu via missatges o amb el teu "
+"contingut, i per respondre a consultes o\n"
+"    soŀlicituds o preguntes."
 
 #: lib/web/templates/api/privacy.html.eex:45
 #, elixir-format
 msgctxt "terms"
 msgid "To aid moderation of the community, for example comparing your IP address with other known ones to determine ban\n    evasion or other violations."
 msgstr ""
+"Per facilitar les tasques de moderació, per exemple, per comparar la teva IP "
+"amb d'altres conegudes per determinar\n"
+"    evasió d'un bloqueig o altres violacions de les condicions."
 
 #: lib/web/templates/api/privacy.html.eex:43
 #, elixir-format
 msgctxt "terms"
 msgid "To provide the core functionality of Mobilizon. Depending on this instance's policy you may only be able to\n    interact with other people's content and post your own content if you are logged in."
 msgstr ""
+"Per a proporcionar la funcionalitat central de Mobilizon. La política "
+"d'aquesta instància podria fer que només\n"
+"    poguessis interaccionar amb continguts i publicacions teus i d'altres, "
+"amb una sessió iniciada."
 
 #: lib/web/templates/api/privacy.html.eex:6
 #, elixir-format
@@ -448,12 +460,24 @@ msgstr "L'organitzadora no hi ha posat cap descripció."
 msgctxt "terms"
 msgid "We implement a variety of security measures to maintain the safety of your personal information when you enter, submit, or access your personal information. Among other things, your browser session, as well as the traffic between your applications and the API, are secured with SSL/TLS, and your password is hashed using a strong one-way algorithm."
 msgstr ""
+"Implementem un conjunt de mesures per a mantenir la seguretat de la "
+"informació personal que introdueixes, envies o consultes. Entre d'altres "
+"mesures, assegurem amb SSL/TLS la sessió del navegador, el trànsit entre les "
+"aplicacions client i l'API del servidor, i desem les contrasenyes "
+"transformades amb una funció de hash forta, unidireccional."
 
 #: lib/web/templates/api/privacy.html.eex:94
 #, elixir-format
 msgctxt "terms"
 msgid "No. We do not sell, trade, or otherwise transfer to outside parties your personally identifiable information. This does not include trusted third parties who assist us in operating our site, conducting our business, or servicing you, so long as those parties agree to keep this information confidential. We may also release your information when we believe release is appropriate to comply with the law, enforce our site policies, or protect ours or others rights, property, or safety."
 msgstr ""
+"No. No venem ni fem negoci de cap tipus, ni transferim a altri, informacions "
+"personals identificables. Això no inclou a tercers en què confiem per ajudar-"
+"nos en tasques de gestió del lloc, portar endavant el projecte, o donant-te "
+"servei, que es comprometen de la mateixa manera a mantenir confidencials "
+"aquestes informacions. Podríem revelar la teva informació en casos on calgui "
+"fer-ho per complir amb la llei, per fer complir la política del lloc, per "
+"protegir el nostres drets o d'altres, la propietat, o la seguretat."
 
 #: lib/web/templates/api/terms.html.eex:23
 #, elixir-format
@@ -472,6 +496,12 @@ msgstr "Canvis an aquestes condicions"
 msgctxt "terms"
 msgid "A lot of the content on the Service is from you and others, and we don't review, verify or authenticate it, and it may include inaccuracies or false information. We make no representations, warranties, or guarantees relating to the quality, suitability, truth, accuracy or completeness of any content contained in the Service. You acknowledge sole responsibility for and assume all risk arising from your use of or reliance on any content."
 msgstr ""
+"Molt del contingut del Servei és teu i d'altres, i no el revisem verifiquem, "
+"o autentiquem, i pot incloure imprecisions o informació falsa. No fem "
+"representacions, garanties o promeses sobre la qualitat, adequació, "
+"veracitat, exactitud o completesa de cap contingut allotjat al Servei. "
+"Assumeixes el risc i responsabilitat derivats de l'ús o confiança en "
+"qualsevol contingut."
 
 #: lib/web/templates/api/terms.html.eex:60
 #, elixir-format
@@ -486,36 +516,44 @@ msgstr ""
 msgctxt "terms"
 msgid "Circumvent or attempt to circumvent any filtering, security measures, rate limits or other features designed to protect the Service, users of the Service, or third parties."
 msgstr ""
+"Elusió o intent d'elusió de filtres, mesures de seguretat, limitacions de "
+"freqüència d'ús, o altres funcions dissenyades per protegir el Servei, "
+"usuàries del Servei, o d'altri."
 
 #: lib/web/templates/api/terms.html.eex:64
 #, elixir-format
 msgctxt "terms"
 msgid "Collect any personal information about other users, or intimidate, threaten, stalk or otherwise harass other users of the Service;"
 msgstr ""
+"Recopilar informació personal d'altres usuàries, intimidar, amenaçar, espiar "
+"o assetjar altres usuàries del Servei;"
 
 #: lib/web/templates/api/terms.html.eex:55
 #, elixir-format
 msgctxt "terms"
 msgid "Content that is illegal or unlawful, that would otherwise create liability;"
-msgstr ""
+msgstr "Continguts iŀlegals, que poguessin comportar responsabilitats;"
 
 #: lib/web/templates/api/terms.html.eex:56
 #, elixir-format
 msgctxt "terms"
 msgid "Content that may infringe or violate any patent, trademark, trade secret, copyright, right of privacy, right of publicity or other intellectual or other right of any party;"
 msgstr ""
+"Continguts que violin o infringeixin qualsevol patent, marca comercial, "
+"secret comercial, drets d'autoria, dret a la privacitat, dret de publicitat "
+"o qualsevol altres drets inteŀlectuals o drets de qualsevol part;"
 
 #: lib/web/templates/api/terms.html.eex:42
 #, elixir-format
 msgctxt "terms"
 msgid "Creating Accounts"
-msgstr ""
+msgstr "Creació dels comptes"
 
 #: lib/web/templates/api/terms.html.eex:89
 #, elixir-format
 msgctxt "terms"
 msgid "Entire Agreement"
-msgstr ""
+msgstr "Acord complet"
 
 #: lib/web/templates/api/terms.html.eex:92
 #, elixir-format
@@ -527,25 +565,32 @@ msgstr "Valoracions"
 #, elixir-format
 msgctxt "terms"
 msgid "Hyperlinks and Third Party Content"
-msgstr ""
+msgstr "Enllaços i continguts de tercers"
 
 #: lib/web/templates/api/terms.html.eex:88
 #, elixir-format
 msgctxt "terms"
 msgid "If you breach any of these Terms, we have the right to suspend or disable your access to or use of the Service."
 msgstr ""
+"Si incompleixes qualsevol d'aquestes condicions, ens reservem el dret de "
+"suspendre o desactivar el teu accés al Servei."
 
 #: lib/web/templates/api/terms.html.eex:63
 #, elixir-format
 msgctxt "terms"
 msgid "Impersonate or post on behalf of any person or entity or otherwise misrepresent your affiliation with a person or entity;"
 msgstr ""
+"Suplantar la identitat o publicar en nom d'una persona o entitat, o "
+"tergiversar la teva afiliació amb una persona o entitat;"
 
 #: lib/web/templates/api/terms.html.eex:48
 #, elixir-format
 msgctxt "terms"
 msgid "Our Service allows you and other users to post, link and otherwise make available content. You are responsible for the content that you make available to the Service, including its legality, reliability, and appropriateness."
 msgstr ""
+"El nostre Servei et permet a tu i altres, publicar, enllaçar i posar "
+"continguts a disposició del públic. Ets responsable del contingut que "
+"publiques al Servei, incloent-ne la legalitat, fiabilitat i adequació."
 
 #: lib/web/templates/api/terms.html.eex:39
 #, elixir-format
@@ -557,25 +602,29 @@ msgstr "Política de privacitat"
 #, elixir-format
 msgctxt "terms"
 msgid "Questions & Contact Information"
-msgstr ""
+msgstr "Preguntes i informació de contacte"
 
 #: lib/web/templates/api/terms.html.eex:87
 #, elixir-format
 msgctxt "terms"
 msgid "Termination"
-msgstr ""
+msgstr "Finalització"
 
 #: lib/web/templates/api/terms.html.eex:62
 #, elixir-format
 msgctxt "terms"
 msgid "Use the Service in any manner that could interfere with, disrupt, negatively affect or inhibit other users from fully enjoying the Service or that could damage, disable, overburden or impair the functioning of the Service;"
 msgstr ""
+"Fer servir el Servir de qualsevol manera que pugui interferir amb, "
+"interrompre, afectar negativament o privar altres usuàries de gaudir "
+"plenament del Servei, que pugui malmetre, deshabilitar, sobrecarregar o "
+"perjudicar el funcionament del Servei;"
 
 #: lib/web/templates/api/terms.html.eex:47
 #, elixir-format
 msgctxt "terms"
 msgid "Your Content & Conduct"
-msgstr ""
+msgstr "El teu contingut i conducta"
 
 #: lib/web/templates/api/terms.html.eex:84
 #, elixir-format
