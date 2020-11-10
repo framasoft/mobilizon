@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2020-11-04 12:52+0000\n"
+"PO-Revision-Date: 2020-11-10 20:52+0000\n"
 "Last-Translator: Marcin Mikołajczak <me@mkljczk.pl>\n"
 "Language-Team: Polish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/pl/>\n"
@@ -388,24 +388,24 @@ msgstr ""
 #: lib/web/email/notification.ex:24
 #, elixir-format
 msgid "Don't forget to go to %{title}"
-msgstr ""
+msgstr "Nie zapomnij być na %{title}"
 
 #: lib/web/templates/email/before_event_notification.html.eex:38
 #: lib/web/templates/email/before_event_notification.text.eex:3
 #, elixir-format
 msgid "Get ready for %{title}"
-msgstr ""
+msgstr "Przygotuj się na %{title}"
 
 #: lib/web/templates/email/group_invite.html.eex:59
 #, elixir-format
 msgid "See my groups"
-msgstr ""
+msgstr "Zobacz moje grupy"
 
 #: lib/web/templates/email/group_invite.html.eex:45
 #: lib/web/templates/email/group_invite.text.eex:5
 #, elixir-format
 msgid "To accept this invitation, head over to your groups."
-msgstr ""
+msgstr "Aby przyjąć to zaproszenie, przejdź do swoich grup."
 
 #: lib/web/templates/email/before_event_notification.text.eex:5
 #, elixir-format
@@ -415,15 +415,15 @@ msgstr "Zobacz zaktualizowane wydarzenie na %{link}"
 #: lib/web/email/group.ex:32
 #, elixir-format
 msgid "You have been invited by %{inviter} to join group %{group}"
-msgstr ""
+msgstr "Dostałeś(-aś) zaproszenie od %{inviter}, aby dołączyć do grupy %{group}"
 
 #: lib/web/email/notification.ex:70
 #, elixir-format
 msgid "One event planned this week"
 msgid_plural "%{nb_events} events planned this week"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Jedno wydarzenie zaplanowane na ten tydzień"
+msgstr[1] "%{nb_events} wydarzenia zaplanowane na ten tydzień"
+msgstr[2] "%{nb_events} wydarzeń zaplanowanych na ten tydzień"
 
 #: lib/web/email/notification.ex:92
 #, elixir-format
