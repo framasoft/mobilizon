@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-02 22:03+0000\n"
-"PO-Revision-Date: 2020-11-09 09:12+0000\n"
+"PO-Revision-Date: 2020-11-13 08:26+0000\n"
 "Last-Translator: Eivind Ødegård <eivind.odegard@sogn.no>\n"
 "Language-Team: Norwegian Nynorsk <https://weblate.framasoft.org/projects/"
 "mobilizon/backend/nn/>\n"
@@ -1041,138 +1041,143 @@ msgstr "Viss du ikkje gjorde dette sjølv, kan du trygt sjå bort frå dette."
 #, elixir-format
 msgid "If you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgstr ""
+"Viss du ikkje vil delta likevel, kan du gå til hendingssida med lenka over "
+"og klkka på «Deltek»-knappen."
 
 #: lib/web/templates/email/email.html.eex:143
 #: lib/web/templates/email/email.text.eex:11
 #, elixir-format
 msgid "Learn more about Mobilizon here!"
-msgstr ""
+msgstr "Lær meir om Mobilizon her!"
 
 #: lib/web/templates/email/event_updated.html.eex:94
 #, elixir-format
 msgid "Location"
-msgstr ""
+msgstr "Stad"
 
 #: lib/web/templates/email/event_updated.html.eex:104
 #, elixir-format
 msgid "Location address was removed"
-msgstr ""
+msgstr "Adressa vart fjerna"
 
 #: lib/web/templates/email/pending_participation_notification.html.eex:51
 #: lib/web/templates/email/pending_participation_notification.text.eex:6
 #, elixir-format
 msgid "Manage pending requests"
-msgstr ""
+msgstr "Sjå over ventande førespurnader"
 
 #: lib/web/templates/email/registration_confirmation.html.eex:13
 #: lib/web/templates/email/registration_confirmation.text.eex:1
 #, elixir-format
 msgid "Nearly there!"
-msgstr ""
+msgstr "Nesten klar!"
 
 #: lib/web/templates/email/email_changed_old.html.eex:13
 #: lib/web/templates/email/email_changed_old.text.eex:1
 #, elixir-format
 msgid "New email confirmation"
-msgstr ""
+msgstr "Ny stadfestingsepost"
 
 #: lib/web/templates/email/report.html.eex:106
 #, elixir-format
 msgid "Reasons for report"
-msgstr ""
+msgstr "Grungjeving for rapporten"
 
 #: lib/web/templates/email/report.html.eex:39
 #, elixir-format
 msgid "Someone on <b>%{instance}</b> reported the following content for you to analyze:"
 msgstr ""
+"Nokon på <b>%{instance}</b> rapporterte dette, slik at du kan sjå på det:"
 
 #: lib/web/templates/email/event_participation_rejected.html.eex:13
 #: lib/web/templates/email/event_participation_rejected.text.eex:1
 #, elixir-format
 msgid "Sorry! You're not going."
-msgstr ""
+msgstr "Orsak! Du er ikkje påmeld."
 
 #: lib/web/templates/email/event_updated.html.eex:74
 #, elixir-format
 msgid "Start"
-msgstr ""
+msgstr "Start"
 
 #: lib/web/templates/email/event_updated.text.eex:18
 #, elixir-format
 msgid "Start %{begins_on}"
-msgstr ""
+msgstr "Startar %{begins_on}"
 
 #: lib/web/templates/email/event_updated.text.eex:3
 #, elixir-format
 msgid "There have been changes for %{title} so we'd thought we'd let you know."
-msgstr ""
+msgstr "%{title} er endra, så me tenkte du ville vita det."
 
 #: lib/web/templates/email/event_updated.html.eex:55
 #: lib/web/templates/email/event_updated.text.eex:11
 #, elixir-format
 msgid "This event has been cancelled by its organizers. Sorry!"
-msgstr ""
+msgstr "Tilskiparane har avlyst denne hendinga. Me orsakar!"
 
 #: lib/web/templates/email/event_updated.html.eex:51
 #: lib/web/templates/email/event_updated.text.eex:7
 #, elixir-format
 msgid "This event has been confirmed"
-msgstr ""
+msgstr "Denne hendinga er stadfesta"
 
 #: lib/web/templates/email/event_updated.html.eex:53
 #: lib/web/templates/email/event_updated.text.eex:9
 #, elixir-format
 msgid "This event has yet to be confirmed: organizers will let you know if they do confirm it."
 msgstr ""
+"Denne hendinga er ikkje stadfesta enno. Tilskiparane seier frå viss dei "
+"stadfestar ho."
 
 #: lib/web/templates/email/event_participation_rejected.html.eex:45
 #: lib/web/templates/email/event_participation_rejected.text.eex:7
 #, elixir-format
 msgid "Unfortunately, the organizers rejected your request."
-msgstr ""
+msgstr "Tilskiparane har diverre avslege førespurnaden din."
 
 #: lib/web/templates/email/email_changed_new.html.eex:51
 #, elixir-format
 msgid "Verify your email address"
-msgstr ""
+msgstr "Stadfest epostadressa di"
 
 #: lib/web/templates/email/report.html.eex:126
 #, elixir-format
 msgid "View report"
-msgstr ""
+msgstr "Les rapporten"
 
 #: lib/web/templates/email/report.text.eex:24
 #, elixir-format
 msgid "View report:"
-msgstr ""
+msgstr "Les rapporten:"
 
 #: lib/web/templates/email/event_participation_approved.html.eex:58
 #: lib/web/templates/email/event_participation_confirmed.html.eex:58
 #, elixir-format
 msgid "Visit event page"
-msgstr ""
+msgstr "Sjå på hendingssida"
 
 #: lib/web/templates/email/event_updated.html.eex:121
 #, elixir-format
 msgid "Visit the updated event page"
-msgstr ""
+msgstr "Sjå på den oppdaterte hendingssida"
 
 #: lib/web/templates/email/event_updated.text.eex:23
 #, elixir-format
 msgid "Visit the updated event page: %{link}"
-msgstr ""
+msgstr "Sjå på den oppdaterte hendingssida: %{link}"
 
 #: lib/web/templates/email/notification_each_week.html.eex:13
 #: lib/web/templates/email/notification_each_week.text.eex:1
 #, elixir-format
 msgid "What's up this week?"
-msgstr ""
+msgstr "Kva skjer denne veka?"
 
 #: lib/web/templates/email/on_day_notification.html.eex:13
 #: lib/web/templates/email/on_day_notification.text.eex:1
 #, elixir-format
 msgid "What's up today?"
-msgstr ""
+msgstr "Kva skjer i dag?"
 
 #: lib/web/templates/email/event_participation_approved.html.eex:70
 #: lib/web/templates/email/event_participation_approved.text.eex:11 lib/web/templates/email/event_participation_confirmed.html.eex:70
@@ -1180,67 +1185,79 @@ msgstr ""
 #, elixir-format
 msgid "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button."
 msgstr ""
+"Viss du vil oppdatera eller avbryta deltakinga di, kan du gå til "
+"hendingssida med lenka over og klikka på Deltek-knappen."
 
 #: lib/web/templates/email/pending_participation_notification.html.eex:64
 #: lib/web/templates/email/pending_participation_notification.text.eex:8
 #, elixir-format
 msgid "You are receiving this email because you chose to get notifications for pending attendance requests to your events. You can disable or change your notification settings in your user account settings under « Notifications »."
 msgstr ""
+"Du får denne eposten fordi du har valt å få varslingar når det er ventande "
+"førespurnader til hendingane dine. Du kan skru av eller endra varsel i "
+"kontoinnstillingane dine, under «Varsel»."
 
 #: lib/web/templates/email/event_participation_rejected.text.eex:5
 #, elixir-format
 msgid "You issued a request to attend %{title}."
-msgstr ""
+msgstr "Du ba om å bli med på %{title}."
 
 #: lib/web/templates/email/event_participation_approved.text.eex:5
 #: lib/web/templates/email/event_participation_confirmed.text.eex:3
 #, elixir-format
 msgid "You recently requested to attend %{title}."
-msgstr ""
+msgstr "Du ba nyst om å vera med på %{title}."
 
 #: lib/web/templates/email/event_participation_approved.html.eex:13
 #: lib/web/templates/email/event_participation_confirmed.html.eex:13 lib/web/templates/email/event_participation_confirmed.text.eex:1
 #, elixir-format
 msgid "You're going!"
-msgstr ""
+msgstr "Du skal dit!"
 
 #: lib/web/templates/email/email_changed_new.html.eex:64
 #: lib/web/templates/email/email_changed_new.text.eex:5
 #, elixir-format
 msgid "If you didn't trigger the change yourself, please ignore this message."
 msgstr ""
+"Viss du ikkje endra dette sjølv, kan du trygt sjå bort frå denne meldinga."
 
 #: lib/web/templates/email/email.html.eex:89
 #, elixir-format
 msgid "<b>Please do not use it for real purposes.</b>"
-msgstr ""
+msgstr "<b>Ikkje bruk det på ordentleg.</b>"
 
 #: lib/web/templates/email/group_member_removal.html.eex:45
 #: lib/web/templates/email/group_member_removal.text.eex:5
 #, elixir-format
 msgid "If you feel this is an error, you may contact the group's administrators so that they can add you back."
 msgstr ""
+"Viss du meiner dette er feil, kan du kontakta gruppestyrarane slik at dei "
+"kan leggja deg til att."
 
 #: lib/web/templates/email/group_member_removal.html.eex:13
 #: lib/web/templates/email/group_member_removal.text.eex:1
 #, elixir-format
 msgid "So long, and thanks for the fish!"
-msgstr ""
+msgstr "Ha det så lenge, og takk for all fisken!"
 
 #: lib/web/email/group.ex:62
 #, elixir-format
 msgid "You have been removed from group %{group}"
-msgstr ""
+msgstr "Du er fjerna frå gruppa %{group}"
 
 #: lib/web/templates/email/group_member_removal.text.eex:3
 #, elixir-format
 msgid "You have been removed from group %{group}. You will not be able to access this group's private content anymore."
 msgstr ""
+"Du er fjerna frå gruppa %{group}. Du kan ikkje lenger lesa innhald som er "
+"privat for denne gruppa."
 
 #: lib/web/templates/email/group_invite.html.eex:38
 #, elixir-format
 msgid "<b>%{inviter}</b> just invited you to join their group %{link_start}<b>%{group}</b>%{link_end}"
 msgstr ""
+"<b>%{inviter}</b> har nett invitert deg til gruppa "
+"%{link_start}<b>%{group}</b>%{link_end}"
 
 #: lib/web/templates/email/group_member_removal.html.eex:38
 #, elixir-format
