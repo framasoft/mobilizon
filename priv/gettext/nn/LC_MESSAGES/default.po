@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-02 22:03+0000\n"
-"PO-Revision-Date: 2020-11-06 07:28+0000\n"
+"PO-Revision-Date: 2020-11-13 08:26+0000\n"
 "Last-Translator: Eivind Ødegård <eivind.odegard@sogn.no>\n"
 "Language-Team: Norwegian Nynorsk <https://weblate.framasoft.org/projects/"
 "mobilizon/backend/nn/>\n"
@@ -687,173 +687,232 @@ msgstr ""
 msgctxt "terms"
 msgid "Since Mobilizon is a distributed network, it is possible, depending on the visibility rules set to your content, that your content has been distributed to other Mobilizon instances. When you delete your content, we will request those other instances to also delete the content. Our responsibility on the content being deleted from those other instances ends here. If for some reason, some other instance does not delete the content, we cannot be held responsible."
 msgstr ""
+"Sidan Mobilizon er eit spreidd nettverk, er det mogleg at innhaldet ditt har "
+"vorte spreidd til andre Mobilizon-nettstader. Dette kjem an på kor synleg du "
+"har gjort innhaldet ditt. Når du slettar innhald, vil me be andre nettstader "
+"omå sletta det òg. Det er så langt ansvaret vårt rekk når det gjeld "
+"innhaldet ditt på andre nettstader. Me er ikkje ansvarlege viss andre "
+"nettstader av ein eller annan grunn ikkje slettar innhaldet ditt."
 
 #: lib/web/templates/api/terms.html.eex:90
 #, elixir-format
 msgctxt "terms"
 msgid "These Terms constitute the entire agreement between you and <b>%{instance_name}</b> regarding the use of the Service, superseding any prior agreements between you and <b>%{instance_name}</b> relating to your use of the Service."
 msgstr ""
+"Desse vilkåra utgjer heile avtala mellom deg og <b>%{instance_name}</b> for "
+"å bruka tenesta, og avløyser alle tidlegare avtaler mellom deg og "
+"<b>%{instance_name}</b> om det same."
 
 #: lib/web/templates/api/terms.html.eex:80
 #, elixir-format
 msgctxt "terms"
 msgid "This Service runs on a Mobilizon instance. This source code is licensed under an <a href=\"https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)\">AGPLv3 license</a> which means you are allowed to and even encouraged to take the source code, modify it and use it."
 msgstr ""
+"Denne tenesta bruker ein Mobilizon-nettstad. Kjeldekoden er gjeven ut under "
+"<a href=\"https://tldrlegal.com/license/gnu-affero-general-public-"
+"license-v3-(agpl-3.0)\">AGPLv3-lisensen</a>, som både gjev deg høve til, og "
+"faktisk oppmodar deg til, å sjå på, bruka og endra kjeldekoden."
 
 #: lib/web/templates/api/terms.html.eex:58
 #, elixir-format
 msgctxt "terms"
 msgid "Viruses, corrupted data or other harmful, disruptive or destructive files or code."
 msgstr ""
+"Virus, øydelagde data eller andre skadelege, forstyrrande og øydeleggjande "
+"filer eller kode."
 
 #: lib/web/templates/api/terms.html.eex:51
 #, elixir-format
 msgctxt "terms"
 msgid "You can remove the content that you posted by deleting it. Once you delete your content, it will not appear on the Service, but copies of your deleted content may remain in our system or backups for some period of time. Web server access logs might also be stored for some time in the system."
 msgstr ""
+"Du kan ta bort innhaldet du har laga ved å sletta det. Når du har sletta "
+"det, blir det borte frå denne tenesta, men det kan henda det finst kopiar av "
+"det i systemet eller tryggingskopiane våre i noko tid. Tilgangsloggar frå "
+"vevtenaren kan òg bli lagra i noko tid."
 
 #: lib/web/templates/api/terms.html.eex:96
 #, elixir-format
 msgctxt "terms"
 msgid "Questions or comments about the Service may be directed to us at %{contact}"
 msgstr ""
+"Du kan senda spørsmål eller kommentarar om tenesta til oss på %{contact}"
 
 #: lib/web/templates/api/terms.html.eex:79
 #, elixir-format
 msgctxt "terms"
 msgid "Source code"
-msgstr ""
+msgstr "Kjeldekode"
 
 #: lib/web/templates/api/terms.html.eex:93
 #, elixir-format
 msgctxt "terms"
 msgid "We love feedback. Please let us know what you think of the Service, these Terms and, in general, <b>%{instance_name}</b>."
 msgstr ""
+"Me likar tilbakemeldingar! Sei gjerne kva du synest om tenesta, vilkåra og "
+"kva som helst om <b>%{instance_name}</b>."
 
 #: lib/web/templates/api/terms.html.eex:74
 #, elixir-format
 msgctxt "terms"
 msgid "Instance administrators (and community moderators, given the relevant access) are responsible for monitoring and acting on flagged content and other user reports, and have the right and responsibility to remove or edit content that is not aligned to this Instance set of rules, or to suspend, block or ban (temporarily or permanently) any account, community, or instance for breaking these terms, or for other behaviours that they deem inappropriate, threatening, offensive, or harmful."
 msgstr ""
+"Dei som styrer nettstaden (og medlemmer som styrer deler av han) er "
+"ansvarlege for å fylgja med på og gjera noko med innhald som andre brukarar "
+"har rapportert eller merka. Dei har rett til og ansvar for å fjerna eller "
+"redigera innhald som ikkje fylgjer reglane på nettstaden. Dei kan sperra, "
+"stenga ute eller avslutta brukarkontoar, mellombels eller permanent. Det "
+"same gjeld andre nettstader og brukarsamfunn, og åtferd som dei meiner er "
+"upassande, trugande, krenkjande eller skadeleg."
 
 #: lib/web/templates/api/terms.html.eex:6
 #, elixir-format
 msgctxt "terms"
 msgid "<b>%{instance_name}</b> will not use or transmit or resell your personal data"
 msgstr ""
+"<b>%{instance_name}</b> korkje bruker, overfører eller sel "
+"personopplysingane dine"
 
 #: lib/web/templates/api/terms.html.eex:44
 #, elixir-format
 msgctxt "terms"
 msgid "If you discover or suspect any Service security breaches, please let us know as soon as possible. For security holes in the Mobilizon software itself, please contact <a href=\"https://framagit.org/framasoft/mobilizon/\">its contributors</a> directly."
 msgstr ""
+"Me er takksame om du seier frå til oss viss du oppdagar eller mistenkjer "
+"tryggleiksproblem med tenesta vår. Når det gjeld tryggleikshol i Mobilizon-"
+"programvara, bed me deg kontakta <a href=\"https://framagit.org/framasoft/"
+"mobilizon/\">Framasoft</a> direkte."
 
 #: lib/web/templates/api/terms.html.eex:77
 #, elixir-format
 msgctxt "terms"
 msgid "Instance administrators should ensure that every community hosted on the instance is properly moderated according to the defined rules."
 msgstr ""
+"Styrarane på nettstaden bør passa på at alle brukarsamfunna som er på "
+"nettstaden blir styrte etter retningslinene som er fastsette."
 
 #: lib/web/templates/api/terms.html.eex:98
 #, elixir-format
 msgctxt "terms"
 msgid "Originally adapted from the <a href=\"https://joindiaspora.com/terms\">Diaspora*</a> and <a href=\"https://github.com/appdotnet/terms-of-service\">App.net</a> privacy policies, also licensed under <a href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>."
 msgstr ""
+"Opphaveleg henta frå personvernretningslinene til <a href=\"https"
+"://joindiaspora.com/terms\">Diaspora*</a> og <a href=\"https://github.com/"
+"appdotnet/terms-of-service\">App.net</a>, som òg er under <a href=\"https"
+"://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>-lisensen."
 
 #: lib/web/templates/api/privacy.html.eex:119
 #, elixir-format
 msgctxt "terms"
 msgid "Originally adapted from the <a href=\"https://mastodon.social/terms\">Mastodon</a> and <a href=\"https://github.com/discourse/discourse\">Discourse</a> privacy policies, also licensed under <a href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>."
 msgstr ""
+"Opphaveleg henta frå personvernretningslinene til <a href=\"https://mastodon."
+"social/terms\">Mastodon</a> og <a href=\"https://github.com/discourse/"
+"discourse\">Discourse</a>, som òg er under <a href=\"https://creativecommons."
+"org/licenses/by-sa/4.0/\">CC BY-SA</a>-lisensen."
 
 #: lib/web/templates/api/terms.html.eex:3
 #, elixir-format
 msgctxt "terms"
 msgid "Short version"
-msgstr ""
+msgstr "Kortversjon"
 
 #: lib/web/templates/api/terms.html.eex:9
 #, elixir-format
 msgctxt "terms"
 msgid "The service is provided without warranties and these terms may change in the future"
 msgstr ""
+"Me driv denne tenesta utan å yta garantiar, og desse vilkåra kan bli endra i "
+"framtida"
 
 #: lib/web/templates/api/privacy.html.eex:118
 #, elixir-format
 msgctxt "terms"
 msgid "This document is licensed under <a href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>. It was last updated June 18, 2020."
 msgstr ""
+"Dette dokumentet er gjeve ut under <a href=\"https://creativecommons.org/"
+"licenses/by-sa/4.0/\">CC BY-SA</a>-lisensen. Det vart sist endra 18. juni "
+"2020."
 
 #: lib/web/templates/api/terms.html.eex:97
 #, elixir-format
 msgctxt "terms"
 msgid "This document is licensed under <a href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>. It was last updated June 22, 2020."
 msgstr ""
+"Dette dokumentet er gjeve ut under <a href=\"https://creativecommons.org/"
+"licenses/by-sa/4.0/\">CC BY-SA</a>-lisensen. Det vart sist endra 22. juni "
+"2020."
 
 #: lib/web/templates/api/terms.html.eex:8
 #, elixir-format
 msgctxt "terms"
 msgid "You must respect other people and <b>%{instance_name}</b>'s rules when using the service"
 msgstr ""
+"Du må respektera andre menneske og halda reglane på <b>%{instance_name}</b> "
+"når du bruker denne tenesta"
 
 #: lib/web/templates/api/terms.html.eex:7
 #, elixir-format
 msgctxt "terms"
 msgid "You must respect the law when using <b>%{instance_name}</b>"
-msgstr ""
+msgstr "Du må fylgja lovene når du bruker <b>%{instance_name}</b>"
 
 #: lib/web/templates/api/terms.html.eex:5
 #, elixir-format
 msgctxt "terms"
 msgid "Your content is yours"
-msgstr ""
+msgstr "Du eig det du lagar"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:51
 #, elixir-format
 msgid "Confirm my e-mail address"
-msgstr ""
+msgstr "Stadfest epostadressa mi"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:13
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:1
 #, elixir-format
 msgid "Confirm your e-mail"
-msgstr ""
+msgstr "Stadfest epostadressa di"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:3
 #, elixir-format
 msgid "Hi there! You just registered to join this event: « %{title} ». Please confirm the e-mail address you provided:"
 msgstr ""
+"Hei! Du har akkurat meldt deg på denne hendinga: « %{title} ». Stadfest "
+"epostadressa du skreiv inn:"
 
 #: lib/web/templates/email/email.html.eex:114
 #: lib/web/templates/email/email.text.eex:8
 #, elixir-format
 msgid "Need help? Is something not working as expected?"
-msgstr ""
+msgstr "Treng du hjelp, eller er det noko som ikkje verkar slik du venta?"
 
 #: lib/web/templates/email/registration_confirmation.html.eex:38
 #, elixir-format
 msgid "You created an account on <b>%{host}</b> with this email address. You are one click away from activating it."
 msgstr ""
+"Du har laga ein konto på <b>%{host}</b> med denne epostadressa. Du er berre "
+"eitt klikk unna å ta kontoen i bruk."
 
 #: lib/web/templates/email/report.html.eex:13
 #, elixir-format
 msgid "New report on <b>%{instance}</b>"
-msgstr ""
+msgstr "Ny rapport på <b>%{instance}</b>"
 
 #: lib/web/templates/email/email_changed_old.html.eex:38
 #, elixir-format
 msgid "The email address for your account on <b>%{host}</b> is being changed to:"
-msgstr ""
+msgstr "Epostadressa for brukarkontoen din på <b>%{host}</b> blir no endra til:"
 
 #: lib/web/templates/email/password_reset.html.eex:38
 #, elixir-format
 msgid "You requested a new password for your account on <b>%{instance}</b>."
-msgstr ""
+msgstr "Du har bede om eit nytt passord for kontoen din på <b>%{instance}</b>."
 
 #: lib/web/templates/email/email.text.eex:5
 #, elixir-format
 msgid "Please do not use it for real purposes."
-msgstr ""
+msgstr "Ikkje bruk han på ordentleg."
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:63
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.eex:133
@@ -864,236 +923,261 @@ msgstr ""
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgid_plural "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button."
 msgstr[0] ""
+"Viss du vil avbryta deltakinga di, kan du gå til hendingssida med lenka over "
+"og klikka på «deltek»-knappen."
 msgstr[1] ""
+"Viss du vil avbryta deltakinga di på ei eller fleire hendingar, kan du gå "
+"til hendingssidene via lenkene over og klikka på «deltek»-knappen."
 
 #: lib/web/templates/email/pending_participation_notification.html.eex:38
 #: lib/web/templates/email/pending_participation_notification.text.eex:4
 #, elixir-format
 msgid "You have one pending attendance request to process:"
 msgid_plural "You have %{number_participation_requests} attendance requests to process:"
-msgstr[0] ""
+msgstr[0] "Du har ein førespurnad om deltaking å handtera:"
 msgstr[1] ""
+"Du har %{number_participation_requests} førespurnader om deltaking å "
+"handtera:"
 
 #: lib/web/templates/email/email.text.eex:11
 #, elixir-format
 msgid "%{instance} is powered by Mobilizon."
-msgstr ""
+msgstr "%{instance} er ein Mobilizon-nettstad."
 
 #: lib/web/templates/email/email.html.eex:142
 #, elixir-format
 msgid "<b>%{instance}</b> is powered by Mobilizon."
-msgstr ""
+msgstr "<b>%{instance}</b> er ein Mobilizon-nettstad."
 
 #: lib/web/templates/email/pending_participation_notification.html.eex:13
 #: lib/web/templates/email/pending_participation_notification.text.eex:1
 #, elixir-format
 msgid "A request is pending!"
-msgstr ""
+msgstr "Ein førespurnad ventar på deg!"
 
 #: lib/web/templates/email/before_event_notification.html.eex:13
 #: lib/web/templates/email/before_event_notification.text.eex:1
 #, elixir-format
 msgid "An event is upcoming!"
-msgstr ""
+msgstr "Ei hending skjer snart!"
 
 #: lib/web/templates/email/email_changed_new.html.eex:13
 #: lib/web/templates/email/email_changed_new.text.eex:1
 #, elixir-format
 msgid "Confirm new email"
-msgstr ""
+msgstr "Stadfest ny epostadresse"
 
 #: lib/web/templates/email/event_updated.html.eex:84
 #, elixir-format
 msgid "End"
-msgstr ""
+msgstr "Slutt"
 
 #: lib/web/templates/email/event_updated.text.eex:21
 #, elixir-format
 msgid "End %{ends_on}"
-msgstr ""
+msgstr "Slutt %{ends_on}"
 
 #: lib/web/templates/email/event_updated.html.eex:13
 #: lib/web/templates/email/event_updated.text.eex:1
 #, elixir-format
 msgid "Event update!"
-msgstr ""
+msgstr "Oppdatert hending!"
 
 #: lib/web/templates/email/report.html.eex:88
 #, elixir-format
 msgid "Flagged comments"
-msgstr ""
+msgstr "Flagga kommentarar"
 
 #: lib/web/templates/email/event_participation_approved.html.eex:45
 #: lib/web/templates/email/event_participation_approved.text.eex:7
 #, elixir-format
 msgid "Good news: one of the event organizers just approved your request. Update your calendar, because you're on the guest list now!"
 msgstr ""
+"Godt nytt: Ein av tilskiparane har godkjent at du deltek. Skriv det i "
+"kalenderen din, for du er på gjestelista!"
 
 #: lib/web/templates/email/email_changed_new.html.eex:38
 #: lib/web/templates/email/email_changed_new.text.eex:3
 #, elixir-format
 msgid "Hi there! It seems like you wanted to change the email address linked to your account on <b>%{instance}</b>. If you still wish to do so, please click the button below to confirm the change. You will then be able to log in to %{instance} with this new email address."
 msgstr ""
+"Hei! Det ser ut til at du vil endra epostadressa du har brukt til "
+"brukarkontoen din på <b>%{instance}</b>. Viss du framleis ynskjer det, kan "
+"du klikka på knappen under for å stadfesta dndringa. Etterpå kan du logga "
+"inn på %{instance} med den nye adressa."
 
 #: lib/web/templates/email/email_changed_old.text.eex:3
 #, elixir-format
 msgid "Hi there! Just a quick note to confirm that the email address linked to your account on %{host} has been changed from this one to:"
 msgstr ""
+"Hei! Berre ei lita melding for å stadfesta at epostadressa til kontoen din "
+"på %{host} er endra frå denne til:"
 
 #: lib/web/templates/email/email_changed_old.html.eex:41
 #: lib/web/templates/email/email_changed_old.html.eex:65 lib/web/templates/email/email_changed_old.text.eex:5
 #, elixir-format
 msgid "If you did not trigger this change yourself, it is likely that someone has gained access to your %{host} account. Please log in and change your password immediately. If you cannot login, contact the admin on %{host}."
 msgstr ""
+"Viss du ikkje gjorde denne endringa sjølv, er det sannsynleg at nokon har "
+"tilgang til kontoen din på %{host}. Då bør du logga inn og endra passordet "
+"ditt med ein gong. Viss du ikkje kan logga inn, bør du kontakta styraren på "
+"%{host}."
 
 #: lib/web/templates/email/password_reset.text.eex:12
 #, elixir-format
 msgid "If you didn't trigger the change yourself, please ignore this message. Your password won't be changed until you click the link above."
 msgstr ""
+"Viss du ikkje gjorde dette sjølv, kan du oversjå denne meldinga. Passordet "
+"ditt blir ikkje endra med mindre du klikkar på lenka over."
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:70
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:4 lib/web/templates/email/registration_confirmation.html.eex:45
 #, elixir-format
 msgid "If you didn't trigger this email, you may safely ignore it."
-msgstr ""
+msgstr "Viss du ikkje gjorde dette sjølv, kan du trygt sjå bort frå dette."
 
 #: lib/web/templates/email/before_event_notification.html.eex:63
 #: lib/web/templates/email/before_event_notification.text.eex:6
 #, elixir-format
 msgid "If you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgstr ""
+"Viss du ikkje vil delta likevel, kan du gå til hendingssida med lenka over "
+"og klkka på «Deltek»-knappen."
 
 #: lib/web/templates/email/email.html.eex:143
 #: lib/web/templates/email/email.text.eex:11
 #, elixir-format
 msgid "Learn more about Mobilizon here!"
-msgstr ""
+msgstr "Lær meir om Mobilizon her!"
 
 #: lib/web/templates/email/event_updated.html.eex:94
 #, elixir-format
 msgid "Location"
-msgstr ""
+msgstr "Stad"
 
 #: lib/web/templates/email/event_updated.html.eex:104
 #, elixir-format
 msgid "Location address was removed"
-msgstr ""
+msgstr "Adressa vart fjerna"
 
 #: lib/web/templates/email/pending_participation_notification.html.eex:51
 #: lib/web/templates/email/pending_participation_notification.text.eex:6
 #, elixir-format
 msgid "Manage pending requests"
-msgstr ""
+msgstr "Sjå over ventande førespurnader"
 
 #: lib/web/templates/email/registration_confirmation.html.eex:13
 #: lib/web/templates/email/registration_confirmation.text.eex:1
 #, elixir-format
 msgid "Nearly there!"
-msgstr ""
+msgstr "Nesten klar!"
 
 #: lib/web/templates/email/email_changed_old.html.eex:13
 #: lib/web/templates/email/email_changed_old.text.eex:1
 #, elixir-format
 msgid "New email confirmation"
-msgstr ""
+msgstr "Ny stadfestingsepost"
 
 #: lib/web/templates/email/report.html.eex:106
 #, elixir-format
 msgid "Reasons for report"
-msgstr ""
+msgstr "Grungjeving for rapporten"
 
 #: lib/web/templates/email/report.html.eex:39
 #, elixir-format
 msgid "Someone on <b>%{instance}</b> reported the following content for you to analyze:"
 msgstr ""
+"Nokon på <b>%{instance}</b> rapporterte dette, slik at du kan sjå på det:"
 
 #: lib/web/templates/email/event_participation_rejected.html.eex:13
 #: lib/web/templates/email/event_participation_rejected.text.eex:1
 #, elixir-format
 msgid "Sorry! You're not going."
-msgstr ""
+msgstr "Orsak! Du er ikkje påmeld."
 
 #: lib/web/templates/email/event_updated.html.eex:74
 #, elixir-format
 msgid "Start"
-msgstr ""
+msgstr "Start"
 
 #: lib/web/templates/email/event_updated.text.eex:18
 #, elixir-format
 msgid "Start %{begins_on}"
-msgstr ""
+msgstr "Startar %{begins_on}"
 
 #: lib/web/templates/email/event_updated.text.eex:3
 #, elixir-format
 msgid "There have been changes for %{title} so we'd thought we'd let you know."
-msgstr ""
+msgstr "%{title} er endra, så me tenkte du ville vita det."
 
 #: lib/web/templates/email/event_updated.html.eex:55
 #: lib/web/templates/email/event_updated.text.eex:11
 #, elixir-format
 msgid "This event has been cancelled by its organizers. Sorry!"
-msgstr ""
+msgstr "Tilskiparane har avlyst denne hendinga. Me orsakar!"
 
 #: lib/web/templates/email/event_updated.html.eex:51
 #: lib/web/templates/email/event_updated.text.eex:7
 #, elixir-format
 msgid "This event has been confirmed"
-msgstr ""
+msgstr "Denne hendinga er stadfesta"
 
 #: lib/web/templates/email/event_updated.html.eex:53
 #: lib/web/templates/email/event_updated.text.eex:9
 #, elixir-format
 msgid "This event has yet to be confirmed: organizers will let you know if they do confirm it."
 msgstr ""
+"Denne hendinga er ikkje stadfesta enno. Tilskiparane seier frå viss dei "
+"stadfestar ho."
 
 #: lib/web/templates/email/event_participation_rejected.html.eex:45
 #: lib/web/templates/email/event_participation_rejected.text.eex:7
 #, elixir-format
 msgid "Unfortunately, the organizers rejected your request."
-msgstr ""
+msgstr "Tilskiparane har diverre avslege førespurnaden din."
 
 #: lib/web/templates/email/email_changed_new.html.eex:51
 #, elixir-format
 msgid "Verify your email address"
-msgstr ""
+msgstr "Stadfest epostadressa di"
 
 #: lib/web/templates/email/report.html.eex:126
 #, elixir-format
 msgid "View report"
-msgstr ""
+msgstr "Les rapporten"
 
 #: lib/web/templates/email/report.text.eex:24
 #, elixir-format
 msgid "View report:"
-msgstr ""
+msgstr "Les rapporten:"
 
 #: lib/web/templates/email/event_participation_approved.html.eex:58
 #: lib/web/templates/email/event_participation_confirmed.html.eex:58
 #, elixir-format
 msgid "Visit event page"
-msgstr ""
+msgstr "Sjå på hendingssida"
 
 #: lib/web/templates/email/event_updated.html.eex:121
 #, elixir-format
 msgid "Visit the updated event page"
-msgstr ""
+msgstr "Sjå på den oppdaterte hendingssida"
 
 #: lib/web/templates/email/event_updated.text.eex:23
 #, elixir-format
 msgid "Visit the updated event page: %{link}"
-msgstr ""
+msgstr "Sjå på den oppdaterte hendingssida: %{link}"
 
 #: lib/web/templates/email/notification_each_week.html.eex:13
 #: lib/web/templates/email/notification_each_week.text.eex:1
 #, elixir-format
 msgid "What's up this week?"
-msgstr ""
+msgstr "Kva skjer denne veka?"
 
 #: lib/web/templates/email/on_day_notification.html.eex:13
 #: lib/web/templates/email/on_day_notification.text.eex:1
 #, elixir-format
 msgid "What's up today?"
-msgstr ""
+msgstr "Kva skjer i dag?"
 
 #: lib/web/templates/email/event_participation_approved.html.eex:70
 #: lib/web/templates/email/event_participation_approved.text.eex:11 lib/web/templates/email/event_participation_confirmed.html.eex:70
@@ -1101,67 +1185,79 @@ msgstr ""
 #, elixir-format
 msgid "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button."
 msgstr ""
+"Viss du vil oppdatera eller avbryta deltakinga di, kan du gå til "
+"hendingssida med lenka over og klikka på Deltek-knappen."
 
 #: lib/web/templates/email/pending_participation_notification.html.eex:64
 #: lib/web/templates/email/pending_participation_notification.text.eex:8
 #, elixir-format
 msgid "You are receiving this email because you chose to get notifications for pending attendance requests to your events. You can disable or change your notification settings in your user account settings under « Notifications »."
 msgstr ""
+"Du får denne eposten fordi du har valt å få varslingar når det er ventande "
+"førespurnader til hendingane dine. Du kan skru av eller endra varsel i "
+"kontoinnstillingane dine, under «Varsel»."
 
 #: lib/web/templates/email/event_participation_rejected.text.eex:5
 #, elixir-format
 msgid "You issued a request to attend %{title}."
-msgstr ""
+msgstr "Du ba om å bli med på %{title}."
 
 #: lib/web/templates/email/event_participation_approved.text.eex:5
 #: lib/web/templates/email/event_participation_confirmed.text.eex:3
 #, elixir-format
 msgid "You recently requested to attend %{title}."
-msgstr ""
+msgstr "Du ba nyst om å vera med på %{title}."
 
 #: lib/web/templates/email/event_participation_approved.html.eex:13
 #: lib/web/templates/email/event_participation_confirmed.html.eex:13 lib/web/templates/email/event_participation_confirmed.text.eex:1
 #, elixir-format
 msgid "You're going!"
-msgstr ""
+msgstr "Du skal dit!"
 
 #: lib/web/templates/email/email_changed_new.html.eex:64
 #: lib/web/templates/email/email_changed_new.text.eex:5
 #, elixir-format
 msgid "If you didn't trigger the change yourself, please ignore this message."
 msgstr ""
+"Viss du ikkje endra dette sjølv, kan du trygt sjå bort frå denne meldinga."
 
 #: lib/web/templates/email/email.html.eex:89
 #, elixir-format
 msgid "<b>Please do not use it for real purposes.</b>"
-msgstr ""
+msgstr "<b>Ikkje bruk det på ordentleg.</b>"
 
 #: lib/web/templates/email/group_member_removal.html.eex:45
 #: lib/web/templates/email/group_member_removal.text.eex:5
 #, elixir-format
 msgid "If you feel this is an error, you may contact the group's administrators so that they can add you back."
 msgstr ""
+"Viss du meiner dette er feil, kan du kontakta gruppestyrarane slik at dei "
+"kan leggja deg til att."
 
 #: lib/web/templates/email/group_member_removal.html.eex:13
 #: lib/web/templates/email/group_member_removal.text.eex:1
 #, elixir-format
 msgid "So long, and thanks for the fish!"
-msgstr ""
+msgstr "Ha det så lenge, og takk for all fisken!"
 
 #: lib/web/email/group.ex:62
 #, elixir-format
 msgid "You have been removed from group %{group}"
-msgstr ""
+msgstr "Du er fjerna frå gruppa %{group}"
 
 #: lib/web/templates/email/group_member_removal.text.eex:3
 #, elixir-format
 msgid "You have been removed from group %{group}. You will not be able to access this group's private content anymore."
 msgstr ""
+"Du er fjerna frå gruppa %{group}. Du kan ikkje lenger lesa innhald som er "
+"privat for denne gruppa."
 
 #: lib/web/templates/email/group_invite.html.eex:38
 #, elixir-format
 msgid "<b>%{inviter}</b> just invited you to join their group %{link_start}<b>%{group}</b>%{link_end}"
 msgstr ""
+"<b>%{inviter}</b> har nett invitert deg til gruppa "
+"%{link_start}<b>%{group}</b>%{link_end}"
 
 #: lib/web/templates/email/group_member_removal.html.eex:38
 #, elixir-format
