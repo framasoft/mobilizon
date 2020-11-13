@@ -24,7 +24,6 @@
   "A user-friendly, emancipatory and ethical tool for gathering, organising, and mobilising.": "Un outil convivial, émancipateur et éthique pour se rassembler, s'organiser et se mobiliser.",
   "A validation email was sent to {email}": "Un email de validation a été envoyé à {email}",
   "API": "API",
-  "Abandon edition": "Abandonner la modification",
   "About": "À propos",
   "About Mobilizon": "À propos de Mobilizon",
   "About this event": "À propos de cet évènement",
@@ -879,5 +878,15 @@
   "{profile} (by default)": "{profile} (par défault)",
   "{title} ({count} todos)": "{title} ({count} todos)",
   "{username} was invited to {group}": "{username} a été invité à {group}",
-  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap"
+  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap",
+  "This setting will be used to display the website and send you emails in the correct language.": "Ce paramètre sera utilisé pour l'affichage du site et pour vous envoyer des courriels dans la bonne langue.",
+  "Abandon editing": "Abandonner la modification",
+  "Previous": "Précédent",
+  "Next": "Suivant",
+  "Your timezone {timezone} isn't supported.": "Votre fuseau horaire {timezone} n'est pas supporté.",
+  "Profiles and federation": "Profils et fédération",
+  "Mobilizon uses a system of profiles to compartiment your activities. You will be able to create as many profiles as you want.": "Mobilizon utilise un système de profils pour compartimenter vos activités. Vous pourrez créer autant de profils que vous voulez.",
+  "Mobilizon is a federated software, meaning you can interact - depending on your admin's federation settings - with content from other instances, such as joining groups or events that were created elsewhere.": "Mobilizon est un logiciel fédéré, ce qui signifie que vous pouvez interagir - en fonction des paramètres de fédération de votre administrateur·ice - avec du contenu d'autres instances, comme par exemple rejoindre des groupes ou des événements ayant été créés ailleurs.",
+  "This instance, <b>{instanceName} ({domain})</b>, hosts your profile, so remember its name.": "Cette instance, <b>{instanceName} ({domain})</b>, héberge votre profil, donc notez bien son nom.",
+  "If you are being asked for your federated indentity, it's composed of your username and your instance. For instance, the federated identity for your first profile is:": "Si l'on vous demande votre identité fédérée, elle est composée de votre nom d'utilisateur·ice et de votre instance. Par exemple, l'identité fédérée de votre premier profil est :"
 }

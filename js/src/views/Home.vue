@@ -168,19 +168,18 @@
         <b-message v-else type="is-danger">{{ $t("No events found") }}</b-message>
       </section>
     </div>
-    <settings-onboard v-else-if="config && loggedUser && loggedUser.settings == undefined" />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import { IParticipant, Participant, ParticipantRole } from "../types/participant.model";
 import { FETCH_EVENTS } from "../graphql/event";
 import EventListCard from "../components/Event/EventListCard.vue";
 import EventCard from "../components/Event/EventCard.vue";
 import { CURRENT_ACTOR_CLIENT, LOGGED_USER_PARTICIPATIONS } from "../graphql/actor";
 import { IPerson, Person } from "../types/actor";
-import { ICurrentUser } from "../types/current-user.model";
+import { ICurrentUser, IUser } from "../types/current-user.model";
 import { CURRENT_USER_CLIENT, USER_SETTINGS } from "../graphql/user";
 import RouteName from "../router/name";
 import { IEvent } from "../types/event.model";
@@ -385,6 +384,13 @@ export default class Home extends Vue {
 
   viewEvent(event: IEvent): void {
     this.$router.push({ name: RouteName.EVENT, params: { uuid: event.uuid } });
+  }
+
+  @Watch("loggedUser")
+  detectEmptyUserSettings(loggedUser: IUser): void {
+    if (loggedUser && loggedUser.id && loggedUser.settings === null) {
+      this.$router.push({ name: RouteName.WELCOME_SCREEN, params: { step: "1" } });
+    }
   }
 }
 </script>

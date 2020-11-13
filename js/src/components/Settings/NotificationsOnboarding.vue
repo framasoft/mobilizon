@@ -25,41 +25,30 @@
         </b-checkbox>
       </div>
       <p>{{ $t("To activate more notifications, head over to the notification settings.") }}</p>
-      <div class="has-text-centered">
-        <router-link
-          :to="{ name: RouteName.NOTIFICATIONS }"
-          class="button is-primary is-outlined"
-          >{{ $t("Manage my notifications") }}</router-link
-        >
-      </div>
     </section>
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component } from "vue-property-decorator";
 import { SnackbarProgrammatic as Snackbar } from "buefy";
-import { USER_SETTINGS, SET_USER_SETTINGS } from "../../graphql/user";
-import { ICurrentUser } from "../../types/current-user.model";
-import RouteName from "../../router/name";
+import { mixins } from "vue-class-component";
+import Onboarding from "../../mixins/onboarding";
 
-@Component({
-  apollo: {
-    loggedUser: USER_SETTINGS,
-  },
-})
-export default class NotificationsOnboarding extends Vue {
-  loggedUser!: ICurrentUser;
-
+@Component
+export default class NotificationsOnboarding extends mixins(Onboarding) {
   notificationOnDay = true;
 
-  RouteName = RouteName;
+  mounted(): void {
+    this.doUpdateSetting({
+      notificationOnDay: true,
+      notificationEachWeek: false,
+      notificationBeforeEvent: false,
+    });
+  }
 
   async updateSetting(variables: Record<string, unknown>): Promise<void> {
     try {
-      await this.$apollo.mutate<{ setUserSettings: string }>({
-        mutation: SET_USER_SETTINGS,
-        variables,
-      });
+      this.doUpdateSetting(variables);
     } catch (e) {
       Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
     }
