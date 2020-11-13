@@ -111,6 +111,20 @@ const router = new Router({
         import(/* webpackChunkName: "ProviderValidation" */ "@/views/User/ProviderValidation.vue"),
     },
     {
+      path: "/welcome/:step?",
+      name: RouteName.WELCOME_SCREEN,
+      component: () =>
+        import(/* webpackChunkName: "WelcomeScreen" */ "@/views/User/SettingsOnboard.vue"),
+      meta: { requiredAuth: true },
+      props: (route) => {
+        const step = Number.parseInt(route.params.step, 10);
+        if (Number.isNaN(step)) {
+          return 1;
+        }
+        return { step };
+      },
+    },
+    {
       path: "/404",
       name: RouteName.PAGE_NOT_FOUND,
       component: () => import(/* webpackChunkName: "search" */ "../views/PageNotFound.vue"),

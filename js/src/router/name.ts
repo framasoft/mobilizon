@@ -17,6 +17,7 @@ enum GlobalRouteName {
   GLOSSARY = "GLOSSARY",
   INTERACT = "INTERACT",
   RULES = "RULES",
+  WELCOME_SCREEN = "WELCOME_SCREEN",
 }
 
 // Hack to merge enums

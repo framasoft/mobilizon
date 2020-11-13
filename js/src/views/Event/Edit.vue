@@ -850,7 +850,7 @@ export default class EditEvent extends Vue {
     this.$buefy.dialog.confirm({
       title,
       message,
-      confirmText: this.$t("Abandon edition") as string,
+      confirmText: this.$t("Abandon editing") as string,
       cancelText: this.$t("Continue editing") as string,
       type: "is-warning",
       hasIcon: true,
