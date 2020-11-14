@@ -6,6 +6,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 1.0.1 - 2020-11-14
+
+**This release adds new migrations, be sure to run them before restarting Mobilizon**
+
+### Added
+
+- **Possibility to join open groups** (local and remote). Possibility in the group settings to pick if the group is open to new members or not.
+  Note: The group default setting is closed. You need to manually set your group as open in the group settings.
+- **Docker support** (@Pascoual). See [documentation](https://docs.joinmobilizon.org/administration/docker/)
+- Added steps to the onboarding process on first login, including a profile and federation presentation step
+- Added a regular job to refresh remote groups once in a while
+
+### Changed
+
+- Adapted the demo mode to reflect changes (Mobilizon is no longer in beta)
+- User language is now saved in localStorage (allowing to load the right locale right away, and in the future allowing to pick custom language without account https://framagit.org/framasoft/mobilizon/-/issues/375)
+
+### Fixed
+
+- Fixed group list, group members and instance followers/followings pagination
+- Fixed detecting file MIME type if the file hasn't got a filename
+- Changed a few sentences that didn't sounded english (@mkljczk)
+- Fixed instance custom privacy policy not being applied
+- Fixed demo warning always displaying on the text version of emails
+- Fixed language picker not loading languages and saving the preference
+- Fixed groups created without collections URLs and added a repair step to add them to local groups where these are missing
+- Handle accessing instance followers/followings unlogged
+- Made sure we only have a single instance relay actor
+- Fixed about page crashing when the instance was configured with languages that Mobilizon doesn't support itself
+- Don't allow remote comments under events if the event doesn't allow comments
+- Fixed notification settings not displaying as saved
+- Fixed pictures not being served by `Plug.Static`
+- Fixed emails missing `Date` and `Message-ID` headers
+- Fixed onboarding not saving language/timezone/notification settings
+
+### Translations
+
+- Basque
+- Catalan
+- Esperanto
+- Finnish
+- French
+- Galician
+- German
+- Hungarian
+- Italian
+- Kannada
+- Occitan
+- Norwegian Nynorsk
+- Polish
+- Spanish
+
 ## 1.0.0 - 2020-10-26
 
 ### Changed
