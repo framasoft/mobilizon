@@ -37,7 +37,7 @@ defmodule Mobilizon.Web.Email do
     if Application.fetch_env!(:mobilizon, :env) == :test do
       "REMOVED FOR TESTING"
     else
-      Timex.format!(Timex.local(), "{WDshort}, {D} {Mshort} {YYYY} {h24}:{m}:{s} {Z}")
+      Timex.format!(DateTime.utc_now(), "{WDshort}, {D} {Mshort} {YYYY} {h24}:{m}:{s} {Z}")
     end
   end
 end
