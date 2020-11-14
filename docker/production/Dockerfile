@@ -31,7 +31,7 @@ RUN mix phx.digest \
 # Finally setup the app
 FROM alpine
 
-RUN apk add --no-cache openssl ncurses-libs file
+RUN apk add --no-cache openssl ncurses-libs file postgresql-client
 
 USER nobody
 EXPOSE 4000
