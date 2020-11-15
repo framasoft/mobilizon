@@ -5,6 +5,12 @@ defmodule Mobilizon.Web.AuthControllerTest do
 
   @email "someone@somewhere.tld"
 
+  setup do
+    Application.put_env(:ueberauth, Ueberauth,
+      providers: [twitter: {Ueberauth.Strategy.Twitter, []}]
+    )
+  end
+
   test "login and registration",
        %{conn: conn} do
     conn =
