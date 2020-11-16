@@ -80,7 +80,7 @@ export default class Glossary extends Vue {
 </script>
 
 <style lang="scss" scoped>
-/deep/ dt {
+::v-deep dt {
   font-weight: bold;
 }
 </style>

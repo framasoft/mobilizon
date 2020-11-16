@@ -391,7 +391,7 @@ h3.title {
 }
 
 form {
-  /deep/ .field label.label {
+  ::v-deep .field label.label {
     margin-bottom: 0;
   }
 }

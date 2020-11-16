@@ -328,7 +328,7 @@ export default class AccountSettings extends Vue {
   margin-top: 2rem;
 }
 
-/deep/ .modal .modal-background {
+::v-deep .modal .modal-background {
   background-color: initial;
 }
 </style>

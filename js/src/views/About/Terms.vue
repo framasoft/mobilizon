@@ -51,7 +51,7 @@ export default class Terms extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-.content /deep/ li {
+.content ::v-deep li {
   margin-bottom: 1rem;
 }
 </style>

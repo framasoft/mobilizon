@@ -280,7 +280,7 @@ main section > .container {
 }
 
 .save__navbar {
-  /deep/ .navbar-menu,
+  ::v-deep .navbar-menu,
   .navbar-end {
     flex-wrap: wrap;
   }
@@ -303,7 +303,7 @@ h2.subtitle {
 }
 
 .event__status__field {
-  /deep/ .field.has-addons {
+  ::v-deep .field.has-addons {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;

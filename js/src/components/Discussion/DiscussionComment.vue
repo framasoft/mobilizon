@@ -171,33 +171,33 @@ article.comment {
       div.description-content {
         padding-bottom: 0.3rem;
 
-        /deep/ h1 {
+        ::v-deep h1 {
           font-size: 2rem;
         }
 
-        /deep/ h2 {
+        ::v-deep h2 {
           font-size: 1.5rem;
         }
 
-        /deep/ h3 {
+        ::v-deep h3 {
           font-size: 1.25rem;
         }
 
-        /deep/ ul {
+        ::v-deep ul {
           list-style-type: disc;
         }
 
-        /deep/ li {
+        ::v-deep li {
           margin: 10px auto 10px 2rem;
         }
 
-        /deep/ blockquote {
+        ::v-deep blockquote {
           border-left: 0.2em solid #333;
           display: block;
           padding-left: 1em;
         }
 
-        /deep/ p {
+        ::v-deep p {
           margin: 10px auto;
 
           a {

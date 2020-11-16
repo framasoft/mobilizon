@@ -78,7 +78,7 @@ export default class OrganizerPicker extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-/deep/ .list-item {
+::v-deep .list-item {
   box-sizing: content-box;
 
   label.b-radio {

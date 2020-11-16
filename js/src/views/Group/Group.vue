@@ -722,7 +722,7 @@ div.container {
               height: 5rem;
               width: 5rem;
 
-              /deep/ i.mdi.mdi-account-group.mdi-48px:before {
+              ::v-deep i.mdi.mdi-account-group.mdi-48px:before {
                 font-size: 100px;
               }
             }
