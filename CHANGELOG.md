@@ -6,6 +6,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 1.0.2 - 2020-11-15
+
+**This release adds new migrations, be sure to run them before restarting Mobilizon**
+
+### Changed
+
+- PostgreSQL extensions creations are now automatically handled in the Docker's entrypoint
+
+### Fixed
+
+- Fixed an issue with Oban migrations and some PostgreSQL versions
+- Fixed an issue that causes email not being able to be sent when the `TZ` environment variable is not available
+- Fixed 3rd-party login Ueberauth providers not being usable if configured at runtime
+
+### Translations
+
+- Catalan
+- Hungarian
+- Italian
+- Occitan
+
 ## 1.0.1 - 2020-11-14
 
 **This release adds new migrations, be sure to run them before restarting Mobilizon**
