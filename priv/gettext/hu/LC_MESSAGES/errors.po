@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-06 00:33+0000\n"
-"PO-Revision-Date: 2020-11-06 07:28+0000\n"
+"PO-Revision-Date: 2020-11-16 14:47+0000\n"
 "Last-Translator: Balázs Úr <balazs@urbalazs.hu>\n"
 "Language-Team: Hungarian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/hu/>\n"
@@ -127,7 +127,7 @@ msgstr "A jelenlegi profil nem tagja ennek a csoportnak"
 #: lib/graphql/resolvers/group.ex:207
 #, elixir-format
 msgid "Current profile is not an administrator of the selected group"
-msgstr "A jelenlegi profil nem rendszergazdája a kijelölt csoportnak"
+msgstr "A jelenlegi profil nem adminisztrátora a kijelölt csoportnak"
 
 #: lib/graphql/resolvers/user.ex:512
 #, elixir-format
@@ -254,7 +254,7 @@ msgstr "Már tagja ennek a csoportnak"
 #: lib/graphql/resolvers/group.ex:287
 #, elixir-format
 msgid "You can't leave this group because you are the only administrator"
-msgstr "Nem hagyhatja el ezt a csoportot, mert Ön az egyedüli rendszergazda"
+msgstr "Nem hagyhatja el ezt a csoportot, mert Ön az egyedüli adminisztrátor"
 
 #: lib/graphql/resolvers/group.ex:251
 #, elixir-format
@@ -304,7 +304,7 @@ msgstr "Bejelentkezve kell lennie egy csoport frissítéséhez"
 #: lib/graphql/resolvers/user.ex:58
 #, elixir-format
 msgid "You need to have admin access to list users"
-msgstr "Rendszergazdai hozzáférésre van szüksége a felhasználók felsorolásához"
+msgstr "Adminisztrátori hozzáférésre van szüksége a felhasználók felsorolásához"
 
 #: lib/graphql/resolvers/user.ex:108
 #, elixir-format
@@ -339,13 +339,13 @@ msgstr "Nem található távoli profil ezzel az azonosítóval"
 #: lib/graphql/resolvers/actor.ex:69
 #, elixir-format
 msgid "Only moderators and administrators can suspend a profile"
-msgstr "Csak moderátorok és rendszergazdák függeszthetnek fel egy profilt"
+msgstr "Csak moderátorok és adminisztrátorok függeszthetnek fel egy profilt"
 
 #: lib/graphql/resolvers/actor.ex:99
 #, elixir-format
 msgid "Only moderators and administrators can unsuspend a profile"
 msgstr ""
-"Csak moderátorok és rendszergazdák szüntethetik meg egy profil "
+"Csak moderátorok és adminisztrátorok szüntethetik meg egy profil "
 "felfüggesztését"
 
 #: lib/graphql/resolvers/actor.ex:24
@@ -371,7 +371,7 @@ msgstr "A névtelen részvétel nincs engedélyezve"
 #: lib/graphql/resolvers/person.ex:188
 #, elixir-format
 msgid "Cannot remove the last administrator of a group"
-msgstr "Nem lehet eltávolítani egy csoport utolsó rendszergazdáját"
+msgstr "Nem lehet eltávolítani egy csoport utolsó adminisztrátorát"
 
 #: lib/graphql/resolvers/person.ex:185
 #, elixir-format
@@ -580,7 +580,7 @@ msgstr "Nem tagja ennek a csoportnak"
 #: lib/graphql/resolvers/member.ex:154
 #, elixir-format
 msgid "You are not a moderator or admin for this group"
-msgstr "Nem moderátor vagy rendszergazda ennél a csoportnál"
+msgstr "Nem moderátor vagy adminisztrátor ennél a csoportnál"
 
 #: lib/graphql/resolvers/comment.ex:55
 #, elixir-format
@@ -619,7 +619,7 @@ msgstr ""
 msgid "You can't set yourself to a lower member role for this group because you are the only administrator"
 msgstr ""
 "Nem állíthatja magát alacsonyabb tagszerepre ennél a csoportnál, mert Ön az "
-"egyedüli rendszergazda"
+"egyedüli adminisztrátor"
 
 #: lib/graphql/resolvers/comment.ex:105
 #, elixir-format
@@ -673,22 +673,22 @@ msgstr ""
 #, elixir-format
 msgid "You need to be logged-in and an administrator to access admin settings"
 msgstr ""
-"Bejelentkezve kell lennie és rendszergazdának kell lennie a rendszergazdai "
-"beállításokhoz való hozzáféréshez"
+"Bejelentkezve kell lennie és adminisztrátornak kell lennie az "
+"adminisztrátori beállításokhoz való hozzáféréshez"
 
 #: lib/graphql/resolvers/admin.ex:205
 #, elixir-format
 msgid "You need to be logged-in and an administrator to access dashboard statistics"
 msgstr ""
-"Bejelentkezve kell lennie és rendszergazdának kell lennie a vezérlőpulti "
+"Bejelentkezve kell lennie és adminisztrátornak kell lennie a vezérlőpulti "
 "statisztikákhoz való hozzáféréshez"
 
 #: lib/graphql/resolvers/admin.ex:244
 #, elixir-format
 msgid "You need to be logged-in and an administrator to save admin settings"
 msgstr ""
-"Bejelentkezve kell lennie és rendszergazdának kell lennie a rendszergazdai "
-"beállítások mentéséhez"
+"Bejelentkezve kell lennie és adminisztrátornak kell lennie az "
+"adminisztrátori beállítások mentéséhez"
 
 #: lib/graphql/resolvers/discussion.ex:66
 #, elixir-format
@@ -869,7 +869,7 @@ msgstr "A fájl nem rendelkezik engedélyezett MIME-típussal."
 #: lib/graphql/resolvers/group.ex:172
 #, elixir-format
 msgid "Profile is not administrator for the group"
-msgstr "A profil nem rendszergazda ennél a csoportnál"
+msgstr "A profil nem adminisztrátor ennél a csoportnál"
 
 #: lib/graphql/resolvers/event.ex:241
 #, elixir-format
