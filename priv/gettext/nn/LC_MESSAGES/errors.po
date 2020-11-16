@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-14 11:02+0000\n"
-"PO-Revision-Date: 2020-11-14 11:53+0000\n"
+"PO-Revision-Date: 2020-11-16 14:47+0000\n"
 "Last-Translator: Eivind Ødegård <eivind.odegard@sogn.no>\n"
 "Language-Team: Norwegian Nynorsk <https://weblate.framasoft.org/projects/"
 "mobilizon/backend-errors/nn/>\n"
@@ -75,102 +75,102 @@ msgstr[1] "skal ha %{count} einingar"
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "må vera minst %{count} teikn"
+msgstr[1] "må vera minst %{count} teikn"
 
 msgid "should have at least %{count} item(s)"
 msgid_plural "should have at least %{count} item(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "må ha minst %{count} oppføring"
+msgstr[1] "må ha minst %{count} oppføringar"
 
 msgid "should be at most %{count} character(s)"
 msgid_plural "should be at most %{count} character(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "kan ikkje ha meir enn %{count} teikn"
+msgstr[1] "kan ikkje ha meir enn %{count} teikn"
 
 msgid "should have at most %{count} item(s)"
 msgid_plural "should have at most %{count} item(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "kan ikkje ha meir enn %{count} oppføring"
+msgstr[1] "kan ikkje ha meir enn %{count} oppføringar"
 
 ## From Ecto.Changeset.validate_number/3
 msgid "must be less than %{number}"
-msgstr ""
+msgstr "må vera mindre enn %{number}"
 
 msgid "must be greater than %{number}"
-msgstr ""
+msgstr "må vera større enn %{number}"
 
 msgid "must be less than or equal to %{number}"
-msgstr ""
+msgstr "må vera mindre enn eller lik %{number}"
 
 msgid "must be greater than or equal to %{number}"
-msgstr ""
+msgstr "må vera større enn eller lik %{number}"
 
 msgid "must be equal to %{number}"
-msgstr ""
+msgstr "må vera lik %{number}"
 
 #: lib/graphql/resolvers/user.ex:103
 #, elixir-format
 msgid "Cannot refresh the token"
-msgstr ""
+msgstr "Kan ikkje fornya teiknet"
 
 #: lib/graphql/resolvers/group.ex:139
 #, elixir-format
 msgid "Creator profile is not owned by the current user"
-msgstr ""
+msgstr "Denne brukaren eig ikkje opphavsprofilen"
 
 #: lib/graphql/resolvers/group.ex:203
 #, elixir-format
 msgid "Current profile is not a member of this group"
-msgstr ""
+msgstr "Denne brukaren er ikkje medlem av gruppa"
 
 #: lib/graphql/resolvers/group.ex:207
 #, elixir-format
 msgid "Current profile is not an administrator of the selected group"
-msgstr ""
+msgstr "Denne brukaren er ikkje styrar av gruppa"
 
 #: lib/graphql/resolvers/user.ex:512
 #, elixir-format
 msgid "Error while saving user settings"
-msgstr ""
+msgstr "Greidde ikkje lagra brukarinnstillingane"
 
 #: lib/graphql/error.ex:90 lib/graphql/resolvers/group.ex:200
 #: lib/graphql/resolvers/group.ex:248 lib/graphql/resolvers/group.ex:283 lib/graphql/resolvers/member.ex:83
 #, elixir-format
 msgid "Group not found"
-msgstr ""
+msgstr "Fann ikkje gruppa"
 
 #: lib/graphql/resolvers/group.ex:69
 #, elixir-format
 msgid "Group with ID %{id} not found"
-msgstr ""
+msgstr "Fann ikkje gruppa med ID %{id}"
 
 #: lib/graphql/resolvers/user.ex:83
 #, elixir-format
 msgid "Impossible to authenticate, either your email or password are invalid."
-msgstr ""
+msgstr "Greier ikkje å logga inn. Epostadressa eller passordet ditt er feil."
 
 #: lib/graphql/resolvers/group.ex:280
 #, elixir-format
 msgid "Member not found"
-msgstr ""
+msgstr "Fann ikkje medlemen"
 
 #: lib/graphql/resolvers/actor.ex:58 lib/graphql/resolvers/actor.ex:88
 #: lib/graphql/resolvers/user.ex:417
 #, elixir-format
 msgid "No profile found for the moderator user"
-msgstr ""
+msgstr "Fann ingen profil for moderator-brukaren"
 
 #: lib/graphql/resolvers/user.ex:195
 #, elixir-format
 msgid "No user to validate with this email was found"
-msgstr ""
+msgstr "Fann ingen brukar med denne eposten å godkjenna"
 
 #: lib/graphql/resolvers/person.ex:232 lib/graphql/resolvers/user.ex:76
 #: lib/graphql/resolvers/user.ex:219
 #, elixir-format
 msgid "No user with this email was found"
-msgstr ""
+msgstr "Fann ingen brukar med denne eposten"
 
 #: lib/graphql/resolvers/comment.ex:50 lib/graphql/resolvers/comment.ex:112
 #: lib/graphql/resolvers/event.ex:286 lib/graphql/resolvers/feed_token.ex:28 lib/graphql/resolvers/group.ex:245
@@ -181,103 +181,103 @@ msgstr ""
 #: lib/graphql/resolvers/todos.ex:57
 #, elixir-format
 msgid "Profile is not owned by authenticated user"
-msgstr ""
+msgstr "Ingen godkjent brukar eig denne profilen"
 
 #: lib/graphql/resolvers/user.ex:125
 #, elixir-format
 msgid "Registrations are not open"
-msgstr ""
+msgstr "Det er ikkje opna for å registrera seg"
 
 #: lib/graphql/resolvers/user.ex:330
 #, elixir-format
 msgid "The current password is invalid"
-msgstr ""
+msgstr "Dette passordet er ugyldig"
 
 #: lib/graphql/resolvers/user.ex:382
 #, elixir-format
 msgid "The new email doesn't seem to be valid"
-msgstr ""
+msgstr "Den nye epostadressa ser ut til å vera feil"
 
 #: lib/graphql/resolvers/user.ex:379
 #, elixir-format
 msgid "The new email must be different"
-msgstr ""
+msgstr "Den nye epostadressa må vera annleis"
 
 #: lib/graphql/resolvers/user.ex:333
 #, elixir-format
 msgid "The new password must be different"
-msgstr ""
+msgstr "Det nye passordet må vera annleis"
 
 #: lib/graphql/resolvers/user.ex:376 lib/graphql/resolvers/user.ex:439
 #: lib/graphql/resolvers/user.ex:442
 #, elixir-format
 msgid "The password provided is invalid"
-msgstr ""
+msgstr "Dette passordet er ugyldig"
 
 #: lib/graphql/resolvers/user.ex:337
 #, elixir-format
 msgid "The password you have chosen is too short. Please make sure your password contains at least 6 characters."
-msgstr ""
+msgstr "Dette passordet er for kort. Passord må ha minst 6 teikn."
 
 #: lib/graphql/resolvers/user.ex:215
 #, elixir-format
 msgid "This user can't reset their password"
-msgstr ""
+msgstr "Denne brukaren kan ikkje nullstilla passordet sitt"
 
 #: lib/graphql/resolvers/user.ex:79
 #, elixir-format
 msgid "This user has been disabled"
-msgstr ""
+msgstr "Denne brukaren er avskrudd"
 
 #: lib/graphql/resolvers/user.ex:179
 #, elixir-format
 msgid "Unable to validate user"
-msgstr ""
+msgstr "Greier ikkje godkjenna brukaren"
 
 #: lib/graphql/resolvers/user.ex:420
 #, elixir-format
 msgid "User already disabled"
-msgstr ""
+msgstr "Brukaren er allereie inaktiv"
 
 #: lib/graphql/resolvers/user.ex:487
 #, elixir-format
 msgid "User requested is not logged-in"
-msgstr ""
+msgstr "Den førespurte brukaren er ikkje innlogga"
 
 #: lib/graphql/resolvers/group.ex:254
 #, elixir-format
 msgid "You are already a member of this group"
-msgstr ""
+msgstr "Du er allereie medlem av denne gruppa"
 
 #: lib/graphql/resolvers/group.ex:287
 #, elixir-format
 msgid "You can't leave this group because you are the only administrator"
-msgstr ""
+msgstr "Du kan ikkje forlata denne gruppa, fordi du er den einaste styraren"
 
 #: lib/graphql/resolvers/group.ex:251
 #, elixir-format
 msgid "You cannot join this group"
-msgstr ""
+msgstr "Du kan ikkje bli med i denne gruppa"
 
 #: lib/graphql/resolvers/group.ex:97
 #, elixir-format
 msgid "You may not list groups unless moderator."
-msgstr ""
+msgstr "Du kan ikkje lista opp grupper med mindre du er moderator."
 
 #: lib/graphql/resolvers/user.ex:387
 #, elixir-format
 msgid "You need to be logged-in to change your email"
-msgstr ""
+msgstr "Du må vera innlogga for å endra epostadressa di"
 
 #: lib/graphql/resolvers/user.ex:345
 #, elixir-format
 msgid "You need to be logged-in to change your password"
-msgstr ""
+msgstr "Du må vera innlogga for å endra passordet ditt"
 
 #: lib/graphql/resolvers/group.ex:212
 #, elixir-format
 msgid "You need to be logged-in to delete a group"
-msgstr ""
+msgstr "Du må vera innlogga for å sletta ei gruppe"
 
 #: lib/graphql/resolvers/user.ex:447
 #, elixir-format
