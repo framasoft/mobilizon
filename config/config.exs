@@ -170,6 +170,7 @@ config :tesla, adapter: Tesla.Adapter.Hackney
 
 config :phoenix, :format_encoders, json: Jason, "activity-json": Jason
 config :phoenix, :json_library, Jason
+config :phoenix, :filter_parameters, ["password", "token"]
 
 config :ex_cldr,
   default_locale: "en",
