@@ -9,8 +9,15 @@ defmodule Mobilizon.Web.AuthController do
 
   plug(Ueberauth)
 
-  def request(conn, %{"provider" => provider} = _params) do
-    redirect(conn, to: "/login?code=Login Provider not found&provider=#{provider}")
+  def request(conn, %{"provider" => provider_name} = _params) do
+    case provider_config(provider_name) do
+      {:ok, provider_config} ->
+        conn
+        |> Ueberauth.run_request(provider_name, provider_config)
+
+      {:error, error} ->
+        redirect_to_error(conn, error, provider_name)
+    end
   end
 
   def callback(
@@ -19,7 +26,7 @@ defmodule Mobilizon.Web.AuthController do
       ) do
     Logger.warn("Unable to login user with #{provider} #{inspect(fails)}")
 
-    redirect(conn, to: "/login?code=Error with Login Provider&provider=#{provider}")
+    redirect_to_error(conn, :unknown_error, provider)
   end
 
   def callback(
@@ -59,7 +66,19 @@ defmodule Mobilizon.Web.AuthController do
     else
       err ->
         Logger.warn("Unable to login user \"#{email}\" #{inspect(err)}")
-        redirect(conn, to: "/login?code=Error with Login Provider&provider=#{strategy}")
+        redirect_to_error(conn, :unknown_error, strategy)
+    end
+  end
+
+  def callback(conn, %{"provider" => provider_name} = params) do
+    case provider_config(provider_name) do
+      {:ok, provider_config} ->
+        conn
+        |> Ueberauth.run_callback(provider_name, provider_config)
+        |> callback(params)
+
+      {:error, error} ->
+        redirect_to_error(conn, error, provider_name)
     end
   end
 
@@ -79,4 +98,30 @@ defmodule Mobilizon.Web.AuthController do
        do: email
 
   defp email_from_ueberauth(_), do: nil
+
+  defp provider_config(provider_name) do
+    with ueberauth when is_list(ueberauth) <- Application.get_env(:ueberauth, Ueberauth),
+         providers when is_list(providers) <- Keyword.get(ueberauth, :providers),
+         providers_keys <- providers |> Keyword.keys() |> Enum.map(&Atom.to_string/1),
+         {:supported, true} <- {:supported, provider_name in providers_keys},
+         provider_name <- String.to_existing_atom(provider_name),
+         provider_config <- Keyword.get(providers, provider_name) do
+      {:ok, provider_config}
+    else
+      {:supported, false} ->
+        {:error, :not_supported}
+
+      _ ->
+        {:error, :unknown_error}
+    end
+  end
+
+  @spec redirect_to_error(Plug.Conn.t(), atom(), String.t()) :: Plug.Conn.t()
+  defp redirect_to_error(conn, :not_supported, provider_name) do
+    redirect(conn, to: "/login?code=Login Provider not found&provider=#{provider_name}")
+  end
+
+  defp redirect_to_error(conn, :unknown_error, provider_name) do
+    redirect(conn, to: "/login?code=Error with Login Provider&provider=#{provider_name}")
+  end
 end
