@@ -74,7 +74,7 @@
                   <%= gettext "Start" %>
                 </td>
                 <td bgcolor="#ffffff" align="left">
-                  <b><%= datetime_to_string(@event.begins_on, @locale) %></b>
+                  <b><%= @event.begins_on |> datetime_tz_convert(@timezone) |> datetime_to_string(@locale) %></b>
                 </td>
               </tr>
             <% end %>
@@ -84,7 +84,7 @@
                   <%= gettext "End" %>
                 </td>
                 <td bgcolor="#ffffff" align="left">
-                  <b><%= datetime_to_string(@event.ends_on, @locale) %></b>
+                  <b><%= @event.ends_on |> datetime_tz_convert(@timezone) |> datetime_to_string(@locale) %></b>
                 </td>
               </tr>
             <% end %>

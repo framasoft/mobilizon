@@ -16,4 +16,15 @@ defmodule Mobilizon.Web.EmailView do
       string
     end
   end
+
+  @spec datetime_tz_convert(DateTime.t(), String.t()) :: DateTime.t()
+  def datetime_tz_convert(%DateTime{} = datetime, timezone) do
+    case DateTime.shift_zone(datetime, timezone) do
+      {:ok, datetime_with_user_tz} ->
+        datetime_with_user_tz
+
+      _ ->
+        datetime
+    end
+  end
 end
