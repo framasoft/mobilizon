@@ -238,7 +238,7 @@ h2.title {
 }
 
 p.create-account {
-  /deep/ button {
+  ::v-deep button {
     margin: 1rem auto 2rem;
   }
 }

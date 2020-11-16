@@ -54,11 +54,11 @@ export default class Privacy extends Vue {
 main > .container {
   background: $white;
 
-  /deep/ dt {
+  ::v-deep dt {
     font-weight: bold;
   }
 }
-.content /deep/ li {
+.content ::v-deep li {
   margin-bottom: 1rem;
 }
 </style>

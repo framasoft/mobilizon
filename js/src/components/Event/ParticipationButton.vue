@@ -218,7 +218,7 @@ export default class ParticipationButton extends Vue {
 }
 
 .anonymousParticipationModal {
-  /deep/ .animation-content {
+  ::v-deep .animation-content {
     z-index: 1;
   }
 }

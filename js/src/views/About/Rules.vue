@@ -30,7 +30,7 @@ export default class Rules extends Vue {
 main > .container {
   background: $white;
 }
-.content /deep/ li {
+.content ::v-deep li {
   margin-bottom: 1rem;
 }
 </style>

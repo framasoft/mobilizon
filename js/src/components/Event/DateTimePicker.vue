@@ -128,13 +128,13 @@ export default class DateTimePicker extends Vue {
 
 <style lang="scss" scoped>
 .timepicker {
-  /deep/ .dropdown-content {
+  ::v-deep .dropdown-content {
     padding: 0;
   }
 }
 
 .calendar-picker {
-  /deep/ .dropdown-menu {
+  ::v-deep .dropdown-menu {
     z-index: 200;
   }
 }

@@ -64,7 +64,7 @@ div.group-section-title {
     background: $purple-2;
   }
 
-  /deep/ & > a {
+  ::v-deep & > a {
     align-self: center;
     margin-right: 5px;
     color: $orange-3;
@@ -73,7 +73,7 @@ div.group-section-title {
   h2 {
     flex: 1;
 
-    /deep/ span {
+    ::v-deep span {
       display: inline;
       padding: 3px 8px;
       font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial, serif;
@@ -82,7 +82,7 @@ div.group-section-title {
       flex: 1;
     }
 
-    /deep/ span.icon {
+    ::v-deep span.icon {
       flex: 0;
       height: 100%;
     }

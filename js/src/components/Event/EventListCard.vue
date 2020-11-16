@@ -343,11 +343,11 @@ article.box {
       .button.is-text {
         text-decoration: none;
 
-        /deep/ span:first-child i.mdi::before {
+        ::v-deep span:first-child i.mdi::before {
           font-size: 24px !important;
         }
 
-        /deep/ span:last-child {
+        ::v-deep span:last-child {
           padding-left: 4px;
         }
 
