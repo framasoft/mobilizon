@@ -132,7 +132,7 @@ defmodule Mobilizon.Mixfile do
       {:ueberauth_gitlab_strategy,
        git: "https://github.com/tcitworld/ueberauth_gitlab.git", branch: "upgrade-deps"},
       {:ecto_shortuuid, "~> 0.1"},
-      {:tesla, "~> 1.3.0"},
+      {:tesla, "~> 1.4.0"},
       {:sitemapper, "~> 0.5.0"},
       {:xml_builder, "~> 2.1.1", override: true},
       {:remote_ip, "~> 0.2.0"},
