@@ -30,7 +30,7 @@ defmodule Mobilizon.Events do
   alias Mobilizon.Service.Workers
   alias Mobilizon.Share
   alias Mobilizon.Storage.{Page, Repo}
-  alias Mobilizon.Users.User
+  alias Mobilizon.Users.{Setting, User}
 
   alias Mobilizon.Web.Email
 
@@ -1587,16 +1587,22 @@ defmodule Mobilizon.Events do
     )
   end
 
+  @doc """
+  List emails for local users (including anonymous ones) participating to an event
+
+  Returns {participation, actor, user, user_settings}
+  """
   @spec list_local_emails_user_participants_for_event_query(String.t()) :: Ecto.Query.t()
   def list_local_emails_user_participants_for_event_query(event_id) do
     Participant
     |> join(:inner, [p], a in Actor, on: p.actor_id == a.id and is_nil(a.domain))
     |> join(:left, [_p, a], u in User, on: a.user_id == u.id)
+    |> join(:left, [_p, _a, u], s in Setting, on: s.user_id == u.id)
     |> where(
       [p],
       p.event_id == ^event_id and p.role not in [^:not_approved, ^:not_confirmed, ^:rejected]
     )
-    |> select([p, a, u], {p, a, u})
+    |> select([p, a, u, s], {p, a, u, s})
   end
 
   @spec list_participations_for_user_query(integer()) :: Ecto.Query.t()

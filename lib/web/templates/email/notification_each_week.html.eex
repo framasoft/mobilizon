@@ -46,7 +46,7 @@
               <%= for participation <- @participations do %>
                 <li>
                   <strong>
-                    <%= participation.event.begins_on |> DateTime.shift_zone!(@timezone) |> datetime_to_string(@locale) %>
+                    <%= participation.event.begins_on |> datetime_tz_convert(@timezone) |> datetime_to_string(@locale) %>
                   </strong>
                   <a href="<%= page_url(Mobilizon.Web.Endpoint, :event, participation.event.uuid) %>" target="_blank">
                     <%= participation.event.title %>
@@ -56,7 +56,7 @@
             </ul>
           <% else %>
             <strong>
-              <%= @participation.event.begins_on |> DateTime.shift_zone!(@timezone) |> datetime_to_string(@locale) %>
+              <%= @participation.event.begins_on |> datetime_tz_convert(@timezone) |> datetime_to_string(@locale) %>
             </strong>
             <a href="<%= page_url(Mobilizon.Web.Endpoint, :event, @participation.event.uuid) %>" target="_blank">
               <%= @participation.event.title %>
