@@ -5,6 +5,10 @@ defmodule Mobilizon.Cldr do
 
   use Cldr,
     locales: Application.get_env(:mobilizon, :cldr)[:locales],
-    gettext: Mobilizon.Web.Gettext,
+    gettext:
+      if(Application.fetch_env!(:mobilizon, :env) == :prod,
+        do: Mobilizon.Web.Gettext,
+        else: nil
+      ),
     providers: [Cldr.Number, Cldr.Calendar, Cldr.DateTime, Cldr.Language]
 end

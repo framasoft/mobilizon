@@ -7,11 +7,15 @@ defmodule Mobilizon.Service.Metadata.Instance do
   alias Phoenix.HTML.Tag
 
   alias Mobilizon.Config
-  alias Mobilizon.Service.Formatter.HTML, as: HTMLFormatter
+  alias Mobilizon.Service.Metadata.Utils
   alias Mobilizon.Web.Endpoint
 
+  @doc """
+  Build the list of tags for the instance
+  """
+  @spec build_tags() :: list(Phoenix.HTML.safe())
   def build_tags do
-    description = process_description(Config.instance_description())
+    description = Utils.process_description(Config.instance_description())
     title = "#{Config.instance_name()} - Mobilizon"
 
     instance_json_ld = """
@@ -37,12 +41,5 @@ defmodule Mobilizon.Service.Metadata.Instance do
       Tag.tag(:meta, property: "og:type", content: "website"),
       HTML.raw(instance_json_ld)
     ]
-  end
-
-  defp process_description(description) do
-    description
-    |> HTMLFormatter.strip_tags()
-    |> String.slice(0..200)
-    |> (&"#{&1}…").()
   end
 end
