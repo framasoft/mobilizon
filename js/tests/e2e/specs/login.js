@@ -95,7 +95,7 @@ describe("Login", () => {
       .find("textarea")
       .type("This shouln't work because it' using a dupublicated username");
     cy.get(".control.has-text-centered").contains("button", "Create my profile").click();
-    cy.contains(".help.is-danger", "Username is already taken");
+    cy.contains(".help.is-danger", "This username is already taken.");
 
     cy.get("form .field input").first(0).clear().type("test_user_2");
     cy.get("form .field input").eq(1).type("Not");

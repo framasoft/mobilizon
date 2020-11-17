@@ -114,17 +114,17 @@ msgid "You created an account on %{host} with this email address. You are one cl
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/participation.ex:113
+#: lib/web/email/participation.ex:112
 msgid "Your participation to event %{title} has been approved"
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/participation.ex:71
+#: lib/web/email/participation.ex:70
 msgid "Your participation to event %{title} has been rejected"
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/event.ex:36
+#: lib/web/email/event.ex:37
 msgid "Event %{title} has been updated"
 msgstr ""
 
@@ -144,7 +144,7 @@ msgid "Warning"
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/participation.ex:135
+#: lib/web/email/participation.ex:134
 msgid "Confirm your participation to event %{title}"
 msgstr ""
 
@@ -396,13 +396,13 @@ msgstr[0] ""
 
 #, elixir-format
 #: lib/web/templates/email/notification_each_week.html.eex:38
-#: lib/web/templates/email/notification_each_week.text.eex:4
+#: lib/web/templates/email/notification_each_week.text.eex:3
 msgid "You have one event this week:"
 msgid_plural "You have %{total} events this week:"
 msgstr[0] ""
 
 #, elixir-format
-#: lib/service/metadata/utils.ex:27
+#: lib/service/metadata/utils.ex:52
 msgid "The event organizer didn't add any description."
 msgstr ""
 
@@ -757,7 +757,7 @@ msgstr ""
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:63
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.eex:133
 #: lib/web/templates/email/event_updated.text.eex:24 lib/web/templates/email/notification_each_week.html.eex:70
-#: lib/web/templates/email/notification_each_week.text.eex:14 lib/web/templates/email/on_day_notification.html.eex:70
+#: lib/web/templates/email/notification_each_week.text.eex:11 lib/web/templates/email/on_day_notification.html.eex:70
 #: lib/web/templates/email/on_day_notification.text.eex:14
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgid_plural "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button."
@@ -1231,7 +1231,7 @@ msgid "You recently requested to attend <b>%{title}</b>."
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/participation.ex:92
+#: lib/web/email/participation.ex:91
 msgid "Your participation to event %{title} has been confirmed"
 msgstr ""
 
@@ -1358,7 +1358,7 @@ msgstr ""
 msgid "We're sorry, but something went wrong on our end."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/web/templates/email/email.html.eex:88
 #: lib/web/templates/email/email.text.eex:4
 msgid "This is a demonstration site to test Mobilizon."

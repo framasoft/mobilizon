@@ -231,7 +231,7 @@
   "On {date} starting at {startTime}": "On {date} starting at {startTime}",
   "On {date}": "On {date}",
   "Only accessible through link (private)": "Only accessible through link (private)",
-  "Only alphanumeric characters and underscores are supported.": "Only alphanumeric characters and underscores are supported.",
+  "Only alphanumeric lowercased characters and underscores are supported.": "Only alphanumeric lowercased characters and underscores are supported.",
   "Open": "Open",
   "Opened reports": "Opened reports",
   "Or": "Or",

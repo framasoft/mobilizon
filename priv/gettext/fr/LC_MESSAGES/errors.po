@@ -8,7 +8,7 @@
 # # to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-10-28 11:41+0100\n"
+"PO-Revision-Date: 2020-11-17 19:10+0100\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend-errors/fr/>\n"
 "Language: fr\n"
@@ -99,15 +99,15 @@ msgstr "doit être égal à %{number}"
 msgid "Cannot refresh the token"
 msgstr "Impossible de rafraîchir le jeton"
 
-#: lib/graphql/resolvers/group.ex:139
+#: lib/graphql/resolvers/group.ex:137
 msgid "Creator profile is not owned by the current user"
 msgstr "Le profil créateur n'est pas possédé par l'utilisateur actuel"
 
-#: lib/graphql/resolvers/group.ex:203
+#: lib/graphql/resolvers/group.ex:201
 msgid "Current profile is not a member of this group"
 msgstr "Le profil actuel n'est pas un membre de ce groupe"
 
-#: lib/graphql/resolvers/group.ex:207
+#: lib/graphql/resolvers/group.ex:205
 msgid "Current profile is not an administrator of the selected group"
 msgstr "Le profil actuel n'est pas un·e administrateur·ice du groupe sélectionné"
 
@@ -115,12 +115,12 @@ msgstr "Le profil actuel n'est pas un·e administrateur·ice du groupe sélectio
 msgid "Error while saving user settings"
 msgstr "Erreur lors de la sauvegarde des paramètres utilisateur"
 
-#: lib/graphql/error.ex:90 lib/graphql/resolvers/group.ex:200 lib/graphql/resolvers/group.ex:248
-#: lib/graphql/resolvers/group.ex:283 lib/graphql/resolvers/member.ex:83
+#: lib/graphql/error.ex:90 lib/graphql/resolvers/group.ex:198 lib/graphql/resolvers/group.ex:229
+#: lib/graphql/resolvers/group.ex:264 lib/graphql/resolvers/member.ex:83
 msgid "Group not found"
 msgstr "Groupe non trouvé"
 
-#: lib/graphql/resolvers/group.ex:69
+#: lib/graphql/resolvers/group.ex:66
 msgid "Group with ID %{id} not found"
 msgstr "Groupe avec l'ID %{id} non trouvé"
 
@@ -128,7 +128,7 @@ msgstr "Groupe avec l'ID %{id} non trouvé"
 msgid "Impossible to authenticate, either your email or password are invalid."
 msgstr "Impossible de s'authentifier, votre adresse e-mail ou bien votre mot de passe sont invalides."
 
-#: lib/graphql/resolvers/group.ex:280
+#: lib/graphql/resolvers/group.ex:261
 msgid "Member not found"
 msgstr "Membre non trouvé"
 
@@ -140,16 +140,16 @@ msgstr "Aucun profil trouvé pour l'utilisateur modérateur"
 msgid "No user to validate with this email was found"
 msgstr "Aucun·e utilisateur·ice à valider avec cet email n'a été trouvé·e"
 
-#: lib/graphql/resolvers/person.ex:232 lib/graphql/resolvers/user.ex:76 lib/graphql/resolvers/user.ex:219
+#: lib/graphql/resolvers/person.ex:231 lib/graphql/resolvers/user.ex:76 lib/graphql/resolvers/user.ex:219
 msgid "No user with this email was found"
 msgstr "Aucun·e utilisateur·ice avec cette adresse e-mail n'a été trouvé·e"
 
 #: lib/graphql/resolvers/comment.ex:50 lib/graphql/resolvers/comment.ex:112 lib/graphql/resolvers/event.ex:286
-#: lib/graphql/resolvers/feed_token.ex:28 lib/graphql/resolvers/group.ex:245 lib/graphql/resolvers/member.ex:80
-#: lib/graphql/resolvers/participant.ex:29 lib/graphql/resolvers/participant.ex:163
-#: lib/graphql/resolvers/participant.ex:192 lib/graphql/resolvers/person.ex:157 lib/graphql/resolvers/person.ex:191
-#: lib/graphql/resolvers/person.ex:256 lib/graphql/resolvers/person.ex:288 lib/graphql/resolvers/person.ex:301
-#: lib/graphql/resolvers/picture.ex:75 lib/graphql/resolvers/report.ex:110 lib/graphql/resolvers/todos.ex:57
+#: lib/graphql/resolvers/feed_token.ex:28 lib/graphql/resolvers/member.ex:80 lib/graphql/resolvers/participant.ex:29
+#: lib/graphql/resolvers/participant.ex:160 lib/graphql/resolvers/participant.ex:189
+#: lib/graphql/resolvers/person.ex:155 lib/graphql/resolvers/person.ex:189 lib/graphql/resolvers/person.ex:255
+#: lib/graphql/resolvers/person.ex:284 lib/graphql/resolvers/person.ex:297 lib/graphql/resolvers/picture.ex:72
+#: lib/graphql/resolvers/report.ex:107 lib/graphql/resolvers/todos.ex:57
 msgid "Profile is not owned by authenticated user"
 msgstr "Le profil n'est pas possédé par l'utilisateur connecté"
 
@@ -203,19 +203,19 @@ msgstr "L'utilisateur·ice est déjà désactivé·e"
 msgid "User requested is not logged-in"
 msgstr "L'utilisateur·ice demandé·e n'est pas connecté·e"
 
-#: lib/graphql/resolvers/group.ex:254
+#: lib/graphql/resolvers/group.ex:235
 msgid "You are already a member of this group"
 msgstr "Vous êtes déjà membre de ce groupe"
 
-#: lib/graphql/resolvers/group.ex:287
+#: lib/graphql/resolvers/group.ex:268
 msgid "You can't leave this group because you are the only administrator"
 msgstr "Vous ne pouvez pas quitter ce groupe car vous en êtes le ou la seul·e administrateur·ice"
 
-#: lib/graphql/resolvers/group.ex:251
+#: lib/graphql/resolvers/group.ex:232
 msgid "You cannot join this group"
 msgstr "Vous ne pouvez pas rejoindre ce groupe"
 
-#: lib/graphql/resolvers/group.ex:97
+#: lib/graphql/resolvers/group.ex:94
 msgid "You may not list groups unless moderator."
 msgstr "Vous ne pouvez pas lister les groupes sauf à être modérateur·ice."
 
@@ -227,7 +227,7 @@ msgstr "Vous devez être connecté·e pour changer votre adresse e-mail"
 msgid "You need to be logged-in to change your password"
 msgstr "Vous devez être connecté·e pour changer votre mot de passe"
 
-#: lib/graphql/resolvers/group.ex:212
+#: lib/graphql/resolvers/group.ex:210
 msgid "You need to be logged-in to delete a group"
 msgstr "Vous devez être connecté·e pour supprimer un groupe"
 
@@ -235,15 +235,15 @@ msgstr "Vous devez être connecté·e pour supprimer un groupe"
 msgid "You need to be logged-in to delete your account"
 msgstr "Vous devez être connecté·e pour supprimer votre compte"
 
-#: lib/graphql/resolvers/group.ex:259
+#: lib/graphql/resolvers/group.ex:240
 msgid "You need to be logged-in to join a group"
 msgstr "Vous devez être connecté·e pour rejoindre un groupe"
 
-#: lib/graphql/resolvers/group.ex:292
+#: lib/graphql/resolvers/group.ex:273
 msgid "You need to be logged-in to leave a group"
 msgstr "Vous devez être connecté·e pour quitter un groupe"
 
-#: lib/graphql/resolvers/group.ex:177
+#: lib/graphql/resolvers/group.ex:175
 msgid "You need to be logged-in to update a group"
 msgstr "Vous devez être connecté·e pour mettre à jour un groupe"
 
@@ -291,19 +291,19 @@ msgstr "Seuls les profils distants peuvent être rafraîchis"
 msgid "Profile already suspended"
 msgstr "Le profil est déjà suspendu"
 
-#: lib/graphql/resolvers/participant.ex:96
+#: lib/graphql/resolvers/participant.ex:93
 msgid "A valid email is required by your instance"
 msgstr "Une adresse e-mail valide est requise par votre instance"
 
-#: lib/graphql/resolvers/participant.ex:90
+#: lib/graphql/resolvers/participant.ex:87
 msgid "Anonymous participation is not enabled"
 msgstr "La participation anonyme n'est pas activée"
 
-#: lib/graphql/resolvers/person.ex:188
+#: lib/graphql/resolvers/person.ex:186
 msgid "Cannot remove the last administrator of a group"
 msgstr "Impossible de supprimer le ou la dernier·ère administrateur·ice d'un groupe"
 
-#: lib/graphql/resolvers/person.ex:185
+#: lib/graphql/resolvers/person.ex:183
 msgid "Cannot remove the last identity of a user"
 msgstr "Impossible de supprimer le dernier profil d'un·e utilisateur·ice"
 
@@ -315,15 +315,15 @@ msgstr "Le commentaire est déjà supprimé"
 msgid "Discussion not found"
 msgstr "Discussion non trouvée"
 
-#: lib/graphql/resolvers/report.ex:62 lib/graphql/resolvers/report.ex:87
+#: lib/graphql/resolvers/report.ex:62 lib/graphql/resolvers/report.ex:84
 msgid "Error while saving report"
 msgstr "Erreur lors de la sauvegarde du signalement"
 
-#: lib/graphql/resolvers/report.ex:113
+#: lib/graphql/resolvers/report.ex:110
 msgid "Error while updating report"
 msgstr "Erreur lors de la mise à jour du signalement"
 
-#: lib/graphql/resolvers/participant.ex:131
+#: lib/graphql/resolvers/participant.ex:128
 msgid "Event id not found"
 msgstr "ID de l'événement non trouvé"
 
@@ -331,20 +331,20 @@ msgstr "ID de l'événement non trouvé"
 msgid "Event not found"
 msgstr "Événement non trouvé"
 
-#: lib/graphql/resolvers/participant.ex:87 lib/graphql/resolvers/participant.ex:128
-#: lib/graphql/resolvers/participant.ex:160
+#: lib/graphql/resolvers/participant.ex:84 lib/graphql/resolvers/participant.ex:125
+#: lib/graphql/resolvers/participant.ex:157
 msgid "Event with this ID %{id} doesn't exist"
 msgstr "L'événement avec cet ID %{id} n'existe pas"
 
-#: lib/graphql/resolvers/participant.ex:103
+#: lib/graphql/resolvers/participant.ex:100
 msgid "Internal Error"
 msgstr "Erreur interne"
 
-#: lib/graphql/resolvers/event.ex:100 lib/graphql/resolvers/participant.ex:234
+#: lib/graphql/resolvers/event.ex:100 lib/graphql/resolvers/participant.ex:231
 msgid "Moderator profile is not owned by authenticated user"
 msgstr "Le profil créateur n'est pas possédé par l'utilisateur actuel"
 
-#: lib/graphql/resolvers/discussion.ex:181
+#: lib/graphql/resolvers/discussion.ex:184
 msgid "No discussion with ID %{id}"
 msgstr "Aucune discussion avec l'ID %{id}"
 
@@ -352,7 +352,7 @@ msgstr "Aucune discussion avec l'ID %{id}"
 msgid "No profile found for user"
 msgstr "Aucun profil trouvé pour l'utilisateur modérateur"
 
-#: lib/graphql/resolvers/feed_token.ex:66
+#: lib/graphql/resolvers/feed_token.ex:63
 msgid "No such feed token"
 msgstr "Aucun jeton de flux correspondant"
 
@@ -360,12 +360,12 @@ msgstr "Aucun jeton de flux correspondant"
 msgid "Organizer profile is not owned by the user"
 msgstr "Le profil créateur n'est pas possédé par l'utilisateur actuel"
 
-#: lib/graphql/resolvers/participant.ex:244
+#: lib/graphql/resolvers/participant.ex:241
 msgid "Participant already has role %{role}"
 msgstr "Le ou la participant·e a déjà le rôle %{role}"
 
-#: lib/graphql/resolvers/participant.ex:173 lib/graphql/resolvers/participant.ex:202
-#: lib/graphql/resolvers/participant.ex:237 lib/graphql/resolvers/participant.ex:247
+#: lib/graphql/resolvers/participant.ex:170 lib/graphql/resolvers/participant.ex:199
+#: lib/graphql/resolvers/participant.ex:234 lib/graphql/resolvers/participant.ex:244
 msgid "Participant not found"
 msgstr "Participant·e non trouvé·e"
 
@@ -377,7 +377,7 @@ msgstr "Personne avec l'ID %{id} non trouvé"
 msgid "Person with username %{username} not found"
 msgstr "Personne avec le nom %{name} non trouvé"
 
-#: lib/graphql/resolvers/picture.ex:45
+#: lib/graphql/resolvers/picture.ex:42
 msgid "Picture with ID %{id} was not found"
 msgstr "Groupe avec l'ID %{id} non trouvé"
 
@@ -405,11 +405,11 @@ msgstr "Ce profil est déjà membre de ce groupe"
 msgid "Profile is not member of group"
 msgstr "Le profil n'est pas un·e membre du groupe"
 
-#: lib/graphql/resolvers/person.ex:154 lib/graphql/resolvers/person.ex:182
+#: lib/graphql/resolvers/person.ex:152 lib/graphql/resolvers/person.ex:180
 msgid "Profile not found"
 msgstr "Profile non trouvé"
 
-#: lib/graphql/resolvers/event.ex:104 lib/graphql/resolvers/participant.ex:241
+#: lib/graphql/resolvers/event.ex:104 lib/graphql/resolvers/participant.ex:238
 msgid "Provided moderator profile doesn't have permission on this event"
 msgstr "Le profil modérateur fourni n'a pas de permissions sur cet événement"
 
@@ -421,11 +421,11 @@ msgstr "Groupe non trouvé"
 msgid "Resource doesn't exist"
 msgstr "La ressource n'existe pas"
 
-#: lib/graphql/resolvers/participant.ex:124
+#: lib/graphql/resolvers/participant.ex:121
 msgid "The event has already reached its maximum capacity"
 msgstr "L'événement a déjà atteint sa capacité maximale"
 
-#: lib/graphql/resolvers/participant.ex:267
+#: lib/graphql/resolvers/participant.ex:264
 msgid "This token is invalid"
 msgstr "Ce jeton est invalide"
 
@@ -437,27 +437,27 @@ msgstr "Ce todo n'existe pas"
 msgid "Todo list doesn't exist"
 msgstr "Cette todo-liste n'existe pas"
 
-#: lib/graphql/resolvers/feed_token.ex:72
+#: lib/graphql/resolvers/feed_token.ex:69
 msgid "Token does not exist"
 msgstr "Ce jeton n'existe pas"
 
-#: lib/graphql/resolvers/feed_token.ex:69
+#: lib/graphql/resolvers/feed_token.ex:66
 msgid "Token is not a valid UUID"
 msgstr "Ce jeton n'est pas un UUID valide"
 
-#: lib/graphql/error.ex:87 lib/graphql/resolvers/person.ex:323
+#: lib/graphql/error.ex:87 lib/graphql/resolvers/person.ex:319
 msgid "User not found"
 msgstr "Membre non trouvé"
 
-#: lib/graphql/resolvers/person.ex:235
+#: lib/graphql/resolvers/person.ex:234
 msgid "You already have a profile for this user"
 msgstr "Vous avez déjà un profil pour cet utilisateur"
 
-#: lib/graphql/resolvers/participant.ex:134
+#: lib/graphql/resolvers/participant.ex:131
 msgid "You are already a participant of this event"
 msgstr "Vous êtes déjà un·e participant·e à cet événement"
 
-#: lib/graphql/resolvers/discussion.ex:185
+#: lib/graphql/resolvers/discussion.ex:188
 msgid "You are not a member of the group the discussion belongs to"
 msgstr "Vous n'êtes pas un membre du groupe dans lequel se fait la discussion"
 
@@ -473,7 +473,7 @@ msgstr "Vous n'êtes pas administrateur·ice ou modérateur·ice de ce groupe"
 msgid "You are not allowed to create a comment if not connected"
 msgstr "Vous n'êtes pas autorisé·e à créer un commentaire si non connecté·e"
 
-#: lib/graphql/resolvers/feed_token.ex:44
+#: lib/graphql/resolvers/feed_token.ex:41
 msgid "You are not allowed to create a feed token if not connected"
 msgstr "Vous n'êtes pas autorisé·e à créer un jeton de flux si non connecté·e"
 
@@ -481,7 +481,7 @@ msgstr "Vous n'êtes pas autorisé·e à créer un jeton de flux si non connect�
 msgid "You are not allowed to delete a comment if not connected"
 msgstr "Vous n'êtes pas autorisé·e à supprimer un commentaire si non connecté·e"
 
-#: lib/graphql/resolvers/feed_token.ex:81
+#: lib/graphql/resolvers/feed_token.ex:78
 msgid "You are not allowed to delete a feed token if not connected"
 msgstr "Vous n'êtes pas autorisé·e à supprimer un jeton de flux si non connecté·e"
 
@@ -489,7 +489,7 @@ msgstr "Vous n'êtes pas autorisé·e à supprimer un jeton de flux si non conne
 msgid "You are not allowed to update a comment if not connected"
 msgstr "Vous n'êtes pas autorisé·e à mettre à jour un commentaire si non connecté·e"
 
-#: lib/graphql/resolvers/participant.ex:167 lib/graphql/resolvers/participant.ex:196
+#: lib/graphql/resolvers/participant.ex:164 lib/graphql/resolvers/participant.ex:193
 msgid "You can't leave event because you're the only event creator participant"
 msgstr "Vous ne pouvez pas quitter cet événement car vous en êtes le ou la seule créateur·ice participant"
 
@@ -511,7 +511,7 @@ msgstr "Vous ne pouvez pas supprimer cet événement"
 msgid "You cannot invite to this group"
 msgstr "Vous ne pouvez pas rejoindre ce groupe"
 
-#: lib/graphql/resolvers/feed_token.ex:75
+#: lib/graphql/resolvers/feed_token.ex:72
 msgid "You don't have permission to delete this token"
 msgstr "Vous n'avez pas la permission de supprimer ce jeton"
 
@@ -523,7 +523,7 @@ msgstr "Vous devez être connecté·e pour rejoindre un groupe"
 msgid "You need to be logged-in and a moderator to list reports"
 msgstr "Vous devez être connecté·e pour rejoindre un groupe"
 
-#: lib/graphql/resolvers/report.ex:118
+#: lib/graphql/resolvers/report.ex:115
 msgid "You need to be logged-in and a moderator to update a report"
 msgstr "Vous devez être connecté·e pour supprimer un groupe"
 
@@ -531,15 +531,15 @@ msgstr "Vous devez être connecté·e pour supprimer un groupe"
 msgid "You need to be logged-in and a moderator to view a report"
 msgstr "Vous devez être connecté·e pour rejoindre un groupe"
 
-#: lib/graphql/resolvers/admin.ex:220
+#: lib/graphql/resolvers/admin.ex:236
 msgid "You need to be logged-in and an administrator to access admin settings"
 msgstr "Vous devez être connecté·e et un·e administrateur·ice pour accéder aux paramètres administrateur"
 
-#: lib/graphql/resolvers/admin.ex:205
+#: lib/graphql/resolvers/admin.ex:221
 msgid "You need to be logged-in and an administrator to access dashboard statistics"
 msgstr "Vous devez être connecté·e et un·e administrateur·ice pour accéder aux panneau de statistiques"
 
-#: lib/graphql/resolvers/admin.ex:244
+#: lib/graphql/resolvers/admin.ex:260
 msgid "You need to be logged-in and an administrator to save admin settings"
 msgstr "Vous devez être connecté·e et un·e administrateur·ice pour sauvegarder les paramètres administrateur"
 
@@ -559,7 +559,7 @@ msgstr "Vous devez être connecté·e pour créer des événements"
 msgid "You need to be logged-in to create posts"
 msgstr "Vous devez être connecté·e pour quitter un groupe"
 
-#: lib/graphql/resolvers/report.ex:81 lib/graphql/resolvers/report.ex:92
+#: lib/graphql/resolvers/report.ex:78 lib/graphql/resolvers/report.ex:89
 msgid "You need to be logged-in to create reports"
 msgstr "Vous devez être connecté·e pour quitter un groupe"
 
@@ -579,11 +579,11 @@ msgstr "Vous devez être connecté·e pour supprimer un groupe"
 msgid "You need to be logged-in to delete resources"
 msgstr "Vous devez être connecté·e pour supprimer un groupe"
 
-#: lib/graphql/resolvers/participant.ex:108
+#: lib/graphql/resolvers/participant.ex:105
 msgid "You need to be logged-in to join an event"
 msgstr "Vous devez être connecté·e pour rejoindre un groupe"
 
-#: lib/graphql/resolvers/participant.ex:207
+#: lib/graphql/resolvers/participant.ex:204
 msgid "You need to be logged-in to leave an event"
 msgstr "Vous devez être connecté·e pour quitter un groupe"
 
@@ -603,11 +603,11 @@ msgstr "Vous devez être connecté·e pour mettre à jour un groupe"
 msgid "You need to be logged-in to view a resource preview"
 msgstr "Vous devez être connecté·e pour supprimer un groupe"
 
-#: lib/graphql/resolvers/picture.ex:86
+#: lib/graphql/resolvers/picture.ex:83
 msgid "You need to login to upload a picture"
 msgstr "Vous devez être connecté·e pour mettre à jour un groupe"
 
-#: lib/graphql/resolvers/report.ex:84
+#: lib/graphql/resolvers/report.ex:81
 msgid "Reporter ID does not match the anonymous profile id"
 msgstr "L'ID du signalant ne correspond pas à l'ID du profil anonyme"
 
@@ -619,7 +619,7 @@ msgstr "Le profil du signalant n'est pas possédé par l'utilisateur actuel"
 msgid "Parent resource doesn't belong to this group"
 msgstr "La ressource parente n'appartient pas à ce groupe"
 
-#: lib/graphql/resolvers/participant.ex:93
+#: lib/graphql/resolvers/participant.ex:90
 msgid "Profile ID provided is not the anonymous profile one"
 msgstr "L'ID du profil fourni ne correspond pas au profil anonyme"
 
@@ -679,11 +679,11 @@ msgstr "Vous ne pouvez pas accepter cette invitation avec ce profil."
 msgid "You can't reject this invitation with this profile."
 msgstr "Vous ne pouvez pas rejeter cette invitation avec ce profil."
 
-#: lib/graphql/resolvers/picture.ex:78
+#: lib/graphql/resolvers/picture.ex:75
 msgid "File doesn't have an allowed MIME type."
 msgstr "Le fichier n'a pas un type MIME autorisé."
 
-#: lib/graphql/resolvers/group.ex:172
+#: lib/graphql/resolvers/group.ex:170
 msgid "Profile is not administrator for the group"
 msgstr "Le profil n'est pas administrateur·ice pour le groupe"
 
@@ -706,3 +706,7 @@ msgstr "Ce·tte membre a déjà été rejetté·e."
 #: lib/graphql/resolvers/member.ex:189
 msgid "You don't have the right to remove this member."
 msgstr "Vous n'avez pas les droits pour supprimer ce·tte membre."
+
+#: lib/mobilizon/actors/actor.ex:344
+msgid "This username is already taken."
+msgstr "Cet identifiant est déjà pris."

@@ -181,7 +181,9 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
 
   get message(): string | null {
     if (this.isUpdate) return null;
-    return this.$t("Only alphanumeric characters and underscores are supported.") as string;
+    return this.$t(
+      "Only alphanumeric lowercased characters and underscores are supported."
+    ) as string;
   }
 
   get avatarUrl(): string | null {

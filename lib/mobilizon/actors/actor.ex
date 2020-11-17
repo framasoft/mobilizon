@@ -18,6 +18,7 @@ defmodule Mobilizon.Actors.Actor do
 
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Router.Helpers, as: Routes
+  import Mobilizon.Web.Gettext, only: [dgettext: 2]
 
   require Logger
 
@@ -337,7 +338,11 @@ defmodule Mobilizon.Actors.Actor do
        ) do
     with nil <- Map.get(changes, :domain, nil),
          %__MODULE__{preferred_username: _} <- Actors.get_local_actor_by_name(username) do
-      add_error(changeset, :preferred_username, "Username is already taken")
+      add_error(
+        changeset,
+        :preferred_username,
+        dgettext("errors", "This username is already taken.")
+      )
     else
       _ -> changeset
     end

@@ -435,8 +435,9 @@ defmodule Mobilizon.ActorsTest do
       _actor = insert(:actor, preferred_username: @valid_attrs.preferred_username)
 
       assert {:error, :insert_group,
-              %Ecto.Changeset{errors: [preferred_username: {"Username is already taken", []}]},
-              %{}} = Actors.create_group(@valid_attrs)
+              %Ecto.Changeset{
+                errors: [preferred_username: {"This username is already taken.", []}]
+              }, %{}} = Actors.create_group(@valid_attrs)
     end
 
     test "create_group/1 with an existing group username fails" do
@@ -445,8 +446,9 @@ defmodule Mobilizon.ActorsTest do
       assert {:ok, %Actor{} = group} = Actors.create_group(attrs)
 
       assert {:error, :insert_group,
-              %Ecto.Changeset{errors: [preferred_username: {"Username is already taken", []}]},
-              %{}} = Actors.create_group(attrs)
+              %Ecto.Changeset{
+                errors: [preferred_username: {"This username is already taken.", []}]
+              }, %{}} = Actors.create_group(attrs)
     end
 
     test "create_group/1 with invalid data returns error changeset" do
