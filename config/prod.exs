@@ -13,6 +13,31 @@ config :mobilizon, Mobilizon.Web.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
+# Load all locales in production
+config :mobilizon, :cldr,
+  locales: [
+    "ar",
+    "be",
+    "ca",
+    "cs",
+    "de",
+    "en",
+    "es",
+    "fi",
+    "fr",
+    "gl",
+    "hu",
+    "it",
+    "ja",
+    "nl",
+    "nn",
+    "oc",
+    "pl",
+    "pt",
+    "ru",
+    "sv"
+  ]
+
 cond do
   System.get_env("INSTANCE_CONFIG") &&
       File.exists?("./config/#{System.get_env("INSTANCE_CONFIG")}") ->

@@ -181,26 +181,8 @@ config :http_signatures,
 
 config :mobilizon, :cldr,
   locales: [
-    "ar",
-    "be",
-    "ca",
-    "cs",
-    "de",
-    "en",
-    "es",
-    "fi",
     "fr",
-    "gl",
-    "hu",
-    "it",
-    "ja",
-    "nl",
-    "nn",
-    "oc",
-    "pl",
-    "pt",
-    "ru",
-    "sv"
+    "en"
   ]
 
 config :mobilizon, :activitypub,
