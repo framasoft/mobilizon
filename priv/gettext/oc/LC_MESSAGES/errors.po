@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-11-10 20:52+0000\n"
+"PO-Revision-Date: 2020-11-17 10:13+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/oc/>\n"
@@ -96,7 +96,7 @@ msgstr "deu èsser egal a %{number}"
 #: lib/graphql/resolvers/user.ex:103
 #, elixir-format
 msgid "Cannot refresh the token"
-msgstr "Actualizacion ompossibla del geton"
+msgstr "Actualizacion impossibla del geton"
 
 #: lib/graphql/resolvers/group.ex:139
 #, elixir-format
@@ -156,7 +156,7 @@ msgstr "Cap d’utilizaire de validar amb aqueste email pas trobat"
 #: lib/graphql/resolvers/user.ex:219
 #, elixir-format
 msgid "No user with this email was found"
-msgstr ""
+msgstr "Degun trobat d'amb aquesta email"
 
 #: lib/graphql/resolvers/comment.ex:50 lib/graphql/resolvers/comment.ex:112
 #: lib/graphql/resolvers/event.ex:286 lib/graphql/resolvers/feed_token.ex:28 lib/graphql/resolvers/group.ex:245
@@ -167,118 +167,120 @@ msgstr ""
 #: lib/graphql/resolvers/todos.ex:57
 #, elixir-format
 msgid "Profile is not owned by authenticated user"
-msgstr ""
+msgstr "Lo perhiu es pas proprietat del utilizator autenticat"
 
 #: lib/graphql/resolvers/user.ex:125
 #, elixir-format
 msgid "Registrations are not open"
-msgstr ""
+msgstr "Las inscripciones sèn pas obèrtas"
 
 #: lib/graphql/resolvers/user.ex:330
 #, elixir-format
 msgid "The current password is invalid"
-msgstr ""
+msgstr "Lo mòt de santa clara actuau es invalid"
 
 #: lib/graphql/resolvers/user.ex:382
 #, elixir-format
 msgid "The new email doesn't seem to be valid"
-msgstr ""
+msgstr "Lo email nau sèm invalid"
 
 #: lib/graphql/resolvers/user.ex:379
 #, elixir-format
 msgid "The new email must be different"
-msgstr ""
+msgstr "Lo email nau deb esser different"
 
 #: lib/graphql/resolvers/user.ex:333
 #, elixir-format
 msgid "The new password must be different"
-msgstr ""
+msgstr "Lo mòt de santa clara nau deb esser different"
 
 #: lib/graphql/resolvers/user.ex:376 lib/graphql/resolvers/user.ex:439
 #: lib/graphql/resolvers/user.ex:442
 #, elixir-format
 msgid "The password provided is invalid"
-msgstr ""
+msgstr "Lo mòt de santa clara aprovedit es invalid"
 
 #: lib/graphql/resolvers/user.ex:337
 #, elixir-format
 msgid "The password you have chosen is too short. Please make sure your password contains at least 6 characters."
 msgstr ""
+"Lo mòt de santa clara que avetz causit es tròp cort. Merci de vos assegurar "
+"que vostre mòt de santa clara contienga au mèns 6 caracteres."
 
 #: lib/graphql/resolvers/user.ex:215
 #, elixir-format
 msgid "This user can't reset their password"
-msgstr ""
+msgstr "Aquest utilizator pod pas reinicializar lo sèn mòt de santa clara"
 
 #: lib/graphql/resolvers/user.ex:79
 #, elixir-format
 msgid "This user has been disabled"
-msgstr ""
+msgstr "Aquest utilizator a essat dasactivat"
 
 #: lib/graphql/resolvers/user.ex:179
 #, elixir-format
 msgid "Unable to validate user"
-msgstr ""
+msgstr "Es impossible de validar l'utilizator"
 
 #: lib/graphql/resolvers/user.ex:420
 #, elixir-format
 msgid "User already disabled"
-msgstr ""
+msgstr "Utilizator déjà desactivat"
 
 #: lib/graphql/resolvers/user.ex:487
 #, elixir-format
 msgid "User requested is not logged-in"
-msgstr ""
+msgstr "L'utilizator demandat es pas conectat"
 
 #: lib/graphql/resolvers/group.ex:254
 #, elixir-format
 msgid "You are already a member of this group"
-msgstr ""
+msgstr "Essetz déjà membre d'aquest grop"
 
 #: lib/graphql/resolvers/group.ex:287
 #, elixir-format
 msgid "You can't leave this group because you are the only administrator"
-msgstr ""
+msgstr "Podetz pas quitar aquest grop perque essetz lo sol administrator"
 
 #: lib/graphql/resolvers/group.ex:251
 #, elixir-format
 msgid "You cannot join this group"
-msgstr ""
+msgstr "Podetz pas rejónher aquest grop"
 
 #: lib/graphql/resolvers/group.ex:97
 #, elixir-format
 msgid "You may not list groups unless moderator."
-msgstr ""
+msgstr "Podetz listar los grops sonque se essetz moderator."
 
 #: lib/graphql/resolvers/user.ex:387
 #, elixir-format
 msgid "You need to be logged-in to change your email"
-msgstr ""
+msgstr "Debetz esser conectat per cambiar lo voste email"
 
 #: lib/graphql/resolvers/user.ex:345
 #, elixir-format
 msgid "You need to be logged-in to change your password"
-msgstr ""
+msgstr "Debetz d'esser conectat per cambiar lo voste mòt de santa clara"
 
 #: lib/graphql/resolvers/group.ex:212
 #, elixir-format
 msgid "You need to be logged-in to delete a group"
-msgstr ""
+msgstr "Debetz d'esser conectat per suprimir un grop"
 
 #: lib/graphql/resolvers/user.ex:447
 #, elixir-format
 msgid "You need to be logged-in to delete your account"
-msgstr ""
+msgstr "Debetz d'esser conectat per suprimir lo voste compte"
 
 #: lib/graphql/resolvers/group.ex:259
 #, elixir-format
 msgid "You need to be logged-in to join a group"
-msgstr ""
+msgstr "Deves-tz d'esser conectat-ada per rejónher un grop"
 
 #: lib/graphql/resolvers/group.ex:292
 #, elixir-format
 msgid "You need to be logged-in to leave a group"
-msgstr ""
+msgstr "Deves-tz d'esser conectat-ada per quitar un grop"
 
 #: lib/graphql/resolvers/group.ex:177
 #, elixir-format
