@@ -156,7 +156,9 @@ import AuthProviders from "../../components/User/AuthProviders.vue";
   metaInfo() {
     return {
       // if no subcomponents specify a metaInfo.title, this title will be used
-      title: this.$t("Register an account on Mobilizon!") as string,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      title: this.title,
       // all titles will be injected into this template
       titleTemplate: "%s | Mobilizon",
     };
@@ -183,6 +185,15 @@ export default class Register extends Vue {
   RouteName = RouteName;
 
   config!: IConfig;
+
+  get title(): string {
+    if (this.config) {
+      return this.$t("Register an account on {instanceName}!", {
+        instanceName: this.config.name,
+      }) as string;
+    }
+    return "";
+  }
 
   async submit(): Promise<void> {
     this.sendingForm = true;
