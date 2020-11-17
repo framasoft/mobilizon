@@ -32,7 +32,7 @@ defmodule Mobilizon.Service.Formatter.HTML do
   @spec strip_tags_and_insert_spaces(String.t()) :: String.t()
   def strip_tags_and_insert_spaces(html) when is_binary(html) do
     html
-    |> String.replace("</", " </")
+    |> String.replace("><", "> <")
     |> strip_tags()
   end
 
