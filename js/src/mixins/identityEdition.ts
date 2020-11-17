@@ -8,7 +8,7 @@ export default class IdentityEditionMixin extends Mixins(Vue) {
 
   oldDisplayName: string | null = null;
 
-  autoUpdateUsername(newDisplayName: string | null) {
+  autoUpdateUsername(newDisplayName: string | null): void {
     const oldUsername = IdentityEditionMixin.convertToUsername(this.oldDisplayName);
 
     if (this.identity.preferredUsername === oldUsername) {
@@ -30,7 +30,7 @@ export default class IdentityEditionMixin extends Mixins(Vue) {
       .replace(/[^a-z0-9_]/g, "");
   }
 
-  validateUsername() {
+  validateUsername(): boolean {
     return (
       this.identity.preferredUsername ===
       IdentityEditionMixin.convertToUsername(this.identity.preferredUsername)

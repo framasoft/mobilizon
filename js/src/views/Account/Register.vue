@@ -5,7 +5,9 @@
         <h1 class="title" v-if="userAlreadyActivated">
           {{ $t("Congratulations, your account is now created!") }}
         </h1>
-        <h1 class="title" v-else>{{ $t("Register an account on Mobilizon!") }}</h1>
+        <h1 class="title" v-else>
+          {{ $t("Register an account on {instanceName}!", { instanceName: config.name }) }}
+        </h1>
         <p class="content" v-if="userAlreadyActivated">
           {{ $t("Now, create your first profile:") }}
         </p>
@@ -92,6 +94,8 @@
 <script lang="ts">
 import { Component, Prop } from "vue-property-decorator";
 import { mixins } from "vue-class-component";
+import { CONFIG } from "@/graphql/config";
+import { IConfig } from "@/types/config.model";
 import { IPerson } from "../../types/actor";
 import { IDENTITIES, REGISTER_PERSON } from "../../graphql/actor";
 import { MOBILIZON_INSTANCE_HOST } from "../../api/_entrypoint";
@@ -99,12 +103,18 @@ import RouteName from "../../router/name";
 import { changeIdentity } from "../../utils/auth";
 import identityEditionMixin from "../../mixins/identityEdition";
 
-@Component
+@Component({
+  apollo: {
+    config: CONFIG,
+  },
+})
 export default class Register extends mixins(identityEditionMixin) {
   @Prop({ type: String, required: true }) email!: string;
 
   @Prop({ type: Boolean, required: false, default: false })
   userAlreadyActivated!: boolean;
+
+  config!: IConfig;
 
   host?: string = MOBILIZON_INSTANCE_HOST;
 
