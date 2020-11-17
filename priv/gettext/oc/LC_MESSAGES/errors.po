@@ -8,8 +8,8 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-11-17 10:13+0000\n"
-"Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
+"PO-Revision-Date: 2020-11-18 07:52+0000\n"
+"Last-Translator: Joan Luci Labòrda <joanluc.laborda@free.fr>\n"
 "Language-Team: Occitan <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/oc/>\n"
 "Language: oc\n"
@@ -269,7 +269,7 @@ msgstr "Debetz d'esser conectat per suprimir un grop"
 #, elixir-format
 #: lib/graphql/resolvers/user.ex:447
 msgid "You need to be logged-in to delete your account"
-msgstr "Debetz d'esser conectat per suprimir lo voste compte"
+msgstr "Deves-tz d'esser conectat-ada per suprimir lo voste compte"
 
 #, elixir-format
 #: lib/graphql/resolvers/group.ex:240
@@ -284,17 +284,17 @@ msgstr "Deves-tz d'esser conectat-ada per quitar un grop"
 #, elixir-format
 #: lib/graphql/resolvers/group.ex:175
 msgid "You need to be logged-in to update a group"
-msgstr ""
+msgstr "Deves-tz d'esser conectat per metre à jorn un grop"
 
 #, elixir-format
 #: lib/graphql/resolvers/user.ex:58
 msgid "You need to have admin access to list users"
-msgstr ""
+msgstr "Deves-tz aver un accès admin per listar los utilizators"
 
 #, elixir-format
 #: lib/graphql/resolvers/user.ex:108
 msgid "You need to have an existing token to get a refresh token"
-msgstr ""
+msgstr "deves-tz aver un senhau existant per obtiéner un senhau nau"
 
 #, elixir-format
 #: lib/graphql/resolvers/user.ex:198 lib/graphql/resolvers/user.ex:222
