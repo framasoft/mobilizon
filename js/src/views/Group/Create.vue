@@ -1,6 +1,6 @@
 <template>
   <section class="section container">
-    <h1>{{ $t("Create a new group") }}</h1>
+    <h1 class="title">{{ $t("Create a new group") }}</h1>
 
     <b-message type="is-danger" v-for="(value, index) in errors" :key="index">
       {{ value }}
@@ -14,8 +14,23 @@
       <div class="field">
         <label class="label">{{ $t("Federated Group Name") }}</label>
         <div class="field-body">
-          <b-field>
-            <b-input aria-required="true" required expanded v-model="group.preferredUsername" />
+          <b-field
+            :message="$t('Only alphanumeric lowercased characters and underscores are supported.')"
+          >
+            <b-input
+              ref="preferredUsernameInput"
+              aria-required="true"
+              required
+              expanded
+              v-model="group.preferredUsername"
+              pattern="[a-z0-9_]+"
+              :useHtml5Validation="true"
+              :validation-message="
+                group.preferredUsername
+                  ? $t('Only alphanumeric lowercased characters and underscores are supported.')
+                  : null
+              "
+            />
             <p class="control">
               <span class="button is-static">@{{ host }}</span>
             </p>
@@ -36,12 +51,12 @@
       </b-field>
 
       <div>
-        {{ $t("Avatar") }}
+        <b>{{ $t("Avatar") }}</b>
         <picture-upload :textFallback="$t('Avatar')" v-model="avatarFile" />
       </div>
 
       <div>
-        {{ $t("Banner") }}
+        <b>{{ $t("Banner") }}</b>
         <picture-upload :textFallback="$t('Banner')" v-model="bannerFile" />
       </div>
 

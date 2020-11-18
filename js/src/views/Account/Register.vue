@@ -26,12 +26,21 @@
             :type="errors.preferred_username ? 'is-danger' : null"
             :message="errors.preferred_username"
           >
-            <b-field>
+            <b-field
+              :message="
+                $t('Only alphanumeric lowercased characters and underscores are supported.')
+              "
+            >
               <b-input
                 aria-required="true"
                 required
                 expanded
                 v-model="identity.preferredUsername"
+                :validation-message="
+                  identity.preferredUsername
+                    ? $t('Only alphanumeric lowercased characters and underscores are supported.')
+                    : null
+                "
               />
               <p class="control">
                 <span class="button is-static">@{{ host }}</span>
@@ -164,7 +173,7 @@ export default class Register extends mixins(identityEditionMixin) {
     } catch (errorCatched) {
       this.errors = errorCatched.graphQLErrors.reduce(
         (acc: { [key: string]: string }, error: any) => {
-          acc[error.details] = error.message;
+          acc[error.details || error.field] = error.message;
           return acc;
         },
         {}

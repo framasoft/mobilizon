@@ -123,6 +123,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       ) do
     with creator_actor_id <- Map.get(args, :creator_actor_id),
          {:is_owned, %Actor{} = creator_actor} <- User.owns_actor(user, creator_actor_id),
+         args <- Map.update(args, :preferred_username, "", &String.downcase/1),
          args <- Map.put(args, :creator_actor, creator_actor),
          args <- save_attached_pictures(args),
          {:ok, _activity, %Actor{type: :Group} = group} <-

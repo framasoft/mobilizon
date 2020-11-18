@@ -120,7 +120,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
       ) do
     args = Map.put(args, :user_id, user.id)
 
-    with args <- save_attached_pictures(args),
+    with args <- Map.update(args, :preferred_username, "", &String.downcase/1),
+         args <- save_attached_pictures(args),
          {:ok, %Actor{} = new_person} <- Actors.new_person(args) do
       {:ok, new_person}
     end
@@ -220,6 +221,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
          user_actor <- Users.get_actor_for_user(user),
          no_actor <- is_nil(user_actor),
          {:no_actor, true} <- {:no_actor, no_actor},
+         args <- Map.update(args, :preferred_username, "", &String.downcase/1),
          args <- Map.put(args, :user_id, user.id),
          args <- save_attached_pictures(args),
          {:ok, %Actor{} = new_person} <- Actors.new_person(args, true) do

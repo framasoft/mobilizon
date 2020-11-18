@@ -16,6 +16,67 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
   alias Mobilizon.Web.Email
 
+  @get_user_query """
+  query GetUser($id: ID!) {
+    user(id: $id) {
+      id
+      email
+    }
+  }
+  """
+
+  @logged_user_query """
+  query LoggedUser {
+    loggedUser {
+      id
+      email
+    }
+  }
+  """
+
+  @list_users_query """
+  query ListUsers($page: Int, $limit: Int, $sort: SortableUserField, $direction: SortDirection) {
+    users(page: $page, limit: $limit, sort: $sort, direction: $direction) {
+      total,
+      elements {
+        email
+      }
+    }
+  }
+  """
+
+  @create_user_mutation """
+  mutation CreateUser($email: String!, $password: String!, $locale: String) {
+    createUser(
+      email: $email
+      password: $password
+      locale: $locale
+  ) {
+      id,
+      email,
+      locale
+    }
+  }
+  """
+
+  @register_person_mutation """
+  mutation RegisterPerson($preferredUsername: String!, $name: String, $summary: String, $email: String!) {
+    registerPerson(
+      preferredUsername: $preferredUsername,
+      name: $name,
+      summary: $summary,
+      email: $email,
+      ) {
+        preferredUsername,
+        name,
+        summary,
+        avatar {
+          url
+        },
+      }
+    }
+  """
+
   @change_email_mutation """
       mutation ChangeEmail($email: String!, $password: String!) {
         changeEmail(email: $email, password: $password) {
@@ -68,200 +129,128 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       user = insert(:user)
       modo = insert(:user, role: :moderator)
 
-      query = """
-      {
-        user(id: "#{user.id}") {
-            email,
-        }
-      }
-      """
+      res =
+        conn
+        |> auth_conn(modo)
+        |> AbsintheHelpers.graphql_query(
+          query: @get_user_query,
+          variables: %{id: user.id}
+        )
+
+      assert res["data"]["user"]["email"] == user.email
 
       res =
         conn
         |> auth_conn(modo)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "user"))
+        |> AbsintheHelpers.graphql_query(
+          query: @get_user_query,
+          variables: %{id: 0}
+        )
 
-      assert json_response(res, 200)["data"]["user"]["email"] == user.email
-
-      query = """
-      {
-        user(id: "#{0}") {
-          email,
-        }
-      }
-      """
-
-      res =
-        conn
-        |> auth_conn(modo)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "user"))
-
-      assert json_response(res, 200)["data"]["user"] == nil
-      assert hd(json_response(res, 200)["errors"])["message"] == "User with ID #{0} not found"
+      assert res["data"]["user"] == nil
+      assert hd(res["errors"])["message"] == "User with ID #{0} not found"
     end
 
-    test "get_current_user/3 returns the current logged-in user", context do
+    test "get_current_user/3 returns the current logged-in user", %{conn: conn} do
       user = insert(:user)
 
-      query = """
-      {
-          loggedUser {
-            id
-          }
-        }
-      """
-
       res =
-        context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "logged_user"))
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @logged_user_query,
+          variables: %{}
+        )
 
-      assert json_response(res, 200)["data"]["loggedUser"] == nil
+      assert res["data"]["loggedUser"] == nil
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert hd(res["errors"])["message"] ==
                "You need to be logged-in to view current user"
 
       res =
-        context.conn
+        conn
         |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "logged_user"))
+        |> AbsintheHelpers.graphql_query(
+          query: @logged_user_query,
+          variables: %{}
+        )
 
-      assert json_response(res, 200)["data"]["loggedUser"]["id"] == to_string(user.id)
+      assert res["data"]["loggedUser"]["id"] == to_string(user.id)
     end
   end
 
   describe "Resolver: List users" do
-    test "list_users/3 doesn't return anything with a non moderator user", context do
+    test "list_users/3 doesn't return anything with a non moderator user", %{conn: conn} do
       insert(:user, email: "riri@example.com", role: :moderator)
       user = insert(:user, email: "fifi@example.com")
       insert(:user, email: "loulou@example.com", role: :administrator)
 
-      query = """
-      {
-        users {
-          total,
-          elements {
-            email
-          }
-        }
-      }
-      """
-
       res =
-        context.conn
+        conn
         |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "user"))
+        |> AbsintheHelpers.graphql_query(
+          query: @list_users_query,
+          variables: %{}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert hd(res["errors"])["message"] ==
                "You need to have admin access to list users"
     end
 
-    test "list_users/3 returns a list of users", context do
+    test "list_users/3 returns a list of users", %{conn: conn} do
       user = insert(:user, email: "riri@example.com", role: :moderator)
       insert(:user, email: "fifi@example.com")
       insert(:user, email: "loulou@example.com")
 
-      query = """
-      {
-        users {
-          total,
-          elements {
-            email
-          }
-        }
-      }
-      """
-
       res =
-        context.conn
+        conn
         |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "user"))
+        |> AbsintheHelpers.graphql_query(
+          query: @list_users_query,
+          variables: %{}
+        )
 
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["users"]["total"] == 3
-      assert json_response(res, 200)["data"]["users"]["elements"] |> length == 3
+      assert res["errors"] == nil
+      assert res["data"]["users"]["total"] == 3
+      assert res["data"]["users"]["elements"] |> length == 3
 
-      assert json_response(res, 200)["data"]["users"]["elements"]
+      assert res["data"]["users"]["elements"]
              |> Enum.map(& &1["email"]) == [
                "loulou@example.com",
                "fifi@example.com",
                "riri@example.com"
              ]
 
-      query = """
-      {
-        users(page: 2, limit: 1) {
-          total,
-          elements {
-            email
-          }
-        }
-      }
-      """
-
       res =
-        context.conn
+        conn
         |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "user"))
+        |> AbsintheHelpers.graphql_query(
+          query: @list_users_query,
+          variables: %{page: 2, limit: 1}
+        )
 
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["users"]["total"] == 3
-      assert json_response(res, 200)["data"]["users"]["elements"] |> length == 1
+      assert res["errors"] == nil
+      assert res["data"]["users"]["total"] == 3
+      assert res["data"]["users"]["elements"] |> length == 1
 
-      assert json_response(res, 200)["data"]["users"]["elements"] |> Enum.map(& &1["email"]) == [
+      assert res["data"]["users"]["elements"] |> Enum.map(& &1["email"]) == [
                "fifi@example.com"
              ]
 
-      query = """
-      {
-        users(page: 3, limit: 1, sort: ID, direction: DESC) {
-          total,
-          elements {
-            email
-          }
-        }
-      }
-      """
-
       res =
-        context.conn
+        conn
         |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "user"))
+        |> AbsintheHelpers.graphql_query(
+          query: @list_users_query,
+          variables: %{page: 3, limit: 1, sort: "ID", direction: "DESC"}
+        )
 
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["users"]["total"] == 3
-      assert json_response(res, 200)["data"]["users"]["elements"] |> length == 1
+      assert res["errors"] == nil
+      assert res["data"]["users"]["total"] == 3
+      assert res["data"]["users"]["elements"] |> length == 1
 
-      assert json_response(res, 200)["data"]["users"]["elements"] |> Enum.map(& &1["email"]) == [
+      assert res["data"]["users"]["elements"] |> Enum.map(& &1["email"]) == [
                "riri@example.com"
              ]
-    end
-
-    test "get_current_user/3 returns the current logged-in user", context do
-      user = insert(:user)
-
-      query = """
-      {
-          loggedUser {
-            id
-          }
-        }
-      """
-
-      res =
-        context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "logged_user"))
-
-      assert json_response(res, 200)["data"]["loggedUser"] == nil
-
-      assert hd(json_response(res, 200)["errors"])["message"] ==
-               "You need to be logged-in to view current user"
-
-      res =
-        context.conn
-        |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "logged_user"))
-
-      assert json_response(res, 200)["data"]["loggedUser"]["id"] == to_string(user.id)
     end
   end
 
@@ -270,7 +259,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       email: "test@demo.tld",
       password: "long password",
       locale: "fr_FR",
-      username: "toto",
+      preferredUsername: "toto",
       name: "Sir Toto",
       summary: "Sir Toto, prince of the functional tests"
     }
@@ -280,117 +269,61 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
     }
 
     test "test create_user/3 creates an user and register_person/3 registers a profile",
-         context do
-      mutation = """
-          mutation {
-            createUser(
-                  email: "#{@user_creation.email}",
-                  password: "#{@user_creation.password}",
-                  locale: "#{@user_creation.locale}"
-              ) {
-                id,
-                email,
-                locale
-              }
-            }
-      """
-
+         %{conn: conn} do
       res =
-        context.conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @create_user_mutation,
+          variables: @user_creation
+        )
 
-      assert json_response(res, 200)["data"]["createUser"]["email"] == @user_creation.email
-      assert json_response(res, 200)["data"]["createUser"]["locale"] == @user_creation.locale
+      assert res["data"]["createUser"]["email"] == @user_creation.email
+      assert res["data"]["createUser"]["locale"] == @user_creation.locale
 
       {:ok, user} = Users.get_user_by_email(@user_creation.email)
 
       assert_delivered_email(Email.User.confirmation_email(user, @user_creation.locale))
 
-      mutation = """
-          mutation {
-            registerPerson(
-              preferredUsername: "#{@user_creation.username}",
-              name: "#{@user_creation.name}",
-              summary: "#{@user_creation.summary}",
-              email: "#{@user_creation.email}",
-              ) {
-                preferredUsername,
-                name,
-                summary,
-                avatar {
-                  url
-                },
-              }
-            }
-      """
-
       res =
-        context.conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @register_person_mutation,
+          variables: @user_creation
+        )
 
-      assert json_response(res, 200)["data"]["registerPerson"]["preferredUsername"] ==
-               @user_creation.username
+      assert res["data"]["registerPerson"]["preferredUsername"] ==
+               @user_creation.preferredUsername
     end
 
     test "create_user/3 doesn't allow two users with the same email", %{conn: conn} do
-      mutation = """
-          mutation {
-            createUser(
-                  email: "#{@user_creation.email}",
-                  password: "#{@user_creation.password}",
-              ) {
-                id,
-                email
-              }
-            }
-      """
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @create_user_mutation,
+          variables: @user_creation
+        )
+
+      assert res["data"]["createUser"]["email"] == @user_creation.email
 
       res =
         conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @create_user_mutation,
+          variables: @user_creation
+        )
 
-      assert json_response(res, 200)["data"]["createUser"]["email"] == @user_creation.email
-
-      mutation = """
-          mutation {
-            createUser(
-                  email: "#{@user_creation.email}",
-                  password: "#{@user_creation.password}",
-              ) {
-                id,
-                email
-              }
-            }
-      """
-
-      res =
-        conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      assert hd(json_response(res, 200)["errors"])["message"] == ["This email is already used."]
+      assert hd(res["errors"])["message"] == ["Cette adresse e-mail est déjà utilisée."]
     end
 
     test "create_user/3 doesn't allow registration when registration is closed", %{conn: conn} do
       Config.put([:instance, :registrations_open], false)
       Config.put([:instance, :registration_email_allowlist], [])
 
-      mutation = """
-          mutation createUser($email: String!, $password: String!) {
-            createUser(
-                  email: $email,
-                  password: $password,
-              ) {
-                id,
-                email
-              }
-            }
-      """
-
       res =
         conn
         |> AbsintheHelpers.graphql_query(
-          query: mutation,
-          variables: %{email: @user_creation.email, password: @user_creation.password}
+          query: @create_user_mutation,
+          variables: @user_creation
         )
 
       assert hd(res["errors"])["message"] == "Registrations are not open"
@@ -403,23 +336,11 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       Config.put([:instance, :registrations_open], false)
       Config.put([:instance, :registration_email_allowlist], ["random.org"])
 
-      mutation = """
-          mutation createUser($email: String!, $password: String!) {
-            createUser(
-                  email: $email,
-                  password: $password,
-              ) {
-                id,
-                email
-              }
-            }
-      """
-
       res =
         conn
         |> AbsintheHelpers.graphql_query(
-          query: mutation,
-          variables: %{email: @user_creation.email, password: @user_creation.password}
+          query: @create_user_mutation,
+          variables: @user_creation
         )
 
       assert hd(res["errors"])["message"] == "Your email is not on the allowlist"
@@ -433,23 +354,11 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       Config.put([:instance, :registrations_open], false)
       Config.put([:instance, :registration_email_allowlist], ["demo.tld"])
 
-      mutation = """
-          mutation createUser($email: String!, $password: String!) {
-            createUser(
-                  email: $email,
-                  password: $password,
-              ) {
-                id,
-                email
-              }
-            }
-      """
-
       res =
         conn
         |> AbsintheHelpers.graphql_query(
-          query: mutation,
-          variables: %{email: @user_creation.email, password: @user_creation.password}
+          query: @create_user_mutation,
+          variables: @user_creation
         )
 
       refute res["errors"]
@@ -462,23 +371,11 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       Config.put([:instance, :registrations_open], false)
       Config.put([:instance, :registration_email_allowlist], [@user_creation.email])
 
-      mutation = """
-          mutation createUser($email: String!, $password: String!) {
-            createUser(
-                  email: $email,
-                  password: $password,
-              ) {
-                id,
-                email
-              }
-            }
-      """
-
       res =
         conn
         |> AbsintheHelpers.graphql_query(
-          query: mutation,
-          variables: %{email: @user_creation.email, password: @user_creation.password}
+          query: @create_user_mutation,
+          variables: @user_creation
         )
 
       refute res["errors"]
@@ -487,133 +384,83 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       Config.put([:instance, :registration_email_allowlist], [])
     end
 
-    test "register_person/3 doesn't register a profile from an unknown email", context do
-      mutation = """
-          mutation {
-            createUser(
-                  email: "#{@user_creation.email}",
-                  password: "#{@user_creation.password}",
-              ) {
-                id,
-                email
-              }
-            }
-      """
-
-      context.conn
-      |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      mutation = """
-          mutation {
-            registerPerson(
-              preferredUsername: "#{@user_creation.username}",
-              name: "#{@user_creation.name}",
-              summary: "#{@user_creation.summary}",
-              email: "random",
-              ) {
-                preferredUsername,
-                name,
-                summary,
-                avatar {
-                  url
-                },
-              }
-            }
-      """
+    test "register_person/3 doesn't register a profile from an unknown email", %{conn: conn} do
+      conn
+      |> AbsintheHelpers.graphql_query(
+        query: @create_user_mutation,
+        variables: @user_creation
+      )
 
       res =
-        context.conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @register_person_mutation,
+          variables: Map.put(@user_creation, :email, "random")
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
-               "No user with this email was found"
+      assert hd(res["errors"])["message"] ==
+               "Aucun·e utilisateur·ice avec cette adresse e-mail n'a été trouvé·e"
     end
 
-    test "register_person/3 can't be called with an existing profile", context do
-      mutation = """
-          mutation {
-            createUser(
-                  email: "#{@user_creation.email}",
-                  password: "#{@user_creation.password}",
-              ) {
-                id,
-                email
-              }
-            }
-      """
-
-      context.conn
-      |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      mutation = """
-          mutation {
-            registerPerson(
-              preferredUsername: "#{@user_creation.username}",
-              name: "#{@user_creation.name}",
-              summary: "#{@user_creation.summary}",
-              email: "#{@user_creation.email}",
-              ) {
-                preferredUsername,
-                name,
-                summary,
-                avatar {
-                  url
-                },
-              }
-            }
-      """
+    test "register_person/3 can't be called with an existing profile", %{conn: conn} do
+      conn
+      |> AbsintheHelpers.graphql_query(
+        query: @create_user_mutation,
+        variables: @user_creation
+      )
 
       res =
-        context.conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @register_person_mutation,
+          variables: @user_creation
+        )
 
-      assert json_response(res, 200)["data"]["registerPerson"]["preferredUsername"] ==
-               @user_creation.username
-
-      mutation = """
-          mutation {
-            registerPerson(
-              preferredUsername: "#{@user_creation.username}",
-              name: "#{@user_creation.name}",
-              summary: "#{@user_creation.summary}",
-              email: "#{@user_creation.email}",
-              ) {
-                preferredUsername,
-                name,
-                summary,
-                avatar {
-                  url
-                },
-              }
-            }
-      """
+      assert res["data"]["registerPerson"]["preferredUsername"] ==
+               @user_creation.preferredUsername
 
       res =
-        context.conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @register_person_mutation,
+          variables: @user_creation
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
-               "You already have a profile for this user"
+      assert hd(res["errors"])["message"] ==
+               "Vous avez déjà un profil pour cet utilisateur"
     end
 
-    test "test create_user/3 doesn't create an user with bad email", context do
-      mutation = """
-          mutation {
-            createUser(
-                  email: "#{@user_creation_bad_email.email}",
-                  password: "#{@user_creation_bad_email.password}",
-              ) {
-                id,
-                email
-              }
-            }
-      """
+    test "register_person/3 is case insensitive", %{conn: conn} do
+      insert(:actor, preferred_username: "myactor")
+
+      conn
+      |> AbsintheHelpers.graphql_query(
+        query: @create_user_mutation,
+        variables: @user_creation
+      )
 
       res =
-        context.conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @register_person_mutation,
+          variables: Map.put(@user_creation, :preferredUsername, "Myactor")
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      refute is_nil(res["errors"])
+
+      assert hd(res["errors"])["message"] ==
+               ["Cet identifiant est déjà pris."]
+    end
+
+    test "test create_user/3 doesn't create an user with bad email", %{conn: conn} do
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @create_user_mutation,
+          variables: @user_creation_bad_email
+        )
+
+      assert hd(res["errors"])["message"] ==
                ["Email doesn't fit required format"]
     end
   end
@@ -993,7 +840,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       user = insert(:user)
       insert(:actor, user: user)
 
-      assert {:ok, %User{actors: actors}} = Users.get_user_with_actors(user.id)
+      assert {:ok, %User{actors: _actors}} = Users.get_user_with_actors(user.id)
 
       actor_params = @valid_single_actor_params |> Map.put(:user_id, user.id)
       assert {:ok, %Actor{} = actor2} = Actors.create_actor(actor_params)

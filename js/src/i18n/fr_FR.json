@@ -480,7 +480,7 @@
   "Only accessible through link": "Accessible uniquement par le lien",
   "Only accessible through link (private)": "Uniquement accessible par lien (privé)",
   "Only accessible to members of the group": "Accessible uniquement aux membres du groupe",
-  "Only alphanumeric characters and underscores are supported.": "Seuls les caractères alphanumériques et les tirets bas sont acceptés.",
+  "Only alphanumeric lowercased characters and underscores are supported.": "Seuls les caractères alphanumériques minuscules et les tirets bas sont acceptés.",
   "Only group moderators can create, edit and delete posts.": "Seul·e·s les modérateur·rice·s du groupe peuvent créer, éditer et supprimer des billets.",
   "Open": "Ouvert",
   "Opened reports": "Signalements ouverts",
