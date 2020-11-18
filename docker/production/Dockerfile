@@ -33,6 +33,8 @@ FROM alpine
 
 RUN apk add --no-cache openssl ncurses-libs file postgresql-client
 
+RUN mkdir -p /app/uploads && chown nobody:nobody /app/uploads
+
 USER nobody
 EXPOSE 4000
 
