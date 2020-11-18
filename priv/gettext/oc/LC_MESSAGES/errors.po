@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-11-18 07:52+0000\n"
+"PO-Revision-Date: 2020-11-18 08:13+0000\n"
 "Last-Translator: Joan Luci Labòrda <joanluc.laborda@free.fr>\n"
 "Language-Team: Occitan <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/oc/>\n"
@@ -93,775 +93,775 @@ msgstr "deu èsser superior o egal a %{number}"
 msgid "must be equal to %{number}"
 msgstr "deu èsser egal a %{number}"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:103
+#, elixir-format
 msgid "Cannot refresh the token"
 msgstr "Actualizacion impossibla del geton"
 
-#, elixir-format
 #: lib/graphql/resolvers/group.ex:137
+#, elixir-format
 msgid "Creator profile is not owned by the current user"
 msgstr "Lo perfil creator es pas tengut per l’utilizaire actual"
 
-#, elixir-format
 #: lib/graphql/resolvers/group.ex:201
+#, elixir-format
 msgid "Current profile is not a member of this group"
 msgstr "Lo perfil actual es pas un membre d’aqueste grop"
 
-#, elixir-format
 #: lib/graphql/resolvers/group.ex:205
+#, elixir-format
 msgid "Current profile is not an administrator of the selected group"
 msgstr "Lo perfil actual es pas administrator del grop seleccionat"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:512
+#, elixir-format
 msgid "Error while saving user settings"
 msgstr "Error en salvagardant los paramètres utilizaire"
 
-#, elixir-format
 #: lib/graphql/error.ex:90 lib/graphql/resolvers/group.ex:198
 #: lib/graphql/resolvers/group.ex:229 lib/graphql/resolvers/group.ex:264 lib/graphql/resolvers/member.ex:83
+#, elixir-format
 msgid "Group not found"
 msgstr "Grop pas trobat"
 
-#, elixir-format
 #: lib/graphql/resolvers/group.ex:66
+#, elixir-format
 msgid "Group with ID %{id} not found"
 msgstr "Grop amb l’ID %{id} pas trobat"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:83
+#, elixir-format
 msgid "Impossible to authenticate, either your email or password are invalid."
 msgstr ""
 "Autentificacion impossibla, vòstra adreça electronica o lo vòstre senhal es "
 "invalid."
 
-#, elixir-format
 #: lib/graphql/resolvers/group.ex:261
+#, elixir-format
 msgid "Member not found"
 msgstr "Membre pas trobat"
 
-#, elixir-format
 #: lib/graphql/resolvers/actor.ex:58 lib/graphql/resolvers/actor.ex:88
 #: lib/graphql/resolvers/user.ex:417
+#, elixir-format
 msgid "No profile found for the moderator user"
 msgstr "Cap de perfil pas trobat per l’utilizaire moderator"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:195
+#, elixir-format
 msgid "No user to validate with this email was found"
 msgstr "Cap d’utilizaire de validar amb aqueste email pas trobat"
 
-#, elixir-format
 #: lib/graphql/resolvers/person.ex:231 lib/graphql/resolvers/user.ex:76
 #: lib/graphql/resolvers/user.ex:219
+#, elixir-format
 msgid "No user with this email was found"
 msgstr "Degun trobat d'amb aquesta email"
 
-#, elixir-format
 #: lib/graphql/resolvers/comment.ex:50 lib/graphql/resolvers/comment.ex:112
 #: lib/graphql/resolvers/event.ex:286 lib/graphql/resolvers/feed_token.ex:28 lib/graphql/resolvers/member.ex:80
 #: lib/graphql/resolvers/participant.ex:29 lib/graphql/resolvers/participant.ex:160
 #: lib/graphql/resolvers/participant.ex:189 lib/graphql/resolvers/person.ex:155 lib/graphql/resolvers/person.ex:189
 #: lib/graphql/resolvers/person.ex:255 lib/graphql/resolvers/person.ex:284 lib/graphql/resolvers/person.ex:297
 #: lib/graphql/resolvers/picture.ex:72 lib/graphql/resolvers/report.ex:107 lib/graphql/resolvers/todos.ex:57
+#, elixir-format
 msgid "Profile is not owned by authenticated user"
 msgstr "Lo perhiu es pas proprietat del utilizator autenticat"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:125
+#, elixir-format
 msgid "Registrations are not open"
 msgstr "Las inscripciones sèn pas obèrtas"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:330
+#, elixir-format
 msgid "The current password is invalid"
 msgstr "Lo mòt de santa clara actuau es invalid"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:382
+#, elixir-format
 msgid "The new email doesn't seem to be valid"
 msgstr "Lo email nau sèm invalid"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:379
+#, elixir-format
 msgid "The new email must be different"
 msgstr "Lo email nau deb esser different"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:333
+#, elixir-format
 msgid "The new password must be different"
 msgstr "Lo mòt de santa clara nau deb esser different"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:376 lib/graphql/resolvers/user.ex:439
 #: lib/graphql/resolvers/user.ex:442
+#, elixir-format
 msgid "The password provided is invalid"
 msgstr "Lo mòt de santa clara aprovedit es invalid"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:337
+#, elixir-format
 msgid "The password you have chosen is too short. Please make sure your password contains at least 6 characters."
 msgstr ""
 "Lo mòt de santa clara que avetz causit es tròp cort. Merci de vos assegurar "
 "que vostre mòt de santa clara contienga au mèns 6 caracteres."
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:215
+#, elixir-format
 msgid "This user can't reset their password"
 msgstr "Aquest utilizator pod pas reinicializar lo sèn mòt de santa clara"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:79
+#, elixir-format
 msgid "This user has been disabled"
 msgstr "Aquest utilizator a essat dasactivat"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:179
+#, elixir-format
 msgid "Unable to validate user"
 msgstr "Es impossible de validar l'utilizator"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:420
+#, elixir-format
 msgid "User already disabled"
 msgstr "Utilizator déjà desactivat"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:487
+#, elixir-format
 msgid "User requested is not logged-in"
 msgstr "L'utilizator demandat es pas conectat"
 
-#, elixir-format
 #: lib/graphql/resolvers/group.ex:235
+#, elixir-format
 msgid "You are already a member of this group"
 msgstr "Essetz déjà membre d'aquest grop"
 
-#, elixir-format
 #: lib/graphql/resolvers/group.ex:268
+#, elixir-format
 msgid "You can't leave this group because you are the only administrator"
 msgstr "Podetz pas quitar aquest grop perque essetz lo sol administrator"
 
-#, elixir-format
 #: lib/graphql/resolvers/group.ex:232
+#, elixir-format
 msgid "You cannot join this group"
 msgstr "Podetz pas rejónher aquest grop"
 
-#, elixir-format
 #: lib/graphql/resolvers/group.ex:94
+#, elixir-format
 msgid "You may not list groups unless moderator."
 msgstr "Podetz listar los grops sonque se essetz moderator."
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:387
+#, elixir-format
 msgid "You need to be logged-in to change your email"
 msgstr "Debetz esser conectat per cambiar lo voste email"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:345
+#, elixir-format
 msgid "You need to be logged-in to change your password"
 msgstr "Debetz d'esser conectat per cambiar lo voste mòt de santa clara"
 
-#, elixir-format
 #: lib/graphql/resolvers/group.ex:210
+#, elixir-format
 msgid "You need to be logged-in to delete a group"
 msgstr "Debetz d'esser conectat per suprimir un grop"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:447
+#, elixir-format
 msgid "You need to be logged-in to delete your account"
 msgstr "Deves-tz d'esser conectat-ada per suprimir lo voste compte"
 
-#, elixir-format
 #: lib/graphql/resolvers/group.ex:240
+#, elixir-format
 msgid "You need to be logged-in to join a group"
 msgstr "Deves-tz d'esser conectat-ada per rejónher un grop"
 
-#, elixir-format
 #: lib/graphql/resolvers/group.ex:273
+#, elixir-format
 msgid "You need to be logged-in to leave a group"
 msgstr "Deves-tz d'esser conectat-ada per quitar un grop"
 
-#, elixir-format
 #: lib/graphql/resolvers/group.ex:175
+#, elixir-format
 msgid "You need to be logged-in to update a group"
 msgstr "Deves-tz d'esser conectat per metre à jorn un grop"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:58
+#, elixir-format
 msgid "You need to have admin access to list users"
 msgstr "Deves-tz aver un accès admin per listar los utilizators"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:108
+#, elixir-format
 msgid "You need to have an existing token to get a refresh token"
 msgstr "deves-tz aver un senhau existant per obtiéner un senhau nau"
 
-#, elixir-format
 #: lib/graphql/resolvers/user.ex:198 lib/graphql/resolvers/user.ex:222
-msgid "You requested again a confirmation email too soon"
-msgstr ""
-
 #, elixir-format
+msgid "You requested again a confirmation email too soon"
+msgstr "Demandatz de nau un email de confirmacion tròp lèu"
+
 #: lib/graphql/resolvers/user.ex:128
+#, elixir-format
 msgid "Your email is not on the allowlist"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/actor.ex:64 lib/graphql/resolvers/actor.ex:94
+#, elixir-format
 msgid "Error while performing background task"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/actor.ex:27
+#, elixir-format
 msgid "No profile found with this ID"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/actor.ex:54 lib/graphql/resolvers/actor.ex:91
+#, elixir-format
 msgid "No remote profile found with this ID"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/actor.ex:69
+#, elixir-format
 msgid "Only moderators and administrators can suspend a profile"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/actor.ex:99
+#, elixir-format
 msgid "Only moderators and administrators can unsuspend a profile"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/actor.ex:24
+#, elixir-format
 msgid "Only remote profiles may be refreshed"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/actor.ex:61
+#, elixir-format
 msgid "Profile already suspended"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/participant.ex:93
+#, elixir-format
 msgid "A valid email is required by your instance"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/participant.ex:87
+#, elixir-format
 msgid "Anonymous participation is not enabled"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/person.ex:186
+#, elixir-format
 msgid "Cannot remove the last administrator of a group"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/person.ex:183
+#, elixir-format
 msgid "Cannot remove the last identity of a user"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/comment.ex:109
+#, elixir-format
 msgid "Comment is already deleted"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/discussion.ex:61
+#, elixir-format
 msgid "Discussion not found"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/report.ex:62 lib/graphql/resolvers/report.ex:84
+#, elixir-format
 msgid "Error while saving report"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/report.ex:110
+#, elixir-format
 msgid "Error while updating report"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/participant.ex:128
+#, elixir-format
 msgid "Event id not found"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/error.ex:89 lib/graphql/resolvers/event.ex:238
 #: lib/graphql/resolvers/event.ex:283
+#, elixir-format
 msgid "Event not found"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/participant.ex:84
 #: lib/graphql/resolvers/participant.ex:125 lib/graphql/resolvers/participant.ex:157
+#, elixir-format
 msgid "Event with this ID %{id} doesn't exist"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/participant.ex:100
+#, elixir-format
 msgid "Internal Error"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/event.ex:100 lib/graphql/resolvers/participant.ex:231
+#, elixir-format
 msgid "Moderator profile is not owned by authenticated user"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/discussion.ex:184
+#, elixir-format
 msgid "No discussion with ID %{id}"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/todos.ex:81 lib/graphql/resolvers/todos.ex:171
+#, elixir-format
 msgid "No profile found for user"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:63
+#, elixir-format
 msgid "No such feed token"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/event.ex:202
+#, elixir-format
 msgid "Organizer profile is not owned by the user"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/participant.ex:241
+#, elixir-format
 msgid "Participant already has role %{role}"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/participant.ex:170
 #: lib/graphql/resolvers/participant.ex:199 lib/graphql/resolvers/participant.ex:234
 #: lib/graphql/resolvers/participant.ex:244
+#, elixir-format
 msgid "Participant not found"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/person.ex:31
+#, elixir-format
 msgid "Person with ID %{id} not found"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/person.ex:52
+#, elixir-format
 msgid "Person with username %{username} not found"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/picture.ex:42
+#, elixir-format
 msgid "Picture with ID %{id} was not found"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/post.ex:165 lib/graphql/resolvers/post.ex:198
+#, elixir-format
 msgid "Post ID is not a valid ID"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/post.ex:168 lib/graphql/resolvers/post.ex:201
+#, elixir-format
 msgid "Post doesn't exist"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/member.ex:86
+#, elixir-format
 msgid "Profile invited doesn't exist"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/member.ex:95 lib/graphql/resolvers/member.ex:99
+#, elixir-format
 msgid "Profile is already a member of this group"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/post.ex:131 lib/graphql/resolvers/post.ex:171
 #: lib/graphql/resolvers/post.ex:204 lib/graphql/resolvers/resource.ex:87 lib/graphql/resolvers/resource.ex:124
 #: lib/graphql/resolvers/resource.ex:153 lib/graphql/resolvers/resource.ex:182 lib/graphql/resolvers/todos.ex:60
 #: lib/graphql/resolvers/todos.ex:84 lib/graphql/resolvers/todos.ex:102 lib/graphql/resolvers/todos.ex:174
 #: lib/graphql/resolvers/todos.ex:197 lib/graphql/resolvers/todos.ex:225
+#, elixir-format
 msgid "Profile is not member of group"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/person.ex:152 lib/graphql/resolvers/person.ex:180
+#, elixir-format
 msgid "Profile not found"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/event.ex:104 lib/graphql/resolvers/participant.ex:238
+#, elixir-format
 msgid "Provided moderator profile doesn't have permission on this event"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/report.ex:38
+#, elixir-format
 msgid "Report not found"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/resource.ex:150 lib/graphql/resolvers/resource.ex:179
+#, elixir-format
 msgid "Resource doesn't exist"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/participant.ex:121
+#, elixir-format
 msgid "The event has already reached its maximum capacity"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/participant.ex:264
+#, elixir-format
 msgid "This token is invalid"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/todos.ex:168 lib/graphql/resolvers/todos.ex:222
+#, elixir-format
 msgid "Todo doesn't exist"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/todos.ex:78 lib/graphql/resolvers/todos.ex:194
 #: lib/graphql/resolvers/todos.ex:219
+#, elixir-format
 msgid "Todo list doesn't exist"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:69
+#, elixir-format
 msgid "Token does not exist"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:66
+#, elixir-format
 msgid "Token is not a valid UUID"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/error.ex:87 lib/graphql/resolvers/person.ex:319
+#, elixir-format
 msgid "User not found"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/person.ex:234
+#, elixir-format
 msgid "You already have a profile for this user"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/participant.ex:131
+#, elixir-format
 msgid "You are already a participant of this event"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/discussion.ex:188
+#, elixir-format
 msgid "You are not a member of the group the discussion belongs to"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/member.ex:89
+#, elixir-format
 msgid "You are not a member of this group"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/member.ex:154
+#, elixir-format
 msgid "You are not a moderator or admin for this group"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/comment.ex:55
+#, elixir-format
 msgid "You are not allowed to create a comment if not connected"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:41
+#, elixir-format
 msgid "You are not allowed to create a feed token if not connected"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/comment.ex:117
+#, elixir-format
 msgid "You are not allowed to delete a comment if not connected"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:78
+#, elixir-format
 msgid "You are not allowed to delete a feed token if not connected"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/comment.ex:77
+#, elixir-format
 msgid "You are not allowed to update a comment if not connected"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/participant.ex:164
 #: lib/graphql/resolvers/participant.ex:193
+#, elixir-format
 msgid "You can't leave event because you're the only event creator participant"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/member.ex:158
+#, elixir-format
 msgid "You can't set yourself to a lower member role for this group because you are the only administrator"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/comment.ex:105
+#, elixir-format
 msgid "You cannot delete this comment"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/event.ex:279
+#, elixir-format
 msgid "You cannot delete this event"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/member.ex:92
+#, elixir-format
 msgid "You cannot invite to this group"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:72
+#, elixir-format
 msgid "You don't have permission to delete this token"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/admin.ex:52
+#, elixir-format
 msgid "You need to be logged-in and a moderator to list action logs"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/report.ex:28
+#, elixir-format
 msgid "You need to be logged-in and a moderator to list reports"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/report.ex:115
+#, elixir-format
 msgid "You need to be logged-in and a moderator to update a report"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/report.ex:43
+#, elixir-format
 msgid "You need to be logged-in and a moderator to view a report"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/admin.ex:236
+#, elixir-format
 msgid "You need to be logged-in and an administrator to access admin settings"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/admin.ex:221
+#, elixir-format
 msgid "You need to be logged-in and an administrator to access dashboard statistics"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/admin.ex:260
+#, elixir-format
 msgid "You need to be logged-in and an administrator to save admin settings"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/discussion.ex:66
+#, elixir-format
 msgid "You need to be logged-in to access discussions"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/resource.ex:93
+#, elixir-format
 msgid "You need to be logged-in to access resources"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/event.ex:213
+#, elixir-format
 msgid "You need to be logged-in to create events"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/post.ex:139
+#, elixir-format
 msgid "You need to be logged-in to create posts"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/report.ex:78 lib/graphql/resolvers/report.ex:89
+#, elixir-format
 msgid "You need to be logged-in to create reports"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/resource.ex:129
+#, elixir-format
 msgid "You need to be logged-in to create resources"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/event.ex:291
+#, elixir-format
 msgid "You need to be logged-in to delete an event"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/post.ex:209
+#, elixir-format
 msgid "You need to be logged-in to delete posts"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/resource.ex:187
+#, elixir-format
 msgid "You need to be logged-in to delete resources"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/participant.ex:105
+#, elixir-format
 msgid "You need to be logged-in to join an event"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/participant.ex:204
+#, elixir-format
 msgid "You need to be logged-in to leave an event"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/event.ex:252
+#, elixir-format
 msgid "You need to be logged-in to update an event"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/post.ex:176
+#, elixir-format
 msgid "You need to be logged-in to update posts"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/resource.ex:158
+#, elixir-format
 msgid "You need to be logged-in to update resources"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/resource.ex:210
+#, elixir-format
 msgid "You need to be logged-in to view a resource preview"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/picture.ex:83
+#, elixir-format
 msgid "You need to login to upload a picture"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/report.ex:81
+#, elixir-format
 msgid "Reporter ID does not match the anonymous profile id"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/report.ex:59
+#, elixir-format
 msgid "Reporter profile is not owned by authenticated user"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/resource.ex:121
+#, elixir-format
 msgid "Parent resource doesn't belong to this group"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/participant.ex:90
+#, elixir-format
 msgid "Profile ID provided is not the anonymous profile one"
 msgstr ""
 
-#, elixir-format
 #: lib/mobilizon/users/user.ex:109
+#, elixir-format
 msgid "The chosen password is too short."
 msgstr ""
 
-#, elixir-format
 #: lib/mobilizon/users/user.ex:138
+#, elixir-format
 msgid "The registration token is already in use, this looks like an issue on our side."
 msgstr ""
 
-#, elixir-format
 #: lib/mobilizon/users/user.ex:104
+#, elixir-format
 msgid "This email is already used."
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/error.ex:88
+#, elixir-format
 msgid "Post not found"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/error.ex:75
+#, elixir-format
 msgid "Invalid arguments passed"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/error.ex:81
+#, elixir-format
 msgid "Invalid credentials"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/error.ex:79
+#, elixir-format
 msgid "Reset your password to login"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/error.ex:86 lib/graphql/error.ex:91
+#, elixir-format
 msgid "Resource not found"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/error.ex:92
+#, elixir-format
 msgid "Something went wrong"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/error.ex:74
+#, elixir-format
 msgid "Unknown Resource"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/error.ex:84
+#, elixir-format
 msgid "You don't have permission to do this"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/error.ex:76
+#, elixir-format
 msgid "You need to be logged in"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/member.ex:119
+#, elixir-format
 msgid "You can't accept this invitation with this profile."
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/member.ex:137
+#, elixir-format
 msgid "You can't reject this invitation with this profile."
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/picture.ex:75
+#, elixir-format
 msgid "File doesn't have an allowed MIME type."
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/group.ex:170
+#, elixir-format
 msgid "Profile is not administrator for the group"
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/event.ex:241
+#, elixir-format
 msgid "You can't edit this event."
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/event.ex:244
+#, elixir-format
 msgid "You can't attribute this event to this profile."
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/member.ex:140
+#, elixir-format
 msgid "This invitation doesn't exist."
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/member.ex:182
+#, elixir-format
 msgid "This member already has been rejected."
 msgstr ""
 
-#, elixir-format
 #: lib/graphql/resolvers/member.ex:189
+#, elixir-format
 msgid "You don't have the right to remove this member."
 msgstr ""
 
-#, elixir-format
 #: lib/mobilizon/actors/actor.ex:344
+#, elixir-format
 msgid "This username is already taken."
 msgstr ""
