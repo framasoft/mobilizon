@@ -40,7 +40,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
 
     field(:physical_address, :address,
       resolve: dataloader(Addresses),
-      description: "The type of the event's address"
+      description: "The event's physical address"
     )
 
     field(:online_address, :string, description: "Online address of the event")
@@ -68,10 +68,13 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     )
 
     field(:participants, :paginated_participant_list, description: "The event's participants") do
-      arg(:page, :integer, default_value: 1)
-      arg(:limit, :integer, default_value: 10)
-      arg(:roles, :string, default_value: "")
-      arg(:actor_id, :id)
+      arg(:page, :integer,
+        default_value: 1,
+        description: "The page in the paginated participants list"
+      )
+
+      arg(:limit, :integer, default_value: 10, description: "The limit of participants per page")
+      arg(:roles, :string, default_value: "", description: "Filter by roles")
       resolve(&Event.list_participants_for_event/3)
     end
 
@@ -119,11 +122,13 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     value(:cancelled, description: "The event is cancelled")
   end
 
+  @desc "A paginated list of events"
   object :paginated_event_list do
     field(:elements, list_of(:event), description: "A list of events")
     field(:total, :integer, description: "The total number of events in the list")
   end
 
+  @desc "Participation statistics"
   object :participant_stats do
     field(:going, :integer, description: "The number of approved participants")
     field(:not_approved, :integer, description: "The number of not approved participants")
@@ -139,24 +144,36 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     field(:creator, :integer, description: "The number of creators")
   end
 
+  @desc """
+  An event offer
+  """
   object :event_offer do
     field(:price, :float, description: "The price amount for this offer")
     field(:price_currency, :string, description: "The currency for this price offer")
     field(:url, :string, description: "The URL to access to this offer")
   end
 
+  @desc """
+  An event participation condition
+  """
   object :event_participation_condition do
     field(:title, :string, description: "The title for this condition")
     field(:content, :string, description: "The content for this condition")
     field(:url, :string, description: "The URL to access this condition")
   end
 
+  @desc """
+  An event offer
+  """
   input_object :event_offer_input do
     field(:price, :float, description: "The price amount for this offer")
     field(:price_currency, :string, description: "The currency for this price offer")
     field(:url, :string, description: "The URL to access to this offer")
   end
 
+  @desc """
+  An event participation condition
+  """
   input_object :event_participation_condition_input do
     field(:title, :string, description: "The title for this condition")
     field(:content, :string, description: "The content for this condition")
@@ -170,6 +187,9 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     value(:closed, description: "No one can comment except for the admin")
   end
 
+  @desc """
+  Event options
+  """
   object :event_options do
     field(:maximum_attendee_capacity, :integer,
       description: "The maximum attendee capacity for this event"
@@ -213,6 +233,9 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     )
   end
 
+  @desc """
+  Event options
+  """
   input_object :event_options_input do
     field(:maximum_attendee_capacity, :integer,
       description: "The maximum attendee capacity for this event"
@@ -259,6 +282,9 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     )
   end
 
+  @desc """
+  A event contact
+  """
   input_object :contact do
     field(:id, :string, description: "The Contact Actor ID")
   end
@@ -266,14 +292,14 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
   object :event_queries do
     @desc "Get all events"
     field :events, list_of(:event) do
-      arg(:page, :integer, default_value: 1)
-      arg(:limit, :integer, default_value: 10)
+      arg(:page, :integer, default_value: 1, description: "The page in the paginated event list")
+      arg(:limit, :integer, default_value: 10, description: "The limit of events per page")
       resolve(&Event.list_events/3)
     end
 
     @desc "Get an event by uuid"
     field :event, :event do
-      arg(:uuid, non_null(:uuid))
+      arg(:uuid, non_null(:uuid), description: "The event's UUID")
       resolve(&Event.find_event/3)
     end
   end
@@ -281,13 +307,21 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
   object :event_mutations do
     @desc "Create an event"
     field :create_event, type: :event do
-      arg(:title, non_null(:string))
-      arg(:description, non_null(:string))
-      arg(:begins_on, non_null(:datetime))
-      arg(:ends_on, :datetime)
-      arg(:status, :event_status)
-      arg(:visibility, :event_visibility, default_value: :public)
-      arg(:join_options, :event_join_options, default_value: :free)
+      arg(:title, non_null(:string), description: "The event's title")
+      arg(:description, non_null(:string), description: "The event's description")
+      arg(:begins_on, non_null(:datetime), description: "Datetime for when the event begins")
+      arg(:ends_on, :datetime, description: "Datetime for when the event ends")
+      arg(:status, :event_status, description: "Status of the event")
+
+      arg(:visibility, :event_visibility,
+        default_value: :public,
+        description: "The event's visibility"
+      )
+
+      arg(:join_options, :event_join_options,
+        default_value: :free,
+        description: "The event's options to join"
+      )
 
       arg(:tags, list_of(:string),
         default_value: [],
@@ -299,31 +333,49 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
           "The picture for the event, either as an object or directly the ID of an existing Picture"
       )
 
-      arg(:publish_at, :datetime)
-      arg(:online_address, :string)
-      arg(:phone_address, :string)
-      arg(:organizer_actor_id, non_null(:id))
-      arg(:attributed_to_id, :id)
-      arg(:category, :string, default_value: "meeting")
-      arg(:physical_address, :address_input)
-      arg(:options, :event_options_input)
-      arg(:draft, :boolean, default_value: false)
-      arg(:contacts, list_of(:contact), default_value: [])
+      arg(:publish_at, :datetime, description: "Datetime when the event was published")
+      arg(:online_address, :string, description: "Online address of the event")
+      arg(:phone_address, :string, description: "Phone address for the event")
+
+      arg(:organizer_actor_id, non_null(:id),
+        description: "The event's organizer ID (as a person)"
+      )
+
+      arg(:attributed_to_id, :id, description: "Who the event is attributed to ID (often a group)")
+
+      arg(:category, :string, default_value: "meeting", description: "The event's category")
+      arg(:physical_address, :address_input, description: "The event's physical address")
+      arg(:options, :event_options_input, description: "The event options")
+
+      arg(:draft, :boolean,
+        default_value: false,
+        description: "Whether or not the event is a draft"
+      )
+
+      arg(:contacts, list_of(:contact), default_value: [], description: "The events contacts")
 
       resolve(&Event.create_event/3)
     end
 
     @desc "Update an event"
     field :update_event, type: :event do
-      arg(:event_id, non_null(:id))
+      arg(:event_id, non_null(:id), description: "The event's ID")
 
-      arg(:title, :string)
-      arg(:description, :string)
-      arg(:begins_on, :datetime)
-      arg(:ends_on, :datetime)
-      arg(:status, :event_status)
-      arg(:visibility, :event_visibility, default_value: :public)
-      arg(:join_options, :event_join_options, default_value: :free)
+      arg(:title, :string, description: "The event's title")
+      arg(:description, :string, description: "The event's description")
+      arg(:begins_on, :datetime, description: "Datetime for when the event begins")
+      arg(:ends_on, :datetime, description: "Datetime for when the event ends")
+      arg(:status, :event_status, description: "Status of the event")
+
+      arg(:visibility, :event_visibility,
+        default_value: :public,
+        description: "The event's visibility"
+      )
+
+      arg(:join_options, :event_join_options,
+        default_value: :free,
+        description: "The event's options to join"
+      )
 
       arg(:tags, list_of(:string), description: "The list of tags associated to the event")
 
@@ -332,23 +384,24 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
           "The picture for the event, either as an object or directly the ID of an existing Picture"
       )
 
-      arg(:online_address, :string)
-      arg(:phone_address, :string)
-      arg(:organizer_actor_id, :id)
-      arg(:attributed_to_id, :id)
-      arg(:category, :string)
-      arg(:physical_address, :address_input)
-      arg(:options, :event_options_input)
-      arg(:draft, :boolean)
-      arg(:contacts, list_of(:contact), default_value: [])
+      arg(:online_address, :string, description: "Online address of the event")
+      arg(:phone_address, :string, description: "Phone address for the event")
+      arg(:organizer_actor_id, :id, description: "The event's organizer ID (as a person)")
+
+      arg(:attributed_to_id, :id, description: "Who the event is attributed to ID (often a group)")
+
+      arg(:category, :string, description: "The event's category")
+      arg(:physical_address, :address_input, description: "The event's physical address")
+      arg(:options, :event_options_input, description: "The event options")
+      arg(:draft, :boolean, description: "Whether or not the event is a draft")
+      arg(:contacts, list_of(:contact), default_value: [], description: "The events contacts")
 
       resolve(&Event.update_event/3)
     end
 
     @desc "Delete an event"
     field :delete_event, :deleted_object do
-      arg(:event_id, non_null(:id))
-      arg(:actor_id, non_null(:id))
+      arg(:event_id, non_null(:id), description: "The event ID to delete")
 
       resolve(&Event.delete_event/3)
     end

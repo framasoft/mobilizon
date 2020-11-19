@@ -26,6 +26,9 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
     field(:elements, non_null(list_of(:event)), description: "Event elements")
   end
 
+  @desc """
+  A entity that can be interacted with from a remote instance
+  """
   interface :interactable do
     field(:url, :string, description: "A public URL for the entity")
 
@@ -44,20 +47,25 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
   object :search_queries do
     @desc "Search persons"
     field :search_persons, :persons do
-      arg(:term, :string, default_value: "")
-      arg(:page, :integer, default_value: 1)
-      arg(:limit, :integer, default_value: 10)
+      arg(:term, :string, default_value: "", description: "Search term")
+      arg(:page, :integer, default_value: 1, description: "Result page")
+      arg(:limit, :integer, default_value: 10, description: "Results limit per page")
 
       resolve(&Search.search_persons/3)
     end
 
     @desc "Search groups"
     field :search_groups, :groups do
-      arg(:term, :string, default_value: "")
+      arg(:term, :string, default_value: "", description: "Search term")
       arg(:location, :string, description: "A geohash for coordinates")
-      arg(:radius, :float, default_value: 50)
-      arg(:page, :integer, default_value: 1)
-      arg(:limit, :integer, default_value: 10)
+
+      arg(:radius, :float,
+        default_value: 50,
+        description: "Radius around the location to search in"
+      )
+
+      arg(:page, :integer, default_value: 1, description: "Result page")
+      arg(:limit, :integer, default_value: 10, description: "Results limit per page")
 
       resolve(&Search.search_groups/3)
     end
@@ -67,11 +75,16 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
       arg(:term, :string, default_value: "")
       arg(:tags, :string, description: "A comma-separated string listing the tags")
       arg(:location, :string, description: "A geohash for coordinates")
-      arg(:radius, :float, default_value: 50)
-      arg(:page, :integer, default_value: 1)
-      arg(:limit, :integer, default_value: 10)
-      arg(:begins_on, :datetime)
-      arg(:ends_on, :datetime)
+
+      arg(:radius, :float,
+        default_value: 50,
+        description: "Radius around the location to search in"
+      )
+
+      arg(:page, :integer, default_value: 1, description: "Result page")
+      arg(:limit, :integer, default_value: 10, description: "Results limit per page")
+      arg(:begins_on, :datetime, description: "Filter events by their start date")
+      arg(:ends_on, :datetime, description: "Filter events by their end date")
 
       resolve(&Search.search_events/3)
     end

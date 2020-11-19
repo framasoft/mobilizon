@@ -178,15 +178,10 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
       };
     }
 
-    const currentActor = {
-      creatorActorId: this.currentActor.id,
-    };
-
     return {
       ...this.group,
       ...avatarObj,
       ...bannerObj,
-      ...currentActor,
     };
   }
 

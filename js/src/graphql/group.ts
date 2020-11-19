@@ -223,7 +223,6 @@ export const GET_GROUP = gql`
 
 export const CREATE_GROUP = gql`
   mutation CreateGroup(
-    $creatorActorId: ID!
     $preferredUsername: String!
     $name: String!
     $summary: String
@@ -231,7 +230,6 @@ export const CREATE_GROUP = gql`
     $banner: PictureInput
   ) {
     createGroup(
-      creatorActorId: $creatorActorId
       preferredUsername: $preferredUsername
       name: $name
       summary: $summary

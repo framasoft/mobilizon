@@ -4,7 +4,7 @@
   <%= if @report.reported.type == :Group do %>
     <%= gettext "Group %{group} was reported", group: Mobilizon.Actors.Actor.display_name_and_username(@report.reported) %>
   <% else %>
-    <%= gettext "Profile %{profile} was reported", group: Mobilizon.Actors.Actor.display_name_and_username(@report.reported) %>
+    <%= gettext "Profile %{profile} was reported", profile: Mobilizon.Actors.Actor.display_name_and_username(@report.reported) %>
   <% end %>
 <% end %>
 <%= if Map.has_key?(@report, :event) and @report.event do %>

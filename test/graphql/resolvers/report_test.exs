@@ -14,9 +14,8 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
 
   describe "Resolver: Report a content" do
     @create_report_mutation """
-    mutation CreateReport($reporterId: ID!, $reportedId: ID!, $eventId: ID, $content: String) {
+    mutation CreateReport($reportedId: ID!, $eventId: ID, $content: String) {
       createReport(
-        reporterId: $reporterId,
         reportedId: $reportedId,
         eventId: $eventId,
         content: $content
@@ -54,7 +53,6 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
           query: @create_report_mutation,
           variables: %{
             reportedId: reported.id,
-            reporterId: reporter.id,
             eventId: event.id,
             content: "This is an issue"
           }
@@ -78,7 +76,6 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
           query: @create_report_mutation,
           variables: %{
             reportedId: reported.id,
-            reporterId: 5,
             content: "This is an issue"
           }
         )
@@ -100,7 +97,6 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
           query: @create_report_mutation,
           variables: %{
             reportedId: reported.id,
-            reporterId: anonymous_actor_id,
             content: "This is an issue"
           }
         )
@@ -112,91 +108,75 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
       assert res["data"]["createReport"]["reporter"]["id"] ==
                to_string(anonymous_actor_id)
     end
-
-    test "create_report/3 anonymously doesn't creates a report if the anonymous actor ID is wrong",
-         %{conn: conn} do
-      %Actor{} = reported = insert(:actor)
-      Config.put([:anonymous, :reports, :allowed], true)
-
-      res =
-        conn
-        |> AbsintheHelpers.graphql_query(
-          query: @create_report_mutation,
-          variables: %{
-            reportedId: reported.id,
-            reporterId: 53,
-            content: "This is an issue"
-          }
-        )
-
-      assert res["errors"] |> hd |> Map.get("message") ==
-               "Reporter ID does not match the anonymous profile id"
-    end
   end
 
   describe "Resolver: update a report" do
+    @update_report_mutation """
+    mutation UpdateReport($reportId: ID!, $status: ReportStatus!) {
+      updateReportStatus(reportId: $reportId, status: $status) {
+        content,
+        reporter {
+          id
+        },
+        event {
+          id
+        },
+        status
+      }
+    }
+    """
+
     test "update_report/3 updates the report's status", %{conn: conn} do
       %User{} = user_moderator = insert(:user, role: :moderator)
-      %Actor{} = moderator = insert(:actor, user: user_moderator)
+      %Actor{} = _actor_moderator = insert(:actor, user: user_moderator)
       %Report{} = report = insert(:report)
-
-      mutation = """
-          mutation {
-            updateReportStatus(
-              report_id: #{report.id},
-              moderator_id: #{moderator.id},
-              status: RESOLVED
-            ) {
-                content,
-                reporter {
-                  id
-                },
-                event {
-                  id
-                },
-                status
-              }
-            }
-      """
 
       res =
         conn
         |> auth_conn(user_moderator)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @update_report_mutation,
+          variables: %{reportId: report.id, status: "RESOLVED"}
+        )
 
-      assert json_response(res, 200)["errors"] == nil
+      assert is_nil(res["errors"])
 
-      assert json_response(res, 200)["data"]["updateReportStatus"]["content"] ==
+      assert res["data"]["updateReportStatus"]["content"] ==
                "This is problematic"
 
-      assert json_response(res, 200)["data"]["updateReportStatus"]["status"] == "RESOLVED"
+      assert res["data"]["updateReportStatus"]["status"] == "RESOLVED"
 
-      assert json_response(res, 200)["data"]["updateReportStatus"]["reporter"]["id"] ==
+      assert res["data"]["updateReportStatus"]["reporter"]["id"] ==
                to_string(report.reporter.id)
     end
 
     test "create_report/3 without being connected doesn't create any report", %{conn: conn} do
-      %User{} = user_moderator = insert(:user, role: :moderator)
-      %Actor{} = moderator = insert(:actor, user: user_moderator)
       %Report{} = report = insert(:report)
-
-      mutation = """
-          mutation {
-            updateReportStatus(
-              report_id: #{report.id},
-              moderator_id: #{moderator.id},
-              status: RESOLVED
-            ) {
-                content
-              }
-            }
-      """
 
       res =
         conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @update_report_mutation,
+          variables: %{reportId: report.id, status: "RESOLVED"}
+        )
 
-      assert json_response(res, 200)["errors"] |> hd |> Map.get("message") ==
+      assert res["errors"] |> hd |> Map.get("message") ==
+               "You need to be logged-in and a moderator to update a report"
+    end
+
+    test "update_report/3 without being a moderator doesn't update any report", %{conn: conn} do
+      %User{} = user = insert(:user)
+      %Report{} = report = insert(:report)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_report_mutation,
+          variables: %{reportId: report.id, status: "RESOLVED"}
+        )
+
+      assert res["errors"] |> hd |> Map.get("message") ==
                "You need to be logged-in and a moderator to update a report"
     end
   end
@@ -369,13 +349,12 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
 
     test "create_report_note/3 creates a report note", %{conn: conn} do
       %User{} = user_moderator = insert(:user, role: :moderator)
-      %Actor{id: moderator_id} = moderator = insert(:actor, user: user_moderator)
+      %Actor{} = moderator = insert(:actor, user: user_moderator)
       %Report{id: report_id} = insert(:report)
 
       mutation = """
           mutation {
             createReportNote(
-              moderator_id: #{moderator_id},
               report_id: #{report_id},
               content: "#{@report_note_content}"
             ) {
@@ -410,13 +389,12 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
 
     test "delete_report_note deletes a report note", %{conn: conn} do
       %User{} = user_moderator = insert(:user, role: :moderator)
-      %Actor{id: moderator_id} = moderator = insert(:actor, user: user_moderator)
+      %Actor{} = moderator = insert(:actor, user: user_moderator)
       %Note{id: report_note_id} = insert(:report_note, moderator: moderator)
 
       mutation = """
           mutation {
             deleteReportNote(
-              moderator_id: #{moderator_id},
               note_id: #{report_note_id},
             ) {
                 id

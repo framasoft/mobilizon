@@ -31,6 +31,9 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
     )
   end
 
+  @desc """
+  A paginated list of posts
+  """
   object :paginated_post_list do
     field(:elements, list_of(:post), description: "A list of posts")
     field(:total, :integer, description: "The total number of posts in the list")
@@ -50,7 +53,7 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
   object :post_queries do
     @desc "Get a post"
     field :post, :post do
-      arg(:slug, non_null(:string))
+      arg(:slug, non_null(:string), description: "The post's slug")
       resolve(&Post.get_post/3)
     end
   end
@@ -58,12 +61,15 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
   object :post_mutations do
     @desc "Create a post"
     field :create_post, :post do
-      arg(:attributed_to_id, non_null(:id))
-      arg(:title, non_null(:string))
-      arg(:body, non_null(:string))
-      arg(:draft, :boolean, default_value: false)
-      arg(:visibility, :post_visibility)
-      arg(:publish_at, :datetime)
+      arg(:attributed_to_id, non_null(:id),
+        description: "The ID from the group whose post is attributed to"
+      )
+
+      arg(:title, non_null(:string), description: "The post's title")
+      arg(:body, non_null(:string), description: "The post's body")
+      arg(:draft, :boolean, default_value: false, description: "Whether the post is a draft")
+      arg(:visibility, :post_visibility, description: "The post's visibility")
+      arg(:publish_at, :datetime, description: "The post's publish date")
 
       arg(:tags, list_of(:string),
         default_value: [],
@@ -80,13 +86,17 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
 
     @desc "Update a post"
     field :update_post, :post do
-      arg(:id, non_null(:id))
-      arg(:title, :string)
-      arg(:body, :string)
-      arg(:attributed_to_id, :id)
-      arg(:draft, :boolean)
-      arg(:visibility, :post_visibility)
-      arg(:publish_at, :datetime)
+      arg(:id, non_null(:id), description: "The post's ID")
+      arg(:title, :string, description: "The post's new title")
+      arg(:body, :string, description: "The post's new body")
+      arg(:attributed_to_id, :id, description: "The group the post is attributed to")
+      arg(:draft, :boolean, description: "Whether the post is a draft")
+      arg(:visibility, :post_visibility, description: "The post's visibility")
+
+      arg(:publish_at, :datetime,
+        description: "The time when the posts is going to be or has been published"
+      )
+
       arg(:tags, list_of(:string), description: "The list of tags associated to the post")
 
       arg(:picture, :picture_input,
@@ -99,7 +109,7 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
 
     @desc "Delete a post"
     field :delete_post, :deleted_object do
-      arg(:id, non_null(:id))
+      arg(:id, non_null(:id), description: "The post's ID")
       resolve(&Post.delete_post/3)
     end
   end

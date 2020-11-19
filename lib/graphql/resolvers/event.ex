@@ -3,7 +3,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   Handles the event-related GraphQL calls.
   """
 
-  alias Mobilizon.{Actors, Admin, Events}
+  alias Mobilizon.{Actors, Admin, Events, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Config
   alias Mobilizon.Events.{Event, EventParticipantStats}
@@ -74,10 +74,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   """
   def list_participants_for_event(
         %Event{id: event_id},
-        %{page: page, limit: limit, roles: roles, actor_id: actor_id},
+        %{page: page, limit: limit, roles: roles},
         %{context: %{current_user: %User{} = user}} = _resolution
       ) do
-    with {:is_owned, %Actor{} = _actor} <- User.owns_actor(user, actor_id),
+    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
          # Check that moderator has right
          {:actor_approve_permission, true} <-
            {:actor_approve_permission, Events.moderator_for_event?(event_id, actor_id)} do
@@ -96,9 +96,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
       participants = Events.list_participants_for_event(event_id, roles, page, limit)
       {:ok, participants}
     else
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "Moderator profile is not owned by authenticated user")}
-
       {:actor_approve_permission, _} ->
         {:error,
          dgettext("errors", "Provided moderator profile doesn't have permission on this event")}
@@ -191,8 +188,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
         %{context: %{current_user: user}} = _resolution
       ) do
     # See https://github.com/absinthe-graphql/absinthe/issues/490
-    with args <- Map.put(args, :options, args[:options] || %{}),
-         {:is_owned, %Actor{} = organizer_actor} <- User.owns_actor(user, organizer_actor_id),
+    with {:is_owned, %Actor{} = organizer_actor} <- User.owns_actor(user, organizer_actor_id),
+         args <- Map.put(args, :options, args[:options] || %{}),
          args_with_organizer <- Map.put(args, :organizer_actor, organizer_actor),
          {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} <-
            API.Events.create_event(args_with_organizer) do
@@ -257,12 +254,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   """
   def delete_event(
         _parent,
-        %{event_id: event_id, actor_id: actor_id},
+        %{event_id: event_id},
         %{context: %{current_user: %User{role: role} = user}}
       ) do
     with {:ok, %Event{local: is_local} = event} <- Events.get_event_with_preload(event_id),
-         {actor_id, ""} <- Integer.parse(actor_id),
-         {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id) do
+         %Actor{id: actor_id} = actor <- Users.get_actor_for_user(user) do
       cond do
         {:event_can_be_managed, true} == Event.can_be_managed_by(event, actor_id) ->
           do_delete_event(event, actor)
@@ -281,9 +277,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     else
       {:error, :event_not_found} ->
         {:error, dgettext("errors", "Event not found")}
-
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
     end
   end
 

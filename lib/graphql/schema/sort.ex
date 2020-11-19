@@ -6,7 +6,7 @@ defmodule Mobilizon.GraphQL.Schema.SortType do
 
   @desc "Available sort directions"
   enum :sort_direction do
-    value(:asc)
-    value(:desc)
+    value(:asc, description: "Ascending order")
+    value(:desc, description: "Descending order")
   end
 end

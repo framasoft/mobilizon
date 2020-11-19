@@ -4,9 +4,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Picture do
   """
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Media
+  alias Mobilizon.{Media, Users}
   alias Mobilizon.Media.Picture
-  alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext
 
   @doc """
@@ -46,10 +45,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Picture do
   @spec upload_picture(map, map, map) :: {:ok, Picture.t()} | {:error, any}
   def upload_picture(
         _parent,
-        %{file: %Plug.Upload{} = file, actor_id: actor_id} = args,
+        %{file: %Plug.Upload{} = file} = args,
         %{context: %{current_user: user}}
       ) do
-    with {:is_owned, %Actor{}} <- User.owns_actor(user, actor_id),
+    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
          {:ok, %{name: _name, url: url, content_type: content_type, size: size}} <-
            Mobilizon.Web.Upload.store(file),
          args <-
@@ -68,9 +67,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Picture do
          size: picture.file.size
        }}
     else
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
-
       {:error, :mime_type_not_allowed} ->
         {:error, dgettext("errors", "File doesn't have an allowed MIME type.")}
 

@@ -53,9 +53,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
          %Page{} = page <- Todos.get_todos_for_todo_list(todo_list) do
       {:ok, page}
     else
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
-
       {:member, _} ->
         {:error, dgettext("errors", "Profile is not member of group")}
     end

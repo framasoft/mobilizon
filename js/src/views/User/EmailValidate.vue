@@ -30,11 +30,11 @@ export default class Validate extends Vue {
 
   failed = false;
 
-  async created() {
+  async created(): Promise<void> {
     await this.validateAction();
   }
 
-  async validateAction() {
+  async validateAction(): Promise<void> {
     try {
       await this.$apollo.mutate<{ validateEmail: ICurrentUser }>({
         mutation: VALIDATE_EMAIL,
@@ -43,11 +43,10 @@ export default class Validate extends Vue {
         },
       });
       this.loading = false;
-      return await this.$router.push({ name: RouteName.HOME });
+      await this.$router.push({ name: RouteName.HOME });
     } catch (err) {
       console.error(err);
       this.failed = true;
-      return undefined;
     }
   }
 }

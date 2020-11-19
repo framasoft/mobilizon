@@ -62,18 +62,21 @@ defmodule Mobilizon.GraphQL.Schema.ActorInterface do
   end
 
   object :actor_mutations do
+    @desc "Suspend an actor"
     field :suspend_profile, :deleted_object do
-      arg(:id, non_null(:id), description: "The profile ID to suspend")
+      arg(:id, non_null(:id), description: "The remote profile ID to suspend")
       resolve(&ActorResolver.suspend_profile/3)
     end
 
+    @desc "Unsuspend an actor"
     field :unsuspend_profile, :actor do
-      arg(:id, non_null(:id), description: "The profile ID to unsuspend")
+      arg(:id, non_null(:id), description: "The remote profile ID to unsuspend")
       resolve(&ActorResolver.unsuspend_profile/3)
     end
 
+    @desc "Refresh a profile"
     field :refresh_profile, :actor do
-      arg(:id, non_null(:id))
+      arg(:id, non_null(:id), description: "The remote profile ID to refresh")
       resolve(&ActorResolver.refresh_profile/3)
     end
   end

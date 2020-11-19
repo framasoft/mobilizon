@@ -1,0 +1,3231 @@
+schema {
+  query: RootQueryType
+  mutation: RootMutationType
+  subscription: RootSubscriptionType
+}
+
+"A JWT and the associated user ID"
+type Login {
+  "A JWT Token for this session"
+  accessToken: String!
+
+  "A JWT Token to refresh the access token"
+  refreshToken: String!
+
+  "The user associated to this session"
+  user: User!
+}
+
+"Instance anonymous participation configuration"
+type AnonymousParticipation {
+  "Whether anonymous participations are allowed"
+  allowed: Boolean
+
+  "The ways to validate anonymous participations"
+  validation: AnonymousParticipationValidation
+}
+
+"Available sort directions"
+enum SortDirection {
+  "Ascending order"
+  ASC
+
+  "Descending order"
+  DESC
+}
+
+"Token"
+type RefreshedToken {
+  "Generated access token"
+  accessToken: String!
+
+  "Generated refreshed token"
+  refreshToken: String!
+}
+
+"Represents an application"
+type Application {
+  "Internal ID for this application"
+  id: ID
+
+  "The ActivityPub actor's URL"
+  url: String
+
+  "The type of Actor (Person, Group,…)"
+  type: ActorType
+
+  "The actor's displayed name"
+  name: String
+
+  "The actor's domain if (null if it's this instance)"
+  domain: String
+
+  "If the actor is from this instance"
+  local: Boolean
+
+  "The actor's summary"
+  summary: String
+
+  "The actor's preferred username"
+  preferredUsername: String
+
+  "Whether the actors manually approves followers"
+  manuallyApprovesFollowers: Boolean
+
+  "If the actor is suspended"
+  suspended: Boolean
+
+  "The actor's avatar picture"
+  avatar: Picture
+
+  "The actor's banner picture"
+  banner: Picture
+
+  "List of followings"
+  following: [Follower]
+
+  "List of followers"
+  followers: [Follower]
+
+  "Number of followers for this actor"
+  followersCount: Int
+
+  "Number of actors following this actor"
+  followingCount: Int
+}
+
+"Instance anonymous event creation configuration"
+type AnonymousEventCreation {
+  "Whether anonymous event creation is enabled"
+  allowed: Boolean
+
+  "The methods to validate events created anonymously"
+  validation: AnonymousEventCreationValidation
+}
+
+"The list of values the for pending notification settings"
+enum NotificationPendingEnum {
+  "None. The notification won't be sent."
+  NONE
+
+  "Direct. The notification will be sent right away each time."
+  DIRECT
+
+  "One hour. Notifications will be sent at most each hour"
+  ONE_HOUR
+
+  "One day. Notifications will be sent at most each day"
+  ONE_DAY
+}
+
+"The possible values for a participant role"
+enum ParticipantRoleEnum {
+  "The participant has not been approved"
+  NOT_APPROVED
+
+  "The participant has not confirmed their participation"
+  NOT_CONFIRMED
+
+  "The participant is a regular participant"
+  PARTICIPANT
+
+  "The participant is an event moderator"
+  MODERATOR
+
+  "The participant is an event administrator"
+  ADMINISTRATOR
+
+  "The participant is an event creator"
+  CREATOR
+
+  "The participant has been rejected from this event"
+  REJECTED
+}
+
+"A config object"
+type Config {
+  "The instance's name"
+  name: String
+
+  "The instance's short description"
+  description: String
+
+  "The instance's long description"
+  longDescription: String
+
+  "The instance's slogan"
+  slogan: String
+
+  "The instance's contact details"
+  contact: String
+
+  "The instance's admins languages"
+  languages: [String]
+
+  "Whether the registrations are opened"
+  registrationsOpen: Boolean
+
+  "Whether the registration are on an allowlist"
+  registrationsAllowlist: Boolean
+
+  "Whether the demo mode is enabled"
+  demoMode: Boolean
+
+  "The country code from the IP"
+  countryCode: String
+
+  "The IP's location"
+  location: Lonlat
+
+  "The instance's geocoding settings"
+  geocoding: Geocoding
+
+  "The instance's maps settings"
+  maps: Maps
+
+  "The instance's anonymous action settings"
+  anonymous: Anonymous
+
+  "The instance's enabled resource providers"
+  resourceProviders: [ResourceProvider]
+
+  "The instance's available timezones"
+  timezones: [String]
+
+  "The instance's features"
+  features: Features
+
+  "The instance's version"
+  version: String
+
+  "Whether this instance is federation"
+  federating: Boolean
+
+  "The instance's terms"
+  terms(
+    "The user's locale. The terms will be translated in their language, if available."
+    locale: String
+  ): Terms
+
+  "The instance's privacy policy"
+  privacy(
+    "The user's locale. The privacy policy will be translated in their language, if available."
+    locale: String
+  ): Privacy
+
+  "The instance's rules"
+  rules: String
+
+  "The instance auth methods"
+  auth: Auth
+}
+
+"A tag"
+type Tag {
+  "The tag's ID"
+  id: ID
+
+  "The tags's slug"
+  slug: String
+
+  "The tag's title"
+  title: String
+
+  "Related tags to this tag"
+  related: [Tag]
+}
+
+"Language information"
+type Language {
+  "The iso-639-3 language code"
+  code: String
+
+  "The language name"
+  name: String
+}
+
+"A picture"
+type Picture {
+  "The picture's ID"
+  id: ID
+
+  "The picture's alternative text"
+  alt: String
+
+  "The picture's name"
+  name: String
+
+  "The picture's full URL"
+  url: String
+
+  "The picture's detected content type"
+  contentType: String
+
+  "The picture's size"
+  size: Int
+}
+
+"The list of roles an user can have"
+enum UserRole {
+  "Administrator role"
+  ADMINISTRATOR
+
+  "Moderator role"
+  MODERATOR
+
+  "User role"
+  USER
+}
+
+"A todo list"
+type TodoList {
+  "The todo list's ID"
+  id: ID
+
+  "The todo list's title"
+  title: String
+
+  "The actor that owns this todo list"
+  actor: Actor
+
+  "The todo-list's todos"
+  todos: PaginatedTodoList
+}
+
+"Represents a participant to an event"
+type Participant {
+  "The participation ID"
+  id: ID
+
+  "The event which the actor participates in"
+  event: Event
+
+  "The actor that participates to the event"
+  actor: Actor
+
+  "The role of this actor at this event"
+  role: ParticipantRoleEnum
+
+  "The metadata associated to this participant"
+  metadata: ParticipantMetadata
+
+  "The datetime this participant was created"
+  insertedAt: DateTime
+}
+
+"The list of sortable fields for an user list"
+enum SortableUserField {
+  "The user's ID"
+  ID
+}
+
+"""
+The `UUID` scalar type represents UUID4 compliant string data, represented as UTF-8
+character sequences. The UUID4 type is most often used to represent unique
+human-readable ID strings.
+"""
+scalar UUID
+
+"A paginated list of discussions"
+type PaginatedDiscussionList {
+  "A list of discussion"
+  elements: [Discussion]
+
+  "The total number of discussions in the list"
+  total: Int
+}
+
+"The objects that can be in an action log"
+interface ActionLogObject {
+  "Internal ID for this object"
+  id: ID
+}
+
+"Represents an uploaded file."
+scalar Upload
+
+"A paginated list of posts"
+type PaginatedPostList {
+  "A list of posts"
+  elements: [Post]
+
+  "The total number of posts in the list"
+  total: Int
+}
+
+"A comment"
+type Comment {
+  "Internal ID for this comment"
+  id: ID
+
+  "An UUID for this comment"
+  uuid: UUID
+
+  "Comment URL"
+  url: String
+
+  "Whether this comment is local or not"
+  local: Boolean
+
+  "The visibility for the comment"
+  visibility: CommentVisibility
+
+  "The comment body"
+  text: String
+
+  "The comment's primary language"
+  primaryLanguage: String
+
+  "A list of replies to the comment"
+  replies: [Comment]
+
+  "The number of total known replies to this comment"
+  totalReplies: Int
+
+  "The comment this comment directly replies to"
+  inReplyToComment: Comment
+
+  "The eventual event this comment is under"
+  event: Event
+
+  "The original comment that started the thread this comment is in"
+  originComment: Comment
+
+  "The thread languages"
+  threadLanguages: [String]!
+
+  "The comment's author"
+  actor: Person
+
+  "When was the comment inserted in database"
+  insertedAt: DateTime
+
+  "When was the comment updated"
+  updatedAt: DateTime
+
+  "When was the comment deleted"
+  deletedAt: DateTime
+
+  "When was the comment published"
+  publishedAt: DateTime
+}
+
+"An attached picture or a link to a picture"
+input PictureInput {
+  "A full picture attached"
+  picture: PictureInputObject
+
+  "The ID of an existing picture"
+  pictureId: ID
+}
+
+"Instance anonymous reports"
+type AnonymousReports {
+  "Whether anonymous reports are allowed"
+  allowed: Boolean
+}
+
+"Search events result"
+type Events {
+  "Total elements"
+  total: Int!
+
+  "Event elements"
+  elements: [Event]!
+}
+
+"Instance maps configuration"
+type Maps {
+  "The instance's maps tiles configuration"
+  tiles: Tiles
+}
+
+"Search groups result"
+type Groups {
+  "Total elements"
+  total: Int!
+
+  "Group elements"
+  elements: [Group]!
+}
+
+"The list of possible statuses for a report object"
+enum ReportStatus {
+  "The report has been opened"
+  OPEN
+
+  "The report has been closed"
+  CLOSED
+
+  "The report has been marked as resolved"
+  RESOLVED
+}
+
+"The metadata associated to the resource"
+type ResourceMetadata {
+  "The type of the resource"
+  type: String
+
+  "The resource's metadata title"
+  title: String
+
+  "The resource's metadata description"
+  description: String
+
+  "The resource's metadata image"
+  imageRemoteUrl: String
+
+  "The resource's metadata image width"
+  width: Int
+
+  "The resource's metadata image height"
+  height: Int
+
+  "The resource's author name"
+  authorName: String
+
+  "The resource's author URL"
+  authorUrl: String
+
+  "The resource's provider name"
+  providerName: String
+
+  "The resource's provider URL"
+  providerUrl: String
+
+  "The resource's author name"
+  html: String
+
+  "The resource's favicon URL"
+  faviconUrl: String
+}
+
+"Metadata about a participant"
+type ParticipantMetadata {
+  "The eventual token to leave an event when user is anonymous"
+  cancellationToken: String
+
+  "The eventual message the participant left"
+  message: String
+
+  "The participant's locale"
+  locale: String
+}
+
+"Instance anonymous participation with validation by captcha configuration"
+type AnonymousParticipationValidationCaptcha {
+  "Whether anonymous participation validation by captcha is enabled"
+  enabled: Boolean
+}
+
+"Instance anonymous event creation captcha validation configuration"
+type AnonymousEventCreationValidationCaptcha {
+  "Whether anonymous event creation with validation by captcha is enabled"
+  enabled: Boolean
+}
+
+"A todo"
+type Todo {
+  "The todo's ID"
+  id: ID
+
+  "The todo's title"
+  title: String
+
+  "The todo's status"
+  status: Boolean
+
+  "The todo's due date"
+  dueDate: DateTime
+
+  "The todo's creator"
+  creator: Actor
+
+  "The todo list this todo is attached to"
+  todoList: TodoList
+
+  "The todos's assigned person"
+  assignedTo: Actor
+}
+
+"Root subscription"
+type RootSubscriptionType {
+  "Notify when a person's participation's status changed for an event"
+  eventPersonParticipationChanged("The person's ID" personId: ID!): Person
+
+  "Notify when a person's membership's status changed for a group"
+  groupMembershipChanged("The person's ID" personId: ID!): Person
+
+  "Notify when a discussion changed"
+  discussionCommentChanged("The discussion's slug" slug: String!): Discussion
+}
+
+"Represents a deleted feed_token"
+type DeletedFeedToken {
+  "The user that owned the deleted feed token"
+  user: DeletedObject
+
+  "The actor that owned the deleted feed token"
+  actor: DeletedObject
+}
+
+"Instance anonymous participation validation configuration"
+type AnonymousParticipationValidation {
+  "The policy to validate anonymous participations by email"
+  email: AnonymousParticipationValidationEmail
+
+  "The policy to validate anonymous participations by captcha"
+  captcha: AnonymousParticipationValidationCaptcha
+}
+
+"The list of visibility options for a comment"
+enum CommentVisibility {
+  "Publicly listed and federated. Can be shared."
+  PUBLIC
+
+  "Visible only to people with the link - or invited"
+  UNLISTED
+
+  "Visible only to people members of the group or followers of the person"
+  PRIVATE
+
+  "Visible only after a moderator accepted"
+  MODERATED
+
+  "visible only to people invited"
+  INVITE
+}
+
+"The list of visibility options for an event"
+enum EventVisibility {
+  "Publicly listed and federated. Can be shared."
+  PUBLIC
+
+  "Visible only to people with the link - or invited"
+  UNLISTED
+
+  "Visible only after a moderator accepted"
+  RESTRICTED
+
+  "Visible only to people members of the group or followers of the person"
+  PRIVATE
+}
+
+"The instance's auth configuration"
+type Auth {
+  "Whether or not LDAP auth is enabled"
+  ldap: Boolean
+
+  "List of oauth providers"
+  oauthProviders: [OauthProvider]
+}
+
+"An action log"
+type ActionLog {
+  "Internal ID for this comment"
+  id: ID
+
+  "The actor that acted"
+  actor: Actor
+
+  "The object that was acted upon"
+  object: ActionLogObject
+
+  "The action that was done"
+  action: ActionLogAction
+
+  "The time when the action was performed"
+  insertedAt: DateTime
+}
+
+"The acceptable values for the instance's terms type"
+enum InstanceTermsType {
+  "An URL. Users will be redirected to this URL."
+  URL
+
+  "Terms will be set to Mobilizon's default terms"
+  DEFAULT
+
+  "Custom terms text"
+  CUSTOM
+}
+
+"A entity that can be interacted with from a remote instance"
+interface Interactable {
+  "A public URL for the entity"
+  url: String
+}
+
+"A struct containing the id of the deleted object"
+type DeletedObject {
+  id: ID
+}
+
+"A paginated list of comments"
+type PaginatedCommentList {
+  "A list of comments"
+  elements: [Comment]
+
+  "The total number of comments in the list"
+  total: Int
+}
+
+"A paginated list of members"
+type PaginatedMemberList {
+  "A list of members"
+  elements: [Member]
+
+  "The total number of elements in the list"
+  total: Int
+}
+
+"A post"
+type Post {
+  "The post's ID"
+  id: ID
+
+  "The post's title"
+  title: String
+
+  "The post's slug"
+  slug: String
+
+  "The post's body, as HTML"
+  body: String
+
+  "The post's URL"
+  url: String
+
+  "Whether the post is a draft"
+  draft: Boolean
+
+  "The post's author"
+  author: Actor
+
+  "The post's group"
+  attributedTo: Actor
+
+  "The post's visibility"
+  visibility: PostVisibility
+
+  "When the post was published"
+  publishAt: DateTime
+
+  "The post's creation date"
+  insertedAt: DateTime
+
+  "The post's last update date"
+  updatedAt: DateTime
+
+  "The post's tags"
+  tags: [Tag]
+
+  "The event's picture"
+  picture: Picture
+}
+
+"A paginated list of events"
+type PaginatedEventList {
+  "A list of events"
+  elements: [Event]
+
+  "The total number of events in the list"
+  total: Int
+}
+
+"Represents a deleted participant"
+type DeletedParticipant {
+  "The participant ID"
+  id: ID
+
+  "The participant's event"
+  event: DeletedObject
+
+  "The participant's actor"
+  actor: DeletedObject
+}
+
+"A paginated list of follower objects"
+type PaginatedFollowerList {
+  "A list of followers"
+  elements: [Follower]
+
+  "The total number of elements in the list"
+  total: Int
+}
+
+"The list of possible options for the event's status"
+enum EventStatus {
+  "The event is tentative"
+  TENTATIVE
+
+  "The event is confirmed"
+  CONFIRMED
+
+  "The event is cancelled"
+  CANCELLED
+}
+
+"A statistics object"
+type Statistics {
+  "The number of local users"
+  numberOfUsers: Int
+
+  "The total number of events"
+  numberOfEvents: Int
+
+  "The number of local events"
+  numberOfLocalEvents: Int
+
+  "The total number of comments"
+  numberOfComments: Int
+
+  "The number of local events"
+  numberOfLocalComments: Int
+
+  "The total number of groups"
+  numberOfGroups: Int
+
+  "The number of local groups"
+  numberOfLocalGroups: Int
+
+  "The number of this instance's followers"
+  numberOfInstanceFollowers: Int
+
+  "The number of instances this instance follows"
+  numberOfInstanceFollowings: Int
+}
+
+"Search persons result"
+type Persons {
+  "Total elements"
+  total: Int!
+
+  "Person elements"
+  elements: [Person]!
+}
+
+"An oAuth Provider"
+type OauthProvider {
+  "The provider ID"
+  id: String
+
+  "The label for the auth provider"
+  label: String
+}
+
+"An ActivityPub actor"
+interface Actor {
+  "Internal ID for this actor"
+  id: ID
+
+  "The ActivityPub actor's URL"
+  url: String
+
+  "The type of Actor (Person, Group,…)"
+  type: ActorType
+
+  "The actor's displayed name"
+  name: String
+
+  "The actor's domain if (null if it's this instance)"
+  domain: String
+
+  "If the actor is from this instance"
+  local: Boolean
+
+  "The actor's summary"
+  summary: String
+
+  "The actor's preferred username"
+  preferredUsername: String
+
+  "Whether the actors manually approves followers"
+  manuallyApprovesFollowers: Boolean
+
+  "If the actor is suspended"
+  suspended: Boolean
+
+  "The actor's avatar picture"
+  avatar: Picture
+
+  "The actor's banner picture"
+  banner: Picture
+
+  "List of followings"
+  following: [Follower]
+
+  "List of followers"
+  followers: [Follower]
+
+  "Number of followers for this actor"
+  followersCount: Int
+
+  "Number of actors following this actor"
+  followingCount: Int
+}
+
+"Instance anonymous event creation validation configuration"
+type AnonymousEventCreationValidation {
+  "The policy to validate anonymous event creations by email"
+  email: AnonymousEventCreationValidationEmail
+
+  "The policy to validate anonymous event creations by captcha"
+  captcha: AnonymousEventCreationValidationCaptcha
+}
+
+"The list of possible options for the event's status"
+enum EventCommentModeration {
+  "Anyone can comment under the event"
+  ALLOW_ALL
+
+  "Every comment has to be moderated by the admin"
+  MODERATED
+
+  "No one can comment except for the admin"
+  CLOSED
+}
+
+"Represents a person identity"
+type Person {
+  "Internal ID for this person"
+  id: ID
+
+  "The user this actor is associated to"
+  user: User
+
+  "The list of groups this person is member of"
+  memberOf: [Member]
+
+  "The ActivityPub actor's URL"
+  url: String
+
+  "The type of Actor (Person, Group,…)"
+  type: ActorType
+
+  "The actor's displayed name"
+  name: String
+
+  "The actor's domain if (null if it's this instance)"
+  domain: String
+
+  "If the actor is from this instance"
+  local: Boolean
+
+  "The actor's summary"
+  summary: String
+
+  "The actor's preferred username"
+  preferredUsername: String
+
+  "Whether the actors manually approves followers"
+  manuallyApprovesFollowers: Boolean
+
+  "If the actor is suspended"
+  suspended: Boolean
+
+  "The actor's avatar picture"
+  avatar: Picture
+
+  "The actor's banner picture"
+  banner: Picture
+
+  "List of followings"
+  following: [Follower]
+
+  "List of followers"
+  followers: [Follower]
+
+  "Number of followers for this actor"
+  followersCount: Int
+
+  "Number of actors following this actor"
+  followingCount: Int
+
+  "A list of the feed tokens for this person"
+  feedTokens: [FeedToken]
+
+  "A list of the events this actor has organized"
+  organizedEvents(
+    "The page in the paginated event list"
+    page: Int
+
+    "The limit of events per page"
+    limit: Int
+  ): PaginatedEventList
+
+  "The list of events this person goes to"
+  participations(
+    eventId: ID
+
+    "The page in the paginated participation list"
+    page: Int
+
+    "The limit of participations per page"
+    limit: Int
+  ): PaginatedParticipantList
+
+  "The list of group this person is member of"
+  memberships: PaginatedMemberList
+}
+
+"Root Mutation"
+type RootMutationType {
+  "Create an user"
+  createUser(
+    "The new user's email"
+    email: String!
+
+    "The new user's password"
+    password: String!
+
+    "The new user's locale"
+    locale: String
+  ): User
+
+  "Validate an user after registration"
+  validateUser(
+    "The token that will be used to validate the user"
+    token: String!
+  ): Login
+
+  "Resend registration confirmation token"
+  resendConfirmationEmail(
+    "The email used to register"
+    email: String!
+
+    "The user's locale"
+    locale: String
+  ): String
+
+  "Send a link through email to reset user password"
+  sendResetPassword(
+    "The user's email"
+    email: String!
+
+    "The user's locale"
+    locale: String
+  ): String
+
+  "Reset user password"
+  resetPassword(
+    "The user's token that will be used to reset the password"
+    token: String!
+
+    "The new password"
+    password: String!
+
+    "The user's locale"
+    locale: String
+  ): Login
+
+  "Login an user"
+  login(
+    "The user's email"
+    email: String!
+
+    "The user's password"
+    password: String!
+  ): Login
+
+  "Refresh a token"
+  refreshToken("A refresh token" refreshToken: String!): RefreshedToken
+
+  "Change default actor for user"
+  changeDefaultActor(
+    "The actor preferred_username"
+    preferredUsername: String!
+  ): User
+
+  "Change an user password"
+  changePassword(
+    "The user's current password"
+    oldPassword: String!
+
+    "The user's new password"
+    newPassword: String!
+  ): User
+
+  "Change an user email"
+  changeEmail(
+    "The user's new email"
+    email: String!
+
+    "The user's current password"
+    password: String!
+  ): User
+
+  "Validate an user email"
+  validateEmail(
+    "The token that will be used to validate the email change"
+    token: String!
+  ): User
+
+  "Delete an account"
+  deleteAccount(
+    "The user's password"
+    password: String
+
+    "The user's ID"
+    userId: ID
+  ): DeletedObject
+
+  "Set user settings"
+  setUserSettings(
+    "The timezone for this user"
+    timezone: String
+
+    "Whether this user will receive an email at the start of the day of an event."
+    notificationOnDay: Boolean
+
+    "Whether this user will receive an weekly event recap"
+    notificationEachWeek: Boolean
+
+    "Whether this user will receive a notification right before event"
+    notificationBeforeEvent: Boolean
+
+    "When does the user receives a notification about new pending participations"
+    notificationPendingParticipation: NotificationPendingEnum
+
+    "When does the user receives a notification about a new pending membership in one of the group they're admin for"
+    notificationPendingMembership: NotificationPendingEnum
+  ): UserSettings
+
+  "Update the user's locale"
+  updateLocale("The user's new locale" locale: String): User
+
+  "Create a new person for user"
+  createPerson(
+    "The username for the profile"
+    preferredUsername: String!
+
+    "The displayed name for the new profile"
+    name: String
+
+    "The summary for the new profile"
+    summary: String
+
+    "The avatar for the profile, either as an object or directly the ID of an existing Picture"
+    avatar: PictureInput
+
+    "The banner for the profile, either as an object or directly the ID of an existing Picture"
+    banner: PictureInput
+  ): Person
+
+  "Update an identity"
+  updatePerson(
+    "The person's ID"
+    id: ID!
+
+    "The displayed name for this profile"
+    name: String
+
+    "The summary for this profile"
+    summary: String
+
+    "The avatar for the profile, either as an object or directly the ID of an existing Picture"
+    avatar: PictureInput
+
+    "The banner for the profile, either as an object or directly the ID of an existing Picture"
+    banner: PictureInput
+  ): Person
+
+  "Delete an identity"
+  deletePerson("The person's ID" id: ID!): Person
+
+  "Register a first profile on registration"
+  registerPerson(
+    "The username for the profile"
+    preferredUsername: String!
+
+    "The displayed name for the new profile"
+    name: String
+
+    "The summary for the new profile"
+    summary: String
+
+    "The email from the user previously created"
+    email: String!
+
+    "The avatar for the profile, either as an object or directly the ID of an existing Picture"
+    avatar: PictureInput
+
+    "The banner for the profile, either as an object or directly the ID of an existing Picture"
+    banner: PictureInput
+  ): Person
+
+  "Create a group"
+  createGroup(
+    "The name for the group"
+    preferredUsername: String!
+
+    "The displayed name for the group"
+    name: String
+
+    "The summary for the group"
+    summary: String
+
+    "The visibility for the group"
+    visibility: GroupVisibility
+
+    "The avatar for the group, either as an object or directly the ID of an existing Picture"
+    avatar: PictureInput
+
+    "The banner for the group, either as an object or directly the ID of an existing Picture"
+    banner: PictureInput
+
+    "The physical address for the group"
+    physicalAddress: AddressInput
+  ): Group
+
+  "Update a group"
+  updateGroup(
+    "The group ID"
+    id: ID!
+
+    "The displayed name for the group"
+    name: String
+
+    "The summary for the group"
+    summary: String
+
+    "The visibility for the group"
+    visibility: GroupVisibility
+
+    "Whether the group can be join freely, with approval or is invite-only."
+    openness: Openness
+
+    "The avatar for the group, either as an object or directly the ID of an existing Picture"
+    avatar: PictureInput
+
+    "The banner for the group, either as an object or directly the ID of an existing Picture"
+    banner: PictureInput
+
+    "The physical address for the group"
+    physicalAddress: AddressInput
+  ): Group
+
+  "Delete a group"
+  deleteGroup("The group ID" groupId: ID!): DeletedObject
+
+  "Create an event"
+  createEvent(
+    "The event's title"
+    title: String!
+
+    "The event's description"
+    description: String!
+
+    "Datetime for when the event begins"
+    beginsOn: DateTime!
+
+    "Datetime for when the event ends"
+    endsOn: DateTime
+
+    "Status of the event"
+    status: EventStatus
+
+    "The event's visibility"
+    visibility: EventVisibility
+
+    "The event's options to join"
+    joinOptions: EventJoinOptions
+
+    "The list of tags associated to the event"
+    tags: [String]
+
+    "The picture for the event, either as an object or directly the ID of an existing Picture"
+    picture: PictureInput
+
+    "Datetime when the event was published"
+    publishAt: DateTime
+
+    "Online address of the event"
+    onlineAddress: String
+
+    "Phone address for the event"
+    phoneAddress: String
+
+    "The event's organizer ID (as a person)"
+    organizerActorId: ID!
+
+    "Who the event is attributed to ID (often a group)"
+    attributedToId: ID
+
+    "The event's category"
+    category: String
+
+    "The event's physical address"
+    physicalAddress: AddressInput
+
+    "The event options"
+    options: EventOptionsInput
+
+    "Whether or not the event is a draft"
+    draft: Boolean
+
+    "The events contacts"
+    contacts: [Contact]
+  ): Event
+
+  "Update an event"
+  updateEvent(
+    "The event's ID"
+    eventId: ID!
+
+    "The event's title"
+    title: String
+
+    "The event's description"
+    description: String
+
+    "Datetime for when the event begins"
+    beginsOn: DateTime
+
+    "Datetime for when the event ends"
+    endsOn: DateTime
+
+    "Status of the event"
+    status: EventStatus
+
+    "The event's visibility"
+    visibility: EventVisibility
+
+    "The event's options to join"
+    joinOptions: EventJoinOptions
+
+    "The list of tags associated to the event"
+    tags: [String]
+
+    "The picture for the event, either as an object or directly the ID of an existing Picture"
+    picture: PictureInput
+
+    "Online address of the event"
+    onlineAddress: String
+
+    "Phone address for the event"
+    phoneAddress: String
+
+    "The event's organizer ID (as a person)"
+    organizerActorId: ID
+
+    "Who the event is attributed to ID (often a group)"
+    attributedToId: ID
+
+    "The event's category"
+    category: String
+
+    "The event's physical address"
+    physicalAddress: AddressInput
+
+    "The event options"
+    options: EventOptionsInput
+
+    "Whether or not the event is a draft"
+    draft: Boolean
+
+    "The events contacts"
+    contacts: [Contact]
+  ): Event
+
+  "Delete an event"
+  deleteEvent("The event ID to delete" eventId: ID!): DeletedObject
+
+  "Create a comment"
+  createComment(
+    "The comment's body"
+    text: String!
+
+    "The event under which this comment is"
+    eventId: ID!
+
+    "The comment ID this one replies to"
+    inReplyToCommentId: ID
+  ): Comment
+
+  "Update a comment"
+  updateComment(
+    "The comment updated body"
+    text: String!
+
+    "The comment ID"
+    commentId: ID!
+  ): Comment
+
+  "Delete a single comment"
+  deleteComment("The comment ID" commentId: ID!): Comment
+
+  "Join an event"
+  joinEvent(
+    "The event ID that is joined"
+    eventId: ID!
+
+    "The actor ID for the participant"
+    actorId: ID!
+
+    "The anonymous participant's email"
+    email: String
+
+    "The anonymous participant's message"
+    message: String
+
+    "The anonymous participant's locale"
+    locale: String
+  ): Participant
+
+  "Leave an event"
+  leaveEvent(
+    "The event ID the participant left"
+    eventId: ID!
+
+    "The actor ID for the participant"
+    actorId: ID!
+
+    "The anonymous participant participation token"
+    token: String
+  ): DeletedParticipant
+
+  "Update a participation"
+  updateParticipation(
+    "The participant ID"
+    id: ID!
+
+    "The participant new role"
+    role: ParticipantRoleEnum!
+  ): Participant
+
+  "Confirm a participation"
+  confirmParticipation(
+    "The participation token"
+    confirmationToken: String!
+  ): Participant
+
+  "Join a group"
+  joinGroup("The group ID" groupId: ID!): Member
+
+  "Leave a group"
+  leaveGroup("The group ID" groupId: ID!): DeletedObject
+
+  "Invite an actor to join the group"
+  inviteMember(
+    "The group ID"
+    groupId: ID!
+
+    "The targeted person's federated username"
+    targetActorUsername: String!
+  ): Member
+
+  "Accept an invitation to a group"
+  acceptInvitation("The member ID" id: ID!): Member
+
+  "Reject an invitation to a group"
+  rejectInvitation("The member ID" id: ID!): Member
+
+  updateMember(
+    "The member ID"
+    memberId: ID!
+
+    "The new member role"
+    role: MemberRoleEnum!
+  ): Member
+
+  "Remove a member from a group"
+  removeMember(
+    "The group ID"
+    groupId: ID!
+
+    "The member ID"
+    memberId: ID!
+  ): Member
+
+  "Create a Feed Token"
+  createFeedToken("The actor ID for the feed token" actorId: ID): FeedToken
+
+  "Delete a feed token"
+  deleteFeedToken("The token to delete" token: String!): DeletedFeedToken
+
+  "Upload a picture"
+  uploadPicture(
+    "The picture's name"
+    name: String!
+
+    "The picture's alternative text"
+    alt: String
+
+    "The picture file"
+    file: Upload!
+  ): Picture
+
+  "Create a report"
+  createReport(
+    "The message sent with the report"
+    content: String
+
+    "The actor's ID that is being reported"
+    reportedId: ID!
+
+    "The event ID that is being reported"
+    eventId: ID
+
+    "The comment ID that is being reported"
+    commentsIds: [ID]
+
+    "Whether to forward the report to the original instance if the content is remote"
+    forward: Boolean
+  ): Report
+
+  "Update a report"
+  updateReportStatus(
+    "The report's ID"
+    reportId: ID!
+
+    "The report's new status"
+    status: ReportStatus!
+  ): Report
+
+  "Create a note on a report"
+  createReportNote(
+    "The note's content"
+    content: String
+
+    "The report's ID"
+    reportId: ID!
+  ): ReportNote
+
+  "Delete a note on a report"
+  deleteReportNote("The note's ID" noteId: ID!): DeletedObject
+
+  "Add a relay subscription"
+  addRelay("The relay hostname to add" address: String!): Follower
+
+  "Delete a relay subscription"
+  removeRelay("The relay hostname to delete" address: String!): Follower
+
+  "Accept a relay subscription"
+  acceptRelay("The accepted relay hostname" address: String!): Follower
+
+  "Reject a relay subscription"
+  rejectRelay("The rejected relay hostname" address: String!): Follower
+
+  "Save admin settings"
+  saveAdminSettings(
+    "The instance's name"
+    instanceName: String
+
+    "The instance's description"
+    instanceDescription: String
+
+    "The instance's long description"
+    instanceLongDescription: String
+
+    "The instance's slogan"
+    instanceSlogan: String
+
+    "The instance's contact details"
+    contact: String
+
+    "The instance's terms body text"
+    instanceTerms: String
+
+    "The instance's terms type"
+    instanceTermsType: InstanceTermsType
+
+    "The instance's terms URL"
+    instanceTermsUrl: String
+
+    "The instance's privacy policy body text"
+    instancePrivacyPolicy: String
+
+    "The instance's privacy policy type"
+    instancePrivacyPolicyType: InstancePrivacyType
+
+    "The instance's privacy policy URL"
+    instancePrivacyPolicyUrl: String
+
+    "The instance's rules"
+    instanceRules: String
+
+    "Whether the registrations are opened"
+    registrationsOpen: Boolean
+
+    "The instance's languages"
+    instanceLanguages: [String]
+  ): AdminSettings
+
+  "Create a todo list"
+  createTodoList(
+    "The todo list title"
+    title: String!
+
+    "The group ID"
+    groupId: ID!
+  ): TodoList
+
+  "Create a todo"
+  createTodo(
+    "The todo-list ID this todo is in"
+    todoListId: ID!
+
+    "The todo title"
+    title: String!
+
+    "The todo status"
+    status: Boolean
+
+    "The todo due date"
+    dueDate: DateTime
+
+    "The actor this todo is assigned to"
+    assignedToId: ID
+  ): Todo
+
+  "Update a todo"
+  updateTodo(
+    "The todo ID"
+    id: ID!
+
+    "The new todo-list ID"
+    todoListId: ID
+
+    "The new todo title"
+    title: String
+
+    "The new todo status"
+    status: Boolean
+
+    "The new todo due date"
+    dueDate: DateTime
+
+    "The new id of the actor this todo is assigned to"
+    assignedToId: ID
+  ): Todo
+
+  "Create a discussion"
+  createDiscussion(
+    "The discussion's title"
+    title: String!
+
+    "The discussion's first comment body"
+    text: String!
+
+    "The discussion's group ID"
+    actorId: ID!
+  ): Discussion
+
+  "Reply to a discussion"
+  replyToDiscussion(
+    "The discussion's ID"
+    discussionId: ID!
+
+    "The discussion's reply body"
+    text: String!
+  ): Discussion
+
+  "Update a discussion"
+  updateDiscussion(
+    "The updated discussion's title"
+    title: String!
+
+    "The discussion's ID"
+    discussionId: ID!
+  ): Discussion
+
+  "Delete a discussion"
+  deleteDiscussion("The discussion's ID" discussionId: ID!): Discussion
+
+  "Create a resource"
+  createResource(
+    "The ID from the parent resource (folder) this resource is in"
+    parentId: ID
+
+    "The group this resource belongs to"
+    actorId: ID!
+
+    "This resource's title"
+    title: String!
+
+    "This resource summary"
+    summary: String
+
+    "This resource's own original URL"
+    resourceUrl: String
+
+    "The type for this resource"
+    type: String
+  ): Resource
+
+  "Update a resource"
+  updateResource(
+    "The resource ID"
+    id: ID!
+
+    "The new resource title"
+    title: String
+
+    "The new resource summary"
+    summary: String
+
+    "The new resource parent ID (if the resource is moved)"
+    parentId: ID
+
+    "The new resource URL"
+    resourceUrl: String
+  ): Resource
+
+  "Delete a resource"
+  deleteResource("The resource ID" id: ID!): DeletedObject
+
+  "Get a preview for a resource link"
+  previewResourceLink(
+    "The link to crawl to get of preview of"
+    resourceUrl: String!
+  ): ResourceMetadata
+
+  "Create a post"
+  createPost(
+    "The ID from the group whose post is attributed to"
+    attributedToId: ID!
+
+    "The post's title"
+    title: String!
+
+    "The post's body"
+    body: String!
+
+    "Whether the post is a draft"
+    draft: Boolean
+
+    "The post's visibility"
+    visibility: PostVisibility
+
+    "The post's publish date"
+    publishAt: DateTime
+
+    "The list of tags associated to the post"
+    tags: [String]
+
+    "The banner for the post, either as an object or directly the ID of an existing Picture"
+    picture: PictureInput
+  ): Post
+
+  "Update a post"
+  updatePost(
+    "The post's ID"
+    id: ID!
+
+    "The post's new title"
+    title: String
+
+    "The post's new body"
+    body: String
+
+    "The group the post is attributed to"
+    attributedToId: ID
+
+    "Whether the post is a draft"
+    draft: Boolean
+
+    "The post's visibility"
+    visibility: PostVisibility
+
+    "The time when the posts is going to be or has been published"
+    publishAt: DateTime
+
+    "The list of tags associated to the post"
+    tags: [String]
+
+    "The banner for the post, either as an object or directly the ID of an existing Picture"
+    picture: PictureInput
+  ): Post
+
+  "Delete a post"
+  deletePost("The post's ID" id: ID!): DeletedObject
+
+  "Suspend an actor"
+  suspendProfile("The remote profile ID to suspend" id: ID!): DeletedObject
+
+  "Unsuspend an actor"
+  unsuspendProfile("The remote profile ID to unsuspend" id: ID!): Actor
+
+  "Refresh a profile"
+  refreshProfile("The remote profile ID to refresh" id: ID!): Actor
+}
+
+"Instance anonymous event creation email validation configuration"
+type AnonymousEventCreationValidationEmail {
+  "Whether anonymous event creation with email validation is enabled"
+  enabled: Boolean
+
+  "Whether anonymous event creation with email validation is required"
+  confirmationRequired: Boolean
+}
+
+"The instance's privacy policy configuration"
+type Privacy {
+  "The instance's privacy policy URL"
+  url: String
+
+  "The instance's privacy policy type"
+  type: InstancePrivacyType
+
+  "The instance's privacy policy body text"
+  bodyHtml: String
+}
+
+"Root Query"
+type RootQueryType {
+  "Search persons"
+  searchPersons(
+    "Search term"
+    term: String
+
+    "Result page"
+    page: Int
+
+    "Results limit per page"
+    limit: Int
+  ): Persons
+
+  "Search groups"
+  searchGroups(
+    "Search term"
+    term: String
+
+    "A geohash for coordinates"
+    location: String
+
+    "Radius around the location to search in"
+    radius: Float
+
+    "Result page"
+    page: Int
+
+    "Results limit per page"
+    limit: Int
+  ): Groups
+
+  "Search events"
+  searchEvents(
+    term: String
+
+    "A comma-separated string listing the tags"
+    tags: String
+
+    "A geohash for coordinates"
+    location: String
+
+    "Radius around the location to search in"
+    radius: Float
+
+    "Result page"
+    page: Int
+
+    "Results limit per page"
+    limit: Int
+
+    "Filter events by their start date"
+    beginsOn: DateTime
+
+    "Filter events by their end date"
+    endsOn: DateTime
+  ): Events
+
+  "Interact with an URI"
+  interact("The URI for to interact with" uri: String!): Interactable
+
+  "Get an user"
+  user(id: ID!): User
+
+  "Get the current user"
+  loggedUser: User
+
+  "List instance users"
+  users(
+    "Filter users by email"
+    email: String
+
+    "The page in the paginated users list"
+    page: Int
+
+    "The limit of users per page"
+    limit: Int
+
+    "Sort column"
+    sort: SortableUserField
+
+    "Sort direction"
+    direction: SortDirection
+  ): Users
+
+  "Get the current actor for the logged-in user"
+  loggedPerson: Person
+
+  "Get a person by its (federated) username"
+  fetchPerson(
+    "The person's federated username"
+    preferredUsername: String!
+  ): Person
+
+  "Get a person by its ID"
+  person("The person ID" id: ID!): Person
+
+  "Get the persons for an user"
+  identities: [Person]
+
+  "List the profiles"
+  persons(
+    "Filter by username"
+    preferredUsername: String
+
+    "Filter by name"
+    name: String
+
+    "Filter by domain"
+    domain: String
+
+    "Filter by profile being local or not"
+    local: Boolean
+
+    "Filter by suspended status"
+    suspended: Boolean
+
+    "The page in the paginated person list"
+    page: Int
+
+    "The limit of persons per page"
+    limit: Int
+  ): PaginatedPersonList
+
+  "Get all groups"
+  groups(
+    "Filter by username"
+    preferredUsername: String
+
+    "Filter by name"
+    name: String
+
+    "Filter by domain"
+    domain: String
+
+    "Filter whether group is local or not"
+    local: Boolean
+
+    "Filter by suspended status"
+    suspended: Boolean
+
+    "The page in the paginated group list"
+    page: Int
+
+    "The limit of groups per page"
+    limit: Int
+  ): PaginatedGroupList
+
+  "Get a group by its ID"
+  getGroup("The group ID" id: ID!): Group
+
+  "Get a group by its preferred username"
+  group(
+    "The group preferred_username, eventually containing their domain if remote"
+    preferredUsername: String!
+  ): Group
+
+  "Get all events"
+  events(
+    "The page in the paginated event list"
+    page: Int
+
+    "The limit of events per page"
+    limit: Int
+  ): [Event]
+
+  "Get an event by uuid"
+  event("The event's UUID" uuid: UUID!): Event
+
+  "Get replies for thread"
+  thread("The comment ID" id: ID!): [Comment]
+
+  "Get the list of tags"
+  tags(
+    "The page in the paginated tags list"
+    page: Int
+
+    "The limit of tags per page"
+    limit: Int
+  ): [Tag]!
+
+  "Search for an address"
+  searchAddress(
+    query: String!
+
+    "The user's locale. Geocoding backends will make use of this value."
+    locale: String
+
+    "The page in the paginated search results list"
+    page: Int
+
+    "The limit of search results per page"
+    limit: Int
+  ): [Address]
+
+  "Reverse geocode coordinates"
+  reverseGeocode(
+    "Geographical longitude (using WGS 84)"
+    longitude: Float!
+
+    "Geographical latitude (using WGS 84)"
+    latitude: Float!
+
+    "Zoom level"
+    zoom: Int
+
+    "The user's locale. Geocoding backends will make use of this value."
+    locale: String
+  ): [Address]
+
+  "Get the instance config"
+  config: Config
+
+  "Get a picture"
+  picture("The picture ID" id: String!): Picture
+
+  "Get all reports"
+  reports(
+    "The page in the reports participations list"
+    page: Int
+
+    "The limit of reports per page"
+    limit: Int
+
+    "Filter reports by status"
+    status: ReportStatus
+  ): [Report]
+
+  "Get a report by id"
+  report("The report ID" id: ID!): Report
+
+  "Get the list of action logs"
+  actionLogs(page: Int, limit: Int): [ActionLog]
+
+  "List the instance's supported languages"
+  languages(
+    "The user's locale. The list of languages will be translated with this locale"
+    codes: [String]
+  ): [Language]
+
+  "Get dashboard information"
+  dashboard: Dashboard
+
+  "Get admin settings"
+  adminSettings: AdminSettings
+
+  "List the relay followers"
+  relayFollowers(
+    "The page in the paginated relay followers list"
+    page: Int
+
+    "The limit of relay followers per page"
+    limit: Int
+  ): PaginatedFollowerList
+
+  "List the relay followings"
+  relayFollowings(
+    "The page in the paginated relay followings list"
+    page: Int
+
+    "The limit of relay followings per page"
+    limit: Int
+
+    "The field to order by the list"
+    orderBy: String
+
+    "The sorting direction"
+    direction: String
+  ): PaginatedFollowerList
+
+  "Get a todo list"
+  todoList("The todo-list ID" id: ID!): TodoList
+
+  "Get a todo"
+  todo("The todo ID" id: ID!): Todo
+
+  "Get a discussion"
+  discussion(
+    "The discussion's ID"
+    id: ID
+
+    "The discussion's slug"
+    slug: String
+  ): Discussion
+
+  "Get a resource"
+  resource(
+    "The path for the resource"
+    path: String!
+
+    "The federated username for the group resource"
+    username: String!
+  ): Resource
+
+  "Get a post"
+  post("The post's slug" slug: String!): Post
+
+  "Get the instance statistics"
+  statistics: Statistics
+}
+
+"The list of types an actor can be"
+enum ActorType {
+  "An ActivityPub Person"
+  PERSON
+
+  "An ActivityPub Application"
+  APPLICATION
+
+  "An ActivityPub Group"
+  GROUP
+
+  "An ActivityPub Organization"
+  ORGANIZATION
+
+  "An ActivityPub Service"
+  SERVICE
+}
+
+"""
+The `Naive DateTime` scalar type represents a naive date and time without
+timezone. The DateTime appears in a JSON response as an ISO8601 formatted
+string.
+"""
+scalar NaiveDateTime
+
+"""
+The `DateTime` scalar type represents a date and time in the UTC
+timezone. The DateTime appears in a JSON response as an ISO8601 formatted
+string, including UTC timezone ("Z"). The parsed date and time string will
+be converted to UTC if there is an offset.
+"""
+scalar DateTime
+
+"The acceptable values for the instance privacy policy type"
+enum InstancePrivacyType {
+  "An URL. Users will be redirected to this URL."
+  URL
+
+  "Privacy policy will be set to Mobilizon's default privacy policy"
+  DEFAULT
+
+  "Custom privacy policy text"
+  CUSTOM
+}
+
+"A resource"
+type Resource {
+  "The resource's ID"
+  id: ID
+
+  "The resource's title"
+  title: String
+
+  "The resource's summary"
+  summary: String
+
+  "The resource's URL"
+  url: String
+
+  "The resource's URL"
+  resourceUrl: String
+
+  "The resource's metadata"
+  metadata: ResourceMetadata
+
+  "The resource's creator"
+  creator: Actor
+
+  "The resource's owner"
+  actor: Actor
+
+  "The resource's creation date"
+  insertedAt: NaiveDateTime
+
+  "The resource's last update date"
+  updatedAt: NaiveDateTime
+
+  "The resource's type (if it's a folder)"
+  type: String
+
+  "The resource's path"
+  path: String
+
+  "The resource's parent"
+  parent: Resource
+
+  "Children resources in folder"
+  children: PaginatedResourceList
+}
+
+"Event options"
+input EventOptionsInput {
+  "The maximum attendee capacity for this event"
+  maximumAttendeeCapacity: Int
+
+  "The number of remaining seats for this event"
+  remainingAttendeeCapacity: Int
+
+  "Whether or not to show the number of remaining seats for this event"
+  showRemainingAttendeeCapacity: Boolean
+
+  "Whether or not to allow anonymous participation (if the server allows it)"
+  anonymousParticipation: Boolean
+
+  "The list of offers to show for this event"
+  offers: [EventOfferInput]
+
+  "The list of participation conditions to accept to join this event"
+  participationConditions: [EventParticipationConditionInput]
+
+  "The list of special attendees"
+  attendees: [String]
+
+  "The list of the event"
+  program: String
+
+  "The policy on public comment moderation under the event"
+  commentModeration: EventCommentModeration
+
+  "Whether or not to show the participation price"
+  showParticipationPrice: Boolean
+
+  "Show event start time"
+  showStartTime: Boolean
+
+  "Show event end time"
+  showEndTime: Boolean
+
+  "Whether to show or hide the person organizer when event is organized by a group"
+  hideOrganizerWhenGroupEvent: Boolean
+}
+
+"A report object"
+type Report {
+  "The internal ID of the report"
+  id: ID
+
+  "The comment the reporter added about this report"
+  content: String
+
+  "Whether the report is still active"
+  status: ReportStatus
+
+  "The URI of the report"
+  uri: String
+
+  "The actor that is being reported"
+  reported: Actor
+
+  "The actor that created the report"
+  reporter: Actor
+
+  "The event that is being reported"
+  event: Event
+
+  "The comments that are reported"
+  comments: [Comment]
+
+  "The notes made on the event"
+  notes: [ReportNote]
+
+  "When the report was created"
+  insertedAt: DateTime
+
+  "When the report was updated"
+  updatedAt: DateTime
+}
+
+"An event participation condition"
+input EventParticipationConditionInput {
+  "The title for this condition"
+  title: String
+
+  "The content for this condition"
+  content: String
+
+  "The URL to access this condition"
+  url: String
+}
+
+"A paginated list of participants"
+type PaginatedParticipantList {
+  "A list of participants"
+  elements: [Participant]
+
+  "The total number of participants in the list"
+  total: Int
+}
+
+"A paginated list of todo-lists"
+type PaginatedTodoListList {
+  "A list of todo lists"
+  elements: [TodoList]
+
+  "The total number of todo lists in the list"
+  total: Int
+}
+
+"An event"
+type Event {
+  "Internal ID for this event"
+  id: ID
+
+  "The Event UUID"
+  uuid: UUID
+
+  "The ActivityPub Event URL"
+  url: String
+
+  "Whether the event is local or not"
+  local: Boolean
+
+  "The event's title"
+  title: String
+
+  "The event's description's slug"
+  slug: String
+
+  "The event's description"
+  description: String
+
+  "Datetime for when the event begins"
+  beginsOn: DateTime
+
+  "Datetime for when the event ends"
+  endsOn: DateTime
+
+  "Status of the event"
+  status: EventStatus
+
+  "The event's visibility"
+  visibility: EventVisibility
+
+  "The event's visibility"
+  joinOptions: EventJoinOptions
+
+  "The event's picture"
+  picture: Picture
+
+  "When the event was published"
+  publishAt: DateTime
+
+  "The event's physical address"
+  physicalAddress: Address
+
+  "Online address of the event"
+  onlineAddress: String
+
+  "Phone address for the event"
+  phoneAddress: String
+
+  "The event's organizer (as a person)"
+  organizerActor: Actor
+
+  "Who the event is attributed to (often a group)"
+  attributedTo: Actor
+
+  "The event's tags"
+  tags: [Tag]
+
+  "The event's category"
+  category: String
+
+  "Whether or not the event is a draft"
+  draft: Boolean
+
+  "Statistics on the event"
+  participantStats: ParticipantStats
+
+  "The event's participants"
+  participants(
+    "The page in the paginated participants list"
+    page: Int
+
+    "The limit of participants per page"
+    limit: Int
+
+    "Filter by roles"
+    roles: String
+  ): PaginatedParticipantList
+
+  "The events contacts"
+  contacts: [Actor]
+
+  "Events related to this one"
+  relatedEvents: [Event]
+
+  "The comments in reply to the event"
+  comments: [Comment]
+
+  "When the event was last updated"
+  updatedAt: DateTime
+
+  "When the event was created"
+  createdAt: DateTime
+
+  "The event options"
+  options: EventOptions
+}
+
+"An event offer"
+input EventOfferInput {
+  "The price amount for this offer"
+  price: Float
+
+  "The currency for this price offer"
+  priceCurrency: String
+
+  "The URL to access to this offer"
+  url: String
+}
+
+"""
+The `Point` scalar type represents Point geographic information compliant string data,
+represented as floats separated by a semi-colon. The geodetic system is WGS 84
+"""
+scalar Point
+
+input AddressInput {
+  "The geocoordinates for the point where this address is"
+  geom: Point
+
+  "The address's street name (with number)"
+  street: String
+
+  "The address's locality"
+  locality: String
+
+  "The address's postal code"
+  postalCode: String
+
+  "The address's region"
+  region: String
+
+  "The address's country"
+  country: String
+
+  "The address's description"
+  description: String
+
+  "The address's type"
+  type: String
+
+  "The address's URL"
+  url: String
+
+  "The address's ID"
+  id: ID
+
+  "The address's original ID from the provider"
+  originId: String
+}
+
+"Instance anonymous configuration"
+type Anonymous {
+  "The instance's anonymous participation settings"
+  participation: AnonymousParticipation
+
+  "The instance's anonymous event creation settings"
+  eventCreation: AnonymousEventCreation
+
+  "The instance's anonymous reports setting"
+  reports: AnonymousReports
+
+  "The actor ID that should be used to perform anonymous actions"
+  actorId: ID
+}
+
+"Users list"
+type Users {
+  "Total elements"
+  total: Int!
+
+  "User elements"
+  elements: [User]!
+}
+
+"The list of join options for an event"
+enum EventJoinOptions {
+  "Anyone can join and is automatically accepted"
+  FREE
+
+  "Manual acceptation"
+  RESTRICTED
+
+  "Participants must be invited"
+  INVITE
+}
+
+"Event options"
+type EventOptions {
+  "The maximum attendee capacity for this event"
+  maximumAttendeeCapacity: Int
+
+  "The number of remaining seats for this event"
+  remainingAttendeeCapacity: Int
+
+  "Whether or not to show the number of remaining seats for this event"
+  showRemainingAttendeeCapacity: Boolean
+
+  "Whether or not to allow anonymous participation (if the server allows it)"
+  anonymousParticipation: Boolean
+
+  "The list of offers to show for this event"
+  offers: [EventOffer]
+
+  "The list of participation conditions to accept to join this event"
+  participationConditions: [EventParticipationCondition]
+
+  "The list of special attendees"
+  attendees: [String]
+
+  "The list of the event"
+  program: String
+
+  "The policy on public comment moderation under the event"
+  commentModeration: EventCommentModeration
+
+  "Whether or not to show the participation price"
+  showParticipationPrice: Boolean
+
+  "Show event start time"
+  showStartTime: Boolean
+
+  "Show event end time"
+  showEndTime: Boolean
+
+  "Whether to show or hide the person organizer when event is organized by a group"
+  hideOrganizerWhenGroupEvent: Boolean
+}
+
+"A resource provider details"
+type ResourceProvider {
+  "The resource provider's type"
+  type: String
+
+  "The resource provider's endpoint"
+  endpoint: String
+
+  "The resource provider's software"
+  software: String
+}
+
+"An event offer"
+type EventOffer {
+  "The price amount for this offer"
+  price: Float
+
+  "The currency for this price offer"
+  priceCurrency: String
+
+  "The URL to access to this offer"
+  url: String
+}
+
+"Represents an actor's follower"
+type Follower {
+  "What or who the profile follows"
+  targetActor: Actor
+
+  "Which profile follows"
+  actor: Actor
+
+  "Whether the follow has been approved by the target actor"
+  approved: Boolean
+
+  "When the follow was created"
+  insertedAt: DateTime
+
+  "When the follow was updated"
+  updatedAt: DateTime
+}
+
+"A discussion"
+type Discussion {
+  "Internal ID for this discussion"
+  id: ID
+
+  "The title for this discussion"
+  title: String
+
+  "The slug for the discussion"
+  slug: String
+
+  "The last comment of the discussion"
+  lastComment: Comment
+
+  "The comments for the discussion"
+  comments(page: Int, limit: Int): PaginatedCommentList
+
+  "This discussions's creator"
+  creator: Person
+
+  "This discussion's group"
+  actor: Actor
+
+  "When was this discussion's created"
+  insertedAt: DateTime
+
+  "When was this discussion's updated"
+  updatedAt: DateTime
+}
+
+"The different types of action log actions"
+enum ActionLogAction {
+  "The report was closed"
+  REPORT_UPDATE_CLOSED
+
+  "The report was opened"
+  REPORT_UPDATE_OPENED
+
+  "The report was resolved"
+  REPORT_UPDATE_RESOLVED
+
+  "A note was created on a report"
+  NOTE_CREATION
+
+  "A note was deleted on a report"
+  NOTE_DELETION
+
+  "An event was deleted"
+  EVENT_DELETION
+
+  "A comment was deleted"
+  COMMENT_DELETION
+
+  "An event was updated"
+  EVENT_UPDATE
+
+  "An actor was suspended"
+  ACTOR_SUSPENSION
+
+  "An actor was unsuspended"
+  ACTOR_UNSUSPENSION
+
+  "An user was deleted"
+  USER_DELETION
+}
+
+"An event participation condition"
+type EventParticipationCondition {
+  "The title for this condition"
+  title: String
+
+  "The content for this condition"
+  content: String
+
+  "The URL to access this condition"
+  url: String
+}
+
+"""
+Represents a feed token
+
+Feed tokens are tokens that are used to provide access to private feeds such as WebCal feed for all of your user's events,
+or an Atom feed for just a profile.
+"""
+type FeedToken {
+  "The event which the actor participates in"
+  actor: Actor
+
+  "The actor that participates to the event"
+  user: User
+
+  "The role of this actor at this event"
+  token: String
+}
+
+"Values for a member role"
+enum MemberRoleEnum {
+  "The member needs to be approved by the group admins"
+  NOT_APPROVED
+
+  "The member has been invited"
+  INVITED
+
+  "Regular member"
+  MEMBER
+
+  "The member is a moderator"
+  MODERATOR
+
+  "The member is an administrator"
+  ADMINISTRATOR
+
+  "The member was the creator of the group. Shouldn't be used."
+  CREATOR
+
+  "The member has been rejected or excluded from the group"
+  REJECTED
+}
+
+"Instance anonymous participation with validation by email configuration"
+type AnonymousParticipationValidationEmail {
+  "Whether anonymous participation validation by email is enabled"
+  enabled: Boolean
+
+  "Whether anonymous participation validation by email is required"
+  confirmationRequired: Boolean
+}
+
+"The list of visibility options for a post"
+enum PostVisibility {
+  "Publicly listed and federated. Can be shared."
+  PUBLIC
+
+  "Visible only to people with the link"
+  UNLISTED
+
+  "Visible only to people members of the group or followers of the person"
+  PRIVATE
+}
+
+"The list of visibility options for a group"
+enum GroupVisibility {
+  "Publicly listed and federated"
+  PUBLIC
+
+  "Visible only to people with the link - or invited"
+  UNLISTED
+}
+
+"Instance geocoding configuration"
+type Geocoding {
+  "Whether autocomplete in address fields can be enabled"
+  autocomplete: Boolean
+
+  "The geocoding provider"
+  provider: String
+}
+
+"A report note object"
+type ReportNote {
+  "The internal ID of the report note"
+  id: ID
+
+  "The content of the note"
+  content: String
+
+  "The moderator who added the note"
+  moderator: Actor
+
+  "The report on which this note is added"
+  report: Report
+
+  "When the report note was created"
+  insertedAt: DateTime
+}
+
+"The types of Group that exist"
+enum GroupType {
+  "A private group of persons"
+  GROUP
+
+  "A public group of many actors"
+  COMMUNITY
+}
+
+"A paginated list of persons"
+type PaginatedPersonList {
+  "A list of persons"
+  elements: [Person]
+
+  "The total number of persons in the list"
+  total: Int
+}
+
+"A event contact"
+input Contact {
+  "The Contact Actor ID"
+  id: String
+}
+
+"An attached picture"
+input PictureInputObject {
+  "The picture's name"
+  name: String!
+
+  "The picture's alternative text"
+  alt: String
+
+  "The picture file"
+  file: Upload!
+
+  "The picture owner"
+  actorId: ID
+}
+
+"Geographic coordinates"
+type Lonlat {
+  "The coordinates longitude"
+  longitude: Float
+
+  "The coordinates latitude"
+  latitude: Float
+}
+
+"A paginated list of resources"
+type PaginatedResourceList {
+  "A list of resources"
+  elements: [Resource]
+
+  "The total number of resources in the list"
+  total: Int
+}
+
+"Dashboard information"
+type Dashboard {
+  "Last public event published"
+  lastPublicEventPublished: Event
+
+  "Last public group created"
+  lastGroupCreated: Group
+
+  "The number of local users"
+  numberOfUsers: Int
+
+  "The number of local events"
+  numberOfEvents: Int
+
+  "The number of local comments"
+  numberOfComments: Int
+
+  "The number of local groups"
+  numberOfGroups: Int
+
+  "The number of current opened reports"
+  numberOfReports: Int
+
+  "The number of instance followers"
+  numberOfFollowers: Int
+
+  "The number of instance followings"
+  numberOfFollowings: Int
+
+  "The number of total confirmed participations to local events"
+  numberOfConfirmedParticipationsToLocalEvents: Int
+}
+
+"A paginated list of todos"
+type PaginatedTodoList {
+  "A list of todos"
+  elements: [Todo]
+
+  "The total number of todos in the list"
+  total: Int
+}
+
+"A paginated list of groups"
+type PaginatedGroupList {
+  "A list of groups"
+  elements: [Group]
+
+  "The total number of groups in the list"
+  total: Int
+}
+
+"Instance tiles configuration"
+type Tiles {
+  "The instance's tiles endpoint"
+  endpoint: String
+
+  "The instance's tiles attribution text"
+  attribution: String
+}
+
+"Describes how an actor is opened to follows"
+enum Openness {
+  "The actor can only be followed by invitation"
+  INVITE_ONLY
+
+  "The actor needs to accept the following before it's effective"
+  MODERATED
+
+  "The actor is open to followings"
+  OPEN
+}
+
+type Address {
+  "The geocoordinates for the point where this address is"
+  geom: Point
+
+  "The address's street name (with number)"
+  street: String
+
+  "The address's locality"
+  locality: String
+
+  "The address's postal code"
+  postalCode: String
+
+  "The address's region"
+  region: String
+
+  "The address's country"
+  country: String
+
+  "The address's description"
+  description: String
+
+  "The address's type"
+  type: String
+
+  "The address's URL"
+  url: String
+
+  "The address's ID"
+  id: ID
+
+  "The address's original ID from the provider"
+  originId: String
+}
+
+"The instance's terms configuration"
+type Terms {
+  "The instance's terms URL."
+  url: String
+
+  "The instance's terms type"
+  type: InstanceTermsType
+
+  "The instance's terms body text"
+  bodyHtml: String
+}
+
+"Participation statistics"
+type ParticipantStats {
+  "The number of approved participants"
+  going: Int
+
+  "The number of not approved participants"
+  notApproved: Int
+
+  "The number of not confirmed participants"
+  notConfirmed: Int
+
+  "The number of rejected participants"
+  rejected: Int
+
+  "The number of simple participants (excluding creators)"
+  participant: Int
+
+  "The number of moderators"
+  moderator: Int
+
+  "The number of administrators"
+  administrator: Int
+
+  "The number of creators"
+  creator: Int
+}
+
+"Admin settings"
+type AdminSettings {
+  "The instance's name"
+  instanceName: String
+
+  "The instance's description"
+  instanceDescription: String
+
+  "The instance's long description"
+  instanceLongDescription: String
+
+  "The instance's slogan"
+  instanceSlogan: String
+
+  "The instance's contact details"
+  contact: String
+
+  "The instance's terms body text"
+  instanceTerms: String
+
+  "The instance's terms type"
+  instanceTermsType: InstanceTermsType
+
+  "The instance's terms URL"
+  instanceTermsUrl: String
+
+  "The instance's privacy policy body text"
+  instancePrivacyPolicy: String
+
+  "The instance's privacy policy type"
+  instancePrivacyPolicyType: InstancePrivacyType
+
+  "The instance's privacy policy URL"
+  instancePrivacyPolicyUrl: String
+
+  "The instance's rules"
+  instanceRules: String
+
+  "Whether the registrations are opened"
+  registrationsOpen: Boolean
+
+  "The instance's languages"
+  instanceLanguages: [String]
+}
+
+"The instance's features"
+type Features {
+  "Whether groups are activated on this instance"
+  groups: Boolean
+
+  "Whether event creation is allowed on this instance"
+  eventCreation: Boolean
+}
+
+type UserSettings {
+  "The timezone for this user"
+  timezone: String
+
+  "Whether this user will receive an email at the start of the day of an event."
+  notificationOnDay: Boolean
+
+  "Whether this user will receive an weekly event recap"
+  notificationEachWeek: Boolean
+
+  "Whether this user will receive a notification right before event"
+  notificationBeforeEvent: Boolean
+
+  "When does the user receives a notification about new pending participations"
+  notificationPendingParticipation: NotificationPendingEnum
+
+  "When does the user receives a notification about a new pending membership in one of the group they're admin for"
+  notificationPendingMembership: NotificationPendingEnum
+}
+
+"Represents a member of a group"
+type Member {
+  "The member's ID"
+  id: ID
+
+  "Of which the profile is member"
+  parent: Group
+
+  "Which profile is member of"
+  actor: Person
+
+  "The role of this membership"
+  role: MemberRoleEnum
+
+  "Who invited this member"
+  invitedBy: Person
+
+  "When was this member created"
+  insertedAt: NaiveDateTime
+
+  "When was this member updated"
+  updatedAt: NaiveDateTime
+}
+
+"A local user of Mobilizon"
+type User {
+  "The user's ID"
+  id: ID
+
+  "The user's email"
+  email: String!
+
+  "The user's list of profiles (identities)"
+  actors: [Person]!
+
+  "The user's default actor"
+  defaultActor: Person
+
+  "The datetime when the user was confirmed/activated"
+  confirmedAt: DateTime
+
+  "The datetime the last activation/confirmation token was sent"
+  confirmationSentAt: DateTime
+
+  "The account activation/confirmation token"
+  confirmationToken: String
+
+  "The datetime last reset password email was sent"
+  resetPasswordSentAt: DateTime
+
+  "The token sent when requesting password token"
+  resetPasswordToken: String
+
+  "A list of the feed tokens for this user"
+  feedTokens: [FeedToken]
+
+  "The role for the user"
+  role: UserRole
+
+  "The user's locale"
+  locale: String
+
+  "The user's login provider"
+  provider: String
+
+  "Whether the user is disabled"
+  disabled: Boolean
+
+  "The list of participations this user has"
+  participations(
+    "Filter participations by event start datetime"
+    afterDatetime: DateTime
+
+    "Filter participations by event end datetime"
+    beforeDatetime: DateTime
+
+    "The page in the paginated participations list"
+    page: Int
+
+    "The limit of participations per page"
+    limit: Int
+  ): PaginatedParticipantList
+
+  "The list of memberships for this user"
+  memberships(
+    "The page in the paginated memberships list"
+    page: Int
+
+    "The limit of memberships per page"
+    limit: Int
+  ): PaginatedMemberList
+
+  "The list of draft events this user has created"
+  drafts(
+    "The page in the paginated drafts events list"
+    page: Int
+
+    "The limit of drafts events per page"
+    limit: Int
+  ): [Event]
+
+  "The list of settings for this user"
+  settings: UserSettings
+
+  "When the user previously signed-in"
+  lastSignInAt: DateTime
+
+  "The IP adress the user previously sign-in with"
+  lastSignInIp: String
+
+  "When the user currenlty signed-in"
+  currentSignInAt: DateTime
+
+  "The IP adress the user's currently signed-in with"
+  currentSignInIp: String
+}
+
+"Represents a group of actors"
+type Group {
+  "Internal ID for this group"
+  id: ID
+
+  "The ActivityPub actor's URL"
+  url: String
+
+  "The type of Actor (Person, Group,…)"
+  type: ActorType
+
+  "The actor's displayed name"
+  name: String
+
+  "The actor's domain if (null if it's this instance)"
+  domain: String
+
+  "If the actor is from this instance"
+  local: Boolean
+
+  "The actor's summary"
+  summary: String
+
+  "The actor's preferred username"
+  preferredUsername: String
+
+  "Whether the actors manually approves followers"
+  manuallyApprovesFollowers: Boolean
+
+  "Whether the group can be found and/or promoted"
+  visibility: GroupVisibility
+
+  "If the actor is suspended"
+  suspended: Boolean
+
+  "The actor's avatar picture"
+  avatar: Picture
+
+  "The actor's banner picture"
+  banner: Picture
+
+  "The type of the event's address"
+  physicalAddress: Address
+
+  "List of followings"
+  following: [Follower]
+
+  "List of followers"
+  followers: [Follower]
+
+  "Number of followers for this actor"
+  followersCount: Int
+
+  "Number of actors following this actor"
+  followingCount: Int
+
+  "A list of the events this actor has organized"
+  organizedEvents(
+    "Filter events that begin after this datetime"
+    afterDatetime: DateTime
+
+    "Filter events that begin before this datetime"
+    beforeDatetime: DateTime
+
+    "The page in the paginated event list"
+    page: Int
+
+    "The limit of events per page"
+    limit: Int
+  ): PaginatedEventList
+
+  "A list of the discussions for this group"
+  discussions: PaginatedDiscussionList
+
+  "The type of group : Group, Community,…"
+  types: GroupType
+
+  "Whether the group is opened to all or has restricted access"
+  openness: Openness
+
+  "A paginated list of group members"
+  members(
+    "The page in the paginated member list"
+    page: Int
+
+    "The limit of members per page"
+    limit: Int
+
+    "Filter members by their role"
+    roles: String
+  ): PaginatedMemberList
+
+  "A paginated list of the resources this group has"
+  resources(
+    "The page in the paginated resource list"
+    page: Int
+
+    "The limit of resources per page"
+    limit: Int
+  ): PaginatedResourceList
+
+  "A paginated list of the posts this group has"
+  posts(
+    "The page in the paginated post list"
+    page: Int
+
+    "The limit of posts per page"
+    limit: Int
+  ): PaginatedPostList
+
+  "A paginated list of the todo lists this group has"
+  todoLists: PaginatedTodoListList
+}

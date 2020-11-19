@@ -112,7 +112,6 @@ export default class CommentTree extends Vue {
         mutation: CREATE_COMMENT_FROM_EVENT,
         variables: {
           eventId: this.event.id,
-          actorId: comment.actor.id,
           text: comment.text,
           inReplyToCommentId: comment.inReplyToComment ? comment.inReplyToComment.id : null,
         },
@@ -204,7 +203,6 @@ export default class CommentTree extends Vue {
         mutation: DELETE_COMMENT,
         variables: {
           commentId: comment.id,
-          actorId: this.currentActor.id,
         },
         update: (store, { data }) => {
           if (data == null) return;

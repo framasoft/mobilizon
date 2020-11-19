@@ -70,7 +70,6 @@ export default class CreateDiscussion extends Vue {
           title: this.discussion.title,
           text: this.discussion.text,
           actorId: parseInt(this.group.id, 10),
-          creatorId: parseInt(this.currentActor.id, 10),
         },
       });
 

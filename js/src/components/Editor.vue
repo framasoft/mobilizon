@@ -530,7 +530,6 @@ export default class EditorComponent extends Vue {
         variables: {
           file: image,
           name: image.name,
-          actorId: this.currentActor.id,
         },
       });
       if (data.uploadPicture && data.uploadPicture.url) {

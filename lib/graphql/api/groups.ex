@@ -26,9 +26,6 @@ defmodule Mobilizon.GraphQL.API.Groups do
     else
       {:existing_group, _} ->
         {:error, "A group with this name already exists"}
-
-      {:is_owned, nil} ->
-        {:error, "Profile is not owned by authenticated user"}
     end
   end
 
@@ -42,9 +39,6 @@ defmodule Mobilizon.GraphQL.API.Groups do
     else
       {:existing_group, _} ->
         {:error, "A group with this name already exists"}
-
-      {:is_owned, nil} ->
-        {:error, "Profile is not owned by authenticated user"}
     end
   end
 end
