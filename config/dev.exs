@@ -19,7 +19,6 @@ config :mobilizon, Mobilizon.Web.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    # yarn: ["run", "dev", cd: Path.expand("../js", __DIR__)]
     node: [
       "node_modules/webpack/bin/webpack.js",
       "--mode",
@@ -53,8 +52,8 @@ config :mobilizon, Mobilizon.Web.Endpoint,
     patterns: [
       ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
       ~r{priv/gettext/.*(po)$},
-      ~r{lib/mobilizon_web/views/.*(ex)$},
-      ~r{lib/mobilizon_web/templates/.*(eex)$}
+      ~r{lib/web/(live|views)/.*(ex)$},
+      ~r{lib/web/templates/.*(eex)$}
     ]
   ]
 
