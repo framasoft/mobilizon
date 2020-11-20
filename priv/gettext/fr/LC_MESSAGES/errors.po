@@ -609,22 +609,22 @@ msgstr "Vous n'avez pas la permission de supprimer ce jeton"
 #, elixir-format
 #: lib/graphql/resolvers/admin.ex:52
 msgid "You need to be logged-in and a moderator to list action logs"
-msgstr "Vous devez être connecté·e pour rejoindre un groupe"
+msgstr "Vous devez être connecté·e et une modérateur·ice pour lister les journaux de modération"
 
 #, elixir-format
 #: lib/graphql/resolvers/report.ex:26
 msgid "You need to be logged-in and a moderator to list reports"
-msgstr "Vous devez être connecté·e pour rejoindre un groupe"
+msgstr "Vous devez être connecté·e et une modérateur·ice pour lister les signalements"
 
 #, elixir-format
 #: lib/graphql/resolvers/report.ex:101
 msgid "You need to be logged-in and a moderator to update a report"
-msgstr "Vous devez être connecté·e pour supprimer un groupe"
+msgstr "Vous devez être connecté·e et une modérateur·ice pour modifier un signalement"
 
 #, elixir-format
 #: lib/graphql/resolvers/report.ex:41
 msgid "You need to be logged-in and a moderator to view a report"
-msgstr "Vous devez être connecté·e pour rejoindre un groupe"
+msgstr "Vous devez être connecté·e pour et une modérateur·ice pour visionner un signalement"
 
 #, elixir-format
 #: lib/graphql/resolvers/admin.ex:236
@@ -689,7 +689,7 @@ msgstr "Vous devez être connecté·e pour supprimer un groupe"
 #, elixir-format
 #: lib/graphql/resolvers/participant.ex:105
 msgid "You need to be logged-in to join an event"
-msgstr "Vous devez être connecté·e pour rejoindre un groupe"
+msgstr "Vous devez être connecté·e pour rejoindre un événement"
 
 #, elixir-format
 #: lib/graphql/resolvers/participant.ex:204
