@@ -31,7 +31,7 @@
         </li>
       </ul>
     </nav>
-    <section class="container section" v-if="isCurrentActorAGroupAdmin">
+    <section class="container section" v-if="group && isCurrentActorAGroupAdmin">
       <form @submit.prevent="updateGroup">
         <b-field :label="$t('Group name')">
           <b-input v-model="group.name" />
@@ -43,7 +43,7 @@
           <picture-upload
             :textFallback="$t('Avatar')"
             v-model="avatarFile"
-            :defaultImageSrc="group.avatar ? group.avatar.url : null"
+            :defaultImage="group.avatar"
           />
         </b-field>
 
@@ -51,7 +51,7 @@
           <picture-upload
             :textFallback="$t('Banner')"
             v-model="bannerFile"
-            :defaultImageSrc="group.banner ? group.banner.url : null"
+            :defaultImage="group.banner"
           />
         </b-field>
         <p class="label">{{ $t("Group visibility") }}</p>

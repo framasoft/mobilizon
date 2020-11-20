@@ -69,7 +69,7 @@ interface IEventEditJSON {
   visibility: EventVisibility;
   joinOptions: EventJoinOptions;
   draft: boolean;
-  picture: IPicture | { pictureId: string } | null;
+  picture?: IPicture | { pictureId: string } | null;
   attributedToId: string | null;
   onlineAddress?: string;
   phoneAddress?: string;
@@ -234,7 +234,6 @@ export class EventModel implements IEvent {
       joinOptions: this.joinOptions,
       draft: this.draft,
       tags: this.tags.map((t) => t.title),
-      picture: this.picture,
       onlineAddress: this.onlineAddress,
       phoneAddress: this.phoneAddress,
       physicalAddress: this.physicalAddress,

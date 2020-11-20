@@ -12,7 +12,7 @@
         <picture-upload
           v-model="pictureFile"
           :textFallback="$t('Headline picture')"
-          :defaultImageSrc="post.picture ? post.picture.url : null"
+          :defaultImage="post.picture"
         />
 
         <b-field

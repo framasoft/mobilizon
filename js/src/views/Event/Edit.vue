@@ -10,7 +10,11 @@
 
       <form ref="form">
         <subtitle>{{ $t("General information") }}</subtitle>
-        <picture-upload v-model="pictureFile" :textFallback="$t('Headline picture')" />
+        <picture-upload
+          v-model="pictureFile"
+          :textFallback="$t('Headline picture')"
+          :defaultImage="event.picture"
+        />
 
         <b-field :label="$t('Title')" :type="checkTitleLength[0]" :message="checkTitleLength[1]">
           <b-input size="is-large" aria-required="true" required v-model="event.title" />
@@ -676,6 +680,7 @@ export default class EditEvent extends Vue {
             __typename: "Person",
             id: organizerActor.id,
             participations: {
+              __typename: "PaginatedParticipantList",
               total: 1,
               elements: [
                 {
@@ -763,11 +768,13 @@ export default class EditEvent extends Vue {
       res.endsOn = null;
     }
 
-    const pictureObj = buildFileVariable(this.pictureFile, "picture");
-    res = { ...res, ...pictureObj };
+    if (this.pictureFile) {
+      const pictureObj = buildFileVariable(this.pictureFile, "picture");
+      res = { ...res, ...pictureObj };
+    }
 
     try {
-      if (this.event.picture) {
+      if (this.event.picture && this.pictureFile) {
         const oldPictureFile = (await buildFileFromIPicture(this.event.picture)) as File;
         const oldPictureFileContent = await readFileAsync(oldPictureFile);
         const newPictureFileContent = await readFileAsync(this.pictureFile as File);
