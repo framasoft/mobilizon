@@ -35,7 +35,7 @@ defmodule Mobilizon.GraphQL.Schema.PictureType do
   object :picture_queries do
     @desc "Get a picture"
     field :picture, :picture do
-      arg(:id, non_null(:string), description: "The picture ID")
+      arg(:id, non_null(:id), description: "The picture ID")
       resolve(&Picture.picture/3)
     end
   end
@@ -47,6 +47,14 @@ defmodule Mobilizon.GraphQL.Schema.PictureType do
       arg(:alt, :string, description: "The picture's alternative text")
       arg(:file, non_null(:upload), description: "The picture file")
       resolve(&Picture.upload_picture/3)
+    end
+
+    @desc """
+    Remove a picture
+    """
+    field :remove_picture, :deleted_object do
+      arg(:id, non_null(:id), description: "The picture's ID")
+      resolve(&Picture.remove_picture/3)
     end
   end
 end
