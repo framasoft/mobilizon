@@ -8,8 +8,8 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-11-05 10:29+0000\n"
-"Last-Translator: x <hardwired1.0@protonmail.com>\n"
+"PO-Revision-Date: 2020-11-20 03:52+0000\n"
+"Last-Translator: Gabriele Tosato <gabriele.tosato@virgilio.it>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/it/>\n"
 "Language: it\n"
@@ -153,7 +153,8 @@ msgstr "Nessun utente con questa email"
 
 #, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:28
-#: lib/graphql/resolvers/participant.ex:29 lib/graphql/resolvers/person.ex:153 lib/graphql/resolvers/person.ex:187
+#: lib/graphql/resolvers/participant.ex:29 lib/graphql/resolvers/participant.ex:160
+#: lib/graphql/resolvers/participant.ex:189 lib/graphql/resolvers/person.ex:153 lib/graphql/resolvers/person.ex:187
 #: lib/graphql/resolvers/person.ex:253 lib/graphql/resolvers/person.ex:282 lib/graphql/resolvers/person.ex:295
 msgid "Profile is not owned by authenticated user"
 msgstr "L'utente autenticato non è propietario di questo profilo"
@@ -334,12 +335,12 @@ msgid "Profile already suspended"
 msgstr "Profilo già sospeso"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:88
+#: lib/graphql/resolvers/participant.ex:93
 msgid "A valid email is required by your instance"
 msgstr "Un'email valida è richiesta dalla vostra istanza"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:85
+#: lib/graphql/resolvers/participant.ex:87
 msgid "Anonymous participation is not enabled"
 msgstr "La partecipazione anonima non è abilitata"
 
@@ -354,7 +355,7 @@ msgid "Cannot remove the last identity of a user"
 msgstr "Impossibile rimuovere l'ultima identità di un utente"
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:104
+#: lib/graphql/resolvers/comment.ex:105
 msgid "Comment is already deleted"
 msgstr "Commento già cancellato"
 
@@ -374,24 +375,24 @@ msgid "Error while updating report"
 msgstr "Errore durante l'aggiornamento del rapporto"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:123
+#: lib/graphql/resolvers/participant.ex:128
 msgid "Event id not found"
 msgstr "ID evento non trovato"
 
 #, elixir-format
-#: lib/graphql/error.ex:89 lib/graphql/resolvers/event.ex:232
-#: lib/graphql/resolvers/event.ex:276
+#: lib/graphql/error.ex:89 lib/graphql/resolvers/event.ex:235
+#: lib/graphql/resolvers/event.ex:279
 msgid "Event not found"
 msgstr "Evento non trovato"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:82
-#: lib/graphql/resolvers/participant.ex:120 lib/graphql/resolvers/participant.ex:152
+#: lib/graphql/resolvers/participant.ex:84
+#: lib/graphql/resolvers/participant.ex:125 lib/graphql/resolvers/participant.ex:157
 msgid "Event with this ID %{id} doesn't exist"
 msgstr "L'evento con questo ID %{id} non esiste"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:95
+#: lib/graphql/resolvers/participant.ex:100
 msgid "Internal Error"
 msgstr "Errore Interno"
 
@@ -411,14 +412,14 @@ msgid "No such feed token"
 msgstr "Nessun token di rifornimento corrispondente"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:227
+#: lib/graphql/resolvers/participant.ex:238
 msgid "Participant already has role %{role}"
 msgstr "Il partecipante ha già il ruolo %{role}"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:162
-#: lib/graphql/resolvers/participant.ex:188 lib/graphql/resolvers/participant.ex:220
-#: lib/graphql/resolvers/participant.ex:230
+#: lib/graphql/resolvers/participant.ex:170
+#: lib/graphql/resolvers/participant.ex:199 lib/graphql/resolvers/participant.ex:231
+#: lib/graphql/resolvers/participant.ex:241
 msgid "Participant not found"
 msgstr "Partecipante non trovato"
 
@@ -472,7 +473,7 @@ msgid "Profile not found"
 msgstr "Profilo non trovato"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:101 lib/graphql/resolvers/participant.ex:224
+#: lib/graphql/resolvers/event.ex:101 lib/graphql/resolvers/participant.ex:235
 msgid "Provided moderator profile doesn't have permission on this event"
 msgstr ""
 "Il profilo del moderatore fornito non dispone dell'autorizzazione per questo "
@@ -489,12 +490,12 @@ msgid "Resource doesn't exist"
 msgstr "La risorsa non esiste"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:116
+#: lib/graphql/resolvers/participant.ex:121
 msgid "The event has already reached its maximum capacity"
 msgstr "L'evento ha già raggiunto la sua massima capacità"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:250
+#: lib/graphql/resolvers/participant.ex:261
 msgid "This token is invalid"
 msgstr "Questo token non è valido"
 
@@ -530,7 +531,7 @@ msgid "You already have a profile for this user"
 msgstr "Hai già un profilo per questo utente"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:126
+#: lib/graphql/resolvers/participant.ex:131
 msgid "You are already a participant of this event"
 msgstr "Se già un partecipante di questo evento"
 
@@ -550,7 +551,7 @@ msgid "You are not a moderator or admin for this group"
 msgstr "Non sei un moderatore o amministratore di questo gruppo"
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:50
+#: lib/graphql/resolvers/comment.ex:51
 msgid "You are not allowed to create a comment if not connected"
 msgstr "Non è consentito creare un commento se non si è collegati"
 
@@ -560,7 +561,7 @@ msgid "You are not allowed to create a feed token if not connected"
 msgstr "Non puoi creare un token di rifornimento senza connessione"
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:109
+#: lib/graphql/resolvers/comment.ex:110
 msgid "You are not allowed to delete a comment if not connected"
 msgstr "Non è consentito eliminare un commento se non si è collegati"
 
@@ -570,13 +571,13 @@ msgid "You are not allowed to delete a feed token if not connected"
 msgstr "Non puoi eliminare un token di rifornimento senza connettersi"
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:72
+#: lib/graphql/resolvers/comment.ex:73
 msgid "You are not allowed to update a comment if not connected"
 msgstr "Non è consentito aggiornare un commento se non si è collegati"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:156
-#: lib/graphql/resolvers/participant.ex:182
+#: lib/graphql/resolvers/participant.ex:164
+#: lib/graphql/resolvers/participant.ex:193
 msgid "You can't leave event because you're the only event creator participant"
 msgstr ""
 "Non puoi lasciare l'evento perchè sei l'unico partecipante creatore di eventi"
@@ -589,12 +590,12 @@ msgstr ""
 "gruppo perché sei l'unico amministratore"
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:100
+#: lib/graphql/resolvers/comment.ex:101
 msgid "You cannot delete this comment"
 msgstr "Non puoi eliminare questo commento"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:272
+#: lib/graphql/resolvers/event.ex:275
 msgid "You cannot delete this event"
 msgstr "Non puoi eliminare questo evento"
 
@@ -660,7 +661,7 @@ msgid "You need to be logged-in to access resources"
 msgstr "Devi essere connesso per accedere alle risorse"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:207
+#: lib/graphql/resolvers/event.ex:210
 msgid "You need to be logged-in to create events"
 msgstr "Devi essere connesso per creare eventi"
 
@@ -680,7 +681,7 @@ msgid "You need to be logged-in to create resources"
 msgstr "Devi essere connesso per creare risorse"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:281
+#: lib/graphql/resolvers/event.ex:284
 msgid "You need to be logged-in to delete an event"
 msgstr "Devi essere connesso per eliminare un evento"
 
@@ -695,17 +696,17 @@ msgid "You need to be logged-in to delete resources"
 msgstr "Devi essere connesso per eliminare risorse"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:100
+#: lib/graphql/resolvers/participant.ex:105
 msgid "You need to be logged-in to join an event"
 msgstr "Devi essere connesso per partecipare a un evento"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:193
+#: lib/graphql/resolvers/participant.ex:204
 msgid "You need to be logged-in to leave an event"
 msgstr "Devi essere connesso per lasciare un evento"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:246
+#: lib/graphql/resolvers/event.ex:249
 msgid "You need to be logged-in to update an event"
 msgstr "Devi essere connesso per aggiornare un evento"
 
@@ -817,12 +818,12 @@ msgid "Profile is not administrator for the group"
 msgstr "Il profilo non è amministratore del gruppo"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:235
+#: lib/graphql/resolvers/event.ex:238
 msgid "You can't edit this event."
 msgstr "Non puoi modificare questo evento."
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:238
+#: lib/graphql/resolvers/event.ex:241
 msgid "You can't attribute this event to this profile."
 msgstr "Non puo iattribuire questo evento a questo profilo."
 
@@ -844,9 +845,19 @@ msgstr "Non hai il diritto di rimuovere questo membro."
 #, elixir-format
 #: lib/mobilizon/actors/actor.ex:344
 msgid "This username is already taken."
-msgstr ""
+msgstr "Questo nome utente è già in uso."
 
 #, elixir-format
 #: lib/graphql/resolvers/discussion.ex:72
 msgid "You must provide either an ID or a slug to access a discussion"
 msgstr ""
+
+#, elixir-format
+#: lib/graphql/resolvers/event.ex:199
+msgid "Organizer profile is not owned by the user"
+msgstr "Il profilo dell'organizzatore non è di proprietà dell'utente"
+
+#, elixir-format
+#: lib/graphql/resolvers/participant.ex:90
+msgid "Profile ID provided is not the anonymous profile one"
+msgstr "L'ID profilo fornito non è quello del profilo anonimo"

@@ -169,7 +169,8 @@ msgstr "Nem található ezzel az e-mail-címmel rendelkező felhasználó"
 
 #, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:28
-#: lib/graphql/resolvers/participant.ex:29 lib/graphql/resolvers/person.ex:153 lib/graphql/resolvers/person.ex:187
+#: lib/graphql/resolvers/participant.ex:29 lib/graphql/resolvers/participant.ex:160
+#: lib/graphql/resolvers/participant.ex:189 lib/graphql/resolvers/person.ex:153 lib/graphql/resolvers/person.ex:187
 #: lib/graphql/resolvers/person.ex:253 lib/graphql/resolvers/person.ex:282 lib/graphql/resolvers/person.ex:295
 msgid "Profile is not owned by authenticated user"
 msgstr "A profilt nem hitelesített felhasználó birtokolja"
@@ -350,12 +351,12 @@ msgid "Profile already suspended"
 msgstr "A profil már fel van függesztve"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:88
+#: lib/graphql/resolvers/participant.ex:93
 msgid "A valid email is required by your instance"
 msgstr "Érvényes e-mail-címet követelt meg az Ön példánya"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:85
+#: lib/graphql/resolvers/participant.ex:87
 msgid "Anonymous participation is not enabled"
 msgstr "A névtelen részvétel nincs engedélyezve"
 
@@ -370,7 +371,7 @@ msgid "Cannot remove the last identity of a user"
 msgstr "Nem lehet eltávolítani egy felhasználó utolsó személyazonosságát"
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:104
+#: lib/graphql/resolvers/comment.ex:105
 msgid "Comment is already deleted"
 msgstr "A hozzászólást már törölték"
 
@@ -390,24 +391,24 @@ msgid "Error while updating report"
 msgstr "Hiba a jelentés frissítésekor"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:123
+#: lib/graphql/resolvers/participant.ex:128
 msgid "Event id not found"
 msgstr "Nem található az eseményazonosító"
 
 #, elixir-format
-#: lib/graphql/error.ex:89 lib/graphql/resolvers/event.ex:232
-#: lib/graphql/resolvers/event.ex:276
+#: lib/graphql/error.ex:89 lib/graphql/resolvers/event.ex:235
+#: lib/graphql/resolvers/event.ex:279
 msgid "Event not found"
 msgstr "Nem található az esemény"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:82
-#: lib/graphql/resolvers/participant.ex:120 lib/graphql/resolvers/participant.ex:152
+#: lib/graphql/resolvers/participant.ex:84
+#: lib/graphql/resolvers/participant.ex:125 lib/graphql/resolvers/participant.ex:157
 msgid "Event with this ID %{id} doesn't exist"
 msgstr "Ezzel a(z) %{id} azonosítóval rendelkező esemény nem létezik"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:95
+#: lib/graphql/resolvers/participant.ex:100
 msgid "Internal Error"
 msgstr "Belső hiba"
 
@@ -427,14 +428,14 @@ msgid "No such feed token"
 msgstr "Nincs ilyen hírforrástoken"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:227
+#: lib/graphql/resolvers/participant.ex:238
 msgid "Participant already has role %{role}"
 msgstr "A résztvevő már rendelkezik %{role} szereppel"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:162
-#: lib/graphql/resolvers/participant.ex:188 lib/graphql/resolvers/participant.ex:220
-#: lib/graphql/resolvers/participant.ex:230
+#: lib/graphql/resolvers/participant.ex:170
+#: lib/graphql/resolvers/participant.ex:199 lib/graphql/resolvers/participant.ex:231
+#: lib/graphql/resolvers/participant.ex:241
 msgid "Participant not found"
 msgstr "Nem található a résztvevő"
 
@@ -488,7 +489,7 @@ msgid "Profile not found"
 msgstr "Nem található a profil"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:101 lib/graphql/resolvers/participant.ex:224
+#: lib/graphql/resolvers/event.ex:101 lib/graphql/resolvers/participant.ex:235
 msgid "Provided moderator profile doesn't have permission on this event"
 msgstr "A megadott moderátorprofilnak nincs jogosultsága ezen az eseményen"
 
@@ -503,12 +504,12 @@ msgid "Resource doesn't exist"
 msgstr "Az erőforrás nem létezik"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:116
+#: lib/graphql/resolvers/participant.ex:121
 msgid "The event has already reached its maximum capacity"
 msgstr "Az esemény már elérte a legnagyobb kapacitását"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:250
+#: lib/graphql/resolvers/participant.ex:261
 msgid "This token is invalid"
 msgstr "Ez a token érvénytelen"
 
@@ -544,7 +545,7 @@ msgid "You already have a profile for this user"
 msgstr "Már rendelkezik profillal ehhez a felhasználóhoz"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:126
+#: lib/graphql/resolvers/participant.ex:131
 msgid "You are already a participant of this event"
 msgstr "Már résztvevője ennek az eseménynek"
 
@@ -564,7 +565,7 @@ msgid "You are not a moderator or admin for this group"
 msgstr "Nem moderátor vagy adminisztrátor ennél a csoportnál"
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:50
+#: lib/graphql/resolvers/comment.ex:51
 msgid "You are not allowed to create a comment if not connected"
 msgstr "Nem hozhat létre hozzászólást, ha nincs kapcsolódva"
 
@@ -574,7 +575,7 @@ msgid "You are not allowed to create a feed token if not connected"
 msgstr "Nem hozhat létre hírforrástokent, ha nincs kapcsolódva"
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:109
+#: lib/graphql/resolvers/comment.ex:110
 msgid "You are not allowed to delete a comment if not connected"
 msgstr "Nem törölhet hozzászólást, ha nincs kapcsolódva"
 
@@ -584,13 +585,13 @@ msgid "You are not allowed to delete a feed token if not connected"
 msgstr "Nem törölhet hírforrástokent, ha nincs kapcsolódva"
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:72
+#: lib/graphql/resolvers/comment.ex:73
 msgid "You are not allowed to update a comment if not connected"
 msgstr "Nem frissíthet hozzászólást, ha nincs kapcsolódva"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:156
-#: lib/graphql/resolvers/participant.ex:182
+#: lib/graphql/resolvers/participant.ex:164
+#: lib/graphql/resolvers/participant.ex:193
 msgid "You can't leave event because you're the only event creator participant"
 msgstr ""
 "Nem hagyhatja el az eseményt, mert Ön az egyedüli eseménylétrehozó résztvevő"
@@ -603,12 +604,12 @@ msgstr ""
 "egyedüli adminisztrátor"
 
 #, elixir-format
-#: lib/graphql/resolvers/comment.ex:100
+#: lib/graphql/resolvers/comment.ex:101
 msgid "You cannot delete this comment"
 msgstr "Nem tudja törölni ezt a hozzászólást"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:272
+#: lib/graphql/resolvers/event.ex:275
 msgid "You cannot delete this event"
 msgstr "Nem tudja törölni ezt az eseményt"
 
@@ -682,7 +683,7 @@ msgid "You need to be logged-in to access resources"
 msgstr "Bejelentkezve kell lennie az erőforrásokhoz való hozzáféréshez"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:207
+#: lib/graphql/resolvers/event.ex:210
 msgid "You need to be logged-in to create events"
 msgstr "Bejelentkezve kell lennie az események létrehozásához"
 
@@ -702,7 +703,7 @@ msgid "You need to be logged-in to create resources"
 msgstr "Bejelentkezve kell lennie az erőforrások létrehozásához"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:281
+#: lib/graphql/resolvers/event.ex:284
 msgid "You need to be logged-in to delete an event"
 msgstr "Bejelentkezve kell lennie egy esemény törléséhez"
 
@@ -717,17 +718,17 @@ msgid "You need to be logged-in to delete resources"
 msgstr "Bejelentkezve kell lennie az erőforrások törléséhez"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:100
+#: lib/graphql/resolvers/participant.ex:105
 msgid "You need to be logged-in to join an event"
 msgstr "Bejelentkezve kell lennie egy eseményhez való csatlakozáshoz"
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:193
+#: lib/graphql/resolvers/participant.ex:204
 msgid "You need to be logged-in to leave an event"
 msgstr "Bejelentkezve kell lennie egy esemény elhagyásához"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:246
+#: lib/graphql/resolvers/event.ex:249
 msgid "You need to be logged-in to update an event"
 msgstr "Bejelentkezve kell lennie egy esemény frissítéséhez"
 
@@ -838,12 +839,12 @@ msgid "Profile is not administrator for the group"
 msgstr "A profil nem adminisztrátor ennél a csoportnál"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:235
+#: lib/graphql/resolvers/event.ex:238
 msgid "You can't edit this event."
 msgstr "Nem tudja szerkeszteni ezt az eseményt."
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:238
+#: lib/graphql/resolvers/event.ex:241
 msgid "You can't attribute this event to this profile."
 msgstr "Nem tudja ezt az eseményt ennek a profilnak tulajdonítani."
 
@@ -870,4 +871,14 @@ msgstr ""
 #, elixir-format
 #: lib/graphql/resolvers/discussion.ex:72
 msgid "You must provide either an ID or a slug to access a discussion"
+msgstr ""
+
+#, elixir-format
+#: lib/graphql/resolvers/event.ex:199
+msgid "Organizer profile is not owned by the user"
+msgstr ""
+
+#, elixir-format
+#: lib/graphql/resolvers/participant.ex:90
+msgid "Profile ID provided is not the anonymous profile one"
 msgstr ""

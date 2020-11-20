@@ -519,6 +519,7 @@
   "Only accessible through link and search (private)": "Solo accesible a través de enlace y búsqueda (privado)",
   "Only accessible to members of the group": "Solo accesible para los miembros del grupo",
   "Only alphanumeric characters and underscores are supported.": "Solo se admiten caracteres alfanuméricos y guiones bajos.",
+  "Only alphanumeric lowercased characters and underscores are supported.": "Solo se admiten caracteres alfanuméricos en minúscula y guiones bajos.",
   "Only group moderators can create, edit and delete posts.": "Solo los moderadores de grupo pueden crear, editar y eliminar publicaciones.",
   "Open": "Abrir",
   "Opened reports": "Informes abiertos",

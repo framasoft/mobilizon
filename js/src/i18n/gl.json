@@ -482,6 +482,7 @@
   "Only accessible through link (private)": "Só accesible desde a ligazón {private}",
   "Only accessible to members of the group": "Accesible só para membros do grupo",
   "Only alphanumeric characters and underscores are supported.": "Só se permiten caracteres alfanuméricos e trazo baixo.",
+  "Only alphanumeric lowercased characters and underscores are supported.": "Só se permiten caracteres alfanuméricos en minúsculas e trazo baixo.",
   "Only group moderators can create, edit and delete posts.": "Só as moderadoras do grupo poden crear, editar e eliminar publicacións.",
   "Open": "Abrir",
   "Opened reports": "Denuncias abertas",
