@@ -575,8 +575,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       mutation { uploadPicture(
               name: "#{picture.name}",
               alt: "#{picture.alt}",
-              file: "#{picture.file}",
-              actor_id: #{actor.id}
+              file: "#{picture.file}"
             ) {
                 id,
                 url,
@@ -1304,7 +1303,6 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       mutation = """
           mutation {
             deleteEvent(
-              actor_id: #{actor.id},
               event_id: #{event.id}
             ) {
                 id
@@ -1334,7 +1332,6 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       mutation = """
           mutation {
             deleteEvent(
-              actor_id: #{actor.id},
               event_id: #{event.id}
             ) {
                 id
@@ -1349,32 +1346,6 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       assert hd(json_response(res, 200)["errors"])["message"] =~ "logged-in"
     end
 
-    test "delete_event/3 should check the actor id is owned by the user", %{
-      conn: conn,
-      user: user,
-      actor: actor
-    } do
-      event = insert(:event, organizer_actor: actor)
-
-      mutation = """
-          mutation {
-            deleteEvent(
-              actor_id: 1042,
-              event_id: #{event.id}
-            ) {
-                id
-              }
-            }
-      """
-
-      res =
-        conn
-        |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "not owned"
-    end
-
     test "delete_event/3 should check the event can be deleted by the user", %{
       conn: conn,
       user: user,
@@ -1386,7 +1357,6 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       mutation = """
           mutation {
             deleteEvent(
-              actor_id: #{actor.id},
               event_id: #{event.id}
             ) {
                 id
@@ -1417,7 +1387,6 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       mutation = """
           mutation {
             deleteEvent(
-              actor_id: #{actor_moderator.id},
               event_id: #{event.id}
             ) {
                 id

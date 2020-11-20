@@ -55,15 +55,19 @@ defmodule Mobilizon.GraphQL.Schema.ReportType do
   object :report_queries do
     @desc "Get all reports"
     field :reports, list_of(:report) do
-      arg(:page, :integer, default_value: 1)
-      arg(:limit, :integer, default_value: 10)
-      arg(:status, :report_status, default_value: :open)
+      arg(:page, :integer,
+        default_value: 1,
+        description: "The page in the reports participations list"
+      )
+
+      arg(:limit, :integer, default_value: 10, description: "The limit of reports per page")
+      arg(:status, :report_status, default_value: :open, description: "Filter reports by status")
       resolve(&Report.list_reports/3)
     end
 
     @desc "Get a report by id"
     field :report, :report do
-      arg(:id, non_null(:id))
+      arg(:id, non_null(:id), description: "The report ID")
       resolve(&Report.get_report/3)
     end
   end
@@ -71,34 +75,41 @@ defmodule Mobilizon.GraphQL.Schema.ReportType do
   object :report_mutations do
     @desc "Create a report"
     field :create_report, type: :report do
-      arg(:content, :string)
-      arg(:reporter_id, non_null(:id))
-      arg(:reported_id, non_null(:id))
-      arg(:event_id, :id, default_value: nil)
-      arg(:comments_ids, list_of(:id), default_value: [])
-      arg(:forward, :boolean, default_value: false)
+      arg(:content, :string, description: "The message sent with the report")
+      arg(:reported_id, non_null(:id), description: "The actor's ID that is being reported")
+      arg(:event_id, :id, default_value: nil, description: "The event ID that is being reported")
+
+      arg(:comments_ids, list_of(:id),
+        default_value: [],
+        description: "The comment ID that is being reported"
+      )
+
+      arg(:forward, :boolean,
+        default_value: false,
+        description:
+          "Whether to forward the report to the original instance if the content is remote"
+      )
+
       resolve(&Report.create_report/3)
     end
 
     @desc "Update a report"
     field :update_report_status, type: :report do
-      arg(:report_id, non_null(:id))
-      arg(:moderator_id, non_null(:id))
-      arg(:status, non_null(:report_status))
+      arg(:report_id, non_null(:id), description: "The report's ID")
+      arg(:status, non_null(:report_status), description: "The report's new status")
       resolve(&Report.update_report/3)
     end
 
     @desc "Create a note on a report"
     field :create_report_note, type: :report_note do
-      arg(:content, :string)
-      arg(:moderator_id, non_null(:id))
-      arg(:report_id, non_null(:id))
+      arg(:content, :string, description: "The note's content")
+      arg(:report_id, non_null(:id), description: "The report's ID")
       resolve(&Report.create_report_note/3)
     end
 
+    @desc "Delete a note on a report"
     field :delete_report_note, type: :deleted_object do
-      arg(:note_id, non_null(:id))
-      arg(:moderator_id, non_null(:id))
+      arg(:note_id, non_null(:id), description: "The note's ID")
       resolve(&Report.delete_report_note/3)
     end
   end

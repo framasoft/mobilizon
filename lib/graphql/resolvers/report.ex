@@ -5,10 +5,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
 
   import Mobilizon.Users.Guards
 
-  alias Mobilizon.Actors
+  alias Mobilizon.{Actors, Config, Reports, Users}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Config
-  alias Mobilizon.Reports
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext
@@ -48,16 +46,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
   """
   def create_report(
         _parent,
-        %{reporter_id: reporter_id} = args,
+        args,
         %{context: %{current_user: %User{} = user}} = _resolution
       ) do
-    with {:is_owned, %Actor{}} <- User.owns_actor(user, reporter_id),
-         {:ok, _, %Report{} = report} <- API.Reports.report(args) do
+    with %Actor{id: reporter_id} <- Users.get_actor_for_user(user),
+         {:ok, _, %Report{} = report} <-
+           args |> Map.put(:reporter_id, reporter_id) |> API.Reports.report() do
       {:ok, report}
     else
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "Reporter profile is not owned by authenticated user")}
-
       _error ->
         {:error, dgettext("errors", "Error while saving report")}
     end
@@ -65,28 +61,21 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
 
   def create_report(
         _parent,
-        %{reporter_id: reporter_id} = args,
+        args,
         _resolution
       ) do
     with {:anonymous_reporting_allowed, true} <-
            {:anonymous_reporting_allowed, Config.anonymous_reporting?()},
-         {:wrong_id, true} <- {:wrong_id, reporter_id == to_string(Config.anonymous_actor_id())},
-         {:ok, _, %Report{} = report} <- API.Reports.report(args) do
+         {:ok, _, %Report{} = report} <-
+           args |> Map.put(:reporter_id, Config.anonymous_actor_id()) |> API.Reports.report() do
       {:ok, report}
     else
       {:anonymous_reporting_allowed, _} ->
         {:error, dgettext("errors", "You need to be logged-in to create reports")}
 
-      {:wrong_id, _} ->
-        {:error, dgettext("errors", "Reporter ID does not match the anonymous profile id")}
-
       _error ->
         {:error, dgettext("errors", "Error while saving report")}
     end
-  end
-
-  def create_report(_parent, _args, _resolution) do
-    {:error, dgettext("errors", "You need to be logged-in to create reports")}
   end
 
   @doc """
@@ -94,18 +83,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
   """
   def update_report(
         _parent,
-        %{report_id: report_id, moderator_id: moderator_id, status: status},
+        %{report_id: report_id, status: status},
         %{context: %{current_user: %User{role: role} = user}}
       )
       when is_moderator(role) do
-    with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, moderator_id),
+    with %Actor{} = actor <- Users.get_actor_for_user(user),
          %Report{} = report <- Mobilizon.Reports.get_report(report_id),
          {:ok, %Report{} = report} <- API.Reports.update_report_status(actor, report, status) do
       {:ok, report}
     else
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
-
       _error ->
         {:error, dgettext("errors", "Error while updating report")}
     end
@@ -117,11 +103,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
 
   def create_report_note(
         _parent,
-        %{report_id: report_id, moderator_id: moderator_id, content: content},
+        %{report_id: report_id, content: content},
         %{context: %{current_user: %User{role: role} = user}}
       )
       when is_moderator(role) do
-    with {:is_owned, %Actor{}} <- User.owns_actor(user, moderator_id),
+    with %Actor{id: moderator_id} <- Users.get_actor_for_user(user),
          %Report{} = report <- Reports.get_report(report_id),
          %Actor{} = moderator <- Actors.get_local_actor_with_preload(moderator_id),
          {:ok, %Note{} = note} <- API.Reports.create_report_note(report, moderator, content) do
@@ -131,11 +117,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
 
   def delete_report_note(
         _parent,
-        %{note_id: note_id, moderator_id: moderator_id},
+        %{note_id: note_id},
         %{context: %{current_user: %User{role: role} = user}}
       )
       when is_moderator(role) do
-    with {:is_owned, %Actor{}} <- User.owns_actor(user, moderator_id),
+    with %Actor{id: moderator_id} <- Users.get_actor_for_user(user),
          %Note{} = note <- Reports.get_note(note_id),
          %Actor{} = moderator <- Actors.get_local_actor_with_preload(moderator_id),
          {:ok, %Note{} = note} <- API.Reports.delete_report_note(note, moderator) do

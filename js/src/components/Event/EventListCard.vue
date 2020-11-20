@@ -246,7 +246,7 @@ export default class EventListCard extends mixins(ActorMixin, EventMixin) {
   async openDeleteEventModalWrapper(): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    await this.openDeleteEventModal(this.participation.event, this.currentActor);
+    await this.openDeleteEventModal(this.participation.event);
   }
 
   async gotToWithCheck(participation: IParticipant, route: RawLocation): Promise<Route> {

@@ -761,7 +761,7 @@ export default class Event extends EventMixin {
    * Delete the event, then redirect to home.
    */
   async openDeleteEventModalWrapper(): Promise<void> {
-    await this.openDeleteEventModal(this.event, this.currentActor);
+    await this.openDeleteEventModal(this.event);
   }
 
   async reportEvent(content: string, forward: boolean): Promise<void> {
@@ -771,19 +771,12 @@ export default class Event extends EventMixin {
     this.$refs.reportModal.close();
     if (!this.event.organizerActor) return;
     const eventTitle = this.event.title;
-    let reporterId = null;
-    if (this.currentActor.id) {
-      reporterId = this.currentActor.id;
-    } else if (this.config.anonymous.reports.allowed) {
-      reporterId = this.config.anonymous.actorId;
-    }
-    if (!reporterId) return;
+
     try {
       await this.$apollo.mutate<IReport>({
         mutation: CREATE_REPORT,
         variables: {
           eventId: this.event.id,
-          reporterId,
           reportedId: this.actorForReport ? this.actorForReport.id : null,
           content,
           forward,
@@ -808,7 +801,6 @@ export default class Event extends EventMixin {
         mutation: JOIN_EVENT,
         variables: {
           eventId: this.event.id,
-          actorId: identity.id,
           message,
         },
         update: (store, { data }) => {

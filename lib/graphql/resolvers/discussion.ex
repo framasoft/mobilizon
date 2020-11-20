@@ -62,6 +62,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
     end
   end
 
+  def get_discussion(_parent, _args, %{
+        context: %{
+          current_user: %User{} = _user
+        }
+      }),
+      do:
+        {:error,
+         dgettext("errors", "You must provide either an ID or a slug to access a discussion")}
+
   def get_discussion(_parent, _args, _resolution),
     do: {:error, dgettext("errors", "You need to be logged-in to access discussions")}
 

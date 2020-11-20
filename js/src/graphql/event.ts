@@ -498,8 +498,8 @@ export const CONFIRM_PARTICIPATION = gql`
 `;
 
 export const UPDATE_PARTICIPANT = gql`
-  mutation AcceptParticipant($id: ID!, $moderatorActorId: ID!, $role: ParticipantRoleEnum!) {
-    updateParticipation(id: $id, moderatorActorId: $moderatorActorId, role: $role) {
+  mutation UpdateParticipant($id: ID!, $role: ParticipantRoleEnum!) {
+    updateParticipation(id: $id, role: $role) {
       role
       id
     }
@@ -507,20 +507,20 @@ export const UPDATE_PARTICIPANT = gql`
 `;
 
 export const DELETE_EVENT = gql`
-  mutation DeleteEvent($eventId: ID!, $actorId: ID!) {
-    deleteEvent(eventId: $eventId, actorId: $actorId) {
+  mutation DeleteEvent($eventId: ID!) {
+    deleteEvent(eventId: $eventId) {
       id
     }
   }
 `;
 
 export const PARTICIPANTS = gql`
-  query($uuid: UUID!, $page: Int, $limit: Int, $roles: String, $actorId: ID!) {
+  query($uuid: UUID!, $page: Int, $limit: Int, $roles: String) {
     event(uuid: $uuid) {
       id,
       uuid,
       title,
-      participants(page: $page, limit: $limit, roles: $roles, actorId: $actorId) {
+      participants(page: $page, limit: $limit, roles: $roles) {
         ${participantsQuery}
       },
       participantStats {

@@ -5,12 +5,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
 
   import Mobilizon.Users.Guards
 
-  alias Mobilizon.Actors
+  alias Mobilizon.{Actors, Events, Users}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events
   alias Mobilizon.Events.Participant
   alias Mobilizon.Storage.Page
-  alias Mobilizon.Users
   alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext
 

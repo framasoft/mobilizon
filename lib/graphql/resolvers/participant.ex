@@ -2,7 +2,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   @moduledoc """
   Handles the participation-related GraphQL calls.
   """
-  alias Mobilizon.{Actors, Config, Crypto, Events}
+  alias Mobilizon.{Actors, Config, Crypto, Events, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.GraphQL.API.Participations
@@ -206,7 +206,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
 
   def update_participation(
         _parent,
-        %{id: participation_id, moderator_actor_id: moderator_actor_id, role: new_role},
+        %{id: participation_id, role: new_role},
         %{
           context: %{
             current_user: user
@@ -214,7 +214,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
         }
       ) do
     # Check that moderator provided is rightly authenticated
-    with {:is_owned, moderator_actor} <- User.owns_actor(user, moderator_actor_id),
+    with %Actor{id: moderator_actor_id} = moderator_actor <- Users.get_actor_for_user(user),
          # Check that participation already exists
          {:has_participation, %Participant{role: old_role} = participation} <-
            {:has_participation, Events.get_participant(participation_id)},
@@ -227,9 +227,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
            Participations.update(participation, moderator_actor, new_role) do
       {:ok, participation}
     else
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "Moderator profile is not owned by authenticated user")}
-
       {:has_participation, nil} ->
         {:error, dgettext("errors", "Participant not found")}
 

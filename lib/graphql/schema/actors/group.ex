@@ -54,10 +54,18 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
 
     # This one should have a privacy setting
     field :organized_events, :paginated_event_list do
-      arg(:after_datetime, :datetime, default_value: nil)
-      arg(:before_datetime, :datetime, default_value: nil)
-      arg(:page, :integer, default_value: 1)
-      arg(:limit, :integer, default_value: 10)
+      arg(:after_datetime, :datetime,
+        default_value: nil,
+        description: "Filter events that begin after this datetime"
+      )
+
+      arg(:before_datetime, :datetime,
+        default_value: nil,
+        description: "Filter events that begin before this datetime"
+      )
+
+      arg(:page, :integer, default_value: 1, description: "The page in the paginated event list")
+      arg(:limit, :integer, default_value: 10, description: "The limit of events per page")
       resolve(&Group.find_events_for_group/3)
       description("A list of the events this actor has organized")
     end
@@ -74,23 +82,27 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     )
 
     field :members, :paginated_member_list do
-      arg(:page, :integer, default_value: 1)
-      arg(:limit, :integer, default_value: 10)
-      arg(:roles, :string, default_value: "")
+      arg(:page, :integer, default_value: 1, description: "The page in the paginated member list")
+      arg(:limit, :integer, default_value: 10, description: "The limit of members per page")
+      arg(:roles, :string, default_value: "", description: "Filter members by their role")
       resolve(&Member.find_members_for_group/3)
       description("A paginated list of group members")
     end
 
     field :resources, :paginated_resource_list do
-      arg(:page, :integer, default_value: 1)
-      arg(:limit, :integer, default_value: 10)
+      arg(:page, :integer,
+        default_value: 1,
+        description: "The page in the paginated resource list"
+      )
+
+      arg(:limit, :integer, default_value: 10, description: "The limit of resources per page")
       resolve(&Resource.find_resources_for_group/3)
       description("A paginated list of the resources this group has")
     end
 
     field :posts, :paginated_post_list do
-      arg(:page, :integer, default_value: 1)
-      arg(:limit, :integer, default_value: 10)
+      arg(:page, :integer, default_value: 1, description: "The page in the paginated post list")
+      arg(:limit, :integer, default_value: 10, description: "The limit of posts per page")
       resolve(&Post.find_posts_for_group/3)
       description("A paginated list of the posts this group has")
     end
@@ -120,9 +132,12 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     value(:open, description: "The actor is open to followings")
   end
 
+  @desc """
+  A paginated list of groups
+  """
   object :paginated_group_list do
     field(:elements, list_of(:group), description: "A list of groups")
-    field(:total, :integer, description: "The total number of elements in the list")
+    field(:total, :integer, description: "The total number of groups in the list")
   end
 
   @desc "The list of visibility options for a group"
@@ -134,25 +149,33 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
   object :group_queries do
     @desc "Get all groups"
     field :groups, :paginated_group_list do
-      arg(:preferred_username, :string, default_value: "")
-      arg(:name, :string, default_value: "")
-      arg(:domain, :string, default_value: "")
-      arg(:local, :boolean, default_value: true)
-      arg(:suspended, :boolean, default_value: false)
-      arg(:page, :integer, default_value: 1)
-      arg(:limit, :integer, default_value: 10)
+      arg(:preferred_username, :string, default_value: "", description: "Filter by username")
+      arg(:name, :string, default_value: "", description: "Filter by name")
+      arg(:domain, :string, default_value: "", description: "Filter by domain")
+
+      arg(:local, :boolean,
+        default_value: true,
+        description: "Filter whether group is local or not"
+      )
+
+      arg(:suspended, :boolean, default_value: false, description: "Filter by suspended status")
+      arg(:page, :integer, default_value: 1, description: "The page in the paginated group list")
+      arg(:limit, :integer, default_value: 10, description: "The limit of groups per page")
       resolve(&Group.list_groups/3)
     end
 
     @desc "Get a group by its ID"
     field :get_group, :group do
-      arg(:id, non_null(:id))
+      arg(:id, non_null(:id), description: "The group ID")
       resolve(&Group.get_group/3)
     end
 
     @desc "Get a group by its preferred username"
     field :group, :group do
-      arg(:preferred_username, non_null(:string))
+      arg(:preferred_username, non_null(:string),
+        description: "The group preferred_username, eventually containing their domain if remote"
+      )
+
       resolve(&Group.find_group/3)
     end
   end
@@ -161,8 +184,6 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     @desc "Create a group"
     field :create_group, :group do
       arg(:preferred_username, non_null(:string), description: "The name for the group")
-
-      arg(:creator_actor_id, non_null(:id), description: "The identity that creates the group")
 
       arg(:name, :string, description: "The displayed name for the group")
       arg(:summary, :string, description: "The summary for the group", default_value: "")
@@ -182,7 +203,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
           "The banner for the group, either as an object or directly the ID of an existing Picture"
       )
 
-      arg(:physical_address, :address_input)
+      arg(:physical_address, :address_input, description: "The physical address for the group")
 
       resolve(&Group.create_group/3)
     end
@@ -210,14 +231,14 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
           "The banner for the group, either as an object or directly the ID of an existing Picture"
       )
 
-      arg(:physical_address, :address_input)
+      arg(:physical_address, :address_input, description: "The physical address for the group")
 
       resolve(&Group.update_group/3)
     end
 
     @desc "Delete a group"
     field :delete_group, :deleted_object do
-      arg(:group_id, non_null(:id))
+      arg(:group_id, non_null(:id), description: "The group ID")
 
       resolve(&Group.delete_group/3)
     end

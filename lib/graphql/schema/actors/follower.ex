@@ -19,6 +19,9 @@ defmodule Mobilizon.GraphQL.Schema.Actors.FollowerType do
     field(:updated_at, :datetime, description: "When the follow was updated")
   end
 
+  @desc """
+  A paginated list of follower objects
+  """
   object :paginated_follower_list do
     field(:elements, list_of(:follower), description: "A list of followers")
     field(:total, :integer, description: "The total number of elements in the list")

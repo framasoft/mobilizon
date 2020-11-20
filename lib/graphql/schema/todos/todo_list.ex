@@ -23,6 +23,9 @@ defmodule Mobilizon.GraphQL.Schema.Todos.TodoListType do
     )
   end
 
+  @desc """
+  A paginated list of todo-lists
+  """
   object :paginated_todo_list_list do
     field(:elements, list_of(:todo_list), description: "A list of todo lists")
     field(:total, :integer, description: "The total number of todo lists in the list")
@@ -31,7 +34,7 @@ defmodule Mobilizon.GraphQL.Schema.Todos.TodoListType do
   object :todo_list_queries do
     @desc "Get a todo list"
     field :todo_list, :todo_list do
-      arg(:id, non_null(:id))
+      arg(:id, non_null(:id), description: "The todo-list ID")
       resolve(&Todos.get_todo_list/3)
     end
   end
@@ -39,8 +42,8 @@ defmodule Mobilizon.GraphQL.Schema.Todos.TodoListType do
   object :todo_list_mutations do
     @desc "Create a todo list"
     field :create_todo_list, :todo_list do
-      arg(:title, non_null(:string))
-      arg(:group_id, non_null(:id))
+      arg(:title, non_null(:string), description: "The todo list title")
+      arg(:group_id, non_null(:id), description: "The group ID")
       resolve(&Todos.create_todo_list/3)
     end
   end

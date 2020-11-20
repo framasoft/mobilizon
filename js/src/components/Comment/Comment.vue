@@ -288,7 +288,6 @@ export default class Comment extends Vue {
         mutation: CREATE_REPORT,
         variables: {
           eventId: this.event.id,
-          reporterId: this.currentActor.id,
           reportedId: this.comment.actor.id,
           commentsIds: [this.comment.id],
           content,

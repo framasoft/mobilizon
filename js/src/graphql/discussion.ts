@@ -84,8 +84,8 @@ export const DISCUSSION_FIELDS_FRAGMENT = gql`
 `;
 
 export const CREATE_DISCUSSION = gql`
-  mutation createDiscussion($title: String!, $creatorId: ID!, $actorId: ID!, $text: String!) {
-    createDiscussion(title: $title, text: $text, creatorId: $creatorId, actorId: $actorId) {
+  mutation createDiscussion($title: String!, $actorId: ID!, $text: String!) {
+    createDiscussion(title: $title, text: $text, actorId: $actorId) {
       ...DiscussionFields
     }
   }

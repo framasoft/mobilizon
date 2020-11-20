@@ -17,37 +17,12 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
   end
 
   describe "create a group" do
-    test "create_group/3 should check the user owns the identity", %{conn: conn, user: user} do
-      another_actor = insert(:actor)
-
-      mutation = """
-          mutation {
-            createGroup(
-              preferred_username: "#{@new_group_params.groupname}",
-              creator_actor_id: #{another_actor.id}
-            ) {
-                preferred_username,
-                type
-              }
-            }
-      """
-
-      res =
-        conn
-        |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      assert hd(json_response(res, 200)["errors"])["message"] ==
-               "Creator profile is not owned by the current user"
-    end
-
     test "create_group/3 creates a group and check a group with this name does not already exist",
-         %{conn: conn, user: user, actor: actor} do
+         %{conn: conn, user: user} do
       mutation = """
           mutation {
             createGroup(
-              preferred_username: "#{@new_group_params.groupname}",
-              creator_actor_id: #{actor.id}
+              preferred_username: "#{@new_group_params.groupname}"
             ) {
                 preferred_username,
                 type
@@ -68,8 +43,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
       mutation = """
           mutation {
             createGroup(
-              preferred_username: "#{@new_group_params.groupname}",
-              creator_actor_id: #{actor.id},
+              preferred_username: "#{@new_group_params.groupname}"
             ) {
                 preferred_username,
                 type

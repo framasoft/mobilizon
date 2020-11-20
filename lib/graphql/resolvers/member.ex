@@ -76,9 +76,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
          {:ok, _activity, %Member{} = member} <- ActivityPub.invite(group, actor, target_actor) do
       {:ok, member}
     else
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
-
       {:error, :group_not_found} ->
         {:error, dgettext("errors", "Group not found")}
 

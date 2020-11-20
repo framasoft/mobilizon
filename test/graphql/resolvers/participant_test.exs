@@ -439,9 +439,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
       query = """
       {
         event(uuid: "#{event.uuid}") {
-          participants(roles: "participant,moderator,administrator,creator", actor_id: "#{
-        actor.id
-      }") {
+          participants(roles: "participant,moderator,administrator,creator") {
             elements {
               role,
               actor {
@@ -478,9 +476,9 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
       participant2 = insert(:participant, event: event, actor: actor3, role: :participant)
 
       query = """
-      query EventParticipants($uuid: UUID!, $actorId: ID, $roles: String, $page: Int, $limit: Int) {
+      query EventParticipants($uuid: UUID!, $roles: String, $page: Int, $limit: Int) {
         event(uuid: $uuid) {
-          participants(page: $page, limit: $limit, roles: $roles, actorId: $actorId) {
+          participants(page: $page, limit: $limit, roles: $roles) {
             total,
             elements {
               role,
@@ -500,7 +498,6 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
           query: query,
           variables: %{
             uuid: event.uuid,
-            actorId: actor.id,
             roles: "participant,moderator,administrator,creator",
             page: 1,
             limit: 2
@@ -696,7 +693,6 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
             updateParticipation(
               id: "#{participation_id}",
               role: PARTICIPANT,
-              moderator_actor_id: #{actor_creator.id}
             ) {
                 id,
                 role,
@@ -739,7 +735,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
 
     test "accept_participation/3 with bad parameters", %{conn: conn, actor: actor, user: user} do
       user_creator = insert(:user)
-      actor_creator = insert(:actor, user: user_creator)
+      _actor_creator = insert(:actor, user: user_creator)
       event = insert(:event, join_options: :restricted)
       insert(:participant, event: event, role: :creator)
 
@@ -776,8 +772,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
           mutation {
             updateParticipation (
               id: "#{participation_id}",
-              role: PARTICIPANT,
-              moderator_actor_id: #{actor_creator.id}
+              role: PARTICIPANT
             ) {
                 id,
                 role,
@@ -841,8 +836,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
           mutation {
             updateParticipation(
               id: "#{participation_id}",
-              role: REJECTED,
-              moderator_actor_id: #{actor_creator.id}
+              role: REJECTED
             ) {
                 id,
                 role,
@@ -884,7 +878,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
 
     test "reject_participation/3 with bad parameters", %{conn: conn, actor: actor, user: user} do
       user_creator = insert(:user)
-      actor_creator = insert(:actor, user: user_creator)
+      _actor_creator = insert(:actor, user: user_creator)
       event = insert(:event, join_options: :restricted)
       insert(:participant, event: event, role: :creator)
 
@@ -921,8 +915,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
           mutation {
             updateParticipation (
               id: "#{participation_id}",
-              role: REJECTED,
-              moderator_actor_id: #{actor_creator.id}
+              role: REJECTED
             ) {
                 id,
                 actor {
@@ -1341,8 +1334,8 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
                |> hd
 
       update_participation_mutation = """
-          mutation UpdateParticipation($participantId: ID!, $role: ParticipantRoleEnum!, $moderatorActorId: ID!) {
-            updateParticipation(id: $participantId, role: $role, moderatorActorId: $moderatorActorId) {
+          mutation UpdateParticipation($participantId: ID!, $role: ParticipantRoleEnum!) {
+            updateParticipation(id: $participantId, role: $role) {
                 id,
                 role,
                 actor {
@@ -1362,8 +1355,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
           query: update_participation_mutation,
           variables: %{
             participantId: participant_id,
-            role: "PARTICIPANT",
-            moderatorActorId: event_creator_actor.id
+            role: "PARTICIPANT"
           }
         )
 

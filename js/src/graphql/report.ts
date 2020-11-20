@@ -121,7 +121,6 @@ export const REPORT = gql`
 export const CREATE_REPORT = gql`
   mutation CreateReport(
     $eventId: ID
-    $reporterId: ID!
     $reportedId: ID!
     $content: String
     $commentsIds: [ID]
@@ -129,7 +128,6 @@ export const CREATE_REPORT = gql`
   ) {
     createReport(
       eventId: $eventId
-      reporterId: $reporterId
       reportedId: $reportedId
       content: $content
       commentsIds: $commentsIds
@@ -141,8 +139,8 @@ export const CREATE_REPORT = gql`
 `;
 
 export const UPDATE_REPORT = gql`
-  mutation UpdateReport($reportId: ID!, $moderatorId: ID!, $status: ReportStatus!) {
-    updateReportStatus(reportId: $reportId, moderatorId: $moderatorId, status: $status) {
+  mutation UpdateReport($reportId: ID!, $status: ReportStatus!) {
+    updateReportStatus(reportId: $reportId, status: $status) {
       ...ReportFragment
     }
   }
@@ -150,8 +148,8 @@ export const UPDATE_REPORT = gql`
 `;
 
 export const CREATE_REPORT_NOTE = gql`
-  mutation CreateReportNote($reportId: ID!, $moderatorId: ID!, $content: String!) {
-    createReportNote(reportId: $reportId, moderatorId: $moderatorId, content: $content) {
+  mutation CreateReportNote($reportId: ID!, $content: String!) {
+    createReportNote(reportId: $reportId, content: $content) {
       id
       content
       insertedAt

@@ -3,11 +3,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
   Handles the comment-related GraphQL calls.
   """
 
-  alias Mobilizon.{Actors, Admin, Discussions, Events}
+  alias Mobilizon.{Actors, Admin, Discussions, Events, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.Comment, as: CommentModel
   alias Mobilizon.Events.{Event, EventOptions}
-  alias Mobilizon.Users
   alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext
 
@@ -21,14 +20,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
 
   def create_comment(
         _parent,
-        %{actor_id: actor_id, event_id: event_id} = args,
+        %{event_id: event_id} = args,
         %{
           context: %{
             current_user: %User{} = user
           }
         }
       ) do
-    with {:is_owned, %Actor{} = _organizer_actor} <- User.owns_actor(user, actor_id),
+    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
          {:find_event,
           {:ok,
            %Event{
@@ -36,18 +35,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
              organizer_actor_id: organizer_actor_id
            }}} <-
            {:find_event, Events.get_event(event_id)},
-         {actor_id, ""} <- Integer.parse(actor_id),
          {:allowed, true} <-
            {:allowed, comment_moderation != :closed || actor_id == organizer_actor_id},
+         args <- Map.put(args, :actor_id, actor_id),
          {:ok, _, %CommentModel{} = comment} <-
            Comments.create_comment(args) do
       {:ok, comment}
     else
       {:allowed, false} ->
         {:error, :unauthorized}
-
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
     end
   end
 
@@ -107,9 +103,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
     else
       %CommentModel{deleted_at: deleted_at} when not is_nil(deleted_at) ->
         {:error, dgettext("errors", "Comment is already deleted")}
-
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
     end
   end
 

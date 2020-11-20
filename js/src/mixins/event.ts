@@ -90,7 +90,7 @@ export default class EventMixin extends mixins(Vue) {
     this.$notifier.success(this.$t("You have cancelled your participation") as string);
   }
 
-  protected async openDeleteEventModal(event: IEvent, currentActor: IPerson): Promise<void> {
+  protected async openDeleteEventModal(event: IEvent): Promise<void> {
     function escapeRegExp(string: string) {
       return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
     }
@@ -115,11 +115,11 @@ export default class EventMixin extends mixins(Vue) {
         placeholder: event.title,
         pattern: escapeRegExp(event.title),
       },
-      onConfirm: () => this.deleteEvent(event, currentActor),
+      onConfirm: () => this.deleteEvent(event),
     });
   }
 
-  private async deleteEvent(event: IEvent, currentActor: IPerson) {
+  private async deleteEvent(event: IEvent) {
     const eventTitle = event.title;
 
     try {
@@ -127,7 +127,6 @@ export default class EventMixin extends mixins(Vue) {
         mutation: DELETE_EVENT,
         variables: {
           eventId: event.id,
-          actorId: currentActor.id,
         },
       });
       /**

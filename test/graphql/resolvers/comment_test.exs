@@ -19,8 +19,8 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
 
   describe "Comment Resolver" do
     @create_comment_mutation """
-    mutation CreateComment($text: String!, $actorId: ID, $eventId: ID, $inReplyToCommentId: ID) {
-      createComment(text: $text, actorId: $actorId, eventId: $eventId, inReplyToCommentId: $inReplyToCommentId) {
+    mutation CreateComment($text: String!, $eventId: ID, $inReplyToCommentId: ID) {
+      createComment(text: $text, eventId: $eventId, inReplyToCommentId: $inReplyToCommentId) {
         id,
         text,
         uuid,
@@ -43,25 +43,10 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
         |> auth_conn(user)
         |> AbsintheHelpers.graphql_query(
           query: @create_comment_mutation,
-          variables: %{text: @comment_text, actorId: actor.id, eventId: event.id}
+          variables: %{text: @comment_text, eventId: event.id}
         )
 
       assert res["data"]["createComment"]["text"] == @comment_text
-    end
-
-    test "create_comment/3 checks that user owns actor", %{conn: conn, user: user, event: event} do
-      actor = insert(:actor)
-
-      res =
-        conn
-        |> auth_conn(user)
-        |> AbsintheHelpers.graphql_query(
-          query: @create_comment_mutation,
-          variables: %{text: @comment_text, actorId: actor.id, eventId: event.id}
-        )
-
-      assert hd(res["errors"])["message"] ==
-               "Profile is not owned by authenticated user"
     end
 
     test "create_comment/3 doesn't allow creating events if it's disabled", %{
@@ -78,7 +63,7 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
         |> auth_conn(user)
         |> AbsintheHelpers.graphql_query(
           query: @create_comment_mutation,
-          variables: %{text: @comment_text, actorId: actor.id, eventId: event.id}
+          variables: %{text: @comment_text, eventId: event.id}
         )
 
       assert hd(res["errors"])["message"] ==
@@ -97,7 +82,7 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
         |> auth_conn(user)
         |> AbsintheHelpers.graphql_query(
           query: @create_comment_mutation,
-          variables: %{text: @comment_text, actorId: actor.id, eventId: event.id}
+          variables: %{text: @comment_text, eventId: event.id}
         )
 
       assert is_nil(res["errors"])
@@ -114,7 +99,7 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
         conn
         |> AbsintheHelpers.graphql_query(
           query: @create_comment_mutation,
-          variables: %{text: @comment_text, actorId: actor.id, eventId: event.id}
+          variables: %{text: @comment_text, eventId: event.id}
         )
 
       assert hd(res["errors"])["message"] ==
@@ -136,7 +121,6 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
           query: @create_comment_mutation,
           variables: %{
             text: @comment_text,
-            actorId: actor.id,
             eventId: event.id,
             inReplyToCommentId: comment.id
           }

@@ -88,15 +88,12 @@ export default class Image extends Node {
               });
               if (!coordinates) return false;
               const client = apolloProvider.defaultClient as ApolloClient<NormalizedCacheObject>;
-              const editorElem = document.getElementById("tiptab-editor");
-              const actorId = editorElem && editorElem.dataset.actorId;
 
               try {
                 images.forEach(async (image) => {
                   const { data } = await client.mutate({
                     mutation: UPLOAD_PICTURE,
                     variables: {
-                      actorId,
                       file: image,
                       name: image.name,
                     },

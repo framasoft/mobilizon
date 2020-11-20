@@ -481,18 +481,10 @@ export default class Group extends mixins(GroupMixin) {
     // @ts-ignore
     this.$refs.reportModal.close();
     const groupTitle = this.group.name || usernameWithDomain(this.group);
-    let reporterId = null;
-    if (this.currentActor.id) {
-      reporterId = this.currentActor.id;
-    } else if (this.config.anonymous.reports.allowed) {
-      reporterId = this.config.anonymous.actorId;
-    }
-    if (!reporterId) return;
     try {
       await this.$apollo.mutate<IReport>({
         mutation: CREATE_REPORT,
         variables: {
-          reporterId,
           reportedId: this.group.id,
           content,
           forward,

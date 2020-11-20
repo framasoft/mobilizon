@@ -303,7 +303,6 @@ export default class Report extends Vue {
         mutation: CREATE_REPORT_NOTE,
         variables: {
           reportId: this.report.id,
-          moderatorId: this.currentActor.id,
           content: this.noteContent,
         },
         update: (store, { data }) => {
@@ -372,7 +371,6 @@ export default class Report extends Vue {
         mutation: DELETE_EVENT,
         variables: {
           eventId: this.report.event.id.toString(),
-          actorId: this.currentActor.id,
         },
       });
 
@@ -395,7 +393,6 @@ export default class Report extends Vue {
         mutation: DELETE_COMMENT,
         variables: {
           commentId: comment.id,
-          actorId: this.currentActor.id,
         },
       });
       this.$notifier.success(this.$t("Comment deleted") as string);
@@ -410,7 +407,6 @@ export default class Report extends Vue {
         mutation: UPDATE_REPORT,
         variables: {
           reportId: this.report.id,
-          moderatorId: this.currentActor.id,
           status,
         },
         update: (store, { data }) => {

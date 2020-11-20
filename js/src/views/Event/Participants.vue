@@ -214,7 +214,6 @@ const MESSAGE_ELLIPSIS_LENGTH = 130;
           page: 1,
           limit: PARTICIPANTS_PER_PAGE,
           roles: this.roles,
-          actorId: this.currentActor.id,
         };
       },
       skip() {
@@ -298,7 +297,6 @@ export default class Participants extends Vue {
         mutation: UPDATE_PARTICIPANT,
         variables: {
           id: participant.id,
-          moderatorActorId: this.currentActor.id,
           role: ParticipantRole.PARTICIPANT,
         },
       });
@@ -313,7 +311,6 @@ export default class Participants extends Vue {
         mutation: UPDATE_PARTICIPANT,
         variables: {
           id: participant.id,
-          moderatorActorId: this.currentActor.id,
           role: ParticipantRole.REJECTED,
         },
       });

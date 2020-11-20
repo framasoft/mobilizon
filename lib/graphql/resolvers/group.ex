@@ -121,10 +121,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
           }
         }
       ) do
-    with creator_actor_id <- Map.get(args, :creator_actor_id),
-         {:is_owned, %Actor{} = creator_actor} <- User.owns_actor(user, creator_actor_id),
+    with %Actor{id: creator_actor_id} = creator_actor <- Users.get_actor_for_user(user),
          args <- Map.update(args, :preferred_username, "", &String.downcase/1),
          args <- Map.put(args, :creator_actor, creator_actor),
+         args <- Map.put(args, :creator_actor_id, creator_actor_id),
          args <- save_attached_pictures(args),
          {:ok, _activity, %Actor{type: :Group} = group} <-
            API.Groups.create_group(args) do
@@ -132,9 +132,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
     else
       {:error, err} when is_binary(err) ->
         {:error, err}
-
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "Creator profile is not owned by the current user")}
     end
   end
 
