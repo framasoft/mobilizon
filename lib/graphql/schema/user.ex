@@ -136,6 +136,9 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
     value(:id, description: "The user's ID")
   end
 
+  @desc """
+  A set of user settings
+  """
   object :user_settings do
     field(:timezone, :string, description: "The timezone for this user")
 

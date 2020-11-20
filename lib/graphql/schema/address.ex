@@ -6,6 +6,9 @@ defmodule Mobilizon.GraphQL.Schema.AddressType do
 
   alias Mobilizon.GraphQL.Resolvers.Address
 
+  @desc """
+  An address object
+  """
   object :address do
     field(:geom, :point, description: "The geocoordinates for the point where this address is")
     field(:street, :string, description: "The address's street name (with number)")
@@ -20,16 +23,25 @@ defmodule Mobilizon.GraphQL.Schema.AddressType do
     field(:origin_id, :string, description: "The address's original ID from the provider")
   end
 
+  @desc """
+  A phone address
+  """
   object :phone_address do
     field(:phone, :string, description: "The phone number")
     field(:info, :string, description: "Additional information about the phone number")
   end
 
+  @desc """
+  An online address
+  """
   object :online_address do
     field(:url, :string)
     field(:info, :string)
   end
 
+  @desc """
+  An address input
+  """
   input_object :address_input do
     # Either a full picture object
     field(:geom, :point, description: "The geocoordinates for the point where this address is")

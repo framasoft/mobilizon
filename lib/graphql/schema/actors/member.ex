@@ -80,6 +80,9 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
       resolve(&Member.reject_invitation/3)
     end
 
+    @desc """
+    Update a member's role
+    """
     field :update_member, :member do
       arg(:member_id, non_null(:id), description: "The member ID")
       arg(:role, non_null(:member_role_enum), description: "The new member role")
