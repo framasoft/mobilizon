@@ -487,6 +487,7 @@
   "Only accessible through link and search (private)": "Només accessible amb enllaç i cerca (privat)",
   "Only accessible to members of the group": "Només accessible als membres del grup",
   "Only alphanumeric characters and underscores are supported.": "Només acceptem caràcters alfanumèrics i el guió baix.",
+  "Only alphanumeric lowercased characters and underscores are supported.": "Només es permeten els caràcters alfanumèrics en minúscula i els guions baixos.",
   "Only group moderators can create, edit and delete posts.": "Només les moderadores poden crear, modificar i esborrar publicacions.",
   "Open": "Obre",
   "Opened reports": "Denúncies obertes",
