@@ -7,7 +7,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias Mobilizon.Events
-  alias Mobilizon.GraphQL.Resolvers.User
+  alias Mobilizon.GraphQL.Resolvers.{Picture, User}
   alias Mobilizon.GraphQL.Schema
 
   import_types(Schema.SortType)
@@ -120,6 +120,11 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       arg(:limit, :integer, default_value: 10, description: "The limit of user media per page")
       resolve(&User.user_medias/3)
     end
+
+    field(:media_size, :integer,
+      resolve: &Picture.user_size/3,
+      description: "The total size of all the media from this user (from all their actors)"
+    )
   end
 
   @desc "The list of roles an user can have"

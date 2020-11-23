@@ -98,4 +98,52 @@ defmodule Mobilizon.GraphQL.Resolvers.Picture do
   end
 
   def remove_picture(_parent, _args, _resolution), do: {:error, :unauthenticated}
+
+  @doc """
+  Return the total media size for an actor
+  """
+  @spec actor_size(map(), map(), map()) ::
+          {:ok, integer()} | {:error, :unauthorized} | {:error, :unauthenticated}
+  def actor_size(%Actor{id: actor_id}, _args, %{
+        context: %{current_user: %User{} = user}
+      }) do
+    if can_get_actor_size?(user, actor_id) do
+      {:ok, Media.media_size_for_actor(actor_id)}
+    else
+      {:error, :unauthorized}
+    end
+  end
+
+  def actor_size(_parent, _args, _resolution), do: {:error, :unauthenticated}
+
+  @doc """
+  Return the total media size for a local user
+  """
+  @spec user_size(map(), map(), map()) ::
+          {:ok, integer()} | {:error, :unauthorized} | {:error, :unauthenticated}
+  def user_size(%User{id: user_id}, _args, %{
+        context: %{current_user: %User{} = logged_user}
+      }) do
+    if can_get_user_size?(logged_user, user_id) do
+      {:ok, Media.media_size_for_user(user_id)}
+    else
+      {:error, :unauthorized}
+    end
+  end
+
+  def user_size(_parent, _args, _resolution), do: {:error, :unauthenticated}
+
+  @spec can_get_user_size?(User.t(), integer()) :: boolean()
+  defp can_get_actor_size?(%User{role: role} = user, actor_id) do
+    role in [:moderator, :administrator] || owns_actor?(User.owns_actor(user, actor_id))
+  end
+
+  @spec owns_actor?({:is_owned, Actor.t() | nil}) :: boolean()
+  defp owns_actor?({:is_owned, %Actor{} = _actor}), do: true
+  defp owns_actor?({:is_owned, _}), do: false
+
+  @spec can_get_user_size?(User.t(), integer()) :: boolean()
+  defp can_get_user_size?(%User{role: role, id: logged_user_id}, user_id) do
+    user_id == logged_user_id || role in [:moderator, :administrator]
+  end
 end

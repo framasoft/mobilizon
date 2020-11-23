@@ -8,7 +8,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias Mobilizon.Addresses
-  alias Mobilizon.GraphQL.Resolvers.{Discussion, Group, Member, Post, Resource, Todos}
+  alias Mobilizon.GraphQL.Resolvers.{Discussion, Group, Member, Picture, Post, Resource, Todos}
   alias Mobilizon.GraphQL.Schema
 
   import_types(Schema.Actors.MemberType)
@@ -51,6 +51,11 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     field(:followers, list_of(:follower), description: "List of followers")
     field(:followersCount, :integer, description: "Number of followers for this actor")
     field(:followingCount, :integer, description: "Number of actors following this actor")
+
+    field(:media_size, :integer,
+      resolve: &Picture.actor_size/3,
+      description: "The total size of the media from this actor"
+    )
 
     # This one should have a privacy setting
     field :organized_events, :paginated_event_list do
