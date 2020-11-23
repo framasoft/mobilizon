@@ -110,6 +110,16 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
     field(:current_sign_in_ip, :string,
       description: "The IP adress the user's currently signed-in with"
     )
+
+    field(:media, :paginated_picture_list, description: "The user's media objects") do
+      arg(:page, :integer,
+        default_value: 1,
+        description: "The page in the paginated user media list"
+      )
+
+      arg(:limit, :integer, default_value: 10, description: "The limit of user media per page")
+      resolve(&User.user_medias/3)
+    end
   end
 
   @desc "The list of roles an user can have"

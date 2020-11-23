@@ -16,6 +16,14 @@ defmodule Mobilizon.GraphQL.Schema.PictureType do
     field(:size, :integer, description: "The picture's size")
   end
 
+  @desc """
+  A paginated list of pictures
+  """
+  object :paginated_picture_list do
+    field(:elements, list_of(:picture), description: "The list of pictures")
+    field(:total, :integer, description: "The total number of pictures in the list")
+  end
+
   @desc "An attached picture or a link to a picture"
   input_object :picture_input do
     # Either a full picture object

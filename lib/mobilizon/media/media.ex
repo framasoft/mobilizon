@@ -7,8 +7,10 @@ defmodule Mobilizon.Media do
 
   alias Ecto.Multi
 
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Media.{File, Picture}
-  alias Mobilizon.Storage.Repo
+  alias Mobilizon.Storage.{Page, Repo}
+  alias Mobilizon.Users.User
 
   alias Mobilizon.Web.Upload
 
@@ -33,6 +35,16 @@ defmodule Mobilizon.Media do
     url
     |> picture_by_url_query()
     |> Repo.one()
+  end
+
+  @doc """
+  List the paginated picture for user
+  """
+  @spec pictures_for_user(integer | String.t(), integer | nil, integer | nil) :: Page.t()
+  def pictures_for_user(user_id, page, limit) do
+    user_id
+    |> pictures_for_user_query()
+    |> Page.build_page(page, limit)
   end
 
   @doc """
@@ -83,5 +95,13 @@ defmodule Mobilizon.Media do
       p in Picture,
       where: fragment("? @> ?", p.file, ~s|{"url": "#{url}"}|)
     )
+  end
+
+  @spec pictures_for_user_query(integer() | String.t()) :: Ecto.Query.t()
+  defp pictures_for_user_query(user_id) do
+    Picture
+    |> join(:inner, [p], a in Actor, on: p.actor_id == a.id)
+    |> join(:inner, [_p, a], u in User, on: a.user_id == u.id)
+    |> where([_p, _a, u], u.id == ^user_id)
   end
 end

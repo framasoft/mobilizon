@@ -26,7 +26,7 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
     )
 
     field(:picture, :picture,
-      description: "The event's picture",
+      description: "The posts's picture",
       resolve: &Picture.picture/3
     )
   end
