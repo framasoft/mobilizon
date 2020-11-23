@@ -126,11 +126,11 @@
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
+import { formatBytes } from "@/utils/datetime";
 import { GET_PERSON, SUSPEND_PROFILE, UNSUSPEND_PROFILE } from "../../graphql/actor";
 import { IPerson } from "../../types/actor";
 import { usernameWithDomain } from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
-import { IEvent } from "../../types/event.model";
 import ActorCard from "../../components/Account/ActorCard.vue";
 
 const EVENTS_PER_PAGE = 10;
@@ -171,9 +171,9 @@ export default class AdminProfile extends Vue {
 
   participationsPage = 1;
 
-  get metadata(): Array<object> {
+  get metadata(): Array<Record<string, unknown>> {
     if (!this.person) return [];
-    const res: object[] = [
+    const res: Record<string, unknown>[] = [
       {
         key: this.$t("Status") as string,
         value: this.person.suspended ? this.$t("Suspended") : this.$t("Active"),
@@ -181,6 +181,10 @@ export default class AdminProfile extends Vue {
       {
         key: this.$t("Domain") as string,
         value: this.person.domain ? this.person.domain : this.$t("Local"),
+      },
+      {
+        key: this.$i18n.t("Uploaded media size"),
+        value: formatBytes(this.person.mediaSize),
       },
     ];
     if (!this.person.domain && this.person.user) {
@@ -193,7 +197,7 @@ export default class AdminProfile extends Vue {
     return res;
   }
 
-  async suspendProfile() {
+  async suspendProfile(): Promise<void> {
     this.$apollo.mutate<{ suspendProfile: { id: string } }>({
       mutation: SUSPEND_PROFILE,
       variables: {
@@ -229,7 +233,7 @@ export default class AdminProfile extends Vue {
     });
   }
 
-  async unsuspendProfile() {
+  async unsuspendProfile(): Promise<void> {
     const profileID = this.id;
     this.$apollo.mutate<{ unsuspendProfile: { id: string } }>({
       mutation: UNSUSPEND_PROFILE,
@@ -249,7 +253,7 @@ export default class AdminProfile extends Vue {
     });
   }
 
-  async onOrganizedEventsPageChange(page: number) {
+  async onOrganizedEventsPageChange(page: number): Promise<void> {
     this.organizedEventsPage = page;
     await this.$apollo.queries.person.fetchMore({
       variables: {
@@ -274,7 +278,7 @@ export default class AdminProfile extends Vue {
     });
   }
 
-  async onParticipationsPageChange(page: number) {
+  async onParticipationsPageChange(page: number): Promise<void> {
     this.participationsPage = page;
     await this.$apollo.queries.person.fetchMore({
       variables: {

@@ -1,10 +1,17 @@
 import gql from "graphql-tag";
 
-/* eslint-disable import/prefer-default-export */
 export const UPLOAD_PICTURE = gql`
   mutation UploadPicture($file: Upload!, $alt: String, $name: String!) {
     uploadPicture(file: $file, alt: $alt, name: $name) {
       url
+      id
+    }
+  }
+`;
+
+export const REMOVE_PICTURE = gql`
+  mutation RemovePicture($id: ID!) {
+    removePicture(id: $id) {
       id
     }
   }

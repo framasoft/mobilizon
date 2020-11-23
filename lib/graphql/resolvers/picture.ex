@@ -6,6 +6,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Picture do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.{Media, Users}
   alias Mobilizon.Media.Picture
+  alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext
 
   @doc """
@@ -37,8 +38,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Picture do
            size: file.size
          }}
 
-      _error ->
-        {:error, dgettext("errors", "Picture with ID %{id} was not found", id: picture_id)}
+      nil ->
+        {:error, :not_found}
     end
   end
 
@@ -46,7 +47,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Picture do
   def upload_picture(
         _parent,
         %{file: %Plug.Upload{} = file} = args,
-        %{context: %{current_user: user}}
+        %{context: %{current_user: %User{} = user}}
       ) do
     with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
          {:ok, %{name: _name, url: url, content_type: content_type, size: size}} <-
@@ -75,7 +76,74 @@ defmodule Mobilizon.GraphQL.Resolvers.Picture do
     end
   end
 
-  def upload_picture(_parent, _args, _resolution) do
-    {:error, dgettext("errors", "You need to login to upload a picture")}
+  def upload_picture(_parent, _args, _resolution), do: {:error, :unauthenticated}
+
+  @doc """
+  Remove a picture that the user owns
+  """
+  @spec remove_picture(map(), map(), map()) ::
+          {:ok, Picture.t()}
+          | {:error, :unauthorized}
+          | {:error, :unauthenticated}
+          | {:error, :not_found}
+  def remove_picture(_parent, %{id: picture_id}, %{context: %{current_user: %User{} = user}}) do
+    with {:picture, %Picture{actor_id: actor_id} = picture} <-
+           {:picture, Media.get_picture(picture_id)},
+         {:is_owned, %Actor{} = _actor} <- User.owns_actor(user, actor_id) do
+      Media.delete_picture(picture)
+    else
+      {:picture, nil} -> {:error, :not_found}
+      {:is_owned, _} -> {:error, :unauthorized}
+    end
+  end
+
+  def remove_picture(_parent, _args, _resolution), do: {:error, :unauthenticated}
+
+  @doc """
+  Return the total media size for an actor
+  """
+  @spec actor_size(map(), map(), map()) ::
+          {:ok, integer()} | {:error, :unauthorized} | {:error, :unauthenticated}
+  def actor_size(%Actor{id: actor_id}, _args, %{
+        context: %{current_user: %User{} = user}
+      }) do
+    if can_get_actor_size?(user, actor_id) do
+      {:ok, Media.media_size_for_actor(actor_id)}
+    else
+      {:error, :unauthorized}
+    end
+  end
+
+  def actor_size(_parent, _args, _resolution), do: {:error, :unauthenticated}
+
+  @doc """
+  Return the total media size for a local user
+  """
+  @spec user_size(map(), map(), map()) ::
+          {:ok, integer()} | {:error, :unauthorized} | {:error, :unauthenticated}
+  def user_size(%User{id: user_id}, _args, %{
+        context: %{current_user: %User{} = logged_user}
+      }) do
+    if can_get_user_size?(logged_user, user_id) do
+      {:ok, Media.media_size_for_user(user_id)}
+    else
+      {:error, :unauthorized}
+    end
+  end
+
+  def user_size(_parent, _args, _resolution), do: {:error, :unauthenticated}
+
+  @spec can_get_user_size?(User.t(), integer()) :: boolean()
+  defp can_get_actor_size?(%User{role: role} = user, actor_id) do
+    role in [:moderator, :administrator] || owns_actor?(User.owns_actor(user, actor_id))
+  end
+
+  @spec owns_actor?({:is_owned, Actor.t() | nil}) :: boolean()
+  defp owns_actor?({:is_owned, %Actor{} = _actor}), do: true
+  defp owns_actor?({:is_owned, _}), do: false
+
+  @spec can_get_user_size?(User.t(), integer()) :: boolean()
+  defp can_get_user_size?(%User{role: role, id: logged_user_id}, user_id) do
+    user_id == logged_user_id || role in [:moderator, :administrator]
   end
 end

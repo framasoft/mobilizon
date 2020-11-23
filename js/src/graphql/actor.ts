@@ -10,6 +10,7 @@ export const FETCH_PERSON = gql`
       summary
       preferredUsername
       suspended
+      mediaSize
       avatar {
         id
         name
@@ -51,6 +52,7 @@ export const GET_PERSON = gql`
       summary
       preferredUsername
       suspended
+      mediaSize
       avatar {
         id
         name

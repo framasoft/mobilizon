@@ -7,7 +7,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias Mobilizon.Events
-  alias Mobilizon.GraphQL.Resolvers.Person
+  alias Mobilizon.GraphQL.Resolvers.{Person, Picture}
   alias Mobilizon.GraphQL.Schema
 
   import_types(Schema.Events.FeedTokenType)
@@ -48,6 +48,11 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
     field(:followers, list_of(:follower), description: "List of followers")
     field(:followersCount, :integer, description: "Number of followers for this actor")
     field(:followingCount, :integer, description: "Number of actors following this actor")
+
+    field(:media_size, :integer,
+      resolve: &Picture.actor_size/3,
+      description: "The total size of the media from this actor"
+    )
 
     field(:feed_tokens, list_of(:feed_token),
       resolve: dataloader(Events),

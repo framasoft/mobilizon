@@ -37,6 +37,8 @@ defmodule Mobilizon.GraphQL.Schema.ActorInterface do
     field(:followersCount, :integer, description: "Number of followers for this actor")
     field(:followingCount, :integer, description: "Number of actors following this actor")
 
+    field(:media_size, :integer, description: "The total size of the media from this actor")
+
     resolve_type(fn
       %Actor{type: :Person}, _ ->
         :person

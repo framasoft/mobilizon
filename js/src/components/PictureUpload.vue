@@ -1,7 +1,7 @@
 <template>
   <div class="root">
-    <figure class="image" v-if="actualImageSrc">
-      <img :src="actualImageSrc" />
+    <figure class="image" v-if="imageSrc">
+      <img :src="imageSrc" />
     </figure>
     <figure class="image is-128x128" v-else>
       <div class="image-placeholder">
@@ -9,12 +9,19 @@
       </div>
     </figure>
 
-    <b-upload @input="onFileChanged" :accept="accept">
-      <a class="button is-primary">
-        <b-icon icon="upload"></b-icon>
-        <span>{{ $t("Click to upload") }}</span>
-      </a>
-    </b-upload>
+    <div class="action-buttons">
+      <b-field class="file is-primary">
+        <b-upload @input="onFileChanged" :accept="accept" class="file-label">
+          <span class="file-cta">
+            <b-icon class="file-icon" icon="upload" />
+            <span>{{ $t("Click to upload") }}</span>
+          </span>
+        </b-upload>
+      </b-field>
+      <b-button type="is-text" v-if="imageSrc" @click="removeOrClearPicture">
+        {{ $t("Clear") }}
+      </b-button>
+    </div>
   </div>
 </template>
 
@@ -45,16 +52,22 @@ figure.image {
     color: #eee;
   }
 }
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+}
 </style>
 
 <script lang="ts">
+import { IPicture } from "@/types/picture.model";
 import { Component, Model, Prop, Vue, Watch } from "vue-property-decorator";
 
 @Component
 export default class PictureUpload extends Vue {
   @Model("change", { type: File }) readonly pictureFile!: File;
 
-  @Prop({ type: String, required: false }) defaultImageSrc!: string;
+  @Prop({ type: Object, required: false }) defaultImage!: IPicture;
 
   @Prop({ type: String, required: false, default: "image/gif,image/png,image/jpeg,image/webp" })
   accept!: string;
@@ -70,34 +83,46 @@ export default class PictureUpload extends Vue {
   })
   textFallback!: string;
 
-  imageSrc: string | null = null;
+  imageSrc: string | null = this.defaultImage ? this.defaultImage.url : null;
+
+  file!: File | null;
 
   mounted(): void {
-    this.updatePreview(this.pictureFile);
+    if (this.pictureFile) {
+      this.updatePreview(this.pictureFile);
+    }
   }
 
   @Watch("pictureFile")
   onPictureFileChanged(val: File): void {
+    console.log("onPictureFileChanged", val);
     this.updatePreview(val);
   }
 
-  onFileChanged(file: File): void {
+  @Watch("defaultImage")
+  onDefaultImageChange(defaultImage: IPicture): void {
+    console.log("onDefaultImageChange", defaultImage);
+    this.imageSrc = defaultImage ? defaultImage.url : null;
+  }
+
+  onFileChanged(file: File | null): void {
     this.$emit("change", file);
 
     this.updatePreview(file);
+    this.file = file;
   }
 
-  private updatePreview(file?: File) {
+  async removeOrClearPicture(): Promise<void> {
+    this.onFileChanged(null);
+  }
+
+  private updatePreview(file?: File | null) {
     if (file) {
       this.imageSrc = URL.createObjectURL(file);
       return;
     }
 
     this.imageSrc = null;
-  }
-
-  get actualImageSrc(): string | null {
-    return this.imageSrc || this.defaultImageSrc;
   }
 }
 </script>

@@ -9,7 +9,7 @@ export async function buildFileFromIPicture(obj: IPicture | null | undefined): P
   return new File([blob], obj.name);
 }
 
-export function buildFileVariable<T>(file: File | null, name: string, alt?: string): Record<string, unknown> {
+export function buildFileVariable(file: File | null, name: string, alt?: string): Record<string, unknown> {
   if (!file) return {};
 
   return {

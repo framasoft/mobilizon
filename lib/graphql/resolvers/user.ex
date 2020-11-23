@@ -525,6 +525,28 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     end
   end
 
+  def user_medias(%User{id: user_id}, %{page: page, limit: limit}, %{
+        context: %{current_user: %User{id: logged_in_user_id}}
+      })
+      when user_id == logged_in_user_id do
+    %{elements: elements, total: total} = Mobilizon.Media.pictures_for_user(user_id, page, limit)
+
+    {:ok,
+     %{
+       elements:
+         Enum.map(elements, fn element ->
+           %{
+             name: element.file.name,
+             url: element.file.url,
+             id: element.id,
+             content_type: element.file.content_type,
+             size: element.file.size
+           }
+         end),
+       total: total
+     }}
+  end
+
   @spec update_user_login_information(User.t(), map()) ::
           {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   defp update_user_login_information(

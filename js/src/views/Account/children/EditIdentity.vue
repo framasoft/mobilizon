@@ -27,7 +27,7 @@
         <span v-else>{{ $t("I create an identity") }}</span>
       </h1>
 
-      <picture-upload v-model="avatarFile" :defaultImageSrc="avatarUrl" class="picture-upload" />
+      <picture-upload v-model="avatarFile" :defaultImage="identity.avatar" class="picture-upload" />
 
       <b-field horizontal :label="$t('Display name')">
         <b-input
@@ -124,6 +124,7 @@ h1 {
 <script lang="ts">
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { mixins } from "vue-class-component";
+import { IPicture } from "@/types/picture.model";
 import {
   CREATE_PERSON,
   CURRENT_ACTOR_CLIENT,
@@ -136,7 +137,7 @@ import { IPerson, Person } from "../../../types/actor";
 import PictureUpload from "../../../components/PictureUpload.vue";
 import { MOBILIZON_INSTANCE_HOST } from "../../../api/_entrypoint";
 import RouteName from "../../../router/name";
-import { buildFileVariable } from "../../../utils/image";
+import { buildFileFromIPicture, buildFileVariable } from "../../../utils/image";
 import { changeIdentity } from "../../../utils/auth";
 import identityEditionMixin from "../../../mixins/identityEdition";
 
@@ -184,13 +185,6 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
     return this.$t(
       "Only alphanumeric lowercased characters and underscores are supported."
     ) as string;
-  }
-
-  get avatarUrl(): string | null {
-    if (this.identity && this.identity.avatar && this.identity.avatar.url) {
-      return this.identity.avatar.url;
-    }
-    return null;
   }
 
   @Watch("isUpdate")
@@ -286,7 +280,6 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
           }
         },
       });
-      this.avatarFile = null;
 
       this.$notifier.success(
         this.$t("Identity {displayName} updated", {
