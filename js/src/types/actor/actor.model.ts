@@ -13,6 +13,7 @@ export interface IActor {
   url: string;
   name: string;
   domain: string | null;
+  mediaSize: number;
   summary: string;
   preferredUsername: string;
   suspended: boolean;
@@ -29,6 +30,8 @@ export class Actor implements IActor {
   banner: IPicture | null = null;
 
   domain: string | null = null;
+
+  mediaSize = 0;
 
   name = "";
 

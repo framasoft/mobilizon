@@ -26,7 +26,7 @@
     </nav>
     <table v-if="metadata.length > 0" class="table is-fullwidth">
       <tbody>
-        <tr v-for="{ key, value, link, elements } in metadata" :key="key">
+        <tr v-for="{ key, value, link, elements, type } in metadata" :key="key">
           <td>{{ key }}</td>
           <td v-if="elements && elements.length > 0">
             <ul v-for="{ value, link: elementLink, active } in elements" :key="value">
@@ -46,6 +46,9 @@
               {{ value }}
             </router-link>
           </td>
+          <td v-else-if="type == 'code'">
+            <code>{{ value }}</code>
+          </td>
           <td v-else>{{ value }}</td>
         </tr>
       </tbody>
@@ -60,6 +63,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { Route } from "vue-router";
+import { formatBytes } from "@/utils/datetime";
 import { GET_USER, SUSPEND_USER } from "../../graphql/user";
 import { usernameWithDomain } from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
@@ -139,10 +143,15 @@ export default class AdminUserProfile extends Vue {
       {
         key: this.$i18n.t("Last IP adress"),
         value: this.user.currentSignInIp || this.$t("Unknown"),
+        type: "code",
       },
       {
         key: this.$i18n.t("Participations"),
         value: this.user.participations.total,
+      },
+      {
+        key: this.$i18n.t("Uploaded media size"),
+        value: formatBytes(this.user.mediaSize),
       },
     ];
   }

@@ -198,6 +198,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { GET_GROUP, REFRESH_PROFILE } from "@/graphql/group";
+import { formatBytes } from "@/utils/datetime";
 import { SUSPEND_PROFILE, UNSUSPEND_PROFILE } from "../../graphql/actor";
 import { IGroup, MemberRole } from "../../types/actor";
 import { usernameWithDomain, IActor } from "../../types/actor/actor.model";
@@ -257,6 +258,10 @@ export default class AdminGroupProfile extends Vue {
       {
         key: this.$t("Domain") as string,
         value: (this.group.domain ? this.group.domain : this.$t("Local")) as string,
+      },
+      {
+        key: this.$i18n.t("Uploaded media size") as string,
+        value: formatBytes(this.group.mediaSize),
       },
     ];
     return res;

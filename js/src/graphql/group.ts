@@ -84,6 +84,7 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
       id
       url
     }
+    mediaSize
     organizedEvents(
       afterDatetime: $afterDateTime
       beforeDatetime: $beforeDateTime

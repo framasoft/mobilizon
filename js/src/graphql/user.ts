@@ -200,6 +200,7 @@ export const GET_USER = gql`
       currentSignInAt
       locale
       disabled
+      mediaSize
       defaultActor {
         id
       }

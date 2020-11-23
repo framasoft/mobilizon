@@ -39,6 +39,7 @@ export interface IUser extends ICurrentUser {
   actors: IPerson[];
   disabled: boolean;
   participations: Paginate<IParticipant>;
+  mediaSize: number;
   drafts: IEvent[];
   settings: IUserSettings;
   locale: string;
