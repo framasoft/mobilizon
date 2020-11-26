@@ -1,17 +1,17 @@
 import gql from "graphql-tag";
 
-export const UPLOAD_PICTURE = gql`
-  mutation UploadPicture($file: Upload!, $alt: String, $name: String!) {
-    uploadPicture(file: $file, alt: $alt, name: $name) {
+export const UPLOAD_MEDIA = gql`
+  mutation UploadMedia($file: Upload!, $alt: String, $name: String!) {
+    uploadMedia(file: $file, alt: $alt, name: $name) {
       url
       id
     }
   }
 `;
 
-export const REMOVE_PICTURE = gql`
-  mutation RemovePicture($id: ID!) {
-    removePicture(id: $id) {
+export const REMOVE_MEDIA = gql`
+  mutation RemoveMedia($id: ID!) {
+    removeMedia(id: $id) {
       id
     }
   }

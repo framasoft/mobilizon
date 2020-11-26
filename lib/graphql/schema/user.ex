@@ -7,7 +7,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias Mobilizon.Events
-  alias Mobilizon.GraphQL.Resolvers.{Picture, User}
+  alias Mobilizon.GraphQL.Resolvers.{Media, User}
   alias Mobilizon.GraphQL.Schema
 
   import_types(Schema.SortType)
@@ -111,7 +111,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       description: "The IP adress the user's currently signed-in with"
     )
 
-    field(:media, :paginated_picture_list, description: "The user's media objects") do
+    field(:media, :paginated_media_list, description: "The user's media objects") do
       arg(:page, :integer,
         default_value: 1,
         description: "The page in the paginated user media list"
@@ -122,7 +122,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
     end
 
     field(:media_size, :integer,
-      resolve: &Picture.user_size/3,
+      resolve: &Media.user_size/3,
       description: "The total size of all the media from this user (from all their actors)"
     )
   end

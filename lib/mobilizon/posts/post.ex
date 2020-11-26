@@ -22,8 +22,8 @@ defmodule Mobilizon.Posts.Post do
   alias Ecto.Changeset
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Tag
-  alias Mobilizon.Media
-  alias Mobilizon.Media.Picture
+  alias Mobilizon.Medias
+  alias Mobilizon.Medias.Media
   alias Mobilizon.Posts.Post.TitleSlug
   alias Mobilizon.Posts.PostVisibility
   alias Mobilizon.Web.Endpoint
@@ -41,7 +41,8 @@ defmodule Mobilizon.Posts.Post do
           publish_at: DateTime.t(),
           author: Actor.t(),
           attributed_to: Actor.t(),
-          picture: Picture.t(),
+          picture: Media.t(),
+          media: [Media.t()],
           tags: [Tag.t()]
         }
 
@@ -60,6 +61,7 @@ defmodule Mobilizon.Posts.Post do
     belongs_to(:attributed_to, Actor)
     belongs_to(:picture, Picture, on_replace: :update)
     many_to_many(:tags, Tag, join_through: "posts_tags", on_replace: :delete)
+    many_to_many(:media, Media, join_through: "posts_medias", on_replace: :delete)
 
     timestamps(type: :utc_datetime)
   end
@@ -82,6 +84,7 @@ defmodule Mobilizon.Posts.Post do
     post
     |> cast(attrs, @attrs)
     |> maybe_generate_id()
+    |> put_assoc(:media, Map.get(attrs, :media, []))
     |> put_tags(attrs)
     |> maybe_put_publish_date()
     |> put_picture(attrs)
@@ -146,8 +149,8 @@ defmodule Mobilizon.Posts.Post do
   # In case the provided picture is an existing one
   @spec put_picture(Changeset.t(), map) :: Changeset.t()
   defp put_picture(%Changeset{} = changeset, %{picture: %{picture_id: id} = _picture}) do
-    case Media.get_picture!(id) do
-      %Picture{} = picture ->
+    case Medias.get_media!(id) do
+      %Media{} = picture ->
         put_assoc(changeset, :picture, picture)
 
       _ ->

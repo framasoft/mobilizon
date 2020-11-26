@@ -96,8 +96,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   # TODO Move me to somewhere cleaner
   defp save_attached_pictures(args) do
     Enum.reduce([:avatar, :banner], args, fn key, args ->
-      if Map.has_key?(args, key) && !is_nil(args[key][:picture]) do
-        pic = args[key][:picture]
+      if Map.has_key?(args, key) && !is_nil(args[key][:media]) do
+        pic = args[key][:media]
 
         with {:ok, %{name: name, url: url, content_type: content_type, size: _size}} <-
                Upload.store(pic.file, type: key, description: pic.alt) do

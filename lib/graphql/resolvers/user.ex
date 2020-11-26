@@ -529,7 +529,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
         context: %{current_user: %User{id: logged_in_user_id}}
       })
       when user_id == logged_in_user_id do
-    %{elements: elements, total: total} = Mobilizon.Media.pictures_for_user(user_id, page, limit)
+    %{elements: elements, total: total} = Mobilizon.Medias.medias_for_user(user_id, page, limit)
 
     {:ok,
      %{

@@ -72,7 +72,10 @@ defmodule Mobilizon.Web.Plugs.UploadedMedia do
       conn
     else
       conn
-      |> send_resp(404, "Not found")
+      |> delete_resp_header("content-disposition")
+      |> put_status(404)
+      |> Phoenix.Controller.put_view(Mobilizon.Web.ErrorView)
+      |> Phoenix.Controller.render("404.html")
       |> halt()
     end
   end

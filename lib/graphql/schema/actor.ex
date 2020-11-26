@@ -28,8 +28,8 @@ defmodule Mobilizon.GraphQL.Schema.ActorInterface do
 
     field(:suspended, :boolean, description: "If the actor is suspended")
 
-    field(:avatar, :picture, description: "The actor's avatar picture")
-    field(:banner, :picture, description: "The actor's banner picture")
+    field(:avatar, :media, description: "The actor's avatar media")
+    field(:banner, :media, description: "The actor's banner media")
 
     # These one should have a privacy setting
     field(:following, list_of(:follower), description: "List of followings")

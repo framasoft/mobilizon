@@ -9,7 +9,7 @@ defmodule Mobilizon.ActorsTest do
   alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
-  alias Mobilizon.Media.File, as: FileModel
+  alias Mobilizon.Medias.File, as: FileModel
   alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.Page
 

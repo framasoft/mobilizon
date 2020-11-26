@@ -227,8 +227,8 @@ export const CREATE_GROUP = gql`
     $preferredUsername: String!
     $name: String!
     $summary: String
-    $avatar: PictureInput
-    $banner: PictureInput
+    $avatar: MediaInput
+    $banner: MediaInput
   ) {
     createGroup(
       preferredUsername: $preferredUsername
@@ -259,8 +259,8 @@ export const UPDATE_GROUP = gql`
     $id: ID!
     $name: String
     $summary: String
-    $avatar: PictureInput
-    $banner: PictureInput
+    $avatar: MediaInput
+    $banner: MediaInput
     $visibility: GroupVisibility
     $openness: Openness
     $physicalAddress: AddressInput

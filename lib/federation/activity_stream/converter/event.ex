@@ -10,11 +10,11 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   alias Mobilizon.Addresses
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.Event, as: EventModel
-  alias Mobilizon.Media.Picture
+  alias Mobilizon.Medias.Media
 
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
   alias Mobilizon.Federation.ActivityStream.Converter.Address, as: AddressConverter
-  alias Mobilizon.Federation.ActivityStream.Converter.Picture, as: PictureConverter
+  alias Mobilizon.Federation.ActivityStream.Converter.Media, as: MediaConverter
 
   import Mobilizon.Federation.ActivityStream.Converter.Utils,
     only: [
@@ -55,10 +55,10 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
 
       picture_id =
         with true <- length(attachments) > 0,
-             {:ok, %Picture{id: picture_id}} <-
+             {:ok, %Media{id: picture_id}} <-
                attachments
                |> hd()
-               |> PictureConverter.find_or_create_picture(actor_id) do
+               |> MediaConverter.find_or_create_media(actor_id) do
           picture_id
         else
           _err ->
@@ -239,7 +239,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
           res,
           "attachment",
           [],
-          &(&1 ++ [PictureConverter.model_to_as(event.picture)])
+          &(&1 ++ [MediaConverter.model_to_as(event.picture)])
         )
   end
 

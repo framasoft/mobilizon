@@ -377,7 +377,7 @@ import {
 import { IPerson, Person, displayNameAndUsername } from "../../types/actor";
 import { TAGS } from "../../graphql/tags";
 import { ITag } from "../../types/tag.model";
-import { buildFileFromIPicture, buildFileVariable, readFileAsync } from "../../utils/image";
+import { buildFileFromIMedia, buildFileVariable, readFileAsync } from "../../utils/image";
 import RouteName from "../../router/name";
 import "intersection-observer";
 import { CONFIG } from "../../graphql/config";
@@ -517,7 +517,7 @@ export default class EditEvent extends Vue {
     );
     this.observer.observe(this.$refs.bottomObserver as Element);
 
-    this.pictureFile = await buildFileFromIPicture(this.event.picture);
+    this.pictureFile = await buildFileFromIMedia(this.event.picture);
     this.limitedPlaces = this.event.options.maximumAttendeeCapacity > 0;
     if (!(this.isUpdate || this.isDuplicate)) {
       this.initializeEvent();
@@ -775,11 +775,11 @@ export default class EditEvent extends Vue {
 
     try {
       if (this.event.picture && this.pictureFile) {
-        const oldPictureFile = (await buildFileFromIPicture(this.event.picture)) as File;
+        const oldPictureFile = (await buildFileFromIMedia(this.event.picture)) as File;
         const oldPictureFileContent = await readFileAsync(oldPictureFile);
         const newPictureFileContent = await readFileAsync(this.pictureFile as File);
         if (oldPictureFileContent === newPictureFileContent) {
-          res.picture = { pictureId: this.event.picture.id };
+          res.picture = { mediaId: this.event.picture.id };
         }
       }
     } catch (e) {

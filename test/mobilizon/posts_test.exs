@@ -70,7 +70,7 @@ defmodule Mobilizon.PostsTest do
       %Post{} = post = insert(:post)
       assert {:error, %Ecto.Changeset{}} = Posts.update_post(post, @invalid_attrs)
       %Post{} = post_fetched = Posts.get_post(post.id)
-      assert post = post_fetched
+      assert post.body == post_fetched.body
     end
 
     test "delete_post/1 deletes the post" do

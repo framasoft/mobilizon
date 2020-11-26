@@ -3,13 +3,13 @@ defmodule Mobilizon.MediaTest do
 
   import Mobilizon.Factory
 
-  alias Mobilizon.{Config, Media}
+  alias Mobilizon.{Config, Medias}
 
   alias Mobilizon.Web.Upload.Uploader
 
   describe "media" do
     setup [:ensure_local_uploader]
-    alias Mobilizon.Media.Picture
+    alias Mobilizon.Medias.Media
 
     @valid_attrs %{
       file: %{
@@ -24,39 +24,42 @@ defmodule Mobilizon.MediaTest do
       }
     }
 
-    test "get_picture!/1 returns the picture with given id" do
-      picture = insert(:picture)
-      assert Media.get_picture!(picture.id).id == picture.id
+    test "get_media!/1 returns the media with given id" do
+      media = insert(:media)
+      assert Medias.get_media!(media.id).id == media.id
     end
 
-    test "create_picture/1 with valid data creates a picture" do
-      assert {:ok, %Picture{} = picture} =
-               Media.create_picture(Map.put(@valid_attrs, :actor_id, insert(:actor).id))
+    test "create_media/1 with valid data creates a media" do
+      assert {:ok, %Media{} = media} =
+               Medias.create_media(Map.put(@valid_attrs, :actor_id, insert(:actor).id))
 
-      assert picture.file.name == "something old"
+      assert media.file.name == "something old"
     end
 
-    test "update_picture/2 with valid data updates the picture" do
-      picture = insert(:picture)
+    test "update_media/2 with valid data updates the media" do
+      media = insert(:media)
 
-      assert {:ok, %Picture{} = picture} =
-               Media.update_picture(picture, Map.put(@update_attrs, :actor_id, insert(:actor).id))
+      assert {:ok, %Media{} = media} =
+               Medias.update_media(
+                 media,
+                 Map.put(@update_attrs, :actor_id, insert(:actor).id)
+               )
 
-      assert picture.file.name == "something new"
+      assert media.file.name == "something new"
     end
 
-    test "delete_picture/1 deletes the picture" do
-      picture = insert(:picture)
+    test "delete_media/1 deletes the media" do
+      media = insert(:media)
 
-      %URI{path: "/media/" <> path} = URI.parse(picture.file.url)
+      %URI{path: "/media/" <> path} = URI.parse(media.file.url)
 
       assert File.exists?(
                Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> path
              )
 
-      assert {:ok, %Picture{}} = Media.delete_picture(picture)
-      assert_raise Ecto.NoResultsError, fn -> Media.get_picture!(picture.id) end
+      assert {:ok, %Media{}} = Medias.delete_media(media)
+      assert_raise Ecto.NoResultsError, fn -> Medias.get_media!(media.id) end
 
       refute File.exists?(
                Config.get!([Uploader.Local, :uploads]) <>

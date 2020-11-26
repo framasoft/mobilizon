@@ -7,7 +7,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias Mobilizon.Events
-  alias Mobilizon.GraphQL.Resolvers.{Person, Picture}
+  alias Mobilizon.GraphQL.Resolvers.{Media, Person}
   alias Mobilizon.GraphQL.Schema
 
   import_types(Schema.Events.FeedTokenType)
@@ -40,8 +40,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
 
     field(:suspended, :boolean, description: "If the actor is suspended")
 
-    field(:avatar, :picture, description: "The actor's avatar picture")
-    field(:banner, :picture, description: "The actor's banner picture")
+    field(:avatar, :media, description: "The actor's avatar media")
+    field(:banner, :media, description: "The actor's banner media")
 
     # These one should have a privacy setting
     field(:following, list_of(:follower), description: "List of followings")
@@ -50,7 +50,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
     field(:followingCount, :integer, description: "Number of actors following this actor")
 
     field(:media_size, :integer,
-      resolve: &Picture.actor_size/3,
+      resolve: &Media.actor_size/3,
       description: "The total size of the media from this actor"
     )
 
@@ -150,14 +150,14 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
 
       arg(:summary, :string, description: "The summary for the new profile", default_value: "")
 
-      arg(:avatar, :picture_input,
+      arg(:avatar, :media_input,
         description:
-          "The avatar for the profile, either as an object or directly the ID of an existing Picture"
+          "The avatar for the profile, either as an object or directly the ID of an existing media"
       )
 
-      arg(:banner, :picture_input,
+      arg(:banner, :media_input,
         description:
-          "The banner for the profile, either as an object or directly the ID of an existing Picture"
+          "The banner for the profile, either as an object or directly the ID of an existing media"
       )
 
       resolve(&Person.create_person/3)
@@ -171,14 +171,14 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
 
       arg(:summary, :string, description: "The summary for this profile")
 
-      arg(:avatar, :picture_input,
+      arg(:avatar, :media_input,
         description:
-          "The avatar for the profile, either as an object or directly the ID of an existing Picture"
+          "The avatar for the profile, either as an object or directly the ID of an existing media"
       )
 
-      arg(:banner, :picture_input,
+      arg(:banner, :media_input,
         description:
-          "The banner for the profile, either as an object or directly the ID of an existing Picture"
+          "The banner for the profile, either as an object or directly the ID of an existing media"
       )
 
       resolve(&Person.update_person/3)
@@ -200,14 +200,14 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
       arg(:summary, :string, description: "The summary for the new profile", default_value: "")
       arg(:email, non_null(:string), description: "The email from the user previously created")
 
-      arg(:avatar, :picture_input,
+      arg(:avatar, :media_input,
         description:
-          "The avatar for the profile, either as an object or directly the ID of an existing Picture"
+          "The avatar for the profile, either as an object or directly the ID of an existing media"
       )
 
-      arg(:banner, :picture_input,
+      arg(:banner, :media_input,
         description:
-          "The banner for the profile, either as an object or directly the ID of an existing Picture"
+          "The banner for the profile, either as an object or directly the ID of an existing media"
       )
 
       resolve(&Person.register_person/3)

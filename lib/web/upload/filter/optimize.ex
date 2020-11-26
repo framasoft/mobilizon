@@ -1,6 +1,6 @@
 defmodule Mobilizon.Web.Upload.Filter.Optimize do
   @moduledoc """
-  Handle picture optimizations
+  Handle media optimizations
   """
 
   @behaviour Mobilizon.Web.Upload.Filter

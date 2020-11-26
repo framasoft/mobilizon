@@ -47,12 +47,14 @@ defmodule Mix.Tasks.Mobilizon.Common do
       else: shell_prompt(message, "Continue?") in ~w(Yn Y y)
   end
 
+  @spec shell_info(String.t()) :: :ok
   def shell_info(message) do
     if mix_shell?(),
       do: Mix.shell().info(message),
       else: IO.puts(message)
   end
 
+  @spec shell_error(String.t()) :: :ok
   def shell_error(message) do
     if mix_shell?(),
       do: Mix.shell().error(message),

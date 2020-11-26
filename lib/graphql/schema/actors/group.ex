@@ -8,7 +8,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias Mobilizon.Addresses
-  alias Mobilizon.GraphQL.Resolvers.{Discussion, Group, Member, Picture, Post, Resource, Todos}
+  alias Mobilizon.GraphQL.Resolvers.{Discussion, Group, Media, Member, Post, Resource, Todos}
   alias Mobilizon.GraphQL.Schema
 
   import_types(Schema.Actors.MemberType)
@@ -38,8 +38,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
 
     field(:suspended, :boolean, description: "If the actor is suspended")
 
-    field(:avatar, :picture, description: "The actor's avatar picture")
-    field(:banner, :picture, description: "The actor's banner picture")
+    field(:avatar, :media, description: "The actor's avatar media")
+    field(:banner, :media, description: "The actor's banner media")
 
     field(:physical_address, :address,
       resolve: dataloader(Addresses),
@@ -53,7 +53,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     field(:followingCount, :integer, description: "Number of actors following this actor")
 
     field(:media_size, :integer,
-      resolve: &Picture.actor_size/3,
+      resolve: &Media.actor_size/3,
       description: "The total size of the media from this actor"
     )
 
@@ -198,14 +198,14 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
         default_value: :public
       )
 
-      arg(:avatar, :picture_input,
+      arg(:avatar, :media_input,
         description:
-          "The avatar for the group, either as an object or directly the ID of an existing Picture"
+          "The avatar for the group, either as an object or directly the ID of an existing media"
       )
 
-      arg(:banner, :picture_input,
+      arg(:banner, :media_input,
         description:
-          "The banner for the group, either as an object or directly the ID of an existing Picture"
+          "The banner for the group, either as an object or directly the ID of an existing media"
       )
 
       arg(:physical_address, :address_input, description: "The physical address for the group")
@@ -226,14 +226,14 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
         description: "Whether the group can be join freely, with approval or is invite-only."
       )
 
-      arg(:avatar, :picture_input,
+      arg(:avatar, :media_input,
         description:
-          "The avatar for the group, either as an object or directly the ID of an existing Picture"
+          "The avatar for the group, either as an object or directly the ID of an existing media"
       )
 
-      arg(:banner, :picture_input,
+      arg(:banner, :media_input,
         description:
-          "The banner for the group, either as an object or directly the ID of an existing Picture"
+          "The banner for the group, either as an object or directly the ID of an existing media"
       )
 
       arg(:physical_address, :address_input, description: "The physical address for the group")

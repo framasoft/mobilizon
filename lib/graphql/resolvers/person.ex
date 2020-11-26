@@ -13,6 +13,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   import Mobilizon.Web.Gettext
 
   alias Mobilizon.Federation.ActivityPub
+  require Logger
 
   alias Mobilizon.Web.{MediaProxy, Upload}
 
@@ -137,6 +138,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
         %{id: id} = args,
         %{context: %{current_user: user}} = _resolution
       ) do
+    require Logger
     args = Map.put(args, :user_id, user.id)
 
     with {:find_actor, %Actor{} = actor} <-
@@ -198,11 +200,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
 
   defp save_attached_pictures(args) do
     Enum.reduce([:avatar, :banner], args, fn key, args ->
-      if Map.has_key?(args, key) && !is_nil(args[key][:picture]) do
-        pic = args[key][:picture]
+      if Map.has_key?(args, key) && !is_nil(args[key][:media]) do
+        media = args[key][:media]
 
         with {:ok, %{name: name, url: url, content_type: content_type, size: _size}} <-
-               Upload.store(pic.file, type: key, description: pic.alt) do
+               Upload.store(media.file, type: key, description: media.alt) do
           Map.put(args, key, %{"name" => name, "url" => url, "mediaType" => content_type})
         end
       else

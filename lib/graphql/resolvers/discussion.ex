@@ -7,6 +7,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.GraphQL.API.Comments
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext
@@ -94,17 +95,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
     with {:actor, %Actor{id: creator_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
          {:member, true} <- {:member, Actors.is_member?(creator_id, group_id)},
          {:ok, _activity, %Discussion{} = discussion} <-
-           ActivityPub.create(
-             :discussion,
-             %{
-               title: title,
-               text: text,
-               actor_id: group_id,
-               creator_id: creator_id,
-               attributed_to_id: group_id
-             },
-             true
-           ) do
+           Comments.create_discussion(%{
+             title: title,
+             text: text,
+             actor_id: group_id,
+             creator_id: creator_id,
+             attributed_to_id: group_id
+           }) do
       {:ok, discussion}
     else
       {:member, false} ->
@@ -134,19 +131,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
            {:no_discussion, Discussions.get_discussion(discussion_id)},
          {:member, true} <- {:member, Actors.is_member?(creator_id, actor_id)},
          {:ok, _activity, %Discussion{} = discussion} <-
-           ActivityPub.create(
-             :discussion,
-             %{
-               text: text,
-               discussion_id: discussion_id,
-               actor_id: creator_id,
-               attributed_to_id: actor_id,
-               in_reply_to_comment_id: last_comment_id,
-               origin_comment_id:
-                 origin_comment_id || previous_in_reply_to_comment_id || last_comment_id
-             },
-             true
-           ) do
+           Comments.create_discussion(%{
+             text: text,
+             discussion_id: discussion_id,
+             actor_id: creator_id,
+             attributed_to_id: actor_id,
+             in_reply_to_comment_id: last_comment_id,
+             origin_comment_id:
+               origin_comment_id || previous_in_reply_to_comment_id || last_comment_id
+           }) do
       {:ok, discussion}
     end
   end

@@ -1,4 +1,4 @@
-defmodule Mobilizon.Media.File do
+defmodule Mobilizon.Medias.File do
   @moduledoc """
   Represents a file entity.
   """

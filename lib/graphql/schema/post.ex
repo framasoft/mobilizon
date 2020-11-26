@@ -3,7 +3,7 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
   Schema representation for Posts
   """
   use Absinthe.Schema.Notation
-  alias Mobilizon.GraphQL.Resolvers.{Picture, Post, Tag}
+  alias Mobilizon.GraphQL.Resolvers.{Media, Post, Tag}
 
   @desc "A post"
   object :post do
@@ -25,9 +25,9 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
       description: "The post's tags"
     )
 
-    field(:picture, :picture,
-      description: "The posts's picture",
-      resolve: &Picture.picture/3
+    field(:picture, :media,
+      description: "The posts's media",
+      resolve: &Media.media/3
     )
   end
 
@@ -76,9 +76,9 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
         description: "The list of tags associated to the post"
       )
 
-      arg(:picture, :picture_input,
+      arg(:picture, :media_input,
         description:
-          "The banner for the post, either as an object or directly the ID of an existing Picture"
+          "The banner for the post, either as an object or directly the ID of an existing media"
       )
 
       resolve(&Post.create_post/3)
@@ -99,9 +99,9 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
 
       arg(:tags, list_of(:string), description: "The list of tags associated to the post")
 
-      arg(:picture, :picture_input,
+      arg(:picture, :media_input,
         description:
-          "The banner for the post, either as an object or directly the ID of an existing Picture"
+          "The banner for the post, either as an object or directly the ID of an existing media"
       )
 
       resolve(&Post.update_post/3)

@@ -1,5 +1,5 @@
 import { ITag } from "./tag.model";
-import { IPicture } from "./picture.model";
+import { IMedia } from "./media.model";
 import { IActor } from "./actor";
 
 export enum PostVisibility {
@@ -17,7 +17,7 @@ export interface IPost {
   title: string;
   body: string;
   tags?: ITag[];
-  picture?: IPicture | null;
+  picture?: IMedia | null;
   draft: boolean;
   visibility: PostVisibility;
   author?: IActor;

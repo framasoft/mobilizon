@@ -119,7 +119,7 @@ export const CREATE_POST = gql`
     $visibility: PostVisibility
     $draft: Boolean
     $tags: [String]
-    $picture: PictureInput
+    $picture: MediaInput
   ) {
     createPost(
       title: $title
@@ -145,7 +145,7 @@ export const UPDATE_POST = gql`
     $visibility: PostVisibility
     $draft: Boolean
     $tags: [String]
-    $picture: PictureInput
+    $picture: MediaInput
   ) {
     updatePost(
       id: $id

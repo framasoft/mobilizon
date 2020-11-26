@@ -84,7 +84,8 @@ defmodule Mobilizon.Events do
     :participants,
     :physical_address,
     :picture,
-    :contacts
+    :contacts,
+    :media
   ]
 
   @doc """
@@ -295,7 +296,7 @@ defmodule Mobilizon.Events do
   @spec update_event(Event.t(), map) :: {:ok, Event.t()} | {:error, Changeset.t()}
   def update_event(%Event{draft: old_draft} = old_event, attrs) do
     with %Changeset{changes: changes} = changeset <-
-           Event.update_changeset(Repo.preload(old_event, :tags), attrs),
+           Event.update_changeset(Repo.preload(old_event, [:tags, :media]), attrs),
          {:ok, %{update: %Event{} = new_event}} <-
            Multi.new()
            |> Multi.update(:update, changeset)
