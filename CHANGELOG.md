@@ -6,6 +6,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+**This release adds new migrations, be sure to run them before restarting Mobilizon**
+
+**This release has a repair step, be sure to run the command right after restarting Mobilizon**
+
+### Special operations
+
+* **Reattach media files to their entity.**
+  When media files were uploaded and added in events and posts bodies, they were only attached to the profile that uploaded them, not to the event or post. This task attaches them back to their entity so that the command to clean orphan media files doesn't remove them.
+
+  * Source install
+    `MIX_ENV=prod mix mobilizon.maintenance.fix_unattached_media_in_body`
+  * Docker
+    `docker-compose exec mobilizon mobilizon_ctl maintenance.fix_unattached_media_in_body`
+
+### Added
+
+- **Add a command to clean orphan media files**. There's a `--dry-run` option to see what files would have been deleted.  
+  **Make sure all media files have been reattached properly (see above) before running this command.**  
+  In 1.1.0 a scheduled job will be enabled to clear orphan media files automatically after a while.
+
+### Fixed
+
+- Fix inline media that weren't being tracked, so that they are not considered orphans media files.
+
 ## 1.0.2 - 2020-11-15
 
 **This release adds new migrations, be sure to run them before restarting Mobilizon**
