@@ -127,6 +127,9 @@ defmodule Mobilizon.Users do
 
   @doc """
   Deletes an user.
+
+  Options:
+  * `reserve_email` whether to keep a record of the email so that the user can't register again
   """
   @spec delete_user(User.t()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   def delete_user(%User{id: user_id} = user, options \\ @delete_user_default_options) do
