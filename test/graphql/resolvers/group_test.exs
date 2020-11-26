@@ -218,8 +218,8 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
       $id: ID!
       $name: String
       $summary: String
-      $avatar: PictureInput
-      $banner: PictureInput
+      $avatar: MediaInput
+      $banner: MediaInput
       $visibility: GroupVisibility
       $physicalAddress: AddressInput
       ) {

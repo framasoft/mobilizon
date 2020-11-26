@@ -212,7 +212,7 @@ import { SEARCH_PERSONS } from "../graphql/search";
 import { Actor, IActor, IPerson } from "../types/actor";
 import Image from "./Editor/Image";
 import MaxSize from "./Editor/MaxSize";
-import { UPLOAD_PICTURE } from "../graphql/upload";
+import { UPLOAD_MEDIA } from "../graphql/upload";
 import { listenFileUpload } from "../utils/upload";
 import { CURRENT_ACTOR_CLIENT } from "../graphql/actor";
 import { IComment } from "../types/comment.model";
@@ -395,7 +395,15 @@ export default class EditorComponent extends Vue {
         new Image(),
         new MaxSize({ maxSize: this.maxSize }),
       ],
-      onUpdate: ({ getHTML }: { getHTML: Function }) => {
+      onUpdate: ({
+        getHTML,
+        transaction,
+        getJSON,
+      }: {
+        getHTML: Function;
+        getJSON: Function;
+        transaction: unknown;
+      }) => {
         this.$emit("input", getHTML());
       },
     });
@@ -526,14 +534,14 @@ export default class EditorComponent extends Vue {
     const image = await listenFileUpload();
     try {
       const { data } = await this.$apollo.mutate({
-        mutation: UPLOAD_PICTURE,
+        mutation: UPLOAD_MEDIA,
         variables: {
           file: image,
           name: image.name,
         },
       });
-      if (data.uploadPicture && data.uploadPicture.url) {
-        command({ src: data.uploadPicture.url });
+      if (data.uploadMedia && data.uploadMedia.url) {
+        command({ src: data.uploadMedia.url, "data-media-id": data.uploadMedia.id });
       }
     } catch (error) {
       console.error(error);

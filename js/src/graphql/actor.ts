@@ -421,7 +421,7 @@ export const CREATE_PERSON = gql`
     $preferredUsername: String!
     $name: String!
     $summary: String
-    $avatar: PictureInput
+    $avatar: MediaInput
   ) {
     createPerson(
       preferredUsername: $preferredUsername
@@ -442,7 +442,7 @@ export const CREATE_PERSON = gql`
 `;
 
 export const UPDATE_PERSON = gql`
-  mutation UpdatePerson($id: ID!, $name: String, $summary: String, $avatar: PictureInput) {
+  mutation UpdatePerson($id: ID!, $name: String, $summary: String, $avatar: MediaInput) {
     updatePerson(id: $id, name: $name, summary: $summary, avatar: $avatar) {
       id
       preferredUsername

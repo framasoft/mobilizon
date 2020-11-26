@@ -10,7 +10,7 @@ defmodule Mobilizon.Events.Event do
   alias Ecto.Changeset
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.{Addresses, Events, Media, Mention}
+  alias Mobilizon.{Addresses, Events, Medias, Mention}
   alias Mobilizon.Addresses.Address
 
   alias Mobilizon.Discussions.Comment
@@ -27,7 +27,7 @@ defmodule Mobilizon.Events.Event do
     Track
   }
 
-  alias Mobilizon.Media.Picture
+  alias Mobilizon.Medias.Media
   alias Mobilizon.Storage.Repo
 
   alias Mobilizon.Web.Endpoint
@@ -54,7 +54,8 @@ defmodule Mobilizon.Events.Event do
           organizer_actor: Actor.t(),
           attributed_to: Actor.t(),
           physical_address: Address.t(),
-          picture: Picture.t(),
+          picture: Media.t(),
+          media: [Media.t()],
           tracks: [Track.t()],
           sessions: [Session.t()],
           mentions: [Mention.t()],
@@ -110,7 +111,7 @@ defmodule Mobilizon.Events.Event do
     belongs_to(:organizer_actor, Actor, foreign_key: :organizer_actor_id)
     belongs_to(:attributed_to, Actor, foreign_key: :attributed_to_id)
     belongs_to(:physical_address, Address, on_replace: :nilify)
-    belongs_to(:picture, Picture, on_replace: :update)
+    belongs_to(:picture, Media, on_replace: :update)
     has_many(:tracks, Track)
     has_many(:sessions, Session)
     has_many(:mentions, Mention)
@@ -118,6 +119,7 @@ defmodule Mobilizon.Events.Event do
     many_to_many(:contacts, Actor, join_through: "event_contacts", on_replace: :delete)
     many_to_many(:tags, Tag, join_through: "events_tags", on_replace: :delete)
     many_to_many(:participants, Actor, join_through: Participant)
+    many_to_many(:media, Media, join_through: "events_medias", on_replace: :delete)
 
     timestamps(type: :utc_datetime)
   end
@@ -150,6 +152,7 @@ defmodule Mobilizon.Events.Event do
     changeset
     |> cast_embed(:options)
     |> put_assoc(:contacts, Map.get(attrs, :contacts, []))
+    |> put_assoc(:media, Map.get(attrs, :media, []))
     |> put_tags(attrs)
     |> put_address(attrs)
     |> put_picture(attrs)
@@ -241,9 +244,9 @@ defmodule Mobilizon.Events.Event do
 
   # In case the provided picture is an existing one
   @spec put_picture(Changeset.t(), map) :: Changeset.t()
-  defp put_picture(%Changeset{} = changeset, %{picture: %{picture_id: id} = _picture}) do
-    case Media.get_picture!(id) do
-      %Picture{} = picture ->
+  defp put_picture(%Changeset{} = changeset, %{picture: %{media_id: id} = _picture}) do
+    case Medias.get_media!(id) do
+      %Media{} = picture ->
         put_assoc(changeset, :picture, picture)
 
       _ ->

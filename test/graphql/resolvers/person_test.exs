@@ -205,7 +205,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
               name: "secret person",
               summary: "no-one will know who I am",
               banner: {
-                picture: {
+                media: {
                   file: "landscape.jpg",
                   name: "irish landscape",
                   alt: "The beautiful atlantic way"
@@ -274,7 +274,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
               name: "riri updated",
               summary: "summary updated",
               banner: {
-                picture: {
+                media: {
                   file: "landscape.jpg",
                   name: "irish landscape",
                   alt: "The beautiful atlantic way"

@@ -1,17 +1,17 @@
-defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
+defmodule Mobilizon.GraphQL.Resolvers.MediaTest do
   use Mobilizon.Web.ConnCase
   use Bamboo.Test
 
   import Mobilizon.Factory
 
-  alias Mobilizon.Media.Picture
+  alias Mobilizon.Medias.Media
 
   alias Mobilizon.GraphQL.AbsintheHelpers
 
   alias Mobilizon.Web.Endpoint
 
-  @default_picture_details %{name: "my pic", alt: "represents something", file: "picture.png"}
-  @default_picture_path "test/fixtures/picture.png"
+  @default_media_details %{name: "my pic", alt: "represents something", file: "picture.png"}
+  @default_media_path "test/fixtures/picture.png"
 
   setup %{conn: conn} do
     user = insert(:user)
@@ -20,9 +20,9 @@ defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
     {:ok, conn: conn, user: user, actor: actor}
   end
 
-  @picture_query """
-  query Picture($id: ID!) {
-    picture(id: $id) {
+  @media_query """
+  query Media($id: ID!) {
+    media(id: $id) {
       id
       name,
       alt,
@@ -33,9 +33,9 @@ defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
   }
   """
 
-  @upload_picture_mutation """
-  mutation UploadPicture($name: String!, $alt: String, $file: Upload!) {
-    uploadPicture(
+  @upload_media_mutation """
+  mutation UploadMedia($name: String!, $alt: String, $file: Upload!) {
+    uploadMedia(
       name: $name
       alt: $alt
       file: $file
@@ -48,44 +48,44 @@ defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
   }
   """
 
-  describe "Resolver: Get picture" do
-    test "picture/3 returns the information on a picture", %{conn: conn} do
-      %Picture{id: id} = picture = insert(:picture)
+  describe "Resolver: Get media" do
+    test "media/3 returns the information on a media", %{conn: conn} do
+      %Media{id: id} = media = insert(:media)
 
       res =
         conn
-        |> AbsintheHelpers.graphql_query(query: @picture_query, variables: %{id: id})
+        |> AbsintheHelpers.graphql_query(query: @media_query, variables: %{id: id})
 
-      assert res["data"]["picture"]["name"] == picture.file.name
+      assert res["data"]["media"]["name"] == media.file.name
 
-      assert res["data"]["picture"]["content_type"] ==
-               picture.file.content_type
+      assert res["data"]["media"]["content_type"] ==
+               media.file.content_type
 
-      assert res["data"]["picture"]["size"] == 13_120
+      assert res["data"]["media"]["size"] == 13_120
 
-      assert res["data"]["picture"]["url"] =~ Endpoint.url()
+      assert res["data"]["media"]["url"] =~ Endpoint.url()
     end
 
-    test "picture/3 returns nothing on a non-existent picture", %{conn: conn} do
+    test "media/3 returns nothing on a non-existent media", %{conn: conn} do
       res =
         conn
-        |> AbsintheHelpers.graphql_query(query: @picture_query, variables: %{id: 3})
+        |> AbsintheHelpers.graphql_query(query: @media_query, variables: %{id: 3})
 
       assert hd(res["errors"])["message"] == "Resource not found"
       assert hd(res["errors"])["status_code"] == 404
     end
   end
 
-  describe "Resolver: Upload picture" do
-    test "upload_picture/3 uploads a new picture", %{conn: conn, user: user} do
-      picture = %{name: "my pic", alt: "represents something", file: "picture.png"}
+  describe "Resolver: Upload media" do
+    test "upload_media/3 uploads a new media", %{conn: conn, user: user} do
+      media = %{name: "my pic", alt: "represents something", file: "picture.png"}
 
       map = %{
-        "query" => @upload_picture_mutation,
-        "variables" => picture,
-        picture.file => %Plug.Upload{
+        "query" => @upload_media_mutation,
+        "variables" => media,
+        media.file => %Plug.Upload{
           path: "test/fixtures/picture.png",
-          filename: picture.file
+          filename: media.file
         }
       }
 
@@ -99,21 +99,21 @@ defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
         )
         |> json_response(200)
 
-      assert res["data"]["uploadPicture"]["name"] == picture.name
-      assert res["data"]["uploadPicture"]["content_type"] == "image/png"
-      assert res["data"]["uploadPicture"]["size"] == 10_097
-      assert res["data"]["uploadPicture"]["url"]
+      assert res["data"]["uploadMedia"]["name"] == media.name
+      assert res["data"]["uploadMedia"]["content_type"] == "image/png"
+      assert res["data"]["uploadMedia"]["size"] == 10_097
+      assert res["data"]["uploadMedia"]["url"]
     end
 
-    test "upload_picture/3 forbids uploading if no auth", %{conn: conn} do
-      picture = %{name: "my pic", alt: "represents something", file: "picture.png"}
+    test "upload_media/3 forbids uploading if no auth", %{conn: conn} do
+      media = %{name: "my pic", alt: "represents something", file: "picture.png"}
 
       map = %{
-        "query" => @upload_picture_mutation,
-        "variables" => picture,
-        picture.file => %Plug.Upload{
+        "query" => @upload_media_mutation,
+        "variables" => media,
+        media.file => %Plug.Upload{
           path: "test/fixtures/picture.png",
-          filename: picture.file
+          filename: media.file
         }
       }
 
@@ -130,43 +130,43 @@ defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
     end
   end
 
-  describe "Resolver: Remove picture" do
-    @remove_picture_mutation """
-    mutation RemovePicture($id: ID!) {
-      removePicture(id: $id) {
+  describe "Resolver: Remove media" do
+    @remove_media_mutation """
+    mutation RemoveMedia($id: ID!) {
+      removeMedia(id: $id) {
         id
       }
     }
     """
 
-    test "Removes a previously uploaded picture", %{conn: conn, user: user, actor: actor} do
-      %Picture{id: picture_id} = insert(:picture, actor: actor)
+    test "Removes a previously uploaded media", %{conn: conn, user: user, actor: actor} do
+      %Media{id: media_id} = insert(:media, actor: actor)
 
       res =
         conn
         |> auth_conn(user)
         |> AbsintheHelpers.graphql_query(
-          query: @remove_picture_mutation,
-          variables: %{id: picture_id}
+          query: @remove_media_mutation,
+          variables: %{id: media_id}
         )
 
       assert is_nil(res["errors"])
-      assert res["data"]["removePicture"]["id"] == to_string(picture_id)
+      assert res["data"]["removeMedia"]["id"] == to_string(media_id)
 
       res =
         conn
-        |> AbsintheHelpers.graphql_query(query: @picture_query, variables: %{id: picture_id})
+        |> AbsintheHelpers.graphql_query(query: @media_query, variables: %{id: media_id})
 
       assert hd(res["errors"])["message"] == "Resource not found"
       assert hd(res["errors"])["status_code"] == 404
     end
 
-    test "Removes nothing if picture is not found", %{conn: conn, user: user} do
+    test "Removes nothing if media is not found", %{conn: conn, user: user} do
       res =
         conn
         |> auth_conn(user)
         |> AbsintheHelpers.graphql_query(
-          query: @remove_picture_mutation,
+          query: @remove_media_mutation,
           variables: %{id: 400}
         )
 
@@ -174,14 +174,14 @@ defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
       assert hd(res["errors"])["status_code"] == 404
     end
 
-    test "Removes nothing if picture if not logged-in", %{conn: conn, actor: actor} do
-      %Picture{id: picture_id} = insert(:picture, actor: actor)
+    test "Removes nothing if media if not logged-in", %{conn: conn, actor: actor} do
+      %Media{id: media_id} = insert(:media, actor: actor)
 
       res =
         conn
         |> AbsintheHelpers.graphql_query(
-          query: @remove_picture_mutation,
-          variables: %{id: picture_id}
+          query: @remove_media_mutation,
+          variables: %{id: media_id}
         )
 
       assert hd(res["errors"])["message"] == "You need to be logged in"
@@ -210,8 +210,8 @@ defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
 
       assert res["data"]["loggedPerson"]["mediaSize"] == 0
 
-      res = upload_picture(conn, user)
-      assert res["data"]["uploadPicture"]["size"] == 10_097
+      res = upload_media(conn, user)
+      assert res["data"]["uploadMedia"]["size"] == 10_097
 
       res =
         conn
@@ -221,14 +221,14 @@ defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
       assert res["data"]["loggedPerson"]["mediaSize"] == 10_097
 
       res =
-        upload_picture(
+        upload_media(
           conn,
           user,
           "test/fixtures/image.jpg",
-          Map.put(@default_picture_details, :file, "image.jpg")
+          Map.put(@default_media_details, :file, "image.jpg")
         )
 
-      assert res["data"]["uploadPicture"]["size"] == 13_227
+      assert res["data"]["uploadMedia"]["size"] == 13_227
 
       res =
         conn
@@ -266,7 +266,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
       assert is_nil(res["errors"])
       assert hd(res["data"]["persons"]["elements"])["mediaSize"] == 0
 
-      upload_picture(conn, user)
+      upload_media(conn, user)
 
       res =
         conn
@@ -355,8 +355,8 @@ defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
       assert res["errors"] == nil
       assert res["data"]["loggedUser"]["mediaSize"] == 0
 
-      res = upload_picture(conn, user)
-      assert res["data"]["uploadPicture"]["size"] == 10_097
+      res = upload_media(conn, user)
+      assert res["data"]["uploadMedia"]["size"] == 10_097
 
       res =
         conn
@@ -366,14 +366,14 @@ defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
       assert res["data"]["loggedUser"]["mediaSize"] == 10_097
 
       res =
-        upload_picture(
+        upload_media(
           conn,
           user,
           "test/fixtures/image.jpg",
-          Map.put(@default_picture_details, :file, "image.jpg")
+          Map.put(@default_media_details, :file, "image.jpg")
         )
 
-      assert res["data"]["uploadPicture"]["size"] == 13_227
+      assert res["data"]["uploadMedia"]["size"] == 13_227
 
       res =
         conn
@@ -393,14 +393,14 @@ defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
       assert is_nil(res["errors"])
 
       res =
-        upload_picture(
+        upload_media(
           conn,
           user,
           "test/fixtures/image.jpg",
-          Map.put(@default_picture_details, :file, "image.jpg")
+          Map.put(@default_media_details, :file, "image.jpg")
         )
 
-      assert res["data"]["uploadPicture"]["size"] == 13_227
+      assert res["data"]["uploadMedia"]["size"] == 13_227
 
       res =
         conn
@@ -438,9 +438,9 @@ defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
       assert is_nil(res["errors"])
       assert hd(res["data"]["users"]["elements"])["mediaSize"] == 0
 
-      res = upload_picture(conn, user)
+      res = upload_media(conn, user)
       assert is_nil(res["errors"])
-      assert res["data"]["uploadPicture"]["size"] == 10_097
+      assert res["data"]["uploadMedia"]["size"] == 10_097
 
       res =
         conn
@@ -463,19 +463,19 @@ defmodule Mobilizon.GraphQL.Resolvers.PictureTest do
     end
   end
 
-  @spec upload_picture(Plug.Conn.t(), Mobilizon.Users.User.t(), String.t(), map()) :: map()
-  defp upload_picture(
+  @spec upload_media(Plug.Conn.t(), Mobilizon.Users.User.t(), String.t(), map()) :: map()
+  defp upload_media(
          conn,
          user,
-         picture_path \\ @default_picture_path,
-         picture_details \\ @default_picture_details
+         media_path \\ @default_media_path,
+         media_details \\ @default_media_details
        ) do
     map = %{
-      "query" => @upload_picture_mutation,
-      "variables" => picture_details,
-      picture_details.file => %Plug.Upload{
-        path: picture_path,
-        filename: picture_details.file
+      "query" => @upload_media_mutation,
+      "variables" => media_details,
+      media_details.file => %Plug.Upload{
+        path: media_path,
+        filename: media_details.file
       }
     }
 

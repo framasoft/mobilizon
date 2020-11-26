@@ -14,7 +14,7 @@ defmodule Mobilizon.Actors do
   alias Mobilizon.Addresses.Address
   alias Mobilizon.{Crypto, Events}
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Media.File
+  alias Mobilizon.Medias.File
   alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users
@@ -285,7 +285,7 @@ defmodule Mobilizon.Actors do
   #   if is_nil(file) do
   #     nil
   #   else
-  #     struct(Mobilizon.Media.File, file)
+  #     struct(Mobilizon.Medias.File, file)
   #   end
   # end
 
@@ -1673,7 +1673,8 @@ defmodule Mobilizon.Actors do
             :attributed_to,
             :tags,
             :physical_address,
-            :contacts
+            :contacts,
+            :media
           ])
 
         ActivityPub.delete(event, actor, false)

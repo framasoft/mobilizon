@@ -60,14 +60,14 @@ figure.image {
 </style>
 
 <script lang="ts">
-import { IPicture } from "@/types/picture.model";
+import { IMedia } from "@/types/media.model";
 import { Component, Model, Prop, Vue, Watch } from "vue-property-decorator";
 
 @Component
 export default class PictureUpload extends Vue {
   @Model("change", { type: File }) readonly pictureFile!: File;
 
-  @Prop({ type: Object, required: false }) defaultImage!: IPicture;
+  @Prop({ type: Object, required: false }) defaultImage!: IMedia;
 
   @Prop({ type: String, required: false, default: "image/gif,image/png,image/jpeg,image/webp" })
   accept!: string;
@@ -100,7 +100,7 @@ export default class PictureUpload extends Vue {
   }
 
   @Watch("defaultImage")
-  onDefaultImageChange(defaultImage: IPicture): void {
+  onDefaultImageChange(defaultImage: IMedia): void {
     console.log("onDefaultImageChange", defaultImage);
     this.imageSrc = defaultImage ? defaultImage.url : null;
   }

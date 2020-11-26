@@ -148,6 +148,7 @@ defmodule Mobilizon.Factory do
       event: build(:event),
       uuid: uuid,
       mentions: [],
+      media: [],
       attributed_to: nil,
       local: true,
       deleted_at: nil,
@@ -179,13 +180,14 @@ defmodule Mobilizon.Factory do
       local: true,
       publish_at: DateTime.utc_now(),
       url: Routes.page_url(Endpoint, :event, uuid),
-      picture: insert(:picture),
+      picture: insert(:media),
       uuid: uuid,
       join_options: :free,
       options: %{},
       participant_stats: %{},
       status: :confirmed,
-      contacts: []
+      contacts: [],
+      media: []
     }
   end
 
@@ -269,16 +271,16 @@ defmodule Mobilizon.Factory do
       size: 13_227
     } = data
 
-    %Mobilizon.Media.File{
-      name: "My Picture",
+    %Mobilizon.Medias.File{
+      name: "My Media",
       url: url,
       content_type: "image/png",
       size: 13_120
     }
   end
 
-  def picture_factory do
-    %Mobilizon.Media.Picture{
+  def media_factory do
+    %Mobilizon.Medias.Media{
       file: build(:file),
       actor: build(:actor)
     }
@@ -372,6 +374,7 @@ defmodule Mobilizon.Factory do
       tags: build_list(3, :tag),
       visibility: :public,
       publish_at: DateTime.utc_now(),
+      media: [],
       url: Routes.page_url(Endpoint, :post, uuid)
     }
   end

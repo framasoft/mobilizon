@@ -1,6 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { Node } from "tiptap";
-import { UPLOAD_PICTURE } from "@/graphql/upload";
+import { UPLOAD_MEDIA } from "@/graphql/upload";
 import apolloProvider from "@/vue-apollo";
 import ApolloClient from "apollo-client";
 import { NormalizedCacheObject } from "apollo-cache-inmemory";
@@ -27,16 +28,18 @@ export default class Image extends Node {
         title: {
           default: null,
         },
+        "data-media-id": {},
       },
       group: "inline",
       draggable: true,
       parseDOM: [
         {
-          tag: "img[src]",
+          tag: "img",
           getAttrs: (dom: any) => ({
             src: dom.getAttribute("src"),
             title: dom.getAttribute("title"),
             alt: dom.getAttribute("alt"),
+            "data-media-id": dom.getAttribute("data-media-id"),
           }),
         },
       ],
@@ -92,13 +95,16 @@ export default class Image extends Node {
               try {
                 images.forEach(async (image) => {
                   const { data } = await client.mutate({
-                    mutation: UPLOAD_PICTURE,
+                    mutation: UPLOAD_MEDIA,
                     variables: {
                       file: image,
                       name: image.name,
                     },
                   });
-                  const node = schema.nodes.image.create({ src: data.uploadPicture.url });
+                  const node = schema.nodes.image.create({
+                    src: data.uploadMedia.url,
+                    "data-media-id": data.uploadMedia.id,
+                  });
                   const transaction = view.state.tr.insert(coordinates.pos, node);
                   view.dispatch(transaction);
                 });

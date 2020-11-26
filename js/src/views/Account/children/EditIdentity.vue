@@ -124,7 +124,6 @@ h1 {
 <script lang="ts">
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { mixins } from "vue-class-component";
-import { IPicture } from "@/types/picture.model";
 import {
   CREATE_PERSON,
   CURRENT_ACTOR_CLIENT,
@@ -137,7 +136,7 @@ import { IPerson, Person } from "../../../types/actor";
 import PictureUpload from "../../../components/PictureUpload.vue";
 import { MOBILIZON_INSTANCE_HOST } from "../../../api/_entrypoint";
 import RouteName from "../../../router/name";
-import { buildFileFromIPicture, buildFileVariable } from "../../../utils/image";
+import { buildFileVariable } from "../../../utils/image";
 import { changeIdentity } from "../../../utils/auth";
 import identityEditionMixin from "../../../mixins/identityEdition";
 

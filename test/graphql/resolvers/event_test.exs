@@ -526,7 +526,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
                   organizer_actor_id: "#{actor.id}",
                   category: "birthday",
                   picture: {
-                    picture: {
+                    media: {
                       name: "picture for my event",
                       alt: "A very sunny landscape",
                       file: "event.jpg",
@@ -569,13 +569,13 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       actor: actor,
       user: user
     } do
-      picture = %{name: "my pic", alt: "represents something", file: "picture.png"}
+      media = %{name: "my pic", alt: "represents something", file: "picture.png"}
 
       mutation = """
-      mutation { uploadPicture(
-              name: "#{picture.name}",
-              alt: "#{picture.alt}",
-              file: "#{picture.file}"
+      mutation { uploadMedia (
+              name: "#{media.name}",
+              alt: "#{media.alt}",
+              file: "#{media.file}"
             ) {
                 id,
                 url,
@@ -586,9 +586,9 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
 
       map = %{
         "query" => mutation,
-        picture.file => %Plug.Upload{
+        media.file => %Plug.Upload{
           path: "test/fixtures/picture.png",
-          filename: picture.file
+          filename: media.file
         }
       }
 
@@ -601,8 +601,8 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
           map
         )
 
-      assert json_response(res, 200)["data"]["uploadPicture"]["name"] == picture.name
-      picture_id = json_response(res, 200)["data"]["uploadPicture"]["id"]
+      assert json_response(res, 200)["data"]["uploadMedia"]["name"] == media.name
+      media_id = json_response(res, 200)["data"]["uploadMedia"]["id"]
 
       mutation = """
           mutation {
@@ -615,7 +615,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
                   organizer_actor_id: "#{actor.id}",
                   category: "birthday",
                   picture: {
-                    picture_id: "#{picture_id}"
+                    media_id: "#{media_id}"
                   }
               ) {
                 title,
@@ -635,7 +635,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
 
       assert json_response(res, 200)["data"]["createEvent"]["title"] == "come to my event"
 
-      assert json_response(res, 200)["data"]["createEvent"]["picture"]["name"] == picture.name
+      assert json_response(res, 200)["data"]["createEvent"]["picture"]["name"] == media.name
 
       assert json_response(res, 200)["data"]["createEvent"]["picture"]["url"]
     end
@@ -943,7 +943,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
                   event_id: #{event.id},
                   category: "birthday",
                   picture: {
-                    picture: {
+                    media: {
                       name: "picture for my event",
                       alt: "A very sunny landscape",
                       file: "event.jpg",
@@ -1349,7 +1349,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
     test "delete_event/3 should check the event can be deleted by the user", %{
       conn: conn,
       user: user,
-      actor: actor
+      actor: _actor
     } do
       actor2 = insert(:actor)
       event = insert(:event, organizer_actor: actor2)

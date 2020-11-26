@@ -12,7 +12,7 @@ defmodule Mobilizon.Actors.Actor do
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.{Event, FeedToken}
-  alias Mobilizon.Media.File
+  alias Mobilizon.Medias.File
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Users.User
 

@@ -116,6 +116,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
            Map.update(args, :picture, nil, fn picture ->
              process_picture(picture, group)
            end),
+         args <- extract_pictures_from_post_body(args, actor_id),
          {:ok, _, %Post{} = post} <-
            ActivityPub.create(
              :post,
@@ -156,6 +157,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
            Map.update(args, :picture, nil, fn picture ->
              process_picture(picture, group)
            end),
+         args <- extract_pictures_from_post_body(args, actor_id),
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          {:ok, _, %Post{} = post} <-
            ActivityPub.update(post, args, true, %{"actor" => actor_url}) do
@@ -210,15 +212,23 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
   end
 
   defp process_picture(nil, _), do: nil
-  defp process_picture(%{picture_id: _picture_id} = args, _), do: args
+  defp process_picture(%{media_id: _picture_id} = args, _), do: args
 
-  defp process_picture(%{picture: picture}, %Actor{id: actor_id}) do
+  defp process_picture(%{media: media}, %Actor{id: actor_id}) do
     %{
       file:
-        picture
+        media
         |> Map.get(:file)
-        |> Utils.make_picture_data(description: Map.get(picture, :name)),
+        |> Utils.make_media_data(description: Map.get(media, :name)),
       actor_id: actor_id
     }
   end
+
+  @spec extract_pictures_from_post_body(map(), String.t()) :: map()
+  defp extract_pictures_from_post_body(%{body: body} = args, actor_id) do
+    pictures = Mobilizon.GraphQL.API.Utils.extract_pictures_from_body(body, actor_id)
+    Map.put(args, :media, pictures)
+  end
+
+  defp extract_pictures_from_post_body(args, _actor_id), do: args
 end

@@ -1,4 +1,4 @@
-import { IPicture } from "@/types/picture.model";
+import { IMedia } from "@/types/media.model";
 
 export enum ActorType {
   PERSON = "PERSON",
@@ -17,17 +17,17 @@ export interface IActor {
   summary: string;
   preferredUsername: string;
   suspended: boolean;
-  avatar?: IPicture | null;
-  banner?: IPicture | null;
+  avatar?: IMedia | null;
+  banner?: IMedia | null;
   type: ActorType;
 }
 
 export class Actor implements IActor {
   id?: string;
 
-  avatar: IPicture | null = null;
+  avatar: IMedia | null = null;
 
-  banner: IPicture | null = null;
+  banner: IMedia | null = null;
 
   domain: string | null = null;
 

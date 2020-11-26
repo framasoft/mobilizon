@@ -103,7 +103,7 @@
 import { Component, Prop } from "vue-property-decorator";
 import { mixins } from "vue-class-component";
 import { FETCH_GROUP } from "@/graphql/group";
-import { buildFileFromIPicture, readFileAsync } from "@/utils/image";
+import { buildFileFromIMedia, readFileAsync } from "@/utils/image";
 import GroupMixin from "@/mixins/group";
 import { TAGS } from "../../graphql/tags";
 import { CONFIG } from "../../graphql/config";
@@ -188,7 +188,7 @@ export default class EditPost extends mixins(GroupMixin) {
   errors: Record<string, unknown> = {};
 
   async mounted(): Promise<void> {
-    this.pictureFile = await buildFileFromIPicture(this.post.picture);
+    this.pictureFile = await buildFileFromIMedia(this.post.picture);
   }
 
   // eslint-disable-next-line consistent-return
@@ -277,11 +277,11 @@ export default class EditPost extends mixins(GroupMixin) {
     }
     try {
       if (this.post.picture) {
-        const oldPictureFile = (await buildFileFromIPicture(this.post.picture)) as File;
+        const oldPictureFile = (await buildFileFromIMedia(this.post.picture)) as File;
         const oldPictureFileContent = await readFileAsync(oldPictureFile);
         const newPictureFileContent = await readFileAsync(this.pictureFile as File);
         if (oldPictureFileContent === newPictureFileContent) {
-          obj.picture = { pictureId: this.post.picture.id };
+          obj.picture = { mediaId: this.post.picture.id };
         }
       }
     } catch (e) {

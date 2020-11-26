@@ -246,7 +246,7 @@ export default class GroupSettings extends mixins(GroupMixin) {
     if (this.avatarFile) {
       avatarObj = {
         avatar: {
-          picture: {
+          media: {
             name: this.avatarFile.name,
             alt: `${this.group.preferredUsername}'s avatar`,
             file: this.avatarFile,
@@ -258,7 +258,7 @@ export default class GroupSettings extends mixins(GroupMixin) {
     if (this.bannerFile) {
       bannerObj = {
         banner: {
-          picture: {
+          media: {
             name: this.bannerFile.name,
             alt: `${this.group.preferredUsername}'s banner`,
             file: this.bannerFile,

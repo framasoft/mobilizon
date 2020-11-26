@@ -1,6 +1,6 @@
-import { IPicture } from "@/types/picture.model";
+import { IMedia } from "@/types/media.model";
 
-export async function buildFileFromIPicture(obj: IPicture | null | undefined): Promise<File | null> {
+export async function buildFileFromIMedia(obj: IMedia | null | undefined): Promise<File | null> {
   if (!obj) return Promise.resolve(null);
 
   const response = await fetch(obj.url);
@@ -14,7 +14,7 @@ export function buildFileVariable(file: File | null, name: string, alt?: string)
 
   return {
     [name]: {
-      picture: {
+      media: {
         name: file.name,
         alt: alt || file.name,
         file,

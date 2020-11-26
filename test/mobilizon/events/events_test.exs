@@ -292,7 +292,7 @@ defmodule Mobilizon.EventsTest do
       tag1: %Tag{id: tag1_id} = tag1,
       tag2: %Tag{id: tag2_id} = tag2
     } do
-      assert {:ok, %TagRelation{} = tag_relation} =
+      assert {:ok, %TagRelation{}} =
                Events.create_tag_relation(%{tag_id: tag1_id, link_id: tag2_id})
 
       assert Events.are_tags_linked(tag1, tag2)

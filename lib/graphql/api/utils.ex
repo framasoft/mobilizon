@@ -3,7 +3,8 @@ defmodule Mobilizon.GraphQL.API.Utils do
   Utils for API.
   """
 
-  alias Mobilizon.Config
+  alias Mobilizon.{Config, Medias}
+  alias Mobilizon.Medias.Media
   alias Mobilizon.Service.Formatter
 
   @doc """
@@ -39,5 +40,42 @@ defmodule Mobilizon.GraphQL.API.Utils do
     else
       {:error, "Comment must be up to #{max_size} characters"}
     end
+  end
+
+  @doc """
+  Use the data-media-id attributes to extract media from body text
+  """
+  @spec extract_pictures_from_body(String.t(), integer() | String.t()) :: list(Media.t())
+  def extract_pictures_from_body(body, actor_id) do
+    body
+    |> do_extract_pictures_from_body()
+    |> Enum.map(&fetch_picture(&1, actor_id))
+    |> Enum.filter(& &1)
+  end
+
+  @spec do_extract_pictures_from_body(String.t()) :: list(String.t())
+  defp do_extract_pictures_from_body(body) when is_nil(body) or body == "", do: []
+
+  defp do_extract_pictures_from_body(body) do
+    {:ok, document} = Floki.parse_document(body)
+
+    document
+    |> Floki.attribute("img", "data-media-id")
+  end
+
+  @spec fetch_picture(String.t() | integer(), String.t() | integer()) :: Media.t() | nil
+  defp fetch_picture(id, actor_id) do
+    with %Media{actor_id: media_actor_id} = media <- Medias.get_media(id),
+         {:owns_media, true} <-
+           {:owns_media, check_actor_owns_media?(actor_id, media_actor_id)} do
+      media
+    else
+      _ -> nil
+    end
+  end
+
+  @spec check_actor_owns_media?(integer() | String.t(), integer() | String.t()) :: boolean()
+  defp check_actor_owns_media?(actor_id, media_actor_id) do
+    actor_id == media_actor_id || Mobilizon.Actors.is_member?(media_actor_id, actor_id)
   end
 end

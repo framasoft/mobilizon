@@ -10,7 +10,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Media.Picture
+  alias Mobilizon.Medias.Media
 
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.{Activity, Federator, Relay}
@@ -333,50 +333,50 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   Return AS Link data from
 
   * a `Plug.Upload` struct, stored an returned
-  * a `Picture`, directly returned
-  * a map containing picture information, stored, saved and returned
+  * a `Media`, directly returned
+  * a map containing media information, stored, saved and returned
 
-  Save picture data from %Plug.Upload{} and return AS Link data.
+  Save media data from %Plug.Upload{} and return AS Link data.
   """
-  def make_picture_data(%Plug.Upload{} = picture, opts) do
-    case Mobilizon.Web.Upload.store(picture, opts) do
-      {:ok, picture} ->
-        picture
+  def make_media_data(%Plug.Upload{} = media, opts) do
+    case Mobilizon.Web.Upload.store(media, opts) do
+      {:ok, media} ->
+        media
 
       _ ->
         nil
     end
   end
 
-  def make_picture_data(%Picture{} = picture) do
-    Converter.Picture.model_to_as(picture)
+  def make_media_data(%Media{} = media) do
+    Converter.Media.model_to_as(media)
   end
 
-  def make_picture_data(picture) when is_map(picture) do
+  def make_media_data(media) when is_map(media) do
     with {:ok, %{"url" => [%{"href" => url, "mediaType" => content_type}], "size" => size}} <-
-           Mobilizon.Web.Upload.store(picture.file),
-         {:picture_exists, nil} <- {:picture_exists, Mobilizon.Media.get_picture_by_url(url)},
-         {:ok, %Picture{file: _file} = picture} <-
-           Mobilizon.Media.create_picture(%{
+           Mobilizon.Web.Upload.store(media.file),
+         {:media_exists, nil} <- {:media_exists, Mobilizon.Medias.get_media_by_url(url)},
+         {:ok, %Media{file: _file} = media} <-
+           Mobilizon.Medias.create_media(%{
              "file" => %{
                "url" => url,
-               "name" => picture.name,
+               "name" => media.name,
                "content_type" => content_type,
                "size" => size
              },
-             "actor_id" => picture.actor_id
+             "actor_id" => media.actor_id
            }) do
-      Converter.Picture.model_to_as(picture)
+      Converter.Media.model_to_as(media)
     else
-      {:picture_exists, %Picture{file: _file} = picture} ->
-        Converter.Picture.model_to_as(picture)
+      {:media_exists, %Media{file: _file} = media} ->
+        Converter.Media.model_to_as(media)
 
       err ->
         err
     end
   end
 
-  def make_picture_data(nil), do: nil
+  def make_media_data(nil), do: nil
 
   @doc """
   Make announce activity data for the given actor and object

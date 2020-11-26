@@ -8,7 +8,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias Mobilizon.{Actors, Addresses, Discussions}
-  alias Mobilizon.GraphQL.Resolvers.{Event, Picture, Tag}
+  alias Mobilizon.GraphQL.Resolvers.{Event, Media, Tag}
   alias Mobilizon.GraphQL.Schema
 
   import_types(Schema.AddressType)
@@ -31,9 +31,14 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     field(:visibility, :event_visibility, description: "The event's visibility")
     field(:join_options, :event_join_options, description: "The event's visibility")
 
-    field(:picture, :picture,
+    field(:picture, :media,
       description: "The event's picture",
-      resolve: &Picture.picture/3
+      resolve: &Media.media/3
+    )
+
+    field(:media, list_of(:media),
+      description: "The event's media",
+      resolve: &Media.medias/3
     )
 
     field(:publish_at, :datetime, description: "When the event was published")
@@ -328,9 +333,9 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
         description: "The list of tags associated to the event"
       )
 
-      arg(:picture, :picture_input,
+      arg(:picture, :media_input,
         description:
-          "The picture for the event, either as an object or directly the ID of an existing Picture"
+          "The picture for the event, either as an object or directly the ID of an existing media"
       )
 
       arg(:publish_at, :datetime, description: "Datetime when the event was published")
@@ -379,9 +384,9 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
 
       arg(:tags, list_of(:string), description: "The list of tags associated to the event")
 
-      arg(:picture, :picture_input,
+      arg(:picture, :media_input,
         description:
-          "The picture for the event, either as an object or directly the ID of an existing Picture"
+          "The picture for the event, either as an object or directly the ID of an existing media"
       )
 
       arg(:online_address, :string, description: "Online address of the event")

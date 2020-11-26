@@ -28,6 +28,8 @@ config :mobilizon, :instance,
   upload_limit: 10_000_000,
   avatar_upload_limit: 2_000_000,
   banner_upload_limit: 4_000_000,
+  remove_orphan_uploads: true,
+  orphan_upload_grace_period_hours: 48,
   email_from: "noreply@localhost",
   email_reply_to: "noreply@localhost"
 
@@ -250,6 +252,8 @@ config :mobilizon, Oban,
   crontab: [
     {"@hourly", Mobilizon.Service.Workers.BuildSiteMap, queue: :background},
     {"17 * * * *", Mobilizon.Service.Workers.RefreshGroups, queue: :background}
+    # To be activated in Mobilizon 1.2
+    # {"@hourly", Mobilizon.Service.Workers.CleanOrphanMediaWorker, queue: :background}
   ]
 
 config :mobilizon, :rich_media,

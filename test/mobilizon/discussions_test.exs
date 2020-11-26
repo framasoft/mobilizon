@@ -58,7 +58,8 @@ defmodule Mobilizon.DiscussionsTest do
       %Comment{} = comment = insert(:comment)
       assert {:error, %Ecto.Changeset{}} = Discussions.update_comment(comment, @invalid_attrs)
       %Comment{} = comment_fetched = Discussions.get_comment!(comment.id)
-      assert comment = comment_fetched
+      assert comment.text == comment_fetched.text
+      assert comment.url == comment_fetched.url
     end
 
     test "delete_comment/1 deletes the comment" do

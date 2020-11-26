@@ -1,6 +1,6 @@
 import { Address, IAddress } from "@/types/address.model";
 import { ITag } from "@/types/tag.model";
-import { IPicture } from "@/types/picture.model";
+import { IMedia } from "@/types/media.model";
 import { IComment } from "@/types/comment.model";
 import { Paginate } from "@/types/paginate";
 import { Actor, Group, IActor, IGroup, IPerson } from "./actor";
@@ -69,7 +69,7 @@ interface IEventEditJSON {
   visibility: EventVisibility;
   joinOptions: EventJoinOptions;
   draft: boolean;
-  picture?: IPicture | { pictureId: string } | null;
+  picture?: IMedia | { mediaId: string } | null;
   attributedToId: string | null;
   onlineAddress?: string;
   phoneAddress?: string;
@@ -96,7 +96,7 @@ export interface IEvent {
   joinOptions: EventJoinOptions;
   draft: boolean;
 
-  picture: IPicture | null;
+  picture: IMedia | null;
 
   organizerActor?: IActor;
   attributedTo?: IGroup;
@@ -142,7 +142,7 @@ export class EventModel implements IEvent {
 
   physicalAddress?: IAddress;
 
-  picture: IPicture | null = null;
+  picture: IMedia | null = null;
 
   visibility = EventVisibility.PUBLIC;
 

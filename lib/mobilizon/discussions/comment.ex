@@ -11,6 +11,7 @@ defmodule Mobilizon.Discussions.Comment do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.{Comment, CommentVisibility, Discussion}
   alias Mobilizon.Events.{Event, Tag}
+  alias Mobilizon.Medias.Media
   alias Mobilizon.Mention
 
   alias Mobilizon.Web.Endpoint
@@ -27,6 +28,7 @@ defmodule Mobilizon.Discussions.Comment do
           event: Event.t(),
           tags: [Tag.t()],
           mentions: [Mention.t()],
+          media: [Media.t()],
           in_reply_to_comment: t,
           origin_comment: t
         }
@@ -66,6 +68,7 @@ defmodule Mobilizon.Discussions.Comment do
     has_many(:replies, Comment, foreign_key: :in_reply_to_comment_id)
     many_to_many(:tags, Tag, join_through: "comments_tags", on_replace: :delete)
     has_many(:mentions, Mention)
+    many_to_many(:media, Media, join_through: "comments_medias", on_replace: :delete)
 
     timestamps(type: :utc_datetime)
   end
@@ -120,6 +123,7 @@ defmodule Mobilizon.Discussions.Comment do
     |> maybe_add_published_at()
     |> maybe_generate_uuid()
     |> maybe_generate_url()
+    |> put_assoc(:media, Map.get(attrs, :media, []))
     |> put_tags(attrs)
     |> put_mentions(attrs)
   end

@@ -103,7 +103,7 @@ defmodule Mobilizon.Posts do
   @spec update_post(Post.t(), map) :: {:ok, Post.t()} | {:error, Ecto.Changeset.t()}
   def update_post(%Post{} = post, attrs) do
     post
-    |> Repo.preload(:tags)
+    |> Repo.preload([:tags, :media])
     |> Post.changeset(attrs)
     |> Repo.update()
   end
