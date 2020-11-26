@@ -8,8 +8,8 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-11-25 15:53+0000\n"
-"Last-Translator: x <hardwired1.0@protonmail.com>\n"
+"PO-Revision-Date: 2020-11-26 06:52+0000\n"
+"Last-Translator: frama late <loss@e.email>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/it/>\n"
 "Language: it\n"
@@ -850,7 +850,7 @@ msgstr "Questo nome utente è già in uso."
 #: lib/graphql/resolvers/discussion.ex:72
 #, elixir-format
 msgid "You must provide either an ID or a slug to access a discussion"
-msgstr "Devi fornire un ID o uno slug per accedere a una discussione"
+msgstr "Devi fornire un ID o l'indirizzo utente per accedere ad una discussione"
 
 #: lib/graphql/resolvers/event.ex:199
 #, elixir-format
