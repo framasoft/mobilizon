@@ -59,7 +59,7 @@ defmodule Mobilizon.Posts.Post do
     field(:visibility, PostVisibility, default_value: :public)
     belongs_to(:author, Actor)
     belongs_to(:attributed_to, Actor)
-    belongs_to(:picture, Picture, on_replace: :update)
+    belongs_to(:picture, Media, on_replace: :update)
     many_to_many(:tags, Tag, join_through: "posts_tags", on_replace: :delete)
     many_to_many(:media, Media, join_through: "posts_medias", on_replace: :delete)
 
