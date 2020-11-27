@@ -145,7 +145,6 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
     with %Actor{user_id: user_id} when not is_nil(user_id) <-
            Actors.get_actor(organizer_actor_id),
          %User{
-           locale: locale,
            settings: %Setting{
              notification_pending_participation: notification_pending_participation,
              timezone: timezone
@@ -160,7 +159,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
             :direct
 
           :one_day ->
-            calculate_next_day_notification(Date.utc_today(), timezone, locale)
+            calculate_next_day_notification(Date.utc_today(), timezone)
 
           :one_hour ->
             DateTime.utc_now()
@@ -219,7 +218,6 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
   defp pending_membership_admin_notification_user(
          %User{
            id: user_id,
-           locale: locale,
            settings: %Setting{
              notification_pending_membership: notification_pending_membership,
              timezone: timezone
@@ -236,7 +234,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
           :direct
 
         :one_day ->
-          calculate_next_day_notification(Date.utc_today(), timezone, locale)
+          calculate_next_day_notification(Date.utc_today(), timezone)
 
         :one_hour ->
           DateTime.utc_now()
@@ -280,13 +278,12 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
       else: calculate_first_day_of_week(Date.add(date, -1), locale)
   end
 
-  defp calculate_next_day_notification(%Date{} = day, timezone, locale) do
+  defp calculate_next_day_notification(%Date{} = day, timezone) do
     send_at = date_to_datetime(day, ~T[18:00:00], timezone)
 
     if DateTime.compare(send_at, DateTime.utc_now()) == :lt do
       day
       |> Date.add(1)
-      |> calculate_first_day_of_week(locale)
       |> date_to_datetime(~T[18:00:00], timezone)
     else
       send_at
