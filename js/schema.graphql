@@ -75,11 +75,11 @@ type Application {
   "If the actor is suspended"
   suspended: Boolean
 
-  "The actor's avatar picture"
-  avatar: Picture
+  "The actor's avatar media"
+  avatar: Media
 
-  "The actor's banner picture"
-  banner: Picture
+  "The actor's banner media"
+  banner: Media
 
   "List of followings"
   following: [Follower]
@@ -92,6 +92,9 @@ type Application {
 
   "Number of actors following this actor"
   followingCount: Int
+
+  "The total size of the media from this actor"
+  mediaSize: Int
 }
 
 "Instance anonymous event creation configuration"
@@ -244,27 +247,6 @@ type Language {
   name: String
 }
 
-"A picture"
-type Picture {
-  "The picture's ID"
-  id: ID
-
-  "The picture's alternative text"
-  alt: String
-
-  "The picture's name"
-  name: String
-
-  "The picture's full URL"
-  url: String
-
-  "The picture's detected content type"
-  contentType: String
-
-  "The picture's size"
-  size: Int
-}
-
 "The list of roles an user can have"
 enum UserRole {
   "Administrator role"
@@ -410,13 +392,13 @@ type Comment {
   publishedAt: DateTime
 }
 
-"An attached picture or a link to a picture"
-input PictureInput {
-  "A full picture attached"
-  picture: PictureInputObject
+"An attached media or a link to a media"
+input MediaInput {
+  "A full media attached"
+  media: MediaInputObject
 
-  "The ID of an existing picture"
-  pictureId: ID
+  "The ID of an existing media"
+  mediaId: ID
 }
 
 "Instance anonymous reports"
@@ -510,6 +492,27 @@ type ParticipantMetadata {
 
   "The participant's locale"
   locale: String
+}
+
+"A media"
+type Media {
+  "The media's ID"
+  id: ID
+
+  "The media's alternative text"
+  alt: String
+
+  "The media's name"
+  name: String
+
+  "The media's full URL"
+  url: String
+
+  "The media's detected content type"
+  contentType: String
+
+  "The media's size"
+  size: Int
 }
 
 "Instance anonymous participation with validation by captcha configuration"
@@ -720,8 +723,8 @@ type Post {
   "The post's tags"
   tags: [Tag]
 
-  "The event's picture"
-  picture: Picture
+  "The posts's media"
+  picture: Media
 }
 
 "A paginated list of events"
@@ -846,11 +849,11 @@ interface Actor {
   "If the actor is suspended"
   suspended: Boolean
 
-  "The actor's avatar picture"
-  avatar: Picture
+  "The actor's avatar media"
+  avatar: Media
 
-  "The actor's banner picture"
-  banner: Picture
+  "The actor's banner media"
+  banner: Media
 
   "List of followings"
   following: [Follower]
@@ -863,6 +866,9 @@ interface Actor {
 
   "Number of actors following this actor"
   followingCount: Int
+
+  "The total size of the media from this actor"
+  mediaSize: Int
 }
 
 "Instance anonymous event creation validation configuration"
@@ -924,11 +930,11 @@ type Person {
   "If the actor is suspended"
   suspended: Boolean
 
-  "The actor's avatar picture"
-  avatar: Picture
+  "The actor's avatar media"
+  avatar: Media
 
-  "The actor's banner picture"
-  banner: Picture
+  "The actor's banner media"
+  banner: Media
 
   "List of followings"
   following: [Follower]
@@ -941,6 +947,9 @@ type Person {
 
   "Number of actors following this actor"
   followingCount: Int
+
+  "The total size of the media from this actor"
+  mediaSize: Int
 
   "A list of the feed tokens for this person"
   feedTokens: [FeedToken]
@@ -1105,11 +1114,11 @@ type RootMutationType {
     "The summary for the new profile"
     summary: String
 
-    "The avatar for the profile, either as an object or directly the ID of an existing Picture"
-    avatar: PictureInput
+    "The avatar for the profile, either as an object or directly the ID of an existing media"
+    avatar: MediaInput
 
-    "The banner for the profile, either as an object or directly the ID of an existing Picture"
-    banner: PictureInput
+    "The banner for the profile, either as an object or directly the ID of an existing media"
+    banner: MediaInput
   ): Person
 
   "Update an identity"
@@ -1123,11 +1132,11 @@ type RootMutationType {
     "The summary for this profile"
     summary: String
 
-    "The avatar for the profile, either as an object or directly the ID of an existing Picture"
-    avatar: PictureInput
+    "The avatar for the profile, either as an object or directly the ID of an existing media"
+    avatar: MediaInput
 
-    "The banner for the profile, either as an object or directly the ID of an existing Picture"
-    banner: PictureInput
+    "The banner for the profile, either as an object or directly the ID of an existing media"
+    banner: MediaInput
   ): Person
 
   "Delete an identity"
@@ -1147,11 +1156,11 @@ type RootMutationType {
     "The email from the user previously created"
     email: String!
 
-    "The avatar for the profile, either as an object or directly the ID of an existing Picture"
-    avatar: PictureInput
+    "The avatar for the profile, either as an object or directly the ID of an existing media"
+    avatar: MediaInput
 
-    "The banner for the profile, either as an object or directly the ID of an existing Picture"
-    banner: PictureInput
+    "The banner for the profile, either as an object or directly the ID of an existing media"
+    banner: MediaInput
   ): Person
 
   "Create a group"
@@ -1168,11 +1177,11 @@ type RootMutationType {
     "The visibility for the group"
     visibility: GroupVisibility
 
-    "The avatar for the group, either as an object or directly the ID of an existing Picture"
-    avatar: PictureInput
+    "The avatar for the group, either as an object or directly the ID of an existing media"
+    avatar: MediaInput
 
-    "The banner for the group, either as an object or directly the ID of an existing Picture"
-    banner: PictureInput
+    "The banner for the group, either as an object or directly the ID of an existing media"
+    banner: MediaInput
 
     "The physical address for the group"
     physicalAddress: AddressInput
@@ -1195,11 +1204,11 @@ type RootMutationType {
     "Whether the group can be join freely, with approval or is invite-only."
     openness: Openness
 
-    "The avatar for the group, either as an object or directly the ID of an existing Picture"
-    avatar: PictureInput
+    "The avatar for the group, either as an object or directly the ID of an existing media"
+    avatar: MediaInput
 
-    "The banner for the group, either as an object or directly the ID of an existing Picture"
-    banner: PictureInput
+    "The banner for the group, either as an object or directly the ID of an existing media"
+    banner: MediaInput
 
     "The physical address for the group"
     physicalAddress: AddressInput
@@ -1234,8 +1243,8 @@ type RootMutationType {
     "The list of tags associated to the event"
     tags: [String]
 
-    "The picture for the event, either as an object or directly the ID of an existing Picture"
-    picture: PictureInput
+    "The picture for the event, either as an object or directly the ID of an existing media"
+    picture: MediaInput
 
     "Datetime when the event was published"
     publishAt: DateTime
@@ -1297,8 +1306,8 @@ type RootMutationType {
     "The list of tags associated to the event"
     tags: [String]
 
-    "The picture for the event, either as an object or directly the ID of an existing Picture"
-    picture: PictureInput
+    "The picture for the event, either as an object or directly the ID of an existing media"
+    picture: MediaInput
 
     "Online address of the event"
     onlineAddress: String
@@ -1421,6 +1430,7 @@ type RootMutationType {
   "Reject an invitation to a group"
   rejectInvitation("The member ID" id: ID!): Member
 
+  "Update a member's role"
   updateMember(
     "The member ID"
     memberId: ID!
@@ -1444,17 +1454,20 @@ type RootMutationType {
   "Delete a feed token"
   deleteFeedToken("The token to delete" token: String!): DeletedFeedToken
 
-  "Upload a picture"
-  uploadPicture(
-    "The picture's name"
+  "Upload a media"
+  uploadMedia(
+    "The media's name"
     name: String!
 
-    "The picture's alternative text"
+    "The media's alternative text"
     alt: String
 
-    "The picture file"
+    "The media file"
     file: Upload!
-  ): Picture
+  ): Media
+
+  "Remove a media"
+  removeMedia("The media's ID" id: ID!): DeletedObject
 
   "Create a report"
   createReport(
@@ -1704,8 +1717,8 @@ type RootMutationType {
     "The list of tags associated to the post"
     tags: [String]
 
-    "The banner for the post, either as an object or directly the ID of an existing Picture"
-    picture: PictureInput
+    "The banner for the post, either as an object or directly the ID of an existing media"
+    picture: MediaInput
   ): Post
 
   "Update a post"
@@ -1734,8 +1747,8 @@ type RootMutationType {
     "The list of tags associated to the post"
     tags: [String]
 
-    "The banner for the post, either as an object or directly the ID of an existing Picture"
-    picture: PictureInput
+    "The banner for the post, either as an object or directly the ID of an existing media"
+    picture: MediaInput
   ): Post
 
   "Delete a post"
@@ -1985,8 +1998,8 @@ type RootQueryType {
   "Get the instance config"
   config: Config
 
-  "Get a picture"
-  picture("The picture ID" id: String!): Picture
+  "Get a media"
+  media("The media ID" id: ID!): Media
 
   "Get all reports"
   reports(
@@ -2310,7 +2323,10 @@ type Event {
   joinOptions: EventJoinOptions
 
   "The event's picture"
-  picture: Picture
+  picture: Media
+
+  "The event's media"
+  media: [Media]
 
   "When the event was published"
   publishAt: DateTime
@@ -2385,12 +2401,28 @@ input EventOfferInput {
   url: String
 }
 
+"An attached media"
+input MediaInputObject {
+  "The media's name"
+  name: String!
+
+  "The media's alternative text"
+  alt: String
+
+  "The media file"
+  file: Upload!
+
+  "The media owner"
+  actorId: ID
+}
+
 """
 The `Point` scalar type represents Point geographic information compliant string data,
 represented as floats separated by a semi-colon. The geodetic system is WGS 84
 """
 scalar Point
 
+"An address input"
 input AddressInput {
   "The geocoordinates for the point where this address is"
   geom: Point
@@ -2746,19 +2778,13 @@ input Contact {
   id: String
 }
 
-"An attached picture"
-input PictureInputObject {
-  "The picture's name"
-  name: String!
+"A paginated list of medias"
+type PaginatedMediaList {
+  "The list of medias"
+  elements: [Media]
 
-  "The picture's alternative text"
-  alt: String
-
-  "The picture file"
-  file: Upload!
-
-  "The picture owner"
-  actorId: ID
+  "The total number of medias in the list"
+  total: Int
 }
 
 "Geographic coordinates"
@@ -2851,6 +2877,7 @@ enum Openness {
   OPEN
 }
 
+"An address object"
 type Address {
   "The geocoordinates for the point where this address is"
   geom: Point
@@ -2979,6 +3006,7 @@ type Features {
   eventCreation: Boolean
 }
 
+"A set of user settings"
 type UserSettings {
   "The timezone for this user"
   timezone: String
@@ -3114,6 +3142,18 @@ type User {
 
   "The IP adress the user's currently signed-in with"
   currentSignInIp: String
+
+  "The user's media objects"
+  media(
+    "The page in the paginated user media list"
+    page: Int
+
+    "The limit of user media per page"
+    limit: Int
+  ): PaginatedMediaList
+
+  "The total size of all the media from this user (from all their actors)"
+  mediaSize: Int
 }
 
 "Represents a group of actors"
@@ -3151,11 +3191,11 @@ type Group {
   "If the actor is suspended"
   suspended: Boolean
 
-  "The actor's avatar picture"
-  avatar: Picture
+  "The actor's avatar media"
+  avatar: Media
 
-  "The actor's banner picture"
-  banner: Picture
+  "The actor's banner media"
+  banner: Media
 
   "The type of the event's address"
   physicalAddress: Address
@@ -3171,6 +3211,9 @@ type Group {
 
   "Number of actors following this actor"
   followingCount: Int
+
+  "The total size of the media from this actor"
+  mediaSize: Int
 
   "A list of the events this actor has organized"
   organizedEvents(
