@@ -74,7 +74,8 @@ import Subtitle from "@/components/Utils/Subtitle.vue";
 import EventListViewCard from "@/components/Event/EventListViewCard.vue";
 import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import GroupMixin from "@/mixins/group";
-import { IGroup, IMember, IPerson, usernameWithDomain } from "../../types/actor";
+import { IMember } from "@/types/actor/member.model";
+import { IGroup, IPerson, usernameWithDomain } from "../../types/actor";
 
 @Component({
   apollo: {

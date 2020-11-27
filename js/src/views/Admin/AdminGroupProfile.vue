@@ -199,8 +199,9 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { GET_GROUP, REFRESH_PROFILE } from "@/graphql/group";
 import { formatBytes } from "@/utils/datetime";
+import { MemberRole } from "@/types/enums";
 import { SUSPEND_PROFILE, UNSUSPEND_PROFILE } from "../../graphql/actor";
-import { IGroup, MemberRole } from "../../types/actor";
+import { IGroup } from "../../types/actor";
 import { usernameWithDomain, IActor } from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
 import ActorCard from "../../components/Account/ActorCard.vue";

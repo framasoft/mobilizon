@@ -152,6 +152,7 @@ import {
   startOfMonth,
   eachWeekendOfInterval,
 } from "date-fns";
+import { SearchTabs } from "@/types/enums";
 import EventCard from "../components/Event/EventCard.vue";
 import { FETCH_EVENTS } from "../graphql/event";
 import { IEvent } from "../types/event.model";
@@ -160,7 +161,6 @@ import { IAddress, Address } from "../types/address.model";
 import AddressAutoComplete from "../components/Event/AddressAutoComplete.vue";
 import { SEARCH_EVENTS, SEARCH_GROUPS } from "../graphql/search";
 import { Paginate } from "../types/paginate";
-import { SearchTabs } from "../types/search.model";
 import { IGroup } from "../types/actor";
 import GroupCard from "../components/Group/GroupCard.vue";
 import { CONFIG } from "../graphql/config";

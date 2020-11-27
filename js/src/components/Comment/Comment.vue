@@ -137,7 +137,7 @@ import { Component, Prop, Vue, Ref } from "vue-property-decorator";
 import EditorComponent from "@/components/Editor.vue";
 import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { formatDistanceToNow } from "date-fns";
-import { CommentModeration } from "../../types/event-options.model";
+import { CommentModeration } from "@/types/enums";
 import { CommentModel, IComment } from "../../types/comment.model";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { IPerson, usernameWithDomain } from "../../types/actor";

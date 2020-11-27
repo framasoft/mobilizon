@@ -43,9 +43,10 @@
 </template>
 <script lang="ts">
 import { usernameWithDomain } from "@/types/actor";
+import { PostVisibility } from "@/types/enums";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import RouteName from "../../router/name";
-import { IPost, PostVisibility } from "../../types/post.model";
+import { IPost } from "../../types/post.model";
 
 @Component
 export default class PostElementItem extends Vue {

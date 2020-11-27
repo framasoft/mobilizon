@@ -82,7 +82,7 @@ import { IComment } from "../../types/comment.model";
   },
 })
 export default class ReportModal extends Vue {
-  @Prop({ type: Function }) onConfirm!: Function;
+  @Prop({ type: Function }) onConfirm!: (content: string, forward: boolean) => void;
 
   @Prop({ type: String }) title!: string;
 

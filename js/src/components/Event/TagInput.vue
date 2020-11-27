@@ -40,7 +40,6 @@ import { ITag } from "../../types/tag.model";
           if (typeof tag !== "string") {
             return tag;
           }
-          // @ts-ignore
           return { title: tag, slug: tag } as ITag;
         });
         this.$emit("input", tagEntities);
@@ -57,14 +56,10 @@ export default class TagInput extends Vue {
 
   filteredTags: ITag[] = [];
 
-  getFilteredTags(text: string) {
+  getFilteredTags(text: string): void {
     this.filteredTags = differenceBy(this.data, this.value, "id").filter(
       (option) => get(option, this.path).toString().toLowerCase().indexOf(text.toLowerCase()) >= 0
     );
-  }
-
-  static isTag(x: any): x is ITag {
-    return x.slug !== undefined;
   }
 }
 </script>

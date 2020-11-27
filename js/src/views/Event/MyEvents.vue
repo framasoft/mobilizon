@@ -88,7 +88,8 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { IParticipant, Participant, ParticipantRole } from "../../types/participant.model";
+import { ParticipantRole } from "@/types/enums";
+import { IParticipant, Participant } from "../../types/participant.model";
 import { LOGGED_USER_PARTICIPATIONS, LOGGED_USER_DRAFTS } from "../../graphql/actor";
 import { EventModel, IEvent } from "../../types/event.model";
 import EventListCard from "../../components/Event/EventListCard.vue";

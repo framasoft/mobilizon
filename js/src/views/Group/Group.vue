@@ -362,7 +362,7 @@
 <script lang="ts">
 import { Component, Prop, Watch } from "vue-property-decorator";
 import EventCard from "@/components/Event/EventCard.vue";
-import { IActor, usernameWithDomain, MemberRole, IMember, Openness } from "@/types/actor";
+import { IActor, usernameWithDomain } from "@/types/actor";
 import Subtitle from "@/components/Utils/Subtitle.vue";
 import CompactTodo from "@/components/Todo/CompactTodo.vue";
 import EventMinimalistCard from "@/components/Event/EventMinimalistCard.vue";
@@ -380,6 +380,8 @@ import { IConfig } from "@/types/config.model";
 import GroupMixin from "@/mixins/group";
 import { mixins } from "vue-class-component";
 import { JOIN_GROUP } from "@/graphql/member";
+import { MemberRole, Openness } from "@/types/enums";
+import { IMember } from "@/types/actor/member.model";
 import RouteName from "../../router/name";
 import GroupSection from "../../components/Group/GroupSection.vue";
 import ReportModal from "../../components/Report/ReportModal.vue";

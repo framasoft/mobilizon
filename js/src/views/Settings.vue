@@ -10,14 +10,13 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
-import { Route } from "vue-router";
+import { Component, Vue } from "vue-property-decorator";
 import SettingsMenu from "../components/Settings/SettingsMenu.vue";
 import RouteName from "../router/name";
 import { IPerson, Person } from "../types/actor";
 import { IDENTITIES } from "../graphql/actor";
 import { CURRENT_USER_CLIENT } from "../graphql/user";
-import { ICurrentUser, ICurrentUserRole } from "../types/current-user.model";
+import { ICurrentUser } from "../types/current-user.model";
 
 @Component({
   components: { SettingsMenu },

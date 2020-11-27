@@ -1,13 +1,8 @@
-import { IEvent } from "@/types/event.model";
-import { IPerson } from "@/types/actor/person.model";
-import { Paginate } from "./paginate";
-import { IParticipant } from "./participant.model";
-
-export enum ICurrentUserRole {
-  USER = "USER",
-  MODERATOR = "MODERATOR",
-  ADMINISTRATOR = "ADMINISTRATOR",
-}
+import type { IEvent } from "@/types/event.model";
+import type { IPerson } from "@/types/actor/person.model";
+import type { Paginate } from "./paginate";
+import type { IParticipant } from "./participant.model";
+import { ICurrentUserRole, INotificationPendingEnum } from "./enums";
 
 export interface ICurrentUser {
   id: string;
@@ -15,13 +10,6 @@ export interface ICurrentUser {
   isLoggedIn: boolean;
   role: ICurrentUserRole;
   defaultActor?: IPerson;
-}
-
-export enum INotificationPendingEnum {
-  NONE = "NONE",
-  DIRECT = "DIRECT",
-  ONE_DAY = "ONE_DAY",
-  ONE_HOUR = "ONE_HOUR",
 }
 
 export interface IUserSettings {
@@ -48,15 +36,4 @@ export interface IUser extends ICurrentUser {
   lastSignInIp: string;
   currentSignInIp: string;
   currentSignInAt: string;
-}
-
-export enum IAuthProvider {
-  LDAP = "ldap",
-  GOOGLE = "google",
-  DISCORD = "discord",
-  GITHUB = "github",
-  KEYCLOAK = "keycloak",
-  FACEBOOK = "facebook",
-  GITLAB = "gitlab",
-  TWITTER = "twitter",
 }

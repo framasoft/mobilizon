@@ -9,7 +9,11 @@ export async function buildFileFromIMedia(obj: IMedia | null | undefined): Promi
   return new File([blob], obj.name);
 }
 
-export function buildFileVariable(file: File | null, name: string, alt?: string): Record<string, unknown> {
+export function buildFileVariable(
+  file: File | null,
+  name: string,
+  alt?: string
+): Record<string, unknown> {
   if (!file) return {};
 
   return {

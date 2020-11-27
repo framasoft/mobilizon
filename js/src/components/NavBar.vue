@@ -109,13 +109,14 @@ import { Component, Vue, Watch } from "vue-property-decorator";
 import Logo from "@/components/Logo.vue";
 import { GraphQLError } from "graphql";
 import { loadLanguageAsync } from "@/utils/i18n";
+import { ICurrentUserRole } from "@/types/enums";
 import { CURRENT_USER_CLIENT, USER_SETTINGS } from "../graphql/user";
 import { changeIdentity, logout } from "../utils/auth";
 import { CURRENT_ACTOR_CLIENT, IDENTITIES, UPDATE_DEFAULT_ACTOR } from "../graphql/actor";
 import { IPerson, Person } from "../types/actor";
 import { CONFIG } from "../graphql/config";
 import { IConfig } from "../types/config.model";
-import { ICurrentUser, ICurrentUserRole, IUser } from "../types/current-user.model";
+import { ICurrentUser, IUser } from "../types/current-user.model";
 import SearchField from "./SearchField.vue";
 import RouteName from "../router/name";
 

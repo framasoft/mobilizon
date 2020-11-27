@@ -51,8 +51,10 @@ import { LEAVE_GROUP } from "@/graphql/group";
 import GroupMemberCard from "@/components/Group/GroupMemberCard.vue";
 import Invitations from "@/components/Group/Invitations.vue";
 import { Paginate } from "@/types/paginate";
-import { IGroup, IMember, MemberRole, usernameWithDomain } from "@/types/actor";
+import { IGroup, usernameWithDomain } from "@/types/actor";
 import { Route } from "vue-router";
+import { IMember } from "@/types/actor/member.model";
+import { MemberRole } from "@/types/enums";
 import RouteName from "../../router/name";
 
 @Component({

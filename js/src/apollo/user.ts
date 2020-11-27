@@ -1,8 +1,11 @@
+import { ICurrentUserRole } from "@/types/enums";
 import { ApolloCache } from "apollo-cache";
 import { NormalizedCacheObject } from "apollo-cache-inmemory";
-import { ICurrentUserRole } from "@/types/current-user.model";
+import { Resolvers } from "apollo-client/core/types";
 
-export default function buildCurrentUserResolver(cache: ApolloCache<NormalizedCacheObject>) {
+export default function buildCurrentUserResolver(
+  cache: ApolloCache<NormalizedCacheObject>
+): Resolvers {
   cache.writeData({
     data: {
       currentUser: {

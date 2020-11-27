@@ -18,7 +18,6 @@ export enum EventRouteName {
   EVENT_PARTICIPATE_WITHOUT_ACCOUNT = "EVENT_PARTICIPATE_WITHOUT_ACCOUNT",
   EVENT_PARTICIPATE_LOGGED_OUT = "EVENT_PARTICIPATE_LOGGED_OUT",
   EVENT_PARTICIPATE_CONFIRM = "EVENT_PARTICIPATE_CONFIRM",
-  LOCATION = "Location",
   TAG = "Tag",
 }
 
@@ -46,14 +45,17 @@ export const eventRoutes: RouteConfig[] = [
     name: EventRouteName.EDIT_EVENT,
     component: editEvent,
     meta: { requiredAuth: true },
-    props: (route: Route) => ({ ...route.params, ...{ isUpdate: true } }),
+    props: (route: Route): Record<string, unknown> => ({ ...route.params, ...{ isUpdate: true } }),
   },
   {
     path: "/events/duplicate/:eventId",
     name: EventRouteName.DUPLICATE_EVENT,
     component: editEvent,
     meta: { requiredAuth: true },
-    props: (route: Route) => ({ ...route.params, ...{ isDuplicate: true } }),
+    props: (route: Route): Record<string, unknown> => ({
+      ...route.params,
+      ...{ isDuplicate: true },
+    }),
   },
   {
     path: "/events/:eventId/participations",
@@ -61,12 +63,6 @@ export const eventRoutes: RouteConfig[] = [
     component: participations,
     meta: { requiredAuth: true },
     props: true,
-  },
-  {
-    path: "/location/new",
-    name: EventRouteName.LOCATION,
-    component: () => import(/* webpackChunkName: "Location" */ "@/views/Location.vue"),
-    meta: { requiredAuth: true },
   },
   {
     path: "/events/:uuid",

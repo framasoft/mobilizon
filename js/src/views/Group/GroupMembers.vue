@@ -184,10 +184,11 @@ import { Component, Watch } from "vue-property-decorator";
 import GroupMixin from "@/mixins/group";
 import { mixins } from "vue-class-component";
 import { FETCH_GROUP } from "@/graphql/group";
+import { MemberRole } from "@/types/enums";
+import { IMember } from "@/types/actor/member.model";
 import RouteName from "../../router/name";
 import { INVITE_MEMBER, GROUP_MEMBERS, REMOVE_MEMBER, UPDATE_MEMBER } from "../../graphql/member";
 import { usernameWithDomain } from "../../types/actor";
-import { IMember, MemberRole } from "../../types/actor/group.model";
 
 @Component({
   apollo: {

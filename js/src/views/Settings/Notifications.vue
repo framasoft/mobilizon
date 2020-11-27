@@ -102,8 +102,9 @@
 </template>
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
+import { INotificationPendingEnum } from "@/types/enums";
 import { USER_SETTINGS, SET_USER_SETTINGS } from "../../graphql/user";
-import { IUser, INotificationPendingEnum } from "../../types/current-user.model";
+import { IUser } from "../../types/current-user.model";
 import RouteName from "../../router/name";
 
 @Component({

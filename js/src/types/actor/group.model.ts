@@ -1,38 +1,15 @@
-import { Actor, ActorType, IActor } from "./actor.model";
-import { Paginate } from "../paginate";
-import { IResource } from "../resource";
-import { ITodoList } from "../todos";
-import { IEvent } from "../event.model";
-import { IDiscussion } from "../discussions";
-import { IPerson } from "./person.model";
-import { IPost } from "../post.model";
-import { IAddress, Address } from "../address.model";
-
-export enum MemberRole {
-  NOT_APPROVED = "NOT_APPROVED",
-  INVITED = "INVITED",
-  MEMBER = "MEMBER",
-  MODERATOR = "MODERATOR",
-  ADMINISTRATOR = "ADMINISTRATOR",
-  CREATOR = "CREATOR",
-  REJECTED = "REJECTED",
-}
-
-export enum Openness {
-  INVITE_ONLY = "INVITE_ONLY",
-  MODERATED = "MODERATED",
-  OPEN = "OPEN",
-}
-
-export interface IMember {
-  id?: string;
-  role: MemberRole;
-  parent: IGroup;
-  actor: IActor;
-  invitedBy?: IPerson;
-  insertedAt: string;
-  updatedAt: string;
-}
+import type { IActor } from "./actor.model";
+import { Actor } from "./actor.model";
+import type { Paginate } from "../paginate";
+import type { IResource } from "../resource";
+import type { IEvent } from "../event.model";
+import type { IDiscussion } from "../discussions";
+import type { IPost } from "../post.model";
+import type { IAddress } from "../address.model";
+import { Address } from "../address.model";
+import { ActorType, Openness } from "../enums";
+import type { IMember } from "./member.model";
+import type { ITodoList } from "../todolist";
 
 export interface IGroup extends IActor {
   members: Paginate<IMember>;

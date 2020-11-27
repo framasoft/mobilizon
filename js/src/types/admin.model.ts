@@ -1,5 +1,6 @@
-import { IEvent } from "@/types/event.model";
-import { IGroup } from "./actor";
+import type { IEvent } from "@/types/event.model";
+import type { IGroup } from "./actor";
+import { InstanceTermsType } from "./enums";
 
 export interface IDashboard {
   lastPublicEventPublished: IEvent;
@@ -14,23 +15,10 @@ export interface IDashboard {
   numberOfConfirmedParticipationsToLocalEvents: number;
 }
 
-export enum InstanceTermsType {
-  DEFAULT = "DEFAULT",
-  URL = "URL",
-  CUSTOM = "CUSTOM",
-}
-
-export enum InstancePrivacyType {
-  DEFAULT = "DEFAULT",
-  URL = "URL",
-  CUSTOM = "CUSTOM",
-}
-
 export interface ILanguage {
   code: string;
   name: string;
 }
-
 export interface IAdminSettings {
   instanceName: string;
   instanceDescription: string;

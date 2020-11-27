@@ -16,7 +16,7 @@ export default class SettingMenuItem extends Vue {
 
   @Prop({ required: true, type: Object }) to!: Route;
 
-  get isActive() {
+  get isActive(): boolean {
     if (!this.to) return false;
     if (this.to.name === this.$route.name) {
       if (this.to.params) {

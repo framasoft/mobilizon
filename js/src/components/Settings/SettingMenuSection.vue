@@ -20,11 +20,12 @@ export default class SettingMenuSection extends Vue {
 
   @Prop({ required: true, type: Object }) to!: Route;
 
-  get sectionActive() {
+  get sectionActive(): boolean {
     if (this.$slots.default) {
       return this.$slots.default.some(
         ({
           componentOptions: {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             propsData: { to },
           },

@@ -45,9 +45,10 @@
 </template>
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
-import { IReport, ReportStatusEnum } from "@/types/report.model";
+import { IReport } from "@/types/report.model";
 import { REPORTS } from "@/graphql/report";
 import ReportCard from "@/components/Report/ReportCard.vue";
+import { ReportStatusEnum } from "@/types/enums";
 import RouteName from "../../router/name";
 
 @Component({

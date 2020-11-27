@@ -47,13 +47,14 @@
 <script lang="ts">
 import { Component, Prop } from "vue-property-decorator";
 import { mixins } from "vue-class-component";
-import Editor from "@/components/Editor.vue";
 import GroupMixin from "@/mixins/group";
+import { PostVisibility } from "@/types/enums";
+import { IMember } from "@/types/actor/member.model";
 import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "../../graphql/actor";
 import { FETCH_POST } from "../../graphql/post";
 
-import { IPost, PostVisibility } from "../../types/post.model";
-import { IMember, IPerson, usernameWithDomain } from "../../types/actor";
+import { IPost } from "../../types/post.model";
+import { IPerson, usernameWithDomain } from "../../types/actor";
 import RouteName from "../../router/name";
 import Tag from "../../components/Tag.vue";
 

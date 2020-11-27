@@ -12,8 +12,9 @@
   </v-popover>
 </template>
 <script lang="ts">
+import { ActorType } from "@/types/enums";
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { IActor, ActorType } from "../../types/actor";
+import { IActor } from "../../types/actor";
 import ActorCard from "./ActorCard.vue";
 
 @Component({

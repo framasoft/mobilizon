@@ -11,8 +11,8 @@
 </template>
 
 <script lang="ts">
+import { ErrorCode } from "@/types/enums";
 import { Component, Vue } from "vue-property-decorator";
-import { ErrorCode } from "@/types/error-code.model";
 
 @Component
 export default class ErrorPage extends Vue {
@@ -20,7 +20,7 @@ export default class ErrorPage extends Vue {
 
   ErrorCode = ErrorCode;
 
-  mounted() {
+  mounted(): void {
     this.code = this.$route.query.code as ErrorCode;
   }
 }

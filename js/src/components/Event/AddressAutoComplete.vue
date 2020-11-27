@@ -50,7 +50,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { LatLng } from "leaflet";
-import { debounce } from "lodash";
+import { debounce, DebouncedFunc } from "lodash";
 import { Address, IAddress } from "../../types/address.model";
 import { ADDRESS, REVERSE_GEOCODE } from "../../graphql/address";
 import { CONFIG } from "../../graphql/config";
@@ -81,7 +81,7 @@ export default class AddressAutoComplete extends Vue {
 
   private gettingLocation = false;
 
-  private location!: Position;
+  private location!: GeolocationPosition;
 
   private gettingLocationError: any;
 
@@ -89,7 +89,7 @@ export default class AddressAutoComplete extends Vue {
 
   config!: IConfig;
 
-  fetchAsyncData!: Function;
+  fetchAsyncData!: DebouncedFunc<(query: string) => Promise<void>>;
 
   // We put this in data because of issues like
   // https://github.com/vuejs/vue-class-component/issues/263
@@ -207,7 +207,7 @@ export default class AddressAutoComplete extends Vue {
     this.gettingLocation = false;
   }
 
-  static async getLocation(): Promise<Position> {
+  static async getLocation(): Promise<GeolocationPosition> {
     return new Promise((resolve, reject) => {
       if (!("geolocation" in navigator)) {
         reject(new Error("Geolocation is not available."));

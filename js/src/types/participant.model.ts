@@ -1,15 +1,8 @@
-import { Actor, IActor } from "./actor";
-import { EventModel, IEvent } from "./event.model";
-
-export enum ParticipantRole {
-  NOT_APPROVED = "NOT_APPROVED",
-  NOT_CONFIRMED = "NOT_CONFIRMED",
-  REJECTED = "REJECTED",
-  PARTICIPANT = "PARTICIPANT",
-  MODERATOR = "MODERATOR",
-  ADMINISTRATOR = "ADMINISTRATOR",
-  CREATOR = "CREATOR",
-}
+import { Actor } from "./actor";
+import type { IActor } from "./actor";
+import { EventModel } from "./event.model";
+import type { IEvent } from "./event.model";
+import { ParticipantRole } from "./enums";
 
 export interface IParticipant {
   id?: string;

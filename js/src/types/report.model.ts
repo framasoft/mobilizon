@@ -1,13 +1,16 @@
-import { IActor, IPerson } from "@/types/actor";
-import { IEvent } from "@/types/event.model";
-import { IComment } from "@/types/comment.model";
+import type { IActor, IPerson } from "@/types/actor";
+import type { IEvent } from "@/types/event.model";
+import type { IComment } from "@/types/comment.model";
+import { ActionLogAction, ReportStatusEnum } from "./enums";
 
-export enum ReportStatusEnum {
-  OPEN = "OPEN",
-  CLOSED = "CLOSED",
-  RESOLVED = "RESOLVED",
+export interface IActionLogObject {
+  id: string;
 }
-
+export interface IReportNote extends IActionLogObject {
+  id: string;
+  content: string;
+  moderator: IActor;
+}
 export interface IReport extends IActionLogObject {
   id: string;
   reported: IActor;
@@ -19,29 +22,6 @@ export interface IReport extends IActionLogObject {
   insertedAt: Date;
   updatedAt: Date;
   status: ReportStatusEnum;
-}
-
-export interface IReportNote extends IActionLogObject {
-  id: string;
-  content: string;
-  moderator: IActor;
-}
-
-export interface IActionLogObject {
-  id: string;
-}
-
-export enum ActionLogAction {
-  NOTE_CREATION = "NOTE_CREATION",
-  NOTE_DELETION = "NOTE_DELETION",
-  REPORT_UPDATE_CLOSED = "REPORT_UPDATE_CLOSED",
-  REPORT_UPDATE_OPENED = "REPORT_UPDATE_OPENED",
-  REPORT_UPDATE_RESOLVED = "REPORT_UPDATE_RESOLVED",
-  EVENT_DELETION = "EVENT_DELETION",
-  COMMENT_DELETION = "COMMENT_DELETION",
-  ACTOR_SUSPENSION = "ACTOR_SUSPENSION",
-  ACTOR_UNSUSPENSION = "ACTOR_UNSUSPENSION",
-  USER_DELETION = "USER_DELETION",
 }
 
 export interface IActionLog {

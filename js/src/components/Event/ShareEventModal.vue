@@ -76,7 +76,9 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Ref } from "vue-property-decorator";
-import { IEvent, EventVisibility, EventStatus } from "../../types/event.model";
+import { EventStatus, EventVisibility } from "@/types/enums";
+import { IEvent } from "../../types/event.model";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import DiasporaLogo from "../../assets/diaspora-icon.svg?inline";
 
@@ -124,7 +126,7 @@ export default class ShareEventModal extends Vue {
     )}&url=${encodeURIComponent(this.event.url)}`;
   }
 
-  copyURL() {
+  copyURL(): void {
     this.eventURLInput.$refs.input.select();
     document.execCommand("copy");
     this.showCopiedTooltip = true;

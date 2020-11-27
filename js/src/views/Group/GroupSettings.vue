@@ -152,9 +152,10 @@ import { Route } from "vue-router";
 import PictureUpload from "@/components/PictureUpload.vue";
 import { mixins } from "vue-class-component";
 import GroupMixin from "@/mixins/group";
+import { Openness } from "@/types/enums";
 import RouteName from "../../router/name";
 import { UPDATE_GROUP, DELETE_GROUP } from "../../graphql/group";
-import { IGroup, usernameWithDomain, Openness } from "../../types/actor";
+import { IGroup, usernameWithDomain } from "../../types/actor";
 import { Address, IAddress } from "../../types/address.model";
 
 @Component({

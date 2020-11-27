@@ -51,7 +51,7 @@
 import { Prop, Vue, Component, Watch } from "vue-property-decorator";
 import Comment from "@/components/Comment/Comment.vue";
 import IdentityPickerWrapper from "@/views/Account/IdentityPickerWrapper.vue";
-import { CommentModeration } from "../../types/event-options.model";
+import { CommentModeration } from "@/types/enums";
 import { CommentModel, IComment } from "../../types/comment.model";
 import {
   CREATE_COMMENT_FROM_EVENT,

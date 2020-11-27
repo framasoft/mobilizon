@@ -9,7 +9,7 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { PRIVACY } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
-import { InstancePrivacyType } from "@/types/admin.model";
+import { InstancePrivacyType } from "@/types/enums";
 
 @Component({
   apollo: {
@@ -31,19 +31,18 @@ export default class Privacy extends Vue {
 
   locale: string | null = null;
 
-  created() {
+  created(): void {
     this.locale = this.$i18n.locale;
   }
 
   @Watch("config", { deep: true })
-  watchConfig(config: IConfig) {
+  watchConfig(config: IConfig): void {
     if (config.privacy.type) {
-      console.log(this.config.privacy);
       this.redirectToUrl();
     }
   }
 
-  redirectToUrl() {
+  redirectToUrl(): void {
     if (this.config.privacy.type === InstancePrivacyType.URL) {
       window.location.replace(this.config.privacy.url);
     }

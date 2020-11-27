@@ -1,5 +1,7 @@
-import { Actor, IActor } from "@/types/actor";
-import { EventModel, IEvent } from "@/types/event.model";
+import { Actor } from "@/types/actor";
+import type { IActor } from "@/types/actor";
+import type { IEvent } from "@/types/event.model";
+import { EventModel } from "@/types/event.model";
 
 export interface IComment {
   id?: string;

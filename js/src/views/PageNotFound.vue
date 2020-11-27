@@ -46,8 +46,8 @@ export default class PageNotFound extends Vue {
     return this.$t("Search events, groups, etc.") as string;
   }
 
-  enter() {
-    this.$router.push({
+  async enter(): Promise<void> {
+    await this.$router.push({
       name: RouteName.SEARCH,
       query: { term: this.searchText },
     });

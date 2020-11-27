@@ -105,11 +105,12 @@ import { mixins } from "vue-class-component";
 import { FETCH_GROUP } from "@/graphql/group";
 import { buildFileFromIMedia, readFileAsync } from "@/utils/image";
 import GroupMixin from "@/mixins/group";
+import { PostVisibility } from "@/types/enums";
 import { TAGS } from "../../graphql/tags";
 import { CONFIG } from "../../graphql/config";
 import { FETCH_POST, CREATE_POST, UPDATE_POST, DELETE_POST } from "../../graphql/post";
 
-import { IPost, PostVisibility } from "../../types/post.model";
+import { IPost } from "../../types/post.model";
 import Editor from "../../components/Editor.vue";
 import { IActor, IGroup, usernameWithDomain } from "../../types/actor";
 import TagInput from "../../components/Event/TagInput.vue";

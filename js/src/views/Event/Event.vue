@@ -504,6 +504,7 @@
 <script lang="ts">
 import { Component, Prop, Watch } from "vue-property-decorator";
 import BIcon from "buefy/src/components/icon/Icon.vue";
+import { EventJoinOptions, EventStatus, EventVisibility, ParticipantRole } from "@/types/enums";
 import {
   EVENT_PERSON_PARTICIPATION,
   EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED,
@@ -511,13 +512,7 @@ import {
   JOIN_EVENT,
 } from "../../graphql/event";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
-import {
-  EventModel,
-  EventStatus,
-  EventVisibility,
-  IEvent,
-  EventJoinOptions,
-} from "../../types/event.model";
+import { EventModel, IEvent } from "../../types/event.model";
 import { IActor, IPerson, Person, usernameWithDomain } from "../../types/actor";
 import { GRAPHQL_API_ENDPOINT } from "../../api/_entrypoint";
 import DateCalendarIcon from "../../components/Event/DateCalendarIcon.vue";
@@ -546,7 +541,7 @@ import Tag from "../../components/Tag.vue";
 import EventMetadataBlock from "../../components/Event/EventMetadataBlock.vue";
 import ActorCard from "../../components/Account/ActorCard.vue";
 import PopoverActorCard from "../../components/Account/PopoverActorCard.vue";
-import { IParticipant, ParticipantRole } from "../../types/participant.model";
+import { IParticipant } from "../../types/participant.model";
 
 @Component({
   components: {

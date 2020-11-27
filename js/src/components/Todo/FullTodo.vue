@@ -18,7 +18,7 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { debounce } from "lodash";
+import { debounce, DebouncedFunc } from "lodash";
 import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { ITodo } from "../../types/todos";
 import RouteName from "../../router/name";
@@ -36,7 +36,7 @@ export default class Todo extends Vue {
 
   editMode = false;
 
-  debounceUpdateTodo!: Function;
+  debounceUpdateTodo!: DebouncedFunc<(obj: Record<string, unknown>) => Promise<void>>;
 
   // We put this in data because of issues like
   // https://github.com/vuejs/vue-class-component/issues/263

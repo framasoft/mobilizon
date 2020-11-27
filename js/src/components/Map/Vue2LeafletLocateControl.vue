@@ -17,13 +17,13 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component({
   beforeDestroy() {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     this.parentContainer.removeLayer(this);
   },
 })
 export default class Vue2LeafletLocateControl extends Vue {
-  @Prop({ type: Object, default: () => ({}) }) options!: object;
+  @Prop({ type: Object, default: () => ({}) }) options!: Record<string, unknown>;
 
   @Prop({ type: Boolean, default: true }) visible = true;
 
@@ -33,7 +33,7 @@ export default class Vue2LeafletLocateControl extends Vue {
 
   parentContainer: any;
 
-  mounted() {
+  mounted(): void {
     this.mapObject = L.control.locate(this.options);
     DomEvent.on(this.mapObject, this.$listeners as any);
     propsBinder(this, this.mapObject, this.$props);
@@ -42,7 +42,7 @@ export default class Vue2LeafletLocateControl extends Vue {
     this.mapObject.addTo(this.parentContainer.mapObject, !this.visible);
   }
 
-  public locate() {
+  public locate(): void {
     this.mapObject.start();
   }
 }

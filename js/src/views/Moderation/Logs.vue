@@ -158,9 +158,10 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { IActionLog, ActionLogAction } from "@/types/report.model";
+import { IActionLog } from "@/types/report.model";
 import { LOGS } from "@/graphql/report";
 import ReportCard from "@/components/Report/ReportCard.vue";
+import { ActionLogAction } from "@/types/enums";
 import RouteName from "../../router/name";
 import { displayNameAndUsername } from "../../types/actor";
 

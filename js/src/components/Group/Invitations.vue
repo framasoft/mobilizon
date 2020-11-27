@@ -11,10 +11,10 @@
 </template>
 <script lang="ts">
 import { ACCEPT_INVITATION, REJECT_INVITATION } from "@/graphql/member";
-import { IMember } from "@/types/actor";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import InvitationCard from "@/components/Group/InvitationCard.vue";
 import { LOGGED_USER_MEMBERSHIPS } from "@/graphql/actor";
+import { IMember } from "@/types/actor/member.model";
 
 @Component({
   components: {

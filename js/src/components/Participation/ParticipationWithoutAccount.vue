@@ -74,12 +74,13 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { EventModel, IEvent, EventJoinOptions } from "@/types/event.model";
+import { EventModel, IEvent } from "@/types/event.model";
 import { FETCH_EVENT, JOIN_EVENT } from "@/graphql/event";
 import { IConfig } from "@/types/config.model";
 import { CONFIG } from "@/graphql/config";
 import { addLocalUnconfirmedAnonymousParticipation } from "@/services/AnonymousParticipationStorage";
-import { IParticipant, ParticipantRole } from "../../types/participant.model";
+import { EventJoinOptions, ParticipantRole } from "@/types/enums";
+import { IParticipant } from "../../types/participant.model";
 
 @Component({
   apollo: {

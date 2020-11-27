@@ -1,3 +1,5 @@
+import { CommentModeration } from "./enums";
+
 export interface IParticipationCondition {
   title: string;
   content: string;
@@ -8,12 +10,6 @@ export interface IOffer {
   price: number;
   priceCurrency: string;
   url: string;
-}
-
-export enum CommentModeration {
-  ALLOW_ALL = "ALLOW_ALL",
-  MODERATED = "MODERATED",
-  CLOSED = "CLOSED",
 }
 
 export interface IEventOptions {

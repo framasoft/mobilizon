@@ -36,7 +36,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { IReport } from "@/types/report.model";
-import { ActorType } from "@/types/actor";
+import { ActorType } from "@/types/enums";
 
 @Component
 export default class ReportCard extends Vue {

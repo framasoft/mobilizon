@@ -123,7 +123,7 @@ export default class Profiles extends Vue {
 
   RouteName = RouteName;
 
-  async onPageChange(page: number) {
+  async onPageChange(page: number): Promise<void> {
     this.page = page;
     await this.$apollo.queries.persons.fetchMore({
       variables: {
@@ -149,13 +149,19 @@ export default class Profiles extends Vue {
     });
   }
 
-  onFiltersChange({ preferredUsername, domain }: { preferredUsername: string; domain: string }) {
+  onFiltersChange({
+    preferredUsername,
+    domain,
+  }: {
+    preferredUsername: string;
+    domain: string;
+  }): void {
     this.preferredUsername = preferredUsername;
     this.domain = domain;
   }
 
   @Watch("domain")
-  domainNotLocal() {
+  domainNotLocal(): void {
     this.local = this.domain === "";
   }
 }

@@ -123,7 +123,7 @@ export default class Users extends Vue {
 
   RouteName = RouteName;
 
-  async onPageChange(page: number) {
+  async onPageChange(page: number): Promise<void> {
     this.page = page;
     await this.$apollo.queries.users.fetchMore({
       variables: {

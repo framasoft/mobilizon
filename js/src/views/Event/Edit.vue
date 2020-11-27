@@ -353,8 +353,13 @@ import IdentityPickerWrapper from "@/views/Account/IdentityPickerWrapper.vue";
 import Subtitle from "@/components/Utils/Subtitle.vue";
 import { Route } from "vue-router";
 import { formatList } from "@/utils/i18n";
-import { CommentModeration } from "../../types/event-options.model";
-import { ParticipantRole } from "../../types/participant.model";
+import {
+  CommentModeration,
+  EventJoinOptions,
+  EventStatus,
+  EventVisibility,
+  ParticipantRole,
+} from "@/types/enums";
 import OrganizerPickerWrapper from "../../components/Event/OrganizerPickerWrapper.vue";
 import {
   CREATE_EVENT,
@@ -362,13 +367,7 @@ import {
   EVENT_PERSON_PARTICIPATION,
   FETCH_EVENT,
 } from "../../graphql/event";
-import {
-  EventJoinOptions,
-  EventModel,
-  EventStatus,
-  EventVisibility,
-  IEvent,
-} from "../../types/event.model";
+import { EventModel, IEvent } from "../../types/event.model";
 import {
   CURRENT_ACTOR_CLIENT,
   LOGGED_USER_DRAFTS,
@@ -837,9 +836,9 @@ export default class EditEvent extends Vue {
   /**
    * Confirm cancel
    */
-  confirmGoElsewhere(callback: (value?: string) => any): void | Function {
+  confirmGoElsewhere(callback: (value?: string) => any): void {
     if (!this.isEventModified) {
-      return callback();
+      callback();
     }
     const title: string = this.isUpdate
       ? (this.$t("Cancel edition") as string)
@@ -872,7 +871,8 @@ export default class EditEvent extends Vue {
     this.confirmGoElsewhere(() => this.$router.go(-1));
   }
 
-  beforeRouteLeave(to: Route, from: Route, next: Function): void {
+  // eslint-disable-next-line consistent-return
+  beforeRouteLeave(to: Route, from: Route, next: () => void): void {
     if (to.name === RouteName.EVENT) return next();
     this.confirmGoElsewhere(() => next());
   }

@@ -77,7 +77,7 @@ import { IEvent, IEventCardOptions } from "@/types/event.model";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
 import { Actor, Person } from "@/types/actor";
-import { ParticipantRole } from "../../types/participant.model";
+import { ParticipantRole } from "@/types/enums";
 import RouteName from "../../router/name";
 
 @Component({

@@ -54,7 +54,7 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import VerticalDivider from "@/components/Utils/VerticalDivider.vue";
 import Subtitle from "@/components/Utils/Subtitle.vue";
-import { LoginErrorCode } from "@/types/login-error-code.model";
+import { LoginErrorCode } from "@/types/enums";
 import RouteName from "../../router/name";
 
 @Component({

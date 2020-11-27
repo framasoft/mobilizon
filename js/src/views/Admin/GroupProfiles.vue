@@ -83,7 +83,6 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { LIST_GROUPS } from "@/graphql/group";
-import { LIST_PROFILES } from "../../graphql/actor";
 import RouteName from "../../router/name";
 
 const PROFILES_PER_PAGE = 10;
@@ -124,7 +123,7 @@ export default class GroupProfiles extends Vue {
 
   RouteName = RouteName;
 
-  async onPageChange(page: number) {
+  async onPageChange(page: number): Promise<void> {
     this.page = page;
     await this.$apollo.queries.groups.fetchMore({
       variables: {
@@ -150,13 +149,19 @@ export default class GroupProfiles extends Vue {
     });
   }
 
-  onFiltersChange({ preferredUsername, domain }: { preferredUsername: string; domain: string }) {
+  onFiltersChange({
+    preferredUsername,
+    domain,
+  }: {
+    preferredUsername: string;
+    domain: string;
+  }): void {
     this.preferredUsername = preferredUsername;
     this.domain = domain;
   }
 
   @Watch("domain")
-  domainNotLocal() {
+  domainNotLocal(): void {
     this.local = this.domain === "";
   }
 }

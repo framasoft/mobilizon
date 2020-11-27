@@ -1,5 +1,5 @@
-import { InstanceTermsType, InstancePrivacyType } from "./admin.model";
-import { IProvider } from "./resource";
+import { InstancePrivacyType, InstanceTermsType } from "./enums";
+import type { IProvider } from "./resource";
 
 export interface IOAuthProvider {
   id: string;

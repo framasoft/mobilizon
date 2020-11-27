@@ -1,15 +1,11 @@
-import { ICurrentUser } from "../current-user.model";
-import { IEvent } from "../event.model";
-import { Actor, IActor } from "./actor.model";
-import { Paginate } from "../paginate";
-import { IMember } from "./group.model";
-import { IParticipant } from "../participant.model";
-
-export interface IFeedToken {
-  token: string;
-  actor?: IPerson;
-  user: ICurrentUser;
-}
+import type { ICurrentUser } from "../current-user.model";
+import type { IEvent } from "../event.model";
+import { Actor } from "./actor.model";
+import type { IActor } from "./actor.model";
+import type { Paginate } from "../paginate";
+import type { IParticipant } from "../participant.model";
+import type { IMember } from "./member.model";
+import type { IFeedToken } from "../feedtoken.model";
 
 export interface IPerson extends IActor {
   feedTokens: IFeedToken[];

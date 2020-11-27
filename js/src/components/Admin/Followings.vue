@@ -103,7 +103,6 @@ import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { formatDistanceToNow } from "date-fns";
 import { ADD_RELAY, REMOVE_RELAY } from "../../graphql/admin";
 import { IFollower } from "../../types/actor/follower.model";
-import { Paginate } from "../../types/paginate";
 import RelayMixin from "../../mixins/relay";
 
 @Component({

@@ -53,10 +53,10 @@ export default class Map extends Vue {
 
   @Prop({ type: Object, required: false }) marker!: { text: string | string[]; icon: string };
 
-  @Prop({ type: Object, required: false }) options!: object;
+  @Prop({ type: Object, required: false }) options!: Record<string, unknown>;
 
   @Prop({ type: Function, required: false })
-  updateDraggableMarkerCallback!: Function;
+  updateDraggableMarkerCallback!: (latlng: LatLng, zoom: number) => void;
 
   defaultOptions: {
     zoom: number;
@@ -86,45 +86,47 @@ export default class Map extends Vue {
   }
   /* eslint-enable */
 
-  openPopup(event: LeafletEvent) {
+  openPopup(event: LeafletEvent): void {
     this.$nextTick(() => {
       event.target.openPopup();
     });
   }
 
-  get mergedOptions(): object {
+  get mergedOptions(): Record<string, unknown> {
     return { ...this.defaultOptions, ...this.options };
   }
 
-  get lat() {
+  get lat(): number {
     return this.$props.coords.split(";")[1];
   }
 
-  get lon() {
+  get lon(): number {
     return this.$props.coords.split(";")[0];
   }
 
-  get popupMultiLine() {
+  get popupMultiLine(): Array<string> {
     if (Array.isArray(this.marker.text)) {
       return this.marker.text;
     }
     return [this.marker.text];
   }
 
-  clickMap(event: LeafletMouseEvent) {
+  clickMap(event: LeafletMouseEvent): void {
     this.updateDraggableMarkerPosition(event.latlng);
   }
 
-  updateDraggableMarkerPosition(e: LatLng) {
+  updateDraggableMarkerPosition(e: LatLng): void {
     this.updateDraggableMarkerCallback(e, this.zoom);
   }
 
-  updateZoom(zoom: number) {
+  updateZoom(zoom: number): void {
     this.zoom = zoom;
   }
 
-  get attribution() {
-    return this.config.maps.tiles.attribution || this.$t("© The OpenStreetMap Contributors");
+  get attribution(): string {
+    return (
+      this.config.maps.tiles.attribution || (this.$t("© The OpenStreetMap Contributors") as string)
+    );
   }
 }
 </script>

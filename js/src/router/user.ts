@@ -1,5 +1,5 @@
 import { beforeRegisterGuard } from "@/router/guards/register-guard";
-import { RouteConfig } from "vue-router";
+import { Route, RouteConfig } from "vue-router";
 
 export enum UserRouteName {
   REGISTER = "Register",
@@ -27,7 +27,7 @@ export const userRoutes: RouteConfig[] = [
     component: () =>
       import(/* webpackChunkName: "RegisterProfile" */ "@/views/Account/Register.vue"),
     // We can only pass string values through params, therefore
-    props: (route) => ({
+    props: (route: Route): Record<string, unknown> => ({
       email: route.params.email,
       userAlreadyActivated: route.params.userAlreadyActivated === "true",
     }),

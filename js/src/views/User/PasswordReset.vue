@@ -52,21 +52,21 @@ export default class PasswordReset extends Vue {
   errors: string[] = [];
 
   rules = {
-    passwordLength: (value: string) =>
+    passwordLength: (value: string): boolean | string =>
       value.length > 6 || "Password must be at least 6 characters long",
     required: validateRequiredField,
-    passwordEqual: (value: string) =>
+    passwordEqual: (value: string): boolean | string =>
       value === this.credentials.password || "Passwords must be the same",
   };
 
-  get samePasswords() {
+  get samePasswords(): boolean {
     return (
       this.rules.passwordLength(this.credentials.password) === true &&
       this.credentials.password === this.credentials.passwordConfirmation
     );
   }
 
-  async resetAction(e: Event) {
+  async resetAction(e: Event): Promise<void> {
     e.preventDefault();
     this.errors.splice(0);
 

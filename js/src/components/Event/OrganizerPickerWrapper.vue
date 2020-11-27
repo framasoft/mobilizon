@@ -115,7 +115,8 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { IActor, IGroup, IMember, IPerson } from "../../types/actor";
+import { IMember } from "@/types/actor/member.model";
+import { IActor, IGroup, IPerson } from "../../types/actor";
 import OrganizerPicker from "./OrganizerPicker.vue";
 import { PERSON_MEMBERSHIPS_WITH_MEMBERS } from "../../graphql/actor";
 import { Paginate } from "../../types/paginate";
@@ -182,7 +183,7 @@ export default class OrganizerPickerWrapper extends Vue {
       ({ parent: { id } }) => id === this.currentActor.id
     );
     if (currentMembership) {
-      return currentMembership.parent.members.elements.map(({ actor }) => actor);
+      return currentMembership.parent.members.elements.map(({ actor }: { actor: IActor }) => actor);
     }
     return [];
   }

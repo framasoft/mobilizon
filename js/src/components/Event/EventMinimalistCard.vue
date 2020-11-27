@@ -56,7 +56,7 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { IEvent } from "@/types/event.model";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
-import { ParticipantRole } from "../../types/participant.model";
+import { ParticipantRole } from "@/types/enums";
 import RouteName from "../../router/name";
 
 @Component({

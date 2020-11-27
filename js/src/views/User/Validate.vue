@@ -16,11 +16,11 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { ICurrentUserRole } from "@/types/enums";
 import { VALIDATE_USER, UPDATE_CURRENT_USER_CLIENT } from "../../graphql/user";
 import RouteName from "../../router/name";
 import { saveUserData, saveTokenData, changeIdentity } from "../../utils/auth";
 import { ILogin } from "../../types/login.model";
-import { ICurrentUserRole } from "../../types/current-user.model";
 
 @Component
 export default class Validate extends Vue {
@@ -30,11 +30,11 @@ export default class Validate extends Vue {
 
   failed = false;
 
-  async created() {
+  async created(): Promise<void> {
     await this.validateAction();
   }
 
-  async validateAction() {
+  async validateAction(): Promise<void> {
     try {
       const { data } = await this.$apollo.mutate<{ validateUser: ILogin }>({
         mutation: VALIDATE_USER,

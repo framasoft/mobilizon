@@ -241,14 +241,15 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { CREATE_REPORT_NOTE, REPORT, UPDATE_REPORT } from "@/graphql/report";
-import { IReport, IReportNote, ReportStatusEnum } from "@/types/report.model";
+import { IReport, IReportNote } from "@/types/report.model";
 import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
-import { IPerson, ActorType, displayNameAndUsername } from "@/types/actor";
+import { IPerson, displayNameAndUsername } from "@/types/actor";
 import { DELETE_EVENT } from "@/graphql/event";
 import { uniq } from "lodash";
 import { nl2br } from "@/utils/html";
 import { DELETE_COMMENT } from "@/graphql/comment";
 import { IComment } from "@/types/comment.model";
+import { ActorType, ReportStatusEnum } from "@/types/enums";
 import RouteName from "../../router/name";
 
 @Component({

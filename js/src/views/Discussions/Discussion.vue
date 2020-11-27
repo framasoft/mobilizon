@@ -222,23 +222,24 @@ export default class discussion extends mixins(GroupMixin) {
           },
         });
         if (!discussionData) return;
-        const { discussion } = discussionData;
-        discussion.lastComment = replyToDiscussion.lastComment;
-        discussion.comments.elements.push(replyToDiscussion.lastComment);
-        discussion.comments.total += 1;
+        const { discussion: discussionCached } = discussionData;
+        discussionCached.lastComment = replyToDiscussion.lastComment;
+        discussionCached.comments.elements.push(replyToDiscussion.lastComment);
+        discussionCached.comments.total += 1;
         store.writeQuery({
           query: GET_DISCUSSION,
           variables: { slug: this.slug, page: this.page },
-          data: { discussion },
+          data: { discussion: discussionCached },
         });
       },
-      // We don't need to handle cache update since there's the subscription that handles this for us
+      // We don't need to handle cache update since
+      // there's the subscription that handles this for us
     });
     this.newComment = "";
   }
 
   async updateComment(comment: IComment): Promise<void> {
-    const { data } = await this.$apollo.mutate<{ deleteComment: IComment }>({
+    await this.$apollo.mutate<{ deleteComment: IComment }>({
       mutation: UPDATE_COMMENT,
       variables: {
         commentId: comment.id,
@@ -256,25 +257,25 @@ export default class discussion extends mixins(GroupMixin) {
           },
         });
         if (!discussionData) return;
-        const { discussion } = discussionData;
-        const index = discussion.comments.elements.findIndex(
+        const { discussion: discussionCached } = discussionData;
+        const index = discussionCached.comments.elements.findIndex(
           ({ id }) => id === data.deleteComment.id
         );
         if (index > -1) {
-          discussion.comments.elements.splice(index, 1);
-          discussion.comments.total -= 1;
+          discussionCached.comments.elements.splice(index, 1);
+          discussionCached.comments.total -= 1;
         }
         store.writeQuery({
           query: GET_DISCUSSION,
           variables: { slug: this.slug, page: this.page },
-          data: { discussion },
+          data: { discussion: discussionCached },
         });
       },
     });
   }
 
   async deleteComment(comment: IComment): Promise<void> {
-    const { data } = await this.$apollo.mutate<{ deleteComment: IComment }>({
+    await this.$apollo.mutate<{ deleteComment: IComment }>({
       mutation: DELETE_COMMENT,
       variables: {
         commentId: comment.id,
@@ -291,21 +292,21 @@ export default class discussion extends mixins(GroupMixin) {
           },
         });
         if (!discussionData) return;
-        const { discussion } = discussionData;
-        const index = discussion.comments.elements.findIndex(
+        const { discussion: discussionCached } = discussionData;
+        const index = discussionCached.comments.elements.findIndex(
           ({ id }) => id === data.deleteComment.id
         );
         if (index > -1) {
-          const updatedComment = discussion.comments.elements[index];
+          const updatedComment = discussionCached.comments.elements[index];
           updatedComment.deletedAt = new Date();
           updatedComment.actor = null;
           updatedComment.text = "";
-          discussion.comments.elements.splice(index, 1, updatedComment);
+          discussionCached.comments.elements.splice(index, 1, updatedComment);
         }
         store.writeQuery({
           query: GET_DISCUSSION,
           variables: { slug: this.slug, page: this.page },
-          data: { discussion },
+          data: { discussion: discussionCached },
         });
       },
     });
@@ -327,13 +328,13 @@ export default class discussion extends mixins(GroupMixin) {
           if (!fetchMoreResult) return previousResult;
           const newComments = fetchMoreResult.discussion.comments.elements;
           this.hasMoreComments = newComments.length === 1;
-          const { discussion } = previousResult;
-          discussion.comments.elements = [
+          const { discussion: discussionCached } = previousResult;
+          discussionCached.comments.elements = [
             ...previousResult.discussion.comments.elements,
             ...newComments,
           ];
 
-          return { discussion };
+          return { discussion: discussionCached };
         },
       });
     } catch (e) {
@@ -359,12 +360,12 @@ export default class discussion extends mixins(GroupMixin) {
           },
         });
         if (!discussionData) return;
-        const { discussion } = discussionData;
-        discussion.title = updateDiscussion.title;
+        const { discussion: discussionCached } = discussionData;
+        discussionCached.title = updateDiscussion.title;
         store.writeQuery({
           query: GET_DISCUSSION,
           variables: { slug: this.slug, page: this.page },
-          data: { discussion },
+          data: { discussion: discussionCached },
         });
       },
     });

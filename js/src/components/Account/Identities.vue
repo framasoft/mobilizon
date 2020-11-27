@@ -53,7 +53,7 @@ export default class Identities extends Vue {
 
   errors: string[] = [];
 
-  isCurrentIdentity(identity: IPerson) {
+  isCurrentIdentity(identity: IPerson): boolean {
     return identity.preferredUsername === this.currentIdentityName;
   }
 }

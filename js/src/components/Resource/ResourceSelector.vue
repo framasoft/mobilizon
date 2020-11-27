@@ -47,7 +47,7 @@
     <b-button type="is-primary" @click="updateResource" :disabled="moveDisabled">{{
       $t("Move resource to {folder}", { folder: resource.title })
     }}</b-button>
-    <b-button type="is-text" @click="$emit('closeMoveModal')">{{ $t("Cancel") }}</b-button>
+    <b-button type="is-text" @click="$emit('close-move-modal')">{{ $t("Cancel") }}</b-button>
   </div>
 </template>
 <script lang="ts">
@@ -81,15 +81,15 @@ export default class ResourceSelector extends Vue {
 
   resource: IResource | undefined = this.initialResource.parent;
 
-  goDown(element: IResource) {
+  goDown(element: IResource): void {
     if (element.type === "folder" && element.id !== this.initialResource.id) {
       this.resource = element;
     }
   }
 
-  updateResource() {
+  updateResource(): void {
     this.$emit(
-      "updateResource",
+      "update-resource",
       {
         id: this.initialResource.id,
         title: this.initialResource.title,
@@ -100,12 +100,12 @@ export default class ResourceSelector extends Vue {
     );
   }
 
-  get moveDisabled() {
+  get moveDisabled(): boolean | undefined {
     return (
       (this.initialResource.parent &&
         this.resource &&
         this.initialResource.parent.path === this.resource.path) ||
-      (this.initialResource.parent == undefined && this.resource && this.resource.path === "/")
+      (this.initialResource.parent === undefined && this.resource && this.resource.path === "/")
     );
   }
 }

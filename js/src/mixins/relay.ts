@@ -1,8 +1,9 @@
 import { Component, Vue, Ref } from "vue-property-decorator";
-import { ActorType, IActor } from "@/types/actor";
+import { IActor } from "@/types/actor";
 import { IFollower } from "@/types/actor/follower.model";
 import { RELAY_FOLLOWERS, RELAY_FOLLOWINGS } from "@/graphql/admin";
 import { Paginate } from "@/types/paginate";
+import { ActorType } from "@/types/enums";
 
 @Component({
   apollo: {

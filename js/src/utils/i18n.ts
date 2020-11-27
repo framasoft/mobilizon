@@ -7,10 +7,15 @@ import langs from "../i18n/langs.json";
 
 const DEFAULT_LOCALE = "en_US";
 
-let language = localStorage.getItem(USER_LOCALE) || (document.documentElement.getAttribute("lang") as string);
-language = language || ((window.navigator as any).userLanguage || window.navigator.language).replace(/-/, "_");
+let language =
+  localStorage.getItem(USER_LOCALE) || (document.documentElement.getAttribute("lang") as string);
+language =
+  language ||
+  ((window.navigator as any).userLanguage || window.navigator.language).replace(/-/, "_");
 export const locale =
-  language && Object.prototype.hasOwnProperty.call(langs, language) ? language : language.split("-")[0];
+  language && Object.prototype.hasOwnProperty.call(langs, language)
+    ? language
+    : language.split("-")[0];
 
 Vue.use(VueI18n);
 

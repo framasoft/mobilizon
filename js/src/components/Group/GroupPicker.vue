@@ -36,9 +36,11 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { IGroup, IMember, IPerson, Group, MemberRole } from "@/types/actor";
+import { IGroup, IPerson, Group } from "@/types/actor";
 import { PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import { Paginate } from "@/types/paginate";
+import { IMember } from "@/types/actor/member.model";
+import { MemberRole } from "@/types/enums";
 
 @Component({
   apollo: {

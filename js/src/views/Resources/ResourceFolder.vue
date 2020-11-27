@@ -21,9 +21,8 @@
           >
         </li>
         <li
-          v-if="resource.path !== '/'"
           :class="{ 'is-active': index + 1 === ResourceMixin.resourcePathArray(resource).length }"
-          v-for="(pathFragment, index) in ResourceMixin.resourcePathArray(resource)"
+          v-for="(pathFragment, index) in filteredPath"
           :key="pathFragment"
         >
           <router-link
@@ -145,8 +144,8 @@
           <resource-selector
             :initialResource="updatedResource"
             :username="usernameWithDomain(resource.actor)"
-            @updateResource="moveResource"
-            @closeMoveModal="moveModal = false"
+            @update-resource="moveResource"
+            @close-move-modal="moveModal = false"
           />
         </section>
       </div>
@@ -301,6 +300,13 @@ export default class Resources extends Mixins(ResourceMixin) {
       ? this.$route.params.path.join("/")
       : this.$route.params.path || this.path;
     return path[0] !== "/" ? `/${path}` : path;
+  }
+
+  get filteredPath(): string[] {
+    if (this.resource && this.resource.path !== "/") {
+      return ResourceMixin.resourcePathArray(this.resource);
+    }
+    return [];
   }
 
   async createResource(): Promise<void> {

@@ -1,12 +1,5 @@
-import { IMedia } from "@/types/media.model";
-
-export enum ActorType {
-  PERSON = "PERSON",
-  APPLICATION = "APPLICATION",
-  GROUP = "GROUP",
-  ORGANISATION = "ORGANISATION",
-  SERVICE = "SERVICE",
-}
+import type { IMedia } from "@/types/media.model";
+import { ActorType } from "../enums";
 
 export interface IActor {
   id?: string;

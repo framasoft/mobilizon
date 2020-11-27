@@ -1,4 +1,5 @@
-import { poiIcons, IPOIIcon } from "@/utils/poiIcons";
+import { poiIcons } from "@/utils/poiIcons";
+import type { IPOIIcon } from "@/utils/poiIcons";
 
 export interface IAddress {
   id?: string;
@@ -53,7 +54,7 @@ export class Address implements IAddress {
     this.originId = hash.originId;
   }
 
-  get poiInfos() {
+  get poiInfos(): { name: string; alternativeName: string; poiIcon: IPOIIcon } {
     /* generate name corresponding to poi type */
     let name = "";
     let alternativeName = "";

@@ -1,4 +1,4 @@
-import { RouteConfig } from "vue-router";
+import { Route, RouteConfig } from "vue-router";
 
 export enum SettingsRouteName {
   SETTINGS = "SETTINGS",
@@ -199,7 +199,10 @@ export const settingsRoutes: RouteConfig[] = [
           import(
             /* webpackChunkName: "EditIdentity" */ "@/views/Account/children/EditIdentity.vue"
           ),
-        props: (route) => ({ identityName: route.params.identityName, isUpdate: false }),
+        props: (route: Route): Record<string, unknown> => ({
+          identityName: route.params.identityName,
+          isUpdate: false,
+        }),
         meta: { requiredAuth: true },
       },
       {
@@ -209,7 +212,10 @@ export const settingsRoutes: RouteConfig[] = [
           import(
             /* webpackChunkName: "EditIdentity" */ "@/views/Account/children/EditIdentity.vue"
           ),
-        props: (route) => ({ identityName: route.params.identityName, isUpdate: true }),
+        props: (route: Route): Record<string, unknown> => ({
+          identityName: route.params.identityName,
+          isUpdate: true,
+        }),
         meta: { requiredAuth: true },
       },
     ],

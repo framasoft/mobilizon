@@ -61,7 +61,8 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { IGroup, IMember, IPerson } from "../../types/actor";
+import { IMember } from "@/types/actor/member.model";
+import { IGroup, IPerson } from "../../types/actor";
 import GroupPicker from "./GroupPicker.vue";
 import { PERSON_MEMBERSHIPS } from "../../graphql/actor";
 import { Paginate } from "../../types/paginate";

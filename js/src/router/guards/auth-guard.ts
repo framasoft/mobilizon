@@ -1,7 +1,7 @@
 import { NavigationGuard } from "vue-router";
 import { UserRouteName } from "@/router/user";
-import { LoginErrorCode } from "@/types/login-error-code.model";
 import { AUTH_ACCESS_TOKEN } from "@/constants";
+import { LoginErrorCode } from "@/types/enums";
 
 // eslint-disable-next-line import/prefer-default-export
 export const authGuardIfNeeded: NavigationGuard = async (to, from, next) => {

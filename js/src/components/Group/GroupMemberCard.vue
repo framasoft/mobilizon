@@ -54,7 +54,9 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { IMember, MemberRole, usernameWithDomain } from "@/types/actor";
+import { usernameWithDomain } from "@/types/actor";
+import { IMember } from "@/types/actor/member.model";
+import { MemberRole } from "@/types/enums";
 import RouteName from "../../router/name";
 
 @Component

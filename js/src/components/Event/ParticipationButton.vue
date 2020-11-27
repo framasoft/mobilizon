@@ -142,8 +142,9 @@ A button to set your participation
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { IParticipant, ParticipantRole } from "../../types/participant.model";
-import { EventJoinOptions, IEvent } from "../../types/event.model";
+import { EventJoinOptions, ParticipantRole } from "@/types/enums";
+import { IParticipant } from "../../types/participant.model";
+import { IEvent } from "../../types/event.model";
 import { IPerson, Person } from "../../types/actor";
 import { CURRENT_ACTOR_CLIENT, IDENTITIES } from "../../graphql/actor";
 import { CURRENT_USER_CLIENT } from "../../graphql/user";

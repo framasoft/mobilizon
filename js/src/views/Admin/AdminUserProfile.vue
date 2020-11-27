@@ -64,10 +64,11 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { Route } from "vue-router";
 import { formatBytes } from "@/utils/datetime";
+import { ICurrentUserRole } from "@/types/enums";
 import { GET_USER, SUSPEND_USER } from "../../graphql/user";
 import { usernameWithDomain } from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
-import { IUser, ICurrentUserRole } from "../../types/current-user.model";
+import { IUser } from "../../types/current-user.model";
 import { IPerson } from "../../types/actor";
 
 @Component({

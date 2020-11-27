@@ -98,14 +98,14 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { Route } from "vue-router";
+import { ICurrentUser } from "@/types/current-user.model";
+import { LoginError, LoginErrorCode } from "@/types/enums";
 import { LOGIN } from "../../graphql/auth";
 import { validateEmailField, validateRequiredField } from "../../utils/validators";
 import { initializeCurrentActor, NoIdentitiesException, saveUserData } from "../../utils/auth";
 import { ILogin } from "../../types/login.model";
 import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from "../../graphql/user";
 import RouteName from "../../router/name";
-import { LoginErrorCode, LoginError } from "../../types/login-error-code.model";
-import { ICurrentUser } from "../../types/current-user.model";
 import { CONFIG } from "../../graphql/config";
 import { IConfig } from "../../types/config.model";
 import AuthProviders from "../../components/User/AuthProviders.vue";

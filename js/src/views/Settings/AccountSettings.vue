@@ -176,11 +176,12 @@
 </template>
 
 <script lang="ts">
+import { IAuthProvider } from "@/types/enums";
 import { Component, Vue, Ref } from "vue-property-decorator";
 import { Route } from "vue-router";
 import { CHANGE_EMAIL, CHANGE_PASSWORD, DELETE_ACCOUNT, LOGGED_USER } from "../../graphql/user";
 import RouteName from "../../router/name";
-import { IUser, IAuthProvider } from "../../types/current-user.model";
+import { IUser } from "../../types/current-user.model";
 import { logout, SELECTED_PROVIDERS } from "../../utils/auth";
 
 @Component({
@@ -299,7 +300,7 @@ export default class AccountSettings extends Vue {
   get hasUserGotAPassword(): boolean {
     return (
       this.loggedUser &&
-      (this.loggedUser.provider == null || this.loggedUser.provider == IAuthProvider.LDAP)
+      (this.loggedUser.provider == null || this.loggedUser.provider === IAuthProvider.LDAP)
     );
   }
 

@@ -395,15 +395,7 @@ export default class EditorComponent extends Vue {
         new Image(),
         new MaxSize({ maxSize: this.maxSize }),
       ],
-      onUpdate: ({
-        getHTML,
-        transaction,
-        getJSON,
-      }: {
-        getHTML: Function;
-        getJSON: Function;
-        transaction: unknown;
-      }) => {
+      onUpdate: ({ getHTML }: { getHTML: Function }) => {
         this.$emit("input", getHTML());
       },
     });

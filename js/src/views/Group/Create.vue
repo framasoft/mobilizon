@@ -67,14 +67,15 @@
 
 <script lang="ts">
 import { Component, Watch } from "vue-property-decorator";
-import { Group, IPerson, usernameWithDomain, MemberRole } from "@/types/actor";
+import { Group, IPerson, usernameWithDomain } from "@/types/actor";
 import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import { CREATE_GROUP } from "@/graphql/group";
-import PictureUpload from "@/components/PictureUpload.vue";
 import { mixins } from "vue-class-component";
 import IdentityEditionMixin from "@/mixins/identityEdition";
+import { MemberRole } from "@/types/enums";
 import RouteName from "../../router/name";
 import { convertToUsername } from "../../utils/username";
+import PictureUpload from "../../components/PictureUpload.vue";
 
 @Component({
   components: {

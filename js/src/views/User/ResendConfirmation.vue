@@ -68,11 +68,11 @@ export default class ResendConfirmation extends Vue {
     email: validateEmailField,
   };
 
-  mounted() {
+  mounted(): void {
     this.credentials.email = this.email;
   }
 
-  async resendConfirmationAction(e: Event) {
+  async resendConfirmationAction(e: Event): Promise<void> {
     e.preventDefault();
     this.error = false;
 

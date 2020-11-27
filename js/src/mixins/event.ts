@@ -1,7 +1,8 @@
 import { mixins } from "vue-class-component";
 import { Component, Vue } from "vue-property-decorator";
 import { SnackbarProgrammatic as Snackbar } from "buefy";
-import { IParticipant, ParticipantRole } from "../types/participant.model";
+import { ParticipantRole } from "@/types/enums";
+import { IParticipant } from "../types/participant.model";
 import { IEvent } from "../types/event.model";
 import {
   DELETE_EVENT,

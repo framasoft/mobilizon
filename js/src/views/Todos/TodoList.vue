@@ -42,11 +42,12 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { ITodo, ITodoList } from "@/types/todos";
+import { ITodo } from "@/types/todos";
 import { CREATE_TODO, FETCH_TODO_LIST } from "@/graphql/todos";
 import CompactTodo from "@/components/Todo/CompactTodo.vue";
 import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
 import { IActor } from "@/types/actor";
+import { ITodoList } from "@/types/todolist";
 import RouteName from "../../router/name";
 
 @Component({
@@ -77,7 +78,7 @@ export default class TodoList extends Vue {
 
   RouteName = RouteName;
 
-  async createNewTodo() {
+  async createNewTodo(): Promise<void> {
     await this.$apollo.mutate({
       mutation: CREATE_TODO,
       variables: {

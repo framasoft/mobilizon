@@ -54,9 +54,9 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { FETCH_GROUP } from "@/graphql/group";
 import { IGroup, usernameWithDomain } from "@/types/actor";
-import { ITodoList } from "@/types/todos";
 import { CREATE_TODO_LIST } from "@/graphql/todos";
 import CompactTodo from "@/components/Todo/CompactTodo.vue";
+import { ITodoList } from "@/types/todolist";
 import RouteName from "../../router/name";
 
 @Component({

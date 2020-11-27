@@ -1,6 +1,7 @@
-import { IActor, IPerson } from "@/types/actor";
-import { IComment, CommentModel } from "@/types/comment.model";
-import { Paginate } from "@/types/paginate";
+import type { IActor, IPerson } from "@/types/actor";
+import type { IComment } from "@/types/comment.model";
+import { CommentModel } from "@/types/comment.model";
+import type { Paginate } from "@/types/paginate";
 
 export interface IDiscussion {
   id?: string;

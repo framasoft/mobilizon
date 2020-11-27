@@ -126,8 +126,7 @@
           </span>
           <div>
             <EventListCard
-              v-for="participation in row[1]"
-              v-if="isInLessThanSevenDays(row[0])"
+              v-for="participation in thisWeek(row)"
               @event-deleted="eventDeleted"
               :key="participation[1].id"
               :participation="participation[1]"
@@ -173,7 +172,8 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
-import { IParticipant, Participant, ParticipantRole } from "../types/participant.model";
+import { ParticipantRole } from "@/types/enums";
+import { IParticipant, Participant } from "../types/participant.model";
 import { FETCH_EVENTS } from "../graphql/event";
 import EventListCard from "../components/Event/EventListCard.vue";
 import EventCard from "../components/Event/EventCard.vue";
@@ -284,6 +284,13 @@ export default class Home extends Vue {
   // eslint-disable-next-line class-methods-use-this
   get newRegisteredUser(): boolean {
     return window.localStorage.getItem("new-registered-user") === "yes";
+  }
+
+  thisWeek(row: [string, Map<string, IParticipant>]): Map<string, IParticipant> {
+    if (this.isInLessThanSevenDays(row[0])) {
+      return row[1];
+    }
+    return new Map();
   }
 
   // eslint-disable-next-line class-methods-use-this

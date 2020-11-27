@@ -143,7 +143,6 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { Route } from "vue-router";
 import { CREATE_USER } from "../../graphql/user";
 import RouteName from "../../router/name";
 import { IConfig } from "../../types/config.model";

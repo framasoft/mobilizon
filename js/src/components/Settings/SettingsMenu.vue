@@ -55,13 +55,14 @@
   </aside>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
+import { ICurrentUserRole } from "@/types/enums";
 import SettingMenuSection from "./SettingMenuSection.vue";
 import SettingMenuItem from "./SettingMenuItem.vue";
 import { IDENTITIES } from "../../graphql/actor";
 import { IPerson, Person } from "../../types/actor";
 import { CURRENT_USER_CLIENT } from "../../graphql/user";
-import { ICurrentUser, ICurrentUserRole } from "../../types/current-user.model";
+import { ICurrentUser } from "../../types/current-user.model";
 
 import RouteName from "../../router/name";
 

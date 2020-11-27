@@ -38,9 +38,9 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { confirmLocalAnonymousParticipation } from "@/services/AnonymousParticipationStorage";
+import { EventJoinOptions } from "@/types/enums";
 import { IParticipant } from "../../types/participant.model";
 import RouteName from "../../router/name";
-import { EventJoinOptions } from "../../types/event.model";
 import { CONFIRM_PARTICIPATION } from "../../graphql/event";
 
 @Component

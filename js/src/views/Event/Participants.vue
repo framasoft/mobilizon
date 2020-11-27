@@ -185,7 +185,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch, Ref } from "vue-property-decorator";
-import { IParticipant, ParticipantRole } from "../../types/participant.model";
+import { ParticipantRole } from "@/types/enums";
+import { IParticipant } from "../../types/participant.model";
 import { IEvent, IEventParticipantStats } from "../../types/event.model";
 import { PARTICIPANTS, UPDATE_PARTICIPANT } from "../../graphql/event";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";

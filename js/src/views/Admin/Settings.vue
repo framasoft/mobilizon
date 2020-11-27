@@ -290,12 +290,8 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { ADMIN_SETTINGS, SAVE_ADMIN_SETTINGS, LANGUAGES } from "@/graphql/admin";
-import {
-  IAdminSettings,
-  InstanceTermsType,
-  InstancePrivacyType,
-  ILanguage,
-} from "../../types/admin.model";
+import { InstancePrivacyType, InstanceTermsType } from "@/types/enums";
+import { IAdminSettings, ILanguage } from "../../types/admin.model";
 import RouteName from "../../router/name";
 
 @Component({

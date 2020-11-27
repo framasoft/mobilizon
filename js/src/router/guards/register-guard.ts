@@ -1,6 +1,6 @@
+import { ErrorCode } from "@/types/enums";
 import { NavigationGuard } from "vue-router";
 import { CONFIG } from "../../graphql/config";
-import { ErrorCode } from "../../types/error-code.model";
 import apolloProvider from "../../vue-apollo";
 
 // eslint-disable-next-line import/prefer-default-export
