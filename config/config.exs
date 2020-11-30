@@ -158,17 +158,14 @@ config :geolix,
     }
   ]
 
-config :auto_linker,
-  opts: [
-    scheme: true,
-    extra: true,
-    # TODO: Set to :no_scheme when it works properly
-    validate_tld: true,
-    class: false,
-    strip_prefix: false,
-    new_window: true,
-    rel: "noopener noreferrer ugc"
-  ]
+config :mobilizon, Mobilizon.Service.Formatter,
+  class: false,
+  rel: "noopener noreferrer ugc",
+  new_window: true,
+  truncate: false,
+  strip_prefix: false,
+  extra: true,
+  validate_tld: :no_scheme
 
 config :tesla, adapter: Tesla.Adapter.Hackney
 
