@@ -97,6 +97,15 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticator do
     end
   end
 
+  # Bind user with full DN
+  @spec bind_user(any(), String.t(), String.t(), {:full, String.t()}, String.t()) ::
+          User.t() | any()
+  defp bind_user(connection, _base, _uid, {:full, field}, password) do
+    Logger.debug("Binding to LDAP with \"#{field}\"")
+    :eldap.simple_bind(connection, field, password)
+  end
+
+  # Bind user with only uid field on top of base
   @spec bind_user(any(), String.t(), String.t(), String.t(), String.t()) ::
           User.t() | any()
   defp bind_user(connection, base, uid, field, password) do

@@ -146,6 +146,8 @@ config :mobilizon, :ldap,
   base: System.get_env("LDAP_BASE") || "dc=example,dc=com",
   uid: System.get_env("LDAP_UID") || "cn",
   require_bind_for_search: !(System.get_env("LDAP_REQUIRE_BIND_FOR_SEARCH") == "false"),
+  # Either the admin UID matching the field in `uid`,
+  # Either a tuple with the fully qualified DN: {:full, uid=admin,dc=example.com,dc=local}
   bind_uid: System.get_env("LDAP_BIND_UID"),
   bind_password: System.get_env("LDAP_BIND_PASSWORD")
 
