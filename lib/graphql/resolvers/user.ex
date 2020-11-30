@@ -39,7 +39,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   end
 
   def get_current_user(_parent, _args, _resolution) do
-    {:error, "You need to be logged-in to view current user"}
+    {:error, :unauthenticated}
   end
 
   @doc """
@@ -55,7 +55,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   end
 
   def list_users(_parent, _args, _resolution) do
-    {:error, dgettext("errors", "You need to have admin access to list users")}
+    {:error, :unauthorized}
   end
 
   @doc """
@@ -73,7 +73,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
       {:ok, user_and_tokens}
     else
       {:error, :user_not_found} ->
-        {:error, dgettext("errors", "No user with this email was found")}
+        {:error, :user_not_found}
 
       {:error, :disabled_user} ->
         {:error, dgettext("errors", "This user has been disabled")}
