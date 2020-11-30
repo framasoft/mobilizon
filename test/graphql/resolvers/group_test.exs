@@ -155,6 +155,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
                group.preferred_username
 
       assert res["data"]["group"]["members"]["total"] == 2
+      assert res["data"]["group"]["members"]["elements"] == []
 
       res =
         conn
@@ -170,9 +171,12 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
       assert res["errors"] == nil
 
       assert res["data"]["group"]["members"]["total"] == 2
-      assert hd(res["data"]["group"]["members"]["elements"])["role"] == "ADMINISTRATOR"
 
-      assert hd(res["data"]["group"]["members"]["elements"])["actor"]["preferredUsername"] ==
+      admin =
+        res["data"]["group"]["members"]["elements"]
+        |> Enum.find(&(&1["role"] == "ADMINISTRATOR"))
+
+      assert admin["actor"]["preferredUsername"] ==
                actor.preferred_username
 
       res =

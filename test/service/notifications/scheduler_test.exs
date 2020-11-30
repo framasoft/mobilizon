@@ -249,7 +249,15 @@ defmodule Mobilizon.Service.Notifications.SchedulerTest do
 
       Scheduler.pending_participation_notification(event)
 
-      {:ok, scheduled_at} = NaiveDateTime.new(Date.utc_today(), ~T[18:00:00])
+      now = Time.utc_now()
+
+      {:ok, scheduled_at} =
+        if now.hour <= 18 do
+          NaiveDateTime.new(Date.utc_today(), ~T[18:00:00])
+        else
+          Date.utc_today() |> Date.add(1) |> NaiveDateTime.new(~T[18:00:00])
+        end
+
       {:ok, scheduled_at} = DateTime.from_naive(scheduled_at, "Europe/Paris")
 
       assert_enqueued(
