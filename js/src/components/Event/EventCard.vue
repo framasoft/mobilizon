@@ -1,5 +1,8 @@
 <template>
-  <router-link class="card" :to="{ name: 'Event', params: { uuid: event.uuid } }">
+  <router-link
+    class="card"
+    :to="{ name: 'Event', params: { uuid: event.uuid } }"
+  >
     <div class="card-image">
       <figure
         class="image is-16by9"
@@ -21,14 +24,18 @@
     <div class="card-content">
       <div class="media">
         <div class="media-left">
-          <date-calendar-icon v-if="!mergedOptions.hideDate" :date="event.beginsOn" />
+          <date-calendar-icon
+            v-if="!mergedOptions.hideDate"
+            :date="event.beginsOn"
+          />
         </div>
         <div class="media-content">
           <p class="event-title">{{ event.title }}</p>
           <div class="event-subtitle" v-if="event.physicalAddress">
             <!--            <p>{{ $t('By @{username}', { username: actor.preferredUsername }) }}</p>-->
             <span>
-              {{ event.physicalAddress.description }}, {{ event.physicalAddress.locality }}
+              {{ event.physicalAddress.description }},
+              {{ event.physicalAddress.locality }}
             </span>
           </div>
         </div>

@@ -10,7 +10,11 @@
         {{ $t("The event will show the group as organizer.") }}
       </p>
     </div>
-    <div v-if="inline && currentGroup.id" class="inline box" @click="isComponentModalActive = true">
+    <div
+      v-if="inline && currentGroup.id"
+      class="inline box"
+      @click="isComponentModalActive = true"
+    >
       <div class="media">
         <div class="media-left">
           <figure class="image is-48x48" v-if="currentGroup.avatar">
@@ -24,7 +28,9 @@
         </div>
         <div class="media-content" v-if="currentGroup.name">
           <p class="is-4">{{ currentGroup.name }}</p>
-          <p class="is-6 has-text-grey">{{ `@${currentGroup.preferredUsername}` }}</p>
+          <p class="is-6 has-text-grey">
+            {{ `@${currentGroup.preferredUsername}` }}
+          </p>
         </div>
         <div class="media-content" v-else>
           {{ `@${currentGroup.preferredUsername}` }}
@@ -34,7 +40,11 @@
         </b-button>
       </div>
     </div>
-    <span v-else-if="currentGroup.id" class="block" @click="isComponentModalActive = true">
+    <span
+      v-else-if="currentGroup.id"
+      class="block"
+      @click="isComponentModalActive = true"
+    >
       <img
         class="image is-48x48"
         v-if="currentGroup.avatar"
@@ -44,7 +54,9 @@
       <b-icon v-else size="is-large" icon="account-circle" />
     </span>
     <div v-if="groupMemberships.total === 0" class="box">
-      <p class="is-4">{{ $t("This identity is not a member of any group.") }}</p>
+      <p class="is-4">
+        {{ $t("This identity is not a member of any group.") }}
+      </p>
       <p class="is-6 is-size-6 has-text-grey">
         {{ $t("You need to create the group before you create an event.") }}
       </p>

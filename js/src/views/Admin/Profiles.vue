@@ -3,10 +3,14 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li>
-          <router-link :to="{ name: RouteName.MODERATION }">{{ $t("Moderation") }}</router-link>
+          <router-link :to="{ name: RouteName.MODERATION }">{{
+            $t("Moderation")
+          }}</router-link>
         </li>
         <li class="is-active">
-          <router-link :to="{ name: RouteName.PROFILES }">{{ $t("Profiles") }}</router-link>
+          <router-link :to="{ name: RouteName.PROFILES }">{{
+            $t("Profiles")
+          }}</router-link>
         </li>
       </ul>
     </nav>
@@ -24,7 +28,11 @@
         @page-change="onPageChange"
         @filters-change="onFiltersChange"
       >
-        <b-table-column field="preferredUsername" :label="$t('Username')" searchable>
+        <b-table-column
+          field="preferredUsername"
+          :label="$t('Username')"
+          searchable
+        >
           <template slot="searchable" slot-scope="props">
             <b-input
               v-model="props.filters.preferredUsername"
@@ -36,7 +44,10 @@
           <template v-slot:default="props">
             <router-link
               class="profile"
-              :to="{ name: RouteName.ADMIN_PROFILE, params: { id: props.row.id } }"
+              :to="{
+                name: RouteName.ADMIN_PROFILE,
+                params: { id: props.row.id },
+              }"
             >
               <article class="media">
                 <figure class="media-left" v-if="props.row.avatar">

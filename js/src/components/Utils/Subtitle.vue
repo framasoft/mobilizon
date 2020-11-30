@@ -21,7 +21,8 @@ h2 {
     display: inline;
     padding: 3px 8px;
     color: #3a384c;
-    font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial, serif;
+    font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial,
+      serif;
     font-weight: 400;
     font-size: 32px;
   }

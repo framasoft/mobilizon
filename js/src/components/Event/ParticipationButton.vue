@@ -47,8 +47,16 @@ A button to set your participation
       >
     </b-dropdown>
 
-    <div v-else-if="participation && participation.role === ParticipantRole.NOT_APPROVED">
-      <b-dropdown aria-role="list" position="is-bottom-left" class="dropdown-disabled">
+    <div
+      v-else-if="
+        participation && participation.role === ParticipantRole.NOT_APPROVED
+      "
+    >
+      <b-dropdown
+        aria-role="list"
+        position="is-bottom-left"
+        class="dropdown-disabled"
+      >
         <button class="button is-success is-large" type="button" slot="trigger">
           <b-icon icon="timer-sand-empty" />
           <template>
@@ -74,9 +82,17 @@ A button to set your participation
       <small>{{ $t("Waiting for organization team approval.") }}</small>
     </div>
 
-    <div v-else-if="participation && participation.role === ParticipantRole.REJECTED">
+    <div
+      v-else-if="
+        participation && participation.role === ParticipantRole.REJECTED
+      "
+    >
       <span>
-        {{ $t("Unfortunately, your participation request was rejected by the organizers.") }}
+        {{
+          $t(
+            "Unfortunately, your participation request was rejected by the organizers."
+          )
+        }}
       </span>
     </div>
 
@@ -92,7 +108,11 @@ A button to set your participation
         <b-icon icon="menu-down" />
       </button>
 
-      <b-dropdown-item :value="true" aria-role="listitem" @click="joinEvent(currentActor)">
+      <b-dropdown-item
+        :value="true"
+        aria-role="listitem"
+        @click="joinEvent(currentActor)"
+      >
         <div class="media">
           <div class="media-left">
             <figure class="image is-32x32" v-if="currentActor.avatar">
@@ -103,7 +123,8 @@ A button to set your participation
             <span>
               {{
                 $t("as {identity}", {
-                  identity: currentActor.name || `@${currentActor.preferredUsername}`,
+                  identity:
+                    currentActor.name || `@${currentActor.preferredUsername}`,
                 })
               }}
             </span>
@@ -121,7 +142,10 @@ A button to set your participation
     </b-dropdown>
     <b-button
       tag="router-link"
-      :to="{ name: RouteName.EVENT_PARTICIPATE_LOGGED_OUT, params: { uuid: event.uuid } }"
+      :to="{
+        name: RouteName.EVENT_PARTICIPATE_LOGGED_OUT,
+        params: { uuid: event.uuid },
+      }"
       v-else-if="!participation && hasAnonymousParticipationMethods"
       type="is-primary"
       size="is-large"
@@ -130,7 +154,10 @@ A button to set your participation
     >
     <b-button
       tag="router-link"
-      :to="{ name: RouteName.EVENT_PARTICIPATE_WITH_ACCOUNT, params: { uuid: event.uuid } }"
+      :to="{
+        name: RouteName.EVENT_PARTICIPATE_WITH_ACCOUNT,
+        params: { uuid: event.uuid },
+      }"
       v-else-if="!currentActor.id"
       type="is-primary"
       size="is-large"
@@ -162,7 +189,9 @@ import RouteName from "../../router/name";
     identities: {
       query: IDENTITIES,
       update: ({ identities }) =>
-        identities ? identities.map((identity: IPerson) => new Person(identity)) : [],
+        identities
+          ? identities.map((identity: IPerson) => new Person(identity))
+          : [],
       skip() {
         return this.currentUser.isLoggedIn === false;
       },

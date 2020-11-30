@@ -16,8 +16,17 @@
           :defaultImage="event.picture"
         />
 
-        <b-field :label="$t('Title')" :type="checkTitleLength[0]" :message="checkTitleLength[1]">
-          <b-input size="is-large" aria-required="true" required v-model="event.title" />
+        <b-field
+          :label="$t('Title')"
+          :type="checkTitleLength[0]"
+          :message="checkTitleLength[1]"
+        >
+          <b-input
+            size="is-large"
+            aria-required="true"
+            required
+            v-model="event.title"
+          />
         </b-field>
 
         <tag-input v-model="event.tags" :data="tags" path="title" />
@@ -41,7 +50,12 @@
         </div>
 
         <b-field :label="$t('Website / URL')">
-          <b-input icon="link" type="url" v-model="event.onlineAddress" placeholder="URL" />
+          <b-input
+            icon="link"
+            type="url"
+            v-model="event.onlineAddress"
+            placeholder="URL"
+          />
         </b-field>
 
         <subtitle>{{ $t("Organizers") }}</subtitle>
@@ -55,18 +69,28 @@
             />
           </b-field>
           <p v-if="!event.attributedTo.id || attributedToEqualToOrganizerActor">
-            {{ $t("The event will show as attributed to your personal profile.") }}
+            {{
+              $t("The event will show as attributed to your personal profile.")
+            }}
           </p>
           <p v-else>
-            <span>{{ $t("The event will show as attributed to this group.") }}</span>
+            <span>{{
+              $t("The event will show as attributed to this group.")
+            }}</span>
             <span
               v-if="event.contacts && event.contacts.length"
               v-html="
-                $tc('<b>{contact}</b> will be displayed as contact.', event.contacts.length, {
-                  contact: formatList(
-                    event.contacts.map((contact) => displayNameAndUsername(contact))
-                  ),
-                })
+                $tc(
+                  '<b>{contact}</b> will be displayed as contact.',
+                  event.contacts.length,
+                  {
+                    contact: formatList(
+                      event.contacts.map((contact) =>
+                        displayNameAndUsername(contact)
+                      )
+                    ),
+                  }
+                )
               "
             />
           </p>
@@ -96,11 +120,21 @@
           </b-radio>
         </div>-->
 
-        <div class="field" v-if="config && config.anonymous.participation.allowed">
+        <div
+          class="field"
+          v-if="config && config.anonymous.participation.allowed"
+        >
           <label class="label">{{ $t("Anonymous participations") }}</label>
           <b-switch v-model="event.options.anonymousParticipation">
-            {{ $t("I want to allow people to participate without an account.") }}
-            <small v-if="config.anonymous.participation.validation.email.confirmationRequired">
+            {{
+              $t("I want to allow people to participate without an account.")
+            }}
+            <small
+              v-if="
+                config.anonymous.participation.validation.email
+                  .confirmationRequired
+              "
+            >
               <br />
               {{
                 $t(
@@ -120,7 +154,9 @@
 
         <div class="field">
           <label class="label">{{ $t("Number of places") }}</label>
-          <b-switch v-model="limitedPlaces">{{ $t("Limited number of places") }}</b-switch>
+          <b-switch v-model="limitedPlaces">{{
+            $t("Limited number of places")
+          }}</b-switch>
         </div>
 
         <div class="box" v-if="limitedPlaces">
@@ -225,7 +261,11 @@
             </b-field>
           </section>
           <footer class="modal-card-foot">
-            <button class="button" type="button" @click="dateSettingsIsOpen = false">
+            <button
+              class="button"
+              type="button"
+              @click="dateSettingsIsOpen = false"
+            >
               {{ $t("OK") }}
             </button>
           </footer>
@@ -243,11 +283,15 @@
       <div class="container">
         <div class="navbar-menu">
           <div class="navbar-start">
-            <span class="navbar-item" v-if="isEventModified">{{ $t("Unsaved changes") }}</span>
+            <span class="navbar-item" v-if="isEventModified">{{
+              $t("Unsaved changes")
+            }}</span>
           </div>
           <div class="navbar-end">
             <span class="navbar-item">
-              <b-button type="is-text" @click="confirmGoBack">{{ $t("Cancel") }}</b-button>
+              <b-button type="is-text" @click="confirmGoBack">{{
+                $t("Cancel")
+              }}</b-button>
             </span>
             <!-- If an event has been published we can't make it draft anymore -->
             <span class="navbar-item" v-if="event.draft === true">
@@ -266,8 +310,12 @@
                 @click="createOrUpdatePublish"
                 @keyup.enter="createOrUpdatePublish"
               >
-                <span v-if="isUpdate === false">{{ $t("Create my event") }}</span>
-                <span v-else-if="event.draft === true">{{ $t("Publish") }}</span>
+                <span v-if="isUpdate === false">{{
+                  $t("Create my event")
+                }}</span>
+                <span v-else-if="event.draft === true">{{
+                  $t("Publish")
+                }}</span>
                 <span v-else>{{ $t("Update my event") }}</span>
               </b-button>
             </span>
@@ -376,7 +424,11 @@ import {
 import { IPerson, Person, displayNameAndUsername } from "../../types/actor";
 import { TAGS } from "../../graphql/tags";
 import { ITag } from "../../types/tag.model";
-import { buildFileFromIMedia, buildFileVariable, readFileAsync } from "../../utils/image";
+import {
+  buildFileFromIMedia,
+  buildFileVariable,
+  readFileAsync,
+} from "../../utils/image";
 import RouteName from "../../router/name";
 import "intersection-observer";
 import { CONFIG } from "../../graphql/config";
@@ -419,7 +471,9 @@ const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
       // if no subcomponents specify a metaInfo.title, this title will be used
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      title: (this.isUpdate ? this.$t("Event edition") : this.$t("Event creation")) as string,
+      title: (this.isUpdate
+        ? this.$t("Event edition")
+        : this.$t("Event creation")) as string,
       // all titles will be injected into this template
       titleTemplate: "%s | Mobilizon",
     };
@@ -546,8 +600,15 @@ export default class EditEvent extends Vue {
 
   @Watch("event")
   setInitialData(): void {
-    if (this.isUpdate && this.unmodifiedEvent === undefined && this.event && this.event.uuid) {
-      this.unmodifiedEvent = JSON.parse(JSON.stringify(this.event.toEditJSON()));
+    if (
+      this.isUpdate &&
+      this.unmodifiedEvent === undefined &&
+      this.event &&
+      this.event.uuid
+    ) {
+      this.unmodifiedEvent = JSON.parse(
+        JSON.stringify(this.event.toEditJSON())
+      );
     }
   }
 
@@ -575,8 +636,10 @@ export default class EditEvent extends Vue {
       const { data } = await this.$apollo.mutate({
         mutation: CREATE_EVENT,
         variables,
-        update: (store, { data: { createEvent } }) => this.postCreateOrUpdate(store, createEvent),
-        refetchQueries: ({ data: { createEvent } }) => this.postRefetchQueries(createEvent),
+        update: (store, { data: { createEvent } }) =>
+          this.postCreateOrUpdate(store, createEvent),
+        refetchQueries: ({ data: { createEvent } }) =>
+          this.postRefetchQueries(createEvent),
       });
 
       this.$buefy.notification.open({
@@ -606,8 +669,10 @@ export default class EditEvent extends Vue {
       await this.$apollo.mutate({
         mutation: EDIT_EVENT,
         variables,
-        update: (store, { data: { updateEvent } }) => this.postCreateOrUpdate(store, updateEvent),
-        refetchQueries: ({ data: { updateEvent } }) => this.postRefetchQueries(updateEvent),
+        update: (store, { data: { updateEvent } }) =>
+          this.postCreateOrUpdate(store, updateEvent),
+        refetchQueries: ({ data: { updateEvent } }) =>
+          this.postRefetchQueries(updateEvent),
       });
 
       this.$buefy.notification.open({
@@ -774,9 +839,13 @@ export default class EditEvent extends Vue {
 
     try {
       if (this.event.picture && this.pictureFile) {
-        const oldPictureFile = (await buildFileFromIMedia(this.event.picture)) as File;
+        const oldPictureFile = (await buildFileFromIMedia(
+          this.event.picture
+        )) as File;
         const oldPictureFileContent = await readFileAsync(oldPictureFile);
-        const newPictureFileContent = await readFileAsync(this.pictureFile as File);
+        const newPictureFileContent = await readFileAsync(
+          this.pictureFile as File
+        );
         if (oldPictureFileContent === newPictureFileContent) {
           res.picture = { mediaId: this.event.picture.id };
         }
@@ -814,7 +883,8 @@ export default class EditEvent extends Vue {
       this.event.options.showRemainingAttendeeCapacity = false;
     } else {
       this.event.options.maximumAttendeeCapacity =
-        this.event.options.maximumAttendeeCapacity || DEFAULT_LIMIT_NUMBER_OF_PLACES;
+        this.event.options.maximumAttendeeCapacity ||
+        DEFAULT_LIMIT_NUMBER_OF_PLACES;
     }
   }
 
@@ -878,7 +948,10 @@ export default class EditEvent extends Vue {
   }
 
   get isEventModified(): boolean {
-    return JSON.stringify(this.event.toEditJSON()) !== JSON.stringify(this.unmodifiedEvent);
+    return (
+      JSON.stringify(this.event.toEditJSON()) !==
+      JSON.stringify(this.unmodifiedEvent)
+    );
   }
 
   get beginsOn(): Date {

@@ -51,7 +51,9 @@
                 }}</router-link>
               </li>
               <li>
-                <router-link :to="{ name: RouteName.GLOSSARY }">{{ $t("Glossary") }}</router-link>
+                <router-link :to="{ name: RouteName.GLOSSARY }">{{
+                  $t("Glossary")
+                }}</router-link>
               </li>
             </ul>
           </aside>
@@ -79,9 +81,13 @@
             </div>
             <div class="column">
               <h2 class="title">{{ $t("Find another instance") }}</h2>
-              <b-button type="is-secondary" size="is-large" tag="a" href="https://mobilizon.org">{{
-                $t("Pick an instance")
-              }}</b-button>
+              <b-button
+                type="is-secondary"
+                size="is-large"
+                tag="a"
+                href="https://mobilizon.org"
+                >{{ $t("Pick an instance") }}</b-button
+              >
             </div>
           </div>
         </div>

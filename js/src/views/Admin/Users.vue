@@ -3,10 +3,14 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li>
-          <router-link :to="{ name: RouteName.MODERATION }">{{ $t("Moderation") }}</router-link>
+          <router-link :to="{ name: RouteName.MODERATION }">{{
+            $t("Moderation")
+          }}</router-link>
         </li>
         <li class="is-active">
-          <router-link :to="{ name: RouteName.USERS }">{{ $t("Users") }}</router-link>
+          <router-link :to="{ name: RouteName.USERS }">{{
+            $t("Users")
+          }}</router-link>
         </li>
       </ul>
     </nav>
@@ -40,7 +44,10 @@
           <template v-slot:default="props">
             <router-link
               class="user-profile"
-              :to="{ name: RouteName.ADMIN_USER_PROFILE, params: { id: props.row.id } }"
+              :to="{
+                name: RouteName.ADMIN_USER_PROFILE,
+                params: { id: props.row.id },
+              }"
               :class="{ disabled: props.row.disabled }"
             >
               {{ props.row.email }}
@@ -60,7 +67,12 @@
             {{ $t("Not confirmed") }}
           </template>
         </b-table-column>
-        <b-table-column field="locale" :label="$t('Language')" :centered="true" v-slot="props">
+        <b-table-column
+          field="locale"
+          :label="$t('Language')"
+          :centered="true"
+          v-slot="props"
+        >
           {{ props.row.locale }}
         </b-table-column>
 

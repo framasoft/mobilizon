@@ -13,13 +13,20 @@ export default class ProviderValidate extends Vue {
     const refreshToken = this.getValueFromMeta("auth-refresh-token");
     const userId = this.getValueFromMeta("auth-user-id");
     const userEmail = this.getValueFromMeta("auth-user-email");
-    const userRole = this.getValueFromMeta("auth-user-role") as ICurrentUserRole;
+    const userRole = this.getValueFromMeta(
+      "auth-user-role"
+    ) as ICurrentUserRole;
 
     if (!(userId && userEmail && userRole && accessToken && refreshToken)) {
       await this.$router.push("/");
     } else {
       const login = {
-        user: { id: userId, email: userEmail, role: userRole, isLoggedIn: true },
+        user: {
+          id: userId,
+          email: userEmail,
+          role: userRole,
+          isLoggedIn: true,
+        },
         accessToken,
         refreshToken,
       };
@@ -39,7 +46,10 @@ export default class ProviderValidate extends Vue {
       const { loggedUser } = data;
 
       if (loggedUser.defaultActor) {
-        await changeIdentity(this.$apollo.provider.defaultClient, loggedUser.defaultActor);
+        await changeIdentity(
+          this.$apollo.provider.defaultClient,
+          loggedUser.defaultActor
+        );
         await this.$router.push({ name: RouteName.HOME });
       } else {
         // If the user didn't register any profile yet, let's create one for them

@@ -31,7 +31,10 @@
         </li>
       </ul>
     </nav>
-    <section class="container section" v-if="group && isCurrentActorAGroupAdmin">
+    <section
+      class="container section"
+      v-if="group && isCurrentActorAGroupAdmin"
+    >
       <form @submit.prevent="updateGroup">
         <b-field :label="$t('Group name')">
           <b-input v-model="group.name" />
@@ -104,7 +107,11 @@
 
         <p class="label">{{ $t("New members") }}</p>
         <div class="field">
-          <b-radio v-model="group.openness" name="groupOpenness" :native-value="Openness.OPEN">
+          <b-radio
+            v-model="group.openness"
+            name="groupOpenness"
+            :native-value="Openness.OPEN"
+          >
             {{ $t("Anyone can join freely") }}<br />
             <small>{{
               $t(
@@ -134,8 +141,12 @@
         />
 
         <div class="buttons">
-          <b-button native-type="submit" type="is-primary">{{ $t("Update group") }}</b-button>
-          <b-button @click="confirmDeleteGroup" type="is-danger">{{ $t("Delete group") }}</b-button>
+          <b-button native-type="submit" type="is-primary">{{
+            $t("Update group")
+          }}</b-button>
+          <b-button @click="confirmDeleteGroup" type="is-danger">{{
+            $t("Delete group")
+          }}</b-button>
         </div>
       </form>
     </section>

@@ -21,7 +21,9 @@
           >
         </li>
         <li class="is-active">
-          <router-link :to="{ name: RouteName.TODO_LIST, params: { id: todoList.id } }">
+          <router-link
+            :to="{ name: RouteName.TODO_LIST, params: { id: todoList.id } }"
+          >
             {{ todoList.title }}
           </router-link>
         </li>
@@ -95,7 +97,9 @@ export default class TodoList extends Vue {
         if (cachedData == null) return;
         const { todoList } = cachedData;
         if (todoList === null) {
-          console.error("Cannot update event notes cache, because of null value.");
+          console.error(
+            "Cannot update event notes cache, because of null value."
+          );
           return;
         }
         const newTodo: ITodo = data.createTodo;

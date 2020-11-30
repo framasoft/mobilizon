@@ -36,7 +36,9 @@ export default class Todo extends Vue {
 
   editMode = false;
 
-  debounceUpdateTodo!: DebouncedFunc<(obj: Record<string, unknown>) => Promise<void>>;
+  debounceUpdateTodo!: DebouncedFunc<
+    (obj: Record<string, unknown>) => Promise<void>
+  >;
 
   // We put this in data because of issues like
   // https://github.com/vuejs/vue-class-component/issues/263
@@ -89,7 +91,11 @@ export default class Todo extends Vue {
       });
       this.editMode = false;
     } catch (e) {
-      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+      Snackbar.open({
+        message: e.message,
+        type: "is-danger",
+        position: "is-bottom",
+      });
     }
   }
 }

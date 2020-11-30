@@ -1,10 +1,16 @@
 import { RouteConfig, Route } from "vue-router";
+import { EsModuleComponent } from "vue/types/options";
 
-const participations = () =>
-  import(/* webpackChunkName: "participations" */ "@/views/Event/Participants.vue");
-const editEvent = () => import(/* webpackChunkName: "edit-event" */ "@/views/Event/Edit.vue");
-const event = () => import(/* webpackChunkName: "event" */ "@/views/Event/Event.vue");
-const myEvents = () => import(/* webpackChunkName: "my-events" */ "@/views/Event/MyEvents.vue");
+const participations = (): Promise<EsModuleComponent> =>
+  import(
+    /* webpackChunkName: "participations" */ "@/views/Event/Participants.vue"
+  );
+const editEvent = (): Promise<EsModuleComponent> =>
+  import(/* webpackChunkName: "edit-event" */ "@/views/Event/Edit.vue");
+const event = (): Promise<EsModuleComponent> =>
+  import(/* webpackChunkName: "event" */ "@/views/Event/Event.vue");
+const myEvents = (): Promise<EsModuleComponent> =>
+  import(/* webpackChunkName: "my-events" */ "@/views/Event/MyEvents.vue");
 
 export enum EventRouteName {
   EVENT_LIST = "EventList",
@@ -25,7 +31,8 @@ export const eventRoutes: RouteConfig[] = [
   {
     path: "/events/list/:location?",
     name: EventRouteName.EVENT_LIST,
-    component: () => import(/* webpackChunkName: "EventList" */ "@/views/Event/EventList.vue"),
+    component: (): Promise<EsModuleComponent> =>
+      import(/* webpackChunkName: "EventList" */ "@/views/Event/EventList.vue"),
     meta: { requiredAuth: false },
   },
   {
@@ -45,7 +52,9 @@ export const eventRoutes: RouteConfig[] = [
     name: EventRouteName.EDIT_EVENT,
     component: editEvent,
     meta: { requiredAuth: true },
-    props: (route: Route): Record<string, unknown> => ({ ...route.params, ...{ isUpdate: true } }),
+    props: (route: Route): Record<string, unknown> => {
+      return { ...route.params, ...{ isUpdate: true } };
+    },
   },
   {
     path: "/events/duplicate/:eventId",
@@ -74,31 +83,36 @@ export const eventRoutes: RouteConfig[] = [
   {
     path: "/events/:uuid/participate",
     name: EventRouteName.EVENT_PARTICIPATE_LOGGED_OUT,
-    component: () => import("../components/Participation/UnloggedParticipation.vue"),
+    component: (): Promise<EsModuleComponent> =>
+      import("../components/Participation/UnloggedParticipation.vue"),
     props: true,
   },
   {
     path: "/events/:uuid/participate/with-account",
     name: EventRouteName.EVENT_PARTICIPATE_WITH_ACCOUNT,
-    component: () => import("../components/Participation/ParticipationWithAccount.vue"),
+    component: (): Promise<EsModuleComponent> =>
+      import("../components/Participation/ParticipationWithAccount.vue"),
     props: true,
   },
   {
     path: "/events/:uuid/participate/without-account",
     name: EventRouteName.EVENT_PARTICIPATE_WITHOUT_ACCOUNT,
-    component: () => import("../components/Participation/ParticipationWithoutAccount.vue"),
+    component: (): Promise<EsModuleComponent> =>
+      import("../components/Participation/ParticipationWithoutAccount.vue"),
     props: true,
   },
   {
     path: "/participation/email/confirm/:token",
     name: EventRouteName.EVENT_PARTICIPATE_CONFIRM,
-    component: () => import("../components/Participation/ConfirmParticipation.vue"),
+    component: (): Promise<EsModuleComponent> =>
+      import("../components/Participation/ConfirmParticipation.vue"),
     props: true,
   },
   {
     path: "/tag/:tag",
     name: EventRouteName.TAG,
-    component: () => import(/* webpackChunkName: "Search" */ "@/views/Search.vue"),
+    component: (): Promise<EsModuleComponent> =>
+      import(/* webpackChunkName: "Search" */ "@/views/Search.vue"),
     props: true,
     meta: { requiredAuth: false },
   },

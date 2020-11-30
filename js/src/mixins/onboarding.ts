@@ -13,7 +13,9 @@ export default class Onboarding extends Vue {
 
   RouteName = RouteName;
 
-  protected async doUpdateSetting(variables: Record<string, unknown>): Promise<void> {
+  protected async doUpdateSetting(
+    variables: Record<string, unknown>
+  ): Promise<void> {
     await this.$apollo.mutate<{ setUserSettings: string }>({
       mutation: SET_USER_SETTINGS,
       variables,

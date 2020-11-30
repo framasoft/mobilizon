@@ -2,8 +2,11 @@ const path = require("path");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
 module.exports = {
+  devServer: {
+    proxy: "http://mobilizon1.com",
+  },
   runtimeCompiler: true,
-  lintOnSave: true,
+  lintOnSave: process.env.NODE_ENV !== "production",
   filenameHashing: true,
   productionSourceMap: false,
   outputDir: path.resolve(__dirname, "../priv/static"),
@@ -17,7 +20,9 @@ module.exports = {
 
     // remove the existing ForkTsCheckerWebpackPlugin
     // so that we can replace it with our modified version
-    config.plugins = config.plugins.filter((p) => !(p instanceof ForkTsCheckerWebpackPlugin));
+    config.plugins = config.plugins.filter(
+      (p) => !(p instanceof ForkTsCheckerWebpackPlugin)
+    );
 
     // copy the options from the original ForkTsCheckerWebpackPlugin
     // instance and add the memoryLimit property

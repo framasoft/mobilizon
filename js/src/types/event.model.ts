@@ -184,7 +184,9 @@ export class EventModel implements IEvent {
 
     this.onlineAddress = hash.onlineAddress;
     this.phoneAddress = hash.phoneAddress;
-    this.physicalAddress = hash.physicalAddress ? new Address(hash.physicalAddress) : undefined;
+    this.physicalAddress = hash.physicalAddress
+      ? new Address(hash.physicalAddress)
+      : undefined;
     this.participantStats = hash.participantStats;
 
     this.contacts = hash.contacts;
@@ -209,7 +211,8 @@ export class EventModel implements IEvent {
       phoneAddress: this.phoneAddress,
       physicalAddress: this.physicalAddress,
       options: this.options,
-      attributedToId: this.attributedTo && this.attributedTo.id ? this.attributedTo.id : null,
+      attributedToId:
+        this.attributedTo && this.attributedTo.id ? this.attributedTo.id : null,
       contacts: this.contacts.map(({ id }) => ({
         id,
       })),

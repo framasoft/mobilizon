@@ -14,11 +14,13 @@
 //
 //
 // -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
+// Cypress.Commands.add("drag",
+// { prevSubject: 'element' }, (subject, options) => { ... })
 //
 //
 // -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
+// Cypress.Commands.add("dismiss",
+// { prevSubject: 'optional' }, (subject, options) => { ... })
 //
 //
 // -- This is will overwrite an existing command --
@@ -104,7 +106,10 @@ const decreaseFetches = () => {
   Cypress.env("fetchCount", count - 1);
 };
 
-const buildTrackableFetchWithSessionId = (fetch) => (fetchUrl, fetchOptions) => {
+const buildTrackableFetchWithSessionId = (fetch) => (
+  fetchUrl,
+  fetchOptions
+) => {
   const { headers } = fetchOptions;
   const modifiedHeaders = {
     "x-session-id": Cypress.env("sessionId"),
@@ -149,6 +154,8 @@ Cypress.Commands.add("iframeLoaded", { prevSubject: "element" }, ($iframe) => {
   });
 });
 
-Cypress.Commands.add("getInDocument", { prevSubject: "document" }, (document, selector) =>
-  Cypress.$(selector, document)
+Cypress.Commands.add(
+  "getInDocument",
+  { prevSubject: "document" },
+  (document, selector) => Cypress.$(selector, document)
 );

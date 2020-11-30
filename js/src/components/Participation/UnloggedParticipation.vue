@@ -2,22 +2,34 @@
   <section class="section container hero">
     <div class="hero-body" v-if="event">
       <div class="container">
-        <subtitle>{{ $t("You wish to participate to the following event") }}</subtitle>
+        <subtitle>{{
+          $t("You wish to participate to the following event")
+        }}</subtitle>
         <EventListViewCard v-if="event" :event="event" />
         <div class="columns has-text-centered">
           <div class="column">
-            <router-link :to="{ name: RouteName.EVENT_PARTICIPATE_WITH_ACCOUNT }">
+            <router-link
+              :to="{ name: RouteName.EVENT_PARTICIPATE_WITH_ACCOUNT }"
+            >
               <figure class="image is-128x128">
-                <img src="../../assets/undraw_profile.svg" alt="Profile illustration" />
+                <img
+                  src="../../assets/undraw_profile.svg"
+                  alt="Profile illustration"
+                />
               </figure>
-              <b-button type="is-primary">{{ $t("I have a Mobilizon account") }}</b-button>
+              <b-button type="is-primary">{{
+                $t("I have a Mobilizon account")
+              }}</b-button>
             </router-link>
             <p>
               <small>
                 {{
-                  $t("Either on the {instance} instance or on another instance.", {
-                    instance: host,
-                  })
+                  $t(
+                    "Either on the {instance} instance or on another instance.",
+                    {
+                      instance: host,
+                    }
+                  )
                 }}
               </small>
               <b-tooltip
@@ -32,25 +44,41 @@
               </b-tooltip>
             </p>
           </div>
-          <vertical-divider :content="$t('Or')" v-if="anonymousParticipationAllowed" />
+          <vertical-divider
+            :content="$t('Or')"
+            v-if="anonymousParticipationAllowed"
+          />
           <div
             class="column"
-            v-if="anonymousParticipationAllowed && hasAnonymousEmailParticipationMethod"
+            v-if="
+              anonymousParticipationAllowed &&
+              hasAnonymousEmailParticipationMethod
+            "
           >
             <router-link
               :to="{ name: RouteName.EVENT_PARTICIPATE_WITHOUT_ACCOUNT }"
               v-if="event.local"
             >
               <figure class="image is-128x128">
-                <img src="../../assets/undraw_mail_2.svg" alt="Privacy illustration" />
+                <img
+                  src="../../assets/undraw_mail_2.svg"
+                  alt="Privacy illustration"
+                />
               </figure>
-              <b-button type="is-primary">{{ $t("I don't have a Mobilizon account") }}</b-button>
+              <b-button type="is-primary">{{
+                $t("I don't have a Mobilizon account")
+              }}</b-button>
             </router-link>
             <a :href="`${event.url}/participate/without-account`" v-else>
               <figure class="image is-128x128">
-                <img src="../../assets/undraw_mail_2.svg" alt="Privacy illustration" />
+                <img
+                  src="../../assets/undraw_mail_2.svg"
+                  alt="Privacy illustration"
+                />
               </figure>
-              <b-button type="is-primary">{{ $t("I don't have a Mobilizon account") }}</b-button>
+              <b-button type="is-primary">{{
+                $t("I don't have a Mobilizon account")
+              }}</b-button>
             </a>
             <p>
               <small>{{ $t("Participate using your email address") }}</small>

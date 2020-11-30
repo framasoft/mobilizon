@@ -3,13 +3,24 @@
     <section class="hero">
       <div class="hero-body">
         <h1 class="title">
-          {{ $t("Register an account on {instanceName}!", { instanceName: config.name }) }}
+          {{
+            $t("Register an account on {instanceName}!", {
+              instanceName: config.name,
+            })
+          }}
         </h1>
-        <i18n tag="p" path="{instanceName} is an instance of the {mobilizon} software.">
+        <i18n
+          tag="p"
+          path="{instanceName} is an instance of the {mobilizon} software."
+        >
           <b slot="instanceName">{{ config.name }}</b>
-          <a href="https://joinmobilizon.org" target="_blank" class="out" slot="mobilizon">{{
-            $t("Mobilizon")
-          }}</a>
+          <a
+            href="https://joinmobilizon.org"
+            target="_blank"
+            class="out"
+            slot="mobilizon"
+            >{{ $t("Mobilizon") }}</a
+          >
         </i18n>
       </div>
     </section>
@@ -21,10 +32,26 @@
             <div class="content">
               <ul>
                 <li>{{ $t("To create and manage your events") }}</li>
-                <li>{{ $t("To create and manage multiples identities from a same account") }}</li>
-                <li>{{ $t("To register for an event by choosing one of your identities") }}</li>
+                <li>
+                  {{
+                    $t(
+                      "To create and manage multiples identities from a same account"
+                    )
+                  }}
+                </li>
+                <li>
+                  {{
+                    $t(
+                      "To register for an event by choosing one of your identities"
+                    )
+                  }}
+                </li>
                 <li v-if="config.features.groups">
-                  {{ $t("To create or join an group and start organizing with other people") }}
+                  {{
+                    $t(
+                      "To create or join an group and start organizing with other people"
+                    )
+                  }}
                 </li>
               </ul>
             </div>
@@ -34,7 +61,9 @@
           }}</router-link>
           <hr />
           <div class="content">
-            <subtitle>{{ $t("About {instance}", { instance: config.name }) }}</subtitle>
+            <subtitle>{{
+              $t("About {instance}", { instance: config.name })
+            }}</subtitle>
             <div class="content" v-html="config.description"></div>
             <i18n
               path="Please read the {fullRules} published by {instance}'s administrators."
@@ -87,13 +116,22 @@
             </b-field>
 
             <b-checkbox required>
-              <i18n tag="span" path="I agree to the {instanceRules} and {termsOfService}">
-                <router-link class="out" slot="instanceRules" :to="{ name: RouteName.RULES }">{{
-                  $t("instance rules")
-                }}</router-link>
-                <router-link class="out" slot="termsOfService" :to="{ name: RouteName.TERMS }">{{
-                  $t("terms of service")
-                }}</router-link>
+              <i18n
+                tag="span"
+                path="I agree to the {instanceRules} and {termsOfService}"
+              >
+                <router-link
+                  class="out"
+                  slot="instanceRules"
+                  :to="{ name: RouteName.RULES }"
+                  >{{ $t("instance rules") }}</router-link
+                >
+                <router-link
+                  class="out"
+                  slot="termsOfService"
+                  :to="{ name: RouteName.TERMS }"
+                  >{{ $t("terms of service") }}</router-link
+                >
               </i18n>
             </b-checkbox>
 
@@ -111,7 +149,10 @@
             <p class="control has-text-centered">
               <router-link
                 class="button is-text"
-                :to="{ name: RouteName.RESEND_CONFIRMATION, params: { email: credentials.email } }"
+                :to="{
+                  name: RouteName.RESEND_CONFIRMATION,
+                  params: { email: credentials.email },
+                }"
                 >{{ $t("Didn't receive the instructions?") }}</router-link
               >
             </p>
@@ -120,20 +161,28 @@
                 class="button is-text"
                 :to="{
                   name: RouteName.LOGIN,
-                  params: { email: credentials.email, password: credentials.password },
+                  params: {
+                    email: credentials.email,
+                    password: credentials.password,
+                  },
                 }"
                 >{{ $t("Login") }}</router-link
               >
             </p>
 
             <hr />
-            <div class="control" v-if="config && config.auth.oauthProviders.length > 0">
+            <div
+              class="control"
+              v-if="config && config.auth.oauthProviders.length > 0"
+            >
               <auth-providers :oauthProviders="config.auth.oauthProviders" />
             </div>
           </form>
 
           <div v-if="errors.length > 0">
-            <b-message type="is-danger" v-for="error in errors" :key="error">{{ error }}</b-message>
+            <b-message type="is-danger" v-for="error in errors" :key="error">{{
+              error
+            }}</b-message>
           </div>
         </div>
       </div>
@@ -211,10 +260,13 @@ export default class Register extends Vue {
       });
     } catch (error) {
       console.error(error);
-      this.errors = error.graphQLErrors.reduce((acc: { [key: string]: any }, localError: any) => {
-        acc[localError.field] = localError.message;
-        return acc;
-      }, {});
+      this.errors = error.graphQLErrors.reduce(
+        (acc: { [key: string]: any }, localError: any) => {
+          acc[localError.field] = localError.message;
+          return acc;
+        },
+        {}
+      );
       this.sendingForm = false;
     }
   }

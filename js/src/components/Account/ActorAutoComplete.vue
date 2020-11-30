@@ -13,7 +13,12 @@
     <template slot-scope="props">
       <div class="media">
         <div class="media-left">
-          <img width="32" :src="props.option.avatar.url" v-if="props.option.avatar" alt="" />
+          <img
+            width="32"
+            :src="props.option.avatar.url"
+            v-if="props.option.avatar"
+            alt=""
+          />
           <b-icon v-else icon="account-circle" />
         </div>
         <div class="media-content">
@@ -21,7 +26,9 @@
             {{ props.option.name }}
             <br />
             <small>{{ `@${props.option.preferredUsername}` }}</small>
-            <small v-if="props.option.domain">{{ `@${props.option.domain}` }}</small>
+            <small v-if="props.option.domain">{{
+              `@${props.option.domain}`
+            }}</small>
           </span>
           <span v-else>
             {{ `@${props.option.preferredUsername}` }}
@@ -53,7 +60,9 @@ export default class ActorAutoComplete extends Vue {
 
   selected: IPerson | null = this.defaultSelected;
 
-  name: string = this.defaultSelected ? this.defaultSelected.preferredUsername : "";
+  name: string = this.defaultSelected
+    ? this.defaultSelected.preferredUsername
+    : "";
 
   page = 1;
 

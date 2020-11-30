@@ -31,9 +31,16 @@
         </li>
       </ul>
     </nav>
-    <section class="container section" v-if="group && isCurrentActorAGroupAdmin">
+    <section
+      class="container section"
+      v-if="group && isCurrentActorAGroupAdmin"
+    >
       <form @submit.prevent="inviteMember">
-        <b-field :label="$t('Invite a new member')" custom-class="add-relay" horizontal>
+        <b-field
+          :label="$t('Invite a new member')"
+          custom-class="add-relay"
+          horizontal
+        >
           <b-field
             grouped
             expanded
@@ -42,10 +49,15 @@
             :message="inviteError"
           >
             <p class="control">
-              <b-input v-model="newMemberUsername" :placeholder="$t('Ex: someone@mobilizon.org')" />
+              <b-input
+                v-model="newMemberUsername"
+                :placeholder="$t('Ex: someone@mobilizon.org')"
+              />
             </p>
             <p class="control">
-              <b-button type="is-primary" native-type="submit">{{ $t("Invite member") }}</b-button>
+              <b-button type="is-primary" native-type="submit">{{
+                $t("Invite member")
+              }}</b-button>
             </p>
           </b-field>
         </b-field>
@@ -97,15 +109,33 @@
         @page-change="triggerLoadMoreMemberPageChange"
         @sort="(field, order) => $emit('sort', field, order)"
       >
-        <b-table-column field="actor.preferredUsername" :label="$t('Member')" v-slot="props">
+        <b-table-column
+          field="actor.preferredUsername"
+          :label="$t('Member')"
+          v-slot="props"
+        >
           <article class="media">
-            <figure class="media-left image is-48x48" v-if="props.row.actor.avatar">
-              <img class="is-rounded" :src="props.row.actor.avatar.url" alt="" />
+            <figure
+              class="media-left image is-48x48"
+              v-if="props.row.actor.avatar"
+            >
+              <img
+                class="is-rounded"
+                :src="props.row.actor.avatar.url"
+                alt=""
+              />
             </figure>
-            <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+            <b-icon
+              class="media-left"
+              v-else
+              size="is-large"
+              icon="account-circle"
+            />
             <div class="media-content">
               <div class="content">
-                <span v-if="props.row.actor.name">{{ props.row.actor.name }}</span
+                <span v-if="props.row.actor.name">{{
+                  props.row.actor.name
+                }}</span
                 ><br />
                 <span class="is-size-7 has-text-grey"
                   >@{{ usernameWithDomain(props.row.actor) }}</span
@@ -115,22 +145,37 @@
           </article>
         </b-table-column>
         <b-table-column field="role" :label="$t('Role')" v-slot="props">
-          <b-tag type="is-primary" v-if="props.row.role === MemberRole.ADMINISTRATOR">
+          <b-tag
+            type="is-primary"
+            v-if="props.row.role === MemberRole.ADMINISTRATOR"
+          >
             {{ $t("Administrator") }}
           </b-tag>
-          <b-tag type="is-primary" v-else-if="props.row.role === MemberRole.MODERATOR">
+          <b-tag
+            type="is-primary"
+            v-else-if="props.row.role === MemberRole.MODERATOR"
+          >
             {{ $t("Moderator") }}
           </b-tag>
           <b-tag v-else-if="props.row.role === MemberRole.MEMBER">
             {{ $t("Member") }}
           </b-tag>
-          <b-tag type="is-warning" v-else-if="props.row.role === MemberRole.NOT_APPROVED">
+          <b-tag
+            type="is-warning"
+            v-else-if="props.row.role === MemberRole.NOT_APPROVED"
+          >
             {{ $t("Not approved") }}
           </b-tag>
-          <b-tag type="is-danger" v-else-if="props.row.role === MemberRole.REJECTED">
+          <b-tag
+            type="is-danger"
+            v-else-if="props.row.role === MemberRole.REJECTED"
+          >
             {{ $t("Rejected") }}
           </b-tag>
-          <b-tag type="is-warning" v-else-if="props.row.role === MemberRole.INVITED">
+          <b-tag
+            type="is-warning"
+            v-else-if="props.row.role === MemberRole.INVITED"
+          >
             {{ $t("Invited") }}
           </b-tag>
         </b-table-column>
@@ -144,13 +189,21 @@
         <b-table-column field="actions" :label="$t('Actions')" v-slot="props">
           <div class="buttons" v-if="props.row.actor.id !== currentActor.id">
             <b-button
-              v-if="[MemberRole.MEMBER, MemberRole.MODERATOR].includes(props.row.role)"
+              v-if="
+                [MemberRole.MEMBER, MemberRole.MODERATOR].includes(
+                  props.row.role
+                )
+              "
               @click="promoteMember(props.row)"
               icon-left="chevron-double-up"
               >{{ $t("Promote") }}</b-button
             >
             <b-button
-              v-if="[MemberRole.ADMINISTRATOR, MemberRole.MODERATOR].includes(props.row.role)"
+              v-if="
+                [MemberRole.ADMINISTRATOR, MemberRole.MODERATOR].includes(
+                  props.row.role
+                )
+              "
               @click="demoteMember(props.row)"
               icon-left="chevron-double-down"
               >{{ $t("Demote") }}</b-button
@@ -187,7 +240,12 @@ import { FETCH_GROUP } from "@/graphql/group";
 import { MemberRole } from "@/types/enums";
 import { IMember } from "@/types/actor/member.model";
 import RouteName from "../../router/name";
-import { INVITE_MEMBER, GROUP_MEMBERS, REMOVE_MEMBER, UPDATE_MEMBER } from "../../graphql/member";
+import {
+  INVITE_MEMBER,
+  GROUP_MEMBERS,
+  REMOVE_MEMBER,
+  UPDATE_MEMBER,
+} from "../../graphql/member";
 import { usernameWithDomain } from "../../types/actor";
 
 @Component({
@@ -380,7 +438,10 @@ export default class GroupMembers extends mixins(GroupMixin) {
           role,
         },
         refetchQueries: [
-          { query: FETCH_GROUP, variables: { name: this.$route.params.preferredUsername } },
+          {
+            query: FETCH_GROUP,
+            variables: { name: this.$route.params.preferredUsername },
+          },
         ],
       });
       let successMessage;

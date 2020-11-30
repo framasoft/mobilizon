@@ -8,7 +8,9 @@
         <a
           class="list-item"
           v-for="groupMembership in actualMemberships"
-          :class="{ 'is-active': groupMembership.parent.id === currentGroup.id }"
+          :class="{
+            'is-active': groupMembership.parent.id === currentGroup.id,
+          }"
           @click="changeCurrentGroup(groupMembership.parent)"
           :key="groupMembership.id"
         >
@@ -19,14 +21,25 @@
               :src="groupMembership.parent.avatar.url"
               alt=""
             />
-            <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+            <b-icon
+              class="media-left"
+              v-else
+              size="is-large"
+              icon="account-circle"
+            />
             <div class="media-content">
               <h3>@{{ groupMembership.parent.name }}</h3>
-              <small>{{ `@${groupMembership.parent.preferredUsername}` }}</small>
+              <small>{{
+                `@${groupMembership.parent.preferredUsername}`
+              }}</small>
             </div>
           </div>
         </a>
-        <a class="list-item" @click="changeCurrentGroup(new Group())" v-if="currentGroup.id">
+        <a
+          class="list-item"
+          @click="changeCurrentGroup(new Group())"
+          v-if="currentGroup.id"
+        >
           <h3>{{ $t("Unset group") }}</h3>
         </a>
       </div>
@@ -79,9 +92,11 @@ export default class GroupPicker extends Vue {
   get actualMemberships(): IMember[] {
     if (this.restrictModeratorLevel) {
       return this.groupMemberships.elements.filter((membership: IMember) =>
-        [MemberRole.ADMINISTRATOR, MemberRole.MODERATOR, MemberRole.CREATOR].includes(
-          membership.role
-        )
+        [
+          MemberRole.ADMINISTRATOR,
+          MemberRole.MODERATOR,
+          MemberRole.CREATOR,
+        ].includes(membership.role)
       );
     }
     return this.groupMemberships.elements;

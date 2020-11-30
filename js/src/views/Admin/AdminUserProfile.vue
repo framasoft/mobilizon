@@ -3,7 +3,9 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li>
-          <router-link :to="{ name: RouteName.ADMIN }">{{ $t("Admin") }}</router-link>
+          <router-link :to="{ name: RouteName.ADMIN }">{{
+            $t("Admin")
+          }}</router-link>
         </li>
         <li>
           <router-link
@@ -29,10 +31,15 @@
         <tr v-for="{ key, value, link, elements, type } in metadata" :key="key">
           <td>{{ key }}</td>
           <td v-if="elements && elements.length > 0">
-            <ul v-for="{ value, link: elementLink, active } in elements" :key="value">
+            <ul
+              v-for="{ value, link: elementLink, active } in elements"
+              :key="value"
+            >
               <li>
                 <router-link :to="elementLink">
-                  <span v-if="active">{{ $t("{profile} (by default)", { profile: value }) }}</span>
+                  <span v-if="active">{{
+                    $t("{profile} (by default)", { profile: value })
+                  }}</span>
                   <span v-else>{{ value }}</span>
                 </router-link>
               </li>
@@ -54,9 +61,12 @@
       </tbody>
     </table>
     <div class="buttons">
-      <b-button @click="deleteAccount" v-if="!user.disabled" type="is-primary">{{
-        $t("Suspend")
-      }}</b-button>
+      <b-button
+        @click="deleteAccount"
+        v-if="!user.disabled"
+        type="is-primary"
+        >{{ $t("Suspend") }}</b-button
+      >
     </div>
   </div>
 </template>
@@ -113,7 +123,9 @@ export default class AdminUserProfile extends Vue {
       },
       {
         key: this.$i18n.t("Login status"),
-        value: this.user.disabled ? this.$i18n.t("Disabled") : this.$t("Activated"),
+        value: this.user.disabled
+          ? this.$i18n.t("Disabled")
+          : this.$t("Activated"),
       },
       {
         key: this.$i18n.t("Profiles"),
@@ -123,7 +135,9 @@ export default class AdminUserProfile extends Vue {
             value: actor.name
               ? `${actor.name} (${actor.preferredUsername})`
               : actor.preferredUsername,
-            active: this.user.defaultActor ? actor.id === this.user.defaultActor.id : false,
+            active: this.user.defaultActor
+              ? actor.id === this.user.defaultActor.id
+              : false,
           };
         }),
       },
@@ -138,7 +152,9 @@ export default class AdminUserProfile extends Vue {
         key: this.$i18n.t("Last sign-in"),
         value:
           this.$options.filters && this.user.currentSignInAt
-            ? this.$options.filters.formatDateTimeString(this.user.currentSignInAt)
+            ? this.$options.filters.formatDateTimeString(
+                this.user.currentSignInAt
+              )
             : this.$t("Unknown"),
       },
       {

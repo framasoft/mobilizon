@@ -14,26 +14,46 @@
         <div class="media-content">
           <p class="post-minimalist-title">{{ post.title }}</p>
           <div class="metadata">
-            <b-tag type="is-warning" size="is-small" v-if="post.draft">{{ $t("Draft") }}</b-tag>
+            <b-tag type="is-warning" size="is-small" v-if="post.draft">{{
+              $t("Draft")
+            }}</b-tag>
             <small
-              v-if="post.visibility === PostVisibility.PUBLIC && isCurrentActorMember"
+              v-if="
+                post.visibility === PostVisibility.PUBLIC &&
+                isCurrentActorMember
+              "
               class="has-text-grey"
             >
               <b-icon icon="earth" size="is-small" />{{ $t("Public") }}</small
             >
-            <small v-else-if="post.visibility === PostVisibility.UNLISTED" class="has-text-grey">
-              <b-icon icon="link" size="is-small" />{{ $t("Accessible through link") }}</small
+            <small
+              v-else-if="post.visibility === PostVisibility.UNLISTED"
+              class="has-text-grey"
             >
-            <small v-else-if="post.visibility === PostVisibility.PRIVATE" class="has-text-grey">
+              <b-icon icon="link" size="is-small" />{{
+                $t("Accessible through link")
+              }}</small
+            >
+            <small
+              v-else-if="post.visibility === PostVisibility.PRIVATE"
+              class="has-text-grey"
+            >
               <b-icon icon="lock" size="is-small" />{{
-                $t("Accessible only to members", { group: post.attributedTo.name })
+                $t("Accessible only to members", {
+                  group: post.attributedTo.name,
+                })
               }}</small
             >
             <small class="has-text-grey">{{
-              $options.filters.formatDateTimeString(new Date(post.insertedAt), false)
+              $options.filters.formatDateTimeString(
+                new Date(post.insertedAt),
+                false
+              )
             }}</small>
             <small class="has-text-grey" v-if="isCurrentActorMember">{{
-              $t("Created by {username}", { username: `@${usernameWithDomain(post.author)}` })
+              $t("Created by {username}", {
+                username: `@${usernameWithDomain(post.author)}`,
+              })
             }}</small>
           </div>
         </div>
@@ -52,7 +72,8 @@ import { IPost } from "../../types/post.model";
 export default class PostElementItem extends Vue {
   @Prop({ required: true, type: Object }) post!: IPost;
 
-  @Prop({ required: false, type: Boolean, default: false }) isCurrentActorMember!: boolean;
+  @Prop({ required: false, type: Boolean, default: false })
+  isCurrentActorMember!: boolean;
 
   RouteName = RouteName;
 
@@ -75,7 +96,8 @@ export default class PostElementItem extends Vue {
 
     .post-minimalist-title {
       color: #3c376e;
-      font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial, serif;
+      font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial,
+        serif;
       font-size: 1rem;
       font-weight: 700;
       overflow: hidden;

@@ -12,7 +12,10 @@ function convertToUsername(value: string | null): string {
     .replace(/[^a-z0-9_]/g, "");
 }
 
-function autoUpdateUsername(actor: IActor, newDisplayName: string | null): IActor {
+function autoUpdateUsername(
+  actor: IActor,
+  newDisplayName: string | null
+): IActor {
   const actor2 = { ...actor };
   const oldUsername = convertToUsername(actor.name);
 

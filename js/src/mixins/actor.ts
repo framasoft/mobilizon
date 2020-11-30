@@ -7,6 +7,8 @@ export default class ActorMixin extends Vue {
   static actorIsOrganizer(actor: IActor, event: IEvent): boolean {
     console.log("actorIsOrganizer actor", actor.id);
     console.log("actorIsOrganizer event", event);
-    return event.organizerActor !== undefined && actor.id === event.organizerActor.id;
+    return (
+      event.organizerActor !== undefined && actor.id === event.organizerActor.id
+    );
   }
 }

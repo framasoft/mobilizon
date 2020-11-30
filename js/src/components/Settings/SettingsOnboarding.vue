@@ -39,7 +39,10 @@
               timezone,
             })
           }}
-          <b-message type="is-danger" v-if="!$apollo.loading && !supportedTimezone">
+          <b-message
+            type="is-danger"
+            v-if="!$apollo.loading && !supportedTimezone"
+          >
             {{ $t("Your timezone {timezone} isn't supported.", { timezone }) }}
           </b-message>
         </p>

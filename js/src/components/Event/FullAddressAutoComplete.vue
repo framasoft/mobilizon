@@ -33,9 +33,12 @@
           <div v-else-if="queryText.length >= 3" class="is-enabled">
             <span>{{ $t('No results for "{queryText}"') }}</span>
             <span>{{
-              $t("You can try another search term or drag and drop the marker on the map", {
-                queryText,
-              })
+              $t(
+                "You can try another search term or drag and drop the marker on the map",
+                {
+                  queryText,
+                }
+              )
             }}</span>
             <!--                        <p class="control" @click="openNewAddressModal">-->
             <!--                            <button type="button" class="button is-primary">{{ $t('Add') }}</button>-->
@@ -110,7 +113,8 @@ import { IConfig } from "../../types/config.model";
 
 @Component({
   components: {
-    "map-leaflet": () => import(/* webpackChunkName: "map" */ "@/components/Map.vue"),
+    "map-leaflet": () =>
+      import(/* webpackChunkName: "map" */ "@/components/Map.vue"),
   },
   apollo: {
     config: CONFIG,
@@ -173,7 +177,9 @@ export default class FullAddressAutoComplete extends Vue {
       },
     });
 
-    this.addressData = result.data.searchAddress.map((address: IAddress) => new Address(address));
+    this.addressData = result.data.searchAddress.map(
+      (address: IAddress) => new Address(address)
+    );
     this.isFetching = false;
   }
 
@@ -224,7 +230,9 @@ export default class FullAddressAutoComplete extends Vue {
       },
     });
 
-    this.addressData = result.data.reverseGeocode.map((address: IAddress) => new Address(address));
+    this.addressData = result.data.reverseGeocode.map(
+      (address: IAddress) => new Address(address)
+    );
     if (this.addressData.length > 0) {
       const defaultAddress = new Address(this.addressData[0]);
       this.selected = defaultAddress;
@@ -248,7 +256,10 @@ export default class FullAddressAutoComplete extends Vue {
       this.location = await FullAddressAutoComplete.getLocation();
       this.mapDefaultZoom = 12;
       this.reverseGeoCode(
-        new LatLng(this.location.coords.latitude, this.location.coords.longitude),
+        new LatLng(
+          this.location.coords.latitude,
+          this.location.coords.longitude
+        ),
         12
       );
     } catch (e) {

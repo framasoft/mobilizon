@@ -10,9 +10,11 @@
         class="column is-one-quarter-desktop is-half-mobile"
       />
     </div>
-    <b-message v-if-else="events.length === 0 && $apollo.loading === false" type="is-danger">{{
-      $t("No events found")
-    }}</b-message>
+    <b-message
+      v-if-else="events.length === 0 && $apollo.loading === false"
+      type="is-danger"
+      >{{ $t("No events found") }}</b-message
+    >
   </section>
 </template>
 

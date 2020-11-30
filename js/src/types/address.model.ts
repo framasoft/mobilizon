@@ -60,7 +60,8 @@ export class Address implements IAddress {
     let alternativeName = "";
     let poiIcon: IPOIIcon = poiIcons.default;
     // Google Maps doesn't have a type
-    if (this.type == null && this.description === this.street) this.type = "house";
+    if (this.type == null && this.description === this.street)
+      this.type = "house";
 
     switch (this.type) {
       case "house":
@@ -81,8 +82,12 @@ export class Address implements IAddress {
       case "zone":
       case "city":
       case "administrative":
-        name = this.postalCode ? `${this.description} (${this.postalCode})` : this.description;
-        alternativeName = [this.region, this.country].filter((zone) => zone).join(", ");
+        name = this.postalCode
+          ? `${this.description} (${this.postalCode})`
+          : this.description;
+        alternativeName = [this.region, this.country]
+          .filter((zone) => zone)
+          .join(", ");
         poiIcon = poiIcons.defaultAdministrative;
         break;
       default:

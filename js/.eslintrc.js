@@ -38,8 +38,11 @@ module.exports = {
       "error",
       {
         ignoreStrings: true,
+        ignoreHTMLTextContents: true,
+        ignoreTemplateLiterals: true,
+        ignoreComments: true,
         template: 170,
-        code: 100,
+        code: 80,
       },
     ],
     "prettier/prettier": "error",
@@ -56,7 +59,10 @@ module.exports = {
 
   overrides: [
     {
-      files: ["**/__tests__/*.{j,t}s?(x)", "**/tests/unit/**/*.spec.{j,t}s?(x)"],
+      files: [
+        "**/__tests__/*.{j,t}s?(x)",
+        "**/tests/unit/**/*.spec.{j,t}s?(x)",
+      ],
       env: {
         mocha: true,
       },

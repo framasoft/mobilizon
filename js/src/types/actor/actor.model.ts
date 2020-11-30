@@ -52,7 +52,9 @@ export class Actor implements IActor {
   }
 
   public displayName(): string {
-    return this.name != null && this.name !== "" ? this.name : this.usernameWithDomain();
+    return this.name != null && this.name !== ""
+      ? this.name
+      : this.usernameWithDomain();
   }
 }
 

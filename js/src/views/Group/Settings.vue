@@ -4,7 +4,10 @@
     <div class="columns">
       <aside class="column is-one-quarter-desktop">
         <ul>
-          <SettingMenuSection :title="$t('Settings')" :to="{ name: RouteName.GROUP_SETTINGS }">
+          <SettingMenuSection
+            :title="$t('Settings')"
+            :to="{ name: RouteName.GROUP_SETTINGS }"
+          >
             <SettingMenuItem
               :title="this.$t('Public')"
               :to="{ name: RouteName.GROUP_PUBLIC_SETTINGS }"

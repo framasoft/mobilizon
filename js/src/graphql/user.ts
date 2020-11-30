@@ -108,7 +108,12 @@ export const UPDATE_CURRENT_USER_CLIENT = gql`
     $isLoggedIn: Boolean!
     $role: UserRole!
   ) {
-    updateCurrentUser(id: $id, email: $email, isLoggedIn: $isLoggedIn, role: $role) @client
+    updateCurrentUser(
+      id: $id
+      email: $email
+      isLoggedIn: $isLoggedIn
+      role: $role
+    ) @client
   }
 `;
 

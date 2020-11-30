@@ -158,7 +158,9 @@ export default class PostList extends mixins(GroupMixin) {
 
   get isCurrentActorMember(): boolean {
     if (!this.group || !this.memberships) return false;
-    return this.memberships.map(({ parent: { id } }) => id).includes(this.group.id);
+    return this.memberships
+      .map(({ parent: { id } }) => id)
+      .includes(this.group.id);
   }
 }
 </script>

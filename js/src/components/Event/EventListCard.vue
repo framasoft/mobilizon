@@ -6,25 +6,38 @@
           <div class="date-component">
             <date-calendar-icon :date="participation.event.beginsOn" />
           </div>
-          <router-link :to="{ name: RouteName.EVENT, params: { uuid: participation.event.uuid } }">
+          <router-link
+            :to="{
+              name: RouteName.EVENT,
+              params: { uuid: participation.event.uuid },
+            }"
+          >
             <h3 class="title">{{ participation.event.title }}</h3>
           </router-link>
         </div>
         <div class="participation-actor has-text-grey">
           <span>
-            <b-icon icon="earth" v-if="participation.event.visibility === EventVisibility.PUBLIC" />
+            <b-icon
+              icon="earth"
+              v-if="participation.event.visibility === EventVisibility.PUBLIC"
+            />
             <b-icon
               icon="link"
-              v-else-if="participation.event.visibility === EventVisibility.UNLISTED"
+              v-else-if="
+                participation.event.visibility === EventVisibility.UNLISTED
+              "
             />
             <b-icon
               icon="lock"
-              v-else-if="participation.event.visibility === EventVisibility.PRIVATE"
+              v-else-if="
+                participation.event.visibility === EventVisibility.PRIVATE
+              "
             />
           </span>
           <span
             v-if="
-              participation.event.physicalAddress && participation.event.physicalAddress.locality
+              participation.event.physicalAddress &&
+              participation.event.physicalAddress.locality
             "
             >{{ participation.event.physicalAddress.locality }} -</span
           >
@@ -43,7 +56,11 @@
               path="Going as {name}"
               tag="span"
             >
-              <popover-actor-card slot="name" :actor="participation.actor" :inline="true">
+              <popover-actor-card
+                slot="name"
+                :actor="participation.actor"
+                :inline="true"
+              >
                 {{ participation.actor.displayName() }}
               </popover-actor-card>
             </i18n>
@@ -53,12 +70,15 @@
           <span
             class="participant-stats"
             v-if="
-              ![ParticipantRole.PARTICIPANT, ParticipantRole.NOT_APPROVED].includes(
-                participation.role
-              )
+              ![
+                ParticipantRole.PARTICIPANT,
+                ParticipantRole.NOT_APPROVED,
+              ].includes(participation.role)
             "
           >
-            <span v-if="participation.event.options.maximumAttendeeCapacity !== 0">
+            <span
+              v-if="participation.event.options.maximumAttendeeCapacity !== 0"
+            >
               {{
                 $tc(
                   "{available}/{capacity} available places",
@@ -68,16 +88,21 @@
                     available:
                       participation.event.options.maximumAttendeeCapacity -
                       participation.event.participantStats.participant,
-                    capacity: participation.event.options.maximumAttendeeCapacity,
+                    capacity:
+                      participation.event.options.maximumAttendeeCapacity,
                   }
                 )
               }}
             </span>
             <span v-else>
               {{
-                $tc("{count} participants", participation.event.participantStats.participant, {
-                  count: participation.event.participantStats.participant,
-                })
+                $tc(
+                  "{count} participants",
+                  participation.event.participantStats.participant,
+                  {
+                    count: participation.event.participantStats.participant,
+                  }
+                )
               }}
             </span>
             <span v-if="participation.event.participantStats.notApproved > 0">
@@ -107,9 +132,10 @@
         <ul>
           <li
             v-if="
-              ![ParticipantRole.PARTICIPANT, ParticipantRole.NOT_APPROVED].includes(
-                participation.role
-              )
+              ![
+                ParticipantRole.PARTICIPANT,
+                ParticipantRole.NOT_APPROVED,
+              ].includes(participation.role)
             "
           >
             <b-button
@@ -140,19 +166,23 @@
           </li>
           <li
             v-if="
-              ![ParticipantRole.PARTICIPANT, ParticipantRole.NOT_APPROVED].includes(
-                participation.role
-              )
+              ![
+                ParticipantRole.PARTICIPANT,
+                ParticipantRole.NOT_APPROVED,
+              ].includes(participation.role)
             "
             @click="openDeleteEventModalWrapper"
           >
-            <b-button type="is-text" icon-left="delete">{{ $t("Delete") }}</b-button>
+            <b-button type="is-text" icon-left="delete">{{
+              $t("Delete")
+            }}</b-button>
           </li>
           <li
             v-if="
-              ![ParticipantRole.PARTICIPANT, ParticipantRole.NOT_APPROVED].includes(
-                participation.role
-              )
+              ![
+                ParticipantRole.PARTICIPANT,
+                ParticipantRole.NOT_APPROVED,
+              ].includes(participation.role)
             "
           >
             <b-button
@@ -172,7 +202,10 @@
               tag="router-link"
               icon-left="view-compact"
               type="is-text"
-              :to="{ name: RouteName.EVENT, params: { uuid: participation.event.uuid } }"
+              :to="{
+                name: RouteName.EVENT,
+                params: { uuid: participation.event.uuid },
+              }"
               >{{ $t("View event page") }}</b-button
             >
           </li>
@@ -250,8 +283,14 @@ export default class EventListCard extends mixins(ActorMixin, EventMixin) {
     await this.openDeleteEventModal(this.participation.event);
   }
 
-  async gotToWithCheck(participation: IParticipant, route: RawLocation): Promise<Route> {
-    if (participation.actor.id !== this.currentActor.id && participation.event.organizerActor) {
+  async gotToWithCheck(
+    participation: IParticipant,
+    route: RawLocation
+  ): Promise<Route> {
+    if (
+      participation.actor.id !== this.currentActor.id &&
+      participation.event.organizerActor
+    ) {
       const organizer = participation.event.organizerActor as IPerson;
       await changeIdentity(this.$apollo.provider.defaultClient, organizer);
       this.$buefy.notification.open({

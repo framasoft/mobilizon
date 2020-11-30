@@ -33,7 +33,13 @@
               )
             }}
           </p>
-          <p v-else>{{ $t("If you want, you may send a message to the event organizer here.") }}</p>
+          <p v-else>
+            {{
+              $t(
+                "If you want, you may send a message to the event organizer here."
+              )
+            }}
+          </p>
           <b-field :label="$t('Message')">
             <b-input
               type="textarea"
@@ -54,18 +60,29 @@
               </p>
             </b-checkbox>
           </b-field>
-          <b-button :disabled="sendingForm" type="is-primary" native-type="submit">{{
-            $t("Send email")
-          }}</b-button>
+          <b-button
+            :disabled="sendingForm"
+            type="is-primary"
+            native-type="submit"
+            >{{ $t("Send email") }}</b-button
+          >
           <div class="has-text-centered">
-            <b-button native-type="button" tag="a" type="is-text" @click="$router.go(-1)">{{
-              $t("Back to previous page")
-            }}</b-button>
+            <b-button
+              native-type="button"
+              tag="a"
+              type="is-text"
+              @click="$router.go(-1)"
+              >{{ $t("Back to previous page") }}</b-button
+            >
           </div>
         </form>
         <div v-else>
-          <h1 class="title">{{ $t("Request for participation confirmation sent") }}</h1>
-          <p class="content">{{ $t("Check your inbox (and your junk mail folder).") }}</p>
+          <h1 class="title">
+            {{ $t("Request for participation confirmation sent") }}
+          </h1>
+          <p class="content">
+            {{ $t("Check your inbox (and your junk mail folder).") }}
+          </p>
           <p class="content">{{ $t("You may now close this window.") }}</p>
         </div>
       </div>
@@ -102,7 +119,11 @@ import { IParticipant } from "../../types/participant.model";
 export default class ParticipationWithoutAccount extends Vue {
   @Prop({ type: String, required: true }) uuid!: string;
 
-  anonymousParticipation: { email: string; message: string; saveParticipation: boolean } = {
+  anonymousParticipation: {
+    email: string;
+    message: string;
+    saveParticipation: boolean;
+  } = {
     email: "",
     message: "",
     saveParticipation: true,
@@ -134,7 +155,9 @@ export default class ParticipationWithoutAccount extends Vue {
         },
         update: (store, { data: updateData }) => {
           if (updateData == null) {
-            console.error("Cannot update event participant cache, because of data null value.");
+            console.error(
+              "Cannot update event participant cache, because of data null value."
+            );
             return;
           }
 
@@ -143,12 +166,16 @@ export default class ParticipationWithoutAccount extends Vue {
             variables: { uuid: this.event.uuid },
           });
           if (cachedData == null) {
-            console.error("Cannot update event participant cache, because of cached null value.");
+            console.error(
+              "Cannot update event participant cache, because of cached null value."
+            );
             return;
           }
           const { event } = cachedData;
           if (event === null) {
-            console.error("Cannot update event participant cache, because of null value.");
+            console.error(
+              "Cannot update event participant cache, because of null value."
+            );
             return;
           }
 

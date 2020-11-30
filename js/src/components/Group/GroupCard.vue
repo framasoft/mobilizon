@@ -17,7 +17,9 @@
           >
             <h3>{{ group.name }}</h3>
             <p class="is-6 has-text-grey">
-              <span v-if="group.domain">{{ `@${group.preferredUsername}@${group.domain}` }}</span>
+              <span v-if="group.domain">{{
+                `@${group.preferredUsername}@${group.domain}`
+              }}</span>
               <span v-else>{{ `@${group.preferredUsername}` }}</span>
             </p>
           </router-link>

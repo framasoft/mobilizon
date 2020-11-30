@@ -6,9 +6,11 @@
       @submit.prevent="createCommentForEvent(newComment)"
       @keyup.ctrl.enter="createCommentForEvent(newComment)"
     >
-      <b-notification v-if="isEventOrganiser && !areCommentsClosed" :closable="false">{{
-        $t("Comments are closed for everybody else.")
-      }}</b-notification>
+      <b-notification
+        v-if="isEventOrganiser && !areCommentsClosed"
+        :closable="false"
+        >{{ $t("Comments are closed for everybody else.") }}</b-notification
+      >
       <article class="media">
         <figure class="media-left">
           <identity-picker-wrapper :inline="false" v-model="newComment.actor" />
@@ -16,11 +18,17 @@
         <div class="media-content">
           <div class="field">
             <p class="control">
-              <editor ref="commenteditor" mode="comment" v-model="newComment.text" />
+              <editor
+                ref="commenteditor"
+                mode="comment"
+                v-model="newComment.text"
+              />
             </p>
           </div>
           <div class="send-comment">
-            <b-button native-type="submit" type="is-primary">{{ $t("Post a comment") }}</b-button>
+            <b-button native-type="submit" type="is-primary">{{
+              $t("Post a comment")
+            }}</b-button>
           </div>
         </div>
       </article>
@@ -29,7 +37,12 @@
       $t("The organiser has chosen to close comments.")
     }}</b-notification>
     <transition name="comment-empty-list" mode="out-in">
-      <transition-group name="comment-list" v-if="comments.length" class="comment-list" tag="ul">
+      <transition-group
+        name="comment-list"
+        v-if="comments.length"
+        class="comment-list"
+        tag="ul"
+      >
         <comment
           class="root-comment"
           :comment="comment"
@@ -76,7 +89,9 @@ import { IEvent } from "../../types/event.model";
         };
       },
       update(data) {
-        return data.event.comments.map((comment: IComment) => new CommentModel(comment));
+        return data.event.comments.map(
+          (comment: IComment) => new CommentModel(comment)
+        );
       },
       skip() {
         return !this.event.uuid;
@@ -86,7 +101,8 @@ import { IEvent } from "../../types/event.model";
   components: {
     Comment,
     IdentityPickerWrapper,
-    editor: () => import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
+    editor: () =>
+      import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
   },
 })
 export default class CommentTree extends Vue {
@@ -113,7 +129,9 @@ export default class CommentTree extends Vue {
         variables: {
           eventId: this.event.id,
           text: comment.text,
-          inReplyToCommentId: comment.inReplyToComment ? comment.inReplyToComment.id : null,
+          inReplyToCommentId: comment.inReplyToComment
+            ? comment.inReplyToComment.id
+            : null,
         },
         update: (store, { data }) => {
           if (data == null) return;
@@ -228,7 +246,9 @@ export default class CommentTree extends Vue {
             });
             if (!localData) return;
             const { thread: oldReplyList } = localData;
-            const replies = oldReplyList.filter((reply) => reply.id !== deletedCommentId);
+            const replies = oldReplyList.filter(
+              (reply) => reply.id !== deletedCommentId
+            );
             store.writeQuery({
               query: FETCH_THREAD_REPLIES,
               variables: {
@@ -249,7 +269,9 @@ export default class CommentTree extends Vue {
             event.comments = oldComments;
           } else {
             // we have deleted a thread itself
-            event.comments = oldComments.filter((reply) => reply.id !== deletedCommentId);
+            event.comments = oldComments.filter(
+              (reply) => reply.id !== deletedCommentId
+            );
           }
           store.writeQuery({
             query: COMMENTS_THREADS,
@@ -274,14 +296,18 @@ export default class CommentTree extends Vue {
       .filter((comment) => comment.inReplyToComment == null)
       .sort((a, b) => {
         if (a.updatedAt && b.updatedAt) {
-          return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+          return (
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          );
         }
         return 0;
       });
   }
 
   get filteredOrderedComments(): IComment[] {
-    return this.orderedComments.filter((comment) => !comment.deletedAt || comment.totalReplies > 0);
+    return this.orderedComments.filter(
+      (comment) => !comment.deletedAt || comment.totalReplies > 0
+    );
   }
 
   get isEventOrganiser(): boolean {

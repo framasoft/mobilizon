@@ -15,7 +15,11 @@
         <label class="label">{{ $t("Federated Group Name") }}</label>
         <div class="field-body">
           <b-field
-            :message="$t('Only alphanumeric lowercased characters and underscores are supported.')"
+            :message="
+              $t(
+                'Only alphanumeric lowercased characters and underscores are supported.'
+              )
+            "
           >
             <b-input
               ref="preferredUsernameInput"
@@ -27,7 +31,9 @@
               :useHtml5Validation="true"
               :validation-message="
                 group.preferredUsername
-                  ? $t('Only alphanumeric lowercased characters and underscores are supported.')
+                  ? $t(
+                      'Only alphanumeric lowercased characters and underscores are supported.'
+                    )
                   : null
               "
             />
@@ -60,7 +66,9 @@
         <picture-upload :textFallback="$t('Banner')" v-model="bannerFile" />
       </div>
 
-      <button class="button is-primary" native-type="submit">{{ $t("Create my group") }}</button>
+      <button class="button is-primary" native-type="submit">
+        {{ $t("Create my group") }}
+      </button>
     </form>
   </section>
 </template>
@@ -187,7 +195,9 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
   }
 
   private handleError(err: any) {
-    this.errors.push(...err.graphQLErrors.map(({ message }: { message: string }) => message));
+    this.errors.push(
+      ...err.graphQLErrors.map(({ message }: { message: string }) => message)
+    );
   }
 }
 </script>

@@ -3,13 +3,20 @@
     <div
       v-if="inline"
       class="inline box"
-      :class="{ 'has-background-grey-lighter': masked, 'no-other-identity': !hasOtherIdentities }"
+      :class="{
+        'has-background-grey-lighter': masked,
+        'no-other-identity': !hasOtherIdentities,
+      }"
       @click="activateModal"
     >
       <div class="media">
         <div class="media-left">
           <figure class="image is-48x48" v-if="currentIdentity.avatar">
-            <img class="image is-rounded" :src="currentIdentity.avatar.url" alt="" />
+            <img
+              class="image is-rounded"
+              :src="currentIdentity.avatar.url"
+              alt=""
+            />
           </figure>
           <b-icon v-else size="is-large" icon="account-circle" />
         </div>
@@ -23,7 +30,11 @@
         <div class="media-content" v-else>
           {{ `@${currentIdentity.preferredUsername}` }}
         </div>
-        <b-button type="is-text" v-if="identities.length > 1" @click="activateModal">
+        <b-button
+          type="is-text"
+          v-if="identities.length > 1"
+          @click="activateModal"
+        >
           {{ $t("Change") }}
         </b-button>
       </div>

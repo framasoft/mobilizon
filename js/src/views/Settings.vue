@@ -23,7 +23,8 @@ import { ICurrentUser } from "../types/current-user.model";
   apollo: {
     identities: {
       query: IDENTITIES,
-      update: (data) => data.identities.map((identity: IPerson) => new Person(identity)),
+      update: (data) =>
+        data.identities.map((identity: IPerson) => new Person(identity)),
     },
     currentUser: CURRENT_USER_CLIENT,
   },

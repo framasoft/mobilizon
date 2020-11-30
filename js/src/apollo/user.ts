@@ -56,7 +56,12 @@ export default function buildCurrentUserResolver(
           preferredUsername,
           avatar,
           name,
-        }: { id: string; preferredUsername: string; avatar: string; name: string },
+        }: {
+          id: string;
+          preferredUsername: string;
+          avatar: string;
+          name: string;
+        },
         { cache: localCache }: { cache: ApolloCache<NormalizedCacheObject> }
       ) => {
         const data = {

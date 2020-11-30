@@ -21,7 +21,9 @@ export default class EventMixin extends mixins(Vue) {
     anonymousParticipationConfirmed: boolean | null = null
   ): Promise<void> {
     try {
-      const { data: resultData } = await this.$apollo.mutate<{ leaveEvent: IParticipant }>({
+      const { data: resultData } = await this.$apollo.mutate<{
+        leaveEvent: IParticipant;
+      }>({
         mutation: LEAVE_EVENT,
         variables: {
           eventId: event.id,
@@ -33,14 +35,18 @@ export default class EventMixin extends mixins(Vue) {
           let participation;
 
           if (!token) {
-            const participationCachedData = store.readQuery<{ person: IPerson }>({
+            const participationCachedData = store.readQuery<{
+              person: IPerson;
+            }>({
               query: EVENT_PERSON_PARTICIPATION,
               variables: { eventId: event.id, actorId },
             });
             if (participationCachedData == null) return;
             const { person } = participationCachedData;
             if (person === null) {
-              console.error("Cannot update participation cache, because of null value.");
+              console.error(
+                "Cannot update participation cache, because of null value."
+              );
               return;
             }
             [participation] = person.participations.elements;
@@ -63,7 +69,10 @@ export default class EventMixin extends mixins(Vue) {
             console.error("Cannot update event cache, because of null value.");
             return;
           }
-          if (participation && participation.role === ParticipantRole.NOT_APPROVED) {
+          if (
+            participation &&
+            participation.role === ParticipantRole.NOT_APPROVED
+          ) {
             eventCached.participantStats.notApproved -= 1;
           } else if (anonymousParticipationConfirmed === false) {
             eventCached.participantStats.notConfirmed -= 1;
@@ -82,13 +91,19 @@ export default class EventMixin extends mixins(Vue) {
         this.participationCancelledMessage();
       }
     } catch (error) {
-      Snackbar.open({ message: error.message, type: "is-danger", position: "is-bottom" });
+      Snackbar.open({
+        message: error.message,
+        type: "is-danger",
+        position: "is-bottom",
+      });
       console.error(error);
     }
   }
 
   private participationCancelledMessage() {
-    this.$notifier.success(this.$t("You have cancelled your participation") as string);
+    this.$notifier.success(
+      this.$t("You have cancelled your participation") as string
+    );
   }
 
   protected async openDeleteEventModal(event: IEvent): Promise<void> {
@@ -97,21 +112,29 @@ export default class EventMixin extends mixins(Vue) {
     }
     const participantsLength = event.participantStats.participant;
     const prefix = participantsLength
-      ? this.$tc("There are {participants} participants.", event.participantStats.participant, {
-          participants: event.participantStats.participant,
-        })
+      ? this.$tc(
+          "There are {participants} participants.",
+          event.participantStats.participant,
+          {
+            participants: event.participantStats.participant,
+          }
+        )
       : "";
 
     this.$buefy.dialog.prompt({
       type: "is-danger",
       title: this.$t("Delete event") as string,
       message: `${prefix}
-        ${this.$t("Are you sure you want to delete this event? This action cannot be reverted.")}
+        ${this.$t(
+          "Are you sure you want to delete this event? This action cannot be reverted."
+        )}
         <br><br>
         ${this.$t('To confirm, type your event title "{eventTitle}"', {
           eventTitle: event.title,
         })}`,
-      confirmText: this.$t("Delete {eventTitle}", { eventTitle: event.title }) as string,
+      confirmText: this.$t("Delete {eventTitle}", {
+        eventTitle: event.title,
+      }) as string,
       inputAttrs: {
         placeholder: event.title,
         pattern: escapeRegExp(event.title),
@@ -139,13 +162,19 @@ export default class EventMixin extends mixins(Vue) {
       this.$emit("event-deleted", event.id);
 
       this.$buefy.notification.open({
-        message: this.$t("Event {eventTitle} deleted", { eventTitle }) as string,
+        message: this.$t("Event {eventTitle} deleted", {
+          eventTitle,
+        }) as string,
         type: "is-success",
         position: "is-bottom-right",
         duration: 5000,
       });
     } catch (error) {
-      Snackbar.open({ message: error.message, type: "is-danger", position: "is-bottom" });
+      Snackbar.open({
+        message: error.message,
+        type: "is-danger",
+        position: "is-bottom",
+      });
 
       console.error(error);
     }

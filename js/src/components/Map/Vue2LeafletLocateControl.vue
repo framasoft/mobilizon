@@ -23,7 +23,10 @@ import { Component, Prop, Vue } from "vue-property-decorator";
   },
 })
 export default class Vue2LeafletLocateControl extends Vue {
-  @Prop({ type: Object, default: () => ({}) }) options!: Record<string, unknown>;
+  @Prop({ type: Object, default: () => ({}) }) options!: Record<
+    string,
+    unknown
+  >;
 
   @Prop({ type: Boolean, default: true }) visible = true;
 

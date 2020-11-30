@@ -1,4 +1,7 @@
-import { IntrospectionFragmentMatcher, NormalizedCacheObject } from "apollo-cache-inmemory";
+import {
+  IntrospectionFragmentMatcher,
+  NormalizedCacheObject,
+} from "apollo-cache-inmemory";
 import { AUTH_ACCESS_TOKEN, AUTH_REFRESH_TOKEN } from "@/constants";
 import { REFRESH_TOKEN } from "@/graphql/auth";
 import { saveTokenData } from "@/utils/auth";
@@ -11,7 +14,11 @@ export const fragmentMatcher = new IntrospectionFragmentMatcher({
         {
           kind: "UNION",
           name: "SearchResult",
-          possibleTypes: [{ name: "Event" }, { name: "Person" }, { name: "Group" }],
+          possibleTypes: [
+            { name: "Event" },
+            { name: "Person" },
+            { name: "Group" },
+          ],
         },
         {
           kind: "INTERFACE",

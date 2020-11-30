@@ -40,7 +40,12 @@
           </b-dropdown-item>
         </b-dropdown>
 
-        <b-dropdown hoverable has-link aria-role="list" v-if="person.feedTokens.length > 0">
+        <b-dropdown
+          hoverable
+          has-link
+          aria-role="list"
+          v-if="person.feedTokens.length > 0"
+        >
           <button class="button is-info" slot="trigger">
             {{ $t("Private feeds") }}
             <b-icon icon="menu-down"></b-icon>
@@ -57,7 +62,11 @@
             </a>
           </b-dropdown-item>
         </b-dropdown>
-        <a class="button" v-if="currentActor.id === person.id" @click="createToken">
+        <a
+          class="button"
+          v-if="currentActor.id === person.id"
+          @click="createToken"
+        >
           {{ $t("Create token") }}
         </a>
       </div>

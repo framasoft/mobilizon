@@ -4,7 +4,9 @@
       {{ $t("Add some tags") }}
       <b-tooltip
         type="is-dark"
-        :label="$t('You can add tags by hitting the Enter key or by adding a comma')"
+        :label="
+          $t('You can add tags by hitting the Enter key or by adding a comma')
+        "
       >
         <b-icon size="is-small" icon="help-circle-outline"></b-icon>
       </b-tooltip>
@@ -58,7 +60,11 @@ export default class TagInput extends Vue {
 
   getFilteredTags(text: string): void {
     this.filteredTags = differenceBy(this.data, this.value, "id").filter(
-      (option) => get(option, this.path).toString().toLowerCase().indexOf(text.toLowerCase()) >= 0
+      (option) =>
+        get(option, this.path)
+          .toString()
+          .toLowerCase()
+          .indexOf(text.toLowerCase()) >= 0
     );
   }
 }

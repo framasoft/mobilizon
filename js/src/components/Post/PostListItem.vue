@@ -43,7 +43,8 @@ export default class PostListItem extends Vue {
 
     .post-minimalist-title {
       color: #3c376e;
-      font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial, serif;
+      font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial,
+        serif;
       font-size: 1rem;
       font-weight: 700;
       overflow: hidden;

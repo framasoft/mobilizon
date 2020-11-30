@@ -117,11 +117,21 @@
             <b-icon icon="format-quote-close" />
           </button>
 
-          <button v-if="!isBasicMode" class="menubar__button" @click="commands.undo" type="button">
+          <button
+            v-if="!isBasicMode"
+            class="menubar__button"
+            @click="commands.undo"
+            type="button"
+          >
             <b-icon icon="undo" />
           </button>
 
-          <button v-if="!isBasicMode" class="menubar__button" @click="commands.redo" type="button">
+          <button
+            v-if="!isBasicMode"
+            class="menubar__button"
+            @click="commands.redo"
+            type="button"
+          >
             <b-icon icon="redo" />
           </button>
         </div>
@@ -181,7 +191,9 @@
           </div>
         </div>
       </template>
-      <div v-else class="suggestion-list__item is-empty">{{ $t("No profiles found") }}</div>
+      <div v-else class="suggestion-list__item is-empty">
+        {{ $t("No profiles found") }}
+      </div>
     </div>
   </div>
 </template>
@@ -430,7 +442,8 @@ export default class EditorComponent extends Vue {
 
   upHandler(): void {
     this.navigatedActorIndex =
-      (this.navigatedActorIndex + this.filteredActors.length - 1) % this.filteredActors.length;
+      (this.navigatedActorIndex + this.filteredActors.length - 1) %
+      this.filteredActors.length;
   }
 
   /**
@@ -438,7 +451,8 @@ export default class EditorComponent extends Vue {
    * if it's the last item, navigate to the first one
    */
   downHandler(): void {
-    this.navigatedActorIndex = (this.navigatedActorIndex + 1) % this.filteredActors.length;
+    this.navigatedActorIndex =
+      (this.navigatedActorIndex + 1) % this.filteredActors.length;
   }
 
   enterHandler(): void {
@@ -533,7 +547,10 @@ export default class EditorComponent extends Vue {
         },
       });
       if (data.uploadMedia && data.uploadMedia.url) {
-        command({ src: data.uploadMedia.url, "data-media-id": data.uploadMedia.id });
+        command({
+          src: data.uploadMedia.url,
+          "data-media-id": data.uploadMedia.id,
+        });
       }
     } catch (error) {
       console.error(error);

@@ -19,7 +19,12 @@
               :src="identity.avatar.url"
               alt=""
             />
-            <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+            <b-icon
+              class="media-left"
+              v-else
+              size="is-large"
+              icon="account-circle"
+            />
             <div class="media-content">
               <h3>@{{ identity.preferredUsername }}</h3>
               <small>{{ identity.name }}</small>

@@ -20,7 +20,9 @@
           </div>
           <vertical-divider :content="$t('Or')" />
           <div class="column">
-            <subtitle>{{ $t("I have an account on another Mobilizon instance.") }}</subtitle>
+            <subtitle>{{
+              $t("I have an account on another Mobilizon instance.")
+            }}</subtitle>
             <p>{{ $t("Other software may also support this.") }}</p>
             <p>{{ sentence }}</p>
             <form @submit.prevent="redirectToInstance">
@@ -34,7 +36,9 @@
                     :placeholder="$t('profile@instance')"
                   ></b-input>
                   <p class="control">
-                    <button class="button is-primary" type="submit">{{ $t("Go") }}</button>
+                    <button class="button is-primary" type="submit">
+                      {{ $t("Go") }}
+                    </button>
                   </p>
                 </b-field>
               </b-field>
@@ -80,14 +84,22 @@ export default class RedirectWithAccount extends Vue {
 
   async redirectToInstance(): Promise<void> {
     const [, host] = this.remoteActorAddress.split("@", 2);
-    const remoteInteractionURI = await this.webFingerFetch(host, this.remoteActorAddress);
+    const remoteInteractionURI = await this.webFingerFetch(
+      host,
+      this.remoteActorAddress
+    );
     window.open(remoteInteractionURI);
   }
 
-  private async webFingerFetch(hostname: string, identity: string): Promise<string> {
+  private async webFingerFetch(
+    hostname: string,
+    identity: string
+  ): Promise<string> {
     const scheme = process.env.NODE_ENV === "production" ? "https" : "http";
     const data = await (
-      await fetch(`${scheme}://${hostname}/.well-known/webfinger?resource=acct:${identity}`)
+      await fetch(
+        `${scheme}://${hostname}/.well-known/webfinger?resource=acct:${identity}`
+      )
     ).json();
     if (data && Array.isArray(data.links)) {
       const link: { template: string } = data.links.find(

@@ -14,10 +14,12 @@
           {{
             $tc(
               "{available}/{capacity} available places",
-              event.options.maximumAttendeeCapacity - event.participantStats.participant,
+              event.options.maximumAttendeeCapacity -
+                event.participantStats.participant,
               {
                 available:
-                  event.options.maximumAttendeeCapacity - event.participantStats.participant,
+                  event.options.maximumAttendeeCapacity -
+                  event.participantStats.participant,
                 capacity: event.options.maximumAttendeeCapacity,
               }
             )
@@ -42,9 +44,13 @@
             "
           >
             {{
-              $tc("{count} requests waiting", event.participantStats.notApproved, {
-                count: event.participantStats.notApproved,
-              })
+              $tc(
+                "{count} requests waiting",
+                event.participantStats.notApproved,
+                {
+                  count: event.participantStats.notApproved,
+                }
+              )
             }}
           </b-button>
         </span>
@@ -88,7 +94,8 @@ export default class EventMinimalistCard extends Vue {
 
     .event-minimalist-title {
       color: #3c376e;
-      font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial, serif;
+      font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial,
+        serif;
       font-size: 1.25rem;
       font-weight: 700;
     }

@@ -2,7 +2,10 @@
   <div class="media">
     <div class="media-content">
       <div class="content">
-        <i18n tag="p" path="You have been invited by {invitedBy} to the following group:">
+        <i18n
+          tag="p"
+          path="You have been invited by {invitedBy} to the following group:"
+        >
           <b slot="invitedBy">{{ member.invitedBy.name }}</b>
         </i18n>
       </div>
@@ -20,15 +23,21 @@
                 <router-link
                   :to="{
                     name: RouteName.GROUP,
-                    params: { preferredUsername: usernameWithDomain(member.parent) },
+                    params: {
+                      preferredUsername: usernameWithDomain(member.parent),
+                    },
                   }"
                 >
                   <h3>{{ member.parent.name }}</h3>
                   <p class="is-6 has-text-grey">
                     <span v-if="member.parent.domain">
-                      {{ `@${member.parent.preferredUsername}@${member.parent.domain}` }}
+                      {{
+                        `@${member.parent.preferredUsername}@${member.parent.domain}`
+                      }}
                     </span>
-                    <span v-else>{{ `@${member.parent.preferredUsername}` }}</span>
+                    <span v-else>{{
+                      `@${member.parent.preferredUsername}`
+                    }}</span>
                   </p>
                 </router-link>
               </div>

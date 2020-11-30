@@ -24,7 +24,9 @@
       <div class="columns is-centered">
         <b-button
           class="column is-narrow"
-          v-if="hasMoreFutureParticipations && futureParticipations.length === limit"
+          v-if="
+            hasMoreFutureParticipations && futureParticipations.length === limit
+          "
           @click="loadMoreFutureParticipations"
           size="is-large"
           type="is-primary"
@@ -65,7 +67,9 @@
       <div class="columns is-centered">
         <b-button
           class="column is-narrow"
-          v-if="hasMorePastParticipations && pastParticipations.length === limit"
+          v-if="
+            hasMorePastParticipations && pastParticipations.length === limit
+          "
           @click="loadMorePastParticipations"
           size="is-large"
           type="is-primary"
@@ -90,7 +94,10 @@
 import { Component, Vue } from "vue-property-decorator";
 import { ParticipantRole } from "@/types/enums";
 import { IParticipant, Participant } from "../../types/participant.model";
-import { LOGGED_USER_PARTICIPATIONS, LOGGED_USER_DRAFTS } from "../../graphql/actor";
+import {
+  LOGGED_USER_PARTICIPATIONS,
+  LOGGED_USER_DRAFTS,
+} from "../../graphql/actor";
 import { EventModel, IEvent } from "../../types/event.model";
 import EventListCard from "../../components/Event/EventListCard.vue";
 import EventCard from "../../components/Event/EventCard.vue";
@@ -123,7 +130,8 @@ import Subtitle from "../../components/Utils/Subtitle.vue";
         page: 1,
         limit: 10,
       },
-      update: (data) => data.loggedUser.drafts.map((event: IEvent) => new EventModel(event)),
+      update: (data) =>
+        data.loggedUser.drafts.map((event: IEvent) => new EventModel(event)),
     },
     pastParticipations: {
       query: LOGGED_USER_PARTICIPATIONS,
@@ -170,7 +178,8 @@ export default class MyEvents extends Vue {
     revertSort = false
   ): Map<string, Participant[]> {
     const res = participations.filter(
-      ({ event, role }) => event.beginsOn != null && role !== ParticipantRole.REJECTED
+      ({ event, role }) =>
+        event.beginsOn != null && role !== ParticipantRole.REJECTED
     );
     if (revertSort) {
       res.sort(
@@ -183,16 +192,22 @@ export default class MyEvents extends Vue {
           a.event.beginsOn.getTime() - b.event.beginsOn.getTime()
       );
     }
-    return res.reduce((acc: Map<string, IParticipant[]>, participation: IParticipant) => {
-      const month = new Date(participation.event.beginsOn).toLocaleDateString(undefined, {
-        year: "numeric",
-        month: "long",
-      });
-      const filteredParticipations: IParticipant[] = acc.get(month) || [];
-      filteredParticipations.push(participation);
-      acc.set(month, filteredParticipations);
-      return acc;
-    }, new Map());
+    return res.reduce(
+      (acc: Map<string, IParticipant[]>, participation: IParticipant) => {
+        const month = new Date(participation.event.beginsOn).toLocaleDateString(
+          undefined,
+          {
+            year: "numeric",
+            month: "long",
+          }
+        );
+        const filteredParticipations: IParticipant[] = acc.get(month) || [];
+        filteredParticipations.push(participation);
+        acc.set(month, filteredParticipations);
+        return acc;
+      },
+      new Map()
+    );
   }
 
   get monthlyFutureParticipations(): Map<string, Participant[]> {
@@ -216,7 +231,8 @@ export default class MyEvents extends Vue {
         const oldParticipations = previousResult.loggedUser.participations;
         const newParticipations = fetchMoreResult.loggedUser.participations;
         this.hasMoreFutureParticipations =
-          newParticipations.total === oldParticipations.length + newParticipations.length;
+          newParticipations.total ===
+          oldParticipations.length + newParticipations.length;
 
         return {
           loggedUser: {
@@ -224,7 +240,10 @@ export default class MyEvents extends Vue {
             participations: {
               __typename: newParticipations.__typename,
               total: newParticipations.total,
-              elements: [...oldParticipations.elements, ...newParticipations.elements],
+              elements: [
+                ...oldParticipations.elements,
+                ...newParticipations.elements,
+              ],
             },
           },
         };
@@ -245,7 +264,8 @@ export default class MyEvents extends Vue {
         const oldParticipations = previousResult.loggedUser.participations;
         const newParticipations = fetchMoreResult.loggedUser.participations;
         this.hasMorePastParticipations =
-          newParticipations.total === oldParticipations.length + newParticipations.length;
+          newParticipations.total ===
+          oldParticipations.length + newParticipations.length;
 
         return {
           loggedUser: {
@@ -253,7 +273,10 @@ export default class MyEvents extends Vue {
             participations: {
               __typename: newParticipations.__typename,
               total: newParticipations.total,
-              elements: [...oldParticipations.elements, ...newParticipations.elements],
+              elements: [
+                ...oldParticipations.elements,
+                ...newParticipations.elements,
+              ],
             },
           },
         };

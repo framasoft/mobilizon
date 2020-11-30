@@ -2,9 +2,13 @@
   <section class="section container columns is-mobile is-centered">
     <div class="card column is-half-desktop">
       <h1>{{ $t("Password reset") }}</h1>
-      <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">{{
-        error
-      }}</b-message>
+      <b-message
+        title="Error"
+        type="is-danger"
+        v-for="error in errors"
+        :key="error"
+        >{{ error }}</b-message
+      >
       <form @submit="resetAction">
         <b-field :label="$t('Password')">
           <b-input

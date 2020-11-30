@@ -21,9 +21,13 @@
       </b-autocomplete>
     </b-field>
     <b-field v-if="isSecureContext()">
-      <b-button type="is-text" v-if="!gettingLocation" icon-right="target" @click="locateMe">{{
-        $t("Use my location")
-      }}</b-button>
+      <b-button
+        type="is-text"
+        v-if="!gettingLocation"
+        icon-right="target"
+        @click="locateMe"
+        >{{ $t("Use my location") }}</b-button
+      >
       <span v-else>{{ $t("Getting location") }}</span>
     </b-field>
     <!--
@@ -58,7 +62,8 @@ import { IConfig } from "../../types/config.model";
 
 @Component({
   components: {
-    "map-leaflet": () => import(/* webpackChunkName: "map" */ "@/components/Map.vue"),
+    "map-leaflet": () =>
+      import(/* webpackChunkName: "map" */ "@/components/Map.vue"),
   },
   apollo: {
     config: CONFIG,
@@ -121,7 +126,9 @@ export default class AddressAutoComplete extends Vue {
       },
     });
 
-    this.addressData = result.data.searchAddress.map((address: IAddress) => new Address(address));
+    this.addressData = result.data.searchAddress.map(
+      (address: IAddress) => new Address(address)
+    );
     this.isFetching = false;
   }
 
@@ -174,7 +181,9 @@ export default class AddressAutoComplete extends Vue {
       },
     });
 
-    this.addressData = result.data.reverseGeocode.map((address: IAddress) => new Address(address));
+    this.addressData = result.data.reverseGeocode.map(
+      (address: IAddress) => new Address(address)
+    );
     if (this.addressData.length > 0) {
       const defaultAddress = new Address(this.addressData[0]);
       this.selected = defaultAddress;
@@ -197,7 +206,10 @@ export default class AddressAutoComplete extends Vue {
       this.location = await AddressAutoComplete.getLocation();
       this.mapDefaultZoom = 12;
       this.reverseGeoCode(
-        new LatLng(this.location.coords.latitude, this.location.coords.longitude),
+        new LatLng(
+          this.location.coords.latitude,
+          this.location.coords.longitude
+        ),
         12
       );
     } catch (e) {

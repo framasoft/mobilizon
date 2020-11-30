@@ -7,7 +7,10 @@ declare module "vue/types/vue" {
   }
 }
 
-export function DateFnsPlugin(vue: typeof VueInstance, { locale }: { locale: string }): void {
+export function DateFnsPlugin(
+  vue: typeof VueInstance,
+  { locale }: { locale: string }
+): void {
   import(`date-fns/locale/${locale}/index.js`).then((localeEntity) => {
     VueInstance.prototype.$dateFnsLocale = localeEntity;
   });

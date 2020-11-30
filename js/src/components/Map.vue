@@ -8,7 +8,11 @@
       @click="clickMap"
       @update:zoom="updateZoom"
     >
-      <l-tile-layer :url="config.maps.tiles.endpoint" :attribution="attribution"> </l-tile-layer>
+      <l-tile-layer
+        :url="config.maps.tiles.endpoint"
+        :attribution="attribution"
+      >
+      </l-tile-layer>
       <v-locatecontrol :options="{ icon: 'mdi mdi-map-marker' }" />
       <l-marker
         :lat-lng="[lat, lon]"
@@ -17,7 +21,9 @@
         :draggable="!readOnly"
       >
         <l-popup v-if="popupMultiLine">
-          <span v-for="line in popupMultiLine" :key="line">{{ line }}<br /></span>
+          <span v-for="line in popupMultiLine" :key="line"
+            >{{ line }}<br
+          /></span>
         </l-popup>
       </l-marker>
     </l-map>
@@ -51,7 +57,10 @@ export default class Map extends Vue {
 
   @Prop({ type: String, required: true }) coords!: string;
 
-  @Prop({ type: Object, required: false }) marker!: { text: string | string[]; icon: string };
+  @Prop({ type: Object, required: false }) marker!: {
+    text: string | string[];
+    icon: string;
+  };
 
   @Prop({ type: Object, required: false }) options!: Record<string, unknown>;
 
@@ -125,7 +134,8 @@ export default class Map extends Vue {
 
   get attribution(): string {
     return (
-      this.config.maps.tiles.attribution || (this.$t("© The OpenStreetMap Contributors") as string)
+      this.config.maps.tiles.attribution ||
+      (this.$t("© The OpenStreetMap Contributors") as string)
     );
   }
 }

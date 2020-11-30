@@ -18,7 +18,9 @@
 </docs>
 
 <template>
-  <span v-if="!endsOn">{{ beginsOn | formatDateTimeString(showStartTime) }}</span>
+  <span v-if="!endsOn">{{
+    beginsOn | formatDateTimeString(showStartTime)
+  }}</span>
   <span v-else-if="isSameDay() && showStartTime && showEndTime">
     {{
       $t("On {date} from {startTime} to {endTime}", {
@@ -44,7 +46,9 @@
       })
     }}
   </span>
-  <span v-else-if="isSameDay()">{{ $t("On {date}", { date: formatDate(beginsOn) }) }}</span>
+  <span v-else-if="isSameDay()">{{
+    $t("On {date}", { date: formatDate(beginsOn) })
+  }}</span>
   <span v-else-if="endsOn && showStartTime && showEndTime">
     {{
       $t("From the {startDate} at {startTime} to the {endDate} at {endTime}", {
@@ -97,7 +101,9 @@ export default class EventFullDate extends Vue {
   }
 
   isSameDay(): boolean {
-    const sameDay = new Date(this.beginsOn).toDateString() === new Date(this.endsOn).toDateString();
+    const sameDay =
+      new Date(this.beginsOn).toDateString() ===
+      new Date(this.endsOn).toDateString();
     return this.endsOn !== undefined && sameDay;
   }
 }

@@ -25,7 +25,9 @@
     <section>
       <p>
         {{
-          $t("Create to-do lists for all the tasks you need to do, assign them and set due dates.")
+          $t(
+            "Create to-do lists for all the tasks you need to do, assign them and set due dates."
+          )
         }}
       </p>
       <form class="form" @submit.prevent="createNewTodoList">
@@ -35,7 +37,9 @@
         <b-button native-type="submit">{{ $t("Create a new list") }}</b-button>
       </form>
       <div v-for="todoList in todoLists" :key="todoList.id">
-        <router-link :to="{ name: RouteName.TODO_LIST, params: { id: todoList.id } }">
+        <router-link
+          :to="{ name: RouteName.TODO_LIST, params: { id: todoList.id } }"
+        >
           <h3 class="is-size-3">
             {{
               $tc("{title} ({count} todos)", todoList.todos.total, {
@@ -45,7 +49,11 @@
             }}
           </h3>
         </router-link>
-        <compact-todo :todo="todo" v-for="todo in todoList.todos.elements" :key="todo.id" />
+        <compact-todo
+          :todo="todo"
+          v-for="todo in todoList.todos.elements"
+          :key="todo.id"
+        />
       </div>
     </section>
   </div>

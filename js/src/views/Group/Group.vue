@@ -4,7 +4,9 @@
       <nav class="breadcrumb" aria-label="breadcrumbs">
         <ul>
           <li>
-            <router-link :to="{ name: RouteName.MY_GROUPS }">{{ $t("My groups") }}</router-link>
+            <router-link :to="{ name: RouteName.MY_GROUPS }">{{
+              $t("My groups")
+            }}</router-link>
           </li>
           <li class="is-active">
             <router-link
@@ -28,8 +30,15 @@
       <b-message v-if="isCurrentActorARejectedGroupMember" type="is-danger">
         {{ $t("You have been removed from this group's members.") }}
       </b-message>
-      <b-message v-if="isCurrentActorAGroupMember && isCurrentActorARecentMember" type="is-info">
-        {{ $t("Since you are a new member, private content can take a few minutes to appear.") }}
+      <b-message
+        v-if="isCurrentActorAGroupMember && isCurrentActorARecentMember"
+        type="is-info"
+      >
+        {{
+          $t(
+            "Since you are a new member, private content can take a few minutes to appear."
+          )
+        }}
       </b-message>
       <header class="block-container presentation">
         <div class="block-column media">
@@ -96,7 +105,10 @@
         </div>
         <div class="block-column address" v-else>
           <address v-if="physicalAddress">
-            <p class="addressDescription" :title="physicalAddress.poiInfos.name">
+            <p
+              class="addressDescription"
+              :title="physicalAddress.poiInfos.name"
+            >
               {{ physicalAddress.poiInfos.name }}
             </p>
             <p>{{ physicalAddress.poiInfos.alternativeName }}</p>
@@ -113,11 +125,16 @@
               :label="$t('This group is invite-only')"
               position="is-bottom"
             >
-              <b-button disabled type="is-primary">{{ $t("Join group") }}</b-button></b-tooltip
+              <b-button disabled type="is-primary">{{
+                $t("Join group")
+              }}</b-button></b-tooltip
             >
-            <b-button v-else-if="currentActor.id" @click="joinGroup" type="is-primary">{{
-              $t("Join group")
-            }}</b-button>
+            <b-button
+              v-else-if="currentActor.id"
+              @click="joinGroup"
+              type="is-primary"
+              >{{ $t("Join group") }}</b-button
+            >
             <b-button
               tag="router-link"
               :to="{
@@ -129,7 +146,12 @@
               >{{ $t("Join group") }}</b-button
             >
             <b-dropdown aria-role="list" position="is-bottom-left">
-              <b-button slot="trigger" role="button" icon-right="dots-horizontal"> </b-button>
+              <b-button
+                slot="trigger"
+                role="button"
+                icon-right="dots-horizontal"
+              >
+              </b-button>
               <b-dropdown-item
                 aria-role="listitem"
                 v-if="ableToReport"
@@ -143,7 +165,11 @@
             </b-dropdown>
           </p>
         </div>
-        <img v-if="group.banner && group.banner.url" :src="group.banner.url" alt="" />
+        <img
+          v-if="group.banner && group.banner.url"
+          :src="group.banner.url"
+          alt=""
+        />
       </header>
     </div>
     <div v-if="isCurrentActorAGroupMember" class="block-container">
@@ -192,16 +218,27 @@
         >
           <template v-slot:default>
             <div v-if="group.resources.elements.length > 0">
-              <div v-for="resource in group.resources.elements" :key="resource.id">
+              <div
+                v-for="resource in group.resources.elements"
+                :key="resource.id"
+              >
                 <resource-item
                   :resource="resource"
                   v-if="resource.type !== 'folder'"
                   :inline="true"
                 />
-                <folder-item :resource="resource" :group="group" v-else :inline="true" />
+                <folder-item
+                  :resource="resource"
+                  :group="group"
+                  v-else
+                  :inline="true"
+                />
               </div>
             </div>
-            <div v-else-if="group" class="content has-text-grey has-text-centered">
+            <div
+              v-else-if="group"
+              class="content has-text-grey has-text-centered"
+            >
               <p>{{ $t("No resources yet") }}</p>
             </div>
           </template>
@@ -230,7 +267,10 @@
           }"
         >
           <template v-slot:default>
-            <div class="organized-events-wrapper" v-if="group && group.organizedEvents.total > 0">
+            <div
+              class="organized-events-wrapper"
+              v-if="group && group.organizedEvents.total > 0"
+            >
               <EventMinimalistCard
                 v-for="event in group.organizedEvents.elements"
                 :event="event"
@@ -238,7 +278,10 @@
                 class="organized-event"
               />
             </div>
-            <div v-else-if="group" class="content has-text-grey has-text-centered">
+            <div
+              v-else-if="group"
+              class="content has-text-grey has-text-centered"
+            >
               <p>{{ $t("No public upcoming events") }}</p>
             </div>
             <b-skeleton animated v-else></b-skeleton>
@@ -266,9 +309,16 @@
         >
           <template v-slot:default>
             <div v-if="group.posts.total > 0" class="posts-wrapper">
-              <post-list-item v-for="post in group.posts.elements" :key="post.id" :post="post" />
+              <post-list-item
+                v-for="post in group.posts.elements"
+                :key="post.id"
+                :post="post"
+              />
             </div>
-            <div v-else-if="group" class="content has-text-grey has-text-centered">
+            <div
+              v-else-if="group"
+              class="content has-text-grey has-text-centered"
+            >
               <p>{{ $t("No posts yet") }}</p>
             </div>
           </template>
@@ -292,14 +342,20 @@
     <div v-else class="public-container">
       <section>
         <subtitle>{{ $t("About") }}</subtitle>
-        <div v-html="group.summary" v-if="group.summary && group.summary !== '<p></p>'" />
+        <div
+          v-html="group.summary"
+          v-if="group.summary && group.summary !== '<p></p>'"
+        />
         <div v-else-if="group" class="content has-text-grey has-text-centered">
           <p>{{ $t("This group doesn't have a description yet.") }}</p>
         </div>
       </section>
       <section>
         <subtitle>{{ $t("Upcoming events") }}</subtitle>
-        <div class="organized-events-wrapper" v-if="group && group.organizedEvents.total > 0">
+        <div
+          class="organized-events-wrapper"
+          v-if="group && group.organizedEvents.total > 0"
+        >
           <EventMinimalistCard
             v-for="event in group.organizedEvents.elements"
             :event="event"
@@ -322,7 +378,11 @@
       <section>
         <subtitle>{{ $t("Latest posts") }}</subtitle>
         <div v-if="group.posts.total > 0" class="posts-wrapper">
-          <post-list-item v-for="post in group.posts.elements" :key="post.id" :post="post" />
+          <post-list-item
+            v-for="post in group.posts.elements"
+            :key="post.id"
+            :post="post"
+          />
           <router-link
             :to="{
               name: RouteName.POSTS,
@@ -336,7 +396,10 @@
         </div>
         <b-skeleton animated v-else></b-skeleton>
       </section>
-      <b-modal v-if="physicalAddress && physicalAddress.geom" :active.sync="showMap">
+      <b-modal
+        v-if="physicalAddress && physicalAddress.geom"
+        :active.sync="showMap"
+      >
         <div class="map">
           <map-leaflet
             :coords="physicalAddress.geom"
@@ -347,7 +410,11 @@
           />
         </div>
       </b-modal>
-      <b-modal :active.sync="isReportModalActive" has-modal-card ref="reportModal">
+      <b-modal
+        :active.sync="isReportModalActive"
+        has-modal-card
+        ref="reportModal"
+      >
         <report-modal
           :on-confirm="reportGroup"
           :title="$t('Report this group')"
@@ -402,7 +469,8 @@ import ReportModal from "../../components/Report/ReportModal.vue";
     GroupSection,
     Invitations,
     ReportModal,
-    "map-leaflet": () => import(/* webpackChunkName: "map" */ "../../components/Map.vue"),
+    "map-leaflet": () =>
+      import(/* webpackChunkName: "map" */ "../../components/Map.vue"),
   },
   metaInfo() {
     return {
@@ -469,7 +537,8 @@ export default class Group extends mixins(GroupMixin) {
 
   rejectInvitation({ id: memberId }: { id: string }): void {
     const index = this.person.memberships.elements.findIndex(
-      (membership) => membership.role === MemberRole.INVITED && membership.id === memberId
+      (membership) =>
+        membership.role === MemberRole.INVITED && membership.id === memberId
     );
     if (index > -1) {
       this.person.memberships.elements.splice(index, 1);
@@ -492,11 +561,15 @@ export default class Group extends mixins(GroupMixin) {
           forward,
         },
       });
-      this.$notifier.success(this.$t("Group {groupTitle} reported", { groupTitle }) as string);
+      this.$notifier.success(
+        this.$t("Group {groupTitle} reported", { groupTitle }) as string
+      );
     } catch (error) {
       console.error(error);
       this.$notifier.error(
-        this.$t("Error while reporting group {groupTitle}", { groupTitle }) as string
+        this.$t("Error while reporting group {groupTitle}", {
+          groupTitle,
+        }) as string
       );
     }
   }
@@ -513,7 +586,9 @@ export default class Group extends mixins(GroupMixin) {
 
   get groupMember(): IMember | undefined {
     if (!this.person || !this.person.id) return undefined;
-    return this.person.memberships.elements.find(({ parent: { id } }) => id === this.group.id);
+    return this.person.memberships.elements.find(
+      ({ parent: { id } }) => id === this.group.id
+    );
   }
 
   get groupMemberships(): (string | undefined)[] {
@@ -521,9 +596,11 @@ export default class Group extends mixins(GroupMixin) {
     return this.person.memberships.elements
       .filter(
         (membership: IMember) =>
-          ![MemberRole.REJECTED, MemberRole.NOT_APPROVED, MemberRole.INVITED].includes(
-            membership.role
-          )
+          ![
+            MemberRole.REJECTED,
+            MemberRole.NOT_APPROVED,
+            MemberRole.INVITED,
+          ].includes(membership.role)
       )
       .map(({ parent: { id } }) => id);
   }
@@ -535,7 +612,10 @@ export default class Group extends mixins(GroupMixin) {
   }
 
   get isCurrentActorAGroupMember(): boolean {
-    return this.groupMemberships !== undefined && this.groupMemberships.includes(this.group.id);
+    return (
+      this.groupMemberships !== undefined &&
+      this.groupMemberships.includes(this.group.id)
+    );
   }
 
   get isCurrentActorARejectedGroupMember(): boolean {
@@ -573,7 +653,11 @@ export default class Group extends mixins(GroupMixin) {
   get members(): IMember[] {
     return this.group.members.elements.filter(
       (member) =>
-        ![MemberRole.INVITED, MemberRole.REJECTED, MemberRole.NOT_APPROVED].includes(member.role)
+        ![
+          MemberRole.INVITED,
+          MemberRole.REJECTED,
+          MemberRole.NOT_APPROVED,
+        ].includes(member.role)
     );
   }
 
@@ -584,7 +668,9 @@ export default class Group extends mixins(GroupMixin) {
 
   get ableToReport(): boolean {
     return (
-      this.config && (this.currentActor.id !== undefined || this.config.anonymous.reports.allowed)
+      this.config &&
+      (this.currentActor.id !== undefined ||
+        this.config.anonymous.reports.allowed)
     );
   }
 }
@@ -725,7 +811,8 @@ div.container {
           .media-content {
             h2 {
               color: #3c376e;
-              font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial, serif;
+              font-family: "Liberation Sans", "Helvetica Neue", Roboto,
+                Helvetica, Arial, serif;
               font-size: 1.5rem;
               font-weight: 700;
             }

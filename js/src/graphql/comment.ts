@@ -68,8 +68,16 @@ export const COMMENTS_THREADS = gql`
 `;
 
 export const CREATE_COMMENT_FROM_EVENT = gql`
-  mutation CreateCommentFromEvent($eventId: ID!, $text: String!, $inReplyToCommentId: ID) {
-    createComment(eventId: $eventId, text: $text, inReplyToCommentId: $inReplyToCommentId) {
+  mutation CreateCommentFromEvent(
+    $eventId: ID!
+    $text: String!
+    $inReplyToCommentId: ID
+  ) {
+    createComment(
+      eventId: $eventId
+      text: $text
+      inReplyToCommentId: $inReplyToCommentId
+    ) {
       ...CommentRecursive
     }
   }

@@ -3,13 +3,20 @@
     <img :src="`/img/pics/footer_${random}.jpg`" alt="" />
     <ul>
       <li>
-        <router-link :to="{ name: RouteName.ABOUT }">{{ $t("About") }}</router-link>
+        <router-link :to="{ name: RouteName.ABOUT }">{{
+          $t("About")
+        }}</router-link>
       </li>
       <li>
-        <router-link :to="{ name: RouteName.TERMS }">{{ $t("Terms") }}</router-link>
+        <router-link :to="{ name: RouteName.TERMS }">{{
+          $t("Terms")
+        }}</router-link>
       </li>
       <li>
-        <a hreflang="en" href="https://framagit.org/framasoft/mobilizon/blob/master/LICENSE">
+        <a
+          hreflang="en"
+          href="https://framagit.org/framasoft/mobilizon/blob/master/LICENSE"
+        >
           {{ $t("License") }}
         </a>
       </li>
@@ -19,7 +26,9 @@
         tag="span"
         path="Powered by {mobilizon}. © 2018 - {date} The Mobilizon Contributors - Made with the financial support of {contributors}."
       >
-        <a slot="mobilizon" href="https://joinmobilizon.org">{{ $t("Mobilizon") }}</a>
+        <a slot="mobilizon" href="https://joinmobilizon.org">{{
+          $t("Mobilizon")
+        }}</a>
         <span slot="date">{{ new Date().getFullYear() }}</span>
         <a href="https://joinmobilizon.org/hall-of-fame" slot="contributors">{{
           $t("more than 1360 contributors")

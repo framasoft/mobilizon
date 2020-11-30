@@ -1,11 +1,18 @@
 <template>
   <section class="section container">
-    <h1 class="title" v-if="loading">{{ $t("Your account is being validated") }}</h1>
+    <h1 class="title" v-if="loading">
+      {{ $t("Your account is being validated") }}
+    </h1>
     <div v-else>
       <div v-if="failed">
-        <b-message :title="$t('Error while validating account')" type="is-danger">
+        <b-message
+          :title="$t('Error while validating account')"
+          type="is-danger"
+        >
           {{
-            $t("Either the account is already validated, either the validation token is incorrect.")
+            $t(
+              "Either the account is already validated, either the validation token is incorrect."
+            )
           }}
         </b-message>
       </div>
@@ -60,7 +67,10 @@ export default class Validate extends Vue {
         });
 
         if (user.defaultActor) {
-          await changeIdentity(this.$apollo.provider.defaultClient, user.defaultActor);
+          await changeIdentity(
+            this.$apollo.provider.defaultClient,
+            user.defaultActor
+          );
           await this.$router.push({ name: RouteName.HOME });
         } else {
           // If the user didn't register any profile yet, let's create one for them

@@ -61,7 +61,10 @@ export default class GroupMixin extends Vue {
   }
 
   get isCurrentActorAGroupModerator(): boolean {
-    return this.hasCurrentActorThisRole([MemberRole.MODERATOR, MemberRole.ADMINISTRATOR]);
+    return this.hasCurrentActorThisRole([
+      MemberRole.MODERATOR,
+      MemberRole.ADMINISTRATOR,
+    ]);
   }
 
   hasCurrentActorThisRole(givenRole: string | string[]): boolean {
@@ -69,7 +72,8 @@ export default class GroupMixin extends Vue {
     return (
       this.person &&
       this.person.memberships.elements.some(
-        ({ parent: { id }, role }) => id === this.group.id && roles.includes(role)
+        ({ parent: { id }, role }) =>
+          id === this.group.id && roles.includes(role)
       )
     );
   }

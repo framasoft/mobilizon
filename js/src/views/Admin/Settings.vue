@@ -3,7 +3,9 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li>
-          <router-link :to="{ name: RouteName.ADMIN }">{{ $t("Admin") }}</router-link>
+          <router-link :to="{ name: RouteName.ADMIN }">{{
+            $t("Admin")
+          }}</router-link>
         </li>
         <li class="is-active">
           <router-link :to="{ name: RouteName.ADMIN_SETTINGS }">{{
@@ -18,7 +20,9 @@
           <b-input v-model="adminSettings.instanceName" />
         </b-field>
         <div class="field">
-          <label class="label has-help">{{ $t("Instance Short Description") }}</label>
+          <label class="label has-help">{{
+            $t("Instance Short Description")
+          }}</label>
           <small>
             {{
               $t(
@@ -26,7 +30,11 @@
               )
             }}
           </small>
-          <b-input type="textarea" v-model="adminSettings.instanceDescription" rows="2" />
+          <b-input
+            type="textarea"
+            v-model="adminSettings.instanceDescription"
+            rows="2"
+          />
         </div>
         <div class="field">
           <label class="label has-help">{{ $t("Instance Slogan") }}</label>
@@ -76,7 +84,9 @@
           </b-taginput>
         </div>
         <div class="field">
-          <label class="label has-help">{{ $t("Instance Long Description") }}</label>
+          <label class="label has-help">{{
+            $t("Instance Long Description")
+          }}</label>
           <small>
             {{
               $t(
@@ -84,13 +94,19 @@
               )
             }}
           </small>
-          <b-input type="textarea" v-model="adminSettings.instanceLongDescription" rows="4" />
+          <b-input
+            type="textarea"
+            v-model="adminSettings.instanceLongDescription"
+            rows="4"
+          />
         </div>
         <div class="field">
           <label class="label has-help">{{ $t("Instance Rules") }}</label>
           <small>
             {{
-              $t("A place for your code of conduct, rules or guidelines. You can use HTML tags.")
+              $t(
+                "A place for your code of conduct, rules or guidelines. You can use HTML tags."
+              )
             }}
           </small>
           <b-input type="textarea" v-model="adminSettings.instanceRules" />
@@ -126,7 +142,9 @@
             <div class="column">
               <div
                 class="notification"
-                v-if="adminSettings.instanceTermsType === InstanceTermsType.DEFAULT"
+                v-if="
+                  adminSettings.instanceTermsType === InstanceTermsType.DEFAULT
+                "
               >
                 <b>{{ $t("Default") }}</b>
                 <i18n
@@ -153,11 +171,15 @@
                 v-if="adminSettings.instanceTermsType === InstanceTermsType.URL"
               >
                 <b>{{ $t("URL") }}</b>
-                <p class="content">{{ $t("Set an URL to a page with your own terms.") }}</p>
+                <p class="content">
+                  {{ $t("Set an URL to a page with your own terms.") }}
+                </p>
               </div>
               <div
                 class="notification"
-                v-if="adminSettings.instanceTermsType === InstanceTermsType.CUSTOM"
+                v-if="
+                  adminSettings.instanceTermsType === InstanceTermsType.CUSTOM
+                "
               >
                 <b>{{ $t("Custom") }}</b>
                 <i18n
@@ -221,7 +243,10 @@
             <div class="column">
               <div
                 class="notification"
-                v-if="adminSettings.instancePrivacyPolicyType === InstancePrivacyType.DEFAULT"
+                v-if="
+                  adminSettings.instancePrivacyPolicyType ===
+                  InstancePrivacyType.DEFAULT
+                "
               >
                 <b>{{ $t("Default") }}</b>
                 <i18n
@@ -240,7 +265,10 @@
               </div>
               <div
                 class="notification"
-                v-if="adminSettings.instancePrivacyPolicyType === InstancePrivacyType.URL"
+                v-if="
+                  adminSettings.instancePrivacyPolicyType ===
+                  InstancePrivacyType.URL
+                "
               >
                 <b>{{ $t("URL") }}</b>
                 <p class="content">
@@ -249,7 +277,10 @@
               </div>
               <div
                 class="notification"
-                v-if="adminSettings.instancePrivacyPolicyType === InstancePrivacyType.CUSTOM"
+                v-if="
+                  adminSettings.instancePrivacyPolicyType ===
+                  InstancePrivacyType.CUSTOM
+                "
               >
                 <b>{{ $t("Custom") }}</b>
                 <i18n
@@ -272,24 +303,41 @@
         </b-field>
         <b-field
           :label="$t('Instance Privacy Policy URL')"
-          v-if="adminSettings.instancePrivacyPolicyType === InstancePrivacyType.URL"
+          v-if="
+            adminSettings.instancePrivacyPolicyType === InstancePrivacyType.URL
+          "
         >
-          <b-input type="URL" v-model="adminSettings.instancePrivacyPolicyUrl" />
+          <b-input
+            type="URL"
+            v-model="adminSettings.instancePrivacyPolicyUrl"
+          />
         </b-field>
         <b-field
           :label="$t('Instance Privacy Policy')"
-          v-if="adminSettings.instancePrivacyPolicyType === InstancePrivacyType.CUSTOM"
+          v-if="
+            adminSettings.instancePrivacyPolicyType ===
+            InstancePrivacyType.CUSTOM
+          "
         >
-          <b-input type="textarea" v-model="adminSettings.instancePrivacyPolicy" />
+          <b-input
+            type="textarea"
+            v-model="adminSettings.instancePrivacyPolicy"
+          />
         </b-field>
-        <b-button native-type="submit" type="is-primary">{{ $t("Save") }}</b-button>
+        <b-button native-type="submit" type="is-primary">{{
+          $t("Save")
+        }}</b-button>
       </form>
     </section>
   </div>
 </template>
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
-import { ADMIN_SETTINGS, SAVE_ADMIN_SETTINGS, LANGUAGES } from "@/graphql/admin";
+import {
+  ADMIN_SETTINGS,
+  SAVE_ADMIN_SETTINGS,
+  LANGUAGES,
+} from "@/graphql/admin";
 import { InstancePrivacyType, InstanceTermsType } from "@/types/enums";
 import { IAdminSettings, ILanguage } from "../../types/admin.model";
 import RouteName from "../../router/name";
@@ -326,15 +374,19 @@ export default class Settings extends Vue {
     const variables = { ...this.adminSettings };
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    variables.instanceLanguages = variables.instanceLanguages.map((language) => {
-      return this.codeForLanguage(language);
-    });
+    variables.instanceLanguages = variables.instanceLanguages.map(
+      (language) => {
+        return this.codeForLanguage(language);
+      }
+    );
     try {
       await this.$apollo.mutate({
         mutation: SAVE_ADMIN_SETTINGS,
         variables,
       });
-      this.$notifier.success(this.$t("Admin settings successfully saved.") as string);
+      this.$notifier.success(
+        this.$t("Admin settings successfully saved.") as string
+      );
     } catch (e) {
       console.error(e);
       this.$notifier.error(this.$t("Failed to save admin settings") as string);
@@ -345,7 +397,12 @@ export default class Settings extends Vue {
     this.filteredLanguages = this.languages
       ? this.languages
           .filter((language: ILanguage) => {
-            return language.name.toString().toLowerCase().indexOf(text.toLowerCase()) >= 0;
+            return (
+              language.name
+                .toString()
+                .toLowerCase()
+                .indexOf(text.toLowerCase()) >= 0
+            );
           })
           .map(({ name }) => name)
       : [];

@@ -41,7 +41,9 @@ export class Discussion implements IDiscussion {
     this.title = hash.title;
     this.comments = {
       total: hash.comments.total,
-      elements: hash.comments.elements.map((comment: IComment) => new CommentModel(comment)),
+      elements: hash.comments.elements.map(
+        (comment: IComment) => new CommentModel(comment)
+      ),
     };
     this.slug = hash.slug;
     this.creator = hash.creator;

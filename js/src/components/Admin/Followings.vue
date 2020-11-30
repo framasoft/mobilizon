@@ -1,13 +1,22 @@
 <template>
   <div>
     <form @submit="followRelay">
-      <b-field :label="$t('Add an instance')" custom-class="add-relay" horizontal>
+      <b-field
+        :label="$t('Add an instance')"
+        custom-class="add-relay"
+        horizontal
+      >
         <b-field grouped expanded size="is-large">
           <p class="control">
-            <b-input v-model="newRelayAddress" :placeholder="$t('Ex: mobilizon.fr')" />
+            <b-input
+              v-model="newRelayAddress"
+              :placeholder="$t('Ex: mobilizon.fr')"
+            />
           </p>
           <p class="control">
-            <b-button type="is-primary" native-type="submit">{{ $t("Add an instance") }}</b-button>
+            <b-button type="is-primary" native-type="submit">{{
+              $t("Add an instance")
+            }}</b-button>
           </p>
         </b-field>
       </b-field>
@@ -29,12 +38,25 @@
       checkable
       checkbox-position="left"
     >
-      <b-table-column field="targetActor.id" label="ID" width="40" numeric v-slot="props">{{
-        props.row.targetActor.id
-      }}</b-table-column>
+      <b-table-column
+        field="targetActor.id"
+        label="ID"
+        width="40"
+        numeric
+        v-slot="props"
+        >{{ props.row.targetActor.id }}</b-table-column
+      >
 
-      <b-table-column field="targetActor.type" :label="$t('Type')" width="80" v-slot="props">
-        <b-icon icon="lan" v-if="RelayMixin.isInstance(props.row.targetActor)" />
+      <b-table-column
+        field="targetActor.type"
+        :label="$t('Type')"
+        width="80"
+        v-slot="props"
+      >
+        <b-icon
+          icon="lan"
+          v-if="RelayMixin.isInstance(props.row.targetActor)"
+        />
         <b-icon icon="account-circle" v-else />
       </b-table-column>
 
@@ -46,26 +68,39 @@
         centered
         v-slot="props"
       >
-        <span :class="`tag ${props.row.approved ? 'is-success' : 'is-danger'}`">{{
-          props.row.approved ? $t("Accepted") : $t("Pending")
-        }}</span>
+        <span
+          :class="`tag ${props.row.approved ? 'is-success' : 'is-danger'}`"
+          >{{ props.row.approved ? $t("Accepted") : $t("Pending") }}</span
+        >
       </b-table-column>
 
       <b-table-column field="targetActor.domain" :label="$t('Domain')" sortable>
         <template v-slot:default="props">
-          <a @click="toggle(props.row)" v-if="RelayMixin.isInstance(props.row.targetActor)">{{
-            props.row.targetActor.domain
-          }}</a>
+          <a
+            @click="toggle(props.row)"
+            v-if="RelayMixin.isInstance(props.row.targetActor)"
+            >{{ props.row.targetActor.domain }}</a
+          >
           <a @click="toggle(props.row)" v-else>{{
             `${props.row.targetActor.preferredUsername}@${props.row.targetActor.domain}`
           }}</a>
         </template>
       </b-table-column>
 
-      <b-table-column field="targetActor.updatedAt" :label="$t('Date')" sortable v-slot="props">
-        <span :title="$options.filters.formatDateTimeString(props.row.updatedAt)">{{
-          formatDistanceToNow(new Date(props.row.updatedAt), { locale: $dateFnsLocale })
-        }}</span></b-table-column
+      <b-table-column
+        field="targetActor.updatedAt"
+        :label="$t('Date')"
+        sortable
+        v-slot="props"
+      >
+        <span
+          :title="$options.filters.formatDateTimeString(props.row.updatedAt)"
+          >{{
+            formatDistanceToNow(new Date(props.row.updatedAt), {
+              locale: $dateFnsLocale,
+            })
+          }}</span
+        ></b-table-column
       >
 
       <template slot="detail" slot-scope="props">
@@ -132,13 +167,19 @@ export default class Followings extends Mixins(RelayMixin) {
       await this.$apollo.queries.relayFollowings.refetch();
       this.newRelayAddress = "";
     } catch (err) {
-      Snackbar.open({ message: err.message, type: "is-danger", position: "is-bottom" });
+      Snackbar.open({
+        message: err.message,
+        type: "is-danger",
+        position: "is-bottom",
+      });
     }
   }
 
   async removeRelays(): Promise<void> {
     await this.checkedRows.forEach((row: IFollower) => {
-      this.removeRelay(`${row.targetActor.preferredUsername}@${row.targetActor.domain}`);
+      this.removeRelay(
+        `${row.targetActor.preferredUsername}@${row.targetActor.domain}`
+      );
     });
   }
 
@@ -153,7 +194,11 @@ export default class Followings extends Mixins(RelayMixin) {
       await this.$apollo.queries.relayFollowings.refetch();
       this.checkedRows = [];
     } catch (e) {
-      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+      Snackbar.open({
+        message: e.message,
+        type: "is-danger",
+        position: "is-bottom",
+      });
     }
   }
 }

@@ -3,7 +3,9 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li>
-          <router-link :to="{ name: RouteName.ACCOUNT_SETTINGS }">{{ $t("Account") }}</router-link>
+          <router-link :to="{ name: RouteName.ACCOUNT_SETTINGS }">{{
+            $t("Account")
+          }}</router-link>
         </li>
         <li class="is-active">
           <router-link :to="{ name: RouteName.ACCOUNT_SETTINGS_GENERAL }">{{
@@ -26,9 +28,12 @@
       </i18n>
       <b-message v-if="!canChangeEmail" type="is-warning" :closable="false">
         {{
-          $t("Your email address was automatically set based on your {provider} account.", {
-            provider: providerName(loggedUser.provider),
-          })
+          $t(
+            "Your email address was automatically set based on your {provider} account.",
+            {
+              provider: providerName(loggedUser.provider),
+            }
+          )
         }}
       </b-message>
       <b-notification
@@ -40,9 +45,19 @@
         v-for="error in changeEmailErrors"
         >{{ error }}</b-notification
       >
-      <form @submit.prevent="resetEmailAction" ref="emailForm" class="form" v-if="canChangeEmail">
+      <form
+        @submit.prevent="resetEmailAction"
+        ref="emailForm"
+        class="form"
+        v-if="canChangeEmail"
+      >
         <b-field :label="$t('New email')">
-          <b-input aria-required="true" required type="email" v-model="newEmail" />
+          <b-input
+            aria-required="true"
+            required
+            type="email"
+            v-model="newEmail"
+          />
         </b-field>
         <p class="help">{{ $t("You'll receive a confirmation email.") }}</p>
         <b-field :label="$t('Password')">
@@ -67,9 +82,12 @@
       </div>
       <b-message v-if="!canChangePassword" type="is-warning" :closable="false">
         {{
-          $t("You can't change your password because you are registered through {provider}.", {
-            provider: providerName(loggedUser.provider),
-          })
+          $t(
+            "You can't change your password because you are registered through {provider}.",
+            {
+              provider: providerName(loggedUser.provider),
+            }
+          )
         }}
       </b-message>
       <b-notification
@@ -109,7 +127,9 @@
         </b-field>
         <button
           class="button is-primary"
-          :disabled="!($refs.passwordForm && $refs.passwordForm.checkValidity())"
+          :disabled="
+            !($refs.passwordForm && $refs.passwordForm.checkValidity())
+          "
         >
           {{ $t("Change my password") }}
         </button>
@@ -117,7 +137,9 @@
       <div class="setting-title">
         <h2>{{ $t("Delete account") }}</h2>
       </div>
-      <p class="content">{{ $t("Deleting my account will delete all of my identities.") }}</p>
+      <p class="content">
+        {{ $t("Deleting my account will delete all of my identities.") }}
+      </p>
       <b-button @click="openDeleteAccountModal" type="is-danger">
         {{ $t("Delete my account") }}
       </b-button>
@@ -132,8 +154,12 @@
           <div class="hero-body has-text-centered">
             <div class="container">
               <div class="columns">
-                <div class="column is-one-third-desktop is-offset-one-third-desktop">
-                  <h1 class="title">{{ $t("Deleting your Mobilizon account") }}</h1>
+                <div
+                  class="column is-one-third-desktop is-offset-one-third-desktop"
+                >
+                  <h1 class="title">
+                    {{ $t("Deleting your Mobilizon account") }}
+                  </h1>
                   <p class="content">
                     {{
                       $t(
@@ -141,10 +167,14 @@
                       )
                     }}
                     <br />
-                    <b>{{ $t("There will be no way to recover your data.") }}</b>
+                    <b>{{
+                      $t("There will be no way to recover your data.")
+                    }}</b>
                   </p>
                   <p class="content" v-if="hasUserGotAPassword">
-                    {{ $t("Please enter your password to confirm this action.") }}
+                    {{
+                      $t("Please enter your password to confirm this action.")
+                    }}
                   </p>
                   <form @submit.prevent="deleteAccount">
                     <b-field v-if="hasUserGotAPassword">
@@ -156,12 +186,19 @@
                         :placeholder="$t('Password')"
                       />
                     </b-field>
-                    <b-button native-type="submit" type="is-danger" size="is-large">
+                    <b-button
+                      native-type="submit"
+                      type="is-danger"
+                      size="is-large"
+                    >
                       {{ $t("Delete everything") }}
                     </b-button>
                   </form>
                   <div class="cancel-button">
-                    <b-button type="is-light" @click="isDeleteAccountModalActive = false">
+                    <b-button
+                      type="is-light"
+                      @click="isDeleteAccountModalActive = false"
+                    >
                       {{ $t("Cancel") }}
                     </b-button>
                   </div>
@@ -179,7 +216,12 @@
 import { IAuthProvider } from "@/types/enums";
 import { Component, Vue, Ref } from "vue-property-decorator";
 import { Route } from "vue-router";
-import { CHANGE_EMAIL, CHANGE_PASSWORD, DELETE_ACCOUNT, LOGGED_USER } from "../../graphql/user";
+import {
+  CHANGE_EMAIL,
+  CHANGE_PASSWORD,
+  DELETE_ACCOUNT,
+  LOGGED_USER,
+} from "../../graphql/user";
 import RouteName from "../../router/name";
 import { IUser } from "../../types/current-user.model";
 import { logout, SELECTED_PROVIDERS } from "../../utils/auth";
@@ -248,7 +290,9 @@ export default class AccountSettings extends Vue {
         },
       });
 
-      this.$notifier.success(this.$t("The password was successfully changed") as string);
+      this.$notifier.success(
+        this.$t("The password was successfully changed") as string
+      );
     } catch (err) {
       this.handleErrors("password", err);
     }
@@ -264,12 +308,16 @@ export default class AccountSettings extends Vue {
       await this.$apollo.mutate({
         mutation: DELETE_ACCOUNT,
         variables: {
-          password: this.hasUserGotAPassword ? this.passwordForAccountDeletion : null,
+          password: this.hasUserGotAPassword
+            ? this.passwordForAccountDeletion
+            : null,
         },
       });
       await logout(this.$apollo.provider.defaultClient);
       this.$buefy.notification.open({
-        message: this.$t("Your account has been successfully deleted") as string,
+        message: this.$t(
+          "Your account has been successfully deleted"
+        ) as string,
         type: "is-success",
         position: "is-bottom-right",
         duration: 5000,
@@ -300,7 +348,8 @@ export default class AccountSettings extends Vue {
   get hasUserGotAPassword(): boolean {
     return (
       this.loggedUser &&
-      (this.loggedUser.provider == null || this.loggedUser.provider === IAuthProvider.LDAP)
+      (this.loggedUser.provider == null ||
+        this.loggedUser.provider === IAuthProvider.LDAP)
     );
   }
 

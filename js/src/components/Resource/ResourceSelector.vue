@@ -2,9 +2,15 @@
   <div v-if="resource">
     <article class="panel is-primary">
       <p class="panel-heading">
-        {{ $t('Move "{resourceName}"', { resourceName: initialResource.title }) }}
+        {{
+          $t('Move "{resourceName}"', { resourceName: initialResource.title })
+        }}
       </p>
-      <a class="panel-block clickable" @click="resource = resource.parent" v-if="resource.parent">
+      <a
+        class="panel-block clickable"
+        @click="resource = resource.parent"
+        v-if="resource.parent"
+      >
         <span class="panel-icon">
           <b-icon icon="chevron-up" size="is-small" />
         </span>
@@ -23,12 +29,19 @@
       <a
         class="panel-block"
         v-for="element in resource.children.elements"
-        :class="{ clickable: element.type === 'folder' && element.id !== initialResource.id }"
+        :class="{
+          clickable:
+            element.type === 'folder' && element.id !== initialResource.id,
+        }"
         :key="element.id"
         @click="goDown(element)"
       >
         <span class="panel-icon">
-          <b-icon icon="folder" size="is-small" v-if="element.type === 'folder'" />
+          <b-icon
+            icon="folder"
+            size="is-small"
+            v-if="element.type === 'folder'"
+          />
           <b-icon icon="link" size="is-small" v-else />
         </span>
         {{ element.title }}
@@ -44,10 +57,17 @@
         {{ $t("No resources in this folder") }}
       </p>
     </article>
-    <b-button type="is-primary" @click="updateResource" :disabled="moveDisabled">{{
-      $t("Move resource to {folder}", { folder: resource.title })
+    <b-button
+      type="is-primary"
+      @click="updateResource"
+      :disabled="moveDisabled"
+      >{{
+        $t("Move resource to {folder}", { folder: resource.title })
+      }}</b-button
+    >
+    <b-button type="is-text" @click="$emit('close-move-modal')">{{
+      $t("Cancel")
     }}</b-button>
-    <b-button type="is-text" @click="$emit('close-move-modal')">{{ $t("Cancel") }}</b-button>
   </div>
 </template>
 <script lang="ts">
@@ -93,7 +113,8 @@ export default class ResourceSelector extends Vue {
       {
         id: this.initialResource.id,
         title: this.initialResource.title,
-        parent: this.resource && this.resource.path === "/" ? null : this.resource,
+        parent:
+          this.resource && this.resource.path === "/" ? null : this.resource,
         path: this.initialResource.path,
       },
       this.initialResource.parent
@@ -105,7 +126,9 @@ export default class ResourceSelector extends Vue {
       (this.initialResource.parent &&
         this.resource &&
         this.initialResource.parent.path === this.resource.path) ||
-      (this.initialResource.parent === undefined && this.resource && this.resource.path === "/")
+      (this.initialResource.parent === undefined &&
+        this.resource &&
+        this.resource.path === "/")
     );
   }
 }

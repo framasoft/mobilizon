@@ -3,10 +3,14 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li>
-          <router-link :to="{ name: RouteName.ADMIN }">{{ $t("Admin") }}</router-link>
+          <router-link :to="{ name: RouteName.ADMIN }">{{
+            $t("Admin")
+          }}</router-link>
         </li>
         <li>
-          <router-link :to="{ name: RouteName.RELAYS }">{{ $t("Federation") }}</router-link>
+          <router-link :to="{ name: RouteName.RELAYS }">{{
+            $t("Federation")
+          }}</router-link>
         </li>
         <li class="is-active" v-if="$route.name == RouteName.RELAY_FOLLOWINGS">
           <router-link :to="{ name: RouteName.RELAY_FOLLOWINGS }">{{
@@ -14,7 +18,9 @@
           }}</router-link>
         </li>
         <li class="is-active" v-if="$route.name == RouteName.RELAY_FOLLOWERS">
-          <router-link :to="{ name: RouteName.RELAY_FOLLOWERS }">{{ $t("Followers") }}</router-link>
+          <router-link :to="{ name: RouteName.RELAY_FOLLOWERS }">{{
+            $t("Followers")
+          }}</router-link>
         </li>
       </ul>
     </nav>

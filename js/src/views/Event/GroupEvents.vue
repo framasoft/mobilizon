@@ -24,7 +24,11 @@
     </nav>
     <section>
       <h1 class="title" v-if="group">
-        {{ $t("{group}'s events", { group: group.name || group.preferredUsername }) }}
+        {{
+          $t("{group}'s events", {
+            group: group.name || group.preferredUsername,
+          })
+        }}
       </h1>
       <p v-if="isCurrentActorMember">
         {{
@@ -56,7 +60,10 @@
           />
         </transition-group>
         <b-message
-          v-if="group.organizedEvents.elements.length === 0 && $apollo.loading === false"
+          v-if="
+            group.organizedEvents.elements.length === 0 &&
+            $apollo.loading === false
+          "
           type="is-danger"
         >
           {{ $t("No events found") }}
@@ -124,7 +131,9 @@ export default class GroupEvents extends mixins(GroupMixin) {
 
   get isCurrentActorMember(): boolean {
     if (!this.group || !this.memberships) return false;
-    return this.memberships.map(({ parent: { id } }) => id).includes(this.group.id);
+    return this.memberships
+      .map(({ parent: { id } }) => id)
+      .includes(this.group.id);
   }
 }
 </script>

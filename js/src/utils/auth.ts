@@ -37,11 +37,15 @@ export function saveActorData(obj: IPerson): void {
 }
 
 export function deleteUserData(): void {
-  [AUTH_USER_ID, AUTH_USER_EMAIL, AUTH_ACCESS_TOKEN, AUTH_REFRESH_TOKEN, AUTH_USER_ROLE].forEach(
-    (key) => {
-      localStorage.removeItem(key);
-    }
-  );
+  [
+    AUTH_USER_ID,
+    AUTH_USER_EMAIL,
+    AUTH_ACCESS_TOKEN,
+    AUTH_REFRESH_TOKEN,
+    AUTH_USER_ROLE,
+  ].forEach((key) => {
+    localStorage.removeItem(key);
+  });
 }
 
 export class NoIdentitiesException extends Error {}
@@ -62,7 +66,9 @@ export async function changeIdentity(
  * then fetch the current identities to set in cache
  * the current identity used
  */
-export async function initializeCurrentActor(apollo: ApolloClient<any>): Promise<void> {
+export async function initializeCurrentActor(
+  apollo: ApolloClient<any>
+): Promise<void> {
   const actorId = localStorage.getItem(AUTH_USER_ACTOR_ID);
 
   const result = await apollo.query({
@@ -75,14 +81,17 @@ export async function initializeCurrentActor(apollo: ApolloClient<any>): Promise
     throw new NoIdentitiesException();
   }
   const activeIdentity =
-    identities.find((identity: IPerson) => identity.id === actorId) || (identities[0] as IPerson);
+    identities.find((identity: IPerson) => identity.id === actorId) ||
+    (identities[0] as IPerson);
 
   if (activeIdentity) {
     await changeIdentity(apollo, activeIdentity);
   }
 }
 
-export async function logout(apollo: ApolloClient<NormalizedCacheObject>): Promise<void> {
+export async function logout(
+  apollo: ApolloClient<NormalizedCacheObject>
+): Promise<void> {
   await apollo.mutate({
     mutation: UPDATE_CURRENT_USER_CLIENT,
     variables: {

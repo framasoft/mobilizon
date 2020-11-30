@@ -3,14 +3,18 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li>
-          <router-link :to="{ name: RouteName.MY_GROUPS }">{{ $t("My groups") }}</router-link>
+          <router-link :to="{ name: RouteName.MY_GROUPS }">{{
+            $t("My groups")
+          }}</router-link>
         </li>
         <li>
           <router-link
             v-if="discussion.actor"
             :to="{
               name: RouteName.GROUP,
-              params: { preferredUsername: usernameWithDomain(discussion.actor) },
+              params: {
+                preferredUsername: usernameWithDomain(discussion.actor),
+              },
             }"
             >{{ discussion.actor.name }}</router-link
           >
@@ -21,16 +25,19 @@
             v-if="discussion.actor"
             :to="{
               name: RouteName.DISCUSSION_LIST,
-              params: { preferredUsername: usernameWithDomain(discussion.actor) },
+              params: {
+                preferredUsername: usernameWithDomain(discussion.actor),
+              },
             }"
             >{{ $t("Discussions") }}</router-link
           >
           <b-skeleton animated v-else />
         </li>
         <li class="is-active">
-          <router-link :to="{ name: RouteName.DISCUSSION, params: { id: discussion.id } }">{{
-            discussion.title
-          }}</router-link>
+          <router-link
+            :to="{ name: RouteName.DISCUSSION, params: { id: discussion.id } }"
+            >{{ discussion.title }}</router-link
+          >
         </li>
       </ul>
     </nav>
@@ -39,7 +46,10 @@
         <h2 class="title" v-if="discussion.title && !editTitleMode">
           {{ discussion.title }}
           <span
-            v-if="currentActor.id === discussion.creator.id || isCurrentActorAGroupModerator"
+            v-if="
+              currentActor.id === discussion.creator.id ||
+              isCurrentActorAGroupModerator
+            "
             @click="
               () => {
                 newTitle = discussion.title;
@@ -54,7 +64,11 @@
         <form v-else @submit.prevent="updateDiscussion" class="title-edit">
           <b-input :value="discussion.title" v-model="newTitle" />
           <div class="buttons">
-            <b-button type="is-primary" native-type="submit" icon-right="check" />
+            <b-button
+              type="is-primary"
+              native-type="submit"
+              icon-right="check"
+            />
             <b-button
               @click="
                 () => {
@@ -151,7 +165,8 @@ import { IComment } from "../../types/comment.model";
           if (
             !previousDiscussion.comments.elements.find(
               (comment: IComment) =>
-                comment.id === subscriptionData.data.discussionCommentChanged.lastComment.id
+                comment.id ===
+                subscriptionData.data.discussionCommentChanged.lastComment.id
             )
           ) {
             previousDiscussion.lastComment =
@@ -169,7 +184,8 @@ import { IComment } from "../../types/comment.model";
   },
   components: {
     DiscussionComment,
-    editor: () => import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
+    editor: () =>
+      import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
   },
   metaInfo() {
     return {
@@ -382,7 +398,9 @@ export default class discussion extends mixins(GroupMixin) {
     if (this.discussion.actor) {
       this.$router.push({
         name: RouteName.DISCUSSION_LIST,
-        params: { preferredUsername: usernameWithDomain(this.discussion.actor) },
+        params: {
+          preferredUsername: usernameWithDomain(this.discussion.actor),
+        },
       });
     }
   }
@@ -403,12 +421,15 @@ export default class discussion extends mixins(GroupMixin) {
 
   handleScroll(): void {
     const scrollTop =
-      (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
+      (document.documentElement && document.documentElement.scrollTop) ||
+      document.body.scrollTop;
     const scrollHeight =
       (document.documentElement && document.documentElement.scrollHeight) ||
       document.body.scrollHeight;
-    const clientHeight = document.documentElement.clientHeight || window.innerHeight;
-    const scrolledToBottom = Math.ceil(scrollTop + clientHeight + 800) >= scrollHeight;
+    const clientHeight =
+      document.documentElement.clientHeight || window.innerHeight;
+    const scrolledToBottom =
+      Math.ceil(scrollTop + clientHeight + 800) >= scrollHeight;
     if (scrolledToBottom) {
       this.loadMoreComments();
     }

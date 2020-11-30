@@ -9,9 +9,11 @@
       }}
     </p>
     <div class="buttons">
-      <router-link class="button is-primary" :to="{ name: RouteName.CREATE_GROUP }">{{
-        $t("Create group")
-      }}</router-link>
+      <router-link
+        class="button is-primary"
+        :to="{ name: RouteName.CREATE_GROUP }"
+        >{{ $t("Create group") }}</router-link
+      >
     </div>
     <b-loading :active.sync="$apollo.loading"></b-loading>
     <invitations
@@ -38,7 +40,10 @@
       >
       </b-pagination>
     </section>
-    <b-message v-if="$apollo.loading === false && memberships.length === 0" type="is-danger">
+    <b-message
+      v-if="$apollo.loading === false && memberships.length === 0"
+      type="is-danger"
+    >
       {{ $t("No groups found") }}
     </b-message>
   </section>
@@ -102,7 +107,8 @@ export default class MyGroups extends Vue {
 
   rejectInvitation({ id: memberId }: { id: string }): void {
     const index = this.membershipsPages.elements.findIndex(
-      (membership) => membership.role === MemberRole.INVITED && membership.id === memberId
+      (membership) =>
+        membership.role === MemberRole.INVITED && membership.id === memberId
     );
     if (index > -1) {
       this.membershipsPages.elements.splice(index, 1);
@@ -139,7 +145,8 @@ export default class MyGroups extends Vue {
   get memberships(): IMember[] {
     if (!this.membershipsPages) return [];
     return this.membershipsPages.elements.filter(
-      (member: IMember) => ![MemberRole.INVITED, MemberRole.REJECTED].includes(member.role)
+      (member: IMember) =>
+        ![MemberRole.INVITED, MemberRole.REJECTED].includes(member.role)
     );
   }
 }

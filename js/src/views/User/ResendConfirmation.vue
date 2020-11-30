@@ -7,15 +7,22 @@
         </h1>
         <form v-if="!validationSent" @submit="resendConfirmationAction">
           <b-field :label="$t('Email address')">
-            <b-input aria-required="true" required type="email" v-model="credentials.email" />
+            <b-input
+              aria-required="true"
+              required
+              type="email"
+              v-model="credentials.email"
+            />
           </b-field>
           <p class="control">
             <b-button type="is-primary" native-type="submit">
               {{ $t("Send the confirmation email again") }}
             </b-button>
-            <router-link :to="{ name: RouteName.LOGIN }" class="button is-text">{{
-              $t("Cancel")
-            }}</router-link>
+            <router-link
+              :to="{ name: RouteName.LOGIN }"
+              class="button is-text"
+              >{{ $t("Cancel") }}</router-link
+            >
           </p>
         </form>
         <div v-else>
@@ -28,7 +35,11 @@
             }}
           </b-message>
           <b-message type="is-info">
-            {{ $t("Please check your spam folder if you didn't receive the email.") }}
+            {{
+              $t(
+                "Please check your spam folder if you didn't receive the email."
+              )
+            }}
           </b-message>
         </div>
       </div>
@@ -38,7 +49,10 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { validateEmailField, validateRequiredField } from "../../utils/validators";
+import {
+  validateEmailField,
+  validateRequiredField,
+} from "../../utils/validators";
 import { RESEND_CONFIRMATION_EMAIL } from "../../graphql/auth";
 import RouteName from "../../router/name";
 

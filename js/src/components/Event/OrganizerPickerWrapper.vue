@@ -1,7 +1,11 @@
 <template>
   <div class="organizer-picker">
     <!-- If we have a current actor (inline) -->
-    <div v-if="inline && currentActor.id" class="inline box" @click="isComponentModalActive = true">
+    <div
+      v-if="inline && currentActor.id"
+      class="inline box"
+      @click="isComponentModalActive = true"
+    >
       <div class="media">
         <div class="media-left">
           <figure class="image is-48x48" v-if="currentActor.avatar">
@@ -15,7 +19,9 @@
         </div>
         <div class="media-content" v-if="currentActor.name">
           <p class="is-4">{{ currentActor.name }}</p>
-          <p class="is-6 has-text-grey">{{ `@${currentActor.preferredUsername}` }}</p>
+          <p class="is-6 has-text-grey">
+            {{ `@${currentActor.preferredUsername}` }}
+          </p>
         </div>
         <div class="media-content" v-else>
           {{ `@${currentActor.preferredUsername}` }}
@@ -26,7 +32,11 @@
       </div>
     </div>
     <!-- If we have a current actor -->
-    <span v-else-if="currentActor.id" class="block" @click="isComponentModalActive = true">
+    <span
+      v-else-if="currentActor.id"
+      class="block"
+      @click="isComponentModalActive = true"
+    >
       <img
         class="image is-48x48"
         v-if="currentActor.avatar"
@@ -40,13 +50,19 @@
       <div class="media">
         <div class="media-left">
           <figure class="image is-48x48" v-if="identity.avatar">
-            <img class="image is-rounded" :src="identity.avatar.url" :alt="identity.avatar.alt" />
+            <img
+              class="image is-rounded"
+              :src="identity.avatar.url"
+              :alt="identity.avatar.alt"
+            />
           </figure>
           <b-icon v-else size="is-large" icon="account-circle" />
         </div>
         <div class="media-content" v-if="identity.name">
           <p class="is-4">{{ identity.name }}</p>
-          <p class="is-6 has-text-grey">{{ `@${identity.preferredUsername}` }}</p>
+          <p class="is-6 has-text-grey">
+            {{ `@${identity.preferredUsername}` }}
+          </p>
         </div>
         <div class="media-content" v-else>
           {{ `@${identity.preferredUsername}` }}
@@ -74,7 +90,11 @@
             <div class="column">
               <div v-if="actorMembersForCurrentActor.length > 0">
                 <p>{{ $t("Add a contact") }}</p>
-                <p class="field" v-for="actor in actorMembersForCurrentActor" :key="actor.id">
+                <p
+                  class="field"
+                  v-for="actor in actorMembersForCurrentActor"
+                  :key="actor.id"
+                >
                   <b-checkbox v-model="actualContacts" :native-value="actor.id">
                     <div class="media">
                       <div class="media-left">
@@ -89,7 +109,9 @@
                       </div>
                       <div class="media-content" v-if="actor.name">
                         <p class="is-4">{{ actor.name }}</p>
-                        <p class="is-6 has-text-grey">{{ `@${actor.preferredUsername}` }}</p>
+                        <p class="is-6 has-text-grey">
+                          {{ `@${actor.preferredUsername}` }}
+                        </p>
                       </div>
                       <div class="media-content" v-else>
                         {{ `@${actor.preferredUsername}` }}
@@ -151,7 +173,8 @@ export default class OrganizerPickerWrapper extends Vue {
 
   groupMemberships: Paginate<IMember> = { elements: [], total: 0 };
 
-  @Prop({ type: Array, required: false, default: () => [] }) contacts!: IActor[];
+  @Prop({ type: Array, required: false, default: () => [] })
+  contacts!: IActor[];
 
   actualContacts: (string | undefined)[] = this.contacts.map(({ id }) => id);
 
@@ -172,7 +195,9 @@ export default class OrganizerPickerWrapper extends Vue {
   pickActor(): void {
     this.$emit(
       "update:contacts",
-      this.actorMembersForCurrentActor.filter(({ id }) => this.actualContacts.includes(id))
+      this.actorMembersForCurrentActor.filter(({ id }) =>
+        this.actualContacts.includes(id)
+      )
     );
     this.$emit("input", this.currentActor);
     this.isComponentModalActive = false;
@@ -183,7 +208,9 @@ export default class OrganizerPickerWrapper extends Vue {
       ({ parent: { id } }) => id === this.currentActor.id
     );
     if (currentMembership) {
-      return currentMembership.parent.members.elements.map(({ actor }: { actor: IActor }) => actor);
+      return currentMembership.parent.members.elements.map(
+        ({ actor }: { actor: IActor }) => actor
+      );
     }
     return [];
   }

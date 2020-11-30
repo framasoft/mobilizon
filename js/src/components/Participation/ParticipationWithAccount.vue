@@ -1,5 +1,9 @@
 <template>
-  <redirect-with-account :uri="uri" :pathAfterLogin="`/events/${uuid}`" :sentence="sentence" />
+  <redirect-with-account
+    :uri="uri"
+    :pathAfterLogin="`/events/${uuid}`"
+    :sentence="sentence"
+  />
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
@@ -21,6 +25,8 @@ export default class ParticipationWithAccount extends Vue {
     }`;
   }
 
-  sentence = this.$t("We will redirect you to your instance in order to interact with this event");
+  sentence = this.$t(
+    "We will redirect you to your instance in order to interact with this event"
+  );
 }
 </script>

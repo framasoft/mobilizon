@@ -3,10 +3,14 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li>
-          <router-link :to="{ name: RouteName.ACCOUNT_SETTINGS }">{{ $t("Account") }}</router-link>
+          <router-link :to="{ name: RouteName.ACCOUNT_SETTINGS }">{{
+            $t("Account")
+          }}</router-link>
         </li>
         <li class="is-active">
-          <router-link :to="{ name: RouteName.PREFERENCES }">{{ $t("Preferences") }}</router-link>
+          <router-link :to="{ name: RouteName.PREFERENCES }">{{
+            $t("Preferences")
+          }}</router-link>
         </li>
       </ul>
     </nav>
@@ -28,7 +32,11 @@
           :loading="!config || !loggedUser"
           v-model="selectedTimezone"
         >
-          <optgroup :label="group" v-for="(groupTimezones, group) in timezones" :key="group">
+          <optgroup
+            :label="group"
+            v-for="(groupTimezones, group) in timezones"
+            :key="group"
+          >
             <option
               v-for="timezone in groupTimezones"
               :value="`${group}/${timezone}`"
@@ -44,7 +52,9 @@
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         })
       }}</em>
-      <b-message v-else type="is-danger">{{ $t("Unable to detect timezone.") }}</b-message>
+      <b-message v-else type="is-danger">{{
+        $t("Unable to detect timezone.")
+      }}</b-message>
     </div>
   </div>
 </template>
@@ -52,7 +62,11 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { saveLocaleData } from "@/utils/auth";
 import { TIMEZONES } from "../../graphql/config";
-import { USER_SETTINGS, SET_USER_SETTINGS, UPDATE_USER_LOCALE } from "../../graphql/user";
+import {
+  USER_SETTINGS,
+  SET_USER_SETTINGS,
+  UPDATE_USER_LOCALE,
+} from "../../graphql/user";
 import { IConfig } from "../../types/config.model";
 import { IUser } from "../../types/current-user.model";
 import langs from "../../i18n/langs.json";
@@ -93,28 +107,39 @@ export default class Preferences extends Vue {
 
   // eslint-disable-next-line class-methods-use-this
   sanitize(timezone: string): string {
-    return timezone.split("_").join(" ").replace("St ", "St. ").split("/").join(" - ");
+    return timezone
+      .split("_")
+      .join(" ")
+      .replace("St ", "St. ")
+      .split("/")
+      .join(" - ");
   }
 
   get timezones(): Record<string, string[]> {
     if (!this.config || !this.config.timezones) return {};
-    return this.config.timezones.reduce((acc: { [key: string]: Array<string> }, val: string) => {
-      const components = val.split("/");
-      const [prefix, suffix] = [components.shift() as string, components.join("/")];
-      const pushOrCreate = (
-        acc2: { [key: string]: Array<string> },
-        prefix2: string,
-        suffix2: string
-      ) => {
-        // eslint-disable-next-line no-param-reassign
-        (acc2[prefix2] = acc2[prefix2] || []).push(suffix2);
-        return acc2;
-      };
-      if (suffix) {
-        return pushOrCreate(acc, prefix, suffix);
-      }
-      return pushOrCreate(acc, this.$t("Other") as string, prefix);
-    }, {});
+    return this.config.timezones.reduce(
+      (acc: { [key: string]: Array<string> }, val: string) => {
+        const components = val.split("/");
+        const [prefix, suffix] = [
+          components.shift() as string,
+          components.join("/"),
+        ];
+        const pushOrCreate = (
+          acc2: { [key: string]: Array<string> },
+          prefix2: string,
+          suffix2: string
+        ) => {
+          // eslint-disable-next-line no-param-reassign
+          (acc2[prefix2] = acc2[prefix2] || []).push(suffix2);
+          return acc2;
+        };
+        if (suffix) {
+          return pushOrCreate(acc, prefix, suffix);
+        }
+        return pushOrCreate(acc, this.$t("Other") as string, prefix);
+      },
+      {}
+    );
   }
 
   @Watch("selectedTimezone")
