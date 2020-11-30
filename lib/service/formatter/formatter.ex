@@ -11,6 +11,7 @@ defmodule Mobilizon.Service.Formatter do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.Formatter.HTML
+  alias Phoenix.HTML.Tag
 
   alias Mobilizon.Web.Endpoint
 
@@ -37,8 +38,23 @@ defmodule Mobilizon.Service.Formatter do
       #        {link, %{acc | mentions: MapSet.put(acc.mentions, {"@" <> nickname, actor})}}
 
       %Actor{type: :Person, id: id, preferred_username: preferred_username} = actor ->
+        # link =
+        #   "<span class='h-card mention' data-user='#{id}'>@<span>#{preferred_username}</span></span>"
+
         link =
-          "<span class='h-card mention' data-user='#{id}'>@<span>#{preferred_username}</span></span>"
+          Tag.content_tag(
+            :span,
+            [
+              "@",
+              Tag.content_tag(
+                :span,
+                preferred_username
+              )
+            ],
+            "data-user": id,
+            class: "h-card mention"
+          )
+          |> Phoenix.HTML.safe_to_string()
 
         {link, %{acc | mentions: MapSet.put(acc.mentions, {"@" <> nickname, actor})}}
 
@@ -58,7 +74,6 @@ defmodule Mobilizon.Service.Formatter do
   @doc """
   Parses a text and replace plain text links with HTML. Returns a tuple with a result text, mentions, and hashtags.
 
-  If the 'safe_mention' option is given, only consecutive mentions at the start the post are actually mentioned.
   """
   @spec linkify(String.t(), keyword()) ::
           {String.t(), [{String.t(), Actor.t()}], [{String.t(), String.t()}]}
@@ -123,7 +138,7 @@ defmodule Mobilizon.Service.Formatter do
         hashtag: true,
         hashtag_handler: &__MODULE__.hashtag_handler/4,
         mention: true,
-        mention_handler: &__MODULE__.hashtag_handler/4
+        mention_handler: &__MODULE__.mention_handler/4
       ]
   end
 end

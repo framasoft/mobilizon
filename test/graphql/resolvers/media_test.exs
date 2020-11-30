@@ -459,7 +459,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MediaTest do
         conn
         |> AbsintheHelpers.graphql_query(query: @user_media_size_query)
 
-      assert hd(res["errors"])["message"] == "You need to be logged-in to view current user"
+      assert hd(res["errors"])["message"] == "You need to be logged in"
     end
   end
 
