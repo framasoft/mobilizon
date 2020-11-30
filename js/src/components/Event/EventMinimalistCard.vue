@@ -14,10 +14,12 @@
           {{
             $tc(
               "{available}/{capacity} available places",
-              event.options.maximumAttendeeCapacity - event.participantStats.participant,
+              event.options.maximumAttendeeCapacity -
+                event.participantStats.participant,
               {
                 available:
-                  event.options.maximumAttendeeCapacity - event.participantStats.participant,
+                  event.options.maximumAttendeeCapacity -
+                  event.participantStats.participant,
                 capacity: event.options.maximumAttendeeCapacity,
               }
             )
@@ -42,9 +44,13 @@
             "
           >
             {{
-              $tc("{count} requests waiting", event.participantStats.notApproved, {
-                count: event.participantStats.notApproved,
-              })
+              $tc(
+                "{count} requests waiting",
+                event.participantStats.notApproved,
+                {
+                  count: event.participantStats.notApproved,
+                }
+              )
             }}
           </b-button>
         </span>
@@ -56,7 +62,7 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { IEvent } from "@/types/event.model";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
-import { ParticipantRole } from "../../types/participant.model";
+import { ParticipantRole } from "@/types/enums";
 import RouteName from "../../router/name";
 
 @Component({
@@ -88,7 +94,8 @@ export default class EventMinimalistCard extends Vue {
 
     .event-minimalist-title {
       color: #3c376e;
-      font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial, serif;
+      font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial,
+        serif;
       font-size: 1.25rem;
       font-weight: 700;
     }

@@ -3,7 +3,9 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li>
-          <router-link :to="{ name: RouteName.ADMIN }">{{ $t("Admin") }}</router-link>
+          <router-link :to="{ name: RouteName.ADMIN }">{{
+            $t("Admin")
+          }}</router-link>
         </li>
         <li>
           <router-link
@@ -26,9 +28,17 @@
     </nav>
     <div class="actor-card">
       <router-link
-        :to="{ name: RouteName.GROUP, params: { preferredUsername: usernameWithDomain(group) } }"
+        :to="{
+          name: RouteName.GROUP,
+          params: { preferredUsername: usernameWithDomain(group) },
+        }"
       >
-        <actor-card :actor="group" :full="true" :popover="false" :limit="false" />
+        <actor-card
+          :actor="group"
+          :full="true"
+          :popover="false"
+          :limit="false"
+        />
       </router-link>
     </div>
     <table v-if="metadata.length > 0" class="table is-fullwidth">
@@ -45,15 +55,25 @@
       </tbody>
     </table>
     <div class="buttons">
-      <b-button @click="confirmSuspendProfile" v-if="!group.suspended" type="is-primary">{{
-        $t("Suspend")
-      }}</b-button>
-      <b-button @click="unsuspendProfile" v-if="group.suspended" type="is-primary">{{
-        $t("Unsuspend")
-      }}</b-button>
-      <b-button @click="refreshProfile" v-if="group.domain" type="is-primary" outlined>{{
-        $t("Refresh profile")
-      }}</b-button>
+      <b-button
+        @click="confirmSuspendProfile"
+        v-if="!group.suspended"
+        type="is-primary"
+        >{{ $t("Suspend") }}</b-button
+      >
+      <b-button
+        @click="unsuspendProfile"
+        v-if="group.suspended"
+        type="is-primary"
+        >{{ $t("Unsuspend") }}</b-button
+      >
+      <b-button
+        @click="refreshProfile"
+        v-if="group.domain"
+        type="is-primary"
+        outlined
+        >{{ $t("Refresh profile") }}</b-button
+      >
     </div>
     <section>
       <h2 class="subtitle">
@@ -72,15 +92,33 @@
         :per-page="EVENTS_PER_PAGE"
         @page-change="onMembersPageChange"
       >
-        <b-table-column field="actor.preferredUsername" :label="$t('Member')" v-slot="props">
+        <b-table-column
+          field="actor.preferredUsername"
+          :label="$t('Member')"
+          v-slot="props"
+        >
           <article class="media">
-            <figure class="media-left image is-48x48" v-if="props.row.actor.avatar">
-              <img class="is-rounded" :src="props.row.actor.avatar.url" alt="" />
+            <figure
+              class="media-left image is-48x48"
+              v-if="props.row.actor.avatar"
+            >
+              <img
+                class="is-rounded"
+                :src="props.row.actor.avatar.url"
+                alt=""
+              />
             </figure>
-            <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+            <b-icon
+              class="media-left"
+              v-else
+              size="is-large"
+              icon="account-circle"
+            />
             <div class="media-content">
               <div class="content">
-                <span v-if="props.row.actor.name">{{ props.row.actor.name }}</span
+                <span v-if="props.row.actor.name">{{
+                  props.row.actor.name
+                }}</span
                 ><br />
                 <span class="is-size-7 has-text-grey"
                   >@{{ usernameWithDomain(props.row.actor) }}</span
@@ -90,22 +128,37 @@
           </article>
         </b-table-column>
         <b-table-column field="role" :label="$t('Role')" v-slot="props">
-          <b-tag type="is-primary" v-if="props.row.role === MemberRole.ADMINISTRATOR">
+          <b-tag
+            type="is-primary"
+            v-if="props.row.role === MemberRole.ADMINISTRATOR"
+          >
             {{ $t("Administrator") }}
           </b-tag>
-          <b-tag type="is-primary" v-else-if="props.row.role === MemberRole.MODERATOR">
+          <b-tag
+            type="is-primary"
+            v-else-if="props.row.role === MemberRole.MODERATOR"
+          >
             {{ $t("Moderator") }}
           </b-tag>
           <b-tag v-else-if="props.row.role === MemberRole.MEMBER">
             {{ $t("Member") }}
           </b-tag>
-          <b-tag type="is-warning" v-else-if="props.row.role === MemberRole.NOT_APPROVED">
+          <b-tag
+            type="is-warning"
+            v-else-if="props.row.role === MemberRole.NOT_APPROVED"
+          >
             {{ $t("Not approved") }}
           </b-tag>
-          <b-tag type="is-danger" v-else-if="props.row.role === MemberRole.REJECTED">
+          <b-tag
+            type="is-danger"
+            v-else-if="props.row.role === MemberRole.REJECTED"
+          >
             {{ $t("Rejected") }}
           </b-tag>
-          <b-tag type="is-danger" v-else-if="props.row.role === MemberRole.INVITED">
+          <b-tag
+            type="is-danger"
+            v-else-if="props.row.role === MemberRole.INVITED"
+          >
             {{ $t("Invited") }}
           </b-tag>
         </b-table-column>
@@ -143,11 +196,17 @@
         @page-change="onOrganizedEventsPageChange"
       >
         <b-table-column field="title" :label="$t('Title')" v-slot="props">
-          <router-link :to="{ name: RouteName.EVENT, params: { uuid: props.row.uuid } }">
+          <router-link
+            :to="{ name: RouteName.EVENT, params: { uuid: props.row.uuid } }"
+          >
             {{ props.row.title }}
           </router-link>
         </b-table-column>
-        <b-table-column field="beginsOn" :label="$t('Begins on')" v-slot="props">
+        <b-table-column
+          field="beginsOn"
+          :label="$t('Begins on')"
+          v-slot="props"
+        >
           {{ props.row.beginsOn | formatDateTimeString }}
         </b-table-column>
         <template slot="empty">
@@ -177,11 +236,17 @@
         @page-change="onPostsPageChange"
       >
         <b-table-column field="title" :label="$t('Title')" v-slot="props">
-          <router-link :to="{ name: RouteName.POST, params: { slug: props.row.slug } }">
+          <router-link
+            :to="{ name: RouteName.POST, params: { slug: props.row.slug } }"
+          >
             {{ props.row.title }}
           </router-link>
         </b-table-column>
-        <b-table-column field="publishAt" :label="$t('Publication date')" v-slot="props">
+        <b-table-column
+          field="publishAt"
+          :label="$t('Publication date')"
+          v-slot="props"
+        >
           {{ props.row.publishAt | formatDateTimeString }}
         </b-table-column>
         <template slot="empty">
@@ -199,8 +264,9 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { GET_GROUP, REFRESH_PROFILE } from "@/graphql/group";
 import { formatBytes } from "@/utils/datetime";
+import { MemberRole } from "@/types/enums";
 import { SUSPEND_PROFILE, UNSUSPEND_PROFILE } from "../../graphql/actor";
-import { IGroup, MemberRole } from "../../types/actor";
+import { IGroup } from "../../types/actor";
 import { usernameWithDomain, IActor } from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
 import ActorCard from "../../components/Account/ActorCard.vue";
@@ -253,11 +319,15 @@ export default class AdminGroupProfile extends Vue {
     const res: Record<string, string>[] = [
       {
         key: this.$t("Status") as string,
-        value: (this.group.suspended ? this.$t("Suspended") : this.$t("Active")) as string,
+        value: (this.group.suspended
+          ? this.$t("Suspended")
+          : this.$t("Active")) as string,
       },
       {
         key: this.$t("Domain") as string,
-        value: (this.group.domain ? this.group.domain : this.$t("Local")) as string,
+        value: (this.group.domain
+          ? this.group.domain
+          : this.$t("Local")) as string,
       },
       {
         key: this.$i18n.t("Uploaded media size") as string,
@@ -359,14 +429,18 @@ export default class AdminGroupProfile extends Vue {
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         if (!fetchMoreResult) return previousResult;
-        const newOrganizedEvents = fetchMoreResult.group.organizedEvents.elements;
+        const newOrganizedEvents =
+          fetchMoreResult.group.organizedEvents.elements;
         return {
           group: {
             ...previousResult.group,
             organizedEvents: {
               __typename: previousResult.group.organizedEvents.__typename,
               total: previousResult.group.organizedEvents.total,
-              elements: [...previousResult.group.organizedEvents.elements, ...newOrganizedEvents],
+              elements: [
+                ...previousResult.group.organizedEvents.elements,
+                ...newOrganizedEvents,
+              ],
             },
           },
         };
@@ -391,7 +465,10 @@ export default class AdminGroupProfile extends Vue {
             members: {
               __typename: previousResult.group.members.__typename,
               total: previousResult.group.members.total,
-              elements: [...previousResult.group.members.elements, ...newMembers],
+              elements: [
+                ...previousResult.group.members.elements,
+                ...newMembers,
+              ],
             },
           },
         };

@@ -75,49 +75,61 @@ const link = split(
   // split based on operation type
   ({ query }) => {
     const definition = getMainDefinition(query);
-    return definition.kind === "OperationDefinition" && definition.operation === "subscription";
+    return (
+      definition.kind === "OperationDefinition" &&
+      definition.operation === "subscription"
+    );
   },
   wsLink,
   uploadLink
 );
 
-const errorLink = onError(({ graphQLErrors, networkError, forward, operation }) => {
-  if (isServerError(networkError) && networkError.statusCode === 401 && !alreadyRefreshedToken) {
-    if (!refreshingTokenPromise) refreshingTokenPromise = refreshAccessToken(apolloClient);
+const errorLink = onError(
+  ({ graphQLErrors, networkError, forward, operation }) => {
+    if (
+      isServerError(networkError) &&
+      networkError.statusCode === 401 &&
+      !alreadyRefreshedToken
+    ) {
+      if (!refreshingTokenPromise)
+        refreshingTokenPromise = refreshAccessToken(apolloClient);
 
-    return promiseToObservable(refreshingTokenPromise).flatMap(() => {
-      refreshingTokenPromise = undefined;
-      alreadyRefreshedToken = true;
+      return promiseToObservable(refreshingTokenPromise).flatMap(() => {
+        refreshingTokenPromise = undefined;
+        alreadyRefreshedToken = true;
 
-      const context = operation.getContext();
-      const oldHeaders = context.headers;
+        const context = operation.getContext();
+        const oldHeaders = context.headers;
 
-      operation.setContext({
-        headers: {
-          ...oldHeaders,
-          authorization: generateTokenHeader(),
-        },
+        operation.setContext({
+          headers: {
+            ...oldHeaders,
+            authorization: generateTokenHeader(),
+          },
+        });
+
+        return forward(operation);
       });
+    }
 
-      return forward(operation);
-    });
-  }
+    if (graphQLErrors) {
+      graphQLErrors.map(({ message, locations, path }) =>
+        console.log(
+          `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+        )
+      );
+    }
 
-  if (graphQLErrors) {
-    graphQLErrors.map(({ message, locations, path }) =>
-      console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
-    );
+    if (networkError) {
+      console.log(`[Network error]: ${networkError}`);
+      Snackbar.open({
+        message: "Please refresh the page and retry.",
+        type: "is-danger",
+        position: "is-bottom",
+      });
+    }
   }
-
-  if (networkError) {
-    console.log(`[Network error]: ${networkError}`);
-    Snackbar.open({
-      message: "Please refresh the page and retry.",
-      type: "is-danger",
-      position: "is-bottom",
-    });
-  }
-});
+);
 
 const fullLink = authMiddleware.concat(errorLink).concat(link);
 

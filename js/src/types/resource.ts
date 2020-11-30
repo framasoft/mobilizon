@@ -1,6 +1,20 @@
-import { Paginate } from "@/types/paginate";
-import { IActor } from "@/types/actor";
+import type { Paginate } from "@/types/paginate";
+import type { IActor } from "@/types/actor";
 
+export interface IResourceMetadata {
+  title?: string;
+  description?: string;
+  imageRemoteUrl?: string;
+  height?: number;
+  width?: number;
+  type?: string;
+  authorName?: string;
+  authorUrl?: string;
+  providerName?: string;
+  providerUrl?: string;
+  html?: string;
+  faviconUrl?: string;
+}
 export interface IResource {
   id?: string;
   title: string;
@@ -18,22 +32,7 @@ export interface IResource {
   type?: string;
 }
 
-export interface IResourceMetadata {
-  title?: string;
-  description?: string;
-  imageRemoteUrl?: string;
-  height?: number;
-  width?: number;
-  type?: string;
-  authorName?: string;
-  authorUrl?: string;
-  providerName?: string;
-  providerUrl?: string;
-  html?: string;
-  faviconUrl?: string;
-}
-
-export const mapServiceTypeToIcon: object = {
+export const mapServiceTypeToIcon: Record<string, string> = {
   pad: "file-document-outline",
   calc: "google-spreadsheet",
   visio: "webcam",

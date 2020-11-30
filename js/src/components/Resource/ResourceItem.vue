@@ -2,7 +2,12 @@
   <div class="resource-wrapper">
     <a :href="resource.resourceUrl" target="_blank">
       <div class="preview">
-        <div v-if="resource.type && Object.keys(mapServiceTypeToIcon).includes(resource.type)">
+        <div
+          v-if="
+            resource.type &&
+            Object.keys(mapServiceTypeToIcon).includes(resource.type)
+          "
+        >
           <b-icon :icon="mapServiceTypeToIcon[resource.type]" size="is-large" />
         </div>
         <div
@@ -21,7 +26,9 @@
           :src="resource.metadata.faviconUrl"
         />
         <h3>{{ resource.title }}</h3>
-        <span class="host" v-if="inline">{{ resource.updatedAt | formatDateTimeString }}</span>
+        <span class="host" v-if="inline">{{
+          resource.updatedAt | formatDateTimeString
+        }}</span>
         <span class="host" v-else>{{ urlHostname }}</span>
       </div>
     </a>

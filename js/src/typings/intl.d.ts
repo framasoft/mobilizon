@@ -11,7 +11,10 @@ declare namespace Intl {
   }
 
   class ListFormat {
-    constructor(locales?: Locale | Locales | undefined, options?: Partial<ListFormatOptions>);
+    constructor(
+      locales?: Locale | Locales | undefined,
+      options?: Partial<ListFormatOptions>
+    );
     public format: (items: string[]) => string;
   }
 }

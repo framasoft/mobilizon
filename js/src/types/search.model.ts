@@ -1,5 +1,5 @@
-import { IGroup, IPerson } from "@/types/actor";
-import { IEvent } from "@/types/event.model";
+import type { IGroup, IPerson } from "@/types/actor";
+import type { IEvent } from "@/types/event.model";
 
 export interface SearchEvent {
   total: number;
@@ -14,9 +14,4 @@ export interface SearchGroup {
 export interface SearchPerson {
   total: number;
   elements: IPerson[];
-}
-
-export enum SearchTabs {
-  EVENTS = 0,
-  GROUPS = 1,
 }

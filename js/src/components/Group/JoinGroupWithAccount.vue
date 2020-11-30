@@ -25,6 +25,8 @@ export default class JoinGroupWithAccount extends Vue {
     }`;
   }
 
-  sentence = this.$t("We will redirect you to your instance in order to interact with this group");
+  sentence = this.$t(
+    "We will redirect you to your instance in order to interact with this group"
+  );
 }
 </script>

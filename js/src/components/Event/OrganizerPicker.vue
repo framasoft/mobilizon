@@ -10,9 +10,18 @@
     >
       <div class="media">
         <figure class="image is-48x48" v-if="availableActor.avatar">
-          <img class="media-left is-rounded" :src="availableActor.avatar.url" alt="" />
+          <img
+            class="media-left is-rounded"
+            :src="availableActor.avatar.url"
+            alt=""
+          />
         </figure>
-        <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+        <b-icon
+          class="media-left"
+          v-else
+          size="is-large"
+          icon="account-circle"
+        />
         <div class="media-content">
           <h3>{{ availableActor.name }}</h3>
           <small>{{ `@${availableActor.preferredUsername}` }}</small>
@@ -23,9 +32,11 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { IMember, IPerson, MemberRole, IActor, Actor } from "@/types/actor";
+import { IPerson, IActor, Actor } from "@/types/actor";
 import { PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import { Paginate } from "@/types/paginate";
+import { IMember } from "@/types/actor/member.model";
+import { MemberRole } from "@/types/enums";
 
 @Component({
   apollo: {
@@ -59,16 +70,21 @@ export default class OrganizerPicker extends Vue {
   get actualMemberships(): IMember[] {
     if (this.restrictModeratorLevel) {
       return this.groupMemberships.elements.filter((membership: IMember) =>
-        [MemberRole.ADMINISTRATOR, MemberRole.MODERATOR, MemberRole.CREATOR].includes(
-          membership.role
-        )
+        [
+          MemberRole.ADMINISTRATOR,
+          MemberRole.MODERATOR,
+          MemberRole.CREATOR,
+        ].includes(membership.role)
       );
     }
     return this.groupMemberships.elements;
   }
 
   get actualAvailableActors(): IActor[] {
-    return [this.identity, ...this.actualMemberships.map((member) => member.parent)];
+    return [
+      this.identity,
+      ...this.actualMemberships.map((member) => member.parent),
+    ];
   }
 
   @Watch("currentActor")

@@ -1,12 +1,5 @@
-import { Paginate } from "@/types/paginate";
-import { IActor, IPerson } from "@/types/actor";
-
-export interface ITodoList {
-  id: string;
-  title: string;
-  todos: Paginate<ITodo>;
-  actor?: IActor;
-}
+import type { IActor, IPerson } from "@/types/actor";
+import { ITodoList } from "./todolist";
 
 export interface ITodo {
   id?: string;

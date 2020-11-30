@@ -9,7 +9,7 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { TERMS } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
-import { InstanceTermsType } from "@/types/admin.model";
+import { InstanceTermsType } from "@/types/enums";
 
 @Component({
   apollo: {
@@ -31,19 +31,18 @@ export default class Terms extends Vue {
 
   locale: string | null = null;
 
-  created() {
+  created(): void {
     this.locale = this.$i18n.locale;
   }
 
   @Watch("config", { deep: true })
-  watchConfig(config: IConfig) {
+  watchConfig(config: IConfig): void {
     if (config.terms.type) {
-      console.log(this.config.terms);
       this.redirectToUrl();
     }
   }
 
-  redirectToUrl() {
+  redirectToUrl(): void {
     if (this.config.terms.type === InstanceTermsType.URL) {
       window.location.replace(this.config.terms.url);
     }

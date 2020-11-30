@@ -8,20 +8,34 @@
             slot="author"
             :to="{
               name: RouteName.GROUP,
-              params: { preferredUsername: usernameWithDomain(post.attributedTo) },
+              params: {
+                preferredUsername: usernameWithDomain(post.attributedTo),
+              },
             }"
             >{{ post.attributedTo.name }}</router-link
           >
         </i18n>
-        <p class="published" v-if="!post.draft">{{ post.publishAt | formatDateTimeString }}</p>
-        <small v-if="post.visibility === PostVisibility.PRIVATE" class="has-text-grey">
+        <p class="published" v-if="!post.draft">
+          {{ post.publishAt | formatDateTimeString }}
+        </p>
+        <small
+          v-if="post.visibility === PostVisibility.PRIVATE"
+          class="has-text-grey"
+        >
           <b-icon icon="lock" size="is-small" />
-          {{ $t("Accessible only to members", { group: post.attributedTo.name }) }}
+          {{
+            $t("Accessible only to members", { group: post.attributedTo.name })
+          }}
         </small>
         <p class="buttons" v-if="isCurrentActorMember">
-          <b-tag type="is-warning" size="is-medium" v-if="post.draft">{{ $t("Draft") }}</b-tag>
+          <b-tag type="is-warning" size="is-medium" v-if="post.draft">{{
+            $t("Draft")
+          }}</b-tag>
           <router-link
-            v-if="currentActor.id === post.author.id || isCurrentActorAGroupModerator"
+            v-if="
+              currentActor.id === post.author.id ||
+              isCurrentActorAGroupModerator
+            "
             :to="{ name: RouteName.POST_EDIT, params: { slug: post.slug } }"
             tag="button"
             class="button is-text"
@@ -47,13 +61,14 @@
 <script lang="ts">
 import { Component, Prop } from "vue-property-decorator";
 import { mixins } from "vue-class-component";
-import Editor from "@/components/Editor.vue";
 import GroupMixin from "@/mixins/group";
+import { PostVisibility } from "@/types/enums";
+import { IMember } from "@/types/actor/member.model";
 import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "../../graphql/actor";
 import { FETCH_POST } from "../../graphql/post";
 
-import { IPost, PostVisibility } from "../../types/post.model";
-import { IMember, IPerson, usernameWithDomain } from "../../types/actor";
+import { IPost } from "../../types/post.model";
+import { IPerson, usernameWithDomain } from "../../types/actor";
 import RouteName from "../../router/name";
 import Tag from "../../components/Tag.vue";
 
@@ -127,7 +142,9 @@ export default class Post extends mixins(GroupMixin) {
 
   get isCurrentActorMember(): boolean {
     if (!this.post.attributedTo || !this.memberships) return false;
-    return this.memberships.map(({ parent: { id } }) => id).includes(this.post.attributedTo.id);
+    return this.memberships
+      .map(({ parent: { id } }) => id)
+      .includes(this.post.attributedTo.id);
   }
 }
 </script>

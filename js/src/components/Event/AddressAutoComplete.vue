@@ -21,9 +21,13 @@
       </b-autocomplete>
     </b-field>
     <b-field v-if="isSecureContext()">
-      <b-button type="is-text" v-if="!gettingLocation" icon-right="target" @click="locateMe">{{
-        $t("Use my location")
-      }}</b-button>
+      <b-button
+        type="is-text"
+        v-if="!gettingLocation"
+        icon-right="target"
+        @click="locateMe"
+        >{{ $t("Use my location") }}</b-button
+      >
       <span v-else>{{ $t("Getting location") }}</span>
     </b-field>
     <!--
@@ -50,7 +54,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { LatLng } from "leaflet";
-import { debounce } from "lodash";
+import { debounce, DebouncedFunc } from "lodash";
 import { Address, IAddress } from "../../types/address.model";
 import { ADDRESS, REVERSE_GEOCODE } from "../../graphql/address";
 import { CONFIG } from "../../graphql/config";
@@ -58,7 +62,8 @@ import { IConfig } from "../../types/config.model";
 
 @Component({
   components: {
-    "map-leaflet": () => import(/* webpackChunkName: "map" */ "@/components/Map.vue"),
+    "map-leaflet": () =>
+      import(/* webpackChunkName: "map" */ "@/components/Map.vue"),
   },
   apollo: {
     config: CONFIG,
@@ -81,7 +86,7 @@ export default class AddressAutoComplete extends Vue {
 
   private gettingLocation = false;
 
-  private location!: Position;
+  private location!: GeolocationPosition;
 
   private gettingLocationError: any;
 
@@ -89,7 +94,7 @@ export default class AddressAutoComplete extends Vue {
 
   config!: IConfig;
 
-  fetchAsyncData!: Function;
+  fetchAsyncData!: DebouncedFunc<(query: string) => Promise<void>>;
 
   // We put this in data because of issues like
   // https://github.com/vuejs/vue-class-component/issues/263
@@ -121,7 +126,9 @@ export default class AddressAutoComplete extends Vue {
       },
     });
 
-    this.addressData = result.data.searchAddress.map((address: IAddress) => new Address(address));
+    this.addressData = result.data.searchAddress.map(
+      (address: IAddress) => new Address(address)
+    );
     this.isFetching = false;
   }
 
@@ -174,7 +181,9 @@ export default class AddressAutoComplete extends Vue {
       },
     });
 
-    this.addressData = result.data.reverseGeocode.map((address: IAddress) => new Address(address));
+    this.addressData = result.data.reverseGeocode.map(
+      (address: IAddress) => new Address(address)
+    );
     if (this.addressData.length > 0) {
       const defaultAddress = new Address(this.addressData[0]);
       this.selected = defaultAddress;
@@ -197,7 +206,10 @@ export default class AddressAutoComplete extends Vue {
       this.location = await AddressAutoComplete.getLocation();
       this.mapDefaultZoom = 12;
       this.reverseGeoCode(
-        new LatLng(this.location.coords.latitude, this.location.coords.longitude),
+        new LatLng(
+          this.location.coords.latitude,
+          this.location.coords.longitude
+        ),
         12
       );
     } catch (e) {
@@ -207,7 +219,7 @@ export default class AddressAutoComplete extends Vue {
     this.gettingLocation = false;
   }
 
-  static async getLocation(): Promise<Position> {
+  static async getLocation(): Promise<GeolocationPosition> {
     return new Promise((resolve, reject) => {
       if (!("geolocation" in navigator)) {
         reject(new Error("Geolocation is not available."));

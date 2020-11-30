@@ -59,7 +59,12 @@
           <a :href="linkedInShareUrl" target="_blank" rel="nofollow noopener"
             ><b-icon icon="linkedin" size="is-large" type="is-primary"
           /></a>
-          <a :href="diasporaShareUrl" class="diaspora" target="_blank" rel="nofollow noopener">
+          <a
+            :href="diasporaShareUrl"
+            class="diaspora"
+            target="_blank"
+            rel="nofollow noopener"
+          >
             <span data-v-5e15e80a="" class="icon has-text-primary is-large">
               <DiasporaLogo alt="diaspora-logo" />
             </span>
@@ -76,7 +81,9 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Ref } from "vue-property-decorator";
-import { IEvent, EventVisibility, EventStatus } from "../../types/event.model";
+import { EventStatus, EventVisibility } from "@/types/enums";
+import { IEvent } from "../../types/event.model";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import DiasporaLogo from "../../assets/diaspora-icon.svg?inline";
 
@@ -88,7 +95,8 @@ import DiasporaLogo from "../../assets/diaspora-icon.svg?inline";
 export default class ShareEventModal extends Vue {
   @Prop({ type: Object, required: true }) event!: IEvent;
 
-  @Prop({ type: Boolean, required: false, default: true }) eventCapacityOK!: boolean;
+  @Prop({ type: Boolean, required: false, default: true })
+  eventCapacityOK!: boolean;
 
   @Ref("eventURLInput") readonly eventURLInput!: any;
 
@@ -99,13 +107,15 @@ export default class ShareEventModal extends Vue {
   showCopiedTooltip = false;
 
   get twitterShareUrl(): string {
-    return `https://twitter.com/intent/tweet?url=${encodeURIComponent(this.event.url)}&text=${
-      this.event.title
-    }`;
+    return `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+      this.event.url
+    )}&text=${this.event.title}`;
   }
 
   get facebookShareUrl(): string {
-    return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(this.event.url)}`;
+    return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+      this.event.url
+    )}`;
   }
 
   get linkedInShareUrl(): string {
@@ -124,7 +134,7 @@ export default class ShareEventModal extends Vue {
     )}&url=${encodeURIComponent(this.event.url)}`;
   }
 
-  copyURL() {
+  copyURL(): void {
     this.eventURLInput.$refs.input.select();
     document.execCommand("copy");
     this.showCopiedTooltip = true;

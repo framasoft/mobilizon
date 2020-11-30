@@ -13,7 +13,11 @@ declare module "tiptap-commands" {
   }
 
   export interface CommandFunction {
-    (state: EditorState, dispatch: DispatchFn | undefined, view: EditorView): boolean;
+    (
+      state: EditorState,
+      dispatch: DispatchFn | undefined,
+      view: EditorView
+    ): boolean;
   }
 
   export function toggleWrap(type: NodeType): Command;
@@ -25,7 +29,10 @@ declare module "tiptap-commands" {
     joinPredicate?: (strs: string[], node: Node) => boolean
   ): InputRule;
 
-  export function toggleMark(type: MarkType, attrs?: { [key: string]: any }): Command;
+  export function toggleMark(
+    type: MarkType,
+    attrs?: { [key: string]: any }
+  ): Command;
 
   export function pasteRule(
     regexp: RegExp,

@@ -38,8 +38,11 @@ module.exports = {
       "error",
       {
         ignoreStrings: true,
+        ignoreHTMLTextContents: true,
+        ignoreTemplateLiterals: true,
+        ignoreComments: true,
         template: 170,
-        code: 100,
+        code: 80,
       },
     ],
     "prettier/prettier": "error",
@@ -48,13 +51,18 @@ module.exports = {
     "import/prefer-default-export": "off",
     "import/extensions": "off",
     "import/no-unresolved": "off",
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": ["error"],
   },
 
   ignorePatterns: ["src/typings/*.d.ts", "vue.config.js"],
 
   overrides: [
     {
-      files: ["**/__tests__/*.{j,t}s?(x)", "**/tests/unit/**/*.spec.{j,t}s?(x)"],
+      files: [
+        "**/__tests__/*.{j,t}s?(x)",
+        "**/tests/unit/**/*.spec.{j,t}s?(x)",
+      ],
       env: {
         mocha: true,
       },

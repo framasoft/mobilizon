@@ -1,14 +1,23 @@
 <template>
   <router-link
     class="discussion-minimalist-card-wrapper"
-    :to="{ name: RouteName.DISCUSSION, params: { slug: discussion.slug, id: discussion.id } }"
+    :to="{
+      name: RouteName.DISCUSSION,
+      params: { slug: discussion.slug, id: discussion.id },
+    }"
   >
     <div class="media-left">
       <figure
         class="image is-32x32"
-        v-if="discussion.lastComment.actor && discussion.lastComment.actor.avatar"
+        v-if="
+          discussion.lastComment.actor && discussion.lastComment.actor.avatar
+        "
       >
-        <img class="is-rounded" :src="discussion.lastComment.actor.avatar.url" alt />
+        <img
+          class="is-rounded"
+          :src="discussion.lastComment.actor.avatar.url"
+          alt
+        />
       </figure>
       <b-icon v-else size="is-medium" icon="account-circle" />
     </div>
@@ -17,15 +26,18 @@
         <p class="discussion-minimalist-title">{{ discussion.title }}</p>
         <span :title="actualDate | formatDateTimeString">
           {{
-            formatDistanceToNowStrict(new Date(actualDate), { locale: $dateFnsLocale }) ||
-            $t("Right now")
+            formatDistanceToNowStrict(new Date(actualDate), {
+              locale: $dateFnsLocale,
+            }) || $t("Right now")
           }}</span
         >
       </div>
       <div class="has-text-grey" v-if="!discussion.lastComment.deletedAt">
         {{ htmlTextEllipsis }}
       </div>
-      <div v-else class="has-text-grey">{{ $t("[This comment has been deleted]") }}</div>
+      <div v-else class="has-text-grey">
+        {{ $t("[This comment has been deleted]") }}
+      </div>
     </div>
   </router-link>
 </template>
@@ -54,7 +66,10 @@ export default class DiscussionListItem extends Vue {
   }
 
   get actualDate(): string | Date | undefined {
-    if (this.discussion.updatedAt === this.discussion.insertedAt && this.discussion.lastComment) {
+    if (
+      this.discussion.updatedAt === this.discussion.insertedAt &&
+      this.discussion.lastComment
+    ) {
       return this.discussion.lastComment.publishedAt;
     }
     return this.discussion.updatedAt;
@@ -83,7 +98,8 @@ export default class DiscussionListItem extends Vue {
 
       .discussion-minimalist-title {
         color: #3c376e;
-        font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial, serif;
+        font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica,
+          Arial, serif;
         font-size: 1.25rem;
         font-weight: 700;
         flex: 1;

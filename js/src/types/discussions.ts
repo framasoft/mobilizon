@@ -1,6 +1,7 @@
-import { IActor, IPerson } from "@/types/actor";
-import { IComment, CommentModel } from "@/types/comment.model";
-import { Paginate } from "@/types/paginate";
+import type { IActor, IPerson } from "@/types/actor";
+import type { IComment } from "@/types/comment.model";
+import { CommentModel } from "@/types/comment.model";
+import type { Paginate } from "@/types/paginate";
 
 export interface IDiscussion {
   id?: string;
@@ -40,7 +41,9 @@ export class Discussion implements IDiscussion {
     this.title = hash.title;
     this.comments = {
       total: hash.comments.total,
-      elements: hash.comments.elements.map((comment: IComment) => new CommentModel(comment)),
+      elements: hash.comments.elements.map(
+        (comment: IComment) => new CommentModel(comment)
+      ),
     };
     this.slug = hash.slug;
     this.creator = hash.creator;

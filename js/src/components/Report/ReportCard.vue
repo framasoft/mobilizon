@@ -22,10 +22,18 @@
       <div class="content columns">
         <div class="column is-one-quarter-desktop">
           <span v-if="report.reporter.type === ActorType.APPLICATION">
-            {{ $t("Reported by someone on {domain}", { domain: report.reporter.domain }) }}
+            {{
+              $t("Reported by someone on {domain}", {
+                domain: report.reporter.domain,
+              })
+            }}
           </span>
           <span v-else>
-            {{ $t("Reported by {reporter}", { reporter: report.reporter.preferredUsername }) }}
+            {{
+              $t("Reported by {reporter}", {
+                reporter: report.reporter.preferredUsername,
+              })
+            }}
           </span>
         </div>
         <div class="column" v-if="report.content" v-html="report.content" />
@@ -36,7 +44,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { IReport } from "@/types/report.model";
-import { ActorType } from "@/types/actor";
+import { ActorType } from "@/types/enums";
 
 @Component
 export default class ReportCard extends Vue {

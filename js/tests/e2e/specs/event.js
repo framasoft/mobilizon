@@ -36,13 +36,21 @@ describe("Events", () => {
     cy.url().should("include", "/events/");
     cy.contains(".title", EVENT.title);
     cy.contains(".column.is-3-tablet", "One person going");
-    cy.get(".eventMetadataBlock").eq(1).contains("On Wednesday, September 15, 2021 from");
+    cy.get(".eventMetadataBlock")
+      .eq(1)
+      .contains("On Wednesday, September 15, 2021 from");
     cy.contains(".column.is-3-tablet", "Public event");
 
     cy.contains(".navbar-item", "My events").click();
     cy.contains(".title", EVENT.title);
     cy.contains(".content.column", "Organized by I'm a test user");
-    cy.contains(".title-wrapper .date-component .datetime-container .month", "Sep");
-    cy.contains(".title-wrapper .date-component .datetime-container .day", "15");
+    cy.contains(
+      ".title-wrapper .date-component .datetime-container .month",
+      "Sep"
+    );
+    cy.contains(
+      ".title-wrapper .date-component .datetime-container .day",
+      "15"
+    );
   });
 });

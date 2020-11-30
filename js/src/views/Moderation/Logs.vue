@@ -3,7 +3,9 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li>
-          <router-link :to="{ name: RouteName.MODERATION }">{{ $t("Moderation") }}</router-link>
+          <router-link :to="{ name: RouteName.MODERATION }">{{
+            $t("Moderation")
+          }}</router-link>
         </li>
         <li class="is-active">
           <router-link :to="{ name: RouteName.REPORT_LOGS }">{{
@@ -16,7 +18,11 @@
       <ul v-if="actionLogs.length > 0">
         <li v-for="log in actionLogs" :key="log.id">
           <div class="box">
-            <img class="image" :src="log.actor.avatar.url" v-if="log.actor.avatar" />
+            <img
+              class="image"
+              :src="log.actor.avatar.url"
+              v-if="log.actor.avatar"
+            />
             <i18n
               v-if="log.action === ActionLogAction.REPORT_UPDATE_CLOSED"
               tag="span"
@@ -24,13 +30,23 @@
             >
               <router-link
                 slot="moderator"
-                :to="{ name: RouteName.ADMIN_PROFILE, params: { id: log.actor.id } }"
+                :to="{
+                  name: RouteName.ADMIN_PROFILE,
+                  params: { id: log.actor.id },
+                }"
                 >@{{ log.actor.preferredUsername }}</router-link
               >
               <router-link
-                :to="{ name: RouteName.REPORT, params: { reportId: log.object.id } }"
+                :to="{
+                  name: RouteName.REPORT,
+                  params: { reportId: log.object.id },
+                }"
                 slot="report"
-                >{{ $t("report #{report_number}", { report_number: log.object.id }) }}
+                >{{
+                  $t("report #{report_number}", {
+                    report_number: log.object.id,
+                  })
+                }}
               </router-link>
             </i18n>
             <i18n
@@ -40,13 +56,23 @@
             >
               <router-link
                 slot="moderator"
-                :to="{ name: RouteName.ADMIN_PROFILE, params: { id: log.actor.id } }"
+                :to="{
+                  name: RouteName.ADMIN_PROFILE,
+                  params: { id: log.actor.id },
+                }"
                 >@{{ log.actor.preferredUsername }}</router-link
               >
               <router-link
-                :to="{ name: RouteName.REPORT, params: { reportId: log.object.id } }"
+                :to="{
+                  name: RouteName.REPORT,
+                  params: { reportId: log.object.id },
+                }"
                 slot="report"
-                >{{ $t("report #{report_number}", { report_number: log.object.id }) }}
+                >{{
+                  $t("report #{report_number}", {
+                    report_number: log.object.id,
+                  })
+                }}
               </router-link>
             </i18n>
             <i18n
@@ -56,13 +82,23 @@
             >
               <router-link
                 slot="moderator"
-                :to="{ name: RouteName.ADMIN_PROFILE, params: { id: log.actor.id } }"
+                :to="{
+                  name: RouteName.ADMIN_PROFILE,
+                  params: { id: log.actor.id },
+                }"
                 >@{{ log.actor.preferredUsername }}</router-link
               >
               <router-link
-                :to="{ name: RouteName.REPORT, params: { reportId: log.object.id } }"
+                :to="{
+                  name: RouteName.REPORT,
+                  params: { reportId: log.object.id },
+                }"
                 slot="report"
-                >{{ $t("report #{report_number}", { report_number: log.object.id }) }}
+                >{{
+                  $t("report #{report_number}", {
+                    report_number: log.object.id,
+                  })
+                }}
               </router-link>
             </i18n>
             <i18n
@@ -72,16 +108,28 @@
             >
               <router-link
                 slot="moderator"
-                :to="{ name: RouteName.ADMIN_PROFILE, params: { id: log.actor.id } }"
+                :to="{
+                  name: RouteName.ADMIN_PROFILE,
+                  params: { id: log.actor.id },
+                }"
                 >@{{ log.actor.preferredUsername }}</router-link
               >
               <router-link
                 v-if="log.object.report"
-                :to="{ name: RouteName.REPORT, params: { reportId: log.object.report.id } }"
+                :to="{
+                  name: RouteName.REPORT,
+                  params: { reportId: log.object.report.id },
+                }"
                 slot="report"
-                >{{ $t("report #{report_number}", { report_number: log.object.report.id }) }}
+                >{{
+                  $t("report #{report_number}", {
+                    report_number: log.object.report.id,
+                  })
+                }}
               </router-link>
-              <span v-else slot="report">{{ $t("a non-existent report") }}</span>
+              <span v-else slot="report">{{
+                $t("a non-existent report")
+              }}</span>
             </i18n>
             <i18n
               v-else-if="log.action === ActionLogAction.EVENT_DELETION"
@@ -90,7 +138,10 @@
             >
               <router-link
                 slot="moderator"
-                :to="{ name: RouteName.ADMIN_PROFILE, params: { id: log.actor.id } }"
+                :to="{
+                  name: RouteName.ADMIN_PROFILE,
+                  params: { id: log.actor.id },
+                }"
                 >@{{ log.actor.preferredUsername }}</router-link
               >
               <b slot="title">{{ log.object.title }}</b>
@@ -102,12 +153,18 @@
             >
               <router-link
                 slot="moderator"
-                :to="{ name: RouteName.ADMIN_PROFILE, params: { id: log.actor.id } }"
+                :to="{
+                  name: RouteName.ADMIN_PROFILE,
+                  params: { id: log.actor.id },
+                }"
                 >@{{ log.actor.preferredUsername }}</router-link
               >
               <router-link
                 slot="profile"
-                :to="{ name: RouteName.ADMIN_PROFILE, params: { id: log.object.id } }"
+                :to="{
+                  name: RouteName.ADMIN_PROFILE,
+                  params: { id: log.object.id },
+                }"
                 >{{ displayNameAndUsername(log.object) }}
               </router-link>
             </i18n>
@@ -118,12 +175,18 @@
             >
               <router-link
                 slot="moderator"
-                :to="{ name: RouteName.ADMIN_PROFILE, params: { id: log.actor.id } }"
+                :to="{
+                  name: RouteName.ADMIN_PROFILE,
+                  params: { id: log.actor.id },
+                }"
                 >@{{ log.actor.preferredUsername }}</router-link
               >
               <router-link
                 slot="profile"
-                :to="{ name: RouteName.ADMIN_PROFILE, params: { id: log.object.id } }"
+                :to="{
+                  name: RouteName.ADMIN_PROFILE,
+                  params: { id: log.object.id },
+                }"
                 >{{ displayNameAndUsername(log.object) }}
               </router-link>
             </i18n>
@@ -134,13 +197,19 @@
             >
               <router-link
                 slot="moderator"
-                :to="{ name: RouteName.ADMIN_PROFILE, params: { id: log.actor.id } }"
+                :to="{
+                  name: RouteName.ADMIN_PROFILE,
+                  params: { id: log.actor.id },
+                }"
                 >@{{ log.actor.preferredUsername }}</router-link
               >
               <router-link
                 v-if="log.object.confirmedAt"
                 slot="user"
-                :to="{ name: RouteName.ADMIN_USER_PROFILE, params: { id: log.object.id } }"
+                :to="{
+                  name: RouteName.ADMIN_USER_PROFILE,
+                  params: { id: log.object.id },
+                }"
                 >{{ log.object.email }}
               </router-link>
               <b v-else slot="user">{{ log.object.email }}</b>
@@ -158,9 +227,10 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { IActionLog, ActionLogAction } from "@/types/report.model";
+import { IActionLog } from "@/types/report.model";
 import { LOGS } from "@/graphql/report";
 import ReportCard from "@/components/Report/ReportCard.vue";
+import { ActionLogAction } from "@/types/enums";
 import RouteName from "../../router/name";
 import { displayNameAndUsername } from "../../types/actor";
 

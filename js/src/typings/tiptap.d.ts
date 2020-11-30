@@ -76,7 +76,13 @@ declare module "tiptap" {
     parseOptions?: ParseOptions;
     /** defaults to true */
     injectCSS?: boolean;
-    onInit?: ({ view, state }: { view: EditorView; state: EditorState }) => void;
+    onInit?: ({
+      view,
+      state,
+    }: {
+      view: EditorView;
+      state: EditorState;
+    }) => void;
     onTransaction?: (event: EditorUpdateEvent) => void;
     onUpdate?: (event: EditorUpdateEvent) => void;
     onFocus?: ({

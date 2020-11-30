@@ -1,7 +1,15 @@
 <template>
-  <b-navbar type="is-secondary" wrapper-class="container" :active.sync="mobileNavbarActive">
+  <b-navbar
+    type="is-secondary"
+    wrapper-class="container"
+    :active.sync="mobileNavbarActive"
+  >
     <template slot="brand">
-      <b-navbar-item tag="router-link" :to="{ name: RouteName.HOME }" :aria-label="$t('Home')">
+      <b-navbar-item
+        tag="router-link"
+        :to="{ name: RouteName.HOME }"
+        :aria-label="$t('Home')"
+      >
         <logo />
       </b-navbar-item>
     </template>
@@ -19,9 +27,12 @@
         >{{ $t("My groups") }}</b-navbar-item
       >
       <b-navbar-item tag="span" v-if="config && config.features.eventCreation">
-        <b-button tag="router-link" :to="{ name: RouteName.CREATE_EVENT }" type="is-primary">{{
-          $t("Create")
-        }}</b-button>
+        <b-button
+          tag="router-link"
+          :to="{ name: RouteName.CREATE_EVENT }"
+          type="is-primary"
+          >{{ $t("Create") }}</b-button
+        >
       </b-navbar-item>
     </template>
     <template slot="end">
@@ -30,9 +41,17 @@
       </b-navbar-item>
 
       <b-navbar-dropdown v-if="currentActor.id && currentUser.isLoggedIn" right>
-        <template slot="label" v-if="currentActor" class="navbar-dropdown-profile">
+        <template
+          slot="label"
+          v-if="currentActor"
+          class="navbar-dropdown-profile"
+        >
           <figure class="image is-32x32" v-if="currentActor.avatar">
-            <img class="is-rounded" alt="avatarUrl" :src="currentActor.avatar.url" />
+            <img
+              class="is-rounded"
+              alt="avatarUrl"
+              :src="currentActor.avatar.url"
+            />
           </figure>
           <b-icon v-else icon="account-circle" />
         </template>
@@ -65,9 +84,11 @@
           <hr class="navbar-divider" />
         </b-navbar-item>
 
-        <b-navbar-item tag="router-link" :to="{ name: RouteName.UPDATE_IDENTITY }">{{
-          $t("My account")
-        }}</b-navbar-item>
+        <b-navbar-item
+          tag="router-link"
+          :to="{ name: RouteName.UPDATE_IDENTITY }"
+          >{{ $t("My account") }}</b-navbar-item
+        >
 
         <!--          <b-navbar-item tag="router-link" :to="{ name: RouteName.CREATE_GROUP }">-->
         <!--            {{ $t('Create group') }}-->
@@ -95,9 +116,11 @@
             <strong>{{ $t("Sign up") }}</strong>
           </router-link>
 
-          <router-link class="button is-light" :to="{ name: RouteName.LOGIN }">{{
-            $t("Log in")
-          }}</router-link>
+          <router-link
+            class="button is-light"
+            :to="{ name: RouteName.LOGIN }"
+            >{{ $t("Log in") }}</router-link
+          >
         </div>
       </b-navbar-item>
     </template>
@@ -109,13 +132,18 @@ import { Component, Vue, Watch } from "vue-property-decorator";
 import Logo from "@/components/Logo.vue";
 import { GraphQLError } from "graphql";
 import { loadLanguageAsync } from "@/utils/i18n";
+import { ICurrentUserRole } from "@/types/enums";
 import { CURRENT_USER_CLIENT, USER_SETTINGS } from "../graphql/user";
 import { changeIdentity, logout } from "../utils/auth";
-import { CURRENT_ACTOR_CLIENT, IDENTITIES, UPDATE_DEFAULT_ACTOR } from "../graphql/actor";
+import {
+  CURRENT_ACTOR_CLIENT,
+  IDENTITIES,
+  UPDATE_DEFAULT_ACTOR,
+} from "../graphql/actor";
 import { IPerson, Person } from "../types/actor";
 import { CONFIG } from "../graphql/config";
 import { IConfig } from "../types/config.model";
-import { ICurrentUser, ICurrentUserRole, IUser } from "../types/current-user.model";
+import { ICurrentUser, IUser } from "../types/current-user.model";
 import SearchField from "./SearchField.vue";
 import RouteName from "../router/name";
 
@@ -130,7 +158,9 @@ import RouteName from "../router/name";
     identities: {
       query: IDENTITIES,
       update: ({ identities }) =>
-        identities ? identities.map((identity: IPerson) => new Person(identity)) : [],
+        identities
+          ? identities.map((identity: IPerson) => new Person(identity))
+          : [],
       skip() {
         return this.currentUser.isLoggedIn === false;
       },
@@ -201,7 +231,8 @@ export default class NavBar extends Vue {
   async handleErrors(errors: GraphQLError[]): Promise<void> {
     if (
       errors.length > 0 &&
-      errors[0].message === "You need to be logged-in to view your list of identities"
+      errors[0].message ===
+        "You need to be logged-in to view your list of identities"
     ) {
       await this.logout();
     }

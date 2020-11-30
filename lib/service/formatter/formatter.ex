@@ -11,16 +11,12 @@ defmodule Mobilizon.Service.Formatter do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.Formatter.HTML
+  alias Phoenix.HTML.Tag
 
   alias Mobilizon.Web.Endpoint
 
   @link_regex ~r"((?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~%:/?#[\]@!\$&'\(\)\*\+,;=.]+)|[0-9a-z+\-\.]+:[0-9a-z$-_.+!*'(),]+"ui
   @markdown_characters_regex ~r/(`|\*|_|{|}|[|]|\(|\)|#|\+|-|\.|!)/
-
-  @auto_linker_config hashtag: true,
-                      hashtag_handler: &__MODULE__.hashtag_handler/4,
-                      mention: true,
-                      mention_handler: &__MODULE__.mention_handler/4
 
   def escape_mention_handler("@" <> nickname = mention, buffer, _, _) do
     case Actors.get_actor_by_name(nickname) do
@@ -42,8 +38,23 @@ defmodule Mobilizon.Service.Formatter do
       #        {link, %{acc | mentions: MapSet.put(acc.mentions, {"@" <> nickname, actor})}}
 
       %Actor{type: :Person, id: id, preferred_username: preferred_username} = actor ->
+        # link =
+        #   "<span class='h-card mention' data-user='#{id}'>@<span>#{preferred_username}</span></span>"
+
         link =
-          "<span class='h-card mention' data-user='#{id}'>@<span>#{preferred_username}</span></span>"
+          Tag.content_tag(
+            :span,
+            [
+              "@",
+              Tag.content_tag(
+                :span,
+                preferred_username
+              )
+            ],
+            "data-user": id,
+            class: "h-card mention"
+          )
+          |> Phoenix.HTML.safe_to_string()
 
         {link, %{acc | mentions: MapSet.put(acc.mentions, {"@" <> nickname, actor})}}
 
@@ -63,15 +74,14 @@ defmodule Mobilizon.Service.Formatter do
   @doc """
   Parses a text and replace plain text links with HTML. Returns a tuple with a result text, mentions, and hashtags.
 
-  If the 'safe_mention' option is given, only consecutive mentions at the start the post are actually mentioned.
   """
   @spec linkify(String.t(), keyword()) ::
           {String.t(), [{String.t(), Actor.t()}], [{String.t(), String.t()}]}
   def linkify(text, options \\ []) do
-    options = options ++ @auto_linker_config
+    options = linkify_opts() ++ options
 
     acc = %{mentions: MapSet.new(), tags: MapSet.new()}
-    {text, %{mentions: mentions, tags: tags}} = AutoLinker.link_map(text, acc, options)
+    {text, %{mentions: mentions, tags: tags}} = Linkify.link_map(text, acc, options)
 
     {text, MapSet.to_list(mentions), MapSet.to_list(tags)}
   end
@@ -87,7 +97,7 @@ defmodule Mobilizon.Service.Formatter do
         mention_handler: &escape_mention_handler/4
       )
 
-    AutoLinker.link(text, options)
+    Linkify.link(text, options)
   end
 
   def html_escape({text, mentions, hashtags}, type) do
@@ -120,5 +130,15 @@ defmodule Mobilizon.Service.Formatter do
       length_with_omission = max_length - String.length(omission)
       String.slice(text, 0, length_with_omission) <> omission
     end
+  end
+
+  defp linkify_opts do
+    Mobilizon.Config.get(__MODULE__) ++
+      [
+        hashtag: true,
+        hashtag_handler: &__MODULE__.hashtag_handler/4,
+        mention: true,
+        mention_handler: &__MODULE__.mention_handler/4
+      ]
   end
 end

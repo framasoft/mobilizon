@@ -14,7 +14,9 @@
       </div>
       <div class="body">
         <h3>{{ resource.title }}</h3>
-        <span class="host" v-if="inline">{{ resource.updatedAt | formatDateTimeString }}</span>
+        <span class="host" v-if="inline">{{
+          resource.updatedAt | formatDateTimeString
+        }}</span>
       </div>
       <draggable
         v-if="!inline"
@@ -93,21 +95,27 @@ export default class FolderItem extends Mixins(ResourceMixin) {
 
   async moveResource(resource: IResource): Promise<IResource | undefined> {
     try {
-      const { data } = await this.$apollo.mutate<{ updateResource: IResource }>({
-        mutation: UPDATE_RESOURCE,
-        variables: {
-          id: resource.id,
-          path: `${this.resource.path}/${resource.title}`,
-          parentId: this.resource.id,
-        },
-      });
+      const { data } = await this.$apollo.mutate<{ updateResource: IResource }>(
+        {
+          mutation: UPDATE_RESOURCE,
+          variables: {
+            id: resource.id,
+            path: `${this.resource.path}/${resource.title}`,
+            parentId: this.resource.id,
+          },
+        }
+      );
       if (!data) {
         console.error("Error while updating resource");
         return undefined;
       }
       return data.updateResource;
     } catch (e) {
-      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+      Snackbar.open({
+        message: e.message,
+        type: "is-danger",
+        position: "is-bottom",
+      });
       return undefined;
     }
   }

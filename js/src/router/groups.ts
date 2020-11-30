@@ -1,4 +1,5 @@
 import { RouteConfig, Route } from "vue-router";
+import { EsModuleComponent } from "vue/types/options";
 
 export enum GroupsRouteName {
   TODO_LISTS = "TODO_LISTS",
@@ -18,29 +19,33 @@ export enum GroupsRouteName {
   GROUP_JOIN = "GROUP_JOIN",
 }
 
-const resourceFolder = () => import("@/views/Resources/ResourceFolder.vue");
-const groupEvents = () =>
+const resourceFolder = (): Promise<EsModuleComponent> =>
+  import("@/views/Resources/ResourceFolder.vue");
+const groupEvents = (): Promise<EsModuleComponent> =>
   import(/* webpackChunkName: "groupEvents" */ "@/views/Event/GroupEvents.vue");
 
 export const groupsRoutes: RouteConfig[] = [
   {
     path: "/@:preferredUsername/todo-lists",
     name: GroupsRouteName.TODO_LISTS,
-    component: () => import("@/views/Todos/TodoLists.vue"),
+    component: (): Promise<EsModuleComponent> =>
+      import("@/views/Todos/TodoLists.vue"),
     props: true,
     meta: { requiredAuth: true },
   },
   {
     path: "/todo-lists/:id",
     name: GroupsRouteName.TODO_LIST,
-    component: () => import("@/views/Todos/TodoList.vue"),
+    component: (): Promise<EsModuleComponent> =>
+      import("@/views/Todos/TodoList.vue"),
     props: true,
     meta: { requiredAuth: true },
   },
   {
     path: "/todo/:todoId",
     name: GroupsRouteName.TODO,
-    component: () => import("@/views/Todos/Todo.vue"),
+    component: (): Promise<EsModuleComponent> =>
+      import("@/views/Todos/Todo.vue"),
     props: true,
     meta: { requiredAuth: true },
   },
@@ -60,7 +65,8 @@ export const groupsRoutes: RouteConfig[] = [
   },
   {
     path: "/@:preferredUsername/settings",
-    component: () => import("@/views/Group/Settings.vue"),
+    component: (): Promise<EsModuleComponent> =>
+      import("@/views/Group/Settings.vue"),
     props: true,
     meta: { requiredAuth: true },
     redirect: { name: GroupsRouteName.GROUP_PUBLIC_SETTINGS },
@@ -69,40 +75,49 @@ export const groupsRoutes: RouteConfig[] = [
       {
         path: "public",
         name: GroupsRouteName.GROUP_PUBLIC_SETTINGS,
-        component: () => import("../views/Group/GroupSettings.vue"),
+        component: (): Promise<EsModuleComponent> =>
+          import("../views/Group/GroupSettings.vue"),
       },
       {
         path: "members",
         name: GroupsRouteName.GROUP_MEMBERS_SETTINGS,
-        component: () => import("../views/Group/GroupMembers.vue"),
+        component: (): Promise<EsModuleComponent> =>
+          import("../views/Group/GroupMembers.vue"),
         props: true,
       },
     ],
   },
   {
     path: "/@:preferredUsername/p/new",
-    component: () => import("@/views/Posts/Edit.vue"),
+    component: (): Promise<EsModuleComponent> =>
+      import("@/views/Posts/Edit.vue"),
     props: true,
     name: GroupsRouteName.POST_CREATE,
     meta: { requiredAuth: true },
   },
   {
     path: "/p/:slug/edit",
-    component: () => import("@/views/Posts/Edit.vue"),
-    props: (route: Route) => ({ ...route.params, ...{ isUpdate: true } }),
+    component: (): Promise<EsModuleComponent> =>
+      import("@/views/Posts/Edit.vue"),
+    props: (route: Route): Record<string, unknown> => ({
+      ...route.params,
+      ...{ isUpdate: true },
+    }),
     name: GroupsRouteName.POST_EDIT,
     meta: { requiredAuth: true },
   },
   {
     path: "/p/:slug",
-    component: () => import("@/views/Posts/Post.vue"),
+    component: (): Promise<EsModuleComponent> =>
+      import("@/views/Posts/Post.vue"),
     props: true,
     name: GroupsRouteName.POST,
     meta: { requiredAuth: false },
   },
   {
     path: "/@:preferredUsername/p",
-    component: () => import("@/views/Posts/List.vue"),
+    component: (): Promise<EsModuleComponent> =>
+      import("@/views/Posts/List.vue"),
     props: true,
     name: GroupsRouteName.POSTS,
     meta: { requiredAuth: false },
@@ -116,7 +131,8 @@ export const groupsRoutes: RouteConfig[] = [
   },
   {
     path: "/@:preferredUsername/join",
-    component: () => import("@/components/Group/JoinGroupWithAccount.vue"),
+    component: (): Promise<EsModuleComponent> =>
+      import("@/components/Group/JoinGroupWithAccount.vue"),
     props: true,
     name: GroupsRouteName.GROUP_JOIN,
     meta: { requiredAuth: false },

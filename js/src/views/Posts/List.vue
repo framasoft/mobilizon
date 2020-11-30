@@ -82,10 +82,11 @@ import { Component, Prop } from "vue-property-decorator";
 import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import { mixins } from "vue-class-component";
 import GroupMixin from "@/mixins/group";
+import { IMember } from "@/types/actor/member.model";
 import { FETCH_GROUP_POSTS } from "../../graphql/post";
 import { Paginate } from "../../types/paginate";
 import { IPost } from "../../types/post.model";
-import { IGroup, IMember, IPerson, usernameWithDomain } from "../../types/actor";
+import { IGroup, IPerson, usernameWithDomain } from "../../types/actor";
 import RouteName from "../../router/name";
 import PostElementItem from "../../components/Post/PostElementItem.vue";
 
@@ -157,7 +158,9 @@ export default class PostList extends mixins(GroupMixin) {
 
   get isCurrentActorMember(): boolean {
     if (!this.group || !this.memberships) return false;
-    return this.memberships.map(({ parent: { id } }) => id).includes(this.group.id);
+    return this.memberships
+      .map(({ parent: { id } }) => id)
+      .includes(this.group.id);
   }
 }
 </script>

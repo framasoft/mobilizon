@@ -9,10 +9,14 @@ export default class IdentityEditionMixin extends Mixins(Vue) {
   oldDisplayName: string | null = null;
 
   autoUpdateUsername(newDisplayName: string | null): void {
-    const oldUsername = IdentityEditionMixin.convertToUsername(this.oldDisplayName);
+    const oldUsername = IdentityEditionMixin.convertToUsername(
+      this.oldDisplayName
+    );
 
     if (this.identity.preferredUsername === oldUsername) {
-      this.identity.preferredUsername = IdentityEditionMixin.convertToUsername(newDisplayName);
+      this.identity.preferredUsername = IdentityEditionMixin.convertToUsername(
+        newDisplayName
+      );
     }
 
     this.oldDisplayName = newDisplayName;

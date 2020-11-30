@@ -1,5 +1,9 @@
 import nl2br from "@/filters/utils";
-import { formatDateString, formatTimeString, formatDateTimeString } from "./datetime";
+import {
+  formatDateString,
+  formatTimeString,
+  formatDateTimeString,
+} from "./datetime";
 
 export default {
   install(vue: any): void {

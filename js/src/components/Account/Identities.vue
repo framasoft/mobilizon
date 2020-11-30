@@ -7,7 +7,10 @@
     <ul class="identities">
       <li v-for="identity in identities" :key="identity.id">
         <router-link
-          :to="{ name: 'UpdateIdentity', params: { identityName: identity.preferredUsername } }"
+          :to="{
+            name: 'UpdateIdentity',
+            params: { identityName: identity.preferredUsername },
+          }"
           class="media identity"
           v-bind:class="{ 'is-current-identity': isCurrentIdentity(identity) }"
         >
@@ -24,7 +27,10 @@
       </li>
     </ul>
 
-    <router-link :to="{ name: 'CreateIdentity' }" class="button create-identity is-primary">
+    <router-link
+      :to="{ name: 'CreateIdentity' }"
+      class="button create-identity is-primary"
+    >
       {{ $t("Create a new identity") }}
     </router-link>
   </section>
@@ -53,7 +59,7 @@ export default class Identities extends Vue {
 
   errors: string[] = [];
 
-  isCurrentIdentity(identity: IPerson) {
+  isCurrentIdentity(identity: IPerson): boolean {
     return identity.preferredUsername === this.currentIdentityName;
   }
 }

@@ -69,7 +69,11 @@ export default class PictureUpload extends Vue {
 
   @Prop({ type: Object, required: false }) defaultImage!: IMedia;
 
-  @Prop({ type: String, required: false, default: "image/gif,image/png,image/jpeg,image/webp" })
+  @Prop({
+    type: String,
+    required: false,
+    default: "image/gif,image/png,image/jpeg,image/webp",
+  })
   accept!: string;
 
   @Prop({
@@ -95,13 +99,11 @@ export default class PictureUpload extends Vue {
 
   @Watch("pictureFile")
   onPictureFileChanged(val: File): void {
-    console.log("onPictureFileChanged", val);
     this.updatePreview(val);
   }
 
   @Watch("defaultImage")
   onDefaultImageChange(defaultImage: IMedia): void {
-    console.log("onDefaultImageChange", defaultImage);
     this.imageSrc = defaultImage ? defaultImage.url : null;
   }
 

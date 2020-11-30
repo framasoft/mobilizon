@@ -3,7 +3,9 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li>
-          <router-link :to="{ name: RouteName.ADMIN }">{{ $t("Admin") }}</router-link>
+          <router-link :to="{ name: RouteName.ADMIN }">{{
+            $t("Admin")
+          }}</router-link>
         </li>
         <li>
           <router-link
@@ -25,7 +27,12 @@
       </ul>
     </nav>
     <div class="actor-card">
-      <actor-card :actor="person" :full="true" :popover="false" :limit="false" />
+      <actor-card
+        :actor="person"
+        :full="true"
+        :popover="false"
+        :limit="false"
+      />
     </div>
     <table v-if="metadata.length > 0" class="table is-fullwidth">
       <tbody>
@@ -71,11 +78,17 @@
         :per-page="EVENTS_PER_PAGE"
         @page-change="onOrganizedEventsPageChange"
       >
-        <b-table-column field="beginsOn" :label="$t('Begins on')" v-slot="props">
+        <b-table-column
+          field="beginsOn"
+          :label="$t('Begins on')"
+          v-slot="props"
+        >
           {{ props.row.beginsOn | formatDateTimeString }}
         </b-table-column>
         <b-table-column field="title" :label="$t('Title')" v-slot="props">
-          <router-link :to="{ name: RouteName.EVENT, params: { uuid: props.row.uuid } }">
+          <router-link
+            :to="{ name: RouteName.EVENT, params: { uuid: props.row.uuid } }"
+          >
             {{ props.row.title }}
           </router-link>
         </b-table-column>
@@ -97,7 +110,11 @@
         }}
       </h2>
       <b-table
-        :data="person.participations.elements.map((participation) => participation.event)"
+        :data="
+          person.participations.elements.map(
+            (participation) => participation.event
+          )
+        "
         :loading="$apollo.queries.person.loading"
         paginated
         backend-pagination
@@ -105,11 +122,17 @@
         :per-page="EVENTS_PER_PAGE"
         @page-change="onParticipationsPageChange"
       >
-        <b-table-column field="beginsOn" :label="$t('Begins on')" v-slot="props">
+        <b-table-column
+          field="beginsOn"
+          :label="$t('Begins on')"
+          v-slot="props"
+        >
           {{ props.row.beginsOn | formatDateTimeString }}
         </b-table-column>
         <b-table-column field="title" :label="$t('Title')" v-slot="props">
-          <router-link :to="{ name: RouteName.EVENT, params: { uuid: props.row.uuid } }">
+          <router-link
+            :to="{ name: RouteName.EVENT, params: { uuid: props.row.uuid } }"
+          >
             {{ props.row.title }}
           </router-link>
         </b-table-column>
@@ -127,7 +150,11 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { formatBytes } from "@/utils/datetime";
-import { GET_PERSON, SUSPEND_PROFILE, UNSUSPEND_PROFILE } from "../../graphql/actor";
+import {
+  GET_PERSON,
+  SUSPEND_PROFILE,
+  UNSUSPEND_PROFILE,
+} from "../../graphql/actor";
 import { IPerson } from "../../types/actor";
 import { usernameWithDomain } from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
@@ -190,7 +217,10 @@ export default class AdminProfile extends Vue {
     if (!this.person.domain && this.person.user) {
       res.push({
         key: this.$t("User") as string,
-        link: { name: RouteName.ADMIN_USER_PROFILE, params: { id: this.person.user.id } },
+        link: {
+          name: RouteName.ADMIN_USER_PROFILE,
+          params: { id: this.person.user.id },
+        },
         value: this.person.user.email,
       });
     }
@@ -263,14 +293,18 @@ export default class AdminProfile extends Vue {
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         if (!fetchMoreResult) return previousResult;
-        const newOrganizedEvents = fetchMoreResult.person.organizedEvents.elements;
+        const newOrganizedEvents =
+          fetchMoreResult.person.organizedEvents.elements;
         return {
           person: {
             ...previousResult.person,
             organizedEvents: {
               __typename: previousResult.person.organizedEvents.__typename,
               total: previousResult.person.organizedEvents.total,
-              elements: [...previousResult.person.organizedEvents.elements, ...newOrganizedEvents],
+              elements: [
+                ...previousResult.person.organizedEvents.elements,
+                ...newOrganizedEvents,
+              ],
             },
           },
         };
@@ -288,14 +322,18 @@ export default class AdminProfile extends Vue {
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         if (!fetchMoreResult) return previousResult;
-        const newParticipations = fetchMoreResult.person.participations.elements;
+        const newParticipations =
+          fetchMoreResult.person.participations.elements;
         return {
           person: {
             ...previousResult.person,
             participations: {
               __typename: previousResult.person.participations.__typename,
               total: previousResult.person.participations.total,
-              elements: [...previousResult.person.participations.elements, ...newParticipations],
+              elements: [
+                ...previousResult.person.participations.elements,
+                ...newParticipations,
+              ],
             },
           },
         };

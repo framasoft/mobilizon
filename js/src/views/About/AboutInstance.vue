@@ -26,9 +26,12 @@
       <div class="column contact">
         <h4>{{ $t("Contact") }}</h4>
         <p>
-          <a :title="config.contact" v-if="generateConfigLink()" :href="generateConfigLink().uri">{{
-            generateConfigLink().text
-          }}</a>
+          <a
+            :title="config.contact"
+            v-if="generateConfigLink()"
+            :href="generateConfigLink().uri"
+            >{{ generateConfigLink().text }}</a
+          >
           <span v-else-if="config.contact">{{ config.contact }}</span>
           <span v-else>{{ $t("contact uninformed") }}</span>
         </p>
@@ -44,7 +47,9 @@
       <table class="table is-fullwidth">
         <tr>
           <td>{{ $t("Instance languages") }}</td>
-          <td :title="this.config.languages.join(', ')">{{ formattedLanguageList }}</td>
+          <td :title="this.config.languages.join(', ')">
+            {{ formattedLanguageList }}
+          </td>
         </tr>
         <tr>
           <td>{{ $t("Mobilizon version") }}</td>
@@ -67,7 +72,9 @@
         </tr>
         <tr>
           <td>{{ $t("Anonymous participations") }}</td>
-          <td v-if="config.anonymous.participation.allowed">{{ $t("If allowed by organizer") }}</td>
+          <td v-if="config.anonymous.participation.allowed">
+            {{ $t("If allowed by organizer") }}
+          </td>
           <td v-else>{{ $t("Disabled") }}</td>
         </tr>
       </table>
@@ -132,12 +139,17 @@ export default class AboutInstance extends Vue {
   generateConfigLink(): { uri: string; text: string } | null {
     if (!this.config.contact) return null;
     if (this.isContactEmail) {
-      return { uri: `mailto:${this.config.contact}`, text: this.config.contact };
+      return {
+        uri: `mailto:${this.config.contact}`,
+        text: this.config.contact,
+      };
     }
     if (this.isContactURL) {
       return {
         uri: this.config.contact,
-        text: AboutInstance.urlToHostname(this.config.contact) || (this.$t("Contact") as string),
+        text:
+          AboutInstance.urlToHostname(this.config.contact) ||
+          (this.$t("Contact") as string),
       };
     }
     return null;

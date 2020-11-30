@@ -49,7 +49,8 @@ const router = new Router({
     {
       path: "/search",
       name: RouteName.SEARCH,
-      component: () => import(/* webpackChunkName: "search" */ "../views/Search.vue"),
+      component: () =>
+        import(/* webpackChunkName: "search" */ "../views/Search.vue"),
       props: true,
       meta: { requiredAuth: false },
     },
@@ -62,7 +63,8 @@ const router = new Router({
     {
       path: "/about",
       name: RouteName.ABOUT,
-      component: () => import(/* webpackChunkName: "about" */ "@/views/About.vue"),
+      component: () =>
+        import(/* webpackChunkName: "about" */ "@/views/About.vue"),
       meta: { requiredAuth: false },
       redirect: { name: RouteName.ABOUT_INSTANCE },
       children: [
@@ -70,30 +72,40 @@ const router = new Router({
           path: "instance",
           name: RouteName.ABOUT_INSTANCE,
           component: () =>
-            import(/* webpackChunkName: "about" */ "@/views/About/AboutInstance.vue"),
+            import(
+              /* webpackChunkName: "about" */ "@/views/About/AboutInstance.vue"
+            ),
         },
         {
           path: "/terms",
           name: RouteName.TERMS,
-          component: () => import(/* webpackChunkName: "cookies" */ "@/views/About/Terms.vue"),
+          component: () =>
+            import(/* webpackChunkName: "cookies" */ "@/views/About/Terms.vue"),
           meta: { requiredAuth: false },
         },
         {
           path: "/privacy",
           name: RouteName.PRIVACY,
-          component: () => import(/* webpackChunkName: "cookies" */ "@/views/About/Privacy.vue"),
+          component: () =>
+            import(
+              /* webpackChunkName: "cookies" */ "@/views/About/Privacy.vue"
+            ),
           meta: { requiredAuth: false },
         },
         {
           path: "/rules",
           name: RouteName.RULES,
-          component: () => import(/* webpackChunkName: "cookies" */ "@/views/About/Rules.vue"),
+          component: () =>
+            import(/* webpackChunkName: "cookies" */ "@/views/About/Rules.vue"),
           meta: { requiredAuth: false },
         },
         {
           path: "/glossary",
           name: RouteName.GLOSSARY,
-          component: () => import(/* webpackChunkName: "cookies" */ "@/views/About/Glossary.vue"),
+          component: () =>
+            import(
+              /* webpackChunkName: "cookies" */ "@/views/About/Glossary.vue"
+            ),
           meta: { requiredAuth: false },
         },
       ],
@@ -101,20 +113,25 @@ const router = new Router({
     {
       path: "/interact",
       name: RouteName.INTERACT,
-      component: () => import(/* webpackChunkName: "cookies" */ "@/views/Interact.vue"),
+      component: () =>
+        import(/* webpackChunkName: "cookies" */ "@/views/Interact.vue"),
       meta: { requiredAuth: false },
     },
     {
       path: "/auth/:provider/callback",
       name: "auth-callback",
       component: () =>
-        import(/* webpackChunkName: "ProviderValidation" */ "@/views/User/ProviderValidation.vue"),
+        import(
+          /* webpackChunkName: "ProviderValidation" */ "@/views/User/ProviderValidation.vue"
+        ),
     },
     {
       path: "/welcome/:step?",
       name: RouteName.WELCOME_SCREEN,
       component: () =>
-        import(/* webpackChunkName: "WelcomeScreen" */ "@/views/User/SettingsOnboard.vue"),
+        import(
+          /* webpackChunkName: "WelcomeScreen" */ "@/views/User/SettingsOnboard.vue"
+        ),
       meta: { requiredAuth: true },
       props: (route) => {
         const step = Number.parseInt(route.params.step, 10);
@@ -127,7 +144,8 @@ const router = new Router({
     {
       path: "/404",
       name: RouteName.PAGE_NOT_FOUND,
-      component: () => import(/* webpackChunkName: "search" */ "../views/PageNotFound.vue"),
+      component: () =>
+        import(/* webpackChunkName: "search" */ "../views/PageNotFound.vue"),
       meta: { requiredAuth: false },
     },
     {

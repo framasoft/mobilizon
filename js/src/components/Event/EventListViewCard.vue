@@ -6,7 +6,9 @@
           <div class="date-component">
             <date-calendar-icon :date="event.beginsOn" />
           </div>
-          <router-link :to="{ name: RouteName.EVENT, params: { uuid: event.uuid } }">
+          <router-link
+            :to="{ name: RouteName.EVENT, params: { uuid: event.uuid } }"
+          >
             <h2 class="title">{{ event.title }}</h2>
           </router-link>
         </div>
@@ -15,17 +17,34 @@
             {{ event.physicalAddress.locality }}
           </span>
           <span v-if="event.attributedTo && options.memberofGroup">
-            {{ $t("Created by {name}", { name: usernameWithDomain(event.organizerActor) }) }}
+            {{
+              $t("Created by {name}", {
+                name: usernameWithDomain(event.organizerActor),
+              })
+            }}
           </span>
           <span v-else-if="options.memberofGroup">
-            {{ $t("Organized by {name}", { name: usernameWithDomain(event.organizerActor) }) }}
+            {{
+              $t("Organized by {name}", {
+                name: usernameWithDomain(event.organizerActor),
+              })
+            }}
           </span>
         </div>
         <div class="columns">
           <span class="column is-narrow">
-            <b-icon icon="earth" v-if="event.visibility === EventVisibility.PUBLIC" />
-            <b-icon icon="link" v-if="event.visibility === EventVisibility.UNLISTED" />
-            <b-icon icon="lock" v-if="event.visibility === EventVisibility.PRIVATE" />
+            <b-icon
+              icon="earth"
+              v-if="event.visibility === EventVisibility.PUBLIC"
+            />
+            <b-icon
+              icon="link"
+              v-if="event.visibility === EventVisibility.UNLISTED"
+            />
+            <b-icon
+              icon="lock"
+              v-if="event.visibility === EventVisibility.PRIVATE"
+            />
           </span>
           <span class="column is-narrow participant-stats">
             <span v-if="event.options.maximumAttendeeCapacity !== 0">
@@ -38,9 +57,13 @@
             </span>
             <span v-else>
               {{
-                $tc("{count} participants", event.participantStats.participant, {
-                  count: event.participantStats.participant,
-                })
+                $tc(
+                  "{count} participants",
+                  event.participantStats.participant,
+                  {
+                    count: event.participantStats.participant,
+                  }
+                )
               }}
             </span>
           </span>
@@ -51,7 +74,7 @@
 </template>
 
 <script lang="ts">
-import { EventVisibility, IEventCardOptions, IEvent } from "@/types/event.model";
+import { IEventCardOptions, IEvent } from "@/types/event.model";
 import { Component, Prop } from "vue-property-decorator";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
 import { IPerson, usernameWithDomain } from "@/types/actor";
@@ -59,7 +82,7 @@ import { mixins } from "vue-class-component";
 import ActorMixin from "@/mixins/actor";
 import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
 import EventMixin from "@/mixins/event";
-import { ParticipantRole } from "../../types/participant.model";
+import { EventVisibility, ParticipantRole } from "@/types/enums";
 import RouteName from "../../router/name";
 
 const defaultOptions: IEventCardOptions = {

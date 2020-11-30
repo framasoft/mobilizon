@@ -1,11 +1,14 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { Extension, Plugin } from "tiptap";
 
 export default class MaxSize extends Extension {
+  // eslint-disable-next-line class-methods-use-this
   get name() {
     return "maxSize";
   }
 
+  // eslint-disable-next-line class-methods-use-this
   get defaultOptions() {
     return {
       maxSize: null,
@@ -21,7 +24,7 @@ export default class MaxSize extends Extension {
           const newLength = newState.doc.content.size;
 
           if (newLength > max && newLength > oldLength) {
-            let newTr = newState.tr;
+            const newTr = newState.tr;
             newTr.insertText("", max + 1, newLength);
 
             return newTr;

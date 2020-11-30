@@ -3,10 +3,14 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li>
-          <router-link :to="{ name: RouteName.MODERATION }">{{ $t("Moderation") }}</router-link>
+          <router-link :to="{ name: RouteName.MODERATION }">{{
+            $t("Moderation")
+          }}</router-link>
         </li>
         <li class="is-active">
-          <router-link :to="{ name: RouteName.PROFILES }">{{ $t("Groups") }}</router-link>
+          <router-link :to="{ name: RouteName.PROFILES }">{{
+            $t("Groups")
+          }}</router-link>
         </li>
       </ul>
     </nav>
@@ -24,7 +28,11 @@
         @page-change="onPageChange"
         @filters-change="onFiltersChange"
       >
-        <b-table-column field="preferredUsername" :label="$t('Username')" searchable>
+        <b-table-column
+          field="preferredUsername"
+          :label="$t('Username')"
+          searchable
+        >
           <template slot="searchable" slot-scope="props">
             <b-input
               v-model="props.filters.preferredUsername"
@@ -36,7 +44,10 @@
           <template v-slot:default="props">
             <router-link
               class="profile"
-              :to="{ name: RouteName.ADMIN_GROUP_PROFILE, params: { id: props.row.id } }"
+              :to="{
+                name: RouteName.ADMIN_GROUP_PROFILE,
+                params: { id: props.row.id },
+              }"
             >
               <article class="media">
                 <figure class="media-left" v-if="props.row.avatar">
@@ -83,7 +94,6 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { LIST_GROUPS } from "@/graphql/group";
-import { LIST_PROFILES } from "../../graphql/actor";
 import RouteName from "../../router/name";
 
 const PROFILES_PER_PAGE = 10;
@@ -124,7 +134,7 @@ export default class GroupProfiles extends Vue {
 
   RouteName = RouteName;
 
-  async onPageChange(page: number) {
+  async onPageChange(page: number): Promise<void> {
     this.page = page;
     await this.$apollo.queries.groups.fetchMore({
       variables: {
@@ -150,13 +160,19 @@ export default class GroupProfiles extends Vue {
     });
   }
 
-  onFiltersChange({ preferredUsername, domain }: { preferredUsername: string; domain: string }) {
+  onFiltersChange({
+    preferredUsername,
+    domain,
+  }: {
+    preferredUsername: string;
+    domain: string;
+  }): void {
     this.preferredUsername = preferredUsername;
     this.domain = domain;
   }
 
   @Watch("domain")
-  domainNotLocal() {
+  domainNotLocal(): void {
     this.local = this.domain === "";
   }
 }

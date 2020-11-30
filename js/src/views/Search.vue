@@ -17,7 +17,9 @@
               size="is-large"
               expanded
               v-model="search"
-              :placeholder="$t('For instance: London, Taekwondo, Architecture…')"
+              :placeholder="
+                $t('For instance: London, Taekwondo, Architecture…')
+              "
             />
           </b-field>
           <b-field grouped group-multiline position="is-right" expanded>
@@ -41,7 +43,11 @@
             </b-field>
             <b-field :label="$t('Date')" label-for="date">
               <b-select v-model="when" id="date" :disabled="activeTab !== 0">
-                <option v-for="(option, index) in options" :key="index" :value="option">
+                <option
+                  v-for="(option, index) in options"
+                  :key="index"
+                  :value="option"
+                >
                   {{ option.label }}
                 </option>
               </b-select>
@@ -54,13 +60,19 @@
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <h2 class="title">{{ $t("Featured events") }}</h2>
       <div v-if="events.length > 0" class="columns is-multiline">
-        <div class="column is-one-third-desktop" v-for="event in events" :key="event.uuid">
+        <div
+          class="column is-one-third-desktop"
+          v-for="event in events"
+          :key="event.uuid"
+        >
           <EventCard :event="event" />
         </div>
       </div>
-      <b-message v-else-if="events.length === 0 && $apollo.loading === false" type="is-danger">{{
-        $t("No events found")
-      }}</b-message>
+      <b-message
+        v-else-if="events.length === 0 && $apollo.loading === false"
+        type="is-danger"
+        >{{ $t("No events found") }}</b-message
+      >
     </section>
     <b-tabs v-else v-model="activeTab" type="is-boxed" class="searchTabs">
       <b-tab-item>
@@ -152,6 +164,7 @@ import {
   startOfMonth,
   eachWeekendOfInterval,
 } from "date-fns";
+import { SearchTabs } from "@/types/enums";
 import EventCard from "../components/Event/EventCard.vue";
 import { FETCH_EVENTS } from "../graphql/event";
 import { IEvent } from "../types/event.model";
@@ -160,7 +173,6 @@ import { IAddress, Address } from "../types/address.model";
 import AddressAutoComplete from "../components/Event/AddressAutoComplete.vue";
 import { SEARCH_EVENTS, SEARCH_GROUPS } from "../graphql/search";
 import { Paginate } from "../types/paginate";
-import { SearchTabs } from "../types/search.model";
 import { IGroup } from "../types/actor";
 import GroupCard from "../components/Group/GroupCard.vue";
 import { CONFIG } from "../graphql/config";
@@ -240,7 +252,11 @@ export default class Search extends Vue {
 
   events: IEvent[] = [];
 
-  searchEvents: Paginate<IEvent> & { initial: boolean } = { total: 0, elements: [], initial: true };
+  searchEvents: Paginate<IEvent> & { initial: boolean } = {
+    total: 0,
+    elements: [],
+    initial: true,
+  };
 
   searchGroups: Paginate<IGroup> = { total: 0, elements: [] };
 
@@ -250,7 +266,8 @@ export default class Search extends Vue {
 
   search: string = (this.$route.query.term as string) || "";
 
-  activeTab: SearchTabs = tabsName[this.$route.query.searchType as "events" | "groups"] || 0;
+  activeTab: SearchTabs =
+    tabsName[this.$route.query.searchType as "events" | "groups"] || 0;
 
   location: IAddress = new Address();
 
@@ -277,7 +294,9 @@ export default class Search extends Vue {
     },
     {
       label: this.$t("Next week") as string,
-      start: startOfWeek(addWeeks(new Date(), 1), { locale: this.$dateFnsLocale }),
+      start: startOfWeek(addWeeks(new Date(), 1), {
+        locale: this.$dateFnsLocale,
+      }),
       end: endOfWeek(addWeeks(new Date(), 1), { locale: this.$dateFnsLocale }),
     },
     {
@@ -343,7 +362,10 @@ export default class Search extends Vue {
     const now = new Date();
     const endOfWeekDate = endOfWeek(now, { locale: this.$dateFnsLocale });
     const startOfWeekDate = startOfWeek(now, { locale: this.$dateFnsLocale });
-    const [start, end] = eachWeekendOfInterval({ start: startOfWeekDate, end: endOfWeekDate });
+    const [start, end] = eachWeekendOfInterval({
+      start: startOfWeekDate,
+      end: endOfWeekDate,
+    });
     return { start: startOfDay(start), end: endOfDay(end) };
   }
 

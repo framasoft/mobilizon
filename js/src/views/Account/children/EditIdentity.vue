@@ -3,7 +3,9 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li>
-          <router-link :to="{ name: RouteName.IDENTITIES }">{{ $t("Profiles") }}</router-link>
+          <router-link :to="{ name: RouteName.IDENTITIES }">{{
+            $t("Profiles")
+          }}</router-link>
         </li>
         <li class="is-active" v-if="isUpdate && identity">
           <router-link
@@ -27,7 +29,11 @@
         <span v-else>{{ $t("I create an identity") }}</span>
       </h1>
 
-      <picture-upload v-model="avatarFile" :defaultImage="identity.avatar" class="picture-upload" />
+      <picture-upload
+        v-model="avatarFile"
+        :defaultImage="identity.avatar"
+        class="picture-upload"
+      />
 
       <b-field horizontal :label="$t('Display name')">
         <b-input
@@ -62,7 +68,11 @@
       </b-field>
 
       <b-field horizontal :label="$t('Description')">
-        <b-input type="textarea" aria-required="false" v-model="identity.summary" />
+        <b-input
+          type="textarea"
+          aria-required="false"
+          v-model="identity.summary"
+        />
       </b-field>
 
       <b-notification
@@ -84,7 +94,9 @@
       </b-field>
 
       <div class="delete-identity" v-if="isUpdate">
-        <span @click="openDeleteIdentityConfirmation()">{{ $t("Delete this identity") }}</span>
+        <span @click="openDeleteIdentityConfirmation()">{{
+          $t("Delete this identity")
+        }}</span>
       </div>
     </div>
   </div>
@@ -229,7 +241,9 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
           });
 
           if (data) {
-            data.identities = data.identities.filter((i) => i.id !== this.identity.id);
+            data.identities = data.identities.filter(
+              (i) => i.id !== this.identity.id
+            );
 
             store.writeQuery({ query: IDENTITIES, data });
           }
@@ -242,7 +256,8 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
         }) as string
       );
       /**
-       * If we just deleted the current identity, we need to change it to the next one
+       * If we just deleted the current identity,
+       * we need to change it to the next one
        */
       const data = this.$apollo.provider.defaultClient.readQuery<{
         identities: IPerson[];
@@ -270,7 +285,9 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
           });
 
           if (data) {
-            const index = data.identities.findIndex((i) => i.id === this.identity.id);
+            const index = data.identities.findIndex(
+              (i) => i.id === this.identity.id
+            );
 
             this.$set(data.identities, index, updatePerson);
             this.maybeUpdateCurrentActorCache(updatePerson);
@@ -351,9 +368,12 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
               "Otherwise this identity will just be removed from the group administrators."
             )}
             <br /><br />
-            ${this.$t('To confirm, type your identity username "{preferredUsername}"', {
-              preferredUsername: this.identity.preferredUsername,
-            })}`,
+            ${this.$t(
+              'To confirm, type your identity username "{preferredUsername}"',
+              {
+                preferredUsername: this.identity.preferredUsername,
+              }
+            )}`,
       confirmText: this.$t("Delete {preferredUsername}", {
         preferredUsername: this.identity.preferredUsername,
       }) as string,
@@ -406,7 +426,9 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
 
   private async maybeUpdateCurrentActorCache(identity: IPerson) {
     if (this.currentActor) {
-      if (this.currentActor.preferredUsername === this.identity.preferredUsername) {
+      if (
+        this.currentActor.preferredUsername === this.identity.preferredUsername
+      ) {
         await changeIdentity(this.$apollo.provider.defaultClient, identity);
       }
       this.currentActor = identity;

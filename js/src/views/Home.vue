@@ -1,11 +1,20 @@
 <template>
   <div id="homepage">
-    <section class="hero" v-if="config && (!currentUser.id || !currentActor.id)">
+    <section
+      class="hero"
+      v-if="config && (!currentUser.id || !currentActor.id)"
+    >
       <div class="hero-body">
         <div class="container">
-          <h1 class="title">{{ config.slogan || $t("Gather ⋅ Organize ⋅ Mobilize") }}</h1>
+          <h1 class="title">
+            {{ config.slogan || $t("Gather ⋅ Organize ⋅ Mobilize") }}
+          </h1>
           <p
-            v-html="$t('Join <b>{instance}</b>, a Mobilizon instance', { instance: config.name })"
+            v-html="
+              $t('Join <b>{instance}</b>, a Mobilizon instance', {
+                instance: config.name,
+              })
+            "
           />
           <p class="instance-description">{{ config.description }}</p>
           <!-- We don't invite to find other instances yet -->
@@ -25,7 +34,11 @@
             >
             <!-- We don't invite to find other instances yet -->
             <!-- <b-button v-else type="is-link" tag="a" href="https://joinmastodon.org">{{ $t('Find an instance') }}</b-button> -->
-            <b-button type="is-text" tag="router-link" :to="{ name: RouteName.ABOUT }">
+            <b-button
+              type="is-text"
+              tag="router-link"
+              :to="{ name: RouteName.ABOUT }"
+            >
               {{ $t("Learn more about {instance}", { instance: config.name }) }}
             </b-button>
           </div>
@@ -40,7 +53,10 @@
       <section class="events-featured">
         <h2 class="title">{{ $t("Featured events") }}</h2>
         <b-loading :active.sync="$apollo.loading" />
-        <div v-if="filteredFeaturedEvents.length > 0" class="columns is-multiline">
+        <div
+          v-if="filteredFeaturedEvents.length > 0"
+          class="columns is-multiline"
+        >
           <div
             class="column is-one-third-desktop"
             v-for="event in filteredFeaturedEvents.slice(0, 6)"
@@ -49,12 +65,17 @@
             <EventCard :event="event" />
           </div>
         </div>
-        <b-message v-else type="is-danger">{{ $t("No events found") }}</b-message>
+        <b-message v-else type="is-danger">{{
+          $t("No events found")
+        }}</b-message>
       </section>
     </div>
     <div id="picture" v-if="config && (!currentUser.id || !currentActor.id)">
       <div class="picture-container">
-        <img src="/img/pics/2020-10-06-mobilizon-illustration-A_homepage.jpg" alt="" />
+        <img
+          src="/img/pics/2020-10-06-mobilizon-illustration-A_homepage.jpg"
+          alt=""
+        />
       </div>
       <div class="container section">
         <div class="columns">
@@ -62,7 +83,9 @@
             <h3 class="title">{{ $t("A practical tool") }}</h3>
             <p
               v-html="
-                $t('Mobilizon is a tool that helps you <b>find, create and organise events</b>.')
+                $t(
+                  'Mobilizon is a tool that helps you <b>find, create and organise events</b>.'
+                )
               "
             />
           </div>
@@ -88,32 +111,51 @@
           </div>
         </div>
         <div class="buttons">
-          <a class="button is-primary is-large" href="https://joinmobilizon.org">{{
-            $t("Learn more about Mobilizon")
-          }}</a>
+          <a
+            class="button is-primary is-large"
+            href="https://joinmobilizon.org"
+            >{{ $t("Learn more about Mobilizon") }}</a
+          >
         </div>
       </div>
     </div>
-    <div class="container section" v-if="config && loggedUser && loggedUser.settings">
+    <div
+      class="container section"
+      v-if="config && loggedUser && loggedUser.settings"
+    >
       <section v-if="currentActor.id">
         <b-message type="is-info" v-if="welcomeBack">{{
-          $t("Welcome back {username}!", { username: currentActor.displayName() })
+          $t("Welcome back {username}!", {
+            username: currentActor.displayName(),
+          })
         }}</b-message>
         <b-message type="is-info" v-if="newRegisteredUser">{{
-          $t("Welcome to Mobilizon, {username}!", { username: currentActor.displayName() })
+          $t("Welcome to Mobilizon, {username}!", {
+            username: currentActor.displayName(),
+          })
         }}</b-message>
       </section>
-      <section v-if="currentActor.id && goingToEvents.size > 0" class="container">
+      <section
+        v-if="currentActor.id && goingToEvents.size > 0"
+        class="container"
+      >
         <h3 class="title">{{ $t("Upcoming") }}</h3>
         <b-loading :active.sync="$apollo.loading" />
         <div v-for="row of goingToEvents" class="upcoming-events" :key="row[0]">
-          <span class="date-component-container" v-if="isInLessThanSevenDays(row[0])">
+          <span
+            class="date-component-container"
+            v-if="isInLessThanSevenDays(row[0])"
+          >
             <date-component :date="row[0]" />
             <subtitle v-if="isToday(row[0])">{{
-              $tc("You have one event today.", row[1].length, { count: row[1].length })
+              $tc("You have one event today.", row[1].length, {
+                count: row[1].length,
+              })
             }}</subtitle>
             <subtitle v-else-if="isTomorrow(row[0])">{{
-              $tc("You have one event tomorrow.", row[1].length, { count: row[1].length })
+              $tc("You have one event tomorrow.", row[1].length, {
+                count: row[1].length,
+              })
             }}</subtitle>
             <subtitle v-else-if="isInLessThanSevenDays(row[0])">
               {{
@@ -126,8 +168,7 @@
           </span>
           <div>
             <EventListCard
-              v-for="participation in row[1]"
-              v-if="isInLessThanSevenDays(row[0])"
+              v-for="participation in thisWeek(row)"
               @event-deleted="eventDeleted"
               :key="participation[1].id"
               :participation="participation[1]"
@@ -156,7 +197,10 @@
       <section class="events-featured">
         <h2 class="title">{{ $t("Featured events") }}</h2>
         <b-loading :active.sync="$apollo.loading" />
-        <div v-if="filteredFeaturedEvents.length > 0" class="columns is-multiline">
+        <div
+          v-if="filteredFeaturedEvents.length > 0"
+          class="columns is-multiline"
+        >
           <div
             class="column is-one-third-desktop"
             v-for="event in filteredFeaturedEvents.slice(0, 6)"
@@ -165,7 +209,9 @@
             <EventCard :event="event" />
           </div>
         </div>
-        <b-message v-else type="is-danger">{{ $t("No events found") }}</b-message>
+        <b-message v-else type="is-danger">{{
+          $t("No events found")
+        }}</b-message>
       </section>
     </div>
   </div>
@@ -173,11 +219,15 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
-import { IParticipant, Participant, ParticipantRole } from "../types/participant.model";
+import { ParticipantRole } from "@/types/enums";
+import { IParticipant, Participant } from "../types/participant.model";
 import { FETCH_EVENTS } from "../graphql/event";
 import EventListCard from "../components/Event/EventListCard.vue";
 import EventCard from "../components/Event/EventCard.vue";
-import { CURRENT_ACTOR_CLIENT, LOGGED_USER_PARTICIPATIONS } from "../graphql/actor";
+import {
+  CURRENT_ACTOR_CLIENT,
+  LOGGED_USER_PARTICIPATIONS,
+} from "../graphql/actor";
 import { IPerson, Person } from "../types/actor";
 import { ICurrentUser, IUser } from "../types/current-user.model";
 import { CURRENT_USER_CLIENT, USER_SETTINGS } from "../graphql/user";
@@ -286,6 +336,15 @@ export default class Home extends Vue {
     return window.localStorage.getItem("new-registered-user") === "yes";
   }
 
+  thisWeek(
+    row: [string, Map<string, IParticipant>]
+  ): Map<string, IParticipant> {
+    if (this.isInLessThanSevenDays(row[0])) {
+      return row[1];
+    }
+    return new Map();
+  }
+
   // eslint-disable-next-line class-methods-use-this
   mounted(): void {
     if (window.localStorage.getItem("welcome-back")) {
@@ -323,7 +382,9 @@ export default class Home extends Vue {
 
   // eslint-disable-next-line class-methods-use-this
   calculateDiffDays(date: string): number {
-    return Math.ceil((new Date(date).getTime() - new Date().getTime()) / 1000 / 60 / 60 / 24);
+    return Math.ceil(
+      (new Date(date).getTime() - new Date().getTime()) / 1000 / 60 / 60 / 24
+    );
   }
 
   get goingToEvents(): Map<string, Map<string, IParticipant>> {
@@ -335,14 +396,22 @@ export default class Home extends Vue {
         role !== ParticipantRole.REJECTED
     );
     res.sort(
-      (a: IParticipant, b: IParticipant) => a.event.beginsOn.getTime() - b.event.beginsOn.getTime()
+      (a: IParticipant, b: IParticipant) =>
+        a.event.beginsOn.getTime() - b.event.beginsOn.getTime()
     );
 
     return res.reduce(
-      (acc: Map<string, Map<string, IParticipant>>, participation: IParticipant) => {
+      (
+        acc: Map<string, Map<string, IParticipant>>,
+        participation: IParticipant
+      ) => {
         const day = new Date(participation.event.beginsOn).toDateString();
-        const participations: Map<string, IParticipant> = acc.get(day) || new Map();
-        participations.set(`${participation.event.uuid}${participation.actor.id}`, participation);
+        const participations: Map<string, IParticipant> =
+          acc.get(day) || new Map();
+        participations.set(
+          `${participation.event.uuid}${participation.actor.id}`,
+          participation
+        );
         acc.set(day, participations);
         return acc;
       },
@@ -358,7 +427,8 @@ export default class Home extends Vue {
         role !== ParticipantRole.REJECTED
     );
     res.sort(
-      (a: IParticipant, b: IParticipant) => a.event.beginsOn.getTime() - b.event.beginsOn.getTime()
+      (a: IParticipant, b: IParticipant) =>
+        a.event.beginsOn.getTime() - b.event.beginsOn.getTime()
     );
     return res;
   }
@@ -370,7 +440,9 @@ export default class Home extends Vue {
     return this.events.filter(
       ({ id }) =>
         !this.currentUserParticipations
-          .filter((participation) => participation.role === ParticipantRole.CREATOR)
+          .filter(
+            (participation) => participation.role === ParticipantRole.CREATOR
+          )
           .map(({ event: { id: eventId } }) => eventId)
           .includes(id)
     );
@@ -389,7 +461,10 @@ export default class Home extends Vue {
   @Watch("loggedUser")
   detectEmptyUserSettings(loggedUser: IUser): void {
     if (loggedUser && loggedUser.id && loggedUser.settings === null) {
-      this.$router.push({ name: RouteName.WELCOME_SCREEN, params: { step: "1" } });
+      this.$router.push({
+        name: RouteName.WELCOME_SCREEN,
+        params: { step: "1" },
+      });
     }
   }
 }

@@ -3,10 +3,14 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li>
-          <router-link :to="{ name: RouteName.ADMIN }">{{ $t("Admin") }}</router-link>
+          <router-link :to="{ name: RouteName.ADMIN }">{{
+            $t("Admin")
+          }}</router-link>
         </li>
         <li class="is-active">
-          <router-link :to="{ name: RouteName.ADMIN_DASHBOARD }">{{ $t("Dashboard") }}</router-link>
+          <router-link :to="{ name: RouteName.ADMIN_DASHBOARD }">{{
+            $t("Dashboard")
+          }}</router-link>
         </li>
       </ul>
     </nav>
@@ -24,7 +28,8 @@
                       'Published events with <b>{comments}</b> comments and <b>{participations}</b> confirmed participations',
                       {
                         comments: dashboard.numberOfComments,
-                        participations: dashboard.numberOfConfirmedParticipationsToLocalEvents,
+                        participations:
+                          dashboard.numberOfConfirmedParticipationsToLocalEvents,
                       }
                     )
                   "
@@ -46,7 +51,9 @@
               </article>
               <article class="tile is-child box">
                 <router-link :to="{ name: RouteName.RELAY_FOLLOWERS }">
-                  <p class="dashboard-number">{{ dashboard.numberOfFollowers }}</p>
+                  <p class="dashboard-number">
+                    {{ dashboard.numberOfFollowers }}
+                  </p>
                   <p>{{ $t("Instances following you") }}</p>
                 </router-link>
               </article>
@@ -54,20 +61,27 @@
             <div class="tile is-parent is-vertical">
               <article class="tile is-child box">
                 <router-link :to="{ name: RouteName.REPORTS }">
-                  <p class="dashboard-number">{{ dashboard.numberOfReports }}</p>
+                  <p class="dashboard-number">
+                    {{ dashboard.numberOfReports }}
+                  </p>
                   <p>{{ $t("Opened reports") }}</p>
                 </router-link>
               </article>
               <article class="tile is-child box">
                 <router-link :to="{ name: RouteName.RELAY_FOLLOWINGS }">
-                  <p class="dashboard-number">{{ dashboard.numberOfFollowings }}</p>
+                  <p class="dashboard-number">
+                    {{ dashboard.numberOfFollowings }}
+                  </p>
                   <p>{{ $t("Instances you follow") }}</p>
                 </router-link>
               </article>
             </div>
           </div>
           <div class="tile">
-            <div class="tile is-parent is-vertical is-6" v-if="dashboard.lastPublicEventPublished">
+            <div
+              class="tile is-parent is-vertical is-6"
+              v-if="dashboard.lastPublicEventPublished"
+            >
               <article class="tile is-child box">
                 <router-link
                   :to="{
@@ -76,19 +90,33 @@
                   }"
                 >
                   <p>{{ $t("Last published event") }}</p>
-                  <p class="subtitle">{{ dashboard.lastPublicEventPublished.title }}</p>
-                  <figure class="image is-4by3" v-if="dashboard.lastPublicEventPublished.picture">
-                    <img :src="dashboard.lastPublicEventPublished.picture.url" />
+                  <p class="subtitle">
+                    {{ dashboard.lastPublicEventPublished.title }}
+                  </p>
+                  <figure
+                    class="image is-4by3"
+                    v-if="dashboard.lastPublicEventPublished.picture"
+                  >
+                    <img
+                      :src="dashboard.lastPublicEventPublished.picture.url"
+                    />
                   </figure>
                 </router-link>
               </article>
             </div>
-            <div class="tile is-parent is-vertical" v-if="dashboard.lastGroupCreated">
+            <div
+              class="tile is-parent is-vertical"
+              v-if="dashboard.lastGroupCreated"
+            >
               <article class="tile is-child box">
                 <router-link
                   :to="{
                     name: RouteName.GROUP,
-                    params: { preferredUsername: usernameWithDomain(dashboard.lastGroupCreated) },
+                    params: {
+                      preferredUsername: usernameWithDomain(
+                        dashboard.lastGroupCreated
+                      ),
+                    },
                   }"
                 >
                   <p>{{ $t("Last group created") }}</p>
@@ -98,7 +126,10 @@
                       dashboard.lastGroupCreated.preferredUsername
                     }}
                   </p>
-                  <figure class="image is-4by3" v-if="dashboard.lastGroupCreated.avatar">
+                  <figure
+                    class="image is-4by3"
+                    v-if="dashboard.lastGroupCreated.avatar"
+                  >
                     <img :src="dashboard.lastGroupCreated.avatar.url" />
                   </figure>
                 </router-link>

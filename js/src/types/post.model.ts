@@ -1,13 +1,7 @@
-import { ITag } from "./tag.model";
-import { IMedia } from "./media.model";
-import { IActor } from "./actor";
-
-export enum PostVisibility {
-  PUBLIC = "PUBLIC",
-  UNLISTED = "UNLISTED",
-  RESTRICTED = "RESTRICTED",
-  PRIVATE = "PRIVATE",
-}
+import type { ITag } from "./tag.model";
+import type { IMedia } from "./media.model";
+import type { IActor } from "./actor";
+import type { PostVisibility } from "./enums";
 
 export interface IPost {
   id?: string;

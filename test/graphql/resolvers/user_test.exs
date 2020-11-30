@@ -164,7 +164,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       assert res["data"]["loggedUser"] == nil
 
       assert hd(res["errors"])["message"] ==
-               "You need to be logged-in to view current user"
+               "You need to be logged in"
 
       res =
         conn
@@ -193,7 +193,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
         )
 
       assert hd(res["errors"])["message"] ==
-               "You need to have admin access to list users"
+               "You don't have permission to do this"
     end
 
     test "list_users/3 returns a list of users", %{conn: conn} do
@@ -757,7 +757,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
         )
 
       assert hd(res["errors"])["message"] ==
-               "No user with this email was found"
+               "User not found"
     end
 
     test "test login_user/3 with unconfirmed user", %{conn: conn} do
@@ -770,7 +770,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
           variables: %{email: user.email, password: user.password}
         )
 
-      assert hd(res["errors"])["message"] == "No user with this email was found"
+      assert hd(res["errors"])["message"] == "User not found"
     end
   end
 

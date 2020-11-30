@@ -2,9 +2,10 @@
   <div class="card" v-if="todo">
     <div class="card-content">
       <b-checkbox v-model="status" />
-      <router-link :to="{ name: RouteName.TODO, params: { todoId: todo.id } }">{{
-        todo.title
-      }}</router-link>
+      <router-link
+        :to="{ name: RouteName.TODO, params: { todoId: todo.id } }"
+        >{{ todo.title }}</router-link
+      >
       <span class="details has-text-grey">
         <span v-if="todo.dueDate" class="due_date">
           <b-icon icon="calendar" />
@@ -13,7 +14,9 @@
         <span v-if="todo.assignedTo" class="assigned_to">
           <b-icon icon="account" />
           {{ `@${todo.assignedTo.preferredUsername}` }}
-          <span v-if="todo.assignedTo.domain">{{ `@${todo.assignedTo.domain}` }}</span>
+          <span v-if="todo.assignedTo.domain">{{
+            `@${todo.assignedTo.domain}`
+          }}</span>
         </span>
       </span>
     </div>
@@ -53,7 +56,11 @@ export default class Todo extends Vue {
       });
       this.editMode = false;
     } catch (e) {
-      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+      Snackbar.open({
+        message: e.message,
+        type: "is-danger",
+        position: "is-bottom",
+      });
     }
   }
 }

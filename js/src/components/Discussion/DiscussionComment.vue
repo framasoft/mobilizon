@@ -15,7 +15,10 @@
         <span v-else class="name comment-link has-text-grey">
           {{ $t("[deleted]") }}
         </span>
-        <span class="icons" v-if="!comment.deletedAt && comment.actor.id === currentActor.id">
+        <span
+          class="icons"
+          v-if="!comment.deletedAt && comment.actor.id === currentActor.id"
+        >
           <b-dropdown aria-role="list">
             <b-icon slot="trigger" role="button" icon="dots-horizontal" />
 
@@ -44,8 +47,9 @@
         <div class="post-infos">
           <span :title="comment.insertedAt | formatDateTimeString">
             {{
-              formatDistanceToNow(new Date(comment.updatedAt), { locale: $dateFnsLocale }) ||
-              $t("Right now")
+              formatDistanceToNow(new Date(comment.updatedAt), {
+                locale: $dateFnsLocale,
+              }) || $t("Right now")
             }}</span
           >
         </div>
@@ -77,7 +81,9 @@
             type="is-primary"
             >{{ $t("Update") }}</b-button
           >
-          <b-button native-type="button" @click="toggleEditMode">{{ $t("Cancel") }}</b-button>
+          <b-button native-type="button" @click="toggleEditMode">{{
+            $t("Cancel")
+          }}</b-button>
         </div>
       </form>
     </div>
@@ -95,7 +101,8 @@ import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
     currentActor: CURRENT_ACTOR_CLIENT,
   },
   components: {
-    editor: () => import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
+    editor: () =>
+      import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
   },
 })
 export default class DiscussionComment extends Vue {

@@ -14,7 +14,10 @@ function formatDateString(value: string): string {
 }
 
 function formatTimeString(value: string): string {
-  return parseDateTime(value).toLocaleTimeString(undefined, { hour: "numeric", minute: "numeric" });
+  return parseDateTime(value).toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "numeric",
+  });
 }
 
 function formatDateTimeString(value: string, showTime = true): string {

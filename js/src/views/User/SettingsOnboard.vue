@@ -56,9 +56,12 @@ import { IConfig } from "../../types/config.model";
 
 @Component({
   components: {
-    NotificationsOnboarding: () => import("../../components/Settings/NotificationsOnboarding.vue"),
-    SettingsOnboarding: () => import("../../components/Settings/SettingsOnboarding.vue"),
-    ProfileOnboarding: () => import("../../components/Account/ProfileOnboarding.vue"),
+    NotificationsOnboarding: () =>
+      import("../../components/Settings/NotificationsOnboarding.vue"),
+    SettingsOnboarding: () =>
+      import("../../components/Settings/SettingsOnboarding.vue"),
+    ProfileOnboarding: () =>
+      import("../../components/Account/ProfileOnboarding.vue"),
   },
   apollo: {
     config: TIMEZONES,

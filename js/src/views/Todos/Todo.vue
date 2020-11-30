@@ -6,13 +6,20 @@
           <router-link
             :to="{
               name: RouteName.GROUP,
-              params: { preferredUsername: todo.todoList.actor.preferredUsername },
+              params: {
+                preferredUsername: todo.todoList.actor.preferredUsername,
+              },
             }"
             >{{ todo.todoList.actor.name }}</router-link
           >
         </li>
         <li>
-          <router-link :to="{ name: RouteName.TODO_LIST, params: { id: todo.todoList.id } }">
+          <router-link
+            :to="{
+              name: RouteName.TODO_LIST,
+              params: { id: todo.todoList.id },
+            }"
+          >
             {{ todo.todoList.title }}
           </router-link>
         </li>

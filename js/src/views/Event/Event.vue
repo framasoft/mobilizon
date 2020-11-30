@@ -18,16 +18,29 @@
               <h1 class="title" style="margin: 0">{{ event.title }}</h1>
               <div class="organizer">
                 <span v-if="event.organizerActor && !event.attributedTo">
-                  <popover-actor-card :actor="event.organizerActor" :inline="true">
+                  <popover-actor-card
+                    :actor="event.organizerActor"
+                    :inline="true"
+                  >
                     <span>
                       {{
-                        $t("By @{username}", { username: usernameWithDomain(event.organizerActor) })
+                        $t("By @{username}", {
+                          username: usernameWithDomain(event.organizerActor),
+                        })
                       }}
                     </span>
                   </popover-actor-card>
                 </span>
-                <span v-else-if="event.attributedTo && event.options.hideOrganizerWhenGroupEvent">
-                  <popover-actor-card :actor="event.attributedTo" :inline="true">
+                <span
+                  v-else-if="
+                    event.attributedTo &&
+                    event.options.hideOrganizerWhenGroupEvent
+                  "
+                >
+                  <popover-actor-card
+                    :actor="event.attributedTo"
+                    :inline="true"
+                  >
                     {{
                       $t("By @{group}", {
                         group: usernameWithDomain(event.attributedTo),
@@ -37,14 +50,26 @@
                 </span>
                 <span v-else-if="event.organizerActor && event.attributedTo">
                   <i18n path="By {group}">
-                    <popover-actor-card :actor="event.attributedTo" slot="group" :inline="true">
+                    <popover-actor-card
+                      :actor="event.attributedTo"
+                      slot="group"
+                      :inline="true"
+                    >
                       <router-link
                         :to="{
                           name: RouteName.GROUP,
-                          params: { preferredUsername: usernameWithDomain(event.attributedTo) },
+                          params: {
+                            preferredUsername: usernameWithDomain(
+                              event.attributedTo
+                            ),
+                          },
                         }"
                       >
-                        {{ $t("@{group}", { group: usernameWithDomain(event.attributedTo) }) }}
+                        {{
+                          $t("@{group}", {
+                            group: usernameWithDomain(event.attributedTo),
+                          })
+                        }}
                       </router-link>
                     </popover-actor-card>
                   </i18n>
@@ -59,14 +84,23 @@
                   <tag>{{ tag.title }}</tag>
                 </router-link>
               </p>
-              <b-tag type="is-warning" size="is-medium" v-if="event.draft">{{ $t("Draft") }}</b-tag>
-              <span class="event-status" v-if="event.status !== EventStatus.CONFIRMED">
-                <b-tag type="is-warning" v-if="event.status === EventStatus.TENTATIVE">{{
-                  $t("Event to be confirmed")
-                }}</b-tag>
-                <b-tag type="is-danger" v-if="event.status === EventStatus.CANCELLED">{{
-                  $t("Event cancelled")
-                }}</b-tag>
+              <b-tag type="is-warning" size="is-medium" v-if="event.draft">{{
+                $t("Draft")
+              }}</b-tag>
+              <span
+                class="event-status"
+                v-if="event.status !== EventStatus.CONFIRMED"
+              >
+                <b-tag
+                  type="is-warning"
+                  v-if="event.status === EventStatus.TENTATIVE"
+                  >{{ $t("Event to be confirmed") }}</b-tag
+                >
+                <b-tag
+                  type="is-danger"
+                  v-if="event.status === EventStatus.CANCELLED"
+                  >{{ $t("Event cancelled") }}</b-tag
+                >
               </span>
             </div>
             <div class="column is-3-tablet">
@@ -95,7 +129,9 @@
                   />
                   <b-button
                     type="is-text"
-                    v-if="!actorIsParticipant && anonymousParticipation !== null"
+                    v-if="
+                      !actorIsParticipant && anonymousParticipation !== null
+                    "
                     @click="cancelAnonymousParticipation"
                     >{{ $t("Cancel anonymous participation") }}</b-button
                   >
@@ -103,7 +139,9 @@
                     {{ $t("You are participating in this event anonymously") }}
                     <b-tooltip
                       :label="
-                        $t('This information is saved only on your computer. Click for details')
+                        $t(
+                          'This information is saved only on your computer. Click for details'
+                        )
                       "
                     >
                       <router-link :to="{ name: RouteName.TERMS }">
@@ -111,7 +149,11 @@
                       </router-link>
                     </b-tooltip>
                   </small>
-                  <small v-else-if="!actorIsParticipant && anonymousParticipation === false">
+                  <small
+                    v-else-if="
+                      !actorIsParticipant && anonymousParticipation === false
+                    "
+                  >
                     {{
                       $t(
                         "You are participating in this event anonymously but didn't confirm participation"
@@ -119,7 +161,9 @@
                     }}
                     <b-tooltip
                       :label="
-                        $t('This information is saved only on your computer. Click for details')
+                        $t(
+                          'This information is saved only on your computer. Click for details'
+                        )
                       "
                     >
                       <router-link :to="{ name: RouteName.TERMS }">
@@ -129,7 +173,12 @@
                   </small>
                 </div>
                 <div v-else>
-                  <button class="button is-primary" type="button" slot="trigger" disabled>
+                  <button
+                    class="button is-primary"
+                    type="button"
+                    slot="trigger"
+                    disabled
+                  >
                     <template>
                       <span>{{ $t("Event already passed") }}</span>
                     </template>
@@ -157,7 +206,10 @@
                   <router-link
                     class="participations-link"
                     v-if="actorIsOrganizer && event.draft === false"
-                    :to="{ name: RouteName.PARTICIPATIONS, params: { eventId: event.uuid } }"
+                    :to="{
+                      name: RouteName.PARTICIPATIONS,
+                      params: { eventId: event.uuid },
+                    }"
                   >
                     <!-- We retire one because of the event creator who is a participant -->
                     <span v-if="event.options.maximumAttendeeCapacity">
@@ -177,9 +229,13 @@
                     </span>
                     <span v-else>
                       {{
-                        $tc("No one is going to this event", event.participantStats.participant, {
-                          going: event.participantStats.participant,
-                        })
+                        $tc(
+                          "No one is going to this event",
+                          event.participantStats.participant,
+                          {
+                            going: event.participantStats.participant,
+                          }
+                        )
                       }}
                     </span>
                   </router-link>
@@ -201,9 +257,13 @@
                     </span>
                     <span v-else>
                       {{
-                        $tc("No one is going to this event", event.participantStats.participant, {
-                          going: event.participantStats.participant,
-                        })
+                        $tc(
+                          "No one is going to this event",
+                          event.participantStats.participant,
+                          {
+                            going: event.participantStats.participant,
+                          }
+                        )
                       }}
                     </span>
                   </span>
@@ -221,7 +281,11 @@
                   <b-icon icon="ticket-confirmation-outline" />
                 </p>
                 <b-dropdown position="is-bottom-left" aria-role="list">
-                  <b-button slot="trigger" role="button" icon-right="dots-horizontal">
+                  <b-button
+                    slot="trigger"
+                    role="button"
+                    icon-right="dots-horizontal"
+                  >
                     {{ $t("Actions") }}
                     <!-- <b-icon icon="dots-horizontal" /> -->
                   </b-button>
@@ -231,7 +295,10 @@
                     v-if="actorIsOrganizer || event.draft"
                   >
                     <router-link
-                      :to="{ name: RouteName.EDIT_EVENT, params: { eventId: event.uuid } }"
+                      :to="{
+                        name: RouteName.EDIT_EVENT,
+                        params: { eventId: event.uuid },
+                      }"
                     >
                       {{ $t("Edit") }}
                       <b-icon icon="pencil" />
@@ -243,7 +310,10 @@
                     v-if="actorIsOrganizer || event.draft"
                   >
                     <router-link
-                      :to="{ name: RouteName.DUPLICATE_EVENT, params: { eventId: event.uuid } }"
+                      :to="{
+                        name: RouteName.DUPLICATE_EVENT,
+                        params: { eventId: event.uuid },
+                      }"
                     >
                       {{ $t("Duplicate") }}
                       <b-icon icon="content-duplicate" />
@@ -263,7 +333,11 @@
                     aria-role="menuitem"
                     v-if="actorIsOrganizer || event.draft"
                   />
-                  <b-dropdown-item aria-role="listitem" v-if="!event.draft" @click="triggerShare()">
+                  <b-dropdown-item
+                    aria-role="listitem"
+                    v-if="!event.draft"
+                    @click="triggerShare()"
+                  >
                     <span>
                       {{ $t("Share this event") }}
                       <b-icon icon="share" />
@@ -299,14 +373,23 @@
             <div class="sticky">
               <event-metadata-block
                 :title="$t('Location')"
-                :icon="physicalAddress ? physicalAddress.poiInfos.poiIcon.icon : 'earth'"
+                :icon="
+                  physicalAddress
+                    ? physicalAddress.poiInfos.poiIcon.icon
+                    : 'earth'
+                "
               >
                 <div class="address-wrapper">
-                  <span v-if="!physicalAddress">{{ $t("No address defined") }}</span>
+                  <span v-if="!physicalAddress">{{
+                    $t("No address defined")
+                  }}</span>
                   <div class="address" v-if="physicalAddress">
                     <div>
                       <address>
-                        <p class="addressDescription" :title="physicalAddress.poiInfos.name">
+                        <p
+                          class="addressDescription"
+                          :title="physicalAddress.poiInfos.name"
+                        >
                           {{ physicalAddress.poiInfos.name }}
                         </p>
                         <p>{{ physicalAddress.poiInfos.alternativeName }}</p>
@@ -321,7 +404,10 @@
                   </div>
                 </div>
               </event-metadata-block>
-              <event-metadata-block :title="$t('Date and time')" icon="calendar">
+              <event-metadata-block
+                :title="$t('Date and time')"
+                icon="calendar"
+              >
                 <event-full-date
                   :beginsOn="event.beginsOn"
                   :show-start-time="event.options.showStartTime"
@@ -330,19 +416,27 @@
                 />
               </event-metadata-block>
               <event-metadata-block :title="$t('Organized by')">
-                <popover-actor-card :actor="event.organizerActor" v-if="!event.attributedTo">
+                <popover-actor-card
+                  :actor="event.organizerActor"
+                  v-if="!event.attributedTo"
+                >
                   <actor-card :actor="event.organizerActor" />
                 </popover-actor-card>
                 <router-link
                   v-if="event.attributedTo"
                   :to="{
                     name: RouteName.GROUP,
-                    params: { preferredUsername: usernameWithDomain(event.attributedTo) },
+                    params: {
+                      preferredUsername: usernameWithDomain(event.attributedTo),
+                    },
                   }"
                 >
                   <popover-actor-card
                     :actor="event.attributedTo"
-                    v-if="!event.attributedTo || !event.options.hideOrganizerWhenGroupEvent"
+                    v-if="
+                      !event.attributedTo ||
+                      !event.options.hideOrganizerWhenGroupEvent
+                    "
                   >
                     <actor-card :actor="event.attributedTo" />
                   </popover-actor-card>
@@ -397,8 +491,13 @@
             </section>
           </div>
         </div>
-        <section class="more-events section" v-if="event.relatedEvents.length > 0">
-          <h3 class="title has-text-centered">{{ $t("These events may interest you") }}</h3>
+        <section
+          class="more-events section"
+          v-if="event.relatedEvents.length > 0"
+        >
+          <h3 class="title has-text-centered">
+            {{ $t("These events may interest you") }}
+          </h3>
           <div class="columns">
             <div
               class="column is-one-third-desktop"
@@ -409,7 +508,11 @@
             </div>
           </div>
         </section>
-        <b-modal :active.sync="isReportModalActive" has-modal-card ref="reportModal">
+        <b-modal
+          :active.sync="isReportModalActive"
+          has-modal-card
+          ref="reportModal"
+        >
           <report-modal
             :on-confirm="reportEvent"
             :title="$t('Report this event')"
@@ -417,14 +520,29 @@
             @close="$refs.reportModal.close()"
           />
         </b-modal>
-        <b-modal :active.sync="isShareModalActive" has-modal-card ref="shareModal">
-          <share-event-modal :event="event" :eventCapacityOK="eventCapacityOK" />
+        <b-modal
+          :active.sync="isShareModalActive"
+          has-modal-card
+          ref="shareModal"
+        >
+          <share-event-modal
+            :event="event"
+            :eventCapacityOK="eventCapacityOK"
+          />
         </b-modal>
-        <b-modal :active.sync="isJoinModalActive" has-modal-card ref="participationModal">
+        <b-modal
+          :active.sync="isJoinModalActive"
+          has-modal-card
+          ref="participationModal"
+        >
           <identity-picker v-model="identity">
             <template v-slot:footer>
               <footer class="modal-card-foot">
-                <button class="button" ref="cancelButton" @click="isJoinModalActive = false">
+                <button
+                  class="button"
+                  ref="cancelButton"
+                  @click="isJoinModalActive = false"
+                >
                   {{ $t("Cancel") }}
                 </button>
                 <button
@@ -449,7 +567,9 @@
         >
           <div class="modal-card">
             <header class="modal-card-head">
-              <p class="modal-card-title">{{ $t("Participation confirmation") }}</p>
+              <p class="modal-card-title">
+                {{ $t("Participation confirmation") }}
+              </p>
             </header>
 
             <section class="modal-card-body">
@@ -460,7 +580,11 @@
                   )
                 }}
               </p>
-              <form @submit.prevent="joinEvent(actorForConfirmation, messageForConfirmation)">
+              <form
+                @submit.prevent="
+                  joinEvent(actorForConfirmation, messageForConfirmation)
+                "
+              >
                 <b-field :label="$t('Message')">
                   <b-input
                     type="textarea"
@@ -485,7 +609,10 @@
             </section>
           </div>
         </b-modal>
-        <b-modal v-if="physicalAddress && physicalAddress.geom" :active.sync="showMap">
+        <b-modal
+          v-if="physicalAddress && physicalAddress.geom"
+          :active.sync="showMap"
+        >
           <div class="map">
             <map-leaflet
               :coords="physicalAddress.geom"
@@ -505,19 +632,19 @@
 import { Component, Prop, Watch } from "vue-property-decorator";
 import BIcon from "buefy/src/components/icon/Icon.vue";
 import {
+  EventJoinOptions,
+  EventStatus,
+  EventVisibility,
+  ParticipantRole,
+} from "@/types/enums";
+import {
   EVENT_PERSON_PARTICIPATION,
   EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED,
   FETCH_EVENT,
   JOIN_EVENT,
 } from "../../graphql/event";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
-import {
-  EventModel,
-  EventStatus,
-  EventVisibility,
-  IEvent,
-  EventJoinOptions,
-} from "../../types/event.model";
+import { EventModel, IEvent } from "../../types/event.model";
 import { IActor, IPerson, Person, usernameWithDomain } from "../../types/actor";
 import { GRAPHQL_API_ENDPOINT } from "../../api/_entrypoint";
 import DateCalendarIcon from "../../components/Event/DateCalendarIcon.vue";
@@ -546,7 +673,7 @@ import Tag from "../../components/Tag.vue";
 import EventMetadataBlock from "../../components/Event/EventMetadataBlock.vue";
 import ActorCard from "../../components/Account/ActorCard.vue";
 import PopoverActorCard from "../../components/Account/PopoverActorCard.vue";
-import { IParticipant, ParticipantRole } from "../../types/participant.model";
+import { IParticipant } from "../../types/participant.model";
 
 @Component({
   components: {
@@ -563,7 +690,8 @@ import { IParticipant, ParticipantRole } from "../../types/participant.model";
     Tag,
     ActorCard,
     PopoverActorCard,
-    "map-leaflet": () => import(/* webpackChunkName: "map" */ "../../components/Map.vue"),
+    "map-leaflet": () =>
+      import(/* webpackChunkName: "map" */ "../../components/Map.vue"),
     ShareEventModal: () =>
       import(
         /* webpackChunkName: "shareEventModal" */ "../../components/Event/ShareEventModal.vue"
@@ -608,7 +736,12 @@ import { IParticipant, ParticipantRole } from "../../types/participant.model";
         return [];
       },
       skip() {
-        return !this.currentActor || !this.event || !this.event.id || !this.currentActor.id;
+        return (
+          !this.currentActor ||
+          !this.event ||
+          !this.event.id ||
+          !this.currentActor.id
+        );
       },
     },
     config: CONFIG,
@@ -719,7 +852,8 @@ export default class Event extends EventMixin {
 
     this.$watch("eventDescription", (eventDescription) => {
       if (!eventDescription) return;
-      const eventDescriptionElement = this.$refs.eventDescriptionElement as HTMLElement;
+      const eventDescriptionElement = this.$refs
+        .eventDescriptionElement as HTMLElement;
 
       eventDescriptionElement.addEventListener("click", ($event) => {
         // TODO: Find the right type for target
@@ -729,7 +863,14 @@ export default class Event extends EventMixin {
         if (target && target.matches(".hashtag") && target.href) {
           // some sanity checks taken from vue-router:
           // https://github.com/vuejs/vue-router/blob/dev/src/components/link.js#L106
-          const { altKey, ctrlKey, metaKey, shiftKey, button, defaultPrevented } = $event;
+          const {
+            altKey,
+            ctrlKey,
+            metaKey,
+            shiftKey,
+            button,
+            defaultPrevented,
+          } = $event;
           // don't handle with control keys
           if (metaKey || altKey || ctrlKey || shiftKey) return;
           // don't handle when preventDefault called
@@ -782,7 +923,9 @@ export default class Event extends EventMixin {
           forward,
         },
       });
-      this.$notifier.success(this.$t("Event {eventTitle} reported", { eventTitle }) as string);
+      this.$notifier.success(
+        this.$t("Event {eventTitle} reported", { eventTitle }) as string
+      );
     } catch (error) {
       console.error(error);
     }
@@ -793,11 +936,16 @@ export default class Event extends EventMixin {
     this.actorForConfirmation = actor;
   }
 
-  async joinEvent(identity: IPerson, message: string | null = null): Promise<void> {
+  async joinEvent(
+    identity: IPerson,
+    message: string | null = null
+  ): Promise<void> {
     this.isJoinConfirmationModalActive = false;
     this.isJoinModalActive = false;
     try {
-      const { data: mutationData } = await this.$apollo.mutate<{ joinEvent: IParticipant }>({
+      const { data: mutationData } = await this.$apollo.mutate<{
+        joinEvent: IParticipant;
+      }>({
         mutation: JOIN_EVENT,
         variables: {
           eventId: this.event.id,
@@ -813,7 +961,9 @@ export default class Event extends EventMixin {
           if (participationCachedData == null) return;
           const { person } = participationCachedData;
           if (person === null) {
-            console.error("Cannot update participation cache, because of null value.");
+            console.error(
+              "Cannot update participation cache, because of null value."
+            );
             return;
           }
           person.participations.elements.push(data.joinEvent);
@@ -831,7 +981,9 @@ export default class Event extends EventMixin {
           if (cachedData == null) return;
           const { event } = cachedData;
           if (event === null) {
-            console.error("Cannot update event participant cache, because of null value.");
+            console.error(
+              "Cannot update event participant cache, because of null value."
+            );
             return;
           }
 
@@ -866,9 +1018,12 @@ export default class Event extends EventMixin {
       title: this.$t('Leaving event "{title}"', {
         title: this.event.title,
       }) as string,
-      message: this.$t('Are you sure you want to cancel your participation at event "{title}"?', {
-        title: this.event.title,
-      }) as string,
+      message: this.$t(
+        'Are you sure you want to cancel your participation at event "{title}"?',
+        {
+          title: this.event.title,
+        }
+      ) as string,
       confirmText: this.$t("Leave event") as string,
       cancelText: this.$t("Cancel") as string,
       type: "is-danger",
@@ -906,19 +1061,27 @@ export default class Event extends EventMixin {
   }
 
   private participationConfirmedMessage() {
-    this.$notifier.success(this.$t("Your participation has been confirmed") as string);
+    this.$notifier.success(
+      this.$t("Your participation has been confirmed") as string
+    );
   }
 
   private participationRequestedMessage() {
-    this.$notifier.success(this.$t("Your participation has been requested") as string);
+    this.$notifier.success(
+      this.$t("Your participation has been requested") as string
+    );
   }
 
   private participationRejectedMessage() {
-    this.$notifier.error(this.$t("Your participation has been rejected") as string);
+    this.$notifier.error(
+      this.$t("Your participation has been rejected") as string
+    );
   }
 
   private participationChangedMessage() {
-    this.$notifier.info(this.$t("Your participation status has been changed") as string);
+    this.$notifier.info(
+      this.$t("Your participation status has been changed") as string
+    );
   }
 
   async downloadIcsEvent(): Promise<void> {
@@ -968,13 +1131,15 @@ export default class Event extends EventMixin {
     if (this.actorIsOrganizer) return true;
 
     return (
-      this.participations.length > 0 && this.participations[0].role === ParticipantRole.PARTICIPANT
+      this.participations.length > 0 &&
+      this.participations[0].role === ParticipantRole.PARTICIPANT
     );
   }
 
   get actorIsOrganizer(): boolean {
     return (
-      this.participations.length > 0 && this.participations[0].role === ParticipantRole.CREATOR
+      this.participations.length > 0 &&
+      this.participations[0].role === ParticipantRole.CREATOR
     );
   }
 
@@ -987,12 +1152,18 @@ export default class Event extends EventMixin {
   get eventCapacityOK(): boolean {
     if (this.event.draft) return true;
     if (!this.event.options.maximumAttendeeCapacity) return true;
-    return this.event.options.maximumAttendeeCapacity > this.event.participantStats.participant;
+    return (
+      this.event.options.maximumAttendeeCapacity >
+      this.event.participantStats.participant
+    );
   }
 
   get numberOfPlacesStillAvailable(): number {
     if (this.event.draft) return this.event.options.maximumAttendeeCapacity;
-    return this.event.options.maximumAttendeeCapacity - this.event.participantStats.participant;
+    return (
+      this.event.options.maximumAttendeeCapacity -
+      this.event.participantStats.participant
+    );
   }
 
   get physicalAddress(): Address | null {
@@ -1012,7 +1183,10 @@ export default class Event extends EventMixin {
   }
 
   get ableToReport(): boolean {
-    return this.config && (this.currentActor.id != null || this.config.anonymous.reports.allowed);
+    return (
+      this.config &&
+      (this.currentActor.id != null || this.config.anonymous.reports.allowed)
+    );
   }
 
   get actorForReport(): IActor | null {

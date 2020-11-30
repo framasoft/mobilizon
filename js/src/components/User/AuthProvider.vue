@@ -7,7 +7,11 @@
     <b-icon :icon="oauthProvider.id" />
     <span>{{ SELECTED_PROVIDERS[oauthProvider.id] }}</span></a
   >
-  <a class="button is-light" :href="`/auth/${oauthProvider.id}`" v-else-if="isProviderSelected">
+  <a
+    class="button is-light"
+    :href="`/auth/${oauthProvider.id}`"
+    v-else-if="isProviderSelected"
+  >
     <b-icon icon="lock" />
     <span>{{ oauthProvider.label }}</span>
   </a>

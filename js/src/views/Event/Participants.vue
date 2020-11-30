@@ -4,7 +4,9 @@
       <nav class="breadcrumb" aria-label="breadcrumbs">
         <ul>
           <li>
-            <router-link :to="{ name: RouteName.MY_EVENTS }">{{ $t("My events") }}</router-link>
+            <router-link :to="{ name: RouteName.MY_EVENTS }">{{
+              $t("My events")
+            }}</router-link>
           </li>
           <li>
             <router-link
@@ -72,10 +74,21 @@
         @page-change="(newPage) => (page = newPage)"
         @sort="(field, order) => $emit('sort', field, order)"
       >
-        <b-table-column field="actor.preferredUsername" :label="$t('Participant')" v-slot="props">
+        <b-table-column
+          field="actor.preferredUsername"
+          :label="$t('Participant')"
+          v-slot="props"
+        >
           <article class="media">
-            <figure class="media-left image is-48x48" v-if="props.row.actor.avatar">
-              <img class="is-rounded" :src="props.row.actor.avatar.url" alt="" />
+            <figure
+              class="media-left image is-48x48"
+              v-if="props.row.actor.avatar"
+            >
+              <img
+                class="is-rounded"
+                :src="props.row.actor.avatar.url"
+                alt=""
+              />
             </figure>
             <b-icon
               class="media-left"
@@ -83,11 +96,18 @@
               size="is-large"
               icon="incognito"
             />
-            <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+            <b-icon
+              class="media-left"
+              v-else
+              size="is-large"
+              icon="account-circle"
+            />
             <div class="media-content">
               <div class="content">
                 <span v-if="props.row.actor.preferredUsername !== 'anonymous'">
-                  <span v-if="props.row.actor.name">{{ props.row.actor.name }}</span
+                  <span v-if="props.row.actor.name">{{
+                    props.row.actor.name
+                  }}</span
                   ><br />
                   <span class="is-size-7 has-text-grey"
                     >@{{ usernameWithDomain(props.row.actor) }}</span
@@ -101,7 +121,10 @@
           </article>
         </b-table-column>
         <b-table-column field="role" :label="$t('Role')" v-slot="props">
-          <b-tag type="is-primary" v-if="props.row.role === ParticipantRole.CREATOR">
+          <b-tag
+            type="is-primary"
+            v-if="props.row.role === ParticipantRole.CREATOR"
+          >
             {{ $t("Organizer") }}
           </b-tag>
           <b-tag v-else-if="props.row.role === ParticipantRole.PARTICIPANT">
@@ -110,18 +133,29 @@
           <b-tag v-else-if="props.row.role === ParticipantRole.NOT_CONFIRMED">
             {{ $t("Not confirmed") }}
           </b-tag>
-          <b-tag type="is-warning" v-else-if="props.row.role === ParticipantRole.NOT_APPROVED">
+          <b-tag
+            type="is-warning"
+            v-else-if="props.row.role === ParticipantRole.NOT_APPROVED"
+          >
             {{ $t("Not approved") }}
           </b-tag>
-          <b-tag type="is-danger" v-else-if="props.row.role === ParticipantRole.REJECTED">
+          <b-tag
+            type="is-danger"
+            v-else-if="props.row.role === ParticipantRole.REJECTED"
+          >
             {{ $t("Rejected") }}
           </b-tag>
         </b-table-column>
-        <b-table-column field="metadata.message" :label="$t('Message')" v-slot="props">
+        <b-table-column
+          field="metadata.message"
+          :label="$t('Message')"
+          v-slot="props"
+        >
           <span
             @click="toggleQueueDetails(props.row)"
             :class="{
-              'ellipsed-message': props.row.metadata.message.length > MESSAGE_ELLIPSIS_LENGTH,
+              'ellipsed-message':
+                props.row.metadata.message.length > MESSAGE_ELLIPSIS_LENGTH,
             }"
             v-if="props.row.metadata && props.row.metadata.message"
           >
@@ -185,7 +219,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch, Ref } from "vue-property-decorator";
-import { IParticipant, ParticipantRole } from "../../types/participant.model";
+import { ParticipantRole } from "@/types/enums";
+import { IParticipant } from "../../types/participant.model";
 import { IEvent, IEventParticipantStats } from "../../types/event.model";
 import { PARTICIPANTS, UPDATE_PARTICIPANT } from "../../graphql/event";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
@@ -222,7 +257,8 @@ const MESSAGE_ELLIPSIS_LENGTH = 130;
     },
   },
   filters: {
-    ellipsize: (text?: string) => text && text.substr(0, MESSAGE_ELLIPSIS_LENGTH).concat("…"),
+    ellipsize: (text?: string) =>
+      text && text.substr(0, MESSAGE_ELLIPSIS_LENGTH).concat("…"),
   },
 })
 export default class Participants extends Vue {
@@ -281,7 +317,10 @@ export default class Participants extends Vue {
           event: {
             ...previousResult.event,
             participants: {
-              elements: [...oldParticipants.elements, ...newParticipants.elements],
+              elements: [
+                ...oldParticipants.elements,
+                ...newParticipants.elements,
+              ],
               total: newParticipants.total,
               __typename: oldParticipants.__typename,
             },
@@ -338,7 +377,9 @@ export default class Participants extends Vue {
    */
   get canAcceptParticipants(): boolean {
     return this.checkedRows.some((participant: IParticipant) =>
-      [ParticipantRole.NOT_APPROVED, ParticipantRole.REJECTED].includes(participant.role)
+      [ParticipantRole.NOT_APPROVED, ParticipantRole.REJECTED].includes(
+        participant.role
+      )
     );
   }
 
@@ -347,7 +388,8 @@ export default class Participants extends Vue {
    */
   get canRefuseParticipants(): boolean {
     return this.checkedRows.some(
-      (participant: IParticipant) => participant.role !== ParticipantRole.REJECTED
+      (participant: IParticipant) =>
+        participant.role !== ParticipantRole.REJECTED
     );
   }
 
@@ -356,7 +398,11 @@ export default class Participants extends Vue {
   nl2br = nl2br;
 
   toggleQueueDetails(row: IParticipant): void {
-    if (row.metadata.message && row.metadata.message.length < MESSAGE_ELLIPSIS_LENGTH) return;
+    if (
+      row.metadata.message &&
+      row.metadata.message.length < MESSAGE_ELLIPSIS_LENGTH
+    )
+      return;
     this.queueTable.toggleDetails(row);
   }
 }

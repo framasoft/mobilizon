@@ -102,14 +102,20 @@ export default class DateTimePicker extends Vue {
   }
 
   get minTime(): Date | null {
-    if (this.minDatetime && this.datesAreOnSameDay(this.dateWithTime, this.minDatetime)) {
+    if (
+      this.minDatetime &&
+      this.datesAreOnSameDay(this.dateWithTime, this.minDatetime)
+    ) {
       return this.minDatetime;
     }
     return null;
   }
 
   get maxTime(): Date | null {
-    if (this.maxDatetime && this.datesAreOnSameDay(this.dateWithTime, this.maxDatetime)) {
+    if (
+      this.maxDatetime &&
+      this.datesAreOnSameDay(this.dateWithTime, this.maxDatetime)
+    ) {
       return this.maxDatetime;
     }
     return null;

@@ -1,9 +1,14 @@
 <template>
   <section class="section container">
-    <h1 class="title" v-if="loading">{{ $t("Your participation request is being validated") }}</h1>
+    <h1 class="title" v-if="loading">
+      {{ $t("Your participation request is being validated") }}
+    </h1>
     <div v-else>
       <div v-if="failed">
-        <b-message :title="$t('Error while validating participation request')" type="is-danger">
+        <b-message
+          :title="$t('Error while validating participation request')"
+          type="is-danger"
+        >
           {{
             $t(
               "Either the participation request has already been validated, either the validation token is incorrect."
@@ -12,9 +17,16 @@
         </b-message>
       </div>
       <div v-else>
-        <h1 class="title">{{ $t("Your participation request has been validated") }}</h1>
-        <p class="content" v-if="participation.event.joinOptions == EventJoinOptions.RESTRICTED">
-          {{ $t("Your participation still has to be approved by the organisers.") }}
+        <h1 class="title">
+          {{ $t("Your participation request has been validated") }}
+        </h1>
+        <p
+          class="content"
+          v-if="participation.event.joinOptions == EventJoinOptions.RESTRICTED"
+        >
+          {{
+            $t("Your participation still has to be approved by the organisers.")
+          }}
         </p>
         <div class="columns has-text-centered">
           <div class="column">
@@ -38,9 +50,9 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { confirmLocalAnonymousParticipation } from "@/services/AnonymousParticipationStorage";
+import { EventJoinOptions } from "@/types/enums";
 import { IParticipant } from "../../types/participant.model";
 import RouteName from "../../router/name";
-import { EventJoinOptions } from "../../types/event.model";
 import { CONFIRM_PARTICIPATION } from "../../graphql/event";
 
 @Component

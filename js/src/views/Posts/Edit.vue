@@ -20,7 +20,12 @@
           :type="errors.title ? 'is-danger' : null"
           :message="errors.title"
         >
-          <b-input size="is-large" aria-required="true" required v-model="post.title" />
+          <b-input
+            size="is-large"
+            aria-required="true"
+            required
+            v-model="post.title"
+          />
         </b-field>
 
         <tag-input v-model="post.tags" :data="tags" path="title" />
@@ -61,7 +66,9 @@
           <div class="navbar-menu">
             <div class="navbar-end">
               <span class="navbar-item">
-                <b-button type="is-text" @click="$router.go(-1)">{{ $t("Cancel") }}</b-button>
+                <b-button type="is-text" @click="$router.go(-1)">{{
+                  $t("Cancel")
+                }}</b-button>
               </span>
               <span class="navbar-item" v-if="this.isUpdate">
                 <b-button type="is-danger is-outlined" @click="deletePost">{{
@@ -76,7 +83,9 @@
               </span>
               <span class="navbar-item">
                 <b-button type="is-primary" native-type="submit">
-                  <span v-if="isUpdate === false || post.draft === true">{{ $t("Publish") }}</span>
+                  <span v-if="isUpdate === false || post.draft === true">{{
+                    $t("Publish")
+                  }}</span>
 
                   <span v-else>{{ $t("Update post") }}</span>
                 </b-button>
@@ -105,11 +114,17 @@ import { mixins } from "vue-class-component";
 import { FETCH_GROUP } from "@/graphql/group";
 import { buildFileFromIMedia, readFileAsync } from "@/utils/image";
 import GroupMixin from "@/mixins/group";
+import { PostVisibility } from "@/types/enums";
 import { TAGS } from "../../graphql/tags";
 import { CONFIG } from "../../graphql/config";
-import { FETCH_POST, CREATE_POST, UPDATE_POST, DELETE_POST } from "../../graphql/post";
+import {
+  FETCH_POST,
+  CREATE_POST,
+  UPDATE_POST,
+  DELETE_POST,
+} from "../../graphql/post";
 
-import { IPost, PostVisibility } from "../../types/post.model";
+import { IPost } from "../../types/post.model";
 import Editor from "../../components/Editor.vue";
 import { IActor, IGroup, usernameWithDomain } from "../../types/actor";
 import TagInput from "../../components/Event/TagInput.vue";
@@ -209,7 +224,10 @@ export default class EditPost extends mixins(GroupMixin) {
         },
       });
       if (data && data.updatePost) {
-        this.$router.push({ name: RouteName.POST, params: { slug: data.updatePost.slug } });
+        this.$router.push({
+          name: RouteName.POST,
+          params: { slug: data.updatePost.slug },
+        });
       }
     } else {
       try {
@@ -224,14 +242,22 @@ export default class EditPost extends mixins(GroupMixin) {
           },
         });
         if (data && data.createPost) {
-          this.$router.push({ name: RouteName.POST, params: { slug: data.createPost.slug } });
+          this.$router.push({
+            name: RouteName.POST,
+            params: { slug: data.createPost.slug },
+          });
         }
       } catch (error) {
         console.error(error);
-        this.errors = error.graphQLErrors.reduce((acc: { [key: string]: any }, localError: any) => {
-          acc[localError.field] = EditPost.transformMessage(localError.message);
-          return acc;
-        }, {});
+        this.errors = error.graphQLErrors.reduce(
+          (acc: { [key: string]: any }, localError: any) => {
+            acc[localError.field] = EditPost.transformMessage(
+              localError.message
+            );
+            return acc;
+          },
+          {}
+        );
       }
     }
   }
@@ -246,7 +272,9 @@ export default class EditPost extends mixins(GroupMixin) {
     if (data && this.post.attributedTo) {
       this.$router.push({
         name: RouteName.POSTS,
-        params: { preferredUsername: usernameWithDomain(this.post.attributedTo) },
+        params: {
+          preferredUsername: usernameWithDomain(this.post.attributedTo),
+        },
       });
     }
   }
@@ -277,9 +305,13 @@ export default class EditPost extends mixins(GroupMixin) {
     }
     try {
       if (this.post.picture) {
-        const oldPictureFile = (await buildFileFromIMedia(this.post.picture)) as File;
+        const oldPictureFile = (await buildFileFromIMedia(
+          this.post.picture
+        )) as File;
         const oldPictureFileContent = await readFileAsync(oldPictureFile);
-        const newPictureFileContent = await readFileAsync(this.pictureFile as File);
+        const newPictureFileContent = await readFileAsync(
+          this.pictureFile as File
+        );
         if (oldPictureFileContent === newPictureFileContent) {
           obj.picture = { mediaId: this.post.picture.id };
         }
@@ -302,7 +334,8 @@ export default class EditPost extends mixins(GroupMixin) {
     return (
       this.person &&
       this.person.memberships.elements.some(
-        ({ parent: { id }, role }) => id === this.actualGroup.id && roles.includes(role)
+        ({ parent: { id }, role }) =>
+          id === this.actualGroup.id && roles.includes(role)
       )
     );
   }

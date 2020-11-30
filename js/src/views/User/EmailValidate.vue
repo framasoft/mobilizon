@@ -1,6 +1,8 @@
 <template>
   <section class="section container">
-    <h1 class="title" v-if="loading">{{ $t("Your email is being changed") }}</h1>
+    <h1 class="title" v-if="loading">
+      {{ $t("Your email is being changed") }}
+    </h1>
     <div v-else>
       <div v-if="failed">
         <b-message :title="$t('Error while changing email')" type="is-danger">

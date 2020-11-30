@@ -1,6 +1,8 @@
 import { IMedia } from "@/types/media.model";
 
-export async function buildFileFromIMedia(obj: IMedia | null | undefined): Promise<File | null> {
+export async function buildFileFromIMedia(
+  obj: IMedia | null | undefined
+): Promise<File | null> {
   if (!obj) return Promise.resolve(null);
 
   const response = await fetch(obj.url);
@@ -9,7 +11,11 @@ export async function buildFileFromIMedia(obj: IMedia | null | undefined): Promi
   return new File([blob], obj.name);
 }
 
-export function buildFileVariable(file: File | null, name: string, alt?: string): Record<string, unknown> {
+export function buildFileVariable(
+  file: File | null,
+  name: string,
+  alt?: string
+): Record<string, unknown> {
   if (!file) return {};
 
   return {
@@ -23,7 +29,9 @@ export function buildFileVariable(file: File | null, name: string, alt?: string)
   };
 }
 
-export function readFileAsync(file: File): Promise<string | ArrayBuffer | null> {
+export function readFileAsync(
+  file: File
+): Promise<string | ArrayBuffer | null> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 

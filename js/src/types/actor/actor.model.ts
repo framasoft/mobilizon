@@ -1,12 +1,5 @@
-import { IMedia } from "@/types/media.model";
-
-export enum ActorType {
-  PERSON = "PERSON",
-  APPLICATION = "APPLICATION",
-  GROUP = "GROUP",
-  ORGANISATION = "ORGANISATION",
-  SERVICE = "SERVICE",
-}
+import type { IMedia } from "@/types/media.model";
+import { ActorType } from "../enums";
 
 export interface IActor {
   id?: string;
@@ -59,7 +52,9 @@ export class Actor implements IActor {
   }
 
   public displayName(): string {
-    return this.name != null && this.name !== "" ? this.name : this.usernameWithDomain();
+    return this.name != null && this.name !== ""
+      ? this.name
+      : this.usernameWithDomain();
   }
 }
 

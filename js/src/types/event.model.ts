@@ -1,44 +1,15 @@
-import { Address, IAddress } from "@/types/address.model";
-import { ITag } from "@/types/tag.model";
-import { IMedia } from "@/types/media.model";
-import { IComment } from "@/types/comment.model";
-import { Paginate } from "@/types/paginate";
-import { Actor, Group, IActor, IGroup, IPerson } from "./actor";
-import { IParticipant } from "./participant.model";
-import { EventOptions, IEventOptions } from "./event-options.model";
-
-export enum EventStatus {
-  TENTATIVE = "TENTATIVE",
-  CONFIRMED = "CONFIRMED",
-  CANCELLED = "CANCELLED",
-}
-
-export enum EventVisibility {
-  PUBLIC = "PUBLIC",
-  UNLISTED = "UNLISTED",
-  RESTRICTED = "RESTRICTED",
-  PRIVATE = "PRIVATE",
-}
-
-export enum EventJoinOptions {
-  FREE = "FREE",
-  RESTRICTED = "RESTRICTED",
-  INVITE = "INVITE",
-}
-
-export enum EventVisibilityJoinOptions {
-  PUBLIC = "PUBLIC",
-  LINK = "LINK",
-  LIMITED = "LIMITED",
-}
-
-export enum Category {
-  BUSINESS = "business",
-  CONFERENCE = "conference",
-  BIRTHDAY = "birthday",
-  DEMONSTRATION = "demonstration",
-  MEETING = "meeting",
-}
+import { Address } from "@/types/address.model";
+import type { IAddress } from "@/types/address.model";
+import type { ITag } from "@/types/tag.model";
+import type { IMedia } from "@/types/media.model";
+import type { IComment } from "@/types/comment.model";
+import type { Paginate } from "@/types/paginate";
+import { Actor, Group } from "./actor";
+import type { IActor, IGroup, IPerson } from "./actor";
+import type { IParticipant } from "./participant.model";
+import { EventOptions } from "./event-options.model";
+import type { IEventOptions } from "./event-options.model";
+import { EventJoinOptions, EventStatus, EventVisibility } from "./enums";
 
 export interface IEventCardOptions {
   hideDate: boolean;
@@ -213,7 +184,9 @@ export class EventModel implements IEvent {
 
     this.onlineAddress = hash.onlineAddress;
     this.phoneAddress = hash.phoneAddress;
-    this.physicalAddress = hash.physicalAddress ? new Address(hash.physicalAddress) : undefined;
+    this.physicalAddress = hash.physicalAddress
+      ? new Address(hash.physicalAddress)
+      : undefined;
     this.participantStats = hash.participantStats;
 
     this.contacts = hash.contacts;
@@ -238,7 +211,8 @@ export class EventModel implements IEvent {
       phoneAddress: this.phoneAddress,
       physicalAddress: this.physicalAddress,
       options: this.options,
-      attributedToId: this.attributedTo && this.attributedTo.id ? this.attributedTo.id : null,
+      attributedToId:
+        this.attributedTo && this.attributedTo.id ? this.attributedTo.id : null,
       contacts: this.contacts.map(({ id }) => ({
         id,
       })),

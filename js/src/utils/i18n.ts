@@ -7,10 +7,19 @@ import langs from "../i18n/langs.json";
 
 const DEFAULT_LOCALE = "en_US";
 
-let language = localStorage.getItem(USER_LOCALE) || (document.documentElement.getAttribute("lang") as string);
-language = language || ((window.navigator as any).userLanguage || window.navigator.language).replace(/-/, "_");
+let language =
+  localStorage.getItem(USER_LOCALE) ||
+  (document.documentElement.getAttribute("lang") as string);
+language =
+  language ||
+  ((window.navigator as any).userLanguage || window.navigator.language).replace(
+    /-/,
+    "_"
+  );
 export const locale =
-  language && Object.prototype.hasOwnProperty.call(langs, language) ? language : language.split("-")[0];
+  language && Object.prototype.hasOwnProperty.call(langs, language)
+    ? language
+    : language.split("-")[0];
 
 Vue.use(VueI18n);
 
@@ -66,7 +75,9 @@ export async function loadLanguageAsync(lang: string): Promise<string> {
   }
   // If the language hasn't been loaded yet
   const newMessages = await import(
-    /* webpackChunkName: "lang-[request]" */ `@/i18n/${vueI18NfileForLanguage(lang)}.json`
+    /* webpackChunkName: "lang-[request]" */ `@/i18n/${vueI18NfileForLanguage(
+      lang
+    )}.json`
   );
   i18n.setLocaleMessage(lang, newMessages.default);
   loadedLanguages.push(lang);
@@ -77,7 +88,10 @@ loadLanguageAsync(locale);
 
 export function formatList(list: string[]): string {
   if (window.Intl && Intl.ListFormat) {
-    const formatter = new Intl.ListFormat(undefined, { style: "long", type: "conjunction" });
+    const formatter = new Intl.ListFormat(undefined, {
+      style: "long",
+      type: "conjunction",
+    });
     return formatter.format(list);
   }
   return list.join(",");

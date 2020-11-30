@@ -65,7 +65,10 @@ export const GET_PERSON = gql`
       feedTokens {
         token
       }
-      organizedEvents(page: $organizedEventsPage, limit: $organizedEventsLimit) {
+      organizedEvents(
+        page: $organizedEventsPage
+        limit: $organizedEventsLimit
+      ) {
         total
         elements {
           id
@@ -442,7 +445,12 @@ export const CREATE_PERSON = gql`
 `;
 
 export const UPDATE_PERSON = gql`
-  mutation UpdatePerson($id: ID!, $name: String, $summary: String, $avatar: MediaInput) {
+  mutation UpdatePerson(
+    $id: ID!
+    $name: String
+    $summary: String
+    $avatar: MediaInput
+  ) {
     updatePerson(id: $id, name: $name, summary: $summary, avatar: $avatar) {
       id
       preferredUsername
@@ -469,7 +477,12 @@ export const DELETE_PERSON = gql`
  * Prefer CREATE_PERSON when creating another identity
  */
 export const REGISTER_PERSON = gql`
-  mutation($preferredUsername: String!, $name: String!, $summary: String!, $email: String!) {
+  mutation(
+    $preferredUsername: String!
+    $name: String!
+    $summary: String!
+    $email: String!
+  ) {
     registerPerson(
       preferredUsername: $preferredUsername
       name: $name

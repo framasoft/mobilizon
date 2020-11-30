@@ -3,20 +3,32 @@
     <nav class="breadcrumb" aria-label="breadcrumbs" v-if="report">
       <ul>
         <li>
-          <router-link :to="{ name: RouteName.MODERATION }">{{ $t("Moderation") }}</router-link>
+          <router-link :to="{ name: RouteName.MODERATION }">{{
+            $t("Moderation")
+          }}</router-link>
         </li>
         <li>
-          <router-link :to="{ name: RouteName.REPORTS }">{{ $t("Reports") }}</router-link>
+          <router-link :to="{ name: RouteName.REPORTS }">{{
+            $t("Reports")
+          }}</router-link>
         </li>
         <li class="is-active">
-          <router-link :to="{ name: RouteName.REPORT, params: { id: report.id } }">{{
-            $t("Report #{reportNumber}", { reportNumber: report.id })
-          }}</router-link>
+          <router-link
+            :to="{ name: RouteName.REPORT, params: { id: report.id } }"
+            >{{
+              $t("Report #{reportNumber}", { reportNumber: report.id })
+            }}</router-link
+          >
         </li>
       </ul>
     </nav>
     <section>
-      <b-message title="Error" type="is-danger" v-for="error in errors" :key="error">
+      <b-message
+        title="Error"
+        type="is-danger"
+        v-for="error in errors"
+        :key="error"
+      >
         {{ error }}
       </b-message>
       <div class="container" v-if="report">
@@ -116,7 +128,9 @@
               <tr>
                 <td>{{ $t("Status") }}</td>
                 <td>
-                  <span v-if="report.status === ReportStatusEnum.OPEN">{{ $t("Open") }}</span>
+                  <span v-if="report.status === ReportStatusEnum.OPEN">{{
+                    $t("Open")
+                  }}</span>
                   <span v-else-if="report.status === ReportStatusEnum.CLOSED">
                     {{ $t("Closed") }}
                   </span>
@@ -129,7 +143,12 @@
               <tr v-if="report.event && report.comments.length > 0">
                 <td>{{ $t("Event") }}</td>
                 <td>
-                  <router-link :to="{ name: RouteName.EVENT, params: { uuid: report.event.uuid } }">
+                  <router-link
+                    :to="{
+                      name: RouteName.EVENT,
+                      params: { uuid: report.event.uuid },
+                    }"
+                  >
                     {{ report.event.title }}
                   </router-link>
                   <span class="is-pulled-right">
@@ -159,7 +178,9 @@
         </div>
 
         <div class="box" v-if="report.event && report.comments.length === 0">
-          <router-link :to="{ name: RouteName.EVENT, params: { uuid: report.event.uuid } }">
+          <router-link
+            :to="{ name: RouteName.EVENT, params: { uuid: report.event.uuid } }"
+          >
             <h3 class="title">{{ report.event.title }}</h3>
             <p v-html="report.event.description" />
           </router-link>
@@ -184,10 +205,18 @@
               <div class="box" v-if="comment">
                 <article class="media">
                   <div class="media-left">
-                    <figure class="image is-48x48" v-if="comment.actor && comment.actor.avatar">
+                    <figure
+                      class="image is-48x48"
+                      v-if="comment.actor && comment.actor.avatar"
+                    >
                       <img :src="comment.actor.avatar.url" alt="Image" />
                     </figure>
-                    <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+                    <b-icon
+                      class="media-left"
+                      v-else
+                      size="is-large"
+                      icon="account-circle"
+                    />
                   </div>
                   <div class="media-content">
                     <div class="content">
@@ -214,10 +243,25 @@
         </div>
 
         <h2 class="title" v-if="report.notes.length > 0">{{ $t("Notes") }}</h2>
-        <div class="box note" v-for="note in report.notes" :id="`note-${note.id}`" :key="note.id">
+        <div
+          class="box note"
+          v-for="note in report.notes"
+          :id="`note-${note.id}`"
+          :key="note.id"
+        >
           <p>{{ note.content }}</p>
-          <router-link :to="{ name: RouteName.ADMIN_PROFILE, params: { id: note.moderator.id } }">
-            <img alt class="image" :src="note.moderator.avatar.url" v-if="note.moderator.avatar" />
+          <router-link
+            :to="{
+              name: RouteName.ADMIN_PROFILE,
+              params: { id: note.moderator.id },
+            }"
+          >
+            <img
+              alt
+              class="image"
+              :src="note.moderator.avatar.url"
+              v-if="note.moderator.avatar"
+            />
             @{{ note.moderator.preferredUsername }}
           </router-link>
           <br />
@@ -230,9 +274,15 @@
 
         <form @submit="addNote()">
           <b-field :label="$t('New note')" label-for="newNoteInput">
-            <b-input type="textarea" v-model="noteContent" id="newNoteInput"></b-input>
+            <b-input
+              type="textarea"
+              v-model="noteContent"
+              id="newNoteInput"
+            ></b-input>
           </b-field>
-          <b-button type="submit" @click="addNote">{{ $t("Add a note") }}</b-button>
+          <b-button type="submit" @click="addNote">{{
+            $t("Add a note")
+          }}</b-button>
         </form>
       </div>
     </section>
@@ -241,14 +291,15 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { CREATE_REPORT_NOTE, REPORT, UPDATE_REPORT } from "@/graphql/report";
-import { IReport, IReportNote, ReportStatusEnum } from "@/types/report.model";
+import { IReport, IReportNote } from "@/types/report.model";
 import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
-import { IPerson, ActorType, displayNameAndUsername } from "@/types/actor";
+import { IPerson, displayNameAndUsername } from "@/types/actor";
 import { DELETE_EVENT } from "@/graphql/event";
 import { uniq } from "lodash";
 import { nl2br } from "@/utils/html";
 import { DELETE_COMMENT } from "@/graphql/comment";
 import { IComment } from "@/types/comment.model";
+import { ActorType, ReportStatusEnum } from "@/types/enums";
 import RouteName from "../../router/name";
 
 @Component({
@@ -314,7 +365,9 @@ export default class Report extends Vue {
           if (cachedData == null) return;
           const { report } = cachedData;
           if (report === null) {
-            console.error("Cannot update event notes cache, because of null value.");
+            console.error(
+              "Cannot update event notes cache, because of null value."
+            );
             return;
           }
           const note = data.createReportNote;
@@ -418,7 +471,9 @@ export default class Report extends Vue {
           if (reportCachedData == null) return;
           const { report } = reportCachedData;
           if (report === null) {
-            console.error("Cannot update event notes cache, because of null value.");
+            console.error(
+              "Cannot update event notes cache, because of null value."
+            );
             return;
           }
           const updatedReport = data.updateReportStatus;

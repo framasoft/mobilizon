@@ -48,9 +48,14 @@ export default class Image extends Node {
   }
 
   commands({ type }: { type: NodeType }): any {
-    return (attrs: { [key: string]: string }) => (state: EditorState, dispatch: DispatchFn) => {
+    return (attrs: { [key: string]: string }) => (
+      state: EditorState,
+      dispatch: DispatchFn
+    ) => {
       const { selection }: { selection: TextSelection } = state;
-      const position = selection.$cursor ? selection.$cursor.pos : selection.$to.pos;
+      const position = selection.$cursor
+        ? selection.$cursor.pos
+        : selection.$to.pos;
       const node = type.create(attrs);
       const transaction = state.tr.insert(position, node);
       dispatch(transaction);
@@ -75,7 +80,8 @@ export default class Image extends Node {
               }
 
               const images = Array.from(realEvent.dataTransfer.files).filter(
-                (file: any) => /image/i.test(file.type) && !/svg/i.test(file.type)
+                (file: any) =>
+                  /image/i.test(file.type) && !/svg/i.test(file.type)
               );
 
               if (images.length === 0) {
@@ -105,7 +111,10 @@ export default class Image extends Node {
                     src: data.uploadMedia.url,
                     "data-media-id": data.uploadMedia.id,
                   });
-                  const transaction = view.state.tr.insert(coordinates.pos, node);
+                  const transaction = view.state.tr.insert(
+                    coordinates.pos,
+                    node
+                  );
                   view.dispatch(transaction);
                 });
                 return true;

@@ -11,7 +11,9 @@
         <editor v-model="discussion.text" />
       </b-field>
 
-      <button class="button is-primary" type="submit">{{ $t("Create the discussion") }}</button>
+      <button class="button is-primary" type="submit">
+        {{ $t("Create the discussion") }}
+      </button>
     </form>
   </section>
 </template>
@@ -26,7 +28,8 @@ import RouteName from "../../router/name";
 
 @Component({
   components: {
-    editor: () => import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
+    editor: () =>
+      import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
   },
   apollo: {
     currentActor: CURRENT_ACTOR_CLIENT,

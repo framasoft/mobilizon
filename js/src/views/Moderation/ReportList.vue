@@ -3,40 +3,61 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li>
-          <router-link :to="{ name: RouteName.MODERATION }">{{ $t("Moderation") }}</router-link>
+          <router-link :to="{ name: RouteName.MODERATION }">{{
+            $t("Moderation")
+          }}</router-link>
         </li>
         <li class="is-active">
-          <router-link :to="{ name: RouteName.REPORTS }">{{ $t("Reports") }}</router-link>
+          <router-link :to="{ name: RouteName.REPORTS }">{{
+            $t("Reports")
+          }}</router-link>
         </li>
       </ul>
     </nav>
     <section>
       <b-field>
-        <b-radio-button v-model="filterReports" :native-value="ReportStatusEnum.OPEN">{{
-          $t("Open")
-        }}</b-radio-button>
-        <b-radio-button v-model="filterReports" :native-value="ReportStatusEnum.RESOLVED">{{
-          $t("Resolved")
-        }}</b-radio-button>
-        <b-radio-button v-model="filterReports" :native-value="ReportStatusEnum.CLOSED">{{
-          $t("Closed")
-        }}</b-radio-button>
+        <b-radio-button
+          v-model="filterReports"
+          :native-value="ReportStatusEnum.OPEN"
+          >{{ $t("Open") }}</b-radio-button
+        >
+        <b-radio-button
+          v-model="filterReports"
+          :native-value="ReportStatusEnum.RESOLVED"
+          >{{ $t("Resolved") }}</b-radio-button
+        >
+        <b-radio-button
+          v-model="filterReports"
+          :native-value="ReportStatusEnum.CLOSED"
+          >{{ $t("Closed") }}</b-radio-button
+        >
       </b-field>
       <ul v-if="reports.length > 0">
         <li v-for="report in reports" :key="report.id">
-          <router-link :to="{ name: RouteName.REPORT, params: { reportId: report.id } }">
+          <router-link
+            :to="{ name: RouteName.REPORT, params: { reportId: report.id } }"
+          >
             <report-card :report="report" />
           </router-link>
         </li>
       </ul>
       <div v-else>
-        <b-message v-if="filterReports === ReportStatusEnum.OPEN" type="is-info">
+        <b-message
+          v-if="filterReports === ReportStatusEnum.OPEN"
+          type="is-info"
+        >
           {{ $t("No open reports yet") }}
         </b-message>
-        <b-message v-if="filterReports === ReportStatusEnum.RESOLVED" type="is-info">
+        <b-message
+          v-if="filterReports === ReportStatusEnum.RESOLVED"
+          type="is-info"
+        >
           {{ $t("No resolved reports yet") }}
         </b-message>
-        <b-message v-if="filterReports === ReportStatusEnum.CLOSED" type="is-info">
+        <b-message
+          v-if="filterReports === ReportStatusEnum.CLOSED"
+          type="is-info"
+        >
           {{ $t("No closed reports yet") }}
         </b-message>
       </div>
@@ -45,9 +66,10 @@
 </template>
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
-import { IReport, ReportStatusEnum } from "@/types/report.model";
+import { IReport } from "@/types/report.model";
 import { REPORTS } from "@/graphql/report";
 import ReportCard from "@/components/Report/ReportCard.vue";
+import { ReportStatusEnum } from "@/types/enums";
 import RouteName from "../../router/name";
 
 @Component({

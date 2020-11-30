@@ -21,16 +21,21 @@
           >
         </li>
         <li
-          v-if="resource.path !== '/'"
-          :class="{ 'is-active': index + 1 === ResourceMixin.resourcePathArray(resource).length }"
-          v-for="(pathFragment, index) in ResourceMixin.resourcePathArray(resource)"
+          :class="{
+            'is-active':
+              index + 1 === ResourceMixin.resourcePathArray(resource).length,
+          }"
+          v-for="(pathFragment, index) in filteredPath"
           :key="pathFragment"
         >
           <router-link
             :to="{
               name: RouteName.RESOURCE_FOLDER,
               params: {
-                path: ResourceMixin.resourcePathArray(resource).slice(0, index + 1),
+                path: ResourceMixin.resourcePathArray(resource).slice(
+                  0,
+                  index + 1
+                ),
                 preferredUsername: usernameWithDomain(resource.actor),
               },
             }"
@@ -45,11 +50,17 @@
               <b-icon icon="folder" />
               {{ $t("New folder") }}
             </b-dropdown-item>
-            <b-dropdown-item aria-role="listitem" @click="createLinkResourceModal = true">
+            <b-dropdown-item
+              aria-role="listitem"
+              @click="createLinkResourceModal = true"
+            >
               <b-icon icon="link" />
               {{ $t("New link") }}
             </b-dropdown-item>
-            <hr class="dropdown-divider" v-if="config.resourceProviders.length" />
+            <hr
+              class="dropdown-divider"
+              v-if="config.resourceProviders.length"
+            />
             <b-dropdown-item
               aria-role="listitem"
               v-for="resourceProvider in config.resourceProviders"
@@ -65,7 +76,9 @@
     </nav>
     <section>
       <p v-if="resource.path === '/'" class="module-description">
-        {{ $t("A place to store links to documents or resources of any type.") }}
+        {{
+          $t("A place to store links to documents or resources of any type.")
+        }}
       </p>
       <div class="list-header">
         <div class="list-header-right">
@@ -95,7 +108,10 @@
         v-if="resource.children.total > 0"
       >
         <transition-group>
-          <div v-for="localResource in resource.children.elements" :key="localResource.id">
+          <div
+            v-for="localResource in resource.children.elements"
+            :key="localResource.id"
+          >
             <div class="resource-item">
               <div
                 class="resource-checkbox"
@@ -122,7 +138,10 @@
           </div>
         </transition-group>
       </draggable>
-      <div class="content has-text-centered has-text-grey" v-if="resource.children.total === 0">
+      <div
+        class="content has-text-centered has-text-grey"
+        v-if="resource.children.total === 0"
+      >
         <p>{{ $t("No resources in this folder") }}</p>
       </div>
     </section>
@@ -134,7 +153,9 @@
               <b-input aria-required="true" v-model="updatedResource.title" />
             </b-field>
 
-            <b-button native-type="submit">{{ $t("Rename resource") }}</b-button>
+            <b-button native-type="submit">{{
+              $t("Rename resource")
+            }}</b-button>
           </form>
         </section>
       </div>
@@ -145,8 +166,8 @@
           <resource-selector
             :initialResource="updatedResource"
             :username="usernameWithDomain(resource.actor)"
-            @updateResource="moveResource"
-            @closeMoveModal="moveModal = false"
+            @update-resource="moveResource"
+            @close-move-modal="moveModal = false"
           />
         </section>
       </div>
@@ -159,7 +180,9 @@
               <b-input aria-required="true" v-model="newResource.title" />
             </b-field>
 
-            <b-button native-type="submit">{{ createResourceButtonLabel }}</b-button>
+            <b-button native-type="submit">{{
+              createResourceButtonLabel
+            }}</b-button>
           </form>
         </section>
       </div>
@@ -189,7 +212,9 @@
               <b-input type="textarea" v-model="newResource.summary" />
             </b-field>
 
-            <b-button native-type="submit">{{ $t("Create resource") }}</b-button>
+            <b-button native-type="submit">{{
+              $t("Create resource")
+            }}</b-button>
           </form>
         </section>
       </div>
@@ -205,7 +230,11 @@ import { RefetchQueryDescription } from "apollo-client/core/watchQueryOptions";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { IActor, usernameWithDomain } from "../../types/actor";
 import RouteName from "../../router/name";
-import { IResource, mapServiceTypeToIcon, IProvider } from "../../types/resource";
+import {
+  IResource,
+  mapServiceTypeToIcon,
+  IProvider,
+} from "../../types/resource";
 import {
   CREATE_RESOURCE,
   DELETE_RESOURCE,
@@ -303,6 +332,13 @@ export default class Resources extends Mixins(ResourceMixin) {
     return path[0] !== "/" ? `/${path}` : path;
   }
 
+  get filteredPath(): string[] {
+    if (this.resource && this.resource.path !== "/") {
+      return ResourceMixin.resourcePathArray(this.resource);
+    }
+    return [];
+  }
+
   async createResource(): Promise<void> {
     if (!this.resource.actor) return;
     try {
@@ -314,7 +350,9 @@ export default class Resources extends Mixins(ResourceMixin) {
           actorId: this.resource.actor.id,
           resourceUrl: this.newResource.resourceUrl,
           parentId:
-            this.resource.id && this.resource.id.startsWith("root_") ? null : this.resource.id,
+            this.resource.id && this.resource.id.startsWith("root_")
+              ? null
+              : this.resource.id,
           type: this.newResource.type,
         },
         refetchQueries: () => this.postRefreshQueries(),
@@ -373,7 +411,9 @@ export default class Resources extends Mixins(ResourceMixin) {
     const randomString = [...Array(10)]
       .map(() => Math.random().toString(36)[3])
       .join("")
-      .replace(/(.|$)/g, (c) => c[!Math.round(Math.random()) ? "toString" : "toLowerCase"]());
+      .replace(/(.|$)/g, (c) =>
+        c[!Math.round(Math.random()) ? "toString" : "toLowerCase"]()
+      );
     switch (provider.type) {
       case "ethercalc":
       case "etherpad":
@@ -436,7 +476,9 @@ export default class Resources extends Mixins(ResourceMixin) {
         },
         refetchQueries: () => this.postRefreshQueries(),
       });
-      this.validCheckedResources = this.validCheckedResources.filter((id) => id !== resourceID);
+      this.validCheckedResources = this.validCheckedResources.filter(
+        (id) => id !== resourceID
+      );
       delete this.checkedResources[resourceID];
     } catch (e) {
       console.error(e);
@@ -454,8 +496,12 @@ export default class Resources extends Mixins(ResourceMixin) {
     this.updatedResource = { ...resource };
   }
 
-  async moveResource(resource: IResource, oldParent: IResource | undefined): Promise<void> {
-    const parentPath = oldParent && oldParent.path ? oldParent.path || "/" : "/";
+  async moveResource(
+    resource: IResource,
+    oldParent: IResource | undefined
+  ): Promise<void> {
+    const parentPath =
+      oldParent && oldParent.path ? oldParent.path || "/" : "/";
     await this.updateResource(resource, parentPath);
     this.moveModal = false;
   }
@@ -465,7 +511,10 @@ export default class Resources extends Mixins(ResourceMixin) {
     this.renameModal = false;
   }
 
-  async updateResource(resource: IResource, parentPath: string | null = null): Promise<void> {
+  async updateResource(
+    resource: IResource,
+    parentPath: string | null = null
+  ): Promise<void> {
     try {
       await this.$apollo.mutate<{ updateResource: IResource }>({
         mutation: UPDATE_RESOURCE,
@@ -477,7 +526,8 @@ export default class Resources extends Mixins(ResourceMixin) {
         },
         refetchQueries: () => this.postRefreshQueries(),
         update: (store, { data }) => {
-          if (!data || data.updateResource == null || parentPath == null) return;
+          if (!data || data.updateResource == null || parentPath == null)
+            return;
           if (!this.resource.actor) return;
 
           console.log("Removing ressource from old parent");
@@ -491,7 +541,9 @@ export default class Resources extends Mixins(ResourceMixin) {
           if (oldParentCachedData == null) return;
           const { resource: oldParentCachedResource } = oldParentCachedData;
           if (oldParentCachedResource == null) {
-            console.error("Cannot update resource cache, because of null value.");
+            console.error(
+              "Cannot update resource cache, because of null value."
+            );
             return;
           }
           const updatedResource: IResource = data.updateResource;
@@ -526,7 +578,9 @@ export default class Resources extends Mixins(ResourceMixin) {
           if (newParentCachedData == null) return;
           const { resource: newParentCachedResource } = newParentCachedData;
           if (newParentCachedResource == null) {
-            console.error("Cannot update resource cache, because of null value.");
+            console.error(
+              "Cannot update resource cache, because of null value."
+            );
             return;
           }
 

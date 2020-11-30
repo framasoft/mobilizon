@@ -15,16 +15,27 @@
         </p>
       </div>
       <div class="field">
-        <b-checkbox v-model="notificationOnDay" @input="updateSetting({ notificationOnDay })">
+        <b-checkbox
+          v-model="notificationOnDay"
+          @input="updateSetting({ notificationOnDay })"
+        >
           <strong>{{ $t("Notification on the day of the event") }}</strong>
           <p>
             {{
-              $t("We'll use your timezone settings to send a recap of the morning of the event.")
+              $t(
+                "We'll use your timezone settings to send a recap of the morning of the event."
+              )
             }}
           </p>
         </b-checkbox>
       </div>
-      <p>{{ $t("To activate more notifications, head over to the notification settings.") }}</p>
+      <p>
+        {{
+          $t(
+            "To activate more notifications, head over to the notification settings."
+          )
+        }}
+      </p>
     </section>
   </div>
 </template>
@@ -50,7 +61,11 @@ export default class NotificationsOnboarding extends mixins(Onboarding) {
     try {
       this.doUpdateSetting(variables);
     } catch (e) {
-      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+      Snackbar.open({
+        message: e.message,
+        type: "is-danger",
+        position: "is-bottom",
+      });
     }
   }
 }

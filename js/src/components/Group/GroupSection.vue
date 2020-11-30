@@ -26,7 +26,8 @@ export default class GroupSection extends Vue {
 
   @Prop({ required: true, type: String }) icon!: string;
 
-  @Prop({ required: false, type: Boolean, default: true }) privateSection!: boolean;
+  @Prop({ required: false, type: Boolean, default: true })
+  privateSection!: boolean;
 
   @Prop({ required: true, type: Object }) route!: Route;
 }
@@ -76,7 +77,8 @@ div.group-section-title {
     ::v-deep span {
       display: inline;
       padding: 3px 8px;
-      font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial, serif;
+      font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial,
+        serif;
       font-weight: 500;
       font-size: 30px;
       flex: 1;

@@ -24,7 +24,11 @@
     </nav>
     <section>
       <h1 class="title" v-if="group">
-        {{ $t("{group}'s events", { group: group.name || group.preferredUsername }) }}
+        {{
+          $t("{group}'s events", {
+            group: group.name || group.preferredUsername,
+          })
+        }}
       </h1>
       <p v-if="isCurrentActorMember">
         {{
@@ -56,7 +60,10 @@
           />
         </transition-group>
         <b-message
-          v-if="group.organizedEvents.elements.length === 0 && $apollo.loading === false"
+          v-if="
+            group.organizedEvents.elements.length === 0 &&
+            $apollo.loading === false
+          "
           type="is-danger"
         >
           {{ $t("No events found") }}
@@ -74,7 +81,8 @@ import Subtitle from "@/components/Utils/Subtitle.vue";
 import EventListViewCard from "@/components/Event/EventListViewCard.vue";
 import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import GroupMixin from "@/mixins/group";
-import { IGroup, IMember, IPerson, usernameWithDomain } from "../../types/actor";
+import { IMember } from "@/types/actor/member.model";
+import { IGroup, IPerson, usernameWithDomain } from "../../types/actor";
 
 @Component({
   apollo: {
@@ -123,7 +131,9 @@ export default class GroupEvents extends mixins(GroupMixin) {
 
   get isCurrentActorMember(): boolean {
     if (!this.group || !this.memberships) return false;
-    return this.memberships.map(({ parent: { id } }) => id).includes(this.group.id);
+    return this.memberships
+      .map(({ parent: { id } }) => id)
+      .includes(this.group.id);
   }
 }
 </script>

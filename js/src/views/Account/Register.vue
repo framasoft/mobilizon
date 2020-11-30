@@ -6,7 +6,11 @@
           {{ $t("Congratulations, your account is now created!") }}
         </h1>
         <h1 class="title" v-else>
-          {{ $t("Register an account on {instanceName}!", { instanceName: config.name }) }}
+          {{
+            $t("Register an account on {instanceName}!", {
+              instanceName: config.name,
+            })
+          }}
         </h1>
         <p class="content" v-if="userAlreadyActivated">
           {{ $t("Now, create your first profile:") }}
@@ -28,7 +32,9 @@
           >
             <b-field
               :message="
-                $t('Only alphanumeric lowercased characters and underscores are supported.')
+                $t(
+                  'Only alphanumeric lowercased characters and underscores are supported.'
+                )
               "
             >
               <b-input
@@ -38,7 +44,9 @@
                 v-model="identity.preferredUsername"
                 :validation-message="
                   identity.preferredUsername
-                    ? $t('Only alphanumeric lowercased characters and underscores are supported.')
+                    ? $t(
+                        'Only alphanumeric lowercased characters and underscores are supported.'
+                      )
                     : null
                 "
               />
@@ -48,11 +56,20 @@
             </b-field>
           </b-field>
           <p class="description">
-            {{ $t("This identifier is unique to your profile. It allows others to find you.") }}
+            {{
+              $t(
+                "This identifier is unique to your profile. It allows others to find you."
+              )
+            }}
           </p>
 
           <b-field :label="$t('Short bio')">
-            <b-input type="textarea" maxlength="100" rows="2" v-model="identity.summary" />
+            <b-input
+              type="textarea"
+              maxlength="100"
+              rows="2"
+              v-model="identity.summary"
+            />
           </b-field>
 
           <p class="content">
@@ -165,7 +182,10 @@ export default class Register extends mixins(identityEditionMixin) {
         window.localStorage.setItem("new-registered-user", "yes");
 
         if (this.userAlreadyActivated) {
-          await changeIdentity(this.$apollo.provider.defaultClient, data.registerPerson);
+          await changeIdentity(
+            this.$apollo.provider.defaultClient,
+            data.registerPerson
+          );
 
           await this.$router.push({ name: RouteName.HOME });
         }

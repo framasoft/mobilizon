@@ -11,10 +11,10 @@
 </template>
 <script lang="ts">
 import { ACCEPT_INVITATION, REJECT_INVITATION } from "@/graphql/member";
-import { IMember } from "@/types/actor";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import InvitationCard from "@/components/Group/InvitationCard.vue";
 import { LOGGED_USER_MEMBERSHIPS } from "@/graphql/actor";
+import { IMember } from "@/types/actor/member.model";
 
 @Component({
   components: {
@@ -26,13 +26,15 @@ export default class Invitations extends Vue {
 
   async acceptInvitation(id: string): Promise<void> {
     try {
-      const { data } = await this.$apollo.mutate<{ acceptInvitation: IMember }>({
-        mutation: ACCEPT_INVITATION,
-        variables: {
-          id,
-        },
-        refetchQueries: [{ query: LOGGED_USER_MEMBERSHIPS }],
-      });
+      const { data } = await this.$apollo.mutate<{ acceptInvitation: IMember }>(
+        {
+          mutation: ACCEPT_INVITATION,
+          variables: {
+            id,
+          },
+          refetchQueries: [{ query: LOGGED_USER_MEMBERSHIPS }],
+        }
+      );
       if (data) {
         this.$emit("accept-invitation", data.acceptInvitation);
       }
@@ -46,13 +48,15 @@ export default class Invitations extends Vue {
 
   async rejectInvitation(id: string): Promise<void> {
     try {
-      const { data } = await this.$apollo.mutate<{ rejectInvitation: IMember }>({
-        mutation: REJECT_INVITATION,
-        variables: {
-          id,
-        },
-        refetchQueries: [{ query: LOGGED_USER_MEMBERSHIPS }],
-      });
+      const { data } = await this.$apollo.mutate<{ rejectInvitation: IMember }>(
+        {
+          mutation: REJECT_INVITATION,
+          variables: {
+            id,
+          },
+          refetchQueries: [{ query: LOGGED_USER_MEMBERSHIPS }],
+        }
+      );
       if (data) {
         this.$emit("reject-invitation", data.rejectInvitation);
       }

@@ -1,8 +1,9 @@
 import { Component, Vue, Ref } from "vue-property-decorator";
-import { ActorType, IActor } from "@/types/actor";
+import { IActor } from "@/types/actor";
 import { IFollower } from "@/types/actor/follower.model";
 import { RELAY_FOLLOWERS, RELAY_FOLLOWINGS } from "@/graphql/admin";
 import { Paginate } from "@/types/paginate";
+import { ActorType } from "@/types/enums";
 
 @Component({
   apollo: {
@@ -62,7 +63,10 @@ export default class RelayMixin extends Vue {
             relayFollowings: {
               __typename: previousResult.relayFollowings.__typename,
               total: previousResult.relayFollowings.total,
-              elements: [...previousResult.relayFollowings.elements, ...newFollowings],
+              elements: [
+                ...previousResult.relayFollowings.elements,
+                ...newFollowings,
+              ],
             },
           };
         },
@@ -87,7 +91,10 @@ export default class RelayMixin extends Vue {
             relayFollowers: {
               __typename: previousResult.relayFollowers.__typename,
               total: previousResult.relayFollowers.total,
-              elements: [...previousResult.relayFollowers.elements, ...newFollowers],
+              elements: [
+                ...previousResult.relayFollowers.elements,
+                ...newFollowers,
+              ],
             },
           };
         },
@@ -100,7 +107,8 @@ export default class RelayMixin extends Vue {
   static isInstance(actor: IActor): boolean {
     return (
       actor.type === ActorType.APPLICATION &&
-      (actor.preferredUsername === "relay" || actor.preferredUsername === actor.domain)
+      (actor.preferredUsername === "relay" ||
+        actor.preferredUsername === actor.domain)
     );
   }
 }

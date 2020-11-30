@@ -15,9 +15,12 @@
           type="is-danger"
           :aria-close-label="$t('Close')"
           >{{
-            $t("Error while login with {provider}. Retry or login another way.", {
-              provider: $route.query.provider,
-            })
+            $t(
+              "Error while login with {provider}. Retry or login another way.",
+              {
+                provider: $route.query.provider,
+              }
+            )
           }}</b-message
         >
         <b-message
@@ -25,12 +28,20 @@
           type="is-danger"
           :aria-close-label="$t('Close')"
           >{{
-            $t("Error while login with {provider}. This login provider doesn't exist.", {
-              provider: $route.query.provider,
-            })
+            $t(
+              "Error while login with {provider}. This login provider doesn't exist.",
+              {
+                provider: $route.query.provider,
+              }
+            )
           }}</b-message
         >
-        <b-message :title="$t('Error')" type="is-danger" v-for="error in errors" :key="error">
+        <b-message
+          :title="$t('Error')"
+          type="is-danger"
+          v-for="error in errors"
+          :key="error"
+        >
           {{ error }}
         </b-message>
         <form @submit="loginAction">
@@ -56,24 +67,35 @@
           </b-field>
 
           <p class="control has-text-centered" v-if="!submitted">
-            <button class="button is-primary is-large">{{ $t("Login") }}</button>
+            <button class="button is-primary is-large">
+              {{ $t("Login") }}
+            </button>
           </p>
           <b-loading :is-full-page="false" v-model="submitted" />
 
-          <div class="control" v-if="config && config.auth.oauthProviders.length > 0">
+          <div
+            class="control"
+            v-if="config && config.auth.oauthProviders.length > 0"
+          >
             <auth-providers :oauthProviders="config.auth.oauthProviders" />
           </div>
 
           <p class="control">
             <router-link
               class="button is-text"
-              :to="{ name: RouteName.SEND_PASSWORD_RESET, params: { email: credentials.email } }"
+              :to="{
+                name: RouteName.SEND_PASSWORD_RESET,
+                params: { email: credentials.email },
+              }"
               >{{ $t("Forgot your password ?") }}</router-link
             >
           </p>
           <router-link
             class="button is-text"
-            :to="{ name: RouteName.RESEND_CONFIRMATION, params: { email: credentials.email } }"
+            :to="{
+              name: RouteName.RESEND_CONFIRMATION,
+              params: { email: credentials.email },
+            }"
             >{{ $t("Didn't receive the instructions?") }}</router-link
           >
           <p class="control" v-if="config && config.registrationsOpen">
@@ -98,14 +120,24 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { Route } from "vue-router";
+import { ICurrentUser } from "@/types/current-user.model";
+import { LoginError, LoginErrorCode } from "@/types/enums";
 import { LOGIN } from "../../graphql/auth";
-import { validateEmailField, validateRequiredField } from "../../utils/validators";
-import { initializeCurrentActor, NoIdentitiesException, saveUserData } from "../../utils/auth";
+import {
+  validateEmailField,
+  validateRequiredField,
+} from "../../utils/validators";
+import {
+  initializeCurrentActor,
+  NoIdentitiesException,
+  saveUserData,
+} from "../../utils/auth";
 import { ILogin } from "../../types/login.model";
-import { CURRENT_USER_CLIENT, UPDATE_CURRENT_USER_CLIENT } from "../../graphql/user";
+import {
+  CURRENT_USER_CLIENT,
+  UPDATE_CURRENT_USER_CLIENT,
+} from "../../graphql/user";
 import RouteName from "../../router/name";
-import { LoginErrorCode, LoginError } from "../../types/login-error-code.model";
-import { ICurrentUser } from "../../types/current-user.model";
 import { CONFIG } from "../../graphql/config";
 import { IConfig } from "../../types/config.model";
 import AuthProviders from "../../components/User/AuthProviders.vue";

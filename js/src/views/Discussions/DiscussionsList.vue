@@ -3,7 +3,9 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         <li>
-          <router-link :to="{ name: RouteName.MY_GROUPS }">{{ $t("My groups") }}</router-link>
+          <router-link :to="{ name: RouteName.MY_GROUPS }">{{
+            $t("My groups")
+          }}</router-link>
         </li>
         <li>
           <router-link
@@ -27,7 +29,11 @@
     </nav>
     <section>
       <p>
-        {{ $t("Keep the entire conversation about a specific topic together on a single page.") }}
+        {{
+          $t(
+            "Keep the entire conversation about a specific topic together on a single page."
+          )
+        }}
       </p>
       <b-button
         tag="router-link"

@@ -1,19 +1,34 @@
 <template>
   <li :class="{ reply: comment.inReplyToComment }">
-    <article class="media" :class="{ selected: commentSelected }" :id="commentId">
+    <article
+      class="media"
+      :class="{ selected: commentSelected }"
+      :id="commentId"
+    >
       <popover-actor-card
         class="media-left"
         :actor="comment.actor"
         :inline="true"
         v-if="comment.actor"
       >
-        <figure class="image is-48x48" v-if="!comment.deletedAt && comment.actor.avatar">
+        <figure
+          class="image is-48x48"
+          v-if="!comment.deletedAt && comment.actor.avatar"
+        >
           <img class="is-rounded" :src="comment.actor.avatar.url" alt="" />
         </figure>
-        <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+        <b-icon
+          class="media-left"
+          v-else
+          size="is-large"
+          icon="account-circle"
+        />
       </popover-actor-card>
       <div v-else class="media-left">
-        <figure class="image is-48x48" v-if="!comment.deletedAt && comment.actor.avatar">
+        <figure
+          class="image is-48x48"
+          v-if="!comment.deletedAt && comment.actor.avatar"
+        >
           <img class="is-rounded" :src="comment.actor.avatar.url" alt="" />
         </figure>
         <b-icon v-else size="is-large" icon="account-circle" />
@@ -21,7 +36,9 @@
       <div class="media-content">
         <div class="content">
           <span class="first-line" v-if="!comment.deletedAt">
-            <strong :class="{ organizer: commentFromOrganizer }">{{ comment.actor.name }}</strong>
+            <strong :class="{ organizer: commentFromOrganizer }">{{
+              comment.actor.name
+            }}</strong>
             <small>@{{ usernameWithDomain(comment.actor) }}</small>
             <a class="comment-link has-text-grey" :href="commentURL">
               <small>{{
@@ -54,10 +71,15 @@
           <div class="load-replies" v-if="comment.totalReplies">
             <p v-if="!showReplies" @click="fetchReplies">
               <b-icon icon="chevron-down" /><span>{{
-                $tc("View a reply", comment.totalReplies, { totalReplies: comment.totalReplies })
+                $tc("View a reply", comment.totalReplies, {
+                  totalReplies: comment.totalReplies,
+                })
               }}</span>
             </p>
-            <p v-else-if="comment.totalReplies && showReplies" @click="showReplies = false">
+            <p
+              v-else-if="comment.totalReplies && showReplies"
+              @click="showReplies = false"
+            >
               <b-icon icon="chevron-up" />
               <span>{{ $t("Hide replies") }}</span>
             </p>
@@ -86,14 +108,24 @@
         </nav>
       </div>
     </article>
-    <form class="reply" @submit.prevent="replyToComment" v-if="currentActor.id" v-show="replyTo">
+    <form
+      class="reply"
+      @submit.prevent="replyToComment"
+      v-if="currentActor.id"
+      v-show="replyTo"
+    >
       <article class="media reply">
         <figure class="media-left" v-if="currentActor.avatar">
           <p class="image is-48x48">
             <img :src="currentActor.avatar.url" alt="" />
           </p>
         </figure>
-        <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+        <b-icon
+          class="media-left"
+          v-else
+          size="is-large"
+          icon="account-circle"
+        />
         <div class="media-content">
           <div class="content">
             <span class="first-line">
@@ -102,7 +134,12 @@
             </span>
             <br />
             <span class="editor-line">
-              <editor class="editor" ref="commentEditor" v-model="newComment.text" mode="comment" />
+              <editor
+                class="editor"
+                ref="commentEditor"
+                v-model="newComment.text"
+                mode="comment"
+              />
               <b-button
                 :disabled="newComment.text.trim().length === 0"
                 native-type="submit"
@@ -118,7 +155,12 @@
       <div class="left">
         <div class="vertical-border" @click="showReplies = false" />
       </div>
-      <transition-group name="comment-replies" v-if="showReplies" class="comment-replies" tag="ul">
+      <transition-group
+        name="comment-replies"
+        v-if="showReplies"
+        class="comment-replies"
+        tag="ul"
+      >
         <comment
           class="reply"
           v-for="reply in comment.replies"
@@ -137,7 +179,7 @@ import { Component, Prop, Vue, Ref } from "vue-property-decorator";
 import EditorComponent from "@/components/Editor.vue";
 import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { formatDistanceToNow } from "date-fns";
-import { CommentModeration } from "../../types/event-options.model";
+import { CommentModeration } from "@/types/enums";
 import { CommentModel, IComment } from "../../types/comment.model";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { IPerson, usernameWithDomain } from "../../types/actor";
@@ -155,7 +197,8 @@ import PopoverActorCard from "../Account/PopoverActorCard.vue";
     },
   },
   components: {
-    editor: () => import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
+    editor: () =>
+      import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
     comment: () => import(/* webpackChunkName: "comment" */ "./Comment.vue"),
     PopoverActorCard,
   },
@@ -167,7 +210,9 @@ export default class Comment extends Vue {
 
   // Hack because Vue only exports it's own interface.
   // See https://github.com/kaorun343/vue-property-decorator/issues/257
-  @Ref() readonly commentEditor!: EditorComponent & { replyToComment: (comment: IComment) => void };
+  @Ref() readonly commentEditor!: EditorComponent & {
+    replyToComment: (comment: IComment) => void;
+  };
 
   currentActor!: IPerson;
 
@@ -231,7 +276,9 @@ export default class Comment extends Vue {
     if (!eventData) return;
     const { event } = eventData;
     const { comments } = event;
-    const parentCommentIndex = comments.findIndex((oldComment) => oldComment.id === parentId);
+    const parentCommentIndex = comments.findIndex(
+      (oldComment) => oldComment.id === parentId
+    );
     const parentComment = comments[parentCommentIndex];
     if (!parentComment) return;
     parentComment.replies = thread;
@@ -303,7 +350,11 @@ export default class Comment extends Vue {
         duration: 5000,
       });
     } catch (e) {
-      Snackbar.open({ message: e.message, type: "is-danger", position: "is-bottom" });
+      Snackbar.open({
+        message: e.message,
+        type: "is-danger",
+        position: "is-bottom",
+      });
     }
   }
 }

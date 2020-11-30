@@ -4,7 +4,10 @@
       <p class="modal-card-title">{{ title }}</p>
     </header>
 
-    <section class="modal-card-body is-flex" :class="{ 'is-titleless': !title }">
+    <section
+      class="modal-card-body is-flex"
+      :class="{ 'is-titleless': !title }"
+    >
       <div class="media">
         <div class="media-left">
           <b-icon icon="alert" type="is-warning" size="is-large" />
@@ -16,7 +19,12 @@
                 <figure class="image is-48x48" v-if="comment.actor.avatar">
                   <img :src="comment.actor.avatar.url" alt="Image" />
                 </figure>
-                <b-icon class="media-left" v-else size="is-large" icon="account-circle" />
+                <b-icon
+                  class="media-left"
+                  v-else
+                  size="is-large"
+                  icon="account-circle"
+                />
               </div>
               <div class="media-content">
                 <div class="content">
@@ -82,7 +90,10 @@ import { IComment } from "../../types/comment.model";
   },
 })
 export default class ReportModal extends Vue {
-  @Prop({ type: Function }) onConfirm!: Function;
+  @Prop({ type: Function }) onConfirm!: (
+    content: string,
+    forward: boolean
+  ) => void;
 
   @Prop({ type: String }) title!: string;
 

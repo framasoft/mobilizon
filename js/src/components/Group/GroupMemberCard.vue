@@ -13,7 +13,9 @@
             <router-link
               :to="{
                 name: RouteName.GROUP,
-                params: { preferredUsername: usernameWithDomain(member.parent) },
+                params: {
+                  preferredUsername: usernameWithDomain(member.parent),
+                },
               }"
             >
               <h3>{{ member.parent.name }}</h3>
@@ -23,12 +25,16 @@
                 }}</span>
                 <span v-else>{{ `@${member.parent.preferredUsername}` }}</span>
                 <b-taglist>
-                  <b-tag type="is-info" v-if="member.role === MemberRole.ADMINISTRATOR">{{
-                    $t("Administrator")
-                  }}</b-tag>
-                  <b-tag type="is-info" v-else-if="member.role === MemberRole.MODERATOR">{{
-                    $t("Moderator")
-                  }}</b-tag>
+                  <b-tag
+                    type="is-info"
+                    v-if="member.role === MemberRole.ADMINISTRATOR"
+                    >{{ $t("Administrator") }}</b-tag
+                  >
+                  <b-tag
+                    type="is-info"
+                    v-else-if="member.role === MemberRole.MODERATOR"
+                    >{{ $t("Moderator") }}</b-tag
+                  >
                 </b-taglist>
               </p>
             </router-link>
@@ -54,7 +60,9 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { IMember, MemberRole, usernameWithDomain } from "@/types/actor";
+import { usernameWithDomain } from "@/types/actor";
+import { IMember } from "@/types/actor/member.model";
+import { MemberRole } from "@/types/enums";
 import RouteName from "../../router/name";
 
 @Component

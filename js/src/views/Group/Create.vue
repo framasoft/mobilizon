@@ -15,7 +15,11 @@
         <label class="label">{{ $t("Federated Group Name") }}</label>
         <div class="field-body">
           <b-field
-            :message="$t('Only alphanumeric lowercased characters and underscores are supported.')"
+            :message="
+              $t(
+                'Only alphanumeric lowercased characters and underscores are supported.'
+              )
+            "
           >
             <b-input
               ref="preferredUsernameInput"
@@ -27,7 +31,9 @@
               :useHtml5Validation="true"
               :validation-message="
                 group.preferredUsername
-                  ? $t('Only alphanumeric lowercased characters and underscores are supported.')
+                  ? $t(
+                      'Only alphanumeric lowercased characters and underscores are supported.'
+                    )
                   : null
               "
             />
@@ -60,21 +66,24 @@
         <picture-upload :textFallback="$t('Banner')" v-model="bannerFile" />
       </div>
 
-      <button class="button is-primary" native-type="submit">{{ $t("Create my group") }}</button>
+      <button class="button is-primary" native-type="submit">
+        {{ $t("Create my group") }}
+      </button>
     </form>
   </section>
 </template>
 
 <script lang="ts">
 import { Component, Watch } from "vue-property-decorator";
-import { Group, IPerson, usernameWithDomain, MemberRole } from "@/types/actor";
+import { Group, IPerson, usernameWithDomain } from "@/types/actor";
 import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import { CREATE_GROUP } from "@/graphql/group";
-import PictureUpload from "@/components/PictureUpload.vue";
 import { mixins } from "vue-class-component";
 import IdentityEditionMixin from "@/mixins/identityEdition";
+import { MemberRole } from "@/types/enums";
 import RouteName from "../../router/name";
 import { convertToUsername } from "../../utils/username";
+import PictureUpload from "../../components/PictureUpload.vue";
 
 @Component({
   components: {
@@ -186,7 +195,9 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
   }
 
   private handleError(err: any) {
-    this.errors.push(...err.graphQLErrors.map(({ message }: { message: string }) => message));
+    this.errors.push(
+      ...err.graphQLErrors.map(({ message }: { message: string }) => message)
+    );
   }
 }
 </script>

@@ -42,8 +42,20 @@ export const SEARCH_EVENTS = gql`
 `;
 
 export const SEARCH_GROUPS = gql`
-  query SearchGroups($term: String, $location: String, $radius: Float, $page: Int, $limit: Int) {
-    searchGroups(term: $term, location: $location, radius: $radius, page: $page, limit: $limit) {
+  query SearchGroups(
+    $term: String
+    $location: String
+    $radius: Float
+    $page: Int
+    $limit: Int
+  ) {
+    searchGroups(
+      term: $term
+      location: $location
+      radius: $radius
+      page: $page
+      limit: $limit
+    ) {
       total
       elements {
         id

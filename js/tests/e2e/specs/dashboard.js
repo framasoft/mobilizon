@@ -6,11 +6,16 @@ describe("Homepage", () => {
     cy.visit("/", { onBeforeLoad });
     cy.get("#mobilizon").find("footer").contains("The Mobilizon Contributors");
 
-    cy.contains("About").should("have.attr", "href").and("eq", "https://joinmobilizon.org");
+    cy.contains("About")
+      .should("have.attr", "href")
+      .and("eq", "https://joinmobilizon.org");
 
     cy.contains("License")
       .should("have.attr", "href")
-      .and("eq", "https://framagit.org/framasoft/mobilizon/blob/master/LICENSE");
+      .and(
+        "eq",
+        "https://framagit.org/framasoft/mobilizon/blob/master/LICENSE"
+      );
   });
 
   it("Tries to register from the hero section", () => {
