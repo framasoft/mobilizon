@@ -1,26 +1,30 @@
 import Vue from "vue";
 import VueI18n from "vue-i18n";
 import { DateFnsPlugin } from "@/plugins/dateFns";
-import { USER_LOCALE } from "@/constants";
 import en from "../i18n/en_US.json";
 import langs from "../i18n/langs.json";
+import { getLocaleData } from "./auth";
 
 const DEFAULT_LOCALE = "en_US";
 
 let language =
-  localStorage.getItem(USER_LOCALE) ||
-  (document.documentElement.getAttribute("lang") as string);
+  getLocaleData() || (document.documentElement.getAttribute("lang") as string);
+console.log("lang1", language);
+
 language =
   language ||
   ((window.navigator as any).userLanguage || window.navigator.language).replace(
     /-/,
     "_"
   );
+console.log("language2", language);
+
 export const locale =
   language && Object.prototype.hasOwnProperty.call(langs, language)
     ? language
     : language.split("-")[0];
 
+console.log("lang3", locale);
 Vue.use(VueI18n);
 
 export const i18n = new VueI18n({
@@ -29,6 +33,7 @@ export const i18n = new VueI18n({
   // @ts-ignore
   messages: en, // set locale messages
   fallbackLocale: DEFAULT_LOCALE,
+  formatFallbackMessages: true,
 });
 
 const loadedLanguages = [DEFAULT_LOCALE];

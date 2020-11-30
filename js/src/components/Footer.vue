@@ -3,6 +3,17 @@
     <img :src="`/img/pics/footer_${random}.jpg`" alt="" />
     <ul>
       <li>
+        <b-select
+          v-if="$i18n"
+          v-model="locale"
+          :placeholder="$t('Select a language')"
+        >
+          <option v-for="(language, lang) in langs" :value="lang" :key="lang">
+            {{ language }}
+          </option>
+        </b-select>
+      </li>
+      <li>
         <router-link :to="{ name: RouteName.ABOUT }">{{
           $t("About")
         }}</router-link>
@@ -38,16 +49,39 @@
   </footer>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
+import { saveLocaleData } from "@/utils/auth";
+import { loadLanguageAsync } from "@/utils/i18n";
 import RouteName from "../router/name";
+import langs from "../i18n/langs.json";
 
 @Component
 export default class Footer extends Vue {
   RouteName = RouteName;
 
+  locale: string | null = this.$i18n.locale;
+
+  langs: Record<string, string> = langs;
+
   // eslint-disable-next-line class-methods-use-this
   get random(): number {
     return Math.floor(Math.random() * 4) + 1;
+  }
+
+  @Watch("locale")
+  // eslint-disable-next-line class-methods-use-this
+  async updateLocale(locale: string): Promise<void> {
+    if (locale) {
+      await loadLanguageAsync(locale);
+      saveLocaleData(locale);
+    }
+  }
+
+  @Watch("$i18n.locale", { deep: true })
+  updateLocaleFromI18n(locale: string): void {
+    if (locale) {
+      this.locale = locale;
+    }
   }
 }
 </script>
@@ -91,6 +125,11 @@ footer.footer {
     color: $white;
     text-decoration: underline;
     text-decoration-color: $secondary;
+  }
+
+  ::v-deep span.select select {
+    background: $background-color;
+    color: $white;
   }
 }
 </style>

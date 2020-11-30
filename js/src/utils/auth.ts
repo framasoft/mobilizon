@@ -32,6 +32,10 @@ export function saveLocaleData(locale: string): void {
   localStorage.setItem(USER_LOCALE, locale);
 }
 
+export function getLocaleData(): string | null {
+  return localStorage.getItem(USER_LOCALE);
+}
+
 export function saveActorData(obj: IPerson): void {
   localStorage.setItem(AUTH_USER_ACTOR_ID, `${obj.id}`);
 }
