@@ -674,8 +674,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:ok, %Actor{} = target} <-
            target |> Utils.get_url() |> ActivityPub.get_or_fetch_actor_by_url(),
          {:ok, activity, %Member{} = member} <-
-           ActivityPub.invite(object, actor, target, false, %{url: id}),
-         :ok <- Group.send_invite_to_user(member) do
+           ActivityPub.invite(object, actor, target, false, %{url: id}) do
       {:ok, activity, member}
     end
   end
