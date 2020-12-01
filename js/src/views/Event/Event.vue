@@ -949,6 +949,7 @@ export default class Event extends EventMixin {
         mutation: JOIN_EVENT,
         variables: {
           eventId: this.event.id,
+          actorId: identity.id,
           message,
         },
         update: (store, { data }) => {
