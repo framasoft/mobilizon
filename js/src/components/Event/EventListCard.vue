@@ -1,7 +1,13 @@
 <template>
   <article class="box">
-    <div class="columns">
-      <div class="content column">
+    <div class="identity-header">
+      <figure class="image is-24x24" v-if="participation.actor.avatar">
+        <img class="is-rounded" :src="participation.actor.avatar.url" alt="" />
+      </figure>
+      {{ displayNameAndUsername(participation.actor) }}
+    </div>
+    <div class="list-card">
+      <div class="content">
         <div class="title-wrapper">
           <div class="date-component">
             <date-calendar-icon :date="participation.event.beginsOn" />
@@ -45,23 +51,10 @@
             <i18n tag="span" path="Organized by {name}">
               <popover-actor-card
                 slot="name"
-                :actor="participation.event.organizerActor"
+                :actor="organizerActor"
                 :inline="true"
               >
-                {{ participation.event.organizerActor.displayName() }}
-              </popover-actor-card>
-            </i18n>
-            <i18n
-              v-if="participation.role === ParticipantRole.PARTICIPANT"
-              path="Going as {name}"
-              tag="span"
-            >
-              <popover-actor-card
-                slot="name"
-                :actor="participation.actor"
-                :inline="true"
-              >
-                {{ participation.actor.displayName() }}
+                {{ organizerActor.displayName() }}
               </popover-actor-card>
             </i18n>
           </span>
@@ -128,88 +121,90 @@
           </span>
         </div>
       </div>
-      <div class="actions column is-narrow">
-        <ul>
-          <li
+      <div class="actions">
+        <b-dropdown aria-role="list" position="is-bottom-left">
+          <b-button slot="trigger" role="button" icon-right="dots-horizontal">
+            {{ $t("Actions") }}
+          </b-button>
+
+          <b-dropdown-item
             v-if="
               ![
                 ParticipantRole.PARTICIPANT,
                 ParticipantRole.NOT_APPROVED,
               ].includes(participation.role)
+            "
+            aria-role="listitem"
+            @click="
+              gotToWithCheck(participation, {
+                name: RouteName.EDIT_EVENT,
+                params: { eventId: participation.event.uuid },
+              })
             "
           >
-            <b-button
-              type="is-text"
-              @click="
-                gotToWithCheck(participation, {
-                  name: RouteName.EDIT_EVENT,
-                  params: { eventId: participation.event.uuid },
-                })
-              "
-              icon-left="pencil"
-              >{{ $t("Edit") }}</b-button
-            >
-          </li>
-          <li v-if="participation.role === ParticipantRole.CREATOR">
-            <b-button
-              type="is-text"
-              @click="
-                gotToWithCheck(participation, {
-                  name: RouteName.DUPLICATE_EVENT,
-                  params: { eventId: participation.event.uuid },
-                })
-              "
-              icon-left="content-duplicate"
-            >
-              {{ $t("Duplicate") }}
-            </b-button>
-          </li>
-          <li
+            <b-icon icon="pencil" />
+            {{ $t("Edit") }}
+          </b-dropdown-item>
+
+          <b-dropdown-item
+            v-if="participation.role === ParticipantRole.CREATOR"
+            aria-role="listitem"
+            @click="
+              gotToWithCheck(participation, {
+                name: RouteName.DUPLICATE_EVENT,
+                params: { eventId: participation.event.uuid },
+              })
+            "
+          >
+            <b-icon icon="content-duplicate" />
+            {{ $t("Duplicate") }}
+          </b-dropdown-item>
+
+          <b-dropdown-item
             v-if="
               ![
                 ParticipantRole.PARTICIPANT,
                 ParticipantRole.NOT_APPROVED,
               ].includes(participation.role)
             "
+            aria-role="listitem"
             @click="openDeleteEventModalWrapper"
           >
-            <b-button type="is-text" icon-left="delete">{{
-              $t("Delete")
-            }}</b-button>
-          </li>
-          <li
+            <b-icon icon="delete" />
+            {{ $t("Delete") }}
+          </b-dropdown-item>
+
+          <b-dropdown-item
             v-if="
               ![
                 ParticipantRole.PARTICIPANT,
                 ParticipantRole.NOT_APPROVED,
               ].includes(participation.role)
             "
+            aria-role="listitem"
+            @click="
+              gotToWithCheck(participation, {
+                name: RouteName.PARTICIPATIONS,
+                params: { eventId: participation.event.uuid },
+              })
+            "
           >
-            <b-button
-              type="is-text"
-              @click="
-                gotToWithCheck(participation, {
-                  name: RouteName.PARTICIPATIONS,
-                  params: { eventId: participation.event.uuid },
-                })
-              "
-              icon-left="account-multiple-plus"
-              >{{ $t("Manage participations") }}</b-button
-            >
-          </li>
-          <li>
-            <b-button
-              tag="router-link"
-              icon-left="view-compact"
-              type="is-text"
+            <b-icon icon="account-multiple-plus" />
+            {{ $t("Manage participations") }}
+          </b-dropdown-item>
+
+          <b-dropdown-item aria-role="listitem" has-link>
+            <router-link
               :to="{
                 name: RouteName.EVENT,
                 params: { uuid: participation.event.uuid },
               }"
-              >{{ $t("View event page") }}</b-button
             >
-          </li>
-        </ul>
+              <b-icon icon="view-compact" />
+              {{ $t("View event page") }}
+            </router-link>
+          </b-dropdown-item>
+        </b-dropdown>
       </div>
     </div>
   </article>
@@ -223,7 +218,7 @@ import { RawLocation, Route } from "vue-router";
 import { EventVisibility, ParticipantRole } from "@/types/enums";
 import { IParticipant } from "../../types/participant.model";
 import { IEventCardOptions } from "../../types/event.model";
-import { IPerson } from "../../types/actor";
+import { displayNameAndUsername, IActor, IPerson } from "../../types/actor";
 import ActorMixin from "../../mixins/actor";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import EventMixin from "../../mixins/event";
@@ -268,6 +263,8 @@ export default class EventListCard extends mixins(ActorMixin, EventMixin) {
 
   EventVisibility = EventVisibility;
 
+  displayNameAndUsername = displayNameAndUsername;
+
   RouteName = RouteName;
 
   get mergedOptions(): IEventCardOptions {
@@ -307,6 +304,16 @@ export default class EventListCard extends mixins(ActorMixin, EventMixin) {
     }
     return this.$router.push(route);
   }
+
+  get organizerActor(): IActor | undefined {
+    if (
+      this.participation.event.attributedTo &&
+      this.participation.event.attributedTo.id
+    ) {
+      return this.participation.event.attributedTo;
+    }
+    return this.participation.event.organizerActor;
+  }
 }
 </script>
 
@@ -333,74 +340,71 @@ article.box {
       line-height: 1.75em;
     }
   }
-  div.content {
+
+  .list-card {
+    display: flex;
+    align-items: center;
+
+    .actions {
+      padding-right: 7.5px;
+      cursor: pointer;
+    }
+
+    div.content {
+      flex: 1;
+      padding: 5px;
+
+      .participation-actor span,
+      .participant-stats span {
+        padding: 0 5px;
+
+        button {
+          height: auto;
+          padding-top: 0;
+        }
+      }
+
+      div.title-wrapper {
+        display: flex;
+        align-items: center;
+
+        div.date-component {
+          flex: 0;
+          margin-right: 16px;
+        }
+
+        a {
+          text-decoration: none;
+        }
+
+        .title {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          font-weight: 400;
+          line-height: 1em;
+          font-size: 1.6em;
+          padding-bottom: 5px;
+          margin: auto 0;
+        }
+      }
+    }
+  }
+
+  .identity-header {
+    background: $yellow-2;
+    display: flex;
     padding: 5px;
 
-    .participation-actor span,
-    .participant-stats span {
-      padding: 0 5px;
-
-      button {
-        height: auto;
-        padding-top: 0;
-      }
-    }
-
-    div.title-wrapper {
-      display: flex;
-      align-items: center;
-
-      div.date-component {
-        flex: 0;
-        margin-right: 16px;
-      }
-
-      a {
-        text-decoration: none;
-      }
-
-      .title {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        font-weight: 400;
-        line-height: 1em;
-        font-size: 1.6em;
-        padding-bottom: 5px;
-        margin: auto 0;
-      }
+    figure {
+      padding-right: 3px;
     }
   }
 
-  .actions {
-    ul li {
-      margin: 0 auto;
-      .is-link {
-        cursor: pointer;
-      }
-
-      .button.is-text {
-        text-decoration: none;
-
-        ::v-deep span:first-child i.mdi::before {
-          font-size: 24px !important;
-        }
-
-        ::v-deep span:last-child {
-          padding-left: 4px;
-        }
-
-        &:hover {
-          background: #f5f5f5;
-        }
-      }
-
-      * {
-        font-size: 0.8rem;
-        color: $background-color;
-      }
-    }
+  & > .columns {
+    padding: 1.25rem;
   }
+  padding: 0;
 }
 </style>

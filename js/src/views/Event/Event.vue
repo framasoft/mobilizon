@@ -279,7 +279,6 @@
                     icon-right="dots-horizontal"
                   >
                     {{ $t("Actions") }}
-                    <!-- <b-icon icon="dots-horizontal" /> -->
                   </b-button>
                   <b-dropdown-item
                     aria-role="listitem"
