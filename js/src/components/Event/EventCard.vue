@@ -10,7 +10,16 @@
           event.picture ? event.picture.url : '/img/mobilizon_default_card.png'
         }')`"
       >
-        <div class="tag-container" v-if="event.tags">
+        <div
+          class="tag-container"
+          v-if="event.tags || event.status !== EventStatus.CONFIRMED"
+        >
+          <b-tag type="is-info" v-if="event.status === EventStatus.TENTATIVE">
+            {{ $t("Tentative") }}
+          </b-tag>
+          <b-tag type="is-danger" v-if="event.status === EventStatus.CANCELLED">
+            {{ $t("Cancelled") }}
+          </b-tag>
           <router-link
             :to="{ name: RouteName.TAG, params: { tag: tag.title } }"
             v-for="tag in event.tags.slice(0, 3)"
@@ -84,7 +93,7 @@ import { IEvent, IEventCardOptions } from "@/types/event.model";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
 import { Actor, Person } from "@/types/actor";
-import { ParticipantRole } from "@/types/enums";
+import { EventStatus, ParticipantRole } from "@/types/enums";
 import RouteName from "../../router/name";
 
 @Component({
@@ -98,6 +107,8 @@ export default class EventCard extends Vue {
   @Prop({ required: false }) options!: IEventCardOptions;
 
   ParticipantRole = ParticipantRole;
+
+  EventStatus = EventStatus;
 
   RouteName = RouteName;
 
