@@ -211,6 +211,18 @@ export const LOGGED_USER_PARTICIPATIONS = gql`
                 url
               }
             }
+            attributedTo {
+              avatar {
+                id
+                url
+              }
+              preferredUsername
+              name
+              summary
+              domain
+              url
+              id
+            }
             participantStats {
               going
               notApproved
@@ -219,6 +231,11 @@ export const LOGGED_USER_PARTICIPATIONS = gql`
             options {
               maximumAttendeeCapacity
               remainingAttendeeCapacity
+            }
+            tags {
+              id
+              slug
+              title
             }
           }
           id
