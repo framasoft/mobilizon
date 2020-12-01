@@ -61,9 +61,11 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticator do
 
           base = Keyword.get(ldap, :base)
           uid_field = Keyword.get(ldap, :uid, "cn")
+          group = Keyword.get(ldap, :group, false)
 
           # We first need to find the LDAP UID/CN for this specif email
-          with uid when is_binary(uid) <- search_user(connection, ldap, base, uid_field, email),
+          with uid when is_binary(uid) <-
+                 search_user(connection, ldap, base, uid_field, email, group),
                # Then we can verify the user's password
                :ok <- bind_user(connection, base, uid_field, uid, password) do
             case fetch_user(email) do
@@ -97,6 +99,15 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticator do
     end
   end
 
+  # Bind user with full DN
+  @spec bind_user(any(), String.t(), String.t(), {:full, String.t()}, String.t()) ::
+          User.t() | any()
+  defp bind_user(connection, _base, _uid, {:full, field}, password) do
+    Logger.debug("Binding to LDAP with \"#{field}\"")
+    :eldap.simple_bind(connection, field, password)
+  end
+
+  # Bind user with only uid field on top of base
   @spec bind_user(any(), String.t(), String.t(), String.t(), String.t()) ::
           User.t() | any()
   defp bind_user(connection, base, uid, field, password) do
@@ -105,9 +116,16 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticator do
     :eldap.simple_bind(connection, bind, password)
   end
 
-  @spec search_user(any(), Keyword.t(), String.t(), String.t(), String.t()) ::
+  @spec search_user(
+          any(),
+          Keyword.t(),
+          String.t(),
+          String.t(),
+          String.t(),
+          String.t() | boolean()
+        ) ::
           String.t() | {:error, :ldap_registration_missing_attributes} | any()
-  defp search_user(connection, ldap, base, uid, email) do
+  defp search_user(connection, ldap, base, uid, email, group) do
     # We may need to bind before performing the search
     res =
       if Keyword.get(ldap, :require_bind_for_search, true) do
@@ -119,20 +137,20 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticator do
       end
 
     if res == :ok do
-      do_search_user(connection, base, uid, email)
+      do_search_user(connection, base, uid, email, group)
     else
       res
     end
   end
 
   # Search an user by uid to find their CN
-  @spec do_search_user(any(), String.t(), String.t(), String.t()) ::
+  @spec do_search_user(any(), String.t(), String.t(), String.t(), String.t() | boolean()) ::
           String.t() | {:error, :ldap_registration_missing_attributes} | any()
-  defp do_search_user(connection, base, uid, email) do
+  defp do_search_user(connection, base, uid, email, group) do
     with {:ok, {:eldap_search_result, [{:eldap_entry, _, attributes}], _}} <-
            :eldap.search(connection, [
              {:base, to_charlist(base)},
-             {:filter, :eldap.equalityMatch(to_charlist("mail"), to_charlist(email))},
+             {:filter, search_filter(email, group)},
              {:scope, :eldap.wholeSubtree()},
              {:attributes, [to_charlist(uid)]},
              {:timeout, @search_timeout}
@@ -151,6 +169,20 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticator do
       error ->
         error
     end
+  end
+
+  @spec search_filter(String.t(), boolean()) :: any()
+  defp search_filter(email, false) do
+    :eldap.equalityMatch('mail', to_charlist(email))
+  end
+
+  # If we need to filter for group memberships as well
+  @spec search_filter(String.t(), String.t()) :: any()
+  defp search_filter(email, group) when is_binary(group) do
+    :eldap.and([
+      :eldap.equalityMatch('mail', to_charlist(email)),
+      :eldap.equalityMatch('memberOf', to_charlist(group))
+    ])
   end
 
   @spec register_user(String.t()) :: User.t() | any()
