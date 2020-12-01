@@ -96,6 +96,7 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
         uuid
         title
         beginsOn
+        draft
         options {
           maximumAttendeeCapacity
         }
