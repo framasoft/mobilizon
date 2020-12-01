@@ -110,15 +110,7 @@
                   v-if="new Date(endDate) > new Date()"
                 >
                   <participation-button
-                    v-if="
-                      anonymousParticipation === null &&
-                      (config.anonymous.participation.allowed ||
-                        (currentActor.id &&
-                          !actorIsOrganizer &&
-                          !event.draft &&
-                          (eventCapacityOK || actorIsParticipant) &&
-                          event.status !== EventStatus.CANCELLED))
-                    "
+                    v-if="shouldShowParticipationButton"
                     :participation="participations[0]"
                     :event="event"
                     :current-actor="currentActor"
@@ -1205,6 +1197,29 @@ export default class Event extends EventMixin {
       return this.actorForReport.domain;
     }
     return null;
+  }
+
+  get shouldShowParticipationButton(): boolean {
+    // So that people can cancel their participation
+    if (
+      this.actorIsParticipant ||
+      (this.config.anonymous.participation.allowed &&
+        this.anonymousParticipation)
+    )
+      return true;
+
+    // You can participate to draft or cancelled events
+    if (this.event.draft || this.event.status === EventStatus.CANCELLED)
+      return false;
+
+    // Organizer can't participate
+    if (this.actorIsOrganizer) return false;
+
+    // If capacity is OK
+    if (this.eventCapacityOK) return true;
+
+    // Else
+    return false;
   }
 }
 </script>
