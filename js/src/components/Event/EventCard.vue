@@ -22,7 +22,7 @@
           </b-tag>
           <router-link
             :to="{ name: RouteName.TAG, params: { tag: tag.title } }"
-            v-for="tag in event.tags.slice(0, 3)"
+            v-for="tag in (event.tags || []).slice(0, 3)"
             :key="tag.slug"
           >
             <b-tag type="is-light">{{ tag.title }}</b-tag>
