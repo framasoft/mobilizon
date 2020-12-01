@@ -1,5 +1,11 @@
 <template>
   <div class="card">
+    <div class="identity-header">
+      <figure class="image is-24x24" v-if="member.actor.avatar">
+        <img class="is-rounded" :src="member.actor.avatar.url" alt="" />
+      </figure>
+      {{ displayNameAndUsername(member.actor) }}
+    </div>
     <div class="card-content">
       <div>
         <div class="media">
@@ -60,7 +66,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { usernameWithDomain } from "@/types/actor";
+import { displayNameAndUsername, usernameWithDomain } from "@/types/actor";
 import { IMember } from "@/types/actor/member.model";
 import { MemberRole } from "@/types/enums";
 import RouteName from "../../router/name";
@@ -73,20 +79,34 @@ export default class GroupMemberCard extends Vue {
 
   usernameWithDomain = usernameWithDomain;
 
+  displayNameAndUsername = displayNameAndUsername;
+
   MemberRole = MemberRole;
 }
 </script>
 <style lang="scss" scoped>
-.card-content {
-  display: flex;
-  align-items: center;
+.card {
+  .card-content {
+    display: flex;
+    align-items: center;
 
-  & > div:first-child {
-    flex: 1;
+    & > div:first-child {
+      flex: 1;
+    }
+
+    & > div:last-child {
+      cursor: pointer;
+    }
   }
 
-  & > div:last-child {
-    cursor: pointer;
+  .identity-header {
+    background: $yellow-2;
+    display: flex;
+    padding: 5px;
+
+    figure {
+      padding-right: 3px;
+    }
   }
 }
 </style>

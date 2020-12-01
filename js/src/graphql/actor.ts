@@ -287,6 +287,16 @@ export const LOGGED_USER_MEMBERSHIPS = gql`
         elements {
           id
           role
+          actor {
+            id
+            avatar {
+              id
+              url
+            }
+            preferredUsername
+            name
+            domain
+          }
           parent {
             id
             preferredUsername
