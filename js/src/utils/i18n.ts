@@ -9,7 +9,6 @@ const DEFAULT_LOCALE = "en_US";
 
 let language =
   getLocaleData() || (document.documentElement.getAttribute("lang") as string);
-console.log("lang1", language);
 
 language =
   language ||
@@ -17,14 +16,12 @@ language =
     /-/,
     "_"
   );
-console.log("language2", language);
 
 export const locale =
   language && Object.prototype.hasOwnProperty.call(langs, language)
     ? language
     : language.split("-")[0];
 
-console.log("lang3", locale);
 Vue.use(VueI18n);
 
 export const i18n = new VueI18n({

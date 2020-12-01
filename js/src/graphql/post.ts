@@ -8,6 +8,7 @@ export const POST_FRAGMENT = gql`
     slug
     url
     body
+    draft
     author {
       id
       preferredUsername

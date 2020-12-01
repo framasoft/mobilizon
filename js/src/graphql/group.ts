@@ -84,7 +84,6 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
       id
       url
     }
-    mediaSize
     organizedEvents(
       afterDatetime: $afterDateTime
       beforeDatetime: $beforeDateTime
@@ -96,6 +95,7 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
         uuid
         title
         beginsOn
+        draft
         options {
           maximumAttendeeCapacity
         }
@@ -213,6 +213,7 @@ export const GET_GROUP = gql`
     $organisedEventslimit: Int
   ) {
     getGroup(id: $id) {
+      mediaSize
       ...GroupFullFields
     }
   }

@@ -200,6 +200,9 @@
             :to="{ name: RouteName.EVENT, params: { uuid: props.row.uuid } }"
           >
             {{ props.row.title }}
+            <b-tag type="is-info" v-if="props.row.draft">{{
+              $t("Draft")
+            }}</b-tag>
           </router-link>
         </b-table-column>
         <b-table-column
@@ -240,6 +243,9 @@
             :to="{ name: RouteName.POST, params: { slug: props.row.slug } }"
           >
             {{ props.row.title }}
+            <b-tag type="is-info" v-if="props.row.draft">{{
+              $t("Draft")
+            }}</b-tag>
           </router-link>
         </b-table-column>
         <b-table-column
