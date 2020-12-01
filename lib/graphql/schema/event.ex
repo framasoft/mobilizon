@@ -56,7 +56,10 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       description: "The event's organizer (as a person)"
     )
 
-    field(:attributed_to, :actor, description: "Who the event is attributed to (often a group)")
+    field(:attributed_to, :actor,
+      resolve: dataloader(Actors),
+      description: "Who the event is attributed to (often a group)"
+    )
 
     field(:tags, list_of(:tag),
       resolve: &Tag.list_tags_for_event/3,
