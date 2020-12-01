@@ -21,8 +21,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   alias Mobilizon.Federation.ActivityPub.Types.Ownable
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
   alias Mobilizon.Tombstone
+  alias Mobilizon.Web.Email.Participation
   alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Email.{Group, Participation}
 
   require Logger
 
