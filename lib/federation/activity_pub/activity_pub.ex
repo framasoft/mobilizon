@@ -526,7 +526,8 @@ defmodule Mobilizon.Federation.ActivityPub do
              local
            ),
          :ok <- maybe_federate(activity),
-         :ok <- maybe_relay_if_group_activity(activity) do
+         :ok <- maybe_relay_if_group_activity(activity),
+         :ok <- Group.send_invite_to_user(member) do
       {:ok, activity, member}
     end
   end

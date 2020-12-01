@@ -24,7 +24,8 @@ defmodule Mobilizon.Web.Email.Group do
           member,
         locale
       ) do
-    with %User{email: email} <- Users.get_user!(user_id) do
+    with %User{email: email} = user <- Users.get_user!(user_id) do
+      locale = Map.get(user, :locale, locale)
       Gettext.put_locale(locale)
       %Actor{name: invited_by_name} = inviter = Actors.get_actor(member.invited_by_id)
 
